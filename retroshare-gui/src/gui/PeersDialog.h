@@ -124,20 +124,10 @@ class PeersDialog : public RsAutoUpdatePage
 		void getAvatar();
 
 		void on_actionAdd_Friend_activated();
-		void on_actionCreate_new_Profile_activated();
 		void on_actionCreate_New_Forum_activated();
 		void on_actionCreate_New_Channel_activated(); 
 
 		void loadmypersonalstatus();
-    void loadtabsettings();
-    
-    void on_actionSet_Tabs_Right_activated();
-    void on_actionSet_Tabs_North_activated();
-    void on_actionSet_Tabs_South_activated();
-    void on_actionSet_Tabs_Left_activated();
-
-    void on_actionSet_Tabs_Triangular_activated();
-    void on_actionSet_Tabs_Rounded_activated();
 
 signals:
 		void friendsUpdated() ;

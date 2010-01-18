@@ -236,7 +236,7 @@ bool 	getX509id(X509 *x509, std::string &xid);
 
 int     LoadCheckX509andGetIssuerName(const char *cert_file, 
 			std::string &issuerName, std::string &userId);
-int     LoadCheckX509andGetName(const char *cert_file, 
-			std::string &userName, std::string &userId);
+int     LoadCheckX509andGetLocation(const char *cert_file,
+                        std::string &location, std::string &userId);
 
 #endif // MRK_AUTH_SSL_HEADER

@@ -57,7 +57,7 @@ class accountId
 		std::string pgpEmail;
 
 		std::string sslId;
-		std::string sslName;
+                std::string location;
 };
 
 
@@ -489,7 +489,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored)
 		{
 			std::cerr << " * Preferred * " << std::endl;
 			userId = it->sslId;
-			userName = it->sslName;
+                        userName = it->pgpName;
 			existingUser = true;
 		}
 	}
@@ -533,7 +533,7 @@ bool     RsInit::getAccountIds(std::list<std::string> &ids)
 		std::cerr << "SSL Id: " << it->sslId << " PGP Id " << it->pgpId <<
 		std::cerr << " PGP Name: " << it->pgpName;
 		std::cerr << " PGP Email: " << it->pgpEmail;
-		std::cerr << " SSL Name: " << it->sslName;
+                std::cerr << " Location: " << it->location;
 		std::cerr << std::endl;
 
 		ids.push_back(it->sslId);
@@ -544,7 +544,7 @@ bool     RsInit::getAccountIds(std::list<std::string> &ids)
 
 bool     RsInit::getAccountDetails(std::string id, 
                                 std::string &gpgId, std::string &gpgName, 
-				std::string &gpgEmail, std::string &sslName)
+                                std::string &gpgEmail, std::string &location)
 {
 	std::list<accountId>::iterator it;
 	for(it = RsInitConfig::accountIds.begin(); it != RsInitConfig::accountIds.end(); it++)
@@ -554,7 +554,7 @@ bool     RsInit::getAccountDetails(std::string id,
 			gpgId = it->pgpId;
 			gpgName = it->pgpName;
 			gpgEmail = it->pgpEmail;
-			sslName = it->sslName;
+                        location = it->location;
 			return true;
 		}
 	}
@@ -732,8 +732,8 @@ static bool checkAccount(std::string accountdir, accountId &id)
 	bool ret = false;
 
 	/* check against authmanagers private keys */
-	LoadCheckX509andGetName(cert_name.c_str(), id.sslName, id.sslId);
-	std::cerr << "sslName: " << id.sslName << " id: " << id.sslId << std::endl;
+        LoadCheckX509andGetLocation(cert_name.c_str(), id.location, id.sslId);
+        std::cerr << "location: " << id.location << " id: " << id.sslId << std::endl;
 
 		std::string tmpid;
 		if (LoadCheckX509andGetIssuerName(cert_name.c_str(), id.pgpId, tmpid))
@@ -949,10 +949,10 @@ bool     RsInit::GenerateSSLCertificate(std::string gpg_id, std::string org, std
 
 	/* try to load it, and get Id */
 
-	std::string sslName;
+        std::string location;
 	int ret = 0;
 
-	ret = LoadCheckX509andGetName(cert_name.c_str(), sslName, sslId);
+        ret = LoadCheckX509andGetLocation(cert_name.c_str(), location, sslId);
 
 	/* Move directory to correct id */
 	std::string finalbase = RsInitConfig::basedir + RsInitConfig::dirSeperator + sslId + RsInitConfig::dirSeperator;

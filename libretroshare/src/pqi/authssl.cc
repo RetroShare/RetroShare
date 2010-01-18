@@ -2239,7 +2239,7 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
 
 // Not dependent on sslroot. load, and detroys the X509 memory.
 
-int	LoadCheckX509andGetName(const char *cert_file, std::string &userName, std::string &userId)
+int	LoadCheckX509andGetLocation(const char *cert_file, std::string &location, std::string &userId)
 {
 	/* This function loads the X509 certificate from the file, 
 	 * and checks the certificate 
@@ -2270,7 +2270,7 @@ int	LoadCheckX509andGetName(const char *cert_file, std::string &userName, std::s
 	if (valid)
 	{
 		// extract the name.
-		userName = getX509CNString(x509->cert_info->subject);
+                location = getX509LocString(x509->cert_info->subject);
 	}
 
 	std::cout << getX509Info(x509) << std::endl ;

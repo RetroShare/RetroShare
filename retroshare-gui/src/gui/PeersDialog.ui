@@ -557,7 +557,7 @@ p, li { white-space: pre-wrap; }
             </property>
            </spacer>
           </item>
-          <item row="0" column="3">
+          <item row="0" column="2">
            <widget class="QPushButton" name="menupushButton">
             <property name="toolTip">
              <string>Add</string>
@@ -592,33 +592,6 @@ p, li { white-space: pre-wrap; }
             </property>
             <property name="default">
              <bool>false</bool>
-            </property>
-            <property name="flat">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QPushButton" name="lookpushButton">
-            <property name="toolTip">
-             <string>Display</string>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">QPushButton::menu-indicator { 
-subcontrol-origin: padding;
-subcontrol-position: bottom right;
-}
-
- QPushButton:hover {
-	border: 1px solid #CCCCCC;
- }</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="images.qrc">
-              <normaloff>:/images/looknfeel.png</normaloff>:/images/looknfeel.png</iconset>
             </property>
             <property name="flat">
              <bool>true</bool>
@@ -1225,47 +1198,7 @@ background: white;}</string>
     <string>Set your Personal Message</string>
    </property>
    <property name="toolTip">
-    <string>Set your Personal Message</string>
-   </property>
-  </action>
-  <action name="actionSet_Tabs_Right">
-   <property name="text">
-    <string>Set Tabs Right</string>
-   </property>
-  </action>
-  <action name="actionSet_Tabs_Left">
-   <property name="text">
-    <string>Set Tabs Left</string>
-   </property>
-  </action>
-  <action name="actionSet_Tabs_North">
-   <property name="text">
-    <string>Set Tabs North</string>
-   </property>
-  </action>
-  <action name="actionSet_Tabs_South">
-   <property name="text">
-    <string>Set Tabs South</string>
-   </property>
-  </action>
-  <action name="actionSet_Tabs_Triangular">
-   <property name="text">
-    <string>Set Tabs Triangular</string>
-   </property>
-  </action>
-  <action name="actionSet_Tabs_Rounded">
-   <property name="text">
-    <string>Set Tabs Rounded</string>
-   </property>
-  </action>
-  <action name="actionSort_Status_Descending_Order">
-   <property name="text">
-    <string>Sort Status Descending Order</string>
-   </property>
-  </action>
-  <action name="actionSort_Status_Ascending_Order">
-   <property name="text">
-    <string>Sort Status Ascending Order</string>
+    <string>Edit your status Message</string>
    </property>
   </action>
  </widget>

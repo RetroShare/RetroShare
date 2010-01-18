@@ -65,8 +65,7 @@ void ProfileWidget::loadDialog()
   if (rsPeers->getPeerDetails(rsPeers->getOwnId(),detail)) 	
   {	
 
-	ui.name->setText(QString::fromStdString(detail.name));
-	ui.orgloc->setText(QString::fromStdString(detail.org));
+        ui.name->setText(QString::fromStdString(detail.name));
 	ui.country->setText(QString::fromStdString(detail.location));
   
   ui.peerid->setText(QString::fromStdString(detail.id));
@@ -74,7 +73,6 @@ void ProfileWidget::loadDialog()
 	// Dont Show a timestamp in RS calculate the day
 	QDateTime date = QDateTime::fromTime_t(detail.lastConnect);
 	QString stime = date.toString(Qt::LocalDate);
-  ui.lastcontact-> setText(stime);
 
     /* set retroshare version */
     std::map<std::string, std::string>::iterator vit;
@@ -94,7 +92,7 @@ void ProfileWidget::loadDialog()
 	
 	  std::list<std::string> ids;
 	  ids.clear();
-    rsPeers->getFriendList(ids);
+    rsPeers->getGPGAcceptedList(ids);
     int friends = ids.size();
     
     std::ostringstream out;

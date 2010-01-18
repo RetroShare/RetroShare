@@ -22,6 +22,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include "common/vmessagebox.h"
+#include <gui/mainpagestack.h>
 
 #include "rshare.h"
 #include "PeersDialog.h"
@@ -96,6 +97,7 @@ PeersDialog::PeersDialog(QWidget *parent)
 
   last_status_send_time = 0 ;
 
+
   connect( ui.peertreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( peertreeWidgetCostumPopupMenu( QPoint ) ) );
   connect( ui.peertreeWidget, SIGNAL( itemDoubleClicked ( QTreeWidgetItem *, int)), this, SLOT(chatfriend()));
 
@@ -104,6 +106,7 @@ PeersDialog::PeersDialog(QWidget *parent)
   connect( ui.actionSet_your_Avatar, SIGNAL(triggered()), this, SLOT(getAvatar()));
   connect( ui.actionSet_your_Personal_Message, SIGNAL(triggered()), this, SLOT(statusmessage()));
 
+  ui.peertabWidget->setTabPosition(QTabWidget::West);
   ui.peertabWidget->addTab(new ProfileWidget(),QString(tr("Profile")));
 
   ui.peertreeWidget->setColumnCount(4);
@@ -127,7 +130,6 @@ PeersDialog::PeersDialog(QWidget *parent)
         headerItem->setTextAlignment(1, Qt::AlignLeft | Qt::AlignVCenter);
 	headerItem->setTextAlignment(2, Qt::AlignHCenter | Qt::AlignVCenter);
 
-  loadtabsettings();
   loadEmoticonsgroupchat();
 
   connect(ui.lineEdit, SIGNAL(textChanged ( ) ), this, SLOT(checkChat( ) ));
@@ -175,9 +177,7 @@ PeersDialog::PeersDialog(QWidget *parent)
   timer->start(500); /* half a second */
   
   QMenu *menu = new QMenu();
-  menu->addAction(ui.actionAdd_Friend); 
-  menu->addSeparator();
-  menu->addAction(ui.actionCreate_new_Profile);
+  menu->addAction(ui.actionAdd_Friend);
   menu->addSeparator();
   menu->addAction(ui.actionCreate_New_Forum);
   menu->addAction(ui.actionCreate_New_Channel);
@@ -185,21 +185,6 @@ PeersDialog::PeersDialog(QWidget *parent)
   menu->addAction(ui.actionSet_your_Personal_Message);
   
   ui.menupushButton->setMenu(menu);
-  
-  QMenu *lookmenu = new QMenu();
-  lookmenu->addAction(ui.actionSort_Status_Descending_Order); 
-  lookmenu->addAction(ui.actionSort_Status_Ascending_Order);
-  lookmenu->addSeparator();
-  lookmenu->addAction(ui.actionSet_Tabs_Right); 
-  lookmenu->addAction(ui.actionSet_Tabs_Left);
-  lookmenu->addAction(ui.actionSet_Tabs_North);
-  lookmenu->addAction(ui.actionSet_Tabs_South);
-  lookmenu->addSeparator();
-  lookmenu->addAction(ui.actionSet_Tabs_Triangular);
-  lookmenu->addAction(ui.actionSet_Tabs_Rounded);
-  
-  ui.lookpushButton->setMenu(lookmenu);
-
   
   updateAvatar();
   loadmypersonalstatus();
@@ -1417,15 +1402,9 @@ void PeersDialog::on_actionAdd_Friend_activated()
     connectwiz->show();
 }
 
-void PeersDialog::on_actionCreate_new_Profile_activated()
-{
-    static GenCertDialog *gencertdialog = new GenCertDialog();
-    gencertdialog->show();
-    
-}
-
 void PeersDialog::on_actionCreate_New_Forum_activated()
 {
+    ((MainPageStack*)this->parent())->setCurrentIndex(8); // swtich to forum view
     static CreateForum *cf = new CreateForum(this);
     cf->show();
     
@@ -1434,6 +1413,7 @@ void PeersDialog::on_actionCreate_New_Forum_activated()
 void PeersDialog::on_actionCreate_New_Channel_activated()
 {
     CreateForum *cf = new CreateForum(NULL, false);
+    ((MainPageStack*)this->parent())->setCurrentIndex(6); // swtich to forum view
 
     cf->setWindowTitle(tr("Create a new Channel"));
     cf->ui.labelicon->setPixmap(QPixmap(":/images/add_channel64.png"));
@@ -1456,84 +1436,3 @@ void PeersDialog::statusmessage()
     static StatusMessage *statusmsgdialog = new StatusMessage();
     statusmsgdialog->show();
 }
-
-void PeersDialog::on_actionSet_Tabs_North_activated()
-{
-	_settings->beginGroup("PeersDialog");
-	
-  ui.peertabWidget->setTabPosition(QTabWidget::North);
-  
-  _settings->setValue("TabWidget_Position",ui.peertabWidget->tabPosition());
-  _settings->endGroup();
-}
-
-void PeersDialog::on_actionSet_Tabs_South_activated()
-{
-	_settings->beginGroup("PeersDialog");
-
-  ui.peertabWidget->setTabPosition(QTabWidget::South);
-  
-  _settings->setValue("TabWidget_Position",ui.peertabWidget->tabPosition());  
-  _settings->endGroup();
-}
-
-void PeersDialog::on_actionSet_Tabs_Left_activated()
-{
-	_settings->beginGroup("PeersDialog");
-
-  ui.peertabWidget->setTabPosition(QTabWidget::West);
-  
-  _settings->setValue("TabWidget_Position",ui.peertabWidget->tabPosition());  
-  _settings->endGroup();
-}
-
-void PeersDialog::on_actionSet_Tabs_Right_activated()
-{
-	_settings->beginGroup("PeersDialog");
-	
-  ui.peertabWidget->setTabPosition(QTabWidget::East);
-  
-  _settings->setValue("TabWidget_Position",ui.peertabWidget->tabPosition());  
-  _settings->endGroup();
-}
-
-void PeersDialog::on_actionSet_Tabs_Triangular_activated()
-{
-  ui.peertabWidget->setTabShape(QTabWidget::Triangular);
-}
-
-void PeersDialog::on_actionSet_Tabs_Rounded_activated()
-{
-  ui.peertabWidget->setTabShape(QTabWidget::Rounded);
-}
-
-void PeersDialog::loadtabsettings()
-{
-   _settings->beginGroup("PeersDialog");
-
-  if(_settings->value("TabWidget_Position","0").toInt() == 0)
-  {
-  qDebug() << "Tab North";
-  ui.peertabWidget->setTabPosition(QTabWidget::North);
-  }
-
-  else if (_settings->value("TabWidget_Position","1").toInt() == 1)
-  {
-  qDebug() << "Tab South";
-  ui.peertabWidget->setTabPosition(QTabWidget::South);
-  }
-
-  else if (_settings->value("TabWidget_Position","2").toInt() ==2)
-  {
-  qDebug() << "Tab West";
-  ui.peertabWidget->setTabPosition(QTabWidget::West);
-  }
-
-  else if(_settings->value("TabWidget_Position","3").toInt() ==3)
-  {
-  qDebug() << "Tab East";
-  ui.peertabWidget->setTabPosition(QTabWidget::East);
-  }
-
-  _settings->endGroup();
-  }
