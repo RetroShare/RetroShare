@@ -269,11 +269,8 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
       contextMnu.addAction( collapseAll);
       contextMnu.addSeparator();
       contextMnu.addAction( widgetAction);
-      if (c->type() != 0) {
-          //this is a SSL key
-          contextMnu.addAction( chatAct);
-          contextMnu.addAction( msgAct);
-      }
+      contextMnu.addAction( chatAct);
+      contextMnu.addAction( msgAct);
       contextMnu.addAction( configurefriendAct);
       //contextMnu.addAction( profileviewAct);
       if (c->type() != 0) {
@@ -565,28 +562,43 @@ void PeersDialog::chatfriend()
     if (!i)
 	return;
 
-    std::string name = (i -> text(2)).toStdString();
+    //std::string name = (i -> text(2)).toStdString();
     std::string id = (i -> text(3)).toStdString();
 
+    bool oneLocationConnected = false;
+
     RsPeerDetails detail;
-    if (!rsPeers->getPeerDetails(id, detail))
-    {
+    if (!rsPeers->getPeerDetails(id, detail)) {
     	return;
     }
 
-    if (detail.state & RS_PEER_STATE_CONNECTED)
-    {
-    	getPrivateChat(id, name, RS_CHAT_REOPEN);
+    if (detail.isOnlyGPGdetail) {
+        //let's get the ssl child details, and open all the chat boxes
+        std::list<std::string> sslIds;
+        rsPeers->getSSLChildListOfGPGId(detail.gpg_id, sslIds);
+        for (std::list<std::string>::iterator it = sslIds.begin(); it != sslIds.end(); it++) {
+            RsPeerDetails sslDetails;
+            if (rsPeers->getPeerDetails(*it, sslDetails)) {
+                if (sslDetails.state & RS_PEER_STATE_CONNECTED) {
+                    oneLocationConnected = true;
+                    getPrivateChat(*it, sslDetails.name + " - " + sslDetails.location, RS_CHAT_REOPEN);
+                }
+            }
+        }
+    } else {
+        if (detail.state & RS_PEER_STATE_CONNECTED) {
+            oneLocationConnected = true;
+            getPrivateChat(id, detail.name + " - " + detail.location, RS_CHAT_REOPEN);
+        }
     }
-    else
-    {
+
+    if (!oneLocationConnected) {
     	/* info dialog */
        QMessageBox::StandardButton sb = QMessageBox::question ( NULL,
 			"Friend Not Online",
 	"Your Friend is offline \nDo you want to send them a Message instead",
 			        (QMessageBox::Yes | QMessageBox::No));
-	if (sb == QMessageBox::Yes)
-	{
+        if (sb == QMessageBox::Yes) {
 		msgfriend();
 	}
     }
@@ -611,6 +623,12 @@ void PeersDialog::msgfriend()
 
     rsicontrol -> ClearInMsg();
     rsicontrol -> SetInMsg(id, true);
+    std::list<std::string> sslIds;
+    rsPeers->getSSLChildListOfGPGId(id, sslIds);
+    for (std::list<std::string>::iterator it = sslIds.begin(); it != sslIds.end(); it++) {
+        //put all sslChilds in message list
+        rsicontrol -> SetInMsg(*it, true);
+    }
 
     /* create a message */
     ChanMsgDialog *nMsgDialog = new ChanMsgDialog(true);

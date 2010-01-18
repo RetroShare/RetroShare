@@ -65,6 +65,8 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
 
   RshareSettings config;
   config.loadWidgetInformation(this);
+  this->move(qrand()%100, qrand()%100); //avoid to stack multiple popup chat windows on the same position
+
   
   loadEmoticons();
   
@@ -134,7 +136,7 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
 
 void PopupChatDialog::resetStatusBar() 
 {
-	statusBar()->showMessage(tr("Chatting with ") + QString::fromStdString(dialogName) + " (" +QString::fromStdString(dialogId)+ ")") ;
+        statusBar()->showMessage(tr("Chatting with ") + QString::fromStdString(dialogName)) ;
 }
 
 void PopupChatDialog::updateStatusTyping()

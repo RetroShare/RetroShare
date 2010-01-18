@@ -322,7 +322,7 @@ void  ChanMsgDialog::insertSendList()
 
 		/* add all the labels */
 		/* (0) Person */
-		item -> setText(0, QString::fromStdString(detail.name));
+                item -> setText(0, QString::fromStdString(detail.name) + " - " + QString::fromStdString(detail.location));
 		/* () Org */
 		//item -> setText(1, QString::fromStdString(detail.org));
 		/* () Location */
