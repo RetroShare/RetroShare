@@ -106,6 +106,8 @@ PeersDialog::PeersDialog(QWidget *parent)
   connect( ui.actionSet_your_Avatar, SIGNAL(triggered()), this, SLOT(getAvatar()));
   connect( ui.actionSet_your_Personal_Message, SIGNAL(triggered()), this, SLOT(statusmessage()));
 
+  connect(ui.hide_unconnected, SIGNAL(clicked()), this, SLOT(insertPeers()));
+
   ui.peertabWidget->setTabPosition(QTabWidget::West);
   ui.peertabWidget->addTab(new ProfileWidget(),QString(tr("Profile")));
 
@@ -445,6 +447,7 @@ void  PeersDialog::insertPeers()
                 /* change color and icon */
                 int i;
                 if (sslDetail.state & RS_PEER_STATE_CONNECTED) {
+                    sslItem->setHidden(false);
                     gpg_connected = true;
 
                     sslItem -> setIcon(0,(QIcon(":/images/connect_established.png")));
@@ -455,6 +458,7 @@ void  PeersDialog::insertPeers()
                         sslItem -> setFont(i,font);
                     }
                } else if (sslDetail.state & RS_PEER_STATE_ONLINE) {
+                    sslItem->setHidden(ui.hide_unconnected->isChecked());
                     gpg_online = true;
                         
                     QFont font;
@@ -464,6 +468,7 @@ void  PeersDialog::insertPeers()
                         sslItem -> setFont(i,font);
                     }
                 } else {
+                    sslItem->setHidden(ui.hide_unconnected->isChecked());
                     if (sslDetail.autoconnect !="Offline") {
                         sslItem -> setIcon(0, (QIcon(":/images/connect_creating.png")));
                     } else {
@@ -490,6 +495,7 @@ void  PeersDialog::insertPeers()
 
             int i = 0;
             if (gpg_connected) {
+                gpg_item->setHidden(false);
                 gpg_item -> setIcon(0,(QIcon(IMAGE_ONLINE)));
                 gpg_item -> setText(1, tr("Online"));
                 QFont font;
@@ -499,6 +505,7 @@ void  PeersDialog::insertPeers()
                     gpg_item -> setFont(i,font);
                 }
             } else if (gpg_online) {
+                gpg_item->setHidden(ui.hide_unconnected->isChecked());
                 gpg_item -> setIcon(0,(QIcon(IMAGE_AVAIBLE)));
                 gpg_item -> setText(1, tr("Available"));
                 QFont font;
@@ -508,6 +515,7 @@ void  PeersDialog::insertPeers()
                     gpg_item -> setFont(i,font);
                 }
             } else {
+                gpg_item->setHidden(ui.hide_unconnected->isChecked());
                 gpg_item -> setIcon(0,(QIcon(IMAGE_OFFLINE)));
                 gpg_item -> setText(1, tr("Offline"));
                 QFont font;
