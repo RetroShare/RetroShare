@@ -42,6 +42,8 @@ GenCertDialog::GenCertDialog(QWidget *parent, Qt::WFlags flags)
   /* Invoke Qt Designer generated QObject setup routine */
   ui.setupUi(this);
 
+  connect(ui.new_gpg_key_checkbox, SIGNAL(clicked()), this, SLOT(newGPGKeyGenUiSetup()));
+
   WidgetBackgroundImage::setBackgroundImage(ui.loginLabel, ":images/new-account.png", WidgetBackgroundImage::AdjustHeight);
 
   
@@ -57,9 +59,9 @@ GenCertDialog::GenCertDialog(QWidget *parent, Qt::WFlags flags)
      */
     std::cerr << "Finding PGPUsers" << std::endl;
 
-    foundGPGKeys = false;
     std::list<std::string> pgpIds;
     std::list<std::string>::iterator it;
+    bool foundGPGKeys = false;
     if (RsInit::GetPGPLogins(pgpIds)) {
             for(it = pgpIds.begin(); it != pgpIds.end(); it++)
             {
@@ -74,16 +76,15 @@ GenCertDialog::GenCertDialog(QWidget *parent, Qt::WFlags flags)
 
     if (foundGPGKeys) {
         ui.no_gpg_key_label->hide();
-        ui.name_label->hide();
-        ui.name_input->hide();
-        ui.email_label->hide();
-        ui.email_input->hide();
-        ui.password_label->hide();
-        ui.password_input->hide();
+        ui.new_gpg_key_checkbox->setChecked(false);
+        genNewGPGKey = false;
     } else {
-        ui.genPGPuserlabel->hide();
-        ui.genPGPuser->hide();
+        ui.no_gpg_key_label->show();
+        ui.new_gpg_key_checkbox->setChecked(true);
+        ui.new_gpg_key_checkbox->hide();
+        genNewGPGKey = true;
     }
+    newGPGKeyGenUiSetup();
 }
 
 /** Destructor. */
@@ -116,6 +117,29 @@ void GenCertDialog::closeinfodlg()
 	close();
 }
 
+void GenCertDialog::newGPGKeyGenUiSetup() {
+    if (ui.new_gpg_key_checkbox->isChecked()) {
+        genNewGPGKey = true;
+        ui.name_label->show();
+        ui.name_input->show();
+        ui.email_label->show();
+        ui.email_input->show();
+        ui.password_label->show();
+        ui.password_input->show();
+        ui.genPGPuserlabel->hide();
+        ui.genPGPuser->hide();
+    } else {
+        genNewGPGKey = false;
+        ui.name_label->hide();
+        ui.name_input->hide();
+        ui.email_label->hide();
+        ui.email_input->hide();
+        ui.password_label->hide();
+        ui.password_input->hide();
+        ui.genPGPuserlabel->show();
+        ui.genPGPuser->show();
+    }
+}
 void GenCertDialog::genPerson()
 {
 
@@ -123,7 +147,7 @@ void GenCertDialog::genPerson()
 	std::string genLoc  = ui.genLoc->text().toStdString();
         std::string PGPId;
 
-        if (foundGPGKeys) {
+        if (!genNewGPGKey) {
             int pgpidx = ui.genPGPuser->currentIndex();
             if (pgpidx < 0)
             {
@@ -145,6 +169,7 @@ void GenCertDialog::genPerson()
             ui.progress_label->setMovie(movie);
             movie->start();
             movie->setSpeed(100); // 2x speed
+            ui.new_gpg_key_checkbox->hide();
             ui.name_label->hide();
             ui.name_input->hide();
             ui.email_label->hide();

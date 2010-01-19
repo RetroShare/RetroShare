@@ -55,19 +55,21 @@ private slots:
 	void selectFriend();
 	void checkChanged(int i);
 	void infodlg();
-  
+        void newGPGKeyGenUiSetup();
+
 private:
 
   /** Loads the saved connectidialog settings */
   //  void loadSettings();
   void loadCertificates();
+
   
   QMovie *movie;
 
   /** Qt Designer generated object */
   Ui::GenCertDialog ui;
 
-  bool foundGPGKeys;
+  bool genNewGPGKey;
 };
 
 #endif
