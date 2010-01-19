@@ -517,7 +517,7 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
 				return getFlagsString(details.flags);
 				break;
 			case 3:
-				return  misc::userFriendlyDuration(details.age);
+				return QString::fromUtf8("Folder");
 				break;
             case 4:
             {
