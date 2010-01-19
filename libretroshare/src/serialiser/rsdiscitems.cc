@@ -153,7 +153,7 @@ std::ostream &RsDiscAskInfo::print(std::ostream &out, uint16_t indent)
         printIndent(out, int_Indent);
         out << "gpg_id: " << gpg_id << std::endl;
 
-        printRsItemEnd(out, "RsDiscOwnItem", indent);
+        printRsItemEnd(out, "RsDiscAskInfo", indent);
         return out;
 }
 

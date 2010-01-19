@@ -312,16 +312,17 @@ void p3disc::sendPeerDetails(std::string to, std::string about) {
 	// Set Target as input cert.
 	di -> PeerId(to);
 	di -> aboutId = about;
-        di -> certGPG = AuthGPG::getAuthGPG()->SaveCertificateToString(about);
 
         // set the ip addresse list.
         std::list<std::string> sslChilds;
         rsPeers->getSSLChildListOfGPGId(about, sslChilds);
+        bool shouldWeSendGPGKey = false;//the GPG key is send only if we've got a valid friend with DISC enabled
         for (std::list<std::string>::iterator sslChildIt = sslChilds.begin(); sslChildIt != sslChilds.end(); sslChildIt++) {
             peerConnectState detail;
             if (!mConnMgr->getFriendNetStatus(*sslChildIt, detail) || detail.visState & RS_VIS_STATE_NODISC) {
                     continue;
             }
+            shouldWeSendGPGKey = true;
             RsPeerNetItem *rsPeerNetItem = new RsPeerNetItem();
             rsPeerNetItem->clear();
 
@@ -343,6 +344,7 @@ void p3disc::sendPeerDetails(std::string to, std::string about) {
         if (about == rsPeers->getGPGOwnId()) {
             peerConnectState detail;
             if (mConnMgr->getOwnNetStatus(detail)) {
+                shouldWeSendGPGKey = true;
                 RsPeerNetItem *rsPeerNetItem = new RsPeerNetItem();
                 rsPeerNetItem->clear();
                 rsPeerNetItem->pid = detail.id;
@@ -358,6 +360,14 @@ void p3disc::sendPeerDetails(std::string to, std::string about) {
                 di->rsPeerList.push_back(*rsPeerNetItem);
             }
         }
+
+        if (!shouldWeSendGPGKey) {
+            #ifdef P3DISC_DEBUG
+            std::cerr << "p3disc::sendPeerDetails() GPG key should not be send, no friend with disc on found about it." << std::endl;
+            #endif
+            return;
+        }
+        di -> certGPG = AuthGPG::getAuthGPG()->SaveCertificateToString(about);
 
         // Send off message
 #ifdef P3DISC_DEBUG
