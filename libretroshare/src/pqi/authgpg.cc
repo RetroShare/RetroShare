@@ -30,6 +30,7 @@
 #include <sstream>
 #include <algorithm>
 #include "serialiser/rsconfigitems.h"
+#include "cleanupxpgp.h"
 
 
 // initialisation du pointeur de singleton à zéro
@@ -1201,8 +1202,12 @@ bool AuthGPG::LoadCertificateFromString(std::string str, std::string &gpg_id)
 
 	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
 
+        std::string cleancert = cleanUpCertificate(str);
+
+        std::cerr << "AuthGPG::LoadCertificateFromString() cleancert : " << cleancert;
+
 	gpgme_data_t gpgmeData;
-	if (GPG_ERR_NO_ERROR != gpgme_data_new_from_mem(&gpgmeData, str.c_str(), str.length(), 1))
+        if (GPG_ERR_NO_ERROR != gpgme_data_new_from_mem(&gpgmeData, cleancert.c_str(), cleancert.length(), 1))
 	{
 		std::cerr << "Error create Data";
 		std::cerr << std::endl;

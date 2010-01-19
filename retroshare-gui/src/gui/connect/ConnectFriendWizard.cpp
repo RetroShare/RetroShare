@@ -813,7 +813,7 @@ void ConclusionPage::initializePage() {
     //set the radio button to sign the GPG key
     if (detail.accept_connection && !detail.ownsign) {
         //gpg key connection is already accepted, don't propose to accept it again
-        signGPGRadioButton->setText(tr("Peer is already a GPG key is already a retroshare friend. Sign his GPG key."));
+        signGPGRadioButton->setText(tr("Peer is already a retroshare friend. Sign his GPG key."));
         signGPGRadioButton->setChecked(true);
         acceptNoSignGPGRadioButton->hide();
         acceptNoSignGPGRadioButton->setChecked(false);

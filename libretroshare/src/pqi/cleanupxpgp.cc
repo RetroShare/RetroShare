@@ -224,7 +224,21 @@ std::string cleanUpCertificate(std::string badCertificate)
 	while(badCertificate[currBadCertIdx]=='\n'|| badCertificate[currBadCertIdx]==' ')
 	{
 		currBadCertIdx++;
-	}	
+        }
+
+        //keep the first line : gnupg version
+        cleanCertificate[currCleanCertIdx]= badCertificate[currBadCertIdx];
+        currBadCertIdx++;
+        while(badCertificate[currBadCertIdx]!='\n')
+        {
+                cleanCertificate[currCleanCertIdx]= badCertificate[currBadCertIdx];
+                currCleanCertIdx++;
+                currBadCertIdx++;
+        }
+        cleanCertificate[currCleanCertIdx]= badCertificate[currBadCertIdx];
+        currCleanCertIdx++;
+        currBadCertIdx++;
+
 	//Start of the actual certificate. Remove spaces in the certificate
 	//and make sure there are 64 characters per line in the
 	//new cleaned certificate
