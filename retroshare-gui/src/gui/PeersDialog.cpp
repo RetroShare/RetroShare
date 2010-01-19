@@ -265,9 +265,6 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
       widgetAction->setDefaultWidget(widget); 
 
       contextMnu.clear();
-      contextMnu.addAction( expandAll);
-      contextMnu.addAction( collapseAll);
-      contextMnu.addSeparator();
       contextMnu.addAction( widgetAction);
       contextMnu.addAction( chatAct);
       contextMnu.addAction( msgAct);
@@ -279,6 +276,9 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
       }
       contextMnu.addAction( removefriendAct);
       //contextMnu.addAction( exportfriendAct);
+      contextMnu.addSeparator();
+      contextMnu.addAction( expandAll);
+      contextMnu.addAction( collapseAll);
       contextMnu.exec( mevent->globalPos() );
       
 
