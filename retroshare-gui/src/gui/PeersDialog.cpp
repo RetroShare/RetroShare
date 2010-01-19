@@ -451,6 +451,7 @@ void  PeersDialog::insertPeers()
                     gpg_connected = true;
 
                     sslItem -> setIcon(0,(QIcon(":/images/connect_established.png")));
+                    sslItem -> setIcon(1,(QIcon(":/images/encrypted32.png")));
                     QFont font;
                     font.setBold(true);
                     for(i = 0; i < 3; i++) {
