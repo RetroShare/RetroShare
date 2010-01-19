@@ -43,7 +43,7 @@ ProfileWidget::ProfileWidget(QWidget *parent, Qt::WFlags flags)
   
   connect(ui.editstatuspushButton,SIGNAL(clicked()), this, SLOT(statusmessagedlg()));
 
-  loadDialog();
+  //loadDialog();
 }
 
 /** Destructor. */
@@ -58,25 +58,25 @@ void ProfileWidget::closeEvent (QCloseEvent * event)
  QWidget::closeEvent(event);
 }
 
-void ProfileWidget::loadDialog()
+void ProfileWidget::showEvent ( QShowEvent * event )
 {
 
 	RsPeerDetails detail;
-  if (rsPeers->getPeerDetails(rsPeers->getOwnId(),detail)) 	
-  {	
+      if (rsPeers->getPeerDetails(rsPeers->getOwnId(),detail))
+      {
 
         ui.name->setText(QString::fromStdString(detail.name));
 	ui.country->setText(QString::fromStdString(detail.location));
   
-  ui.peerid->setText(QString::fromStdString(detail.id));
+        ui.peerid->setText(QString::fromStdString(detail.id));
         
 	// Dont Show a timestamp in RS calculate the day
 	QDateTime date = QDateTime::fromTime_t(detail.lastConnect);
 	QString stime = date.toString(Qt::LocalDate);
 
-    /* set retroshare version */
-    std::map<std::string, std::string>::iterator vit;
-    std::map<std::string, std::string> versions;
+        /* set retroshare version */
+        std::map<std::string, std::string>::iterator vit;
+        std::map<std::string, std::string> versions;
 	bool retv = rsDisc->getDiscVersions(versions);
 	if (retv && versions.end() != (vit = versions.find(detail.id)))
 	{

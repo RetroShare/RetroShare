@@ -43,7 +43,7 @@ protected:
   
 private slots:
 
-  void loadDialog();
+  void showEvent ( QShowEvent * event );
   void statusmessagedlg();
   
 private:

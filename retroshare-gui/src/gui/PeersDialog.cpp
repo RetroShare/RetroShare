@@ -297,7 +297,16 @@ void PeersDialog::keyPressEvent(QKeyEvent *e)
 
 void PeersDialog::updateDisplay()
 {
-	insertPeers() ;
+        // add self nick and Avatar to Friends.
+        RsPeerDetails pd ;
+        if (rsPeers->getPeerDetails(rsPeers->getOwnId(),pd)) {
+                QString titleStr("<span style=\"font-size:16pt; font-weight:500;"
+                       "color:#32cd32;\">%1</span>");
+                ui.nicklabel->setText(titleStr.arg(QString::fromStdString(pd.name) + tr(" (me)") + QString::fromStdString(pd.location))) ;
+        }
+
+
+        insertPeers() ;
 }
 
 /* get the list of peers from the RsIface.  */
@@ -308,6 +317,7 @@ void  PeersDialog::insertPeers()
 
         if (!rsPeers) {
                 /* not ready yet! */
+                std::cerr << "PeersDialog::insertPeers() not ready yet : rsPeers unintialized."  << std::endl;
                 return;
         }
 
@@ -322,14 +332,6 @@ void  PeersDialog::insertPeers()
 
         /* get a link to the table */
         QTreeWidget *peertreeWidget = ui.peertreeWidget;
-
-	// add self nick and Avatar to Friends.
-	RsPeerDetails pd ;
-        if (rsPeers->getPeerDetails(rsPeers->getOwnId(),pd)) {
-                QString titleStr("<span style=\"font-size:16pt; font-weight:500;"
-                       "color:#32cd32;\">%1</span>");
-                ui.nicklabel->setText(titleStr.arg(QString::fromStdString(pd.name) + tr(" (me)"))) ;
-        }
 
         //remove items that are not fiends anymore
         int index = 0;
