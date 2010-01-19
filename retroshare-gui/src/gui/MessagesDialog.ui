@@ -512,34 +512,11 @@
    <item row="0" column="0">
     <widget class="QFrame" name="frame">
      <property name="styleSheet">
-      <string notr="true">#frame {
-border: none;
-background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-stop: 0 #a6a6a6, stop: 0.08 #7f7f7f,
-stop: 0.39999 #717171, stop: 0.4 #626262,
-stop: 0.9 #4c4c4c, stop: 1 #333333);
-}
+      <string notr="true">QFrame#frame{ 
+background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+stop:0 #FEFEFE, stop:1 #E8E8E8);
 
-#frame QPushButton {
-color: #333;
-border: 2px solid #555;
-border-radius: 11px;
-padding: 5px;
-background: qradialgradient(cx: 0.3, cy: -0.4,
-fx: 0.3, fy: -0.4,
-radius: 1.35, stop: 0 #fff, stop: 1 #888);
-min-width:30px;
-}
-#frame QPushButton:hover {
-background: qradialgradient(cx: 0.3, cy: -0.4,
-fx: 0.3, fy: -0.4,
-radius: 1.35, stop: 0 #fff, stop: 1 #bbb);
-}
-#frame QPushButton:pressed {
-background: qradialgradient(cx: 0.4, cy: -0.1,
-fx: 0.4, fy: -0.1,
-radius: 1.35, stop: 0 #fff, stop: 1 #ddd);
-}</string>
+border: 1px solid #CCCCCC;}</string>
      </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
@@ -609,7 +586,9 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;reply to selected message&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="styleSheet">
-         <string notr="true"/>
+         <string notr="true">
+
+</string>
         </property>
         <property name="text">
          <string/>
@@ -771,13 +750,7 @@ p, li { white-space: pre-wrap; }
        </font>
       </property>
       <property name="styleSheet">
-       <string notr="true">QListWidget::item:selected { /* when user selects item using mouse or keyboard */
-	background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-	stop: 0 #a6a6a6, stop: 0.08 #7f7f7f,
-	stop: 0.39999 #717171, stop: 0.4 #626262,
-	stop: 0.9 #4c4c4c, stop: 1 #333333);
-}
-</string>
+       <string notr="true"/>
       </property>
       <property name="lineWidth">
        <number>1</number>
@@ -863,15 +836,7 @@ p, li { white-space: pre-wrap; }
         <enum>Qt::CustomContextMenu</enum>
        </property>
        <property name="styleSheet">
-        <string notr="true">QHeaderView::section {
-	background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-	stop: 0 #a6a6a6, stop: 0.08 #7f7f7f,
-	stop: 0.39999 #717171, stop: 0.4 #626262,
-	stop: 0.9 #4c4c4c, stop: 1 #333333);
-     color: white;
-     padding-left: 4px;
-     border: 1px solid #6c6c6c;
- }</string>
+        <string notr="true"/>
        </property>
        <property name="indentation">
         <number>16</number>
@@ -1278,15 +1243,7 @@ p, li { white-space: pre-wrap; }
         <enum>Qt::CustomContextMenu</enum>
        </property>
        <property name="styleSheet">
-        <string notr="true">QHeaderView::section {
-	background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-	stop: 0 #a6a6a6, stop: 0.08 #7f7f7f,
-	stop: 0.39999 #717171, stop: 0.4 #626262,
-	stop: 0.9 #4c4c4c, stop: 1 #333333);
-     color: white;
-     padding-left: 4px;
-     border: 1px solid #6c6c6c;
- }</string>
+        <string notr="true"/>
        </property>
        <property name="sortingEnabled">
         <bool>true</bool>
