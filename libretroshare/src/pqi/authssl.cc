@@ -2156,9 +2156,14 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
                                 return false;
                         }
                         std::string pgpid = getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer);
-                        if (!AuthGPG::getAuthGPG()->isGPGAccepted(pgpid))
+                        if (!AuthGPG::getAuthGPG()->isGPGAccepted(pgpid) && pgpid != AuthGPG::getAuthGPG()->getGPGOwnId())
                         {
-                                fprintf(stderr, "AuthSSL::VerifyX509Callback() pgp key not signed by ourself.\n");
+                                fprintf(stderr, "AuthSSL::VerifyX509Callback() pgp key not signed by ourself : \n");
+                                fprintf(stderr, "issuer pgpid : ");
+                                fprintf(stderr, pgpid.c_str());
+                                fprintf(stderr, "\n AuthGPG::getAuthGPG()->getGPGOwnId() : ");
+                                fprintf(stderr, AuthGPG::getAuthGPG()->getGPGOwnId().c_str());
+                                fprintf(stderr, "\n");
                                 return false;
                         }
                         preverify_ok = true;
@@ -2169,7 +2174,12 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
                         std::string pgpid = getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer);
                         if (!AuthGPG::getAuthGPG()->isGPGAccepted(pgpid) && pgpid != AuthGPG::getAuthGPG()->getGPGOwnId())
                         {
-                                fprintf(stderr, "AuthSSL::VerifyX509Callback() pgp key not signed by ourself.\n");
+                                fprintf(stderr, "AuthSSL::VerifyX509Callback() pgp key not signed by ourself : \n");
+                                fprintf(stderr, "issuer pgpid : ");
+                                fprintf(stderr, pgpid.c_str());
+                                fprintf(stderr, "\n AuthGPG::getAuthGPG()->getGPGOwnId() : ");
+                                fprintf(stderr, AuthGPG::getAuthGPG()->getGPGOwnId().c_str());
+                                fprintf(stderr, "\n");
                                 return false;
                         }
                         preverify_ok = true;
@@ -2245,7 +2255,7 @@ int	LoadCheckX509andGetLocation(const char *cert_file, std::string &location, st
 	 * and checks the certificate 
 	 */
 
-	FILE *tmpfp = fopen(cert_file, "r");
+        FILE *tmpfp = fopen(cert_file, "r");
 	if (tmpfp == NULL)
 	{
 #ifdef AUTHSSL_DEBUG
