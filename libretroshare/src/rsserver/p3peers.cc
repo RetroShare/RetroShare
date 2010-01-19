@@ -637,7 +637,7 @@ bool 	p3Peers::isDummyFriend(std::string ssl_id) {
 bool 	p3Peers::removeFriend(std::string ssl_or_gpgid)
 {
 #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::removeFriend() " << id << std::endl;
+        std::cerr << "p3Peers::removeFriend() " << ssl_or_gpgid << std::endl;
 #endif
         if (ssl_or_gpgid == AuthGPG::getAuthGPG()->getGPGOwnId()) {
 #ifdef P3PEERS_DEBUG

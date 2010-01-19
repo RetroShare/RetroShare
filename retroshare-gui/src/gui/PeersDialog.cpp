@@ -334,8 +334,16 @@ void  PeersDialog::insertPeers()
         //remove items that are not fiends anymore
         int index = 0;
         while (index < peertreeWidget->topLevelItemCount()) {
-            std::string gpg_id = (peertreeWidget->topLevelItem(index))->text(3).toStdString();
-            if (!rsPeers->isGPGAccepted(gpg_id) && gpg_id != rsPeers->getGPGOwnId()) {
+            std::string gpg_widget_id = (peertreeWidget->topLevelItem(index))->text(3).toStdString();
+            std::list<std::string>::iterator gpgfriendIt;
+            bool found = false;
+            for (gpgfriendIt =  gpgFriends.begin(); gpgfriendIt != gpgFriends.end(); gpgfriendIt++) {
+                if (gpg_widget_id == *gpgfriendIt) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
                 peertreeWidget->takeTopLevelItem(index);
             } else {
                 index++;

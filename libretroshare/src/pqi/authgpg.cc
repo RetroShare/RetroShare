@@ -2073,6 +2073,9 @@ std::list<RsItem*> AuthGPG::saveList(bool& cleanup)
         RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
         std::map<std::string, bool>::iterator mapIt;
         for (mapIt = mAcceptToConnectMap.begin(); mapIt != mAcceptToConnectMap.end(); mapIt++) {
+            if (mapIt->first == getGPGOwnId()) {
+                continue;
+            }
             RsTlvKeyValue kv;
             kv.key = mapIt->first;
             std::cerr << "AuthGPG::saveList() called (mapIt->second) : " << (mapIt->second) << std::endl ;
@@ -2104,6 +2107,9 @@ bool AuthGPG::loadList(std::list<RsItem*> load)
 
                         std::list<RsTlvKeyValue>::iterator kit;
                         for(kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); kit++) {
+                            if (kit->key == getGPGOwnId()) {
+                                continue;
+                            }
                             mAcceptToConnectMap[kit->key] = (kit->value == "TRUE");
                             //set the gpg key
                             certmap::iterator it;
