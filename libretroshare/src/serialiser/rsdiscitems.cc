@@ -45,9 +45,8 @@
 
 uint32_t    RsDiscSerialiser::size(RsItem *i)
 {
-	RsDiscOwnItem  *rdi;
-	RsDiscReply *rdr;
-	RsDiscIssuer *rds;
+        RsDiscAskInfo  *inf;
+        RsDiscReply *rdr;
 	RsDiscVersion *rdv;
         RsDiscHeartbeat *rdt;
 
@@ -56,13 +55,9 @@ uint32_t    RsDiscSerialiser::size(RsItem *i)
 	{
 		return sizeReply(rdr);
 	}
-	else if (NULL != (rds = dynamic_cast<RsDiscIssuer *>(i)))
+        else if (NULL != (inf = dynamic_cast<RsDiscAskInfo *>(i)))
 	{
-		return sizeIssuer(rds);
-	}
-	else if (NULL != (rdi = dynamic_cast<RsDiscOwnItem *>(i)))
-	{
-		return sizeItem(rdi);
+                return sizeAskInfo(inf);
 	}
 	else if (NULL != (rdv = dynamic_cast<RsDiscVersion *>(i)))
 	{
@@ -79,9 +74,8 @@ uint32_t    RsDiscSerialiser::size(RsItem *i)
 /* serialise the data to the buffer */
 bool    RsDiscSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsize)
 {
-	RsDiscOwnItem  *rdi;
-	RsDiscReply *rdr;
-	RsDiscIssuer *rds;
+        RsDiscAskInfo  *inf;
+        RsDiscReply *rdr;
 	RsDiscVersion *rdv;
         RsDiscHeartbeat *rdt;
 
@@ -90,13 +84,9 @@ bool    RsDiscSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsize)
 	{
 		return serialiseReply(rdr, data, pktsize);
 	}
-	else if (NULL != (rds = dynamic_cast<RsDiscIssuer *>(i)))
+        else if (NULL != (inf = dynamic_cast<RsDiscAskInfo *>(i)))
 	{
-		return serialiseIssuer(rds, data, pktsize);
-	}
-	else if (NULL != (rdi = dynamic_cast<RsDiscOwnItem *>(i)))
-	{
-		return serialiseItem(rdi, data, pktsize);
+                return serialiseAskInfo(inf, data, pktsize);
 	}
 	else if (NULL != (rdv = dynamic_cast<RsDiscVersion *>(i)))
 	{
@@ -127,11 +117,8 @@ RsItem *RsDiscSerialiser::deserialise(void *data, uint32_t *pktsize)
 		case RS_PKT_SUBTYPE_DISC_REPLY:
 			return deserialiseReply(data, pktsize);
 			break;
-		case RS_PKT_SUBTYPE_DISC_OWN:
-			return deserialiseOwnItem(data, pktsize);
-			break;
-		case RS_PKT_SUBTYPE_DISC_ISSUER:
-			return deserialiseIssuer(data, pktsize);
+                case RS_PKT_SUBTYPE_DISC_ASK_INFO:
+                        return deserialiseAskInfo(data, pktsize);
 			break;
 		case RS_PKT_SUBTYPE_DISC_VERSION:
 			return deserialiseVersion(data, pktsize);
@@ -148,76 +135,40 @@ RsItem *RsDiscSerialiser::deserialise(void *data, uint32_t *pktsize)
 
 /*************************************************************************/
 
-RsDiscOwnItem::~RsDiscOwnItem()
+RsDiscAskInfo::~RsDiscAskInfo()
 {
 	return;
 }
 
-void 	RsDiscOwnItem::clear()
+void 	RsDiscAskInfo::clear()
 {
-	memset(&laddr, 0, sizeof(laddr));
-	memset(&saddr, 0, sizeof(laddr));
-	contact_tf = 0;
-	discFlags = 0;
-        ipAddressList.clear();
+        gpg_id.clear();
 }
 
-std::ostream &RsDiscOwnItem::print(std::ostream &out, uint16_t indent)
+std::ostream &RsDiscAskInfo::print(std::ostream &out, uint16_t indent)
 {
-        printRsItemBase(out, "RsDiscOwnItem", indent);
+        printRsItemBase(out, "RsDiscAskInfo", indent);
 	uint16_t int_Indent = indent + 2;
 
         printIndent(out, int_Indent);
-        out << "Local Address: " << inet_ntoa(laddr.sin_addr);
-	out << " Port: " << ntohs(laddr.sin_port) << std::endl;
-
-        printIndent(out, int_Indent);
-        out << "Server Address: " << inet_ntoa(saddr.sin_addr);
-	out << " Port: " << ntohs(saddr.sin_port) << std::endl;
-
-        printIndent(out, int_Indent);
-        out << "Contact TimeFrame: " << contact_tf;
-        out << std::endl;
-
-        printIndent(out, int_Indent);
-        out << "DiscFlags:  " << discFlags  << std::endl;
-
-        printIndent(out, int_Indent);
-        out << "IpAddressListSize:  " << ipAddressList.size()  << std::endl;
-
-        printIndent(out, int_Indent);
-        out << "RsDiscOwnItem::print() IpAddressList: " << std::endl;
-        for (std::list<IpAddressTimed>::iterator ipListIt = ipAddressList.begin(); ipListIt!=(ipAddressList.end()); ipListIt++) {
-        printIndent(out, int_Indent);
-               out << inet_ntoa(ipListIt->ipAddr.sin_addr) << ":" << ntohs(ipListIt->ipAddr.sin_port) << " seenTime : " << ipListIt->seenTime << std::endl;
-        }
+        out << "gpg_id: " << gpg_id << std::endl;
 
         printRsItemEnd(out, "RsDiscOwnItem", indent);
         return out;
 }
 
 
-uint32_t    RsDiscSerialiser::sizeItem(RsDiscOwnItem *item)
+uint32_t    RsDiscSerialiser::sizeAskInfo(RsDiscAskInfo *item)
 {
 	uint32_t s = 8; /* header */
-	s += GetTlvIpAddrPortV4Size(); /* laddr */
-	s += GetTlvIpAddrPortV4Size(); /* saddr */
-	s += 2; /* contact_tf */
-	s += 4; /* discFlags  */
-        s += 4; /* ipaddress list size  */
-
-	//add the size of the ip list
-	int ipListSize = item->ipAddressList.size();
-	s += ipListSize * GetTlvIpAddrPortV4Size();
-	s += ipListSize * 8; //size of an uint64
-
+        s += GetTlvStringSize(item->gpg_id);
 	return s;
 }
 
 /* serialise the data to the buffer */
-bool     RsDiscSerialiser::serialiseItem(RsDiscOwnItem *item, void *data, uint32_t *pktsize)
+bool     RsDiscSerialiser::serialiseAskInfo(RsDiscAskInfo *item, void *data, uint32_t *pktsize)
 {
-	uint32_t tlvsize = sizeItem(item);
+        uint32_t tlvsize = sizeAskInfo(item);
 	uint32_t offset = 0;
 
 	if (*pktsize < tlvsize)
@@ -230,42 +181,27 @@ bool     RsDiscSerialiser::serialiseItem(RsDiscOwnItem *item, void *data, uint32
 	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
 
 #ifdef RSSERIAL_DEBUG
-	std::cerr << "RsDiscSerialiser::serialiseItem() Header: " << ok << std::endl;
-	std::cerr << "RsDiscSerialiser::serialiseItem() Size: " << tlvsize << std::endl;
+        std::cerr << "RsDiscSerialiser::serialiseAskInfo() Header: " << ok << std::endl;
+        std::cerr << "RsDiscSerialiser::serialiseAskInfo() Size: " << tlvsize << std::endl;
 #endif
 
         /* skip the header */
 	offset += 8;
 
 	/* add mandatory parts first */
-	ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset,
-					TLV_TYPE_IPV4_LOCAL, &(item->laddr));
-        ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset,
-					TLV_TYPE_IPV4_REMOTE, &(item->saddr));
-	ok &= setRawUInt16(data, tlvsize, &offset, item->contact_tf);
-	ok &= setRawUInt32(data, tlvsize, &offset, item->discFlags);
+        ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PEERID, item->gpg_id);
 
-        ok &= setRawUInt32(data, tlvsize, &offset, item->ipAddressList.size());
-
-        //store the ip list
-        for (std::list<IpAddressTimed>::iterator ipListIt = item->ipAddressList.begin(); ipListIt != item->ipAddressList.end(); ipListIt++) {
-            ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, TLV_TYPE_IPV4_REMOTE, &(ipListIt->ipAddr));
-            ok &= setRawUInt64(data, tlvsize, &offset, ipListIt->seenTime);
-        }
-
-	if (offset != tlvsize)
-	{
+        if (offset != tlvsize) {
 		ok = false;
 #ifdef RSSERIAL_DEBUG
-		std::cerr << "RsDiscSerialiser::serialiseItem() Size Error! " << std::endl;
+                std::cerr << "RsDiscSerialiser::serialiseAskInfo() Size Error! " << std::endl;
 #endif
 	}
 
 	return ok;
 }
 
-RsDiscOwnItem *RsDiscSerialiser::deserialiseOwnItem(void *data, uint32_t *pktsize)
-{
+RsDiscAskInfo *RsDiscSerialiser::deserialiseAskInfo(void *data, uint32_t *pktsize) {
 	/* get the type and size */
 	uint32_t rstype = getRsItemId(data);
 	uint32_t rssize = getRsItemSize(data);
@@ -275,10 +211,10 @@ RsDiscOwnItem *RsDiscSerialiser::deserialiseOwnItem(void *data, uint32_t *pktsiz
 
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
 		(RS_SERVICE_TYPE_DISC != getRsItemService(rstype)) ||
-		(RS_PKT_SUBTYPE_DISC_OWN != getRsItemSubType(rstype)))
+                (RS_PKT_SUBTYPE_DISC_ASK_INFO != getRsItemSubType(rstype)))
 	{
 #ifdef RSSERIAL_DEBUG
-		std::cerr << "RsDiscSerialiser::deserialiseItem() Wrong Type" << std::endl;
+                std::cerr << "RsDiscSerialiser::deserialiseAskInfo() Wrong Type" << std::endl;
 #endif
 		return NULL; /* wrong type */
 	}
@@ -286,7 +222,7 @@ RsDiscOwnItem *RsDiscSerialiser::deserialiseOwnItem(void *data, uint32_t *pktsiz
 	if (*pktsize < rssize)    /* check size */
 	{
 #ifdef RSSERIAL_DEBUG
-		std::cerr << "RsDiscSerialiser::deserialiseItem() Not Enough Space" << std::endl;
+                std::cerr << "RsDiscSerialiser::deserialiseAskInfo() Not Enough Space" << std::endl;
 #endif
 		return NULL; /* not enough data */
 	}
@@ -297,54 +233,27 @@ RsDiscOwnItem *RsDiscSerialiser::deserialiseOwnItem(void *data, uint32_t *pktsiz
 	bool ok = true;
 
 	/* ready to load */
-	RsDiscOwnItem *item = new RsDiscOwnItem();
+        RsDiscAskInfo *item = new RsDiscAskInfo();
 	item->clear();
 
 	/* skip the header */
 	offset += 8;
 
 	/* get mandatory parts first */
-	ok &= GetTlvIpAddrPortV4(data, rssize, &offset,
-					TLV_TYPE_IPV4_LOCAL, &(item->laddr));
-	ok &= GetTlvIpAddrPortV4(data, rssize, &offset,
-					TLV_TYPE_IPV4_REMOTE, &(item->saddr));
-	ok &= getRawUInt16(data, rssize, &offset, &(item->contact_tf));
-	ok &= getRawUInt32(data, rssize, &offset, &(item->discFlags));
+        ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PEERID, item->gpg_id);
 
-        uint32_t listSize;
-        ok &= getRawUInt32(data, rssize, &offset, &listSize);
-
-	//get the ip adress list
-        int count = 0;
-        std::list<IpAddressTimed> ipTimedList;
-        while (offset < rssize && count < (int)listSize) {
-            count++;
-            IpAddressTimed ipTimed;
-            sockaddr_clear(&ipTimed.ipAddr);
-            ok &= GetTlvIpAddrPortV4(data, rssize, &offset, TLV_TYPE_IPV4_REMOTE, &ipTimed.ipAddr);
-            if (!ok) { break; }
-            uint64_t time = 0;
-            ok &= getRawUInt64(data, rssize, &offset, &time);
-            if (!ok) { break; }
-            ipTimed.seenTime = time;
-            ipTimedList.push_back(ipTimed);
-        }
-        item->ipAddressList = ipTimedList;
-
-	if (offset != rssize)
-	{
+        if (offset != rssize) {
 #ifdef RSSERIAL_DEBUG
-		std::cerr << "RsDiscSerialiser::deserialiseItem() offset != rssize" << std::endl;
+                std::cerr << "RsDiscSerialiser::deserialiseAskInfo() offset != rssize" << std::endl;
 #endif
 		/* error */
 		delete item;
 		return NULL;
 	}
 
-	if (!ok)
-	{
+        if (!ok) {
 #ifdef RSSERIAL_DEBUG
-		std::cerr << "RsDiscSerialiser::deserialiseItem() ok = false" << std::endl;
+                std::cerr << "RsDiscSerialiser::deserialiseAskInfo() ok = false" << std::endl;
 #endif
 		delete item;
 		return NULL;
@@ -531,149 +440,6 @@ RsDiscReply *RsDiscSerialiser::deserialiseReply(void *data, uint32_t *pktsize)
 
 	return item;
 }
-
-
-
-/*************************************************************************/
-
-
-RsDiscIssuer::~RsDiscIssuer()
-{
-	return;
-}
-
-void 	RsDiscIssuer::clear()
-{
-        certGPG.clear();
-}
-
-std::ostream &RsDiscIssuer::print(std::ostream &out, uint16_t indent)
-{
-        printRsItemBase(out, "RsDiscIssuer", indent);
-	uint16_t int_Indent = indent + 2;
-
-        printIndent(out, int_Indent);
-        out << "GPG Cert String:  " << certGPG  << std::endl;
-
-        printRsItemEnd(out, "RsDiscIssuer", indent);
-        return out;
-}
-
-
-uint32_t    RsDiscSerialiser::sizeIssuer(RsDiscIssuer *item)
-{
-	uint32_t s = 8; /* header */
-	s += 4; /* size in RawString() */
-        s += item->certGPG.length();
-
-	return s;
-}
-
-/* serialise the data to the buffer */
-bool     RsDiscSerialiser::serialiseIssuer(RsDiscIssuer *item, void *data, uint32_t *pktsize)
-{
-	uint32_t tlvsize = sizeIssuer(item);
-	uint32_t offset = 0;
-
-	if (*pktsize < tlvsize)
-		return false; /* not enough space */
-
-	*pktsize = tlvsize;
-
-	bool ok = true;
-
-	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
-
-#ifdef RSSERIAL_DEBUG
-	std::cerr << "RsDiscSerialiser::serialiseIssuer() Header: " << ok << std::endl;
-	std::cerr << "RsDiscSerialiser::serialiseIssuer() Size: " << tlvsize << std::endl;
-#endif
-
-	/* skip the header */
-	offset += 8;
-
-	/* add mandatory parts first */
-        ok &= setRawString(data, tlvsize, &offset, item->certGPG);
-
-	if (offset != tlvsize)
-	{
-		ok = false;
-#ifdef RSSERIAL_DEBUG
-		std::cerr << "RsDiscSerialiser::serialiseIssuer() Size Error! " << std::endl;
-		std::cerr << "Offset: " << offset << " tlvsize: " << tlvsize << std::endl;
-#endif
-	}
-
-	return ok;
-}
-
-RsDiscIssuer *RsDiscSerialiser::deserialiseIssuer(void *data, uint32_t *pktsize)
-{
-	/* get the type and size */
-	uint32_t rstype = getRsItemId(data);
-	uint32_t rssize = getRsItemSize(data);
-
-	uint32_t offset = 0;
-
-
-	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_TYPE_DISC != getRsItemService(rstype)) ||
-		(RS_PKT_SUBTYPE_DISC_ISSUER != getRsItemSubType(rstype)))
-	{
-#ifdef RSSERIAL_DEBUG
-		std::cerr << "RsDiscSerialiser::deserialiseIssuer() Wrong Type" << std::endl;
-#endif
-		return NULL; /* wrong type */
-	}
-
-	if (*pktsize < rssize)    /* check size */
-	{
-#ifdef RSSERIAL_DEBUG
-		std::cerr << "RsDiscSerialiser::deserialiseIssuer() pktsize != rssize" << std::endl;
-		std::cerr << "Pktsize: " << *pktsize << " Rssize: " << rssize << std::endl;
-#endif
-		return NULL; /* not enough data */
-	}
-
-	/* set the packet length */
-	*pktsize = rssize;
-
-	bool ok = true;
-
-	/* ready to load */
-	RsDiscIssuer *item = new RsDiscIssuer();
-	item->clear();
-
-	/* skip the header */
-	offset += 8;
-
-	/* get mandatory parts first */
-        ok &= getRawString(data, rssize, &offset, item->certGPG);
-
-	if (offset != rssize)
-	{
-#ifdef RSSERIAL_DEBUG
-		std::cerr << "RsDiscSerialiser::deserialiseIssuer() offset != rssize" << std::endl;
-		std::cerr << "Offset: " << offset << " Rssize: " << rssize << std::endl;
-#endif
-		/* error */
-		delete item;
-		return NULL;
-	}
-
-	if (!ok)
-	{
-#ifdef RSSERIAL_DEBUG
-		std::cerr << "RsDiscSerialiser::deserialiseIssuer() ok = false" << std::endl;
-#endif
-		delete item;
-		return NULL;
-	}
-
-	return item;
-}
-
-
 
 /*************************************************************************/
 

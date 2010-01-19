@@ -34,9 +34,9 @@
 #include "serialiser/rsserviceids.h"
 #include "serialiser/rsconfigitems.h"
 
-const uint8_t RS_PKT_SUBTYPE_DISC_OWN    = 0x01;
+//const uint8_t RS_PKT_SUBTYPE_DISC_OWN    = 0x01;
 const uint8_t RS_PKT_SUBTYPE_DISC_REPLY  = 0x02;
-const uint8_t RS_PKT_SUBTYPE_DISC_ISSUER = 0x03;
+const uint8_t RS_PKT_SUBTYPE_DISC_ASK_INFO = 0x03;
 const uint8_t RS_PKT_SUBTYPE_DISC_VERSION = 0x05;
 const uint8_t RS_PKT_SUBTYPE_DISC_HEARTBEAT = 0x06;
 
@@ -47,30 +47,30 @@ class RsDiscItem: public RsItem
 };
 
 
-class RsDiscOwnItem: public RsDiscItem
-{
-	public:
-
-	RsDiscOwnItem() :RsDiscItem(RS_PKT_SUBTYPE_DISC_OWN ) {}
-
-
-	virtual ~RsDiscOwnItem();
-
-	virtual  void clear();
-	virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
-
-	//use for transmitting ip address list
-	std::list<IpAddressTimed> ipAddressList;
-
-	//use for transmitting my own adress list
-	struct sockaddr_in laddr;
-	struct sockaddr_in saddr;
-
-	// time frame of recent connections.
-	uint16_t contact_tf;
-	// flags...
-	uint32_t discFlags;
-};
+//class RsDiscOwnItem: public RsDiscItem
+//{
+//	public:
+//
+//	RsDiscOwnItem() :RsDiscItem(RS_PKT_SUBTYPE_DISC_OWN ) {}
+//
+//
+//	virtual ~RsDiscOwnItem();
+//
+//	virtual  void clear();
+//	virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
+//
+//	//use for transmitting ip address list
+//	std::list<IpAddressTimed> ipAddressList;
+//
+//	//use for transmitting my own adress list
+//	struct sockaddr_in laddr;
+//	struct sockaddr_in saddr;
+//
+//	// time frame of recent connections.
+//	uint16_t contact_tf;
+//	// flags...
+//	uint32_t discFlags;
+//};
 
 class RsDiscReply: public RsDiscItem
 {
@@ -101,20 +101,20 @@ virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
         std::string certGPG;
 };
 
-class RsDiscIssuer: public RsDiscItem
+class RsDiscAskInfo: public RsDiscItem
 {
 	public:
 
-	RsDiscIssuer()
-	:RsDiscItem(RS_PKT_SUBTYPE_DISC_ISSUER)
+        RsDiscAskInfo()
+        :RsDiscItem(RS_PKT_SUBTYPE_DISC_ASK_INFO)
 	{ return; }
 
-virtual ~RsDiscIssuer();
+virtual ~RsDiscAskInfo();
 
 virtual  void clear();
 virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
-        std::string certGPG;
+        std::string gpg_id;
 };
 
 class RsDiscVersion: public RsDiscItem
@@ -158,17 +158,17 @@ virtual RsItem *    deserialise(void *data, uint32_t *size);
 
 	private:
 
-virtual uint32_t    sizeItem(RsDiscOwnItem *);
-virtual bool        serialiseItem  (RsDiscOwnItem *item, void *data, uint32_t *size);
-virtual RsDiscOwnItem *deserialiseOwnItem(void *data, uint32_t *size);
+virtual uint32_t    sizeAskInfo(RsDiscAskInfo *);
+virtual bool        serialiseAskInfo(RsDiscAskInfo *item, void *data, uint32_t *size);
+virtual RsDiscAskInfo *deserialiseAskInfo(void *data, uint32_t *size);
 
 virtual uint32_t    sizeReply(RsDiscReply *);
 virtual bool        serialiseReply   (RsDiscReply *item, void *data, uint32_t *size);
 virtual RsDiscReply *deserialiseReply(void *data, uint32_t *size);
 
-virtual uint32_t    sizeIssuer(RsDiscIssuer *);
-virtual bool        serialiseIssuer   (RsDiscIssuer *item, void *data, uint32_t *size);
-virtual RsDiscIssuer *deserialiseIssuer(void *data, uint32_t *size);
+//virtual uint32_t    sizeIssuer(RsDiscIssuer *);
+//virtual bool        serialiseIssuer   (RsDiscIssuer *item, void *data, uint32_t *size);
+//virtual RsDiscIssuer *deserialiseIssuer(void *data, uint32_t *size);
 
 virtual uint32_t        sizeVersion(RsDiscVersion *);
 virtual bool            serialiseVersion(RsDiscVersion *item, void *data, uint32_t *size);

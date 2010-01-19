@@ -112,10 +112,11 @@ void sendOwnVersion(std::string to);
 void sendPeerDetails(std::string to, std::string about);
 //void sendPeerIssuer(std::string to, std::string about);
 void sendHeartbeat(std::string to);
+void askInfoToAllPeers(std::string about);
 
 	/* Network Input */
 int  handleIncoming();
-//void recvPeerOwnMsg(RsDiscOwnItem *item);
+void recvAskInfo(RsDiscAskInfo *item);
 void recvPeerDetails(RsDiscReply *item);
 //void recvPeerIssuerMsg(RsDiscIssuer *item);
 void recvPeerVersionMsg(RsDiscVersion *item);

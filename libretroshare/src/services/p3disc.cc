@@ -158,9 +158,9 @@ int p3disc::handleIncoming()
 	// While messages read
 	while(NULL != (item = recvItem()))
 	{
-		RsDiscOwnItem *dio = NULL;
+                RsDiscAskInfo *inf = NULL;
 		RsDiscReply *dri = NULL;
-		RsDiscIssuer *dii = NULL;
+                //RsDiscIssuer *dii = NULL;
 		RsDiscVersion *dvi = NULL;
                 RsDiscHeartbeat *dta = NULL;
 
@@ -179,19 +179,12 @@ int p3disc::handleIncoming()
                         recvPeerDetails(dri);
 			nhandled++;
 		}
-#ifdef RS_USE_PGPSSL
-                else if (NULL != (dii = dynamic_cast<RsDiscIssuer *> (item))) {
-
-                        //recvPeerIssuerMsg(dii);
-			nhandled++;
-		}
-#endif
                 else if (NULL != (dvi = dynamic_cast<RsDiscVersion *> (item))) {
 			recvPeerVersionMsg(dvi);
 			nhandled++;
 		}
-                else if (NULL != (dio = dynamic_cast<RsDiscOwnItem *> (item))) /* Ping */ {
-                        //recvPeerOwnMsg(dio);
+                else if (NULL != (inf = dynamic_cast<RsDiscAskInfo *> (item))) /* Ping */ {
+                        recvAskInfo(inf);
 			nhandled++;
 		}
                 else if (NULL != (dta = dynamic_cast<RsDiscHeartbeat *> (item))) {
@@ -212,11 +205,6 @@ void p3disc::statusChange(const std::list<pqipeer> &plist)
 	std::cerr << "p3disc::statusChange()";
 	std::cerr << std::endl;
 #endif
-        // if off discard item.
-        peerConnectState detail;
-        if (!mConnMgr->getOwnNetStatus(detail) || (detail.visState & RS_VIS_STATE_NODISC)) {
-            return;
-        }
 
 	std::list<pqipeer>::const_iterator pit;
 	/* if any have switched to 'connected' then we notify */
@@ -225,9 +213,10 @@ void p3disc::statusChange(const std::list<pqipeer> &plist)
                         sendOwnVersion(pit->id);
                         sendAllInfoToJustConnectedPeer(pit->id);
                         sendJustConnectedPeerInfoToAllPeer(pit->id);
-		}
-                if (!(pit->state & RS_PEER_S_FRIEND) && (pit->actions & RS_PEER_MOVED)) {
+                } else if (!(pit->state & RS_PEER_S_FRIEND) && (pit->actions & RS_PEER_MOVED)) {
                         this->removeFriend(pit->id);
+                } else if ((pit->state & RS_PEER_S_FRIEND) && (pit->actions & RS_PEER_NEW)) {
+                    this->askInfoToAllPeers(pit->id);
                 }
         }
 }
@@ -302,7 +291,19 @@ void p3disc::sendPeerDetails(std::string to, std::string about) {
 #endif
 	}
 
+        // if off discard item.
+        peerConnectState detail;
+        if (!mConnMgr->getOwnNetStatus(detail) || (detail.visState & RS_VIS_STATE_NODISC)) {
+            return;
+        }
+
         about = rsPeers->getGPGId(about);
+        if (about == "") {
+            #ifdef P3DISC_DEBUG
+            std::cerr << "p3disc::sendPeerDetails() no info about this id" << std::endl;
+            #endif
+            return;
+        }
 
 	// Construct a message
 	RsDiscReply *di = new RsDiscReply();
@@ -318,7 +319,7 @@ void p3disc::sendPeerDetails(std::string to, std::string about) {
         rsPeers->getSSLChildListOfGPGId(about, sslChilds);
         for (std::list<std::string>::iterator sslChildIt = sslChilds.begin(); sslChildIt != sslChilds.end(); sslChildIt++) {
             peerConnectState detail;
-            if (!mConnMgr->getFriendNetStatus(*sslChildIt, detail)) {
+            if (!mConnMgr->getFriendNetStatus(*sslChildIt, detail) || detail.visState & RS_VIS_STATE_NODISC) {
                     continue;
             }
             RsPeerNetItem *rsPeerNetItem = new RsPeerNetItem();
@@ -414,6 +415,46 @@ void p3disc::sendHeartbeat(std::string to)
 #endif
 }
 
+void p3disc::askInfoToAllPeers(std::string about)
+{
+        {
+#ifdef P3DISC_DEBUG
+                std::ostringstream out;
+                out << "p3disc::askInfoToAllPeers()" << " about " << about;
+                std::cerr << out.str() << std::endl;
+#endif
+        }
+
+        about = rsPeers->getGPGId(about);
+        if (about == "") {
+#ifdef P3DISC_DEBUG
+                std::cerr << "p3disc::askInfoToAllPeers() no gpg id found" << std::endl;
+#endif
+        }
+
+        // if off discard item.
+        peerConnectState detail;
+        if (!mConnMgr->getOwnNetStatus(detail) || (detail.visState & RS_VIS_STATE_NODISC)) {
+            return;
+        }
+
+        std::list<std::string> onlineIds;
+        std::list<std::string>::iterator onlineIdsIt;
+
+        rsPeers->getOnlineList(onlineIds);
+
+        /* send them a list of all friend's details */
+        for(onlineIdsIt = onlineIds.begin(); onlineIdsIt != onlineIds.end(); onlineIdsIt++) {
+                RsDiscAskInfo *di = new RsDiscAskInfo();
+                di->PeerId(*onlineIdsIt);
+                di->gpg_id = about;
+                sendItem(di);
+        }
+#ifdef P3DISC_DEBUG
+        std::cerr << "Sent ask info message to all connected peers." << std::endl;
+#endif
+}
+
 void p3disc::recvPeerDetails(RsDiscReply *item)
 {
         // if off discard item.
@@ -451,7 +492,7 @@ void p3disc::recvPeerDetails(RsDiscReply *item)
                 //check that the friend is not a deleted one
                 if (deletedSSLFriendsIds.find(pitem->pid) == deletedSSLFriendsIds.end()) {
                     //||  {
-                    mConnMgr->addFriend(pitem->pid, pitem->gpg_id, pitem->netMode, RS_VIS_STATE_NODISC, 0); //add with no disc bay default. If friend already exist, it will do nothing
+                    mConnMgr->addFriend(pitem->pid, pitem->gpg_id, pitem->netMode, RS_VIS_STATE_NODISC, 0); //add with no disc by default. If friend already exist, it will do nothing
                 } else if ((pitem->lastContact - deletedSSLFriendsIds[pitem->pid]) > 3600*48) { // the friend was seen 48hours before we deleted it, we will readd it
                     mConnMgr->addFriend(pitem->pid, pitem->gpg_id, pitem->netMode, RS_VIS_STATE_NODISC, 0); //add with no disc bay default. If friend already exist, it will do nothing
                 }
@@ -516,6 +557,17 @@ void p3disc::recvHeartbeatMsg(RsDiscHeartbeat *item)
 #endif
 
         mPqiPersonGrp->getPeer(item->PeerId())->receiveHeartbeat();
+
+        return;
+}
+
+void p3disc::recvAskInfo(RsDiscAskInfo *item) {
+#ifdef P3DISC_DEBUG
+        std::cerr << "p3disc::recvAskInfo() From: " << item->PeerId();
+        std::cerr << std::endl;
+#endif
+
+        sendPeerDetails(item->PeerId(), item->gpg_id);
 
         return;
 }
