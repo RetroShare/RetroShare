@@ -614,7 +614,7 @@ void SubFileItem::download()
 	{
 		srcIds.push_back(mSrcId);
 	}
-	rsFiles->FileRequest(mFileName, mFileHash, mFileSize, "", 0, srcIds);
+	rsFiles->FileRequest(mFileName, mFileHash, mFileSize, "", RS_FILE_HINTS_NETWORK_WIDE, srcIds);
 
 }
 
