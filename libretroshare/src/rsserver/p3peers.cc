@@ -29,6 +29,7 @@
 #include "pqi/authssl.h"
 #include "pqi/authgpg.h"
 #include <rsiface/rsinit.h>
+#include "pqi/cleanupxpgp.h"
 
 
 #include <iostream>
@@ -912,7 +913,8 @@ bool 	p3Peers::loadDetailsFromStringCert(std::string certstr, RsPeerDetails &pd)
                     parsePosition += pgpend.length();
                     std::string pgpCert = certstr.substr(0, parsePosition);
                     std::string gpg_id;
-                    AuthGPG::getAuthGPG()->LoadCertificateFromString(pgpCert, gpg_id);
+                    std::string cleancert = cleanUpCertificate(pgpCert);
+                    AuthGPG::getAuthGPG()->LoadCertificateFromString(cleancert, gpg_id);
                     AuthGPG::getAuthGPG()->getGPGDetails(gpg_id, pd);
                     if (gpg_id == "") {
                         return false;

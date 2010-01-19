@@ -1202,7 +1202,8 @@ bool AuthGPG::LoadCertificateFromString(std::string str, std::string &gpg_id)
 
 	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
 
-        std::string cleancert = cleanUpCertificate(str);
+        //std::string cleancert = cleanUpCertificate(str); disable for p3disc message on windows system. Move the clean cert in p3peers
+        std::string cleancert = str;
 
         std::cerr << "AuthGPG::LoadCertificateFromString() cleancert : " << cleancert;
 
