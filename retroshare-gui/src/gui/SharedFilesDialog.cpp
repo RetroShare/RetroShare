@@ -111,6 +111,10 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
   ui.remoteDirTreeView->setModel(model);
   ui.localDirTreeView->setModel(localModel);
 
+  ui.remoteDirTreeView->setColumnHidden(2,true) ;
+  ui.remoteDirTreeView->setColumnHidden(4,true) ;
+  ui.localDirTreeView->setColumnHidden(4,true) ;
+
   connect( ui.remoteDirTreeView, SIGNAL( collapsed(const QModelIndex & ) ),
   	model, SLOT(  collapsed(const QModelIndex & ) ) );
   connect( ui.remoteDirTreeView, SIGNAL( expanded(const QModelIndex & ) ),
@@ -124,17 +128,17 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
 
   /* Set header resize modes and initial section sizes  */
 	QHeaderView * l_header = ui.localDirTreeView->header () ;
-	l_header->setResizeMode (0, QHeaderView::Interactive);
-	l_header->setResizeMode (1, QHeaderView::Fixed);
-	l_header->setResizeMode (2, QHeaderView::Interactive);
-	l_header->setResizeMode (3, QHeaderView::Interactive);
-	l_header->setResizeMode (4, QHeaderView::Interactive);
+//	l_header->setResizeMode (0, QHeaderView::Interactive);
+//	l_header->setResizeMode (1, QHeaderView::Fixed);
+//	l_header->setResizeMode (2, QHeaderView::Interactive);
+//	l_header->setResizeMode (3, QHeaderView::Interactive);
+//	l_header->setResizeMode (4, QHeaderView::Interactive);
 
 	l_header->resizeSection ( 0, 490 );
 	l_header->resizeSection ( 1, 70 );
 	l_header->resizeSection ( 2, 130 );
 	l_header->resizeSection ( 3, 100 );
-	l_header->resizeSection ( 4, 100 );
+//	l_header->resizeSection ( 4, 100 );
 
 	/* Set header resize modes and initial section sizes */
 	QHeaderView * r_header = ui.remoteDirTreeView->header () ;
@@ -142,17 +146,17 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
 	r_header->setResizeMode (0, QHeaderView::Interactive);
 	r_header->setStretchLastSection(false);
 
-	r_header->setResizeMode (1, QHeaderView::Fixed);
-	r_header->setResizeMode (2, QHeaderView::Interactive);
-	r_header->setResizeMode (3, QHeaderView::Fixed);
-	r_header->setResizeMode (4, QHeaderView::Interactive);
+// 	r_header->setResizeMode (1, QHeaderView::Fixed);
+// //	r_header->setResizeMode (2, QHeaderView::Interactive);
+// 	r_header->setResizeMode (3, QHeaderView::Fixed);
+// //	r_header->setResizeMode (4, QHeaderView::Interactive);
 
 
 	r_header->resizeSection ( 0, 490 );
 	r_header->resizeSection ( 1, 70 );
-	r_header->resizeSection ( 2, 130 );
+//	r_header->resizeSection ( 2, 0 );
 	r_header->resizeSection ( 3, 100 );
-	r_header->resizeSection ( 4, 100 );
+//	r_header->resizeSection ( 4, 0 );
 
 	l_header->setHighlightSections(false);
 	r_header->setHighlightSections(false);
