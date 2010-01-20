@@ -36,13 +36,13 @@
      </property>
      <property name="minimumSize">
       <size>
-       <width>221</width>
+       <width>222</width>
        <height>0</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>221</width>
+       <width>222</width>
        <height>16777215</height>
       </size>
      </property>
@@ -205,7 +205,11 @@ p, li { white-space: pre-wrap; }
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QTreeView" name="treeView"/>
+       <widget class="QTreeView" name="treeView">
+        <property name="contextMenuPolicy">
+         <enum>Qt::CustomContextMenu</enum>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -318,7 +322,7 @@ p, li { white-space: pre-wrap; }
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>0</height>
+              <height>25</height>
              </size>
             </property>
             <property name="toolTip">
@@ -554,7 +558,7 @@ border-bottom-right-radius: 1px;
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>430</width>
+             <width>429</width>
              <height>331</height>
             </rect>
            </property>

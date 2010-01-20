@@ -188,6 +188,7 @@ HEADERS +=  rshare.h \
             gui/profile/ProfileWidget.h \
             gui/profile/StatusMessage.h \
             gui/chat/PopupChatDialog.h \
+            gui/channels/ChannelDetails.h \
             gui/channels/CreateChannelMsg.h \
             gui/connect/ConnectDialog.h \
             gui/connect/ConfCertDialog.h \
@@ -272,6 +273,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/profile/ProfileWidget.ui \
             gui/profile/StatusMessage.ui \
             gui/channels/CreateChannelMsg.ui \
+            gui/channels/ChannelDetails.ui \
             gui/chat/PopupChatDialog.ui \
             gui/connect/ConnectDialog.ui \
             gui/connect/ConfCertDialog.ui \
@@ -366,6 +368,7 @@ SOURCES +=  main.cpp \
             gui/profile/ProfileWidget.cpp \
             gui/profile/StatusMessage.cpp \
             gui/channels/CreateChannelMsg.cpp \
+            gui/channels/ChannelDetails.cpp \
             gui/chat/PopupChatDialog.cpp \
             gui/connect/ConnectDialog.cpp \
             gui/connect/ConfCertDialog.cpp \

@@ -61,6 +61,8 @@ public slots:
 
 private slots:
 
+  void channelListCustomPopupMenu( QPoint point );
+
 	void checkUpdate();
 
 	void createChannel();
@@ -73,6 +75,7 @@ private slots:
 	
 	void createMsg();
 
+  void showChannelDetails();
 
 private:
 

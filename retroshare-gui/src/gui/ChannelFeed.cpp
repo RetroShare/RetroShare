@@ -19,6 +19,12 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 #include <QtGui>
+#include <QContextMenuEvent>
+#include <QCursor>
+#include <QMenu>
+#include <QMouseEvent>
+#include <QPixmap>
+#include <QPoint>
 
 #include <iostream>
 #include <algorithm>
@@ -31,6 +37,7 @@
 #include "gui/feeds/ChanMsgItem.h"
 
 #include "gui/forums/CreateForum.h"
+#include "gui/channels/ChannelDetails.h"
 
 #include "gui/ChanGroupDelegate.h"
 #include "GeneralMsgDialog.h"
@@ -150,6 +157,7 @@ ChannelFeed::ChannelFeed(QWidget *parent)
 
 	connect(treeView, SIGNAL(clicked(const QModelIndex &)), this, SLOT(selectChannel(const QModelIndex &)));
 	connect(treeView, SIGNAL(activated(const QModelIndex &)), this, SLOT(toggleSelection(const QModelIndex &)));
+	connect(treeView, SIGNAL(customContextMenuRequested( QPoint ) ), this, SLOT( channelListCustomPopupMenu( QPoint ) ) );
 
 	//added from ahead
 	updateChannelList();
@@ -182,6 +190,21 @@ ChannelFeed::ChannelFeed(QWidget *parent)
 	timer->start(1000);
 }
 
+void ChannelFeed::channelListCustomPopupMenu( QPoint point )
+{
+      QMenu contextMnu( this );
+      QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
+      
+      QAction *channeldetailsAct = new QAction(QIcon(":/images/info16.png"), tr( "Show Channel Details" ), this );
+      connect( channeldetailsAct , SIGNAL( triggered() ), this, SLOT( showChannelDetails() ) );
+
+      contextMnu.clear();
+      contextMnu.addAction( channeldetailsAct );
+
+      contextMnu.exec( mevent->globalPos() );
+
+
+}
 
 void ChannelFeed::createChannel()
 {
@@ -716,3 +739,19 @@ void ChannelFeed::toggleSelection(const QModelIndex &index)
 		selectionModel->select(index, QItemSelectionModel::Toggle);
 }
 
+void ChannelFeed::showChannelDetails()
+{
+	if (mChannelId == "")
+	{
+	return;
+	}
+
+	if (!rsChannels)
+		return;
+
+  static ChannelDetails *channelui = new ChannelDetails();
+
+	channelui->showDetails(mChannelId);
+	channelui->show();
+
+}

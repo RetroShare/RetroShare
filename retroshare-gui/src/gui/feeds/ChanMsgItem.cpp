@@ -29,6 +29,8 @@
 #include "rsiface/rschannels.h"
 
 #include <iostream>
+#include <sstream>
+
 
 /****
  * #define DEBUG_ITEM 1
@@ -92,12 +94,19 @@ void ChanMsgItem::updateItemStatic()
 		subjectLabel->setText(QString::fromStdWString(cmi.msg));
 	}
 	
+	msgLabel->setText(QString::fromStdWString(cmi.msg));
+
 	QDateTime qtime;
 	qtime.setTime_t(cmi.ts);
 	QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm:ss");
 	datetimelabel->setText(timestamp);
+	
+	{
+		std::ostringstream out;
+		out << "(" << cmi.count << " Files)";
+		filelabel->setText(QString::fromStdString(out.str()));
+	}
 		
-	msgLabel->setText(QString::fromStdWString(cmi.msg));
 
 	std::list<FileInfo>::iterator it;
 	for(it = cmi.files.begin(); it != cmi.files.end(); it++)
