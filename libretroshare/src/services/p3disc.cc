@@ -367,7 +367,11 @@ void p3disc::sendPeerDetails(std::string to, std::string about) {
             #endif
             return;
         }
-        di -> certGPG = AuthGPG::getAuthGPG()->SaveCertificateToString(about);
+        std::string cert = AuthGPG::getAuthGPG()->SaveCertificateToString(about);
+        if (cert == "") {
+            cert = "No Key";
+        }
+        di -> certGPG = cert;
 
         // Send off message
 #ifdef P3DISC_DEBUG
