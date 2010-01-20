@@ -28,6 +28,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QMovie>
+#include <time.h>
 
 #include <util/WidgetBackgroundImage.h>
 

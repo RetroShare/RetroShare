@@ -41,6 +41,7 @@
 #include "rsiface/rsfiles.h"
 
 #include "gui/feeds/SubFileItem.h"
+#include <time.h>
 
 #define appDir QApplication::applicationDirPath()
 

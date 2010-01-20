@@ -47,6 +47,7 @@
 
 #include <sstream>
 #include "util/rsdebug.h"
+#include <time.h>
 
 const int pqiarchivezone = 9326;
 

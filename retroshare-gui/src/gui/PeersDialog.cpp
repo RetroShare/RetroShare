@@ -44,6 +44,7 @@
 #include "gui/forums/CreateForum.h"
 
 #include <sstream>
+#include <time.h>
 
 #include <QTextCodec>
 #include <QTextEdit>

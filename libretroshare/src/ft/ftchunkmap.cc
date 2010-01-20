@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <rsiface/rspeers.h>
 #include "ftchunkmap.h"
+#include <time.h>
 
 static const uint32_t SOURCE_CHUNK_MAP_UPDATE_PERIOD = 60 ; //! TTL for  chunkmap info
 

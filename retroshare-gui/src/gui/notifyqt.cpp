@@ -23,6 +23,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <time.h>
 
 /*****
  * #define NOTIFY_DEBUG
