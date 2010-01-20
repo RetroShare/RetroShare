@@ -27,6 +27,8 @@
 #include "rsiface/rsmsgs.h"
 
 #include <gui/settings/rsharesettings.h>
+#include "gui/feeds/AttachFileItem.h"
+
 #include "util/misc.h"
 
 #include <sstream>
@@ -86,6 +88,7 @@ ChanMsgDialog::ChanMsgDialog(bool msg, QWidget *parent, Qt::WFlags flags)
   //connect(ui.linkbtn, SIGNAL(clicked()), this, SLOT(insertLink()));
   connect(ui.actionContactsView, SIGNAL(triggered()), this, SLOT(toggleContacts()));
   connect(ui.actionSaveas, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
+  connect(ui.actionAttach, SIGNAL(triggered()), this, SLOT(attachFile()));
   
   connect(ui.msgText, SIGNAL(currentCharFormatChanged(const QTextCharFormat &)),
             this, SLOT(currentCharFormatChanged(const QTextCharFormat &)));
@@ -1094,5 +1097,76 @@ void  ChanMsgDialog::Create_New_Image_Tag( const QString urlremoteorlocal )
    //}
 }
 
+void ChanMsgDialog::attachFile()
+{
+	// select a file
+	QString qfile = QFileDialog::getOpenFileName(this, tr("Add Extra File"), "", "", 0,
+				QFileDialog::DontResolveSymlinks);
+	std::string filePath = qfile.toStdString();
+	if (filePath != "")
+	{
+	    ChanMsgDialog::addAttachment(filePath);
+	}
+}
 
+void ChanMsgDialog::addAttachment(std::string filePath) {
+	    /* add a AttachFileItem to the attachment section */
+	    std::cerr << "ChanMsgDialog::addFile() hashing file.";
+	    std::cerr << std::endl;
+
+	    /* add widget in for new destination */
+	    AttachFileItem *file = new AttachFileItem(filePath);
+	    //file->
+	    	    
+	    ui.verticalLayout->addWidget(file, 1, 0);
+
+	    //when the file is local or is finished hashing, call the fileHashingFinished method to send a chat message
+	    if (file->getState() == AFI_STATE_LOCAL) {
+		fileHashingFinished(file);
+	    } else {
+		QObject::connect(file,SIGNAL(fileFinished(AttachFileItem *)),this, SLOT(fileHashingFinished(AttachFileItem *))) ;
+	    }
+}
+
+void ChanMsgDialog::fileHashingFinished(AttachFileItem* file) {
+	std::cerr << "ChanMsgDialog::fileHashingFinished() started.";
+	std::cerr << std::endl;
+
+	//check that the file is ok tos end
+	if (file->getState() == AFI_STATE_ERROR) {
+	#ifdef CHAT_DEBUG
+		    std::cerr << "ChanMsgDialog::fileHashingFinished error file is not hashed.";
+	#endif
+	    return;
+	}
+
+	//convert fileSize from uint_64 to string for html link
+	char fileSizeChar [100];
+	sprintf(fileSizeChar, "%lld", file->FileSize());
+	std::string fileSize = *(&fileSizeChar);
+
+	std::string mesgString = "<a href='retroshare://file|" + (file->FileName()) + "|" + fileSize + "|" + (file->FileHash()) + "'>" 
+	+ "retroshare://file|" + (file->FileName()) + "|" + fileSize +  "|" + (file->FileHash())  + "</a>";
+#ifdef CHAT_DEBUG
+	    std::cerr << "ChanMsgDialog::anchorClicked mesgString : " << mesgString << std::endl;
+#endif
+
+	const char * messageString = mesgString.c_str ();
+
+	//convert char massageString to w_char
+	wchar_t* message;
+	int requiredSize = mbstowcs(NULL, messageString, 0); // C4996
+	/* Add one to leave room for the NULL terminator */
+	message = (wchar_t *)malloc( (requiredSize + 1) * sizeof( wchar_t ));
+	if (! message) {
+	    std::cerr << ("Memory allocation failure.\n");
+	}
+	int size = mbstowcs( message, messageString, requiredSize + 1); // C4996
+	if (size == (size_t) (-1)) {
+	   printf("Couldn't convert string--invalid multibyte character.\n");
+	}
+  	
+	ui.msgText->setHtml(QString::fromStdWString(message));
+
+}
 

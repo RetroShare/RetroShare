@@ -27,6 +27,7 @@
 #include <QMap>
 #include <QPointer>
 #include <gui/settings/rsharesettings.h>
+#include "gui/feeds/AttachFileItem.h"
 
 #include "ui_ChanMsgDialog.h"
 #include "rsiface/rsfiles.h"
@@ -111,6 +112,11 @@ private slots:
   void cursorPositionChanged();
   
   void clipboardDataChanged();
+  
+  void fileHashingFinished(AttachFileItem* file);
+
+	void attachFile();
+	void addAttachment(std::string);
 
  
 private:

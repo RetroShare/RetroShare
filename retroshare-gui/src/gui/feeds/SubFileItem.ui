@@ -227,7 +227,7 @@ background: white;}
           </property>
           <property name="icon">
            <iconset resource="../images.qrc">
-            <normaloff>:/images/start.png</normaloff>:/images/start.png</iconset>
+            <normaloff>:/images/player_play.png</normaloff>:/images/player_play.png</iconset>
           </property>
          </widget>
         </item>

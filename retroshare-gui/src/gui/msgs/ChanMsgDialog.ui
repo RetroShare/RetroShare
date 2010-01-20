@@ -101,7 +101,7 @@
         <enum>Qt::Vertical</enum>
        </property>
        <widget class="QWidget" name="layoutWidget">
-        <layout class="QGridLayout">
+        <layout class="QGridLayout" name="messagelayout">
          <item row="0" column="0">
           <layout class="QHBoxLayout">
            <property name="spacing">
@@ -316,7 +316,7 @@
         </layout>
        </widget>
        <widget class="QWidget" name="layoutWidget">
-        <layout class="QGridLayout">
+        <layout class="QGridLayout" name="layoutrecommended">
          <property name="margin">
           <number>0</number>
          </property>
@@ -376,6 +376,9 @@
            </column>
           </widget>
          </item>
+         <item row="2" column="0">
+          <layout class="QVBoxLayout" name="verticalLayout"/>
+         </item>
         </layout>
        </widget>
       </widget>
@@ -389,7 +392,7 @@
      <x>0</x>
      <y>0</y>
      <width>770</width>
-     <height>25</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
@@ -416,6 +419,7 @@
    <addaction name="actionSend"/>
    <addaction name="actionContactsView"/>
    <addaction name="separator"/>
+   <addaction name="actionAttach"/>
    <addaction name="actionSaveas"/>
   </widget>
   <action name="actionSend">
@@ -444,6 +448,18 @@
   <action name="actionSaveas">
    <property name="text">
     <string>Save</string>
+   </property>
+  </action>
+  <action name="actionAttach">
+   <property name="icon">
+    <iconset resource="../images.qrc">
+     <normaloff>:/images/attach.png</normaloff>:/images/attach.png</iconset>
+   </property>
+   <property name="text">
+    <string>Attach</string>
+   </property>
+   <property name="toolTip">
+    <string>Attach File</string>
    </property>
   </action>
  </widget>

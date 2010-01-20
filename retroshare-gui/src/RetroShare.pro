@@ -237,6 +237,7 @@ HEADERS +=  rshare.h \
             gui/feeds/BlogMsgItem.h \
             gui/feeds/SubFileItem.h \
             gui/feeds/SubDestItem.h \
+            gui/feeds/AttachFileItem.h \
             gui/connect/ConnectFriendWizard.h
 
 
@@ -299,6 +300,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/feeds/BlogMsgItem.ui \
             gui/feeds/SubFileItem.ui \
             gui/feeds/SubDestItem.ui \
+            gui/feeds/AttachFileItem.ui
 
 SOURCES +=  main.cpp \
             rshare.cpp \
@@ -409,6 +411,7 @@ SOURCES +=  main.cpp \
             gui/feeds/BlogMsgItem.cpp \
             gui/feeds/SubFileItem.cpp \
             gui/feeds/SubDestItem.cpp \
+            gui/feeds/AttachFileItem.cpp \
             gui/connect/ConnectFriendWizard.cpp
             
 RESOURCES += gui/images.qrc lang/lang.qrc gui/help/content/content.qrc 
