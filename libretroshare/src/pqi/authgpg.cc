@@ -1150,10 +1150,9 @@ bool AuthGPG::loadCertificates()
 std::string AuthGPG::SaveCertificateToString(std::string id)
 {
 
-        if (!isGPGValid(id)) {
+        if (!isGPGId(id)) {
                 std::cerr << "AuthGPG::SaveCertificateToString() unknown ID" << std::endl;
-		std::string emptystr;
-		return emptystr;
+                return "";
 	}
 
 	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
