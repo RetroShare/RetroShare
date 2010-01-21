@@ -238,39 +238,34 @@ void SearchDialog::download()
     QTreeWidgetItem * item;
     bool attemptDownloadLocal = false;
 
-    for (int i = 0; i < numdls; ++i) {
-        item = itemsForDownload.at(i);
-        // call the download
-	if (item->text(SR_ID_COL) != "Local")
-	{
-		if (!item->childCount()) {
-			std::cerr << "SearchDialog::download() Calling File Request";
-			std::cerr << std::endl;
-			std::list<std::string> srcIds;
-			srcIds.push_back(item->text(SR_UID_COL).toStdString()) ;
+    for (int i = 0; i < numdls; ++i) 
+	 {
+		 item = itemsForDownload.at(i);
+		 // call the download
+		 if (!item->childCount()) 
+		 {
+			 std::cerr << "SearchDialog::download() Calling File Request";
+			 std::cerr << std::endl;
+			 std::list<std::string> srcIds;
+			 srcIds.push_back(item->text(SR_UID_COL).toStdString()) ;
 
-				rsFiles -> FileRequest((item->text(SR_NAME_COL)).toStdString(),
-									  (item->text(SR_HASH_COL)).toStdString(),
-									  (item->text(SR_REALSIZE_COL)).toInt(),
-									  "", RS_FILE_HINTS_NETWORK_WIDE, srcIds);
-
-				std::cout << "isuing file request from search dialog: -" << (item->text(SR_NAME_COL)).toStdString() << "-" << (item->text(SR_HASH_COL)).toStdString() << "-" << (item->text(SR_REALSIZE_COL)).toInt() << "-ids=" ;
-				for(std::list<std::string>::const_iterator it(srcIds.begin());it!=srcIds.end();++it)
-					std::cout << *it << "-" << std::endl ;
-		} else {
-			// we have a folder
-			downloadDirectory(item, tr(""));
-		}
-	}
-	else
-	{
-		attemptDownloadLocal = true;
-	}
-    }
+			 if(!rsFiles -> FileRequest((item->text(SR_NAME_COL)).toStdString(),
+						 (item->text(SR_HASH_COL)).toStdString(),
+						 (item->text(SR_REALSIZE_COL)).toInt(),
+						 "", RS_FILE_HINTS_NETWORK_WIDE, srcIds))
+				 attemptDownloadLocal = true ;
+			 else
+			 {
+				 std::cout << "isuing file request from search dialog: -" << (item->text(SR_NAME_COL)).toStdString() << "-" << (item->text(SR_HASH_COL)).toStdString() << "-" << (item->text(SR_REALSIZE_COL)).toInt() << "-ids=" ;
+				 for(std::list<std::string>::const_iterator it(srcIds.begin());it!=srcIds.end();++it)
+					 std::cout << *it << "-" << std::endl ;
+			 }
+		 }
+		 else // we have a folder
+			 downloadDirectory(item, tr(""));
+	 }
     if (attemptDownloadLocal)
-    {
     	QMessageBox::information(0, tr("Download Notice"), tr("Skipping Local Files"));
-    }
 }
 
 void SearchDialog::downloadDirectory(const QTreeWidgetItem *item, const QString &base)
