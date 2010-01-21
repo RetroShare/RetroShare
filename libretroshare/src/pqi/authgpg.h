@@ -52,6 +52,8 @@
 
 #define GPG_id std::string
 
+const time_t STORE_KEY_TIMEOUT = 60; //store key is call around every 60sec
+
 /* gpgcert is the identifier for a person.
  * It is a wrapper class for a GPGme OpenPGP certificate.
  */
@@ -99,7 +101,8 @@ class AuthGPG : public p3Config
 
         // store all keys in map mKeyList to avoid calling gpgme exe repeatedly
   	bool    storeAllKeys_locked();
-  	bool    updateTrustAllKeys_locked();
+        bool    storeAllKeys_timed();
+        bool    updateTrustAllKeys_locked();
 
   	bool    printAllKeys_locked();
   	bool    printOwnKeys_locked();
@@ -231,21 +234,20 @@ private:
     /* Below is protected via the mutex */
 
     certmap mKeyList;
+    time_t mStoreKeyTime;
 
     bool gpgmeInit;
+
     bool gpgmeKeySelected;
-    bool gpgmeX509Selected;
 
     gpgme_engine_info_t INFO;
     gpgme_ctx_t CTX;
 
     std::string mOwnGpgId;
-    std::string mOwnGpgName;
-    std::string mOwnGpgEmail;
-    std::string mX509id;
+    gpgcert mOwnGpgCert;
+
     std::map<std::string, bool> mAcceptToConnectMap;
 
-    gpgcert mOwnGpgCert;
 };
 
 /* Sign a key */
