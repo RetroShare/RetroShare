@@ -290,6 +290,7 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 
         if (id == AuthSSL::getAuthSSL()->OwnId()) {
                 mConnMgr->getOwnNetStatus(pcs);
+                pcs.gpg_id = AuthGPG::getAuthGPG()->getGPGOwnId();
         }
 
         /* get from gpg (first), to fill in the sign and trust details */

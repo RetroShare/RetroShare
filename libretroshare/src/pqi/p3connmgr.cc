@@ -140,6 +140,7 @@ p3ConnectMgr::p3ConnectMgr()
 {
 	/* setup basics of own state */
         ownState.id = AuthSSL::getAuthSSL()->OwnId();
+        ownState.gpg_id = AuthGPG::getAuthGPG()->getGPGOwnId();
         ownState.name = AuthGPG::getAuthGPG()->getGPGOwnName();
         ownState.location = AuthSSL::getAuthSSL()->getOwnLocation();
         ownState.netMode = RS_NET_MODE_UDP;
