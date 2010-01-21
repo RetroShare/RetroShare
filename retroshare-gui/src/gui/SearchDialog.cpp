@@ -22,6 +22,9 @@
 
 #include "rshare.h"
 #include "SearchDialog.h"
+#include "RetroShareLinkAnalyzer.h"
+#include "msgs/ChanMsgDialog.h"
+
 #include "rsiface/rsiface.h"
 #include "rsiface/rsexpr.h"
 #include "rsiface/rsfiles.h"
@@ -68,6 +71,8 @@
 #define SS_TEXT_COL         0
 #define SS_COUNT_COL        1
 #define SS_SEARCH_ID_COL    2
+
+#define IMAGE_COPYLINK             ":/images/copyrslink.png"
 
 /* static members */
 /* These indices MUST be identical to their equivalent indices in the combobox */
@@ -211,6 +216,12 @@ void SearchDialog::searchtableWidgetCostumPopupMenu( QPoint point )
         downloadAct = new QAction(QIcon(IMAGE_START), tr( "Download" ), this );
         connect( downloadAct , SIGNAL( triggered() ), this, SLOT( download() ) );
 
+        copysearchlinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Link" ), this );
+        connect( copysearchlinkAct , SIGNAL( triggered() ), this, SLOT( copysearchLink() ) );
+        
+        sendrslinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Link" ), this );
+	      connect( sendrslinkAct , SIGNAL( triggered() ), this, SLOT( sendLinkTo( ) ) );
+
         broadcastonchannelAct = new QAction( tr( "Broadcast on Channel" ), this );
         connect( broadcastonchannelAct , SIGNAL( triggered() ), this, SLOT( broadcastonchannel() ) );
 
@@ -220,9 +231,9 @@ void SearchDialog::searchtableWidgetCostumPopupMenu( QPoint point )
 
         contextMnu->clear();
         contextMnu->addAction( downloadAct);
-        //contextMnu->addSeparator();
-        //contextMnu->addAction( broadcastonchannelAct);
-        //contextMnu->addAction( recommendtofriendsAct);
+        contextMnu->addSeparator();
+        contextMnu->addAction( copysearchlinkAct);
+        contextMnu->addAction( sendrslinkAct);
       }
 
       QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point,
@@ -935,4 +946,53 @@ void SearchDialog::setIconAndType(QTreeWidgetItem *item, QString &ext)
 	{
 		item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypeAny.png"));
 	}
+}
+
+void SearchDialog::copysearchLink()
+{
+    RetroShareLinkAnalyzer analyzer;
+
+    /* should also be able to handle multi-selection */
+    QList<QTreeWidgetItem*> itemsForCopy = ui.searchResultWidget->selectedItems();
+    int numdls = itemsForCopy.size();
+    QTreeWidgetItem * item;
+
+    for (int i = 0; i < numdls; ++i) 
+    {
+        item = itemsForCopy.at(i);
+        // call copy
+
+      if (!item->childCount()) 
+      {
+			std::cerr << "SearchDialog::copysearchLink() Calling set retroshare link";
+			std::cerr << std::endl;
+			std::list<std::string> srcIds;
+			srcIds.push_back(item->text(SR_UID_COL).toStdString()) ;
+			
+			QString fhash = item->text(SR_HASH_COL);
+      QString fsize = item->text(SR_REALSIZE_COL);
+      QString fname = item->text(SR_NAME_COL);
+
+      analyzer.setRetroShareLink (fname, fsize, fhash);
+
+      } 
+    }
+	
+    QClipboard *clipboard = QApplication::clipboard();
+    clipboard->setText(analyzer.getRetroShareLink ());
+
+}
+
+void SearchDialog::sendLinkTo( )
+{
+    copysearchLink();
+
+    /* create a message */
+    ChanMsgDialog *nMsgDialog = new ChanMsgDialog(true);
+
+    nMsgDialog->newMsg();
+    nMsgDialog->insertTitleText("New RetroShare Link(s)");
+    nMsgDialog->insertHtmlText(QApplication::clipboard()->text().toStdString());
+
+    nMsgDialog->show();
 }

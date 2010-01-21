@@ -60,7 +60,8 @@ private slots:
     void broadcastonchannel();
 
     void recommendtofriends();
-
+    
+    void copysearchLink();
 
 
     void searchRemove();
@@ -82,12 +83,14 @@ private slots:
     void selectSearchResults();
 
     void clearKeyword();
+    
+    void sendLinkTo();
 
 
 private:
 /** render the results to the tree widget display */
 	 void initSearchResult(const std::string& txt,qulonglong searchId) ;
-    void resultsToTree(std::string,qulonglong searchId, const std::list<DirDetails>&);
+   void resultsToTree(std::string,qulonglong searchId, const std::list<DirDetails>&);
 	 void insertFile(const std::string& txt,qulonglong searchId, const FileDetail& file) ;
 	 void insertDirectory(const std::string &txt, qulonglong searchId, const DirDetails &dir, QTreeWidgetItem *item);
 	 void setIconAndType(QTreeWidgetItem *item, QString &ext);
@@ -104,6 +107,8 @@ private:
 
 /** Defines the actions for the context menu */
     QAction* downloadAct;
+    QAction* copysearchlinkAct;
+    QAction* sendrslinkAct;
     QAction* broadcastonchannelAct;
     QAction* recommendtofriendsAct;
 
