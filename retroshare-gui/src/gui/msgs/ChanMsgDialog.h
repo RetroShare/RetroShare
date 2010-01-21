@@ -117,6 +117,7 @@ private slots:
 
 	void attachFile();
 	void addAttachment(std::string);
+	void checkAttachmentReady();
 
  
 private:
@@ -162,8 +163,12 @@ private:
   QHash<QString, QString> autoLinkDictionary;
   QHash<QString, QString> autoLinkTitleDictionary;
   QHash<QString, int> autoLinkTargetDictionary;
+  
+  /* maps of files  */
+	std::list<AttachFileItem *> mAttachments;
 
   bool mIsMsg; /* different behaviour for Msg or ChanMsg */
+  bool mCheckAttachment;
 
   /** Qt Designer generated object */
   Ui::ChanMsgDialog ui;

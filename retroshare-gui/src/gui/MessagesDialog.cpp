@@ -121,7 +121,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
   ui.printbutton->setIcon(QIcon(QString(":/images/print24.png")));
 
 	ui.forwardmessageButton->setToolTip(tr("Forward selected Message"));
- 	ui.replyallmessageButton->setToolTip(tr("Replay to All"));
+ 	ui.replyallmessageButton->setToolTip(tr("Reply to All"));
 
     QMenu * printmenu = new QMenu();
     printmenu->addAction(ui.actionPrint);
@@ -260,7 +260,7 @@ void MessagesDialog::replytomessage()
 	nMsgDialog->insertTitleText( (QString("Re: ") + QString::fromStdWString(msgInfo.title)).toStdString()) ;
 	}
 	
-	nMsgDialog->setWindowTitle(tr("Re: ") + QString::fromStdWString(msgInfo.title) ) ;
+	nMsgDialog->setWindowTitle( tr ("Compose: ") + tr("Re: ") + QString::fromStdWString(msgInfo.title) ) ;
 
 
 	QTextDocument doc ;
@@ -305,7 +305,7 @@ void MessagesDialog::replyallmessage()
 	{
 	nMsgDialog->insertTitleText( (QString("Re: ") + QString::fromStdWString(msgInfo.title)).toStdString()) ;
 	}
-	nMsgDialog->setWindowTitle(tr("Re: ") + QString::fromStdWString(msgInfo.title) ) ;
+	nMsgDialog->setWindowTitle( tr ("Compose: ") + tr("Re: ") + QString::fromStdWString(msgInfo.title) ) ;
 
 
 	QTextDocument doc ;
@@ -361,7 +361,7 @@ void MessagesDialog::forwardmessage()
 	nMsgDialog->insertTitleText( (QString("Fwd: ") + QString::fromStdWString(msgInfo.title)).toStdString()) ;
 	}
 	
-	nMsgDialog->setWindowTitle(tr("Fwd: ") + QString::fromStdWString(msgInfo.title) ) ;
+	nMsgDialog->setWindowTitle( tr ("Compose: ") + tr("Fwd: ") + QString::fromStdWString(msgInfo.title) ) ;
 
 
 	QTextDocument doc ;

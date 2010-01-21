@@ -32,7 +32,7 @@
 #include "util/misc.h"
 
 #include <sstream>
-
+#include <QtGui>
 #include <QContextMenuEvent>
 #include <QCloseEvent>
 #include <QColorDialog>
@@ -59,7 +59,7 @@
 
 /** Constructor */
 ChanMsgDialog::ChanMsgDialog(bool msg, QWidget *parent, Qt::WFlags flags)
-: mIsMsg(msg), QMainWindow(parent, flags)
+: mIsMsg(msg), QMainWindow(parent, flags), mCheckAttachment(true)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
@@ -493,7 +493,11 @@ void  ChanMsgDialog::insertFileList(const std::list<DirDetails>& files_info)
 void  ChanMsgDialog::newMsg()
 {
 	/* clear all */
+	QString titlestring = ui.titleEdit->text();
+
+	setWindowTitle(tr("Compose: ") + titlestring );
 	ui.titleEdit->setText("No Title");
+
 	ui.msgText->setText("");
 
         /* worker fns */
@@ -1126,6 +1130,13 @@ void ChanMsgDialog::addAttachment(std::string filePath) {
 	    } else {
 		QObject::connect(file,SIGNAL(fileFinished(AttachFileItem *)),this, SLOT(fileHashingFinished(AttachFileItem *))) ;
 	    }
+	mAttachments.push_back(file); 
+	   
+	if (mCheckAttachment)
+	{
+		checkAttachmentReady();
+	}
+	    
 }
 
 void ChanMsgDialog::fileHashingFinished(AttachFileItem* file) {
@@ -1170,3 +1181,35 @@ void ChanMsgDialog::fileHashingFinished(AttachFileItem* file) {
 
 }
 
+void ChanMsgDialog::checkAttachmentReady()
+{
+	std::list<AttachFileItem *>::iterator fit;
+
+	mCheckAttachment = false;
+
+	for(fit = mAttachments.begin(); fit != mAttachments.end(); fit++)
+	{
+		if (!(*fit)->isHidden())
+		{
+			if (!(*fit)->ready())
+			{
+				/* 
+				 */
+				ui.actionSend->setEnabled(false);
+				break;
+
+
+				return;
+			}
+		}
+	}
+
+	if (fit == mAttachments.end())
+	{
+		ui.actionSend->setEnabled(true);
+	}
+
+	/* repeat... */
+	int msec_rate = 1000;
+	QTimer::singleShot( msec_rate, this, SLOT(checkAttachmentReady(void)));
+}
