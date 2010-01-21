@@ -162,7 +162,7 @@ void p3turtle::statusChange(const std::list<pqipeer> &plist) // derived from pqi
 void p3turtle::addDistantPeer(const TurtleFileHash&,TurtleTunnelId tid)
 {
 	char buff[400] ;
-	sprintf(buff,"Turtle tunnel %08x",tid) ;
+	sprintf(buff,"Anonymous F2F tunnel %08x",tid) ;
 
 	{
 		_virtual_peers[TurtleVirtualPeerId(buff)] = tid ;
@@ -1686,7 +1686,11 @@ static std::string printNumber(uint64_t num,bool hex=false)
 	if(hex)
 	{
 		char tmp[100] ;
-		sprintf(tmp,"%08x%08x", uint32_t(num >> 32),uint32_t(num & ( (1<<32)-1 ))) ;
+
+		if(num < (1<<32))
+			sprintf(tmp,"%08x", uint32_t(num)) ;
+		else
+			sprintf(tmp,"%08x%08x", uint32_t(num >> 32),uint32_t(num & ( (1<<32)-1 ))) ;
 		return std::string(tmp) ;
 	}
 	else
