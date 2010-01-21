@@ -166,6 +166,8 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
   ui.remoteDirTreeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
   ui.localDirTreeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
+  ui.remoteDirTreeView->setColumnHidden(2,true) ;
+
   QTimer *timer = new QTimer(this);
   timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
   timer->start(1000);
