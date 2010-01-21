@@ -71,6 +71,7 @@ class ChunkDownloadInfo
 	public:
 		std::map<ftChunk::ChunkId,uint32_t> _slices ;
 		uint32_t _remains ;
+		time_t _last_data_received ;
 };
 
 class SourceChunksInfo
@@ -138,6 +139,10 @@ class ChunkMap
 
 		/// This function is used by the parent ftFileProvider to know whether the chunk can be sent or not.
 		bool isChunkAvailable(uint64_t offset, uint32_t chunk_size) const ;
+
+		/// Remove active chunks that have not received any data for the last 60 seconds, and return
+		/// the list of slice numbers that should be canceled.
+		void removeInactiveChunks(std::vector<ftChunk::ChunkId>& to_remove) ;
 
 		/// Updates the peer's availablility map
 		//

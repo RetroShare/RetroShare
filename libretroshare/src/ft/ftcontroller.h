@@ -193,6 +193,7 @@ bool    setPeerState(ftTransferModule *tm, std::string id,
                         uint32_t maxrate, bool online);
 
 		time_t last_save_time ;
+		time_t last_clean_time ;
 	/* pointers to other components */
 
 	ftSearch *mSearch;

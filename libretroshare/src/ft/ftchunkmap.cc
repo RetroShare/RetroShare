@@ -1,11 +1,14 @@
-#include <math.h>
+#ifdef DEBUG_FTCHUNK
 #include <assert.h>
+#endif
+#include <math.h>
 #include <stdlib.h>
 #include <rsiface/rspeers.h>
 #include "ftchunkmap.h"
 #include <time.h>
 
-static const uint32_t SOURCE_CHUNK_MAP_UPDATE_PERIOD = 60 ; //! TTL for  chunkmap info
+static const uint32_t SOURCE_CHUNK_MAP_UPDATE_PERIOD	= 60 ; //! TTL for chunkmap info
+static const uint32_t INACTIVE_CHUNK_TIME_LAPSE 		= 60 ; //! TTL for an inactive chunk
 
 std::ostream& operator<<(std::ostream& o,const ftChunk& c)
 {
@@ -78,7 +81,9 @@ void ChunkMap::dataReceived(const ftChunk::ChunkId& cid)
 	if(itc == _slices_to_download.end()) 
 	{
 		std::cerr << "!!! ChunkMap::dataReceived: error: ChunkId " << cid << " corresponds to chunk number " << n << ", which is not being downloaded!" << std::endl ;
+#ifdef DEBUG_FTCHUNK
 		assert(false) ;
+#endif
 		return ;
 	}
 
@@ -87,13 +92,16 @@ void ChunkMap::dataReceived(const ftChunk::ChunkId& cid)
 	if(it == itc->second._slices.end()) 
 	{
 		std::cerr << "!!! ChunkMap::dataReceived: chunk " << cid << " is not found in slice lst of chunk number " << n << std::endl ;
+#ifdef DEBUG_FTCHUNK
 		assert(false) ;
+#endif
 		return ;
 	}
 
 	_total_downloaded += it->second ;
 	itc->second._remains -= it->second ;
 	itc->second._slices.erase(it) ;
+	itc->second._last_data_received = time(NULL) ;	// update time stamp
 
 #ifdef DEBUG_FTCHUNK
 	std::cerr << "*** ChunkMap::dataReceived: received data chunk " << cid << " for chunk number " << n << ", local remains=" << itc->second._remains << ", total downloaded=" << _total_downloaded << ", remains=" << _file_size - _total_downloaded << std::endl ;
@@ -171,6 +179,7 @@ bool ChunkMap::getDataChunk(const std::string& peer_id,uint32_t size_hint,ftChun
 	//
 	_active_chunks_feed[peer_id].getSlice(size_hint,chunk) ;
 	_slices_to_download[chunk.offset/_chunk_size]._slices[chunk.id] = chunk.size ;
+	_slices_to_download[chunk.offset/_chunk_size]._last_data_received = time(NULL) ;
 
 	if(_active_chunks_feed[peer_id].empty())
 		_active_chunks_feed.erase(_active_chunks_feed.find(peer_id)) ;
@@ -179,6 +188,45 @@ bool ChunkMap::getDataChunk(const std::string& peer_id,uint32_t size_hint,ftChun
 	std::cout << "*** ChunkMap::getDataChunk: returning slice " << chunk << " for peer " << peer_id << std::endl ;
 #endif
 	return true ;
+}
+
+void ChunkMap::removeInactiveChunks(std::vector<ftChunk::ChunkId>& to_remove)
+{
+	to_remove.clear() ;
+	time_t now = time(NULL) ;
+
+	for(std::map<ChunkNumber,ChunkDownloadInfo>::iterator it(_slices_to_download.begin());it!=_slices_to_download.end();)
+		if(now - it->second._last_data_received > (int)INACTIVE_CHUNK_TIME_LAPSE)
+		{
+#ifdef DEBUG_FTCHUNK
+			std::cerr << "ChunkMap::removeInactiveChunks(): removing inactive chunk " << it->first << ", time lapse=" << now - it->second._last_data_received << std::endl ;
+#endif
+			// First, remove all slices from this chunk
+			//
+			std::map<ChunkNumber,ChunkDownloadInfo>::iterator tmp(it) ;
+
+			for(std::map<ftChunk::ChunkId,uint32_t>::const_iterator it2(it->second._slices.begin());it2!=it->second._slices.end();++it2)
+				to_remove.push_back(it2->first) ;
+
+			_map[it->first] = FileChunksInfo::CHUNK_OUTSTANDING ;	// reset the chunk
+
+			// Also remove the chunk from the chunk feed, to free the associated peer.
+			//
+			for(std::map<std::string,Chunk>::iterator it3=_active_chunks_feed.begin();it3!=_active_chunks_feed.end();)
+				if(it3->second._start == _chunk_size*uint64_t(it->first))
+				{
+					std::map<std::string,Chunk>::iterator tmp3 = it3 ;
+					++it3 ;
+					_active_chunks_feed.erase(tmp3) ;
+				}
+				else
+					++it3 ;
+
+			++it ;
+			_slices_to_download.erase(tmp) ;
+		}
+		else
+			++it ;
 }
 
 bool ChunkMap::isChunkAvailable(uint64_t offset, uint32_t chunk_size) const 

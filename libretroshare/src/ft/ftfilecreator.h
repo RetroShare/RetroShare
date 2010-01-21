@@ -65,6 +65,11 @@ class ftFileCreator: public ftFileProvider
 		//
 		bool	getMissingChunk(const std::string& peer_id,uint32_t size_hint,uint64_t& offset, uint32_t& size,bool& is_chunk_map_too_old);
 
+		// Takes care of purging any inactive chunks. This should be called regularly, because some peers may disconnect
+		// and let inactive chunks not finished.
+		//
+		void removeInactiveChunks() ;
+
 		// actually store data in the file, and update chunks info
 		//
 		bool 	addFileData(uint64_t offset, uint32_t chunk_size, void *data);

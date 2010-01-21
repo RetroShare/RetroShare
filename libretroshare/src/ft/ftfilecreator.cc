@@ -135,6 +135,44 @@ bool ftFileCreator::addFileData(uint64_t offset, uint32_t chunk_size, void *data
 	return 1;
 }
 
+void ftFileCreator::removeInactiveChunks()
+{
+	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
+
+#ifdef FILE_DEBUG
+	std::cerr << "ftFileCreator::removeInactiveChunks(): looking for old chunks." << std::endl ;
+#endif
+	std::vector<ftChunk::ChunkId> to_remove ;
+
+	chunkMap.removeInactiveChunks(to_remove) ;
+
+#ifdef FILE_DEBUG
+	if(!to_remove.empty())
+		std::cerr << "ftFileCreator::removeInactiveChunks(): removing slice ids: " ;
+#endif
+	// This double loop looks costly, but it's called on very few chunks, and not often, so it's ok.
+	//
+	for(uint32_t i=0;i<to_remove.size();++i)
+	{
+#ifdef FILE_DEBUG
+		std::cerr << to_remove[i] << " " ;
+#endif
+		for(std::map<uint64_t,ftChunk>::iterator it(mChunks.begin());it!=mChunks.end();)
+			if(it->second.id == to_remove[i])
+			{
+				std::map<uint64_t,ftChunk>::iterator tmp(it) ;
+				++it ;
+				mChunks.erase(tmp) ;
+			}
+			else
+				++it ;
+	}
+#ifdef FILE_DEBUG
+	if(!to_remove.empty())
+		std::cerr << std::endl ;
+#endif
+}
+
 int ftFileCreator::initializeFileAttrs()
 {
 	std::cerr << "ftFileCreator::initializeFileAttrs() Filename: ";

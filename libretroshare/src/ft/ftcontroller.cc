@@ -57,7 +57,8 @@
  * #define CONTROL_DEBUG 1
  *****/
 
-static const uint32_t SAVE_TRANSFERS_DELAY = 30	; // save transfer progress every 30 seconds.
+static const uint32_t SAVE_TRANSFERS_DELAY = 61	; // save transfer progress every 61 seconds.
+static const uint32_t INACTIVE_CHUNKS_CHECK_DELAY = 60	; // save transfer progress every 61 seconds.
 
 ftFileControl::ftFileControl()
 	:mTransfer(NULL), mCreator(NULL),
@@ -82,6 +83,7 @@ ftFileControl::ftFileControl(std::string fname,
 ftController::ftController(CacheStrapper *cs, ftDataMultiplex *dm, std::string configDir)
 	:CacheTransfer(cs), p3Config(CONFIG_TYPE_FT_CONTROL), 
 	last_save_time(0),
+	last_clean_time(0),
 	mDataplex(dm),
 	mTurtle(NULL), 
 	mFtActive(false),
@@ -193,6 +195,16 @@ void ftController::run()
 		{
 			IndicateConfigChanged() ;
 			last_save_time = now ;
+		}
+
+		if((int)now - (int)last_clean_time > (int)INACTIVE_CHUNKS_CHECK_DELAY)
+		{
+			RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+
+		  for(std::map<std::string,ftFileControl>::iterator it(mDownloads.begin());it!=mDownloads.end();++it)
+			  it->second.mCreator->removeInactiveChunks() ;
+
+			last_clean_time = now ;
 		}
 
 		if (doPending)
