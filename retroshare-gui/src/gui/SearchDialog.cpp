@@ -258,7 +258,13 @@ void SearchDialog::download()
 			 std::cerr << "SearchDialog::download() Calling File Request";
 			 std::cerr << std::endl;
 			 std::list<std::string> srcIds;
+#ifdef SUSPENDED
+			 // I suspend this. For turtle F2F download, we dont' need sources: 
+			 // 	- if we put sources, they make double with some tunnels.
+			 // 	- they won't transfer because ASSUME_AVAILABILITY can't be used,
+			 // 		and no chunk maps are transfered except in tunnels.
 			 srcIds.push_back(item->text(SR_UID_COL).toStdString()) ;
+#endif
 
 			 if(!rsFiles -> FileRequest((item->text(SR_NAME_COL)).toStdString(),
 						 (item->text(SR_HASH_COL)).toStdString(),
@@ -283,7 +289,9 @@ void SearchDialog::downloadDirectory(const QTreeWidgetItem *item, const QString 
 {
 	if (!item->childCount()) {
 		std::list<std::string> srcIds;
+#ifdef SUSPENDED
 		srcIds.push_back(item->text(SR_UID_COL).toStdString());
+#endif
 
 		QString path = QString::fromStdString(rsFiles->getDownloadDirectory())
 						+ tr("/") + base + tr("/");

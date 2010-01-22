@@ -221,6 +221,12 @@ void FileTransferInfoWidget::draw(const FileChunksInfo& info,QPainter *painter)
 	 y += text_height ; painter->drawText(20,y,tr("Number of chunks: ")) ; painter->drawText(tab_size,y,QString::number(info.chunks.size())) ;
 	 y += block_sep ;
 	 y += text_height ; painter->drawText(20,y,tr("Number of sources: ")) ; painter->drawText(tab_size,y,QString::number(info.compressed_peer_availability_maps.size())) ;
+	 y += block_sep ;
+	 y += text_height ; painter->drawText(20,y,tr("Chunk strategy: ")) ; painter->drawText(tab_size,y,(info.strategy==FileChunksInfo::CHUNK_STRATEGY_RANDOM)?"Random":"Streaming") ;
+	 y += block_sep ;
+	 y += text_height ; painter->drawText(20,y,tr("Transfer type: ")) ; 
+	 if(info.flags & RS_FILE_HINTS_NETWORK_WIDE) painter->drawText(tab_size,y,"Anonymous F2F") ;
+	 if(info.flags & RS_FILE_HINTS_ASSUME_AVAILABILITY) painter->drawText(tab_size,y,"Direct friend transfer / Availability assumed") ;
 	 y += text_height ;
 	 y += block_sep ;
 

@@ -264,6 +264,8 @@ class FileChunksInfo
 
 		uint64_t file_size ;					// real size of the file
 		uint32_t chunk_size ;				// size of chunks
+		uint32_t flags ;
+		uint32_t strategy ;
 
 		// dl state of chunks. Only the last chunk may have size < chunk_size
 		std::vector<ChunkState> chunks ;	

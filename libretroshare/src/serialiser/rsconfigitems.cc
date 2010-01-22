@@ -197,6 +197,7 @@ uint32_t    RsFileConfigSerialiser::sizeTransfer(RsFileTransfer *item)
 	s += 4; /* lrate */
 	s += 4; /* ltransfer */
 	s += 4; // chunk_strategy
+	s += 4; // flags
 	s += 4; // chunk map size
 	s += 4*item->compressed_chunk_map._map.size(); // compressed_chunk_map
 
@@ -241,6 +242,7 @@ bool     RsFileConfigSerialiser::serialiseTransfer(RsFileTransfer *item, void *d
 	ok &= setRawUInt32(data, tlvsize, &offset, item->lrate);
 	ok &= setRawUInt32(data, tlvsize, &offset, item->ltransfer);
 
+	ok &= setRawUInt32(data, tlvsize, &offset, item->flags);
 	ok &= setRawUInt32(data, tlvsize, &offset, item->chunk_strategy);
 	ok &= setRawUInt32(data, tlvsize, &offset, item->compressed_chunk_map._map.size());
 
@@ -306,6 +308,7 @@ RsFileTransfer *RsFileConfigSerialiser::deserialiseTransfer(void *data, uint32_t
 	ok &= getRawUInt32(data, rssize, &offset, &(item->lrate));
 	ok &= getRawUInt32(data, rssize, &offset, &(item->ltransfer));
 
+	ok &= getRawUInt32(data, rssize, &offset, &(item->flags));
 	ok &= getRawUInt32(data, rssize, &offset, &(item->chunk_strategy));
 	uint32_t map_size = 0 ;
 	ok &= getRawUInt32(data, rssize, &offset, &map_size);

@@ -207,6 +207,7 @@ class RsFileTransfer: public RsItem
 		uint32_t ltransfer;
 
 		// chunk information
+		uint32_t flags ;
 		uint32_t chunk_strategy ;				// strategy flags for chunks
 		CompressedChunkMap compressed_chunk_map ;	// chunk availability (bitwise)
 };

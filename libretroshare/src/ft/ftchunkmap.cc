@@ -359,6 +359,7 @@ void ChunkMap::getChunksInfo(FileChunksInfo& info) const
 	info.file_size = _file_size ;
 	info.chunk_size = _chunk_size ;
 	info.chunks = _map ;
+	info.strategy = _strategy ;
 
 	info.active_chunks.clear() ;
 

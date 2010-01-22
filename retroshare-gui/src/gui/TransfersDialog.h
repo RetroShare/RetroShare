@@ -22,6 +22,8 @@
 #ifndef _TRANSFERSDIALOG_H
 #define _TRANSFERSDIALOG_H
 
+#include <set>
+
 #include <QFileDialog>
 #include <QProgressBar>
 #include <QtGui>
@@ -152,7 +154,7 @@ class TransfersDialog : public RsAutoUpdatePage
 		QAction *chunkStreamingAct;
 		QAction *detailsfileAct;
 
-	void getIdOfSelectedItems(QList<QStandardItem *>& items);
+	void getIdOfSelectedItems(std::set<QStandardItem *>& items);
     bool controlTransferFile(uint32_t flags);
     void changePriority(int priority);
 	void setChunkStrategy(FileChunksInfo::ChunkStrategy s) ;

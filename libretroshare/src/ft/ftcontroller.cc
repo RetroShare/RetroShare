@@ -112,6 +112,7 @@ bool ftController::getFileDownloadChunksDetails(const std::string& hash,FileChun
 		return false ;
 
 	it->second.mCreator->getChunkMap(info) ;
+	info.flags = it->second.mFlags ;
 
 	return true ;
 }
@@ -481,9 +482,11 @@ bool ftController::completeFile(std::string hash)
 		callbackCode = fc->mCallbackCode;
 
 		mDataplex->removeTransferModule(hash_to_suppress) ;
+		uint32_t flgs = fc->mFlags ;
 		mDownloads.erase(it);
 
-		mTurtle->stopMonitoringFileTunnels(hash_to_suppress) ;
+		if(flgs & RS_FILE_HINTS_NETWORK_WIDE)
+			mTurtle->stopMonitoringFileTunnels(hash_to_suppress) ;
 
 	} /******* UNLOCKED ********/
 
@@ -773,7 +776,9 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 	else
 	{
 		/* do a source search - for any extra sources */
-		if (mSearch->search(hash, RS_FILE_HINTS_REMOTE | RS_FILE_HINTS_SPEC_ONLY, info))
+		// add sources only in direct mode
+		//
+		if ((!(flags & RS_FILE_HINTS_NETWORK_WIDE)) && mSearch->search(hash, RS_FILE_HINTS_REMOTE | RS_FILE_HINTS_SPEC_ONLY, info))
 		{
 			/* do something with results */
 #ifdef CONTROL_DEBUG
@@ -840,7 +845,10 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
   	if(flags & RS_FILE_HINTS_NETWORK_WIDE)
 		mTurtle->monitorFileTunnels(fname,hash,size) ;
 	else
+	{
+		std::cerr << "Warning: no flags supplied. Assuming availability. This is probably a bug." << std::endl ;
 		flags |= RS_FILE_HINTS_ASSUME_AVAILABILITY ;
+	}
 
 	bool assume_source_availability = (flags & RS_FILE_HINTS_ASSUME_AVAILABILITY) > 0 ;
 
@@ -1498,7 +1506,7 @@ std::list<RsItem *> ftController::saveList(bool &cleanup)
 		rft->file.hash  = fit->second.mHash;
 		rft->file.filesize = fit->second.mSize;
 		rft->file.path = RsDirUtil::removeTopDir(fit->second.mDestination); /* remove fname */
-		//rft->flags = fit->second.mFlags;
+		rft->flags = fit->second.mFlags;
 
 		fit->second.mTransfer->getFileSources(rft->allPeerIds.ids);
 
@@ -1560,7 +1568,7 @@ bool ftController::loadList(std::list<RsItem *> load)
 			/* This will get stored on a waiting list - until the
 			 * config files are fully loaded
 			 */
-			FileRequest(rsft->file.name, rsft->file.hash, rsft->file.filesize, rsft->file.path, 0, rsft->allPeerIds.ids);
+			FileRequest(rsft->file.name, rsft->file.hash, rsft->file.filesize, rsft->file.path, rsft->flags, rsft->allPeerIds.ids);
 
 			{
 				RsStackMutex mtx(ctrlMutex) ;

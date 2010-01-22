@@ -23,6 +23,7 @@
 	#include <windows.h>
 #endif
 
+#include <set>
 
 #include "rshare.h"
 #include "TransfersDialog.h"
@@ -241,14 +242,18 @@ void TransfersDialog::keyPressEvent(QKeyEvent *e)
 
 void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 {
+	QMenu contextMnu( this );
+	QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
 
-      QMenu contextMnu( this );
-      QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
+	std::set<QStandardItem *> items;
+	std::set<QStandardItem *>::iterator it;
+	getIdOfSelectedItems(items);
 
+	bool single = (items.size() == 1) ;
 
-      /* check which item is selected
-       * - if it is completed - play should appear in menu
-       */
+	/* check which item is selected
+	 * - if it is completed - play should appear in menu
+	 */
 	std::cerr << "TransfersDialog::downloadListCostumPopupMenu()" << std::endl;
 
 	bool addPlayOption = false;
@@ -266,112 +271,142 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 			}
 		}
 	}
-      	QAction *playAct = NULL;
+	QAction *playAct = NULL;
 	if (addPlayOption)
 	{
-      		playAct = new QAction(QIcon(IMAGE_PLAY), tr( "Play" ), this );
-      		connect( playAct , SIGNAL( triggered() ), this, SLOT( playSelectedTransfer() ) );
+		playAct = new QAction(QIcon(IMAGE_PLAY), tr( "Play" ), this );
+		connect( playAct , SIGNAL( triggered() ), this, SLOT( playSelectedTransfer() ) );
 	}
-    	QAction *detailsAct = NULL;
-      pauseAct = new QAction(QIcon(IMAGE_PAUSE), tr("Pause"), this);
-      connect(pauseAct, SIGNAL(triggered()), this, SLOT(pauseFileTransfer()));
 
-      resumeAct = new QAction(QIcon(IMAGE_RESUME), tr("Resume"), this);
-      connect(resumeAct, SIGNAL(triggered()), this, SLOT(resumeFileTransfer()));
+		QAction *detailsAct = NULL;
+		pauseAct = new QAction(QIcon(IMAGE_PAUSE), tr("Pause"), this);
+		connect(pauseAct, SIGNAL(triggered()), this, SLOT(pauseFileTransfer()));
 
-      cancelAct = new QAction(QIcon(IMAGE_CANCEL), tr( "Cancel" ), this );
-      connect( cancelAct , SIGNAL( triggered() ), this, SLOT( cancel() ) );
+		resumeAct = new QAction(QIcon(IMAGE_RESUME), tr("Resume"), this);
+		connect(resumeAct, SIGNAL(triggered()), this, SLOT(resumeFileTransfer()));
 
-      openfolderAct = new QAction(QIcon(IMAGE_OPENFOLDER), tr("Open Folder"), this);
-      connect(openfolderAct, SIGNAL(triggered()), this, SLOT(openFolderTransfer()));
+		cancelAct = new QAction(QIcon(IMAGE_CANCEL), tr( "Cancel" ), this );
+		connect( cancelAct , SIGNAL( triggered() ), this, SLOT( cancel() ) );
 
-      openfileAct = new QAction(QIcon(IMAGE_OPENFILE), tr("Open File"), this);
-      connect(openfileAct, SIGNAL(triggered()), this, SLOT(openTransfer()));
+	openfolderAct = new QAction(QIcon(IMAGE_OPENFOLDER), tr("Open Folder"), this);
+	connect(openfolderAct, SIGNAL(triggered()), this, SLOT(openFolderTransfer()));
 
-      previewfileAct = new QAction(QIcon(IMAGE_PREVIEW), tr("Preview File"), this);
-      connect(previewfileAct, SIGNAL(triggered()), this, SLOT(previewTransfer()));
-      
-      detailsfileAct = new QAction(QIcon(IMAGE_INFO), tr("Details..."), this);
-      connect(detailsfileAct, SIGNAL(triggered()), this, SLOT(showDetailsDialog()));
+		openfileAct = new QAction(QIcon(IMAGE_OPENFILE), tr("Open File"), this);
+		connect(openfileAct, SIGNAL(triggered()), this, SLOT(openTransfer()));
 
-      clearcompletedAct = new QAction(QIcon(IMAGE_CLEARCOMPLETED), tr( "Clear Completed" ), this );
-      connect( clearcompletedAct , SIGNAL( triggered() ), this, SLOT( clearcompleted() ) );
+		previewfileAct = new QAction(QIcon(IMAGE_PREVIEW), tr("Preview File"), this);
+		connect(previewfileAct, SIGNAL(triggered()), this, SLOT(previewTransfer()));
 
-      copylinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Link" ), this );
-      connect( copylinkAct , SIGNAL( triggered() ), this, SLOT( copyLink() ) );
+		detailsfileAct = new QAction(QIcon(IMAGE_INFO), tr("Details..."), this);
+		connect(detailsfileAct, SIGNAL(triggered()), this, SLOT(showDetailsDialog()));
 
-      pastelinkAct = new QAction(QIcon(IMAGE_PASTELINK), tr( "Paste retroshare Link" ), this );
-      connect( pastelinkAct , SIGNAL( triggered() ), this, SLOT( pasteLink() ) );
+	clearcompletedAct = new QAction(QIcon(IMAGE_CLEARCOMPLETED), tr( "Clear Completed" ), this );
+	connect( clearcompletedAct , SIGNAL( triggered() ), this, SLOT( clearcompleted() ) );
 
-      rootisnotdecoratedAct = new QAction(QIcon(), tr( "Set Root is not Decorated" ), this );
-      connect( rootisnotdecoratedAct , SIGNAL( triggered() ), this, SLOT( rootisnotdecorated() ) );
+#ifndef RS_RELEASE_VERSION
+	copylinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Link" ), this );
+	connect( copylinkAct , SIGNAL( triggered() ), this, SLOT( copyLink() ) );
+#endif
 
-      rootisdecoratedAct = new QAction(QIcon(), tr( "Set Root is Decorated" ), this );
-      connect( rootisdecoratedAct , SIGNAL( triggered() ), this, SLOT( rootdecorated() ) );
+	pastelinkAct = new QAction(QIcon(IMAGE_PASTELINK), tr( "Paste retroshare Link" ), this );
+	connect( pastelinkAct , SIGNAL( triggered() ), this, SLOT( pasteLink() ) );
 
-      QMenu *viewMenu = new QMenu( tr("View"), this );
-      viewMenu->addAction(rootisnotdecoratedAct);
-      viewMenu->addAction(rootisdecoratedAct);
+	rootisnotdecoratedAct = new QAction(QIcon(), tr( "Set Root is not Decorated" ), this );
+	connect( rootisnotdecoratedAct , SIGNAL( triggered() ), this, SLOT( rootisnotdecorated() ) );
 
-	  clearQueuedDwlAct = new QAction(QIcon(), tr("Clear from Queue"), this);
-	  connect(clearQueuedDwlAct, SIGNAL(triggered()), this, SLOT(clearQueuedDwl()));
-	  clearQueueAct = new QAction(QIcon(), tr("Clear Queue"), this);
-	  connect(clearQueueAct, SIGNAL(triggered()), this, SLOT(clearQueue()));
+	rootisdecoratedAct = new QAction(QIcon(), tr( "Set Root is Decorated" ), this );
+	connect( rootisdecoratedAct , SIGNAL( triggered() ), this, SLOT( rootdecorated() ) );
 
-	  priorityLowAct = new QAction(QIcon(IMAGE_PRIORITYLOW), tr("Low"), this);
-	  connect(priorityLowAct, SIGNAL(triggered()), this, SLOT(priorityLow()));
-	  priorityNormalAct = new QAction(QIcon(IMAGE_PRIORITYNORMAL), tr("Normal"), this);
-	  connect(priorityNormalAct, SIGNAL(triggered()), this, SLOT(priorityNormal()));
-	  priorityHighAct = new QAction(QIcon(IMAGE_PRIORITYHIGH), tr("High"), this);
-	  connect(priorityHighAct, SIGNAL(triggered()), this, SLOT(priorityHigh()));
-	  priorityAutoAct = new QAction(QIcon(IMAGE_PRIORITYAUTO), tr("Auto"), this);
-	  connect(priorityAutoAct, SIGNAL(triggered()), this, SLOT(priorityAuto()));
+	QMenu *viewMenu = new QMenu( tr("View"), this );
+	viewMenu->addAction(rootisnotdecoratedAct);
+	viewMenu->addAction(rootisdecoratedAct);
 
-	  QMenu *priorityMenu = new QMenu(tr("Priority (Download)"), this);
-	  priorityMenu->setIcon(QIcon(IMAGE_PRIORITY));
-	  priorityMenu->addAction(priorityLowAct);
-	  priorityMenu->addAction(priorityNormalAct);
-	  priorityMenu->addAction(priorityHighAct);
-	  priorityMenu->addAction(priorityAutoAct);
+	clearQueuedDwlAct = new QAction(QIcon(), tr("Clear from Queue"), this);
+	connect(clearQueuedDwlAct, SIGNAL(triggered()), this, SLOT(clearQueuedDwl()));
+	clearQueueAct = new QAction(QIcon(), tr("Clear Queue"), this);
+	connect(clearQueueAct, SIGNAL(triggered()), this, SLOT(clearQueue()));
 
-	  chunkStreamingAct = new QAction(QIcon(IMAGE_PRIORITYAUTO), tr("Streaming"), this);
-	  connect(chunkStreamingAct, SIGNAL(triggered()), this, SLOT(chunkStreaming()));
-	  chunkRandomAct = new QAction(QIcon(IMAGE_PRIORITYAUTO), tr("Random"), this);
-	  connect(chunkRandomAct, SIGNAL(triggered()), this, SLOT(chunkRandom()));
+	priorityLowAct = new QAction(QIcon(IMAGE_PRIORITYLOW), tr("Low"), this);
+	connect(priorityLowAct, SIGNAL(triggered()), this, SLOT(priorityLow()));
+	priorityNormalAct = new QAction(QIcon(IMAGE_PRIORITYNORMAL), tr("Normal"), this);
+	connect(priorityNormalAct, SIGNAL(triggered()), this, SLOT(priorityNormal()));
+	priorityHighAct = new QAction(QIcon(IMAGE_PRIORITYHIGH), tr("High"), this);
+	connect(priorityHighAct, SIGNAL(triggered()), this, SLOT(priorityHigh()));
+	priorityAutoAct = new QAction(QIcon(IMAGE_PRIORITYAUTO), tr("Auto"), this);
+	connect(priorityAutoAct, SIGNAL(triggered()), this, SLOT(priorityAuto()));
 
-	  QMenu *chunkMenu = new QMenu(tr("Chunk strategy"), this);
-	  chunkMenu->setIcon(QIcon(IMAGE_PRIORITY));
-	  chunkMenu->addAction(chunkStreamingAct);
-	  chunkMenu->addAction(chunkRandomAct);
+		QMenu *priorityMenu = new QMenu(tr("Priority (Download)"), this);
+		priorityMenu->setIcon(QIcon(IMAGE_PRIORITY));
+		priorityMenu->addAction(priorityLowAct);
+		priorityMenu->addAction(priorityNormalAct);
+		priorityMenu->addAction(priorityHighAct);
+		priorityMenu->addAction(priorityAutoAct);
 
-      contextMnu.clear();
-      if (addPlayOption)
-      {
-      	contextMnu.addAction(playAct);
-      }
-      contextMnu.addSeparator();
-      contextMnu.addMenu( priorityMenu);
-      contextMnu.addMenu( chunkMenu);
-      contextMnu.addAction( pauseAct);
-      contextMnu.addAction( resumeAct);
-      contextMnu.addAction( cancelAct);
-      contextMnu.addSeparator();
-      contextMnu.addAction( openfileAct);
-      contextMnu.addAction( previewfileAct);
-      contextMnu.addAction( openfolderAct);
-      contextMnu.addAction( detailsfileAct);
-      contextMnu.addSeparator();
-      contextMnu.addAction( clearcompletedAct);
-      contextMnu.addSeparator();
-      contextMnu.addAction( copylinkAct);
-      contextMnu.addAction( pastelinkAct);
-      contextMnu.addSeparator();
-      contextMnu.addAction( clearQueuedDwlAct);
-      contextMnu.addAction( clearQueueAct);
-      contextMnu.addSeparator();
-      contextMnu.addMenu( viewMenu);
+		chunkStreamingAct = new QAction(QIcon(IMAGE_PRIORITYAUTO), tr("Streaming"), this);
+		connect(chunkStreamingAct, SIGNAL(triggered()), this, SLOT(chunkStreaming()));
+		chunkRandomAct = new QAction(QIcon(IMAGE_PRIORITYAUTO), tr("Random"), this);
+		connect(chunkRandomAct, SIGNAL(triggered()), this, SLOT(chunkRandom()));
 
-      contextMnu.exec( mevent->globalPos() );
+		QMenu *chunkMenu = new QMenu(tr("Chunk strategy"), this);
+		chunkMenu->setIcon(QIcon(IMAGE_PRIORITY));
+		chunkMenu->addAction(chunkStreamingAct);
+		chunkMenu->addAction(chunkRandomAct);
+
+	contextMnu.clear();
+	if (addPlayOption)
+	{
+		contextMnu.addAction(playAct);
+	}
+	contextMnu.addSeparator();
+
+	if(!items.empty())
+	{
+		bool all_paused = true ;
+		bool all_downld = true ;
+
+		QModelIndexList lst = ui.downloadList->selectionModel ()->selectedIndexes ();
+
+		for (int i = 0; i < lst.count (); i++)
+		{
+			if ( lst[i].column() == 0 && lst[i].model ()->data (lst[i].model ()->index (lst[i].row (), STATUS )).toString() == "Waiting")
+				all_downld = false ;
+			if ( lst[i].column() == 0 && lst[i].model ()->data (lst[i].model ()->index (lst[i].row (), STATUS )).toString() == "Downloading")
+				all_paused = false ;
+		}
+
+		contextMnu.addMenu( priorityMenu);
+		contextMnu.addMenu( chunkMenu);
+
+		if(!all_paused)
+			contextMnu.addAction( pauseAct);
+		if(!all_downld)
+			contextMnu.addAction( resumeAct);
+		contextMnu.addAction( cancelAct);
+		contextMnu.addSeparator();
+	}
+#ifndef RS_RELEASE_VERSION
+	if(single)
+	{
+		contextMnu.addAction( openfileAct);
+		contextMnu.addAction( previewfileAct);
+		contextMnu.addAction( openfolderAct);
+		contextMnu.addAction( detailsfileAct);
+		contextMnu.addSeparator();
+	}
+#endif
+	contextMnu.addAction( clearcompletedAct);
+	contextMnu.addSeparator();
+#ifndef RS_RELEASE_VERSION
+	contextMnu.addAction( copylinkAct);
+#endif
+	contextMnu.addAction( pastelinkAct);
+	contextMnu.addSeparator();
+	contextMnu.addAction( clearQueuedDwlAct);
+	contextMnu.addAction( clearQueueAct);
+	contextMnu.addSeparator();
+	contextMnu.addMenu( viewMenu);
+
+	contextMnu.exec( mevent->globalPos() );
 }
 
 void TransfersDialog::playSelectedTransfer()
@@ -1201,7 +1236,7 @@ void TransfersDialog::pasteLink()
     }
 }
 
-void TransfersDialog::getIdOfSelectedItems(QList<QStandardItem *>& items)
+void TransfersDialog::getIdOfSelectedItems(std::set<QStandardItem *>& items)
 {
 	items.clear();
 
@@ -1230,7 +1265,7 @@ void TransfersDialog::getIdOfSelectedItems(QList<QStandardItem *>& items)
 		/* if transfered file or it's peers are selected control it*/
 		if (isParentSelected || isChildSelected) {
 			QStandardItem *id = DLListModel->item(i, ID);
-			items.append(id);
+			items.insert(id);
 		}
 	}
 }
@@ -1239,8 +1274,8 @@ bool TransfersDialog::controlTransferFile(uint32_t flags)
 {
 	bool result = true;
 
-	QList<QStandardItem *> items;
-	QList<QStandardItem *>::iterator it;
+	std::set<QStandardItem *> items;
+	std::set<QStandardItem *>::iterator it;
 	getIdOfSelectedItems(items);
 	for (it = items.begin(); it != items.end(); it ++) {
 		result &= rsFiles->FileControl((*it)->data(Qt::DisplayRole).toString().toStdString(), flags);
@@ -1269,8 +1304,8 @@ void TransfersDialog::openFolderTransfer()
 {
 	FileInfo info;
 
-	QList<QStandardItem *> items;
-	QList<QStandardItem *>::iterator it;
+	std::set<QStandardItem *> items;
+	std::set<QStandardItem *>::iterator it;
 	getIdOfSelectedItems(items);
 	for (it = items.begin(); it != items.end(); it ++) {
 		if (!rsFiles->FileDetails((*it)->data(Qt::DisplayRole).toString().toStdString(), RS_FILE_HINTS_DOWNLOAD, info)) continue;
@@ -1299,8 +1334,8 @@ void TransfersDialog::previewTransfer()
 {
 	FileInfo info;
 
-	QList<QStandardItem *> items;
-	QList<QStandardItem *>::iterator it;
+	std::set<QStandardItem *> items;
+	std::set<QStandardItem *>::iterator it;
 	getIdOfSelectedItems(items);
 	for (it = items.begin(); it != items.end(); it ++) {
 		if (!rsFiles->FileDetails((*it)->data(Qt::DisplayRole).toString().toStdString(), RS_FILE_HINTS_DOWNLOAD, info)) continue;
@@ -1359,8 +1394,8 @@ void TransfersDialog::openTransfer()
 {
 	FileInfo info;
 
-	QList<QStandardItem *> items;
-	QList<QStandardItem *>::iterator it;
+	std::set<QStandardItem *> items;
+	std::set<QStandardItem *>::iterator it;
 	getIdOfSelectedItems(items);
 	for (it = items.begin(); it != items.end(); it ++) {
 		if (!rsFiles->FileDetails((*it)->data(Qt::DisplayRole).toString().toStdString(), RS_FILE_HINTS_DOWNLOAD, info)) continue;
@@ -1390,8 +1425,8 @@ void TransfersDialog::openTransfer()
 /* clear download or all queue - for pending dwls */
 void TransfersDialog::clearQueuedDwl()
 {
-	QList<QStandardItem *> items;
-	QList<QStandardItem *>::iterator it;
+	std::set<QStandardItem *> items;
+	std::set<QStandardItem *>::iterator it;
 	getIdOfSelectedItems(items);
 
 	for (it = items.begin(); it != items.end(); it ++) {
@@ -1414,8 +1449,8 @@ void TransfersDialog::chunkRandom()
 }
 void TransfersDialog::setChunkStrategy(FileChunksInfo::ChunkStrategy s)
 {
-	QList<QStandardItem *> items;
-	QList<QStandardItem *>::iterator it;
+	std::set<QStandardItem *> items;
+	std::set<QStandardItem *>::iterator it;
 	getIdOfSelectedItems(items);
 
 	for (it = items.begin(); it != items.end(); it ++) {
@@ -1443,8 +1478,8 @@ void TransfersDialog::priorityAuto()
 
 void TransfersDialog::changePriority(int priority)
 {
-	QList<QStandardItem *> items;
-	QList<QStandardItem *>::iterator it;
+	std::set<QStandardItem *> items;
+	std::set<QStandardItem *>::iterator it;
 	getIdOfSelectedItems(items);
 
 	for (it = items.begin(); it != items.end(); it ++) {
