@@ -28,8 +28,11 @@
 #include <QTimer>
 
 #include "gui/mainpage.h"
-#include "ui_StatisticDialog.h"
 #include "gui/linetypes.h"
+
+#include "gui/settings/rsharesettings.h"
+
+#include "ui_StatisticDialog.h"
 
 /** Redraw graph every 1000ms **/
 #define REFRESH_RATE    1000

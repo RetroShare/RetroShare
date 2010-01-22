@@ -22,6 +22,7 @@
 #include "rshare.h"
 #include "StatisticDialog.h"
 #include <control/bandwidthevent.h>
+
 #include "rsiface/rsiface.h"
 
 #include <QTime>

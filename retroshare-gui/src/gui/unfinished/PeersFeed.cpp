@@ -142,19 +142,19 @@ void  PeersFeed::updatePeers()
 	{
 		rsPeers->getFriendList(peers);
 	}
-	else if (mMode == PEERSFEED_MODE_ONLINE)
+	if(mMode == PEERSFEED_MODE_ONLINE)
 	{
 		rsPeers->getOnlineList(peers);
 	}
-	else if (mMode == PEERSFEED_MODE_ALL)
+	/*else if (mMode == PEERSFEED_MODE_ALL)
 	{
 		rsPeers->getOthersList(peers);
 	}
 	else
 	{
-		rsPeers->getOthersList(peers);
+		rsPeers->getOthersList(peers);*/
 		/* now remove friends */
-		for(it = peers.begin(); it != peers.end(); )
+		/*for(it = peers.begin(); it != peers.end(); )
 		{
 			if (rsPeers->isFriend(*it))
 			{
@@ -165,7 +165,7 @@ void  PeersFeed::updatePeers()
 				it++;
 			}
 		}
-	}
+	}*/
 
 	for(it = peers.begin(); it != peers.end(); it++)
 	{
