@@ -67,6 +67,10 @@ private slots:
 
   /* handle splitter */
   void togglefileview();
+  
+  void buttonstextbesideicon();
+  void buttonsicononly();
+  void buttonstextundericon();
 
 private:
 

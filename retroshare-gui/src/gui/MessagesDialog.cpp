@@ -83,6 +83,11 @@ MessagesDialog::MessagesDialog(QWidget *parent)
   
   connect( ui.msgText, SIGNAL( anchorClicked(const QUrl &)), SLOT(anchorClicked(const QUrl &)));
   
+  connect(ui.actionTextBesideIcon, SIGNAL(triggered()), this, SLOT(buttonstextbesideicon()));
+  connect(ui.actionIconOnly, SIGNAL(triggered()), this, SLOT(buttonsicononly()));
+  connect(ui.actionTextUnderIcon, SIGNAL(triggered()), this, SLOT(buttonstextundericon()));
+  
+  
 
   mCurrCertId = "";
   mCurrMsgId  = "";
@@ -112,13 +117,6 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 	msglheader->resizeSection ( 1, 100 );
 	msglheader->resizeSection ( 2, 100 );
 	msglheader->resizeSection ( 3, 200 );
-	
-	ui.newmessageButton->setIcon(QIcon(QString(":/images/folder-draft24-pressed.png")));
-  ui.replymessageButton->setIcon(QIcon(QString(":/images/replymail-pressed.png")));
-	ui.replyallmessageButton->setIcon(QIcon(QString(":/images/replymailall24-hover.png")));
-	ui.forwardmessageButton->setIcon(QIcon(QString(":/images/mailforward24-hover.png")));
-  ui.removemessageButton->setIcon(QIcon(QString(":/images/deletemail-pressed.png")));
-  ui.printbutton->setIcon(QIcon(QString(":/images/print24.png")));
 
 	ui.forwardmessageButton->setToolTip(tr("Forward selected Message"));
  	ui.replyallmessageButton->setToolTip(tr("Reply to All"));
@@ -127,6 +125,12 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     printmenu->addAction(ui.actionPrint);
     printmenu->addAction(ui.actionPrintPreview);
     ui.printbutton->setMenu(printmenu);
+    
+    QMenu * viewmenu = new QMenu();
+    viewmenu->addAction(ui.actionTextBesideIcon);
+    viewmenu->addAction(ui.actionIconOnly);
+    viewmenu->addAction(ui.actionTextUnderIcon);
+    ui.viewtoolButton->setMenu(viewmenu);
 
 	 ui.msgWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
 	 ui.msgWidget->sortItems( 3, Qt::DescendingOrder );
@@ -957,4 +961,39 @@ void MessagesDialog::anchorClicked (const QUrl& link )
 		newAddress.prepend("http://");
 		QDesktopServices::openUrl(QUrl(newAddress));
 	}
+}
+
+void MessagesDialog::buttonsicononly()
+{
+    ui.newmessageButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+    ui.removemessageButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+    ui.replymessageButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+    ui.replyallmessageButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+    ui.forwardmessageButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+    ui.printbutton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+    ui.viewtoolButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+}
+
+void MessagesDialog::buttonstextbesideicon()
+{
+    ui.newmessageButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    ui.removemessageButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    ui.replymessageButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    ui.replyallmessageButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    ui.forwardmessageButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    ui.printbutton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    ui.viewtoolButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+
+}
+
+void MessagesDialog::buttonstextundericon()
+{
+    ui.newmessageButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    ui.removemessageButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    ui.replymessageButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    ui.replyallmessageButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    ui.forwardmessageButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    ui.printbutton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    ui.viewtoolButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+
 }
