@@ -35,7 +35,6 @@
 #include <iostream>
 #include <string>
 
-
 #include <QContextMenuEvent>
 #include <QMenu>
 #include <QCursor>
@@ -87,7 +86,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
   connect(ui.actionIconOnly, SIGNAL(triggered()), this, SLOT(buttonsicononly()));
   connect(ui.actionTextUnderIcon, SIGNAL(triggered()), this, SLOT(buttonstextundericon()));
   
-  
+  connect(ui.actionSave_as, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
 
   mCurrCertId = "";
   mCurrMsgId  = "";
@@ -192,7 +191,10 @@ void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint point )
 			connect( removemsgAct , SIGNAL( triggered() ), this, SLOT( removemessage() ) );
 			contextMnu.addAction( removemsgAct);
 		}
-
+      contextMnu.addAction( ui.actionSave_as);
+		  contextMnu.addAction( ui.actionPrintPreview);
+      contextMnu.addAction( ui.actionPrint);
+      contextMnu.addSeparator(); 
       contextMnu.addAction( newmsgAct);
       contextMnu.exec( mevent->globalPos() );
 }
@@ -961,6 +963,39 @@ void MessagesDialog::anchorClicked (const QUrl& link )
 		newAddress.prepend("http://");
 		QDesktopServices::openUrl(QUrl(newAddress));
 	}
+}
+
+bool MessagesDialog::fileSave()
+{
+    if (fileName.isEmpty())
+        return fileSaveAs();
+
+    QFile file(fileName);
+    if (!file.open(QFile::WriteOnly))
+        return false;
+    QTextStream ts(&file);
+    ts.setCodec(QTextCodec::codecForName("UTF-8"));
+    ts << ui.msgText->document()->toHtml("UTF-8");
+    ui.msgText->document()->setModified(false);
+    return true;
+}
+
+bool MessagesDialog::fileSaveAs()
+{
+    QString fn = QFileDialog::getSaveFileName(this, tr("Save as..."),
+                                              QString(), tr("HTML-Files (*.htm *.html);;All Files (*)"));
+    if (fn.isEmpty())
+        return false;
+    setCurrentFileName(fn);
+    return fileSave();
+}
+
+void MessagesDialog::setCurrentFileName(const QString &fileName)
+{
+    this->fileName = fileName;
+    ui.msgText->document()->setModified(false);
+
+    setWindowModified(false);
 }
 
 void MessagesDialog::buttonsicononly()

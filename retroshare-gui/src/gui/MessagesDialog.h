@@ -58,6 +58,9 @@ private slots:
   void print();
   void printpreview();
   
+  bool fileSave();
+  bool fileSaveAs();
+  
   void removemessage();
   
   void anchorClicked (const QUrl &);
@@ -76,6 +79,8 @@ private:
 
   bool getCurrentMsg(std::string &cid, std::string &mid);
   void setMsgAsRead(QTreeWidgetItem *);
+  
+  void setCurrentFileName(const QString &fileName);
 
   std::string mCurrCertId;
   std::string mCurrMsgId;
@@ -92,6 +97,9 @@ private:
 
   QAction* getRecAct;
   QAction* getAllRecAct;
+     
+  QString fileName;
+
   
   /** Qt Designer generated object */
   Ui::MessagesDialog ui;
