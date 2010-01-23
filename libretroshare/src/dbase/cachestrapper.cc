@@ -832,9 +832,20 @@ bool CacheStrapper::loadList(std::list<RsItem *> load)
 			CacheData cd;
 
 			cd.pid = rscc->pid;
-                        peerConnectState pca;
-                        mConnMgr->getFriendNetStatus(rscc->pid, pca);
-                        cd.pname = pca.name;
+
+			if(cd.pid == mConnMgr->getOwnId())
+			{
+				peerConnectState pca;
+				mConnMgr->getOwnNetStatus(pca);
+				cd.pname = pca.name+" ("+pca.location+")";
+			}
+			else
+			{
+				peerConnectState pca;
+				mConnMgr->getFriendNetStatus(rscc->pid, pca);
+				cd.pname = pca.name+" ("+pca.location+")";
+			}
+
 			cd.cid.type = rscc->cachetypeid;
 			cd.cid.subid = rscc->cachesubid;
 			cd.path = rscc->path;
