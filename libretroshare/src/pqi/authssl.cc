@@ -1147,6 +1147,7 @@ bool AuthSSL::SignDataBin(const void *data, const uint32_t len,
 	return true;
 }
 
+#define AUTHSSL_DEBUG2
 
 bool AuthSSL::VerifySignBin(const void *data, const uint32_t len,
                        	unsigned char *sign, unsigned int signlen)
@@ -1154,13 +1155,21 @@ bool AuthSSL::VerifySignBin(const void *data, const uint32_t len,
 	RsStackMutex stack(sslMtx);   /***** STACK LOCK MUTEX *****/
 
 	/* find the peer */
+#ifdef AUTHSSL_DEBUG2
+	std::cerr << "In AuthSSL::VerifySignBin" << std::endl ;
+#endif
 	
         sslcert *peer = mOwnCert;
 
 	EVP_PKEY *peerkey = peer->certificate->cert_info->key->pkey;
 
 	if(peerkey == NULL)
+	{
+#ifdef AUTHSSL_DEBUG2
+		std::cerr << "AuthSSL::VerifySignBin: no public key available !!" << std::endl ;
+#endif
 		return false ;
+	}
 
 	EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
 	
@@ -1182,6 +1191,9 @@ bool AuthSSL::VerifySignBin(const void *data, const uint32_t len,
 
 	if(signlen == 0 || sign == NULL)
 	{
+#ifdef AUTHSSL_DEBUG2
+		std::cerr << "AuthSSL::VerifySignBin: signlen=" << signlen << ", sign=" << (void*)sign << "!!" << std::endl ;
+#endif
 		EVP_MD_CTX_destroy(mdctx);
 		return false ;
 	}
@@ -1679,7 +1691,7 @@ bool getX509id(X509 *x509, std::string &xid) {
 	/* switched to the other end of the signature. for
 	 * more randomness
 	 */
-	for(uint32_t i = signlen - CERTSIGNLEN; i < signlen; i++)
+	for(int i = signlen - CERTSIGNLEN; i < signlen; i++)
 	{
 		id << std::hex << std::setw(2) << std::setfill('0') 
 			<< (uint16_t) (((uint8_t *) (signdata))[i]);
@@ -1907,7 +1919,9 @@ bool AuthSSL::AuthX509(X509 *x509)
         /* extract CN for peer Id */
         std::string issuer = getX509CNString(x509->cert_info->issuer);
         RsPeerDetails pd;
-        if (!AuthGPG::getAuthGPG()->getGPGDetails(issuer, pd)) {
+		  std::cerr << "Checking GPG issuer : " << issuer << std::endl ;
+        if (!AuthGPG::getAuthGPG()->getGPGDetails(issuer, pd)) 
+		  {
             std::cerr << "AuthSSL::AuthX509() X509 NOT authenticated : AuthGPG::getAuthGPG()->getGPGDetails() returned false." << std::endl;
             return false;
         }
@@ -1991,6 +2005,10 @@ bool AuthSSL::AuthX509(X509 *x509)
         /* NOW check sign via GPG Functions */
         //get the fingerprint of the key that is supposed to sign
         std::cerr << "AuthSSL::AuthX509() verifying the gpg sig with keyprint : " << pd.fpr << std::endl;
+		  std::cerr << "Sigoutl = " << sigoutl << std::endl ;
+		  std::cerr << "pd.fpr = " << pd.fpr << std::endl ;
+		  std::cerr << "hashoutl = " << hashoutl << std::endl ;
+
         if (!AuthGPG::getAuthGPG()->VerifySignBin(buf_hashout, hashoutl, buf_sigout, (unsigned int) sigoutl, pd.fpr)) {
                 sigoutl = 0;
                 goto err;
@@ -2007,20 +2025,29 @@ bool AuthSSL::AuthX509(X509 *x509)
 bool    AuthSSL::ValidateCertificate(X509 *x509, std::string &peerId)
 {
 	/* check self signed */
-        if (!AuthX509(x509) || !getX509id(x509, peerId)) {
+	if (!AuthX509(x509))
+	{
 #ifdef AUTHSSL_DEBUG
-        std::cerr << "AuthSSL::ValidateCertificate() bad certificate.";
-        std::cerr << std::endl;
+		std::cerr << "AuthSSL::ValidateCertificate() bad certificate.";
+		std::cerr << std::endl;
 #endif
-                return false;
+		return false;
+	}
+	if(!getX509id(x509, peerId)) 
+	{
+#ifdef AUTHSSL_DEBUG
+		std::cerr << "AuthSSL::ValidateCertificate() Cannot retrieve peer id from certificate..";
+		std::cerr << std::endl;
+#endif
+		return false;
 	}
 
 #ifdef AUTHSSL_DEBUG
-        std::cerr << "AuthSSL::ValidateCertificate() good certificate.";
+	std::cerr << "AuthSSL::ValidateCertificate() good certificate.";
 	std::cerr << std::endl;
 #endif
 
-        return true;
+	return true;
 }
 
 /* store for discovery */
@@ -2039,6 +2066,8 @@ bool    AuthSSL::encrypt(void *&out, int &outlen, const void *in, int inlen, std
         out = malloc(inlen);
         memcpy(out, in, inlen);
         outlen = inlen;
+
+		  return true ;
 }
 
 bool    AuthSSL::decrypt(void *&out, int &outlen, const void *in, int inlen)
@@ -2050,6 +2079,8 @@ bool    AuthSSL::decrypt(void *&out, int &outlen, const void *in, int inlen)
         out = malloc(inlen);
         memcpy(out, in, inlen);
         outlen = inlen;
+
+		  return true ;
 }
 
 
@@ -2160,9 +2191,9 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
                         {
                                 fprintf(stderr, "AuthSSL::VerifyX509Callback() pgp key not signed by ourself : \n");
                                 fprintf(stderr, "issuer pgpid : ");
-                                fprintf(stderr, pgpid.c_str());
+                                fprintf(stderr, "%s\n",pgpid.c_str());
                                 fprintf(stderr, "\n AuthGPG::getAuthGPG()->getGPGOwnId() : ");
-                                fprintf(stderr, AuthGPG::getAuthGPG()->getGPGOwnId().c_str());
+                                fprintf(stderr, "%s\n",AuthGPG::getAuthGPG()->getGPGOwnId().c_str());
                                 fprintf(stderr, "\n");
                                 return false;
                         }
@@ -2176,9 +2207,9 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
                         {
                                 fprintf(stderr, "AuthSSL::VerifyX509Callback() pgp key not signed by ourself : \n");
                                 fprintf(stderr, "issuer pgpid : ");
-                                fprintf(stderr, pgpid.c_str());
+                                fprintf(stderr, "%s\n",pgpid.c_str());
                                 fprintf(stderr, "\n AuthGPG::getAuthGPG()->getGPGOwnId() : ");
-                                fprintf(stderr, AuthGPG::getAuthGPG()->getGPGOwnId().c_str());
+                                fprintf(stderr, "%s\n",AuthGPG::getAuthGPG()->getGPGOwnId().c_str());
                                 fprintf(stderr, "\n");
                                 return false;
                         }
@@ -2258,11 +2289,9 @@ int	LoadCheckX509andGetLocation(const char *cert_file, std::string &location, st
         FILE *tmpfp = fopen(cert_file, "r");
 	if (tmpfp == NULL)
 	{
-#ifdef AUTHSSL_DEBUG
 		std::cerr << "sslroot::LoadCheckAndGetX509Name()";
 		std::cerr << " Failed to open Certificate File:" << cert_file;
 		std::cerr << std::endl;
-#endif
 		return 0;
 	}
 
@@ -2270,33 +2299,29 @@ int	LoadCheckX509andGetLocation(const char *cert_file, std::string &location, st
 	X509 *x509 = PEM_read_X509(tmpfp, NULL, NULL, NULL);
 	fclose(tmpfp);
 
+	if(x509 == NULL)
+	{
+		std::cerr << "PEM_read_X509 failed !!" << std::endl ;
+		return false ;
+	}
+
 	// check the certificate.
-	bool valid = false;
-	if (x509)
+	//
+
+	if (AuthSSL::getAuthSSL()->ValidateCertificate(x509, userId))
+		location = getX509LocString(x509->cert_info->subject);
+	else
 	{
-                valid =AuthSSL::getAuthSSL()->ValidateCertificate(x509, userId);
+		std::cerr << "certificate validation failed !!" << std::endl ;
+		return false ;
 	}
 
-	if (valid)
-	{
-		// extract the name.
-                location = getX509LocString(x509->cert_info->subject);
-	}
-
+	std::cerr << "getX509LocString ok. Info:" << std::endl ;
 	std::cout << getX509Info(x509) << std::endl ;
 	// clean up.
 	X509_free(x509);
 
-	if (valid)
-	{
-		// happy!
-		return 1;
-	}
-	else
-	{
-		// something went wrong!
-		return 0;
-	}
+	return true ;
 }
 
 
@@ -2464,7 +2489,6 @@ std::string getX509Info(X509 *cert)
 {
 	std::stringstream out;
 	long l;
-	int i,j;
 
 	out << "X509 Certificate:" << std::endl;
 	l=X509_get_version(cert);

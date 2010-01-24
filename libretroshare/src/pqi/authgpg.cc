@@ -293,6 +293,7 @@ bool   AuthGPG::storeAllKeys_timed() {
         RsStackMutex stack(pgpMtx); /******* LOCKED ******/
         storeAllKeys_locked();
     }
+	 return true ;
 }
 
 // store all keys in map mKeyList to avoid callin gpgme exe repeatedly
@@ -961,44 +962,44 @@ bool	AuthGPG::getGPGAllList(std::list<std::string> &ids)
 bool	AuthGPG::getGPGDetails(std::string id, RsPeerDetails &d)
 {
 #ifdef GPG_DEBUG
-        std::cerr << "AuthGPG::getPGPDetails() called for : " << id << std::endl;
+	std::cerr << "AuthGPG::getPGPDetails() called for : " << id << std::endl;
 #endif
 
-        storeAllKeys_timed();
-        RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+	storeAllKeys_timed();
+	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
 
-        /* add an id for each pgp certificate */
-        certmap::iterator it;
-        if (mKeyList.end() != (it = mKeyList.find(id))) {
-            d.id = it->second.id; //keep, it but can be bug gen
-            d.gpg_id = it->second.id;
-            d.name = it->second.name;
-            d.email = it->second.email;
-            d.trustLvl = it->second.trustLvl;
-            d.validLvl = it->second.validLvl;
-            d.ownsign = it->second.ownsign;
-            d.gpgSigners = it->second.signers;
-            d.fpr = it->second.fpr;
+	/* add an id for each pgp certificate */
+	certmap::iterator it;
+	if (mKeyList.end() != (it = mKeyList.find(id))) 
+	{
+		d.id = it->second.id; //keep, it but can be bug gen
+		d.gpg_id = it->second.id;
+		d.name = it->second.name;
+		d.email = it->second.email;
+		d.trustLvl = it->second.trustLvl;
+		d.validLvl = it->second.validLvl;
+		d.ownsign = it->second.ownsign;
+		d.gpgSigners = it->second.signers;
+		d.fpr = it->second.fpr;
 
-            d.accept_connection = it->second.accept_connection;
+		d.accept_connection = it->second.accept_connection;
 
-            //did the peer signed me ?
-            d.hasSignedMe = false;
-            std::list<std::string>::iterator signersIt;
-            for(signersIt = mOwnGpgCert.signers.begin(); signersIt != mOwnGpgCert.signers.end() ; ++signersIt) {
-                if (*signersIt == d.id) {
-                    d.hasSignedMe = true;
-                    break;
-                }
-            }
+		//did the peer signed me ?
+		d.hasSignedMe = false;
+		std::list<std::string>::iterator signersIt;
+		for(signersIt = mOwnGpgCert.signers.begin(); signersIt != mOwnGpgCert.signers.end() ; ++signersIt) 
+			if (*signersIt == d.id) 
+			{
+				d.hasSignedMe = true;
+				break;
+			}
 
 #ifdef GPG_DEBUG
-            std::cerr << "AuthGPG::getPGPDetails() Name : " << it->second.name << std::endl;
+		std::cerr << "AuthGPG::getPGPDetails() Name : " << it->second.name << std::endl;
 #endif
-            return true;
-        } else {
-            return false;
-        }
+		return true;
+	} 
+	return false;
 }
 
 bool 	AuthGPG::decryptText(gpgme_data_t CIPHER, gpgme_data_t PLAIN) {
@@ -1898,21 +1899,25 @@ static gpg_error_t keySignCallback(void *opaque, gpgme_status_code_t status, \
 	}
 
 	if (result)
-        {
+	{
 		fprintf(stderr,"keySignCallback result:%s\n", result);
 #ifndef WINDOWS_SYS
 		if (*result)
+		{
 			write (fd, result, strlen (result));
-          	write (fd, "\n", 1);
+			write (fd, "\n", 1);
+		}
 #else
 		DWORD written = 0;
 		HANDLE winFd = (HANDLE) fd;
 		if (*result)
+		{
 			WriteFile(winFd, result, strlen(result), &written, NULL);
-		WriteFile(winFd, "\n", 1, &written, NULL); 
+			WriteFile(winFd, "\n", 1, &written, NULL); 
+		}
 #endif
 
-        }
+	}
 	
 	fprintf(stderr,"keySignCallback Error status\n");
 	ProcessPGPmeError(params->err);
