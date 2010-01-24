@@ -821,11 +821,11 @@ bool AuthGPG::VerifySignature_locked(const void *data, int datalen, const void *
 	while(sg != NULL)
 	{
 #ifdef GPG_DEBUG
-		fprintf(stderr, "AuthGPG::Verify Sig by: %s, Result: %d\n", sg->fpr, sg->summary);
+        fprintf(stderr, "AuthGPG::Verify Sig by: %s, status: %d\n", sg->fpr, sg->status);
 		print_pgpme_verify_summary(sg->summary);
 #endif
 
-		if (sg->summary & GPGME_SIGSUM_VALID)
+		if (sg->status == GPG_ERR_NO_ERROR)
 		{
 #ifdef GPG_DEBUG
 			fprintf(stderr, "AuthGPG::VerifySignature() OK\n");

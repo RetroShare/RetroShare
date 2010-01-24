@@ -950,9 +950,10 @@ bool     RsInit::GenerateSSLCertificate(std::string gpg_id, std::string org, std
 	/* try to load it, and get Id */
 
         std::string location;
-	int ret = 0;
-
-        ret = LoadCheckX509andGetLocation(cert_name.c_str(), location, sslId);
+        if (LoadCheckX509andGetLocation(cert_name.c_str(), location, sslId) == 0) {
+            std::cerr << "RsInit::GenerateSSLCertificate() Cannot check own signature, maybe the files are corrupted." << std::endl;
+            return false;
+        }
 
 	/* Move directory to correct id */
 	std::string finalbase = RsInitConfig::basedir + RsInitConfig::dirSeperator + sslId + RsInitConfig::dirSeperator;
@@ -1106,7 +1107,9 @@ int RsInit::LoadCertificates(bool autoLoginNT)
                 gpgme_data_new_from_stream (&cipher, sslPassphraseFile);
                 if (0 < AuthGPG::getAuthGPG()->encryptText(plain, cipher)) {
 		    std::cerr << "Encrypting went ok !" << std::endl;
-		}
+                } else {
+                    std::cerr << "Encrypting went wrong !" << std::endl;
+                }
                 gpgme_data_release (cipher);
 		gpgme_data_release (plain);
 		fclose(sslPassphraseFile);
