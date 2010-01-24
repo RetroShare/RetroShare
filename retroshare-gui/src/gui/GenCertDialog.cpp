@@ -162,6 +162,14 @@ void GenCertDialog::genPerson()
             QVariant data = ui.genPGPuser->itemData(pgpidx);
             PGPId = (data.toString()).toStdString();
         } else {
+            if (ui.password_input->text().length() < 3 || ui.name_input->text().length() < 3) {
+                    /* Message Dialog */
+                    QMessageBox::StandardButton sb = QMessageBox::warning ( NULL,
+                                    tr("Generate GPG key Failure"),
+                                    tr("Your Name or password is too short (3+ characters)"),
+                                      QMessageBox::Ok);
+                    return;
+            }
             //generate a new gpg key
             std::string err_string;
             ui.no_gpg_key_label->setText(tr("Generating new GPG key, please be patient. Fill in your GPG password when asked."));
