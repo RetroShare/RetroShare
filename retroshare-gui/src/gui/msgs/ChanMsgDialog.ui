@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>770</width>
+    <width>874</width>
     <height>528</height>
    </rect>
   </property>
@@ -20,9 +20,13 @@
    <iconset resource="../images.qrc">
     <normaloff>:/images/folder-draft.png</normaloff>:/images/folder-draft.png</iconset>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QToolBar#toolBar{background-image: url(:/images/connect/connectFriendBanner.png)}
+</string>
+  </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
-    <item>
+   <layout class="QGridLayout" name="gridLayout_3">
+    <item row="0" column="0">
      <widget class="QSplitter" name="splitter_2">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
@@ -101,7 +105,10 @@
         <enum>Qt::Vertical</enum>
        </property>
        <widget class="QWidget" name="layoutWidget">
-        <layout class="QGridLayout" name="messagelayout">
+        <layout class="QGridLayout" name="gridLayout_2">
+         <property name="verticalSpacing">
+          <number>2</number>
+         </property>
          <item row="0" column="0">
           <layout class="QHBoxLayout">
            <property name="spacing">
@@ -130,175 +137,374 @@
           </layout>
          </item>
          <item row="1" column="0">
-          <layout class="QGridLayout">
-           <item row="0" column="0">
-            <widget class="QComboBox" name="comboStyle"/>
-           </item>
-           <item row="0" column="1">
-            <widget class="QFontComboBox" name="comboFont"/>
-           </item>
-           <item row="0" column="2">
-            <widget class="QComboBox" name="comboSize">
-             <property name="toolTip">
-              <string>Font size</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="3">
-            <widget class="QPushButton" name="boldbtn">
-             <property name="minimumSize">
-              <size>
-               <width>24</width>
-               <height>24</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>24</width>
-               <height>24</height>
-              </size>
-             </property>
-             <property name="toolTip">
-              <string>Bold</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="4">
-            <widget class="QPushButton" name="underlinebtn">
-             <property name="minimumSize">
-              <size>
-               <width>24</width>
-               <height>24</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>24</width>
-               <height>24</height>
-              </size>
-             </property>
-             <property name="toolTip">
-              <string>Underline</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="5">
-            <widget class="QPushButton" name="italicbtn">
-             <property name="minimumSize">
-              <size>
-               <width>24</width>
-               <height>24</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>24</width>
-               <height>24</height>
-              </size>
-             </property>
-             <property name="toolTip">
-              <string>Italic</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="6">
-            <widget class="QPushButton" name="colorbtn">
-             <property name="minimumSize">
-              <size>
-               <width>24</width>
-               <height>24</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>24</width>
-               <height>24</height>
-              </size>
-             </property>
-             <property name="toolTip">
-              <string>Color</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="7">
-            <widget class="QPushButton" name="textalignmentbtn">
-             <property name="minimumSize">
-              <size>
-               <width>24</width>
-               <height>24</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>24</width>
-               <height>24</height>
-              </size>
-             </property>
-             <property name="toolTip">
-              <string>Alignment</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="11">
-            <spacer>
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>24</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="0" column="8">
-            <widget class="QPushButton" name="imagebtn">
-             <property name="minimumSize">
-              <size>
-               <width>24</width>
-               <height>24</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>24</width>
-               <height>24</height>
-              </size>
-             </property>
-             <property name="toolTip">
-              <string>Add a Image</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-          </layout>
+          <widget class="QFrame" name="frame">
+           <property name="styleSheet">
+            <string notr="true">QFrame#frame{ 
+background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+stop:0 #FEFEFE, stop:1 #E8E8E8);
+
+border: 1px solid #CCCCCC;}</string>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QGridLayout" name="gridLayout">
+            <property name="margin">
+             <number>6</number>
+            </property>
+            <item row="0" column="0">
+             <layout class="QGridLayout">
+              <item row="0" column="0">
+               <widget class="QComboBox" name="comboStyle"/>
+              </item>
+              <item row="0" column="1">
+               <widget class="QFontComboBox" name="comboFont"/>
+              </item>
+              <item row="0" column="2">
+               <widget class="QComboBox" name="comboSize">
+                <property name="maximumSize">
+                 <size>
+                  <width>45</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="toolTip">
+                 <string>Font size</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="15">
+               <spacer>
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>24</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item row="0" column="3">
+               <widget class="QToolButton" name="blockquoteButton">
+                <property name="toolTip">
+                 <string>Blockquote</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="../images.qrc">
+                  <normaloff>:/images/textedit/hi22-action-format-text-blockquote.png</normaloff>:/images/textedit/hi22-action-format-text-blockquote.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>24</width>
+                  <height>24</height>
+                 </size>
+                </property>
+                <property name="autoRaise">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="4">
+               <widget class="QToolButton" name="sizeincreaseButton">
+                <property name="maximumSize">
+                 <size>
+                  <width>1677</width>
+                  <height>1677</height>
+                 </size>
+                </property>
+                <property name="toolTip">
+                 <string>Increase font size</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="../images.qrc">
+                  <normaloff>:/images/textedit/format_font_size_less.png</normaloff>:/images/textedit/format_font_size_less.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>24</width>
+                  <height>24</height>
+                 </size>
+                </property>
+                <property name="autoRaise">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="5">
+               <widget class="QToolButton" name="sizedecreaseButton">
+                <property name="maximumSize">
+                 <size>
+                  <width>167</width>
+                  <height>167</height>
+                 </size>
+                </property>
+                <property name="toolTip">
+                 <string>Decrease font size</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="../images.qrc">
+                  <normaloff>:/images/textedit/format_font_size_more.png</normaloff>:/images/textedit/format_font_size_more.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>24</width>
+                  <height>24</height>
+                 </size>
+                </property>
+                <property name="autoRaise">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="6">
+               <widget class="QToolButton" name="boldbtn">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>1677</width>
+                  <height>1677</height>
+                 </size>
+                </property>
+                <property name="toolTip">
+                 <string>Bold</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="../images.qrc">
+                  <normaloff>:/images/textedit/textbold.png</normaloff>:/images/textedit/textbold.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>24</width>
+                  <height>24</height>
+                 </size>
+                </property>
+                <property name="checkable">
+                 <bool>true</bool>
+                </property>
+                <property name="autoRaise">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="7">
+               <widget class="QToolButton" name="underlinebtn">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>167</width>
+                  <height>167</height>
+                 </size>
+                </property>
+                <property name="toolTip">
+                 <string>Underline</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="../images.qrc">
+                  <normaloff>:/images/textedit/textunder.png</normaloff>:/images/textedit/textunder.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>24</width>
+                  <height>24</height>
+                 </size>
+                </property>
+                <property name="checkable">
+                 <bool>true</bool>
+                </property>
+                <property name="autoRaise">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="8">
+               <widget class="QToolButton" name="italicbtn">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>167</width>
+                  <height>167</height>
+                 </size>
+                </property>
+                <property name="toolTip">
+                 <string>Italic</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="../images.qrc">
+                  <normaloff>:/images/textedit/textitalic.png</normaloff>:/images/textedit/textitalic.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>24</width>
+                  <height>24</height>
+                 </size>
+                </property>
+                <property name="checkable">
+                 <bool>true</bool>
+                </property>
+                <property name="autoRaise">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="10">
+               <widget class="QToolButton" name="colorbtn">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>167</width>
+                  <height>167</height>
+                 </size>
+                </property>
+                <property name="toolTip">
+                 <string>Select Color</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="autoRaise">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="11">
+               <widget class="QToolButton" name="textalignmentbtn">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>167</width>
+                  <height>167</height>
+                 </size>
+                </property>
+                <property name="toolTip">
+                 <string>Alignment</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>24</width>
+                  <height>24</height>
+                 </size>
+                </property>
+                <property name="popupMode">
+                 <enum>QToolButton::MenuButtonPopup</enum>
+                </property>
+                <property name="autoRaise">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="12">
+               <widget class="QToolButton" name="imagebtn">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>167</width>
+                  <height>167</height>
+                 </size>
+                </property>
+                <property name="toolTip">
+                 <string>Add a Image</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="../images.qrc">
+                  <normaloff>:/images/add_image24.png</normaloff>:/images/add_image24.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>24</width>
+                  <height>24</height>
+                 </size>
+                </property>
+                <property name="autoRaise">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="9">
+               <widget class="QToolButton" name="codeButton">
+                <property name="toolTip">
+                 <string>Sets text font to code style</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="../images.qrc">
+                  <normaloff>:/images/textedit/hi22-action-format-text-code.png</normaloff>:/images/textedit/hi22-action-format-text-code.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>22</width>
+                  <height>22</height>
+                 </size>
+                </property>
+                <property name="autoRaise">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
          </item>
          <item row="2" column="0">
           <widget class="QTextEdit" name="msgText">
@@ -391,7 +597,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>770</width>
+     <width>874</width>
      <height>21</height>
     </rect>
    </property>
@@ -430,6 +636,9 @@
    <property name="text">
     <string>Send</string>
    </property>
+   <property name="toolTip">
+    <string>Send this message now</string>
+   </property>
   </action>
   <action name="actionReply">
    <property name="icon">
@@ -441,13 +650,27 @@
    </property>
   </action>
   <action name="actionContactsView">
+   <property name="icon">
+    <iconset resource="../images.qrc">
+     <normaloff>:/images/contacts24.png</normaloff>:/images/contacts24.png</iconset>
+   </property>
    <property name="text">
     <string>Contacts</string>
    </property>
+   <property name="toolTip">
+    <string>Toggle Contacts View</string>
+   </property>
   </action>
   <action name="actionSaveas">
+   <property name="icon">
+    <iconset resource="../images.qrc">
+     <normaloff>:/images/save24.png</normaloff>:/images/save24.png</iconset>
+   </property>
    <property name="text">
     <string>Save</string>
+   </property>
+   <property name="toolTip">
+    <string>Save this message</string>
    </property>
   </action>
   <action name="actionAttach">

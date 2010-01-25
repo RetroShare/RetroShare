@@ -193,7 +193,7 @@ HEADERS +=  rshare.h \
             gui/connect/ConnectDialog.h \
             gui/connect/ConfCertDialog.h \
             gui/msgs/ChanMsgDialog.h \
-            gui/msgs/ChanCreateDialog.h \
+            gui/msgs/textformat.h \
             gui/images/retroshare_win.rc.h \
             gui/settings/rsharesettings.h \
             gui/settings/rsettings.h \         
@@ -279,7 +279,6 @@ FORMS +=    gui/StartDialog.ui \
             gui/connect/ConnectDialog.ui \
             gui/connect/ConfCertDialog.ui \
             gui/msgs/ChanMsgDialog.ui \
-            gui/msgs/ChanCreateDialog.ui \
             gui/toaster/CallToaster.ui \
             gui/toaster/ChatToaster.ui \
             gui/toaster/MessageToaster.ui \
@@ -375,7 +374,6 @@ SOURCES +=  main.cpp \
             gui/connect/ConnectDialog.cpp \
             gui/connect/ConfCertDialog.cpp \
             gui/msgs/ChanMsgDialog.cpp \
-            gui/msgs/ChanCreateDialog.cpp \          
             gui/common/vmessagebox.cpp \
             gui/common/rwindow.cpp \ 
             gui/common/html.cpp \

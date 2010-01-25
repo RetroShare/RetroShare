@@ -48,39 +48,32 @@ public:
   ChanMsgDialog(bool isMsg, QWidget *parent = 0, Qt::WFlags flags = 0);
   /** Default Destructor */
 
-void  newMsg();
+  void  newMsg();
 
 	/* worker fns */
-void  insertSendList(); /* for Msgs */
-void  insertChannelSendList(); /* for Channels */
-void  insertFileList(const std::list<DirDetails>&); /* for Both */
-void  insertTitleText(std::string title);
-void  insertPastedText(std::string msg) ;
-void  insertForwardPastedText(std::string msg);
-void  insertHtmlText(std::string msg);
-void  insertMsgText(std::string msg);
-void  addRecipient(std::string id) ;
-void  Create_New_Image_Tag( const QString urlremoteorlocal );
+  void  insertSendList(); /* for Msgs */
+  void  insertChannelSendList(); /* for Channels */
+  void  insertFileList(const std::list<DirDetails>&); /* for Both */
+  void  insertTitleText(std::string title);
+  void  insertPastedText(std::string msg) ;
+  void  insertForwardPastedText(std::string msg);
+  void  insertHtmlText(std::string msg);
+  void  insertMsgText(std::string msg);
+  void  addRecipient(std::string id) ;
+  void  Create_New_Image_Tag( const QString urlremoteorlocal );
  QSettings setter;
 
 public slots:
 
 	/* actions to take.... */
-void  sendMessage();
-void  cancelMessage();
-void  addImage();
+  void  sendMessage();
+  void  cancelMessage();
+  void  addImage();
 
 protected:
   void closeEvent (QCloseEvent * event);
 
 private slots:
-
-  /** Create the context popup menu and it's submenus */
-  void channelstreeViewCostumPopupMenu( QPoint point );
-   
-  /** Defines the context menu functions*/
-  void deletechannel();
-  void createchannelmsg();
   
   /* toggle Contacts DockWidget */
   void toggleContacts();
@@ -119,7 +112,12 @@ private slots:
 	void addAttachment(std::string);
 	void checkAttachmentReady();
 
- 
+  void fontSizeIncrease();
+  void fontSizeDecrease();
+  void blockQuote();
+  void toggleCode();
+
+  
 private:
   void setTextColor(const QColor& col) ;
 	void setupFileActions();
@@ -159,6 +157,9 @@ private:
   
   QString fileName;
   QString nametomake;
+  
+  QColor codeBackground;
+  QTextCharFormat defaultCharFormat;
   
   QHash<QString, QString> autoLinkDictionary;
   QHash<QString, QString> autoLinkTitleDictionary;

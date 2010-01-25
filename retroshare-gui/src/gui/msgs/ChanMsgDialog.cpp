@@ -28,7 +28,7 @@
 
 #include <gui/settings/rsharesettings.h>
 #include "gui/feeds/AttachFileItem.h"
-
+#include "textformat.h"
 #include "util/misc.h"
 
 #include <sstream>
@@ -49,6 +49,7 @@
 #include <QPrintDialog>
 #include <QPrinter>
 #include <QHeaderView>
+#include <QTextCharFormat>
 #include <QTextCodec>
 #include <QTextEdit>
 #include <QTextCursor>
@@ -61,38 +62,40 @@
 ChanMsgDialog::ChanMsgDialog(bool msg, QWidget *parent, Qt::WFlags flags)
 : mIsMsg(msg), QMainWindow(parent, flags), mCheckAttachment(true)
 {
-  /* Invoke the Qt Designer generated object setup routine */
-  ui.setupUi(this);
+    /* Invoke the Qt Designer generated object setup routine */
+    ui.setupUi(this);
     
-  setupFileActions();
-  setupEditActions();
-  setupViewActions();
-  setupInsertActions();
+    setupFileActions();
+    setupEditActions();
+    setupViewActions();
+    setupInsertActions();
   
-  RshareSettings config;
-  config.loadWidgetInformation(this);
+    RshareSettings config;
+    config.loadWidgetInformation(this);
 
-  setAttribute ( Qt::WA_DeleteOnClose, true );
+    setAttribute ( Qt::WA_DeleteOnClose, true );
+   
+    // connect up the buttons. 
+    connect( ui.actionSend, SIGNAL( triggered (bool)), this, SLOT( sendMessage( ) ) );
+    //connect( ui.actionReply, SIGNAL( triggered (bool)), this, SLOT( replyMessage( ) ) );
+    connect(ui.boldbtn, SIGNAL(clicked()), this, SLOT(textBold()));
+    connect(ui.underlinebtn, SIGNAL(clicked()), this, SLOT(textUnderline()));
+    connect(ui.italicbtn, SIGNAL(clicked()), this, SLOT(textItalic()));
+    connect(ui.colorbtn, SIGNAL(clicked()), this, SLOT(textColor()));
+    connect(ui.imagebtn, SIGNAL(clicked()), this, SLOT(addImage()));
+    //connect(ui.linkbtn, SIGNAL(clicked()), this, SLOT(insertLink()));
+    connect(ui.actionContactsView, SIGNAL(triggered()), this, SLOT(toggleContacts()));
+    connect(ui.actionSaveas, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
+    connect(ui.actionAttach, SIGNAL(triggered()), this, SLOT(attachFile()));
   
-  //connect( ui.channelstreeView, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( channelstreeViewCostumPopupMenu( QPoint ) ) );
-  //
- 
-  // connect up the buttons. 
-  connect( ui.actionSend, SIGNAL( triggered (bool)), this, SLOT( sendMessage( ) ) );
-  //connect( ui.actionReply, SIGNAL( triggered (bool)), this, SLOT( replyMessage( ) ) );
-  connect(ui.boldbtn, SIGNAL(clicked()), this, SLOT(textBold()));
-  connect(ui.underlinebtn, SIGNAL(clicked()), this, SLOT(textUnderline()));
-  connect(ui.italicbtn, SIGNAL(clicked()), this, SLOT(textItalic()));
-  connect(ui.colorbtn, SIGNAL(clicked()), this, SLOT(textColor()));
-  connect(ui.imagebtn, SIGNAL(clicked()), this, SLOT(addImage()));
-  //connect(ui.linkbtn, SIGNAL(clicked()), this, SLOT(insertLink()));
-  connect(ui.actionContactsView, SIGNAL(triggered()), this, SLOT(toggleContacts()));
-  connect(ui.actionSaveas, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
-  connect(ui.actionAttach, SIGNAL(triggered()), this, SLOT(attachFile()));
+    connect(ui.sizeincreaseButton, SIGNAL (clicked()), this, SLOT (fontSizeIncrease()));
+    connect(ui.sizedecreaseButton, SIGNAL (clicked()), this, SLOT (fontSizeDecrease()));
+    connect(ui.blockquoteButton, SIGNAL (clicked()), this, SLOT (blockQuote()));
+    connect(ui.codeButton, SIGNAL (clicked()), this, SLOT (toggleCode()));
   
-  connect(ui.msgText, SIGNAL(currentCharFormatChanged(const QTextCharFormat &)),
+    connect(ui.msgText, SIGNAL(currentCharFormatChanged(const QTextCharFormat &)),
             this, SLOT(currentCharFormatChanged(const QTextCharFormat &)));
-  connect(ui.msgText, SIGNAL(cursorPositionChanged()),
+    connect(ui.msgText, SIGNAL(cursorPositionChanged()),
             this, SLOT(cursorPositionChanged()));
             
     connect(ui.msgText->document(), SIGNAL(modificationChanged(bool)),
@@ -124,27 +127,27 @@ ChanMsgDialog::ChanMsgDialog(bool msg, QWidget *parent, Qt::WFlags flags)
 
     connect(QApplication::clipboard(), SIGNAL(dataChanged()), this, SLOT(clipboardDataChanged()));
 
-  /* if Msg */
-  if (mIsMsg)
-  {
-    connect(ui.msgSendList, SIGNAL(itemChanged( QTreeWidgetItem *, int ) ),
-      this, SLOT(togglePersonItem( QTreeWidgetItem *, int ) ));
-  }
-  else
-  {
-    connect(ui.msgSendList, SIGNAL(itemChanged( QTreeWidgetItem *, int ) ),
-      this, SLOT(toggleChannelItem( QTreeWidgetItem *, int ) ));
-  }
+    /* if Msg */
+    if (mIsMsg)
+    {
+      connect(ui.msgSendList, SIGNAL(itemChanged( QTreeWidgetItem *, int ) ),
+        this, SLOT(togglePersonItem( QTreeWidgetItem *, int ) ));
+    }
+    else
+    {
+      connect(ui.msgSendList, SIGNAL(itemChanged( QTreeWidgetItem *, int ) ),
+        this, SLOT(toggleChannelItem( QTreeWidgetItem *, int ) ));
+    }
 
-  connect(ui.msgFileList, SIGNAL(itemChanged( QTreeWidgetItem *, int ) ),
-    this, SLOT(toggleRecommendItem( QTreeWidgetItem *, int ) ));
+    connect(ui.msgFileList, SIGNAL(itemChanged( QTreeWidgetItem *, int ) ),
+      this, SLOT(toggleRecommendItem( QTreeWidgetItem *, int ) ));
     
-  /* hide the Tree +/- */
-  ui.msgSendList -> setRootIsDecorated( false );
-  ui.msgFileList -> setRootIsDecorated( false );
+    /* hide the Tree +/- */
+    ui.msgSendList -> setRootIsDecorated( false );
+    ui.msgFileList -> setRootIsDecorated( false );
   
-   /* to hide the header  */
-  //ui.msgSendList->header()->hide(); 
+    /* to hide the header  */
+    //ui.msgSendList->header()->hide(); 
   
     QActionGroup *grp = new QActionGroup(this);
     connect(grp, SIGNAL(triggered(QAction *)), this, SLOT(textAlign(QAction *)));
@@ -182,19 +185,7 @@ ChanMsgDialog::ChanMsgDialog(bool msg, QWidget *parent, Qt::WFlags flags)
     connect(ui.comboSize, SIGNAL(activated(const QString &)),this, SLOT(textSize(const QString &)));
     ui.comboSize->setCurrentIndex(ui.comboSize->findText(QString::number(QApplication::font().pointSize())));
     
-    ui.boldbtn->setIcon(QIcon(QString(":/images/textedit/textbold.png")));
-    ui.underlinebtn->setIcon(QIcon(QString(":/images/textedit/textunder.png")));
-    ui.italicbtn->setIcon(QIcon(QString(":/images/textedit/textitalic.png")));
-    ui.textalignmentbtn->setIcon(QIcon(QString(":/images/textedit/textcenter.png")));
-    ui.imagebtn->setIcon(QIcon(QString(":/images/lphoto24.png")));
-    ui.actionContactsView->setIcon(QIcon(":/images/contacts24.png"));
-    ui.actionSaveas->setIcon(QIcon(":/images/save24.png"));
-    
-    /* ToolTips */
-    ui.actionSend->setStatusTip(tr("Send this message now"));
-    ui.actionContactsView->setStatusTip(tr("Toggle Contacts View"));
-    ui.actionSaveas->setStatusTip(tr("Save this message"));
-    
+    ui.textalignmentbtn->setIcon(QIcon(QString(":/images/textedit/textcenter.png"))); 
        
     QMenu * alignmentmenu = new QMenu();
     alignmentmenu->addAction(actionAlignLeft);
@@ -217,32 +208,15 @@ ChanMsgDialog::ChanMsgDialog(bool msg, QWidget *parent, Qt::WFlags flags)
     _smheader->resizeSection ( 2, 60 );
     _smheader->resizeSection ( 3, 220 );
     _smheader->resizeSection ( 4, 10 );
+    
+    QPalette palette = QApplication::palette();
+    codeBackground = palette.color( QPalette::Active, QPalette::Midlight );
 
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
 #endif
-}
-
-
-void ChanMsgDialog::channelstreeViewCostumPopupMenu( QPoint point )
-{
-
-      QMenu contextMnu( this );
-      QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
-
-      deletechannelAct = new QAction( tr( "Delete Channel" ), this );
-      connect( deletechannelAct , SIGNAL( triggered() ), this, SLOT( deletechannel() ) );
-      
-      createchannelmsgAct = new QAction( tr( "Create Channel MSG" ), this );
-      connect( createchannelmsgAct , SIGNAL( triggered() ), this, SLOT( createchannelmsg() ) );
-
-
-      contextMnu.clear();
-      contextMnu.addAction( deletechannelAct);
-      contextMnu.addAction( createchannelmsgAct);
-      contextMnu.exec( mevent->globalPos() );
 }
 
 void ChanMsgDialog::closeEvent (QCloseEvent * event)
@@ -277,21 +251,6 @@ void ChanMsgDialog::closeEvent (QCloseEvent * event)
 #endif
 
 }
-
-void ChanMsgDialog::deletechannel()
-{
-
-
-}
-
-
-void ChanMsgDialog::createchannelmsg()
-{
-
-
-}
-
-
 
 void  ChanMsgDialog::insertSendList()
 {
@@ -525,6 +484,12 @@ void  ChanMsgDialog::insertPastedText(std::string msg)
 		msg.replace(i,1,std::string("\n<BR/>> ")) ;
 
 	ui.msgText->setHtml(QString("<HTML><font color=\"blue\">")+QString::fromStdString(std::string("> ") + msg)+"</font><br/><br/></HTML>") ;
+	
+	ui.msgText->setFocus( Qt::OtherFocusReason );
+	
+	QTextCursor c =  ui.msgText->textCursor();
+  c.movePosition(QTextCursor::End);
+  ui.msgText->setTextCursor(c);
 }
 
 void  ChanMsgDialog::insertForwardPastedText(std::string msg)
@@ -534,16 +499,29 @@ void  ChanMsgDialog::insertForwardPastedText(std::string msg)
 		msg.replace(i,1,std::string("\n<BR/>> ")) ;
 
 	ui.msgText->setHtml(QString("<HTML><blockquote ><font color=\"blue\">")+QString::fromStdString(std::string("") + msg)+"</font><br/><br/></blockquote></HTML>") ;
+	
+	ui.msgText->setFocus( Qt::OtherFocusReason );
+	
+	QTextCursor c =  ui.msgText->textCursor();
+  c.movePosition(QTextCursor::End);
+  ui.msgText->setTextCursor(c);
 }
 
 void  ChanMsgDialog::insertMsgText(std::string msg)
 {
 	ui.msgText->setText(QString::fromStdString(msg));
+	
+	ui.msgText->setFocus( Qt::OtherFocusReason );
+	
+	QTextCursor c =  ui.msgText->textCursor();
+  c.movePosition(QTextCursor::End);
+  ui.msgText->setTextCursor(c);
 }
 
 void  ChanMsgDialog::insertHtmlText(std::string msg)
 {
 	ui.msgText->setHtml(QString("<a href='") + QString::fromStdString(std::string(msg + "'> ") ) + QString::fromStdString(std::string(msg)) + "</a>") ;
+	
 }
 
 
@@ -992,14 +970,6 @@ void ChanMsgDialog::filePrint()
 #endif
 }
 
-/*void TextEdit::filePrintPreview()
-{
-    PrintPreview *preview = new PrintPreview(textEdit->document(), this);
-    preview->setWindowModality(Qt::WindowModal);
-    preview->setAttribute(Qt::WA_DeleteOnClose);
-    preview->show();
-}*/
-
 void ChanMsgDialog::filePrintPdf()
 {
 #ifndef QT_NO_PRINTER
@@ -1101,6 +1071,76 @@ void  ChanMsgDialog::Create_New_Image_Tag( const QString urlremoteorlocal )
    //}
 }
 
+void ChanMsgDialog::fontSizeIncrease()
+{
+    if ( !( ui.msgText->textCursor().blockFormat().hasProperty( TextFormat::HtmlHeading ) &&
+        ui.msgText->textCursor().blockFormat().intProperty( TextFormat::HtmlHeading ) ) ) {
+        QTextCharFormat format;
+        int idx = ui.msgText->currentCharFormat().intProperty( QTextFormat::FontSizeAdjustment );
+        if ( idx < 3 ) {
+            format.setProperty( QTextFormat::FontSizeAdjustment, QVariant( ++idx ) );
+            ui.msgText->textCursor().mergeCharFormat( format );
+        }
+    }
+    ui.msgText->setFocus( Qt::OtherFocusReason );
+}
+
+void ChanMsgDialog::fontSizeDecrease()
+{
+    if ( !( ui.msgText->textCursor().blockFormat().hasProperty( TextFormat::HtmlHeading ) &&
+        ui.msgText->textCursor().blockFormat().intProperty( TextFormat::HtmlHeading ) ) ) {
+        QTextCharFormat format;
+        int idx = ui.msgText->currentCharFormat().intProperty( QTextFormat::FontSizeAdjustment );
+        if ( idx > -1 ) {
+            format.setProperty( QTextFormat::FontSizeAdjustment, QVariant( --idx ) );
+            ui.msgText->textCursor().mergeCharFormat( format );
+        }
+    }
+    ui.msgText->setFocus( Qt::OtherFocusReason );
+}
+
+void ChanMsgDialog::blockQuote()
+{
+    QTextBlockFormat blockFormat = ui.msgText->textCursor().blockFormat();
+    QTextBlockFormat f;
+
+    if ( blockFormat.hasProperty( TextFormat::IsBlockQuote ) && 
+         blockFormat.boolProperty( TextFormat::IsBlockQuote ) ) {
+        f.setProperty( TextFormat::IsBlockQuote, QVariant( false ) );
+        f.setLeftMargin( 0 );
+        f.setRightMargin( 0 );
+    } else {
+        f.setProperty( TextFormat::IsBlockQuote, QVariant( true ) );
+        f.setLeftMargin( 40 );
+        f.setRightMargin( 40 );
+    }
+    ui.msgText->textCursor().mergeBlockFormat( f );
+}
+
+void ChanMsgDialog::toggleCode()
+{
+    static QString preFontFamily;
+
+    QTextCharFormat charFormat = ui.msgText->currentCharFormat();
+    QTextCharFormat f;
+    
+    if ( charFormat.hasProperty( TextFormat::HasCodeStyle ) &&
+         charFormat.boolProperty( TextFormat::HasCodeStyle ) ) {
+        f.setProperty( TextFormat::HasCodeStyle, QVariant( false ) );
+        f.setBackground( defaultCharFormat.background() );
+        f.setFontFamily( preFontFamily );
+        ui.msgText->textCursor().mergeCharFormat( f );
+
+    } else {
+        preFontFamily = ui.msgText->fontFamily();
+        f.setProperty( TextFormat::HasCodeStyle, QVariant( true ) );
+        f.setBackground( codeBackground );
+        f.setFontFamily( "Dejavu Sans Mono" );
+        ui.msgText->textCursor().mergeCharFormat( f );
+    }
+    ui.msgText->setFocus( Qt::OtherFocusReason );
+}
+
 void ChanMsgDialog::attachFile()
 {
 	// select a file
@@ -1178,6 +1218,8 @@ void ChanMsgDialog::fileHashingFinished(AttachFileItem* file) {
 	}
   	
 	ui.msgText->setHtml(QString::fromStdWString(message));
+	ui.msgText->setFocus( Qt::OtherFocusReason );
+	
 
 }
 
