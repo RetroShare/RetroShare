@@ -22,6 +22,8 @@
 #ifndef _MESSAGESDIALOG_H
 #define _MESSAGESDIALOG_H
 
+#include "settings/rsharesettings.h"
+
 #include <QFileDialog>
 
 #include "mainpage.h"
@@ -35,11 +37,12 @@ public:
   /** Default Constructor */
   MessagesDialog(QWidget *parent = 0);
   /** Default Destructor */
- void insertMsgTxtAndFiles();
- virtual void keyPressEvent(QKeyEvent *) ;
+  void insertMsgTxtAndFiles();
+  virtual void keyPressEvent(QKeyEvent *) ;
 
 public slots:
- void insertMessages();
+  void insertMessages();
+  
 private slots:
 
   /** Create the context popup menu and it's submenus */
@@ -74,8 +77,12 @@ private slots:
   void buttonstextbesideicon();
   void buttonsicononly();
   void buttonstextundericon();
+  
+  void loadToolButtonsettings();
 
 private:
+  /** A RetroShare Settings object used for saving/loading settings */
+  RshareSettings *_settings;
 
   bool getCurrentMsg(std::string &cid, std::string &mid);
   void setMsgAsRead(QTreeWidgetItem *);
