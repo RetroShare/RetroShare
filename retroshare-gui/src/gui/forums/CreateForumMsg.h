@@ -23,10 +23,11 @@
 #ifndef _CREATE_FORUM_MSG_DIALOG_H
 #define _CREATE_FORUM_MSG_DIALOG_H
 
+#include <QtGui>
 #include <QWidget>
 #include <string>
 
-#include "gui/feeds/SubFileItem.h"
+#include "gui/feeds/AttachFileItem.h"
 
 #include "ui_CreateForumMsg.h"
 
@@ -43,7 +44,7 @@ public:
   
 private slots:
 
-  void fileHashingFinished(SubFileItem* file);
+  void fileHashingFinished(AttachFileItem* file);
 	/* actions to take.... */
   void  createMsg();
   void  cancelMsg();

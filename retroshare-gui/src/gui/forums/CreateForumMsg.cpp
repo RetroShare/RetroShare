@@ -41,7 +41,7 @@
 #include "rsiface/rsforums.h"
 #include "rsiface/rsfiles.h"
 
-#include "gui/feeds/SubFileItem.h"
+#include "gui/feeds/AttachFileItem.h"
 
 #include <sstream>
 
@@ -315,30 +315,30 @@ void CreateForumMsg::addFile()
 }
 
 void CreateForumMsg::addAttachment(std::string filePath) {
-	    /* add a SubFileItem to the attachment section */
+	    /* add a AttachFileItem to the attachment section */
 	    std::cerr << "CreateForumMsg::addFile() hashing file.";
 	    std::cerr << std::endl;
 
 	    /* add widget in for new destination */
-	    SubFileItem *file = new SubFileItem(filePath);
+	    AttachFileItem *file = new AttachFileItem(filePath);
 	    //file->
 	    	    
 	    ui.verticalLayout->addWidget(file, 1, 0);
 
-	    //when the file is local or is finished hashing, call the fileHashingFinished method to send a chat message
-	    if (file->getState() == SFI_STATE_LOCAL) {
+	    //when the file is local or is finished hashing, call the fileHashingFinished method to send a forum message
+	    if (file->getState() == AFI_STATE_LOCAL) {
 		fileHashingFinished(file);
 	    } else {
-		QObject::connect(file,SIGNAL(fileFinished(SubFileItem *)),this, SLOT(fileHashingFinished(SubFileItem *))) ;
+		QObject::connect(file,SIGNAL(fileFinished(AttachFileItem *)),this, SLOT(fileHashingFinished(AttachFileItem *))) ;
 	    }
 }
 
-void CreateForumMsg::fileHashingFinished(SubFileItem* file) {
+void CreateForumMsg::fileHashingFinished(AttachFileItem* file) {
 	std::cerr << "CreateForumMsg::fileHashingFinished() started.";
 	std::cerr << std::endl;
 
 	//check that the file is ok tos end
-	if (file->getState() == SFI_STATE_ERROR) {
+	if (file->getState() == AFI_STATE_ERROR) {
 	#ifdef CHAT_DEBUG
 		    std::cerr << "CreateForumMsg::fileHashingFinished error file is not hashed.";
 	#endif

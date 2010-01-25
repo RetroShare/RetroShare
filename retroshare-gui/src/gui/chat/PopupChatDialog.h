@@ -30,7 +30,7 @@
 #include <gui/settings/rsharesettings.h>
 
 #include "rsiface/rsiface.h"
-#include "gui/feeds/SubFileItem.h"
+#include "gui/feeds/AttachFileItem.h"
 
 
 
@@ -77,7 +77,7 @@ public slots:
   void addSmiley();
   
   void changeStyle();
-  void fileHashingFinished(SubFileItem* file);
+  void fileHashingFinished(AttachFileItem* file);
 
   void resetStatusBar() ;
   void updateStatusTyping() ;

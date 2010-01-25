@@ -40,7 +40,7 @@
 #include "rsiface/rsmsgs.h"
 #include "rsiface/rsfiles.h"
 
-#include "gui/feeds/SubFileItem.h"
+#include "gui/feeds/AttachFileItem.h"
 #include <time.h>
 
 #define appDir QApplication::applicationDirPath()
@@ -717,30 +717,30 @@ void PopupChatDialog::addExtraFile()
 }
 
 void PopupChatDialog::addAttachment(std::string filePath) {
-	    /* add a SubFileItem to the attachment section */
+	    /* add a AttachFileItem to the attachment section */
 	    std::cerr << "PopupChatDialog::addExtraFile() hashing file.";
 	    std::cerr << std::endl;
 
 	    /* add widget in for new destination */
-	    SubFileItem *file = new SubFileItem(filePath);
+	    AttachFileItem *file = new AttachFileItem(filePath);
 	    //file->
 
 	    ui.vboxLayout->addWidget(file, 1, 0);
 
 	    //when the file is local or is finished hashing, call the fileHashingFinished method to send a chat message
-	    if (file->getState() == SFI_STATE_LOCAL) {
+	    if (file->getState() == AFI_STATE_LOCAL) {
 		fileHashingFinished(file);
 	    } else {
-		QObject::connect(file,SIGNAL(fileFinished(SubFileItem *)), SLOT(fileHashingFinished(SubFileItem *))) ;
+		QObject::connect(file,SIGNAL(fileFinished(AttachFileItem *)), SLOT(fileHashingFinished(AttachFileItem *))) ;
 	    }
 }
 
-void PopupChatDialog::fileHashingFinished(SubFileItem* file) {
+void PopupChatDialog::fileHashingFinished(AttachFileItem* file) {
 	std::cerr << "PopupChatDialog::fileHashingFinished() started.";
 	std::cerr << std::endl;
 
 	//check that the file is ok tos end
-	if (file->getState() == SFI_STATE_ERROR) {
+	if (file->getState() == AFI_STATE_ERROR) {
 	#ifdef CHAT_DEBUG
 		    std::cerr << "PopupChatDialog::fileHashingFinished error file is not hashed.";
 	#endif
