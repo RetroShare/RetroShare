@@ -97,7 +97,8 @@ private slots:
   
   void changeAvatarClicked();
   void updateAvatar();
-
+	
+	void loadmystatus();
   
 private:
 

@@ -115,9 +115,6 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
 
 	QHeaderView * _header = ui.messengertreeWidget->header () ;   
 	_header->setResizeMode (0, QHeaderView::Interactive);
-	//_header->setResizeMode (1, QHeaderView::Interactive);
-	//_header->setResizeMode (2, QHeaderView::Interactive);
-	//_header->setResizeMode (3, QHeaderView::Interactive);
 
 	_header->resizeSection ( 0, 200 );   
  
@@ -128,7 +125,7 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
   
 
 	ui.statuscomboBox->setMinimumWidth(20);
-	ui.messagecomboBox->setMinimumWidth(20);
+	ui.messagelineEdit->setMinimumWidth(20);
 	ui.searchlineEdit->setMinimumWidth(20);
 
   updateAvatar();
@@ -136,6 +133,7 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
   itemFont = QFont("ARIAL", 10);
 	itemFont.setBold(true);
 
+  loadmystatus();
   
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -227,13 +225,15 @@ void  MessengerWindow::insertPeers()
 
 		/* add all the labels */
 		/* (0) Person */
-		item -> setText(0, QString::fromStdString(details.name));
-		/* (1) Org */
-		//item -> setText(1, QString::fromStdString(details.org));
-		/* (2) Location */
-		//item -> setText(2, QString::fromStdString(details.location));
-		/* (3) Email */
-		//item -> setText(3, QString::fromStdString(details.email));
+		if (rsMsgs->getCustomStateString(details.id) != "") 
+		{
+        item -> setText( 0, QString::fromStdString(details.name) + tr(" - ") + QString::fromStdString(rsMsgs->getCustomStateString(details.id)));
+    }    
+		else
+		{
+        item -> setText(0, QString::fromStdString(details.name));
+		}
+
 		
 		/* Hidden ones: RsCertId */
 		item -> setText(4, QString::fromStdString(details.id));
@@ -522,37 +522,12 @@ void MessengerWindow::changeAvatarClicked()
 /** Add a Friend ShortCut */
 void MessengerWindow::addFriend2()
 {
-    /* call load Certificate */
-#if 0
-    std::string id;
-    if (connectionsDialog)
-    {
-        id = connectionsDialog->loadneighbour();
-    }
-
-    /* call make Friend */
-    if (id != "")
-    {
-        connectionsDialog->showpeerdetails(id);
-    }
-    virtual int NeighLoadPEMString(std::string pem, std::string &id)  = 0;
-#else
-/*
-    static  AddFriendDialog *addDialog2 = 
-    new AddFriendDialog(networkDialog2, this);
-
-    std::string invite = "";
-    addDialog2->setInfo(invite);
-    addDialog2->show();
-    */
     ConnectFriendWizard* connwiz = new ConnectFriendWizard(this);
-
     // set widget to be deleted after close
     connwiz->setAttribute( Qt::WA_DeleteOnClose, true);
 
-
     connwiz->show();
-#endif
+
 }
 
 LogoBar & MessengerWindow::getLogoBar() const {
@@ -600,4 +575,10 @@ void MessengerWindow::getAvatar()
 
 		updateAvatar() ;
 	}
+}
+
+/** Loads own personal status */
+void MessengerWindow::loadmystatus()
+{ 
+    ui.messagelineEdit->setText(QString::fromStdString(rsMsgs->getCustomStateString()));
 }

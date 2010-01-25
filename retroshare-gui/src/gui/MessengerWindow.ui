@@ -189,18 +189,8 @@ p, li { white-space: pre-wrap; }
              </item>
             </widget>
            </item>
-           <item row="1" column="0" colspan="2">
-            <widget class="QComboBox" name="messagecomboBox">
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Share a personal message with your contacts&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="editable">
-              <bool>true</bool>
-             </property>
-            </widget>
+           <item row="1" column="0">
+            <widget class="QLineEdit" name="messagelineEdit"/>
            </item>
           </layout>
          </item>
