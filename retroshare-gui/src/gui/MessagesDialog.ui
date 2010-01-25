@@ -971,12 +971,12 @@ p, li { white-space: pre-wrap; }
        </column>
        <column>
         <property name="text">
-         <string>From</string>
+         <string>Subject</string>
         </property>
        </column>
        <column>
         <property name="text">
-         <string>Subject</string>
+         <string>From</string>
         </property>
        </column>
        <column>
@@ -1078,7 +1078,7 @@ p, li { white-space: pre-wrap; }
               <property name="maximumSize">
                <size>
                 <width>16777215</width>
-                <height>10</height>
+                <height>12</height>
                </size>
               </property>
               <property name="text">
@@ -1135,7 +1135,7 @@ p, li { white-space: pre-wrap; }
               <property name="maximumSize">
                <size>
                 <width>16777215</width>
-                <height>10</height>
+                <height>12</height>
                </size>
               </property>
               <property name="text">
@@ -1192,7 +1192,7 @@ p, li { white-space: pre-wrap; }
               <property name="maximumSize">
                <size>
                 <width>16777215</width>
-                <height>10</height>
+                <height>12</height>
                </size>
               </property>
               <property name="text">

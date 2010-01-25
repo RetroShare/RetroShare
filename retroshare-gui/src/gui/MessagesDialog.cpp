@@ -105,7 +105,8 @@ MessagesDialog::MessagesDialog(QWidget *parent)
   msgwheader->setResizeMode (3, QHeaderView::Interactive);
     
   msgwheader->resizeSection ( 0, 24 );
-  msgwheader->resizeSection ( 2, 250 );
+  msgwheader->resizeSection ( 1, 250 );
+  msgwheader->resizeSection ( 2, 140 );
   msgwheader->resizeSection ( 3, 140 );
   
     /* Set header resize modes and initial section sizes */
@@ -138,6 +139,9 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 	 ui.msgWidget->sortItems( 3, Qt::DescendingOrder );
 	 
 	 loadToolButtonsettings();
+	 
+	 mFont = QFont("Times", 11, QFont::Bold);
+   ui.subjectText->setFont(mFont);
 
 
   /* Hide platform specific features */
@@ -624,26 +628,26 @@ void MessagesDialog::insertMessages()
 
 		//  From ....
 		{
-			item -> setText(1, QString::fromStdString(rsPeers->getPeerName(it->srcId)));
+			item -> setText(2, QString::fromStdString(rsPeers->getPeerName(it->srcId)));
 		}
 
 		// Subject
-		item -> setText(2, QString::fromStdWString(it->title));
+		item -> setText(1, QString::fromStdWString(it->title));
 		
 		// Change Message icon when Subject is Re: or Fwd:
 		QString text = QString::fromStdWString(it->title);
 			
     if (text.startsWith("Re:", Qt::CaseInsensitive))
     {
-		item -> setIcon(2, (QIcon(":/images/message-mail-replied-read.png")));
+		item -> setIcon(1, (QIcon(":/images/message-mail-replied-read.png")));
     }
     else if (text.startsWith("Fwd:", Qt::CaseInsensitive))
     {
-		item -> setIcon(2, (QIcon(":/images/message-mail-forwarded-read.png")));
+		item -> setIcon(1, (QIcon(":/images/message-mail-forwarded-read.png")));
     }
     else
 		{
-    item -> setIcon(2, (QIcon(":/images/message-mail-read.png")));
+    item -> setIcon(1, (QIcon(":/images/message-mail-read.png")));
 		}
 		
 		if (it -> msgflags & RS_MSG_NEW)
@@ -658,15 +662,15 @@ void MessagesDialog::insertMessages()
 			
       if (text.startsWith("Re:", Qt::CaseInsensitive))
       {
-      item -> setIcon(2, (QIcon(":/images/message-mail-replied.png")));
+      item -> setIcon(1, (QIcon(":/images/message-mail-replied.png")));
       }
       else if (text.startsWith("Fwd:", Qt::CaseInsensitive))
       {
-      item -> setIcon(2, (QIcon(":/images/message-mail-forwarded.png")));
+      item -> setIcon(1, (QIcon(":/images/message-mail-forwarded.png")));
       }
       else
       {
-      item -> setIcon(2, (QIcon(":/images/message-mail.png")));
+      item -> setIcon(1, (QIcon(":/images/message-mail.png")));
       }
 		}
 

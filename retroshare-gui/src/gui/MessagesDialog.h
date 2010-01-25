@@ -106,6 +106,8 @@ private:
   QAction* getAllRecAct;
      
   QString fileName;
+  
+  QFont mFont;
 
   
   /** Qt Designer generated object */
