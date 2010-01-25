@@ -32,6 +32,8 @@ MessageToaster::MessageToaster( QWidget * parent, Qt::WFlags f)
 	// connect buttons
 	connect(closebtn, SIGNAL(clicked()), this, SLOT(closeClicked()));
 	connect(openmessagebtn, SIGNAL(clicked()), this, SLOT(openmessageClicked()));
+	connect(openmessagetoolButton, SIGNAL(clicked()), this, SLOT(openmessageClicked()));
+	
 	// init state
 	displayState = dsInactive;
 }

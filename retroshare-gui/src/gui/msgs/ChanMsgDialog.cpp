@@ -91,9 +91,11 @@ ChanMsgDialog::ChanMsgDialog(bool msg, QWidget *parent, Qt::WFlags flags)
     connect(ui.sizeincreaseButton, SIGNAL (clicked()), this, SLOT (fontSizeIncrease()));
     connect(ui.sizedecreaseButton, SIGNAL (clicked()), this, SLOT (fontSizeDecrease()));
     connect(ui.blockquoteButton, SIGNAL (clicked()), this, SLOT (blockQuote()));
+    connect(ui.actionQuote, SIGNAL(triggered()), this, SLOT(blockQuote()));
     connect(ui.codeButton, SIGNAL (clicked()), this, SLOT (toggleCode()));
     connect(ui.splitPostButton, SIGNAL (clicked()), this, SLOT (addPostSplitter()));
 
+    connect(ui.msgText, SIGNAL( checkSpellingChanged( bool ) ), this, SLOT( spellChecking( bool ) ) );
   
     connect(ui.msgText, SIGNAL(currentCharFormatChanged(const QTextCharFormat &)),
             this, SLOT(currentCharFormatChanged(const QTextCharFormat &)));
@@ -500,7 +502,7 @@ void  ChanMsgDialog::insertForwardPastedText(std::string msg)
 	while( (i=msg.find_first_of('\n',i+1)) < msg.size())
 		msg.replace(i,1,std::string("\n<BR/>> ")) ;
 
-	ui.msgText->setHtml(QString("<HTML><blockquote ><font color=\"blue\">")+QString::fromStdString(std::string("") + msg)+"</font><br/><br/></blockquote></HTML>") ;
+	ui.msgText->setHtml(QString("<HTML><blockquote [type=cite]><font color=\"blue\">")+QString::fromStdString(std::string("") + msg)+"</font><br/><br/></blockquote></HTML>") ;
 	
 	ui.msgText->setFocus( Qt::OtherFocusReason );
 	

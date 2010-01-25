@@ -666,6 +666,7 @@ border: 1px solid #CCCCCC;}</string>
    <addaction name="actionContactsView"/>
    <addaction name="separator"/>
    <addaction name="actionAttach"/>
+   <addaction name="actionQuote"/>
    <addaction name="actionSaveas"/>
   </widget>
   <action name="actionSend">
@@ -690,6 +691,9 @@ border: 1px solid #CCCCCC;}</string>
    </property>
   </action>
   <action name="actionContactsView">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="../images.qrc">
      <normaloff>:/images/contacts24.png</normaloff>:/images/contacts24.png</iconset>
@@ -723,6 +727,21 @@ border: 1px solid #CCCCCC;}</string>
    </property>
    <property name="toolTip">
     <string>Attach File</string>
+   </property>
+  </action>
+  <action name="actionQuote">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../images.qrc">
+     <normaloff>:/images/quote_24.png</normaloff>:/images/quote_24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Quote</string>
+   </property>
+   <property name="toolTip">
+    <string>Add Blockquote</string>
    </property>
   </action>
  </widget>

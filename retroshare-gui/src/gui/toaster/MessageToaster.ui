@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>304</width>
-    <height>115</height>
+    <height>113</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -47,34 +47,41 @@ border: 2px solid #CCCCCC;}</string>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
+     <widget class="QToolButton" name="openmessagetoolButton">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>30</y>
+        <width>61</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>64</width>
+        <height>64</height>
+       </size>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="../images.qrc">
+        <normaloff>:/images/folder_inbox64.png</normaloff>:/images/folder_inbox64.png</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>64</width>
+        <height>64</height>
+       </size>
+      </property>
+      <property name="autoRaise">
+       <bool>true</bool>
+      </property>
+     </widget>
     </widget>
    </item>
   </layout>
-  <widget class="QLabel" name="imgVideoService">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>30</y>
-     <width>61</width>
-     <height>61</height>
-    </rect>
-   </property>
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="pixmap">
-    <pixmap resource="../images.qrc">:/images/folder_inbox64.png</pixmap>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignCenter</set>
-   </property>
-  </widget>
   <widget class="QLabel" name="messagelabel">
    <property name="geometry">
     <rect>
@@ -280,7 +287,6 @@ border-radius: 10px }</string>
    </property>
   </widget>
   <zorder>frame</zorder>
-  <zorder>imgVideoService</zorder>
   <zorder>messagelabel</zorder>
   <zorder>openmessagebtn</zorder>
   <zorder>lblTitle</zorder>
@@ -293,6 +299,7 @@ border-radius: 10px }</string>
   <tabstop>closebtn</tabstop>
  </tabstops>
  <resources>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>
