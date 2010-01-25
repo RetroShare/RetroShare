@@ -92,6 +92,8 @@ ChanMsgDialog::ChanMsgDialog(bool msg, QWidget *parent, Qt::WFlags flags)
     connect(ui.sizedecreaseButton, SIGNAL (clicked()), this, SLOT (fontSizeDecrease()));
     connect(ui.blockquoteButton, SIGNAL (clicked()), this, SLOT (blockQuote()));
     connect(ui.codeButton, SIGNAL (clicked()), this, SLOT (toggleCode()));
+    connect(ui.splitPostButton, SIGNAL (clicked()), this, SLOT (addPostSplitter()));
+
   
     connect(ui.msgText, SIGNAL(currentCharFormatChanged(const QTextCharFormat &)),
             this, SLOT(currentCharFormatChanged(const QTextCharFormat &)));
@@ -1139,6 +1141,22 @@ void ChanMsgDialog::toggleCode()
         ui.msgText->textCursor().mergeCharFormat( f );
     }
     ui.msgText->setFocus( Qt::OtherFocusReason );
+}
+
+void ChanMsgDialog::addPostSplitter()
+{
+    QTextBlockFormat f = ui.msgText->textCursor().blockFormat();
+    QTextBlockFormat f1 = f;
+
+    f.setProperty( TextFormat::IsHtmlTagSign, true );
+    f.setProperty( QTextFormat::BlockTrailingHorizontalRulerWidth, 
+             QTextLength( QTextLength::PercentageLength, 80 ) );
+    if ( ui.msgText->textCursor().block().text().isEmpty() ) {
+        ui.msgText->textCursor().mergeBlockFormat( f );
+    } else {
+        ui.msgText->textCursor().insertBlock( f );
+    }
+    ui.msgText->textCursor().insertBlock( f1 );
 }
 
 void ChanMsgDialog::attachFile()

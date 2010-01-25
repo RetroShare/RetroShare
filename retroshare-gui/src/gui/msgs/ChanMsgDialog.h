@@ -19,7 +19,6 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-
 #ifndef _CHAN_MSG_DIALOG_H
 #define _CHAN_MSG_DIALOG_H
 
@@ -116,6 +115,7 @@ private slots:
   void fontSizeDecrease();
   void blockQuote();
   void toggleCode();
+  void addPostSplitter();
 
   
 private:

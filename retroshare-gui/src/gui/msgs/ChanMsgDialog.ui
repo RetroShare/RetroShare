@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>874</width>
-    <height>528</height>
+    <width>769</width>
+    <height>485</height>
    </rect>
   </property>
   <property name="contextMenuPolicy">
@@ -151,17 +151,34 @@ border: 1px solid #CCCCCC;}</string>
            <property name="frameShadow">
             <enum>QFrame::Raised</enum>
            </property>
-           <layout class="QGridLayout" name="gridLayout">
+           <layout class="QGridLayout" name="gridLayout_5">
             <property name="margin">
              <number>6</number>
             </property>
             <item row="0" column="0">
              <layout class="QGridLayout">
+              <property name="horizontalSpacing">
+               <number>1</number>
+              </property>
               <item row="0" column="0">
-               <widget class="QComboBox" name="comboStyle"/>
+               <widget class="QComboBox" name="comboStyle">
+                <property name="maximumSize">
+                 <size>
+                  <width>75</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+               </widget>
               </item>
               <item row="0" column="1">
-               <widget class="QFontComboBox" name="comboFont"/>
+               <widget class="QFontComboBox" name="comboFont">
+                <property name="maximumSize">
+                 <size>
+                  <width>100</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+               </widget>
               </item>
               <item row="0" column="2">
                <widget class="QComboBox" name="comboSize">
@@ -175,19 +192,6 @@ border: 1px solid #CCCCCC;}</string>
                  <string>Font size</string>
                 </property>
                </widget>
-              </item>
-              <item row="0" column="15">
-               <spacer>
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>24</height>
-                 </size>
-                </property>
-               </spacer>
               </item>
               <item row="0" column="3">
                <widget class="QToolButton" name="blockquoteButton">
@@ -384,7 +388,7 @@ border: 1px solid #CCCCCC;}</string>
                 </property>
                </widget>
               </item>
-              <item row="0" column="10">
+              <item row="0" column="11">
                <widget class="QToolButton" name="colorbtn">
                 <property name="minimumSize">
                  <size>
@@ -409,7 +413,7 @@ border: 1px solid #CCCCCC;}</string>
                 </property>
                </widget>
               </item>
-              <item row="0" column="11">
+              <item row="0" column="12">
                <widget class="QToolButton" name="textalignmentbtn">
                 <property name="minimumSize">
                  <size>
@@ -443,7 +447,7 @@ border: 1px solid #CCCCCC;}</string>
                 </property>
                </widget>
               </item>
-              <item row="0" column="12">
+              <item row="0" column="13">
                <widget class="QToolButton" name="imagebtn">
                 <property name="minimumSize">
                  <size>
@@ -501,6 +505,42 @@ border: 1px solid #CCCCCC;}</string>
                 </property>
                </widget>
               </item>
+              <item row="0" column="16">
+               <spacer>
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>24</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item row="0" column="10">
+               <widget class="QToolButton" name="splitPostButton">
+                <property name="toolTip">
+                 <string>Split text</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="../images.qrc">
+                  <normaloff>:/images/textedit/hi22-action-insert-more-mark.png</normaloff>:/images/textedit/hi22-action-insert-more-mark.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>22</width>
+                  <height>22</height>
+                 </size>
+                </property>
+                <property name="autoRaise">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
              </layout>
             </item>
            </layout>
@@ -521,7 +561,7 @@ border: 1px solid #CCCCCC;}</string>
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="layoutWidget">
+       <widget class="QWidget" name="layoutWidget_1">
         <layout class="QGridLayout" name="layoutrecommended">
          <property name="margin">
           <number>0</number>
@@ -597,7 +637,7 @@ border: 1px solid #CCCCCC;}</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>874</width>
+     <width>769</width>
      <height>21</height>
     </rect>
    </property>
