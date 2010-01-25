@@ -12,7 +12,6 @@ echo done.
 version="$version"."$svn"
 pkgname=RetroShare_"$version"_ubuntu_"$arch".deb
 
-echo
 echo Building retroshare debian package version $version for Ubuntu $arch. 
 echo Please check that:
 echo "    "- you have sudo access and that root has right to write in this directory and the subdirectories.
@@ -45,7 +44,6 @@ cat retroshare/DEBIAN/control | sed -e s/XXXXXX/"$version"/g | sed -e s/YYYYYY/"
 mv retroshare/DEBIAN/control.tmp retroshare/DEBIAN/control
 
 # clean
-echo Cleaning...
 find retroshare -name "*~" -exec \rm -f {} \;
 
 # copy executables at the right place
@@ -59,6 +57,7 @@ if ! test -f ../../retroshare-nogui/src/retroshare-nogui; then
 	echo
 	exit ;
 fi
+
 echo Stripping executables...
 cp ../../retroshare-gui/src/RetroShare              retroshare/usr/bin/
 strip retroshare/usr/bin/RetroShare
@@ -74,7 +73,7 @@ echo Creating package $pkgname
 dpkg-deb -b retroshare $pkgname 
 
 # cleaning
-echo Cleaning...
+echo Cleaning up...
 \rm -rf retroshare
 
 echo Done.
