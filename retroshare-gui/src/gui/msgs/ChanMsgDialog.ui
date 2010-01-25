@@ -691,9 +691,6 @@ border: 1px solid #CCCCCC;}</string>
    </property>
   </action>
   <action name="actionContactsView">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
    <property name="icon">
     <iconset resource="../images.qrc">
      <normaloff>:/images/contacts24.png</normaloff>:/images/contacts24.png</iconset>
