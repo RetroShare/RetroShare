@@ -58,8 +58,8 @@ class RsMutex
 #endif
 				pthread_mutex_lock(&realMutex); 
 
-#ifdef RSTHREAD_SELF_LOCKING_GUARD
 		_thread_id = pthread_self() ;
+#ifdef RSTHREAD_SELF_LOCKING_GUARD
 		++_cnt ;
 #endif
 	}
@@ -69,9 +69,9 @@ class RsMutex
 		if(--_cnt == 0)
 		{
 #endif
+			_thread_id = 0 ;
 			pthread_mutex_unlock(&realMutex); 
 #ifdef RSTHREAD_SELF_LOCKING_GUARD
-			_thread_id = 0 ;
 		}
 #endif
 	}
@@ -79,8 +79,8 @@ class RsMutex
 
 	private:
 		pthread_mutex_t  realMutex;
-#ifdef RSTHREAD_SELF_LOCKING_GUARD
 		pthread_t _thread_id ;
+#ifdef RSTHREAD_SELF_LOCKING_GUARD
 		uint32_t _cnt ;
 #endif
 };
