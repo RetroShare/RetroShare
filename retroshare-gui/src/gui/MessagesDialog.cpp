@@ -842,7 +842,7 @@ void MessagesDialog::insertMsgTxtAndFiles()
 		ui.dateText-> setText(timestamp);
 	}
 	ui.toText->setText(msgTxt);
-	ui.fromText->setText(QString::fromStdString(rsPeers->getPeerName(msgInfo.srcId)));
+	ui.fromText->setText("<a style='color: blue;' href='" + QString::fromStdString(rsPeers->getPeerName(msgInfo.srcId)) + "'> " + QString::fromStdString(rsPeers->getPeerName(msgInfo.srcId)) +"</a>");
 
 	ui.subjectText->setText(QString::fromStdWString(msgInfo.title));
 	ui.msgText->setHtml(QString::fromStdWString(msgInfo.msg));
