@@ -57,6 +57,12 @@ class TransferInfo
 	int  status; /* FT_STATE_... */
 };
 
+enum DwlPriority { 	PRIORITY_LOW 		= 0x00, 
+							PRIORITY_NORMAL 	= 0x01, 
+							PRIORITY_HIGH		= 0x02, 
+							PRIORITY_AUTO		= 0x03
+};
+
 
 class FileInfo
 {
@@ -101,6 +107,7 @@ class FileInfo
 		uint32_t  downloadStatus; /* 0 = Err, 1 = Ok, 2 = Done */
 		std::list<TransferInfo> peers;
 
+		DwlPriority priority ;
 		time_t lastTS;
 };
 
@@ -246,13 +253,6 @@ class FileDetail
 	uint32_t age;
 	uint32_t rank;
 };
-
-enum DwlPriority { Low = 0, Normal, High, Auto };
-
-// Macro to read a bits array for compressed chunk maps
-//
-//#define COMPRESSED_MAP_READ(A,j) (A[j >> 5] & (1 << (j & 0x11111)))
-//#define COMPRESSED_MAP_WRITE(A,j,x) (A[j >> 5] |= (1 << (j & 0x11111)))
 
 class CompressedChunkMap ;
 

@@ -4,6 +4,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <rsiface/rspeers.h>
+#include <rsiface/rsturtle.h>
 #include "ftchunkmap.h"
 #include <time.h>
 
@@ -35,10 +36,9 @@ void Chunk::getSlice(uint32_t size_hint,ftChunk& chunk)
 	_offset += chunk.size ;
 }
 
-ChunkMap::ChunkMap(uint64_t s,bool assume_availability)
+ChunkMap::ChunkMap(uint64_t s)
 	:	_file_size(s),
-		_chunk_size(CHUNKMAP_FIXED_CHUNK_SIZE), 	// 1MB chunks
-	 	_assume_availability(assume_availability)
+		_chunk_size(CHUNKMAP_FIXED_CHUNK_SIZE) // 1MB chunks
 {
 	uint64_t n = s/(uint64_t)_chunk_size ;
 	if(s% (uint64_t)_chunk_size != 0)
@@ -290,56 +290,66 @@ uint32_t ChunkMap::sizeOfChunk(uint32_t cid) const
 
 uint32_t ChunkMap::getAvailableChunk(uint32_t start_location,const std::string& peer_id,bool& map_is_too_old) 
 {
-	// Very bold algorithm: checks for 1st availabe chunk for this peer starting
-	// from the given start location.
+	// Quite simple strategy: Check for 1st availabe chunk for this peer starting from the given start location.
+	//
 	std::map<std::string,SourceChunksInfo>::iterator it(_peers_chunks_availability.find(peer_id)) ;
 	SourceChunksInfo *peer_chunks = NULL;
 
-	// Do we have records for this file source ?
+	// Do we have a chunk map for this file source ?
+	//  - if yes, we use it
+	//  - if no, 
+	//  	- if availability is assumed, let's build a plain chunkmap for it
+	//  	- otherwise, refuse the transfer, but still ask for the chunkmap
 	//
-	if(!_assume_availability)
+	//  We first test whether the source has a record of not. If not, we fill a new record. 
+	//  For availability sources we fill it plain, otherwise, we fill it blank.
+	//
+	if(it == _peers_chunks_availability.end())
 	{
-		if(it == _peers_chunks_availability.end())
-		{
-			SourceChunksInfo& pchunks(_peers_chunks_availability[peer_id]) ;
+		SourceChunksInfo& pchunks(_peers_chunks_availability[peer_id]) ;
 
-			// Ok, we don't have the info, so two cases:
-			// 	- we are the actual source, so we can safely init the map to a full map
-			// 	- we are not the source, so we init it with an empty map, and set the time stamp to 0.
-			//
-			if(peer_id == rsPeers->getOwnId())
-			{
-				pchunks.cmap._map.resize( CompressedChunkMap::getCompressedSize(_map.size()),~(uint32_t)0 ) ;
-				pchunks.TS = 0 ;
-				pchunks.is_full = true ;
-			}
-			else
-			{
-				pchunks.cmap._map.resize( CompressedChunkMap::getCompressedSize(_map.size()),0 ) ;
-				pchunks.TS = 0 ;
-				pchunks.is_full = false ;
-			}
+		bool assume_availability = !rsTurtle->isTurtlePeer(peer_id) ;
 
-			it = _peers_chunks_availability.find(peer_id) ;
-		}
-		peer_chunks = &(it->second) ;
-
-		// If the info is too old, we ask for a new one. When the map is full, we ask 10 times less, as it's probably not 
-		// useful to get a new map that will also be full, but because we need to be careful not to mislead information,
-		// we still keep asking.
+		// Ok, we don't have the info, so two cases:
+		// 	- peer_id is a not a turtle peer, so he is considered having the full file source, so we init with a plain chunkmap
+		// 	- otherwise, a source map needs to be obtained, so we init with a blank chunkmap
 		//
-		time_t now = time(NULL) ;
-		map_is_too_old = (int)now - (int)peer_chunks->TS > (int)SOURCE_CHUNK_MAP_UPDATE_PERIOD*(1+9*peer_chunks->is_full) ;
+		if(assume_availability)
+		{
+			pchunks.cmap._map.resize( CompressedChunkMap::getCompressedSize(_map.size()),~(uint32_t)0 ) ;
+			pchunks.TS = 0 ;
+			pchunks.is_full = true ;
+		}
+		else
+		{
+			pchunks.cmap._map.resize( CompressedChunkMap::getCompressedSize(_map.size()),0 ) ;
+			pchunks.TS = 0 ;
+			pchunks.is_full = false ;
+		}
 
-		// We will re-ask but not now seconds.
+		it = _peers_chunks_availability.find(peer_id) ;
+	}
+	peer_chunks = &(it->second) ;
+
+	// If the info is too old, we ask for a new one. When the map is full, we ask 10 times less, as it's probably not 
+	// useful to get a new map that will also be full, but because we need to be careful not to mislead information,
+	// we still keep asking.
+	//
+	time_t now = time(NULL) ;
+
+	if((!peer_chunks->is_full) && ((int)now - (int)peer_chunks->TS > (int)SOURCE_CHUNK_MAP_UPDATE_PERIOD)) 
+	{
+		map_is_too_old = true ;// We will re-ask but not before some seconds.
 		peer_chunks->TS = now ;
 	}
+	else
+		map_is_too_old = false ;// the map is not too old
 
 	for(unsigned int i=0;i<_map.size();++i)
 	{
 		uint32_t j = (start_location+i)%(int)_map.size() ;	// index of the chunk
 
-		if(_map[j] == FileChunksInfo::CHUNK_OUTSTANDING && (_assume_availability || peer_chunks->cmap[j]))
+		if(_map[j] == FileChunksInfo::CHUNK_OUTSTANDING && (peer_chunks->is_full || peer_chunks->cmap[j]))
 		{
 #ifdef DEBUG_FTCHUNK
 			std::cerr << "ChunkMap::getAvailableChunk: returning chunk " << j << " for peer " << peer_id << std::endl;

@@ -66,25 +66,26 @@ class ftFileControl
 {
 	public:
 
-        enum {DOWNLOADING,COMPLETED,ERROR_COMPLETION};
+		enum {DOWNLOADING,COMPLETED,ERROR_COMPLETION};
 
-	ftFileControl();
-        ftFileControl(std::string fname, std::string tmppath, std::string dest,
-		uint64_t size, std::string hash, uint32_t flags,
-		ftFileCreator *fc, ftTransferModule *tm, uint32_t cb_flags);
+		ftFileControl();
+		ftFileControl(std::string fname, std::string tmppath, std::string dest,
+							uint64_t size, std::string hash, uint32_t flags,
+							ftFileCreator *fc, ftTransferModule *tm, uint32_t cb_flags);
 
-	std::string	   mName;
-	std::string	   mCurrentPath; /* current full path (including name) */
-	std::string	   mDestination; /* final full path (including name) */
-	ftTransferModule * mTransfer;
-	ftFileCreator *    mCreator;
-	uint32_t	   mState;
-	std::string	   mHash;
-	uint64_t	   mSize;
-	uint32_t	   mFlags;
-	bool		   mDoCallback;
-	uint32_t	   mCallbackCode;
-	time_t		   mCreateTime;
+		std::string	   mName;
+		std::string	   mCurrentPath; /* current full path (including name) */
+		std::string	   mDestination; /* final full path (including name) */
+		ftTransferModule * mTransfer;
+		ftFileCreator *    mCreator;
+		uint32_t	   mState;
+		std::string	   mHash;
+		uint64_t	   mSize;
+		uint32_t	   mFlags;
+		bool		   mDoCallback;
+		uint32_t	   mCallbackCode;
+		time_t		mCreateTime;
+		DwlPriority mPriority ;
 };
 
 class ftPendingRequest
@@ -143,6 +144,9 @@ bool 	FileClearCompleted();
 bool 	FlagFileComplete(std::string hash);
 bool  getFileDownloadChunksDetails(const std::string& hash,FileChunksInfo& info);
 
+bool getPriority(const std::string& hash,DwlPriority& p);
+void setPriority(const std::string& hash,DwlPriority p);
+
 	/* get Details of File Transfers */
 bool 	FileDownloads(std::list<std::string> &hashs);
 
@@ -159,10 +163,18 @@ bool moveFile(const std::string& source,const std::string& dest) ;
 	/********************** Cache Transfer *************************/
 	/***************************************************************/
 
+/// Returns true is full source availability can be assumed for this peer.
+///
+bool assumeAvailability(const std::string& peer_id) const ;
+
 protected:
 
 virtual bool RequestCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size);
 virtual bool CancelCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size);
+
+void cleanCacheDownloads() ;
+void tickTransfers() ;
+
 
 	/***************************************************************/
 	/********************** Controller Access **********************/
@@ -205,9 +217,7 @@ bool    setPeerState(ftTransferModule *tm, std::string id,
 
 	std::list<FileInfo> incomingQueue;
 	std::map<std::string, ftFileControl> mCompleted;
-
-
-        std::map<std::string, ftFileControl> mDownloads;
+	std::map<std::string, ftFileControl> mDownloads;
 
 	//std::map<std::string, ftTransferModule *> mTransfers;
 	//std::map<std::string, ftFileCreator *> mFileCreators;
@@ -233,6 +243,10 @@ bool    setPeerState(ftTransferModule *tm, std::string id,
 
 	/* share incoming directory */
 	bool mShareDownloadDir;
+
+	// priority handling
+	//
+	std::vector< std::vector<ftTransferModule*> > mPriorityTab ;
 };
 
 #endif

@@ -92,6 +92,9 @@ class RsTurtle
 		// Get info from the turtle router. I use std strings to hide the internal structs.
 		virtual void getInfo(std::vector<std::vector<std::string> >&,std::vector<std::vector<std::string> >&,
 									std::vector<std::vector<std::string> >&,std::vector<std::vector<std::string> >&) const = 0;
+
+		// Convenience function.
+		virtual bool isTurtlePeer(const std::string& peer_id) const = 0 ;
 		
 	protected:
 		FileSharingStrategy _sharing_strategy ;

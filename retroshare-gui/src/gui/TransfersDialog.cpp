@@ -457,19 +457,19 @@ TransfersDialog::~TransfersDialog()
 }
 
 
-int TransfersDialog::addItem(QString symbol, QString name, QString coreID, qlonglong fileSize, const FileProgressInfo& pinfo, double dlspeed,
-		QString sources,  QString status, QString priority, qlonglong completed, qlonglong remaining)
+int TransfersDialog::addItem(const QString& symbol, const QString& name, const QString& coreID, qlonglong fileSize, const FileProgressInfo& pinfo, double dlspeed,
+		const QString& sources,  const QString& status, const QString& priority, qlonglong completed, qlonglong remaining)
 {
     int row;
     QString sl;
     //QIcon icon(symbol);
-    name.insert(0, " ");
+    //name.insert(0, " ");
     //sl.sprintf("%d / %d", seeds, leechs);
     row = DLListModel->rowCount();
     DLListModel->insertRow(row);
 
     //DLListModel->setData(DLListModel->index(row, NAME), QVariant((QIcon)icon), Qt::DecorationRole);
-    DLListModel->setData(DLListModel->index(row, NAME), QVariant((QString)name), Qt::DisplayRole);
+    DLListModel->setData(DLListModel->index(row, NAME), QVariant((QString)" "+name), Qt::DisplayRole);
     DLListModel->setData(DLListModel->index(row, SIZE), QVariant((qlonglong)fileSize));
     DLListModel->setData(DLListModel->index(row, COMPLETED), QVariant((qlonglong)completed));
     DLListModel->setData(DLListModel->index(row, DLSPEED), QVariant((double)dlspeed));
@@ -534,7 +534,7 @@ int TransfersDialog::addItem(QString symbol, QString name, QString coreID, qlong
 	return row;
 }
 
-bool TransfersDialog::addPeerToItem(int row, QString symbol, QString name, QString coreID, qlonglong fileSize, const FileProgressInfo& pinfo, double dlspeed, QString sources, QString status, qlonglong completed, qlonglong remaining)
+bool TransfersDialog::addPeerToItem(int row, const QString& symbol, const QString& name, const QString& coreID, qlonglong fileSize, const FileProgressInfo& pinfo, double dlspeed, const QString& sources, const QString& status, qlonglong completed, qlonglong remaining)
 {
     QStandardItem *dlItem = DLListModel->item(row);
     if (!dlItem) return false;
@@ -542,10 +542,10 @@ bool TransfersDialog::addPeerToItem(int row, QString symbol, QString name, QStri
     //set this false if you want to expand on double click
     dlItem->setEditable(false);
 
-    name.insert(0, " ");
+    //name.insert(0, " ");
 
     QList<QStandardItem *> items;
-    QStandardItem *i1 = new QStandardItem(); i1->setData(QVariant((QString)name), Qt::DisplayRole);
+    QStandardItem *i1 = new QStandardItem(); i1->setData(QVariant((QString)" "+name), Qt::DisplayRole);
     QStandardItem *i2 = new QStandardItem(); i2->setData(QVariant((qlonglong)fileSize), Qt::DisplayRole);
     QStandardItem *i3 = new QStandardItem(); i3->setData(QVariant((qlonglong)completed), Qt::DisplayRole);
     QStandardItem *i4 = new QStandardItem(); i4->setData(QVariant((double)dlspeed), Qt::DisplayRole);
@@ -587,16 +587,16 @@ bool TransfersDialog::addPeerToItem(int row, QString symbol, QString name, QStri
 }
 
 
-int TransfersDialog::addUploadItem(QString symbol, QString name, QString coreID, qlonglong fileSize, const FileProgressInfo& pinfo, double dlspeed, QString source,  QString status, qlonglong completed, qlonglong remaining)
+int TransfersDialog::addUploadItem(const QString& symbol, const QString& name, const QString& coreID, qlonglong fileSize, const FileProgressInfo& pinfo, double dlspeed, const QString& source,  const QString& status, qlonglong completed, qlonglong remaining)
 {
 	int row;
 	QString sl;
 	//QIcon icon(symbol);
-	name.insert(0, " ");
+	//name.insert(0, " ");
 	row = ULListModel->rowCount();
 	ULListModel->insertRow(row);
 
-	ULListModel->setData(ULListModel->index(row, UNAME), QVariant((QString)name), Qt::DisplayRole);
+	ULListModel->setData(ULListModel->index(row, UNAME), QVariant((QString)" "+name), Qt::DisplayRole);
 	ULListModel->setData(ULListModel->index(row, USIZE), QVariant((qlonglong)fileSize));
 	ULListModel->setData(ULListModel->index(row, UTRANSFERRED), QVariant((qlonglong)completed));
 	ULListModel->setData(ULListModel->index(row, ULSPEED), QVariant((double)dlspeed));
@@ -775,7 +775,21 @@ void TransfersDialog::insertTransfers()
                 status = tr("Unknown"); break;
         }
 
-        priority	= "";	/* for already downloading files */
+		switch (info.priority) {
+			case 0:
+				priority = tr("Low");
+				break;
+			case 1:
+				priority = tr("Normal");
+				break;
+			case 2:
+				priority = tr("High");
+				break;
+			default:
+				priority = tr("Auto");
+				break;
+		}
+
         completed   = info.transfered;
         remaining   = (info.size - info.transfered) / (info.tfRate * 1024.0);
 

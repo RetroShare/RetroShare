@@ -15,8 +15,8 @@
 *
 ***********************************************************/
 
-ftFileCreator::ftFileCreator(std::string path, uint64_t size, std::string hash, uint64_t recvd,bool assume_sources_availability)
-	: ftFileProvider(path,size,hash), chunkMap(size,assume_sources_availability)
+ftFileCreator::ftFileCreator(std::string path, uint64_t size, std::string hash, uint64_t recvd)
+	: ftFileProvider(path,size,hash), chunkMap(size)
 {
 	/* 
          * FIXME any inits to do?

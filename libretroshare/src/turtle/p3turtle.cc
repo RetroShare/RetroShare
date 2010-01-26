@@ -424,7 +424,7 @@ std::list<RsItem*> p3turtle::saveList(bool& cleanup)
 #endif
 	cleanup = true ;
 	std::list<RsItem*> lst ;
-
+#ifdef TO_REMOVE
 	RsTurtleSearchResultItem *item = new RsTurtleSearchResultItem ;
 	item->PeerId("") ;
 
@@ -441,11 +441,13 @@ std::list<RsItem*> p3turtle::saveList(bool& cleanup)
 		item->result.push_back(finfo) ;
 	}
 	lst.push_back(item) ;
-
+#endif
 	return lst ;
 }
+
 bool p3turtle::loadList(std::list<RsItem*> load)
 {
+#ifdef TO_REMOVE
 #ifdef P3TURTLE_DEBUG
 	std::cerr << "p3turtle: loading list..." << std::endl ;
 #endif
@@ -468,6 +470,7 @@ bool p3turtle::loadList(std::list<RsItem*> load)
 		}
 		delete item ;
 	}
+#endif
 	return true ;
 }
 
@@ -797,8 +800,10 @@ void p3turtle::routeGenericTunnelItem(RsTurtleGenericTunnelItem *item)
 		case RS_TURTLE_SUBTYPE_FILE_MAP_REQUEST:	handleRecvFileMapRequest(dynamic_cast<RsTurtleFileMapRequestItem *>(item)) ;
 																break ;
 		default:
-															std::cerr << "Unknown packet type received: id=" << (void*)(item->PacketSubType()) << std::endl ;
+															std::cerr << "WARNING: Unknown packet type received: id=" << (void*)(item->PacketSubType()) << ". Is somebody trying to DOS you ?" << std::endl ;
+#ifdef P3TURTLE_DEBUG
 															exit(-1) ;
+#endif
 	}
 
 	delete item ;

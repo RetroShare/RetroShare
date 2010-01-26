@@ -10,6 +10,7 @@ static const time_t UPLOAD_CHUNK_MAPS_TIME = 30 ;	// time to ask for a new chunk
 ftFileProvider::ftFileProvider(std::string path, uint64_t size, std::string
 hash) : mSize(size), hash(hash), file_name(path), fd(NULL),transfer_rate(0),total_size(0)
 {
+	clients_chunk_maps.clear(); 
 #ifdef DEBUG_FT_FILE_PROVIDER
 	std::cout << "Creating file provider for " << hash << std::endl ;
 #endif

@@ -23,6 +23,7 @@
 
 #include "RemoteDirModel.h"
 #include "rsiface/rsfiles.h"
+#include "rsiface/rstypes.h"
 
 #include <QtGui>
 #include <QIcon>
@@ -867,7 +868,7 @@ void RemoteDirModel::downloadSelected(QModelIndexList list)
             std::list<std::string> srcIds;
             srcIds.push_back(details.id);
             rsFiles -> FileRequest(details.name, details.hash,
-                    details.count, "", 0, srcIds);
+                    details.count, "", RS_FILE_HINTS_NETWORK_WIDE, srcIds);
         }
         /* if it is a dir, copy all files included*/
         else if (details.type == DIR_TYPE_DIR)
@@ -888,7 +889,7 @@ void RemoteDirModel::downloadDirectory(const DirDetails & dirDetails, int prefix
 		QString cleanPath = QDir::cleanPath((rsFiles->getDownloadDirectory() + "/" + dirDetails.path.substr(prefixLen)).c_str());
 
 		srcIds.push_back(dirDetails.id);
-		rsFiles->FileRequest(dirDetails.name, dirDetails.hash, dirDetails.count, cleanPath.toStdString(), 0, srcIds);
+		rsFiles->FileRequest(dirDetails.name, dirDetails.hash, dirDetails.count, cleanPath.toStdString(), RS_FILE_HINTS_NETWORK_WIDE, srcIds);
 	}
 	else if (dirDetails.type & DIR_TYPE_DIR)
 	{

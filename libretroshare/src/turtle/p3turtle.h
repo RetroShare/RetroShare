@@ -263,7 +263,7 @@ class p3turtle: public p3Service, public pqiMonitor, public RsTurtle,/* public f
 		/************* Communication with ftserver *******************/
 		/// Does the turtle router manages tunnels to this peer ? (this is not a
 		/// real id, but a fake one, that the turtle router is capable of connecting with a tunnel id).
-		bool isTurtlePeer(const std::string& peer_id) const ;
+		virtual bool isTurtlePeer(const std::string& peer_id) const ;
 
 		/// Examines the peer id, finds the turtle tunnel in it, and respond yes if the tunnel is ok and operational.
 		bool isOnline(const std::string& peer_id) const ;

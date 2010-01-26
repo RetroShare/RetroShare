@@ -40,7 +40,7 @@ class ftFileCreator: public ftFileProvider
 {
 	public:
 
-		ftFileCreator(std::string savepath, uint64_t size, std::string hash, uint64_t recvd,bool assume_sources_availability=false);
+		ftFileCreator(std::string savepath, uint64_t size, std::string hash, uint64_t recvd);
 
 		~ftFileCreator();
 

@@ -62,7 +62,8 @@ static const uint32_t INACTIVE_CHUNKS_CHECK_DELAY = 60	; // save transfer progre
 
 ftFileControl::ftFileControl()
 	:mTransfer(NULL), mCreator(NULL),
-	 mState(0), mSize(0), mFlags(0)
+	 mState(0), mSize(0), mFlags(0),
+	 mPriority(PRIORITY_NORMAL)
 {
 	return;
 }
@@ -73,7 +74,8 @@ ftFileControl::ftFileControl(std::string fname,
 		ftFileCreator *fc, ftTransferModule *tm, uint32_t cb)
 	:mName(fname), mCurrentPath(tmppath), mDestination(dest),
 	 mTransfer(tm), mCreator(fc), mState(0), mHash(hash),
-	 mSize(size), mFlags(flags), mDoCallback(false), mCallbackCode(cb)
+	 mSize(size), mFlags(flags), mDoCallback(false), mCallbackCode(cb),
+	 mPriority(PRIORITY_NORMAL)	// default priority to normal
 {
 	if (cb)
 		mDoCallback = true;
@@ -194,6 +196,8 @@ void ftController::run()
 		time_t now = time(NULL) ;
 		if((int)now - (int)last_save_time > (int)SAVE_TRANSFERS_DELAY)
 		{
+			cleanCacheDownloads() ;
+
 			IndicateConfigChanged() ;
 			last_save_time = now ;
 		}
@@ -217,65 +221,160 @@ void ftController::run()
 			}
 		}
 
-		/* tick the transferModules */
-		std::list<std::string> done;
-		std::list<std::string>::iterator it;
+		tickTransfers() ;
+
 		{
-		  RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+			RsStackMutex stack2(doneMutex);
 
-		  std::map<std::string, ftFileControl>::iterator it;
-		  std::map<std::string, ftFileControl> currentDownloads = *(&mDownloads);
-		  for(it = currentDownloads.begin(); it != currentDownloads.end(); it++)
-		  {
-
-#ifdef CONTROL_DEBUG
-			std::cerr << "\tTicking: " << it->first;
-			std::cerr << std::endl;
-#endif
-
-			if (it->second.mTransfer)
-			{
-#ifdef CONTROL_DEBUG
-				std::cerr << "\tTicking mTransfer: " << (void*)it->second.mTransfer;
-				std::cerr << std::endl;
-#endif
-				(it->second.mTransfer)->tick();
-
-
-				//check if a cache file is downloaded, if the case, timeout the transfer after TIMOUT_CACHE_FILE_TRANSFER
-				if ((it->second).mFlags & RS_FILE_HINTS_CACHE) {
-#ifdef CONTROL_DEBUG
-					std::cerr << "ftController::run() cache transfer found. age of this tranfer is :" << (int)(time(NULL) - (it->second).mCreateTime);
-					std::cerr << std::endl;
-#endif
-					if ((time(NULL) - (it->second).mCreateTime) > TIMOUT_CACHE_FILE_TRANSFER) {
-#ifdef CONTROL_DEBUG
-						std::cerr << "ftController::run() cache transfer to old. Cancelling transfer. Hash :" << (it->second).mHash << ", time=" << (it->second).mCreateTime << ", now = " << time(NULL) ;
-						std::cerr << std::endl;
-#endif
-						this->FileCancel((it->second).mHash);
-					}
-				}
-
-			}
-#ifdef CONTROL_DEBUG
-			else
-				std::cerr << "No mTransfer for this hash." << std::endl ;
-#endif
-		  }
+			for(std::list<std::string>::iterator it(mDone.begin()); it != mDone.end(); it++)
+				completeFile(*it);
+			
+			mDone.clear();
 		}
-
-		RsStackMutex stack2(doneMutex);
-		for(it = mDone.begin(); it != mDone.end(); it++)
-		{
-			completeFile(*it);
-		}
-		mDone.clear();
 	}
 
 }
 
+void ftController::tickTransfers()
+{
+	// 1 - sort modules into arrays according to priority
+	
+//	if(mPrioritiesChanged)
+	
+	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
+	std::cerr << "ticking transfers." << std::endl ;
+	mPriorityTab = std::vector<std::vector<ftTransferModule*> >(3,std::vector<ftTransferModule*>()) ;
+
+	for(std::map<std::string,ftFileControl>::iterator it(mDownloads.begin()); it != mDownloads.end(); it++)
+		mPriorityTab[it->second.mPriority].push_back(it->second.mTransfer) ;
+
+	// 2 - tick arrays with a probability proportional to priority
+	
+	// 2.1 - decide based on probability, which category of files we handle.
+	
+	static const float   HIGH_PRIORITY_PROB = 0.60 ;
+	static const float NORMAL_PRIORITY_PROB = 0.25 ;
+	static const float    LOW_PRIORITY_PROB = 0.15 ;
+	static const float   SUSP_PRIORITY_PROB = 0.00 ;
+
+	std::cerr << "Priority tabs: " ;
+	std::cerr << "Low ("    << mPriorityTab[PRIORITY_LOW   ].size() << ") " ;
+	std::cerr << "Normal (" << mPriorityTab[PRIORITY_NORMAL].size() << ") " ;
+	std::cerr << "High ("   << mPriorityTab[PRIORITY_HIGH  ].size() << ") " ;
+	std::cerr << std::endl ;
+
+//	float probs[3] = { (!mPriorityTab[PRIORITY_LOW   ].empty())*   LOW_PRIORITY_PROB,
+//	                   (!mPriorityTab[PRIORITY_NORMAL].empty())*NORMAL_PRIORITY_PROB,
+//                      (!mPriorityTab[PRIORITY_HIGH  ].empty())*  HIGH_PRIORITY_PROB } ;
+//
+//	float total = probs[0]+probs[1]+probs[2] ;
+//	float cumul_probs[3] = { probs[0], probs[0]+probs[1], probs[0]+probs[1]+probs[2] } ;
+//
+//	float r = rand()/(float)RAND_MAX * total;
+//	int chosen ;
+//
+//	if(total == 0.0)
+//		return ;
+//
+//	if(r < cumul_probs[0])
+//		chosen = 0 ;
+//	else if(r < cumul_probs[1])
+//		chosen = 1 ;
+//	else 
+//		chosen = 2 ;
+//
+//	std::cerr << "chosen: " << chosen << std::endl ;
+
+	/* tick the transferModules */
+
+	// start anywhere in the chosen list of transfers, so that not to favor any special transfer
+	//
+
+	for(int chosen=2;chosen>=0;--chosen)
+		if(!mPriorityTab[chosen].empty())
+		{
+			int start = rand() % mPriorityTab[chosen].size() ;
+
+			for(int i=0;i<(int)mPriorityTab[chosen].size();++i)
+				mPriorityTab[chosen][(i+start)%(int)mPriorityTab[chosen].size()]->tick() ;
+		}
+
+//		{
+//
+//#ifdef CONTROL_DEBUG
+//			std::cerr << "\tTicking: " << it->first;
+//			std::cerr << std::endl;
+//#endif
+//
+//			if (it->second.mTransfer)
+//			{
+//#ifdef CONTROL_DEBUG
+//				std::cerr << "\tTicking mTransfer: " << (void*)it->second.mTransfer;
+//				std::cerr << std::endl;
+//#endif
+//				(it->second.mTransfer)->tick();
+//			}
+//#ifdef CONTROL_DEBUG
+//			else
+//				std::cerr << "No mTransfer for this hash." << std::endl ;
+//#endif
+//		}
+//	}
+}
+
+bool ftController::getPriority(const std::string& hash,DwlPriority& p)
+{
+	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+
+	std::map<std::string,ftFileControl>::iterator it(mDownloads.find(hash)) ;
+
+	if(it != mDownloads.end())
+	{
+		p = it->second.mPriority ;
+		return true ;
+	}
+	else
+		return false ;
+}
+void ftController::setPriority(const std::string& hash,DwlPriority p)
+{
+	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+
+	std::map<std::string,ftFileControl>::iterator it(mDownloads.find(hash)) ;
+
+	if(it != mDownloads.end())
+		it->second.mPriority = p ;
+}
+
+void ftController::cleanCacheDownloads()
+{
+	std::vector<std::string> toCancel ;
+
+	{
+		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+
+		for(std::map<std::string,ftFileControl>::iterator it(mDownloads.begin());it!=mDownloads.end();++it)
+			if ((it->second).mFlags & RS_FILE_HINTS_CACHE) //check if a cache file is downloaded, if the case, timeout the transfer after TIMOUT_CACHE_FILE_TRANSFER
+			{
+#ifdef CONTROL_DEBUG
+				std::cerr << "ftController::run() cache transfer found. age of this tranfer is :" << (int)(time(NULL) - (it->second).mCreateTime);
+				std::cerr << std::endl;
+#endif
+				if ((time(NULL) - (it->second).mCreateTime) > TIMOUT_CACHE_FILE_TRANSFER) 
+				{
+#ifdef CONTROL_DEBUG
+					std::cerr << "ftController::run() cache transfer to old. Cancelling transfer. Hash :" << (it->second).mHash << ", time=" << (it->second).mCreateTime << ", now = " << time(NULL) ;
+					std::cerr << std::endl;
+#endif
+					toCancel.push_back((it->second).mHash);
+				}
+			}
+	}
+
+	for(uint32_t i=0;i<toCancel.size();++i)
+		FileCancel(toCancel[i]);
+}
 
 /* Called every 10 seconds or so */
 void ftController::checkDownloadQueue()
@@ -687,13 +786,9 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 	std::string ownId = mConnMgr->getOwnId();
 	uint32_t rate = 0;
 	if (flags & RS_FILE_HINTS_BACKGROUND)
-	{
 		rate = FT_CNTRL_SLOW_RATE;
-	}
 	else
-	{
 		rate = FT_CNTRL_STANDARD_RATE;
-	}
 
 	/* First check if the file is already being downloaded....
 	 * This is important as some guis request duplicate files regularly.
@@ -844,15 +939,8 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
   
   	if(flags & RS_FILE_HINTS_NETWORK_WIDE)
 		mTurtle->monitorFileTunnels(fname,hash,size) ;
-	else
-	{
-		std::cerr << "Warning: no flags supplied. Assuming availability. This is probably a bug." << std::endl ;
-		flags |= RS_FILE_HINTS_ASSUME_AVAILABILITY ;
-	}
 
-	bool assume_source_availability = (flags & RS_FILE_HINTS_ASSUME_AVAILABILITY) > 0 ;
-
-	ftFileCreator *fc = new ftFileCreator(savepath, size, hash, 0,assume_source_availability);
+	ftFileCreator *fc = new ftFileCreator(savepath, size, hash, 0);
 	ftTransferModule *tm = new ftTransferModule(fc, mDataplex,this);
 
 	/* add into maps */
@@ -894,9 +982,7 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 	return true;
 }
 
-
-bool 	ftController::setPeerState(ftTransferModule *tm, std::string id,
-						uint32_t maxrate, bool online)
+bool 	ftController::setPeerState(ftTransferModule *tm, std::string id, uint32_t maxrate, bool online)
 {
 	if (id == mConnMgr->getOwnId())
 	{
@@ -935,7 +1021,7 @@ bool ftController::setChunkStrategy(const std::string& hash,FileChunksInfo::Chun
 	if (mit==mDownloads.end())
 	{
 #ifdef CONTROL_DEBUG
-		std::cerr<<"ftController::FileCancel file is not found in mDownloads"<<std::endl;
+		std::cerr<<"ftController::setChunkStrategy file is not found in mDownloads"<<std::endl;
 #endif
 		return false;
 	}
@@ -952,70 +1038,75 @@ bool 	ftController::FileCancel(std::string hash)
 	std::cerr << "ftController::FileCancel" << std::endl;
 #endif
 	/*check if the file in the download map*/
-	std::map<std::string,ftFileControl>::iterator mit;
-	mit=mDownloads.find(hash);
-	if (mit==mDownloads.end())
+
 	{
+		RsStackMutex mtx(ctrlMutex) ;
+
+		std::map<std::string,ftFileControl>::iterator mit;
+		mit=mDownloads.find(hash);
+		if (mit==mDownloads.end())
+		{
 #ifdef CONTROL_DEBUG
-		std::cerr<<"ftController::FileCancel file is not found in mDownloads"<<std::endl;
+			std::cerr<<"ftController::FileCancel file is not found in mDownloads"<<std::endl;
 #endif
-		return false;
-	}
+			return false;
+		}
 
-	/* check if finished */
-	if ((mit->second).mCreator->finished())
-	{
+		/* check if finished */
+		if ((mit->second).mCreator->finished())
+		{
 #ifdef CONTROL_DEBUG
-		std::cerr << "ftController:FileCancel(" << hash << ")";
-		std::cerr << " Transfer Already finished";
-		std::cerr << std::endl;
+			std::cerr << "ftController:FileCancel(" << hash << ")";
+			std::cerr << " Transfer Already finished";
+			std::cerr << std::endl;
 
-		std::cerr << "FileSize: ";
-		std::cerr << (mit->second).mCreator->getFileSize();
-		std::cerr << " and Recvd: ";
-		std::cerr << (mit->second).mCreator->getRecvd();
+			std::cerr << "FileSize: ";
+			std::cerr << (mit->second).mCreator->getFileSize();
+			std::cerr << " and Recvd: ";
+			std::cerr << (mit->second).mCreator->getRecvd();
 #endif
-		return false;
-	}
+			return false;
+		}
 
-	/*find the point to transfer module*/
-	ftTransferModule* ft=(mit->second).mTransfer;
-	ft->cancelTransfer();
+		/*find the point to transfer module*/
+		ftTransferModule* ft=(mit->second).mTransfer;
+		ft->cancelTransfer();
 
-	ftFileControl *fc = &(mit->second);
-	mDataplex->removeTransferModule(fc->mTransfer->hash());
+		ftFileControl *fc = &(mit->second);
+		mDataplex->removeTransferModule(fc->mTransfer->hash());
 
-	if (fc->mTransfer)
-	{
-		delete fc->mTransfer;
-		fc->mTransfer = NULL;
-	}
+		if (fc->mTransfer)
+		{
+			delete fc->mTransfer;
+			fc->mTransfer = NULL;
+		}
 
-	if (fc->mCreator)
-	{
-		delete fc->mCreator;
-		fc->mCreator = NULL;
-	}
+		if (fc->mCreator)
+		{
+			delete fc->mCreator;
+			fc->mCreator = NULL;
+		}
 
-        /* delete the temporary file */
-        if (0 == remove(fc->mCurrentPath.c_str()))
-        {
+		/* delete the temporary file */
+		if (0 == remove(fc->mCurrentPath.c_str()))
+		{
 #ifdef CONTROL_DEBUG
-                std::cerr << "ftController::FileCancel() remove temporary file ";
-                std::cerr << fc->mCurrentPath;
-                std::cerr << std::endl;
+			std::cerr << "ftController::FileCancel() remove temporary file ";
+			std::cerr << fc->mCurrentPath;
+			std::cerr << std::endl;
 #endif
-        }
-        else
-        {
+		}
+		else
+		{
 #ifdef CONTROL_DEBUG
-                std::cerr << "ftController::FileCancel() fail to remove file ";
-                std::cerr << fc->mCurrentPath;
-                std::cerr << std::endl;
+			std::cerr << "ftController::FileCancel() fail to remove file ";
+			std::cerr << fc->mCurrentPath;
+			std::cerr << std::endl;
 #endif
-        }
+		}
 
-	mDownloads.erase(mit);
+		mDownloads.erase(mit);
+	}
 
 	IndicateConfigChanged(); /* completed transfer -> save */
 	return true;
@@ -1196,6 +1287,7 @@ bool 	ftController::FileDetails(std::string hash, FileInfo &info)
 	info.fname = it->second.mName;
 	info.flags = it->second.mFlags;
 	info.path = RsDirUtil::removeTopDir(it->second.mDestination); /* remove fname */
+	info.priority = it->second.mPriority ;
 
 	/* get list of sources from transferModule */
 	std::list<std::string> peerIds;
@@ -1396,7 +1488,7 @@ bool ftController::RequestCacheFile(RsPeerId id, std::string path, std::string h
 	std::list<std::string> ids;
 	ids.push_back(id);
 
-	FileRequest(hash, hash, size, path, RS_FILE_HINTS_CACHE | RS_FILE_HINTS_NO_SEARCH | RS_FILE_HINTS_ASSUME_AVAILABILITY, ids);
+	FileRequest(hash, hash, size, path, RS_FILE_HINTS_CACHE | RS_FILE_HINTS_NO_SEARCH, ids);
 
 	return true;
 }

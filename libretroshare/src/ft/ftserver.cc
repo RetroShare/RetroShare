@@ -25,6 +25,7 @@
 
 #include "util/rsdebug.h"
 #include "util/rsdir.h"
+#include "rsiface/rstypes.h"
 const int ftserverzone = 29539;
 
 #include "ft/ftserver.h"
@@ -249,7 +250,7 @@ bool ftServer::FileRequest(std::string fname, std::string hash, uint64_t size, s
 	if(mFtController->alreadyHaveFile(hash))
 		return false ;
 
-	const DwlDetails details(fname, hash, size, dest, flags, srcIds, Normal);
+	const DwlDetails details(fname, hash, size, dest, flags, srcIds, PRIORITY_NORMAL);
 	mFtDwlQueue->insertDownload(details);
 
 	return true ;
@@ -278,13 +279,14 @@ bool ftServer::FileClearCompleted()
 	/* Control of Downloads Priority. */
 bool ftServer::changePriority(const std::string hash, int priority)
 {
-	return mFtDwlQueue->changePriority(hash, (DwlPriority) priority);
+	mFtController->setPriority(hash, (DwlPriority) priority);
+	return true ;
 }
 
 bool ftServer::getPriority(const std::string hash, int & priority)
 {
 	DwlPriority _priority;
-	int ret = mFtDwlQueue->getPriority(hash, _priority);
+	int ret = mFtController->getPriority(hash, _priority);
 	if (ret) {
 		priority = _priority;
 	}

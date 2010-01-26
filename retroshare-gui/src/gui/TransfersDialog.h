@@ -168,11 +168,11 @@ class TransfersDialog : public RsAutoUpdatePage
 		Ui::TransfersDialog ui;
 
 		public slots:
-		int addItem(QString symbol, QString name, QString coreID, qlonglong size, const FileProgressInfo& pinfo, double dlspeed, QString sources, QString status, QString priority, qlonglong completed, qlonglong remaining);
-		bool addPeerToItem(int row, QString symbol, QString name, QString coreID, qlonglong fileSize, const FileProgressInfo& pinfo, double dlspeed, QString sources, QString status, qlonglong completed, qlonglong remaining);
+		int addItem(const QString& symbol, const QString& name, const QString& coreID, qlonglong size, const FileProgressInfo& pinfo, double dlspeed, const QString& sources, const QString& status, const QString& priority, qlonglong completed, qlonglong remaining);
+		bool addPeerToItem(int row, const QString& symbol, const QString& name, const QString& coreID, qlonglong fileSize, const FileProgressInfo& pinfo, double dlspeed, const QString& sources, const QString& status, qlonglong completed, qlonglong remaining);
 		void delItem(int row);
 
-		int addUploadItem(QString symbol, QString name, QString coreID, qlonglong size, const FileProgressInfo& pinfo, double dlspeed, QString sources, QString status, qlonglong completed, qlonglong remaining);
+		int addUploadItem(const QString& symbol, const QString& name, const QString& coreID, qlonglong size, const FileProgressInfo& pinfo, double dlspeed, const QString& sources, const QString& status, qlonglong completed, qlonglong remaining);
 		void delUploadItem(int row);
 
 		void editItem(int row, int column, QVariant data);
