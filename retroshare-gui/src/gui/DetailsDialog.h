@@ -29,6 +29,7 @@
 
 #include "ui_DetailsDialog.h"
 
+class FileChunksInfo ;
 
 class DetailsDialog : public QDialog
 {
@@ -39,7 +40,10 @@ public:
   DetailsDialog(QWidget *parent = 0, Qt::WFlags flags = 0);
   /** Default destructor */
   ~DetailsDialog();
+  
+  void updateDisplay() ;
 
+	void setFileHash(const std::string& hash) { _file_hash = hash ; }
 
 public slots:
   /** Overloaded QWidget.show */
@@ -56,9 +60,12 @@ public slots:
 	void setCompleted(const qulonglong & completed); 
   void setRemaining(const qulonglong & remaining) ;
   void setType(const QString & type); 
+
  
 protected:
   void closeEvent (QCloseEvent * event);
+  
+	virtual void showEvent(QShowEvent * event);
   
 private slots:
   void on_ok_dButton_clicked();
@@ -68,6 +75,7 @@ private:
 
 	class QStandardItemModel *CommentsModel;
 
+	 std::string _file_hash ;
 
   
   /** Qt Designer generated object */

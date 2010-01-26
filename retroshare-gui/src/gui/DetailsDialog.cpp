@@ -36,6 +36,8 @@
 #include <QStandardItemModel>
 
 #include "util/misc.h"
+#include <rsiface/rsfiles.h>
+#include <rsiface/rstypes.h>
 
 /** Default constructor */
 DetailsDialog::DetailsDialog(QWidget *parent, Qt::WFlags flags)
@@ -60,6 +62,8 @@ DetailsDialog::DetailsDialog(QWidget *parent, Qt::WFlags flags)
   _coheader->resizeSection ( 0, 100 );
 	_coheader->resizeSection ( 1, 240 );
 	_coheader->resizeSection ( 2, 100 );
+	
+	updateDisplay();
 
  
 }
@@ -85,6 +89,7 @@ void DetailsDialog::on_cancel_dButton_clicked()
 void
 DetailsDialog::show()
 {
+    ui.tabWidget->setCurrentIndex(0);
     if (!this->isVisible()) {
     QDialog::show();
   } else {
@@ -180,3 +185,34 @@ void DetailsDialog::setLink(const QString & link)
 {
 	ui.Linktext->setText(link);
 }
+
+void DetailsDialog::showEvent(QShowEvent *event)
+{
+    updateDisplay();
+}
+
+void DetailsDialog::updateDisplay()
+{
+       
+       bool ok=true ;
+       FileInfo nfo ;
+       if(!rsFiles->FileDetails(_file_hash, RS_FILE_HINTS_DOWNLOAD, nfo)) 
+       ok = false ;
+       FileChunksInfo info ;
+       if(!rsFiles->FileDownloadChunksDetails(_file_hash, info)) 
+       ok = false ;
+            
+       if(ok)
+       {
+       uint32_t blockSize = info.chunk_size ;
+
+       ui.chunksizelabel->setText(misc::friendlyUnit(blockSize));
+       ui.numberofchunkslabel->setText(QString::number(info.chunks.size()));
+
+       }
+
+            
+}            
+
+
+            

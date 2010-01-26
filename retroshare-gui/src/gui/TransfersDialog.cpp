@@ -384,16 +384,18 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 		contextMnu.addAction( cancelAct);
 		contextMnu.addSeparator();
 	}
-#ifndef RS_RELEASE_VERSION
+
 	if(single)
 	{
+#ifndef RS_RELEASE_VERSION
 		contextMnu.addAction( openfileAct);
 		contextMnu.addAction( previewfileAct);
-		contextMnu.addAction( openfolderAct);
+#endif		
+    contextMnu.addAction( openfolderAct);
 		contextMnu.addAction( detailsfileAct);
 		contextMnu.addSeparator();
 	}
-#endif
+
 	contextMnu.addAction( clearcompletedAct);
 	contextMnu.addSeparator();
 #ifndef RS_RELEASE_VERSION
@@ -1156,6 +1158,8 @@ void TransfersDialog::showDetailsDialog()
     
     QModelIndexList lst = ui.downloadList->selectionModel ()->selectedIndexes ();
     RetroShareLinkAnalyzer analyzer;
+    
+    std::string file_hash ;
 
     for (int i = 0; i < lst.count (); i++)
     {
@@ -1173,6 +1177,17 @@ void TransfersDialog::showDetailsDialog()
             double fdatarate = ind.model ()->data (ind.model ()->index (ind.row (), DLSPEED)).toDouble() ;            
             qulonglong fcompleted = ind.model ()->data (ind.model ()->index (ind.row (), COMPLETED)).toULongLong() ;
             qulonglong fremaining = ind.model ()->data (ind.model ()->index (ind.row (), REMAINING)).toULongLong() ;
+            
+            int nb_select = 0 ;
+            
+            for(int i = 0; i <= DLListModel->rowCount(); i++) 
+            if(selection->isRowSelected(i, QModelIndex())) 
+            {
+              file_hash = getID(i, DLListModel).toStdString();
+              ++nb_select ;
+            }
+            
+            detailsdlg->setFileHash(file_hash);
             
             // Set Details.. Window Title
             detailsdlg->setWindowTitle(tr("Details:") + fname);
