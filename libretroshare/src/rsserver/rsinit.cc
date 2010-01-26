@@ -829,7 +829,7 @@ bool RsInit::SelectGPGAccount(std::string id)
 
 
 bool     RsInit::GeneratePGPCertificate(std::string name, std::string email, std::string passwd, std::string &pgpId, std::string &errString) {
-        AuthGPG::getAuthGPG()->GeneratePGPCertificate(name, email, passwd, pgpId, errString);
+        return AuthGPG::getAuthGPG()->GeneratePGPCertificate(name, email, passwd, pgpId, errString);
 }
 
 
@@ -955,6 +955,13 @@ bool     RsInit::GenerateSSLCertificate(std::string gpg_id, std::string org, std
             return false;
         }
 
+		  std::cout << "LoadCheckX509andGetLocation: returned " << ret << ", sslId=" << sslId << std::endl ;
+
+		  if(!ret)
+		  {
+			  std::cerr << "LoadCheckX509andGetLocation failed. Sorry." << std::endl ;
+			  return false ;
+		  }
 	/* Move directory to correct id */
 	std::string finalbase = RsInitConfig::basedir + RsInitConfig::dirSeperator + sslId + RsInitConfig::dirSeperator;
 	/* Rename Directory */
