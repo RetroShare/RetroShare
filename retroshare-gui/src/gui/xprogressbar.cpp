@@ -66,8 +66,8 @@ void xProgressBar::setColor()
 		/* green schema */
 		case 1:
 			// background
-			backgroundBorderColor.setRgb(3, 194, 26);
-			backgroundColor.setRgb(76, 214, 93);
+			backgroundBorderColor.setRgb(53, 194, 26);
+			backgroundColor.setRgb(176, 214, 93);
 			// progress
 			gradBorderColor.setRgb(8, 77, 16);
 			gradColor1.setRgb(0, 137, 16);

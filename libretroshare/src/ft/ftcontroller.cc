@@ -63,7 +63,7 @@ static const uint32_t INACTIVE_CHUNKS_CHECK_DELAY = 60	; // save transfer progre
 ftFileControl::ftFileControl()
 	:mTransfer(NULL), mCreator(NULL),
 	 mState(0), mSize(0), mFlags(0),
-	 mPriority(PRIORITY_NORMAL)
+	 mPriority(SPEED_NORMAL)
 {
 	return;
 }
@@ -75,7 +75,7 @@ ftFileControl::ftFileControl(std::string fname,
 	:mName(fname), mCurrentPath(tmppath), mDestination(dest),
 	 mTransfer(tm), mCreator(fc), mState(0), mHash(hash),
 	 mSize(size), mFlags(flags), mDoCallback(false), mCallbackCode(cb),
-	 mPriority(PRIORITY_NORMAL)	// default priority to normal
+	 mPriority(SPEED_NORMAL)	// default priority to normal
 {
 	if (cb)
 		mDoCallback = true;
@@ -253,38 +253,16 @@ void ftController::tickTransfers()
 	
 	// 2.1 - decide based on probability, which category of files we handle.
 	
-	static const float   HIGH_PRIORITY_PROB = 0.60 ;
-	static const float NORMAL_PRIORITY_PROB = 0.25 ;
-	static const float    LOW_PRIORITY_PROB = 0.15 ;
-	static const float   SUSP_PRIORITY_PROB = 0.00 ;
+//	static const float   HIGH_PRIORITY_PROB = 0.60 ;
+//	static const float NORMAL_PRIORITY_PROB = 0.25 ;
+//	static const float    LOW_PRIORITY_PROB = 0.15 ;
+//	static const float   SUSP_PRIORITY_PROB = 0.00 ;
 
 	std::cerr << "Priority tabs: " ;
-	std::cerr << "Low ("    << mPriorityTab[PRIORITY_LOW   ].size() << ") " ;
-	std::cerr << "Normal (" << mPriorityTab[PRIORITY_NORMAL].size() << ") " ;
-	std::cerr << "High ("   << mPriorityTab[PRIORITY_HIGH  ].size() << ") " ;
+	std::cerr << "Low ("    << mPriorityTab[SPEED_LOW   ].size() << ") " ;
+	std::cerr << "Normal (" << mPriorityTab[SPEED_NORMAL].size() << ") " ;
+	std::cerr << "High ("   << mPriorityTab[SPEED_HIGH  ].size() << ") " ;
 	std::cerr << std::endl ;
-
-//	float probs[3] = { (!mPriorityTab[PRIORITY_LOW   ].empty())*   LOW_PRIORITY_PROB,
-//	                   (!mPriorityTab[PRIORITY_NORMAL].empty())*NORMAL_PRIORITY_PROB,
-//                      (!mPriorityTab[PRIORITY_HIGH  ].empty())*  HIGH_PRIORITY_PROB } ;
-//
-//	float total = probs[0]+probs[1]+probs[2] ;
-//	float cumul_probs[3] = { probs[0], probs[0]+probs[1], probs[0]+probs[1]+probs[2] } ;
-//
-//	float r = rand()/(float)RAND_MAX * total;
-//	int chosen ;
-//
-//	if(total == 0.0)
-//		return ;
-//
-//	if(r < cumul_probs[0])
-//		chosen = 0 ;
-//	else if(r < cumul_probs[1])
-//		chosen = 1 ;
-//	else 
-//		chosen = 2 ;
-//
-//	std::cerr << "chosen: " << chosen << std::endl ;
 
 	/* tick the transferModules */
 
@@ -299,31 +277,9 @@ void ftController::tickTransfers()
 			for(int i=0;i<(int)mPriorityTab[chosen].size();++i)
 				mPriorityTab[chosen][(i+start)%(int)mPriorityTab[chosen].size()]->tick() ;
 		}
-
-//		{
-//
-//#ifdef CONTROL_DEBUG
-//			std::cerr << "\tTicking: " << it->first;
-//			std::cerr << std::endl;
-//#endif
-//
-//			if (it->second.mTransfer)
-//			{
-//#ifdef CONTROL_DEBUG
-//				std::cerr << "\tTicking mTransfer: " << (void*)it->second.mTransfer;
-//				std::cerr << std::endl;
-//#endif
-//				(it->second.mTransfer)->tick();
-//			}
-//#ifdef CONTROL_DEBUG
-//			else
-//				std::cerr << "No mTransfer for this hash." << std::endl ;
-//#endif
-//		}
-//	}
 }
 
-bool ftController::getPriority(const std::string& hash,DwlPriority& p)
+bool ftController::getPriority(const std::string& hash,DwlSpeed& p)
 {
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
@@ -337,7 +293,7 @@ bool ftController::getPriority(const std::string& hash,DwlPriority& p)
 	else
 		return false ;
 }
-void ftController::setPriority(const std::string& hash,DwlPriority p)
+void ftController::setPriority(const std::string& hash,DwlSpeed p)
 {
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 

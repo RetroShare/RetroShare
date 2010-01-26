@@ -63,6 +63,12 @@ enum DwlPriority { 	PRIORITY_LOW 		= 0x00,
 							PRIORITY_AUTO		= 0x03
 };
 
+enum DwlSpeed 		{ 	SPEED_LOW 		= 0x00, 
+							SPEED_NORMAL 	= 0x01, 
+							SPEED_HIGH		= 0x02
+};
+
+
 
 class FileInfo
 {
@@ -107,7 +113,7 @@ class FileInfo
 		uint32_t  downloadStatus; /* 0 = Err, 1 = Ok, 2 = Done */
 		std::list<TransferInfo> peers;
 
-		DwlPriority priority ;
+		DwlSpeed priority ;
 		time_t lastTS;
 };
 

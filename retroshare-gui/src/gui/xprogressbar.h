@@ -39,6 +39,9 @@
 class FileProgressInfo
 {
 	public:
+		typedef enum { DOWNLOAD_LINE,UPLOAD_LINE,DOWNLOAD_SOURCE } LineType ;
+
+		LineType type ;
 		CompressedChunkMap cmap ;
 		float progress ;
 };

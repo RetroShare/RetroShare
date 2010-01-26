@@ -263,7 +263,12 @@ bool ftServer::setChunkStrategy(const std::string& hash,FileChunksInfo::ChunkStr
 
 bool ftServer::FileCancel(std::string hash)
 {
-	return mFtController->FileCancel(hash);
+	// Remove from both queue and ftController, by default.
+	//
+	mFtDwlQueue->clearDownload(hash);
+	mFtController->FileCancel(hash);
+
+	return true ;
 }
 
 bool ftServer::FileControl(std::string hash, uint32_t flags)
@@ -277,26 +282,35 @@ bool ftServer::FileClearCompleted()
 }
 
 	/* Control of Downloads Priority. */
-bool ftServer::changePriority(const std::string hash, int priority)
+bool ftServer::changeQueuePriority(const std::string hash, int priority)
 {
-	mFtController->setPriority(hash, (DwlPriority) priority);
+	return mFtDwlQueue->changePriority(hash,(DwlPriority)priority) ;
+}
+bool ftServer::changeDownloadSpeed(const std::string hash, int speed)
+{
+	mFtController->setPriority(hash, (DwlSpeed)speed);
 	return true ;
 }
-
-bool ftServer::getPriority(const std::string hash, int & priority)
+bool ftServer::getDownloadSpeed(const std::string hash, int & speed)
 {
-	DwlPriority _priority;
-	int ret = mFtController->getPriority(hash, _priority);
-	if (ret) {
-		priority = _priority;
-	}
+	DwlSpeed _speed;
+	int ret = mFtController->getPriority(hash, _speed);
+	if (ret) 
+		speed = _speed;
 
 	return ret;
 }
+bool ftServer::getQueuePriority(const std::string hash, int & priority)
+{
+	DwlPriority _priority;
+	int ret = mFtDwlQueue->getPriority(hash, _priority);
+	if (ret) 
+		priority = _priority;
 
+	return ret;
+}
 bool ftServer::clearDownload(const std::string hash)
 {
-	return mFtDwlQueue->clearDownload(hash);
 }
 
 void ftServer::clearQueue()

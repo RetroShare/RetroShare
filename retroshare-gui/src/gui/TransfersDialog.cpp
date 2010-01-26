@@ -115,10 +115,10 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     DLListModel->setHeaderData(SIZE, Qt::Horizontal, tr("Size", "i.e: file size"));
     DLListModel->setHeaderData(COMPLETED, Qt::Horizontal, tr("Completed", ""));
     DLListModel->setHeaderData(DLSPEED, Qt::Horizontal, tr("Speed", "i.e: Download speed"));
-    DLListModel->setHeaderData(PROGRESS, Qt::Horizontal, tr("Progress", "i.e: % downloaded"));
+    DLListModel->setHeaderData(PROGRESS, Qt::Horizontal, tr("Progress / Availability", "i.e: % downloaded"));
     DLListModel->setHeaderData(SOURCES, Qt::Horizontal, tr("Sources", "i.e: Sources"));
     DLListModel->setHeaderData(STATUS, Qt::Horizontal, tr("Status"));
-    DLListModel->setHeaderData(PRIORITY, Qt::Horizontal, tr("Priority"));
+    DLListModel->setHeaderData(PRIORITY, Qt::Horizontal, tr("Speed / Queue priority"));
     DLListModel->setHeaderData(REMAINING, Qt::Horizontal, tr("Remaining", "i.e: Estimated Time of Arrival / Time left"));
     DLListModel->setHeaderData(ID, Qt::Horizontal, tr("Core-ID"));
     ui.downloadList->setModel(DLListModel);
@@ -321,48 +321,61 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 	viewMenu->addAction(rootisnotdecoratedAct);
 	viewMenu->addAction(rootisdecoratedAct);
 
-	clearQueuedDwlAct = new QAction(QIcon(), tr("Clear from Queue"), this);
-	connect(clearQueuedDwlAct, SIGNAL(triggered()), this, SLOT(clearQueuedDwl()));
-	clearQueueAct = new QAction(QIcon(), tr("Clear Queue"), this);
+	clearQueueAct = new QAction(QIcon(), tr("Remove all queued"), this);
 	connect(clearQueueAct, SIGNAL(triggered()), this, SLOT(clearQueue()));
 
 	priorityLowAct = new QAction(QIcon(IMAGE_PRIORITYLOW), tr("Low"), this);
-	connect(priorityLowAct, SIGNAL(triggered()), this, SLOT(priorityLow()));
+	connect(priorityLowAct, SIGNAL(triggered()), this, SLOT(priorityQueueLow()));
 	priorityNormalAct = new QAction(QIcon(IMAGE_PRIORITYNORMAL), tr("Normal"), this);
-	connect(priorityNormalAct, SIGNAL(triggered()), this, SLOT(priorityNormal()));
+	connect(priorityNormalAct, SIGNAL(triggered()), this, SLOT(priorityQueueNormal()));
 	priorityHighAct = new QAction(QIcon(IMAGE_PRIORITYHIGH), tr("High"), this);
-	connect(priorityHighAct, SIGNAL(triggered()), this, SLOT(priorityHigh()));
+	connect(priorityHighAct, SIGNAL(triggered()), this, SLOT(priorityQueueHigh()));
 	priorityAutoAct = new QAction(QIcon(IMAGE_PRIORITYAUTO), tr("Auto"), this);
-	connect(priorityAutoAct, SIGNAL(triggered()), this, SLOT(priorityAuto()));
+	connect(priorityAutoAct, SIGNAL(triggered()), this, SLOT(priorityQueueAuto()));
 
-		QMenu *priorityMenu = new QMenu(tr("Priority (Download)"), this);
-		priorityMenu->setIcon(QIcon(IMAGE_PRIORITY));
-		priorityMenu->addAction(priorityLowAct);
-		priorityMenu->addAction(priorityNormalAct);
-		priorityMenu->addAction(priorityHighAct);
-		priorityMenu->addAction(priorityAutoAct);
+	prioritySlowAct = new QAction(QIcon(IMAGE_PRIORITYLOW), tr("Slower"), this);
+	connect(prioritySlowAct, SIGNAL(triggered()), this, SLOT(speedSlow()));
+	priorityMediumAct = new QAction(QIcon(IMAGE_PRIORITYNORMAL), tr("Average"), this);
+	connect(priorityMediumAct, SIGNAL(triggered()), this, SLOT(speedAverage()));
+	priorityFastAct = new QAction(QIcon(IMAGE_PRIORITYHIGH), tr("Faster"), this);
+	connect(priorityFastAct, SIGNAL(triggered()), this, SLOT(speedFast()));
 
-		chunkStreamingAct = new QAction(QIcon(IMAGE_PRIORITYAUTO), tr("Streaming"), this);
-		connect(chunkStreamingAct, SIGNAL(triggered()), this, SLOT(chunkStreaming()));
-		chunkRandomAct = new QAction(QIcon(IMAGE_PRIORITYAUTO), tr("Random"), this);
-		connect(chunkRandomAct, SIGNAL(triggered()), this, SLOT(chunkRandom()));
+	QMenu *priorityQueueMenu = new QMenu(tr("Priority (Queue)"), this);
+	priorityQueueMenu->setIcon(QIcon(IMAGE_PRIORITY));
+	priorityQueueMenu->addAction(priorityLowAct);
+	priorityQueueMenu->addAction(priorityNormalAct);
+	priorityQueueMenu->addAction(priorityHighAct);
+	priorityQueueMenu->addAction(priorityAutoAct);
 
-		QMenu *chunkMenu = new QMenu(tr("Chunk strategy"), this);
-		chunkMenu->setIcon(QIcon(IMAGE_PRIORITY));
-		chunkMenu->addAction(chunkStreamingAct);
-		chunkMenu->addAction(chunkRandomAct);
+	QMenu *prioritySpeedMenu = new QMenu(tr("Priority (Speed)"), this);
+	prioritySpeedMenu->setIcon(QIcon(IMAGE_PRIORITY));
+	prioritySpeedMenu->addAction(prioritySlowAct);
+	prioritySpeedMenu->addAction(priorityMediumAct);
+	prioritySpeedMenu->addAction(priorityFastAct);
+
+	chunkStreamingAct = new QAction(QIcon(IMAGE_PRIORITYAUTO), tr("Streaming"), this);
+	connect(chunkStreamingAct, SIGNAL(triggered()), this, SLOT(chunkStreaming()));
+	chunkRandomAct = new QAction(QIcon(IMAGE_PRIORITYAUTO), tr("Random"), this);
+	connect(chunkRandomAct, SIGNAL(triggered()), this, SLOT(chunkRandom()));
+
+	QMenu *chunkMenu = new QMenu(tr("Chunk strategy"), this);
+	chunkMenu->setIcon(QIcon(IMAGE_PRIORITY));
+	chunkMenu->addAction(chunkStreamingAct);
+	chunkMenu->addAction(chunkRandomAct);
 
 	contextMnu.clear();
+
 	if (addPlayOption)
-	{
 		contextMnu.addAction(playAct);
-	}
+
 	contextMnu.addSeparator();
 
 	if(!items.empty())
 	{
 		bool all_paused = true ;
 		bool all_downld = true ;
+		bool all_downloading = true ;
+		bool all_queued = true ;
 
 		QModelIndexList lst = ui.downloadList->selectionModel ()->selectedIndexes ();
 
@@ -372,10 +385,21 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 				all_downld = false ;
 			if ( lst[i].column() == 0 && lst[i].model ()->data (lst[i].model ()->index (lst[i].row (), STATUS )).toString() == "Downloading")
 				all_paused = false ;
+
+			if ( lst[i].column() == 0)
+				if(lst[i].model ()->data (lst[i].model ()->index (lst[i].row (), STATUS )).toString() == "Queued")
+					all_downloading = false ;
+				else
+					all_queued = false ;
 		}
 
-		contextMnu.addMenu( priorityMenu);
-		contextMnu.addMenu( chunkMenu);
+		if(all_downloading)
+			contextMnu.addMenu(prioritySpeedMenu);
+		else if(all_queued)
+			contextMnu.addMenu(priorityQueueMenu) ;
+
+		if(all_downloading)
+			contextMnu.addMenu( chunkMenu);
 
 		if(!all_paused)
 			contextMnu.addAction( pauseAct);
@@ -403,7 +427,6 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 #endif
 	contextMnu.addAction( pastelinkAct);
 	contextMnu.addSeparator();
-	contextMnu.addAction( clearQueuedDwlAct);
 	contextMnu.addAction( clearQueueAct);
 	contextMnu.addSeparator();
 	contextMnu.addMenu( viewMenu);
@@ -776,17 +799,17 @@ void TransfersDialog::insertTransfers()
         }
 
 		switch (info.priority) {
-			case 0:
-				priority = tr("Low");
+			case SPEED_LOW:
+				priority = tr("Slower");
 				break;
-			case 1:
-				priority = tr("Normal");
+			case SPEED_NORMAL:
+				priority = tr("Average");
 				break;
-			case 2:
-				priority = tr("High");
+			case SPEED_HIGH:
+				priority = tr("Faster");
 				break;
 			default:
-				priority = tr("Auto");
+				priority = tr("Average");
 				break;
 		}
 
@@ -799,6 +822,7 @@ void TransfersDialog::insertTransfers()
 
 		  FileProgressInfo pinfo ;
 		  pinfo.cmap = fcinfo.chunks ;
+		  pinfo.type = FileProgressInfo::DOWNLOAD_LINE ;
 		  pinfo.progress = completed*100.0/info.size ;
 
 //			std::cerr << "Converting fcinfo to compressed chunk map. Chunks=" << fcinfo.chunks.size() << std::endl ;
@@ -872,6 +896,7 @@ void TransfersDialog::insertTransfers()
             remaining   = (info.size - info.transfered) / (pit->tfRate * 1024.0);
 
 				FileProgressInfo pinfo ;
+				pinfo.type = FileProgressInfo::DOWNLOAD_SOURCE ;
 				pinfo.cmap = fcinfo.compressed_peer_availability_maps[pit->peerId] ;
 				pinfo.progress = 0.0 ;	// we don't display completion for sources.
 
@@ -1061,6 +1086,7 @@ void TransfersDialog::insertTransfers()
 		FileProgressInfo pinfo ;
 		pinfo.progress = progress ;
 		pinfo.cmap = CompressedChunkMap() ;
+		pinfo.type = FileProgressInfo::DOWNLOAD_LINE ;
 
 		addUploadItem(symbol, name, coreId, fileSize, pinfo, dlspeed, sources,  status, completed, remaining);
 		ulCount++;
@@ -1086,41 +1112,17 @@ QString TransfersDialog::getPeerName(const std::string& id) const
 void TransfersDialog::cancel()
 {
 	QString queryWrn2;
-    queryWrn2.clear();
-    queryWrn2.append(tr("Are you sure that you want to cancel and delete these files?"));
+	queryWrn2.clear();
+	queryWrn2.append(tr("Are you sure that you want to cancel and delete these files?"));
 
-    if ((QMessageBox::question(this, tr("RetroShare"),queryWrn2,QMessageBox::Ok|QMessageBox::No, QMessageBox::Ok))== QMessageBox::Ok)
-    {
-      for(int i = 0; i <= DLListModel->rowCount(); i++)
-      {
-        if(selection->isRowSelected(i, QModelIndex()))
-        {
-        	QVector<QString> pri;
-        	pri << "Low" << "Normal" << "High" << "Auto";
-        	QString priority = getPriority(i, DLListModel).trimmed();
-        	std::string id = getID(i, DLListModel).toStdString();
+	if ((QMessageBox::question(this, tr("RetroShare"),queryWrn2,QMessageBox::Ok|QMessageBox::No, QMessageBox::Ok))== QMessageBox::Ok)
+		for(int i = 0; i <= DLListModel->rowCount(); i++)
+			if(selection->isRowSelected(i, QModelIndex()))
+			{
+				std::string id = getID(i, DLListModel).toStdString();
 
-        	if (pri.indexOf(priority) >= 0)
-        	{
-        		/* for file that is just in dwl queue */
-        		rsFiles->clearDownload(id);
-        	}
-        	else
-        	{
-#ifdef UNUSED
-				QString  qname = getFileName(i, DLListModel);
-				/* XXX -> Should not have to 'trim' filename ... something wrong here..
-				* but otherwise, not exact filename .... BUG
-				*/
-				std::string name = (qname.trimmed()).toStdString();
-#endif
 				rsFiles->FileCancel(id); /* hash */
-        	}
-        }
-      }
-    }
-    else
-    return;
+			}
 }
 
 void TransfersDialog::handleDownloadRequest(const QString& url){
@@ -1452,17 +1454,17 @@ void TransfersDialog::openTransfer()
 }
 
 /* clear download or all queue - for pending dwls */
-void TransfersDialog::clearQueuedDwl()
-{
-	std::set<QStandardItem *> items;
-	std::set<QStandardItem *>::iterator it;
-	getIdOfSelectedItems(items);
-
-	for (it = items.begin(); it != items.end(); it ++) {
-		std::string hash = (*it)->data(Qt::DisplayRole).toString().toStdString();
-		rsFiles->clearDownload(hash);
-	}
-}
+//void TransfersDialog::clearQueuedDwl()
+//{
+//	std::set<QStandardItem *> items;
+//	std::set<QStandardItem *>::iterator it;
+//	getIdOfSelectedItems(items);
+//
+//	for (it = items.begin(); it != items.end(); it ++) {
+//		std::string hash = (*it)->data(Qt::DisplayRole).toString().toStdString();
+//		rsFiles->clearDownload(hash);
+//	}
+//}
 void TransfersDialog::clearQueue()
 {
 	rsFiles->clearQueue();
@@ -1488,24 +1490,37 @@ void TransfersDialog::setChunkStrategy(FileChunksInfo::ChunkStrategy s)
 	}
 }
 /* modify download priority actions */
-void TransfersDialog::priorityLow()
+void TransfersDialog::speedSlow()
 {
-	changePriority(0);
+	changeSpeed(0);
 }
-void TransfersDialog::priorityNormal()
+void TransfersDialog::speedAverage()
 {
-	changePriority(1);
+	changeSpeed(1);
 }
-void TransfersDialog::priorityHigh()
+void TransfersDialog::speedFast()
 {
-	changePriority(2);
-}
-void TransfersDialog::priorityAuto()
-{
-	changePriority(3);
+	changeSpeed(2);
 }
 
-void TransfersDialog::changePriority(int priority)
+void TransfersDialog::priorityQueueLow()
+{
+	changeQueuePriority(0);
+}
+void TransfersDialog::priorityQueueNormal()
+{
+	changeQueuePriority(1);
+}
+void TransfersDialog::priorityQueueHigh()
+{
+	changeQueuePriority(2);
+}
+void TransfersDialog::priorityQueueAuto()
+{
+	changeQueuePriority(3);
+}
+
+void TransfersDialog::changeSpeed(int speed)
 {
 	std::set<QStandardItem *> items;
 	std::set<QStandardItem *>::iterator it;
@@ -1513,7 +1528,21 @@ void TransfersDialog::changePriority(int priority)
 
 	for (it = items.begin(); it != items.end(); it ++) {
 		std::string hash = (*it)->data(Qt::DisplayRole).toString().toStdString();
-		rsFiles->changePriority(hash, priority);
+		rsFiles->changeDownloadSpeed(hash, speed);
+	}
+}
+
+
+void TransfersDialog::changeQueuePriority(int priority)
+{
+	std::set<QStandardItem *> items;
+	std::set<QStandardItem *>::iterator it;
+	getIdOfSelectedItems(items);
+
+	for (it = items.begin(); it != items.end(); it ++) 
+	{
+		std::string hash = (*it)->data(Qt::DisplayRole).toString().toStdString();
+		rsFiles->changeQueuePriority(hash, priority);
 	}
 }
 

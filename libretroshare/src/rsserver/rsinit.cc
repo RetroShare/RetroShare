@@ -950,11 +950,8 @@ bool     RsInit::GenerateSSLCertificate(std::string gpg_id, std::string org, std
 	/* try to load it, and get Id */
 
         std::string location;
-        if (LoadCheckX509andGetLocation(cert_name.c_str(), location, sslId) == 0) {
-            std::cerr << "RsInit::GenerateSSLCertificate() Cannot check own signature, maybe the files are corrupted." << std::endl;
-            return false;
-        }
-
+		  bool ret = LoadCheckX509andGetLocation(cert_name.c_str(), location, sslId) ;
+		  
 		  std::cout << "LoadCheckX509andGetLocation: returned " << ret << ", sslId=" << sslId << std::endl ;
 
 		  if(!ret)

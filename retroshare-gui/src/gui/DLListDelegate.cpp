@@ -151,8 +151,19 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 				// create a xProgressBar
 				FileProgressInfo pinfo = index.data().value<FileProgressInfo>() ;
 				xProgressBar progressBar(pinfo.cmap,option.rect, painter); // the 3rd param is the  color schema (0 is the default value)
-				progressBar.setDisplayText(false); // should display % text?
-				progressBar.setValue(pinfo.progress); // set the progress value
+
+				if(pinfo.type == FileProgressInfo::DOWNLOAD_LINE)
+				{
+					progressBar.setDisplayText(true); // should display % text?
+					progressBar.setValue(pinfo.progress); // set the progress value
+					progressBar.setColorSchema(0) ;
+				}
+				else
+				{
+					progressBar.setDisplayText(false); // should display % text?
+					progressBar.setValue(pinfo.progress); // set the progress value
+					progressBar.setColorSchema(1) ;
+				}
 				progressBar.setVerticalSpan(1);
 				progressBar.paint(); // paint the progress bar
 			}

@@ -85,7 +85,7 @@ class ftFileControl
 		bool		   mDoCallback;
 		uint32_t	   mCallbackCode;
 		time_t		mCreateTime;
-		DwlPriority mPriority ;
+		DwlSpeed 	mPriority ;
 };
 
 class ftPendingRequest
@@ -144,8 +144,8 @@ bool 	FileClearCompleted();
 bool 	FlagFileComplete(std::string hash);
 bool  getFileDownloadChunksDetails(const std::string& hash,FileChunksInfo& info);
 
-bool getPriority(const std::string& hash,DwlPriority& p);
-void setPriority(const std::string& hash,DwlPriority p);
+bool getPriority(const std::string& hash,DwlSpeed& p);
+void setPriority(const std::string& hash,DwlSpeed p);
 
 	/* get Details of File Transfers */
 bool 	FileDownloads(std::list<std::string> &hashs);

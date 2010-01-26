@@ -85,14 +85,20 @@ class TransfersDialog : public RsAutoUpdatePage
     void previewTransfer();
 
     /** clear download or all queue - for pending dwls */
-    void clearQueuedDwl();
     void clearQueue();
 
     /** modify download priority actions */
-    void priorityLow();
-    void priorityNormal();
-    void priorityHigh();
-    void priorityAuto();
+    void priorityQueueLow();
+    void priorityQueueNormal();
+    void priorityQueueHigh();
+    void priorityQueueAuto();
+
+    void speedSlow();
+    void speedAverage();
+    void speedFast();
+
+	 void changeSpeed(int) ;
+	 void changeQueuePriority(int) ;
 
     void chunkRandom();
     void chunkStreaming();
@@ -146,6 +152,9 @@ class TransfersDialog : public RsAutoUpdatePage
 		QAction *clearQueuedDwlAct;
 		QAction *clearQueueAct;
 		QAction *changePriorityAct;
+		QAction *prioritySlowAct;
+		QAction *priorityMediumAct;
+		QAction *priorityFastAct;
 		QAction *priorityLowAct;
 		QAction *priorityNormalAct;
 		QAction *priorityHighAct;
