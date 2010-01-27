@@ -1739,7 +1739,7 @@ void CUPnPControlPoint::Subscribe(CUPnPService &service)
 	return;
 
 error:
-	1+1;
+	;
 #ifdef UPNP_DEBUG
 	std::cerr << std::endl;
 #endif

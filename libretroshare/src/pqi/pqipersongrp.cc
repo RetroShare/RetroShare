@@ -486,7 +486,8 @@ int     pqipersongrp::connectPeer(std::string id)
 bool    pqipersongrp::notifyConnect(std::string id, uint32_t ptype, bool success) {
     struct sockaddr_in remote_peer_address;
     sockaddr_clear(&remote_peer_address);
-    notifyConnect(id, ptype, success, remote_peer_address);
+
+	return notifyConnect(id, ptype, success, remote_peer_address);
 }
 
 bool    pqipersongrp::notifyConnect(std::string id, uint32_t ptype, bool success, struct sockaddr_in remote_peer_address)

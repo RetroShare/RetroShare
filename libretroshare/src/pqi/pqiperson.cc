@@ -105,6 +105,8 @@ int 	pqiperson::receiveHeartbeat()
 {
         pqioutput(PQL_DEBUG_ALERT, pqipersonzone, "pqiperson::receiveHeartbeat() from peer : " + PeerId());
         lastHeartbeatReceived = time(NULL);
+
+		return true ;
 }
 
 	// tick......

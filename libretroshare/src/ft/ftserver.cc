@@ -311,6 +311,7 @@ bool ftServer::getQueuePriority(const std::string hash, int & priority)
 }
 bool ftServer::clearDownload(const std::string hash)
 {
+   return true ;
 }
 
 void ftServer::clearQueue()

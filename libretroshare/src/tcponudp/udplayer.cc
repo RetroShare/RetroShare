@@ -213,6 +213,8 @@ int UdpLayer::reset(struct sockaddr_in &local)
 
 	std::cerr << "UdpLayer::reset() opening socket" << std::endl;
 	openSocket();
+
+	return 1 ;
 }
 
 
