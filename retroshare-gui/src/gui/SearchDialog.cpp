@@ -904,22 +904,26 @@ void SearchDialog::selectSearchResults()
 
 void SearchDialog::setIconAndType(QTreeWidgetItem *item, QString &ext)
 {
-	if (ext == "jpg" || ext == "jpeg" || ext == "png" || ext == "gif" || ext == "bmp" || ext == "ico" || ext == "svg")
+	if (ext == "jpg" || ext == "jpeg" || ext == "png" || ext == "gif" || ext == "bmp" || ext == "ico" 
+	|| ext == "svg" || ext == "tif" || ext == "tiff" || ext == "JPG")
 	{
 		item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypePicture.png"));
 		item->setText(SR_TYPE_COL, QString::fromUtf8("Picture"));
 	}
-	else if (ext == "avi" || ext == "mpg" || ext == "mpeg" || ext == "wmv" || ext == "mkv" || ext == "mp4" || ext == "flv" || ext == "mov" || ext == "vob" || ext == "qt" || ext == "rm" || ext == "3gp")
+	else if (ext == "avi" || ext == "mpg" || ext == "mpeg" || ext == "wmv" || ext == "mkv" || ext == "mp4" 
+	|| ext == "flv" || ext == "mov" || ext == "vob" || ext == "qt" || ext == "rm" || ext == "3gp" 
+	|| ext == "dvx" || ext == "divx")
 	{
 		item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypeVideo.png"));
 		item->setText(SR_TYPE_COL, QString::fromUtf8("Video"));
 	}
-	else if (ext == "ogg" || ext == "mp3" || ext == "wav" || ext == "wma")
+	else if (ext == "ogg" || ext == "mp3" || ext == "MP3"  || ext == "mp1" || ext == "mp2"  || ext == "wav" || ext == "wma")
 	{
 		item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypeAudio.png"));
 		item->setText(SR_TYPE_COL, QString::fromUtf8("Audio"));
 	}
-	else if (ext == "tar" || ext == "bz2" || ext == "zip" || ext == "gz" || ext == "rar" || ext == "rpm" || ext == "deb")
+	else if (ext == "tar" || ext == "bz2" || ext == "zip" || ext == "tgz" || ext == "gz" || ext == "rar"
+	 || ext == "rpm" || ext == "7z" || ext == "ace" || ext == "jar" || ext == "cab" || ext == "deb")
 	{
 		item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypeArchive.png"));
 		item->setText(SR_TYPE_COL, QString::fromUtf8("Archive"));
@@ -929,7 +933,7 @@ void SearchDialog::setIconAndType(QTreeWidgetItem *item, QString &ext)
 		item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypeProgram.png"));
 		item->setText(SR_TYPE_COL, QString::fromUtf8("Program"));
 	}
-	else if (ext == "iso" || ext == "nrg" || ext == "mdf" )
+	else if (ext == "iso" || ext == "nrg" || ext == "mdf" || ext == "img" || ext == "dmg" || ext == "bin" )
 	{
 		item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypeCDImage.png"));
 		item->setText(SR_TYPE_COL, QString::fromUtf8("CD-Image"));
@@ -939,8 +943,8 @@ void SearchDialog::setIconAndType(QTreeWidgetItem *item, QString &ext)
 		item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypeDocument.png"));
 		item->setText(SR_TYPE_COL, QString::fromUtf8("Document"));
 	}
-	else if (ext == "doc" || ext == "rtf" || ext == "sxw" || ext == "xls"
-			|| ext == "sxc" || ext == "odt" || ext == "ods")
+  else if (ext == "doc" || ext == "rtf" || ext == "sxw" || ext == "xls" || ext == "pps" || ext == "xml"
+    || ext == "sxc" || ext == "odt" || ext == "ods" || ext == "dot" || ext == "ppt" || ext == "css"  )
 	{
 		item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypeDocument.png"));
 		item->setText(SR_TYPE_COL, QString::fromUtf8("Document"));
