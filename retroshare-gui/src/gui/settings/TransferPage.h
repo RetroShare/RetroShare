@@ -1,7 +1,7 @@
 /****************************************************************
  *  RetroShare is distributed under the following license:
  *
- *  Copyright (C) 2006, crypton
+ *  Copyright (C) 2006 - 2010 RetroShare Team
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -19,21 +19,21 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#ifndef SERVERPAGE_H
-# define SERVERPAGE_H
+#ifndef TRANSFERPAGE_H
+# define TRANSFERPAGE_H
 
 # include <QtGui/QWidget>
 
 #include "configpage.h"
-#include "ui_ServerPage.h"
+#include "ui_TransferPage.h"
 
-class ServerPage: public ConfigPage
+class TransferPage: public ConfigPage
 {
   Q_OBJECT
 
     public:
-        ServerPage(QWidget * parent = 0, Qt::WFlags flags = 0);
-        ~ServerPage() {}
+        TransferPage(QWidget * parent = 0, Qt::WFlags flags = 0);
+        ~TransferPage() {}
 
     /** Saves the changes on this page */
     bool save(QString &errmsg);
@@ -44,18 +44,16 @@ public slots:
   void updateStatus();
 
 private slots:
-  void saveAddresses();
-  void toggleUPnP();
-  void toggleIpDetermination(bool) ;
-  void toggleTunnelConnection(bool) ;
+
+  void showTurtleRouterDialog();
 
 
     private:
 
        void closeEvent (QCloseEvent * event);
 
-       Ui::ServerPage ui;
+       Ui::TransferPage ui;
 };
 
-#endif // !SERVERPAGE_H
+#endif // !TRANSFERPAGE_H
 

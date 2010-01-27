@@ -31,7 +31,7 @@ class RSettingsWin: public QDialog, private Ui::Settings
     Q_OBJECT
 
     public:
-        enum PageType { General = 0, Server,
+        enum PageType { General = 0, Server, Transfer,
                         Directories, Notify, Security, Appearance, Fileassociations, Sound };
 
         RSettingsWin(QWidget * parent = 0, Qt::WFlags flags = 0);

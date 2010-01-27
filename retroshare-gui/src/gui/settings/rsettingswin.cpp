@@ -28,6 +28,7 @@
 #include "AppearancePage.h"
 #include "FileAssociationsPage.h"
 #include "SoundPage.h"
+#include "TransferPage.h"
 
 #define IMAGE_GENERAL       ":/images/kcmsystem24.png"
 
@@ -61,6 +62,7 @@ RSettingsWin::initStackedWidget()
 
     stackedWidget->addWidget(new GeneralPage(false));
     stackedWidget->addWidget(new ServerPage());
+    stackedWidget->addWidget(new TransferPage());
     stackedWidget->addWidget(new DirectoriesPage());
     stackedWidget->addWidget(new NotifyPage());
     stackedWidget->addWidget(new CryptoPage());
@@ -90,6 +92,10 @@ RSettingsWin::setNewPage(int page)
             text = tr("Server");
 	    pageicon->setPixmap(QPixmap(":/images/server_24x24.png"));
             break;
+        case Transfer:
+            text = tr("Transfer");
+	    pageicon->setPixmap(QPixmap(":/images/ktorrent32.png"));
+            break;    
         case Notify:
             text = tr("Notify");
 	    pageicon->setPixmap(QPixmap(":/images/status_unknown.png"));

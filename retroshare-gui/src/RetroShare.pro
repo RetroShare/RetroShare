@@ -196,7 +196,7 @@ HEADERS +=  rshare.h \
             gui/msgs/textformat.h \
             gui/images/retroshare_win.rc.h \
             gui/settings/rsharesettings.h \
-            gui/settings/rsettings.h \         
+            gui/settings/rsettings.h \
             gui/toaster/MessageToaster.h \
             gui/toaster/OnlineToaster.h \
             gui/toaster/ChatToaster.h \
@@ -465,6 +465,7 @@ newsettings {
 			gui/settings/AppearancePage.cpp \
 			gui/settings/FileAssociationsPage.cpp \
 			gui/settings/SoundPage.cpp \
+			gui/settings/TransferPage.cpp \
 			gui/settings/AddFileAssociationDialog.cpp
 	    
 	    HEADERS +=  gui/settings/rsettingswin.h \
@@ -477,7 +478,8 @@ newsettings {
 			gui/settings/AppearancePage.h \
 			gui/settings/FileAssociationsPage.h \
 			gui/settings/SoundPage.h \
-			gui/settings/AddFileAssociationDialog.h\
+			gui/settings/TransferPage.h \
+			gui/settings/AddFileAssociationDialog.h
 
 	    FORMS +=    gui/settings/settings.ui \
 			gui/settings/GeneralPage.ui \
@@ -487,6 +489,7 @@ newsettings {
 			gui/settings/NotifyPage.ui \
 			gui/settings/CryptoPage.ui \
 			gui/settings/AppearancePage.ui \
+			gui/settings/TransferPage.ui \
 			gui/settings/SoundPage.ui
 
 	   DEFINES *= NEWSETTINGS

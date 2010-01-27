@@ -41,10 +41,6 @@ ServerPage::ServerPage(QWidget * parent, Qt::WFlags flags)
   connect( ui.netModeComboBox, SIGNAL( activated ( int ) ), this, SLOT( toggleUPnP( ) ) );
   connect( ui.allowIpDeterminationCB, SIGNAL( toggled( bool ) ), this, SLOT( toggleIpDetermination(bool) ) );
   connect( ui.allowTunnelConnectionCB, SIGNAL( toggled( bool ) ), this, SLOT( toggleTunnelConnection(bool) ) );
-  connect( ui._showTurtleDialogPB,SIGNAL(clicked()),this,SLOT( showTurtleRouterDialog() )) ;
-
-	  ui._enableTurtleCB->setChecked(true) ;
-	  ui._enableTurtleCB->setEnabled(false) ;
 
    QTimer *timer = new QTimer(this);
    timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
@@ -70,11 +66,6 @@ ServerPage::ServerPage(QWidget * parent, Qt::WFlags flags)
 #ifdef Q_WS_WIN
 
 #endif
-}
-
-void ServerPage::showTurtleRouterDialog()
-{
-	TurtleRouterDialog::showUp() ;
 }
 
 void ServerPage::toggleIpDetermination(bool b)
@@ -190,83 +181,6 @@ void ServerPage::updateStatus()
 	ui.localAddress->setText(QString::fromStdString(detail.localAddr));
 	/* set the server address */
 	ui.extAddress->setText(QString::fromStdString(detail.extAddr));
-
-#if 0
-	/* set status */
-	std::ostringstream out;
-	out << "Attempted Network Mode: ";
-	switch(detail.tryNetMode)
-	{
-		case RS_NETMODE_EXT:
-			out << "External Forwarded Port (UltraPEER Mode)";
-			break;
-		case RS_NETMODE_UDP:
-			out << "Firewalled";
-			break;
-		default:
-		case RS_NETMODE_UPNP:
-
-			out << "Automatic: UPnP Forwarded Port";
-			break;
-	}
-	out << std::endl;
-	out << "Actual Network Mode: ";
-	switch(detail.netMode)
-	{
-		case RS_NETMODE_EXT:
-			out << "External Forwarded Port (UltraPEER Mode)";
-			break;
-		case RS_NETMODE_UDP:
-			out << "Firewalled";
-			break;
-		case RS_NETMODE_UPNP:
-			out << "Automatic: UPnP Forwarded Port";
-			break;
-		default:
-		case RS_NETMODE_UNREACHABLE:
-			out << "Unreachable: Firewalled by Symmetric NAT";
-			break;
-	}
-	out << std::endl;
-	out << "\tLocal Address: " << detail.localAddr;
-	out << ":" << detail.localPort;
-	out << std::endl;
-	out << "\tExternal Address: " << detail.extAddr;
-	out << ":" << detail.extPort;
-	out << std::endl;
-
-	out << "UPnP Status: ";
-	out << std::endl;
-
-	out << "DHT Status: ";
-	if (detail.visState & RS_VS_DHT_ON)
-		out << " Enabled";
-	else
-		out << " Disabled";
-	out << std::endl;
-
-	out << "Discovery Status: ";
-	if (detail.visState & RS_VS_DISC_ON)
-		out << " Enabled";
-	else
-		out << " Disabled";
-	out << std::endl;
-
-
-	if (detail.netMode == RS_NETMODE_UNREACHABLE)
-	{
-		ui.netStatusBox->setTextColor( Qt::red );
-	}
-	else
-	{
-		ui.netStatusBox->setTextColor( Qt::black );
-	}
-
-	ui.netStatusBox->setText(QString::fromStdString(out.str()));
-	ui.netStatusBox ->setReadOnly(true);
-#endif
-
-
 
 
 }
