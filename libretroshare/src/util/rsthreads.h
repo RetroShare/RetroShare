@@ -69,7 +69,9 @@ class RsMutex
 		if(--_cnt == 0)
 		{
 #endif
+#ifndef WIN32
 			_thread_id = 0 ;
+#endif
 			pthread_mutex_unlock(&realMutex); 
 #ifdef RSTHREAD_SELF_LOCKING_GUARD
 		}
