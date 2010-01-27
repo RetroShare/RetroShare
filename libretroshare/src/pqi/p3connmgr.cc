@@ -144,11 +144,14 @@ p3ConnectMgr::p3ConnectMgr()
         ownState.name = AuthGPG::getAuthGPG()->getGPGOwnName();
         ownState.location = AuthSSL::getAuthSSL()->getOwnLocation();
         ownState.netMode = RS_NET_MODE_UDP;
+        ownState.netMode |= RS_NET_MODE_TRY_UPNP;
 
 	//use_extr_addr_finder = true ;
 	use_extr_addr_finder = false;
         allow_tunnel_connection = true;
         mExtAddrFinder = new ExtAddrFinder;
+
+        netReset();
 
 	return;
 }
@@ -2707,10 +2710,9 @@ bool    p3ConnectMgr::setVisState(std::string id, uint32_t visState)
 {
         if (id == AuthSSL::getAuthSSL()->OwnId())
 	{
-		uint32_t netMode = ownState.netMode;
-		setOwnNetConfig(netMode, visState);
-
-		return true;
+            ownState.visState = visState;
+            IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+            return true;
 	}
 
 	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/

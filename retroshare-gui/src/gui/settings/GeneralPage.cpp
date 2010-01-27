@@ -60,7 +60,7 @@ GeneralPage::save(QString &errmsg)
   
   _settings->setValue(QString::fromUtf8("ClosetoTray"), closetoTray());
   
-  _settings->setValue(QString::fromUtf8("FirstRun"), firstRun());
+  //_settings->setValue(QString::fromUtf8("FirstRun"), firstRun());
 
   _settings->setRunRetroshareOnBoot(
   ui.chkRunRetroshareAtSystemStartup->isChecked());
@@ -81,7 +81,7 @@ GeneralPage::load()
   
   ui.checkClosetoTray->setChecked(_settings->value(QString::fromUtf8("ClosetoTray"), false).toBool());
 
-	ui.checkBoxWizard->setChecked(_settings->value(QString::fromUtf8("FirstRun"), false).toBool());
+        //ui.checkBoxWizard->setChecked(_settings->value(QString::fromUtf8("FirstRun"), false).toBool());
 
 
 }
@@ -101,10 +101,10 @@ bool GeneralPage::closetoTray() const {
   return ui.checkClosetoTray->isChecked();
 }
 
-bool GeneralPage::firstRun() const {
-  if(ui.checkBoxWizard->isChecked()) return true;
-  return ui.checkBoxWizard->isChecked();
-}
+//bool GeneralPage::firstRun() const {
+//  if(ui.checkBoxWizard->isChecked()) return true;
+//  return ui.checkBoxWizard->isChecked();
+//}
 
 /** Called when the "show on startup" checkbox is toggled. */
 void

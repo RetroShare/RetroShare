@@ -69,10 +69,16 @@
 #define DEFAULT_BWGRAPH_FILTER          (BWGRAPH_SEND|BWGRAPH_REC)
 #define DEFAULT_BWGRAPH_ALWAYS_ON_TOP   false
 
-
+RshareSettings::RshareSettings(std::string filename) : RSettings(filename) {
+    initSettings();
+}
 
 /** Default Constructor */
-RshareSettings::RshareSettings()
+RshareSettings::RshareSettings() {
+    initSettings();
+}
+
+void RshareSettings::initSettings()
 { 
 #if defined(Q_WS_MAC)
   setDefault(SETTING_STYLE, "macintosh (aqua)");

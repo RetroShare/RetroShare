@@ -950,16 +950,12 @@ bool     RsInit::GenerateSSLCertificate(std::string gpg_id, std::string org, std
 	/* try to load it, and get Id */
 
         std::string location;
-		  bool ret = LoadCheckX509andGetLocation(cert_name.c_str(), location, sslId) ;
-		  
-		  std::cout << "LoadCheckX509andGetLocation: returned " << ret << ", sslId=" << sslId << std::endl ;
+        if (LoadCheckX509andGetLocation(cert_name.c_str(), location, sslId) == 0) {
+            std::cerr << "RsInit::GenerateSSLCertificate() Cannot check own signature, maybe the files are corrupted." << std::endl;
+            return false;
+        }
 
-		  if(!ret)
-		  {
-			  std::cerr << "LoadCheckX509andGetLocation failed. Sorry." << std::endl ;
-			  return false ;
-		  }
-	/* Move directory to correct id */
+        /* Move directory to correct id */
 	std::string finalbase = RsInitConfig::basedir + RsInitConfig::dirSeperator + sslId + RsInitConfig::dirSeperator;
 	/* Rename Directory */
 
@@ -1619,6 +1615,13 @@ bool  RsInit::RsClearAutoLogin()
 std::string RsInit::RsConfigDirectory()
 {
 	return RsInitConfig::basedir;
+}
+
+std::string RsInit::RsProfileConfigDirectory()
+{
+    std::string dir = RsInitConfig::basedir + RsInitConfig::dirSeperator + RsInitConfig::preferedId;
+    std::cerr << "RsInit::RsProfileConfigDirectory() returning : " << dir << std::endl;
+    return dir;
 }
 
 bool	RsInit::setStartMinimised()

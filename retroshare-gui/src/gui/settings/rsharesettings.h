@@ -52,6 +52,11 @@ public:
   /** Default constructor. */
   RshareSettings();
 
+  /** Default constructor. */
+  RshareSettings(std::string filename);
+
+  void initSettings();
+
   /** Gets the currently preferred language code for RShare. */
   QString getLanguageCode();
   /** Saves the preferred language code. */

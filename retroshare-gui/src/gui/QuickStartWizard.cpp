@@ -43,19 +43,19 @@ QuickStartWizard::QuickStartWizard(QWidget *parent) :
 	  /* Create RshareSettings object */
     _settings = new RshareSettings();
     
-    loadNetwork();
+          loadNetwork();
 	  loadShare();
 	  loadGeneral();
 
 	  
-	   ui.checkBoxF2FRouting->setChecked(true) ;
-	   ui.checkBoxF2FRouting->setEnabled(false) ;
+//	   ui.checkBoxF2FRouting->setChecked(true) ;
+//	   ui.checkBoxF2FRouting->setEnabled(false) ;
 	  
 	  connect( ui.netModeComboBox, SIGNAL( activated ( int ) ), this, SLOT( toggleUPnP( ) ) );
-	  connect( ui.checkBoxTunnelConnection, SIGNAL( toggled( bool ) ), this, SLOT( toggleTunnelConnection(bool) ) );
+//	  connect( ui.checkBoxTunnelConnection, SIGNAL( toggled( bool ) ), this, SLOT( toggleTunnelConnection(bool) ) );
 	  
-	  bool b = rsPeers->getAllowTunnelConnection() ;
-    ui.checkBoxTunnelConnection->setChecked(b) ;
+//	  bool b = rsPeers->getAllowTunnelConnection() ;
+//    ui.checkBoxTunnelConnection->setChecked(b) ;
     
     ui.shareddirList->horizontalHeader()->setResizeMode( 0,QHeaderView::Stretch);
     ui.shareddirList->horizontalHeader()->setResizeMode( 2,QHeaderView::Interactive); 
@@ -88,93 +88,98 @@ void QuickStartWizard::changeEvent(QEvent *e)
 
 void QuickStartWizard::on_pushButtonWelcomeNext_clicked()
 {
-	ui.pagesWizard->setCurrentIndex(1);
+        ui.pagesWizard->setCurrentIndex(1);
 }
 
 void QuickStartWizard::on_pushButtonWelcomeExit_clicked()
 {
-	close();
+        close();
 }
 
 void QuickStartWizard::on_pushButtonConnectionBack_clicked()
 {
-	ui.pagesWizard->setCurrentIndex(0);
+        ui.pagesWizard->setCurrentIndex(0);
 }
 
 void QuickStartWizard::on_pushButtonConnectionNext_clicked()
 {
-	ui.pagesWizard->setCurrentIndex(2);
+        /* Check if netMode has changed */
+        int netMode = 0;
+        switch(ui.netModeComboBox->currentIndex())
+        {
+                case 2:
+                        netMode = RS_NETMODE_EXT;
+                        break;
+                case 1:
+                        netMode = RS_NETMODE_UDP;
+                        break;
+                default:
+                case 0:
+                        netMode = RS_NETMODE_UPNP;
+                        break;
+        }
+        std::cerr << "ui.netModeComboBox->currentIndex()" << ui.netModeComboBox->currentIndex() << std::endl;
+        rsPeers->setNetworkMode(rsPeers->getOwnId(), netMode);
+
+        /* Check if vis has changed */
+        int visState = 0;
+        if (0 == ui.discoveryComboBox->currentIndex())
+        {
+                visState |= RS_VS_DISC_ON;
+        }
+
+        RsPeerDetails detail;
+        if (!rsPeers->getPeerDetails(rsPeers->getOwnId(), detail))
+        {
+                return;
+        }
+        if (visState != detail.visState)
+        {
+                rsPeers->setVisState(rsPeers->getOwnId(), visState);
+        }
+        rsicontrol->ConfigSetDataRates( ui.doubleSpinBoxDownloadSpeed->value(), ui.doubleSpinBoxUploadSpeed->value() );
+
+        ui.pagesWizard->setCurrentIndex(2);
 }
 
 void QuickStartWizard::on_pushButtonConnectionExit_clicked()
 {
-	close();
-}
-
-void QuickStartWizard::on_pushButtonNetworkBack_clicked()
-{
-	ui.pagesWizard->setCurrentIndex(1);
-}
-
-void QuickStartWizard::on_pushButtonNetworkNext_clicked()
-{
-	ui.pagesWizard->setCurrentIndex(3);
-}
-
-void QuickStartWizard::on_pushButtonNetworkExit_clicked()
-{
-	close();
+        on_pushButtonConnectionNext_clicked();
+        close();
 }
 
 void QuickStartWizard::on_pushButtonSharesBack_clicked()
 {
-	ui.pagesWizard->setCurrentIndex(2);
+        ui.pagesWizard->setCurrentIndex(1);
 }
 
 void QuickStartWizard::on_pushButtonSharesNext_clicked()
 {
-	ui.pagesWizard->setCurrentIndex(4);
+        ui.pagesWizard->setCurrentIndex(3);
 }
 
 void QuickStartWizard::on_pushButtonSharesExit_clicked()
 {
-	close();
-}
-
-void QuickStartWizard::on_pushButtonNetworksBack_clicked()
-{
-	ui.pagesWizard->setCurrentIndex(3);
-}
-
-void QuickStartWizard::on_pushButtonNetworksNext_clicked()
-{
-	ui.pagesWizard->setCurrentIndex(5);
-}
-
-void QuickStartWizard::on_pushButtonNetworksExit_clicked()
-{
-	close();
+        close();
 }
 
 void QuickStartWizard::on_pushButtonSystemBack_clicked()
 {
-	ui.pagesWizard->setCurrentIndex(4);
+        ui.pagesWizard->setCurrentIndex(3);
 }
 
 void QuickStartWizard::on_pushButtonSystemFinish_clicked()
 {
 	
-	_settings->setValue(QString::fromUtf8("StartMinimized"), startMinimized());
+  _settings->setValue(QString::fromUtf8("StartMinimized"), startMinimized());
 
   _settings->setValue(QString::fromUtf8("doQuit"), quitbox());
   
   _settings->setRunRetroshareOnBoot(ui.checkBoxRunRetroshareAtSystemStartup->isChecked());
   
-  _settings->setValue(QString::fromUtf8("FirstRun"), firstRunWizard());
-  
   saveChanges();
   
-	close();
+  close();
 }
 
 void QuickStartWizard::on_pushButtonSystemExit_clicked()
@@ -351,14 +356,13 @@ bool QuickStartWizard::messageBoxOk(QString msg)
 void
 QuickStartWizard::loadGeneral()
 {
-  ui.checkBoxRunRetroshareAtSystemStartup->setChecked(
-  _settings->runRetroshareOnBoot());
+  ui.checkBoxRunRetroshareAtSystemStartup->setChecked(_settings->runRetroshareOnBoot());
 
   ui.checkBoxStartMinimized->setChecked(_settings->value(QString::fromUtf8("StartMinimized"), false).toBool());
 
   ui.checkBoxQuit->setChecked(_settings->value(QString::fromUtf8("doQuit"), false).toBool());
   
-	ui.checkBoxQuickWizard->setChecked(_settings->value(QString::fromUtf8("FirstRun"), false).toBool());
+        //ui.checkBoxQuickWizard->setChecked(_settings->value(QString::fromUtf8("FirstRun"), false).toBool());
 }
 
 bool QuickStartWizard::quitbox() const {
@@ -371,10 +375,10 @@ bool QuickStartWizard::startMinimized() const {
   return ui.checkBoxStartMinimized->isChecked();
 }
 
-bool QuickStartWizard::firstRunWizard() const {
-  if(ui.checkBoxQuickWizard->isChecked()) return true;
-  return ui.checkBoxQuickWizard->isChecked();
-}
+//bool QuickStartWizard::firstRunWizard() const {
+//  if(ui.checkBoxQuickWizard->isChecked()) return true;
+//  return ui.checkBoxQuickWizard->isChecked();
+//}
 
 /** Loads the settings for this page */
 void QuickStartWizard::loadNetwork()
@@ -413,14 +417,10 @@ void QuickStartWizard::loadNetwork()
 
 	rsiface->lockData(); /* Lock Interface */
 
-	ui.doubleSpinBoxUploadSpeed->setValue(rsiface->getConfig().maxDownloadDataRate);
+        ui.doubleSpinBoxDownloadSpeed->setValue(rsiface->getConfig().maxDownloadDataRate);
 	ui.doubleSpinBoxUploadSpeed->setValue(rsiface->getConfig().maxUploadDataRate);
 
 	rsiface->unlockData(); /* UnLock Interface */
-
-
-	toggleUPnP();
-
 }
 
 void QuickStartWizard::saveChanges()
@@ -438,11 +438,12 @@ void QuickStartWizard::saveChanges()
 		return;
 	}
 
-	int netIndex = ui.netModeComboBox->currentIndex();
 
 	/* Check if netMode has changed */
 	int netMode = 0;
-	switch(netIndex)
+        int netIndex = ui.netModeComboBox->currentIndex();
+        std::cerr << "ui.netModeComboBox->currentIndex()" << ui.netModeComboBox->currentIndex() << std::endl;
+        switch(netIndex)
 	{
 		case 2:
 			netMode = RS_NETMODE_EXT;
@@ -452,26 +453,22 @@ void QuickStartWizard::saveChanges()
 			break;
 		default:
 		case 0:
-			netMode = RS_NETMODE_UPNP;
+                        netMode = RS_NETMODE_UPNP;
 			break;
 	}
+        rsPeers->setNetworkMode(ownId, netMode);
 
-	if (detail.tryNetMode != netMode)
-	{
-		rsPeers->setNetworkMode(ownId, netMode);
-	}
+        int visState = 0;
+        /* Check if vis has changed */
+        if (0 == ui.discoveryComboBox->currentIndex())
+        {
+                visState |= RS_VS_DISC_ON;
+        }
 
-	int visState = 0;
-	/* Check if vis has changed */
-	if (0 == ui.discoveryComboBox->currentIndex())
-	{
-		visState |= RS_VS_DISC_ON;
-	}
-
-	if (visState != detail.visState)
-	{
-		rsPeers->setVisState(ownId, visState);
-	}
+        if (visState != detail.visState)
+        {
+                rsPeers->setVisState(ownId, visState);
+        }
 
 	/*if (0 != netIndex)
 	{
@@ -488,33 +485,8 @@ void QuickStartWizard::saveChanges()
 	loadNetwork();
 }
 
-void QuickStartWizard::toggleUPnP()
-{
-	/* switch on the radioButton */
-	bool settingChangeable = false;
-	if (0 != ui.netModeComboBox->currentIndex())
-	{
-		settingChangeable = true;
-	}
-
-	/*if (settingChangeable)
-	{
-		ui.localAddress->setEnabled(false);
-		ui.localPort  -> setEnabled(true);
-		ui.extAddress -> setEnabled(false);
-		ui.extPort    -> setEnabled(true);
-	}
-	else
-	{
-		ui.localAddress->setEnabled(false);
-		ui.localPort  -> setEnabled(false);
-		ui.extAddress -> setEnabled(false);
-		ui.extPort    -> setEnabled(false);
-	}*/
-}
-
-void QuickStartWizard::toggleTunnelConnection(bool b)
-{
-        std::cerr << "QuickStartWizard::toggleTunnelConnection() set tunnel to : " << b << std::endl;
-        rsPeers->allowTunnelConnection(b) ;
-}
+//void QuickStartWizard::toggleTunnelConnection(bool b)
+//{
+//        std::cerr << "QuickStartWizard::toggleTunnelConnection() set tunnel to : " << b << std::endl;
+//        rsPeers->allowTunnelConnection(b) ;
+//}

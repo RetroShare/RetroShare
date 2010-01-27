@@ -23,13 +23,21 @@
 #include <rshare.h>
 
 #include "rsettings.h"
+#include "rsiface/rsinit.h"
 
 /** The file in which all settings will read and written. */
-#define SETTINGS_FILE   (Rshare::dataDirectory() + "/RetroShare.conf")
+#define SETTINGS_FILE   (RsInit::RsProfileConfigDirectory() + "/RetroShare.conf")
 
 /** Constructor */
 RSettings::RSettings(const QString settingsGroup)
-: QSettings(SETTINGS_FILE, QSettings::IniFormat)
+: QSettings(QString::fromStdString(SETTINGS_FILE), QSettings::IniFormat)
+{
+  if (!settingsGroup.isEmpty())
+    beginGroup(settingsGroup);
+}
+
+RSettings::RSettings(std::string fileName, const QString settingsGroup)
+: QSettings(QString::fromStdString(fileName), QSettings::IniFormat)
 {
   if (!settingsGroup.isEmpty())
     beginGroup(settingsGroup);
@@ -78,7 +86,7 @@ void
 RSettings::reset()
 {
   /* Static method, so we have to create a QSettings object. */
-  QSettings settings(SETTINGS_FILE, QSettings::IniFormat);
+  QSettings settings(QString::fromStdString(SETTINGS_FILE), QSettings::IniFormat);
   settings.clear();
 }
 

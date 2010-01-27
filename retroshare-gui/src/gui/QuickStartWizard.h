@@ -23,6 +23,7 @@
 #define _QUICKSTARTWIZARD_H
 
 #include <QtGui/QDialog>
+#include <QtGui/QWizard>
 
 #include "settings/rsharesettings.h"
 #include "ui_QuickStartWizard.h"
@@ -43,8 +44,6 @@ public:
     
       bool startMinimized() const;
       bool quitbox() const;
-      bool firstRunWizard() const;
-
 
 
 protected:
@@ -60,30 +59,24 @@ private:
     RshareSettings *_settings;
 
 private Q_SLOTS:
-	void on_pushButtonSharesRemove_clicked();
-	void on_pushButtonSharesAdd_clicked();
-	void on_pushButtonSystemExit_clicked();
-	void on_pushButtonSystemFinish_clicked();
-	void on_pushButtonSystemBack_clicked();
-	void on_pushButtonNetworksExit_clicked();
-	void on_pushButtonNetworksNext_clicked();
-	void on_pushButtonNetworksBack_clicked();
-	void on_pushButtonNetworkExit_clicked();
-	void on_pushButtonNetworkNext_clicked();
-	void on_pushButtonNetworkBack_clicked();
-	void on_pushButtonSharesExit_clicked();
-	void on_pushButtonSharesNext_clicked();
-	void on_pushButtonSharesBack_clicked();
-	void on_pushButtonWelcomeExit_clicked();
-	void on_pushButtonWelcomeNext_clicked();
-	void on_pushButtonConnectionExit_clicked();
-	void on_pushButtonConnectionNext_clicked();
-	void on_pushButtonConnectionBack_clicked();
+        void on_pushButtonSharesRemove_clicked();
+        void on_pushButtonSharesAdd_clicked();
+        void on_pushButtonSystemExit_clicked();
+        void on_pushButtonSystemFinish_clicked();
+        void on_pushButtonSystemBack_clicked();
+        void on_pushButtonSharesExit_clicked();
+        void on_pushButtonSharesNext_clicked();
+        void on_pushButtonSharesBack_clicked();
+        void on_pushButtonWelcomeExit_clicked();
+        void on_pushButtonWelcomeNext_clicked();
+        void on_pushButtonConnectionExit_clicked();
+        void on_pushButtonConnectionNext_clicked();
+        void on_pushButtonConnectionBack_clicked();
 	
 	void updateFlags(bool);
 	void saveChanges();
-	void toggleUPnP();  
-	void toggleTunnelConnection(bool) ;
+        //void toggleUPnP();
+        //void toggleTunnelConnection(bool) ;
 
 
 

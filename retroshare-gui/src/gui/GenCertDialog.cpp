@@ -216,7 +216,7 @@ void GenCertDialog::genPerson()
         //RsInit::LoadGPGPassword(PGPpasswd);
 
 	std::string sslId;
-        std::cerr << "Generating SSL cert with gpg id : " << PGPId << std::endl;
+        std::cerr << "GenCertDialog::genPerson() Generating SSL cert with gpg id : " << PGPId << std::endl;
         std::string err;
         bool okGen = RsInit::GenerateSSLCertificate(PGPId, "", genLoc, "", sslPasswd, sslId, err);
 

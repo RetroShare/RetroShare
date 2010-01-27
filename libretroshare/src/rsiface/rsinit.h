@@ -80,6 +80,7 @@ class RsInit
 
 		/* Post Login Options */
 		static std::string 	RsConfigDirectory();
+                static std::string      RsProfileConfigDirectory();
 		static bool	setStartMinimised() ;
 
 
