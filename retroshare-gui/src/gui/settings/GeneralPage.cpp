@@ -34,13 +34,11 @@ GeneralPage::GeneralPage(QWidget * parent, Qt::WFlags flags)
  /* Create RshareSettings object */
   _settings = new RshareSettings();
 
-  //load();
 
   /* Hide platform specific features */
 #ifndef Q_WS_WIN
   ui.chkRunRetroshareAtSystemStartup->setVisible(false);
-  //ui.autologincheckBox->setEnabled(false) ;
-  //ui.autologincheckBox->setChecked(false) ;
+
 #endif
 }
 
@@ -60,8 +58,6 @@ GeneralPage::save(QString &errmsg)
   
   _settings->setValue(QString::fromUtf8("ClosetoTray"), closetoTray());
   
-  //_settings->setValue(QString::fromUtf8("FirstRun"), firstRun());
-
   _settings->setRunRetroshareOnBoot(
   ui.chkRunRetroshareAtSystemStartup->isChecked());
 
@@ -81,8 +77,6 @@ GeneralPage::load()
   
   ui.checkClosetoTray->setChecked(_settings->value(QString::fromUtf8("ClosetoTray"), false).toBool());
 
-        //ui.checkBoxWizard->setChecked(_settings->value(QString::fromUtf8("FirstRun"), false).toBool());
-
 
 }
 
@@ -101,10 +95,6 @@ bool GeneralPage::closetoTray() const {
   return ui.checkClosetoTray->isChecked();
 }
 
-//bool GeneralPage::firstRun() const {
-//  if(ui.checkBoxWizard->isChecked()) return true;
-//  return ui.checkBoxWizard->isChecked();
-//}
 
 /** Called when the "show on startup" checkbox is toggled. */
 void
