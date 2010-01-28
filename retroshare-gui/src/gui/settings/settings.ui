@@ -22,7 +22,7 @@
     <widget class="QListWidget" name="listWidget">
      <property name="minimumSize">
       <size>
-       <width>110</width>
+       <width>130</width>
        <height>0</height>
       </size>
      </property>
