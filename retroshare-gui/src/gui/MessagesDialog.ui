@@ -1081,6 +1081,11 @@ p, li { white-space: pre-wrap; }
                 <height>12</height>
                </size>
               </property>
+              <property name="font">
+               <font>
+                <pointsize>9</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string/>
               </property>
@@ -1203,6 +1208,11 @@ p, li { white-space: pre-wrap; }
                 <height>12</height>
                </size>
               </property>
+              <property name="font">
+               <font>
+                <pointsize>9</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string/>
               </property>
@@ -1247,6 +1257,11 @@ p, li { white-space: pre-wrap; }
                 <width>16777215</width>
                 <height>22</height>
                </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>9</pointsize>
+               </font>
               </property>
              </widget>
             </item>

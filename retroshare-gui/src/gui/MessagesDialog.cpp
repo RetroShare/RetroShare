@@ -140,7 +140,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 	 
 	 loadToolButtonsettings();
 	 
-	 mFont = QFont("Times", 11, QFont::Bold);
+	 mFont = QFont("Arial", 10, QFont::Bold);
    ui.subjectText->setFont(mFont);
 
 
@@ -622,7 +622,7 @@ void MessagesDialog::insertMessages()
 		{
 			QDateTime qtime;
 			qtime.setTime_t(it->ts);
-			QString timestamp = qtime.toString("yyyy-MM-dd hh:mm:ss");
+			QString timestamp = qtime.toString("dd.MM.yyyy hh:mm:ss");
 			item -> setText(3, timestamp);
 		}
 
@@ -838,7 +838,7 @@ void MessagesDialog::insertMsgTxtAndFiles()
 	{
 		QDateTime qtime;
 		qtime.setTime_t(msgInfo.ts);
-		QString timestamp = qtime.toString("yyyy-MM-dd hh:mm:ss");
+		QString timestamp = qtime.toString("dd.MM.yyyy hh:mm:ss");
 		ui.dateText-> setText(timestamp);
 	}
 	ui.toText->setText(msgTxt);
