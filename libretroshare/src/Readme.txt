@@ -20,20 +20,20 @@ REQUIREMENTS
 
 Libraries/Tools:
 	* C/C++ Compiler. 	  	(standard on Linux/cygwin)
-  * Qt >= 4.5.x 		  	  http://trolltech.com/downloads/opensource
-	* OpenSSL       	      http://www.openssl.org/source/openssl-0.9.8k.tar.gz
-	* MiniUPnP           	  http://miniupnp.free.fr/files/download.php?file=miniupnpc-1.3.tar.gz
-	* gpgme 			          ftp://ftp.gnupg.org/gcrypt/gpgme/gpgme-1.1.8.tar.bz2
-	* libgpg-error          ftp://ftp.gnupg.org/gcrypt/libgpg-error/libgpg-error-1.7.tar.bz2 
+	* Qt >= 4.5.x 		  	http://trolltech.com/downloads/opensource
+	* OpenSSL       	      	http://www.openssl.org/source/openssl-0.9.8k.tar.gz
+	* MiniUPnP           	  	http://miniupnp.free.fr/files/download.php?file=miniupnpc-1.3.tar.gz
+	* gpgme 		        ftp://ftp.gnupg.org/gcrypt/gpgme/gpgme-1.1.8.tar.bz2
+	* libgpg-error          	ftp://ftp.gnupg.org/gcrypt/libgpg-error/libgpg-error-1.7.tar.bz2 
 
 Windows only:
-	* Cygwin  	          http://www.cygwin.com/cygwin/setup.exe (for openssl compile)
-	* MinGW/Msys package  http://sourceforge.net/projects/mingw/files/	 (for compile gpgme,libgpg-error)
-	* Pthreads            http://sourceware.org/pthreads-win32/ 
-	* Zlib                http://www.zlib.net/
+	* Cygwin  	          	http://www.cygwin.com/cygwin/setup.exe (for openssl compile)
+	* MinGW/Msys package  		http://sourceforge.net/projects/mingw/files/	 (for compile gpgme,libgpg-error)
+	* Pthreads            		http://sourceware.org/pthreads-win32/ 
+	* Zlib                		http://www.zlib.net/
 	
 	Latest RetroShare sources from (SVN) sourceforge.net:	
-    svn co https://retroshare.svn.sourceforge.net/svnroot/retroshare retroshare 
+    	svn co https://retroshare.svn.sourceforge.net/svnroot/retroshare retroshare 
 
 		
 ------------------------------------------------------------------------------------------
@@ -54,7 +54,7 @@ ftp://ftp.gnupg.org/gcrypt/libgpg-error/libgpg-error-1.7.tar.bz2
 
 Windows only:
 	pthreads:   ftp://sourceware.org/pub/pthreads-win32/pthreads-w32-2-8-0-release.tar.gz 
-	zlib: 		  http://www.zlib.net/zlib-1.2.3.tar.gz 
+	zlib:	    http://www.zlib.net/zlib-1.2.3.tar.gz 
 
 Download/Compile as per instructions...
 
@@ -75,15 +75,16 @@ Directory
 ~/lib 	All the libraries required by Retroshare GUI (libssl.a, libcrypto.a, libretroshare.a,...)
 
 
-Build dependicies
+Build dependences
 ------------------------------------------------------
 
 Needed Packages for compiling Retroshare:
 
     * libqt4-dev
     * g++ 
+    * build-essential
 
-$ sudo apt-get install libqt4-dev g++
+$ sudo apt-get install libqt4-dev g++ build-essential
 
 
 Build prerequisite libraries
@@ -349,12 +350,6 @@ Email me if you're having trouble:
 	retroshare@lunamutt.com
 	
 	
-You can go on ouer forum when you have trouble with compiling:
+You can go on over to our forum when you have trouble with compiling:
 http://retroshare.sourceforge.net/forum/
 ---------------------------------------------
-
-
-
-
-
-

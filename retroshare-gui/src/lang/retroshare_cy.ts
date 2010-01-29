@@ -7,7 +7,7 @@
         <location filename="../gui/MainWindow.cpp" line="60"/>
         <location filename="../gui/unfinished/ApplicationWindow.cpp" line="45"/>
         <source>Arial</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -15,7 +15,7 @@
     <message>
         <location filename="../gui/settings/AddFileAssociationDialog.cpp" line="50"/>
         <source>File type(extension):</source>
-        <translation type="unfinished"></translation>
+        <translation>Ffeil math (estyniad):</translation>
     </message>
     <message>
         <location filename="../gui/settings/AddFileAssociationDialog.cpp" line="61"/>
@@ -484,12 +484,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/CalDialog.ui" line="197"/>
         <source>Private</source>
-        <translation type="unfinished"></translation>
+        <translation>Preifat</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/CalDialog.ui" line="202"/>
         <source>Public</source>
-        <translation type="unfinished"></translation>
+        <translation>Cyhoeddus</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/CalDialog.ui" line="210"/>
@@ -540,7 +540,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="596"/>
         <source>You have to generate a file with your certificate and give it to your friend. Also, you can use a file generated before.</source>
-        <translation type="unfinished"></translation>
+        <translation>Rhaid i chi greu ffeil gyda&apos;ch tystysgrif a rhoi i eich ffrind. Hefyd, gallwch ddefnyddio ffeil a gynhyrchwyd cyn.</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="603"/>

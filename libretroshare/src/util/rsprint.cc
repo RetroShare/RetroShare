@@ -80,4 +80,3 @@ std::string RsUtil::HashId(std::string id, bool reverse)
 
 	return hash;
 }
-
