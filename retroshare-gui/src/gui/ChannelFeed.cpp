@@ -699,7 +699,7 @@ void ChannelFeed::updateChannelMsgs()
 		ChanMsgItem *cmi = new ChanMsgItem(this, 0, mChannelId, it->msgId, true);
 
 		mChanMsgItems.push_back(cmi);
-		verticalLayout->addWidget(cmi);
+		verticalLayout_2->addWidget(cmi);
 	}
 }
 
