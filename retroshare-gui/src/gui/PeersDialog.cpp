@@ -109,7 +109,7 @@ PeersDialog::PeersDialog(QWidget *parent)
 
   connect(ui.hide_unconnected, SIGNAL(clicked()), this, SLOT(insertPeers()));
 
-  ui.peertabWidget->setTabPosition(QTabWidget::West);
+  ui.peertabWidget->setTabPosition(QTabWidget::East);
   ui.peertabWidget->addTab(new ProfileWidget(),QString(tr("Profile")));
 
   ui.peertreeWidget->setColumnCount(4);
@@ -272,7 +272,7 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
       contextMnu.addAction( chatAct);
       contextMnu.addAction( msgAct);
       contextMnu.addAction( configurefriendAct);
-      //contextMnu.addAction( profileviewAct);
+      contextMnu.addAction( profileviewAct);
       if (c->type() != 0) {
           //this is a SSL key
           contextMnu.addAction( connectfriendAct);
