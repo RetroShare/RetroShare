@@ -674,7 +674,13 @@ p, li { white-space: pre-wrap; }
            </widget>
           </item>
           <item row="0" column="2">
-           <widget class="QPushButton" name="newthreadButton">
+           <widget class="QToolButton" name="newthreadButton">
+            <property name="maximumSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
             <property name="toolTip">
              <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -689,10 +695,19 @@ p, li { white-space: pre-wrap; }
              <iconset resource="images.qrc">
               <normaloff>:/images/mail_new.png</normaloff>:/images/mail_new.png</iconset>
             </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item row="0" column="3">
-           <widget class="QPushButton" name="newmessageButton">
+           <widget class="QToolButton" name="newmessageButton">
+            <property name="maximumSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
             <property name="toolTip">
              <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -706,6 +721,9 @@ p, li { white-space: pre-wrap; }
             <property name="icon">
              <iconset resource="images.qrc">
               <normaloff>:/images/mail_reply.png</normaloff>:/images/mail_reply.png</iconset>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -833,7 +851,7 @@ p, li { white-space: pre-wrap; }
              </size>
             </property>
             <property name="styleSheet">
-             <string notr="true">QLabel{border: 2px solid grey;
+             <string notr="true">QLabel{border: 2px solid #CCCCCC;
 border-radius: 10px;
 background: white;}</string>
             </property>
@@ -926,7 +944,7 @@ p, li { white-space: pre-wrap; }
              </sizepolicy>
             </property>
             <property name="styleSheet">
-             <string notr="true">QLabel{border: 2px solid grey;
+             <string notr="true">QLabel{border: 2px solid #CCCCCC;
 border-radius: 10px;
 background: white;}</string>
             </property>
