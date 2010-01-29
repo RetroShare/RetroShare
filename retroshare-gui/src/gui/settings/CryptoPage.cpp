@@ -44,6 +44,7 @@ CryptoPage::CryptoPage(QWidget * parent, Qt::WFlags flags)
 
   connect(ui.copykeyButton, SIGNAL(clicked()), this, SLOT(copyPublicKey()));
   connect(ui.exportkeyButton, SIGNAL(clicked()), this, SLOT(exportPublicKey()));
+  connect(ui.saveButton, SIGNAL(clicked()), this, SLOT(fileSaveAs()));
 
 
   loadPublicKey();
@@ -119,4 +120,37 @@ CryptoPage::exportPublicKey()
                          tr("Sorry, certificate file creation failed"),
                          QMessageBox::Ok, QMessageBox::Ok);
     }
+}
+
+bool CryptoPage::fileSave()
+{
+    if (fileName.isEmpty())
+        return fileSaveAs();
+
+    QFile file(fileName);
+    if (!file.open(QFile::WriteOnly))
+        return false;
+    QTextStream ts(&file);
+    ts.setCodec(QTextCodec::codecForName("UTF-8"));
+    ts << ui.certtextEdit->document()->toPlainText();
+    ui.certtextEdit->document()->setModified(false);
+    return true;
+}
+
+bool CryptoPage::fileSaveAs()
+{
+    QString fn = QFileDialog::getSaveFileName(this, tr("Save as..."),
+                                              QString(), tr("TXT-Files (*.pqi *.pem *.txt);;All Files (*)"));
+    if (fn.isEmpty())
+        return false;
+    setCurrentFileName(fn);
+    return fileSave();
+}
+
+void CryptoPage::setCurrentFileName(const QString &fileName)
+{
+    this->fileName = fileName;
+    ui.certtextEdit->document()->setModified(false);
+
+    setWindowModified(false);
 }

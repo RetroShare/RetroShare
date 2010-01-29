@@ -54,6 +54,9 @@ class CryptoPage : public ConfigPage
       void copyPublicKey();
 
       void exportPublicKey();
+      
+      bool fileSave();
+      bool fileSaveAs();
 
 
   private:
@@ -61,6 +64,10 @@ class CryptoPage : public ConfigPage
       RshareSettings* _settings;
 
       void closeEvent (QCloseEvent * event);
+      
+      void setCurrentFileName(const QString &fileName);
+      
+      QString fileName;
 
 
       /** Qt Designer generated object */
