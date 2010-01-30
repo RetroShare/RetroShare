@@ -32,16 +32,16 @@
 #include "rsiface/rschannels.h"
 
 #include "ChannelFeed.h"
-#include "gui/feeds/ChanGroupItem.h"
-#include "gui/feeds/ChanMenuItem.h"
+
 #include "gui/feeds/ChanMsgItem.h"
 
 #include "gui/forums/CreateForum.h"
 #include "gui/channels/ChannelDetails.h"
+#include "gui/channels/CreateChannelMsg.h"
 
 #include "gui/ChanGroupDelegate.h"
 #include "GeneralMsgDialog.h"
-#include "gui/channels/CreateChannelMsg.h"
+
 
 /****
  * #define CHAN_DEBUG
@@ -60,75 +60,6 @@ ChannelFeed::ChannelFeed(QWidget *parent)
   	connect(unsubscribeButton, SIGNAL( clicked( void ) ), this, SLOT( unsubscribeChannel ( void ) ) );
 
 	/*************** Setup Left Hand Side (List of Channels) ****************/
-
-//	mGroupLayout = new QVBoxLayout;
-//	mGroupLayout->setSpacing(0);
-//	mGroupLayout->setMargin(0);
-//	mGroupLayout->setContentsMargins(0,0,0,0);
-//
-//	mGroupOwn = new ChanGroupItem("Own Channels");
-//	mGroupSub = new ChanGroupItem("Subscribed Channels");
-//	mGroupPop = new ChanGroupItem("Popular Channels");
-//	mGroupOther = new ChanGroupItem("Other Channels");
-//
-//	mGroupLayout->addWidget(mGroupOwn);
-//	mGroupLayout->addWidget(mGroupSub);
-//	mGroupLayout->addWidget(mGroupPop);
-//	mGroupLayout->addWidget(mGroupOther);
-//
-//
-//	QWidget *middleWidget = new QWidget();
-//	//middleWidget->setSizePolicy( QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Minimum);
-//	middleWidget->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Minimum);
-//	middleWidget->setLayout(mGroupLayout);
-//
-//     	QScrollArea *scrollArea = new QScrollArea;
-//        //scrollArea->setBackgroundRole(QPalette::Dark);
-//	scrollArea->setWidget(middleWidget);
-//	scrollArea->setWidgetResizable(true);
-//	scrollArea->setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
-//
-//	QVBoxLayout *layout2 = new QVBoxLayout;
-//	layout2->addWidget(scrollArea);
-//	layout2->setSpacing(0);
-//	layout2->setMargin(0);
-//	layout2->setContentsMargins(0,0,0,0);
-//
-//
-//     	chanFrame->setLayout(layout2);
-//
-	/*************** Setup Right Hand Side (List of Messages) ****************/
-
-	/*mMsgLayout = new QVBoxLayout;
-	mMsgLayout->setSpacing(0);
-	mMsgLayout->setMargin(0);
-	mMsgLayout->setContentsMargins(0,0,0,0);
-
-	QWidget *middleWidget2 = new QWidget();
-	middleWidget2->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
-	middleWidget2->setLayout(mMsgLayout);
-
-	QScrollArea *scrollArea2 = new QScrollArea;
-	//scrollArea2->setBackgroundRole(QPalette::Dark);
-	scrollArea2->setWidget(middleWidget2);
-	scrollArea2->setWidgetResizable(true);
-	scrollArea2->setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
-
-	QVBoxLayout *layout3 = new QVBoxLayout;
-	layout3->addWidget(scrollArea2);
-	layout3->setSpacing(0);
-	layout3->setMargin(0);
-	layout3->setContentsMargins(0,0,0,0); 
-
-    msgFrame->setLayout(layout3);*/
-
-//	mChannelId = "OWNID";
-
-//	updateChannelList();
-//
-//	QTimer *timer = new QTimer(this);
-//	timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
-//	timer->start(1000);
 
   	mChannelId = "";
 	model = new QStandardItemModel(0, 2, this);
@@ -166,19 +97,22 @@ ChannelFeed::ChannelFeed(QWidget *parent)
 	nameLabel->setFont(mChannelFont);
     
 	nameLabel->setMinimumWidth(20);
-    
+  
+  // set ChannelList Font  
 	itemFont = QFont("ARIAL", 10);
 	itemFont.setBold(true);
 	item1->setFont(itemFont);
 	item2->setFont(itemFont);
 	item3->setFont(itemFont);
 	item4->setFont(itemFont);
-		  
+	
+	// set ChannelList Foreground Color	  
   item1->setForeground(QBrush(QColor(79, 79, 79)));
   item2->setForeground(QBrush(QColor(79, 79, 79)));
   item3->setForeground(QBrush(QColor(79, 79, 79)));
   item4->setForeground(QBrush(QColor(79, 79, 79)));
   
+  // Setup Channel Menu:
   QMenu *channelmenu = new QMenu();
   channelmenu->addAction(actionCreate_Channel); 
   channelmenu->addSeparator();
@@ -259,7 +193,6 @@ void ChannelFeed::openMsg(uint32_t type, std::string grpId, std::string inReplyT
 	return;
 }
 
-
 void ChannelFeed::createMsg()
 {
 	if (mChannelId == "")
@@ -312,7 +245,6 @@ void ChannelFeed::checkUpdate()
 		}
 	}
 }
-
 
 void ChannelFeed::updateChannelList()
 {
@@ -405,37 +337,12 @@ void ChannelFeed::updateChannelList()
 
 void ChannelFeed::updateChannelListOwn(std::list<std::string> &ids)
 {
-//	std::list<ChanMenuItem *>::iterator it;
-	std::list<std::string>::iterator iit;
+    std::list<std::string>::iterator iit;
 
-//	/* TEMP just replace all of them */
-//	for(it = mChannelListOwn.begin(); it != mChannelListOwn.end(); it++)
-//	{
-//		delete (*it);
-//	}
-//	mChannelListOwn.clear();
-//
-//	int topIndex = mGroupLayout->indexOf(mGroupOwn);
-//	int index = topIndex + 1;
-//	for (iit = ids.begin(); iit != ids.end(); iit++, index++)
-//	{
-//#ifdef CHAN_DEBUG
-//		std::cerr << "ChannelFeed::updateChannelListOwn(): " << *iit << " at: " << index;
-//		std::cerr << std::endl;
-//#endif
-//
-//		ChanMenuItem *cmi = new ChanMenuItem(*iit);
-//		mChannelListOwn.push_back(cmi);
-//		mGroupLayout->insertWidget(index, cmi);
-//
-//		connect(cmi, SIGNAL( selectMe( std::string )), this, SLOT( selectChannel( std::string )));
-//	}
+    /* remove rows with groups before adding new ones */
+    model->item(OWN)->removeRows(0, model->item(OWN)->rowCount());
 
-
-	/* remove rows with groups before adding new ones */
-	model->item(OWN)->removeRows(0, model->item(OWN)->rowCount());
-
-	for (iit = ids.begin(); iit != ids.end(); iit ++) {
+    for (iit = ids.begin(); iit != ids.end(); iit ++) {
 #ifdef CHAN_DEBUG
 		std::cerr << "ChannelFeed::updateChannelListOwn(): " << *iit << std::endl;
 #endif
@@ -464,35 +371,12 @@ void ChannelFeed::updateChannelListOwn(std::list<std::string> &ids)
 
 void ChannelFeed::updateChannelListSub(std::list<std::string> &ids)
 {
-//	std::list<ChanMenuItem *>::iterator it;
-	std::list<std::string>::iterator iit;
+    std::list<std::string>::iterator iit;
 
-//	/* TEMP just replace all of them */
-//	for(it = mChannelListSub.begin(); it != mChannelListSub.end(); it++)
-//	{
-//		delete (*it);
-//	}
-//	mChannelListSub.clear();
-//
-//	int topIndex = mGroupLayout->indexOf(mGroupSub);
-//	int index = topIndex + 1;
-//	for (iit = ids.begin(); iit != ids.end(); iit++, index++)
-//	{
-//#ifdef CHAN_DEBUG
-//		std::cerr << "ChannelFeed::updateChannelListSub(): " << *iit << " at: " << index;
-//		std::cerr << std::endl;
-//#endif
-//
-//		ChanMenuItem *cmi = new ChanMenuItem(*iit);
-//		mChannelListSub.push_back(cmi);
-//		mGroupLayout->insertWidget(index, cmi);
-//		connect(cmi, SIGNAL( selectMe( std::string )), this, SLOT( selectChannel( std::string )));
-//	}
+    /* remove rows with groups before adding new ones */
+    model->item(SUBSCRIBED)->removeRows(0, model->item(SUBSCRIBED)->rowCount());
 
-	/* remove rows with groups before adding new ones */
-	model->item(SUBSCRIBED)->removeRows(0, model->item(SUBSCRIBED)->rowCount());
-
-	for (iit = ids.begin(); iit != ids.end(); iit ++) {
+    for (iit = ids.begin(); iit != ids.end(); iit ++) {
 #ifdef CHAN_DEBUG
 		std::cerr << "ChannelFeed::updateChannelListSub(): " << *iit << std::endl;
 #endif
@@ -522,35 +406,12 @@ void ChannelFeed::updateChannelListSub(std::list<std::string> &ids)
 
 void ChannelFeed::updateChannelListPop(std::list<std::string> &ids)
 {
-//	std::list<ChanMenuItem *>::iterator it;
-	std::list<std::string>::iterator iit;
+    std::list<std::string>::iterator iit;
 
-//	/* TEMP just replace all of them */
-//	for(it = mChannelListPop.begin(); it != mChannelListPop.end(); it++)
-//	{
-//		delete (*it);
-//	}
-//	mChannelListPop.clear();
-//
-//	int topIndex = mGroupLayout->indexOf(mGroupPop);
-//	int index = topIndex + 1;
-//	for (iit = ids.begin(); iit != ids.end(); iit++, index++)
-//	{
-//#ifdef CHAN_DEBUG
-//		std::cerr << "ChannelFeed::updateChannelListPop(): " << *iit << " at: " << index;
-//		std::cerr << std::endl;
-//#endif
-//
-//		ChanMenuItem *cmi = new ChanMenuItem(*iit);
-//		mChannelListPop.push_back(cmi);
-//		mGroupLayout->insertWidget(index, cmi);
-//		connect(cmi, SIGNAL( selectMe( std::string )), this, SLOT( selectChannel( std::string )));
-//	}
+    /* remove rows with groups before adding new ones */
+    model->item(POPULAR)->removeRows(0, model->item(POPULAR)->rowCount());
 
-	/* remove rows with groups before adding new ones */
-	model->item(POPULAR)->removeRows(0, model->item(POPULAR)->rowCount());
-
-	for (iit = ids.begin(); iit != ids.end(); iit ++) {
+    for (iit = ids.begin(); iit != ids.end(); iit ++) {
 #ifdef CHAN_DEBUG
 		std::cerr << "ChannelFeed::updateChannelListPop(): " << *iit << std::endl;
 #endif
@@ -579,35 +440,12 @@ void ChannelFeed::updateChannelListPop(std::list<std::string> &ids)
 
 void ChannelFeed::updateChannelListOther(std::list<std::string> &ids)
 {
-//	std::list<ChanMenuItem *>::iterator it;
-	std::list<std::string>::iterator iit;
+    std::list<std::string>::iterator iit;
 
-//	/* TEMP just replace all of them */
-//	for(it = mChannelListOther.begin(); it != mChannelListOther.end(); it++)
-//	{
-//		delete (*it);
-//	}
-//	mChannelListOther.clear();
-//
-//	int topIndex = mGroupLayout->indexOf(mGroupOther);
-//	int index = topIndex + 1;
-//	for (iit = ids.begin(); iit != ids.end(); iit++, index++)
-//	{
-//#ifdef CHAN_DEBUG
-//		std::cerr << "ChannelFeed::updateChannelListOther(): " << *iit << " at: " << index;
-//		std::cerr << std::endl;
-//#endif
-//
-//		ChanMenuItem *cmi = new ChanMenuItem(*iit);
-//		mChannelListOther.push_back(cmi);
-//		mGroupLayout->insertWidget(index, cmi);
-//		connect(cmi, SIGNAL( selectMe( std::string )), this, SLOT( selectChannel( std::string )));
-//	}
+    /* remove rows with groups before adding new ones */
+    model->item(OTHER)->removeRows(0, model->item(OTHER)->rowCount());
 
-	/* remove rows with groups before adding new ones */
-	model->item(OTHER)->removeRows(0, model->item(OTHER)->rowCount());
-
-	for (iit = ids.begin(); iit != ids.end(); iit ++) {
+    for (iit = ids.begin(); iit != ids.end(); iit ++) {
 #ifdef CHAN_DEBUG
 		std::cerr << "ChannelFeed::updateChannelListOther(): " << *iit << std::endl;
 #endif

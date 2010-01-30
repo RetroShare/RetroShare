@@ -52,6 +52,9 @@ ChanMsgItem::ChanMsgItem(FeedHolder *parent, uint32_t feedId, std::string chanId
   /* specific ones */
   connect( playButton, SIGNAL( clicked( void ) ), this, SLOT( playMedia ( void ) ) );
   connect( unsubscribeButton, SIGNAL( clicked( void ) ), this, SLOT( unsubscribeChannel ( void ) ) );
+  connect( downloadButton, SIGNAL( clicked( ) ), this, SLOT( downloadMedia () ) );
+
+  
 
   small();
   updateItemStatic();
@@ -231,6 +234,14 @@ void ChanMsgItem::playMedia()
 {
 #ifdef DEBUG_ITEM
 	std::cerr << "ChanMsgItem::playMedia()";
+	std::cerr << std::endl;
+#endif
+}
+
+void ChanMsgItem::downloadMedia()
+{
+#ifdef DEBUG_ITEM
+	std::cerr << "ChanMsgItem::downloadMedia()";
 	std::cerr << std::endl;
 #endif
 }

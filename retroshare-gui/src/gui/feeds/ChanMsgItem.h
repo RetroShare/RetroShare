@@ -50,6 +50,8 @@ private slots:
 	void toggle();
 
 	void playMedia();
+	void downloadMedia();
+
 	void unsubscribeChannel();
 
 	void updateItem();

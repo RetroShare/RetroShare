@@ -34,10 +34,7 @@
 #define POPULAR	2
 #define OTHER	3
 
-class ChanGroupItem;
-class ChanMenuItem;
 class ChanMsgItem;
-
 
 class ChannelFeed : public MainPage, public FeedHolder, private Ui::ChannelFeed
 {
@@ -66,7 +63,6 @@ private slots:
 	void checkUpdate();
 
 	void createChannel();
-	//void sendMsg();
 
 	void channelSelection();
 
@@ -92,20 +88,7 @@ private:
 	std::string mChannelId; /* current Channel */
 
 	/* Layout Pointers */
-//	QBoxLayout *mGroupLayout;
 	QBoxLayout *mMsgLayout;
-
-	/* Group Headers */
-//	ChanGroupItem *mGroupOwn;
-//	ChanGroupItem *mGroupSub;
-//	ChanGroupItem *mGroupPop;
-//	ChanGroupItem *mGroupOther;
-
-	/* lists of feedItems */
-//	std::list<ChanMenuItem *> mChannelListOwn;
-//	std::list<ChanMenuItem *> mChannelListSub;
-//	std::list<ChanMenuItem *> mChannelListPop;
-//	std::list<ChanMenuItem *> mChannelListOther;
 
 	std::list<ChanMsgItem *> mChanMsgItems;
 
