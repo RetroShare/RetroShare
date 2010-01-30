@@ -43,7 +43,6 @@ CryptoPage::CryptoPage(QWidget * parent, Qt::WFlags flags)
   _settings = new RshareSettings();
 
   connect(ui.copykeyButton, SIGNAL(clicked()), this, SLOT(copyPublicKey()));
-  connect(ui.exportkeyButton, SIGNAL(clicked()), this, SLOT(exportPublicKey()));
   connect(ui.saveButton, SIGNAL(clicked()), this, SLOT(fileSaveAs()));
 
 
@@ -81,7 +80,7 @@ CryptoPage::load()
 void
 CryptoPage::loadPublicKey()
 {
-    ui.certtextEdit->setText(QString::fromStdString(rsPeers->GetRetroshareInvite()));
+    ui.certtextEdit->setPlainText(QString::fromStdString(rsPeers->GetRetroshareInvite()));
     ui.certtextEdit->setReadOnly(true);
     ui.certtextEdit->setMinimumHeight(200);
 }
@@ -91,35 +90,11 @@ CryptoPage::copyPublicKey()
 {
     QMessageBox::information(this,
                              tr("RetroShare"),
-                             tr("Your Public Key is copied to Clipbard, paste and send it to your"
-                                "friend via email or some other way"));
+                             tr("Your Public Key is copied to Clipboard, paste and send it to your"
+                                " friend via email or some other way"));
     QClipboard *clipboard = QApplication::clipboard();
     clipboard->setText(ui.certtextEdit->toPlainText());
 
-}
-
-void
-CryptoPage::exportPublicKey()
-{
-    qDebug() << "  exportPulicKey";
-
-    QString qdir = QFileDialog::getSaveFileName(this,
-                                                "Please choose a filename",
-                                                QDir::homePath(),
-                                                "RetroShare Certificate (*.pqi)");
-
-    if ( rsPeers->saveCertificateToFile(rsPeers->getOwnId(), qdir.toStdString()) )
-    {
-        QMessageBox::information(this, tr("RetroShare"),
-                         tr("Certificate file successfully created"),
-                         QMessageBox::Ok, QMessageBox::Ok);
-    }
-    else
-    {
-        QMessageBox::information(this, tr("RetroShare"),
-                         tr("Sorry, certificate file creation failed"),
-                         QMessageBox::Ok, QMessageBox::Ok);
-    }
 }
 
 bool CryptoPage::fileSave()
@@ -140,7 +115,7 @@ bool CryptoPage::fileSave()
 bool CryptoPage::fileSaveAs()
 {
     QString fn = QFileDialog::getSaveFileName(this, tr("Save as..."),
-                                              QString(), tr("TXT-Files (*.pqi *.pem *.txt);;All Files (*)"));
+                                              QString(), tr("RetroShare Certificate (*.retroshare );;All Files (*)"));
     if (fn.isEmpty())
         return false;
     setCurrentFileName(fn);

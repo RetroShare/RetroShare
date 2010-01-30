@@ -52,8 +52,6 @@ class CryptoPage : public ConfigPage
       void loadPublicKey();
 
       void copyPublicKey();
-
-      void exportPublicKey();
       
       bool fileSave();
       bool fileSaveAs();
