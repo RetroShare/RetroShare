@@ -160,7 +160,7 @@ IntroPage::IntroPage(QWidget *parent)
                    "to do this:")) ;
 
     textRadioButton = new QRadioButton(tr("&Enter the certificate manually"));
-    certRadioButton = new QRadioButton(tr("&Use *.pqi files with certificates" ));
+    certRadioButton = new QRadioButton(tr("&Use *.rsc files with certificates" ));
     foffRadioButton = new QRadioButton(tr("&Make friend with selected friends of my friends" ));
     textRadioButton->setChecked(true);
 
@@ -595,7 +595,7 @@ CertificatePage::CertificatePage(QWidget *parent) : QWizardPage(parent) {
 void CertificatePage::loadFriendCert() {
     QString fileName =
         QFileDialog::getOpenFileName(this, tr("Select Certificate"),
-                                     "", tr("Certificates (*.pqi *.pem)"));
+                                     "", tr("RetroShare Certificates (*.rsc)"));
 
     if (!fileName.isNull())
     {
@@ -612,7 +612,7 @@ void CertificatePage::generateCertificateCalled() {
     QString qdir = QFileDialog::getSaveFileName(this,
                                                 tr("Please choose a filename"),
                                                 QDir::homePath(),
-                                                "RetroShare Certificate (*.pqi)");
+                                                "RetroShare Certificate (*.rsc)");
 
     if ( rsPeers->saveCertificateToFile(rsPeers->getOwnId(), qdir.toStdString()) )
     {
