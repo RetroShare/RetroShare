@@ -261,10 +261,18 @@ void 	FileIndexMonitor::run()
 			{
 				break;
 			}
+			
+#ifdef FIM_DEBUG
+			RsStackMutex mtx(fiMutex) ;
+			std::cerr <<"*********** FileIndex **************" << std::endl ;
+			fi.printFileIndex(std::cerr) ;
+			std::cerr <<"************** END *****************" << std::endl ;
+			std::cerr << std::endl ;
+#endif
 		}
 
-//		updateCycle(current_job);
 		updateCycle();
+
 	}
 }
 
@@ -987,46 +995,75 @@ int FileIndexMonitor::RequestDirDetails(void *ref, DirDetails &details, uint32_t
 	fi.root->checkParentPointers();
 #endif
 
-	// return details as reported by the FileIndex
+	// If ref is NULL, we build a root node
 
-	bool b = fi.RequestDirDetails(ref,details,flags) ;
+	if (ref == NULL)
+	{
+#ifdef FI_DEBUG
+		std::cerr << "FileIndex::RequestDirDetails() ref=NULL (root)" << std::endl;
+#endif
+		/* local only */
+		DirStub stub;
+		stub.type = DIR_TYPE_PERSON;
+		stub.name = fi.root->name;
+		stub.ref  = fi.root;
+		details.children.push_back(stub);
+		details.count = 1;
+
+		details.parent = NULL;
+		details.prow = -1;
+		details.ref = NULL;
+		details.type = DIR_TYPE_ROOT;
+		details.name = "root";
+		details.hash = "";
+		details.path = "root";
+		details.age = 0;
+		details.flags = 0;
+
+		return true ;
+	}	
+	
+	bool b = FileIndex::extractData(ref,details) ;
 
 	if(!b)
 		return false ;
 
 	// look for the top level and setup flags accordingly
 
-	FileEntry *file = (FileEntry *) ref;
-	DirEntry *dir = dynamic_cast<DirEntry *>(file);
-	DirEntry *last_dir = NULL ;
-
-	if(dir != NULL)
-		while(dir->parent != NULL)
-		{
-			last_dir = dir ;
-			dir = dir->parent ;
-		}
-
-	if(last_dir != NULL)
+	if(ref != NULL)
 	{
-#ifdef FIM_DEBUG
-		std::cerr << "FileIndexMonitor::RequestDirDetails: parent->name=" << last_dir->name << std::endl ;
-#endif
-		std::map<std::string,SharedDirInfo>::const_iterator it = directoryMap.find(last_dir->name) ;
+		FileEntry *file = (FileEntry *) ref;
+		DirEntry *dir = dynamic_cast<DirEntry*>(file->parent) ;
+		DirEntry *last_dir = NULL ;
 
-		if(it == directoryMap.end())
-			std::cerr << "*********** ERROR *********** In " << __PRETTY_FUNCTION__ << std::endl ;
-		else
+		if(dir != NULL)
+			while(dir->parent != NULL)
+			{
+				last_dir = dir ;
+				dir = dir->parent ;
+			}
+
+		if(last_dir != NULL)
 		{
-			details.flags |= (( (it->second.shareflags & RS_FILE_HINTS_BROWSABLE)>0)?DIR_FLAGS_BROWSABLE:0) ;
-			details.flags |= (( (it->second.shareflags & RS_FILE_HINTS_NETWORK_WIDE)>0)?DIR_FLAGS_NETWORK_WIDE:0) ;
 #ifdef FIM_DEBUG
-			std::cerr << "flags = " << details.flags << std::endl ;
+			std::cerr << "FileIndexMonitor::RequestDirDetails: parent->name=" << last_dir->name << std::endl ;
 #endif
+			std::map<std::string,SharedDirInfo>::const_iterator it = directoryMap.find(last_dir->name) ;
+
+			if(it == directoryMap.end())
+				std::cerr << "*********** ERROR *********** In " << __PRETTY_FUNCTION__ << std::endl ;
+			else
+			{
+				details.flags |= (( (it->second.shareflags & RS_FILE_HINTS_BROWSABLE)>0)?DIR_FLAGS_BROWSABLE:0) ;
+				details.flags |= (( (it->second.shareflags & RS_FILE_HINTS_NETWORK_WIDE)>0)?DIR_FLAGS_NETWORK_WIDE:0) ;
+#ifdef FIM_DEBUG
+				std::cerr << "flags = " << details.flags << std::endl ;
+#endif
+			}
 		}
 	}
 
-	return b ;
+	return true ;
 }
 
 

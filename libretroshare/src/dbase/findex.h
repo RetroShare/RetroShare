@@ -79,7 +79,7 @@ class DirEntry;
 class FileEntry
 {
 	public:
-	FileEntry() :parent(NULL), row(-1) { return; }
+	FileEntry() :parent(NULL), row(0) { return; }
 virtual ~FileEntry() { return; }
 
 virtual int print(std::ostream &out);
@@ -226,14 +226,16 @@ class FileIndex
 		int 	searchHash(std::string hash, std::list<FileEntry *> &results) const;
 		int     searchBoolExp(Expression * exp, std::list<FileEntry *> &results) const;
 
-		/* browse thru directories */
-		int RequestDirDetails(void *ref, DirDetails &details, uint32_t flags) const;
 		PersonEntry *root;
 
 		static std::set<void*> _pointers ;
 		static void registerEntry(void*p) ; 
 		static void unregisterEntry(void*p) ; 
 		static bool isValid(void*p)  ;
+
+		/// Fills up details from the data contained in ref.
+		//
+		static bool extractData(void *ref,DirDetails& details) ;
 };
 
 

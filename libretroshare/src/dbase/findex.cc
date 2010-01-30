@@ -26,6 +26,7 @@
 #include "rsiface/rsexpr.h"
 #include "util/rsdir.h"
 
+#include <assert.h>
 #include <stdlib.h>
 #include <algorithm>
 #include <iostream>
@@ -1177,139 +1178,91 @@ int FileIndex::searchBoolExp(Expression * exp, std::list<FileEntry *> &results) 
 	return 0;
 }
 
-int FileIndex::RequestDirDetails(void *ref, DirDetails &details, uint32_t flags) const
+bool FileIndex::extractData(void *ref,DirDetails& details) 
 {
-	/* so cast *ref to a DirEntry */
-
-	if(ref != NULL && !isValid(ref))
-		return false ;
-
-	FileEntry *file = (FileEntry *) ref;
-	DirEntry *dir = dynamic_cast<DirEntry *>(file);
-
-	if (!ref)
+	if(!isValid(ref))
 	{
 #ifdef FI_DEBUG
-		std::cerr << "FileIndex::RequestDirDetails() ref=NULL (root)" << std::endl;
+		std::cerr << "FileIndex::RequestDirDetails() asked for an invalid pointer " << (void*)ref << std::endl;
 #endif
-		/* local only */
-		DirStub stub;
-		stub.type = DIR_TYPE_PERSON;
-		stub.name = root->name;
-		stub.ref  = root;
-		details.children.push_back(stub);
-		details.count = 1;
+		return false ;
+	}
 
-		details.parent = NULL;
-		details.prow = 0;
-		details.ref = NULL;
-		details.type = DIR_TYPE_ROOT;
-		details.name = "";
+	FileEntry *file = static_cast<FileEntry *>(ref);
+	DirEntry *dir = dynamic_cast<DirEntry *>(file);
+
+	details.children = std::list<DirStub>() ;
+
+	if (dir!=NULL) /* has children --- fill */
+	{
+#ifdef FI_DEBUG
+		std::cerr << "FileIndex::RequestDirDetails() ref=dir" << std::endl;
+#endif
+		/* extract all the entries */
+		for(std::map<std::string,DirEntry*>::const_iterator dit(dir->subdirs.begin()); dit != dir->subdirs.end(); ++dit)
+		{
+			DirStub stub;
+			stub.type = DIR_TYPE_DIR;
+			stub.name = (dit->second) -> name;
+			stub.ref  = (dit->second);
+
+			details.children.push_back(stub);
+		}
+
+		for(std::map<std::string,FileEntry*>::const_iterator fit(dir->files.begin()); fit != dir->files.end(); ++fit)
+		{
+			DirStub stub;
+			stub.type = DIR_TYPE_FILE;
+			stub.name = (fit->second) -> name;
+			stub.ref  = (fit->second);
+
+			details.children.push_back(stub);
+		}
+
+		if(dir->parent == NULL)
+			details.type = DIR_TYPE_PERSON ;
+		else
+			details.type = DIR_TYPE_DIR;
 		details.hash = "";
-		details.path = "";
-		details.age = 0;
-		details.flags = 0;
+		details.count = dir->subdirs.size() + dir->files.size();
 	}
 	else
 	{
-		if (dir) /* has children --- fill */
-		{
 #ifdef FI_DEBUG
-			std::cerr << "FileIndex::RequestDirDetails() ref=dir" << std::endl;
+		std::cerr << "FileIndexStore::RequestDirDetails() ref=file" << std::endl;
 #endif
-			std::map<std::string, FileEntry *>::iterator fit;
-			std::map<std::string, DirEntry *>::iterator dit;
-			/* extract all the entries */
-			for(dit = dir->subdirs.begin(); dit != dir->subdirs.end(); dit++)
-			{
-				DirStub stub;
-				stub.type = DIR_TYPE_DIR;
-				stub.name = (dit->second) -> name;
-				stub.ref  = (dit->second);
-
-				details.children.push_back(stub);
-			}
-
-			for(fit = dir->files.begin(); fit != dir->files.end(); fit++)
-			{
-				DirStub stub;
-				stub.type = DIR_TYPE_FILE;
-				stub.name = (fit->second) -> name;
-				stub.ref  = (fit->second);
-
-				details.children.push_back(stub);
-			}
-
-			details.type = DIR_TYPE_DIR;
-			details.hash = "";
-			details.count = dir->subdirs.size() + dir->files.size();
-		}
-		else
-		{
-#ifdef FI_DEBUG
-			std::cerr << "FileIndexStore::RequestDirDetails() ref=file" << std::endl;
-#endif
-			details.type = DIR_TYPE_FILE;
-			details.count = file->size;
-		}
-
-#ifdef FI_DEBUG
-		std::cerr << "FileIndexStore::RequestDirDetails() name: " << file->name << std::endl;
-#endif
-		details.ref = file;
-		details.name = file->name;
-		details.hash = file->hash;
-		details.age = time(NULL) - file->modtime;
-		details.flags = 0;//file->pop;
-
-		/* find parent pointer, and row */
-		DirEntry *parent = file->parent;
-		if (!parent) /* then must be root */
-		{
-			details.parent = NULL;
-			details.prow = 0;
-		}
-		else
-		{
-			details.parent = parent;
-			details.prow = parent->row;
-		}
-
-		/* find peer id */
-		parent = dir;
-		if (!dir) /* cannot be null -> no files at root level */
-			parent=file->parent;
-
-		// Well, yes, it can be null, beleive me. In such a case it may be that
-		// file is a person entry.
-
-		PersonEntry *person;
-
-		if(parent==NULL)
-		{
-			if(NULL == (person = dynamic_cast<PersonEntry *>(file)))
-			{
-				std::cerr << "Major Error- Not PersonEntry!";
-				exit(1);
-			}
-		}
-		else
-		{
-			/* NEW add path (to dir - if dir, or parent dir - if file? */
-			details.path = parent->path;
-
-			while(parent->parent)
-				parent = parent->parent;
-
-			/* we should end up on the PersonEntry */
-			if (NULL == (person = dynamic_cast<PersonEntry *>(parent)))
-			{
-				std::cerr << "Major Error- Not PersonEntry!";
-				exit(1);
-			}
-		}
-		details.id = person->id;
+		details.type = DIR_TYPE_FILE;
+		details.count = file->size;
 	}
+
+#ifdef FI_DEBUG
+	std::cerr << "FileIndexStore::RequestDirDetails() name: " << file->name << std::endl;
+#endif
+	details.ref = file;
+	details.name = file->name;
+	details.hash = file->hash;
+	details.age = time(NULL) - file->modtime;
+	details.flags = 0;//file->pop;
+
+	/* find parent pointer, and row */
+	details.parent = file->parent ;
+
+	details.prow = (file->parent==NULL)?0:file->parent->row ;
+	details.path = (file->parent==NULL)?"":file->parent->path;
+
+	/* find peer id */
+	FileEntry *f ;
+	for(f=file;f->parent!=NULL;f=f->parent) ;
+
+	details.id = dynamic_cast<PersonEntry*>(f)->id;
+
+#ifdef FI_DEBUG
+	assert(details.parent != details.ref) ;
+	std::cout << "details: ref=" << (void*)ref << ", prow=" << details.prow << ", parent=" << (void*)details.parent << ", children=" ;
+	for(std::list<DirStub>::iterator it(details.children.begin());it!=details.children.end();++it)
+		std::cout << " " << (void*)it->ref ;
+	std::cout << std::endl ;
+#endif
 
 	return true;
 }

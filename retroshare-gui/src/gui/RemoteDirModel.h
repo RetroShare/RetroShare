@@ -38,118 +38,118 @@
 
 class RemoteDirModel : public QAbstractItemModel
 {
-    Q_OBJECT
+	Q_OBJECT
 
-public:
-    enum Roles{ FileNameRole = Qt::UserRole+1 };
+	public:
+		enum Roles{ FileNameRole = Qt::UserRole+1 };
 
-     RemoteDirModel(bool mode, QObject *parent = 0);
+		RemoteDirModel(bool mode, QObject *parent = 0);
 
-	/* These are all overloaded Virtual Functions */
-     int rowCount(const QModelIndex &parent = QModelIndex()) const;
-     int columnCount(const QModelIndex &parent = QModelIndex()) const;
+		/* These are all overloaded Virtual Functions */
+		int rowCount(const QModelIndex &parent = QModelIndex()) const;
+		int columnCount(const QModelIndex &parent = QModelIndex()) const;
 
-     QVariant data(const QModelIndex &index, int role) const;
-     QVariant headerData(int section, Qt::Orientation orientation,
-                         int role = Qt::DisplayRole) const;
+		QVariant data(const QModelIndex &index, int role) const;
+		QVariant headerData(int section, Qt::Orientation orientation,
+				int role = Qt::DisplayRole) const;
 
-     QModelIndex index(int row, int column,
-			const QModelIndex & parent = QModelIndex() ) const;
-     QModelIndex parent ( const QModelIndex & index ) const;
+		QModelIndex index(int row, int column,
+				const QModelIndex & parent = QModelIndex() ) const;
+		QModelIndex parent ( const QModelIndex & index ) const;
 
-     Qt::ItemFlags flags ( const QModelIndex & index ) const;
-     bool hasChildren(const QModelIndex & parent = QModelIndex()) const;
+		Qt::ItemFlags flags ( const QModelIndex & index ) const;
+		bool hasChildren(const QModelIndex & parent = QModelIndex()) const;
 
-	/* Callback from Core */
-     void preMods();
-     void postMods();
+		/* Callback from Core */
+		void preMods();
+		void postMods();
 
-	/* Callback from GUI */
-     void downloadSelected(QModelIndexList list);
+		/* Callback from GUI */
+		void downloadSelected(QModelIndexList list);
 
-     void getDirDetailsFromSelect (QModelIndexList list, std::vector <DirDetails>& dirVec);
+		void getDirDetailsFromSelect (QModelIndexList list, std::vector <DirDetails>& dirVec);
 
-     bool isDir ( const QModelIndex & index ) const ;
-     //void openFile(QModelIndex fileIndex, const QString command);
+		bool isDir ( const QModelIndex & index ) const ;
+		//void openFile(QModelIndex fileIndex, const QString command);
 
-//#if 0  /****** REMOVED ******/
-//     void recommendSelected(QModelIndexList list);
-//     void recommendSelectedOnly(QModelIndexList list);
-//#endif
+		//#if 0  /****** REMOVED ******/
+		//     void recommendSelected(QModelIndexList list);
+		//     void recommendSelectedOnly(QModelIndexList list);
+		//#endif
 		void getFileInfoFromIndexList(const QModelIndexList& list, std::list<DirDetails>& files_info) ;
 
-     void openSelected(QModelIndexList list, bool openFolder);
+		void openSelected(QModelIndexList list, bool openFolder);
 
-     void getFilePaths(QModelIndexList list, std::list<std::string> &fullpaths);
+		void getFilePaths(QModelIndexList list, std::list<std::string> &fullpaths);
 
-     void changeAgeIndicator(int indicator) { ageIndicator = indicator; }
+		void changeAgeIndicator(int indicator) { ageIndicator = indicator; }
 
 
-  public slots:
+		public slots:
 
-     void collapsed ( const QModelIndex & index ) { update(index); }
-     void expanded ( const QModelIndex & index ) { update(index); }
+			void collapsed ( const QModelIndex & index ) { update(index); }
+		void expanded ( const QModelIndex & index ) { update(index); }
 
-  /* Drag and Drop Functionality */
-  public:
+		/* Drag and Drop Functionality */
+	public:
 
-virtual QMimeData * mimeData ( const QModelIndexList & indexes ) const;
-virtual QStringList mimeTypes () const;
+		virtual QMimeData * mimeData ( const QModelIndexList & indexes ) const;
+		virtual QStringList mimeTypes () const;
 
- private:
-     void update (const QModelIndex &index );
-     void treeStyle();
-     void downloadDirectory(const DirDetails & details, int prefixLen);
-	  static QString getFlagsString(uint32_t) ;
-    QString getAgeIndicatorString(const DirDetails &) const;
-    void getAgeIndicatorRec(DirDetails &details, QString &ret) const;
+	private:
+		void update (const QModelIndex &index );
+		void treeStyle();
+		void downloadDirectory(const DirDetails & details, int prefixLen);
+		static QString getFlagsString(uint32_t) ;
+		QString getAgeIndicatorString(const DirDetails &) const;
+		void getAgeIndicatorRec(DirDetails &details, QString &ret) const;
 
-    int ageIndicator;
+		int ageIndicator;
 
-     QIcon categoryIcon;
-     QIcon peerIcon;
+		QIcon categoryIcon;
+		QIcon peerIcon;
 
-	class RemoteIndex
-	{
-		public:
-		RemoteIndex() {}
-		RemoteIndex(std::string in_person,
-				std::string in_path,
-				int in_idx,
-				int in_row,
-				int in_column,
-				std::string in_name,
-				int in_size,
-				int in_type,
-				int in_ts, int in_rank)
-		:id(in_person), path(in_path), parent(in_idx),
-			row(in_row), column(in_column),
-			name(in_name), size(in_size),
-			type(in_type), timestamp(in_ts), rank(in_rank)
+		class RemoteIndex
 		{
-			return;
-		}
+			public:
+				RemoteIndex() {}
+				RemoteIndex(std::string in_person,
+						std::string in_path,
+						int in_idx,
+						int in_row,
+						int in_column,
+						std::string in_name,
+						int in_size,
+						int in_type,
+						int in_ts, int in_rank)
+					:id(in_person), path(in_path), parent(in_idx),
+					row(in_row), column(in_column),
+					name(in_name), size(in_size),
+					type(in_type), timestamp(in_ts), rank(in_rank)
+			{
+				return;
+			}
 
-		std::string id;
-		std::string path;
-		int parent;
-		int row;
-		int column;
+				std::string id;
+				std::string path;
+				int parent;
+				int row;
+				int column;
 
-		/* display info */
-		std::string name;
-		int size;
-		int type;
-		int timestamp;
-		int rank;
+				/* display info */
+				std::string name;
+				int size;
+				int type;
+				int timestamp;
+				int rank;
 
-	};
+		};
 
-     bool RemoteMode;
+		bool RemoteMode;
 
-     mutable int nIndex;
-     mutable std::vector<RemoteIndex> indexSet;
+		mutable int nIndex;
+		mutable std::vector<RemoteIndex> indexSet;
 
- };
+};
 
 #endif

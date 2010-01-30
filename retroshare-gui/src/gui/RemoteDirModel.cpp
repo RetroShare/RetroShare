@@ -34,6 +34,7 @@
 #include <algorithm>
 #include "util/misc.h"
 
+  #define RDM_DEBUG
 /*****
  * #define RDM_DEBUG
  ****/
@@ -116,11 +117,7 @@ void RemoteDirModel::treeStyle()
      std::cerr << ": ";
 #endif
 
-     void *ref = NULL;
-     if (parent.isValid())
-     {
-     	ref = parent.internalPointer();
-     }
+     void *ref = (parent.isValid())? parent.internalPointer() : NULL ;
 
      DirDetails details;
      uint32_t flags = DIR_FLAGS_CHILDREN;
@@ -447,16 +444,14 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
 		switch(coln)
 		{
 			case 0:
-		return QString::fromStdString(details.name);
-			break;
+				return QString::fromStdString(details.name);
+				break;
 			case 1:
-		//return QString("");
-		return QString::fromStdString(details.id);
-			break;
+				return QString() ;
+				break;
 			default:
-		//return QString("");
-		return QString::fromStdString("P");
-			break;
+				return QString() ;
+				break;
 		}
 	}
 	else if (details.type == DIR_TYPE_FILE) /* File */
@@ -464,13 +459,13 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
 		switch(coln)
 		{
 			case 0:
-		return QString::fromUtf8(details.name.c_str());
-			break;
+				return QString::fromUtf8(details.name.c_str());
+				break;
 			case 1:
-		{
-			std::ostringstream out;
-			//out << details.count;
-			//return QString::fromStdString(out.str());
+				{
+					std::ostringstream out;
+					//out << details.count;
+					//return QString::fromStdString(out.str());
 			return  misc::friendlyUnit(details.count);
 		}
 			break;
@@ -520,21 +515,21 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
 			case 3:
 				return QString::fromUtf8("Folder");
 				break;
-            case 4:
-            {
-            	if (ageIndicator == IND_DEFAULT)
-            		return QString("");
-            	QModelIndex pidx = parent(index);
-            	QModelIndex pidxs = pidx.sibling(pidx.row(), 4);
-            	if (pidxs.isValid() && pidxs.data() != tr(""))
-            		return pidxs.data();
-            	else {
-            		QString ind("");
-            		getAgeIndicatorRec(details, ind);
-            		return ind;
-            	}
-            }
-                break;
+//            case 4:
+//            {
+//            	if (ageIndicator == IND_DEFAULT)
+//            		return QString("");
+//            	QModelIndex pidx = parent(index);
+//            	QModelIndex pidxs = pidx.sibling(pidx.row(), 4);
+//            	if (pidxs.isValid() && pidxs.data() != tr(""))
+//            		return pidxs.data();
+//            	else {
+//            		QString ind("");
+//            		getAgeIndicatorRec(details, ind);
+//            		return ind;
+//            	}
+//            }
+ //               break;
 			default:
 				return QString(tr("DIR"));
 				break;
@@ -627,43 +622,40 @@ void RemoteDirModel::getAgeIndicatorRec(DirDetails &details, QString &ret) const
 		return QString("Row %1").arg(section);
 }
 
- QModelIndex RemoteDirModel::index(int row, int column,
-                        const QModelIndex & parent) const
- {
+QModelIndex RemoteDirModel::index(int row, int column, const QModelIndex & parent) const
+{
 #ifdef RDM_DEBUG
 	std::cerr << "RemoteDirModel::index(): " << parent.internalPointer();
 	std::cerr << ": row:" << row << " col:" << column << " ";
 #endif
 
-	void *ref = NULL;
+	if(row < 0)
+		return QModelIndex() ;
 
-        if (parent.isValid())
-	{
-		ref = parent.internalPointer();
-	}
+	void *ref = (parent.isValid()) ? parent.internalPointer() : NULL;
 
 	/********
-		if (!RemoteMode)
-		{
-			remote = &(rsiface->getLocalDirectoryList());
-		}
-	********/
+	  if (!RemoteMode)
+	  {
+	  remote = &(rsiface->getLocalDirectoryList());
+	  }
+	 ********/
 
-     	DirDetails details;
-     	uint32_t flags = DIR_FLAGS_CHILDREN;
-     	if (RemoteMode)
-     		flags |= DIR_FLAGS_REMOTE;
-     	else
-     		flags |= DIR_FLAGS_LOCAL;
+	DirDetails details;
+	uint32_t flags = DIR_FLAGS_CHILDREN;
+	if (RemoteMode)
+		flags |= DIR_FLAGS_REMOTE;
+	else
+		flags |= DIR_FLAGS_LOCAL;
 
-     	if (!rsFiles->RequestDirDetails(ref, details, flags))
-     	{
+	if (!rsFiles->RequestDirDetails(ref, details, flags))
+	{
 #ifdef RDM_DEBUG
-     		std::cerr << "lookup failed -> invalid";
-     		std::cerr << std::endl;
+		std::cerr << "lookup failed -> invalid";
+		std::cerr << std::endl;
 #endif
-     		return QModelIndex();
-     	}
+		return QModelIndex();
+	}
 
 	/* now iterate through the details to
 	 * get the reference number
@@ -671,125 +663,104 @@ void RemoteDirModel::getAgeIndicatorRec(DirDetails &details, QString &ret) const
 
 	std::list<DirStub>::iterator it;
 	int i = 0;
-	for(it = details.children.begin();
-		((i < row) && (it != details.children.end())); it++, i++) ;
+	for(it = details.children.begin(); ((i < row) && (it != details.children.end())); ++it, ++i) ;
 
 	if (it == details.children.end())
 	{
 #ifdef RDM_DEBUG
-     		std::cerr << "wrong number of children -> invalid";
-     		std::cerr << std::endl;
+		std::cerr << "wrong number of children -> invalid";
+		std::cerr << std::endl;
 #endif
 		return QModelIndex();
 	}
 
 #ifdef RDM_DEBUG
-     	std::cerr << "success index(" << row << "," << column << "," << it->ref << ")";
-     	std::cerr << std::endl;
+	std::cerr << "success index(" << row << "," << column << "," << it->ref << ")";
+	std::cerr << std::endl;
 #endif
 
 	/* we can just grab the reference now */
-	QModelIndex qmi = createIndex(row, column, it->ref);
-	return qmi;
- }
+
+	return createIndex(row, column, it->ref);
+}
 
 
- QModelIndex RemoteDirModel::parent( const QModelIndex & index ) const
- {
+QModelIndex RemoteDirModel::parent( const QModelIndex & index ) const
+{
 #ifdef RDM_DEBUG
 	std::cerr << "RemoteDirModel::parent(): " << index.internalPointer();
 	std::cerr << ": ";
 #endif
 
 	/* create the index */
-        if (!index.isValid())
+	if (!index.isValid())
 	{
 #ifdef RDM_DEBUG
-     		std::cerr << "Invalid Index -> invalid";
-     		std::cerr << std::endl;
+		std::cerr << "Invalid Index -> invalid";
+		std::cerr << std::endl;
 #endif
 		/* Parent is invalid too */
 		return QModelIndex();
 	}
 	void *ref = index.internalPointer();
 
-     	DirDetails details;
-     	uint32_t flags = DIR_FLAGS_PARENT;
-     	if (RemoteMode)
-     		flags |= DIR_FLAGS_REMOTE;
-     	else
-     		flags |= DIR_FLAGS_LOCAL;
+	DirDetails details;
+	uint32_t flags = (RemoteMode)?DIR_FLAGS_REMOTE:DIR_FLAGS_LOCAL;
 
-     	if (!rsFiles->RequestDirDetails(ref, details, flags))
-     	{
+	if (!rsFiles->RequestDirDetails(ref, details, flags))
+	{
 #ifdef RDM_DEBUG
-     		std::cerr << "Failed Lookup -> invalid";
-     		std::cerr << std::endl;
+		std::cerr << "Failed Lookup -> invalid";
+		std::cerr << std::endl;
 #endif
-     		return QModelIndex();
-     	}
+		return QModelIndex();
+	}
 
 	if (!(details.parent))
 	{
 #ifdef RDM_DEBUG
-     		std::cerr << "success. parent is Root/NULL --> invalid";
-     		std::cerr << std::endl;
+		std::cerr << "success. parent is Root/NULL --> invalid";
+		std::cerr << std::endl;
 #endif
-     		return QModelIndex();
+		return QModelIndex();
 	}
 
 #ifdef RDM_DEBUG
-     	std::cerr << "success index(" << details.prow << ",0," << details.parent << ")";
-     	std::cerr << std::endl;
+	std::cerr << "success index(" << details.prow << ",0," << details.parent << ")";
+	std::cerr << std::endl;
 
 #endif
 	return createIndex(details.prow, 0, details.parent);
- }
+}
 
- Qt::ItemFlags RemoteDirModel::flags( const QModelIndex & index ) const
- {
+Qt::ItemFlags RemoteDirModel::flags( const QModelIndex & index ) const
+{
 #ifdef RDM_DEBUG
-     	std::cerr << "RemoteDirModel::flags()";
-  	std::cerr << std::endl;
+	std::cerr << "RemoteDirModel::flags()";
+	std::cerr << std::endl;
 #endif
 
-     	if (!index.isValid())
+	if (!index.isValid())
 		return (Qt::ItemIsSelectable); // Error.
 
 	void *ref = index.internalPointer();
 
-     	DirDetails details;
-     	uint32_t flags = DIR_FLAGS_DETAILS;
-     	if (RemoteMode)
-     		flags |= DIR_FLAGS_REMOTE;
-     	else
-     		flags |= DIR_FLAGS_LOCAL;
+	DirDetails details;
+	uint32_t flags = DIR_FLAGS_DETAILS;
+	if (RemoteMode)
+		flags |= DIR_FLAGS_REMOTE;
+	else
+		flags |= DIR_FLAGS_LOCAL;
 
-     	if (!rsFiles->RequestDirDetails(ref, details, flags))
-     	{
-		return (Qt::ItemIsSelectable); // Error.
-     	}
+	if (!rsFiles->RequestDirDetails(ref, details, flags))
+		return Qt::ItemIsSelectable; // Error.
 
-     	if (details.type == DIR_TYPE_PERSON)
+	switch(details.type)
 	{
-     		return (Qt::ItemIsEnabled);
-	}
-     	else if (details.type == DIR_TYPE_DIR)
-	{
-     		return ( Qt::ItemIsSelectable |
-			Qt::ItemIsEnabled);
-
-//			Qt::ItemIsDragEnabled |
-//			Qt::ItemIsDropEnabled |
-
-	}
-	else // (details.type == DIR_TYPE_FILE)
-	{
-     		return ( Qt::ItemIsSelectable |
-			Qt::ItemIsDragEnabled |
-			Qt::ItemIsEnabled);
-
-
+		case DIR_TYPE_PERSON: return Qt::ItemIsEnabled;
+		case DIR_TYPE_DIR:	 return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+		default: ;
+		case DIR_TYPE_FILE:	 return Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled;
 	}
 }
 

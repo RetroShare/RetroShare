@@ -233,7 +233,7 @@ class DirDetails
 {
 	public:
 	void *parent;
-	uint32_t prow; /* parent row */
+	int prow; /* parent row */
 
 	void *ref;
 	uint8_t type;
