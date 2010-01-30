@@ -182,9 +182,6 @@ int FileIndexStore::RequestDirDetails(void *ref, DirDetails &details, uint32_t f
 	}
 
 	/* so cast *ref to a DirEntry */
-	FileEntry *file = (FileEntry *) ref;
-	DirEntry *dir = dynamic_cast<DirEntry *>(file);
-	PersonEntry *person;
 	/* root case */
 
 #ifdef FIS_DEBUG
@@ -195,170 +192,43 @@ int FileIndexStore::RequestDirDetails(void *ref, DirDetails &details, uint32_t f
 	}
 #endif
 
-	if (!ref)
+	if (ref == NULL)
 	{
 #ifdef FIS_DEBUG
 		std::cerr << "FileIndexStore::RequestDirDetails() ref=NULL (root)" << std::endl;
 #endif
-		if (flags & DIR_FLAGS_LOCAL)
+
+		/* get remote root entries */
+		for(pit = indices.begin(); pit != indices.end(); pit++)
 		{
-			/* local only */
-			if (localindex)
-			{
-				DirStub stub;
-				stub.type = DIR_TYPE_PERSON;
-				stub.name = localindex->root->name;
-				stub.ref  = localindex->root;
-				details.children.push_back(stub);
-				details.count = 1;
-			}
-			else
-			{
-				details.count = 0;
-			}
+			/*
+			 */
+			DirStub stub;
+			stub.type = DIR_TYPE_PERSON;
+			stub.name = (pit->second)->root->name;
+			stub.ref =  (pit->second)->root;
 
-			details.parent = NULL;
-			details.prow = 0;
-			details.ref = NULL;
-			details.type = DIR_TYPE_ROOT;
-			details.name = "";
-			details.hash = "";
-			details.path = "";
-			details.age = 0;
-			details.flags = 0;
+			details.children.push_back(stub);
 		}
-		else
-		{
-			/* get remote root entries */
-			for(pit = indices.begin(); pit != indices.end(); pit++)
-			{
-				/*
-				 */
-				DirStub stub;
-				stub.type = DIR_TYPE_PERSON;
-				stub.name = (pit->second)->root->name;
-				stub.ref =  (pit->second)->root;
+		details.parent = NULL;
+		details.prow = -1;
+		details.ref = NULL;
+		details.type = DIR_TYPE_ROOT;
+		details.name = "";
+		details.hash = "";
+		details.path = "";
+		details.count = indices.size();
+		details.age = 0;
+		details.flags = 0;
 
-				details.children.push_back(stub);
-			}
-			details.parent = NULL;
-			details.prow = 0;
-			details.ref = NULL;
-			details.type = DIR_TYPE_ROOT;
-			details.name = "";
-			details.hash = "";
-			details.path = "";
-			details.count = indices.size();
-			details.age = 0;
-			details.flags = 0;
-		}
-	}
-	else
-	{
-		if (dir) /* has children --- fill */
-		{
-#ifdef FIS_DEBUG
-			std::cerr << "FileIndexStore::RequestDirDetails() ref=dir" << std::endl;
-#endif
-			std::map<std::string, FileEntry *>::iterator fit;
-			std::map<std::string, DirEntry *>::iterator dit;
-			/* extract all the entries */
-			for(dit = dir->subdirs.begin();
-				dit != dir->subdirs.end(); dit++)
-			{
-				DirStub stub;
-				stub.type = DIR_TYPE_DIR;
-				stub.name = (dit->second) -> name;
-				stub.ref  = (dit->second);
-
-				details.children.push_back(stub);
-			}
-
-			for(fit = dir->files.begin();
-				fit != dir->files.end(); fit++)
-			{
-				DirStub stub;
-				stub.type = DIR_TYPE_FILE;
-				stub.name = (fit->second) -> name;
-				stub.ref  = (fit->second);
-
-				details.children.push_back(stub);
-			}
-
-			details.type = DIR_TYPE_DIR;
-			details.hash = "";
-			details.count = dir->subdirs.size() +
-					dir->files.size();
-		}
-		else
-		{
-#ifdef FIS_DEBUG
-			std::cerr << "FileIndexStore::RequestDirDetails() ref=file" << std::endl;
-#endif
-			details.type = DIR_TYPE_FILE;
-			details.count = file->size;
-		}
-
-#ifdef FIS_DEBUG
-		std::cerr << "FileIndexStore::RequestDirDetails() name: " << file->name << std::endl;
-#endif
-		details.ref = file;
-		details.name = file->name;
-		details.hash = file->hash;
-		details.age = time(NULL) - file->modtime;
-		details.flags = 0;//file->pop;
-
-		/* find parent pointer, and row */
-		DirEntry *parent = file->parent;
-		if (!parent) /* then must be root */
-		{
-			details.parent = NULL;
-			details.prow = 0;
-		}
-		else
-		{
-			details.parent = parent;
-			details.prow = parent->row;
-		}
-
-		/* find peer id */
-		parent = dir;
-		if (!dir)
-		{
-			/* cannot be null -> no files at root level */
-			parent=file->parent;
-		}
-		// Well, yes, it can be null, beleive me. In such a case it may be that
-		// file is a person entry.
-
-		if(parent==NULL)
-		{
-			if(NULL == (person = dynamic_cast<PersonEntry *>(file)))
-			{
-				std::cerr << "Major Error- Not PersonEntry!";
-				exit(1);
-			}
-		}
-		else
-		{
-			/* NEW add path (to dir - if dir, or parent dir - if file? */
-			details.path = parent->path;
-
-			while(parent->parent)
-				parent = parent->parent;
-
-			/* we should end up on the PersonEntry */
-			if (NULL == (person = dynamic_cast<PersonEntry *>(parent)))
-			{
-				std::cerr << "Major Error- Not PersonEntry!";
-				exit(1);
-			}
-		}
-		details.id = person->id;
+		unlockData();
+		return true ;
 	}
 
+	bool b = FileIndex::extractData(ref,details) ;
+	
 	unlockData();
-	return found;
+	return b;
 }
 
 
@@ -433,7 +303,7 @@ int FileIndexStore::SearchKeywords(std::list<std::string> keywords, std::list<Di
 			for(rit = firesults.begin(); rit != firesults.end(); rit++)
 			{
 				DirDetails dd;
-				(pit->second)->RequestDirDetails(*rit, dd, 0);
+				FileIndex::extractData(*rit, dd);
 				results.push_back(dd);
 			}
 		}
@@ -448,7 +318,7 @@ int FileIndexStore::SearchKeywords(std::list<std::string> keywords, std::list<Di
 			for(rit = firesults.begin(); rit != firesults.end(); rit++)
 			{
 				DirDetails dd;
-				(pit->second)->RequestDirDetails(*rit, dd, 0);
+				FileIndex::extractData(*rit, dd);
 				dd.id = "Local";
 				results.push_back(dd);
 			}
@@ -482,7 +352,7 @@ int FileIndexStore::searchBoolExp(Expression * exp, std::list<DirDetails> &resul
 		for(rit = firesults.begin(); rit != firesults.end(); rit++)
 		{
 			DirDetails dd;
-			(pit->second)->RequestDirDetails(*rit, dd, 0);
+			FileIndex::extractData(*rit, dd);
 			results.push_back(dd);
 		}
 
@@ -499,7 +369,7 @@ int FileIndexStore::searchBoolExp(Expression * exp, std::list<DirDetails> &resul
 		for(rit = firesults.begin(); rit != firesults.end(); rit++)
 		{
 			DirDetails dd;
-			(pit->second)->RequestDirDetails(*rit, dd, 0);
+			FileIndex::extractData(*rit, dd);
 			dd.id = "Local";
 			results.push_back(dd);
 		}
