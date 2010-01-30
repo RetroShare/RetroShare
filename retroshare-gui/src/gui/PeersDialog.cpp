@@ -254,7 +254,7 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
           //this is a GPG key
          textLabel = new QLabel( tr("<strong>GPG Key</strong>"), this );
       } else {
-         textLabel = new QLabel( tr("<strong>Retroshare instance</strong>"), this );
+         textLabel = new QLabel( tr("<strong>RetroShare instance</strong>"), this );
       }
 
       hbox->addWidget(textLabel);
