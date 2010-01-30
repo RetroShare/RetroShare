@@ -289,6 +289,9 @@ void  ChanMsgDialog::insertSendList()
 		/* add all the labels */
 		/* (0) Person */
                 item -> setText(0, QString::fromStdString(detail.name) + " - " + QString::fromStdString(detail.location));
+                if (detail.state & RS_PEER_STATE_CONNECTED) {
+                    item -> setTextColor(0,(Qt::darkBlue));
+                }
 		/* () Org */
 		//item -> setText(1, QString::fromStdString(detail.org));
 		/* () Location */
