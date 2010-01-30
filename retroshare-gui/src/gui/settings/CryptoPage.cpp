@@ -115,11 +115,15 @@ bool CryptoPage::fileSave()
 bool CryptoPage::fileSaveAs()
 {
     QString fn = QFileDialog::getSaveFileName(this, tr("Save as..."),
-                                              QString(), tr("RetroShare Certificate (*.retroshare );;All Files (*)"));
+                                              QString(), tr("RetroShare Certificate (*.rsc );;All Files (*)"));
     if (fn.isEmpty())
         return false;
     setCurrentFileName(fn);
     return fileSave();
+    
+    QMessageBox::information(this, tr("RetroShare"),
+                         tr("RetroShare Certificate file successfully created"),
+                         QMessageBox::Ok, QMessageBox::Ok);
 }
 
 void CryptoPage::setCurrentFileName(const QString &fileName)
