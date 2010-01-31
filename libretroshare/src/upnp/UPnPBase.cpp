@@ -1026,7 +1026,11 @@ error:
 
 char* CUPnPControlPoint::getInternalIpAddress()
 {
-    return UpnpGetServerIpAddress();
+    char * addr = UpnpGetServerIpAddress();
+    if (addr = NULL) {
+        addr = "127.0.0.1";
+    }
+    return addr;
 }
 
 CUPnPControlPoint::~CUPnPControlPoint()
