@@ -662,11 +662,18 @@ void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
 
 
 	  if(localModel->isDir( midx ) )
+	  {
 		  contextMnu2.addAction( openfolderAct);
+		  contextMnu2.addSeparator();
+		  contextMnu2.addAction( copylinklocalAct);
+		  contextMnu2.addAction( sendlinkAct);
+		  contextMnu2.addAction( sendhtmllinkAct);
+		} 
 	  else
 	  {
 		  contextMnu2.addAction( menuAction );
 		  contextMnu2.addAction( openfileAct);
+		  contextMnu2.addAction( openfolderAct);
 	  }
 
 	  contextMnu2.addSeparator();
