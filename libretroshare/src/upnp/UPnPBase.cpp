@@ -1027,7 +1027,7 @@ error:
 char* CUPnPControlPoint::getInternalIpAddress()
 {
     char * addr = UpnpGetServerIpAddress();
-    if (addr = NULL) {
+    if (addr == NULL) {
         addr = "127.0.0.1";
     }
     return addr;
