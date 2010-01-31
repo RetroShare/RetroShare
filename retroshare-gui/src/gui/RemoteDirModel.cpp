@@ -34,7 +34,6 @@
 #include <algorithm>
 #include "util/misc.h"
 
-  #define RDM_DEBUG
 /*****
  * #define RDM_DEBUG
  ****/
@@ -940,40 +939,38 @@ void RemoteDirModel::getFileInfoFromIndexList(const QModelIndexList& list, std::
 	std::set<std::string> already_in ;
 
 	for(QModelIndexList::const_iterator it(list.begin()); it != list.end(); ++it)
-	{
-		void *ref = it -> internalPointer();
+		if(it->column()==0)
+		{
+			void *ref = it -> internalPointer();
 
-		DirDetails details;
-		uint32_t flags = DIR_FLAGS_DETAILS;
-		if (RemoteMode)
-		{
-			flags |= DIR_FLAGS_REMOTE;
-			continue; /* don't recommend remote stuff */
-		}
-		else
-		{
-			flags |= DIR_FLAGS_LOCAL;
-		}
+			DirDetails details;
+			uint32_t flags = DIR_FLAGS_DETAILS;
 
-		if (!rsFiles->RequestDirDetails(ref, details, flags))
-		{
-			continue;
-		}
+			if (RemoteMode)
+				flags |= DIR_FLAGS_REMOTE;
+			else
+				flags |= DIR_FLAGS_LOCAL;
+
+			if (!rsFiles->RequestDirDetails(ref, details, flags))
+				continue;
+
+			if(details.type == DIR_TYPE_PERSON)
+				continue ;
 
 #ifdef RDM_DEBUG
-		std::cerr << "::::::::::::FileRecommend:::: " << std::endl;
-		std::cerr << "Name: " << details.name << std::endl;
-		std::cerr << "Hash: " << details.hash << std::endl;
-		std::cerr << "Size: " << details.count << std::endl;
-		std::cerr << "Path: " << details.path << std::endl;
+			std::cerr << "::::::::::::FileRecommend:::: " << std::endl;
+			std::cerr << "Name: " << details.name << std::endl;
+			std::cerr << "Hash: " << details.hash << std::endl;
+			std::cerr << "Size: " << details.count << std::endl;
+			std::cerr << "Path: " << details.path << std::endl;
 #endif
 
-		if(already_in.find(details.hash) == already_in.end())
-		{
-			file_details.push_back(details) ;
-			already_in.insert(details.hash) ;
+			if(already_in.find(details.hash+details.name) == already_in.end())
+			{
+				file_details.push_back(details) ;
+				already_in.insert(details.hash+details.name) ;
+			}
 		}
-	}
 #ifdef RDM_DEBUG
 	std::cerr << "::::::::::::Done FileRecommend" << std::endl;
 #endif
@@ -1083,7 +1080,9 @@ void RemoteDirModel::openSelected(QModelIndexList qmil, bool openFolder)
 
 	if (openFolder) {
 		std::list<std::string>::iterator dit;
-		for (dit = dirs_to_open.begin(); dit != dirs_to_open.end(); dit++) {
+		for (dit = dirs_to_open.begin(); dit != dirs_to_open.end(); dit++) 
+		{
+			std::cerr << "Opennign this folder: " << (*dit).c_str() << std::endl ;
 			QDesktopServices::openUrl(QUrl::fromLocalFile((*dit).c_str()));
 		}
 	}

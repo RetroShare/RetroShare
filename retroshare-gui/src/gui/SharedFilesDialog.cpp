@@ -73,7 +73,7 @@ const QString Image_AddNewAssotiationForFile = ":/images/kcmsystem24.png";
 
 /** Constructor */
 SharedFilesDialog::SharedFilesDialog(QWidget *parent)
-: MainPage(parent)
+: RsAutoUpdatePage(1000,parent)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
@@ -167,10 +167,6 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
   ui.localDirTreeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
   ui.remoteDirTreeView->setColumnHidden(2,true) ;
-
-  QTimer *timer = new QTimer(this);
-  timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
-  timer->start(1000);
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -571,8 +567,7 @@ void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
 	//if (localModel->isDir( midx ) )
 	//	return;
 
-	currentFile = localModel->data(midx,
-			RemoteDirModel::FileNameRole).toString();
+	currentFile = localModel->data(midx, RemoteDirModel::FileNameRole).toString();
 
 	QMenu contextMnu2( this );
 	//
@@ -618,17 +613,24 @@ void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
 
 	for(it = peers.begin(); it != peers.end(); it++)
 	{
-		std::string name = rsPeers->getPeerName(*it);
+		RsPeerDetails details ;
+		if(!rsPeers->getPeerDetails(*it,details))
+			continue ;
+
+		std::string name = details.name ;
+		std::string location = details.location ;
+
+		std::string nn = name + " (" + location +")" ;
 		/* parents are
 		 * 	recMenu
 		 * 	msgMenu
 		 */
 
-		RsAction *qaf1 = new RsAction( QIcon(IMAGE_FRIEND), QString::fromStdString( name ), recMenu, *it );
+		RsAction *qaf1 = new RsAction( QIcon(IMAGE_FRIEND), QString::fromStdString( nn ), recMenu, *it );
 		connect( qaf1 , SIGNAL( triggeredId( std::string ) ), this, SLOT( recommendFilesTo( std::string ) ) );
 		recMenu->addAction(qaf1);
 
-		RsAction *qaf2 = new RsAction( QIcon(IMAGE_FRIEND), QString::fromStdString( name ), msgMenu, *it );
+		RsAction *qaf2 = new RsAction( QIcon(IMAGE_FRIEND), QString::fromStdString( nn ), msgMenu, *it );
 		connect( qaf2 , SIGNAL( triggeredId( std::string ) ), this, SLOT( recommendFilesToMsg( std::string ) ) );
 		msgMenu->addAction(qaf2);
 
@@ -659,20 +661,29 @@ void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
 	  connect(openfolderAct, SIGNAL(triggered()), this, SLOT(openfolder()));
 
 
-	  contextMnu2.addAction( menuAction );
-	  contextMnu2.addAction( openfileAct);
-	  contextMnu2.addAction( openfolderAct);
-	  contextMnu2.addSeparator();
-	  contextMnu2.addAction( copylinklocalAct);
-	  contextMnu2.addAction( sendlinkAct);
-	  contextMnu2.addAction( sendhtmllinkAct);
-	  contextMnu2.addSeparator();
-	  contextMnu2.addAction( sendlinkCloudAct);
-	  contextMnu2.addAction( addlinkCloudAct);
-	  contextMnu2.addSeparator();
-	  contextMnu2.addMenu( recMenu);
-	  contextMnu2.addMenu( msgMenu);
+	  if(localModel->isDir( midx ) )
+		  contextMnu2.addAction( openfolderAct);
+	  else
+	  {
+		  contextMnu2.addAction( menuAction );
+		  contextMnu2.addAction( openfileAct);
+	  }
 
+	  contextMnu2.addSeparator();
+
+	  if(!localModel->isDir( midx ) )
+	  {
+		  contextMnu2.addAction( copylinklocalAct);
+		  contextMnu2.addAction( sendlinkAct);
+		  contextMnu2.addAction( sendhtmllinkAct);
+		  contextMnu2.addSeparator();
+		  contextMnu2.addAction( sendlinkCloudAct);
+		  contextMnu2.addAction( addlinkCloudAct);
+		  contextMnu2.addSeparator();
+
+		  contextMnu2.addMenu( recMenu);
+		  contextMnu2.addMenu( msgMenu);
+	  }
 
 	QMouseEvent *mevent2 = new QMouseEvent( QEvent::MouseButtonPress, point,
 			Qt::RightButton, Qt::RightButton,

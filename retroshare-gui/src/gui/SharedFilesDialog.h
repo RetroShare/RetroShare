@@ -27,13 +27,13 @@
 
 //#include <config/rsharesettings.h>
 
-#include "mainpage.h"
+#include "RsAutoUpdatePage.h"
 #include "ui_SharedFilesDialog.h"
 
 #include "rsiface/rstypes.h"
 #include "gui/RemoteDirModel.h"
 
-class SharedFilesDialog : public MainPage
+class SharedFilesDialog : public RsAutoUpdatePage
 {
   Q_OBJECT
 
@@ -42,6 +42,7 @@ public:
   SharedFilesDialog(QWidget *parent = 0);
   /** Default Destructor */
 
+  virtual void updatePage() { checkUpdate() ; }
 
 
 private slots:

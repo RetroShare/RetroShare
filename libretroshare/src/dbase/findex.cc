@@ -1239,7 +1239,6 @@ bool FileIndex::extractData(void *ref,DirDetails& details)
 	std::cerr << "FileIndexStore::RequestDirDetails() name: " << file->name << std::endl;
 #endif
 	details.ref = file;
-	details.name = file->name;
 	details.hash = file->hash;
 	details.age = time(NULL) - file->modtime;
 	details.flags = 0;//file->pop;
@@ -1248,7 +1247,17 @@ bool FileIndex::extractData(void *ref,DirDetails& details)
 	details.parent = file->parent ;
 
 	details.prow = (file->parent==NULL)?0:file->parent->row ;
-	details.path = (file->parent==NULL)?"":file->parent->path;
+
+	if(details.type == DIR_TYPE_DIR)
+	{
+		details.name = file->name;
+		details.path = dir->path;
+	}
+	else
+	{
+		details.name = file->name;
+		details.path = (file->parent==NULL)?"":file->parent->path;
+	}
 
 	/* find peer id */
 	FileEntry *f ;
