@@ -45,6 +45,7 @@
 
 #include <sstream>
 #include <time.h>
+#include <sys/stat.h>
 
 #include <QTextCodec>
 #include <QTextEdit>
@@ -62,7 +63,8 @@
 #include <QMessageBox>
 #include <QHeaderView>
 #include <QtGui/QKeyEvent>
-
+#include <QHashIterator>
+#include <QDesktopServices>
 
 /* Images for context menu icons */
 #define IMAGE_REMOVEFRIEND       ":/images/removefriend16.png"
@@ -106,10 +108,12 @@ PeersDialog::PeersDialog(QWidget *parent)
   connect( ui.mypersonalstatuslabel, SIGNAL(clicked()), SLOT(statusmessage()));
   connect( ui.actionSet_your_Avatar, SIGNAL(triggered()), this, SLOT(getAvatar()));
   connect( ui.actionSet_your_Personal_Message, SIGNAL(triggered()), this, SLOT(statusmessage()));
+  connect( ui.addfileButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
+  connect( ui.msgText, SIGNAL(anchorClicked(const QUrl &)), SLOT(anchorClicked(const QUrl &)));
 
   connect(ui.hide_unconnected, SIGNAL(clicked()), this, SLOT(insertPeers()));
 
-  ui.peertabWidget->setTabPosition(QTabWidget::East);
+  ui.peertabWidget->setTabPosition(QTabWidget::North);
   ui.peertabWidget->addTab(new ProfileWidget(),QString(tr("Profile")));
 
   ui.peertreeWidget->setColumnCount(4);
@@ -132,8 +136,6 @@ PeersDialog::PeersDialog(QWidget *parent)
         headerItem->setTextAlignment(0, Qt::AlignHCenter | Qt::AlignVCenter);
         headerItem->setTextAlignment(1, Qt::AlignLeft | Qt::AlignVCenter);
 	headerItem->setTextAlignment(2, Qt::AlignHCenter | Qt::AlignVCenter);
-
-  loadEmoticonsgroupchat();
 
   connect(ui.lineEdit, SIGNAL(textChanged ( ) ), this, SLOT(checkChat( ) ));
   connect(ui.Sendbtn, SIGNAL(clicked()), this, SLOT(sendMsg()));
@@ -189,8 +191,15 @@ PeersDialog::PeersDialog(QWidget *parent)
   
   ui.menupushButton->setMenu(menu);
   
+  ui.msgText->setOpenExternalLinks ( false );
+  ui.msgText->setOpenLinks ( false );
+  
+  setAcceptDrops(true);
+  ui.lineEdit->setAcceptDrops(false);
+  
   updateAvatar();
   loadmypersonalstatus();
+  loadEmoticonsgroupchat();
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -1480,4 +1489,235 @@ void PeersDialog::statusmessage()
 {
     static StatusMessage *statusmsgdialog = new StatusMessage();
     statusmsgdialog->show();
+}
+
+void PeersDialog::addExtraFile()
+{
+	// select a file
+	QString qfile = QFileDialog::getOpenFileName(this, tr("Add Extra File"), "", "", 0,
+				QFileDialog::DontResolveSymlinks);
+	std::string filePath = qfile.toStdString();
+	if (filePath != "")
+	{
+	    PeersDialog::addAttachment(filePath);
+	}
+}
+
+void PeersDialog::addAttachment(std::string filePath) {
+	    /* add a AttachFileItem to the attachment section */
+	    std::cerr << "PopupChatDialog::addExtraFile() hashing file.";
+	    std::cerr << std::endl;
+
+	    /* add widget in for new destination */
+	    AttachFileItem *file = new AttachFileItem(filePath);
+	    //file->
+
+	    ui.verticalLayout->addWidget(file, 1, 0);
+
+	    //when the file is local or is finished hashing, call the fileHashingFinished method to send a chat message
+	    if (file->getState() == AFI_STATE_LOCAL) {
+		fileHashingFinished(file);
+	    } else {
+		QObject::connect(file,SIGNAL(fileFinished(AttachFileItem *)), SLOT(fileHashingFinished(AttachFileItem *))) ;
+	    }
+}
+
+void PeersDialog::fileHashingFinished(AttachFileItem* file) {
+	std::cerr << "PopupChatDialog::fileHashingFinished() started.";
+	std::cerr << std::endl;
+
+	//check that the file is ok tos end
+	if (file->getState() == AFI_STATE_ERROR) {
+	#ifdef CHAT_DEBUG
+		    std::cerr << "PopupChatDialog::fileHashingFinished error file is not hashed.";
+	#endif
+	    return;
+	}
+
+	ChatInfo ci;
+
+
+	{
+	  rsiface->lockData(); /* Lock Interface */
+	  const RsConfig &conf = rsiface->getConfig();
+
+	  ci.rsid = conf.ownId;
+	  ci.name = conf.ownName;
+
+	  rsiface->unlockData(); /* Unlock Interface */
+	}
+
+  //convert fileSize from uint_64 to string for html link
+	char fileSizeChar [100];
+	sprintf(fileSizeChar, "%lld", file->FileSize());
+	std::string fileSize = *(&fileSizeChar);
+
+	std::string mesgString = "<a href='retroshare://file|" + (file->FileName()) + "|" + fileSize + "|" + (file->FileHash()) + "'>" 
+	+ "retroshare://file|" + (file->FileName()) + "|" + fileSize +  "|" + (file->FileHash())  + "</a>";
+#ifdef CHAT_DEBUG
+	    std::cerr << "CreateForumMsg::anchorClicked mesgString : " << mesgString << std::endl;
+#endif
+
+	const char * messageString = mesgString.c_str ();
+
+	//convert char massageString to w_char
+	wchar_t* message;
+	int requiredSize = mbstowcs(NULL, messageString, 0); // C4996
+	/* Add one to leave room for the NULL terminator */
+	message = (wchar_t *)malloc( (requiredSize + 1) * sizeof( wchar_t ));
+	if (! message) {
+	    std::cerr << ("Memory allocation failure.\n");
+	}
+	int size = mbstowcs( message, messageString, requiredSize + 1); // C4996
+	if (size == (size_t) (-1)) {
+	   printf("Couldn't convert string--invalid multibyte character.\n");
+	}
+
+	ci.msg = message;
+	ci.chatflags = RS_CHAT_PUBLIC;
+
+	rsMsgs -> ChatSend(ci);
+	setFont();
+}
+
+void PeersDialog::anchorClicked (const QUrl& link ) 
+{
+    #ifdef FORUM_DEBUG
+		    std::cerr << "ForumsDialog::anchorClicked link.scheme() : " << link.scheme().toStdString() << std::endl;
+    #endif
+    
+	if (link.scheme() == "retroshare")
+	{
+		QStringList L = link.toString().split("|") ;
+
+		std::string fileName = L.at(1).toStdString() ;
+		uint64_t fileSize = L.at(2).toULongLong();
+		std::string fileHash = L.at(3).toStdString() ;
+
+#ifdef FORUM_DEBUG
+		std::cerr << "ForumsDialog::anchorClicked FileRequest : fileName : " << fileName << ". fileHash : " << fileHash << ". fileSize : " << fileSize << std::endl;
+#endif
+
+		if (fileName != "" && fileHash != "")
+		{
+			std::list<std::string> srcIds;
+
+			if(rsFiles->FileRequest(fileName, fileHash, fileSize, "", RS_FILE_HINTS_NETWORK_WIDE, srcIds))
+			{
+				QMessageBox mb(tr("File Request Confirmation"), tr("The file has been added to your download list."),QMessageBox::Information,QMessageBox::Ok,0,0);
+				mb.setButtonText( QMessageBox::Ok, "OK" );
+				mb.exec();
+			}
+			else
+			{
+				QMessageBox mb(tr("File Request canceled"), tr("The file has not been added to your download list, because you already have it."),QMessageBox::Information,QMessageBox::Ok,0,0);
+				mb.setButtonText( QMessageBox::Ok, "OK" );
+				mb.exec();
+			}
+		} 
+		else 
+		{
+			QMessageBox mb(tr("File Request Error"), tr("The file link is malformed."),QMessageBox::Information,QMessageBox::Ok,0,0);
+			mb.setButtonText( QMessageBox::Ok, "OK" );
+			mb.exec();
+		}
+	} 
+	else if (link.scheme() == "http") 
+	{
+		QDesktopServices::openUrl(link);
+	} 
+	else if (link.scheme() == "") 
+	{
+		//it's probably a web adress, let's add http:// at the beginning of the link
+		QString newAddress = link.toString();
+		newAddress.prepend("http://");
+		QDesktopServices::openUrl(QUrl(newAddress));
+	}
+}
+
+void PeersDialog::dropEvent(QDropEvent *event)
+{
+	if (!(Qt::CopyAction & event->possibleActions()))
+	{
+		std::cerr << "PeersDialog::dropEvent() Rejecting uncopyable DropAction";
+		std::cerr << std::endl;
+
+		/* can't do it */
+		return;
+	}
+
+	std::cerr << "PeersDialog::dropEvent() Formats";
+	std::cerr << std::endl;
+	QStringList formats = event->mimeData()->formats();
+	QStringList::iterator it;
+	for(it = formats.begin(); it != formats.end(); it++)
+	{
+		std::cerr << "Format: " << (*it).toStdString();
+		std::cerr << std::endl;
+	}
+
+	if (event->mimeData()->hasUrls())
+	{
+		std::cerr << "PeersDialog::dropEvent() Urls:";
+		std::cerr << std::endl;
+
+		QList<QUrl> urls = event->mimeData()->urls();
+		QList<QUrl>::iterator uit;
+		for(uit = urls.begin(); uit != urls.end(); uit++)
+		{
+			std::string localpath = uit->toLocalFile().toStdString();
+			std::cerr << "Whole URL: " << uit->toString().toStdString();
+			std::cerr << std::endl;
+			std::cerr << "or As Local File: " << localpath;
+			std::cerr << std::endl;
+
+			if (localpath.size() > 0)
+			{
+				struct stat buf;
+				//Check that the file does exist and is not a directory
+				if ((-1 == stat(localpath.c_str(), &buf))) {
+				    std::cerr << "PeersDialog::dropEvent() file does not exists."<< std::endl;
+				    QMessageBox mb(tr("Drop file error."), tr("File not found or file name not accepted."),QMessageBox::Information,QMessageBox::Ok,0,0);
+				    mb.setButtonText( QMessageBox::Ok, "OK" );
+				    mb.exec();
+				} else if (S_ISDIR(buf.st_mode)) {
+				    std::cerr << "PeersDialog::dropEvent() directory not accepted."<< std::endl;
+				    QMessageBox mb(tr("Drop file error."), tr("Directory can't be dropped, only files are accepted."),QMessageBox::Information,QMessageBox::Ok,0,0);
+				    mb.setButtonText( QMessageBox::Ok, "OK" );
+				    mb.exec();
+				} else {
+				    PeersDialog::addAttachment(localpath);
+				}
+			}
+		}
+	}
+
+	event->setDropAction(Qt::CopyAction);
+	event->accept();
+}
+
+void PeersDialog::dragEnterEvent(QDragEnterEvent *event)
+{
+	/* print out mimeType */
+	std::cerr << "PeersDialog::dragEnterEvent() Formats";
+	std::cerr << std::endl;
+	QStringList formats = event->mimeData()->formats();
+	QStringList::iterator it;
+	for(it = formats.begin(); it != formats.end(); it++)
+	{
+		std::cerr << "Format: " << (*it).toStdString();
+		std::cerr << std::endl;
+	}
+
+	if (event->mimeData()->hasUrls())
+	{
+		std::cerr << "PeersDialog::dragEnterEvent() Accepting Urls";
+		std::cerr << std::endl;
+		event->acceptProposedAction();
+	}
+	else
+	{
+		std::cerr << "PeersDialog::dragEnterEvent() No Urls";
+		std::cerr << std::endl;
+	}
 }

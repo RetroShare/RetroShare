@@ -42,7 +42,7 @@ class PeersDialog : public RsAutoUpdatePage
 {
 	Q_OBJECT
 
-	public:
+public:
 		/** Default Constructor */
 		PeersDialog(QWidget *parent = 0);
 		/** Default Destructor */
@@ -57,7 +57,7 @@ class PeersDialog : public RsAutoUpdatePage
 		virtual void updateDisplay() ;	// overloaded from RsAutoUpdatePage
     virtual void keyPressEvent(QKeyEvent *) ;
 
-		public slots:
+public slots:
 
 		void  insertPeers();
 		void toggleSendItem( QTreeWidgetItem *item, int col );
@@ -66,6 +66,7 @@ class PeersDialog : public RsAutoUpdatePage
 		void setChatInfo(QString info, QColor color=QApplication::palette().color(QPalette::WindowText));
 		void resetStatusBar() ;
 
+    void fileHashingFinished(AttachFileItem* file);
 
 		void smileyWidgetgroupchat();
 		void addSmileys();
@@ -79,11 +80,15 @@ class PeersDialog : public RsAutoUpdatePage
 		void updatePeersCustomStateString(const QString& peer_id) ;
 		void updatePeersAvatar(const QString& peer_id);
 		void updateAvatar();	// called by notifyQt to update the avatar when it gets changed by another component
+		
+protected:
+    virtual void dragEnterEvent(QDragEnterEvent *event);
+    virtual void dropEvent(QDropEvent *event);
 
-		private slots:
+private slots:
 
-			/** Create the context popup menu and it's submenus */
-			void peertreeWidgetCostumPopupMenu( QPoint point );
+		/** Create the context popup menu and it's submenus */
+		void peertreeWidgetCostumPopupMenu( QPoint point );
 
 		void updateStatusString(const QString& statusString) ;	// called when a peer is typing in group chat 
 		void updateStatusTyping() ;										// called each time a key is hit
@@ -114,8 +119,6 @@ class PeersDialog : public RsAutoUpdatePage
 		
 		void statusmessage();
 
-		//void privchat();
-
 		void setFont();
 		void getFont();
 		void underline(); 
@@ -128,12 +131,17 @@ class PeersDialog : public RsAutoUpdatePage
 		void on_actionCreate_New_Channel_activated(); 
 
 		void loadmypersonalstatus();
+		
+		void addExtraFile();
+		void anchorClicked (const QUrl &);
+		void addAttachment(std::string);
+
 
 signals:
 		void friendsUpdated() ;
 		void notifyGroupChat(const QString&,const QString&) ;
 
-	private:
+private:
 		class QLabel *iconLabel, *textLabel;
 		class QWidget *widget;
 		class QWidgetAction *widgetAction;
