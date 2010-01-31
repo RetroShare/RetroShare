@@ -189,7 +189,9 @@ void FileTransferInfoWidget::draw(const FileChunksInfo& info,QPainter *painter)
 	 painter->drawText(0,y,tr("Availability map (")+QString::number(info.compressed_peer_availability_maps.size())+ tr(" sources")+")") ;
 	 y += block_sep ;
 
-	 int nb_chunks = info.file_size/info.chunk_size + !(info.file_size % info.chunk_size);
+	 // Note (for non geeks): the !! operator transforms anything positive into 1 and 0 into 0.
+	 //
+	 int nb_chunks = info.file_size/info.chunk_size + !!(info.file_size % info.chunk_size);
 
 	 for(uint i=0;i<availability_map_size_X;++i)
 	 {
