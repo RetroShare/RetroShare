@@ -2173,48 +2173,72 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
 
         if (!preverify_ok)
         {
-                if ((err == X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT) ||
-                                (err == X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY))
-                {
-                        X509_NAME_oneline(X509_get_issuer_name(X509_STORE_CTX_get_current_cert(ctx)), buf, 256);
-                        printf("issuer= %s\n", buf);
 
-                        fprintf(stderr, "Doing REAL PGP Certificates\n");
-                        /* do the REAL Authentication */
-                        if (!AuthX509(X509_STORE_CTX_get_current_cert(ctx)))
-                        {
-                                fprintf(stderr, "AuthSSL::VerifyX509Callback() X509 not authenticated.\n");
-                                return false;
-                        }
-                        std::string pgpid = getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer);
-                        if (!AuthGPG::getAuthGPG()->isGPGAccepted(pgpid) && pgpid != AuthGPG::getAuthGPG()->getGPGOwnId())
-                        {
-                                fprintf(stderr, "AuthSSL::VerifyX509Callback() pgp key not signed by ourself : \n");
-                                fprintf(stderr, "issuer pgpid : ");
-                                fprintf(stderr, "%s\n",pgpid.c_str());
-                                fprintf(stderr, "\n AuthGPG::getAuthGPG()->getGPGOwnId() : ");
-                                fprintf(stderr, "%s\n",AuthGPG::getAuthGPG()->getGPGOwnId().c_str());
-                                fprintf(stderr, "\n");
-                                return false;
-                        }
-                        preverify_ok = true;
-                }
-                else if ((err == X509_V_ERR_CERT_UNTRUSTED) ||
-                        (err == X509_V_ERR_UNABLE_TO_VERIFY_LEAF_SIGNATURE))
-                {
-                        std::string pgpid = getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer);
-                        if (!AuthGPG::getAuthGPG()->isGPGAccepted(pgpid) && pgpid != AuthGPG::getAuthGPG()->getGPGOwnId())
-                        {
-                                fprintf(stderr, "AuthSSL::VerifyX509Callback() pgp key not signed by ourself : \n");
-                                fprintf(stderr, "issuer pgpid : ");
-                                fprintf(stderr, "%s\n",pgpid.c_str());
-                                fprintf(stderr, "\n AuthGPG::getAuthGPG()->getGPGOwnId() : ");
-                                fprintf(stderr, "%s\n",AuthGPG::getAuthGPG()->getGPGOwnId().c_str());
-                                fprintf(stderr, "\n");
-                                return false;
-                        }
-                        preverify_ok = true;
-                }
+            X509_NAME_oneline(X509_get_issuer_name(X509_STORE_CTX_get_current_cert(ctx)), buf, 256);
+            printf("issuer= %s\n", buf);
+
+            fprintf(stderr, "Doing REAL PGP Certificates\n");
+            /* do the REAL Authentication */
+            if (!AuthX509(X509_STORE_CTX_get_current_cert(ctx)))
+            {
+                    fprintf(stderr, "AuthSSL::VerifyX509Callback() X509 not authenticated.\n");
+                    return false;
+            }
+            std::string pgpid = getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer);
+            if (!AuthGPG::getAuthGPG()->isGPGAccepted(pgpid) && pgpid != AuthGPG::getAuthGPG()->getGPGOwnId())
+            {
+                    fprintf(stderr, "AuthSSL::VerifyX509Callback() pgp key not signed by ourself : \n");
+                    fprintf(stderr, "issuer pgpid : ");
+                    fprintf(stderr, "%s\n",pgpid.c_str());
+                    fprintf(stderr, "\n AuthGPG::getAuthGPG()->getGPGOwnId() : ");
+                    fprintf(stderr, "%s\n",AuthGPG::getAuthGPG()->getGPGOwnId().c_str());
+                    fprintf(stderr, "\n");
+                    return false;
+            }
+            preverify_ok = true;
+
+//            if ((err == X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT) ||
+//                        (err == X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY))
+//                {
+//                X509_NAME_oneline(X509_get_issuer_name(X509_STORE_CTX_get_current_cert(ctx)), buf, 256);
+//                printf("issuer= %s\n", buf);
+//
+//                fprintf(stderr, "Doing REAL PGP Certificates\n");
+//                /* do the REAL Authentication */
+//                if (!AuthX509(X509_STORE_CTX_get_current_cert(ctx)))
+//                {
+//                        fprintf(stderr, "AuthSSL::VerifyX509Callback() X509 not authenticated.\n");
+//                        return false;
+//                }
+//                std::string pgpid = getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer);
+//                if (!AuthGPG::getAuthGPG()->isGPGAccepted(pgpid) && pgpid != AuthGPG::getAuthGPG()->getGPGOwnId())
+//                {
+//                        fprintf(stderr, "AuthSSL::VerifyX509Callback() pgp key not signed by ourself : \n");
+//                        fprintf(stderr, "issuer pgpid : ");
+//                        fprintf(stderr, "%s\n",pgpid.c_str());
+//                        fprintf(stderr, "\n AuthGPG::getAuthGPG()->getGPGOwnId() : ");
+//                        fprintf(stderr, "%s\n",AuthGPG::getAuthGPG()->getGPGOwnId().c_str());
+//                        fprintf(stderr, "\n");
+//                        return false;
+//                }
+//                preverify_ok = true;
+//            }
+//            else if ((err == X509_V_ERR_CERT_UNTRUSTED) ||
+//                (err == X509_V_ERR_UNABLE_TO_VERIFY_LEAF_SIGNATURE))
+//            {
+//                std::string pgpid = getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer);
+//                if (!AuthGPG::getAuthGPG()->isGPGAccepted(pgpid) && pgpid != AuthGPG::getAuthGPG()->getGPGOwnId())
+//                {
+//                        fprintf(stderr, "AuthSSL::VerifyX509Callback() pgp key not signed by ourself : \n");
+//                        fprintf(stderr, "issuer pgpid : ");
+//                        fprintf(stderr, "%s\n",pgpid.c_str());
+//                        fprintf(stderr, "\n AuthGPG::getAuthGPG()->getGPGOwnId() : ");
+//                        fprintf(stderr, "%s\n",AuthGPG::getAuthGPG()->getGPGOwnId().c_str());
+//                        fprintf(stderr, "\n");
+//                        return false;
+//                }
+//                preverify_ok = true;
+//            }
         } else {
                 fprintf(stderr, "Failing Normal Certificate!!!\n");
                 preverify_ok = false;
