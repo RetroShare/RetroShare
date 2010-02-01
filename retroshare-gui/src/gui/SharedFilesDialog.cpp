@@ -19,18 +19,20 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-
 #include "rshare.h"
 #include "SharedFilesDialog.h"
 #include "settings/AddFileAssociationDialog.h"
 
 #include "rsiface/rsiface.h"
+#include "rsiface/rsmsgs.h"
 #include "rsiface/rspeers.h"
 #include "rsiface/rsfiles.h"
+
 #include "util/RsAction.h"
 #include "msgs/ChanMsgDialog.h"
 #include "settings/rsharesettings.h"
 #include "AddLinksDialog.h"
+#include "SendLinkDialog.h"
 
 #ifndef RETROSHARE_LINK_ANALYZER
 #include "RetroShareLinkAnalyzer.h"
@@ -363,6 +365,18 @@ void SharedFilesDialog::sendHtmlLinkTo(  )
     nMsgDialog->show();
 }
 
+void SharedFilesDialog::sendLinktoChat()
+{
+	copyLinkLocal ();
+
+  static SendLinkDialog *slinkDialog = new SendLinkDialog(this);
+  
+  slinkDialog->insertHtmlText(QApplication::clipboard()->text().toStdString());
+
+  slinkDialog->show();
+
+}
+
 void SharedFilesDialog::sendLinkToCloud()
 {
 	copyLinkLocal ();
@@ -647,6 +661,9 @@ void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
 	  
 	  sendhtmllinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Link (html)" ), this );
 	  connect( sendhtmllinkAct , SIGNAL( triggered() ), this, SLOT( sendHtmlLinkTo( ) ) );
+	  
+	  sendchatlinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Link to Chat" ), this );
+	  connect( sendchatlinkAct , SIGNAL( triggered() ), this, SLOT( sendLinktoChat( ) ) );
 
 	  sendlinkCloudAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Link to Cloud" ), this );
 	  connect( sendlinkCloudAct , SIGNAL( triggered() ), this, SLOT( sendLinkToCloud(  ) ) );
@@ -676,6 +693,7 @@ void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
 		  contextMnu2.addAction( copylinklocalAct);
 		  contextMnu2.addAction( sendlinkAct);
 		  contextMnu2.addAction( sendhtmllinkAct);
+		  contextMnu2.addAction( sendchatlinkAct);
 		  contextMnu2.addSeparator();
 		  contextMnu2.addAction( sendlinkCloudAct);
 		  contextMnu2.addAction( addlinkCloudAct);

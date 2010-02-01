@@ -69,6 +69,7 @@ private slots:
   void sendHtmlLinkTo();
   void sendLinkToCloud();
   void addLinkToCloud();
+  void sendLinktoChat();
 
   void showFrame(bool show);
   void showFrameRemote(bool show);
@@ -114,6 +115,7 @@ private:
   QAction* sendhtmllinkAct;
   QAction* sendlinkCloudAct;
   QAction* addlinkCloudAct;
+  QAction* sendchatlinkAct;
 
   QTreeView *shareddirtreeview;
   QMovie *movie;
