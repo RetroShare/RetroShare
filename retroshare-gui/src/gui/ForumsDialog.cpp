@@ -1106,6 +1106,7 @@ void ForumsDialog::anchorClicked (const QUrl& link )
 			{
 				QMessageBox mb(tr("File Request Confirmation"), tr("The file has been added to your download list."),QMessageBox::Information,QMessageBox::Ok,0,0);
 				mb.setButtonText( QMessageBox::Ok, "OK" );
+				mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
 				mb.exec();
 			}
 			else
@@ -1119,6 +1120,7 @@ void ForumsDialog::anchorClicked (const QUrl& link )
 		{
 			QMessageBox mb(tr("File Request Error"), tr("The file link is malformed."),QMessageBox::Information,QMessageBox::Ok,0,0);
 			mb.setButtonText( QMessageBox::Ok, "OK" );
+			mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
 			mb.exec();
 		}
 	} 

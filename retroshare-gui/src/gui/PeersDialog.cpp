@@ -1595,7 +1595,7 @@ void PeersDialog::anchorClicked (const QUrl& link )
 		std::string fileHash = L.at(3).toStdString() ;
 
 #ifdef FORUM_DEBUG
-		std::cerr << "ForumsDialog::anchorClicked FileRequest : fileName : " << fileName << ". fileHash : " << fileHash << ". fileSize : " << fileSize << std::endl;
+		std::cerr << "PeersDialog::anchorClicked FileRequest : fileName : " << fileName << ". fileHash : " << fileHash << ". fileSize : " << fileSize << std::endl;
 #endif
 
 		if (fileName != "" && fileHash != "")
@@ -1606,12 +1606,14 @@ void PeersDialog::anchorClicked (const QUrl& link )
 			{
 				QMessageBox mb(tr("File Request Confirmation"), tr("The file has been added to your download list."),QMessageBox::Information,QMessageBox::Ok,0,0);
 				mb.setButtonText( QMessageBox::Ok, "OK" );
+				mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
 				mb.exec();
 			}
 			else
 			{
 				QMessageBox mb(tr("File Request canceled"), tr("The file has not been added to your download list, because you already have it."),QMessageBox::Information,QMessageBox::Ok,0,0);
 				mb.setButtonText( QMessageBox::Ok, "OK" );
+				mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
 				mb.exec();
 			}
 		} 
