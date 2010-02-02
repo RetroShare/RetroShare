@@ -43,6 +43,8 @@ AddLinksDialog::AddLinksDialog(QString url, QWidget *parent)
   /* add button */
   connect(ui.addLinkButton, SIGNAL(clicked()), this, SLOT(addLinkComment()));
   connect(ui.closepushButton, SIGNAL(clicked()), this, SLOT(close()));
+  
+  connect( ui.anonBox, SIGNAL( stateChanged ( int ) ), this, SLOT( load ( void  ) ) );
 
   ui.linkLineEdit->setReadOnly(true);
   ui.linkLineEdit->setText(url);
@@ -50,6 +52,7 @@ AddLinksDialog::AddLinksDialog(QString url, QWidget *parent)
   RetroShareLinkAnalyzer analyzer(url);
   QVector<RetroShareLinkData> linkList;
   analyzer.getFileInformation(linkList);
+  
   if (!linkList.isEmpty())
   {	  /* set title as first name from list */
 	  RetroShareLinkData item = linkList.first();
@@ -59,6 +62,8 @@ AddLinksDialog::AddLinksDialog(QString url, QWidget *parent)
   {
 	  ui.titleLineEdit->setText("New File");
   }
+
+  load();
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -105,4 +110,24 @@ void AddLinksDialog::addLinkComment()
 	}
 
 	close();
+}
+
+void AddLinksDialog::load()
+{
+  if (ui.anonBox->isChecked())
+	{
+
+		/* disable comment + score */
+		ui.scoreBox->setEnabled(false);
+		ui.linkTextEdit->setEnabled(false);
+
+		/* done! */
+		return;
+	}
+	else
+	{
+		/* enable comment + score */
+		ui.scoreBox->setEnabled(true);
+		ui.linkTextEdit->setEnabled(true);
+	}
 }

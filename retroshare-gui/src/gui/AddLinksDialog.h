@@ -37,6 +37,8 @@ public:
 
 public slots:
   void addLinkComment();
+  
+  void load();
 
 private:
   /** Qt Designer generated object */
