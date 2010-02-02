@@ -9,7 +9,29 @@ QToolBar {
 
 }
 
+QTabBar::tab {
+         border-image: url(qss/blue/tab1.png);
+         min-width: 8ex;
+         padding: 4px;
 
+
+}
+     
+QTabBar::tab:!selected {
+         margin-top: 2px; /* make non-selected tabs look smaller */
+
+}
+     
+QTabBar::tab:selected, QTabBar::tab:hover {
+
+         border-image: url(qss/orangesurfer/tab_hover.png);
+
+
+}
+
+QTabBar::tab:selected {
+		border-image: url(qss/blue/tabselected.png);
+}
 
 QPushButton#okButton {
 	min-height: 27px;
