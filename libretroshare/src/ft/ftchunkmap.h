@@ -106,8 +106,11 @@ class ChunkMap
 		/// If not, randomly/streamly select a new chunk depending on the strategy. 
       /// adds an entry in the chunk_ids map, and sets up 1 interval for it.
       /// the chunk should be available from the designated peer. 
+		/// On return:
+		/// 	- source_chunk_map_needed 	= true if the source map should be asked
+		///	- file_is_complete 			= true if the file is complete.
 
-      virtual bool getDataChunk(const std::string& peer_id,uint32_t size_hint,ftChunk& chunk,bool& source_chunk_map_needed) ; 
+      virtual bool getDataChunk(const std::string& peer_id,uint32_t size_hint,ftChunk& chunk,bool& source_chunk_map_needed,bool& file_is_complete) ; 
 
       /// Notify received a slice of data. This needs to 
       ///   - carve in the map of chunks what is received, what is not.
@@ -160,7 +163,7 @@ class ChunkMap
 
 		/// Returns the first chunk available starting from start_location for this peer_id.
 		//
-		uint32_t getAvailableChunk(uint32_t start_location,const std::string& peer_id,bool& chunk_map_too_old) ;
+		uint32_t getAvailableChunk(uint32_t start_location,const std::string& peer_id,bool& chunk_map_too_old,bool& file_is_complete) ;
 
 	private:
 		uint64_t												_file_size ;						//! total size of the file in bytes.

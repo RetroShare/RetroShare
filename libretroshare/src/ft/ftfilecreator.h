@@ -63,7 +63,7 @@ class ftFileCreator: public ftFileProvider
 		// - no chunkmap info is available. In such a case, the chunk info is irrelevant and false is returned.
 		// - the chunk info is too old. In tis case, true is returned, and the chunks info can be used.
 		//
-		bool	getMissingChunk(const std::string& peer_id,uint32_t size_hint,uint64_t& offset, uint32_t& size,bool& is_chunk_map_too_old);
+		bool	getMissingChunk(const std::string& peer_id,uint32_t size_hint,uint64_t& offset, uint32_t& size,bool& is_chunk_map_too_old,bool& file_is_complete);
 
 		// Takes care of purging any inactive chunks. This should be called regularly, because some peers may disconnect
 		// and let inactive chunks not finished.

@@ -317,7 +317,7 @@ void ftFileCreator::setChunkStrategy(FileChunksInfo::ChunkStrategy s)
  * But can return size = 0, if we are still waiting for the data.
  */
 
-bool ftFileCreator::getMissingChunk(const std::string& peer_id,uint32_t size_hint,uint64_t &offset, uint32_t& size,bool& source_chunk_map_needed) 
+bool ftFileCreator::getMissingChunk(const std::string& peer_id,uint32_t size_hint,uint64_t &offset, uint32_t& size,bool& source_chunk_map_needed,bool& file_is_complete) 
 {
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 #ifdef FILE_DEBUG
@@ -356,7 +356,7 @@ bool ftFileCreator::getMissingChunk(const std::string& peer_id,uint32_t size_hin
 
 	ftChunk chunk ;
 
-	if(!chunkMap.getDataChunk(peer_id,size_hint,chunk,source_chunk_map_needed))
+	if(!chunkMap.getDataChunk(peer_id,size_hint,chunk,source_chunk_map_needed,file_is_complete))
 		return false ;
 
 #ifdef FILE_DEBUG
