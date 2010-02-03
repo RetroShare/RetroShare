@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>270</width>
+    <width>295</width>
     <height>511</height>
    </rect>
   </property>
@@ -58,7 +58,7 @@ stop: 0.9 #4c4c4c, stop: 1 #333333);
        <property name="spacing">
         <number>0</number>
        </property>
-       <item row="0" column="0" colspan="2">
+       <item row="0" column="0" colspan="4">
         <layout class="QGridLayout">
          <item row="0" column="0">
           <widget class="QToolButton" name="avatarButton">
@@ -130,7 +130,7 @@ p, li { white-space: pre-wrap; }
               </property>
               <property name="icon">
                <iconset resource="images.qrc">
-                <normaloff>:/images/donline.png</normaloff>:/images/donline.png</iconset>
+                <normaloff>:/images/im-user.png</normaloff>:/images/im-user.png</iconset>
               </property>
              </item>
              <item>
@@ -139,16 +139,7 @@ p, li { white-space: pre-wrap; }
               </property>
               <property name="icon">
                <iconset resource="images.qrc">
-                <normaloff>:/images/dbusy.png</normaloff>:/images/dbusy.png</iconset>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Be right Back</string>
-              </property>
-              <property name="icon">
-               <iconset resource="images.qrc">
-                <normaloff>:/images/dbrb.png</normaloff>:/images/dbrb.png</iconset>
+                <normaloff>:/images/im-user-busy.png</normaloff>:/images/im-user-busy.png</iconset>
               </property>
              </item>
              <item>
@@ -157,25 +148,7 @@ p, li { white-space: pre-wrap; }
               </property>
               <property name="icon">
                <iconset resource="images.qrc">
-                <normaloff>:/images/daway.png</normaloff>:/images/daway.png</iconset>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>In a Call</string>
-              </property>
-              <property name="icon">
-               <iconset resource="images.qrc">
-                <normaloff>:/images/dphone.png</normaloff>:/images/dphone.png</iconset>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Out of lunch</string>
-              </property>
-              <property name="icon">
-               <iconset resource="images.qrc">
-                <normaloff>:/images/dlunch.png</normaloff>:/images/dlunch.png</iconset>
+                <normaloff>:/images/im-user-away.png</normaloff>:/images/im-user-away.png</iconset>
               </property>
              </item>
              <item>
@@ -184,7 +157,7 @@ p, li { white-space: pre-wrap; }
               </property>
               <property name="icon">
                <iconset resource="images.qrc">
-                <normaloff>:/images/dhidden.png</normaloff>:/images/dhidden.png</iconset>
+                <normaloff>:/images/im-user-offline.png</normaloff>:/images/im-user-offline.png</iconset>
               </property>
              </item>
             </widget>
@@ -222,7 +195,7 @@ p, li { white-space: pre-wrap; }
          </property>
         </widget>
        </item>
-       <item row="1" column="1">
+       <item row="1" column="3">
         <spacer>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -235,7 +208,74 @@ p, li { white-space: pre-wrap; }
          </property>
         </spacer>
        </item>
+       <item row="1" column="2">
+        <widget class="QToolButton" name="addIMAccountButton">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Add a Friend&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="images.qrc">
+           <normaloff>:/images/user/add_user24.png</normaloff>:/images/user/add_user24.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonTextBesideIcon</enum>
+         </property>
+         <property name="autoRaise">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QPushButton" name="displaypushButton">
+         <property name="styleSheet">
+          <string notr="true">QPushButton::menu-indicator { 
+subcontrol-origin: padding;
+subcontrol-position: bottom right;
+}
+
+</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="images.qrc">
+           <normaloff>:/images/looknfeel.png</normaloff>:/images/looknfeel.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
       </layout>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QFrame" name="logoframe">
+      <property name="frameShape">
+       <enum>QFrame::NoFrame</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
      </widget>
     </item>
     <item row="1" column="0">
@@ -257,54 +297,18 @@ p, li { white-space: pre-wrap; }
           <height>18</height>
          </size>
         </property>
+        <property name="indentation">
+         <number>22</number>
+        </property>
         <property name="columnCount">
          <number>0</number>
         </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLineEdit" name="searchlineEdit"/>
-      </item>
-      <item row="0" column="1">
-       <widget class="QToolButton" name="addIMAccountButton">
-        <property name="toolTip">
-         <string>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Arial'; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Add a Friend&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="images.qrc">
-          <normaloff>:/images/user/add_user24.png</normaloff>:/images/user/add_user24.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>24</width>
-          <height>24</height>
-         </size>
-        </property>
-        <property name="toolButtonStyle">
-         <enum>Qt::ToolButtonTextBesideIcon</enum>
-        </property>
-        <property name="autoRaise">
-         <bool>true</bool>
-        </property>
+        <attribute name="headerShowSortIndicator" stdset="0">
+         <bool>false</bool>
+        </attribute>
        </widget>
       </item>
      </layout>
-    </item>
-    <item row="2" column="0">
-     <widget class="QFrame" name="logoframe">
-      <property name="frameShape">
-       <enum>QFrame::NoFrame</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-     </widget>
     </item>
    </layout>
   </widget>
@@ -313,11 +317,56 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>270</width>
+     <width>295</width>
      <height>21</height>
     </rect>
    </property>
   </widget>
+  <action name="actionSort_Peers_Descending_Order">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/sort_decrease.png</normaloff>:/images/sort_decrease.png</iconset>
+   </property>
+   <property name="text">
+    <string>Sort Descending Order</string>
+   </property>
+   <property name="toolTip">
+    <string>Sort Descending Order</string>
+   </property>
+  </action>
+  <action name="actionSort_Peers_Ascending_Order">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/sort_incr.png</normaloff>:/images/sort_incr.png</iconset>
+   </property>
+   <property name="text">
+    <string>Sort Ascending Order</string>
+   </property>
+   <property name="toolTip">
+    <string>Sort Ascending Order</string>
+   </property>
+  </action>
+  <action name="actionRoot_is_decorated">
+   <property name="text">
+    <string>Set root is Decorated</string>
+   </property>
+   <property name="toolTip">
+    <string>Set Root Decorated</string>
+   </property>
+  </action>
+  <action name="actionRoot_isnot_decorated">
+   <property name="text">
+    <string>Set Root is not Decorated</string>
+   </property>
+  </action>
+  <action name="actionHide_Offline_Friends">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Hide Offline Friends</string>
+   </property>
+  </action>
  </widget>
  <resources>
   <include location="images.qrc"/>

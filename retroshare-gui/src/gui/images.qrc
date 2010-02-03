@@ -55,6 +55,9 @@
         <file>images/Client2.png</file>
         <file>images/Client3.png</file>
         <file>images/Client4.png</file>
+        <file>images/closenormal.png</file>
+        <file>images/closehover.png</file>
+        <file>images/closepressed.png</file>
         <file>images/denied16.png</file>
         <file>images/filetype-association.png</file>
         <file>images/FileTypeAny.png</file>
@@ -216,6 +219,8 @@
         <file>images/info16.png</file>
         <file>images/im-user.png</file>
         <file>images/im-user-offline.png</file>
+        <file>images/im-user-away.png</file>
+        <file>images/im-user-busy.png</file>
         <file>images/informations_24x24.png</file>
         <file>images/invite-friend24.png</file>
         <file>images/invitefriendlabel.png</file>
@@ -271,6 +276,7 @@
         <file>images/message-mail-forwarded.png</file>
         <file>images/message-news.png</file>
         <file>images/message.png</file>
+        <file>images/messages_new.png</file>
         <file>images/messenger.png</file>
         <file>images/mystatus_bg.png</file>
         <file>images/network.png</file>
@@ -281,6 +287,7 @@
         <file>images/new-mail-alert.png</file>
         <file>images/new_forum16.png</file>
         <file>images/nopic.png</file>
+        <file>images/no_avatar.png</file>
         <file>images/pasterslink.png</file>
         <file>images/package_games1.png</file>
         <file>images/peerdetails_16x16.png</file>
@@ -336,6 +343,8 @@
         <file>images/status_unknown.png</file>
         <file>images/startall.png</file>
         <file>images/server_24x24.png</file>
+        <file>images/sort_incr.png</file>
+        <file>images/sort_decrease.png</file>
         <file>images/sound.png</file>
         <file>images/transferupdown.png</file>
         <file>images/tools_wizard.png</file>

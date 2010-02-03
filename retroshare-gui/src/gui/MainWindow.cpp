@@ -214,9 +214,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     /* Select the first action */
     grp->actions()[0]->setChecked(true);
 
-    /* also an empty list of chat windows */
-    messengerWindow->setChatDialog(peersDialog);
-
     /** StatusBar section ********/
     peerstatus = new PeerStatus();
     statusBar()->addWidget(peerstatus);
