@@ -133,6 +133,7 @@ const uint16_t TLV_TYPE_STR_GENID     = 0x005a;
 const uint16_t TLV_TYPE_STR_GPGID     = 0x005b;
 const uint16_t TLV_TYPE_STR_LOCATION  = 0x005c;
 const uint16_t TLV_TYPE_STR_CERT_GPG  = 0x005d;
+const uint16_t TLV_TYPE_STR_CERT_SSL  = 0x005e;
 
 /* Wide Chars (4 bytes per char) for internationalisation */
 const uint16_t TLV_TYPE_WSTR_PEERID   = 0x0060;

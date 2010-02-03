@@ -139,7 +139,9 @@ virtual bool 	SignData(std::string input, std::string &sign);
 virtual bool 	SignData(const void *data, const uint32_t len, std::string &sign);
 virtual bool 	SignDataBin(std::string, unsigned char*, unsigned int*);
 virtual bool    SignDataBin(const void*, uint32_t, unsigned char*, unsigned int*);
-virtual bool    VerifySignBin(const void*, uint32_t, unsigned char*, unsigned int);
+virtual bool    VerifySignBin(const void*, uint32_t, unsigned char*, unsigned int, sslcert* cert);
+virtual bool    VerifyOwnSignBin(const void*, uint32_t, unsigned char*, unsigned int);
+virtual bool    VerifyOtherSignBin(const void*, uint32_t, unsigned char*, unsigned int, std::string sslCert);
 
 // return : false if encrypt failed
 bool     encrypt(void *&out, int &outlen, const void *in, int inlen, std::string peerId);

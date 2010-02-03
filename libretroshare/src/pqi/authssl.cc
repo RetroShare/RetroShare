@@ -193,7 +193,7 @@ X509_REQ *GenerateX509Req(
 
 	if (!X509_REQ_set_pubkey(req,pkey)) 
 	{
-		fprintf(stderr,"GenerateX509Req() Couldn't Set PUBKEY Version!\n");
+                fprintf(stderr,"GenerateX509Req() Couldn't Set PUBKEY !\n");
 		return 0;
 	}
 
@@ -889,21 +889,24 @@ std::string AuthSSL::getOwnLocation()
 bool AuthSSL::LoadDetailsFromStringCert(std::string pem, RsPeerDetails &pd)
 {
 #ifdef AUTHSSL_DEBUG
-        std::cerr << "AuthSSL::LoadIdsFromStringCert() ";
-	std::cerr << std::endl;
-        std::cerr << "AuthSSL::LoadIdsFromStringCert() Cleaning up Certificate First!";
-	std::cerr << std::endl;
+        std::cerr << "AuthSSL::LoadIdsFromStringCert() " << std::endl;
 #endif
 
-	std::string cleancert = cleanUpCertificate(pem);
-
-	X509 *x509 = loadX509FromPEM(cleancert);
-	if (!x509)
-		return false;
+        X509 *x509 = loadX509FromPEM(pem);
+        if (!x509) {
+                #ifdef AUTHSSL_DEBUG
+                std::cerr << "AuthSSL::LoadIdsFromStringCert() certificate not loadable (maybe malformed)" << std::endl;
+                #endif
+                return false;
+        }
 
         if (!ValidateCertificate(x509, pd.id)) {
             return false;
         } else {
+            #ifdef AUTHSSL_DEBUG
+            std::cerr << "AuthSSL::LoadIdsFromStringCert() certificate validated." << std::endl;
+            #endif
+
             pd.gpg_id = getX509CNString(x509->cert_info->issuer);
             pd.location = getX509LocString(x509->cert_info->subject);
             return true;
@@ -1148,22 +1151,48 @@ bool AuthSSL::SignDataBin(const void *data, const uint32_t len,
 }
 
 #define AUTHSSL_DEBUG2
+bool AuthSSL::VerifyOtherSignBin(const void *data, const uint32_t len,
+                        unsigned char *sign, unsigned int signlen, std::string sslCert) {
+        X509 *x509 = loadX509FromPEM(sslCert);
+        std::string sslId;
+        if (!ValidateCertificate(x509, sslId)) {
+            std::cerr << "AuthSSL::VerifyOtherSignBin() failed to validate certificate." << std::endl;
+            return false;
+        } else {
+            sslcert *cert = new sslcert(x509, sslId);
+            return VerifySignBin(data, len, sign, signlen, cert);
+        }
+        return false;
+}
+
+bool AuthSSL::VerifyOwnSignBin(const void *data, const uint32_t len,
+                        unsigned char *sign, unsigned int signlen) {
+    return VerifySignBin(data, len, sign, signlen, mOwnCert);
+}
 
 bool AuthSSL::VerifySignBin(const void *data, const uint32_t len,
-                       	unsigned char *sign, unsigned int signlen)
+                        unsigned char *sign, unsigned int signlen, sslcert* peer)
 {
+
 	RsStackMutex stack(sslMtx);   /***** STACK LOCK MUTEX *****/
 
 	/* find the peer */
 #ifdef AUTHSSL_DEBUG2
-	std::cerr << "In AuthSSL::VerifySignBin" << std::endl ;
+        std::cerr << "In AuthSSL::VerifySignBin" << std::endl;
 #endif
 	
-        sslcert *peer = mOwnCert;
+        //std::cerr << "Cert info : " << getX509Info(X509 *cert) << std::endl;
 
-	EVP_PKEY *peerkey = peer->certificate->cert_info->key->pkey;
+        /* cert->cert_info->key->pkey is NULL until we call SSL_CTX_use_certificate(),
+         * so we do it here then...  */
+        SSL_CTX *newSslctx = SSL_CTX_new(TLSv1_method());
+        SSL_CTX_set_cipher_list(newSslctx, "DEFAULT");
+        SSL_CTX_use_certificate(newSslctx, peer->certificate);
 
-	if(peerkey == NULL)
+
+        EVP_PKEY *peerkey = peer->certificate->cert_info->key->pkey;
+
+        if(peerkey == NULL)
 	{
 #ifdef AUTHSSL_DEBUG2
 		std::cerr << "AuthSSL::VerifySignBin: no public key available !!" << std::endl ;
@@ -1178,7 +1207,8 @@ bool AuthSSL::VerifySignBin(const void *data, const uint32_t len,
 		std::cerr << "EVP_VerifyInit Failure!" << std::endl;
 
 		EVP_MD_CTX_destroy(mdctx);
-		return false;
+                X509_free(peer->certificate);
+                return false;
 	}
 
 	if (0 == EVP_VerifyUpdate(mdctx, data, len))
@@ -1186,6 +1216,7 @@ bool AuthSSL::VerifySignBin(const void *data, const uint32_t len,
 		std::cerr << "EVP_VerifyUpdate Failure!" << std::endl;
 
 		EVP_MD_CTX_destroy(mdctx);
+                X509_free(peer->certificate);
 		return false;
 	}
 
@@ -1195,6 +1226,7 @@ bool AuthSSL::VerifySignBin(const void *data, const uint32_t len,
 		std::cerr << "AuthSSL::VerifySignBin: signlen=" << signlen << ", sign=" << (void*)sign << "!!" << std::endl ;
 #endif
 		EVP_MD_CTX_destroy(mdctx);
+                X509_free(peer->certificate);
 		return false ;
 	}
 
@@ -1203,10 +1235,12 @@ bool AuthSSL::VerifySignBin(const void *data, const uint32_t len,
 		std::cerr << "EVP_VerifyFinal Failure!" << std::endl;
 
 		EVP_MD_CTX_destroy(mdctx);
+                X509_free(peer->certificate);
 		return false;
 	}
 
 	EVP_MD_CTX_destroy(mdctx);
+        X509_free(peer->certificate);
 	return true;
 }
 
@@ -1947,7 +1981,6 @@ bool AuthSSL::AuthX509(X509 *x509)
         int (*i2d)(X509_CINF*, unsigned char**) = i2d_X509_CINF;
         ASN1_BIT_STRING *signature = x509->signature;
         X509_CINF *data = x509->cert_info;
-        EVP_PKEY *pkey = NULL;
         const EVP_MD *type = EVP_sha1();
 
         EVP_MD_CTX ctx;

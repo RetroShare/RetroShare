@@ -94,7 +94,8 @@ virtual std::ostream &print(std::ostream &out, uint16_t indent);
 	void	ShallowClear(); /* clears signData - but doesn't delete */
 
 	std::string keyId;		// Mandatory :
-	RsTlvBinaryData signData; 	// Mandatory : 
+        RsTlvBinaryData signData; 	// Mandatory :
+        std::string sslCert;               // Mandatory :
 };
 
 
