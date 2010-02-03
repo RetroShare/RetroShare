@@ -146,6 +146,7 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
   //loadstatus();
   
   displayMenu();
+  updateMessengerDisplay();
   
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -244,6 +245,10 @@ void MessengerWindow::updateMessengerDisplay()
         // add self nick and Avatar to Friends.
         RsPeerDetails pd ;
         if (rsPeers->getPeerDetails(rsPeers->getOwnId(),pd)) {
+        
+                QString titleStr("<span style=\"font-size:14pt; font-weight:500;"
+                       "color:#FFFFFF;\">%1</span>");
+                ui.nicklabel->setText(titleStr.arg(QString::fromStdString(pd.name) + tr(" - ") + QString::fromStdString(pd.location))) ;
         }
 
         insertPeers() ;
