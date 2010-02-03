@@ -197,7 +197,11 @@ HEADERS +=  rshare.h \
             gui/msgs/textformat.h \
             gui/images/retroshare_win.rc.h \
             gui/settings/rsharesettings.h \
-            gui/settings/rsettings.h \
+            gui/settings/rsettings.h \  
+            gui/blogs/BlogsDialog.h \
+            gui/blogs/CreateBlog.h \  
+            gui/blogs/CreateBlogMsg.h \
+            gui/blogs/BlogsMsgItem.h \      
             gui/toaster/MessageToaster.h \
             gui/toaster/OnlineToaster.h \
             gui/toaster/ChatToaster.h \
@@ -271,6 +275,10 @@ FORMS +=    gui/StartDialog.ui \
             gui/InfoDialog.ui \
             gui/DetailsDialog.ui \
             gui/bwgraph/bwgraph.ui \
+            gui/blogs/BlogsDialog.ui \
+            gui/blogs/CreateBlog.ui \
+            gui/blogs/CreateBlogMsg.ui \
+            gui/blogs/BlogsMsgItem.ui \      
             gui/profile/ProfileView.ui \
             gui/profile/ProfileEdit.ui \
             gui/profile/ProfileWidget.ui \
@@ -371,6 +379,10 @@ SOURCES +=  main.cpp \
             gui/profile/ProfileEdit.cpp \
             gui/profile/ProfileWidget.cpp \
             gui/profile/StatusMessage.cpp \
+            gui/blogs/BlogsDialog.cpp \
+            gui/blogs/CreateBlog.cpp \
+            gui/blogs/CreateBlogMsg.cpp \
+            gui/blogs/BlogsMsgItem.cpp \      
             gui/channels/CreateChannelMsg.cpp \
             gui/channels/ChannelDetails.cpp \
             gui/chat/PopupChatDialog.cpp \
