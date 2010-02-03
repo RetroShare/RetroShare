@@ -1400,10 +1400,6 @@ int	AuthGPG::privateSignCertificate(std::string id)
         if(GPG_ERR_NO_ERROR != (ERR = gpgme_op_edit(CTX, signKey, keySignCallback, &params, out))) {
 		return 0;	
 	}
-	
-        RsStackMutex stack(pgpMtx); /******* LOCKED ******/
-        storeAllKeys_locked();
-
 
 	return 1;
 }
