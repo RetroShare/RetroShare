@@ -121,9 +121,13 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
   //ui.messengertreeWidget->sortItems( 0, Qt::AscendingOrder );
 
 	QHeaderView * _header = ui.messengertreeWidget->header () ;   
-	_header->setResizeMode (0, QHeaderView::Interactive);
+	_header->setResizeMode (0, QHeaderView::Stretch);
+	_header->setResizeMode (1, QHeaderView::Interactive);
+	_header->setStretchLastSection(false);
 
-	_header->resizeSection ( 0, 200 );   
+
+	_header->resizeSection ( 0, 200 );
+  _header->resizeSection ( 1, 100 );      
  
 	//LogoBar
 	_rsLogoBarmessenger = NULL;
@@ -139,7 +143,7 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
   insertPeers(); 		
   updateAvatar();
   loadmystatus();
-  loadstatus();
+  //loadstatus();
   
   displayMenu();
   
