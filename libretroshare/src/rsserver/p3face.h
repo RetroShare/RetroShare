@@ -43,6 +43,8 @@
 #include "services/p3chatservice.h"
 #include "services/p3ranking.h"
 #include "services/p3Qblog.h"
+#include "services/p3blogs.h"
+
 
 /* The Main Interface Class - for controlling the server */
 

@@ -3,7 +3,7 @@ CONFIG += static release
 TARGET = retroshare
 
 DEFINES -= PQI_USE_XPGP
-DEFINES += RS_USE_PGPSSL
+DEFINES += RS_USE_PGPSSL P3DISC_DEBUG RSSERIAL_DEBUG DEBUG_PQISTREAMER SSL_DEBUG
 
 profiling {
 	QMAKE_CXXFLAGS -= -fomit-frame-pointer
@@ -201,6 +201,7 @@ HEADERS += dbase/cachestrapper.h \
            rsiface/rspeers.h \
            rsiface/rsphoto.h \
            rsiface/rsQblog.h \
+           rsiface/rsblogs.h \
            rsiface/rsrank.h \
            rsiface/rsstatus.h \
            rsiface/rstypes.h \
@@ -223,6 +224,7 @@ HEADERS += dbase/cachestrapper.h \
            serialiser/rsmsgitems.h \
            serialiser/rsphotoitems.h \
            serialiser/rsqblogitems.h \
+           serialiser/rsblogitems.h \
            serialiser/rsrankitems.h \
            serialiser/rsserial.h \
            serialiser/rsserviceids.h \
@@ -245,6 +247,7 @@ HEADERS += dbase/cachestrapper.h \
            services/p3photoservice.h \
            services/p3portservice.h \
            services/p3Qblog.h \
+           services/p3blogs.h \
            services/p3ranking.h \
            services/p3service.h \
            services/p3status.h \
@@ -304,6 +307,7 @@ SOURCES += \
 				services/p3portservice.cc \
 				services/p3channels.cc \
 				services/p3forums.cc \
+				services/p3blogs.cc \
 				services/p3Qblog.cc \
 				services/p3status.cc \
 				services/p3distrib.cc \
@@ -347,6 +351,7 @@ SOURCES += \
 				pqi/pqiloopback.cc \
 				pqi/pqinetwork.cc \
 				pqi/pqisecurity.cc \
+				serialiser/rsblogitems.cc \
 				serialiser/rsqblogitems.cc \
 				serialiser/rsstatusitems.cc \
 				serialiser/rschannelitems.cc \

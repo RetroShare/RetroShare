@@ -1676,6 +1676,7 @@ RsTurtle *rsTurtle = NULL ;
 #include "services/p3channels.h"
 #include "services/p3status.h"
 #include "services/p3Qblog.h"
+#include "services/p3blogs.h"
 #include "turtle/p3turtle.h"
 #include "services/p3tunnel.h"
 
@@ -1850,6 +1851,7 @@ int RsServer::StartupRetroShare()
 	std::string localcachedir = config_dir + "/cache/local";
 	std::string remotecachedir = config_dir + "/cache/remote";
 	std::string channelsdir = config_dir + "/channels";
+	std::string blogsdir = config_dir + "/blogs";
 
 
 	//mRanking = NULL;
@@ -1875,6 +1877,14 @@ int RsServer::StartupRetroShare()
         CachePair cp5(mChannels, mChannels, CacheId(RS_SERVICE_TYPE_CHANNEL, 0));
 	mCacheStrapper -> addCachePair(cp5);
 	pqih -> addService(mChannels);  /* This must be also ticked as a service */
+	
+			p3Blogs *mBlogs = new p3Blogs(RS_SERVICE_TYPE_QBLOG,
+			mCacheStrapper, mCacheTransfer, rsFiles,
+                        localcachedir, remotecachedir, blogsdir);
+
+        CachePair cp6(mBlogs, mBlogs, CacheId(RS_SERVICE_TYPE_QBLOG, 0));
+	mCacheStrapper -> addCachePair(cp6);
+	pqih -> addService(mBlogs);  /* This must be also ticked as a service */
 
 
 #ifndef RS_RELEASE
@@ -1933,7 +1943,7 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("msgs.cfg", msgSrv);
 	mConfigMgr->addConfiguration("chat.cfg", chatSrv);
 	mConfigMgr->addConfiguration("cache.cfg", mCacheStrapper);
-
+	mConfigMgr->addConfiguration("blogs.cfg", mBlogs);
 	mConfigMgr->addConfiguration("ranklink.cfg", mRanking);
 	mConfigMgr->addConfiguration("forums.cfg", mForums);
 	mConfigMgr->addConfiguration("channels.cfg", mChannels);
@@ -2050,6 +2060,7 @@ int RsServer::StartupRetroShare()
 	rsForums = mForums;
 	rsChannels = mChannels;
 	rsRanks = new p3Rank(mRanking);
+	rsBlogs = mBlogs;
 
 #ifndef RS_RELEASE
 	rsGameLauncher = gameLauncher;
