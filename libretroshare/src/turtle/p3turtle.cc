@@ -1521,15 +1521,27 @@ void RsTurtleStringSearchRequestItem::performLocalSearch(std::list<TurtleFileInf
 	// to do: split search string into words.
 	words.push_back(match_string) ;
 
+#ifdef P3TURTLE_DEBUG
+	std::cerr << "Performing rsFiles->search()" << std::endl ;
+#endif
 	// now, search!
 	rsFiles->SearchKeywords(words, initialResults,DIR_FLAGS_LOCAL | DIR_FLAGS_NETWORK_WIDE);
 
+#ifdef P3TURTLE_DEBUG
+	std::cerr << initialResults.size() << " matches found." << std::endl ;
+#endif
 	result.clear() ;
 
 	for(std::list<DirDetails>::const_iterator it(initialResults.begin());it!=initialResults.end();++it)
 	{
 		// retain only file type
-		if (it->type == DIR_TYPE_DIR) continue;
+		if (it->type == DIR_TYPE_DIR) 
+		{
+#ifdef P3TURTLE_DEBUG
+			std::cerr << "  Skipping directory " << it->name << std::endl ;
+#endif
+			continue;
+		}
 
 		TurtleFileInfo i ;
 		i.hash = it->hash ;

@@ -964,6 +964,8 @@ void RemoteDirModel::getFileInfoFromIndexList(const QModelIndexList& list, std::
 			std::cerr << "Size: " << details.count << std::endl;
 			std::cerr << "Path: " << details.path << std::endl;
 #endif
+			// Note: for directories, the returned hash, is the peer id, so if we collect
+			// dirs, we need to be a bit more conservative for the 
 
 			if(already_in.find(details.hash+details.name) == already_in.end())
 			{

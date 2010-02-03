@@ -87,17 +87,24 @@ int FileIndexMonitor::filterResults(std::list<FileEntry*>& firesults,std::list<D
 
 	for(std::list<FileEntry*>::const_iterator rit(firesults.begin()); rit != firesults.end(); ++rit)
 	{
-		DirDetails pdetails ;
-		RequestDirDetails((*rit)->parent,pdetails,0) ;
 		DirDetails cdetails ;
 		RequestDirDetails (*rit,cdetails,0);
+#ifdef FIM_DEBUG
+		std::cerr << "Filtering candidate " << (*rit)->name  << ", flags=" << cdetails.flags ;
+#endif
 
-		if ( ((cdetails.type == DIR_TYPE_FILE) && (pdetails.flags & flags & (DIR_FLAGS_BROWSABLE | DIR_FLAGS_NETWORK_WIDE)) > 0) ||
-				((cdetails.type == DIR_TYPE_DIR) && (cdetails.flags & flags & (DIR_FLAGS_BROWSABLE | DIR_FLAGS_NETWORK_WIDE)) > 0) )
+		if (cdetails.type == DIR_TYPE_FILE && ( cdetails.flags & flags & (DIR_FLAGS_BROWSABLE | DIR_FLAGS_NETWORK_WIDE)) > 0) 
 		{
 			cdetails.id = "Local";
 			results.push_back(cdetails);
+#ifdef FIM_DEBUG
+			std::cerr << ": kept" << std::endl ;
+#endif
 		}
+#ifdef FIM_DEBUG
+		else
+			std::cerr << ": discarded" << std::endl ;
+#endif
 	}
 	return !results.empty() ;
 }
@@ -1029,26 +1036,26 @@ int FileIndexMonitor::RequestDirDetails(void *ref, DirDetails &details, uint32_t
 		return false ;
 
 	// look for the top level and setup flags accordingly
+	// The top level directory is the first dir in parents for which
+	// 	dir->parent->parent == NULL
 
 	if(ref != NULL)
 	{
 		FileEntry *file = (FileEntry *) ref;
-		DirEntry *dir = dynamic_cast<DirEntry*>(file->parent) ;
-		DirEntry *last_dir = NULL ;
+		DirEntry *dir = dynamic_cast<DirEntry*>(file) ;
+		if(dir == NULL)
+			dir = dynamic_cast<DirEntry*>(file->parent) ;
 
-		if(dir != NULL)
-			while(dir->parent != NULL)
-			{
-				last_dir = dir ;
+		if(dir != NULL && dir->parent != NULL)
+			while(dir->parent->parent != NULL)
 				dir = dir->parent ;
-			}
 
-		if(last_dir != NULL)
+		if(dir != NULL && dir->parent != NULL)
 		{
 #ifdef FIM_DEBUG
-			std::cerr << "FileIndexMonitor::RequestDirDetails: parent->name=" << last_dir->name << std::endl ;
+			std::cerr << "FileIndexMonitor::RequestDirDetails: top parent name=" << dir->name << std::endl ;
 #endif
-			std::map<std::string,SharedDirInfo>::const_iterator it = directoryMap.find(last_dir->name) ;
+			std::map<std::string,SharedDirInfo>::const_iterator it = directoryMap.find(dir->name) ;
 
 			if(it == directoryMap.end())
 				std::cerr << "*********** ERROR *********** In " << __PRETTY_FUNCTION__ << std::endl ;
