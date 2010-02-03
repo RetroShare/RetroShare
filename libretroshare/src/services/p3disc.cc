@@ -507,7 +507,7 @@ void p3disc::recvPeerDetails(RsDiscReply *item)
                 if (deletedSSLFriendsIds.find(pitem->pid) == deletedSSLFriendsIds.end()) {
                     //||  {
                     mConnMgr->addFriend(pitem->pid, pitem->gpg_id, pitem->netMode, RS_VIS_STATE_NODISC, 0); //add with no disc by default. If friend already exist, it will do nothing
-                } else if ((pitem->lastContact - deletedSSLFriendsIds[pitem->pid]) > 3600*48) { // the friend was seen 48hours before we deleted it, we will readd it
+                } else if (pitem->lastContact > (deletedSSLFriendsIds[pitem->pid] + 3600*24)) { // the friend was seen up and running 24 hours after we deleted it, we will readd it
                     mConnMgr->addFriend(pitem->pid, pitem->gpg_id, pitem->netMode, RS_VIS_STATE_NODISC, 0); //add with no disc bay default. If friend already exist, it will do nothing
                 }
                 RsPeerDetails storedDetails;
