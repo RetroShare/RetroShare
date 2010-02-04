@@ -233,8 +233,8 @@ Section $(sec_link) sec_link
 
 
   ; Write the file association
-  WriteRegStr HKCR .pqi "" retroshare
-  WriteRegStr HKCR retroshare "" "PQI File"
+  WriteRegStr HKCR .rsc "" retroshare
+  WriteRegStr HKCR retroshare "" "RSC File"
   WriteRegBin HKCR retroshare EditFlags 00000100
   WriteRegStr HKCR "retroshare\shell" "" open
   WriteRegStr HKCR "retroshare\shell\open\command" "" `"$INSTDIR\RetroShare.exe" "%1"`
@@ -305,7 +305,7 @@ SectionEnd
 Section "Uninstall"
   
   ; Remove file association registry keys
-  DeleteRegKey HKCR .pqi
+  DeleteRegKey HKCR .rsc
   DeleteRegKey HKCR retroshare
 	
   ; Remove program/uninstall regsitry keys
