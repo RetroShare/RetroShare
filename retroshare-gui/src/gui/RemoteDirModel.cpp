@@ -224,82 +224,6 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
      	return QVariant();
      }
 
-#if 0
-     /*if (role == Qt::BackgroundRole)
-     {*/
-     	/*** colour entries based on rank/age/count **/
-     	/*** rank (0-10) ***/
-	/ *uint32_t r = details.rank;
-	if (r > 10) r = 10;
-	r = 200 + r * 5; /* 0->250 */
-
-     	/*** age: log2(age) ***
-	 *   1 hour = 3,600       -  250
-	 *   1 day  = 86,400      -  200
-	 *   1 week = 604,800     -  100
-	 *   1 month = 2,419,200  -   50
-	 *
-	 *
-	 *   250 - log2( 1 + (age / 100) ) * 10
-	 *   0       => 1     =>   0   =>  0   => 250
-	 *   900     => 10    =>   3.2 => 32   => 220
-	 *   3600    => 37    =>   5.2 => 52   => 200
-	 *   86400   => 865   =>   9.2 => 92   => 160
-	 *   604800  => 6049  =>  12.3 => 120  => 130
-	 *   2419200 => 24193 =>  14.4 => 140  => 110
-	 *
-	 *   value  log2
-	 *
-	 *   1       0
-	 *   2       1
-	 *   4       2
-	 *   8       3
-	 *   16      4
-	 *   32      5
-	 *   64      6
-	 *   128     7
-	 *   256     8
-	 *   512     9
-	 *   1024    10
-	 *   2048    11
-	 *   4096    12
-	 *   8192    13
-	 *  16384    14
-	 *  32K      15
-	 *
-	 */
-
-	/*uint32_t g =  (uint32_t) log2 ( 1.0 + ( details.age / 100 ) ) * 4;
-	if (g > 250) g = 250;
-	g = 250 - g;
-
-	if (details.type == DIR_TYPE_PERSON)
-	{
-		return QVariant();
-	}
-	else if (details.type == DIR_TYPE_DIR)
-	{
-		uint32_t b =  200 + details.count;
-		if (b > 250) b = 250;
-
-		QBrush brush(QColor(r,g,b));
-		return brush;
-	}
-	else if (details.type == DIR_TYPE_FILE)
-	{
-		uint32_t b =  (uint32_t) (200 + 2 * log2(details.count));
-		if (b > 250) b = 250;
-
-		QBrush brush(QColor(r,g,b));
-		return brush;
-	}
-	else
-	{
-		return QVariant();
-	}
-     }*/
-#endif
-
     if (role == RemoteDirModel::FileNameRole)
     {
         FileInfo finfo;
@@ -463,21 +387,18 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
 			case 1:
 				{
 					std::ostringstream out;
-					//out << details.count;
-					//return QString::fromStdString(out.str());
-			return  misc::friendlyUnit(details.count);
+        return  misc::friendlyUnit(details.count);
 		}
 			break;
 			case 2:
 		{
-				return getFlagsString(details.flags);
+        std::ostringstream out;
+        return  misc::userFriendlyDuration(details.age);
 		}
 			break;
 			case 3:
 		{
-			std::ostringstream out;
-			//out << details.age;
-			return  misc::userFriendlyDuration(details.age);
+        return getFlagsString(details.flags);
 		}
 			break;
 			case 4:
@@ -498,7 +419,7 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
 		switch(coln)
 		{
 			case 0:
-				return QString::fromUtf8(details.name.c_str());
+          return QString::fromUtf8(details.name.c_str());
 				break;
 			case 1:
 				//return QString("");
@@ -509,10 +430,10 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
 				}
 				break;
 			case 2:
-				return getFlagsString(details.flags);
+					return QString::fromUtf8("Folder");
 				break;
 			case 3:
-				return QString::fromUtf8("Folder");
+					return getFlagsString(details.flags);
 				break;
 //            case 4:
 //            {
@@ -606,10 +527,10 @@ void RemoteDirModel::getAgeIndicatorRec(DirDetails &details, QString &ret) const
 				return QString(tr("Size"));
 				break;
 			case 2:
-				return QString(tr("Share type"));
+				return QString(tr("Age"));
 				break;
 			case 3:
-				return QString(tr("Age"));
+				return QString(tr("Share Type"));
 				break;
 			case 4:
 				return QString(tr("What's new"));

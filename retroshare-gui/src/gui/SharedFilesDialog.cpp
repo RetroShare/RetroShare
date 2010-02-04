@@ -113,7 +113,7 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
   ui.remoteDirTreeView->setModel(model);
   ui.localDirTreeView->setModel(localModel);
 
-  ui.remoteDirTreeView->setColumnHidden(2,true) ;
+  ui.remoteDirTreeView->setColumnHidden(3,true) ;
   ui.remoteDirTreeView->setColumnHidden(4,true) ;
   ui.localDirTreeView->setColumnHidden(4,true) ;
 
@@ -138,7 +138,7 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
 
 	l_header->resizeSection ( 0, 490 );
 	l_header->resizeSection ( 1, 70 );
-	l_header->resizeSection ( 2, 130 );
+	l_header->resizeSection ( 2, 100 );
 	l_header->resizeSection ( 3, 100 );
 //	l_header->resizeSection ( 4, 100 );
 
@@ -168,7 +168,6 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
   ui.remoteDirTreeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
   ui.localDirTreeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
-  ui.remoteDirTreeView->setColumnHidden(2,true) ;
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
