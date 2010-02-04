@@ -2,7 +2,7 @@
 
 ; Define your application name
 !define APPNAME "RetroShare"
-!define VERSION "0.4.13c"
+!define VERSION "0.5.0"
 !define APPNAMEANDVERSION "${APPNAME} ${VERSION}"
 
 ; Main Install settings
@@ -186,14 +186,15 @@ Section $(sec_main) sec_main
   ; Set Section Files and Shortcuts
   SetOutPath "$INSTDIR\"
   File /r "release\RetroShare.exe"
-  File /r "D:\Qt\2009.02\mingw\bin\mingwm10.dll"
-  File /r "D:\Qt\2009.02\qt\bin\QtCore4.dll"
-  File /r "D:\Qt\2009.02\qt\bin\QtGui4.dll"
-  File /r "D:\Qt\2009.02\qt\bin\QtNetwork4.dll"
-  File /r "D:\Qt\2009.02\qt\bin\QtXml4.dll"
-  File /r "D:\Qt\2009.02\qt\bin\QtScript4.dll"
-  File /r "pthreadGCE2.dll"
-  File /r "pthreadGC2d.dll"
+  File /r "D:\Qt\2009.03\mingw\bin\mingwm10.dll"
+  File /r "D:\Qt\2009.03\qt\bin\QtCore4.dll"
+  File /r "D:\Qt\2009.03\qt\bin\QtGui4.dll"
+  File /r "D:\Qt\2009.03\qt\bin\QtNetwork4.dll"
+  File /r "D:\Qt\2009.03\qt\bin\QtXml4.dll"
+  File /r "D:\Qt\2009.03\qt\bin\QtScript4.dll"
+  File /r "release\pthreadGC2d.dll"
+  File /r "release\libgpg-error-0.dll"
+  File /r "release\libgpgme-11.dll"
   File /r "changelog.txt"
 
   
@@ -209,6 +210,10 @@ Section  $(sec_data) sec_data
   SetOutPath "$APPDATA\RetroShare\"
   ;File /r "data\*"
   
+  ; Set Section Plugins
+  SetOutPath "$APPDATA\RetroShare\plugins\"
+  ;File /r "plugins\"
+  
   ; We're not ready for external skins...
   ; Set Section qss need to remove svn path
   SetOutPath "$INSTDIR\qss\"
@@ -220,11 +225,11 @@ Section  $(sec_data) sec_data
 
   ; Add emoticons
   SetOutPath "$INSTDIR\emoticons\"
-  File /r emoticons\*.*   
+  File /r gui\emoticons\*.*   
 	
   ; Add Chat Style
-  SetOutPath "$INSTDIR\style\"
-  File /r style\*.*   
+  ;SetOutPath "$INSTDIR\style\"
+  ;File /r style\*.*   
 	
 SectionEnd
 

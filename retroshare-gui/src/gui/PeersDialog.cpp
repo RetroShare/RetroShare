@@ -281,7 +281,7 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
       contextMnu.addAction( chatAct);
       contextMnu.addAction( msgAct);
       contextMnu.addAction( configurefriendAct);
-      contextMnu.addAction( profileviewAct);
+      //contextMnu.addAction( profileviewAct);
       if (c->type() != 0) {
           //this is a SSL key
           contextMnu.addAction( connectfriendAct);
