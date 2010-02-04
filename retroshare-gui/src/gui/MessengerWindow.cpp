@@ -109,7 +109,7 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
 	connect( ui.avatarButton, SIGNAL(clicked()), SLOT(getAvatar()));
 	connect( ui.shareButton, SIGNAL(clicked()), SLOT(openShareManager()));
   connect( ui.addIMAccountButton, SIGNAL(clicked( bool ) ), this , SLOT( addFriend() ) );
-
+  connect( ui.actionHide_Offline_Friends, SIGNAL(triggered()), this, SLOT(insertPeers()));
   
 	/* to hide the header  */
 	ui.messengertreeWidget->header()->hide(); 
