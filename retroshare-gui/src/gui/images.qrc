@@ -425,7 +425,6 @@
         <file>smileys/camera.png</file>
         <file>smileys/cat.png</file>
         <file>smileys/clock.png</file>
-        <file>smileys/cloudy.png</file>
         <file>smileys/coffee.png</file>
         <file>smileys/cool.png</file>
         <file>smileys/crying.png</file>
@@ -448,27 +447,33 @@
         <file>smileys/pizza.png</file>
         <file>smileys/pouty.png</file>
         <file>smileys/pumpkin.png</file>
-        <file>smileys/rain.png</file>
         <file>smileys/rotfl.png</file>
         <file>smileys/sad.png</file>
         <file>smileys/smile.png</file>
         <file>smileys/surprised.png</file>
-        <file>smileys/thunder.png</file>
         <file>smileys/tongue.png</file>
         <file>smileys/umbrella.png</file>
         <file>smileys/wink.png</file>
         <file>smileys/wondering.png</file>
         <file>smileys/emotes.acs</file>
-        <file>smileys/rain.png</file>
-        <file>smileys/thunder.png</file>
         <file>smileys/moon.png</file>
-        <file>smileys/cloudy.png</file>
         <file>smileys/lamp.png</file>
         <file>smileys/good.png</file>
         <file>smileys/drink.png</file>
         <file>smileys/airplane.png</file>
         <file>smileys/turtle.png</file>
         <file>smileys/time-out.png</file>
+        <file>smileys/weather-overcast.png</file>
+        <file>smileys/weather-few-clouds.png</file>
+        <file>smileys/weather-clear.png</file>
+        <file>smileys/weather-clear-night.png</file>
+        <file>smileys/weather-few-clouds-night.png</file>
+        <file>smileys/weather-severe-alert.png</file>
+        <file>smileys/weather-showers.png</file>
+        <file>smileys/weather-showers-scattered.png</file>
+        <file>smileys/weather-snow.png</file>
+        <file>smileys/weather-storm.png</file>
+        <file>smileys/weather-showers.png</file>
         <file>images/connect/connectFriendWatermark.png</file>
         <file>images/connect/connectFriendLogo.png</file>
         <file>images/connect/connectFriendBanner.png</file>
