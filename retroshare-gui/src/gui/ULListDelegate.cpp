@@ -130,7 +130,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 				FileProgressInfo pinfo = index.data().value<FileProgressInfo>() ;
 
 				// create a xProgressBar
-				xProgressBar progressBar(pinfo.cmap,option.rect,painter,0);// the 3rd param is the  color schema (0 is the default value)
+				xProgressBar progressBar(pinfo,option.rect,painter,0);// the 3rd param is the  color schema (0 is the default value)
 
 				QString ext = QFileInfo(QString::fromStdString(index.sibling(index.row(), UNAME).data().toString().toStdString())).suffix();;
 				if (ext == "rsfc" || ext == "rsrl" || ext == "dist" || ext == "rsfb")
@@ -139,7 +139,6 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 					progressBar.setColorSchema( 8);
 
 				progressBar.setDisplayText(true); // should display % text?
-				progressBar.setValue(pinfo.progress); // set the progress value
 				progressBar.setVerticalSpan(1);
 				progressBar.paint(); // paint the progress bar
 			}

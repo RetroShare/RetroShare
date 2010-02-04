@@ -44,6 +44,7 @@ class FileProgressInfo
 		LineType type ;
 		CompressedChunkMap cmap ;
 		float progress ;
+		uint32_t nb_chunks ;
 };
 //
 class xProgressBar : public QObject
@@ -51,7 +52,7 @@ class xProgressBar : public QObject
 Q_OBJECT
 	private:
 		// progress vlues
-		float progressValue;
+		uint32_t _nb_chunks ;
 		int schemaIndex;
 		bool displayText;
 		int vSpan;
@@ -70,13 +71,13 @@ Q_OBJECT
 		// configure the color
 		void setColor();
 
-		const CompressedChunkMap& _cmap ;
+		const FileProgressInfo& _pinfo ;
 	public:
-		xProgressBar(const CompressedChunkMap& cmap,QRect rect, QPainter *painter, int schemaIndex = 0);
+		xProgressBar(const FileProgressInfo& pinfo,QRect rect, QPainter *painter, int schemaIndex = 0);
 
 		void paint();
+
 		void setColorSchema(const int value);
-		void setValue(const float value);
 		void setDisplayText(const bool display);
 		void setVerticalSpan(const int value);
 		void setHorizontalSpan(const int value);

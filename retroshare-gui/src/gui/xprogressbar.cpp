@@ -28,14 +28,13 @@
 #include <rsiface/rstypes.h>
 #include "xprogressbar.h"
 
-xProgressBar::xProgressBar(const CompressedChunkMap& cmap,QRect rect, QPainter *painter, int schemaIndex)
-	: _cmap(cmap)
+xProgressBar::xProgressBar(const FileProgressInfo& pinfo,QRect rect, QPainter *painter, int schemaIndex)
+	: _pinfo(pinfo)
 {
 	// assign internal data
 	this->schemaIndex = schemaIndex;
 	this->rect = rect;
 	this->painter = painter;
-	this->progressValue = 0.00;
 	// set the progress bar colors
 	setColor();
 	// configure span
@@ -194,28 +193,28 @@ void xProgressBar::paint()
 
 	painter->setBrush(linearGrad);
 
-	uint32_t ss = _cmap._map.size()*32 ;
+	uint32_t ss = _pinfo.nb_chunks ;
 
 	if(ss > 1)	// for small files we use a more progressive display
-	for(int i=0;i<ss;++i)
-	{
-		int j=0 ;
-		while(i+j<ss && _cmap[i+j])
-			++j ;
-
-		if(j>0)
+		for(int i=0;i<ss;++i)
 		{
-			float o = std::min(1.0f,j/(float)ss*width) ;
-			painter->setOpacity(o) ;
-			painter->drawRect(rect.x() + hSpan+(int)rint(i*width/(float)ss), rect.y() + vSpan, (int)ceil(j*width/(float)ss), rect.height() - 1 - vSpan * 2);
-		}
+			int j=0 ;
+			while(i+j<ss && _pinfo.cmap[i+j])
+				++j ;
 
-		i += j ;
-	}
+			if(j>0)
+			{
+				float o = std::min(1.0f,j/(float)ss*width) ;
+				painter->setOpacity(o) ;
+				painter->drawRect(rect.x() + hSpan+(int)rint(i*width/(float)ss), rect.y() + vSpan, (int)ceil(j*width/(float)ss), rect.height() - 1 - vSpan * 2);
+			}
+
+			i += j ;
+		}
 	else
 	{
 		// calculate progress value
-		int preWidth = static_cast<int>((rect.width() - 1 - hSpan)*(progressValue/100));
+		int preWidth = static_cast<int>((rect.width() - 1 - hSpan)*(_pinfo.progress/100));
 		int progressWidth = rect.width() - preWidth;
 		if (progressWidth == rect.width() - hSpan) return;
 
@@ -231,7 +230,7 @@ void xProgressBar::paint()
 	{
 		QLocale locale;
 		painter->setPen(textColor);
-		painter->drawText(rect, Qt::AlignCenter, locale.toString(progressValue, 'f', 2) + "%");
+		painter->drawText(rect, Qt::AlignCenter, locale.toString(_pinfo.progress, 'f', 2) + "%");
 	}
 }
 
@@ -240,11 +239,6 @@ void xProgressBar::setColorSchema(const int value)
 	schemaIndex = value;
 	// set the progress bar colors
 	setColor();
-}
-
-void xProgressBar::setValue(const float value)
-{
-	progressValue = value < 0 ? 0 : value > 100 ? 100 : value;
 }
 
 void xProgressBar::setDisplayText(const bool display)

@@ -824,12 +824,7 @@ void TransfersDialog::insertTransfers()
 		  pinfo.cmap = fcinfo.chunks ;
 		  pinfo.type = FileProgressInfo::DOWNLOAD_LINE ;
 		  pinfo.progress = completed*100.0/info.size ;
-
-//			std::cerr << "Converting fcinfo to compressed chunk map. Chunks=" << fcinfo.chunks.size() << std::endl ;
-//			std::cerr << "map data = " ;
-//			for(uint k=0;k<cmap._map.size();++k)
-//				std::cout << (void*)cmap._map[k] ;
-//			std::cout << std::endl ;
+		  pinfo.nb_chunks = fcinfo.chunks.size() ;
 
         int addedRow = addItem(symbol, name, coreId, fileSize, pinfo, dlspeed, sources, status, priority, completed, remaining);
 
@@ -899,6 +894,7 @@ void TransfersDialog::insertTransfers()
 				pinfo.type = FileProgressInfo::DOWNLOAD_SOURCE ;
 				pinfo.cmap = fcinfo.compressed_peer_availability_maps[pit->peerId] ;
 				pinfo.progress = 0.0 ;	// we don't display completion for sources.
+				pinfo.nb_chunks = fcinfo.chunks.size() ;
 
             if (!addPeerToItem(addedRow, symbol, name, coreId, fileSize, pinfo, dlspeed, sources, status, completed, remaining))
                 continue;
@@ -951,6 +947,7 @@ void TransfersDialog::insertTransfers()
 
 		FileProgressInfo pinfo ;
 		pinfo.progress = 0.0 ;
+		pinfo.nb_chunks = 0 ;
 
 		addItem("", name, coreId, fileSize, pinfo, dlspeed, sources, status, priority, completed, remaining);
 
@@ -1036,6 +1033,7 @@ void TransfersDialog::insertTransfers()
 			++nb_chunks ;
 		
 		uint32_t filled_chunks = pinfo.cmap.filledChunks(nb_chunks) ;
+		pinfo.nb_chunks = pinfo.cmap._map.empty()?0:nb_chunks ;
 
 		if(filled_chunks > 1)
 		{
@@ -1087,6 +1085,7 @@ void TransfersDialog::insertTransfers()
 		pinfo.progress = progress ;
 		pinfo.cmap = CompressedChunkMap() ;
 		pinfo.type = FileProgressInfo::DOWNLOAD_LINE ;
+		pinfo.nb_chunks = 0 ;
 
 		addUploadItem(symbol, name, coreId, fileSize, pinfo, dlspeed, sources,  status, completed, remaining);
 		ulCount++;
