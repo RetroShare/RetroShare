@@ -623,13 +623,10 @@ void PeersDialog::chatfriend()
 
     if (!oneLocationConnected) {
     	/* info dialog */
-       QMessageBox::StandardButton sb = QMessageBox::question ( NULL,
-			"Friend Not Online",
-	"Your Friend is offline \nDo you want to send them a Message instead",
-			        (QMessageBox::Yes | QMessageBox::No));
-        if (sb == QMessageBox::Yes) {
-		msgfriend();
-	}
+    	if ((QMessageBox::question(this, tr("Friend Not Online"),tr("Your Friend is offline \nDo you want to send them a Message instead"),QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
+      {
+         msgfriend();
+      }
     }
     return;
 }
