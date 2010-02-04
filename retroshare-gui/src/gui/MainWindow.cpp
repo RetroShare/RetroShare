@@ -177,20 +177,19 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
 
     ui.stackPages->add(messagesDialog = new MessagesDialog(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_MESSAGES), tr("Messages"), grp));
-
-    LinksDialog *linksDialog = NULL;
+                      createPageAction(QIcon(IMAGE_MESSAGES), tr("Messages"), grp));   
 
     ChannelFeed *channelFeed = NULL;
     ui.stackPages->add(channelFeed = new ChannelFeed(ui.stackPages),
                       createPageAction(QIcon(IMAGE_CHANNELS), tr("Channels"), grp));
-
-    ui.stackPages->add(linksDialog = new LinksDialog(ui.stackPages),
-			createPageAction(QIcon(IMAGE_LINKS), tr("Links Cloud"), grp));
-
+                      
     ForumsDialog *forumsDialog = NULL;
     ui.stackPages->add(forumsDialog = new ForumsDialog(ui.stackPages),
-                       createPageAction(QIcon(IMAGE_FORUMS), tr("Forums"), grp));
+                       createPageAction(QIcon(IMAGE_FORUMS), tr("Forums"), grp));  
+                                       
+    LinksDialog *linksDialog = NULL;
+    ui.stackPages->add(linksDialog = new LinksDialog(ui.stackPages),
+			createPageAction(QIcon(IMAGE_LINKS), tr("Links Cloud"), grp));
 
     NewsFeed *newsFeed = NULL;
     ui.stackPages->add(newsFeed = new NewsFeed(ui.stackPages),
