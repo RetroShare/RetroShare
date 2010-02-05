@@ -325,6 +325,12 @@ p, li { white-space: pre-wrap; }
               <height>25</height>
              </size>
             </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>26</height>
+             </size>
+            </property>
             <property name="toolTip">
              <string>Post To Channel</string>
             </property>
@@ -413,6 +419,12 @@ border-image: url(:/images/btn_26_pressed.png) 4;
               <height>26</height>
              </size>
             </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>26</height>
+             </size>
+            </property>
             <property name="toolTip">
              <string>Subscribe To Channel</string>
             </property>
@@ -441,7 +453,7 @@ border-image: url(:/images/btn_26_pressed.png) 4;
             </property>
             <property name="icon">
              <iconset resource="images.qrc">
-              <normaloff>:/images/konqsidebar_news24.png</normaloff>:/images/konqsidebar_news24.png</iconset>
+              <normaloff>:/images/konqsidebar_news16.png</normaloff>:/images/konqsidebar_news16.png</iconset>
             </property>
            </widget>
           </item>
@@ -460,6 +472,12 @@ border-image: url(:/images/btn_26_pressed.png) 4;
           </item>
           <item row="0" column="1">
            <widget class="QComboBox" name="comboBoxautodownload">
+            <property name="minimumSize">
+             <size>
+              <width>26</width>
+              <height>26</height>
+             </size>
+            </property>
             <property name="styleSheet">
              <string notr="true">QToolButton, QPushButton, QComboBox { 
 border-image: url(:/images/btn_26.png) 4;
