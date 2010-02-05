@@ -277,7 +277,7 @@ int	AuthGPG::GPGInit(std::string ownId)
         //check the validity of the private key. When set to unknown, it caused signature and text encryptions bugs
         if (mOwnGpgCert.validLvl < 2) {
             std::cerr << "AuthGPG::GPGInit() abnormal validity set to private key. Switch it to none by default." << std::endl;
-            privateTrustCertificate(mOwnGpgId, 2);
+            privateTrustCertificate(mOwnGpgId, 4);
         }
 
 
