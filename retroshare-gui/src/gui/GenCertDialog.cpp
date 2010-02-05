@@ -45,7 +45,7 @@ GenCertDialog::GenCertDialog(QWidget *parent, Qt::WFlags flags)
 
   connect(ui.new_gpg_key_checkbox, SIGNAL(clicked()), this, SLOT(newGPGKeyGenUiSetup()));
 
-  WidgetBackgroundImage::setBackgroundImage(ui.loginLabel, ":images/new-account.png", WidgetBackgroundImage::AdjustHeight);
+  WidgetBackgroundImage::setBackgroundImage(ui.loginLabel, ":images/new-account.png", WidgetBackgroundImage::AdjustSize);
 
   
   connect(ui.genButton, SIGNAL(clicked()), this, SLOT(genPerson()));
