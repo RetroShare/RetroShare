@@ -142,6 +142,7 @@ void  CreateForumMsg::createMsg()
 
 	msgInfo.title = name.toStdWString();
 	msgInfo.msg = desc.toStdWString();
+        msgInfo.msgflags = 0;
 
 	if (ui.signBox->isChecked())
 	{
