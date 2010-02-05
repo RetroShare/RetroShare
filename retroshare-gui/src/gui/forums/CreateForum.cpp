@@ -69,6 +69,9 @@ void  CreateForum::newForum()
 		ui.msgAnon->setChecked(true);
 		//ui.msgAuth->setEnabled(false);
 		ui.groupBoxLogo->hide();
+		
+		ui.forumName->clear();
+		ui.forumDesc->clear();
 	}
 	else
 	{
