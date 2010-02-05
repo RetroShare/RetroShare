@@ -709,7 +709,7 @@ bool ftServer::sendChunkMap(const std::string& peerId,const std::string& hash,co
 
 //const uint32_t	MAX_FT_CHUNK  = 32 * 1024; /* 32K */
 //const uint32_t	MAX_FT_CHUNK  = 16 * 1024; /* 16K */
-const uint32_t	MAX_FT_CHUNK  = 8 * 1024; /* 16K */
+const uint32_t	MAX_FT_CHUNK  = 32 * 1024; /* 16K */
 
 	/* Server Send */
 bool	ftServer::sendData(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t baseoffset, uint32_t chunksize, void *data)
