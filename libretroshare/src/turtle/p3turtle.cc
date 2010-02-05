@@ -367,29 +367,40 @@ void p3turtle::locked_closeTunnel(TurtleTunnelId tid)
 		std::cerr << "      Associated file source." << std::endl ;
 #endif
 		_ft_controller->removeFileSource(hash,vpid) ;
-		_virtual_peers.erase(_virtual_peers.find(vpid)) ;
 
-		std::vector<TurtleTunnelId>& tunnels(_incoming_file_hashes[hash].tunnels) ;
-
-		// Remove tunnel id from it's corresponding hash. For security we
-		// go through the whole tab, although the tunnel id should only be listed once
-		// in this tab.
+		// Let's be cautious. Normally we should never be here without consistent information,
+		// but still, this happens, rarely.
 		//
-		for(unsigned int i=0;i<tunnels.size();)
-			if(tunnels[i] == tid)
-			{
-				tunnels[i] = tunnels.back() ;
-				tunnels.pop_back() ;
-			}
-			else
-				++i ;
+		if(_virtual_peers.find(vpid) != _virtual_peers.end())  
+			_virtual_peers.erase(_virtual_peers.find(vpid)) ;
+
+		std::map<TurtleFileHash,TurtleFileHashInfo>::iterator it(_incoming_file_hashes.find(hash)) ;
+
+		if(it != _incoming_file_hashes.end())
+		{
+			std::vector<TurtleTunnelId>& tunnels(it->second.tunnels) ;
+
+			// Remove tunnel id from it's corresponding hash. For security we
+			// go through the whole tab, although the tunnel id should only be listed once
+			// in this tab.
+			//
+			for(unsigned int i=0;i<tunnels.size();)
+				if(tunnels[i] == tid)
+				{
+					tunnels[i] = tunnels.back() ;
+					tunnels.pop_back() ;
+				}
+				else
+					++i ;
+		}
 	}
 	else if(it->second.local_dst == mConnMgr->getOwnId())	// This is a ending tunnel. We also remove the virtual peer id
 	{
 #ifdef P3TURTLE_DEBUG
 		std::cerr << "    Tunnel is a ending point. Also removing associated outgoing hash." ;
 #endif
-		_outgoing_file_hashes.erase(_outgoing_file_hashes.find(it->second.hash)) ;
+		if(_outgoing_file_hashes.find(it->second.hash) != _outgoing_file_hashes.end())
+			_outgoing_file_hashes.erase(_outgoing_file_hashes.find(it->second.hash)) ;
 	}
 
 	_local_tunnels.erase(it) ;
