@@ -257,20 +257,29 @@ bool AuthGPG::availableGPGCertificatesWithPrivateKeys(std::list<std::string> &id
  */
 int	AuthGPG::GPGInit(std::string ownId)
 {
-	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
-        std::cerr << "AuthGPG::GPGInit() called with own gpg id : " << ownId << std::endl;
+        {
+            RsStackMutex stack(pgpMtx); /******* LOCKED ******/
+            std::cerr << "AuthGPG::GPGInit() called with own gpg id : " << ownId << std::endl;
 
-        if (!gpgmeInit) {
+            if (!gpgmeInit) {
+                    return 0;
+            }
+
+            mOwnGpgId = ownId;
+            storeAllKeys_locked();
+
+            if (mOwnGpgCert.id != mOwnGpgId) {
+                std::cerr << "AuthGPG::GPGInit() failed to find your id." << std::endl;
                 return 0;
+            }
         }
 
-        mOwnGpgId = ownId;
-        storeAllKeys_locked();
-
-        if (mOwnGpgCert.id != mOwnGpgId) {
-            std::cerr << "AuthGPG::GPGInit() failed to find your id." << std::endl;
-            return 0;
+        //check the validity of the private key. When set to unknown, it caused signature and text encryptions bugs
+        if (mOwnGpgCert.validLvl < 2) {
+            std::cerr << "AuthGPG::GPGInit() abnormal validity set to private key. Switch it to none by default." << std::endl;
+            privateTrustCertificate(mOwnGpgId, 2);
         }
+
 
 	gpgmeKeySelected = true;
         //printAllKeys_locked();
