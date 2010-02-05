@@ -60,7 +60,7 @@
          </column>
         </widget>
        </item>
-       <item row="1" column="0">
+       <item row="3" column="0">
         <widget class="QPushButton" name="expandButton">
          <property name="text">
           <string/>
@@ -71,7 +71,7 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="1">
+       <item row="3" column="1">
         <spacer>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -84,7 +84,7 @@
          </property>
         </spacer>
        </item>
-       <item row="1" column="2">
+       <item row="3" column="2">
         <widget class="QLabel" name="label">
          <property name="font">
           <font>
@@ -98,11 +98,11 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="3">
+       <item row="3" column="3">
         <widget class="QComboBox" name="rankComboBox">
          <property name="font">
           <font>
-           <pointsize>12</pointsize>
+           <pointsize>11</pointsize>
           </font>
          </property>
          <item>
@@ -114,15 +114,23 @@
           <property name="text">
            <string>Time</string>
           </property>
+          <property name="icon">
+           <iconset resource="images.qrc">
+            <normaloff>:/images/kalarm.png</normaloff>:/images/kalarm.png</iconset>
+          </property>
          </item>
          <item>
           <property name="text">
            <string>Ranking</string>
           </property>
+          <property name="icon">
+           <iconset resource="images.qrc">
+            <normaloff>:/images/records.png</normaloff>:/images/records.png</iconset>
+          </property>
          </item>
         </widget>
        </item>
-       <item row="1" column="4">
+       <item row="3" column="4">
         <spacer>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -135,7 +143,7 @@
          </property>
         </spacer>
        </item>
-       <item row="1" column="5">
+       <item row="3" column="5">
         <widget class="QLabel" name="label_2">
          <property name="font">
           <font>
@@ -149,31 +157,43 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="6">
+       <item row="3" column="6">
         <widget class="QComboBox" name="periodComboBox">
          <property name="font">
           <font>
-           <pointsize>12</pointsize>
+           <pointsize>11</pointsize>
           </font>
          </property>
          <item>
           <property name="text">
            <string>Month</string>
           </property>
+          <property name="icon">
+           <iconset resource="images.qrc">
+            <normaloff>:/images/view_calendar_month.png</normaloff>:/images/view_calendar_month.png</iconset>
+          </property>
          </item>
          <item>
           <property name="text">
            <string>Week</string>
+          </property>
+          <property name="icon">
+           <iconset resource="images.qrc">
+            <normaloff>:/images/view_calendar_week.png</normaloff>:/images/view_calendar_week.png</iconset>
           </property>
          </item>
          <item>
           <property name="text">
            <string>Day</string>
           </property>
+          <property name="icon">
+           <iconset resource="images.qrc">
+            <normaloff>:/images/view_calendar_day.png</normaloff>:/images/view_calendar_day.png</iconset>
+          </property>
          </item>
         </widget>
        </item>
-       <item row="1" column="7">
+       <item row="3" column="7">
         <spacer>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -186,7 +206,7 @@
          </property>
         </spacer>
        </item>
-       <item row="1" column="8">
+       <item row="3" column="8">
         <widget class="QLabel" name="label_3">
          <property name="font">
           <font>
@@ -200,26 +220,34 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="9">
+       <item row="3" column="9">
         <widget class="QComboBox" name="fromComboBox">
          <property name="font">
           <font>
-           <pointsize>12</pointsize>
+           <pointsize>11</pointsize>
           </font>
          </property>
          <item>
           <property name="text">
            <string>All Peers</string>
           </property>
+          <property name="icon">
+           <iconset resource="images.qrc">
+            <normaloff>:/images/user/friends24.png</normaloff>:/images/user/friends24.png</iconset>
+          </property>
          </item>
          <item>
           <property name="text">
            <string>Own Links</string>
           </property>
+          <property name="icon">
+           <iconset resource="images.qrc">
+            <normaloff>:/images/user/identity16.png</normaloff>:/images/user/identity16.png</iconset>
+          </property>
          </item>
         </widget>
        </item>
-       <item row="1" column="10">
+       <item row="3" column="10">
         <spacer>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -232,7 +260,7 @@
          </property>
         </spacer>
        </item>
-       <item row="1" column="11">
+       <item row="3" column="11">
         <widget class="QLabel" name="label_5">
          <property name="font">
           <font>
@@ -246,16 +274,20 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="12">
+       <item row="3" column="12">
         <widget class="QComboBox" name="topComboBox">
          <property name="font">
           <font>
-           <pointsize>12</pointsize>
+           <pointsize>11</pointsize>
           </font>
          </property>
          <item>
           <property name="text">
            <string>Top 100</string>
+          </property>
+          <property name="icon">
+           <iconset resource="images.qrc">
+            <normaloff>:/images/records.png</normaloff>:/images/records.png</iconset>
           </property>
          </item>
          <item>
@@ -285,6 +317,40 @@
          </item>
         </widget>
        </item>
+       <item row="1" column="1" colspan="12">
+        <widget class="QTextBrowser" name="linklabel">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>22</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QTextBrowser{border: 2px solid #CCCCCC; 
+border-radius: 10px;
+background: white;}</string>
+         </property>
+         <property name="verticalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="openLinks">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_9">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Link:</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="layoutWidget">
@@ -308,7 +374,7 @@
           <widget class="QCheckBox" name="anonBox">
            <property name="font">
             <font>
-             <pointsize>12</pointsize>
+             <pointsize>11</pointsize>
              <weight>50</weight>
              <bold>false</bold>
             </font>
@@ -322,7 +388,7 @@
           <widget class="QPushButton" name="addButton">
            <property name="font">
             <font>
-             <pointsize>12</pointsize>
+             <pointsize>11</pointsize>
             </font>
            </property>
            <property name="text">
@@ -338,9 +404,9 @@
           <widget class="QLabel" name="label_6">
            <property name="font">
             <font>
-             <pointsize>12</pointsize>
-             <weight>75</weight>
-             <bold>true</bold>
+             <pointsize>10</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
             </font>
            </property>
            <property name="text">
@@ -352,8 +418,13 @@
           <widget class="QLineEdit" name="titleLineEdit">
            <property name="font">
             <font>
-             <pointsize>12</pointsize>
+             <pointsize>11</pointsize>
             </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QLineEdit{border: 2px solid #CCCCCC; 
+border-radius: 10px;
+background: white;}</string>
            </property>
           </widget>
          </item>
@@ -361,9 +432,9 @@
           <widget class="QLabel" name="label_8">
            <property name="font">
             <font>
-             <pointsize>12</pointsize>
-             <weight>75</weight>
-             <bold>true</bold>
+             <pointsize>10</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
             </font>
            </property>
            <property name="text">
@@ -428,9 +499,9 @@
           <widget class="QLabel" name="label_7">
            <property name="font">
             <font>
-             <pointsize>12</pointsize>
-             <weight>75</weight>
-             <bold>true</bold>
+             <pointsize>10</pointsize>
+             <weight>50</weight>
+             <bold>false</bold>
             </font>
            </property>
            <property name="text">
@@ -442,8 +513,13 @@
           <widget class="QLineEdit" name="linkLineEdit">
            <property name="font">
             <font>
-             <pointsize>12</pointsize>
+             <pointsize>11</pointsize>
             </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QLineEdit{border: 2px solid #CCCCCC; 
+border-radius: 10px;
+background: white;}</string>
            </property>
           </widget>
          </item>
@@ -467,6 +543,11 @@
           <font>
            <pointsize>12</pointsize>
           </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QTextEdit{border: 2px solid #CCCCCC; 
+border-radius: 10px;
+background: white;}</string>
          </property>
         </widget>
        </item>

@@ -90,26 +90,25 @@ LinksDialog::LinksDialog(QWidget *parent)
 
   connect( ui.anonBox, SIGNAL( stateChanged ( int ) ), this, SLOT( checkAnon ( void  ) ) );
 
+  connect( ui.linklabel, SIGNAL(anchorClicked(const QUrl &)), SLOT(anchorClicked(const QUrl &)));
 
 
   mStart = 0;
 
 
-  /* hide the Tree +/- */
-//  ui.linkTreeWidget -> setRootIsDecorated( false );
-
     /* Set header resize modes and initial section sizes */
 	QHeaderView * _header = ui.linkTreeWidget->header () ;
-//   	_header->setResizeMode (0, QHeaderView::Custom);
-   	_header->setResizeMode (0, QHeaderView::Interactive);
+  _header->setResizeMode (0, QHeaderView::Interactive);
 	_header->setResizeMode (1, QHeaderView::Interactive);
 	_header->setResizeMode (2, QHeaderView::Interactive);
 
 	_header->resizeSection ( 0, 400 );
-	_header->resizeSection ( 1, 50 );
+	_header->resizeSection ( 1, 60 );
 	_header->resizeSection ( 2, 150 );
 
 	ui.linkTreeWidget->setSortingEnabled(true);
+	
+	ui.linklabel->setMinimumWidth(20);
 
 
 	/* Set a GUI update timer - much cleaner than
@@ -366,10 +365,10 @@ void  LinksDialog::updateLinks()
 		{
 			item -> setText(0, QString::fromStdWString(detail.title));
 			/* Bold and bigger */
-			QFont font = item->font(0);
+			/*QFont font = item->font(0);
 			font.setBold(true);
 			font.setPointSize(font.pointSize() + 2);
-			item->setFont(0, font);
+			item->setFont(0, font);*/
 		}
 
 		/* (1) Rank */
@@ -378,22 +377,31 @@ void  LinksDialog::updateLinks()
 			out << 100 * (detail.rank / (maxRank + 0.01));
 			item -> setText(1, QString::fromStdString(out.str()));
 			/* Bold and bigger */
-			QFont font = item->font(1);
-			//font.setBold(true);
+			/*QFont font = item->font(1);
+			font.setBold(true);
 			font.setPointSize(font.pointSize() + 2);
-			item->setFont(1, font);
+			item->setFont(1, font);*/
 		}
 
 		/* (2) Link */
 		{
 			item -> setText(2, QString::fromStdWString(detail.link));
 			/* Bold and bigger */
-			QFont font = item->font(2);
+			/*QFont font = item->font(2);
 			font.setBold(true);
 			font.setPointSize(font.pointSize() + 2);
-			item->setFont(2, font);
+			item->setFont(2, font);*/
 		}
+		
+		/* (3) Date */
+		/*{
+				QDateTime qtime;
+				qtime.setTime_t(it->lastPost);
+				QString timestamp = qtime.toString("yyyy-MM-dd hh:mm:ss");
+				item -> setText(3, timestamp);
+	 }*/
 
+		
 		/* (4) rid */
 		item -> setText(4, QString::fromStdString(detail.rid));
 
@@ -654,6 +662,8 @@ void  LinksDialog::updateComments(std::string rid, std::string pid)
 	/* set Link details */
 	ui.titleLineEdit->setText(QString::fromStdWString(detail.title));
 	ui.linkLineEdit->setText(QString::fromStdWString(detail.link));
+  ui.linklabel->setHtml("<a href='" + QString::fromStdWString(detail.link) + "'> " + QString::fromStdWString(detail.link) +"</a>");
+
 
 	if (mLinkId == rid)
 	{
@@ -996,5 +1006,62 @@ void LinksDialog::downloadSelected()
 		}
 
 		rsFiles->FileRequest(item.getName().toStdString(), item.getHash().toStdString(), item.getSize().toULong(), "", 0, srcIds);
+	}
+}
+
+void LinksDialog::anchorClicked (const QUrl& link ) 
+{
+    #ifdef LINK_DEBUG
+		    std::cerr << "LinksDialog::anchorClicked link.scheme() : " << link.scheme().toStdString() << std::endl;
+    #endif
+    
+	if (link.scheme() == "retroshare")
+	{
+		QStringList L = link.toString().split("|") ;
+
+		std::string fileName = L.at(1).toStdString() ;
+		uint64_t fileSize = L.at(2).toULongLong();
+		std::string fileHash = L.at(3).toStdString() ;
+
+#ifdef LINK_DEBUG
+		std::cerr << "LinksDialog::anchorClicked FileRequest : fileName : " << fileName << ". fileHash : " << fileHash << ". fileSize : " << fileSize << std::endl;
+#endif
+
+		if (fileName != "" && fileHash != "")
+		{
+			std::list<std::string> srcIds;
+
+			if(rsFiles->FileRequest(fileName, fileHash, fileSize, "", RS_FILE_HINTS_NETWORK_WIDE, srcIds))
+			{
+				QMessageBox mb(tr("File Request Confirmation"), tr("The file has been added to your download list."),QMessageBox::Information,QMessageBox::Ok,0,0);
+				mb.setButtonText( QMessageBox::Ok, "OK" );
+				mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
+				mb.exec();
+			}
+			else
+			{
+				QMessageBox mb(tr("File Request canceled"), tr("The file has not been added to your download list, because you already have it."),QMessageBox::Information,QMessageBox::Ok,0,0);
+				mb.setButtonText( QMessageBox::Ok, "OK" );
+				mb.exec();
+			}
+		} 
+		else 
+		{
+			QMessageBox mb(tr("File Request Error"), tr("The file link is malformed."),QMessageBox::Information,QMessageBox::Ok,0,0);
+			mb.setButtonText( QMessageBox::Ok, "OK" );
+			mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
+			mb.exec();
+		}
+	} 
+	else if (link.scheme() == "http") 
+	{
+		QDesktopServices::openUrl(link);
+	} 
+	else if (link.scheme() == "") 
+	{
+		//it's probably a web adress, let's add http:// at the beginning of the link
+		QString newAddress = link.toString();
+		newAddress.prepend("http://");
+		QDesktopServices::openUrl(QUrl(newAddress));
 	}
 }

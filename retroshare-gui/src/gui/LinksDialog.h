@@ -52,20 +52,22 @@ private slots:
   void voteup_m2();
   void downloadSelected();
 
-void changedSortRank( int index );
-void changedSortPeriod( int index );
-void changedSortFrom( int index );
-void changedSortTop( int index );
+  void changedSortRank( int index );
+  void changedSortPeriod( int index );
+  void changedSortFrom( int index );
+  void changedSortTop( int index );
 
-void updateLinks();
-void addLinkComment( void );
-void toggleWindows( void );
+  void updateLinks();
+  void addLinkComment( void );
+  void toggleWindows( void );
 
-void  openLink ( QTreeWidgetItem * item, int column );
-void  changedItem(QTreeWidgetItem *curr, QTreeWidgetItem *prev);
-void checkAnon();
+  void openLink ( QTreeWidgetItem * item, int column );
+  void changedItem(QTreeWidgetItem *curr, QTreeWidgetItem *prev);
+  void checkAnon();
 
-void checkUpdate();
+  void checkUpdate();
+  
+  void anchorClicked (const QUrl &);
 
 private:
 
