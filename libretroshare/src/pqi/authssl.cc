@@ -2320,6 +2320,7 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
             if (mConnMgr->getFriendNetStatus(certId, detail)) {
                 if (detail.state & RS_PEER_CONNECTED && !(detail.connecttype & RS_NET_CONN_TUNNEL)) {
                     fprintf(stderr, "AuthSSL::VerifyX509Callback this peer is already connected, refuse a new connection.");
+                    preverify_ok = false;
                 }
             }
 

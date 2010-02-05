@@ -1124,6 +1124,16 @@ int 	pqissl::Authorise_SSL_Connection()
 		reset();
 		return -1;
 	}
+        std::string certPeerId;
+        getX509id(peercert, certPeerId);
+        if (certPeerId != PeerId()) {
+                rslog(RSL_WARNING, pqisslzone,
+                  "pqissl::Authorise_SSL_Connection() the cert Id doesn't match the Peer id we're trying to connect to.");
+
+                // Failed completely
+                reset();
+                return -1;
+        }
 
   	rslog(RSL_DEBUG_BASIC, pqisslzone, 
 	  "pqissl::Authorise_SSL_Connection() Have Peer Cert");

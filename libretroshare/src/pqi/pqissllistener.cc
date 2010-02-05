@@ -659,7 +659,14 @@ int pqissllistener::completeConnection(int fd, SSL *ssl, struct sockaddr_in &rem
 			if (it -> first == newPeerId)
 			{
 		 	        out << "\t\tMatch!";
-				found = true;
+                                //check if peer is not already connected
+                                peerConnectState pcs;
+                                if (mConnMgr->getFriendNetStatus(newPeerId, pcs) && (pcs.state & RS_PEER_CONNECTED && !(pcs.connecttype & RS_NET_CONN_TUNNEL))) {
+                                    out << "\t\tPeer is already connected !";
+                                    break;
+                                } else {
+                                    found = true;
+                                }
 			}
 			else
 			{
