@@ -140,24 +140,6 @@
         <normaloff>:/images/looknfeel.png</normaloff>:/images/looknfeel.png</iconset>
       </property>
      </item>
-     <item>
-      <property name="text">
-       <string>File Associations</string>
-      </property>
-      <property name="icon">
-       <iconset resource="../images.qrc">
-        <normaloff>:/images/filetype-association.png</normaloff>:/images/filetype-association.png</iconset>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Sound</string>
-      </property>
-      <property name="icon">
-       <iconset resource="../images.qrc">
-        <normaloff>:/images/sound.png</normaloff>:/images/sound.png</iconset>
-      </property>
-     </item>
     </widget>
    </item>
    <item row="0" column="1">

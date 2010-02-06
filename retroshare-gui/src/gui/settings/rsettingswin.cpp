@@ -110,6 +110,7 @@ RSettingsWin::setNewPage(int page)
             text = tr("Appearance");
 	    pageicon->setPixmap(QPixmap(":/images/looknfeel.png"));
             break;
+        #ifndef RS_RELEASE_VERSION
         case Fileassociations:
             text = tr("File Associations");
 	    pageicon->setPixmap(QPixmap(":/images/filetype-association.png"));
@@ -118,6 +119,7 @@ RSettingsWin::setNewPage(int page)
             text = tr("Sound");
 	    pageicon->setPixmap(QPixmap(":/images/sound.png"));
             break;
+        #endif
         default:
             text = tr("UnknownPage");// impossible case
     }
