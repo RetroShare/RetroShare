@@ -225,7 +225,7 @@ Section  $(sec_data) sec_data
 
   ; Add emoticons
   SetOutPath "$INSTDIR\emoticons\"
-  File /r gui\emoticons\*.*   
+  File /r emoticons\*.*   
 	
   ; Add Chat Style
   ;SetOutPath "$INSTDIR\style\"
