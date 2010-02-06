@@ -67,8 +67,10 @@ RSettingsWin::initStackedWidget()
     stackedWidget->addWidget(new NotifyPage());
     stackedWidget->addWidget(new CryptoPage());
     stackedWidget->addWidget(new AppearancePage());
+    #ifndef RS_RELEASE_VERSION
     stackedWidget->addWidget(new FileAssociationsPage() );
     stackedWidget->addWidget(new SoundPage() );
+    #endif
 
     setNewPage(General);
 }
