@@ -12,7 +12,7 @@ InstallDirRegKey HKLM "Software\${APPNAME}" ""
 OutFile "RetroShare_${VERSION}_setup.exe"
 BrandingText "${APPNAMEANDVERSION}"
 ; Use compression
-SetCompressor LZMA
+SetCompressor LZMA /SOLID
 
 ; Modern interface settings
 !include Sections.nsh
@@ -353,8 +353,8 @@ Section "Uninstall"
   ; Remove Quicklaunch shortcut
   Delete "$QUICKLAUNCH\${APPNAME}.lnk"
   
-  ; Remove Autstart 
-  Delete "$SMSTARTUP\${APPNAME}.lnk"
+  ; Remove Autostart 
+  ;Delete "$SMSTARTUP\${APPNAME}.lnk"
 
   ; Remove directories used
   RMDir "$SMPROGRAMS\${APPNAME}"
