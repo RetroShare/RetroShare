@@ -165,7 +165,7 @@ void QuickStartWizard::on_pushButtonSharesExit_clicked()
 
 void QuickStartWizard::on_pushButtonSystemBack_clicked()
 {
-        ui.pagesWizard->setCurrentIndex(3);
+        ui.pagesWizard->setCurrentIndex(2);
 }
 
 void QuickStartWizard::on_pushButtonSystemFinish_clicked()
