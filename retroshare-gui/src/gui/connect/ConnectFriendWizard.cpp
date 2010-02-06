@@ -75,7 +75,11 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent)
     setPage(Page_ErrorMessage, new ErrorMessagePage);
     setPage(Page_Conclusion, new ConclusionPage);
 
+    #ifndef RS_RELEASE_VERSION
     setStartId(Page_Intro);
+    #else
+    setStartId(Page_Text);
+    #endif
 
 // this define comes from Qt example. I don't have mac, so it wasn't tested
 #ifndef Q_WS_MAC
@@ -166,8 +170,10 @@ IntroPage::IntroPage(QWidget *parent)
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(textRadioButton);
+    #ifndef RS_RELEASE_VERSION
     layout->addWidget(certRadioButton);
     layout->addWidget(foffRadioButton);
+    #endif
     setLayout(layout);
 }
 //
@@ -203,7 +209,7 @@ TextPage::TextPage(QWidget *parent)
     userCertEdit->setText(QString::fromStdString(invite));
     userCertEdit->setReadOnly(true);
     userCertEdit->setMinimumHeight(200);
-    userCertEdit->setMinimumWidth(450);
+    userCertEdit->setMinimumWidth(530);
     QFont font;
     font.setPointSize(10);
     font.setBold(false);
