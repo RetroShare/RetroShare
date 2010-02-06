@@ -185,7 +185,9 @@ PeersDialog::PeersDialog(QWidget *parent)
   menu->addAction(ui.actionAdd_Friend);
   menu->addSeparator();
   menu->addAction(ui.actionCreate_New_Forum);
+  #ifndef RS_RELEASE_VERSION
   menu->addAction(ui.actionCreate_New_Channel);
+  #endif
   menu->addAction(ui.actionSet_your_Avatar);
   menu->addAction(ui.actionSet_your_Personal_Message);
   

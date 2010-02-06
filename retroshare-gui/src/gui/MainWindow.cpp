@@ -140,6 +140,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     connect(ui.actionAdd_Share, SIGNAL(triggered() ), this , SLOT( openShareManager() ) );
     connect(ui.actionOptions, SIGNAL(triggered()), this, SLOT( showSettings()) );
     connect(ui.actionMessenger, SIGNAL(triggered()), this, SLOT( showMessengerWindow()) );
+    #ifdef RS_RELEASE_VERSION
+    ui.actionMessenger->setVisible(false);
+    #endif
     connect(ui.actionAbout, SIGNAL(triggered()), this, SLOT( showabout()) );
     //connect(ui.actionColor, SIGNAL(triggered()), this, SLOT( setStyle()) );
 
@@ -179,27 +182,34 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(messagesDialog = new MessagesDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_MESSAGES), tr("Messages"), grp));   
 
+    #ifndef RS_RELEASE_VERSION
     ChannelFeed *channelFeed = NULL;
     ui.stackPages->add(channelFeed = new ChannelFeed(ui.stackPages),
                       createPageAction(QIcon(IMAGE_CHANNELS), tr("Channels"), grp));
+    #endif
                       
     ForumsDialog *forumsDialog = NULL;
     ui.stackPages->add(forumsDialog = new ForumsDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_FORUMS), tr("Forums"), grp));  
-                                       
+
+    #ifndef RS_RELEASE_VERSION
     LinksDialog *linksDialog = NULL;
     ui.stackPages->add(linksDialog = new LinksDialog(ui.stackPages),
 			createPageAction(QIcon(IMAGE_LINKS), tr("Links Cloud"), grp));
+    #endif
 
+    #ifndef RS_RELEASE_VERSION
     NewsFeed *newsFeed = NULL;
     ui.stackPages->add(newsFeed = new NewsFeed(ui.stackPages),
 		createPageAction(QIcon(IMAGE_NEWSFEED), tr("News Feed"), grp));
+    #endif
 
-#ifdef PLUGINMGR
+    #ifndef RS_RELEASE_VERSION
+    #ifdef PLUGINMGR
     ui.stackPages->add(pluginsPage = new PluginsPage(ui.stackPages),
                        createPageAction(QIcon(IMAGE_PLUGINS), tr("Plugins"), grp));
-#endif
-
+    #endif
+    #endif
 
     /* Create the toolbar */
     ui.toolBar->addActions(grp->actions());

@@ -40,9 +40,6 @@ TransferPage::TransferPage(QWidget * parent, Qt::WFlags flags)
 
   connect( ui._showTurtleDialogPB,SIGNAL(clicked()),this,SLOT( showTurtleRouterDialog() )) ;
 
-	  ui._enableTurtleCB->setChecked(true) ;
-	  ui._enableTurtleCB->setEnabled(false) ;
-
    QTimer *timer = new QTimer(this);
    timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
    timer->start(1000);

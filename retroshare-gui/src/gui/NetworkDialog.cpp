@@ -754,16 +754,7 @@ void NetworkDialog::updateNetworkStatus()
       {    
          ui.iconlabel_upnp->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
       }
-                  
-      if(config.netStunOk)
-      {
-         ui.iconlabel_udp->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));
-      }
-      else
-      {    
-         ui.iconlabel_udp->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
-      }
-            
+                              
       if (config.netLocalOk)
       {
 	  ui.iconlabel_netLimited->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));

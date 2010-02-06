@@ -148,7 +148,7 @@ p3ConnectMgr::p3ConnectMgr()
 
 	//use_extr_addr_finder = true ;
 	use_extr_addr_finder = false;
-        allow_tunnel_connection = true;
+        allow_tunnel_connection = false;
         mExtAddrFinder = new ExtAddrFinder;
         mNetInitTS = 0;
 
