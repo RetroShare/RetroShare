@@ -162,8 +162,7 @@ p3Peers::p3Peers(p3ConnectMgr *cm)
 bool p3Peers::FriendsChanged()
 {
 #ifdef P3PEERS_DEBUG
-	std::cerr << "p3Peers::FriendsChanged()";
-	std::cerr << std::endl;
+        std::cerr << "p3Peers::FriendsChanged()" << std::endl;
 #endif
 
 	/* TODO */
@@ -173,8 +172,7 @@ bool p3Peers::FriendsChanged()
 bool p3Peers::OthersChanged()
 {
 #ifdef P3PEERS_DEBUG
-	std::cerr << "p3Peers::OthersChanged()";
-	std::cerr << std::endl;
+        std::cerr << "p3Peers::OthersChanged()" << std::endl;
 #endif
 
 	/* TODO */
@@ -185,8 +183,7 @@ bool p3Peers::OthersChanged()
 std::string p3Peers::getOwnId()
 {
 #ifdef P3PEERS_DEBUG
-	std::cerr << "p3Peers::getOwnId()";
-	std::cerr << std::endl;
+        std::cerr << "p3Peers::getOwnId()" << std::endl;
 #endif
 
         return AuthSSL::getAuthSSL()->OwnId();
@@ -195,8 +192,7 @@ std::string p3Peers::getOwnId()
 bool	p3Peers::getOnlineList(std::list<std::string> &ids)
 {
 #ifdef P3PEERS_DEBUG
-	std::cerr << "p3Peers::getOnlineList()";
-	std::cerr << std::endl;
+        std::cerr << "p3Peers::getOnlineList()" << std::endl;
 #endif
 
 	/* get from mConnectMgr */
@@ -207,8 +203,7 @@ bool	p3Peers::getOnlineList(std::list<std::string> &ids)
 bool	p3Peers::getFriendList(std::list<std::string> &ids)
 {
 #ifdef P3PEERS_DEBUG
-	std::cerr << "p3Peers::getFriendList()";
-	std::cerr << std::endl;
+        std::cerr << "p3Peers::getFriendList()" << std::endl;
 #endif
 
 	/* get from mConnectMgr */
@@ -231,8 +226,7 @@ bool	p3Peers::getFriendList(std::list<std::string> &ids)
 bool    p3Peers::isOnline(std::string id)
 {
 #ifdef P3PEERS_DEBUG
-	std::cerr << "p3Peers::isOnline() " << id;
-	std::cerr << std::endl;
+        std::cerr << "p3Peers::isOnline() " << id << std::endl;
 #endif
 
 	/* get from mConnectMgr */
@@ -248,8 +242,7 @@ bool    p3Peers::isOnline(std::string id)
 bool    p3Peers::isFriend(std::string ssl_id)
 {
 #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::isFriend() " << ssl_id;
-	std::cerr << std::endl;
+        std::cerr << "p3Peers::isFriend() " << ssl_id << std::endl;
 #endif
 
         /* get from mConnectMgr */
@@ -442,8 +435,7 @@ bool p3Peers::isGPGAccepted(std::string gpg_id_is_friend)
 std::string p3Peers::getPeerName(std::string ssl_or_gpg_id)
 {
 #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::getPeerName() " << ssl_or_gpg_id;
-	std::cerr << std::endl;
+        std::cerr << "p3Peers::getPeerName() " << ssl_or_gpg_id << std::endl;
 #endif
         std::string name;
         if (ssl_or_gpg_id == AuthSSL::getAuthSSL()->OwnId()) {
@@ -452,8 +444,7 @@ std::string p3Peers::getPeerName(std::string ssl_or_gpg_id)
         peerConnectState pcs;
         if (mConnMgr->getFriendNetStatus(ssl_or_gpg_id, pcs)) {
     #ifdef P3PEERS_DEBUG
-            std::cerr << "p3Peers::getPeerName() got a ssl id. Name is : " << pcs.name;
-            std::cerr << std::endl;
+            std::cerr << "p3Peers::getPeerName() got a ssl id. Name is : " << pcs.name << std::endl;
     #endif
            return pcs.name;
         }
@@ -464,8 +455,7 @@ std::string p3Peers::getPeerName(std::string ssl_or_gpg_id)
 bool	p3Peers::getGPGAllList(std::list<std::string> &ids)
 {
 #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::getGPGAllList()";
-        std::cerr << std::endl;
+        std::cerr << "p3Peers::getGPGAllList()" << std::endl;
 #endif
 
         /* get from mAuthMgr */
@@ -476,8 +466,7 @@ bool	p3Peers::getGPGAllList(std::list<std::string> &ids)
 bool	p3Peers::getGPGValidList(std::list<std::string> &ids)
 {
 #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::getPGPOthersList()";
-        std::cerr << std::endl;
+        std::cerr << "p3Peers::getPGPOthersList()" << std::endl;
 #endif
 
         /* get from mAuthMgr */
@@ -488,8 +477,7 @@ bool	p3Peers::getGPGValidList(std::list<std::string> &ids)
 bool	p3Peers::getGPGSignedList(std::list<std::string> &ids)
 {
 #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::getPGPOthersList()";
-        std::cerr << std::endl;
+        std::cerr << "p3Peers::getPGPOthersList()" << std::endl;
 #endif
 
         /* get from mAuthMgr */
@@ -500,8 +488,7 @@ bool	p3Peers::getGPGSignedList(std::list<std::string> &ids)
 bool	p3Peers::getGPGAcceptedList(std::list<std::string> &ids)
 {
 #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::getPGPOthersList()";
-        std::cerr << std::endl;
+        std::cerr << "p3Peers::getPGPOthersList()" << std::endl;
 #endif
 
         //TODO implement an additional list of GPG keys that are accepted even if not signed
@@ -512,8 +499,7 @@ bool	p3Peers::getGPGAcceptedList(std::list<std::string> &ids)
 bool	p3Peers::getSSLChildListOfGPGId(std::string gpg_id, std::list<std::string> &ids)
 {
 #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::getSSLChildListOfGPGId() for id : " << gpg_id;
-        std::cerr << std::endl;
+        std::cerr << "p3Peers::getSSLChildListOfGPGId() for id : " << gpg_id << std::endl;
 #endif
         ids.clear();
         if (gpg_id == "" ) {
@@ -525,13 +511,11 @@ bool	p3Peers::getSSLChildListOfGPGId(std::string gpg_id, std::list<std::string> 
         peerConnectState pcs;
         for (std::list<std::string>::iterator it = friendsIds.begin(); it != friendsIds.end(); it++) {
 #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::getSSLChildListOfGPGId() iterating over friends id : " << gpg_id;
-        std::cerr << std::endl;
+        std::cerr << "p3Peers::getSSLChildListOfGPGId() iterating over friends id : " << gpg_id << std::endl;
 #endif
             if (mConnMgr->getFriendNetStatus(*it, pcs) && pcs.gpg_id == gpg_id) {
 #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::getSSLChildListOfGPGId() adding ssl id :  " << pcs.id;
-        std::cerr << std::endl;
+        std::cerr << "p3Peers::getSSLChildListOfGPGId() adding ssl id :  " << pcs.id << std::endl;
 #endif
                 ids.push_back(pcs.id);
             }
@@ -542,8 +526,7 @@ bool	p3Peers::getSSLChildListOfGPGId(std::string gpg_id, std::list<std::string> 
 bool	p3Peers::getGPGDetails(std::string id, RsPeerDetails &d)
 {
 #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::getPgpDetails() called for id : " << id;
-        std::cerr << std::endl;
+        std::cerr << "p3Peers::getPgpDetails() called for id : " << id << std::endl;
 #endif
 
         /* get from mAuthMgr */
@@ -553,8 +536,7 @@ bool	p3Peers::getGPGDetails(std::string id, RsPeerDetails &d)
 std::string p3Peers::getGPGOwnId()
 {
 #ifdef P3PEERS_DEBUG
-	std::cerr << "p3Peers::getPGPOwnId()";
-	std::cerr << std::endl;
+        std::cerr << "p3Peers::getPGPOwnId()" << std::endl;
 #endif
 
 	/* get from mAuthMgr */
@@ -564,8 +546,7 @@ std::string p3Peers::getGPGOwnId()
 std::string p3Peers::getGPGId(std::string sslid_or_gpgid)
 {
 #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::getPGPId()";
-        std::cerr << std::endl;
+        std::cerr << "p3Peers::getPGPId()" << std::endl;
 #endif
 
         /* get from mAuthMgr */
@@ -578,8 +559,7 @@ std::string p3Peers::getGPGId(std::string sslid_or_gpgid)
         } else {
             if ( AuthGPG::getAuthGPG()->isGPGId(sslid_or_gpgid)) {
                 #ifdef P3PEERS_DEBUG
-                std::cerr << "p3Peers::getPGPId() given id is already an gpg id : " << sslid_or_gpgid;
-                std::cerr << std::endl;
+                std::cerr << "p3Peers::getPGPId() given id is already an gpg id : " << sslid_or_gpgid << std::endl;
                 #endif
                 return sslid_or_gpgid;
             }
@@ -660,8 +640,7 @@ bool 	p3Peers::removeFriend(std::string ssl_or_gpgid)
 bool 	p3Peers::connectAttempt(std::string id)
 {
 #ifdef P3PEERS_DEBUG
-	std::cerr << "p3Peers::connectAttempt() " << id;
-	std::cerr << std::endl;
+        std::cerr << "p3Peers::connectAttempt() " << id << std::endl;
 #endif
 
 	return mConnMgr->retryConnect(id);
@@ -678,7 +657,9 @@ void p3Peers::allowServerIPDetermination(bool b)
 
 void p3Peers::allowTunnelConnection(bool b)
 {
+        #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::allowTunnelConnection() set tunnel to : " << b << std::endl;
+        #endif
         mConnMgr->setTunnelConnection(b) ;
 }
 
@@ -689,15 +670,16 @@ bool p3Peers::getAllowServerIPDetermination()
 
 bool p3Peers::getAllowTunnelConnection()
 {
+        #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::getAllowTunnelConnection() tunnel is : " << mConnMgr->getTunnelConnection()  << std::endl;
+        #endif
         return mConnMgr->getTunnelConnection() ;
 }
 
 bool 	p3Peers::setLocalAddress(std::string id, std::string addr_str, uint16_t port)
 {
 #ifdef P3PEERS_DEBUG
-	std::cerr << "p3Peers::setLocalAddress() " << id;
-	std::cerr << std::endl;
+        std::cerr << "p3Peers::setLocalAddress() " << id << std::endl;
 #endif
 
 	struct sockaddr_in addr;
@@ -722,8 +704,7 @@ bool 	p3Peers::setLocalAddress(std::string id, std::string addr_str, uint16_t po
 bool 	p3Peers::setLocation(std::string ssl_id, std::string location)
 {
 #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::setLocation() " << ssl_id;
-        std::cerr << std::endl;
+        std::cerr << "p3Peers::setLocation() " << ssl_id << std::endl;
 #endif
 
         return mConnMgr->setLocation(ssl_id, location);
@@ -731,8 +712,7 @@ bool 	p3Peers::setLocation(std::string ssl_id, std::string location)
 bool 	p3Peers::setExtAddress(std::string id, std::string addr_str, uint16_t port)
 {
 #ifdef P3PEERS_DEBUG
-	std::cerr << "p3Peers::setExtAddress() " << id;
-	std::cerr << std::endl;
+        std::cerr << "p3Peers::setExtAddress() " << id << std::endl;
 #endif
 
 	struct sockaddr_in addr;
@@ -758,8 +738,7 @@ bool 	p3Peers::setExtAddress(std::string id, std::string addr_str, uint16_t port
 bool 	p3Peers::setNetworkMode(std::string id, uint32_t extNetMode)
 {
 #ifdef P3PEERS_DEBUG
-	std::cerr << "p3Peers::setNetworkMode() " << id;
-	std::cerr << std::endl;
+        std::cerr << "p3Peers::setNetworkMode() " << id << std::endl;
 #endif
 
 	/* translate */
@@ -790,8 +769,7 @@ bool
 p3Peers::setVisState(std::string id, uint32_t extVisState)
 {
 #ifdef P3PEERS_DEBUG
-	std::cerr << "p3Peers::setVisState() " << id;
-	std::cerr << std::endl;
+        std::cerr << "p3Peers::setVisState() " << id << std::endl;
 #endif
 
 	uint32_t visState = 0;
@@ -808,13 +786,9 @@ p3Peers::setVisState(std::string id, uint32_t extVisState)
 std::string
 p3Peers::GetRetroshareInvite()
 {
-#ifdef P3PEERS_DEBUG
-	std::cerr << "p3Peers::GetRetroshareInvite()";
-	std::cerr << std::endl;
-#endif
-
-	std::cerr << "p3Peers::GetRetroshareInvite()";
-	std::cerr << std::endl;
+        #ifdef P3PEERS_DEBUG
+        std::cerr << "p3Peers::GetRetroshareInvite()" << std::endl;
+        #endif
 
         std::string invite = AuthGPG::getAuthGPG()->SaveCertificateToString(AuthGPG::getAuthGPG()->getGPGOwnId());
 
@@ -833,9 +807,9 @@ p3Peers::GetRetroshareInvite()
             invite += out2.str() + ";";
         }
 
-        std::cerr << "p3Peers::GetRetroshareInvite() returns : \n";
-        std::cerr << invite << std::endl;
-
+        #ifdef P3PEERS_DEBUG
+        std::cerr << "p3Peers::GetRetroshareInvite() returns : \n" << invite << std::endl;
+        #endif
         return invite;
 }
 

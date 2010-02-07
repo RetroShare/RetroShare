@@ -15,7 +15,7 @@ RsAutoUpdatePage::RsAutoUpdatePage(int ms_update_period,QWidget *parent)
 
 void RsAutoUpdatePage::showEvent(QShowEvent *event)
 {
-	std::cout << "In show event !!" << std::endl ;
+        //std::cout << "RsAutoUpdatePage::showEvent() In show event !!" << std::endl ;
 	updateDisplay();
 }
 
