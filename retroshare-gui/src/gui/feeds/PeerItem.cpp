@@ -176,10 +176,10 @@ void PeerItem::updateItem()
 		ipLabel->setText(QString::fromStdString(out.str()));
 	}
 
-	time_t now = time(NULL);
 	connLabel->setText(QString::fromStdString(details.autoconnect));
-	lastLabel->setText(QString::fromStdString(
-		RsPeerLastConnectString(now - details.lastConnect)));
+	QDateTime date = QDateTime::fromTime_t(details.lastConnect);
+  QString stime = date.toString(Qt::LocalDate);
+  lastLabel-> setText(stime);
 
 	/* do buttons */
 	chatButton->setEnabled(details.state & RS_PEER_STATE_CONNECTED);
