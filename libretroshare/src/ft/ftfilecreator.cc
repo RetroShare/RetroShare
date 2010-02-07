@@ -175,10 +175,9 @@ void ftFileCreator::removeInactiveChunks()
 
 int ftFileCreator::initializeFileAttrs()
 {
-	std::cerr << "ftFileCreator::initializeFileAttrs() Filename: ";
-	std::cerr << file_name;        	
-	std::cerr << " this: " << this;
-	std::cerr << std::endl;
+        #ifdef FILE_DEBUG
+        std::cerr << "ftFileCreator::initializeFileAttrs() Filename: " << file_name << " this: " << this << std::endl;
+        #endif
 
 	/* 
          * check if the file exists 
@@ -194,7 +193,9 @@ int ftFileCreator::initializeFileAttrs()
          */
 	
 	{
-		std::cerr << "ftFileCreator::initializeFileAttrs() trying (r+b) ";        	
+                #ifdef FILE_DEBUG
+                std::cerr << "ftFileCreator::initializeFileAttrs() trying (r+b) " << file_name << " this: " << this << std::endl;
+                #endif
 		std::cerr << std::endl;
 	}
 
@@ -237,7 +238,9 @@ int ftFileCreator::initializeFileAttrs()
 
 	uint64_t recvdsize = ftello64(fd);
 
+        #ifdef FILE_DEBUG
         std::cerr << "ftFileCreator::initializeFileAttrs() File Expected Size: " << mSize << " RecvdSize: " << recvdsize << std::endl;
+        #endif
 
 	/* start from there! */
 //	mStart = recvdsize;

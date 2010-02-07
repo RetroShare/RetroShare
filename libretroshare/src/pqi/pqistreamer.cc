@@ -743,10 +743,10 @@ continue_packet:
 
 		// create packet, based on header.
 		{
-			std::ostringstream out;
-			out << "Read Data Block -> Incoming Pkt(";
-			out << blen + extralen << ")" << std::endl;
-			//		  std::cerr << out.str() ;
+                        std::ostringstream out;
+                        out << "Read Data Block -> Incoming Pkt(";
+                        out << blen + extralen << ")" << std::endl;
+                        //std::cerr << out.str() ;
 			pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out.str());
 		}
 

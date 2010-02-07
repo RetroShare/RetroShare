@@ -308,7 +308,9 @@ void p3ConnectMgr::netReset()
 	    return;
 	}
 
+        #ifdef CONN_DEBUG
 	std::cerr << "p3ConnectMgr::netReset() shutdown" << std::endl;
+        #endif
 
 	shutdown(); /* blocking shutdown call */
 
@@ -324,7 +326,9 @@ void p3ConnectMgr::netReset()
 	/* check Network Address */
 	checkNetAddress();
 
+        #ifdef CONN_DEBUG
 	std::cerr << "p3ConnectMgr::netReset() done" << std::endl;
+        #endif
 }
 
 /* to allow resets of network stuff */
@@ -343,11 +347,15 @@ void    p3ConnectMgr::startListeners() {
                  *      as it calls back to p3ConnMgr.
                  */
 
+                #ifdef CONN_DEBUG
                 std::cerr << "p3ConnectMgr::netReset() resetting listeners" << std::endl;
+                #endif
                 std::list<pqiNetListener *>::const_iterator it;
                 for(it = mNetListeners.begin(); it != mNetListeners.end(); it++)
                 {
+                        #ifdef CONN_DEBUG
                         std::cerr << "p3ConnectMgr::netReset() reset listener" << std::endl;
+                        #endif
                         (*it)->reset_listener();
                 }
                 mListenerActive = true;
@@ -2947,7 +2955,9 @@ std::list<RsItem *> p3ConnectMgr::saveList(bool &cleanup)
 	kv.value = (use_extr_addr_finder)?"TRUE":"FALSE" ;
 	vitem->tlvkvs.pairs.push_back(kv) ;
 
+        #ifdef CONN_DEBUG
 	std::cout << "Pushing item for use_extr_addr_finder = " << use_extr_addr_finder << std::endl ;
+        #endif
 	saveData.push_back(vitem);
 
                 // Now save config for network digging strategies
@@ -2959,7 +2969,9 @@ std::list<RsItem *> p3ConnectMgr::saveList(bool &cleanup)
         kv2.value = (allow_tunnel_connection)?"TRUE":"FALSE" ;
         vitem2->tlvkvs.pairs.push_back(kv2) ;
 
+        #ifdef CONN_DEBUG
         std::cout << "Pushing item for allow_tunnel_connection = " << allow_tunnel_connection << std::endl ;
+        #endif
         saveData.push_back(vitem2);
 
 	return saveData;

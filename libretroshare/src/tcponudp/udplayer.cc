@@ -191,27 +191,39 @@ int     UdpLayer::status(std::ostream &out)
 
 int UdpLayer::reset(struct sockaddr_in &local)
 {
+        #ifdef DEBUG_UDP_LAYER
 	std::cerr << "UdpLayer::reset()" << std::endl;
+        #endif
 
 	/* stop the old thread */
 	{
 		RsStackMutex stack(sockMtx);   /********** LOCK MUTEX *********/
+                #ifdef DEBUG_UDP_LAYER
 		std::cerr << "UdpLayer::reset() setting stopThread flag" << std::endl;
+                #endif
 		stopThread = true;
 	}
-		
+        #ifdef DEBUG_UDP_LAYER
 	std::cerr << "UdpLayer::reset() joining" << std::endl;
+        #endif
+
 	join(); 
 
+        #ifdef DEBUG_UDP_LAYER
 	std::cerr << "UdpLayer::reset() closing socket" << std::endl;
+        #endif
 	close();
 
+        #ifdef DEBUG_UDP_LAYER
 	std::cerr << "UdpLayer::reset() resetting variables" << std::endl;
+        #endif
 	laddr = local;
 	errorState = 0;
 	ttl = UDP_DEF_TTL;
 
+        #ifdef DEBUG_UDP_LAYER
 	std::cerr << "UdpLayer::reset() opening socket" << std::endl;
+        #endif
 	openSocket();
 
 	return 1 ;

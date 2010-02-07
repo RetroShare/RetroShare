@@ -431,9 +431,6 @@ int	AuthSSL::InitAuth(const char *cert_file, const char *priv_key_file,
 	std::cerr << "AuthSSL::InitAuth()";
 	std::cerr << std::endl;
 #endif
-	if ( passwd == NULL || strlen(passwd) == 0) {
-	    std::cerr << "Warning : AuthSSL::InitAuth passwd empty." << std::endl;
-	}
 
 static  int initLib = 0;
 	if (!initLib)
@@ -454,7 +451,7 @@ static  int initLib = 0;
 		(priv_key_file == NULL) ||
 		(passwd == NULL))
 	{
-		fprintf(stderr, "sslroot::initssl() missing parameters!\n");
+                //fprintf(stderr, "sslroot::initssl() missing parameters!\n");
 		return 0;
 	}
 
@@ -1946,34 +1943,22 @@ X509 *AuthSSL::SignX509Req(X509_REQ *req, long days)
 
 bool AuthSSL::AuthX509(X509 *x509)
 {
+        #ifdef AUTHSSL_DEBUG
         fprintf(stderr, "AuthSSL::AuthX509() called\n");
+        #endif
 
         RsStackMutex stack(sslMtx); /******* LOCKED ******/
 
         /* extract CN for peer Id */
         std::string issuer = getX509CNString(x509->cert_info->issuer);
         RsPeerDetails pd;
-		  std::cerr << "Checking GPG issuer : " << issuer << std::endl ;
-        if (!AuthGPG::getAuthGPG()->getGPGDetails(issuer, pd)) 
-		  {
+        #ifdef AUTHSSL_DEBUG
+        std::cerr << "Checking GPG issuer : " << issuer << std::endl ;
+        #endif
+        if (!AuthGPG::getAuthGPG()->getGPGDetails(issuer, pd)) {
             std::cerr << "AuthSSL::AuthX509() X509 NOT authenticated : AuthGPG::getAuthGPG()->getGPGDetails() returned false." << std::endl;
             return false;
         }
-
-//        //check that the issuer is in the accepted GPG key list.
-//        if (!pd.ownsign || !pd.is_connect_accepted_even_without_ownsign) {
-//            //check that the gpg key is not one of our private key (usefull for initialisation)
-//            std::list<std::string> privateIds;
-//            AuthGPG::getAuthGPG()->availableGPGCertificatesWithPrivateKeys(privateIds);
-//            bool isAccepted = false;
-//            for(std::list<std::string>::iterator it = acceptedIds.begin(); it != privateIds.end(); it++){
-//                std::cerr << "AuthSSL::AuthX509() : accepted id : " << *it << std::endl;
-//                if (*it == issuer) {
-//                    isAccepted = true;
-//                    break;
-//                }
-//            }
-//        }
 
         /* verify GPG signature */
 
@@ -2002,10 +1987,12 @@ bool AuthSSL::AuthX509(X509 *x509)
         sigoutll=sigoutl=2048; //hashoutl; //EVP_PKEY_size(pkey);
         buf_sigout=(unsigned char *)OPENSSL_malloc((unsigned int)sigoutl);
 
+        #ifdef AUTHSSL_DEBUG
         std::cerr << "Buffer Sizes: in: " << inl;
         std::cerr << "  HashOut: " << hashoutl;
         std::cerr << "  SigOut: " << sigoutl;
         std::cerr << std::endl;
+        #endif
 
         if ((buf_in == NULL) || (buf_hashout == NULL) || (buf_sigout == NULL)) {
                 hashoutl=0;
@@ -2015,7 +2002,9 @@ bool AuthSSL::AuthX509(X509 *x509)
         }
         p=buf_in;
 
+        #ifdef AUTHSSL_DEBUG
         std::cerr << "Buffers Allocated" << std::endl;
+        #endif
 
         i2d(data,&p);
         /* data in buf_in, ready to be hashed */
@@ -2029,7 +2018,9 @@ bool AuthSSL::AuthX509(X509 *x509)
                 goto err;
                 }
 
+        #ifdef AUTHSSL_DEBUG
         std::cerr << "Digest Applied: len: " << hashoutl << std::endl;
+        #endif
 
         /* copy data into signature */
         sigoutl = signature->length;
@@ -2037,17 +2028,21 @@ bool AuthSSL::AuthX509(X509 *x509)
 
         /* NOW check sign via GPG Functions */
         //get the fingerprint of the key that is supposed to sign
+        #ifdef AUTHSSL_DEBUG
         std::cerr << "AuthSSL::AuthX509() verifying the gpg sig with keyprint : " << pd.fpr << std::endl;
 		  std::cerr << "Sigoutl = " << sigoutl << std::endl ;
 		  std::cerr << "pd.fpr = " << pd.fpr << std::endl ;
 		  std::cerr << "hashoutl = " << hashoutl << std::endl ;
+        #endif
 
         if (!AuthGPG::getAuthGPG()->VerifySignBin(buf_hashout, hashoutl, buf_sigout, (unsigned int) sigoutl, pd.fpr)) {
                 sigoutl = 0;
                 goto err;
         }
 
+        #ifdef AUTHSSL_DEBUG
         std::cerr << "AuthSSL::AuthX509() X509 authenticated" << std::endl;
+        #endif
         return true;
 
   err:
@@ -2116,46 +2111,6 @@ bool    AuthSSL::decrypt(void *&out, int &outlen, const void *in, int inlen)
 		  return true ;
 }
 
-
-/* check that they are exact match */
-//bool    AuthSSL::CheckCertificate(std::string x509Id, X509 *x509)
-//{
-//	sslMtx.lock();   /***** LOCK *****/
-//
-//	sslcert *cert = NULL;
-//	if (!locked_FindCert(x509Id, &cert))
-//	{
-//		/* not there -> error */
-//		X509_free(x509);
-//
-//		sslMtx.unlock(); /**** UNLOCK ****/
-//		return false;
-//	}
-//	else
-//	{
-//		/* have a duplicate */
-//		/* check that they are exact */
-//		if (0 != X509_cmp(cert->certificate, x509))
-//		{
-//			/* MAJOR ERROR */
-//			X509_free(x509);
-//			sslMtx.unlock(); /**** UNLOCK ****/
-//			return false;
-//		}
-//
-//		/* transfer new signatures */
-//		//X509_copy_known_signatures(pgp_keyring, cert->certificate, x509);
-//		X509_free(x509);
-//
-//		/* update signers */
-//		//cert->signers = getX509signers(cert->certificate);
-//
-//		sslMtx.unlock(); /**** UNLOCK ****/
-//		return true;
-//	}
-//}
-
-
 /********************************************************************************/
 /********************************************************************************/
 /********************************************************************************/
@@ -2179,9 +2134,10 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
         err = X509_STORE_CTX_get_error(ctx);
         depth = X509_STORE_CTX_get_error_depth(ctx);
 
+        #ifdef AUTHSSL_DEBUG
         std::cerr << "AuthSSL::VerifyX509Callback(preverify_ok: " << preverify_ok
-                                 << " Err: " << err << " Depth: " << depth;
-        std::cerr << std::endl;
+                                 << " Err: " << err << " Depth: " << depth << std::endl;
+        #endif
 
         /*
         * Retrieve the pointer to the SSL of the connection currently treated
@@ -2190,13 +2146,16 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
 
         X509_NAME_oneline(X509_get_subject_name(err_cert), buf, 256);
 
-        std::cerr << "AuthSSL::VerifyX509Callback: depth: " << depth << ":" << buf;
-        std::cerr << std::endl;
+        #ifdef AUTHSSL_DEBUG
+        std::cerr << "AuthSSL::VerifyX509Callback: depth: " << depth << ":" << buf << std::endl;
+        #endif
 
 
         if (!preverify_ok) {
+                #ifdef AUTHSSL_DEBUG
                 fprintf(stderr, "Verify error:num=%d:%s:depth=%d:%s\n", err,
                 X509_verify_cert_error_string(err), depth, buf);
+                #endif
         }
 
         /*
@@ -2210,7 +2169,9 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
             X509_NAME_oneline(X509_get_issuer_name(X509_STORE_CTX_get_current_cert(ctx)), buf, 256);
             printf("issuer= %s\n", buf);
 
+            #ifdef AUTHSSL_DEBUG
             fprintf(stderr, "Doing REAL PGP Certificates\n");
+            #endif
             /* do the REAL Authentication */
             if (!AuthX509(X509_STORE_CTX_get_current_cert(ctx)))
             {
@@ -2230,48 +2191,6 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
             }
             preverify_ok = true;
 
-//            if ((err == X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT) ||
-//                        (err == X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY))
-//                {
-//                X509_NAME_oneline(X509_get_issuer_name(X509_STORE_CTX_get_current_cert(ctx)), buf, 256);
-//                printf("issuer= %s\n", buf);
-//
-//                fprintf(stderr, "Doing REAL PGP Certificates\n");
-//                /* do the REAL Authentication */
-//                if (!AuthX509(X509_STORE_CTX_get_current_cert(ctx)))
-//                {
-//                        fprintf(stderr, "AuthSSL::VerifyX509Callback() X509 not authenticated.\n");
-//                        return false;
-//                }
-//                std::string pgpid = getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer);
-//                if (!AuthGPG::getAuthGPG()->isGPGAccepted(pgpid) && pgpid != AuthGPG::getAuthGPG()->getGPGOwnId())
-//                {
-//                        fprintf(stderr, "AuthSSL::VerifyX509Callback() pgp key not signed by ourself : \n");
-//                        fprintf(stderr, "issuer pgpid : ");
-//                        fprintf(stderr, "%s\n",pgpid.c_str());
-//                        fprintf(stderr, "\n AuthGPG::getAuthGPG()->getGPGOwnId() : ");
-//                        fprintf(stderr, "%s\n",AuthGPG::getAuthGPG()->getGPGOwnId().c_str());
-//                        fprintf(stderr, "\n");
-//                        return false;
-//                }
-//                preverify_ok = true;
-//            }
-//            else if ((err == X509_V_ERR_CERT_UNTRUSTED) ||
-//                (err == X509_V_ERR_UNABLE_TO_VERIFY_LEAF_SIGNATURE))
-//            {
-//                std::string pgpid = getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer);
-//                if (!AuthGPG::getAuthGPG()->isGPGAccepted(pgpid) && pgpid != AuthGPG::getAuthGPG()->getGPGOwnId())
-//                {
-//                        fprintf(stderr, "AuthSSL::VerifyX509Callback() pgp key not signed by ourself : \n");
-//                        fprintf(stderr, "issuer pgpid : ");
-//                        fprintf(stderr, "%s\n",pgpid.c_str());
-//                        fprintf(stderr, "\n AuthGPG::getAuthGPG()->getGPGOwnId() : ");
-//                        fprintf(stderr, "%s\n",AuthGPG::getAuthGPG()->getGPGOwnId().c_str());
-//                        fprintf(stderr, "\n");
-//                        return false;
-//                }
-//                preverify_ok = true;
-//            }
         } else {
                 fprintf(stderr, "Failing Normal Certificate!!!\n");
                 preverify_ok = false;
@@ -2374,8 +2293,10 @@ int	LoadCheckX509andGetLocation(const char *cert_file, std::string &location, st
 		return false ;
 	}
 
+        #ifdef AUTHSSL_DEBUG
 	std::cerr << "getX509LocString ok. Info:" << std::endl ;
 	std::cout << getX509Info(x509) << std::endl ;
+        #endif
 	// clean up.
 	X509_free(x509);
 
@@ -2419,7 +2340,9 @@ int	LoadCheckX509andGetIssuerName(const char *cert_file, std::string &issuerName
 		issuerName = getX509CNString(x509->cert_info->issuer);
 	}
 
+        #ifdef AUTHSSL_DEBUG
 	std::cout << getX509Info(x509) << std::endl ;
+        #endif
 	// clean up.
 	X509_free(x509);
 

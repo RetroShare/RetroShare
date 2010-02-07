@@ -38,14 +38,10 @@
  * #define CONFIG_DEBUG 1
  ***/
 
-#define CONFIG_DEBUG 1
-
 p3ConfigMgr::p3ConfigMgr(std::string dir, std::string fname, std::string signame)
         :basedir(dir), metafname(fname), metasigfname(signame),
 	mConfigSaveActive(true)
 {
-
-
 }
 
 void	p3ConfigMgr::tick()
@@ -464,9 +460,9 @@ bool	p3Config::saveConfiguration()
 	std::string fname = Filename();
 	std::string fnametmp = Filename()+".tmp";
 
-	std::cerr << "Writting p3config file " << fname.c_str() << std::endl ;
 #ifdef CONFIG_DEBUG 
-	std::cerr << "p3Config::saveConfiguration() toSave " << toSave.size();
+        std::cerr << "Writting p3config file " << fname.c_str() << std::endl ;
+        std::cerr << "p3Config::saveConfiguration() toSave " << toSave.size();
 	std::cerr << " Elements to File: " << fname;
 	std::cerr << std::endl;
 #endif

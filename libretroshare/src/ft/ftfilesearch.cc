@@ -27,7 +27,7 @@
 
 const uint32_t MAX_SEARCHS = 24; /* lower 24 bits of hint */
 
-#define DEBUG_SEARCH 1
+//#define DEBUG_SEARCH 1
 
 ftFileSearch::ftFileSearch()
 	:mSearchs(MAX_SEARCHS)

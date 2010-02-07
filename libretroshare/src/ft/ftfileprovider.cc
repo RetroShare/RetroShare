@@ -214,9 +214,9 @@ void ftFileProvider::getClientMap(const std::string& peer_id,CompressedChunkMap&
 
 int ftFileProvider::initializeFileAttrs()
 {
-	std::cerr << "ftFileProvider::initializeFileAttrs() Filename: ";
-	std::cerr << file_name;        	
-	std::cerr << std::endl;
+        #ifdef DEBUG_FT_FILE_PROVIDER
+        std::cerr << "ftFileProvider::initializeFileAttrs() Filename: " << file_name << std::endl;
+        #endif
 	
         RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 	if (fd)
@@ -227,8 +227,9 @@ int ftFileProvider::initializeFileAttrs()
          */
 	
 	{
-		std::cerr << "ftFileProvider::initializeFileAttrs() trying (r+b) ";        	
-		std::cerr << std::endl;
+                #ifdef DEBUG_FT_FILE_PROVIDER
+                std::cerr << "ftFileProvider::initializeFileAttrs() trying (r+b) " << std::endl;
+                #endif
 	}
 
 	/* 
@@ -266,7 +267,9 @@ int ftFileProvider::initializeFileAttrs()
 
 	uint64_t recvdsize = ftello64(fd);
 
+        #ifdef DEBUG_FT_FILE_PROVIDER
         std::cerr << "ftFileProvider::initializeFileAttrs() File Expected Size: " << mSize << " RecvdSize: " << recvdsize << std::endl;
+        #endif
 	
 	return 1;
 }

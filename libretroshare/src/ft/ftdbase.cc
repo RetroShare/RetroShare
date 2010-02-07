@@ -28,7 +28,7 @@
 
 #include "serialiser/rsconfigitems.h"
 
-#define DB_DEBUG 1
+//#define DB_DEBUG 1
 
 ftFiStore::ftFiStore(CacheStrapper *cs, CacheTransfer *cft, NotifyBase *cb_in,
                         RsPeerId ownid, std::string cachedir)

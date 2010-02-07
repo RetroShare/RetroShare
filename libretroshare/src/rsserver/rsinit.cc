@@ -526,15 +526,19 @@ bool     RsInit::getPreferedAccountId(std::string &id)
 bool     RsInit::getAccountIds(std::list<std::string> &ids)
 {
 	std::list<accountId>::iterator it;
+        #ifdef AUTHSSL_DEBUG
 	std::cerr << "getAccountIds:" << std::endl;
+        #endif
 
 	for(it = RsInitConfig::accountIds.begin(); it != RsInitConfig::accountIds.end(); it++)
 	{
-		std::cerr << "SSL Id: " << it->sslId << " PGP Id " << it->pgpId <<
+                #ifdef AUTHSSL_DEBUG
+                std::cerr << "SSL Id: " << it->sslId << " PGP Id " << it->pgpId;
 		std::cerr << " PGP Name: " << it->pgpName;
 		std::cerr << " PGP Email: " << it->pgpEmail;
                 std::cerr << " Location: " << it->location;
 		std::cerr << std::endl;
+                #endif
 
 		ids.push_back(it->sslId);
 	}
@@ -694,14 +698,16 @@ bool getAvailableAccounts(std::list<accountId> &ids)
 	for(it = directories.begin(); it != directories.end(); it++)
 	{
 		std::string accountdir = RsInitConfig::basedir + RsInitConfig::dirSeperator + *it;
-		std::cerr << "getAvailableAccounts() Checking: " << *it;
-		std::cerr << std::endl;
+                #ifdef GPG_DEBUG
+                std::cerr << "getAvailableAccounts() Checking: " << *it << std::endl;
+                #endif
 
 		accountId tmpId;
 		if (checkAccount(accountdir, tmpId))
 		{
-			std::cerr << "getAvailableAccounts() Accepted: " << *it;
-			std::cerr << std::endl;
+                        #ifdef GPG_DEBUG
+                        std::cerr << "getAvailableAccounts() Accepted: " << *it << std::endl;
+                        #endif
 			ids.push_back(tmpId);
 		}
 	}
@@ -727,28 +733,36 @@ static bool checkAccount(std::string accountdir, accountId &id)
 	std::string cert_name = basename + "_cert.pem";
 	std::string userName, userId;
 
+        #ifdef AUTHSSL_DEBUG
 	std::cerr << "checkAccount() dir: " << accountdir << std::endl;
+        #endif
 
 	bool ret = false;
 
 	/* check against authmanagers private keys */
         LoadCheckX509andGetLocation(cert_name.c_str(), id.location, id.sslId);
+        #ifdef AUTHSSL_DEBUG
         std::cerr << "location: " << id.location << " id: " << id.sslId << std::endl;
+        #endif
 
-		std::string tmpid;
-		if (LoadCheckX509andGetIssuerName(cert_name.c_str(), id.pgpId, tmpid))
-		{
-			std::cerr << "issuerName: " << id.pgpId << " id: " << tmpid << std::endl;
-			RsInit::GetPGPLoginDetails(id.pgpId, id.pgpName, id.pgpEmail);
-			std::cerr << "PGPLoginDetails: " << id.pgpId << " name: " << id.pgpName;
-			std::cerr << " email: " << id.pgpEmail << std::endl;
-			ret = true;
-		}
-		else
-		{
-			std::cerr << "GetIssuerName FAILED!" << std::endl;
-			ret = false;
-		}
+        std::string tmpid;
+        if (LoadCheckX509andGetIssuerName(cert_name.c_str(), id.pgpId, tmpid))
+        {
+                #ifdef GPG_DEBUG
+                std::cerr << "issuerName: " << id.pgpId << " id: " << tmpid << std::endl;
+                #endif
+                RsInit::GetPGPLoginDetails(id.pgpId, id.pgpName, id.pgpEmail);
+                #ifdef GPG_DEBUG
+                std::cerr << "PGPLoginDetails: " << id.pgpId << " name: " << id.pgpName;
+                std::cerr << " email: " << id.pgpEmail << std::endl;
+                #endif
+                ret = true;
+        }
+        else
+        {
+                std::cerr << "GetIssuerName FAILED!" << std::endl;
+                ret = false;
+        }
 
 	return ret;
 }
@@ -771,8 +785,9 @@ int      RsInit::GetPGPLogins(std::list<std::string> &pgpIds) {
 
 int      RsInit::GetPGPLoginDetails(std::string id, std::string &name, std::string &email)
 {
-        std::cerr << "RsInit::GetPGPLoginDetails for \"" << id << "\"";
-        std::cerr << std::endl;
+        #ifdef GPG_DEBUG
+        std::cerr << "RsInit::GetPGPLoginDetails for \"" << id << "\"" << std::endl;
+        #endif
 
         name = AuthGPG::getAuthGPG()->getGPGName(id);
         email = AuthGPG::getAuthGPG()->getGPGEmail(id);
@@ -795,7 +810,7 @@ bool RsInit::SelectGPGAccount(std::string id)
         if (0 < AuthGPG::getAuthGPG() -> GPGInit(gpgId))
 	{
 		ok = true;
-		std::cerr << "PGP Auth Success!";
+                std::cerr << "PGP Auth Success! ";
 		std::cerr << "ID: " << id << " NAME: " << name;
 		std::cerr << std::endl;
 	}
@@ -1143,7 +1158,6 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 	}
 
 	std::cerr << "RsInitConfig::load_key.c_str() : " << RsInitConfig::load_key.c_str() << std::endl;
-        std::cerr << "sslPassword : " << sslPassword << std::endl;;
         if (0 < AuthSSL::getAuthSSL() -> InitAuth(RsInitConfig::load_cert.c_str(), RsInitConfig::load_key.c_str(), sslPassword))
 	{
 		ok = true;
@@ -1620,7 +1634,7 @@ std::string RsInit::RsConfigDirectory()
 std::string RsInit::RsProfileConfigDirectory()
 {
     std::string dir = RsInitConfig::basedir + RsInitConfig::dirSeperator + RsInitConfig::preferedId;
-    std::cerr << "RsInit::RsProfileConfigDirectory() returning : " << dir << std::endl;
+    //std::cerr << "RsInit::RsProfileConfigDirectory() returning : " << dir << std::endl;
     return dir;
 }
 
@@ -1918,8 +1932,6 @@ int RsServer::StartupRetroShare()
 
 	/**************************************************************************/
 	/* need to Monitor too! */
-        std::cerr << "need to Monitor too!" << std::endl;
-
 	mConnMgr->addMonitor(pqih);
 	mConnMgr->addMonitor(mCacheStrapper);
 	mConnMgr->addMonitor(ad);

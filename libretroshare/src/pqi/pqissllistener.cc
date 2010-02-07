@@ -169,7 +169,7 @@ int	pqissllistenbase::setuplisten()
 		out << "\tSetup Port: " << ntohs(laddr.sin_port);
 
 		pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, out.str());
-		std::cerr << out.str() << std::endl;
+                //std::cerr << out.str() << std::endl;
 	}
 	
 	/* added a call to REUSEADDR, so that we can re-open an existing socket

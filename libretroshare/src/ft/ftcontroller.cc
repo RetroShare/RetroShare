@@ -243,7 +243,9 @@ void ftController::tickTransfers()
 	
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
+        #ifdef CONTROL_DEBUG
 	std::cerr << "ticking transfers." << std::endl ;
+        #endif
 	mPriorityTab = std::vector<std::vector<ftTransferModule*> >(3,std::vector<ftTransferModule*>()) ;
 
 	for(std::map<std::string,ftFileControl>::iterator it(mDownloads.begin()); it != mDownloads.end(); it++)
@@ -258,11 +260,13 @@ void ftController::tickTransfers()
 //	static const float    LOW_PRIORITY_PROB = 0.15 ;
 //	static const float   SUSP_PRIORITY_PROB = 0.00 ;
 
+        #ifdef CONTROL_DEBUG
 	std::cerr << "Priority tabs: " ;
 	std::cerr << "Low ("    << mPriorityTab[SPEED_LOW   ].size() << ") " ;
 	std::cerr << "Normal (" << mPriorityTab[SPEED_NORMAL].size() << ") " ;
 	std::cerr << "High ("   << mPriorityTab[SPEED_HIGH  ].size() << ") " ;
 	std::cerr << std::endl ;
+        #endif
 
 	/* tick the transferModules */
 

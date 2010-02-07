@@ -799,7 +799,9 @@ RsSerialiser *p3disc::setupSerialiser()
 
 std::list<RsItem*> p3disc::saveList(bool& cleanup)
 {
-        std::cerr << "p3disc::saveList() called" << std::endl ;
+        #ifdef P3DISC_DEBUG
+        std::cerr << "p3disc::saveList() called" << std::endl;
+        #endif
         cleanup = true ;
         std::list<RsItem*> lst ;
 
@@ -813,7 +815,9 @@ std::list<RsItem*> p3disc::saveList(bool& cleanup)
             time_string << mapIt->second;
             kv.value = time_string.str();
             vitem->tlvkvs.pairs.push_back(kv) ;
+            #ifdef P3DISC_DEBUG
             std::cerr << "p3disc::saveList() saving : " << mapIt->first << " ; " << mapIt->second << std::endl ;
+            #endif
         }
         lst.push_back(vitem);
 
@@ -822,7 +826,9 @@ std::list<RsItem*> p3disc::saveList(bool& cleanup)
 
 bool p3disc::loadList(std::list<RsItem*> load)
 {
+        #ifdef P3DISC_DEBUG
         std::cerr << "p3disc::loadList() Item Count: " << load.size() << std::endl;
+        #endif
 
         RsStackMutex stack(mDiscMtx); /****** STACK LOCK MUTEX *******/
 
@@ -832,9 +838,11 @@ bool p3disc::loadList(std::list<RsItem*> load)
                 RsConfigKeyValueSet *vitem = dynamic_cast<RsConfigKeyValueSet *>(*it);
 
                 if(vitem) {
+                        #ifdef P3DISC_DEBUG
                         std::cerr << "p3disc::loadList() General Variable Config Item:" << std::endl;
                         vitem->print(std::cerr, 10);
                         std::cerr << std::endl;
+                        #endif
 
                         std::list<RsTlvKeyValue>::iterator kit;
                         for(kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); kit++) {
