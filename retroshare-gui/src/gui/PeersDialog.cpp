@@ -369,10 +369,9 @@ void  PeersDialog::insertPeers()
 
         //add the gpg friends
         for(it = gpgFriends.begin(); it != gpgFriends.end(); it++) {
-            std::cerr << "" << *it << std::endl;
-//            if (*it == rsPeers->getGPGOwnId()) {
-//                continue;
-//            }
+            #ifdef PEERS_DEBUG
+            std::cerr << "PeersDialog::insertPeers() inserting gpg_id : " << *it << std::endl;
+            #endif
 
             /* make a widget per friend */
             QTreeWidgetItem *gpg_item;
@@ -437,7 +436,9 @@ void  PeersDialog::insertPeers()
 
                 RsPeerDetails sslDetail;
                 if (!rsPeers->getPeerDetails(*sslIt, sslDetail) || !rsPeers->isFriend(*sslIt)) {
+                    #ifdef PEERS_DEBUG
                     std::cerr << "Removing widget from the view : id : " << *sslIt << std::endl;
+                    #endif
                     //child has disappeared, remove it from the gpg_item
                     gpg_item->removeChild(sslItem);
                 }
@@ -575,8 +576,7 @@ void PeersDialog::exportfriend()
 	if (file != "")
 	{
 #ifdef PEERS_DEBUG
-        	std::cerr << "PeersDialog::exportfriend() Saving to: " << file << std::endl;
-        	std::cerr << std::endl;
+                std::cerr << "PeersDialog::exportfriend() Saving to: " << file << std::endl;
 #endif
 		if (rsPeers)
 		{
@@ -841,7 +841,9 @@ void PeersDialog::updatePeersCustomStateString(const QString& peer_id)
 
 void PeersDialog::updatePeersAvatar(const QString& peer_id)
 {
+        #ifdef PEERS_DEBUG
 	std::cerr << "PeersDialog: Got notified of new avatar for peer " << peer_id.toStdString() << std::endl ;
+        #endif
 
 	PopupChatDialog *pcd = getPrivateChat(peer_id.toStdString(),rsPeers->getPeerName(peer_id.toStdString()), 0);
 	pcd->updatePeerAvatar(peer_id.toStdString());
@@ -856,7 +858,9 @@ void PeersDialog::updatePeerStatusString(const QString& peer_id,const QString& s
 	}
 	else
 	{
+                #ifdef PEERS_DEBUG
 		std::cerr << "Updating public chat msg from peer " << rsPeers->getPeerName(peer_id.toStdString()) << ": " << status_string.toStdString() << std::endl ;
+                #endif
 
 		updateStatusString(status_string) ;
 	}
@@ -866,9 +870,9 @@ void PeersDialog::insertChat()
 {
 	if (!rsMsgs->chatAvailable())
 	{
-#ifdef PEERS_DEBUG
+                #ifdef PEERS_DEBUG
 		std::cerr << "no chat available." << std::endl ;
-#endif
+                #endif
 		return;
 	}
 
@@ -878,9 +882,10 @@ void PeersDialog::insertChat()
 		std::cerr << "could not get new chat." << std::endl ;
 		return;
 	}
-
-		std::cerr << "got new chat." << std::endl ;
-    QTextEdit *msgWidget = ui.msgText;
+        #ifdef PEERS_DEBUG
+        std::cerr << "got new chat." << std::endl;
+        #endif
+        QTextEdit *msgWidget = ui.msgText;
 	std::list<ChatInfo>::iterator it;
 
         /** A RshareSettings object used for saving/loading settings */
@@ -891,9 +896,9 @@ void PeersDialog::insertChat()
 	for(it = newchat.begin(); it != newchat.end(); it++)
 	{
                 std::string msg(it->msg.begin(), it->msg.end());
-#ifdef PEERS_DEBUG
+                #ifdef PEERS_DEBUG
 		std::cerr << "PeersDialog::insertChat(): " << msg << std::endl;
-#endif
+                #endif
 
 		/* are they private? */
 		if (it->chatflags & RS_CHAT_PRIVATE)
@@ -1003,9 +1008,9 @@ void PeersDialog::sendMsg()
     //historyKeeper.addMessage("THIS", "ALL", lineWidget->toHtml() );
 
 	std::string msg(ci.msg.begin(), ci.msg.end());
-#ifdef PEERS_DEBUG
+        #ifdef PEERS_DEBUG
 	std::cerr << "PeersDialog::sendMsg(): " << msg << std::endl;
-#endif
+        #endif
 
 	rsMsgs -> ChatSend(ci);
 	ui.lineEdit->clear();
@@ -1087,9 +1092,9 @@ void  PeersDialog::insertSendList()
 
 void PeersDialog::toggleSendItem( QTreeWidgetItem *item, int col )
 {
-#ifdef PEERS_DEBUG
+        #ifdef PEERS_DEBUG
 	std::cerr << "ToggleSendItem()" << std::endl;
-#endif
+        #endif
 
 	/* extract id */
 	std::string id = (item -> text(4)).toStdString();
@@ -1115,8 +1120,9 @@ PeersDialog::getPrivateChat(std::string id, std::string name, uint chatflags)
    if (chatflags & RS_CHAT_REOPEN)
    {
   	show = true;
-	std::cerr << "reopen flag so: enable SHOW popupchatdialog()";
-	std::cerr << std::endl;
+        #ifdef PEERS_DEBUG
+        std::cerr << "reopen flag so: enable SHOW popupchatdialog()" << std::endl;
+#endif
    }
 
 
@@ -1133,8 +1139,9 @@ PeersDialog::getPrivateChat(std::string id, std::string name, uint chatflags)
 
 	if (chatflags & RS_CHAT_OPEN_NEW)
 	{
-		std::cerr << "new chat so: enable SHOW popupchatdialog()";
-		std::cerr << std::endl;
+                #ifdef PEERS_DEBUG
+                std::cerr << "new chat so: enable SHOW popupchatdialog()" << std::endl;
+                #endif
 
 		show = true;
 	}
@@ -1142,8 +1149,9 @@ PeersDialog::getPrivateChat(std::string id, std::string name, uint chatflags)
 
    if (show)
    {
-	std::cerr << "SHOWING popupchatdialog()";
-	std::cerr << std::endl;
+        #ifdef PEERS_DEBUG
+        std::cerr << "SHOWING popupchatdialog()" << std::endl;
+        #endif
 
 	popupchatdialog->show();
    }
@@ -1153,23 +1161,26 @@ PeersDialog::getPrivateChat(std::string id, std::string name, uint chatflags)
    {
 	   if (chatflags & RS_CHAT_FOCUS)
 	   {
-		std::cerr << "focus chat flag so: GETFOCUS popupchatdialog()";
-		std::cerr << std::endl;
+                #ifdef PEERS_DEBUG
+                std::cerr << "focus chat flag so: GETFOCUS popupchatdialog()" << std::endl;
+                #endif
 
 		popupchatdialog->getfocus();
 	   }
 	   else
 	   {
-		std::cerr << "no focus chat flag so: FLASH popupchatdialog()";
-		std::cerr << std::endl;
+                #ifdef PEERS_DEBUG
+                std::cerr << "no focus chat flag so: FLASH popupchatdialog()" << std::endl;
+                #endif
 
 		popupchatdialog->flash();
 	   }
    }
    else
    {
-	std::cerr << "not visible ... so leave popupchatdialog()";
-	std::cerr << std::endl;
+        #ifdef PEERS_DEBUG
+        std::cerr << "not visible ... so leave popupchatdialog()" << std::endl;
+        #endif
    }
 
    return popupchatdialog;
@@ -1412,7 +1423,9 @@ void PeersDialog::updateAvatar()
 
 	rsMsgs->getOwnAvatarData(data,size); 
 
+        #ifdef PEERS_DEBUG
 	std::cerr << "Image size = " << size << std::endl ;
+        #endif
 
 	if(size == 0)
 	   std::cerr << "Got no image" << std::endl ;
@@ -1435,7 +1448,9 @@ void PeersDialog::getAvatar()
 	{
 		picture = QPixmap(fileName).scaled(82,82, Qt::IgnoreAspectRatio);
 
+                #ifdef PEERS_DEBUG
 		std::cerr << "Sending avatar image down the pipe" << std::endl ;
+                #endif
 
 		// send avatar down the pipe for other peers to get it.
 		QByteArray ba;
@@ -1443,7 +1458,9 @@ void PeersDialog::getAvatar()
 		buffer.open(QIODevice::WriteOnly);
 		picture.save(&buffer, "PNG"); // writes image into ba in PNG format
 
+                #ifdef PEERS_DEBUG
 		std::cerr << "Image size = " << ba.size() << std::endl ;
+                #endif
 
 		rsMsgs->setOwnAvatarData((unsigned char *)(ba.data()),ba.size()) ;	// last char 0 included.
 
@@ -1518,8 +1535,7 @@ void PeersDialog::addExtraFile()
 
 void PeersDialog::addAttachment(std::string filePath) {
 	    /* add a AttachFileItem to the attachment section */
-	    std::cerr << "PopupChatDialog::addExtraFile() hashing file.";
-	    std::cerr << std::endl;
+            std::cerr << "PopupChatDialog::addExtraFile() hashing file." << std::endl;
 
 	    /* add widget in for new destination */
 	    AttachFileItem *file = new AttachFileItem(filePath);
@@ -1536,14 +1552,13 @@ void PeersDialog::addAttachment(std::string filePath) {
 }
 
 void PeersDialog::fileHashingFinished(AttachFileItem* file) {
-        std::cerr << "PeersDialog::fileHashingFinished() started.";
-	std::cerr << std::endl;
+        std::cerr << "PeersDialog::fileHashingFinished() started." << std::endl;
 
 	//check that the file is ok tos end
 	if (file->getState() == AFI_STATE_ERROR) {
-	#ifdef CHAT_DEBUG
-		    std::cerr << "PopupChatDialog::fileHashingFinished error file is not hashed.";
-	#endif
+            #ifdef PEERS_DEBUG
+            std::cerr << "PopupChatDialog::fileHashingFinished error file is not hashed." << std::endl;
+            #endif
 	    return;
 	}
 
@@ -1560,16 +1575,16 @@ void PeersDialog::fileHashingFinished(AttachFileItem* file) {
 	  rsiface->unlockData(); /* Unlock Interface */
 	}
 
-  //convert fileSize from uint_64 to string for html link
+        //convert fileSize from uint_64 to string for html link
 	char fileSizeChar [100];
 	sprintf(fileSizeChar, "%lld", file->FileSize());
 	std::string fileSize = *(&fileSizeChar);
 
 	std::string mesgString = "<a href='retroshare://file|" + (file->FileName()) + "|" + fileSize + "|" + (file->FileHash()) + "'>" 
 	+ "retroshare://file|" + (file->FileName()) + "|" + fileSize +  "|" + (file->FileHash())  + "</a>";
-#ifdef PEERS_DEBUG
-            std::cerr << "PeersDialog::fileHashingFinished mesgString : " << mesgString << std::endl;
-#endif
+        #ifdef PEERS_DEBUG
+        std::cerr << "PeersDialog::fileHashingFinished mesgString : " << mesgString << std::endl;
+        #endif
 
 	const char * messageString = mesgString.c_str ();
 
@@ -1595,9 +1610,9 @@ void PeersDialog::fileHashingFinished(AttachFileItem* file) {
 
 void PeersDialog::anchorClicked (const QUrl& link ) 
 {
-    #ifdef PEERS_DEBUG
-                    std::cerr << "PeersDialog::anchorClicked link.scheme() : " << link.scheme().toStdString() << std::endl;
-    #endif
+        #ifdef PEERS_DEBUG
+        std::cerr << "PeersDialog::anchorClicked link.scheme() : " << link.scheme().toStdString() << std::endl;
+        #endif
     
 	if (link.scheme() == "retroshare")
 	{
@@ -1607,9 +1622,9 @@ void PeersDialog::anchorClicked (const QUrl& link )
 		uint64_t fileSize = L.at(2).toULongLong();
 		std::string fileHash = L.at(3).toStdString() ;
 
-#ifdef PEERS_DEBUG
+                #ifdef PEERS_DEBUG
 		std::cerr << "PeersDialog::anchorClicked FileRequest : fileName : " << fileName << ". fileHash : " << fileHash << ". fileSize : " << fileSize << std::endl;
-#endif
+                #endif
 
 		if (fileName != "" && fileHash != "")
 		{
@@ -1654,37 +1669,31 @@ void PeersDialog::dropEvent(QDropEvent *event)
 {
 	if (!(Qt::CopyAction & event->possibleActions()))
 	{
-		std::cerr << "PeersDialog::dropEvent() Rejecting uncopyable DropAction";
-		std::cerr << std::endl;
+                std::cerr << "PeersDialog::dropEvent() Rejecting uncopyable DropAction" << std::endl;
 
 		/* can't do it */
 		return;
 	}
 
-	std::cerr << "PeersDialog::dropEvent() Formats";
-	std::cerr << std::endl;
+        std::cerr << "PeersDialog::dropEvent() Formats" << std::endl;
 	QStringList formats = event->mimeData()->formats();
 	QStringList::iterator it;
 	for(it = formats.begin(); it != formats.end(); it++)
 	{
-		std::cerr << "Format: " << (*it).toStdString();
-		std::cerr << std::endl;
+                std::cerr << "Format: " << (*it).toStdString() << std::endl;
 	}
 
 	if (event->mimeData()->hasUrls())
 	{
-		std::cerr << "PeersDialog::dropEvent() Urls:";
-		std::cerr << std::endl;
+                std::cerr << "PeersDialog::dropEvent() Urls:" << std::endl;
 
 		QList<QUrl> urls = event->mimeData()->urls();
 		QList<QUrl>::iterator uit;
 		for(uit = urls.begin(); uit != urls.end(); uit++)
 		{
 			std::string localpath = uit->toLocalFile().toStdString();
-			std::cerr << "Whole URL: " << uit->toString().toStdString();
-			std::cerr << std::endl;
-			std::cerr << "or As Local File: " << localpath;
-			std::cerr << std::endl;
+                        std::cerr << "Whole URL: " << uit->toString().toStdString() << std::endl;
+                        std::cerr << "or As Local File: " << localpath << std::endl;
 
 			if (localpath.size() > 0)
 			{
@@ -1714,25 +1723,21 @@ void PeersDialog::dropEvent(QDropEvent *event)
 void PeersDialog::dragEnterEvent(QDragEnterEvent *event)
 {
 	/* print out mimeType */
-	std::cerr << "PeersDialog::dragEnterEvent() Formats";
-	std::cerr << std::endl;
+        std::cerr << "PeersDialog::dragEnterEvent() Formats" << std::endl;
 	QStringList formats = event->mimeData()->formats();
 	QStringList::iterator it;
 	for(it = formats.begin(); it != formats.end(); it++)
 	{
-		std::cerr << "Format: " << (*it).toStdString();
-		std::cerr << std::endl;
+                std::cerr << "Format: " << (*it).toStdString() << std::endl;
 	}
 
 	if (event->mimeData()->hasUrls())
 	{
-		std::cerr << "PeersDialog::dragEnterEvent() Accepting Urls";
-		std::cerr << std::endl;
+                std::cerr << "PeersDialog::dragEnterEvent() Accepting Urls" << std::endl;
 		event->acceptProposedAction();
 	}
 	else
 	{
-		std::cerr << "PeersDialog::dragEnterEvent() No Urls";
-		std::cerr << std::endl;
+                std::cerr << "PeersDialog::dragEnterEvent() No Urls" << std::endl;
 	}
 }

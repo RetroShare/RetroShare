@@ -504,7 +504,9 @@ bool	p3Config::saveConfiguration()
 	if(!written)
 		return false ;
 
-	std::cerr << "renaming " << fnametmp.c_str() << " to " << fname.c_str() << std::endl ;
+        #ifdef CONFIG_DEBUG
+        std::cerr << "renaming " << fnametmp.c_str() << " to " << fname.c_str() << std::endl;
+        #endif
 
 	if(!RsDirUtil::renameFile(fnametmp,fname))
 	{
@@ -517,8 +519,9 @@ bool	p3Config::saveConfiguration()
 	   getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "File rename error", "Error while renaming file " + fname + ": got error "+errlog.str());
 		return false ;
 	}
-
+        #ifdef CONFIG_DEBUG
 	std::cerr << "Successfully wrote p3config file " << fname.c_str() << std::endl ;
+        #endif
 	/* else okay */
 	return true;
 }

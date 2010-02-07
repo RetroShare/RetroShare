@@ -37,8 +37,6 @@
 #define RSSERIAL_DEBUG 1
 ***/
 
-#define RSSERIAL_DEBUG 1
-
 #include <iostream>
 
 /*************************************************************************/
@@ -618,7 +616,7 @@ bool RsDiscSerialiser::serialiseHeartbeat(RsDiscHeartbeat *item, void *data, uin
     ok &= setRsItemHeader(data, *pktsize, item->PacketId(), *pktsize);
 
 #ifdef RSSERIAL_DEBUG
-    std::cerr << "RsDiscSerialiser::serialiseHeartbeat() Header: " << ok << std::endl;
+        std::cerr << "RsDiscSerialiser::serialiseHeartbeat() Header: " << ok << std::endl;
         std::cerr << "RsDiscSerialiser::serialiseHeartbeat() Size: " << tlvsize << std::endl;
 #endif
 

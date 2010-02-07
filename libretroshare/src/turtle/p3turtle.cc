@@ -247,7 +247,9 @@ void p3turtle::autoWash()
 
 			if(it == _incoming_file_hashes.end())
 			{
+                                #ifdef P3TURTLE_DEBUG
 				std::cerr << "p3turtle: asked to stop monitoring file hash " << _hashes_to_remove[i] << ", but this hash is actually not handled by the turtle router." << std::endl ;
+                                #endif
 				continue ;
 			}
 

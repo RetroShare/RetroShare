@@ -361,16 +361,12 @@ bool   AuthGPG::storeAllKeys_locked()
                 nu.fpr = mainsubkey->fpr;
 
 #ifdef GPG_DEBUG
-                std::cerr << "MAIN KEYID: " << nu.id;
-                std::cerr << " FPR: " << nu.fpr;
-		std::cerr << std::endl;
+                std::cerr << "MAIN KEYID: " << nu.id << " FPR: " << nu.fpr << std::endl;
 
 		gpgme_subkey_t subkeylist = KEY->subkeys;
 		while(subkeylist != NULL)
 		{
-			std::cerr << "\tKEYID: " << subkeylist->keyid;
-			std::cerr << " FPR: " << subkeylist->fpr;
-			std::cerr << std::endl;
+                        std::cerr << "\tKEYID: " << subkeylist->keyid << " FPR: " << subkeylist->fpr << std::endl;
 
 			subkeylist = subkeylist->next;
 		}
@@ -646,22 +642,19 @@ bool AuthGPG::DoOwnSignature_locked(const void *data, unsigned int datalen, void
 	gpgme_signers_clear(CTX);
 	if (GPG_ERR_NO_ERROR != gpgme_signers_add(CTX, mOwnGpgCert.key))
 	{
-                std::cerr << "AuthGPG::DoOwnSignature() Error Adding Signer";
-		std::cerr << std::endl;
+                std::cerr << "AuthGPG::DoOwnSignature() Error Adding Signer" << std::endl;
 	}
 
 	gpgme_data_t gpgmeData;
 	gpgme_data_t gpgmeSig;
 	if (GPG_ERR_NO_ERROR != gpgme_data_new_from_mem(&gpgmeData, (const char *) data, datalen, 1))
 	{
-		std::cerr << "Error create Data";
-		std::cerr << std::endl;
+                std::cerr << "Error create Data" << std::endl;
 	}
 
 	if (GPG_ERR_NO_ERROR != gpgme_data_new(&gpgmeSig))
 	{
-		std::cerr << "Error create Sig";
-		std::cerr << std::endl;
+                std::cerr << "Error create Sig" << std::endl;
 	}
 
 	/* move string data to gpgmeData */
@@ -1110,22 +1103,18 @@ std::string AuthGPG::SaveCertificateToString(std::string id)
 
 	if (GPG_ERR_NO_ERROR != gpgme_data_new (&gpgmeData))
 	{
-		std::cerr << "Error create Data";
-		std::cerr << std::endl;
+                std::cerr << "Error create Data" << std::endl;
 	}
 	gpgme_set_armor (CTX, 1);
 
 	if (GPG_ERR_NO_ERROR != gpgme_op_export_ext (CTX, pattern, 0, gpgmeData))
 	{
-		std::cerr << "Error export Data";
-		std::cerr << std::endl;
+                std::cerr << "Error export Data" << std::endl;
 	}
 	gpgme_data_write (gpgmeData, "", 1); 	// to be able to convert it into a string
 
 	fflush (NULL);
-	fputs ("Begin Result:\n", stdout);
-	showData (gpgmeData);
-	fputs ("End Result.\n", stdout);
+        showData (gpgmeData);
 
 	size_t len = 0; 
 	char *export_txt = gpgme_data_release_and_get_mem(gpgmeData, &len);
