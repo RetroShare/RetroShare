@@ -33,6 +33,8 @@ echo "DESTDIR = ../../libretroshare/src/lib/" > /tmp/toto75299
 cat retroshare-0.5/src/libretroshare/libretroshare.pro /tmp/toto75299 > /tmp/toto752992
 cp /tmp/toto752992 retroshare-0.5/src/libretroshare/libretroshare.pro
 
+cat retroshare-gui-ext.pro >> retroshare-0.5/src/retroshare-gui/retroshare-gui.pro 
+
 mkdir retroshare-0.5.orig
 cp -r retroshare-0.5/src retroshare-0.5.orig
 
