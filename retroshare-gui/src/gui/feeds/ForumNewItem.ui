@@ -14,17 +14,8 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout">
-   <property name="leftMargin">
-    <number>0</number>
-   </property>
-   <property name="topMargin">
-    <number>1</number>
-   </property>
-   <property name="rightMargin">
-    <number>0</number>
-   </property>
-   <property name="bottomMargin">
-    <number>1</number>
+   <property name="margin">
+    <number>6</number>
    </property>
    <item row="0" column="0">
     <widget class="QFrame" name="frame">
@@ -35,8 +26,10 @@
       </sizepolicy>
      </property>
      <property name="styleSheet">
-      <string notr="true">QFrame#frame{border: 2px solid black;
-background: white;}</string>
+      <string notr="true">QFrame#frame{border: 2px solid orange;
+background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #F7B552, stop: 1 #FB8428);
+border-radius: 10px}</string>
      </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
@@ -45,11 +38,14 @@ background: white;}</string>
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QVBoxLayout">
+      <property name="leftMargin">
+       <number>9</number>
+      </property>
       <property name="topMargin">
-       <number>0</number>
+       <number>6</number>
       </property>
       <property name="bottomMargin">
-       <number>0</number>
+       <number>6</number>
       </property>
       <item>
        <layout class="QHBoxLayout">
@@ -271,6 +267,12 @@ background: white;}</string>
   </layout>
  </widget>
  <resources>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
