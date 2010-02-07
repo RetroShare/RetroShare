@@ -503,6 +503,11 @@ void MainWindow::doQuit()
 	rApp->quit();
 }
 
+void MainWindow::displayErrorMessage(int a,int b,const QString& error_msg)
+{
+	QMessageBox::critical(NULL, tr("Internal Error"),error_msg) ;
+}
+
 void MainWindow::closeEvent(QCloseEvent *e)
 {
     static bool firstTime = true;

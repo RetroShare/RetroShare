@@ -40,6 +40,7 @@ class NotifyQt: public QObject, public NotifyBase
 		virtual void notifyPeerHasNewAvatar(std::string peer_id) ;
 		virtual void notifyOwnAvatarChanged() ;
 		virtual void notifyOwnStatusMessageChanged() ;
+
 		virtual std::string askForPassword(const std::string& window_title,const std::string& text) ;
 
 	signals:
@@ -61,6 +62,7 @@ class NotifyQt: public QObject, public NotifyBase
 		void peerHasNewAvatar(const QString& peer_id) const ;
 		void ownAvatarChanged() const ;
 		void ownStatusMessageChanged() const ;
+		void errorOccurred(int,int,const QString&) const ;
 
 	public slots:
 

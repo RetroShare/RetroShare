@@ -31,11 +31,7 @@
 
 void NotifyQt::notifyErrorMsg(int list, int type, std::string msg)
 {
-	(void) list;
-	(void) type;
-	(void) msg;
-
-	return;
+	emit errorOccurred(list,type,QString::fromStdString(msg)) ;
 }
 
 void NotifyQt::notifyOwnAvatarChanged()

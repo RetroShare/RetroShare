@@ -102,6 +102,10 @@ void	StartupThreads();
 	/* own thread */
 virtual void	run();
 
+// Checks that the given hash is well formed. Used to chase 
+// string bugs.
+static bool checkHash(const std::string& hash,std::string& error_string) ;
+
 	/***************************************************************/
 	/*************** Control Interface *****************************/
 	/************** (Implements RsFiles) ***************************/

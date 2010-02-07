@@ -23,6 +23,7 @@
  *
  */
 
+#include <sstream>
 #include "util/rsdebug.h"
 #include "util/rsdir.h"
 #include "rsiface/rstypes.h"
@@ -243,8 +244,42 @@ void	ftServer::run()
 	/********************** Controller Access **********************/
 	/***************************************************************/
 
+bool ftServer::checkHash(const std::string& hash,std::string& error_string)
+{
+	static const uint32_t HASH_LENGTH = 40 ;
+
+	if(hash.length() != HASH_LENGTH)
+	{
+		std::ostringstream is ;
+		is << "Line too long : " << hash.length() << " chars, " << HASH_LENGTH << " expected." ;
+		is.flush() ;
+		error_string = is.str() ;
+		return false ;
+	}
+
+	for(uint i=0;i<hash.length();++i)
+		if(!((hash[i] > 47 && hash[i] < 58) || (hash[i] > 96 && hash[i] < 103)))
+		{
+			std::ostringstream is;
+			is << "unexpected char code=" << (int)hash[i] << " '" << hash[i] << "'" ;
+			is.flush() ;
+			error_string = is.str() ;
+			return false ;
+		}
+
+	return true ;
+}
+
 bool ftServer::FileRequest(std::string fname, std::string hash, uint64_t size, std::string dest, uint32_t flags, std::list<std::string> srcIds)
 {
+	std::string error_string ;
+
+	if(!checkHash(hash,error_string))
+	{
+		rsicontrol->getNotify().notifyErrorMsg(0,0,"Error handling hash \""+hash+"\". This hash appears to be invalid(Error string=\""+error_string+"\"). This is probably due an bad handling of strings.") ;
+		return false ;
+	}
+
    std::cerr << "Requesting " << fname << std::endl ;
 
 	if(mFtController->alreadyHaveFile(hash))

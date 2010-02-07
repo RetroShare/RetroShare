@@ -102,6 +102,7 @@ public slots:
     void showWindow(Page page);
 
     void updateHashingInfo(const QString&) ;
+	 void displayErrorMessage(int,int,const QString&) ;
 	
 protected:
     void closeEvent(QCloseEvent *);
