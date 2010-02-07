@@ -129,7 +129,7 @@ SearchDialog::SearchDialog(QWidget *parent)
 
 
     /* hide the Tree +/- */
-    ui.searchResultWidget -> setRootIsDecorated( false );
+    ui.searchResultWidget -> setRootIsDecorated( true );
     ui.searchResultWidget -> setColumnHidden( SR_UID_COL,true );
     ui.searchResultWidget -> setColumnHidden( SR_REALSIZE_COL,true );
     ui.searchSummaryWidget -> setRootIsDecorated( false );
@@ -672,7 +672,7 @@ void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, 
 		}
 
 		/* translate search result for a file */
-
+		
 		child->setText(SR_NAME_COL, QString::fromUtf8(dir.name.c_str()));
 		child->setText(SR_HASH_COL, QString::fromStdString(dir.hash));
 		QString ext = QFileInfo(QString::fromStdString(dir.name)).suffix();
@@ -698,8 +698,8 @@ void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, 
 		} else {
 			child = new QTreeWidgetItem(item);
 		}
-
-		child->setIcon(SR_ICON_COL, QIcon(IMAGE_DIRECTORY));
+    
+		child->setIcon(SR_NAME_COL, QIcon(IMAGE_DIRECTORY));
 		child->setText(SR_NAME_COL, QString::fromUtf8(dir.name.c_str()));
 		child->setText(SR_HASH_COL, QString::fromStdString(dir.hash));
 		child->setText(SR_SIZE_COL, misc::friendlyUnit(dir.count));
@@ -708,6 +708,8 @@ void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, 
 		child->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
 		child->setText(SR_ID_COL, QString::number(1));
 		child->setText(SR_SEARCH_ID_COL, sid_hexa);
+		child->setText(SR_TYPE_COL, tr("Folder"));
+
 
 		if (item == NULL) {
 			ui.searchResultWidget->addTopLevelItem(child);
@@ -785,7 +787,7 @@ void SearchDialog::insertFile(const std::string& txt,qulonglong searchId, const 
 	if(!found)
 	{
 		/* translate search results */
-
+		
 		QTreeWidgetItem *item = new QTreeWidgetItem();
 		item->setText(SR_NAME_COL, QString::fromUtf8(file.name.c_str()));
 		item->setText(SR_HASH_COL, QString::fromStdString(file.hash));
@@ -907,56 +909,56 @@ void SearchDialog::setIconAndType(QTreeWidgetItem *item, QString &ext)
 	if (ext == "jpg" || ext == "jpeg" || ext == "png" || ext == "gif" || ext == "bmp" || ext == "ico" 
 	|| ext == "svg" || ext == "tif" || ext == "tiff" || ext == "JPG")
 	{
-		item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypePicture.png"));
+		item->setIcon(SR_NAME_COL, QIcon(":/images/FileTypePicture.png"));
 		item->setText(SR_TYPE_COL, QString::fromUtf8("Picture"));
 	}
 	else if (ext == "avi" || ext == "mpg" || ext == "mpeg" || ext == "wmv" || ext == "mkv" || ext == "mp4" 
 	|| ext == "flv" || ext == "mov" || ext == "vob" || ext == "qt" || ext == "rm" || ext == "3gp" 
 	|| ext == "dvx" || ext == "divx")
 	{
-		item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypeVideo.png"));
+		item->setIcon(SR_NAME_COL, QIcon(":/images/FileTypeVideo.png"));
 		item->setText(SR_TYPE_COL, QString::fromUtf8("Video"));
 	}
 	else if (ext == "ogg" || ext == "mp3" || ext == "MP3"  || ext == "mp1" || ext == "mp2"  || ext == "wav" || ext == "wma")
 	{
-		item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypeAudio.png"));
+		item->setIcon(SR_NAME_COL, QIcon(":/images/FileTypeAudio.png"));
 		item->setText(SR_TYPE_COL, QString::fromUtf8("Audio"));
 	}
 	else if (ext == "tar" || ext == "bz2" || ext == "zip" || ext == "tgz" || ext == "gz" || ext == "rar"
 	 || ext == "rpm" || ext == "7z" || ext == "ace" || ext == "jar" || ext == "cab" || ext == "deb")
 	{
-		item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypeArchive.png"));
+		item->setIcon(SR_NAME_COL, QIcon(":/images/FileTypeArchive.png"));
 		item->setText(SR_TYPE_COL, QString::fromUtf8("Archive"));
 	}
 	else if (ext == "app" || ext == "bat" || ext == "cgi" || ext == "com" || ext == "bin" || ext == "exe" || ext == "js" || ext == "pif" || ext == "py" || ext == "pl" || ext == "sh" || ext == "vb" || ext == "ws")
 	{
-		item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypeProgram.png"));
+		item->setIcon(SR_NAME_COL, QIcon(":/images/FileTypeProgram.png"));
 		item->setText(SR_TYPE_COL, QString::fromUtf8("Program"));
 	}
 	else if (ext == "iso" || ext == "nrg" || ext == "mdf" || ext == "img" || ext == "dmg" || ext == "bin" )
 	{
-		item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypeCDImage.png"));
+		item->setIcon(SR_NAME_COL, QIcon(":/images/FileTypeCDImage.png"));
 		item->setText(SR_TYPE_COL, QString::fromUtf8("CD-Image"));
 	}
 	else if (ext == "txt" || ext == "cpp" || ext == "c" || ext == "h")
 	{
-		item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypeDocument.png"));
+		item->setIcon(SR_NAME_COL, QIcon(":/images/FileTypeDocument.png"));
 		item->setText(SR_TYPE_COL, QString::fromUtf8("Document"));
 	}
   else if (ext == "doc" || ext == "rtf" || ext == "sxw" || ext == "xls" || ext == "pps" || ext == "xml"
     || ext == "sxc" || ext == "odt" || ext == "ods" || ext == "dot" || ext == "ppt" || ext == "css"  )
 	{
-		item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypeDocument.png"));
+		item->setIcon(SR_NAME_COL, QIcon(":/images/FileTypeDocument.png"));
 		item->setText(SR_TYPE_COL, QString::fromUtf8("Document"));
 	}
 	else if (ext == "html" || ext == "htm" || ext == "php")
 	{
-		item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypeDocument.png"));
+		item->setIcon(SR_NAME_COL, QIcon(":/images/FileTypeDocument.png"));
 		item->setText(SR_TYPE_COL, QString::fromUtf8("Document"));
 	}
 	else
 	{
-		item->setIcon(SR_ICON_COL, QIcon(":/images/FileTypeAny.png"));
+		item->setIcon(SR_NAME_COL, QIcon(":/images/FileTypeAny.png"));
 	}
 }
 
