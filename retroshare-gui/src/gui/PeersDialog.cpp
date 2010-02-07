@@ -193,8 +193,8 @@ PeersDialog::PeersDialog(QWidget *parent)
   
   ui.menupushButton->setMenu(menu);
   
-  ui.msgText->setOpenExternalLinks ( false );
-  ui.msgText->setOpenLinks ( false );
+  //ui.msgText->setOpenExternalLinks ( false );
+  //ui.msgText->setOpenLinks ( false );
   
   setAcceptDrops(true);
   ui.lineEdit->setAcceptDrops(false);
@@ -890,7 +890,7 @@ void PeersDialog::insertChat()
 	/* add in lines at the bottom */
 	for(it = newchat.begin(); it != newchat.end(); it++)
 	{
-		std::string msg(it->msg.begin(), it->msg.end());
+                std::string msg(it->msg.begin(), it->msg.end());
 #ifdef PEERS_DEBUG
 		std::cerr << "PeersDialog::insertChat(): " << msg << std::endl;
 #endif
@@ -907,50 +907,64 @@ void PeersDialog::insertChat()
 		std::ostringstream out;
 		QString extraTxt;
 
-        QString timestamp = QDateTime::currentDateTime().toString("hh:mm:ss");
-        QString name = QString::fromStdString(it->name);
-        QString line = "<span style=\"color:#C00000\">" + timestamp + "</span>" +
-            		"<span style=\"color:#2D84C9\"><strong>" + " " + name + "</strong></span>";
+                QString timestamp = QDateTime::currentDateTime().toString("hh:mm:ss");
+                QString name = QString::fromStdString(it->name);
+                QString line = "<span style=\"color:#C00000\">" + timestamp + "</span>" +
+                                "<span style=\"color:#2D84C9\"><strong>" + " " + name + "</strong></span>";
 
-        //std::cerr << "PeersDialog::insertChat(): 1.11\n";
-        historyKeeper.addMessage(name, "THIS", QString::fromStdWString(it->msg));
-        //std::cerr << "PeersDialog::insertChat(): 1.12\n";
-        extraTxt += line;
+                //std::cerr << "PeersDialog::insertChat(): 1.11\n";
+                historyKeeper.addMessage(name, "THIS", QString::fromStdWString(it->msg));
+                //std::cerr << "PeersDialog::insertChat(): 1.12\n";
+                extraTxt += line;
 
-        extraTxt += QString::fromStdWString(it->msg);
+                extraTxt += QString::fromStdWString(it->msg);
 
-		  // notify with a systray icon msg
-		  if(it->rsid != rsPeers->getOwnId())
-		  {
-			  // This is a trick to translate HTML into text.
-			  QTextEdit editor ;
-			  editor.setHtml(QString::fromStdWString(it->msg));
-			  QString notifyMsg(QString::fromStdString(it->name)+": "+editor.toPlainText()) ;
+                // notify with a systray icon msg
+                if(it->rsid != rsPeers->getOwnId())
+                {
+                      // This is a trick to translate HTML into text.
+                      QTextEdit editor ;
+                      editor.setHtml(QString::fromStdWString(it->msg));
+                      QString notifyMsg(QString::fromStdString(it->name)+": "+editor.toPlainText()) ;
 
-			  if(notifyMsg.length() > 30)
-				  emit notifyGroupChat(QString("New group chat"), notifyMsg.left(30)+QString("..."));
-			  else
-				  emit notifyGroupChat(QString("New group chat"), notifyMsg);
-		  }
+                      if(notifyMsg.length() > 30)
+                              emit notifyGroupChat(QString("New group chat"), notifyMsg.left(30)+QString("..."));
+                      else
+                              emit notifyGroupChat(QString("New group chat"), notifyMsg);
+                }
 
-		QHashIterator<QString, QString> i(smileys);
-		while(i.hasNext())
-		{
-			i.next();
-			foreach(QString code, i.key().split("|"))
-				extraTxt.replace(code, "<img src=\"" + i.value() + "\" />");
-		}
+                //replace http://, https:// and www. with <a href> links
+                QRegExp rx("(https?://[^ <>]*)|(www\\.[^ <>]*)");
+                int count = 0;
+                int pos = 200; //ignore the first 200 char because of the standard DTD ref
+                while ( (pos = rx.indexIn(extraTxt, pos)) != -1 ) {
+                    //we need to look ahead to see if it's already a well formed link
+                    if (extraTxt.mid(pos - 6, 6) != "href=\"" && extraTxt.mid(pos - 6, 6) != "href='" && extraTxt.mid(pos - 6, 6) != "ttp://" ) {
+                        QString tempMessg = extraTxt.left(pos) + "<a href=\"" + rx.cap(count) + "\">" + rx.cap(count) + "</a>" + extraTxt.mid(pos + rx.matchedLength(), -1);
+                        extraTxt = tempMessg;
+                    }
+                    pos += rx.matchedLength() + 15;
+                    count ++;
+                }
 
-		if ((msgWidget->verticalScrollBar()->maximum() - 30) < msgWidget->verticalScrollBar()->value() ) {
-		    msgWidget->append(extraTxt);
-		} else {
-		    //the vertical scroll is not at the bottom, so just update the text, the scroll will stay at the current position
-		    int scroll = msgWidget->verticalScrollBar()->value();
-		    msgWidget->setHtml(msgWidget->toHtml() + extraTxt);
-		    msgWidget->verticalScrollBar()->setValue(scroll);
-		    msgWidget->update();
-		}
-	}
+                QHashIterator<QString, QString> i(smileys);
+                while(i.hasNext())
+                {
+                    i.next();
+                    foreach(QString code, i.key().split("|"))
+                            extraTxt.replace(code, "<img src=\"" + i.value() + "\" />");
+                }
+
+                if ((msgWidget->verticalScrollBar()->maximum() - 30) < msgWidget->verticalScrollBar()->value() ) {
+                msgWidget->append(extraTxt);
+                } else {
+                //the vertical scroll is not at the bottom, so just update the text, the scroll will stay at the current position
+                int scroll = msgWidget->verticalScrollBar()->value();
+                msgWidget->setHtml(msgWidget->toHtml() + extraTxt);
+                msgWidget->verticalScrollBar()->setValue(scroll);
+                msgWidget->update();
+                }
+       }
 }
 
 void PeersDialog::checkChat()
@@ -1522,7 +1536,7 @@ void PeersDialog::addAttachment(std::string filePath) {
 }
 
 void PeersDialog::fileHashingFinished(AttachFileItem* file) {
-	std::cerr << "PopupChatDialog::fileHashingFinished() started.";
+        std::cerr << "PeersDialog::fileHashingFinished() started.";
 	std::cerr << std::endl;
 
 	//check that the file is ok tos end
@@ -1553,8 +1567,8 @@ void PeersDialog::fileHashingFinished(AttachFileItem* file) {
 
 	std::string mesgString = "<a href='retroshare://file|" + (file->FileName()) + "|" + fileSize + "|" + (file->FileHash()) + "'>" 
 	+ "retroshare://file|" + (file->FileName()) + "|" + fileSize +  "|" + (file->FileHash())  + "</a>";
-#ifdef CHAT_DEBUG
-	    std::cerr << "CreateForumMsg::anchorClicked mesgString : " << mesgString << std::endl;
+#ifdef PEERS_DEBUG
+            std::cerr << "PeersDialog::fileHashingFinished mesgString : " << mesgString << std::endl;
 #endif
 
 	const char * messageString = mesgString.c_str ();
@@ -1581,8 +1595,8 @@ void PeersDialog::fileHashingFinished(AttachFileItem* file) {
 
 void PeersDialog::anchorClicked (const QUrl& link ) 
 {
-    #ifdef FORUM_DEBUG
-		    std::cerr << "ForumsDialog::anchorClicked link.scheme() : " << link.scheme().toStdString() << std::endl;
+    #ifdef PEERS_DEBUG
+                    std::cerr << "PeersDialog::anchorClicked link.scheme() : " << link.scheme().toStdString() << std::endl;
     #endif
     
 	if (link.scheme() == "retroshare")
@@ -1593,7 +1607,7 @@ void PeersDialog::anchorClicked (const QUrl& link )
 		uint64_t fileSize = L.at(2).toULongLong();
 		std::string fileHash = L.at(3).toStdString() ;
 
-#ifdef FORUM_DEBUG
+#ifdef PEERS_DEBUG
 		std::cerr << "PeersDialog::anchorClicked FileRequest : fileName : " << fileName << ". fileHash : " << fileHash << ". fileSize : " << fileSize << std::endl;
 #endif
 

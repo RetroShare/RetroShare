@@ -861,6 +861,12 @@ background: white;}</string>
              <property name="readOnly">
               <bool>true</bool>
              </property>
+             <property name="openExternalLinks">
+              <bool>true</bool>
+             </property>
+             <property name="openLinks">
+              <bool>false</bool>
+             </property>
             </widget>
            </item>
            <item>

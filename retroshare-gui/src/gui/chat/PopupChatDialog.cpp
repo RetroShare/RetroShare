@@ -99,8 +99,8 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   // Create the status bar
   resetStatusBar() ;
 
-  ui.textBrowser->setOpenExternalLinks ( false );
-  ui.textBrowser->setOpenLinks ( false );
+  //ui.textBrowser->setOpenExternalLinks ( false );
+  //ui.textBrowser->setOpenLinks ( false );
 
   QString title = QString::fromStdString(name) + " :" + tr(" RetroShare - Encrypted Chat")  ;
   setWindowTitle(title);
@@ -252,28 +252,20 @@ void PopupChatDialog::addChatMsg(ChatInfo *ci)
 	//replace http://, https:// and www. with <a href> links
 	QRegExp rx("(https?://[^ <>]*)|(www\\.[^ <>]*)");
 	int count = 0;
-	int pos = 100; //ignor the first 100 charater because of the standard DTD ref
+        int pos = 100; //ignore the first 100 char because of the standard DTD ref
 	while ( (pos = rx.indexIn(message, pos)) != -1 ) {
-	    count ++;
 	    //we need to look ahead to see if it's already a well formed link
 	    if (message.mid(pos - 6, 6) != "href=\"" && message.mid(pos - 6, 6) != "href='" && message.mid(pos - 6, 6) != "ttp://" ) {
 		QString tempMessg = message.left(pos) + "<a href=\"" + rx.cap(count) + "\">" + rx.cap(count) + "</a>" + message.mid(pos + rx.matchedLength(), -1);
 		message = tempMessg;
 	    }
 	    pos += rx.matchedLength() + 15;
-	}
+            count ++;
+        }
 
 #ifdef CHAT_DEBUG
 std::cout << "PopupChatDialog:addChatMsg message : " << message.toStdString() << std::endl;
 #endif
-
-
-        /*QHashIterator<QString, QString> i(smileys);
-	while(i.hasNext())
-	{
-		i.next();
-		message.replace(i.key(), "<img src=\"" + i.value() + "\">");
-	}*/
 
 	QHashIterator<QString, QString> i(smileys);
 	while(i.hasNext())
