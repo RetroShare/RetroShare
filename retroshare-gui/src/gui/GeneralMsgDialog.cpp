@@ -279,8 +279,8 @@ void GeneralMsgDialog::addAttachment(std::string hash, std::string fname, uint64
 	SubFileItem *file = new SubFileItem(hash, fname, size, flags, srcId);
 
 	mAttachments.push_back(file);
-	QLayout *layout = fileFrame->layout();
-	layout->addWidget(file);
+	//QLayout *layout = fileFrame->layout();
+	verticalLayout_2->addWidget(file);
 
 	if (mCheckAttachment)
 	{
@@ -325,8 +325,8 @@ void GeneralMsgDialog::addAttachment(std::string path)
 	SubFileItem *file = new SubFileItem(path);
 
 	mAttachments.push_back(file);
-	QLayout *layout = fileFrame->layout();
-	layout->addWidget(file);
+	//QLayout *layout = fileFrame->layout();
+	verticalLayout_2->addWidget(file);
 
 	if (mCheckAttachment)
 	{
@@ -387,8 +387,8 @@ void GeneralMsgDialog::addDestination(uint32_t type, std::string grpId, std::str
 	SubDestItem *dest = new SubDestItem(type, grpId, inReplyTo);
 
 	mDestinations.push_back(dest);
-	QLayout *layout = destFrame->layout();
-	layout->addWidget(dest);
+	//QLayout *layout = destFrame->layout();
+	verticalLayout->addWidget(dest);
 
 	return;
 }
@@ -646,6 +646,7 @@ void GeneralMsgDialog::sendMessage(uint32_t type, std::string grpId, std::string
 
 			break;
 		case FEEDHOLDER_MSG_BLOG:
+
 
 			break;
 		default:
