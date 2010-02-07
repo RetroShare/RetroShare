@@ -58,29 +58,6 @@ NewsFeed::NewsFeed(QWidget *parent)
   	/* Invoke the Qt Designer generated object setup routine */
   	setupUi(this);
 
-	/* mLayout -> to add widgets to */
-	mLayout = new QVBoxLayout;
-	mLayout->setSpacing(0);
-	mLayout->setMargin(0);
-
-	QWidget *middleWidget = new QWidget();
-	//middleWidget->setSizePolicy( QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Minimum);
-	middleWidget->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Minimum);
-	middleWidget->setLayout(mLayout);
-
-
-		QScrollArea *scrollArea = new QScrollArea;
-		//scrollArea->setBackgroundRole(QPalette::Dark);
-	scrollArea->setWidget(middleWidget);
-	scrollArea->setWidgetResizable(true);
-	scrollArea->setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
-
-	QVBoxLayout *layout2 = new QVBoxLayout;
-	layout2->addWidget(scrollArea);
-	layout2->setSpacing(0);
-	layout2->setMargin(0);
-	
-     	frame->setLayout(layout2);
 
 	QTimer *timer = new QTimer(this);
 	timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateFeed()));
@@ -178,7 +155,7 @@ void	NewsFeed::addFeedItemPeerConnect(RsFeedItem &fi)
 	/* store */
 
 	/* add to layout */
-	mLayout->addWidget(pi);
+	verticalLayout->addWidget(pi);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemPeerConnect()";
@@ -196,7 +173,7 @@ void	NewsFeed::addFeedItemPeerDisconnect(RsFeedItem &fi)
 	/* store */
 
 	/* add to layout */
-	mLayout->addWidget(pi);
+	verticalLayout->addWidget(pi);
 
 
 
@@ -215,7 +192,7 @@ void	NewsFeed::addFeedItemPeerHello(RsFeedItem &fi)
 	/* store */
 
 	/* add to layout */
-	mLayout->addWidget(pi);
+	verticalLayout->addWidget(pi);
 
 
 #ifdef NEWS_DEBUG
@@ -233,7 +210,7 @@ void	NewsFeed::addFeedItemPeerNew(RsFeedItem &fi)
 	/* store */
 
 	/* add to layout */
-	mLayout->addWidget(pi);
+	verticalLayout->addWidget(pi);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemPeerNew()";
@@ -250,7 +227,7 @@ void	NewsFeed::addFeedItemChanNew(RsFeedItem &fi)
 	/* store in list */
 
 	/* add to layout */
-	mLayout->addWidget(cni);
+	verticalLayout->addWidget(cni);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemChanNew()";
@@ -267,7 +244,7 @@ void	NewsFeed::addFeedItemChanUpdate(RsFeedItem &fi)
 	/* store in list */
 
 	/* add to layout */
-	mLayout->addWidget(cni);
+	verticalLayout->addWidget(cni);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemChanUpdate()";
@@ -284,7 +261,7 @@ void	NewsFeed::addFeedItemChanMsg(RsFeedItem &fi)
 	/* store in forum list */
 
 	/* add to layout */
-	mLayout->addWidget(cm);
+	verticalLayout->addWidget(cm);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemChanMsg()";
@@ -302,7 +279,7 @@ void	NewsFeed::addFeedItemForumNew(RsFeedItem &fi)
 	mForumNewItems.push_back(fni);
 
 	/* add to layout */
-	mLayout->addWidget(fni);
+	verticalLayout->addWidget(fni);
 
 
 #ifdef NEWS_DEBUG
@@ -321,7 +298,7 @@ void	NewsFeed::addFeedItemForumUpdate(RsFeedItem &fi)
 	mForumNewItems.push_back(fni);
 
 	/* add to layout */
-	mLayout->addWidget(fni);
+	verticalLayout->addWidget(fni);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemForumUpdate()";
@@ -338,7 +315,7 @@ void	NewsFeed::addFeedItemForumMsg(RsFeedItem &fi)
 	/* store in forum list */
 
 	/* add to layout */
-	mLayout->addWidget(fm);
+	verticalLayout->addWidget(fm);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemForumMsg()";
@@ -355,7 +332,7 @@ void	NewsFeed::addFeedItemBlogMsg(RsFeedItem &fi)
 	/* store in forum list */
 
 	/* add to layout */
-	mLayout->addWidget(bm);
+	verticalLayout->addWidget(bm);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemBlogMsg()";
@@ -381,7 +358,7 @@ void	NewsFeed::addFeedItemMessage(RsFeedItem &fi)
 	/* store in list */
 
 	/* add to layout */
-	mLayout->addWidget(mi);
+	verticalLayout->addWidget(mi);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemMessage()";
