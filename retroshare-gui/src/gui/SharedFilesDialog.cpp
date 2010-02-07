@@ -694,10 +694,11 @@ void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
 		  contextMnu2.addAction( sendhtmllinkAct);
 		  contextMnu2.addAction( sendchatlinkAct);
 		  contextMnu2.addSeparator();
+#ifndef RS_RELEASE_VERSION
 		  contextMnu2.addAction( sendlinkCloudAct);
 		  contextMnu2.addAction( addlinkCloudAct);
 		  contextMnu2.addSeparator();
-
+#endif
 		  contextMnu2.addMenu( recMenu);
 		  contextMnu2.addMenu( msgMenu);
 	  }
