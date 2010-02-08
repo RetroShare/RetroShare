@@ -676,15 +676,27 @@ p, li { white-space: pre-wrap; }
          <property name="text">
           <string>One day old</string>
          </property>
+         <property name="icon">
+          <iconset resource="images.qrc">
+           <normaloff>:/images/view_calendar_day.png</normaloff>:/images/view_calendar_day.png</iconset>
+         </property>
         </item>
         <item>
          <property name="text">
           <string>One Week old</string>
          </property>
+         <property name="icon">
+          <iconset resource="images.qrc">
+           <normaloff>:/images/view_calendar_week.png</normaloff>:/images/view_calendar_week.png</iconset>
+         </property>
         </item>
         <item>
          <property name="text">
           <string>One month old</string>
+         </property>
+         <property name="icon">
+          <iconset resource="images.qrc">
+           <normaloff>:/images/view_calendar_month.png</normaloff>:/images/view_calendar_month.png</iconset>
          </property>
         </item>
        </widget>
