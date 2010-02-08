@@ -846,7 +846,12 @@ void SharedFilesDialog::showFrameSplitted(bool show)
 
 void SharedFilesDialog::indicatorChanged(int index)
 {
-    model->changeAgeIndicator(index);
-    localModel->changeAgeIndicator(index);
+	static uint32_t correct_indicator[4] = { IND_ALWAYS,IND_LAST_DAY,IND_LAST_WEEK,IND_LAST_MONTH } ;
+
+	model->changeAgeIndicator(correct_indicator[index]);
+	localModel->changeAgeIndicator(correct_indicator[index]);
+
+  ui.remoteDirTreeView->update(ui.remoteDirTreeView->rootIndex());
+  ui.localDirTreeView->update(ui.localDirTreeView->rootIndex()) ;
 }
 

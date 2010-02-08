@@ -244,6 +244,7 @@ class DirDetails
 	uint64_t count;
 	uint32_t age;
 	uint32_t flags;
+	uint32_t min_age ;	// minimum age of files in this subtree
 
 	std::list<DirStub> children;
 };

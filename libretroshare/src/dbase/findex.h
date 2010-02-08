@@ -144,6 +144,8 @@ void writeFileInfo(std::ostringstream&);
 	std::map<std::string, DirEntry *>  subdirs;
 	std::map<std::string, FileEntry *> files;
 
+	time_t most_recent_time;      /* last updated */
+
 	/* Inherited members from FileEntry:
 	int size 	  - count for dirs 
 	std::string name; - directory name 
@@ -225,6 +227,12 @@ class FileIndex
 		int 	searchTerms(std::list<std::string> terms, std::list<FileEntry *> &results) const;
 		int 	searchHash(std::string hash, std::list<FileEntry *> &results) const;
 		int     searchBoolExp(Expression * exp, std::list<FileEntry *> &results) const;
+
+		/// Recursively compute the maximum modification time of children.
+		/// Used to easily retrieve mose recent files.
+		//
+		void updateMaxModTime() ;
+		void RecursUpdateMaxModTime(DirEntry *) ;
 
 		PersonEntry *root;
 

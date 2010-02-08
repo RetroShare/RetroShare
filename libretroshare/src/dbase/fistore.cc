@@ -126,10 +126,12 @@ int FileIndexStore::loadCache(const CacheData &data)
 	for(it = indices.begin(); it != indices.end(); it++)
 	{
 		(it->second)->root->row = i++;
+		it->second->FileIndex::updateMaxModTime() ;
 	}
 	if (localindex)
 	{
 		localindex->root->row = 0;
+		localindex->updateMaxModTime() ;
 	}
 
 	unlockData();
@@ -220,6 +222,7 @@ int FileIndexStore::RequestDirDetails(void *ref, DirDetails &details, uint32_t f
 		details.count = indices.size();
 		details.age = 0;
 		details.flags = 0;
+		details.min_age = 0;
 
 		unlockData();
 		return true ;

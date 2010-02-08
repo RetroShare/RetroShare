@@ -30,11 +30,10 @@
 #include "util/misc.h"
 #include "rsiface/rstypes.h"
 
-#define IND_DEFAULT 	0
-#define IND_LAST_DAY    1
-#define IND_LAST_WEEK   2
-#define IND_LAST_MONTH  3
-#define IND_OLDER       4
+static const uint32_t IND_LAST_DAY    = 3600*24 ;
+static const uint32_t IND_LAST_WEEK   = 3600*24*7 ;
+static const uint32_t IND_LAST_MONTH  = 3600*24*31	; // I know, this is approximate
+static const uint32_t IND_ALWAYS      = ~(uint32_t)0 ;
 
 class RemoteDirModel : public QAbstractItemModel
 {
@@ -82,13 +81,13 @@ class RemoteDirModel : public QAbstractItemModel
 
 		void getFilePaths(QModelIndexList list, std::list<std::string> &fullpaths);
 
-		void changeAgeIndicator(int indicator) { ageIndicator = indicator; }
+		void changeAgeIndicator(uint32_t indicator) { ageIndicator = indicator; }
 
 
 		public slots:
 
-			void collapsed ( const QModelIndex & index ) { update(index); }
-		void expanded ( const QModelIndex & index ) { update(index); }
+//			void collapsed ( const QModelIndex & index ) { update(index); }
+//		void expanded ( const QModelIndex & index ) { update(index); }
 
 		/* Drag and Drop Functionality */
 	public:
@@ -97,14 +96,14 @@ class RemoteDirModel : public QAbstractItemModel
 		virtual QStringList mimeTypes () const;
 
 	private:
-		void update (const QModelIndex &index );
+//		void update (const QModelIndex &index );
 		void treeStyle();
 		void downloadDirectory(const DirDetails & details, int prefixLen);
 		static QString getFlagsString(uint32_t) ;
 		QString getAgeIndicatorString(const DirDetails &) const;
 		void getAgeIndicatorRec(DirDetails &details, QString &ret) const;
 
-		int ageIndicator;
+		uint32_t ageIndicator;
 
 		QIcon categoryIcon;
 		QIcon peerIcon;

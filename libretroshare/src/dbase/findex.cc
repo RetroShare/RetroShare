@@ -559,6 +559,24 @@ int	FileIndex::setRootDirectories(std::list<std::string> inlist, time_t updtime)
 	return 1;
 }
 
+void FileIndex::updateMaxModTime() 
+{
+	RecursUpdateMaxModTime(root) ;
+}
+void FileIndex::RecursUpdateMaxModTime(DirEntry *dir) 
+{
+	time_t max_mod_t = 0 ;
+
+	for(std::map<std::string,DirEntry*>::iterator it(dir->subdirs.begin());it!=dir->subdirs.end();++it)
+	{
+		RecursUpdateMaxModTime(it->second) ;
+		max_mod_t = std::max(max_mod_t, it->second->most_recent_time) ;
+	}
+	for(std::map<std::string,FileEntry*>::iterator it(dir->files.begin());it!=dir->files.end();++it)
+		max_mod_t = std::max(max_mod_t, it->second->modtime) ;
+
+	dir->most_recent_time = max_mod_t ;
+}
 
 int	FileIndex::getRootDirectories(std::list<std::string> &outlist)
 {
@@ -571,7 +589,7 @@ int	FileIndex::getRootDirectories(std::list<std::string> &outlist)
 	return 1;
 }
 
-	/* update (index building) */
+/* update (index building) */
 DirEntry *FileIndex::updateDirEntry(std::string fpath, FileEntry fe, time_t utime)
 {
 	/* path is to parent */
@@ -1183,7 +1201,7 @@ bool FileIndex::extractData(void *ref,DirDetails& details)
 	if(!isValid(ref))
 	{
 #ifdef FI_DEBUG
-		std::cerr << "FileIndex::RequestDirDetails() asked for an invalid pointer " << (void*)ref << std::endl;
+		std::cerr << "FileIndex::extractData() asked for an invalid pointer " << (void*)ref << std::endl;
 #endif
 		return false ;
 	}
@@ -1192,11 +1210,12 @@ bool FileIndex::extractData(void *ref,DirDetails& details)
 	DirEntry *dir = dynamic_cast<DirEntry *>(file);
 
 	details.children = std::list<DirStub>() ;
+	time_t now = time(NULL) ;
 
 	if (dir!=NULL) /* has children --- fill */
 	{
 #ifdef FI_DEBUG
-		std::cerr << "FileIndex::RequestDirDetails() ref=dir" << std::endl;
+		std::cerr << "FileIndex::extractData() ref=dir" << std::endl;
 #endif
 		/* extract all the entries */
 		for(std::map<std::string,DirEntry*>::const_iterator dit(dir->subdirs.begin()); dit != dir->subdirs.end(); ++dit)
@@ -1225,22 +1244,24 @@ bool FileIndex::extractData(void *ref,DirDetails& details)
 			details.type = DIR_TYPE_DIR;
 		details.hash = "";
 		details.count = dir->subdirs.size() + dir->files.size();
+		details.min_age = now - dir->most_recent_time ;
 	}
 	else
 	{
 #ifdef FI_DEBUG
-		std::cerr << "FileIndexStore::RequestDirDetails() ref=file" << std::endl;
+		std::cerr << "FileIndexStore::extractData() ref=file" << std::endl;
 #endif
 		details.type = DIR_TYPE_FILE;
 		details.count = file->size;
+		details.min_age = now - file->modtime ;
 	}
 
 #ifdef FI_DEBUG
-	std::cerr << "FileIndexStore::RequestDirDetails() name: " << file->name << std::endl;
+	std::cerr << "FileIndexStore::extractData() name: " << file->name << std::endl;
 #endif
 	details.ref = file;
 	details.hash = file->hash;
-	details.age = time(NULL) - file->modtime;
+	details.age = now - file->modtime;
 	details.flags = 0;//file->pop;
 
 	/* find parent pointer, and row */

@@ -669,27 +669,22 @@ p, li { white-space: pre-wrap; }
        <widget class="QComboBox" name="indicatorCBox">
         <item>
          <property name="text">
-          <string>No indicator</string>
+          <string>Always</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Last day</string>
+          <string>One day old</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Last week</string>
+          <string>One Week old</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Last month</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Older</string>
+          <string>One month old</string>
          </property>
         </item>
        </widget>

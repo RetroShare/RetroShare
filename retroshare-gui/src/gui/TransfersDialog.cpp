@@ -763,7 +763,9 @@ void TransfersDialog::insertTransfers()
         FileInfo info;
         if (!rsFiles->FileDetails(*it, RS_FILE_HINTS_DOWNLOAD, info)) continue;
         //if file transfer is a cache file index file, don't show it
-        if (info.flags & CB_CODE_CACHE) continue;
+		  //
+        if (/*(!_show_cache_transfers) &&*/ (info.flags & CB_CODE_CACHE)) 
+			  continue;
 
         symbol      = "";
         name        = QString::fromUtf8(info.fname.c_str());
@@ -978,6 +980,8 @@ void TransfersDialog::insertTransfers()
 	  {
 		continue;
 	  }
+	  if (/*(!_show_cache_transfers) &&*/ (info.flags & CB_CODE_CACHE)) 
+		  continue ;
 
 	  std::list<TransferInfo>::iterator pit;
 	  for(pit = info.peers.begin(); pit != info.peers.end(); pit++)

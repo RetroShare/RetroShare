@@ -41,7 +41,7 @@
 RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
         : QAbstractItemModel(parent),
          RemoteMode(mode), nIndex(1), indexSet(1) /* ass zero index cant be used */,
-         ageIndicator(0)
+         ageIndicator(IND_ALWAYS)
 {
 	setSupportedDragActions(Qt::CopyAction);
 	treeStyle();
@@ -147,7 +147,6 @@ void RemoteDirModel::treeStyle()
      std::cerr << "lookup PER/DIR #" << details.count;
      std::cerr << std::endl;
 #endif
-
      return details.count;
  }
 
@@ -184,10 +183,10 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
 		case IND_LAST_MONTH:
 			if (age < 30 * 24 * 60 * 60) return nind;
 			break;
-		case IND_OLDER:
-			if (age >= 30 * 24 * 60 * 60) return oind;
-			break;
-		case IND_DEFAULT:
+//		case IND_OLDER:
+//			if (age >= 30 * 24 * 60 * 60) return oind;
+//			break;
+		case IND_ALWAYS:
 			return ret;
 		default:
 			return ret;
@@ -231,6 +230,18 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
 
         return QString::fromStdString(finfo.path) ;
     }
+
+    if (role == Qt::TextColorRole)
+    {
+        FileInfo finfo;
+        rsFiles->FileDetails(details.hash, 0, finfo);
+
+		  if(details.min_age > ageIndicator)
+			  return Qt::gray ;
+		  else
+			  return Qt::black ;
+    }
+
 
     if (role == Qt::DecorationRole)
 	 {
@@ -404,7 +415,7 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
 			case 4:
 		{
 			QString ind("");
-			if (ageIndicator != IND_DEFAULT)
+			if (ageIndicator != IND_ALWAYS)
 				ind = getAgeIndicatorString(details);
 			return ind;
 		}
@@ -577,14 +588,15 @@ QModelIndex RemoteDirModel::index(int row, int column, const QModelIndex & paren
 		return QModelIndex();
 	}
 
+
 	/* now iterate through the details to
 	 * get the reference number
 	 */
 
 	std::list<DirStub>::iterator it;
 	int i = 0;
-	for(it = details.children.begin(); ((i < row) && (it != details.children.end())); ++it, ++i) ;
-
+	for(it = details.children.begin(); ((i < row) && (it != details.children.end())); ++it,++i) ;
+	
 	if (it == details.children.end())
 	{
 #ifdef RDM_DEBUG
@@ -715,14 +727,14 @@ Qt::ItemFlags RemoteDirModel::flags( const QModelIndex & index ) const
  }
 
 
-void RemoteDirModel::update (const QModelIndex &index )
-{
-#ifdef RDM_DEBUG
-	//std::cerr << "Directory Request(" << id << ") : ";
-	//std::cerr << path << std::endl;
-#endif
-	//rsFiles -> RequestDirectories(id, path, 1);
-}
+//void RemoteDirModel::update (const QModelIndex &index )
+//{
+//#ifdef RDM_DEBUG
+//	//std::cerr << "Directory Request(" << id << ") : ";
+//	//std::cerr << path << std::endl;
+//#endif
+//	//rsFiles -> RequestDirectories(id, path, 1);
+//}
 
 void RemoteDirModel::downloadSelected(QModelIndexList list)
 {

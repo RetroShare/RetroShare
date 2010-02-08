@@ -195,31 +195,34 @@ bool FileIndexMonitor::loadLocalCache(const CacheData &data)  /* called with sto
 {
 	bool ok = false;
 
-	fiMutex.lock(); { /* LOCKED DIRS */
+	fiMutex.lock(); 
+	{ /* LOCKED DIRS */
 
-	//fi.root->name = data.pid;
+		//fi.root->name = data.pid;
 
-	/* More error checking needed here! */
+		/* More error checking needed here! */
 
-	std::string name = data.name ;	// this trick allows to load the complete file. Not the one being shared.
-	name[name.length()-1] = 'c' ;
+		std::string name = data.name ;	// this trick allows to load the complete file. Not the one being shared.
+		name[name.length()-1] = 'c' ;
 
-	if ((ok = fi.loadIndex(data.path + '/' + name, "", data.size)))
-	{
+		if ((ok = fi.loadIndex(data.path + '/' + name, "", data.size)))
+		{
 #ifdef FIM_DEBUG
-		std::cerr << "FileIndexMonitor::loadCache() Success!";
-		std::cerr << std::endl;
+			std::cerr << "FileIndexMonitor::loadCache() Success!";
+			std::cerr << std::endl;
 #endif
-		fi.root->row = 0;
-		fi.root->name = data.pname ;
-	}
-	else
-	{
+			fi.root->row = 0;
+			fi.root->name = data.pname ;
+		}
+		else
+		{
 #ifdef FIM_DEBUG
-		std::cerr << "FileIndexMonitor::loadCache() Failed!";
-		std::cerr << std::endl;
+			std::cerr << "FileIndexMonitor::loadCache() Failed!";
+			std::cerr << std::endl;
 #endif
-	}
+		}
+
+		fi.updateMaxModTime() ;
 
 	} fiMutex.unlock(); /* UNLOCKED DIRS */
 
@@ -1026,6 +1029,7 @@ int FileIndexMonitor::RequestDirDetails(void *ref, DirDetails &details, uint32_t
 		details.path = "root";
 		details.age = 0;
 		details.flags = 0;
+		details.min_age = 0 ;
 
 		return true ;
 	}	
