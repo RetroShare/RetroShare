@@ -24,6 +24,8 @@
 #include "FeedHolder.h"
 
 #include "rsiface/rsforums.h"
+#include "gui/forums/CreateForumMsg.h"
+
 
 #include <iostream>
 
@@ -76,7 +78,7 @@ void ForumMsgItem::updateItemStatic()
 		if (!(fi.forumFlags & RS_DISTRIB_SUBSCRIBED))
 		{
 			unsubscribeButton->setEnabled(false);
-			replyButton->setEnabled(false);
+			replyButton->setEnabled(true);
 		}
 		else
 		{
@@ -254,7 +256,10 @@ void ForumMsgItem::replyToPost()
 #endif
 	if (mParent)
 	{
-		mParent->openMsg(FEEDHOLDER_MSG_FORUM, mForumId, mPostId);
+		//mParent->openMsg(FEEDHOLDER_MSG_FORUM, mForumId, mPostId);
+	CreateForumMsg *cfm = new CreateForumMsg(mForumId, mPostId);
+	cfm->show();
 	}
+	
 }
 
