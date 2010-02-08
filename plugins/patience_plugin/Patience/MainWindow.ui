@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>810</width>
+    <height>653</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Patience</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <property name="margin">
+     <number>5</number>
+    </property>
+    <item row="0" column="0">
+     <widget class="Viewer" name="viewer">
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="renderHints">
+       <set>QPainter::Antialiasing|QPainter::HighQualityAntialiasing|QPainter::SmoothPixmapTransform|QPainter::TextAntialiasing</set>
+      </property>
+      <property name="cacheMode">
+       <set>QGraphicsView::CacheBackground</set>
+      </property>
+      <property name="viewportUpdateMode">
+       <enum>QGraphicsView::FullViewportUpdate</enum>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>810</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuSpiel">
+    <property name="title">
+     <string>Game</string>
+    </property>
+    <addaction name="action_neues_spiel"/>
+    <addaction name="separator"/>
+    <addaction name="action_beenden"/>
+   </widget>
+   <widget class="QMenu" name="menu_Hilfe">
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="action_about"/>
+    <addaction name="action_about_qt"/>
+   </widget>
+   <widget class="QMenu" name="menu_Einstellungen">
+    <property name="title">
+     <string>&amp;Settings</string>
+    </property>
+    <widget class="QMenu" name="menu_Cardset">
+     <property name="title">
+      <string>&amp;Cardset</string>
+     </property>
+     <addaction name="action_french"/>
+     <addaction name="action_german"/>
+    </widget>
+    <widget class="QMenu" name="menu_Gametype">
+     <property name="title">
+      <string>Gametype</string>
+     </property>
+     <addaction name="action_eine_ziehen"/>
+     <addaction name="action_drei_ziehen"/>
+    </widget>
+    <widget class="QMenu" name="menuSave_Game">
+     <property name="title">
+      <string>Save Game</string>
+     </property>
+     <addaction name="action_speichern"/>
+     <addaction name="action_nicht_speichern"/>
+     <addaction name="separator"/>
+     <addaction name="action_fragen"/>
+    </widget>
+    <addaction name="menu_Cardset"/>
+    <addaction name="menu_Gametype"/>
+    <addaction name="menuSave_Game"/>
+    <addaction name="separator"/>
+    <addaction name="action_rahmen"/>
+    <addaction name="separator"/>
+   </widget>
+   <widget class="QMenu" name="menu_Highscore">
+    <property name="title">
+     <string>&amp;Highscore</string>
+    </property>
+    <addaction name="action_highscore"/>
+   </widget>
+   <widget class="QMenu" name="menu_Edit">
+    <property name="title">
+     <string>&amp;Edit</string>
+    </property>
+    <addaction name="action_undo"/>
+   </widget>
+   <addaction name="menuSpiel"/>
+   <addaction name="menu_Edit"/>
+   <addaction name="menu_Einstellungen"/>
+   <addaction name="menu_Highscore"/>
+   <addaction name="menu_Hilfe"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="action_neues_spiel">
+   <property name="text">
+    <string>&amp;New Game</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="action_beenden">
+   <property name="text">
+    <string>Close</string>
+   </property>
+  </action>
+  <action name="action_about">
+   <property name="text">
+    <string>About Patience</string>
+   </property>
+  </action>
+  <action name="action_about_qt">
+   <property name="text">
+    <string>About QT</string>
+   </property>
+  </action>
+  <action name="action_french_">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>French</string>
+   </property>
+  </action>
+  <action name="action_german_">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>German</string>
+   </property>
+  </action>
+  <action name="action_highscore">
+   <property name="text">
+    <string>&amp;Show</string>
+   </property>
+  </action>
+  <action name="action_eine_ziehen_">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Take One</string>
+   </property>
+  </action>
+  <action name="action_drei_ziehen_">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Take Three</string>
+   </property>
+  </action>
+  <action name="action_french">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>French</string>
+   </property>
+  </action>
+  <action name="action_german">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>German</string>
+   </property>
+  </action>
+  <action name="action_eine_ziehen">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Take One</string>
+   </property>
+  </action>
+  <action name="action_drei_ziehen">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Take Three</string>
+   </property>
+  </action>
+  <action name="action_rahmen">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Frame</string>
+   </property>
+  </action>
+  <action name="action_undo">
+   <property name="text">
+    <string>Undo</string>
+   </property>
+  </action>
+  <action name="action_fragen">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Ask</string>
+   </property>
+  </action>
+  <action name="action_speichern">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="action_nicht_speichern">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Don't save</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Viewer</class>
+   <extends>QGraphicsView</extends>
+   <header>Viewer.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="resourcen.qrc"/>
+ </resources>
+ <connections/>
+</ui>

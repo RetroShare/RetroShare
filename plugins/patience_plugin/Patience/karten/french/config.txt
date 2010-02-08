@@ -1,0 +1,6 @@
+PySol solitaire cardset;5;.gif;1;52;7,1006;2004
+12442-xskat-french-large;XSkat-French-Large
+90 140 8
+18 18 9 9
+back01.gif
+back01.gif
