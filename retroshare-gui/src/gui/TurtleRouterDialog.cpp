@@ -23,6 +23,9 @@ TurtleRouterDialog::TurtleRouterDialog(QWidget *parent)
 
 void TurtleRouterDialog::showCtxMenu(const QPoint& point)
 {
+	if(_hashes_TW->currentItem() == NULL)
+		return ;
+
 	std::cerr << "execing context menu" << std::endl ;
 	// create context menus.
 	QMenu contextMnu( this );

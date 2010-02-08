@@ -853,5 +853,7 @@ void SharedFilesDialog::indicatorChanged(int index)
 
   ui.remoteDirTreeView->update(ui.remoteDirTreeView->rootIndex());
   ui.localDirTreeView->update(ui.localDirTreeView->rootIndex()) ;
+
+  updateDisplay() ;
 }
 

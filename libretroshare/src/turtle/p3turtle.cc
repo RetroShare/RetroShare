@@ -1717,7 +1717,7 @@ static std::string printNumber(uint64_t num,bool hex=false)
 	{
 		char tmp[100] ;
 
-		if(num < (1<<32))
+		if(num < (((uint64_t)1)<<32))
 			sprintf(tmp,"%08x", uint32_t(num)) ;
 		else
 			sprintf(tmp,"%08x%08x", uint32_t(num >> 32),uint32_t(num & ( (1<<32)-1 ))) ;
