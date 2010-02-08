@@ -60,7 +60,7 @@ void FileTransferInfoWidget::resizeEvent(QResizeEvent *event)
 }
 void FileTransferInfoWidget::updateDisplay()
 {
-	std::cout << "In TaskGraphPainterWidget::updateDisplay()" << std::endl ;
+        //std::cout << "In TaskGraphPainterWidget::updateDisplay()" << std::endl ;
 
 	bool ok=true ;
 	FileInfo nfo ;
@@ -70,7 +70,7 @@ void FileTransferInfoWidget::updateDisplay()
 	if(!rsFiles->FileDownloadChunksDetails(_file_hash, info)) 
 		ok = false ;
 
-	std::cout << "got details for file " << nfo.fname << std::endl ;
+        //std::cout << "got details for file " << nfo.fname << std::endl ;
 
 	pixmap = QPixmap(size());
 	pixmap.fill(this, 0, 0);

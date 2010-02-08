@@ -471,7 +471,7 @@ void    p3ConnectMgr::statusTick()
 	 * 	etc.
 	 */
 
-#ifdef CONN_DEBUG
+#ifdef CONN_DEBUG_TICK
 	std::cerr << "p3ConnectMgr::statusTick()" << std::endl;
 #endif
 	std::list<std::string> retryIds;
@@ -507,7 +507,7 @@ void    p3ConnectMgr::statusTick()
 		if ((it->second.state & RS_PEER_S_ONLINE) &&
 			(it->second.lastavailable < oldavail))
 		{
-#ifdef CONN_DEBUG
+#ifdef CONN_DEBUG_TICK
 			std::cerr << "p3ConnectMgr::statusTick() ONLINE TIMEOUT for: ";
 			std::cerr << it->first;
 			std::cerr << std::endl;
@@ -530,7 +530,7 @@ void    p3ConnectMgr::statusTick()
 
         for(it2 = retryIds.begin(); it2 != retryIds.end(); it2++)
 	{
-#ifdef CONN_DEBUG
+#ifdef CONN_DEBUG_TICK
 		std::cerr << "p3ConnectMgr::statusTick() RETRY TIMEOUT for: ";
 		std::cerr << *it2;
 		std::cerr << std::endl;
@@ -547,7 +547,7 @@ void    p3ConnectMgr::statusTick()
 void p3ConnectMgr::netTick()
 {
 
-#ifdef CONN_DEBUG
+#ifdef CONN_DEBUG_TICK
 	//std::cerr << "p3ConnectMgr::netTick()" << std::endl;
 #endif
 
@@ -574,21 +574,21 @@ void p3ConnectMgr::netTick()
 	{
 		case RS_NET_NEED_RESET:
 
-#ifdef CONN_DEBUG
+#ifdef CONN_DEBUG_TICK
 			std::cerr << "p3ConnectMgr::netTick() STATUS: NEED_RESET" << std::endl;
 #endif
 			netReset();
 			break;
 
 		case RS_NET_UNKNOWN:
-#ifdef CONN_DEBUG
+#ifdef CONN_DEBUG_TICK
 			std::cerr << "p3ConnectMgr::netTick() STATUS: UNKNOWN" << std::endl;
 #endif
 			netStartup();
 			break;
 
 		case RS_NET_UPNP_INIT:
-#ifdef CONN_DEBUG
+#ifdef CONN_DEBUG_TICK
 			std::cerr << "p3ConnectMgr::netTick() STATUS: UPNP_INIT" << std::endl;
 #endif
 			netExtFinderAddressCheck();
@@ -596,14 +596,14 @@ void p3ConnectMgr::netTick()
 			break;
 
 		case RS_NET_UPNP_SETUP:
-#ifdef CONN_DEBUG
+#ifdef CONN_DEBUG_TICK
 			std::cerr << "p3ConnectMgr::netTick() STATUS: UPNP_SETUP" << std::endl;
 #endif
 			netUpnpCheck();
 			break;
 
 		case RS_NET_DONE:
-#ifdef CONN_DEBUG
+#ifdef CONN_DEBUG_TICK
 			//std::cerr << "p3ConnectMgr::netTick() STATUS: DONE" << std::endl;
 #endif
 
@@ -612,7 +612,7 @@ void p3ConnectMgr::netTick()
 		case RS_NET_LOOPBACK:
                         //don't do a shutdown because a client in a computer without local network might be usefull for debug.
                         //shutdown();
-#ifdef CONN_DEBUG
+#ifdef CONN_DEBUG_TICK
                         std::cerr << "p3ConnectMgr::netTick() STATUS: RS_NET_LOOPBACK" << std::endl;
 #endif
 		default:
@@ -686,7 +686,7 @@ void p3ConnectMgr::netUpnpCheck()
 	connMtx.lock();   /*   LOCK MUTEX */
 
 	time_t delta = time(NULL) - mNetInitTS;
-	#ifdef CONN_DEBUG
+        #ifdef CONN_DEBUG_TICK
 		std::cerr << "p3ConnectMgr time since last reset : " << delta << std::endl;
 	#endif
 
@@ -697,10 +697,10 @@ void p3ConnectMgr::netUpnpCheck()
 
 	if ((upnpState == 0) && (delta > MAX_UPNP_INIT))
 	{
-#ifdef CONN_DEBUG
+                #ifdef CONN_DEBUG_TICK
 		std::cerr << "p3ConnectMgr::netUpnpCheck() ";
 		std::cerr << "Upnp Check failed." << std::endl;
-#endif
+                #endif
 		/* fallback to UDP startup */
 		connMtx.lock();   /*   LOCK MUTEX */
 
@@ -711,10 +711,10 @@ void p3ConnectMgr::netUpnpCheck()
 	}
 	else if ((upnpState > 0) && netAssistExtAddress(extAddr))
 	{
-#ifdef CONN_DEBUG
+                #ifdef CONN_DEBUG_TICK
 		std::cerr << "p3ConnectMgr::netUpnpCheck() ";
 		std::cerr << "Upnp Check successed." << std::endl;
-#endif
+                #endif
 		/* switch to UDP startup */
 		connMtx.lock();   /*   LOCK MUTEX */
 
@@ -736,14 +736,14 @@ void p3ConnectMgr::netUpnpCheck()
 void p3ConnectMgr::networkConsistencyCheck()
 {
 	time_t delta;
-#ifdef CONN_DEBUG
+        #ifdef CONN_DEBUG_TICK
 	delta = time(NULL) - mNetInitTS;
         std::cerr << "p3ConnectMgr::networkConsistencyCheck() time since last reset : " << delta << std::endl;
-#endif
+        #endif
 
         bool doNetReset = false;
 	//if one of the flag is degrated from true to false during last tick, let's do a reset
-	#ifdef CONN_DEBUG
+        #ifdef CONN_DEBUG_TICK
 		std::cerr << "p3ConnectMgr::networkConsistencyCheck() net flags : " << std::endl;
 		std::cerr << "	oldnetFlagLocalOk : " << oldnetFlagLocalOk << ". netFlagLocalOk : " << netFlagLocalOk << "." << std::endl;
 		std::cerr << "	oldnetFlagUpnpOk : " << oldnetFlagUpnpOk << ". netFlagUpnpOk : " << netFlagUpnpOk << "." << std::endl;
@@ -757,7 +757,7 @@ void p3ConnectMgr::networkConsistencyCheck()
 	    || (!netFlagStunOk && oldnetFlagStunOk)
 	    || (!netFlagExtraAddressCheckOk && oldnetFlagExtraAddressCheckOk)
 	    ) {
-	    #ifdef CONN_DEBUG
+            #ifdef CONN_DEBUG_TICK
 		    std::cerr << "p3ConnectMgr::networkConsistencyCheck() A net flag went down." << std::endl;
 	    #endif
 
@@ -779,13 +779,13 @@ void p3ConnectMgr::networkConsistencyCheck()
         if (!doNetReset) {//set an external address. if ip adresses are different, let's use the stun address, then the extaddrfinder and then the upnp address.
             struct sockaddr_in extAddr;
             if (getUpnpExtAddress(extAddr)) {
-                #ifdef CONN_DEBUG
+                #ifdef CONN_DEBUG_TICK
                     std::cerr << "p3ConnectMgr::networkConsistencyCheck() using getUpnpExtAddress for ownState.serveraddr." << std::endl;
                 #endif
                 ownState.currentserveraddr = extAddr;
             } else if (getExtFinderExtAddress(extAddr)) {
                 netExtFinderAddressCheck(); //so we put the extra address flag ok.
-                #ifdef CONN_DEBUG
+                #ifdef CONN_DEBUG_TICK
                 std::cerr << "p3ConnectMgr::networkConsistencyCheck() using getExtFinderExtAddress for ownState.serveraddr." << std::endl;
                 #endif
                 ownState.currentserveraddr = extAddr;
@@ -798,7 +798,7 @@ void p3ConnectMgr::networkConsistencyCheck()
                         /* get last contact detail */
                         is_connected = it->second.state & RS_PEER_S_CONNECTED;
                 }
-                #ifdef CONN_DEBUG
+                #ifdef CONN_DEBUG_TICK
                 if (is_connected) {
                         std::cerr << "p3ConnectMgr::networkConsistencyCheck() not doing a net reset because a peer is connected." << std::endl;
                     } else {
@@ -823,12 +823,12 @@ void p3ConnectMgr::networkConsistencyCheck()
 		//don't do a reset it if the network init is not finished
 		delta = time(NULL) - mNetInitTS;
 		if (delta > MAX_NETWORK_INIT) {
-		    #ifdef CONN_DEBUG
+                    #ifdef CONN_DEBUG_TICK
 			    std::cerr << "p3ConnectMgr::networkConsistencyCheck() doing a net reset." << std::endl;
 		    #endif
 		    netReset();
 		} else {
-		    #ifdef CONN_DEBUG
+                    #ifdef CONN_DEBUG_TICK
 			std::cerr << "p3ConnectMgr::networkConsistencyCheck() reset delayed : p3ConnectMgr time since last reset : " << delta;
 			std::cerr << ". Cannot reset before : " <<  MAX_NETWORK_INIT << " sec" << std::endl;
 		    #endif
@@ -839,12 +839,12 @@ void p3ConnectMgr::networkConsistencyCheck()
 void p3ConnectMgr::netExtFinderAddressCheck()
 {	struct sockaddr_in tmpip;
 	if (getExtFinderExtAddress(tmpip)) {
-	    #ifdef CONN_DEBUG
+            #ifdef CONN_DEBUG_TICK
 		    std::cerr << "p3ConnectMgr::netExtraAddressCheck() return true" << std::endl;
 	    #endif
 	    netFlagExtraAddressCheckOk = true;
 	} else {
-	    #ifdef CONN_DEBUG
+            #ifdef CONN_DEBUG_TICK
 		    std::cerr << "p3ConnectMgr::netExtraAddressCheck() return false" << std::endl;
 	    #endif
 	    netFlagExtraAddressCheckOk = false;
@@ -2830,7 +2830,7 @@ bool 	p3ConnectMgr::checkNetAddress()
 		ownState.updateIpAddressList(ipAddressTimed);
 
 
-#ifdef CONN_DEBUG
+#ifdef CONN_DEBUG_TICK
 		std::cerr << "p3ConnectMgr::checkNetAddress() Final Local Address: " << inet_ntoa(ownState.currentlocaladdr.sin_addr);
 		std::cerr << ":" << ntohs(ownState.currentlocaladdr.sin_port) << std::endl;
 #endif

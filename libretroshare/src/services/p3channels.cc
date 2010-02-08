@@ -311,10 +311,10 @@ bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std
 	std::string nullId;
 
 
-	std::cerr << "p3Channels::locked_eventDuplicateMsg() ";
-	std::cerr << " grpId: " << grpId << " msgId: " << msgId;
-	std::cerr << " peerId: " << id;
-	std::cerr << std::endl;
+//	std::cerr << "p3Channels::locked_eventDuplicateMsg() ";
+//	std::cerr << " grpId: " << grpId << " msgId: " << msgId;
+//	std::cerr << " peerId: " << id;
+//	std::cerr << std::endl;
 
 
 	RsChannelMsg *chanMsg = dynamic_cast<RsChannelMsg *>(msg);
@@ -389,11 +389,11 @@ bool p3Channels::locked_eventNewMsg(GroupInfo *grp, RsDistribMsg *msg, std::stri
 	std::string msgId = msg->msgId;
 	std::string nullId;
 
-	std::cerr << "p3Channels::locked_eventNewMsg() ";
-	std::cerr << " grpId: " << grpId;
-	std::cerr << " msgId: " << msgId;
-	std::cerr << " peerId: " << id;
-	std::cerr << std::endl;
+//	std::cerr << "p3Channels::locked_eventNewMsg() ";
+//	std::cerr << " grpId: " << grpId;
+//	std::cerr << " msgId: " << msgId;
+//	std::cerr << " peerId: " << id;
+//	std::cerr << std::endl;
 
 	getPqiNotify()->AddFeedItem(RS_FEED_ITEM_CHAN_MSG, grpId, msgId, nullId);
 
@@ -415,10 +415,10 @@ void p3Channels::locked_notifyGroupChanged(GroupInfo &grp, uint32_t flags)
 	std::string msgId;
 	std::string nullId;
 
-	std::cerr << "p3Channels::locked_notifyGroupChanged() ";
-	std::cerr << grpId;
-	std::cerr << " flags:" << flags;
-	std::cerr << std::endl;
+//	std::cerr << "p3Channels::locked_notifyGroupChanged() ";
+//	std::cerr << grpId;
+//	std::cerr << " flags:" << flags;
+//	std::cerr << std::endl;
 
 	switch(flags)
 	{

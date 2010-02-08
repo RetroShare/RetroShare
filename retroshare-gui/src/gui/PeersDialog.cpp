@@ -804,7 +804,9 @@ void PeersDialog::configurefriend()
 
 void PeersDialog::resetStatusBar() 
 {
+        #ifdef PEERS_DEBUG
 	std::cerr << "PeersDialog: reseting status bar." << std::endl ;
+        #endif
 
 	ui.statusStringLabel->setText(QString("")) ;
 }
@@ -882,7 +884,9 @@ void PeersDialog::insertChat()
 	std::list<ChatInfo> newchat;
 	if (!rsMsgs->getNewChat(newchat))
 	{
+                #ifdef PEERS_DEBUG
 		std::cerr << "could not get new chat." << std::endl ;
+                #endif
 		return;
 	}
         #ifdef PEERS_DEBUG

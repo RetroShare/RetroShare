@@ -36,7 +36,9 @@ void NotifyQt::notifyErrorMsg(int list, int type, std::string msg)
 
 void NotifyQt::notifyOwnAvatarChanged()
 {
+        #ifdef NOTIFY_DEBUG
 	std::cerr << "Notifyqt:: notified that own avatar changed" << std::endl ;
+        #endif
 	emit ownAvatarChanged() ;
 }
 
@@ -49,31 +51,41 @@ std::string NotifyQt::askForPassword(const std::string& window_title,const std::
 
 void NotifyQt::notifyOwnStatusMessageChanged()
 {
+        #ifdef NOTIFY_DEBUG
 	std::cerr << "Notifyqt:: notified that own avatar changed" << std::endl ;
+        #endif
 	emit ownStatusMessageChanged() ;
 }
 
 void NotifyQt::notifyPeerHasNewAvatar(std::string peer_id)
 {
+        #ifdef NOTIFY_DEBUG
 	std::cerr << "notifyQt: notification of new avatar." << std::endl ;
+        #endif
 	emit peerHasNewAvatar(QString::fromStdString(peer_id)) ;
 }
 
 void NotifyQt::notifyCustomState(const std::string& peer_id) 
 {
+        #ifdef NOTIFY_DEBUG
 	std::cerr << "notifyQt: Received custom status string notification" << std::endl ;
+        #endif
 	emit peerHasNewCustomStateString(QString::fromStdString(peer_id)) ;
 }
 
 void NotifyQt::notifyChatStatus(const std::string& peer_id,const std::string& status_string,bool is_private)
 {
+        #ifdef NOTIFY_DEBUG
 	std::cerr << "notifyQt: Received chat status string: " << status_string << std::endl ;
+        #endif
 	emit chatStatusChanged(QString::fromStdString(peer_id),QString::fromStdString(status_string),is_private) ;
 }
 
 void NotifyQt::notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleFileInfo>& files) 
 {
+        #ifdef NOTIFY_DEBUG
 	std::cerr << "in notify search result..." << std::endl ;
+        #endif
 
 	for(std::list<TurtleFileInfo>::const_iterator it(files.begin());it!=files.end();++it)
 	{
@@ -108,25 +120,25 @@ void NotifyQt::notifyListChange(int list, int type)
 	switch(list)
 	{
 		case NOTIFY_LIST_NEIGHBOURS:
-#ifdef DEBUG
+#ifdef NOTIFY_DEBUG
 			std::cerr << "received neighbrs changed" << std::endl ;
 #endif
 			emit neighborsChanged();
 			break;
 		case NOTIFY_LIST_FRIENDS:
-#ifdef DEBUG
+#ifdef NOTIFY_DEBUG
 			std::cerr << "received friends changed" << std::endl ;
 #endif
 			emit friendsChanged() ;
 			break;
 		case NOTIFY_LIST_DIRLIST_LOCAL:
-#ifdef DEBUG
+#ifdef NOTIFY_DEBUG
 			std::cerr << "received files changed" << std::endl ;
 #endif
 			emit filesPostModChanged(true) ;  /* Local */
 			break;
 		case NOTIFY_LIST_DIRLIST_FRIENDS:
-#ifdef DEBUG
+#ifdef NOTIFY_DEBUG
 			std::cerr << "received files changed" << std::endl ;
 #endif
 			emit filesPostModChanged(false) ;  /* Local */
@@ -134,7 +146,7 @@ void NotifyQt::notifyListChange(int list, int type)
 		case NOTIFY_LIST_SEARCHLIST:
 			break;
 		case NOTIFY_LIST_MESSAGELIST:
-#ifdef DEBUG
+#ifdef NOTIFY_DEBUG
 			std::cerr << "received msg changed" << std::endl ;
 #endif
 			emit messagesChanged() ;
@@ -142,13 +154,13 @@ void NotifyQt::notifyListChange(int list, int type)
 		case NOTIFY_LIST_CHANNELLIST:
 			break;
 		case NOTIFY_LIST_TRANSFERLIST:
-#ifdef DEBUG
+#ifdef NOTIFY_DEBUG
 			std::cerr << "received transfer changed" << std::endl ;
 #endif
 			emit transfersChanged() ;
 			break;
 		case NOTIFY_LIST_CONFIG:
-#ifdef DEBUG
+#ifdef NOTIFY_DEBUG
 			std::cerr << "received config changed" << std::endl ;
 #endif
 			emit configChanged() ;

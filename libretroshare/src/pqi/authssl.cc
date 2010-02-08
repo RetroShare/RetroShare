@@ -1147,7 +1147,7 @@ bool AuthSSL::SignDataBin(const void *data, const uint32_t len,
 	return true;
 }
 
-#define AUTHSSL_DEBUG2
+//#define AUTHSSL_DEBUG2
 bool AuthSSL::VerifyOtherSignBin(const void *data, const uint32_t len,
                         unsigned char *sign, unsigned int signlen, std::string sslCert) {
         X509 *x509 = loadX509FromPEM(sslCert);
