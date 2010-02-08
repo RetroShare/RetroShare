@@ -152,7 +152,7 @@ HEADERS += dbase/cachestrapper.h \
            ft/ftchunkmap.h \
            ft/ftserver.h \
            ft/fttransfermodule.h \
-	         ft/ftdwlqueue.h \
+	   ft/ftdwlqueue.h \
            pqi/authssl.h \
            pqi/authgpg.h \
            pqi/cleanupxpgp.h \
@@ -205,7 +205,7 @@ HEADERS += dbase/cachestrapper.h \
            rsiface/rsrank.h \
            rsiface/rsstatus.h \
            rsiface/rstypes.h \
-           rsserver/p3Blog.h \
+           rsserver/p3blog.h \
            rsserver/p3discovery.h \
            rsserver/p3face.h \
            rsserver/p3msgs.h \
@@ -251,10 +251,10 @@ HEADERS += dbase/cachestrapper.h \
            services/p3ranking.h \
            services/p3service.h \
            services/p3status.h \
-			  turtle/p3turtle.h \
-			  turtle/turtletypes.h \
-			  turtle/rsturtleitem.h \
-			  tcponudp/extaddrfinder.h \
+	   turtle/p3turtle.h \
+	   turtle/turtletypes.h \
+	   turtle/rsturtleitem.h \
+	   tcponudp/extaddrfinder.h \
            tcponudp/bio_tou.h \
            tcponudp/tcppacket.h \
            tcponudp/tcpstream.h \
@@ -281,7 +281,7 @@ SOURCES += \
 				rsserver/rsinit.cc \
 				rsserver/p3face-config.cc \
 				rsserver/p3face-server.cc \
-				rsserver/p3Blog.cc \
+				rsserver/p3blog.cc \
 				rsserver/p3discovery.cc \
 				rsserver/p3msgs.cc \
 				rsserver/p3photo.cc \

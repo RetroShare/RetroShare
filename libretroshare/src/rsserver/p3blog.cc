@@ -43,8 +43,6 @@ bool p3Blog::getBlogs(std::map< std::string, std::multimap<long int, std::wstrin
 	return mQblog->getBlogs(blogs);
 }
 
-
-
 bool p3Blog::sendBlog(const std::wstring &msg)
 {
 	return mQblog->sendBlog(msg);
@@ -57,6 +55,5 @@ bool p3Blog::getPeerLatestBlog(std::string id, uint32_t &ts, std::wstring &post)
 	post = L"Hmmm, not much, just eating prawn crackers at the moment... but I'll post this every second if you want ;)";
 
 	return true;
-
 }
 

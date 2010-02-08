@@ -12,7 +12,7 @@ RSOBJ = rsinit.o \
 	p3rank.o  \
 	p3photo.o  \
 	p3msgs.o  \
-	p3Blog.o  \
+	p3blog.o  \
 	p3discovery.o \
 	p3face-server.o \
 	p3face-config.o \
