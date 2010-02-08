@@ -257,7 +257,7 @@ bool ftServer::checkHash(const std::string& hash,std::string& error_string)
 		return false ;
 	}
 
-	for(uint i=0;i<hash.length();++i)
+	for(uint32_t i=0;i<hash.length();++i)
 		if(!((hash[i] > 47 && hash[i] < 58) || (hash[i] > 96 && hash[i] < 103)))
 		{
 			std::ostringstream is;
