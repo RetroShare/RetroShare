@@ -349,8 +349,8 @@ int     pqistore::readPkt(RsItem **item_out)
 	}
 
 	// create packet, based on header.
-	std::cerr << "Read Data Block -> Incoming Pkt(";
-	std::cerr << blen + extralen << ")" << std::endl;
+        //std::cerr << "Read Data Block -> Incoming Pkt(";
+        //std::cerr << blen + extralen << ")" << std::endl;
 	uint32_t readbytes = extralen + blen;
 
 	RsItem *item = rsSerialiser->deserialise(block, &readbytes);

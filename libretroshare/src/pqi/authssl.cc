@@ -2167,7 +2167,9 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
         {
 
             X509_NAME_oneline(X509_get_issuer_name(X509_STORE_CTX_get_current_cert(ctx)), buf, 256);
+            #ifdef AUTHSSL_DEBUG
             printf("issuer= %s\n", buf);
+            #endif
 
             #ifdef AUTHSSL_DEBUG
             fprintf(stderr, "Doing REAL PGP Certificates\n");
@@ -2175,24 +2177,30 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
             /* do the REAL Authentication */
             if (!AuthX509(X509_STORE_CTX_get_current_cert(ctx)))
             {
+                    #ifdef AUTHSSL_DEBUG
                     fprintf(stderr, "AuthSSL::VerifyX509Callback() X509 not authenticated.\n");
+                    #endif
                     return false;
             }
             std::string pgpid = getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer);
             if (!AuthGPG::getAuthGPG()->isGPGAccepted(pgpid) && pgpid != AuthGPG::getAuthGPG()->getGPGOwnId())
             {
+                    #ifdef AUTHSSL_DEBUG
                     fprintf(stderr, "AuthSSL::VerifyX509Callback() pgp key not signed by ourself : \n");
                     fprintf(stderr, "issuer pgpid : ");
                     fprintf(stderr, "%s\n",pgpid.c_str());
                     fprintf(stderr, "\n AuthGPG::getAuthGPG()->getGPGOwnId() : ");
                     fprintf(stderr, "%s\n",AuthGPG::getAuthGPG()->getGPGOwnId().c_str());
                     fprintf(stderr, "\n");
+                    #endif
                     return false;
             }
             preverify_ok = true;
 
         } else {
+                #ifdef AUTHSSL_DEBUG
                 fprintf(stderr, "Failing Normal Certificate!!!\n");
+                #endif
                 preverify_ok = false;
         }
 
@@ -2214,7 +2222,9 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
                 char *peer_id_in_context = (char*) SSL_get_ex_data(ssl, AuthSSL::ex_data_ctx_index);
                 if (std::string(certId.c_str()) != std::string(peer_id_in_context)) {
                     //the connection was asked for a given peer and get connected top another peer
+                    #ifdef AUTHSSL_DEBUG
                     fprintf(stderr, "AuthSSL::VerifyX509Callback peer id in context not the same as cert, aborting connection.");
+                    #endif
                     preverify_ok = false;
 
                     //tranfer the ip address to the new peer
@@ -2224,7 +2234,9 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
                         mConnMgr->setAddressList(certId, detail.getIpAddressList());
                     }
                 } else {
+                    #ifdef AUTHSSL_DEBUG
                     fprintf(stderr, "AuthSSL::VerifyX509Callback peer id in context is the same as cert, continung connection.");
+                    #endif
                 }
             }
 
@@ -2238,7 +2250,9 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
             peerConnectState detail;
             if (mConnMgr->getFriendNetStatus(certId, detail)) {
                 if (detail.state & RS_PEER_CONNECTED && !(detail.connecttype & RS_NET_CONN_TUNNEL)) {
+                    #ifdef AUTHSSL_DEBUG
                     fprintf(stderr, "AuthSSL::VerifyX509Callback this peer is already connected, refuse a new connection.");
+                    #endif
                     preverify_ok = false;
                 }
             }
@@ -2246,11 +2260,14 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
 
         }
 
+        #ifdef AUTHSSL_DEBUG
         if (preverify_ok) {
             fprintf(stderr, "AuthSSL::VerifyX509Callback returned true.\n");
         } else {
             fprintf(stderr, "AuthSSL::VerifyX509Callback returned false.\n");
         }
+        #endif
+
         return preverify_ok;
 }
 

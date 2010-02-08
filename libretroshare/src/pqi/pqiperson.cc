@@ -249,7 +249,7 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
                                         pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
                                         it->second->reset();
                                 } else {
-                                        std::cerr << "Active pqi : not resetting." << std::endl;
+                                        //std::cerr << "Active pqi : not resetting." << std::endl;
                                 }
 			}
 			return 1;

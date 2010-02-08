@@ -29,7 +29,7 @@
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rstlvbase.h"
 
-#define RSSERIAL_DEBUG 1
+//#define RSSERIAL_DEBUG 1
 #include <iostream>
 
 /*************************************************************************/

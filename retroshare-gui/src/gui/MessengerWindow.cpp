@@ -300,7 +300,6 @@ void  MessengerWindow::insertPeers()
 
         //add the gpg friends
         for(it = gpgFriends.begin(); it != gpgFriends.end(); it++) {
-            std::cerr << "" << *it << std::endl;
 //            if (*it == rsPeers->getGPGOwnId()) {
 //                continue;
 //            }

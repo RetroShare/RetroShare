@@ -326,6 +326,9 @@ void PeersDialog::updateDisplay()
 /* get the list of peers from the RsIface.  */
 void  PeersDialog::insertPeers()
 {
+        #ifdef PEERS_DEBUG
+        std::cerr << "PeersDialog::insertPeers() called." << std::endl;
+        #endif
         std::list<std::string> gpgFriends;
 	std::list<std::string>::iterator it;
 

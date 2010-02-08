@@ -731,7 +731,7 @@ bool AuthGPG::VerifySignature_locked(const void *data, int datalen, const void *
 	
 	if(siglen==73)
 	{
-		std::cerr << "Reducing to 72 to overcome an old bug." << std::endl ;
+                //std::cerr << "Reducing to 72 to overcome an old bug." << std::endl ;
 		siglen=72 ;
 	}
 
@@ -1114,7 +1114,7 @@ std::string AuthGPG::SaveCertificateToString(std::string id)
 	gpgme_data_write (gpgmeData, "", 1); 	// to be able to convert it into a string
 
 	fflush (NULL);
-        showData (gpgmeData);
+        //showData (gpgmeData);
 
 	size_t len = 0; 
 	char *export_txt = gpgme_data_release_and_get_mem(gpgmeData, &len);

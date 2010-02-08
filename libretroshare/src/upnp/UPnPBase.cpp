@@ -632,8 +632,10 @@ bool CUPnPService::Execute(
 #endif
 		return false;
 	}
-	std::cerr <<  ActionName << "(";
-	bool firstTime = true;
+#ifdef UPNP_DEBUG
+        std::cerr <<  ActionName << "(";
+#endif
+        bool firstTime = true;
 	// Check for correct Argument/Value pairs
 	const CUPnPAction &action = *(itAction->second);
 	for (unsigned int i = 0; i < ArgValue.size(); ++i) {

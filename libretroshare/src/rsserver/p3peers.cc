@@ -488,10 +488,8 @@ bool	p3Peers::getGPGSignedList(std::list<std::string> &ids)
 bool	p3Peers::getGPGAcceptedList(std::list<std::string> &ids)
 {
 #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::getPGPOthersList()" << std::endl;
+        std::cerr << "p3Peers::getGPGAcceptedList()" << std::endl;
 #endif
-
-        //TODO implement an additional list of GPG keys that are accepted even if not signed
         AuthGPG::getAuthGPG()->getGPGAcceptedList(ids);
         return true;
 }
@@ -511,7 +509,7 @@ bool	p3Peers::getSSLChildListOfGPGId(std::string gpg_id, std::list<std::string> 
         peerConnectState pcs;
         for (std::list<std::string>::iterator it = friendsIds.begin(); it != friendsIds.end(); it++) {
 #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::getSSLChildListOfGPGId() iterating over friends id : " << gpg_id << std::endl;
+        std::cerr << "p3Peers::getSSLChildListOfGPGId() iterating over friends id : " << *it << std::endl;
 #endif
             if (mConnMgr->getFriendNetStatus(*it, pcs) && pcs.gpg_id == gpg_id) {
 #ifdef P3PEERS_DEBUG
@@ -896,7 +894,9 @@ bool 	p3Peers::loadDetailsFromStringCert(std::string certstr, RsPeerDetails &pd)
                     }
             }
 
+            #ifdef P3PEERS_DEBUG
             std::cerr << "Parsing cert for sslid, location, ext and local address details. : " << certstr << std::endl;
+            #endif
 
             //let's parse the ssl id
             parsePosition = certstr.find(CERT_SSL_ID);
