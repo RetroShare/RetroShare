@@ -16,23 +16,30 @@
  * along with ColorCode. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ABOUT_H
-#define ABOUT_H
+#ifndef SOLROW_H
+#define SOLROW_H
 
-#include "ui_about.h"
+#include <QGraphicsItem>
+#include <iostream>
 
-#include <QDialog>
-#include <QFile>
-
-class About : public QDialog, public Ui::About
+class SolRow : public QGraphicsItem
 {
-    Q_OBJECT
+public:
+    SolRow();
 
-    public:
-        About(QWidget* parent = 0, Qt::WindowFlags f = 0);
-        ~About();
+    void SetState(const int pegcnt, const bool solved);
+    QRectF boundingRect() const;
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);
 
-        virtual QSize sizeHint () const;
+private:
+    QRectF mRect;
+    QRectF mRectC;
+    QBrush mBgBrush;
+    QPen mFramePen;
+    QFont mFont;
+
+    int mPegCnt;
+    bool mSolved;
 };
 
-#endif // ABOUT_H
+#endif // SOLROW_H

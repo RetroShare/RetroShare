@@ -1,9 +1,27 @@
+/* ColorCode, a free MasterMind clone with built in solver
+ * Copyright (C) 2009  Dirk Laebisch
+ * http://www.laebisch.com/
+ *
+ * ColorCode is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * ColorCode is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ColorCode. If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include <iostream>
 #include <QtGui/QApplication>
 #include <QLibraryInfo>
 #include <QLocale>
 #include <QTranslator>
-#include "mainwindow.h"
+#include "colorcode.h"
 
 int main(int argc, char* argv[])
 {
@@ -20,13 +38,13 @@ int main(int argc, char* argv[])
             {
                 cout << "usage: ColorCode [options]" << endl;
                 cout << "  options:" << endl;
-                cout << "  -l cc, --lang=cc    use country code cc instead of system locale, accepted values for cc: en|de" << endl;
+                cout << "  -l cc, --lang=cc    use country code cc instead of system locale, accepted values for cc: en|de|cs" << endl;
                 cout << "  -h, --help          prints this message ;-)" << endl;
                 return 0;
             }
             else if (str == "-l" && i < argc - 1)
             {
-                if (std::string(argv[i + 1]) == "de" || std::string(argv[i + 1]) == "en")
+                if (std::string(argv[i + 1]) == "de" || std::string(argv[i + 1]) == "en" || std::string(argv[i + 1]) == "cs")
                 {
                     std::string test(argv[i]);
                     lang = argv[i + 1];
@@ -34,7 +52,7 @@ int main(int argc, char* argv[])
             }
             else if ( str.size() == 9
                       && str.find("--lang=") != string::npos
-                      && (str.substr(7) == "en" || str.substr(7) == "de") )
+                      && (str.substr(7) == "en" || str.substr(7) == "de" || str.substr(7) == "cs") )
             {
                 lang = str.substr(7);
             }
@@ -57,7 +75,7 @@ int main(int argc, char* argv[])
     QTranslator appTranslator;
     if (lang == "")
     {
-        appTranslator.load("trans_" + QLocale::system().name());
+        appTranslator.load(":/trans_" + QLocale::system().name());
     }
     else
     {
@@ -65,7 +83,7 @@ int main(int argc, char* argv[])
     }
     app.installTranslator(&appTranslator);
 
-    MainWindow w;
+    ColorCode w;
     w.show();
     return app.exec();
 }

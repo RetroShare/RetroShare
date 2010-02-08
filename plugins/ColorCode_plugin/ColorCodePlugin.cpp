@@ -24,7 +24,7 @@
 //#include <QPushButton>
 
 #include "ColorCodePlugin.h"
-#include "mainwindow.h"
+#include "colorcode.h"
 
 QString
 ColorCodePlugin::pluginDescription() const
@@ -44,7 +44,7 @@ ColorCodePlugin::pluginName() const
 QWidget*
 ColorCodePlugin::pluginWidget(QWidget * parent )
 {
-    MainWindow* window = new MainWindow();
+    ColorCode* window = new ColorCode();
 
     return window;
 }

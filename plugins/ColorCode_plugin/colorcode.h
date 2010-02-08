@@ -1,5 +1,23 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+/* ColorCode, a free MasterMind clone with built in solver
+ * Copyright (C) 2009  Dirk Laebisch
+ * http://www.laebisch.com/
+ *
+ * ColorCode is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * ColorCode is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ColorCode. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#ifndef COLORCODE_H
+#define COLORCODE_H
 
 #include <iostream>
 #include <QMainWindow>
@@ -7,30 +25,34 @@
 struct PegType
 {
     int ix;
-    QRadialGradient grad;
+    char let;
+    QRadialGradient* grad;
     QColor  pencolor;
 };
-
-//typedef std::vector<PegType> TypesMap;
 
 class QAction;
 class QActionGroup;
 class QComboBox;
+class QLabel;
 class QGraphicsItem;
 class QGraphicsTextItem;
 class QGraphicsScene;
 class QGraphicsView;
+class CCSolver;
 class ColorPeg;
 class PegRow;
 class RowHint;
 class Msg;
+class BackGround;
+class SolRow;
 
-class MainWindow : public QMainWindow
+class ColorCode : public QMainWindow
 {
     Q_OBJECT
 
     public:
-        MainWindow();
+        ColorCode();
+        ~ColorCode();
 
         static const int STATE_RUNNING;
         static const int STATE_WON;
@@ -38,13 +60,13 @@ class MainWindow : public QMainWindow
         static const int STATE_GAVE_UP;
 
         static const int MAX_COLOR_CNT;
-        static const int LEVEL_COLOR_CNTS[3];
 
         int ROW_CNT;
-        int POS_CNT;
+        int ROW_Y0;
 
     public slots:
         void PegPressSlot(ColorPeg *cp);
+        void PegSortSlot(ColorPeg* cp);
         void PegReleasedSlot(ColorPeg *cp);
         void RowSolutionSlot(int ix);
         void HintPressedSlot(int ix);
@@ -54,6 +76,7 @@ class MainWindow : public QMainWindow
     protected :
         void resizeEvent(QResizeEvent* e);
         void contextMenuEvent(QContextMenuEvent* e);
+        void keyPressEvent(QKeyEvent *e);
 
     private slots:
         void InitRows();
@@ -62,12 +85,16 @@ class MainWindow : public QMainWindow
         void RestartGameSlot();
         void GiveInSlot();
         void ResetRows();
+        void OnlineHelpSlot();
         void AboutSlot();
         void AboutQtSlot();
         void ShowToolbarSlot();
         void ShowMenubarSlot();
         void ShowStatusbarSlot();
-        void SameColorSlot();
+        void ResetColorsOrderSlot();
+        void ShowLetterSlot();
+        void SameColorSlot(bool checked);
+        void SetSameColor(bool checked);
         void AutoCloseSlot();
         void ForceLevelSlot();
 
@@ -75,22 +102,30 @@ class MainWindow : public QMainWindow
         void PrevRowSlot();
         void ClearRowSlot();
 
-        void LevelChangedSlot();
+        void mColorCntChangedSlot();
+        void PegCntChangedSlot();
 
         void UpdateRowMenuSlot();
+
+        void GetGuessSlot();
 
         void TestSlot();
 
     private:
-        enum Level { LEVEL_EASY,
-                     LEVEL_MEDIUM,
-                     LEVEL_HARD };
+        static const int mLevelSettings[5][3];
 
-        static Level mLevel;
+        static int mLevel;
         static int mColorCnt;
+        static int mPegCnt;
+        static int mDoubles;
         static int mMaxZ;
+        static int mXOffs;
+
+        volatile static bool mNoAct;
 
         int mGameState;
+        int mGameId;
+        int mGuessCnt;
 
         std::vector<int> mSolution;
 
@@ -98,29 +133,37 @@ class MainWindow : public QMainWindow
         QGraphicsView* view;
         QSize* mOrigSize;
 
+        CCSolver* mSolver;
         Msg* mMsg;
+        BackGround* mBg;
 
         PegRow* mCurRow;
 
+        std::vector<ColorPeg *> mAllPegs;
         std::vector<ColorPeg *> mPegBuff;
-        PegRow* mSolRow;
+        SolRow* mSolRow;
         PegRow* mPegRows[10];
         RowHint* mHintBtns[10];
 
         PegType* mTypesMap[10];
+        QRadialGradient mGradMap[10];
+        QRadialGradient mGradBuff[10];
         ColorPeg* mPegBtns[10];
-        ColorPeg* mSolPegs[4];
+        ColorPeg** mSolPegs;
         QPoint mBtnPos[10];
 
-        void FillTypesMap();
-
+        void InitTypesMap();
         void InitSolution();
         void InitActions();
         void InitMenus();
         void InitToolBars();
 
-        void SetLevel();
+        void SetPegCnt();
+        void SetColorCnt();
+        void CheckLevel();
+        void CheckSameColorsSetting();
         void SetState(const int s);
+        void ResetGame();
         void NewGame();
         void SetSolution();
         void ShowSolution();
@@ -138,10 +181,13 @@ class MainWindow : public QMainWindow
         QMenu* LevelMenu;
         QMenu* HelpMenu;
         QMenu* RowContextMenu;
+        QMenuBar* mMenuBar;
         QToolBar* mGameToolbar;
         QToolBar* mLevelToolbar;
 
-        QComboBox* mLevelCmb;
+        QComboBox* mColorCntCmb;
+        QComboBox* mPegCntCmb;
+        QLabel* mStatusLabel;
 
         QActionGroup* mLevelActions;
         QAction* NewGameAction;
@@ -151,19 +197,28 @@ class MainWindow : public QMainWindow
         QAction* ShowMenubarAction;
         QAction* ShowStatusbarAction;
         QAction* SameColorAction;
+        QAction* mActResetColorsOrder;
+        QAction* mActShowLetter;
+        QAction* mActSameColorIcon;
         QAction* AutoCloseAction;
         QAction* AboutAction;
         QAction* AboutQtAction;
         QAction* ExitAction;
 
+        QAction* mActSetPegCnt;
+
         QAction* mActLevelEasy;
+        QAction* mActLevelClassic;
         QAction* mActLevelMedium;
+        QAction* mActLevelChallenging;
         QAction* mActLevelHard;
+        QAction* mLaunchHelpAction;
 
         QAction* RandRowAction;
         QAction* PrevRowAction;
         QAction* ClearRowAction;
 
+        QAction* mActGetGuess;
 };
 
-#endif // MAINWINDOW_H
+#endif // COLORCODE_H

@@ -16,23 +16,40 @@
  * along with ColorCode. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ABOUT_H
-#define ABOUT_H
+#ifndef BACKGROUND_H
+#define BACKGROUND_H
 
-#include "ui_about.h"
+#include <QGraphicsItem>
+#include <QColor>
+#include <QPen>
+#include <QRadialGradient>
+#include <iostream>
+#include "colorcode.h"
 
-#include <QDialog>
-#include <QFile>
-
-class About : public QDialog, public Ui::About
+class BackGround : public QObject, public QGraphicsItem
 {
     Q_OBJECT
 
     public:
-        About(QWidget* parent = 0, Qt::WindowFlags f = 0);
-        ~About();
+        BackGround(QObject* parent = 0);
+        ~BackGround();
 
-        virtual QSize sizeHint () const;
+        QRectF boundingRect() const;
+        void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);
+
+    private:
+        QRectF outlineRect() const;
+
+        QBrush mTopGrad;
+        QBrush mBotGrad;
+
+        QPen mFramePen;
+
+        QColor mPend;
+        QColor mPenl;
+        QColor mGrad0;
+        QColor mGrad1;
+
 };
 
-#endif // ABOUT_H
+#endif // BACKGROUND_H

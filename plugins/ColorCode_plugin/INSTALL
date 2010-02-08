@@ -1,8 +1,11 @@
-ColorCode 0.1
+# simply run:
 
-simply run:
-
-qmake-qt4 -project
 qmake-qt4
 make
+
+# to install:
+cp ColorCode /usr/bin/
+
+# to uninstall:
+rm /usr/bin/ColorCode
 

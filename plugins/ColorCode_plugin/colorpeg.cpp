@@ -1,12 +1,39 @@
+/* ColorCode, a free MasterMind clone with built in solver
+ * Copyright (C) 2009  Dirk Laebisch
+ * http://www.laebisch.com/
+ *
+ * ColorCode is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * ColorCode is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ColorCode. If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include <QtGui>
 
 #include "colorpeg.h"
 
 using namespace std;
 
-
+const QFont ColorPeg::mFont = ColorPeg::GetLetterFont();
 const QBrush ColorPeg::mShadowBrush = ColorPeg::GetShadowBrush();
-const QPen ColorPeg::mPen = ColorPeg::GetOutlinePen();
+const QBrush ColorPeg::mOutlineBrush = ColorPeg::GetOutlineBrush();
+const QBrush ColorPeg::mGlossyBrush = ColorPeg::GetGlossyBrush();
+
+QFont ColorPeg::GetLetterFont()
+{
+    QFont lf("Arial", 12, QFont::Bold, false);
+    lf.setStyleHint(QFont::SansSerif);
+
+    return lf;
+}
 
 QBrush ColorPeg::GetShadowBrush()
 {
@@ -17,12 +44,20 @@ QBrush ColorPeg::GetShadowBrush()
     return QBrush(rgrad);
 }
 
-QPen ColorPeg::GetOutlinePen()
+QBrush ColorPeg::GetOutlineBrush()
 {
-    QRadialGradient rgrad(20, 20, 32, 0, 0);
-    rgrad.setColorAt(0.0, Qt::black);
-    rgrad.setColorAt(1.0, Qt::white);
-    return QPen(QBrush(rgrad), 2);
+    QLinearGradient lgrad(0, 0, 38, 38);
+    lgrad.setColorAt(0.0, QColor(0, 0, 0, 0xa0));
+    lgrad.setColorAt(1.0, QColor(0xff, 0xff, 0xff, 0xa0));
+    return QBrush(lgrad);
+}
+
+QBrush ColorPeg::GetGlossyBrush()
+{
+    QLinearGradient lgrad(20, 4, 20, 20);
+    lgrad.setColorAt(0.0, QColor(0xff, 0xff, 0xff, 0x80));
+    lgrad.setColorAt(1.0, QColor(0xff, 0xff, 0xff, 0x00));
+    return QBrush(lgrad);
 }
 
 
@@ -33,6 +68,8 @@ ColorPeg::ColorPeg(QObject*)
     mPegRow = NULL;
     SetBtn(true);
     mIsDragged = false;
+    mShowLetter = false;
+    mSort = 0;
     mId = -1;
 }
 
@@ -64,6 +101,11 @@ void ColorPeg::SetId(int id)
 bool ColorPeg::IsBtn() const
 {
     return mIsBtn;
+}
+
+int ColorPeg::GetSort() const
+{
+    return mSort;
 }
 
 void ColorPeg::SetBtn(bool b)
@@ -105,8 +147,16 @@ void ColorPeg::SetIsDragged(bool b)
 void ColorPeg::SetEnabled(const bool b)
 {
     setEnabled(b);
-    //setFlags(QGraphicsItem::GraphicsItemFlags(0));
     SetCursorShape();
+}
+
+void ColorPeg::ShowLetter(const bool b)
+{
+    if (mShowLetter != b)
+    {
+        mShowLetter = b;
+        update(boundingRect());
+    }
 }
 
 void ColorPeg::SetCursorShape(Qt::CursorShape shape, const bool force)
@@ -115,13 +165,25 @@ void ColorPeg::SetCursorShape(Qt::CursorShape shape, const bool force)
     {
         if (mIsDragged)
         {
-            shape = Qt::ClosedHandCursor;
+            if (mSort == 0)
+            {
+                shape = Qt::ClosedHandCursor;
+            }
+            else if (mSort == 1)
+            {
+                shape = Qt::SizeVerCursor;
+            }
+            else
+            {
+                shape = Qt::SplitVCursor;
+            }
         }
         else if (isEnabled())
         {
             shape = Qt::OpenHandCursor;
         }
     }
+    
     if (cursor().shape() != shape)
     {
         setCursor(QCursor(shape));
@@ -130,16 +192,7 @@ void ColorPeg::SetCursorShape(Qt::CursorShape shape, const bool force)
 
 QVariant ColorPeg::itemChange(GraphicsItemChange change, const QVariant &value)
 {
-    if (change == ItemPositionHasChanged)
-    {
-    }
-    else if (change == ItemPositionChange)
-    {
-    }
-    else if (change == ItemFlagsChange)
-    {
-    }
-    else if (change == ItemSelectedHasChanged)
+    if (change == ItemSelectedHasChanged)
     {
         scene()->update(scene()->sceneRect());
     }
@@ -148,21 +201,38 @@ QVariant ColorPeg::itemChange(GraphicsItemChange change, const QVariant &value)
 
 void ColorPeg::mousePressEvent(QGraphicsSceneMouseEvent *e)
 {
+    QGraphicsItem::mousePressEvent(e);
     if (mPegType != NULL)
     {
         if (e->button() == Qt::LeftButton)
         {
             Reset();
             SetIsDragged(true);
+            if (IsBtn() && (e->modifiers() & Qt::ControlModifier) != 0)
+            {
+                if ((e->modifiers() & Qt::ShiftModifier) == 0)
+                {
+                    mSort = 1;
+                }
+                else
+                {
+                    mSort = 2;
+                }
+            }
+            else
+            {
+                mSort = 0;
+
+            }
             emit PegPressSignal(this);
             SetCursorShape();
         }
     }
-    QGraphicsItem::mousePressEvent(e);
 }
 
 void ColorPeg::mouseReleaseEvent (QGraphicsSceneMouseEvent *e)
 {
+    QGraphicsItem::mouseReleaseEvent(e);
     if (mPegType != NULL)
     {
         if (e->button() == Qt::LeftButton)
@@ -172,7 +242,6 @@ void ColorPeg::mouseReleaseEvent (QGraphicsSceneMouseEvent *e)
             SetCursorShape();
         }
     }
-    QGraphicsItem::mouseReleaseEvent(e);
 }
 
 QPainterPath ColorPeg::shape() const
@@ -202,31 +271,39 @@ QRectF ColorPeg::outlineRect() const
     return rect;
 }
 
+QRectF ColorPeg::GetColorRect() const
+{
+    QRectF rect(1.0, 1.0, 34.0, 34.0);
+    return rect;
+}
+
 void ColorPeg::paint(QPainter *painter, const QStyleOptionGraphicsItem * /*option*/, QWidget* /* widget */)
 {
-    /*
-    QPen pen(Qt::red);
-    pen.setWidth(2);
-    if (option->state & QStyle::State_Selected)
+    painter->setPen(Qt::NoPen);
+
+    if (!mIsDragged)
     {
-        pen.setStyle(Qt::DotLine);
+        painter->setBrush(ColorPeg::mOutlineBrush);
+        painter->drawEllipse(outlineRect());
     }
-    */
-
-
-    if (mIsDragged)
+    else
     {
-        painter->setPen(Qt::NoPen);
         painter->translate(QPointF(-2, -2));
         painter->setBrush(ColorPeg::mShadowBrush);
         painter->drawEllipse(QRectF(0, 0, 44, 44));
         painter->translate(QPointF(2, 2));
     }
-    else
-    {
-        painter->setPen(ColorPeg::mPen);
-    }
 
-    painter->setBrush(QBrush(mPegType->grad));
-    painter->drawEllipse(outlineRect());
+    painter->setBrush(QBrush(*mPegType->grad));
+    painter->drawEllipse(GetColorRect());
+    painter->setBrush(mGlossyBrush);
+    painter->drawEllipse(QRectF(5, 3, 24, 20));
+
+    if (mShowLetter)
+    {
+        painter->setPen(QPen(QColor("#303133")));
+        painter->setRenderHint(QPainter::TextAntialiasing, true);
+        painter->setFont(mFont);
+        painter->drawText(QRectF(1.5, 2.0, 32.0, 32.0), Qt::AlignCenter, QString(mPegType->let));
+    }
 }

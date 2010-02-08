@@ -21,5 +21,10 @@
         <file>img/cc32.png</file>
         <file>img/cc64.png</file>
         <file>cc32.ico</file>
+        <file>img/business_user.png</file>
+        <file>trans_cs.qm</file>
+        <file>img/same_color_0.png</file>
+        <file>img/same_color_1.png</file>
+        <file>img/help.png</file>
     </qresource>
 </RCC>

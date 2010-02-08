@@ -1,3 +1,21 @@
+/* ColorCode, a free MasterMind clone with built in solver
+ * Copyright (C) 2009  Dirk Laebisch
+ * http://www.laebisch.com/
+ *
+ * ColorCode is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * ColorCode is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with ColorCode. If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include <QtGui>
 
 #include "colorpeg.h"
@@ -9,32 +27,41 @@ using namespace std;
 PegRow::PegRow(QObject*)
 {
     mIx = -1;
+    mPegCnt = 0;
+    mXOffs = 0;
+    mPend = QColor("#646568");
+    mPenl = QColor("#ecedef");
+    mGrad0 = QColor("#cccdcf");
+    mGrad1 = QColor("#fcfdff");
 
-    //setFlags(QGraphicsItem::GraphicsItemFlags(0));
+    mColorPegs = NULL;
 
-    mPen = QPen(QColor("#808080"));
-
-    for (int i = 0; i < 4; ++i)
-    {
-        mColorPegs[i] = NULL;
-    }
-
-    Reset();
+    Reset(0);
 }
 
 PegRow::~PegRow()
 {
+    for (int i = 0; i < mPegCnt; ++i)
+    {
+        delete mColorPegs[i];
+    }
+    delete [] mColorPegs;
+    mColorPegs = NULL;
 }
 
-void PegRow::Reset()
+void PegRow::Reset(const int pegcnt)
 {
     ClearRow();
     SetActive(false);
+    mSolved = false;
+    SetPegCnt(pegcnt);
 }
 
 void PegRow::ClearRow()
 {
-    for (int i = 0; i < 4; ++i)
+    if (mColorPegs == NULL) { return; };
+
+    for (int i = 0; i < mPegCnt; ++i)
     {
         if (mColorPegs[i] != NULL)
         {
@@ -53,11 +80,32 @@ void PegRow::SetIx(const int ix)
     mIx = ix;
 }
 
+void PegRow::SetPegCnt(const int pegcnt)
+{
+    ClearRow();
+    for (int i = 0; i < mPegCnt; ++i)
+    {
+        delete mColorPegs[i];
+    }
+    delete [] mColorPegs;
+    mColorPegs = NULL;
+
+    mPegCnt = pegcnt;
+    mColorPegs = new ColorPeg* [mPegCnt];
+    for (int i = 0; i < mPegCnt; ++i)
+    {
+        mColorPegs[i] = NULL;
+    }
+    mXOffs = 100 - mPegCnt * 20;
+}
+
 int PegRow::GetPegCnt()
 {
+    if (mColorPegs == NULL) { return 0; };
+
     int cnt = 0;
     int i = 0;
-    for (i = 0; i < 4; ++i)
+    for (i = 0; i < mPegCnt; ++i)
     {
         if (mColorPegs[i] != NULL)
         {
@@ -75,19 +123,15 @@ ColorPeg** PegRow::GetPegs()
 void PegRow::SetActive(const bool b)
 {
     mIsActive = b;
-    if (b)
-    {
-        setOpacity(1.0);
-    }
-    else
-    {
-        setOpacity(0.5);
-    }
     update(boundingRect());
 }
 
 bool PegRow::SnapCP(ColorPeg *cp)
 {
+    if (mColorPegs == NULL)
+    {
+        return false;
+    }
 
     bool snapped = false;
     if (mIsActive)
@@ -102,9 +146,9 @@ bool PegRow::SnapCP(ColorPeg *cp)
 
         if (p.y() >= 0 && p.y() <= 40)
         {
-            for (i = 0; i < 4; ++i)
+            for (i = 0; i < mPegCnt; ++i)
             {
-                if (p.x() >= i * 40 && p.x() < (i + 1) * 40)
+                if (p.x() >= mXOffs + i * 40 && p.x() < mXOffs + (i + 1) * 40)
                 {
                     if (mColorPegs[i] != NULL)
                     {
@@ -114,7 +158,7 @@ bool PegRow::SnapCP(ColorPeg *cp)
                     mColorPegs[i] = cp;
                     cp->SetPegRow(this);
                     ix = i;
-                    cp->setPos(mapToParent(i * 40 + 2, 2));
+                    cp->setPos(mapToParent(mXOffs + i * 40 + 2, 2));
                     break;
                 }
             }
@@ -129,6 +173,16 @@ bool PegRow::SnapCP(ColorPeg *cp)
 
 void PegRow::ForceSnap(ColorPeg* cp, int posix)
 {
+    if (mColorPegs == NULL)
+    {
+        return;
+    }
+
+    if (posix > mPegCnt - 1)
+    {
+        return;
+    }
+
     if (mIsActive)
     {
         if (mColorPegs[posix] != NULL)
@@ -138,7 +192,7 @@ void PegRow::ForceSnap(ColorPeg* cp, int posix)
         }
         mColorPegs[posix] = cp;
         cp->SetPegRow(this);
-        cp->setPos(mapToParent(posix * 40 + 2, 2));
+        cp->setPos(mapToParent(mXOffs + posix * 40 + 2, 2));
 
         CheckSolution();
     }
@@ -146,11 +200,19 @@ void PegRow::ForceSnap(ColorPeg* cp, int posix)
 
 void PegRow::CloseRow()
 {
-    for (int i = 0; i < 4; ++i)
+    mSolved = true;
+    if (mColorPegs == NULL)
     {
-        if (mColorPegs[i] != NULL)
+        ;
+    }
+    else
+    {
+        for (int i = 0; i < mPegCnt; ++i)
         {
-            mColorPegs[i]->SetEnabled(false);
+            if (mColorPegs[i] != NULL)
+            {
+                mColorPegs[i]->SetEnabled(false);
+            }
         }
     }
     SetActive(false);
@@ -159,13 +221,15 @@ void PegRow::CloseRow()
 void PegRow::CheckSolution()
 {
     mSolution.clear();
+    if (mColorPegs == NULL)
+    {
+        ;
+    }
 
-    for (int i = 0; i < 4; ++i)
+    for (int i = 0; i < mPegCnt; ++i)
     {
         if (mColorPegs[i] != NULL)
         {
-            //mColorPegs[i]->setEnabled(false);
-            //mColorPegs[i]->setFlags(QGraphicsItem::GraphicsItemFlags(0));
             mSolution.push_back(mColorPegs[i]->GetPegType()->ix);
         }
     }
@@ -180,7 +244,12 @@ std::vector<int> PegRow::GetSolution() const
 
 void PegRow::RemovePeg(ColorPeg *cp)
 {
-    for (int i = 0; i < 4; ++i)
+    if (mColorPegs == NULL)
+    {
+        return;
+    }
+
+    for (int i = 0; i < mPegCnt; ++i)
     {
         if (mColorPegs[i] == cp)
         {
@@ -213,26 +282,52 @@ QRectF PegRow::boundingRect() const
 
 QRectF PegRow::outlineRect() const
 {
-    return QRectF(0.0, 0.0, 160.0, 40.0);
+    return QRectF(0.0, 0.0, 200.0, 40.0);
 }
 
-void PegRow::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* /* widget */)
+void PegRow::paint(QPainter* painter, const QStyleOptionGraphicsItem*, QWidget* /* widget */)
 {
-    mPen.setWidth(2);
-    if (option->state & QStyle::State_Selected)
+    if (mPegCnt == 0)
     {
-        mPen.setStyle(Qt::DotLine);
+        return;
     }
 
-    painter->setPen(mPen);
-
-    int i;
-    for (i = 0; i < 4; i++)
+    if (mIsActive)
     {
-        QRadialGradient grad(QPointF(i * 40 + 10, 10), 100);
-        grad.setColorAt(0, QColor("#cccccc"));
-        grad.setColorAt(1, QColor("#ffffff"));
+        mPend.setAlpha(0xff);
+        mPenl.setAlpha(0xff);
+        mGrad0.setAlpha(0xff);
+        mGrad1.setAlpha(0xff);
+    }
+    else if (mSolved)
+    {
+        mPend.setAlpha(0xa0);
+        mPenl.setAlpha(0xa0);
+        mGrad0.setAlpha(0xa0);
+        mGrad1.setAlpha(0xa0);
+    }
+    else
+    {
+        mPend.setAlpha(0x32);
+        mPenl.setAlpha(0x50);
+        mGrad0.setAlpha(0x32);
+        mGrad1.setAlpha(0x32);
+    }
+    painter->setPen(Qt::NoPen);
+    int i;
+    for (i = 0; i < mPegCnt; i++)
+    {
+        painter->setBrush(QBrush(mPenl));
+        painter->drawRect(QRectF(mXOffs + i * 40, 0.0, 39, 1));
+        painter->drawRect(QRectF(mXOffs + i * 40, 0.0, 1, 39));
+        painter->setBrush(QBrush(mPend));
+        painter->drawRect(QRectF(mXOffs + i * 40, 39.0, 40, 1));
+        painter->drawRect(QRectF(mXOffs + i * 40 + 39, 0.0, 1, 40));
+
+        QRadialGradient grad(QPointF(mXOffs + i * 40 + 10, 10), 100);
+        grad.setColorAt(0, mGrad0);
+        grad.setColorAt(1, mGrad1);
         painter->setBrush(QBrush(grad));
-        painter->drawRect(QRectF(i * 40, 0.0, 40.0, 40.0));
+        painter->drawRect(QRectF(mXOffs + i * 40 + 1, 1.0, 38.0, 38.0));
     }
 }

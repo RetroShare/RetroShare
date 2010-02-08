@@ -25,26 +25,34 @@ SOURCES     += ColorCodePlugin.cpp
                 
 #===============================================================================
 
-
-SOURCES += main.cpp \
-    mainwindow.cpp \
-    colorpeg.cpp \
-    rowhint.cpp \
-    pegrow.cpp \
-    msg.cpp \
-    about.cpp
-HEADERS += mainwindow.h \
+# Input
+HEADERS += about.h \
+    colorcode.h \
     colorpeg.h \
-    rowhint.h \
-    pegrow.h \
     msg.h \
-    about.h
-RESOURCES += resource.qrc
+    pegrow.h \
+    rowhint.h \
+    ccsolver.h \
+    background.h \
+    solrow.h
 FORMS += about.ui
-OTHER_FILES += docs/GPL.html \
+SOURCES += about.cpp \
+    colorcode.cpp \
+    colorpeg.cpp \
+    main.cpp \
+    msg.cpp \
+    pegrow.cpp \
+    rowhint.cpp \
+    ccsolver.cpp \
+    background.cpp \
+    solrow.cpp
+RESOURCES += resource.qrc
+OTHER_FILES += docs/GPL.html
+win32 {
+    RC_FILE = ColorCode.rc
+}
+TRANSLATIONS += trans_de.ts \
     trans_en.ts \
-    trans_de.ts
-TRANSLATIONS = trans_en.ts \
-    trans_de.ts
+    trans_cs.ts
 CODECFORTR = UTF-8
 CODECFORSRC = UTF-8
