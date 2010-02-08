@@ -23,7 +23,7 @@
 #include "GeneralMsgDialog.h"
 #include "gui/feeds/FeedHolder.h"
 
-#include "gui/feeds/SubFileItem.h"
+#include "gui/feeds/AttachFileItem.h"
 #include "gui/feeds/SubDestItem.h"
 
 #include "rsiface/rstypes.h"
@@ -258,28 +258,27 @@ void GeneralMsgDialog::parseRsFileListAttachments(std::string attachList)
 
 void GeneralMsgDialog::addAttachment(std::string hash, std::string fname, uint64_t size, bool local, std::string srcId)
 {
-	/* add a SubFileItem to the attachment section */
+	/* add a AttachFileItem to the attachment section */
 	std::cerr << "GeneralMsgDialog::addAttachment()";
 	std::cerr << std::endl;
 
 	/* add widget in for new destination */
 
-	uint32_t flags = SFI_TYPE_ATTACH;
+	uint32_t flags = AFI_TYPE_ATTACH;
 	if (local)
 	{
-		flags |= SFI_STATE_LOCAL;
+		flags |= AFI_STATE_LOCAL;
 	}
 	else
 	{
-		flags |= SFI_STATE_REMOTE;
+		flags |= AFI_STATE_REMOTE;
 		// TMP REMOVED REMOTE ADD FOR DEMONSTRATOR
 		return;
 	}
 
-	SubFileItem *file = new SubFileItem(hash, fname, size, flags, srcId);
+	AttachFileItem *file = new AttachFileItem(hash, fname, size, flags, srcId);
 
 	mAttachments.push_back(file);
-	//QLayout *layout = fileFrame->layout();
 	verticalLayout_2->addWidget(file);
 
 	if (mCheckAttachment)
@@ -293,7 +292,7 @@ void GeneralMsgDialog::addAttachment(std::string hash, std::string fname, uint64
 
 void GeneralMsgDialog::addExtraFile()
 {
-	/* add a SubFileItem to the attachment section */
+	/* add a AttachFileItem to the attachment section */
 	std::cerr << "GeneralMsgDialog::addExtraFile() opening file dialog";
 	std::cerr << std::endl;
 
@@ -310,7 +309,7 @@ void GeneralMsgDialog::addExtraFile()
 
 void GeneralMsgDialog::addAttachment(std::string path)
 {
-	/* add a SubFileItem to the attachment section */
+	/* add a AttachFileItem to the attachment section */
 	std::cerr << "GeneralMsgDialog::addAttachment()";
 	std::cerr << std::endl;
 
@@ -322,10 +321,9 @@ void GeneralMsgDialog::addAttachment(std::string path)
 	//rsFiles->ExtraFileHash(localpath, period, flags);
 
 	/* add widget in for new destination */
-	SubFileItem *file = new SubFileItem(path);
+	AttachFileItem *file = new AttachFileItem(path);
 
 	mAttachments.push_back(file);
-	//QLayout *layout = fileFrame->layout();
 	verticalLayout_2->addWidget(file);
 
 	if (mCheckAttachment)
@@ -339,7 +337,7 @@ void GeneralMsgDialog::addAttachment(std::string path)
 
 void GeneralMsgDialog::checkAttachmentReady()
 {
-	std::list<SubFileItem *>::iterator fit;
+	std::list<AttachFileItem *>::iterator fit;
 
 	mCheckAttachment = false;
 
@@ -546,7 +544,7 @@ void GeneralMsgDialog::sendMsg()
 	std::list<FileInfo> files;
 
 	std::list<SubDestItem *>::iterator it;
-	std::list<SubFileItem *>::iterator fit;
+	std::list<AttachFileItem *>::iterator fit;
 
 	for(fit = mAttachments.begin(); fit != mAttachments.end(); fit++)
 	{
@@ -564,7 +562,7 @@ void GeneralMsgDialog::sendMsg()
 			{
 				if ((*fit)->ready())
 				{
-					(*fit)->download();
+					//(*fit)->download();
 				}
 				// Skips unhashed files.
 			}

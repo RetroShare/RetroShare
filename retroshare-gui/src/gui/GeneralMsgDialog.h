@@ -26,7 +26,7 @@
 #include <stdint.h>
 
 class SubDestItem;
-class SubFileItem;
+class AttachFileItem;
 class FileInfo;
 
 const uint32_t GMD_TYPE_MESSAGE_IDX = 0;
@@ -72,7 +72,7 @@ void sendMessage(uint32_t type, std::string grpId, std::string inReplyTo,
 
 	/* maps of files and destinations */
 	std::list<SubDestItem *> mDestinations;
-	std::list<SubFileItem *> mAttachments;
+	std::list<AttachFileItem *> mAttachments;
 
 	bool mCheckAttachment;
 };
