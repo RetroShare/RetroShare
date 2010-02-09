@@ -174,10 +174,10 @@ void GenCertDialog::genPerson()
             std::string err_string;
             ui.no_gpg_key_label->setText(tr("Generating new GPG key, please be patient. Fill in your GPG password when asked."));
             ui.no_gpg_key_label->show();
-            QMovie *movie = new QMovie(":/images/loader/progress.gif");
-            ui.progress_label->setMovie(movie);
-            movie->start();
-            movie->setSpeed(100); // 2x speed
+//            QMovie *movie = new QMovie(":/images/loader/progress.gif");
+//            ui.progress_label->setMovie(movie);
+//            movie->start();
+//            movie->setSpeed(100); // 2x speed
             ui.new_gpg_key_checkbox->hide();
             ui.name_label->hide();
             ui.name_input->hide();
