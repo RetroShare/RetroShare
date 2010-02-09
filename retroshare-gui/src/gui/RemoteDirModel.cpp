@@ -275,6 +275,10 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
            {
            	 return QIcon(":/images/folder_yellow.png");
            }
+           else if (ageIndicator == IND_LAST_MONTH )
+           {
+           	 return QIcon(":/images/folder_red.png");
+           }
 					 else
 					 {
 						 return(QIcon(categoryIcon));
