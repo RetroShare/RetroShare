@@ -238,6 +238,7 @@ int FileIndexStore::RequestDirDetails(void *ref, DirDetails &details, uint32_t f
 int FileIndexStore::SearchHash(std::string hash, std::list<FileDetail> &results) const
 {
 	lockData();
+	results.clear() ;
 	std::map<RsPeerId, FileIndex *>::const_iterator pit;
 	std::list<FileEntry *>::iterator rit;
 	std::list<FileEntry *> firesults;
@@ -291,6 +292,7 @@ int FileIndexStore::SearchKeywords(std::list<std::string> keywords, std::list<Di
 	std::list<FileEntry *>::iterator rit;
 	std::list<FileEntry *> firesults;
 
+	results.clear() ;
 	time_t now = time(NULL);
 
 #ifdef FIS_DEBUG
@@ -306,7 +308,10 @@ int FileIndexStore::SearchKeywords(std::list<std::string> keywords, std::list<Di
 			for(rit = firesults.begin(); rit != firesults.end(); rit++)
 			{
 				DirDetails dd;
-				FileIndex::extractData(*rit, dd);
+
+				if(!FileIndex::extractData(*rit, dd))
+					continue ;
+				
 				results.push_back(dd);
 			}
 		}
@@ -321,7 +326,10 @@ int FileIndexStore::SearchKeywords(std::list<std::string> keywords, std::list<Di
 			for(rit = firesults.begin(); rit != firesults.end(); rit++)
 			{
 				DirDetails dd;
-				FileIndex::extractData(*rit, dd);
+
+				if(!FileIndex::extractData(*rit, dd))
+					continue ;
+
 				dd.id = "Local";
 				results.push_back(dd);
 			}
