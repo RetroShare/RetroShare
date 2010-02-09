@@ -290,14 +290,19 @@ void p3turtle::autoWash()
 	{
 		RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
-		for(std::map<TurtleSearchRequestId,TurtleRequestInfo>::iterator it(_search_requests_origins.begin());it!=_search_requests_origins.end();++it)
+		for(std::map<TurtleSearchRequestId,TurtleRequestInfo>::iterator it(_search_requests_origins.begin());it!=_search_requests_origins.end();)
 			if(now > (time_t)(it->second.time_stamp + SEARCH_REQUESTS_LIFE_TIME))
 			{
 #ifdef P3TURTLE_DEBUG
 				std::cerr << "  removed search request " << (void *)it->first << ", timeout." << std::endl ;
 #endif
+				std::map<TurtleSearchRequestId,TurtleRequestInfo>::iterator tmp(it) ;
+				++tmp ;
 				_search_requests_origins.erase(it) ;
+				it = tmp ;
 			}
+			else
+				++it;
 	}
 
 	// Tunnel requests
@@ -305,14 +310,19 @@ void p3turtle::autoWash()
 	{
 		RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
-		for(std::map<TurtleTunnelRequestId,TurtleRequestInfo>::iterator it(_tunnel_requests_origins.begin());it!=_tunnel_requests_origins.end();++it)
+		for(std::map<TurtleTunnelRequestId,TurtleRequestInfo>::iterator it(_tunnel_requests_origins.begin());it!=_tunnel_requests_origins.end();)
 			if(now > (time_t)(it->second.time_stamp + TUNNEL_REQUESTS_LIFE_TIME))
 			{
 #ifdef P3TURTLE_DEBUG
 				std::cerr << "  removed tunnel request " << (void *)it->first << ", timeout." << std::endl ;
 #endif
+				std::map<TurtleTunnelRequestId,TurtleRequestInfo>::iterator tmp(it) ;
+				++tmp ;
 				_tunnel_requests_origins.erase(it) ;
+				it = tmp ;
 			}
+			else
+				++it ;
 	}
 
 	// Tunnels.
