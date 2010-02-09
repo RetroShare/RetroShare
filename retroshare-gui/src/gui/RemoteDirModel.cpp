@@ -243,8 +243,11 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
     }
 
 
-    if (role == Qt::DecorationRole)
+   if (role == Qt::DecorationRole)
 	 {
+	    FileInfo finfo;
+      rsFiles->FileDetails(details.hash, 0, finfo);
+	 
 
 		 if (details.type == DIR_TYPE_PERSON)
 		 {
@@ -260,12 +263,18 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
 			 switch(coln)
 			 {
 				 case 0:
-					 QString ext = QFileInfo(QString::fromStdString(details.name)).suffix();
-					 if (ext == "avi" || ext == "mpg" || ext == "movie")
+           if(details.min_age > ageIndicator)
 					 {
-						 QIcon icon(":/images/folder_video.png");
-						 return icon;
-					 }
+						 return QIcon(":/images/folder_grey.png");
+           }
+           else if (ageIndicator == IND_LAST_DAY )
+           {
+           	 return QIcon(":/images/folder_green.png");
+           }
+           else if (ageIndicator == IND_LAST_WEEK )
+           {
+           	 return QIcon(":/images/folder_yellow.png");
+           }
 					 else
 					 {
 						 return(QIcon(categoryIcon));
