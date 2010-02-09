@@ -1023,9 +1023,9 @@ bool 	p3Peers::signGPGCertificate(std::string id)
 	std::cerr << std::endl;
 #endif
 
-        AuthGPG::getAuthGPG()->SignCertificateLevel0(id);
+
         AuthGPG::getAuthGPG()->setAcceptToConnectGPGCertificate(id, true);
-        return true;
+        return AuthGPG::getAuthGPG()->SignCertificateLevel0(id);
 }
 
 bool 	p3Peers::setAcceptToConnectGPGCertificate(std::string gpg_id, bool acceptance)

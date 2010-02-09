@@ -340,7 +340,12 @@ void ConfCertDialog::denyFriend() {
 
 void ConfCertDialog::signGPGKey() {
     std::string gpg_id = rsPeers->getGPGId(mId);
-    rsPeers->signGPGCertificate(gpg_id);
+    if (!rsPeers->signGPGCertificate(gpg_id)) {
+                 QMessageBox::StandardButton sb = QMessageBox::warning ( NULL,
+                                tr("Signature Failure"),
+                                tr("Maybe password is wrong"),
+                                QMessageBox::Ok);
+    }
     loadDialog();
 }
 

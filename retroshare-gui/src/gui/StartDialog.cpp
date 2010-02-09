@@ -162,8 +162,8 @@ void StartDialog::loadCertificates()
 	{
 		/* some error msg */
                 QMessageBox::StandardButton sb = QMessageBox::warning ( NULL,
-                                "Login Failure",
-                                "*** Wrong Password ***",
+                                tr("Login Failure"),
+                                tr("Maybe password is wrong"),
 				QMessageBox::Ok);
 	}
 }
@@ -174,8 +174,8 @@ void StartDialog::on_labelProfile_linkActivated(QString link)
     //gencertdialog->show();
     
     QMessageBox::StandardButton sb = QMessageBox::question ( NULL,
-                        "Create a New Profil", 
-			"This will generate a new Profile\n Are you sure you want to continue",
+                        tr("Create a New Profil"),
+                        tr("This will generate a new Profile\n Are you sure you want to continue"),
 			(QMessageBox::Ok | QMessageBox::No));
 
     if (sb == QMessageBox::Ok)
