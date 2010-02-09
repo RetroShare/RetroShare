@@ -139,20 +139,26 @@ p3ConnectMgr::p3ConnectMgr()
 	mStatusChanged(false)
 {
 	/* setup basics of own state */
-        ownState.id = AuthSSL::getAuthSSL()->OwnId();
-        ownState.gpg_id = AuthGPG::getAuthGPG()->getGPGOwnId();
-        ownState.name = AuthGPG::getAuthGPG()->getGPGOwnName();
-        ownState.location = AuthSSL::getAuthSSL()->getOwnLocation();
-        ownState.netMode = RS_NET_MODE_UDP;
-        ownState.netMode |= RS_NET_MODE_TRY_UPNP;
+	ownState.id = AuthSSL::getAuthSSL()->OwnId();
+	ownState.gpg_id = AuthGPG::getAuthGPG()->getGPGOwnId();
+	ownState.name = AuthGPG::getAuthGPG()->getGPGOwnName();
+	ownState.location = AuthSSL::getAuthSSL()->getOwnLocation();
+	ownState.netMode = RS_NET_MODE_UDP;
+	ownState.netMode |= RS_NET_MODE_TRY_UPNP;
 
 	//use_extr_addr_finder = true ;
 	use_extr_addr_finder = false;
-        allow_tunnel_connection = false;
-        mExtAddrFinder = new ExtAddrFinder;
-        mNetInitTS = 0;
+	allow_tunnel_connection = false;
+	mExtAddrFinder = new ExtAddrFinder;
+	mNetInitTS = 0;
 
-        netReset();
+	netFlagExtraAddressCheckOk = false;
+	netFlagLocalOk = false;
+	netFlagUpnpOk = false;
+	netFlagDhtOk = false;
+	netFlagStunOk = false;
+
+	netReset();
 
 	return;
 }

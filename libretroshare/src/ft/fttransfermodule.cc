@@ -328,7 +328,7 @@ bool ftTransferModule::getChunk(const std::string& peer_id,uint32_t size_hint,ui
 #endif
 
 	bool source_peer_map_needed ;
-	bool file_is_complete ;
+	bool file_is_complete = false;
 
   	bool val = mFileCreator->getMissingChunk(peer_id,size_hint,offset, chunk_size,source_peer_map_needed,file_is_complete);
 
