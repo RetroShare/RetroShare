@@ -2,7 +2,7 @@
 
 ; Define your application name
 !define APPNAME "RetroShare"
-!define VERSION "0.5.0"
+!define VERSION "0.5.0 alpha 1"
 !define APPNAMEANDVERSION "${APPNAME} ${VERSION}"
 
 ; Main Install settings
@@ -12,7 +12,7 @@ InstallDirRegKey HKLM "Software\${APPNAME}" ""
 OutFile "RetroShare_${VERSION}_setup.exe"
 BrandingText "${APPNAMEANDVERSION}"
 ; Use compression
-SetCompressor LZMA /SOLID
+SetCompressor /SOLID LZMA 
 
 ; Modern interface settings
 !include Sections.nsh
@@ -101,7 +101,6 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
     LangString DESC_sec_data ${LANG_ENGLISH} "Installs RetroShare Skins"
     LangString DESC_sec_shortcuts ${LANG_ENGLISH} "Create RetroShare shortcut icons."
     LangString DESC_sec_link ${LANG_ENGLISH} "Associate RetroShare with .pqi file extension"
-    LangString DESC_sec_autostart ${LANG_ENGLISH} "Auto-Run and Login at Startup"
     LangString LANGUAGEID ${LANG_ENGLISH} "1033"
     
     
@@ -116,7 +115,6 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
     LangString DESC_sec_startmenu ${LANG_FRENCH} "Crée les raccourcis du menu Démarrer"
     LangString DESC_sec_shortcuts ${LANG_FRENCH} "Crée une icône sur le bureau."
     LangString DESC_sec_link ${LANG_FRENCH} "Associate RetroShare with .pqi file extension"
-    LangString DESC_sec_autostart ${LANG_FRENCH} "Run and Auto-connexion au démarrage"
     LangString LANGUAGEID ${LANG_FRENCH} "1036"
 
     
@@ -129,7 +127,6 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
 	  LangString DESC_sec_data ${LANG_GERMAN} "Installiert RetroShare Skins"
     LangString DESC_sec_shortcuts ${LANG_GERMAN} "Erstellt eine RetroShare Verkn�pfung im Startmen�, Desktop oder im Schnellstarter."
     LangString DESC_sec_link ${LANG_GERMAN} "RetroShare mit .pqi Dateien verkn�pfen"
-    LangString DESC_sec_autostart ${LANG_GERMAN} "Beim Neustart automatisch RetroShare starten und sich anmelden"
     LangString LANGUAGEID ${LANG_GERMAN} "1031"
         
     LangString sec_main ${LANG_TURKISH} "Program Dosyalar�"
@@ -141,7 +138,6 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
 	  LangString DESC_sec_data ${LANG_TURKISH} "RetroShare Skin'leri kurar"
     LangString DESC_sec_shortcuts ${TURKISH} "Shortcut yap Start menu , Desktop veya Quicklaunchbar icin."
     LangString DESC_sec_link ${LANG_TURKISH} "RetroShare .pqi almas� i�in kaydettirir"
-    LangString DESC_sec_autostart ${LANG_TURKISH} "Isletim sistemi acildiginda Otomatik olarak calistir ve baglan"
     LangString LANGUAGEID ${LANG_TURKISH} "1055"
     
     LangString sec_main ${LANG_SIMPCHINESE} "程序文件"
@@ -153,7 +149,6 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
     LangString DESC_sec_data ${LANG_SIMPCHINESE} "安装RetroShare皮肤"
     LangString DESC_sec_shortcuts ${LANG_SIMPCHINESE} "建RetroShare快捷方式"
     LangString DESC_sec_link ${LANG_SIMPCHINESE} "关联.pqi扩展名"
-    LangString DESC_sec_autostart ${LANG_SIMPCHINESE} "启动时自动运行和登录"
     LangString LANGUAGEID ${LANG_SIMPCHINESE} "2052"
     
     LangString sec_main ${LANG_POLISH} "Pliki programu"
@@ -165,7 +160,6 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
     LangString DESC_sec_data ${LANG_POLISH} "Instaluje skórki programu RetroShare"
     LangString DESC_sec_shortcuts ${LANG_POLISH} "Utwórz ikony skrótów na pulpicie, w menu start oraz na pasku szybkiego uruchamiania."
     LangString DESC_sec_link ${LANG_POLISH} "Skojarz pliki o rozszerzeniu .pqi z RetroShare"
-    LangString DESC_sec_autostart ${LANG_POLISH} "Uruchom i zaloguj podczas startu systemu"
     LangString LANGUAGEID ${LANG_POLISH} "1045"
     
     
@@ -277,10 +271,10 @@ SectionGroupEnd
   
 ;SectionEnd
 
-Section $(sec_autostart) sec_autostart
+;Section $(sec_autostart) sec_autostart
 
-  CreateShortCut "$SMSTARTUP\${APPNAME}.lnk" "$INSTDIR\RetroShare.exe" "" "$INSTDIR\RetroShare.exe" 0
-SectionEnd
+;  CreateShortCut "$SMSTARTUP\${APPNAME}.lnk" "$INSTDIR\RetroShare.exe" "" "$INSTDIR\RetroShare.exe" 0
+;SectionEnd
 
 
 Section -FinishSection
@@ -303,7 +297,7 @@ SectionEnd
     !insertmacro MUI_DESCRIPTION_TEXT ${sec_data} $(DESC_sec_data)
     !insertmacro MUI_DESCRIPTION_TEXT ${sec_shortcuts} $(DESC_sec_shortcuts)
     !insertmacro MUI_DESCRIPTION_TEXT ${sec_link} $(DESC_sec_link)
-	!insertmacro MUI_DESCRIPTION_TEXT ${sec_autostart} $(DESC_sec_autostart)
+	;!insertmacro MUI_DESCRIPTION_TEXT ${sec_autostart} $(DESC_sec_autostart)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ;Uninstall section
