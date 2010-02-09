@@ -251,7 +251,7 @@ int     p3ChatService::sendPrivateChat( std::wstring msg, std::string id)
 
 		std::map<std::string,StateStringInfo>::iterator it = _state_strings.find(id) ; 
 
-		if(it != _state_strings.end())
+		if(it == _state_strings.end())
 		{
 			_state_strings[id] = StateStringInfo() ;
 			it = _state_strings.find(id) ;
