@@ -653,7 +653,7 @@ border: 1px solid #CCCCCC;}</string>
          </property>
          <property name="icon">
           <iconset resource="images.qrc">
-           <normaloff>:/images/folder_green16.png</normaloff>:/images/folder_green16.png</iconset>
+           <normaloff>:/images/folder16.png</normaloff>:/images/folder16.png</iconset>
          </property>
         </item>
        </widget>
