@@ -579,7 +579,9 @@ struct in_addr getPreferredInterface() // returns best addr.
 		{
 			if (!found_ext)
 			{
+#ifdef NET_DEBUG
 				std::cerr << "Found external address " << (void*)addr.s_addr << std::endl ;
+#endif
 				found_ext = true;
 				addr_ext = addr;
 			}
