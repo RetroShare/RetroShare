@@ -71,24 +71,37 @@ gpgcert::~gpgcert()
 	}
 }
 
+static std::string gpg_password_static;
+static bool is_set_gpg_password_static = false;
+
+
 gpg_error_t pgp_pwd_callback(void *hook, const char *uid_hint, const char *passphrase_info, int prev_was_bad, int fd)
 {
-	static std::string sp = "" ;
+    #ifdef GPG_DEBUG
+    fprintf(stderr, "pgp_pwd_callback() called.\n");
+    #endif
 
-	std::string text ;
-
-	if(sp == "" || prev_was_bad)
-	{
-		if(prev_was_bad)
-			text = rsicontrol->getNotify().askForPassword("GPG key passphrase",std::string("Wrong password !\n\nPlease enter the password to unlock the following GPG key:\n\n  ")+uid_hint+"\n") ;
-		else
-			text = rsicontrol->getNotify().askForPassword("GPG key passphrase",std::string("Please enter the password to unlock the following GPG key:\n\n")+uid_hint+"\n") ;
-		sp = text ;
-	}
-	else
-		text = sp ;
-
-	fprintf(stderr, "pgp_pwd_callback() Set Password\n");
+    std::string text;
+    if (is_set_gpg_password_static) {
+        #ifdef GPG_DEBUG
+        fprintf(stderr, "pgp_pwd_callback() using already setted password.\n");
+        #endif
+        text = gpg_password_static;
+    } else {
+        if(prev_was_bad) {
+            #ifdef GPG_DEBUG
+            fprintf(stderr, "pgp_pwd_callback() allow only one try to be consistent with gpg agent.\n");
+            #endif
+            text = "";
+        } else {
+            text = rsicontrol->getNotify().askForPassword(uid_hint);
+            #ifdef GPG_DEBUG
+            std::cerr << "pgp_pwd_callback() got GPG passwd from gui." << std::endl;
+            #endif
+            gpg_password_static = text;
+            is_set_gpg_password_static = true;
+        }
+    }
 
 #ifndef WINDOWS_SYS
 	write(fd, text.c_str(), text.size());
@@ -99,6 +112,10 @@ gpg_error_t pgp_pwd_callback(void *hook, const char *uid_hint, const char *passp
 	WriteFile(winFd, text.c_str(), text.size(), &written, NULL);
 	WriteFile(winFd, "\n", 1, &written, NULL); 
 #endif
+
+        #ifdef GPG_DEBUG
+        fprintf(stderr, "pgp_pwd_callback() password setted\n");
+        #endif
 
 	return 0;
 }
@@ -252,6 +269,8 @@ bool AuthGPG::availableGPGCertificatesWithPrivateKeys(std::list<std::string> &id
  */
 int	AuthGPG::GPGInit(std::string ownId)
 {
+        is_set_gpg_password_static= false;
+
         {
             RsStackMutex stack(pgpMtx); /******* LOCKED ******/
             std::cerr << "AuthGPG::GPGInit() called with own gpg id : " << ownId << std::endl;

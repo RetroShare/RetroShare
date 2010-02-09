@@ -42,10 +42,12 @@ void NotifyQt::notifyOwnAvatarChanged()
 	emit ownAvatarChanged() ;
 }
 
-std::string NotifyQt::askForPassword(const std::string& window_title,const std::string& text)
+std::string NotifyQt::askForPassword(const std::string& key_details)
 {
-	return QInputDialog::getText(NULL, QString::fromStdString(window_title),
-					  QString::fromStdString(text), QLineEdit::Password,
+
+        return QInputDialog::getText(NULL, tr("GPG key passphrase"),
+                                          tr("Please enter the password to unlock the following GPG key:\n") + QString::fromStdString(key_details),
+                                          QLineEdit::Password,
 					  NULL, NULL).toStdString();
 }
 

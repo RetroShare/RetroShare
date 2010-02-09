@@ -41,7 +41,7 @@ class NotifyQt: public QObject, public NotifyBase
 		virtual void notifyOwnAvatarChanged() ;
 		virtual void notifyOwnStatusMessageChanged() ;
 
-		virtual std::string askForPassword(const std::string& window_title,const std::string& text) ;
+                virtual std::string askForPassword(const std::string& key_details) ;
 
 	signals:
 		// It's beneficial to send info to the GUI using signals, because signals are thread-safe
