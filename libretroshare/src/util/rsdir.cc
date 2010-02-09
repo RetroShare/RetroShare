@@ -34,6 +34,8 @@
 #include <iostream>
 #include <algorithm>
 #include <stdio.h>
+#include <dirent.h>
+
 
 #if defined(WIN32) || defined(__CYGWIN__)
 #include "wtypes.h"
@@ -232,51 +234,42 @@ bool	RsDirUtil::checkDirectory(std::string dir)
 
 bool	RsDirUtil::checkCreateDirectory(std::string dir)
 {
-	struct stat buf;
-	int val = stat(dir.c_str(), &buf);
-	if (val == -1)
-	{
-		// directory don't exist. create.
+#ifdef RSDIR_DEBUG
+        std::cerr << "RsDirUtil::checkCreateDirectory() dir: " << dir << std::endl;
+#endif
+        DIR *direc = opendir(dir.c_str());
+        if (!direc)
+        {
+                // directory don't exist. create.
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS // UNIX
-		if (-1 == mkdir(dir.c_str(), 0777))
+                if (-1 == mkdir(dir.c_str(), 0777))
 #else // WIN
-		if (-1 == mkdir(dir.c_str()))
+                if (-1 == mkdir(dir.c_str()))
 #endif
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
-		{
-#ifdef RSDIR_DEBUG 
-		  std::cerr << "check_create_directory() Fatal Error --";
-		  std::cerr <<std::endl<< "\tcannot create:" <<dir<<std::endl;
+                {
+#ifdef RSDIR_DEBUG
+                  std::cerr << "check_create_directory() Fatal Error et oui--";
+                  std::cerr <<std::endl<< "\tcannot create:" <<dir<<std::endl;
 #endif
-		  return 0;
-		}
+                  return 0;
+                }
 
-#ifdef RSDIR_DEBUG 
-		std::cerr << "check_create_directory()";
-		std::cerr <<std::endl<< "\tcreated:" <<dir<<std::endl;
+#ifdef RSDIR_DEBUG
+                std::cerr << "check_create_directory()";
+                std::cerr <<std::endl<< "\tcreated:" <<dir<<std::endl;
 #endif
-	} 
-	else if (!S_ISDIR(buf.st_mode))
-	{
-		// Some other type - error.
-#ifdef RSDIR_DEBUG 
-		std::cerr<<"check_create_directory() Fatal Error --";
-		std::cerr<<std::endl<<"\t"<<dir<<" is nor Directory"<<std::endl;
+        }
+
+#ifdef RSDIR_DEBUG
+        std::cerr << "check_create_directory()";
+        std::cerr <<std::endl<< "\tDir Exists:" <<dir<<std::endl;
 #endif
-		return 0;
-	}
-#ifdef RSDIR_DEBUG 
-	std::cerr << "check_create_directory()";
-	std::cerr <<std::endl<< "\tDir Exists:" <<dir<<std::endl;
-#endif
-	return 1;
+        return 1;
 }
 
-
-
-#include <dirent.h>
 //#include <sys/types.h>
 //#include <sys/stat.h>
 //#include <fcntl.h>
