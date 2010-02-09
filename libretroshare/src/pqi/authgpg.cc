@@ -708,6 +708,7 @@ bool AuthGPG::DoOwnSignature_locked(const void *data, unsigned int datalen, void
 
 	if (len < *outl)	// -1 because we added a 0 at the end.
 	{
+		fprintf(stderr,"Length is smaller. Reducing to %d\n",len) ;
 		*outl = len;
 	}
 	memmove(buf_sigout, export_sig, *outl);
@@ -1111,14 +1112,13 @@ std::string AuthGPG::SaveCertificateToString(std::string id)
 	{
                 std::cerr << "Error export Data" << std::endl;
 	}
-	gpgme_data_write (gpgmeData, "", 1); 	// to be able to convert it into a string
 
 	fflush (NULL);
         //showData (gpgmeData);
 
 	size_t len = 0; 
 	char *export_txt = gpgme_data_release_and_get_mem(gpgmeData, &len);
-	tmp = std::string(export_txt);
+	tmp = std::string(export_txt,len);
 
 #ifdef GPG_DEBUG
         std::cerr << "Exported Certificate: " << std::endl << tmp << std::endl;
@@ -1160,6 +1160,10 @@ bool AuthGPG::LoadCertificateFromString(std::string str, std::string &gpg_id)
 
 
 	gpgme_import_result_t res = gpgme_op_import_result(CTX);
+
+	if(res->imports == NULL)
+		return false ;
+
         std::string fingerprint = std::string(res->imports->fpr);
 #ifdef GPG_DEBUG
         std::cerr << "AuthGPG::LoadCertificateFromString() Importing considered folowing fpr : " << fingerprint << std::endl;
