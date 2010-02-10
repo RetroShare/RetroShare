@@ -1559,6 +1559,8 @@ std::list<RsItem *> ftController::saveList(bool &cleanup)
 		rft->file.filesize = fit->second.mSize;
 		rft->file.path = RsDirUtil::removeTopDir(fit->second.mDestination); /* remove fname */
 		rft->flags = fit->second.mFlags;
+		rft->state = fit->second.mState;
+		rft->transferred = fit->second.mCreator->getRecvd();
 
 		fit->second.mTransfer->getFileSources(rft->allPeerIds.ids);
 
