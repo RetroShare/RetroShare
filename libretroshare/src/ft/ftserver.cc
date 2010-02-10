@@ -76,9 +76,11 @@ void	ftServer::setConfigDirectory(std::string path)
 	 * TODO.
 	 */
 
+	std::string basecachedir = mConfigPath + "/cache";
 	std::string localcachedir = mConfigPath + "/cache/local";
 	std::string remotecachedir = mConfigPath + "/cache/remote";
 
+	RsDirUtil::checkCreateDirectory(basecachedir) ;
 	RsDirUtil::checkCreateDirectory(localcachedir) ;
 	RsDirUtil::checkCreateDirectory(remotecachedir) ;
 
