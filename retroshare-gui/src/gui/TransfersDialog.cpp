@@ -826,7 +826,7 @@ void TransfersDialog::insertTransfers()
 		  pinfo.cmap = fcinfo.chunks ;
 		  pinfo.type = FileProgressInfo::DOWNLOAD_LINE ;
 		  pinfo.progress = completed*100.0/info.size ;
-		  pinfo.nb_chunks = fcinfo.chunks.size() ;
+		  pinfo.nb_chunks = pinfo.cmap._map.empty()?0:fcinfo.chunks.size() ;
 
         int addedRow = addItem(symbol, name, coreId, fileSize, pinfo, dlspeed, sources, status, priority, completed, remaining);
 
@@ -896,7 +896,7 @@ void TransfersDialog::insertTransfers()
 				pinfo.type = FileProgressInfo::DOWNLOAD_SOURCE ;
 				pinfo.cmap = fcinfo.compressed_peer_availability_maps[pit->peerId] ;
 				pinfo.progress = 0.0 ;	// we don't display completion for sources.
-				pinfo.nb_chunks = fcinfo.chunks.size() ;
+				pinfo.nb_chunks = pinfo.cmap._map.empty()?0:fcinfo.chunks.size() ;
 
             if (!addPeerToItem(addedRow, symbol, name, coreId, fileSize, pinfo, dlspeed, sources, status, completed, remaining))
                 continue;
