@@ -827,7 +827,9 @@ void PeersDialog::updateStatusTyping()
 //
 void PeersDialog::updateStatusString(const QString& status_string)
 {
+        #ifdef PEERS_DEBUG
 	std::cerr << "PeersDialog: received group chat typing info. updating gui." << std::endl ;
+        #endif
 
 	ui.statusStringLabel->setText(status_string) ; // displays info for 5 secs.
 
