@@ -288,8 +288,9 @@ void UdpLayer::recv_loop()
                         } 
 			else if (status < 0) 
 			{
-				std::cerr << "UdpLayer::recv_loop() ";
-				std::cerr << "Error: " << tounet_errno() << std::endl;
+                                #ifdef DEBUG_UDP_LAYER
+                                std::cerr << "UdpLayer::recv_loop() Error: " << tounet_errno() << std::endl;
+                                #endif
                         }
                 };      
 

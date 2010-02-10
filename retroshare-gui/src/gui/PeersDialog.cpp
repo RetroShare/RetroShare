@@ -815,7 +815,9 @@ void PeersDialog::updateStatusTyping()
 {
 	if(time(NULL) - last_status_send_time > 5)	// limit 'peer is typing' packets to at most every 10 sec
 	{
+                #ifdef PEERS_DEBUG
 		std::cerr << "PeersDialog: sending group chat typing info." << std::endl ;
+                #endif
 
 		rsMsgs->sendGroupChatStatusString(rsiface->getConfig().ownName + " is typing...");
 		last_status_send_time = time(NULL) ;

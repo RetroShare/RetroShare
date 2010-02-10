@@ -45,18 +45,14 @@ std::ostream &operator<<(std::ostream &out, const ChannelInfo &info)
 
 std::ostream &operator<<(std::ostream &out, const ChannelMsgSummary &info)
 {
-	out << "ChannelMsgSummary:";
-	out << std::endl;
-	out << "ChannelId: " << info.channelId << std::endl;
+        out << "ChannelMsgSummary: ChannelId: " << info.channelId << std::endl;
 
 	return out;
 }
 
 std::ostream &operator<<(std::ostream &out, const ChannelMsgInfo &info)
 {
-	out << "ChannelMsgInfo:";
-	out << std::endl;
-	out << "ChannelId: " << info.channelId << std::endl;
+        out << "ChannelMsgInfo: ChannelId: " << info.channelId << std::endl;
 
 	return out;
 }
@@ -82,11 +78,8 @@ p3Channels::p3Channels(uint16_t type, CacheStrapper *cs,
 	//loadDummyData();
 	
 	/* create chanDir */
-	if (!RsDirUtil::checkCreateDirectory(mChannelsDir))
-	{
-		std::cerr << "p3Channels() Failed to create Channels Directory: ";
-		std::cerr << mChannelsDir;
-		std::cerr << std::endl;
+        if (!RsDirUtil::checkCreateDirectory(mChannelsDir)) {
+                std::cerr << "p3Channels() Failed to create Channels Directory: " << mChannelsDir << std::endl;
 	}
 
 	return; 
@@ -283,9 +276,9 @@ RsDistribGrp *p3Channels::locked_createPrivateDistribGrp(GroupInfo &info)
 
 bool p3Channels::channelSubscribe(std::string cId, bool subscribe)
 {
-	std::cerr << "p3Channels::channelSubscribe() ";
-	std::cerr << cId;
-	std::cerr << std::endl;
+        #ifdef CHANNEL_DEBUG
+        std::cerr << "p3Channels::channelSubscribe() " << cId << std::endl;
+        #endif
 
 	return subscribeToGroup(cId, subscribe);
 }
@@ -367,11 +360,10 @@ bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std
 		 * FileRequest will ignore request if file is already indexed.
 		 */
 
-		std::cerr << "p3Channels::locked_eventDuplicateMsg() ";
-		std::cerr << " Downloading: " << fname;
-		std::cerr << " to: " << localpath;
-		std::cerr << " from: " << id;
-		std::cerr << std::endl;
+                #ifdef CHANNEL_DEBUG
+                std::cerr << "p3Channels::locked_eventDuplicateMsg() " << " Downloading: " << fname;
+                std::cerr << " to: " << localpath << " from: " << id << std::endl;
+                #endif
 
 		mRsFiles->FileRequest(fname, hash, size, 
 					localpath, flags, srcIds);
@@ -423,40 +415,40 @@ void p3Channels::locked_notifyGroupChanged(GroupInfo &grp, uint32_t flags)
 	switch(flags)
 	{
 		case GRP_NEW_UPDATE:
-			std::cerr << "p3Channels::locked_notifyGroupChanged() NEW UPDATE";
-			std::cerr << std::endl;
+                        #ifdef CHANNEL_DEBUG
+                        std::cerr << "p3Channels::locked_notifyGroupChanged() NEW UPDATE" << std::endl;
+                        #endif
 			getPqiNotify()->AddFeedItem(RS_FEED_ITEM_CHAN_NEW, grpId, msgId, nullId);
 			break;
 		case GRP_UPDATE:
-			std::cerr << "p3Channels::locked_notifyGroupChanged() UPDATE";
-			std::cerr << std::endl;
+                        #ifdef CHANNEL_DEBUG
+                        std::cerr << "p3Channels::locked_notifyGroupChanged() UPDATE" << std::endl;
+                        #endif
 			getPqiNotify()->AddFeedItem(RS_FEED_ITEM_CHAN_UPDATE, grpId, msgId, nullId);
 			break;
 		case GRP_LOAD_KEY:
-			std::cerr << "p3Channels::locked_notifyGroupChanged() LOAD_KEY";
-			std::cerr << std::endl;
+                        #ifdef CHANNEL_DEBUG
+                        std::cerr << "p3Channels::locked_notifyGroupChanged() LOAD_KEY" << std::endl;
+                        #endif
 			break;
 		case GRP_NEW_MSG:
-			std::cerr << "p3Channels::locked_notifyGroupChanged() NEW MSG";
-			std::cerr << std::endl;
-			break;
+                        #ifdef CHANNEL_DEBUG
+                        std::cerr << "p3Channels::locked_notifyGroupChanged() NEW MSG" << std::endl;
+                        #endif
+                        break;
 		case GRP_SUBSCRIBED:
-			std::cerr << "p3Channels::locked_notifyGroupChanged() SUBSCRIBED";
-			std::cerr << std::endl;
+                        #ifdef CHANNEL_DEBUG
+                        std::cerr << "p3Channels::locked_notifyGroupChanged() SUBSCRIBED" << std::endl;
+                        #endif
 	{
 		std::string channeldir = mChannelsDir + "/" + grpId;
-
-		std::cerr << "p3Channels::locked_notifyGroupChanged() ";
-		std::cerr << " creating directory: " << channeldir;
-		std::cerr << std::endl;
+                #ifdef CHANNEL_DEBUG
+                std::cerr << "p3Channels::locked_notifyGroupChanged() creating directory: " << channeldir << std::endl;
+                #endif
 
 		/* create chanDir */
-		if (!RsDirUtil::checkCreateDirectory(channeldir))
-		{
-			std::cerr << "p3Channels::locked_notifyGroupChanged() ";
-			std::cerr << "Failed to create Channels Directory: ";
-			std::cerr << channeldir;
-			std::cerr << std::endl;
+                if (!RsDirUtil::checkCreateDirectory(channeldir)) {
+                        std::cerr << "p3Channels::locked_notifyGroupChanged() Failed to create Channels Directory: " << channeldir << std::endl;
 		}
 
 		/* check if downloads need to be started? */
@@ -464,16 +456,16 @@ void p3Channels::locked_notifyGroupChanged(GroupInfo &grp, uint32_t flags)
 
 			break;
 		case GRP_UNSUBSCRIBED:
-			std::cerr << "p3Channels::locked_notifyGroupChanged() UNSUBSCRIBED";
-			std::cerr << std::endl;
+                        #ifdef CHANNEL_DEBUG
+                        std::cerr << "p3Channels::locked_notifyGroupChanged() UNSUBSCRIBED" << std::endl;
+                         #endif
 
 		/* won't stop downloads... */
 
 			break;
 
 		default:
-			std::cerr << "p3Channels::locked_notifyGroupChanged() Unknown DEFAULT";
-			std::cerr << std::endl;
+                        std::cerr << "p3Channels::locked_notifyGroupChanged() Unknown DEFAULT" << std::endl;
 			break;
 	}
 

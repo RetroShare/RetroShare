@@ -318,7 +318,9 @@ std::list<RsChatMsgItem *> p3ChatService::getChatQueue()
 
 				std::map<std::string,AvatarInfo *>::const_iterator it = _avatars.find(ci->PeerId()) ; 
 
+                                #ifdef CHAT_DEBUG
 				std::cerr << "p3chatservice:: avatar requested from above. " << std::endl ;
+                                #endif
 				// has avatar. Return it strait away.
 				//
 				if(it!=_avatars.end() && it->second->_peer_is_new)
@@ -530,11 +532,13 @@ void p3ChatService::getAvatarJpegData(const std::string& peer_id,unsigned char *
 	   std::cerr << "Already has avatar. Returning it" << std::endl ;
 #endif
 	   return ;
-	}
-	else
+       } else {
+           #ifdef CHAT_DEBUG
 	   std::cerr << "No avatar for this peer. Requesting it by sending request packet." << std::endl ;
+           #endif
+       }
 
-	sendAvatarRequest(peer_id) ;
+        sendAvatarRequest(peer_id);
 }
 
 void p3ChatService::sendAvatarRequest(const std::string& peer_id)
@@ -579,7 +583,9 @@ RsChatAvatarItem *p3ChatService::makeOwnAvatarItem()
 
 void p3ChatService::sendAvatarJpegData(const std::string& peer_id)
 {
+   #ifdef CHAT_DEBUG
    std::cerr << "p3chatservice: sending requested for peer " << peer_id << ", data=" << (void*)_own_avatar << std::endl ;
+   #endif
 
    if(_own_avatar != NULL)
 	{
@@ -593,8 +599,11 @@ void p3ChatService::sendAvatarJpegData(const std::string& peer_id)
 
 		sendItem(ci) ;
 	}
-   else
-	  std::cerr << "Doing nothing" << std::endl ;
+   else {
+        #ifdef CHAT_DEBUG
+        std::cerr << "Doing nothing" << std::endl ;
+        #endif
+   }
 }
 
 bool p3ChatService::loadList(std::list<RsItem*> load)

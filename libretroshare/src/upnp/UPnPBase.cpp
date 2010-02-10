@@ -710,8 +710,7 @@ bool CUPnPService::Execute(
 #endif
 	}
 #ifdef UPNP_DEBUG
-	std::cerr << ")";
-	std::cerr << std::endl;
+        std::cerr << ")" << std::endl;
 #endif
 	// Everything is ok, make the action
 	IXML_Document *ActionDoc = NULL;
@@ -739,8 +738,7 @@ bool CUPnPService::Execute(
 			0, NULL);
 		if (!ActionDoc) {
 #ifdef UPNP_DEBUG
-			std::cerr << "CUPnPService::Execute() Error: UpnpMakeAction returned NULL.";
-			std::cerr << std::endl;
+                        std::cerr << "CUPnPService::Execute() Error: UpnpMakeAction returned NULL." << std::endl;
 #endif
 			return false;
 		}
@@ -765,8 +763,7 @@ const std::string CUPnPService::GetStateVariable(
 	it = propertyMap.find(stateVariableName);
 	if  (it != propertyMap.end()) {
 #ifdef UPNP_DEBUG
-	    std::cerr << "CUPnPService::GetStateVariable(" << stateVariableName << ") = ";
-	    std::cerr << (*it).second << std::endl;
+            std::cerr << "CUPnPService::GetStateVariable(" << stateVariableName << ") = " << (*it).second << std::endl;
 #endif
 	    return (*it).second;
 	} else {
@@ -803,14 +800,12 @@ const std::string CUPnPService::GetStateVariable(
 	    it = propertyMap.find(stateVariableName);
 	    if  (it != propertyMap.end()) {
 #ifdef UPNP_DEBUG
-		std::cerr << "CUPnPService::GetStateVariable(" << stateVariableName << ") = ";
-		std::cerr << (*it).second << std::endl;
+                std::cerr << "CUPnPService::GetStateVariable(" << stateVariableName << ") = " << (*it).second << std::endl;
 #endif
 		return (*it).second;
 	    } else {
 #ifdef UPNP_DEBUG
-		std::cerr << "CUPnPService::GetStateVariable(" << stateVariableName << ") = ";
-		std::cerr << "Empty String" << std::endl;
+                std::cerr << "CUPnPService::GetStateVariable(" << stateVariableName << ") = " << "Empty String" << std::endl;
 #endif
 		return stdEmptyString;
 	    }
@@ -1326,8 +1321,7 @@ upnpDiscovery:
 		int ret;
 		if (d_event->ErrCode != UPNP_E_SUCCESS) {
 #ifdef UPNP_DEBUG
-			std::cerr << upnpCP->m_upnpLib.GetUPnPErrorMessage(d_event->ErrCode) << ".";
-			std::cerr << std::endl;
+                        std::cerr << upnpCP->m_upnpLib.GetUPnPErrorMessage(d_event->ErrCode) << "." << std::endl;
 #endif
 		}
 #ifdef UPNP_DEBUG

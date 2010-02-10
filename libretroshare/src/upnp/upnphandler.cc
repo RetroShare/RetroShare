@@ -315,7 +315,9 @@ void    upnphandler::shutdown()
 void    upnphandler::restart()
 {
 	/* non-blocking call to shutdown upnp, and startup again. */
+        #ifdef UPNP_DEBUG
 	std::cerr << "upnphandler::restart() called." << std::endl;
+        #endif
 	background_setup_upnp(true, true);
 }
 

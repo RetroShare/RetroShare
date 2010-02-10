@@ -627,20 +627,24 @@ void PopupChatDialog::changeStyle()
 
 void PopupChatDialog::updatePeerAvatar(const std::string& peer_id)
 {
-	   std::cerr << "popupchatDialog: updating avatar for peer " << peer_id << std::endl ;
+        #ifdef CHAT_DEBUG
+        std::cerr << "popupchatDialog::updatePeerAvatar() updating avatar for peer " << peer_id << std::endl ;
+        std::cerr << "Requesting avatar image for peer " << peer_id << std::endl ;
+        #endif
 
 	unsigned char *data = NULL;
 	int size = 0 ;
 
-	std::cerr << "Requesting avatar image for peer " << peer_id << std::endl ;
-
 	rsMsgs->getAvatarData(peer_id,data,size); 
 
-	std::cerr << "Image size = " << size << std::endl ;
+        #ifdef CHAT_DEBUG
+        std::cerr << "Image size = " << size << std::endl;
+        #endif
 
-	if(size == 0)
-	{
+        if(size == 0) {
+           #ifdef CHAT_DEBUG
 	   std::cerr << "Got no image" << std::endl ;
+           #endif
 	   ui.avatarlabel->setPixmap(QPixmap(":/images/no_avatar_70.png"));
 		return ;
 	}
@@ -660,10 +664,15 @@ void PopupChatDialog::updateAvatar()
 
 	rsMsgs->getOwnAvatarData(data,size); 
 
+        #ifdef CHAT_DEBUG
 	std::cerr << "Image size = " << size << std::endl ;
+        #endif
 
-	if(size == 0)
-	   std::cerr << "Got no image" << std::endl ;
+        if(size == 0) {
+            #ifdef CHAT_DEBUG
+            std::cerr << "Got no image" << std::endl ;
+            #endif
+        }
 
 	// set the image
 	QPixmap pix ;
