@@ -1,5 +1,9 @@
 Changes for v0.5.0 alpha 1
 
+* suppressed uninitialized memory read
+* corrected display bug in transfers
+* suppressed bug in creation of cache directories
+* suppressed uninitialized memory due to empty cache file
 * corrected invalid memory read due to bad deletion method in std::map
 * suppressed some uninitialised memory reads
 * add error info when gpg password is wrong
