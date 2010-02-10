@@ -1,5 +1,254 @@
-Changes for v0.*
+Changes for v0.5.0 alpha 1
 
+* corrected invalid memory read due to bad deletion method in std::map
+* suppressed some uninitialised memory reads
+* add error info when gpg password is wrong
+* add gpg password static store when gpg password callback is called
+* added for indicator change Folder icons
+* solve a bug when the tmpcfg directory already exists under windows
+* added security check
+* suppressed possible SIGSEGV due to null information in certificate
+* improved display of turtle routing info, corrected some minor compilation issues
+* made the age indicator functional, by recursively changing color of directory/files
+* use CreatForumMsg when replying from News Feed
+* re implement chat parsing for urls. External web browser call might not work on some systems
+* fixed to show for Folders Type Folder, and set root is decorated to not download a dir when want expand it.
+* fix a bug in quick start wizard
+* added some security checks to turtle router
+* add new info to infodialog
+* redesign cert generation
+* set private key trust to full when the validity was unknown
+* solve a bug with gpg private key validity unknown
+* fix a bug wich stops multiple connection against the same peer
+* set a default Avatar when Friend has no Avatar for Privat Chat.
+* corrected issue in display of download/upload progress
+* Msg forums are now signed by ssl certs
+* corrected bug about display/selection of anonymous files
+* add gpg authentication everytime we got an ssl auth error
+* Added to send own Shared File as link to Public Chat
+* Added attaching files to Public Chat via Button/Drag and Drop
+* in message composer, connected peers are colored in blue
+* factorized and cleaned the common code between fistore.cc and fimonitor.cc, 
+  - improved the stability of FileIndex,
+  - improved the display in RemoteDirModel
+* store file certs as .rsc extension* 
+* changed the Date Format to dd.MM.yyyy for Messages
+* update start wizard, change gui settings directory into ssl profile directory (RestroShare.conf)
+* added NETWORK_WIDE flag to remote dir model download
+* added file priority strategy based on which files are requested first. This provides:
+	- equal file speed for files with equal (source,priority)
+	- effective priority speed for file of same source but different priority
+* removed state variable load/save from turtle, as it's not needed anymore (FileRequest re-opens tunnels as needed)
+* manage availability per peer instead of per file type: direct peer ids always assume file availability, while turtle tunnels don't
+* added Chunk size and Number of Chunks to DetailsDialog
+* solve a bug with gpg signature summary
+* add input validator for gpg key gen
+* improved peer name info in cachestrapper, gence improving dir names in file lists
+* added Copy and Send retroshare links for Search 
+* reduce the reading access to gpgme
+* added regular cleaning of inactive chunks and slices, so that they can be treated by a different peer
+* fixed don't send an empty gpg key in p3disc
+* Added Attach File feature for Messages
+* added RS_FILE_HINTS_NETWORK_WIDE for SubFileItem
+* added a icon for SSL item when connected
+* add the possibility to create a gpg key for new profile
+* add a check button to hide unconnected friends
+* update display of the profilewidget tab in peersdialog
+* don't send gpg key when all the ssl childs are on no disc or when we got no ssl child of it
+* ask disc info when adding a new friend
+* removing of own gpg key as friend when not necessary
+* Added a new CreateChannelMsg Dialog as replacement for GeneralMessage for Channels.
+* add key generation at startup if no gpg key found
+* Added Timestamp for each Channel Message
+* fixed up file attachement to forum msgs
+* fixed startup password handling, so that it wont ask for passwd again, hence preventing deadlocks when the gui is running
+* added to Send RetroShare link as html format for Messages
+* added to can download from Messages when clicked on link.
+* added when start connection attempt then change icon on location.
+* added functionnality to complain when a download is initiated over a file already in download, or in the HD
+* fixed downloading of links attached to forums
+* adding a deleted ssl friends persistence in p3disc to avoid getting back a friend we just deleted
+* fix a bug when removing friends
+* Added attaching files feature for Forums.
+* add a ssl check that the peer isn't already connected
+* change mutex lock in authgpg to avoid deadlock
+* send just connected peer info to all others
+* implementation of p3disc with new gpg key management
+* implement the remove friend for gpg key, and improve the tranfer of ip address from a dummy peer to a normal peer
+* change the design of the connect friends wizard
+* change the cert to gpg + some ssl details
+* show correct location when adding an sl cert
+* solve a bug in the load list af connect mgr
+* add persistence of accepted gpg key to connect with
+* remove the ssl cert storage. Big rewrite of ssl cert and friend management
+* allow ssl connection with a new cert, ad a friend when happening
+* implement the trust settings in the gui
+* make peer detail gui work for the gpg and the ssl id
+* make peer details work for GPG key in the network view gui
+* remove the store of the pgp password
+* implemented the sign, trust and validitty functionnality in authGPG. Fix a singleton bug for authGPG and authSSL
+* fix a bug in rsinit with pgp name
+* added flags to file request: RS_FILE_HINTS_ASSUME_AVAILABILITY to not wait/ask for chunk maps. 
+  - Used for cache transfer and also whenever the turtle traffic is not involved, such as chat file exchange, 
+  - and RS_FILE_HINTS_NETWORK_WIDE to force using turtle routing for traffic. 
+* Implemented chunk-based file transfer from partial sources. This in particular means:
+  - exchange of chunk availability maps from different peers
+  - correct handling of what is available to which source before asking the data
+  - correct display of chunks in the progress bars
+  - generalised the use of compressed chunk maps
+  - removed the size parameters from the hash search functions
+* added Reply to Author feature for each Forum Message
+* added Quick Start Wizard
+* added DetailsDialog for Transfers
+* added allowed Messages Information for each Forum if its a Anonymous or Authenticated Forum
+* added Smiley Support when creating new Forum Message
+* fix a bug in peer display
+* added when no Thread selected clear Forum Name ,Post Text and  Thread Title
+* added when switched Thread then clear last Post Text and  Thread Title
+* added a generic RsItem to the turtle router and the methods to route it. This makes the code much more elegant.
+* suppressed a cross mutex lock bug that happened rarely while digging tunnels
+* changed FileDetails in ftServer so that it's now possiblt to search for hashes of files being downloaded
+* improved the search code in ftdatamultiplex
+* added some comments to the turtle code
+* added Popularity/Date to Forum Details
+* Added Forum Details Dialog
+* show Popularity as ToolTip, removed not usefull items which stretches the Forums list
+* added use for Authd forum a different forum icon
+* Added setFocus feature, when creating new Thread or Reply Message change the Focus
+* suspending the auth code in p3distrib to allow forum messages to display.
+* implemented a visualisation for currently handled chunks, availability maps, and transfer info
+* implemented transfer protocol for chunk availability maps between peers (not enabled yet though)
+* don't do a tunnell connect attempt when already connected through a tunnel
+* use siglen -1 for both gpg2 and gpg1 verify signature
+* Add heartbeat (an empty packet, wich is 100 bytes long)  in p3disc every 4 seconds
+* start listener not immediately after net reset to avoid connection flickering.
+* stop ssl listening when already connected
+* stop sending data when ssl read returns 0
+* The external ip address is now set when a peer is connected if there is no upnp or extadrfinder
+* change packet version for rsdisc
+* fix a bug with ip serialization when ip or port is 0
+* add serializiont of own ipaddress list in rsdiscitem
+* send own ip address list with p3disc
+* change the way we handle our own address when recieving a disc item
+* fix a bug for own disc item and address list
+* fix a bug when connected through a tunnel
+* add a break in case ipAddressList don't deserialize correctly
+* add current local and external address to ip list
+* fix a bug in the udp timeout
+* DHT disabled, remove DHT from the gui
+* perform a net reset when network config is changed
+* change the address selection of udp connection
+* Add the tunneling connection.
+* Implemented load/save of chunk maps for current downloads.
+* added a ChunkMap class responsible for allocating new chunks to be downloaded, according to 
+	- a given chunk strategy
+	- the availablility map of each source 
+  - Integrated this into ftFileCreator
+  - added gui menu in file transfer+right click to change the chunk strategy: streaming vs. random
+* Added consistent display of chunk map
+* Modified and renamed the taskGraphPainterWidget to display info about currently selected file transfers.
+* Added a parent page widget (class RsAutoUpdatePage) to handle auto-update.
+* check to see a peer is connected before doing a net reset. 
+* remove upnp mapping before adding new ones
+* fix a bug when removing 1 from a zero siglen
+* simplified and improve ip list for connect attempt. Show the ip in the gui
+* add port filtering if 0 for address list
+* add address list to gui
+* add the ip list to the connect attemps
+* implemented the ipAddressList methods
+* change to only one ip list instead of one local and one remote
+* added the serializing of ip adress list, and the process to ad ip to the list when a connection is made to a peer
+* fix a bug when closing RS for upnp
+* update of network dialog when peer address was manualy changed.
+* display the best available ip for peers in the gui, instead of 0.0.0.0. This does only affect the gui, not the way ips are trusted and propagated.
+* setup reconnexion time to 5 seconds after reset
+* added reset of current connexions and force-reconnect when network configuration changes.
+* added dynamic local and external ip reconfiguration. I still need to reset connexions when changing ips.
+* made the passwd dialog call Qt-independent (thanks to notifyBase)
+* added gpgme and gpg error includes for win32
+* added a QTDialog for the gpg key passphrase input
+* fix uninitialized pointer fir libupnp
+* improving safe upnp shutdown
+* rewrite connection manager
+* improved stun check
+* improve time for initialisation of upnp
+* store exaddr from upnp to stun
+* improved stun failure resistance
+* added network reset ehancement for stun and udp
+* added reset net status when shutingdown
+* added loopback network interface compatibility
+* added new method for external upnp address
+* change back the engine setting. Now it should work with gpg1 and gpg2
+* fix the length of the encrypting ssl passphrase
+* remove the pgp/password fields for start dialog
+* set gpg2 engine for gpgme
+* change ssl password encryption to non symmetric
+* added new/old age indicator for shared files
+* added functionality to edit your own Personal message on Label click
+* suppressed sigsegv when deleting an unallocated object
+* fixed exchange of custom strings.
+* fixed the update of avatars in the various chat dialogs
+* added a "peer is typing" function to the group chat.
+* fixed up avatar exchange between peers
+* Added and ToolTip's For Avatar Button
+* added StatusMessage Dialog
+* added functionality to store own status to chat.cfg and to gui settings
+* added timers for update own status/avatar faster
+* edited ProfileWidget to open from there the StatusMessage Dialog
+* added code for storing and sending a custom status string (for e.g. saying "I'm not here now") in p3ChatService
+* added code for sending group chat status messages "peer is typing". 
+* Redesign MessageToaster
+* bugfix with rehashing already shared files 
+* Added ProfileWidget as Tab to show own Profile Details
+* make possible to download an entire found directory from search dialog
+* Added Age column for Search Results
+* added For Friends Context Menu a Title Widget
+* fixed the file size issue with turtle search
+* fixed keeps transfers sorted when redisplay them
+* replace double with one clik when browsing channels
+* few changes added to channel gui - list of groups and channels was replaced with a tree view
+* correct speed for non active downloads
+* GUI mods for new Forum sorting method. (Last Post)
+* added extra forum sorting method: Last Post.
+* Integrated turtle download to all kind of user-requested downloads
+* fixed core dump issue where AuthSSL::VerifySignBin() is called with NULL parameters. Still, this should not happen.
+* added Enable disable minimize to Tray feature when closing RetroShare
+* correct wrong the setting of the friend ip address when adding a contact
+* add debug info when ip address is set to an unknown peer
+* restored accounting for LAN transfer rates.
+* win32 fix for large file support
+* added to Friends own Avatar and own nick labels
+* Teaked the TrustView and NetworkView so that they only update when visible. Doing so, the CPU overload is only present when strictly needed.
+* downloading directories from search dialog
+* added support for searching and display directories
+* add random ssl password generation
+* hide ssl password when logging in
+* added encrypt and decrypt ssl password
+* add links to cloud from shared files dialog
+* improved turtle router console
+* Integrated the turtle search and download to the gui. Now the search handles both friend and turtle searching.
+* added a console in config->server->F2F routing to be able to visualize turtle routing statistics
+* download recommended files from inside links cloud dialog
+* corrected potentially harmful uninitialized memory reads
+* scroll to previously selected item(s) at next redisplay
+* fixed some mutex bugs and some pointer access bugs in the FileIndexStore
+* ensured early creation of cache directories to avoid "Cannot copy file" bug
+* added a pointer controller to findex to avoid RemoteDirModel to incidentally request for deleted pointers.
+* suppressed auto-collapse of directories when updated.
+* Share Flags:
+    - now, only files with the NETWORK_WIDE flag are searchable by turtle hopping.
+* added persistence to download queue
+* Share Flags:
+	- 1st attempt at displaying share properties in the SharedFlagsDialog.
+	- added share flags in DirDetails structure in place of Rank, that is not used anymore.
+* Share Flags:
+  - own directory browsing is now done through FileIndexMonitor. This allows:
+	- to browse shared directories independently of their flags
+	- to update files as they get hashed
+* Share Flags:
+  - now only the directories with flag "browsable" on are dispatched to friends
+  - when switching flags, directories are re-sent to friends
+* added checkbox for Preferences to can disable the Quit MessageBox
 * Changes to startup / login function to handle multiple accounts.
 * Switched on OpenPGP version by default
 * Major change to the way certificates are stored now defaults to ~/.retroshare/SSLID/
