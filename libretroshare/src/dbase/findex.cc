@@ -923,6 +923,9 @@ int FileIndex::saveIndex(std::string filename, std::string &fileHash, uint64_t &
 	std::ofstream file (filenametmp.c_str(), std::ofstream::binary);
 	std::ostringstream oss;
 
+	size = 0 ;
+	fileHash = "" ;
+
 	if (!file)
 	{
 #ifdef FI_DEBUG

@@ -679,25 +679,28 @@ void FileIndexMonitor::locked_saveFileIndexes()
 	fi.saveIndex(fname_total, calchash, sizetmp,std::set<std::string>());	// save all files
 	fi.saveIndex(fname_browsable, calchash, size,forbidden_dirs);		// save only browsable files
 
+	if(size > 0)
+	{
 #ifdef FIM_DEBUG
-	std::cerr << "FileIndexMonitor::updateCycle() saved with hash:" << calchash;
-	std::cerr <<  std::endl;
+		std::cerr << "FileIndexMonitor::updateCycle() saved with hash:" << calchash;
+		std::cerr <<  std::endl;
 #endif
 
-	/* should clean up the previous cache.... */
+		/* should clean up the previous cache.... */
 
-	/* flag as new info */
-	CacheData data;
-	data.pid = fi.root->id;
-	data.cid.type  = getCacheType();
-	data.cid.subid = 0;
-	data.path = path;
-	data.name = tmpname_browsable;
-	data.hash = calchash;
-	data.size = size;
-	data.recvd = time(NULL);
+		/* flag as new info */
+		CacheData data;
+		data.pid = fi.root->id;
+		data.cid.type  = getCacheType();
+		data.cid.subid = 0;
+		data.path = path;
+		data.name = tmpname_browsable;
+		data.hash = calchash;
+		data.size = size;
+		data.recvd = time(NULL);
 
-	updateCache(data);
+		updateCache(data);
+	}
 
 #ifdef FIM_DEBUG
 	std::cerr << "FileIndexMonitor::updateCycle() called updateCache()";
