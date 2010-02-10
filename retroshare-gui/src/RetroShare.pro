@@ -1,4 +1,4 @@
-CONFIG += qt gui uic qrc resources uitools pluginmgr newsettings
+CONFIG += qt gui uic qrc resources uitools pluginmgr newsettings install_rs
 QT     += network xml script opengl
 TEMPLATE = app
 TARGET = RetroShare
@@ -30,6 +30,12 @@ version_detail_bash_script {
 	QMAKE_EXTRA_TARGETS += write_version_detail
 	PRE_TARGETDEPS = write_version_detail
 	write_version_detail.commands = ./version_detail.sh
+}
+
+install_rs {
+	INSTALLS += binary_rs
+	binary_rs.path = $$(PREFIX)/usr/bin
+	binary_rs.files = ./RetroShare
 }
 
 #################### Cross compilation for windows under Linux ###################
