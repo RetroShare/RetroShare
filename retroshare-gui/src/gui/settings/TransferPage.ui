@@ -82,6 +82,9 @@
           </item>
           <item row="2" column="1">
            <widget class="QComboBox" name="strategycomboBox">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <item>
              <property name="text">
               <string>Streaming</string>
@@ -96,6 +99,9 @@
           </item>
           <item row="3" column="0" colspan="2">
            <widget class="QCheckBox" name="checkBox">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="text">
              <string>Show Cache Transfers</string>
             </property>
