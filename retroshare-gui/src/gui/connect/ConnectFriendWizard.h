@@ -80,6 +80,7 @@ private:
     QVBoxLayout* userCertButtonsLayout;
     QPushButton* userCertHelpButton;
     QPushButton* userCertCopyButton;
+    QPushButton* userCertSaveButton;
     #if defined(Q_OS_WIN)
     QPushButton* userCertMailButton;//! on Windows, click on this button
                                    //! launches default email client
@@ -88,10 +89,17 @@ private:
     QTextEdit*   friendCertEdit;
     
     QVBoxLayout* textPageLayout;
+    
+    void setCurrentFileName(const QString &fileName);
+      
+    QString fileName;
 
 private slots:
     void showHelpUserCert();
     void copyCert();
+    
+    bool fileSave();
+    bool fileSaveAs();
     
     #if defined(Q_OS_WIN)
     //! launches default email client (on windows)

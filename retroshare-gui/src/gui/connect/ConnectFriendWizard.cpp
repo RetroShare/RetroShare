@@ -234,7 +234,16 @@ TextPage::TextPage(QWidget *parent)
     userCertCopyButton->setIcon( QIcon(":images/copyrslink.png") );
     userCertCopyButton->setToolTip(tr("Copy your Cert to Clipboard"));
     connect (userCertCopyButton,  SIGNAL( clicked()),
-             this,                SLOT(   copyCert()) );         
+             this,                SLOT(   copyCert()) );  
+    
+    userCertSaveButton = new QPushButton;
+    userCertSaveButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    userCertSaveButton->setFixedSize(20,20);
+    userCertSaveButton->setFlat(true);
+    userCertSaveButton->setIcon( QIcon(":images/document_save.png") );
+    userCertSaveButton->setToolTip(tr("Save your Cert into a File"));
+    connect (userCertSaveButton,  SIGNAL( clicked()),
+             this,                SLOT(   fileSaveAs()) );                 
              
 #if defined(Q_OS_WIN)
     userCertMailButton = new QPushButton;
@@ -249,6 +258,7 @@ TextPage::TextPage(QWidget *parent)
     userCertButtonsLayout = new QVBoxLayout();
     userCertButtonsLayout->addWidget(userCertHelpButton);
     userCertButtonsLayout->addWidget(userCertCopyButton);
+    userCertButtonsLayout->addWidget(userCertSaveButton);
 #if defined(Q_OS_WIN)
     userCertButtonsLayout->addWidget(userCertMailButton);
 #endif
@@ -334,6 +344,44 @@ TextPage::copyCert()
     clipboard->setText(userCertEdit->toPlainText());                            
 
 }
+//
+//============================================================================
+//
+
+bool TextPage::fileSave()
+{
+    if (fileName.isEmpty())
+        return fileSaveAs();
+
+    QFile file(fileName);
+    if (!file.open(QFile::WriteOnly))
+        return false;
+    QTextStream ts(&file);
+    ts.setCodec(QTextCodec::codecForName("UTF-8"));
+    ts << userCertEdit->document()->toPlainText();
+    userCertEdit->document()->setModified(false);
+    return true;
+}
+
+bool TextPage::fileSaveAs()
+{
+    QString fn = QFileDialog::getSaveFileName(this, tr("Save as..."),
+                                              QString(), tr("RetroShare Certificate (*.rsc );;All Files (*)"));
+    if (fn.isEmpty())
+        return false;
+    setCurrentFileName(fn);
+    return fileSave();    
+}
+
+void TextPage::setCurrentFileName(const QString &fileName)
+{
+    this->fileName = fileName;
+    userCertEdit->document()->setModified(false);
+
+    setWindowModified(false);
+}
+
+
 //
 //============================================================================
 //
