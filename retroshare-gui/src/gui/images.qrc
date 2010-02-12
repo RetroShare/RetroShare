@@ -88,19 +88,6 @@
         <file>images/button_cancel.png</file>
         <file>images/calendar.png</file>
         <file>images/chat.png</file>
-        <file>images/chat/bar_end.png</file>
-        <file>images/chat/bar_fill.png</file>
-        <file>images/chat/chat_emoticon_button.png</file>
-        <file>images/chat/chat_emoticon_button_on.png</file>
-        <file>images/chat/chat_send.png</file>
-        <file>images/chat/font_bold.png</file>
-        <file>images/chat/font_bold_on.png</file>
-        <file>images/chat/font_italic.png</file>
-        <file>images/chat/font_italic_on.png</file>
-        <file>images/chat/font_underline.png</file>
-        <file>images/chat/font_underline_on.png</file>
-        <file>images/chat/hide_avatar_frame.png</file>
-        <file>images/chat/show_avatar_frame.png</file>
         <file>images/chats_24x24.png</file>
         <file>images/cancel.png</file>
         <file>images/close-down.png</file>
@@ -119,7 +106,6 @@
         <file>images/ddeny.png</file>
         <file>images/delete.png</file>
         <file>images/deleteall.png</file>
-        <file>images/deletemail-hover.png</file>
         <file>images/deletemail-pressed.png</file>
         <file>images/deletemail24.png</file>
         <file>images/dhidden.png</file>
@@ -186,7 +172,6 @@
         <file>images/flags/sl.png</file>
         <file>images/flags/tr.png</file>
         <file>images/folder-draft.png</file>
-        <file>images/folder-draft24-hover.png</file>
         <file>images/folder-draft24-pressed.png</file>
         <file>images/folder-draft24.png</file>
         <file>images/folder_inbox64.png</file>
@@ -211,6 +196,7 @@
         <file>images/groupchat.png</file>
         <file>images/genbackground.png</file>
         <file>images/gohome.png</file>
+        <file>images/gpgp_key_generate.png</file>
         <file>images/help.png</file>
         <file>images/help24.png</file>
         <file>images/hide_toolbox_frame.png</file>
@@ -284,8 +270,6 @@
         <file>images/network.png</file>
         <file>images/network16.png</file>
         <file>images/network32.png</file>
-        <file>images/new-account.png</file>
-        <file>images/new-contact.png</file>
         <file>images/new-mail-alert.png</file>
         <file>images/new_forum16.png</file>
         <file>images/nopic.png</file>
@@ -313,13 +297,11 @@
         <file>images/records.png</file>
         <file>images/removefriend16.png</file>
         <file>images/replymail-pressed.png</file>
-        <file>images/replymail24-hover.png</file>
         <file>images/replymail24.png</file>
         <file>images/replymailall24-hover.png</file>
         <file>images/reload24.png</file>
         <file>images/reset.png</file>
         <file>images/resume.png</file>
-        <file>images/retro4.png</file>
         <file>images/RetroShare16.png</file>
         <file>images/retrosharelogo1.png</file>
         <file>images/retrosharelogo2.png</file>

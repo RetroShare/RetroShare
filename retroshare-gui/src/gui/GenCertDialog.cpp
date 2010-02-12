@@ -19,7 +19,6 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-
 #include <rshare.h>
 #include <rsiface/rsinit.h>
 #include "GenCertDialog.h"
@@ -30,7 +29,6 @@
 #include <QMovie>
 #include <time.h>
 
-#include <util/WidgetBackgroundImage.h>
 
 /* Define the format used for displaying the date and time */
 #define DATETIME_FMT  "MMM dd hh:mm:ss"
@@ -44,9 +42,6 @@ GenCertDialog::GenCertDialog(QWidget *parent, Qt::WFlags flags)
   ui.setupUi(this);
 
   connect(ui.new_gpg_key_checkbox, SIGNAL(clicked()), this, SLOT(newGPGKeyGenUiSetup()));
-
-  //WidgetBackgroundImage::setBackgroundImage(ui.loginLabel, ":images/new-account.png", WidgetBackgroundImage::AdjustSize);
-
   
   connect(ui.genButton, SIGNAL(clicked()), this, SLOT(genPerson()));
   connect(ui.infopushButton,SIGNAL(clicked()), this, SLOT(infodlg()));
