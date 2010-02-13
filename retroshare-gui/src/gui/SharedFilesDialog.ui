@@ -669,7 +669,7 @@ p, li { white-space: pre-wrap; }
        <widget class="QComboBox" name="indicatorCBox">
         <item>
          <property name="text">
-          <string>Always</string>
+          <string>All</string>
          </property>
          <property name="icon">
           <iconset resource="images.qrc">

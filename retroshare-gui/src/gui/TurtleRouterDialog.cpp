@@ -94,7 +94,7 @@ void TurtleRouterDialog::fillTable(QTableWidget *table,const std::vector<std::ve
 			table->insertRow(i) ;
 
 		for(uint j=0;j<data[i].size();++j)
-			table->setItem(i,j,new QTableWidgetItem(QString::fromStdString(data[i][j]))) ;
+			table->setItem(i,j,new QTableWidgetItem(QString::fromStdString(data[i][j].empty()?"Unknown":data[i][j]))) ;
 	}
 
 	for(uint i=data.size();i<table->rowCount();)
