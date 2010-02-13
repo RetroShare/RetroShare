@@ -351,12 +351,14 @@ uint32_t ChunkMap::getAvailableChunk(uint32_t start_location,const std::string& 
 	{
 		uint32_t j = (start_location+i)%(int)_map.size() ;	// index of the chunk
 
+		if(_map[j] != FileChunksInfo::CHUNK_DONE)
+			file_is_complete = false ;
+
 		if(_map[j] == FileChunksInfo::CHUNK_OUTSTANDING && (peer_chunks->is_full || peer_chunks->cmap[j]))
 		{
 #ifdef DEBUG_FTCHUNK
 			std::cerr << "ChunkMap::getAvailableChunk: returning chunk " << j << " for peer " << peer_id << std::endl;
 #endif
-			file_is_complete = false ;
 			return j ;
 		}
 	}

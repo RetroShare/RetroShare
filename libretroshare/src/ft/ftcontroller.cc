@@ -1560,9 +1560,16 @@ std::list<RsItem *> ftController::saveList(bool &cleanup)
 		rft->file.path = RsDirUtil::removeTopDir(fit->second.mDestination); /* remove fname */
 		rft->flags = fit->second.mFlags;
 		rft->state = fit->second.mState;
-		rft->transferred = fit->second.mCreator->getRecvd();
-
 		fit->second.mTransfer->getFileSources(rft->allPeerIds.ids);
+
+		// just avoid uninitialised memory reads
+		rft->in = 0 ;
+		rft->cPeerId = "" ;
+		rft->transferred = fit->second.mCreator->getRecvd();
+		rft->crate = 0 ;
+		rft->lrate = 0 ;
+		rft->trate = 0 ;
+		rft->ltransfer = 0 ;
 
 		// Remove turtle peers from sources, as they are not supposed to survive a reboot of RS, since they are dynamic sources.
 		// Otherwize, such sources are unknown from the turtle router, at restart, and never get removed.
