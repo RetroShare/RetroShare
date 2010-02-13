@@ -273,6 +273,9 @@ border-image: url(:/images/mystatus_bg.png);
        </item>
        <item row="0" column="2">
         <widget class="QPushButton" name="styleButton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="minimumSize">
           <size>
            <width>28</width>
