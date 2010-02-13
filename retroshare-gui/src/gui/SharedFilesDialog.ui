@@ -671,6 +671,10 @@ p, li { white-space: pre-wrap; }
          <property name="text">
           <string>Always</string>
          </property>
+         <property name="icon">
+          <iconset resource="images.qrc">
+           <normaloff>:/images/view_calendar_list.png</normaloff>:/images/view_calendar_list.png</iconset>
+         </property>
         </item>
         <item>
          <property name="text">
