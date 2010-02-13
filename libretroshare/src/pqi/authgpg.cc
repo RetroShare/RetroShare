@@ -1137,7 +1137,14 @@ std::string AuthGPG::SaveCertificateToString(std::string id)
 
 	size_t len = 0; 
 	char *export_txt = gpgme_data_release_and_get_mem(gpgmeData, &len);
-	tmp = std::string(export_txt,len);
+
+	char *str = new char[len+1] ;
+	memcpy(str,export_txt,len) ;
+	str[len]=0 ;
+
+	tmp = std::string(str);
+
+	delete[] str ;
 
 #ifdef GPG_DEBUG
         std::cerr << "Exported Certificate: " << std::endl << tmp << std::endl;
