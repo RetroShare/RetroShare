@@ -254,7 +254,26 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
 			 switch(coln)
 			 {
 				 case 0:
+           if(details.min_age > ageIndicator)
+					 {
+						 return QIcon(":/images/folder_grey.png");
+           }
+           else if (ageIndicator == IND_LAST_DAY )
+           {
+           	 return QIcon(":/images/folder_green.png");
+           }
+           else if (ageIndicator == IND_LAST_WEEK )
+           {
+           	 return QIcon(":/images/folder_yellow.png");
+           }
+           else if (ageIndicator == IND_LAST_MONTH )
+           {
+           	 return QIcon(":/images/folder_red.png");
+           }
+           else
+           {
 					 return (QIcon(peerIcon));
+					 }
 					 break;
 			 }
 		 }
