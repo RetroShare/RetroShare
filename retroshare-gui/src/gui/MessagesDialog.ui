@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>760</width>
-    <height>579</height>
+    <width>675</width>
+    <height>553</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -534,19 +534,6 @@ border: 1px solid #CCCCCC;}</string>
       <property name="margin">
        <number>2</number>
       </property>
-      <item row="0" column="9">
-       <spacer>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>529</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
       <item row="0" column="2">
        <widget class="QToolButton" name="replymessageButton">
         <property name="sizePolicy">
@@ -842,6 +829,49 @@ p, li { white-space: pre-wrap; }
         </property>
        </widget>
       </item>
+      <item row="0" column="10">
+       <widget class="QLineEdit" name="filterPatternLineEdit"/>
+      </item>
+      <item row="0" column="11">
+       <widget class="QComboBox" name="filterColumnComboBox">
+        <property name="currentIndex">
+         <number>1</number>
+        </property>
+        <item>
+         <property name="text">
+          <string>Attachments</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Subject</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>From</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Date</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="0" column="9">
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
      </layout>
     </widget>
    </item>
@@ -933,60 +963,26 @@ p, li { white-space: pre-wrap; }
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
-      <widget class="QTreeWidget" name="msgWidget">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>5</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>9</pointsize>
-        </font>
-       </property>
-       <property name="contextMenuPolicy">
-        <enum>Qt::CustomContextMenu</enum>
-       </property>
-       <property name="styleSheet">
-        <string notr="true"/>
-       </property>
-       <property name="indentation">
-        <number>16</number>
-       </property>
-       <property name="sortingEnabled">
-        <bool>true</bool>
-       </property>
-       <property name="columnCount">
-        <number>4</number>
-       </property>
-       <column>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="images.qrc">
-          <normaloff>:/images/attachment.png</normaloff>:/images/attachment.png</iconset>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Subject</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>From</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Date</string>
-        </property>
-       </column>
-      </widget>
       <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout">
+        <item>
+         <widget class="QTreeView" name="messagestreeView">
+          <property name="font">
+           <font>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="contextMenuPolicy">
+           <enum>Qt::CustomContextMenu</enum>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::ExtendedSelection</enum>
+          </property>
+          <property name="sortingEnabled">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
         <item>
          <layout class="QHBoxLayout">
           <property name="spacing">
@@ -1277,6 +1273,9 @@ p, li { white-space: pre-wrap; }
             <verstretch>10</verstretch>
            </sizepolicy>
           </property>
+          <property name="openExternalLinks">
+           <bool>true</bool>
+          </property>
          </widget>
         </item>
         <item>
@@ -1456,7 +1455,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>newmessageButton</tabstop>
   <tabstop>replymessageButton</tabstop>
   <tabstop>listWidget</tabstop>
-  <tabstop>msgWidget</tabstop>
   <tabstop>msgText</tabstop>
   <tabstop>msgList</tabstop>
  </tabstops>

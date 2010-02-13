@@ -23,9 +23,14 @@
 #define _MESSAGESDIALOG_H
 
 #include "settings/rsharesettings.h"
-
+#include <list>
 #include <QFileDialog>
+#include <QModelIndex>
+#include <QSortFilterProxyModel>
 
+#include <QVariant>
+
+#include "rsiface/rsmsgs.h"
 #include "mainpage.h"
 #include "ui_MessagesDialog.h"
 
@@ -37,11 +42,13 @@ public:
   /** Default Constructor */
   MessagesDialog(QWidget *parent = 0);
   /** Default Destructor */
-  void insertMsgTxtAndFiles();
+  void insertMsgTxtAndFiles(QModelIndex index = QModelIndex());
   virtual void keyPressEvent(QKeyEvent *) ;
+ void updateMessageSummaryList();
 
 public slots:
   void insertMessages();
+
   
 private slots:
 
@@ -50,7 +57,7 @@ private slots:
   void msgfilelistWidgetCostumPopupMenu(QPoint);  
 
   void changeBox( int newrow );
-  void updateCurrentMessage ( QTreeWidgetItem * item, QTreeWidgetItem * item2 );
+  void updateCurrentMessage(const QModelIndex&); 
 
   void newmessage();
 
@@ -79,15 +86,23 @@ private slots:
   void buttonstextundericon();
   
   void loadToolButtonsettings();
+  
+  void filterRegExpChanged();
+  void filterColumnChanged();
 
 private:
   /** A RetroShare Settings object used for saving/loading settings */
   RshareSettings *_settings;
 
+	class QStandardItemModel *MessagesModel;
+  QSortFilterProxyModel *proxyModel;
+
   bool getCurrentMsg(std::string &cid, std::string &mid);
-  void setMsgAsRead(QTreeWidgetItem *);
-  
+  void setMsgAsRead(const QModelIndex &index); 
+
   void setCurrentFileName(const QString &fileName);
+
+
 
   std::string mCurrCertId;
   std::string mCurrMsgId;

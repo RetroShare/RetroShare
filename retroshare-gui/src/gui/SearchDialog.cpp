@@ -771,6 +771,7 @@ void SearchDialog::insertFile(const std::string& txt,qulonglong searchId, const 
 	//
 	int items = ui.searchResultWidget->topLevelItemCount();
 	bool found = false ;
+	int sources;
 
 	QString sid_hexa = QString::number(searchId,16) ;
 
@@ -780,7 +781,100 @@ void SearchDialog::insertFile(const std::string& txt,qulonglong searchId, const 
 		{
 			int s = ui.searchResultWidget->topLevelItem(i)->text(SR_ID_COL).toInt() ;
 			ui.searchResultWidget->topLevelItem(i)->setText(SR_ID_COL,QString::number(s+1));
+			QTreeWidgetItem *item = ui.searchResultWidget->topLevelItem(i);
 			found = true ;
+			sources = s+1;
+			if ( sources < 1)
+			{
+				for(int i = 0; i < 7; i++)
+				{
+					item->setForeground(i,QBrush( QColor(0, 0, 19)));
+				}
+			}
+			else if ( sources < 2)
+			{
+				for(int i = 0; i < 7; i++)
+				{
+					item->setForeground(i,QBrush( QColor(0, 0, 38)));
+				}
+			}
+			else if ( sources < 3)
+			{
+				for(int i = 0; i < 7; i++)
+				{
+					item->setForeground(i,QBrush( QColor(0, 0, 57)));
+				}
+			}	
+			else if ( sources < 4)
+			{
+				for(int i = 0; i < 7; i++)
+				{	
+					item->setForeground(i,QBrush( QColor(0, 0, 76)));
+				}
+			}
+			else if ( sources < 5)
+			{
+				for(int i = 0; i < 7; i++)
+				{
+					item->setForeground(i,QBrush( QColor(0, 0, 96)));
+				}
+			}
+			else if ( sources < 6)
+			{
+				for(int i = 0; i < 7; i++)
+				{
+					item->setForeground(i,QBrush( QColor(0, 0, 114)));
+				}
+			}
+			else if ( sources < 7)
+			{	
+				for(int i = 0; i < 7; i++)
+				{
+					item->setForeground(i,QBrush( QColor(0, 0, 133)));
+				}
+			}
+			else if ( sources < 8)
+			{
+				for(int i = 0; i < 7; i++)
+				{
+					item->setForeground(i,QBrush( QColor(0, 0, 152)));
+				}	
+			}
+			else if ( sources < 9)
+			{
+				for(int i = 0; i < 7; i++)
+				{
+					item->setForeground(i,QBrush( QColor(0, 0, 171)));
+				}
+			}
+			else if ( sources < 10)
+			{
+				for(int i = 0; i < 7; i++)
+				{
+					item->setForeground(i,QBrush( QColor(0, 0, 190)));
+				}
+			}
+			else if ( sources < 11)
+			{
+				for(int i = 0; i < 7; i++)
+				{
+					item->setForeground(i,QBrush( QColor(0, 0, 209)));
+				}
+			}
+			else if ( sources < 12)
+			{
+				for(int i = 0; i < 7; i++)
+				{
+					item->setForeground(i,QBrush( QColor(0, 0, 228)));
+				}
+			}
+			else
+			{
+				for(int i = 0; i < 7; i++)
+				{
+					item->setForeground(i,QBrush( QColor(0, 0, 228)));
+				}
+			}
 			break ;
 		}
 
@@ -805,6 +899,16 @@ void SearchDialog::insertFile(const std::string& txt,qulonglong searchId, const 
 		item->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
 		item->setText(SR_ID_COL, QString::number(1));
 		item->setText(SR_SEARCH_ID_COL, sid_hexa);
+	
+			
+		sources = item->text(SR_ID_COL).toInt(); 
+		if ( sources == 1)
+		{
+			for(int i = 0; i < 7; i++)
+			{
+				item->setForeground(i,QBrush( QColor(0, 0, 0)));
+			}
+		}
 
 		ui.searchResultWidget->addTopLevelItem(item);
 	}
