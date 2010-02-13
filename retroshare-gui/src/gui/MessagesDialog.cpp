@@ -645,14 +645,20 @@ void MessagesDialog::insertMessages()
 		}
 
 		/* make a widget per friend */
-		
-    //QModelIndex index;
+    
     QStandardItem *item0 = new QStandardItem();
     QStandardItem *item1 = new QStandardItem();
     QStandardItem *item2 = new QStandardItem();
     QStandardItem *item3 = new QStandardItem();
     QStandardItem *item4 = new QStandardItem();
     QStandardItem *item5 = new QStandardItem();
+    
+    //set this false if you want to expand on double click
+    item0->setEditable(false);
+    item1->setEditable(false);
+    item2->setEditable(false);
+    item3->setEditable(false);
+    item4->setEditable(false);
     
 
 		/* So Text should be:
@@ -672,19 +678,16 @@ void MessagesDialog::insertMessages()
 			qtime.setTime_t(it->ts);
 			QString timestamp = qtime.toString("dd.MM.yyyy hh:mm:ss");
 			item3 -> setText(timestamp);
-			//index = MessagesModel->index(c, 3);
-      			//MessagesModel->setData(index, timestamp);
 		}
 
 		//  From ....
 		{
 			item2 -> setText(QString::fromStdString(rsPeers->getPeerName(it->srcId)));
-			//index = MessagesModel->index(c, 2);
-      			//MessagesModel->setData(index, QString::fromStdString(rsPeers->getPeerName(it->srcId)));
 		}
 
 		// Subject
-		item1 -> setText(QString::fromStdWString(it->title));
+      item1 -> setText(QString::fromStdWString(it->title));
+		
 		if ((it -> msgflags & RS_MSG_NEW) == RS_MSG_NEW)
 		{
 			QFont qf = item1->font();
@@ -692,8 +695,6 @@ void MessagesDialog::insertMessages()
 			item1->setFont(qf);
 			
 		}
-		//index = MessagesModel->index(c, 1);
-    		//MessagesModel->setData(index, QString::fromStdWString(it->title));
 		
 		// Change Message icon when Subject is Re: or Fwd:
 		QString text = QString::fromStdWString(it->title);
