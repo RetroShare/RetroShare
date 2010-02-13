@@ -1,3 +1,16 @@
+Changes for v0.5.0 *
+
+* corrected bug in file completion
+* added Messages Filter for Attachments,Subject,From,Date,
+* rewrite MessagesDialog to use QTreeView with QStandardItemModel
+* added change search results text color when it has more sources
+* fixed stylesheets and enable OpenExternalLinks on InfoDialog 
+* change peericon when indicator changed
+* added Save Cert Button to ConnectFriend Wizard
+* added more info for Network Wide/Browsable to the Description Label in Share Manager
+* added icon for gpg key checkbox
+* improved design of profile generation
+
 Changes for v0.5.0 alpha 1
 
 * suppressed uninitialized memory read
