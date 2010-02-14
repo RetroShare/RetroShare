@@ -168,6 +168,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
 	//sertting default filter by column as subject
     proxyModel->setFilterKeyColumn(ui.filterColumnComboBox->currentIndex());
+        
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
@@ -426,64 +427,21 @@ void MessagesDialog::forwardmessage()
 
 void MessagesDialog::togglefileview()
 {
-	/* if msg header visible -> hide by changing splitter 
+	/* if msg header visible -> change icon and tooltip 
 	 * three widgets...
 	 */
 
-	QList<int> sizeList = ui.msgSplitter->sizes();
-	QList<int>::iterator it;
-
-	int listSize = 0;
-	int msgSize = 0;
-	int recommendSize = 0;
-	int i = 0;
-
-	for(it = sizeList.begin(); it != sizeList.end(); it++, i++)
+	if (ui.expandFilesButton->isChecked())
 	{
-		if (i == 0)
-		{
-			listSize = (*it);
-		}
-		else if (i == 1)
-		{
-			msgSize = (*it);
-		}
-		else if (i == 2)
-		{
-			recommendSize = (*it);
-		}
-	}
-
-	int totalSize = listSize + msgSize + recommendSize;
-
-	bool toShrink = true;
-	if (recommendSize < (int) totalSize / 10)
-	{
-		toShrink = false;
-	}
-
-	QList<int> newSizeList;
-	if (toShrink)
-	{
-		newSizeList.push_back(listSize + recommendSize / 3);
-		newSizeList.push_back(msgSize + recommendSize * 2 / 3);
-		newSizeList.push_back(0);
-		ui.expandFilesButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
-	    ui.expandFilesButton->setToolTip("Expand");
+	  ui.expandFilesButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
+	  ui.expandFilesButton->setToolTip("Hide");
 	}
 	else
 	{
-		/* no change */
-		int nlistSize = (totalSize * 2 / 3) * listSize / (listSize + msgSize);
-		int nMsgSize = (totalSize * 2 / 3) - listSize;
-		newSizeList.push_back(nlistSize);
-		newSizeList.push_back(nMsgSize);
-		newSizeList.push_back(totalSize * 1 / 3);
-	    ui.expandFilesButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
-	    ui.expandFilesButton->setToolTip("Hide");
-	}
+    ui.expandFilesButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
+	  ui.expandFilesButton->setToolTip("Expand");
+	}	
 
-	ui.msgSplitter->setSizes(newSizeList);
 }
 
 
