@@ -29,30 +29,25 @@
 
 class TransferPage: public ConfigPage
 {
-  Q_OBJECT
+	Q_OBJECT
 
-    public:
-        TransferPage(QWidget * parent = 0, Qt::WFlags flags = 0);
-        ~TransferPage() {}
+	public:
+		TransferPage(QWidget * parent = 0, Qt::WFlags flags = 0);
+		~TransferPage() {}
 
-    /** Saves the changes on this page */
-    bool save(QString &errmsg);
-    /** Loads the settings for this page */
-    void load();
+		/** Saves the changes on this page */
+		bool save(QString &errmsg);
+		/** Loads the settings for this page */
+		void load();
 
-public slots:
-  void updateStatus();
+	public slots:
+		void updateStatus();
 
-private slots:
+	private:
 
-  void showTurtleRouterDialog();
+		void closeEvent (QCloseEvent * event);
 
-
-    private:
-
-       void closeEvent (QCloseEvent * event);
-
-       Ui::TransferPage ui;
+		Ui::TransferPage ui;
 };
 
 #endif // !TRANSFERPAGE_H

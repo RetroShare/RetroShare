@@ -8,17 +8,12 @@
 TurtleRouterDialog *TurtleRouterDialog::_instance = NULL ;
 
 TurtleRouterDialog::TurtleRouterDialog(QWidget *parent)
-	: QWidget(parent)
+	: RsAutoUpdatePage(2000,parent)
 {
 	setupUi(this) ;
-
-	_timer = new QTimer ;
-
-	connect(_timer,SIGNAL(timeout()),this,SLOT(update())) ;
-
-	_timer->start(2000) ;
-
 	connect( _hashes_TW, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showCtxMenu(const QPoint&)));
+
+	_hashes_TW->setToolTip(tr("As a helper, you can manually remove hashes\nfrom there. Warning: doing so on currently\nactive transfers will block the transfer process.")) ;
 }
 
 void TurtleRouterDialog::showCtxMenu(const QPoint& point)
@@ -62,26 +57,23 @@ void TurtleRouterDialog::removeFileHash()
 	rsTurtle->stopMonitoringFileTunnels(hash) ;
 }
 
-void TurtleRouterDialog::update()
+void TurtleRouterDialog::updateDisplay()
 {
-	if(isVisible())
-	{
-		std::cout << "updatign turtle router console."<< std::endl ;
+	std::cout << "updatign turtle router console."<< std::endl ;
 
-		std::vector<std::vector<std::string> > hashes_info ;
-		std::vector<std::vector<std::string> > tunnels_info ;
-		std::vector<std::vector<std::string> > search_reqs_info ;
-		std::vector<std::vector<std::string> > tunnel_reqs_info ;
+	std::vector<std::vector<std::string> > hashes_info ;
+	std::vector<std::vector<std::string> > tunnels_info ;
+	std::vector<std::vector<std::string> > search_reqs_info ;
+	std::vector<std::vector<std::string> > tunnel_reqs_info ;
 
-		rsTurtle->getInfo(hashes_info,tunnels_info,search_reqs_info,tunnel_reqs_info) ;
+	rsTurtle->getInfo(hashes_info,tunnels_info,search_reqs_info,tunnel_reqs_info) ;
 
-		// now display this in the QTableWidgets
+	// now display this in the QTableWidgets
 
-		fillTable( _hashes_TW, hashes_info) ;
-		fillTable( _tunnels_TW, tunnels_info) ;
-		fillTable( _tunnel_reqs_TW, tunnel_reqs_info) ;
-		fillTable( _search_reqs_TW, search_reqs_info) ;
-	}
+	fillTable( _hashes_TW, hashes_info) ;
+	fillTable( _tunnels_TW, tunnels_info) ;
+	fillTable( _tunnel_reqs_TW, tunnel_reqs_info) ;
+	fillTable( _search_reqs_TW, search_reqs_info) ;
 }
 
 void TurtleRouterDialog::fillTable(QTableWidget *table,const std::vector<std::vector<std::string> >& data)

@@ -20,7 +20,6 @@
  ****************************************************************/
 
 #include "TransferPage.h"
-#include <gui/TurtleRouterDialog.h>
 
 #include "rshare.h"
 
@@ -38,11 +37,9 @@ TransferPage::TransferPage(QWidget * parent, Qt::WFlags flags)
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
 
-  connect( ui._showTurtleDialogPB,SIGNAL(clicked()),this,SLOT( showTurtleRouterDialog() )) ;
-
-   QTimer *timer = new QTimer(this);
-   timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
-   timer->start(1000);
+//   QTimer *timer = new QTimer(this);
+//   timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
+//   timer->start(1000);
 
    updateStatus();
 
@@ -53,13 +50,7 @@ TransferPage::TransferPage(QWidget * parent, Qt::WFlags flags)
 #endif
 }
 
-void TransferPage::showTurtleRouterDialog()
-{
-	TurtleRouterDialog::showUp() ;
-}
-
-void
-TransferPage::closeEvent (QCloseEvent * event)
+void TransferPage::closeEvent (QCloseEvent * event)
 {
     QWidget::closeEvent(event);
 }
@@ -86,11 +77,11 @@ void TransferPage::load()
 {
 
 	/* load up configuration from rsPeers */
-	RsPeerDetails detail;
-	if (!rsPeers->getPeerDetails(rsPeers->getOwnId(), detail))
-	{
-		return;
-	}
+//	RsPeerDetails detail;
+//	if (!rsPeers->getPeerDetails(rsPeers->getOwnId(), detail))
+//	{
+//		return;
+//	}
 
 
 }
@@ -98,15 +89,12 @@ void TransferPage::load()
 /** Loads the settings for this page */
 void TransferPage::updateStatus()
 {
-
 	/* load up configuration from rsPeers */
-	RsPeerDetails detail;
-	if (!rsPeers->getPeerDetails(rsPeers->getOwnId(), detail))
-	{
-		return;
-	}
-
-
+//	RsPeerDetails detail;
+//	if (!rsPeers->getPeerDetails(rsPeers->getOwnId(), detail))
+//	{
+//		return;
+//	}
 }
 
 

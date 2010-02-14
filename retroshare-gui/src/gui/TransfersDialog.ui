@@ -819,6 +819,30 @@ p, li { white-space: pre-wrap; }
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="tab_3">
+       <attribute name="title">
+        <string>Tunneling</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QScrollArea" name="tunnelInfoWidget">
+          <property name="widgetResizable">
+           <bool>true</bool>
+          </property>
+          <widget class="QWidget" name="scrollAreaWidgetContents_2">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>578</width>
+             <height>117</height>
+            </rect>
+           </property>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </widget>
    </item>
@@ -826,6 +850,7 @@ p, li { white-space: pre-wrap; }
  </widget>
  <resources>
   <include location="images.qrc"/>
+  <include location="../../../../../../../.designer/backup/images.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>555</width>
-    <height>406</height>
+    <width>865</width>
+    <height>553</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,171 +17,114 @@
    <iconset resource="images.qrc">
     <normaloff>:/images/rstray3.png</normaloff>:/images/rstray3.png</iconset>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QTabWidget" name="tabWidget">
-     <property name="currentIndex">
-      <number>0</number>
+    <widget class="QTableWidget" name="_hashes_TW">
+     <property name="contextMenuPolicy">
+      <enum>Qt::CustomContextMenu</enum>
      </property>
-     <widget class="QWidget" name="tab">
-      <attribute name="title">
-       <string>Hashes and Tunnels</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
-        <widget class="QGroupBox" name="groupBox">
-         <property name="title">
-          <string>Handled file hashes</string>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_3">
-          <item>
-           <widget class="QTableWidget" name="_hashes_TW">
-            <property name="contextMenuPolicy">
-             <enum>Qt::CustomContextMenu</enum>
-            </property>
-            <property name="selectionMode">
-             <enum>QAbstractItemView::SingleSelection</enum>
-            </property>
-            <attribute name="horizontalHeaderStretchLastSection">
-             <bool>true</bool>
-            </attribute>
-            <column>
-             <property name="text">
-              <string>File hash</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>File Name</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Active tunnels</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Last tunnel request</string>
-             </property>
-            </column>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="groupBox_2">
-         <property name="title">
-          <string>Current tunnels</string>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_2">
-          <item>
-           <widget class="QTableWidget" name="_tunnels_TW">
-            <attribute name="horizontalHeaderStretchLastSection">
-             <bool>true</bool>
-            </attribute>
-            <column>
-             <property name="text">
-              <string>Tunnel id</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Source</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Destination</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Hash</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Last transfer</string>
-             </property>
-            </column>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="tab_3">
-      <attribute name="title">
-       <string>Tunnels / Search Requests</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
-        <widget class="QGroupBox" name="groupBox_3">
-         <property name="title">
-          <string>Tunnel Requests</string>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_4">
-          <item>
-           <widget class="QTableWidget" name="_tunnel_reqs_TW">
-            <attribute name="horizontalHeaderStretchLastSection">
-             <bool>true</bool>
-            </attribute>
-            <column>
-             <property name="text">
-              <string>Request id</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Origin</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Age</string>
-             </property>
-            </column>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="groupBox_4">
-         <property name="title">
-          <string>Search Requests</string>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_5">
-          <item>
-           <widget class="QTableWidget" name="_search_reqs_TW">
-            <attribute name="horizontalHeaderStretchLastSection">
-             <bool>true</bool>
-            </attribute>
-            <column>
-             <property name="text">
-              <string>Request id</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Origin</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Age</string>
-             </property>
-            </column>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-      </layout>
-     </widget>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::SingleSelection</enum>
+     </property>
+     <attribute name="horizontalHeaderStretchLastSection">
+      <bool>true</bool>
+     </attribute>
+     <column>
+      <property name="text">
+       <string>Handled file hash</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>File Name</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Active tunnels</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Last tunnel request</string>
+      </property>
+     </column>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTableWidget" name="_tunnels_TW">
+     <attribute name="horizontalHeaderStretchLastSection">
+      <bool>true</bool>
+     </attribute>
+     <column>
+      <property name="text">
+       <string>Current Tunnel id</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Source</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Destination</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Hash</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Last transfer</string>
+      </property>
+     </column>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTableWidget" name="_tunnel_reqs_TW">
+     <attribute name="horizontalHeaderStretchLastSection">
+      <bool>true</bool>
+     </attribute>
+     <column>
+      <property name="text">
+       <string>Tunnel request id</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Origin</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Age</string>
+      </property>
+     </column>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTableWidget" name="_search_reqs_TW">
+     <attribute name="horizontalHeaderStretchLastSection">
+      <bool>true</bool>
+     </attribute>
+     <column>
+      <property name="text">
+       <string>Search request id</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Origin</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Age</string>
+      </property>
+     </column>
     </widget>
    </item>
   </layout>

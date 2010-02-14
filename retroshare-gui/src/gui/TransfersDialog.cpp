@@ -32,6 +32,7 @@
 #include "DLListDelegate.h"
 #include "ULListDelegate.h"
 #include "FileTransferInfoWidget.h"
+#include "TurtleRouterDialog.h"
 #include "xprogressbar.h"
 
 #include <QContextMenuEvent>
@@ -220,6 +221,15 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     ui.fileTransferInfoWidget->setFocusPolicy(Qt::NoFocus);
 
 	 QObject::connect(ui.downloadList,SIGNAL(clicked(const QModelIndex&)),this,SLOT(showFileDetails())) ;
+
+    TurtleRouterDialog *trdl = new TurtleRouterDialog();
+    ui.tunnelInfoWidget->setWidget(trdl);
+    ui.tunnelInfoWidget->setWidgetResizable(true);
+    ui.tunnelInfoWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui.tunnelInfoWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    ui.tunnelInfoWidget->viewport()->setBackgroundRole(QPalette::NoRole);
+    ui.tunnelInfoWidget->setFrameStyle(QFrame::NoFrame);
+    ui.tunnelInfoWidget->setFocusPolicy(Qt::NoFocus);
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN

@@ -2,24 +2,26 @@
 
 #include <QPoint>
 #include "ui_TurtleRouterDialog.h"
+#include "RsAutoUpdatePage.h"
 
-class TurtleRouterDialog: public QWidget, public Ui::TurtleRouterDialogForm
+class TurtleRouterDialog: public RsAutoUpdatePage, public Ui::TurtleRouterDialogForm
 {
 	Q_OBJECT
 
 	public:
+		TurtleRouterDialog(QWidget *parent = NULL) ;
 		static void showUp() ;
 
                 /** Default Constructor */
 	protected slots:
-		void update() ;
 		void showCtxMenu(const QPoint&) ;
 		void removeFileHash() ;
 
 	private:
 		void fillTable(QTableWidget *table,const std::vector<std::vector<std::string> >&) ;
-		TurtleRouterDialog(QWidget *parent = NULL) ;
 		QTimer *_timer ;
+
+		virtual void updateDisplay() ;
 
 		static TurtleRouterDialog *_instance ;
 } ;
