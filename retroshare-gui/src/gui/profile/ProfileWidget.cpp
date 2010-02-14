@@ -85,10 +85,10 @@ void ProfileWidget::showEvent ( QShowEvent * event )
 
 	/* set local address */
 	ui.localAddress->setText(QString::fromStdString(detail.localAddr));
-	ui.localPort -> setValue(detail.localPort);
+        ui.localPort -> setText(QString::number(detail.localPort));
 	/* set the server address */
 	ui.extAddress->setText(QString::fromStdString(detail.extAddr));
-	ui.extPort -> setValue(detail.extPort);
+        ui.extPort -> setText(QString::number(detail.extPort));
 	
 	  std::list<std::string> ids;
 	  ids.clear();
