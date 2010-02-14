@@ -25,9 +25,7 @@
 
 #include "rsiface/rsinit.h"
 
-#ifdef RS_USE_PGPSSL
-	#include <gpgme.h>
-#endif
+#include <gpgme.h>
 
 #include <QMenu>
 #include <QMouseEvent>
@@ -168,8 +166,6 @@ void  NetworkView::insertPeers()
 			continue;
 		}
 
-#ifdef RS_USE_PGPSSL
-
 		/* *** */
                 RsPeerDetails detail;
 		if (!rsPeers->getPeerDetails(*it, detail))
@@ -204,37 +200,6 @@ void  NetworkView::insertPeers()
 				break;
 		}
   		ui.graphicsView->addNode(type, *it, detail.name);
-
-
-
-#else
-                /* *** */
-                std::string name = rsPeers->getPeerName(*it);
-
-                if (rsPeers->isFriend(*it))
-                {
-                        type = ELASTIC_NODE_TYPE_FRIEND;
-                }
-                else
-                {
-                        RsPeerDetails detail;
-                        rsPeers->getPeerDetails(*it, detail);
-
-                        if(detail.trustLvl > RS_TRUST_LVL_MARGINAL)
-                        {
-                                type = ELASTIC_NODE_TYPE_AUTHED;
-                        }
-                        else if (detail.trustLvl >= RS_TRUST_LVL_MARGINAL)
-                        {
-                                type = ELASTIC_NODE_TYPE_MARGINALAUTH;
-                        }
-                        else
-                        {
-                                type = ELASTIC_NODE_TYPE_FOF;
-                        }
-                }
-  		ui.graphicsView->addNode(type, *it, name);
-#endif
 
 		std::cerr << "NetworkView::insertPeers() Added Friend: " << *it << std::endl;
 	}

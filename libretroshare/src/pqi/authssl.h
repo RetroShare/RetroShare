@@ -33,7 +33,6 @@
  * only the owner ssl cert is store, the rest is jeus callback verification
  * 	
  * To use as an SSL authentication system, you must use a common CA certificate.
- * and compilation should be done with PQI_USE_XPGP off, and PQI_USE_SSLONLY on
  *  * The pqissl stuff doesn't need to differentiate between SSL, SSL + PGP,
  *  as its X509 certs.
  *  * The rsserver stuff has to distinguish between all three types ;(

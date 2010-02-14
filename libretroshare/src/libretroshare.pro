@@ -1,15 +1,13 @@
 TEMPLATE = lib
-CONFIG += static release
+CONFIG += staticlib release
 TARGET = retroshare
-
-DEFINES -= PQI_USE_XPGP
-DEFINES += RS_USE_PGPSSL
 
 profiling {
 	QMAKE_CXXFLAGS -= -fomit-frame-pointer
 	QMAKE_CXXFLAGS *= -pg -g -fno-omit-frame-pointer
 }
 
+#CONFIG += debug
 debug {
 #	DEFINES *= DEBUG
 #	DEFINES *= OPENDHT_DEBUG DHT_DEBUG CONN_DEBUG DEBUG_UDP_SORTER P3DISC_DEBUG DEBUG_UDP_LAYER FT_DEBUG EXTADDRSEARCH_DEBUG
@@ -18,7 +16,8 @@ debug {
 #        DEFINES *= CONN_DEBUG P3DISC_DEBUG RSSERIAL_DEBUG RSITEM_DEBUG DEBUG_PQISSL DEBUG_PQISTREAMER
 #	DEFINES *= NET_DEBUG
 #	DEFINES *= DISTRIB_DEBUG
-	QMAKE_CXXFLAGS *= -g
+        QMAKE_CXXFLAGS -= -fomit-frame-pointer
+        QMAKE_CXXFLAGS *= -g -fno-omit-frame-pointer
 }
 
 ################################# Linux ##########################################

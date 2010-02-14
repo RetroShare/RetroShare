@@ -40,14 +40,7 @@
 
 #include "pqi/p3connmgr.h"
 
-/**************** PQI_USE_XPGP ******************/
-#if defined(PQI_USE_XPGP)
-#include "pqi/authxpgp.h"
-#else /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
 #include "pqi/authssl.h"
-#endif /* X509 Certificates */
-/**************** PQI_USE_XPGP ******************/
 
 #define WAITING_NOT            0
 #define WAITING_DELAY	       1

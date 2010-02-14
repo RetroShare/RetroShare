@@ -1,13 +1,19 @@
-CONFIG += qt gui uic qrc resources uitools pluginmgr newsettings install_rs
-QT     += network xml script opengl
+CONFIG += qt newsettings install_rs thread release
+#CONFIG += pluginmgr
+QT     += network xml
 TEMPLATE = app
 TARGET = RetroShare
 
-DEFINES *= RS_RELEASE_VERSION
-DEFINES += RS_USE_PGPSSL
+DEFINES += RS_RELEASE_VERSION
 RCC_DIR = temp/qrc
 UI_DIR  = temp/ui
 MOC_DIR = temp/moc
+
+#CONFIG += debug
+debug {
+        DEFINES+*= PEERS_DEBUG
+        QMAKE_CXXFLAGS *= -g
+}
 
 ################################# Linux ##########################################
 # Put lib dir in QMAKE_LFLAGS so it appears before -L/usr/lib

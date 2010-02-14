@@ -36,9 +36,7 @@
 #include <fstream>
 #include <sstream>
 
-#ifdef RS_USE_PGPSSL
-	#include <gpgme.h>
-#endif
+#include <gpgme.h>
 
 const std::string CERT_SSL_ID = "--SSLID--";
 const std::string CERT_LOCATION = "--LOCATION--";
