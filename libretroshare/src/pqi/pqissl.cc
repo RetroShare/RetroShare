@@ -747,6 +747,9 @@ int 	pqissl::Basic_Connection_Complete()
 	FD_ZERO(&WriteFDs);
 	FD_ZERO(&ExceptFDs);
 
+	if(sockfd < 0)
+		return -1 ;
+
 	FD_SET(sockfd, &ReadFDs);
 	FD_SET(sockfd, &WriteFDs);
 	FD_SET(sockfd, &ExceptFDs);
