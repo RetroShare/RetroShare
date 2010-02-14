@@ -84,13 +84,13 @@
     </widget>
    </item>
    <item>
-    <widget class="QTableWidget" name="_tunnel_reqs_TW">
+    <widget class="QTableWidget" name="_reqs_TW">
      <attribute name="horizontalHeaderStretchLastSection">
       <bool>true</bool>
      </attribute>
      <column>
       <property name="text">
-       <string>Tunnel request id</string>
+       <string>Request id</string>
       </property>
      </column>
      <column>
@@ -103,26 +103,9 @@
        <string>Age</string>
       </property>
      </column>
-    </widget>
-   </item>
-   <item>
-    <widget class="QTableWidget" name="_search_reqs_TW">
-     <attribute name="horizontalHeaderStretchLastSection">
-      <bool>true</bool>
-     </attribute>
      <column>
       <property name="text">
-       <string>Search request id</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Origin</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Age</string>
+       <string>Type</string>
       </property>
      </column>
     </widget>

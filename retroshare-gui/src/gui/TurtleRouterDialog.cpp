@@ -72,13 +72,22 @@ void TurtleRouterDialog::updateDisplay()
 
 	fillTable( _hashes_TW, hashes_info) ;
 	fillTable( _tunnels_TW, tunnels_info) ;
-	fillTable( _tunnel_reqs_TW, tunnel_reqs_info) ;
-	fillTable( _search_reqs_TW, search_reqs_info) ;
+
+	std::vector<std::vector<std::string> >& reqs(search_reqs_info) ;
+
+	for(uint i=0;i<search_reqs_info.size();++i) search_reqs_info[i].push_back("Search request") ;
+	for(uint i=0;i<tunnel_reqs_info.size();++i) 
+	{
+		tunnel_reqs_info[i].push_back("Tunnel request") ;
+		reqs.push_back(tunnel_reqs_info[i]) ;
+	}
+
+	fillTable( _reqs_TW, reqs) ;
 }
 
 void TurtleRouterDialog::fillTable(QTableWidget *table,const std::vector<std::vector<std::string> >& data)
 {
-//	table->clearContents() ;
+	table->clearContents() ;
 
 	for(uint i=0;i<data.size();++i)
 	{
