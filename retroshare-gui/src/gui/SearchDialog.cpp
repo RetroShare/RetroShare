@@ -143,13 +143,14 @@ SearchDialog::SearchDialog(QWidget *parent)
 
     /* Set header resize modes and initial section sizes */
     ui.searchSummaryWidget->setColumnCount(3);
+    ui.searchSummaryWidget->setColumnHidden ( 2, true);
 
     QHeaderView * _smheader = ui.searchSummaryWidget->header () ;
     _smheader->setResizeMode (0, QHeaderView::Interactive);
     _smheader->setResizeMode (1, QHeaderView::Interactive);
     _smheader->setResizeMode (2, QHeaderView::Interactive);
 
-    _smheader->resizeSection ( 0, 80 );
+    _smheader->resizeSection ( 0, 140 );
     _smheader->resizeSection ( 1, 75 );
     _smheader->resizeSection ( 2, 75 );
 
