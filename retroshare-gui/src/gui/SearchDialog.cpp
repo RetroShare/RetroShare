@@ -432,6 +432,7 @@ void SearchDialog::clearKeyword()
 {
  	ui.lineEdit->clear();
  	ui.FileTypeComboBox->setCurrentIndex(0);
+ 	ui.lineEdit->setFocus();
 }
 
 
