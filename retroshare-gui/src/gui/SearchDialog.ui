@@ -550,7 +550,7 @@ border-image: url(:/images/btn_26_pressed.png) 4;
      <property name="maximumSize">
       <size>
        <width>16777215</width>
-       <height>38</height>
+       <height>32</height>
       </size>
      </property>
      <property name="styleSheet">
@@ -784,8 +784,8 @@ border-image: url(:/images/btn3.png) 4;
        <widget class="QLabel" name="label">
         <property name="maximumSize">
          <size>
-          <width>24</width>
-          <height>24</height>
+          <width>22</width>
+          <height>22</height>
          </size>
         </property>
         <property name="text">
@@ -803,6 +803,8 @@ border-image: url(:/images/btn3.png) 4;
        <widget class="QLabel" name="label_2">
         <property name="font">
          <font>
+          <family>Arial</family>
+          <pointsize>10</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
