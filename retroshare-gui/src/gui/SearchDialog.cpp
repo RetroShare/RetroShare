@@ -119,6 +119,7 @@ SearchDialog::SearchDialog(QWidget *parent)
     connect( ui.pushButtonDownload, SIGNAL( released ( void ) ), this, SLOT( download( void ) ) );
     connect( ui.cloaseallsearchresultsButton, SIGNAL(clicked()), this, SLOT(searchRemoveAll()));
     connect( ui.resetButton, SIGNAL(clicked()), this, SLOT(clearKeyword()));
+    connect( ui.lineEdit, SIGNAL( textChanged(const QString &)), this, SLOT(togglereset()));
 
     //connect( ui.searchSummaryWidget, SIGNAL( itemSelectionChanged ( void ) ), this, SLOT( selectSearchResults( void ) ) );
 
@@ -173,7 +174,7 @@ SearchDialog::SearchDialog(QWidget *parent)
 
 	ui.searchResultWidget->sortItems(SR_NAME_COL, Qt::AscendingOrder);
 
-
+  ui.resetButton->hide();
 
 /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -1113,4 +1114,19 @@ void SearchDialog::sendLinkTo( )
     nMsgDialog->insertHtmlText(QApplication::clipboard()->text().toStdString());
 
     nMsgDialog->show();
+}
+
+void SearchDialog::togglereset()
+{
+    QString text = ui.lineEdit->text();
+    
+    if (text.isEmpty())
+    {
+      ui.resetButton->hide();
+    }
+    else
+    {
+      ui.resetButton->show();
+    }
+    
 }

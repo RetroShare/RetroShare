@@ -85,6 +85,9 @@ private slots:
     void clearKeyword();
     
     void sendLinkTo();
+    
+    void togglereset();
+
 
 
 private:
