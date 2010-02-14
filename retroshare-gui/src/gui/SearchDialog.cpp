@@ -189,7 +189,7 @@ void SearchDialog::checkText(const QString& txt)
 	if(txt.length() < 4)
 	{
 		std::cout << "setting palette 1" << std::endl ;
-		ui.lineEdit->setStyleSheet("QLineEdit { background-color: blue; }");
+		ui.lineEdit->setStyleSheet("QLineEdit { background-color: gray; }");
 	}
 	else
 	{
@@ -1008,9 +1008,10 @@ void SearchDialog::selectSearchResults()
 
 	/* get the searchId text */
 	QString searchId = ci->text(SS_SEARCH_ID_COL);
-
+#ifdef DEBUG
 	std::cerr << "SearchDialog::selectSearchResults(): searchId: " << searchId.toStdString();
 	std::cerr << std::endl;
+#endif
 
 	/* show only matching searchIds in main window */
 	int items = ui.searchResultWidget->topLevelItemCount();
