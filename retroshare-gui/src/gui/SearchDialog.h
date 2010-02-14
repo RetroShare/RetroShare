@@ -60,6 +60,7 @@ private slots:
     void broadcastonchannel();
 
     void recommendtofriends();
+	 void checkText(const QString&) ;
     
     void copysearchLink();
 

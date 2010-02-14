@@ -99,6 +99,7 @@ SearchDialog::SearchDialog(QWidget *parent)
     ui.setupUi(this);
 
     ui.lineEdit->setFocus();
+    ui.lineEdit->setToolTip(tr("Enter a keyword here (at least 4 char long)"));
 
     /* initialise the filetypes mapping */
     if (!SearchDialog::initialised)
@@ -115,6 +116,7 @@ SearchDialog::SearchDialog(QWidget *parent)
     connect( ui.searchSummaryWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( searchtableWidget2CostumPopupMenu( QPoint ) ) );
 
     connect( ui.lineEdit, SIGNAL( returnPressed ( void ) ), this, SLOT( searchKeywords( void ) ) );
+    connect( ui.lineEdit, SIGNAL( textChanged ( const QString& ) ), this, SLOT( checkText( const QString& ) ) );
     connect( ui.pushButtonsearch, SIGNAL( released ( void ) ), this, SLOT( searchKeywords( void ) ) );
     connect( ui.pushButtonDownload, SIGNAL( released ( void ) ), this, SLOT( download( void ) ) );
     connect( ui.cloaseallsearchresultsButton, SIGNAL(clicked()), this, SLOT(searchRemoveAll()));
@@ -180,6 +182,20 @@ SearchDialog::SearchDialog(QWidget *parent)
 #ifdef Q_WS_WIN
 
 #endif
+}
+
+void SearchDialog::checkText(const QString& txt)
+{
+	if(txt.length() < 4)
+	{
+		std::cout << "setting palette 1" << std::endl ;
+		ui.lineEdit->setStyleSheet("QLineEdit { background-color: blue; }");
+	}
+	else
+	{
+		ui.lineEdit->setStyleSheet("QLineEdit { background-color: white; }");
+		std::cout << "setting palette 2" << std::endl ;
+	}
 }
 
 void SearchDialog::initialiseFileTypeMappings()
@@ -525,6 +541,9 @@ void SearchDialog::searchKeywords()
 	QString qTxt = ui.lineEdit->text();
 	std::string txt = qTxt.toStdString();
 
+	if(txt.length() < 4)
+		return ;
+
 	std::cerr << "SearchDialog::searchKeywords() : " << txt << std::endl;
 
 	TurtleRequestId req_id = rsTurtle->turtleSearch(txt) ;
@@ -628,11 +647,12 @@ void SearchDialog::updateFiles(qulonglong search_id,FileDetail file)
 {
 	/* which extensions do we use? */
 	std::string txt = ui.lineEdit->text().toStdString();
-
+#ifdef DEBUG
 	std::cout << "Updating file detail:" << std::endl ;
 	std::cout << "  size = " << file.size << std::endl ;
 	std::cout << "  name = " << file.name << std::endl ;
 	std::cout << "  s_id = " << search_id << std::endl ;
+#endif
 
 	if (ui.FileTypeComboBox->currentIndex() == FILETYPE_IDX_ANY)
 		insertFile(txt,search_id,file);
