@@ -702,6 +702,7 @@ void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, 
 		child->setText(SR_AGE_COL, misc::userFriendlyDuration(dir.age));
 		child->setText(SR_REALSIZE_COL, QString::number(dir.count));
 		child->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
+		
 		child->setText(SR_ID_COL, QString::number(1));
 		child->setText(SR_SEARCH_ID_COL, sid_hexa);
 		setIconAndType(child, ext);
@@ -777,7 +778,7 @@ void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, 
 	}
 }
 
-void SearchDialog::insertFile(const std::string& txt,qulonglong searchId, const FileDetail& file)
+void SearchDialog::insertFile(const std::string& txt,qulonglong searchId, const FileDetail& file, int searchType)
 {
 	// algo:
 	//
@@ -794,6 +795,9 @@ void SearchDialog::insertFile(const std::string& txt,qulonglong searchId, const 
 	int items = ui.searchResultWidget->topLevelItemCount();
 	bool found = false ;
 	int sources;
+	int friendSource = 0;
+	int anonymousSource = 0;
+	QString modifiedResult;
 
 	QString sid_hexa = QString::number(searchId,16) ;
 
@@ -801,11 +805,24 @@ void SearchDialog::insertFile(const std::string& txt,qulonglong searchId, const 
 		if(ui.searchResultWidget->topLevelItem(i)->text(SR_HASH_COL) == QString::fromStdString(file.hash)
 				&& ui.searchResultWidget->topLevelItem(i)->text(SR_SEARCH_ID_COL) == sid_hexa)
 		{
-			int s = ui.searchResultWidget->topLevelItem(i)->text(SR_ID_COL).toInt() ;
-			ui.searchResultWidget->topLevelItem(i)->setText(SR_ID_COL,QString::number(s+1));
+			QString resultCount = ui.searchResultWidget->topLevelItem(i)->text(SR_ID_COL);
+			QStringList modifiedResultCount = resultCount.split("/", QString::SkipEmptyParts); 
+			if(searchType == FRIEND_SEARCH)
+			{
+				friendSource = modifiedResultCount.at(0).toInt() + 1;
+				anonymousSource = modifiedResultCount.at(1).toInt();
+			}
+			else
+			{
+				friendSource = modifiedResultCount.at(0).toInt();
+				anonymousSource = modifiedResultCount.at(1).toInt() + 1;
+			}
+			anonymousSource = anonymousSource + friendSource;
+			modifiedResult = QString::number(friendSource) + tr("/") + QString::number(anonymousSource);
+			ui.searchResultWidget->topLevelItem(i)->setText(SR_ID_COL,modifiedResult);
 			QTreeWidgetItem *item = ui.searchResultWidget->topLevelItem(i);
 			found = true ;
-			sources = s+1;
+			int sources = friendSource;
 			if ( sources < 1)
 			{
 				for(int i = 0; i < 7; i++)
@@ -919,7 +936,20 @@ void SearchDialog::insertFile(const std::string& txt,qulonglong searchId, const 
 		item->setText(SR_REALSIZE_COL, QString::number(file.size));
 		item->setText(SR_AGE_COL, misc::userFriendlyDuration(file.age));
 		item->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
-		item->setText(SR_ID_COL, QString::number(1));
+		if(searchType == FRIEND_SEARCH)
+		{
+			friendSource = 1;
+			anonymousSource = 0;
+		}
+		else
+		{
+			friendSource = 0;
+			anonymousSource = 1;
+		}
+
+		anonymousSource = anonymousSource + friendSource;
+		modifiedResult =QString::number(friendSource) + tr("/") + QString::number(anonymousSource);
+		item->setText(SR_ID_COL,modifiedResult);
 		item->setText(SR_SEARCH_ID_COL, sid_hexa);
 	
 			
@@ -987,7 +1017,7 @@ void SearchDialog::resultsToTree(std::string txt,qulonglong searchId, const std:
 			fd.age 	= it->age;
 			fd.rank = 0;
 
-			insertFile(txt,searchId,fd);
+			insertFile(txt,searchId,fd, FRIEND_SEARCH);
 		} else if (it->type == DIR_TYPE_DIR) {
 			insertDirectory(txt, searchId, *it, NULL);
 		}

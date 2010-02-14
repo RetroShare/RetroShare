@@ -35,6 +35,8 @@
 #include "advsearch/advancedsearchdialog.h"
 #include "settings/rsharesettings.h"
 
+#define FRIEND_SEARCH 1
+#define ANONYMOUS_SEARCH 2
 class SearchDialog : public MainPage
 {
     Q_OBJECT
@@ -95,7 +97,7 @@ private:
 /** render the results to the tree widget display */
 	 void initSearchResult(const std::string& txt,qulonglong searchId) ;
    void resultsToTree(std::string,qulonglong searchId, const std::list<DirDetails>&);
-	 void insertFile(const std::string& txt,qulonglong searchId, const FileDetail& file) ;
+	 void insertFile(const std::string& txt,qulonglong searchId, const FileDetail& file, int searchType = ANONYMOUS_SEARCH) ;
 	 void insertDirectory(const std::string &txt, qulonglong searchId, const DirDetails &dir, QTreeWidgetItem *item);
 	 void setIconAndType(QTreeWidgetItem *item, QString &ext);
 	 void downloadDirectory(const QTreeWidgetItem *item, const QString &base);
