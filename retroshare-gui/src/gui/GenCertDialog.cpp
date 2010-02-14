@@ -140,10 +140,18 @@ void GenCertDialog::genPerson()
 {
 
 	/* Check the data from the GUI. */
-	std::string genLoc  = ui.genLoc->text().toStdString();
+        std::string genLoc  = ui.location_input->text().toStdString();
         std::string PGPId;
 
         if (!genNewGPGKey) {
+            if (ui.location_input->text().length() < 3) {
+                    /* Message Dialog */
+                    QMessageBox::StandardButton sb = QMessageBox::warning ( NULL,
+                                    tr("Generate GPG key Failure"),
+                                    tr("Location field is required with a minimum of 3 characters"),
+                                      QMessageBox::Ok);
+                    return;
+            }
             int pgpidx = ui.genPGPuser->currentIndex();
             if (pgpidx < 0)
             {
@@ -157,11 +165,12 @@ void GenCertDialog::genPerson()
             QVariant data = ui.genPGPuser->itemData(pgpidx);
             PGPId = (data.toString()).toStdString();
         } else {
-            if (ui.password_input->text().length() < 3 || ui.name_input->text().length() < 3) {
+            if (ui.password_input->text().length() < 3 || ui.name_input->text().length() < 3
+                || ui.email_input->text().length() < 3 || ui.location_label->text().length() < 3) {
                     /* Message Dialog */
                     QMessageBox::StandardButton sb = QMessageBox::warning ( NULL,
                                     tr("Generate GPG key Failure"),
-                                    tr("Your Name or password is too short (3+ characters)"),
+                                    tr("All fields are required with a minimum of 3 characters"),
                                       QMessageBox::Ok);
                     return;
             }
@@ -183,7 +192,7 @@ void GenCertDialog::genPerson()
             ui.genPGPuserlabel->hide();
             ui.genPGPuser->hide();
             ui.location_label->hide();
-            ui.genLoc->hide();
+            ui.location_input->hide();
             ui.infopushButton->hide();
             ui.genButton->hide();
             QMessageBox::StandardButton info = QMessageBox::information( NULL,

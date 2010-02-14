@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>569</width>
-    <height>437</height>
+    <height>469</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -715,7 +715,14 @@ border: 1px solid #CCCCCC;}</string>
             </widget>
            </item>
            <item row="5" column="1">
-            <widget class="QLineEdit" name="genLoc"/>
+            <widget class="QLineEdit" name="location_input"/>
+           </item>
+           <item row="6" column="1">
+            <widget class="QLabel" name="label_location2">
+             <property name="text">
+              <string>Put a meaningfull location. ex : home, laptop, etc.</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -741,7 +748,7 @@ border: 1px solid #CCCCCC;}</string>
             </size>
            </property>
            <property name="text">
-            <string>Generate a new a new gpg key</string>
+            <string>Generate a new gpg key</string>
            </property>
            <property name="icon">
             <iconset resource="images.qrc">
@@ -835,7 +842,7 @@ border: 1px solid #CCCCCC;}</string>
   <tabstop>name_input</tabstop>
   <tabstop>email_input</tabstop>
   <tabstop>password_input</tabstop>
-  <tabstop>genLoc</tabstop>
+  <tabstop>location_input</tabstop>
  </tabstops>
  <resources>
   <include location="images.qrc"/>
