@@ -89,6 +89,9 @@ private slots:
   
   void filterRegExpChanged();
   void filterColumnChanged();
+  
+  void clearFilter();
+  void toggleclearButton();
 
 private:
   /** A RetroShare Settings object used for saving/loading settings */

@@ -91,6 +91,9 @@ MessagesDialog::MessagesDialog(QWidget *parent)
   
   connect(ui.actionSave_as, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
   
+  connect( ui.clearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
+  connect( ui.filterPatternLineEdit, SIGNAL( textChanged(const QString &)), this, SLOT(toggleclearButton()));
+  
   connect(ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)),
             this, SLOT(filterRegExpChanged()));
 
@@ -168,6 +171,9 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
 	//sertting default filter by column as subject
     proxyModel->setFilterKeyColumn(ui.filterColumnComboBox->currentIndex());
+    
+      ui.clearButton->hide();
+
         
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -1298,4 +1304,27 @@ void MessagesDialog::updateMessageSummaryList()
 		item->setFont(qf);
 		
 	}	
+}
+
+/** clear Filter **/
+void MessagesDialog::clearFilter()
+{
+ 	ui.filterPatternLineEdit->clear();
+ 	ui.filterPatternLineEdit->setFocus();
+}
+
+/* toggle clearButton */
+void MessagesDialog::toggleclearButton()
+{
+    QString text = ui.filterPatternLineEdit->text();
+    
+    if (text.isEmpty())
+    {
+      ui.clearButton->hide();
+    }
+    else
+    {
+      ui.clearButton->show();
+    }
+    
 }
