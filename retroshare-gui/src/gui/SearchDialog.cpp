@@ -99,7 +99,7 @@ SearchDialog::SearchDialog(QWidget *parent)
     ui.setupUi(this);
 
     ui.lineEdit->setFocus();
-    ui.lineEdit->setToolTip(tr("Enter a keyword here (at least 4 char long)"));
+    ui.lineEdit->setToolTip(tr("Enter a keyword here (at least 3 char long)"));
 
     /* initialise the filetypes mapping */
     if (!SearchDialog::initialised)
@@ -186,14 +186,14 @@ SearchDialog::SearchDialog(QWidget *parent)
 
 void SearchDialog::checkText(const QString& txt)
 {
-	if(txt.length() < 4)
+	if(txt.length() < 3)
 	{
 		std::cout << "setting palette 1" << std::endl ;
-		ui.lineEdit->setStyleSheet("QLineEdit { background-color: gray; }");
+		ui.frame_2->setStyleSheet("QFrame{ border: 2px solid #079E00; background-color: #DBDBDB; }");
 	}
 	else
 	{
-		ui.lineEdit->setStyleSheet("QLineEdit { background-color: white; }");
+		ui.frame_2->setStyleSheet("QFrame { border: 2px solid #079E00; background-color: white; }");
 		std::cout << "setting palette 2" << std::endl ;
 	}
 }
@@ -541,7 +541,7 @@ void SearchDialog::searchKeywords()
 	QString qTxt = ui.lineEdit->text();
 	std::string txt = qTxt.toStdString();
 
-	if(txt.length() < 4)
+	if(txt.length() < 3)
 		return ;
 
 	std::cerr << "SearchDialog::searchKeywords() : " << txt << std::endl;

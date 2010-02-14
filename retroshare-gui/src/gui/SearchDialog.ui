@@ -734,7 +734,7 @@ border-image: url(:/images/btn_26_pressed.png) 4;
            </size>
           </property>
           <property name="styleSheet">
-           <string notr="true">border: 1px solid #8B8B8B;
+           <string notr="true">border: 2px solid #079E00;
 background: white;</string>
           </property>
           <property name="frameShape">
