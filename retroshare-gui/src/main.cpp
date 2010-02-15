@@ -146,6 +146,7 @@ int main(int argc, char *argv[])
 	QObject::connect(notify,SIGNAL(peerHasNewCustomStateString(const QString&)),w->peersDialog,SLOT(updatePeersCustomStateString(const QString&)));
 	QObject::connect(notify,SIGNAL(peerHasNewAvatar(const QString&)),w->peersDialog,SLOT(updatePeersAvatar(const QString&)));
 	QObject::connect(notify,SIGNAL(ownAvatarChanged()),w->peersDialog,SLOT(updateAvatar()));
+	QObject::connect(notify,SIGNAL(ownAvatarChanged()),w->messengerWindow,SLOT(updateAvatar()));
 	QObject::connect(notify,SIGNAL(ownStatusMessageChanged()),w->peersDialog,SLOT(loadmypersonalstatus()));
 
 	QObject::connect(notify,SIGNAL(logInfoChanged(const QString&)),w->networkDialog,SLOT(setLogInfo(QString))) ;
