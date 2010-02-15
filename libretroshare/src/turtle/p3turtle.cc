@@ -1775,8 +1775,14 @@ void p3turtle::getInfo(	std::vector<std::vector<std::string> >& hashes_info,
 		std::vector<std::string>& tunnel(tunnels_info.back()) ;
 
 		tunnel.push_back(printNumber(it->first,true)) ;
-		tunnel.push_back(rsPeers->getPeerName(it->second.local_src)) ;
-		tunnel.push_back(rsPeers->getPeerName(it->second.local_dst)) ;
+
+		RsPeerDetails sslDetails;
+		rsPeers->getPeerDetails(it->second.local_src,sslDetails) ;
+		tunnel.push_back(sslDetails.name + " - " + sslDetails.location) ;
+
+		rsPeers->getPeerDetails(it->second.local_dst,sslDetails) ;
+		tunnel.push_back(sslDetails.name + " - " + sslDetails.location) ;
+
 		tunnel.push_back(it->second.hash) ;
 		tunnel.push_back(printNumber(now-it->second.time_stamp) + " secs ago") ;
 	}
@@ -1789,7 +1795,11 @@ void p3turtle::getInfo(	std::vector<std::vector<std::string> >& hashes_info,
 		std::vector<std::string>& search_req(search_reqs_info.back()) ;
 
 		search_req.push_back(printNumber(it->first,true)) ;
-		search_req.push_back(rsPeers->getPeerName(it->second.origin)) ;
+
+		RsPeerDetails sslDetails;
+		rsPeers->getPeerDetails(it->second.origin,sslDetails) ;
+		search_req.push_back(sslDetails.name + " - " + sslDetails.location) ;
+
 		search_req.push_back(printNumber(now - it->second.time_stamp) + " secs ago") ;
 	}
 
@@ -1801,7 +1811,9 @@ void p3turtle::getInfo(	std::vector<std::vector<std::string> >& hashes_info,
 		std::vector<std::string>& tunnel_req(tunnel_reqs_info.back()) ;
 
 		tunnel_req.push_back(printNumber(it->first,true)) ;
-		tunnel_req.push_back(rsPeers->getPeerName(it->second.origin)) ;
+		RsPeerDetails sslDetails;
+		rsPeers->getPeerDetails(it->second.origin,sslDetails) ;
+		tunnel_req.push_back(sslDetails.name + " - " + sslDetails.location) ;
 		tunnel_req.push_back(printNumber(now - it->second.time_stamp) + " secs ago") ;
 	}
 }
