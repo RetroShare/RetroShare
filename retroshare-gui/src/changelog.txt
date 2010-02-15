@@ -1,5 +1,23 @@
-Changes for v0.5.0 *
+Changes for v0.5.0 alpha 2
 
+* set TextAlignment for sources to AlignRight
+* added to show files sources count in form of friend source/ total source
+* fixed stylesheets for Search LineEdit's frame
+* put a safety check against sockfd==-1
+* limited the search to > 3 chars
+* fixed remove a bug in peersdialog
+* added clear Filter Button for Messages Filter
+* change the profile widget to replave spinbox by lineedit
+* add some validators for gpg key gen
+* fixed setFocus for search LineEdit when clearing it.
+* improved turtle router display
+* added put the tunnel info as a new tab in the transfer page.
+* added hide reset button when search field is empty
+* fixed to get work again to hide/show the Messages Filelist
+* added a ending 0 to form a proper string in gpg cert export
+* fixed the left side friends list for Message Composer to get resizeable
+* fixed display issues: always -> all and void string -> unknown for turtle hashes
+* fixed Messages items to not editable
 * corrected bug in file completion
 * added Messages Filter for Attachments,Subject,From,Date,
 * rewrite MessagesDialog to use QTreeView with QStandardItemModel
