@@ -739,7 +739,16 @@ int 	pqissl::Basic_Connection_Complete()
 	  		"pqissl::Basic_Connection_Complete() Wrong Mode");
 		return -1;
 	}
-	// use select on the opened socket.
+
+        if (sockfd == -1)
+        {
+                rslog(RSL_DEBUG_BASIC, pqisslzone,
+                        "pqissl::Basic_Connection_Complete() problem with the socket descriptor. Aborting");
+                reset();
+                return -1;
+        }
+
+        // use select on the opened socket.
 	// Interestingly - This code might be portable....
 	
 	fd_set ReadFDs, WriteFDs, ExceptFDs;
