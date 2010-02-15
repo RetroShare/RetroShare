@@ -1090,12 +1090,12 @@ void SearchDialog::setIconAndType(QTreeWidgetItem *item, QString &ext)
 		item->setText(SR_TYPE_COL, QString::fromUtf8("Archive"));
 	}
 	else if (ext == "app" || ext == "bat" || ext == "cgi" || ext == "com" || ext == "bin" || ext == "exe" || ext == "js" 
-	|| ext == "pif" || ext == "py" || ext == "pl" || ext == "sh" || ext == "vb" || ext == "ws")
+	|| ext == "msi" ||ext == "pif" || ext == "py" || ext == "pl" || ext == "sh" || ext == "vb" || ext == "ws")
 	{
 		item->setIcon(SR_NAME_COL, QIcon(":/images/FileTypeProgram.png"));
 		item->setText(SR_TYPE_COL, QString::fromUtf8("Program"));
 	}
-	else if (ext == "iso" || ext == "nrg" || ext == "mdf" || ext == "img" || ext == "dmg" || ext == "bin" )
+	else if (ext == "iso" || ext == "nrg" || ext == "mdf" || ext == "img" || ext == "dmg" || ext == "bin" || ext == "uif" )
 	{
 		item->setIcon(SR_NAME_COL, QIcon(":/images/FileTypeCDImage.png"));
 		item->setText(SR_TYPE_COL, QString::fromUtf8("CD-Image"));
