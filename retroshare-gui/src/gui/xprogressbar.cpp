@@ -202,9 +202,10 @@ void xProgressBar::paint()
 			while(i+j<ss && _pinfo.cmap[i+j])
 				++j ;
 
-			if(j>0)
+			float o = std::min(1.0f,j/(float)ss*width) ;
+
+			if(j>0 && o >= 1.0f)	// limits the number of regions drawn
 			{
-				float o = std::min(1.0f,j/(float)ss*width) ;
 				painter->setOpacity(o) ;
 				painter->drawRect(rect.x() + hSpan+(int)rint(i*width/(float)ss), rect.y() + vSpan, (int)ceil(j*width/(float)ss), rect.height() - 1 - vSpan * 2);
 			}
