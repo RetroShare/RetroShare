@@ -59,6 +59,7 @@ class ftFileProvider
 		void getClientMap(const std::string& peer_id,CompressedChunkMap& cmap,bool& map_is_too_old) ;
 		void setClientMap(const std::string& peer_id,const CompressedChunkMap& cmap) ;
 
+		time_t    lastTS;   		// used for checking if it's alive
 	protected:
 		virtual	int initializeFileAttrs(); /* does for both */
 
@@ -74,7 +75,6 @@ class ftFileProvider
 		std::string lastRequestor;
 		uint64_t   req_loc;
 		uint32_t   req_size;
-		time_t    lastTS;   		// used for checking if it's alive
 		time_t    lastTS_t;   	// used for estimating transfer rate.
 
 		// these two are used for speed estimation

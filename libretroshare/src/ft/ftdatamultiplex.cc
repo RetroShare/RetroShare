@@ -563,6 +563,11 @@ bool	ftDataMultiplex::locked_handleServerRequest(ftFileProvider *provider,
 		std::string peerId, std::string hash, uint64_t size, 
 			uint64_t offset, uint32_t chunksize)
 {
+	if(chunksize > std::min(size,uint64_t(10*1024*1024)))
+	{
+		std::cerr << "Warning: peer " << peerId << " is asking a large chunk (s=" << chunksize << ") for hash " << hash << ", filesize=" << size << ". This is unexpected." << std::endl ;
+		return false ;
+	}
 	void *data = malloc(chunksize);
 
 	if(data == NULL)
@@ -600,7 +605,7 @@ bool	ftDataMultiplex::locked_handleServerRequest(ftFileProvider *provider,
 
 bool ftDataMultiplex::getClientChunkMap(const std::string& upload_hash,const std::string& peerId,CompressedChunkMap& cmap)
 {
-	bool too_old ;
+	bool too_old = false;
 	{
 		RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
 
@@ -625,24 +630,32 @@ bool ftDataMultiplex::sendChunkMapRequest(const std::string& peer_id,const std::
 	return mDataSend->sendChunkMapRequest(peer_id,hash);
 }
 
-void ftDataMultiplex::deleteServers(const std::list<std::string>& serv)
+void ftDataMultiplex::deleteUnusedServers()
 {
 	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
 
-	for(std::list<std::string>::const_iterator it=serv.begin();it != serv.end(); it++)
-	{
-		std::map<std::string,ftFileProvider *>::iterator sit = mServers.find(*it); 
+	//scan the uploads list in ftdatamultiplex and delete the items which time out
+	time_t now = time(NULL);
+	
+	for(std::map<std::string, ftFileProvider *>::iterator sit(mServers.begin());sit != mServers.end();)
+			if ((now - sit->second->lastTS) > 10)
+			{
+#ifdef SERVER_DEBUG
+				std::cout << "info.lastTS = " << info.lastTS << ", now=" << now << std::endl ;
+#endif
+				// We don't delete servers that are clients at the same time !
+				if(dynamic_cast<ftFileCreator*>(sit->second) == NULL)
+					delete sit->second;
 
-		if(mServers.end() != sit)
-		{
-			// Only delete servers that are not also file creators!
-			//
-			if(dynamic_cast<ftFileCreator*>(sit->second) == NULL)
-				delete sit->second;
+				std::map<std::string, ftFileProvider *>::iterator tmp(sit);
+				++tmp ;
 
-			mServers.erase(sit);
-		}
-	}
+				mServers.erase(sit);
+
+				sit = tmp ;
+			}
+			else
+				++sit ;
 }
 
 bool	ftDataMultiplex::handleSearchRequest(const std::string& peerId, const std::string& hash)
