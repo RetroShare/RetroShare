@@ -1105,6 +1105,11 @@ void SearchDialog::setIconAndType(QTreeWidgetItem *item, QString &ext)
 		item->setIcon(SR_NAME_COL, QIcon(":/images/FileTypeDocument.png"));
 		item->setText(SR_TYPE_COL, QString::fromUtf8("Document"));
 	}
+	else if (ext == "pdf" )
+	{
+		item->setIcon(SR_NAME_COL, QIcon(":/images/mimetypes/pdf.png"));
+		item->setText(SR_TYPE_COL, QString::fromUtf8("Document"));
+	}
   else if (ext == "doc" || ext == "rtf" || ext == "sxw" || ext == "xls" || ext == "pps" || ext == "xml" || ext == "nfo" 
   || ext == "reg" || ext == "sxc" || ext == "odt" || ext == "ods" || ext == "dot" || ext == "ppt" || ext == "css" || ext == "crt" )
 	{
