@@ -586,7 +586,7 @@ bool TransfersDialog::addPeerToItem(int row, const QString& symbol, const QStrin
     QStandardItem *i6 = new QStandardItem(); i6->setData(QVariant((QString)sources), Qt::DisplayRole);
     QStandardItem *i7 = new QStandardItem(); i7->setData(QVariant((QString)status), Qt::DisplayRole);
     QStandardItem *i8 = new QStandardItem(); i8->setData(QVariant((QString)tr("")), Qt::DisplayRole);	// blank field for priority
-    QStandardItem *i9 = new QStandardItem(); i9->setData(QVariant((qlonglong)remaining), Qt::DisplayRole);
+    QStandardItem *i9 = new QStandardItem(); i9->setData(QVariant(QString()), Qt::DisplayRole);
     QStandardItem *i10 = new QStandardItem(); i10->setData(QVariant((QString)coreID), Qt::DisplayRole);
 
     /* set status icon in the name field */

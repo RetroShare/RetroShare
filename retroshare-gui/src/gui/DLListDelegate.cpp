@@ -117,7 +117,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 			} else if(seconds > 0) {
 				temp = QString::number(seconds)+"s" ;
 			} else
-				temp = "Unknown" ;
+				temp = "" ;
 			painter->drawText(option.rect, Qt::AlignCenter, temp);
 			break;
 		case COMPLETED:
