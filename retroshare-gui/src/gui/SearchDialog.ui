@@ -1004,11 +1004,6 @@ border-image: url(:/images/btn_26_pressed.png) 4;
       </property>
       <column>
        <property name="text">
-        <string/>
-       </property>
-      </column>
-      <column>
-       <property name="text">
         <string>Filename</string>
        </property>
       </column>

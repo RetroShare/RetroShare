@@ -54,18 +54,17 @@
 
 /* indicies for search results item columns SR_ = Search Result */
 /* indicies for search results item columns SR_ = Search Result */
-#define SR_ICON_COL         0
-#define SR_NAME_COL         1
-#define SR_SIZE_COL         2
-#define SR_ID_COL           3
-#define SR_TYPE_COL         4
-#define SR_AGE_COL          5
-#define SR_HASH_COL         6
+#define SR_NAME_COL         0
+#define SR_SIZE_COL         1
+#define SR_ID_COL           2
+#define SR_TYPE_COL         3
+#define SR_AGE_COL          4
+#define SR_HASH_COL         5
 
-#define SR_SEARCH_ID_COL    7
+#define SR_SEARCH_ID_COL    6
 
-#define SR_UID_COL          8
-#define SR_REALSIZE_COL     9
+#define SR_UID_COL          7
+#define SR_REALSIZE_COL     8
 
 /* indicies for search summary item columns SS_ = Search Summary */
 #define SS_TEXT_COL         0
@@ -148,32 +147,28 @@ SearchDialog::SearchDialog(QWidget *parent)
     QHeaderView * _smheader = ui.searchSummaryWidget->header () ;
     _smheader->setResizeMode (0, QHeaderView::Interactive);
     _smheader->setResizeMode (1, QHeaderView::Interactive);
-    _smheader->setResizeMode (2, QHeaderView::Interactive);
 
-    _smheader->resizeSection ( 0, 140 );
-    _smheader->resizeSection ( 1, 75 );
-    _smheader->resizeSection ( 2, 75 );
+    _smheader->resizeSection ( 0, 160 );
+    _smheader->resizeSection ( 1, 50 );
 
-    ui.searchResultWidget->setColumnCount(7);
+    ui.searchResultWidget->setColumnCount(6);
     _smheader = ui.searchResultWidget->header () ;
-    _smheader->setResizeMode (0, QHeaderView::Custom);
+    _smheader->setResizeMode (0, QHeaderView::Interactive);
     _smheader->setResizeMode (1, QHeaderView::Interactive);
     _smheader->setResizeMode (2, QHeaderView::Interactive);
-    _smheader->setResizeMode (3, QHeaderView::Interactive);
 
-    _smheader->resizeSection ( 0, 20 );
-    _smheader->resizeSection ( 1, 220 );
+    _smheader->resizeSection ( 0, 240 );
+    _smheader->resizeSection ( 1, 75 );
     _smheader->resizeSection ( 2, 75 );
     _smheader->resizeSection ( 3, 75 );
-    _smheader->resizeSection ( 4, 75 );
-    _smheader->resizeSection ( 5, 90 );
-    _smheader->resizeSection ( 6, 240 );
+    _smheader->resizeSection ( 4, 90 );
+    _smheader->resizeSection ( 5, 240 );
 
 
     // set header text aligment
 	QTreeWidgetItem * headerItem = ui.searchResultWidget->headerItem();
-	headerItem->setTextAlignment(2, Qt::AlignRight   | Qt::AlignRight);
-	headerItem->setTextAlignment(3, Qt::AlignRight | Qt::AlignRight);
+	headerItem->setTextAlignment(1, Qt::AlignRight   | Qt::AlignRight);
+	headerItem->setTextAlignment(2, Qt::AlignRight | Qt::AlignRight);
 
 	ui.searchResultWidget->sortItems(SR_NAME_COL, Qt::AscendingOrder);
 
@@ -705,6 +700,8 @@ void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, 
 		child->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
 		
 		child->setText(SR_ID_COL, QString::number(1));
+		child->setTextAlignment( SR_ID_COL, Qt::AlignRight );
+
 		child->setText(SR_SEARCH_ID_COL, sid_hexa);
 		setIconAndType(child, ext);
 
@@ -731,6 +728,7 @@ void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, 
 		child->setText(SR_REALSIZE_COL, QString::number(dir.count));
 		child->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
 		child->setText(SR_ID_COL, QString::number(1));
+		child->setTextAlignment( SR_ID_COL, Qt::AlignRight );
 		child->setText(SR_SEARCH_ID_COL, sid_hexa);
 		child->setText(SR_TYPE_COL, tr("Folder"));
 
@@ -758,6 +756,7 @@ void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, 
 				QTreeWidgetItem *item2 = new QTreeWidgetItem();
 				item2->setText(SS_TEXT_COL, QString::fromStdString(txt));
 				item2->setText(SS_COUNT_COL, QString::number(1));
+				item2->setTextAlignment( SS_COUNT_COL, Qt::AlignRight );
 				item2->setText(SS_SEARCH_ID_COL, sid_hexa);
 
 				ui.searchSummaryWidget->addTopLevelItem(item2);
@@ -951,6 +950,7 @@ void SearchDialog::insertFile(const std::string& txt,qulonglong searchId, const 
 		anonymousSource = anonymousSource + friendSource;
 		modifiedResult =QString::number(friendSource) + tr("/") + QString::number(anonymousSource);
 		item->setText(SR_ID_COL,modifiedResult);
+		item->setTextAlignment( SR_ID_COL, Qt::AlignRight );
 		item->setText(SR_SEARCH_ID_COL, sid_hexa);
 	
 			
@@ -988,6 +988,7 @@ void SearchDialog::insertFile(const std::string& txt,qulonglong searchId, const 
 		QTreeWidgetItem *item2 = new QTreeWidgetItem();
 		item2->setText(SS_TEXT_COL, QString::fromStdString(txt));
 		item2->setText(SS_COUNT_COL, QString::number(1));
+		item2->setTextAlignment( SS_COUNT_COL, Qt::AlignRight );
 		item2->setText(SS_SEARCH_ID_COL, sid_hexa);
 
 		ui.searchSummaryWidget->addTopLevelItem(item2);
@@ -1088,7 +1089,8 @@ void SearchDialog::setIconAndType(QTreeWidgetItem *item, QString &ext)
 		item->setIcon(SR_NAME_COL, QIcon(":/images/FileTypeArchive.png"));
 		item->setText(SR_TYPE_COL, QString::fromUtf8("Archive"));
 	}
-	else if (ext == "app" || ext == "bat" || ext == "cgi" || ext == "com" || ext == "bin" || ext == "exe" || ext == "js" || ext == "pif" || ext == "py" || ext == "pl" || ext == "sh" || ext == "vb" || ext == "ws")
+	else if (ext == "app" || ext == "bat" || ext == "cgi" || ext == "com" || ext == "bin" || ext == "exe" || ext == "js" 
+	|| ext == "pif" || ext == "py" || ext == "pl" || ext == "sh" || ext == "vb" || ext == "ws")
 	{
 		item->setIcon(SR_NAME_COL, QIcon(":/images/FileTypeProgram.png"));
 		item->setText(SR_TYPE_COL, QString::fromUtf8("Program"));
@@ -1103,8 +1105,8 @@ void SearchDialog::setIconAndType(QTreeWidgetItem *item, QString &ext)
 		item->setIcon(SR_NAME_COL, QIcon(":/images/FileTypeDocument.png"));
 		item->setText(SR_TYPE_COL, QString::fromUtf8("Document"));
 	}
-  else if (ext == "doc" || ext == "rtf" || ext == "sxw" || ext == "xls" || ext == "pps" || ext == "xml"
-    || ext == "sxc" || ext == "odt" || ext == "ods" || ext == "dot" || ext == "ppt" || ext == "css"  )
+  else if (ext == "doc" || ext == "rtf" || ext == "sxw" || ext == "xls" || ext == "pps" || ext == "xml" || ext == "nfo" 
+  || ext == "reg" || ext == "sxc" || ext == "odt" || ext == "ods" || ext == "dot" || ext == "ppt" || ext == "css" || ext == "crt" )
 	{
 		item->setIcon(SR_NAME_COL, QIcon(":/images/FileTypeDocument.png"));
 		item->setText(SR_TYPE_COL, QString::fromUtf8("Document"));
