@@ -155,6 +155,12 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
 
 void MessengerWindow::messengertreeWidgetCostumPopupMenu( QPoint point )
 {
+      QTreeWidgetItem *c = getCurrentPeer();
+	  	if (!c) 
+	  	{
+ 	  	  //no peer selected
+	  	  return;
+	  	}
 
       QMenu contextMnu( this );
       QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
@@ -183,7 +189,6 @@ void MessengerWindow::messengertreeWidgetCostumPopupMenu( QPoint point )
       exportfriendAct = new QAction(QIcon(IMAGE_EXPIORTFRIEND), tr( "Export Friend" ), this );
       connect( exportfriendAct , SIGNAL( triggered() ), this, SLOT( exportfriend() ) );
 
-      QTreeWidgetItem *c = getCurrentPeer();
       if (c->type() == 0) {
           //this is a GPG key
           removefriendAct = new QAction(QIcon(IMAGE_REMOVEFRIEND), tr( "Deny Friend" ), this );
