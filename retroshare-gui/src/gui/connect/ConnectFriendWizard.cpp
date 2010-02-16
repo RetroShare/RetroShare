@@ -297,7 +297,8 @@ void
 TextPage::runEmailClient()
 {
 	std::string mailstr = "mailto:";
-    mailstr += "?subject=RetroShare Invite";
+  
+  mailstr += "?subject=RetroShare Invite";
 
 	mailstr += "&body=";
 
@@ -312,15 +313,7 @@ TextPage::runEmailClient()
 		mailstr.replace(loc, 1, "%0D%0A");
 	}
 
-	HINSTANCE hInst = ShellExecuteA(0, "open", mailstr.c_str(), 
-		                            NULL, NULL, SW_SHOW);
-
-    if(reinterpret_cast<int>(hInst) <= 32)
-    {
-	/* error */
-	std::cerr << "ShellExecute Error: " << reinterpret_cast<int>(hInst);
-	std::cerr << std::endl;
-    }
+  QDesktopServices::openUrl( QUrl::fromEncoded( mailstr.c_str() ) );
 }
 #endif
 //
