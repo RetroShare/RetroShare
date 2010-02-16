@@ -1,7 +1,4 @@
-.QWidget {
-   background-color: #ECF3F6;
-   
-}
+
 
 /* Customize the toolbar. */
 QToolBar {
