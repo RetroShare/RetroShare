@@ -1,4 +1,4 @@
-CONFIG += qt gui uic qrc resources uitools newsettings 
+CONFIG += qt gui uic qrc resources newsettings 
 QT     += network xml script opengl
 
 TEMPLATE = app
@@ -94,10 +94,13 @@ macx {
     # ENABLE THIS OPTION FOR Univeral Binary BUILD.
     # CONFIG += ppc x86 
 
-    LIBS += -Wl,-search_paths_first
-    LIBS += -L"../../../../lib" -lretroshare -lssl -lcrypto -lminiupnpc -lz
-    LIBS += -lgpgme
-    LIBS += -lQtUiTools
+	CONFIG += version_detail_bash_script
+	LIBS += ../../libretroshare/src/lib/libretroshare.a
+        LIBS += -lssl -lcrypto -lz -lgpgme -lgpg-error
+	LIBS += ../../../miniupnpc-1.0/libminiupnpc.a
+
+    	INCLUDEPATH += .
+
 }
 
 ############################## Common stuff ######################################

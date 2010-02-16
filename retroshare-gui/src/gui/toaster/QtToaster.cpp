@@ -26,10 +26,6 @@
 
 #include <QtGui/QtGui>
 
-#ifdef OS_MACOSX
-#include <MacWindows.h>
-#endif
-
 static const unsigned TIME_TO_SHOW = 20;
 
 QtToaster::QtToaster(QWidget * toaster, QFrame * toasterWindowFrame)
@@ -41,14 +37,7 @@ QtToaster::QtToaster(QWidget * toaster, QFrame * toasterWindowFrame)
 	_toaster = toaster;
 	_toaster->setParent(_toaster->parentWidget(), Qt::ToolTip | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
 	
-#ifdef OS_MACOSX
-	// Make sure the other windows of the application are not raised when the
-	// toaster appears
-	WId wid = _toaster->winId();
-	SetWindowGroup((WindowRef)wid, NULL);
-#else
 	_toaster->setWindowFlags(_toaster->windowFlags() | Qt::ToolTip);
-#endif	
 
 	WidgetBackgroundImage::setBackgroundImage(toasterWindowFrame, ":images/toaster/toaster-backrs4.png", WidgetBackgroundImage::AdjustSize);
 
