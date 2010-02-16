@@ -1,5 +1,5 @@
-//Linux and macos implementation
-#ifndef WINDOWS_SYS
+//Linux only...
+#if !defined(WINDOWS_SYS) && !defined(__APPLE__) 
 
 #ifndef _RS_UPNP_IFACE_H
 #define _RS_UPNP_IFACE_H
@@ -86,8 +86,8 @@ int CtrlPointCallbackEventHandler(Upnp_EventType ,void* , void*);
 
 
 
+#if defined(WINDOWS_SYS) || defined(__APPLE__) 
 
-#ifdef WINDOWS_SYS
 //windows implementation
 #ifndef _RS_UPNP_IFACE_H
 #define _RS_UPNP_IFACE_H

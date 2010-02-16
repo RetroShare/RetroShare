@@ -21,6 +21,13 @@
 #include <miniupnpc.h>
 #include <upnpcommands.h>
 
+/* Ensure linking names are okay on OSX platform. (C interface) */
+
+#ifdef  __cplusplus
+extern "C" {
+#endif
+
+
 /* protofix() checks if protocol is "UDP" or "TCP" 
  * returns NULL if not */
 const char * protofix(const char * proto);
@@ -33,24 +40,28 @@ void GetConnectionStatus(struct UPNPUrls * urls,
 void ListRedirections(struct UPNPUrls * urls,
                       struct IGDdatas * data);
 
-bool SetRedirectAndTest(struct UPNPUrls * urls,
+int SetRedirectAndTest(struct UPNPUrls * urls,
                                struct IGDdatas * data,
 				const char * iaddr,
 				const char * iport,
 				const char * eport,
                        		const char * proto);
 
-bool TestRedirect(struct UPNPUrls * urls,
+int TestRedirect(struct UPNPUrls * urls,
                                struct IGDdatas * data,
 				const char * iaddr,
 				const char * iport,
 				const char * eport,
                        		const char * proto);
 
-bool RemoveRedirect(struct UPNPUrls * urls,
+int RemoveRedirect(struct UPNPUrls * urls,
                     struct IGDdatas * data,
 			   const char * eport,
 			   const char * proto);
+
+#ifdef  __cplusplus
+}
+#endif
 
 /* EOF */
 #endif

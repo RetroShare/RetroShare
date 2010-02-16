@@ -107,7 +107,7 @@ void ListRedirections(struct UPNPUrls * urls,
  * 2 - get extenal ip address
  * 3 - Add port mapping
  * 4 - get this port mapping from the IGD */
-bool SetRedirectAndTest(struct UPNPUrls * urls,
+int SetRedirectAndTest(struct UPNPUrls * urls,
                                struct IGDdatas * data,
 							   const char * iaddr,
 							   const char * iport,
@@ -209,7 +209,7 @@ bool SetRedirectAndTest(struct UPNPUrls * urls,
 	return ok;
 }
 
-bool TestRedirect(struct UPNPUrls * urls,
+int TestRedirect(struct UPNPUrls * urls,
                                struct IGDdatas * data,
 				const char * iaddr,
 				const char * iport,
@@ -261,7 +261,7 @@ bool TestRedirect(struct UPNPUrls * urls,
 
 
 
-bool
+int
 RemoveRedirect(struct UPNPUrls * urls,
                struct IGDdatas * data,
 			   const char * eport,

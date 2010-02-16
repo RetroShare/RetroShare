@@ -1158,9 +1158,14 @@ X509 *AuthSSL::loadX509FromDER(const uint8_t *ptr, uint32_t len)
 	std::cerr << std::endl;
 #endif
 
-        X509 *tmp = NULL;
-        const unsigned char **certptr = (const unsigned char **) &ptr;
-        X509 *x509 = d2i_X509(&tmp, certptr, len);
+	X509 *tmp = NULL;
+#ifdef __APPLE__
+	unsigned char **certptr = (unsigned char **) &ptr;
+#else
+	const unsigned char **certptr = (const unsigned char **) &ptr;
+#endif
+	
+	X509 *x509 = d2i_X509(&tmp, certptr, len);
 
 	return x509;
 }

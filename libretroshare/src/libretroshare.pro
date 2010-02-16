@@ -16,6 +16,10 @@ debug {
 #        DEFINES *= CONN_DEBUG P3DISC_DEBUG RSSERIAL_DEBUG RSITEM_DEBUG DEBUG_PQISSL DEBUG_PQISTREAMER
 #	DEFINES *= NET_DEBUG
 #	DEFINES *= DISTRIB_DEBUG
+
+#	DEFINES *= P3TURTLE_DEBUG FT_DEBUG DEBUG_FTCHUNK MPLEX_DEBUG
+#	DEFINES *= CONN_DEBUG
+
         QMAKE_CXXFLAGS -= -fomit-frame-pointer
         QMAKE_CXXFLAGS *= -g -fno-omit-frame-pointer
 }
@@ -103,6 +107,31 @@ win32 {
 
 		INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR} $${PTHREADS_DIR} $${ZLIB_DIR} $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src
 }
+
+################################# MacOSX ##########################################
+
+mac {
+		QMAKE_CC = g++
+		OBJECTS_DIR = temp/obj
+		MOC_DIR = temp/moc
+		#DEFINES = WINDOWS_SYS WIN32 STATICLIB MINGW
+                #DEFINES *= MINIUPNPC_VERSION=13
+		DESTDIR = lib
+
+                #miniupnp implementation files
+                HEADERS += upnp/upnputil.h
+                SOURCES += upnp/upnputil.c
+
+		# Beautiful Hack to fix 64bit file access.
+		QMAKE_CXXFLAGS *= -Dfseeko64=fseeko -Dftello64=ftello -Dfopen64=fopen"
+                UPNPC_DIR = ../../../miniupnpc-1.0
+		GPG_ERROR_DIR = ../../../../libgpg-error-1.7
+		GPGME_DIR  = ../../../../gpgme-1.1.8
+
+		INCLUDEPATH += . $${UPNPC_DIR} 
+		#INCLUDEPATH += . $${UPNPC_DIR} $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src
+}
+################################### COMMON stuff ##################################
 ################################### COMMON stuff ##################################
 
 #DEPENDPATH += . \
@@ -302,7 +331,7 @@ SOURCES += \
 				upnp/upnphandler.cc \
 				dht/opendht.cc \
 				dht/opendhtstr.cc \
-				dht/b64.c \
+				dht/b64.cc \
 				services/p3portservice.cc \
 				services/p3channels.cc \
 				services/p3forums.cc \

@@ -1,5 +1,5 @@
-//Linux and macos implementation
-#ifndef WINDOWS_SYS
+//Linux only
+#if !defined(WINDOWS_SYS) && !defined(__APPLE__) 
 
 /* This stuff is actually C */
 
@@ -429,8 +429,8 @@ bool    upnphandler::getExternalAddress(struct sockaddr_in &addr)
 
 
 
-
-#ifdef WINDOWS_SYS
+// Windows / Mac version.
+#if defined(WINDOWS_SYS) || defined(__APPLE__) 
 
 /* This stuff is actually C */
 
