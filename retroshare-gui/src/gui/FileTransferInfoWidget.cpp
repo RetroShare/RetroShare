@@ -41,6 +41,7 @@ FileTransferInfoWidget::FileTransferInfoWidget(QWidget * parent, Qt::WFlags f )
 {
 	QRect TaskGraphRect = geometry();
 	maxWidth = TaskGraphRect.width();
+	maxHeight = 0;
 	pixmap = QPixmap(size());
 	pixmap.fill(this, 0, 0);
 
@@ -91,7 +92,6 @@ void FileTransferInfoWidget::updateDisplay()
 
 		draw(info,&painter) ;
 	}
-
 	pixmap2 = pixmap;
 }
 
