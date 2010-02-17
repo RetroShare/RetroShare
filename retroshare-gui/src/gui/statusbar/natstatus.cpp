@@ -110,7 +110,7 @@ void NATStatus::getNATStatus()
     }
     else if (config.netStunOk || config.netExtraAddressOk)
     {
-    iconLabel->setPixmap(QPixmap::QPixmap(":/images/grayled.png"));
+    iconLabel->setPixmap(QPixmap::QPixmap(":/images/greenled.png"));
     iconLabel->setToolTip(tr("Internet connection"));
     }
     else if (config.netLocalOk)
