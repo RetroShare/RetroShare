@@ -1,5 +1,9 @@
-Changes for v0.5.0 alpha 2
+Changes for v0.5.0 alpha *
 
+* reengineered the transfer list display
+* reduced cost of progress bar display
+* fixed a bug on MessengerWindow context menu
+* messenger-window thumbnail photo update on change
 * set TextAlignment for sources to AlignRight
 * added to show files sources count in form of friend source/ total source
 * fixed stylesheets for Search LineEdit's frame
