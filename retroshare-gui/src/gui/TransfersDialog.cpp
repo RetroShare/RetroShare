@@ -488,36 +488,36 @@ int TransfersDialog::addItem(const QString& symbol, const QString& name, const Q
     DLListModel->setData(DLListModel->index(row, ID), QVariant((QString)coreID));
 
 
-//    QString ext = QFileInfo(name).suffix();
-//    if (ext == "jpg" || ext == "jpeg" || ext == "tif" || ext == "tiff" || ext == "JPG"|| ext == "png" || ext == "gif"
-//    || ext == "bmp" || ext == "ico" || ext == "svg") {
-//        DLListModel->setData(DLListModel->index(row,NAME), QIcon(QString::fromUtf8(":/images/FileTypePicture.png")), Qt::DecorationRole);
-//    } else if (ext == "avi" ||ext == "AVI" || ext == "mpg" || ext == "mpeg" || ext == "wmv" || ext == "divx" || ext == "ts"
-//    || ext == "mkv" || ext == "mp4" || ext == "flv" || ext == "mov" || ext == "asf" || ext == "xvid"
-//    || ext == "vob" || ext == "qt" || ext == "rm" || ext == "3gp" || ext == "mpeg" || ext == "ogm") {
-//        DLListModel->setData(DLListModel->index(row,NAME), QIcon(QString::fromUtf8(":/images/FileTypeVideo.png")), Qt::DecorationRole);
-//    } else if (ext == "ogg" || ext == "mp3" || ext == "MP3"  || ext == "mp1" || ext == "mp2" || ext == "wav" || ext == "wma") {
-//        DLListModel->setData(DLListModel->index(row,NAME), QIcon(QString::fromUtf8(":/images/FileTypeAudio.png")), Qt::DecorationRole);
-//    } else if (ext == "tar" || ext == "bz2" || ext == "zip" || ext == "gz" || ext == "7z" || ext == "msi"
-//    || ext == "rar" || ext == "rpm" || ext == "ace" || ext == "jar" || ext == "tgz" || ext == "lha"
-//    || ext == "cab" || ext == "cbz"|| ext == "cbr" || ext == "alz" || ext == "sit" || ext == "arj" || ext == "deb") {
-//        DLListModel->setData(DLListModel->index(row,NAME), QIcon(QString::fromUtf8(":/images/FileTypeArchive.png")), Qt::DecorationRole);
-//    }else if (ext == "app" || ext == "bat" || ext == "cgi" || ext == "com"
-//    || ext == "exe" || ext == "js" || ext == "pif"
-//    || ext == "py" || ext == "pl" || ext == "sh" || ext == "vb" || ext == "ws") {
-//        DLListModel->setData(DLListModel->index(row,NAME), QIcon(QString::fromUtf8(":/images/FileTypeProgram.png")), Qt::DecorationRole);
-//    } else if (ext == "iso" || ext == "nrg" || ext == "mdf" || ext == "img" || ext == "dmg" || ext == "bin" ) {
-//        DLListModel->setData(DLListModel->index(row,NAME), QIcon(QString::fromUtf8(":/images/FileTypeCDImage.png")), Qt::DecorationRole);
-//    } else if (ext == "txt" || ext == "cpp" || ext == "c" || ext == "h") {
-//        DLListModel->setData(DLListModel->index(row,NAME), QIcon(QString::fromUtf8(":/images/FileTypeDocument.png")), Qt::DecorationRole);
-//    } else if (ext == "doc" || ext == "rtf" || ext == "sxw" || ext == "xls" || ext == "pps" || ext == "xml"
-//    || ext == "sxc" || ext == "odt" || ext == "ods" || ext == "dot" || ext == "ppt" || ext == "css"  ) {
-//        DLListModel->setData(DLListModel->index(row,NAME), QIcon(QString::fromUtf8(":/images/FileTypeDocument.png")), Qt::DecorationRole);
-//    } else if (ext == "html" || ext == "htm" || ext == "php") {
-//        DLListModel->setData(DLListModel->index(row,NAME), QIcon(QString::fromUtf8(":/images/FileTypeDocument.png")), Qt::DecorationRole);
-//    } else {
-//        DLListModel->setData(DLListModel->index(row,NAME), QIcon(QString::fromUtf8(":/images/FileTypeAny.png")), Qt::DecorationRole);
-//    }
+    QString ext = QFileInfo(name).suffix();
+    if (ext == "jpg" || ext == "jpeg" || ext == "tif" || ext == "tiff" || ext == "JPG"|| ext == "png" || ext == "gif"
+    || ext == "bmp" || ext == "ico" || ext == "svg") {
+        DLListModel->setData(DLListModel->index(row,NAME), QIcon(QString::fromUtf8(":/images/FileTypePicture.png")), Qt::DecorationRole);
+    } else if (ext == "avi" ||ext == "AVI" || ext == "mpg" || ext == "mpeg" || ext == "wmv" || ext == "divx" || ext == "ts"
+    || ext == "mkv" || ext == "mp4" || ext == "flv" || ext == "mov" || ext == "asf" || ext == "xvid"
+    || ext == "vob" || ext == "qt" || ext == "rm" || ext == "3gp" || ext == "mpeg" || ext == "ogm") {
+        DLListModel->setData(DLListModel->index(row,NAME), QIcon(QString::fromUtf8(":/images/FileTypeVideo.png")), Qt::DecorationRole);
+    } else if (ext == "ogg" || ext == "mp3" || ext == "MP3"  || ext == "mp1" || ext == "mp2" || ext == "wav" || ext == "wma") {
+        DLListModel->setData(DLListModel->index(row,NAME), QIcon(QString::fromUtf8(":/images/FileTypeAudio.png")), Qt::DecorationRole);
+    } else if (ext == "tar" || ext == "bz2" || ext == "zip" || ext == "gz" || ext == "7z" || ext == "msi"
+    || ext == "rar" || ext == "rpm" || ext == "ace" || ext == "jar" || ext == "tgz" || ext == "lha"
+    || ext == "cab" || ext == "cbz"|| ext == "cbr" || ext == "alz" || ext == "sit" || ext == "arj" || ext == "deb") {
+        DLListModel->setData(DLListModel->index(row,NAME), QIcon(QString::fromUtf8(":/images/FileTypeArchive.png")), Qt::DecorationRole);
+    }else if (ext == "app" || ext == "bat" || ext == "cgi" || ext == "com"
+    || ext == "exe" || ext == "js" || ext == "pif"
+    || ext == "py" || ext == "pl" || ext == "sh" || ext == "vb" || ext == "ws") {
+        DLListModel->setData(DLListModel->index(row,NAME), QIcon(QString::fromUtf8(":/images/FileTypeProgram.png")), Qt::DecorationRole);
+    } else if (ext == "iso" || ext == "nrg" || ext == "mdf" || ext == "img" || ext == "dmg" || ext == "bin" ) {
+        DLListModel->setData(DLListModel->index(row,NAME), QIcon(QString::fromUtf8(":/images/FileTypeCDImage.png")), Qt::DecorationRole);
+    } else if (ext == "txt" || ext == "cpp" || ext == "c" || ext == "h") {
+        DLListModel->setData(DLListModel->index(row,NAME), QIcon(QString::fromUtf8(":/images/FileTypeDocument.png")), Qt::DecorationRole);
+    } else if (ext == "doc" || ext == "rtf" || ext == "sxw" || ext == "xls" || ext == "pps" || ext == "xml"
+    || ext == "sxc" || ext == "odt" || ext == "ods" || ext == "dot" || ext == "ppt" || ext == "css"  ) {
+        DLListModel->setData(DLListModel->index(row,NAME), QIcon(QString::fromUtf8(":/images/FileTypeDocument.png")), Qt::DecorationRole);
+    } else if (ext == "html" || ext == "htm" || ext == "php") {
+        DLListModel->setData(DLListModel->index(row,NAME), QIcon(QString::fromUtf8(":/images/FileTypeDocument.png")), Qt::DecorationRole);
+    } else {
+        DLListModel->setData(DLListModel->index(row,NAME), QIcon(QString::fromUtf8(":/images/FileTypeAny.png")), Qt::DecorationRole);
+    }
 
     return row;
 }
