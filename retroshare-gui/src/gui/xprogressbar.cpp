@@ -196,22 +196,25 @@ void xProgressBar::paint()
 	uint32_t ss = _pinfo.nb_chunks ;
 
 	if(ss > 1)	// for small files we use a more progressive display
-		for(int i=0;i<ss;++i)
-		{
-			int j=0 ;
-			while(i+j<ss && _pinfo.cmap[i+j])
-				++j ;
-
-			float o = std::min(1.0f,j/(float)ss*width) ;
-
-			if(j>0 && o >= 1.0f)	// limits the number of regions drawn
+	{
+		if(!_pinfo.cmap._map.empty())
+			for(int i=0;i<ss;++i)
 			{
-				painter->setOpacity(o) ;
-				painter->drawRect(rect.x() + hSpan+(int)rint(i*width/(float)ss), rect.y() + vSpan, (int)ceil(j*width/(float)ss), rect.height() - 1 - vSpan * 2);
-			}
+				int j=0 ;
+				while(i+j<ss && _pinfo.cmap[i+j])
+					++j ;
 
-			i += j ;
-		}
+				float o = std::min(1.0f,j/(float)ss*width) ;
+
+				if(j>0 && o >= 1.0f)	// limits the number of regions drawn
+				{
+					painter->setOpacity(o) ;
+					painter->drawRect(rect.x() + hSpan+(int)rint(i*width/(float)ss), rect.y() + vSpan, (int)ceil(j*width/(float)ss), rect.height() - 1 - vSpan * 2);
+				}
+
+				i += j ;
+			}
+	}
 	else
 	{
 		// calculate progress value
