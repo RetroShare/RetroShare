@@ -186,6 +186,10 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     updateNetworkStatus();
     //load();
     loadtabsettings();
+
+    #ifdef RS_RELEASE_VERSION
+    ui.tabBottom->removeTab(0); //hide the logs tab
+    #endif
     
 
   /* Hide platform specific features */
