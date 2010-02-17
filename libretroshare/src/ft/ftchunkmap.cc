@@ -45,8 +45,9 @@ ChunkMap::ChunkMap(uint64_t s)
 		++n ;
 
 	_map.resize(n,FileChunksInfo::CHUNK_OUTSTANDING) ;
-	_total_downloaded = 0 ;
 	_strategy = FileChunksInfo::CHUNK_STRATEGY_STREAMING ;
+	_total_downloaded = 0 ;
+	_file_is_complete = false ;
 #ifdef DEBUG_FTCHUNK
 	std::cerr << "*** ChunkMap::ChunkMap: starting new chunkmap:" << std::endl ; 
 	std::cerr << "   File size: " << s << std::endl ;
@@ -58,6 +59,9 @@ ChunkMap::ChunkMap(uint64_t s)
 
 void ChunkMap::setAvailabilityMap(const CompressedChunkMap& map)
 {
+	_file_is_complete = true ;
+	_total_downloaded = 0 ;
+
 	for(uint32_t i=0;i<_map.size();++i)
 		if(map[i] > 0)
 		{
@@ -65,7 +69,10 @@ void ChunkMap::setAvailabilityMap(const CompressedChunkMap& map)
 			_total_downloaded += sizeOfChunk(i) ;
 		}
 		else
+		{
 			_map[i] = FileChunksInfo::CHUNK_OUTSTANDING ;
+			_file_is_complete = false ;
+		}
 }
 
 void ChunkMap::dataReceived(const ftChunk::ChunkId& cid)
@@ -113,6 +120,17 @@ void ChunkMap::dataReceived(const ftChunk::ChunkId& cid)
 #endif
 		_map[n] = FileChunksInfo::CHUNK_DONE ;
 		_slices_to_download.erase(itc) ;
+
+		// We also check whether the file is complete or not.
+
+		_file_is_complete = true ;
+
+		for(uint32_t i=0;i<_map.size();++i)
+			if(_map[i] != FileChunksInfo::CHUNK_DONE)
+			{
+				_file_is_complete = false ;
+				break ;
+			}
 	}
 }
 
@@ -128,7 +146,7 @@ void ChunkMap::dataReceived(const ftChunk::ChunkId& cid)
 // 			- chunks pushed when new chunks are needed
 // 			- chunks removed when completely downloaded
 //
-bool ChunkMap::getDataChunk(const std::string& peer_id,uint32_t size_hint,ftChunk& chunk,bool& source_chunk_map_needed,bool& file_is_complete)
+bool ChunkMap::getDataChunk(const std::string& peer_id,uint32_t size_hint,ftChunk& chunk,bool& source_chunk_map_needed)
 {
 #ifdef DEBUG_FTCHUNK
 	std::cerr << "*** ChunkMap::getDataChunk: size_hint = " << size_hint << std::endl ;
@@ -145,10 +163,10 @@ bool ChunkMap::getDataChunk(const std::string& peer_id,uint32_t size_hint,ftChun
 
 		switch(_strategy)
 		{
-			case FileChunksInfo::CHUNK_STRATEGY_STREAMING:	c = getAvailableChunk(0,peer_id,source_chunk_map_needed,file_is_complete) ;	// very bold!!
+			case FileChunksInfo::CHUNK_STRATEGY_STREAMING:	c = getAvailableChunk(0,peer_id,source_chunk_map_needed) ;	// very bold!!
 																			break ;
 
-			case FileChunksInfo::CHUNK_STRATEGY_RANDOM: 		c = getAvailableChunk(rand()%_map.size(),peer_id,source_chunk_map_needed,file_is_complete) ;
+			case FileChunksInfo::CHUNK_STRATEGY_RANDOM: 		c = getAvailableChunk(rand()%_map.size(),peer_id,source_chunk_map_needed) ;
 																			break ;
 			default:
 #ifdef DEBUG_FTCHUNK
@@ -288,7 +306,7 @@ uint32_t ChunkMap::sizeOfChunk(uint32_t cid) const
 		return _chunk_size ;
 }
 
-uint32_t ChunkMap::getAvailableChunk(uint32_t start_location,const std::string& peer_id,bool& map_is_too_old,bool& file_is_complete) 
+uint32_t ChunkMap::getAvailableChunk(uint32_t start_location,const std::string& peer_id,bool& map_is_too_old) 
 {
 	// Quite simple strategy: Check for 1st availabe chunk for this peer starting from the given start location.
 	//
@@ -345,14 +363,9 @@ uint32_t ChunkMap::getAvailableChunk(uint32_t start_location,const std::string& 
 	else
 		map_is_too_old = false ;// the map is not too old
 
-	file_is_complete = true ;
-
 	for(unsigned int i=0;i<_map.size();++i)
 	{
 		uint32_t j = (start_location+i)%(int)_map.size() ;	// index of the chunk
-
-		if(_map[j] != FileChunksInfo::CHUNK_DONE)
-			file_is_complete = false ;
 
 		if(_map[j] == FileChunksInfo::CHUNK_OUTSTANDING && (peer_chunks->is_full || peer_chunks->cmap[j]))
 		{

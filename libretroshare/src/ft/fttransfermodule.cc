@@ -328,15 +328,11 @@ bool ftTransferModule::getChunk(const std::string& peer_id,uint32_t size_hint,ui
 #endif
 
 	bool source_peer_map_needed ;
-	bool file_is_complete = false;
 
-  	bool val = mFileCreator->getMissingChunk(peer_id,size_hint,offset, chunk_size,source_peer_map_needed,file_is_complete);
+  	bool val = mFileCreator->getMissingChunk(peer_id,size_hint,offset, chunk_size,source_peer_map_needed);
 
 	if(source_peer_map_needed)
 		mMultiplexor->sendChunkMapRequest(peer_id, mHash) ;
-
-	if(file_is_complete)
-		mFlag = 1;      
 
 #ifdef FT_DEBUG
 	if (val)
@@ -401,6 +397,9 @@ bool ftTransferModule::queryInactive()
   	{
 		locked_tickPeerTransfer(mit->second);
 	}
+	if(mFileCreator->finished())	// transfer is complete
+		mFlag = 1;      
+
   	return true; 
 }
 

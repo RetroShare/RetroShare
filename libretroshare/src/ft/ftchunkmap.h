@@ -108,9 +108,8 @@ class ChunkMap
       /// the chunk should be available from the designated peer. 
 		/// On return:
 		/// 	- source_chunk_map_needed 	= true if the source map should be asked
-		///	- file_is_complete 			= true if the file is complete.
 
-      virtual bool getDataChunk(const std::string& peer_id,uint32_t size_hint,ftChunk& chunk,bool& source_chunk_map_needed,bool& file_is_complete) ; 
+      virtual bool getDataChunk(const std::string& peer_id,uint32_t size_hint,ftChunk& chunk,bool& source_chunk_map_needed) ; 
 
       /// Notify received a slice of data. This needs to 
       ///   - carve in the map of chunks what is received, what is not.
@@ -156,6 +155,9 @@ class ChunkMap
 		/// Returns the total size of downloaded data in the file.
 		uint64_t getTotalReceived() const { return _total_downloaded ; }
 
+		/// returns true is the file is complete
+		bool isComplete() const { return _file_is_complete ; }
+
 		void getChunksInfo(FileChunksInfo& info) const ;
 	protected:
 		/// handles what size the last chunk has.
@@ -163,7 +165,7 @@ class ChunkMap
 
 		/// Returns the first chunk available starting from start_location for this peer_id.
 		//
-		uint32_t getAvailableChunk(uint32_t start_location,const std::string& peer_id,bool& chunk_map_too_old,bool& file_is_complete) ;
+		uint32_t getAvailableChunk(uint32_t start_location,const std::string& peer_id,bool& chunk_map_too_old) ;
 
 	private:
 		uint64_t												_file_size ;						//! total size of the file in bytes.
@@ -174,6 +176,7 @@ class ChunkMap
 		std::vector<FileChunksInfo::ChunkState>	_map ;								//! vector of chunk state over the whole file
 		std::map<std::string,SourceChunksInfo>		_peers_chunks_availability ;	//! what does each source peer have
 		uint64_t												_total_downloaded ;				//! completion for the file
+		bool													_file_is_complete ;           //! set to true when the file is complete.
 };
 
 
