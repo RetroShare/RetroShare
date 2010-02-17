@@ -431,6 +431,7 @@ void  ChanMsgDialog::insertFileList(const std::list<DirDetails>& files_info)
 		info.hash = it->hash ;
 		info.rank = 0;//it->rank ;
 		info.size = it->count ;
+                info.inRecommend = true;
 		_recList.push_back(info) ;
 
 		/* make a widget per person */
