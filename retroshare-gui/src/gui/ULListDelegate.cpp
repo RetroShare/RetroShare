@@ -82,8 +82,8 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 	switch(index.column()) {
 		case USIZE:
 			fileSize = index.data().toLongLong();
-			if(fileSize < 0){
-				temp = "Unknown";
+                        if(fileSize <= 0){
+                                temp = "";
 			} else {
 				multi = 1.0;
 				for(int i = 0; i < 5; ++i) {
@@ -101,8 +101,8 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 			break;
 		case UTRANSFERRED:
 			transferred = index.data().toLongLong();
-			if(transferred < 0){
-				temp = "Unknown";
+                        if(transferred <= 0){
+                                temp = "";
 			} else {
 				multi = 1.0;
 				for(int i = 0; i < 5; ++i) {
@@ -119,10 +119,14 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 			painter->drawText(option.rect, Qt::AlignRight, temp);
 			break;
 		case ULSPEED:
-		    ulspeed = index.data().toDouble();
-			temp.clear();
-			temp.sprintf("%.2f", ulspeed/1024.);
-			temp += " KB/s";
+                        ulspeed = index.data().toDouble();
+                        if (ulspeed <= 0) {
+                            temp = "";
+                        } else {
+                            temp.clear();
+                            temp.sprintf("%.2f", ulspeed/1024.);
+                            temp += " KB/s";
+                        }
 			painter->drawText(option.rect, Qt::AlignRight, temp);
 			break;
 		case UPROGRESS:

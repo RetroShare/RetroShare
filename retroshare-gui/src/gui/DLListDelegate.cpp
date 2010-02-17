@@ -55,36 +55,36 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 	qlonglong completed;
 
 	//set text color
-	QVariant value = index.data(Qt::TextColorRole);
-	if(value.isValid() && qvariant_cast<QColor>(value).isValid()) {
-		opt.palette.setColor(QPalette::Text, qvariant_cast<QColor>(value));
-	}
-	QPalette::ColorGroup cg = option.state & QStyle::State_Enabled ? QPalette::Normal : QPalette::Disabled;
-	if(option.state & QStyle::State_Selected){
-		painter->setPen(opt.palette.color(cg, QPalette::HighlightedText));
-	} else {
-		painter->setPen(opt.palette.color(cg, QPalette::Text));
-	}
+        QVariant value = index.data(Qt::TextColorRole);
+        if(value.isValid() && qvariant_cast<QColor>(value).isValid()) {
+                opt.palette.setColor(QPalette::Text, qvariant_cast<QColor>(value));
+        }
+        QPalette::ColorGroup cg = option.state & QStyle::State_Enabled ? QPalette::Normal : QPalette::Disabled;
+        if(option.state & QStyle::State_Selected){
+                painter->setPen(opt.palette.color(cg, QPalette::HighlightedText));
+        } else {
+                painter->setPen(opt.palette.color(cg, QPalette::Text));
+        }
 
-	// draw the background color
-	if(index.column() != PROGRESS) {
-		if(option.showDecorationSelected && (option.state & QStyle::State_Selected)) {
-			if(cg == QPalette::Normal && !(option.state & QStyle::State_Active)) {
-				cg = QPalette::Inactive;
-			}
-			painter->fillRect(option.rect, option.palette.brush(cg, QPalette::Highlight));
-		} else {
-			value = index.data(Qt::BackgroundColorRole);
-			if(value.isValid() && qvariant_cast<QColor>(value).isValid()) {
-				painter->fillRect(option.rect, qvariant_cast<QColor>(value));
-			}
-		}
-	}
+        // draw the background color if not the progress column or if progress is not displayed
+        if(index.column() != PROGRESS || ((FileProgressInfo)index.data().value<FileProgressInfo>()).nb_chunks == 0) {
+                if(option.showDecorationSelected && (option.state & QStyle::State_Selected)) {
+                        if(cg == QPalette::Normal && !(option.state & QStyle::State_Active)) {
+                                cg = QPalette::Inactive;
+                        }
+                        painter->fillRect(option.rect, option.palette.brush(cg, QPalette::Highlight));
+                } else {
+                        value = index.data(Qt::BackgroundColorRole);
+                        if(value.isValid() && qvariant_cast<QColor>(value).isValid()) {
+                                painter->fillRect(option.rect, qvariant_cast<QColor>(value));
+                        }
+                }
+        }
 	switch(index.column()) {
 		case SIZE:
 			fileSize = index.data().toLongLong();
-			if(fileSize < 0){
-				temp = "Unknown";
+                        if(fileSize <= 0){
+                                temp = "";
 			} else {
 				multi = 1.0;
 				for(int i = 0; i < 5; ++i) {
@@ -122,8 +122,8 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 			break;
 		case COMPLETED:
 			completed = index.data().toLongLong();
-			if(completed < 0){
-				temp = "Unknown";
+                        if(completed <= 0){
+                                temp = "";
 			} else {
 				multi = 1.0;
 				for(int i = 0; i < 5; ++i) {
@@ -140,43 +140,51 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 			painter->drawText(option.rect, Qt::AlignRight, temp);
 			break;
 		case DLSPEED:
-		    dlspeed = index.data().toDouble();
-			temp.clear();
-			temp.sprintf("%.2f", dlspeed/1024.);
-			temp += " KB/s";
+                        dlspeed = index.data().toDouble();
+                        if (dlspeed <= 0) {
+                            temp = "";
+                        } else {
+                            temp.clear();
+                            temp.sprintf("%.2f", dlspeed/1024.);
+                            temp += " KB/s";
+                        }
 			painter->drawText(option.rect, Qt::AlignRight, temp);
 			break;
 		case PROGRESS:
 			{
 				// create a xProgressBar
 				FileProgressInfo pinfo = index.data().value<FileProgressInfo>() ;
-				xProgressBar progressBar(pinfo,option.rect, painter); // the 3rd param is the  color schema (0 is the default value)
-				if(pinfo.type == FileProgressInfo::DOWNLOAD_LINE)
-				{
-					progressBar.setDisplayText(true); // should display % text?
-					progressBar.setColorSchema(0) ;
-				}
-				else
-				{
-					progressBar.setDisplayText(false); // should display % text?
-					progressBar.setColorSchema(1) ;
-				}
-				progressBar.setVerticalSpan(1);
-				progressBar.paint(); // paint the progress bar
+                                if (pinfo.nb_chunks != 0) {
+                                    xProgressBar progressBar(pinfo,option.rect, painter); // the 3rd param is the  color schema (0 is the default value)
+                                    if(pinfo.type == FileProgressInfo::DOWNLOAD_LINE)
+                                    {
+                                            progressBar.setDisplayText(true); // should display % text?
+                                            progressBar.setColorSchema(0) ;
+                                    }
+                                    else
+                                    {
+                                            progressBar.setDisplayText(false); // should display % text?
+                                            progressBar.setColorSchema(1) ;
+                                    }
+                                    progressBar.setVerticalSpan(1);
+                                    progressBar.paint(); // paint the progress bar
+                                }
 			}
 			painter->drawText(option.rect, Qt::AlignCenter, newopt.text);
 			break;
 		case NAME:
         		// decoration
-			value = index.data(Qt::DecorationRole);
-			pixmap = qvariant_cast<QIcon>(value).pixmap(option.decorationSize, option.state & QStyle::State_Enabled ? QIcon::Normal : QIcon::Disabled, option.state & QStyle::State_Open ? QIcon::On : QIcon::Off);
-			pixmapRect = (pixmap.isNull() ? QRect(0, 0, 0, 0): QRect(QPoint(0, 0), option.decorationSize));
-			if (pixmapRect.isValid()){
-				QPoint p = QStyle::alignedRect(option.direction, Qt::AlignLeft, pixmap.size(), option.rect).topLeft();
-				painter->drawPixmap(p, pixmap);
-			}
-			painter->drawText(option.rect.translated(pixmap.size().width(), 0), Qt::AlignLeft, index.data().toString());
-			break;
+                        value = index.data(Qt::DecorationRole);
+                        temp = index.data().toString();
+                        pixmap = qvariant_cast<QIcon>(value).pixmap(option.decorationSize, option.state & QStyle::State_Enabled ? QIcon::Normal : QIcon::Disabled, option.state & QStyle::State_Open ? QIcon::On : QIcon::Off);
+                        pixmapRect = (pixmap.isNull() ? QRect(0, 0, 0, 0): QRect(QPoint(0, 0), option.decorationSize));
+                        if (pixmapRect.isValid()){
+                                QPoint p = QStyle::alignedRect(option.direction, Qt::AlignLeft, pixmap.size(), option.rect).topLeft();
+                                painter->drawPixmap(p, pixmap);
+                                temp = " " + temp;
+                        }
+                        painter->drawText(option.rect.translated(pixmap.size().width(), 0), Qt::AlignLeft, temp);
+                        break;
 		default:
 			painter->drawText(option.rect, Qt::AlignCenter, index.data().toString());
 	}

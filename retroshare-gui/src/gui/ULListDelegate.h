@@ -33,6 +33,7 @@
 #define UPROGRESS 4
 #define USTATUS 5
 #define USERNAME 6
+#define UHASH 7
 
 
 

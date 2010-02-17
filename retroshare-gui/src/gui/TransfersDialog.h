@@ -46,37 +46,37 @@ class QStandardItemModel;
 
 class TransfersDialog : public RsAutoUpdatePage
 {
-	Q_OBJECT
+Q_OBJECT
 
-	public:
-		/** Default Constructor */
-		TransfersDialog(QWidget *parent = 0);
-		/** Default Destructor */
-		~TransfersDialog();
+public:
+    /** Default Constructor */
+    TransfersDialog(QWidget *parent = 0);
+    /** Default Destructor */
+    ~TransfersDialog();
 
-		virtual void keyPressEvent(QKeyEvent *) ;
-		virtual void updateDisplay() ;				// derived from RsAutoUpdateWidget
+    virtual void keyPressEvent(QKeyEvent *) ;
+    virtual void updateDisplay() ;				// derived from RsAutoUpdateWidget
 
-	public slots:
-		void insertTransfers();
+    public slots:
+    void insertTransfers();
 
-		void handleDownloadRequest(const QString& url);
+    void handleDownloadRequest(const QString& url);
 
-	private slots:
+private slots:
 
-		/** Create the context popup menu and it's submenus */
-		void downloadListCostumPopupMenu( QPoint point );
+    /** Create the context popup menu and it's submenus */
+    void downloadListCostumPopupMenu( QPoint point );
 
-		void cancel();
-		/** removes finished Downloads**/
-		void clearcompleted();
-		void playSelectedTransfer();
+    void cancel();
+    /** removes finished Downloads**/
+    void clearcompleted();
+    void playSelectedTransfer();
 
-		void copyLink();
+    void copyLink();
     void pasteLink();
 
-    void rootdecorated();
-    void rootisnotdecorated();
+//    void rootdecorated();
+//    void rootisnotdecorated();
 
     void pauseFileTransfer();
     void resumeFileTransfer();
@@ -97,106 +97,99 @@ class TransfersDialog : public RsAutoUpdatePage
     void speedAverage();
     void speedFast();
 
-	 void changeSpeed(int) ;
-	 void changeQueuePriority(int) ;
+    void changeSpeed(int) ;
+    void changeQueuePriority(int) ;
 
     void chunkRandom();
     void chunkStreaming();
 
     /** save sort indicators for next transfers display */
-    void saveSortIndicatorDwl(int logicalIndex, Qt::SortOrder order);
-    void saveSortIndicatorUpl(int logicalIndex, Qt::SortOrder order);
-	
+//    void saveSortIndicatorDwl(int logicalIndex, Qt::SortOrder order);
+//    void saveSortIndicatorUpl(int logicalIndex, Qt::SortOrder order);
+
     void showDetailsDialog();
 
-	signals:
-		void playFiles(QStringList files);
+signals:
+    void playFiles(QStringList files);
 
-	private:
-		QString getPeerName(const std::string& peer_id) const ;
+private:
+    QString getPeerName(const std::string& peer_id) const ;
 
-		QStandardItemModel *DLListModel;
-		QStandardItemModel *ULListModel;
-		QItemSelectionModel *selection;
-		QItemSelectionModel *selectionup;
+    QStandardItemModel *DLListModel;
+    QStandardItemModel *ULListModel;
+    QItemSelectionModel *selection;
+    QItemSelectionModel *selectionup;
 
-		DLListDelegate *DLDelegate;
-		ULListDelegate *ULDelegate;
-		qlonglong fileSize;
-		double progress;
-		double dlspeed;
-		QString status, icon, name;
-		qlonglong completed, remaining;
+    DLListDelegate *DLDelegate;
+    ULListDelegate *ULDelegate;
 
-		int _sortColDwl, _sortColUpl;
-		Qt::SortOrder _sortOrderDwl, _sortOrderUpl;
-		
-		/** Create the actions on the tray menu or menubar */
-		void createActions();
+    //		int _sortColDwl, _sortColUpl;
+    //		Qt::SortOrder _sortOrderDwl, _sortOrderUpl;
 
-		/** Define the popup menus for the Context menu */
-		QMenu* contextMnu;
-		/** Defines the actions for the context menu */
-		QAction* showdowninfoAct;
-		QAction* cancelAct;
-		QAction* clearcompletedAct;
-		QAction* copylinkAct;
+    /** Create the actions on the tray menu or menubar */
+    void createActions();
+
+    /** Define the popup menus for the Context menu */
+    QMenu* contextMnu;
+    /** Defines the actions for the context menu */
+    QAction* showdowninfoAct;
+    QAction* cancelAct;
+    QAction* clearcompletedAct;
+    QAction* copylinkAct;
     QAction* pastelinkAct;
     QAction* rootisnotdecoratedAct;
     QAction* rootisdecoratedAct;
-		QAction *pauseAct;
-		QAction *resumeAct;
-		QAction *openfolderAct;
-		QAction *openfileAct;
-		QAction *previewfileAct;
-		QAction *clearQueuedDwlAct;
-		QAction *clearQueueAct;
-		QAction *changePriorityAct;
-		QAction *prioritySlowAct;
-		QAction *priorityMediumAct;
-		QAction *priorityFastAct;
-		QAction *priorityLowAct;
-		QAction *priorityNormalAct;
-		QAction *priorityHighAct;
-		QAction *priorityAutoAct;
-		QAction *chunkRandomAct;
-		QAction *chunkStreamingAct;
-		QAction *detailsfileAct;
+    QAction *pauseAct;
+    QAction *resumeAct;
+    QAction *openfolderAct;
+    QAction *openfileAct;
+    QAction *previewfileAct;
+    QAction *clearQueuedDwlAct;
+    QAction *clearQueueAct;
+    QAction *changePriorityAct;
+    QAction *prioritySlowAct;
+    QAction *priorityMediumAct;
+    QAction *priorityFastAct;
+    QAction *priorityLowAct;
+    QAction *priorityNormalAct;
+    QAction *priorityHighAct;
+    QAction *priorityAutoAct;
+    QAction *chunkRandomAct;
+    QAction *chunkStreamingAct;
+    QAction *detailsfileAct;
 
-	void getIdOfSelectedItems(std::set<QStandardItem *>& items);
+    void getIdOfSelectedItems(std::set<QStandardItem *>& items);
     bool controlTransferFile(uint32_t flags);
     void changePriority(int priority);
-	void setChunkStrategy(FileChunksInfo::ChunkStrategy s) ;
+    void setChunkStrategy(FileChunksInfo::ChunkStrategy s) ;
 
-		QTreeView *downloadList;
+    QTreeView *downloadList;
 
-		/** Adds a new action to the toolbar. */
-		void addAction(QAction *action, const char *slot = 0);
+    /** Adds a new action to the toolbar. */
+    void addAction(QAction *action, const char *slot = 0);
 
-		/** Qt Designer generated object */
-		Ui::TransfersDialog ui;
+    /** Qt Designer generated object */
+    Ui::TransfersDialog ui;
 
-		public slots:
-		int addItem(const QString& symbol, const QString& name, const QString& coreID, qlonglong size, const FileProgressInfo& pinfo, double dlspeed, const QString& sources, const QString& status, const QString& priority, qlonglong completed, qlonglong remaining);
-		bool addPeerToItem(int row, const QString& symbol, const QString& name, const QString& coreID, qlonglong fileSize, const FileProgressInfo& pinfo, double dlspeed, const QString& sources, const QString& status, qlonglong completed, qlonglong remaining);
-		void delItem(int row);
+public slots:
+    int addItem(const QString& symbol, const QString& name, const QString& coreID, qlonglong size, const FileProgressInfo& pinfo, double dlspeed, const QString& sources, const QString& status, const QString& priority, qlonglong completed, qlonglong remaining);
+    bool addPeerToItem(int row, const QString& name, const QString& coreID, double dlspeed, const QString& status);
+    void delItem(int row);
 
-		int addUploadItem(const QString& symbol, const QString& name, const QString& coreID, qlonglong size, const FileProgressInfo& pinfo, double dlspeed, const QString& sources, const QString& status, qlonglong completed, qlonglong remaining);
-		void delUploadItem(int row);
+    int addUploadItem(const QString& symbol, const QString& name, const QString& coreID, qlonglong size, const FileProgressInfo& pinfo, double dlspeed, const QString& sources, const QString& status, qlonglong completed, qlonglong remaining);
+    void delUploadItem(int row);
 
-		void editItem(int row, int column, QVariant data);
-		void updateProgress(int value);
-		void showFileDetails() ;
+    void showFileDetails() ;
 
-		double getProgress(int row, QStandardItemModel *model);
-		double getSpeed(int row, QStandardItemModel *model);
-		QString getFileName(int row, QStandardItemModel *model);
-		QString getStatus(int row, QStandardItemModel *model);
-		QString getID(int row, QStandardItemModel *model);
-		QString getPriority(int row, QStandardItemModel *model);
-		qlonglong getFileSize(int row, QStandardItemModel *model);
-		qlonglong getTransfered(int row, QStandardItemModel *model);
-		qlonglong getRemainingTime(int row, QStandardItemModel *model);
+    double getProgress(int row, QStandardItemModel *model);
+    double getSpeed(int row, QStandardItemModel *model);
+    QString getFileName(int row, QStandardItemModel *model);
+    QString getStatus(int row, QStandardItemModel *model);
+    QString getID(int row, QStandardItemModel *model);
+    QString getPriority(int row, QStandardItemModel *model);
+    qlonglong getFileSize(int row, QStandardItemModel *model);
+    qlonglong getTransfered(int row, QStandardItemModel *model);
+    qlonglong getRemainingTime(int row, QStandardItemModel *model);
 };
 
 #endif

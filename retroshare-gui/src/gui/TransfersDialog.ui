@@ -644,7 +644,7 @@ p, li { white-space: pre-wrap; }
           <bool>false</bool>
          </property>
          <property name="rootIsDecorated">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
          <property name="sortingEnabled">
           <bool>true</bool>
@@ -652,6 +652,15 @@ p, li { white-space: pre-wrap; }
          <property name="allColumnsShowFocus">
           <bool>false</bool>
          </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+         <attribute name="headerStretchLastSection">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="headerStretchLastSection">
+          <bool>false</bool>
+         </attribute>
         </widget>
        </item>
       </layout>
@@ -727,8 +736,8 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>596</width>
-             <height>102</height>
+             <width>598</width>
+             <height>99</height>
             </rect>
            </property>
           </widget>
@@ -834,8 +843,8 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>578</width>
-             <height>117</height>
+             <width>98</width>
+             <height>28</height>
             </rect>
            </property>
           </widget>
@@ -850,7 +859,6 @@ p, li { white-space: pre-wrap; }
  </widget>
  <resources>
   <include location="images.qrc"/>
-  <include location="../../../../../../../.designer/backup/images.qrc"/>
  </resources>
  <connections/>
 </ui>

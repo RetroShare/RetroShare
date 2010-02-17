@@ -97,7 +97,7 @@ void FileTransferInfoWidget::updateDisplay()
 
 void FileTransferInfoWidget::paintEvent(QPaintEvent *event)
 {
-	std::cout << "In paint event" << std::endl ;
+    //std::cout << "In paint event" << std::endl ;
     QStylePainter painter(this);
 
     painter.drawPixmap(0, 0, pixmap2);
