@@ -522,7 +522,7 @@ int TransfersDialog::addItem(const QString& symbol, const QString& name, const Q
     return row;
 }
 
-bool TransfersDialog::addPeerToItem(int row, const QString& name, const QString& coreID, double dlspeed, const QString& status)
+bool TransfersDialog::addPeerToItem(int row, const QString& name, const QString& coreID, double dlspeed, const QString& status, FileProgressInfo peerInfo)
 {
     QStandardItem *dlItem = DLListModel->item(row);
     if (!dlItem) return false;
@@ -547,7 +547,7 @@ bool TransfersDialog::addPeerToItem(int row, const QString& name, const QString&
         QStandardItem *i2 = new QStandardItem(); i2->setData(QVariant(QString()), Qt::DisplayRole);
         QStandardItem *i3 = new QStandardItem(); i3->setData(QVariant(QString()), Qt::DisplayRole);
         QStandardItem *i4 = new QStandardItem(); i4->setData(QVariant((double)dlspeed), Qt::DisplayRole);
-        QStandardItem *i5 = new QStandardItem(); i5->setData(QVariant(QString()), Qt::DisplayRole);
+        QStandardItem *i5 = new QStandardItem(); i5->setData(QVariant::fromValue(peerInfo), Qt::DisplayRole);
         QStandardItem *i6 = new QStandardItem(); i6->setData(QVariant(QString()), Qt::DisplayRole);
         QStandardItem *i7 = new QStandardItem(); i7->setData(QVariant((QString)status), Qt::DisplayRole);
         QStandardItem *i8 = new QStandardItem(); i8->setData(QVariant(QString()), Qt::DisplayRole);	// blank field for priority
@@ -773,13 +773,13 @@ void TransfersDialog::insertTransfers() {
                     peerDlspeed     = pit->tfRate * 1024.0;
                 }
 
-//                FileProgressInfo peerpinfo ;
-//                peerpinfo.type = FileProgressInfo::DOWNLOAD_SOURCE ;
-//                peerpinfo.cmap = fcinfo.compressed_peer_availability_maps[pit->peerId];
-//                peerpinfo.progress = 0.0 ;	// we don't display completion for sources.
-//                peerpinfo.nb_chunks = peerpinfo.cmap._map.empty()?0:fcinfo.chunks.size();
+                FileProgressInfo peerpinfo ;
+                peerpinfo.type = FileProgressInfo::DOWNLOAD_SOURCE ;
+                peerpinfo.cmap = fcinfo.compressed_peer_availability_maps[pit->peerId];
+                peerpinfo.progress = 0.0 ;	// we don't display completion for sources.
+                peerpinfo.nb_chunks = peerpinfo.cmap._map.empty()?0:fcinfo.chunks.size();
 
-                addPeerToItem(addedRow, peerName, hashFileAndPeerId, peerDlspeed, status);
+                addPeerToItem(addedRow, peerName, hashFileAndPeerId, peerDlspeed, status, peerpinfo);
             }
         }
 
