@@ -1718,7 +1718,7 @@ void p3turtle::returnSearchResult(RsTurtleSearchResultItem *item)
 //
 bool p3turtle::performLocalHashSearch(const TurtleFileHash& hash,FileInfo& info)
 {
-	return rsFiles->FileDetails(hash, RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_SPEC_ONLY | RS_FILE_HINTS_DOWNLOAD, info);
+	return rsFiles->FileDetails(hash, RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_SPEC_ONLY | RS_FILE_HINTS_DOWNLOAD, info);
 }
 
 static std::string printNumber(uint64_t num,bool hex=false)
