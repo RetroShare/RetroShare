@@ -173,7 +173,7 @@ private:
 
 public slots:
     int addItem(const QString& symbol, const QString& name, const QString& coreID, qlonglong size, const FileProgressInfo& pinfo, double dlspeed, const QString& sources, const QString& status, const QString& priority, qlonglong completed, qlonglong remaining);
-    bool addPeerToItem(int row, const QString& name, const QString& coreID, double dlspeed, const QString& status, FileProgressInfo peerInfo);
+    bool addPeerToItem(int row, const QString& name, const QString& coreID, double dlspeed, const QString& status, const FileProgressInfo& peerInfo);
     void delItem(int row);
 
     int addUploadItem(const QString& symbol, const QString& name, const QString& coreID, qlonglong size, const FileProgressInfo& pinfo, double dlspeed, const QString& sources, const QString& status, qlonglong completed, qlonglong remaining);

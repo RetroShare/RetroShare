@@ -72,34 +72,7 @@
 #define IMAGE_PRIORITYHIGH			   ":/images/priorityhigh.png"
 #define IMAGE_PRIORITYAUTO			   ":/images/priorityauto.png"
 
-//static const CompressedChunkMap *getMap_tmp()
-//{
-//	static CompressedChunkMap *cmap = NULL ;
-//
-//	if(cmap == NULL)
-//	{
-//		cmap = new CompressedChunkMap ; // to be passed as a parameter
-//		// Initialize the chunkmap with a dummy value, for testing. To be removed...
-//		cmap->_nb_chunks = 700 ;
-//		cmap->_map.resize(cmap->_nb_chunks/32+1,0) ;	
-//		cmap->_progress = 0.34 ;
-//		for(uint i=0;i<10;++i)
-//		{
-//			uint32_t start = rand()%cmap->_nb_chunks;
-//			uint32_t j = std::min((int)cmap->_nb_chunks,(int)start+10+(rand()%5)) ;
-//
-//			for(uint32_t k=start;k<j;++k)
-//				COMPRESSED_MAP_WRITE(cmap->_map,k,1) ;
-//		}
-//
-//		std::cerr << "Built cmap = " << (void*)cmap << std::endl ;
-//	}
-//	return cmap ;
-//}
-
-
 Q_DECLARE_METATYPE(FileProgressInfo) 
-
 
 /** Constructor */
 TransfersDialog::TransfersDialog(QWidget *parent)
@@ -522,7 +495,7 @@ int TransfersDialog::addItem(const QString& symbol, const QString& name, const Q
     return row;
 }
 
-bool TransfersDialog::addPeerToItem(int row, const QString& name, const QString& coreID, double dlspeed, const QString& status, FileProgressInfo peerInfo)
+bool TransfersDialog::addPeerToItem(int row, const QString& name, const QString& coreID, double dlspeed, const QString& status, const FileProgressInfo& peerInfo)
 {
     QStandardItem *dlItem = DLListModel->item(row);
     if (!dlItem) return false;
@@ -583,6 +556,7 @@ bool TransfersDialog::addPeerToItem(int row, const QString& name, const QString&
         //just update the child (peer)
         dlItem->child(childRow, DLSPEED)->setData(QVariant((double)dlspeed), Qt::DisplayRole);
         dlItem->child(childRow, STATUS)->setData(QVariant((QString)status), Qt::DisplayRole);
+        dlItem->child(childRow, PROGRESS)->setData(QVariant::fromValue(peerInfo), Qt::DisplayRole);
         /* set status icon in the name field */
         if (status == "Downloading") {
             dlItem->child(childRow, NAME)->setData(QIcon(QString::fromUtf8(":/images/Client0.png")), Qt::DecorationRole);
@@ -774,10 +748,17 @@ void TransfersDialog::insertTransfers() {
                 }
 
                 FileProgressInfo peerpinfo ;
-                peerpinfo.type = FileProgressInfo::DOWNLOAD_SOURCE ;
                 peerpinfo.cmap = fcinfo.compressed_peer_availability_maps[pit->peerId];
+                peerpinfo.type = FileProgressInfo::DOWNLOAD_SOURCE ;
                 peerpinfo.progress = 0.0 ;	// we don't display completion for sources.
                 peerpinfo.nb_chunks = peerpinfo.cmap._map.empty()?0:fcinfo.chunks.size();
+
+//					 std::cerr << std::endl ;
+//					 std::cerr << "Source " << pit->peerId << " as map " << peerpinfo.cmap._map.size() << " compressed chunks" << std::endl ;
+//						 for(uint j=0;j<peerpinfo.cmap._map.size();++j)
+//							 std::cerr << peerpinfo.cmap._map[j] ;
+//					 std::cerr << std::endl ;
+//					 std::cerr << std::endl ;
 
                 addPeerToItem(addedRow, peerName, hashFileAndPeerId, peerDlspeed, status, peerpinfo);
             }

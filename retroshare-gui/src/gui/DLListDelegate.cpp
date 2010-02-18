@@ -67,7 +67,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
         }
 
         // draw the background color if not the progress column or if progress is not displayed
-        if(index.column() != PROGRESS || ((FileProgressInfo)index.data().value<FileProgressInfo>()).nb_chunks == 0) {
+        if(index.column() != PROGRESS) {
                 if(option.showDecorationSelected && (option.state & QStyle::State_Selected)) {
                         if(cg == QPalette::Normal && !(option.state & QStyle::State_Active)) {
                                 cg = QPalette::Inactive;
@@ -154,21 +154,25 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 			{
 				// create a xProgressBar
 				FileProgressInfo pinfo = index.data().value<FileProgressInfo>() ;
-                                if (pinfo.nb_chunks != 0) {
-                                    xProgressBar progressBar(pinfo,option.rect, painter); // the 3rd param is the  color schema (0 is the default value)
-                                    if(pinfo.type == FileProgressInfo::DOWNLOAD_LINE)
-                                    {
-                                            progressBar.setDisplayText(true); // should display % text?
-                                            progressBar.setColorSchema(0) ;
-                                    }
-                                    else
-                                    {
-                                            progressBar.setDisplayText(false); // should display % text?
-                                            progressBar.setColorSchema(1) ;
-                                    }
-                                    progressBar.setVerticalSpan(1);
-                                    progressBar.paint(); // paint the progress bar
-                                }
+
+//				std::cerr << "drawing progress info: nb_chunks = " << pinfo.nb_chunks ;
+//				for(uint i=0;i<pinfo.cmap._map.size();++i)
+//					std::cerr << pinfo.cmap._map[i] << " " ;
+//				std::cerr << std::endl ;
+				
+				xProgressBar progressBar(pinfo,option.rect, painter); // the 3rd param is the  color schema (0 is the default value)
+				if(pinfo.type == FileProgressInfo::DOWNLOAD_LINE)
+				{
+					progressBar.setDisplayText(true); // should display % text?
+					progressBar.setColorSchema(0) ;
+				}
+				else
+				{
+					progressBar.setDisplayText(false); // should display % text?
+					progressBar.setColorSchema(1) ;
+				}
+				progressBar.setVerticalSpan(1);
+				progressBar.paint(); // paint the progress bar
 			}
 			painter->drawText(option.rect, Qt::AlignCenter, newopt.text);
 			break;
