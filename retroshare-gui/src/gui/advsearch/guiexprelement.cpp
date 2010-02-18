@@ -23,7 +23,7 @@
 #define STR_FIELDS_MIN_WIDTH  200
 #define SIZE_FIELDS_MIN_WIDTH  80
 #define DATE_FIELDS_MIN_WIDTH  100
-#define FIELDS_MIN_HEIGHT    30
+#define FIELDS_MIN_HEIGHT    26
 
 #define LOGICAL_OP_CB_WIDTH 70
 #define STD_CB_WIDTH        90
@@ -416,7 +416,7 @@ void ExprParamElement::adjustForSearchType(ExprSearchType type)
 
     QHBoxLayout* hbox = createLayout();
     internalframe->setLayout(hbox);
-    internalframe->setMinimumSize(320,30);
+    internalframe->setMinimumSize(320,26);
 
     if (isStringSearchExpression())
     {
@@ -499,7 +499,7 @@ void ExprParamElement::setRangedSearch(bool ranged)
         toLbl->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
         if (searchType ==  DateSearch) {
-           internalframe->setMinimumSize(250,30);            
+           internalframe->setMinimumSize(250,26);            
             QDateEdit * dateEdit = new QDateEdit(QDate::currentDate(), internalframe);
             dateEdit->setMinimumSize(DATE_FIELDS_MIN_WIDTH, FIELDS_MIN_HEIGHT);
             dateEdit->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -514,7 +514,7 @@ void ExprParamElement::setRangedSearch(bool ranged)
             hbox->addWidget(dateEdit, Qt::AlignLeft);
             hbox->addStretch();
         } else if (searchType == SizeSearch) {
-            internalframe->setMinimumSize(340,30);
+            internalframe->setMinimumSize(340,26);
             QLineEdit * lineEdit = new QLineEdit(internalframe);
             lineEdit->setMinimumSize(SIZE_FIELDS_MIN_WIDTH, FIELDS_MIN_HEIGHT);
             lineEdit->setMaximumSize(SIZE_FIELDS_MIN_WIDTH, FIELDS_MIN_HEIGHT);

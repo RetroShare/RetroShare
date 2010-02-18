@@ -54,7 +54,7 @@ AdvancedSearchDialog::AdvancedSearchDialog(QWidget * parent) : QDialog (parent)
 
 void AdvancedSearchDialog::addNewExpression()
 {
-    int sizeChange = metrics->height() + 35;
+    int sizeChange = metrics->height() + 26;
 
     ExpressionWidget *expr;
     if (expressions->size() == 0)
@@ -84,7 +84,7 @@ void AdvancedSearchDialog::addNewExpression()
 
 void AdvancedSearchDialog::deleteExpression(ExpressionWidget* expr)
 {
-    int sizeChange = metrics->height() + 35;
+    int sizeChange = metrics->height() + 26;
     
     expressions->removeAll(expr);
     expr->hide();
