@@ -1641,6 +1641,9 @@ void PeersDialog::anchorClicked (const QUrl& link )
 		uint64_t fileSize = L.at(2).toULongLong();
 		std::string fileHash = L.at(3).toStdString() ;
 
+		if(fileHash.length() > 40)
+			fileHash.resize(40) ;
+
                 #ifdef PEERS_DEBUG
 		std::cerr << "PeersDialog::anchorClicked FileRequest : fileName : " << fileName << ". fileHash : " << fileHash << ". fileSize : " << fileSize << std::endl;
                 #endif
