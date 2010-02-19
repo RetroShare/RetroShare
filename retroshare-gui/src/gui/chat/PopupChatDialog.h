@@ -103,6 +103,8 @@ private slots:
   void sendChat();
 
   void getAvatar();
+  
+  void on_actionClear_Chat_triggered();
 
   
 private:

@@ -123,6 +123,11 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   
   /*Disabled style Button when will switch chat style RetroShare will crash need to be fix */
   //ui.styleButton->setEnabled(false);
+  
+  QMenu * toolmenu = new QMenu();
+  toolmenu->addAction(ui.actionClear_Chat);
+  toolmenu->addAction(ui.action_Disable_Emoticons);
+  ui.pushtoolsButton->setMenu(toolmenu);
 
   
   mCurrentColor = Qt::black;
@@ -267,6 +272,8 @@ void PopupChatDialog::addChatMsg(ChatInfo *ci)
 std::cout << "PopupChatDialog:addChatMsg message : " << message.toStdString() << std::endl;
 #endif
 
+  if(!ui.action_Disable_Emoticons->isChecked())
+  {
 	QHashIterator<QString, QString> i(smileys);
 	while(i.hasNext())
 	{
@@ -274,6 +281,8 @@ std::cout << "PopupChatDialog:addChatMsg message : " << message.toStdString() <<
 		foreach(QString code, i.key().split("|"))
 			message.replace(code, "<img src=\"" + i.value() + "\" />");
 	}
+	}
+	
 	history /*<< nickColor << color << font << fontSize*/ << timestamp << name << message;
 	
 	QString formatMsg = loadEmptyStyle()/*.replace(nickColor)
@@ -598,6 +607,11 @@ QString PopupChatDialog::loadEmptyStyle()
 		ret="%timestamp% %name% \n %message% ";
 		return ret;
 	}
+}
+
+void PopupChatDialog::on_actionClear_Chat_triggered()
+{
+    ui.textBrowser->clear();
 }
 
 void PopupChatDialog::changeStyle()
