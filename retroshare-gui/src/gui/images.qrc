@@ -18,7 +18,6 @@
         <file>images/connect_no.png</file>
         <file>images/feedback_arrow.png</file>
         <file>images/feedback_arrow_hover.png</file>
-        <file>images/feedback-bar-background.png</file>
         <file>images/list_bullet_arrow.png</file>
         <file>images/rc_combined.png</file>
         <file>images/btn_26_pressed.png</file>
@@ -34,14 +33,11 @@
         <file>images/add_channel24.png</file>
         <file>images/add_channel32.png</file>
         <file>images/browse-looking.gif</file>
-        <file>images/addfriendlabel.png</file>
         <file>images/back.png</file>
         <file>images/backgroundl.png</file>
         <file>images/blockdevice.png</file>
         <file>images/blockdevice2.png</file>
         <file>images/channels.png</file>
-        <file>images/channeldelete.png</file>
-        <file>images/channelsubscribe.png</file>
         <file>images/turtle.png</file>
         <file>images/channels16.png</file>
         <file>images/channels24.png</file>
@@ -88,14 +84,12 @@
         <file>images/button_cancel.png</file>
         <file>images/calendar.png</file>
         <file>images/chat.png</file>
-        <file>images/chats_24x24.png</file>
         <file>images/cancel.png</file>
         <file>images/close-down.png</file>
         <file>images/close_normal.png</file>
         <file>images/console-small-down.png</file>
         <file>images/console-small-hover.png</file>
         <file>images/console-small-up.png</file>
-        <file>images/contract_hover.png</file>
         <file>images/contact_new128.png</file>
         <file>images/dadd.png</file>
         <file>images/dauthed.png</file>
@@ -132,7 +126,6 @@
         <file>images/encrypted48.png</file>
         <file>images/evolution.png</file>
         <file>images/exit_24x24.png</file>
-        <file>images/expand_hover.png</file>
         <file>images/expand_frame.png</file>
         <file>images/exportpeers_16x16.png</file>
         <file>images/extension_32.png</file>
@@ -186,7 +179,6 @@
         <file>images/folder_red.png</file>
         <file>images/folder_grey.png</file>
         <file>images/folder_yellow.png</file>
-        <file>images/folder_green16.png</file>
         <file>images/folder_open.png</file>
         <file>images/folder_video.png</file>
         <file>images/folder_blueshared.png</file>
@@ -213,7 +205,6 @@
         <file>images/im-user-busy.png</file>
         <file>images/informations_24x24.png</file>
         <file>images/invite-friend24.png</file>
-        <file>images/invitefriendlabel.png</file>
         <file>images/connect_friend.png</file>
         <file>images/kalarm.png</file>
         <file>images/kbackgammon.png</file>
@@ -274,7 +265,6 @@
         <file>images/network32.png</file>
         <file>images/new-mail-alert.png</file>
         <file>images/new_forum16.png</file>
-        <file>images/nopic.png</file>
         <file>images/no_avatar.png</file>
         <file>images/no_avatar_70.png</file>
         <file>images/pasterslink.png</file>
@@ -322,7 +312,6 @@
         <file>images/settings.png</file>
         <file>images/settings16.png</file>
         <file>images/show_toolbox_frame.png</file>
-        <file>images/smplayer_icon32.png</file>
         <file>images/start.png</file>
         <file>images/stop.png</file>
         <file>images/StatsCumulative.png</file>

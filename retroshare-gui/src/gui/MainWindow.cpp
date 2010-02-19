@@ -62,7 +62,6 @@
 #define FONT        QFont(tr("Arial"), 9)
 
 /* Images for toolbar icons */
-#define IMAGE_NETWORK           ":/images/retrosharelogo1.png"
 #define IMAGE_NETWORK2          ":/images/rs1.png"
 #define IMAGE_PEERS         	  ":/images/groupchat.png"
 #define IMAGE_SEARCH    		    ":/images/filefind.png"
@@ -71,7 +70,6 @@
 #define IMAGE_FILES   	        ":/images/fileshare24.png"
 #define IMAGE_CHANNELS       	  ":/images/channels.png"
 #define IMAGE_FORUMS            ":/images/konversation.png"
-#define IMAGE_TURTLE            ":/images/turtle.png"
 #define IMAGE_PREFERENCES       ":/images/kcmsystem24.png"
 #define IMAGE_CHAT          	  ":/images/groupchat.png"
 #define IMAGE_RETROSHARE        ":/images/rstray3.png"
@@ -82,12 +80,10 @@
 #define IMAGE_RSM32             ":/images/kdmconfig.png"
 #define IMAGE_RSM16             ":/images/rsmessenger16.png"
 #define IMAGE_CLOSE             ":/images/close_normal.png"
-#define IMAGE_SMPLAYER			    ":/images/smplayer_icon32.png"
 #define IMAGE_BLOCK         	  ":/images/blockdevice.png"
 #define IMAGE_COLOR         	  ":/images/highlight.png"
 #define IMAGE_GAMES             ":/images/kgames.png"
 #define IMAGE_PHOTO             ":/images/lphoto.png"
-#define IMAGE_SMPLAYER          ":/images/smplayer_icon32.png"
 #define IMAGE_ADDFRIEND         ":/images/add-friend24.png"
 #define IMAGE_ADDSHARE          ":/images/directoryadd_24x24_shadow.png"
 #define IMAGE_OPTIONS           ":/images/settings.png"
