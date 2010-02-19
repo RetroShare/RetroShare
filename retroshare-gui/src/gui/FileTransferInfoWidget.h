@@ -27,6 +27,7 @@
 #include "RsAutoUpdatePage.h"
 
 class FileChunksInfo ;
+class FileInfo ;
 
 class FileTransferInfoWidget : public RsAutoUpdatePage
 {
@@ -39,7 +40,7 @@ public:
 
 	 virtual void updateDisplay() ;	// update from RsAutoUpdateWidget
 protected:
-	 void draw(const FileChunksInfo& details,QPainter *painter) ;
+	 void draw(const FileInfo& nfo,const FileChunksInfo& details,QPainter *painter) ;
 
     virtual void paintEvent(QPaintEvent *);
     virtual void resizeEvent(QResizeEvent *event);

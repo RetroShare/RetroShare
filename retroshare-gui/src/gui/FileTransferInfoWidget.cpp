@@ -90,7 +90,7 @@ void FileTransferInfoWidget::updateDisplay()
 		x = blocks%columns*chunk_square_size;
 		maxHeight = y+150+info.active_chunks.size()*(block_sep+text_height);	// warning: this should be computed from the different size parameter and the number of objects drawn, otherwise the last objects to be displayed will be truncated.
 
-		draw(info,&painter) ;
+		draw(nfo,info,&painter) ;
 	}
 	pixmap2 = pixmap;
 }
@@ -104,7 +104,7 @@ void FileTransferInfoWidget::paintEvent(QPaintEvent *event)
     pixmap = pixmap2;
 }
 
-void FileTransferInfoWidget::draw(const FileChunksInfo& info,QPainter *painter)
+void FileTransferInfoWidget::draw(const FileInfo& nfo,const FileChunksInfo& info,QPainter *painter)
 {
     x=0;
     y=0;
@@ -216,11 +216,15 @@ void FileTransferInfoWidget::draw(const FileChunksInfo& info,QPainter *painter)
 	 painter->setPen(QColor::fromRgb(0,0,0)) ;
 	 y += text_height ; painter->drawText(0,y,tr("File info:")) ;
 	 y += block_sep ;
+	 y += text_height ; painter->drawText(20,y,tr("File hash: ")) ; painter->drawText(tab_size,y,QString::fromStdString(nfo.hash)) ;
+	 y += block_sep ;
 	 y += text_height ; painter->drawText(20,y,tr("File size: ")) ; painter->drawText(tab_size,y,QString::number(info.file_size)) ;
 	 y += block_sep ;
 	 y += text_height ; painter->drawText(20,y,tr("Chunk size: ")) ; painter->drawText(tab_size,y,QString::number(info.chunk_size)) ;
 	 y += block_sep ;
 	 y += text_height ; painter->drawText(20,y,tr("Number of chunks: ")) ; painter->drawText(tab_size,y,QString::number(info.chunks.size())) ;
+	 y += block_sep ;
+	 y += text_height ; painter->drawText(20,y,tr("Transfered: ")) ; painter->drawText(tab_size,y,QString::number(nfo.transfered)) ;
 	 y += block_sep ;
 	 y += text_height ; painter->drawText(20,y,tr("Number of sources: ")) ; painter->drawText(tab_size,y,QString::number(info.compressed_peer_availability_maps.size())) ;
 	 y += block_sep ;
