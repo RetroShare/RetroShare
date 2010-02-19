@@ -188,9 +188,6 @@ p, li { white-space: pre-wrap; }
         <property name="currentIndex">
          <number>0</number>
         </property>
-        <property name="movable">
-         <bool>false</bool>
-        </property>
         <widget class="QWidget" name="tab">
          <attribute name="title">
           <string>Message</string>
