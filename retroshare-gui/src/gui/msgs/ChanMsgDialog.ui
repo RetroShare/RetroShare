@@ -244,7 +244,7 @@ border: 1px solid #CCCCCC;}</string>
                 </property>
                 <property name="icon">
                  <iconset resource="../images.qrc">
-                  <normaloff>:/images/textedit/format_font_size_less.png</normaloff>:/images/textedit/format_font_size_less.png</iconset>
+                  <normaloff>:/images/textedit/format_font_size_more.png</normaloff>:/images/textedit/format_font_size_more.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -273,7 +273,7 @@ border: 1px solid #CCCCCC;}</string>
                 </property>
                 <property name="icon">
                  <iconset resource="../images.qrc">
-                  <normaloff>:/images/textedit/format_font_size_more.png</normaloff>:/images/textedit/format_font_size_more.png</iconset>
+                  <normaloff>:/images/textedit/format_font_size_less.png</normaloff>:/images/textedit/format_font_size_less.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
