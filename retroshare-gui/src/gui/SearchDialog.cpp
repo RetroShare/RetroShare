@@ -129,6 +129,7 @@ SearchDialog::SearchDialog(QWidget *parent)
     connect ( ui.searchSummaryWidget, SIGNAL( currentItemChanged ( QTreeWidgetItem *, QTreeWidgetItem * ) ),
                     this, SLOT( selectSearchResults( void ) ) );
 
+    connect(ui.FileTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onComboIndexChanged(int)));
 
     /* hide the Tree +/- */
     ui.searchResultWidget -> setRootIsDecorated( true );
@@ -266,7 +267,7 @@ void SearchDialog::download()
 	 {
 		 item = itemsForDownload.at(i);
 		 // call the download
-		 if (!item->childCount()) 
+                 if (!item->text(SR_HASH_COL).isEmpty() || !item->childCount())
 		 {
 			 std::cerr << "SearchDialog::download() Calling File Request";
 			 std::cerr << std::endl;
@@ -573,66 +574,74 @@ void SearchDialog::searchKeywords()
 	bool matched =false;
 	DirDetails dd;
 
-	if (ui.FileTypeComboBox->currentIndex() == FILETYPE_IDX_ANY)
-	{
-		finalResults = new std::list<DirDetails>;
-		std::list<DirDetails>::iterator resultsIter;
-		for (resultsIter = initialResults.begin(); resultsIter != initialResults.end(); resultsIter ++)
-		{
-			dd = *resultsIter;
-			if (dd.type == DIR_TYPE_DIR) continue;
-			finalResults->push_back(dd);
-		}
-	}
-	else if (ui.FileTypeComboBox->currentIndex() == FILETYPE_IDX_DIRECTORY)
-	{
-		finalResults = new std::list<DirDetails>;
-		txt += " (" + ui.FileTypeComboBox->currentText().toStdString() + ")";
-		std::list<DirDetails>::iterator resultsIter;
-		for (resultsIter = initialResults.begin(); resultsIter != initialResults.end(); resultsIter ++)
-		{
-			dd = *resultsIter;
-			if (dd.type != DIR_TYPE_DIR) continue;
-			finalResults->push_back(dd);
-		}
-	}
-	else
-	{
-		finalResults = new std::list<DirDetails>;
-		// amend the text description of the search
-		txt += " (" + ui.FileTypeComboBox->currentText().toStdString() + ")";
-		// collect the extensions to use
-		QString extStr = SearchDialog::FileTypeExtensionMap->value(ui.FileTypeComboBox->currentIndex());
-		QStringList extList = extStr.split(" ");
+//	if (ui.FileTypeComboBox->currentIndex() == FILETYPE_IDX_ANY)
+//	{
+//		finalResults = new std::list<DirDetails>;
+//		std::list<DirDetails>::iterator resultsIter;
+//		for (resultsIter = initialResults.begin(); resultsIter != initialResults.end(); resultsIter ++)
+//		{
+//			dd = *resultsIter;
+//			if (dd.type == DIR_TYPE_DIR) continue;
+//			finalResults->push_back(dd);
+//		}
+//	}
+//	else if (ui.FileTypeComboBox->currentIndex() == FILETYPE_IDX_DIRECTORY)
+//	{
+//		finalResults = new std::list<DirDetails>;
+//		txt += " (" + ui.FileTypeComboBox->currentText().toStdString() + ")";
+//		std::list<DirDetails>::iterator resultsIter;
+//		for (resultsIter = initialResults.begin(); resultsIter != initialResults.end(); resultsIter ++)
+//		{
+//			dd = *resultsIter;
+//			if (dd.type != DIR_TYPE_DIR) continue;
+//			finalResults->push_back(dd);
+//		}
+//	}
+//	else
+//	{
+//		finalResults = new std::list<DirDetails>;
+//		// amend the text description of the search
+//		txt += " (" + ui.FileTypeComboBox->currentText().toStdString() + ")";
+//		// collect the extensions to use
+//		QString extStr = SearchDialog::FileTypeExtensionMap->value(ui.FileTypeComboBox->currentIndex());
+//		QStringList extList = extStr.split(" ");
+//
+//		// now iterate through the results ignoring those with wrong extensions
+//		std::list<DirDetails>::iterator resultsIter;
+//		for (resultsIter = initialResults.begin(); resultsIter != initialResults.end(); resultsIter++)
+//		{
+//			dd = *resultsIter;
+//			if (dd.type == DIR_TYPE_DIR) continue;
+//			// get this file's extension
+//			qName = QString::fromStdString(dd.name);
+//			extIndex = qName.lastIndexOf(".");
+//			if (extIndex >= 0) {
+//				qExt = qName.mid(extIndex+1);
+//				if (qExt != "" )
+//				{
+//					// does it match?
+//					matched = false;
+//					/* iterate through the requested extensions */
+//					for (int i = 0; i < extList.size(); ++i)
+//					{
+//						if (qExt.toUpper() == extList.at(i).toUpper())
+//						{
+//							finalResults->push_back(dd);
+//							matched = true;
+//						}
+//					}
+//				}
+//			}
+//		}
+//	}
 
-		// now iterate through the results ignoring those with wrong extensions
-		std::list<DirDetails>::iterator resultsIter;
-		for (resultsIter = initialResults.begin(); resultsIter != initialResults.end(); resultsIter++)
-		{
-			dd = *resultsIter;
-			if (dd.type == DIR_TYPE_DIR) continue;
-			// get this file's extension
-			qName = QString::fromStdString(dd.name);
-			extIndex = qName.lastIndexOf(".");
-			if (extIndex >= 0) {
-				qExt = qName.mid(extIndex+1);
-				if (qExt != "" )
-				{
-					// does it match?
-					matched = false;
-					/* iterate through the requested extensions */
-					for (int i = 0; i < extList.size(); ++i)
-					{
-						if (qExt.toUpper() == extList.at(i).toUpper())
-						{
-							finalResults->push_back(dd);
-							matched = true;
-						}
-					}
-				}
-			}
-		}
-	}
+        finalResults = new std::list<DirDetails>;
+        std::list<DirDetails>::iterator resultsIter;
+        for (resultsIter = initialResults.begin(); resultsIter != initialResults.end(); resultsIter ++)
+        {
+                dd = *resultsIter;
+                finalResults->push_back(dd);
+        }
 
 	/* abstraction to allow reusee of tree rendering code */
 	resultsToTree(txt,req_id, *finalResults);
@@ -776,6 +785,55 @@ void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, 
 			insertDirectory(txt, searchId, details, child);
 		}
 	}
+}
+
+void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, const DirDetails &dir)
+{
+    QString sid_hexa = QString::number(searchId,16) ;
+    QTreeWidgetItem *child = new QTreeWidgetItem(ui.searchResultWidget);
+
+    child->setIcon(SR_NAME_COL, QIcon(IMAGE_DIRECTORY));
+    child->setText(SR_NAME_COL, QString::fromUtf8(dir.name.c_str()));
+    child->setText(SR_HASH_COL, QString::fromStdString(dir.hash));
+    child->setText(SR_SIZE_COL, misc::friendlyUnit(dir.count));
+    child->setText(SR_AGE_COL, misc::userFriendlyDuration(dir.age));
+    child->setText(SR_REALSIZE_COL, QString::number(dir.count));
+    child->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
+    child->setText(SR_ID_COL, QString::number(1));
+    child->setTextAlignment( SR_ID_COL, Qt::AlignRight );
+    child->setText(SR_SEARCH_ID_COL, sid_hexa);
+    child->setText(SR_TYPE_COL, tr("Folder"));
+
+    ui.searchResultWidget->addTopLevelItem(child);
+
+    /* add to the summary as well */
+
+    int items = ui.searchSummaryWidget->topLevelItemCount();
+    bool found = false ;
+
+    for(int i = 0; i < items; i++)
+    {
+            if(ui.searchSummaryWidget->topLevelItem(i)->text(SS_SEARCH_ID_COL) == sid_hexa)
+            {
+                    // increment result since every item is new
+                    int s = ui.searchSummaryWidget->topLevelItem(i)->text(SS_COUNT_COL).toInt() ;
+                    ui.searchSummaryWidget->topLevelItem(i)->setText(SS_COUNT_COL,QString::number(s+1));
+                    found = true ;
+            }
+    }
+    if(!found)
+    {
+            QTreeWidgetItem *item2 = new QTreeWidgetItem();
+            item2->setText(SS_TEXT_COL, QString::fromStdString(txt));
+            item2->setText(SS_COUNT_COL, QString::number(1));
+            item2->setTextAlignment( SS_COUNT_COL, Qt::AlignRight );
+            item2->setText(SS_SEARCH_ID_COL, sid_hexa);
+
+            ui.searchSummaryWidget->addTopLevelItem(item2);
+            ui.searchSummaryWidget->setCurrentItem(item2);
+    }
+
+// TODO: check for duplicate directories
 }
 
 void SearchDialog::insertFile(const std::string& txt,qulonglong searchId, const FileDetail& file, int searchType)
@@ -1021,15 +1079,12 @@ void SearchDialog::resultsToTree(std::string txt,qulonglong searchId, const std:
 
 			insertFile(txt,searchId,fd, FRIEND_SEARCH);
 		} else if (it->type == DIR_TYPE_DIR) {
-			insertDirectory(txt, searchId, *it, NULL);
+//                        insertDirectory(txt, searchId, *it, NULL);
+                        insertDirectory(txt, searchId, *it);
 		}
 
 	ui.searchResultWidget->setSortingEnabled(true);
 }
-
-
-//void QTreeWidget::currentItemChanged ( QTreeWidgetItem * current, QTreeWidgetItem * previous )  [signal]
-
 
 void SearchDialog::selectSearchResults()
 {
@@ -1189,4 +1244,65 @@ void SearchDialog::togglereset()
       ui.resetButton->show();
     }
     
+}
+
+void SearchDialog::onComboIndexChanged(int index)
+{
+    if (!FileTypeExtensionMap->contains(index) && index != FILETYPE_IDX_DIRECTORY)
+        return;
+    QString alltypes = FileTypeExtensionMap->value(index);
+    QStringList types = alltypes.split(" ");
+    int items = ui.searchResultWidget->topLevelItemCount();
+    for (int i = 0; i < items; i++) {
+        QTreeWidgetItem *ti = ui.searchResultWidget->topLevelItem(i);
+        QString name = ti->text(SR_NAME_COL);
+
+        if (index == FILETYPE_IDX_ANY) {
+            if (ti->isHidden()) {
+                QTreeWidgetItem *ci = ui.searchSummaryWidget->currentItem();
+                if (!ci) {
+                    ti->setHidden(false);
+                    continue;
+                }
+                if (ti->text(SR_SEARCH_ID_COL) == ci->text(SS_SEARCH_ID_COL)) {
+                    ti->setHidden(false);
+                }
+            }
+        } else if (index == FILETYPE_IDX_DIRECTORY) {
+            if (ti->text(SR_HASH_COL).isEmpty()) {
+                if (ti->isHidden()) {
+                    QTreeWidgetItem *ci = ui.searchSummaryWidget->currentItem();
+                    if (!ci) {
+                        ti->setHidden(false);
+                        continue;
+                    }
+                    if (ti->text(SR_SEARCH_ID_COL) == ci->text(SS_SEARCH_ID_COL)) {
+                        ti->setHidden(false);
+                    }
+                }
+            } else {
+                ti->setHidden(true);
+            }
+        } else {
+            if (name.lastIndexOf(".") >= 0) {
+                QString ext = name.mid(name.lastIndexOf(".") + 1);
+                if (!ext.isEmpty() && types.contains(ext, Qt::CaseInsensitive)) {
+                    if (ti->isHidden()) {
+                        QTreeWidgetItem *ci = ui.searchSummaryWidget->currentItem();
+                        if (!ci) {
+                            ti->setHidden(false);
+                            continue;
+                        }
+                        if (ti->text(SR_SEARCH_ID_COL) == ci->text(SS_SEARCH_ID_COL)) {
+                            ti->setHidden(false);
+                        }
+                    }
+                } else {
+                    ti->setHidden(true);
+                }
+            } else {
+                ti->setHidden(true);
+            }
+        }
+    }
 }

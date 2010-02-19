@@ -91,6 +91,8 @@ private slots:
     
     void togglereset();
 
+    void onComboIndexChanged(int index);
+
 
 
 private:
@@ -99,6 +101,7 @@ private:
    void resultsToTree(std::string,qulonglong searchId, const std::list<DirDetails>&);
 	 void insertFile(const std::string& txt,qulonglong searchId, const FileDetail& file, int searchType = ANONYMOUS_SEARCH) ;
 	 void insertDirectory(const std::string &txt, qulonglong searchId, const DirDetails &dir, QTreeWidgetItem *item);
+         void insertDirectory(const std::string &txt, qulonglong searchId, const DirDetails &dir);
 	 void setIconAndType(QTreeWidgetItem *item, QString &ext);
 	 void downloadDirectory(const QTreeWidgetItem *item, const QString &base);
 
