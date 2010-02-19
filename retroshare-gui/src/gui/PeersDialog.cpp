@@ -173,6 +173,7 @@ PeersDialog::PeersDialog(QWidget *parent)
 
   QMenu * grpchatmenu = new QMenu();
   grpchatmenu->addAction(ui.actionClearChat);
+  grpchatmenu->addAction(ui.actionDisable_Emoticons);
   ui.menuButton->setMenu(grpchatmenu);
 
   _underline = false;
@@ -967,12 +968,15 @@ void PeersDialog::insertChat()
                     count ++;
                 }
 
+                if(!ui.actionDisable_Emoticons->isChecked()) 
+                { 
                 QHashIterator<QString, QString> i(smileys);
                 while(i.hasNext())
                 {
                     i.next();
                     foreach(QString code, i.key().split("|"))
                             extraTxt.replace(code, "<img src=\"" + i.value() + "\" />");
+                }
                 }
 
                 if ((msgWidget->verticalScrollBar()->maximum() - 30) < msgWidget->verticalScrollBar()->value() ) {

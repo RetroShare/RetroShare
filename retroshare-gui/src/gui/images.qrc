@@ -11,16 +11,17 @@
         <file>images/btn4.png</file>
         <file>images/btn_26.png</file>
         <file>images/btn_26_hover.png</file>
+        <file>images/btn_26_pressed.png</file>
         <file>images/btn_27.png</file>
         <file>images/btn_27_hover.png</file>
         <file>images/connect_established.png</file>
         <file>images/connect_creating.png</file>
         <file>images/connect_no.png</file>
+        <file>images/edit-clear-history.png</file>
         <file>images/feedback_arrow.png</file>
         <file>images/feedback_arrow_hover.png</file>
         <file>images/list_bullet_arrow.png</file>
         <file>images/rc_combined.png</file>
-        <file>images/btn_26_pressed.png</file>
         <file>images/combobox_arrow.png</file>
         <file>images/arrow-left.png</file>
         <file>images/arrow-right.png</file>
@@ -37,6 +38,7 @@
         <file>images/backgroundl.png</file>
         <file>images/blockdevice.png</file>
         <file>images/blockdevice2.png</file>
+        <file>images/configure.png</file>
         <file>images/channels.png</file>
         <file>images/turtle.png</file>
         <file>images/channels16.png</file>

@@ -1117,6 +1117,10 @@ border: 1px solid #CCCCCC;}</string>
                 <property name="text">
                  <string/>
                 </property>
+                <property name="icon">
+                 <iconset resource="images.qrc">
+                  <normaloff>:/images/fonts.png</normaloff>:/images/fonts.png</iconset>
+                </property>
                 <property name="autoRaise">
                  <bool>true</bool>
                 </property>
@@ -1158,7 +1162,7 @@ p, li { white-space: pre-wrap; }
                </widget>
               </item>
               <item>
-               <widget class="QToolButton" name="menuButton">
+               <widget class="QPushButton" name="menuButton">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                   <horstretch>0</horstretch>
@@ -1180,11 +1184,18 @@ p, li { white-space: pre-wrap; }
                 <property name="text">
                  <string/>
                 </property>
-                <property name="popupMode">
-                 <enum>QToolButton::MenuButtonPopup</enum>
+                <property name="icon">
+                 <iconset resource="images.qrc">
+                  <normaloff>:/images/configure.png</normaloff>:/images/configure.png</iconset>
                 </property>
-                <property name="autoRaise">
-                 <bool>false</bool>
+                <property name="iconSize">
+                 <size>
+                  <width>22</width>
+                  <height>22</height>
+                 </size>
+                </property>
+                <property name="flat">
+                 <bool>true</bool>
                 </property>
                </widget>
               </item>
@@ -1301,6 +1312,10 @@ p, li { white-space: pre-wrap; }
    </item>
   </layout>
   <action name="actionClearChat">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/edit-clear-history.png</normaloff>:/images/edit-clear-history.png</iconset>
+   </property>
    <property name="text">
     <string>Clear Chat History</string>
    </property>
@@ -1375,6 +1390,17 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="toolTip">
     <string>Edit your status Message</string>
+   </property>
+  </action>
+  <action name="actionDisable_Emoticons">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Disable Emoticons</string>
+   </property>
+   <property name="toolTip">
+    <string>Disable Emoticons</string>
    </property>
   </action>
  </widget>
