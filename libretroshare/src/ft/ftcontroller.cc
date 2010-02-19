@@ -110,13 +110,32 @@ bool ftController::getFileDownloadChunksDetails(const std::string& hash,FileChun
 
 	std::map<std::string, ftFileControl>::iterator it = mDownloads.find(hash) ;
 
-	if(it == mDownloads.end())
-		return false ;
+	if(it != mDownloads.end())
+	{
+		it->second.mCreator->getChunkMap(info) ;
+		info.flags = it->second.mFlags ;
 
-	it->second.mCreator->getChunkMap(info) ;
-	info.flags = it->second.mFlags ;
+		return true ;
+	}
 
-	return true ;
+	it = mCompleted.find(hash) ;
+
+	if(it != mCompleted.end())
+	{
+		// This should rather be done as a static method of ChunkMap.
+		//
+		info.file_size = it->second.mSize ;
+		info.chunk_size = ChunkMap::CHUNKMAP_FIXED_CHUNK_SIZE ;
+		info.flags = it->second.mFlags ;
+		uint32_t nb_chunks = it->second.mSize/ChunkMap::CHUNKMAP_FIXED_CHUNK_SIZE ;
+		if(it->second.mSize % ChunkMap::CHUNKMAP_FIXED_CHUNK_SIZE != 0)
+			++nb_chunks ;
+		info.chunks.resize(nb_chunks,FileChunksInfo::CHUNK_DONE) ;
+
+		return true ;
+	}
+
+	return false ;
 }
 
 void ftController::addFileSource(const std::string& hash,const std::string& peer_id)
@@ -519,11 +538,8 @@ bool ftController::completeFile(std::string hash)
 			fc->mState = ftFileControl::ERROR_COMPLETION;
 
 		/* switch map */
-		if (fc->mFlags & RS_FILE_HINTS_CACHE) /* clean up completed cache files automatically */
-		{
+		if (!(fc->mFlags & RS_FILE_HINTS_CACHE)) /* clean up completed cache files automatically */
 			mCompleted[fc->mHash] = *fc;
-		}
-
 
 		/* for extralist additions */
 		path    = fc->mDestination;
@@ -1110,8 +1126,9 @@ bool 	ftController::FileClearCompleted()
 #ifdef CONTROL_DEBUG
 	std::cerr << "ftController::FileClearCompleted()" <<std::endl;
 #endif
-        mCompleted.clear();
-        IndicateConfigChanged();
+	mCompleted.clear();
+	IndicateConfigChanged();
+
 	return false;
 }
 
@@ -1254,9 +1271,7 @@ bool 	ftController::FileDetails(std::string hash, FileInfo &info)
 	std::list<std::string>::iterator pit;
 
 	if (!completed)
-	{
 		it->second.mTransfer->getFileSources(peerIds);
-	}
 
 	double totalRate = 0;
 	uint32_t tfRate = 0;
