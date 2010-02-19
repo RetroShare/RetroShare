@@ -173,7 +173,7 @@ void CreateBlogMsg::parseRsFileListAttachments(std::string attachList)
 
 	for(it = attachItems.begin(); it != attachItems.end(); it++)
 	{
-		std::cerr << "CreateChannelMsg::parseRsFileListAttachments() Entry: ";
+		std::cerr << "CreateBlogMsg::parseRsFileListAttachments() Entry: ";
 
 		QStringList parts = (*it).split("/");
 
@@ -355,7 +355,7 @@ void CreateBlogMsg::checkAttachmentReady()
 
 void CreateBlogMsg::cancelMsg()
 {
-	std::cerr << "CreateChannelMsg::cancelMsg()";
+	std::cerr << "CreateBlogMsg::cancelMsg()";
 	std::cerr << std::endl;
 	close();
 	return;
@@ -383,7 +383,7 @@ void CreateBlogMsg::newBlogMsg()
 
 void CreateBlogMsg::sendMsg()
 {
-	std::cerr << "CreateChannelMsg::sendMsg()";
+	std::cerr << "CreateBlogMsg::sendMsg()";
 	std::cerr << std::endl;
 
 	/* construct message bits */
@@ -423,6 +423,8 @@ void CreateBlogMsg::sendMsg()
 
 void CreateBlogMsg::sendMessage(std::wstring subject, std::wstring msg, std::list<FileInfo> &files)
 {
+	std::cerr << "CreateBlogMsg::sendMessage()" << std::endl;
+
 	QString name = subjectEdit->text();
 
 	if(name.isEmpty())
@@ -446,7 +448,7 @@ void CreateBlogMsg::sendMessage(std::wstring subject, std::wstring msg, std::lis
 		msgInfo.subject = subject;
 		msgInfo.msg = msg;
 		msgInfo.files = files;
-				
+		msgInfo.msgIdReply = "nothing";
 		rsBlogs->BlogMessageSend(msgInfo);
 	}
 			

@@ -33,6 +33,7 @@
 #include "LinksDialog.h"
 #include "ForumsDialog.h"
 #include "NewsFeed.h"
+#include "blogs/BlogsDialog.h"
 
 #include "rshare.h"
 #include "MainWindow.h"
@@ -97,6 +98,7 @@
 #define IMAGE_NOONLINE          ":/images/rstray0.png"
 #define IMAGE_ONEONLINE         ":/images/rstray1.png"
 #define IMAGE_TWOONLINE         ":/images/rstray2.png"
+#define IMAGE_BLOGS             ":/images/kblogger.png"
 
 
 /** Constructor */
@@ -183,6 +185,12 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(channelFeed = new ChannelFeed(ui.stackPages),
                       createPageAction(QIcon(IMAGE_CHANNELS), tr("Channels"), grp));
     #endif
+
+	#ifndef RS_RELEASE_VERSION
+    BlogsDialog *blogsFeed = NULL;
+    ui.stackPages->add(blogsFeed = new BlogsDialog(ui.stackPages),
+		createPageAction(QIcon(IMAGE_BLOGS), tr("Blogs"), grp));
+	#endif
                       
     ForumsDialog *forumsDialog = NULL;
     ui.stackPages->add(forumsDialog = new ForumsDialog(ui.stackPages),

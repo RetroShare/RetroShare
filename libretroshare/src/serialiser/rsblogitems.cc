@@ -47,7 +47,7 @@ void 	RsBlogMsg::clear()
 
 std::ostream &RsBlogMsg::print(std::ostream &out, uint16_t indent)
 {
-        printRsItemBase(out, "RsChannelMsg", indent);
+        printRsItemBase(out, "RsBlogMsg", indent);
 	uint16_t int_Indent = indent + 2;
 
 	RsDistribMsg::print(out, int_Indent);
@@ -186,7 +186,7 @@ RsBlogMsg *RsBlogSerialiser::deserialiseMsg(void *data, uint32_t *pktsize)
 
 	ok &= GetTlvWideString(data, rssize, &offset, TLV_TYPE_WSTR_SUBJECT, item->subject);
 	ok &= GetTlvWideString(data, rssize, &offset, TLV_TYPE_WSTR_MSG, item->message);
-	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_MSGID, item->mIdReply);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_MSG, item->mIdReply);
 
     ok &= item->attachment.GetTlv(data, rssize, &offset);
 
