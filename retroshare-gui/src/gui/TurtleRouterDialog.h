@@ -6,22 +6,16 @@
 
 class TurtleRouterDialog: public RsAutoUpdatePage, public Ui::TurtleRouterDialogForm
 {
-	Q_OBJECT
-
 	public:
 		TurtleRouterDialog(QWidget *parent = NULL) ;
-		static void showUp() ;
 
                 /** Default Constructor */
-	protected slots:
-		void showCtxMenu(const QPoint&) ;
-		void removeFileHash() ;
-
 	private:
-		void fillTable(QTableWidget *table,const std::vector<std::vector<std::string> >&) ;
-		QTimer *_timer ;
-
 		virtual void updateDisplay() ;
+		QTreeWidgetItem *findParentHashItem(const std::string& hash) ;
 
-		static TurtleRouterDialog *_instance ;
+		std::map<std::string,QTreeWidgetItem*> top_level_hashes ;
+		QTreeWidgetItem *top_level_unknown_hashes ;
+		QTreeWidgetItem *top_level_s_requests ;
+		QTreeWidgetItem *top_level_t_requests ;
 } ;

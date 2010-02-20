@@ -5,56 +5,27 @@
 #include <rsiface/rsturtle.h>
 #include "TurtleRouterDialog.h"
 
-TurtleRouterDialog *TurtleRouterDialog::_instance = NULL ;
-
 TurtleRouterDialog::TurtleRouterDialog(QWidget *parent)
 	: RsAutoUpdatePage(2000,parent)
 {
 	setupUi(this) ;
-	connect( _hashes_TW, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showCtxMenu(const QPoint&)));
 
-	_hashes_TW->setToolTip(tr("As a helper, you can manually remove hashes\nfrom there. Warning: doing so on currently\nactive transfers will block the transfer process.")) ;
-}
+	// Init the basic setup.
+	//
+	QStringList stl ;
+	int n=0 ;
 
-void TurtleRouterDialog::showCtxMenu(const QPoint& point)
-{
-	if(_hashes_TW->currentItem() == NULL)
-		return ;
+	stl.clear() ;
+	stl.push_back(QString("Search requests")) ;
+	top_level_s_requests = new QTreeWidgetItem(_f2f_TW,stl) ;
+	_f2f_TW->insertTopLevelItem(n++,top_level_s_requests) ;
 
-	std::cerr << "execing context menu" << std::endl ;
-	// create context menus.
-	QMenu contextMnu( this );
-	QAction *removeHashAction = new QAction(QIcon(":/images/delete.png"), tr("Stop handling this hash"), this);
-	connect(removeHashAction , SIGNAL(triggered()), this, SLOT(removeFileHash()));
-	contextMnu.addAction(removeHashAction);
+	stl.clear() ;
+	stl.push_back(QString("Tunnel requests")) ;
+	top_level_t_requests = new QTreeWidgetItem(_f2f_TW,stl) ;
+	_f2f_TW->insertTopLevelItem(n++,top_level_t_requests) ;
 
-	QMouseEvent *mevent = new QMouseEvent(QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier ) ;
-	contextMnu.exec( mevent->globalPos() );
-}
-
-void TurtleRouterDialog::showUp()
-{
-	if(_instance == NULL)
-		_instance = new TurtleRouterDialog ;
-
-	_instance->show() ;
-	_instance->update() ;
-}
-
-void TurtleRouterDialog::removeFileHash()
-{
-	QTableWidgetItem *item = _hashes_TW->currentItem();
-
-	std::cout << "in remove hash " << std::endl ;
-	if(item == NULL)
-		return ;
-
-	std::cout << "item->row = " << item->row() << std::endl ;
-	std::string hash = _hashes_TW->item(item->row(),0)->text().toStdString() ;
-
-	std::cout << "remove ing hash: " << hash << std::endl ;
-
-	rsTurtle->stopMonitoringFileTunnels(hash) ;
+	top_level_hashes.clear() ;
 }
 
 void TurtleRouterDialog::updateDisplay()
@@ -70,35 +41,70 @@ void TurtleRouterDialog::updateDisplay()
 
 	// now display this in the QTableWidgets
 
-	fillTable( _hashes_TW, hashes_info) ;
-	fillTable( _tunnels_TW, tunnels_info) ;
+	QStringList stl ;
 
-	std::vector<std::vector<std::string> >& reqs(search_reqs_info) ;
+	// remove all children of top level objects
+	for(int i=0;i<_f2f_TW->topLevelItemCount();++i)
+		while(_f2f_TW->topLevelItem(i)->takeChild(0) != NULL) ;
 
-	for(uint i=0;i<search_reqs_info.size();++i) search_reqs_info[i].push_back("Search request") ;
-	for(uint i=0;i<tunnel_reqs_info.size();++i) 
+	// check that an entry exist for all hashes
+	for(uint i=0;i<tunnels_info.size();++i)
 	{
-		tunnel_reqs_info[i].push_back("Tunnel request") ;
-		reqs.push_back(tunnel_reqs_info[i]) ;
+		const std::string& hash(tunnels_info[i][3]) ;
+
+		QTreeWidgetItem *parent = findParentHashItem(hash) ;
+
+		QString str = QString::fromStdString("Tunnel id: "+tunnels_info[i][0] + "\t from [" + tunnels_info[i][2] + "] to [" + tunnels_info[i][1] + "]\t\t last transfer: " + tunnels_info[i][4]) ;
+		stl.clear() ;
+		stl.push_back(str) ;
+
+		new QTreeWidgetItem(parent,stl) ;
 	}
 
-	fillTable( _reqs_TW, reqs) ;
-}
+	for(uint i=0;i<search_reqs_info.size();++i)
+	{
+		QString str = QString::fromStdString("Request id: "+search_reqs_info[i][0] + "\t from [" + search_reqs_info[i][1] + "]\t " + search_reqs_info[i][2]) ;
 
-void TurtleRouterDialog::fillTable(QTableWidget *table,const std::vector<std::vector<std::string> >& data)
+		stl.clear() ;
+		stl.push_back(str) ;
+
+		new QTreeWidgetItem(top_level_s_requests,stl) ;
+	}
+
+	for(uint i=0;i<tunnel_reqs_info.size();++i)
+	{
+		QString str = QString::fromStdString("Request id: "+tunnel_reqs_info[i][0] + "\t from [" + tunnel_reqs_info[i][1] + "]\t " + tunnel_reqs_info[i][2]) ;
+
+		stl.clear() ;
+		stl.push_back(str) ;
+
+		new QTreeWidgetItem(top_level_t_requests,stl) ;
+	}
+
+	for(int i=2;i<_f2f_TW->topLevelItemCount();)
+		if(_f2f_TW->topLevelItem(i)->childCount() == 0) 
+			_f2f_TW->takeTopLevelItem(i) ;
+		else
+			++i ;
+}
+	
+QTreeWidgetItem *TurtleRouterDialog::findParentHashItem(const std::string& hash)
 {
-	table->clearContents() ;
+	// look for the hash, and insert a new element if necessary.
+	//
+	QList<QTreeWidgetItem*> items = _f2f_TW->findItems((hash=="")?QString("Unknown hashes"):QString::fromStdString(hash),Qt::MatchExactly) ;
 
-	for(uint i=0;i<data.size();++i)
-	{
-		if(table->rowCount() <= i)
-			table->insertRow(i) ;
+	if(items.empty())
+	{	
+		QStringList stl ;
+		stl.push_back((hash=="")?QString("Unknown hashes"):QString::fromStdString(hash)) ;
+		QTreeWidgetItem *item = new QTreeWidgetItem(_f2f_TW,stl) ;
+		_f2f_TW->insertTopLevelItem(0,item) ;
 
-		for(uint j=0;j<data[i].size();++j)
-			table->setItem(i,j,new QTableWidgetItem(QString::fromStdString(data[i][j].empty()?"Unknown":data[i][j]))) ;
+		return item ;
 	}
-
-	for(uint i=data.size();i<table->rowCount();)
-		table->removeRow(i) ;
+	else
+		return items.front() ;
 }
+
 

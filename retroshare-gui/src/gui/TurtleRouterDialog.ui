@@ -19,93 +19,13 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QTableWidget" name="_hashes_TW">
-     <property name="contextMenuPolicy">
-      <enum>Qt::CustomContextMenu</enum>
+    <widget class="QTreeWidget" name="_f2f_TW">
+     <property name="headerHidden">
+      <bool>true</bool>
      </property>
-     <property name="selectionMode">
-      <enum>QAbstractItemView::SingleSelection</enum>
-     </property>
-     <attribute name="horizontalHeaderStretchLastSection">
-      <bool>true</bool>
-     </attribute>
      <column>
       <property name="text">
-       <string>Handled file hash</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>File Name</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Active tunnels</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Last tunnel request</string>
-      </property>
-     </column>
-    </widget>
-   </item>
-   <item>
-    <widget class="QTableWidget" name="_tunnels_TW">
-     <attribute name="horizontalHeaderStretchLastSection">
-      <bool>true</bool>
-     </attribute>
-     <column>
-      <property name="text">
-       <string>Current Tunnel id</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Source</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Destination</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Hash</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Last transfer</string>
-      </property>
-     </column>
-    </widget>
-   </item>
-   <item>
-    <widget class="QTableWidget" name="_reqs_TW">
-     <attribute name="horizontalHeaderStretchLastSection">
-      <bool>true</bool>
-     </attribute>
-     <column>
-      <property name="text">
-       <string>Request id</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Origin</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Age</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Type</string>
+       <string>F2F router information</string>
       </property>
      </column>
     </widget>
