@@ -527,7 +527,7 @@ void BlogsDialog::updateChannelMsgs()
 		BlogsMsgItem *cmi = new BlogsMsgItem(this, 0, mPeerId, mBlogId, it->msgId, true);
 
 		mBlogMsgItems.push_back(cmi);
-		verticalLayout->addWidget(cmi);
+		verticalLayout_2->addWidget(cmi);
 	}
 }
 

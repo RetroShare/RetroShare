@@ -535,14 +535,7 @@ border-image: url(:/images/btn_26_pressed.png) 4;
              <number>0</number>
             </property>
             <item>
-             <widget class="QFrame" name="frame_2">
-              <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
-              </property>
-              <property name="frameShadow">
-               <enum>QFrame::Raised</enum>
-              </property>
-             </widget>
+             <layout class="QVBoxLayout" name="verticalLayout_2"/>
             </item>
             <item>
              <spacer name="verticalSpacer">
@@ -583,6 +576,7 @@ border-image: url(:/images/btn_26_pressed.png) 4;
  <resources>
   <include location="../images.qrc"/>
   <include location="images.qrc"/>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
