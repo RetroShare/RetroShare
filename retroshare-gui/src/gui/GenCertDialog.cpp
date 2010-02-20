@@ -65,7 +65,8 @@ GenCertDialog::GenCertDialog(QWidget *parent, Qt::WFlags flags)
                     std::string name, email;
                     RsInit::GetPGPLoginDetails(*it, name, email);
                     std::cerr << "Adding PGPUser: " << name << " id: " << *it << std::endl;
-                    ui.genPGPuser->addItem(QString::fromStdString(name + " <" + email + "> ("+*it+")"), userData);
+						  QString gid = QString::fromStdString(*it).right(8) ;
+                    ui.genPGPuser->addItem(QString::fromStdString(name + " <" + email + "> (")+gid+")", userData);
                     foundGPGKeys = true;
             }
     }
