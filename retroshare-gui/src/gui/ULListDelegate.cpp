@@ -134,6 +134,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 				FileProgressInfo pinfo = index.data().value<FileProgressInfo>() ;
 
 				// create a xProgressBar
+				painter->save() ;
 				xProgressBar progressBar(pinfo,option.rect,painter,0);// the 3rd param is the  color schema (0 is the default value)
 
 				QString ext = QFileInfo(QString::fromStdString(index.sibling(index.row(), UNAME).data().toString().toStdString())).suffix();;
@@ -145,6 +146,8 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 				progressBar.setDisplayText(true); // should display % text?
 				progressBar.setVerticalSpan(1);
 				progressBar.paint(); // paint the progress bar
+
+				painter->restore() ;
 			}
 			painter->drawText(option.rect, Qt::AlignCenter, newopt.text);
 			break;

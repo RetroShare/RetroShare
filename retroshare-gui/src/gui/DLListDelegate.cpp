@@ -160,6 +160,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 //					std::cerr << pinfo.cmap._map[i] << " " ;
 //				std::cerr << std::endl ;
 				
+				painter->save() ;
 				xProgressBar progressBar(pinfo,option.rect, painter); // the 3rd param is the  color schema (0 is the default value)
 				if(pinfo.type == FileProgressInfo::DOWNLOAD_LINE)
 				{
@@ -173,6 +174,8 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 				}
 				progressBar.setVerticalSpan(1);
 				progressBar.paint(); // paint the progress bar
+
+				painter->restore() ;
 			}
 			painter->drawText(option.rect, Qt::AlignCenter, newopt.text);
 			break;
