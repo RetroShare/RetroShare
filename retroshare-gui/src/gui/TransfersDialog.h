@@ -70,7 +70,6 @@ private slots:
     void cancel();
     /** removes finished Downloads**/
     void clearcompleted();
-    void playSelectedTransfer();
 
     void copyLink();
     void pasteLink();

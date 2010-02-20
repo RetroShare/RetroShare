@@ -229,27 +229,41 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 	 * - if it is completed - play should appear in menu
 	 */
 	std::cerr << "TransfersDialog::downloadListCostumPopupMenu()" << std::endl;
+	
+	FileInfo info;
+
+	for (it = items.begin(); it != items.end(); it ++) {
+		if (!rsFiles->FileDetails((*it)->data(Qt::DisplayRole).toString().toStdString(), RS_FILE_HINTS_DOWNLOAD, info)) continue;
+		break;
+	}
 
 	bool addPlayOption = false;
+	bool addOpenFileOption = false;
 
-	for(int i = 0; i <= DLListModel->rowCount(); i++) {
-		std::cerr << "Row Status :" << getStatus(i, DLListModel).toStdString() << ":" << std::endl;
-		if(selection->isRowSelected(i, QModelIndex())) {
-			std::cerr << "Selected Row Status :" << getStatus(i, DLListModel).toStdString() << ":" << std::endl;
-			QString qstatus = getStatus(i, DLListModel);
-			std::string status = (qstatus.trimmed()).toStdString();
-			if (status == "Complete")
-			{
-				std::cerr << "Add Play Option" << std::endl;
-				addPlayOption = true;
-			}
+  if  (info.downloadStatus == FT_STATE_COMPLETE)
+	{
+		std::cerr << "Add Play Option" << std::endl;
+		
+		addOpenFileOption = true;
+				
+		size_t pos = info.fname.find_last_of('.');
+    if (pos == -1) return;	/* can't identify type of file */
+    
+		/* check if the file is a media file */
+    if (misc::isPreviewable(info.fname.substr(pos + 1).c_str()))
+    {
+		addPlayOption = true;
 		}
+		
+
 	}
+		
+
 	QAction *playAct = NULL;
 	if (addPlayOption)
 	{
 		playAct = new QAction(QIcon(IMAGE_PLAY), tr( "Play" ), this );
-		connect( playAct , SIGNAL( triggered() ), this, SLOT( playSelectedTransfer() ) );
+		connect( playAct , SIGNAL( triggered() ), this, SLOT( openTransfer() ) );
 	}
 
         QAction *detailsAct = NULL;
@@ -262,8 +276,8 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
         cancelAct = new QAction(QIcon(IMAGE_CANCEL), tr( "Cancel" ), this );
         connect( cancelAct , SIGNAL( triggered() ), this, SLOT( cancel() ) );
 
-	openfolderAct = new QAction(QIcon(IMAGE_OPENFOLDER), tr("Open Folder"), this);
-	connect(openfolderAct, SIGNAL(triggered()), this, SLOT(openFolderTransfer()));
+        openfolderAct = new QAction(QIcon(IMAGE_OPENFOLDER), tr("Open Folder"), this);
+        connect(openfolderAct, SIGNAL(triggered()), this, SLOT(openFolderTransfer()));
 
         openfileAct = new QAction(QIcon(IMAGE_OPENFILE), tr("Open File"), this);
         connect(openfileAct, SIGNAL(triggered()), this, SLOT(openTransfer()));
@@ -377,8 +391,10 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 
 	if(single)
 	{
-#ifndef RS_RELEASE_VERSION
+    if (addOpenFileOption)
 		contextMnu.addAction( openfileAct);
+
+#ifndef RS_RELEASE_VERSION		
 		contextMnu.addAction( previewfileAct);
 #endif		
     contextMnu.addAction( openfolderAct);
@@ -398,36 +414,6 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 	contextMnu.addMenu( viewMenu);
 
 	contextMnu.exec( mevent->globalPos() );
-}
-
-void TransfersDialog::playSelectedTransfer()
-{
-	std::cerr << "TransfersDialog::playSelectedTransfer()" << std::endl;
-
-        /* get the shared directories */
-	std::string incomingdir = rsFiles->getDownloadDirectory();
-
-	/* create the List of Files */
-	QStringList playList;
-	for(int i = 0; i <= DLListModel->rowCount(); i++) {
-		if(selection->isRowSelected(i, QModelIndex())) {
-			QString qstatus = getStatus(i, DLListModel);
-			std::string status = (qstatus.trimmed()).toStdString();
-			if (status == "Complete")
-			{
-				QString qname = getFileName(i, DLListModel);
-				QString fullpath = QString::fromStdString(incomingdir);
-				fullpath += "/";
-				fullpath += qname.trimmed();
-
-				playList.push_back(fullpath);
-
-				std::cerr << "PlayFile:" << fullpath.toStdString() << std::endl;
-
-			}
-		}
-	}
-	playFiles(playList);
 }
 
 TransfersDialog::~TransfersDialog()
@@ -1044,18 +1030,6 @@ void TransfersDialog::showDetailsDialog()
         }
     }
 }
-
-// display properties of selected items
-/*void DownloadingTorrents::propertiesSelection(){
-  QModelIndexList selectedIndexes = downloadList->selectionModel()->selectedIndexes();
-  foreach(const QModelIndex &index, selectedIndexes){
-    if(index.column() == NAME){
-      showProperties(index);
-    }
-  }
-}*/
-
-
 
 void TransfersDialog::pasteLink()
 {
