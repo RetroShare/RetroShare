@@ -129,7 +129,8 @@ SearchDialog::SearchDialog(QWidget *parent)
     connect ( ui.searchSummaryWidget, SIGNAL( currentItemChanged ( QTreeWidgetItem *, QTreeWidgetItem * ) ),
                     this, SLOT( selectSearchResults( void ) ) );
 
-    connect(ui.FileTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onComboIndexChanged(int)));
+    //connect(ui.FileTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onComboIndexChanged(int)));
+    connect(ui.FileTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(selectSearchResults(int)));
 
     /* hide the Tree +/- */
     ui.searchResultWidget -> setRootIsDecorated( true );
@@ -833,6 +834,7 @@ void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, 
             ui.searchSummaryWidget->setCurrentItem(item2);
     }
 
+    selectSearchResults();
 // TODO: check for duplicate directories
 }
 
@@ -1086,8 +1088,13 @@ void SearchDialog::resultsToTree(std::string txt,qulonglong searchId, const std:
 	ui.searchResultWidget->setSortingEnabled(true);
 }
 
-void SearchDialog::selectSearchResults()
+void SearchDialog::selectSearchResults(int index)
 {
+    index = (index == -1)?ui.FileTypeComboBox->currentIndex():index;
+    QString alltypes = FileTypeExtensionMap->value(index);
+    QStringList types = alltypes.split(" ");
+
+
 	/* highlight this search in summary window */
 	QTreeWidgetItem *ci = ui.searchSummaryWidget->currentItem();
 	if (!ci)
@@ -1107,8 +1114,15 @@ void SearchDialog::selectSearchResults()
 		/* get item */
 		QTreeWidgetItem *ti = ui.searchResultWidget->topLevelItem(i);
 		if (ti->text(SR_SEARCH_ID_COL) == searchId)
-		{
-			ti->setHidden(false);
+                {
+                    if (index == FILETYPE_IDX_ANY)
+                        ti->setHidden(false);
+                    else if (index == FILETYPE_IDX_DIRECTORY && ti->text(SR_HASH_COL).isEmpty())
+                        ti->setHidden(false);
+                    else if (types.contains(QFileInfo(ti->text(SR_NAME_COL)).suffix(), Qt::CaseInsensitive))
+                        ti->setHidden(false);
+                    else
+                        ti->setHidden(true);
 		}
 		else
 		{
@@ -1246,6 +1260,7 @@ void SearchDialog::togglereset()
     
 }
 
+// not in use for the moment
 void SearchDialog::onComboIndexChanged(int index)
 {
     if (!FileTypeExtensionMap->contains(index) && index != FILETYPE_IDX_DIRECTORY)

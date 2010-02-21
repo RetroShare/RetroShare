@@ -83,7 +83,7 @@ private slots:
 /** perform the advanced search */
     void advancedSearch(Expression*);
 
-    void selectSearchResults();
+    void selectSearchResults(int index = -1);
 
     void clearKeyword();
     
