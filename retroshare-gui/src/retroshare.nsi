@@ -187,6 +187,7 @@ Section $(sec_main) sec_main
   File /r "D:\Qt\2010.01\qt\bin\QtXml4.dll"
   File /r "D:\Qt\2010.01\qt\bin\QtScript4.dll"
   File /r "D:\Qt\2010.01\qt\bin\libgcc_s_dw2-1.dll"
+  File /r "D:\Qt\2010.01\qt\plugins\imageformats"
   File /r "D:\Development\miniupnpc-1.3\miniupnpc.dll"
   File /r "release\pthreadGC2d.dll"
   File /r "release\libgpg-error-0.dll"
