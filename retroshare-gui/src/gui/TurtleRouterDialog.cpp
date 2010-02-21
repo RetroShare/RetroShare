@@ -30,8 +30,6 @@ TurtleRouterDialog::TurtleRouterDialog(QWidget *parent)
 
 void TurtleRouterDialog::updateDisplay()
 {
-	std::cout << "updatign turtle router console."<< std::endl ;
-
 	std::vector<std::vector<std::string> > hashes_info ;
 	std::vector<std::vector<std::string> > tunnels_info ;
 	std::vector<std::vector<std::string> > search_reqs_info ;
@@ -54,7 +52,7 @@ void TurtleRouterDialog::updateDisplay()
 
 		QTreeWidgetItem *parent = findParentHashItem(hash) ;
 
-		QString str = QString::fromStdString("Tunnel id: "+tunnels_info[i][0] + "\t from [" + tunnels_info[i][2] + "] to [" + tunnels_info[i][1] + "]\t\t last transfer: " + tunnels_info[i][4]) ;
+		QString str = QString::fromStdString("Tunnel id: "+tunnels_info[i][0] + "\t [" + tunnels_info[i][2] + "] --> [" + tunnels_info[i][1] + "]\t\t last transfer: " + tunnels_info[i][4]) ;
 		stl.clear() ;
 		stl.push_back(str) ;
 
