@@ -1462,7 +1462,7 @@ void PeersDialog::updateAvatar()
 
 void PeersDialog::getAvatar()
 {
-	QString fileName = QFileDialog::getOpenFileName(this, "Load File", QDir::homePath(), "Pictures (*.png *.xpm *.jpg *.tiff)");
+	QString fileName = QFileDialog::getOpenFileName(this, "Load File", QDir::homePath(), "Pictures (*.png *.xpm *.jpg *.tiff *.gif)");
 	if(!fileName.isEmpty())
 	{
 		picture = QPixmap(fileName).scaled(82,82, Qt::IgnoreAspectRatio);
