@@ -378,8 +378,7 @@ void CreateBlogMsg::addAttachment(std::string hash, std::string fname, uint64_t 
 	SubFileItem *file = new SubFileItem(hash, fname, size, flags, srcId);
 
 	mAttachments.push_back(file);
-	QLayout *layout = ui.fileFrame->layout();
-	layout->addWidget(file);
+	ui.verticalLayout_3->addWidget(file);
 
 	if (mCheckAttachment)
 	{
@@ -424,8 +423,7 @@ void CreateBlogMsg::addAttachment(std::string path)
 	SubFileItem *file = new SubFileItem(path);
 
 	mAttachments.push_back(file);
-	QLayout *layout = ui.fileFrame->layout();
-	layout->addWidget(file);
+	ui.verticalLayout_3->addWidget(file);
 
 	if (mCheckAttachment)
 	{

@@ -267,35 +267,7 @@ border: 1px solid #CCCCCC;}</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout">
                <item>
-                <widget class="QFrame" name="fileFrame">
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                 <property name="acceptDrops">
-                  <bool>true</bool>
-                 </property>
-                 <property name="toolTip">
-                  <string>Drag and Drop Files from Search Results</string>
-                 </property>
-                 <property name="styleSheet">
-                  <string notr="true">QFrame#fileFrame{border: 2px solid black; 
-background: white;}</string>
-                 </property>
-                 <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
-                 </property>
-                 <property name="frameShadow">
-                  <enum>QFrame::Raised</enum>
-                 </property>
-                 <layout class="QGridLayout" name="gridLayout_3">
-                  <item row="0" column="0">
-                   <layout class="QHBoxLayout" name="horizontalLayout"/>
-                  </item>
-                 </layout>
-                </widget>
+                <layout class="QVBoxLayout" name="verticalLayout_3"/>
                </item>
                <item>
                 <spacer name="verticalSpacer">
@@ -497,6 +469,9 @@ background: white;}</string>
   </action>
  </widget>
  <resources>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
