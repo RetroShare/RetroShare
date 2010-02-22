@@ -742,68 +742,6 @@ void CreateBlogMsg::textSize(const QString &p)
     }
 }
 
-void CreateBlogMsg::textStyle(int styleIndex)
-{
-    QTextCursor cursor = ui.msgEdit->textCursor();
-
-    if (styleIndex != 0) {
-        QTextListFormat::Style style = QTextListFormat::ListDisc;
-
-        switch (styleIndex) {
-            default:
-            case 1:
-                style = QTextListFormat::ListDisc;
-                break;
-            case 2:
-                style = QTextListFormat::ListCircle;
-                break;
-            case 3:
-                style = QTextListFormat::ListSquare;
-                break;
-            case 4:
-                style = QTextListFormat::ListDecimal;
-                break;
-            case 5:
-                style = QTextListFormat::ListLowerAlpha;
-                break;
-            case 6:
-                style = QTextListFormat::ListUpperAlpha;
-                break;
-            case 7:
-                style = QTextListFormat::ListLowerRoman;
-                break;
-            case 8:
-                style = QTextListFormat::ListUpperRoman;
-                break;
-        }
-
-        cursor.beginEditBlock();
-
-        QTextBlockFormat blockFmt = cursor.blockFormat();
-
-        QTextListFormat listFmt;
-
-        if (cursor.currentList()) {
-            listFmt = cursor.currentList()->format();
-        } else {
-            listFmt.setIndent(blockFmt.indent() + 1);
-            blockFmt.setIndent(0);
-            cursor.setBlockFormat(blockFmt);
-        }
-
-        listFmt.setStyle(style);
-
-        cursor.createList(listFmt);
-
-        cursor.endEditBlock();
-    } else {
-        // ####
-        QTextBlockFormat bfmt;
-        bfmt.setObjectIndex(-1);
-        cursor.mergeBlockFormat(bfmt);
-    }
-}
-
 void CreateBlogMsg::changeFormatType(int styleIndex )
 {
     ui.msgEdit->setFocus( Qt::OtherFocusReason );
@@ -1052,7 +990,7 @@ void CreateBlogMsg::setupTextActions()
     
     actionTextBold = new QAction(QIcon(":/images/textedit/textbold.png"),tr("&Bold"), this);
     actionTextBold->setShortcut(Qt::CTRL + Qt::Key_B);
-    actionTextBold->setPriority(QAction::LowPriority);
+    //actionTextBold->setPriority(QAction::LowPriority);
     QFont bold;
     bold.setBold(true);
     actionTextBold->setFont(bold);
@@ -1063,7 +1001,7 @@ void CreateBlogMsg::setupTextActions()
     actionTextBold->setCheckable(true);
 
     actionTextItalic = new QAction(QIcon(":/images/textedit/textitalic.png"),tr("&Italic"), this);
-    actionTextItalic->setPriority(QAction::LowPriority);
+    //actionTextItalic->setPriority(QAction::LowPriority);
     actionTextItalic->setShortcut(Qt::CTRL + Qt::Key_I);
     QFont italic;
     italic.setItalic(true);
@@ -1076,7 +1014,7 @@ void CreateBlogMsg::setupTextActions()
 
     actionTextUnderline = new QAction(QIcon(":/images/textedit/textunder.png"),tr("&Underline"), this);
     actionTextUnderline->setShortcut(Qt::CTRL + Qt::Key_U);
-    actionTextUnderline->setPriority(QAction::LowPriority);
+    //actionTextUnderline->setPriority(QAction::LowPriority);
     QFont underline;
     underline.setUnderline(true);
     actionTextUnderline->setFont(underline);
@@ -1105,16 +1043,16 @@ void CreateBlogMsg::setupTextActions()
 
     actionAlignLeft->setShortcut(Qt::CTRL + Qt::Key_L);
     actionAlignLeft->setCheckable(true);
-    actionAlignLeft->setPriority(QAction::LowPriority);
+    //actionAlignLeft->setPriority(QAction::LowPriority);
     actionAlignCenter->setShortcut(Qt::CTRL + Qt::Key_E);
     actionAlignCenter->setCheckable(true);
-    actionAlignCenter->setPriority(QAction::LowPriority);
+    //actionAlignCenter->setPriority(QAction::LowPriority);
     actionAlignRight->setShortcut(Qt::CTRL + Qt::Key_R);
     actionAlignRight->setCheckable(true);
-    actionAlignRight->setPriority(QAction::LowPriority);
+    //actionAlignRight->setPriority(QAction::LowPriority);
     actionAlignJustify->setShortcut(Qt::CTRL + Qt::Key_J);
     actionAlignJustify->setCheckable(true);
-    actionAlignJustify->setPriority(QAction::LowPriority);
+    //actionAlignJustify->setPriority(QAction::LowPriority);
 
     ui.toolBar_2->addActions(grp->actions());
     menu->addActions(grp->actions());
