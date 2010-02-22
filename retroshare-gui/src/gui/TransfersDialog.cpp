@@ -361,9 +361,9 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 
 		for (int i = 0; i < lst.count (); i++)
 		{
-			if ( lst[i].column() == 0 && lst[i].model ()->data (lst[i].model ()->index (lst[i].row (), STATUS )).toString() == "Waiting")
+			if ( lst[i].column() == 0 && info.downloadStatus == FT_STATE_WAITING )
 				all_downld = false ;
-			if ( lst[i].column() == 0 && lst[i].model ()->data (lst[i].model ()->index (lst[i].row (), STATUS )).toString() == "Downloading")
+			if ( lst[i].column() == 0 && info.downloadStatus == FT_STATE_DOWNLOADING )
 				all_paused = false ;
 
 			if ( lst[i].column() == 0)
