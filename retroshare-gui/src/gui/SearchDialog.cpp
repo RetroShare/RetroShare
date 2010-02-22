@@ -565,10 +565,12 @@ void SearchDialog::searchKeywords()
 
 	/* call to core */
 	std::list<DirDetails> initialResults;
-	std::list<DirDetails> * finalResults = 0;
+        std::list<DirDetails> * finalResults = 0;
 
-	//rsFiles -> SearchKeywords(words, initialResults,DIR_FLAGS_LOCAL | DIR_FLAGS_REMOTE | DIR_FLAGS_NETWORK_WIDE | DIR_FLAGS_BROWSABLE);
-	rsFiles -> SearchKeywords(words, initialResults,DIR_FLAGS_REMOTE | DIR_FLAGS_NETWORK_WIDE | DIR_FLAGS_BROWSABLE);
+        uint32_t flags =  DIR_FLAGS_REMOTE | DIR_FLAGS_NETWORK_WIDE | DIR_FLAGS_BROWSABLE;
+        if (ui.checkBox->isChecked())
+            flags |= DIR_FLAGS_LOCAL;
+        rsFiles -> SearchKeywords(words, initialResults,flags);
 	/* which extensions do we use? */
 	QString qExt, qName;
 	int extIndex;
@@ -1090,7 +1092,8 @@ void SearchDialog::resultsToTree(std::string txt,qulonglong searchId, const std:
 
 void SearchDialog::selectSearchResults(int index)
 {
-    index = (index == -1)?ui.FileTypeComboBox->currentIndex():index;
+    int cindex = ui.FileTypeComboBox->currentIndex();
+    index = (index == -1) ? (cindex == -1 ? 0 : cindex):index;
     QString alltypes = FileTypeExtensionMap->value(index);
     QStringList types = alltypes.split(" ");
 

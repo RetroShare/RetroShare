@@ -502,13 +502,7 @@
   <property name="styleSheet">
    <string notr="true"/>
   </property>
-  <layout class="QGridLayout" name="gridLayout_4">
-   <property name="bottomMargin">
-    <number>4</number>
-   </property>
-   <property name="spacing">
-    <number>0</number>
-   </property>
+  <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
     <widget class="QFrame" name="frame">
      <property name="maximumSize">
@@ -1041,14 +1035,8 @@ border-image: url(:/images/btn_26_pressed.png) 4;
     </widget>
    </item>
    <item row="2" column="0">
-    <layout class="QGridLayout" name="gridLayout_2">
-     <property name="topMargin">
-      <number>4</number>
-     </property>
-     <property name="horizontalSpacing">
-      <number>6</number>
-     </property>
-     <item row="0" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
       <widget class="QPushButton" name="cloaseallsearchresultsButton">
        <property name="toolTip">
         <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -1104,20 +1092,27 @@ border-image: url(:/images/btn_26_pressed.png) 4;
        </property>
       </widget>
      </item>
-     <item row="0" column="1">
+     <item>
+      <widget class="QCheckBox" name="checkBox">
+       <property name="text">
+        <string>Include own files</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>351</width>
-         <height>20</height>
+         <width>218</width>
+         <height>21</height>
         </size>
        </property>
       </spacer>
      </item>
-     <item row="0" column="2">
+     <item>
       <widget class="QPushButton" name="pushButtonDownload">
        <property name="minimumSize">
         <size>
