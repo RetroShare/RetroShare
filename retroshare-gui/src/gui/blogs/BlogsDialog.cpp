@@ -480,11 +480,11 @@ void BlogsDialog::updateChannelMsgs()
 	
 	iconLabel->setEnabled(true);
 	
-	/* set textcolor for Channel name  */
+	/* set textcolor for Blog name  */
 	QString channelStr("<span style=\"font-size:22pt; font-weight:500;"
-                               "color:#4F4F4F;\">%1</span>");
+                               "color:white;\">%1</span>");
 	
-	/* set Channel name */
+	/* set Blog name */
 	QString cname = QString::fromStdWString(ci.blogName);
   nameLabel->setText(channelStr.arg(cname));
 

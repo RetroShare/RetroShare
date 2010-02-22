@@ -219,8 +219,11 @@ p, li { white-space: pre-wrap; }
      <item row="0" column="0">
       <widget class="QFrame" name="frame">
        <property name="styleSheet">
-        <string notr="true"> QFrame#frame{background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                                       stop:0 #F2F2F2, stop:1 #E6E6E6);}</string>
+        <string notr="true">QFrame#frame{
+border: 2px solid #6ACEFF;
+border-radius: 10px;
+background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                       stop:0 #0076B1, stop:1 #12A3EB);}</string>
        </property>
        <property name="frameShape">
         <enum>QFrame::StyledPanel</enum>
@@ -293,7 +296,7 @@ border-radius: 10px;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'DejaVu Sans'; font-size:14pt;&quot;&gt;Blog Name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'DejaVu Sans'; font-size:14pt; color:#ffffff;&quot;&gt;Blog Name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="scaledContents">
              <bool>true</bool>
@@ -521,7 +524,7 @@ border-image: url(:/images/btn_26_pressed.png) 4;
              <x>0</x>
              <y>0</y>
              <width>429</width>
-             <height>331</height>
+             <height>329</height>
             </rect>
            </property>
            <property name="styleSheet">
@@ -576,6 +579,8 @@ border-image: url(:/images/btn_26_pressed.png) 4;
  <resources>
   <include location="../images.qrc"/>
   <include location="images.qrc"/>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
