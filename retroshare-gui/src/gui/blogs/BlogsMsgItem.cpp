@@ -85,27 +85,24 @@ void BlogsMsgItem::updateItemStatic()
 		title = "Channel Feed: ";
 		title += QString::fromStdWString(ci.blogName);
 		titleLabel->setText(title);
-		subjectLabel->setText(QString::fromStdWString(cmi.subject));
+		//subjectLabel->setText(QString::fromStdWString(cmi.subject));
 	}
 	else
 	{
 		/* subject */
 		titleLabel->setText(QString::fromStdWString(cmi.subject));
-		subjectLabel->setText(QString::fromStdWString(cmi.msg));
+		/* Blog Message */
+		textBrowser->setHtml( QString::fromStdWString(cmi.msg));
 	}
 	
-	msgLabel->setText(QString::fromStdWString(cmi.msg));
+	//msgLabel->setText(QString::fromStdWString(cmi.msg));
+	//msgcommentstextEdit->setHtml(QString::fromStdWString(cmi.msg));
 
 	QDateTime qtime;
 	qtime.setTime_t(cmi.ts);
 	QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm:ss");
 	datetimelabel->setText(timestamp);
 	
-	{
-		std::ostringstream out;
-		out << "(" << cmi.count << " Files)";
-		filelabel->setText(QString::fromStdString(out.str()));
-	}
 		
 
 	std::list<FileInfo>::iterator it;

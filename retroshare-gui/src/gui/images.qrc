@@ -351,6 +351,9 @@
         <file>images/textedit/fileopen.png</file>
         <file>images/textedit/fileprint.png</file>
         <file>images/textedit/filesave.png</file>
+        <file>images/textedit/format-text-color.png</file>
+        <file>images/textedit/format-list-ordered.png</file>
+        <file>images/textedit/format-list-unordered.png</file>
         <file>images/textedit/zoomin.png</file>
         <file>images/textedit/zoomout.png</file>
         <file>images/textedit/format_font_size_more.png</file>

@@ -22,19 +22,32 @@
 #ifndef _CREATEBLOGMSG_H
 #define _CREATEBLOGMSG_H
 
+#include <QMainWindow>
+#include <QMap>
+#include <QPointer>
+#include <QObject>
+#include <gui/settings/rsharesettings.h>
+
 #include "ui_CreateBlogMsg.h"
 #include <stdint.h>
 
 class SubFileItem;
 class FileInfo;
 
-class CreateBlogMsg : public QDialog, private Ui::CreateBlogMsg
+QT_FORWARD_DECLARE_CLASS(QAction)
+QT_FORWARD_DECLARE_CLASS(QComboBox)
+QT_FORWARD_DECLARE_CLASS(QFontComboBox)
+QT_FORWARD_DECLARE_CLASS(QTextEdit)
+QT_FORWARD_DECLARE_CLASS(QTextCharFormat)
+QT_FORWARD_DECLARE_CLASS(QMenu)
+
+class CreateBlogMsg : public QMainWindow
 {
   Q_OBJECT
 
 public:
   /** Default Constructor */
-  CreateBlogMsg(std::string cId);
+  CreateBlogMsg(std::string cId, QWidget *parent = 0, Qt::WFlags flags = 0);
   /** Default Destructor */
 
 	void addAttachment(std::string path);
@@ -44,6 +57,9 @@ public:
 	void newBlogMsg();
 	
 	QPixmap picture;
+  QSettings setter;
+
+  void  Create_New_Image_Tag( const QString urlremoteorlocal );
 
 protected:
 virtual void dragEnterEvent(QDragEnterEvent *event);
@@ -55,9 +71,64 @@ private slots:
 
 	void cancelMsg();
 	void sendMsg();
+	void addImage();
 	
+	void fontSizeIncrease();
+  void fontSizeDecrease();
+  void blockQuote();
+  void toggleCode();
+  void addPostSplitter();
+  
+  void setStartupText();
+  void updateTextEdit();
+  
+  void fileNew();
+  void fileOpen();
+  bool fileSave();
+  bool fileSaveAs();
+  void filePrint();
+  void filePrintPreview();
+  void filePrintPdf();
+  void printPreview(QPrinter *);
+  
+  void textBold();
+  void textUnderline();
+  void textItalic();
+  void textFamily(const QString &f);
+  void textSize(const QString &p);
+  void textStyle(int styleIndex);
+  void changeFormatType(int styleIndex );
+
+  
+  void textColor();
+  void textAlign(QAction *a);
+  
+  void addOrderedList();
+  void addUnorderedList();
+  
+  void currentCharFormatChanged(const QTextCharFormat &format);
+  void cursorPositionChanged();
+
+  void clipboardDataChanged();
+
 
 private:
+	void setupFileActions();
+	void setupEditActions();
+	void setupViewActions();
+	void setupInsertActions();
+	void setupParagraphActions();
+	void setupTextActions();
+
+  void setCurrentFileName(const QString &fileName);
+  bool load(const QString &f);
+  bool maybeSave();
+
+  void mergeFormatOnWordOrSelection(const QTextCharFormat &format);
+  
+  void fontChanged(const QFont &f);
+  void colorChanged(const QColor &c);
+  void alignmentChanged(Qt::Alignment a);
 
   void parseRsFileListAttachments(std::string attachList);
 
@@ -68,6 +139,36 @@ private:
 	std::list<SubFileItem *> mAttachments;
 
 	bool mCheckAttachment;
+	
+	  QAction *actionSave,
+	      *actionTextBold,
+        *actionTextUnderline,
+        *actionTextItalic,		    
+        *actionTextColor,
+        *actionAlignLeft,
+        *actionAlignCenter,
+        *actionAlignRight,
+        *actionAlignJustify,
+        *actionUndo,
+        *actionRedo,
+        *actionCut,
+        *actionCopy,
+        *actionPaste;
+        
+    QComboBox *comboStyle;
+    QFontComboBox *comboFont;
+    QComboBox *comboSize;
+    
+  QString fileName;
+	
+	QColor codeBackground;
+    QTextCharFormat defaultCharFormat;
+    QTextBlockFormat defaultBlockFormat;
+    QTextCharFormat lastCharFormat;
+    QTextBlockFormat lastBlockFormat;
+    
+  /** Qt Designer generated object */
+  Ui::CreateBlogMsg ui;
 };
 
 

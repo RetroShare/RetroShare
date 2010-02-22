@@ -783,9 +783,12 @@ void ChanMsgDialog::textFamily(const QString &f)
 
 void ChanMsgDialog::textSize(const QString &p)
 {
-    QTextCharFormat fmt;
-    fmt.setFontPointSize(p.toFloat());
-    mergeFormatOnWordOrSelection(fmt);
+    qreal pointSize = p.toFloat();
+    if (p.toFloat() > 0) {
+        QTextCharFormat fmt;
+        fmt.setFontPointSize(pointSize);
+        mergeFormatOnWordOrSelection(fmt);
+    }
 }
 
 void ChanMsgDialog::textStyle(int styleIndex)
