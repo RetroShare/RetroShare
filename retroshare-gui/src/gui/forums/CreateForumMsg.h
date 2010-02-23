@@ -43,6 +43,8 @@ public:
   void loadEmoticonsForums();
   
 private slots:
+  /** Create the context popup menu and it's submenus */
+  void forumMessageCostumPopupMenu( QPoint point );
 
   void fileHashingFinished(AttachFileItem* file);
 	/* actions to take.... */
@@ -58,6 +60,11 @@ private slots:
 	
   
 private:
+   /** Define the popup menus for the Context menu */
+   QMenu* contextMnu;
+    
+   /** Defines the actions for the context menu */
+   QAction* pasteLinkAct;
 
   std::string mForumId;
   std::string mParentId;

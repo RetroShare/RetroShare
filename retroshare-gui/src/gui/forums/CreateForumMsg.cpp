@@ -37,6 +37,12 @@
 #include <QtDebug>
 #include <QIcon>
 #include <QPixmap>
+#include <QContextMenuEvent>
+#include <QMenu>
+#include <QCursor>
+#include <QPoint>
+#include <QMouseEvent>
+#include <QPixmap>
 
 #include "rsiface/rsforums.h"
 #include "rsiface/rsfiles.h"
@@ -56,17 +62,39 @@ CreateForumMsg::CreateForumMsg(std::string fId, std::string pId)
   RshareSettings config;
   config.loadWidgetInformation(this);
   
+  connect( ui.forumMessage, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( forumMessageCostumPopupMenu( QPoint ) ) );
+  
   // connect up the buttons.
   connect( ui.postmessage_action, SIGNAL( triggered (bool) ), this, SLOT( createMsg( ) ) );
   connect( ui.close_action, SIGNAL( triggered (bool) ), this, SLOT( cancelMsg( ) ) );
   connect( ui.emoticonButton, SIGNAL(clicked()), this, SLOT(smileyWidgetForums()));
   connect( ui.attachFileButton, SIGNAL(clicked() ), this , SLOT(addFile()));
   connect( ui.pastersButton, SIGNAL(clicked() ), this , SLOT(pasteLink()));
+  
+  
 
   newMsg();
   
   loadEmoticonsForums();
 
+}
+
+/** context menu searchTablewidget2 **/
+void CreateForumMsg::forumMessageCostumPopupMenu( QPoint point )
+{
+
+    contextMnu = new QMenu( this );
+
+    pasteLinkAct = new QAction(QIcon(":/images/pasterslink.png"), tr( "Paste retroshare Link" ), this );
+    connect( pasteLinkAct , SIGNAL( triggered() ), this, SLOT( pasteLink() ) );
+    //pasteLinkAct->setShortcut(QKeySequence::Paste);
+
+
+    contextMnu->clear();
+    contextMnu->addAction( pasteLinkAct);
+
+    QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
+    contextMnu->exec( mevent->globalPos() );
 }
 
 
