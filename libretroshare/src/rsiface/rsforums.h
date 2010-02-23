@@ -40,43 +40,58 @@
 class ForumInfo 
 {
 	public:
-	ForumInfo() {}
-	std::string forumId;
-	std::wstring forumName;
-	std::wstring forumDesc;
+		ForumInfo() 
+		{
+			forumFlags = 0 ;
+			subscribeFlags = 0 ;
+			pop = 0 ;
+			lastPost = 0 ;
+		}
+		std::string forumId;
+		std::wstring forumName;
+		std::wstring forumDesc;
 
-	uint32_t forumFlags;
-	uint32_t subscribeFlags;
+		uint32_t forumFlags;
+		uint32_t subscribeFlags;
 
-	uint32_t pop;
+		uint32_t pop;
 
-	time_t lastPost;
+		time_t lastPost;
 };
 
 class ForumMsgInfo 
 {
 	public:
-	ForumMsgInfo() {}
-	std::string forumId;
-	std::string threadId;
-	std::string parentId;
-	std::string msgId;
+		ForumMsgInfo() 
+		{
+			msgflags = 0 ;
+			ts = childTS = 0 ;
+		}
+		std::string forumId;
+		std::string threadId;
+		std::string parentId;
+		std::string msgId;
 
-	std::string srcId; /* if Authenticated -> signed here */
+		std::string srcId; /* if Authenticated -> signed here */
 
-	unsigned int msgflags;
+		unsigned int msgflags;
 
-	std::wstring title;
-	std::wstring msg;
-	time_t ts;
-	time_t childTS;
+		std::wstring title;
+		std::wstring msg;
+		time_t ts;
+		time_t childTS;
 };
 
 
 class ThreadInfoSummary 
 {
 	public:
-	ThreadInfoSummary() {}
+	ThreadInfoSummary() 
+	{
+		msgflags = 0 ;
+		count = 0 ;
+		ts = childTS = 0 ;
+	}
 	std::string forumId;
 	std::string threadId;
 	std::string parentId;

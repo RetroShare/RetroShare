@@ -131,37 +131,46 @@ std::ostream &operator<<(std::ostream &out, const FileInfo &info);
 class RsConfig
 {
 	public:
-	std::string		ownId;
-	std::string		ownName;
+		RsConfig()
+		{
+			localPort = extPort = 0 ;
+			firewalled = forwardPort = false ;
+			maxDownloadDataRate = maxUploadDataRate = maxIndivDataRate = 0 ;
+			promptAtBoot = 0 ;
+			DHTActive = uPnPActive = netLocalOk = netDhtOk = netStunOk = netExtraAddressOk = false ;
+			uPnPState = DHTPeers = 0 ;
+		}
+		std::string		ownId;
+		std::string		ownName;
 
-	std::string		localAddr;
-	int			localPort;
-	std::string		extAddr;
-	int			extPort;
-	std::string		extName;
+		std::string		localAddr;
+		int			localPort;
+		std::string		extAddr;
+		int			extPort;
+		std::string		extName;
 
-	bool			firewalled;
-	bool			forwardPort;
+		bool			firewalled;
+		bool			forwardPort;
 
-	int			maxDownloadDataRate;     /* kb */
-	int			maxUploadDataRate;     /* kb */
-	int			maxIndivDataRate; /* kb */
+		int			maxDownloadDataRate;     /* kb */
+		int			maxUploadDataRate;     /* kb */
+		int			maxIndivDataRate; /* kb */
 
-	int			promptAtBoot; /* popup the password prompt */
+		int			promptAtBoot; /* popup the password prompt */
 
-	/* older data types */
-	bool			DHTActive;
-	bool			uPnPActive;
+		/* older data types */
+		bool			DHTActive;
+		bool			uPnPActive;
 
-	int			uPnPState;
-	int			DHTPeers;
+		int			uPnPState;
+		int			DHTPeers;
 
-	/* Flags for Network Status */
-	bool 			netLocalOk;     /* That we've talked to someone! */
-	bool			netUpnpOk; /* upnp is enabled and active */
-	bool			netDhtOk;  /* response from dht */
-	bool			netStunOk;  /* recvd stun / udp packets */
-	bool			netExtraAddressOk;  /* recvd ip address with external finder*/
+		/* Flags for Network Status */
+		bool 			netLocalOk;     /* That we've talked to someone! */
+		bool			netUpnpOk; /* upnp is enabled and active */
+		bool			netDhtOk;  /* response from dht */
+		bool			netStunOk;  /* recvd stun / udp packets */
+		bool			netExtraAddressOk;  /* recvd ip address with external finder*/
 };
 
 /********************** For Search Interface *****************/
