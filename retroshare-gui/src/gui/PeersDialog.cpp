@@ -1465,7 +1465,7 @@ void PeersDialog::getAvatar()
 	QString fileName = QFileDialog::getOpenFileName(this, "Load File", QDir::homePath(), "Pictures (*.png *.xpm *.jpg *.tiff *.gif)");
 	if(!fileName.isEmpty())
 	{
-		picture = QPixmap(fileName).scaled(82,82, Qt::IgnoreAspectRatio);
+		picture = QPixmap(fileName).scaled(82,82, Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
 
                 #ifdef PEERS_DEBUG
 		std::cerr << "Sending avatar image down the pipe" << std::endl ;
