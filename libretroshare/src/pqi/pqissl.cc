@@ -202,8 +202,10 @@ int 	pqissl::reset()
 		out << "pqissl::reset() Shutting down SSL Connection";
 		out << std::endl;
                 if (quietShutdown) {
-                    ssl_connection->quiet_shutdown;
+                    ssl_connection->quiet_shutdown = 1;
+                    SSL_shutdown(ssl_connection);
                 } else {
+                    ssl_connection->quiet_shutdown = 0;
                     SSL_shutdown(ssl_connection);
                 }
 
