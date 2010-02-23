@@ -56,6 +56,7 @@ public slots:
   
   void updatePeersAvatar(const QString& peer_id);
   void updateAvatar();
+  void loadmystatusmessage();
   
   LogoBar & getLogoBar() const;
 
@@ -94,7 +95,8 @@ private slots:
   
   void changeAvatarClicked();
 	
-	void loadmystatus();	
+	void savestatusmessage();
+	
 	void loadstatus();
 	
 	void on_actionSort_Peers_Descending_Order_activated();
@@ -138,6 +140,9 @@ private:
   LogoBar * _rsLogoBarmessenger;
   
   QFont itemFont;
+  
+  /** A RshareSettings object used for saving/loading settings */
+  RshareSettings* _settings;
 
   /** Qt Designer generated object */
   Ui::MessengerWindow ui;

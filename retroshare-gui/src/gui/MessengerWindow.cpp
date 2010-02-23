@@ -99,6 +99,9 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
+	
+	/* Create RshareSettings object */
+  _settings = new RshareSettings();
   
 	connect( ui.messengertreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( messengertreeWidgetCostumPopupMenu( QPoint ) ) );
   connect( ui.messengertreeWidget, SIGNAL(itemDoubleClicked ( QTreeWidgetItem *, int)), this, SLOT(chatfriend()));
@@ -107,6 +110,8 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
 	connect( ui.shareButton, SIGNAL(clicked()), SLOT(openShareManager()));
   connect( ui.addIMAccountButton, SIGNAL(clicked( bool ) ), this , SLOT( addFriend() ) );
   connect( ui.actionHide_Offline_Friends, SIGNAL(triggered()), this, SLOT(insertPeers()));
+  
+  connect(ui.messagelineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(savestatusmessage()));
   
 	/* to hide the header  */
 	ui.messengertreeWidget->header()->hide(); 
@@ -139,8 +144,7 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
 	
   insertPeers(); 		
   updateAvatar();
-  loadmystatus();
-  //loadstatus();
+  loadmystatusmessage();
   
   displayMenu();
   updateMessengerDisplay();
@@ -865,10 +869,23 @@ void MessengerWindow::getAvatar()
 	}
 }
 
-/** Loads own personal status */
-void MessengerWindow::loadmystatus()
+/** Loads own personal status message */
+void MessengerWindow::loadmystatusmessage()
 { 
     ui.messagelineEdit->setText(QString::fromStdString(rsMsgs->getCustomStateString()));
+}
+
+/** Save own status message */
+void  MessengerWindow::savestatusmessage()
+{
+  _settings->beginGroup("Profile");
+
+			_settings->setValue("StatusMessage",ui.messagelineEdit->text());
+
+	_settings->endGroup();
+	
+	rsMsgs->setCustomStateString(ui.messagelineEdit->text().toStdString());
+
 }
 
 void MessengerWindow::on_actionSort_Peers_Descending_Order_activated()

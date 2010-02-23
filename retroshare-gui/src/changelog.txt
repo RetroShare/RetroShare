@@ -1,5 +1,31 @@
 Changes for v0.5.0 alpha *
 
+* added context menu action for Paste retroshare Link for Create Forum Message
+* added smotth interpolation flag to image scaling
+* added Paste retroshare link's from a Button in Create Forum Message, and fixed to not allow send blank Forum Messages
+* improved display of turtle router info
+* changed the default Blog Header stylesheet, and use now white Text Color
+* include own files check option on search
+* fixed Resume/Pause context menu actions to work properly in all Translations
+* redesign Create Blog Msg Publisher with html Formating features and fixed textSize formating for Message Composer
+* added to can use *.gif pictures now too for Avatars.
+* added new French translation
+* search result filtering
+* fixed display issue in transfers (bad colors in crosses)
+* improved display of tunnel info
+* made gpg ids more consistent with the way gpg lists them
+* added more detailed info about gpg ids in login and gen certificates dialogs
+* fixed to get work properly Play and OpenFile when File Transfer is complete, Play action is only visible when its a media file. 
+* added additional info into FileTransferInfoWidget
+* added actions for disable/enable Emoticons in Privat Chat and for Clear Chat History
+* made complete files stay in the download list
+* fixed bug in clink on link in group chat
+* added action to GroupChats Button Menu for disable/enable Emoticon's
+* filter after search, not before search
+* fixed group chat download
+* fixed the recommend system
+* corrected compled completion and file progress issues
+* security fix to xprogressbar display
 * reengineered the transfer list display
 * reduced cost of progress bar display
 * fixed a bug on MessengerWindow context menu
