@@ -224,7 +224,7 @@ void BlogsDialog::checkUpdate()
 
 	if (rsBlogs->blogsChanged(blogIds))
 	{
-		/* update Forums List */
+		/* update Blogs List */
 		updateChannelList();
 
 		it = std::find(blogIds.begin(), blogIds.end(), mBlogId);
