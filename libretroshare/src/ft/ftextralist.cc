@@ -242,7 +242,7 @@ bool	ftExtraList::cleanupOldFiles()
 	for(it = mFiles.begin(); it != mFiles.end(); it++)
 	{
 		/* check timestamps */
-		if (it->second.info.age < (unsigned) now)
+		if ((time_t)it->second.info.age < now)
 		{
 			toRemove.push_back(it->first);
 		}
@@ -432,7 +432,7 @@ bool    ftExtraList::loadList(std::list<RsItem *> load)
 
 		fclose(fd);
 
-		if (ts > fi->file.age)
+		if (ts > (time_t)fi->file.age)
 		{
 			/* to old */
 			cleanupEntry(fi->file.path, fi->flags);

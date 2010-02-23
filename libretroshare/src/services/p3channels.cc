@@ -334,7 +334,7 @@ bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std
 	/* check age */
 	time_t age = time(NULL) - msg->timestamp;
 
-	if (age > DOWNLOAD_PERIOD)
+	if (age > (time_t)DOWNLOAD_PERIOD)
 	{
 		return true;
 	}
