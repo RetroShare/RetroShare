@@ -65,7 +65,8 @@ public:
         Messages,  		           	/** Messages page. */
         Links,  				/** Links page. */
         Channels,  				/** Channels page. */
-        Forums  				/** Forums page. */
+        Forums,  				/** Forums page. */
+        Blogs  				/** Blogs page. */
 
 
     };
