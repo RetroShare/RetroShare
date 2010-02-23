@@ -48,8 +48,8 @@ const uint32_t AUTODISC_LDI_SUBTYPE_RPLY = 0x02;
 
 const int pqidisczone = 2482;
 
-static int convertTDeltaToTRange(double tdelta);
-static int convertTRangeToTDelta(int trange);
+//static int convertTDeltaToTRange(double tdelta);
+//static int convertTRangeToTDelta(int trange);
 
 // Operating System specific includes.
 #include "pqi/pqinetwork.h"
@@ -81,7 +81,10 @@ const uint32_t P3DISC_FLAGS_ASK_VERSION		= 0x0080;
  *****************************************************************************************/
 
 p3disc::p3disc(p3ConnectMgr *cm, pqipersongrp *pqih)
-        :p3Service(RS_SERVICE_TYPE_DISC), mConnMgr(cm), mPqiPersonGrp(pqih), p3Config(CONFIG_TYPE_P3DISC)
+        :p3Service(RS_SERVICE_TYPE_DISC),
+				 p3Config(CONFIG_TYPE_P3DISC),
+		  mConnMgr(cm), 
+		  mPqiPersonGrp(pqih)
 {
 	RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
 
@@ -120,8 +123,6 @@ int p3disc::handleIncoming()
         #ifdef P3DISC_DEBUG
         std::cerr << "p3disc::handleIncoming()" << std::endl;
         #endif
-
-	bool discOn;
 
 	// if off discard item.
         peerConnectState detail;
@@ -532,7 +533,7 @@ void p3disc::recvPeerDetails(RsDiscReply *item)
                 if (deletedSSLFriendsIds.find(pitem->pid) == deletedSSLFriendsIds.end()) {
                     //||  {
                     mConnMgr->addFriend(pitem->pid, pitem->gpg_id, pitem->netMode, RS_VIS_STATE_NODISC, 0); //add with no disc by default. If friend already exist, it will do nothing
-                } else if (pitem->lastContact > (deletedSSLFriendsIds[pitem->pid] + 3600*24)) { // the friend was seen up and running 24 hours after we deleted it, we will readd it
+                } else if (pitem->lastContact > ((uint32_t)deletedSSLFriendsIds[pitem->pid] + 3600*24)) { // the friend was seen up and running 24 hours after we deleted it, we will readd it
                     mConnMgr->addFriend(pitem->pid, pitem->gpg_id, pitem->netMode, RS_VIS_STATE_NODISC, 0); //add with no disc bay default. If friend already exist, it will do nothing
                 }
                 RsPeerDetails storedDetails;
@@ -786,14 +787,14 @@ int p3disc::idServers()
 //  999...<9999    4
 //  etc...
 
-int convertTDeltaToTRange(double tdelta)
-{
-	if (tdelta < 0)
-		return 0;
-	int trange = 1 + (int) log10(tdelta + 1.0);
-	return trange;
-
-}
+//int convertTDeltaToTRange(double tdelta)
+//{
+//	if (tdelta < 0)
+//		return 0;
+//	int trange = 1 + (int) log10(tdelta + 1.0);
+//	return trange;
+//
+//}
 
 // trange     -> tdelta
 // -inf...0	  -1 (invalid)
@@ -803,13 +804,13 @@ int convertTDeltaToTRange(double tdelta)
 //    4         9998
 //  etc...
 
-int convertTRangeToTDelta(int trange)
-{
-	if (trange <= 0)
-		return -1;
-
-	return (int) (pow(10.0, trange) - 1.5); // (int) xxx98.5 -> xxx98
-}
+//int convertTRangeToTDelta(int trange)
+//{
+//	if (trange <= 0)
+//		return -1;
+//
+//	return (int) (pow(10.0, trange) - 1.5); // (int) xxx98.5 -> xxx98
+//}
 
 // -----------------------------------------------------------------------------------//
 // --------------------------------  Config functions  ------------------------------ //

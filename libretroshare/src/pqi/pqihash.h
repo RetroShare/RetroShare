@@ -35,6 +35,7 @@ class pqihash
 {
 	
 	sha_hash = new uint8_t[SHA_DIGEST_LENGTH];
+	memset(sha_hash,0,SHA_DIGEST_LENGTH*sizeof(uint8_t)) ;
 	sha_ctx = new SHA_CTX;
 	SHA1_Init(sha_ctx);
 	doHash = true;

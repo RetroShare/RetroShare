@@ -2599,6 +2599,7 @@ bool	p3GroupDistrib::locked_updateChildTS(GroupInfo &gi, RsDistribMsg *msg)
 		parent->childTS = updateTS;
 		msg = parent;
 	}
+	return false ;
 }
 
 

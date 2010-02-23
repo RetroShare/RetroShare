@@ -587,8 +587,6 @@ void RsDiscHeartbeat::clear()
 std::ostream &RsDiscHeartbeat::print(std::ostream &out, uint16_t indent)
 {
     printRsItemBase(out, "RsDiscHeartbeat", indent);
-        uint16_t int_Indent = indent + 2;
-
     printRsItemEnd(out, "RsDiscHeartbeat", indent);
     return out;
 }

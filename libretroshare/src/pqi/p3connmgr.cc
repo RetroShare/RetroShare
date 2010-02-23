@@ -152,11 +152,17 @@ p3ConnectMgr::p3ConnectMgr()
 	mExtAddrFinder = new ExtAddrFinder;
 	mNetInitTS = 0;
 
-	netFlagExtraAddressCheckOk = false;
 	netFlagLocalOk = false;
 	netFlagUpnpOk = false;
 	netFlagDhtOk = false;
 	netFlagStunOk = false;
+	netFlagExtraAddressCheckOk = false;
+
+	oldnetFlagLocalOk = false;
+	oldnetFlagUpnpOk = false;
+	oldnetFlagDhtOk = false;
+	oldnetFlagStunOk = false;
+	oldnetFlagExtraAddressCheckOk = false;
 
 	netReset();
 
