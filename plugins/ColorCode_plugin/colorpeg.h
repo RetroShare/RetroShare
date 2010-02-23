@@ -28,6 +28,7 @@
 #include "colorcode.h"
 #include "pegrow.h"
 #include "rowhint.h"
+#include "settings.h"
 
 
 class ColorPeg : public QObject, public QGraphicsItem
@@ -50,7 +51,7 @@ public:
 
     void SetType(const int t);
     void SetEnabled(const bool b);
-    void ShowLetter(const bool b);
+    void SetIndicator(const bool b, const int t, const bool c);
     void SetCursorShape( Qt::CursorShape shape = Qt::ArrowCursor, const bool force = false);
     PegType* GetPegType();
     int GetType() const;
@@ -83,6 +84,8 @@ private:
     static QBrush GetOutlineBrush();
     static const QBrush mGlossyBrush;
     static QBrush GetGlossyBrush();
+    static const QBrush mNeutralBrush;
+    static QBrush GetNeutralBrush();
 
     QRectF GetColorRect() const;
     QRectF outlineRect() const;
@@ -96,7 +99,9 @@ private:
     int mSort;
     bool mIsBtn;
     bool mIsDragged;    
-    bool mShowLetter;
+    bool mShowIndicator;
+    int mIndicatorType;
+    bool mHideColor;
 };
 
 

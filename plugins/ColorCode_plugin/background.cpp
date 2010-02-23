@@ -24,6 +24,7 @@ using namespace std;
 BackGround::BackGround(QObject*)
 {
     setCacheMode(QGraphicsItem::DeviceCoordinateCache);
+    setAcceptedMouseButtons(0);
 
     QLinearGradient topgrad(0, 16, 0, 129);
     topgrad.setColorAt(0.0, QColor(0xf8, 0xf8, 0xf8));

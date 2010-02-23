@@ -38,23 +38,25 @@ int main(int argc, char* argv[])
             {
                 cout << "usage: ColorCode [options]" << endl;
                 cout << "  options:" << endl;
-                cout << "  -l cc, --lang=cc    use country code cc instead of system locale, accepted values for cc: en|de|cs" << endl;
+                cout << "  -l cc, --lang=cc    use country code cc instead of system locale, accepted values for cc: en|de|cs|fr|hu" << endl;
                 cout << "  -h, --help          prints this message ;-)" << endl;
                 return 0;
             }
             else if (str == "-l" && i < argc - 1)
             {
-                if (std::string(argv[i + 1]) == "de" || std::string(argv[i + 1]) == "en" || std::string(argv[i + 1]) == "cs")
+                if (std::string(argv[i + 1]) == "de" || std::string(argv[i + 1]) == "en" || std::string(argv[i + 1]) == "cs" || std::string(argv[i + 1]) == "fr" || std::string(argv[i + 1]) == "hu")
                 {
                     std::string test(argv[i]);
                     lang = argv[i + 1];
+                    cerr << "Lang: " << lang << endl;
                 }
             }
             else if ( str.size() == 9
                       && str.find("--lang=") != string::npos
-                      && (str.substr(7) == "en" || str.substr(7) == "de" || str.substr(7) == "cs") )
+                      && (str.substr(7) == "en" || str.substr(7) == "de" || str.substr(7) == "cs" || str.substr(7) == "fr" || str.substr(7) == "hu") )
             {
                 lang = str.substr(7);
+                cerr << "Lang: " << lang << endl;
             }
         }
     }

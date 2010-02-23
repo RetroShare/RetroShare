@@ -17,8 +17,13 @@
 */
 
 #include "ccsolver.h"
+#include <time.h>
 
 using namespace std;
+
+const int CCSolver::STRENGTH_LOW    = 0;
+const int CCSolver::STRENGTH_MEDIUM = 1;
+const int CCSolver::STRENGTH_HIGH   = 2;
 
 const int CCSolver::mFGCnts[4][9][4] = {
 {
@@ -440,7 +445,7 @@ string CCSolver::FirstGuess()
 
         if (pegcnt != mPegCnt)
         {
-            ;
+            //
         }
 
         if (mPegCnt > 2 && diffcnt > 1)
@@ -479,7 +484,7 @@ int CCSolver::Guess()
     clock_t start, finish;
     start = clock();
 
-    if (mGuessCnt == 0 && mRestartCnt == 0)
+    if (mLevel > STRENGTH_LOW && mGuessCnt == 0 && mRestartCnt == 0)
     {
         return Row2Ix(FirstGuess());
     }
@@ -487,14 +492,14 @@ int CCSolver::Guess()
     mBusy = true;
 
     int level = mLevel;
-    if (level == 2 && mPosCnt > 10000)
+    if (level == STRENGTH_HIGH && mPosCnt > 10000)
     {
-        level = 1;
+        level = STRENGTH_MEDIUM;
     }
 
     int i, j;
 
-    if (level == 0)
+    if (level == STRENGTH_LOW)
     {
         for (i = 0; i < mAllCnt; ++i)
         {
@@ -504,7 +509,7 @@ int CCSolver::Guess()
             }
         }
     }
-    else if (level == 1)
+    else if (level == STRENGTH_MEDIUM)
     {
         int m = mPosCnt >> 1;
         for (i = 0; i < mAllCnt; ++i)
@@ -616,7 +621,6 @@ int CCSolver::Row2Ix(const vector<int>* v)
     {
         return ix;
     }
-
     return -1;
 }
 
@@ -647,7 +651,6 @@ int CCSolver::Row2Ix(const string str)
     {
         return ix;
     }
-
     return -1;
 }
 

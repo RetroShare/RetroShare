@@ -16,61 +16,61 @@
  * along with ColorCode. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ROWHINT_H
-#define ROWHINT_H
+#ifndef GRAPHICSBTN_H
+#define GRAPHICSBTN_H
 
+#include <QObject>
 #include <QGraphicsItem>
 #include <QColor>
 #include <QPen>
+#include <QFont>
 #include <QRadialGradient>
 #include <iostream>
-#include <vector>
-#include "colorcode.h"
 
-class RowHint : public QObject, public QGraphicsItem
+class GraphicsBtn : public QObject, public QGraphicsItem
 {
     Q_OBJECT
 
 public:
-    RowHint(QObject* parent = 0);
-    ~RowHint();
+    GraphicsBtn();
 
-    int mIx;
-    bool mActive;
-    bool mSolved;
-    std::vector<int> mHints;
-
-    int GetIx() const;
-    bool IsActive() const;
-    std::vector<int> GetHints();
-    void SetIx(const int ix);
-    void SetPegCnt(const int pegcnt);
-    void SetGameMode(const int gamemode);
-    void SetActive(bool b);
-    void DrawHints(std::vector<int> res);
-    void Reset(const int pegcnt, const int gamemode);
+    void SetWidth(int w);
+    void SetLabel(QString str);
+    void ShowBtn(bool b);
 
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);
     QRectF boundingRect() const;
-    QPainterPath shape() const;
 
 signals:
-    void HintPressedSignal(int ix);
+    void BtnPressSignal(GraphicsBtn* btn);
 
 protected:
+    void hoverEnterEvent(QGraphicsSceneHoverEvent* e);
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent* e);
     void mousePressEvent(QGraphicsSceneMouseEvent* e);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent* e);
 
-private:
-    static const int mPegPos[4][5][3];
+    virtual void InitGraphics();
+    virtual void SetShapes();
 
-    int mPegCnt;
-    int mGameMode;
+    QString mLabel;
+    int mWidth;
+    int mLabelWidth;
+    int mYOffs;
 
-    QPen mPen;
-    QBrush mBrush0;
-    QBrush mBrush1;
+    QRectF mRect;
+    QRectF mRectFill;
+    QRectF mIconRect;
 
-    QRectF outlineRect() const;
+    QBrush mFillOutBrush;
+    QBrush mFillOverBrush;
+    QBrush* mFillBrush;
+
+    QBrush mFrameOutBrush;
+    QBrush mFrameOverBrush;
+    QBrush* mFrameBrush;
+
+    QFont mFont;
 };
 
-#endif // ROWHINT_H
+#endif // GRAPHICSBTN_H

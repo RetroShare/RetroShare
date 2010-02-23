@@ -34,8 +34,12 @@ HEADERS += about.h \
     rowhint.h \
     ccsolver.h \
     background.h \
-    solrow.h
-FORMS += about.ui
+    solutionrow.h \
+    graphicsbtn.h \
+    settings.h \
+    prefdialog.h
+FORMS += about.ui \
+    prefdialog.ui
 SOURCES += about.cpp \
     colorcode.cpp \
     colorpeg.cpp \
@@ -45,14 +49,17 @@ SOURCES += about.cpp \
     rowhint.cpp \
     ccsolver.cpp \
     background.cpp \
-    solrow.cpp
+    solutionrow.cpp \
+    graphicsbtn.cpp \
+    settings.cpp \
+    prefdialog.cpp
 RESOURCES += resource.qrc
 OTHER_FILES += docs/GPL.html
-win32 {
-    RC_FILE = ColorCode.rc
-}
+win32:RC_FILE = ColorCode.rc
 TRANSLATIONS += trans_de.ts \
     trans_en.ts \
-    trans_cs.ts
+    trans_cs.ts \
+    trans_fr.ts \
+    trans_hu.ts
 CODECFORTR = UTF-8
 CODECFORSRC = UTF-8

@@ -27,7 +27,6 @@
 #include <iostream>
 #include <vector>
 #include "colorcode.h"
-#include "pegrow.h"
 #include "colorpeg.h"
 
 class PegRow : public QObject, public QGraphicsItem
@@ -39,19 +38,22 @@ public:
     ~PegRow();
 
     int GetIx() const;
-    int GetPegCnt();
+    bool IsActive() const;
+    int GetPegCnt() const;
     ColorPeg** GetPegs();
     std::vector<int> GetSolution() const;
     void SetIx(const int ix);
     void SetPegCnt(const int pegcnt);
+    void SetGameMode(const int gamemode);
     void SetActive(const bool b);
     bool SnapCP(ColorPeg* cp);
     void ForceSnap(ColorPeg* cp, int posix);
     void RemovePeg(ColorPeg* cp);
 
     void CloseRow();
+    void OpenRow();
     void ClearRow();
-    void Reset(const int pegcnt);
+    void Reset(const int pegcnt, const int gamemode);
 
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);
     QRectF boundingRect() const;
@@ -64,7 +66,6 @@ signals:
 protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
-private:
     std::vector<int> mSolution;
 
     QColor mPend;
@@ -75,11 +76,20 @@ private:
     bool mSolved;
     int mIx;
     int mPegCnt;
+    int mGameMode;
     int mXOffs;
 
+    virtual void SetXOffs();
+    
     void CheckSolution();
     ColorPeg** mColorPegs;
     QRectF outlineRect() const;
+
+private slots:
+    //void FillRandSlot();
+
+private:
+
 };
 
 #endif // PEGROW_H

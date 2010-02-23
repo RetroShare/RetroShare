@@ -16,61 +16,35 @@
  * along with ColorCode. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ROWHINT_H
-#define ROWHINT_H
+#ifndef SOLUTIONROW_H
+#define SOLUTIONROW_H
 
+#include <QObject>
 #include <QGraphicsItem>
-#include <QColor>
-#include <QPen>
-#include <QRadialGradient>
 #include <iostream>
-#include <vector>
-#include "colorcode.h"
+#include "pegrow.h"
 
-class RowHint : public QObject, public QGraphicsItem
+class SolutionRow : public PegRow
 {
-    Q_OBJECT
 
 public:
-    RowHint(QObject* parent = 0);
-    ~RowHint();
-
-    int mIx;
-    bool mActive;
-    bool mSolved;
-    std::vector<int> mHints;
-
-    int GetIx() const;
-    bool IsActive() const;
-    std::vector<int> GetHints();
-    void SetIx(const int ix);
-    void SetPegCnt(const int pegcnt);
-    void SetGameMode(const int gamemode);
-    void SetActive(bool b);
-    void DrawHints(std::vector<int> res);
-    void Reset(const int pegcnt, const int gamemode);
+    SolutionRow(QObject* parent = 0);
+    ~SolutionRow();
 
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);
     QRectF boundingRect() const;
-    QPainterPath shape() const;
-
-signals:
-    void HintPressedSignal(int ix);
 
 protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent* e);
+    void SetXOffs();
 
 private:
-    static const int mPegPos[4][5][3];
+    void InitGraphics();
 
-    int mPegCnt;
-    int mGameMode;
-
-    QPen mPen;
-    QBrush mBrush0;
-    QBrush mBrush1;
-
-    QRectF outlineRect() const;
+    QRectF mRect;
+    QRectF mRectC;
+    QBrush mBgBrush;
+    QPen mFramePen;
+    QFont mFont;
 };
 
-#endif // ROWHINT_H
+#endif // SOLUTIONROW_H

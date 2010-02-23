@@ -27,6 +27,10 @@ using namespace std;
 class CCSolver
 {
 public:
+    static const int STRENGTH_LOW;
+    static const int STRENGTH_MEDIUM;
+    static const int STRENGTH_HIGH;
+
     CCSolver(ColorCode* cc);
     ~CCSolver();
 

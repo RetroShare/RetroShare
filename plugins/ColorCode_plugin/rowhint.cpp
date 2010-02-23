@@ -69,7 +69,7 @@ RowHint::RowHint(QObject*)
     grad.setColorAt(1, QColor(255, 255, 255, 51));
     mBrush0 = QBrush(grad);
 
-    Reset(0);
+    Reset(0, 0);
 }
 
 RowHint::~RowHint()
@@ -77,12 +77,14 @@ RowHint::~RowHint()
     scene()->removeItem(this);
 }
 
-void RowHint::Reset(const int pegcnt)
+void RowHint::Reset(const int pegcnt, const int gamemode)
 {
     mActive = true;
-    mHints.clear();
     mSolved = false;
     SetPegCnt(pegcnt);
+    mHints.clear();
+    mHints.assign(mPegCnt, 0);
+    SetGameMode(gamemode);
     SetActive(false);
 }
 
@@ -101,6 +103,16 @@ void RowHint::SetPegCnt(const int pegcnt)
     mPegCnt = pegcnt;
 }
 
+void RowHint::SetGameMode(const int gamemode)
+{
+    mGameMode = gamemode;
+}
+
+bool RowHint::IsActive() const
+{
+    return mActive;
+}
+
 void RowHint::SetActive(bool b)
 {
     if (b == mActive)
@@ -113,42 +125,83 @@ void RowHint::SetActive(bool b)
     setEnabled(b);
     if (b)
     {
-        setCursor(Qt::PointingHandCursor);
-        setToolTip(tr("Commit Your solution"));
+        if (mGameMode == ColorCode::MODE_HVM)
+        {
+            setCursor(Qt::PointingHandCursor);
+            setToolTip(tr("Commit Your solution"));
+        }
+        else if (mGameMode == ColorCode::MODE_MVH)
+        {
+            mSolved = true;
+            mHints.assign(mPegCnt, 0);
+            setCursor(Qt::ArrowCursor);
+            setToolTip(tr("Click the circles to rate my guess.\nHit Ctrl+H or the corresponding toolbar button to let an impartial part of me do this for you ;-)"));
+        }
     }
     else
     {
         setCursor(Qt::ArrowCursor);
         setToolTip(QString(""));
     }
-
     update(boundingRect());
+}
+
+std::vector<int> RowHint::GetHints()
+{
+    return mHints;
 }
 
 void RowHint::DrawHints(std::vector<int> res)
 {
-    mHints = res;
+    mHints.clear();
+    mHints.assign(mPegCnt, 0);
+    for (unsigned i = 0; i < res.size(); ++i)
+    {
+        mHints.at(i) = res.at(i);
+    }
     mSolved = true;
-
     update(boundingRect());
 }
 
-void RowHint::mousePressEvent(QGraphicsSceneMouseEvent *e)
+void RowHint::mousePressEvent(QGraphicsSceneMouseEvent* e)
 {
-    bool disabled = false;
-    if (mActive && !mSolved)
+    if (mGameMode == ColorCode::MODE_HVM)
     {
-        if (e->button() == Qt::LeftButton)
+        bool disabled = false;
+        if (mActive && !mSolved)
         {
-            SetActive(false);
-            emit HintPressedSignal(mIx);
-            disabled = true;
+            if (e->button() == Qt::LeftButton)
+            {
+                SetActive(false);
+                emit HintPressedSignal(mIx);
+                disabled = true;
+            }
+        }
+
+        if (!disabled)
+        {
+            QGraphicsItem::mousePressEvent(e);
         }
     }
-
-    if (!disabled)
+    else if (mGameMode == ColorCode::MODE_MVH)
     {
-        QGraphicsItem::mousePressEvent(e);
+        qreal xm = e->pos().x();
+        qreal ym = e->pos().y();
+
+        int posix = mPegCnt - 2;
+        for (int i = 0; i < mPegCnt; i++)
+        {
+            if ( xm >= mPegPos[posix][i][0] && xm <= mPegPos[posix][i][0] + mPegPos[posix][i][2]
+                 && ym >= mPegPos[posix][i][1] && ym <= mPegPos[posix][i][1] + mPegPos[posix][i][2])
+            {
+                ++mHints.at(i);
+                if (mHints.at(i) > 2)
+                {
+                    mHints.at(i) = 0;
+                }
+            }
+        }
+        update(boundingRect());
     }
 }
 
@@ -238,7 +291,11 @@ void RowHint::paint(QPainter* painter, const QStyleOptionGraphicsItem* /*option*
         painter->setPen(Qt::NoPen);
         for (unsigned i = 0; i < mHints.size(); i++)
         {
-            x0 = QPointF(mPegPos[posix][i][0], mPegPos[posix][i][1]);
+            if (mHints.at(i) == 0)
+            {
+                continue;
+            }
+
             if (mHints.at(i) == 2)
             {
                 painter->setBrush(QBrush(Qt::black));

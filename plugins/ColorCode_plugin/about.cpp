@@ -28,7 +28,7 @@ About::About(QWidget* parent, Qt::WindowFlags f) : QDialog(parent, f)
     mAuthorText->setText("<b>" + tr("ColorCode") + "</b><br>" +
                          tr("A needful game to train your brain ;-)") +
                          tr("<br><br>Free MasterMind clone including a built in,<br>rather intelligent solver.") +
-                         "<br><br>" + tr("Version") + ": 0.5.5<br>" + tr("Author") + ": Dirk Laebisch");
+                         "<br><br>" + tr("Version") + ": 0.6.1<br>" + tr("Author") + ": Dirk Laebisch");
 
     QString license_file = ":/docs/GPL.html";
     if (QFile::exists(license_file))

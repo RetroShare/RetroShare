@@ -26,6 +26,7 @@ Msg::Msg()
 {
     mFont = QFont("Arial", 12, QFont::Bold, false);
     mFont.setStyleHint(QFont::SansSerif);
+    mFont.setPixelSize(16);
     mLay = new QTextLayout();
     mLay->setFont(mFont);
     mLay->setTextOption(QTextOption(Qt::AlignHCenter));
@@ -42,7 +43,7 @@ void Msg::ShowMsg(const QString str)
 
     mLay->setText(str);
     int leading = -3;
-    qreal h = 10;
+    qreal h = 0;
     qreal maxw = 0;
     qreal maxh = 0;
     mLay->beginLayout();
@@ -63,9 +64,12 @@ void Msg::ShowMsg(const QString str)
     }
     mLay->endLayout();
 
+    float ypos = 4 + (70 - mLay->boundingRect().height()) / 2;
+
     maxw = qMax(mUpdateRect.width(), mLay->boundingRect().width());
-    maxh = qMax(mUpdateRect.height(), mLay->boundingRect().height() + 8);
-    mUpdateRect = QRectF(0, 0, maxw, maxh);
+    maxh = qMax(mUpdateRect.height(), mLay->boundingRect().height() + ypos);
+
+    mUpdateRect = QRectF(0, 0, maxw, maxh + ypos);
 
     update(boundingRect());
 }
@@ -79,5 +83,6 @@ void Msg::paint(QPainter* painter, const QStyleOptionGraphicsItem* /*option*/, Q
 {
     painter->setRenderHint(QPainter::TextAntialiasing, true);
     painter->setPen(QPen(QColor("#303133")));
-    mLay->draw(painter, QPoint(0, 0));
+    float ypos = 4 + (70 - mLay->boundingRect().height()) / 2;
+    mLay->draw(painter, QPointF(0, ypos));
 }

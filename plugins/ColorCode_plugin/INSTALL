@@ -4,8 +4,8 @@ qmake-qt4
 make
 
 # to install:
-cp ColorCode /usr/bin/
+cp colorcode /usr/bin/
 
 # to uninstall:
-rm /usr/bin/ColorCode
+rm /usr/bin/colorcode
 

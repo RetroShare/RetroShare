@@ -38,13 +38,16 @@ class QGraphicsItem;
 class QGraphicsTextItem;
 class QGraphicsScene;
 class QGraphicsView;
+class PrefDialog;
+class Settings;
 class CCSolver;
 class ColorPeg;
 class PegRow;
 class RowHint;
 class Msg;
 class BackGround;
-class SolRow;
+class SolutionRow;
+class GraphicsBtn;
 
 class ColorCode : public QMainWindow
 {
@@ -58,11 +61,19 @@ class ColorCode : public QMainWindow
         static const int STATE_WON;
         static const int STATE_LOST;
         static const int STATE_GAVE_UP;
+        static const int STATE_ERROR;
+
+        static const int MODE_HVM;
+        static const int MODE_MVH;
 
         static const int MAX_COLOR_CNT;
 
+        static const int LEVEL_SETTINGS[5][3];
+
         int ROW_CNT;
         int ROW_Y0;
+
+        Settings* mSettings;
 
     public slots:
         void PegPressSlot(ColorPeg *cp);
@@ -72,6 +83,10 @@ class ColorCode : public QMainWindow
         void HintPressedSlot(int ix);
         void ShowMsgSlot(QString msg);
         void RemovePegSlot(ColorPeg* cp);
+
+        void DoneBtnPressSlot(GraphicsBtn* btn = NULL);
+
+        void ApplyPreferencesSlot();
 
     protected :
         void resizeEvent(QResizeEvent* e);
@@ -88,32 +103,45 @@ class ColorCode : public QMainWindow
         void OnlineHelpSlot();
         void AboutSlot();
         void AboutQtSlot();
+        void OpenPreferencesSlot();
         void ShowToolbarSlot();
         void ShowMenubarSlot();
         void ShowStatusbarSlot();
         void ResetColorsOrderSlot();
-        void ShowLetterSlot();
+        void SetIndicators();
         void SameColorSlot(bool checked);
         void SetSameColor(bool checked);
         void AutoCloseSlot();
-        void ForceLevelSlot();
+        void AutoHintsSlot();
+        void SetLevelSlot();
+        void SetGameModeSlot();
 
         void RandRowSlot();
         void PrevRowSlot();
         void ClearRowSlot();
 
-        void mColorCntChangedSlot();
+        void ColorCntChangedSlot();
         void PegCntChangedSlot();
 
         void UpdateRowMenuSlot();
 
-        void GetGuessSlot();
+        void SetGuessSlot();
+        void SetHintsSlot();
+        void SetAutoHintsSlot();
 
         void TestSlot();
 
     private:
-        static const int mLevelSettings[5][3];
+        static const int LAYER_BG;
+        static const int LAYER_ROWS;
+        static const int LAYER_HINTS;
+        static const int LAYER_SOL;
+        static const int LAYER_MSG;
+        static const int LAYER_PEGS;
+        static const int LAYER_BTNS;
+        static const int LAYER_DRAG;
 
+        static int mGameMode;
         static int mLevel;
         static int mColorCnt;
         static int mPegCnt;
@@ -126,6 +154,9 @@ class ColorCode : public QMainWindow
         int mGameState;
         int mGameId;
         int mGuessCnt;
+        int mGameCnt;
+        bool mHideColors;
+        int mSolverStrength;
 
         std::vector<int> mSolution;
 
@@ -136,12 +167,15 @@ class ColorCode : public QMainWindow
         CCSolver* mSolver;
         Msg* mMsg;
         BackGround* mBg;
+        GraphicsBtn* mDoneBtn;
+        GraphicsBtn* mOkBtn;
+        PrefDialog* mPrefDialog;
 
         PegRow* mCurRow;
 
         std::vector<ColorPeg *> mAllPegs;
         std::vector<ColorPeg *> mPegBuff;
-        SolRow* mSolRow;
+        SolutionRow* mSolutionRow;
         PegRow* mPegRows[10];
         RowHint* mHintBtns[10];
 
@@ -149,38 +183,56 @@ class ColorCode : public QMainWindow
         QRadialGradient mGradMap[10];
         QRadialGradient mGradBuff[10];
         ColorPeg* mPegBtns[10];
-        ColorPeg** mSolPegs;
         QPoint mBtnPos[10];
+
+        QTimer* mHintsDelayTimer;
 
         void InitTypesMap();
         void InitSolution();
         void InitActions();
         void InitMenus();
         void InitToolBars();
+        void CreatePrefDialog();
+        void ApplySettings();
+        bool NeedsRestart() const;
+        void TryNewGame();
 
+        void SetGameMode();
         void SetPegCnt();
         void SetColorCnt();
+
+        void ApplyGameMode();
+        void ApplyPegCnt();
+        void ApplyColorCnt();
+        void ApplySolverStrength();
+        
         void CheckLevel();
         void CheckSameColorsSetting();
         void SetState(const int s);
         void ResetGame();
         void NewGame();
         void SetSolution();
+        void GetSolution();
         void ShowSolution();
         void NextRow();
         void ResolveRow();
+        std::vector<int> RateSol2Guess(const std::vector<int> sol, const std::vector<int> guess);
+        void ResolveHints();
         void ResolveGame();
+        bool GamesRunning();
         void Scale();
 
         ColorPeg* CreatePeg(int ix);
         void RemovePeg(ColorPeg* cp);
 
-        QMenu* GameMenu;
-        QMenu* RowMenu;
-        QMenu* SettingsMenu;
-        QMenu* LevelMenu;
-        QMenu* HelpMenu;
-        QMenu* RowContextMenu;
+        QMenu* mMenuGame;
+        QMenu* mMenuRow;
+        QMenu* mMenuRowContext;
+        QMenu* mMenuSettings;
+        QMenu* mMenuModes;
+        QMenu* mMenuLevels;
+        QMenu* mMenuHelp;        
+
         QMenuBar* mMenuBar;
         QToolBar* mGameToolbar;
         QToolBar* mLevelToolbar;
@@ -189,23 +241,30 @@ class ColorCode : public QMainWindow
         QComboBox* mPegCntCmb;
         QLabel* mStatusLabel;
 
-        QActionGroup* mLevelActions;
-        QAction* NewGameAction;
-        QAction* RestartGameAction;
-        QAction* GiveInAction;
-        QAction* ShowToolbarAction;
-        QAction* ShowMenubarAction;
-        QAction* ShowStatusbarAction;
-        QAction* SameColorAction;
+        QActionGroup* mActGroupLevels;
+        QActionGroup* mActGroupModes;
+
+        QAction* mActNewGame;
+        QAction* mActRestartGame;
+        QAction* mActGiveIn;
+        QAction* mActShowToolbar;
+        QAction* mActShowMenubar;
+        QAction* mActShowStatusbar;
+        QAction* mActSameColor;
         QAction* mActResetColorsOrder;
         QAction* mActShowLetter;
         QAction* mActSameColorIcon;
-        QAction* AutoCloseAction;
-        QAction* AboutAction;
-        QAction* AboutQtAction;
-        QAction* ExitAction;
+        QAction* mActAutoClose;
+        QAction* mActAutoHints;
+        QAction* mActPreferences;
+        QAction* mActAbout;
+        QAction* mActAboutQt;
+        QAction* mActExit;
 
         QAction* mActSetPegCnt;
+
+        QAction* mActModeHvM;
+        QAction* mActModeMvH;
 
         QAction* mActLevelEasy;
         QAction* mActLevelClassic;
@@ -214,11 +273,12 @@ class ColorCode : public QMainWindow
         QAction* mActLevelHard;
         QAction* mLaunchHelpAction;
 
-        QAction* RandRowAction;
-        QAction* PrevRowAction;
-        QAction* ClearRowAction;
+        QAction* mActRandRow;
+        QAction* mActPrevRow;
+        QAction* mActClearRow;
 
-        QAction* mActGetGuess;
+        QAction* mActSetGuess;
+        QAction* mActSetHints;
 };
 
 #endif // COLORCODE_H

@@ -11,7 +11,6 @@
         <file>img/qt.png</file>
         <file>img/story-editor.png</file>
         <file>img/view-refresh.png</file>
-        <file>img/bm03.png</file>
         <file>trans_de.qm</file>
         <file>img/face-sad.png</file>
         <file>img/edit-clear.png</file>
@@ -26,5 +25,9 @@
         <file>img/same_color_0.png</file>
         <file>img/same_color_1.png</file>
         <file>img/help.png</file>
+        <file>img/icon_female16.png</file>
+        <file>img/configure.png</file>
+        <file>trans_fr.qm</file>
+        <file>trans_hu.qm</file>
     </qresource>
 </RCC>

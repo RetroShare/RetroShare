@@ -16,9 +16,9 @@
  * along with ColorCode. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #include <QtGui>
 
+#include "settings.h"
 #include "ccsolver.h"
 #include "colorcode.h"
 #include "colorpeg.h"
@@ -27,18 +27,13 @@
 #include "msg.h"
 #include "background.h"
 #include "about.h"
-#include "solrow.h"
+#include "prefdialog.h"
+#include "solutionrow.h"
+#include "graphicsbtn.h"
 
 using namespace std;
 
 const int IdRole = Qt::UserRole;
-
-int ColorCode::mColorCnt = 0;
-int ColorCode::mPegCnt   = 0;
-int ColorCode::mDoubles  = 1;
-int ColorCode::mXOffs    = 0;
-int ColorCode::mMaxZ     = 0;
-int ColorCode::mLevel    = -1;
 
 volatile bool ColorCode::mNoAct    = false;
 
@@ -46,10 +41,23 @@ const int ColorCode::STATE_RUNNING = 0;
 const int ColorCode::STATE_WON     = 1;
 const int ColorCode::STATE_LOST    = 2;
 const int ColorCode::STATE_GAVE_UP = 3;
+const int ColorCode::STATE_ERROR   = 4;
+
+const int ColorCode::MODE_HVM = 0;
+const int ColorCode::MODE_MVH = 1;
 
 const int ColorCode::MAX_COLOR_CNT = 10;
 
-const int ColorCode::mLevelSettings[5][3] = {
+const int ColorCode::LAYER_BG    = 1;
+const int ColorCode::LAYER_ROWS  = 2;
+const int ColorCode::LAYER_HINTS = 3;
+const int ColorCode::LAYER_SOL   = 4;
+const int ColorCode::LAYER_MSG   = 5;
+const int ColorCode::LAYER_PEGS  = 6;
+const int ColorCode::LAYER_BTNS  = 7;
+const int ColorCode::LAYER_DRAG  = 8;
+
+const int ColorCode::LEVEL_SETTINGS[5][3] = {
                                                 { 2, 2, 1},
                                                 { 4, 3, 0},
                                                 { 6, 4, 1},
@@ -57,10 +65,25 @@ const int ColorCode::mLevelSettings[5][3] = {
                                                 {10, 5, 1}
                                             };
 
+int ColorCode::mColorCnt = 0;
+int ColorCode::mPegCnt   = 0;
+int ColorCode::mDoubles  = 1;
+int ColorCode::mXOffs    = 0;
+int ColorCode::mMaxZ     = 0;
+int ColorCode::mLevel    = -1;
+int ColorCode::mGameMode = ColorCode::MODE_HVM;
+
 ColorCode::ColorCode()
 {
     QTime midnight(0, 0, 0);
     qsrand(midnight.secsTo(QTime::currentTime()));
+
+    QCoreApplication::setOrganizationName("dirks");
+    QCoreApplication::setOrganizationDomain("laebisch.com");
+    QCoreApplication::setApplicationName("colorcode");
+
+    mPrefDialog = NULL;
+    mSettings = new Settings();
 
     ROW_CNT = 10;
     ROW_Y0  = 130;
@@ -72,10 +95,8 @@ ColorCode::ColorCode()
     setIconSize(QSize(16, 16));
 
     mMenuBar = menuBar();
-    mBg = new BackGround();
-    mMsg = new Msg;
 
-    // as long as menuBar's size is invalid populated initially ...
+    // as long as menuBar's size isn invalid populated initially ...
 #ifdef Q_WS_X11
     scene = new QGraphicsScene(0, 0, 320, 580);
 #else
@@ -83,6 +104,7 @@ ColorCode::ColorCode()
 #endif
 
     scene->setBackgroundBrush(QBrush(QColor("#b0b1b3")));
+
     view = new QGraphicsView;
     view->setScene(scene);
     view->setGeometry(0, 0, 320, 560);
@@ -93,17 +115,47 @@ ColorCode::ColorCode()
     view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setCentralWidget(view);
+
+    mBg = new BackGround();
     scene->addItem(mBg);
     mBg->setPos(0, 0);
+    mBg->setZValue(LAYER_BG);
+
+    mMsg = new Msg;
     scene->addItem(mMsg);
-    mMsg->setPos(20, 10);
+    mMsg->setPos(20, 0);
+    mMsg->setZValue(LAYER_MSG);
+
+    mDoneBtn = new GraphicsBtn;
+    mDoneBtn->SetLabel(tr("Done"));
+    scene->addItem(mDoneBtn);
+    mDoneBtn->setPos(84, 118);
+    mDoneBtn->setZValue(LAYER_BTNS);
+    mDoneBtn->ShowBtn(false);
+    connect(mDoneBtn, SIGNAL(BtnPressSignal(GraphicsBtn *)), this, SLOT(DoneBtnPressSlot(GraphicsBtn *)));
+
+    mOkBtn = new GraphicsBtn;
+    mOkBtn->SetWidth(38);
+    mOkBtn->SetLabel("ok");
+    scene->addItem(mOkBtn);
+    mOkBtn->setPos(5, 329);
+    mOkBtn->setZValue(LAYER_BTNS);
+    mOkBtn->ShowBtn(false);
+    connect(mOkBtn, SIGNAL(BtnPressSignal(GraphicsBtn *)), this, SLOT(DoneBtnPressSlot(GraphicsBtn *)));
 
     mSolver = new CCSolver(this);
+    mHintsDelayTimer = new QTimer();
+    mHintsDelayTimer->setSingleShot(true);
+    mHintsDelayTimer->setInterval(500);
+    connect(mHintsDelayTimer, SIGNAL(timeout()), this, SLOT(SetAutoHintsSlot()));
 
-    mCurRow   = NULL;
-    mColorCnt = MAX_COLOR_CNT;
-    mGameId   = 0;
-    mGuessCnt = 0;
+    mCurRow         = NULL;
+    mColorCnt       = 0;
+    mGameCnt        = 0;
+    mGameId         = 0;
+    mGuessCnt       = 0;
+    mHideColors     = false;
+    mSolverStrength = CCSolver::STRENGTH_HIGH;
 
     InitTypesMap();
     InitActions();
@@ -118,35 +170,24 @@ ColorCode::ColorCode()
     InitRows();
     InitPegBtns();
 
-    NewGame();
+    ApplySettings();
 
-    mMsg->setZValue(++ColorCode::mMaxZ);
+    NewGame();
 }
 
 ColorCode::~ColorCode()
 {
-    int i;
-    if (mPegCnt > 0)
-    {
-        for (i = 0; i < mPegCnt; ++i)
-        {
-            if (mSolPegs[i] != NULL)
-            {
-                RemovePeg(mSolPegs[i]);
-                mSolPegs[i] = NULL;
-            }
-        }
-
-        delete [] mSolPegs;
-        mSolPegs = NULL;
-    }
+    mSettings->WriteSettings();
 }
 
 void ColorCode::InitSolution()
 {
-    mSolRow = new SolRow();
-    mSolRow->setPos(50, 70);
-    scene->addItem(mSolRow);
+    mSolutionRow = new SolutionRow();
+    mSolutionRow->setPos(50, 70);
+    mSolutionRow->setZValue(LAYER_SOL);
+    scene->addItem(mSolutionRow);
+    connect(mSolutionRow, SIGNAL(RemovePegSignal(ColorPeg*)), this, SLOT(RemovePegSlot(ColorPeg*)));
+    connect(mSolutionRow, SIGNAL(RowSolutionSignal(int)), this, SLOT(RowSolutionSlot(int)));
 }
 
 void ColorCode::InitRows()
@@ -163,7 +204,7 @@ void ColorCode::InitRows()
         row = new PegRow();
         row->SetIx(i);
         row->setPos(QPoint(xpos, ypos + (ROW_CNT - (i + 1)) * 40));
-        row->setZValue(++ColorCode::mMaxZ);
+        row->setZValue(LAYER_ROWS);
         row->SetActive(false);
         scene->addItem(row);
         mPegRows[i] = row;
@@ -173,7 +214,7 @@ void ColorCode::InitRows()
         hint = new RowHint;
         hint->SetIx(i);
         hint->setPos(QPoint(4, ypos + (ROW_CNT - (i + 1)) * 40));
-        hint->setZValue(++ColorCode::mMaxZ);
+        hint->setZValue(LAYER_HINTS);
         hint->SetActive(false);
         scene->addItem(hint);
         mHintBtns[i] = hint;
@@ -297,59 +338,59 @@ void ColorCode::InitTypesMap()
 
 void ColorCode::InitActions()
 {
-    NewGameAction = new QAction(tr("&New Game"), this);
-    NewGameAction->setIcon(QIcon(":/img/document-new.png"));
-    NewGameAction->setShortcut(tr("Ctrl+N"));
-    connect(NewGameAction, SIGNAL(triggered()), this, SLOT(NewGameSlot()));
+    mActNewGame = new QAction(tr("&New Game"), this);
+    mActNewGame->setIcon(QIcon(":/img/document-new.png"));
+    mActNewGame->setShortcut(tr("Ctrl+N"));
+    connect(mActNewGame, SIGNAL(triggered()), this, SLOT(NewGameSlot()));
 
-    RestartGameAction = new QAction(tr("&Restart Game"), this);
-    RestartGameAction->setIcon(QIcon(":/img/view-refresh.png"));
-    RestartGameAction->setShortcut(tr("Ctrl+Shift+R"));
-    connect(RestartGameAction, SIGNAL(triggered()), this, SLOT(RestartGameSlot()));
+    mActRestartGame = new QAction(tr("&Restart Game"), this);
+    mActRestartGame->setIcon(QIcon(":/img/view-refresh.png"));
+    mActRestartGame->setShortcut(tr("Ctrl+Shift+N"));
+    connect(mActRestartGame, SIGNAL(triggered()), this, SLOT(RestartGameSlot()));
 
-    GiveInAction = new QAction(tr("&Throw In The Towel"), this);
-    GiveInAction->setIcon(QIcon(":/img/face-sad.png"));
-    GiveInAction->setShortcut(tr("Ctrl+G"));
-    connect(GiveInAction, SIGNAL(triggered()), this, SLOT(GiveInSlot()));
+    mActGiveIn = new QAction(tr("&Throw In The Towel"), this);
+    mActGiveIn->setIcon(QIcon(":/img/face-sad.png"));
+    mActGiveIn->setShortcut(tr("Ctrl+G"));
+    connect(mActGiveIn, SIGNAL(triggered()), this, SLOT(GiveInSlot()));
 
-    ExitAction = new QAction(tr("E&xit"), this);
-    ExitAction->setIcon(QIcon(":/img/application-exit.png"));
-    ExitAction->setShortcut(tr("Ctrl+Q"));
-    connect(ExitAction, SIGNAL(triggered()), this, SLOT(close()));
+    mActExit = new QAction(tr("E&xit"), this);
+    mActExit->setIcon(QIcon(":/img/application-exit.png"));
+    mActExit->setShortcut(tr("Ctrl+Q"));
+    connect(mActExit, SIGNAL(triggered()), this, SLOT(close()));
 
-    ShowToolbarAction = new QAction(tr("Show Toolbar"), this);
-    ShowToolbarAction->setCheckable(true);
-    ShowToolbarAction->setChecked(true);
-    ShowToolbarAction->setShortcut(tr("Ctrl+T"));
-    connect(ShowToolbarAction, SIGNAL(triggered()), this, SLOT(ShowToolbarSlot()));
+    mActShowToolbar = new QAction(tr("Show Toolbar"), this);
+    mActShowToolbar->setCheckable(true);
+    mActShowToolbar->setChecked(true);
+    mActShowToolbar->setShortcut(tr("Ctrl+T"));
+    connect(mActShowToolbar, SIGNAL(triggered()), this, SLOT(ShowToolbarSlot()));
 
-    ShowMenubarAction = new QAction(tr("Show Menubar"), this);
-    ShowMenubarAction->setCheckable(true);
-    ShowMenubarAction->setChecked(true);
-    ShowMenubarAction->setShortcut(tr("Ctrl+M"));
-    connect(ShowMenubarAction, SIGNAL(triggered()), this, SLOT(ShowMenubarSlot()));
+    mActShowMenubar = new QAction(tr("Show Menubar"), this);
+    mActShowMenubar->setCheckable(true);
+    mActShowMenubar->setChecked(true);
+    mActShowMenubar->setShortcut(tr("Ctrl+M"));
+    connect(mActShowMenubar, SIGNAL(triggered()), this, SLOT(ShowMenubarSlot()));
 
-    ShowStatusbarAction = new QAction(tr("Show Statusbar"), this);
-    ShowStatusbarAction->setCheckable(true);
-    ShowStatusbarAction->setChecked(true);
-    ShowStatusbarAction->setShortcut(tr("Ctrl+S"));
-    connect(ShowStatusbarAction, SIGNAL(triggered()), this, SLOT(ShowStatusbarSlot()));
+    mActShowStatusbar = new QAction(tr("Show Statusbar"), this);
+    mActShowStatusbar->setCheckable(true);
+    mActShowStatusbar->setChecked(true);
+    mActShowStatusbar->setShortcut(tr("Ctrl+S"));
+    connect(mActShowStatusbar, SIGNAL(triggered()), this, SLOT(ShowStatusbarSlot()));
 
     mActResetColorsOrder = new QAction(tr("Reset Color Order"), this);
     mActResetColorsOrder->setShortcut(tr("Ctrl+Shift+R"));
     connect(mActResetColorsOrder, SIGNAL(triggered()), this, SLOT(ResetColorsOrderSlot()));
 
-    mActShowLetter = new QAction(tr("Show Letter Indicators"), this);
+    mActShowLetter = new QAction(tr("Show Indicators"), this);
     mActShowLetter->setCheckable(true);
     mActShowLetter->setChecked(false);
     mActShowLetter->setShortcut(tr("Ctrl+Shift+L"));
-    connect(mActShowLetter, SIGNAL(triggered()), this, SLOT(ShowLetterSlot()));
+    connect(mActShowLetter, SIGNAL(triggered()), this, SLOT(SetIndicators()));
 
-    SameColorAction = new QAction(tr("Allow Pegs of the Same Color"), this);
-    SameColorAction->setCheckable(true);
-    SameColorAction->setChecked(true);
-    SameColorAction->setShortcut(tr("Ctrl+Shift+C"));
-    connect(SameColorAction, SIGNAL(triggered(bool)), this, SLOT(SameColorSlot(bool)));
+    mActSameColor = new QAction(tr("Allow Pegs of the Same Color"), this);
+    mActSameColor->setCheckable(true);
+    mActSameColor->setChecked(true);
+    mActSameColor->setShortcut(tr("Ctrl+Shift+C"));
+    connect(mActSameColor, SIGNAL(triggered(bool)), this, SLOT(SameColorSlot(bool)));
 
     mActSameColorIcon = new QAction(tr("Allow Pegs of the Same Color"), this);
     mActSameColorIcon->setCheckable(true);
@@ -358,137 +399,181 @@ void ColorCode::InitActions()
     mActSameColorIcon->setIcon(QIcon(":/img/same_color_1.png"));
     connect(mActSameColorIcon, SIGNAL(triggered(bool)), this, SLOT(SameColorSlot(bool)));
 
-    AutoCloseAction = new QAction(tr("Close Rows when the last Peg is placed"), this);
-    AutoCloseAction->setCheckable(true);
-    AutoCloseAction->setChecked(false);
-    AutoCloseAction->setShortcut(tr("Ctrl+L"));
-    connect(AutoCloseAction, SIGNAL(triggered()), this, SLOT(AutoCloseSlot()));
+    mActAutoClose = new QAction(tr("Close Rows when the last Peg is placed"), this);
+    mActAutoClose->setCheckable(true);
+    mActAutoClose->setChecked(false);
+    mActAutoClose->setShortcut(tr("Ctrl+L"));
+    connect(mActAutoClose, SIGNAL(triggered()), this, SLOT(AutoCloseSlot()));
+
+    mActAutoHints = new QAction(tr("Set Hints automatically"), this);
+    mActAutoHints->setCheckable(true);
+    mActAutoHints->setChecked(false);
+    mActAutoHints->setShortcut(tr("Ctrl+Shift+H"));
+    connect(mActAutoHints, SIGNAL(triggered()), this, SLOT(AutoHintsSlot()));
 
     mLaunchHelpAction = new QAction(tr("Online &Help"), this);
     mLaunchHelpAction->setIcon(QIcon(":/img/help.png"));
     mLaunchHelpAction->setShortcut(tr("F1"));
     connect(mLaunchHelpAction, SIGNAL(triggered()), this, SLOT(OnlineHelpSlot()));
 
-    AboutAction = new QAction(tr("About &ColorCode"), this);
-    AboutAction->setIcon(QIcon(":/img/help-about.png"));
-    AboutAction->setShortcut(tr("Ctrl+A"));
-    connect(AboutAction, SIGNAL(triggered()), this, SLOT(AboutSlot()));
+    mActAbout = new QAction(tr("About &ColorCode"), this);
+    mActAbout->setIcon(QIcon(":/img/help-about.png"));
+    mActAbout->setShortcut(tr("Ctrl+A"));
+    connect(mActAbout, SIGNAL(triggered()), this, SLOT(AboutSlot()));
 
-    AboutQtAction = new QAction(tr("About &Qt"), this);
-    AboutQtAction->setIcon(QIcon(":/img/qt.png"));
-    AboutQtAction->setShortcut(tr("Ctrl+I"));
-    connect(AboutQtAction, SIGNAL(triggered()), this, SLOT(AboutQtSlot()));
+    mActAboutQt = new QAction(tr("About &Qt"), this);
+    mActAboutQt->setIcon(QIcon(":/img/qt.png"));
+    mActAboutQt->setShortcut(tr("Ctrl+I"));
+    connect(mActAboutQt, SIGNAL(triggered()), this, SLOT(AboutQtSlot()));
 
-    RandRowAction = new QAction(tr("Fill Row by Random"), this);
-    RandRowAction->setIcon(QIcon(":/img/system-switch-user.png"));
-    RandRowAction->setShortcut(tr("Ctrl+R"));
-    connect(RandRowAction, SIGNAL(triggered()), this, SLOT(RandRowSlot()));
+    mActRandRow = new QAction(tr("Fill Row by Random"), this);
+    mActRandRow->setIcon(QIcon(":/img/system-switch-user.png"));
+    mActRandRow->setShortcut(tr("Ctrl+R"));
+    connect(mActRandRow, SIGNAL(triggered()), this, SLOT(RandRowSlot()));
 
-    PrevRowAction = new QAction(tr("Duplicate Previous Row"), this);
-    PrevRowAction->setIcon(QIcon(":/img/edit-copy.png"));
-    PrevRowAction->setShortcut(tr("Ctrl+D"));
-    connect(PrevRowAction, SIGNAL(triggered()), this, SLOT(PrevRowSlot()));
+    mActPrevRow = new QAction(tr("Duplicate Previous Row"), this);
+    mActPrevRow->setIcon(QIcon(":/img/edit-copy.png"));
+    mActPrevRow->setShortcut(tr("Ctrl+D"));
+    connect(mActPrevRow, SIGNAL(triggered()), this, SLOT(PrevRowSlot()));
 
-    ClearRowAction = new QAction(tr("Clear Row"), this);
-    ClearRowAction->setIcon(QIcon(":/img/edit-clear.png"));
-    ClearRowAction->setShortcut(tr("Ctrl+C"));
-    connect(ClearRowAction, SIGNAL(triggered()), this, SLOT(ClearRowSlot()));
+    mActClearRow = new QAction(tr("Clear Row"), this);
+    mActClearRow->setIcon(QIcon(":/img/edit-clear.png"));
+    mActClearRow->setShortcut(tr("Ctrl+C"));
+    connect(mActClearRow, SIGNAL(triggered()), this, SLOT(ClearRowSlot()));
 
     mActLevelEasy = new QAction(tr("Beginner (2 Colors, 2 Slots, Doubles)"), this);
     mActLevelEasy->setData(0);
     mActLevelEasy->setCheckable(true);
     mActLevelEasy->setChecked(false);
-    connect(mActLevelEasy, SIGNAL(triggered()), this, SLOT(ForceLevelSlot()));
+    connect(mActLevelEasy, SIGNAL(triggered()), this, SLOT(SetLevelSlot()));
 
     mActLevelClassic = new QAction(tr("Easy (4 Colors, 3 Slots, No Doubles)"), this);
     mActLevelClassic->setData(1);
     mActLevelClassic->setCheckable(true);
     mActLevelClassic->setChecked(false);
-    connect(mActLevelClassic, SIGNAL(triggered()), this, SLOT(ForceLevelSlot()));
+    connect(mActLevelClassic, SIGNAL(triggered()), this, SLOT(SetLevelSlot()));
 
     mActLevelMedium = new QAction(tr("Classic (6 Colors, 4 Slots, Doubles)"), this);
     mActLevelMedium->setData(2);
     mActLevelMedium->setCheckable(true);
     mActLevelMedium->setChecked(true);
-    connect(mActLevelMedium, SIGNAL(triggered()), this, SLOT(ForceLevelSlot()));
+    connect(mActLevelMedium, SIGNAL(triggered()), this, SLOT(SetLevelSlot()));
 
     mActLevelChallenging = new QAction(tr("Challenging (8 Colors, 4 Slots, Doubles)"), this);
     mActLevelChallenging->setData(3);
     mActLevelChallenging->setCheckable(true);
     mActLevelChallenging->setChecked(false);
-    connect(mActLevelChallenging, SIGNAL(triggered()), this, SLOT(ForceLevelSlot()));
+    connect(mActLevelChallenging, SIGNAL(triggered()), this, SLOT(SetLevelSlot()));
 
     mActLevelHard = new QAction(tr("Hard (10 Colors, 5 Slots, Doubles)"), this);
     mActLevelHard->setData(4);
     mActLevelHard->setCheckable(true);
     mActLevelHard->setChecked(false);
-    connect(mActLevelHard, SIGNAL(triggered()), this, SLOT(ForceLevelSlot()));
+    connect(mActLevelHard, SIGNAL(triggered()), this, SLOT(SetLevelSlot()));
 
+    mActSetGuess = new QAction(tr("Computer's Guess"), this);
+    mActSetGuess->setIcon(QIcon(":/img/business_user.png"));
+    mActSetGuess->setShortcut(tr("Ctrl+H"));
+    connect(mActSetGuess, SIGNAL(triggered()), this, SLOT(SetGuessSlot()));
 
-    mActGetGuess = new QAction(tr("Computer's Guess"), this);
-    mActGetGuess->setIcon(QIcon(":/img/business_user.png"));
-    mActGetGuess->setShortcut(tr("Ctrl+H"));
-    connect(mActGetGuess, SIGNAL(triggered()), this, SLOT(GetGuessSlot()));
+    mActSetHints = new QAction(tr("Rate it for me"), this);
+    mActSetHints->setIcon(QIcon(":/img/icon_female16.png"));
+    mActSetHints->setShortcut(tr("Ctrl+H"));
+    connect(mActSetHints, SIGNAL(triggered()), this, SLOT(SetHintsSlot()));
+
+    mActModeHvM = new QAction(tr("Human vs Computer"), this);
+    mActModeHvM->setData(MODE_HVM);
+    mActModeHvM->setCheckable(true);
+    mActModeHvM->setChecked(true);
+    connect(mActModeHvM, SIGNAL(triggered()), this, SLOT(SetGameModeSlot()));
+
+    mActModeMvH = new QAction(tr("Computer vs Human"), this);
+    mActModeMvH->setData(MODE_MVH);
+    mActModeMvH->setCheckable(true);
+    mActModeMvH->setChecked(false);
+    connect(mActModeMvH, SIGNAL(triggered()), this, SLOT(SetGameModeSlot()));
+
+    mActPreferences = new QAction(tr("Preferences"), this);
+    mActPreferences->setIcon(QIcon(":/img/configure.png"));
+    mActPreferences->setShortcut(tr("Ctrl+P"));
+    connect(mActPreferences, SIGNAL(triggered()), this, SLOT(OpenPreferencesSlot()));
 }
 
 void ColorCode::InitMenus()
 {
-    GameMenu = mMenuBar->addMenu(tr("&Game"));
-    GameMenu->addAction(NewGameAction);
-    GameMenu->addAction(RestartGameAction);
-    GameMenu->addAction(GiveInAction);
-    GameMenu->addSeparator();
-    GameMenu->addAction(ExitAction);
+    mMenuGame = mMenuBar->addMenu(tr("&Game"));
+    mMenuGame->addAction(mActNewGame);
+    mMenuGame->addAction(mActRestartGame);
+    mMenuGame->addAction(mActGiveIn);
+    mMenuGame->addSeparator();
+    mMenuGame->addAction(mActExit);
 
-    RowMenu = mMenuBar->addMenu(tr("&Row"));
-    RowMenu->addAction(RandRowAction);
-    RowMenu->addAction(PrevRowAction);
-    RowMenu->addAction(ClearRowAction);
-    RowMenu->addSeparator();
-    RowMenu->addAction(mActGetGuess);
-    connect(RowMenu, SIGNAL(aboutToShow()), this, SLOT(UpdateRowMenuSlot()));
+    mMenuRow = mMenuBar->addMenu(tr("&Row"));
+    mMenuRow->addAction(mActRandRow);
+    mMenuRow->addAction(mActPrevRow);
+    mMenuRow->addAction(mActClearRow);
+    mMenuRow->addSeparator();
+    mMenuRow->addAction(mActSetGuess);
+    mMenuRow->addAction(mActSetHints);
+    connect(mMenuRow, SIGNAL(aboutToShow()), this, SLOT(UpdateRowMenuSlot()));
 
-    SettingsMenu = mMenuBar->addMenu(tr("&Settings"));
-    SettingsMenu->addAction(ShowMenubarAction);
-    SettingsMenu->addAction(ShowToolbarAction);
-    SettingsMenu->addAction(ShowStatusbarAction);
-    SettingsMenu->addSeparator();
-    SettingsMenu->addAction(mActResetColorsOrder);
-    SettingsMenu->addAction(mActShowLetter);
-    SettingsMenu->addSeparator();
+    mMenuSettings = mMenuBar->addMenu(tr("&Settings"));
 
-    LevelMenu = SettingsMenu->addMenu(tr("Level Presets"));
-    mLevelActions = new QActionGroup(LevelMenu);
-    mLevelActions->addAction(mActLevelEasy);
-    mLevelActions->addAction(mActLevelClassic);
-    mLevelActions->addAction(mActLevelMedium);
-    mLevelActions->addAction(mActLevelChallenging);
-    mLevelActions->addAction(mActLevelHard);
-    QList<QAction *> levelacts = mLevelActions->actions();
-    LevelMenu->addActions(levelacts);
-    SettingsMenu->addSeparator();
+    mMenuModes = mMenuSettings->addMenu(tr("Game Mode"));
+    mActGroupModes = new QActionGroup(mMenuModes);
+    mActGroupModes->setExclusive(true);
+    mActGroupModes->addAction(mActModeHvM);
+    mActGroupModes->addAction(mActModeMvH);
+    QList<QAction *> modeacts = mActGroupModes->actions();
+    mMenuModes->addActions(modeacts);
+    mMenuSettings->addSeparator();
 
-    SettingsMenu->addAction(SameColorAction);
-    SettingsMenu->addAction(AutoCloseAction);
+    mMenuSettings->addAction(mActShowMenubar);
+    mMenuSettings->addAction(mActShowToolbar);
+    mMenuSettings->addAction(mActShowStatusbar);
+    mMenuSettings->addSeparator();
+    mMenuSettings->addAction(mActResetColorsOrder);
+    mMenuSettings->addAction(mActShowLetter);
+    mMenuSettings->addSeparator();
 
-    HelpMenu = mMenuBar->addMenu(tr("&Help"));
-    HelpMenu->addAction(mLaunchHelpAction);
-    HelpMenu->addSeparator();
-    HelpMenu->addAction(AboutAction);
-    HelpMenu->addAction(AboutQtAction);
+    mMenuLevels = mMenuSettings->addMenu(tr("Level Presets"));
+    mActGroupLevels = new QActionGroup(mMenuLevels);
+    mActGroupLevels->addAction(mActLevelEasy);
+    mActGroupLevels->addAction(mActLevelClassic);
+    mActGroupLevels->addAction(mActLevelMedium);
+    mActGroupLevels->addAction(mActLevelChallenging);
+    mActGroupLevels->addAction(mActLevelHard);
+    QList<QAction *> levelacts = mActGroupLevels->actions();
+    mMenuLevels->addActions(levelacts);
+    mMenuSettings->addSeparator();
 
-    RowContextMenu = new QMenu();
-    RowContextMenu->addAction(RandRowAction);
-    RowContextMenu->addAction(PrevRowAction);
-    RowContextMenu->addAction(ClearRowAction);
-    RowContextMenu->addSeparator();
-    RowContextMenu->addAction(mActGetGuess);
-    RowContextMenu->addSeparator();
-    RowContextMenu->addAction(NewGameAction);
-    RowContextMenu->addAction(RestartGameAction);
-    RowContextMenu->addAction(GiveInAction);
-    RowContextMenu->addSeparator();
-    RowContextMenu->addAction(ExitAction);
+    mMenuSettings->addAction(mActSameColor);
+    mMenuSettings->addSeparator();
+
+    mMenuSettings->addAction(mActAutoClose);
+    mMenuSettings->addAction(mActAutoHints);
+
+    mMenuSettings->addSeparator();
+    mMenuSettings->addAction(mActPreferences);
+
+    mMenuHelp = mMenuBar->addMenu(tr("&Help"));
+    mMenuHelp->addAction(mLaunchHelpAction);
+    mMenuHelp->addSeparator();
+    mMenuHelp->addAction(mActAbout);
+    mMenuHelp->addAction(mActAboutQt);
+
+    mMenuRowContext = new QMenu();
+    mMenuRowContext->addAction(mActRandRow);
+    mMenuRowContext->addAction(mActPrevRow);
+    mMenuRowContext->addAction(mActClearRow);
+    mMenuRowContext->addSeparator();
+    mMenuRowContext->addAction(mActSetGuess);
+    mMenuRowContext->addSeparator();
+    mMenuRowContext->addAction(mActNewGame);
+    mMenuRowContext->addAction(mActRestartGame);
+    mMenuRowContext->addAction(mActGiveIn);
+    mMenuRowContext->addSeparator();
+    mMenuRowContext->addAction(mActExit);
 
     addActions(mMenuBar->actions());
 }
@@ -500,11 +585,12 @@ void ColorCode::InitToolBars()
     mGameToolbar->setFloatable(false);
     mGameToolbar->setIconSize(QSize(16, 16));
     mGameToolbar->setMovable(false);
-    mGameToolbar->addAction(NewGameAction);
-    mGameToolbar->addAction(RestartGameAction);
-    mGameToolbar->addAction(GiveInAction);
+    mGameToolbar->addAction(mActNewGame);
+    mGameToolbar->addAction(mActRestartGame);
+    mGameToolbar->addAction(mActGiveIn);
     mGameToolbar->addSeparator();
-    mGameToolbar->addAction(mActGetGuess);
+    mGameToolbar->addAction(mActSetGuess);
+    mGameToolbar->addAction(mActSetHints);
 
     mColorCntCmb = new QComboBox();
     mColorCntCmb->setLayoutDirection(Qt::LeftToRight);
@@ -519,7 +605,7 @@ void ColorCode::InitToolBars()
     mColorCntCmb->addItem("9 " + tr("Colors"), 9);
     mColorCntCmb->addItem("10 " + tr("Colors"), 10);
     mColorCntCmb->setCurrentIndex(6);
-    connect(mColorCntCmb, SIGNAL(currentIndexChanged(int)), this, SLOT(mColorCntChangedSlot()));
+    connect(mColorCntCmb, SIGNAL(currentIndexChanged(int)), this, SLOT(ColorCntChangedSlot()));
 
     mPegCntCmb = new QComboBox();
     mPegCntCmb->setLayoutDirection(Qt::LeftToRight);
@@ -548,6 +634,90 @@ void ColorCode::InitToolBars()
     mLevelToolbar->addAction(mActSameColorIcon);
 }
 
+void ColorCode::ApplySettings()
+{
+    bool restart = NeedsRestart();
+    mNoAct = true;
+
+    mActShowToolbar->setChecked(mSettings->mShowToolBar);
+    ShowToolbarSlot();
+    mActShowMenubar->setChecked(mSettings->mShowMenuBar);
+    ShowMenubarSlot();
+    mActShowStatusbar->setChecked(mSettings->mShowStatusBar);
+    ShowStatusbarSlot();
+    mActShowLetter->setChecked(mSettings->mShowIndicators);
+    SetIndicators();
+
+    mActAutoClose->setChecked(mSettings->mAutoClose);
+    mActAutoHints->setChecked(mSettings->mAutoHints);
+
+    SetSameColor(mSettings->mSameColors);
+    int i;
+    i = mColorCntCmb->findData(mSettings->mColorCnt);
+    if (i != -1 && mColorCntCmb->currentIndex() != i)
+    {
+        mColorCntCmb->setCurrentIndex(i);
+    }
+    i = mPegCntCmb->findData(mSettings->mPegCnt);
+    if (i != -1 && mPegCntCmb->currentIndex() != i)
+    {
+        mPegCntCmb->setCurrentIndex(i);
+    }
+    CheckLevel();
+
+    if (mSettings->mGameMode == MODE_HVM)
+    {
+        mActModeHvM->setChecked(true);
+    }
+    else
+    {
+        mActModeMvH->setChecked(true);
+    }
+
+    mHintsDelayTimer->setInterval(mSettings->mHintsDelay);
+
+    mNoAct = false;
+
+    if (restart)
+    {
+        TryNewGame();
+    }
+}
+
+void ColorCode::TryNewGame()
+{
+    int r = QMessageBox::Yes;
+    if (GamesRunning())
+    {
+        r = QMessageBox::question( this,
+                                   tr("Message"),
+                                   tr("The changed settings will only apply to new games!\nDo you want to give in the current and start a new Game?"),
+                                   QMessageBox::Yes | QMessageBox::No,
+                                   QMessageBox::Yes);
+    }
+
+    if (r == QMessageBox::Yes)
+    {
+        NewGame();
+    }
+}
+
+bool ColorCode::NeedsRestart() const
+{
+    bool need = false;
+
+    if ( mSettings->mSameColors != mActSameColor->isChecked()
+        || mSettings->mColorCnt != mColorCnt
+        || mSettings->mPegCnt != mPegCnt
+        || mSettings->mGameMode != mGameMode
+        || (mGameMode == MODE_MVH && mSolverStrength != mSettings->mSolverStrength) )
+    {
+        need = true;
+    }
+
+    return need;
+}
+
 void ColorCode::contextMenuEvent(QContextMenuEvent* e)
 {
 
@@ -569,11 +739,11 @@ void ColorCode::contextMenuEvent(QContextMenuEvent* e)
     if (isrow)
     {
         UpdateRowMenuSlot();
-        RowContextMenu->exec(e->globalPos());
+        mMenuRowContext->exec(e->globalPos());
     }
     else
     {
-        GameMenu->exec(e->globalPos());
+        mMenuGame->exec(e->globalPos());
     }
 }
 
@@ -585,11 +755,16 @@ void ColorCode::resizeEvent (QResizeEvent* e)
 
 void ColorCode::keyPressEvent(QKeyEvent *e)
 {
+    if (mCurRow == NULL || mGameState != STATE_RUNNING)
+    {
+        return;
+    }
+
     switch (e->key())
     {
         case Qt::Key_Return:
         case Qt::Key_Enter:
-            if (mCurRow != NULL && mGameState == STATE_RUNNING)
+            if (mGameMode == MODE_HVM)
             {
                 int ix = mCurRow->GetIx();
                 if (mHintBtns[ix]->mActive)
@@ -602,53 +777,91 @@ void ColorCode::keyPressEvent(QKeyEvent *e)
                     }
                 }
             }
+            else if (mGameMode == MODE_MVH)
+            {
+                if (mDoneBtn->isVisible() || mOkBtn->isVisible())
+                {
+                    DoneBtnPressSlot();
+                }
+            }
         break;
     }
 }
 
 void ColorCode::UpdateRowMenuSlot()
 {
-    if (mGameState != STATE_RUNNING || mCurRow == NULL)
+    if (mGameMode == MODE_HVM)
     {
-        RandRowAction->setEnabled(false);
-        PrevRowAction->setEnabled(false);
-        ClearRowAction->setEnabled(false);
-        mActGetGuess->setEnabled(false);
-        return;
-    }
-    else
-    {
-        RandRowAction->setEnabled(true);
-        mActGetGuess->setEnabled(true);
-    }
+        if (mGameState != STATE_RUNNING || mCurRow == NULL)
+        {
+            mActRandRow->setEnabled(false);
+            mActPrevRow->setEnabled(false);
+            mActClearRow->setEnabled(false);
+            mActSetGuess->setEnabled(false);
+            return;
+        }
+        else
+        {
+            mActRandRow->setEnabled(true);
+        }
 
-    if (mCurRow->GetIx() < 1)
-    {
-        PrevRowAction->setEnabled(false);
-    }
-    else
-    {
-        PrevRowAction->setEnabled(true);
-    }
+        if (mCurRow->GetIx() < 1)
+        {
+            mActPrevRow->setEnabled(false);
+        }
+        else
+        {
+            mActPrevRow->setEnabled(true);
+        }
 
-    if (mCurRow->GetPegCnt() == 0)
-    {
-        ClearRowAction->setEnabled(false);
+        if (mCurRow->GetPegCnt() == 0)
+        {
+            mActClearRow->setEnabled(false);
+        }
+        else
+        {
+            mActClearRow->setEnabled(true);
+        }
     }
-    else
+    else if (mGameMode == MODE_MVH)
     {
-        ClearRowAction->setEnabled(true);
+        if (mGameState == STATE_RUNNING && mCurRow == mSolutionRow)
+        {
+            mActRandRow->setEnabled(true);
+            mActClearRow->setEnabled(true);
+        }
+        else
+        {
+            mActRandRow->setEnabled(false);
+            mActClearRow->setEnabled(false);
+        }
     }
 }
 
 void ColorCode::RestartGameSlot()
 {
-    ResetRows();
-    SetState(STATE_RUNNING);
+    if (mGameMode == MODE_HVM)
+    {
+        ResetRows();
+        SetState(STATE_RUNNING);
 
-    mCurRow = NULL;
-    mSolver->RestartGame();
-    NextRow();
+        mCurRow = NULL;
+        mSolver->RestartGame();
+        NextRow();
+    }
+    else if (mGameMode == MODE_MVH)
+    {
+        mHintsDelayTimer->stop();
+        mOkBtn->ShowBtn(false);
+        ResetRows();
+        SetState(STATE_RUNNING);
+
+        mCurRow = NULL;
+        mSolver->NewGame(mColorCnt, mPegCnt, mDoubles, mSolverStrength, ROW_CNT);
+        mSolutionRow->OpenRow();
+        GetSolution();
+        RowSolutionSlot(mSolutionRow->GetIx());
+    }
 }
 
 void ColorCode::NewGameSlot()
@@ -695,6 +908,30 @@ void ColorCode::GiveInSlot()
     }
 }
 
+void ColorCode::OpenPreferencesSlot()
+{
+    if (mPrefDialog == NULL)
+    {
+        CreatePrefDialog();
+    }
+    if (mPrefDialog == NULL)
+    {
+        return;
+    }
+
+    mSettings->SaveLastSettings();
+    mPrefDialog->SetSettings();
+    int r = mPrefDialog->exec();
+    if (r == QDialog::Accepted)
+    {
+        ApplySettings();
+    }
+    else
+    {
+        mSettings->RestoreLastSettings();
+    }
+}
+
 void ColorCode::OnlineHelpSlot()
 {
     QDesktopServices::openUrl(QUrl("http://colorcode.laebisch.com/documentation", QUrl::TolerantMode));
@@ -714,7 +951,8 @@ void ColorCode::AboutQtSlot()
 
 void ColorCode::ShowToolbarSlot()
 {
-    if (!ShowToolbarAction->isChecked())
+    mSettings->mShowToolBar = mActShowToolbar->isChecked();
+    if (!mActShowToolbar->isChecked())
     {
         mGameToolbar->hide();
         mLevelToolbar->hide();
@@ -729,7 +967,8 @@ void ColorCode::ShowToolbarSlot()
 
 void ColorCode::ShowMenubarSlot()
 {
-    if (!ShowMenubarAction->isChecked())
+    mSettings->mShowMenuBar = mActShowMenubar->isChecked();
+    if (!mActShowMenubar->isChecked())
     {
         mMenuBar->hide();
     }
@@ -742,7 +981,8 @@ void ColorCode::ShowMenubarSlot()
 
 void ColorCode::ShowStatusbarSlot()
 {
-    if (!ShowStatusbarAction->isChecked())
+    mSettings->mShowStatusBar = mActShowStatusbar->isChecked();
+    if (!mActShowStatusbar->isChecked())
     {
         statusBar()->hide();
     }
@@ -763,13 +1003,22 @@ void ColorCode::ResetColorsOrderSlot()
     scene->update(scene->sceneRect());
 }
 
-void ColorCode::ShowLetterSlot()
+void ColorCode::SetIndicators()
 {
     bool checked = mActShowLetter->isChecked();
+    mSettings->mShowIndicators = checked;
+    if (!mSettings->mShowIndicators)
+    {
+        mHideColors = false;
+    }
+    else
+    {
+        mHideColors = mSettings->mHideColors;
+    }
     vector<ColorPeg *>::iterator it;
     for (it = mAllPegs.begin(); it < mAllPegs.end(); it++)
     {
-        (*it)->ShowLetter(checked);
+        (*it)->SetIndicator(checked, mSettings->mIndicatorType, mHideColors);
     }
 }
 
@@ -783,7 +1032,7 @@ void ColorCode::SameColorSlot(bool checked)
     SetSameColor(checked);
 
     int r = QMessageBox::Yes;
-    if (mGameState == STATE_RUNNING && mGuessCnt > 1)
+    if (GamesRunning())
     {
         r = QMessageBox::question( this,
                                    tr("Message"),
@@ -800,18 +1049,25 @@ void ColorCode::SameColorSlot(bool checked)
 
 void ColorCode::AutoCloseSlot()
 {
-
+    mSettings->mAutoClose = mActAutoClose->isChecked();
 }
 
-void ColorCode::mColorCntChangedSlot()
+void ColorCode::AutoHintsSlot()
 {
+    mSettings->mAutoHints = mActAutoHints->isChecked();
+}
+
+void ColorCode::ColorCntChangedSlot()
+{
+    SetColorCnt();
+
     if (mNoAct)
     {
         return;
     }
 
     int r = QMessageBox::Yes;
-    if (mGameState == STATE_RUNNING && mGuessCnt > 1)
+    if (GamesRunning())
     {
         r = QMessageBox::question( this,
                                    tr("Message"),
@@ -828,6 +1084,8 @@ void ColorCode::mColorCntChangedSlot()
 
 void ColorCode::PegCntChangedSlot()
 {
+    SetPegCnt();
+
     if (mNoAct)
     {
         return;
@@ -840,7 +1098,7 @@ void ColorCode::PegCntChangedSlot()
     }
 
     int r = QMessageBox::Yes;
-    if (mGameState == STATE_RUNNING && mGuessCnt > 1)
+    if (GamesRunning())
     {
         r = QMessageBox::question( this,
                                    tr("Message"),
@@ -855,10 +1113,10 @@ void ColorCode::PegCntChangedSlot()
     }
 }
 
-void ColorCode::ForceLevelSlot()
+void ColorCode::SetLevelSlot()
 {
     mNoAct = true;
-    int ix = mLevelActions->checkedAction()->data().toInt();
+    int ix = mActGroupLevels->checkedAction()->data().toInt();
 
     if (ix < 0 || ix > 4)
     {
@@ -866,21 +1124,23 @@ void ColorCode::ForceLevelSlot()
     }
 
     int i;
-    i = mColorCntCmb->findData(mLevelSettings[ix][0]);
+    i = mColorCntCmb->findData(LEVEL_SETTINGS[ix][0]);
     if (i != -1 && mColorCntCmb->currentIndex() != i)
     {
         mColorCntCmb->setCurrentIndex(i);
+        SetColorCnt();
     }
-    i = mPegCntCmb->findData(mLevelSettings[ix][1]);
+    i = mPegCntCmb->findData(LEVEL_SETTINGS[ix][1]);
     if (i != -1 && mPegCntCmb->currentIndex() != i)
     {
         mPegCntCmb->setCurrentIndex(i);
+        SetPegCnt();
     }
 
-    SetSameColor((mLevelSettings[ix][2] == 1));
+    SetSameColor((LEVEL_SETTINGS[ix][2] == 1));
 
     int r = QMessageBox::Yes;
-    if (mGameState == STATE_RUNNING && mGuessCnt > 1)
+    if (GamesRunning())
     {
         r = QMessageBox::question( this,
                                    tr("Message"),
@@ -897,6 +1157,48 @@ void ColorCode::ForceLevelSlot()
     }    
 }
 
+void ColorCode::SetGameModeSlot()
+{
+    SetGameMode();
+
+    int r = QMessageBox::Yes;
+    if (GamesRunning())
+    {
+        r = QMessageBox::question( this,
+                                   tr("Message"),
+                                   tr("The changed settings will only apply to new games!\nDo you want to give in the current and start a new Game?"),
+                                   QMessageBox::Yes | QMessageBox::No,
+                                   QMessageBox::Yes);
+    }
+
+    if (r == QMessageBox::Yes)
+    {
+        NewGame();
+    }
+}
+
+
+void ColorCode::SetPegCnt()
+{
+    mSettings->mPegCnt = mPegCntCmb->itemData(mPegCntCmb->currentIndex(), IdRole).toInt();
+}
+
+void ColorCode::SetColorCnt()
+{
+    mSettings->mColorCnt = mColorCntCmb->itemData(mColorCntCmb->currentIndex(), IdRole).toInt();
+}
+
+void ColorCode::SetGameMode()
+{
+    int ix = mActGroupModes->checkedAction()->data().toInt();
+    if (ix != MODE_HVM && ix != MODE_MVH)
+    {
+        return;
+    }
+    mSettings->mGameMode = ix;
+}
+
+
 void ColorCode::RemovePegSlot(ColorPeg* cp)
 {
     RemovePeg(cp);
@@ -910,7 +1212,8 @@ void ColorCode::ShowMsgSlot(QString msg)
 void ColorCode::PegPressSlot(ColorPeg* cp)
 {
     if (cp == NULL) { return; }
-    cp->setZValue(++ColorCode::mMaxZ);
+
+    cp->setZValue(LAYER_DRAG);
 
     if (cp->IsBtn())
     {
@@ -923,7 +1226,8 @@ void ColorCode::PegPressSlot(ColorPeg* cp)
 void ColorCode::PegSortSlot(ColorPeg* cp)
 {
     if (cp == NULL) { return; }
-    cp->setZValue(++ColorCode::mMaxZ);
+    
+    cp->setZValue(LAYER_DRAG);
 
     if (cp->IsBtn())
     {
@@ -937,6 +1241,7 @@ void ColorCode::PegReleasedSlot(ColorPeg* cp)
 {
     if (cp == NULL || !cp) { return; }
 
+    cp->setZValue(LAYER_PEGS);
     scene->clearSelection();
     scene->clearFocus();
 
@@ -944,15 +1249,23 @@ void ColorCode::PegReleasedSlot(ColorPeg* cp)
     if (cp->GetSort() == 0)
     {
         bool snapped = false;
-        QList<QGraphicsItem *> list = scene->items(QPointF(cp->pos().x() + 18, cp->pos().y() + 18));
 
-        for (i = 0; i < list.size(); ++i)
+        if (mGameMode == MODE_HVM)
         {
-            if (mCurRow != NULL && list.at(i) == mCurRow)
+            QList<QGraphicsItem *> list = scene->items(QPointF(cp->pos().x() + 18, cp->pos().y() + 18));
+
+            for (i = 0; i < list.size(); ++i)
             {
-                 snapped = mCurRow->SnapCP(cp);
-                 break;
+                if (mCurRow != NULL && list.at(i) == mCurRow)
+                {
+                     snapped = mCurRow->SnapCP(cp);
+                     break;
+                }
             }
+        }
+        else if (mGameMode == MODE_MVH)
+        {
+            snapped = mSolutionRow->SnapCP(cp);
         }
 
         if (!snapped)
@@ -993,6 +1306,7 @@ void ColorCode::PegReleasedSlot(ColorPeg* cp)
 
             mGradMap[ix1] = tmp;
         }
+
         RemovePeg(cp);
     }
 
@@ -1004,25 +1318,81 @@ void ColorCode::PegReleasedSlot(ColorPeg* cp)
 
 void ColorCode::RowSolutionSlot(int ix)
 {
-    std::vector<int> s = mPegRows[ix]->GetSolution();
-    if (s.size() == (unsigned) mPegCnt)
+    if (mGameMode == MODE_HVM)
     {
-        if (AutoCloseAction->isChecked())
+        if (ix == -1) { return; }
+        
+        std::vector<int> s = mPegRows[ix]->GetSolution();
+        if (s.size() == (unsigned) mPegCnt)
         {
-            HintPressedSlot(ix);
+            if (mActAutoClose->isChecked())
+            {
+                HintPressedSlot(ix);
+            }
+            else
+            {
+                mHintBtns[ix]->SetActive(true);
+                ShowMsgSlot(tr("Press the Hint Field or Key Enter if You're done."));
+            }
         }
         else
         {
-            mHintBtns[ix]->SetActive(true);
-            ShowMsgSlot(tr("Press the Hint Field or Key Enter if You're done."));
+            mHintBtns[ix]->SetActive(false);
+            ShowMsgSlot(tr("Place Your pegs ..."));
         }
     }
-    else
+    else if (mGameMode == MODE_MVH)
     {
-        mHintBtns[ix]->SetActive(false);
-        ShowMsgSlot(tr("Place Your pegs ..."));
-    }
+        if (ix == -1)
+        {
+            std::vector<int> s = mSolutionRow->GetSolution();
+            if (s.size() == (unsigned) mPegCnt)
+            {
+                bool valid = true;
+                if (!mActSameColor->isChecked())
+                {                    
+                    int i;
+                    int check[mColorCnt];
+                    for (i = 0; i < mColorCnt; ++i)
+                    {
+                        check[i] = 0;
+                    }
 
+                    for (i = 0; (unsigned)i < s.size(); ++i)
+                    {
+                        if (s[i] >= mColorCnt)
+                        {
+                            valid = false;
+                            break;
+                        }
+
+                        if (check[s[i]] != 0)
+                        {
+                            valid = false;
+                            break;
+                        }
+
+                        check[s[i]] = 1;
+                    }
+                }
+
+                if (valid)
+                {
+                    mDoneBtn->ShowBtn(true);
+                    ShowMsgSlot(tr("Press the button below or Key Enter if You're done."));
+                }
+                else
+                {
+                    ShowMsgSlot(tr("The chosen settings do not allow pegs of the same color!"));
+                }
+            }
+            else
+            {
+                mDoneBtn->ShowBtn(false);
+                ShowMsgSlot(tr("Place Your secret ColorCode ..."));
+            }
+        }
+    }
 }
 
 void ColorCode::HintPressedSlot(int)
@@ -1035,63 +1405,82 @@ void ColorCode::HintPressedSlot(int)
 
 void ColorCode::RandRowSlot()
 {
-    if (mCurRow == NULL || mGameState != STATE_RUNNING)
+    if (mCurRow == NULL || !mCurRow->IsActive() || mGameState != STATE_RUNNING)
     {
         return;
     }
 
-    mCurRow->ClearRow();
-
-    int i, rndm;
-    int check[mColorCnt];
-    ColorPeg* peg;
-    for (i = 0; i < mColorCnt; ++i)
+    if (mGameMode == MODE_HVM || (mGameMode == MODE_MVH && mCurRow == mSolutionRow))
     {
-        check[i] = 0;
-    }
+        mCurRow->ClearRow();
 
-    for (i = 0; i < mPegCnt; ++i)
-    {
-        rndm = qrand() % mColorCnt;
-        if (mDoubles == 0 && check[rndm] != 0)
+        int i, rndm;
+        int check[mColorCnt];
+        ColorPeg* peg;
+        for (i = 0; i < mColorCnt; ++i)
         {
-            --i;
-            continue;
+            check[i] = 0;
         }
 
-        check[rndm] = 1;
+        for (i = 0; i < mPegCnt; ++i)
+        {
+            rndm = qrand() % mColorCnt;
+            if (mDoubles == 0 && check[rndm] != 0)
+            {
+                --i;
+                continue;
+            }
 
-        peg = CreatePeg(rndm);
-        mCurRow->ForceSnap(peg, i);
+            check[rndm] = 1;
+
+            peg = CreatePeg(rndm);
+            mCurRow->ForceSnap(peg, i);
+        }
     }
 }
 
-void ColorCode::GetGuessSlot()
+void ColorCode::SetGuessSlot()
 {
-    if (mCurRow == NULL || mGameState != STATE_RUNNING || mSolver->mBusy)
+    if (mCurRow == NULL || mCurRow == mSolutionRow || mGameState != STATE_RUNNING || mSolver->mBusy)
     {
         return;
     }
 
     mCurRow->ClearRow();
-    mActGetGuess->setEnabled(false);
+    mActSetGuess->setEnabled(false);
     int* row = mSolver->GuessOut();
-    mActGetGuess->setEnabled(true);
     if (row == NULL)
     {
+        SetState(STATE_ERROR);
         return;
     }
+    mActSetGuess->setEnabled(true);
 
     ColorPeg* peg;
     int i;
     for (i = 0; i < mPegCnt; ++i)
     {
-        if (row[i] < 0 || row[i] >= MAX_COLOR_CNT)
-        {
-            ;
-        }
         peg = CreatePeg(row[i]);
         mCurRow->ForceSnap(peg, i);
+    }
+}
+
+void ColorCode::SetHintsSlot()
+{
+    if (mCurRow == NULL || mGameState != STATE_RUNNING)
+    {
+        return;
+    }
+
+    if (mGameMode == MODE_MVH)
+    {
+        if (mCurRow == mSolutionRow || !mHintBtns[mCurRow->GetIx()]->IsActive())
+        {
+            return;
+        }
+
+        std::vector<int> hints = RateSol2Guess(mSolution, mCurRow->GetSolution());
+        mHintBtns[mCurRow->GetIx()]->DrawHints(hints);
     }
 }
 
@@ -1129,26 +1518,64 @@ void ColorCode::ClearRowSlot()
     mCurRow->ClearRow();
 }
 
+void ColorCode::DoneBtnPressSlot(GraphicsBtn*)
+{
+    mDoneBtn->ShowBtn(false);
+    mOkBtn->ShowBtn(false);
+
+    if (mCurRow == mSolutionRow)
+    {
+        SetSolution();
+        mActClearRow->setEnabled(false);
+        mActRandRow->setEnabled(false);
+        mActSetHints->setEnabled(true);
+        NextRow();
+    }
+    else
+    {
+        ResolveHints();
+    }
+}
+
+void ColorCode::SetAutoHintsSlot()
+{
+    DoneBtnPressSlot(mOkBtn);
+}
+
 void ColorCode::TestSlot()
 {
-    ;
+    
+}
+
+void ColorCode::ApplyPreferencesSlot()
+{
+
+}
+
+void ColorCode::CreatePrefDialog()
+{
+    mPrefDialog = new PrefDialog(this);
+    mPrefDialog->setModal(true);
+    mPrefDialog->InitSettings(mSettings);
+    connect(mPrefDialog, SIGNAL(accepted()), this, SLOT(ApplyPreferencesSlot()));
+    connect(mPrefDialog, SIGNAL(ResetColorOrderSignal()), this, SLOT(ResetColorsOrderSlot()));
 }
 
 void ColorCode::CheckSameColorsSetting()
 {
     if (mColorCnt < mPegCnt)
     {
-        if (SameColorAction->isEnabled())
+        if (mActSameColor->isEnabled())
         {
-            SameColorAction->setEnabled(false);
+            mActSameColor->setEnabled(false);
         }
         if (mActSameColorIcon->isEnabled())
         {
             mActSameColorIcon->setEnabled(false);
         }
-        if (!SameColorAction->isChecked())
+        if (!mActSameColor->isChecked())
         {
-            SameColorAction->setChecked(true);
+            mActSameColor->setChecked(true);
         }
         if (!mActSameColorIcon->isChecked())
         {
@@ -1157,9 +1584,9 @@ void ColorCode::CheckSameColorsSetting()
     }
     else
     {
-        if (!SameColorAction->isEnabled())
+        if (!mActSameColor->isEnabled())
         {
-            SameColorAction->setEnabled(true);
+            mActSameColor->setEnabled(true);
         }
         if (!mActSameColorIcon->isEnabled())
         {
@@ -1181,7 +1608,9 @@ void ColorCode::CheckSameColorsSetting()
 
 void ColorCode::SetSameColor(bool checked)
 {
-    SameColorAction->setChecked(checked);
+    mSettings->mSameColors = checked;
+
+    mActSameColor->setChecked(checked);
     mActSameColorIcon->setChecked(checked);
 
     if (checked)
@@ -1201,9 +1630,9 @@ void ColorCode::CheckLevel()
     int ix = -1;
     for (int i = 0; i < 5; ++i)
     {
-        if ( mLevelSettings[i][0] == mColorCnt
-             && mLevelSettings[i][1] == mPegCnt
-             && mLevelSettings[i][2] == mDoubles )
+        if ( LEVEL_SETTINGS[i][0] == mColorCnt
+             && LEVEL_SETTINGS[i][1] == mPegCnt
+             && LEVEL_SETTINGS[i][2] == mDoubles )
         {
             ix = i;
             break;
@@ -1212,12 +1641,12 @@ void ColorCode::CheckLevel()
 
     if (ix > -1)
     {
-        QList<QAction *> levelacts = mLevelActions->actions();
+        QList<QAction *> levelacts = mActGroupLevels->actions();
         levelacts.at(ix)->setChecked(true);
     }
     else
     {
-        QAction* act = mLevelActions->checkedAction();
+        QAction* act = mActGroupLevels->checkedAction();
         if (act != NULL)
         {
             act->setChecked(false);
@@ -1227,57 +1656,41 @@ void ColorCode::CheckLevel()
 
 void ColorCode::ResetGame()
 {
-    int i;
+    mDoneBtn->ShowBtn(false);
+    mOkBtn->ShowBtn(false);
 
-    if (mPegCnt > 0)
-    {
-        for (i = 0; i < mPegCnt; ++i)
-        {
-            if (mSolPegs[i] != NULL)
-            {
-                RemovePeg(mSolPegs[i]);
-                mSolPegs[i] = NULL;
-            }
-        }
+    ApplyPegCnt();
 
-        delete [] mSolPegs;
-        mSolPegs = NULL;
-    }
-
-    SetPegCnt();
-
-    mSolPegs = new ColorPeg* [mPegCnt];
-    for (int i = 0; i < mPegCnt; ++i)
-    {
-        mSolPegs[i] = NULL;
-    }
-
-    mSolRow->SetState(mPegCnt, false);
-
+    mSolutionRow->Reset(mPegCnt, mGameMode);
     ResetRows();
 
     mGameId = qrand();
     mGuessCnt = 0;
+    ++mGameCnt;
 
-    SetColorCnt();
+    ApplyColorCnt();
     
     CheckSameColorsSetting();
 
-    mDoubles = (int) SameColorAction->isChecked();
+    mDoubles = (int) mActSameColor->isChecked();
     CheckLevel();
+
+    ApplySolverStrength();
 }
 
 void ColorCode::ResetRows()
 {
     for (int i = 0; i < ROW_CNT; ++i)
     {
-        mPegRows[i]->Reset(mPegCnt);
-        mHintBtns[i]->Reset(mPegCnt);
+        mPegRows[i]->Reset(mPegCnt, mGameMode);
+        mHintBtns[i]->Reset(mPegCnt, mGameMode);
     }
 }
 
 void ColorCode::NewGame()
 {
+    mHintsDelayTimer->stop();
+    ApplyGameMode();
     ResetGame();
     QString doubles = (mDoubles == 1) ? tr("Yes") : tr("No");
     QString colors = QString::number(mColorCnt, 10);
@@ -1286,9 +1699,18 @@ void ColorCode::NewGame()
     SetState(STATE_RUNNING);
 
     mCurRow = NULL;
-    SetSolution();
-    mSolver->NewGame(mColorCnt, mPegCnt, mDoubles, 2, ROW_CNT);
-    NextRow();
+
+    if (mGameMode == MODE_HVM)
+    {
+        mSolver->NewGame(mColorCnt, mPegCnt, mDoubles, CCSolver::STRENGTH_HIGH, ROW_CNT);
+        SetSolution();
+        NextRow();
+    }
+    else if (mGameMode == MODE_MVH)
+    {
+        mSolver->NewGame(mColorCnt, mPegCnt, mDoubles, mSolverStrength, ROW_CNT);
+        GetSolution();
+    }
 }
 
 void ColorCode::NextRow()
@@ -1316,26 +1738,106 @@ void ColorCode::NextRow()
     {
         ++mGuessCnt;
         mCurRow->SetActive(true);
-        ShowMsgSlot(tr("Place Your pegs ..."));
+        if (mGameMode == MODE_HVM)
+        {
+            ShowMsgSlot(tr("Place Your pegs ..."));
+        }
+        else if (mGameMode == MODE_MVH)
+        {
+            SetGuessSlot();
+            if (mGameState == STATE_RUNNING)
+            {
+                mCurRow->CloseRow();
+                mHintBtns[mCurRow->GetIx()]->SetActive(true);
+
+                if (mActAutoHints->isChecked())
+                {
+                    if (mOkBtn->isVisible())
+                    {
+                        mOkBtn->ShowBtn(false);
+                    }
+                    ShowMsgSlot(tr("Please rate the guess. Press OK or Key Enter if You're done."));
+                    SetHintsSlot();
+                    mHintBtns[mCurRow->GetIx()]->SetActive(false);
+
+                    std::vector<int> rowhints = mHintBtns[mCurRow->GetIx()]->GetHints();
+                    int b = 0;
+                    for (unsigned i = 0; i < rowhints.size(); ++i)
+                    {
+                        if (rowhints.at(i) == 2)
+                        {
+                            ++b;
+                        }
+                    }
+
+                    if (b == mPegCnt)
+                    {
+                        SetState(STATE_WON);
+                        ResolveGame();
+                    }
+                    else
+                    {
+                        mHintsDelayTimer->start();
+                    }
+                }
+                else
+                {
+                    ShowMsgSlot(tr("Please rate the guess. Press OK or Key Enter if You're done."));
+                    mOkBtn->setPos(5, mCurRow->pos().y() - 39);
+                    mOkBtn->ShowBtn(true);
+                }
+            }
+            else
+            {
+                mCurRow->SetActive(false);
+                ResolveGame();
+            }
+        }
     }
 }
 
 void ColorCode::ResolveRow()
 {
-    std::vector<int> res;
-    std::vector<int> left1;
-    std::vector<int> left0;
     std::vector<int> rowsol = mCurRow->GetSolution();
     mSolver->GuessIn(&rowsol);
+
+    std::vector<int> hints = RateSol2Guess(mSolution, rowsol);
+
+    if (hints.size() == (unsigned) mPegCnt)
+    {
+        int bl = 0;
+        for (int i = 0; i < mPegCnt; ++i)
+        {
+            if (hints.at(i) == 2)
+            {
+                ++bl;
+            }
+        }
+
+        if (bl == mPegCnt)
+        {
+            SetState(STATE_WON);
+        }
+    }
+
+    mSolver->ResIn(&hints);
+    mHintBtns[mCurRow->GetIx()]->DrawHints(hints);
+}
+
+std::vector<int> ColorCode::RateSol2Guess(const std::vector<int> sol, const std::vector<int> guess)
+{
+    std::vector<int> hints;
+    std::vector<int> left1;
+    std::vector<int> left0;
 
     int i, p0, p1;
     for (i = 0; i < mPegCnt; ++i)
     {
-        p0 = rowsol.at(i);
-        p1 = mSolution.at(i);
+        p0 = guess.at(i);
+        p1 = sol.at(i);
         if (p0 == p1)
         {
-            res.push_back(2);
+            hints.push_back(2);
         }
         else
         {
@@ -1344,11 +1846,7 @@ void ColorCode::ResolveRow()
         }
     }
 
-    if (res.size() == (unsigned) mPegCnt)
-    {
-        SetState(STATE_WON);
-    }
-    else
+    if (hints.size() < (unsigned) mPegCnt)
     {
         int len0 = left0.size();
         for (i = 0; i < len0; ++i)
@@ -1359,40 +1857,136 @@ void ColorCode::ResolveRow()
                 p1 = left1.at(j);
                 if (p0 == p1)
                 {
-                    res.push_back(1);
+                    hints.push_back(1);
                     left1.erase(left1.begin() + j);
                     break;
                 }
             }
         }
     }
-    mSolver->ResIn(&res);
-    mHintBtns[mCurRow->GetIx()]->DrawHints(res);
+
+    return hints;
+}
+
+void ColorCode::ResolveHints()
+{
+    mHintBtns[mCurRow->GetIx()]->SetActive(false);
+
+    std::vector<int> rowsol = mCurRow->GetSolution();
+    mSolver->GuessIn(&rowsol);
+    std::vector<int> rowhints = mHintBtns[mCurRow->GetIx()]->GetHints();
+    int b = 0;
+    int w = 0;
+    for (unsigned i = 0; i < rowhints.size(); ++i)
+    {
+        if (rowhints.at(i) == 2)
+        {
+            ++b;
+        }
+        else if (rowhints.at(i) == 1)
+        {
+            ++w;
+        }
+    }
+
+    if (b == mPegCnt)
+    {
+        SetState(STATE_WON);
+        ResolveGame();
+    }
+    else if (b == mPegCnt - 1 && w == 1)
+    {
+        
+    }
+    else
+    {
+        mSolver->ResIn(&rowhints);
+        NextRow();
+        ResolveGame();
+    }
 }
 
 void ColorCode::ResolveGame()
 {
-    switch (mGameState)
+    if (mGameMode == MODE_HVM)
     {
-        case STATE_WON:
-            ShowMsgSlot(tr("Congratulation! You have won!"));
-        break;
-        case STATE_LOST:
-            ShowMsgSlot(tr("Sorry! You lost!"));
-        break;
-        case STATE_GAVE_UP:
-            ShowMsgSlot(tr("Sure, You're too weak for me!"));
-        break;
-        case STATE_RUNNING:
-        default:
-            return;
-        break;
-    }
+        switch (mGameState)
+        {
+            case STATE_WON:
+                ShowMsgSlot(tr("Congratulation! You have won!"));
+            break;
+            case STATE_LOST:
+                ShowMsgSlot(tr("Sorry! You lost!"));
+            break;
+            case STATE_GAVE_UP:
+                ShowMsgSlot(tr("Sure, You're too weak for me!"));
+            break;
+            case STATE_ERROR:
+                ShowMsgSlot(tr("The impossible happened, sorry."));
+            break;
+            case STATE_RUNNING:
+            default:
+                return;
+            break;
+        }
 
-    ShowSolution();
+        ShowSolution();
+    }
+    else if (mGameMode == MODE_MVH)
+    {
+        switch (mGameState)
+        {
+            case STATE_WON:
+                ShowMsgSlot(tr("Yeah! I guessed it, man!"));
+            break;
+            case STATE_LOST:
+                ShowMsgSlot(tr("Embarrassing! I lost a game!"));
+            break;
+            case STATE_GAVE_UP:
+                ShowMsgSlot(tr("Don't you like to see me winning? ;-)"));
+            break;
+            case STATE_ERROR:
+                ShowMsgSlot(tr("Nope! Thats impossible! Did you gave me false hints?"));
+            break;
+            case STATE_RUNNING:
+            default:
+                return;
+            break;
+        }
+
+        mDoneBtn->ShowBtn(false);
+        mOkBtn->ShowBtn(false);
+    }
 }
 
-void ColorCode::SetPegCnt()
+void ColorCode::ApplyGameMode()
+{
+    int ix = mActGroupModes->checkedAction()->data().toInt();
+
+    if (ix != MODE_HVM && ix != MODE_MVH)
+    {
+        return;
+    }
+
+    mGameMode = ix;
+
+    if (mGameMode == MODE_HVM)
+    {
+        mActSetHints->setVisible(false);
+
+        mActSetGuess->setVisible(true);
+        mActPrevRow->setVisible(true);
+    }
+    else if (mGameMode == MODE_MVH)
+    {
+        mActSetHints->setVisible(true);
+
+        mActSetGuess->setVisible(false);
+        mActPrevRow->setVisible(false);
+    }
+}
+
+void ColorCode::ApplyPegCnt()
 {
     int pegcnt = mPegCntCmb->itemData(mPegCntCmb->currentIndex(), IdRole).toInt();
     pegcnt = max(2, min(5, pegcnt));
@@ -1400,7 +1994,7 @@ void ColorCode::SetPegCnt()
     mXOffs = 160 - mPegCnt * 20;
 }
 
-void ColorCode::SetColorCnt()
+void ColorCode::ApplyColorCnt()
 {
     int ccnt = mColorCntCmb->itemData(mColorCntCmb->currentIndex(), IdRole).toInt();
     ccnt = max(2, min(10, ccnt));
@@ -1411,7 +2005,6 @@ void ColorCode::SetColorCnt()
     }
 
     mColorCnt = ccnt;
-
     int xpos = 279;
     int ystart = ROW_Y0 + (MAX_COLOR_CNT - mColorCnt) * 40;
     int ypos;
@@ -1438,40 +2031,75 @@ void ColorCode::SetColorCnt()
     }
 }
 
+void ColorCode::ApplySolverStrength()
+{
+    mSolverStrength = mSettings->mSolverStrength;
+}
+
 void ColorCode::SetSolution()
 {
     mSolution.clear();
-    int i, rndm;
-    int check[mColorCnt];
-    for (i = 0; i < mColorCnt; ++i)
-    {
-        check[i] = 0;
-    }
 
-    for (i = 0; i < mPegCnt; ++i)
+    if (mGameMode == MODE_HVM)
     {
-        rndm = qrand() % mColorCnt;
-        if (mDoubles == 0 && check[rndm] != 0)
+        mSolutionRow->ClearRow();
+        int i, rndm;
+        int check[mColorCnt];
+        for (i = 0; i < mColorCnt; ++i)
         {
-            --i;
-            continue;
+            check[i] = 0;
         }
-        mSolution.push_back(rndm);
-        check[rndm] = 1;
+
+        for (i = 0; i < mPegCnt; ++i)
+        {
+            rndm = qrand() % mColorCnt;
+            if (mDoubles == 0 && check[rndm] != 0)
+            {
+                --i;
+                continue;
+            }
+            mSolution.push_back(rndm);
+            check[rndm] = 1;
+        }
     }
+    else if (mGameMode == MODE_MVH)
+    {
+        std::vector<int> s = mSolutionRow->GetSolution();
+        if (s.size() == (unsigned) mPegCnt)
+        {
+            mSolutionRow->CloseRow();
+            mDoneBtn->ShowBtn(false);
+
+            for (int i = 0; i < mPegCnt; ++i)
+            {
+                mSolution.push_back(s.at(i));
+            }
+        }
+    }
+}
+
+void ColorCode::GetSolution()
+{
+    mActSetHints->setEnabled(false);
+    mActRandRow->setEnabled(true);
+    mActClearRow->setEnabled(true);
+
+    ShowMsgSlot(tr("Place Your secret ColorCode ..."));
+    mSolutionRow->SetActive(true);
+    mCurRow = mSolutionRow;
 }
 
 void ColorCode::ShowSolution()
 {
+    mSolutionRow->SetActive(true);
     ColorPeg* peg;
     for (int i = 0; i < mPegCnt; ++i)
     {
         peg = CreatePeg(mSolution.at(i));
-        peg->setPos(mXOffs + i * 40 + 2, 72);
         peg->SetBtn(false);
-        peg->SetEnabled(false);
-        mSolPegs[i] = peg;
+        mSolutionRow->ForceSnap(peg, i);
     }
+    mSolutionRow->CloseRow();
 }
 
 void ColorCode::SetState(const int s)
@@ -1485,25 +2113,44 @@ void ColorCode::SetState(const int s)
 
     bool running = mGameState == STATE_RUNNING;
 
-    RestartGameAction->setEnabled(running);
-    GiveInAction->setEnabled(running);
-    mActGetGuess->setEnabled(running);
+    mActRestartGame->setEnabled(running);
+    mActGiveIn->setEnabled(running);
+    mActSetGuess->setEnabled(running);
+    mActSetHints->setEnabled(running);
+}
+
+bool ColorCode::GamesRunning()
+{
+    if (mGameMode == MODE_HVM)
+    {
+        return (mGameState == STATE_RUNNING && mGuessCnt > 1);
+    }
+    else if (mGameMode == MODE_MVH)
+    {
+        return (mGameState == STATE_RUNNING && mCurRow != mSolutionRow);
+    }
+    return false;
 }
 
 void ColorCode::Scale()
 {
+    if (mGameCnt == 0)
+    {
+        return;
+    }
+
     qreal w = geometry().width() - 4;
     qreal h = geometry().height() - 4;
 
-    if (ShowStatusbarAction->isChecked())
+    if (mActShowStatusbar->isChecked())
     {
         h -= statusBar()->height();
     }
-    if (ShowMenubarAction->isChecked())
+    if (mActShowMenubar->isChecked())
     {
         h -= mMenuBar->height();
     }
-    if (ShowToolbarAction->isChecked())
+    if (mActShowToolbar->isChecked())
     {
         h -= mGameToolbar->height();
     }
@@ -1530,7 +2177,7 @@ ColorPeg* ColorCode::CreatePeg(int ix)
 {
     if (ix < 0 || ix >= mColorCnt)
     {
-        ix = ColorCode::mMaxZ % mColorCnt;
+        ix = mAllPegs.size() % mColorCnt;
     }
 
     PegType *pt = mTypesMap[ix];
@@ -1541,11 +2188,11 @@ ColorPeg* ColorCode::CreatePeg(int ix)
         peg = new ColorPeg;
         peg->SetPegType(pt);
         peg->SetBtn(true);
-        peg->ShowLetter(mActShowLetter->isChecked());
-        peg->SetId(ColorCode::mMaxZ);
+        peg->SetIndicator(mActShowLetter->isChecked(), mSettings->mIndicatorType, mHideColors);
+        peg->SetId(mAllPegs.size());
         scene->addItem(peg);
         peg->setPos(mBtnPos[ix]);
-        peg->setZValue(24);
+        peg->setZValue(LAYER_PEGS);
         mAllPegs.push_back(peg);
         scene->clearSelection();
         scene->update(mBtnPos[ix].x(), mBtnPos[ix].y(), 38, 38);
@@ -1571,8 +2218,6 @@ ColorPeg* ColorCode::CreatePeg(int ix)
         scene->update(mBtnPos[ix].x(), mBtnPos[ix].y(), 38, 38);
         peg->setSelected(true);
     }
-
-    ++ColorCode::mMaxZ;
 
     return peg;
 }

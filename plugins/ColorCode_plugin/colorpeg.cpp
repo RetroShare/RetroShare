@@ -26,6 +26,7 @@ const QFont ColorPeg::mFont = ColorPeg::GetLetterFont();
 const QBrush ColorPeg::mShadowBrush = ColorPeg::GetShadowBrush();
 const QBrush ColorPeg::mOutlineBrush = ColorPeg::GetOutlineBrush();
 const QBrush ColorPeg::mGlossyBrush = ColorPeg::GetGlossyBrush();
+const QBrush ColorPeg::mNeutralBrush = ColorPeg::GetNeutralBrush();
 
 QFont ColorPeg::GetLetterFont()
 {
@@ -33,6 +34,15 @@ QFont ColorPeg::GetLetterFont()
     lf.setStyleHint(QFont::SansSerif);
 
     return lf;
+}
+
+QBrush ColorPeg::GetNeutralBrush()
+{
+    QRadialGradient rgrad(20, 20, 40, 5, 5);
+    rgrad.setColorAt(0.0, QColor(0xff, 0xff, 0xff, 0xff));
+    rgrad.setColorAt(1.0, QColor(0x80, 0x80, 0x80, 0xff));
+
+    return QBrush(rgrad);
 }
 
 QBrush ColorPeg::GetShadowBrush()
@@ -68,7 +78,8 @@ ColorPeg::ColorPeg(QObject*)
     mPegRow = NULL;
     SetBtn(true);
     mIsDragged = false;
-    mShowLetter = false;
+    mShowIndicator = false;
+    mHideColor = false;
     mSort = 0;
     mId = -1;
 }
@@ -150,11 +161,13 @@ void ColorPeg::SetEnabled(const bool b)
     SetCursorShape();
 }
 
-void ColorPeg::ShowLetter(const bool b)
+void ColorPeg::SetIndicator(const bool b, const int t, const bool c)
 {
-    if (mShowLetter != b)
+    if (mShowIndicator != b || mIndicatorType != t || mHideColor != c)
     {
-        mShowLetter = b;
+        mShowIndicator = b;
+        mIndicatorType = t;
+        mHideColor = c;
         update(boundingRect());
     }
 }
@@ -294,16 +307,34 @@ void ColorPeg::paint(QPainter *painter, const QStyleOptionGraphicsItem * /*optio
         painter->translate(QPointF(2, 2));
     }
 
-    painter->setBrush(QBrush(*mPegType->grad));
-    painter->drawEllipse(GetColorRect());
+    if (!mHideColor)
+    {
+        painter->setBrush(QBrush(*mPegType->grad));
+        painter->drawEllipse(GetColorRect());
+    }
+    else
+    {
+        painter->setBrush(mNeutralBrush);
+        painter->drawEllipse(GetColorRect());
+    }
+
     painter->setBrush(mGlossyBrush);
     painter->drawEllipse(QRectF(5, 3, 24, 20));
 
-    if (mShowLetter)
+    if (mShowIndicator)
     {
         painter->setPen(QPen(QColor("#303133")));
         painter->setRenderHint(QPainter::TextAntialiasing, true);
         painter->setFont(mFont);
-        painter->drawText(QRectF(1.5, 2.0, 32.0, 32.0), Qt::AlignCenter, QString(mPegType->let));
+        QString ind;
+        if (mIndicatorType == Settings::INDICATOR_LETTER)
+        {
+            ind = QString(mPegType->let);
+        }
+        else
+        {
+            ind.setNum((mPegType->ix + 1));
+        }
+        painter->drawText(QRectF(1.5, 2.0, 32.0, 32.0), Qt::AlignCenter, ind);
     }
 }

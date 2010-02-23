@@ -1,3 +1,32 @@
+* 0.6.1 released, February 16, 2010
+    * Translation
+        - Added french translation - thanks to Filippo Rusconi.
+
+* 0.6.0 released, February 14, 2010
+    * Summary
+        - Second game mode (Computer vs. Human)
+        - Preferences dialog for persistent settings
+        - Additional settings options
+    * Preferences dialog
+        - To examine all available settings options, a preferences dialog has been introduced.
+        - The chosen preferences/settings are now persistent, so when starting the application, 
+          the last used settings are applied.
+    * Settings options
+        - Game modes (Human vs Computer or Computer versus Human)
+        - To get a fair chance you may select a weaker solver strength level for your computer 
+          opponent ;-)
+        - Let an impartial part :-) of your computer determine the corresponding hints for the 
+          computer's guess. This option affects only Computer vs. Human games. If checked, you 
+          only have to place your secret combination. Then the rest of the game runs automatically 
+          until the end.
+        - To better watch your computer trying hard to break your code, you may 
+          define a timeout between the guesses 
+        - Select letters or numbers as text indicators and - if convenient - do 
+          not use colors as indicators at all - but it's still ColorCode ;-)
+    * Layout/Design
+        - Some minor changes and new buttons for the second game mode.
+        
+
 * 0.5.5 released, October 31, 2009
     * Summary
         - Accessibility and usability improvements

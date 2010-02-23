@@ -26,6 +26,8 @@ using namespace std;
 
 PegRow::PegRow(QObject*)
 {
+    setAcceptedMouseButtons(0);
+
     mIx = -1;
     mPegCnt = 0;
     mXOffs = 0;
@@ -36,7 +38,7 @@ PegRow::PegRow(QObject*)
 
     mColorPegs = NULL;
 
-    Reset(0);
+    Reset(0, 0);
 }
 
 PegRow::~PegRow()
@@ -49,12 +51,19 @@ PegRow::~PegRow()
     mColorPegs = NULL;
 }
 
-void PegRow::Reset(const int pegcnt)
+bool PegRow::IsActive() const
+{
+    return mIsActive;
+}
+
+void PegRow::Reset(const int pegcnt, const int gamemode)
 {
     ClearRow();
+    mSolution.clear();
     SetActive(false);
     mSolved = false;
     SetPegCnt(pegcnt);
+    SetGameMode(gamemode);
 }
 
 void PegRow::ClearRow()
@@ -96,10 +105,20 @@ void PegRow::SetPegCnt(const int pegcnt)
     {
         mColorPegs[i] = NULL;
     }
+    SetXOffs();
+}
+
+void PegRow::SetGameMode(const int gamemode)
+{
+    mGameMode = gamemode;
+}
+
+void PegRow::SetXOffs()
+{
     mXOffs = 100 - mPegCnt * 20;
 }
 
-int PegRow::GetPegCnt()
+int PegRow::GetPegCnt() const
 {
     if (mColorPegs == NULL) { return 0; };
 
@@ -203,7 +222,7 @@ void PegRow::CloseRow()
     mSolved = true;
     if (mColorPegs == NULL)
     {
-        ;
+        
     }
     else
     {
@@ -218,19 +237,41 @@ void PegRow::CloseRow()
     SetActive(false);
 }
 
+void PegRow::OpenRow()
+{
+    mSolved = false;
+    if (mColorPegs == NULL)
+    {
+        
+    }
+    else
+    {
+        for (int i = 0; i < mPegCnt; ++i)
+        {
+            if (mColorPegs[i] != NULL)
+            {
+                mColorPegs[i]->SetEnabled(true);
+            }
+        }
+    }
+    SetActive(true);
+}
+
 void PegRow::CheckSolution()
 {
     mSolution.clear();
     if (mColorPegs == NULL)
     {
-        ;
+        
     }
-
-    for (int i = 0; i < mPegCnt; ++i)
+    else
     {
-        if (mColorPegs[i] != NULL)
+        for (int i = 0; i < mPegCnt; ++i)
         {
-            mSolution.push_back(mColorPegs[i]->GetPegType()->ix);
+            if (mColorPegs[i] != NULL)
+            {
+                mSolution.push_back(mColorPegs[i]->GetPegType()->ix);
+            }
         }
     }
 
