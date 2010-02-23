@@ -45,6 +45,9 @@ void TurtleRouterDialog::updateDisplay()
 	for(int i=0;i<_f2f_TW->topLevelItemCount();++i)
 		while(_f2f_TW->topLevelItem(i)->takeChild(0) != NULL) ;
 
+	for(uint i=0;i<hashes_info.size();++i)
+		findParentHashItem(hashes_info[i][0]) ;
+
 	// check that an entry exist for all hashes
 	for(uint i=0;i<tunnels_info.size();++i)
 	{
@@ -68,6 +71,7 @@ void TurtleRouterDialog::updateDisplay()
 
 		new QTreeWidgetItem(top_level_s_requests,stl) ;
 	}
+	top_level_s_requests->setText(0,"Search requests ("+QString::number(search_reqs_info.size())+")") ;
 
 	for(uint i=0;i<tunnel_reqs_info.size();++i)
 	{
@@ -78,12 +82,21 @@ void TurtleRouterDialog::updateDisplay()
 
 		new QTreeWidgetItem(top_level_t_requests,stl) ;
 	}
+	top_level_t_requests->setText(0,"tunnel requests ("+QString::number(tunnel_reqs_info.size())+")") ;
 
+	// Ok, this is a N2 search, but there are very few elements in the list.
 	for(int i=2;i<_f2f_TW->topLevelItemCount();)
-		if(_f2f_TW->topLevelItem(i)->childCount() == 0) 
+	{
+		bool found = false ;
+		for(uint j=0;j<hashes_info.size();++j)
+			if(_f2f_TW->topLevelItem(i)->text(0).toStdString() == hashes_info[j][0]) 
+				found=true ;
+
+		if(!found)
 			_f2f_TW->takeTopLevelItem(i) ;
 		else
 			++i ;
+	}
 }
 	
 QTreeWidgetItem *TurtleRouterDialog::findParentHashItem(const std::string& hash)
