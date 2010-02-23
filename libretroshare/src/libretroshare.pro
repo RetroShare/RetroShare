@@ -11,12 +11,10 @@ profiling {
 debug {
 #	DEFINES *= DEBUG
 #	DEFINES *= OPENDHT_DEBUG DHT_DEBUG CONN_DEBUG DEBUG_UDP_SORTER P3DISC_DEBUG DEBUG_UDP_LAYER FT_DEBUG EXTADDRSEARCH_DEBUG
-#	DEFINES *= CHAT_DEBUG CONTROL_DEBUG FT_DEBUG
-#	DEFINES *= P3TURTLE_DEBUG UPNP_DEBUG 
-#        DEFINES *= CONN_DEBUG P3DISC_DEBUG RSSERIAL_DEBUG RSITEM_DEBUG DEBUG_PQISSL DEBUG_PQISTREAMER
+#	DEFINES *= CONTROL_DEBUG FT_DEBUG DEBUG_FTCHUNK P3TURTLE_DEBUG
+#	DEFINES *= P3TURTLE_DEBUG 
 #	DEFINES *= NET_DEBUG
 #	DEFINES *= DISTRIB_DEBUG
-
 #	DEFINES *= P3TURTLE_DEBUG FT_DEBUG DEBUG_FTCHUNK MPLEX_DEBUG
 #	DEFINES *= CONN_DEBUG
 
@@ -273,7 +271,6 @@ HEADERS += dbase/cachestrapper.h \
            services/p3gameservice.h \
            services/p3msgservice.h \
            services/p3photoservice.h \
-           services/p3portservice.h \
            services/p3Qblog.h \
            services/p3blogs.h \
            services/p3ranking.h \
@@ -332,7 +329,6 @@ SOURCES += \
 				dht/opendht.cc \
 				dht/opendhtstr.cc \
 				dht/b64.cc \
-				services/p3portservice.cc \
 				services/p3channels.cc \
 				services/p3forums.cc \
 				services/p3blogs.cc \

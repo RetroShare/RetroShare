@@ -216,8 +216,6 @@ bool    ftFiMonitor::loadList(std::list<RsItem *> load)
 	std::cerr << std::endl;
 #endif
 
-	time_t ts = time(NULL);
-
 	std::list<SharedDirInfo> dirList;
 
 	std::list<RsItem *>::iterator it;

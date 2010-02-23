@@ -54,7 +54,6 @@ RsPeers *rsPeers = NULL;
  * #define P3PEERS_DEBUG 1
  *******/
 
-static uint32_t RsPeerTranslateTrust(uint32_t trustLvl);
 int ensureExtension(std::string &name, std::string def_ext);
 
 std::string RsPeerTrustString(uint32_t trustLvl)

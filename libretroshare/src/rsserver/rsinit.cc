@@ -1142,7 +1142,12 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 			gpgme_data_t cipher;
 			gpgme_data_t plain;
 			gpgme_data_new (&plain);
-			gpgme_error_t error_reading_file = gpgme_data_new_from_stream (&cipher, sslPassphraseFile);
+
+			if( gpgme_data_new_from_stream (&cipher, sslPassphraseFile) != GPG_ERR_NO_ERROR)
+			{
+				std::cerr << "Error while creating stream from ssl passwd file." << std::endl ;
+				return 0 ;
+			}
                         if (0 < AuthGPG::getAuthGPG()->decryptText(cipher, plain)) {
 			    std::cerr << "Decrypting went ok !" << std::endl;
                             gpgme_data_write (plain, "", 1);
@@ -1791,7 +1796,6 @@ int RsServer::StartupRetroShare()
 	emergencyPartialsDir += "Partials";
 
 	/* if we've loaded an old format file! */
-        bool oldFormat = false;
 	std::map<std::string, std::string> oldConfigMap;
 
         AuthSSL::getAuthSSL() -> setConfigDirectories(certConfigFile, certNeighDir);

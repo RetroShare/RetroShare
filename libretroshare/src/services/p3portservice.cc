@@ -57,7 +57,7 @@ int	p3PortService::tick()
 
 
 	/* check for data on sockets */
-	int sockfd;
+	//int sockfd;
 	RsRawItem *item;
 
 	//while(0 < (len = recv(sockfd, ....)))  ... etc.
@@ -72,7 +72,7 @@ int	p3PortService::tick()
 
 		/* input data TODO! */
 		void *data;
-		uint32_t len;
+		uint32_t len=0;
 
 		uint32_t packetId = (((uint32_t) RS_PKT_VERSION_SERVICE) << 24) + 
 				(((uint32_t) RS_SERVICE_TYPE_PORT) << 8);
@@ -97,8 +97,8 @@ int	p3PortService::tick()
 	{
 		/* unpackage data */
 		std::string src = item->PeerId();
-	        void *item_data = item->getRawData();
-		uint32_t item_len = item->getRawLength();
+//	        void *item_data = item->getRawData();
+//		uint32_t item_len = item->getRawLength();
 
 		/* push out to the socket .... */
 		// send(sockfd, item_len, item_data....)
