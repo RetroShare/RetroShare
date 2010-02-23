@@ -61,7 +61,7 @@ CreateForumMsg::CreateForumMsg(std::string fId, std::string pId)
   connect( ui.close_action, SIGNAL( triggered (bool) ), this, SLOT( cancelMsg( ) ) );
   connect( ui.emoticonButton, SIGNAL(clicked()), this, SLOT(smileyWidgetForums()));
   connect( ui.attachFileButton, SIGNAL(clicked() ), this , SLOT(addFile()));
-
+  connect( ui.pastersButton, SIGNAL(clicked() ), this , SLOT(pasteLink()));
 
   newMsg();
   
@@ -131,6 +131,14 @@ void  CreateForumMsg::createMsg()
 {
 	QString name = ui.forumSubject->text();
 	QString desc = ui.forumMessage->toHtml();
+	
+	if(name.isEmpty())
+	{	/* error message */
+		QMessageBox::warning(this, tr("RetroShare"),tr("Please set a Forum Subject and Forum Message"),
+    QMessageBox::Ok, QMessageBox::Ok);
+                   
+		return; //Don't add  a empty Subject!!
+	}
 
 
 	ForumMsgInfo msgInfo;
@@ -376,4 +384,23 @@ void CreateForumMsg::fileHashingFinished(AttachFileItem* file) {
 
 }
 
+void CreateForumMsg::pasteLink()
+{
+  
+  QString link = QApplication::clipboard()->text();
+  
+  if (link.startsWith("retroshare://", Qt::CaseInsensitive))
+  {
+    ui.forumMessage->setHtml("<a href='" +  link + "'> " + link + "</a>");
+  }
+  else
+  {
+  	QMessageBox::warning(this, tr("RetroShare"),tr("Clipboard does not contains RetroShare link('s)"),
+    QMessageBox::Ok, QMessageBox::Ok);
+    
+    return;        
+  }
+  
+
+}
 

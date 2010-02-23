@@ -48,6 +48,8 @@ private slots:
 	/* actions to take.... */
   void  createMsg();
   void  cancelMsg();
+  void pasteLink();
+
 
   void smileyWidgetForums();
 	void addSmileys();

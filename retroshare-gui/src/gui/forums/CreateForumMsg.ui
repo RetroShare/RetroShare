@@ -175,6 +175,20 @@ border: 1px solid #CCCCCC;}</string>
            </property>
           </spacer>
          </item>
+         <item>
+          <widget class="QPushButton" name="pastersButton">
+           <property name="toolTip">
+            <string>Paste retroshare link</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../images.qrc">
+             <normaloff>:/images/copyrslink.png</normaloff>:/images/copyrslink.png</iconset>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>
