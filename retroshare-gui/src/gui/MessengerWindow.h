@@ -57,6 +57,7 @@ public slots:
   void updatePeersAvatar(const QString& peer_id);
   void updateAvatar();
   void loadmystatusmessage();
+  void loadstatus();
   
   LogoBar & getLogoBar() const;
 
@@ -97,7 +98,7 @@ private slots:
 	
 	void savestatusmessage();
 	
-	void loadstatus();
+	void savestatus();
 	
 	void on_actionSort_Peers_Descending_Order_activated();
   void on_actionSort_Peers_Ascending_Order_activated();

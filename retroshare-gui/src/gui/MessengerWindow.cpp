@@ -112,6 +112,7 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
   connect( ui.actionHide_Offline_Friends, SIGNAL(triggered()), this, SLOT(insertPeers()));
   
   connect(ui.messagelineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(savestatusmessage()));
+  connect(ui.statuscomboBox, SIGNAL(clicked()), this, SLOT(savestatus()));
   
 	/* to hide the header  */
 	ui.messengertreeWidget->header()->hide(); 
@@ -145,6 +146,8 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
   insertPeers(); 		
   updateAvatar();
   loadmystatusmessage();
+  
+  loadstatus();
   
   displayMenu();
   updateMessengerDisplay();
@@ -928,20 +931,22 @@ void MessengerWindow::displayMenu()
 void MessengerWindow::loadstatus()
 {
 	/* load up configuration from rsPeers */
-	/*RsPeerDetails detail;
-	if (!rsPeers->getPeerDetails(rsPeers->getOwnId(), detail))
+	RsPeerDetails detail;
+	std::string ownId = rsPeers->getOwnId();
+
+	if (!rsPeers->getPeerDetails(ownId, detail))
 	{
 		return;
 	}
 	
 	StatusInfo si;
-	if (!rsStatus->getStatus(detail.id, si))
+	if (!rsStatus->getStatus(ownId, si))
 	{
 		return;
-	}*/
+	}
 
 	/* set status mode */
-	/*int statusIndex = 0;
+	int statusIndex = 0;
 	switch(si.status)
 	{
 		case RS_STATUS_OFFLINE:
@@ -958,5 +963,47 @@ void MessengerWindow::loadstatus()
 			statusIndex = 0;
 			break;
 	}
-	ui.statuscomboBox->setCurrentIndex(statusIndex);*/
+	
+	ui.statuscomboBox->setCurrentIndex(statusIndex);
+}
+
+/** Save own status Online,Away,Busy **/
+void MessengerWindow::savestatus()
+{
+	RsPeerDetails detail;
+	std::string ownId = rsPeers->getOwnId();
+
+	if (!rsPeers->getPeerDetails(ownId, detail))
+	{
+		return;
+	}
+	
+	StatusInfo si;
+
+	int statusIndex = ui.statuscomboBox->currentIndex();
+
+	/* Check if status has changed */
+	int status = 0;
+	switch(statusIndex)
+	{
+		case 3:
+			status = RS_STATUS_OFFLINE;
+			break;
+		case 2:
+			status = RS_STATUS_AWAY;
+			break;
+		case 1:
+			status = RS_STATUS_BUSY;
+			break;
+		default:
+		case 0:
+			status = RS_STATUS_ONLINE;
+			break;
+	}
+	
+  si.id = ownId;
+	si.status = status;
+
+	rsStatus->setStatus(si);
+
 }

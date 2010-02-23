@@ -165,6 +165,9 @@ p, li { white-space: pre-wrap; }
            </item>
            <item row="2" column="0">
             <widget class="QLineEdit" name="messagelineEdit">
+             <property name="toolTip">
+              <string>Change your Personal Status here...</string>
+             </property>
              <property name="styleSheet">
               <string notr="true">border: 1px solid #CCCCCC;</string>
              </property>
