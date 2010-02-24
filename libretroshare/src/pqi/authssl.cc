@@ -1540,10 +1540,10 @@ bool AuthSSL::AuthX509(X509 *x509)
 		  std::cerr << "hashoutl = " << hashoutl << std::endl ;
         #endif
 
-//        if (!AuthGPG::getAuthGPG()->VerifySignBin(buf_hashout, hashoutl, buf_sigout, (unsigned int) sigoutl, pd.fpr)) {
-//                sigoutl = 0;
-//                goto err;
-//        }
+        if (!AuthGPG::getAuthGPG()->VerifySignBin(buf_hashout, hashoutl, buf_sigout, (unsigned int) sigoutl, pd.fpr)) {
+                sigoutl = 0;
+                goto err;
+        }
 
         #ifdef AUTHSSL_DEBUG
         std::cerr << "AuthSSL::AuthX509() X509 authenticated" << std::endl;
