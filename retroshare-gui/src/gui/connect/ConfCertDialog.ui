@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>512</width>
-    <height>529</height>
+    <width>546</width>
+    <height>522</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -256,36 +256,42 @@
        <item>
         <layout class="QHBoxLayout" name="friendAndSignLayout">
          <item>
-          <widget class="QPushButton" name="denyFriendButton">
+          <widget class="QToolButton" name="denyFriendButton">
            <property name="text">
             <string>Deny Friend</string>
            </property>
            <property name="icon">
             <iconset resource="../images.qrc">
-             <normaloff>:/images/cancel.png</normaloff>:/images/cancel.png</iconset>
+             <normaloff>:/images/user/deny_user48.png</normaloff>:/images/user/deny_user48.png</iconset>
            </property>
            <property name="iconSize">
             <size>
-             <width>15</width>
-             <height>15</height>
+             <width>48</width>
+             <height>48</height>
             </size>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextUnderIcon</enum>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="make_friend_button">
+          <widget class="QToolButton" name="make_friend_button">
            <property name="text">
-            <string>Make Friends</string>
+            <string>Make Friend</string>
            </property>
            <property name="icon">
             <iconset resource="../images.qrc">
-             <normaloff>:/images/add-friend24.png</normaloff>:/images/add-friend24.png</iconset>
+             <normaloff>:/images/user/add_user48.png</normaloff>:/images/user/add_user48.png</iconset>
            </property>
            <property name="iconSize">
             <size>
-             <width>15</width>
-             <height>15</height>
+             <width>48</width>
+             <height>48</height>
             </size>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextUnderIcon</enum>
            </property>
           </widget>
          </item>
@@ -296,12 +302,12 @@
            </property>
            <property name="icon">
             <iconset resource="../images.qrc">
-             <normaloff>:/images/dauthed.png</normaloff>:/images/dauthed.png</iconset>
+             <normaloff>:/images/view-certificate-sign-32.png</normaloff>:/images/view-certificate-sign-32.png</iconset>
            </property>
            <property name="iconSize">
             <size>
-             <width>15</width>
-             <height>15</height>
+             <width>32</width>
+             <height>32</height>
             </size>
            </property>
            <property name="checked">
@@ -310,21 +316,34 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="signKeyButton">
+          <widget class="QToolButton" name="signKeyButton">
            <property name="text">
             <string>Sign GPG Key</string>
            </property>
            <property name="icon">
             <iconset resource="../images.qrc">
-             <normaloff>:/images/dauthed.png</normaloff>:/images/dauthed.png</iconset>
+             <normaloff>:/images/view-certificate-sign-32.png</normaloff>:/images/view-certificate-sign-32.png</iconset>
            </property>
            <property name="iconSize">
             <size>
-             <width>15</width>
-             <height>15</height>
+             <width>48</width>
+             <height>48</height>
             </size>
            </property>
           </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
          </item>
         </layout>
        </item>
@@ -358,6 +377,16 @@
            <property name="text">
             <string>None</string>
            </property>
+           <property name="icon">
+            <iconset resource="../images.qrc">
+             <normaloff>:/images/security-low-48.png</normaloff>:/images/security-low-48.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>48</width>
+             <height>48</height>
+            </size>
+           </property>
           </widget>
          </item>
          <item>
@@ -365,12 +394,32 @@
            <property name="text">
             <string>Marginal</string>
            </property>
+           <property name="icon">
+            <iconset resource="../images.qrc">
+             <normaloff>:/images/security-medium-48.png</normaloff>:/images/security-medium-48.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>48</width>
+             <height>48</height>
+            </size>
+           </property>
           </widget>
          </item>
          <item>
           <widget class="QRadioButton" name="radioButton_trust_fully">
            <property name="text">
             <string>Full</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../images.qrc">
+             <normaloff>:/images/security-high-48.png</normaloff>:/images/security-high-48.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>48</width>
+             <height>48</height>
+            </size>
            </property>
           </widget>
          </item>

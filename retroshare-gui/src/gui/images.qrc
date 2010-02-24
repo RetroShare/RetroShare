@@ -309,6 +309,9 @@
         <file>images/rstray1.png</file>
         <file>images/rstray2.png</file>
         <file>images/security-high-16.png</file>
+        <file>images/security-high-48.png</file>
+        <file>images/security-low-48.png</file>
+        <file>images/security-medium-48.png</file>
         <file>images/save24.png</file>
         <file>images/send24.png</file>
         <file>images/settings.png</file>
@@ -369,6 +372,8 @@
         <file>images/toaster/toaster-backrs4.png</file>
         <file>images/thumb-default-video.png</file>
         <file>images/user/add_user24.png</file>
+        <file>images/user/add_user48.png</file>
+        <file>images/user/deny_user48.png</file>
         <file>images/user/friends24.png</file>
         <file>images/user/identity16.png</file>
         <file>images/user/identity24.png</file>
@@ -391,6 +396,7 @@
         <file>images/up1down0.png</file>
         <file>images/underconstruction.png</file>
         <file>images/user.png</file>
+        <file>images/view-certificate-sign-32.png</file>
         <file>images/view_calendar_day.png</file>
         <file>images/view_calendar_week.png</file>
         <file>images/view_calendar_month.png</file>
