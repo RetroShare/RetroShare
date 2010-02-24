@@ -229,28 +229,23 @@ TextPage::TextPage(QWidget *parent)
     
     userCertCopyButton = new QPushButton;
     userCertCopyButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    userCertCopyButton->setFixedSize(34,34);
-    userCertCopyButton->setIconSize(QSize(32,32));
-    userCertCopyButton->setStyleSheet("QPushButton:hover{ border: 1px solid #CCCCCC; }");
+    userCertCopyButton->setFixedSize(20,20);
 
     userCertCopyButton->setFlat(true);
-    userCertCopyButton->setIcon( QIcon(":images/view-certificate-copy-32.png") );
+    userCertCopyButton->setIcon( QIcon(":images/copyrslink.png") );
     userCertCopyButton->setToolTip(tr("Copy your Cert to Clipboard"));
     connect (userCertCopyButton,  SIGNAL( clicked()),
              this,                SLOT(   copyCert()) );  
     
     userCertSaveButton = new QPushButton;
     userCertSaveButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    userCertSaveButton->setFixedSize(34,34);
-    userCertSaveButton->setIconSize(QSize(32,32));
-    userCertSaveButton->setStyleSheet("QPushButton:hover{ border: 1px solid #CCCCCC; }");
+    userCertSaveButton->setFixedSize(20,20);
     userCertSaveButton->setFlat(true);
-    userCertSaveButton->setIcon( QIcon(":images/view-certificate-export-32.png") );
+    userCertSaveButton->setIcon( QIcon(":images/document_save.png") );
     userCertSaveButton->setToolTip(tr("Save your Cert into a File"));
     connect (userCertSaveButton,  SIGNAL( clicked()),
              this,                SLOT(   fileSaveAs()) );                 
              
-#if defined(Q_OS_WIN)
     userCertMailButton = new QPushButton;
     userCertMailButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     userCertMailButton->setFixedSize(20,20);
@@ -259,14 +254,13 @@ TextPage::TextPage(QWidget *parent)
     userCertMailButton->setToolTip(tr("Run Email program"));
     connect (userCertMailButton,  SIGNAL( clicked()),
              this,                SLOT(   runEmailClient()) );
-#endif
+
     userCertButtonsLayout = new QVBoxLayout();
     userCertButtonsLayout->addWidget(userCertHelpButton);
     userCertButtonsLayout->addWidget(userCertCopyButton);
     userCertButtonsLayout->addWidget(userCertSaveButton);
-#if defined(Q_OS_WIN)
     userCertButtonsLayout->addWidget(userCertMailButton);
-#endif
+
     userCertLayout = new QHBoxLayout();
     userCertLayout->addWidget(userCertEdit);
     userCertLayout->addLayout(userCertButtonsLayout);
@@ -288,10 +282,9 @@ TextPage::TextPage(QWidget *parent)
 //
 //============================================================================
 //
-#if defined(Q_OS_WIN)
 
 #include <iostream>
-#include <windows.h>
+//#include <windows.h>
 
 void 
 TextPage::runEmailClient()
@@ -315,7 +308,7 @@ TextPage::runEmailClient()
 
   QDesktopServices::openUrl( QUrl::fromEncoded( mailstr.c_str() ) );
 }
-#endif
+
 //
 //============================================================================
 //
