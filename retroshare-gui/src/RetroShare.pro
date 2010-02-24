@@ -1,4 +1,4 @@
-CONFIG += qt gui uic qrc resources newsettings 
+CONFIG += qt gui uic qrc resources uitools newsettings
 QT     += network xml script opengl
 
 TEMPLATE = app
@@ -212,11 +212,7 @@ HEADERS +=  rshare.h \
             gui/msgs/textformat.h \
             gui/images/retroshare_win.rc.h \
             gui/settings/rsharesettings.h \
-            gui/settings/rsettings.h \  
-            gui/blogs/BlogsDialog.h \
-            gui/blogs/CreateBlog.h \  
-            gui/blogs/CreateBlogMsg.h \
-            gui/blogs/BlogsMsgItem.h \      
+            gui/settings/rsettings.h \        
             gui/toaster/MessageToaster.h \
             gui/toaster/OnlineToaster.h \
             gui/toaster/ChatToaster.h \
@@ -287,11 +283,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/HelpDialog.ui \
             gui/InfoDialog.ui \
             gui/DetailsDialog.ui \
-            gui/bwgraph/bwgraph.ui \
-            gui/blogs/BlogsDialog.ui \
-            gui/blogs/CreateBlog.ui \
-            gui/blogs/CreateBlogMsg.ui \
-            gui/blogs/BlogsMsgItem.ui \      
+            gui/bwgraph/bwgraph.ui \   
             gui/profile/ProfileView.ui \
             gui/profile/ProfileEdit.ui \
             gui/profile/ProfileWidget.ui \
@@ -389,11 +381,7 @@ SOURCES +=  main.cpp \
             gui/profile/ProfileView.cpp \
             gui/profile/ProfileEdit.cpp \
             gui/profile/ProfileWidget.cpp \
-            gui/profile/StatusMessage.cpp \
-            gui/blogs/BlogsDialog.cpp \
-            gui/blogs/CreateBlog.cpp \
-            gui/blogs/CreateBlogMsg.cpp \
-            gui/blogs/BlogsMsgItem.cpp \      
+            gui/profile/StatusMessage.cpp \      
             gui/channels/CreateChannelMsg.cpp \
             gui/channels/ChannelDetails.cpp \
             gui/chat/PopupChatDialog.cpp \
@@ -535,7 +523,11 @@ HEADERS += gui/unfinished/ApplicationWindow.h \
            gui/unfinished/PhotoDialog.h \
            gui/unfinished/PhotoShow.h \
            gui/unfinished/StatisticDialog.h \
-           gui/unfinished/TransferFeed.h
+           gui/unfinished/TransferFeed.h \
+           gui/unfinished/blogs/BlogsDialog.h \
+           gui/unfinished/blogs/CreateBlog.h \  
+           gui/unfinished/blogs/CreateBlogMsg.h \
+           gui/unfinished/blogs/BlogsMsgItem.h
 
 FORMS += gui/unfinished/ApplicationWindow.ui \
          gui/unfinished/BlogDialog.ui \
@@ -547,7 +539,11 @@ FORMS += gui/unfinished/ApplicationWindow.ui \
          gui/unfinished/PhotoDialog.ui \
          gui/unfinished/PhotoShow.ui \
          gui/unfinished/StatisticDialog.ui \
-         gui/unfinished/TransferFeed.ui
+         gui/unfinished/TransferFeed.ui \
+         gui/unfinished/blogs/BlogsDialog.ui \
+         gui/unfinished/blogs/CreateBlog.ui \
+         gui/unfinished/blogs/CreateBlogMsg.ui \
+         gui/unfinished/blogs/BlogsMsgItem.ui  
          
 SOURCES += gui/unfinished/ApplicationWindow.cpp \
            gui/unfinished/BlogDialog.cpp \
@@ -559,7 +555,11 @@ SOURCES += gui/unfinished/ApplicationWindow.cpp \
            gui/unfinished/PhotoDialog.cpp \
            gui/unfinished/PhotoShow.cpp \
            gui/unfinished/StatisticDialog.cpp \
-           gui/unfinished/TransferFeed.cpp
+           gui/unfinished/TransferFeed.cpp \
+           gui/unfinished/blogs/BlogsDialog.cpp \
+           gui/unfinished/blogs/CreateBlog.cpp \
+           gui/unfinished/blogs/CreateBlogMsg.cpp \
+           gui/unfinished/blogs/BlogsMsgItem.cpp
 
           DEFINES *= UNFINISHED
 }

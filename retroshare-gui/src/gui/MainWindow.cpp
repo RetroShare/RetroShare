@@ -33,7 +33,10 @@
 #include "LinksDialog.h"
 #include "ForumsDialog.h"
 #include "NewsFeed.h"
-#include "blogs/BlogsDialog.h"
+
+#ifdef UNFINISHED
+#include "gui/unfinished/blogs/BlogsDialog.h"
+#endif 
 
 #include "rshare.h"
 #include "MainWindow.h"
@@ -128,10 +131,10 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
     /*messengerWindow instance is created statically so that RsAutoUpdatePage can access it*/ 
     messengerWindow = MessengerWindow::getInstance();
-#ifdef UNFINISHED
+    #ifdef UNFINISHED
     applicationWindow = new ApplicationWindow();
     applicationWindow->hide();
-#endif    
+    #endif    
 
     /** Left Side ToolBar**/
     connect(ui.actionAdd_Friend, SIGNAL(triggered() ), this , SLOT( addFriend() ) );
@@ -186,11 +189,11 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
                       createPageAction(QIcon(IMAGE_CHANNELS), tr("Channels"), grp));
     #endif
 
-	#ifndef RS_RELEASE_VERSION
+    #ifdef UNFINISHED
     BlogsDialog *blogsFeed = NULL;
     ui.stackPages->add(blogsFeed = new BlogsDialog(ui.stackPages),
 		createPageAction(QIcon(IMAGE_BLOGS), tr("Blogs"), grp));
-	#endif
+    #endif
                       
     ForumsDialog *forumsDialog = NULL;
     ui.stackPages->add(forumsDialog = new ForumsDialog(ui.stackPages),

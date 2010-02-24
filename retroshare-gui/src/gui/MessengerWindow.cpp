@@ -147,7 +147,7 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
   updateAvatar();
   loadmystatusmessage();
   
-  loadstatus();
+  //loadstatus();
   
   displayMenu();
   updateMessengerDisplay();
@@ -930,6 +930,9 @@ void MessengerWindow::displayMenu()
 /** Load own status Online,Away,Busy **/
 void MessengerWindow::loadstatus()
 {
+	//rsiface->lockData(); /* Lock Interface */
+
+
 	/* load up configuration from rsPeers */
 	RsPeerDetails detail;
 	std::string ownId = rsPeers->getOwnId();
@@ -938,7 +941,7 @@ void MessengerWindow::loadstatus()
 	{
 		return;
 	}
-	
+		
 	StatusInfo si;
 	if (!rsStatus->getStatus(ownId, si))
 	{
@@ -965,19 +968,23 @@ void MessengerWindow::loadstatus()
 	}
 	
 	ui.statuscomboBox->setCurrentIndex(statusIndex);
+	
+	//rsiface->unlockData(); /* UnLock Interface */
 }
 
 /** Save own status Online,Away,Busy **/
 void MessengerWindow::savestatus()
 {
+	//rsiface->lockData(); /* Lock Interface */
+
 	RsPeerDetails detail;
 	std::string ownId = rsPeers->getOwnId();
 
 	if (!rsPeers->getPeerDetails(ownId, detail))
 	{
 		return;
-	}
-	
+	}	
+		
 	StatusInfo si;
 
 	int statusIndex = ui.statuscomboBox->currentIndex();
@@ -1005,5 +1012,7 @@ void MessengerWindow::savestatus()
 	si.status = status;
 
 	rsStatus->setStatus(si);
+	
+	//rsiface->unlockData(); /* UnLock Interface */
 
 }
