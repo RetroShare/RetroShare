@@ -485,7 +485,7 @@ void MessagesDialog::getcurrentrecommended()
 	{
 		const FileInfo& f(it->second) ;
 		std::cout << "Requesting file " << f.fname << ", size=" << f.size << ", hash=" << f.hash << std::endl ;
-		rsFiles -> FileRequest(it->second.fname,it->second.hash,it->second.size, "", 0, srcIds);
+		rsFiles -> FileRequest(it->second.fname,it->second.hash,it->second.size, "", RS_FILE_HINTS_NETWORK_WIDE, srcIds);
 	}
 }
 
