@@ -473,7 +473,7 @@ void MessagesDialog::getcurrentrecommended()
 		{
 			case 0: f.fname = it->data().toString().toStdString() ;
 					  break ;
-			case 1: f.size = it->data().toString().toInt() ;
+			case 1: f.size = it->data().toULongLong() ;
 					  break ;
 			case 3: f.hash = it->data().toString().toStdString() ;
 					  break ;
@@ -482,7 +482,11 @@ void MessagesDialog::getcurrentrecommended()
 	}
 
 	for(std::map<int,FileInfo>::const_iterator it(files.begin());it!=files.end();++it)
+	{
+		const FileInfo& f(it->second) ;
+		std::cout << "Requesting file " << f.fname << ", size=" << f.size << ", hash=" << f.hash << std::endl ;
 		rsFiles -> FileRequest(it->second.fname,it->second.hash,it->second.size, "", 0, srcIds);
+	}
 }
 
 #if 0
@@ -852,7 +856,7 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index)
 		item -> setText(0, QString::fromStdString(it->fname));
 		//std::cerr << "Msg FileItem(" << it->fname.length() << ") :" << it->fname << std::endl;
 
-		item -> setText(1, misc::friendlyUnit(it->size)); /* (1) Size */
+		item -> setText(1, QString::number(it->size)); /* (1) Size */
 		item -> setText(2, QString::number(0)); 			/* (2) Rank */ // what is this ???
 		item -> setText(3, QString::fromStdString(it->hash)); 
 
