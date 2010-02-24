@@ -81,10 +81,8 @@ private:
     QPushButton* userCertHelpButton;
     QPushButton* userCertCopyButton;
     QPushButton* userCertSaveButton;
-    #if defined(Q_OS_WIN)
     QPushButton* userCertMailButton;//! on Windows, click on this button
                                    //! launches default email client
-    #endif
     QLabel*      friendCertLabel;
     QTextEdit*   friendCertEdit;
     
@@ -101,12 +99,11 @@ private slots:
     bool fileSave();
     bool fileSaveAs();
     
-    #if defined(Q_OS_WIN)
+
     //! launches default email client (on windows)
     
     //! Tested on Vista, it work normally... But a bit slowly.
     void runEmailClient();
-    #endif
 };
 
 //============================================================================
