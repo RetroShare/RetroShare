@@ -884,7 +884,7 @@ void SearchDialog::insertFile(const std::string& txt,qulonglong searchId, const 
 			ui.searchResultWidget->topLevelItem(i)->setText(SR_ID_COL,modifiedResult);
 			QTreeWidgetItem *item = ui.searchResultWidget->topLevelItem(i);
 			found = true ;
-			int sources = friendSource;
+			int sources = friendSource + anonymousSource ;
 			if ( sources < 1)
 			{
 				for(int i = 0; i < 7; i++)
