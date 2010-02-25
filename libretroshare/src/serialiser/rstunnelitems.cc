@@ -263,7 +263,7 @@ std::ostream& RsTunnelDataItem::print(std::ostream& o, uint16_t)
 
 std::ostream& RsTunnelHandshakeItem::print(std::ostream& o, uint16_t)
 {
-        o << "RsTunnelDataItem :" << std::endl ;
+        o << "RsTunnelHandshakeItem :" << std::endl ;
         o << "  sourcePeerId : " << sourcePeerId << std::endl ;
         o << "  relayPeerId : " << relayPeerId << std::endl ;
         o << "  destPeerId : " << destPeerId << std::endl ;
