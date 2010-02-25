@@ -103,7 +103,9 @@ public slots:
     void showWindow(Page page);
 
     void updateHashingInfo(const QString&) ;
-	 void displayErrorMessage(int,int,const QString&) ;
+    void displayErrorMessage(int,int,const QString&) ;
+    
+    void updateToolBaricons();
 	
 protected:
     void closeEvent(QCloseEvent *);
@@ -147,7 +149,6 @@ private slots:
     void on_actionQuick_Start_Wizard_activated();
 
 
-
 private:
 
     /** Create the actions on the tray menu or menubar */
@@ -188,6 +189,8 @@ private:
     RatesStatus *ratesstatus;
 
     QLabel *_hashing_info_label ;
+    
+    QIcon MessageIcon;
 
     /** Qt Designer generated object */
     Ui::MainWindow ui;

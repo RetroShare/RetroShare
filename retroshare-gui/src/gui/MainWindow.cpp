@@ -34,7 +34,7 @@
 #include "ForumsDialog.h"
 #include "NewsFeed.h"
 
-#ifdef UNFINISHED
+#ifdef BLOGS
 #include "gui/unfinished/blogs/BlogsDialog.h"
 #endif 
 
@@ -110,6 +110,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 {
     /* Invoke the Qt Designer generated QObject setup routine */
     ui.setupUi(this);
+    
+    updateToolBaricons();
 
     /* Create RshareSettings object */
     _settings = new RshareSettings();
@@ -181,7 +183,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
 
     ui.stackPages->add(messagesDialog = new MessagesDialog(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_MESSAGES), tr("Messages"), grp));   
+                      createPageAction(QIcon(MessageIcon), tr("Messages"), grp));   
 
     #ifndef RS_RELEASE_VERSION
     ChannelFeed *channelFeed = NULL;
@@ -189,7 +191,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
                       createPageAction(QIcon(IMAGE_CHANNELS), tr("Channels"), grp));
     #endif
 
-    #ifdef UNFINISHED
+    #ifdef BLOGS
     BlogsDialog *blogsFeed = NULL;
     ui.stackPages->add(blogsFeed = new BlogsDialog(ui.stackPages),
 		createPageAction(QIcon(IMAGE_BLOGS), tr("Blogs"), grp));
@@ -643,5 +645,28 @@ void MainWindow::setStyle()
  QString toolSheet = "QToolBar" + standardSheet.replace("<color1>", stop1.name()).replace("<color2>", stop2.name());
  QString menuSheet = "QMenuBar" + standardSheet.replace("<color1>", stop1.name()).replace("<color2>", stop2.name());
  qApp->setStyleSheet(/*widgetSheet + */toolSheet + menuSheet);
+
+}
+
+void MainWindow::updateToolBaricons()
+{
+	std::list<MsgInfoSummary> msgList;
+	std::list<MsgInfoSummary>::const_iterator it;
+
+	rsMsgs -> getMessageSummaries(msgList);
+  
+  for(it = msgList.begin(); it != msgList.end(); it++)
+	{
+
+  if ((it -> msgflags & RS_MSG_NEW) == RS_MSG_NEW)
+  {
+     MessageIcon.addPixmap(QPixmap(":/images/messages_new.png"), QIcon::Normal, QIcon::On ); 
+  }
+  else
+  {
+     MessageIcon.addPixmap(QPixmap(":/images/evolution.png"), QIcon::Normal, QIcon::On );
+  }
+  
+  }
 
 }

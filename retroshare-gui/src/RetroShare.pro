@@ -508,6 +508,28 @@ newsettings {
 
 }
 
+blogs {
+
+DEPENDPATH += gui/unfinished \
+
+HEADERS += gui/unfinished/blogs/BlogsDialog.h \
+           gui/unfinished/blogs/CreateBlog.h \  
+           gui/unfinished/blogs/CreateBlogMsg.h \
+           gui/unfinished/blogs/BlogsMsgItem.h
+
+FORMS += gui/unfinished/blogs/BlogsDialog.ui \
+         gui/unfinished/blogs/CreateBlog.ui \
+         gui/unfinished/blogs/CreateBlogMsg.ui \
+         gui/unfinished/blogs/BlogsMsgItem.ui  
+         
+SOURCES += gui/unfinished/blogs/BlogsDialog.cpp \
+           gui/unfinished/blogs/CreateBlog.cpp \
+           gui/unfinished/blogs/CreateBlogMsg.cpp \
+           gui/unfinished/blogs/BlogsMsgItem.cpp
+
+          DEFINES *= BLOGS
+}
+
 
 unfinished {
 
@@ -523,11 +545,7 @@ HEADERS += gui/unfinished/ApplicationWindow.h \
            gui/unfinished/PhotoDialog.h \
            gui/unfinished/PhotoShow.h \
            gui/unfinished/StatisticDialog.h \
-           gui/unfinished/TransferFeed.h \
-           gui/unfinished/blogs/BlogsDialog.h \
-           gui/unfinished/blogs/CreateBlog.h \  
-           gui/unfinished/blogs/CreateBlogMsg.h \
-           gui/unfinished/blogs/BlogsMsgItem.h
+           gui/unfinished/TransferFeed.h
 
 FORMS += gui/unfinished/ApplicationWindow.ui \
          gui/unfinished/BlogDialog.ui \
@@ -539,11 +557,7 @@ FORMS += gui/unfinished/ApplicationWindow.ui \
          gui/unfinished/PhotoDialog.ui \
          gui/unfinished/PhotoShow.ui \
          gui/unfinished/StatisticDialog.ui \
-         gui/unfinished/TransferFeed.ui \
-         gui/unfinished/blogs/BlogsDialog.ui \
-         gui/unfinished/blogs/CreateBlog.ui \
-         gui/unfinished/blogs/CreateBlogMsg.ui \
-         gui/unfinished/blogs/BlogsMsgItem.ui  
+         gui/unfinished/TransferFeed.ui 
          
 SOURCES += gui/unfinished/ApplicationWindow.cpp \
            gui/unfinished/BlogDialog.cpp \
@@ -555,11 +569,7 @@ SOURCES += gui/unfinished/ApplicationWindow.cpp \
            gui/unfinished/PhotoDialog.cpp \
            gui/unfinished/PhotoShow.cpp \
            gui/unfinished/StatisticDialog.cpp \
-           gui/unfinished/TransferFeed.cpp \
-           gui/unfinished/blogs/BlogsDialog.cpp \
-           gui/unfinished/blogs/CreateBlog.cpp \
-           gui/unfinished/blogs/CreateBlogMsg.cpp \
-           gui/unfinished/blogs/BlogsMsgItem.cpp
+           gui/unfinished/TransferFeed.cpp
 
           DEFINES *= UNFINISHED
 }

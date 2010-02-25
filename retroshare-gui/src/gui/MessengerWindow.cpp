@@ -112,7 +112,7 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
   connect( ui.actionHide_Offline_Friends, SIGNAL(triggered()), this, SLOT(insertPeers()));
   
   connect(ui.messagelineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(savestatusmessage()));
-  connect(ui.statuscomboBox, SIGNAL(clicked()), this, SLOT(savestatus()));
+  //connect(ui.statuscomboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(savestatus()));
   
 	/* to hide the header  */
 	ui.messengertreeWidget->header()->hide(); 
