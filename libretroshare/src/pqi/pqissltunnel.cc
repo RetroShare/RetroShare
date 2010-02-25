@@ -45,8 +45,8 @@ const int pqisslzone = 37714;
 
 #define TUNNEL_WAITING_NOT		0
 #define TUNNEL_WAITING_DELAY		1
-#define TUNNEL_WAITING_SPAM_PING	2
-#define TUNNEL_WAITING_PING_RETURN	3
+#define TUNNEL_WAITING_SPAM_HANDSHAKE	2
+#define TUNNEL_WAITING_RETURN_HANDSHAKE	3
 
 
 #define TUNNEL_PASSIVE  0x00
@@ -301,7 +301,7 @@ int	pqissltunnel::tick()
 		if (waiting > 0)
 		{
                         #ifdef DEBUG_PQISSL_TUNNEL
-                        std::cerr << "pqissltunnel::tick() Continuing Connection Attempt!" << std::endl;
+                        //std::cerr << "pqissltunnel::tick() Continuing Connection Attempt!" << std::endl;
                         #endif
 			ConnectAttempt();
 			return 1;
@@ -314,42 +314,41 @@ int	pqissltunnel::tick()
 /********** Internals of Tunnel Connection ****************************/
 int 	pqissltunnel::ConnectAttempt()
 {
-#ifdef DEBUG_PQISSL_TUNNEL
-	std::cerr << "pqissltunnel::ConnectAttempt() called." << std::endl;
-#endif
+        #ifdef DEBUG_PQISSL_TUNNEL
+        //std::cerr << "pqissltunnel::ConnectAttempt() called." << std::endl;
+        #endif
 	switch(waiting)
 	{
 		case TUNNEL_WAITING_NOT:
-
 			active = true; /* we're starting this one */
+                        #ifdef DEBUG_PQISSL_TUNNEL
 			std::cerr << "pqissltunnel::ConnectAttempt() STATE = Not Waiting." << std::endl;
+                        #endif
 
 		case TUNNEL_WAITING_DELAY:
-
-			std::cerr << "pqissltunnel::ConnectAttempt() STATE = Waiting Delay, starting connection" << std::endl;
-
                         if ((time(NULL) - mConnectTS) > TUNNEL_START_CONNECTION_DELAY) {
-			    waiting = TUNNEL_WAITING_SPAM_PING;
+                            waiting = TUNNEL_WAITING_SPAM_HANDSHAKE;
 			}
 
 			break;
 
-		case TUNNEL_WAITING_SPAM_PING:
+                case TUNNEL_WAITING_SPAM_HANDSHAKE:
+                        #ifdef DEBUG_PQISSL_TUNNEL
+                        std::cerr << "pqissltunnel::ConnectAttempt() STATE = Waiting for spamming handshake." << std::endl;
+                        #endif
 
-			std::cerr << "pqissltunnel::ConnectAttempt() STATE = Waiting for spamming ping." << std::endl;
-
-			Spam_Ping();
-			waiting = TUNNEL_WAITING_PING_RETURN;
+                        spam_handshake();
+                        waiting = TUNNEL_WAITING_RETURN_HANDSHAKE;
 			break;
 
-		case TUNNEL_WAITING_PING_RETURN:
+                case TUNNEL_WAITING_RETURN_HANDSHAKE:
                         if ((time(NULL) - mConnectTS) < TUNNEL_PING_TIMEOUT) {
                             #ifdef DEBUG_PQISSL_TUNNEL
-			    std::cerr << "pqissltunnel::ConnectAttempt() STATE = Waiting for ping reply." << std::endl;
+                            //std::cerr << "pqissltunnel::ConnectAttempt() STATE = Waiting for handshake reply." << std::endl;
                             #endif
 			} else {
                             #ifdef DEBUG_PQISSL_TUNNEL
-			    std::cerr << "pqissltunnel::ConnectAttempt() no ping reply during imparing time. Connection failed." << std::endl;
+                            std::cerr << "pqissltunnel::ConnectAttempt() no handshake reply during imparing time. Connection failed." << std::endl;
                             #endif
 			    waiting = TUNNEL_WAITING_NOT;
 			    active = false;
@@ -373,29 +372,27 @@ int 	pqissltunnel::ConnectAttempt()
 	return -1;
 }
 
-void 	pqissltunnel::Spam_Ping()
+void 	pqissltunnel::spam_handshake()
 {
 #ifdef DEBUG_PQISSL_TUNNEL
-	std::cerr << "pqissltunnel::Spam_Ping() starting to spam ping tunnel packet." << std::endl;
+        std::cerr << "pqissltunnel::spam_handshake() starting to spam handshake tunnel packet." << std::endl;
 #endif
 	std::list<std::string> peers;
 	mConnMgr->getOnlineList(peers);
 	std::list<std::string>::iterator it = peers.begin();
 	while (it !=  peers.end()) {
-	    //send a ping to the destination through the relay
-	    if (*it != parent()->PeerId()) {
-		std::cerr << "sending ping with relay id : " << *it << std::endl;
-		mP3tunnel->pingTunnelConnection(*it, parent()->PeerId());
+            //send a handshake to the destination through the relay
+            if (*it != parent()->PeerId()) {
+                mP3tunnel->initiateHandshake(*it, parent()->PeerId());
 	    }
 	    ++it;
 	}
 }
 
 void pqissltunnel::addIncomingPacket(void* encoded_data, int encoded_data_length) {
-#ifdef DEBUG_PQISSL_TUNNEL
-        std::cerr << "pqissltunnel::addIncomingPacket() called." << std::endl;
-        std::cerr << "pqissltunnel::addIncomingPacket() getRsItemSize(encoded_data) : " << getRsItemSize(encoded_data) << std::endl;
-#endif
+    #ifdef DEBUG_PQISSL_TUNNEL
+    std::cerr << "pqissltunnel::addIncomingPacket() called." << std::endl;
+    #endif
     last_packet_time = time(NULL);
 
     data_with_length data_w_l;
@@ -403,25 +400,30 @@ void pqissltunnel::addIncomingPacket(void* encoded_data, int encoded_data_length
     memcpy(data_w_l.data, encoded_data, encoded_data_length);
     data_w_l.length = encoded_data_length;
     data_packet_queue.push_front(data_w_l);
-#ifdef DEBUG_PQISSL_TUNNEL
-        std::cerr << "pqissltunnel::addIncomingPacket() getRsItemSize(data_w_l.data) : " << getRsItemSize(data_w_l.data) << std::endl;
-#endif
 }
 
-void pqissltunnel::IncommingPingPacket(std::string incRelayPeerId) {
-#ifdef DEBUG_PQISSL_TUNNEL
-	std::cerr << "pqissltunnel::IncommingPingPacket() called with incRelayPeerId : " << incRelayPeerId << std::endl;
-#endif
+void pqissltunnel::IncommingPingPacket() {
+    #ifdef DEBUG_PQISSL_TUNNEL
+    std::cerr << "pqissltunnel::IncommingPingPacket() called" << std::endl;
+    #endif
+
+    last_packet_time = time(NULL);
+}
+
+void pqissltunnel::IncommingHanshakePacket(std::string incRelayPeerId) {
+    #ifdef DEBUG_PQISSL_TUNNEL
+    std::cerr << "pqissltunnel::IncommingHanshakePacket() called with incRelayPeerId : " << incRelayPeerId << std::endl;
+    #endif
 
     if ((time(NULL) - resetTime) <= TUNNEL_TIMEOUT_AFTER_RESET) {
 #ifdef DEBUG_PQISSL_TUNNEL
-        std::cerr << "pqissltunnel::IncommingPingPacket() a reset occured, don't activate the connection." << std::endl;
+        std::cerr << "pqissltunnel::IncommingHanshakePacket() a reset occured, don't activate the connection." << std::endl;
 #endif
         return;
     }
     last_packet_time = time(NULL);
 
-    std::string message = "pqissltunnel::IncommingPingPacket() mConnMgr->isOnline(parent()->PeerId() : ";
+    std::string message = "pqissltunnel::IncommingHanshakePacket() mConnMgr->isOnline(parent()->PeerId() : ";
     if (mConnMgr->isOnline(parent()->PeerId())) {
         message += "true";
     } else {
@@ -442,14 +444,13 @@ void pqissltunnel::IncommingPingPacket(std::string incRelayPeerId) {
 
     if (parent())
     {
-#ifdef DEBUG_PQISSL_TUNNEL
-	std::cerr << "pqissltunnel::IncommingPingPacket() Notify the pqiperson.... (Both Connect/Receive)" <<  parent()->PeerId() <<std::endl;
-#endif
-      rslog(RSL_DEBUG_BASIC, pqisslzone, "pqissltunnel::IncommingPingPacket() Notify the pqiperson.... (Both Connect/Receive)");
-      parent() -> notifyEvent(this, NET_CONNECT_SUCCESS);
+        #ifdef DEBUG_PQISSL_TUNNEL
+        std::cerr << "pqissltunnel::IncommingHanshakePacket() Notify the pqiperson.... (Both Connect/Receive)" <<  parent()->PeerId() <<std::endl;
+        #endif
+        rslog(RSL_DEBUG_BASIC, pqisslzone, "pqissltunnel::IncommingHanshakePacket() Notify the pqiperson.... (Both Connect/Receive)");
+        parent() -> notifyEvent(this, NET_CONNECT_SUCCESS);
     }
 }
-
 /********** Implementation of BinInterface **************************
  * All the rest of the BinInterface.
  *
@@ -470,24 +471,14 @@ int 	pqissltunnel::senddata(void *data, int len)
         int outlen = 0;
         void * out;
         if (!AuthSSL::getAuthSSL()->encrypt(out, outlen, data, len, parent()->PeerId())) {
-            std::cerr << "pqissltunnel::readdata() problem while crypting packet, ignoring it." << std::endl;
+            std::cerr << "pqissltunnel::senddata() problem while crypting packet, ignoring it." << std::endl;
             return -1;
         }
-        std::cerr << "pqissltunnel::readdata() outlen : " << outlen << std::endl;
-        //create RsTunnelDataItem
-        RsTunnelDataItem *item = new RsTunnelDataItem();
-        item->destPeerId = parent()->PeerId();
-        item->relayPeerId = relayPeerId;
-        item->sourcePeerId = mConnMgr->getOwnId();
-        item->PeerId(relayPeerId);
-        item->connection_accepted = 1;
-        item->encoded_data_len = outlen;
-        item->encoded_data = out;
 
         #ifdef DEBUG_PQISSL_TUNNEL
-        std::cerr << "pqissltunnel::senddata() sending item (Putting it into queue)" << std::endl ;
+        std::cerr << "pqissltunnel::senddata() sending item via p3tunnel" << std::endl ;
         #endif
-	mP3tunnel->sendItem(item);
+        mP3tunnel->sendTunnelData(parent()->PeerId(), relayPeerId, out, outlen);
 
         return len;
 }

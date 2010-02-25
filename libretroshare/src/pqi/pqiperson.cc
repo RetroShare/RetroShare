@@ -436,6 +436,10 @@ pqiconnect	*pqiperson::getKid(uint32_t type)
 {
 	std::map<uint32_t, pqiconnect *>::iterator it;
 
+        if (kids.empty()) {
+            return NULL;
+        }
+
 	it = kids.find(type);
 	if (it == kids.end())
 	{

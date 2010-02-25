@@ -52,12 +52,12 @@ int	tick();
 
 void sendTunnelData(std::string destPeerId, std::string relayPeerId, void *data, int data_length);
 
-//to establish a connection, send a ping (just a empty data packet)
 void pingTunnelConnection(std::string relayPeerId, std::string destPeerId);
+void initiateHandshake(std::string relayPeerId, std::string destPeerId);
 
 	private:
 
-void sendTunnelDataPrivate(int connection_accept, std::string to, std::string sourcePeerId, std::string relayPeerId, std::string destPeerId, void *data, int data_length);
+void sendTunnelDataPrivate(std::string to, std::string sourcePeerId, std::string relayPeerId, std::string destPeerId, void *data, int data_length);
 
 void privateRecvTunnelDataRelaying(RsTunnelDataItem *item); //invoked when I am relaying
 void privateRecvTunnelDataDestination(RsTunnelDataItem *item); //invoked when I am the destination of the tunnel
@@ -65,6 +65,7 @@ void privateRecvTunnelDataDestination(RsTunnelDataItem *item); //invoked when I 
 	/* Network Input */
 int  handleIncoming();
 void recvTunnelData(RsTunnelDataItem *item);
+void recvTunnelHandshake(RsTunnelHandshakeItem *item);
 
 
 	private:

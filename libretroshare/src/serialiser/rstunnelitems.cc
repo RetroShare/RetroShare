@@ -24,12 +24,29 @@ uint32_t RsTunnelDataItem::serial_size()
 	s += GetTlvStringSize(sourcePeerId) ;
 	s += GetTlvStringSize(relayPeerId) ;
 	s += GetTlvStringSize(destPeerId) ;
-	s += 4 ;	//connection_accept
 
 	s += 4 ;	//encoded_data_len
 	s += encoded_data_len;
 
 	return s ;
+}
+
+uint32_t RsTunnelHandshakeItem::serial_size()
+{
+#ifdef P3TUNNEL_DEBUG
+        std::cerr << "RsTunnelHandshakeItem::serial_size() called." << std::endl ;
+#endif
+        uint32_t s = 0 ;
+
+        s += 8 ; // header
+        s += GetTlvStringSize(sourcePeerId) ;
+        s += GetTlvStringSize(relayPeerId) ;
+        s += GetTlvStringSize(destPeerId) ;
+        s += GetTlvStringSize(sslCertPEM) ;
+        s += 4 ;	//connection_accept
+
+
+        return s ;
 }
 
 //
@@ -38,7 +55,7 @@ uint32_t RsTunnelDataItem::serial_size()
 RsItem *RsTunnelSerialiser::deserialise(void *data, uint32_t *size)
 {
 #ifdef P3TUNNEL_DEBUG
-	std::cerr << "RsTunnelDataItem::deserialise() called." << std::endl ;
+        std::cerr << "RsTunnelSerialiser::deserialise() called." << std::endl ;
 #endif
 	// look what we have...
 
@@ -62,6 +79,7 @@ RsItem *RsTunnelSerialiser::deserialise(void *data, uint32_t *size)
 		switch(getRsItemSubType(rstype))
 		{
 			case RS_TUNNEL_SUBTYPE_DATA		:	return new RsTunnelDataItem(data,*size) ;
+                        case RS_TUNNEL_SUBTYPE_HANDSHAKE	:	return new RsTunnelHandshakeItem(data,*size) ;
 
 			default:
 			    std::cerr << "Unknown packet type in Rstunnel!" << std::endl ;
@@ -105,8 +123,7 @@ bool RsTunnelDataItem::serialize(void *data,uint32_t& pktsize)
 	/* add mandatory parts first */
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, sourcePeerId);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, relayPeerId);
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, destPeerId);
-	ok &= setRawUInt32(data, tlvsize, &offset, connection_accepted);
+        ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, destPeerId);
 
 	ok &= setRawUInt32(data, tlvsize, &offset, encoded_data_len) ;
         memcpy((void*)((unsigned char*)data+offset),encoded_data,encoded_data_len) ;
@@ -119,9 +136,9 @@ bool RsTunnelDataItem::serialize(void *data,uint32_t& pktsize)
         if ((offset + encoded_data_len) != tlvsize )
 	{
 		ok = false;
-#ifdef RSSERIAL_DEBUG
+                #ifdef P3TUNNEL_DEBUG
                 std::cerr << "RsTunnelDataItem::serialiseTransfer() Size Error! " << std::endl;
-#endif
+            #endif
 	}
 
         #ifdef P3TUNNEL_DEBUG
@@ -131,9 +148,50 @@ bool RsTunnelDataItem::serialize(void *data,uint32_t& pktsize)
 	return ok;
 }
 
+bool RsTunnelHandshakeItem::serialize(void *data,uint32_t& pktsize)
+{
+#ifdef P3TUNNEL_DEBUG
+        std::cerr << "RsTunnelHandshakeItem::serialize() called." << std::endl ;
+#endif
+        uint32_t tlvsize = serial_size();
+        uint32_t offset = 0;
+
+        if (pktsize < tlvsize)
+                return false; /* not enough space */
+
+        pktsize = tlvsize;
+
+        bool ok = true;
+
+#ifdef P3TUNNEL_DEBUG
+        std::cerr << "RsTunnelHandshakeItem::serialize() tlvsize : " << tlvsize << std::endl ;
+#endif
+
+        ok &= setRsItemHeader(data,tlvsize,PacketId(), tlvsize);
+
+        /* skip the header */
+        offset += 8;
+
+        /* add mandatory parts first */
+        ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, sourcePeerId);
+        ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, relayPeerId);
+        ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, destPeerId);
+        ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_CERT_SSL, sslCertPEM);
+        ok &= setRawUInt32(data, tlvsize, &offset, connection_accepted);
+
+        if (offset != tlvsize )
+        {
+                ok = false;
+                #ifdef P3TUNNEL_DEBUG
+                std::cerr << "RsTunnelHandshakeItem::serialiseTransfer() Size Error! " << std::endl;
+                #endif
+        }
+
+        return ok;
+}
+
 //deserialize in constructor
-RsTunnelDataItem::RsTunnelDataItem(void *data,uint32_t pktsize)
-: RsTunnelItem(RS_TUNNEL_SUBTYPE_DATA)
+RsTunnelDataItem::RsTunnelDataItem(void *data,uint32_t pktsize) : RsTunnelItem(RS_TUNNEL_SUBTYPE_DATA)
 {
 #ifdef P3TUNNEL_DEBUG
 	std::cerr << "RsTunnelDataItem constructor called : deserializing packet." << std::endl ;
@@ -148,8 +206,7 @@ RsTunnelDataItem::RsTunnelDataItem(void *data,uint32_t pktsize)
 
 	ok &= GetTlvString(data, pktsize, &offset, TLV_TYPE_STR_VALUE, sourcePeerId);
 	ok &= GetTlvString(data, pktsize, &offset, TLV_TYPE_STR_VALUE, relayPeerId);
-	ok &= GetTlvString(data, pktsize, &offset, TLV_TYPE_STR_VALUE, destPeerId);
-	ok &= getRawUInt32(data, pktsize, &offset, &connection_accepted);
+        ok &= GetTlvString(data, pktsize, &offset, TLV_TYPE_STR_VALUE, destPeerId);
 
 	ok &= getRawUInt32(data, pktsize, &offset, &encoded_data_len) ;
         encoded_data = (void*)malloc(encoded_data_len) ;
@@ -164,16 +221,53 @@ RsTunnelDataItem::RsTunnelDataItem(void *data,uint32_t pktsize)
 #endif
 }
 
+//deserialize in constructor
+RsTunnelHandshakeItem::RsTunnelHandshakeItem(void *data,uint32_t pktsize) : RsTunnelItem(RS_TUNNEL_SUBTYPE_HANDSHAKE)
+{
+#ifdef P3TUNNEL_DEBUG
+        std::cerr << "RsTunnelHandshakeItem constructor called : deserializing packet." << std::endl ;
+#endif
+        uint32_t offset = 8; // skip the header
+        uint32_t rssize = getRsItemSize(data);
+        bool ok = true ;
+
+#ifdef P3TUNNEL_DEBUG
+        std::cerr << "RsTunnelHandshakeItem constructor rssize : " << rssize << std::endl ;
+#endif
+
+        ok &= GetTlvString(data, pktsize, &offset, TLV_TYPE_STR_VALUE, sourcePeerId);
+        ok &= GetTlvString(data, pktsize, &offset, TLV_TYPE_STR_VALUE, relayPeerId);
+        ok &= GetTlvString(data, pktsize, &offset, TLV_TYPE_STR_VALUE, destPeerId);
+        ok &= GetTlvString(data, pktsize, &offset, TLV_TYPE_STR_CERT_SSL, sslCertPEM);
+        ok &= getRawUInt32(data, pktsize, &offset, &connection_accepted);
+
+
+#ifdef WINDOWS_SYS // No Exceptions in Windows compile. (drbobs).
+#else
+        if (offset != rssize)
+                throw std::runtime_error("Size error while deserializing.") ;
+        if (!ok)
+                throw std::runtime_error("Unknown error while deserializing.") ;
+#endif
+}
+
 std::ostream& RsTunnelDataItem::print(std::ostream& o, uint16_t)
 {
 	o << "RsTunnelDataItem :" << std::endl ;
 	o << "  sourcePeerId : " << sourcePeerId << std::endl ;
 	o << "  relayPeerId : " << relayPeerId << std::endl ;
-	o << "  destPeerId : " << destPeerId << std::endl ;
-	o << "  connection_accepted : " << connection_accepted << std::endl ;
+        o << "  destPeerId : " << destPeerId << std::endl ;
 	o << "  encoded_data_len : " << encoded_data_len << std::endl ;
-        if (encoded_data_len != 0 ) {
-           o << "getRsItemSize(encoded_data)" << getRsItemSize(encoded_data) << std::endl ;
-        }
+        return o ;
+}
+
+std::ostream& RsTunnelHandshakeItem::print(std::ostream& o, uint16_t)
+{
+        o << "RsTunnelDataItem :" << std::endl ;
+        o << "  sourcePeerId : " << sourcePeerId << std::endl ;
+        o << "  relayPeerId : " << relayPeerId << std::endl ;
+        o << "  destPeerId : " << destPeerId << std::endl ;
+        o << "  sslCertPEM : " << sslCertPEM << std::endl ;
+        o << "  connection_accepted : " << connection_accepted << std::endl ;
         return o ;
 }

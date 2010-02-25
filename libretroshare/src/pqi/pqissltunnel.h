@@ -106,7 +106,8 @@ virtual bool bandwidthLimited() { return true ; } // replace by !sameLAN to avoi
 
 //called by the p3tunnel service to add incoming packets that will be read by the read data function.
 void addIncomingPacket(void* encoded_data, int data_length);
-void IncommingPingPacket(std::string incRelayPeerId);
+void IncommingPingPacket();
+void IncommingHanshakePacket(std::string incRelayPeerId);
 
 private:
         //if no packet (last_time_packet_time) is received since PING_RECEIVE_TIME_OUT, let's assume the connection is broken
@@ -119,7 +120,7 @@ private:
         int last_ping_send_time;
 
         int ConnectAttempt();
-	void Spam_Ping();
+        void spam_handshake();
 	int waiting;
 	bool active;
         time_t resetTime;

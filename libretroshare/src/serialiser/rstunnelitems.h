@@ -36,6 +36,7 @@
 #include "serialiser/rstlvkeys.h"
 
 const uint8_t RS_TUNNEL_SUBTYPE_DATA	= 0x01 ;
+const uint8_t RS_TUNNEL_SUBTYPE_HANDSHAKE	= 0x02 ;
 
 /***********************************************************************************/
 /*                           Basic Tunnel Item Class                               */
@@ -63,13 +64,30 @@ class RsTunnelDataItem: public RsTunnelItem
 
 		std::string sourcePeerId ;
 		std::string relayPeerId ;
-		std::string destPeerId ;
-		uint32_t connection_accepted;
+                std::string destPeerId ;
 
 		std::ostream& print(std::ostream& o, uint16_t) ;
 
 		bool serialize(void *data,uint32_t& size) ;
 		uint32_t serial_size() ;
+};
+
+class RsTunnelHandshakeItem: public RsTunnelItem
+{
+        public:
+                RsTunnelHandshakeItem() : RsTunnelItem(RS_TUNNEL_SUBTYPE_HANDSHAKE) {}
+                RsTunnelHandshakeItem(void *data,uint32_t size) ;		// deserialization
+
+                std::string sourcePeerId ;
+                std::string relayPeerId ;
+                std::string destPeerId ;
+                std::string sslCertPEM ;
+                uint32_t connection_accepted;
+
+                std::ostream& print(std::ostream& o, uint16_t) ;
+
+                bool serialize(void *data,uint32_t& size) ;
+                uint32_t serial_size() ;
 };
 
 class RsTunnelSerialiser: public RsSerialType
