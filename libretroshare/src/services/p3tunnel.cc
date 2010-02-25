@@ -29,6 +29,7 @@
 #include "rsiface/rspeers.h"
 #include "services/p3tunnel.h"
 #include "pqi/pqissltunnel.h"
+#include <sstream>
 
 #include "pqi/authssl.h"
 #include "pqi/p3connmgr.h"
@@ -74,8 +75,7 @@ int p3tunnel::handleIncoming()
 	RsItem *item = NULL;
 
 #ifdef P3TUNNEL_DEBUG
-        std::cerr << "p3tunnel::handleIncoming() called";
-	std::cerr << std::endl;
+        //std::cerr << "p3tunnel::handleIncoming() called." << std::endl;
 #endif
 
 	int nhandled = 0;
@@ -95,9 +95,9 @@ int p3tunnel::handleIncoming()
 #endif
 		}
 
-		if (NULL != (tdi = dynamic_cast<RsTunnelDataItem *> (item))) {
+                if (NULL != (tdi = dynamic_cast<RsTunnelDataItem *> (item))) {
 #ifdef P3TUNNEL_DEBUG
-                        std::cerr << "p3tunnel::handleIncoming() getRsItemSize(tdi->encoded_data) : " << getRsItemSize(tdi->encoded_data) << std::endl;
+                        std::cerr << "p3tunnel::handleIncoming() tdi->encoded_data_len : " << tdi->encoded_data_len << std::endl;
 #endif
                         recvTunnelData(tdi);
 			nhandled++;
@@ -146,7 +146,7 @@ void p3tunnel::sendTunnelDataPrivate(int accept, std::string to, std::string sou
         memcpy(rdi->encoded_data, data, data_length);
 
 #ifdef P3TUNNEL_DEBUG
-                  std::cerr << "p3tunnel::sendTunnelDataPrivate()  getRsItemSize(rdi->encoded_data) : "<<  getRsItemSize(rdi->encoded_data) << std::endl;
+                  std::cerr << "p3tunnel::sendTunnelDataPrivate()  data_length : "<<  data_length << std::endl;
 #endif
 
 	rdi->PeerId(to);
@@ -156,9 +156,11 @@ void p3tunnel::sendTunnelDataPrivate(int accept, std::string to, std::string sou
 }
 
 void p3tunnel::pingTunnelConnection(std::string relayPeerId, std::string destPeerId) {
+#ifdef P3TUNNEL_DEBUG
     std::cerr << "p3tunnel::pingTunnelConnection() sending ping with relay id : " << relayPeerId << std::endl;
     std::cerr << "ownId : " << ownId << std::endl;
     std::cerr << "destPeerId : " << destPeerId << std::endl;
+#endif
     this->sendTunnelDataPrivate(1, relayPeerId, ownId, relayPeerId, destPeerId, NULL, 0);
 }
 
