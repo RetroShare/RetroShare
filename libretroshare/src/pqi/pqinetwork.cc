@@ -143,7 +143,7 @@ std::list<std::string> getLocalInterfaces()
 	{
 		pqioutput(PQL_ALERT, pqinetzone, 
 			"Cannot Determine Local Addresses!");
-		exit(1);
+                return addrs;
 	}
 
 	if (!ifptr)

@@ -211,9 +211,8 @@ int	pqissllistenbase::setuplisten()
 		out << " Cannot Bind to Local Address!" << std::endl;
 		showSocketError(out);
 		pqioutput(PQL_ALERT, pqissllistenzone, out.str());
-		std::cerr << out.str() << std::endl;
+                std::cerr << out.str() << std::endl;
 
-		exit(1); 
 		return -1;
 	}
 	else
@@ -232,7 +231,6 @@ int	pqissllistenbase::setuplisten()
 		pqioutput(PQL_ALERT, pqissllistenzone, out.str());
 		std::cerr << out.str() << std::endl;
 
-		exit(1); 
 		return -1;
 	}
 	else

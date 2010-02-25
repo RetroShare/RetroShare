@@ -72,7 +72,7 @@ int 	tou_init(const struct sockaddr *my_addr, socklen_t addrlen)
 				<< inet_ntoa(addr->sin_addr) << ":" << ntohs(addr->sin_port);
 			std::cerr << std::endl;
 
-			exit(1);
+                        return 0;
 		}
 		return 1;
 	}
@@ -198,11 +198,6 @@ int     tou_socket(int /*domain*/, int /*type*/, int /*protocol*/)
 	tou -> lasterrno = EUSERS;
 
 	return -1;
-
-#ifdef DEBUG_TOU_INTERFACE
-	std::cerr << "tou_socket() FAILED" << std::endl;
-	exit(1);
-#endif 
 }
 
 /* 	bind - opens the udp port */
