@@ -300,7 +300,9 @@ int	pqissltunnel::tick()
 		// if we are waiting.. continue the connection (only)
 		if (waiting > 0)
 		{
-			std::cerr << "pqissltunnel::tick() Continuing Connection Attempt!" << std::endl;
+                        #ifdef DEBUG_PQISSL_TUNNEL
+                        std::cerr << "pqissltunnel::tick() Continuing Connection Attempt!" << std::endl;
+                        #endif
 			ConnectAttempt();
 			return 1;
 		}
@@ -342,9 +344,13 @@ int 	pqissltunnel::ConnectAttempt()
 
 		case TUNNEL_WAITING_PING_RETURN:
                         if ((time(NULL) - mConnectTS) < TUNNEL_PING_TIMEOUT) {
+                            #ifdef DEBUG_PQISSL_TUNNEL
 			    std::cerr << "pqissltunnel::ConnectAttempt() STATE = Waiting for ping reply." << std::endl;
+                            #endif
 			} else {
+                            #ifdef DEBUG_PQISSL_TUNNEL
 			    std::cerr << "pqissltunnel::ConnectAttempt() no ping reply during imparing time. Connection failed." << std::endl;
+                            #endif
 			    waiting = TUNNEL_WAITING_NOT;
 			    active = false;
 			    // clean up the streamer
@@ -452,36 +458,38 @@ void pqissltunnel::IncommingPingPacket(std::string incRelayPeerId) {
 int 	pqissltunnel::senddata(void *data, int len)
 {
 #ifdef DEBUG_PQISSL_TUNNEL
-	std::cout << "pqissltunnel::senddata() called" << std::endl ;
+        std::cerr << "pqissltunnel::senddata() called" << std::endl ;
 #endif
 	if (!active) {
-#ifdef DEBUG_PQISSL_TUNNEL
-	std::cout << "pqissltunnel::senddata() connection is not active" << std::endl ;
-#endif
+            #ifdef DEBUG_PQISSL_TUNNEL
+            std::cerr << "pqissltunnel::senddata() connection is not active" << std::endl ;
+            #endif
 	    return -1;
 	}
 
-	//create RsTunnelDataItem
-	RsTunnelDataItem *item = new RsTunnelDataItem;
-	item->destPeerId = parent()->PeerId();
-	item->relayPeerId = relayPeerId;
-        item->sourcePeerId = mConnMgr->getOwnId();
-	item->PeerId(relayPeerId);
-        item->connection_accepted = 1;
-
-        int oulen;
-        if (!AuthSSL::getAuthSSL()->encrypt(item->encoded_data, oulen, data, len, parent()->PeerId())) {
+        int outlen = 0;
+        void * out;
+        if (!AuthSSL::getAuthSSL()->encrypt(out, outlen, data, len, parent()->PeerId())) {
             std::cerr << "pqissltunnel::readdata() problem while crypting packet, ignoring it." << std::endl;
             return -1;
         }
-        item->encoded_data_len = oulen;
+        std::cerr << "pqissltunnel::readdata() outlen : " << outlen << std::endl;
+        //create RsTunnelDataItem
+        RsTunnelDataItem *item = new RsTunnelDataItem();
+        item->destPeerId = parent()->PeerId();
+        item->relayPeerId = relayPeerId;
+        item->sourcePeerId = mConnMgr->getOwnId();
+        item->PeerId(relayPeerId);
+        item->connection_accepted = 1;
+        item->encoded_data_len = outlen;
+        item->encoded_data = out;
 
-#ifdef DEBUG_PQISSL_TUNNEL
-        std::cout << "pqissltunnel::senddata() sending item (Putting it into queue)" << std::endl ;
-#endif
+        #ifdef DEBUG_PQISSL_TUNNEL
+        std::cerr << "pqissltunnel::senddata() sending item (Putting it into queue)" << std::endl ;
+        #endif
 	mP3tunnel->sendItem(item);
 
-        return oulen;
+        return len;
 }
 
 int 	pqissltunnel::readdata(void *data, int len)
