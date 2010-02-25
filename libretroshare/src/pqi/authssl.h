@@ -50,6 +50,7 @@
 #include "pqi/pqi_base.h"
 #include "pqi/pqinetwork.h"
 #include "rsiface/rspeers.h"
+#include "pqi/p3cfgmgr.h"
 
 typedef std::string SSL_id;
 
@@ -60,7 +61,7 @@ class p3ConnectMgr;
 class sslcert
 {
         public:
-        sslcert(X509 *x509, std::string id);
+        sslcert(X509* x509, std::string id);
         sslcert();
 
         /* certificate parameters */
@@ -79,11 +80,11 @@ class sslcert
         bool authed;
 
         /* INTERNAL Parameters */
-        X509 *certificate;
+        X509* certificate;
 };
 
 
-class AuthSSL
+class AuthSSL : public p3Config
 {
 	public:
 
@@ -126,6 +127,7 @@ virtual	std::string getOwnLocation();
 
 virtual bool LoadDetailsFromStringCert(std::string pem, RsPeerDetails &pd);
 virtual	std::string SaveOwnCertificateToString();
+virtual std::string ConvertCertificateToString(X509* x509);
 //virtual bool LoadCertificateFromFile(std::string filename, std::string &id);
 //virtual bool SaveCertificateToFile(std::string id, std::string filename);
 //bool 	ProcessX509(X509 *x509, std::string &id);
@@ -161,6 +163,13 @@ virtual bool 	ValidateCertificate(X509 *x509, std::string &peerId); /* validate 
 
 	/************* Virtual Functions from AuthSSL *************/
 
+/*****************************************************************/
+/***********************  p3config  ******************************/
+        /* Key Functions to be overloaded for Full Configuration */
+        virtual RsSerialiser *setupSerialiser();
+        virtual std::list<RsItem *> saveList(bool &cleanup);
+        virtual bool    loadList(std::list<RsItem *> load);
+/*****************************************************************/
 
 	public: /* SSL specific functions used in pqissl/pqissllistener */
 SSL_CTX *getCTX();
@@ -190,6 +199,7 @@ bool    saveX509ToFile(X509 *x509, std::string fname, std::string &hash);
 
 X509 *	loadX509FromDER(const uint8_t *ptr, uint32_t len);
 bool 	saveX509ToDER(X509 *x509, uint8_t **ptr, uint32_t *len);
+bool    LocalStoreCert(X509* x509);
 
 	/*********** LOCKED Functions ******/
 //bool 	locked_FindCert(std::string id, sslcert **cert);
@@ -206,11 +216,10 @@ bool 	saveX509ToDER(X509 *x509, uint8_t **ptr, uint32_t *len);
 
 	std::string mOwnId;
 	sslcert *mOwnCert;
-	EVP_PKEY *pkey;
+        EVP_PKEY *own_private_key;
+        EVP_PKEY *own_public_key;
 
-	bool mToSaveCerts;
-	bool mConfigSaveActive;
-        //std::map<std::string, sslcert *> mCerts;
+        std::map<std::string, sslcert *> mCerts;
 
 };
 

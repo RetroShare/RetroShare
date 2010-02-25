@@ -1391,7 +1391,7 @@ const std::string p3ConnectMgr::getOwnId()
 
 bool p3ConnectMgr::getOwnNetStatus(peerConnectState &state)
 {
-	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+        //RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
         state = ownState;
 	return true;
 }

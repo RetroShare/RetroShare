@@ -403,7 +403,7 @@ X509 *SignX509Certificate(X509_NAME *issuer, EVP_PKEY *privkey, X509_REQ *req, l
 
 
 AuthSSL::AuthSSL()
-	:init(0), sslctx(NULL), pkey(NULL), mToSaveCerts(false), mConfigSaveActive(true)
+        :init(0), sslctx(NULL), own_private_key(NULL), own_public_key(NULL), p3Config(CONFIG_TYPE_AUTHSSL)
 {
 }
 
@@ -479,6 +479,12 @@ static  int initLib = 0;
 
 	// get xPGP certificate.
 	X509 *x509 = PEM_read_X509(ownfp, NULL, NULL, NULL);
+        /* cert->cert_info->key->pkey is NULL until we call SSL_CTX_use_certificate(),
+        * so we do it here then...  */
+        SSL_CTX *newSslctx = SSL_CTX_new(TLSv1_method());
+        SSL_CTX_set_cipher_list(newSslctx, "DEFAULT");
+        SSL_CTX_use_certificate(newSslctx, x509);
+        own_public_key = x509->cert_info->key->pkey;
 	fclose(ownfp);
 
 	if (x509 == NULL)
@@ -498,16 +504,16 @@ static  int initLib = 0;
 		return -1;
 	}
 
-	pkey = PEM_read_PrivateKey(pkfp, NULL, NULL, (void *) passwd);
+        own_private_key = PEM_read_PrivateKey(pkfp, NULL, NULL, (void *) passwd);
 	fclose(pkfp);
 
-	if (pkey == NULL)
+        if (own_private_key == NULL)
 	{
                 std::cerr << "AuthSSL::InitAuth() PEM_read_PrivateKey() Failed";
 		std::cerr << std::endl;
 		return -1;
 	}
-	SSL_CTX_use_PrivateKey(sslctx, pkey);
+        SSL_CTX_use_PrivateKey(sslctx, own_private_key);
 
 	if (1 != SSL_CTX_check_private_key(sslctx))
 	{
@@ -533,7 +539,7 @@ static  int initLib = 0;
 	 * for gpg/pgp or CA verification
 	 */
 
-	if (!validateOwnCertificate(x509, pkey))
+        if (!validateOwnCertificate(x509, own_private_key))
 	{
 		std::cerr << "AuthSSL::InitAuth() validateOwnCertificate() Failed";
 		std::cerr << std::endl;
@@ -605,7 +611,7 @@ SSL_CTX *AuthSSL::getNewSslCtx()
         SSL_CTX_use_certificate(newSslctx, mOwnCert->certificate);
 
         // get private key
-        SSL_CTX_use_PrivateKey(newSslctx, pkey);
+        SSL_CTX_use_PrivateKey(newSslctx, own_private_key);
 
         // enable verification of certificates (PEER)
         // and install verify callback.
@@ -637,8 +643,7 @@ int     AuthSSL::setConfigDirectories(std::string configfile, std::string neighd
 std::string AuthSSL::OwnId()
 {
 #ifdef AUTHSSL_DEBUG
-	std::cerr << "AuthSSL::OwnId()";
-	std::cerr << std::endl;
+//	std::cerr << "AuthSSL::OwnId()" << std::endl;
 #endif
         return mOwnId;
 }
@@ -646,14 +651,12 @@ std::string AuthSSL::OwnId()
 std::string AuthSSL::getOwnLocation()
 {
 #ifdef AUTHSSL_DEBUG
-        std::cerr << "AuthSSL::OwnId()";
-        std::cerr << std::endl;
+        std::cerr << "AuthSSL::OwnId()" << std::endl;
 #endif
         return mOwnCert->location;
 }
 	
 	/* Load/Save certificates */
-//don't save the ssl certs anymore, just return the id
 bool AuthSSL::LoadDetailsFromStringCert(std::string pem, RsPeerDetails &pd)
 {
 #ifdef AUTHSSL_DEBUG
@@ -686,12 +689,20 @@ std::string AuthSSL::SaveOwnCertificateToString()
 #ifdef AUTHSSL_DEBUG
         std::cerr << "AuthSSL::SaveOwnCertificateToString() " << std::endl;
 #endif
+        return ConvertCertificateToString(mOwnCert->certificate);
+}
 
-	/* get the cert first */
-	std::string certstr;
+std::string AuthSSL::ConvertCertificateToString(X509* x509)
+{
+#ifdef AUTHSSL_DEBUG
+        std::cerr << "AuthSSL::ConvertCertificateToString() " << std::endl;
+#endif
+
+        /* get the cert first */
+        std::string certstr;
         BIO *bp = BIO_new(BIO_s_mem());
 
-        PEM_write_bio_X509(bp, mOwnCert->certificate);
+        PEM_write_bio_X509(bp, x509);
 
         /* translate the bp data to a string */
         char *data;
@@ -703,7 +714,7 @@ std::string AuthSSL::SaveOwnCertificateToString()
 
         BIO_free(bp);
 
-	return certstr;
+        return certstr;
 }
 
 	/* Sign / Encrypt / Verify Data (TODO) */
@@ -719,7 +730,7 @@ bool AuthSSL::SignData(const void *data, const uint32_t len, std::string &sign)
 	RsStackMutex stack(sslMtx);   /***** STACK LOCK MUTEX *****/
 
 	EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
-	unsigned int signlen = EVP_PKEY_size(pkey);
+        unsigned int signlen = EVP_PKEY_size(own_private_key);
 	unsigned char signature[signlen];
 
 	if (0 == EVP_SignInit(mdctx, EVP_sha1()))
@@ -738,7 +749,7 @@ bool AuthSSL::SignData(const void *data, const uint32_t len, std::string &sign)
 		return false;
 	}
 
-	if (0 == EVP_SignFinal(mdctx, signature, &signlen, pkey))
+        if (0 == EVP_SignFinal(mdctx, signature, &signlen, own_private_key))
 	{
 		std::cerr << "EVP_SignFinal Failure!" << std::endl;
 
@@ -775,7 +786,7 @@ bool AuthSSL::SignDataBin(const void *data, const uint32_t len,
 	RsStackMutex stack(sslMtx);   /***** STACK LOCK MUTEX *****/
 
 	EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
-	unsigned int req_signlen = EVP_PKEY_size(pkey);
+        unsigned int req_signlen = EVP_PKEY_size(own_private_key);
 	if (req_signlen > *signlen)
 	{
 		/* not enough space */
@@ -799,7 +810,7 @@ bool AuthSSL::SignDataBin(const void *data, const uint32_t len,
 		return false;
 	}
 
-	if (0 == EVP_SignFinal(mdctx, sign, signlen, pkey))
+        if (0 == EVP_SignFinal(mdctx, sign, signlen, own_private_key))
 	{
 		std::cerr << "EVP_SignFinal Failure!" << std::endl;
 
@@ -939,7 +950,7 @@ X509 *AuthSSL::loadX509FromFile(std::string fname, std::string hash)
 	if (hash.length() > 1)
 	{
 
-		unsigned int signlen = EVP_PKEY_size(pkey);
+                unsigned int signlen = EVP_PKEY_size(own_private_key);
 		unsigned char signature[signlen];
 
 		int maxsize = 20480; /* should be enough for about 50 signatures */
@@ -967,7 +978,7 @@ X509 *AuthSSL::loadX509FromFile(std::string fname, std::string hash)
 			std::cerr << "EVP_SignUpdate Failure!" << std::endl;
 		}
 	
-		if (0 == EVP_SignFinal(mdctx, signature, &signlen, pkey))
+                if (0 == EVP_SignFinal(mdctx, signature, &signlen, own_private_key))
 		{
 			std::cerr << "EVP_SignFinal Failure!" << std::endl;
 		}
@@ -1068,7 +1079,7 @@ bool  	AuthSSL::saveX509ToFile(X509 *x509, std::string fname, std::string &hash)
 		return false;
 	}
 
-	unsigned int signlen = EVP_PKEY_size(pkey);
+        unsigned int signlen = EVP_PKEY_size(own_private_key);
 	unsigned char signature[signlen];
 
 	int maxsize = 20480;
@@ -1097,7 +1108,7 @@ bool  	AuthSSL::saveX509ToFile(X509 *x509, std::string fname, std::string &hash)
 		std::cerr << "EVP_SignUpdate Failure!" << std::endl;
 	}
 
-	if (0 == EVP_SignFinal(mdctx, signature, &signlen, pkey))
+        if (0 == EVP_SignFinal(mdctx, signature, &signlen, own_private_key))
 	{
 		std::cerr << "EVP_SignFinal Failure!" << std::endl;
 	}
@@ -1545,9 +1556,13 @@ bool AuthSSL::AuthX509(X509 *x509)
                 goto err;
         }
 
+
         #ifdef AUTHSSL_DEBUG
         std::cerr << "AuthSSL::AuthX509() X509 authenticated" << std::endl;
         #endif
+
+        LocalStoreCert(x509);
+
         return true;
 
   err:
@@ -1593,14 +1608,99 @@ bool    AuthSSL::ValidateCertificate(X509 *x509, std::string &peerId)
 bool    AuthSSL::encrypt(void *&out, int &outlen, const void *in, int inlen, std::string peerId)
 {
 #ifdef AUTHSSL_DEBUG
-        std::cerr << "AuthSSL::encrypt() called with inlen : " << inlen << std::endl;
+        std::cerr << "AuthSSL::encrypt() called for peerId : " << peerId << " with inlen : " << inlen << std::endl;
 #endif
         //TODO : use ssl to crypt the binary input buffer
-        out = malloc(inlen);
-        memcpy(out, in, inlen);
-        outlen = inlen;
+//        out = malloc(inlen);
+//        memcpy(out, in, inlen);
+//        outlen = inlen;
 
-		  return true ;
+        EVP_PKEY *public_key;
+        if (peerId == mOwnId) {
+            public_key = own_public_key;
+        } else {
+            if (!mCerts[peerId]) {
+                #ifdef AUTHSSL_DEBUG
+                std::cerr << "AuthSSL::encrypt() public key not found." << std::endl;
+                #endif
+                return false;
+            } else {
+                public_key = mCerts[peerId]->certificate->cert_info->key->pkey;
+            }
+        }
+
+        int out_offset = 0;
+        out = malloc(inlen + 2048);
+
+        /// ** from demos/maurice/example1.c of openssl V1.0 *** ///
+        unsigned char * iv = new unsigned char [EVP_MAX_IV_LENGTH];
+        memset(iv, '\0', sizeof(iv));
+        unsigned char * ek = new unsigned char [EVP_PKEY_size(public_key) + 1024];
+        uint32_t ekl, net_ekl;
+        unsigned char * cryptBuff = new unsigned char [inlen + 1024];
+        memset(cryptBuff, '\0', sizeof(cryptBuff));
+        int cryptBuffL = 0;
+        unsigned char key[EVP_MAX_KEY_LENGTH];
+
+        /// ** copied implementation of EVP_SealInit of openssl V1.0 *** ///;
+        EVP_CIPHER_CTX cipher_ctx;
+        EVP_CIPHER_CTX_init(&cipher_ctx);
+
+        if(!EVP_EncryptInit_ex(&cipher_ctx,EVP_des_ede3_cbc(),NULL,NULL,NULL)) {
+            return false;
+        }
+
+        if (EVP_CIPHER_CTX_rand_key(&cipher_ctx, key) <= 0) {
+            return false;
+        }
+
+        if (EVP_CIPHER_CTX_iv_length(&cipher_ctx)) {
+            RAND_pseudo_bytes(iv,EVP_CIPHER_CTX_iv_length(&cipher_ctx));
+        }
+
+        if(!EVP_EncryptInit_ex(&cipher_ctx,NULL,NULL,key,iv)) {
+            return false;
+        }
+
+        ekl=EVP_PKEY_encrypt(ek,key,EVP_CIPHER_CTX_key_length(&cipher_ctx), public_key);
+
+        /// ** copied implementation of EVP_SealInit of openssl V *** ///
+
+        net_ekl = htonl(ekl);
+        memcpy((void*)(out + out_offset), (char*)&net_ekl, sizeof(net_ekl));
+        out_offset += sizeof(net_ekl);
+
+        memcpy((void*)(out + out_offset), ek, ekl);
+        out_offset += ekl;
+
+        memcpy((void*)(out + out_offset), iv, sizeof(iv));
+        out_offset += sizeof(iv);
+
+        EVP_EncryptUpdate(&cipher_ctx, cryptBuff, &cryptBuffL, (unsigned char*)in, inlen);
+        memcpy((void*)(out + out_offset), cryptBuff, cryptBuffL);
+        out_offset += cryptBuffL;
+
+        EVP_EncryptFinal_ex(&cipher_ctx, cryptBuff, &cryptBuffL);
+        memcpy((void*)(out + out_offset), cryptBuff, cryptBuffL);
+        out_offset += cryptBuffL;
+
+        outlen = out_offset;
+
+        EVP_EncryptInit_ex(&cipher_ctx,NULL,NULL,NULL,NULL);
+        EVP_CIPHER_CTX_cleanup(&cipher_ctx);
+
+
+        delete[] ek;
+
+        #ifdef AUTHSSL_DEBUG
+        std::cerr << "AuthSSL::encrypt() finished with outlen : " << outlen << std::endl;
+        #endif
+
+        //free(ek);
+        //free(cryptBuff);
+        //free(iv);
+
+        return true;
 }
 
 bool    AuthSSL::decrypt(void *&out, int &outlen, const void *in, int inlen)
@@ -1609,11 +1709,175 @@ bool    AuthSSL::decrypt(void *&out, int &outlen, const void *in, int inlen)
         std::cerr << "AuthSSL::decrypt() called with inlen : " << inlen << std::endl;
 #endif
         //TODO : use ssl to decrypt the binary input buffer
-        out = malloc(inlen);
-        memcpy(out, in, inlen);
-        outlen = inlen;
+//        out = malloc(inlen);
+//        memcpy(out, in, inlen);
+//        outlen = inlen;
+        out = malloc(inlen + 2048);
+        int in_offset = 0;
+        unsigned char * buf = new unsigned char [inlen + 1024];
+        memset(buf, '\0', sizeof(buf));
+        int buflen = 0;
+        EVP_CIPHER_CTX ectx;
+        unsigned char * iv = new unsigned char [EVP_MAX_IV_LENGTH];
+        memset(iv, '\0', sizeof(iv));
+        unsigned char *encryptKey;
+        unsigned int ekeylen;
 
-		  return true ;
+
+        memcpy(&ekeylen, (void*)(in + in_offset), sizeof(ekeylen));
+        in_offset += sizeof(ekeylen);
+
+        ekeylen = ntohl(ekeylen);
+
+        if (ekeylen != EVP_PKEY_size(own_private_key))
+        {
+                fprintf(stderr, "keylength mismatch");
+                return false;
+        }
+
+        encryptKey = new unsigned char [sizeof(char) * ekeylen];
+
+        memcpy(encryptKey, (void*)(in + in_offset), ekeylen);
+        in_offset += ekeylen;
+
+        memcpy(iv, (void*)(in + in_offset), sizeof(iv));
+        in_offset += sizeof(iv);
+
+//        EVP_OpenInit(&ectx,
+//                   EVP_des_ede3_cbc(),
+//                   encryptKey,
+//                   ekeylen,
+//                   iv,
+//                   privateKey);
+        /// ** copied implementation of EVP_SealInit of openssl V1.0 *** ///;
+
+        unsigned char *key=NULL;
+        int i,size=0;
+
+        EVP_CIPHER_CTX_init(&ectx);
+        if(!EVP_DecryptInit_ex(&ectx,EVP_des_ede3_cbc(),NULL, NULL,NULL)) return false;
+
+        if (own_private_key->type != EVP_PKEY_RSA)
+        {
+            return false;
+        }
+
+        size=RSA_size(own_private_key->pkey.rsa);
+        key=(unsigned char *)OPENSSL_malloc(size+2);
+        if (key == NULL)
+        {
+            return false;
+        }
+
+        i=EVP_PKEY_decrypt(key,encryptKey,ekeylen,own_private_key);
+        if ((i <= 0) || !EVP_CIPHER_CTX_set_key_length(&ectx, i))
+        {
+            return false;
+        }
+
+        if(!EVP_DecryptInit_ex(&ectx,NULL,NULL,key,iv)) return false;
+        /// ** copied implementation of EVP_SealInit of openssl V1.0 *** ///;
+
+
+        if (!EVP_DecryptUpdate(&ectx, buf, &buflen, (unsigned char*)(in + in_offset), inlen - in_offset)) {
+            return false;
+        }
+        memcpy(out, buf, buflen);
+        int out_offset = buflen;
+
+        if (!EVP_DecryptFinal(&ectx, buf, &buflen)) {
+            return false;
+        }
+        memcpy((void*)(out + out_offset), buf, buflen);
+        out_offset += buflen;
+        outlen = out_offset;
+
+        EVP_DecryptInit_ex(&ectx,NULL,NULL, NULL,NULL);
+        EVP_CIPHER_CTX_cleanup(&ectx);
+
+        delete[] encryptKey;
+
+        #ifdef AUTHSSL_DEBUG
+        std::cerr << "AuthSSL::decrypt() finished with outlen : " << outlen << std::endl;
+        #endif
+
+        return true;
+}
+
+// -----------------------------------------------------------------------------------//
+// --------------------------------  Config functions  ------------------------------ //
+// -----------------------------------------------------------------------------------//
+//
+RsSerialiser *AuthSSL::setupSerialiser()
+{
+        RsSerialiser *rss = new RsSerialiser ;
+        rss->addSerialType(new RsGeneralConfigSerialiser());
+        return rss ;
+}
+
+std::list<RsItem*> AuthSSL::saveList(bool& cleanup)
+{
+        #ifdef AUTHSSL_DEBUG
+        std::cerr << "AuthSSL::saveList() called" << std::endl ;
+        #endif
+
+        RsStackMutex stack(sslMtx); /******* LOCKED ******/
+
+        cleanup = true ;
+        std::list<RsItem*> lst ;
+
+
+        // Now save config for network digging strategies
+        RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
+        std::map<std::string, sslcert*>::iterator mapIt;
+        for (mapIt = mCerts.begin(); mapIt != mCerts.end(); mapIt++) {
+            if (mapIt->first == mOwnId) {
+                continue;
+            }
+            RsTlvKeyValue kv;
+            kv.key = mapIt->first;
+            #ifdef AUTHSSL_DEBUG
+            std::cerr << "AuthSSL::saveList() called (mapIt->first) : " << (mapIt->first) << std::endl ;
+            #endif
+            kv.value = ConvertCertificateToString(mapIt->second->certificate);
+            vitem->tlvkvs.pairs.push_back(kv) ;
+        }
+        lst.push_back(vitem);
+
+        return lst ;
+}
+
+bool AuthSSL::loadList(std::list<RsItem*> load)
+{
+        #ifdef AUTHSSL_DEBUG
+        std::cerr << "AuthSSL::loadList() Item Count: " << load.size() << std::endl;
+        #endif
+
+        /* load the list of accepted gpg keys */
+        std::list<RsItem *>::iterator it;
+        for(it = load.begin(); it != load.end(); it++) {
+                RsConfigKeyValueSet *vitem = dynamic_cast<RsConfigKeyValueSet *>(*it);
+
+                if(vitem) {
+                        #ifdef AUTHSSL_DEBUG
+                        std::cerr << "AuthSSL::loadList() General Variable Config Item:" << std::endl;
+                        vitem->print(std::cerr, 10);
+                        std::cerr << std::endl;
+                        #endif
+
+                        std::list<RsTlvKeyValue>::iterator kit;
+                        for(kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); kit++) {
+                            if (kit->key == mOwnId) {
+                                continue;
+                            }
+                            //authenticate the certificate will store it in the mCerts map
+                            RsPeerDetails pd;
+                            LoadDetailsFromStringCert(kit->value, pd);
+                        }
+                }
+                delete (*it);
+        }
+        return true;
 }
 
 /********************************************************************************/
@@ -1628,6 +1892,61 @@ int pem_passwd_cb(char *buf, int size, int rwflag, void *password)
 	buf[size - 1] = '\0';
 	return(strlen(buf));
 }
+
+bool AuthSSL::LocalStoreCert(X509* x509) {
+            //store the certificate in the local cert list
+            std::string peerId;
+            if(!getX509id(x509, peerId))
+            {
+                #ifdef AUTHSSL_DEBUG
+                std::cerr << "AuthSSL::LocalStoreCert() Cannot retrieve peer id from certificate." << std::endl;
+                #endif
+                return false;
+            }
+            if (peerId != mOwnId) {
+                if (mCerts[peerId]) {
+                    #ifdef AUTHSSL_DEBUG
+                    std::cerr << "AuthSSL::LocalStoreCert() get duplicate for " << mCerts[peerId]->id << std::endl;
+                    #endif
+                    /* have a duplicate */
+                    /* check that they are exact */
+                    if (0 != X509_cmp(mCerts[peerId]->certificate, x509))
+                    {
+                            /* MAJOR ERROR */
+                            std::cerr << "ERROR : AuthSSL::ValidateCertificate() got two different ssl certificate from the same peer. It could be a security intrusion attempt (man in the middle).";
+                            std::cerr << std::endl;
+                            return false;
+                    }
+                } else {
+                    RsStackMutex stack(sslMtx); /******* LOCKED ******/
+
+                    #ifdef AUTHSSL_DEBUG
+                    std::cerr << "AuthSSL::LocalStoreCert() storing certificate for " << peerId << std::endl;
+                    #endif
+                    //have a deep copy of the x509 cert
+                    BIO *bp = BIO_new(BIO_s_mem());
+                    PEM_write_bio_X509(bp, x509);
+                    X509 *certCopy = PEM_read_bio_X509(bp, NULL, 0, NULL);certCopy->cert_info->key->pkey;
+
+                    mCerts[peerId] = new sslcert(certCopy, peerId);
+                    /* cert->cert_info->key->pkey is NULL until we call SSL_CTX_use_certificate(),
+                    * so we do it here then...  */
+                    SSL_CTX *newSslctx = SSL_CTX_new(TLSv1_method());
+                    SSL_CTX_set_cipher_list(newSslctx, "DEFAULT");
+                    SSL_CTX_use_certificate(newSslctx, mCerts[peerId]->certificate);
+
+                    #ifdef AUTHSSL_DEBUG
+                    std::cerr << "AuthSSL::LocalStoreCert() storing certificate with public key : " << mCerts[peerId]->certificate->cert_info->key->pkey << std::endl;
+                    #endif
+
+                    IndicateConfigChanged();
+                }
+            } else {
+                #ifdef AUTHSSL_DEBUG
+                std::cerr << "AuthSSL::LocalStoreCert() not storing certificate because it's our own " << peerId << std::endl;
+                #endif
+            }
+        }
 
 int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
 {
@@ -1700,6 +2019,7 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
                     #endif
                     return false;
             }
+
             preverify_ok = true;
 
         } else {
@@ -1728,7 +2048,7 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
                 if (std::string(certId.c_str()) != std::string(peer_id_in_context)) {
                     //the connection was asked for a given peer and get connected top another peer
                     #ifdef AUTHSSL_DEBUG
-                    fprintf(stderr, "AuthSSL::VerifyX509Callback peer id in context not the same as cert, aborting connection.");
+                    fprintf(stderr, "AuthSSL::VerifyX509Callback peer id in context not the same as cert, aborting connection.\n");
                     #endif
                     preverify_ok = false;
 
@@ -1740,7 +2060,7 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
                     }
                 } else {
                     #ifdef AUTHSSL_DEBUG
-                    fprintf(stderr, "AuthSSL::VerifyX509Callback peer id in context is the same as cert, continung connection.");
+                    fprintf(stderr, "AuthSSL::VerifyX509Callback peer id in context is the same as cert, continung connection.\n");
                     #endif
                 }
             }
@@ -1756,7 +2076,7 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
             if (mConnMgr->getFriendNetStatus(certId, detail)) {
                 if (detail.state & RS_PEER_CONNECTED && !(detail.connecttype & RS_NET_CONN_TUNNEL)) {
                     #ifdef AUTHSSL_DEBUG
-                    fprintf(stderr, "AuthSSL::VerifyX509Callback this peer is already connected, refuse a new connection.");
+                    fprintf(stderr, "AuthSSL::VerifyX509Callback this peer is already connected, refuse a new connection.\n");
                     #endif
                     preverify_ok = false;
                 }
