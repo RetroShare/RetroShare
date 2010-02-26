@@ -653,6 +653,16 @@ void SearchDialog::searchKeywords()
 
 void SearchDialog::updateFiles(qulonglong search_id,FileDetail file)
 {
+	static std::map<qulonglong,uint32_t> nb_results ;
+
+	if(nb_results.find(search_id) == nb_results.end())
+		nb_results[search_id] = 0 ;
+
+	if(nb_results[search_id] >= ui._max_results_SB->value())
+		return ;
+	else
+		++nb_results[search_id] ;
+
 	/* which extensions do we use? */
 	std::string txt = ui.lineEdit->text().toStdString();
 #ifdef DEBUG
