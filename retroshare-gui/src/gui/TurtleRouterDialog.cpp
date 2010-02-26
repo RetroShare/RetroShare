@@ -48,12 +48,17 @@ void TurtleRouterDialog::updateDisplay()
 	for(uint i=0;i<hashes_info.size();++i)
 		findParentHashItem(hashes_info[i][0]) ;
 
+	bool unknown_hash_found = false ;
+
 	// check that an entry exist for all hashes
 	for(uint i=0;i<tunnels_info.size();++i)
 	{
 		const std::string& hash(tunnels_info[i][3]) ;
 
 		QTreeWidgetItem *parent = findParentHashItem(hash) ;
+
+		if(parent->text(0) == QString("Unknown hashes"))
+			unknown_hash_found = true ;
 
 		QString str = QString::fromStdString("Tunnel id: "+tunnels_info[i][0] + "\t [" + tunnels_info[i][2] + "] --> [" + tunnels_info[i][1] + "]\t\t last transfer: " + tunnels_info[i][4]) ;
 		stl.clear() ;
@@ -88,7 +93,11 @@ void TurtleRouterDialog::updateDisplay()
 	for(int i=2;i<_f2f_TW->topLevelItemCount();)
 	{
 		bool found = false ;
-		for(uint j=0;j<hashes_info.size();++j)
+
+		if(_f2f_TW->topLevelItem(i)->text(0) == "Unknown hashes" && unknown_hash_found)
+			found = true ;
+
+		for(uint j=0;j<hashes_info.size() && !found;++j)
 			if(_f2f_TW->topLevelItem(i)->text(0).toStdString() == hashes_info[j][0]) 
 				found=true ;
 
