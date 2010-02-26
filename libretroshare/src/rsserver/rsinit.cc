@@ -1954,7 +1954,7 @@ int RsServer::StartupRetroShare()
         mConfigMgr->addConfiguration("gpg_prefs.cfg", AuthGPG::getAuthGPG());
         mConfigMgr->loadConfiguration();
 
-        mConfigMgr->addConfiguration("sslcerts.cfg", AuthSSL::getAuthSSL());
+        //mConfigMgr->addConfiguration("sslcerts.cfg", AuthSSL::getAuthSSL());
         mConfigMgr->addConfiguration("peers.cfg", mConnMgr);
 	mConfigMgr->addConfiguration("general.cfg", mGeneralConfig);
 	mConfigMgr->addConfiguration("msgs.cfg", msgSrv);
