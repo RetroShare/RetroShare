@@ -61,7 +61,7 @@
   <action name="actionAdd_Friend">
    <property name="icon">
     <iconset resource="images.qrc">
-     <normaloff>:/images/add-friend24.png</normaloff>:/images/add-friend24.png</iconset>
+     <normaloff>:/images/user/add_user24.png</normaloff>:/images/user/add_user24.png</iconset>
    </property>
    <property name="text">
     <string>Add Friend</string>
