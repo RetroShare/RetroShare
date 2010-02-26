@@ -143,6 +143,9 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     ui.unvalidGPGkeyWidget->headerItem()->setTextAlignment(3, Qt::AlignHCenter | Qt::AlignVCenter);
     ui.unvalidGPGkeyWidget->headerItem()->setTextAlignment(4, Qt::AlignVCenter);
 
+    ui.connecttreeWidget->sortItems( 1, Qt::AscendingOrder );
+    ui.unvalidGPGkeyWidget->sortItems( 1, Qt::AscendingOrder );
+
     //ui.networkTab->addTab(new NetworkView(),QString(tr("Network View")));
     ui.networkTab->addTab(new TrustView(),QString(tr("Trust matrix")));
      
@@ -400,20 +403,18 @@ void NetworkDialog::insertConnect()
            	QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
 		
 	        /* (0) Status Icon */
-                item -> setText(0, "");
+                //item -> setText(0, "");
 
         	/* (1) Person */
 		item -> setText(1, QString::fromStdString(detail.name));
 
                 /* (2) Key validity */
-                if (detail.validLvl == 3) {
-                    item -> setText(2, tr("Marginnal"));
-                } else if (detail.validLvl == 4) {
-                    item -> setText(2, tr("Full"));
-                } else if (detail.validLvl == 5) {
-                    item -> setText(2, tr("Ultimate"));
-                } else{
-                    item -> setText(2, tr("None"));
+                if (detail.ownsign) {
+                    item -> setText(2, tr("Authenticated"));
+                    item -> setToolTip(2, tr("GPG key signed"));
+                } else {
+                    item -> setText(2, tr("Not Authenticated"));
+                    item -> setToolTip(2, tr("GPG key not signed"));
                 }
 
                 /* (3) has me auth */
@@ -439,14 +440,22 @@ void NetworkDialog::insertConnect()
 		
                 if (detail.accept_connection)
 		{
+                    if (detail.ownsign) {
+                        item -> setText(0, "0");
 			item -> setIcon(0,(QIcon(IMAGE_AUTHED)));
 			backgrndcolor=Qt::green;
+                    } else {
+                        item -> setText(0, "0");
+                        item -> setIcon(0,(QIcon(IMAGE_AUTHED)));
+                        backgrndcolor=Qt::darkGreen;
+                    }
 		}
 		else
-		{
+                {
+                        item -> setText(0, "1");
                         if (detail.hasSignedMe)
 			{
-				backgrndcolor=Qt::magenta;
+                                backgrndcolor=Qt::darkMagenta;
                                 item -> setIcon(0,(QIcon(IMAGE_DENIED)));
 				for(int k=0;k<8;++k)
                                         item -> setToolTip(k,QString::fromStdString(detail.name) + QString(tr(" has authenticated you. \nRight-click and select 'make friend' to be able to connect."))) ;
@@ -474,7 +483,7 @@ void NetworkDialog::insertConnect()
 
 	// add self to network.
         QTreeWidgetItem *self_item = new QTreeWidgetItem((QTreeWidget*)0);
-
+        self_item -> setText(0, "0");
         self_item->setText(1,QString::fromStdString(ownGPGDetails.name) + " (yourself)") ;
         self_item->setText(2,"N/A");
         self_item->setText(4, QString::fromStdString(ownGPGDetails.id));
@@ -501,8 +510,6 @@ void NetworkDialog::insertConnect()
                 connectWidget->setCurrentItem(newSelect);
                 ui.unvalidGPGkeyWidget->setCurrentItem(newSelect);
         }
-        connectWidget->sortItems( 1, Qt::AscendingOrder );
-        ui.unvalidGPGkeyWidget->sortItems( 1, Qt::AscendingOrder );
 
         if (ui.showUnvalidKeys->isChecked()) {
             ui.unvalidGPGkeyWidget->show();

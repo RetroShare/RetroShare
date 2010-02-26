@@ -107,7 +107,10 @@
          </column>
          <column>
           <property name="text">
-           <string>GPG key validity</string>
+           <string>Did I authenticated peer</string>
+          </property>
+          <property name="toolTip">
+           <string>Did I sign his gpg key</string>
           </property>
          </column>
          <column>
@@ -420,7 +423,7 @@ subcontrol-position: bottom right;
          </column>
          <column>
           <property name="text">
-           <string>GPG key validity</string>
+           <string>Did I authenticated peer</string>
           </property>
          </column>
          <column>
