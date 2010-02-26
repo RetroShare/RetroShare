@@ -246,6 +246,7 @@ bool  ShareManager::messageBoxOk(QString msg)
  {
     QMessageBox mb("Share Manager InfoBox!",msg,QMessageBox::Information,QMessageBox::Ok,0,0);
     mb.setButtonText( QMessageBox::Ok, "OK" );
+		mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
     mb.exec();
     return true;
  }
