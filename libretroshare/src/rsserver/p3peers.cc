@@ -906,6 +906,7 @@ bool 	p3Peers::loadDetailsFromStringCert(std::string certstr, RsPeerDetails &pd)
                     std::string ssl_id = subCert.substr(0, parsePosition);
                     std::cerr << "SSL id : " << ssl_id << std::endl;
                     pd.id = ssl_id;
+                    pd.isOnlyGPGdetail = false;
                 }
             }
 
