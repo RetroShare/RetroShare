@@ -447,7 +447,7 @@ void NetworkDialog::insertConnect()
                     } else {
                         item -> setText(0, "0");
                         item -> setIcon(0,(QIcon(IMAGE_AUTHED)));
-                        backgrndcolor=Qt::darkGreen;
+                        backgrndcolor=QColor("#20A020");//(#108010) light green
                     }
 		}
 		else
@@ -455,21 +455,21 @@ void NetworkDialog::insertConnect()
                         item -> setText(0, "1");
                         if (detail.hasSignedMe)
 			{
-                                backgrndcolor=Qt::darkMagenta;
+                                backgrndcolor=Qt::darkCyan;
                                 item -> setIcon(0,(QIcon(IMAGE_DENIED)));
 				for(int k=0;k<8;++k)
                                         item -> setToolTip(k,QString::fromStdString(detail.name) + QString(tr(" has authenticated you. \nRight-click and select 'make friend' to be able to connect."))) ;
 			}
 			else
 			{
-				backgrndcolor=Qt::gray;
+                                backgrndcolor=Qt::darkGray;
 				item -> setIcon(0,(QIcon(IMAGE_DENIED)));
 			}
 		}
 
 		// Color each Background column in the Network Tab except the first one => 1-9
 		// whith the determinated color
-		for(int i = 1; i <10; i++)
+                for(int i = 0; i <10; i++)
 			item -> setBackground(i,QBrush(backgrndcolor));
 
 		/* add to the list */
@@ -484,16 +484,16 @@ void NetworkDialog::insertConnect()
 	// add self to network.
         QTreeWidgetItem *self_item = new QTreeWidgetItem((QTreeWidget*)0);
         self_item -> setText(0, "0");
+        self_item->setIcon(0,(QIcon(IMAGE_AUTHED)));
         self_item->setText(1,QString::fromStdString(ownGPGDetails.name) + " (yourself)") ;
         self_item->setText(2,"N/A");
         self_item->setText(4, QString::fromStdString(ownGPGDetails.id));
 
         // Color each Background column in the Network Tab except the first one => 1-9
-        for(int i=1;i<10;++i)
+        for(int i=0;i<10;++i)
         {
                 self_item->setBackground(i,QBrush(Qt::green));
         }
-        self_item->setIcon(0,(QIcon(IMAGE_AUTHED)));
         validItems.append(self_item);
 
 
