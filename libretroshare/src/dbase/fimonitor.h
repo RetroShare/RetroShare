@@ -62,6 +62,14 @@ std::string FileIndexMonitor::findRealRoot(std::string base);
 
 class NotifyBase ;
 
+class DirContentToHash
+{
+	public:
+		std::vector<FileEntry> fentries ;
+
+		std::string realpath ;
+		std::string dirpath ;
+};
 
 /******************************************************************************************
  * FileIndexMonitor
@@ -117,6 +125,7 @@ class FileIndexMonitor: public CacheSource, public RsThread
 
 		/* the mutex should be locked before calling... these. */
 		std::string locked_findRealRoot(std::string base) const;
+		void hashFiles(const std::vector<DirContentToHash>& to_hash) ;
 		bool 	hashFile(std::string path, FileEntry &fi); /* To Implement */
 
 		/* data */

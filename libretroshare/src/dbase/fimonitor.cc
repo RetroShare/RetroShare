@@ -195,10 +195,8 @@ bool FileIndexMonitor::loadLocalCache(const CacheData &data)  /* called with sto
 {
 	bool ok = false;
 
-	fiMutex.lock(); 
-	{ /* LOCKED DIRS */
-
-		//fi.root->name = data.pid;
+	{ 
+		RsStackMutex mtx(fiMutex) ; /* LOCKED DIRS */
 
 		/* More error checking needed here! */
 
@@ -223,8 +221,7 @@ bool FileIndexMonitor::loadLocalCache(const CacheData &data)  /* called with sto
 		}
 
 		fi.updateMaxModTime() ;
-
-	} fiMutex.unlock(); /* UNLOCKED DIRS */
+	}
 
 	if (ok)
 	{
@@ -286,7 +283,6 @@ void 	FileIndexMonitor::run()
 	}
 }
 
-
 //void 	FileIndexMonitor::updateCycle(std::string& current_job)
 void 	FileIndexMonitor::updateCycle()
 {
@@ -301,6 +297,8 @@ void 	FileIndexMonitor::updateCycle()
 		mInCheck = true;
 	}
 
+	std::vector<DirContentToHash> to_hash ;
+
 	while(moretodo)
 	{
 		/* sleep a bit for each loop */
@@ -308,31 +306,26 @@ void 	FileIndexMonitor::updateCycle()
 #ifndef WINDOWS_SYS
 		usleep(100000); /* 1/10 sec */
 #else
-
-                Sleep(100);
+		Sleep(100);
 #endif
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
 		/* check if directories have been updated */
-		if (internal_setSharedDirectories())
-		{
-			/* reset start time */
+		if (internal_setSharedDirectories()) /* reset start time */
 			startstamp = time(NULL);
-		}
 
 		/* Handle a Single out-of-date directory */
 
 		time_t stamp = time(NULL);
 
-		/* lock dirs */
-		fiMutex.lock();
+		/* lock dirs from now on */
+		RsStackMutex mtx(fiMutex) ;
 
-        	DirEntry *olddir = fi.findOldDirectory(startstamp);
+		DirEntry *olddir = fi.findOldDirectory(startstamp);
 
 		if (!olddir)
 		{
 			/* finished */
-			fiMutex.unlock();
 			moretodo = false;
 			continue;
 		}
@@ -342,26 +335,19 @@ void 	FileIndexMonitor::updateCycle()
 		std::cerr << " Checking: " << olddir->path << std::endl;
 #endif
 
-
-        	FileEntry fe;
+		FileEntry fe;
 		/* entries that need to be checked properly */
-		std::list<FileEntry> filesToHash;
 		std::list<FileEntry>::iterator hit;
 
 		/* determine the full root path */
-		std::string dirpath = olddir->path;
-		std::string rootdir = RsDirUtil::getRootDir(olddir->path);
-		std::string remdir  = RsDirUtil::removeRootDir(olddir->path);
-
+		std::string dirpath  = olddir->path;
+		std::string rootdir  = RsDirUtil::getRootDir(olddir->path);
+		std::string remdir   = RsDirUtil::removeRootDir(olddir->path);
 		std::string realroot = locked_findRealRoot(rootdir);
-
 		std::string realpath = realroot;
+
 		if (remdir != "")
-		{
 			realpath += "/" + remdir;
-		}
-
-
 
 #ifdef FIM_DEBUG
 		std::cerr << "FileIndexMonitor::updateCycle()";
@@ -377,34 +363,32 @@ void 	FileIndexMonitor::updateCycle()
 			std::cerr << " Missing Dir: " << realpath << std::endl;
 #endif
 			/* bad directory - delete */
-                	if (!fi.removeOldDirectory(olddir->parent->path, olddir->name, stamp))
+			if (!fi.removeOldDirectory(olddir->parent->path, olddir->name, stamp))
 			{
 				/* bad... drop out of updateCycle() - hopefully the initial cleanup
 				 * will deal with it next time! - otherwise we're in a continual loop
 				 */
 				std::cerr << "FileIndexMonitor::updateCycle()";
-                        	std::cerr << "ERROR Failed to Remove: " << olddir->path << std::endl;
+				std::cerr << "ERROR Failed to Remove: " << olddir->path << std::endl;
 			}
-
-			fiMutex.unlock();
 			continue;
 		}
 
-                /* update this dir - as its valid */
-                fe.name = olddir->name;
-                fi.updateDirEntry(olddir->parent->path, fe, stamp);
+		/* update this dir - as its valid */
+		fe.name = olddir->name;
+		fi.updateDirEntry(olddir->parent->path, fe, stamp);
 
-                /* update the directories and files here */
-                std::map<std::string, DirEntry *>::iterator  dit;
-                std::map<std::string, FileEntry *>::iterator fit;
+		/* update the directories and files here */
+		std::map<std::string, DirEntry *>::iterator  dit;
+		std::map<std::string, FileEntry *>::iterator fit;
 
 		/* flag existing subdirs as old */
-                for(dit = olddir->subdirs.begin(); dit != olddir->subdirs.end(); dit++)
-                {
-                        fe.name = (dit->second)->name;
-                        /* set the age as out-of-date so that it gets checked */
-                        fi.updateDirEntry(olddir->path, fe, 0);
-                }
+		for(dit = olddir->subdirs.begin(); dit != olddir->subdirs.end(); dit++)
+		{
+			fe.name = (dit->second)->name;
+			/* set the age as out-of-date so that it gets checked */
+			fi.updateDirEntry(olddir->path, fe, 0);
+		}
 
 		/* now iterate through the directory...
 		 * directories - flags as old,
@@ -413,6 +397,10 @@ void 	FileIndexMonitor::updateCycle()
 
 		struct dirent *dent;
 		struct stat64 buf;
+
+		to_hash.push_back(DirContentToHash()) ;
+		to_hash.back().realpath = realpath ;
+		to_hash.back().dirpath = dirpath ;
 
 		while(NULL != (dent = readdir(dir)))
 		{
@@ -423,12 +411,12 @@ void 	FileIndexMonitor::updateCycle()
 			std::cerr << "calling stats on " << fullname <<std::endl;
 #endif
 
-	 		if (-1 != stat64(fullname.c_str(), &buf))
+			if (-1 != stat64(fullname.c_str(), &buf))
 			{
 #ifdef FIM_DEBUG
 				std::cerr << "buf.st_mode: " << buf.st_mode <<std::endl;
 #endif
-	 			if (S_ISDIR(buf.st_mode))
+				if (S_ISDIR(buf.st_mode))
 				{
 					if ((fname == ".") || (fname == ".."))
 					{
@@ -439,13 +427,13 @@ void 	FileIndexMonitor::updateCycle()
 					}
 
 #ifdef FIM_DEBUG
-	 				std::cerr << "Is Directory: " << fullname << std::endl;
+					std::cerr << "Is Directory: " << fullname << std::endl;
 #endif
 
 					/* add in directory */
-                        		fe.name = fname;
-                        		/* set the age as out-of-date so that it gets checked */
-                        		fi.updateDirEntry(olddir->path, fe, 0);
+					fe.name = fname;
+					/* set the age as out-of-date so that it gets checked */
+					fi.updateDirEntry(olddir->path, fe, 0);
 				}
 				else if (S_ISREG(buf.st_mode))
 				{
@@ -455,12 +443,12 @@ void 	FileIndexMonitor::updateCycle()
 					std::cerr << "Is File: " << fullname << std::endl;
 #endif
 
-                        		fe.name = fname;
+					fe.name = fname;
 					fe.size = buf.st_size;
 					fe.modtime = buf.st_mtime;
 
 					/* check if it exists already */
-                			fit = olddir->files.find(fname);
+					fit = olddir->files.find(fname);
 					if (fit == olddir->files.end())
 					{
 						/* needs to be added */
@@ -472,19 +460,15 @@ void 	FileIndexMonitor::updateCycle()
 					else
 					{
 						/* check size / modtime are the same */
-						if ((fe.size != (fit->second)->size) ||
-						    (fe.modtime != (fit->second)->modtime))
+						if ((fe.size != (fit->second)->size) || (fe.modtime != (fit->second)->modtime))
 						{
 #ifdef FIM_DEBUG
-						std::cerr << "File ModTime/Size changed:" << fname << std::endl;
+							std::cerr << "File ModTime/Size changed:" << fname << std::endl;
 #endif
 							toadd = true;
 						}
 						else
-						{
-							/* keep old info */
-							fe.hash = (fit->second)->hash;
-						}
+							fe.hash = (fit->second)->hash; /* keep old info */
 					}
 					if (toadd)
 					{
@@ -494,21 +478,16 @@ void 	FileIndexMonitor::updateCycle()
 						std::cerr << olddir->path;
 						std::cerr << fname << std::endl;
 #endif
-						filesToHash.push_back(fe);
+						to_hash.back().fentries.push_back(fe);
+						fiMods = true ;
 					}
-					else
+					else /* update with new time */
 					{
-						/* update with new time */
 #ifdef FIM_DEBUG
 						std::cerr << "File Hasn't Changed:" << fname << std::endl;
 #endif
-                        			fi.updateFileEntry(olddir->path, fe, stamp);
+						fi.updateFileEntry(olddir->path, fe, stamp);
 					}
-	 			}
-				else
-				{
-					/* unknown , ignore */
-					continue;
 				}
 			}
 #ifdef FIM_DEBUG
@@ -517,6 +496,8 @@ void 	FileIndexMonitor::updateCycle()
 #endif
 		}
 
+		if(to_hash.back().fentries.empty())
+			to_hash.pop_back() ;
 
 		/* now we unlock the lock, and iterate through the
 		 * next files - hashing them, before adding into the system.
@@ -526,108 +507,110 @@ void 	FileIndexMonitor::updateCycle()
 
 		/* close directory */
 		closedir(dir);
+	}
 
-		/* unlock dirs */
-		fiMutex.unlock();
+	// Now, hash all files at once.
+	//
+	if(!to_hash.empty())
+		hashFiles(to_hash) ;
 
-		if (filesToHash.size() > 0)
-		{
+	{ /* LOCKED DIRS */
+		RsStackMutex stack(fiMutex); /**** LOCKED DIRS ****/
+
+		/* finished update cycle - cleanup extra dirs/files that
+		 * have not had their timestamps updated.
+		 */
+
+		fi.cleanOldEntries(startstamp) ;
+
 #ifdef FIM_DEBUG
-			std::cerr << "List of Files to rehash in: " << dirpath << std::endl;
+		/* print out the new directory structure */
+		fi.printFileIndex(std::cerr);
 #endif
+		/* now if we have changed things -> restore file/hash it/and
+		 * tell the CacheSource
+		 */
+
+		if (pendingForceCacheWrite)
+		{
+			pendingForceCacheWrite = false;
 			fiMods = true;
-			cb->notifyListPreChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
 		}
+
+		if (fiMods)
+			locked_saveFileIndexes() ;
+
+		fi.updateMaxModTime() ;	// Update modification times for proper display.
+
+		mInCheck = false;
+	}
+}
+
+void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
+{
+	cb->notifyListPreChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
+
+	time_t stamp = time(NULL);
+
+	// compute total size of files to hash
+	uint64_t total_size = 0 ;
+	uint32_t n_files = 0 ;
+
+	for(uint32_t i=0;i<to_hash.size();++i)
+		for(uint32_t j=0;j<to_hash[i].fentries.size();++j,++n_files)
+			total_size += to_hash[i].fentries[j].size ;
 
 #ifdef FIM_DEBUG
-                for(hit = filesToHash.begin(); hit != filesToHash.end(); hit++)
-		{
-			std::cerr << "\t" << hit->name << std::endl;
-		}
-
-		if (filesToHash.size() > 0)
-		{
-			std::cerr << std::endl;
-		}
+	std::cerr << "Hashing content of " << to_hash.size() << " different directories." << std::endl ;
+	std::cerr << "Total number of files: " << n_files << std::endl;
+	std::cerr << "Total size: " << total_size << " bytes"<< std::endl;
 #endif
 
-		/* update files */
-		for(hit = filesToHash.begin(); hit != filesToHash.end(); hit++)
-		{
-			//						 currentJob = "Hashing file " + realpath ;
+	uint32_t cnt=0 ;
+	uint64_t size=0 ;
 
-			if (hashFile(realpath, (*hit)))
+	/* update files */
+	for(uint32_t i=0;i<to_hash.size();++i)
+		for(uint32_t j=0;j<to_hash[i].fentries.size();++j,++cnt)
+		{
+			// This is a very basic progress notification. To be more complete and user friendly, one would
+			// rather send a completion ratio based on the size of files vs/ total size.
+			//
+			std::ostringstream tmpout;
+			tmpout << cnt+1 << "/" << n_files << " (" << int(size/double(total_size)*100.0) << "%) : " << to_hash[i].fentries[j].name ;
+			
+			cb->notifyHashingInfo(tmpout.str()) ;
+
+			FileEntry fe(to_hash[i].fentries[j]) ;	// copied, because hashFile updates the hash member
+
+			if (hashFile(to_hash[i].realpath, fe))
 			{
-				/* lock dirs */
-				fiMutex.lock();
+				RsStackMutex stack(fiMutex); /**** LOCKED DIRS ****/
 
 				/* update fileIndex with new time */
 				/* update with new time */
-				fi.updateFileEntry(dirpath, *hit, stamp);
 
-				/* unlock dirs */
-				fiMutex.unlock();
+				fi.updateFileEntry(to_hash[i].dirpath,fe,stamp);
 			}
 			else
-			{
-				std::cerr << "Failed to Hash File!" << std::endl;
-			}
+				std::cerr << "Failed to Hash File " << to_hash[i].fentries[j].name << std::endl;
+
+			size += to_hash[i].fentries[j].size ;
 
 			/* don't hit the disk too hard! */
 			/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS
-			usleep(10000); /* 1/100 sec */
+			usleep(40000); /* 40 msec */
 #else
 
-			Sleep(10);
+			Sleep(40);
 #endif
 			/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
 		}
 
-		if (filesToHash.size() > 0)
-			cb->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
-	}
-
-	fiMutex.lock(); { /* LOCKED DIRS */
-
-	/* finished update cycle - cleanup extra dirs/files that
-	 * have not had their timestamps updated.
-	 */
-
-	if (fi.cleanOldEntries(startstamp))
-	{
-		//fiMods = true;
-	}
-
-	/* print out the new directory structure */
-
-#ifdef FIM_DEBUG
-	fi.printFileIndex(std::cerr);
-#endif
-
-	/* now if we have changed things -> restore file/hash it/and
-	 * tell the CacheSource
-	 */
-
-	if (pendingForceCacheWrite)
-	{
-		pendingForceCacheWrite = false;
-		fiMods = true;
-	}
-
-	}
-
-	if (fiMods)
-		locked_saveFileIndexes() ;
-
-	fiMutex.unlock(); /* UNLOCKED DIRS */
-
-	{
-		RsStackMutex stack(fiMutex); /**** LOCKED DIRS ****/
-		mInCheck = false;
-	}
 	cb->notifyHashingInfo("") ;
+	cb->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
 }
 
 
@@ -910,9 +893,6 @@ bool    FileIndexMonitor::internal_setSharedDirectories()
 	return true;
 }
 
-
-
-
 /* lookup directory function */
 std::string FileIndexMonitor::locked_findRealRoot(std::string rootdir) const
 {
@@ -935,7 +915,7 @@ std::string FileIndexMonitor::locked_findRealRoot(std::string rootdir) const
 
 
 
-bool FileIndexMonitor::hashFile(std::string fullpath, FileEntry &fent)
+bool FileIndexMonitor::hashFile(std::string fullpath, FileEntry& fent)
 {
 	std::string f_hash = fullpath + "/" + fent.name;
 	FILE *fd;
@@ -943,8 +923,6 @@ bool FileIndexMonitor::hashFile(std::string fullpath, FileEntry &fent)
 	SHA_CTX *sha_ctx = new SHA_CTX;
 	unsigned char sha_buf[SHA_DIGEST_LENGTH];
 	unsigned char gblBuf[512];
-
-	cb->notifyHashingInfo(fent.name) ;
 
 #ifdef FIM_DEBUG
 	std::cerr << "File to hash = " << f_hash << std::endl;
