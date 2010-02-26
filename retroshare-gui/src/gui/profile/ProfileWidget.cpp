@@ -83,6 +83,11 @@ void ProfileWidget::showEvent ( QShowEvent * event )
 		ui.version->setText(QString::fromStdString(vit->second));
 	}
 
+        ui.ipAddressList->clear();
+        for(std::list<std::string>::const_iterator it(detail.ipAddressList.begin());it!=detail.ipAddressList.end();++it)
+        ui.ipAddressList->addItem(QString::fromStdString(*it));
+
+
 	/* set local address */
 	ui.localAddress->setText(QString::fromStdString(detail.localAddr));
         ui.localPort -> setText(QString::number(detail.localPort));
