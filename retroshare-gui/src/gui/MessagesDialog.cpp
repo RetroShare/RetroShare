@@ -79,6 +79,8 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
   connect(ui.actionPrint, SIGNAL(triggered()), this, SLOT(print()));
   connect(ui.actionPrintPreview, SIGNAL(triggered()), this, SLOT(printpreview()));
+  connect(ui.printbutton, SIGNAL(clicked()), this, SLOT(print()));
+
 
   connect(ui.expandFilesButton, SIGNAL(clicked()), this, SLOT(togglefileview()));
   connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(getcurrentrecommended()));
