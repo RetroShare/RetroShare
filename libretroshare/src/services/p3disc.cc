@@ -352,7 +352,6 @@ void p3disc::sendPeerDetails(std::string to, std::string about) {
             rsPeerNetItem->ipAddressList = detail.getIpAddressList();
 
             di->rsPeerList.push_back(*rsPeerNetItem);
-
         }
 
         //send own details
@@ -524,7 +523,7 @@ void p3disc::recvPeerDetails(RsDiscReply *item)
             addDiscoveryData(item->PeerId(), pitem->pid, pitem->currentlocaladdr, pitem->currentremoteaddr, 0, time(NULL));
 
             #ifdef P3DISC_DEBUG
-            std::cerr << "pp3disc::recvPeerFriendMsg() Peer Config Item:" << std::endl;
+            std::cerr << "p3disc::recvPeerFriendMsg() Peer Config Item:" << std::endl;
             pitem->print(std::cerr, 10);
             std::cerr << std::endl;
             #endif
@@ -534,7 +533,7 @@ void p3disc::recvPeerDetails(RsDiscReply *item)
                     //||  {
                     mConnMgr->addFriend(pitem->pid, pitem->gpg_id, pitem->netMode, RS_VIS_STATE_NODISC, 0); //add with no disc by default. If friend already exist, it will do nothing
                 } else if (pitem->lastContact > ((uint32_t)deletedSSLFriendsIds[pitem->pid] + 3600*24)) { // the friend was seen up and running 24 hours after we deleted it, we will readd it
-                    mConnMgr->addFriend(pitem->pid, pitem->gpg_id, pitem->netMode, RS_VIS_STATE_NODISC, 0); //add with no disc bay default. If friend already exist, it will do nothing
+                    mConnMgr->addFriend(pitem->pid, pitem->gpg_id, pitem->netMode, RS_VIS_STATE_NODISC, 0); //add with no disc by default. If friend already exist, it will do nothing
                 }
                 RsPeerDetails storedDetails;
                 if (rsPeers->getPeerDetails(pitem->pid, storedDetails) //update only if we got a detail

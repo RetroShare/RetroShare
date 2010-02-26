@@ -773,6 +773,13 @@ std::ostream &RsPeerNetItem::print(std::ostream &out, uint16_t indent)
 	out << "currentremoteaddr: " << inet_ntoa(currentremoteaddr.sin_addr);
 	out << ":" << htons(currentremoteaddr.sin_port) << std::endl;
 
+        printIndent(out, int_Indent);
+        out << "ipAdressList: size : " << ipAddressList.size() << ", adresses : " << std::endl;
+        for (std::list<IpAddressTimed>::iterator ipListIt = ipAddressList.begin(); ipListIt!=(ipAddressList.end()); ipListIt++) {
+                printIndent(out, int_Indent);
+                out << inet_ntoa(ipListIt->ipAddr.sin_addr) << ":" << ntohs(ipListIt->ipAddr.sin_port) << " seenTime : " << ipListIt->seenTime << std::endl;
+        }
+
         printRsItemEnd(out, "RsPeerNetItem", indent);
 	return out;
 }
