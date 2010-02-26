@@ -219,8 +219,8 @@ private:
     QTextEdit* signersEdit;
 
     QLabel* radioButtonsLabel;
-    QRadioButton *signGPGRadioButton;
-    QRadioButton *acceptNoSignGPGRadioButton;
+    QCheckBox *signGPGCheckBox;
+    QCheckBox *acceptNoSignGPGCheckBox;
 
     QVBoxLayout* conclusionPageLayout;
 

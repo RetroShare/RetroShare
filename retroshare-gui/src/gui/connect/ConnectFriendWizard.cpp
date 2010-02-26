@@ -57,8 +57,8 @@
 #define GPG_ID_FIELD_CONNECT_FRIEND_WIZARD "GPGidField"
 #define LOCATION_FIELD_CONNECT_FRIEND_WIZARD "peerLocation"
 #define CERT_STRING_FIELD_CONNECT_FRIEND_WIZARD "peerCertString"
-#define SIGN_RADIO_BUTTON_FIELD_CONNECT_FRIEND_WIZARD "signRadioButton"
-#define ACCEPT_RADIO_BUTTON_FIELD_CONNECT_FRIEND_WIZARD "acceptRadioButton"
+#define SIGN_RADIO_BUTTON_FIELD_CONNECT_FRIEND_WIZARD "signCheckBox"
+#define ACCEPT_RADIO_BUTTON_FIELD_CONNECT_FRIEND_WIZARD "acceptCheckBox"
 
 
 
@@ -781,14 +781,14 @@ ConclusionPage::ConclusionPage(QWidget *parent) : QWizardPage(parent) {
 
     peerDetailsFrame->setLayout(peerDetailsLayout);
 
-    signGPGRadioButton = new QRadioButton();
-    signGPGRadioButton->setText(tr("Add as friend and Sign GPG Key"));
-    registerField(SIGN_RADIO_BUTTON_FIELD_CONNECT_FRIEND_WIZARD,signGPGRadioButton);
-    acceptNoSignGPGRadioButton = new QRadioButton();
-    acceptNoSignGPGRadioButton->setText(tr("Add as friend but don't sign GPG Key"));
-    registerField(ACCEPT_RADIO_BUTTON_FIELD_CONNECT_FRIEND_WIZARD,acceptNoSignGPGRadioButton);
-    peerDetailsLayout->addWidget(signGPGRadioButton, 5,0,1,-1); // QWidget * widget, int fromRow, int fromColumn, int rowSpan, int columnSpan, Qt::Alignment alignment = 0 )
-    peerDetailsLayout->addWidget(acceptNoSignGPGRadioButton, 6,0,1,-1); // QWidget * widget, int fromRow, int fromColumn, int rowSpan, int columnSpan, Qt::Alignment alignment = 0 )
+    signGPGCheckBox = new QCheckBox();
+    signGPGCheckBox->setText(tr("Authenticate friend (Sign GPG Key)"));
+    registerField(SIGN_RADIO_BUTTON_FIELD_CONNECT_FRIEND_WIZARD,signGPGCheckBox);
+    acceptNoSignGPGCheckBox = new QCheckBox();
+    acceptNoSignGPGCheckBox->setText(tr("Add as friend to connect with"));
+    registerField(ACCEPT_RADIO_BUTTON_FIELD_CONNECT_FRIEND_WIZARD,acceptNoSignGPGCheckBox);
+    peerDetailsLayout->addWidget(acceptNoSignGPGCheckBox, 5,0,1,-1); // QWidget * widget, int fromRow, int fromColumn, int rowSpan, int columnSpan, Qt::Alignment alignment = 0 )
+    peerDetailsLayout->addWidget(signGPGCheckBox, 6,0,1,-1); // QWidget * widget, int fromRow, int fromColumn, int rowSpan, int columnSpan, Qt::Alignment alignment = 0 )
 
     conclusionPageLayout = new QVBoxLayout();
     conclusionPageLayout->addWidget(peerDetailsFrame);
@@ -858,30 +858,29 @@ void ConclusionPage::initializePage() {
     //set the radio button to sign the GPG key
     if (detail.accept_connection && !detail.ownsign) {
         //gpg key connection is already accepted, don't propose to accept it again
-        signGPGRadioButton->setText(tr("Peer is already a retroshare friend. Sign his GPG key."));
-        signGPGRadioButton->setChecked(true);
-        acceptNoSignGPGRadioButton->hide();
-        acceptNoSignGPGRadioButton->setChecked(false);
+        signGPGCheckBox->setChecked(true);
+        acceptNoSignGPGCheckBox->hide();
+        acceptNoSignGPGCheckBox->setChecked(false);
     }
     if (!detail.accept_connection && detail.ownsign) {
         //gpg key is already signed, don't propose to sign it again
-        acceptNoSignGPGRadioButton->setText(tr("GPG key is already signed, make it a retroshare friend."));
-        acceptNoSignGPGRadioButton->setChecked(true);
-        signGPGRadioButton->hide();
-        signGPGRadioButton->setChecked(false);
+        acceptNoSignGPGCheckBox->setChecked(true);
+        signGPGCheckBox->hide();
+        signGPGCheckBox->setChecked(false);
     }
     if (!detail.accept_connection && !detail.ownsign) {
-        signGPGRadioButton->setText(tr("Add as friend and Sign GPG Key"));
-        signGPGRadioButton->show();
-        acceptNoSignGPGRadioButton->setText(tr("Add as friend but don't sign GPG Key"));
-        acceptNoSignGPGRadioButton->show();
+        acceptNoSignGPGCheckBox->setChecked(true);
+        signGPGCheckBox->show();
+        signGPGCheckBox->setChecked(true);
+        acceptNoSignGPGCheckBox->show();
     }
-    if (detail.accept_connection && detail.ownsign && !detail.isOnlyGPGdetail) {
-        acceptNoSignGPGRadioButton->setChecked(false);
-        acceptNoSignGPGRadioButton->hide();
-        signGPGRadioButton->setChecked(false);
-        signGPGRadioButton->hide();
+    if (detail.accept_connection && detail.ownsign) {
+        acceptNoSignGPGCheckBox->setChecked(false);
+        acceptNoSignGPGCheckBox->hide();
+        signGPGCheckBox->setChecked(false);
+        signGPGCheckBox->hide();
         radioButtonsLabel = new QLabel(tr("It seems your friend is already registered. Adding it might just set it's ip address."));
+        radioButtonsLabel->setWordWrap(true);
         peerDetailsLayout->addWidget(radioButtonsLabel, 7,0,1,-1); // QWidget * widget, int fromRow, int fromColumn, int rowSpan, int columnSpan, Qt::Alignment alignment = 0 )
     }
 
