@@ -127,7 +127,7 @@ border: 1px solid #CCCCCC;}
               <string/>
              </property>
              <property name="pixmap">
-              <pixmap resource="../images.qrc">:/images/kblogger.png</pixmap>
+              <pixmap>:/images/kblogger.png</pixmap>
              </property>
              <property name="scaledContents">
               <bool>true</bool>
@@ -184,7 +184,7 @@ p, li { white-space: pre-wrap; }
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="../images.qrc">
+            <iconset>
              <normaloff>:/images/edit_add24.png</normaloff>:/images/edit_add24.png</iconset>
            </property>
            <property name="iconSize">
@@ -270,7 +270,7 @@ border-radius: 10px;
              <string/>
             </property>
             <property name="pixmap">
-             <pixmap resource="../images.qrc">:/images/hi64-app-kblogger.png</pixmap>
+             <pixmap>:/images/hi64-app-kblogger.png</pixmap>
             </property>
             <property name="scaledContents">
              <bool>false</bool>
@@ -306,13 +306,6 @@ p, li { white-space: pre-wrap; }
          </layout>
         </item>
         <item row="1" column="0">
-         <widget class="Line" name="line">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
          <layout class="QGridLayout" name="gridLayout">
           <property name="leftMargin">
            <number>9</number>
@@ -361,7 +354,7 @@ border-image: url(:/images/btn_26_pressed.png) 4;
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../images.qrc">
+             <iconset>
               <normaloff>:/images/mail_send.png</normaloff>:/images/mail_send.png</iconset>
             </property>
            </widget>
@@ -457,7 +450,7 @@ border-image: url(:/images/btn_26_pressed.png) 4;
              <string>Subscribe</string>
             </property>
             <property name="icon">
-             <iconset resource="../images.qrc">
+             <iconset>
               <normaloff>:/images/konqsidebar_news24.png</normaloff>:/images/konqsidebar_news24.png</iconset>
             </property>
            </widget>
@@ -524,7 +517,7 @@ border-image: url(:/images/btn_26_pressed.png) 4;
              <x>0</x>
              <y>0</y>
              <width>429</width>
-             <height>329</height>
+             <height>332</height>
             </rect>
            </property>
            <property name="styleSheet">
@@ -565,7 +558,7 @@ border-image: url(:/images/btn_26_pressed.png) 4;
   </layout>
   <action name="actionCreate_Channel">
    <property name="icon">
-    <iconset resource="../images.qrc">
+    <iconset>
      <normaloff>:/images/kblogger.png</normaloff>:/images/kblogger.png</iconset>
    </property>
    <property name="text">
@@ -579,6 +572,7 @@ border-image: url(:/images/btn_26_pressed.png) 4;
  <resources>
   <include location="../images.qrc"/>
   <include location="images.qrc"/>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
