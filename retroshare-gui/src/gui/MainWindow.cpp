@@ -360,18 +360,22 @@ void MainWindow::updateStatus()
     else if (online == 0)
     {
         trayIcon->setIcon(QIcon(IMAGE_NOONLINE));
+        trayIcon->setToolTip(tr("RetroShare"));
     }
     else if (online < 2)
     {
         trayIcon->setIcon(QIcon(IMAGE_ONEONLINE));
+        trayIcon->setToolTip(tr("RetroShare"));
     }
     else if (online < 3)
     {
         trayIcon->setIcon(QIcon(IMAGE_TWOONLINE));
+        trayIcon->setToolTip(tr("RetroShare"));
     }
     else
     {
         trayIcon->setIcon(QIcon(IMAGE_RETROSHARE));
+        trayIcon->setToolTip(tr("RetroShare"));
     }
 
   
