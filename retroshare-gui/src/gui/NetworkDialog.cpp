@@ -443,11 +443,11 @@ void NetworkDialog::insertConnect()
                     if (detail.ownsign) {
                         item -> setText(0, "0");
 			item -> setIcon(0,(QIcon(IMAGE_AUTHED)));
-			backgrndcolor=Qt::green;
+                        backgrndcolor=QColor("#45ff45");//bright green
                     } else {
                         item -> setText(0, "0");
                         item -> setIcon(0,(QIcon(IMAGE_AUTHED)));
-                        backgrndcolor=QColor("#20A020");//(#108010) light green
+                        backgrndcolor=QColor("#43C043");//light green
                     }
 		}
 		else
@@ -455,14 +455,14 @@ void NetworkDialog::insertConnect()
                         item -> setText(0, "1");
                         if (detail.hasSignedMe)
 			{
-                                backgrndcolor=Qt::darkCyan;
+                                backgrndcolor=QColor("#42B2B2"); //kind of darkCyan
                                 item -> setIcon(0,(QIcon(IMAGE_DENIED)));
 				for(int k=0;k<8;++k)
                                         item -> setToolTip(k,QString::fromStdString(detail.name) + QString(tr(" has authenticated you. \nRight-click and select 'make friend' to be able to connect."))) ;
 			}
 			else
 			{
-                                backgrndcolor=Qt::darkGray;
+                                backgrndcolor=Qt::lightGray;
 				item -> setIcon(0,(QIcon(IMAGE_DENIED)));
 			}
 		}
@@ -492,7 +492,7 @@ void NetworkDialog::insertConnect()
         // Color each Background column in the Network Tab except the first one => 1-9
         for(int i=0;i<10;++i)
         {
-                self_item->setBackground(i,QBrush(Qt::green));
+                self_item->setBackground(i,QBrush(QColor("#45ff45")));
         }
         validItems.append(self_item);
 
