@@ -390,17 +390,17 @@ FunctionEnd
 # Installer Language Strings
 # TODO Update the Language Strings with the appropriate translations.
 
-LangString InstallGPG4WIN ${LANG_ENGLISH}     "Install Gpg4win 1.1.4 ? Gpg4win is required for RetroShare!"
-LangString InstallGPG4WIN ${LANG_GERMAN}      "Installiere Gpg4win 1.1.4 ? Gpg4win ist erforderlich fuer RetroShare!"
-LangString InstallGPG4WIN ${LANG_TURKISH}     "Gpg4win 1.1.4 Yükle?   Gpg4win RetroShare için gerekli!"
-LangString InstallGPG4WIN ${LANG_FRENCH}      "Installez Gpg4win 1.1.4 ? Gpg4win est nécessaire pour RetroShare!"
-LangString InstallGPG4WIN ${LANG_SIMPCHINESE} "Install Gpg4win 1.1.4 ? Gpg4win是需要Retroshare!" 
-LangString InstallGPG4WIN ${LANG_POLISH}      "Install Gpg4win 1.1.4 ? Gpg4win wymagane jest Retroshare!"
+LangString InstallGPG4WIN ${LANG_ENGLISH}     "Install Gpg4win ? Gpg4win is required for RetroShare!"
+LangString InstallGPG4WIN ${LANG_GERMAN}      "Installiere Gpg4win ? Gpg4win ist erforderlich fuer RetroShare!"
+LangString InstallGPG4WIN ${LANG_TURKISH}     "Gpg4win Yükle?   Gpg4win RetroShare için gerekli!"
+LangString InstallGPG4WIN ${LANG_FRENCH}      "RetroShare a besoin de GPG4win pour fonctionner. Lancer l'installation de GPG4win?"
+LangString InstallGPG4WIN ${LANG_SIMPCHINESE} "Install Gpg4win ? Gpg4win是需要Retroshare!" 
+LangString InstallGPG4WIN ${LANG_POLISH}      "Install Gpg4win ? Gpg4win wymagane jest Retroshare!"
 
 LangString FINISHPAGELINK ${LANG_ENGLISH}     "Visit the RetroShare forums for the latest news and support"
 LangString FINISHPAGELINK ${LANG_GERMAN}      "Besuche RetroShare Support Forum "
 LangString FINISHPAGELINK ${LANG_TURKISH}     "Destek için Retroshare foruma ziyaret"
-LangString FINISHPAGELINK ${LANG_FRENCH}      "Visitez le RetroShare forums pour les dernières nouvelles et de soutien"
+LangString FINISHPAGELINK ${LANG_FRENCH}      "Consultez le forum RetroShare pour vous tenir au courant des dernieres modifications, et obtenir de l'aide."
 LangString FINISHPAGELINK ${LANG_SIMPCHINESE} "帮助论坛"
 LangString FINISHPAGELINK ${LANG_POLISH}      "Odwiedź forum RetroShare do najświeższych informacji i wsparcia"
 

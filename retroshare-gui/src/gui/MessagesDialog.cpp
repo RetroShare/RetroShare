@@ -1246,7 +1246,7 @@ void MessagesDialog::updateMessageSummaryList()
 	{
 		//QList<QListWidgetItem *> QListWidget::findItems ( const QString & text, Qt::MatchFlags flags ) const
 		QListWidgetItem* item = ui.listWidget->item(0);
-		textItem = tr("Inbox") + "(" + QString::number(newInboxCount)+")";
+		textItem = tr("Inbox") + " " + "(" + QString::number(newInboxCount)+")";
 		item->setText(textItem);
 		QFont qf = item->font();
 		qf.setBold(true);
@@ -1270,7 +1270,7 @@ void MessagesDialog::updateMessageSummaryList()
 		//QList<QListWidgetItem *> QListWidget::findItems ( const QString & text, Qt::MatchFlags flags ) const
 		QListWidgetItem* item = ui.listWidget->item(1);
 
-		textItem = tr("Outbox") + "(" + QString::number(newOutboxCount)+")";
+		textItem = tr("Outbox") + " " + "(" + QString::number(newOutboxCount)+")";
 		item->setText(textItem);
 		QFont qf = item->font();
 		qf.setBold(true);
