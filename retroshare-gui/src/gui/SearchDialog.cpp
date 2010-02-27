@@ -544,111 +544,70 @@ void SearchDialog::searchKeywords()
 
 	std::cerr << "SearchDialog::searchKeywords() : " << txt << std::endl;
 
-	TurtleRequestId req_id = rsTurtle->turtleSearch(txt) ;
+	TurtleRequestId req_id ;
+
+	if(ui._anonF2Fsearch_CB->isChecked())
+		req_id = rsTurtle->turtleSearch(txt) ;
+	else
+		req_id = (((uint32_t)rand()) << 16)^0x1e2fd5e4 + ((uint32_t)rand())^0x1b19acfe ; // generate a random 32 bits request id
 
 	initSearchResult(txt,req_id) ;	// this will act before turtle results come to the interface, thanks to the signals scheduling policy.
 
-	/* extract keywords from lineEdit */
-	QStringList qWords = qTxt.split(" ", QString::SkipEmptyParts);
-	std::list<std::string> words;
-	QStringListIterator qWordsIter(qWords);
-     	while (qWordsIter.hasNext())
+	if(ui._friendListsearch_SB->isChecked() || ui._ownFiles_CB->isChecked())
 	{
-		words.push_back(qWordsIter.next().toStdString());
+		/* extract keywords from lineEdit */
+		QStringList qWords = qTxt.split(" ", QString::SkipEmptyParts);
+		std::list<std::string> words;
+		QStringListIterator qWordsIter(qWords);
+		while (qWordsIter.hasNext())
+		{
+			words.push_back(qWordsIter.next().toStdString());
+		}
+
+		if (words.size() < 1)
+		{
+			/* ignore */
+			return;
+		}
+
+		std::list<DirDetails> finalResults ;
+
+		if(ui._friendListsearch_SB->isChecked())
+		{
+			std::list<DirDetails> initialResults;
+
+			rsFiles -> SearchKeywords(words, initialResults, DIR_FLAGS_REMOTE) ;
+
+			/* which extensions do we use? */
+			DirDetails dd;
+
+			for(std::list<DirDetails>::iterator resultsIter = initialResults.begin(); resultsIter != initialResults.end(); resultsIter ++)
+			{
+				dd = *resultsIter;
+				finalResults.push_back(dd);
+			}
+		}
+
+		if(ui._ownFiles_CB->isChecked())
+		{
+			std::list<DirDetails> initialResults;
+
+			rsFiles -> SearchKeywords(words, initialResults, DIR_FLAGS_LOCAL | DIR_FLAGS_NETWORK_WIDE | DIR_FLAGS_BROWSABLE) ;
+
+			/* which extensions do we use? */
+			DirDetails dd;
+
+			for(std::list<DirDetails>::iterator resultsIter = initialResults.begin(); resultsIter != initialResults.end(); resultsIter ++)
+			{
+				dd = *resultsIter;
+				finalResults.push_back(dd);
+			}
+		}
+
+		/* abstraction to allow reusee of tree rendering code */
+		resultsToTree(txt,req_id, finalResults);
+		ui.lineEdit->clear() ;
 	}
-
-	if (words.size() < 1)
-	{
-		/* ignore */
-		return;
-	}
-
-	/* call to core */
-	std::list<DirDetails> initialResults;
-        std::list<DirDetails> * finalResults = 0;
-
-        uint32_t flags =  DIR_FLAGS_REMOTE | DIR_FLAGS_NETWORK_WIDE | DIR_FLAGS_BROWSABLE;
-        if (ui.checkBox->isChecked())
-            flags |= DIR_FLAGS_LOCAL;
-        rsFiles -> SearchKeywords(words, initialResults,flags);
-	/* which extensions do we use? */
-	QString qExt, qName;
-	int extIndex;
-	bool matched =false;
-	DirDetails dd;
-
-//	if (ui.FileTypeComboBox->currentIndex() == FILETYPE_IDX_ANY)
-//	{
-//		finalResults = new std::list<DirDetails>;
-//		std::list<DirDetails>::iterator resultsIter;
-//		for (resultsIter = initialResults.begin(); resultsIter != initialResults.end(); resultsIter ++)
-//		{
-//			dd = *resultsIter;
-//			if (dd.type == DIR_TYPE_DIR) continue;
-//			finalResults->push_back(dd);
-//		}
-//	}
-//	else if (ui.FileTypeComboBox->currentIndex() == FILETYPE_IDX_DIRECTORY)
-//	{
-//		finalResults = new std::list<DirDetails>;
-//		txt += " (" + ui.FileTypeComboBox->currentText().toStdString() + ")";
-//		std::list<DirDetails>::iterator resultsIter;
-//		for (resultsIter = initialResults.begin(); resultsIter != initialResults.end(); resultsIter ++)
-//		{
-//			dd = *resultsIter;
-//			if (dd.type != DIR_TYPE_DIR) continue;
-//			finalResults->push_back(dd);
-//		}
-//	}
-//	else
-//	{
-//		finalResults = new std::list<DirDetails>;
-//		// amend the text description of the search
-//		txt += " (" + ui.FileTypeComboBox->currentText().toStdString() + ")";
-//		// collect the extensions to use
-//		QString extStr = SearchDialog::FileTypeExtensionMap->value(ui.FileTypeComboBox->currentIndex());
-//		QStringList extList = extStr.split(" ");
-//
-//		// now iterate through the results ignoring those with wrong extensions
-//		std::list<DirDetails>::iterator resultsIter;
-//		for (resultsIter = initialResults.begin(); resultsIter != initialResults.end(); resultsIter++)
-//		{
-//			dd = *resultsIter;
-//			if (dd.type == DIR_TYPE_DIR) continue;
-//			// get this file's extension
-//			qName = QString::fromStdString(dd.name);
-//			extIndex = qName.lastIndexOf(".");
-//			if (extIndex >= 0) {
-//				qExt = qName.mid(extIndex+1);
-//				if (qExt != "" )
-//				{
-//					// does it match?
-//					matched = false;
-//					/* iterate through the requested extensions */
-//					for (int i = 0; i < extList.size(); ++i)
-//					{
-//						if (qExt.toUpper() == extList.at(i).toUpper())
-//						{
-//							finalResults->push_back(dd);
-//							matched = true;
-//						}
-//					}
-//				}
-//			}
-//		}
-//	}
-
-        finalResults = new std::list<DirDetails>;
-        std::list<DirDetails>::iterator resultsIter;
-        for (resultsIter = initialResults.begin(); resultsIter != initialResults.end(); resultsIter ++)
-        {
-                dd = *resultsIter;
-                finalResults->push_back(dd);
-        }
-
-	/* abstraction to allow reusee of tree rendering code */
-	resultsToTree(txt,req_id, *finalResults);
-	ui.lineEdit->clear() ;
 }
 
 void SearchDialog::updateFiles(qulonglong search_id,FileDetail file)

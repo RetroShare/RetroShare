@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>651</width>
+    <width>1064</width>
     <height>340</height>
    </rect>
   </property>
@@ -979,7 +979,7 @@ border-image: url(:/images/btn_26_pressed.png) 4;
      </widget>
      <widget class="SearchTreeWidget" name="searchResultWidget">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
         <horstretch>1</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
@@ -1088,14 +1088,44 @@ border-image: url(:/images/btn_26_pressed.png) 4;
 </string>
        </property>
        <property name="text">
-        <string>Close All Search Results</string>
+        <string>Clear All Search Results</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="checkBox">
+      <widget class="QCheckBox" name="_ownFiles_CB">
+       <property name="toolTip">
+        <string>Include files from your own file list in the search result</string>
+       </property>
        <property name="text">
         <string>Include own files</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="_friendListsearch_SB">
+       <property name="toolTip">
+        <string>Search inside &quot;browsable&quot; files of your friends</string>
+       </property>
+       <property name="text">
+        <string>Search in friends lists</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="_anonF2Fsearch_CB">
+       <property name="toolTip">
+        <string>Multi-hop search at distance 6 in the network 
+(always reports available files)</string>
+       </property>
+       <property name="text">
+        <string>F2F search</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
