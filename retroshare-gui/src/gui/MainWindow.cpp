@@ -213,12 +213,12 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 		createPageAction(QIcon(IMAGE_NEWSFEED), tr("News Feed"), grp));
     #endif
 
-    #ifndef RS_RELEASE_VERSION
+	#ifndef RS_RELEASE_VERSION
     #ifdef PLUGINMGR
     ui.stackPages->add(pluginsPage = new PluginsPage(ui.stackPages),
                        createPageAction(QIcon(IMAGE_PLUGINS), tr("Plugins"), grp));
     #endif
-    #endif
+	#endif
 
     /* Create the toolbar */
     ui.toolBar->addActions(grp->actions());
@@ -343,8 +343,21 @@ void MainWindow::updateStatus()
     std::list<std::string> ids;
     rsPeers->getOnlineList(ids);
     int online = ids.size();
+    
+    std::list<MsgInfoSummary> msgList;
+    std::list<MsgInfoSummary>::const_iterator it;
 
-    if (online == 0)
+    rsMsgs -> getMessageSummaries(msgList);
+  
+    for(it = msgList.begin(); it != msgList.end(); it++)
+    {
+
+    if (it -> msgflags & RS_MSG_NEW)
+    {
+        trayIcon->setIcon(QIcon(":/images/newmsg.png"));
+        trayIcon->setToolTip(tr("RetroShare") + "\n" + tr("You has a new message"));
+    }    
+    else if (online == 0)
     {
         trayIcon->setIcon(QIcon(IMAGE_NOONLINE));
     }
@@ -360,6 +373,12 @@ void MainWindow::updateStatus()
     {
         trayIcon->setIcon(QIcon(IMAGE_RETROSHARE));
     }
+
+  
+    }
+
+
+
 
 }
 
@@ -658,9 +677,9 @@ void MainWindow::updateToolBaricons()
   for(it = msgList.begin(); it != msgList.end(); it++)
 	{
 
-  if ((it -> msgflags & RS_MSG_NEW) == RS_MSG_NEW)
+  if (it -> msgflags & RS_MSG_NEW)
   {
-     MessageIcon.addPixmap(QPixmap(":/images/messages_new.png"), QIcon::Normal, QIcon::On ); 
+     MessageIcon.addPixmap(QPixmap(":/images/messages_new.png"), QIcon::Normal, QIcon::On );     
   }
   else
   {

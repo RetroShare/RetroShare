@@ -239,12 +239,21 @@ void ConfCertDialog::loadDialog()
                 if (detail.trustLvl == 4) {
                     ui.web_of_trust_label->setText(tr("Your trust in this peer is full."));
                     ui.radioButton_trust_fully->setChecked(true);
+                    ui.radioButton_trust_fully->setIcon(QIcon(":/images/security-high-48.png"));
+                    ui.radioButton_trust_marginnaly->setIcon(QIcon(":/images/security-medium-off-48.png"));
+                    ui.radioButton_trust_never->setIcon(QIcon(":/images/security-low-off-48.png"));
                 } else if (detail.trustLvl == 3) {
                     ui.web_of_trust_label->setText(tr("Your trust in this peer is marginal."));
                     ui.radioButton_trust_marginnaly->setChecked(true);
+                    ui.radioButton_trust_marginnaly->setIcon(QIcon(":/images/security-medium-48.png"));
+                    ui.radioButton_trust_never->setIcon(QIcon(":/images/security-low-off-48.png"));
+                    ui.radioButton_trust_fully->setIcon(QIcon(":/images/security-high-off-48.png"));
                 } else if (detail.trustLvl == 2) {
                     ui.web_of_trust_label->setText(tr("Your trust in this peer is none."));
                     ui.radioButton_trust_never->setChecked(true);
+                    ui.radioButton_trust_never->setIcon(QIcon(":/images/security-low-48.png"));
+                    ui.radioButton_trust_fully->setIcon(QIcon(":/images/security-high-off-48.png"));
+                    ui.radioButton_trust_marginnaly->setIcon(QIcon(":/images/security-medium-off-48.png"));
                 } else {
                     ui.web_of_trust_label->setText(tr("Your trust in this peer is not set."));
                     ui.radioButton_trust_fully->setChecked(false);

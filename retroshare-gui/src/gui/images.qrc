@@ -48,6 +48,7 @@
         <file>images/contacts24.png</file>
         <file>images/connection.png</file>
         <file>images/contact_new.png</file>
+        <file>images/contact.png</file>
         <file>images/Client0.png</file>
         <file>images/Client1.png</file>
         <file>images/Client2.png</file>
@@ -267,6 +268,7 @@
         <file>images/network32.png</file>
         <file>images/new-mail-alert.png</file>
         <file>images/new_forum16.png</file>
+        <file>images/newmsg.png</file>
         <file>images/no_avatar.png</file>
         <file>images/no_avatar_70.png</file>
         <file>images/pasterslink.png</file>
@@ -312,6 +314,9 @@
         <file>images/security-high-48.png</file>
         <file>images/security-low-48.png</file>
         <file>images/security-medium-48.png</file>
+        <file>images/security-high-off-48.png</file>
+        <file>images/security-low-off-48.png</file>
+        <file>images/security-medium-off-48.png</file>
         <file>images/save24.png</file>
         <file>images/send24.png</file>
         <file>images/settings.png</file>
