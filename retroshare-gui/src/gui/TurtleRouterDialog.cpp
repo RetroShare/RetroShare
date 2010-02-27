@@ -97,6 +97,9 @@ void TurtleRouterDialog::updateDisplay()
 		if(_f2f_TW->topLevelItem(i)->text(0) == "Unknown hashes" && unknown_hash_found)
 			found = true ;
 
+		if(_f2f_TW->topLevelItem(i)->childCount() > 0)	// this saves uploading hashes
+			found = true ;
+
 		for(uint j=0;j<hashes_info.size() && !found;++j)
 			if(_f2f_TW->topLevelItem(i)->text(0).toStdString() == hashes_info[j][0]) 
 				found=true ;
