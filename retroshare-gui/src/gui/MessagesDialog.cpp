@@ -646,8 +646,16 @@ void MessagesDialog::insertMessages()
 		{
 			QDateTime qtime;
 			qtime.setTime_t(it->ts);
+			if (it->ts > 86400)
+			{
+			QString timestamp = qtime.toString("hh:mm:ss");
+			item3 -> setText(timestamp);
+			}
+			else
+			{
 			QString timestamp = qtime.toString("dd.MM.yyyy hh:mm:ss");
 			item3 -> setText(timestamp);
+			}
 		}
 
 		//  From ....
