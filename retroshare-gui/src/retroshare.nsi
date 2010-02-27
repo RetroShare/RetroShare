@@ -2,7 +2,7 @@
 
 ; Define your application name
 !define APPNAME "RetroShare"
-!define VERSION "0.5.0 alpha 1"
+!define VERSION "0.5.0 alpha "
 !define APPNAMEANDVERSION "${APPNAME} ${VERSION}"
 
 ; Main Install settings
@@ -28,7 +28,7 @@ SetCompressor /SOLID LZMA
 !define MUI_FINISHPAGE_NOAUTOCLOSE
 !define MUI_LICENSEPAGE_RADIOBUTTONS
 !define MUI_COMPONENTSPAGE_SMALLDESC
-!define MUI_FINISHPAGE_LINK "Visit the RetroShare forum for the latest news and support"
+!define MUI_FINISHPAGE_LINK "$(FINISHPAGELINK)"
 !define MUI_FINISHPAGE_LINK_LOCATION "http://retroshare.sourceforge.net/forum/"
 !define MUI_FINISHPAGE_RUN "$INSTDIR\RetroShare.exe"
 !define MUI_FINISHPAGE_SHOWREADME $INSTDIR\changelog.txt
@@ -100,7 +100,7 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
     LangString DESC_sec_main ${LANG_ENGLISH} "Installs the RetroShare program files."
     LangString DESC_sec_data ${LANG_ENGLISH} "Installs RetroShare Skins"
     LangString DESC_sec_shortcuts ${LANG_ENGLISH} "Create RetroShare shortcut icons."
-    LangString DESC_sec_link ${LANG_ENGLISH} "Associate RetroShare with .pqi file extension"
+    LangString DESC_sec_link ${LANG_ENGLISH} "Associate RetroShare with .rsc file extension"
     LangString LANGUAGEID ${LANG_ENGLISH} "1033"
     
     
@@ -114,19 +114,19 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
     LangString DESC_sec_data ${LANG_FRENCH} "Installe RetroShare Skins"
     LangString DESC_sec_startmenu ${LANG_FRENCH} "Crée les raccourcis du menu Démarrer"
     LangString DESC_sec_shortcuts ${LANG_FRENCH} "Crée une icône sur le bureau."
-    LangString DESC_sec_link ${LANG_FRENCH} "Associate RetroShare with .pqi file extension"
+    LangString DESC_sec_link ${LANG_FRENCH} "Associate RetroShare with .rsc file extension"
     LangString LANGUAGEID ${LANG_FRENCH} "1036"
 
     
     LangString sec_main ${LANG_GERMAN} "Programmdateien"
-    LangString sec_data ${LANG_GERMAN} "Skins f�r das Programm"
+    LangString sec_data ${LANG_GERMAN} "Skins fuer das Programm"
     LangString sec_shortcuts ${LANG_GERMAN} "Shortcuts"
-    LangString sec_link ${LANG_GERMAN} "Dateiverkn�pfungen"
+    LangString sec_link ${LANG_GERMAN} "Dateiverknuepfungen"
     LangString sec_autostart ${LANG_GERMAN} "Auto Startup"
 	  LangString DESC_sec_main ${LANG_GERMAN} "Installiert die erforderlichen Programmdateien."
 	  LangString DESC_sec_data ${LANG_GERMAN} "Installiert RetroShare Skins"
-    LangString DESC_sec_shortcuts ${LANG_GERMAN} "Erstellt eine RetroShare Verkn�pfung im Startmen�, Desktop oder im Schnellstarter."
-    LangString DESC_sec_link ${LANG_GERMAN} "RetroShare mit .pqi Dateien verkn�pfen"
+    LangString DESC_sec_shortcuts ${LANG_GERMAN} "Erstellt eine RetroShare Verknuepfung im Startmen�, Desktop oder im Schnellstarter."
+    LangString DESC_sec_link ${LANG_GERMAN} "RetroShare mit .rsc Dateien verkn�pfen"
     LangString LANGUAGEID ${LANG_GERMAN} "1031"
         
     LangString sec_main ${LANG_TURKISH} "Program Dosyalar�"
@@ -148,7 +148,7 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
     LangString DESC_sec_main ${LANG_SIMPCHINESE} "安装RetroShare程序"
     LangString DESC_sec_data ${LANG_SIMPCHINESE} "安装RetroShare皮肤"
     LangString DESC_sec_shortcuts ${LANG_SIMPCHINESE} "建RetroShare快捷方式"
-    LangString DESC_sec_link ${LANG_SIMPCHINESE} "关联.pqi扩展名"
+    LangString DESC_sec_link ${LANG_SIMPCHINESE} "关联.rsc扩展名"
     LangString LANGUAGEID ${LANG_SIMPCHINESE} "2052"
     
     LangString sec_main ${LANG_POLISH} "Pliki programu"
@@ -159,7 +159,7 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
     LangString DESC_sec_main ${LANG_POLISH} "Instaluje pliki programu RetroShare"
     LangString DESC_sec_data ${LANG_POLISH} "Instaluje skórki programu RetroShare"
     LangString DESC_sec_shortcuts ${LANG_POLISH} "Utwórz ikony skrótów na pulpicie, w menu start oraz na pasku szybkiego uruchamiania."
-    LangString DESC_sec_link ${LANG_POLISH} "Skojarz pliki o rozszerzeniu .pqi z RetroShare"
+    LangString DESC_sec_link ${LANG_POLISH} "Skojarz pliki o rozszerzeniu .rsc z RetroShare"
     LangString LANGUAGEID ${LANG_POLISH} "1045"
     
     
@@ -228,6 +228,16 @@ Section  $(sec_data) sec_data
   ;SetOutPath "$INSTDIR\style\"
   ;File /r style\*.*   
 	
+SectionEnd
+
+; These are the programs that are needed by RetroShare.
+Section -Prerequisites
+  SetOutPath $INSTDIR\Prerequisites
+  MessageBox MB_YESNO "$(InstallGPG4WIN)" /SD IDYES IDNO leave
+    File "Prerequisites\gpg4win-1.1.4.exe"
+    ExecWait "$INSTDIR\Prerequisites\gpg4win-1.1.4.exe"
+     
+ leave:
 SectionEnd
 
 Section $(sec_link) sec_link
@@ -380,12 +390,26 @@ FunctionEnd
 # Installer Language Strings
 # TODO Update the Language Strings with the appropriate translations.
 
-LangString ^UninstallLink ${LANG_ENGLISH} "Uninstall"
-LangString ^UninstallLink ${LANG_GERMAN} "Deinstallieren"
-LangString ^UninstallLink ${LANG_TURKISH} "Kald�r"
-LangString ^UninstallLink ${LANG_FRENCH} "Désinstaller"
+LangString InstallGPG4WIN ${LANG_ENGLISH}     "Install Gpg4win 1.1.4 ? Gpg4win is required for RetroShare!"
+LangString InstallGPG4WIN ${LANG_GERMAN}      "Installiere Gpg4win 1.1.4 ? Gpg4win ist erforderlich fuer RetroShare!"
+LangString InstallGPG4WIN ${LANG_TURKISH}     "Gpg4win 1.1.4 Yükle?   Gpg4win RetroShare için gerekli!"
+LangString InstallGPG4WIN ${LANG_FRENCH}      "Installez Gpg4win 1.1.4 ? Gpg4win est nécessaire pour RetroShare!"
+LangString InstallGPG4WIN ${LANG_SIMPCHINESE} "Install Gpg4win 1.1.4 ? Gpg4win是需要Retroshare!" 
+LangString InstallGPG4WIN ${LANG_POLISH}      "Install Gpg4win 1.1.4 ? Gpg4win wymagane jest Retroshare!"
+
+LangString FINISHPAGELINK ${LANG_ENGLISH}     "Visit the RetroShare forums for the latest news and support"
+LangString FINISHPAGELINK ${LANG_GERMAN}      "Besuche RetroShare Support Forum "
+LangString FINISHPAGELINK ${LANG_TURKISH}     "Destek için Retroshare foruma ziyaret"
+LangString FINISHPAGELINK ${LANG_FRENCH}      "Visitez le RetroShare forums pour les dernières nouvelles et de soutien"
+LangString FINISHPAGELINK ${LANG_SIMPCHINESE} "帮助论坛"
+LangString FINISHPAGELINK ${LANG_POLISH}      "Odwiedź forum RetroShare do najświeższych informacji i wsparcia"
+
+LangString ^UninstallLink ${LANG_ENGLISH}     "Uninstall"
+LangString ^UninstallLink ${LANG_GERMAN}      "Deinstallieren"
+LangString ^UninstallLink ${LANG_TURKISH}     "Kald�r"
+LangString ^UninstallLink ${LANG_FRENCH}      "Désinstaller"
 LangString ^UninstallLink ${LANG_SIMPCHINESE} "卸载"
-LangString ^UninstallLink ${LANG_POLISH} "Odinstaluj"
+LangString ^UninstallLink ${LANG_POLISH}      "Odinstaluj"
 
 
 
