@@ -168,13 +168,18 @@ SearchDialog::SearchDialog(QWidget *parent)
 
 
     // set header text aligment
-	QTreeWidgetItem * headerItem = ui.searchResultWidget->headerItem();
-	headerItem->setTextAlignment(1, Qt::AlignRight   | Qt::AlignRight);
-	headerItem->setTextAlignment(2, Qt::AlignRight | Qt::AlignRight);
+    QTreeWidgetItem * headerItem = ui.searchResultWidget->headerItem();
+    headerItem->setTextAlignment(1, Qt::AlignRight   | Qt::AlignRight);
+    headerItem->setTextAlignment(2, Qt::AlignRight | Qt::AlignRight);
 
-	ui.searchResultWidget->sortItems(SR_NAME_COL, Qt::AscendingOrder);
+    ui.searchResultWidget->sortItems(SR_NAME_COL, Qt::AscendingOrder);
 
-  ui.resetButton->hide();
+    ui.resetButton->hide();
+  
+  	ui._ownFiles_CB->setMinimumWidth(20);
+  	ui._friendListsearch_SB->setMinimumWidth(20);
+  	ui._anonF2Fsearch_CB->setMinimumWidth(20);
+  	ui.label->setMinimumWidth(20);
 
 /* Hide platform specific features */
 #ifdef Q_WS_WIN
