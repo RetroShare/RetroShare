@@ -161,7 +161,7 @@ p, li { white-space: pre-wrap; }
           </spacer>
          </item>
          <item row="0" column="2">
-          <widget class="QPushButton" name="channelpushButton">
+          <widget class="QPushButton" name="blogpushButton">
            <property name="toolTip">
             <string>Add</string>
            </property>
@@ -556,7 +556,7 @@ border-image: url(:/images/btn_26_pressed.png) 4;
     </layout>
    </item>
   </layout>
-  <action name="actionCreate_Channel">
+  <action name="actionCreate_Blog">
    <property name="icon">
     <iconset>
      <normaloff>:/images/kblogger.png</normaloff>:/images/kblogger.png</iconset>
@@ -570,14 +570,6 @@ border-image: url(:/images/btn_26_pressed.png) 4;
   </action>
  </widget>
  <resources>
-  <include location="../images.qrc"/>
-  <include location="images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

@@ -53,37 +53,37 @@ virtual void openMsg(uint32_t type, std::string grpId, std::string inReplyTo);
 
 public slots:
 
-	void selectChannel( std::string );
-	void selectChannel(const QModelIndex &);
+	void selectBlog( std::string );
+	void selectBlog(const QModelIndex &);
 	void toggleSelection(const QModelIndex &);
 
 private slots:
 
-  void channelListCustomPopupMenu( QPoint point );
+  void blogListCustomPopupMenu( QPoint point );
 
 	void checkUpdate();
 
-	void createChannel();
+	void createBlog();
 	//void sendMsg();
 
-	void channelSelection();
+	void blogSelection();
 
-	void subscribeChannel();
-	void unsubscribeChannel();
+	void subscribeBlog();
+	void unsubscribeBlog();
 	
 	void createMsg();
 
-  void showChannelDetails();
+  void showBlogDetails();
 
 private:
 
-	void updateChannelList();
-	void updateChannelListOwn(std::list<std::string> &ids);
-	void updateChannelListSub(std::list<std::string> &ids);
-	void updateChannelListPop(std::list<std::string> &ids);
-	void updateChannelListOther(std::list<std::string> &ids);
+	void updateBlogList();
+	void updateBlogListOwn(std::list<std::string> &ids);
+	void updateBlogListSub(std::list<std::string> &ids);
+	void updateBlogListPop(std::list<std::string> &ids);
+	void updateBlogListOther(std::list<std::string> &ids);
 
-	void updateChannelMsgs();
+	void updateBlogMsgs();
 
 	QStandardItemModel *model;
 
@@ -97,7 +97,7 @@ private:
 
 	std::list<BlogsMsgItem *> mBlogMsgItems;
 
-	QFont mChannelFont;
+	QFont mBlogFont;
 	QFont itemFont;
 
 };

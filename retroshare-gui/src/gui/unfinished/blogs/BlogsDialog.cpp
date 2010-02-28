@@ -49,10 +49,10 @@ BlogsDialog::BlogsDialog(QWidget *parent)
   	/* Invoke the Qt Designer generated object setup routine */
   	setupUi(this);
 
-  	connect(actionCreate_Channel, SIGNAL(triggered()), this, SLOT(createChannel()));
+  	connect(actionCreate_Blog, SIGNAL(triggered()), this, SLOT(createBlog()));
   	connect(postButton, SIGNAL(clicked()), this, SLOT(createMsg()));
-  	connect(subscribeButton, SIGNAL( clicked( void ) ), this, SLOT( subscribeChannel ( void ) ) );
-  	connect(unsubscribeButton, SIGNAL( clicked( void ) ), this, SLOT( unsubscribeChannel ( void ) ) );
+  	connect(subscribeButton, SIGNAL( clicked( void ) ), this, SLOT( subscribeBlog ( void ) ) );
+  	connect(unsubscribeButton, SIGNAL( clicked( void ) ), this, SLOT( unsubscribeBlog ( void ) ) );
 
 
   	mBlogId = "";
@@ -82,15 +82,15 @@ BlogsDialog::BlogsDialog(QWidget *parent)
     model->appendRow(item3);
     model->appendRow(item4);
 
-    connect(treeView, SIGNAL(clicked(const QModelIndex &)), this, SLOT(selectChannel(const QModelIndex &)));
+    connect(treeView, SIGNAL(clicked(const QModelIndex &)), this, SLOT(selectBlog(const QModelIndex &)));
     connect(treeView, SIGNAL(activated(const QModelIndex &)), this, SLOT(toggleSelection(const QModelIndex &)));
-    connect(treeView, SIGNAL(customContextMenuRequested( QPoint ) ), this, SLOT( channelListCustomPopupMenu( QPoint ) ) );
+    connect(treeView, SIGNAL(customContextMenuRequested( QPoint ) ), this, SLOT( blogListCustomPopupMenu( QPoint ) ) );
 
     //added from ahead
-    updateChannelList();
+    updateBlogList();
 
-    mChannelFont = QFont("MS SANS SERIF", 22);
-    nameLabel->setFont(mChannelFont);
+    mBlogFont = QFont("MS SANS SERIF", 22);
+    nameLabel->setFont(mBlogFont);
     
     nameLabel->setMinimumWidth(20);
     
@@ -106,10 +106,10 @@ BlogsDialog::BlogsDialog(QWidget *parent)
     item3->setForeground(QBrush(QColor(79, 79, 79)));
     item4->setForeground(QBrush(QColor(79, 79, 79)));
   
-    QMenu *channelmenu = new QMenu();
-    channelmenu->addAction(actionCreate_Channel); 
-    channelmenu->addSeparator();
-    channelpushButton->setMenu(channelmenu);
+    QMenu *blogmenu = new QMenu();
+    blogmenu->addAction(actionCreate_Blog); 
+    blogmenu->addSeparator();
+    blogpushButton->setMenu(blogmenu);
 
 	
     QTimer *timer = new QTimer(this);
@@ -117,23 +117,23 @@ BlogsDialog::BlogsDialog(QWidget *parent)
     timer->start(1000);
 }
 
-void BlogsDialog::channelListCustomPopupMenu( QPoint point )
+void BlogsDialog::blogListCustomPopupMenu( QPoint point )
 {
       QMenu contextMnu( this );
       QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
       
-      QAction *channeldetailsAct = new QAction(QIcon(":/images/info16.png"), tr( "Show Channel Details" ), this );
-      connect( channeldetailsAct , SIGNAL( triggered() ), this, SLOT( showChannelDetails() ) );
+      QAction *blogdetailsAct = new QAction(QIcon(":/images/info16.png"), tr( "Show Blog Details" ), this );
+      connect( blogdetailsAct , SIGNAL( triggered() ), this, SLOT( showBlogDetails() ) );
 
       contextMnu.clear();
-      contextMnu.addAction( channeldetailsAct );
+      contextMnu.addAction( blogdetailsAct );
 
       contextMnu.exec( mevent->globalPos() );
 
 
 }
 
-void BlogsDialog::createChannel()
+void BlogsDialog::createBlog()
 {
 	CreateBlog *cf = new CreateBlog(NULL, false);
 
@@ -141,14 +141,14 @@ void BlogsDialog::createChannel()
 	cf->show();
 }
 
-void BlogsDialog::channelSelection()
+void BlogsDialog::blogSelection()
 {
 	/* which item was selected? */
 
 
 	/* update mBlogId */
 
-	updateChannelMsgs();
+	updateBlogMsgs();
 }
 
 
@@ -168,7 +168,7 @@ void BlogsDialog::openChat(std::string peerId)
 
 void BlogsDialog::openMsg(uint32_t type, std::string grpId, std::string inReplyTo)
 {
-#ifdef CHAN_DEBUG
+#ifdef BLOG_DEBUG
 	std::cerr << "BlogsDialog::openMsg()";
 	std::cerr << std::endl;
 #endif
@@ -195,14 +195,14 @@ void BlogsDialog::createMsg()
 	return;
 }
 
-void BlogsDialog::selectChannel( std::string cId)
+void BlogsDialog::selectBlog( std::string cId)
 {
 	mBlogId = cId;
 
-	updateChannelMsgs();
+	updateBlogMsgs();
 }
 
-void BlogsDialog::selectChannel(const QModelIndex &index)
+void BlogsDialog::selectBlog(const QModelIndex &index)
 {
 	int row = index.row();
 	int col = index.column();
@@ -212,7 +212,7 @@ void BlogsDialog::selectChannel(const QModelIndex &index)
 			mBlogId = sibling.data().toString().toStdString();
 	} else
 		mBlogId = index.data().toString().toStdString();
-	updateChannelMsgs();
+	updateBlogMsgs();
 }
 
 void BlogsDialog::checkUpdate()
@@ -225,18 +225,18 @@ void BlogsDialog::checkUpdate()
 	if (rsBlogs->blogsChanged(blogIds))
 	{
 		/* update Blogs List */
-		updateChannelList();
+		updateBlogList();
 
 		it = std::find(blogIds.begin(), blogIds.end(), mBlogId);
 		if (it != blogIds.end())
 		{
-			updateChannelMsgs();
+			updateBlogMsgs();
 		}
 	}
 }
 
 
-void BlogsDialog::updateChannelList()
+void BlogsDialog::updateBlogList()
 {
 
 	std::list<BlogInfo> channelList;
@@ -319,13 +319,13 @@ void BlogsDialog::updateChannelList()
 
 	/* now we have our lists ---> update entries */
 
-	updateChannelListOwn(adminIds);
-	updateChannelListSub(subIds);
-	updateChannelListPop(popIds);
-	updateChannelListOther(otherIds);
+	updateBlogListOwn(adminIds);
+	updateBlogListSub(subIds);
+	updateBlogListPop(popIds);
+	updateBlogListOther(otherIds);
 }
 
-void BlogsDialog::updateChannelListOwn(std::list<std::string> &ids)
+void BlogsDialog::updateBlogListOwn(std::list<std::string> &ids)
 {
 	std::list<std::string>::iterator iit;
 
@@ -333,8 +333,8 @@ void BlogsDialog::updateChannelListOwn(std::list<std::string> &ids)
 	model->item(OWN)->removeRows(0, model->item(OWN)->rowCount());
 
 	for (iit = ids.begin(); iit != ids.end(); iit ++) {
-#ifdef CHAN_DEBUG
-		std::cerr << "BlogsDialog::updateChannelListOwn(): " << *iit << std::endl;
+#ifdef BLOG_DEBUG
+		std::cerr << "BlogsDialog::updateBlogListOwn(): " << *iit << std::endl;
 #endif
 		QStandardItem *ownGroup = model->item(OWN);
 		QList<QStandardItem *> channel;
@@ -359,7 +359,7 @@ void BlogsDialog::updateChannelListOwn(std::list<std::string> &ids)
 	}
 }
 
-void BlogsDialog::updateChannelListSub(std::list<std::string> &ids)
+void BlogsDialog::updateBlogListSub(std::list<std::string> &ids)
 {
 	std::list<std::string>::iterator iit;
 
@@ -367,8 +367,8 @@ void BlogsDialog::updateChannelListSub(std::list<std::string> &ids)
 	model->item(SUBSCRIBED)->removeRows(0, model->item(SUBSCRIBED)->rowCount());
 
 	for (iit = ids.begin(); iit != ids.end(); iit ++) {
-#ifdef CHAN_DEBUG
-		std::cerr << "BlogsDialog::updateChannelListSub(): " << *iit << std::endl;
+#ifdef BLOG_DEBUG
+		std::cerr << "BlogsDialog::updateBlogListSub(): " << *iit << std::endl;
 #endif
 		QStandardItem *ownGroup = model->item(SUBSCRIBED);
 		QList<QStandardItem *> channel;
@@ -382,9 +382,9 @@ void BlogsDialog::updateChannelListSub(std::list<std::string> &ids)
 			item1->setToolTip(tr("Popularity: %1\nFetches: %2\nAvailable: %3"
 					).arg(QString::number(ci.pop)).arg(9999).arg(9999));
 		} else {
-			item1->setData(QVariant(QString("Unknown Channel")), Qt::DisplayRole);
+			item1->setData(QVariant(QString("Unknown Blog")), Qt::DisplayRole);
 			item2->setData(QVariant(QString::fromStdString(*iit)), Qt::DisplayRole);
-			item1->setToolTip("Unknown Channel\nNo Description");
+			item1->setToolTip("Unknown Blog\nNo Description");
 		}
 
 		channel.append(item1);
@@ -394,7 +394,7 @@ void BlogsDialog::updateChannelListSub(std::list<std::string> &ids)
 
 }
 
-void BlogsDialog::updateChannelListPop(std::list<std::string> &ids)
+void BlogsDialog::updateBlogListPop(std::list<std::string> &ids)
 {
 	std::list<std::string>::iterator iit;
 
@@ -402,8 +402,8 @@ void BlogsDialog::updateChannelListPop(std::list<std::string> &ids)
 	model->item(POPULAR)->removeRows(0, model->item(POPULAR)->rowCount());
 
 	for (iit = ids.begin(); iit != ids.end(); iit ++) {
-#ifdef CHAN_DEBUG
-		std::cerr << "BlogsDialog::updateChannelListPop(): " << *iit << std::endl;
+#ifdef BLOG_DEBUG
+		std::cerr << "BlogsDialog::updateBlogListPop(): " << *iit << std::endl;
 #endif
 		QStandardItem *ownGroup = model->item(POPULAR);
 		QList<QStandardItem *> channel;
@@ -417,9 +417,9 @@ void BlogsDialog::updateChannelListPop(std::list<std::string> &ids)
 			item1->setToolTip(tr("Popularity: %1\nFetches: %2\nAvailable: %3"
 					).arg(QString::number(ci.pop)).arg(9999).arg(9999));
 		} else {
-			item1->setData(QVariant(QString("Unknown Channel")), Qt::DisplayRole);
+			item1->setData(QVariant(QString("Unknown Blog")), Qt::DisplayRole);
 			item2->setData(QVariant(QString::fromStdString(*iit)), Qt::DisplayRole);
-			item1->setToolTip("Unknown Channel\nNo Description");
+			item1->setToolTip("Unknown Blog\nNo Description");
 		}
 
 		channel.append(item1);
@@ -428,7 +428,7 @@ void BlogsDialog::updateChannelListPop(std::list<std::string> &ids)
 	}
 }
 
-void BlogsDialog::updateChannelListOther(std::list<std::string> &ids)
+void BlogsDialog::updateBlogListOther(std::list<std::string> &ids)
 {
 	std::list<std::string>::iterator iit;
 
@@ -436,8 +436,8 @@ void BlogsDialog::updateChannelListOther(std::list<std::string> &ids)
 	model->item(OTHER)->removeRows(0, model->item(OTHER)->rowCount());
 
 	for (iit = ids.begin(); iit != ids.end(); iit ++) {
-#ifdef CHAN_DEBUG
-		std::cerr << "BlogsDialog::updateChannelListOther(): " << *iit << std::endl;
+#ifdef BLOG_DEBUG
+		std::cerr << "BlogsDialog::updateBlogListOther(): " << *iit << std::endl;
 #endif
 		QStandardItem *ownGroup = model->item(OTHER);
 		QList<QStandardItem *> channel;
@@ -462,7 +462,7 @@ void BlogsDialog::updateChannelListOther(std::list<std::string> &ids)
 	}
 }
 
-void BlogsDialog::updateChannelMsgs()
+void BlogsDialog::updateBlogMsgs()
 {
 	if (!rsBlogs)
 		return;
@@ -481,12 +481,12 @@ void BlogsDialog::updateChannelMsgs()
 	iconLabel->setEnabled(true);
 	
 	/* set textcolor for Blog name  */
-	QString channelStr("<span style=\"font-size:22pt; font-weight:500;"
+	QString blogStr("<span style=\"font-size:22pt; font-weight:500;"
                                "color:white;\">%1</span>");
 	
 	/* set Blog name */
-	QString cname = QString::fromStdWString(ci.blogName);
-  nameLabel->setText(channelStr.arg(cname));
+	QString bname = QString::fromStdWString(ci.blogName);
+  nameLabel->setText(blogStr.arg(bname));
 
 	/* do buttons */
 	if (ci.blogFlags & RS_DISTRIB_SUBSCRIBED)
@@ -532,31 +532,31 @@ void BlogsDialog::updateChannelMsgs()
 }
 
 
-void BlogsDialog::unsubscribeChannel()
+void BlogsDialog::unsubscribeBlog()
 {
 #ifdef BLOG_DEBUG
-	std::cerr << "BlogsDialog::unsubscribeChannel()";
+	std::cerr << "BlogsDialog::unsubscribeBlog()";
 	std::cerr << std::endl;
 #endif
 	if (rsBlogs)
 	{
 		rsBlogs->blogSubscribe(mBlogId, false);
 	}
-	updateChannelMsgs();
+	updateBlogMsgs();
 }
 
 
-void BlogsDialog::subscribeChannel()
+void BlogsDialog::subscribeBlog()
 {
 #ifdef BLOG_DEBUG
-	std::cerr << "BlogsDialog::subscribeChannel()";
+	std::cerr << "BlogsDialog::subscribeBlog()";
 	std::cerr << std::endl;
 #endif
 	if (rsBlogs)
 	{
 		rsBlogs->blogSubscribe(mBlogId, true);
 	}
-	updateChannelMsgs();
+	updateBlogMsgs();
 }
 
 
@@ -567,7 +567,7 @@ void BlogsDialog::toggleSelection(const QModelIndex &index)
 		selectionModel->select(index, QItemSelectionModel::Toggle);
 }
 
-void BlogsDialog::showChannelDetails()
+void BlogsDialog::showBlogDetails()
 {
 	if (mBlogId == "")
 	{
@@ -577,9 +577,9 @@ void BlogsDialog::showChannelDetails()
 	if (!rsBlogs)
 		return;
 
-  //static ChannelDetails *channelui = new ChannelDetails();
+  //static BlogDetails *blogui = new BlogDetails();
 
-	//channelui->showDetails(mBlogId);
-	//channelui->show();
+	//blogui->showDetails(mBlogId);
+	//blogui->show();
 
 }
