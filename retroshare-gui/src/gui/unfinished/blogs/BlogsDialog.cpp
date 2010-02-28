@@ -122,6 +122,9 @@ void BlogsDialog::blogListCustomPopupMenu( QPoint point )
       QMenu contextMnu( this );
       QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
       
+      QAction *createblogpostAct = new QAction(QIcon(":/images/mail_reply.png"), tr( "Post to Blog" ), this );
+      connect( createblogpostAct , SIGNAL( triggered() ), this, SLOT( createMsg() ) );
+      
       QAction *subscribeblogAct = new QAction(QIcon(":/images/edit_add24.png"), tr( "Subscribe to Blog" ), this );
       connect( subscribeblogAct , SIGNAL( triggered() ), this, SLOT( subscribeBlog() ) );
 
@@ -141,6 +144,8 @@ void BlogsDialog::blogListCustomPopupMenu( QPoint point )
                         
       if (bi.blogFlags & RS_DISTRIB_PUBLISH)
       {
+        contextMnu.addAction( createblogpostAct );
+        contextMnu.addSeparator();
         contextMnu.addAction( blogdetailsAct );
       }
       else if (bi.blogFlags & RS_DISTRIB_SUBSCRIBED)
