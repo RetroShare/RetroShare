@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>559</width>
+    <width>567</width>
     <height>340</height>
    </rect>
   </property>
@@ -1042,15 +1042,15 @@ border-image: url(:/images/btn_26_pressed.png) 4;
      <property name="maximumSize">
       <size>
        <width>16777215</width>
-       <height>48</height>
+       <height>52</height>
       </size>
      </property>
      <property name="styleSheet">
       <string notr="true">QFrame#frame_3{ 
 background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
 stop:0 #FEFEFE, stop:1 #E8E8E8);
-
-border: 1px solid #CCCCCC;}</string>
+border-radius: 10px;
+border: 2px solid #CCCCCC;}</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <property name="horizontalSpacing">
@@ -1060,7 +1060,7 @@ border: 1px solid #CCCCCC;}</string>
        <number>1</number>
       </property>
       <property name="margin">
-       <number>2</number>
+       <number>3</number>
       </property>
       <item row="0" column="0">
        <widget class="QCheckBox" name="_friendListsearch_SB">
