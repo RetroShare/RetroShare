@@ -129,11 +129,44 @@ void ChannelFeed::channelListCustomPopupMenu( QPoint point )
       QMenu contextMnu( this );
       QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
       
+      QAction *postchannelAct = new QAction(QIcon(":/images/mail_reply.png"), tr( "Post to Channel" ), this );
+      connect( postchannelAct , SIGNAL( triggered() ), this, SLOT( createMsg() ) );
+      
+      QAction *subscribechannelAct = new QAction(QIcon(":/images/edit_add24.png"), tr( "Subscribe to Channel" ), this );
+      connect( subscribechannelAct , SIGNAL( triggered() ), this, SLOT( subscribeChannel() ) );
+
+      QAction *unsubscribechannelAct = new QAction(QIcon(":/images/cancel.png"), tr( "Unsubscribe to Channel" ), this );
+      connect( unsubscribechannelAct , SIGNAL( triggered() ), this, SLOT( unsubscribeChannel() ) );
+      
       QAction *channeldetailsAct = new QAction(QIcon(":/images/info16.png"), tr( "Show Channel Details" ), this );
       connect( channeldetailsAct , SIGNAL( triggered() ), this, SLOT( showChannelDetails() ) );
 
       contextMnu.clear();
-      contextMnu.addAction( channeldetailsAct );
+      
+      ChannelInfo ci;
+      if (!rsChannels->getChannelInfo(mChannelId, ci))
+      {
+      return;
+      }
+                        
+      if (ci.channelFlags & RS_DISTRIB_PUBLISH)
+      {
+        contextMnu.addAction( postchannelAct );
+        contextMnu.addSeparator();
+        contextMnu.addAction( channeldetailsAct );
+      }
+      else if (ci.channelFlags & RS_DISTRIB_SUBSCRIBED)
+      {
+        contextMnu.addAction( unsubscribechannelAct );
+        contextMnu.addSeparator();
+        contextMnu.addAction( channeldetailsAct );;
+      }
+      else
+      {      
+        contextMnu.addAction( subscribechannelAct );
+        contextMnu.addSeparator();
+        contextMnu.addAction( channeldetailsAct );
+      }
 
       contextMnu.exec( mevent->globalPos() );
 
