@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>672</width>
+    <width>580</width>
     <height>376</height>
    </rect>
   </property>
@@ -1108,7 +1108,7 @@ border-image: url(:/images/btn_26_pressed.png) 4;
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>353</width>
+         <width>200</width>
          <height>17</height>
         </size>
        </property>
