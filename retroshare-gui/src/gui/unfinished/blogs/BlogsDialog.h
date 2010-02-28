@@ -87,7 +87,7 @@ private:
 
 	QStandardItemModel *model;
 
-	std::string mBlogId; /* current Channel */
+	std::string mBlogId; /* current Blog */
 	std::string mPeerId;
 
 	/* Layout Pointers */

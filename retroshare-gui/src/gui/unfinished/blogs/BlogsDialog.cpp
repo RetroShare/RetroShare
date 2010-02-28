@@ -37,6 +37,7 @@
 #include "BlogsMsgItem.h"
 #include "CreateBlog.h"
 #include "CreateBlogMsg.h"
+#include "BlogDetails.h"
 
 #include "gui/ChanGroupDelegate.h"
 #include "gui/GeneralMsgDialog.h"
@@ -53,7 +54,6 @@ BlogsDialog::BlogsDialog(QWidget *parent)
   	connect(postButton, SIGNAL(clicked()), this, SLOT(createMsg()));
   	connect(subscribeButton, SIGNAL( clicked( void ) ), this, SLOT( subscribeBlog ( void ) ) );
   	connect(unsubscribeButton, SIGNAL( clicked( void ) ), this, SLOT( unsubscribeBlog ( void ) ) );
-
 
   	mBlogId = "";
   	mPeerId = rsPeers->getOwnId(); // add your id
@@ -122,11 +122,39 @@ void BlogsDialog::blogListCustomPopupMenu( QPoint point )
       QMenu contextMnu( this );
       QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
       
+      QAction *subscribeblogAct = new QAction(QIcon(":/images/edit_add24.png"), tr( "Subscribe to Blog" ), this );
+      connect( subscribeblogAct , SIGNAL( triggered() ), this, SLOT( subscribeBlog() ) );
+
+      QAction *unsubscribeblogAct = new QAction(QIcon(":/images/cancel.png"), tr( "Unsubscribe to Blog" ), this );
+      connect( unsubscribeblogAct , SIGNAL( triggered() ), this, SLOT( unsubscribeBlog() ) );
+      
       QAction *blogdetailsAct = new QAction(QIcon(":/images/info16.png"), tr( "Show Blog Details" ), this );
       connect( blogdetailsAct , SIGNAL( triggered() ), this, SLOT( showBlogDetails() ) );
-
+      
       contextMnu.clear();
-      contextMnu.addAction( blogdetailsAct );
+      
+      BlogInfo bi;
+      if (!rsBlogs->getBlogInfo(mBlogId, bi))
+      {
+      return;
+      }
+                        
+      if (bi.blogFlags & RS_DISTRIB_PUBLISH)
+      {
+        contextMnu.addAction( blogdetailsAct );
+      }
+      else if (bi.blogFlags & RS_DISTRIB_SUBSCRIBED)
+      {
+        contextMnu.addAction( unsubscribeblogAct );
+        contextMnu.addSeparator();
+        contextMnu.addAction( blogdetailsAct );;
+      }
+      else
+      {      
+        contextMnu.addAction( subscribeblogAct );
+        contextMnu.addSeparator();
+        contextMnu.addAction( blogdetailsAct );
+      }
 
       contextMnu.exec( mevent->globalPos() );
 
@@ -181,7 +209,6 @@ void BlogsDialog::openMsg(uint32_t type, std::string grpId, std::string inReplyT
 	return;
 }
 
-
 void BlogsDialog::createMsg()
 {
 	if (mBlogId == "")
@@ -195,9 +222,9 @@ void BlogsDialog::createMsg()
 	return;
 }
 
-void BlogsDialog::selectBlog( std::string cId)
+void BlogsDialog::selectBlog( std::string bId)
 {
-	mBlogId = cId;
+	mBlogId = bId;
 
 	updateBlogMsgs();
 }
@@ -234,7 +261,6 @@ void BlogsDialog::checkUpdate()
 		}
 	}
 }
-
 
 void BlogsDialog::updateBlogList()
 {
@@ -341,12 +367,12 @@ void BlogsDialog::updateBlogListOwn(std::list<std::string> &ids)
 		QStandardItem *item1 = new QStandardItem();
 		QStandardItem *item2 = new QStandardItem();
 
-		BlogInfo ci;
-		if (rsBlogs && rsBlogs->getBlogInfo(*iit, ci)) {
-			item1->setData(QVariant(QString::fromStdWString(ci.blogName)), Qt::DisplayRole);
-			item2->setData(QVariant(QString::fromStdString(ci.blogId)), Qt::DisplayRole);
+		BlogInfo bi;
+		if (rsBlogs && rsBlogs->getBlogInfo(*iit, bi)) {
+			item1->setData(QVariant(QString::fromStdWString(bi.blogName)), Qt::DisplayRole);
+			item2->setData(QVariant(QString::fromStdString(bi.blogId)), Qt::DisplayRole);
 			item1->setToolTip(tr("Popularity: %1\nFetches: %2\nAvailable: %3"
-					).arg(QString::number(ci.pop)).arg(9999).arg(9999));
+					).arg(QString::number(bi.pop)).arg(9999).arg(9999));
 		} else {
 			item1->setData(QVariant(QString("Unknown Blog")), Qt::DisplayRole);
 			item2->setData(QVariant(QString::fromStdString(*iit)), Qt::DisplayRole);
@@ -375,12 +401,12 @@ void BlogsDialog::updateBlogListSub(std::list<std::string> &ids)
 		QStandardItem *item1 = new QStandardItem();
 		QStandardItem *item2 = new QStandardItem();
 
-		BlogInfo ci;
-		if (rsBlogs && rsBlogs->getBlogInfo(*iit, ci)) {
-			item1->setData(QVariant(QString::fromStdWString(ci.blogName)), Qt::DisplayRole);
-			item2->setData(QVariant(QString::fromStdString(ci.blogId)), Qt::DisplayRole);
+		BlogInfo bi;
+		if (rsBlogs && rsBlogs->getBlogInfo(*iit, bi)) {
+			item1->setData(QVariant(QString::fromStdWString(bi.blogName)), Qt::DisplayRole);
+			item2->setData(QVariant(QString::fromStdString(bi.blogId)), Qt::DisplayRole);
 			item1->setToolTip(tr("Popularity: %1\nFetches: %2\nAvailable: %3"
-					).arg(QString::number(ci.pop)).arg(9999).arg(9999));
+					).arg(QString::number(bi.pop)).arg(9999).arg(9999));
 		} else {
 			item1->setData(QVariant(QString("Unknown Blog")), Qt::DisplayRole);
 			item2->setData(QVariant(QString::fromStdString(*iit)), Qt::DisplayRole);
@@ -410,12 +436,12 @@ void BlogsDialog::updateBlogListPop(std::list<std::string> &ids)
 		QStandardItem *item1 = new QStandardItem();
 		QStandardItem *item2 = new QStandardItem();
 
-		BlogInfo ci;
-		if (rsBlogs && rsBlogs->getBlogInfo(*iit, ci)) {
-			item1->setData(QVariant(QString::fromStdWString(ci.blogName)), Qt::DisplayRole);
-			item2->setData(QVariant(QString::fromStdString(ci.blogId)), Qt::DisplayRole);
+		BlogInfo bi;
+		if (rsBlogs && rsBlogs->getBlogInfo(*iit, bi)) {
+			item1->setData(QVariant(QString::fromStdWString(bi.blogName)), Qt::DisplayRole);
+			item2->setData(QVariant(QString::fromStdString(bi.blogId)), Qt::DisplayRole);
 			item1->setToolTip(tr("Popularity: %1\nFetches: %2\nAvailable: %3"
-					).arg(QString::number(ci.pop)).arg(9999).arg(9999));
+					).arg(QString::number(bi.pop)).arg(9999).arg(9999));
 		} else {
 			item1->setData(QVariant(QString("Unknown Blog")), Qt::DisplayRole);
 			item2->setData(QVariant(QString::fromStdString(*iit)), Qt::DisplayRole);
@@ -444,12 +470,12 @@ void BlogsDialog::updateBlogListOther(std::list<std::string> &ids)
 		QStandardItem *item1 = new QStandardItem();
 		QStandardItem *item2 = new QStandardItem();
 
-		BlogInfo ci;
-		if (rsBlogs && rsBlogs->getBlogInfo(*iit, ci)) {
-			item1->setData(QVariant(QString::fromStdWString(ci.blogName)), Qt::DisplayRole);
-			item2->setData(QVariant(QString::fromStdString(ci.blogId)), Qt::DisplayRole);
+		BlogInfo bi;
+		if (rsBlogs && rsBlogs->getBlogInfo(*iit, bi)) {
+			item1->setData(QVariant(QString::fromStdWString(bi.blogName)), Qt::DisplayRole);
+			item2->setData(QVariant(QString::fromStdString(bi.blogId)), Qt::DisplayRole);
 			item1->setToolTip(tr("Popularity: %1\nFetches: %2\nAvailable: %3"
-					).arg(QString::number(ci.pop)).arg(9999).arg(9999));
+					).arg(QString::number(bi.pop)).arg(9999).arg(9999));
 		} else {
 			item1->setData(QVariant(QString("Unknown Blog")), Qt::DisplayRole);
 			item2->setData(QVariant(QString::fromStdString(*iit)), Qt::DisplayRole);
@@ -467,8 +493,8 @@ void BlogsDialog::updateBlogMsgs()
 	if (!rsBlogs)
 		return;
 
-	BlogInfo ci;
-	if (!rsBlogs->getBlogInfo(mBlogId, ci))
+	BlogInfo bi;
+	if (!rsBlogs->getBlogInfo(mBlogId, bi))
 	{
 		postButton->setEnabled(false);
 		subscribeButton->setEnabled(false);
@@ -485,11 +511,11 @@ void BlogsDialog::updateBlogMsgs()
                                "color:white;\">%1</span>");
 	
 	/* set Blog name */
-	QString bname = QString::fromStdWString(ci.blogName);
+	QString bname = QString::fromStdWString(bi.blogName);
   nameLabel->setText(blogStr.arg(bname));
 
 	/* do buttons */
-	if (ci.blogFlags & RS_DISTRIB_SUBSCRIBED)
+	if (bi.blogFlags & RS_DISTRIB_SUBSCRIBED)
 	{
 		subscribeButton->setEnabled(false);
 		unsubscribeButton->setEnabled(true);
@@ -500,7 +526,7 @@ void BlogsDialog::updateBlogMsgs()
 		unsubscribeButton->setEnabled(false);
 	}
 
-	if (ci.blogFlags & RS_DISTRIB_PUBLISH)
+	if (bi.blogFlags & RS_DISTRIB_PUBLISH)
 	{
 		postButton->setEnabled(true);
 	}
@@ -531,7 +557,6 @@ void BlogsDialog::updateBlogMsgs()
 	}
 }
 
-
 void BlogsDialog::unsubscribeBlog()
 {
 #ifdef BLOG_DEBUG
@@ -545,7 +570,6 @@ void BlogsDialog::unsubscribeBlog()
 	updateBlogMsgs();
 }
 
-
 void BlogsDialog::subscribeBlog()
 {
 #ifdef BLOG_DEBUG
@@ -558,7 +582,6 @@ void BlogsDialog::subscribeBlog()
 	}
 	updateBlogMsgs();
 }
-
 
 void BlogsDialog::toggleSelection(const QModelIndex &index)
 {
@@ -577,9 +600,9 @@ void BlogsDialog::showBlogDetails()
 	if (!rsBlogs)
 		return;
 
-  //static BlogDetails *blogui = new BlogDetails();
+  static BlogDetails *blogui = new BlogDetails();
 
-	//blogui->showDetails(mBlogId);
-	//blogui->show();
+	blogui->showDetails(mBlogId);
+	blogui->show();
 
 }

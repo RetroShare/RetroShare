@@ -515,17 +515,20 @@ DEPENDPATH += gui/unfinished \
 HEADERS += gui/unfinished/blogs/BlogsDialog.h \
            gui/unfinished/blogs/CreateBlog.h \  
            gui/unfinished/blogs/CreateBlogMsg.h \
-           gui/unfinished/blogs/BlogsMsgItem.h
+           gui/unfinished/blogs/BlogsMsgItem.h \
+           gui/unfinished/blogs/BlogDetails.h
 
 FORMS += gui/unfinished/blogs/BlogsDialog.ui \
          gui/unfinished/blogs/CreateBlog.ui \
          gui/unfinished/blogs/CreateBlogMsg.ui \
-         gui/unfinished/blogs/BlogsMsgItem.ui  
+         gui/unfinished/blogs/BlogsMsgItem.ui \
+         gui/unfinished/blogs/BlogDetails.ui  
          
 SOURCES += gui/unfinished/blogs/BlogsDialog.cpp \
            gui/unfinished/blogs/CreateBlog.cpp \
            gui/unfinished/blogs/CreateBlogMsg.cpp \
-           gui/unfinished/blogs/BlogsMsgItem.cpp
+           gui/unfinished/blogs/BlogsMsgItem.cpp \
+           gui/unfinished/blogs/BlogDetails.cpp
 
           DEFINES *= BLOGS
 }
