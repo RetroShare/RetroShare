@@ -124,7 +124,7 @@ static char *PgpPassword = NULL;
 
 
 AuthGPG::AuthGPG()
-        :gpgmeInit(false) , p3Config(CONFIG_TYPE_AUTHGPG)
+        :gpgmeInit(false),gpgmeKeySelected(false),p3Config(CONFIG_TYPE_AUTHGPG)
 {
 	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
 
@@ -746,14 +746,17 @@ bool AuthGPG::VerifySignature_locked(const void *data, int datalen, const void *
 	gpgme_data_t gpgmeData;
 
 #ifdef GPG_DEBUG
-        std::cerr << "VerifySignature: datalen: " << datalen << " siglen: " << siglen << std::endl;
+	std::cerr << "VerifySignature: datalen: " << datalen << " siglen: " << siglen << std::endl;
 #endif
 	
-	if(siglen==73)
-	{
-                //std::cerr << "Reducing to 72 to overcome an old bug." << std::endl ;
-		siglen=72 ;
-	}
+	if(!(gpgmeInit || gpgmeKeySelected))
+		return false ;
+
+//	if(siglen==73)
+//	{
+//                //std::cerr << "Reducing to 72 to overcome an old bug." << std::endl ;
+//		siglen=72 ;
+//	}
 
 	if (GPG_ERR_NO_ERROR != gpgme_data_new_from_mem(&gpgmeData, (const char *) data, datalen, 1))
 	{
