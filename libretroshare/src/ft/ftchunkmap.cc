@@ -228,6 +228,8 @@ void ChunkMap::removeInactiveChunks(std::vector<ftChunk::ChunkId>& to_remove)
 
 			_map[it->first] = FileChunksInfo::CHUNK_OUTSTANDING ;	// reset the chunk
 
+			_total_downloaded -= (sizeOfChunk(it->first) - it->second._remains) ;	// restore completion.
+
 			// Also remove the chunk from the chunk feed, to free the associated peer.
 			//
 			for(std::map<std::string,Chunk>::iterator it3=_active_chunks_feed.begin();it3!=_active_chunks_feed.end();)
