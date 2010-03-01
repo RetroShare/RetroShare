@@ -25,6 +25,7 @@
 #include <QDebug>
 #include <rsiface/rsfiles.h>
 #include <rsiface/rstypes.h>
+#include "util/misc.h"
 #include "FileTransferInfoWidget.h"
 
 // Variables to decide of display behaviour. Should be adapted to window size.
@@ -218,13 +219,13 @@ void FileTransferInfoWidget::draw(const FileInfo& nfo,const FileChunksInfo& info
 	 y += block_sep ;
 	 y += text_height ; painter->drawText(20,y,tr("File hash: ")) ; painter->drawText(tab_size,y,QString::fromStdString(nfo.hash)) ;
 	 y += block_sep ;
-	 y += text_height ; painter->drawText(20,y,tr("File size: ")) ; painter->drawText(tab_size,y,QString::number(info.file_size)) ;
+	 y += text_height ; painter->drawText(20,y,tr("File size: ")) ; painter->drawText(tab_size,y,misc::friendlyUnit(info.file_size)) ;
 	 y += block_sep ;
-	 y += text_height ; painter->drawText(20,y,tr("Chunk size: ")) ; painter->drawText(tab_size,y,QString::number(info.chunk_size)) ;
+	 y += text_height ; painter->drawText(20,y,tr("Chunk size: ")) ; painter->drawText(tab_size,y,misc::friendlyUnit(info.chunk_size)) ;
 	 y += block_sep ;
 	 y += text_height ; painter->drawText(20,y,tr("Number of chunks: ")) ; painter->drawText(tab_size,y,QString::number(info.chunks.size())) ;
 	 y += block_sep ;
-	 y += text_height ; painter->drawText(20,y,tr("Transfered: ")) ; painter->drawText(tab_size,y,QString::number(nfo.transfered)) ;
+	 y += text_height ; painter->drawText(20,y,tr("Transfered: ")) ; painter->drawText(tab_size,y,misc::friendlyUnit(nfo.transfered)) ;
 	 y += block_sep ;
 	 y += text_height ; painter->drawText(20,y,tr("Number of sources: ")) ; painter->drawText(tab_size,y,QString::number(info.compressed_peer_availability_maps.size())) ;
 	 y += block_sep ;

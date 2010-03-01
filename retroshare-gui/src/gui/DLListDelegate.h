@@ -36,7 +36,8 @@
 #define STATUS 6
 #define PRIORITY 7
 #define REMAINING 8
-#define ID 9
+#define DOWNLOADTIME 9
+#define ID 10
 
 
 #define MAX_CHAR_TMP 128

@@ -53,6 +53,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 	qlonglong remaining;
 	QString temp , status;
 	qlonglong completed;
+	qlonglong downloadtime;
 
 	//set text color
         QVariant value = index.data(Qt::TextColorRole);
@@ -102,23 +103,22 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 			break;
 		case REMAINING:
 			remaining = index.data().toLongLong();
-			minutes = remaining / 60;
-			seconds = remaining % 60;
-			hours = minutes / 60;
-			minutes = minutes % 60 ;
-			days = hours / 24;
-			hours = hours % 24 ;
-			if(days > 0) {
-				temp = QString::number(days)+"d "+QString::number(hours)+"h" ;
-			} else if(hours > 0 || days > 0) {
-				temp = QString::number(hours)+"h "+QString::number(minutes)+"m" ;
-			} else if(minutes > 0 || hours > 0) {
-				temp = QString::number(minutes)+"m"+QString::number(seconds)+"s" ;
-			} else if(seconds > 0) {
-				temp = QString::number(seconds)+"s" ;
-			} else
-				temp = "" ;
-			painter->drawText(option.rect, Qt::AlignCenter, temp);
+			if(remaining <= 0){
+        temp = "";
+			} else {
+				multi = 1.0;
+				for(int i = 0; i < 5; ++i) {
+					if (remaining < 1024) {
+						remaining = index.data().toLongLong();
+						temp.sprintf("%.2f ", remaining / multi);
+						temp += byteUnits[i];
+						break;
+					}
+					remaining /= 1024;
+					multi *= 1024.0;
+				}
+			}
+			painter->drawText(option.rect, Qt::AlignRight, temp);
 			break;
 		case COMPLETED:
 			completed = index.data().toLongLong();
@@ -178,6 +178,26 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 				painter->restore() ;
 			}
 			painter->drawText(option.rect, Qt::AlignCenter, newopt.text);
+			break;
+		case DOWNLOADTIME:
+			downloadtime = index.data().toLongLong();
+			minutes = downloadtime / 60;
+			seconds = downloadtime % 60;
+			hours = minutes / 60;
+			minutes = minutes % 60 ;
+			days = hours / 24;
+			hours = hours % 24 ;
+			if(days > 0) {
+				temp = QString::number(days)+"d "+QString::number(hours)+"h" ;
+			} else if(hours > 0 || days > 0) {
+				temp = QString::number(hours)+"h "+QString::number(minutes)+"m" ;
+			} else if(minutes > 0 || hours > 0) {
+				temp = QString::number(minutes)+"m"+QString::number(seconds)+"s" ;
+			} else if(seconds > 0) {
+				temp = QString::number(seconds)+"s" ;
+			} else
+				temp = "" ;
+			painter->drawText(option.rect, Qt::AlignCenter, temp);
 			break;
 		case NAME:
         		// decoration

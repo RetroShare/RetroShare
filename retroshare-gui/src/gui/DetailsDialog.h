@@ -59,6 +59,7 @@ public slots:
 	void setDatarate(const double & datarate);
 	void setCompleted(const qulonglong & completed); 
   void setRemaining(const qulonglong & remaining) ;
+  void setDownloadtime(const qulonglong & downloadtime); 
   void setType(const QString & type); 
 
  

@@ -178,7 +178,12 @@ void DetailsDialog::setCompleted(const qulonglong & completed)
 
 void DetailsDialog::setRemaining(const qulonglong & remaining) 
 {
-	ui.remaining_line->setText(misc::userFriendlyDuration(remaining));
+	ui.remaining_line->setText(misc::friendlyUnit(remaining));
+}
+
+void DetailsDialog::setDownloadtime(const qulonglong & downloadtime) 
+{
+	ui.downloadtime_line->setText(misc::userFriendlyDuration(downloadtime));
 }
 
 void DetailsDialog::setLink(const QString & link) 

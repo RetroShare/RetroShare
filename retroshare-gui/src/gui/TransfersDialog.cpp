@@ -93,7 +93,8 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     DLListModel->setHeaderData(SOURCES, Qt::Horizontal, tr("Sources", "i.e: Sources"));
     DLListModel->setHeaderData(STATUS, Qt::Horizontal, tr("Status"));
     DLListModel->setHeaderData(PRIORITY, Qt::Horizontal, tr("Speed / Queue priority"));
-    DLListModel->setHeaderData(REMAINING, Qt::Horizontal, tr("Remaining", "i.e: Estimated Time of Arrival / Time left"));
+    DLListModel->setHeaderData(REMAINING, Qt::Horizontal, tr("Remaining"));
+    DLListModel->setHeaderData(DOWNLOADTIME, Qt::Horizontal, tr("Download time", "i.e: Estimated Time of Arrival / Time left"));
     DLListModel->setHeaderData(ID, Qt::Horizontal, tr("Core-ID"));
     ui.downloadList->setModel(DLListModel);
     ui.downloadList->hideColumn(ID);
@@ -423,7 +424,7 @@ TransfersDialog::~TransfersDialog()
 
 
 int TransfersDialog::addItem(const QString& symbol, const QString& name, const QString& coreID, qlonglong fileSize, const FileProgressInfo& pinfo, double dlspeed,
-		const QString& sources,  const QString& status, const QString& priority, qlonglong completed, qlonglong remaining)
+		const QString& sources,  const QString& status, const QString& priority, qlonglong completed, qlonglong remaining, qlonglong downloadtime)
 {
     int row;
     QList<QStandardItem *> list = DLListModel->findItems(coreID, Qt::MatchExactly, ID);
@@ -444,6 +445,7 @@ int TransfersDialog::addItem(const QString& symbol, const QString& name, const Q
     DLListModel->setData(DLListModel->index(row, STATUS), QVariant((QString)status));
     DLListModel->setData(DLListModel->index(row, PRIORITY), QVariant((QString)priority));
     DLListModel->setData(DLListModel->index(row, REMAINING), QVariant((qlonglong)remaining));
+    DLListModel->setData(DLListModel->index(row, DOWNLOADTIME), QVariant((qlonglong)downloadtime));
     DLListModel->setData(DLListModel->index(row, ID), QVariant((QString)coreID));
 
 
@@ -688,8 +690,10 @@ void TransfersDialog::insertTransfers() {
                     default:            priority = tr("Average");break;
             }
 
-            qlonglong completed   = info.transfered;
-            qlonglong remaining   = (info.size - info.transfered) / (info.tfRate * 1024.0);
+            qlonglong completed    = info.transfered;
+            qlonglong remaining    = info.size - info.transfered;
+            qlonglong downloadtime = (info.size - info.transfered) / (info.tfRate * 1024.0);
+
 
             FileChunksInfo fcinfo ;
             if(!rsFiles->FileDownloadChunksDetails(*it,fcinfo))
@@ -701,7 +705,7 @@ void TransfersDialog::insertTransfers() {
             pinfo.progress = completed*100.0/info.size ;
             pinfo.nb_chunks = pinfo.cmap._map.empty()?0:fcinfo.chunks.size() ;
 
-            int addedRow = addItem("", fileName, fileHash, fileSize, pinfo, fileDlspeed, sources, status, priority, completed, remaining);
+            int addedRow = addItem("", fileName, fileHash, fileSize, pinfo, fileDlspeed, sources, status, priority, completed, remaining, downloadtime);
 
             /* continue to next download item if no peers to add */
             if (!info.peers.size()) continue;
@@ -770,7 +774,7 @@ void TransfersDialog::insertTransfers() {
 
             addItem("", QString::fromUtf8(dit->fname.c_str()),
                     QString::fromStdString(dit->hash), dit->count, pinfo, 0, 0,
-                    tr("Queued"), "", 0, 0);
+                    tr("Queued"), "", 0, 0, 0);
         }
 
 
@@ -993,6 +997,8 @@ void TransfersDialog::showDetailsDialog()
             qulonglong fcompleted = ind.model ()->data (ind.model ()->index (ind.row (), COMPLETED)).toULongLong() ;
             qulonglong fremaining = ind.model ()->data (ind.model ()->index (ind.row (), REMAINING)).toULongLong() ;
             
+            qulonglong fdownloadtime = ind.model ()->data (ind.model ()->index (ind.row (), DOWNLOADTIME)).toULongLong() ;
+            
             int nb_select = 0 ;
             
             for(int i = 0; i <= DLListModel->rowCount(); i++) 
@@ -1020,6 +1026,9 @@ void TransfersDialog::showDetailsDialog()
             detailsdlg->setDatarate(fdatarate);
             detailsdlg->setCompleted(fcompleted);
             detailsdlg->setRemaining(fremaining);
+            
+            //Date GroupBox
+            detailsdlg->setDownloadtime(fdownloadtime);
             
             // retroshare link(s) Tab
             analyzer.setRetroShareLink (fname, fsize, fhash);
