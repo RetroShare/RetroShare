@@ -146,12 +146,14 @@ void* doExtAddrSearch(void *p)
 	{
 		// thread safe copy results.
 		//
-		af->_addrMtx.lock();
-		*(af->_found) = false ;
-		*(af->mFoundTS) = time(NULL) ;
-		*(af->_searching) = false ;
+		{
+			RsStackMutex mtx(af->_addrMtx) ;
+
+			*(af->_found) = false ;
+			*(af->mFoundTS) = time(NULL) ;
+			*(af->_searching) = false ;
+		}
 		pthread_exit(NULL);
-		af->_addrMtx.unlock();
 		return NULL ;
 	}
 
@@ -161,20 +163,22 @@ void* doExtAddrSearch(void *p)
 	if(!inet_aton(res[res.size()/2].c_str(),&(af->_addr->sin_addr)))
 	{
 		std::cerr << "ExtAddrFinder: Could not convert " << res[res.size()/2] << " into an address." << std::endl ;
-		af->_addrMtx.lock();
-		*(af->_found) = false ;
-		*(af->mFoundTS) = time(NULL) ;
-		*(af->_searching) = false ;
-		af->_addrMtx.unlock();
+		{
+			RsStackMutex mtx(af->_addrMtx) ;
+			*(af->_found) = false ;
+			*(af->mFoundTS) = time(NULL) ;
+			*(af->_searching) = false ;
+		}
 		pthread_exit(NULL);
 		return NULL ;
 	}
 
-	af->_addrMtx.lock();
-	*(af->_found) = true ;
-	*(af->mFoundTS) = time(NULL) ;
-	*(af->_searching) = false ;
-	af->_addrMtx.unlock();
+	{
+		RsStackMutex mtx(af->_addrMtx) ;
+		*(af->_found) = true ;
+		*(af->mFoundTS) = time(NULL) ;
+		*(af->_searching) = false ;
+	}
 
 	pthread_exit(NULL);
 	return NULL ;
@@ -205,7 +209,7 @@ bool ExtAddrFinder::hasValidIP(struct sockaddr_in *addr)
 
 	//timeout the current ip
 	time_t delta = time(NULL) - *mFoundTS;
-	if(delta > MAX_IP_STORE) {//launch a research
+	if((uint32_t)delta > MAX_IP_STORE) {//launch a research
 	    if( _addrMtx.trylock())
 		    {
 			    if(!*_searching)
