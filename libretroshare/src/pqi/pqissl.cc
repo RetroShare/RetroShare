@@ -1049,7 +1049,7 @@ int 	pqissl::SSL_Connection_Complete()
 			out.str());
 
 		// attempt real error.
-		Extract_Failed_SSL_Certificate();
+                //Extract_Failed_SSL_Certificate();
 
 		reset();
 		waiting = WAITING_FAIL_INTERFACE;
