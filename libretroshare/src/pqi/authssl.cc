@@ -1667,21 +1667,21 @@ bool    AuthSSL::encrypt(void *&out, int &outlen, const void *in, int inlen, std
         /// ** copied implementation of EVP_SealInit of openssl V *** ///
 
         net_ekl = htonl(ekl);
-        memcpy((void*)((uint8_t*)out)[out_offset], (char*)&net_ekl, sizeof(net_ekl));
+        memcpy((void*)(out + out_offset), (char*)&net_ekl, sizeof(net_ekl));
         out_offset += sizeof(net_ekl);
 
-        memcpy((void*)((uint8_t*)out)[out_offset], ek, ekl);
+        memcpy((void*)(out + out_offset), ek, ekl);
         out_offset += ekl;
 
-        memcpy((void*)((uint8_t*)out)[out_offset], iv, sizeof(iv));
+        memcpy((void*)(out + out_offset), iv, sizeof(iv));
         out_offset += sizeof(iv);
 
         EVP_EncryptUpdate(&cipher_ctx, cryptBuff, &cryptBuffL, (unsigned char*)in, inlen);
-        memcpy((void*)((uint8_t*)out)[out_offset], cryptBuff, cryptBuffL);
+        memcpy((void*)(out + out_offset), cryptBuff, cryptBuffL);
         out_offset += cryptBuffL;
 
         EVP_EncryptFinal_ex(&cipher_ctx, cryptBuff, &cryptBuffL);
-        memcpy((void*)((uint8_t*)out)[out_offset], cryptBuff, cryptBuffL);
+        memcpy((void*)(out + out_offset), cryptBuff, cryptBuffL);
         out_offset += cryptBuffL;
 
         outlen = out_offset;
@@ -1724,7 +1724,7 @@ bool    AuthSSL::decrypt(void *&out, int &outlen, const void *in, int inlen)
         unsigned int ekeylen;
 
 
-        memcpy(&ekeylen, (void*)((uint8_t*)in)[in_offset], sizeof(ekeylen));
+        memcpy(&ekeylen, (void*)(in + in_offset), sizeof(ekeylen));
         in_offset += sizeof(ekeylen);
 
         ekeylen = ntohl(ekeylen);
@@ -1737,10 +1737,10 @@ bool    AuthSSL::decrypt(void *&out, int &outlen, const void *in, int inlen)
 
         encryptKey = new unsigned char [sizeof(char) * ekeylen];
 
-        memcpy(encryptKey, (void*)((uint8_t*)in)[in_offset], ekeylen);
+        memcpy(encryptKey, (void*)(in + in_offset), ekeylen);
         in_offset += ekeylen;
 
-        memcpy(iv, (void*)((uint8_t*)in)[in_offset], sizeof(iv));
+        memcpy(iv, (void*)(in + in_offset), sizeof(iv));
         in_offset += sizeof(iv);
 
 //        EVP_OpenInit(&ectx,
@@ -1779,7 +1779,7 @@ bool    AuthSSL::decrypt(void *&out, int &outlen, const void *in, int inlen)
         /// ** copied implementation of EVP_SealInit of openssl V1.0 *** ///;
 
 
-        if (!EVP_DecryptUpdate(&ectx, buf, &buflen, (unsigned char*)((uint8_t*)in)[in_offset], inlen - in_offset)) {
+        if (!EVP_DecryptUpdate(&ectx, buf, &buflen, (unsigned char*)(in + in_offset), inlen - in_offset)) {
             return false;
         }
         memcpy(out, buf, buflen);
@@ -1788,7 +1788,7 @@ bool    AuthSSL::decrypt(void *&out, int &outlen, const void *in, int inlen)
         if (!EVP_DecryptFinal(&ectx, buf, &buflen)) {
             return false;
         }
-        memcpy((void*)((uint8_t*)out)[out_offset], buf, buflen);
+        memcpy((void*)(out + out_offset), buf, buflen);
         out_offset += buflen;
         outlen = out_offset;
 
