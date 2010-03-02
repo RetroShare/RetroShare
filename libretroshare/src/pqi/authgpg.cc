@@ -330,14 +330,13 @@ bool   AuthGPG::storeAllKeys_locked()
 	gpg_error_t ERR;
 	if (!gpgmeInit)
 	{
-                std::cerr << "Error since GPG is not initialised" << std::endl;
+                std::cerr << "AuthGPG::storeAllKeys_locked() Error since GPG is not initialised" << std::endl;
 		return false;
 	}
 	
 #ifdef GPG_DEBUG
         std::cerr << "AuthGPG::storeAllKeys_locked() clearing existing ones" << std::endl;
 #endif
-        mKeyList.clear();
 
 	/* enable SIG mode */
 	gpgme_keylist_mode_t origmode = gpgme_get_keylist_mode(CTX);
@@ -349,15 +348,29 @@ bool   AuthGPG::storeAllKeys_locked()
 	gpgme_key_t KEY = NULL;
 
 	/* Initiates a key listing 0 = All Keys */
-	if (GPG_ERR_NO_ERROR != gpgme_op_keylist_start (CTX, "", 0))
-	{
-                std::cerr << "Error iterating through KeyList" << std::endl;
+        if (GPG_ERR_NO_ERROR != gpgme_op_keylist_start (CTX, "", 0))
+        {
+                std::cerr << "AuthGPG::storeAllKeys_locked() Error iterating through KeyList" << std::endl;
+                if (rsicontrol != NULL) {
+                    rsicontrol->getNotify().notifyErrorMsg(0,0,"Error reading gpg keyring, cannot acess key list.");
+                }
 		gpgme_set_keylist_mode(CTX, origmode);
 		return false;
-	} 
+        }
 
 	/* Loop until end of key */
-	for(int i = 0;(GPG_ERR_NO_ERROR == (ERR = gpgme_op_keylist_next (CTX, &KEY))); i++)
+        ERR = gpgme_op_keylist_next (CTX, &KEY);
+        if (GPG_ERR_NO_ERROR != ERR) {
+                std::cerr << "AuthGPG::storeAllKeys_locked() didn't find any gpg key in the keyring" << std::endl;
+                if (rsicontrol != NULL) {
+                    rsicontrol->getNotify().notifyErrorMsg(0,0,"Error reading gpg keyring, cannot find any key in the list.");
+                }
+                return false;
+        } else {
+                //let's start a new list
+                mKeyList.clear();
+        }
+        for(int i = 0;GPG_ERR_NO_ERROR == ERR; i++)
 	{
 		/* store in pqiAuthDetails */
 		gpgcert nu;
@@ -368,7 +381,7 @@ bool   AuthGPG::storeAllKeys_locked()
 
 		if ((!KEY->subkeys) || (!KEY->uids))
 		{
-                        std::cerr << "Invalid Key in List... skipping" << std::endl;
+                        std::cerr << "AuthGPG::storeAllKeys_locked() Invalid Key in List... skipping" << std::endl;
 			continue;
 		}
 
@@ -474,6 +487,8 @@ bool   AuthGPG::storeAllKeys_locked()
                 if (nu.id == mOwnGpgId) {
                     mOwnGpgCert = nu;
                 }
+
+                ERR = gpgme_op_keylist_next (CTX, &KEY);
 	}
 
 	if (GPG_ERR_NO_ERROR != gpgme_op_keylist_end(CTX))
