@@ -790,18 +790,24 @@ void p3ConnectMgr::networkConsistencyCheck()
 
         if (!doNetReset) {//set an external address. if ip adresses are different, let's use the stun address, then the extaddrfinder and then the upnp address.
             struct sockaddr_in extAddr;
-            if (getUpnpExtAddress(extAddr)) {
-                #ifdef CONN_DEBUG_TICK
-                    std::cerr << "p3ConnectMgr::networkConsistencyCheck() using getUpnpExtAddress for ownState.serveraddr." << std::endl;
-                #endif
-                ownState.currentserveraddr = extAddr;
-            } else if (getExtFinderExtAddress(extAddr)) {
+            if (getExtFinderExtAddress(extAddr)) {
                 netExtFinderAddressCheck(); //so we put the extra address flag ok.
                 #ifdef CONN_DEBUG_TICK
                 std::cerr << "p3ConnectMgr::networkConsistencyCheck() using getExtFinderExtAddress for ownState.serveraddr." << std::endl;
                 #endif
                 ownState.currentserveraddr = extAddr;
+            } else if (getUpnpExtAddress(extAddr)) {
+                #ifdef CONN_DEBUG_TICK
+                    std::cerr << "p3ConnectMgr::networkConsistencyCheck() using getUpnpExtAddress for ownState.serveraddr." << std::endl;
+                #endif
+                ownState.currentserveraddr = extAddr;
             } else {
+                //try to extract ext address from our own ip address list
+                IpAddressTimed extractedAddress;
+                if (peerConnectState::extractExtAddress(ownState.getIpAddressList(), extractedAddress)) {
+                    ownState.currentserveraddr = extractedAddress.ipAddr;
+                }
+
                 //check if a peer is connected, if yes don't do a net reset
                 bool is_connected = false;
                 std::map<std::string, peerConnectState>::iterator it;

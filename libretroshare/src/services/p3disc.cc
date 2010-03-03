@@ -550,21 +550,23 @@ void p3disc::recvPeerDetails(RsDiscReply *item)
                         mConnMgr->setLocation(pitem->pid, pitem->location);
                     }
                 }
-            } else {
-                if (pitem->currentremoteaddr.sin_addr.s_addr != 0 && pitem->currentremoteaddr.sin_port != 0 &&
-                    pitem->currentremoteaddr.sin_addr.s_addr != 1 && pitem->currentremoteaddr.sin_port != 1 &&
-                    std::string(inet_ntoa(pitem->currentremoteaddr.sin_addr)) != "1.1.1.1" &&
-                    (!isLoopbackNet(&pitem->currentremoteaddr.sin_addr)) &&
-                    (!isPrivateNet(&pitem->currentremoteaddr.sin_addr))
-                    ) {
-                    //the current server address given by the peer looks nice, let's use it for our own ext address if needed
-                    sockaddr_in tempAddr;
-                    if (!mConnMgr->getExtFinderExtAddress(tempAddr) && !mConnMgr->getUpnpExtAddress(tempAddr)) {
-                        //don't change the port, just the ip
-                        pitem->currentremoteaddr.sin_port = mConnMgr->ownState.currentserveraddr.sin_port;
-                        mConnMgr->setExtAddress(mConnMgr->getOwnId(), pitem->currentremoteaddr);
-                    }
-                }
+
+                //useless, we will exploit the list in the connect manager
+//            } else {
+//                if (pitem->currentremoteaddr.sin_addr.s_addr != 0 && pitem->currentremoteaddr.sin_port != 0 &&
+//                    pitem->currentremoteaddr.sin_addr.s_addr != 1 && pitem->currentremoteaddr.sin_port != 1 &&
+//                    std::string(inet_ntoa(pitem->currentremoteaddr.sin_addr)) != "1.1.1.1" &&
+//                    (!isLoopbackNet(&pitem->currentremoteaddr.sin_addr)) &&
+//                    (!isPrivateNet(&pitem->currentremoteaddr.sin_addr))
+//                    ) {
+//                    //the current server address given by the peer looks nice, let's use it for our own ext address if needed
+//                    sockaddr_in tempAddr;
+//                    if (!mConnMgr->getExtFinderExtAddress(tempAddr) && !mConnMgr->getUpnpExtAddress(tempAddr)) {
+//                        //don't change the port, just the ip
+//                        pitem->currentremoteaddr.sin_port = mConnMgr->ownState.currentserveraddr.sin_port;
+//                        mConnMgr->setExtAddress(mConnMgr->getOwnId(), pitem->currentremoteaddr);
+//                    }
+//                }
             }
             //allways update address list
             mConnMgr->setAddressList(pitem->pid, pitem->ipAddressList);
