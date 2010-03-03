@@ -1260,6 +1260,7 @@ void MessagesDialog::updateMessageSummaryList()
 		qf.setBold(true);
 		item->setFont(qf);
 		item->setIcon(QIcon(":/images/folder-inbox-new.png"));
+		item->setForeground(QBrush(QColor(49, 106, 197)));
 	}
 	else
 	{
@@ -1270,7 +1271,8 @@ void MessagesDialog::updateMessageSummaryList()
 		QFont qf = item->font();
 		qf.setBold(false);
 		item->setFont(qf);
-   		item->setIcon(QIcon(":/images/folder-inbox.png"));	
+		item->setIcon(QIcon(":/images/folder-inbox.png"));
+		item->setForeground(QBrush(QColor(0, 0, 0)));	
 	}
 	
 	if(newOutboxCount != 0)

@@ -957,7 +957,7 @@ border-image: url(:/images/closepressed.png)
       <property name="gridSize">
        <size>
         <width>100</width>
-        <height>16</height>
+        <height>18</height>
        </size>
       </property>
       <property name="modelColumn">
