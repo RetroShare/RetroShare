@@ -222,10 +222,11 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
     /* Create the toolbar */
     ui.toolBar->addActions(grp->actions());
-    ui.toolBar->addSeparator();
+
     connect(grp, SIGNAL(triggered(QAction *)), ui.stackPages, SLOT(showPage(QAction *)));
 
-#ifdef UNFINISHED
+#ifdef UNFINISHED    
+    ui.toolBar->addSeparator();
     addAction(new QAction(QIcon(IMAGE_UNFINISHED), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));
 #endif
 
@@ -352,7 +353,7 @@ void MainWindow::updateStatus()
     for(it = msgList.begin(); it != msgList.end(); it++)
     {
 
-    if (it -> msgflags & RS_MSG_NEW)
+    if ((it -> msgflags & RS_MSG_BOXMASK) == RS_MSG_INBOX && ((it -> msgflags & RS_MSG_NEW) == RS_MSG_NEW))
     {
         trayIcon->setIcon(QIcon(":/images/newmsg.png"));
         trayIcon->setToolTip(tr("RetroShare") + "\n" + tr("You has a new message"));
