@@ -35,6 +35,7 @@
 #include "pqi/pqiindic.h"
 #include "pqi/pqinetwork.h"
 #include "util/rsthreads.h"
+#include "pqi/pqibin.h"
 
 /***** Configuration Management *****
  *
@@ -102,11 +103,30 @@ class pqiConfig
 	pqiConfig(uint32_t t);
 virtual ~pqiConfig();
 
+/**
+ * @param loadHash This is hash that will be compared to confirm that data has not been tampered with
+ */
 virtual bool	loadConfiguration(std::string &loadHash) = 0;
+
+/**
+ * @param This should
+ */
 virtual bool	saveConfiguration() = 0;
 
+/**
+ * The type of configuration, see ids where this class is declared
+ */
 uint32_t   Type();
+
+/**
+ *  The name of the configuration file
+ */
 std::string Filename();
+
+/**
+ * The hash computed for this configuration, can use this to compare to externally stored hash
+ * for validation checking
+ */
 std::string Hash();
 
 	protected:
@@ -118,8 +138,15 @@ void	setHash(std::string h);
 
 	private:
 
-void    setFilename(std::string name);
-bool    HasConfigChanged(uint16_t idx);
+	/**
+	 * This sets the name of the pqi configuation file
+	 */
+	void    setFilename(std::string name);
+
+	/**
+	 * @param an index for the Confind which contains list of configuarations that can be tracked
+	 */
+	bool    HasConfigChanged(uint16_t idx);
 
 	Indicator ConfInd;
 
@@ -144,17 +171,38 @@ class p3ConfigMgr
 	public:
         p3ConfigMgr(std::string bdir, std::string fname, std::string signame);
 
-void	tick();
-void	saveConfiguration();
-void	loadConfiguration();
-void	addConfiguration(std::string file, pqiConfig *conf);
+        /**
+         * Called from Rs server to check configuration and update configurations
+         */
+        void	tick();
 
-	/* saves config, and disables further saving
-	 * used for exiting the system
-	 */
-void	completeConfiguration();
+        /**
+         * save all added configuation including configuration files
+         */
+        void	saveConfiguration();
+
+        /**
+         * save all loaded configurations
+         */
+        void	loadConfiguration();
+
+        /**
+         * @param file The name for new configuration
+         * @param conf to the configuration to use
+         */
+        void	addConfiguration(std::string file, pqiConfig *conf);
+
+		/* saves config, and disables further saving
+		 * used for exiting the system
+		 */
+		void	completeConfiguration();
 
 	private:
+
+		/**
+		 * To be called from load configuration
+		 */
+		bool getSignAttempt(std::string& metaConfigFname, std::string& metaSignFname, BinMemInterface* membio);
 
 const std::string basedir;
 const std::string metafname;
@@ -188,6 +236,12 @@ virtual bool	loadList(std::list<RsItem *> load) = 0;
  */
 virtual void    saveDone() { return; }
 
+private:
+
+//helper function for retrieving correct hash using a temporary directory
+virtual bool getHashAttempt(const std::string& loadHash, std::string& hashstr, const std::string& fname, std::list<RsItem *>& load);
+
+
 }; /* end of p3Config */
 
 
@@ -211,6 +265,8 @@ virtual bool	loadList(std::list<RsItem *> load);
 
 	/* protected by pqiConfig mutex as well! */
 std::map<std::string, std::string> settings;
+
+
 };
 
 

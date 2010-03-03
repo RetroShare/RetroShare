@@ -23,6 +23,11 @@
  *
  */
 
+#include "fstream"
+
+using std::ofstream;
+using std::ifstream;
+
 #include "util/rsdir.h"
 #include "rsiface/rspeers.h"
 #include "pqi/p3cfgmgr.h"
@@ -34,9 +39,8 @@
 
 #include "serialiser/rsconfigitems.h"
 
-/****
- * #define CONFIG_DEBUG 1
- ***/
+#define CONFIG_DEBUG 1
+
 
 p3ConfigMgr::p3ConfigMgr(std::string dir, std::string fname, std::string signame)
         :basedir(dir), metafname(fname), metasigfname(signame),
@@ -137,6 +141,8 @@ void	p3ConfigMgr::saveConfiguration()
 	/* construct filename */
 	std::string filename1 = basedir;
 	std::string filename2 = basedir;
+	std::string filename1_tmp, filename2_tmp; // temporary file to do two pass save
+
 	if (basedir != "")
 	{
 		filename1 += "/";
@@ -144,6 +150,8 @@ void	p3ConfigMgr::saveConfiguration()
 	}
 	filename1 += metasigfname;
 	filename2 += metafname;
+	filename1_tmp = filename1 + ".tmp";
+	filename2_tmp = filename2 + ".tmp";
 
 	/* Write the data to a stream */
 	uint32_t bioflags = BIN_FLAGS_WRITEABLE;
@@ -165,10 +173,10 @@ void	p3ConfigMgr::saveConfiguration()
 	std::cerr << std::endl;
 #endif
 
-	if (!membio->writetofile(filename2.c_str()))
+	if (!membio->writetofile(filename2_tmp.c_str()))
 	{
 #ifdef CONFIG_DEBUG 
-		std::cerr << "p3ConfigMgr::saveConfiguration() Failed to Write MetaFile " << filename2 ;
+		std::cerr << "p3ConfigMgr::saveConfiguration() Failed to Write temp MetaFile " << filename2 ;
 		std::cerr << std::endl;
 #endif
 	}
@@ -178,13 +186,29 @@ void	p3ConfigMgr::saveConfiguration()
 	BinMemInterface *signbio = new BinMemInterface(signature.c_str(), 
 					signature.length(), BIN_FLAGS_READABLE);
 
-	if (!signbio->writetofile(filename1.c_str()))
+	if (!signbio->writetofile(filename1_tmp.c_str()))
 	{
 #ifdef CONFIG_DEBUG 
-		std::cerr << "p3ConfigMgr::saveConfiguration() Failed to Write MetaSignFile" << filename1 ;
+		std::cerr << "p3ConfigMgr::saveConfiguration() Failed to Write temp MetaSignFile" << filename1 ;
 		std::cerr << std::endl;
 #endif
 	}
+
+
+	/*
+	 * if above written successfully now write actual file  that will be read initially
+	 * The aim is that if any of the file savings here fail at least one of these pairings of
+	 * signature will be compatible to either config.tmp and config files
+	 */
+
+	if (!membio->writetofile(filename1.c_str()) || !signbio->writetofile(filename2.c_str()))
+	{
+#ifdef CONFIG_DEBUG
+		std::cerr << "p3ConfigMgr::saveConfiguration() Failed to Write MetaFile and MetaSignFile " << filename2 ;
+		std::cerr << std::endl;
+#endif
+	}
+
 
 	delete signbio;
 
@@ -203,100 +227,51 @@ void	p3ConfigMgr::loadConfiguration()
 	/* construct filename */
 	std::string filename1 = basedir;
 	std::string filename2 = basedir;
+	std::string filename1_tmp, filename2_tmp;
+
 	if (basedir != "")
 	{
 		filename1 += "/";
 		filename2 += "/";
 	}
+
 	filename1 += metasigfname;
 	filename2 += metafname;
 
-        #ifdef CONFIG_DEBUG 
-		std::cerr << "p3ConfigMgr::loadConfiguration() filename1 : " << filename1;
+	// temporary files
+	filename1_tmp = filename1 + ".tmp";
+	filename2_tmp = filename2 + ".tmp";
+
+	BinMemInterface* membio = new BinMemInterface(1000, BIN_FLAGS_READABLE);
+
+	/*
+	 * Will attempt to get signature first from meta file then if that fails try temporary meta files, these will correspond to temp configs
+	 */
+
+	bool pass = getSignAttempt(filename2, filename1, membio);
+
+	// if first attempt fails then try and temporary files
+	if(!pass){
+
+		#ifdef CONFIG_DEBUG
+		std::cerr << "\np3ConfigMgr::loadConfiguration(): Trying to load METACONFIG item and METASIGN with temporary files";
 		std::cerr << std::endl;
-		std::cerr << "p3ConfigMgr::loadConfiguration() filename2 : " << filename2;
-		std::cerr << std::endl;
-         #endif
+		#endif
 
-	/* write signature to configuration */
-	BinMemInterface *signbio = new BinMemInterface(1000, BIN_FLAGS_READABLE);
+		pass = getSignAttempt(filename2_tmp, filename1_tmp, membio);
 
-	if (!signbio->readfromfile(filename1.c_str()))
-	{
-#ifdef CONFIG_DEBUG 
-		std::cerr << "p3ConfigMgr::loadConfiguration() Failed to Load MetaSignFile";
-		std::cerr << std::endl;
-#endif
-
-		/* HACK to load the old one (with the wrong directory) 
-		 * THIS SHOULD BE REMOVED IN A COUPLE OF VERSIONS....
-		 * ONLY HERE TO CORRECT BAD MISTAKE IN EARLIER VERSIONS.
-		 */
-
-		filename1 = metasigfname;
-		filename2 = metafname;
-
-		if (!signbio->readfromfile(filename1.c_str()))
-		{
-#ifdef CONFIG_DEBUG 
-			std::cerr << "p3ConfigMgr::loadConfiguration() HACK: Failed to Load ALT MetaSignFile";
+		if(!pass){
+			#ifdef CONFIG_DEBUG
+			std::cerr << "\np3ConfigMgr::loadConfiguration(): failed to load METACONFIG item and METASIGN";
 			std::cerr << std::endl;
-#endif
+			#endif
+
+			return;
 		}
-		else
-		{
-#ifdef CONFIG_DEBUG 
-			std::cerr << "p3ConfigMgr::loadConfiguration() HACK: Loaded ALT MetaSignFile";
-			std::cerr << std::endl;
-#endif
-		}
-
 	}
 
-	std::string oldsignature((char *) signbio->memptr(), signbio->memsize());
-	delete signbio;
+	membio->fseek(0); /* go back to start of file */
 
-	BinMemInterface *membio = new BinMemInterface(1000, BIN_FLAGS_READABLE);
-
-	if (!membio->readfromfile(filename2.c_str()))
-	{
-#ifdef CONFIG_DEBUG 
-		std::cerr << "p3ConfigMgr::loadConfiguration() Failed to Load MetaFile";
-		std::cerr << std::endl;
-#endif
-//		delete membio;
-//		return ;
-	}
-
-	/* get signature */
-	std::string signature;
-        AuthSSL::getAuthSSL()->SignData(membio->memptr(), membio->memsize(), signature);
-
-#ifdef CONFIG_DEBUG 
-	std::cerr << "p3ConfigMgr::loadConfiguration() New MetaFile Signature:";
-	std::cerr << std::endl;
-	std::cerr << signature;
-	std::cerr << std::endl;
-#endif
-
-#ifdef CONFIG_DEBUG 
-	std::cerr << "p3ConfigMgr::loadConfiguration() Orig MetaFile Signature:";
-	std::cerr << std::endl;
-	std::cerr << oldsignature;
-	std::cerr << std::endl;
-#endif
-
-	if (signature != oldsignature)
-	{
-		/* Failed */
-#ifdef CONFIG_DEBUG 
-		std::cerr << "p3ConfigMgr::loadConfiguration() Signature Check Failed";
-		std::cerr << std::endl;
-#endif
-		return;
-	}
-
-	membio->fseek(0); /* go to start */
 	RsSerialiser *rss = new RsSerialiser();
 	rss->addSerialType(new RsGeneralConfigSerialiser());
 	pqistore stream(rss, "CONFIG", membio, BIN_FLAGS_READABLE);
@@ -361,6 +336,103 @@ void	p3ConfigMgr::loadConfiguration()
 
 }
 
+
+bool p3ConfigMgr::getSignAttempt(std::string& metaConfigFname, std::string& metaSignFname, BinMemInterface* membio){
+
+
+	#ifdef CONFIG_DEBUG
+	std::cerr << "p3ConfigMgr::getSignAttempt() metaConfigFname : " << metaConfigFname;
+	std::cerr << std::endl;
+	std::cerr << "p3ConfigMgr::getSignAttempt() metaSignFname : " << metaSignFname;
+	std::cerr << std::endl;
+	 #endif
+
+	/* read signature */
+	BinMemInterface *signbio = new BinMemInterface(1000, BIN_FLAGS_READABLE);
+
+	if (!signbio->readfromfile(metaSignFname.c_str()))
+	{
+		#ifdef CONFIG_DEBUG
+		std::cerr << "p3ConfigMgr::getSignAttempt() Failed to Load MetaSignFile";
+		std::cerr << std::endl;
+		#endif
+
+		/* HACK to load the old one (with the wrong directory)
+		 * THIS SHOULD BE REMOVED IN A COUPLE OF VERSIONS....
+		 * ONLY HERE TO CORRECT BAD MISTAKE IN EARLIER VERSIONS.
+		 */
+
+		metaSignFname = metasigfname;
+		metaConfigFname = metafname;
+
+		if (!signbio->readfromfile(metaSignFname.c_str()))
+		{
+		#ifdef CONFIG_DEBUG
+			std::cerr << "p3ConfigMgr::getSignAttempt() HACK: Failed to Load ALT MetaSignFile";
+			std::cerr << std::endl;
+		#endif
+		}
+		else
+		{
+		#ifdef CONFIG_DEBUG
+			std::cerr << "p3ConfigMgr::getSignAttempt() HACK: Loaded ALT MetaSignFile";
+			std::cerr << std::endl;
+		#endif
+		}
+	}
+
+	std::string oldsignature((char *) signbio->memptr(), signbio->memsize());
+	delete signbio;
+
+
+
+	if (!membio->readfromfile(metaConfigFname.c_str()))
+	{
+	#ifdef CONFIG_DEBUG
+	std::cerr << "p3ConfigMgr::getSignAttempt() Failed to Load MetaFile";
+	std::cerr << std::endl;
+	#endif
+	//		delete membio;
+	//		return ;
+	}
+
+	/* get signature */
+	std::string signature;
+	AuthSSL::getAuthSSL()->SignData(membio->memptr(), membio->memsize(), signature);
+
+	#ifdef CONFIG_DEBUG
+	std::cerr << "p3ConfigMgr::getSignAttempt() New MetaFile Signature:";
+	std::cerr << std::endl;
+	std::cerr << signature;
+	std::cerr << std::endl;
+	#endif
+
+	#ifdef CONFIG_DEBUG
+	std::cerr << "p3ConfigMgr::getSignAttempt() Orig MetaFile Signature:";
+	std::cerr << std::endl;
+	std::cerr << oldsignature;
+	std::cerr << std::endl;
+	#endif
+
+	if (signature != oldsignature)
+	{
+	/* Failed */
+	#ifdef CONFIG_DEBUG
+	std::cerr << "p3ConfigMgr::getSignAttempt() Signature Check Failed";
+	std::cerr << std::endl;
+	#endif
+	return false;
+	}
+
+#ifdef CONFIG_DEBUG
+std::cerr << "p3ConfigMgr::getSignAttempt() Signature Check Passed!";
+std::cerr << std::endl;
+#endif
+
+	return true;
+
+}
+
 void	p3ConfigMgr::addConfiguration(std::string file, pqiConfig *conf)
 {
 	RsStackMutex stack(cfgMtx); /***** LOCK STACK MUTEX ****/
@@ -392,12 +464,53 @@ p3Config::p3Config(uint32_t t)
 	return;
 }
 
+
 bool	p3Config::loadConfiguration(std::string &loadHash)
 {
-	std::list<RsItem *> load;
-	std::list<RsItem *>::iterator it;
 
 	std::string fname = Filename();
+	std::string fnametmp = fname + ".tmp";
+	std::string hashstr;
+	std::list<RsItem *> load;
+
+#ifdef CONFIG_DEBUG
+	std::string success_fname = fname;
+	std::cerr << "p3Config::loadConfiguration(): Attempting to load configuration file" << fname << std::endl;
+#endif
+
+	bool pass = getHashAttempt(loadHash, hashstr, fname, load);
+
+	if(!pass){
+		pass = getHashAttempt(loadHash, hashstr, fnametmp, load);
+#ifdef CONFIG_DEBUG
+		success_fname = fnametmp;
+#endif
+
+		if(!pass){
+#ifdef CONFIG_DEBUG
+			std::cerr << "p3Config::loadConfiguratio() ERROR: Failed to get Hash" << std::endl;
+			return false;
+#endif
+		}
+	}
+
+#ifdef CONFIG_DEBUG
+	std::cerr << "p3Config::loadConfiguration(): SUCCESS: configuration file loaded" << success_fname << std::endl;
+#endif
+
+	setHash(hashstr);
+
+	// else okay
+	return loadList(load);
+}
+
+
+
+
+bool p3Config::getHashAttempt(const std::string& loadHash, std::string& hashstr,const std::string& fname,
+		std::list<RsItem *>& load){
+
+	std::list<RsItem *>::iterator it;
 
 	uint32_t bioflags = BIN_FLAGS_HASH_DATA | BIN_FLAGS_READABLE;
 	uint32_t stream_flags = BIN_FLAGS_READABLE;
@@ -424,8 +537,9 @@ bool	p3Config::loadConfiguration(std::string &loadHash)
 #endif
 
 	/* check hash */
-	std::string hashstr = bio->gethash();
+	hashstr = bio->gethash();
 
+	// if hash then atmpt load with temporary file
 	if (hashstr != loadHash)
 	{
 
@@ -441,13 +555,11 @@ bool	p3Config::loadConfiguration(std::string &loadHash)
 		}
 
 		setHash("");
+
 		return false;
 	}
-
-	setHash(hashstr);
-
-	/* else okay */
-	return loadList(load);
+	//delete bio;
+	return true;
 }
 
 
@@ -457,8 +569,10 @@ bool	p3Config::saveConfiguration()
 	bool cleanup = true;
 	std::list<RsItem *> toSave = saveList(cleanup);
 
-	std::string fname = Filename();
-	std::string fnametmp = Filename()+".tmp";
+
+	std::string fname = Filename(); // get configuration file name
+	std::string fnametmp = Filename()+".tmp"; // temporary file for two pass save
+	std::string fnametmpold =  fnametmp + "_old";
 
 #ifdef CONFIG_DEBUG 
         std::cerr << "Writting p3config file " << fname.c_str() << std::endl ;
@@ -499,30 +613,59 @@ bool	p3Config::saveConfiguration()
 		     * protecting saveList() data
 		     */
 
+	//  so early?
 	delete stream ;
+
+	/**
+	 * ensures real old config is alway present in file system, leave of config as tmp file
+	 */
 
 	if(!written)
 		return false ;
 
         #ifdef CONFIG_DEBUG
-        std::cerr << "renaming " << fnametmp.c_str() << " to " << fname.c_str() << std::endl;
+        std::cerr << "p3config::saveConfiguration() renaming " << fnametmp.c_str() << " to " << fname.c_str() << std::endl;
         #endif
 
-	if(!RsDirUtil::renameFile(fnametmp,fname))
-	{
-	   std::ostringstream errlog;
-#ifdef WIN32
-	   errlog << "Error " << GetLastError() ;
-#else
-	   errlog << "Error " << errno ;
-#endif
-	   getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "File rename error", "Error while renaming file " + fname + ": got error "+errlog.str());
-		return false ;
+        // first write old config to old-temp file
+
+        ifstream ifstrm;
+		ofstream ofstrm;
+		ifstrm.open(fname.c_str(), std::ifstream::binary);
+
+		std::cerr << "p3config::saveConfiguration() Is file open: " <<  ifstrm.is_open();
+
+		// if file does not exist then open temporay file already created
+		if(!ifstrm.is_open()){
+			ifstrm.close();
+			ifstrm.open(fnametmp.c_str(), std::ifstream::binary);
+		}
+
+		// determine size of old config file
+		ifstrm.seekg(0, std::ios_base::end);
+		std::streampos length = ifstrm.tellg();
+		ifstrm.seekg(0);
+
+		//read this into a buffer
+		char* buff = new char[length];
+		ifstrm.read(buff, length);
+		ifstrm.close();
+
+		// write to config_old file
+		ofstrm.open(fnametmpold.c_str(), std::ofstream::binary);
+		ofstrm.write(buff, length);
+		ofstrm.close();
+
+		// now rename new temp config file to current(fname) and old config file to temp (fnametmp)
+	if(!RsDirUtil::renameFile(fnametmp, fname) || !RsDirUtil::renameFile(fnametmpold, fnametmp)){
+		std::cerr << "ERROR!" << std::endl;
+	#ifdef CONFIG_DEBUG
+		std::cerr << "p3Config::saveConfiguration():  Failed to Rename" << std::endl;
+	#endif
 	}
-        #ifdef CONFIG_DEBUG
-	std::cerr << "Successfully wrote p3config file " << fname.c_str() << std::endl ;
-        #endif
-	/* else okay */
+
+	delete buff;
+//	delete bio;
 	return true;
 }
 
