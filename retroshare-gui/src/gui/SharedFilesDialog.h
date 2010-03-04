@@ -64,6 +64,7 @@ private slots:
 
   void copyLinkRemote();
   void copyLinkLocal();
+  void copyLinkhtml();
   void sendLinkTo();
   void sendremoteLinkTo();
   void sendHtmlLinkTo();
@@ -116,6 +117,7 @@ private:
   QAction* sendlinkCloudAct;
   QAction* addlinkCloudAct;
   QAction* sendchatlinkAct;
+  QAction* copylinklocalhtmlAct;
 
   QTreeView *shareddirtreeview;
   QMovie *movie;

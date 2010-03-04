@@ -290,7 +290,6 @@ void SharedFilesDialog::copyLink (const QModelIndexList& lst, bool remote)
 
     QClipboard *clipboard = QApplication::clipboard();
     clipboard->setText(analyzer.getRetroShareLink ());
-    //QMessageBox::warning(this, tr("RetroShare"), analyzer.getKommuteLink (), QMessageBox::Ok);
 }
 
 void SharedFilesDialog::copyLinkRemote()
@@ -303,6 +302,17 @@ void SharedFilesDialog::copyLinkLocal()
 {
     QModelIndexList lst = ui.localDirTreeView->selectionModel ()->selectedIndexes ();
     copyLink (lst, false);
+}
+
+void SharedFilesDialog::copyLinkhtml( )
+{
+    copyLinkLocal ();
+
+    QString link = QApplication::clipboard()->text();
+
+    QClipboard *clipboard = QApplication::clipboard();
+    clipboard->setText("<a href='" +  link + "'> " + link + "</a>");
+
 }
 
 void SharedFilesDialog::sendremoteLinkTo()
@@ -324,7 +334,7 @@ void SharedFilesDialog::sendremoteLinkTo()
     nMsgDialog->show();
 }
 
-void SharedFilesDialog::sendLinkTo( /*std::string rsid*/ )
+void SharedFilesDialog::sendLinkTo()
 {
     copyLinkLocal ();
 
@@ -653,22 +663,25 @@ void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
 	}
 	//#endif
 
-	  copylinklocalAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Link" ), this );
+	  copylinklocalAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Links to Clipboard" ), this );
 	  connect( copylinklocalAct , SIGNAL( triggered() ), this, SLOT( copyLinkLocal() ) );
+	  
+	  copylinklocalhtmlAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Links to Clipboard (HTML)" ), this );
+	  connect( copylinklocalhtmlAct , SIGNAL( triggered() ), this, SLOT( copyLinkhtml() ) );
 
-	  sendlinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Link" ), this );
+	  sendlinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Links" ), this );
 	  connect( sendlinkAct , SIGNAL( triggered() ), this, SLOT( sendLinkTo( ) ) );
 	  
-	  sendhtmllinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Link (html)" ), this );
+	  sendhtmllinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Links (HTML)" ), this );
 	  connect( sendhtmllinkAct , SIGNAL( triggered() ), this, SLOT( sendHtmlLinkTo( ) ) );
 	  
-	  sendchatlinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Link to Chat" ), this );
+	  sendchatlinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Links to Chat" ), this );
 	  connect( sendchatlinkAct , SIGNAL( triggered() ), this, SLOT( sendLinktoChat( ) ) );
 
-	  sendlinkCloudAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Link to Cloud" ), this );
+	  sendlinkCloudAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Links to Cloud" ), this );
 	  connect( sendlinkCloudAct , SIGNAL( triggered() ), this, SLOT( sendLinkToCloud(  ) ) );
 
-	  addlinkCloudAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Add Link to Cloud" ), this );
+	  addlinkCloudAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Add Links to Cloud" ), this );
 	  connect( addlinkCloudAct , SIGNAL( triggered() ), this, SLOT( addLinkToCloud(  ) ) );
 
 	  openfileAct = new QAction(QIcon(IMAGE_OPENFILE), tr("Open File"), this);
@@ -691,6 +704,7 @@ void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
 	  if(!localModel->isDir( midx ) )
 	  {
 		  contextMnu2.addAction( copylinklocalAct);
+		  contextMnu2.addAction( copylinklocalhtmlAct);
 		  contextMnu2.addAction( sendlinkAct);
 		  contextMnu2.addAction( sendhtmllinkAct);
 		  contextMnu2.addAction( sendchatlinkAct);
