@@ -42,7 +42,7 @@
 #include "StatisticDialog.h"
 
 
-#define FONT        QFont(tr("Arial"), 8)
+#define FONT        QFont("Arial", 9)
 
 /* Images for toolbar icons */
 #define IMAGE_NETWORK           ":/images/network32.png"
