@@ -1168,6 +1168,16 @@ void SearchDialog::setIconAndType(QTreeWidgetItem *item, QString &ext)
 		item->setIcon(SR_NAME_COL, QIcon(":/images/FileTypeDocument.png"));
 		item->setText(SR_TYPE_COL, QString::fromUtf8("Document"));
 	}
+	else if (ext == "sub" || ext == "srt")
+	{
+		item->setIcon(SR_NAME_COL, QIcon(":/images/FileTypeAny.png"));
+		item->setText(SR_TYPE_COL, QString::fromUtf8("Subtitles"));
+	}
+	else if (ext == "nds")
+	{
+		item->setIcon(SR_NAME_COL, QIcon(":/images/FileTypeAny.png"));
+		item->setText(SR_TYPE_COL, QString::fromUtf8("Nintendo DS Rom"));
+	}
 	else
 	{
 		item->setIcon(SR_NAME_COL, QIcon(":/images/FileTypeAny.png"));
