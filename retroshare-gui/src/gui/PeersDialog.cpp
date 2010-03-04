@@ -955,7 +955,7 @@ void PeersDialog::insertChat()
                 }
 
                 //replace http://, https:// and www. with <a href> links
-                QRegExp rx("(https?://[^ <>]*)|(www\\.[^ <>]*)");
+                QRegExp rx("(retroshare://[^ <>]*)|(https?://[^ <>]*)|(www\\.[^ <>]*)");
                 int count = 0;
                 int pos = 200; //ignore the first 200 char because of the standard DTD ref
                 while ( (pos = rx.indexIn(extraTxt, pos)) != -1 ) {
