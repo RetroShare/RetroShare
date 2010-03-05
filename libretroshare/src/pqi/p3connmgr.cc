@@ -2635,41 +2635,40 @@ bool    p3ConnectMgr::setAddressList(std::string id, std::list<IpAddressTimed> I
         #ifdef CONN_DEBUG
                         std::cerr << "p3ConnectMgr::setAddressList() called for id : " << id << std::endl;
         #endif
+
+        RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
         /* check if it is our own ip */
         if (id == getOwnId()) {
             ownState.updateIpAddressList(IpAddressTimedList);
             //if we have no ext address from upnp or extAdrFinder, we will use this list for ext ip detection
-            sockaddr_in extAddr;
-            if (!getExtFinderExtAddress(extAddr) && !getUpnpExtAddress(extAddr)) { //TODO fix it
-                IpAddressTimed extractedAddress;
-                if (peerConnectState::extractExtAddress(IpAddressTimedList, extractedAddress)) {
-                    #ifdef CONN_DEBUG
-                                    std::cerr << "p3ConnectMgr::setAddressList() using ip address list to set external addres." << std::endl;
-                    #endif
-                    ownState.currentserveraddr.sin_addr = extractedAddress.ipAddr.sin_addr;
-                    IndicateConfigChanged();
-                } else {
-                    #ifdef CONN_DEBUG
-                                    std::cerr << "p3ConnectMgr::setAddressList() no valuable ext adress found." << std::endl;
-                    #endif
-                }
-            }
+            //useless, already done in network consistency check
+//            sockaddr_in extAddr;
+//            if (!getExtFinderExtAddress(extAddr) && !getUpnpExtAddress(extAddr)) { //TODO fix it
+//                IpAddressTimed extractedAddress;
+//                if (peerConnectState::extractExtAddress(IpAddressTimedList, extractedAddress)) {
+//                    #ifdef CONN_DEBUG
+//                                    std::cerr << "p3ConnectMgr::setAddressList() using ip address list to set external addres." << std::endl;
+//                    #endif
+//                    ownState.currentserveraddr.sin_addr = extractedAddress.ipAddr.sin_addr;
+//                    IndicateConfigChanged();
+//                } else {
+//                    #ifdef CONN_DEBUG
+//                                    std::cerr << "p3ConnectMgr::setAddressList() no valuable ext adress found." << std::endl;
+//                    #endif
+//                }
+//            }
             return true;
         }
-
-        RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
         /* check if it is a friend */
 	std::map<std::string, peerConnectState>::iterator it;
 	if (mFriendList.end() == (it = mFriendList.find(id)))
 	{
-		if (mOthersList.end() == (it = mOthersList.find(id)))
-		{
-			#ifdef CONN_DEBUG
-					std::cerr << "p3ConnectMgr::setLocalAddress() cannot add addres info : peer id not found in friend list  id: " << id << std::endl;
-			#endif
-			return false;
-		}
+            #ifdef CONN_DEBUG
+            std::cerr << "p3ConnectMgr::setLocalAddress() cannot add addres info : peer id not found in friend list. id: " << id << std::endl;
+            #endif
+            return false;
 	}
 
 	/* "it" points to peer */

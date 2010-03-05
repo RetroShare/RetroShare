@@ -391,7 +391,7 @@ int	pqissllistenbase::continueSSL(SSL *ssl, struct sockaddr_in remote_addr, bool
 		}
 
 		/* we have failed -> get certificate if possible */
-		Extract_Failed_SSL_Certificate(ssl, &remote_addr);
+                //Extract_Failed_SSL_Certificate(ssl, &remote_addr);
 
 		// other wise delete ssl connection.
 		// kill connection....
@@ -675,32 +675,16 @@ int pqissllistener::completeConnection(int fd, SSL *ssl, struct sockaddr_in &rem
   	        pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, out.str());
 	}
 	
-	if (found == false)
-	{
-		std::ostringstream out;
-		out << "No Matching Certificate/Already Connected";
-		out << " for Connection:" << inet_ntoa(remote_addr.sin_addr);
-		out << std::endl;
-		out << "pqissllistenbase: Will shut it down!" << std::endl;
-  	        pqioutput(PQL_WARNING, pqissllistenzone, out.str());
-		X509_free(peercert);
-
-		return -1;
+        if (found == false) {
+            std::ostringstream out;
+            out << "Don't accept connection because friend is not found or (probably) already connected";
+            out << " for Connection:" << inet_ntoa(remote_addr.sin_addr);
+            out << std::endl;
+            out << "pqissllistenbase: Will shut it down!" << std::endl;
+            pqioutput(PQL_WARNING, pqissllistenzone, out.str());
+            X509_free(peercert);
+            return -1;
 	}
-
-//	/* Certificate consumed! */
-//        bool certKnown = AuthSSL::getAuthSSL()->CheckCertificate(it->first, peercert);
-//
-//	if (certKnown == false)
-//	{
-//		std::ostringstream out;
-//		out << "Failed Final Check";
-//		out << " for Connection:" << inet_ntoa(remote_addr.sin_addr);
-//		out << std::endl;
-//		out << "pqissllistenbase: Will shut it down!" << std::endl;
-//  	        pqioutput(PQL_WARNING, pqissllistenzone, out.str());
-//		return -1;
-//	}
 
 	pqissl *pqis = it -> second;
 

@@ -39,7 +39,7 @@ using std::ifstream;
 
 #include "serialiser/rsconfigitems.h"
 
-#define CONFIG_DEBUG 1
+//#define CONFIG_DEBUG 1
 
 
 p3ConfigMgr::p3ConfigMgr(std::string dir, std::string fname, std::string signame)
@@ -633,7 +633,9 @@ bool	p3Config::saveConfiguration()
 		ofstream ofstrm;
 		ifstrm.open(fname.c_str(), std::ifstream::binary);
 
-		std::cerr << "p3config::saveConfiguration() Is file open: " <<  ifstrm.is_open();
+                #ifdef CONFIG_DEBUG
+                std::cerr << "p3config::saveConfiguration() Is file open: " <<  ifstrm.is_open() << std::endl;
+                #endif
 
 		// if file does not exist then open temporay file already created
 		if(!ifstrm.is_open()){

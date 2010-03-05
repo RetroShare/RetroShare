@@ -1137,6 +1137,7 @@ int 	pqissl::Authorise_SSL_Connection()
 		reset();
 		return -1;
 	}
+
         std::string certPeerId;
         getX509id(peercert, certPeerId);
         if (certPeerId != PeerId()) {
@@ -1153,39 +1154,6 @@ int 	pqissl::Authorise_SSL_Connection()
 
         accept(ssl_connection, sockfd, remote_addr);
         return 1;
-
-	// save certificate... (and ip locations)
-	// false for outgoing....
-	// we actually connected to remote_addr, 
-	// 	which could be 
-	//      (pqissl's case) sslcert->serveraddr or sslcert->localaddr.
-
-//	bool certCorrect = false;
-//        certCorrect = AuthSSL::getAuthSSL()->CheckCertificate(PeerId(), peercert);
-//
-//	// check it's the right one.
-//	if (certCorrect)
-//	{
-//		// then okay...
-//		std::ostringstream out;
-//	  	out << "pqissl::Authorise_SSL_Connection() Accepting Conn. Peer: " << PeerId();
-//  		rslog(RSL_WARNING, pqisslzone, out.str());
-//
-//		accept(ssl_connection, sockfd, remote_addr);
-//		return 1;
-//        }
-//
-//	{
-//		std::ostringstream out;
-//	  	out << "pqissl::Authorise_SSL_Connection() Something Wrong ... ";
-//		out << " Shutdown. Peer: " << PeerId();
-//  		rslog(RSL_WARNING, pqisslzone, out.str());
-//	}
-
-	// else shutdown ssl connection.
-
-	reset();
-	return 0;
 }
 
 int	pqissl::accept(SSL *ssl, int fd, struct sockaddr_in foreign_addr) // initiate incoming connection.

@@ -2010,7 +2010,7 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
             if (!AuthGPG::getAuthGPG()->isGPGAccepted(pgpid) && pgpid != AuthGPG::getAuthGPG()->getGPGOwnId())
             {
                     #ifdef AUTHSSL_DEBUG
-                    fprintf(stderr, "AuthSSL::VerifyX509Callback() pgp key not signed by ourself : \n");
+                    fprintf(stderr, "AuthSSL::VerifyX509Callback() pgp key not accepted : \n");
                     fprintf(stderr, "issuer pgpid : ");
                     fprintf(stderr, "%s\n",pgpid.c_str());
                     fprintf(stderr, "\n AuthGPG::getAuthGPG()->getGPGOwnId() : ");
@@ -2024,7 +2024,7 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
 
         } else {
                 #ifdef AUTHSSL_DEBUG
-                fprintf(stderr, "Failing Normal Certificate!!!\n");
+                fprintf(stderr, "A normal certificate is probably a security breach attempt. We sould fail it !!!\n");
                 #endif
                 preverify_ok = false;
         }
