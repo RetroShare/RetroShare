@@ -94,6 +94,11 @@ private:
 
 	QFont mChannelFont;
 	QFont itemFont;
+	
+	QAction* postchannelAct;
+	QAction* subscribechannelAct;
+	QAction* unsubscribechannelAct;
+	QAction* channeldetailsAct;
 
 };
 

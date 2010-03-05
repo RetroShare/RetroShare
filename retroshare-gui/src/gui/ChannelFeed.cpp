@@ -62,9 +62,10 @@ ChannelFeed::ChannelFeed(QWidget *parent)
 	/*************** Setup Left Hand Side (List of Channels) ****************/
 
   	mChannelId = "";
-	model = new QStandardItemModel(0, 2, this);
+	model = new QStandardItemModel(0, 3, this);
 	model->setHeaderData(0, Qt::Horizontal, tr("Name"), Qt::DisplayRole);
-	model->setHeaderData(1, Qt::Horizontal, tr("ID"), Qt::DisplayRole);
+	model->setHeaderData(1, Qt::Horizontal, tr("Popularity"), Qt::DisplayRole);
+	model->setHeaderData(2, Qt::Horizontal, tr("ID"), Qt::DisplayRole);
 
 	treeView->setModel(model);
 	treeView->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -74,7 +75,14 @@ ChannelFeed::ChannelFeed(QWidget *parent)
 
 	// hide header and id column
 	treeView->setHeaderHidden(true);
-	treeView->hideColumn(1);
+	treeView->hideColumn(2);
+	
+	/* Set header resize modes and initial section sizes TreeView*/
+  QHeaderView * _header = treeView->header () ;
+  _header->setResizeMode ( 1, QHeaderView::Custom);
+  _header->resizeSection ( 0, 190 );
+  _header->resizeSection ( 1, 22 );
+  _header->resizeSection ( 2, 22 );
 	
 	QStandardItem *item1 = new QStandardItem(tr("Own Channels"));
 	QStandardItem *item2 = new QStandardItem(tr("Subscribed Channels"));
@@ -129,16 +137,16 @@ void ChannelFeed::channelListCustomPopupMenu( QPoint point )
       QMenu contextMnu( this );
       QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
       
-      QAction *postchannelAct = new QAction(QIcon(":/images/mail_reply.png"), tr( "Post to Channel" ), this );
+      postchannelAct = new QAction(QIcon(":/images/mail_reply.png"), tr( "Post to Channel" ), this );
       connect( postchannelAct , SIGNAL( triggered() ), this, SLOT( createMsg() ) );
       
-      QAction *subscribechannelAct = new QAction(QIcon(":/images/edit_add24.png"), tr( "Subscribe to Channel" ), this );
+      subscribechannelAct = new QAction(QIcon(":/images/edit_add24.png"), tr( "Subscribe to Channel" ), this );
       connect( subscribechannelAct , SIGNAL( triggered() ), this, SLOT( subscribeChannel() ) );
 
-      QAction *unsubscribechannelAct = new QAction(QIcon(":/images/cancel.png"), tr( "Unsubscribe to Channel" ), this );
+      unsubscribechannelAct = new QAction(QIcon(":/images/cancel.png"), tr( "Unsubscribe to Channel" ), this );
       connect( unsubscribechannelAct , SIGNAL( triggered() ), this, SLOT( unsubscribeChannel() ) );
       
-      QAction *channeldetailsAct = new QAction(QIcon(":/images/info16.png"), tr( "Show Channel Details" ), this );
+      channeldetailsAct = new QAction(QIcon(":/images/info16.png"), tr( "Show Channel Details" ), this );
       connect( channeldetailsAct , SIGNAL( triggered() ), this, SLOT( showChannelDetails() ) );
 
       contextMnu.clear();
@@ -250,8 +258,8 @@ void ChannelFeed::selectChannel(const QModelIndex &index)
 {
 	int row = index.row();
 	int col = index.column();
-	if (col != 1) {
-		QModelIndex sibling = index.sibling(row, 1);
+	if (col != 2) {
+		QModelIndex sibling = index.sibling(row, 2);
 		if (sibling.isValid())
 			mChannelId = sibling.data().toString().toStdString();
 	} else
@@ -383,21 +391,52 @@ void ChannelFeed::updateChannelListOwn(std::list<std::string> &ids)
 		QList<QStandardItem *> channel;
 		QStandardItem *item1 = new QStandardItem();
 		QStandardItem *item2 = new QStandardItem();
+		QStandardItem *item3 = new QStandardItem();
 
 		ChannelInfo ci;
 		if (rsChannels && rsChannels->getChannelInfo(*iit, ci)) {
 			item1->setData(QVariant(QString::fromStdWString(ci.channelName)), Qt::DisplayRole);
-			item2->setData(QVariant(QString::fromStdString(ci.channelId)), Qt::DisplayRole);
+			//item2->setData(QVariant(QString::number(ci.pop)), Qt::DisplayRole);
+			item3->setData(QVariant(QString::fromStdString(ci.channelId)), Qt::DisplayRole);
 			item1->setToolTip(tr("Popularity: %1\nFetches: %2\nAvailable: %3"
 					).arg(QString::number(ci.pop)).arg(9999).arg(9999));
+					
+        int popcount = ci.pop;		
+        /* set Popularity icon  */
+        if (popcount == 0) 
+        {
+            item2->setData(QIcon(QString::fromUtf8(":/images/hot_0.png")), Qt::DecorationRole);
+        } 
+        else if (popcount < 2) 
+        {
+            item2->setData(QIcon(QString::fromUtf8(":/images/hot_1.png")), Qt::DecorationRole);
+        } 
+        else if (popcount < 4) 
+        {
+            item2->setData(QIcon(QString::fromUtf8(":/images/hot_2.png")), Qt::DecorationRole);
+        } 
+        else if (popcount < 8) 
+        {
+            item2->setData(QIcon(QString::fromUtf8(":/images/hot_3.png")), Qt::DecorationRole);
+        } 
+        else if (popcount < 16) {
+            item2->setData(QIcon(QString::fromUtf8(":/images/hot_4.png")), Qt::DecorationRole);
+        } 
+        else
+        {
+            item2->setData(QIcon(QString::fromUtf8(":/images/hot_5.png")), Qt::DecorationRole);
+        } 		
+					
+					
 		} else {
 			item1->setData(QVariant(QString("Unknown Channel")), Qt::DisplayRole);
 			item2->setData(QVariant(QString::fromStdString(*iit)), Qt::DisplayRole);
 			item1->setToolTip("Unknown Channel\nNo Description");
 		}
-
+    
 		channel.append(item1);
 		channel.append(item2);
+		channel.append(item3);
 		ownGroup->appendRow(channel);
 	}
 }
