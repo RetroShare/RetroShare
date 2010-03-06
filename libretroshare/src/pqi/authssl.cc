@@ -2031,13 +2031,13 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
 
         if (preverify_ok) {
 
-
             //sslcert *cert = NULL;
             std::string certId;
             getX509id(X509_STORE_CTX_get_current_cert(ctx), certId);
             if (!mConnMgr->isFriend(certId)) {
                 //we've got a new ssl id
                 preverify_ok = false;
+                mConnMgr->addFriend(certId, getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer));
             }
 
             //is the connection was initiated by us, then it was for a specific peer id wich is stored is in the context
@@ -2046,7 +2046,7 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
             if (SSL_get_ex_data(ssl, AuthSSL::ex_data_ctx_index)) {
                 char *peer_id_in_context = (char*) SSL_get_ex_data(ssl, AuthSSL::ex_data_ctx_index);
                 if (std::string(certId.c_str()) != std::string(peer_id_in_context)) {
-                    //the connection was asked for a given peer and get connected top another peer
+                    //the connection was asked for a given peer and get connected to another peer
                     #ifdef AUTHSSL_DEBUG
                     fprintf(stderr, "AuthSSL::VerifyX509Callback peer id in context not the same as cert, aborting connection.\n");
                     #endif
@@ -2055,8 +2055,10 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
                     //tranfer the ip address to the new peer
                     peerConnectState detail;
                     if (mConnMgr->getFriendNetStatus(peer_id_in_context, detail)) {
-                        mConnMgr->addFriend(certId, getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer));
-                        mConnMgr->setAddressList(certId, detail.getIpAddressList());
+                        //transfer ips only if the two peers got the same gpg key
+                        if (detail.gpg_id == getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer)) {
+                            mConnMgr->setAddressList(certId, detail.getIpAddressList());
+                        }
                     }
                 } else {
                     #ifdef AUTHSSL_DEBUG
@@ -2064,9 +2066,6 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
                     #endif
                 }
             }
-
-            //just to be sure
-            mConnMgr->addFriend(certId, getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer));
 
             //set location
             mConnMgr->setLocation(certId, getX509LocString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->subject));
