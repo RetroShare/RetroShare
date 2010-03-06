@@ -119,13 +119,13 @@ class RsFiles
 		/***
 		 * Control of Downloads Priority.
 		 ***/
-		virtual bool changeQueuePriority(const std::string hash, int priority) = 0;
+		virtual uint32_t getQueueSize() = 0 ;
+		virtual void setQueueSize(uint32_t s) = 0 ;
+		virtual bool changeQueuePosition(const std::string hash, QueueMove mv) = 0;
 		virtual bool changeDownloadSpeed(const std::string hash, int speed) = 0;
-		virtual bool getQueuePriority(const std::string hash, int & priority) = 0;
 		virtual bool getDownloadSpeed(const std::string hash, int & speed) = 0;
 		virtual bool clearDownload(const std::string hash) = 0;
-		virtual void clearQueue() = 0;
-		virtual void getDwlDetails(std::list<DwlDetails> & details) = 0;
+//		virtual void getDwlDetails(std::list<DwlDetails> & details) = 0;
 
 		/***
 		 * Download / Upload Details.

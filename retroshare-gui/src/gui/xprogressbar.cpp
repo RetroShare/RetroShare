@@ -236,6 +236,11 @@ void xProgressBar::paint()
 		painter->setPen(textColor);
 		painter->drawText(rect, Qt::AlignCenter, locale.toString(_pinfo.progress, 'f', 2) + "%");
 	}
+
+	backgroundColor.setRgb(255, 255, 255);
+	painter->setBrush(backgroundColor);
+	backgroundBorderColor.setRgb(0, 0, 0);
+	painter->setPen(backgroundBorderColor);
 }
 
 void xProgressBar::setColorSchema(const int value)

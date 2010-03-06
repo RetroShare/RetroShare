@@ -40,7 +40,7 @@ class ftFileCreator: public ftFileProvider
 {
 	public:
 
-		ftFileCreator(std::string savepath, uint64_t size, std::string hash, uint64_t recvd);
+		ftFileCreator(std::string savepath, uint64_t size, std::string hash);
 
 		~ftFileCreator();
 
@@ -48,6 +48,9 @@ class ftFileCreator: public ftFileProvider
 		virtual bool 	getFileData(uint64_t offset, uint32_t &chunk_size, void *data);
 		bool	finished() ;
 		uint64_t getRecvd();
+
+		/// (temporarily) close the file, to save file descriptors.
+		void closeFile() ;
 
 		void getChunkMap(FileChunksInfo& info) ;
 
@@ -69,6 +72,9 @@ class ftFileCreator: public ftFileProvider
 		// and let inactive chunks not finished.
 		//
 		void removeInactiveChunks() ;
+
+		// Returns the time stamp of the last data receive.
+		time_t lastRecvTimeStamp() ;
 
 		// actually store data in the file, and update chunks info
 		//
@@ -105,6 +111,8 @@ class ftFileCreator: public ftFileProvider
 		std::map<uint64_t, ftChunk> mChunks;
 
 		ChunkMap chunkMap ;
+
+		time_t _last_recv_time_t ;	/// last time stamp when data was received.
 };
 
 #endif // FT_FILE_CREATOR_HEADER

@@ -172,14 +172,6 @@ virtual	RsItem *    deserialise(void *data, uint32_t *size);
 
 /**************************************************************************/
 
-#ifndef FT_STATE_FAILED
-    #define FT_STATE_FAILED         0
-    #define FT_STATE_OKAY           1
-    #define FT_STATE_WAITING        2
-    #define FT_STATE_DOWNLOADING    3
-    #define FT_STATE_COMPLETE       4
-#endif
-
 class RsFileTransfer: public RsItem
 {
 	public:

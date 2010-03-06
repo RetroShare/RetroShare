@@ -15,7 +15,7 @@
 *
 ***********************************************************/
 
-ftFileCreator::ftFileCreator(std::string path, uint64_t size, std::string hash, uint64_t recvd)
+ftFileCreator::ftFileCreator(std::string path, uint64_t size, std::string hash)
 	: ftFileProvider(path,size,hash), chunkMap(size)
 {
 	/* 
@@ -32,8 +32,8 @@ ftFileCreator::ftFileCreator(std::string path, uint64_t size, std::string hash, 
 	std::cerr << "\thash: " << hash;
 	std::cerr << std::endl;
 #endif
-
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
+	_last_recv_time_t = time(NULL) ;
 }
 
 bool ftFileCreator::getFileData(uint64_t offset, uint32_t &chunk_size, void *data)
@@ -53,6 +53,22 @@ bool ftFileCreator::getFileData(uint64_t offset, uint32_t &chunk_size, void *dat
 		return false ;
 }
 
+time_t ftFileCreator::lastRecvTimeStamp() 
+{
+	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
+	return _last_recv_time_t ;
+}
+
+void ftFileCreator::closeFile()
+{
+	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
+
+	if(fd != NULL)
+		fclose(fd) ;
+
+	fd = NULL ;
+}
+
 uint64_t ftFileCreator::getRecvd()
 {
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
@@ -69,10 +85,9 @@ bool ftFileCreator::addFileData(uint64_t offset, uint32_t chunk_size, void *data
 	std::cerr << " this: " << this;
 	std::cerr << std::endl;
 #endif
-	/* dodgey checking outside of mutex...
-	 * much check again inside FileAttrs().
-	 */
+	/* dodgey checking outside of mutex...  much check again inside FileAttrs(). */
 	/* Check File is open */
+
 	if (fd == NULL)
 		if (!initializeFileAttrs())
 			return false;
@@ -98,15 +113,6 @@ bool ftFileCreator::addFileData(uint64_t offset, uint32_t chunk_size, void *data
 		return 0;
 	}
 	
-	uint64_t pos;
-	pos = ftello64(fd);
-	/* 
-	 * add the data 
- 	 */
-	//void *data2 = malloc(chunk_size);
-        //std::cerr << "data2: " << data2 << std::endl;
-	//if (1 != fwrite(data2, chunk_size, 1, this->fd))
-
 	if (1 != fwrite(data, chunk_size, 1, this->fd))
 	{
         	std::cerr << "ftFileCreator::addFileData() Bad fwrite" << std::endl;
@@ -115,8 +121,6 @@ bool ftFileCreator::addFileData(uint64_t offset, uint32_t chunk_size, void *data
 		return 0;
 	}
 
-	pos = ftello64(fd);
-	
 #ifdef FILE_DEBUG
 	std::cerr << "ftFileCreator::addFileData() added Data...";
 	std::cerr << std::endl;
@@ -204,6 +208,7 @@ int ftFileCreator::initializeFileAttrs()
          */
 	
 	fd = fopen64(file_name.c_str(), "r+b");
+
 	if (!fd)
 	{
 		std::cerr << "ftFileCreator::initializeFileAttrs() Failed to open (r+b): ";
@@ -230,22 +235,16 @@ int ftFileCreator::initializeFileAttrs()
 	 * move to the end 
          */
 	
-	if (0 != fseeko64(fd, 0L, SEEK_END))
-	{
-        	std::cerr << "ftFileCreator::initializeFileAttrs() Seek Failed" << std::endl;
-		return 0;
-	}
+//	if (0 != fseeko64(fd, 0L, SEEK_END))
+//	{
+//        	std::cerr << "ftFileCreator::initializeFileAttrs() Seek Failed" << std::endl;
+//		return 0;
+//	}
 
-	//uint64_t recvdsize = ftello64(fd);
+#ifdef FILE_DEBUG
+	std::cerr << "ftFileCreator::initializeFileAttrs() File Expected Size: " << mSize << " RecvdSize: " << recvdsize << std::endl;
+#endif
 
-        #ifdef FILE_DEBUG
-        std::cerr << "ftFileCreator::initializeFileAttrs() File Expected Size: " << mSize << " RecvdSize: " << recvdsize << std::endl;
-        #endif
-
-	/* start from there! */
-//	mStart = recvdsize;
-//	mEnd = recvdsize;
-	
 	return 1;
 }
 ftFileCreator::~ftFileCreator()
@@ -293,6 +292,8 @@ int ftFileCreator::locked_notifyReceived(uint64_t offset, uint32_t chunk_size)
 	}
 	else	// notify the chunkmap that the slice is finished
 		chunkMap.dataReceived(chunk.id) ;
+
+	_last_recv_time_t = time(NULL) ;
 
 	/* otherwise there is another earlier block to go
 	 */

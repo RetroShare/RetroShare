@@ -42,6 +42,7 @@ class TransferPage: public ConfigPage
 
 	public slots:
 		void updateStatus();
+		void updateQueueSize(int) ;
 
 	private:
 

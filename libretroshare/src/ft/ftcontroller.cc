@@ -56,13 +56,15 @@
 /******
  * #define CONTROL_DEBUG 1
  *****/
+#define DEBUG_DWLQUEUE 1
 
-static const uint32_t SAVE_TRANSFERS_DELAY = 61	; // save transfer progress every 61 seconds.
-static const uint32_t INACTIVE_CHUNKS_CHECK_DELAY = 60	; // save transfer progress every 61 seconds.
+static const uint32_t SAVE_TRANSFERS_DELAY 			= 61	; // save transfer progress every 61 seconds.
+static const uint32_t INACTIVE_CHUNKS_CHECK_DELAY 	= 60	; // time after which an inactive chunk is released
+static const uint32_t MAX_TIME_INACTIVE_REQUEUED 	= 60  ; // time after which an inactive ftFileControl is bt-queued
 
 ftFileControl::ftFileControl()
 	:mTransfer(NULL), mCreator(NULL),
-	 mState(0), mSize(0), mFlags(0),
+	 mState(DOWNLOADING), mSize(0), mFlags(0),
 	 mPriority(SPEED_NORMAL)
 {
 	return;
@@ -73,7 +75,7 @@ ftFileControl::ftFileControl(std::string fname,
 		uint64_t size, std::string hash, uint32_t flags,
 		ftFileCreator *fc, ftTransferModule *tm, uint32_t cb)
 	:mName(fname), mCurrentPath(tmppath), mDestination(dest),
-	 mTransfer(tm), mCreator(fc), mState(0), mHash(hash),
+	 mTransfer(tm), mCreator(fc), mState(DOWNLOADING), mHash(hash),
 	 mSize(size), mFlags(flags), mDoCallback(false), mCallbackCode(cb),
 	 mPriority(SPEED_NORMAL)	// default priority to normal
 {
@@ -91,6 +93,7 @@ ftController::ftController(CacheStrapper *cs, ftDataMultiplex *dm, std::string c
 	mFtActive(false),
 	mShareDownloadDir(true)
 {
+	_max_active_downloads = 5 ; // default queue size
 	/* TODO */
 }
 
@@ -108,12 +111,12 @@ bool ftController::getFileDownloadChunksDetails(const std::string& hash,FileChun
 {
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-	std::map<std::string, ftFileControl>::iterator it = mDownloads.find(hash) ;
+	std::map<std::string, ftFileControl*>::iterator it = mDownloads.find(hash) ;
 
 	if(it != mDownloads.end())
 	{
-		it->second.mCreator->getChunkMap(info) ;
-		info.flags = it->second.mFlags ;
+		it->second->mCreator->getChunkMap(info) ;
+		info.flags = it->second->mFlags ;
 
 		return true ;
 	}
@@ -124,11 +127,11 @@ bool ftController::getFileDownloadChunksDetails(const std::string& hash,FileChun
 	{
 		// This should rather be done as a static method of ChunkMap.
 		//
-		info.file_size = it->second.mSize ;
+		info.file_size = it->second->mSize ;
 		info.chunk_size = ChunkMap::CHUNKMAP_FIXED_CHUNK_SIZE ;
-		info.flags = it->second.mFlags ;
-		uint32_t nb_chunks = it->second.mSize/ChunkMap::CHUNKMAP_FIXED_CHUNK_SIZE ;
-		if(it->second.mSize % ChunkMap::CHUNKMAP_FIXED_CHUNK_SIZE != 0)
+		info.flags = it->second->mFlags ;
+		uint32_t nb_chunks = it->second->mSize/ChunkMap::CHUNKMAP_FIXED_CHUNK_SIZE ;
+		if(it->second->mSize % ChunkMap::CHUNKMAP_FIXED_CHUNK_SIZE != 0)
 			++nb_chunks ;
 		info.chunks.resize(nb_chunks,FileChunksInfo::CHUNK_DONE) ;
 
@@ -142,8 +145,8 @@ void ftController::addFileSource(const std::string& hash,const std::string& peer
 {
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-	std::map<std::string, ftFileControl>::iterator it;
-	std::map<std::string, ftFileControl> currentDownloads = *(&mDownloads);
+	std::map<std::string, ftFileControl*>::iterator it;
+	std::map<std::string, ftFileControl*> currentDownloads = *(&mDownloads);
 
 #ifdef CONTROL_DEBUG
 	std::cerr << "ftController: Adding source " << peer_id << " to current download hash=" << hash ;
@@ -151,7 +154,7 @@ void ftController::addFileSource(const std::string& hash,const std::string& peer
 	for(it = currentDownloads.begin(); it != currentDownloads.end(); it++)
 		if(it->first == hash)
 		{
-			it->second.mTransfer->addFileSource(peer_id);
+			it->second->mTransfer->addFileSource(peer_id);
 
 //			setPeerState(it->second.mTransfer, peer_id, rate, mConnMgr->isOnline(peer_id));
 
@@ -168,8 +171,8 @@ void ftController::removeFileSource(const std::string& hash,const std::string& p
 {
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-	std::map<std::string, ftFileControl>::iterator it;
-	std::map<std::string, ftFileControl> currentDownloads = *(&mDownloads);
+	std::map<std::string, ftFileControl*>::iterator it;
+	std::map<std::string, ftFileControl*> currentDownloads = *(&mDownloads);
 
 #ifdef CONTROL_DEBUG
 	std::cerr << "ftController: Adding source " << peer_id << " to current download hash=" << hash ;
@@ -177,7 +180,7 @@ void ftController::removeFileSource(const std::string& hash,const std::string& p
 	for(it = currentDownloads.begin(); it != currentDownloads.end(); it++)
 		if(it->first == hash)
 		{
-			it->second.mTransfer->removeFileSource(peer_id);
+			it->second->mTransfer->removeFileSource(peer_id);
 
 //			setPeerState(it->second.mTransfer, peer_id, rate, mConnMgr->isOnline(peer_id));
 
@@ -194,6 +197,8 @@ void ftController::run()
 {
 
 	/* check the queues */
+	uint32_t cnt = 0 ;
+
 	while(1)
 	{
 #ifdef WIN32
@@ -225,8 +230,8 @@ void ftController::run()
 		{
 			RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-		  for(std::map<std::string,ftFileControl>::iterator it(mDownloads.begin());it!=mDownloads.end();++it)
-			  it->second.mCreator->removeInactiveChunks() ;
+		  for(std::map<std::string,ftFileControl*>::iterator it(mDownloads.begin());it!=mDownloads.end();++it)
+			  it->second->mCreator->removeInactiveChunks() ;
 
 			last_clean_time = now ;
 		}
@@ -250,6 +255,9 @@ void ftController::run()
 			
 			mDone.clear();
 		}
+
+		if(cnt++ % 10 == 0)
+			checkDownloadQueue() ;
 	}
 
 }
@@ -258,34 +266,30 @@ void ftController::tickTransfers()
 {
 	// 1 - sort modules into arrays according to priority
 	
-//	if(mPrioritiesChanged)
-	
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-        #ifdef CONTROL_DEBUG
+#ifdef CONTROL_DEBUG
 	std::cerr << "ticking transfers." << std::endl ;
-        #endif
-	mPriorityTab = std::vector<std::vector<ftTransferModule*> >(3,std::vector<ftTransferModule*>()) ;
+#endif
+	std::vector<std::vector<ftTransferModule*> >priority_tab (3,std::vector<ftTransferModule*>()) ;
 
-	for(std::map<std::string,ftFileControl>::iterator it(mDownloads.begin()); it != mDownloads.end(); it++)
-		mPriorityTab[it->second.mPriority].push_back(it->second.mTransfer) ;
+	// Collect all non queued files.
+	//
+	for(std::map<std::string,ftFileControl*>::iterator it(mDownloads.begin()); it != mDownloads.end(); it++)
+		if(it->second->mState != ftFileControl::QUEUED)
+			priority_tab[it->second->mPriority].push_back(it->second->mTransfer) ;
 
 	// 2 - tick arrays with a probability proportional to priority
 	
 	// 2.1 - decide based on probability, which category of files we handle.
 	
-//	static const float   HIGH_PRIORITY_PROB = 0.60 ;
-//	static const float NORMAL_PRIORITY_PROB = 0.25 ;
-//	static const float    LOW_PRIORITY_PROB = 0.15 ;
-//	static const float   SUSP_PRIORITY_PROB = 0.00 ;
-
-        #ifdef CONTROL_DEBUG
+#ifdef CONTROL_DEBUG
 	std::cerr << "Priority tabs: " ;
-	std::cerr << "Low ("    << mPriorityTab[SPEED_LOW   ].size() << ") " ;
-	std::cerr << "Normal (" << mPriorityTab[SPEED_NORMAL].size() << ") " ;
-	std::cerr << "High ("   << mPriorityTab[SPEED_HIGH  ].size() << ") " ;
+	std::cerr << "Low ("    << priority_tab[SPEED_LOW   ].size() << ") " ;
+	std::cerr << "Normal (" << priority_tab[SPEED_NORMAL].size() << ") " ;
+	std::cerr << "High ("   << priority_tab[SPEED_HIGH  ].size() << ") " ;
 	std::cerr << std::endl ;
-        #endif
+#endif
 
 	/* tick the transferModules */
 
@@ -293,12 +297,12 @@ void ftController::tickTransfers()
 	//
 
 	for(int chosen=2;chosen>=0;--chosen)
-		if(!mPriorityTab[chosen].empty())
+		if(!priority_tab[chosen].empty())
 		{
-			int start = rand() % mPriorityTab[chosen].size() ;
+			int start = rand() % priority_tab[chosen].size() ;
 
-			for(int i=0;i<(int)mPriorityTab[chosen].size();++i)
-				mPriorityTab[chosen][(i+start)%(int)mPriorityTab[chosen].size()]->tick() ;
+			for(int i=0;i<(int)priority_tab[chosen].size();++i)
+				priority_tab[chosen][(i+start)%(int)priority_tab[chosen].size()]->tick() ;
 		}
 }
 
@@ -306,11 +310,11 @@ bool ftController::getPriority(const std::string& hash,DwlSpeed& p)
 {
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-	std::map<std::string,ftFileControl>::iterator it(mDownloads.find(hash)) ;
+	std::map<std::string,ftFileControl*>::iterator it(mDownloads.find(hash)) ;
 
 	if(it != mDownloads.end())
 	{
-		p = it->second.mPriority ;
+		p = it->second->mPriority ;
 		return true ;
 	}
 	else
@@ -320,10 +324,10 @@ void ftController::setPriority(const std::string& hash,DwlSpeed p)
 {
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-	std::map<std::string,ftFileControl>::iterator it(mDownloads.find(hash)) ;
+	std::map<std::string,ftFileControl*>::iterator it(mDownloads.find(hash)) ;
 
 	if(it != mDownloads.end())
-		it->second.mPriority = p ;
+		it->second->mPriority = p ;
 }
 
 void ftController::cleanCacheDownloads()
@@ -333,20 +337,20 @@ void ftController::cleanCacheDownloads()
 	{
 		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-		for(std::map<std::string,ftFileControl>::iterator it(mDownloads.begin());it!=mDownloads.end();++it)
-			if ((it->second).mFlags & RS_FILE_HINTS_CACHE) //check if a cache file is downloaded, if the case, timeout the transfer after TIMOUT_CACHE_FILE_TRANSFER
+		for(std::map<std::string,ftFileControl*>::iterator it(mDownloads.begin());it!=mDownloads.end();++it)
+			if ((it->second)->mFlags & RS_FILE_HINTS_CACHE) //check if a cache file is downloaded, if the case, timeout the transfer after TIMOUT_CACHE_FILE_TRANSFER
 			{
 #ifdef CONTROL_DEBUG
-				std::cerr << "ftController::run() cache transfer found. age of this tranfer is :" << (int)(time(NULL) - (it->second).mCreateTime);
+				std::cerr << "ftController::run() cache transfer found. age of this tranfer is :" << (int)(time(NULL) - (it->second)->mCreateTime);
 				std::cerr << std::endl;
 #endif
-				if ((time(NULL) - (it->second).mCreateTime) > TIMOUT_CACHE_FILE_TRANSFER) 
+				if ((time(NULL) - (it->second)->mCreateTime) > TIMOUT_CACHE_FILE_TRANSFER) 
 				{
 #ifdef CONTROL_DEBUG
-					std::cerr << "ftController::run() cache transfer to old. Cancelling transfer. Hash :" << (it->second).mHash << ", time=" << (it->second).mCreateTime << ", now = " << time(NULL) ;
+					std::cerr << "ftController::run() cache transfer to old. Cancelling transfer. Hash :" << (it->second)->mHash << ", time=" << (it->second)->mCreateTime << ", now = " << time(NULL) ;
 					std::cerr << std::endl;
 #endif
-					toCancel.push_back((it->second).mHash);
+					toCancel.push_back((it->second)->mHash);
 				}
 			}
 	}
@@ -358,9 +362,200 @@ void ftController::cleanCacheDownloads()
 /* Called every 10 seconds or so */
 void ftController::checkDownloadQueue()
 {
-	/* */
+	// We do multiple things here:
+	//
+	// 1 - are there queued files ?
+	// 	YES
+	// 		1.1 - check for inactive files (see below).
+	// 				- select one inactive file
+	// 					- close it temporarily
+	// 					- remove it from turtle handling
+	// 					- move the ftFileControl to queued list
+	// 					- set the queue priority to 1+largest in the queue.
+	// 		1.2 - pop from the queue the 1st file to come (according to priority)
+	// 				- enable turtle router handling for this hash
+	// 				- reset counters
+	// 				- set the file as waiting
+	// 	NO
+	// 		Do nothing, because no files are waiting.
+	//
+	// 2 - in FileRequest, if the max number of downloaded files is exceeded, put the 
+	// 	file in the queue list, and don't enable the turtle router handling.
+	//
+	// Implementation: 
+	// 	- locate a hash in the queue
+	// 	- move hashes in the queue up/down/top/bottom
+	// 	- now the place of each ftFileControl element in the queue to activate/desactive them
+	//
+	// So:
+	// 	- change mDownloads to be a std::map<hash,ftFileControl*>
+	// 	- sort the ftFileControl* into a std::vector
+	// 	- store the queue position of each ftFileControl* into its own structure (mQueuePosition member)
+	//
+	// We don't want the turtle router to keep openning tunnels for queued files, so we only base
+	// the notion of inactive on the fact that no traffic happens for the file within 5 mins.
+	//
+	// How do we detect inactive files?
+	// 	For a downld file: - no traffic for 5 min.
 
+	RsStackMutex mtx(ctrlMutex) ;
 
+#ifdef DEBUG_DWLQUEUE
+	std::cerr << "Checking download queue." << std::endl ;
+#endif
+	if(mDownloads.size() <= _max_active_downloads)
+		return ;
+
+	// Check for inactive transfers.
+	//
+	time_t now = time(NULL) ;
+
+	for(std::map<std::string,ftFileControl*>::const_iterator it(mDownloads.begin());it!=mDownloads.end();++it)
+		if(it->second->mState != ftFileControl::QUEUED && now - it->second->mCreator->lastRecvTimeStamp() > (time_t)MAX_TIME_INACTIVE_REQUEUED)
+		{
+			locked_bottomQueue(it->second->mQueuePosition) ;
+#ifdef DEBUG_DWLQUEUE
+			std::cerr << "  - Inactive file " << it->second->mName << " moved to end of the queue" << std::endl ;
+#endif
+		}
+}
+
+void ftController::locked_addToQueue(ftFileControl* ftfc)
+{
+#ifdef DEBUG_DWLQUEUE
+	std::cerr << "Queueing ftfileControl " << (void*)ftfc << ", name=" << ftfc->mName << std::endl ;
+#endif
+	_queue.push_back(ftfc) ;
+	locked_checkQueueElement(_queue.size()-1) ;
+}
+
+void ftController::locked_queueRemove(uint32_t pos)
+{
+	for(uint32_t p=pos;p<_queue.size()-1;++p)
+	{
+		_queue[p]=_queue[p+1] ;
+		locked_checkQueueElement(p) ;
+	}
+	_queue.pop_back();
+}
+
+void ftController::setQueueSize(uint32_t s)
+{
+	RsStackMutex mtx(ctrlMutex) ;
+
+	if(s > 0)
+	{
+		uint32_t old_s = _max_active_downloads ;
+		_max_active_downloads = s ;
+#ifdef DEBUG_DWLQUEUE
+		std::cerr << "Settign new queue size to " << s << std::endl ;
+#endif
+		for(uint32_t p=std::min(s,old_s);p<=std::max(s,old_s);++p)
+			locked_checkQueueElement(p);
+	}
+	else
+		std::cerr << "ftController::setQueueSize(): cannot set queue to size " << s << std::endl ;
+}
+uint32_t ftController::getQueueSize()
+{
+	RsStackMutex mtx(ctrlMutex) ;
+	return _max_active_downloads ;
+}
+
+void ftController::moveInQueue(const std::string& hash,QueueMove mv)
+{
+	RsStackMutex mtx(ctrlMutex) ;
+
+	std::map<std::string,ftFileControl*>::iterator it(mDownloads.find(hash)) ;
+
+	if(it == mDownloads.end())
+	{
+		std::cerr << "ftController::moveInQueue: can't find hash " << hash << " in the download list." << std::endl ;
+		return ;
+	}
+	uint32_t pos = it->second->mQueuePosition ;
+
+#ifdef DEBUG_DWLQUEUE
+	std::cerr << "Moving file " << hash << ", pos=" << pos << " to new pos." << std::endl ;
+#endif
+	switch(mv)
+	{
+		case QUEUE_TOP:		locked_topQueue(pos) ;
+									break ;
+
+		case QUEUE_BOTTOM:	locked_bottomQueue(pos) ;
+									break ;
+
+		case QUEUE_UP:			if(pos > 0)
+										locked_swapQueue(pos,pos-1) ;
+									break ;
+
+		case QUEUE_DOWN: 		if(pos < _queue.size()-1)
+										locked_swapQueue(pos,pos+1) ;
+									break ;
+		default:
+									std::cerr << "ftController::moveInQueue: unknown move " << mv << std::endl ;
+	}
+}
+
+void ftController::locked_topQueue(uint32_t pos)
+{
+	ftFileControl *tmp=_queue[pos] ;
+
+	for(int p=pos;p>0;--p)
+	{
+		_queue[p]=_queue[p-1] ;
+		locked_checkQueueElement(p) ;
+	}
+	_queue[0]=tmp ;
+	locked_checkQueueElement(0) ;
+}
+void ftController::locked_bottomQueue(uint32_t pos)
+{
+	ftFileControl *tmp=_queue[pos] ;
+
+	for(uint32_t p=pos;p<_queue.size()-1;++p)
+	{
+		_queue[p]=_queue[p+1] ;
+		locked_checkQueueElement(p) ;
+	}
+	_queue[_queue.size()-1]=tmp ;
+	locked_checkQueueElement(_queue.size()-1) ;
+}
+void ftController::locked_swapQueue(uint32_t pos1,uint32_t pos2)
+{
+	// Swap the element at position pos with the last element of the queue
+
+	if(pos1==pos2)
+		return ;
+
+	ftFileControl *tmp = _queue[pos1] ;
+	_queue[pos1] = _queue[pos2] ;
+	_queue[pos2] = tmp;
+
+	locked_checkQueueElement(pos1) ;
+	locked_checkQueueElement(pos2) ;
+}
+
+//void ftController::checkQueueElements()
+//{
+//	for(uint32_t pos=0;pos<_queue.size();++pos)
+//		checkQueueElement(pos) ;
+//}
+void ftController::locked_checkQueueElement(uint32_t pos)
+{
+	_queue[pos]->mQueuePosition = pos ;
+
+	if(pos < _max_active_downloads)
+	{
+		_queue[pos]->mState = ftFileControl::DOWNLOADING ;
+	}
+
+	if(pos >= _max_active_downloads && _queue[pos]->mState != ftFileControl::QUEUED)
+	{
+		_queue[pos]->mState = ftFileControl::QUEUED ;
+		_queue[pos]->mCreator->closeFile() ;
+	}
 }
 
 bool ftController::FlagFileComplete(std::string hash)
@@ -456,7 +651,7 @@ bool ftController::completeFile(std::string hash)
 {
 	/* variables... so we can drop mutex later */
 	std::string path;
-        uint64_t    size = 0;
+	uint64_t    size = 0;
 	uint32_t    state = 0;
 	uint32_t    period = 0;
 	uint32_t    flags = 0;
@@ -469,40 +664,40 @@ bool ftController::completeFile(std::string hash)
 		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
 #ifdef CONTROL_DEBUG
-                std::cerr << "ftController:completeFile(" << hash << ")";
+		std::cerr << "ftController:completeFile(" << hash << ")";
 		std::cerr << std::endl;
 #endif
-		std::map<std::string, ftFileControl>::iterator it;
-		it = mDownloads.find(hash);
+		std::map<std::string, ftFileControl*>::iterator it(mDownloads.find(hash));
+
 		if (it == mDownloads.end())
 		{
 #ifdef CONTROL_DEBUG
-                        std::cerr << "ftController:completeFile(" << hash << ")";
+			std::cerr << "ftController:completeFile(" << hash << ")";
 			std::cerr << " Not Found!";
 			std::cerr << std::endl;
 #endif
-                        return false;
+			return false;
 		}
 
 		/* check if finished */
-		if (!(it->second).mCreator->finished())
+		if (!(it->second)->mCreator->finished())
 		{
 			/* not done! */
 #ifdef CONTROL_DEBUG
-                        std::cerr << "ftController:completeFile(" << hash << ")";
+			std::cerr << "ftController:completeFile(" << hash << ")";
 			std::cerr << " Transfer Not Done";
 			std::cerr << std::endl;
 
 			std::cerr << "FileSize: ";
-			std::cerr << (it->second).mCreator->getFileSize();
+			std::cerr << (it->second)->mCreator->getFileSize();
 			std::cerr << " and Recvd: ";
-			std::cerr << (it->second).mCreator->getRecvd();
+			std::cerr << (it->second)->mCreator->getRecvd();
 #endif
 			return false;
 		}
 
 
-		ftFileControl *fc = &(it->second);
+		ftFileControl *fc = it->second;
 
 		// (csoler) I've postponed this to the end of the block because deleting the
 		// element from the map calls the destructor of fc->mTransfer, which
@@ -537,10 +732,6 @@ bool ftController::completeFile(std::string hash)
 		else
 			fc->mState = ftFileControl::ERROR_COMPLETION;
 
-		/* switch map */
-		if (!(fc->mFlags & RS_FILE_HINTS_CACHE)) /* clean up completed cache files automatically */
-			mCompleted[fc->mHash] = *fc;
-
 		/* for extralist additions */
 		path    = fc->mDestination;
 		//hash    = fc->mHash;
@@ -558,6 +749,15 @@ bool ftController::completeFile(std::string hash)
 
 		mDataplex->removeTransferModule(hash_to_suppress) ;
 		uint32_t flgs = fc->mFlags ;
+
+		locked_queueRemove(it->second->mQueuePosition) ;
+
+		/* switch map */
+		if (!(fc->mFlags & RS_FILE_HINTS_CACHE)) /* clean up completed cache files automatically */
+			mCompleted[fc->mHash] = fc;
+		else
+			delete fc ;
+
 		mDownloads.erase(it);
 
 		if(flgs & RS_FILE_HINTS_NETWORK_WIDE)
@@ -679,9 +879,9 @@ bool	ftController::handleAPendingRequest()
 		if(it != mPendingChunkMaps.end())
 		{
 			RsFileTransfer *rsft = it->second ;
-			std::map<std::string, ftFileControl>::iterator fit = mDownloads.find(rsft->file.hash);
+			std::map<std::string, ftFileControl*>::iterator fit = mDownloads.find(rsft->file.hash);
 
-			if((fit==mDownloads.end() || (fit->second).mCreator == NULL))
+			if((fit==mDownloads.end() || (fit->second)->mCreator == NULL))
 			{
 				// This should never happen, because the last call to FileRequest must have created the fileCreator!!
 				//
@@ -689,8 +889,8 @@ bool	ftController::handleAPendingRequest()
 			}
 			else
 			{
-				(fit->second).mCreator->setAvailabilityMap(rsft->compressed_chunk_map) ;
-				(fit->second).mCreator->setChunkStrategy((FileChunksInfo::ChunkStrategy)(rsft->chunk_strategy)) ;
+				(fit->second)->mCreator->setAvailabilityMap(rsft->compressed_chunk_map) ;
+				(fit->second)->mCreator->setChunkStrategy((FileChunksInfo::ChunkStrategy)(rsft->chunk_strategy)) ;
 			}
 
 			delete rsft ;
@@ -720,6 +920,27 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 			uint64_t size, std::string dest, uint32_t flags,
 			std::list<std::string> &srcIds)
 {
+	if(size == 0)	// we treat this special case because
+	{
+		/* if no destpath - send to download directory */
+		std::string destination ;
+
+		if (dest == "")
+			destination = mDownloadPath + "/" + fname;
+		else
+			destination = dest + "/" + fname;
+
+		// create void file with the target name.
+		FILE *f = fopen(destination.c_str(),"w") ;
+
+		if(f == NULL)
+			std::cerr << "Could not open file " << destination << " for writting." << std::endl ;
+		else
+			fclose(f) ;
+
+		return true ;
+	}
+
 	/* If file transfer is not enabled ....
 	 * save request for later. This will also
 	 * mean that we will have to copy local files,
@@ -773,8 +994,8 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 	{ 
 		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-		std::map<std::string, ftFileControl>::iterator dit;
-		dit = mDownloads.find(hash);
+		std::map<std::string, ftFileControl*>::iterator dit = mDownloads.find(hash);
+
 		if (dit != mDownloads.end())
 		{
 			/* we already have it! */
@@ -792,7 +1013,7 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 			for(it = srcIds.begin(); it != srcIds.end(); it++)
 			{
 				uint32_t i, j;
-				if ((dit->second).mTransfer->getPeerState(*it, i, j))
+				if ((dit->second)->mTransfer->getPeerState(*it, i, j))
 				{
 #ifdef CONTROL_DEBUG
 					std::cerr << "ftController::FileRequest() Peer Existing";
@@ -805,9 +1026,8 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 				std::cerr << "ftController::FileRequest() Adding Peer: " << *it;
 				std::cerr << std::endl;
 #endif
-				(dit->second).mTransfer->addFileSource(*it);
-				setPeerState(dit->second.mTransfer, *it,
-						rate, mConnMgr->isOnline(*it));
+				(dit->second)->mTransfer->addFileSource(*it);
+				setPeerState(dit->second->mTransfer, *it, rate, mConnMgr->isOnline(*it));
 
 				IndicateConfigChanged(); /* new peer for transfer -> save */
 			}
@@ -904,9 +1124,7 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 
 		/* if no destpath - send to download directory */
 		if (dest == "")
-		{
 			destination = mDownloadPath + "/" + fname;
-		}
 	} /******* UNLOCKED ********/
 
   // We check that flags are consistent.  In particular, for know
@@ -916,12 +1134,14 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
   	if(flags & RS_FILE_HINTS_NETWORK_WIDE)
 		mTurtle->monitorFileTunnels(fname,hash,size) ;
 
-	ftFileCreator *fc = new ftFileCreator(savepath, size, hash, 0);
+	ftFileCreator *fc = new ftFileCreator(savepath, size, hash);
 	ftTransferModule *tm = new ftTransferModule(fc, mDataplex,this);
 
 	/* add into maps */
-	ftFileControl ftfc(fname, savepath, destination, size, hash, flags, fc, tm, callbackCode);
-	ftfc.mCreateTime = time(NULL);
+	ftFileControl *ftfc = new ftFileControl(fname, savepath, destination, size, hash, flags, fc, tm, callbackCode);
+	ftfc->mCreateTime = time(NULL);
+
+	locked_addToQueue(ftfc) ;
 
 #ifdef CONTROL_DEBUG
 	std::cerr << "ftController::FileRequest() Created ftFileCreator @: " << fc;
@@ -951,8 +1171,6 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 	mDownloads[hash] = ftfc;
-	mSlowQueue.push_back(hash);
-
 
 	IndicateConfigChanged(); /* completed transfer -> save */
 	return true;
@@ -992,8 +1210,7 @@ bool 	ftController::setPeerState(ftTransferModule *tm, std::string id, uint32_t 
 
 bool ftController::setChunkStrategy(const std::string& hash,FileChunksInfo::ChunkStrategy s)
 {
-	std::map<std::string,ftFileControl>::iterator mit;
-	mit=mDownloads.find(hash);
+	std::map<std::string,ftFileControl*>::iterator mit=mDownloads.find(hash);
 	if (mit==mDownloads.end())
 	{
 #ifdef CONTROL_DEBUG
@@ -1002,7 +1219,7 @@ bool ftController::setChunkStrategy(const std::string& hash,FileChunksInfo::Chun
 		return false;
 	}
 
-	mit->second.mCreator->setChunkStrategy(s) ;
+	mit->second->mCreator->setChunkStrategy(s) ;
 	return true ;
 }
 
@@ -1018,8 +1235,7 @@ bool 	ftController::FileCancel(std::string hash)
 	{
 		RsStackMutex mtx(ctrlMutex) ;
 
-		std::map<std::string,ftFileControl>::iterator mit;
-		mit=mDownloads.find(hash);
+		std::map<std::string,ftFileControl*>::iterator mit=mDownloads.find(hash);
 		if (mit==mDownloads.end())
 		{
 #ifdef CONTROL_DEBUG
@@ -1029,7 +1245,7 @@ bool 	ftController::FileCancel(std::string hash)
 		}
 
 		/* check if finished */
-		if ((mit->second).mCreator->finished())
+		if ((mit->second)->mCreator->finished())
 		{
 #ifdef CONTROL_DEBUG
 			std::cerr << "ftController:FileCancel(" << hash << ")";
@@ -1037,18 +1253,18 @@ bool 	ftController::FileCancel(std::string hash)
 			std::cerr << std::endl;
 
 			std::cerr << "FileSize: ";
-			std::cerr << (mit->second).mCreator->getFileSize();
+			std::cerr << (mit->second)->mCreator->getFileSize();
 			std::cerr << " and Recvd: ";
-			std::cerr << (mit->second).mCreator->getRecvd();
+			std::cerr << (mit->second)->mCreator->getRecvd();
 #endif
 			return false;
 		}
 
 		/*find the point to transfer module*/
-		ftTransferModule* ft=(mit->second).mTransfer;
+		ftTransferModule* ft=(mit->second)->mTransfer;
 		ft->cancelTransfer();
 
-		ftFileControl *fc = &(mit->second);
+		ftFileControl *fc = mit->second;
 		mDataplex->removeTransferModule(fc->mTransfer->hash());
 
 		if (fc->mTransfer)
@@ -1081,6 +1297,8 @@ bool 	ftController::FileCancel(std::string hash)
 #endif
 		}
 
+		locked_queueRemove(fc->mQueuePosition) ;
+		delete fc ;
 		mDownloads.erase(mit);
 	}
 
@@ -1095,8 +1313,7 @@ bool 	ftController::FileControl(std::string hash, uint32_t flags)
 	std::cerr << flags << ")"<<std::endl;
 #endif
 	/*check if the file in the download map*/
-	std::map<std::string,ftFileControl>::iterator mit;
-	mit=mDownloads.find(hash);
+	std::map<std::string,ftFileControl*>::iterator mit=mDownloads.find(hash);
 	if (mit==mDownloads.end())
 	{
 #ifdef CONTROL_DEBUG
@@ -1106,7 +1323,7 @@ bool 	ftController::FileControl(std::string hash, uint32_t flags)
 	}
 
 	/*find the point to transfer module*/
-	ftTransferModule* ft=(mit->second).mTransfer;
+	ftTransferModule* ft=(mit->second)->mTransfer;
 	switch (flags)
 	{
 		case RS_FILE_CTRL_PAUSE:
@@ -1126,7 +1343,13 @@ bool 	ftController::FileClearCompleted()
 #ifdef CONTROL_DEBUG
 	std::cerr << "ftController::FileClearCompleted()" <<std::endl;
 #endif
+	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+
+	for(std::map<std::string, ftFileControl*>::iterator it(mCompleted.begin());it!=mCompleted.end();++it)
+		delete it->second ;
+
 	mCompleted.clear();
+
 	IndicateConfigChanged();
 
 	return false;
@@ -1137,14 +1360,14 @@ bool 	ftController::FileDownloads(std::list<std::string> &hashs)
 {
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-	std::map<std::string, ftFileControl>::iterator it;
+	std::map<std::string, ftFileControl*>::iterator it;
 	for(it = mDownloads.begin(); it != mDownloads.end(); it++)
 	{
-		hashs.push_back(it->second.mHash);
+		hashs.push_back(it->second->mHash);
 	}
 	for(it = mCompleted.begin(); it != mCompleted.end(); it++)
 	{
-		hashs.push_back(it->second.mHash);
+		hashs.push_back(it->second->mHash);
 	}
 	return true;
 }
@@ -1243,8 +1466,7 @@ bool 	ftController::FileDetails(std::string hash, FileInfo &info)
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
 	bool completed = false;
-	std::map<std::string, ftFileControl>::iterator it;
-	it = mDownloads.find(hash);
+	std::map<std::string, ftFileControl*>::iterator it = mDownloads.find(hash);
 	if (it == mDownloads.end())
 	{
 		/* search completed files too */
@@ -1261,17 +1483,18 @@ bool 	ftController::FileDetails(std::string hash, FileInfo &info)
 
 	/* extract details */
 	info.hash = hash;
-	info.fname = it->second.mName;
-	info.flags = it->second.mFlags;
-	info.path = RsDirUtil::removeTopDir(it->second.mDestination); /* remove fname */
-	info.priority = it->second.mPriority ;
+	info.fname = it->second->mName;
+	info.flags = it->second->mFlags;
+	info.path = RsDirUtil::removeTopDir(it->second->mDestination); /* remove fname */
+	info.priority = it->second->mPriority ;
+	info.queue_position = it->second->mQueuePosition ;
 
 	/* get list of sources from transferModule */
 	std::list<std::string> peerIds;
 	std::list<std::string>::iterator pit;
 
 	if (!completed)
-		it->second.mTransfer->getFileSources(peerIds);
+		it->second->mTransfer->getFileSources(peerIds);
 
 	double totalRate = 0;
 	uint32_t tfRate = 0;
@@ -1282,7 +1505,7 @@ bool 	ftController::FileDetails(std::string hash, FileInfo &info)
 
 	for(pit = peerIds.begin(); pit != peerIds.end(); pit++)
 	{
-		if (it->second.mTransfer->getPeerState(*pit, state, tfRate))
+		if (it->second->mTransfer->getPeerState(*pit, state, tfRate))
 		{
 			TransferInfo ti;
 			switch(state)
@@ -1314,7 +1537,7 @@ bool 	ftController::FileDetails(std::string hash, FileInfo &info)
 		}
 	}
 
-	if ((completed) || ((it->second).mCreator->finished()))
+	if ((completed) || ((it->second)->mCreator->finished()))
 	{
 		info.downloadStatus = FT_STATE_COMPLETE;
 	}
@@ -1330,8 +1553,12 @@ bool 	ftController::FileDetails(std::string hash, FileInfo &info)
 	{
 		info.downloadStatus = FT_STATE_WAITING;
 	}
+
+	if(it->second->mState == ftFileControl::QUEUED)
+		info.downloadStatus = FT_STATE_QUEUED ;
+
 	info.tfRate = totalRate;
-	info.size = (it->second).mSize;
+	info.size = (it->second)->mSize;
 
 	if (completed)
 	{
@@ -1340,7 +1567,7 @@ bool 	ftController::FileDetails(std::string hash, FileInfo &info)
 	}
 	else
 	{
-		info.transfered  = (it->second).mCreator->getRecvd();
+		info.transfered  = (it->second)->mCreator->getRecvd();
 		info.avail = info.transfered;
 	}
 
@@ -1364,7 +1591,7 @@ void    ftController::statusChange(const std::list<pqipeer> &plist)
 	uint32_t rate = FT_CNTRL_STANDARD_RATE;
 
 	/* add online to all downloads */
-	std::map<std::string, ftFileControl>::iterator it;
+	std::map<std::string, ftFileControl*>::iterator it;
 	std::list<pqipeer>::const_iterator pit;
 
 	std::list<pqipeer> vlist ;
@@ -1393,7 +1620,7 @@ void    ftController::statusChange(const std::list<pqipeer> &plist)
 				std::cerr << " is Newly Connected!";
 				std::cerr << std::endl;
 #endif
-				setPeerState(it->second.mTransfer, pit->id, rate, true);
+				setPeerState(it->second->mTransfer, pit->id, rate, true);
 			}
 			else if (pit->actions & RS_PEER_DISCONNECTED)
 			{
@@ -1401,7 +1628,7 @@ void    ftController::statusChange(const std::list<pqipeer> &plist)
 				std::cerr << " is Just disconnected!";
 				std::cerr << std::endl;
 #endif
-				setPeerState(it->second.mTransfer, pit->id, rate, false);
+				setPeerState(it->second->mTransfer, pit->id, rate, false);
 			}
 			else
 			{
@@ -1410,7 +1637,7 @@ void    ftController::statusChange(const std::list<pqipeer> &plist)
 				std::cerr << pit-> actions;
 				std::cerr << std::endl;
 #endif
-				setPeerState(it->second.mTransfer, pit->id, rate, false);
+				setPeerState(it->second->mTransfer, pit->id, rate, false);
 			}
 		}
 
@@ -1427,7 +1654,7 @@ void    ftController::statusChange(const std::list<pqipeer> &plist)
 				std::cerr << " is Newly Connected!";
 				std::cerr << std::endl;
 #endif
-				setPeerState(it->second.mTransfer, pit->id, rate, true);
+				setPeerState(it->second->mTransfer, pit->id, rate, true);
 			}
 			else if (pit->actions & RS_PEER_DISCONNECTED)
 			{
@@ -1435,7 +1662,7 @@ void    ftController::statusChange(const std::list<pqipeer> &plist)
 				std::cerr << " is Just disconnected!";
 				std::cerr << std::endl;
 #endif
-				setPeerState(it->second.mTransfer, pit->id, rate, false);
+				setPeerState(it->second->mTransfer, pit->id, rate, false);
 			}
 			else
 			{
@@ -1444,7 +1671,7 @@ void    ftController::statusChange(const std::list<pqipeer> &plist)
 				std::cerr << pit-> actions;
 				std::cerr << std::endl;
 #endif
-				setPeerState(it->second.mTransfer, pit->id, rate, false);
+				setPeerState(it->second->mTransfer, pit->id, rate, false);
 			}
 		}
 	}
@@ -1546,41 +1773,34 @@ std::list<RsItem *> ftController::saveList(bool &cleanup)
 		/* stack mutex released each loop */
   		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-		std::map<std::string, ftFileControl>::iterator fit;
-		fit = mDownloads.find(*it);
+		std::map<std::string, ftFileControl*>::iterator fit = mDownloads.find(*it);
 		if (fit == mDownloads.end())
-		{
 			continue;
-		}
 
 		/* ignore callback ones */
-		if (fit->second.mDoCallback)
-		{
+		if (fit->second->mDoCallback)
 			continue;
-		}
 
-		if ((fit->second).mCreator->finished())
-		{
+		if ((fit->second)->mCreator->finished())
 			continue;
-		}
 
 		/* make RsFileTransfer item for save list */
 		RsFileTransfer *rft = new RsFileTransfer();
 
 		/* what data is important? */
 
-		rft->file.name = fit->second.mName;
-		rft->file.hash  = fit->second.mHash;
-		rft->file.filesize = fit->second.mSize;
-		rft->file.path = RsDirUtil::removeTopDir(fit->second.mDestination); /* remove fname */
-		rft->flags = fit->second.mFlags;
-		rft->state = fit->second.mState;
-		fit->second.mTransfer->getFileSources(rft->allPeerIds.ids);
+		rft->file.name = fit->second->mName;
+		rft->file.hash  = fit->second->mHash;
+		rft->file.filesize = fit->second->mSize;
+		rft->file.path = RsDirUtil::removeTopDir(fit->second->mDestination); /* remove fname */
+		rft->flags = fit->second->mFlags;
+		rft->state = fit->second->mState;
+		fit->second->mTransfer->getFileSources(rft->allPeerIds.ids);
 
 		// just avoid uninitialised memory reads
 		rft->in = 0 ;
 		rft->cPeerId = "" ;
-		rft->transferred = fit->second.mCreator->getRecvd();
+		rft->transferred = fit->second->mCreator->getRecvd();
 		rft->crate = 0 ;
 		rft->lrate = 0 ;
 		rft->trate = 0 ;
@@ -1600,8 +1820,8 @@ std::list<RsItem *> ftController::saveList(bool &cleanup)
 			else
 				++sit ;
 
-		fit->second.mCreator->getAvailabilityMap(rft->compressed_chunk_map) ;
-		rft->chunk_strategy = fit->second.mCreator->getChunkStrategy() ;
+		fit->second->mCreator->getAvailabilityMap(rft->compressed_chunk_map) ;
+		rft->chunk_strategy = fit->second->mCreator->getChunkStrategy() ;
 
 		saveData.push_back(rft);
 	}
@@ -1649,9 +1869,9 @@ bool ftController::loadList(std::list<RsItem *> load)
 			{
 				RsStackMutex mtx(ctrlMutex) ;
 
-				std::map<std::string, ftFileControl>::iterator fit = mDownloads.find(rsft->file.hash);
+				std::map<std::string, ftFileControl*>::iterator fit = mDownloads.find(rsft->file.hash);
 
-				if((fit==mDownloads.end() || (fit->second).mCreator == NULL))
+				if((fit==mDownloads.end() || (fit->second)->mCreator == NULL))
 				{
 					std::cerr << "ftController::loadList(): Error: could not find hash " << rsft->file.hash << " in mDownloads list !" << std::endl ;
 					std::cerr << "Storing the map in a wait list." << std::endl ;
@@ -1661,8 +1881,8 @@ bool ftController::loadList(std::list<RsItem *> load)
 				}
 				else
 				{
-					(fit->second).mCreator->setAvailabilityMap(rsft->compressed_chunk_map) ;
-					(fit->second).mCreator->setChunkStrategy((FileChunksInfo::ChunkStrategy)(rsft->chunk_strategy)) ;
+					(fit->second)->mCreator->setAvailabilityMap(rsft->compressed_chunk_map) ;
+					(fit->second)->mCreator->setChunkStrategy((FileChunksInfo::ChunkStrategy)(rsft->chunk_strategy)) ;
 				}
 			}
 		}

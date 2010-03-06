@@ -137,7 +137,7 @@ LogicalOperator ExpressionWidget::getOperator()
 
 Expression* ExpressionWidget::getRsExpression()
 {
-    Expression * expr;
+    Expression * expr = NULL;
     
     std::list<std::string> wordList;
     int lowVal = 0;

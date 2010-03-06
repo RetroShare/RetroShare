@@ -84,20 +84,20 @@ private slots:
     void previewTransfer();
 
     /** clear download or all queue - for pending dwls */
-    void clearQueue();
+//    void clearQueue();
 
     /** modify download priority actions */
-    void priorityQueueLow();
-    void priorityQueueNormal();
-    void priorityQueueHigh();
-    void priorityQueueAuto();
+    void priorityQueueUp();
+    void priorityQueueDown();
+    void priorityQueueTop();
+    void priorityQueueBottom();
 
     void speedSlow();
     void speedAverage();
     void speedFast();
 
     void changeSpeed(int) ;
-    void changeQueuePriority(int) ;
+    void changeQueuePosition(QueueMove) ;
 
     void chunkRandom();
     void chunkStreaming();
@@ -143,8 +143,8 @@ private:
     QAction *openfolderAct;
     QAction *openfileAct;
     QAction *previewfileAct;
-    QAction *clearQueuedDwlAct;
-    QAction *clearQueueAct;
+//    QAction *clearQueuedDwlAct;
+//    QAction *clearQueueAct;
     QAction *changePriorityAct;
     QAction *prioritySlowAct;
     QAction *priorityMediumAct;

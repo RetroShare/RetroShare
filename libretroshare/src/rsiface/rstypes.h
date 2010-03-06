@@ -39,13 +39,12 @@ typedef std::string   RsChanId;
 typedef std::string   RsMsgId;
 typedef std::string   RsAuthId;
 
-#ifndef FT_STATE_FAILED
-    const uint32_t FT_STATE_FAILED		= 0x0000;
-    const uint32_t FT_STATE_OKAY		= 0x0001;
-    const uint32_t FT_STATE_WAITING 	= 0x0002;
-    const uint32_t FT_STATE_DOWNLOADING 	= 0x0003;
-    const uint32_t FT_STATE_COMPLETE 	= 0x0004;
-#endif
+const uint32_t FT_STATE_FAILED		= 0x0000 ;
+const uint32_t FT_STATE_OKAY			= 0x0001 ;
+const uint32_t FT_STATE_WAITING 		= 0x0002 ;
+const uint32_t FT_STATE_DOWNLOADING	= 0x0003 ;
+const uint32_t FT_STATE_COMPLETE 	= 0x0004 ;
+const uint32_t FT_STATE_QUEUED   	= 0x0005 ;
 
 class TransferInfo
 {
@@ -57,10 +56,10 @@ class TransferInfo
 	int  status; /* FT_STATE_... */
 };
 
-enum DwlPriority { 	PRIORITY_LOW 		= 0x00, 
-							PRIORITY_NORMAL 	= 0x01, 
-							PRIORITY_HIGH		= 0x02, 
-							PRIORITY_AUTO		= 0x03
+enum QueueMove { 	QUEUE_TOP 	 = 0x00, 
+						QUEUE_UP  	 = 0x01, 
+						QUEUE_DOWN	 = 0x02, 
+						QUEUE_BOTTOM = 0x03
 };
 
 enum DwlSpeed 		{ 	SPEED_LOW 		= 0x00, 
@@ -106,6 +105,7 @@ class FileInfo
 
 		double rank;
 		int age;
+		uint32_t queue_position ;
 
 		/* Transfer Stuff */
 		uint64_t transfered;
@@ -336,9 +336,9 @@ class DwlDetails {
 public:
 	DwlDetails() { return; }
 	DwlDetails(std::string fname, std::string hash, int count, std::string dest,
-			uint32_t flags, std::list<std::string> srcIds, DwlPriority priority)
+			uint32_t flags, std::list<std::string> srcIds, uint32_t queue_pos)
 	: fname(fname), hash(hash), count(count), dest(dest), flags(flags),
-	srcIds(srcIds), priority(priority), retries(0) { return; }
+	srcIds(srcIds), queue_position(queue_pos), retries(0) { return; }
 
 	/* download details */
 	std::string fname;
@@ -349,7 +349,7 @@ public:
 	std::list<std::string> srcIds;
 
 	/* internally used in download queue */
-	DwlPriority priority;
+	uint32_t queue_position;
 
 	/* how many times a failed dwl will be requeued */
 	unsigned int retries;

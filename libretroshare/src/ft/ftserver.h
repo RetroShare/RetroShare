@@ -129,13 +129,13 @@ virtual bool setChunkStrategy(const std::string& hash,FileChunksInfo::ChunkStrat
 /***
  * Control of Downloads Priority.
  ***/
-virtual bool changeQueuePriority(const std::string hash, int priority);
+virtual uint32_t getQueueSize() ;
+virtual void setQueueSize(uint32_t s) ;
+virtual bool changeQueuePosition(const std::string hash, QueueMove queue_mv);
 virtual bool changeDownloadSpeed(const std::string hash, int speed);
-virtual bool getQueuePriority(const std::string hash, int & priority);
 virtual bool getDownloadSpeed(const std::string hash, int & speed);
 virtual bool clearDownload(const std::string hash);
-virtual void clearQueue();
-virtual void getDwlDetails(std::list<DwlDetails> & details);
+//virtual void getDwlDetails(std::list<DwlDetails> & details);
 
 /***
  * Download/Upload Details

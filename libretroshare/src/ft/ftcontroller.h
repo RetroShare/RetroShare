@@ -66,7 +66,11 @@ class ftFileControl
 {
 	public:
 
-		enum {DOWNLOADING,COMPLETED,ERROR_COMPLETION};
+		enum { 	DOWNLOADING      = 0, 
+					COMPLETED        = 1, 
+					ERROR_COMPLETION = 2, 
+					QUEUED           = 3 
+		};
 
 		ftFileControl();
 		ftFileControl(std::string fname, std::string tmppath, std::string dest,
@@ -86,6 +90,8 @@ class ftFileControl
 		uint32_t	   mCallbackCode;
 		time_t		mCreateTime;
 		DwlSpeed 	mPriority ;
+		uint32_t		mQueuePriority ;
+		uint32_t		mQueuePosition ;
 };
 
 class ftPendingRequest
@@ -112,141 +118,154 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 {
 	public:
 
-	/* Setup */
-	ftController(CacheStrapper *cs, ftDataMultiplex *dm, std::string configDir);
+		/* Setup */
+		ftController(CacheStrapper *cs, ftDataMultiplex *dm, std::string configDir);
 
-void	setFtSearchNExtra(ftSearch *, ftExtraList *);
-void	setTurtleRouter(p3turtle *) ;
-bool    activate();
-bool 	isActiveAndNoPending();
+		void	setFtSearchNExtra(ftSearch *, ftExtraList *);
+		void	setTurtleRouter(p3turtle *) ;
+		bool    activate();
+		bool 	isActiveAndNoPending();
 
-void	setShareDownloadDirectory(bool value);
-bool	getShareDownloadDirectory();
+		void	setShareDownloadDirectory(bool value);
+		bool	getShareDownloadDirectory();
 
-virtual void run();
+		virtual void run();
 
-	/***************************************************************/
-	/********************** Controller Access **********************/
-	/***************************************************************/
+		/***************************************************************/
+		/********************** Controller Access **********************/
+		/***************************************************************/
 
-bool 	FileRequest(std::string fname, std::string hash,
-			uint64_t size, std::string dest, uint32_t flags,
-			std::list<std::string> &sourceIds);
+		bool 	FileRequest(std::string fname, std::string hash,
+				uint64_t size, std::string dest, uint32_t flags,
+				std::list<std::string> &sourceIds);
 
-	/// Do we already have this file, either in download or in file lists ?
-bool  alreadyHaveFile(const std::string& hash) ;
+		/// Do we already have this file, either in download or in file lists ?
+		bool  alreadyHaveFile(const std::string& hash) ;
 
-bool 	setChunkStrategy(const std::string& hash,FileChunksInfo::ChunkStrategy s);
+		bool 	setChunkStrategy(const std::string& hash,FileChunksInfo::ChunkStrategy s);
 
-bool 	FileCancel(std::string hash);
-bool 	FileControl(std::string hash, uint32_t flags);
-bool 	FileClearCompleted();
-bool 	FlagFileComplete(std::string hash);
-bool  getFileDownloadChunksDetails(const std::string& hash,FileChunksInfo& info);
+		bool 	FileCancel(std::string hash);
+		bool 	FileControl(std::string hash, uint32_t flags);
+		bool 	FileClearCompleted();
+		bool 	FlagFileComplete(std::string hash);
+		bool  getFileDownloadChunksDetails(const std::string& hash,FileChunksInfo& info);
 
-bool getPriority(const std::string& hash,DwlSpeed& p);
-void setPriority(const std::string& hash,DwlSpeed p);
+		// Download speed
+		bool getPriority(const std::string& hash,DwlSpeed& p);
+		void setPriority(const std::string& hash,DwlSpeed p);
 
-	/* get Details of File Transfers */
-bool 	FileDownloads(std::list<std::string> &hashs);
+		// Action on queue position
+		//
+		void moveInQueue(const std::string& hash,QueueMove mv) ;
+		void clearQueue() ;
+		void setQueueSize(uint32_t size) ;
+		uint32_t getQueueSize() ;
 
-	/* Directory Handling */
-bool 	setDownloadDirectory(std::string path);
-bool 	setPartialsDirectory(std::string path);
-std::string getDownloadDirectory();
-std::string getPartialsDirectory();
-bool 	FileDetails(std::string hash, FileInfo &info);
+		/* get Details of File Transfers */
+		bool 	FileDownloads(std::list<std::string> &hashs);
 
-bool moveFile(const std::string& source,const std::string& dest) ;
+		/* Directory Handling */
+		bool 	setDownloadDirectory(std::string path);
+		bool 	setPartialsDirectory(std::string path);
+		std::string getDownloadDirectory();
+		std::string getPartialsDirectory();
+		bool 	FileDetails(std::string hash, FileInfo &info);
 
-	/***************************************************************/
-	/********************** Cache Transfer *************************/
-	/***************************************************************/
+		bool moveFile(const std::string& source,const std::string& dest) ;
 
-/// Returns true is full source availability can be assumed for this peer.
-///
-bool assumeAvailability(const std::string& peer_id) const ;
+		/***************************************************************/
+		/********************** Cache Transfer *************************/
+		/***************************************************************/
 
-protected:
+		/// Returns true is full source availability can be assumed for this peer.
+		///
+		bool assumeAvailability(const std::string& peer_id) const ;
 
-virtual bool RequestCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size);
-virtual bool CancelCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size);
+		/* pqiMonitor callback (also provided mConnMgr pointer!) */
+		virtual void    statusChange(const std::list<pqipeer> &plist);
+		void addFileSource(const std::string& hash,const std::string& peer_id) ;
+		void removeFileSource(const std::string& hash,const std::string& peer_id) ;
 
-void cleanCacheDownloads() ;
-void tickTransfers() ;
+	protected:
+
+		virtual bool RequestCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size);
+		virtual bool CancelCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size);
+
+		void cleanCacheDownloads() ;
+		void tickTransfers() ;
+
+		/***************************************************************/
+		/********************** Controller Access **********************/
+		/***************************************************************/
 
 
-	/***************************************************************/
-	/********************** Controller Access **********************/
-	/***************************************************************/
-
-	/* pqiMonitor callback (also provided mConnMgr pointer!) */
-	public:
-virtual void    statusChange(const std::list<pqipeer> &plist);
-void addFileSource(const std::string& hash,const std::string& peer_id) ;
-void removeFileSource(const std::string& hash,const std::string& peer_id) ;
-
-
-	/* p3Config Interface */
-        protected:
-virtual RsSerialiser *setupSerialiser();
-virtual std::list<RsItem *> saveList(bool &cleanup);
-virtual bool    loadList(std::list<RsItem *> load);
-bool	loadConfigMap(std::map<std::string, std::string> &configMap);
+		/* p3Config Interface */
+		virtual RsSerialiser *setupSerialiser();
+		virtual std::list<RsItem *> saveList(bool &cleanup);
+		virtual bool    loadList(std::list<RsItem *> load);
+		bool	loadConfigMap(std::map<std::string, std::string> &configMap);
 
 	private:
 
-	/* RunTime Functions */
-void 	checkDownloadQueue();
-bool 	completeFile(std::string hash);
-bool    handleAPendingRequest();
+		/* RunTime Functions */
+		void 	checkDownloadQueue();							// check the whole queue for inactive files
 
-bool    setPeerState(ftTransferModule *tm, std::string id,
-                        uint32_t maxrate, bool online);
+		void  locked_addToQueue(ftFileControl*) ;					// insert this one into the queue
+		void  locked_bottomQueue(uint32_t pos) ; 					// bottom queue file which is at this position
+		void  locked_topQueue(uint32_t pos) ; 						// top queue file which is at this position
+		void  locked_checkQueueElement(uint32_t pos) ;			// check the state of this element in the queue
+		void  locked_queueRemove(uint32_t pos) ;					// delete this element from the queue
+		void  locked_swapQueue(uint32_t pos1,uint32_t pos2) ; 	// swap position of the two elements
+
+		bool 	completeFile(std::string hash);
+		bool    handleAPendingRequest();
+
+		bool    setPeerState(ftTransferModule *tm, std::string id,
+				uint32_t maxrate, bool online);
 
 		time_t last_save_time ;
 		time_t last_clean_time ;
-	/* pointers to other components */
+		/* pointers to other components */
 
-	ftSearch *mSearch;
-	ftDataMultiplex *mDataplex;
-	ftExtraList *mExtraList;
-	p3turtle *mTurtle ;
+		ftSearch *mSearch;
+		ftDataMultiplex *mDataplex;
+		ftExtraList *mExtraList;
+		p3turtle *mTurtle ;
 
-	RsMutex ctrlMutex;
+		RsMutex ctrlMutex;
 
-	std::list<FileInfo> incomingQueue;
-	std::map<std::string, ftFileControl> mCompleted;
-	std::map<std::string, ftFileControl> mDownloads;
+//		std::list<FileInfo> incomingQueue;
 
-	//std::map<std::string, ftTransferModule *> mTransfers;
-	//std::map<std::string, ftFileCreator *> mFileCreators;
+		std::map<std::string, ftFileControl*> mCompleted;
+		std::map<std::string, ftFileControl*> mDownloads;
+		std::vector<ftFileControl*> _queue ;
 
-	std::string mConfigPath;
-	std::string mDownloadPath;
-	std::string mPartialsPath;
+		//std::map<std::string, ftTransferModule *> mTransfers;
+		//std::map<std::string, ftFileCreator *> mFileCreators;
 
-	/**** SPEED QUEUES ****/
-	std::list<std::string> mSlowQueue;
-	std::list<std::string> mStreamQueue;
-	std::list<std::string> mFastQueue;
+		std::string mConfigPath;
+		std::string mDownloadPath;
+		std::string mPartialsPath;
 
-	/* callback list (for File Completion) */
-	RsMutex doneMutex;
-	std::list<std::string> mDone;
+		/**** SPEED QUEUES ****/
+//		std::list<std::string> mSlowQueue;
+//		std::list<std::string> mStreamQueue;
+//		std::list<std::string> mFastQueue;
 
-	/* List to Pause File transfers until Caches are properly loaded */
-	bool mFtActive;
-        bool mFtPendingDone;
-	std::list<ftPendingRequest> mPendingRequests;
-	std::map<std::string,RsFileTransfer*> mPendingChunkMaps ;
+		/* callback list (for File Completion) */
+		RsMutex doneMutex;
+		std::list<std::string> mDone;
 
-	/* share incoming directory */
-	bool mShareDownloadDir;
+		/* List to Pause File transfers until Caches are properly loaded */
+		bool mFtActive;
+		bool mFtPendingDone;
+		std::list<ftPendingRequest> mPendingRequests;
+		std::map<std::string,RsFileTransfer*> mPendingChunkMaps ;
 
-	// priority handling
-	//
-	std::vector< std::vector<ftTransferModule*> > mPriorityTab ;
+		/* share incoming directory */
+		bool mShareDownloadDir;
+
+		uint32_t _max_active_downloads ; // maximum number of simultaneous downloads
 };
 
 #endif

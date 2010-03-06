@@ -27,6 +27,7 @@
 #include <sstream>
 
 #include "rsiface/rsiface.h"
+#include "rsiface/rsfiles.h"
 #include "rsiface/rspeers.h"
 
 #include <QTimer>
@@ -43,11 +44,19 @@ TransferPage::TransferPage(QWidget * parent, Qt::WFlags flags)
 
    updateStatus();
 
+	ui._queueSize_SB->setValue(rsFiles->getQueueSize()) ;
+
+	QObject::connect(ui._queueSize_SB,SIGNAL(valueChanged(int)),this,SLOT(updateQueueSize(int))) ;
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
 #endif
+}
+
+void TransferPage::updateQueueSize(int s)
+{
+	rsFiles->setQueueSize(s) ;
 }
 
 void TransferPage::closeEvent (QCloseEvent * event)

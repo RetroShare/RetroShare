@@ -1763,10 +1763,7 @@ void p3turtle::getInfo(	std::vector<std::vector<std::string> >& hashes_info,
 		hashes.push_back(printNumber(it->second.tunnels.size())) ;
 		hashes.push_back(printNumber(now - it->second.time_stamp)+" secs ago") ;
 	}
-#ifdef A_VOIR
-	for(std::map<TurtleFileHash,FileInfo>::const_iterator it(_outgoing_file_hashes.begin());it!=_outgoing_file_hashes.end();++it)
-		std::cerr << "    hash=0x" << it->first << ", name=" << it->second.fname << ", size=" << it->second.size << std::endl ;
-#endif
+
 	tunnels_info.clear();
 
 	for(std::map<TurtleTunnelId,TurtleTunnel>::const_iterator it(_local_tunnels.begin());it!=_local_tunnels.end();++it)

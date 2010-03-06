@@ -35,7 +35,7 @@ const int ftserverzone = 29539;
 #include "ft/ftcontroller.h"
 #include "ft/ftfileprovider.h"
 #include "ft/ftdatamultiplex.h"
-#include "ft/ftdwlqueue.h"
+//#include "ft/ftdwlqueue.h"
 #include "turtle/p3turtle.h"
 
 
@@ -149,9 +149,9 @@ void ftServer::SetupFtServer(NotifyBase *cb)
 	mFtSearch->addSearchMode(mFiStore, RS_FILE_HINTS_REMOTE);
 
 	mConnMgr->addMonitor(mFtController);
-        mConnMgr->addMonitor(mCacheStrapper);
+	mConnMgr->addMonitor(mCacheStrapper);
 
-    mFtDwlQueue = new ftDwlQueue(mFtController);
+//    mFtDwlQueue = new ftDwlQueue(mFtController);
 
 	return;
 }
@@ -160,7 +160,6 @@ void ftServer::connectToTurtleRouter(p3turtle *fts)
 {
 	mTurtleRouter = fts ;
 
-//	mFtSearch->addSearchMode(fts, RS_FILE_HINTS_TURTLE);
 	mFtController->setTurtleRouter(fts) ;
 }
 
@@ -185,8 +184,8 @@ void    ftServer::StartupThreads()
 	/* Dataplex */
 	mFtDataplex->start();
 
-	/* Download Queue */
-	mFtDwlQueue->start();
+//	/* Download Queue */
+//	mFtDwlQueue->start();
 
 	/* start own thread */
 	start();
@@ -263,11 +262,8 @@ bool ftServer::FileRequest(std::string fname, std::string hash, uint64_t size, s
 
    std::cerr << "Requesting " << fname << std::endl ;
 
-	if(mFtController->alreadyHaveFile(hash))
+	if(!mFtController->FileRequest(fname, hash, size, dest, flags, srcIds))
 		return false ;
-
-	const DwlDetails details(fname, hash, size, dest, flags, srcIds, PRIORITY_NORMAL);
-	mFtDwlQueue->insertDownload(details);
 
 	return true ;
 }
@@ -281,7 +277,6 @@ bool ftServer::FileCancel(std::string hash)
 {
 	// Remove from both queue and ftController, by default.
 	//
-	mFtDwlQueue->clearDownload(hash);
 	mFtController->FileCancel(hash);
 
 	return true ;
@@ -297,10 +292,19 @@ bool ftServer::FileClearCompleted()
 	return mFtController->FileClearCompleted();
 }
 
-	/* Control of Downloads Priority. */
-bool ftServer::changeQueuePriority(const std::string hash, int priority)
+void ftServer::setQueueSize(uint32_t s)
 {
-	return mFtDwlQueue->changePriority(hash,(DwlPriority)priority) ;
+	mFtController->setQueueSize(s) ;
+}
+uint32_t ftServer::getQueueSize()
+{
+	return mFtController->getQueueSize() ;
+}
+	/* Control of Downloads Priority. */
+bool ftServer::changeQueuePosition(const std::string hash, QueueMove mv)
+{
+	mFtController->moveInQueue(hash,mv) ;
+	return true ;
 }
 bool ftServer::changeDownloadSpeed(const std::string hash, int speed)
 {
@@ -316,29 +320,15 @@ bool ftServer::getDownloadSpeed(const std::string hash, int & speed)
 
 	return ret;
 }
-bool ftServer::getQueuePriority(const std::string hash, int & priority)
-{
-	DwlPriority _priority;
-	int ret = mFtDwlQueue->getPriority(hash, _priority);
-	if (ret) 
-		priority = _priority;
-
-	return ret;
-}
 bool ftServer::clearDownload(const std::string hash)
 {
    return true ;
 }
 
-void ftServer::clearQueue()
-{
-	mFtDwlQueue->clearQueue();
-}
-
-void ftServer::getDwlDetails(std::list<DwlDetails> & details)
-{
-	mFtDwlQueue->getDwlDetails(details);
-}
+//void ftServer::getDwlDetails(std::list<DwlDetails> & details)
+//{
+//	mFtDwlQueue->getDwlDetails(details);
+//}
 
 bool ftServer::FileDownloadChunksDetails(const std::string& hash,FileChunksInfo& info)
 {
@@ -1041,7 +1031,7 @@ bool    ftServer::addConfiguration(p3ConfigMgr *cfgmgr)
 	cfgmgr->addConfiguration("ft_shared.cfg", mFiMon);
 	cfgmgr->addConfiguration("ft_extra.cfg", mFtExtra);
 	cfgmgr->addConfiguration("ft_transfers.cfg", mFtController);
-	cfgmgr->addConfiguration("ft_dwlqueue.cfg", mFtDwlQueue);
+//	cfgmgr->addConfiguration("ft_dwlqueue.cfg", mFtDwlQueue);
 
 	return true;
 }

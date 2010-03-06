@@ -178,7 +178,7 @@ HEADERS += dbase/cachestrapper.h \
            ft/ftchunkmap.h \
            ft/ftserver.h \
            ft/fttransfermodule.h \
-	   ft/ftdwlqueue.h \
+#	   ft/ftdwlqueue.h \
            pqi/authssl.h \
            pqi/authgpg.h \
            pqi/cleanupxpgp.h \
@@ -323,7 +323,7 @@ SOURCES += \
 				ft/ftdata.cc \
 				ft/ftchunkmap.cc \
 				ft/ftfileprovider.cc \
-				ft/ftdwlqueue.cc \
+#				ft/ftdwlqueue.cc \
 				dht/opendhtmgr.cc \
 				upnp/upnphandler.cc \
 				dht/opendht.cc \
