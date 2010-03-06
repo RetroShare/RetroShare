@@ -11,7 +11,7 @@ MOC_DIR = temp/moc
 
 #CONFIG += debug
 debug {
-        DEFINES+*= PEERS_DEBUG
+        DEFINES += PEERS_DEBUG
         QMAKE_CXXFLAGS *= -g
 }
 

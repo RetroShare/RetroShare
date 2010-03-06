@@ -99,7 +99,9 @@ NetworkDialog::NetworkDialog(QWidget *parent)
 
   /* hide the Tree +/- */
   ui.connecttreeWidget -> setRootIsDecorated( false );
-  
+      ui.connecttreeWidget->setColumnCount(5);
+    ui.unvalidGPGkeyWidget->setColumnCount(5);
+
   /* Set header resize modes and initial section sizes */
     QHeaderView * _header = ui.connecttreeWidget->header () ;
     _header->setResizeMode (0, QHeaderView::Custom);
@@ -375,21 +377,36 @@ void NetworkDialog::insertConnect()
 
 	/* get a link to the table */
         QTreeWidget *connectWidget = ui.connecttreeWidget;
-	QTreeWidgetItem *oldSelect = getCurrentNeighbour();
-	QTreeWidgetItem *newSelect = NULL;
-	std::string oldId;
-	if (oldSelect)
-	{
-                oldId = (oldSelect -> text(4)).toStdString();
-	}
 
-        RsPeerDetails ownGPGDetails ;
-        rsPeers->getGPGDetails(rsPeers->getGPGOwnId(), ownGPGDetails);
+        //remove items
+        int index = 0;
+        while (index < connectWidget->topLevelItemCount()) {
+            std::string gpg_widget_id = (connectWidget->topLevelItem(index))->text(4).toStdString();
+            RsPeerDetails detail;
+            if (!rsPeers->getGPGDetails(gpg_widget_id, detail) || detail.validLvl < 3) {
+                connectWidget->takeTopLevelItem(index);
+            } else {
+                index++;
+            }
+        }
+        index = 0;
+        while (index < ui.unvalidGPGkeyWidget->topLevelItemCount()) {
+            std::string gpg_widget_id = (ui.unvalidGPGkeyWidget->topLevelItem(index))->text(4).toStdString();
+            RsPeerDetails detail;
+            if (!rsPeers->getGPGDetails(gpg_widget_id, detail) || detail.validLvl >= 3) {
+                ui.unvalidGPGkeyWidget->takeTopLevelItem(index);
+            } else {
+                index++;
+            }
+        }
 
         QList<QTreeWidgetItem *> validItems;
         QList<QTreeWidgetItem *> unvalidItems;
 	for(it = neighs.begin(); it != neighs.end(); it++)
 	{
+                #ifdef NET_DEBUG
+                std::cerr << "NetworkDialog::insertConnect() inserting gpg key : " << *it << std::endl;
+                #endif
                 if (*it == rsPeers->getGPGOwnId()) {
                     continue;
                 }
@@ -399,9 +416,26 @@ void NetworkDialog::insertConnect()
                 {
                         continue; /* BAD */
                 }
+
                 /* make a widget per friend */
-           	QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
-		
+                QTreeWidgetItem *item;
+                QList<QTreeWidgetItem *> list = connectWidget->findItems(QString::fromStdString(*it), Qt::MatchExactly, 4);
+                if (list.size() == 1) {
+                    item = list.front();
+                } else {
+                    list = ui.unvalidGPGkeyWidget->findItems(QString::fromStdString(*it), Qt::MatchExactly, 4);
+                    if (list.size() == 1) {
+                        item = list.front();
+                    } else {
+                        //create new item
+                        #ifdef NET_DEBUG
+                        std::cerr << "NetworkDialog::insertConnect() creating new tree widget item : " << *it << std::endl;
+                        #endif
+                        item = new QTreeWidgetItem(0);
+                        item->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
+                    }
+                }
+
 	        /* (0) Status Icon */
                 //item -> setText(0, "");
 
@@ -424,13 +458,7 @@ void NetworkDialog::insertConnect()
                         item -> setText(3, tr("Unknown"));
 		
                 /* (4) key id */
-		{
-                        item -> setText(4, QString::fromStdString(detail.id));
-			if ((oldSelect) && (oldId == detail.id))
-			{
-				newSelect = item;
-			}
-		}
+                item -> setText(4, QString::fromStdString(detail.id));
 
 
 		/**
@@ -449,9 +477,7 @@ void NetworkDialog::insertConnect()
                         item -> setIcon(0,(QIcon(IMAGE_AUTHED)));
                         backgrndcolor=QColor("#43C043");//light green
                     }
-		}
-		else
-                {
+                } else {
                         item -> setText(0, "1");
                         if (detail.hasSignedMe)
 			{
@@ -474,15 +500,26 @@ void NetworkDialog::insertConnect()
 
 		/* add to the list */
                 if (detail.accept_connection || detail.validLvl >= 3) {
-                    validItems.append(item);
+                    /* add gpg item to the list. If item is already in the list, it won't be duplicated thanks to Qt */
+                    connectWidget->addTopLevelItem(item);
                 } else {
-                    unvalidItems.append(item);
+                    ui.unvalidGPGkeyWidget->addTopLevelItem(item);
                 }
 
 	}
 
 	// add self to network.
-        QTreeWidgetItem *self_item = new QTreeWidgetItem((QTreeWidget*)0);
+        RsPeerDetails ownGPGDetails;
+        rsPeers->getGPGDetails(rsPeers->getGPGOwnId(), ownGPGDetails);
+        /* make a widget per friend */
+        QTreeWidgetItem *self_item;
+        QList<QTreeWidgetItem *> list = connectWidget->findItems(QString::fromStdString(ownGPGDetails.gpg_id), Qt::MatchExactly, 4);
+        if (list.size() == 1) {
+            self_item = list.front();
+        } else {
+            self_item = new QTreeWidgetItem(0);
+            self_item->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
+        }
         self_item -> setText(0, "0");
         self_item->setIcon(0,(QIcon(IMAGE_AUTHED)));
         self_item->setText(1,QString::fromStdString(ownGPGDetails.name) + " (yourself)") ;
@@ -494,22 +531,7 @@ void NetworkDialog::insertConnect()
         {
                 self_item->setBackground(i,QBrush(QColor("#45ff45")));
         }
-        validItems.append(self_item);
-
-
-	/* remove old items ??? */
-	connectWidget->clear();
-        connectWidget->setColumnCount(5);
-        ui.unvalidGPGkeyWidget->clear();
-        ui.unvalidGPGkeyWidget->setColumnCount(5);
-
-	/* add the items in! */
-        connectWidget->insertTopLevelItems(0, validItems);
-        ui.unvalidGPGkeyWidget->insertTopLevelItems(0, unvalidItems);
-        if (newSelect) {
-                connectWidget->setCurrentItem(newSelect);
-                ui.unvalidGPGkeyWidget->setCurrentItem(newSelect);
-        }
+        connectWidget->addTopLevelItem(self_item);
 
         if (ui.showUnvalidKeys->isChecked()) {
             ui.unvalidGPGkeyWidget->show();

@@ -355,7 +355,7 @@ void  PeersDialog::insertPeers()
         /* get a link to the table */
         QTreeWidget *peertreeWidget = ui.peertreeWidget;
 
-        //remove items that are not fiends anymore
+        //remove items that are not friends anymore
         int index = 0;
         while (index < peertreeWidget->topLevelItemCount()) {
             std::string gpg_widget_id = (peertreeWidget->topLevelItem(index))->text(3).toStdString();
