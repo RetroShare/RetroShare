@@ -482,5 +482,6 @@
         <file>images/connect/info16.png</file>
         <file>images/connect/mail_send.png</file>
         <file>help/version.html</file>
+        <file>images/view-certificate-sign-48.png</file>
     </qresource>
 </RCC>

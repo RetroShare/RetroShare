@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>560</width>
-    <height>497</height>
+    <width>505</width>
+    <height>527</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -41,7 +41,7 @@
           <item row="0" column="0">
            <widget class="QLabel" name="label_name">
             <property name="text">
-             <string>Name:</string>
+             <string>Name</string>
             </property>
            </widget>
           </item>
@@ -97,7 +97,7 @@
           <item row="4" column="0">
            <widget class="QLabel" name="label_loc">
             <property name="text">
-             <string>Loc:</string>
+             <string>Loc</string>
             </property>
            </widget>
           </item>
@@ -127,7 +127,7 @@
                  <enum>Qt::LeftToRight</enum>
                 </property>
                 <property name="text">
-                 <string>Local Address:</string>
+                 <string>Local Address</string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -137,7 +137,7 @@
               <item>
                <widget class="QLabel" name="label_2">
                 <property name="text">
-                 <string>External Address:</string>
+                 <string>External Address</string>
                 </property>
                </widget>
               </item>
@@ -158,14 +158,14 @@
               <item>
                <widget class="QLabel" name="label_5">
                 <property name="text">
-                 <string>Port:</string>
+                 <string>Port</string>
                 </property>
                </widget>
               </item>
               <item>
                <widget class="QLabel" name="label_4">
                 <property name="text">
-                 <string>Port:</string>
+                 <string>Port</string>
                 </property>
                </widget>
               </item>
@@ -258,12 +258,21 @@
          <item>
           <widget class="QLabel" name="web_of_trust_label">
            <property name="text">
-            <string>Your trust in this peer is :</string>
+            <string>Your trust in this peer is:</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QRadioButton" name="radioButton_trust_never">
+           <property name="maximumSize">
+            <size>
+             <width>125</width>
+             <height>16777215</height>
+            </size>
+           </property>
            <property name="text">
             <string>None</string>
            </property>
@@ -281,6 +290,12 @@
          </item>
          <item>
           <widget class="QRadioButton" name="radioButton_trust_marginnaly">
+           <property name="maximumSize">
+            <size>
+             <width>140</width>
+             <height>16777215</height>
+            </size>
+           </property>
            <property name="text">
             <string>Marginal</string>
            </property>
@@ -298,6 +313,12 @@
          </item>
          <item>
           <widget class="QRadioButton" name="radioButton_trust_fully">
+           <property name="maximumSize">
+            <size>
+             <width>130</width>
+             <height>16777215</height>
+            </size>
+           </property>
            <property name="text">
             <string>Full</string>
            </property>
@@ -367,36 +388,6 @@
           <number>6</number>
          </property>
          <item>
-          <spacer name="horizontalSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QToolButton" name="signKeyButton">
-           <property name="text">
-            <string>Sign GPG Key</string>
-           </property>
-           <property name="icon">
-            <iconset resource="../images.qrc">
-             <normaloff>:/images/view-certificate-sign-32.png</normaloff>:/images/view-certificate-sign-32.png</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>48</width>
-             <height>48</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="QCheckBox" name="signGPGKeyCheckBox">
            <property name="text">
             <string>Sign GPG key</string>
@@ -415,6 +406,39 @@
             <bool>true</bool>
            </property>
           </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="signKeyButton">
+           <property name="text">
+            <string>SignGPG Key</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../images.qrc">
+             <normaloff>:/images/view-certificate-sign-48.png</normaloff>:/images/view-certificate-sign-48.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>48</width>
+             <height>48</height>
+            </size>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextUnderIcon</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
          </item>
          <item>
           <widget class="QToolButton" name="denyFriendButton">
@@ -489,13 +513,6 @@
        </property>
       </spacer>
      </item>
-     <item row="0" column="1">
-      <widget class="QPushButton" name="cancelButton">
-       <property name="text">
-        <string>Cancel</string>
-       </property>
-      </widget>
-     </item>
      <item row="0" column="2">
       <widget class="QPushButton" name="applyButton">
        <property name="text">
@@ -506,6 +523,13 @@
        </property>
        <property name="default">
         <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QPushButton" name="cancelButton">
+       <property name="text">
+        <string>Cancel</string>
        </property>
       </widget>
      </item>
