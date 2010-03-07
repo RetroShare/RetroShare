@@ -181,6 +181,7 @@ void ftController::removeFileSource(const std::string& hash,const std::string& p
 		if(it->first == hash)
 		{
 			it->second->mTransfer->removeFileSource(peer_id);
+			it->second->mCreator->removeFileSource(peer_id);
 
 //			setPeerState(it->second.mTransfer, peer_id, rate, mConnMgr->isOnline(peer_id));
 

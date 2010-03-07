@@ -402,6 +402,16 @@ void ChunkMap::getChunksInfo(FileChunksInfo& info) const
 		info.compressed_peer_availability_maps[it->first] = it->second.cmap ;
 }
 
+void ChunkMap::removeFileSource(const std::string& peer_id)
+{
+	std::map<std::string,SourceChunksInfo>::iterator it(_peers_chunks_availability.find(peer_id)) ;
+
+	if(it == _peers_chunks_availability.end())
+		return ;
+
+	_peers_chunks_availability.erase(it) ;
+}
+
 void ChunkMap::getAvailabilityMap(CompressedChunkMap& compressed_map) const 
 {
 	compressed_map = CompressedChunkMap(_map) ; 

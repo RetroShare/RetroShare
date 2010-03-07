@@ -135,6 +135,9 @@ class ChunkMap
       virtual void getAvailabilityMap(CompressedChunkMap& cmap) const ;
 		void setAvailabilityMap(const CompressedChunkMap& cmap) ;
 
+		/// Removes the source availability map. The map
+		void removeFileSource(const std::string& peer_id) ;
+
 		/// This function fills in a plain map for a file of the given size. This
 		/// is used to ensure that the chunk size will be consistent with the rest
 		/// of the code.

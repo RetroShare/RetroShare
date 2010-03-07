@@ -73,6 +73,9 @@ class ftFileCreator: public ftFileProvider
 		//
 		void removeInactiveChunks() ;
 
+		// removes the designated file source from the chunkmap.
+		void removeFileSource(const std::string& peer_id) ;
+
 		// Returns the time stamp of the last data receive.
 		time_t lastRecvTimeStamp() ;
 

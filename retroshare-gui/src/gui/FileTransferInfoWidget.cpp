@@ -187,7 +187,7 @@ void FileTransferInfoWidget::draw(const FileInfo& nfo,const FileChunksInfo& info
 	 y += block_sep ;
 	 y += text_height ;
 	 painter->setPen(QColor::fromRgb(0,0,0)) ;
-	 painter->drawText(0,y,tr("Availability map (")+QString::number(info.compressed_peer_availability_maps.size())+ tr(" sources")+")") ;
+	 painter->drawText(0,y,tr("Availability map (")+QString::number(info.compressed_peer_availability_maps.size())+ tr(" active sources")+")") ;
 	 y += block_sep ;
 
 	 // Note (for non geeks): the !! operator transforms anything positive into 1 and 0 into 0.

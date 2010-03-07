@@ -217,28 +217,28 @@ void ftFileProvider::getClientMap(const std::string& peer_id,CompressedChunkMap&
 
 int ftFileProvider::initializeFileAttrs()
 {
-        #ifdef DEBUG_FT_FILE_PROVIDER
-        std::cerr << "ftFileProvider::initializeFileAttrs() Filename: " << file_name << std::endl;
-        #endif
-	
-        RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
+#ifdef DEBUG_FT_FILE_PROVIDER
+	std::cerr << "ftFileProvider::initializeFileAttrs() Filename: " << file_name << std::endl;
+#endif
+
+	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 	if (fd)
 		return 1;
 
 	/* 
-         * check if the file exists 
-         */
-	
+	 * check if the file exists 
+	 */
+
 	{
-                #ifdef DEBUG_FT_FILE_PROVIDER
-                std::cerr << "ftFileProvider::initializeFileAttrs() trying (r+b) " << std::endl;
-                #endif
+#ifdef DEBUG_FT_FILE_PROVIDER
+		std::cerr << "ftFileProvider::initializeFileAttrs() trying (r+b) " << std::endl;
+#endif
 	}
 
 	/* 
-         * attempt to open file 
-         */
-	
+	 * attempt to open file 
+	 */
+
 	fd = fopen64(file_name.c_str(), "rb");
 	if (!fd)
 	{
@@ -251,28 +251,28 @@ int ftFileProvider::initializeFileAttrs()
 		{
 			std::cerr << "ftFileProvider::initializeFileAttrs() Failed to open (rb): ";
 			std::cerr << file_name << std::endl;
-	
+
 			/* try opening read only */
 			return 0;
 		}
 	}
 
 	/*
-         * if it opened, find it's length 
+	 * if it opened, find it's length 
 	 * move to the end 
-         */
-	
-	if (0 != fseeko64(fd, 0L, SEEK_END))
-	{
-        	std::cerr << "ftFileProvider::initializeFileAttrs() Seek Failed" << std::endl;
-		return 0;
-	}
+	 */
 
-	uint64_t recvdsize = ftello64(fd);
+//	if (0 != fseeko64(fd, 0L, SEEK_END))
+//	{
+//		std::cerr << "ftFileProvider::initializeFileAttrs() Seek Failed" << std::endl;
+//		return 0;
+//	}
+//
+//	uint64_t recvdsize = ftello64(fd);
+//
+//#ifdef DEBUG_FT_FILE_PROVIDER
+//	std::cerr << "ftFileProvider::initializeFileAttrs() File Expected Size: " << mSize << " RecvdSize: " << recvdsize << std::endl;
+//#endif
 
-        #ifdef DEBUG_FT_FILE_PROVIDER
-        std::cerr << "ftFileProvider::initializeFileAttrs() File Expected Size: " << mSize << " RecvdSize: " << recvdsize << std::endl;
-        #endif
-	
 	return 1;
 }

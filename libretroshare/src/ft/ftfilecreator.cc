@@ -177,6 +177,15 @@ void ftFileCreator::removeInactiveChunks()
 #endif
 }
 
+void ftFileCreator::removeFileSource(const std::string& peer_id)
+{
+	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
+#ifdef FILE_DEBUG
+	std::cerr << "ftFileCreator:: removign file source " << peer_id << " from chunkmap." << std::endl ;
+#endif
+	chunkMap.removeFileSource(peer_id) ;
+}
+
 int ftFileCreator::initializeFileAttrs()
 {
         #ifdef FILE_DEBUG
