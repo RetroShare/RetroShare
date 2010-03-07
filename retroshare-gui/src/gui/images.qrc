@@ -151,8 +151,8 @@
         <file>images/emoticons/kopete/kopete020.png</file>
         <file>images/flags/af.png</file>
         <file>images/flags/cn.png</file>
-        <file>images/flags/cn_simp.png</file>
-        <file>images/flags/cn_trad.png</file>
+        <file>images/flags/zh_CN.png</file>
+        <file>images/flags/zh_TW.png</file>
         <file>images/flags/de.png</file>
         <file>images/flags/dk.png</file>
         <file>images/flags/en.png</file>
@@ -161,7 +161,7 @@
         <file>images/flags/fr.png</file>
         <file>images/flags/gr.png</file>
         <file>images/flags/it.png</file>
-        <file>images/flags/jp.png</file>
+        <file>images/flags/ja.png</file>
         <file>images/flags/kr.png</file>
         <file>images/flags/pl.png</file>
         <file>images/flags/pt.png</file>

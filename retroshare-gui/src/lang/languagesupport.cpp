@@ -34,32 +34,28 @@ void
 LanguageSupport::initialize()
 {
   _languages.clear();
-  _languages.insert("en",    "English");
-  _languages.insert("de",    "Deutsch");
   _languages.insert("af",    "Afrikaans");
-  _languages.insert("da",    "Danish");
+  _languages.insert("bg",    "Bulgarien");
   _languages.insert("cy",    "Welsh");
-  _languages.insert("fr",    
-    QString::fromUtf8("Fran\303\247ais"));
+  _languages.insert("de",    "Deutsch");
+  _languages.insert("da",    "Danish");
+  _languages.insert("en",    "English");
+  _languages.insert("es",    QString::fromUtf8("spanish"));
+  _languages.insert("fr",    QString::fromUtf8("Fran\303\247ais"));
+  _languages.insert("fi",    "suomi");
   _languages.insert("gr",    "Greek");
   _languages.insert("it",    "Italiano");
-  _languages.insert("jp",    "Japanese");
-  _languages.insert("kr",    "Korean");
+  _languages.insert("ja",    QString::fromUtf8("\346\227\245\346\234\254\350\252\236"));
+  _languages.insert("ko",    "Korean");
   _languages.insert("pl",    "Polish");
   _languages.insert("pt",    "Portuguese");
-  _languages.insert("ru",
-    QString::fromUtf8("\320\240\321\203\321\201\321\201\320\272\320\270\320\271"));
-  _languages.insert("es",    
-    QString::fromUtf8("spanish"));
+  _languages.insert("ru",    QString::fromUtf8("\320\240\321\203\321\201\321\201\320\272\320\270\320\271"));
   _languages.insert("sl",    "slovenian");
   _languages.insert("sr",    "Serbian");
   _languages.insert("sv",    "svenska");     
   _languages.insert("tr",    QString::fromUtf8("T\303\274rk\303\247e"));
-  _languages.insert("fi",    "suomi");
-  _languages.insert("zh_CN", 
-      QString::fromUtf8("\347\256\200\344\275\223\345\255\227"));
-  _languages.insert("zh_TW", 
-      QString::fromUtf8("\347\260\241\351\253\224\345\255\227"));
+  _languages.insert("zh_CN", QString::fromUtf8("\347\256\200\344\275\223\345\255\227"));
+  _languages.insert("zh_TW", QString::fromUtf8("\347\260\241\351\253\224\345\255\227"));
 
 }
 
