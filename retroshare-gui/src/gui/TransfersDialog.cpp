@@ -248,7 +248,8 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 		addOpenFileOption = true;
 				
 		size_t pos = info.fname.find_last_of('.');
-    if (pos == -1) return;	/* can't identify type of file */
+
+    if (pos ==  std::string::npos) return;	/* can't identify type of file */
     
 		/* check if the file is a media file */
     if (misc::isPreviewable(info.fname.substr(pos + 1).c_str()))
@@ -267,7 +268,6 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 		connect( playAct , SIGNAL( triggered() ), this, SLOT( openTransfer() ) );
 	}
 
-        QAction *detailsAct = NULL;
         pauseAct = new QAction(QIcon(IMAGE_PAUSE), tr("Pause"), this);
         connect(pauseAct, SIGNAL(triggered()), this, SLOT(pauseFileTransfer()));
 
@@ -368,10 +368,12 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 				all_paused = false ;
 
 			if ( lst[i].column() == 0)
+			{
 				if(lst[i].model ()->data (lst[i].model ()->index (lst[i].row (), STATUS )).toString() == "Queued")
 					all_downloading = false ;
 				else
 					all_queued = false ;
+			}
 		}
 
 		if(all_downloading)
@@ -426,12 +428,11 @@ TransfersDialog::~TransfersDialog()
 }
 
 
-int TransfersDialog::addItem(const QString& symbol, const QString& name, const QString& coreID, qlonglong fileSize, const FileProgressInfo& pinfo, double dlspeed,
+int TransfersDialog::addItem(const QString&, const QString& name, const QString& coreID, qlonglong fileSize, const FileProgressInfo& pinfo, double dlspeed,
 		const QString& sources,  const QString& status, const QString& priority, qlonglong completed, qlonglong remaining, qlonglong downloadtime)
 {
     int row;
     QList<QStandardItem *> list = DLListModel->findItems(coreID, Qt::MatchExactly, ID);
-    QStandardItem* item;
     if (list.size() > 0) {
         row = list.front()->row();
     } else {
@@ -486,10 +487,10 @@ int TransfersDialog::addItem(const QString& symbol, const QString& name, const Q
     return row;
 }
 
-bool TransfersDialog::addPeerToItem(int row, const QString& name, const QString& coreID, double dlspeed, const QString& status, const FileProgressInfo& peerInfo)
+int TransfersDialog::addPeerToItem(int row, const QString& name, const QString& coreID, double dlspeed, const QString& status, const FileProgressInfo& peerInfo)
 {
     QStandardItem *dlItem = DLListModel->item(row);
-    if (!dlItem) return false;
+    if (!dlItem) return -1;
 
     //try to find the item
     int childRow = -1;
@@ -497,14 +498,12 @@ bool TransfersDialog::addPeerToItem(int row, const QString& name, const QString&
 	 QStandardItem* childId=NULL ;
 
     for(count=0; (childId = dlItem->child(count, ID)) != NULL;++count) 
-	 {
-		 std::cerr << "data = " << childId->data(Qt::DisplayRole).toString().toStdString() << ", compared to " << coreID.toStdString() << std::endl ;
         if (childId->data(Qt::DisplayRole).toString() == coreID) 
 		  {
             childRow = count;
             break;
         }
-    }
+
     if (childRow == -1) {
         //set this false if you want to expand on double click
         dlItem->setEditable(false);
@@ -548,6 +547,8 @@ bool TransfersDialog::addPeerToItem(int row, const QString& name, const QString&
         items.append(i10);
         items.append(i11);
         dlItem->appendRow(items);
+
+		  childRow = dlItem->rowCount()-1 ;
     } else {
         //just update the child (peer)
         dlItem->child(childRow, DLSPEED)->setData(QVariant((double)dlspeed), Qt::DisplayRole);
@@ -568,15 +569,14 @@ bool TransfersDialog::addPeerToItem(int row, const QString& name, const QString&
         }
     }
 
-    return true;
+    return childRow;
 }
 
 
-int TransfersDialog::addUploadItem(const QString& symbol, const QString& name, const QString& coreID, qlonglong fileSize, const FileProgressInfo& pinfo, double dlspeed, const QString& source,  const QString& status, qlonglong completed, qlonglong remaining)
+int TransfersDialog::addUploadItem(const QString&, const QString& name, const QString& coreID, qlonglong fileSize, const FileProgressInfo& pinfo, double dlspeed, const QString& source,  const QString& status, qlonglong completed, qlonglong)
 {
     int row;
     QList<QStandardItem *> list = ULListModel->findItems(coreID, Qt::MatchExactly, UHASH);
-    QStandardItem* item;
     if (list.size() > 0) {
         row = list.front()->row();
     } else {
@@ -669,7 +669,6 @@ void TransfersDialog::insertTransfers()
 		QString fileName = QString::fromUtf8(info.fname.c_str());
 		QString fileHash = QString::fromStdString(info.hash);
 		qlonglong fileSize    = info.size;
-		double fileProgress    = (info.transfered * 100.0) / info.size;
 		double fileDlspeed     = info.tfRate * 1024.0;
 
 		/* get the sources (number of online peers) */
@@ -729,7 +728,10 @@ void TransfersDialog::insertTransfers()
 		std::map<std::string, std::string> versions;
 		bool retv = rsDisc->getDiscVersions(versions);
 
-		for (pit = info.peers.begin(); pit != info.peers.end(); pit++) {
+		std::set<int> used_rows ;
+
+		for (pit = info.peers.begin(); pit != info.peers.end(); pit++) 
+		{
 			QString peerName        = getPeerName(pit->peerId);
 			//unique combination: fileHash + peerId, variant: hash + peerName (too long)
 			QString hashFileAndPeerId      = fileHash + QString::fromStdString(pit->peerId);
@@ -748,7 +750,8 @@ void TransfersDialog::insertTransfers()
 				default:                    status = tr(""); break;
 			}
 			double peerDlspeed	= 0;
-			if (pit->status == FT_STATE_DOWNLOADING) {
+			if ((uint32_t)pit->status == FT_STATE_DOWNLOADING) 
+			{
 				peerDlspeed     = pit->tfRate * 1024.0;
 			}
 
@@ -766,8 +769,19 @@ void TransfersDialog::insertTransfers()
 			//					 std::cerr << std::endl ;
 
 			std::cout << "adding peer " << peerName.toStdString() << " to row " << addedRow << ", hashfile and peerid=" << hashFileAndPeerId.toStdString() << std::endl ;
-			addPeerToItem(addedRow, peerName, hashFileAndPeerId, peerDlspeed, status, peerpinfo);
+			int row_id = addPeerToItem(addedRow, peerName, hashFileAndPeerId, peerDlspeed, status, peerpinfo);
+
+			used_rows.insert(row_id) ;
 		}
+
+		QStandardItem *dlItem = DLListModel->item(addedRow);
+
+		// This is not optimal, but we deal with a small number of elements. The reverse order is really important,
+		// because rows after the deleted rows change positions !
+		//
+		for(int r=dlItem->rowCount()-1;r>=0;--r)
+			if(used_rows.find(r) == used_rows.end())
+				dlItem->takeRow(r) ;
 	}
 
 	/* here i will insert files from the download queue - which are
@@ -1186,7 +1200,8 @@ void TransfersDialog::previewTransfer()
 	}
 
 	size_t pos = info.fname.find_last_of('.');
-	if (pos == -1) return;	/* can't identify type of file */
+	if (pos == std::string::npos) 
+		return;	/* can't identify type of file */
 
 	/* check if the file is a media file */
 	if (!misc::isPreviewable(info.fname.substr(pos + 1).c_str())) return;
@@ -1389,7 +1404,7 @@ void TransfersDialog::showFileDetails()
 	std::cout << "done" << std::endl ;
 }
 
-double TransfersDialog::getProgress(int row, QStandardItemModel *model)
+double TransfersDialog::getProgress(int , QStandardItemModel *)
 {
 //	return model->data(model->index(row, PROGRESS), Qt::DisplayRole).toDouble();
 return 0.0 ;
