@@ -188,6 +188,10 @@
         <file>images/forward.png</file>
         <file>images/friendsfolder24.png</file>
         <file>images/kgames.png</file>
+        <file>images/go-down.png</file>
+        <file>images/go-top.png</file>
+        <file>images/go-up.png</file>
+        <file>images/go-bottom.png</file>
         <file>images/graph-area.png</file>
         <file>images/graph-line.png</file>
         <file>images/groupchat.png</file>

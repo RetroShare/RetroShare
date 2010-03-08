@@ -305,14 +305,14 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 //	clearQueueAct = new QAction(QIcon(), tr("Remove all queued"), this);
 //	connect(clearQueueAct, SIGNAL(triggered()), this, SLOT(clearQueue()));
 
-	priorityLowAct = new QAction(QIcon(IMAGE_PRIORITYLOW), tr("Down"), this);
-	connect(priorityLowAct, SIGNAL(triggered()), this, SLOT(priorityQueueDown()));
-	priorityNormalAct = new QAction(QIcon(IMAGE_PRIORITYNORMAL), tr("Up"), this);
-	connect(priorityNormalAct, SIGNAL(triggered()), this, SLOT(priorityQueueUp()));
-	priorityHighAct = new QAction(QIcon(IMAGE_PRIORITYHIGH), tr("Top"), this);
-	connect(priorityHighAct, SIGNAL(triggered()), this, SLOT(priorityQueueTop()));
-	priorityAutoAct = new QAction(QIcon(IMAGE_PRIORITYAUTO), tr("Bottom"), this);
-	connect(priorityAutoAct, SIGNAL(triggered()), this, SLOT(priorityQueueBottom()));
+	queueDownAct = new QAction(QIcon(":/images/go-down.png"), tr("Down"), this);
+	connect(queueDownAct, SIGNAL(triggered()), this, SLOT(priorityQueueDown()));
+	queueUpAct = new QAction(QIcon(":/images/go-up.png"), tr("Up"), this);
+	connect(queueUpAct, SIGNAL(triggered()), this, SLOT(priorityQueueUp()));
+	queueTopAct = new QAction(QIcon(":/images/go-top.png"), tr("Top"), this);
+	connect(queueTopAct, SIGNAL(triggered()), this, SLOT(priorityQueueTop()));
+	queueBottomAct = new QAction(QIcon(":/images/go-bottom.png"), tr("Bottom"), this);
+	connect(queueBottomAct, SIGNAL(triggered()), this, SLOT(priorityQueueBottom()));
 
 	prioritySlowAct = new QAction(QIcon(IMAGE_PRIORITYLOW), tr("Slower"), this);
 	connect(prioritySlowAct, SIGNAL(triggered()), this, SLOT(speedSlow()));
@@ -321,12 +321,12 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 	priorityFastAct = new QAction(QIcon(IMAGE_PRIORITYHIGH), tr("Faster"), this);
 	connect(priorityFastAct, SIGNAL(triggered()), this, SLOT(speedFast()));
 
-	QMenu *priorityQueueMenu = new QMenu(tr("Move in queue..."), this);
+	QMenu *priorityQueueMenu = new QMenu(tr("Move in Queue..."), this);
 	priorityQueueMenu->setIcon(QIcon(IMAGE_PRIORITY));
-	priorityQueueMenu->addAction(priorityLowAct);
-	priorityQueueMenu->addAction(priorityNormalAct);
-	priorityQueueMenu->addAction(priorityHighAct);
-	priorityQueueMenu->addAction(priorityAutoAct);
+	priorityQueueMenu->addAction(queueTopAct);
+	priorityQueueMenu->addAction(queueUpAct);
+	priorityQueueMenu->addAction(queueDownAct);
+	priorityQueueMenu->addAction(queueBottomAct);
 
 	QMenu *prioritySpeedMenu = new QMenu(tr("Priority (Speed)..."), this);
 	prioritySpeedMenu->setIcon(QIcon(IMAGE_PRIORITY));

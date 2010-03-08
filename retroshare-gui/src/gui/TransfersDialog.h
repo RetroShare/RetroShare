@@ -149,10 +149,10 @@ private:
     QAction *prioritySlowAct;
     QAction *priorityMediumAct;
     QAction *priorityFastAct;
-    QAction *priorityLowAct;
-    QAction *priorityNormalAct;
-    QAction *priorityHighAct;
-    QAction *priorityAutoAct;
+    QAction *queueDownAct;
+    QAction *queueUpAct;
+    QAction *queueTopAct;
+    QAction *queueBottomAct;
     QAction *chunkRandomAct;
     QAction *chunkStreamingAct;
     QAction *detailsfileAct;
