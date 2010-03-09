@@ -49,7 +49,7 @@ ShareManager::ShareManager(QWidget *parent, Qt::WFlags flags)
 
   connect(ui.addButton, SIGNAL(clicked( bool ) ), this , SLOT( addShareDirectory() ) );
   connect(ui.removeButton, SIGNAL(clicked( bool ) ), this , SLOT( removeShareDirectory() ) );
-  connect(ui.closeButton, SIGNAL(accepted()), this, SLOT(close()));
+  connect(ui.closeButton, SIGNAL(clicked()), this, SLOT(close()));
 
   connect( ui.shareddirList, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( shareddirListCostumPopupMenu( QPoint ) ) );
 
