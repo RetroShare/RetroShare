@@ -109,7 +109,7 @@ p, li { white-space: pre-wrap; }
       <property name="topMargin">
        <number>6</number>
       </property>
-      <item row="0" column="0" colspan="4">
+      <item row="0" column="0" colspan="5">
        <widget class="QGroupBox" name="groupBox">
         <property name="title">
          <string>Shared Folder Manager</string>
@@ -255,12 +255,9 @@ p, li { white-space: pre-wrap; }
        </spacer>
       </item>
       <item row="1" column="3">
-       <widget class="QDialogButtonBox" name="buttonBox">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="standardButtons">
-         <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+       <widget class="QPushButton" name="closeButton">
+        <property name="text">
+         <string>Close</string>
         </property>
        </widget>
       </item>

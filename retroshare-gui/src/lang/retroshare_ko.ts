@@ -303,7 +303,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/AttachFileItem.ui" line="80"/>
         <source>File Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">파일명</translation>
     </message>
     <message>
         <location filename="../gui/feeds/AttachFileItem.ui" line="108"/>
@@ -415,12 +415,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/blogs/BlogDetails.ui" line="54"/>
         <source>Popularity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">인기도</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/BlogDetails.ui" line="68"/>
         <source>Last Post</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">마지막 게시물</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/BlogDetails.ui" line="82"/>
@@ -458,7 +458,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/BlogDialog.ui" line="73"/>
         <source>Blogs</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">블로그</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/BlogDialog.ui" line="97"/>
@@ -531,7 +531,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/BlogMsgItem.ui" line="152"/>
         <source>Subject</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">주제</translation>
     </message>
     <message>
         <location filename="../gui/feeds/BlogMsgItem.ui" line="165"/>
@@ -569,7 +569,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/blogs/BlogsDialog.ui" line="166"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">추가</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/BlogsDialog.ui" line="295"/>
@@ -622,7 +622,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/blogs/BlogsDialog.cpp" line="62"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">이름</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/BlogsDialog.cpp" line="63"/>
@@ -772,7 +772,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/CalDialog.ui" line="122"/>
         <source>Location:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">위치 :</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/CalDialog.ui" line="168"/>
@@ -807,7 +807,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/CalDialog.ui" line="249"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">추가</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/CalDialog.ui" line="274"/>
@@ -1015,7 +1015,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.cpp" line="699"/>
         <source>&amp;Quit</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">종료</translation>
     </message>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.cpp" line="707"/>
@@ -1112,7 +1112,7 @@ Do you want to save message ?</source>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.cpp" line="1174"/>
         <source>Add Extra File</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">추가 파일 추가</translation>
     </message>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="622"/>
@@ -1168,12 +1168,12 @@ Do you want to save message ?</source>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="342"/>
         <source>Underline</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">밑줄</translation>
     </message>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="380"/>
         <source>Italic</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">기울임꼴</translation>
     </message>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="735"/>
@@ -1368,22 +1368,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/channels/ChannelDetails.ui" line="44"/>
         <source>Forum Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">포럼 이름</translation>
     </message>
     <message>
         <location filename="../gui/channels/ChannelDetails.ui" line="54"/>
         <source>Popularity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">인기도</translation>
     </message>
     <message>
         <location filename="../gui/channels/ChannelDetails.ui" line="68"/>
         <source>Last Post</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">마지막 게시물</translation>
     </message>
     <message>
         <location filename="../gui/channels/ChannelDetails.ui" line="82"/>
         <source>Forum ID</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">포럼 자료 ID</translation>
     </message>
     <message>
         <location filename="../gui/channels/ChannelDetails.ui" line="92"/>
@@ -1435,7 +1435,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/ChannelFeed.ui" line="166"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">추가</translation>
     </message>
     <message>
         <location filename="../gui/ChannelFeed.ui" line="292"/>
@@ -1479,12 +1479,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/ChannelFeed.cpp" line="66"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">이름</translation>
     </message>
     <message>
         <location filename="../gui/ChannelFeed.cpp" line="67"/>
         <source>Popularity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">인기도</translation>
     </message>
     <message>
         <location filename="../gui/ChannelFeed.cpp" line="68"/>
@@ -1653,7 +1653,7 @@ Available: %3</source>
     <message>
         <location filename="../gui/connect/ConfCertDialog.ui" line="44"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">이름</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.ui" line="100"/>
@@ -1693,12 +1693,12 @@ Available: %3</source>
     <message>
         <location filename="../gui/connect/ConfCertDialog.ui" line="209"/>
         <source>Addresses list</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">주소 목록</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.cpp" line="55"/>
         <source>Apply and Close</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">닫기</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.cpp" line="123"/>
@@ -1765,7 +1765,7 @@ Available: %3</source>
     <message>
         <location filename="../gui/connect/ConfCertDialog.cpp" line="355"/>
         <source>Maybe password is wrong</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">아마 비밀 번호가 잘못입니다</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.ui" line="253"/>
@@ -1775,7 +1775,7 @@ Available: %3</source>
     <message>
         <location filename="../gui/connect/ConfCertDialog.ui" line="446"/>
         <source>Deny Friend</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">친구 거부</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.ui" line="393"/>
@@ -1785,12 +1785,12 @@ Available: %3</source>
     <message>
         <location filename="../gui/connect/ConfCertDialog.ui" line="130"/>
         <source>Local Address</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">로컬 주소</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.ui" line="140"/>
         <source>External Address</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">외부 주소</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.ui" line="161"/>
@@ -1811,12 +1811,12 @@ Available: %3</source>
     <message>
         <location filename="../gui/connect/ConfCertDialog.ui" line="300"/>
         <source>Marginal</source>
-        <translation type="unfinished"></translation>
+        <translation>한계</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.ui" line="323"/>
         <source>Full</source>
-        <translation type="unfinished"></translation>
+        <translation>전체</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.ui" line="348"/>
@@ -1841,12 +1841,12 @@ Available: %3</source>
     <message>
         <location filename="../gui/connect/ConfCertDialog.ui" line="466"/>
         <source>Make Friend</source>
-        <translation type="unfinished">친구를 사귀십시오</translation>
+        <translation>친구를 사귀십시오</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.ui" line="519"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">확인</translation>
     </message>
 </context>
 <context>
@@ -1925,7 +1925,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlog.ui" line="14"/>
         <source>Create new Blog</source>
-        <translation type="unfinished"></translation>
+        <translation>새 블로그 만들기</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlog.ui" line="79"/>
@@ -1934,72 +1934,76 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;New Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;새 블로그&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlog.ui" line="104"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>이름</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlog.ui" line="118"/>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation>설명</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlog.ui" line="130"/>
         <source>Type:</source>
-        <translation type="unfinished">유형:</translation>
+        <translation>유형:</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlog.ui" line="142"/>
         <source>Public - Anyone can read and publish (Shared Publish Key)</source>
-        <translation type="unfinished"></translation>
+        <translation>공개 - 누구나 읽을 수 있고 (공유 게시 키) 게시</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlog.ui" line="149"/>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation type="unfinished"></translation>
+        <translation>제한됨 - 누구나 제한 게시 (사립 게시 키)를 읽을 수있습니다</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlog.ui" line="156"/>
         <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation type="unfinished"></translation>
+        <translation>개인 - (사립 게시 키 메시지를 볼 필요)</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlog.ui" line="166"/>
         <source>Allowed Messages</source>
-        <translation type="unfinished"></translation>
+        <translation>허용 메시지</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlog.ui" line="178"/>
         <source>Authemticated Messages</source>
-        <translation type="unfinished"></translation>
+        <translation>인증된 메시지</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlog.ui" line="185"/>
         <source>Anonymous Messages</source>
-        <translation type="unfinished"></translation>
+        <translation>익명 메시지</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlog.ui" line="221"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>취소</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlog.ui" line="228"/>
         <source>Create</source>
-        <translation type="unfinished"></translation>
+        <translation>만들기</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlog.cpp" line="91"/>
         <source>RetroShare</source>
-        <translation type="unfinished">Retroshare (뒤에몫) </translation>
+        <translation>Retroshare (뒤에몫) </translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlog.cpp" line="92"/>
         <source>Please add a Name</source>
-        <translation type="unfinished"></translation>
+        <translation>제발 이름을 추가합니다</translation>
     </message>
 </context>
 <context>
@@ -2043,7 +2047,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.ui" line="158"/>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.ui" line="203"/>
         <source>Attachments</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">첨부 파일</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.ui" line="322"/>
@@ -2078,12 +2082,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.ui" line="391"/>
         <source>Underline</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">밑줄</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.ui" line="400"/>
         <source>Italic</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">기울임꼴</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.ui" line="405"/>
@@ -2128,7 +2132,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="399"/>
         <source>Add Extra File</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">추가 파일 추가</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="547"/>
@@ -2158,17 +2162,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="887"/>
         <source>&amp;Save</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">저장하십시오 </translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="893"/>
         <source>Save &amp;As...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">다른 이름으로 저장</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="898"/>
         <source>&amp;Print...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">인쇄</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="903"/>
@@ -2183,7 +2187,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="914"/>
         <source>&amp;Quit</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">종료</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="922"/>
@@ -2292,7 +2296,7 @@ Do you want to save your changes?</source>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1158"/>
         <source>Open File...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">파일 열기</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1159"/>
@@ -2302,7 +2306,7 @@ Do you want to save your changes?</source>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1178"/>
         <source>Save as...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">다른 이름으로 저장</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1179"/>
@@ -2387,7 +2391,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/channels/CreateChannelMsg.ui" line="249"/>
         <location filename="../gui/channels/CreateChannelMsg.ui" line="294"/>
         <source>Attachments</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">첨부 파일</translation>
     </message>
     <message>
         <location filename="../gui/channels/CreateChannelMsg.ui" line="372"/>
@@ -2397,7 +2401,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/channels/CreateChannelMsg.cpp" line="285"/>
         <source>Add Extra File</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">추가 파일 추가</translation>
     </message>
     <message>
         <location filename="../gui/channels/CreateChannelMsg.cpp" line="432"/>
@@ -2415,32 +2419,32 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="104"/>
         <source>Name</source>
-        <translation type="unfinished">이름</translation>
+        <translation>이름</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="130"/>
         <source>Type:</source>
-        <translation type="unfinished">유형:</translation>
+        <translation>유형:</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="334"/>
         <source>Cancel</source>
-        <translation type="unfinished">취소</translation>
+        <translation>취소</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForum.cpp" line="98"/>
         <source>RetroShare</source>
-        <translation type="unfinished">Retroshare (뒤에몫) </translation>
+        <translation>Retroshare (뒤에몫) </translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForum.cpp" line="99"/>
         <source>Please add a Name</source>
-        <translation type="unfinished"></translation>
+        <translation>제발 이름을 추가합니다</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="14"/>
         <source>Create new Forum</source>
-        <translation type="unfinished"></translation>
+        <translation>새 포럼 만들기</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="79"/>
@@ -2449,57 +2453,61 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;New Forum&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;새 포럼&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="118"/>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation>설명</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="142"/>
         <source>Public - Anyone can read and publish (Shared Publish Key)</source>
-        <translation type="unfinished"></translation>
+        <translation>공개 - 누구나 읽을 수 있고 (공유 게시 키) 게시</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="149"/>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation type="unfinished"></translation>
+        <translation>제한됨 - 누구나 제한 게시 (사립 게시 키)를 읽을 수있습니다</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="156"/>
         <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation type="unfinished"></translation>
+        <translation>개인 - (사립 게시 키 메시지를 볼 필요)</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="166"/>
         <source>Allowed Messages</source>
-        <translation type="unfinished"></translation>
+        <translation>허용 메시지</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="178"/>
         <source>Authemticated Messages</source>
-        <translation type="unfinished"></translation>
+        <translation>인증된 메시지</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="185"/>
         <source>Anonymous Messages</source>
-        <translation type="unfinished"></translation>
+        <translation>익명 메시지</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="208"/>
         <source>Channel Logo</source>
-        <translation type="unfinished"></translation>
+        <translation>채널 로고</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="266"/>
         <source>Add Channel Logo</source>
-        <translation type="unfinished"></translation>
+        <translation>채널 로고 추가</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="341"/>
         <source>Create</source>
-        <translation type="unfinished"></translation>
+        <translation>만들기</translation>
     </message>
 </context>
 <context>
@@ -2591,12 +2599,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/settings/CryptoPage.cpp" line="117"/>
         <source>Save as...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">다른 이름으로 저장</translation>
     </message>
     <message>
         <location filename="../gui/settings/CryptoPage.cpp" line="118"/>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">RetroShare 인증서 (*.의 RSC);; 모든 파일 (*)</translation>
     </message>
     <message>
         <location filename="../gui/settings/CryptoPage.ui" line="506"/>
@@ -2731,7 +2739,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/DetailsDialog.ui" line="180"/>
         <source>Transfer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">전송</translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="186"/>
@@ -2853,7 +2861,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/DetailsDialog.cpp" line="53"/>
         <source>File Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">파일명</translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.cpp" line="121"/>
@@ -2900,7 +2908,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/settings/DirectoriesPage.cpp" line="44"/>
         <source>Add a Share Directory</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">공유 디렉토리를 추가하십시오</translation>
     </message>
     <message>
         <location filename="../gui/settings/DirectoriesPage.cpp" line="45"/>
@@ -3020,7 +3028,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/ExampleDialog.ui" line="580"/>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">상태</translation>
     </message>
 </context>
 <context>
@@ -3141,9 +3149,13 @@ p, li { white-space: pre-wrap; }
         <translation>상태지도</translation>
     </message>
     <message>
-        <location filename="../gui/FileTransferInfoWidget.cpp" line="190"/>
         <source> sources</source>
-        <translation>근원</translation>
+        <translation type="obsolete">근원</translation>
+    </message>
+    <message>
+        <location filename="../gui/FileTransferInfoWidget.cpp" line="190"/>
+        <source> active sources</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/FileTransferInfoWidget.cpp" line="218"/>
@@ -3345,7 +3357,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/ForumMsgItem.ui" line="85"/>
         <source>Forum Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">포럼 이름</translation>
     </message>
     <message>
         <location filename="../gui/feeds/ForumMsgItem.ui" line="114"/>
@@ -3377,7 +3389,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/ForumMsgItem.ui" line="233"/>
         <source>Reply</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">대답</translation>
     </message>
     <message>
         <location filename="../gui/feeds/ForumMsgItem.ui" line="285"/>
@@ -3421,7 +3433,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/ForumNewItem.ui" line="149"/>
         <source>Subscribe to Forum</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">구독 포럼</translation>
     </message>
     <message>
         <location filename="../gui/feeds/ForumNewItem.ui" line="185"/>
@@ -3431,7 +3443,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/ForumNewItem.ui" line="216"/>
         <source>Forum Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">포럼에 대한 설명</translation>
     </message>
     <message>
         <location filename="../gui/feeds/ForumNewItem.ui" line="244"/>
@@ -3650,7 +3662,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/ForumsDialog.ui" line="873"/>
         <source>Last Post</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">마지막 게시물</translation>
     </message>
     <message>
         <location filename="../gui/ForumsDialog.ui" line="878"/>
@@ -3834,7 +3846,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/GamesDialog.ui" line="200"/>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">상태</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/GamesDialog.ui" line="205"/>
@@ -3865,7 +3877,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/GamesDialog.ui" line="251"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">삭제</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/GamesDialog.ui" line="283"/>
@@ -4029,7 +4041,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/GeneralMsgDialog.ui" line="55"/>
         <location filename="../gui/GeneralMsgDialog.cpp" line="62"/>
         <source>Forum</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">포럼</translation>
     </message>
     <message>
         <location filename="../gui/GeneralMsgDialog.ui" line="60"/>
@@ -4056,7 +4068,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/GeneralMsgDialog.cpp" line="300"/>
         <source>Add Extra File</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">추가 파일 추가</translation>
     </message>
     <message>
         <location filename="../gui/GeneralMsgDialog.ui" line="45"/>
@@ -4078,7 +4090,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/GeneralMsgDialog.ui" line="336"/>
         <location filename="../gui/GeneralMsgDialog.ui" line="376"/>
         <source>Attachments</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">첨부 파일</translation>
     </message>
     <message>
         <location filename="../gui/GeneralMsgDialog.ui" line="307"/>
@@ -4491,7 +4503,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/InfoDialog.ui" line="14"/>
         <source>Info</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">정보</translation>
     </message>
     <message>
         <location filename="../gui/InfoDialog.ui" line="31"/>
@@ -4921,6 +4933,11 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../gui/MainWindow.cpp" line="126"/>
+        <source>RetroShare %1 a secure decentralised communication platform</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../gui/MainWindow.cpp" line="230"/>
         <source>Unfinished</source>
         <translation type="unfinished"></translation>
@@ -4960,9 +4977,8 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">조정 </translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="126"/>
         <source>RetroShare %1 a secure decentralised commmunication platform</source>
-        <translation>RetroShare %1 보안 분산 커뮤니케이션 플랫폼</translation>
+        <translation type="obsolete">RetroShare %1 보안 분산 커뮤니케이션 플랫폼</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="219"/>
@@ -5449,7 +5465,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MessagesPopupDialog.ui" line="40"/>
         <source>Reply</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">대답</translation>
     </message>
     <message>
         <location filename="../gui/MessagesPopupDialog.ui" line="49"/>
@@ -5460,12 +5476,12 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/MessagesPopupDialog.ui" line="67"/>
         <location filename="../gui/MessagesPopupDialog.ui" line="77"/>
         <source>Print</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">인쇄</translation>
     </message>
     <message>
         <location filename="../gui/MessagesPopupDialog.ui" line="72"/>
         <source>PrintPreview</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">인쇄 미리보기</translation>
     </message>
 </context>
 <context>
@@ -5473,12 +5489,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="172"/>
         <source>Expand all</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">모두 확장</translation>
     </message>
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="175"/>
         <source>Collapse all</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">모두 축소</translation>
     </message>
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="178"/>
@@ -5488,7 +5504,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="181"/>
         <source>Message Friend</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">메시지를 친구에게 보내기</translation>
     </message>
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="184"/>
@@ -5508,12 +5524,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="198"/>
         <source>Deny Friend</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">친구 거부</translation>
     </message>
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="200"/>
         <source>Remove Friend Location</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">제거 친구 위치</translation>
     </message>
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="219"/>
@@ -5523,7 +5539,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="221"/>
         <source>&lt;strong&gt;RetroShare instance&lt;/strong&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;strong&gt;RetroShare 예를 들어&lt;/strong&gt;</translation>
     </message>
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="260"/>
@@ -5537,7 +5553,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/MessengerWindow.cpp" line="390"/>
         <location filename="../gui/MessengerWindow.cpp" line="391"/>
         <source>location : </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">위치 :</translation>
     </message>
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="387"/>
@@ -5549,12 +5565,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="464"/>
         <source>Available</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">사용 가능</translation>
     </message>
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="474"/>
         <source>Offline</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">오프라인</translation>
     </message>
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="523"/>
@@ -5569,7 +5585,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="580"/>
         <source>Friend Not Online</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">친구가 아니 온라인</translation>
     </message>
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="580"/>
@@ -5580,7 +5596,7 @@ Do you want to send them a Message instead</source>
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="921"/>
         <source>View</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">보기</translation>
     </message>
     <message>
         <source>Remove Friend</source>
@@ -5609,7 +5625,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/MessengerWindow.ui" line="130"/>
         <location filename="../gui/MessengerWindow.cpp" line="453"/>
         <source>Online</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">온라인</translation>
     </message>
     <message>
         <location filename="../gui/MessengerWindow.ui" line="139"/>
@@ -5732,7 +5748,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/MsgFeed.ui" line="156"/>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">모두</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/MsgFeed.ui" line="189"/>
@@ -5742,7 +5758,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/MsgFeed.ui" line="218"/>
         <source>Subject</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">주제</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/MsgFeed.ui" line="223"/>
@@ -6009,7 +6025,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="458"/>
         <source>Unknown</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">알 수없는</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="668"/>
@@ -6314,7 +6330,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/settings/NotifyPage.ui" line="510"/>
         <source>News Feed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">뉴스 피드</translation>
     </message>
     <message>
         <location filename="../gui/settings/NotifyPage.ui" line="522"/>
@@ -6329,7 +6345,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/settings/NotifyPage.ui" line="536"/>
         <source>Forums</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">포럼</translation>
     </message>
     <message>
         <location filename="../gui/settings/NotifyPage.ui" line="543"/>
@@ -6339,7 +6355,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/settings/NotifyPage.ui" line="550"/>
         <source>Blogs</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">블로그</translation>
     </message>
     <message>
         <location filename="../gui/settings/NotifyPage.ui" line="557"/>
@@ -6618,12 +6634,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/PeersDialog.cpp" line="224"/>
         <source>Expand all</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">모두 확장</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="227"/>
         <source>Collapse all</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">모두 축소</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="233"/>
@@ -6821,7 +6837,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/PeersDialog.ui" line="833"/>
         <source>Edit Personal message</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">편집 상태 메시지</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.ui" line="871"/>
@@ -7012,7 +7028,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/PhotoDialog.ui" line="82"/>
         <source>Peer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">피어</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/PhotoDialog.ui" line="87"/>
@@ -7074,7 +7090,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/PhotoDialog.ui" line="240"/>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">설명</translation>
     </message>
 </context>
 <context>
@@ -7087,12 +7103,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/PhotoShow.ui" line="25"/>
         <source>Date:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">날짜:</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/PhotoShow.ui" line="32"/>
         <source>Location:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">위치 :</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/PhotoShow.ui" line="39"/>
@@ -7187,7 +7203,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/PhotoShow.ui" line="208"/>
         <source>Pause</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">일시 중지</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/PhotoShow.ui" line="215"/>
@@ -7295,13 +7311,13 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/chat/PopupChatDialog.ui" line="362"/>
         <location filename="../gui/chat/PopupChatDialog.ui" line="605"/>
         <source>Underline</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">밑줄</translation>
     </message>
     <message>
         <location filename="../gui/chat/PopupChatDialog.ui" line="391"/>
         <location filename="../gui/chat/PopupChatDialog.ui" line="600"/>
         <source>Italic</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">기울임꼴</translation>
     </message>
     <message>
         <location filename="../gui/chat/PopupChatDialog.ui" line="420"/>
@@ -7351,7 +7367,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/chat/PopupChatDialog.cpp" line="726"/>
         <source>Add Extra File</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">추가 파일 추가</translation>
     </message>
     <message>
         <location filename="../gui/chat/PopupChatDialog.cpp" line="835"/>
@@ -7415,12 +7431,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../util/printpreview.cpp" line="254"/>
         <source>Print</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">인쇄</translation>
     </message>
     <message>
         <location filename="../util/printpreview.cpp" line="258"/>
         <source>&amp;Print...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">인쇄</translation>
     </message>
     <message>
         <location filename="../util/printpreview.cpp" line="264"/>
@@ -7468,7 +7484,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/profile/ProfileEdit.ui" line="35"/>
         <source>Profile</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">개요</translation>
     </message>
     <message>
         <location filename="../gui/profile/ProfileEdit.ui" line="49"/>
@@ -7633,7 +7649,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/profile/ProfileView.ui" line="254"/>
         <source>Hash</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">해쉬</translation>
     </message>
     <message>
         <location filename="../gui/profile/ProfileView.ui" line="280"/>
@@ -7842,7 +7858,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/advsearch/guiexprelement.cpp" line="45"/>
         <source>Popularity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">인기도</translation>
     </message>
     <message>
         <location filename="../gui/advsearch/guiexprelement.cpp" line="47"/>
@@ -7907,7 +7923,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/advsearch/guiexprelement.cpp" line="39"/>
         <source>Hash</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">해쉬</translation>
     </message>
 </context>
 <context>
@@ -8732,7 +8748,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/settings/ServerPage.ui" line="521"/>
         <source>Firewalled</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">방화벽</translation>
     </message>
     <message>
         <location filename="../gui/settings/ServerPage.ui" line="526"/>
@@ -8907,28 +8923,28 @@ behind a firewall or a VPN.</source>
 <context>
     <name>ShareManager</name>
     <message>
-        <location filename="../gui/ShareManager.cpp" line="57"/>
+        <location filename="../gui/ShareManager.cpp" line="56"/>
         <source>Add a Share Directory</source>
         <translation>공유 디렉토리를 추가하십시오</translation>
     </message>
     <message>
-        <location filename="../gui/ShareManager.cpp" line="58"/>
+        <location filename="../gui/ShareManager.cpp" line="57"/>
         <source>Stop sharing selected Directory</source>
         <translation>그만 공유 디렉토리를 선택</translation>
     </message>
     <message>
-        <location filename="../gui/ShareManager.cpp" line="177"/>
+        <location filename="../gui/ShareManager.cpp" line="176"/>
         <source>Select A Folder To Share</source>
         <translation>를 선택하려면 폴더 공유</translation>
     </message>
     <message>
-        <location filename="../gui/ShareManager.cpp" line="231"/>
+        <location filename="../gui/ShareManager.cpp" line="230"/>
         <source>Do you really want to stop sharing this directory ? </source>
         <translation>정말이 디렉토리의 공유를 중지하시겠습니까?</translation>
     </message>
     <message>
         <location filename="../gui/ShareManager.ui" line="234"/>
-        <location filename="../gui/ShareManager.cpp" line="77"/>
+        <location filename="../gui/ShareManager.cpp" line="76"/>
         <source>Remove</source>
         <translation>제거하십시오</translation>
     </message>
@@ -8937,12 +8953,12 @@ behind a firewall or a VPN.</source>
         <translation type="obsolete">공유 디렉토리를 추가하십시오</translation>
     </message>
     <message>
-        <location filename="../gui/ShareManager.cpp" line="235"/>
+        <location filename="../gui/ShareManager.cpp" line="234"/>
         <source>Warning!</source>
         <translation>경고!</translation>
     </message>
     <message>
-        <location filename="../gui/ShareManager.cpp" line="190"/>
+        <location filename="../gui/ShareManager.cpp" line="189"/>
         <source>Shared Directory Added!</source>
         <translation>공유 디렉토리 추가!</translation>
     </message>
@@ -9001,6 +9017,11 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/ShareManager.ui" line="209"/>
         <source>Add</source>
         <translation>추가</translation>
+    </message>
+    <message>
+        <location filename="../gui/ShareManager.ui" line="260"/>
+        <source>Close</source>
+        <translation>닫기</translation>
     </message>
 </context>
 <context>
@@ -9508,7 +9529,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/StatisticDialog.ui" line="532"/>
         <source>Transfer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">전송</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/StatisticDialog.ui" line="543"/>
@@ -9544,12 +9565,12 @@ p, li { white-space: pre-wrap; }
         <translation>개인 메시지</translation>
     </message>
     <message>
-        <location filename="../gui/profile/StatusMessage.ui" line="78"/>
+        <location filename="../gui/profile/StatusMessage.ui" line="62"/>
         <source>Status message</source>
         <translation>상태 메시지</translation>
     </message>
     <message>
-        <location filename="../gui/profile/StatusMessage.ui" line="102"/>
+        <location filename="../gui/profile/StatusMessage.ui" line="86"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -9562,7 +9583,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;개인 메시지&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/profile/StatusMessage.ui" line="119"/>
+        <location filename="../gui/profile/StatusMessage.ui" line="103"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -9573,6 +9594,16 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;귀하의 상태 메시지를 입력하세요&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="../gui/profile/StatusMessage.ui" line="165"/>
+        <source>OK</source>
+        <translation>좋습니다</translation>
+    </message>
+    <message>
+        <location filename="../gui/profile/StatusMessage.ui" line="181"/>
+        <source>Cancel</source>
+        <translation>취소</translation>
     </message>
 </context>
 <context>
@@ -9613,7 +9644,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/SubFileItem.ui" line="82"/>
         <source>File Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">파일명</translation>
     </message>
     <message>
         <location filename="../gui/feeds/SubFileItem.ui" line="110"/>
@@ -9651,7 +9682,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/AboutDialog.cpp" line="407"/>
         <source>Pause</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">일시 중지</translation>
     </message>
 </context>
 <context>
@@ -9969,7 +10000,7 @@ p, li { white-space: pre-wrap; }
         <translation>해쉬</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="266"/>
+        <location filename="../gui/TransfersDialog.cpp" line="267"/>
         <source>Play</source>
         <translation>놀이</translation>
     </message>
@@ -10039,9 +10070,8 @@ p, li { white-space: pre-wrap; }
         <translation>아래쪽</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="324"/>
         <source>Move in queue...</source>
-        <translation>대기열로 이동 ...</translation>
+        <translation type="obsolete">대기열로 이동 ...</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="331"/>
@@ -10064,32 +10094,32 @@ p, li { white-space: pre-wrap; }
         <translation>청크 전략</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="692"/>
+        <location filename="../gui/TransfersDialog.cpp" line="691"/>
         <source>Queued</source>
         <translation>대기</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="937"/>
+        <location filename="../gui/TransfersDialog.cpp" line="951"/>
         <source>RetroShare</source>
         <translation>Retroshare (뒤에몫) </translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="1030"/>
+        <location filename="../gui/TransfersDialog.cpp" line="1044"/>
         <source>Details:</source>
         <translation>세부 사항 :</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="1263"/>
+        <location filename="../gui/TransfersDialog.cpp" line="1278"/>
         <source>Open Transfer</source>
         <translation>열기 전송</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="1264"/>
+        <location filename="../gui/TransfersDialog.cpp" line="1279"/>
         <source>File %1 is not completed. If it is a media file, try to preview it.</source>
         <translation>%1 파일이 완료되지 않습니다. 만약 미디어 미리보기하려고하는 파일입니다.</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="935"/>
+        <location filename="../gui/TransfersDialog.cpp" line="949"/>
         <source>Are you sure that you want to cancel and delete these files?</source>
         <translation>당신을 취소하고 해당 파일을 삭제하겠습니까?</translation>
     </message>
@@ -10117,75 +10147,80 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="317"/>
-        <location filename="../gui/TransfersDialog.cpp" line="703"/>
+        <location filename="../gui/TransfersDialog.cpp" line="702"/>
         <source>Slower</source>
         <translation>천천히</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="319"/>
-        <location filename="../gui/TransfersDialog.cpp" line="704"/>
-        <location filename="../gui/TransfersDialog.cpp" line="706"/>
+        <location filename="../gui/TransfersDialog.cpp" line="703"/>
+        <location filename="../gui/TransfersDialog.cpp" line="705"/>
         <source>Average</source>
         <translation>평균</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="321"/>
-        <location filename="../gui/TransfersDialog.cpp" line="705"/>
+        <location filename="../gui/TransfersDialog.cpp" line="704"/>
         <source>Faster</source>
         <translation>빨리</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="687"/>
-        <location filename="../gui/TransfersDialog.cpp" line="743"/>
-        <location filename="../gui/TransfersDialog.cpp" line="843"/>
-        <location filename="../gui/TransfersDialog.cpp" line="892"/>
+        <location filename="../gui/TransfersDialog.cpp" line="324"/>
+        <source>Move in Queue...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/TransfersDialog.cpp" line="686"/>
+        <location filename="../gui/TransfersDialog.cpp" line="745"/>
+        <location filename="../gui/TransfersDialog.cpp" line="857"/>
+        <location filename="../gui/TransfersDialog.cpp" line="906"/>
         <source>Failed</source>
         <translation>실패</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="688"/>
-        <location filename="../gui/TransfersDialog.cpp" line="744"/>
-        <location filename="../gui/TransfersDialog.cpp" line="844"/>
-        <location filename="../gui/TransfersDialog.cpp" line="893"/>
+        <location filename="../gui/TransfersDialog.cpp" line="687"/>
+        <location filename="../gui/TransfersDialog.cpp" line="746"/>
+        <location filename="../gui/TransfersDialog.cpp" line="858"/>
+        <location filename="../gui/TransfersDialog.cpp" line="907"/>
         <source>Okay</source>
         <translation>좋아요</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="689"/>
-        <location filename="../gui/TransfersDialog.cpp" line="845"/>
-        <location filename="../gui/TransfersDialog.cpp" line="894"/>
+        <location filename="../gui/TransfersDialog.cpp" line="688"/>
+        <location filename="../gui/TransfersDialog.cpp" line="859"/>
+        <location filename="../gui/TransfersDialog.cpp" line="908"/>
         <source>Waiting</source>
         <translation>대기</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="690"/>
-        <location filename="../gui/TransfersDialog.cpp" line="746"/>
+        <location filename="../gui/TransfersDialog.cpp" line="689"/>
+        <location filename="../gui/TransfersDialog.cpp" line="748"/>
         <source>Downloading</source>
         <translation>다운로드</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="691"/>
-        <location filename="../gui/TransfersDialog.cpp" line="747"/>
-        <location filename="../gui/TransfersDialog.cpp" line="847"/>
-        <location filename="../gui/TransfersDialog.cpp" line="848"/>
-        <location filename="../gui/TransfersDialog.cpp" line="896"/>
-        <location filename="../gui/TransfersDialog.cpp" line="897"/>
+        <location filename="../gui/TransfersDialog.cpp" line="690"/>
+        <location filename="../gui/TransfersDialog.cpp" line="749"/>
+        <location filename="../gui/TransfersDialog.cpp" line="861"/>
+        <location filename="../gui/TransfersDialog.cpp" line="862"/>
+        <location filename="../gui/TransfersDialog.cpp" line="910"/>
+        <location filename="../gui/TransfersDialog.cpp" line="911"/>
         <source>Complete</source>
         <translation>완료</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="693"/>
+        <location filename="../gui/TransfersDialog.cpp" line="692"/>
         <source>Unknown</source>
         <translation>알 수없는</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="738"/>
+        <location filename="../gui/TransfersDialog.cpp" line="740"/>
         <source>version: </source>
         <translation>버전: </translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="846"/>
-        <location filename="../gui/TransfersDialog.cpp" line="895"/>
+        <location filename="../gui/TransfersDialog.cpp" line="860"/>
+        <location filename="../gui/TransfersDialog.cpp" line="909"/>
         <source>Uploading</source>
         <translation>업로드</translation>
     </message>
@@ -10303,7 +10338,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/common/vmessagebox.cpp" line="98"/>
         <source>Quit</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">종료</translation>
     </message>
     <message>
         <location filename="../gui/common/vmessagebox.cpp" line="99"/>
@@ -10317,7 +10352,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../util/misc.h" line="118"/>
         <source>Unknown</source>
         <comment>Unknown (size)</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">알 수없는</translation>
     </message>
     <message>
         <location filename="../util/misc.h" line="120"/>

@@ -4013,9 +4013,13 @@ p, li { white-space: pre-wrap; }
         <translation>Verfügbarkeits map</translation>
     </message>
     <message>
-        <location filename="../gui/FileTransferInfoWidget.cpp" line="190"/>
         <source> sources</source>
-        <translation>Quellen</translation>
+        <translation type="obsolete">Quellen</translation>
+    </message>
+    <message>
+        <location filename="../gui/FileTransferInfoWidget.cpp" line="190"/>
+        <source> active sources</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/FileTransferInfoWidget.cpp" line="218"/>
@@ -6339,6 +6343,11 @@ p, li { white-space: pre-wrap; }
         <translation>Foren</translation>
     </message>
     <message>
+        <location filename="../gui/MainWindow.cpp" line="126"/>
+        <source>RetroShare %1 a secure decentralised communication platform</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../gui/MainWindow.cpp" line="502"/>
         <source>Open Messages</source>
         <translation>Öffne Email</translation>
@@ -6351,11 +6360,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Settings</source>
         <translation type="obsolete">Einstellungen</translation>
-    </message>
-    <message>
-        <location filename="../gui/MainWindow.cpp" line="126"/>
-        <source>RetroShare %1 a secure decentralised commmunication platform</source>
-        <translation></translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="219"/>
@@ -11041,22 +11045,22 @@ behind a firewall or a VPN.</source>
 <context>
     <name>ShareManager</name>
     <message>
-        <location filename="../gui/ShareManager.cpp" line="57"/>
+        <location filename="../gui/ShareManager.cpp" line="56"/>
         <source>Add a Share Directory</source>
         <translation>Freigabe-Verzeichnis hinzufügen</translation>
     </message>
     <message>
-        <location filename="../gui/ShareManager.cpp" line="58"/>
+        <location filename="../gui/ShareManager.cpp" line="57"/>
         <source>Stop sharing selected Directory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/ShareManager.cpp" line="177"/>
+        <location filename="../gui/ShareManager.cpp" line="176"/>
         <source>Select A Folder To Share</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/ShareManager.cpp" line="231"/>
+        <location filename="../gui/ShareManager.cpp" line="230"/>
         <source>Do you really want to stop sharing this directory ? </source>
         <translation type="unfinished"></translation>
     </message>
@@ -11066,7 +11070,7 @@ behind a firewall or a VPN.</source>
     </message>
     <message>
         <location filename="../gui/ShareManager.ui" line="234"/>
-        <location filename="../gui/ShareManager.cpp" line="77"/>
+        <location filename="../gui/ShareManager.cpp" line="76"/>
         <source>Remove</source>
         <translation>Entfernen</translation>
     </message>
@@ -11075,7 +11079,7 @@ behind a firewall or a VPN.</source>
         <translation type="obsolete">Freigabe-Verzeichnis hinzufügen</translation>
     </message>
     <message>
-        <location filename="../gui/ShareManager.cpp" line="235"/>
+        <location filename="../gui/ShareManager.cpp" line="234"/>
         <source>Warning!</source>
         <translation>Warnung!</translation>
     </message>
@@ -11122,6 +11126,11 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../gui/ShareManager.ui" line="260"/>
+        <source>Close</source>
+        <translation type="unfinished">Schliessen</translation>
+    </message>
+    <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -11135,7 +11144,7 @@ p, li { white-space: pre-wrap; }
         <translation>Hinzufügen</translation>
     </message>
     <message>
-        <location filename="../gui/ShareManager.cpp" line="190"/>
+        <location filename="../gui/ShareManager.cpp" line="189"/>
         <source>Shared Directory Added!</source>
         <translation>Verzeichniss wurde hinzugefügt!</translation>
     </message>
@@ -11773,12 +11782,12 @@ p, li { white-space: pre-wrap; }
         <translation>Status Nachricht </translation>
     </message>
     <message>
-        <location filename="../gui/profile/StatusMessage.ui" line="78"/>
+        <location filename="../gui/profile/StatusMessage.ui" line="62"/>
         <source>Status message</source>
         <translation>Statusnachricht</translation>
     </message>
     <message>
-        <location filename="../gui/profile/StatusMessage.ui" line="102"/>
+        <location filename="../gui/profile/StatusMessage.ui" line="86"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -11791,7 +11800,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Statusnachricht &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/profile/StatusMessage.ui" line="119"/>
+        <location filename="../gui/profile/StatusMessage.ui" line="103"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -11802,6 +11811,16 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;Bitte geben sie ihre Statusnachricht ein&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="../gui/profile/StatusMessage.ui" line="165"/>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
+    </message>
+    <message>
+        <location filename="../gui/profile/StatusMessage.ui" line="181"/>
+        <source>Cancel</source>
+        <translation type="unfinished">Abbrechen</translation>
     </message>
 </context>
 <context>
@@ -12211,7 +12230,7 @@ p, li { white-space: pre-wrap; }
         <translation>Übertragen</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="266"/>
+        <location filename="../gui/TransfersDialog.cpp" line="267"/>
         <source>Play</source>
         <translation>Abspielen</translation>
     </message>
@@ -12281,11 +12300,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="324"/>
-        <source>Move in queue...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../gui/TransfersDialog.cpp" line="331"/>
         <source>Priority (Speed)...</source>
         <translation type="unfinished"></translation>
@@ -12306,32 +12320,32 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="692"/>
+        <location filename="../gui/TransfersDialog.cpp" line="691"/>
         <source>Queued</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="937"/>
+        <location filename="../gui/TransfersDialog.cpp" line="951"/>
         <source>RetroShare</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="1030"/>
+        <location filename="../gui/TransfersDialog.cpp" line="1044"/>
         <source>Details:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="1263"/>
+        <location filename="../gui/TransfersDialog.cpp" line="1278"/>
         <source>Open Transfer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="1264"/>
+        <location filename="../gui/TransfersDialog.cpp" line="1279"/>
         <source>File %1 is not completed. If it is a media file, try to preview it.</source>
         <translation>Datei %1 ist nicht komplett. Wenn es eine Media datei ist dann versuche &quot;Vorschau&quot;.</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="935"/>
+        <location filename="../gui/TransfersDialog.cpp" line="949"/>
         <source>Are you sure that you want to cancel and delete these files?</source>
         <translation>Soll dieser Download wirklich abgebrochen und gelöscht werden?</translation>
     </message>
@@ -12364,75 +12378,80 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="317"/>
-        <location filename="../gui/TransfersDialog.cpp" line="703"/>
+        <location filename="../gui/TransfersDialog.cpp" line="702"/>
         <source>Slower</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="319"/>
-        <location filename="../gui/TransfersDialog.cpp" line="704"/>
-        <location filename="../gui/TransfersDialog.cpp" line="706"/>
+        <location filename="../gui/TransfersDialog.cpp" line="703"/>
+        <location filename="../gui/TransfersDialog.cpp" line="705"/>
         <source>Average</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="321"/>
-        <location filename="../gui/TransfersDialog.cpp" line="705"/>
+        <location filename="../gui/TransfersDialog.cpp" line="704"/>
         <source>Faster</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="687"/>
-        <location filename="../gui/TransfersDialog.cpp" line="743"/>
-        <location filename="../gui/TransfersDialog.cpp" line="843"/>
-        <location filename="../gui/TransfersDialog.cpp" line="892"/>
+        <location filename="../gui/TransfersDialog.cpp" line="324"/>
+        <source>Move in Queue...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/TransfersDialog.cpp" line="686"/>
+        <location filename="../gui/TransfersDialog.cpp" line="745"/>
+        <location filename="../gui/TransfersDialog.cpp" line="857"/>
+        <location filename="../gui/TransfersDialog.cpp" line="906"/>
         <source>Failed</source>
         <translation>Gescheitert</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="688"/>
-        <location filename="../gui/TransfersDialog.cpp" line="744"/>
-        <location filename="../gui/TransfersDialog.cpp" line="844"/>
-        <location filename="../gui/TransfersDialog.cpp" line="893"/>
+        <location filename="../gui/TransfersDialog.cpp" line="687"/>
+        <location filename="../gui/TransfersDialog.cpp" line="746"/>
+        <location filename="../gui/TransfersDialog.cpp" line="858"/>
+        <location filename="../gui/TransfersDialog.cpp" line="907"/>
         <source>Okay</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="689"/>
-        <location filename="../gui/TransfersDialog.cpp" line="845"/>
-        <location filename="../gui/TransfersDialog.cpp" line="894"/>
+        <location filename="../gui/TransfersDialog.cpp" line="688"/>
+        <location filename="../gui/TransfersDialog.cpp" line="859"/>
+        <location filename="../gui/TransfersDialog.cpp" line="908"/>
         <source>Waiting</source>
         <translation>Warte</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="690"/>
-        <location filename="../gui/TransfersDialog.cpp" line="746"/>
+        <location filename="../gui/TransfersDialog.cpp" line="689"/>
+        <location filename="../gui/TransfersDialog.cpp" line="748"/>
         <source>Downloading</source>
         <translation>Ladend</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="691"/>
-        <location filename="../gui/TransfersDialog.cpp" line="747"/>
-        <location filename="../gui/TransfersDialog.cpp" line="847"/>
-        <location filename="../gui/TransfersDialog.cpp" line="848"/>
-        <location filename="../gui/TransfersDialog.cpp" line="896"/>
-        <location filename="../gui/TransfersDialog.cpp" line="897"/>
+        <location filename="../gui/TransfersDialog.cpp" line="690"/>
+        <location filename="../gui/TransfersDialog.cpp" line="749"/>
+        <location filename="../gui/TransfersDialog.cpp" line="861"/>
+        <location filename="../gui/TransfersDialog.cpp" line="862"/>
+        <location filename="../gui/TransfersDialog.cpp" line="910"/>
+        <location filename="../gui/TransfersDialog.cpp" line="911"/>
         <source>Complete</source>
         <translation>Vollständig</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="693"/>
+        <location filename="../gui/TransfersDialog.cpp" line="692"/>
         <source>Unknown</source>
         <translation>Unbekannt</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="738"/>
+        <location filename="../gui/TransfersDialog.cpp" line="740"/>
         <source>version: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="846"/>
-        <location filename="../gui/TransfersDialog.cpp" line="895"/>
+        <location filename="../gui/TransfersDialog.cpp" line="860"/>
+        <location filename="../gui/TransfersDialog.cpp" line="909"/>
         <source>Uploading</source>
         <translation>Hochladend</translation>
     </message>

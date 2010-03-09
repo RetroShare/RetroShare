@@ -408,12 +408,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/blogs/BlogDetails.ui" line="54"/>
         <source>Popularity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Popülerlik:</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/BlogDetails.ui" line="68"/>
         <source>Last Post</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Son Mesaj</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/BlogDetails.ui" line="82"/>
@@ -451,7 +451,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/BlogDialog.ui" line="73"/>
         <source>Blogs</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bloglar</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/BlogDialog.ui" line="97"/>
@@ -524,7 +524,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/BlogMsgItem.ui" line="152"/>
         <source>Subject</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Konu</translation>
     </message>
     <message>
         <location filename="../gui/feeds/BlogMsgItem.ui" line="165"/>
@@ -775,7 +775,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/CalDialog.ui" line="177"/>
         <source>Status:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Durum:</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/CalDialog.ui" line="197"/>
@@ -847,7 +847,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="622"/>
         <source>Browse</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gözalt</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="642"/>
@@ -882,7 +882,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="665"/>
         <source>Certificate file successfully created</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sertifika dosyası başarıyla oluşturuldu</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="671"/>
@@ -968,7 +968,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.cpp" line="465"/>
         <source>Compose: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Yeni posta:</translation>
     </message>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.cpp" line="655"/>
@@ -1069,17 +1069,17 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/msgs/ChanMsgDialog.cpp" line="938"/>
         <location filename="../gui/msgs/ChanMsgDialog.cpp" line="961"/>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">HTML-Dosya (*.htm *.html);;Tüm Dosyalar (*)</translation>
     </message>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.cpp" line="960"/>
         <source>Save as...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Farklı kaydet...</translation>
     </message>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.cpp" line="976"/>
         <source>Print Document</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Belge yazdır</translation>
     </message>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.cpp" line="1038"/>
@@ -1105,7 +1105,7 @@ Do you want to save message ?</source>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.cpp" line="1174"/>
         <source>Add Extra File</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ekstra Dosya Ekle</translation>
     </message>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="617"/>
@@ -1136,7 +1136,7 @@ Do you want to save message ?</source>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="142"/>
         <source>Subject:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Konu:</translation>
     </message>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="204"/>
@@ -1171,7 +1171,7 @@ Do you want to save message ?</source>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="380"/>
         <source>Italic</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Italik</translation>
     </message>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="735"/>
@@ -1181,7 +1181,7 @@ Do you want to save message ?</source>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="738"/>
         <source>Attach File</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dosya ekle</translation>
     </message>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="750"/>
@@ -1221,7 +1221,7 @@ Do you want to save message ?</source>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="702"/>
         <source>Reply</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Yanıtla</translation>
     </message>
 </context>
 <context>
@@ -1361,17 +1361,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/channels/ChannelDetails.ui" line="44"/>
         <source>Forum Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Forum İsmi</translation>
     </message>
     <message>
         <location filename="../gui/channels/ChannelDetails.ui" line="54"/>
         <source>Popularity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Popülerlik:</translation>
     </message>
     <message>
         <location filename="../gui/channels/ChannelDetails.ui" line="68"/>
         <source>Last Post</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Son Mesaj</translation>
     </message>
     <message>
         <location filename="../gui/channels/ChannelDetails.ui" line="82"/>
@@ -1477,7 +1477,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/ChannelFeed.cpp" line="67"/>
         <source>Popularity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Popülerlik:</translation>
     </message>
     <message>
         <location filename="../gui/ChannelFeed.cpp" line="68"/>
@@ -1527,12 +1527,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/ChannelFeed.cpp" line="188"/>
         <source>Create a new Channel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Yeni bir kanal oluştur</translation>
     </message>
     <message>
         <location filename="../gui/ChannelFeed.cpp" line="192"/>
         <source>New Channel</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Yeni Kanal</translation>
     </message>
     <message>
         <location filename="../gui/ChannelFeed.cpp" line="401"/>
@@ -1542,6 +1542,14 @@ p, li { white-space: pre-wrap; }
         <source>Popularity: %1
 Fetches: %2
 Available: %3</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ChatToaster</name>
+    <message>
+        <location filename="../gui/toaster/ChatToaster.ui" line="567"/>
+        <source>Message</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1929,7 +1937,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlog.ui" line="118"/>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Açıklamalar</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlog.ui" line="130"/>
@@ -1954,17 +1962,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlog.ui" line="166"/>
         <source>Allowed Messages</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Izin Mesajlar</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlog.ui" line="178"/>
         <source>Authemticated Messages</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Doğrulanmış Mesajlar</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlog.ui" line="185"/>
         <source>Anonymous Messages</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Anonim Mesajlar</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlog.ui" line="221"/>
@@ -1974,7 +1982,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlog.ui" line="228"/>
         <source>Create</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Oluştur</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlog.cpp" line="91"/>
@@ -2028,7 +2036,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.ui" line="158"/>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.ui" line="203"/>
         <source>Attachments</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ek</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.ui" line="322"/>
@@ -2068,7 +2076,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.ui" line="400"/>
         <source>Italic</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Italik</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.ui" line="405"/>
@@ -2113,7 +2121,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="399"/>
         <source>Add Extra File</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ekstra Dosya Ekle</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="547"/>
@@ -2282,12 +2290,12 @@ Do you want to save your changes?</source>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1159"/>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">HTML-Dosya (*.htm *.html);;Tüm Dosyalar (*)</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1178"/>
         <source>Save as...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Farklı kaydet...</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1179"/>
@@ -2297,7 +2305,7 @@ Do you want to save your changes?</source>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1195"/>
         <source>Print Document</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Belge yazdır</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1259"/>
@@ -2372,7 +2380,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/channels/CreateChannelMsg.ui" line="249"/>
         <location filename="../gui/channels/CreateChannelMsg.ui" line="294"/>
         <source>Attachments</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ek</translation>
     </message>
     <message>
         <location filename="../gui/channels/CreateChannelMsg.ui" line="372"/>
@@ -2382,7 +2390,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/channels/CreateChannelMsg.cpp" line="285"/>
         <source>Add Extra File</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ekstra Dosya Ekle</translation>
     </message>
     <message>
         <location filename="../gui/channels/CreateChannelMsg.cpp" line="432"/>
@@ -2400,22 +2408,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="104"/>
         <source>Name</source>
-        <translation type="unfinished">Name</translation>
+        <translation>Isim</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="130"/>
         <source>Type:</source>
-        <translation type="unfinished">Tip:</translation>
+        <translation>Tip:</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="334"/>
         <source>Cancel</source>
-        <translation type="unfinished">geçersiz kılmak</translation>
+        <translation>Iptal</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForum.cpp" line="98"/>
         <source>RetroShare</source>
-        <translation type="unfinished">Retroshare</translation>
+        <translation>Retroshare</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForum.cpp" line="99"/>
@@ -2425,7 +2433,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="14"/>
         <source>Create new Forum</source>
-        <translation type="unfinished"></translation>
+        <translation>Yeni Forum yarat</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="79"/>
@@ -2434,12 +2442,16 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;New Forum&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;Yeni Forum&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="118"/>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation>Açıklamalar</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="142"/>
@@ -2459,17 +2471,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="166"/>
         <source>Allowed Messages</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Izin Mesajlar</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="178"/>
         <source>Authemticated Messages</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Doğrulanmış Mesajlar</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="185"/>
         <source>Anonymous Messages</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Anonim Mesajlar</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="208"/>
@@ -2484,7 +2496,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="341"/>
         <source>Create</source>
-        <translation type="unfinished"></translation>
+        <translation>Oluştur</translation>
     </message>
 </context>
 <context>
@@ -2553,7 +2565,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/forums/CreateForumMsg.cpp" line="345"/>
         <source>Add Extra File</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ekstra Dosya Ekle</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForumMsg.cpp" line="426"/>
@@ -2576,7 +2588,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/settings/CryptoPage.cpp" line="117"/>
         <source>Save as...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Farklı kaydet...</translation>
     </message>
     <message>
         <location filename="../gui/settings/CryptoPage.cpp" line="118"/>
@@ -3126,9 +3138,13 @@ p, li { white-space: pre-wrap; }
         <translation>Mevcut map</translation>
     </message>
     <message>
-        <location filename="../gui/FileTransferInfoWidget.cpp" line="190"/>
         <source> sources</source>
-        <translation>Kaynak</translation>
+        <translation type="obsolete">Kaynak</translation>
+    </message>
+    <message>
+        <location filename="../gui/FileTransferInfoWidget.cpp" line="190"/>
+        <source> active sources</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/FileTransferInfoWidget.cpp" line="218"/>
@@ -3247,72 +3263,72 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/forums/ForumDetails.ui" line="14"/>
         <location filename="../gui/forums/ForumDetails.ui" line="32"/>
         <source>Forum Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Forum Detayları</translation>
     </message>
     <message>
         <location filename="../gui/forums/ForumDetails.ui" line="38"/>
         <source>Forum Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Forum Bilgileri</translation>
     </message>
     <message>
         <location filename="../gui/forums/ForumDetails.ui" line="44"/>
         <source>Forum Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Forum İsmi</translation>
     </message>
     <message>
         <location filename="../gui/forums/ForumDetails.ui" line="54"/>
         <source>Popularity</source>
-        <translation type="unfinished"></translation>
+        <translation>Popülerlik:</translation>
     </message>
     <message>
         <location filename="../gui/forums/ForumDetails.ui" line="68"/>
         <source>Last Post</source>
-        <translation type="unfinished"></translation>
+        <translation>Son Mesaj</translation>
     </message>
     <message>
         <location filename="../gui/forums/ForumDetails.ui" line="82"/>
         <source>Forum ID</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/forums/ForumDetails.ui" line="92"/>
         <source>Forum Description</source>
-        <translation type="unfinished"></translation>
+        <translation>Forum Açıklama</translation>
     </message>
     <message>
         <location filename="../gui/forums/ForumDetails.ui" line="112"/>
         <source>Security</source>
-        <translation type="unfinished"></translation>
+        <translation>Güvenlik</translation>
     </message>
     <message>
         <location filename="../gui/forums/ForumDetails.ui" line="118"/>
         <source>Allowed Messages</source>
-        <translation type="unfinished"></translation>
+        <translation>Izin Mesajlar</translation>
     </message>
     <message>
         <location filename="../gui/forums/ForumDetails.ui" line="124"/>
         <source>Authemticated Messages</source>
-        <translation type="unfinished"></translation>
+        <translation>Doğrulanmış Mesajlar</translation>
     </message>
     <message>
         <location filename="../gui/forums/ForumDetails.ui" line="131"/>
         <source>Anonymous Messages</source>
-        <translation type="unfinished"></translation>
+        <translation>Anonim Mesajlar</translation>
     </message>
     <message>
         <location filename="../gui/forums/ForumDetails.ui" line="176"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Iptal</translation>
     </message>
     <message>
         <location filename="../gui/forums/ForumDetails.ui" line="183"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamam</translation>
     </message>
     <message>
         <location filename="../gui/forums/ForumDetails.cpp" line="50"/>
         <source>Apply and Close</source>
-        <translation type="unfinished"></translation>
+        <translation>Kapat</translation>
     </message>
 </context>
 <context>
@@ -3330,7 +3346,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/ForumMsgItem.ui" line="85"/>
         <source>Forum Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Forum İsmi</translation>
     </message>
     <message>
         <location filename="../gui/feeds/ForumMsgItem.ui" line="114"/>
@@ -3362,7 +3378,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/ForumMsgItem.ui" line="233"/>
         <source>Reply</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Yanıtla</translation>
     </message>
     <message>
         <location filename="../gui/feeds/ForumMsgItem.ui" line="285"/>
@@ -3406,7 +3422,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/ForumNewItem.ui" line="149"/>
         <source>Subscribe to Forum</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Foruma abone ol</translation>
     </message>
     <message>
         <location filename="../gui/feeds/ForumNewItem.ui" line="185"/>
@@ -3416,7 +3432,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/ForumNewItem.ui" line="216"/>
         <source>Forum Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Forum Açıklama</translation>
     </message>
     <message>
         <location filename="../gui/feeds/ForumNewItem.ui" line="244"/>
@@ -3852,7 +3868,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/GamesDialog.ui" line="251"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sil</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/GamesDialog.ui" line="283"/>
@@ -4084,7 +4100,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/GeneralMsgDialog.cpp" line="300"/>
         <source>Add Extra File</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ekstra Dosya Ekle</translation>
     </message>
     <message>
         <location filename="../gui/GeneralMsgDialog.ui" line="45"/>
@@ -4106,7 +4122,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/GeneralMsgDialog.ui" line="336"/>
         <location filename="../gui/GeneralMsgDialog.ui" line="376"/>
         <source>Attachments</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ek</translation>
     </message>
     <message>
         <location filename="../gui/GeneralMsgDialog.ui" line="307"/>
@@ -4519,7 +4535,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/InfoDialog.ui" line="14"/>
         <source>Info</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bilgi</translation>
     </message>
     <message>
         <location filename="../gui/InfoDialog.ui" line="31"/>
@@ -4949,6 +4965,11 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../gui/MainWindow.cpp" line="126"/>
+        <source>RetroShare %1 a secure decentralised communication platform</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../gui/MainWindow.cpp" line="230"/>
         <source>Unfinished</source>
         <translation type="unfinished"></translation>
@@ -4988,9 +5009,8 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Settings</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="126"/>
         <source>RetroShare %1 a secure decentralised commmunication platform</source>
-        <translation>RetroShare %1 güvenli bir merkezden uzak iletişim platformu</translation>
+        <translation type="obsolete">RetroShare %1 güvenli bir merkezden uzak iletişim platformu</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="219"/>
@@ -5486,7 +5506,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MessagesPopupDialog.ui" line="40"/>
         <source>Reply</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Yanıtla</translation>
     </message>
     <message>
         <location filename="../gui/MessagesPopupDialog.ui" line="49"/>
@@ -5497,12 +5517,12 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/MessagesPopupDialog.ui" line="67"/>
         <location filename="../gui/MessagesPopupDialog.ui" line="77"/>
         <source>Print</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Yazdır</translation>
     </message>
     <message>
         <location filename="../gui/MessagesPopupDialog.ui" line="72"/>
         <source>PrintPreview</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Baskı Önizleme</translation>
     </message>
 </context>
 <context>
@@ -5510,12 +5530,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="172"/>
         <source>Expand all</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tüm genişletin</translation>
     </message>
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="175"/>
         <source>Collapse all</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tümünü daralt</translation>
     </message>
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="178"/>
@@ -5525,7 +5545,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="181"/>
         <source>Message Friend</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Arkadaş&apos;a Mesaj yaz</translation>
     </message>
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="184"/>
@@ -5545,22 +5565,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="198"/>
         <source>Deny Friend</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Arkadaş reddet</translation>
     </message>
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="200"/>
         <source>Remove Friend Location</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kaldır Arkadaş Yeri</translation>
     </message>
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="219"/>
         <source>&lt;strong&gt;GPG Key&lt;/strong&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;strong&gt;GPG Anahtar&lt;/strong&gt;</translation>
     </message>
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="221"/>
         <source>&lt;strong&gt;RetroShare instance&lt;/strong&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;strong&gt;RetroShare instance&lt;/strong&gt;</translation>
     </message>
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="260"/>
@@ -5574,7 +5594,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/MessengerWindow.cpp" line="390"/>
         <location filename="../gui/MessengerWindow.cpp" line="391"/>
         <source>location : </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Yer:</translation>
     </message>
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="387"/>
@@ -5586,7 +5606,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="464"/>
         <source>Available</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mevcut</translation>
     </message>
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="474"/>
@@ -5606,13 +5626,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="580"/>
         <source>Friend Not Online</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Arkadaşım Online değil </translation>
     </message>
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="580"/>
         <source>Your Friend is offline 
 Do you want to send them a Message instead</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Arkadaşınızın offline
+Bunun yerine Mesaj göndermek istiyor musunuz?</translation>
     </message>
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="921"/>
@@ -5779,7 +5800,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/MsgFeed.ui" line="218"/>
         <source>Subject</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Konu</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/MsgFeed.ui" line="223"/>
@@ -6526,7 +6547,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/PeerItem.ui" line="145"/>
         <source>Status:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Durum:</translation>
     </message>
     <message>
         <location filename="../gui/feeds/PeerItem.ui" line="187"/>
@@ -7117,7 +7138,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/PhotoDialog.ui" line="240"/>
         <source>Description</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Açıklamalar</translation>
     </message>
 </context>
 <context>
@@ -7130,7 +7151,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/PhotoShow.ui" line="25"/>
         <source>Date:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tarih:</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/PhotoShow.ui" line="32"/>
@@ -7344,7 +7365,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/chat/PopupChatDialog.ui" line="391"/>
         <location filename="../gui/chat/PopupChatDialog.ui" line="600"/>
         <source>Italic</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Italik</translation>
     </message>
     <message>
         <location filename="../gui/chat/PopupChatDialog.ui" line="420"/>
@@ -7394,7 +7415,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/chat/PopupChatDialog.cpp" line="726"/>
         <source>Add Extra File</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ekstra Dosya Ekle</translation>
     </message>
     <message>
         <location filename="../gui/chat/PopupChatDialog.cpp" line="835"/>
@@ -7435,7 +7456,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/chat/PopupChatDialog.cpp" line="908"/>
         <source>File not found or file name not accepted.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dosya bulunamadı veya isim kabul edilmedi .</translation>
     </message>
     <message>
         <location filename="../gui/chat/PopupChatDialog.cpp" line="913"/>
@@ -7458,7 +7479,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../util/printpreview.cpp" line="254"/>
         <source>Print</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Yazdır</translation>
     </message>
     <message>
         <location filename="../util/printpreview.cpp" line="258"/>
@@ -7511,7 +7532,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/profile/ProfileEdit.ui" line="35"/>
         <source>Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>Profil</translation>
     </message>
     <message>
         <location filename="../gui/profile/ProfileEdit.ui" line="49"/>
@@ -7853,7 +7874,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/advsearch/guiexprelement.cpp" line="45"/>
         <source>Popularity</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Popülerlik:</translation>
     </message>
     <message>
         <location filename="../gui/advsearch/guiexprelement.cpp" line="47"/>
@@ -8167,7 +8188,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/settings/rsettingswin.cpp" line="98"/>
         <source>Transfer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aktarım</translation>
     </message>
     <message>
         <location filename="../gui/settings/rsettingswin.cpp" line="102"/>
@@ -8177,7 +8198,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/settings/rsettingswin.cpp" line="106"/>
         <source>Security</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Güvenlik</translation>
     </message>
     <message>
         <location filename="../gui/settings/rsettingswin.cpp" line="110"/>
@@ -8827,12 +8848,12 @@ behind a firewall or a VPN.</source>
     <message>
         <location filename="../gui/settings/settings.ui" line="14"/>
         <source>Options</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Seçenekler</translation>
     </message>
     <message>
         <location filename="../gui/settings/settings.ui" line="100"/>
         <source>Transfer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aktarım</translation>
     </message>
     <message>
         <location filename="../gui/settings/settings.ui" line="118"/>
@@ -8842,7 +8863,7 @@ behind a firewall or a VPN.</source>
     <message>
         <location filename="../gui/settings/settings.ui" line="127"/>
         <source>Security</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Güvenlik</translation>
     </message>
     <message>
         <location filename="../gui/settings/settings.ui" line="136"/>
@@ -8887,38 +8908,38 @@ behind a firewall or a VPN.</source>
 <context>
     <name>ShareManager</name>
     <message>
-        <location filename="../gui/ShareManager.cpp" line="57"/>
+        <location filename="../gui/ShareManager.cpp" line="56"/>
         <source>Add a Share Directory</source>
         <translation>Paylaşım Dizin Ekle</translation>
     </message>
     <message>
-        <location filename="../gui/ShareManager.cpp" line="58"/>
+        <location filename="../gui/ShareManager.cpp" line="57"/>
         <source>Stop sharing selected Directory</source>
         <translation>Seçilen paylaşımı durdur</translation>
     </message>
     <message>
-        <location filename="../gui/ShareManager.cpp" line="177"/>
+        <location filename="../gui/ShareManager.cpp" line="176"/>
         <source>Select A Folder To Share</source>
         <translation>Bir klasör seçin Paylaşım için</translation>
     </message>
     <message>
-        <location filename="../gui/ShareManager.cpp" line="231"/>
+        <location filename="../gui/ShareManager.cpp" line="230"/>
         <source>Do you really want to stop sharing this directory ? </source>
         <translation>Gerçekten bu dizinin paylaşımını durdurmak istiyor musunuz?</translation>
     </message>
     <message>
         <location filename="../gui/ShareManager.ui" line="234"/>
-        <location filename="../gui/ShareManager.cpp" line="77"/>
+        <location filename="../gui/ShareManager.cpp" line="76"/>
         <source>Remove</source>
         <translation>Kaldır</translation>
     </message>
     <message>
-        <location filename="../gui/ShareManager.cpp" line="235"/>
+        <location filename="../gui/ShareManager.cpp" line="234"/>
         <source>Warning!</source>
         <translation>Uyarı!</translation>
     </message>
     <message>
-        <location filename="../gui/ShareManager.cpp" line="190"/>
+        <location filename="../gui/ShareManager.cpp" line="189"/>
         <source>Shared Directory Added!</source>
         <translation>Paylaşılan Dizin Eklendi!</translation>
     </message>
@@ -8977,6 +8998,11 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/ShareManager.ui" line="209"/>
         <source>Add</source>
         <translation>Ekle</translation>
+    </message>
+    <message>
+        <location filename="../gui/ShareManager.ui" line="260"/>
+        <source>Close</source>
+        <translation>Kapat</translation>
     </message>
 </context>
 <context>
@@ -9484,7 +9510,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/StatisticDialog.ui" line="532"/>
         <source>Transfer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aktarım</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/StatisticDialog.ui" line="543"/>
@@ -9520,12 +9546,12 @@ p, li { white-space: pre-wrap; }
         <translation>Kişisel ileti</translation>
     </message>
     <message>
-        <location filename="../gui/profile/StatusMessage.ui" line="78"/>
+        <location filename="../gui/profile/StatusMessage.ui" line="62"/>
         <source>Status message</source>
         <translation>Durum mesajı</translation>
     </message>
     <message>
-        <location filename="../gui/profile/StatusMessage.ui" line="102"/>
+        <location filename="../gui/profile/StatusMessage.ui" line="86"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -9538,7 +9564,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Kişisel ileti&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/profile/StatusMessage.ui" line="119"/>
+        <location filename="../gui/profile/StatusMessage.ui" line="103"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -9549,6 +9575,16 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;Durum mesajı&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="../gui/profile/StatusMessage.ui" line="165"/>
+        <source>OK</source>
+        <translation>Tamam</translation>
+    </message>
+    <message>
+        <location filename="../gui/profile/StatusMessage.ui" line="181"/>
+        <source>Cancel</source>
+        <translation>Iptal</translation>
     </message>
 </context>
 <context>
@@ -9690,7 +9726,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="359"/>
         <source>Save as...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Farklı kaydet...</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="360"/>
@@ -9946,7 +9982,7 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="266"/>
+        <location filename="../gui/TransfersDialog.cpp" line="267"/>
         <source>Play</source>
         <translation>Başlat</translation>
     </message>
@@ -10016,9 +10052,8 @@ p, li { white-space: pre-wrap; }
         <translation>Alt</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="324"/>
         <source>Move in queue...</source>
-        <translation>Kuyrukta Taşı ...</translation>
+        <translation type="obsolete">Kuyrukta Taşı ...</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="331"/>
@@ -10057,32 +10092,32 @@ p, li { white-space: pre-wrap; }
         <translation>Chunk stratejisi</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="692"/>
+        <location filename="../gui/TransfersDialog.cpp" line="691"/>
         <source>Queued</source>
         <translation>Sırada</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="937"/>
+        <location filename="../gui/TransfersDialog.cpp" line="951"/>
         <source>RetroShare</source>
         <translation>Retroshare</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="1030"/>
+        <location filename="../gui/TransfersDialog.cpp" line="1044"/>
         <source>Details:</source>
         <translation>Ayrıntılar</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="1263"/>
+        <location filename="../gui/TransfersDialog.cpp" line="1278"/>
         <source>Open Transfer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="1264"/>
+        <location filename="../gui/TransfersDialog.cpp" line="1279"/>
         <source>File %1 is not completed. If it is a media file, try to preview it.</source>
         <translation>%1 Dosya Tamamlanmamış. Eğer bir medya sa, önizleme deneyin .</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="935"/>
+        <location filename="../gui/TransfersDialog.cpp" line="949"/>
         <source>Are you sure that you want to cancel and delete these files?</source>
         <translation>Bu dosyaları iptal et ve silmek istediğinizden emin misiniz?</translation>
     </message>
@@ -10110,75 +10145,80 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="317"/>
-        <location filename="../gui/TransfersDialog.cpp" line="703"/>
+        <location filename="../gui/TransfersDialog.cpp" line="702"/>
         <source>Slower</source>
         <translation>Yavaş</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="319"/>
-        <location filename="../gui/TransfersDialog.cpp" line="704"/>
-        <location filename="../gui/TransfersDialog.cpp" line="706"/>
+        <location filename="../gui/TransfersDialog.cpp" line="703"/>
+        <location filename="../gui/TransfersDialog.cpp" line="705"/>
         <source>Average</source>
         <translation>Ortalama</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="321"/>
-        <location filename="../gui/TransfersDialog.cpp" line="705"/>
+        <location filename="../gui/TransfersDialog.cpp" line="704"/>
         <source>Faster</source>
         <translation>Daha hızlı</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="687"/>
-        <location filename="../gui/TransfersDialog.cpp" line="743"/>
-        <location filename="../gui/TransfersDialog.cpp" line="843"/>
-        <location filename="../gui/TransfersDialog.cpp" line="892"/>
+        <location filename="../gui/TransfersDialog.cpp" line="324"/>
+        <source>Move in Queue...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/TransfersDialog.cpp" line="686"/>
+        <location filename="../gui/TransfersDialog.cpp" line="745"/>
+        <location filename="../gui/TransfersDialog.cpp" line="857"/>
+        <location filename="../gui/TransfersDialog.cpp" line="906"/>
         <source>Failed</source>
         <translation>Başarısız</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="688"/>
-        <location filename="../gui/TransfersDialog.cpp" line="744"/>
-        <location filename="../gui/TransfersDialog.cpp" line="844"/>
-        <location filename="../gui/TransfersDialog.cpp" line="893"/>
+        <location filename="../gui/TransfersDialog.cpp" line="687"/>
+        <location filename="../gui/TransfersDialog.cpp" line="746"/>
+        <location filename="../gui/TransfersDialog.cpp" line="858"/>
+        <location filename="../gui/TransfersDialog.cpp" line="907"/>
         <source>Okay</source>
         <translation>Tamam</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="689"/>
-        <location filename="../gui/TransfersDialog.cpp" line="845"/>
-        <location filename="../gui/TransfersDialog.cpp" line="894"/>
+        <location filename="../gui/TransfersDialog.cpp" line="688"/>
+        <location filename="../gui/TransfersDialog.cpp" line="859"/>
+        <location filename="../gui/TransfersDialog.cpp" line="908"/>
         <source>Waiting</source>
         <translation>Bekliyor</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="690"/>
-        <location filename="../gui/TransfersDialog.cpp" line="746"/>
+        <location filename="../gui/TransfersDialog.cpp" line="689"/>
+        <location filename="../gui/TransfersDialog.cpp" line="748"/>
         <source>Downloading</source>
         <translation>Indiriliyor</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="691"/>
-        <location filename="../gui/TransfersDialog.cpp" line="747"/>
-        <location filename="../gui/TransfersDialog.cpp" line="847"/>
-        <location filename="../gui/TransfersDialog.cpp" line="848"/>
-        <location filename="../gui/TransfersDialog.cpp" line="896"/>
-        <location filename="../gui/TransfersDialog.cpp" line="897"/>
+        <location filename="../gui/TransfersDialog.cpp" line="690"/>
+        <location filename="../gui/TransfersDialog.cpp" line="749"/>
+        <location filename="../gui/TransfersDialog.cpp" line="861"/>
+        <location filename="../gui/TransfersDialog.cpp" line="862"/>
+        <location filename="../gui/TransfersDialog.cpp" line="910"/>
+        <location filename="../gui/TransfersDialog.cpp" line="911"/>
         <source>Complete</source>
         <translation>Bitmış</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="693"/>
+        <location filename="../gui/TransfersDialog.cpp" line="692"/>
         <source>Unknown</source>
         <translation>Bilinmeyen</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="738"/>
+        <location filename="../gui/TransfersDialog.cpp" line="740"/>
         <source>version: </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="846"/>
-        <location filename="../gui/TransfersDialog.cpp" line="895"/>
+        <location filename="../gui/TransfersDialog.cpp" line="860"/>
+        <location filename="../gui/TransfersDialog.cpp" line="909"/>
         <source>Uploading</source>
         <translation>Gönderiliyor</translation>
     </message>
@@ -10300,12 +10340,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/common/vmessagebox.cpp" line="98"/>
         <source>Quit</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Çıkış</translation>
     </message>
     <message>
         <location filename="../gui/common/vmessagebox.cpp" line="99"/>
         <source>Browse</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gözalt</translation>
     </message>
 </context>
 <context>
@@ -10314,7 +10354,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../util/misc.h" line="118"/>
         <source>Unknown</source>
         <comment>Unknown (size)</comment>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bilinmeyen</translation>
     </message>
     <message>
         <location filename="../util/misc.h" line="120"/>
@@ -10350,7 +10390,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../util/misc.h" line="305"/>
         <location filename="../util/misc.h" line="329"/>
         <source>Unknown</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bilinmeyen</translation>
     </message>
     <message>
         <location filename="../util/misc.h" line="308"/>

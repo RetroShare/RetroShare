@@ -42,8 +42,8 @@ StatusMessage::StatusMessage(QWidget *parent, Qt::WFlags flags)
   /* Create RshareSettings object */
   _settings = new RshareSettings();
   
-  connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
-  connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(save()));
+  connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(close()));
+  connect(ui.okButton, SIGNAL(clicked()), this, SLOT(save()));
   
   load();
   
@@ -79,13 +79,8 @@ void StatusMessage::save()
 
 /** Loads the settings for this page */
 void StatusMessage::load()
-{
-	//_settings->beginGroup("Profile");	
-			//ui.txt_StatusMessage->setText(_settings->value("StatusMessage","").toString());
-	//_settings->endGroup();
-	
-		  ui.txt_StatusMessage->setText(QString::fromStdString(rsMsgs->getCustomStateString())) ;
-
+{	
+  ui.txt_StatusMessage->setText(QString::fromStdString(rsMsgs->getCustomStateString()));
 }
 
 
