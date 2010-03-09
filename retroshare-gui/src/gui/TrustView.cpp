@@ -25,7 +25,7 @@ TrustView::TrustView()
 	QObject::connect(trustTableTW->verticalHeader(),SIGNAL(sectionClicked(int)),this,SLOT(hideShowPeers(int))) ;
 	QObject::connect(trustTableTW->horizontalHeader(),SIGNAL(sectionClicked(int)),this,SLOT(hideShowPeers(int))) ;
 
-	updatePB->setToolTip(QString("This table normaly auto-updates every 10 seconds.")) ;
+	updatePB->setToolTip(tr("This table normaly auto-updates every 10 seconds.")) ;
 
 	QTimer *timer = new QTimer ;
 
@@ -199,30 +199,30 @@ void TrustView::update()
 				if(i_ji == NULL)
 				{
 					i_ij->setBackgroundColor(Qt::yellow) ;
-					i_ij->setToolTip(trustTableTW->horizontalHeaderItem(i)->text() + QString(" is trusted (one way) by " )+trustTableTW->verticalHeaderItem(j)->text()) ;
-					i_ij->setText(QString("Half")) ;
+					i_ij->setToolTip(trustTableTW->horizontalHeaderItem(i)->text() + tr(" is trusted (one way) by " )+trustTableTW->verticalHeaderItem(j)->text()) ;
+					i_ij->setText(tr("Half")) ;
 				}
 				else
 				{
 					if(i==j)
 					{
 						i_ij->setBackgroundColor(Qt::red) ;
-						i_ij->setToolTip(trustTableTW->horizontalHeaderItem(i)->text() + QString(" trusts himself") ) ;
+						i_ij->setToolTip(trustTableTW->horizontalHeaderItem(i)->text() + tr(" trusts himself") ) ;
 					}
 					else
 					{
 						i_ij->setBackgroundColor(Qt::green) ;
-						i_ij->setToolTip(trustTableTW->horizontalHeaderItem(i)->text() + " and " +trustTableTW->verticalHeaderItem(j)->text() + QString(" trust each others") ) ;
-						i_ij->setText(QString("Full")) ;
+						i_ij->setToolTip(trustTableTW->horizontalHeaderItem(i)->text() + " and " +trustTableTW->verticalHeaderItem(j)->text() + tr(" trust each others") ) ;
+						i_ij->setText(tr("Full")) ;
 					}
 				}
 			}
 		}
 	for(int i=0;i<trustTableTW->rowCount();++i)
-		trustTableTW->verticalHeaderItem(i)->setToolTip(trustTableTW->verticalHeaderItem(i)->text()+" is trusted by " + QString::number(ni[i]) + " peers, including him(her)self.") ; 
+		trustTableTW->verticalHeaderItem(i)->setToolTip(trustTableTW->verticalHeaderItem(i)->text()+ tr(" is trusted by ") + QString::number(ni[i]) + tr(" peers, including him(her)self.")) ; 
 
 	for(int j=0;j<trustTableTW->columnCount();++j)
-		trustTableTW->horizontalHeaderItem(j)->setToolTip(trustTableTW->horizontalHeaderItem(j)->text()+" trusts " + QString::number(nj[j]) + " peers, including him(her)self.") ; 
+		trustTableTW->horizontalHeaderItem(j)->setToolTip(trustTableTW->horizontalHeaderItem(j)->text()+ tr(" trusts ") + QString::number(nj[j]) + tr(" peers, including him(her)self.")) ; 
 
 }
 
@@ -242,7 +242,7 @@ void TrustView::hideShowPeers(int col)
 		}
 		last_col = -1 ;
 
-		showingLabel->setText(QString("Showing: whole network")) ;
+		showingLabel->setText(tr("Showing: whole network")) ;
 	}
 	else
 	{
@@ -258,7 +258,7 @@ void TrustView::hideShowPeers(int col)
 				trustTableTW->setRowHidden(i,false) ;
 			}
 		last_col = col ;
-		showingLabel->setText(QString("Showing: peers connected to ")+trustTableTW->verticalHeaderItem(col)->text()) ;
+		showingLabel->setText(tr("Showing: peers connected to ")+trustTableTW->verticalHeaderItem(col)->text()) ;
 	}
 }
 
