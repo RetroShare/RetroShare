@@ -123,7 +123,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 		qstartWizard->exec();
     }
 
-    setWindowTitle(tr("RetroShare %1 a secure decentralised commmunication platform").arg(retroshareVersion()));
+    setWindowTitle(tr("RetroShare %1 a secure decentralised communication platform").arg(retroshareVersion()));
 
     // Setting icons
     this->setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
