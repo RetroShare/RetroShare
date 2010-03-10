@@ -117,6 +117,10 @@ const uint32_t GROUP_KEY_DISTRIB_PRIVATE	= 0x0020;
 const uint32_t GROUP_KEY_DISTRIB_ADMIN		= 0x0040;
 #endif
 
+
+/*!
+ * allows group members to access
+ */
 class GroupKey
 {
 	public:
@@ -129,6 +133,8 @@ class GroupKey
 	time_t   startTS, endTS;
 	EVP_PKEY *key;
 };
+
+
 
 class GroupInfo
 {

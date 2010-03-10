@@ -36,6 +36,7 @@
 #include <stdio.h>
 #include <dirent.h>
 
+#include <fstream>
 
 #if defined(WIN32) || defined(__CYGWIN__)
 #include "wtypes.h"

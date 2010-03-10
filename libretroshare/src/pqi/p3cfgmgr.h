@@ -97,6 +97,11 @@ const uint32_t CONFIG_TYPE_CACHE 	= 0xff01;
 
 class p3ConfigMgr;
 
+
+/*!
+ * Aim is that active objects in retroshare can dervie from this class
+ * and implement their method of saving and loading their configuration
+ */
 class pqiConfig
 {
 	public:
@@ -104,17 +109,17 @@ class pqiConfig
 virtual ~pqiConfig();
 
 /**
- * @param loadHash This is hash that will be compared to confirm that data has not been tampered with
+ * loadHash This is the hash that will be compared to confirm saved configuration has not
+ * been tampered with
  */
 virtual bool	loadConfiguration(std::string &loadHash) = 0;
 
-/**
- * @param This should
- */
+
 virtual bool	saveConfiguration() = 0;
 
 /**
  * The type of configuration, see ids where this class is declared
+ * @see p3cfgmgr.h
  */
 uint32_t   Type();
 
@@ -131,6 +136,9 @@ std::string Hash();
 
 	protected:
 
+/**
+ * Checks if configuration has changed
+ */
 void	IndicateConfigChanged();
 void	setHash(std::string h);
 
@@ -161,18 +169,23 @@ void	setHash(std::string h);
 };
 
 
-/**** MUTEX NOTE
- * None - because no-one calls any functions
- * besides tick() when the system is running.
- */
 
+/***********************************************************************************************/
+
+/*!
+ * MUTEX NOTE
+ * None - because no-one calls any functions besides tick() when the system is running.
+ * Takes care of updating, saving configurations within retroshare and also
+ * adding new configurations
+ */
 class p3ConfigMgr
 {
 	public:
         p3ConfigMgr(std::string bdir, std::string fname, std::string signame);
 
         /**
-         * Called from Rs server to check configuration and update configurations
+         * checks and update all added configurations
+         * @see rsserver
          */
         void	tick();
 
@@ -200,9 +213,24 @@ class p3ConfigMgr
 	private:
 
 		/**
-		 * To be called from load configuration
+		 * checks if signature and configuration file's signature matches
+		 * @return false if signature file does not match configuration file's signature
 		 */
 		bool getSignAttempt(std::string& metaConfigFname, std::string& metaSignFname, BinMemInterface* membio);
+
+		/**
+		 * takes current configuration which is stored in back-up file, and moves it to actual config file
+		 * then stores data that was in actual config file into back-up, Corresponding signatures and handled
+		 * simlarly in parallel
+		 *@param fname the name of the first configuration file checked
+		 *@param fname_backup the seconf file, backup, checked if first file does not exist or is corrupted
+		 *@param sign file name in which signature is kept
+		 *@param sign_backup  file name in which signature which correspond to backup config is kept
+		 *@param configbio to write config to file
+		 *@param signbio  to write signature config to file
+		 */
+		bool backedUpFileSave(const std::string& fname, const std::string& fname_backup,const std::string& sign,
+				const std::string& sign_backup, BinMemInterface* configbio, BinMemInterface* signbio);
 
 const std::string basedir;
 const std::string metafname;
@@ -214,6 +242,7 @@ bool	mConfigSaveActive;
 std::map<uint32_t, pqiConfig *> configs;
 };
 
+/***************************************************************************************************/
 
 class p3Config: public pqiConfig
 {
@@ -238,8 +267,19 @@ virtual void    saveDone() { return; }
 
 private:
 
-//helper function for retrieving correct hash using a temporary directory
-virtual bool getHashAttempt(const std::string& loadHash, std::string& hashstr, const std::string& fname, std::list<RsItem *>& load);
+/**
+ * takes current configuration which is stored in back-up file, and moves it to actual config file
+ * then stores data that was in actual config file into back-up, This is an rs specific solution
+ * @param fname the name of the first configuration file checked
+ * @param fname_backup the seconf file, backup, checked if first file does not exist or is corrupted
+ */
+bool backedUpFileSave(const std::string& fname, const std::string& fname_backup, std::list<RsItem* >& toSave,
+		bool cleanup);
+
+/*
+ * for retrieving hash files
+ */
+bool getHashAttempt(const std::string& loadHash, std::string& hashstr, const std::string& fname, std::list<RsItem *>& load);
 
 
 }; /* end of p3Config */

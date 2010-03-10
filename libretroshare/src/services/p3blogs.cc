@@ -251,8 +251,14 @@ bool p3Blogs::BlogMessageSend(BlogMsgInfo &info)
 
 bool p3Blogs::BlogMessageReply(BlogMsgInfo& reply){
 
-	if(reply.msgIdReply.empty())
+	// ensure it has a value
+	if(isReply(reply)){
+		std::cerr << "p3Blogs::BlogMessageReply()" << " This is not a reply " << std::endl;
 		return false;
+	}
+
+
+	// also check that msgId exists for group
 
 	return BlogMessageSend(reply);
 }
@@ -303,6 +309,23 @@ bool p3Blogs::blogSubscribe(std::string cId, bool subscribe)
 	std::cerr << std::endl;
 
 	return subscribeToGroup(cId, subscribe);
+}
+
+
+bool p3Blogs::deleteBlogMsg(std::string cId, std::string mId){
+	return false;
+}
+
+bool p3Blogs::isBlogDeleted(std::string cId){
+	return false;
+}
+
+bool p3Blogs::isBlogMsgDeleted(std::string cId, std::string mId){
+	return false;
+}
+
+bool p3Blogs::deleteBlog(std::string cId){
+	return false;
 }
 
 

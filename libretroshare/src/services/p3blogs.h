@@ -45,24 +45,75 @@ virtual ~p3Blogs();
 /****************************************/
 /********* rsBlogs Interface ***********/
 
+
+/**
+ * check if any of the blogs has been changed
+ * @param blogIds list blogs by ids to be checked
+ * @return false if changed and vice versa
+ */
 virtual bool blogsChanged(std::list<std::string> &blogIds);
 
+/**
+ * creates a new blog
+ */
 virtual std::string createBlog(std::wstring blogName, std::wstring blogDesc, uint32_t blogFlags);
 
+/**
+ * @param cId the id for the blog
+ * @param BloogInfo blog information is stored here
+ */
 virtual bool getBlogInfo(std::string cId, BlogInfo &ci);
-virtual bool getBlogList(std::list<BlogInfo> &chanList);
+
+/**
+ * get list of blogs from the group peer belongs to
+ */
+virtual bool getBlogList(std::list<BlogInfo> &blogList);
+
+/**
+ * Returns a list of all the messages sent
+ * @param cId group id
+ * @param msgs
+ */
 virtual bool getBlogMsgList(std::string cId, std::list<BlogMsgSummary> &msgs);
 virtual bool getBlogMessage(std::string cId, std::string mId, BlogMsgInfo &msg);
 
 virtual bool BlogMessageSend(BlogMsgInfo &info);
 
-
+/**
+ * subscribes or unsubscribes peer to a blog message
+ * @param cId the id of the blog message peer wants to subscribe
+ * @param subscribe set to true to subscribe, false otherwise
+ */
 virtual bool blogSubscribe(std::string cId, bool subscribe);
 
+
+/**
+ * send a reply to a blog msg, ensure msgIdReply has valid id to a message
+ */
 virtual bool BlogMessageReply(BlogMsgInfo &info);
 
+/**
+ * check if a particular blog is a reply
+ * @return false if not a reply, true otherwise
+ */
 virtual bool isReply(BlogMsgInfo& info);
 
+/**
+ * Deletes a blog by group id
+ *
+ */
+virtual bool deleteBlog(std::string cId);
+
+/**
+ * Delete a blog message
+ * @param cId the group id the blog message belongs to
+ * @param mId the message id within the group
+ */
+virtual bool deleteBlogMsg(std::string cId, std::string mId);
+
+virtual bool isBlogDeleted(std::string cId);
+
+virtual bool isBlogMsgDeleted(std::string cId, std::string mId);
 /***************************************************************************************/
 /****************** Event Feedback (Overloaded form p3distrib) *************************/
 /***************************************************************************************/

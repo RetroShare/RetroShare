@@ -23,11 +23,6 @@
  *
  */
 
-#include "fstream"
-
-using std::ofstream;
-using std::ifstream;
-
 #include "util/rsdir.h"
 #include "rsiface/rspeers.h"
 #include "pqi/p3cfgmgr.h"
@@ -39,7 +34,7 @@ using std::ifstream;
 
 #include "serialiser/rsconfigitems.h"
 
-//#define CONFIG_DEBUG 1
+#define CONFIG_DEBUG 1
 
 
 p3ConfigMgr::p3ConfigMgr(std::string dir, std::string fname, std::string signame)
@@ -139,32 +134,37 @@ void	p3ConfigMgr::saveConfiguration()
 
 #endif
 	/* construct filename */
-	std::string filename1 = basedir;
-	std::string filename2 = basedir;
-	std::string filename1_tmp, filename2_tmp; // temporary file to do two pass save
+	std::string fname = basedir;
+	std::string sign_fname = basedir;
+	std::string fname_backup, sign_fname_backup; // back up files
 
 	if (basedir != "")
 	{
-		filename1 += "/";
-		filename2 += "/";
+		fname += "/";
+		sign_fname += "/";
 	}
-	filename1 += metasigfname;
-	filename2 += metafname;
-	filename1_tmp = filename1 + ".tmp";
-	filename2_tmp = filename2 + ".tmp";
+
+	fname += metafname;
+	sign_fname += metasigfname;
+	fname_backup = fname + ".tmp";
+	sign_fname_backup = sign_fname + ".tmp";
 
 	/* Write the data to a stream */
 	uint32_t bioflags = BIN_FLAGS_WRITEABLE;
-	BinMemInterface *membio = new BinMemInterface(1000, bioflags);
+	BinMemInterface *configbio = new BinMemInterface(1000, bioflags);
 	RsSerialiser *rss = new RsSerialiser();
 	rss->addSerialType(new RsGeneralConfigSerialiser());
-	pqistore store(rss, "CONFIG", membio, BIN_FLAGS_WRITEABLE);
+	pqistore store(rss, "CONFIG", configbio, BIN_FLAGS_WRITEABLE);
 
 	store.SendItem(item);
 
 	/* sign data */
 	std::string signature;
-        AuthSSL::getAuthSSL()->SignData(membio->memptr(), membio->memsize(), signature);
+	AuthSSL::getAuthSSL()->SignData(configbio->memptr(), configbio->memsize(), signature);
+
+    /* write signature to configuration */
+    BinMemInterface *signbio = new BinMemInterface(signature.c_str(),
+    		signature.length(), BIN_FLAGS_READABLE);
 
 #ifdef CONFIG_DEBUG 
 	std::cerr << "p3ConfigMgr::saveConfiguration() MetaFile Signature:";
@@ -173,46 +173,105 @@ void	p3ConfigMgr::saveConfiguration()
 	std::cerr << std::endl;
 #endif
 
-	if (!membio->writetofile(filename2_tmp.c_str()))
-	{
-#ifdef CONFIG_DEBUG 
-		std::cerr << "p3ConfigMgr::saveConfiguration() Failed to Write temp MetaFile " << filename2 ;
-		std::cerr << std::endl;
-#endif
-	}
-
-
-	/* write signature to configuration */
-	BinMemInterface *signbio = new BinMemInterface(signature.c_str(), 
-					signature.length(), BIN_FLAGS_READABLE);
-
-	if (!signbio->writetofile(filename1_tmp.c_str()))
-	{
-#ifdef CONFIG_DEBUG 
-		std::cerr << "p3ConfigMgr::saveConfiguration() Failed to Write temp MetaSignFile" << filename1 ;
-		std::cerr << std::endl;
-#endif
-	}
-
-
-	/*
-	 * if above written successfully now write actual file  that will be read initially
-	 * The aim is that if any of the file savings here fail at least one of these pairings of
-	 * signature will be compatible to either config.tmp and config files
-	 */
-
-	if (!membio->writetofile(filename1.c_str()) || !signbio->writetofile(filename2.c_str()))
-	{
-#ifdef CONFIG_DEBUG
-		std::cerr << "p3ConfigMgr::saveConfiguration() Failed to Write MetaFile and MetaSignFile " << filename2 ;
-		std::cerr << std::endl;
-#endif
-	}
-
+	// begin two pass save
+	backedUpFileSave(fname, fname_backup, sign_fname, sign_fname_backup, configbio, signbio);
 
 	delete signbio;
+}
+
+bool p3ConfigMgr::backedUpFileSave(const std::string& fname, const std::string& fname_backup, const std::string& sign_fname,
+		const std::string& sign_fname_backup, BinMemInterface* configbio, BinMemInterface* signbio){
+
+	FILE *file = NULL, *sign = NULL;
+	int size_file, size_sign;
+
+	// begin two pass saving by writing to back up file instead
+	if (!configbio->writetofile(fname_backup.c_str()) || !signbio->writetofile(sign_fname_backup.c_str()))
+	{
+#ifdef CONFIG_DEBUG
+		std::cerr << "p3ConfigMgr::backedupFileSave() Failed write to Backup MetaFiles " << fname_backup
+				<< " and " << sign_fname_backup;
+		std::cerr << std::endl;
+#endif
+	}
+
+#ifdef CONFIG_DEBUG
+	std::cerr << "p3Config::backedUpFileSave() Save file and keeps a back up " << std::endl;
+#endif
+
+	// open file from which to collect buffer
+	file = fopen(fname.c_str(), "rb");
+	sign = fopen(sign_fname.c_str(), "rb");
+
+	// if failed then just use back-up file: back-up and actual configs are the same files now
+	if((file == NULL) || (sign == NULL)){
+#ifdef CONFIG_DEBUG
+		std::cerr << "p3Config::backedUpFileSave()  failed to open meta files " << fname << std::endl;
+#endif
+
+		fclose(file);
+		fclose(file);
+
+		file = fopen(fname_backup.c_str(), "rb");
+		sign = fopen(sign_fname_backup.c_str(), "rb");
+
+		if((file == NULL) || (sign == NULL)){
+			std::cerr << "p3Config::backedUpFileSave()  failed to open backup meta files" << fname_backup << std::endl;
+			return false;
+		}
+	}
 
 
+	//determine file size
+	fseek(file, 0L, SEEK_END);
+	size_file = ftell(file);
+	fseek(file, 0L, SEEK_SET);
+
+	fseek(sign, 0L, SEEK_END);
+	size_sign = ftell(sign);
+	fseek(sign, 0L, SEEK_SET);
+
+	//read this into a buffer
+	char* config_buff = new char[size_file];
+	fread(config_buff, size_file, 1, file);
+	fclose(file);
+
+	//read this into a buffer
+	char* sign_buff = new char[size_sign];
+	fread(sign_buff, size_sign, 1, sign);
+	fclose(sign);
+
+	// rename back-up to current file
+	if(!RsDirUtil::renameFile(fname_backup, fname)  || !RsDirUtil::renameFile(sign_fname_backup, sign_fname)){
+		std::cerr << "p3Config::backedUpFileSave() Failed to rename backup meta files: " << std::endl
+				<< fname_backup << " to " << fname << std::endl
+				<< sign_fname_backup << " to " << sign_fname << std::endl;
+		return false;
+	}
+
+	// now write actual back-up file
+	file = fopen(fname_backup.c_str(), "wb");
+	sign = fopen(sign_fname_backup.c_str(), "wb");
+
+	if((file == NULL) || (sign == NULL)){
+#ifdef CONFIG_DEBUG
+		std::cerr << "p3Config::backedUpFileSave()  fopen failed for file: " << fname_backup << std::endl;
+#endif
+		return false;
+	}
+
+	fwrite(config_buff, size_file, 1, file);
+	fwrite(sign_buff, size_sign, 1, sign);
+	fclose(file);
+	fclose(sign);
+
+#ifdef CONFIG_DEBUG
+    std::cerr << "p3Config::backedUpFileSave() finished backed up save.  " << std::endl;
+#endif
+
+    delete[] config_buff;
+    delete[] sign_buff;
+    return true;
 }
 
 void	p3ConfigMgr::loadConfiguration()
@@ -225,30 +284,27 @@ void	p3ConfigMgr::loadConfiguration()
 #endif
 
 	/* construct filename */
-	std::string filename1 = basedir;
-	std::string filename2 = basedir;
-	std::string filename1_tmp, filename2_tmp;
+	std::string fname = basedir;
+	std::string sign_fname = basedir;
+	std::string fname_backup, sign_fname_backup;
 
 	if (basedir != "")
 	{
-		filename1 += "/";
-		filename2 += "/";
+		fname += "/";
+		sign_fname += "/";
 	}
 
-	filename1 += metasigfname;
-	filename2 += metafname;
+	fname += metafname;
+	sign_fname += metasigfname;
 
 	// temporary files
-	filename1_tmp = filename1 + ".tmp";
-	filename2_tmp = filename2 + ".tmp";
+	fname_backup = fname + ".tmp";
+	sign_fname_backup = sign_fname + ".tmp";
 
 	BinMemInterface* membio = new BinMemInterface(1000, BIN_FLAGS_READABLE);
 
-	/*
-	 * Will attempt to get signature first from meta file then if that fails try temporary meta files, these will correspond to temp configs
-	 */
-
-	bool pass = getSignAttempt(filename2, filename1, membio);
+	// Will attempt to get signature first from meta file then if that fails try temporary meta files, these will correspond to temp configs
+	bool pass = getSignAttempt(fname, sign_fname, membio);
 
 	// if first attempt fails then try and temporary files
 	if(!pass){
@@ -258,7 +314,7 @@ void	p3ConfigMgr::loadConfiguration()
 		std::cerr << std::endl;
 		#endif
 
-		pass = getSignAttempt(filename2_tmp, filename1_tmp, membio);
+		pass = getSignAttempt(fname_backup, sign_fname_backup , membio);
 
 		if(!pass){
 			#ifdef CONFIG_DEBUG
@@ -468,29 +524,30 @@ p3Config::p3Config(uint32_t t)
 bool	p3Config::loadConfiguration(std::string &loadHash)
 {
 
-	std::string fname = Filename();
-	std::string fnametmp = fname + ".tmp";
+	std::string cfg_fname = Filename();
+	std::string cfg_fname_backup = cfg_fname + ".tmp";
 	std::string hashstr;
 	std::list<RsItem *> load;
 
 #ifdef CONFIG_DEBUG
-	std::string success_fname = fname;
-	std::cerr << "p3Config::loadConfiguration(): Attempting to load configuration file" << fname << std::endl;
+	std::string success_fname = cfg_fname;
+	std::cerr << "p3Config::loadConfiguration(): Attempting to load configuration file" << cfg_fname << std::endl;
 #endif
 
-	bool pass = getHashAttempt(loadHash, hashstr, fname, load);
+	bool pass = getHashAttempt(loadHash, hashstr, cfg_fname, load);
 
 	if(!pass){
-		pass = getHashAttempt(loadHash, hashstr, fnametmp, load);
+		pass = getHashAttempt(loadHash, hashstr, cfg_fname_backup, load);
 #ifdef CONFIG_DEBUG
-		success_fname = fnametmp;
+		std::cerr << "p3Config::loadConfiguration() ERROR: Failed to get Hash from " << success_fname << std::endl;
+		success_fname = cfg_fname_backup;
 #endif
 
 		if(!pass){
 #ifdef CONFIG_DEBUG
-			std::cerr << "p3Config::loadConfiguratio() ERROR: Failed to get Hash" << std::endl;
-			return false;
+			std::cerr << "p3Config::loadConfiguration() ERROR: Failed to get Hash from " << success_fname << std::endl;
 #endif
+			return false;
 		}
 	}
 
@@ -499,15 +556,13 @@ bool	p3Config::loadConfiguration(std::string &loadHash)
 #endif
 
 	setHash(hashstr);
-
-	// else okay
 	return loadList(load);
 }
 
 
 
 
-bool p3Config::getHashAttempt(const std::string& loadHash, std::string& hashstr,const std::string& fname,
+bool p3Config::getHashAttempt(const std::string& loadHash, std::string& hashstr,const std::string& cfg_fname,
 		std::list<RsItem *>& load){
 
 	std::list<RsItem *>::iterator it;
@@ -515,7 +570,7 @@ bool p3Config::getHashAttempt(const std::string& loadHash, std::string& hashstr,
 	uint32_t bioflags = BIN_FLAGS_HASH_DATA | BIN_FLAGS_READABLE;
 	uint32_t stream_flags = BIN_FLAGS_READABLE;
 
-	BinInterface *bio = new BinFileInterface(fname.c_str(), bioflags);
+	BinInterface *bio = new BinFileInterface(cfg_fname.c_str(), bioflags);
 	pqistore stream(setupSerialiser(), "CONFIG", bio, stream_flags);
 	RsItem *item = NULL;
 
@@ -532,7 +587,7 @@ bool p3Config::getHashAttempt(const std::string& loadHash, std::string& hashstr,
 
 #ifdef CONFIG_DEBUG 
 	std::cerr << "p3Config::loadConfiguration() loaded " << load.size();
-	std::cerr << " Elements from File: " << fname;
+	std::cerr << " Elements from File: " << cfg_fname;
 	std::cerr << std::endl;
 #endif
 
@@ -570,31 +625,47 @@ bool	p3Config::saveConfiguration()
 	std::list<RsItem *> toSave = saveList(cleanup);
 
 
-	std::string fname = Filename(); // get configuration file name
-	std::string fnametmp = Filename()+".tmp"; // temporary file for two pass save
-	std::string fnametmpold =  fnametmp + "_old";
+	std::string cfg_fname = Filename(); // get configuration file name
+	std::string cfg_fname_backup = Filename()+".tmp"; // backup file for two pass save
 
 #ifdef CONFIG_DEBUG 
-        std::cerr << "Writting p3config file " << fname.c_str() << std::endl ;
+        std::cerr << "Writting p3config file " << cfg_fname << std::endl ;
         std::cerr << "p3Config::saveConfiguration() toSave " << toSave.size();
-	std::cerr << " Elements to File: " << fname;
+	std::cerr << " Elements to File: " << cfg_fname;
 	std::cerr << std::endl;
 #endif
 
+
+
+	saveDone(); // callback to inherited class to unlock any Mutexes protecting saveList() data
+
+	// saves current config and keeps back-up (old configuration)
+	if(!backedUpFileSave(cfg_fname, cfg_fname_backup, toSave, cleanup))
+		return false;
+
+	return true;
+}
+
+
+bool p3Config::backedUpFileSave(const std::string& cfg_fname, const std::string& cfg_fname_backup, std::list<RsItem* >& itemList,
+		bool cleanup){
+
 	uint32_t bioflags = BIN_FLAGS_HASH_DATA | BIN_FLAGS_WRITEABLE;
-	uint32_t stream_flags = BIN_FLAGS_WRITEABLE;
+	uint32_t stream_flags = true;
 
-	if (!cleanup)
+	if (!cleanup){
 		stream_flags |= BIN_FLAGS_NO_DELETE;
-
-	BinInterface *bio = new BinFileInterface(fnametmp.c_str(), bioflags);
+	}else{
+		stream_flags = BIN_FLAGS_WRITEABLE;
+	}
+	BinInterface *bio = new BinFileInterface(cfg_fname_backup.c_str(), bioflags);
 	pqistore *stream = new pqistore(setupSerialiser(), "CONFIG", bio, stream_flags);
 
 	std::list<RsItem *>::iterator it;
 
-	bool written = true ;
+	bool written = true;
 
-	for(it = toSave.begin(); it != toSave.end(); it++)
+	for(it = itemList.begin(); it != itemList.end(); it++)
 	{
 #ifdef CONFIG_DEBUG 
 		std::cerr << "p3Config::saveConfiguration() save item:";
@@ -603,72 +674,72 @@ bool	p3Config::saveConfiguration()
 		std::cerr << std::endl;
 #endif
 		written = written && stream->SendItem(*it);
-
-//		std::cerr << "written = " << written << std::endl ;
 	}
 
 	/* store the hash */
 	setHash(bio->gethash());
-	saveDone(); /* callback to inherited class to unlock any Mutexes
-		     * protecting saveList() data
-		     */
 
-	//  so early?
-	delete stream ;
+	// bio is taken care of in stream's destructor
+	delete stream;
 
-	/**
-	 * ensures real old config is alway present in file system, leave of config as tmp file
-	 */
-
-	if(!written)
-		return false ;
-
-        #ifdef CONFIG_DEBUG
-        std::cerr << "p3config::saveConfiguration() renaming " << fnametmp.c_str() << " to " << fname.c_str() << std::endl;
-        #endif
-
-        // first write old config to old-temp file
-
-        ifstream ifstrm;
-		ofstream ofstrm;
-		ifstrm.open(fname.c_str(), std::ifstream::binary);
-
-                #ifdef CONFIG_DEBUG
-                std::cerr << "p3config::saveConfiguration() Is file open: " <<  ifstrm.is_open() << std::endl;
-                #endif
-
-		// if file does not exist then open temporay file already created
-		if(!ifstrm.is_open()){
-			ifstrm.close();
-			ifstrm.open(fnametmp.c_str(), std::ifstream::binary);
-		}
-
-		// determine size of old config file
-		ifstrm.seekg(0, std::ios_base::end);
-		std::streampos length = ifstrm.tellg();
-		ifstrm.seekg(0);
-
-		//read this into a buffer
-		char* buff = new char[length];
-		ifstrm.read(buff, length);
-		ifstrm.close();
-
-		// write to config_old file
-		ofstrm.open(fnametmpold.c_str(), std::ofstream::binary);
-		ofstrm.write(buff, length);
-		ofstrm.close();
-
-		// now rename new temp config file to current(fname) and old config file to temp (fnametmp)
-	if(!RsDirUtil::renameFile(fnametmp, fname) || !RsDirUtil::renameFile(fnametmpold, fnametmp)){
-		std::cerr << "ERROR!" << std::endl;
 	#ifdef CONFIG_DEBUG
-		std::cerr << "p3Config::saveConfiguration():  Failed to Rename" << std::endl;
+		std::cerr << "p3Config::backedUpFileSave() Save file and keeps a back up " << std::endl;
 	#endif
+
+	// open file from which to collect buffer
+	FILE* cfg_file = NULL;
+	int size_file = 0;
+	cfg_file = fopen(cfg_fname.c_str(), "rb");
+
+	// if failed then just use back-up file: back-up and file are now the same files
+	if(cfg_file == NULL){
+	#ifdef CONFIG_DEBUG
+		std::cerr << "p3Config::backedUpFileSave()  fopen failed for file: " << cfg_fname << std::endl;
+	#endif
+		fclose(cfg_file);
+		cfg_file = fopen(cfg_fname_backup.c_str(), "rb");
+		if(cfg_file == NULL){
+			std::cerr << "p3Config::backedUpFileSave()  fopen failed for file:" << cfg_fname_backup << std::endl;
+			return false;
+		}
 	}
 
-	delete buff;
-//	delete bio;
-	return true;
+	//determine file size
+	fseek(cfg_file, 0L, SEEK_END);
+	size_file = ftell(cfg_file);
+	fseek(cfg_file, 0L, SEEK_SET);
+
+	//read this into a data buffer
+	char* buff = new char[size_file];
+	fread(buff, size_file, 1, cfg_file);
+	fclose(cfg_file);
+
+	// rename back-up to current file
+	if(!RsDirUtil::renameFile(cfg_fname_backup, cfg_fname)){
+		std::cerr << "p3Config::backedUpFileSave() Failed to rename file" << cfg_fname_backup << " to "
+			<< cfg_fname << std::endl;
+		return false;
+	}
+
+	// now write actual back-up file
+	cfg_file = fopen(cfg_fname_backup.c_str(), "wb");
+
+	if(cfg_file == NULL){
+#ifdef CONFIG_DEBUG
+		std::cerr << "p3Config::backedUpFileSave()  fopen failed for file: " << cfg_fname_backup << std::endl;
+#endif
+		return false;
+	}
+
+	fwrite(buff, size_file, 1, cfg_file);
+	fclose(cfg_file);
+
+#ifdef CONFIG_DEBUG
+    std::cerr << "p3Config::backedUpFileSave() finished backed up save.  " << std::endl;
+#endif
+
+    delete[] buff;
+    return true;
 }
 
 
