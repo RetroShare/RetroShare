@@ -1,41 +1,42 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>PhotoShow</class>
- <widget class="QWidget" name="PhotoShow" >
-  <property name="geometry" >
+ <widget class="QWidget" name="PhotoShow">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>591</width>
+    <width>528</width>
     <height>421</height>
    </rect>
   </property>
-  <property name="windowTitle" >
-   <string>Form</string>
+  <property name="windowTitle">
+   <string>Photo Show</string>
   </property>
-  <layout class="QGridLayout" >
-   <item row="0" column="0" >
-    <layout class="QVBoxLayout" >
+  <layout class="QGridLayout">
+   <item row="0" column="0">
+    <layout class="QVBoxLayout">
      <item>
-      <layout class="QHBoxLayout" >
+      <layout class="QHBoxLayout">
        <item>
-        <layout class="QVBoxLayout" >
+        <layout class="QVBoxLayout">
          <item>
-          <widget class="QLabel" name="label_3" >
-           <property name="text" >
+          <widget class="QLabel" name="label_3">
+           <property name="text">
             <string>Date:</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_2" >
-           <property name="text" >
+          <widget class="QLabel" name="label_2">
+           <property name="text">
             <string>Location:</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_4" >
-           <property name="text" >
+          <widget class="QLabel" name="label_4">
+           <property name="text">
             <string>Comment:</string>
            </property>
           </widget>
@@ -43,84 +44,84 @@
         </layout>
        </item>
        <item>
-        <layout class="QVBoxLayout" >
+        <layout class="QVBoxLayout">
          <item>
-          <widget class="QLineEdit" name="dateLineEdit" />
+          <widget class="QLineEdit" name="dateLineEdit"/>
          </item>
          <item>
-          <widget class="QLineEdit" name="locLineEdit" />
+          <widget class="QLineEdit" name="locLineEdit"/>
          </item>
          <item>
-          <widget class="QLineEdit" name="commentLineEdit" />
+          <widget class="QLineEdit" name="commentLineEdit"/>
          </item>
         </layout>
        </item>
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" >
+      <layout class="QHBoxLayout">
        <item>
-        <widget class="QLabel" name="label_5" >
-         <property name="text" >
+        <widget class="QLabel" name="label_5">
+         <property name="text">
           <string>Display Size:</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="sizeComboBox" >
+        <widget class="QComboBox" name="sizeComboBox">
          <item>
-          <property name="text" >
+          <property name="text">
            <string>320 x 320</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>640 x 640</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>Full Size</string>
           </property>
          </item>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label_6" >
-         <property name="text" >
+        <widget class="QLabel" name="label_6">
+         <property name="text">
           <string>Play Rate:</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="speedComboBox" >
+        <widget class="QComboBox" name="speedComboBox">
          <item>
-          <property name="text" >
+          <property name="text">
            <string>1 Sec</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>2 Sec</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>5 Sec</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>10 Sec</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>20 Sec</string>
           </property>
          </item>
          <item>
-          <property name="text" >
+          <property name="text">
            <string>1 Min</string>
           </property>
          </item>
@@ -128,10 +129,10 @@
        </item>
        <item>
         <spacer>
-         <property name="orientation" >
+         <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>40</width>
            <height>20</height>
@@ -140,15 +141,15 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="editButton" >
-         <property name="text" >
+        <widget class="QPushButton" name="editButton">
+         <property name="text">
           <string>Edit Photo Details</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="saveButton" >
-         <property name="text" >
+        <widget class="QPushButton" name="saveButton">
+         <property name="text">
           <string>Save Photo</string>
          </property>
         </widget>
@@ -156,20 +157,23 @@
       </layout>
      </item>
      <item>
-      <widget class="QLabel" name="photoLabel" >
-       <property name="text" >
+      <widget class="QLabel" name="photoLabel">
+       <property name="text">
         <string>No Photo Selected</string>
+       </property>
+       <property name="scaledContents">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
      <item>
-      <layout class="QHBoxLayout" >
+      <layout class="QHBoxLayout">
        <item>
         <spacer>
-         <property name="orientation" >
+         <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>40</width>
            <height>20</height>
@@ -178,54 +182,54 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="startButton" >
-         <property name="text" >
-          <string>Start</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="backButton" >
-         <property name="text" >
+        <widget class="QPushButton" name="backButton">
+         <property name="text">
           <string>Back</string>
          </property>
-         <property name="icon" >
-          <iconset resource="images.qrc" >
+         <property name="icon">
+          <iconset>
            <normaloff>:/images/back.png</normaloff>:/images/back.png</iconset>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="playButton" >
-         <property name="text" >
+        <widget class="QPushButton" name="startButton">
+         <property name="text">
+          <string>Start</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="playButton">
+         <property name="text">
           <string>Play </string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pauseButton" >
-         <property name="text" >
+        <widget class="QPushButton" name="pauseButton">
+         <property name="text">
           <string>Pause</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="stepButton" >
-         <property name="text" >
+        <widget class="QPushButton" name="stepButton">
+         <property name="text">
           <string>Forward</string>
          </property>
-         <property name="icon" >
-          <iconset resource="images.qrc" >
+         <property name="icon">
+          <iconset>
            <normaloff>:/images/forward.png</normaloff>:/images/forward.png</iconset>
          </property>
         </widget>
        </item>
        <item>
         <spacer>
-         <property name="orientation" >
+         <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>40</width>
            <height>20</height>
@@ -240,7 +244,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="images.qrc" />
+  <include location="images.qrc"/>
  </resources>
  <connections/>
 </ui>

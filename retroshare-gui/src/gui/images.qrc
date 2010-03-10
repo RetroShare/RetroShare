@@ -281,6 +281,7 @@
         <file>images/newmsg.png</file>
         <file>images/no_avatar.png</file>
         <file>images/no_avatar_70.png</file>
+        <file>images/openimage.png</file>
         <file>images/pasterslink.png</file>
         <file>images/package_games1.png</file>
         <file>images/peerdetails_16x16.png</file>
@@ -300,6 +301,13 @@
         <file>images/greenled.png</file>
         <file>images/grayled.png</file>
         <file>images/yellowled.png</file>
+        <file>images/rate-1.png</file>
+        <file>images/rate-2.png</file>
+        <file>images/rate-3.png</file>
+        <file>images/rate-4.png</file>
+        <file>images/rate-5.png</file>
+        <file>images/rating.png</file>
+        <file>images/records.png</file>
         <file>images/records.png</file>
         <file>images/removefriend16.png</file>
         <file>images/replymail-pressed.png</file>

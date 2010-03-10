@@ -78,6 +78,13 @@ private:
 
   /** Define the popup menus for the Context menu */
   QMenu* contextMnu;
+  
+  QAction *rateExcellenAct;
+  QAction *rateGoodAct;
+  QAction *rateAverageAct;
+  QAction *rateBelowAvarageAct;
+  QAction *rateBadAct;
+  QAction *rateUnratedAct;
 
   QTreeWidget *exampletreeWidget;
 

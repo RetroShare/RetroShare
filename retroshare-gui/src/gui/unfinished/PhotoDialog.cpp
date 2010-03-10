@@ -157,13 +157,54 @@ void PhotoDialog::photoTreeWidgetCustomPopupMenu( QPoint point )
 
       QMenu contextMnu( this );
       QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
+      
+      QAction *openphotoAct = new QAction(QIcon(":/images/openimage.png"), tr( "Open" ), this );
+      openphotoAct->setShortcut(Qt::CTRL + Qt::Key_O);
+      connect( openphotoAct , SIGNAL( triggered(QTreeWidgetItem * , int) ), this, SLOT( showPhoto( QTreeWidgetItem *, int ) ) );
 
-      QAction *rm = new QAction(QIcon(IMAGE_REMOVE), tr( "Remove" ), this );
-      connect( rm , SIGNAL( triggered() ), this, SLOT( removePhoto() ) );
+      QAction *removephotoAct = new QAction(QIcon(IMAGE_REMOVE), tr( "Remove" ), this );
+      removephotoAct->setShortcut(Qt::Key_Delete);
+      connect( removephotoAct , SIGNAL( triggered() ), this, SLOT( removePhoto() ) );
+      
+      rateExcellenAct = new QAction(QIcon(":/images/rate-5.png"), tr("Excellent"), this);
+      rateExcellenAct->setShortcut(Qt::CTRL + Qt::Key_5);
+      connect(rateExcellenAct, SIGNAL(triggered()), this, SLOT(rateExcellent()));
+      
+      rateGoodAct = new QAction(QIcon(":/images/rate-4.png"), tr("Good"), this);
+      rateGoodAct->setShortcut(Qt::CTRL + Qt::Key_4);
+      connect(rateGoodAct, SIGNAL(triggered()), this, SLOT(rateGood()));
+      
+      rateAverageAct = new QAction(QIcon(":/images/rate-3.png"), tr("Average"), this);
+      rateAverageAct->setShortcut(Qt::CTRL + Qt::Key_3);
+      connect(rateAverageAct, SIGNAL(triggered()), this, SLOT(rateAvarge()));
+      
+      rateBelowAvarageAct = new QAction(QIcon(":/images/rate-2.png"), tr("Below avarage"), this);
+      rateBelowAvarageAct->setShortcut(Qt::CTRL + Qt::Key_2);
+      connect(rateBelowAvarageAct, SIGNAL(triggered()), this, SLOT(rateBelowAverage()));      
+      
+      rateBadAct = new QAction(QIcon(":/images/rate-1.png"), tr("Bad"), this);
+      rateBadAct->setShortcut(Qt::CTRL + Qt::Key_1);
+      connect(rateBadAct, SIGNAL(triggered()), this, SLOT(rateBad()));
+      
+      rateUnratedAct = new QAction(tr("Unrated"), this);
+      rateUnratedAct->setShortcut(Qt::CTRL + Qt::Key_0);
+      connect(rateUnratedAct, SIGNAL(triggered()), this, SLOT(rateUnrated()));
+      
+      QMenu *ratingMenu = new QMenu(tr("Rating"), this);
+      ratingMenu->setIcon(QIcon(":/images/rating.png"));
+      ratingMenu->addAction(rateExcellenAct);
+      ratingMenu->addAction(rateGoodAct);
+      ratingMenu->addAction(rateAverageAct);
+      ratingMenu->addAction(rateBelowAvarageAct);
+      ratingMenu->addAction(rateBadAct);
+      ratingMenu->addAction(rateUnratedAct);
 
       contextMnu.clear();
-      contextMnu.addAction(rm);
-      contextMnu.addSeparator(); 
+      contextMnu.addAction(openphotoAct);
+      contextMnu.addSeparator();
+      contextMnu.addMenu( ratingMenu);
+      contextMnu.addSeparator();
+      contextMnu.addAction(removephotoAct); 
       contextMnu.exec( mevent->globalPos() );
 }
 
