@@ -1072,12 +1072,15 @@ void TransfersDialog::showDetailsDialog()
 
 void TransfersDialog::pasteLink()
 {
-    RetroShareLink link(QApplication::clipboard()->text());
+	QList<QUrl> urllist = QApplication::clipboard()->mimeData()->urls() ;
 
-    if (!link.valid())
-        return;
+	for(QList<QUrl>::const_iterator it(urllist.begin());it!=urllist.end();++it)
+	{
+		RetroShareLink link(*it) ;
 
-	 rsFiles->FileRequest(link.name().toStdString(), link.hash().toStdString(),link.size(), "", RS_FILE_HINTS_NETWORK_WIDE, std::list<std::string>());
+		if (link.valid())
+			rsFiles->FileRequest(link.name().toStdString(), link.hash().toStdString(),link.size(), "", RS_FILE_HINTS_NETWORK_WIDE, std::list<std::string>());
+	}
 }
 
 void TransfersDialog::getIdOfSelectedItems(std::set<QStandardItem *>& items)

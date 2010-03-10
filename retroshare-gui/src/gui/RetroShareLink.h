@@ -27,11 +27,12 @@
 #include <stdint.h>
 #include <QString>
 #include <QVector>
+#include <QUrl>
 
 class RetroShareLink
 {
 	public:
-		RetroShareLink(const QString& url);
+		RetroShareLink(const QUrl& url);
 		RetroShareLink(const QString& name, uint64_t size, const QString& hash);
 
 		uint64_t size() const { return _size ; }
@@ -39,10 +40,9 @@ class RetroShareLink
 		const QString& hash() const { return _hash ; }
 
 		QString toString() const ;
+		QUrl toUrl() const ;
 
 		bool valid() const { return _size > 0 ; }
-
-		static void parseForLinks(const QString& text,QList<RetroShareLink>& link_list) ;
 	private:
 		void check() ;
 		static bool checkHash(const QString& hash) ;

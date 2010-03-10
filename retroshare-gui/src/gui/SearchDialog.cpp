@@ -254,11 +254,8 @@ void SearchDialog::searchtableWidgetCostumPopupMenu( QPoint point )
         contextMnu->addAction( downloadAct);
         contextMnu->addSeparator();
 
-		  if ((ui.searchResultWidget->selectedItems()).size() == 1) 
-		  {
-			  contextMnu->addAction( copysearchlinkAct);
-			  contextMnu->addAction( sendrslinkAct);
-		  }
+		  contextMnu->addAction( copysearchlinkAct);
+		  contextMnu->addAction( sendrslinkAct);
       }
 
       QMouseEvent *mevent = new QMouseEvent(QEvent::MouseButtonPress,point,Qt::RightButton, Qt::RightButton,Qt::NoModifier);
@@ -1195,26 +1192,31 @@ void SearchDialog::copysearchLink()
     int numdls = itemsForCopy.size();
     QTreeWidgetItem * item;
 
+	 QList<QUrl> urls ;
+
     for (int i = 0; i < numdls; ++i) 
-    {
-        item = itemsForCopy.at(i);
-        // call copy
+	 {
+		 item = itemsForCopy.at(i);
+		 // call copy
 
-      if (!item->childCount()) 
-		{
-			std::cerr << "SearchDialog::copysearchLink() Calling set retroshare link";
-			std::cerr << std::endl;
+		 if (!item->childCount()) 
+		 {
+			 std::cerr << "SearchDialog::copysearchLink() Calling set retroshare link";
+			 std::cerr << std::endl;
 
-			QString fhash = item->text(SR_HASH_COL);
-			qulonglong fsize = item->text(SR_REALSIZE_COL).toULongLong();
-			QString fname = item->text(SR_NAME_COL);
+			 QString fhash = item->text(SR_HASH_COL);
+			 qulonglong fsize = item->text(SR_REALSIZE_COL).toULongLong();
+			 QString fname = item->text(SR_NAME_COL);
 
-			RetroShareLink link(fname, fsize, fhash);
+			 RetroShareLink link(fname, fsize, fhash);
 
-			QApplication::clipboard()->setText(link.toString());
-			break ;
-		} 
-    }
+			 if(link.valid())
+				 urls.push_back(link.toUrl()) ;
+		 } 
+	 }
+	 QMimeData *dt = new QMimeData;
+	 dt->setUrls(urls) ;
+	 QApplication::clipboard()->setMimeData(dt) ;
 }
 
 void SearchDialog::sendLinkTo( )

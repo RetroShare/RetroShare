@@ -25,35 +25,31 @@
 
 const QString RetroShareLink::HEADER_NAME("retroshare://file");
 
-RetroShareLink::RetroShareLink(const QString & url)
+RetroShareLink::RetroShareLink(const QUrl& url)
 {
 	// parse
 #ifdef DEBUG_RSLINK
-	std::cerr << "got new RS link \"" << url.toStdString() << "\"" << std::endl ;
+	std::cerr << "got new RS link \"" << url.toString().toStdString() << "\"" << std::endl ;
 #endif
-	QStringList urlList = url.split ("\n");
+	QStringList list = url.toString().split ("|");
 
-	if(urlList.isEmpty ())
+	if(list.size() < 4)
 		goto bad_link ;
 
-	{
-		QStringList list = urlList[0].split ("|");
+	bool ok ;
 
-		bool ok ;
+	_name = list[1] ;
+	_size = list[2].toULongLong(&ok) ;
+	_hash = list[3].left(40) ;	// normally not necessary, but it's a security.
 
-		_name = list[1] ;
-		_size = list[2].toULongLong(&ok) ;
-		_hash = list[3].left(40) ;	// normally not necessary, but it's a security.
-
-		if(!ok)
-			goto bad_link ;
+	if(!ok)
+		goto bad_link ;
 #ifdef DEBUG_RSLINK
-		std::cerr << "New RetroShareLink forged:" << std::endl ;
-		std::cerr << "  name = \"" << _name.toStdString() << "\"" << std::endl ;
-		std::cerr << "  hash = \"" << _hash.toStdString() << "\"" << std::endl ;
-		std::cerr << "  size = " << _size << std::endl ;
+	std::cerr << "New RetroShareLink forged:" << std::endl ;
+	std::cerr << "  name = \"" << _name.toStdString() << "\"" << std::endl ;
+	std::cerr << "  hash = \"" << _hash.toStdString() << "\"" << std::endl ;
+	std::cerr << "  size = " << _size << std::endl ;
 #endif
-	}
 
 	 check() ;
 
@@ -122,6 +118,11 @@ bool RetroShareLink::checkName(const QString& name)
 	return true ;
 }
 
+QUrl RetroShareLink::toUrl() const
+{
+	return QUrl(toString()) ;
+}
+
 bool RetroShareLink::checkHash(const QString& hash)
 {
 	if(hash.length() != 40)
@@ -139,5 +140,4 @@ bool RetroShareLink::checkHash(const QString& hash)
 
 	return true ;
 }
-
 

@@ -1636,7 +1636,7 @@ void PeersDialog::anchorClicked (const QUrl& link )
     
 	if (link.scheme() == "retroshare")
 	{
-		RetroShareLink rslnk(link.toString()) ;
+		RetroShareLink rslnk(link) ;
 
 		if (rslnk.valid())
 		{

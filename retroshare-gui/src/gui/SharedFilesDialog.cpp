@@ -251,43 +251,43 @@ void SharedFilesDialog::copyLink (const QModelIndexList& lst, bool remote)
     else
         localModel->getDirDetailsFromSelect(lst, dirVec);
 
+	 QList<QUrl> urls ;
+
     for (int i = 0, n = dirVec.size(); i < n; ++i)
     {
         const DirDetails& details = dirVec[i];
 
-		  RetroShareLink link(details.name.c_str(), details.count, details.hash.c_str());
-
-		  QApplication::clipboard()->setText(link.toString());
-#ifdef TO_DO_LATER
         if (details.type == DIR_TYPE_DIR)
         {
-            for (std::list<DirStub>::const_iterator cit = details.children.begin();
-                cit != details.children.end(); ++cit)
+            for (std::list<DirStub>::const_iterator cit = details.children.begin();cit != details.children.end(); ++cit)
             {
                 const DirStub& dirStub = *cit;
 
                 DirDetails details;
                 uint32_t flags = DIR_FLAGS_DETAILS;
                 if (remote)
-                {
                     flags |= DIR_FLAGS_REMOTE;
-                }
                 else
-                {
                     flags |= DIR_FLAGS_LOCAL;
-                }
 
                 // do not recursive copy sub dirs.
                 if (!rsFiles->RequestDirDetails(dirStub.ref, details, flags) || details.type != DIR_TYPE_FILE)
                     continue;
 
-                analyzer.setRetroShareLink (details.name.c_str(), QString::number(details.count), details.hash.c_str());
+					 RetroShareLink link(details.name.c_str(), details.count, details.hash.c_str());
+					 urls.push_back(link.toUrl()) ;
             }
         }
         else
-            analyzer.setRetroShareLink (details.name.c_str(), QString::number(details.count), details.hash.c_str());
-#endif
+		  {
+			  RetroShareLink link(details.name.c_str(), details.count, details.hash.c_str());
+
+			  urls.push_back(link.toUrl()) ;
+		  }
     }
+	 QMimeData *dt = new QMimeData ;
+	 dt->setUrls(urls) ;
+	 QApplication::clipboard()->setMimeData(dt) ;
 }
 
 void SharedFilesDialog::copyLinkRemote()

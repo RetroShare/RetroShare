@@ -23,6 +23,7 @@
 
 #include <gui/settings/rsharesettings.h>
 
+#include <gui/RetroShareLink.h>
 #include <QtGui>
 #include <QFileDialog>
 #include <QString>
@@ -414,21 +415,14 @@ void CreateForumMsg::fileHashingFinished(AttachFileItem* file) {
 
 void CreateForumMsg::pasteLink()
 {
-  
-  QString link = QApplication::clipboard()->text();
-  
-  if (link.startsWith("retroshare://", Qt::CaseInsensitive))
-  {
-    ui.forumMessage->setHtml("<a href='" +  link + "'> " + link + "</a>");
-  }
-  else
-  {
-  	QMessageBox::warning(this, tr("RetroShare"),tr("Clipboard does not contains RetroShare link('s)"),
-    QMessageBox::Ok, QMessageBox::Ok);
-    
-    return;        
-  }
-  
+	QList<QUrl> list = QApplication::clipboard()->mimeData()->urls();
 
+	for(QList<QUrl>::const_iterator it(list.begin());it!=list.end();++it)
+	{
+		RetroShareLink link(*it) ;
+
+		if(link.valid())
+			ui.forumMessage->insertHtml("<a href='" +  link.toString() + "'> " + link.toString() + "</a> <br>") ;
+	}
 }
 
