@@ -34,9 +34,7 @@
 #include "AddLinksDialog.h"
 #include "SendLinkDialog.h"
 
-#ifndef RETROSHARE_LINK_ANALYZER
-#include "RetroShareLinkAnalyzer.h"
-#endif
+#include "RetroShareLink.h"
 
 #include <iostream>
 #include <sstream>
@@ -253,12 +251,14 @@ void SharedFilesDialog::copyLink (const QModelIndexList& lst, bool remote)
     else
         localModel->getDirDetailsFromSelect(lst, dirVec);
 
-    RetroShareLinkAnalyzer analyzer;
-
     for (int i = 0, n = dirVec.size(); i < n; ++i)
     {
         const DirDetails& details = dirVec[i];
 
+		  RetroShareLink link(details.name.c_str(), details.count, details.hash.c_str());
+
+		  QApplication::clipboard()->setText(link.toString());
+#ifdef TO_DO_LATER
         if (details.type == DIR_TYPE_DIR)
         {
             for (std::list<DirStub>::const_iterator cit = details.children.begin();
@@ -286,10 +286,8 @@ void SharedFilesDialog::copyLink (const QModelIndexList& lst, bool remote)
         }
         else
             analyzer.setRetroShareLink (details.name.c_str(), QString::number(details.count), details.hash.c_str());
+#endif
     }
-
-    QClipboard *clipboard = QApplication::clipboard();
-    clipboard->setText(analyzer.getRetroShareLink ());
 }
 
 void SharedFilesDialog::copyLinkRemote()

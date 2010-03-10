@@ -23,6 +23,7 @@
 #include <QFileInfo>
 #include "common/vmessagebox.h"
 #include <gui/mainpagestack.h>
+#include <gui/RetroShareLink.h>
 
 #include "rshare.h"
 #include "PeersDialog.h"
@@ -1635,24 +1636,13 @@ void PeersDialog::anchorClicked (const QUrl& link )
     
 	if (link.scheme() == "retroshare")
 	{
-		QStringList L = link.toString().split("|") ;
+		RetroShareLink rslnk(link.toString()) ;
 
-		std::string fileName = L.at(1).toStdString() ;
-		uint64_t fileSize = L.at(2).toULongLong();
-		std::string fileHash = L.at(3).toStdString() ;
-
-		if(fileHash.length() > 40)
-			fileHash.resize(40) ;
-
-                #ifdef PEERS_DEBUG
-		std::cerr << "PeersDialog::anchorClicked FileRequest : fileName : " << fileName << ". fileHash : " << fileHash << ". fileSize : " << fileSize << std::endl;
-                #endif
-
-		if (fileName != "" && fileHash != "")
+		if (rslnk.valid())
 		{
 			std::list<std::string> srcIds;
 
-			if(rsFiles->FileRequest(fileName, fileHash, fileSize, "", RS_FILE_HINTS_NETWORK_WIDE, srcIds))
+			if(rsFiles->FileRequest(rslnk.name().toStdString(), rslnk.hash().toStdString(), rslnk.size(), "", RS_FILE_HINTS_NETWORK_WIDE, srcIds))
 			{
 				QMessageBox mb(tr("File Request Confirmation"), tr("The file has been added to your download list."),QMessageBox::Information,QMessageBox::Ok,0,0);
 				mb.setButtonText( QMessageBox::Ok, "OK" );

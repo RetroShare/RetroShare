@@ -27,7 +27,7 @@
 
 #include "rshare.h"
 #include "TransfersDialog.h"
-#include "RetroShareLinkAnalyzer.h"
+#include "RetroShareLink.h"
 #include "DetailsDialog.h"
 #include "DLListDelegate.h"
 #include "ULListDelegate.h"
@@ -411,7 +411,8 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 	contextMnu.addAction( clearcompletedAct);
 	contextMnu.addSeparator();
 #ifndef RS_RELEASE_VERSION
-	contextMnu.addAction( copylinkAct);
+	if(single)
+		contextMnu.addAction( copylinkAct);
 #endif
 	contextMnu.addAction( pastelinkAct);
 	contextMnu.addSeparator();
@@ -958,47 +959,47 @@ void TransfersDialog::cancel()
 			}
 }
 
-void TransfersDialog::handleDownloadRequest(const QString& url){
-
-    RetroShareLinkAnalyzer analyzer (url);
-
-    if (!analyzer.isValid ())
-        return;
-
-    QVector<RetroShareLinkData> linkList;
-    analyzer.getFileInformation (linkList);
-
-    std::list<std::string> srcIds;
-
-    for (int i = 0, n = linkList.size (); i < n; ++i)
-    {
-        const RetroShareLinkData& linkData = linkList[i];
-
-        rsFiles->FileRequest (linkData.getName ().toStdString (), linkData.getHash ().toStdString (),
-            linkData.getSize ().toInt (), "", 0, srcIds);
-    }
-}
+//void TransfersDialog::handleDownloadRequest(const QString& url)
+//{
+//    RetroShareLink link(url);
+//
+//    if (!link.valid ())
+//	 {
+//		 QMessageBox::critical(NULL,"Link error","This link could not be parsed. This is a bug. Please contact the developers.") ;
+//		 return;
+//	 }
+//
+//    QVector<RetroShareLinkData> linkList;
+//    analyzer.getFileInformation (linkList);
+//
+//    std::list<std::string> srcIds;
+//
+//    for (int i = 0, n = linkList.size (); i < n; ++i)
+//    {
+//        const RetroShareLinkData& linkData = linkList[i];
+//
+//        rsFiles->FileRequest (linkData.getName ().toStdString (), linkData.getHash ().toStdString (),
+//            linkData.getSize ().toInt (), "", 0, srcIds);
+//    }
+//}
 
 void TransfersDialog::copyLink ()
 {
-    QModelIndexList lst = ui.downloadList->selectionModel ()->selectedIndexes ();
-    RetroShareLinkAnalyzer analyzer;
+	QModelIndexList lst = ui.downloadList->selectionModel ()->selectedIndexes ();
 
-    for (int i = 0; i < lst.count (); i++)
-    {
-        if ( lst[i].column() == 0 )
-        {
-            QModelIndex & ind = lst[i];
-            QString fhash= ind.model ()->data (ind.model ()->index (ind.row (), ID )).toString() ;
-            QString fsize= ind.model ()->data (ind.model ()->index (ind.row (), SIZE)).toString() ;
-            QString fname= ind.model ()->data (ind.model ()->index (ind.row (), NAME)).toString() ;
+	for (int i = 0; i < lst.count (); i++)
+		if ( lst[i].column() == 0 )
+		{
+			QModelIndex & ind = lst[i];
+			QString fhash= ind.model ()->data (ind.model ()->index (ind.row (), ID )).toString() ;
+			qulonglong fsize= ind.model ()->data (ind.model ()->index (ind.row (), SIZE)).toULongLong() ;
+			QString fname= ind.model ()->data (ind.model ()->index (ind.row (), NAME)).toString() ;
 
-            analyzer.setRetroShareLink (fname, fsize, fhash);
-        }
-    }
+			RetroShareLink link(fname, fsize, fhash);
 
-    QClipboard *clipboard = QApplication::clipboard();
-    clipboard->setText(analyzer.getRetroShareLink ());
+			QApplication::clipboard()->setText(link.toString());
+			break ;
+		}
 }
 
 void TransfersDialog::showDetailsDialog()
@@ -1006,7 +1007,6 @@ void TransfersDialog::showDetailsDialog()
     static DetailsDialog *detailsdlg = new DetailsDialog();
     
     QModelIndexList lst = ui.downloadList->selectionModel ()->selectedIndexes ();
-    RetroShareLinkAnalyzer analyzer;
     
     std::string file_hash ;
 
@@ -1061,8 +1061,8 @@ void TransfersDialog::showDetailsDialog()
             detailsdlg->setDownloadtime(fdownloadtime);
             
             // retroshare link(s) Tab
-            analyzer.setRetroShareLink (fname, fsize, fhash);
-            detailsdlg->setLink(analyzer.getRetroShareLink ());
+            RetroShareLink link(fname, filesize, fhash);
+            detailsdlg->setLink(link.toString());
             
             detailsdlg->show();
             break;
@@ -1072,25 +1072,12 @@ void TransfersDialog::showDetailsDialog()
 
 void TransfersDialog::pasteLink()
 {
-    QClipboard *clipboard = QApplication::clipboard();
-    RetroShareLinkAnalyzer analyzer (clipboard->text ());
+    RetroShareLink link(QApplication::clipboard()->text());
 
-    if (!analyzer.isValid ())
+    if (!link.valid())
         return;
 
-    QVector<RetroShareLinkData> linkList;
-    analyzer.getFileInformation (linkList);
-
-    std::list<std::string> srcIds;
-
-    for (int i = 0, n = linkList.size (); i < n; ++i)
-    {
-        const RetroShareLinkData& linkData = linkList[i];
-        //downloadFileRequested(linkData.getName (), linkData.getSize ().toInt (),
-        //    linkData.getHash (), "", -1, -1, -1, -1);
-        rsFiles->FileRequest (linkData.getName ().toStdString (), linkData.getHash ().toStdString (),
-            linkData.getSize().toULongLong(), "", RS_FILE_HINTS_NETWORK_WIDE, srcIds);
-    }
+	 rsFiles->FileRequest(link.name().toStdString(), link.hash().toStdString(),link.size(), "", RS_FILE_HINTS_NETWORK_WIDE, std::list<std::string>());
 }
 
 void TransfersDialog::getIdOfSelectedItems(std::set<QStandardItem *>& items)

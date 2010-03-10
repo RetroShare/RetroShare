@@ -22,7 +22,7 @@
 #include "common/vmessagebox.h"
 
 #include "AddLinksDialog.h"
-#include "RetroShareLinkAnalyzer.h"
+#include "RetroShareLink.h"
 #include "rsiface/rsrank.h"
 
 /* Images for context menu icons */
@@ -49,19 +49,12 @@ AddLinksDialog::AddLinksDialog(QString url, QWidget *parent)
   ui.linkLineEdit->setReadOnly(true);
   ui.linkLineEdit->setText(url);
 
-  RetroShareLinkAnalyzer analyzer(url);
-  QVector<RetroShareLinkData> linkList;
-  analyzer.getFileInformation(linkList);
-  
-  if (!linkList.isEmpty())
-  {	  /* set title as first name from list */
-	  RetroShareLinkData item = linkList.first();
-	  ui.titleLineEdit->setText(item.getName());
-  }
+  RetroShareLink link(url);
+
+  if(link.valid())
+	  ui.titleLineEdit->setText(link.name());
   else
-  {
 	  ui.titleLineEdit->setText("New File");
-  }
 
   load();
 

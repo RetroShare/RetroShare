@@ -159,7 +159,7 @@ HEADERS +=  rshare.h \
             gui/MessengerWindow.h \
             gui/PeersDialog.h \
             gui/RemoteDirModel.h \
-            gui/RetroShareLinkAnalyzer.h \
+            gui/RetroShareLink.h \
             gui/SearchTreeWidget.h \
             gui/SendLinkDialog.h \
             gui/SearchDialog.h \
@@ -341,7 +341,7 @@ SOURCES +=  main.cpp \
             gui/PeersDialog.cpp \
             gui/RemoteDirModel.cpp \
             gui/RsAutoUpdatePage.cpp \
-            gui/RetroShareLinkAnalyzer.cpp \
+            gui/RetroShareLink.cpp \
             gui/SearchTreeWidget.cpp \
             gui/SearchDialog.cpp \
             gui/SendLinkDialog.cpp \

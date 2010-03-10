@@ -19,10 +19,11 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <set>
 
 #include "rshare.h"
 #include "SearchDialog.h"
-#include "RetroShareLinkAnalyzer.h"
+#include "RetroShareLink.h"
 #include "msgs/ChanMsgDialog.h"
 
 #include "rsiface/rsiface.h"
@@ -252,12 +253,15 @@ void SearchDialog::searchtableWidgetCostumPopupMenu( QPoint point )
         contextMnu->clear();
         contextMnu->addAction( downloadAct);
         contextMnu->addSeparator();
-        contextMnu->addAction( copysearchlinkAct);
-        contextMnu->addAction( sendrslinkAct);
+
+		  if ((ui.searchResultWidget->selectedItems()).size() == 1) 
+		  {
+			  contextMnu->addAction( copysearchlinkAct);
+			  contextMnu->addAction( sendrslinkAct);
+		  }
       }
 
-      QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point,
-                                             Qt::RightButton, Qt::RightButton, Qt::NoModifier );
+      QMouseEvent *mevent = new QMouseEvent(QEvent::MouseButtonPress,point,Qt::RightButton, Qt::RightButton,Qt::NoModifier);
       contextMnu->exec( mevent->globalPos() );
 }
 
@@ -1186,8 +1190,6 @@ void SearchDialog::setIconAndType(QTreeWidgetItem *item, QString &ext)
 
 void SearchDialog::copysearchLink()
 {
-    RetroShareLinkAnalyzer analyzer;
-
     /* should also be able to handle multi-selection */
     QList<QTreeWidgetItem*> itemsForCopy = ui.searchResultWidget->selectedItems();
     int numdls = itemsForCopy.size();
@@ -1199,24 +1201,20 @@ void SearchDialog::copysearchLink()
         // call copy
 
       if (!item->childCount()) 
-      {
+		{
 			std::cerr << "SearchDialog::copysearchLink() Calling set retroshare link";
 			std::cerr << std::endl;
-			std::list<std::string> srcIds;
-			srcIds.push_back(item->text(SR_UID_COL).toStdString()) ;
-			
+
 			QString fhash = item->text(SR_HASH_COL);
-      QString fsize = item->text(SR_REALSIZE_COL);
-      QString fname = item->text(SR_NAME_COL);
+			qulonglong fsize = item->text(SR_REALSIZE_COL).toULongLong();
+			QString fname = item->text(SR_NAME_COL);
 
-      analyzer.setRetroShareLink (fname, fsize, fhash);
+			RetroShareLink link(fname, fsize, fhash);
 
-      } 
+			QApplication::clipboard()->setText(link.toString());
+			break ;
+		} 
     }
-	
-    QClipboard *clipboard = QApplication::clipboard();
-    clipboard->setText(analyzer.getRetroShareLink ());
-
 }
 
 void SearchDialog::sendLinkTo( )

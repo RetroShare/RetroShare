@@ -60,7 +60,7 @@ public:
     public slots:
     void insertTransfers();
 
-    void handleDownloadRequest(const QString& url);
+//    void handleDownloadRequest(const QString& url);
 
 private slots:
 

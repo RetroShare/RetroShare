@@ -22,6 +22,7 @@
 
 #include "MessagesDialog.h"
 #include "msgs/ChanMsgDialog.h"
+#include "gui/RetroShareLink.h"
 #include "gui/toaster/MessageToaster.h"
 #include "util/printpreview.h"
 #include "util/misc.h"
@@ -1011,27 +1012,23 @@ void MessagesDialog::printpreview()
 
 void MessagesDialog::anchorClicked (const QUrl& link ) 
 {
-    #ifdef FORUM_DEBUG
-		    std::cerr << "MessagesDialog::anchorClicked link.scheme() : " << link.scheme().toStdString() << std::endl;
-    #endif
+#ifdef FORUM_DEBUG
+	std::cerr << "MessagesDialog::anchorClicked link.scheme() : " << link.scheme().toStdString() << std::endl;
+#endif
     
 	if (link.scheme() == "retroshare")
 	{
-		QStringList L = link.toString().split("|") ;
-
-		std::string fileName = L.at(1).toStdString() ;
-		uint64_t fileSize = L.at(2).toULongLong();
-		std::string fileHash = L.at(3).toStdString() ;
+		RetroShareLink rslnk(link.toString()) ;
 
 #ifdef FORUM_DEBUG
 		std::cerr << "MessagesDialog::anchorClicked FileRequest : fileName : " << fileName << ". fileHash : " << fileHash << ". fileSize : " << fileSize << std::endl;
 #endif
 
-		if (fileName != "" && fileHash != "")
+		if(rslnk.valid())
 		{
 			std::list<std::string> srcIds;
 
-			if(rsFiles->FileRequest(fileName, fileHash, fileSize, "", RS_FILE_HINTS_NETWORK_WIDE, srcIds))
+			if(rsFiles->FileRequest(rslnk.name().toStdString(), rslnk.hash().toStdString(), rslnk.size(), "", RS_FILE_HINTS_NETWORK_WIDE, srcIds))
 			{
 				QMessageBox mb(tr("File Request Confirmation"), tr("The file has been added to your download list."),QMessageBox::Information,QMessageBox::Ok,0,0);
 				mb.setButtonText( QMessageBox::Ok, "OK" );

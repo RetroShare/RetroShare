@@ -30,7 +30,7 @@
 
 //#include "rshare.h"
 #include "LinksDialog.h"
-#include "RetroShareLinkAnalyzer.h"
+#include "RetroShareLink.h"
 #include "rsiface/rspeers.h"
 #include "rsiface/rsrank.h"
 #include "rsiface/rsfiles.h"
@@ -514,7 +514,7 @@ void  LinksDialog::updateLinks()
 
 }
 
-void LinksDialog::openLink ( QTreeWidgetItem * item, int column )
+void LinksDialog::openLink ( QTreeWidgetItem * item, int )
 {
 #ifdef LINKS_DEBUG
 	std::cerr << "LinksDialog::openLink()" << std::endl;
@@ -555,7 +555,7 @@ void LinksDialog::openLink ( QTreeWidgetItem * item, int column )
 	item->setExpanded(!state);
 }
 
-void  LinksDialog::changedItem(QTreeWidgetItem *curr, QTreeWidgetItem *prev)
+void  LinksDialog::changedItem(QTreeWidgetItem *curr, QTreeWidgetItem *)
 {
 	/* work out the ids */
 	if (!curr)
@@ -617,7 +617,7 @@ int ScoreToIndex(int score)
 
 
 /* get the list of Links from the RsRanks.  */
-void  LinksDialog::updateComments(std::string rid, std::string pid)
+void  LinksDialog::updateComments(std::string rid, std::string )
 {
 	std::list<RsRankComment>::iterator cit;
 
@@ -711,10 +711,7 @@ void LinksDialog::addLinkComment( void )
 	{
 		if ((link == "") || (title == ""))
 		{
-                	QMessageBox::StandardButton sb = QMessageBox::warning ( NULL,
-		                                "Add Link Failure",
-						"Missing Link and/or Title",
-						QMessageBox::Ok);
+			QMessageBox::warning ( NULL, "Add Link Failure", "Missing Link and/or Title", QMessageBox::Ok);
 			/* can't do anything */
 			return;
 		}
@@ -742,10 +739,7 @@ void LinksDialog::addLinkComment( void )
 	if (!rsRanks->getRankDetails(mLinkId, detail))
 	{
 		/* strange error! */
-                QMessageBox::StandardButton sb = QMessageBox::warning ( NULL,
-		                        "Add Link Failure",
-					"Missing Link Data",
-					QMessageBox::Ok);
+               QMessageBox::warning ( NULL, "Add Link Failure", "Missing Link Data", QMessageBox::Ok);
 		return;
 	}
 
@@ -753,10 +747,7 @@ void LinksDialog::addLinkComment( void )
 	{
 		if (comment == "") /* no comment! */
 		{
-                	QMessageBox::StandardButton sb = QMessageBox::warning ( NULL,
-		                        "Add Link Failure",
-					"Missing Comment",
-					QMessageBox::Ok);
+                	QMessageBox::warning ( NULL, "Add Link Failure", "Missing Comment", QMessageBox::Ok);
 			return;
 		}
 
@@ -986,27 +977,24 @@ void LinksDialog::downloadSelected()
 	std::cerr << "LinksDialog::downloadSelected() : " << link.toStdString() << std::endl;
 #endif
 
-	RetroShareLinkAnalyzer analyzer(QString::fromStdWString(detail.link));
-	QVector<RetroShareLinkData> linkList;
-	analyzer.getFileInformation(linkList);
-	if (!linkList.isEmpty())
+	RetroShareLink rslink(QString::fromStdWString(detail.link));
+
+	if(!rslink.valid())
 	{
-		/* regularly one link and choose it */
-		RetroShareLinkData item = linkList.first();
-
-		/* retrieve all peers id for this file */
-		FileInfo info;
-		rsFiles->FileDetails(item.getHash().toStdString(), 0, info);
-
-		std::list<std::string> srcIds;
-		std::list<TransferInfo>::iterator pit;
-		for (pit = info.peers.begin(); pit != info.peers.end(); pit ++)
-		{
-			srcIds.push_back(pit->peerId);
-		}
-
-		rsFiles->FileRequest(item.getName().toStdString(), item.getHash().toStdString(), item.getSize().toULong(), "", 0, srcIds);
+		QMessageBox::critical(NULL,"Badly formed link","This link is badly formed. Can't parse/use it. This is a bug. Please contact the developers.") ;
+		return ;
 	}
+
+	/* retrieve all peers id for this file */
+	FileInfo info;
+	rsFiles->FileDetails(rslink.hash().toStdString(), 0, info);
+
+	std::list<std::string> srcIds;
+	std::list<TransferInfo>::iterator pit;
+	for (pit = info.peers.begin(); pit != info.peers.end(); pit ++)
+		srcIds.push_back(pit->peerId);
+
+	rsFiles->FileRequest(rslink.name().toStdString(), rslink.hash().toStdString(), rslink.size(), "", 0, srcIds);
 }
 
 void LinksDialog::anchorClicked (const QUrl& link ) 
