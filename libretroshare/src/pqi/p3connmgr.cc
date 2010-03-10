@@ -2996,6 +2996,12 @@ std::list<RsItem *> p3ConnectMgr::saveList(bool &cleanup)
 
 bool  p3ConnectMgr::loadList(std::list<RsItem *> load)
 {
+
+        if (load.size() == 0) {
+            std::cerr << "p3ConnectMgr::loadList() list is empty, it may be a configuration problem."  << std::endl;
+            return false;
+        }
+
 #ifdef CONN_DEBUG
 	std::cerr << "p3ConnectMgr::loadList() Item Count: " << load.size() << std::endl;
 #endif
