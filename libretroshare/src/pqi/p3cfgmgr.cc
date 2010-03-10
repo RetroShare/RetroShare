@@ -537,6 +537,7 @@ bool	p3Config::loadConfiguration(std::string &loadHash)
 	bool pass = getHashAttempt(loadHash, hashstr, cfg_fname, load);
 
 	if(!pass){
+                load.clear();
 		pass = getHashAttempt(loadHash, hashstr, cfg_fname_backup, load);
 #ifdef CONFIG_DEBUG
 		std::cerr << "p3Config::loadConfiguration() ERROR: Failed to get Hash from " << success_fname << std::endl;
