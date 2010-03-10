@@ -103,6 +103,32 @@ border-radius: 10px}</string>
          </spacer>
         </item>
         <item>
+         <widget class="QLabel" name="label_10">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Last Contact:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="lastLabel">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>TextLabel</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QPushButton" name="expandButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -449,19 +475,6 @@ p, li { white-space: pre-wrap; }
                </property>
               </widget>
              </item>
-             <item>
-              <widget class="QLabel" name="label_10">
-               <property name="font">
-                <font>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>Last Contact:</string>
-               </property>
-              </widget>
-             </item>
             </layout>
            </item>
            <item>
@@ -546,19 +559,6 @@ p, li { white-space: pre-wrap; }
              </item>
              <item>
               <widget class="QLabel" name="connLabel">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>TextLabel</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="lastLabel">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                  <horstretch>0</horstretch>

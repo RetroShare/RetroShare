@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>632</width>
+    <width>716</width>
     <height>340</height>
    </rect>
   </property>
@@ -76,8 +76,9 @@ border-radius: 10px}</string>
           </property>
           <property name="font">
            <font>
+            <pointsize>9</pointsize>
             <weight>75</weight>
-            <italic>true</italic>
+            <italic>false</italic>
             <bold>true</bold>
            </font>
           </property>
@@ -87,20 +88,31 @@ border-radius: 10px}</string>
          </widget>
         </item>
         <item>
-         <spacer>
+         <spacer name="horizontalSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
-          <property name="sizeType">
-           <enum>QSizePolicy::Preferred</enum>
-          </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>500</width>
+            <width>40</width>
             <height>20</height>
            </size>
           </property>
          </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="timestamplabel">
+          <property name="font">
+           <font>
+            <pointsize>9</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Timestamp</string>
+          </property>
+         </widget>
         </item>
         <item>
          <widget class="QPushButton" name="expandButton">
