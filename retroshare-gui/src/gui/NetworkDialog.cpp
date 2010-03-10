@@ -433,14 +433,14 @@ void NetworkDialog::insertConnect()
                         #endif
                         item = new QTreeWidgetItem(0);
                         item->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
+
+                        /* (1) Person */
+                        item -> setText(1, QString::fromStdString(detail.name));
+
+                        /* (4) key id */
+                        item -> setText(4, QString::fromStdString(detail.id));
                     }
                 }
-
-	        /* (0) Status Icon */
-                //item -> setText(0, "");
-
-        	/* (1) Person */
-		item -> setText(1, QString::fromStdString(detail.name));
 
                 /* (2) Key validity */
                 if (detail.ownsign) {
@@ -457,9 +457,6 @@ void NetworkDialog::insertConnect()
 		else
                         item -> setText(3, tr("Unknown"));
 		
-                /* (4) key id */
-                item -> setText(4, QString::fromStdString(detail.id));
-
 
 		/**
 		* Determinated the Background Color
