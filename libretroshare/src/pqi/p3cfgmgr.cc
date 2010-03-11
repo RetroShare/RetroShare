@@ -638,11 +638,12 @@ bool	p3Config::saveConfiguration()
 
 
 
-	saveDone(); // callback to inherited class to unlock any Mutexes protecting saveList() data
 
 	// saves current config and keeps back-up (old configuration)
 	if(!backedUpFileSave(cfg_fname, cfg_fname_backup, toSave, cleanup))
 		return false;
+
+	saveDone(); // callback to inherited class to unlock any Mutexes protecting saveList() data
 
 	return true;
 }
