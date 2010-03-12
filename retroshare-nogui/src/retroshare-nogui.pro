@@ -10,7 +10,7 @@ linux-g++ {
 	LIBS += ../../../../lib/linux-g++/libminiupnpc.a 
 	LIBS += ../../../../lib/linux-g++/libssl.a 
 	LIBS += ../../../../lib/linux-g++/libcrypto.a
-    LIBS += -lz
+    LIBS += -lpthread -lz
 }
 linux-g++-64 {
 	OBJECTS_DIR = temp/linux-g++-64/obj

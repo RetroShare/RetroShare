@@ -5,10 +5,27 @@ if test -d "RetroShare" ;  then
 	exit
 fi
 
+
+###################### PARAMETERS ####################
+version="0.5-alpha1"
+######################################################
+
+echo attempting to get svn revision number...
+svn=`svn info | grep 'Revision:' | cut -d\  -f2`
+echo done.
+version="$version"."$svn"
+echo got version number $version. Is this correct ?
+read tmp
+
 packages="."
 
 tar zxvf $packages/BaseRetroShareDirs.tgz
 
+echo Setting up version numbers...
+cat retroshare-0.5/debian/control | sed -e s/XXXXXX/"$version"/g | sed -e s/YYYYYY/"$arch"/g | sed -e s/ZZZZZZ/"$packager"/g > retroshare-0.5/debian/control.tmp
+mv retroshare-0.5/debian/control.tmp retroshare-0.5/debian/control
+
+echo Getting svn sources
 # Ultimately, use the following, but 
 cd retroshare-0.5/src/libretroshare/
 #tar zxvf ../../../libretroshare.tgz
@@ -22,8 +39,10 @@ cd ../../..
 
 # Various cleaning
 
+echo Cleaning...
 find retroshare-0.5 -name ".svn" -exec rm -rf {} \;		# remove all svn repositories
 
+echo Preparing package
 mv retroshare-0.5/src/retroshare-gui/RetroShare.pro retroshare-0.5/src/retroshare-gui/retroshare-gui.pro
 
 ./cleanProFile.sh retroshare-0.5/src/libretroshare/libretroshare.pro

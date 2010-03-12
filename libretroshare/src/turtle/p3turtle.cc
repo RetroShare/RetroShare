@@ -238,6 +238,9 @@ void p3turtle::autoWash()
 #endif
 	// Remove hashes that are marked as such.
 	//
+
+	std::vector<std::pair<TurtleFileHash,TurtleVirtualPeerId> > peers_to_remove ;
+
 	{
 		RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
@@ -270,7 +273,7 @@ void p3turtle::autoWash()
 			std::cerr << ")" << std::endl ;
 #endif
 			for(unsigned int k=0;k<tunnels_to_remove.size();++k)
-				locked_closeTunnel(tunnels_to_remove[k]) ;
+				locked_closeTunnel(tunnels_to_remove[k],peers_to_remove) ;
 
 			_incoming_file_hashes.erase(it) ;
 		}
@@ -340,13 +343,18 @@ void p3turtle::autoWash()
 				tunnels_to_close.push_back(it->first) ;
 			}
 		for(unsigned int i=0;i<tunnels_to_close.size();++i)
-			locked_closeTunnel(tunnels_to_close[i]) ;
+			locked_closeTunnel(tunnels_to_close[i],peers_to_remove) ;
 	}
 
 	// File hashes can only be removed by calling the 'stopMonitoringFileTunnels()' command.
+	
+	// All calls to _ft_controller are done off-mutex, to avoir cross-lock
+	for(uint32_t i=0;i<peers_to_remove.size();++i)
+		_ft_controller->removeFileSource(peers_to_remove[i].first,peers_to_remove[i].second) ;
+
 }
 
-void p3turtle::locked_closeTunnel(TurtleTunnelId tid)
+void p3turtle::locked_closeTunnel(TurtleTunnelId tid,std::vector<std::pair<TurtleFileHash,TurtleVirtualPeerId> >& sources_to_remove)
 {
 	// This is closing a given tunnel, removing it from file sources, and from the list of tunnels of its
 	// corresponding file hash. In the original turtle4privacy paradigm, they also send back and forward
@@ -378,7 +386,7 @@ void p3turtle::locked_closeTunnel(TurtleTunnelId tid)
 		std::cerr << "      Virtual Peer Id " << vpid << std::endl ;
 		std::cerr << "      Associated file source." << std::endl ;
 #endif
-		_ft_controller->removeFileSource(hash,vpid) ;
+		sources_to_remove.push_back(std::pair<TurtleFileHash,TurtleVirtualPeerId>(hash,vpid)) ;
 
 		// Let's be cautious. Normally we should never be here without consistent information,
 		// but still, this happens, rarely.
@@ -1677,6 +1685,20 @@ void p3turtle::monitorFileTunnels(const std::string& name,const std::string& fil
 	{
 		RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
+		// First, check if the hash is tagged for removal (there's a delay)
+
+		for(uint i=0;i<_hashes_to_remove.size();++i)
+			if(_hashes_to_remove[i] == file_hash)
+			{
+				_hashes_to_remove[i] = _hashes_to_remove.back() ;
+				_hashes_to_remove.pop_back() ;
+#ifdef P3TURTLE_DEBUG
+				std::cerr << "p3turtle: File hash " << file_hash << " Was scheduled for removal. Canceling the removal." << std::endl ;
+#endif
+			}
+
+		// Then, check if the hash is already there
+		//
 		if(_incoming_file_hashes.find(file_hash) != _incoming_file_hashes.end())	// download already asked.
 		{
 #ifdef P3TURTLE_DEBUG
@@ -1730,7 +1752,7 @@ static std::string printNumber(uint64_t num,bool hex=false)
 		if(num < (((uint64_t)1)<<32))
 			sprintf(tmp,"%08x", uint32_t(num)) ;
 		else
-			sprintf(tmp,"%08x%08x", uint32_t(num >> 32),uint32_t(num & ( (1<<32)-1 ))) ;
+			sprintf(tmp,"%08x%08x", uint32_t(num >> 32),uint32_t(num & ( (((uint64_t)1)<<32)-1 ))) ;
 		return std::string(tmp) ;
 	}
 	else
