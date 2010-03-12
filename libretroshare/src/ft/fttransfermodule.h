@@ -105,7 +105,6 @@ public:
 		PQIFILE_INIT,
 		PQIFILE_NOT_ONLINE,
 		PQIFILE_DOWNLOADING,
-		PQIFILE_PAUSE,
 		PQIFILE_COMPLETE,
 		PQIFILE_FAIL,
 		PQIFILE_FAIL_CANCEL,
@@ -138,8 +137,6 @@ public:
   bool getFileSources(std::list<std::string> &peerIds);
   bool getPeerState(std::string peerId,uint32_t &state,uint32_t &tfRate);  
   uint32_t getDataRate(std::string peerId);
-  bool pauseTransfer();
-  bool resumeTransfer();
   bool cancelTransfer();
   bool completeFileTransfer();
 

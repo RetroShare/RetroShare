@@ -277,7 +277,7 @@ void ftController::tickTransfers()
 	// Collect all non queued files.
 	//
 	for(std::map<std::string,ftFileControl*>::iterator it(mDownloads.begin()); it != mDownloads.end(); it++)
-		if(it->second->mState != ftFileControl::QUEUED)
+		if(it->second->mState != ftFileControl::QUEUED && it->second->mState != ftFileControl::PAUSED)
 			priority_tab[it->second->mPriority].push_back(it->second->mTransfer) ;
 
 	// 2 - tick arrays with a probability proportional to priority
@@ -412,7 +412,9 @@ void ftController::checkDownloadQueue()
 	time_t now = time(NULL) ;
 
 	for(std::map<std::string,ftFileControl*>::const_iterator it(mDownloads.begin());it!=mDownloads.end();++it)
-		if(it->second->mState != ftFileControl::QUEUED && now - it->second->mCreator->lastRecvTimeStamp() > (time_t)MAX_TIME_INACTIVE_REQUEUED)
+		if(	it->second->mState != ftFileControl::QUEUED 
+			&& it->second->mState != ftFileControl::PAUSED 
+			&& now - it->second->mCreator->lastRecvTimeStamp() > (time_t)MAX_TIME_INACTIVE_REQUEUED)
 		{
 			locked_bottomQueue(it->second->mQueuePosition) ;
 #ifdef DEBUG_DWLQUEUE
@@ -555,7 +557,7 @@ void ftController::locked_checkQueueElement(uint32_t pos)
 			mTurtle->monitorFileTunnels(_queue[pos]->mName,_queue[pos]->mHash,_queue[pos]->mSize) ;
 	}
 
-	if(pos >= _max_active_downloads && _queue[pos]->mState != ftFileControl::QUEUED)
+	if(pos >= _max_active_downloads && _queue[pos]->mState != ftFileControl::QUEUED && _queue[pos]->mState != ftFileControl::PAUSED)
 	{
 		_queue[pos]->mState = ftFileControl::QUEUED ;
 		_queue[pos]->mCreator->closeFile() ;
@@ -1315,10 +1317,12 @@ bool 	ftController::FileCancel(std::string hash)
 
 bool 	ftController::FileControl(std::string hash, uint32_t flags)
 {
-#ifdef CONTROL_DEBUG
+//#ifdef CONTROL_DEBUG
 	std::cerr << "ftController::FileControl(" << hash << ",";
 	std::cerr << flags << ")"<<std::endl;
-#endif
+//#endif
+	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+
 	/*check if the file in the download map*/
 	std::map<std::string,ftFileControl*>::iterator mit=mDownloads.find(hash);
 	if (mit==mDownloads.end())
@@ -1330,14 +1334,15 @@ bool 	ftController::FileControl(std::string hash, uint32_t flags)
 	}
 
 	/*find the point to transfer module*/
-	ftTransferModule* ft=(mit->second)->mTransfer;
 	switch (flags)
 	{
 		case RS_FILE_CTRL_PAUSE:
-			ft->pauseTransfer();
+			mit->second->mState = ftFileControl::PAUSED ;
+	std::cerr << "setting state to " << ftFileControl::PAUSED << std::endl ;
 			break;
 		case RS_FILE_CTRL_START:
-			ft->resumeTransfer();
+			mit->second->mState = ftFileControl::DOWNLOADING ;
+	std::cerr << "setting state to " << ftFileControl::DOWNLOADING << std::endl ;
 			break;
 		default:
 			return false;
@@ -1563,6 +1568,9 @@ bool 	ftController::FileDetails(std::string hash, FileInfo &info)
 
 	if(it->second->mState == ftFileControl::QUEUED)
 		info.downloadStatus = FT_STATE_QUEUED ;
+
+	if(it->second->mState == ftFileControl::PAUSED)
+		info.downloadStatus = FT_STATE_PAUSED ;
 
 	info.tfRate = totalRate;
 	info.size = (it->second)->mSize;
