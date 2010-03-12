@@ -550,12 +550,18 @@ void ftController::locked_checkQueueElement(uint32_t pos)
 	if(pos < _max_active_downloads)
 	{
 		_queue[pos]->mState = ftFileControl::DOWNLOADING ;
+
+		if(_queue[pos]->mFlags & RS_FILE_HINTS_NETWORK_WIDE)
+			mTurtle->monitorFileTunnels(_queue[pos]->mName,_queue[pos]->mHash,_queue[pos]->mSize) ;
 	}
 
 	if(pos >= _max_active_downloads && _queue[pos]->mState != ftFileControl::QUEUED)
 	{
 		_queue[pos]->mState = ftFileControl::QUEUED ;
 		_queue[pos]->mCreator->closeFile() ;
+
+		if(_queue[pos]->mFlags & RS_FILE_HINTS_NETWORK_WIDE)
+			mTurtle->stopMonitoringFileTunnels(_queue[pos]->mHash) ;
 	}
 }
 

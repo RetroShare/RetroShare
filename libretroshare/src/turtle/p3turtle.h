@@ -311,8 +311,11 @@ class p3turtle: public p3Service, public pqiMonitor, public RsTurtle,/* public f
 		/// Handle tunnel digging for current file hashes
 		void manageTunnels() ;									
 
-		/// closes a given tunnel. Should be called with mutex set.
-		void locked_closeTunnel(TurtleTunnelId tid) ;	
+		/// Closes a given tunnel. Should be called with mutex set.
+		/// The hashes and peers to remove (by calling 
+		/// ftController::removeFileSource() are happended to the supplied vector 
+		/// so that they can be removed off the turtle mutex.
+		void locked_closeTunnel(TurtleTunnelId tid,std::vector<std::pair<TurtleFileHash,TurtleVirtualPeerId> >& peers_to_remove) ;	
 
 		/// Main routing function
 		int handleIncoming(); 									
