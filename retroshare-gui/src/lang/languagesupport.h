@@ -30,30 +30,28 @@
 #include <QMap>
 
 
+
 class LanguageSupport
 {
 public:
-  /** Initializes the list of supported languages. */
-  static void initialize();
   /** Returns the default language code for the system locale. */
   static QString defaultLanguageCode();
   /** Returns the language code for a given language name. */
-  static QString languageCode(QString languageName);
+  static QString languageCode(const QString &languageName);
   /** Returns a list of all supported language codes (e.g., "en"). */
   static QStringList languageCodes();
   /** Returns the language name for a given language code. */
-  static QString languageName(QString languageCode);
+  static QString languageName(const QString &languageCode);
   /** Returns a list of all supported language names (e.g., "English"). */
   static QStringList languageNames();
   /** Returns a list of all supported language codes and names. */
   static QMap<QString, QString> languages();
   /** Returns true if we understand the given language code. */
-  static bool isValidLanguageCode(QString code);
+  static bool isValidLanguageCode(const QString &languageCode);
+  /** Returns true if <b>languageCode</b> requires a right-to-left layout. */
+  static bool isRightToLeft(const QString &languageCode);
   /** Sets the application's translator to the specified language. */
-  static bool translate(QString langCode);
-
-private:
-  static QMap<QString,QString> _languages; /**< List of support languages. */
+  static bool translate(const QString &languageCode);
 };
 
 #endif

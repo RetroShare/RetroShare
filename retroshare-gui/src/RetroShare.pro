@@ -437,7 +437,7 @@ TRANSLATIONS +=  \
             lang/retroshare_af.ts  \
             lang/retroshare_gr.ts  \
             lang/retroshare_it.ts  \
-            lang/retroshare_ja.ts  \
+            lang/retroshare_ja_JP.ts  \
             lang/retroshare_ko.ts  \
             lang/retroshare_pl.ts  \
             lang/retroshare_pt.ts  \
