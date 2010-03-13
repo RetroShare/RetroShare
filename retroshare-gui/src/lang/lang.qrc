@@ -1,27 +1,27 @@
 <RCC>
   <qresource prefix="/lang">
-    <file alias="af">retroshare_af.qm</file>
-    <file alias="bg">retroshare_bg.qm</file>
-    <file alias="en">retroshare_en.qm</file>
-    <file alias="da">retroshare_da.qm</file>
-    <file alias="de">retroshare_de.qm</file>
-    <file alias="es">retroshare_es.qm</file>
-    <file alias="fi">retroshare_fi.qm</file>
-    <file alias="fr">retroshare_fr.qm</file>
-    <file alias="cy">retroshare_cy.qm</file>
-    <file alias="gr">retroshare_gr.qm</file>
-    <file alias="it">retroshare_it.qm</file>
-    <file alias="ja">retroshare_ja.qm</file>
-    <file alias="ko">retroshare_ko.qm</file>
-    <file alias="pl">retroshare_pl.qm</file>
-    <file alias="pt">retroshare_pt.qm</file>
-    <file alias="ru">retroshare_ru.qm</file>
-    <file alias="tr">retroshare_tr.qm</file>
-    <file alias="sl">retroshare_sl.qm</file>
-    <file alias="sr">retroshare_sr.qm</file>
-    <file alias="sv">retroshare_sv.qm</file>
-    <file alias="zh_CN">retroshare_zh_CN.qm</file>
-    <file alias="zh_TW">retroshare_zh_TW.qm</file>
+    <file>retroshare_af.qm</file>
+    <file>retroshare_bg.qm</file>
+    <file>retroshare_en.qm</file>
+    <file>retroshare_da.qm</file>
+    <file>retroshare_de.qm</file>
+    <file>retroshare_es.qm</file>
+    <file>retroshare_fi.qm</file>
+    <file>retroshare_fr.qm</file>
+    <file>retroshare_cy.qm</file>
+    <file>retroshare_gr.qm</file>
+    <file>retroshare_it.qm</file>
+    <file>retroshare_ja_JP.qm</file>
+    <file>retroshare_ko.qm</file>
+    <file>retroshare_pl.qm</file>
+    <file>retroshare_pt.qm</file>
+    <file>retroshare_ru.qm</file>
+    <file>retroshare_tr.qm</file>
+    <file>retroshare_sl.qm</file>
+    <file>retroshare_sr.qm</file>
+    <file>retroshare_sv.qm</file>
+    <file>retroshare_zh_CN.qm</file>
+    <file>retroshare_zh_TW.qm</file>
   </qresource>
 </RCC>
 

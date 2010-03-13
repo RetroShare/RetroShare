@@ -20,43 +20,44 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-
 #include <QTranslator>
 #include <QLocale>
+#include <QLibraryInfo>
+#include <rshare.h>
 
 #include "languagesupport.h"
 
-/** Static list of supported languages and codes. */
-QMap<QString, QString> LanguageSupport::_languages;
 
 /** Initializes the list of available languages. */
-void
-LanguageSupport::initialize()
+QMap<QString, QString>
+LanguageSupport::languages()
 {
-  _languages.clear();
-  _languages.insert("af",    "Afrikaans");
-  _languages.insert("bg",    "Bulgarien");
-  _languages.insert("cy",    "Welsh");
-  _languages.insert("de",    "Deutsch");
-  _languages.insert("da",    "Danish");
-  _languages.insert("en",    "English");
-  _languages.insert("es",    QString::fromUtf8("spanish"));
-  _languages.insert("fr",    QString::fromUtf8("Fran\303\247ais"));
-  _languages.insert("fi",    "suomi");
-  _languages.insert("gr",    "Greek");
-  _languages.insert("it",    "Italiano");
-  _languages.insert("ja",    QString::fromUtf8("\346\227\245\346\234\254\350\252\236"));
-  _languages.insert("ko",    "Korean");
-  _languages.insert("pl",    "Polish");
-  _languages.insert("pt",    "Portuguese");
-  _languages.insert("ru",    QString::fromUtf8("\320\240\321\203\321\201\321\201\320\272\320\270\320\271"));
-  _languages.insert("sl",    "slovenian");
-  _languages.insert("sr",    "Serbian");
-  _languages.insert("sv",    "svenska");     
-  _languages.insert("tr",    QString::fromUtf8("T\303\274rk\303\247e"));
-  _languages.insert("zh_CN", QString::fromUtf8("\347\256\200\344\275\223\345\255\227"));
-  _languages.insert("zh_TW", QString::fromUtf8("\347\260\241\351\253\224\345\255\227"));
-
+  static QMap<QString, QString> languages;
+  if (languages.isEmpty()) {
+    languages.insert("af",    "Afrikaans");
+    languages.insert("bg",    "Bulgarien");
+    languages.insert("cy",    "Welsh");
+    languages.insert("de",    "Deutsch");
+    languages.insert("da",    "Danish");
+    languages.insert("en",    "English");
+    languages.insert("es",    QString::fromUtf8("spanish"));
+    languages.insert("fr",    QString::fromUtf8("Fran\303\247ais"));
+    languages.insert("fi",    "suomi");
+    languages.insert("gr",    "Greek");
+    languages.insert("it",    "Italiano");
+    languages.insert("ja_JP",    QString::fromUtf8("\346\227\245\346\234\254\350\252\236"));
+    languages.insert("ko",    "Korean");
+    languages.insert("pl",    "Polish");
+    languages.insert("pt",    "Portuguese");
+    languages.insert("ru",    QString::fromUtf8("\320\240\321\203\321\201\321\201\320\272\320\270\320\271"));
+    languages.insert("sl",    "slovenian");
+    languages.insert("sr",    "Serbian");
+    languages.insert("sv",    "svenska");     
+    languages.insert("tr",    QString::fromUtf8("T\303\274rk\303\247e"));
+    languages.insert("zh_CN", QString::fromUtf8("\347\256\200\344\275\223\345\255\227"));
+    languages.insert("zh_TW", QString::fromUtf8("\347\260\241\351\253\224\345\255\227"));
+  }
+  return languages;
 }
 
 /** Returns the default language code for the system locale. */
@@ -75,58 +76,76 @@ LanguageSupport::defaultLanguageCode()
 
 /** Returns the language code for a given language name. */
 QString
-LanguageSupport::languageCode(QString languageName)
+LanguageSupport::languageCode(const QString &languageName)
 {
-  return _languages.key(languageName);
+  return languages().key(languageName);
 }
 
 /** Returns a list of all supported language codes. (e.g., "en"). */
 QStringList
 LanguageSupport::languageCodes()
 {
-  return _languages.keys();
+  return languages().keys();
 }
 
 /** Returns the language name for a given language code. */
 QString
-LanguageSupport::languageName(QString languageCode)
+LanguageSupport::languageName(const QString &languageCode)
 {
-  return _languages.value(languageCode);
+  return languages().value(languageCode);
 }
 
 /** Returns a list of all supported language names (e.g., "English"). */
 QStringList
 LanguageSupport::languageNames()
 {
-  return _languages.values();
-}
-
-/** Returns a list of all supported language codes and names. */
-QMap<QString, QString>
-LanguageSupport::languages()
-{
-  return _languages;
+  return languages().values();
 }
 
 /** Returns true if we understand the given language code. */
 bool
-LanguageSupport::isValidLanguageCode(QString code)
+LanguageSupport::isValidLanguageCode(const QString &languageCode)
 {
-  return languageCodes().contains(code.toLower());
+  return languageCodes().contains(languageCode);
 }
 
+/** Returns true if <b>languageCode</b> requires a right-to-left layout. */
+bool
+LanguageSupport::isRightToLeft(const QString &languageCode)
+{
+  return (!languageCode.compare("ar", Qt::CaseInsensitive) 
+            || !languageCode.compare("fa", Qt::CaseInsensitive)
+            || !languageCode.compare("he", Qt::CaseInsensitive));
+}
 /** Sets the application's translator to the specified language. */
 bool
-LanguageSupport::translate(QString langCode)
+LanguageSupport::translate(const QString &languageCode)
 {
-  if (isValidLanguageCode(langCode)) {
-    QTranslator *translator = new QTranslator();
-    if (translator->load(QString(":/lang/") + langCode.toLower())) {
-      QApplication::installTranslator(translator);
-      return true;
-    }
-    delete translator;
+  if (!isValidLanguageCode(languageCode))
+    return false;
+  if (languageCode == "en")
+    return true;
+
+  /* Attempt to load the translations for Qt's internal widgets from their
+   * installed Qt directory. */
+  QTranslator *systemQtTranslator = new QTranslator(rApp);
+  Q_CHECK_PTR(systemQtTranslator);
+
+  QString qtDir = QLibraryInfo::location(QLibraryInfo::TranslationsPath);
+  if (systemQtTranslator->load(qtDir + "/qt_" + languageCode + ".qm"))
+    QApplication::installTranslator(systemQtTranslator);
+  else
+    delete systemQtTranslator;
+
+  /* Install a translator for RetroShare's UI widgets */
+  QTranslator *retroshareTranslator = new QTranslator(rApp);
+  Q_CHECK_PTR(retroshareTranslator);
+
+  if (retroshareTranslator->load(":/lang/retroshare_" + languageCode + ".qm")) {
+    QApplication::installTranslator(retroshareTranslator);
+    return true;
   }
+  delete retroshareTranslator;
   return false;
 }
 

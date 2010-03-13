@@ -121,7 +121,7 @@ Rshare::Rshare(QStringList args, int &argc, char **argv, QString dir)
   }
 
   /** Initialize support for language translations. */
-  LanguageSupport::initialize();
+  //LanguageSupport::initialize();
 
   /** Translate the GUI to the appropriate language. */
   setLanguage(_args.value(ARG_LANGUAGE));
