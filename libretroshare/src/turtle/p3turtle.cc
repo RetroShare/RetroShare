@@ -1687,7 +1687,7 @@ void p3turtle::monitorFileTunnels(const std::string& name,const std::string& fil
 
 		// First, check if the hash is tagged for removal (there's a delay)
 
-		for(uint i=0;i<_hashes_to_remove.size();++i)
+		for(uint32_t i=0;i<_hashes_to_remove.size();++i)
 			if(_hashes_to_remove[i] == file_hash)
 			{
 				_hashes_to_remove[i] = _hashes_to_remove.back() ;
