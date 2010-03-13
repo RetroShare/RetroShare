@@ -73,12 +73,12 @@ const uint32_t PEER_IP_CONNECT_STATE_MAX_LIST_SIZE =     	6;
  * #define P3CONNMGR_NO_AUTO_CONNECTION 1
  ***/
 
-const uint32_t P3CONNMGR_TCP_DEFAULT_DELAY = 2; /* 2 Seconds? is it be enough! */
-const uint32_t P3CONNMGR_UDP_DEFAULT_DELAY = 2; /* 2 Seconds? is it be enough! */
-const uint32_t P3CONNMGR_UDP_DEFAULT_PERIOD = 20; //a random timeout is set between P3CONNMGR_UDP_DEFAULT_PERIOD and 2 * P3CONNMGR_UDP_DEFAULT_PERIOD in the implementation
+const uint32_t P3CONNMGR_TCP_DEFAULT_DELAY = 5; /* 2 Seconds? is it be enough! */
+const uint32_t P3CONNMGR_UDP_DEFAULT_DELAY = 5; /* 2 Seconds? is it be enough! */
+const uint32_t P3CONNMGR_UDP_DEFAULT_PERIOD = 10; //a random timeout is set between P3CONNMGR_UDP_DEFAULT_PERIOD and 2 * P3CONNMGR_UDP_DEFAULT_PERIOD in the implementation
 
-#define MAX_AVAIL_PERIOD 180 //times a peer stay in available state when not connected
-#define MIN_RETRY_PERIOD 90
+#define MAX_AVAIL_PERIOD 230 //times a peer stay in available state when not connected
+#define MIN_RETRY_PERIOD 180
 
 void  printConnectState(peerConnectState &peer);
 
