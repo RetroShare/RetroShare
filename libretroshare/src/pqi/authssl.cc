@@ -1633,20 +1633,20 @@ bool    AuthSSL::encrypt(void *&out, int &outlen, const void *in, int inlen, std
         out = malloc(inlen + 2048);
 
         /// ** from demos/maurice/example1.c of openssl V1.0 *** ///
-        unsigned char * iv = new unsigned char [EVP_MAX_IV_LENGTH];
-        memset(iv, '\0', sizeof(iv));
+        unsigned char * iv = new unsigned char [16];
+        memset(iv, '\0', 16);
         unsigned char * ek = new unsigned char [EVP_PKEY_size(public_key) + 1024];
         uint32_t ekl, net_ekl;
-        unsigned char * cryptBuff = new unsigned char [inlen + 1024];
+        unsigned char * cryptBuff = new unsigned char [inlen + 16];
         memset(cryptBuff, '\0', sizeof(cryptBuff));
         int cryptBuffL = 0;
-        unsigned char key[EVP_MAX_KEY_LENGTH];
+        unsigned char key[256];
 
         /// ** copied implementation of EVP_SealInit of openssl V1.0 *** ///;
         EVP_CIPHER_CTX cipher_ctx;
         EVP_CIPHER_CTX_init(&cipher_ctx);
 
-        if(!EVP_EncryptInit_ex(&cipher_ctx,EVP_des_ede3_cbc(),NULL,NULL,NULL)) {
+        if(!EVP_EncryptInit_ex(&cipher_ctx,EVP_aes_256_cbc(),NULL,NULL,NULL)) {
             return false;
         }
 
@@ -1673,8 +1673,8 @@ bool    AuthSSL::encrypt(void *&out, int &outlen, const void *in, int inlen, std
         memcpy((void*)((unsigned long int)out + (unsigned long int)out_offset), ek, ekl);
         out_offset += ekl;
 
-        memcpy((void*)((unsigned long int)out + (unsigned long int)out_offset), iv, sizeof(iv));
-        out_offset += sizeof(iv);
+        memcpy((void*)((unsigned long int)out + (unsigned long int)out_offset), iv, 16);
+        out_offset += 16;
 
         EVP_EncryptUpdate(&cipher_ctx, cryptBuff, &cryptBuffL, (unsigned char*)in, inlen);
         memcpy((void*)((unsigned long int)out + (unsigned long int)out_offset), cryptBuff, cryptBuffL);
@@ -1712,14 +1712,14 @@ bool    AuthSSL::decrypt(void *&out, int &outlen, const void *in, int inlen)
 //        out = malloc(inlen);
 //        memcpy(out, in, inlen);
 //        outlen = inlen;
-        out = malloc(inlen + 2048);
+        out = malloc(inlen + 16);
         int in_offset = 0;
-        unsigned char * buf = new unsigned char [inlen + 1024];
+        unsigned char * buf = new unsigned char [inlen + 16];
         memset(buf, '\0', sizeof(buf));
         int buflen = 0;
         EVP_CIPHER_CTX ectx;
-        unsigned char * iv = new unsigned char [EVP_MAX_IV_LENGTH];
-        memset(iv, '\0', sizeof(iv));
+        unsigned char * iv = new unsigned char [16];
+        memset(iv, '\0', 16);
         unsigned char *encryptKey;
         unsigned int ekeylen;
 
@@ -1740,8 +1740,8 @@ bool    AuthSSL::decrypt(void *&out, int &outlen, const void *in, int inlen)
         memcpy(encryptKey, (void*)((unsigned long int)in + (unsigned long int)in_offset), ekeylen);
         in_offset += ekeylen;
 
-        memcpy(iv, (void*)((unsigned long int)in + (unsigned long int)in_offset), sizeof(iv));
-        in_offset += sizeof(iv);
+        memcpy(iv, (void*)((unsigned long int)in + (unsigned long int)in_offset), 16);
+        in_offset += 16;
 
 //        EVP_OpenInit(&ectx,
 //                   EVP_des_ede3_cbc(),
@@ -1752,18 +1752,17 @@ bool    AuthSSL::decrypt(void *&out, int &outlen, const void *in, int inlen)
         /// ** copied implementation of EVP_SealInit of openssl V1.0 *** ///;
 
         unsigned char *key=NULL;
-        int i,size=0;
+        int i=0;
 
         EVP_CIPHER_CTX_init(&ectx);
-        if(!EVP_DecryptInit_ex(&ectx,EVP_des_ede3_cbc(),NULL, NULL,NULL)) return false;
+        if(!EVP_DecryptInit_ex(&ectx,EVP_aes_256_cbc(),NULL, NULL,NULL)) return false;
 
         if (own_private_key->type != EVP_PKEY_RSA)
         {
             return false;
         }
 
-        size=RSA_size(own_private_key->pkey.rsa);
-        key=(unsigned char *)OPENSSL_malloc(size+2);
+        key=(unsigned char *)OPENSSL_malloc(256);
         if (key == NULL)
         {
             return false;
