@@ -414,7 +414,9 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 	if(single)
 		contextMnu.addAction( copylinkAct);
 #endif
-	contextMnu.addAction( pastelinkAct);
+	if(!RSLinkClipboard::empty())
+		contextMnu.addAction( pastelinkAct);
+
 	contextMnu.addSeparator();
 //	contextMnu.addAction( clearQueueAct);
 	contextMnu.addSeparator();
@@ -1072,15 +1074,12 @@ void TransfersDialog::showDetailsDialog()
 
 void TransfersDialog::pasteLink()
 {
-	QList<QUrl> urllist = QApplication::clipboard()->mimeData()->urls() ;
+	const std::vector<RetroShareLink>& links(RSLinkClipboard::pasteLinks()) ;
 
-	for(QList<QUrl>::const_iterator it(urllist.begin());it!=urllist.end();++it)
-	{
-		RetroShareLink link(*it) ;
-
-		if (link.valid())
-			rsFiles->FileRequest(link.name().toStdString(), link.hash().toStdString(),link.size(), "", RS_FILE_HINTS_NETWORK_WIDE, std::list<std::string>());
-	}
+	for(uint32_t i=0;i<links.size();++i)
+		if (links[i].valid())
+			if(!rsFiles->FileRequest(links[i].name().toStdString(), links[i].hash().toStdString(),links[i].size(), "", RS_FILE_HINTS_NETWORK_WIDE, std::list<std::string>()))
+				QMessageBox::critical(NULL,"Download refused","The file "+links[i].name()+" could not be downloaded. Do you already have it ?") ;
 }
 
 void TransfersDialog::getIdOfSelectedItems(std::set<QStandardItem *>& items)

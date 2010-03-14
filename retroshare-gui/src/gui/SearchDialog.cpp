@@ -1192,7 +1192,7 @@ void SearchDialog::copysearchLink()
     int numdls = itemsForCopy.size();
     QTreeWidgetItem * item;
 
-	 QList<QUrl> urls ;
+	 std::vector<RetroShareLink> urls ;
 
     for (int i = 0; i < numdls; ++i) 
 	 {
@@ -1212,12 +1212,10 @@ void SearchDialog::copysearchLink()
 
 			 std::cerr << "new link added to clipboard: " << link.toString().toStdString() << std::endl ;
 			 if(link.valid())
-				 urls.push_back(link.toUrl()) ;
+				 urls.push_back(link) ;
 		 } 
 	 }
-	 QMimeData *dt = new QMimeData;
-	 dt->setUrls(urls) ;
-	 QApplication::clipboard()->setMimeData(dt) ;
+	 RSLinkClipboard::copyLinks(urls) ;
 }
 
 void SearchDialog::sendLinkTo( )
@@ -1229,8 +1227,8 @@ void SearchDialog::sendLinkTo( )
 
     nMsgDialog->newMsg();
     nMsgDialog->insertTitleText("New RetroShare Link(s)");
-    nMsgDialog->insertHtmlText(QApplication::clipboard()->text().toStdString());
 
+    nMsgDialog->insertMsgText(RSLinkClipboard::toHtml().toStdString()) ;
     nMsgDialog->show();
 }
 

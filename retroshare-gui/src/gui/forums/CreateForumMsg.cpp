@@ -84,6 +84,9 @@ CreateForumMsg::CreateForumMsg(std::string fId, std::string pId)
 void CreateForumMsg::forumMessageCostumPopupMenu( QPoint point )
 {
 
+	if(RSLinkClipboard::empty())
+		return ;
+
     contextMnu = new QMenu( this );
 
     pasteLinkAct = new QAction(QIcon(":/images/pasterslink.png"), tr( "Paste retroshare Link" ), this );
@@ -415,14 +418,6 @@ void CreateForumMsg::fileHashingFinished(AttachFileItem* file) {
 
 void CreateForumMsg::pasteLink()
 {
-	QList<QUrl> list = QApplication::clipboard()->mimeData()->urls();
-
-	for(QList<QUrl>::const_iterator it(list.begin());it!=list.end();++it)
-	{
-		RetroShareLink link(*it) ;
-
-		if(link.valid())
-			ui.forumMessage->insertHtml("<a href='" +  link.toString() + "'> " + link.toString() + "</a> <br>") ;
-	}
+	ui.forumMessage->insertHtml(RSLinkClipboard::toHtml()) ;
 }
 

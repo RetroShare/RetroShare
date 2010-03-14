@@ -251,7 +251,7 @@ void SharedFilesDialog::copyLink (const QModelIndexList& lst, bool remote)
     else
         localModel->getDirDetailsFromSelect(lst, dirVec);
 
-	 QList<QUrl> urls ;
+	 std::vector<RetroShareLink> urls ;
 
     for (int i = 0, n = dirVec.size(); i < n; ++i)
     {
@@ -275,19 +275,20 @@ void SharedFilesDialog::copyLink (const QModelIndexList& lst, bool remote)
                     continue;
 
 					 RetroShareLink link(details.name.c_str(), details.count, details.hash.c_str());
-					 urls.push_back(link.toUrl()) ;
+
+					 if(link.valid())
+						 urls.push_back(link) ;
             }
         }
         else
 		  {
 			  RetroShareLink link(details.name.c_str(), details.count, details.hash.c_str());
 
-			  urls.push_back(link.toUrl()) ;
+			  if(link.valid())
+				  urls.push_back(link) ;
 		  }
     }
-	 QMimeData *dt = new QMimeData ;
-	 dt->setUrls(urls) ;
-	 QApplication::clipboard()->setMimeData(dt) ;
+	 RSLinkClipboard::copyLinks(urls) ;
 }
 
 void SharedFilesDialog::copyLinkRemote()
@@ -327,7 +328,7 @@ void SharedFilesDialog::sendremoteLinkTo()
     std::cerr << "SharedFilesDialog::sendremoteLinkTo()" << std::endl;
     nMsgDialog->newMsg();
     nMsgDialog->insertTitleText("RetroShare Link");
-    nMsgDialog->insertMsgText(QApplication::clipboard()->text().toStdString());
+    nMsgDialog->insertMsgText(RSLinkClipboard::toHtml().toStdString());
 
     nMsgDialog->show();
 }
@@ -347,7 +348,8 @@ void SharedFilesDialog::sendLinkTo()
     std::cerr << "SharedFilesDialog::sendLinkTo()" << std::endl;
     nMsgDialog->newMsg();
     nMsgDialog->insertTitleText("RetroShare Link");
-    nMsgDialog->insertMsgText(QApplication::clipboard()->text().toStdString());
+
+    nMsgDialog->insertMsgText(RSLinkClipboard::toHtml().toStdString());
 
     nMsgDialog->show();
 }
@@ -359,7 +361,6 @@ void SharedFilesDialog::sendHtmlLinkTo(  )
     /* create a message */
     ChanMsgDialog *nMsgDialog = new ChanMsgDialog(true);
 
-
     /* fill it in
     * files are receommended already
     * just need to set peers
@@ -367,22 +368,22 @@ void SharedFilesDialog::sendHtmlLinkTo(  )
     std::cerr << "SharedFilesDialog::sendLinkTo()" << std::endl;
     nMsgDialog->newMsg();
     nMsgDialog->insertTitleText("RetroShare Link");
-    nMsgDialog->insertHtmlText(QApplication::clipboard()->text().toStdString());
+ //   nMsgDialog->insertHtmlText(QApplication::clipboard()->text().toStdString());// not compatible with multiple links
+    nMsgDialog->insertMsgText(RSLinkClipboard::toHtml().toStdString());
 
     nMsgDialog->show();
 }
 
-void SharedFilesDialog::sendLinktoChat()
-{
-	copyLinkLocal ();
-
-  static SendLinkDialog *slinkDialog = new SendLinkDialog(this);
-  
-  slinkDialog->insertHtmlText(QApplication::clipboard()->text().toStdString());
-
-  slinkDialog->show();
-
-}
+//void SharedFilesDialog::sendLinktoChat()
+//{
+//	copyLinkLocal ();
+//
+//  static SendLinkDialog *slinkDialog = new SendLinkDialog(this);
+//  
+//  slinkDialog->insertMsgText(RSLinkClipboard::toHtml().toStdString());
+//  slinkDialog->show();
+//
+//}
 
 void SharedFilesDialog::sendLinkToCloud()
 {
@@ -673,8 +674,8 @@ void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
 	  sendhtmllinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Links (HTML)" ), this );
 	  connect( sendhtmllinkAct , SIGNAL( triggered() ), this, SLOT( sendHtmlLinkTo( ) ) );
 	  
-	  sendchatlinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Links to Chat" ), this );
-	  connect( sendchatlinkAct , SIGNAL( triggered() ), this, SLOT( sendLinktoChat( ) ) );
+//	  sendchatlinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Links to Chat" ), this );
+//	  connect( sendchatlinkAct , SIGNAL( triggered() ), this, SLOT( sendLinktoChat( ) ) );
 
 	  sendlinkCloudAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Links to Cloud" ), this );
 	  connect( sendlinkCloudAct , SIGNAL( triggered() ), this, SLOT( sendLinkToCloud(  ) ) );
@@ -702,10 +703,10 @@ void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
 	  if(!localModel->isDir( midx ) )
 	  {
 		  contextMnu2.addAction( copylinklocalAct);
-		  contextMnu2.addAction( copylinklocalhtmlAct);
+//		  contextMnu2.addAction( copylinklocalhtmlAct);
 		  contextMnu2.addAction( sendlinkAct);
-		  contextMnu2.addAction( sendhtmllinkAct);
-		  contextMnu2.addAction( sendchatlinkAct);
+//		  contextMnu2.addAction( sendhtmllinkAct);
+//		  contextMnu2.addAction( sendchatlinkAct);
 		  contextMnu2.addSeparator();
 #ifndef RS_RELEASE_VERSION
 		  contextMnu2.addAction( sendlinkCloudAct);
