@@ -369,7 +369,7 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 
 			if ( lst[i].column() == 0)
 			{
-				if(lst[i].model ()->data (lst[i].model ()->index (lst[i].row (), STATUS )).toString() == "Queued")
+				if(info.downloadStatus == FT_STATE_QUEUED)
 					all_downloading = false ;
 				else
 					all_queued = false ;
