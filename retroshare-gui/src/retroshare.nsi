@@ -2,7 +2,7 @@
 
 ; Define your application name
 !define APPNAME "RetroShare"
-!define VERSION "0.5.0 alpha "
+!define VERSION "0.5.0"
 !define APPNAMEANDVERSION "${APPNAME} ${VERSION}"
 
 ; Main Install settings
@@ -59,12 +59,17 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
 
   ;!insertmacro MUI_RESERVEFILE_SPECIALBITMAP
  
+  LicenseLangString myLicenseData 1030 "license\license.txt"
   LicenseLangString myLicenseData 1033 "license\license.txt"
   LicenseLangString myLicenseData 1031 "license\license-GER.txt"
   LicenseLangString myLicenseData 1036 "license\license-FR.txt"
   LicenseLangString myLicenseData 1055 "license\license-TR.txt"
   LicenseLangString myLicenseData 2052 "license\license.txt"
   LicenseLangString myLicenseData 1045 "license\license.txt"
+  LicenseLangString myLicenseData 1041 "license\license.txt"
+  LicenseLangString myLicenseData 1042 "license\license.txt"
+  LicenseLangString myLicenseData 1049 "license\license.txt"
+  LicenseLangString myLicenseData 1053 "license\license.txt"
 
   LicenseData $(myLicenseData)
 
@@ -81,12 +86,18 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
 # Installer languages
 !define MUI_LANGDLL_ALLLANGUAGES
 
+!insertmacro MUI_LANGUAGE Danish
 !insertmacro MUI_LANGUAGE English
-!insertmacro MUI_LANGUAGE German
 !insertmacro MUI_LANGUAGE French
-!insertmacro MUI_LANGUAGE Turkish
-!insertmacro MUI_LANGUAGE SimpChinese
+!insertmacro MUI_LANGUAGE German
+!insertmacro MUI_LANGUAGE Japanese
+!insertmacro MUI_LANGUAGE Korean
 !insertmacro MUI_LANGUAGE Polish
+!insertmacro MUI_LANGUAGE Russian
+!insertmacro MUI_LANGUAGE Swedish
+!insertmacro MUI_LANGUAGE SimpChinese
+!insertmacro MUI_LANGUAGE Turkish
+
 
 
   ;Component-selection page
@@ -162,6 +173,60 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
     LangString DESC_sec_link ${LANG_POLISH} "Skojarz pliki o rozszerzeniu .rsc z RetroShare"
     LangString LANGUAGEID ${LANG_POLISH} "1045"
     
+    LangString sec_main ${LANG_DANISH} "Program Files"
+    LangString sec_data ${LANG_DANISH} "Program Skins"
+    LangString sec_shortcuts ${LANG_DANISH} "Shortcuts"
+    LangString sec_link ${LANG_DANISH} "File Association"
+    LangString sec_autostart ${LANG_DANISH} "Auto Startup"
+    LangString DESC_sec_main ${LANG_DANISH} "Installs the RetroShare program files."
+    LangString DESC_sec_data ${LANG_DANISH} "Installs RetroShare Skins"
+    LangString DESC_sec_shortcuts ${LANG_DANISH} "Create RetroShare shortcut icons."
+    LangString DESC_sec_link ${LANG_DANISH} "Associate RetroShare with .rsc file extension"
+    LangString LANGUAGEID ${LANG_DANISH} "1030"
+    
+    LangString sec_main ${LANG_RUSSIAN} "Program Files"
+    LangString sec_data ${LANG_RUSSIAN} "Program Skins"
+    LangString sec_shortcuts ${LANG_RUSSIAN} "Shortcuts"
+    LangString sec_link ${LANG_RUSSIAN} "File Association"
+    LangString sec_autostart ${LANG_RUSSIAN} "Auto Startup"
+    LangString DESC_sec_main ${LANG_RUSSIAN} "Installs the RetroShare program files."
+    LangString DESC_sec_data ${LANG_RUSSIAN} "Installs RetroShare Skins"
+    LangString DESC_sec_shortcuts ${LANG_RUSSIAN} "Create RetroShare shortcut icons."
+    LangString DESC_sec_link ${LANG_RUSSIAN} "Associate RetroShare with .rsc file extension"
+    LangString LANGUAGEID ${LANG_RUSSIAN} "1049"
+
+    LangString sec_main ${LANG_SWEDISH} "Program Files"
+    LangString sec_data ${LANG_SWEDISH} "Program Skins"
+    LangString sec_shortcuts ${LANG_SWEDISH} "Shortcuts"
+    LangString sec_link ${LANG_SWEDISH} "File Association"
+    LangString sec_autostart ${LANG_SWEDISH} "Auto Startup"
+    LangString DESC_sec_main ${LANG_SWEDISH} "Installs the RetroShare program files."
+    LangString DESC_sec_data ${LANG_SWEDISH} "Installs RetroShare Skins"
+    LangString DESC_sec_shortcuts ${LANG_SWEDISH} "Create RetroShare shortcut icons."
+    LangString DESC_sec_link ${LANG_SWEDISH} "Associate RetroShare with .rsc file extension"
+    LangString LANGUAGEID ${LANG_SWEDISH} "1053"
+    
+    LangString sec_main ${LANG_JAPANESE} "Program Files"
+    LangString sec_data ${LANG_JAPANESE} "Program Skins"
+    LangString sec_shortcuts ${LANG_JAPANESE} "Shortcuts"
+    LangString sec_link ${LANG_JAPANESE} "File Association"
+    LangString sec_autostart ${LANG_JAPANESE} "Auto Startup"
+    LangString DESC_sec_main ${LANG_JAPANESE} "Installs the RetroShare program files."
+    LangString DESC_sec_data ${LANG_JAPANESE} "Installs RetroShare Skins"
+    LangString DESC_sec_shortcuts ${LANG_JAPANESE} "Create RetroShare shortcut icons."
+    LangString DESC_sec_link ${LANG_JAPANESE} "Associate RetroShare with .rsc file extension"
+    LangString LANGUAGEID ${LANG_JAPANESE} "1041"
+    
+    LangString sec_main ${LANG_KOREAN} "Program Files"
+    LangString sec_data ${LANG_KOREAN} "Program Skins"
+    LangString sec_shortcuts ${LANG_KOREAN} "Shortcuts"
+    LangString sec_link ${LANG_KOREAN} "File Association"
+    LangString sec_autostart ${LANG_KOREAN} "Auto Startup"
+    LangString DESC_sec_main ${LANG_KOREAN} "Installs the RetroShare program files."
+    LangString DESC_sec_data ${LANG_KOREAN} "Installs RetroShare Skins"
+    LangString DESC_sec_shortcuts ${LANG_KOREAN} "Create RetroShare shortcut icons."
+    LangString DESC_sec_link ${LANG_KOREAN} "Associate RetroShare with .rsc file extension"
+    LangString LANGUAGEID ${LANG_KOREAN} "1042"    
     
 
 !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
@@ -396,6 +461,11 @@ LangString InstallGPG4WIN ${LANG_TURKISH}     "Gpg4win Yükle?   Gpg4win RetroSh
 LangString InstallGPG4WIN ${LANG_FRENCH}      "RetroShare a besoin de GPG4win pour fonctionner. Lancer l'installation de GPG4win?"
 LangString InstallGPG4WIN ${LANG_SIMPCHINESE} "Install Gpg4win ? Gpg4win是需要Retroshare!" 
 LangString InstallGPG4WIN ${LANG_POLISH}      "Install Gpg4win ? Gpg4win wymagane jest Retroshare!"
+LangString InstallGPG4WIN ${LANG_DANISH}      "Installer Gpg4win? Gpg4win er nødvendig for RetroShare!"
+LangString InstallGPG4WIN ${LANG_JAPANESE}    "Install Gpg4win ? Gpg4win is required for RetroShare!"
+LangString InstallGPG4WIN ${LANG_KOREAN}      "Install Gpg4win ? Gpg4win is required for RetroShare!"
+LangString InstallGPG4WIN ${LANG_RUSSIAN}     "Install Gpg4win ? Gpg4win is required for RetroShare!"
+LangString InstallGPG4WIN ${LANG_SWEDISH}     "Installera Gpg4win? Gpg4win krävs för RetroShare!"
 
 LangString FINISHPAGELINK ${LANG_ENGLISH}     "Visit the RetroShare forums for the latest news and support"
 LangString FINISHPAGELINK ${LANG_GERMAN}      "Besuche RetroShare Support Forum "
@@ -403,6 +473,11 @@ LangString FINISHPAGELINK ${LANG_TURKISH}     "Destek için Retroshare foruma zi
 LangString FINISHPAGELINK ${LANG_FRENCH}      "Consultez le forum RetroShare pour vous tenir au courant des dernieres modifications, et obtenir de l'aide."
 LangString FINISHPAGELINK ${LANG_SIMPCHINESE} "帮助论坛"
 LangString FINISHPAGELINK ${LANG_POLISH}      "Odwiedź forum RetroShare do najświeższych informacji i wsparcia"
+LangString FINISHPAGELINK ${LANG_DANISH}      "Besøg RetroShare fora for de seneste nyheder og støtte"
+LangString FINISHPAGELINK ${LANG_JAPANESE}    "Visit the RetroShare forums for the latest news and support"
+LangString FINISHPAGELINK ${LANG_KOREAN}      "Visit the RetroShare forums for the latest news and support"
+LangString FINISHPAGELINK ${LANG_RUSSIAN}     "Visit the RetroShare forums for the latest news and support"
+LangString FINISHPAGELINK ${LANG_SWEDISH}     "Besök RetroShare forum för de senaste nyheterna och stöd"
 
 LangString ^UninstallLink ${LANG_ENGLISH}     "Uninstall"
 LangString ^UninstallLink ${LANG_GERMAN}      "Deinstallieren"
@@ -410,7 +485,11 @@ LangString ^UninstallLink ${LANG_TURKISH}     "Kald�r"
 LangString ^UninstallLink ${LANG_FRENCH}      "Désinstaller"
 LangString ^UninstallLink ${LANG_SIMPCHINESE} "卸载"
 LangString ^UninstallLink ${LANG_POLISH}      "Odinstaluj"
-
+LangString ^UninstallLink ${LANG_DANISH}      "Afinstaller"
+LangString ^UninstallLink ${LANG_JAPANESE}    "Uninstall"
+LangString ^UninstallLink ${LANG_KOREAN}      "Uninstall"
+LangString ^UninstallLink ${LANG_RUSSIAN}     "Uninstall"
+LangString ^UninstallLink ${LANG_SWEDISH}     "Avinstallera"
 
 
 ; eof
