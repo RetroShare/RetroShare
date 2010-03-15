@@ -383,7 +383,14 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 
 		if(all_downloading)
 			contextMnu.addMenu( chunkMenu);
-
+			
+	if(single)
+	{
+		if(info.downloadStatus == FT_STATE_PAUSED)
+			contextMnu.addAction( resumeAct);
+		else if(info.downloadStatus != FT_STATE_COMPLETE)
+			contextMnu.addAction( pauseAct);
+	}		
 
 		if(info.downloadStatus != FT_STATE_COMPLETE)
 			contextMnu.addAction( cancelAct);
@@ -403,10 +410,6 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 		contextMnu.addAction( detailsfileAct);
 		contextMnu.addSeparator();
 
-		if(info.downloadStatus == FT_STATE_PAUSED)
-			contextMnu.addAction( resumeAct);
-		else if(info.downloadStatus != FT_STATE_COMPLETE)
-			contextMnu.addAction( pauseAct);
 	}
 
 	contextMnu.addAction( clearcompletedAct);
@@ -455,7 +458,6 @@ int TransfersDialog::addItem(const QString&, const QString& name, const QString&
     DLListModel->setData(DLListModel->index(row, REMAINING), QVariant((qlonglong)remaining));
     DLListModel->setData(DLListModel->index(row, DOWNLOADTIME), QVariant((qlonglong)downloadtime));
     DLListModel->setData(DLListModel->index(row, ID), QVariant((QString)coreID));
-
 
     QString ext = QFileInfo(name).suffix();
     if (ext == "jpg" || ext == "jpeg" || ext == "tif" || ext == "tiff" || ext == "JPG"|| ext == "png" || ext == "gif"
@@ -558,8 +560,45 @@ int TransfersDialog::addPeerToItem(int row, const QString& name, const QString& 
         dlItem->child(childRow, DLSPEED)->setData(QVariant((double)dlspeed), Qt::DisplayRole);
         dlItem->child(childRow, STATUS)->setData(QVariant((QString)status), Qt::DisplayRole);
         dlItem->child(childRow, PROGRESS)->setData(QVariant::fromValue(peerInfo), Qt::DisplayRole);
+        
+        std::set<QStandardItem *> dlitems;
+        std::set<QStandardItem *>::iterator it;
+        getIdOfSelectedItems(dlitems);
+	
+        FileInfo info;
+        for (it = dlitems.begin(); it != dlitems.end(); it ++) {
+            if (!rsFiles->FileDetails((*it)->data(Qt::DisplayRole).toString().toStdString(), RS_FILE_HINTS_DOWNLOAD, info)) continue;
+            break;
+        }
+        
         /* set status icon in the name field */
-        if (status == "Downloading") {
+        if ( info.downloadStatus == FT_STATE_DOWNLOADING) 
+        {
+            dlItem->child(childRow, NAME)->setData(QIcon(QString::fromUtf8(":/images/Client0.png")), Qt::DecorationRole);
+        } 
+        else if ( info.downloadStatus == FT_STATE_FAILED) 
+        {
+            dlItem->child(childRow, NAME)->setData(QIcon(QString::fromUtf8(":/images/Client1.png")), Qt::DecorationRole);
+        }  
+        else if ( info.downloadStatus == FT_STATE_OKAY) 
+        {
+            dlItem->child(childRow, NAME)->setData(QIcon(QString::fromUtf8(":/images/Client2.png")), Qt::DecorationRole);
+        } 
+        else if ( info.downloadStatus == FT_STATE_WAITING) 
+        {
+            dlItem->child(childRow, NAME)->setData(QIcon(QString::fromUtf8(":/images/Client3.png")), Qt::DecorationRole);
+        } 
+        else if ( info.downloadStatus == FT_STATE_COMPLETE)
+        {
+            dlItem->child(childRow, NAME)->setData(QIcon(QString::fromUtf8(":/images/Client0.png")), Qt::DecorationRole);
+        } 
+        else 
+        {
+            //dlItem->child(childRow, NAME)->setData(QIcon(QString::fromUtf8(":/images/Client4.png")), Qt::DecorationRole);
+        }
+        
+        /* set status icon in the name field */
+        /*if (status == "Downloading") {
             dlItem->child(childRow, NAME)->setData(QIcon(QString::fromUtf8(":/images/Client0.png")), Qt::DecorationRole);
         } else if (status == "Failed") {
             dlItem->child(childRow, NAME)->setData(QIcon(QString::fromUtf8(":/images/Client1.png")), Qt::DecorationRole);
@@ -570,7 +609,7 @@ int TransfersDialog::addPeerToItem(int row, const QString& name, const QString& 
         } else if (status == "Unknown") {
             dlItem->child(childRow, NAME)->setData(QIcon(QString::fromUtf8(":/images/Client4.png")), Qt::DecorationRole);
         } else if (status == "Complete") {
-        }
+        }*/
     }
 
     return childRow;
