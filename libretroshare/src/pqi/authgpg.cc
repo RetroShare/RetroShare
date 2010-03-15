@@ -1179,17 +1179,25 @@ bool AuthGPG::LoadCertificateFromString(std::string str, std::string &gpg_id)
 
 	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
 
+        if (str == "") {
+            #ifdef GPG_DEBUG
+            std::cerr << "AuthGPG::LoadCertificateFromString() cert is empty string, returning false." << std::endl;
+            #endif
+            return false;
+        }
+
         //std::string cleancert = cleanUpCertificate(str); disable for p3disc message on windows system. Move the clean cert in p3peers
         std::string cleancert = str;
 
-#ifdef GPG_DEBUG
+        #ifdef GPG_DEBUG
         std::cerr << "AuthGPG::LoadCertificateFromString() cleancert : " << cleancert;
-#endif
+        #endif
 
 	gpgme_data_t gpgmeData;
         if (GPG_ERR_NO_ERROR != gpgme_data_new_from_mem(&gpgmeData, cleancert.c_str(), cleancert.length(), 1))
 	{
                 std::cerr << "Error create Data" << std::endl;
+                return false;
 	}
 
 	/* move string data to gpgmeData */
