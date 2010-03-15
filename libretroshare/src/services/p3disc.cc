@@ -509,7 +509,12 @@ void p3disc::recvPeerDetails(RsDiscReply *item)
         std::cerr << "p3disc::recvPeerFriendMsg() From: " << item->PeerId() << " About " << item->aboutId << std::endl;
 #endif
         std::string certGpgId;
-        AuthGPG::getAuthGPG()->LoadCertificateFromString(item->certGPG, certGpgId);
+        if (!AuthGPG::getAuthGPG()->LoadCertificateFromString(item->certGPG, certGpgId)) {
+            #ifdef P3DISC_DEBUG
+            std::cerr << "p3disc::recvPeerFriendMsg() gpg cert is not good, aborting" << std::endl;
+            #endif
+            return;
+        }
         if (item->aboutId == "" || item->aboutId != certGpgId) {
  #ifdef P3DISC_DEBUG
         std::cerr << "p3disc::recvPeerFriendMsg() Error : about id is not the same as gpg id." << std::endl;
