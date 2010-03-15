@@ -1163,7 +1163,6 @@ bool TransfersDialog::controlTransferFile(uint32_t flags)
 	std::set<QStandardItem *>::iterator it;
 	getIdOfSelectedItems(items);
 	for (it = items.begin(); it != items.end(); it ++) {
-		std::cerr << "changing file mode for hash " << (*it)->data(Qt::DisplayRole).toString().toStdString() << " to " << flags << std::endl;
 		result &= rsFiles->FileControl((*it)->data(Qt::DisplayRole).toString().toStdString(), flags);
 	}
 
