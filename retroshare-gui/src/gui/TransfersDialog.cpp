@@ -362,7 +362,7 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 
 		for (int i = 0; i < lst.count (); i++)
 		{
-			if ( lst[i].column() == 0 && info.downloadStatus == FT_STATE_WAITING )
+			if ( lst[i].column() == 0 && info.downloadStatus == FT_STATE_PAUSED )
 				all_downld = false ;
 			if ( lst[i].column() == 0 && info.downloadStatus == FT_STATE_DOWNLOADING )
 				all_paused = false ;
@@ -406,6 +406,11 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
     contextMnu.addAction( openfolderAct);
 		contextMnu.addAction( detailsfileAct);
 		contextMnu.addSeparator();
+
+		if(info.downloadStatus == FT_STATE_PAUSED)
+			contextMnu.addAction( resumeAct);
+		else if(info.downloadStatus != FT_STATE_COMPLETE)
+			contextMnu.addAction( pauseAct);
 	}
 
 	contextMnu.addAction( clearcompletedAct);
@@ -672,7 +677,7 @@ void TransfersDialog::insertTransfers()
 		QString fileName = QString::fromUtf8(info.fname.c_str());
 		QString fileHash = QString::fromStdString(info.hash);
 		qlonglong fileSize    = info.size;
-		double fileDlspeed     = info.tfRate * 1024.0;
+		double fileDlspeed     = (info.downloadStatus==FT_STATE_PAUSED)?0.0:(info.tfRate * 1024.0);
 
 		/* get the sources (number of online peers) */
 		int online = 0;
@@ -692,6 +697,7 @@ void TransfersDialog::insertTransfers()
 			case FT_STATE_DOWNLOADING:  status = tr("Downloading"); break;
 			case FT_STATE_COMPLETE:     status = tr("Complete"); break;
 			case FT_STATE_QUEUED:       status = tr("Queued"); break;
+			case FT_STATE_PAUSED:       status = tr("Paused"); break;
 			default:                    status = tr("Unknown"); break;
 		}
 
@@ -753,10 +759,8 @@ void TransfersDialog::insertTransfers()
 				default:                    status = tr(""); break;
 			}
 			double peerDlspeed	= 0;
-			if ((uint32_t)pit->status == FT_STATE_DOWNLOADING) 
-			{
+			if ((uint32_t)pit->status == FT_STATE_DOWNLOADING && info.downloadStatus != FT_STATE_PAUSED) 
 				peerDlspeed     = pit->tfRate * 1024.0;
-			}
 
 			FileProgressInfo peerpinfo ;
 			peerpinfo.cmap = fcinfo.compressed_peer_availability_maps[pit->peerId];
