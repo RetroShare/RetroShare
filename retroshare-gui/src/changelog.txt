@@ -1,5 +1,90 @@
-Changes for v0.5.0 alpha *
+Changes for v0.5.0 *
 
+* increase udp ttl
+* fixed queue menu to work on multiple languages
+* change ssl binary encryption to aes debug code
+* change ssl binary encryption to aes
+* lower connection attempt timings
+* moved removal of sources off turtle mutex to avoid cross-lock. Added a closeFile() call when moving files out of the queue
+* fixed to get work again Chinese language , and load now Qt translations for widgets 
+* bug correction: avoid reading deleted pointers by moving saveDone() after the next line
+* added paste multiple links
+* added Timestamps for forum message feeds to know the date for each Forum Message.
+* cleaned the RS link code, factorized the parsing into a single class. 
+* fix a bug in the double file configuration loading
+* Fixed config forward compatibility problem
+  - note to self: C++ binary file not same as C binary file 
+* fixed sharemanager closing
+* fixed to enable translation suppor for Trustview strings
+* added for Queue actions own icons
+* clean up languages and corrected few languages
+* added proper dynamic suppression of sources from chunkmap, and updated the gui
+* suppressed bug in dynamic removal of sources. suppressed bug in string search. Suppressed some warnings.
+* added to show bytes and formates size FileTranferInfoWidget
+* suppressed debug msg
+* Added proper dl queue behavior
+	- suppressed old DwlQueue class
+	- turned mDownloads into a list of pointers to allow easy cross-info update between queue and std::map of downloads
+	- added queue functionality for moving files top/bottom/up/down
+	- added the necessary functions in rsFiles
+* reengineered the network dialog insert connect method
+* small design change of confcertdialog
+* restrain ip list exchange in an attempt for bug solving
+* small update of connct mgr and ssl connection
+* added Popularity view as icons to display for each channel
+* fixed to display pasted plaintext retroshare link in public chat in html format to get click able.
+* added Copy link as html format
+* fixed to get click able the retroshare links in privat chat
+* fixed only show a new message icon on tray when its a inbox message
+* small change in ext address detection
+* Added new 2-pass save method to configuration management
+  - essentially if any part of the file saving procedure fails, there should be config files whose signatures/hash match up
+* set a item foreground color for Inbox when get a new message, set gridsize for listwidget to 18
+* disable the extract failed certificate
+* make the gpg key list reading a little more error proof
+* change the pointer offset cast
+* added Download Time column to Downloads
+* added to DetailsDialog Download Time label
+* added formating the filesize's for FileTransferInfoWidget 
+* suppressed bug in file transfer while removing inactive chunks.
+* added initialisation of gpgmeKeySelected.
+* suppressed deadlock (mutex explicitely locked before thread exit)
+* Fixed to get again gui resize able , search not allowed more to set gui to a minimum size.
+* color adjustement for the network dialog
+* cleaned some memory leak in search, added 2 checkboxes for F2F and friend lists, made the "include own files" work properly
+* put the max result test at a more appropriate place in the code
+* fixed display of uploads tunnels
+* fixed trayicon tooltip
+* added change trayicon when get a new message, added change trust icons when trust is changed
+* added a spacer when counting Messages
+* added to installer to install gpg4win
+* change the color of peer display
+* change the button at the end the the connect friend wizard dialog
+* small fix on gencert dialog
+* small fix xhen loading detail from a string cert
+* change the gpg key list display
+* add own ip addresses list to profile widget
+* cleaned the code in fimonitor, modified the order of file hashing, and put a more explicit progress message while hashing.
+* connect PrintButton when not use the menu
+* disable the ssl cert config persistance
+* changed add friend icon
+* small bug correction in display of unknown hashes
+* added a spinbox to limit the number of search results (too many results may hang the gui)
+* add the tunnel config to server tab, and activate the tunnel on fresh configs
+* reimplemented the tunnel handshake
+* update implemention for new ssl encryption
+* remove some exit(1)
+* implementation of an SSL binary encryption
+* enabled Run Email Program for all platforms
+* moved the Buttons Make Friends,Deny Friend, Sig GPG Key to the Bottom of Trust Tab
+* improved the icons and Buttons in Trust Tab
+* use for color sources friends sources + anonymous sources
+* added missing NetworkWide flag to download from recommendation
+* added missing NetworkWide flag to download from recommendation
+* corrected bug in MessageDialog: friendly size was could not be properly converted into a real file size. We should not use it.
+* Properly close ssl connection when receiving error SYS_CALL. Bug solved
+* Fixed Load and Save own status Message in MessengerWindow works now.
+* suppressed unninitialisez memory reads
 * added context menu action for Paste retroshare Link for Create Forum Message
 * added smotth interpolation flag to image scaling
 * added Paste retroshare link's from a Button in Create Forum Message, and fixed to not allow send blank Forum Messages
