@@ -1565,57 +1565,57 @@ Available: %3</source>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="752"/>
         <source>Make Friend</source>
-        <translation type="unfinished">친구를 사귀십시오</translation>
+        <translation>친구를 사귀십시오</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="754"/>
         <source>Details about your friend : </source>
-        <translation type="unfinished"></translation>
+        <translation>당신의 친구에 대한 세부 정보 :</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="761"/>
         <source>Key validity:</source>
-        <translation type="unfinished"></translation>
+        <translation>키 유효 기간 :</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="769"/>
         <source>Email:</source>
-        <translation type="unfinished"></translation>
+        <translation>이메일:</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="785"/>
         <source>Authenticate friend (Sign GPG Key)</source>
-        <translation type="unfinished"></translation>
+        <translation>친구 인증 (로그인 GPG 키를)</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="788"/>
         <source>Add as friend to connect with</source>
-        <translation type="unfinished"></translation>
+        <translation>친구와 연결에 담기</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="882"/>
         <source>It seems your friend is already registered. Adding it might just set it&apos;s ip address.</source>
-        <translation type="unfinished"></translation>
+        <translation>그것은 당신의 친구가 이미 등록되어있는 것으로 보인다. 그냥 그것의 IP 주소를 설정할 수있습니다 추가.</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="757"/>
         <source>Peer details</source>
-        <translation type="unfinished"></translation>
+        <translation>피어 세부 사항</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="765"/>
         <source>Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>이름:</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="773"/>
         <source>Loc:</source>
-        <translation type="unfinished"></translation>
+        <translation>위치:</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="777"/>
         <source>Signers</source>
-        <translation type="unfinished"></translation>
+        <translation>서명자</translation>
     </message>
 </context>
 <context>
@@ -1917,7 +1917,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="102"/>
         <source>Connect Friend Wizard</source>
-        <translation type="unfinished"></translation>
+        <translation>친구 연결 마법사</translation>
     </message>
 </context>
 <context>
@@ -2666,134 +2666,134 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/DetailsDialog.ui" line="14"/>
         <source>Details</source>
-        <translation type="unfinished">세부사항 </translation>
+        <translation>세부사항 </translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="32"/>
         <location filename="../gui/DetailsDialog.ui" line="38"/>
         <source>General</source>
-        <translation type="unfinished">일반</translation>
+        <translation>일반</translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="53"/>
         <source>File Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>파일명:</translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="60"/>
         <source>Name Label</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="89"/>
         <source>Hash:</source>
-        <translation type="unfinished"></translation>
+        <translation>해시:</translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="96"/>
         <source>Hash Label</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="112"/>
         <source>Size:</source>
-        <translation type="unfinished"></translation>
+        <translation>크기:</translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="119"/>
         <source>Size Label</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="135"/>
         <source>Status:</source>
-        <translation type="unfinished"></translation>
+        <translation>상태:</translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="142"/>
         <source>Status Label</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="149"/>
         <source>Priority</source>
-        <translation type="unfinished"></translation>
+        <translation>우선순위</translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="156"/>
         <source>Priority Label</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="163"/>
         <source>Type Label</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="170"/>
         <source>Type:</source>
-        <translation type="unfinished">유형:</translation>
+        <translation>유형:</translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="180"/>
         <source>Transfer</source>
-        <translation type="unfinished">전송</translation>
+        <translation>전송</translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="186"/>
         <source>Sources:</source>
-        <translation type="unfinished"></translation>
+        <translation>근원:</translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="193"/>
         <source>Datarate:</source>
-        <translation type="unfinished"></translation>
+        <translation>속도</translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="200"/>
         <source>Completed:</source>
-        <translation type="unfinished"></translation>
+        <translation>완료하는:</translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="207"/>
         <source>Source Label</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="214"/>
         <source>Datarate Label</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="221"/>
         <source>Completed Label</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="241"/>
         <source>Chunks Label</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="248"/>
         <source>Chunk size:</source>
-        <translation type="unfinished"></translation>
+        <translation>청크 크기 :</translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="255"/>
         <location filename="../gui/DetailsDialog.ui" line="265"/>
         <source>Number of Chunks</source>
-        <translation type="unfinished"></translation>
+        <translation>조각수</translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="258"/>
         <source>Chunks Number Label</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="268"/>
         <source>Chunks:</source>
-        <translation type="unfinished"></translation>
+        <translation>청크 :</translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="275"/>
@@ -2802,74 +2802,74 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Remaining Label&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="286"/>
         <source>Remaining:</source>
-        <translation type="unfinished"></translation>
+        <translation>남은 시간:</translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="296"/>
         <source>Date</source>
-        <translation type="unfinished">날짜</translation>
+        <translation>날짜</translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="302"/>
         <source>Download time:</source>
-        <translation type="unfinished"></translation>
+        <translation>다운로드 시간 :</translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="309"/>
         <source>Download Time Label</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="350"/>
         <location filename="../gui/DetailsDialog.cpp" line="52"/>
         <source>Comments</source>
-        <translation type="unfinished"></translation>
+        <translation>댓글</translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="360"/>
         <location filename="../gui/DetailsDialog.ui" line="366"/>
         <source>retroshare link(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>retroshare 링크</translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="391"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>복사</translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="415"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="425"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>취소</translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.cpp" line="51"/>
         <source>Rating</source>
-        <translation type="unfinished"></translation>
+        <translation>평가</translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.cpp" line="53"/>
         <source>File Name</source>
-        <translation type="unfinished">파일명</translation>
+        <translation>파일명</translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.cpp" line="121"/>
         <source>Not Rated</source>
-        <translation type="unfinished"></translation>
+        <translation>아니 등급</translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.cpp" line="124"/>
         <source>No Comments</source>
-        <translation type="unfinished"></translation>
+        <translation>코멘트 없음</translation>
     </message>
 </context>
 <context>
@@ -9740,7 +9740,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/AboutDialog.cpp" line="407"/>
         <source>Pause</source>
-        <translation type="unfinished">일시 중지</translation>
+        <translation>일시 중지</translation>
     </message>
 </context>
 <context>
@@ -10462,7 +10462,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../util/misc.h" line="118"/>
         <source>Unknown</source>
         <comment>Unknown (size)</comment>
-        <translation type="unfinished">알 수없는</translation>
+        <translation>알 수없는</translation>
     </message>
     <message>
         <location filename="../util/misc.h" line="120"/>
