@@ -403,37 +403,6 @@ bool ftTransferModule::queryInactive()
   	return true; 
 }
 
-bool ftTransferModule::pauseTransfer()
-{
-  	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
-
-/*
-  std::map<std::string,peerInfo>::iterator mit;
-  for(mit = mOnlinePeers.begin(); mit != mOnlinePeers.end(); mit++)
-  {
-    (mit->second).state = PQIPEER_SUSPEND;
-  }
-*/
-  mFileStatus.stat=ftFileStatus::PQIFILE_PAUSE;
-  
-  return 1;
-}
-
-bool ftTransferModule::resumeTransfer()
-{
-  	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
-/*
-  std::map<std::string,peerInfo>::iterator mit;
-  for(mit = mOnlinePeers.begin(); mit != mOnlinePeers.end(); mit++)
-  {
-    (mit->second).state = PQIPEER_IDLE;
-  }
-*/
-  mFileStatus.stat=ftFileStatus::PQIFILE_DOWNLOADING;
-
-  return 1;
-}
-
 bool ftTransferModule::cancelTransfer()
 {
   	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/

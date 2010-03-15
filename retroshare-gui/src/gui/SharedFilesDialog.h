@@ -70,7 +70,7 @@ private slots:
   void sendHtmlLinkTo();
   void sendLinkToCloud();
   void addLinkToCloud();
-  void sendLinktoChat();
+//  void sendLinktoChat();
 
   void showFrame(bool show);
   void showFrameRemote(bool show);

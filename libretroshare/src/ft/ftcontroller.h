@@ -69,7 +69,8 @@ class ftFileControl
 		enum { 	DOWNLOADING      = 0, 
 					COMPLETED        = 1, 
 					ERROR_COMPLETION = 2, 
-					QUEUED           = 3 
+					QUEUED           = 3,
+					PAUSED           = 4 
 		};
 
 		ftFileControl();

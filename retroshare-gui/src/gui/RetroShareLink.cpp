@@ -25,6 +25,8 @@
 
 const QString RetroShareLink::HEADER_NAME("retroshare://file");
 
+std::vector<RetroShareLink> RSLinkClipboard::_links ;
+
 RetroShareLink::RetroShareLink(const QUrl& url)
 {
 	// parse
@@ -93,6 +95,10 @@ void RetroShareLink::check()
 QString RetroShareLink::toString() const
 {
 	return HEADER_NAME + "|" + _name + "|" + QString::number(_size) + "|" + _hash ;
+}
+QString RetroShareLink::toHtml() const
+{
+	return QString("<a href='") + toString() + "'>" + toString() + "</a>" ;
 }
 
 bool RetroShareLink::checkName(const QString& name)

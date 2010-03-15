@@ -45,6 +45,7 @@ const uint32_t FT_STATE_WAITING 		= 0x0002 ;
 const uint32_t FT_STATE_DOWNLOADING	= 0x0003 ;
 const uint32_t FT_STATE_COMPLETE 	= 0x0004 ;
 const uint32_t FT_STATE_QUEUED   	= 0x0005 ;
+const uint32_t FT_STATE_PAUSED   	= 0x0006 ;
 
 class TransferInfo
 {
