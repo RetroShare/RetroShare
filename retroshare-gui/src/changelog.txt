@@ -1,5 +1,6 @@
 Changes for v0.5.0 *
 
+* fixed RS link copy/paste from shared/search to transfers/forums/messages
 * increase udp ttl
 * fixed queue menu to work on multiple languages
 * change ssl binary encryption to aes debug code
