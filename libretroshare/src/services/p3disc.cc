@@ -383,7 +383,10 @@ void p3disc::sendPeerDetails(std::string to, std::string about) {
         }
         std::string cert = AuthGPG::getAuthGPG()->SaveCertificateToString(about);
         if (cert == "") {
-            cert = "No Key";
+            #ifdef P3DISC_DEBUG
+            std::cerr << "p3disc::sendPeerDetails() don't send details because the gpg cert is not good" << std::endl;
+            #endif
+            return;
         }
         di -> certGPG = cert;
 
@@ -507,7 +510,7 @@ void p3disc::recvPeerDetails(RsDiscReply *item)
 #endif
         std::string certGpgId;
         AuthGPG::getAuthGPG()->LoadCertificateFromString(item->certGPG, certGpgId);
-        if (item->aboutId != certGpgId) {
+        if (item->aboutId == "" || item->aboutId != certGpgId) {
  #ifdef P3DISC_DEBUG
         std::cerr << "p3disc::recvPeerFriendMsg() Error : about id is not the same as gpg id." << std::endl;
 #endif
