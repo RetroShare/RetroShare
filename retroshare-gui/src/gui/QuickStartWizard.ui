@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>445</width>
-    <height>357</height>
+    <height>370</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -21,8 +21,8 @@
   </property>
   <property name="maximumSize">
    <size>
-    <width>445</width>
-    <height>357</height>
+    <width>457</width>
+    <height>370</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -161,7 +161,7 @@ p, li { white-space: pre-wrap; }
       <string notr="true"/>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="pageWelcome">
       <property name="styleSheet">
@@ -432,7 +432,7 @@ p, li { white-space: pre-wrap; }
             <item row="1" column="0">
              <widget class="QLabel" name="label_6">
               <property name="text">
-               <string>Dicovery :</string>
+               <string>Discovery :</string>
               </property>
              </widget>
             </item>
