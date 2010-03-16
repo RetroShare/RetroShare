@@ -727,6 +727,7 @@ bool ftController::completeFile(std::string hash)
 
 		if (fc->mCreator)
 		{
+			fc->mCreator->closeFile() ;
 			delete fc->mCreator;
 			fc->mCreator = NULL;
 		}

@@ -98,7 +98,7 @@ class ftFileCreator: public ftFileProvider
 
 	protected:
 
-		virtual int initializeFileAttrs(); 
+		virtual int locked_initializeFileAttrs(); 
 
 	private:
 
