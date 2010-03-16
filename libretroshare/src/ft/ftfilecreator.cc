@@ -109,13 +109,13 @@ bool ftFileCreator::addFileData(uint64_t offset, uint32_t chunk_size, void *data
 	 */
 	if (0 != fseeko64(this->fd, offset, SEEK_SET))
 	{
-		std::cerr << "ftFileCreator::addFileData() Bad fseek" << std::endl;
+		std::cerr << "ftFileCreator::addFileData() Bad fseek at offset " << offset << ", fd=" << (void*)(this->fd) << ", size=" << mSize << ", errno=" << errno << std::endl;
 		return 0;
 	}
 	
 	if (1 != fwrite(data, chunk_size, 1, this->fd))
 	{
-        	std::cerr << "ftFileCreator::addFileData() Bad fwrite" << std::endl;
+        	std::cerr << "ftFileCreator::addFileData() Bad fwrite." << std::endl;
         	std::cerr << "ERRNO: " << errno << std::endl;
 
 		return 0;

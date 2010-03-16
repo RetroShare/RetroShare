@@ -1346,11 +1346,13 @@ bool AuthGPG::SignDataBin(std::string input, unsigned char *sign, unsigned int *
 }
 
 bool AuthGPG::SignDataBin(const void *data, unsigned int datalen, unsigned char *sign, unsigned int *signlen) {
+        RsStackMutex stack(pgpMtx); /******* LOCKED ******/
         return DoOwnSignature_locked(data, datalen,
                         sign, signlen);
 }
 
 bool AuthGPG::VerifySignBin(const void *data, uint32_t datalen, unsigned char *sign, unsigned int signlen, std::string withfingerprint) {
+        RsStackMutex stack(pgpMtx); /******* LOCKED ******/
         return VerifySignature_locked(data, datalen,
                         sign, signlen, withfingerprint);
 }
@@ -1360,6 +1362,7 @@ bool AuthGPG::VerifySignBin(const void *data, uint32_t datalen, unsigned char *s
 
 int	AuthGPG::privateSignCertificate(std::string id)
 {
+        RsStackMutex stack(pgpMtx); /******* LOCKED ******/
 	/* The key should be in Others list and not in Peers list ?? 
 	 * Once the key is signed, it moves from Others to Peers list ??? 
 	 */
