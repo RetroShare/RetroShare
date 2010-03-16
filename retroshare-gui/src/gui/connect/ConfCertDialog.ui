@@ -7,14 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>505</width>
-    <height>527</height>
+    <height>613</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Peer Details</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../images.qrc">
+   <iconset>
     <normaloff>:/images/rstray3.png</normaloff>:/images/rstray3.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
@@ -25,7 +25,7 @@
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="icon">
-       <iconset resource="../images.qrc">
+       <iconset>
         <normaloff>:/images/peerdetails_16x16.png</normaloff>:/images/peerdetails_16x16.png</iconset>
       </attribute>
       <attribute name="title">
@@ -246,7 +246,7 @@
      </widget>
      <widget class="QWidget" name="tab_2">
       <attribute name="icon">
-       <iconset resource="../images.qrc">
+       <iconset>
         <normaloff>:/images/security-high-16.png</normaloff>:/images/security-high-16.png</iconset>
       </attribute>
       <attribute name="title">
@@ -274,10 +274,10 @@
             </size>
            </property>
            <property name="text">
-            <string>None</string>
+            <string>None </string>
            </property>
            <property name="icon">
-            <iconset resource="../images.qrc">
+            <iconset>
              <normaloff>:/images/security-low-48.png</normaloff>:/images/security-low-48.png</iconset>
            </property>
            <property name="iconSize">
@@ -297,10 +297,10 @@
             </size>
            </property>
            <property name="text">
-            <string>Marginal</string>
+            <string>Marginal </string>
            </property>
            <property name="icon">
-            <iconset resource="../images.qrc">
+            <iconset>
              <normaloff>:/images/security-medium-48.png</normaloff>:/images/security-medium-48.png</iconset>
            </property>
            <property name="iconSize">
@@ -320,10 +320,10 @@
             </size>
            </property>
            <property name="text">
-            <string>Full</string>
+            <string>Full </string>
            </property>
            <property name="icon">
-            <iconset resource="../images.qrc">
+            <iconset>
              <normaloff>:/images/security-high-48.png</normaloff>:/images/security-high-48.png</iconset>
            </property>
            <property name="iconSize">
@@ -335,6 +335,17 @@
           </widget>
          </item>
         </layout>
+       </item>
+       <item>
+        <widget class="QTextBrowser" name="gpgTrustInfoBrowser">
+         <property name="html">
+          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'DejaVu Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The trust settings refers to the gnupg web of trust mecanism. This trust means how you trust your friends when he is signing other gpg keys. If you set your trust to &quot;full&quot;, it means that when your friend sign a key, this key will be shown as validated by the web of trust in the network view.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QGroupBox" name="groupBox_3">
@@ -379,6 +390,17 @@
             </layout>
            </widget>
           </item>
+          <item>
+           <widget class="QTextBrowser" name="gpgSignInfoBrowser">
+            <property name="html">
+             <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'DejaVu Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;You should sign a key when you are sure that the person who claims ownership on this key is the real owner of the key.  When you are sure that the name of the key owner is the real name of the emmitter of this key, you may sign it to confirm it. Signing the key will be public unless public discovery is not setted. This means you friends can check if you did sign someone's key.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -393,7 +415,7 @@
             <string>Sign GPG key</string>
            </property>
            <property name="icon">
-            <iconset resource="../images.qrc">
+            <iconset>
              <normaloff>:/images/view-certificate-sign-32.png</normaloff>:/images/view-certificate-sign-32.png</iconset>
            </property>
            <property name="iconSize">
@@ -413,7 +435,7 @@
             <string>SignGPG Key</string>
            </property>
            <property name="icon">
-            <iconset resource="../images.qrc">
+            <iconset>
              <normaloff>:/images/view-certificate-sign-48.png</normaloff>:/images/view-certificate-sign-48.png</iconset>
            </property>
            <property name="iconSize">
@@ -446,7 +468,7 @@
             <string>Deny Friend</string>
            </property>
            <property name="icon">
-            <iconset resource="../images.qrc">
+            <iconset>
              <normaloff>:/images/user/deny_user48.png</normaloff>:/images/user/deny_user48.png</iconset>
            </property>
            <property name="iconSize">
@@ -466,7 +488,7 @@
             <string>Make Friend</string>
            </property>
            <property name="icon">
-            <iconset resource="../images.qrc">
+            <iconset>
              <normaloff>:/images/user/add_user48.png</normaloff>:/images/user/add_user48.png</iconset>
            </property>
            <property name="iconSize">
@@ -537,8 +559,6 @@
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../images.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

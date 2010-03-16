@@ -149,7 +149,7 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     ui.unvalidGPGkeyWidget->sortItems( 1, Qt::AscendingOrder );
 
     //ui.networkTab->addTab(new NetworkView(),QString(tr("Network View")));
-    ui.networkTab->addTab(new TrustView(),QString(tr("Trust matrix")));
+    ui.networkTab->addTab(new TrustView(),QString(tr("Authentication matrix")));
      
     QString version = "-";
     std::map<std::string, std::string>::iterator vit;
