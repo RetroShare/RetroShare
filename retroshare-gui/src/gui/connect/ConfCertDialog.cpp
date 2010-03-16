@@ -174,6 +174,8 @@ void ConfCertDialog::loadDialog()
         }
 
         if (detail.gpg_id == rsPeers->getGPGOwnId()) {
+            ui.gpgSignInfoBrowser->hide();
+            ui.gpgTrustInfoBrowser->hide();
             ui.make_friend_button->hide();
             ui.signGPGKeyCheckBox->hide();
             ui.signKeyButton->hide();
@@ -188,6 +190,8 @@ void ConfCertDialog::loadDialog()
             ui.signersBox->setTitle(tr("Your key is signed by : "));
 
         } else {
+            ui.gpgSignInfoBrowser->show();
+            ui.gpgTrustInfoBrowser->show();
             ui.make_friend_button->show();
             ui.signGPGKeyCheckBox->show();
             ui.signKeyButton->show();
