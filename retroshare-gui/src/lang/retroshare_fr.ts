@@ -421,47 +421,43 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">%1 RetroShare</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/ApplicationWindow.cpp" line="213"/>
+        <location filename="../gui/unfinished/ApplicationWindow.cpp" line="179"/>
         <source>Hide</source>
         <translation>Cacher</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/ApplicationWindow.cpp" line="213"/>
+        <location filename="../gui/unfinished/ApplicationWindow.cpp" line="179"/>
         <source>Show</source>
         <translation>Montrer</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/ApplicationWindow.cpp" line="105"/>
         <source>Peers</source>
-        <translation>Personne</translation>
+        <translation type="obsolete">Personne</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/ApplicationWindow.cpp" line="109"/>
         <source>Transfers</source>
-        <translation>Transferts</translation>
+        <translation type="obsolete">Transferts</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/ApplicationWindow.cpp" line="113"/>
         <source>Messages</source>
-        <translation>Messages</translation>
+        <translation type="obsolete">Messages</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/ApplicationWindow.cpp" line="117"/>
         <source>Blog Feed</source>
-        <translation>Fil d&apos;actualité du Blog</translation>
+        <translation type="obsolete">Fil d&apos;actualité du Blog</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/ApplicationWindow.cpp" line="122"/>
+        <location filename="../gui/unfinished/ApplicationWindow.cpp" line="93"/>
         <source>Games Launcher</source>
         <translation>Lanceur de jeux</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/ApplicationWindow.cpp" line="126"/>
+        <location filename="../gui/unfinished/ApplicationWindow.cpp" line="89"/>
         <source>Photo View</source>
         <translation>Visionneuse d&apos;image</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/ApplicationWindow.cpp" line="131"/>
+        <location filename="../gui/unfinished/ApplicationWindow.cpp" line="97"/>
         <source>Shared Calendars</source>
         <translation>Calendriers partagés</translation>
     </message>
@@ -470,13 +466,13 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Librairie</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/ApplicationWindow.cpp" line="101"/>
+        <location filename="../gui/unfinished/ApplicationWindow.cpp" line="85"/>
         <source>Statistics</source>
         <translation>Statistiques</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/ApplicationWindow.ui" line="485"/>
-        <location filename="../gui/unfinished/ApplicationWindow.cpp" line="87"/>
+        <location filename="../gui/unfinished/ApplicationWindow.cpp" line="71"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
@@ -2297,7 +2293,7 @@ Disponible : %3</translation>
 <context>
     <name>ConfCertDialog</name>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="532"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="554"/>
         <source>Cancel</source>
         <translation>Annuler</translation>
     </message>
@@ -2322,7 +2318,7 @@ Disponible : %3</translation>
         <translation type="obsolete">Signer le certificat</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="519"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="541"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
@@ -2357,68 +2353,68 @@ Disponible : %3</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.cpp" line="123"/>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="290"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="294"/>
         <source>RetroShare</source>
         <translation type="unfinished">RetroShare</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.cpp" line="124"/>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="291"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="295"/>
         <source>Error : cannot get peer details.</source>
         <translation type="unfinished">Erreur : impossible d&apos;obtenir les détails de cette personne.</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="188"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="190"/>
         <source>Your key is signed by : </source>
         <translation type="unfinished">Votre clé a été signée par : </translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="202"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="206"/>
         <source>Peer key is signed by : </source>
         <translation type="unfinished">La clé de la personne a été signée par : </translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="231"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="235"/>
         <source>Your trust in this peer is ultimate, it&apos;s probably a key you own.</source>
         <translation type="unfinished">Votre confiance envers cette personne est ultime, c&apos;est probablement une de vos propre clé.</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="240"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="244"/>
         <source>Your trust in this peer is full.</source>
         <translation type="unfinished">Votre faites totalement confiance en cette personne.</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="246"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="250"/>
         <source>Your trust in this peer is marginal.</source>
         <translation type="unfinished">Votre faites moyennement confiance en cette personne.</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="252"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="256"/>
         <source>Your trust in this peer is none.</source>
         <translation type="unfinished">Vous ne faites pas confiance à cette personne.</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="258"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="262"/>
         <source>Your trust in this peer is not set.</source>
         <translation type="unfinished">Vous n&apos;avez pas déterminé votre niveau de confiance envers cette personne.</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="266"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="270"/>
         <source>Peer has authenticated me as a friend and did sign my GPG key</source>
         <translation type="unfinished">Cette personne m&apos;a authentifié comme ami et a signé ma clé PGP</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="268"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="272"/>
         <source>Peer has not authenticated me as a friend and did not sign my GPG key</source>
         <translation type="unfinished">Cette personne ne m&apos;a pas authentifié comme ami et n&apos;a pas signé ma clé PGP</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="354"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="358"/>
         <source>Signature Failure</source>
         <translation type="unfinished">Signature échouée</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="355"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="359"/>
         <source>Maybe password is wrong</source>
         <translation type="unfinished">Peut-être que le mot de passe est incorrect</translation>
     </message>
@@ -2468,17 +2464,50 @@ Disponible : %3</translation>
         <translation type="unfinished">Confiance</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="413"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="277"/>
+        <source>None </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="300"/>
+        <source>Marginal </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="323"/>
+        <source>Full </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="342"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The trust settings refers to the gnupg web of trust mecanism. This trust means how you trust your friends when he is signing other gpg keys. If you set your trust to &quot;full&quot;, it means that when your friend sign a key, this key will be shown as validated by the web of trust in the network view.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="396"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;You should sign a key when you are sure that the person who claims ownership on this key is the real owner of the key.  When you are sure that the name of the key owner is the real name of the emmitter of this key, you may sign it to confirm it. Signing the key will be public unless public discovery is not setted. This means you friends can check if you did sign someone&apos;s key.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="435"/>
         <source>SignGPG Key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="446"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="468"/>
         <source>Deny Friend</source>
         <translation type="unfinished">Ignorer cet ami</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="466"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="488"/>
         <source>Make Friend</source>
         <translation type="unfinished">Devenir ami</translation>
     </message>
@@ -2487,7 +2516,7 @@ Disponible : %3</translation>
         <translation type="obsolete">Devenir amis</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="393"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="415"/>
         <source>Sign GPG key</source>
         <translation type="unfinished">Signer la clé PGP</translation>
     </message>
@@ -2531,32 +2560,29 @@ Disponible : %3</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="277"/>
         <source>None</source>
-        <translation type="unfinished">Aucun</translation>
+        <translation type="obsolete">Aucun</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="300"/>
         <source>Marginal</source>
-        <translation type="unfinished">Moyenne</translation>
+        <translation type="obsolete">Moyenne</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="323"/>
         <source>Full</source>
-        <translation type="unfinished">Totale</translation>
+        <translation type="obsolete">Totale</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="348"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="359"/>
         <source>GPG Key</source>
         <translation type="unfinished">Clé GPG</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="366"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="377"/>
         <source>Peer has signed my GPG key</source>
         <translation type="unfinished">Cette personne a signé ma clé PGP</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="373"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="384"/>
         <source>Peer key is signed by :</source>
         <translation type="unfinished">La clé de cette personne a été signée par :</translation>
     </message>
@@ -3340,22 +3366,22 @@ p, li { white-space: pre-wrap; }
         <translation>Poster un message sur le forum</translation>
     </message>
     <message>
-        <location filename="../gui/forums/CreateForumMsg.cpp" line="89"/>
+        <location filename="../gui/forums/CreateForumMsg.cpp" line="92"/>
         <source>Paste retroshare Link</source>
         <translation type="unfinished">Coller le lien RetroShare</translation>
     </message>
     <message>
-        <location filename="../gui/forums/CreateForumMsg.cpp" line="166"/>
+        <location filename="../gui/forums/CreateForumMsg.cpp" line="169"/>
         <source>RetroShare</source>
         <translation type="unfinished">RetroShare</translation>
     </message>
     <message>
-        <location filename="../gui/forums/CreateForumMsg.cpp" line="166"/>
+        <location filename="../gui/forums/CreateForumMsg.cpp" line="169"/>
         <source>Please set a Forum Subject and Forum Message</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/forums/CreateForumMsg.cpp" line="346"/>
+        <location filename="../gui/forums/CreateForumMsg.cpp" line="349"/>
         <source>Add Extra File</source>
         <translation type="unfinished">Ajouter un fichier supplémentaire</translation>
     </message>
@@ -8270,9 +8296,8 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Détails du peer</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="152"/>
         <source>Trust matrix</source>
-        <translation>Matrice de confiance</translation>
+        <translation type="obsolete">Matrice de confiance</translation>
     </message>
     <message>
         <source>View</source>
@@ -8333,6 +8358,11 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Never seen</source>
         <translation type="obsolete">Jamais vu</translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.cpp" line="152"/>
+        <source>Authentication matrix</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="447"/>
@@ -10725,9 +10755,13 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Redirection manuelle des ports</translation>
     </message>
     <message>
-        <location filename="../gui/QuickStartWizard.ui" line="435"/>
         <source>Dicovery :</source>
-        <translation type="unfinished">Découverte :</translation>
+        <translation type="obsolete">Découverte :</translation>
+    </message>
+    <message>
+        <location filename="../gui/QuickStartWizard.ui" line="435"/>
+        <source>Discovery :</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/QuickStartWizard.ui" line="443"/>
@@ -11984,18 +12018,18 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Message ami </translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="685"/>
-        <location filename="../gui/SharedFilesDialog.cpp" line="740"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="686"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="741"/>
         <source>Open File</source>
         <translation>Ouvrir le fichier</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="688"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="689"/>
         <source>Open Folder</source>
         <translation>Ouvrir le dossier</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="749"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="750"/>
         <source>Set command for opening this file</source>
         <translation>Définir une commande d&apos;ouverture pour ce fichier</translation>
     </message>
@@ -12020,47 +12054,46 @@ p, li { white-space: pre-wrap; }
         <translation>Evoyer un lien RetroShare</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="620"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="621"/>
         <source>Recommend (Automated message) To </source>
         <translation>Recommender (Message automatique) à </translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="622"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="623"/>
         <source>Recommend in a message to </source>
         <translation>Recommender dans un message à </translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="664"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="665"/>
         <source>Copy retroshare Links to Clipboard</source>
         <translation>Copier le lien retroshare</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="667"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="668"/>
         <source>Copy retroshare Links to Clipboard (HTML)</source>
         <translation>Copier le lien retroshare</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="670"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="671"/>
         <source>Send retroshare Links</source>
         <translation>Evoyer un lien retroshare</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="673"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="674"/>
         <source>Send retroshare Links (HTML)</source>
         <translation>Envoyer le lien RetroShare (html)</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="676"/>
         <source>Send retroshare Links to Chat</source>
-        <translation>Envoyer le lien RetroShare dans le Chat public</translation>
+        <translation type="obsolete">Envoyer le lien RetroShare dans le Chat public</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="679"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="680"/>
         <source>Send retroshare Links to Cloud</source>
         <translation>Envoyer le lien RetroShare dans le nuage de liens</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="682"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="683"/>
         <source>Add Links to Cloud</source>
         <translation></translation>
     </message>
@@ -12081,17 +12114,17 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Ajouter le lien dans le nuage de liens</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="818"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="819"/>
         <source>&lt;strong&gt;My Shared Files&lt;/strong&gt;</source>
         <translation type="unfinished">&lt;strong&gt;Mes fichiers partagés&lt;/strong&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="832"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="833"/>
         <source>&lt;strong&gt;Friends Files&lt;/strong&gt;</source>
         <translation type="unfinished">&lt;strong&gt;Les fichiers de mes amis&lt;/strong&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="847"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="848"/>
         <source>&lt;strong&gt;Files&lt;/strong&gt;</source>
         <translation type="unfinished">&lt;strong&gt;Fichiers&lt;/strong&gt;</translation>
     </message>
@@ -13138,20 +13171,20 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="317"/>
-        <location filename="../gui/TransfersDialog.cpp" line="703"/>
+        <location filename="../gui/TransfersDialog.cpp" line="746"/>
         <source>Slower</source>
         <translation type="unfinished">Basse</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="319"/>
-        <location filename="../gui/TransfersDialog.cpp" line="704"/>
-        <location filename="../gui/TransfersDialog.cpp" line="706"/>
+        <location filename="../gui/TransfersDialog.cpp" line="747"/>
+        <location filename="../gui/TransfersDialog.cpp" line="749"/>
         <source>Average</source>
         <translation type="unfinished">Normale</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="321"/>
-        <location filename="../gui/TransfersDialog.cpp" line="705"/>
+        <location filename="../gui/TransfersDialog.cpp" line="748"/>
         <source>Faster</source>
         <translation type="unfinished">Plus rapide</translation>
     </message>
@@ -13200,56 +13233,56 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Méthode de téléchargement</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="687"/>
-        <location filename="../gui/TransfersDialog.cpp" line="746"/>
-        <location filename="../gui/TransfersDialog.cpp" line="858"/>
-        <location filename="../gui/TransfersDialog.cpp" line="907"/>
+        <location filename="../gui/TransfersDialog.cpp" line="729"/>
+        <location filename="../gui/TransfersDialog.cpp" line="789"/>
+        <location filename="../gui/TransfersDialog.cpp" line="899"/>
+        <location filename="../gui/TransfersDialog.cpp" line="948"/>
         <source>Failed</source>
         <translation type="unfinished">Echoué</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="688"/>
-        <location filename="../gui/TransfersDialog.cpp" line="747"/>
-        <location filename="../gui/TransfersDialog.cpp" line="859"/>
-        <location filename="../gui/TransfersDialog.cpp" line="908"/>
+        <location filename="../gui/TransfersDialog.cpp" line="730"/>
+        <location filename="../gui/TransfersDialog.cpp" line="790"/>
+        <location filename="../gui/TransfersDialog.cpp" line="900"/>
+        <location filename="../gui/TransfersDialog.cpp" line="949"/>
         <source>Okay</source>
         <translation type="unfinished">OK</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="689"/>
-        <location filename="../gui/TransfersDialog.cpp" line="860"/>
-        <location filename="../gui/TransfersDialog.cpp" line="909"/>
+        <location filename="../gui/TransfersDialog.cpp" line="731"/>
+        <location filename="../gui/TransfersDialog.cpp" line="901"/>
+        <location filename="../gui/TransfersDialog.cpp" line="950"/>
         <source>Waiting</source>
         <translation type="unfinished">En attente</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="690"/>
-        <location filename="../gui/TransfersDialog.cpp" line="749"/>
+        <location filename="../gui/TransfersDialog.cpp" line="732"/>
+        <location filename="../gui/TransfersDialog.cpp" line="792"/>
         <source>Downloading</source>
         <translation type="unfinished">En cours de téléchargement</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="691"/>
-        <location filename="../gui/TransfersDialog.cpp" line="750"/>
-        <location filename="../gui/TransfersDialog.cpp" line="862"/>
-        <location filename="../gui/TransfersDialog.cpp" line="863"/>
-        <location filename="../gui/TransfersDialog.cpp" line="911"/>
-        <location filename="../gui/TransfersDialog.cpp" line="912"/>
+        <location filename="../gui/TransfersDialog.cpp" line="733"/>
+        <location filename="../gui/TransfersDialog.cpp" line="793"/>
+        <location filename="../gui/TransfersDialog.cpp" line="903"/>
+        <location filename="../gui/TransfersDialog.cpp" line="904"/>
+        <location filename="../gui/TransfersDialog.cpp" line="952"/>
+        <location filename="../gui/TransfersDialog.cpp" line="953"/>
         <source>Complete</source>
         <translation type="unfinished">Termine</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="693"/>
+        <location filename="../gui/TransfersDialog.cpp" line="736"/>
         <source>Unknown</source>
         <translation type="unfinished">Inconnu</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="741"/>
+        <location filename="../gui/TransfersDialog.cpp" line="784"/>
         <source>version: </source>
         <translation type="unfinished">Version : </translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="692"/>
+        <location filename="../gui/TransfersDialog.cpp" line="734"/>
         <source>Queued</source>
         <translation type="unfinished">En file d&apos;attente</translation>
     </message>
@@ -13284,33 +13317,38 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="861"/>
-        <location filename="../gui/TransfersDialog.cpp" line="910"/>
+        <location filename="../gui/TransfersDialog.cpp" line="735"/>
+        <source>Paused</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/TransfersDialog.cpp" line="902"/>
+        <location filename="../gui/TransfersDialog.cpp" line="951"/>
         <source>Uploading</source>
         <translation type="unfinished">En cours d&apos;envoi</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="952"/>
+        <location filename="../gui/TransfersDialog.cpp" line="993"/>
         <source>RetroShare</source>
         <translation type="unfinished">RetroShare</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="1044"/>
+        <location filename="../gui/TransfersDialog.cpp" line="1085"/>
         <source>Details:</source>
         <translation type="unfinished">Détails :</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="1268"/>
+        <location filename="../gui/TransfersDialog.cpp" line="1306"/>
         <source>Open Transfer</source>
         <translation type="unfinished">Ouvrir le transfert</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="1269"/>
+        <location filename="../gui/TransfersDialog.cpp" line="1307"/>
         <source>File %1 is not completed. If it is a media file, try to preview it.</source>
         <translation type="unfinished">Le fichier %1 n&apos;est pas terminé. Si c&apos;est un fichier multimédia, essayez de le prévisualiser.</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="950"/>
+        <location filename="../gui/TransfersDialog.cpp" line="991"/>
         <source>Are you sure that you want to cancel and delete these files?</source>
         <translation type="unfinished">Etes-vous sûr de vouloir annuler et d&apos;effacer ces fichiers ?</translation>
     </message>
@@ -13345,22 +13383,32 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/TrustView.cpp" line="202"/>
-        <source> is trusted (one way) by </source>
+        <source> is athenticated (one way) by </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/TrustView.cpp" line="210"/>
+        <source> athenticated himself</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/TrustView.cpp" line="215"/>
+        <source> athenticated each others</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/TrustView.cpp" line="222"/>
+        <source> is athenticated by </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/TrustView.cpp" line="225"/>
+        <source> athenticated </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/TrustView.cpp" line="203"/>
         <source>Half</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/TrustView.cpp" line="210"/>
-        <source> trusts himself</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/TrustView.cpp" line="215"/>
-        <source> trust each others</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -13370,18 +13418,8 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/TrustView.cpp" line="222"/>
-        <source> is trusted by </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/TrustView.cpp" line="222"/>
         <location filename="../gui/TrustView.cpp" line="225"/>
         <source> peers, including him(her)self.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/TrustView.cpp" line="225"/>
-        <source> trusts </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
