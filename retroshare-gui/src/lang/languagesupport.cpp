@@ -34,28 +34,28 @@ LanguageSupport::languages()
 {
   static QMap<QString, QString> languages;
   if (languages.isEmpty()) {
-    languages.insert("af",    "Afrikaans");
-    languages.insert("bg",    "Bulgarien");
-    languages.insert("cy",    "Welsh");
+    //languages.insert("af",    "Afrikaans");
+    //languages.insert("bg",    "Bulgarien");
+    //languages.insert("cy",    "Welsh");
     languages.insert("de",    "Deutsch");
-    languages.insert("da",    "Danish");
+    //languages.insert("da",    "Danish");
     languages.insert("en",    "English");
-    languages.insert("es",    QString::fromUtf8("spanish"));
+    //languages.insert("es",    QString::fromUtf8("spanish"));
     languages.insert("fr",    QString::fromUtf8("Fran\303\247ais"));
-    languages.insert("fi",    "suomi");
-    languages.insert("gr",    "Greek");
-    languages.insert("it",    "Italiano");
+    //languages.insert("fi",    "suomi");
+    //languages.insert("gr",    "Greek");
+    //languages.insert("it",    "Italiano");
     languages.insert("ja_JP",    QString::fromUtf8("\346\227\245\346\234\254\350\252\236"));
     languages.insert("ko",    "Korean");
-    languages.insert("pl",    "Polish");
-    languages.insert("pt",    "Portuguese");
+    //languages.insert("pl",    "Polish");
+    //languages.insert("pt",    "Portuguese");
     languages.insert("ru",    QString::fromUtf8("\320\240\321\203\321\201\321\201\320\272\320\270\320\271"));
-    languages.insert("sl",    "slovenian");
-    languages.insert("sr",    "Serbian");
+    //languages.insert("sl",    "slovenian");
+    //languages.insert("sr",    "Serbian");
     languages.insert("sv",    "svenska");     
     languages.insert("tr",    QString::fromUtf8("T\303\274rk\303\247e"));
     languages.insert("zh_CN", QString::fromUtf8("\347\256\200\344\275\223\345\255\227"));
-    languages.insert("zh_TW", QString::fromUtf8("\347\260\241\351\253\224\345\255\227"));
+    //languages.insert("zh_TW", QString::fromUtf8("\347\260\241\351\253\224\345\255\227"));
   }
   return languages;
 }

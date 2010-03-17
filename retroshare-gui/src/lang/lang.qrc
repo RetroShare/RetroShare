@@ -1,27 +1,14 @@
 <RCC>
   <qresource prefix="/lang">
-    <file>retroshare_af.qm</file>
-    <file>retroshare_bg.qm</file>
     <file>retroshare_en.qm</file>
-    <file>retroshare_da.qm</file>
     <file>retroshare_de.qm</file>
-    <file>retroshare_es.qm</file>
-    <file>retroshare_fi.qm</file>
     <file>retroshare_fr.qm</file>
-    <file>retroshare_cy.qm</file>
-    <file>retroshare_gr.qm</file>
-    <file>retroshare_it.qm</file>
     <file>retroshare_ja_JP.qm</file>
     <file>retroshare_ko.qm</file>
-    <file>retroshare_pl.qm</file>
-    <file>retroshare_pt.qm</file>
     <file>retroshare_ru.qm</file>
     <file>retroshare_tr.qm</file>
-    <file>retroshare_sl.qm</file>
-    <file>retroshare_sr.qm</file>
     <file>retroshare_sv.qm</file>
     <file>retroshare_zh_CN.qm</file>
-    <file>retroshare_zh_TW.qm</file>
   </qresource>
 </RCC>
 

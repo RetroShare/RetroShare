@@ -76,14 +76,14 @@ win32 {
     #QTPLUGIN += qjpeg
 
     LIBS += ../../libretroshare/src/lib/libretroshare.a
-    LIBS += -L"../../../../lib" 
+    LIBS += -L"../../../../../lib" 
     LIBS += -lssl -lcrypto -lgpgme -lpthreadGC2d -lminiupnpc -lz
     LIBS += -lws2_32 -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32
     LIBS += -lole32 -lwinmm
     RC_FILE = gui/images/retroshare_win.rc
 
-    GPG_ERROR_DIR = ../../../../libgpg-error-1.7
-    GPGME_DIR  = ../../../../gpgme-1.1.8
+    GPG_ERROR_DIR = ../../../../../libgpg-error-1.7
+    GPGME_DIR  = ../../../../../gpgme-1.1.8
     INCLUDEPATH += . $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src
 }
 
@@ -428,25 +428,13 @@ RESOURCES += gui/images.qrc lang/lang.qrc gui/help/content/content.qrc
 TRANSLATIONS +=  \
             lang/retroshare_en.ts \
             lang/retroshare_de.ts \
-            lang/retroshare_da.ts \
-            lang/retroshare_bg.ts \
-            lang/retroshare_es.ts \
-            lang/retroshare_fi.ts \
             lang/retroshare_fr.ts \
-            lang/retroshare_af.ts  \
-            lang/retroshare_gr.ts  \
-            lang/retroshare_it.ts  \
             lang/retroshare_ja_JP.ts  \
             lang/retroshare_ko.ts  \
-            lang/retroshare_pl.ts  \
-            lang/retroshare_pt.ts  \
             lang/retroshare_ru.ts  \
             lang/retroshare_tr.ts \
-            lang/retroshare_sl.ts \
-            lang/retroshare_sr.ts \
             lang/retroshare_sv.ts \
-            lang/retroshare_zh_CN.ts \
-            lang/retroshare_zh_TW.ts
+            lang/retroshare_zh_CN.ts
 
 # Shifted Qt4.4 dependancies to here.
 #    qmake CONFIG=pluginmgr
