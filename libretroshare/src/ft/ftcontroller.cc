@@ -1147,6 +1147,8 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 	ftFileCreator *fc = new ftFileCreator(savepath, size, hash);
 	ftTransferModule *tm = new ftTransferModule(fc, mDataplex,this);
 
+	fc->setChunkStrategy(mDefaultChunkStrategy) ;
+
 	/* add into maps */
 	ftFileControl *ftfc = new ftFileControl(fname, savepath, destination, size, hash, flags, fc, tm, callbackCode);
 	ftfc->mCreateTime = time(NULL);
@@ -1726,6 +1728,7 @@ bool ftController::CancelCacheFile(RsPeerId id, std::string path, std::string ha
 const std::string download_dir_ss("DOWN_DIR");
 const std::string partial_dir_ss("PART_DIR");
 const std::string share_dwl_dir("SHARE_DWL_DIR");
+const std::string default_chunk_strategy_ss("DEFAULT_CHUNK_STRATEGY");
 
 
 	/* p3Config Interface */
@@ -1757,6 +1760,7 @@ std::list<RsItem *> ftController::saveList(bool &cleanup)
 	configMap[download_dir_ss] = getDownloadDirectory();
 	configMap[partial_dir_ss] = getPartialsDirectory();
 	configMap[share_dwl_dir] = mShareDownloadDir ? "YES" : "NO";
+	configMap[default_chunk_strategy_ss] = (mDefaultChunkStrategy==FileChunksInfo::CHUNK_STRATEGY_STREAMING) ? "STREAMING" : "RANDOM";
 
 	RsConfigKeyValueSet *rskv = new RsConfigKeyValueSet();
 
@@ -1940,15 +1944,39 @@ bool  ftController::loadConfigMap(std::map<std::string, std::string> &configMap)
 		}
 	}
 
+	if (configMap.end() != (mit = configMap.find(default_chunk_strategy_ss)))
+	{
+		if(mit->second == "STREAMING")
+			setDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_STREAMING) ;
+		else if(mit->second == "RANDOM")
+			setDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_RANDOM) ;
+	}
+
 	return true;
+}
+
+FileChunksInfo::ChunkStrategy ftController::defaultChunkStrategy()
+{
+	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+	return mDefaultChunkStrategy ;
+}
+void ftController::setDefaultChunkStrategy(FileChunksInfo::ChunkStrategy S)
+{
+	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+	mDefaultChunkStrategy = S ;
+	IndicateConfigChanged() ;
 }
 
 void ftController::setShareDownloadDirectory(bool value)
 {
+	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 	mShareDownloadDir = value;
+	IndicateConfigChanged() ;
 }
 
 bool ftController::getShareDownloadDirectory()
 {
+	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 	return mShareDownloadDir;
 }
+
