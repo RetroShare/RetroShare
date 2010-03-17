@@ -88,11 +88,11 @@ bool ftFileCreator::addFileData(uint64_t offset, uint32_t chunk_size, void *data
 	/* dodgey checking outside of mutex...  much check again inside FileAttrs(). */
 	/* Check File is open */
 
-	if (fd == NULL)
-		if (!initializeFileAttrs())
-			return false;
-
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
+
+	if (fd == NULL)
+		if (!locked_initializeFileAttrs())
+			return false;
 
 	/* 
 	 * check its at the correct location 
@@ -109,13 +109,13 @@ bool ftFileCreator::addFileData(uint64_t offset, uint32_t chunk_size, void *data
 	 */
 	if (0 != fseeko64(this->fd, offset, SEEK_SET))
 	{
-		std::cerr << "ftFileCreator::addFileData() Bad fseek" << std::endl;
+		std::cerr << "ftFileCreator::addFileData() Bad fseek at offset " << offset << ", fd=" << (void*)(this->fd) << ", size=" << mSize << ", errno=" << errno << std::endl;
 		return 0;
 	}
 	
 	if (1 != fwrite(data, chunk_size, 1, this->fd))
 	{
-        	std::cerr << "ftFileCreator::addFileData() Bad fwrite" << std::endl;
+        	std::cerr << "ftFileCreator::addFileData() Bad fwrite." << std::endl;
         	std::cerr << "ERRNO: " << errno << std::endl;
 
 		return 0;
@@ -186,36 +186,35 @@ void ftFileCreator::removeFileSource(const std::string& peer_id)
 	chunkMap.removeFileSource(peer_id) ;
 }
 
-int ftFileCreator::initializeFileAttrs()
+int ftFileCreator::locked_initializeFileAttrs()
 {
-        #ifdef FILE_DEBUG
-        std::cerr << "ftFileCreator::initializeFileAttrs() Filename: " << file_name << " this: " << this << std::endl;
-        #endif
+#ifdef FILE_DEBUG
+	std::cerr << "ftFileCreator::initializeFileAttrs() Filename: " << file_name << " this: " << this << std::endl;
+#endif
 
 	/* 
-         * check if the file exists 
+	 * check if the file exists 
 	 * cant use FileProviders verion because that opens readonly.
-         */
+	 */
 
-        RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 	if (fd)
 		return 1;
 
 	/* 
-         * check if the file exists 
-         */
-	
+	 * check if the file exists 
+	 */
+
 	{
-                #ifdef FILE_DEBUG
-                std::cerr << "ftFileCreator::initializeFileAttrs() trying (r+b) " << file_name << " this: " << this << std::endl;
-                #endif
+#ifdef FILE_DEBUG
+		std::cerr << "ftFileCreator::initializeFileAttrs() trying (r+b) " << file_name << " this: " << this << std::endl;
+#endif
 		std::cerr << std::endl;
 	}
 
 	/* 
-         * attempt to open file 
-         */
-	
+	 * attempt to open file 
+	 */
+
 	fd = fopen64(file_name.c_str(), "r+b");
 
 	if (!fd)
@@ -235,21 +234,6 @@ int ftFileCreator::initializeFileAttrs()
 			return 0;
 		}
 	}
-
-
-
-
-	/*
-         * if it opened, find it's length 
-	 * move to the end 
-         */
-	
-//	if (0 != fseeko64(fd, 0L, SEEK_END))
-//	{
-//        	std::cerr << "ftFileCreator::initializeFileAttrs() Seek Failed" << std::endl;
-//		return 0;
-//	}
-
 #ifdef FILE_DEBUG
 	std::cerr << "ftFileCreator::initializeFileAttrs() File Expected Size: " << mSize << " RecvdSize: " << recvdsize << std::endl;
 #endif

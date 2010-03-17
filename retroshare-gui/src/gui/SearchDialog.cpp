@@ -1210,6 +1210,7 @@ void SearchDialog::copysearchLink()
 
 			 RetroShareLink link(fname, fsize, fhash);
 
+			 std::cerr << "new link added to clipboard: " << link.toString().toStdString() << std::endl ;
 			 if(link.valid())
 				 urls.push_back(link) ;
 		 } 

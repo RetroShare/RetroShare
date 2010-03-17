@@ -727,6 +727,7 @@ bool ftController::completeFile(std::string hash)
 
 		if (fc->mCreator)
 		{
+			fc->mCreator->closeFile() ;
 			delete fc->mCreator;
 			fc->mCreator = NULL;
 		}
@@ -929,6 +930,11 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 			uint64_t size, std::string dest, uint32_t flags,
 			std::list<std::string> &srcIds)
 {
+	/* check if we have the file */
+
+	if(alreadyHaveFile(hash))
+		return false ;
+
 	if(size == 0)	// we treat this special case because
 	{
 		/* if no destpath - send to download directory */
@@ -966,11 +972,6 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 			return true;
 		}
 	}
-
-	/* check if we have the file */
-
-	if(alreadyHaveFile(hash))
-		return true ;
 
 	FileInfo info;
 	std::list<std::string>::iterator it;

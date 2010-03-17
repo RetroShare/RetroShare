@@ -383,7 +383,7 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 
 		if(all_downloading)
 			contextMnu.addMenu( chunkMenu);
-			
+
 	if(single)
 	{
 		if(info.downloadStatus == FT_STATE_PAUSED)
@@ -400,16 +400,15 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 
 	if(single)
 	{
-    if (addOpenFileOption)
-		contextMnu.addAction( openfileAct);
+		if (addOpenFileOption)
+			contextMnu.addAction( openfileAct);
 
 #ifndef RS_RELEASE_VERSION		
 		contextMnu.addAction( previewfileAct);
 #endif		
-    contextMnu.addAction( openfolderAct);
+		contextMnu.addAction( openfolderAct);
 		contextMnu.addAction( detailsfileAct);
 		contextMnu.addSeparator();
-
 	}
 
 	contextMnu.addAction( clearcompletedAct);
@@ -774,6 +773,7 @@ void TransfersDialog::insertTransfers()
 
 		std::set<int> used_rows ;
 
+		if(info.downloadStatus != FT_STATE_COMPLETE)
 		for (pit = info.peers.begin(); pit != info.peers.end(); pit++) 
 		{
 			QString peerName        = getPeerName(pit->peerId);
@@ -794,7 +794,7 @@ void TransfersDialog::insertTransfers()
 				default:                    status = tr(""); break;
 			}
 			double peerDlspeed	= 0;
-			if ((uint32_t)pit->status == FT_STATE_DOWNLOADING && info.downloadStatus != FT_STATE_PAUSED) 
+			if ((uint32_t)pit->status == FT_STATE_DOWNLOADING && info.downloadStatus != FT_STATE_PAUSED && info.downloadStatus != FT_STATE_COMPLETE) 
 				peerDlspeed     = pit->tfRate * 1024.0;
 
 			FileProgressInfo peerpinfo ;
