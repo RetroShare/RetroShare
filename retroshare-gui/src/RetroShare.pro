@@ -526,40 +526,28 @@ unfinished {
 DEPENDPATH += gui/unfinished \
 
 HEADERS += gui/unfinished/ApplicationWindow.h \
-           gui/unfinished/BlogDialog.h \
            gui/unfinished/CalDialog.h \
            gui/unfinished/ExampleDialog.h \
            gui/unfinished/GamesDialog.h \
-           gui/unfinished/MsgFeed.h \
-           gui/unfinished/PeersFeed.h \
            gui/unfinished/PhotoDialog.h \
            gui/unfinished/PhotoShow.h \
-           gui/unfinished/StatisticDialog.h \
-           gui/unfinished/TransferFeed.h
+           gui/unfinished/StatisticDialog.h
 
 FORMS += gui/unfinished/ApplicationWindow.ui \
-         gui/unfinished/BlogDialog.ui \
          gui/unfinished/CalDialog.ui \
          gui/unfinished/ExampleDialog.ui \
          gui/unfinished/GamesDialog.ui \
-         gui/unfinished/MsgFeed.ui \
-         gui/unfinished/PeersFeed.ui \
          gui/unfinished/PhotoDialog.ui \
          gui/unfinished/PhotoShow.ui \
-         gui/unfinished/StatisticDialog.ui \
-         gui/unfinished/TransferFeed.ui 
+         gui/unfinished/StatisticDialog.ui
          
 SOURCES += gui/unfinished/ApplicationWindow.cpp \
-           gui/unfinished/BlogDialog.cpp \
            gui/unfinished/CalDialog.cpp \
            gui/unfinished/ExampleDialog.cpp \
            gui/unfinished/GamesDialog.cpp \
-           gui/unfinished/MsgFeed.cpp \
-           gui/unfinished/PeersFeed.cpp \
            gui/unfinished/PhotoDialog.cpp \
            gui/unfinished/PhotoShow.cpp \
-           gui/unfinished/StatisticDialog.cpp \
-           gui/unfinished/TransferFeed.cpp
+           gui/unfinished/StatisticDialog.cpp
 
           DEFINES *= UNFINISHED
 }

@@ -39,38 +39,31 @@ public:
   LibraryDialog(QWidget *parent = 0);
   /** Default Destructor */
 
-  	QString filePass();
-  	QString LibShared;
-  	QString filechose;
-  	QModelIndex ind;
 
 private slots:
   
   	void PopulateList();
   	
   	void CallShareFilesBtn_library();
-	void CallTileViewBtn_library();
-	void CallShowDetailsBtn_library();
-	void CallCreateAlbumBtn_library();
-	void CallDeleteAlbumBtn_library();		
+    void CallTileViewBtn_library();
+    void CallShowDetailsBtn_library();
+    void CallCreateAlbumBtn_library();
+    void CallDeleteAlbumBtn_library();		
     void CallFindBtn_library();
     
     void browseFile();
     void player();
-	void ListLibrarymenu(QModelIndex,QPoint);
-	void PlayFrmList();
-	void copyFile();
-	void DeleteFile();
-	void RenameFile();
-	void StopRename();
+    void PlayFrmList();
+    void copyFile();
+    void DeleteFile();
+    void RenameFile();
+    void StopRename();
 
 
 signals:
-	void rightButtonClicked(const QModelIndex , const QPoint);
 
 
 private:
-     QTimer *progtime;
 
 
   /** Qt Designer generated object */

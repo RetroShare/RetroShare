@@ -23,15 +23,9 @@
 #include "rshare.h"
 #include "LibraryDialog.h"
 
-#include "rsiface/rsiface.h"
-#include "rsiface/rspeers.h"
-#include "rsiface/rsfiles.h"
 #include "ShareManager.h"
 
-
 #include "util/RsAction.h"
-#include "msgs/ChanMsgDialog.h"
-#include "FindWindow.h"
 
 #include <iostream>
 #include <sstream>
@@ -59,8 +53,6 @@
 #define IMAGE_PROGRESS       ":/images/browse-looking.gif"
 #define IMAGE_LIBRARY        ":/images/library.png"
 
-QString fileToFind;
-
 
 /** Constructor */
 LibraryDialog::LibraryDialog(QWidget *parent)
@@ -68,28 +60,24 @@ LibraryDialog::LibraryDialog(QWidget *parent)
 {
   	/* Invoke the Qt Designer generated object setup routine */
   	ui.setupUi(this);
-  
   	
-  	PopulateList();
-	
-	connect(ui.organizerListView, SIGNAL(rightButtonClicked(QModelIndex,QPoint)), this, SLOT(ListLibrarymenu(QModelIndex,QPoint)));
-	
 	connect(ui.shareFiles_btn,SIGNAL(clicked()),this, SLOT(CallShareFilesBtn_library()));
-	connect(ui.tileView_btn_library,SIGNAL(clicked()),this, SLOT(CallTileViewBtn_library()));
-	connect(ui.showDetails_btn_library,SIGNAL(clicked()),this, SLOT(CallShowDetailsBtn_library()));
-	connect(ui.createAlbum_btn_library,SIGNAL(clicked()),this, SLOT(CallCreateAlbumBtn_library()));
-	connect(ui.deleteAlbum_btn_library,SIGNAL(clicked()),this, SLOT(CallDeleteAlbumBtn_library()));
-	connect(ui.find_btn_library,SIGNAL(clicked()),this, SLOT(CallFindBtn_library()));
+	//connect(ui.tileView_btn_library,SIGNAL(clicked()),this, SLOT(CallTileViewBtn_library()));
+	//connect(ui.showDetails_btn_library,SIGNAL(clicked()),this, SLOT(CallShowDetailsBtn_library()));
+	//connect(ui.createAlbum_btn_library,SIGNAL(clicked()),this, SLOT(CallCreateAlbumBtn_library()));
+	//connect(ui.deleteAlbum_btn_library,SIGNAL(clicked()),this, SLOT(CallDeleteAlbumBtn_library()));
+	//connect(ui.find_btn_library,SIGNAL(clicked()),this, SLOT(CallFindBtn_library()));
+	
+	//Load the library
+	fileSystemModelLibraryFolders.setFilter(QDir::AllDirs|QDir::NoDotAndDotDot);
+	fileSystemModelLibraryFolders.setRootPath(Settings.Library.Shares.join(" "));
 
-  	  /* Set header resize modes and initial section sizes  */
-	QHeaderView * organizerheader = ui.organizertreeView->header();   
-   
-	organizerheader->resizeSection ( 0, 250 );
+	ui.treeViewLibraryNavigatorFolders->setModel(&fileSystemModelLibraryFolders);
   
 
-	QTimer *timer = new QTimer(this);
+	/*QTimer *timer = new QTimer(this);
 	timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
-	timer->start(1000);
+	timer->start(1000);*/
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -98,70 +86,6 @@ LibraryDialog::LibraryDialog(QWidget *parent)
 }
 
 
-void LibraryDialog::PopulateList()
-{
-	QDir DwnlFolder,ShrFolder,retroshareLib,treePath;
-
-#if 0
-	retroshareLib.mkdir("RetroShare Library");
-	DwnlFolder.mkdir("RetroShare Library/Download");
-	ShrFolder.mkdir("RetroShare Library/SharedFolder");
-	LibShared=treePath.currentPath();
-	LibShared.append("/RetroShare Library");
-#else
-	LibShared=Rshare::dataDirectory();
-#endif
-
-	QDirModel * dmodel=new QDirModel;
-	ui.organizertreeView->setModel(dmodel);
-	ui.organizertreeView->setRootIndex(dmodel->index(LibShared));
-	ui.organizerListView->setModel(dmodel);
-	ui.organizerListView->setViewMode(QListView::ListMode);
-	ui.organizerListView->setWordWrap (true);
-
-}
-
-
-void LibraryDialog::ListLibrarymenu(QModelIndex index,QPoint pos) 
-{
-	ind=index;
-	if(index.isValid())
-	{
-		bool indexselected=true;
-		QMenu rmenu(this);
-		rmenu.move(pos);
-		if(indexselected)
-		rmenu.addAction(QIcon(""),tr("Play"), this, SLOT(PlayFrmList()));
-		if(indexselected)
-		rmenu.addAction(QIcon(""),tr("Copy"), this, SLOT(copyFile()));
-		if(indexselected)
-		rmenu.addAction(QIcon(""),tr("Delete"), this, SLOT(DeleteFile()));
-		if(indexselected)
-		rmenu.addAction(QIcon(""),tr("Rename"), this, SLOT(RenameFile()));
-		rmenu.exec();
-	}
-	else
-		return;
-}
-
-void LibraryDialog::PlayFrmList() 
-{
-	QDirModel *dmodel=new QDirModel;
-	QModelIndex parentIndex = dmodel->index(LibShared+"/Download");
-    QModelIndex index = dmodel->index(ind.row(), 0, parentIndex);
-    QString text = dmodel->data(index, Qt::DisplayRole).toString();
-    
-    filechose.clear();
-    QDir dir;
-    filechose.append(LibShared+"/Download/");
-    filechose.append(text);
-    if(filechose.contains("avi")|| filechose.contains("MP3")||filechose.contains("mp3")|| filechose.contains("wmv")||filechose.contains("wav")|| filechose.contains("dat")|| filechose.contains("mov")|| filechose.contains("mpeg")|| filechose.contains("mpg"))
-    {
-    	player();
-	}
-    else 
-    	QMessageBox::information(this,"Information", "Not Supported By the Player");
-}
 
 void LibraryDialog::copyFile()
 {
@@ -175,17 +99,12 @@ void LibraryDialog::DeleteFile()
 
 void LibraryDialog::RenameFile()
 {
-	ui.organizerListView->openPersistentEditor (ind);
-	progtime=new QTimer(this);
-	progtime->start(100000);
-	connect(progtime, SIGNAL(timeout()), this, SLOT(StopRename()));
 	
 }
 
 void LibraryDialog::StopRename()
 {
-	ui.organizerListView->closePersistentEditor(ind);
-	progtime->stop();
+
 }
 
 
@@ -214,37 +133,18 @@ void LibraryDialog::CallDeleteAlbumBtn_library()
 	//QMessageBox::information(this, tr("RetroShare"),tr("Will be Introducing this .. soon- Delete Album in Library"));
 }
 
-QString LibraryDialog::filePass()
-{
-	fileToFind=ui.findEditmain->text();
-	return fileToFind;
-}
-
 void LibraryDialog::CallFindBtn_library()
 {
-	filePass();
-	FindWindow *files = new FindWindow(this);
-	files->show();
+
 }
 
 void LibraryDialog:: player()
 {
-	QString avi;
-	avi.append(filechose);
-	QStringList argu;
-	QString smlayer="./smplayer";
-	argu<<avi;
-	QProcess *retroshareplayer=new QProcess(this);
-	retroshareplayer->start(smlayer,argu);
+
 	
 }
 
 void LibraryDialog::browseFile()
  {
-	QDir dir;
-	 QString pathseted =dir.currentPath();
-	 pathseted.append("/RetroShare Library/Download");
-     filechose = QFileDialog::getOpenFileName(this, tr("Open File..."),
-    		 	pathseted, tr("Media-Files (*.avi *.mp3 *.wmv *.wav *.dat *.mov *.mpeg);;All Files (*)"));
-     //movieEdit->setText(filechose);
+
  }

@@ -37,7 +37,6 @@
 #include "CalDialog.h"
 #include "StatisticDialog.h"
 
-
 #define FONT        QFont("Arial", 9)
 
 /* Images for toolbar icons */
@@ -47,19 +46,11 @@
 #define IMAGE_GAMES             ":/images/kgames.png"
 #define IMAGE_PHOTO             ":/images/lphoto.png"
 #define IMAGE_BWGRAPH           ":/images/ksysguard.png"
-#define IMAGE_RSM32             ":/images/rsmessenger32.png"
-#define IMAGE_RSM16             ":/images/rsmessenger16.png"
 #define IMAGE_CLOSE             ":/images/close_normal.png"
 #define IMAGE_CALENDAR          ":/images/calendar.png"
 #define IMAGE_LIBRARY           ":/images/library.png"
 #define IMAGE_PLUGINS           ":/images/extension_32.png"
 
-
-
-/* Keys for UI Preferences */
-#define UI_PREF_PROMPT_ON_QUIT  "UIOptions/ConfirmOnQuit"
-/* uncomment this for release version */
-#define RS_RELEASE_VERSION    1
 
 /** Constructor */
 ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
@@ -103,8 +94,6 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
    ui.toolBar->addSeparator();
    connect(grp, SIGNAL(triggered(QAction *)), ui.stackPages, SLOT(showPage(QAction *)));
 
-    /* Create and bind the messenger button */
-    //addAction(new QAction(QIcon(IMAGE_SMPLAYER), tr("SMPlayer"), ui.toolBar), SLOT(showsmplayer()));
 
 }
 
