@@ -8243,7 +8243,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/QuickStartWizard.ui" line="29"/>
         <source>Quick Start Wizard</source>
-        <translation type="unfinished">快速启动向导</translation>
+        <translation>快速启动向导</translation>
     </message>
     <message>
         <location filename="../gui/QuickStartWizard.ui" line="147"/>
@@ -8338,7 +8338,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/QuickStartWizard.ui" line="435"/>
         <source>Discovery :</source>
-        <translation type="unfinished"></translation>
+        <translation>发现：</translation>
     </message>
     <message>
         <location filename="../gui/QuickStartWizard.ui" line="443"/>
