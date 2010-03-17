@@ -739,47 +739,48 @@ void TransfersDialog::insertTransfers()
 
 		std::set<int> used_rows ;
 
-		for (pit = info.peers.begin(); pit != info.peers.end(); pit++) 
-		{
-			QString peerName        = getPeerName(pit->peerId);
-			//unique combination: fileHash + peerId, variant: hash + peerName (too long)
-			QString hashFileAndPeerId      = fileHash + QString::fromStdString(pit->peerId);
-			QString version;
-			if (retv && versions.end() != (vit = versions.find(pit->peerId))) {
-				version = tr("version: ") + QString::fromStdString(vit->second);
+		if(info.downloadStatus != FT_STATE_COMPLETE)
+			for (pit = info.peers.begin(); pit != info.peers.end(); pit++) 
+			{
+				QString peerName        = getPeerName(pit->peerId);
+				//unique combination: fileHash + peerId, variant: hash + peerName (too long)
+				QString hashFileAndPeerId      = fileHash + QString::fromStdString(pit->peerId);
+				QString version;
+				if (retv && versions.end() != (vit = versions.find(pit->peerId))) {
+					version = tr("version: ") + QString::fromStdString(vit->second);
+				}
+
+				QString status;
+				switch (pit->status) {
+					case FT_STATE_FAILED:       status = tr("Failed"); break;
+					case FT_STATE_OKAY:         status = tr("Okay"); break;
+					case FT_STATE_WAITING:      status = tr(""); break;
+					case FT_STATE_DOWNLOADING:  status = tr("Downloading"); break;
+					case FT_STATE_COMPLETE:     status = tr("Complete"); break;
+					default:                    status = tr(""); break;
+				}
+				double peerDlspeed	= 0;
+				if ((uint32_t)pit->status == FT_STATE_DOWNLOADING && info.downloadStatus != FT_STATE_PAUSED && info.downloadStatus != FT_STATE_COMPLETE) 
+					peerDlspeed     = pit->tfRate * 1024.0;
+
+				FileProgressInfo peerpinfo ;
+				peerpinfo.cmap = fcinfo.compressed_peer_availability_maps[pit->peerId];
+				peerpinfo.type = FileProgressInfo::DOWNLOAD_SOURCE ;
+				peerpinfo.progress = 0.0 ;	// we don't display completion for sources.
+				peerpinfo.nb_chunks = peerpinfo.cmap._map.empty()?0:fcinfo.chunks.size();
+
+				//					 std::cerr << std::endl ;
+				//					 std::cerr << "Source " << pit->peerId << " as map " << peerpinfo.cmap._map.size() << " compressed chunks" << std::endl ;
+				//						 for(uint j=0;j<peerpinfo.cmap._map.size();++j)
+				//							 std::cerr << peerpinfo.cmap._map[j] ;
+				//					 std::cerr << std::endl ;
+				//					 std::cerr << std::endl ;
+
+				std::cout << "adding peer " << peerName.toStdString() << " to row " << addedRow << ", hashfile and peerid=" << hashFileAndPeerId.toStdString() << std::endl ;
+				int row_id = addPeerToItem(addedRow, peerName, hashFileAndPeerId, peerDlspeed, status, peerpinfo);
+
+				used_rows.insert(row_id) ;
 			}
-
-			QString status;
-			switch (pit->status) {
-				case FT_STATE_FAILED:       status = tr("Failed"); break;
-				case FT_STATE_OKAY:         status = tr("Okay"); break;
-				case FT_STATE_WAITING:      status = tr(""); break;
-				case FT_STATE_DOWNLOADING:  status = tr("Downloading"); break;
-				case FT_STATE_COMPLETE:     status = tr("Complete"); break;
-				default:                    status = tr(""); break;
-			}
-			double peerDlspeed	= 0;
-			if ((uint32_t)pit->status == FT_STATE_DOWNLOADING && info.downloadStatus != FT_STATE_PAUSED) 
-				peerDlspeed     = pit->tfRate * 1024.0;
-
-			FileProgressInfo peerpinfo ;
-			peerpinfo.cmap = fcinfo.compressed_peer_availability_maps[pit->peerId];
-			peerpinfo.type = FileProgressInfo::DOWNLOAD_SOURCE ;
-			peerpinfo.progress = 0.0 ;	// we don't display completion for sources.
-			peerpinfo.nb_chunks = peerpinfo.cmap._map.empty()?0:fcinfo.chunks.size();
-
-			//					 std::cerr << std::endl ;
-			//					 std::cerr << "Source " << pit->peerId << " as map " << peerpinfo.cmap._map.size() << " compressed chunks" << std::endl ;
-			//						 for(uint j=0;j<peerpinfo.cmap._map.size();++j)
-			//							 std::cerr << peerpinfo.cmap._map[j] ;
-			//					 std::cerr << std::endl ;
-			//					 std::cerr << std::endl ;
-
-			std::cout << "adding peer " << peerName.toStdString() << " to row " << addedRow << ", hashfile and peerid=" << hashFileAndPeerId.toStdString() << std::endl ;
-			int row_id = addPeerToItem(addedRow, peerName, hashFileAndPeerId, peerDlspeed, status, peerpinfo);
-
-			used_rows.insert(row_id) ;
-		}
 
 		QStandardItem *dlItem = DLListModel->item(addedRow);
 

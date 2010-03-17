@@ -23,6 +23,7 @@
 #include <sys/stat.h>
 
 #include "PopupChatDialog.h"
+#include <gui/RetroShareLink.h>
 
 #include <QTextCodec>
 #include <QTextEdit>
@@ -53,6 +54,7 @@
 /*****
  * #define CHAT_DEBUG 1
  *****/
+#define CHAT_DEBUG 1
 
 /** Default constructor */
 PopupChatDialog::PopupChatDialog(std::string id, std::string name, 
@@ -96,6 +98,10 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
 
   connect(ui.textBrowser, SIGNAL(anchorClicked(const QUrl &)), SLOT(anchorClicked(const QUrl &)));
 
+  std::cerr << "Connecting custom context menu" << std::endl;
+  ui.chattextEdit->setContextMenuPolicy(Qt::CustomContextMenu) ;
+  connect(ui.chattextEdit,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(contextMenu(QPoint)));
+
   // Create the status bar
   resetStatusBar() ;
 
@@ -136,8 +142,30 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   colorChanged(mCurrentColor);
   setFont();
 
+  pasteLinkAct = new QAction(QIcon(":/images/pasterslink.png"), tr( "Paste retroshare Link" ), this );
+  connect( pasteLinkAct , SIGNAL( triggered() ), this, SLOT( pasteLink() ) );
+
   updateAvatar() ;
   updatePeerAvatar(id) ;
+}
+
+void PopupChatDialog::pasteLink()
+{
+	std::cerr << "In paste link" << std::endl ;
+	ui.chattextEdit->insertHtml(RSLinkClipboard::toHtml()) ;
+}
+
+void PopupChatDialog::contextMenu( QPoint point )
+{
+	std::cerr << "In context menu" << std::endl ;
+	if(RSLinkClipboard::empty())
+		return ;
+
+	QMenu contextMnu(this);
+	contextMnu.addAction( pasteLinkAct);
+
+	QMouseEvent mevent(QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier);
+	contextMnu.exec( mevent.globalPos() );
 }
 
 void PopupChatDialog::resetStatusBar() 
@@ -732,7 +760,8 @@ void PopupChatDialog::addExtraFile()
 	}
 }
 
-void PopupChatDialog::addAttachment(std::string filePath) {
+void PopupChatDialog::addAttachment(std::string filePath) 
+{
 	    /* add a AttachFileItem to the attachment section */
 	    std::cerr << "PopupChatDialog::addExtraFile() hashing file.";
 	    std::cerr << std::endl;
@@ -751,7 +780,8 @@ void PopupChatDialog::addAttachment(std::string filePath) {
 	    }
 }
 
-void PopupChatDialog::fileHashingFinished(AttachFileItem* file) {
+void PopupChatDialog::fileHashingFinished(AttachFileItem* file) 
+{
 	std::cerr << "PopupChatDialog::fileHashingFinished() started.";
 	std::cerr << std::endl;
 
@@ -781,7 +811,10 @@ void PopupChatDialog::fileHashingFinished(AttachFileItem* file) {
 	sprintf(fileSizeChar, "%lld", file->FileSize());
 	std::string fileSize = *(&fileSizeChar);
 
-	std::string mesgString = "<a href='file:?fileHash=" + (file->FileHash()) + "&fileName=" + (file->FileName()) + "&fileSize=" + fileSize + "'>" + (file->FileName()) + "</a>";
+//	std::string mesgString = "<a href='file:?fileHash=" + (file->FileHash()) + "&fileName=" + (file->FileName()) + "&fileSize=" + fileSize + "'>" + (file->FileName()) + "</a>";
+
+	std::string mesgString = RetroShareLink(QString::fromStdString(file->FileName()),file->FileSize(),QString::fromStdString(file->FileHash())).toHtml().toStdString() ;
+
 #ifdef CHAT_DEBUG
 	    std::cerr << "PopupChatDialog::anchorClicked mesgString : " << mesgString << std::endl;
 #endif
@@ -813,44 +846,38 @@ void PopupChatDialog::fileHashingFinished(AttachFileItem* file) {
 	rsMsgs -> ChatSend(ci);
 }
 
-void PopupChatDialog::anchorClicked (const QUrl& link ) {
+void PopupChatDialog::anchorClicked (const QUrl& link ) 
+{
 #ifdef CHAT_DEBUG
 	std::cerr << "PopupChatDialog::anchorClicked link.scheme() : " << link.scheme().toStdString() << std::endl;
 #endif
-	if (link.scheme() == "file") {
-		std::string fileName = link.queryItemValue(QString("fileName")).toStdString();
-		std::string fileHash = link.queryItemValue(QString("fileHash")).toStdString();
-		uint32_t fileSize = link.queryItemValue(QString("fileSize")).toInt();
-#ifdef CHAT_DEBUG
-		std::cerr << "PopupChatDialog::anchorClicked FileRequest : fileName : " << fileName << ". fileHash : " << fileHash << ". fileSize : " << fileSize;
-		std::cerr << ". source id : " << dialogId << std::endl;
-#endif
-		if (fileName != "" &&
-				fileHash != "") {
-			std::list<std::string> srcIds;
-			srcIds.push_front(dialogId);
 
-			if(rsFiles->FileRequest(fileName, fileHash, fileSize, "", RS_FILE_HINTS_NETWORK_WIDE, srcIds))
-			{
-				QMessageBox mb(tr("File Request Confirmation"), tr("The file has been added to your download list."),QMessageBox::Information,QMessageBox::Ok,0,0);
-				mb.setButtonText( QMessageBox::Ok, "OK" );
-				mb.exec();
-			}
-			else
-			{
-				QMessageBox mb(tr("File Request canceled"), tr("The file has not been added to your download list, because you already have it, or you're already downloading it."),QMessageBox::Information,QMessageBox::Ok,0,0);
-				mb.setButtonText( QMessageBox::Ok, "OK" );
-				mb.exec();
-			}
 
-		} 
-		else 
+	if(link.scheme() == "retroshare")
+	{
+		RetroShareLink rslink(link) ;
+
+		if(!rslink.valid())
 		{
-			QMessageBox mb(tr("File Request Error"), tr("The file link is malformed."),QMessageBox::Information,QMessageBox::Ok,0,0);
+			QMessageBox mb(tr("Badly formed RS link"), tr("This RetroShare link is malformed. This is bug. Please contact the developers."),QMessageBox::Information,QMessageBox::Ok,0,0);
+			mb.setButtonText( QMessageBox::Ok, "OK" );
+			mb.exec();
+			return ;
+		}
+
+		if(rsFiles->FileRequest(rslink.name().toStdString(), rslink.hash().toStdString(), rslink.size(), "", RS_FILE_HINTS_NETWORK_WIDE, std::list<std::string>()))
+		{
+			QMessageBox mb(tr("File Request Confirmation"), tr("The file has been added to your download list."),QMessageBox::Information,QMessageBox::Ok,0,0);
 			mb.setButtonText( QMessageBox::Ok, "OK" );
 			mb.exec();
 		}
-	} 
+		else
+		{
+			QMessageBox mb(tr("File Request canceled"), tr("The file has not been added to your download list, because you already have it, or you're already downloading it."),QMessageBox::Information,QMessageBox::Ok,0,0);
+			mb.setButtonText( QMessageBox::Ok, "OK" );
+			mb.exec();
+		}
+	}
 	else if (link.scheme() == "http") 
 		QDesktopServices::openUrl(link);
 	else if (link.scheme() == "") 
@@ -860,7 +887,6 @@ void PopupChatDialog::anchorClicked (const QUrl& link ) {
 		newAddress.prepend("http://");
 		QDesktopServices::openUrl(QUrl(newAddress));
 	}
-
 }
 
 void PopupChatDialog::dropEvent(QDropEvent *event)

@@ -98,7 +98,7 @@ QString RetroShareLink::toString() const
 }
 QString RetroShareLink::toHtml() const
 {
-	return QString("<a href='") + toString() + "'>" + toString() + "</a>" ;
+	return QString("<a href='") + toString() + "'>" + name() + "</a>" ;
 }
 
 bool RetroShareLink::checkName(const QString& name)

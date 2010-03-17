@@ -142,8 +142,12 @@ PeersDialog::PeersDialog(QWidget *parent)
   connect(ui.Sendbtn, SIGNAL(clicked()), this, SLOT(sendMsg()));
   connect(ui.emoticonBtn, SIGNAL(clicked()), this, SLOT(smileyWidgetgroupchat()));
 
+  ui.lineEdit->setContextMenuPolicy(Qt::CustomContextMenu) ;
+  connect(ui.lineEdit,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(contextMenu(QPoint)));
 
-  //connect( ui.msgSendList, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( msgSendListCostumPopupMenu( QPoint ) ) );
+  pasteLinkAct = new QAction(QIcon(":/images/pasterslink.png"), tr( "Paste retroshare Link" ), this );
+  connect( pasteLinkAct , SIGNAL( triggered() ), this, SLOT( pasteLink() ) );
+
   connect( ui.msgText, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(displayInfoChatMenu(const QPoint&)));
 
   connect(ui.textboldChatButton, SIGNAL(clicked()), this, SLOT(setFont()));
@@ -209,6 +213,23 @@ PeersDialog::PeersDialog(QWidget *parent)
 #ifdef Q_WS_WIN
 
 #endif
+}
+
+void PeersDialog::pasteLink()
+{
+	ui.lineEdit->insertHtml(RSLinkClipboard::toHtml()) ;
+}
+
+void PeersDialog::contextMenu( QPoint point )
+{
+	if(RSLinkClipboard::empty())
+		return ;
+
+	QMenu contextMnu(this);
+	contextMnu.addAction( pasteLinkAct);
+
+	QMouseEvent mevent(QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier);
+	contextMnu.exec( mevent.globalPos() );
 }
 
 void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
@@ -300,8 +321,6 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
       contextMnu.addAction( expandAll);
       contextMnu.addAction( collapseAll);
       contextMnu.exec( mevent->globalPos() );
-      
-
 }
 
 void PeersDialog::keyPressEvent(QKeyEvent *e)
@@ -1600,11 +1619,15 @@ void PeersDialog::fileHashingFinished(AttachFileItem* file) {
 	sprintf(fileSizeChar, "%lld", file->FileSize());
 	std::string fileSize = *(&fileSizeChar);
 
-	std::string mesgString = "<a href='retroshare://file|" + (file->FileName()) + "|" + fileSize + "|" + (file->FileHash()) + "'>" 
-	+ "retroshare://file|" + (file->FileName()) + "|" + fileSize +  "|" + (file->FileHash())  + "</a>";
-        #ifdef PEERS_DEBUG
-        std::cerr << "PeersDialog::fileHashingFinished mesgString : " << mesgString << std::endl;
-        #endif
+	std::string mesgString = RetroShareLink(QString::fromStdString(file->FileName()),
+														file->FileSize(),
+														QString::fromStdString(file->FileHash())).toHtml().toStdString() ;
+
+//	std::string mesgString = "<a href='retroshare://file|" + (file->FileName()) + "|" + fileSize + "|" + (file->FileHash()) + "'>" 
+//	+ "retroshare://file|" + (file->FileName()) + "|" + fileSize +  "|" + (file->FileHash())  + "</a>";
+#ifdef PEERS_DEBUG
+	std::cerr << "PeersDialog::fileHashingFinished mesgString : " << mesgString << std::endl;
+#endif
 
 	const char * messageString = mesgString.c_str ();
 

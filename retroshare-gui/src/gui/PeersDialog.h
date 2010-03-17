@@ -86,6 +86,8 @@ protected:
     virtual void dropEvent(QDropEvent *event);
 
 private slots:
+		void pasteLink() ;
+		void contextMenu(QPoint) ;
 
 		/** Create the context popup menu and it's submenus */
 		void peertreeWidgetCostumPopupMenu( QPoint point );
@@ -157,6 +159,7 @@ private:
 		QMenu* contextMnu;
 		/** Defines the actions for the context menu */
 		QAction* chatAct;
+		QAction* pasteLinkAct;
 		QAction* msgAct;
 		QAction* connectfriendAct;
 		QAction* profileviewAct;

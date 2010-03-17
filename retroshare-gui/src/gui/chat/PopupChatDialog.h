@@ -72,6 +72,8 @@ public slots:
 
   void getfocus();
   void flash(); 
+  void pasteLink() ;
+  void contextMenu(QPoint) ;
   	
   void smileyWidget();
   void addSmiley();
@@ -115,6 +117,7 @@ private:
    QAction     *actionTextBold;
    QAction     *actionTextUnderline;
    QAction     *actionTextItalic;
+	QAction		*pasteLinkAct ;
    
    std::string dialogId, dialogName;
    unsigned int lastChatTime;
