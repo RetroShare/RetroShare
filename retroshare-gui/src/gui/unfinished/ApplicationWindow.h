@@ -80,7 +80,6 @@ private slots:
     void toggleVisibility(QSystemTrayIcon::ActivationReason e);
     void toggleVisibilitycontextmenu();
 
-    void showsmplayer();
 
 protected:
     void closeEvent(QCloseEvent *);

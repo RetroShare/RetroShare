@@ -34,25 +34,13 @@
 
 #include "GamesDialog.h"
 #include "PhotoDialog.h"
-#include "BlogDialog.h"
 #include "CalDialog.h"
-#include "PeersFeed.h"
-#include "TransferFeed.h"
-#include "MsgFeed.h"
 #include "StatisticDialog.h"
 
 
 #define FONT        QFont("Arial", 9)
 
 /* Images for toolbar icons */
-#define IMAGE_NETWORK           ":/images/network32.png"
-#define IMAGE_PEERS         	":/images/groupchat.png"
-#define IMAGE_SEARCH    	":/images/filefind.png"
-#define IMAGE_TRANSFERS      	":/images/ktorrent.png"
-#define IMAGE_FILES   	        ":/images/folder_green.png"
-#define IMAGE_FORUMS   	        ":/images/konversation.png"
-#define IMAGE_CHANNELS       	":/images/channels.png"
-#define IMAGE_PREFERENCES       ":/images/settings16.png"
 #define IMAGE_RETROSHARE        ":/images/RetroShare16.png"
 #define IMAGE_ABOUT             ":/images/informations_24x24.png"
 #define IMAGE_STATISTIC         ":/images/ksysguard32.png"
@@ -63,10 +51,6 @@
 #define IMAGE_RSM16             ":/images/rsmessenger16.png"
 #define IMAGE_CLOSE             ":/images/close_normal.png"
 #define IMAGE_CALENDAR          ":/images/calendar.png"
-#define IMAGE_NEWSFEED          ":/images/konqsidebar_news24.png"
-#define IMAGE_LINKS             ":/images/ktorrent.png"
-#define IMAGE_MESSAGES          ":/images/evolution.png"
-#define IMAGE_BLOGS             ":/images/kblogger.png"
 #define IMAGE_LIBRARY           ":/images/library.png"
 #define IMAGE_PLUGINS           ":/images/extension_32.png"
 
@@ -100,31 +84,13 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(statisticDialog = new StatisticDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_STATISTIC), tr("Statistics"), grp));
 
-    PeersFeed *peersFeed = NULL;
-    ui.stackPages->add(peersFeed = new PeersFeed(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_PEERS), tr("Peers"), grp));
-
-    TransferFeed *transferFeed = NULL;
-    ui.stackPages->add(transferFeed = new TransferFeed(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_LINKS), tr("Transfers"), grp));
-
-    MsgFeed *msgFeed = NULL;
-    ui.stackPages->add(msgFeed = new MsgFeed(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_MESSAGES), tr("Messages"), grp));
-
-    BlogDialog *blogDialog = NULL;
-    ui.stackPages->add(blogDialog = new BlogDialog(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_BLOGS), tr("Blog Feed"), grp));
-
-
-    GamesDialog *gamesDialog = NULL;
-    ui.stackPages->add(gamesDialog = new GamesDialog(ui.stackPages),
-                       createPageAction(QIcon(IMAGE_GAMES), tr("Games Launcher"), grp));
-
     PhotoDialog *photoDialog = NULL;
     ui.stackPages->add(photoDialog = new PhotoDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_PHOTO), tr("Photo View"), grp));
 
+    GamesDialog *gamesDialog = NULL;
+    ui.stackPages->add(gamesDialog = new GamesDialog(ui.stackPages),
+                       createPageAction(QIcon(IMAGE_GAMES), tr("Games Launcher"), grp));
 
     CalDialog *calDialog = NULL;
     ui.stackPages->add(calDialog = new CalDialog(ui.stackPages),
@@ -254,17 +220,5 @@ void ApplicationWindow::loadStyleSheet(const QString &sheetName)
 
 }
 
-/** Shows smplayer */
-void ApplicationWindow::showsmplayer()
-{
-#if 0
-    static SMPlayer * smplayer = 0;
 
-    if (smplayer == 0) {
-        smplayer = new SMPlayer(QString::null, this);
-    }
-
-    smplayer->gui()->show();
-#endif
-}
 
