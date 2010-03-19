@@ -107,7 +107,7 @@ stop: 0.9 #4c4c4c, stop: 1 #333333);
            <item row="1" column="0">
             <widget class="QComboBox" name="statuscomboBox">
              <property name="enabled">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="toolTip">
               <string>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -197,11 +197,15 @@ p, li { white-space: pre-wrap; }
       </property>
       <property name="styleSheet">
        <string notr="true">#frame { 
-border: none;
-background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-stop: 0 #a6a6a6, stop: 0.08 #7f7f7f,
-stop: 0.39999 #717171, stop: 0.4 #626262,
-stop: 0.9 #4c4c4c, stop: 1 #333333);
+border-image:none; 
+background-color: qlineargradient(x1: 0, y1: 0, x2: 0.0, y2: 1.0,
+stop: 0 #ffffff,
+stop: 0.4 #eeeeee,
+stop: 0.401 #e2e2e2,
+stop: 1 #dddddd);
+color: #CCCCCC;
+border-top: 1px solid #606060;
+border-bottom: 1px solid #CCCCCC;
 }</string>
       </property>
       <property name="frameShape">
@@ -210,14 +214,11 @@ stop: 0.9 #4c4c4c, stop: 1 #333333);
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <property name="spacing">
-        <number>6</number>
-       </property>
+      <layout class="QGridLayout" name="gridLayout_2">
        <property name="margin">
         <number>6</number>
        </property>
-       <item>
+       <item row="0" column="0">
         <widget class="QToolButton" name="addIMAccountButton">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -258,7 +259,7 @@ p, li { white-space: pre-wrap; }
          </property>
         </widget>
        </item>
-       <item>
+       <item row="0" column="1">
         <widget class="QToolButton" name="shareButton">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
@@ -290,7 +291,7 @@ p, li { white-space: pre-wrap; }
          </property>
         </widget>
        </item>
-       <item>
+       <item row="0" column="2">
         <widget class="QPushButton" name="displaypushButton">
          <property name="styleSheet">
           <string notr="true">QPushButton::menu-indicator { 
@@ -318,7 +319,7 @@ subcontrol-position: bottom right;
          </property>
         </widget>
        </item>
-       <item>
+       <item row="0" column="3">
         <spacer name="horizontalSpacer">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
