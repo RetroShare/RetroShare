@@ -454,7 +454,8 @@ void ftController::setQueueSize(uint32_t s)
 		std::cerr << "Settign new queue size to " << s << std::endl ;
 #endif
 		for(uint32_t p=std::min(s,old_s);p<=std::max(s,old_s);++p)
-			locked_checkQueueElement(p);
+			if(p < _queue.size())
+				locked_checkQueueElement(p);
 	}
 	else
 		std::cerr << "ftController::setQueueSize(): cannot set queue to size " << s << std::endl ;
