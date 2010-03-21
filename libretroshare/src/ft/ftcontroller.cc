@@ -57,6 +57,7 @@
  * #define CONTROL_DEBUG 1
  * #define DEBUG_DWLQUEUE 1
  *****/
+#define DEBUG_DWLQUEUE 1
 
 static const uint32_t SAVE_TRANSFERS_DELAY 			= 61	; // save transfer progress every 61 seconds.
 static const uint32_t INACTIVE_CHUNKS_CHECK_DELAY 	= 60	; // time after which an inactive chunk is released
@@ -410,16 +411,23 @@ void ftController::checkDownloadQueue()
 	// Check for inactive transfers.
 	//
 	time_t now = time(NULL) ;
+	uint32_t nb_moved = 0 ;	// don't move more files than the size of the queue.
 
-	for(std::map<std::string,ftFileControl*>::const_iterator it(mDownloads.begin());it!=mDownloads.end();++it)
+	for(std::map<std::string,ftFileControl*>::const_iterator it(mDownloads.begin());it!=mDownloads.end() && nb_moved <= _max_active_downloads;++it)
 		if(	it->second->mState != ftFileControl::QUEUED 
 			&& it->second->mState != ftFileControl::PAUSED 
-			&& now - it->second->mCreator->lastRecvTimeStamp() > (time_t)MAX_TIME_INACTIVE_REQUEUED)
+			&& now > it->second->mCreator->lastRecvTimeStamp() + (time_t)MAX_TIME_INACTIVE_REQUEUED)
 		{
+#ifdef DEBUG_DWLQUEUE
+			std::cerr << "  - Inactive file " << it->second->mName << " at position " << it->second->mQueuePosition << " moved to end of the queue. mState=" << it->second->mState << ", time lapse=" << now - it->second->mCreator->lastRecvTimeStamp()  << std::endl ;
+#endif
 			locked_bottomQueue(it->second->mQueuePosition) ;
 #ifdef DEBUG_DWLQUEUE
-			std::cerr << "  - Inactive file " << it->second->mName << " moved to end of the queue" << std::endl ;
+			std::cerr << "  new position: " << it->second->mQueuePosition << std::endl ;
+			std::cerr << "  new state: " << it->second->mState << std::endl ;
 #endif
+			it->second->mCreator->resetRecvTimeStamp() ;	// very important!
+			++nb_moved ;
 		}
 }
 
@@ -541,11 +549,6 @@ void ftController::locked_swapQueue(uint32_t pos1,uint32_t pos2)
 	locked_checkQueueElement(pos2) ;
 }
 
-//void ftController::checkQueueElements()
-//{
-//	for(uint32_t pos=0;pos<_queue.size();++pos)
-//		checkQueueElement(pos) ;
-//}
 void ftController::locked_checkQueueElement(uint32_t pos)
 {
 	_queue[pos]->mQueuePosition = pos ;

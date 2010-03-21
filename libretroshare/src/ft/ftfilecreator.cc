@@ -58,6 +58,11 @@ time_t ftFileCreator::lastRecvTimeStamp()
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 	return _last_recv_time_t ;
 }
+void ftFileCreator::resetRecvTimeStamp() 
+{
+	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
+	_last_recv_time_t = time(NULL) ;
+}
 
 void ftFileCreator::closeFile()
 {
