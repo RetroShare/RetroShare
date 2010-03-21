@@ -789,7 +789,7 @@ void TransfersDialog::insertTransfers()
 				case FT_STATE_FAILED:       status = tr("Failed"); break;
 				case FT_STATE_OKAY:         status = tr("Okay"); break;
 				case FT_STATE_WAITING:      status = tr(""); break;
-				case FT_STATE_DOWNLOADING:  status = tr("Downloading"); break;
+				case FT_STATE_DOWNLOADING:  status = tr("Transferring"); break;
 				case FT_STATE_COMPLETE:     status = tr("Complete"); break;
 				default:                    status = tr(""); break;
 			}
