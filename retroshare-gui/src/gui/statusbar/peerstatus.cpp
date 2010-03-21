@@ -71,12 +71,8 @@ void PeerStatus::getPeerStatus()
     rsPeers->getFriendList(ids);
     int friends = ids.size();
 
-    ids.clear();
-    //rsPeers->getOthersList(ids);
-    int others = 1 + ids.size();
-
     std::ostringstream out2;
-    out2 << "<span style=\"color:#008000\"><strong>" << tr("Online:").toStdString() << " </strong></span>" << online << " | <span style=\"color:#0000FF\"><strong>" << tr("Friends:").toStdString() << " </strong></span>" << friends << " | <strong>" << tr("Network:").toStdString() << " </strong>" << others << " ";
+    out2 << "<span style=\"color:#000000\"><strong>" << tr("Friends:").toStdString() << " " << friends << "</strong></span>" << " | " << "<span style=\"color:#0000FF\"><strong>" << tr("Online:").toStdString() << " " << online << "</strong></span>" << " ";
 
 
     if (statusPeers)
