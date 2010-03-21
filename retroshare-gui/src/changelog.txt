@@ -1,5 +1,18 @@
-Changes for v0.5.0 *
+Changes for v0.5.0 alpha 2
 
+* fixed a bug in download queue when ticking inactive files. Added a checkbox for showing cache transfers. Cleaned the dialog cleaning method.
+* suppresed bad lookup in _queue causing SIGV
+* utf8 fix
+* fixed RS link clipboard so that links can be imported/exported from both RS and the application clipboard.
+* cleaned the config->Transfers tab, made the default chunk strategy combobox effective.
+* fixed copy/paste of RS links in public and private chat
+* cleaned the code for anchorClick() in private chat
+* added return false for FileRequest of already have files
+* suppressed sources when the file is complete, in TransfersDialog.
+* added info and consistency for gpg sign and trust signification
+* added proper close for file transfers. This drops down the number of FDs from 250 to ... 50 svn status
+* added missing locks, that caused random crashes
+* improve the recieving of bad gpg keys
 * fixed RS link copy/paste from shared/search to transfers/forums/Pmessages
 * increase udp ttl
 * fixed queue menu to work on multiple languages
