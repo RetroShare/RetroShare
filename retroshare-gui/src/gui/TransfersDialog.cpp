@@ -201,6 +201,7 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 
 #endif
 
+	 QObject::connect(ui._showCacheTransfers_CB,SIGNAL(toggled(bool)),this,SLOT(insertTransfers())) ;
 
 }
 
@@ -663,50 +664,23 @@ void TransfersDialog::insertTransfers()
 //	std::list<DwlDetails> dwlDetails;
 //	rsFiles->getDwlDetails(dwlDetails);
 
-	//first clean the model in case some files are not download anymore
-	//remove items that are not fiends anymore
-	int removeIndex = 0;
-	while (removeIndex < DLListModel->rowCount()) {
-		std::string hash = DLListModel->item(removeIndex, ID)->data(Qt::EditRole).toString().toStdString();
-		std::list<std::string>::iterator downHashesIt;
-		bool found = false;
-		for (downHashesIt =  downHashes.begin(); downHashesIt != downHashes.end(); downHashesIt++) {
-			if (hash == *downHashesIt) {
-				found = true;
-				break;
-			}
-		}
-//		if (!found) {
-//			//look in the queued files
-//			std::list<DwlDetails>::iterator dwlDetailsIt;
-//			for (dwlDetailsIt =  dwlDetails.begin(); dwlDetailsIt != dwlDetails.end(); dwlDetailsIt++) {
-//				if (hash == dwlDetailsIt->hash) {
-//					found = true;
-//					break;
-//				}
-//			}
-//		}
-		if (!found) {
-			DLListModel->takeRow(removeIndex);
-		} else {
-			removeIndex++;
-		}
-	}
+
+
+	std::set<std::string> used_hashes ;
 
 	// clear all source peers.
 
 	std::list<std::string>::iterator it;
-	for (it = downHashes.begin(); it != downHashes.end(); it++) {
+	for (it = downHashes.begin(); it != downHashes.end(); it++) 
+	{
 		FileInfo info;
 		if (!rsFiles->FileDetails(*it, RS_FILE_HINTS_DOWNLOAD, info)) {
 			//if file transfer is a cache file index file, don't show it
 			continue;
 		}
 
-		if ((info.flags & CB_CODE_CACHE)) {
-			/*(!_show_cache_transfers) &&*/
+		if((info.flags & CB_CODE_CACHE) && !ui._showCacheTransfers_CB->isChecked())
 			continue;
-		}
 
 		QString fileName = QString::fromUtf8(info.fname.c_str());
 		QString fileHash = QString::fromStdString(info.hash);
@@ -763,6 +737,7 @@ void TransfersDialog::insertTransfers()
 		pinfo.nb_chunks = pinfo.cmap._map.empty()?0:fcinfo.chunks.size() ;
 
 		int addedRow = addItem("", fileName, fileHash, fileSize, pinfo, fileDlspeed, sources, status, priority, completed, remaining, downloadtime);
+		used_hashes.insert(info.hash) ;
 
 		/* continue to next download item if no peers to add */
 		if (!info.peers.size()) continue;
@@ -810,7 +785,7 @@ void TransfersDialog::insertTransfers()
 			//					 std::cerr << std::endl ;
 			//					 std::cerr << std::endl ;
 
-			std::cout << "adding peer " << peerName.toStdString() << " to row " << addedRow << ", hashfile and peerid=" << hashFileAndPeerId.toStdString() << std::endl ;
+//				std::cout << "adding peer " << peerName.toStdString() << " to row " << addedRow << ", hashfile and peerid=" << hashFileAndPeerId.toStdString() << std::endl ;
 			int row_id = addPeerToItem(addedRow, peerName, hashFileAndPeerId, peerDlspeed, status, peerpinfo);
 
 			used_rows.insert(row_id) ;
@@ -825,31 +800,22 @@ void TransfersDialog::insertTransfers()
 			if(used_rows.find(r) == used_rows.end())
 				dlItem->takeRow(r) ;
 	}
+	// remove hashes that where not shown
+	//first clean the model in case some files are not download anymore
+	//remove items that are not fiends anymore
+	int removeIndex = 0;
+	while (removeIndex < DLListModel->rowCount()) 
+	{
+		std::string hash = DLListModel->item(removeIndex, ID)->data(Qt::EditRole).toString().toStdString();
 
-	/* here i will insert files from the download queue - which are
-	 * not started yet and can't be find in FileDownloads
-	 * */
-	//        std::list<DwlDetails>::iterator dit;
-	//        for (dit = dwlDetails.begin(); dit != dwlDetails.end(); dit ++)
-	//        {
-	////            switch (dit->priority) {
-	////                    case 0:     priority = tr("Low"); break;
-	////                    case 1:     priority = tr("Normal"); break;
-	////                    case 2:     priority = tr("High"); break;
-	////                    case 3:     priority = tr("Auto"); break;
-	////                    default:    priority = tr("Auto"); break;
-	////            }
-	//
-	//            FileProgressInfo pinfo ;
-	//            pinfo.progress = 0.0 ;
-	//            pinfo.nb_chunks = 0 ;
-	//
-	//            addItem("", QString::fromUtf8(dit->fname.c_str()),
-	//                    QString::fromStdString(dit->hash), dit->count, pinfo, 0, 0,
-	//                    tr("Queued"), "", 0, 0, 0);
-	//        }
-	//
+		if(used_hashes.find(hash) == used_hashes.end())
+			DLListModel->takeRow(removeIndex);
+		 else 
+			removeIndex++;
+	}
 
+	// Now show upload hashes
+	//
 	std::list<std::string> upHashes;
 	rsFiles->FileUploads(upHashes);
 	//first clean the model in case some files are not uploaded anymore
@@ -881,7 +847,7 @@ void TransfersDialog::insertTransfers()
 		if (!rsFiles->FileDetails(*it, RS_FILE_HINTS_UPLOAD, info)) {
 			continue;
 		}
-		if (/*(!_show_cache_transfers) &&*/ (info.flags & CB_CODE_CACHE))
+		if((info.flags & CB_CODE_CACHE) && !ui._showCacheTransfers_CB->isChecked())
 			continue ;
 
 		std::list<TransferInfo>::iterator pit;

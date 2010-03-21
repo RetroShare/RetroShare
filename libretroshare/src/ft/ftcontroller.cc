@@ -57,6 +57,7 @@
  * #define CONTROL_DEBUG 1
  * #define DEBUG_DWLQUEUE 1
  *****/
+#define DEBUG_DWLQUEUE 1
 
 static const uint32_t SAVE_TRANSFERS_DELAY 			= 61	; // save transfer progress every 61 seconds.
 static const uint32_t INACTIVE_CHUNKS_CHECK_DELAY 	= 60	; // time after which an inactive chunk is released
@@ -410,16 +411,23 @@ void ftController::checkDownloadQueue()
 	// Check for inactive transfers.
 	//
 	time_t now = time(NULL) ;
+	uint32_t nb_moved = 0 ;	// don't move more files than the size of the queue.
 
-	for(std::map<std::string,ftFileControl*>::const_iterator it(mDownloads.begin());it!=mDownloads.end();++it)
+	for(std::map<std::string,ftFileControl*>::const_iterator it(mDownloads.begin());it!=mDownloads.end() && nb_moved <= _max_active_downloads;++it)
 		if(	it->second->mState != ftFileControl::QUEUED 
 			&& it->second->mState != ftFileControl::PAUSED 
-			&& now - it->second->mCreator->lastRecvTimeStamp() > (time_t)MAX_TIME_INACTIVE_REQUEUED)
+			&& now > it->second->mCreator->lastRecvTimeStamp() + (time_t)MAX_TIME_INACTIVE_REQUEUED)
 		{
+#ifdef DEBUG_DWLQUEUE
+			std::cerr << "  - Inactive file " << it->second->mName << " at position " << it->second->mQueuePosition << " moved to end of the queue. mState=" << it->second->mState << ", time lapse=" << now - it->second->mCreator->lastRecvTimeStamp()  << std::endl ;
+#endif
 			locked_bottomQueue(it->second->mQueuePosition) ;
 #ifdef DEBUG_DWLQUEUE
-			std::cerr << "  - Inactive file " << it->second->mName << " moved to end of the queue" << std::endl ;
+			std::cerr << "  new position: " << it->second->mQueuePosition << std::endl ;
+			std::cerr << "  new state: " << it->second->mState << std::endl ;
 #endif
+			it->second->mCreator->resetRecvTimeStamp() ;	// very important!
+			++nb_moved ;
 		}
 }
 
@@ -454,7 +462,8 @@ void ftController::setQueueSize(uint32_t s)
 		std::cerr << "Settign new queue size to " << s << std::endl ;
 #endif
 		for(uint32_t p=std::min(s,old_s);p<=std::max(s,old_s);++p)
-			locked_checkQueueElement(p);
+			if(p < _queue.size())
+				locked_checkQueueElement(p);
 	}
 	else
 		std::cerr << "ftController::setQueueSize(): cannot set queue to size " << s << std::endl ;
@@ -540,11 +549,6 @@ void ftController::locked_swapQueue(uint32_t pos1,uint32_t pos2)
 	locked_checkQueueElement(pos2) ;
 }
 
-//void ftController::checkQueueElements()
-//{
-//	for(uint32_t pos=0;pos<_queue.size();++pos)
-//		checkQueueElement(pos) ;
-//}
 void ftController::locked_checkQueueElement(uint32_t pos)
 {
 	_queue[pos]->mQueuePosition = pos ;
@@ -1147,6 +1151,8 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 	ftFileCreator *fc = new ftFileCreator(savepath, size, hash);
 	ftTransferModule *tm = new ftTransferModule(fc, mDataplex,this);
 
+	fc->setChunkStrategy(mDefaultChunkStrategy) ;
+
 	/* add into maps */
 	ftFileControl *ftfc = new ftFileControl(fname, savepath, destination, size, hash, flags, fc, tm, callbackCode);
 	ftfc->mCreateTime = time(NULL);
@@ -1726,6 +1732,7 @@ bool ftController::CancelCacheFile(RsPeerId id, std::string path, std::string ha
 const std::string download_dir_ss("DOWN_DIR");
 const std::string partial_dir_ss("PART_DIR");
 const std::string share_dwl_dir("SHARE_DWL_DIR");
+const std::string default_chunk_strategy_ss("DEFAULT_CHUNK_STRATEGY");
 
 
 	/* p3Config Interface */
@@ -1757,6 +1764,7 @@ std::list<RsItem *> ftController::saveList(bool &cleanup)
 	configMap[download_dir_ss] = getDownloadDirectory();
 	configMap[partial_dir_ss] = getPartialsDirectory();
 	configMap[share_dwl_dir] = mShareDownloadDir ? "YES" : "NO";
+	configMap[default_chunk_strategy_ss] = (mDefaultChunkStrategy==FileChunksInfo::CHUNK_STRATEGY_STREAMING) ? "STREAMING" : "RANDOM";
 
 	RsConfigKeyValueSet *rskv = new RsConfigKeyValueSet();
 
@@ -1940,15 +1948,39 @@ bool  ftController::loadConfigMap(std::map<std::string, std::string> &configMap)
 		}
 	}
 
+	if (configMap.end() != (mit = configMap.find(default_chunk_strategy_ss)))
+	{
+		if(mit->second == "STREAMING")
+			setDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_STREAMING) ;
+		else if(mit->second == "RANDOM")
+			setDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_RANDOM) ;
+	}
+
 	return true;
+}
+
+FileChunksInfo::ChunkStrategy ftController::defaultChunkStrategy()
+{
+	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+	return mDefaultChunkStrategy ;
+}
+void ftController::setDefaultChunkStrategy(FileChunksInfo::ChunkStrategy S)
+{
+	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+	mDefaultChunkStrategy = S ;
+	IndicateConfigChanged() ;
 }
 
 void ftController::setShareDownloadDirectory(bool value)
 {
+	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 	mShareDownloadDir = value;
+	IndicateConfigChanged() ;
 }
 
 bool ftController::getShareDownloadDirectory()
 {
+	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 	return mShareDownloadDir;
 }
+

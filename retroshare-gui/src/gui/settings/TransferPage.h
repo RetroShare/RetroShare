@@ -36,13 +36,13 @@ class TransferPage: public ConfigPage
 		~TransferPage() {}
 
 		/** Saves the changes on this page */
-		bool save(QString &errmsg);
+		virtual bool save(QString &errmsg) {}
 		/** Loads the settings for this page */
-		void load();
+		virtual void load() {}
 
 	public slots:
-		void updateStatus();
 		void updateQueueSize(int) ;
+		void updateDefaultStrategy(int) ;
 
 	private:
 

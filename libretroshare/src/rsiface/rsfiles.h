@@ -113,6 +113,8 @@ class RsFiles
 		virtual bool FileRequest(std::string fname, std::string hash, uint64_t size, std::string dest, uint32_t flags, std::list<std::string> srcIds) = 0;
 		virtual bool FileCancel(std::string hash) = 0;
 		virtual bool setChunkStrategy(const std::string& hash,FileChunksInfo::ChunkStrategy) = 0;
+		virtual void setDefaultChunkStrategy(FileChunksInfo::ChunkStrategy) = 0;
+		virtual FileChunksInfo::ChunkStrategy defaultChunkStrategy() = 0;
 		virtual bool FileControl(std::string hash, uint32_t flags) = 0;
 		virtual bool FileClearCompleted() = 0;
 

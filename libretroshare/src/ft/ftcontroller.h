@@ -144,6 +144,8 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 		bool  alreadyHaveFile(const std::string& hash) ;
 
 		bool 	setChunkStrategy(const std::string& hash,FileChunksInfo::ChunkStrategy s);
+		void 	setDefaultChunkStrategy(FileChunksInfo::ChunkStrategy s);
+		FileChunksInfo::ChunkStrategy	defaultChunkStrategy();
 
 		bool 	FileCancel(std::string hash);
 		bool 	FileControl(std::string hash, uint32_t flags);
@@ -265,6 +267,7 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 
 		/* share incoming directory */
 		bool mShareDownloadDir;
+		FileChunksInfo::ChunkStrategy mDefaultChunkStrategy ;
 
 		uint32_t _max_active_downloads ; // maximum number of simultaneous downloads
 };

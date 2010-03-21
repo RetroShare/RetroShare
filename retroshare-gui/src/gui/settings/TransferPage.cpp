@@ -26,9 +26,9 @@
 #include <iostream>
 #include <sstream>
 
-#include "rsiface/rsiface.h"
-#include "rsiface/rsfiles.h"
-#include "rsiface/rspeers.h"
+#include <rsiface/rsiface.h>
+#include <rsiface/rsfiles.h>
+#include <rsiface/rspeers.h>
 
 #include <QTimer>
 
@@ -38,20 +38,34 @@ TransferPage::TransferPage(QWidget * parent, Qt::WFlags flags)
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
 
-//   QTimer *timer = new QTimer(this);
-//   timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
-//   timer->start(1000);
-
-   updateStatus();
-
 	ui._queueSize_SB->setValue(rsFiles->getQueueSize()) ;
 
+	if(rsFiles->defaultChunkStrategy() == FileChunksInfo::CHUNK_STRATEGY_STREAMING)
+		ui._defaultStrategy_CB->setCurrentIndex(0) ;
+	else
+		ui._defaultStrategy_CB->setCurrentIndex(1) ;
+
 	QObject::connect(ui._queueSize_SB,SIGNAL(valueChanged(int)),this,SLOT(updateQueueSize(int))) ;
+	QObject::connect(ui._defaultStrategy_CB,SIGNAL(activated(int)),this,SLOT(updateDefaultStrategy(int))) ;
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
 #endif
+}
+
+void TransferPage::updateDefaultStrategy(int i)
+{
+	switch(i)
+	{
+		case 0: rsFiles->setDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_STREAMING) ;
+				  break ;
+
+		case 1: rsFiles->setDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_RANDOM) ;
+				  break ;
+
+		default: ;
+	}
 }
 
 void TransferPage::updateQueueSize(int s)
@@ -63,48 +77,5 @@ void TransferPage::closeEvent (QCloseEvent * event)
 {
     QWidget::closeEvent(event);
 }
-
-
-/** Saves the changes on this page */
-bool
-TransferPage::save(QString &errmsg)
-{
-
-  /* save the server address */
-  /* save local address */
-  /* save the url for DNS access */
-
-  /* restart server */
-
-  /* save all? */
-   //saveAddresses();
-  return true;
-}
-
-/** Loads the settings for this page */
-void TransferPage::load()
-{
-
-	/* load up configuration from rsPeers */
-//	RsPeerDetails detail;
-//	if (!rsPeers->getPeerDetails(rsPeers->getOwnId(), detail))
-//	{
-//		return;
-//	}
-
-
-}
-
-/** Loads the settings for this page */
-void TransferPage::updateStatus()
-{
-	/* load up configuration from rsPeers */
-//	RsPeerDetails detail;
-//	if (!rsPeers->getPeerDetails(rsPeers->getOwnId(), detail))
-//	{
-//		return;
-//	}
-}
-
 
 

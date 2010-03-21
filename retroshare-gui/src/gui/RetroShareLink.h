@@ -49,11 +49,16 @@ class RetroShareLink
 
 		/// returns the string retroshare://file|name|size|hash
 		QString toString() const ;
-		/// returns the string <a href="retroshare://file|name|size|hash">retroshare://file|name|size|hash</a>
+		/// returns the string <a href="retroshare://file|name|size|hash">name</a>
 		QString toHtml() const ;
+		/// returns the string <a href="retroshare://file|name|size|hash">retroshare://file|name|size|hash</a>
+		QString toHtmlFull() const ;
+
 		QUrl toUrl() const ;
 
 		bool valid() const { return _size > 0 ; }
+
+		bool operator==(const RetroShareLink& l) const { return _hash == l._hash ; }
 	private:
 		void check() ;
 		static bool checkHash(const QString& hash) ;
@@ -68,32 +73,42 @@ class RetroShareLink
 
 /// This class handles the copy/paste of links. Every member is static to ensure unicity.
 /// I put no mutex, because all calls supposely com from the GUI thread.
+/// 
+/// All links are stored in html format into the clipboard. Why? Because this allows to import
+/// links from both the clipboard and the RS application, e.g. paste links from an internet forum.
+/// This requires many clipboard parsing operations, but this is not a problem because this code is
+/// not performances-critical.
 //
 class RSLinkClipboard
 {
 	public:
-		static void copyLinks(const std::vector<RetroShareLink>& links) 
-		{
-			_links = links ;
-		}
-		static const std::vector<RetroShareLink>& pasteLinks() 
-		{
-			return _links ;
-		}
-		static QString toHtml()
-		{
-			QString res ;
-			for(uint32_t i=0;i<_links.size();++i)
-				res += _links[i].toHtml() + "<br/>" ;
+		// Copy these links to the RS clipboard. Also copy them to the system clipboard
+		//
+		static void copyLinks(const std::vector<RetroShareLink>& links) ;
 
-			return res ;
-		}
-		static bool empty()
-		{
-			return _links.empty();
-		}
+		// Get the liste of pasted links, either from the internal RS links, or by default
+		// from the clipboard.
+		//
+		static std::vector<RetroShareLink> pasteLinks() ;
+
+		// Produces a list of links with no html structure.
+		static QString toString() ;
+
+		// produces a list of html links that displays with the file names only
+		//
+		static QString toHtml();
+
+		// produces a list of html links that displays the full links
+		//
+		static QString toHtmlFull();
+
+		// Returns true is no links are found to paste.
+		// Useful for menus.
+		//
+		static bool empty();
+
 	private:
-		static std::vector<RetroShareLink> _links ;
+		static std::vector<RetroShareLink> parseClipboard() ;
 };
 
 
