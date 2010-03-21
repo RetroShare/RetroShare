@@ -104,7 +104,7 @@ void ShareManager::load()
 	for(it = dirs.begin(); it != dirs.end(); it++,++row)
 	{
 		listWidget->insertRow(row) ;
-		listWidget->setItem(row,0,new QTableWidgetItem(QString::fromStdString((*it).filename)));
+		listWidget->setItem(row,0,new QTableWidgetItem(QString::fromUtf8((*it).filename.c_str())));
 #ifdef USE_COMBOBOX
 		QComboBox *cb = new QComboBox ;
 		cb->addItem(QString("Network Wide")) ;
@@ -173,8 +173,7 @@ void ShareManager::addShareDirectory()
 	 */
 
 
-	QString qdir = QFileDialog::getExistingDirectory(this, tr("Select A Folder To Share"), "",
-			QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+	QString qdir = QFileDialog::getExistingDirectory(this, tr("Select A Folder To Share"), "", QFileDialog::DontUseNativeDialog | QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
 
 	/* add it to the server */
 	std::string dir = qdir.toStdString();
