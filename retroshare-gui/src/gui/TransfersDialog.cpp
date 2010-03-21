@@ -389,6 +389,14 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 			contextMnu.addAction( pauseAct);
 		if(!all_downld)
 			contextMnu.addAction( resumeAct);
+			
+  if(single)
+	{	
+		if(info.downloadStatus == FT_STATE_PAUSED)
+			contextMnu.addAction( resumeAct);
+		else if(info.downloadStatus != FT_STATE_COMPLETE)
+			contextMnu.addAction( pauseAct);
+	}
 
 		if(info.downloadStatus != FT_STATE_COMPLETE)
 			contextMnu.addAction( cancelAct);
@@ -408,10 +416,6 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 		contextMnu.addAction( detailsfileAct);
 		contextMnu.addSeparator();
 
-		if(info.downloadStatus == FT_STATE_PAUSED)
-			contextMnu.addAction( resumeAct);
-		else if(info.downloadStatus != FT_STATE_COMPLETE)
-			contextMnu.addAction( pauseAct);
 	}
 
 	contextMnu.addAction( clearcompletedAct);
