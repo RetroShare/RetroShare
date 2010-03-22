@@ -19,13 +19,15 @@
 
 #include <iostream>
 #include <QStringList>
+#include <QRegExp>
+#include <QApplication>
+#include <QMimeData>
+#include <QClipboard>
 #include "RetroShareLink.h"
 
 #define DEBUG_RSLINK 1
 
 const QString RetroShareLink::HEADER_NAME("retroshare://file");
-
-std::vector<RetroShareLink> RSLinkClipboard::_links ;
 
 RetroShareLink::RetroShareLink(const QUrl& url)
 {
@@ -98,6 +100,10 @@ QString RetroShareLink::toString() const
 }
 QString RetroShareLink::toHtml() const
 {
+	return QString("<a href='") + toString() + "'>" + name() + "</a>" ;
+}
+QString RetroShareLink::toHtmlFull() const
+{
 	return QString("<a href='") + toString() + "'>" + toString() + "</a>" ;
 }
 
@@ -145,5 +151,107 @@ bool RetroShareLink::checkHash(const QString& hash)
 	}
 
 	return true ;
+}
+
+
+void RSLinkClipboard::copyLinks(const std::vector<RetroShareLink>& links) 
+{
+	QString res ;
+	for(uint32_t i=0;i<links.size();++i)
+		res += links[i].toString() + "\n" ;
+
+	QApplication::clipboard()->setText(res) ;
+}
+
+std::vector<RetroShareLink> RSLinkClipboard::pasteLinks() 
+{
+	return parseClipboard() ;
+}
+
+std::vector<RetroShareLink> RSLinkClipboard::parseClipboard()
+{
+	// parse clipboard for links.
+	//
+	std::vector<RetroShareLink> links ;
+	QString text = QApplication::clipboard()->text() ;
+
+	std::cerr << "Parsing clipboard:" << text.toStdString() << std::endl ;
+
+	QRegExp rx("retroshare://file") ;
+	rx.setPatternSyntax(QRegExp::Wildcard) ;
+
+	int pos = 0;
+
+	while((pos = rx.indexIn(text, pos)) != -1) 
+	{
+		QString txt = text.right(text.length()-pos) ;
+		QStringList lst = txt.split('|') ;
+
+		if(lst.size() < 4)
+			break ;
+
+		bool ok = false ;
+		RetroShareLink link(lst[1],lst[2].toULongLong(&ok),lst[3].left(40)) ;
+
+		if(link.valid())
+		{
+			// check that the link is not already in the list:
+			bool already = false ;
+			for(uint32_t i=0;i<links.size();++i)
+				if(links[i] == link)
+				{
+					already = true ;
+					break ;
+				}
+
+			if(!already)
+			{
+				links.push_back(link) ;
+				std::cerr << "captured link: " << link.toString().toStdString() << std::endl ;
+			}
+		}
+		else
+			std::cerr << "invalid link" << std::endl ;
+
+		pos += rx.matchedLength();
+	}
+
+	return links ;
+}
+
+QString RSLinkClipboard::toString()
+{
+	std::vector<RetroShareLink> links(parseClipboard()) ;
+
+	QString res ;
+	for(uint32_t i=0;i<links.size();++i)
+		res += links[i].toString() + "\n" ;
+
+	return res ;
+}
+
+QString RSLinkClipboard::toHtml()
+{
+	std::vector<RetroShareLink> links(parseClipboard()) ;
+
+	QString res ;
+	for(uint32_t i=0;i<links.size();++i)
+		res += links[i].toHtml() + "<br/>" ;
+
+	return res ;
+}
+QString RSLinkClipboard::toHtmlFull()
+{
+	std::vector<RetroShareLink> links(parseClipboard()) ;
+
+	QString res ;
+	for(uint32_t i=0;i<links.size();++i)
+		res += links[i].toHtmlFull() + "<br/>" ;
+
+	return res ;
+}
+bool RSLinkClipboard::empty()
+{
+	return  parseClipboard().empty() ;
 }
 
