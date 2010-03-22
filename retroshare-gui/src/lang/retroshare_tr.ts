@@ -2459,7 +2459,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/forums/CreateForumMsg.ui" line="308"/>
         <source>Close</source>
-        <translation type="unfinished">bağlantılı</translation>
+        <translation>Kapat</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForumMsg.ui" line="17"/>
@@ -2469,17 +2469,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/forums/CreateForumMsg.ui" line="59"/>
         <source>Forum</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForumMsg.ui" line="77"/>
         <source>Forum Post Subject</source>
-        <translation type="unfinished"></translation>
+        <translation>Başlık</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForumMsg.ui" line="187"/>
         <source>Paste retroshare link</source>
-        <translation type="unfinished"></translation>
+        <translation>Yapıştır retroshare Link</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForumMsg.ui" line="222"/>
@@ -2504,7 +2504,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/forums/CreateForumMsg.cpp" line="92"/>
         <source>Paste retroshare Link</source>
-        <translation type="unfinished">Yapıştır retroshare Link</translation>
+        <translation>Yapıştır retroshare Link</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForumMsg.cpp" line="169"/>
@@ -2519,7 +2519,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/forums/CreateForumMsg.cpp" line="349"/>
         <source>Add Extra File</source>
-        <translation type="unfinished">Ekstra Dosya Ekle</translation>
+        <translation>Ekstra Dosya Ekle</translation>
     </message>
 </context>
 <context>
@@ -3474,8 +3474,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/ForumsDialog.cpp" line="694"/>
         <location filename="../gui/ForumsDialog.cpp" line="779"/>
         <source>signed</source>
-        <translation>imzalı
-</translation>
+        <translation>imzalı</translation>
     </message>
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="698"/>
@@ -3542,7 +3541,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/ForumsDialog.ui" line="910"/>
         <source>Title</source>
-        <translation>Başlık:</translation>
+        <translation>Başlık</translation>
     </message>
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="177"/>

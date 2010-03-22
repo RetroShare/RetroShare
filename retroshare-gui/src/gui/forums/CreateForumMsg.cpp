@@ -91,11 +91,13 @@ void CreateForumMsg::forumMessageCostumPopupMenu( QPoint point )
 
     pasteLinkAct = new QAction(QIcon(":/images/pasterslink.png"), tr( "Paste retroshare Link" ), this );
     connect( pasteLinkAct , SIGNAL( triggered() ), this, SLOT( pasteLink() ) );
-    //pasteLinkAct->setShortcut(QKeySequence::Paste);
 
+    pasteLinkFullAct = new QAction(QIcon(":/images/pasterslink.png"), tr( "Paste retroshare Link Full" ), this );
+    connect( pasteLinkFullAct , SIGNAL( triggered() ), this, SLOT( pasteLinkFull() ) );
 
     contextMnu->clear();
     contextMnu->addAction( pasteLinkAct);
+    contextMnu->addAction( pasteLinkFullAct);
 
     QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
     contextMnu->exec( mevent->globalPos() );
@@ -419,5 +421,10 @@ void CreateForumMsg::fileHashingFinished(AttachFileItem* file) {
 void CreateForumMsg::pasteLink()
 {
 	ui.forumMessage->insertHtml(RSLinkClipboard::toHtml()) ;
+}
+
+void CreateForumMsg::pasteLinkFull()
+{
+	ui.forumMessage->insertHtml(RSLinkClipboard::toHtmlFull()) ;
 }
 
