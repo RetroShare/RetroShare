@@ -837,7 +837,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="17"/>
         <source>Compose</source>
-        <translation type="unfinished">oluşturmak</translation>
+        <translation>Yeni ileti yaz</translation>
     </message>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="418"/>
@@ -847,17 +847,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="600"/>
         <source>Recommended Files</source>
-        <translation type="unfinished">tavsiye etmek dosya</translation>
+        <translation>Tavsiye edilen dosya</translation>
     </message>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="107"/>
         <source>Send To:</source>
-        <translation type="unfinished">Göndermek e:</translation>
+        <translation>Gönde Kime:</translation>
     </message>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="690"/>
         <source>Send</source>
-        <translation type="unfinished">Göndermek</translation>
+        <translation>Gönder</translation>
     </message>
     <message>
         <source>Delete Channel</source>
@@ -905,7 +905,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.cpp" line="465"/>
         <source>Compose: </source>
-        <translation type="unfinished">Yeni posta:</translation>
+        <translation>Yeni posta:</translation>
     </message>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.cpp" line="655"/>
@@ -1042,38 +1042,38 @@ Do you want to save message ?</source>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.cpp" line="1174"/>
         <source>Add Extra File</source>
-        <translation type="unfinished">Ekstra Dosya Ekle</translation>
+        <translation>Ekstra Dosya Ekle</translation>
     </message>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="617"/>
         <source>File Name</source>
-        <translation type="unfinished">File Name</translation>
+        <translation>Dosya Adı</translation>
     </message>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="622"/>
         <source>Size</source>
-        <translation type="unfinished">Size</translation>
+        <translation>Boyut</translation>
     </message>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="627"/>
         <source>Sources</source>
-        <translation type="unfinished">Sources</translation>
+        <translation>Kaynak</translation>
     </message>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="723"/>
         <source>Save</source>
-        <translation type="unfinished">Save</translation>
+        <translation>Kaydet</translation>
     </message>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="60"/>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="711"/>
         <source>Contacts</source>
-        <translation type="unfinished"></translation>
+        <translation>Rehber</translation>
     </message>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="142"/>
         <source>Subject:</source>
-        <translation type="unfinished">Konu:</translation>
+        <translation>Konu:</translation>
     </message>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="204"/>
@@ -1113,12 +1113,12 @@ Do you want to save message ?</source>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="735"/>
         <source>Attach</source>
-        <translation type="unfinished"></translation>
+        <translation>Ekle</translation>
     </message>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="738"/>
         <source>Attach File</source>
-        <translation type="unfinished">Dosya ekle</translation>
+        <translation>Dosya ekle</translation>
     </message>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="750"/>
@@ -1158,7 +1158,7 @@ Do you want to save message ?</source>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="702"/>
         <source>Reply</source>
-        <translation type="unfinished">Yanıtla</translation>
+        <translation>Yanıtla</translation>
     </message>
 </context>
 <context>
@@ -4872,7 +4872,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MainWindow.cpp" line="174"/>
         <source>Search</source>
-        <translation>Araştır</translation>
+        <translation>Ara</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="182"/>
@@ -6774,7 +6774,11 @@ Bunun yerine Mesaj göndermek istiyor musunuz?</translation>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Friends&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Arkadaşlar&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.ui" line="557"/>

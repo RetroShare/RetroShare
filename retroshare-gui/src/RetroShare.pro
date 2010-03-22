@@ -435,6 +435,24 @@ TRANSLATIONS +=  \
             lang/retroshare_tr.ts \
             lang/retroshare_sv.ts \
             lang/retroshare_zh_CN.ts
+            
+unfinishedtranslations {
+
+       TRANSLATIONS +=  \
+            lang/retroshare_da.ts \
+            lang/retroshare_bg.ts \
+            lang/retroshare_es.ts \
+            lang/retroshare_fi.ts \
+            lang/retroshare_af.ts  \
+            lang/retroshare_gr.ts  \
+            lang/retroshare_it.ts  \
+            lang/retroshare_pl.ts  \
+            lang/retroshare_pt.ts  \
+            lang/retroshare_sl.ts \
+            lang/retroshare_sr.ts \
+            lang/retroshare_zh_TW.ts
+          
+}            
 
 # Shifted Qt4.4 dependancies to here.
 #    qmake CONFIG=pluginmgr
