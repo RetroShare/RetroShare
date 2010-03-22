@@ -446,6 +446,7 @@ unfinishedtranslations {
             lang/retroshare_af.ts  \
             lang/retroshare_gr.ts  \
             lang/retroshare_it.ts  \
+            lang/retroshare_nl.ts \
             lang/retroshare_pl.ts  \
             lang/retroshare_pt.ts  \
             lang/retroshare_sl.ts \
