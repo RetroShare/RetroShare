@@ -51,7 +51,7 @@ private slots:
   void  createMsg();
   void  cancelMsg();
   void pasteLink();
-
+  void pasteLinkFull();
 
   void smileyWidgetForums();
 	void addSmileys();
@@ -65,6 +65,7 @@ private:
     
    /** Defines the actions for the context menu */
    QAction* pasteLinkAct;
+   QAction* pasteLinkFullAct;
 
   std::string mForumId;
   std::string mParentId;
