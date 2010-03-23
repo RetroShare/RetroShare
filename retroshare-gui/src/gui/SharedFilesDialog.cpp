@@ -595,7 +595,7 @@ void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
 	QMenu contextMnu2( this );
 	//
 
-	//QAction* menuAction = fileAssotiationAction(currentFile) ;
+	QAction* menuAction = fileAssotiationAction(currentFile) ;
 	//new QAction(QIcon(IMAGE_PLAY), currentFile, this);
 	//tr( "111Play File(s)" ), this );
 	//      connect( openfolderAct , SIGNAL( triggered() ), this,
@@ -694,7 +694,7 @@ void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
 		  contextMnu2.addAction( openfolderAct);
 	  else
 	  {
-		  //contextMnu2.addAction( menuAction );
+		  contextMnu2.addAction( menuAction );
 		  contextMnu2.addAction( openfileAct);
 	  }
 
