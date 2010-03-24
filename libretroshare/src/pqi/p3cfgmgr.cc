@@ -34,7 +34,9 @@
 
 #include "serialiser/rsconfigitems.h"
 
+/*
 #define CONFIG_DEBUG 1
+*/
 #define BACKEDUP_SAVE
 
 
@@ -184,8 +186,8 @@ bool p3ConfigMgr::backedUpFileSave(const std::string& fname, const std::string& 
 		const std::string& sign_fname_backup, BinMemInterface* configbio, BinMemInterface* signbio){
 
 	FILE *file = NULL, *sign = NULL;
-	char *config_buff, *sign_buff;
-	int size_file, size_sign;
+	char *config_buff=NULL, *sign_buff=NULL;
+	int size_file=0, size_sign=0;
 
 	// begin two pass saving by writing to back up file instead
 	if (!configbio->writetofile(fname_backup.c_str()) || !signbio->writetofile(sign_fname_backup.c_str()))
@@ -665,7 +667,7 @@ bool p3Config::backedUpFileSave(const std::string& cfg_fname, const std::string&
 	uint32_t stream_flags = BIN_FLAGS_WRITEABLE;
 	bool written = true;
 	FILE* cfg_file = NULL;
-	char* buff;
+	char* buff=NULL;
 	int size_file = 0;
 
 	if (!cleanup)

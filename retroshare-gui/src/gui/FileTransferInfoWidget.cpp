@@ -227,6 +227,8 @@ void FileTransferInfoWidget::draw(const FileInfo& nfo,const FileChunksInfo& info
 	 y += block_sep ;
 	 y += text_height ; painter->drawText(20,y,tr("Transfered: ")) ; painter->drawText(tab_size,y,QString::number(nfo.transfered) + " " + tr("bytes") + " " + "(" + misc::friendlyUnit(nfo.transfered) + ")") ;
 	 y += block_sep ;
+	 y += text_height ; painter->drawText(20,y,tr("Remaining: ")) ; painter->drawText(tab_size,y,QString::number(info.file_size - nfo.transfered) + " " + tr("bytes") + " " + "(" + misc::friendlyUnit(info.file_size - nfo.transfered) + ")") ;
+	 y += block_sep ;
 	 y += text_height ; painter->drawText(20,y,tr("Number of sources: ")) ; painter->drawText(tab_size,y,QString::number(info.compressed_peer_availability_maps.size())) ;
 	 y += block_sep ;
 	 y += text_height ; painter->drawText(20,y,tr("Chunk strategy: ")) ; painter->drawText(tab_size,y,(info.strategy==FileChunksInfo::CHUNK_STRATEGY_RANDOM)?"Random":"Streaming") ;

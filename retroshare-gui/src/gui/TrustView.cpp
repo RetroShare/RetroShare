@@ -11,6 +11,7 @@
 using namespace std ;
 
 TrustView::TrustView()
+	: RsAutoUpdatePage(10000)
 {
 	setupUi(this) ;
 
@@ -26,13 +27,6 @@ TrustView::TrustView()
 	QObject::connect(trustTableTW->horizontalHeader(),SIGNAL(sectionClicked(int)),this,SLOT(hideShowPeers(int))) ;
 
 	updatePB->setToolTip(tr("This table normaly auto-updates every 10 seconds.")) ;
-
-	QTimer *timer = new QTimer ;
-
-	QObject::connect(timer,SIGNAL(timeout()),this,SLOT(update())) ;
-	timer->start(10000) ;
-
-	update() ;
 }
 
 void TrustView::showEvent(QShowEvent *e)
@@ -55,10 +49,11 @@ void TrustView::selectCell(int row,int col)
 {
 	static int last_row = -1 ;
 	static int last_col = -1 ;
-
+#ifdef DEBUG_TRUSTVIEW
 	cout << "row = " << row << ", column = " << col << endl;
 	if(row == 0 || col == 0)
 		cout << "***********************************************" << endl ;
+#endif
 	if(last_row > -1)
 	{
 		int col_s,row_s ;
@@ -133,19 +128,18 @@ int TrustView::getRowColId(const string& peerid)
 	return i ;
 }
 
+void TrustView::updateDisplay()
+{
+	update() ;
+}
 void TrustView::update()
 {
-	// collect info.
-
-	if(!isVisible())
-		return ;
-
 	std::list<std::string> neighs;
 
-        if(!rsPeers->getGPGAllList(neighs))
+	if(!rsPeers->getGPGAllList(neighs))
 		return ;
 
-        neighs.push_back(rsPeers->getGPGOwnId()) ;
+	neighs.push_back(rsPeers->getGPGOwnId()) ;
 
 	trustTableTW->setSortingEnabled(false) ;
 
@@ -162,9 +156,11 @@ void TrustView::update()
 		int i = getRowColId(details.id) ;
 		std::string issuer(details.issuer) ;	// the one we check for trust.
 
-                for(list<string>::const_iterator it2(details.gpgSigners.begin());it2!=details.gpgSigners.end();++it2)
+		for(list<string>::const_iterator it2(details.gpgSigners.begin());it2!=details.gpgSigners.end();++it2)
 		{
+#ifdef DEBUG_TRUSTVIEW
 			cout << *it2 << " " ;
+#endif
 
 			int j = getRowColId(*it2) ;
 
@@ -175,7 +171,7 @@ void TrustView::update()
 			else
 				trustTableTW->item(i,j)->setText(trr) ;
 		}
-//		cout << endl ;
+		//		cout << endl ;
 	}
 	// assign colors
 	vector<int> ni(trustTableTW->rowCount(),0) ;
@@ -199,7 +195,7 @@ void TrustView::update()
 				if(i_ji == NULL)
 				{
 					i_ij->setBackgroundColor(Qt::yellow) ;
-                                        i_ij->setToolTip(trustTableTW->horizontalHeaderItem(i)->text() + tr(" is athenticated (one way) by " )+trustTableTW->verticalHeaderItem(j)->text()) ;
+					i_ij->setToolTip(trustTableTW->horizontalHeaderItem(i)->text() + tr(" is athenticated (one way) by " )+trustTableTW->verticalHeaderItem(j)->text()) ;
 					i_ij->setText(tr("Half")) ;
 				}
 				else
@@ -207,22 +203,22 @@ void TrustView::update()
 					if(i==j)
 					{
 						i_ij->setBackgroundColor(Qt::red) ;
-                                                i_ij->setToolTip(trustTableTW->horizontalHeaderItem(i)->text() + tr(" athenticated himself") ) ;
+						i_ij->setToolTip(trustTableTW->horizontalHeaderItem(i)->text() + tr(" athenticated himself") ) ;
 					}
 					else
 					{
 						i_ij->setBackgroundColor(Qt::green) ;
-                                                i_ij->setToolTip(trustTableTW->horizontalHeaderItem(i)->text() + " and " +trustTableTW->verticalHeaderItem(j)->text() + tr(" athenticated each others") ) ;
+						i_ij->setToolTip(trustTableTW->horizontalHeaderItem(i)->text() + " and " +trustTableTW->verticalHeaderItem(j)->text() + tr(" athenticated each others") ) ;
 						i_ij->setText(tr("Full")) ;
 					}
 				}
 			}
 		}
 	for(int i=0;i<trustTableTW->rowCount();++i)
-                trustTableTW->verticalHeaderItem(i)->setToolTip(trustTableTW->verticalHeaderItem(i)->text()+ tr(" is athenticated by ") + QString::number(ni[i]) + tr(" peers, including him(her)self.")) ;
+		trustTableTW->verticalHeaderItem(i)->setToolTip(trustTableTW->verticalHeaderItem(i)->text()+ tr(" is athenticated by ") + QString::number(ni[i]) + tr(" peers, including him(her)self.")) ;
 
 	for(int j=0;j<trustTableTW->columnCount();++j)
-                trustTableTW->horizontalHeaderItem(j)->setToolTip(trustTableTW->horizontalHeaderItem(j)->text()+ tr(" athenticated ") + QString::number(nj[j]) + tr(" peers, including him(her)self.")) ;
+		trustTableTW->horizontalHeaderItem(j)->setToolTip(trustTableTW->horizontalHeaderItem(j)->text()+ tr(" athenticated ") + QString::number(nj[j]) + tr(" peers, including him(her)self.")) ;
 
 }
 
