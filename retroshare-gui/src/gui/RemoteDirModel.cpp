@@ -237,25 +237,8 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
         rsFiles->FileDetails(details.hash, 0, finfo);
 
 		  if(details.min_age > ageIndicator)
-		  {
 			  return Qt::gray ;
-			}
-			else if (ageIndicator == IND_LAST_DAY )
-			{
-				// color green
-				return QBrush(QColor(0, 191, 6));
-			}
-		  else if (ageIndicator == IND_LAST_WEEK )
-		  {
-		  	//color yellow
-		  	return QBrush(QColor(234, 160, 0));
-		  }
-      else if (ageIndicator == IND_LAST_MONTH )
-      {
-      	//color red
-        return QBrush(QColor(228, 70, 69));
-      }
-      else
+		  else
 			  return Qt::black ;
     }
 
