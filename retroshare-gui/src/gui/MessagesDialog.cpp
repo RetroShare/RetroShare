@@ -164,7 +164,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     QMenu * viewmenu = new QMenu();
     viewmenu->addAction(ui.actionTextBesideIcon);
     viewmenu->addAction(ui.actionIconOnly);
-    viewmenu->addAction(ui.actionTextUnderIcon);
+    //viewmenu->addAction(ui.actionTextUnderIcon);
     ui.viewtoolButton->setMenu(viewmenu);
 
 	 loadToolButtonsettings();
