@@ -443,12 +443,12 @@ void MessagesDialog::togglefileview()
 	if (ui.expandFilesButton->isChecked())
 	{
 	  ui.expandFilesButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
-	  ui.expandFilesButton->setToolTip("Hide");
+	  ui.expandFilesButton->setToolTip(tr("Hide"));
 	}
 	else
 	{
     ui.expandFilesButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
-	  ui.expandFilesButton->setToolTip("Expand");
+	  ui.expandFilesButton->setToolTip(tr("Expand"));
 	}	
 
 }
