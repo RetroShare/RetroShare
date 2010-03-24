@@ -138,7 +138,7 @@ void DetailsDialog::setHash(const QString & hash)
 
 void DetailsDialog::setSize(const qulonglong & size) 
 {
-	ui.size_label_2->setText(misc::friendlyUnit(size));
+	ui.size_label_2->setText(misc::friendlyUnit(size) + " " + "(" + QString::number(size) + " " + "Bytes" + ")");
 }
 
 void DetailsDialog::setStatus(const QString & status) 
