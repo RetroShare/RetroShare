@@ -867,7 +867,7 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index)
 		item -> setText(0, QString::fromStdString(it->fname));
 		//std::cerr << "Msg FileItem(" << it->fname.length() << ") :" << it->fname << std::endl;
 
-		item -> setText(1, misc::friendlyUnit(it->size)); /* (1) Size */
+		item -> setText(1, QString::number(it->size)); /* (1) Size */
 		item -> setText(2, QString::number(0)); 			/* (2) Rank */ // what is this ???
 		item -> setText(3, QString::fromStdString(it->hash)); 
 
