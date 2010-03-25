@@ -444,6 +444,7 @@ void SearchDialog::searchRemoveAll()
 {
 	ui.searchResultWidget->clear();
 	ui.searchSummaryWidget->clear();
+	ui.FileTypeComboBox->setCurrentIndex(0);
 	nextSearchId = 1;
 }
 
@@ -451,7 +452,6 @@ void SearchDialog::searchRemoveAll()
 void SearchDialog::clearKeyword()
 {
  	ui.lineEdit->clear();
- 	ui.FileTypeComboBox->setCurrentIndex(0);
  	ui.lineEdit->setFocus();
 }
 

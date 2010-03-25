@@ -1097,7 +1097,7 @@ border-image: url(:/images/btn_26_pressed.png) 4;
 </string>
        </property>
        <property name="text">
-        <string>Clear all Search Results</string>
+        <string>Close All Search Results</string>
        </property>
       </widget>
      </item>
