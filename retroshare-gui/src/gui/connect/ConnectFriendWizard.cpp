@@ -206,16 +206,14 @@ TextPage::TextPage(QWidget *parent)
     userCertEdit = new QTextEdit;
     std::string invite = rsPeers->GetRetroshareInvite();
 
-    userCertEdit->setText(QString::fromStdString(invite));
     userCertEdit->setReadOnly(true);
     userCertEdit->setMinimumHeight(200);
     userCertEdit->setMinimumWidth(530);
-    QFont font;
-    font.setPointSize(10);
-    font.setBold(false);
-    font.setStyleHint(QFont::TypeWriter, QFont::PreferDefault);
-    //font.setWeight(75);
+    QFont font("Courier New",10,50,false);
+	 font.setStyleHint(QFont::TypeWriter,QFont::PreferMatch);
+	 font.setStyle(QFont::StyleNormal);
     userCertEdit->setFont(font);
+    userCertEdit->setText(QString::fromStdString(invite));
 
     std::cerr << "TextPage() getting Invite: " << invite << std::endl;
 
@@ -269,6 +267,9 @@ TextPage::TextPage(QWidget *parent)
                                     "certificate into the box below" )) ;
     
     friendCertEdit = new QTextEdit;
+
+    //font.setWeight(75);
+    friendCertEdit->setFont(font);
 
     //=== add all widgets to one layout
     textPageLayout = new QVBoxLayout();
