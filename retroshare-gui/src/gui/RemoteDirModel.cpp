@@ -465,11 +465,15 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
           return QString::fromUtf8(details.name.c_str());
 				break;
 			case 1:
-				//return QString("");
 				{
 					std::ostringstream out;
 					out << details.count;
-					return QString::fromStdString(out.str());
+					if (details.count > 1)
+					{
+					return QString::fromStdString(out.str()) + " " + tr("Files");
+					}
+					else
+					return QString::fromStdString(out.str()) + " " + tr("File");
 				}
 				break;
 			case 2:
@@ -506,7 +510,7 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
 	{
 		if(coln == 1)
 		{
-			return int( Qt::AlignLeft | Qt::AlignVCenter);
+			return int( Qt::AlignRight | Qt::AlignVCenter);
 		}
 
 
