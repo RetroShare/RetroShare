@@ -444,6 +444,7 @@ void SearchDialog::searchRemoveAll()
 {
 	ui.searchResultWidget->clear();
 	ui.searchSummaryWidget->clear();
+	ui.FileTypeComboBox->setCurrentIndex(0);
 	nextSearchId = 1;
 }
 
@@ -451,7 +452,6 @@ void SearchDialog::searchRemoveAll()
 void SearchDialog::clearKeyword()
 {
  	ui.lineEdit->clear();
- 	ui.FileTypeComboBox->setCurrentIndex(0);
  	ui.lineEdit->setFocus();
 }
 
@@ -700,7 +700,7 @@ void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, 
 		child->setIcon(SR_NAME_COL, QIcon(IMAGE_DIRECTORY));
 		child->setText(SR_NAME_COL, QString::fromUtf8(dir.name.c_str()));
 		child->setText(SR_HASH_COL, QString::fromStdString(dir.hash));
-		child->setText(SR_SIZE_COL, misc::friendlyUnit(dir.count));
+		child->setText(SR_SIZE_COL, misc::toQString(dir.count));
 		child->setText(SR_AGE_COL, misc::userFriendlyDuration(dir.age));
 		child->setText(SR_REALSIZE_COL, QString::number(dir.count));
 		child->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
@@ -763,8 +763,8 @@ void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, 
     child->setIcon(SR_NAME_COL, QIcon(IMAGE_DIRECTORY));
     child->setText(SR_NAME_COL, QString::fromUtf8(dir.name.c_str()));
     child->setText(SR_HASH_COL, QString::fromStdString(dir.hash));
-    child->setText(SR_SIZE_COL, misc::friendlyUnit(dir.count));
-    child->setText(SR_AGE_COL, misc::userFriendlyDuration(dir.age));
+    child->setText(SR_SIZE_COL, misc::toQString(dir.count));
+    child->setText(SR_AGE_COL, misc::userFriendlyDuration(dir.min_age));
     child->setText(SR_REALSIZE_COL, QString::number(dir.count));
     child->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
     child->setText(SR_ID_COL, QString::number(1));
@@ -1210,6 +1210,7 @@ void SearchDialog::copysearchLink()
 
 			 RetroShareLink link(fname, fsize, fhash);
 
+			 std::cerr << "new link added to clipboard: " << link.toString().toStdString() << std::endl ;
 			 if(link.valid())
 				 urls.push_back(link) ;
 		 } 
