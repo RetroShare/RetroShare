@@ -38,7 +38,7 @@ LanguageSupport::languages()
     //languages.insert("bg",    "Bulgarien");
     //languages.insert("cy",    "Welsh");
     languages.insert("de",    "Deutsch");
-    //languages.insert("da",    "Danish");
+    languages.insert("da",    "Danish");
     languages.insert("en",    "English");
     //languages.insert("es",    QString::fromUtf8("spanish"));
     languages.insert("fr",    QString::fromUtf8("Fran\303\247ais"));
