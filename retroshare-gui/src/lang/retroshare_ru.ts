@@ -9161,27 +9161,27 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RemoteDirModel</name>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="563"/>
+        <location filename="../gui/RemoteDirModel.cpp" line="567"/>
         <source>Friends Directories</source>
         <translation>Друзья Каталоги</translation>
     </message>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="567"/>
+        <location filename="../gui/RemoteDirModel.cpp" line="571"/>
         <source>My Directories</source>
         <translation>Моя Каталоги</translation>
     </message>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="571"/>
+        <location filename="../gui/RemoteDirModel.cpp" line="575"/>
         <source>Size</source>
         <translation>размер</translation>
     </message>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="577"/>
+        <location filename="../gui/RemoteDirModel.cpp" line="581"/>
         <source>Share Type</source>
         <translation>Тип акции</translation>
     </message>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="580"/>
+        <location filename="../gui/RemoteDirModel.cpp" line="584"/>
         <source>What&apos;s new</source>
         <translation>Что нового</translation>
     </message>
@@ -9190,7 +9190,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Ранг </translation>
     </message>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="574"/>
+        <location filename="../gui/RemoteDirModel.cpp" line="578"/>
         <source>Age</source>
         <translation>Возраст</translation>
     </message>
@@ -9200,7 +9200,17 @@ p, li { white-space: pre-wrap; }
         <translation>ФАЙЛОВ</translation>
     </message>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="498"/>
+        <location filename="../gui/RemoteDirModel.cpp" line="473"/>
+        <source>Files</source>
+        <translation type="unfinished">Файлы </translation>
+    </message>
+    <message>
+        <location filename="../gui/RemoteDirModel.cpp" line="476"/>
+        <source>File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/RemoteDirModel.cpp" line="502"/>
         <source>DIR</source>
         <translation>Папка</translation>
     </message>
@@ -9306,6 +9316,11 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/SearchDialog.ui" line="977"/>
         <source>Results</source>
         <translation>Результаты </translation>
+    </message>
+    <message>
+        <location filename="../gui/SearchDialog.ui" line="1100"/>
+        <source>Close All Search Results</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/SearchDialog.ui" line="1181"/>
@@ -9501,9 +9516,8 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Закрыть все Результаты поиска&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1100"/>
         <source>Clear all Search Results</source>
-        <translation>Закрыть все Результаты поиска</translation>
+        <translation type="obsolete">Закрыть все Результаты поиска</translation>
     </message>
     <message>
         <location filename="../gui/SearchDialog.ui" line="1132"/>

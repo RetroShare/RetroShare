@@ -8928,12 +8928,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/SearchDialog.cpp" line="240"/>
         <source>Copy retroshare Link</source>
-        <translation type="unfinished">Kopiere retroshare Link</translation>
+        <translation>Kopiere retroshare Link</translation>
     </message>
     <message>
         <location filename="../gui/SearchDialog.cpp" line="243"/>
         <source>Send retroshare Link</source>
-        <translation type="unfinished">Sende retroshare Link</translation>
+        <translation>Sende retroshare Link</translation>
     </message>
     <message>
         <location filename="../gui/SearchDialog.cpp" line="246"/>
@@ -8967,7 +8967,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/SearchDialog.cpp" line="710"/>
         <location filename="../gui/SearchDialog.cpp" line="773"/>
         <source>Folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Ordner</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -9116,7 +9116,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/SearchDialog.ui" line="664"/>
         <source>Directory</source>
-        <translation type="unfinished"></translation>
+        <translation>Ordner</translation>
     </message>
     <message>
         <location filename="../gui/SearchDialog.ui" line="743"/>
@@ -9135,7 +9135,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/SearchDialog.ui" line="855"/>
         <source>Search</source>
-        <translation type="unfinished">Suchen</translation>
+        <translation>Suchen</translation>
     </message>
     <message>
         <location filename="../gui/SearchDialog.ui" line="1225"/>

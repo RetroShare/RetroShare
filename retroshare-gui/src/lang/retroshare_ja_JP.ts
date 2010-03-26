@@ -45,12 +45,12 @@
     <message>
         <location filename="../gui/settings/AddFileAssociationDialog.cpp" line="50"/>
         <source>File type(extension):</source>
-        <translation>ファイルタイプ(拡張子):</translation>
+        <translation>ファイルの種類 (拡張子):</translation>
     </message>
     <message>
         <location filename="../gui/settings/AddFileAssociationDialog.cpp" line="61"/>
         <source>Use default command</source>
-        <translation>デフォルト コマンドを使用</translation>
+        <translation>デフォルトのコマンドを使用</translation>
     </message>
     <message>
         <location filename="../gui/settings/AddFileAssociationDialog.cpp" line="71"/>
@@ -60,13 +60,14 @@
     <message>
         <location filename="../gui/settings/AddFileAssociationDialog.cpp" line="151"/>
         <source>RetroShare</source>
-        <translation>Ret6roShare</translation>
+        <translation>RetroShare</translation>
     </message>
     <message>
         <location filename="../gui/settings/AddFileAssociationDialog.cpp" line="152"/>
         <source>Sorry, can&apos;t determine system default command for this file
 </source>
-        <translation>このファイルのシステム デフォルト コマンドを決定できません</translation>
+        <translation>このファイルはシステムのデフォルトのコマンドを決定できません
+</translation>
     </message>
 </context>
 <context>
@@ -75,12 +76,12 @@
         <location filename="../gui/AddLinksDialog.ui" line="14"/>
         <location filename="../gui/AddLinksDialog.ui" line="105"/>
         <source>Add Link</source>
-        <translation>追加</translation>
+        <translation>リンクを追加</translation>
     </message>
     <message>
         <location filename="../gui/AddLinksDialog.ui" line="131"/>
         <source>Add a new Link</source>
-        <translation>新規リンクの追加</translation>
+        <translation>新規リンクを追加</translation>
     </message>
     <message>
         <location filename="../gui/AddLinksDialog.ui" line="151"/>
@@ -89,7 +90,11 @@
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:400;&quot;&gt;Title:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:400;&quot;&gt;タイトル:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/AddLinksDialog.ui" line="169"/>
@@ -98,7 +103,11 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:400;&quot;&gt;Url:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:400;&quot;&gt;URL::&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/AddLinksDialog.ui" line="249"/>
@@ -113,7 +122,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/AddLinksDialog.ui" line="267"/>
         <source>0 Okay</source>
-        <translation>0 可</translation>
+        <translation>0 普通</translation>
     </message>
     <message>
         <location filename="../gui/AddLinksDialog.ui" line="276"/>
@@ -137,7 +146,11 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:18pt; font-weight:600; color:#ffffff;&quot;&gt;Add Link to Cloud&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:18pt; font-weight:600; color:#ffffff;&quot;&gt;クラウドにリンクを追加&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/AddLinksDialog.ui" line="93"/>
@@ -150,7 +163,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/advsearch/AdvancedSearchDialog.ui" line="14"/>
         <source>RetroShare: Advanced Search</source>
-        <translation>RetroShare:: 高度な検索</translation>
+        <translation>RetroShare: 高度な検索</translation>
     </message>
     <message>
         <location filename="../gui/advsearch/AdvancedSearchDialog.ui" line="237"/>
@@ -165,22 +178,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/advsearch/AdvancedSearchDialog.ui" line="175"/>
         <source>Add a further search criterion.</source>
-        <translation>さらに検索基準を追加</translation>
+        <translation>さらに検索基準を追加.</translation>
     </message>
     <message>
         <location filename="../gui/advsearch/AdvancedSearchDialog.ui" line="195"/>
         <source>Reset the search criteria.</source>
-        <translation>検索基準をリセット</translation>
+        <translation>検索基準をリセット.</translation>
     </message>
     <message>
         <location filename="../gui/advsearch/AdvancedSearchDialog.ui" line="234"/>
         <source>Cancels the search.</source>
-        <translation>検索をキャンセル</translation>
+        <translation>検索をキャンセル.</translation>
     </message>
     <message>
         <location filename="../gui/advsearch/AdvancedSearchDialog.ui" line="250"/>
         <source>Perform the advanced search.</source>
-        <translation>高度な検索を実行</translation>
+        <translation>高度な検索を実行.</translation>
     </message>
     <message>
         <location filename="../gui/advsearch/AdvancedSearchDialog.ui" line="111"/>
@@ -206,7 +219,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/settings/AppearancePage.ui" line="612"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Arial; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Changes to language will only take effect after restarting RetroShare!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Arial; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;言語の変更はRetroShareの再起動後に有効になります&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Arial; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;言語の変更はRetroShareの再起動後に有効になります!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/settings/AppearancePage.ui" line="632"/>
@@ -219,12 +232,12 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Choose RetroShare&apos;s interface style&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;RetroShareのインターフェイス スタイルを選択&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;RetroShareのインターフェイスのスタイルを選択&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/settings/AppearancePage.ui" line="710"/>
         <source>Style Sheet</source>
-        <translation>スタイルシート </translation>
+        <translation>スタイルシート</translation>
     </message>
 </context>
 <context>
@@ -258,7 +271,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/ApplicationWindow.cpp" line="84"/>
         <source>Games Launcher</source>
-        <translation>ゲーム ランチャー</translation>
+        <translation>ゲーム ランチャ</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/ApplicationWindow.cpp" line="80"/>
@@ -297,7 +310,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/AttachFileItem.ui" line="108"/>
         <source>%p Kb</source>
-        <translation>%p Kb</translation>
+        <translation>%p KB</translation>
     </message>
     <message>
         <location filename="../gui/feeds/AttachFileItem.ui" line="121"/>
@@ -321,12 +334,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/bwgraph/bwgraph.ui" line="630"/>
         <source>Receive Rate</source>
-        <translation type="unfinished">受信レート</translation>
+        <translation>受信速度</translation>
     </message>
     <message>
         <location filename="../gui/bwgraph/bwgraph.ui" line="654"/>
         <source>Send Rate</source>
-        <translation type="unfinished">送信レート</translation>
+        <translation>送信速度</translation>
     </message>
     <message>
         <location filename="../gui/bwgraph/bwgraph.ui" line="723"/>
@@ -336,7 +349,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/bwgraph/bwgraph.ui" line="775"/>
         <source>Changes the transparency of the Bandwidth Graph</source>
-        <translation>帯域幅グラフの透明度を変更</translation>
+        <translation>帯域グラフの透明度を変更</translation>
     </message>
     <message>
         <location filename="../gui/bwgraph/bwgraph.ui" line="860"/>
@@ -361,7 +374,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/bwgraph/bwgraph.cpp" line="199"/>
         <source>Since:</source>
-        <translation type="unfinished">以来:</translation>
+        <translation>開始:</translation>
     </message>
     <message>
         <location filename="../gui/bwgraph/bwgraph.cpp" line="265"/>
@@ -371,7 +384,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/bwgraph/bwgraph.ui" line="491"/>
         <source>RetroShare Bandwidth Usage</source>
-        <translation type="unfinished">RetroShare 帯域幅の使用量</translation>
+        <translation>RetroShare 帯域の使用量</translation>
     </message>
     <message>
         <location filename="../gui/bwgraph/bwgraph.ui" line="667"/>
@@ -390,7 +403,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/unfinished/blogs/BlogDetails.ui" line="32"/>
         <source>Blogl Details</source>
         <translatorcomment>typo?</translatorcomment>
-        <translation type="unfinished">Bloglの詳細</translation>
+        <translation type="unfinished">ブログの詳細</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/BlogDetails.ui" line="38"/>
@@ -500,22 +513,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/BlogMsgItem.ui" line="105"/>
         <source>Connected</source>
-        <translation>接続済</translation>
+        <translation>接続中</translation>
     </message>
     <message>
         <location filename="../gui/feeds/BlogMsgItem.ui" line="134"/>
         <source>Expand</source>
-        <translation type="unfinished">展開</translation>
+        <translation>展開</translation>
     </message>
     <message>
         <location filename="../gui/feeds/BlogMsgItem.ui" line="152"/>
         <source>Subject</source>
-        <translation>題名</translation>
+        <translation>件名</translation>
     </message>
     <message>
         <location filename="../gui/feeds/BlogMsgItem.ui" line="165"/>
         <source>subjectLabel</source>
-        <translation type="unfinished">題名ラベル</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/feeds/BlogMsgItem.ui" line="194"/>
@@ -526,7 +539,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/feeds/BlogMsgItem.ui" line="225"/>
         <source>Long 
  message here</source>
-        <translation type="unfinished">ここに長文を</translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -565,7 +578,7 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:14pt; color:#ffffff;&quot;&gt;ブログの名前&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:14pt; color:#ffffff;&quot;&gt;ブログ名&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/BlogsDialog.ui" line="331"/>
@@ -588,7 +601,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/blogs/BlogsDialog.ui" line="404"/>
         <source>Unsubscribe</source>
-        <translation>購読を中止</translation>
+        <translation>購読中止</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/BlogsDialog.ui" line="423"/>
@@ -677,9 +690,9 @@ p, li { white-space: pre-wrap; }
         <source>Popularity: %1
 Fetches: %2
 Available: %3</source>
-        <translation type="unfinished">人気: %1
-取得: %2
-有効: %3</translation>
+        <translation>人気度: %1
+取得数: %2
+評価: %3</translation>
     </message>
 </context>
 <context>
@@ -700,7 +713,7 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:11pt; font-weight:600; font-style:italic;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#656565;&quot;&gt;ブログのタイトル&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#656565;&quot;&gt;ブログの件名&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/BlogsMsgItem.ui" line="131"/>
@@ -729,7 +742,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/unfinished/blogs/BlogsMsgItem.ui" line="164"/>
         <location filename="../gui/unfinished/blogs/BlogsMsgItem.cpp" line="188"/>
         <source>Expand</source>
-        <translation type="unfinished">展開</translation>
+        <translation>展開</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/BlogsMsgItem.ui" line="88"/>
@@ -787,7 +800,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/CalDialog.ui" line="177"/>
         <source>Status:</source>
-        <translation>ステータス:</translation>
+        <translation>状態:</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/CalDialog.ui" line="197"/>
@@ -797,7 +810,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/CalDialog.ui" line="202"/>
         <source>Public</source>
-        <translation>公開</translation>
+        <translation>パブリック</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/CalDialog.ui" line="210"/>
@@ -838,23 +851,23 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="594"/>
         <source>Use PGP certificates saved in files.</source>
-        <translation>ファイルに保存されたPGP証明書を使用.</translation>
+        <translation>ファイルに保存された PGP 証明書を使用.</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="596"/>
         <source>You have to generate a file with your certificate and give it to your friend. Also, you can use a file generated before.</source>
-        <translation>あなたの証明書でファイルを生成する必要があり、そのファイルをあなたの友人に渡してください また、以前に生成したファイルも使用できます.</translation>
+        <translation>あなたの証明書でファイルを生成する必要があり、そのファイルをあなたの友達に渡してください また、以前に生成したファイルも使用できます.</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="603"/>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="613"/>
         <source>Export my certificate...</source>
-        <translation>証明書のエクスポート...</translation>
+        <translation>あなたの証明書をエクスポート...</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="616"/>
         <source>Specify path to your friend&apos;s certificate in the box below </source>
-        <translation>下のボックスにあなたの友人の証明書のパスを指定してください</translation>
+        <translation>下のボックスにあなたの友達の証明書のパスを指定してください</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="622"/>
@@ -912,7 +925,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="17"/>
         <source>Compose</source>
-        <translation type="unfinished">構成</translation>
+        <translation>作成</translation>
     </message>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="424"/>
@@ -970,17 +983,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="720"/>
         <source>Toggle Contacts View</source>
-        <translation>コンタクト ビューの切り替え</translation>
+        <translation>コンタクトの表示の切り替え</translation>
     </message>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="732"/>
         <source>Save this message</source>
-        <translation>メッセージを保存</translation>
+        <translation>このメッセージを保存</translation>
     </message>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.cpp" line="465"/>
         <source>Compose: </source>
-        <translation type="unfinished">構成:</translation>
+        <translation>作成:</translation>
     </message>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.cpp" line="655"/>
@@ -1118,7 +1131,7 @@ Do you want to save message ?</source>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.cpp" line="1174"/>
         <source>Add Extra File</source>
-        <translation>添付ファイルの追加</translation>
+        <translation>さらにファイルを追加</translation>
     </message>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="623"/>
@@ -1154,7 +1167,7 @@ Do you want to save message ?</source>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="210"/>
         <source>Font size</source>
-        <translation>フォントの大きさ</translation>
+        <translation>フォント サイズ</translation>
     </message>
     <message>
         <location filename="../gui/msgs/ChanMsgDialog.ui" line="217"/>
@@ -1251,7 +1264,7 @@ Do you want to save message ?</source>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:11pt; font-weight:600; font-style:italic;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-style:normal; color:#656565;&quot;&gt;Channel Subject&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:11pt; font-weight:600; font-style:italic;&quot;&gt;
@@ -1291,13 +1304,13 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/ChanMsgItem.ui" line="223"/>
         <source>Remove Item</source>
-        <translation>アイテムの削除</translation>
+        <translation>アイテムを削除</translation>
     </message>
     <message>
         <location filename="../gui/feeds/ChanMsgItem.ui" line="263"/>
         <location filename="../gui/feeds/ChanMsgItem.cpp" line="194"/>
         <source>Expand</source>
-        <translation type="unfinished">展開</translation>
+        <translation>展開</translation>
     </message>
     <message>
         <location filename="../gui/feeds/ChanMsgItem.ui" line="203"/>
@@ -1312,13 +1325,13 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/ChanMsgItem.ui" line="280"/>
         <source>TextLabel</source>
-        <translation>テキスト ラベル</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/feeds/ChanMsgItem.ui" line="329"/>
         <source>Long 
  message here</source>
-        <translation type="unfinished">長文をここに</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/feeds/ChanMsgItem.cpp" line="188"/>
@@ -1341,7 +1354,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/ChanNewItem.ui" line="85"/>
         <source>Connected</source>
-        <translation>接続済</translation>
+        <translation>接続中</translation>
     </message>
     <message>
         <location filename="../gui/feeds/ChanNewItem.ui" line="108"/>
@@ -1356,7 +1369,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/ChanNewItem.ui" line="173"/>
         <source>Expand</source>
-        <translation type="unfinished">展開</translation>
+        <translation>展開</translation>
     </message>
     <message>
         <location filename="../gui/feeds/ChanNewItem.ui" line="204"/>
@@ -1381,7 +1394,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/channels/ChannelDetails.ui" line="38"/>
         <source>Channel Info</source>
-        <translation>チャネルの情報</translation>
+        <translation>チャネル情報</translation>
     </message>
     <message>
         <location filename="../gui/channels/ChannelDetails.ui" line="44"/>
@@ -1391,7 +1404,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/channels/ChannelDetails.ui" line="54"/>
         <source>Popularity</source>
-        <translation type="unfinished">人気度</translation>
+        <translation>人気度</translation>
     </message>
     <message>
         <location filename="../gui/channels/ChannelDetails.ui" line="68"/>
@@ -1485,7 +1498,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/ChannelFeed.ui" line="410"/>
         <source>Unsubscribe</source>
-        <translation>購読を中止</translation>
+        <translation>購読中止</translation>
     </message>
     <message>
         <location filename="../gui/ChannelFeed.ui" line="458"/>
@@ -1495,12 +1508,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/ChannelFeed.ui" line="527"/>
         <source>Auto Download On</source>
-        <translation>自動ダウンロード ON</translation>
+        <translation>自動ダウンロード オン</translation>
     </message>
     <message>
         <location filename="../gui/ChannelFeed.ui" line="532"/>
         <source>Auto Download Off</source>
-        <translation>自動ダウンロード OFF</translation>
+        <translation>自動ダウンロード オフ</translation>
     </message>
     <message>
         <location filename="../gui/ChannelFeed.cpp" line="66"/>
@@ -1560,7 +1573,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/ChannelFeed.cpp" line="188"/>
         <source>Create a new Channel</source>
-        <translation>新規チャネルを作成</translation>
+        <translation>チャネルを新規作成</translation>
     </message>
     <message>
         <location filename="../gui/ChannelFeed.cpp" line="192"/>
@@ -1575,9 +1588,9 @@ p, li { white-space: pre-wrap; }
         <source>Popularity: %1
 Fetches: %2
 Available: %3</source>
-        <translation type="unfinished">人気: %1
-取得: %2
-有効: %3</translation>
+        <translation>人気度: %1
+取得数: %2
+評価: %3</translation>
     </message>
 </context>
 <context>
@@ -1593,12 +1606,12 @@ Available: %3</source>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="752"/>
         <source>Make Friend</source>
-        <translation>友人になる</translation>
+        <translation>友達になる</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="754"/>
         <source>Details about your friend : </source>
-        <translation>友人についての詳細:</translation>
+        <translation>友達についての詳細:</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="761"/>
@@ -1608,22 +1621,22 @@ Available: %3</source>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="769"/>
         <source>Email:</source>
-        <translation>Email:</translation>
+        <translation>Eメール:</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="785"/>
         <source>Authenticate friend (Sign GPG Key)</source>
-        <translation type="unfinished">友人を認証する (GPG キーで署名)</translation>
+        <translation>友達を認証する (GPG キーに署名)</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="788"/>
         <source>Add as friend to connect with</source>
-        <translation type="unfinished">接続する友人として追加</translation>
+        <translation>接続する友達として追加</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="882"/>
         <source>It seems your friend is already registered. Adding it might just set it&apos;s ip address.</source>
-        <translation type="unfinished">この友人はすでに登録されているようです. 追加しても IP アドレスを変更するだけかもしれません.</translation>
+        <translation>この友達はすでに登録されているようです. 追加しても IP アドレスを変更するだけかもしれません.</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="757"/>
@@ -1696,12 +1709,12 @@ Available: %3</source>
     <message>
         <location filename="../gui/connect/ConfCertDialog.ui" line="117"/>
         <source>Peer Address</source>
-        <translation>ピアのアドレス</translation>
+        <translation>ピア アドレス</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.ui" line="72"/>
         <source>Last Contact</source>
-        <translation>最後の接続</translation>
+        <translation>最新のコンタクト</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.ui" line="14"/>
@@ -1731,17 +1744,17 @@ Available: %3</source>
     <message>
         <location filename="../gui/connect/ConfCertDialog.ui" line="277"/>
         <source>None </source>
-        <translation type="unfinished"></translation>
+        <translation>なし</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.ui" line="300"/>
         <source>Marginal </source>
-        <translation type="unfinished"></translation>
+        <translation>最低限</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.ui" line="323"/>
         <source>Full </source>
-        <translation type="unfinished"></translation>
+        <translation>完全</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.ui" line="342"/>
@@ -1750,7 +1763,11 @@ Available: %3</source>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;The trust settings refers to the gnupg web of trust mecanism. This trust means how you trust your friends when he is signing other gpg keys. If you set your trust to &quot;full&quot;, it means that when your friend sign a key, this key will be shown as validated by the web of trust in the network view.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;信頼の設定は GNUPG の WOT (Web of Trust) メカニズムを参照しています. この信頼はあなたの友達が他の GPG キーに署名したとき, あなたの友達をどのように信頼するかを意味します. 信頼を「完全」に設定した場合, あなたの友達があるキーに署名したときに, このキーが WOT によって認証されたものとしてネットワーク ビューに表示されます。 &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.ui" line="396"/>
@@ -1759,27 +1776,31 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;You should sign a key when you are sure that the person who claims ownership on this key is the real owner of the key.  When you are sure that the name of the key owner is the real name of the emmitter of this key, you may sign it to confirm it. Signing the key will be public unless public discovery is not setted. This means you friends can check if you did sign someone&apos;s key.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;このキーの所有権を主張する人物が本当にこのキーの所有者であるとあなたが確信できる場合に, このキーに署名するべきです.  このキーの所有者の名前がこのキーの発行者の本当の名前であるとあなたが確信できる場合, 確認のため署名してもかまいません. 開示の設定がオフでない限り, キーへの署名は公開されます. このことは, あなたが誰かのキーに署名したかどうかを, あなたの友達がチェックできることを意味します.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.ui" line="435"/>
         <source>SignGPG Key</source>
-        <translation type="unfinished">GPG キーで署名</translation>
+        <translation>GPG キーに署名</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.ui" line="468"/>
         <source>Deny Friend</source>
-        <translation>友人を取り消す</translation>
+        <translation>友達を拒否</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.ui" line="488"/>
         <source>Make Friend</source>
-        <translation>友人になる</translation>
+        <translation>友達になる</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.ui" line="415"/>
         <source>Sign GPG key</source>
-        <translation type="unfinished">GPG キーで署名</translation>
+        <translation>GPG キーに署名</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.ui" line="130"/>
@@ -1800,7 +1821,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/connect/ConfCertDialog.ui" line="261"/>
         <source>Your trust in this peer is:</source>
-        <translation type="unfinished">このピアへの信頼:</translation>
+        <translation>このピアへの信頼:</translation>
     </message>
     <message>
         <source>None</source>
@@ -1822,12 +1843,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/connect/ConfCertDialog.ui" line="377"/>
         <source>Peer has signed my GPG key</source>
-        <translation type="unfinished">ピアはこちらの GPG キーに署名済</translation>
+        <translation>ピアはあなたの GPG キーで署名されまています</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.ui" line="384"/>
         <source>Peer key is signed by :</source>
-        <translation type="unfinished">ピアのキーは署名されている:</translation>
+        <translation>ピアのキーは以下によって署名されています:</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.cpp" line="55"/>
@@ -1844,52 +1865,52 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/connect/ConfCertDialog.cpp" line="124"/>
         <location filename="../gui/connect/ConfCertDialog.cpp" line="295"/>
         <source>Error : cannot get peer details.</source>
-        <translation>エラー: ピアの詳細を取得できません.</translation>
+        <translation>エラー: ピア詳細を取得できません.</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.cpp" line="190"/>
         <source>Your key is signed by : </source>
-        <translation type="unfinished">こちらのキーは署名されている:</translation>
+        <translation>あなたのキーは次によって署名されています : </translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.cpp" line="206"/>
         <source>Peer key is signed by : </source>
-        <translation type="unfinished">ピアのキーは署名されている:</translation>
+        <translation>ピアのキーは次によって署名されています : </translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.cpp" line="235"/>
         <source>Your trust in this peer is ultimate, it&apos;s probably a key you own.</source>
-        <translation type="unfinished">このピアによるこちらへの信頼は最大限です. おそらくあなた自身のキー。</translation>
+        <translation>このピアへのあなたの信頼は最大限です. おそらくあなた自身のキーです.</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.cpp" line="244"/>
         <source>Your trust in this peer is full.</source>
-        <translation>このピアはこちらを完全に信頼しています.</translation>
+        <translation>このピアへのあなたの信頼は完全です.</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.cpp" line="250"/>
         <source>Your trust in this peer is marginal.</source>
-        <translation>このピアはこちらを最低限信頼しています.</translation>
+        <translation>このピアへのあなたの信頼は最低限です.</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.cpp" line="256"/>
         <source>Your trust in this peer is none.</source>
-        <translation type="unfinished">このピアはこちらを全く信頼していません.</translation>
+        <translation>このピアへのあなたの信頼はなしです.</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.cpp" line="262"/>
         <source>Your trust in this peer is not set.</source>
-        <translation type="unfinished">このピアはこちらへの信頼を設定していません.</translation>
+        <translation>このピアへのあなたの信頼は設定されていません.</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.cpp" line="270"/>
         <source>Peer has authenticated me as a friend and did sign my GPG key</source>
-        <translation type="unfinished">ピアはこちらを友人として認証し、GPG キーに署名しました</translation>
+        <translation>ピアはあなたを友達として認証し、あなたの GPG キーに署名しました</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.cpp" line="272"/>
         <source>Peer has not authenticated me as a friend and did not sign my GPG key</source>
-        <translation type="unfinished">ピアはこちらを友人として認証せず、GPG キーに署名しませんでした</translation>
+        <translation>ピアはあなたを友達として認証しておらず、あなたの GPG キーに署名していません</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.cpp" line="358"/>
@@ -1899,7 +1920,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/connect/ConfCertDialog.cpp" line="359"/>
         <source>Maybe password is wrong</source>
-        <translation>パスワードが間違っているかもしれません</translation>
+        <translation>おそらくパスワードが間違っています</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.ui" line="253"/>
@@ -1918,7 +1939,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/connect/ConnectDialog.ui" line="496"/>
         <location filename="../gui/connect/ConnectDialog.ui" line="704"/>
         <source>Make Friend</source>
-        <translation>友人になる</translation>
+        <translation>友達になる</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectDialog.ui" line="684"/>
@@ -1936,7 +1957,7 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:16pt; font-weight:600; color:#000000;&quot;&gt;		友人になる&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:16pt; font-weight:600; color:#000000;&quot;&gt;		友達になる&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectDialog.ui" line="541"/>
@@ -1979,7 +2000,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="102"/>
         <source>Connect Friend Wizard</source>
-        <translation type="unfinished">友人との接続ウィザード</translation>
+        <translation>友達と接続ウィザード</translation>
     </message>
 </context>
 <context>
@@ -2015,37 +2036,37 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlog.ui" line="130"/>
         <source>Type:</source>
-        <translation>タイプ: </translation>
+        <translation>種類:</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlog.ui" line="142"/>
         <source>Public - Anyone can read and publish (Shared Publish Key)</source>
-        <translation type="unfinished">パブリック - 誰でも読み書き可能 (共有公開キー)</translation>
+        <translation>パブリック - 誰でも読み書き可能 (共有公開キー)</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlog.ui" line="149"/>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation type="unfinished">制限付き - 誰でも読むことは可能. 公開は制限 (プライベート公開キー)</translation>
+        <translation>制限付き - 誰でも読むことは可能. 公開は限定 (プライベート公開キー)</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlog.ui" line="156"/>
         <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation type="unfinished">プライベート - (プライベート公開キーがメッセージを見るために必要)</translation>
+        <translation>プライベート - (メッセージの表示にプライベート公開キーが必要)</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlog.ui" line="166"/>
         <source>Allowed Messages</source>
-        <translation type="unfinished">許可されるメッセージ</translation>
+        <translation>許可されるメッセージ</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlog.ui" line="178"/>
         <source>Authemticated Messages</source>
-        <translation type="unfinished">認証されたメッセージ</translation>
+        <translation>認証されたメッセージ</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlog.ui" line="185"/>
         <source>Anonymous Messages</source>
-        <translation>匿名メッセージ</translation>
+        <translation>匿名のメッセージ</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlog.ui" line="221"/>
@@ -2073,12 +2094,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.ui" line="14"/>
         <source>New Blog Post</source>
-        <translation>新規ブログを投稿</translation>
+        <translation>新規ブログ投稿</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.ui" line="64"/>
         <source>Blog Post</source>
-        <translation>ブログを投稿</translation>
+        <translation>ブログ投稿</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.ui" line="78"/>
@@ -2088,7 +2109,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.ui" line="101"/>
         <source>Visual Editor</source>
-        <translation>ビジュアル エディター</translation>
+        <translation>ビジュアル エディタ</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.ui" line="107"/>
@@ -2103,7 +2124,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.ui" line="140"/>
         <source>Html Editor</source>
-        <translation>HTML エディター</translation>
+        <translation>HTML エディタ</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.ui" line="158"/>
@@ -2119,7 +2140,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.ui" line="336"/>
         <source>toolBar_2</source>
-        <translation>ツールバー 2</translation>
+        <translation>ツールバー_2</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.ui" line="355"/>
@@ -2169,17 +2190,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.ui" line="428"/>
         <source>splitPost</source>
-        <translation type="unfinished">投稿を分割</translation>
+        <translation>投稿を分割</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.ui" line="437"/>
         <source>Ordered List</source>
-        <translation type="unfinished">整列リスト</translation>
+        <translation>順序付きリスト</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.ui" line="446"/>
         <source>Unordered List</source>
-        <translation type="unfinished">非整列リスト</translation>
+        <translation>順序なしリスト</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.ui" line="458"/>
@@ -2194,7 +2215,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="399"/>
         <source>Add Extra File</source>
-        <translation type="unfinished">添付ファイルを追加</translation>
+        <translation>さらにファイルを追加</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="547"/>
@@ -2353,7 +2374,8 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1137"/>
         <source>The document has been modified.
 Do you want to save your changes?</source>
-        <translation>ドキュメントが変更されています. 変更を保存しますか?</translation>
+        <translation>ドキュメントが変更されています.
+変更を保存しますか?</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1158"/>
@@ -2396,7 +2418,7 @@ Do you want to save your changes?</source>
     <message>
         <location filename="../gui/channels/CreateChannelMsg.ui" line="17"/>
         <source>New Channel Post</source>
-        <translation type="unfinished">チャネルへの新規投稿</translation>
+        <translation>新規チャネル投稿</translation>
     </message>
     <message>
         <location filename="../gui/channels/CreateChannelMsg.ui" line="77"/>
@@ -2405,21 +2427,21 @@ Do you want to save your changes?</source>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:26pt; color:#ffffff;&quot;&gt;New Channel Post&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:26pt; color:#ffffff;&quot;&gt;チャネルへの新規投稿&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:26pt; color:#ffffff;&quot;&gt;新規チャネル投稿&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/channels/CreateChannelMsg.ui" line="104"/>
         <source>Channel Post</source>
-        <translation type="unfinished">チャネルに投稿</translation>
+        <translation>チャネル投稿</translation>
     </message>
     <message>
         <location filename="../gui/channels/CreateChannelMsg.ui" line="118"/>
         <source>Channel Post to:</source>
-        <translation type="unfinished">投稿するチャネル:</translation>
+        <translation>投稿するチャネル:</translation>
     </message>
     <message>
         <location filename="../gui/channels/CreateChannelMsg.ui" line="139"/>
@@ -2431,24 +2453,24 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; You can use Drap and Drop to Attach Files.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Set your Subject and Description for your Channel Post.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; You can View your Attached Files on Attachments Tab.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; チャネルへの投稿にサムネイルを設定できます..&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;ドラッグ &amp; ドロップでファイルの添付できます..&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; チャネルへの投稿に賢明と説明を設定してください..&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; 添付タブで添付したファイルを表示できます.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; チャネル投稿にサムネイル画像を設定できます. &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; ドラッグ＆ドロップでファイルを添付できます. &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; チャネル投稿には件名と説明を設定してください. &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; 添付したファイルは添付タブに表示されます. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/channels/CreateChannelMsg.ui" line="153"/>
         <source>Add File to Attach</source>
-        <translation type="unfinished">添付ファイルを追加</translation>
+        <translation>添付するファイルを追加</translation>
     </message>
     <message>
         <location filename="../gui/channels/CreateChannelMsg.ui" line="164"/>
         <source>Add Channel Thumbnail</source>
-        <translation type="unfinished">チャネル サムネイルを追加</translation>
+        <translation>チャネル サムネイルを追加</translation>
     </message>
     <message>
         <location filename="../gui/channels/CreateChannelMsg.ui" line="212"/>
@@ -2474,12 +2496,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/channels/CreateChannelMsg.cpp" line="285"/>
         <source>Add Extra File</source>
-        <translation type="unfinished">添付ファイルを追加</translation>
+        <translation>さらにファイルを追加</translation>
     </message>
     <message>
         <location filename="../gui/channels/CreateChannelMsg.cpp" line="432"/>
         <source>RetroShare</source>
-        <translation type="unfinished">RetroShare</translation>
+        <translation>RetroShare</translation>
     </message>
     <message>
         <location filename="../gui/channels/CreateChannelMsg.cpp" line="433"/>
@@ -2492,12 +2514,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="104"/>
         <source>Name</source>
-        <translation>名前 </translation>
+        <translation>名前</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="130"/>
         <source>Type:</source>
-        <translation>タイプ: </translation>
+        <translation>種類:</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="334"/>
@@ -2535,37 +2557,37 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="118"/>
         <source>Description</source>
-        <translation type="unfinished">説明</translation>
+        <translation>説明</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="142"/>
         <source>Public - Anyone can read and publish (Shared Publish Key)</source>
-        <translation type="unfinished">パブリック - 誰でも読み書き可能 (共有パブリックキー)</translation>
+        <translation>パブリック - 誰でも読み書き可能 (共有公開キー)</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="149"/>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation type="unfinished">制限 - 誰でも読むことは可能. 公開は限定 (プライベート公開キー)</translation>
+        <translation>制限付き - 誰でも読むことは可能. 公開は限定 (プライベート公開キー)</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="156"/>
         <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation type="unfinished">プライベート - (メッセージの表示にプライベート公開キーが必要)</translation>
+        <translation>プライベート - (メッセージの表示にプライベート公開キーが必要)</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="166"/>
         <source>Allowed Messages</source>
-        <translation type="unfinished">許可済メッセージ</translation>
+        <translation>許可されるメッセージ</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="178"/>
         <source>Authemticated Messages</source>
-        <translation type="unfinished">認証済メッセージ</translation>
+        <translation>認証されたメッセージ</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="185"/>
         <source>Anonymous Messages</source>
-        <translation>匿名メッセージ</translation>
+        <translation>匿名のメッセージ</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="208"/>
@@ -2575,7 +2597,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="266"/>
         <source>Add Channel Logo</source>
-        <translation>チャネル ロゴの追加</translation>
+        <translation>チャネル ロゴを追加</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForum.ui" line="341"/>
@@ -2593,7 +2615,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/forums/CreateForumMsg.ui" line="17"/>
         <source>Post Forum Message</source>
-        <translation type="unfinished">フォーラムメッセージを投稿</translation>
+        <translation>フォーラム メッセージを投稿</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForumMsg.ui" line="59"/>
@@ -2603,7 +2625,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/forums/CreateForumMsg.ui" line="77"/>
         <source>Forum Post Subject</source>
-        <translation type="unfinished">フォーラムに投稿する件名</translation>
+        <translation>フォーラム投稿の件名</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForumMsg.ui" line="187"/>
@@ -2613,7 +2635,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/forums/CreateForumMsg.ui" line="222"/>
         <source>Forum Post</source>
-        <translation type="unfinished">フォーラムに投稿</translation>
+        <translation>フォーラム投稿</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForumMsg.ui" line="154"/>
@@ -2628,7 +2650,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/forums/CreateForumMsg.ui" line="299"/>
         <source>Post Forum Msg</source>
-        <translation type="unfinished">フォーラム メッセージを投稿</translation>
+        <translation>フォーラム メッセージを投稿</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForumMsg.cpp" line="92"/>
@@ -2653,7 +2675,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/forums/CreateForumMsg.cpp" line="351"/>
         <source>Add Extra File</source>
-        <translation type="unfinished">添付ファイルを追加</translation>
+        <translation>さらにファイルを追加</translation>
     </message>
     <message>
         <source>Clipboard does not contains RetroShare link(&apos;s)</source>
@@ -2670,7 +2692,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/settings/CryptoPage.cpp" line="93"/>
         <source>Your Public Key is copied to Clipboard, paste and send it to your friend via email or some other way</source>
-        <translation type="unfinished">あなたの公開キーがクリップボードにコピーされました. Eメール(またその他の方法)に貼り付けてあなたの友人に送ってください</translation>
+        <translation>あなたの公開キーがクリップボードにコピーされました. Eメール(またはその他の方法)に貼り付けてあなたの友達に送ってください</translation>
     </message>
     <message>
         <location filename="../gui/settings/CryptoPage.cpp" line="117"/>
@@ -2685,7 +2707,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/settings/CryptoPage.ui" line="506"/>
         <source>Public Key</source>
-        <translation>公開キー</translation>
+        <translation>パブリック キー</translation>
     </message>
     <message>
         <location filename="../gui/settings/CryptoPage.ui" line="527"/>
@@ -2698,7 +2720,7 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;キーをクリップボードにコピー&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;あなたのキーをクリップボードにコピー&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/settings/CryptoPage.ui" line="534"/>
@@ -2758,7 +2780,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/DetailsDialog.ui" line="32"/>
         <location filename="../gui/DetailsDialog.ui" line="38"/>
         <source>General</source>
-        <translation>概要 </translation>
+        <translation>一般</translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="53"/>
@@ -2793,7 +2815,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/DetailsDialog.ui" line="134"/>
         <source>Status:</source>
-        <translation>ステータス:</translation>
+        <translation>状態:</translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="141"/>
@@ -2818,12 +2840,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/DetailsDialog.ui" line="175"/>
         <source>Type:</source>
-        <translation>タイプ:</translation>
+        <translation>種類:</translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="195"/>
         <source>Transfer</source>
-        <translation>送受信</translation>
+        <translation>転送</translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="201"/>
@@ -2869,7 +2891,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/DetailsDialog.ui" line="270"/>
         <location filename="../gui/DetailsDialog.ui" line="280"/>
         <source>Number of Chunks</source>
-        <translation>チャンク数</translation>
+        <translation>チャンクの数</translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="273"/>
@@ -2907,7 +2929,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/DetailsDialog.ui" line="317"/>
         <source>Download time:</source>
-        <translation>ダウンロードの日時:</translation>
+        <translation>ダウンロードした日時:</translation>
     </message>
     <message>
         <location filename="../gui/DetailsDialog.ui" line="324"/>
@@ -2959,7 +2981,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/DetailsDialog.cpp" line="124"/>
         <source>No Comments</source>
-        <translation>コメント無し</translation>
+        <translation>コメントなし</translation>
     </message>
 </context>
 <context>
@@ -2967,27 +2989,27 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/settings/DirectoriesPage.ui" line="515"/>
         <source>Incoming Directory</source>
-        <translation type="unfinished">ダウンロード ディレクトリ</translation>
+        <translation>ダウンロード フォルダ</translation>
     </message>
     <message>
         <location filename="../gui/settings/DirectoriesPage.ui" line="560"/>
         <source>Partials Direcrtory</source>
-        <translation type="unfinished">不完全ファイルのディレクトリ</translation>
+        <translation>未完了ファイルのフォルダ</translation>
     </message>
     <message>
         <location filename="../gui/settings/DirectoriesPage.ui" line="605"/>
         <source>Shared Directories</source>
-        <translation>共有ディレクトリ</translation>
+        <translation>共有フォルダ</translation>
     </message>
     <message>
         <location filename="../gui/settings/DirectoriesPage.ui" line="617"/>
         <source>Automatically share incoming directory (Recommanded)</source>
-        <translation type="unfinished">ダウンロード ディレクトリを自動的に共有　(推奨)</translation>
+        <translation>ダウンロード フォルダを自動的に共有　(推奨)</translation>
     </message>
     <message>
         <location filename="../gui/settings/DirectoriesPage.ui" line="627"/>
         <source>Edit Share</source>
-        <translation type="unfinished">共有の編集</translation>
+        <translation>共有を編集</translation>
     </message>
     <message>
         <source>Incoming files</source>
@@ -2996,33 +3018,33 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/settings/DirectoriesPage.cpp" line="44"/>
         <source>Add a Share Directory</source>
-        <translation>共有ディレクトリを追加</translation>
+        <translation>共有フォルダを追加</translation>
     </message>
     <message>
         <location filename="../gui/settings/DirectoriesPage.cpp" line="45"/>
         <source>Remove Shared Directory</source>
-        <translation>共有ディレクトリを削除</translation>
+        <translation>共有フォルダを削除</translation>
     </message>
     <message>
         <location filename="../gui/settings/DirectoriesPage.cpp" line="48"/>
         <location filename="../gui/settings/DirectoriesPage.cpp" line="49"/>
         <source>Browse</source>
-        <translation>参照</translation>
+        <translation>ブラウズ</translation>
     </message>
     <message>
         <location filename="../gui/settings/DirectoriesPage.cpp" line="144"/>
         <source>Add Shared Directory</source>
-        <translation>共有ディレクトリを追加</translation>
+        <translation>共有フォルダを追加</translation>
     </message>
     <message>
         <location filename="../gui/settings/DirectoriesPage.cpp" line="173"/>
         <source>Set Incoming Directory</source>
-        <translation type="unfinished">ダウンロード ディレクトリを設定</translation>
+        <translation>ダウンロード フォルダを設定</translation>
     </message>
     <message>
         <location filename="../gui/settings/DirectoriesPage.cpp" line="202"/>
         <source>Set Partials Directory</source>
-        <translation type="unfinished">不完全ファイルのディレクトリを設定</translation>
+        <translation>不完全ファイルのフォルダを設定</translation>
     </message>
 </context>
 <context>
@@ -3030,12 +3052,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="727"/>
         <source>Sorry, some error appeared</source>
-        <translation type="unfinished">エラーが発生しました</translation>
+        <translation>エラーが発生しました</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="728"/>
         <source>Here is the error message: </source>
-        <translation type="unfinished">エラーメッセージ:</translation>
+        <translation>エラーメッセージ:</translation>
     </message>
 </context>
 <context>
@@ -3056,7 +3078,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Friends&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;友人&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;友達&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/ExampleDialog.ui" line="580"/>
@@ -3066,7 +3088,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/ExampleDialog.ui" line="585"/>
         <source>Person</source>
-        <translation type="unfinished">人</translation>
+        <translation>パーソン</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/ExampleDialog.ui" line="590"/>
@@ -3106,7 +3128,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/ExampleDialog.ui" line="625"/>
         <source>Person Id</source>
-        <translation type="unfinished">パーソン ID</translation>
+        <translation>パーソン ID</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/ExampleDialog.ui" line="630"/>
@@ -3163,12 +3185,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/advsearch/expressionwidget.ui" line="32"/>
         <source>Expression Widget</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">言い回しウィジット</translation>
     </message>
     <message>
         <location filename="../gui/advsearch/expressionwidget.ui" line="154"/>
         <source>Delete this expression</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">この言い回しを削除</translation>
     </message>
 </context>
 <context>
@@ -3181,7 +3203,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/settings/FileAssociationsPage.cpp" line="65"/>
         <source>Add new Association</source>
-        <translation>新規関連付けを追加</translation>
+        <translation>関連付けを新規追加</translation>
     </message>
     <message>
         <location filename="../gui/settings/FileAssociationsPage.cpp" line="70"/>
@@ -3191,7 +3213,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/settings/FileAssociationsPage.cpp" line="71"/>
         <source>Edit this Association</source>
-        <translation>関連付けを編集</translation>
+        <translation>この関連付けを編集</translation>
     </message>
     <message>
         <location filename="../gui/settings/FileAssociationsPage.cpp" line="76"/>
@@ -3201,7 +3223,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/settings/FileAssociationsPage.cpp" line="77"/>
         <source>Remove this Association</source>
-        <translation>関連付けを削除</translation>
+        <translation>この関連付けを削除</translation>
     </message>
     <message>
         <location filename="../gui/settings/FileAssociationsPage.cpp" line="84"/>
@@ -3211,7 +3233,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/settings/FileAssociationsPage.cpp" line="311"/>
         <source> Friend Help</source>
-        <translation type="unfinished"></translation>
+        <translation> 友達 ヘルプ</translation>
     </message>
     <message>
         <location filename="../gui/settings/FileAssociationsPage.cpp" line="312"/>
@@ -3234,7 +3256,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/FileTransferInfoWidget.cpp" line="190"/>
         <source>Availability map (</source>
-        <translation>可用性マップ</translation>
+        <translation>可用性マップ (</translation>
     </message>
     <message>
         <source> sources</source>
@@ -3243,7 +3265,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/FileTransferInfoWidget.cpp" line="190"/>
         <source> active sources</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> 個のアクティブな ソース</translation>
     </message>
     <message>
         <location filename="../gui/FileTransferInfoWidget.cpp" line="218"/>
@@ -3290,7 +3312,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/FileTransferInfoWidget.cpp" line="232"/>
         <source>Chunk strategy: </source>
-        <translation type="unfinished">チャンク方針:</translation>
+        <translation>チャンクの方針:</translation>
     </message>
     <message>
         <location filename="../gui/FileTransferInfoWidget.cpp" line="234"/>
@@ -3303,57 +3325,57 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="418"/>
         <source>Friends of friends</source>
-        <translation>友人の友人</translation>
+        <translation>友達の友達</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="420"/>
         <source>Select now who you want to make friends with.</source>
-        <translation>友人にしたい人を選択してください.</translation>
+        <translation>友達にしたい人を選択してください.</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="422"/>
         <source>Show me: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">以下を表示: </translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="424"/>
         <source>Any peer I&apos;ve not signed</source>
-        <translation type="unfinished">署名していないピア</translation>
+        <translation type="unfinished">署名していないすべてのピア</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="425"/>
         <source>Friends of my friends who already trust me</source>
-        <translation type="unfinished">すでに信頼されている友人の友人</translation>
+        <translation type="unfinished">あなたの友達の友達で、すでにあなたを信頼している人</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="426"/>
         <source>Signed peers showing as denied</source>
-        <translation type="unfinished">拒否されている署名済のピア</translation>
+        <translation type="unfinished">署名済のピアで拒否と表示されているもの</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="430"/>
         <source>Peer name</source>
-        <translation type="unfinished">ピアの名前</translation>
+        <translation>ピアの名前</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="431"/>
         <source>Also signed by</source>
-        <translation type="unfinished">署名されている</translation>
+        <translation type="unfinished">署名されている </translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="432"/>
         <source>Peer id</source>
-        <translation type="unfinished">ピア ID</translation>
+        <translation>ピア ID</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="434"/>
         <source>Make friend with these peers</source>
-        <translation type="unfinished">これらのピアを友人にする</translation>
+        <translation>これらのピアと友達になる</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="531"/>
         <source>*** None ***</source>
-        <translation type="unfinished">*** 無し ***</translation>
+        <translation>*** なし ***</translation>
     </message>
 </context>
 <context>
@@ -3362,7 +3384,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/forums/ForumDetails.ui" line="14"/>
         <location filename="../gui/forums/ForumDetails.ui" line="32"/>
         <source>Forum Details</source>
-        <translation>フォーラム詳細</translation>
+        <translation>フォーラムの詳細</translation>
     </message>
     <message>
         <location filename="../gui/forums/ForumDetails.ui" line="38"/>
@@ -3397,22 +3419,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/forums/ForumDetails.ui" line="112"/>
         <source>Security</source>
-        <translation>安全性</translation>
+        <translation>セキュリティ</translation>
     </message>
     <message>
         <location filename="../gui/forums/ForumDetails.ui" line="118"/>
         <source>Allowed Messages</source>
-        <translation type="unfinished">許可済メッセージ</translation>
+        <translation>許可されるメッセージ</translation>
     </message>
     <message>
         <location filename="../gui/forums/ForumDetails.ui" line="124"/>
         <source>Authemticated Messages</source>
-        <translation type="unfinished">認証済メッセージ</translation>
+        <translation>認証されたメッセージ</translation>
     </message>
     <message>
         <location filename="../gui/forums/ForumDetails.ui" line="131"/>
         <source>Anonymous Messages</source>
-        <translation>匿名メッセージ</translation>
+        <translation>匿名のメッセージ</translation>
     </message>
     <message>
         <location filename="../gui/forums/ForumDetails.ui" line="176"/>
@@ -3450,12 +3472,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/ForumMsgItem.ui" line="113"/>
         <source>Timestamp</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/feeds/ForumMsgItem.ui" line="126"/>
         <source>Expand</source>
-        <translation type="unfinished">展開</translation>
+        <translation>展開</translation>
     </message>
     <message>
         <location filename="../gui/feeds/ForumMsgItem.ui" line="150"/>
@@ -3472,12 +3494,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/ForumMsgItem.ui" line="180"/>
         <source>Persons Name</source>
-        <translation type="unfinished">人物名</translation>
+        <translation>人物名</translation>
     </message>
     <message>
         <location filename="../gui/feeds/ForumMsgItem.ui" line="209"/>
         <source>Unsubscribe To Forum</source>
-        <translation>フォーラムの購読の中止</translation>
+        <translation>フォーラムの購読を中止</translation>
     </message>
     <message>
         <location filename="../gui/feeds/ForumMsgItem.ui" line="245"/>
@@ -3516,12 +3538,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/ForumNewItem.ui" line="94"/>
         <source>Connected</source>
-        <translation type="unfinished">接続済</translation>
+        <translation>接続中</translation>
     </message>
     <message>
         <location filename="../gui/feeds/ForumNewItem.ui" line="120"/>
         <source>name</source>
-        <translation type="unfinished">名前</translation>
+        <translation>名前</translation>
     </message>
     <message>
         <location filename="../gui/feeds/ForumNewItem.ui" line="149"/>
@@ -3531,7 +3553,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/ForumNewItem.ui" line="185"/>
         <source>Expand</source>
-        <translation type="unfinished">展開</translation>
+        <translation>展開</translation>
     </message>
     <message>
         <location filename="../gui/feeds/ForumNewItem.ui" line="216"/>
@@ -3542,7 +3564,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/feeds/ForumNewItem.ui" line="244"/>
         <source>Description 
  of Forum</source>
-        <translation>フォーラムの説明</translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -3555,7 +3577,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="149"/>
         <source>Unsubscribe to Forum</source>
-        <translation>フォーラムの購読の中止</translation>
+        <translation>フォーラムの購読を中止</translation>
     </message>
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="152"/>
@@ -3575,7 +3597,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="180"/>
         <source>Reply to Author</source>
-        <translation type="unfinished">主に返信</translation>
+        <translation>スレ主に返信</translation>
     </message>
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="183"/>
@@ -3607,12 +3629,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="529"/>
         <source>Popular Forums</source>
-        <translation>人気フォーラム</translation>
+        <translation>人気のフォーラム</translation>
     </message>
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="536"/>
         <source>Other Forums</source>
-        <translation>他のフォーラム</translation>
+        <translation>その他のフォーラム</translation>
     </message>
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="689"/>
@@ -3630,18 +3652,18 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/ForumsDialog.cpp" line="698"/>
         <location filename="../gui/ForumsDialog.cpp" line="783"/>
         <source>none</source>
-        <translation type="unfinished">無し</translation>
+        <translation>なし</translation>
     </message>
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="935"/>
         <location filename="../gui/ForumsDialog.cpp" line="1080"/>
         <source>RetroShare</source>
-        <translation type="unfinished">RetroShare</translation>
+        <translation>RetroShare</translation>
     </message>
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="935"/>
         <source>No Forum Selected!</source>
-        <translation type="unfinished">フォーラムが選択されていません!</translation>
+        <translation>フォーラムが選択されていません!</translation>
     </message>
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="1066"/>
@@ -3651,22 +3673,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="1080"/>
         <source>You cant reply a Anonymous Author</source>
-        <translation>匿名の主には返信できません</translation>
+        <translation>匿名のスレ主には返信できません</translation>
     </message>
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="1100"/>
         <source>File Request Confirmation</source>
-        <translation type="unfinished">ファイル要求の確認</translation>
+        <translation>ファイル リクエストの確認</translation>
     </message>
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="1100"/>
         <source>The file has been added to your download list.</source>
-        <translation type="unfinished">ファイルがダウンロード リストに追加されました.</translation>
+        <translation>ファイルはすでにダウンロードリストに追加されています.</translation>
     </message>
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="1107"/>
         <source>File Request canceled</source>
-        <translation type="unfinished">ファイル要求がキャンセルされました</translation>
+        <translation>ファイル リクエストがキャンセルされました</translation>
     </message>
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="1107"/>
@@ -3676,7 +3698,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="1114"/>
         <source>File Request Error</source>
-        <translation>ファイル要求エラー</translation>
+        <translation>ファイル リクエスト エラー</translation>
     </message>
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="1114"/>
@@ -3692,7 +3714,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/ForumsDialog.cpp" line="177"/>
         <location filename="../gui/ForumsDialog.cpp" line="940"/>
         <source>Start New Thread</source>
-        <translation>新規スレッドを作成</translation>
+        <translation>スレッドを新規作成</translation>
     </message>
     <message>
         <source>New Message</source>
@@ -3714,7 +3736,7 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;選択されたフォーラムの新規スレッドを作成&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;選択されたフォーラムでスレッドを新規作成&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/ForumsDialog.ui" line="718"/>
@@ -3732,7 +3754,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/ForumsDialog.ui" line="781"/>
         <source>RetroShare Forums</source>
-        <translation>RetroShareフォーラム</translation>
+        <translation>RetroShare フォーラム</translation>
     </message>
     <message>
         <location filename="../gui/ForumsDialog.ui" line="831"/>
@@ -3745,7 +3767,7 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:600; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;フォーラム：&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;フォーラム:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/ForumsDialog.ui" line="873"/>
@@ -3770,7 +3792,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/ForumsDialog.ui" line="915"/>
         <source>Author</source>
-        <translation>著者</translation>
+        <translation>スレ主</translation>
     </message>
     <message>
         <location filename="../gui/ForumsDialog.ui" line="920"/>
@@ -3866,7 +3888,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/GamesDialog.cpp" line="424"/>
         <source>Interested in Game</source>
-        <translation type="unfinished">ゲームに興味あり</translation>
+        <translation>ゲームに興味あり</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/GamesDialog.cpp" line="437"/>
@@ -3876,7 +3898,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/GamesDialog.ui" line="200"/>
         <source>Status</source>
-        <translation>状態 </translation>
+        <translation>状態</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/GamesDialog.ui" line="235"/>
@@ -3897,7 +3919,7 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;ゲーム ランチャーr&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;ゲーム ランチャ&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/GamesDialog.ui" line="75"/>
@@ -3907,32 +3929,32 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/GamesDialog.ui" line="83"/>
         <source>GameType: 0. Want to Add your Game here?</source>
-        <translation type="unfinished">ゲームの種類: 0. ゲームをここに追加しますか?</translation>
+        <translation>ゲームの種類: 0. ゲームをここに追加しますか?</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/GamesDialog.ui" line="88"/>
         <source>GameType: 1. Get In Touch with the developers</source>
-        <translation type="unfinished">ゲームの種類: 1. 開発者に連絡</translation>
+        <translation>ゲームの種類: 1. 開発者に連絡</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/GamesDialog.ui" line="93"/>
         <source>GameType: 2.</source>
-        <translation type="unfinished">ゲームの種類:: 2.</translation>
+        <translation>ゲームの種類:: 2.</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/GamesDialog.ui" line="110"/>
         <source>Title / Comment</source>
-        <translation>タイトル / コメント</translation>
+        <translation>タイトル/コメント</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/GamesDialog.ui" line="142"/>
         <source>Create New Game</source>
-        <translation>新規ゲーム</translation>
+        <translation>ゲームを新規作成</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/GamesDialog.ui" line="158"/>
         <source>Invite All Friends</source>
-        <translation>友人をすべて招待</translation>
+        <translation type="unfinished">友達をすべて招待</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/GamesDialog.ui" line="190"/>
@@ -3942,7 +3964,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/GamesDialog.ui" line="195"/>
         <source>Server</source>
-        <translation>サーバー</translation>
+        <translation>サーバ</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/GamesDialog.ui" line="205"/>
@@ -3957,7 +3979,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/GamesDialog.ui" line="220"/>
         <source>Player</source>
-        <translation>プレイヤー</translation>
+        <translation>プレイヤ</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/GamesDialog.ui" line="225"/>
@@ -3979,7 +4001,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/unfinished/GamesDialog.ui" line="283"/>
         <location filename="../gui/unfinished/GamesDialog.ui" line="299"/>
         <source>Move Player</source>
-        <translation type="unfinished">プレイヤーに移動</translation>
+        <translation type="unfinished">プレイヤを移動</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/GamesDialog.ui" line="315"/>
@@ -4000,7 +4022,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/GenCertDialog.ui" line="509"/>
         <source>RetroShare : Create new user Profile</source>
-        <translation>RetroShare: 新規ユーザー プロファイルを作成</translation>
+        <translation>RetroShare: ユーザ プロファイルを新規作成</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -4017,12 +4039,12 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:16pt; color:#ffffff;&quot;&gt;新規 RetroShare プロファイルを作成&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt;&quot;&gt;&lt;br /&gt;&lt;br /&gt;&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;RetroShar は GPG キーをアイデンティティー管理のために思量します.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;すでにある GPG キーを使用することもこのフォームで新規に作成することもできます.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;場所フィールドは (例 : &quot;home&quot;, &quot;laptop&quot;, etc) のように入力してください.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:16pt; color:#ffffff;&quot;&gt;新規 RetroShare プロファイルを作成&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt;&quot;&gt;&lt;br /&gt;&lt;br /&gt;&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;RetroShar は GPG キーをアイデンティティ管理のために使用します.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;既存の GPG キーやプロファイルを使用することも, このフォームで新規に作成することもできます.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;場所フィールドは (例 : &quot;home&quot;, &quot;laptop&quot;, など) のように入力してください.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;プロファイルはこの RetroShare に永続的に紐付けられ、他のピアに&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;表示されます.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;同じ GPG キーを使って異なる場所で RetroShare をインストールすることもできます.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;同じ GPG キーを使って異なる場所に RetroShare をインストールすることもできます.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/GenCertDialog.ui" line="610"/>
@@ -4040,7 +4062,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/GenCertDialog.ui" line="662"/>
         <source>It looks like you don&apos;t own any GPG keys. Please fill in the form below to generate one, or use your favorite gnupg key manager.</source>
-        <translation type="unfinished">GPG キーがないようです. 下のフォームに入力してキーを生成するか, GPG キー マネージャを使用してください.</translation>
+        <translation>あなたは GPG キーを所有していないようです. 下のフォームに入力してキーを生成するか, ご利用の GPG キー マネージャを使用してください.</translation>
     </message>
     <message>
         <location filename="../gui/GenCertDialog.ui" line="677"/>
@@ -4069,7 +4091,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Put a meaningfull location. ex : home, laptop, etc.</source>
-        <translation type="obsolete">有意な場所を入力. 例: home, laptop, etc.</translation>
+        <translation type="obsolete">有意な場所を入力. 例: home, laptop, など.</translation>
     </message>
     <message>
         <location filename="../gui/GenCertDialog.ui" line="777"/>
@@ -4117,22 +4139,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/GenCertDialog.cpp" line="152"/>
         <source>Location field is required with a minimum of 3 characters</source>
-        <translation>場所フィールドは最低3文字以上必要です.</translation>
+        <translation>場所フィールドは最低3文字以上必要です</translation>
     </message>
     <message>
         <location filename="../gui/GenCertDialog.cpp" line="174"/>
         <source>All fields are required with a minimum of 3 characters</source>
-        <translation>すべてのフィールドは最低3文字以上必要です.</translation>
+        <translation>すべてのフィールドは最低3文字以上必要です</translation>
     </message>
     <message>
         <location filename="../gui/GenCertDialog.cpp" line="180"/>
         <source>Generating new GPG key, please be patient. Fill in your GPG password when asked.</source>
-        <translation>新規 GPG キーを生成中. しばらくお待ちください. GPG パスワードが要求されたら入力してください.</translation>
+        <translation>新規 GPG キーを生成中. しばらくお待ちください. GPG パスワードをたずねられたら入力してください.</translation>
     </message>
     <message>
         <location filename="../gui/GenCertDialog.cpp" line="255"/>
         <source>Select Trusted Friend</source>
-        <translation>信頼している友人を選択</translation>
+        <translation>信頼している友達を選択</translation>
     </message>
     <message>
         <location filename="../gui/GenCertDialog.cpp" line="256"/>
@@ -4150,7 +4172,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/GeneralMsgDialog.ui" line="17"/>
         <source>General Message</source>
-        <translation type="unfinished">一般メッセージ</translation>
+        <translation>一般メッセージ</translation>
     </message>
     <message>
         <location filename="../gui/GeneralMsgDialog.ui" line="50"/>
@@ -4177,7 +4199,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:18pt; font-weight:600; color:#ffffff;&quot;&gt;General Message&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -4193,12 +4215,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/GeneralMsgDialog.cpp" line="300"/>
         <source>Add Extra File</source>
-        <translation type="unfinished">ファイルを追加</translation>
+        <translation>さらにファイルを追加</translation>
     </message>
     <message>
         <location filename="../gui/GeneralMsgDialog.ui" line="45"/>
         <source>Friend</source>
-        <translation>友人</translation>
+        <translation>友達</translation>
     </message>
     <message>
         <location filename="../gui/GeneralMsgDialog.ui" line="109"/>
@@ -4261,7 +4283,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/settings/GeneralPage.ui" line="518"/>
         <source>Start RetroShare when my system starts</source>
-        <translation>システム起動時にRetoroshareを起動</translation>
+        <translation>システム起動時に Retoroshare を起動</translation>
     </message>
     <message>
         <location filename="../gui/settings/GeneralPage.ui" line="525"/>
@@ -4276,12 +4298,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/settings/GeneralPage.ui" line="544"/>
         <source>Do not show the Quit RetroShare MessageBox</source>
-        <translation>Retoroshare 終了時にメッセージボックスを表示しない</translation>
+        <translation>終了時にメッセージボックスを表示しない</translation>
     </message>
     <message>
         <location filename="../gui/settings/GeneralPage.ui" line="551"/>
         <source>Do not Minimize to Tray Icon</source>
-        <translation>トレイ アイコンに最初化しない</translation>
+        <translation>トレイ アイコンに最小化しない</translation>
     </message>
 </context>
 <context>
@@ -4338,27 +4360,27 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/help/browser/helpbrowser.cpp" line="146"/>
         <source>Supplied XML file is not a valid Contents document.</source>
-        <translation type="unfinished">提供された XML ファイルは有効なコンテンツ ドキュメントではありません.</translation>
+        <translation>提供された XML ファイルは有効なコンテンツ ドキュメントではありません.</translation>
     </message>
     <message>
         <location filename="../gui/help/browser/helpbrowser.cpp" line="389"/>
         <source>Search reached end of document</source>
-        <translation>ドキュメントの最後まで検索しました.</translation>
+        <translation>ドキュメントの最後まで検索しました</translation>
     </message>
     <message>
         <location filename="../gui/help/browser/helpbrowser.cpp" line="391"/>
         <source>Search reached start of document</source>
-        <translation>ドキュメントの最初まで検索しました.</translation>
+        <translation>ドキュメントの最初まで検索しました</translation>
     </message>
     <message>
         <location filename="../gui/help/browser/helpbrowser.cpp" line="393"/>
         <source>Text not found in document</source>
-        <translation>ドキュメント中にテキストを見つけることができません.</translation>
+        <translation>ドキュメント中にテキストが見つかりません</translation>
     </message>
     <message>
         <location filename="../gui/help/browser/helpbrowser.cpp" line="437"/>
         <source>Found %1 results</source>
-        <translation>検索結果: %1個</translation>
+        <translation>%1個の検索結果が見つかりました</translation>
     </message>
     <message>
         <location filename="../gui/help/browser/helpbrowser.ui" line="341"/>
@@ -4400,7 +4422,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/help/browser/helpbrowser.ui" line="224"/>
         <source>Case sensitive</source>
-        <translation>大文字小文字を区別</translation>
+        <translation>大文字・小文字を区別</translation>
     </message>
     <message>
         <location filename="../gui/help/browser/helpbrowser.ui" line="234"/>
@@ -4415,7 +4437,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/help/browser/helpbrowser.ui" line="324"/>
         <source>Help Topics</source>
-        <translation>トピックス</translation>
+        <translation>ヘルプ トピックス</translation>
     </message>
     <message>
         <location filename="../gui/help/browser/helpbrowser.ui" line="389"/>
@@ -4425,7 +4447,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/help/browser/helpbrowser.ui" line="430"/>
         <source>Found Documents</source>
-        <translation type="unfinished">ドキュメントを発見</translation>
+        <translation type="unfinished">ドキュメントを見つけました</translation>
     </message>
     <message>
         <location filename="../gui/help/browser/helpbrowser.ui" line="519"/>
@@ -4435,12 +4457,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/help/browser/helpbrowser.ui" line="522"/>
         <source>Move to previous page (Backspace)</source>
-        <translation type="unfinished">前のページに移動 (Backspace)</translation>
+        <translation>前のページに移動 (Backspace)</translation>
     </message>
     <message>
         <location filename="../gui/help/browser/helpbrowser.ui" line="525"/>
         <source>Backspace</source>
-        <translation type="unfinished">バックスペース</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/help/browser/helpbrowser.ui" line="534"/>
@@ -4450,17 +4472,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/help/browser/helpbrowser.ui" line="537"/>
         <source>Move to next page (Shift+Backspace)</source>
-        <translation type="unfinished">次のページへ移動 (Shift+Backspace)</translation>
+        <translation>次のページへ移動 (Shift+Backspace)</translation>
     </message>
     <message>
         <location filename="../gui/help/browser/helpbrowser.ui" line="540"/>
         <source>Shift+Backspace</source>
-        <translation type="unfinished">シフト+バックスペース</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/help/browser/helpbrowser.ui" line="552"/>
         <source>Move to the Home page (Ctrl+H)</source>
-        <translation type="unfinished">ホームへ移動 (Ctrl+H)</translation>
+        <translation>ホームへ移動 (Ctrl+H)</translation>
     </message>
     <message>
         <location filename="../gui/help/browser/helpbrowser.ui" line="555"/>
@@ -4487,12 +4509,13 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/help/browser/helpbrowser.ui" line="591"/>
         <source>Close Vidalia Help</source>
-        <translation type="unfinished">ヘルプを閉じる</translation>
+        <translatorcomment>what is vidalia?</translatorcomment>
+        <translation type="unfinished">Vidalia ヘルプを閉じる</translation>
     </message>
     <message>
         <location filename="../gui/help/browser/helpbrowser.ui" line="594"/>
         <source>Esc</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -4524,28 +4547,28 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RetroShare is a Open Source cross-platform, &lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;private and secure decentralised commmunication platform.	&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;It lets you share securely your friends, &lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;using a web-of-trust to authenticate peers and OpenSSL to encrypt all communication. &lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RetroShare provides filesharing, chat, messages and channels&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RetroShareは, オープンソース, クロスプラットフォーム, &lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;非公開, セキュア, 分散型のコミュニケーション プラットフォームです. 	&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;ピアの信頼性を認証するために WOT (Web of Trust) を使い, すべてのコミュニケーションを暗号化するために OpenSSL を使うため, &lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;あなたの友達と安全に共有することができます. &lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RetroShare は, ファイル共有, チャット, メッセージ, チャネルを提供します. &lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Usefull External Links to more information:&lt;/span&gt;&lt;/p&gt;
-&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Retroshare Webpage&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net/wiki/index.php/Main_Page&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Retroshare Wiki&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;以下の外部リンクから有益な詳細情報が得られます:&lt;/span&gt;&lt;/p&gt;
+&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;RetroShare Webpage&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net/wiki/index.php/Main_Page&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;RetroShare Wiki&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
 &lt;li style=&quot; font-size:8pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net/forum/&quot;&gt;RetroShare&apos;s Forum&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://sourceforge.net/projects/retroshare/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Retroshare Project Page&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://sourceforge.net/projects/retroshare/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;RetroShare Project Page&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
 &lt;li style=&quot; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://www.lunamutt.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Lunamutt Homepage.&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/HelpDialog.ui" line="585"/>
         <source>Authors</source>
-        <translation>制作</translation>
+        <translation>作者</translation>
     </message>
     <message>
         <location filename="../gui/HelpDialog.ui" line="624"/>
         <source>Thanks to</source>
-        <translation>協力</translation>
+        <translation>謝辞</translation>
     </message>
     <message>
         <location filename="../gui/HelpDialog.ui" line="663"/>
@@ -4602,7 +4625,11 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;About RetroShare&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;RetroShare について&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -4610,7 +4637,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/help/browser/helptextbrowser.cpp" line="66"/>
         <source>Error opening help file: </source>
-        <translation>ヘルプファイルのオープンエラー:</translation>
+        <translation>ヘルプ ファイルのオープン エラー:</translation>
     </message>
     <message>
         <location filename="../gui/help/browser/helptextbrowser.cpp" line="84"/>
@@ -4625,17 +4652,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/help/browser/helptextbrowser.cpp" line="85"/>
         <source>RetroShare can open the link you selected in your default Web browser. If your browser is not currently configured to use Tor then the request will not be anonymous.</source>
-        <translation type="unfinished">Retoroshare はデフォルト ウェブ ブラウザで選択されたリンクを開きます. ブラウザが TOR を使用するように設定されていなければ, リクエストは匿名ではありません.</translation>
+        <translation>Retoroshare はデフォルトのウェブ ブラウザで選択されたリンクを開きます. ブラウザが TOR を使用するように設定されていなければ, リクエストは匿名ではありません.</translation>
     </message>
     <message>
         <location filename="../gui/help/browser/helptextbrowser.cpp" line="89"/>
         <source>Do you want Retroshare to open the link in your Web browser?</source>
-        <translation type="unfinished">ウェブ ブラウザでリンクを開きますか?</translation>
+        <translation>ウェブ ブラウザでリンクを開きますか?</translation>
     </message>
     <message>
         <location filename="../gui/help/browser/helptextbrowser.cpp" line="101"/>
         <source>RetroShare was unable to open the selected link in your Web browser. You can still copy the URL and paste it into your browser.</source>
-        <translation type="unfinished">ウェブ ブラウザで選択されたリンクを開けません. URLをコピーしてブラウザにペーストすることも可能です.</translation>
+        <translation>ウェブ ブラウザで選択されたリンクを開けません. URLをコピーしてブラウザに貼り付ることもできます.</translation>
     </message>
 </context>
 <context>
@@ -4668,7 +4695,27 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://winpt.gnupt.de/winpt.zip&quot;&gt;&lt;span style=&quot; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;http://winpt.gnupt.de/winpt.zip&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;RetroShare は GPG キーを使用します. これは RetroShare のプロファイルを作成するために必要です. &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;あなたはあなたの友達とEメールやその他の方法で GPG キーを交換する必要があります. &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;友達の GPG キーを受け取ったら, RetroShare の「友達追加ウィザード」でそのキーを追加してください. &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:9pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;1. Linux では GPA をインストールする必要があります :&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#0000ff;&quot;&gt;sudo apt-get install gpa&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; color:#0000ff;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;2. Windows では GPG キーを作成するために, gpg4win をインストールする必要があります :&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://ftp.gpg4win.org/gpg4win-1.1.4.exe&quot;&gt;&lt;span style=&quot; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;http://ftp.gpg4win.org/gpg4win-1.1.4.exe&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600; color:#000000;&quot;&gt;3. GPA で GPG キーを作成しようとして, それがうまく動作しない場合は, GPG キーの作成に WinPT を使用してください :&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; color:#0000ff;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://winpt.gnupt.de/winpt.zip&quot;&gt;&lt;span style=&quot; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;http://winpt.gnupt.de/winpt.zip&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -4676,22 +4723,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="162"/>
         <source>This wizard will help you to connect to your friend(s) to RetroShare network. There are three possible ways to do this:</source>
-        <translation>このウィザードはあなたの友人とRetoroshare ネットワークに接続するお手伝いをします. 接続するには3通りの方法があります:</translation>
+        <translation>このウィザードはあなたと友達が Retoroshare ネットワークに接続するお手伝いをします. 接続するには次の3通りの方法があります:</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="167"/>
         <source>&amp;Use *.rsc files with certificates</source>
-        <translation>認証に *.rsc ファイルを使用 (&amp;U)</translation>
+        <translation>認証に *.rsc ファイルを使用する (&amp;U)</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="168"/>
         <source>&amp;Make friend with selected friends of my friends</source>
-        <translation type="unfinished">選択された友人の友人を友人にする (&amp;M)</translation>
+        <translation>選択されたあなたの友達の友達と, 友達になる (&amp;M)</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="160"/>
         <source>Add a new Friend</source>
-        <translation>新規友人を有意か</translation>
+        <translation>友達を新規追加</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="166"/>
@@ -4704,12 +4751,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/LinksDialog.cpp" line="149"/>
         <source>Share Link Anonymously</source>
-        <translation type="unfinished">リンクを匿名で共有</translation>
+        <translation>リンクを匿名で共有</translation>
     </message>
     <message>
         <location filename="../gui/LinksDialog.cpp" line="153"/>
         <source>Vote on Link</source>
-        <translation type="unfinished">リンクに投票</translation>
+        <translation>リンクに投票</translation>
     </message>
     <message>
         <location filename="../gui/LinksDialog.cpp" line="172"/>
@@ -4719,7 +4766,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/LinksDialog.cpp" line="1024"/>
         <source>File Request Confirmation</source>
-        <translation type="unfinished">ファイル要求の確認</translation>
+        <translation>ファイルリクエストの確認</translation>
     </message>
     <message>
         <location filename="../gui/LinksDialog.cpp" line="1024"/>
@@ -4729,17 +4776,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/LinksDialog.cpp" line="1031"/>
         <source>File Request canceled</source>
-        <translation>ファイル要求がキャンセルされました</translation>
+        <translation>ファイル リクエストがキャンセルされました</translation>
     </message>
     <message>
         <location filename="../gui/LinksDialog.cpp" line="1031"/>
         <source>The file has not been added to your download list, because you already have it.</source>
-        <translation type="unfinished">そのファイルはすでに持っているためダウンロードリストには追加されません.</translation>
+        <translation>そのファイルはすでに持っているためダウンロードリストには追加されません.</translation>
     </message>
     <message>
         <location filename="../gui/LinksDialog.cpp" line="1038"/>
         <source>File Request Error</source>
-        <translation>ファイル要求エラー</translation>
+        <translation>ファイル リクエスト エラー</translation>
     </message>
     <message>
         <location filename="../gui/LinksDialog.cpp" line="1038"/>
@@ -4749,7 +4796,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/LinksDialog.ui" line="219"/>
         <source>From</source>
-        <translation></translation>
+        <translation>範囲</translation>
     </message>
     <message>
         <location filename="../gui/LinksDialog.ui" line="273"/>
@@ -4767,7 +4814,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Links Cloud&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;リンク クラウド&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
@@ -4775,17 +4822,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/LinksDialog.ui" line="48"/>
         <source>Title / Comment</source>
-        <translation>タイトル / コメント</translation>
+        <translation>タイトル/コメント</translation>
     </message>
     <message>
         <location filename="../gui/LinksDialog.ui" line="53"/>
         <source>Score</source>
-        <translation type="unfinished">得点</translation>
+        <translation>得点</translation>
     </message>
     <message>
         <location filename="../gui/LinksDialog.ui" line="58"/>
         <source>Peer / Link</source>
-        <translation>ピア / リンク</translation>
+        <translation>ピア/リンク</translation>
     </message>
     <message>
         <location filename="../gui/LinksDialog.ui" line="97"/>
@@ -4795,22 +4842,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/LinksDialog.ui" line="110"/>
         <source>Combo</source>
-        <translation type="unfinished">組み合わせ</translation>
+        <translation>コンボ</translation>
     </message>
     <message>
         <location filename="../gui/LinksDialog.ui" line="115"/>
         <source>Time</source>
-        <translation type="unfinished">時間</translation>
+        <translation>時間</translation>
     </message>
     <message>
         <location filename="../gui/LinksDialog.ui" line="124"/>
         <source>Ranking</source>
-        <translation type="unfinished">ランキング</translation>
+        <translation>ランキング</translation>
     </message>
     <message>
         <location filename="../gui/LinksDialog.ui" line="156"/>
         <source>In last</source>
-        <translation type="unfinished">最新</translation>
+        <translation>最新の</translation>
     </message>
     <message>
         <location filename="../gui/LinksDialog.ui" line="169"/>
@@ -4865,7 +4912,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/LinksDialog.ui" line="315"/>
         <source>Bottom 100</source>
-        <translation type="unfinished">ワースト100</translation>
+        <translation>ワースト100</translation>
     </message>
     <message>
         <location filename="../gui/LinksDialog.ui" line="350"/>
@@ -4880,7 +4927,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/LinksDialog.ui" line="395"/>
         <source>Add Link/Comment</source>
-        <translation type="unfinished">リンク / コメントを追加</translation>
+        <translation>リンク/コメントを追加</translation>
     </message>
     <message>
         <location filename="../gui/LinksDialog.ui" line="413"/>
@@ -4890,32 +4937,32 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/LinksDialog.ui" line="441"/>
         <source>Score:</source>
-        <translation type="unfinished">得点:</translation>
+        <translation>得点:</translation>
     </message>
     <message>
         <location filename="../gui/LinksDialog.ui" line="449"/>
         <source>+2 Great!</source>
-        <translation type="unfinished">+2 優良!</translation>
+        <translation>+2 優良!</translation>
     </message>
     <message>
         <location filename="../gui/LinksDialog.ui" line="458"/>
         <source>+1 Good</source>
-        <translation type="unfinished">+1 良好</translation>
+        <translation>+1 良好</translation>
     </message>
     <message>
         <location filename="../gui/LinksDialog.ui" line="467"/>
         <source>0 Okay</source>
-        <translation type="unfinished">0 普通</translation>
+        <translation>0 普通</translation>
     </message>
     <message>
         <location filename="../gui/LinksDialog.ui" line="476"/>
         <source>-1 Sux</source>
-        <translation type="unfinished">-2 不良</translation>
+        <translation>-1 不良</translation>
     </message>
     <message>
         <location filename="../gui/LinksDialog.ui" line="485"/>
         <source>-2 Bad Link</source>
-        <translation type="unfinished">-2 リンク切れ</translation>
+        <translation>-2 リンク切れ</translation>
     </message>
     <message>
         <location filename="../gui/LinksDialog.ui" line="508"/>
@@ -4933,22 +4980,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MainWindow.cpp" line="170"/>
         <source>Friends</source>
-        <translation>友人</translation>
+        <translation>友達</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="178"/>
         <source>Transfers</source>
-        <translation>ファイル・トランスファー</translation>
+        <translation>転送</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="186"/>
         <source>Messages</source>
-        <translation>電子メール</translation>
+        <translation>メッセージ</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="191"/>
         <source>Channels</source>
-        <translation>チャネル </translation>
+        <translation>チャネル</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="197"/>
@@ -4989,7 +5036,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/MainWindow.cpp" line="374"/>
         <location filename="../gui/MainWindow.cpp" line="379"/>
         <source>RetroShare</source>
-        <translation>Retroshare</translation>
+        <translation>RetroShare</translation>
     </message>
     <message>
         <source>Invite Friend</source>
@@ -4998,7 +5045,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MainWindow.ui" line="14"/>
         <source>MainWindow</source>
-        <translation>メインウィンドウ</translation>
+        <translation>メイン ウィンドウ</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.ui" line="29"/>
@@ -5008,12 +5055,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MainWindow.ui" line="67"/>
         <source>Add Friend</source>
-        <translation>友人を追加</translation>
+        <translation>友達を追加</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.ui" line="70"/>
         <source>Add a Friend Wizard</source>
-        <translation>友人の追加ウィザード</translation>
+        <translation>友達追加ウィザード</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.ui" line="79"/>
@@ -5078,7 +5125,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MainWindow.cpp" line="126"/>
         <source>RetroShare %1 a secure decentralised communication platform</source>
-        <translation type="unfinished"></translation>
+        <translation>RetroShare %1 セキュアで分散型のコミュニケーション プラットフォーム</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="230"/>
@@ -5137,7 +5184,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MainWindow.ui" line="43"/>
         <source>toolBar_2</source>
-        <translation>ツールバー2</translation>
+        <translation>ツールバー_2</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.ui" line="123"/>
@@ -5183,7 +5230,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/toaster/MessageToaster.ui" line="222"/>
         <source>&lt;b&gt;1 new Message from&lt;/b&gt;</source>
-        <translation type="unfinished">&lt;b&gt;新規メッセージがあります&lt;/b&gt;</translation>
+        <translation>&lt;b&gt;新規メッセージ1件あります&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="../gui/toaster/MessageToaster.ui" line="257"/>
@@ -5228,7 +5275,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/MessagesDialog.ui" line="930"/>
         <location filename="../gui/MessagesDialog.cpp" line="115"/>
         <source>From</source>
-        <translation>から </translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="1467"/>
@@ -5241,7 +5288,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Recommended Files&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;推薦されたファイル &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;おすすめのファイル &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="639"/>
@@ -5269,7 +5316,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MessagesDialog.ui" line="760"/>
         <source>Delete</source>
-        <translation>削除</translation>
+        <translation>消去</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="582"/>
@@ -5352,7 +5399,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MessagesDialog.ui" line="1519"/>
         <source>Set Text Under Icon</source>
-        <translation type="unfinished">アイコンの下にテキストを設定</translation>
+        <translation>アイコンの下にテキストを設定</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="1524"/>
@@ -5365,7 +5412,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;reply to selected message&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;選択しメッセージに返信&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;選択したメッセージに返信&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="573"/>
@@ -5440,27 +5487,27 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/MessagesDialog.cpp" line="368"/>
         <location filename="../gui/MessagesDialog.cpp" line="424"/>
         <source>Compose: </source>
-        <translation type="unfinished">作成:</translation>
+        <translation>作成:</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.cpp" line="424"/>
         <source>Fwd: </source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.cpp" line="446"/>
         <source>Hide</source>
-        <translation type="unfinished">非表示</translation>
+        <translation>非表示</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.cpp" line="451"/>
         <source>Expand</source>
-        <translation type="unfinished">展開</translation>
+        <translation>展開</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.cpp" line="1033"/>
         <source>File Request Confirmation</source>
-        <translation type="unfinished">ファイル要求の確認</translation>
+        <translation>ファイル リクエストの確認</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.cpp" line="1033"/>
@@ -5470,22 +5517,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MessagesDialog.cpp" line="1039"/>
         <source>File Request canceled</source>
-        <translation type="unfinished">ファイル要求がキャンセルされました</translation>
+        <translation>ファイル リクエストがキャンセルされました</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.cpp" line="1039"/>
         <source>The file has not been added to your download list, because you already have it.</source>
-        <translation type="unfinished">そのファイルはすでに持っているためダウンロードリストには追加されません.</translation>
+        <translation>そのファイルはすでに持っているためダウンロードリストには追加されません.</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.cpp" line="1046"/>
         <source>File Request Error</source>
-        <translation type="unfinished">ファイル要求エラー</translation>
+        <translation>ファイル リクエスト エラー</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.cpp" line="1046"/>
         <source>The file link is malformed.</source>
-        <translation type="unfinished">ファイルのリンクが不正です.</translation>
+        <translation>ファイルのリンクが不正です.</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.cpp" line="1081"/>
@@ -5517,17 +5564,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MessagesDialog.ui" line="1292"/>
         <source>From:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="1357"/>
         <source>Date:</source>
-        <translation type="unfinished">日付:</translation>
+        <translation>日付:</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="1419"/>
         <source>To:</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="1144"/>
@@ -5535,10 +5582,10 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Download all Recommended Files&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;推薦されたファイルをすべてダウンロード&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;おすすめのファイルをすべてダウンロード&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="1477"/>
@@ -5616,7 +5663,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MessagesPopupDialog.ui" line="31"/>
         <source>Compose</source>
-        <translation type="unfinished">作成</translation>
+        <translation>作成</translation>
     </message>
     <message>
         <location filename="../gui/MessagesPopupDialog.ui" line="58"/>
@@ -5626,7 +5673,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MessagesPopupDialog.ui" line="40"/>
         <source>Reply</source>
-        <translation type="unfinished">返信</translation>
+        <translation>返信</translation>
     </message>
     <message>
         <location filename="../gui/MessagesPopupDialog.ui" line="49"/>
@@ -5665,12 +5712,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="181"/>
         <source>Message Friend</source>
-        <translation>友人にメッセージを送る</translation>
+        <translation>友達にメッセージを送る</translation>
     </message>
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="184"/>
         <source>Connect To Friend</source>
-        <translation>友人に接続</translation>
+        <translation>友達に接続</translation>
     </message>
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="187"/>
@@ -5680,17 +5727,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="193"/>
         <source>Export Friend</source>
-        <translation>友人をエクスポート</translation>
+        <translation>友達をエクスポート</translation>
     </message>
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="198"/>
         <source>Deny Friend</source>
-        <translation>友人を拒否</translation>
+        <translation>友達を拒否</translation>
     </message>
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="200"/>
         <source>Remove Friend Location</source>
-        <translation type="unfinished">友人の場所を削除</translation>
+        <translation>友達の場所を削除</translation>
     </message>
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="219"/>
@@ -5726,7 +5773,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="464"/>
         <source>Available</source>
-        <translation type="unfinished">利用可能</translation>
+        <translation>利用可能</translation>
     </message>
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="474"/>
@@ -5746,13 +5793,13 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="580"/>
         <source>Friend Not Online</source>
-        <translation>友人はオンラインではありません</translation>
+        <translation>友達はオンラインではありません</translation>
     </message>
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="580"/>
         <source>Your Friend is offline 
 Do you want to send them a Message instead</source>
-        <translation type="unfinished">あなたの友人はオフラインです.
+        <translation>あなたの友達はオフラインです.
 代わりにメッセージを送りますか</translation>
     </message>
     <message>
@@ -5781,7 +5828,7 @@ p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Change your Status and your display&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;picture here.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;状態と表示の変更&lt;/p&gt;
@@ -5801,7 +5848,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MessengerWindow.ui" line="169"/>
         <source>Change your Personal Status here...</source>
-        <translation type="unfinished">ここで状態を変更...</translation>
+        <translation type="unfinished">ここで個人的な状態を変更...</translation>
     </message>
     <message>
         <location filename="../gui/MessengerWindow.ui" line="179"/>
@@ -5823,7 +5870,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MessengerWindow.ui" line="436"/>
         <source>Set root is Decorated</source>
-        <translation type="unfinished">ルートを装飾</translation>
+        <translation type="unfinished">ルートを装飾する</translation>
     </message>
     <message>
         <location filename="../gui/MessengerWindow.ui" line="439"/>
@@ -5838,7 +5885,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MessengerWindow.ui" line="452"/>
         <source>Hide Offline Friends</source>
-        <translation>オフラインの友人を隠す</translation>
+        <translation>オフラインの友達を隠す</translation>
     </message>
     <message>
         <location filename="../gui/MessengerWindow.ui" line="148"/>
@@ -5853,7 +5900,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MessengerWindow.ui" line="271"/>
         <source>Share Files for your Friends</source>
-        <translation type="unfinished">友人にファイルを共有</translation>
+        <translation type="unfinished">友達ににファイルを共有</translation>
     </message>
     <message>
         <location filename="../gui/MessengerWindow.ui" line="277"/>
@@ -5866,21 +5913,21 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Add a Friend&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;友人を追加&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;友達を追加&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
     <name>MsgFeed</name>
     <message>
         <source>Inbox</source>
-        <translation type="obsolete">受信箱 </translation>
+        <translation type="obsolete">受信箱</translation>
     </message>
     <message>
         <source>Outbox</source>
-        <translation type="obsolete">送信箱 </translation>
+        <translation type="obsolete">送信箱</translation>
     </message>
     <message>
         <source>Sent</source>
@@ -5888,7 +5935,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Date</source>
-        <translation type="obsolete">日付 </translation>
+        <translation type="obsolete">日付</translation>
     </message>
     <message>
         <source>Form</source>
@@ -5943,7 +5990,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/MsgItem.ui" line="96"/>
         <source>Connected</source>
-        <translation>接続済</translation>
+        <translation>接続中</translation>
     </message>
     <message>
         <location filename="../gui/feeds/MsgItem.ui" line="125"/>
@@ -5953,7 +6000,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/MsgItem.ui" line="148"/>
         <source>subjectLabel</source>
-        <translation type="unfinished">題名ラベル</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/feeds/MsgItem.ui" line="206"/>
@@ -5969,7 +6016,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/feeds/MsgItem.ui" line="271"/>
         <source>Long 
  message here</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -5987,17 +6034,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/statusbar/natstatus.cpp" line="119"/>
         <source>No internet connection</source>
-        <translation type="unfinished">インターネット接続なし</translation>
+        <translation>インターネット接続なし</translation>
     </message>
     <message>
         <location filename="../gui/statusbar/natstatus.cpp" line="124"/>
         <source>No local network</source>
-        <translation type="unfinished">ローカル ネットワークなし</translation>
+        <translation>ローカル ネットワークなし</translation>
     </message>
     <message>
         <location filename="../gui/statusbar/natstatus.cpp" line="109"/>
         <source>OK | RetroShare Server</source>
-        <translation>OK | Retoroshare サーバー</translation>
+        <translation>OK | Retoroshare サーバ</translation>
     </message>
 </context>
 <context>
@@ -6022,7 +6069,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/NetworkDialog.cpp" line="336"/>
         <location filename="../gui/NetworkDialog.cpp" line="632"/>
         <source>%1 does not exist. Would you like to create it?</source>
-        <translation type="unfinished">%1 がありません. 作成しますか?</translation>
+        <translation>%1 がありません. 作成しますか?</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="347"/>
@@ -6034,24 +6081,24 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/NetworkDialog.cpp" line="348"/>
         <location filename="../gui/NetworkDialog.cpp" line="644"/>
         <source>Unable to create %1 [%2]</source>
-        <translation>%1 [%2] を作成できません</translation>
+        <translation>%1 を作成できません [%2]</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="456"/>
         <source>Has authenticated me</source>
-        <translation>認証されました</translation>
+        <translation>認証済</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="484"/>
         <source> has authenticated you. 
 Right-click and select &apos;make friend&apos; to be able to connect.</source>
-        <translation type="unfinished">認証されました.
-接続するためには’友達になる’を選択してください.</translation>
+        <translation> はあなたを認証しています.
+接続できるようにするためには, 右クリックして ’友達になる’ を選択してください.</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="574"/>
         <source>Select Certificate</source>
-        <translation type="unfinished">証明書を選択</translation>
+        <translation>証明書を選択</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="575"/>
@@ -6103,7 +6150,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/NetworkDialog.ui" line="123"/>
         <location filename="../gui/NetworkDialog.ui" line="436"/>
         <source>Cert Id</source>
-        <translation type="unfinished">証明書 ID</translation>
+        <translation>証明書 ID</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="165"/>
@@ -6113,7 +6160,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="167"/>
         <source>Menu</source>
-        <translation type="unfinished">メニュー</translation>
+        <translation>メニュー</translation>
     </message>
     <message>
         <source>Trust matrix</source>
@@ -6122,12 +6169,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="152"/>
         <source>Authentication matrix</source>
-        <translation type="unfinished"></translation>
+        <translation>認証 マトリックス</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="163"/>
         <source>RetroShare %1 started.</source>
-        <translation type="unfinished">Retoroshare %1 が起動しました.</translation>
+        <translation>Retoroshare %1 が起動しました.</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="230"/>
@@ -6147,7 +6194,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="254"/>
         <source>Export my Cert</source>
-        <translation>証明書をエクスポート</translation>
+        <translation>あなたの証明書をエクスポート</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="259"/>
@@ -6157,22 +6204,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="447"/>
         <source>Authenticated</source>
-        <translation type="unfinished">認証済</translation>
+        <translation>認証済</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="448"/>
         <source>GPG key signed</source>
-        <translation>GPG キーが署名されました</translation>
+        <translation>GPG キーが署名済</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="450"/>
         <source>Not Authenticated</source>
-        <translation type="unfinished">認証されていません</translation>
+        <translation>未認証</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="451"/>
         <source>GPG key not signed</source>
-        <translation>GPG キーは署名されていません</translation>
+        <translation>GPG キーが未署名</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="458"/>
@@ -6183,7 +6230,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/NetworkDialog.cpp" line="665"/>
         <location filename="../gui/NetworkDialog.cpp" line="671"/>
         <source>RetroShare</source>
-        <translation>Retoroshare</translation>
+        <translation>RetroShare</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="666"/>
@@ -6193,7 +6240,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="672"/>
         <source>Sorry, certificate file creation failed</source>
-        <translation>署名書はいるの作成に失敗しました</translation>
+        <translation>署名書ファイルの作成に失敗しました</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="721"/>
@@ -6203,7 +6250,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="725"/>
         <source>UPNP NOT FOUND.</source>
-        <translation>UPNPが見つかりません</translation>
+        <translation>UPNPが見つかりません.</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="730"/>
@@ -6213,12 +6260,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="739"/>
         <source>Stun external address detection is working.</source>
-        <translation type="unfinished">STUN 外部アドレス検出が動作しています.</translation>
+        <translation>STUN 外部アドレス検出が動作中.</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="743"/>
         <source>Stun is not working.</source>
-        <translation type="unfinished">STUN が動作していません.</translation>
+        <translation>STUN が動作していません.</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="748"/>
@@ -6233,17 +6280,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="757"/>
         <source>ip found via external address finder</source>
-        <translation type="unfinished">外部ネットワーク ファインダーでIPが検出されました</translation>
+        <translation>外部ネットワーク ファインダーでIPが検出されました</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="761"/>
         <source>external address finder didn&apos;t found anything</source>
-        <translation type="unfinished">外部ネットワーク ファインダーは何も検出しませんでした</translation>
+        <translation>外部ネットワーク ファインダーは何も検出しませんでした</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="734"/>
         <source>DHT is not working (down).</source>
-        <translation type="unfinished">DHTは動作していません （ダウン）.</translation>
+        <translation>DHTは動作していません （ダウン）.</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="14"/>
@@ -6259,12 +6306,12 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/NetworkDialog.ui" line="110"/>
         <location filename="../gui/NetworkDialog.ui" line="426"/>
         <source>Did I authenticated peer</source>
-        <translation type="unfinished">認証されたキーですか</translation>
+        <translation type="unfinished">ピアへの認証</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="113"/>
         <source>Did I sign his gpg key</source>
-        <translation type="unfinished">GPG キーに署名しましたか</translation>
+        <translation type="unfinished">ピアのGPG キーへの署名</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="208"/>
@@ -6273,7 +6320,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Display&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -6303,7 +6350,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/NetworkDialog.ui" line="118"/>
         <location filename="../gui/NetworkDialog.ui" line="431"/>
         <source>Did peer authenticated me</source>
-        <translation type="unfinished">ピアに認証されましたか</translation>
+        <translation>ピアによる認証</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="184"/>
@@ -6321,7 +6368,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/NetworkDialog.ui" line="240"/>
         <source>Show keys that are not validated by the GPG web of trust</source>
-        <translation type="unfinished">GPG WOT によって認証されていないキーを表示</translation>
+        <translation>GPG WOT (Web of Trust) によって認証されていないキーを表示</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="375"/>
@@ -6331,7 +6378,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/NetworkDialog.ui" line="448"/>
         <source>Clear</source>
-        <translation>消去</translation>
+        <translation>クリア</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="453"/>
@@ -6356,12 +6403,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/NetworkDialog.ui" line="473"/>
         <source>Set Tabs Rounded</source>
-        <translation>タブの角を丸める</translation>
+        <translation>タブを丸める</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="478"/>
         <source>Set Tabs Triangular</source>
-        <translation>タブの角を鋭角にする</translation>
+        <translation>タブを三角にする</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="487"/>
@@ -6381,12 +6428,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/NetworkDialog.ui" line="506"/>
         <source>Create New Profile</source>
-        <translation>新規プロファイルを作成</translation>
+        <translation>プロファイルを新規作成</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="509"/>
         <source>Create a new Profile</source>
-        <translation>新規プロファイルを作成</translation>
+        <translation>プロファイルを新規作成</translation>
     </message>
 </context>
 <context>
@@ -6437,7 +6484,7 @@ p, li { white-space: pre-wrap; }
 
 
 </source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/NetworkView.ui" line="51"/>
@@ -6447,17 +6494,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/NetworkView.ui" line="106"/>
         <source>Show Friends of Friends</source>
-        <translation>友人の友人を表示</translation>
+        <translation>友達の友達を表示</translation>
     </message>
     <message>
         <location filename="../gui/NetworkView.ui" line="113"/>
         <source>Connect Signature</source>
-        <translation type="unfinished">接続署名</translation>
+        <translation type="unfinished">署名に接続</translation>
     </message>
     <message>
         <location filename="../gui/NetworkView.ui" line="124"/>
         <source>Draw Friend Connections</source>
-        <translation type="unfinished">友人の接続を描画</translation>
+        <translation>友達の接続を表示</translation>
     </message>
 </context>
 <context>
@@ -6535,7 +6582,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/settings/NotifyPage.ui" line="591"/>
         <source>Toasters</source>
-        <translation type="unfinished">トースター</translation>
+        <translation>トースタ</translation>
     </message>
     <message>
         <location filename="../gui/settings/NotifyPage.ui" line="603"/>
@@ -6555,17 +6602,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/settings/NotifyPage.ui" line="626"/>
         <source>Open Window for new Peer Chat</source>
-        <translation type="unfinished">新しいピア チャットのウィンドウを開く</translation>
+        <translation>新しいピア チャットでウィンドウを開く</translation>
     </message>
     <message>
         <location filename="../gui/settings/NotifyPage.ui" line="633"/>
         <source>Reopen if closed by user:</source>
-        <translation type="unfinished">ユーザーが閉じた場合再度開く:</translation>
+        <translation>ユーザーが閉じた場合再度開く:</translation>
     </message>
     <message>
         <location filename="../gui/settings/NotifyPage.ui" line="640"/>
         <source>Grab Focus when chat arrives</source>
-        <translation type="unfinished">チャットが届いた時フォーカスを取得</translation>
+        <translation>チャットが届いた時フォーカスを取得</translation>
     </message>
     <message>
         <location filename="../gui/settings/NotifyPage.ui" line="650"/>
@@ -6575,7 +6622,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/settings/NotifyPage.ui" line="656"/>
         <source>Display systray message</source>
-        <translation type="unfinished">システムトレイにメッセージを表示</translation>
+        <translation>システムトレイにメッセージを表示</translation>
     </message>
 </context>
 <context>
@@ -6583,13 +6630,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/notifyqt.cpp" line="48"/>
         <source>GPG key passphrase</source>
-        <translation>GPG キー パスフレーズ</translation>
+        <translation>GPG キー パスワード</translation>
     </message>
     <message>
         <location filename="../gui/notifyqt.cpp" line="49"/>
         <source>Please enter the password to unlock the following GPG key:
 </source>
-        <translation>次の GPG キーをアンロックするためにパスワードを入力してください:</translation>
+        <translation>次の GPG キーをアンロックするためにパスワードを入力してください:
+</translation>
     </message>
 </context>
 <context>
@@ -6624,7 +6672,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Peer Id:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
@@ -6633,7 +6681,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/PeerItem.ui" line="422"/>
         <source>Organisation</source>
-        <translation>組織 </translation>
+        <translation>組織</translation>
     </message>
     <message>
         <location filename="../gui/feeds/PeerItem.ui" line="435"/>
@@ -6643,7 +6691,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/PeerItem.ui" line="448"/>
         <source>Country</source>
-        <translation>国 </translation>
+        <translation>国</translation>
     </message>
     <message>
         <location filename="../gui/feeds/PeerItem.ui" line="14"/>
@@ -6674,7 +6722,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/PeerItem.ui" line="213"/>
         <source>Trust: </source>
-        <translation>信頼:</translation>
+        <translation>信頼: </translation>
     </message>
     <message>
         <location filename="../gui/feeds/PeerItem.ui" line="220"/>
@@ -6716,7 +6764,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/PeerItem.ui" line="114"/>
         <source>Last Contact:</source>
-        <translation>最後の接続:</translation>
+        <translation>最新のコンタクト:</translation>
     </message>
 </context>
 <context>
@@ -6724,21 +6772,21 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/statusbar/peerstatus.cpp" line="50"/>
         <source>Online: 0  | Friends: 0  | Network: 0 </source>
-        <translation>オンライン: 0  | 友人: 0  | ネットワーク: 0 </translation>
+        <translation>オンライン: 0  | 友達: 0  | ネットワーク: 0 </translation>
     </message>
     <message>
         <location filename="../gui/statusbar/peerstatus.cpp" line="75"/>
         <source>Online:</source>
-        <translation>オンライン：</translation>
+        <translation>オンライン:</translation>
     </message>
     <message>
         <location filename="../gui/statusbar/peerstatus.cpp" line="75"/>
         <source>Friends:</source>
-        <translation>フレンド：</translation>
+        <translation>友達:</translation>
     </message>
     <message>
         <source>Network:</source>
-        <translation type="obsolete">ネットワーク：</translation>
+        <translation type="obsolete">ネットワーク:</translation>
     </message>
 </context>
 <context>
@@ -6746,12 +6794,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/PeersDialog.cpp" line="252"/>
         <source>Chat</source>
-        <translation>雑談</translation>
+        <translation>チャット</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="267"/>
         <source>Export Friend</source>
-        <translation>友人をエクスポート</translation>
+        <translation>友達をエクスポート</translation>
     </message>
     <message>
         <source>Remove Friend</source>
@@ -6775,7 +6823,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/PeersDialog.ui" line="704"/>
         <source>Person</source>
-        <translation type="unfinished">人</translation>
+        <translation>パーソン</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -6787,12 +6835,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/PeersDialog.cpp" line="258"/>
         <source>Connect To Friend</source>
-        <translation>友人に接続</translation>
+        <translation>友達に接続</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="169"/>
         <source>Welcome to RetroShare&apos;s group chat.</source>
-        <translation>Retoroshareのグループチャットにようこそ.</translation>
+        <translation>Retoroshare のグループチャットにようこそ.</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="118"/>
@@ -6817,7 +6865,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/PeersDialog.cpp" line="255"/>
         <source>Message Friend</source>
-        <translation>友人にメッセージを送る</translation>
+        <translation>友達にメッセージを送る</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="261"/>
@@ -6832,7 +6880,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/PeersDialog.cpp" line="274"/>
         <source>Remove Friend Location</source>
-        <translation>友人の場所を削除</translation>
+        <translation>友達の場所を削除</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="293"/>
@@ -6860,7 +6908,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/PeersDialog.cpp" line="552"/>
         <source>Available</source>
-        <translation>有効</translation>
+        <translation>利用可能</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="562"/>
@@ -6870,18 +6918,19 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/PeersDialog.cpp" line="656"/>
         <source>Friend Not Online</source>
-        <translation>友人はオンラインではありません</translation>
+        <translation>友達はオンラインではありません</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="656"/>
         <source>Your Friend is offline 
 Do you want to send them a Message instead</source>
-        <translation type="unfinished">友人はオフラインです. 代わりにメッセージを送りますか</translation>
+        <translation>あなたの友達はオフラインです.
+代わりにメッセージを送りますか</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="1541"/>
         <source>Create a new Channel</source>
-        <translation>新規チャネルを作成</translation>
+        <translation>チャネルを新規作成</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="1545"/>
@@ -6891,12 +6940,12 @@ Do you want to send them a Message instead</source>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="1566"/>
         <source>Add Extra File</source>
-        <translation type="unfinished">添付ファイルの追加</translation>
+        <translation>さらにファイルを追加</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="1670"/>
         <source>File Request Confirmation</source>
-        <translation type="unfinished">ファイル要求の確認</translation>
+        <translation>ファイル リクエストの確認</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="1670"/>
@@ -6906,28 +6955,28 @@ Do you want to send them a Message instead</source>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="1677"/>
         <source>File Request canceled</source>
-        <translation type="unfinished">ファイル要求がキャンセルされました</translation>
+        <translation>ファイル リクエストがキャンセルされました</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="1677"/>
         <source>The file has not been added to your download list, because you already have it.</source>
-        <translation type="unfinished">そのファイルはすでに持っているためダウンロードリストには追加されません.</translation>
+        <translation>そのファイルはすでに持っているためダウンロードリストには追加されません.</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="1685"/>
         <source>File Request Error</source>
-        <translation type="unfinished">ファイル要求エラー</translation>
+        <translation>ファイル リクエスト エラー</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="1685"/>
         <source>The file link is malformed.</source>
-        <translation type="unfinished">ファイルのリンクが不正です.</translation>
+        <translation>ファイルのリンクが不正です.</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="1739"/>
         <location filename="../gui/PeersDialog.cpp" line="1744"/>
         <source>Drop file error.</source>
-        <translation type="unfinished">ファイルのドロップ エラー.</translation>
+        <translation>ファイルのドロップ エラー.</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="1739"/>
@@ -6937,18 +6986,18 @@ Do you want to send them a Message instead</source>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="1744"/>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
-        <translation>ディレクトリーはドロップできません. ファイルのみ可能です.</translation>
+        <translation>フォルダーはドロップできません. ファイルのみ可能です.</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="344"/>
         <source> (me)</source>
-        <translation type="unfinished">(自分)</translation>
+        <translation> (自分)</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="478"/>
         <location filename="../gui/PeersDialog.cpp" line="479"/>
         <source> - </source>
-        <translation></translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.ui" line="1311"/>
@@ -6958,7 +7007,7 @@ Do you want to send them a Message instead</source>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="264"/>
         <source>Profile View</source>
-        <translation type="unfinished">プロファイル表示</translation>
+        <translation>プロファイル表示</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.ui" line="1077"/>
@@ -6981,12 +7030,12 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;友人&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;友達&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.ui" line="557"/>
         <source>Add</source>
-        <translation>追加する</translation>
+        <translation>追加</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.ui" line="611"/>
@@ -7014,7 +7063,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/PeersDialog.ui" line="833"/>
         <source>Edit Personal message</source>
-        <translation type="unfinished">パーソナル メッセージを編集</translation>
+        <translation>パーソナル メッセージを編集</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.ui" line="871"/>
@@ -7044,12 +7093,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/PeersDialog.ui" line="1377"/>
         <source>Create New Channel</source>
-        <translation>新規チャネルを作成</translation>
+        <translation>チャネルを新規作成</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.ui" line="1380"/>
         <source>Create new Channel</source>
-        <translation>新規チャネルを作成</translation>
+        <translation>チャネルを新規作成</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.ui" line="1383"/>
@@ -7080,7 +7129,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/PeersDialog.ui" line="1415"/>
         <location filename="../gui/PeersDialog.ui" line="1418"/>
         <source>Disable Emoticons</source>
-        <translation>気分を無効化</translation>
+        <translation type="unfinished">気分を無効化</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.ui" line="1344"/>
@@ -7090,7 +7139,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/PeersDialog.ui" line="1353"/>
         <source>Create new Profile</source>
-        <translation>新規プロファイルを作成</translation>
+        <translation>プロファイルを新規作成</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.ui" line="1115"/>
@@ -7118,7 +7167,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/PeersDialog.ui" line="1335"/>
         <source>Clear Chat History</source>
-        <translation>チャットの履歴を消去</translation>
+        <translation>チャットの履歴をクリア</translation>
     </message>
 </context>
 <context>
@@ -7149,7 +7198,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Friends of Friends.</source>
-        <translation type="obsolete">友人の友人.</translation>
+        <translation type="obsolete">友達の友達.</translation>
     </message>
     <message>
         <source>All Peers</source>
@@ -7166,7 +7215,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/PhotoDialog.cpp" line="161"/>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation>開く</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/PhotoDialog.cpp" line="165"/>
@@ -7176,37 +7225,37 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/PhotoDialog.cpp" line="169"/>
         <source>Excellent</source>
-        <translation type="unfinished"></translation>
+        <translation>優秀</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/PhotoDialog.cpp" line="173"/>
         <source>Good</source>
-        <translation type="unfinished">良好</translation>
+        <translation>良好</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/PhotoDialog.cpp" line="177"/>
         <source>Average</source>
-        <translation type="unfinished">平均</translation>
+        <translation>平均的</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/PhotoDialog.cpp" line="181"/>
         <source>Below avarage</source>
-        <translation type="unfinished"></translation>
+        <translation>平均以下</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/PhotoDialog.cpp" line="185"/>
         <source>Bad</source>
-        <translation type="unfinished"></translation>
+        <translation>不良</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/PhotoDialog.cpp" line="189"/>
         <source>Unrated</source>
-        <translation type="unfinished"></translation>
+        <translation>未評価</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/PhotoDialog.cpp" line="193"/>
         <source>Rating</source>
-        <translation type="unfinished">評価</translation>
+        <translation>評価</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/PhotoDialog.ui" line="117"/>
@@ -7259,12 +7308,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/PhotoDialog.ui" line="102"/>
         <source>Thumb Image</source>
-        <translation>サムネイル画像</translation>
+        <translation>サムネイル イメージ</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/PhotoDialog.ui" line="107"/>
         <source>Image Name</source>
-        <translation>画像名</translation>
+        <translation>イメージ名</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/PhotoDialog.ui" line="112"/>
@@ -7403,7 +7452,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/PhotoShow.ui" line="198"/>
         <source>Start</source>
-        <translation>開始</translation>
+        <translation type="unfinished">最初から</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/PhotoShow.ui" line="187"/>
@@ -7413,7 +7462,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/PhotoShow.ui" line="14"/>
         <source>Photo Show</source>
-        <translation type="unfinished"></translation>
+        <translation>フォト ショー</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/PhotoShow.ui" line="205"/>
@@ -7449,12 +7498,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/PluginManagerWidget.cpp" line="165"/>
         <source>Open Plugin to install</source>
-        <translation type="unfinished">インストールするプラグインを開く</translation>
+        <translation>インストールするプラグインを開く</translation>
     </message>
     <message>
         <location filename="../gui/PluginManagerWidget.cpp" line="167"/>
         <source>Plugins (*.so *.dll)</source>
-        <translation type="unfinished">プラグイン (*.so *.dll)</translation>
+        <translation>プラグイン (*.so *.dll)</translation>
     </message>
 </context>
 <context>
@@ -7482,7 +7531,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/chat/PopupChatDialog.cpp" line="401"/>
         <source>:images/show_toolbox_frame.png</source>
-        <translation></translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/chat/PopupChatDialog.cpp" line="647"/>
@@ -7502,7 +7551,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/chat/PopupChatDialog.cpp" line="111"/>
         <source> RetroShare - Encrypted Chat</source>
-        <translation>RetroShare - 暗号化チャット</translation>
+        <translation> RetroShare - 暗号化チャット</translation>
     </message>
     <message>
         <location filename="../gui/chat/PopupChatDialog.ui" line="14"/>
@@ -7580,7 +7629,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/chat/PopupChatDialog.ui" line="631"/>
         <source>Clear Chat</source>
-        <translation type="unfinished">チャットをクリア</translation>
+        <translation>チャットをクリア</translation>
     </message>
     <message>
         <location filename="../gui/chat/PopupChatDialog.ui" line="639"/>
@@ -7590,12 +7639,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/chat/PopupChatDialog.cpp" line="173"/>
         <source>Chatting with </source>
-        <translation type="unfinished">チャットする</translation>
+        <translation type="unfinished">チャットする </translation>
     </message>
     <message>
         <location filename="../gui/chat/PopupChatDialog.cpp" line="754"/>
         <source>Add Extra File</source>
-        <translation type="unfinished">添付ファイルの追加</translation>
+        <translation>さらにファイルを追加</translation>
     </message>
     <message>
         <location filename="../gui/chat/PopupChatDialog.cpp" line="862"/>
@@ -7610,7 +7659,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/chat/PopupChatDialog.cpp" line="870"/>
         <source>File Request Confirmation</source>
-        <translation type="unfinished">ファイル要求の確認</translation>
+        <translation>ファイル リクエストの確認</translation>
     </message>
     <message>
         <location filename="../gui/chat/PopupChatDialog.cpp" line="870"/>
@@ -7620,7 +7669,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/chat/PopupChatDialog.cpp" line="876"/>
         <source>File Request canceled</source>
-        <translation type="unfinished">ファイル要求がキャンセルされました</translation>
+        <translation>ファイル リクエストがキャンセルされました</translation>
     </message>
     <message>
         <location filename="../gui/chat/PopupChatDialog.cpp" line="876"/>
@@ -7629,7 +7678,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File Request Error</source>
-        <translation type="obsolete">ファイル要求エラー</translation>
+        <translation type="obsolete">ファイル リクエスト エラー</translation>
     </message>
     <message>
         <source>The file link is malformed.</source>
@@ -7639,7 +7688,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/chat/PopupChatDialog.cpp" line="934"/>
         <location filename="../gui/chat/PopupChatDialog.cpp" line="939"/>
         <source>Drop file error.</source>
-        <translation type="unfinished">ファイル ドロップのエラー.</translation>
+        <translation>ファイルのドロップ エラー.</translation>
     </message>
     <message>
         <location filename="../gui/chat/PopupChatDialog.cpp" line="934"/>
@@ -7649,12 +7698,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/chat/PopupChatDialog.cpp" line="939"/>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
-        <translation>ディレクトリーはドロップできません. ファイルのみ可能です.</translation>
+        <translation>フォルダーはドロップできません. ファイルのみ可能です.</translation>
     </message>
     <message>
         <location filename="../gui/chat/PopupChatDialog.ui" line="530"/>
         <source>Add a File for your Friend</source>
-        <translation>友人宛のファイルを追加</translation>
+        <translation>友達宛のファイルを追加</translation>
     </message>
 </context>
 <context>
@@ -7662,7 +7711,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../util/printpreview.cpp" line="230"/>
         <source>RetroShare Message - Print Preview</source>
-        <translation>Retoroshare メッセージ - 印刷プレビュー</translation>
+        <translation>RetoroShare メッセージ - 印刷プレビュー</translation>
     </message>
     <message>
         <location filename="../util/printpreview.cpp" line="254"/>
@@ -7725,7 +7774,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/profile/ProfileEdit.ui" line="49"/>
         <source>Category</source>
-        <translation>カテゴリー</translation>
+        <translation>カテゴリ</translation>
     </message>
     <message>
         <location filename="../gui/profile/ProfileEdit.ui" line="54"/>
@@ -7735,7 +7784,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/profile/ProfileEdit.ui" line="72"/>
         <source>Edit Profile Category</source>
-        <translation>プロファイルのカテゴリーを編集</translation>
+        <translation>プロファイルのカテゴリを編集</translation>
     </message>
     <message>
         <location filename="../gui/profile/ProfileEdit.ui" line="80"/>
@@ -7791,7 +7840,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/profile/ProfileEdit.ui" line="205"/>
         <source>Close Editor</source>
-        <translation>エディターを閉じる</translation>
+        <translation>エディタを閉じる</translation>
     </message>
 </context>
 <context>
@@ -7846,7 +7895,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/profile/ProfileView.ui" line="13"/>
         <source>Profile View</source>
-        <translation type="unfinished">プロファイル表示</translation>
+        <translation>プロファイル表示</translation>
     </message>
     <message>
         <location filename="../gui/profile/ProfileView.ui" line="26"/>
@@ -7856,7 +7905,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/profile/ProfileView.ui" line="112"/>
         <source>Last Post:</source>
-        <translation>最新投稿:</translation>
+        <translation>最新の投稿:</translation>
     </message>
     <message>
         <location filename="../gui/profile/ProfileView.ui" line="156"/>
@@ -7865,7 +7914,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:600; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:16pt; vertical-align:sub;&quot;&gt;Profile&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:600; font-style:normal;&quot;&gt;
@@ -7874,7 +7923,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/profile/ProfileView.ui" line="207"/>
         <source>Category</source>
-        <translation>カテゴリー</translation>
+        <translation>カテゴリ</translation>
     </message>
     <message>
         <location filename="../gui/profile/ProfileView.ui" line="212"/>
@@ -7921,7 +7970,7 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/info16.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;公開情報&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/info16.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;パブリック情報&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/profile/ProfileWidget.ui" line="134"/>
@@ -7934,7 +7983,7 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; font-weight:600; color:#808080;&quot;&gt;公開情報&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; font-weight:600; color:#808080;&quot;&gt;パブリック情報&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/profile/ProfileWidget.ui" line="147"/>
@@ -7956,7 +8005,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/profile/ProfileWidget.ui" line="318"/>
         <location filename="../gui/profile/ProfileWidget.ui" line="355"/>
         <source>TextLabel</source>
-        <translation type="unfinished">テキスト ラベル</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/profile/ProfileWidget.ui" line="184"/>
@@ -8008,7 +8057,7 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;友人の数&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;友達の数&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/profile/ProfileWidget.ui" line="338"/>
@@ -8030,7 +8079,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; font-weight:600; color:#808080;&quot;&gt;My Address&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -8180,7 +8229,11 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:26pt;&quot;&gt;RetroShare!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:26pt;&quot;&gt;RetroShare!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/QuickStartWizard.ui" line="201"/>
@@ -8207,17 +8260,17 @@ p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;RetroShare へようこそ!&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;｀このクィック スタート ウィザードは, ほんの数ステップでRetoroshareを設定するお手伝いをします..&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;このクィック スタート ウィザードは, ほんの数ステップでRetoroshareを設定するお手伝いをします.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;もしあなたが上級ユーザーならば, ツールバーからRetoroshareのすべての設定を行うことができます. 終了をクリックすれば, いつでもウィザードを終了できます.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;このウィザードは以下のようなアシストをします.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;   インターネット接続をについてRetoroshareに教える.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;   インターネット接続についてRetoroshareに教える.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;   どのファイルを共有するか選択する.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;  RetroShare の起動方法を設定する.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;   RetroShare を使い始める.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/QuickStartWizard.ui" line="267"/>
@@ -8237,7 +8290,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/QuickStartWizard.ui" line="337"/>
         <source>For best performance, RetroShare needs to know a little about your connection to the internet.</source>
-        <translation>よりよいパフォーマンスのために, Retoroshareはインターネットへの接続について少し知る必要があります.</translation>
+        <translation>よりよいパフォーマンスのために, Retoroshareはあなたのインターネット接続について少し知る必要があります.</translation>
     </message>
     <message>
         <location filename="../gui/QuickStartWizard.ui" line="350"/>
@@ -8287,12 +8340,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/QuickStartWizard.ui" line="443"/>
         <source>Share Ip and information with your friend (Disc On)</source>
-        <translation>あなたの友人と IP とその他の情報を共有する (開示オン)</translation>
+        <translation>あなたの友達と IP その他の情報を共有する (開示オン)</translation>
     </message>
     <message>
         <location filename="../gui/QuickStartWizard.ui" line="448"/>
         <source>Don&apos;t share any information (Disc Off)</source>
-        <translation>情報をすべて共有しない (開示 オフ)</translation>
+        <translation>情報を何も共有しない (開示 オフ)</translation>
     </message>
     <message>
         <location filename="../gui/QuickStartWizard.ui" line="464"/>
@@ -8328,20 +8381,20 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;これは共有フォルダのリストです. 左側のボタンを使ってフォルダを追加または削除できます. 新しくフォルダを追加した場合, そのフォルダ内のすべてのファイルは即座に共有されます..&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;これは共有フォルダのリストです. 左側のボタンを使ってフォルダを追加または削除できます.  新しくフォルダを追加した場合, そのフォルダ内のすべてのファイルは最初に共有されます.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;それぞれの共有フォルダに対して,個別に共有フラグを設定できます:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;友人はブラウズ可:&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: 直接の友人がファイルをブラウズ可能.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;匿名で共有:&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: 匿名トンネルを経由して誰でもファイルをダウンロード可能.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;ブラウズ可能 &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: 直接の友達がファイルをブラウズ可能.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;ネットワーク全体&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: 匿名トンネルを経由して誰でもファイルをダウンロード可能.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/QuickStartWizard.ui" line="641"/>
         <source>Directory</source>
-        <translation>ディレクトリ</translation>
+        <translation>フォルダ</translation>
     </message>
     <message>
         <location filename="../gui/QuickStartWizard.ui" line="646"/>
         <source>Network Wide</source>
-        <translation>ネットワーク ワイド</translation>
+        <translation>ネットワーク全体</translation>
     </message>
     <message>
         <location filename="../gui/QuickStartWizard.ui" line="651"/>
@@ -8389,9 +8442,9 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;最後のステップです! 設定はほとんど終わりました. これでRetoroshareはあなたのコンピューターで動作します.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;これが最後のステップです! Retoroshareがあなたのコンピューターで動作するための設定はほとんど終わりました. .&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;これらは Retoroshare がいつ,どのように起動するかの設定です.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;ここでは Retoroshare がいつ,どのように起動するかを設定します.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
@@ -8407,7 +8460,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/QuickStartWizard.ui" line="857"/>
         <source>Start RetroShare when my System Starts.</source>
-        <translation>システム起動時に Retoroshareを起動.</translation>
+        <translation>システム起動時に Retoroshare を起動.</translation>
     </message>
     <message>
         <location filename="../gui/QuickStartWizard.ui" line="920"/>
@@ -8422,12 +8475,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/QuickStartWizard.cpp" line="209"/>
         <source>Shared Directory Added!</source>
-        <translation>共有ディレクトリが追加されました!</translation>
+        <translation>共有フォルダが追加されました!</translation>
     </message>
     <message>
         <location filename="../gui/QuickStartWizard.cpp" line="224"/>
         <source>Do you really want to stop sharing this directory ? </source>
-        <translation>本当にこのディレクトリの共有を中止しますか?</translation>
+        <translation>本当にこのフォルダの共有を中止しますか?</translation>
     </message>
     <message>
         <location filename="../gui/QuickStartWizard.cpp" line="228"/>
@@ -8445,17 +8498,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/settings/rsettingswin.cpp" line="90"/>
         <source>Directories</source>
-        <translation>ディレクトリ</translation>
+        <translation>フォルダ</translation>
     </message>
     <message>
         <location filename="../gui/settings/rsettingswin.cpp" line="94"/>
         <source>Server</source>
-        <translation>サーバー</translation>
+        <translation>サーバ</translation>
     </message>
     <message>
         <location filename="../gui/settings/rsettingswin.cpp" line="98"/>
         <source>Transfer</source>
-        <translation>送受信</translation>
+        <translation>転送</translation>
     </message>
     <message>
         <location filename="../gui/settings/rsettingswin.cpp" line="102"/>
@@ -8465,7 +8518,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/settings/rsettingswin.cpp" line="106"/>
         <source>Security</source>
-        <translation>安全性</translation>
+        <translation>セキュリティ</translation>
     </message>
     <message>
         <location filename="../gui/settings/rsettingswin.cpp" line="110"/>
@@ -8498,43 +8551,43 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/statusbar/ratesstatus.cpp" line="50"/>
         <source>&lt;strong&gt;Down:&lt;/strong&gt; 0.00 (kB/s) | &lt;strong&gt;Up:&lt;/strong&gt; 0.00 (kB/s) </source>
-        <translation>&lt;strong&gt;下に:&lt;/strong&gt; 0.00 (kB/s) | &lt;strong&gt;上へ:&lt;/strong&gt; 0.00 (kB/s) </translation>
+        <translation>&lt;strong&gt;下り:&lt;/strong&gt; 0.00 (kB/s) | &lt;strong&gt;上り:&lt;/strong&gt; 0.00 (kB/s) </translation>
     </message>
     <message>
         <location filename="../gui/statusbar/ratesstatus.cpp" line="70"/>
         <source>Down:</source>
-        <translation>ダウン：</translation>
+        <translation>下り:</translation>
     </message>
     <message>
         <location filename="../gui/statusbar/ratesstatus.cpp" line="70"/>
         <source>Up:</source>
-        <translation>最大：</translation>
+        <translation>上り:</translation>
     </message>
 </context>
 <context>
     <name>RemoteDirModel</name>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="563"/>
-        <source>Friends Directories</source>
-        <translation>友人のディレクトリ</translation>
-    </message>
-    <message>
         <location filename="../gui/RemoteDirModel.cpp" line="567"/>
-        <source>My Directories</source>
-        <translation>自分のディレクトリ</translation>
+        <source>Friends Directories</source>
+        <translation>友達のフォルダ</translation>
     </message>
     <message>
         <location filename="../gui/RemoteDirModel.cpp" line="571"/>
-        <source>Size</source>
-        <translation>サイズ </translation>
+        <source>My Directories</source>
+        <translation>自分のフォルダ</translation>
     </message>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="577"/>
+        <location filename="../gui/RemoteDirModel.cpp" line="575"/>
+        <source>Size</source>
+        <translation>サイズ</translation>
+    </message>
+    <message>
+        <location filename="../gui/RemoteDirModel.cpp" line="581"/>
         <source>Share Type</source>
         <translation>共有の種類</translation>
     </message>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="580"/>
+        <location filename="../gui/RemoteDirModel.cpp" line="584"/>
         <source>What&apos;s new</source>
         <translation>最新情報</translation>
     </message>
@@ -8543,7 +8596,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">ランク </translation>
     </message>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="574"/>
+        <location filename="../gui/RemoteDirModel.cpp" line="578"/>
         <source>Age</source>
         <translation>経過時間</translation>
     </message>
@@ -8553,9 +8606,19 @@ p, li { white-space: pre-wrap; }
         <translation>ファイル</translation>
     </message>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="498"/>
+        <location filename="../gui/RemoteDirModel.cpp" line="473"/>
+        <source>Files</source>
+        <translation type="unfinished">ファイル</translation>
+    </message>
+    <message>
+        <location filename="../gui/RemoteDirModel.cpp" line="476"/>
+        <source>File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/RemoteDirModel.cpp" line="502"/>
         <source>DIR</source>
-        <translation>ディレクトリ</translation>
+        <translation>フォルダ</translation>
     </message>
 </context>
 <context>
@@ -8573,12 +8636,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../rshare.cpp" line="214"/>
         <source>Resets ALL stored RetroShare settings.</source>
-        <translation>保存された Retoroshare のすべての設定をリセット.</translation>
+        <translation>保存された Retoroshare の設定をすべてリセット.</translation>
     </message>
     <message>
         <location filename="../rshare.cpp" line="216"/>
         <source>Sets the directory RetroShare uses for data files.</source>
-        <translation>RetroShare がデータファイルとして使用するディレクトリを設定.</translation>
+        <translation>RetroShare がデータファイルとして使用するフォルダを設定.</translation>
     </message>
     <message>
         <location filename="../rshare.cpp" line="218"/>
@@ -8588,7 +8651,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../rshare.cpp" line="220"/>
         <source>Sets the verbosity of Vidalia&apos;s logging.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vidaliaのログ出力の詳細さを設定.</translation>
     </message>
     <message>
         <location filename="../rshare.cpp" line="223"/>
@@ -8657,6 +8720,11 @@ p, li { white-space: pre-wrap; }
         <translation>結果</translation>
     </message>
     <message>
+        <location filename="../gui/SearchDialog.ui" line="1100"/>
+        <source>Close All Search Results</source>
+        <translation>検索結果をすべてクリア</translation>
+    </message>
+    <message>
         <location filename="../gui/SearchDialog.ui" line="1181"/>
         <location filename="../gui/SearchDialog.cpp" line="237"/>
         <source>Download</source>
@@ -8685,7 +8753,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/SearchDialog.cpp" line="249"/>
         <source>Recommend to Friends</source>
-        <translation>友人に推薦</translation>
+        <translation>友達におすすめ</translation>
     </message>
     <message>
         <location filename="../gui/SearchDialog.cpp" line="318"/>
@@ -8774,7 +8842,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/SearchDialog.ui" line="1017"/>
         <source>Size</source>
-        <translation>サイズ </translation>
+        <translation>サイズ</translation>
     </message>
     <message>
         <location filename="../gui/SearchDialog.ui" line="1027"/>
@@ -8809,7 +8877,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/SearchDialog.ui" line="664"/>
         <source>Directory</source>
-        <translation>ディレクトリ</translation>
+        <translation>フォルダ</translation>
     </message>
     <message>
         <location filename="../gui/SearchDialog.ui" line="743"/>
@@ -8838,9 +8906,8 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;検索結果をすべて閉じる&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1100"/>
         <source>Clear all Search Results</source>
-        <translation>検索結果をすべてクリア</translation>
+        <translation type="obsolete">検索結果をすべてクリア</translation>
     </message>
     <message>
         <location filename="../gui/SearchDialog.ui" line="1132"/>
@@ -8868,18 +8935,19 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/SearchDialog.ui" line="1235"/>
         <source>Search inside &quot;browsable&quot; files of your friends</source>
-        <translation>友人の”ブラウズ可能”なファイルの範囲内で検索</translation>
+        <translation>友達の”ブラウズ可能”なファイルを検索</translation>
     </message>
     <message>
         <location filename="../gui/SearchDialog.ui" line="1238"/>
         <source>Search in friends lists</source>
-        <translation>友人のリストで検索</translation>
+        <translation>友達のリストを検索</translation>
     </message>
     <message>
         <location filename="../gui/SearchDialog.ui" line="1248"/>
         <source>Multi-hop search at distance 6 in the network 
 (always reports available files)</source>
-        <translation>ネット-ワークの6ホップまでマルチ ホップ検索 (常に利用可能なファイルをレポート)</translation>
+        <translation>ネット-ワーク上で6ホップまでマルチ・ホップ検索 
+(利用可能なファイルを常に報告)</translation>
     </message>
     <message>
         <location filename="../gui/SearchDialog.ui" line="1252"/>
@@ -9022,12 +9090,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/settings/ServerPage.ui" line="554"/>
         <source>Discovery Enabled</source>
-        <translation>公開を有効化</translation>
+        <translation>開示を有効化</translation>
     </message>
     <message>
         <location filename="../gui/settings/ServerPage.ui" line="559"/>
         <source>Discovery Disabled</source>
-        <translation>公開を無効化</translation>
+        <translation>開示を無効化</translation>
     </message>
     <message>
         <location filename="../gui/settings/ServerPage.ui" line="592"/>
@@ -9054,7 +9122,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/settings/ServerPage.ui" line="663"/>
         <source>If you unckeck this, RetroShare will not use tunnel connection between peers that are firewalled and cannot connect directly. This is independant from F2F routing (turtle router).</source>
-        <translation type="unfinished">ここをチェックしない場合, Retoroshareはファイアウォール内の直接接続できないピア同士でトンネル接続を行いません. この設定はF2Fルーティング (タートル ルーター) とは独立しています.</translation>
+        <translation>ここをチェックしない場合, Retoroshareはファイアウォール内の直接接続できないピア同士でトンネル接続を行いません. この設定はF2Fルーティング (タートル ルータ) とは独立しています.</translation>
     </message>
     <message>
         <location filename="../gui/settings/ServerPage.ui" line="666"/>
@@ -9088,14 +9156,15 @@ p, li { white-space: pre-wrap; }
 when you connect to somebody. Leaving this checked helps 
 connecting when you have few friends. It also helps if you&apos;re 
 behind a firewall or a VPN.</source>
-        <translation type="unfinished">ここをチェックしない場合, Retoroshareは誰かと接続した場合のみ
-あなたのIPを決定できます. チェックしたままだと友人がほとんどいなくても
-接続可能です. またファイアーウォールやVPN内にいる場合にも同様です.</translation>
+        <translation>ここをチェックしない場合, Retoroshareは誰かと接続した場合のみ
+あなたのIPを決定できます. チェックすると友達がほとんどいない場合
+にも接続可能です. またファイアーウォールやVPN内にいる場合も
+同様です.</translation>
     </message>
     <message>
         <location filename="../gui/settings/ServerPage.ui" line="780"/>
         <source>Allow RetroShare to ask my ip to these websites:</source>
-        <translation>以下のウェブサイトに自分のIPアドレスを通知されるのを許可.</translation>
+        <translation>RetroShareが以下のウェブサイトにあなたのIPアドレスを問い合わせるのを許可:</translation>
     </message>
     <message>
         <source>Misc</source>
@@ -9129,7 +9198,7 @@ behind a firewall or a VPN.</source>
     <message>
         <location filename="../gui/settings/settings.ui" line="100"/>
         <source>Transfer</source>
-        <translation>送受信</translation>
+        <translation>転送</translation>
     </message>
     <message>
         <location filename="../gui/settings/settings.ui" line="118"/>
@@ -9139,7 +9208,7 @@ behind a firewall or a VPN.</source>
     <message>
         <location filename="../gui/settings/settings.ui" line="127"/>
         <source>Security</source>
-        <translation>安全性</translation>
+        <translation>セキュリティ</translation>
     </message>
     <message>
         <location filename="../gui/settings/settings.ui" line="136"/>
@@ -9173,12 +9242,12 @@ behind a firewall or a VPN.</source>
     <message>
         <location filename="../gui/settings/settings.ui" line="91"/>
         <source>Server</source>
-        <translation>サーバー</translation>
+        <translation>サーバ</translation>
     </message>
     <message>
         <location filename="../gui/settings/settings.ui" line="109"/>
         <source>Directories</source>
-        <translation>ディレクトリ</translation>
+        <translation>フォルダ</translation>
     </message>
 </context>
 <context>
@@ -9186,12 +9255,12 @@ behind a firewall or a VPN.</source>
     <message>
         <location filename="../gui/ShareManager.cpp" line="56"/>
         <source>Add a Share Directory</source>
-        <translation>共有ディレクトリを追加</translation>
+        <translation>共有フォルダを追加</translation>
     </message>
     <message>
         <location filename="../gui/ShareManager.cpp" line="57"/>
         <source>Stop sharing selected Directory</source>
-        <translation>選択したディレクトリの共有を中止</translation>
+        <translation>選択したフォルダの共有を中止</translation>
     </message>
     <message>
         <location filename="../gui/ShareManager.cpp" line="176"/>
@@ -9201,7 +9270,7 @@ behind a firewall or a VPN.</source>
     <message>
         <location filename="../gui/ShareManager.cpp" line="229"/>
         <source>Do you really want to stop sharing this directory ? </source>
-        <translation>本当にこのディレクトリの共有を中止しますか?</translation>
+        <translation>本当にこのフォルダの共有を中止しますか?</translation>
     </message>
     <message>
         <location filename="../gui/ShareManager.ui" line="234"/>
@@ -9217,12 +9286,12 @@ behind a firewall or a VPN.</source>
     <message>
         <location filename="../gui/ShareManager.cpp" line="188"/>
         <source>Shared Directory Added!</source>
-        <translation>共有ディレクトリが追加されました!</translation>
+        <translation>共有フォルダが追加されました!</translation>
     </message>
     <message>
         <location filename="../gui/ShareManager.ui" line="17"/>
         <source>RetroShare Share Manager</source>
-        <translation>Retoroshare 共有マネージャー</translation>
+        <translation>Retoroshare 共有マネージャ</translation>
     </message>
     <message>
         <location filename="../gui/ShareManager.ui" line="86"/>
@@ -9235,12 +9304,12 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:26pt; font-weight:600; color:#ffffff;&quot;&gt;共有マネージャー&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:26pt; font-weight:600; color:#ffffff;&quot;&gt;共有マネージャ&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/ShareManager.ui" line="115"/>
         <source>Shared Folder Manager</source>
-        <translation>共有フォルダ マネージャー</translation>
+        <translation>共有フォルダ マネージャ</translation>
     </message>
     <message>
         <location filename="../gui/ShareManager.ui" line="124"/>
@@ -9253,20 +9322,21 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;You can separately setup share flags for each shared directory:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Browsable &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: files are browsable from your direct friends.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Network Wide&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: files can be downloaded by anybody through anonymous tunnels.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translatorcomment>&apos;intially&apos; is typo of &apos;iｎｉｔｉａｌｌｙ&apos;?</translatorcomment>
         <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;これは共有フォルダのリストです. 左側のボタンを使ってフォルダを追加または削除できます. &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;新しくフォルダを追加した場合, そのフォルダ内のすべてのファイルは即座に共有されます..&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;新しくフォルダを追加した場合, そのフォルダ内のすべてのファイルは最初に共有されます.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;それぞれの共有フォルダに対して,個別に共有フラグを設定できます:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;ブラウズ可能 &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: 直接の友人がファイルをブラウズ可能.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;ブラウズ可能 &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: 直接の友達がファイルをブラウズ可能.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;ネットワーク全体 &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: 匿名トンネルを経由して誰でもファイルをダウンロード可能.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/ShareManager.ui" line="170"/>
         <source>Directory</source>
-        <translation>ディレクトリ</translation>
+        <translation>フォルダ</translation>
     </message>
     <message>
         <location filename="../gui/ShareManager.ui" line="175"/>
@@ -9327,12 +9397,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/SharedFilesDialog.cpp" line="621"/>
         <source>Recommend (Automated message) To </source>
-        <translation>推薦する (自動メッセージ)</translation>
+        <translation>おすすめする (自動メッセージ)</translation>
     </message>
     <message>
         <location filename="../gui/SharedFilesDialog.cpp" line="623"/>
         <source>Recommend in a message to </source>
-        <translation>メッセージで推薦する</translation>
+        <translation>メッセージでおすすめする</translation>
     </message>
     <message>
         <location filename="../gui/SharedFilesDialog.cpp" line="665"/>
@@ -9361,7 +9431,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/SharedFilesDialog.cpp" line="680"/>
         <source>Send retroshare Links to Cloud</source>
-        <translation>クラウドでRetoroshare リンクを送信</translation>
+        <translation>クラウドに Retoroshare リンクを送信</translation>
     </message>
     <message>
         <location filename="../gui/SharedFilesDialog.cpp" line="683"/>
@@ -9382,7 +9452,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/SharedFilesDialog.cpp" line="750"/>
         <source>Set command for opening this file</source>
-        <translation type="unfinished">このファイルを開くためのコマンドを設定</translation>
+        <translation>このファイルを開くためのコマンドを設定</translation>
     </message>
     <message>
         <location filename="../gui/SharedFilesDialog.cpp" line="819"/>
@@ -9392,7 +9462,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/SharedFilesDialog.cpp" line="833"/>
         <source>&lt;strong&gt;Friends Files&lt;/strong&gt;</source>
-        <translation>&lt;strong&gt;友達ファイル&lt;/strong&gt;</translation>
+        <translation>&lt;strong&gt;友達のファイル&lt;/strong&gt;</translation>
     </message>
     <message>
         <location filename="../gui/SharedFilesDialog.cpp" line="848"/>
@@ -9407,12 +9477,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/SharedFilesDialog.ui" line="625"/>
         <source>Friends Folders</source>
-        <translation>友人フォルダ</translation>
+        <translation>友達のフォルダ</translation>
     </message>
     <message>
         <location filename="../gui/SharedFilesDialog.ui" line="654"/>
         <source>My Folders</source>
-        <translation>マイ フォルダ</translation>
+        <translation>自分のフォルダ</translation>
     </message>
     <message>
         <location filename="../gui/SharedFilesDialog.ui" line="563"/>
@@ -9435,17 +9505,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/SharedFilesDialog.ui" line="687"/>
         <source>One day old</source>
-        <translation>1日経過</translation>
+        <translation type="unfinished">1日経過</translation>
     </message>
     <message>
         <location filename="../gui/SharedFilesDialog.ui" line="696"/>
         <source>One Week old</source>
-        <translation>1週間経過</translation>
+        <translation type="unfinished">1週間経過</translation>
     </message>
     <message>
         <location filename="../gui/SharedFilesDialog.ui" line="705"/>
         <source>One month old</source>
-        <translation>1ヶ月経過</translation>
+        <translation type="unfinished">1ヶ月経過</translation>
     </message>
     <message>
         <location filename="../gui/SharedFilesDialog.ui" line="843"/>
@@ -9463,12 +9533,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/settings/SoundPage.ui" line="500"/>
         <source>Sound Events</source>
-        <translation type="unfinished">サウンド イベント</translation>
+        <translation>サウンド イベント</translation>
     </message>
     <message>
         <location filename="../gui/settings/SoundPage.ui" line="512"/>
         <source>User</source>
-        <translation>ユーザー</translation>
+        <translation>ユーザ</translation>
     </message>
     <message>
         <location filename="../gui/settings/SoundPage.ui" line="527"/>
@@ -9527,7 +9597,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/StartDialog.ui" line="435"/>
         <source>RetroShare</source>
-        <translation>Retoroshare</translation>
+        <translation>RetroShare</translation>
     </message>
     <message>
         <location filename="../gui/StartDialog.ui" line="560"/>
@@ -9578,7 +9648,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/StartDialog.ui" line="683"/>
         <source>Name (GPG Id) - location:</source>
-        <translation type="unfinished"></translation>
+        <translation>名前 (GPG ID) - 場所:</translation>
     </message>
     <message>
         <source>Name - location:</source>
@@ -9592,18 +9662,19 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/StartDialog.cpp" line="166"/>
         <source>Maybe password is wrong</source>
-        <translation>パスワードが間違っているかもしれません</translation>
+        <translation>おそらくパスワードが間違っています</translation>
     </message>
     <message>
         <location filename="../gui/StartDialog.cpp" line="177"/>
         <source>Create a New Profil</source>
-        <translation>新規プロファイルを作成</translation>
+        <translation>プロファイルを新規作成</translation>
     </message>
     <message>
         <location filename="../gui/StartDialog.cpp" line="178"/>
         <source>This will generate a new Profile
  Are you sure you want to continue</source>
-        <translation>新規プロファイルが作成されます. 続行しますか</translation>
+        <translation>新規プロファイルが作成されます
+ 続行しますか</translation>
     </message>
 </context>
 <context>
@@ -9700,7 +9771,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/StatisticDialog.ui" line="867"/>
         <source>Uptime:</source>
-        <translation>使用時間:</translation>
+        <translation>経過時間:</translation>
     </message>
     <message>
         <source>Overall:</source>
@@ -9710,7 +9781,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/unfinished/StatisticDialog.ui" line="786"/>
         <location filename="../gui/unfinished/StatisticDialog.ui" line="814"/>
         <source>Uptime</source>
-        <translation>使用時間</translation>
+        <translation>経過時間</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/StatisticDialog.ui" line="824"/>
@@ -9786,17 +9857,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/StatisticDialog.cpp" line="302"/>
         <source>%1 KIB</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 KB</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/StatisticDialog.cpp" line="305"/>
         <source>%1 MIB</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 MB</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/StatisticDialog.cpp" line="308"/>
         <source>%1 GIB</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 GB</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/StatisticDialog.cpp" line="126"/>
@@ -9811,17 +9882,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/StatisticDialog.ui" line="532"/>
         <source>Transfer</source>
-        <translation>送受信</translation>
+        <translation>転送</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/StatisticDialog.ui" line="543"/>
         <source>Session UL:DL Ratio:</source>
-        <translation>セッションのアップロード:ダウンロード比:</translation>
+        <translation>セッションの UL:DL 比:</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/StatisticDialog.ui" line="551"/>
         <source>Cumulative UL:DL Ratio</source>
-        <translation>累積アップロード:ダウンロード比</translation>
+        <translation>累積 UL: DL 比</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/StatisticDialog.ui" line="764"/>
@@ -9831,7 +9902,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/StatisticDialog.ui" line="794"/>
         <source>Since:</source>
-        <translation>以来:</translation>
+        <translation>開始:</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/StatisticDialog.ui" line="803"/>
@@ -9844,12 +9915,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/profile/StatusMessage.ui" line="32"/>
         <source>Personal message</source>
-        <translation>パーソナル メッセージ</translation>
+        <translation type="unfinished">パーソナル メッセージ</translation>
     </message>
     <message>
         <location filename="../gui/profile/StatusMessage.ui" line="62"/>
         <source>Status message</source>
-        <translation>状態メッセージ</translation>
+        <translation type="unfinished">状態メッセージ</translation>
     </message>
     <message>
         <location filename="../gui/profile/StatusMessage.ui" line="86"/>
@@ -9858,7 +9929,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Personal message&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -9871,7 +9942,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;Enter your Status message&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -9921,7 +9992,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/SubFileItem.cpp" line="635"/>
         <source>Save Channel File</source>
-        <translation type="unfinished">チャネルファイルを保存</translation>
+        <translation type="unfinished">チャネル ファイルを保存</translation>
     </message>
     <message>
         <location filename="../gui/feeds/SubFileItem.ui" line="20"/>
@@ -9936,7 +10007,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/SubFileItem.ui" line="125"/>
         <source>Expand</source>
-        <translation type="unfinished">展開</translation>
+        <translation>展開</translation>
     </message>
     <message>
         <location filename="../gui/feeds/SubFileItem.ui" line="145"/>
@@ -9972,32 +10043,32 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="200"/>
         <source>Use text representation of the PGP certificates.</source>
-        <translation>PGP 証明書のテキスト表現を使用.</translation>
+        <translation>テキスト形式で PGP 証明書を使用.</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="202"/>
         <source>The text below is your PGP certificate. You have to provide it to your friend </source>
-        <translation>下記テキストはあなたのPGP証明書です. あなたの友人に配布してください</translation>
+        <translation>下記テキストはあなたのPGP証明書です. あなたの友達に渡してください </translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="268"/>
         <source>Please, paste your friends PGP certificate into the box below</source>
-        <translation>あなたの友人の PGP 証明書をしたのボックスにペーストしてください</translation>
+        <translation>あなたの友達の PGP 証明書を下のボックスに貼り付けてください</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="332"/>
         <source>Your Cert is copied to Clipboard, paste and send it to yourfriend via email or some other way</source>
-        <translation>あなたの証明書はクリップボードにコピーされました. Eメールに貼り付けるかその他の方法であなたの友人に送付してください</translation>
+        <translation>あなたの証明書はクリップボードにコピーされました. Eメールに貼り付けるかその他の方法であなたの友達に送ってください</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="320"/>
         <source>You can copy this text and send it to your friend via email or some other way</source>
-        <translation>このテキストをコピーしてEメールかその他の方法であなたの友人に送ることができます</translation>
+        <translation type="unfinished">このテキストをコピーしてEメールやその他の方法であなたの友達に送ることができます</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="331"/>
         <source>RetroShare</source>
-        <translation>Retoroshare</translation>
+        <translation>RetroShare</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="198"/>
@@ -10022,7 +10093,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="319"/>
         <source>Connect Friend Help</source>
-        <translation>友人へ接続ヘルプ</translation>
+        <translation type="unfinished">友達と接続ヘルプ</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="359"/>
@@ -10064,12 +10135,12 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Transfer</source>
-        <translation type="obsolete">送受信</translation>
+        <translation type="obsolete">転送</translation>
     </message>
     <message>
         <location filename="../gui/settings/TransferPage.ui" line="20"/>
         <source>Transfer options</source>
-        <translation>送受信オプション</translation>
+        <translation>転送オプション</translation>
     </message>
     <message>
         <location filename="../gui/settings/TransferPage.ui" line="30"/>
@@ -10087,7 +10158,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/settings/TransferPage.ui" line="37"/>
         <source>Default chunk strategy:</source>
-        <translation>デフォルトのチャンク方針:</translation>
+        <translation>デフォルトのチャンクの方針:</translation>
     </message>
     <message>
         <location filename="../gui/settings/TransferPage.ui" line="68"/>
@@ -10118,24 +10189,15 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;You can separately setup share flags for each shared directory in the shared files dialog to be:&lt;/span&gt;&lt;/p&gt;
 &lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-size:8pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Browsable by friends&lt;/span&gt;: files are seen by your friends.&lt;/li&gt;
 &lt;li style=&quot; font-size:8pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Anonymously shared&lt;/span&gt;: files are anonymously reachable through distant F2F tunnels.&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translatorcomment>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;RetroShare&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; is capable of transfering data and search requests between peers that are not necessarily friends. This traffic however only transits through a connected list of friends and is anonymous.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;共有ファイルダイアログで指定した, それぞれの共有フォルダに個別の共有フラグを設定できます.:&lt;/span&gt;&lt;/p&gt;
-&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-size:8pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;友人がブラウズ可能&lt;/span&gt;: あなたの友人は参照できます&lt;/li&gt;
-&lt;li style=&quot; font-size:8pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;匿名で共有&lt;/span&gt;: ファイルはF2Fトンネル経由で匿名で到達可能&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</translatorcomment>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;RetroShare&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; is capable of transfering data and search requests between peers that are not necessarily friends. This traffic however only transits through a connected list of friends and is anonymous.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;You can separately setup share flags for each shared directory in the shared files dialog to be:&lt;/span&gt;&lt;/p&gt;
-&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-size:8pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Browsable by friends&lt;/span&gt;: files are seen by your friends.&lt;/li&gt;
-&lt;li style=&quot; font-size:8pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Anonymously shared&lt;/span&gt;: files are anonymously reachable through distant F2F tunnels.&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;ul style=&quot;-qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-size:8pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;友達がファイルをブラウズ可能&lt;/span&gt;: あなたの友達は参照できます&lt;/li&gt;
+&lt;li style=&quot; font-size:8pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;匿名で共有&lt;/span&gt;: ファイルはF2Fトンネル経由で匿名で到達可能&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -10194,7 +10256,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/TransfersDialog.ui" line="718"/>
         <source>Selected transfer</source>
-        <translation>選択した送受信</translation>
+        <translation>選択した転送</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.ui" line="770"/>
@@ -10228,14 +10290,14 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/TransfersDialog.cpp" line="138"/>
         <source>Name</source>
         <comment>i.e: file name</comment>
-        <translation>名前 </translation>
+        <translation>名前</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="89"/>
         <location filename="../gui/TransfersDialog.cpp" line="139"/>
         <source>Size</source>
         <comment>i.e: file size</comment>
-        <translation>サイズ </translation>
+        <translation>サイズ</translation>
     </message>
     <message>
         <source>Progress</source>
@@ -10252,7 +10314,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/TransfersDialog.cpp" line="92"/>
         <source>Progress / Availability</source>
         <comment>i.e: % downloaded</comment>
-        <translation type="unfinished">進捗 / 有効性</translation>
+        <translation>進捗/可用性</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="93"/>
@@ -10263,13 +10325,13 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="98"/>
         <source>Core-ID</source>
-        <translation type="unfinished">コア ID</translation>
+        <translation>コア ID</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="141"/>
         <source>Progress</source>
         <comment>i.e: % uploaded</comment>
-        <translation type="unfinished">進捗</translation>
+        <translation>進捗</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="142"/>
@@ -10280,7 +10342,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="144"/>
         <source>Transferred</source>
-        <translation type="unfinished">送受信</translation>
+        <translation>転送済</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="145"/>
@@ -10300,7 +10362,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="275"/>
         <source>Resume</source>
-        <translation>リジューム</translation>
+        <translation>再開</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="281"/>
@@ -10340,22 +10402,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="309"/>
         <source>Down</source>
-        <translation>ダウン：</translation>
+        <translation>下へ</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="311"/>
         <source>Up</source>
-        <translation>アップ</translation>
+        <translation>上へ</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="313"/>
         <source>Top</source>
-        <translation>トップ</translation>
+        <translation>先頭</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="315"/>
         <source>Bottom</source>
-        <translation>ボトム</translation>
+        <translation>末尾</translation>
     </message>
     <message>
         <source>Move in queue...</source>
@@ -10384,7 +10446,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="707"/>
         <source>Queued</source>
-        <translation>キュー</translation>
+        <translation>キュー済</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="959"/>
@@ -10399,7 +10461,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="1272"/>
         <source>Open Transfer</source>
-        <translation>送受信を開く</translation>
+        <translation>転送を開く</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="1273"/>
@@ -10414,7 +10476,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="95"/>
         <source>Speed / Queue position</source>
-        <translation>速度 / キュー ポジション</translation>
+        <translation>速度/キュー順</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="96"/>
@@ -10455,7 +10517,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="325"/>
         <source>Move in Queue...</source>
-        <translation>キューで移動...</translation>
+        <translation>キュー内で移動...</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="702"/>
@@ -10478,7 +10540,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/TransfersDialog.cpp" line="867"/>
         <location filename="../gui/TransfersDialog.cpp" line="916"/>
         <source>Waiting</source>
-        <translation>処理待ち</translation>
+        <translation>待機中</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="705"/>
@@ -10513,7 +10575,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="767"/>
         <source>Transferring</source>
-        <translation>転送</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="868"/>
@@ -10532,69 +10594,69 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/TrustView.ui" line="31"/>
         <source>Zoom :</source>
-        <translation>ズーム: </translation>
+        <translation>ズーム :</translation>
     </message>
     <message>
         <location filename="../gui/TrustView.ui" line="48"/>
         <source>Update</source>
-        <translation>アップデート</translation>
+        <translation>更新</translation>
     </message>
     <message>
         <location filename="../gui/TrustView.ui" line="55"/>
         <location filename="../gui/TrustView.cpp" line="245"/>
         <source>Showing: whole network</source>
-        <translation>ネットワーク全体を表示</translation>
+        <translation>表示中: ネットワーク全体</translation>
     </message>
     <message>
         <location filename="../gui/TrustView.cpp" line="28"/>
         <source>This table normaly auto-updates every 10 seconds.</source>
-        <translation type="unfinished"></translation>
+        <translation>この表は通常10秒ごとに自動更新されます.</translation>
     </message>
     <message>
         <location filename="../gui/TrustView.cpp" line="202"/>
         <source> is athenticated (one way) by </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> は (一方向に) 認証されています </translation>
     </message>
     <message>
         <location filename="../gui/TrustView.cpp" line="210"/>
         <source> athenticated himself</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> は自分自身を認証しています</translation>
     </message>
     <message>
         <location filename="../gui/TrustView.cpp" line="215"/>
         <source> athenticated each others</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> はお互いに認証されています</translation>
     </message>
     <message>
         <location filename="../gui/TrustView.cpp" line="222"/>
         <source> is athenticated by </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> は認証されています </translation>
     </message>
     <message>
         <location filename="../gui/TrustView.cpp" line="225"/>
         <source> athenticated </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> は認証しています </translation>
     </message>
     <message>
         <location filename="../gui/TrustView.cpp" line="203"/>
         <source>Half</source>
-        <translation type="unfinished"></translation>
+        <translation>ハーフ</translation>
     </message>
     <message>
         <location filename="../gui/TrustView.cpp" line="216"/>
         <source>Full</source>
-        <translation type="unfinished">完全</translation>
+        <translation>完全</translation>
     </message>
     <message>
         <location filename="../gui/TrustView.cpp" line="222"/>
         <location filename="../gui/TrustView.cpp" line="225"/>
         <source> peers, including him(her)self.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> 個のピア (自分自身を含む).</translation>
     </message>
     <message>
         <location filename="../gui/TrustView.cpp" line="261"/>
         <source>Showing: peers connected to </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">表示中: 接続しているピア </translation>
     </message>
 </context>
 <context>
@@ -10602,12 +10664,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/TurtleRouterDialog.ui" line="14"/>
         <source>Router Statistics</source>
-        <translation>ルーター統計</translation>
+        <translation>ルータ統計</translation>
     </message>
     <message>
         <location filename="../gui/TurtleRouterDialog.ui" line="28"/>
         <source>F2F router information</source>
-        <translation>F2F ルーター情報</translation>
+        <translation>F2F ルータ情報</translation>
     </message>
     <message>
         <source>File Name</source>
@@ -10676,12 +10738,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/common/vmessagebox.cpp" line="95"/>
         <source>Show Log</source>
-        <translation>ログの表示</translation>
+        <translation>ログを表示</translation>
     </message>
     <message>
         <location filename="../gui/common/vmessagebox.cpp" line="96"/>
         <source>Show Settings</source>
-        <translation>設定の表示</translation>
+        <translation>設定を表示</translation>
     </message>
     <message>
         <location filename="../gui/common/vmessagebox.cpp" line="97"/>
@@ -10753,31 +10815,31 @@ p, li { white-space: pre-wrap; }
         <location filename="../util/misc.h" line="312"/>
         <source>%1 minutes</source>
         <comment>e.g: 10minutes</comment>
-        <translation>%1 分</translation>
+        <translation>%1分</translation>
     </message>
     <message>
         <location filename="../util/misc.h" line="327"/>
         <source>%1y %2d %3h %4m</source>
         <comment>e.g: 2 years 2days 10hours 2minutes</comment>
-        <translation type="unfinished"></translation>
+        <translation>%1年%2日%3時間%4分</translation>
     </message>
     <message>
         <source>%1y %1d %2h %3m</source>
         <comment>e.g: 2 years 2days 10hours 2minutes</comment>
         <translatorcomment>is this correct? %1 is duplicated at y and d</translatorcomment>
-        <translation type="obsolete">%1 年 %1日 %2 時間 %3分</translation>
+        <translation type="obsolete">%1年%1日%2時間%3分</translation>
     </message>
     <message>
         <location filename="../util/misc.h" line="317"/>
         <source>%1h %2m</source>
         <comment>e.g: 3hours 5minutes</comment>
-        <translation>%1 時間 %2 分</translation>
+        <translation>%1時間 %2分</translation>
     </message>
     <message>
         <location filename="../util/misc.h" line="322"/>
         <source>%1d %2h %3m</source>
         <comment>e.g: 2days 10hours 2minutes</comment>
-        <translation>%1日 %2時間 %3分</translation>
+        <translation>%1日%2時間%3分</translation>
     </message>
 </context>
 </TS>
