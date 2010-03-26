@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>458</width>
-    <height>366</height>
+    <width>663</width>
+    <height>397</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -58,6 +58,9 @@
      </property>
      <property name="layoutMode">
       <enum>QListView::SinglePass</enum>
+     </property>
+     <property name="spacing">
+      <number>0</number>
      </property>
      <property name="gridSize">
       <size>

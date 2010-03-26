@@ -44,6 +44,11 @@ CryptoPage::CryptoPage(QWidget * parent, Qt::WFlags flags)
 
   connect(ui.copykeyButton, SIGNAL(clicked()), this, SLOT(copyPublicKey()));
   connect(ui.saveButton, SIGNAL(clicked()), this, SLOT(fileSaveAs()));
+  
+  QFont font("Courier New",8,50,false);
+  font.setStyleHint(QFont::TypeWriter,QFont::PreferMatch);
+  font.setStyle(QFont::StyleNormal);
+  ui.certtextEdit->setFont(font);
 
 
   loadPublicKey();
