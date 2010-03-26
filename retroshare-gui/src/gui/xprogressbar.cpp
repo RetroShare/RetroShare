@@ -218,7 +218,7 @@ void xProgressBar::paint()
 	else
 	{
 		// calculate progress value
-		int preWidth = static_cast<int>((rect.width() - 1 - hSpan)*(_pinfo.progress/100));
+		int preWidth = static_cast<int>((rect.width() - 1 - hSpan)*(_pinfo.progress/100.0f));
 		int progressWidth = rect.width() - preWidth;
 		if (progressWidth == rect.width() - hSpan) return;
 

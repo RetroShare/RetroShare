@@ -689,7 +689,7 @@ void TransfersDialog::insertTransfers()
 		FileProgressInfo pinfo ;
 		pinfo.cmap = fcinfo.chunks ;
 		pinfo.type = FileProgressInfo::DOWNLOAD_LINE ;
-		pinfo.progress = completed*100.0/info.size ;
+		pinfo.progress = (info.size==0)?0:(completed*100.0/info.size) ;
 		pinfo.nb_chunks = pinfo.cmap._map.empty()?0:fcinfo.chunks.size() ;
 
 		int addedRow = addItem("", fileName, fileHash, fileSize, pinfo, fileDlspeed, sources, status, priority, completed, remaining, downloadtime);
@@ -834,8 +834,8 @@ void TransfersDialog::insertTransfers()
 
 			double dlspeed  	= pit->tfRate * 1024.0;
 			qlonglong fileSize 	= info.size;
-			double completed 	= info.transfered;
-			double progress 	= info.transfered * 100.0 / info.size;
+			qlonglong completed 	= info.transfered;
+			double progress 	= (info.size > 0)?(info.transfered * 100.0 / info.size):0.0;
 			qlonglong remaining   = (info.size - info.transfered) / (info.tfRate * 1024.0);
 
 			// Estimate the completion. We need something more accurate, meaning that we need to
@@ -847,49 +847,50 @@ void TransfersDialog::insertTransfers()
 				++nb_chunks ;
 
 			uint32_t filled_chunks = pinfo.cmap.filledChunks(nb_chunks) ;
+			pinfo.type = FileProgressInfo::UPLOAD_LINE ;
 			pinfo.nb_chunks = pinfo.cmap._map.empty()?0:nb_chunks ;
 
 			if(filled_chunks > 1) {
-				pinfo.progress = filled_chunks*100.0/nb_chunks ;
+				pinfo.progress = (nb_chunks==0)?0:(filled_chunks*100.0/nb_chunks) ;
 				completed = std::min(info.size,((uint64_t)filled_chunks)*chunk_size) ;
-			} else {
+			} 
+			else 
 				pinfo.progress = progress ;
-			}
 
 			addUploadItem("", fileName, fileHash, fileSize, pinfo, dlspeed, sources,  status, completed, remaining);
 		}
 
-		if (info.peers.size() == 0) { //it has not been added (maybe only turtle tunnels
-			QString fileHash    = QString::fromStdString(info.hash);
-			QString fileName    	= QString::fromUtf8(info.fname.c_str());
-			QString sources		= tr("");
-
-			QString status;
-			switch(info.downloadStatus)
-			{
-				case FT_STATE_FAILED: status = tr("Failed"); break;
-				case FT_STATE_OKAY: status = tr("Okay"); break;
-				case FT_STATE_WAITING: status = tr("Waiting"); break;
-				case FT_STATE_DOWNLOADING: status = tr("Uploading");break;
-				case FT_STATE_COMPLETE:status = tr("Complete"); break;
-				default: status = tr("Complete"); break;
-
-			}
-
-			double dlspeed  	= info.tfRate * 1024.0;
-			qlonglong fileSize 	= info.size;
-			double completed 	= info.transfered;
-			double progress 	= info.transfered * 100.0 / info.size;
-			qlonglong remaining   = (info.size - info.transfered) / (info.tfRate * 1024.0);
-
-			FileProgressInfo pinfo ;
-			pinfo.progress = progress ;
-			pinfo.cmap = CompressedChunkMap() ;
-			pinfo.type = FileProgressInfo::DOWNLOAD_LINE ;
-			pinfo.nb_chunks = 0 ;
-
-			addUploadItem("", fileName, fileHash, fileSize, pinfo, dlspeed, sources,  status, completed, remaining);
-		}
+//		if (info.peers.size() == 0) { //it has not been added (maybe only turtle tunnels
+//			QString fileHash    = QString::fromStdString(info.hash);
+//			QString fileName    	= QString::fromUtf8(info.fname.c_str());
+//			QString sources		= tr("");
+//
+//			QString status;
+//			switch(info.downloadStatus)
+//			{
+//				case FT_STATE_FAILED: status = tr("Failed"); break;
+//				case FT_STATE_OKAY: status = tr("Okay"); break;
+//				case FT_STATE_WAITING: status = tr("Waiting"); break;
+//				case FT_STATE_DOWNLOADING: status = tr("Uploading");break;
+//				case FT_STATE_COMPLETE:status = tr("Complete"); break;
+//				default: status = tr("Complete"); break;
+//
+//			}
+//
+//			double dlspeed  	= info.tfRate * 1024.0;
+//			qlonglong fileSize 	= info.size;
+//			double completed 	= info.transfered;
+//			double progress 	= info.transfered * 100.0 / info.size;
+//			qlonglong remaining   = (info.size - info.transfered) / (info.tfRate * 1024.0);
+//
+//			FileProgressInfo pinfo ;
+//			pinfo.progress = progress ;
+//			pinfo.cmap = CompressedChunkMap() ;
+//			pinfo.type = FileProgressInfo::DOWNLOAD_LINE ;
+//			pinfo.nb_chunks = 0 ;
+//
+//			addUploadItem("", fileName, fileHash, fileSize, pinfo, dlspeed, sources,  status, completed, remaining);
+//		}
 	}
 }
 
