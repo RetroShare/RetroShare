@@ -8768,27 +8768,27 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RemoteDirModel</name>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="563"/>
+        <location filename="../gui/RemoteDirModel.cpp" line="567"/>
         <source>Friends Directories</source>
         <translation>Dateien von Freunde</translation>
     </message>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="567"/>
+        <location filename="../gui/RemoteDirModel.cpp" line="571"/>
         <source>My Directories</source>
         <translation>Meine Dateien</translation>
     </message>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="571"/>
+        <location filename="../gui/RemoteDirModel.cpp" line="575"/>
         <source>Size</source>
         <translation>Grösse</translation>
     </message>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="577"/>
+        <location filename="../gui/RemoteDirModel.cpp" line="581"/>
         <source>Share Type</source>
         <translation>Freigabe Typ</translation>
     </message>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="580"/>
+        <location filename="../gui/RemoteDirModel.cpp" line="584"/>
         <source>What&apos;s new</source>
         <translation>Was ist neu</translation>
     </message>
@@ -8797,7 +8797,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Platzierung</translation>
     </message>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="574"/>
+        <location filename="../gui/RemoteDirModel.cpp" line="578"/>
         <source>Age</source>
         <translation>Alter</translation>
     </message>
@@ -8807,7 +8807,17 @@ p, li { white-space: pre-wrap; }
         <translation>DATEI</translation>
     </message>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="498"/>
+        <location filename="../gui/RemoteDirModel.cpp" line="473"/>
+        <source>Files</source>
+        <translation type="unfinished">Dateien</translation>
+    </message>
+    <message>
+        <location filename="../gui/RemoteDirModel.cpp" line="476"/>
+        <source>File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/RemoteDirModel.cpp" line="502"/>
         <source>DIR</source>
         <translation>ORDNER</translation>
     </message>
@@ -9198,11 +9208,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="1100"/>
-        <source>Clear all Search Results</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../gui/SearchDialog.ui" line="1132"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -9219,8 +9224,9 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Auswahl Downloaden&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
+        <location filename="../gui/SearchDialog.ui" line="1100"/>
         <source>Close All Search Results</source>
-        <translation type="obsolete">Schließe all Ergebnisse</translation>
+        <translation type="unfinished">Schließe all Ergebnisse</translation>
     </message>
 </context>
 <context>
