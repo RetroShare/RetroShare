@@ -427,6 +427,7 @@ RESOURCES += gui/images.qrc lang/lang.qrc gui/help/content/content.qrc
 
 TRANSLATIONS +=  \
             lang/retroshare_en.ts \
+            lang/retroshare_da.ts \
             lang/retroshare_de.ts \
             lang/retroshare_fr.ts \
             lang/retroshare_ja_JP.ts  \
