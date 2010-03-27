@@ -138,7 +138,7 @@ class RsConfig
 			firewalled = forwardPort = false ;
 			maxDownloadDataRate = maxUploadDataRate = maxIndivDataRate = 0 ;
 			promptAtBoot = 0 ;
-			DHTActive = uPnPActive = netLocalOk = netDhtOk = netStunOk = netExtraAddressOk = false ;
+			DHTActive = uPnPActive = netLocalOk = netUpnpOk = netDhtOk = netStunOk = netExtraAddressOk = false ;
 			uPnPState = DHTPeers = 0 ;
 		}
 		std::string		ownId;

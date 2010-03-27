@@ -95,6 +95,7 @@ RsQueueThread::RsQueueThread(uint32_t min, uint32_t max, double relaxFactor )
 	:mMinSleep(min), mMaxSleep(max), mRelaxFactor(relaxFactor)
 {
 	mLastSleep = (uint32_t)mMinSleep ;
+	mLastWork = time(NULL) ;
 }
 
 void RsQueueThread::run()
