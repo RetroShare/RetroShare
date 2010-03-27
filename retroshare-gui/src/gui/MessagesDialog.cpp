@@ -1235,7 +1235,7 @@ void MessagesDialog::updateMessageSummaryList()
 		{
 			newInboxCount ++;
 		}
-		if ((it -> msgflags & RS_MSG_BOXMASK) == RS_MSG_OUTBOX && ((it -> msgflags & RS_MSG_NEW) == RS_MSG_NEW))
+		if ((it -> msgflags & RS_MSG_BOXMASK) == RS_MSG_OUTBOX )
 		{
 			newOutboxCount ++;
 		}
