@@ -6546,7 +6546,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/statusbar/peerstatus.cpp" line="75"/>
         <source>Friends:</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkadaşlar:</translation>
     </message>
 </context>
 <context>
@@ -8190,17 +8190,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/statusbar/ratesstatus.cpp" line="50"/>
         <source>&lt;strong&gt;Down:&lt;/strong&gt; 0.00 (kB/s) | &lt;strong&gt;Up:&lt;/strong&gt; 0.00 (kB/s) </source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;Indirme:&lt;/strong&gt; 0.00 (kB/s) | &lt;strong&gt;Gönderme:&lt;/strong&gt; 0.00 (kB/s) </translation>
     </message>
     <message>
         <location filename="../gui/statusbar/ratesstatus.cpp" line="70"/>
         <source>Down:</source>
-        <translation type="unfinished"></translation>
+        <translation>Indirme:</translation>
     </message>
     <message>
         <location filename="../gui/statusbar/ratesstatus.cpp" line="70"/>
         <source>Up:</source>
-        <translation type="unfinished"></translation>
+        <translation>Gönderme:</translation>
     </message>
 </context>
 <context>
