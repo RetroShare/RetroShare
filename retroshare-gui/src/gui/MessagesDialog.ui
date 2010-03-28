@@ -946,6 +946,12 @@ border-image: url(:/images/closepressed.png)
       <enum>Qt::Horizontal</enum>
      </property>
      <widget class="QListWidget" name="listWidget">
+      <property name="minimumSize">
+       <size>
+        <width>120</width>
+        <height>0</height>
+       </size>
+      </property>
       <property name="maximumSize">
        <size>
         <width>120</width>
@@ -1183,7 +1189,7 @@ p, li { white-space: pre-wrap; }
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
-                 <width>20</width>
+                 <width>2</width>
                  <height>40</height>
                 </size>
                </property>
@@ -1234,21 +1240,21 @@ p, li { white-space: pre-wrap; }
              <item row="0" column="2">
               <widget class="QLabel" name="subjectText">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                 <horstretch>2</horstretch>
+                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>12</height>
+                 <height>0</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
-                 <height>12</height>
+                 <height>16777215</height>
                 </size>
                </property>
                <property name="font">
@@ -1258,6 +1264,9 @@ p, li { white-space: pre-wrap; }
                </property>
                <property name="text">
                 <string/>
+               </property>
+               <property name="textInteractionFlags">
+                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                </property>
               </widget>
              </item>
@@ -1293,10 +1302,10 @@ p, li { white-space: pre-wrap; }
                </property>
               </widget>
              </item>
-             <item row="1" column="2">
+             <item row="1" column="2" colspan="2">
               <widget class="QLabel" name="fromText">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                  <horstretch>2</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
@@ -1304,13 +1313,13 @@ p, li { white-space: pre-wrap; }
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>12</height>
+                 <height>0</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
-                 <height>12</height>
+                 <height>16777215</height>
                 </size>
                </property>
                <property name="font">
@@ -1327,68 +1336,6 @@ p, li { white-space: pre-wrap; }
               </widget>
              </item>
              <item row="2" column="0">
-              <widget class="QLabel" name="datelabel">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>60</width>
-                 <height>12</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>10</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <pointsize>10</pointsize>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>Date:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="2">
-              <widget class="QLabel" name="dateText">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                 <horstretch>2</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>12</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>12</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <pointsize>9</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="0">
               <widget class="QLabel" name="tolabel">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -1420,18 +1367,28 @@ p, li { white-space: pre-wrap; }
                </property>
               </widget>
              </item>
-             <item row="3" column="2">
-              <widget class="QTextBrowser" name="toText">
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>22</height>
-                </size>
-               </property>
+             <item row="0" column="3">
+              <widget class="QLabel" name="dateText">
                <property name="font">
                 <font>
                  <pointsize>9</pointsize>
                 </font>
+               </property>
+               <property name="layoutDirection">
+                <enum>Qt::RightToLeft</enum>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="textInteractionFlags">
+                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="2" colspan="2">
+              <widget class="QLabel" name="toText">
+               <property name="text">
+                <string/>
                </property>
               </widget>
              </item>

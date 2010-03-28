@@ -884,30 +884,21 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index)
 	QString msgTxt;
 	for(pit = msgInfo.msgto.begin(); pit != msgInfo.msgto.end(); pit++)
 	{
-		msgTxt += QString::fromStdString(*pit);
-		msgTxt += " <";
-		msgTxt += QString::fromStdString(rsPeers->getPeerName(*pit));
-		msgTxt += ">, ";
+		msgTxt += "<a style='color: black;'href='" + QString::fromStdString(rsPeers->getPeerName(*pit)) + "@" + QString::fromStdString(*pit) + "'> " + QString::fromStdString(rsPeers->getPeerName(*pit))  + "</a>" + " ,  ";
 	}
 
 	if (msgInfo.msgcc.size() > 0)
 		msgTxt += "\nCc: ";
 	for(pit = msgInfo.msgcc.begin(); pit != msgInfo.msgcc.end(); pit++)
 	{
-		msgTxt += QString::fromStdString(*pit);
-		msgTxt += " <";
-		msgTxt += QString::fromStdString(rsPeers->getPeerName(*pit));
-		msgTxt += ">, ";
+		msgTxt += "<a style='color: black;'href='" + QString::fromStdString(rsPeers->getPeerName(*pit)) + "@" + QString::fromStdString(*pit) + "'> " + QString::fromStdString(rsPeers->getPeerName(*pit))  + "</a>" + " ,  ";
 	}
 
 	if (msgInfo.msgbcc.size() > 0)
 		msgTxt += "\nBcc: ";
 	for(pit = msgInfo.msgbcc.begin(); pit != msgInfo.msgbcc.end(); pit++)
 	{
-		msgTxt += QString::fromStdString(*pit);
-		msgTxt += " <";
-		msgTxt += QString::fromStdString(rsPeers->getPeerName(*pit));
-		msgTxt += ">, ";
+		msgTxt += "<a style='color: black;'href='" + QString::fromStdString(rsPeers->getPeerName(*pit)) + "@" + QString::fromStdString(*pit) + "'> " + QString::fromStdString(rsPeers->getPeerName(*pit))  + "</a>" + " ,  ";
 	}
 
 	{
@@ -917,7 +908,8 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index)
 		ui.dateText-> setText(timestamp);
 	}
 	ui.toText->setText(msgTxt);
-	ui.fromText->setText("<a style='color: blue;' href='" + QString::fromStdString(rsPeers->getPeerName(msgInfo.srcId)) + "'> " + QString::fromStdString(rsPeers->getPeerName(msgInfo.srcId)) +"</a>");
+	ui.fromText->setText("<a style='color: blue;' href='" + QString::fromStdString(rsPeers->getPeerName(msgInfo.srcId)) + "@" + QString::fromStdString(msgInfo.srcId) + "'> " + QString::fromStdString(rsPeers->getPeerName(msgInfo.srcId)) +"</a>");
+	ui.fromText->setToolTip(QString::fromStdString(rsPeers->getPeerName(msgInfo.srcId)) + "@" + QString::fromStdString(msgInfo.srcId));
 
 	ui.subjectText->setText(QString::fromStdWString(msgInfo.title));
 	ui.msgText->setHtml(QString::fromStdWString(msgInfo.msg));
