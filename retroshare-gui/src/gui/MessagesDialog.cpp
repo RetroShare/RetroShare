@@ -645,17 +645,20 @@ void MessagesDialog::insertMessages()
 
 		// Date First.... (for sorting)
 		{
-			QDateTime qtime;
-			qtime.setTime_t(it->ts);
-			if (it->ts < 86400)
+			QDateTime qdatetime;
+			qdatetime.setTime_t(it->ts);
+			
+			//if the mail is on same date show only time.
+			if (qdatetime.daysTo(QDateTime::currentDateTime()) == 0)
 			{
-			QString timestamp = qtime.toString("hh:mm:ss");
-			item3 -> setText(timestamp);
+				QTime qtime = qdatetime.time();
+				QVariant varTime(qtime);
+				item3->setData(varTime, Qt::DisplayRole);
 			}
 			else
 			{
-			QString timestamp = qtime.toString("dd.MM.yyyy hh:mm:ss");
-			item3 -> setText(timestamp);
+				QVariant varDateTime(qdatetime);
+				item3->setData(varDateTime, Qt::DisplayRole);
 			}
 		}
 
