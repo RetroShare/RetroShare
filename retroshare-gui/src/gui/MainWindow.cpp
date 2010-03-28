@@ -111,8 +111,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     /* Invoke the Qt Designer generated QObject setup routine */
     ui.setupUi(this);
     
-    updateToolBaricons();
-
     /* Create RshareSettings object */
     _settings = new RshareSettings();
     
@@ -183,7 +181,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
 
     ui.stackPages->add(messagesDialog = new MessagesDialog(ui.stackPages),
-                      createPageAction(QIcon(MessageIcon), tr("Messages"), grp));   
+                      messageAction = createPageAction(QIcon(IMAGE_MESSAGES), tr("Messages"), grp));   
 
     #ifndef RS_RELEASE_VERSION
     ChannelFeed *channelFeed = NULL;
@@ -332,59 +330,59 @@ void MainWindow::displaySystrayMsg(const QString& title,const QString& msg)
 void MainWindow::updateStatus()
 {
 
-      if (ratesstatus)
-      ratesstatus->getRatesStatus();
+	if (ratesstatus)
+		ratesstatus->getRatesStatus();
 
-      if (peerstatus)
-      peerstatus->getPeerStatus();
+	if (peerstatus)
+		peerstatus->getPeerStatus();
 
-      if (natstatus)
-      natstatus->getNATStatus();
+	if (natstatus)
+		natstatus->getNATStatus();
 
-    std::list<std::string> ids;
-    rsPeers->getOnlineList(ids);
-    int online = ids.size();
-    
-    std::list<MsgInfoSummary> msgList;
-    std::list<MsgInfoSummary>::const_iterator it;
+	std::list<std::string> ids;
+	rsPeers->getOnlineList(ids);
+	int online = ids.size();
 
-    rsMsgs -> getMessageSummaries(msgList);
-  
-    for(it = msgList.begin(); it != msgList.end(); it++)
-    {
+	std::list<MsgInfoSummary> msgList;
+	std::list<MsgInfoSummary>::const_iterator it;
 
-    if ((it -> msgflags & RS_MSG_BOXMASK) == RS_MSG_INBOX && ((it -> msgflags & RS_MSG_NEW) == RS_MSG_NEW))
-    {
-        trayIcon->setIcon(QIcon(":/images/newmsg.png"));
-        trayIcon->setToolTip(tr("RetroShare") + "\n" + tr("You has a new message"));
-    }    
-    else if (online == 0)
-    {
-        trayIcon->setIcon(QIcon(IMAGE_NOONLINE));
-        trayIcon->setToolTip(tr("RetroShare"));
-    }
-    else if (online < 2)
-    {
-        trayIcon->setIcon(QIcon(IMAGE_ONEONLINE));
-        trayIcon->setToolTip(tr("RetroShare"));
-    }
-    else if (online < 3)
-    {
-        trayIcon->setIcon(QIcon(IMAGE_TWOONLINE));
-        trayIcon->setToolTip(tr("RetroShare"));
-    }
-    else
-    {
-        trayIcon->setIcon(QIcon(IMAGE_RETROSHARE));
-        trayIcon->setToolTip(tr("RetroShare"));
-    }
+	rsMsgs -> getMessageSummaries(msgList);
+	bool new_msg = false ;
 
-  
-    }
+	for(it = msgList.begin(); it != msgList.end(); it++)
+		if ((it -> msgflags & RS_MSG_BOXMASK) == RS_MSG_INBOX && ((it -> msgflags & RS_MSG_NEW) == RS_MSG_NEW))
+			new_msg = true ;
 
+	if(new_msg)
+		messageAction->setIcon(QIcon(QPixmap(":/images/messages_new.png"))) ;
+	else
+		messageAction->setIcon(QIcon(QPixmap(":/images/evolution.png"))) ;
 
-
-
+	if(new_msg)
+	{
+		trayIcon->setIcon(QIcon(":/images/newmsg.png"));
+		trayIcon->setToolTip(tr("RetroShare") + "\n" + tr("You has a new message"));
+	}    
+	else if (online == 0)
+	{
+		trayIcon->setIcon(QIcon(IMAGE_NOONLINE));
+		trayIcon->setToolTip(tr("RetroShare"));
+	}
+	else if (online < 2)
+	{
+		trayIcon->setIcon(QIcon(IMAGE_ONEONLINE));
+		trayIcon->setToolTip(tr("RetroShare"));
+	}
+	else if (online < 3)
+	{
+		trayIcon->setIcon(QIcon(IMAGE_TWOONLINE));
+		trayIcon->setToolTip(tr("RetroShare"));
+	}
+	else
+	{
+		trayIcon->setIcon(QIcon(IMAGE_RETROSHARE));
+		trayIcon->setToolTip(tr("RetroShare"));
+	}
 }
 
 void MainWindow::updateHashingInfo(const QString& s)
@@ -672,25 +670,4 @@ void MainWindow::setStyle()
 
 }
 
-void MainWindow::updateToolBaricons()
-{
-	std::list<MsgInfoSummary> msgList;
-	std::list<MsgInfoSummary>::const_iterator it;
 
-	rsMsgs -> getMessageSummaries(msgList);
-  
-  for(it = msgList.begin(); it != msgList.end(); it++)
-	{
-
-  if (it -> msgflags & RS_MSG_NEW)
-  {
-     MessageIcon.addPixmap(QPixmap(":/images/messages_new.png"), QIcon::Normal, QIcon::On );     
-  }
-  else
-  {
-     MessageIcon.addPixmap(QPixmap(":/images/evolution.png"), QIcon::Normal, QIcon::On );
-  }
-  
-  }
-
-}

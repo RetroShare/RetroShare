@@ -594,15 +594,17 @@ void p3ChatService::sendAvatarJpegData(const std::string& peer_id)
 
 		// take avatar, and embed it into a std::wstring.
 		//
+#ifdef CHAT_DEBUG
 		std::cerr << "p3ChatService::sending avatar image to peer" << peer_id << ", image size = " << ci->image_size << std::endl ;
 		std::cerr << std::endl;
+#endif
 
 		sendItem(ci) ;
 	}
    else {
-        #ifdef CHAT_DEBUG
+#ifdef CHAT_DEBUG
         std::cerr << "Doing nothing" << std::endl ;
-        #endif
+#endif
    }
 }
 

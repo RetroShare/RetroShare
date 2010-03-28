@@ -105,8 +105,6 @@ public slots:
     void updateHashingInfo(const QString&) ;
     void displayErrorMessage(int,int,const QString&) ;
     
-    void updateToolBaricons();
-	
 protected:
     void closeEvent(QCloseEvent *);
     
@@ -190,7 +188,7 @@ private:
 
     QLabel *_hashing_info_label ;
     
-    QIcon MessageIcon;
+	 QAction *messageAction ;
 
     /** Qt Designer generated object */
     Ui::MainWindow ui;

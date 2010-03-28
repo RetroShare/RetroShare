@@ -1025,7 +1025,8 @@ void RemoteDirModel::openSelected(QModelIndexList qmil, bool openFolder)
 	std::list<DirDetails>::iterator it;
 	getFileInfoFromIndexList(qmil, files_info);
 
-	for (it = files_info.begin(); it != files_info.end(); it++) {
+	for (it = files_info.begin(); it != files_info.end(); it++) 
+	{
 		if ((*it).type & DIR_TYPE_PERSON) continue;
 
 		std::string fullpath, name;
@@ -1039,25 +1040,19 @@ void RemoteDirModel::openSelected(QModelIndexList qmil, bool openFolder)
 			name = fullpath;
 		}
 
-		if (!openFolder) {
-			if ((*it).type & DIR_TYPE_FILE) {
-				QDesktopServices::openUrl(QUrl::fromLocalFile(name.c_str()));
-			}
-		} else {
-			if (dirs_to_open.end() == std::find(dirs_to_open.begin(), dirs_to_open.end(), fullpath)) {
-				dirs_to_open.push_back(fullpath);
-			}
-		}
+		std::cerr << "Opennign this file: " << name << std::endl ;
+
+		QDesktopServices::openUrl(QUrl::fromLocalFile(QString::fromUtf8(name.c_str(),name.length())));
 	}
 
-	if (openFolder) {
-		std::list<std::string>::iterator dit;
-		for (dit = dirs_to_open.begin(); dit != dirs_to_open.end(); dit++) 
-		{
-			std::cerr << "Opennign this folder: " << (*dit).c_str() << std::endl ;
-			QDesktopServices::openUrl(QUrl::fromLocalFile((*dit).c_str()));
-		}
-	}
+//	if (openFolder) {
+//		std::list<std::string>::iterator dit;
+//		for (dit = dirs_to_open.begin(); dit != dirs_to_open.end(); dit++) 
+//		{
+//			std::cerr << "Opennign this folder: " << (*dit).c_str() << std::endl ;
+//			QDesktopServices::openUrl(QUrl::fromLocalFile(QString::fromUtf8((*dit).c_str())));
+//		}
+//	}
 
 #ifdef RDM_DEBUG
 	std::cerr << "::::::::::::Done RemoteDirModel::openSelected()" << std::endl;

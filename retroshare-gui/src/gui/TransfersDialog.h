@@ -132,6 +132,7 @@ private:
     QMenu* contextMnu;
     /** Defines the actions for the context menu */
     QAction* showdowninfoAct;
+    QAction* playAct;
     QAction* cancelAct;
     QAction* clearcompletedAct;
     QAction* copylinkAct;

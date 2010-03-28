@@ -1,9 +1,10 @@
 #include "ui_TrustView.h"
+#include <gui/RsAutoUpdatePage.h>
 
 class QWheelEvent ;
 class QShowEvent ;
 
-class TrustView: public QWidget, public Ui::TrustView
+class TrustView: public RsAutoUpdatePage, public Ui::TrustView
 {
 	Q_OBJECT
 
@@ -14,6 +15,7 @@ class TrustView: public QWidget, public Ui::TrustView
 		virtual void wheelEvent(QWheelEvent *) ;
 		virtual void showEvent(QShowEvent *) ;
 
+		virtual void updateDisplay() ;
 	public slots:
 		void update() ;
 		void updateZoom(int) ;

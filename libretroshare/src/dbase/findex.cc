@@ -947,12 +947,20 @@ int FileIndex::saveIndex(std::string filename, std::string &fileHash, uint64_t &
 	std::map<std::string, DirEntry *>::iterator it;
 	for(it = root->subdirs.begin(); it != root->subdirs.end(); it++)
 	{
+#ifdef FI_DEBUG
 		std::cout << "writting root directory: name=" << it->second->name << ", path=" << it->second->path << std::endl ;
+#endif
 		if(forbidden_dirs.find(it->second->name) != forbidden_dirs.end())
+		{
+#ifdef FI_DEBUG
 			std::cerr << "  will be suppressed." << std::endl ;
+#endif
+		}
 		else
 		{
+#ifdef FI_DEBUG
 			std::cerr << "  will be saved." << std::endl ;
+#endif
 			(it->second)->saveEntry(oss);
 		}
 	}

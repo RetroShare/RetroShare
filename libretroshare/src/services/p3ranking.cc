@@ -423,6 +423,7 @@ void p3Ranking::addRankMsg(RsRankLinkMsg *msg)
 		RankGroup grp;
 		grp.rid = rid;
 		grp.ownTag = false;
+		grp.rank = 0.0f;
 
 /*************************************************************************/
 /****************************** LINK SPECIFIC ****************************/
@@ -437,7 +438,6 @@ void p3Ranking::addRankMsg(RsRankLinkMsg *msg)
 
 		mData[rid] = grp;
 		it = mData.find(rid);
-
 
 		if (id == "")
 		{

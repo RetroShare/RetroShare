@@ -171,6 +171,24 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
 #ifdef Q_WS_WIN
 
 #endif
+  copylinklocalAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Links to Clipboard" ), this );
+  connect( copylinklocalAct , SIGNAL( triggered() ), this, SLOT( copyLinkLocal() ) );
+  copylinklocalhtmlAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Links to Clipboard (HTML)" ), this );
+  connect( copylinklocalhtmlAct , SIGNAL( triggered() ), this, SLOT( copyLinkhtml() ) );
+  sendlinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Links" ), this );
+  connect( sendlinkAct , SIGNAL( triggered() ), this, SLOT( sendLinkTo( ) ) );
+  sendhtmllinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Links (HTML)" ), this );
+  connect( sendhtmllinkAct , SIGNAL( triggered() ), this, SLOT( sendHtmlLinkTo( ) ) );
+  sendlinkCloudAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Links to Cloud" ), this );
+  connect( sendlinkCloudAct , SIGNAL( triggered() ), this, SLOT( sendLinkToCloud(  ) ) );
+  addlinkCloudAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Add Links to Cloud" ), this );
+  connect( addlinkCloudAct , SIGNAL( triggered() ), this, SLOT( addLinkToCloud(  ) ) );
+  openfileAct = new QAction(QIcon(IMAGE_OPENFILE), tr("Open File"), this);
+  connect(openfileAct, SIGNAL(triggered()), this, SLOT(openfile()));
+  openfolderAct = new QAction(QIcon(IMAGE_OPENFOLDER), tr("Open Folder"), this);
+  connect(openfolderAct, SIGNAL(triggered()), this, SLOT(openfolder()));
+
+
 }
 
 void SharedFilesDialog::checkUpdate()
@@ -595,7 +613,7 @@ void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
 	QMenu contextMnu2( this );
 	//
 
-	QAction* menuAction = fileAssotiationAction(currentFile) ;
+//	QAction* menuAction = fileAssotiationAction(currentFile) ;
 	//new QAction(QIcon(IMAGE_PLAY), currentFile, this);
 	//tr( "111Play File(s)" ), this );
 	//      connect( openfolderAct , SIGNAL( triggered() ), this,
@@ -618,10 +636,10 @@ void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
 	 *
 	 */
 
-	QMenu *recMenu = new QMenu( tr("Recommend (Automated message) To "), this );
-	recMenu->setIcon(QIcon(IMAGE_ATTACHMENT));
-	QMenu *msgMenu = new QMenu( tr("Recommend in a message to "), &contextMnu2 );
-	msgMenu->setIcon(QIcon(IMAGE_MSG));
+	QMenu recMenu( tr("Recommend (Automated message) To "), this );
+	recMenu.setIcon(QIcon(IMAGE_ATTACHMENT));
+	QMenu msgMenu( tr("Recommend in a message to "), &contextMnu2 );
+	msgMenu.setIcon(QIcon(IMAGE_MSG));
 
 	std::list<std::string> peers;
 	std::list<std::string>::iterator it;
@@ -649,52 +667,24 @@ void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
 		 * 	msgMenu
 		 */
 
-		RsAction *qaf1 = new RsAction( QIcon(IMAGE_FRIEND), QString::fromStdString( nn ), recMenu, *it );
+		RsAction *qaf1 = new RsAction( QIcon(IMAGE_FRIEND), QString::fromStdString( nn ), &recMenu, *it );
 		connect( qaf1 , SIGNAL( triggeredId( std::string ) ), this, SLOT( recommendFilesTo( std::string ) ) );
-		recMenu->addAction(qaf1);
-
-		RsAction *qaf2 = new RsAction( QIcon(IMAGE_FRIEND), QString::fromStdString( nn ), msgMenu, *it );
+		RsAction *qaf2 = new RsAction( QIcon(IMAGE_FRIEND), QString::fromStdString( nn ), &msgMenu, *it );
 		connect( qaf2 , SIGNAL( triggeredId( std::string ) ), this, SLOT( recommendFilesToMsg( std::string ) ) );
-		msgMenu->addAction(qaf2);
+
+		recMenu.addAction(qaf1);
+		msgMenu.addAction(qaf2);
 
 		/* create list of ids */
 
 	}
 	//#endif
 
-	  copylinklocalAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Links to Clipboard" ), this );
-	  connect( copylinklocalAct , SIGNAL( triggered() ), this, SLOT( copyLinkLocal() ) );
-	  
-	  copylinklocalhtmlAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Links to Clipboard (HTML)" ), this );
-	  connect( copylinklocalhtmlAct , SIGNAL( triggered() ), this, SLOT( copyLinkhtml() ) );
-
-	  sendlinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Links" ), this );
-	  connect( sendlinkAct , SIGNAL( triggered() ), this, SLOT( sendLinkTo( ) ) );
-	  
-	  sendhtmllinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Links (HTML)" ), this );
-	  connect( sendhtmllinkAct , SIGNAL( triggered() ), this, SLOT( sendHtmlLinkTo( ) ) );
-	  
-//	  sendchatlinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Links to Chat" ), this );
-//	  connect( sendchatlinkAct , SIGNAL( triggered() ), this, SLOT( sendLinktoChat( ) ) );
-
-	  sendlinkCloudAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Links to Cloud" ), this );
-	  connect( sendlinkCloudAct , SIGNAL( triggered() ), this, SLOT( sendLinkToCloud(  ) ) );
-
-	  addlinkCloudAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Add Links to Cloud" ), this );
-	  connect( addlinkCloudAct , SIGNAL( triggered() ), this, SLOT( addLinkToCloud(  ) ) );
-
-	  openfileAct = new QAction(QIcon(IMAGE_OPENFILE), tr("Open File"), this);
-	  connect(openfileAct, SIGNAL(triggered()), this, SLOT(openfile()));
-
-	  openfolderAct = new QAction(QIcon(IMAGE_OPENFOLDER), tr("Open Folder"), this);
-	  connect(openfolderAct, SIGNAL(triggered()), this, SLOT(openfolder()));
-
-
 	  if(localModel->isDir( midx ) )
 		  contextMnu2.addAction( openfolderAct);
 	  else
 	  {
-		  contextMnu2.addAction( menuAction );
+//		  contextMnu2.addAction( menuAction );
 		  contextMnu2.addAction( openfileAct);
 	  }
 
@@ -713,14 +703,12 @@ void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
 		  contextMnu2.addAction( addlinkCloudAct);
 		  contextMnu2.addSeparator();
 #endif
-		  contextMnu2.addMenu( recMenu);
-		  contextMnu2.addMenu( msgMenu);
+		  contextMnu2.addMenu( &recMenu);
+		  contextMnu2.addMenu( &msgMenu);
 	  }
 
-	QMouseEvent *mevent2 = new QMouseEvent( QEvent::MouseButtonPress, point,
-			Qt::RightButton, Qt::RightButton,
-			Qt::NoModifier );
-	contextMnu2.exec( mevent2->globalPos() );
+	QMouseEvent mevent2( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
+	contextMnu2.exec( mevent2.globalPos() );
 }
 
 //============================================================================

@@ -431,6 +431,7 @@ bool    ftExtraList::loadList(std::list<RsItem *> load)
 		}
 
 		fclose(fd);
+		fd = NULL ;
 
 		if (ts > (time_t)fi->file.age)
 		{

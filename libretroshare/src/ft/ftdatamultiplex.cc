@@ -402,6 +402,7 @@ bool ftDataMultiplex::recvChunkMap(const std::string& peerId, const std::string&
 			std::cerr << "ftDataMultiplex::handleRecvChunkMap() ERROR: No matching file Provider for hash " << hash ;
 			std::cerr << std::endl;
 #endif
+			return false;
 		}
 
 		it->second->setClientMap(peerId, compressed_map);
