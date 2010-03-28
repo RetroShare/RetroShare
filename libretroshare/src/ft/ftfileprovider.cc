@@ -25,6 +25,7 @@ ftFileProvider::~ftFileProvider(){
 #endif
 	if (fd!=NULL) {
 		fclose(fd);
+		fd = NULL ;
 	}
 }
 
@@ -239,7 +240,7 @@ int ftFileProvider::initializeFileAttrs()
 	 * attempt to open file 
 	 */
 
-	fd = fopen64(file_name.c_str(), "rb");
+	fd = fopen64(file_name.c_str(), "r+b");
 	if (!fd)
 	{
 		std::cerr << "ftFileProvider::initializeFileAttrs() Failed to open (r+b): ";
