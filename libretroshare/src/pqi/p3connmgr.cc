@@ -73,12 +73,12 @@ const uint32_t PEER_IP_CONNECT_STATE_MAX_LIST_SIZE =     	6;
  * #define P3CONNMGR_NO_AUTO_CONNECTION 1
  ***/
 
-const uint32_t P3CONNMGR_TCP_DEFAULT_DELAY = 5; /* 2 Seconds? is it be enough! */
-const uint32_t P3CONNMGR_UDP_DEFAULT_DELAY = 5; /* 2 Seconds? is it be enough! */
+const uint32_t P3CONNMGR_TCP_DEFAULT_DELAY = 2; /* 2 Seconds? is it be enough! */
+const uint32_t P3CONNMGR_UDP_DEFAULT_DELAY = 3; /* 2 Seconds? is it be enough! */
 const uint32_t P3CONNMGR_UDP_DEFAULT_PERIOD = 40; //a random timeout is set between P3CONNMGR_UDP_DEFAULT_PERIOD and 2 * P3CONNMGR_UDP_DEFAULT_PERIOD in the implementation
 
 #define MAX_AVAIL_PERIOD 230 //times a peer stay in available state when not connected
-#define MIN_RETRY_PERIOD 180
+#define MIN_RETRY_PERIOD 130
 
 void  printConnectState(peerConnectState &peer);
 
@@ -103,7 +103,7 @@ peerConnectState::peerConnectState()
 	 lastcontact(0),
 	 connecttype(0),
 	 lastavailable(0),
-         lastattempt(time(NULL) - MIN_RETRY_PERIOD + MIN_TIME_BETWEEN_NET_RESET + 2), //start connection 2 second after the possible next one net reset
+         lastattempt(time(NULL) - MIN_RETRY_PERIOD + MIN_TIME_BETWEEN_NET_RESET + 6 + (time(NULL)*1664525 + 1013904223) % 6), //start connection few seconds after the possible next one net reset
          name(""), location(""),
          state(0), actions(0),
 	 source(0), 
@@ -390,7 +390,8 @@ void p3ConnectMgr::netStatusReset()
 	for(std::map<std::string, peerConnectState>::iterator it = mFriendList.begin(); it != mFriendList.end(); it++)
 	{
 		it->second.state &= ~RS_PEER_S_CONNECTED ;
-                it->second.lastattempt = time(NULL) - MIN_RETRY_PERIOD + 6;	// forces immediate re-connexion in 6 seconds.
+                // forces immediate re-connexion in 6 seconds, don't start all connection immediately
+                it->second.lastattempt = time(NULL) - MIN_RETRY_PERIOD + 6 + ((time(NULL)*1664525 + 1013904223) % 6);
 	}
 
 	IndicateConfigChanged();
@@ -1559,7 +1560,7 @@ bool p3ConnectMgr::connectAttempt(std::string id, struct sockaddr_in &addr,
             }
          }
 
-        it->second.lastattempt = time(NULL) + ((time(NULL)*1664525 + 1013904223) % 3);//add a random perturbation between 0 and 2 sec.  pseudo random number generator from Wikipedia/Numerical Recipies.
+        it->second.lastattempt = time(NULL) + ((time(NULL)*1664525 + 1013904223) % 6);//add a random perturbation between 0 and 2 sec.  pseudo random number generator from Wikipedia/Numerical Recipies.
         it->second.inConnAttempt = true;
         it->second.currentConnAddrAttempt = it->second.connAddrs.front();
 	it->second.connAddrs.pop_front();
@@ -2358,7 +2359,8 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
                     peerConnectAddress pca;
                     pca.addr = ipListIt->ipAddr;
                     pca.type = RS_NET_CONN_TCP_UNKNOW_TOPOLOGY;
-                    pca.delay = P3CONNMGR_TCP_DEFAULT_DELAY;
+                    //fir the delay, we add a random time and some more time when the friend list is big
+                    pca.delay = P3CONNMGR_TCP_DEFAULT_DELAY + (time(NULL)*1664525 + 1013904223) % P3CONNMGR_TCP_DEFAULT_DELAY + (mFriendList.size() / 7);
                     pca.ts = time(NULL);
                     pca.period = 0;
                     it->second.connAddrs.push_back(pca);
@@ -2435,7 +2437,7 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
         }
 
 	/* flag as last attempt to prevent loop */
-        it->second.lastattempt = time(NULL) + ((time(NULL)*1664525 + 1013904223) % 3);//add a random perturbation between 0 and 2 sec.  pseudo random number generator from Wikipedia/Numerical Recipies.
+        it->second.lastattempt = time(NULL) + ((time(NULL)*1664525 + 1013904223) % 6);//add a random perturbation between 0 and 2 sec.  pseudo random number generator from Wikipedia/Numerical Recipies.
 
         if (it->second.inConnAttempt) {
                 /*  -> it'll automatically use the addresses we added */
@@ -2499,7 +2501,7 @@ bool   p3ConnectMgr::retryConnectNotify(std::string id)
 	}
 
 	/* flag as last attempt to prevent loop */
-        it->second.lastattempt = time(NULL) + ((time(NULL)*1664525 + 1013904223) % 3);//add a random perturbation between 0 and 2 sec.  pseudo random number generator from Wikipedia/Numerical Recipies.
+        it->second.lastattempt = time(NULL) + ((time(NULL)*1664525 + 1013904223) % 6);//add a random perturbation between 0 and 2 sec.  pseudo random number generator from Wikipedia/Numerical Recipies.
 
 	if (ownState.netMode & RS_NET_MODE_UNREACHABLE)
 	{
