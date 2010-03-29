@@ -887,13 +887,24 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index)
 	QString msgTxt;
 	for(pit = msgInfo.msgto.begin(); pit != msgInfo.msgto.end(); pit++)
 	{
-		msgTxt += "<a style='color: black;'href='" + QString::fromStdString(rsPeers->getPeerName(*pit)) + "@" + QString::fromStdString(*pit) + "'> " + QString::fromStdString(rsPeers->getPeerName(*pit))  + "</a>" + "   ";
+	 if (QString::fromStdString(rsPeers->getPeerName(*pit)) == "")
+	 {
+		msgTxt += "<a style='color: black;'href='" + tr("Anonymous") + "@" + QString::fromStdString(*pit) + "'> " +  tr("Anonymous")  + "</a>" + "    ";
+	 }
+	 else
+	 	msgTxt += "<a style='color: black;'href='" + QString::fromStdString(rsPeers->getPeerName(*pit)) + "@" + QString::fromStdString(*pit) + "'> " + QString::fromStdString(rsPeers->getPeerName(*pit))  + "</a>" + "   ";
+	 	
 	}
 
 	if (msgInfo.msgcc.size() > 0)
 		msgTxt += "\nCc: ";
 	for(pit = msgInfo.msgcc.begin(); pit != msgInfo.msgcc.end(); pit++)
 	{
+   if (QString::fromStdString(rsPeers->getPeerName(*pit)) == "")
+	 {
+		msgTxt += "<a style='color: black;'href='" + tr("Anonymous") + "@" + QString::fromStdString(*pit) + "'> " +  tr("Anonymous")  + "</a>" + "    ";
+	 }
+	 else
 		msgTxt += "<a style='color: black;'href='" + QString::fromStdString(rsPeers->getPeerName(*pit)) + "@" + QString::fromStdString(*pit) + "'> " + QString::fromStdString(rsPeers->getPeerName(*pit))  + "</a>" + "   ";
 	}
 
@@ -901,6 +912,11 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index)
 		msgTxt += "\nBcc: ";
 	for(pit = msgInfo.msgbcc.begin(); pit != msgInfo.msgbcc.end(); pit++)
 	{
+	 if (QString::fromStdString(rsPeers->getPeerName(*pit)) == "")
+	 {
+		msgTxt += "<a style='color: black;'href='" + tr("Anonymous") + "@" + QString::fromStdString(*pit) + "'> " +  tr("Anonymous")  + "</a>" + "    ";
+	 }
+	 else
 		msgTxt += "<a style='color: black;'href='" + QString::fromStdString(rsPeers->getPeerName(*pit)) + "@" + QString::fromStdString(*pit) + "'> " + QString::fromStdString(rsPeers->getPeerName(*pit))  + "</a>" + "   ";
 	}
 
