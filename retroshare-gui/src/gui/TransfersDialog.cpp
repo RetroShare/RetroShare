@@ -172,7 +172,7 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     upheader->resizeSection ( ULSPEED, 75 );
     upheader->resizeSection ( UPROGRESS, 170 );
     upheader->resizeSection ( USTATUS, 100 );
-    upheader->resizeSection ( USERNAME, 75 );
+    upheader->resizeSection ( USERNAME, 120 );
 
     connect(upheader, SIGNAL(sortIndicatorChanged(int, Qt::SortOrder)), this, SLOT(saveSortIndicatorUpl(int, Qt::SortOrder)));
 
