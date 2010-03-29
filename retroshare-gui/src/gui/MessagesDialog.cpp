@@ -887,21 +887,21 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index)
 	QString msgTxt;
 	for(pit = msgInfo.msgto.begin(); pit != msgInfo.msgto.end(); pit++)
 	{
-		msgTxt += "<a style='color: black;'href='" + QString::fromStdString(rsPeers->getPeerName(*pit)) + "@" + QString::fromStdString(*pit) + "'> " + QString::fromStdString(rsPeers->getPeerName(*pit))  + "</a>" + " ,  ";
+		msgTxt += "<a style='color: black;'href='" + QString::fromStdString(rsPeers->getPeerName(*pit)) + "@" + QString::fromStdString(*pit) + "'> " + QString::fromStdString(rsPeers->getPeerName(*pit))  + "</a>" + "   ";
 	}
 
 	if (msgInfo.msgcc.size() > 0)
 		msgTxt += "\nCc: ";
 	for(pit = msgInfo.msgcc.begin(); pit != msgInfo.msgcc.end(); pit++)
 	{
-		msgTxt += "<a style='color: black;'href='" + QString::fromStdString(rsPeers->getPeerName(*pit)) + "@" + QString::fromStdString(*pit) + "'> " + QString::fromStdString(rsPeers->getPeerName(*pit))  + "</a>" + " ,  ";
+		msgTxt += "<a style='color: black;'href='" + QString::fromStdString(rsPeers->getPeerName(*pit)) + "@" + QString::fromStdString(*pit) + "'> " + QString::fromStdString(rsPeers->getPeerName(*pit))  + "</a>" + "   ";
 	}
 
 	if (msgInfo.msgbcc.size() > 0)
 		msgTxt += "\nBcc: ";
 	for(pit = msgInfo.msgbcc.begin(); pit != msgInfo.msgbcc.end(); pit++)
 	{
-		msgTxt += "<a style='color: black;'href='" + QString::fromStdString(rsPeers->getPeerName(*pit)) + "@" + QString::fromStdString(*pit) + "'> " + QString::fromStdString(rsPeers->getPeerName(*pit))  + "</a>" + " ,  ";
+		msgTxt += "<a style='color: black;'href='" + QString::fromStdString(rsPeers->getPeerName(*pit)) + "@" + QString::fromStdString(*pit) + "'> " + QString::fromStdString(rsPeers->getPeerName(*pit))  + "</a>" + "   ";
 	}
 
 	{
