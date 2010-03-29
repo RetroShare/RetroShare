@@ -968,9 +968,11 @@ void MessagesDialog::removemessage()
 {
 	QList<QModelIndex> selectedIndexList= ui.messagestreeView->selectionModel() -> selectedIndexes ();
 	QList<int> rowList;
+	QModelIndex selectedIndex;
 	for(QList<QModelIndex>::iterator it = selectedIndexList.begin(); it != selectedIndexList.end(); it++)
 	{
-		int row = it->row();
+		selectedIndex = proxyModel->mapToSource(*it);
+		int row = selectedIndex.row();
 		if (rowList.contains(row) == false)
 		{
 			rowList.append(row);
