@@ -228,10 +228,9 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 	clearcompletedAct = new QAction(QIcon(IMAGE_CLEARCOMPLETED), tr( "Clear Completed" ), this );
 	connect( clearcompletedAct , SIGNAL( triggered() ), this, SLOT( clearcompleted() ) );
 
-#ifndef RS_RELEASE_VERSION
+
 	copylinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Link" ), this );
 	connect( copylinkAct , SIGNAL( triggered() ), this, SLOT( copyLink() ) );
-#endif
 	pastelinkAct = new QAction(QIcon(IMAGE_PASTELINK), tr( "Paste retroshare Link" ), this );
 	connect( pastelinkAct , SIGNAL( triggered() ), this, SLOT( pasteLink() ) );
 	queueDownAct = new QAction(QIcon(":/images/go-down.png"), tr("Down"), this);
@@ -368,14 +367,14 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 			contextMnu.addAction( pauseAct);
 		if(!all_downld)
 			contextMnu.addAction( resumeAct);
-			
-  if(single)
-	{	
-		if(info.downloadStatus == FT_STATE_PAUSED)
-			contextMnu.addAction( resumeAct);
-		else if(info.downloadStatus != FT_STATE_COMPLETE)
-			contextMnu.addAction( pauseAct);
-	}
+
+		if(single)
+		{	
+			if(info.downloadStatus == FT_STATE_PAUSED)
+				contextMnu.addAction( resumeAct);
+			else if(info.downloadStatus != FT_STATE_COMPLETE)
+				contextMnu.addAction( pauseAct);
+		}
 
 		if(info.downloadStatus != FT_STATE_COMPLETE)
 			contextMnu.addAction( cancelAct);
@@ -399,10 +398,10 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 
 	contextMnu.addAction( clearcompletedAct);
 	contextMnu.addSeparator();
-#ifndef RS_RELEASE_VERSION
-	if(single)
+
+	if(!items.empty())
 		contextMnu.addAction( copylinkAct);
-#endif
+
 	if(!RSLinkClipboard::empty())
 		contextMnu.addAction( pastelinkAct);
 
@@ -912,6 +911,7 @@ void TransfersDialog::cancel()
 void TransfersDialog::copyLink ()
 {
 	QModelIndexList lst = ui.downloadList->selectionModel ()->selectedIndexes ();
+	std::vector<RetroShareLink> links ;
 
 	for (int i = 0; i < lst.count (); i++)
 		if ( lst[i].column() == 0 )
@@ -921,11 +921,10 @@ void TransfersDialog::copyLink ()
 			qulonglong fsize= ind.model ()->data (ind.model ()->index (ind.row (), SIZE)).toULongLong() ;
 			QString fname= ind.model ()->data (ind.model ()->index (ind.row (), NAME)).toString() ;
 
-			RetroShareLink link(fname, fsize, fhash);
-
-			QApplication::clipboard()->setText(link.toString());
-			break ;
+			RetroShareLink link(fname, uint64_t(fsize), fhash);
+			links.push_back(link) ;
 		}
+	RSLinkClipboard::copyLinks(links) ;
 }
 
 void TransfersDialog::showDetailsDialog()
