@@ -800,11 +800,7 @@ void SharedFilesDialog::showFrame(bool show)
         ui.remoteButton->setChecked(false);
         ui.splittedButton->setChecked(false);
 
-        /* set textcolor for Channel name  */
-        QString labelStr("<span style=\"font-size:10pt; font-weight:500;"
-                               "color:#000000;\">%1</span>");
-
-        ui.labeltext->setText( labelStr.arg(tr("<strong>My Shared Files</strong>")));
+        ui.labeltext->setText( tr("<strong>My Shared Files</strong>"));
     }
 }
 
