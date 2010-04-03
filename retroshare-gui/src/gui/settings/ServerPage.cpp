@@ -70,7 +70,6 @@ ServerPage::ServerPage(QWidget * parent, Qt::WFlags flags)
 #ifdef Q_WS_WIN
 
 #endif
-	_changed = false ;
 }
 
 void ServerPage::toggleIpDetermination(bool b)
@@ -211,11 +210,6 @@ void ServerPage::toggleUPnP()
 		ui.extAddress -> setEnabled(false);
 		ui.extPort    -> setEnabled(false);
 	}
-}
-
-void ServerPage::changed()
-{
-	_changed = true ;
 }
 
 void ServerPage::saveAddresses()
