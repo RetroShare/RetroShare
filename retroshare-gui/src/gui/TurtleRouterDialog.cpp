@@ -16,12 +16,12 @@ TurtleRouterDialog::TurtleRouterDialog(QWidget *parent)
 	int n=0 ;
 
 	stl.clear() ;
-	stl.push_back(QString("Search requests")) ;
+	stl.push_back(tr("Search requests")) ;
 	top_level_s_requests = new QTreeWidgetItem(_f2f_TW,stl) ;
 	_f2f_TW->insertTopLevelItem(n++,top_level_s_requests) ;
 
 	stl.clear() ;
-	stl.push_back(QString("Tunnel requests")) ;
+	stl.push_back(tr("Tunnel requests")) ;
 	top_level_t_requests = new QTreeWidgetItem(_f2f_TW,stl) ;
 	_f2f_TW->insertTopLevelItem(n++,top_level_t_requests) ;
 
@@ -60,7 +60,7 @@ void TurtleRouterDialog::updateDisplay()
 		if(parent->text(0) == QString("Unknown hashes"))
 			unknown_hash_found = true ;
 
-		QString str = QString::fromStdString("Tunnel id: "+tunnels_info[i][0] + "\t [" + tunnels_info[i][2] + "] --> [" + tunnels_info[i][1] + "]\t\t last transfer: " + tunnels_info[i][4]) ;
+		QString str = QString::fromStdString( "Tunnel id: " + tunnels_info[i][0] + "\t [" + tunnels_info[i][2] + "] --> [" + tunnels_info[i][1] + "]\t\t last transfer: " + tunnels_info[i][4]) ;
 		stl.clear() ;
 		stl.push_back(str) ;
 
@@ -69,25 +69,25 @@ void TurtleRouterDialog::updateDisplay()
 
 	for(uint i=0;i<search_reqs_info.size();++i)
 	{
-		QString str = QString::fromStdString("Request id: "+search_reqs_info[i][0] + "\t from [" + search_reqs_info[i][1] + "]\t " + search_reqs_info[i][2]) ;
+		QString str = QString::fromStdString( "Request id: " + search_reqs_info[i][0] + "\t from [" + search_reqs_info[i][1] + "]\t " + search_reqs_info[i][2]) ;
 
 		stl.clear() ;
 		stl.push_back(str) ;
 
 		new QTreeWidgetItem(top_level_s_requests,stl) ;
 	}
-	top_level_s_requests->setText(0,"Search requests ("+QString::number(search_reqs_info.size())+")") ;
+	top_level_s_requests->setText(0, tr("Search requests") + "(" + QString::number(search_reqs_info.size()) + ")" ) ;
 
 	for(uint i=0;i<tunnel_reqs_info.size();++i)
 	{
-		QString str = QString::fromStdString("Request id: "+tunnel_reqs_info[i][0] + "\t from [" + tunnel_reqs_info[i][1] + "]\t " + tunnel_reqs_info[i][2]) ;
+		QString str = QString::fromStdString( "Request id: " + tunnel_reqs_info[i][0] + "\t from [" + tunnel_reqs_info[i][1] + "]\t " + tunnel_reqs_info[i][2]) ;
 
 		stl.clear() ;
 		stl.push_back(str) ;
 
 		new QTreeWidgetItem(top_level_t_requests,stl) ;
 	}
-	top_level_t_requests->setText(0,"tunnel requests ("+QString::number(tunnel_reqs_info.size())+")") ;
+	top_level_t_requests->setText(0, tr("Tunnel requests") + "("+QString::number(tunnel_reqs_info.size()) + ")") ;
 
 	// Ok, this is a N2 search, but there are very few elements in the list.
 	for(int i=2;i<_f2f_TW->topLevelItemCount();)
