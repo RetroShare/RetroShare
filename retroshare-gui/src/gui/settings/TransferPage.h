@@ -36,7 +36,7 @@ class TransferPage: public ConfigPage
 		~TransferPage() {}
 
 		/** Saves the changes on this page */
-		virtual bool save(QString &errmsg) {}
+		virtual bool save(QString &errmsg) { return true ; }
 		/** Loads the settings for this page */
 		virtual void load() {}
 

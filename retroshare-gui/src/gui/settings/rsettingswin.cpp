@@ -145,22 +145,22 @@ RSettingsWin::loadSettings()
 void
 RSettingsWin::saveChanges()
 {
-	bool saveOk;
 	QString errmsg;
 
 	/* Call each config page's save() method to save its data */
 	int i, count = stackedWidget->count();
-	for (i = 0; i < count; i++) {
-		ConfigPage *page = (ConfigPage *) stackedWidget->widget(i);
-		saveOk = page->save(errmsg);
+	for (i = 0; i < count; i++) 
+	{
+		ConfigPage *page = dynamic_cast<ConfigPage *>(stackedWidget->widget(i));
 
-		if (!saveOk) {
+		if(!page->save(errmsg)) 
+		{
 			/* Display the offending page */
 			stackedWidget->setCurrentWidget(page);
 
 			/* Show the user what went wrong */
 			QMessageBox::warning(this,
-			tr("Error Saving Configuration"), errmsg,
+			tr("Error Saving Configuration on page ")+QString::number(i), errmsg,
 			QMessageBox::Ok, QMessageBox::NoButton);
 
 			/* Don't process the rest of the pages */
@@ -173,3 +173,4 @@ RSettingsWin::saveChanges()
 
 	QDialog::close();
 }
+
