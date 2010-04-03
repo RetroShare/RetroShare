@@ -67,11 +67,14 @@ void RatesStatus::getRatesStatus()
     rsicontrol -> ConfigGetDataRates(downKb, upKb);
 
     std::ostringstream out;
-    out << "<strong>" << tr("Down:").toStdString() << "</strong> " << std::setprecision(2) << std::fixed << downKb << " (kB/s) |  <strong>" << tr("Up:").toStdString() << "</strong> " << std::setprecision(2) << std::fixed <<  upKb << " (kB/s) ";
+    out << std::setprecision(2) << std::fixed << downKb ;
+    
+    std::ostringstream out2;
+    out2 << std::setprecision(2) << std::fixed <<  upKb ;
 
 
     if (statusRates)
-          statusRates -> setText(QString::fromStdString(out.str()));
+          statusRates -> setText( tr("<strong>Down:</strong>") + " " + QString::fromStdString(out.str()) + " (kB/s) | " + tr("<strong>Up:</strong>") + " " + QString::fromStdString(out2.str()) + " (kB/s) " );
     		
     if( upKb > 0 || downKb < 0  )
     {

@@ -844,48 +844,48 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>CertificatePage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="592"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="593"/>
         <source>Certificate files</source>
         <translation>証明書ファイル</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="594"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="595"/>
         <source>Use PGP certificates saved in files.</source>
         <translation>ファイルに保存された PGP 証明書を使用.</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="596"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="597"/>
         <source>You have to generate a file with your certificate and give it to your friend. Also, you can use a file generated before.</source>
         <translation>あなたの証明書でファイルを生成する必要があり、そのファイルをあなたの友達に渡してください また、以前に生成したファイルも使用できます.</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="603"/>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="613"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="604"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="614"/>
         <source>Export my certificate...</source>
         <translation>あなたの証明書をエクスポート...</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="616"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="617"/>
         <source>Specify path to your friend&apos;s certificate in the box below </source>
         <translation>下のボックスにあなたの友達の証明書のパスを指定してください</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="622"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="623"/>
         <source>Browse</source>
         <translation>ブラウズ</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="642"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="643"/>
         <source>Select Certificate</source>
         <translation>証明書を選択</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="643"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="644"/>
         <source>RetroShare Certificates (*.rsc)</source>
         <translation>RetroShare 証明書 (*.rsc)</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="702"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="703"/>
         <source>Not implemented </source>
         <translation>未実装</translation>
     </message>
@@ -894,28 +894,28 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">証明書  (*.pqi *.pem)</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="658"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="659"/>
         <source>Please choose a filename</source>
         <translation>ファイル名を選択してください</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="664"/>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="670"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="665"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="671"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="665"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="666"/>
         <source>Certificate file successfully created</source>
         <translation>証明書ファイルの作成に成功しました</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="671"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="672"/>
         <source>Sorry, certificate file creation failed</source>
         <translation>証明書ファイルの作成に失敗しました</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="709"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="710"/>
         <source>Certificate Load Failed:file %1 not found</source>
         <translation>証明書の読み込みに失敗: ファイル %1 が見つかりません</translation>
     </message>
@@ -1604,57 +1604,57 @@ Available: %3</source>
 <context>
     <name>ConclusionPage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="752"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="753"/>
         <source>Make Friend</source>
         <translation>友達になる</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="754"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="755"/>
         <source>Details about your friend : </source>
         <translation>友達についての詳細:</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="761"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="762"/>
         <source>Key validity:</source>
         <translation>キーの有効性:</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="769"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="770"/>
         <source>Email:</source>
         <translation>Eメール:</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="785"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="786"/>
         <source>Authenticate friend (Sign GPG Key)</source>
         <translation>友達を認証する (GPG キーに署名)</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="788"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="789"/>
         <source>Add as friend to connect with</source>
         <translation>接続する友達として追加</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="882"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="883"/>
         <source>It seems your friend is already registered. Adding it might just set it&apos;s ip address.</source>
         <translation>この友達はすでに登録されているようです. 追加しても IP アドレスを変更するだけかもしれません.</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="757"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="758"/>
         <source>Peer details</source>
         <translation>ピア詳細</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="765"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="766"/>
         <source>Name:</source>
         <translation>名前:</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="773"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="774"/>
         <source>Loc:</source>
         <translation>場所:</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="777"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="778"/>
         <source>Signers</source>
         <translation>署名者</translation>
     </message>
@@ -2685,22 +2685,22 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>CryptoPage</name>
     <message>
-        <location filename="../gui/settings/CryptoPage.cpp" line="92"/>
+        <location filename="../gui/settings/CryptoPage.cpp" line="95"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
     <message>
-        <location filename="../gui/settings/CryptoPage.cpp" line="93"/>
+        <location filename="../gui/settings/CryptoPage.cpp" line="96"/>
         <source>Your Public Key is copied to Clipboard, paste and send it to your friend via email or some other way</source>
         <translation>あなたの公開キーがクリップボードにコピーされました. Eメール(またはその他の方法)に貼り付けてあなたの友達に送ってください</translation>
     </message>
     <message>
-        <location filename="../gui/settings/CryptoPage.cpp" line="117"/>
+        <location filename="../gui/settings/CryptoPage.cpp" line="120"/>
         <source>Save as...</source>
         <translation>名前をつけて保存...</translation>
     </message>
     <message>
-        <location filename="../gui/settings/CryptoPage.cpp" line="118"/>
+        <location filename="../gui/settings/CryptoPage.cpp" line="121"/>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
         <translation>RetroShare 証明書 (*.rsc); すべてのファイル (*)</translation>
     </message>
@@ -3050,12 +3050,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ErrorMessagePage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="727"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="728"/>
         <source>Sorry, some error appeared</source>
         <translation>エラーが発生しました</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="728"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="729"/>
         <source>Here is the error message: </source>
         <translation>エラーメッセージ:</translation>
     </message>
@@ -3286,6 +3286,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/FileTransferInfoWidget.cpp" line="222"/>
         <location filename="../gui/FileTransferInfoWidget.cpp" line="224"/>
         <location filename="../gui/FileTransferInfoWidget.cpp" line="228"/>
+        <location filename="../gui/FileTransferInfoWidget.cpp" line="230"/>
         <source>bytes</source>
         <translation></translation>
     </message>
@@ -3306,16 +3307,21 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/FileTransferInfoWidget.cpp" line="230"/>
+        <source>Remaining: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/FileTransferInfoWidget.cpp" line="232"/>
         <source>Number of sources: </source>
         <translation>ソースの数:</translation>
     </message>
     <message>
-        <location filename="../gui/FileTransferInfoWidget.cpp" line="232"/>
+        <location filename="../gui/FileTransferInfoWidget.cpp" line="234"/>
         <source>Chunk strategy: </source>
         <translation>チャンクの方針:</translation>
     </message>
     <message>
-        <location filename="../gui/FileTransferInfoWidget.cpp" line="234"/>
+        <location filename="../gui/FileTransferInfoWidget.cpp" line="236"/>
         <source>Transfer type: </source>
         <translation>転送の種類:</translation>
     </message>
@@ -3323,57 +3329,57 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>FofPage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="418"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="419"/>
         <source>Friends of friends</source>
         <translation>友達の友達</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="420"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="421"/>
         <source>Select now who you want to make friends with.</source>
         <translation>友達にしたい人を選択してください.</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="422"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="423"/>
         <source>Show me: </source>
         <translation type="unfinished">以下を表示: </translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="424"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="425"/>
         <source>Any peer I&apos;ve not signed</source>
         <translation type="unfinished">署名していないすべてのピア</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="425"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="426"/>
         <source>Friends of my friends who already trust me</source>
         <translation type="unfinished">あなたの友達の友達で、すでにあなたを信頼している人</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="426"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="427"/>
         <source>Signed peers showing as denied</source>
         <translation type="unfinished">署名済のピアで拒否と表示されているもの</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="430"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="431"/>
         <source>Peer name</source>
         <translation>ピアの名前</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="431"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="432"/>
         <source>Also signed by</source>
         <translation type="unfinished">署名されている </translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="432"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="433"/>
         <source>Peer id</source>
         <translation>ピア ID</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="434"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="435"/>
         <source>Make friend with these peers</source>
         <translation>これらのピアと友達になる</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="531"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="532"/>
         <source>*** None ***</source>
         <translation>*** なし ***</translation>
     </message>
@@ -4973,68 +4979,68 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="166"/>
+        <location filename="../gui/MainWindow.cpp" line="163"/>
         <source>Network</source>
         <translation>ネットワーク</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="170"/>
+        <location filename="../gui/MainWindow.cpp" line="167"/>
         <source>Friends</source>
         <translation>友達</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="178"/>
+        <location filename="../gui/MainWindow.cpp" line="175"/>
         <source>Transfers</source>
         <translation>転送</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="186"/>
+        <location filename="../gui/MainWindow.cpp" line="183"/>
         <source>Messages</source>
         <translation>メッセージ</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="191"/>
+        <location filename="../gui/MainWindow.cpp" line="188"/>
         <source>Channels</source>
         <translation>チャネル</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="197"/>
+        <location filename="../gui/MainWindow.cpp" line="194"/>
         <source>Blogs</source>
         <translation>ブログ</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="359"/>
+        <location filename="../gui/MainWindow.cpp" line="363"/>
         <source>You has a new message</source>
         <translation>新しいメッセージがあります</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="541"/>
+        <location filename="../gui/MainWindow.cpp" line="542"/>
         <source>Internal Error</source>
         <translation>内部エラー</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.ui" line="88"/>
-        <location filename="../gui/MainWindow.cpp" line="492"/>
+        <location filename="../gui/MainWindow.cpp" line="493"/>
         <source>Options</source>
         <translation>オプション</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="575"/>
+        <location filename="../gui/MainWindow.cpp" line="576"/>
         <source>Hide</source>
         <translation>非表示</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="575"/>
+        <location filename="../gui/MainWindow.cpp" line="576"/>
         <source>Show</source>
         <translation>表示</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="318"/>
-        <location filename="../gui/MainWindow.cpp" line="359"/>
-        <location filename="../gui/MainWindow.cpp" line="364"/>
-        <location filename="../gui/MainWindow.cpp" line="369"/>
-        <location filename="../gui/MainWindow.cpp" line="374"/>
-        <location filename="../gui/MainWindow.cpp" line="379"/>
+        <location filename="../gui/MainWindow.cpp" line="315"/>
+        <location filename="../gui/MainWindow.cpp" line="363"/>
+        <location filename="../gui/MainWindow.cpp" line="368"/>
+        <location filename="../gui/MainWindow.cpp" line="373"/>
+        <location filename="../gui/MainWindow.cpp" line="378"/>
+        <location filename="../gui/MainWindow.cpp" line="383"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
@@ -5074,12 +5080,12 @@ p, li { white-space: pre-wrap; }
         <translation>クィック スタート ウィザード</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="174"/>
+        <location filename="../gui/MainWindow.cpp" line="171"/>
         <source>Search</source>
         <translation>検索</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="182"/>
+        <location filename="../gui/MainWindow.cpp" line="179"/>
         <source>Files</source>
         <translation>ファイル</translation>
     </message>
@@ -5088,52 +5094,52 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">共用登録簿を加えなさい</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="298"/>
+        <location filename="../gui/MainWindow.cpp" line="295"/>
         <source>Show/Hide</source>
         <translation>表示/非表示</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="313"/>
+        <location filename="../gui/MainWindow.cpp" line="310"/>
         <source>&amp;Quit</source>
         <translation>終了 (&amp;Q)</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="495"/>
+        <location filename="../gui/MainWindow.cpp" line="496"/>
         <source>Bandwidth Graph</source>
         <translation>帯域グラフ</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="499"/>
+        <location filename="../gui/MainWindow.cpp" line="500"/>
         <source>Open Messenger</source>
         <translation>メッセンジャーを開く</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="310"/>
+        <location filename="../gui/MainWindow.cpp" line="307"/>
         <source>Minimize</source>
         <translation>最小化</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="311"/>
+        <location filename="../gui/MainWindow.cpp" line="308"/>
         <source>Maximize</source>
         <translation>最大化</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="207"/>
+        <location filename="../gui/MainWindow.cpp" line="204"/>
         <source>Links Cloud</source>
         <translation>リンク クラウド</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="126"/>
+        <location filename="../gui/MainWindow.cpp" line="125"/>
         <source>RetroShare %1 a secure decentralised communication platform</source>
         <translation>RetroShare %1 セキュアで分散型のコミュニケーション プラットフォーム</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="230"/>
+        <location filename="../gui/MainWindow.cpp" line="227"/>
         <source>Unfinished</source>
         <translation>未完了</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="508"/>
+        <location filename="../gui/MainWindow.cpp" line="509"/>
         <source>Help</source>
         <translation>ヘルプ</translation>
     </message>
@@ -5143,22 +5149,22 @@ p, li { white-space: pre-wrap; }
         <translation>バージョン情報</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="213"/>
+        <location filename="../gui/MainWindow.cpp" line="210"/>
         <source>News Feed</source>
         <translation>ニュース フィード</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="202"/>
+        <location filename="../gui/MainWindow.cpp" line="199"/>
         <source>Forums</source>
         <translation>フォーラム</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="502"/>
+        <location filename="../gui/MainWindow.cpp" line="503"/>
         <source>Open Messages</source>
         <translation>メッセンジャーを開く</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="505"/>
+        <location filename="../gui/MainWindow.cpp" line="506"/>
         <source>Applications</source>
         <translation>アプリケーション</translation>
     </message>
@@ -5167,17 +5173,17 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete"> 設定</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="219"/>
+        <location filename="../gui/MainWindow.cpp" line="216"/>
         <source>Plugins</source>
         <translation>プラグイン</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="526"/>
+        <location filename="../gui/MainWindow.cpp" line="527"/>
         <source>Really quit ? </source>
         <translation>本当に終了しますか?</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="524"/>
+        <location filename="../gui/MainWindow.cpp" line="525"/>
         <source>Do you really want to exit RetroShare ?</source>
         <translation>本当に Retoroshare を終了しますか?</translation>
     </message>
@@ -5278,12 +5284,12 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1467"/>
+        <location filename="../gui/MessagesDialog.ui" line="1427"/>
         <source>Size</source>
         <translation>サイズ</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1089"/>
+        <location filename="../gui/MessagesDialog.ui" line="1098"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -5339,70 +5345,70 @@ p, li { white-space: pre-wrap; }
         <translation>添付</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="992"/>
-        <location filename="../gui/MessagesDialog.cpp" line="1254"/>
-        <location filename="../gui/MessagesDialog.cpp" line="1266"/>
+        <location filename="../gui/MessagesDialog.ui" line="998"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1267"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1279"/>
         <source>Inbox</source>
         <translation>受信箱</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1001"/>
-        <location filename="../gui/MessagesDialog.cpp" line="1280"/>
-        <location filename="../gui/MessagesDialog.cpp" line="1290"/>
+        <location filename="../gui/MessagesDialog.ui" line="1007"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1293"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1303"/>
         <source>Outbox</source>
         <translation>送信箱</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1010"/>
-        <location filename="../gui/MessagesDialog.cpp" line="1303"/>
-        <location filename="../gui/MessagesDialog.cpp" line="1313"/>
+        <location filename="../gui/MessagesDialog.ui" line="1016"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1316"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1326"/>
         <source>Draft</source>
         <translation>下書き</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1019"/>
+        <location filename="../gui/MessagesDialog.ui" line="1025"/>
         <source>Sent</source>
         <translation>送信済</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1487"/>
-        <location filename="../gui/MessagesDialog.ui" line="1490"/>
+        <location filename="../gui/MessagesDialog.ui" line="1447"/>
+        <location filename="../gui/MessagesDialog.ui" line="1450"/>
         <source>Print...</source>
         <translation>印刷...</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1495"/>
+        <location filename="../gui/MessagesDialog.ui" line="1455"/>
         <source>Print Preview</source>
         <translation>印刷プレビュー</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1500"/>
-        <location filename="../gui/MessagesDialog.ui" line="1503"/>
+        <location filename="../gui/MessagesDialog.ui" line="1460"/>
+        <location filename="../gui/MessagesDialog.ui" line="1463"/>
         <source>Buttons Icon Only</source>
         <translation>アイコンのみ</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1508"/>
+        <location filename="../gui/MessagesDialog.ui" line="1468"/>
         <source>Buttons Text Beside Icon</source>
         <translation>アイコンの横にテキスト</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1511"/>
+        <location filename="../gui/MessagesDialog.ui" line="1471"/>
         <source>Buttons with Text</source>
         <translation>テキスト</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1516"/>
+        <location filename="../gui/MessagesDialog.ui" line="1476"/>
         <source>Buttons Text Under Icon</source>
         <translation>アイコンの下にテキスト</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1519"/>
+        <location filename="../gui/MessagesDialog.ui" line="1479"/>
         <source>Set Text Under Icon</source>
         <translation>アイコンの下にテキストを設定</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1524"/>
+        <location filename="../gui/MessagesDialog.ui" line="1484"/>
         <source>Save As...</source>
         <translation>名前をつけて保存...</translation>
     </message>
@@ -5427,17 +5433,17 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">すべてをダウンロードしなさい </translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="997"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1010"/>
         <source>Print Document</source>
         <translation>ドキュメントを印刷</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1462"/>
+        <location filename="../gui/MessagesDialog.ui" line="1422"/>
         <source>File Name</source>
         <translation>ファイル名</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1472"/>
+        <location filename="../gui/MessagesDialog.ui" line="1432"/>
         <source>Sources</source>
         <translation>ソース</translation>
     </message>
@@ -5505,42 +5511,49 @@ p, li { white-space: pre-wrap; }
         <translation>展開</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="1033"/>
+        <location filename="../gui/MessagesDialog.cpp" line="892"/>
+        <location filename="../gui/MessagesDialog.cpp" line="905"/>
+        <location filename="../gui/MessagesDialog.cpp" line="917"/>
+        <source>Anonymous</source>
+        <translation type="unfinished">匿名</translation>
+    </message>
+    <message>
+        <location filename="../gui/MessagesDialog.cpp" line="1046"/>
         <source>File Request Confirmation</source>
         <translation>ファイル リクエストの確認</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="1033"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1046"/>
         <source>The file has been added to your download list.</source>
         <translation>ファイルはすでにダウンロードリストに追加されています.</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="1039"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1052"/>
         <source>File Request canceled</source>
         <translation>ファイル リクエストがキャンセルされました</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="1039"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1052"/>
         <source>The file has not been added to your download list, because you already have it.</source>
         <translation>そのファイルはすでに持っているためダウンロードリストには追加されません.</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="1046"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1059"/>
         <source>File Request Error</source>
         <translation>ファイル リクエスト エラー</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="1046"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1059"/>
         <source>The file link is malformed.</source>
         <translation>ファイルのリンクが不正です.</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="1081"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1094"/>
         <source>Save as...</source>
         <translation>名前をつけて保存...</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="1082"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1095"/>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
         <translation>HTML ファイル (*.htm *.html);;すべてのファイル (*)</translation>
     </message>
@@ -5557,27 +5570,26 @@ p, li { white-space: pre-wrap; }
         <translation>件名</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1230"/>
+        <location filename="../gui/MessagesDialog.ui" line="1239"/>
         <source>Subject:</source>
         <translation>件名:</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1292"/>
+        <location filename="../gui/MessagesDialog.ui" line="1304"/>
         <source>From:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1357"/>
         <source>Date:</source>
-        <translation>日付:</translation>
+        <translation type="obsolete">日付:</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1419"/>
+        <location filename="../gui/MessagesDialog.ui" line="1369"/>
         <source>To:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1144"/>
+        <location filename="../gui/MessagesDialog.ui" line="1153"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -5588,7 +5600,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;おすすめのファイルをすべてダウンロード&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1477"/>
+        <location filename="../gui/MessagesDialog.ui" line="1437"/>
         <source>Hash</source>
         <translation>ハッシュ</translation>
     </message>
@@ -5690,6 +5702,24 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/MessagesPopupDialog.ui" line="72"/>
         <source>PrintPreview</source>
         <translation>印刷プレビュー</translation>
+    </message>
+    <message>
+        <location filename="../gui/MessagesPopupDialog.cpp" line="129"/>
+        <location filename="../gui/MessagesPopupDialog.cpp" line="134"/>
+        <source>&lt;strong&gt;Unread:&lt;/strong&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/MessagesPopupDialog.cpp" line="141"/>
+        <location filename="../gui/MessagesPopupDialog.cpp" line="146"/>
+        <source>&lt;strong&gt;Inbox:&lt;/strong&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/MessagesPopupDialog.cpp" line="153"/>
+        <location filename="../gui/MessagesPopupDialog.cpp" line="158"/>
+        <source>&lt;strong&gt;Outbox:&lt;/strong&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6775,14 +6805,22 @@ p, li { white-space: pre-wrap; }
         <translation>オンライン: 0  | 友達: 0  | ネットワーク: 0 </translation>
     </message>
     <message>
-        <location filename="../gui/statusbar/peerstatus.cpp" line="75"/>
-        <source>Online:</source>
-        <translation>オンライン:</translation>
+        <location filename="../gui/statusbar/peerstatus.cpp" line="82"/>
+        <source>&lt;span style=&quot;color:#000000&quot;&gt;&lt;strong&gt;Friends:&lt;/strong&gt;&lt;/span&gt;</source>
+        <translation>&lt;span style=&quot;color:#000000&quot;&gt;&lt;strong&gt;友達:&lt;/strong&gt;&lt;/span&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/statusbar/peerstatus.cpp" line="75"/>
+        <location filename="../gui/statusbar/peerstatus.cpp" line="82"/>
+        <source>&lt;span style=&quot;color:#0000FF&quot;&gt;&lt;strong&gt;Online:&lt;/strong&gt;&lt;/span&gt;</source>
+        <translation>&lt;span style=&quot;color:#0000FF&quot;&gt;&lt;strong&gt;オンライン:&lt;/strong&gt;&lt;/span&gt;</translation>
+    </message>
+    <message>
+        <source>Online:</source>
+        <translation type="obsolete">オンライン:</translation>
+    </message>
+    <message>
         <source>Friends:</source>
-        <translation>友達:</translation>
+        <translation type="obsolete">友達:</translation>
     </message>
     <message>
         <source>Network:</source>
@@ -8554,14 +8592,22 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;strong&gt;下り:&lt;/strong&gt; 0.00 (kB/s) | &lt;strong&gt;上り:&lt;/strong&gt; 0.00 (kB/s) </translation>
     </message>
     <message>
-        <location filename="../gui/statusbar/ratesstatus.cpp" line="70"/>
-        <source>Down:</source>
-        <translation>下り:</translation>
+        <location filename="../gui/statusbar/ratesstatus.cpp" line="77"/>
+        <source>&lt;strong&gt;Down:&lt;/strong&gt;</source>
+        <translation>&lt;strong&gt;下り::&lt;/strong&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/statusbar/ratesstatus.cpp" line="70"/>
+        <location filename="../gui/statusbar/ratesstatus.cpp" line="77"/>
+        <source>&lt;strong&gt;Up:&lt;/strong&gt;</source>
+        <translation>&lt;strong&gt;上り:&lt;/strong&gt;</translation>
+    </message>
+    <message>
+        <source>Down:</source>
+        <translation type="obsolete">下り:</translation>
+    </message>
+    <message>
         <source>Up:</source>
-        <translation>上り:</translation>
+        <translation type="obsolete">上り:</translation>
     </message>
 </context>
 <context>
@@ -8608,12 +8654,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/RemoteDirModel.cpp" line="473"/>
         <source>Files</source>
-        <translation>ファイル</translation>
+        <translation type="unfinished">ファイル</translation>
     </message>
     <message>
         <location filename="../gui/RemoteDirModel.cpp" line="476"/>
         <source>File</source>
-        <translation>ファイル</translation>
+        <translation type="unfinished">ファイル</translation>
     </message>
     <message>
         <location filename="../gui/RemoteDirModel.cpp" line="502"/>
@@ -9363,7 +9409,7 @@ p, li { white-space: pre-wrap; }
     <name>SharedFilesDialog</name>
     <message>
         <location filename="../gui/SharedFilesDialog.ui" line="846"/>
-        <location filename="../gui/SharedFilesDialog.cpp" line="210"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="228"/>
         <source>Download</source>
         <translation>ダウンロード</translation>
     </message>
@@ -9375,52 +9421,52 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;ファイル&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="181"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="199"/>
         <source>Checking...</source>
         <translation>確認中...</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="189"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="207"/>
         <source>Check files</source>
         <translation>ファイルを確認</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="213"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="231"/>
         <source>Copy retroshare Link</source>
         <translation>Retoroshare リンクをコピー</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="216"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="234"/>
         <source>Send retroshare Link</source>
         <translation>Retoroshare リンクを送信</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="621"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="639"/>
         <source>Recommend (Automated message) To </source>
         <translation>おすすめする (自動メッセージ)</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="623"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="641"/>
         <source>Recommend in a message to </source>
         <translation>メッセージでおすすめする</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="665"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="174"/>
         <source>Copy retroshare Links to Clipboard</source>
         <translation>クリップボードにRetoroshare リンクをコピー</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="668"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="176"/>
         <source>Copy retroshare Links to Clipboard (HTML)</source>
         <translation>クリップボードにRetoroshare リンクをコピー (HTML)</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="671"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="178"/>
         <source>Send retroshare Links</source>
         <translation>Retoroshare リンクを送信</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="674"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="180"/>
         <source>Send retroshare Links (HTML)</source>
         <translation>Retoroshare リンクを送信 (HTML)</translation>
     </message>
@@ -9429,43 +9475,43 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">チャットでRetoroshare リンクを送信</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="680"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="182"/>
         <source>Send retroshare Links to Cloud</source>
         <translation>クラウドに Retoroshare リンクを送信</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="683"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="184"/>
         <source>Add Links to Cloud</source>
         <translation>リンクをクラウドに追加</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="686"/>
-        <location filename="../gui/SharedFilesDialog.cpp" line="741"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="186"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="729"/>
         <source>Open File</source>
         <translation>ファイルを開く</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="689"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="188"/>
         <source>Open Folder</source>
         <translation>フォルダを開く</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="750"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="738"/>
         <source>Set command for opening this file</source>
         <translation>このファイルを開くためのコマンドを設定</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="819"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="803"/>
         <source>&lt;strong&gt;My Shared Files&lt;/strong&gt;</source>
         <translation>&lt;strong&gt;自分の共有ファイル&lt;/strong&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="833"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="817"/>
         <source>&lt;strong&gt;Friends Files&lt;/strong&gt;</source>
         <translation>&lt;strong&gt;友達のファイル&lt;/strong&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="848"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="832"/>
         <source>&lt;strong&gt;Files&lt;/strong&gt;</source>
         <translation>&lt;strong&gt;ファイル&lt;/strong&gt;</translation>
     </message>
@@ -9655,22 +9701,22 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">名前 - 場所:</translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.cpp" line="165"/>
+        <location filename="../gui/StartDialog.cpp" line="170"/>
         <source>Login Failure</source>
         <translation>ログインに失敗</translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.cpp" line="166"/>
+        <location filename="../gui/StartDialog.cpp" line="171"/>
         <source>Maybe password is wrong</source>
         <translation>おそらくパスワードが間違っています</translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.cpp" line="177"/>
+        <location filename="../gui/StartDialog.cpp" line="182"/>
         <source>Create a New Profil</source>
         <translation>プロファイルを新規作成</translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.cpp" line="178"/>
+        <location filename="../gui/StartDialog.cpp" line="183"/>
         <source>This will generate a new Profile
  Are you sure you want to continue</source>
         <translation>新規プロファイルが作成されます
@@ -9857,17 +9903,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/StatisticDialog.cpp" line="302"/>
         <source>%1 KIB</source>
-        <translation>%1 KB</translation>
+        <translation type="unfinished">%1 KB</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/StatisticDialog.cpp" line="305"/>
         <source>%1 MIB</source>
-        <translation>%1 MB</translation>
+        <translation type="unfinished">%1 MB</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/StatisticDialog.cpp" line="308"/>
         <source>%1 GIB</source>
-        <translation>%1 GB</translation>
+        <translation type="unfinished">%1 GB</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/StatisticDialog.cpp" line="126"/>
@@ -10051,22 +10097,22 @@ p, li { white-space: pre-wrap; }
         <translation>下記テキストはあなたのPGP証明書です. あなたの友達に渡してください </translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="268"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="266"/>
         <source>Please, paste your friends PGP certificate into the box below</source>
         <translation>あなたの友達の PGP 証明書を下のボックスに貼り付けてください</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="332"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="333"/>
         <source>Your Cert is copied to Clipboard, paste and send it to yourfriend via email or some other way</source>
         <translation>あなたの証明書はクリップボードにコピーされました. Eメールに貼り付けるかその他の方法であなたの友達に送ってください</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="320"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="321"/>
         <source>You can copy this text and send it to your friend via email or some other way</source>
         <translation>このテキストをコピーしてEメールやその他の方法であなたの友達に送ることができます</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="331"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="332"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
@@ -10076,37 +10122,37 @@ p, li { white-space: pre-wrap; }
         <translation>テキスト証明書</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="236"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="234"/>
         <source>Copy your Cert to Clipboard</source>
         <translation>証明書をクリップボードにコピー</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="245"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="243"/>
         <source>Save your Cert into a File</source>
         <translation>証明書をファイルに保存</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="254"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="252"/>
         <source>Run Email program</source>
         <translation>Eメール プログラムを起動</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="319"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="320"/>
         <source>Connect Friend Help</source>
         <translation>友達と接続ヘルプ</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="359"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="360"/>
         <source>Save as...</source>
         <translation>名前をつけて保存...</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="360"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="361"/>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
         <translation>RetroShare 証明書 (*.rsc); すべてのファイル (*)</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="404"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="405"/>
         <source>Certificate Load Failed</source>
         <translation>証明書の読み込みに失敗</translation>
     </message>
@@ -10203,12 +10249,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TransfersDialog</name>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="278"/>
+        <location filename="../gui/TransfersDialog.cpp" line="213"/>
         <source>Cancel</source>
         <translation>キャンセル</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="293"/>
+        <location filename="../gui/TransfersDialog.cpp" line="228"/>
         <source>Clear Completed</source>
         <translation>完了したものをクリア</translation>
     </message>
@@ -10350,72 +10396,72 @@ p, li { white-space: pre-wrap; }
         <translation>ハッシュ</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="268"/>
+        <location filename="../gui/TransfersDialog.cpp" line="255"/>
         <source>Play</source>
         <translation>再生</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="272"/>
+        <location filename="../gui/TransfersDialog.cpp" line="207"/>
         <source>Pause</source>
         <translation>ポーズ</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="275"/>
+        <location filename="../gui/TransfersDialog.cpp" line="210"/>
         <source>Resume</source>
         <translation>再開</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="281"/>
+        <location filename="../gui/TransfersDialog.cpp" line="216"/>
         <source>Open Folder</source>
         <translation>フォルダを開く</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="284"/>
+        <location filename="../gui/TransfersDialog.cpp" line="219"/>
         <source>Open File</source>
         <translation>ファイルを開く</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="287"/>
+        <location filename="../gui/TransfersDialog.cpp" line="222"/>
         <source>Preview File</source>
         <translation>ファイルをプレビュー</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="290"/>
+        <location filename="../gui/TransfersDialog.cpp" line="225"/>
         <source>Details...</source>
         <translation>詳細...</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="297"/>
+        <location filename="../gui/TransfersDialog.cpp" line="232"/>
         <source>Copy retroshare Link</source>
         <translation>Retoroshare リンクをコピー</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="301"/>
+        <location filename="../gui/TransfersDialog.cpp" line="235"/>
         <source>Paste retroshare Link</source>
         <translation>Retoroshare リンクを貼り付け</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="304"/>
+        <location filename="../gui/TransfersDialog.cpp" line="316"/>
         <source>View</source>
-        <translation>表示</translation>
+        <translation type="unfinished">表示</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="309"/>
+        <location filename="../gui/TransfersDialog.cpp" line="237"/>
         <source>Down</source>
         <translation>下へ</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="311"/>
+        <location filename="../gui/TransfersDialog.cpp" line="239"/>
         <source>Up</source>
         <translation>上へ</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="313"/>
+        <location filename="../gui/TransfersDialog.cpp" line="241"/>
         <source>Top</source>
         <translation>先頭</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="315"/>
+        <location filename="../gui/TransfersDialog.cpp" line="243"/>
         <source>Bottom</source>
         <translation>末尾</translation>
     </message>
@@ -10424,52 +10470,52 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">キューで移動...</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="332"/>
+        <location filename="../gui/TransfersDialog.cpp" line="325"/>
         <source>Priority (Speed)...</source>
         <translation>優先度 (速度)...</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="338"/>
+        <location filename="../gui/TransfersDialog.cpp" line="245"/>
         <source>Streaming</source>
         <translation>ストリーミング</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="340"/>
+        <location filename="../gui/TransfersDialog.cpp" line="253"/>
         <source>Random</source>
         <translation>ランダム</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="343"/>
+        <location filename="../gui/TransfersDialog.cpp" line="331"/>
         <source>Chunk strategy</source>
         <translation>チャンクの方針</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="707"/>
+        <location filename="../gui/TransfersDialog.cpp" line="693"/>
         <source>Queued</source>
         <translation>キュー済</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="959"/>
+        <location filename="../gui/TransfersDialog.cpp" line="946"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="1051"/>
+        <location filename="../gui/TransfersDialog.cpp" line="1038"/>
         <source>Details:</source>
         <translation>詳細:</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="1272"/>
+        <location filename="../gui/TransfersDialog.cpp" line="1259"/>
         <source>Open Transfer</source>
         <translation>転送を開く</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="1273"/>
+        <location filename="../gui/TransfersDialog.cpp" line="1260"/>
         <source>File %1 is not completed. If it is a media file, try to preview it.</source>
         <translation>ファイル %1 は完了していません. もしそれがメディア ファイルならプレビューを試みてください.</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="957"/>
+        <location filename="../gui/TransfersDialog.cpp" line="944"/>
         <source>Are you sure that you want to cancel and delete these files?</source>
         <translation>本当にこれらのファイルをキャンセルして削除しますか?</translation>
     </message>
@@ -10496,90 +10542,84 @@ p, li { white-space: pre-wrap; }
         <translation>ピア</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="318"/>
-        <location filename="../gui/TransfersDialog.cpp" line="719"/>
+        <location filename="../gui/TransfersDialog.cpp" line="247"/>
+        <location filename="../gui/TransfersDialog.cpp" line="705"/>
         <source>Slower</source>
         <translation>遅く</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="320"/>
-        <location filename="../gui/TransfersDialog.cpp" line="720"/>
-        <location filename="../gui/TransfersDialog.cpp" line="722"/>
+        <location filename="../gui/TransfersDialog.cpp" line="249"/>
+        <location filename="../gui/TransfersDialog.cpp" line="706"/>
+        <location filename="../gui/TransfersDialog.cpp" line="708"/>
         <source>Average</source>
         <translation>平均</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="322"/>
-        <location filename="../gui/TransfersDialog.cpp" line="721"/>
+        <location filename="../gui/TransfersDialog.cpp" line="251"/>
+        <location filename="../gui/TransfersDialog.cpp" line="707"/>
         <source>Faster</source>
         <translation>速く</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="325"/>
+        <location filename="../gui/TransfersDialog.cpp" line="318"/>
         <source>Move in Queue...</source>
         <translation>キュー内で移動...</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="702"/>
-        <location filename="../gui/TransfersDialog.cpp" line="764"/>
-        <location filename="../gui/TransfersDialog.cpp" line="865"/>
-        <location filename="../gui/TransfersDialog.cpp" line="914"/>
+        <location filename="../gui/TransfersDialog.cpp" line="688"/>
+        <location filename="../gui/TransfersDialog.cpp" line="750"/>
+        <location filename="../gui/TransfersDialog.cpp" line="851"/>
         <source>Failed</source>
         <translation>失敗</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="703"/>
-        <location filename="../gui/TransfersDialog.cpp" line="765"/>
-        <location filename="../gui/TransfersDialog.cpp" line="866"/>
-        <location filename="../gui/TransfersDialog.cpp" line="915"/>
+        <location filename="../gui/TransfersDialog.cpp" line="689"/>
+        <location filename="../gui/TransfersDialog.cpp" line="751"/>
+        <location filename="../gui/TransfersDialog.cpp" line="852"/>
         <source>Okay</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="704"/>
-        <location filename="../gui/TransfersDialog.cpp" line="867"/>
-        <location filename="../gui/TransfersDialog.cpp" line="916"/>
+        <location filename="../gui/TransfersDialog.cpp" line="690"/>
+        <location filename="../gui/TransfersDialog.cpp" line="853"/>
         <source>Waiting</source>
         <translation>待機中</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="705"/>
+        <location filename="../gui/TransfersDialog.cpp" line="691"/>
         <source>Downloading</source>
         <translation>ダウンロード中</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="706"/>
-        <location filename="../gui/TransfersDialog.cpp" line="768"/>
-        <location filename="../gui/TransfersDialog.cpp" line="869"/>
-        <location filename="../gui/TransfersDialog.cpp" line="870"/>
-        <location filename="../gui/TransfersDialog.cpp" line="918"/>
-        <location filename="../gui/TransfersDialog.cpp" line="919"/>
+        <location filename="../gui/TransfersDialog.cpp" line="692"/>
+        <location filename="../gui/TransfersDialog.cpp" line="754"/>
+        <location filename="../gui/TransfersDialog.cpp" line="855"/>
+        <location filename="../gui/TransfersDialog.cpp" line="856"/>
         <source>Complete</source>
         <translation>完了</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="708"/>
+        <location filename="../gui/TransfersDialog.cpp" line="694"/>
         <source>Paused</source>
         <translation>ポーズ</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="709"/>
+        <location filename="../gui/TransfersDialog.cpp" line="695"/>
         <source>Unknown</source>
         <translation>不明</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="759"/>
+        <location filename="../gui/TransfersDialog.cpp" line="745"/>
         <source>version: </source>
         <translation>バージョン:</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="767"/>
+        <location filename="../gui/TransfersDialog.cpp" line="753"/>
         <source>Transferring</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="868"/>
-        <location filename="../gui/TransfersDialog.cpp" line="917"/>
+        <location filename="../gui/TransfersDialog.cpp" line="854"/>
         <source>Uploading</source>
         <translation>アップロード中</translation>
     </message>
@@ -10603,60 +10643,75 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/TrustView.ui" line="55"/>
-        <location filename="../gui/TrustView.cpp" line="245"/>
+        <location filename="../gui/TrustView.cpp" line="241"/>
         <source>Showing: whole network</source>
         <translation>表示中: ネットワーク全体</translation>
     </message>
     <message>
-        <location filename="../gui/TrustView.cpp" line="28"/>
+        <location filename="../gui/TrustView.cpp" line="29"/>
         <source>This table normaly auto-updates every 10 seconds.</source>
         <translation>この表は通常10秒ごとに自動更新されます.</translation>
     </message>
     <message>
-        <location filename="../gui/TrustView.cpp" line="202"/>
+        <location filename="../gui/TrustView.cpp" line="198"/>
         <source> is athenticated (one way) by </source>
         <translation type="unfinished"> は (一方向に) 認証されています </translation>
     </message>
     <message>
-        <location filename="../gui/TrustView.cpp" line="210"/>
+        <location filename="../gui/TrustView.cpp" line="206"/>
         <source> athenticated himself</source>
         <translation type="unfinished"> は自分自身を認証しています</translation>
     </message>
     <message>
-        <location filename="../gui/TrustView.cpp" line="215"/>
+        <location filename="../gui/TrustView.cpp" line="211"/>
         <source> athenticated each others</source>
         <translation type="unfinished"> はお互いに認証されています</translation>
     </message>
     <message>
-        <location filename="../gui/TrustView.cpp" line="222"/>
+        <location filename="../gui/TrustView.cpp" line="218"/>
         <source> is athenticated by </source>
         <translation type="unfinished"> は認証されています </translation>
     </message>
     <message>
-        <location filename="../gui/TrustView.cpp" line="225"/>
+        <location filename="../gui/TrustView.cpp" line="221"/>
         <source> athenticated </source>
         <translation type="unfinished"> は認証しています </translation>
     </message>
     <message>
-        <location filename="../gui/TrustView.cpp" line="203"/>
+        <location filename="../gui/TrustView.cpp" line="199"/>
         <source>Half</source>
         <translation>ハーフ</translation>
     </message>
     <message>
-        <location filename="../gui/TrustView.cpp" line="216"/>
+        <location filename="../gui/TrustView.cpp" line="212"/>
         <source>Full</source>
         <translation>完全</translation>
     </message>
     <message>
-        <location filename="../gui/TrustView.cpp" line="222"/>
-        <location filename="../gui/TrustView.cpp" line="225"/>
+        <location filename="../gui/TrustView.cpp" line="218"/>
+        <location filename="../gui/TrustView.cpp" line="221"/>
         <source> peers, including him(her)self.</source>
         <translation type="unfinished"> 個のピア (自分自身を含む).</translation>
     </message>
     <message>
-        <location filename="../gui/TrustView.cpp" line="261"/>
+        <location filename="../gui/TrustView.cpp" line="257"/>
         <source>Showing: peers connected to </source>
         <translation type="unfinished">表示中: 接続しているピア </translation>
+    </message>
+</context>
+<context>
+    <name>TurtleRouterDialog</name>
+    <message>
+        <location filename="../gui/TurtleRouterDialog.cpp" line="19"/>
+        <location filename="../gui/TurtleRouterDialog.cpp" line="79"/>
+        <source>Search requests</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/TurtleRouterDialog.cpp" line="24"/>
+        <location filename="../gui/TurtleRouterDialog.cpp" line="90"/>
+        <source>Tunnel requests</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

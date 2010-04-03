@@ -763,48 +763,48 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>CertificatePage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="592"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="593"/>
         <source>Certificate files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="594"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="595"/>
         <source>Use PGP certificates saved in files.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="596"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="597"/>
         <source>You have to generate a file with your certificate and give it to your friend. Also, you can use a file generated before.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="603"/>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="613"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="604"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="614"/>
         <source>Export my certificate...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="616"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="617"/>
         <source>Specify path to your friend&apos;s certificate in the box below </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="622"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="623"/>
         <source>Browse</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="642"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="643"/>
         <source>Select Certificate</source>
         <translation type="unfinished">증명서를 선정하십시오</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="643"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="644"/>
         <source>RetroShare Certificates (*.rsc)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="702"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="703"/>
         <source>Not implemented </source>
         <translation type="unfinished"></translation>
     </message>
@@ -813,28 +813,28 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">증명서 (*.pqi *.pem) </translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="658"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="659"/>
         <source>Please choose a filename</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="664"/>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="670"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="665"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="671"/>
         <source>RetroShare</source>
         <translation type="unfinished">Retroshare (뒤에몫) </translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="665"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="666"/>
         <source>Certificate file successfully created</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="671"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="672"/>
         <source>Sorry, certificate file creation failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="709"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="710"/>
         <source>Certificate Load Failed:file %1 not found</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1500,57 +1500,57 @@ Available: %3</source>
 <context>
     <name>ConclusionPage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="752"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="753"/>
         <source>Make Friend</source>
         <translation>친구를 사귀십시오</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="754"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="755"/>
         <source>Details about your friend : </source>
         <translation>당신의 친구에 대한 세부 정보 :</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="761"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="762"/>
         <source>Key validity:</source>
         <translation>키 유효 기간 :</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="769"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="770"/>
         <source>Email:</source>
         <translation>이메일:</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="785"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="786"/>
         <source>Authenticate friend (Sign GPG Key)</source>
         <translation>친구 인증 (로그인 GPG 키를)</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="788"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="789"/>
         <source>Add as friend to connect with</source>
         <translation>친구와 연결에 담기</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="882"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="883"/>
         <source>It seems your friend is already registered. Adding it might just set it&apos;s ip address.</source>
         <translation>그것은 당신의 친구가 이미 등록되어있는 것으로 보인다. 그냥 그것의 IP 주소를 설정할 수있습니다 추가.</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="757"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="758"/>
         <source>Peer details</source>
         <translation>피어 세부 사항</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="765"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="766"/>
         <source>Name:</source>
         <translation>이름:</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="773"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="774"/>
         <source>Loc:</source>
         <translation>위치:</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="777"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="778"/>
         <source>Signers</source>
         <translation>서명자</translation>
     </message>
@@ -2553,22 +2553,22 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>CryptoPage</name>
     <message>
-        <location filename="../gui/settings/CryptoPage.cpp" line="92"/>
+        <location filename="../gui/settings/CryptoPage.cpp" line="95"/>
         <source>RetroShare</source>
         <translation type="unfinished">Retroshare (뒤에몫) </translation>
     </message>
     <message>
-        <location filename="../gui/settings/CryptoPage.cpp" line="93"/>
+        <location filename="../gui/settings/CryptoPage.cpp" line="96"/>
         <source>Your Public Key is copied to Clipboard, paste and send it to your friend via email or some other way</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/settings/CryptoPage.cpp" line="117"/>
+        <location filename="../gui/settings/CryptoPage.cpp" line="120"/>
         <source>Save as...</source>
         <translation type="unfinished">다른 이름으로 저장</translation>
     </message>
     <message>
-        <location filename="../gui/settings/CryptoPage.cpp" line="118"/>
+        <location filename="../gui/settings/CryptoPage.cpp" line="121"/>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
         <translation type="unfinished">RetroShare 인증서 (*.의 RSC);; 모든 파일 (*)</translation>
     </message>
@@ -2906,12 +2906,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ErrorMessagePage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="727"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="728"/>
         <source>Sorry, some error appeared</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="728"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="729"/>
         <source>Here is the error message: </source>
         <translation type="unfinished"></translation>
     </message>
@@ -3142,6 +3142,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/FileTransferInfoWidget.cpp" line="222"/>
         <location filename="../gui/FileTransferInfoWidget.cpp" line="224"/>
         <location filename="../gui/FileTransferInfoWidget.cpp" line="228"/>
+        <location filename="../gui/FileTransferInfoWidget.cpp" line="230"/>
         <source>bytes</source>
         <translation>바이트</translation>
     </message>
@@ -3162,16 +3163,21 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/FileTransferInfoWidget.cpp" line="230"/>
+        <source>Remaining: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/FileTransferInfoWidget.cpp" line="232"/>
         <source>Number of sources: </source>
         <translation>소스의 개수 :</translation>
     </message>
     <message>
-        <location filename="../gui/FileTransferInfoWidget.cpp" line="232"/>
+        <location filename="../gui/FileTransferInfoWidget.cpp" line="234"/>
         <source>Chunk strategy: </source>
         <translation>청크 전략:</translation>
     </message>
     <message>
-        <location filename="../gui/FileTransferInfoWidget.cpp" line="234"/>
+        <location filename="../gui/FileTransferInfoWidget.cpp" line="236"/>
         <source>Transfer type: </source>
         <translation>전송 유형 :</translation>
     </message>
@@ -3179,57 +3185,57 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>FofPage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="418"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="419"/>
         <source>Friends of friends</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="420"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="421"/>
         <source>Select now who you want to make friends with.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="422"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="423"/>
         <source>Show me: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="424"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="425"/>
         <source>Any peer I&apos;ve not signed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="425"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="426"/>
         <source>Friends of my friends who already trust me</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="426"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="427"/>
         <source>Signed peers showing as denied</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="430"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="431"/>
         <source>Peer name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="431"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="432"/>
         <source>Also signed by</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="432"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="433"/>
         <source>Peer id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="434"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="435"/>
         <source>Make friend with these peers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="531"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="532"/>
         <source>*** None ***</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4757,68 +4763,68 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="166"/>
+        <location filename="../gui/MainWindow.cpp" line="163"/>
         <source>Network</source>
         <translation>네트워크</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="170"/>
+        <location filename="../gui/MainWindow.cpp" line="167"/>
         <source>Friends</source>
         <translation>친구들</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="178"/>
+        <location filename="../gui/MainWindow.cpp" line="175"/>
         <source>Transfers</source>
         <translation>파일-전송</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="186"/>
+        <location filename="../gui/MainWindow.cpp" line="183"/>
         <source>Messages</source>
         <translation>전자 우편 메시지 </translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="191"/>
+        <location filename="../gui/MainWindow.cpp" line="188"/>
         <source>Channels</source>
         <translation>수로</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="197"/>
+        <location filename="../gui/MainWindow.cpp" line="194"/>
         <source>Blogs</source>
         <translation>블로그</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="359"/>
+        <location filename="../gui/MainWindow.cpp" line="363"/>
         <source>You has a new message</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="541"/>
+        <location filename="../gui/MainWindow.cpp" line="542"/>
         <source>Internal Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.ui" line="88"/>
-        <location filename="../gui/MainWindow.cpp" line="492"/>
+        <location filename="../gui/MainWindow.cpp" line="493"/>
         <source>Options</source>
         <translation>선택권</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="575"/>
+        <location filename="../gui/MainWindow.cpp" line="576"/>
         <source>Hide</source>
         <translation>은신처</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="575"/>
+        <location filename="../gui/MainWindow.cpp" line="576"/>
         <source>Show</source>
         <translation>쇼</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="318"/>
-        <location filename="../gui/MainWindow.cpp" line="359"/>
-        <location filename="../gui/MainWindow.cpp" line="364"/>
-        <location filename="../gui/MainWindow.cpp" line="369"/>
-        <location filename="../gui/MainWindow.cpp" line="374"/>
-        <location filename="../gui/MainWindow.cpp" line="379"/>
+        <location filename="../gui/MainWindow.cpp" line="315"/>
+        <location filename="../gui/MainWindow.cpp" line="363"/>
+        <location filename="../gui/MainWindow.cpp" line="368"/>
+        <location filename="../gui/MainWindow.cpp" line="373"/>
+        <location filename="../gui/MainWindow.cpp" line="378"/>
+        <location filename="../gui/MainWindow.cpp" line="383"/>
         <source>RetroShare</source>
         <translation>Retroshare (뒤에몫) </translation>
     </message>
@@ -4858,12 +4864,12 @@ p, li { white-space: pre-wrap; }
         <translation>빠른 시작 마법사</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="174"/>
+        <location filename="../gui/MainWindow.cpp" line="171"/>
         <source>Search</source>
         <translation>수색</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="182"/>
+        <location filename="../gui/MainWindow.cpp" line="179"/>
         <source>Files</source>
         <translation>파일</translation>
     </message>
@@ -4872,52 +4878,52 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">공유 디렉토리를 추가하십시오</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="298"/>
+        <location filename="../gui/MainWindow.cpp" line="295"/>
         <source>Show/Hide</source>
         <translation>표시 / 숨기기</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="313"/>
+        <location filename="../gui/MainWindow.cpp" line="310"/>
         <source>&amp;Quit</source>
         <translation>종료</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="495"/>
+        <location filename="../gui/MainWindow.cpp" line="496"/>
         <source>Bandwidth Graph</source>
         <translation>대역폭 그래프</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="499"/>
+        <location filename="../gui/MainWindow.cpp" line="500"/>
         <source>Open Messenger</source>
         <translation>열기 메신저</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="310"/>
+        <location filename="../gui/MainWindow.cpp" line="307"/>
         <source>Minimize</source>
         <translation>최소화</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="311"/>
+        <location filename="../gui/MainWindow.cpp" line="308"/>
         <source>Maximize</source>
         <translation>최대화</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="207"/>
+        <location filename="../gui/MainWindow.cpp" line="204"/>
         <source>Links Cloud</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="126"/>
+        <location filename="../gui/MainWindow.cpp" line="125"/>
         <source>RetroShare %1 a secure decentralised communication platform</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="230"/>
+        <location filename="../gui/MainWindow.cpp" line="227"/>
         <source>Unfinished</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="508"/>
+        <location filename="../gui/MainWindow.cpp" line="509"/>
         <source>Help</source>
         <translation>도움</translation>
     </message>
@@ -4927,22 +4933,22 @@ p, li { white-space: pre-wrap; }
         <translation>에 관하여</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="213"/>
+        <location filename="../gui/MainWindow.cpp" line="210"/>
         <source>News Feed</source>
         <translation>뉴스 피드</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="202"/>
+        <location filename="../gui/MainWindow.cpp" line="199"/>
         <source>Forums</source>
         <translation>포럼</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="502"/>
+        <location filename="../gui/MainWindow.cpp" line="503"/>
         <source>Open Messages</source>
         <translation>메시지를 열</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="505"/>
+        <location filename="../gui/MainWindow.cpp" line="506"/>
         <source>Applications</source>
         <translation>응용 프로그램</translation>
     </message>
@@ -4955,17 +4961,17 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">RetroShare %1 보안 분산 커뮤니케이션 플랫폼</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="219"/>
+        <location filename="../gui/MainWindow.cpp" line="216"/>
         <source>Plugins</source>
         <translation>플러그인</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="526"/>
+        <location filename="../gui/MainWindow.cpp" line="527"/>
         <source>Really quit ? </source>
         <translation>정말 그만?</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="524"/>
+        <location filename="../gui/MainWindow.cpp" line="525"/>
         <source>Do you really want to exit RetroShare ?</source>
         <translation>정말 RetroShare 종료 하시겠습니까?</translation>
     </message>
@@ -5066,12 +5072,12 @@ p, li { white-space: pre-wrap; }
         <translation>에서</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1467"/>
+        <location filename="../gui/MessagesDialog.ui" line="1427"/>
         <source>Size</source>
         <translation>크기</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1089"/>
+        <location filename="../gui/MessagesDialog.ui" line="1098"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -5127,70 +5133,70 @@ p, li { white-space: pre-wrap; }
         <translation>첨부 파일</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="992"/>
-        <location filename="../gui/MessagesDialog.cpp" line="1254"/>
-        <location filename="../gui/MessagesDialog.cpp" line="1266"/>
+        <location filename="../gui/MessagesDialog.ui" line="998"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1267"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1279"/>
         <source>Inbox</source>
         <translation>들어오는 전자 우편</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1001"/>
-        <location filename="../gui/MessagesDialog.cpp" line="1280"/>
-        <location filename="../gui/MessagesDialog.cpp" line="1290"/>
+        <location filename="../gui/MessagesDialog.ui" line="1007"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1293"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1303"/>
         <source>Outbox</source>
         <translation>나가는 전자 우편</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1010"/>
-        <location filename="../gui/MessagesDialog.cpp" line="1303"/>
-        <location filename="../gui/MessagesDialog.cpp" line="1313"/>
+        <location filename="../gui/MessagesDialog.ui" line="1016"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1316"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1326"/>
         <source>Draft</source>
         <translation>초안</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1019"/>
+        <location filename="../gui/MessagesDialog.ui" line="1025"/>
         <source>Sent</source>
         <translation>보내진 전자 우편</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1487"/>
-        <location filename="../gui/MessagesDialog.ui" line="1490"/>
+        <location filename="../gui/MessagesDialog.ui" line="1447"/>
+        <location filename="../gui/MessagesDialog.ui" line="1450"/>
         <source>Print...</source>
         <translation>인쇄</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1495"/>
+        <location filename="../gui/MessagesDialog.ui" line="1455"/>
         <source>Print Preview</source>
         <translation>인쇄 미리보기</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1500"/>
-        <location filename="../gui/MessagesDialog.ui" line="1503"/>
+        <location filename="../gui/MessagesDialog.ui" line="1460"/>
+        <location filename="../gui/MessagesDialog.ui" line="1463"/>
         <source>Buttons Icon Only</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1508"/>
+        <location filename="../gui/MessagesDialog.ui" line="1468"/>
         <source>Buttons Text Beside Icon</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1511"/>
+        <location filename="../gui/MessagesDialog.ui" line="1471"/>
         <source>Buttons with Text</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1516"/>
+        <location filename="../gui/MessagesDialog.ui" line="1476"/>
         <source>Buttons Text Under Icon</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1519"/>
+        <location filename="../gui/MessagesDialog.ui" line="1479"/>
         <source>Set Text Under Icon</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1524"/>
+        <location filename="../gui/MessagesDialog.ui" line="1484"/>
         <source>Save As...</source>
         <translation>다른 이름으로 저장</translation>
     </message>
@@ -5215,12 +5221,12 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">모두를 다운로드하십시오 </translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="997"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1010"/>
         <source>Print Document</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1472"/>
+        <location filename="../gui/MessagesDialog.ui" line="1432"/>
         <source>Sources</source>
         <translation>근원</translation>
     </message>
@@ -5288,42 +5294,49 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="1033"/>
+        <location filename="../gui/MessagesDialog.cpp" line="892"/>
+        <location filename="../gui/MessagesDialog.cpp" line="905"/>
+        <location filename="../gui/MessagesDialog.cpp" line="917"/>
+        <source>Anonymous</source>
+        <translation type="unfinished">익명</translation>
+    </message>
+    <message>
+        <location filename="../gui/MessagesDialog.cpp" line="1046"/>
         <source>File Request Confirmation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="1033"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1046"/>
         <source>The file has been added to your download list.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="1039"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1052"/>
         <source>File Request canceled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="1039"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1052"/>
         <source>The file has not been added to your download list, because you already have it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="1046"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1059"/>
         <source>File Request Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="1046"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1059"/>
         <source>The file link is malformed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="1081"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1094"/>
         <source>Save as...</source>
         <translation>다른 이름으로 저장</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="1082"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1095"/>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5340,27 +5353,26 @@ p, li { white-space: pre-wrap; }
         <translation>주제</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1230"/>
+        <location filename="../gui/MessagesDialog.ui" line="1239"/>
         <source>Subject:</source>
         <translation>주제:</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1292"/>
+        <location filename="../gui/MessagesDialog.ui" line="1304"/>
         <source>From:</source>
         <translation>에서:</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1357"/>
         <source>Date:</source>
-        <translation>날짜:</translation>
+        <translation type="obsolete">날짜:</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1419"/>
+        <location filename="../gui/MessagesDialog.ui" line="1369"/>
         <source>To:</source>
         <translation>으로:</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1144"/>
+        <location filename="../gui/MessagesDialog.ui" line="1153"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -5371,12 +5383,12 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;추천 파일 모두 다운로드&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1462"/>
+        <location filename="../gui/MessagesDialog.ui" line="1422"/>
         <source>File Name</source>
         <translation>파일명</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1477"/>
+        <location filename="../gui/MessagesDialog.ui" line="1437"/>
         <source>Hash</source>
         <translation>해쉬</translation>
     </message>
@@ -5466,6 +5478,24 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/MessagesPopupDialog.ui" line="72"/>
         <source>PrintPreview</source>
         <translation type="unfinished">인쇄 미리보기</translation>
+    </message>
+    <message>
+        <location filename="../gui/MessagesPopupDialog.cpp" line="129"/>
+        <location filename="../gui/MessagesPopupDialog.cpp" line="134"/>
+        <source>&lt;strong&gt;Unread:&lt;/strong&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/MessagesPopupDialog.cpp" line="141"/>
+        <location filename="../gui/MessagesPopupDialog.cpp" line="146"/>
+        <source>&lt;strong&gt;Inbox:&lt;/strong&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/MessagesPopupDialog.cpp" line="153"/>
+        <location filename="../gui/MessagesPopupDialog.cpp" line="158"/>
+        <source>&lt;strong&gt;Outbox:&lt;/strong&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6505,14 +6535,22 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/statusbar/peerstatus.cpp" line="75"/>
-        <source>Online:</source>
-        <translation>온라인:</translation>
+        <location filename="../gui/statusbar/peerstatus.cpp" line="82"/>
+        <source>&lt;span style=&quot;color:#000000&quot;&gt;&lt;strong&gt;Friends:&lt;/strong&gt;&lt;/span&gt;</source>
+        <translation>&lt;span style=&quot;color:#000000&quot;&gt;&lt;strong&gt;친구:&lt;/strong&gt;&lt;/span&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/statusbar/peerstatus.cpp" line="75"/>
+        <location filename="../gui/statusbar/peerstatus.cpp" line="82"/>
+        <source>&lt;span style=&quot;color:#0000FF&quot;&gt;&lt;strong&gt;Online:&lt;/strong&gt;&lt;/span&gt;</source>
+        <translation>&lt;span style=&quot;color:#0000FF&quot;&gt;&lt;strong&gt;온라인:&lt;/strong&gt;&lt;/span&gt;</translation>
+    </message>
+    <message>
+        <source>Online:</source>
+        <translation type="obsolete">온라인:</translation>
+    </message>
+    <message>
         <source>Friends:</source>
-        <translation>친구:</translation>
+        <translation type="obsolete">친구:</translation>
     </message>
     <message>
         <source>Network:</source>
@@ -8214,17 +8252,25 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/statusbar/ratesstatus.cpp" line="50"/>
         <source>&lt;strong&gt;Down:&lt;/strong&gt; 0.00 (kB/s) | &lt;strong&gt;Up:&lt;/strong&gt; 0.00 (kB/s) </source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;strong&gt;다운 :&lt;/strong&gt; 0.00 (kB/s) | &lt;strong&gt;최대 :&lt;/strong&gt; 0.00 (kB/s) </translation>
     </message>
     <message>
-        <location filename="../gui/statusbar/ratesstatus.cpp" line="70"/>
+        <location filename="../gui/statusbar/ratesstatus.cpp" line="77"/>
+        <source>&lt;strong&gt;Down:&lt;/strong&gt;</source>
+        <translation>&lt;strong&gt;다운 :&lt;/strong&gt;</translation>
+    </message>
+    <message>
+        <location filename="../gui/statusbar/ratesstatus.cpp" line="77"/>
+        <source>&lt;strong&gt;Up:&lt;/strong&gt;</source>
+        <translation>&lt;strong&gt;최대 :&lt;/strong&gt;</translation>
+    </message>
+    <message>
         <source>Down:</source>
-        <translation>다운 :</translation>
+        <translation type="obsolete">다운 :</translation>
     </message>
     <message>
-        <location filename="../gui/statusbar/ratesstatus.cpp" line="70"/>
         <source>Up:</source>
-        <translation>최대 :</translation>
+        <translation type="obsolete">최대 :</translation>
     </message>
 </context>
 <context>
@@ -9014,7 +9060,7 @@ p, li { white-space: pre-wrap; }
     <name>SharedFilesDialog</name>
     <message>
         <location filename="../gui/SharedFilesDialog.ui" line="846"/>
-        <location filename="../gui/SharedFilesDialog.cpp" line="210"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="228"/>
         <source>Download</source>
         <translation>다운로드</translation>
     </message>
@@ -9026,93 +9072,93 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;파일 &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="181"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="199"/>
         <source>Checking...</source>
         <translation>확인중 ...</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="189"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="207"/>
         <source>Check files</source>
         <translation>확인 파일</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="213"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="231"/>
         <source>Copy retroshare Link</source>
         <translation>retroshare 링크 복사</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="216"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="234"/>
         <source>Send retroshare Link</source>
         <translation>retroshare 링크 보내기</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="621"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="639"/>
         <source>Recommend (Automated message) To </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="623"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="641"/>
         <source>Recommend in a message to </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="665"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="174"/>
         <source>Copy retroshare Links to Clipboard</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="668"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="176"/>
         <source>Copy retroshare Links to Clipboard (HTML)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="671"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="178"/>
         <source>Send retroshare Links</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="674"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="180"/>
         <source>Send retroshare Links (HTML)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="680"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="182"/>
         <source>Send retroshare Links to Cloud</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="683"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="184"/>
         <source>Add Links to Cloud</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="686"/>
-        <location filename="../gui/SharedFilesDialog.cpp" line="741"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="186"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="729"/>
         <source>Open File</source>
         <translation>파일 열기</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="689"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="188"/>
         <source>Open Folder</source>
         <translation>폴더 열기</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="750"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="738"/>
         <source>Set command for opening this file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="819"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="803"/>
         <source>&lt;strong&gt;My Shared Files&lt;/strong&gt;</source>
         <translation>&lt;strong&gt;내 공유 파일&lt;/strong&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="833"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="817"/>
         <source>&lt;strong&gt;Friends Files&lt;/strong&gt;</source>
         <translation>&lt;strong&gt;친구 파일&lt;/strong&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="848"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="832"/>
         <source>&lt;strong&gt;Files&lt;/strong&gt;</source>
         <translation>&lt;strong&gt;파일&lt;/strong&gt;</translation>
     </message>
@@ -9302,22 +9348,22 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">이름 - 위치 :</translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.cpp" line="165"/>
+        <location filename="../gui/StartDialog.cpp" line="170"/>
         <source>Login Failure</source>
         <translation>로그인 실패</translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.cpp" line="166"/>
+        <location filename="../gui/StartDialog.cpp" line="171"/>
         <source>Maybe password is wrong</source>
         <translation>아마 비밀 번호가 잘못입니다</translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.cpp" line="177"/>
+        <location filename="../gui/StartDialog.cpp" line="182"/>
         <source>Create a New Profil</source>
         <translation>새 프로필 만들기</translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.cpp" line="178"/>
+        <location filename="../gui/StartDialog.cpp" line="183"/>
         <source>This will generate a new Profile
  Are you sure you want to continue</source>
         <translation>이것은 새 프로필을 생성합니다
@@ -9698,22 +9744,22 @@ p, li { white-space: pre-wrap; }
         <translation>아래의 텍스트를 귀하의 PGP는 인증서입니다. 당신은 친구에게 그것을 제공해야</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="268"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="266"/>
         <source>Please, paste your friends PGP certificate into the box below</source>
         <translation>제발, 상자 아래에 등록된 PGP 공개키 인증서를 귀하의 친구에 붙여넣기하세요</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="332"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="333"/>
         <source>Your Cert is copied to Clipboard, paste and send it to yourfriend via email or some other way</source>
         <translation>귀하의 쿠폰 클립 보드에 복사 붙여넣기하고 너의 친구이기도 이메일 또는 기타 방법을 통해 보내세요</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="320"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="321"/>
         <source>You can copy this text and send it to your friend via email or some other way</source>
         <translation>이 텍스트를 복사하여 친구에게 이메일을 통해 보내세요</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="331"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="332"/>
         <source>RetroShare</source>
         <translation>Retroshare (뒤에몫) </translation>
     </message>
@@ -9723,37 +9769,37 @@ p, li { white-space: pre-wrap; }
         <translation>텍스트 증명서</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="236"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="234"/>
         <source>Copy your Cert to Clipboard</source>
         <translation>클립 보드로 복사하여 쿠폰</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="245"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="243"/>
         <source>Save your Cert into a File</source>
         <translation>파일에 사용자 쿠폰 할인</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="254"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="252"/>
         <source>Run Email program</source>
         <translation>이메일 프로그램을 실행</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="319"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="320"/>
         <source>Connect Friend Help</source>
         <translation>친구 연결 도움말</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="359"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="360"/>
         <source>Save as...</source>
         <translation>다른 이름으로 저장</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="360"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="361"/>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
         <translation>RetroShare 인증서 (*.의 RSC);; 모든 파일 (*)</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="404"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="405"/>
         <source>Certificate Load Failed</source>
         <translation>증명서 짐은 실패했다</translation>
     </message>
@@ -9831,12 +9877,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TransfersDialog</name>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="278"/>
+        <location filename="../gui/TransfersDialog.cpp" line="213"/>
         <source>Cancel</source>
         <translation>취소</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="293"/>
+        <location filename="../gui/TransfersDialog.cpp" line="228"/>
         <source>Clear Completed</source>
         <translation>공간은 완료했다</translation>
     </message>
@@ -9978,72 +10024,72 @@ p, li { white-space: pre-wrap; }
         <translation>해쉬</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="268"/>
+        <location filename="../gui/TransfersDialog.cpp" line="255"/>
         <source>Play</source>
         <translation>놀이</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="272"/>
+        <location filename="../gui/TransfersDialog.cpp" line="207"/>
         <source>Pause</source>
         <translation>일시 중지</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="275"/>
+        <location filename="../gui/TransfersDialog.cpp" line="210"/>
         <source>Resume</source>
         <translation>이력서</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="281"/>
+        <location filename="../gui/TransfersDialog.cpp" line="216"/>
         <source>Open Folder</source>
         <translation>폴더 열기</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="284"/>
+        <location filename="../gui/TransfersDialog.cpp" line="219"/>
         <source>Open File</source>
         <translation>파일 열기</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="287"/>
+        <location filename="../gui/TransfersDialog.cpp" line="222"/>
         <source>Preview File</source>
         <translation>미리보기 파일</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="290"/>
+        <location filename="../gui/TransfersDialog.cpp" line="225"/>
         <source>Details...</source>
         <translation>세부 정보</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="297"/>
+        <location filename="../gui/TransfersDialog.cpp" line="232"/>
         <source>Copy retroshare Link</source>
         <translation>retroshare 링크 복사</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="301"/>
+        <location filename="../gui/TransfersDialog.cpp" line="235"/>
         <source>Paste retroshare Link</source>
         <translation>붙여넣기 retroshare 링크</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="304"/>
+        <location filename="../gui/TransfersDialog.cpp" line="316"/>
         <source>View</source>
-        <translation>보기</translation>
+        <translation type="unfinished">보기</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="309"/>
+        <location filename="../gui/TransfersDialog.cpp" line="237"/>
         <source>Down</source>
         <translation>아래로</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="311"/>
+        <location filename="../gui/TransfersDialog.cpp" line="239"/>
         <source>Up</source>
         <translation>위로</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="313"/>
+        <location filename="../gui/TransfersDialog.cpp" line="241"/>
         <source>Top</source>
         <translation>위쪽</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="315"/>
+        <location filename="../gui/TransfersDialog.cpp" line="243"/>
         <source>Bottom</source>
         <translation>아래쪽</translation>
     </message>
@@ -10052,52 +10098,52 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">대기열로 이동 ...</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="332"/>
+        <location filename="../gui/TransfersDialog.cpp" line="325"/>
         <source>Priority (Speed)...</source>
         <translation>우선순위 (고속) ...</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="338"/>
+        <location filename="../gui/TransfersDialog.cpp" line="245"/>
         <source>Streaming</source>
         <translation>스트리밍</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="340"/>
+        <location filename="../gui/TransfersDialog.cpp" line="253"/>
         <source>Random</source>
         <translation>랜덤</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="343"/>
+        <location filename="../gui/TransfersDialog.cpp" line="331"/>
         <source>Chunk strategy</source>
         <translation>청크 전략</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="707"/>
+        <location filename="../gui/TransfersDialog.cpp" line="693"/>
         <source>Queued</source>
         <translation>대기</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="959"/>
+        <location filename="../gui/TransfersDialog.cpp" line="946"/>
         <source>RetroShare</source>
         <translation>Retroshare (뒤에몫) </translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="1051"/>
+        <location filename="../gui/TransfersDialog.cpp" line="1038"/>
         <source>Details:</source>
         <translation>세부 사항 :</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="1272"/>
+        <location filename="../gui/TransfersDialog.cpp" line="1259"/>
         <source>Open Transfer</source>
         <translation>열기 전송</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="1273"/>
+        <location filename="../gui/TransfersDialog.cpp" line="1260"/>
         <source>File %1 is not completed. If it is a media file, try to preview it.</source>
         <translation>%1 파일이 완료되지 않습니다. 만약 미디어 미리보기하려고하는 파일입니다.</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="957"/>
+        <location filename="../gui/TransfersDialog.cpp" line="944"/>
         <source>Are you sure that you want to cancel and delete these files?</source>
         <translation>당신을 취소하고 해당 파일을 삭제하겠습니까?</translation>
     </message>
@@ -10124,90 +10170,84 @@ p, li { white-space: pre-wrap; }
         <translation>피어</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="318"/>
-        <location filename="../gui/TransfersDialog.cpp" line="719"/>
+        <location filename="../gui/TransfersDialog.cpp" line="247"/>
+        <location filename="../gui/TransfersDialog.cpp" line="705"/>
         <source>Slower</source>
         <translation>천천히</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="320"/>
-        <location filename="../gui/TransfersDialog.cpp" line="720"/>
-        <location filename="../gui/TransfersDialog.cpp" line="722"/>
+        <location filename="../gui/TransfersDialog.cpp" line="249"/>
+        <location filename="../gui/TransfersDialog.cpp" line="706"/>
+        <location filename="../gui/TransfersDialog.cpp" line="708"/>
         <source>Average</source>
         <translation>평균</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="322"/>
-        <location filename="../gui/TransfersDialog.cpp" line="721"/>
+        <location filename="../gui/TransfersDialog.cpp" line="251"/>
+        <location filename="../gui/TransfersDialog.cpp" line="707"/>
         <source>Faster</source>
         <translation>빨리</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="325"/>
+        <location filename="../gui/TransfersDialog.cpp" line="318"/>
         <source>Move in Queue...</source>
         <translation>대기열에있는 이동 ...</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="702"/>
-        <location filename="../gui/TransfersDialog.cpp" line="764"/>
-        <location filename="../gui/TransfersDialog.cpp" line="865"/>
-        <location filename="../gui/TransfersDialog.cpp" line="914"/>
+        <location filename="../gui/TransfersDialog.cpp" line="688"/>
+        <location filename="../gui/TransfersDialog.cpp" line="750"/>
+        <location filename="../gui/TransfersDialog.cpp" line="851"/>
         <source>Failed</source>
         <translation>실패</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="703"/>
-        <location filename="../gui/TransfersDialog.cpp" line="765"/>
-        <location filename="../gui/TransfersDialog.cpp" line="866"/>
-        <location filename="../gui/TransfersDialog.cpp" line="915"/>
+        <location filename="../gui/TransfersDialog.cpp" line="689"/>
+        <location filename="../gui/TransfersDialog.cpp" line="751"/>
+        <location filename="../gui/TransfersDialog.cpp" line="852"/>
         <source>Okay</source>
         <translation>좋아요</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="704"/>
-        <location filename="../gui/TransfersDialog.cpp" line="867"/>
-        <location filename="../gui/TransfersDialog.cpp" line="916"/>
+        <location filename="../gui/TransfersDialog.cpp" line="690"/>
+        <location filename="../gui/TransfersDialog.cpp" line="853"/>
         <source>Waiting</source>
         <translation>대기</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="705"/>
+        <location filename="../gui/TransfersDialog.cpp" line="691"/>
         <source>Downloading</source>
         <translation>다운로드</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="706"/>
-        <location filename="../gui/TransfersDialog.cpp" line="768"/>
-        <location filename="../gui/TransfersDialog.cpp" line="869"/>
-        <location filename="../gui/TransfersDialog.cpp" line="870"/>
-        <location filename="../gui/TransfersDialog.cpp" line="918"/>
-        <location filename="../gui/TransfersDialog.cpp" line="919"/>
+        <location filename="../gui/TransfersDialog.cpp" line="692"/>
+        <location filename="../gui/TransfersDialog.cpp" line="754"/>
+        <location filename="../gui/TransfersDialog.cpp" line="855"/>
+        <location filename="../gui/TransfersDialog.cpp" line="856"/>
         <source>Complete</source>
         <translation>완료</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="708"/>
+        <location filename="../gui/TransfersDialog.cpp" line="694"/>
         <source>Paused</source>
         <translation>일시 중지됨</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="709"/>
+        <location filename="../gui/TransfersDialog.cpp" line="695"/>
         <source>Unknown</source>
         <translation>알 수없는</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="759"/>
+        <location filename="../gui/TransfersDialog.cpp" line="745"/>
         <source>version: </source>
         <translation>버전: </translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="767"/>
+        <location filename="../gui/TransfersDialog.cpp" line="753"/>
         <source>Transferring</source>
         <translation>전송</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="868"/>
-        <location filename="../gui/TransfersDialog.cpp" line="917"/>
+        <location filename="../gui/TransfersDialog.cpp" line="854"/>
         <source>Uploading</source>
         <translation>업로드</translation>
     </message>
@@ -10231,59 +10271,74 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/TrustView.ui" line="55"/>
-        <location filename="../gui/TrustView.cpp" line="245"/>
+        <location filename="../gui/TrustView.cpp" line="241"/>
         <source>Showing: whole network</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/TrustView.cpp" line="28"/>
+        <location filename="../gui/TrustView.cpp" line="29"/>
         <source>This table normaly auto-updates every 10 seconds.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/TrustView.cpp" line="202"/>
+        <location filename="../gui/TrustView.cpp" line="198"/>
         <source> is athenticated (one way) by </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/TrustView.cpp" line="210"/>
+        <location filename="../gui/TrustView.cpp" line="206"/>
         <source> athenticated himself</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/TrustView.cpp" line="215"/>
+        <location filename="../gui/TrustView.cpp" line="211"/>
         <source> athenticated each others</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/TrustView.cpp" line="222"/>
+        <location filename="../gui/TrustView.cpp" line="218"/>
         <source> is athenticated by </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/TrustView.cpp" line="225"/>
+        <location filename="../gui/TrustView.cpp" line="221"/>
         <source> athenticated </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/TrustView.cpp" line="203"/>
+        <location filename="../gui/TrustView.cpp" line="199"/>
         <source>Half</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/TrustView.cpp" line="216"/>
+        <location filename="../gui/TrustView.cpp" line="212"/>
         <source>Full</source>
         <translation type="unfinished">전체</translation>
     </message>
     <message>
-        <location filename="../gui/TrustView.cpp" line="222"/>
-        <location filename="../gui/TrustView.cpp" line="225"/>
+        <location filename="../gui/TrustView.cpp" line="218"/>
+        <location filename="../gui/TrustView.cpp" line="221"/>
         <source> peers, including him(her)self.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/TrustView.cpp" line="261"/>
+        <location filename="../gui/TrustView.cpp" line="257"/>
         <source>Showing: peers connected to </source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>TurtleRouterDialog</name>
+    <message>
+        <location filename="../gui/TurtleRouterDialog.cpp" line="19"/>
+        <location filename="../gui/TurtleRouterDialog.cpp" line="79"/>
+        <source>Search requests</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/TurtleRouterDialog.cpp" line="24"/>
+        <location filename="../gui/TurtleRouterDialog.cpp" line="90"/>
+        <source>Tunnel requests</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

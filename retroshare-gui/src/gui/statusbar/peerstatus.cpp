@@ -71,12 +71,15 @@ void PeerStatus::getPeerStatus()
     rsPeers->getFriendList(ids);
     int friends = ids.size();
 
+    std::ostringstream out;
+    out << friends << " ";
+    
     std::ostringstream out2;
-    out2 << "<span style=\"color:#000000\"><strong>" << tr("Friends:").toStdString() << " " << friends << "</strong></span>" << " | " << "<span style=\"color:#0000FF\"><strong>" << tr("Online:").toStdString() << " " << online << "</strong></span>" << " ";
+    out2 << online << " ";
 
 
     if (statusPeers)
-          statusPeers -> setText(QString::fromStdString(out2.str()));
+          statusPeers -> setText( tr("<span style=\"color:#000000\"><strong>Friends:</strong></span>") + " " + QString::fromStdString(out.str()) + " | " + tr("<span style=\"color:#0000FF\"><strong>Online:</strong></span>") + " " + QString::fromStdString(out2.str()) );
     		
     if (online > 0) 
     {
