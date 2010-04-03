@@ -297,6 +297,8 @@ void 	FileIndexMonitor::updateCycle()
 		mInCheck = true;
 	}
 
+	cb->notifyHashingInfo("Examining shared files...") ;
+
 	std::vector<DirContentToHash> to_hash ;
 
 	while(moretodo)
@@ -514,6 +516,8 @@ void 	FileIndexMonitor::updateCycle()
 	if(!to_hash.empty())
 		hashFiles(to_hash) ;
 
+	cb->notifyHashingInfo("") ;
+
 	{ /* LOCKED DIRS */
 		RsStackMutex stack(fiMutex); /**** LOCKED DIRS ****/
 
@@ -579,7 +583,7 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 			std::ostringstream tmpout;
 			tmpout << cnt+1 << "/" << n_files << " (" << int(size/double(total_size)*100.0) << "%) : " << to_hash[i].fentries[j].name ;
 			
-			cb->notifyHashingInfo(tmpout.str()) ;
+			cb->notifyHashingInfo("Hashing file " + tmpout.str()) ;
 
 			FileEntry fe(to_hash[i].fentries[j]) ;	// copied, because hashFile updates the hash member
 
@@ -609,7 +613,6 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 
 		}
 
-	cb->notifyHashingInfo("") ;
 	cb->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
 }
 

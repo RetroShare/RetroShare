@@ -391,7 +391,7 @@ void MainWindow::updateHashingInfo(const QString& s)
 		_hashing_info_label->hide() ;
 	else
 	{
-		_hashing_info_label->setText("Hashing file " + s) ;
+		_hashing_info_label->setText(s) ;
 		_hashing_info_label->show() ;
 	}
 }
