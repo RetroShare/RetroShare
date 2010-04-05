@@ -1,3 +1,31 @@
+Changes for v0.5.0
+
+* corrected small bug in max search determination
+* Fixed translations on StatusBar display.
+* added a state message for examining files.
+* suppressed bug in settings
+* cleaned the code and debugged the icons
+* suppressed notify callback in main thread, resulting in deadlock, and explicitely askes for queued message passing for notifyError
+* bug fixed for deleting selected messages
+* change the timings and add some randomness for tcp connections
+* corrected one nasty bug due to missing return
+* added security to fd management, corrected bug causing bad fseeks
+* suppressed some uninitialized memory reads
+* made the key font Courier New to allow fixed-size display (makes the key much more readable)
+* suppressed uninitialized memory read in file transfer, also made the TransferDialog more secure
+* reset only ComboBox when close all search results
+* Fixed to display Dir Count in search
+* fixed to display Certificate in CryptoPage userfriendly
+* restored the courier new font, to allow the user to quickly vizualize errors in the keys (and to make the display less messy)
+* fixed open file, removed file action menu (already handled by the system)
+* fixed the update of message icon when there is a new message
+* fixed: enabled translation for Hide/Expand Button in Messages
+* cleaned some debug text, suppressed a few memory leaks
+* suppressed some memory leaks due to bad use of QMenu
+* fixed Folder Age with min_age
+* Change the status bar network display
+* add the ability to copy file details text
+
 Changes for v0.5.0 alpha 2
 
 * fixed a bug in download queue when ticking inactive files. Added a checkbox for showing cache transfers. Cleaned the dialog cleaning method.
