@@ -25,7 +25,7 @@ debug {
 ################################# Linux ##########################################
 linux-* {
 	DESTDIR = lib
-	QMAKE_CXXFLAGS *= -Wall
+	QMAKE_CXXFLAGS *= -Wall -D_FILE_OFFSET_BITS=64
 	QMAKE_CC = g++
 
 	SSL_DIR = /usr/include/openssl
