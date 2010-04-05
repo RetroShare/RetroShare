@@ -7701,63 +7701,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/PeersDialog.ui" line="1415"/>
         <location filename="../gui/PeersDialog.ui" line="1418"/>
         <source>Disable Emoticons</source>
-        <translation>Otklyuchitʹ Smaĭliki
-Eine bessere Übersetzung vorschlagen
-Vielen Dank für Ihren Übersetzungsvorschlag für Google Übersetzer.
-Eine bessere Übersetzung vorschlagen:
-Отключить Смайлики
-
-
-Für die Übersetzung verfügbare Sprachen:
-
-Afrikaans
-Albanisch
-Arabisch
-Bulgarisch
-Chinesisch
-Dänisch
-Deutsch
-Englisch
-Estnisch	Finnisch
-Französisch
-Galicisch
-Griechisch
-Hebräisch
-Hindi
-Indonesisch
-Irisch
-Isländisch	Italienisch
-Japanisch
-Jiddisch
-Katalanisch
-Koreanisch
-Kreolisch (Haiti)
-Kroatisch
-Lettisch
-Litauisch	Malaysisch
-Maltesisch
-Mazedonisch
-Niederländisch
-Norwegisch
-Persisch
-Polnisch
-Portugiesisch
-Rumänisch	Russisch
-Schwedisch
-Serbisch
-Slowakisch
-Slowenisch
-Spanisch
-Suaheli
-Tagalog
-Thailändisch	Tschechisch
-Türkisch
-Ukrainisch
-Ungarisch
-Vietnamesisch
-Walisisch
-Weissrussisch
-</translation>
+        <translation>Отключить смайлики</translation>
     </message>
     <message>
         <source>Text Color</source>
@@ -8274,63 +8218,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/chat/PopupChatDialog.ui" line="639"/>
         <source>Disable Emoticons</source>
-        <translation type="unfinished">Otklyuchitʹ Smaĭliki
-Eine bessere Übersetzung vorschlagen
-Vielen Dank für Ihren Übersetzungsvorschlag für Google Übersetzer.
-Eine bessere Übersetzung vorschlagen:
-Отключить Смайлики
-
-
-Für die Übersetzung verfügbare Sprachen:
-
-Afrikaans
-Albanisch
-Arabisch
-Bulgarisch
-Chinesisch
-Dänisch
-Deutsch
-Englisch
-Estnisch	Finnisch
-Französisch
-Galicisch
-Griechisch
-Hebräisch
-Hindi
-Indonesisch
-Irisch
-Isländisch	Italienisch
-Japanisch
-Jiddisch
-Katalanisch
-Koreanisch
-Kreolisch (Haiti)
-Kroatisch
-Lettisch
-Litauisch	Malaysisch
-Maltesisch
-Mazedonisch
-Niederländisch
-Norwegisch
-Persisch
-Polnisch
-Portugiesisch
-Rumänisch	Russisch
-Schwedisch
-Serbisch
-Slowakisch
-Slowenisch
-Spanisch
-Suaheli
-Tagalog
-Thailändisch	Tschechisch
-Türkisch
-Ukrainisch
-Ungarisch
-Vietnamesisch
-Walisisch
-Weissrussisch
-</translation>
+        <translation>Отключить смайлики</translation>
     </message>
     <message>
         <location filename="../gui/chat/PopupChatDialog.cpp" line="173"/>
