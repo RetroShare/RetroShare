@@ -88,7 +88,7 @@ gpg_error_t pgp_pwd_callback(void *hook, const char *uid_hint, const char *passp
         #endif
         text = gpg_password_static;
     } else {
-        if(prev_was_bad) {
+        if(prev_was_bad || !AuthGPG::getAuthGPG()->getAutorisePasswordCallbackNotify()) {
             #ifdef GPG_DEBUG
             fprintf(stderr, "pgp_pwd_callback() allow only one try to be consistent with gpg agent.\n");
             #endif
@@ -124,7 +124,7 @@ static char *PgpPassword = NULL;
 
 
 AuthGPG::AuthGPG()
-        :gpgmeInit(false),gpgmeKeySelected(false),p3Config(CONFIG_TYPE_AUTHGPG)
+        :gpgmeInit(false),gpgmeKeySelected(false),autorisePasswordCallbackNotify(true),p3Config(CONFIG_TYPE_AUTHGPG)
 {
 	RsStackMutex stack(pgpMtx); /******* LOCKED ******/
 
@@ -274,7 +274,7 @@ int	AuthGPG::GPGInit(std::string ownId)
         {
             RsStackMutex stack(pgpMtx); /******* LOCKED ******/
             std::cerr << "AuthGPG::GPGInit() called with own gpg id : " << ownId << std::endl;
-
+            is_set_gpg_password_static= false;
             if (!gpgmeInit) {
                     return 0;
             }
@@ -2141,4 +2141,13 @@ bool AuthGPG::loadList(std::list<RsItem*> load)
                 delete (*it);
         }
         return true;
+}
+
+void AuthGPG::setAutorisePasswordCallbackNotify(bool autorise) {
+    autorisePasswordCallbackNotify = autorise;
+    return;
+}
+
+bool AuthGPG::getAutorisePasswordCallbackNotify() {
+    return autorisePasswordCallbackNotify;
 }
