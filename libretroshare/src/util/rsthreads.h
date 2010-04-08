@@ -101,15 +101,15 @@ class RsStackMutex
 class RsReadWriteMutex: public RsMutex
 {
         public:
-        RsReadWriteMutex(): readLocks(0) {  }
+        RsReadWriteMutex();
 
-        void readLock() {  if (readLocks == 0) {lock();} ; readLocks++;}
-        void readUnlock() { if (readLocks == 1) {unlock();} if (readLocks != 0) {readLocks--;}  }
-        void writeLock() {lock();}
-        void writeUnlock() {unlock();}
+        void readLock();
+        void readUnlock();
+        void writeLock();
+        void writeUnlock();
 
-        void rwlock(uint32_t type) {  if (type & READ_LOCK) {readLock();} else {writeLock();} }
-        void rwunlock(uint32_t type) {  if (type & READ_LOCK) {readUnlock();} else {writeUnlock();} }
+        void rwlock(uint32_t type);
+        void rwunlock(uint32_t type);
 
         const static uint32_t READ_LOCK = 0x0001;
         const static uint32_t WRITE_LOCK = 0x0002;
@@ -117,6 +117,7 @@ class RsReadWriteMutex: public RsMutex
 
         private:
         int readLocks;
+        RsMutex internalCounterMtx;
 };
 
 class RsStackReadWriteMutex
