@@ -60,6 +60,11 @@ private slots:
 
 	void closeinfodlg();
 	void loadPerson();
+
+	/**
+	 * Warns the user that autologin is not secure
+	 */
+	void notSecureWarning();
 	
   void on_labelProfile_linkActivated(QString link);
   void on_labelInfo_linkActivated(QString link);

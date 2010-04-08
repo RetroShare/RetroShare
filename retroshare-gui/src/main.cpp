@@ -116,8 +116,8 @@ int main(int argc, char *argv[])
 	}
 	else
 	{
-		/* don't save auto login details */
-		RsInit::LoadCertificates(false);
+		// true: note auto-login is active
+		RsInit::LoadCertificates(true);
 	}
 
 	rsicontrol->StartupRetroShare();

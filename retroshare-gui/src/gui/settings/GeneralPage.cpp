@@ -19,7 +19,9 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include "rshare.h"
+#include <iostream>
+#include <rshare.h>
+#include <rsiface/rsinit.h>
 #include "GeneralPage.h"
 #include <util/stringutil.h>
 #include <QSystemTrayIcon>
@@ -34,12 +36,16 @@ GeneralPage::GeneralPage(QWidget * parent, Qt::WFlags flags)
  /* Create RshareSettings object */
   _settings = new RshareSettings();
 
+  connect(ui.autoLogin, SIGNAL(clicked()), this, SLOT(setAutoLogin()));
 
   /* Hide platform specific features */
 #ifndef Q_WS_WIN
   ui.chkRunRetroshareAtSystemStartup->setVisible(false);
 
 #endif
+
+  ui.autoLogin->setChecked(RsInit::getAutoLogin());
+
 }
 
 /** Destructor */
@@ -102,4 +108,8 @@ GeneralPage::toggleShowOnStartup(bool checked)
 {
   //RshareSettings _settings;
   _settings->setShowMainWindowAtStart(checked);
+}
+
+void GeneralPage::setAutoLogin(){
+	RsInit::setAutoLogin(ui.autoLogin->isChecked());
 }

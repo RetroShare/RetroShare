@@ -55,7 +55,9 @@ StartDialog::StartDialog(QWidget *parent, Qt::WFlags flags)
   
   ui.loadButton->setFocus();
 
+
   connect(ui.loadButton, SIGNAL(clicked()), this, SLOT(loadPerson()));
+  connect(ui.autologin_checkbox, SIGNAL(clicked()), this, SLOT(notSecureWarning()));
 
   /* load the Certificate File name */
   std::string userName;
@@ -154,7 +156,8 @@ void StartDialog::loadPerson()
 void StartDialog::loadCertificates()
 {
 	/* Final stage of loading */
-	if (RsInit::LoadCertificates(false))
+
+	if (RsInit::LoadCertificates(ui.autologin_checkbox->isChecked()))
 	{
 		close();
 	}
@@ -168,13 +171,15 @@ void StartDialog::loadCertificates()
 	}
 }
 
+
+
 void StartDialog::on_labelProfile_linkActivated(QString link)
 {
     //static GenCertDialog *gencertdialog = new GenCertDialog();
     //gencertdialog->show();
     
     QMessageBox::StandardButton sb = QMessageBox::question ( NULL,
-                        tr("Create a New Profil"),
+                        tr("Create a New Profile"),
                         tr("This will generate a new Profile\n Are you sure you want to continue"),
 			(QMessageBox::Ok | QMessageBox::No));
 
@@ -200,3 +205,15 @@ LogoBar & StartDialog::getLogoBar() const {
 	return *_rsLogoBar;
 }
 
+void StartDialog::notSecureWarning() {
+
+	/* some error msg */
+		if(ui.autologin_checkbox->isChecked()){
+            QMessageBox::StandardButton sb = QMessageBox::warning ( NULL,
+                            tr("Insecure"),
+                            tr("Auto Login is not Secure: Password stored on disk"),
+			QMessageBox::Ok);
+		}
+
+		return;
+}

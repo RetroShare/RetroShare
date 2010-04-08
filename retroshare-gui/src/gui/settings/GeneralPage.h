@@ -28,6 +28,7 @@
 #include <QLineEdit>
 
 #include "rsharesettings.h"
+#include "rsiface/rsiface.h"
 
 #include "configpage.h"
 #include "ui_GeneralPage.h"
@@ -56,6 +57,11 @@ private slots:
 
   /** Called when the "show on startup" checkbox is toggled. */
   void toggleShowOnStartup(bool checked);
+
+  /**
+   *
+   */
+  void setAutoLogin();
 
 private:
   /** A RetroShare Settings object used for saving/loading settings */
