@@ -116,8 +116,18 @@ int main(int argc, char *argv[])
 	}
 	else
 	{
-		// true: note auto-login is active
-		RsInit::LoadCertificates(true);
+
+            std::string preferredId, gpgId, gpgName, gpgEmail, sslName;
+            RsInit::getPreferedAccountId(preferredId);
+
+            if (RsInit::getAccountDetails(preferredId,
+                            gpgId, gpgName, gpgEmail, sslName))
+            {
+                    RsInit::SelectGPGAccount(gpgId);
+            }
+
+            // true: note auto-login is active
+            RsInit::LoadCertificates(true);
 	}
 
 	rsicontrol->StartupRetroShare();
