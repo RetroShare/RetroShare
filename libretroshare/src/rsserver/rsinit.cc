@@ -1453,8 +1453,7 @@ bool  RsInit::RsStoreAutoLogin()
 
 	return true;
 #else
-//XXX temp
-#ifdef 0
+
 	/* store password encrypted in a file */
 	std::string entropy = RsInitConfig::load_cert;
 
@@ -1533,7 +1532,6 @@ bool  RsInit::RsStoreAutoLogin()
 	free(pbDataEnt);
 	LocalFree(DataOut.pbData);
 #endif
-#endif
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
 	return false;
@@ -1585,7 +1583,6 @@ bool  RsInit::RsTryAutoLogin()
 	return true;
 #else
 
-#ifdef 0 //XXX Temp
 	/* try to load from file */
 	std::string entropy = RsInitConfig::load_cert;
 	/* get the data out */
@@ -1691,7 +1688,6 @@ bool  RsInit::RsTryAutoLogin()
 
 	return isDecrypt;
 #endif
-#endif
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
 	return false;
@@ -1699,7 +1695,6 @@ bool  RsInit::RsTryAutoLogin()
 
 bool  RsInit::RsClearAutoLogin()
 {
-#ifndef WINDOWS_SYS
 	std::string passwdfile = RsInitConfig::configDir;
 	passwdfile += RsInitConfig::dirSeperator + configKeyDir + RsInitConfig::dirSeperator;
 	passwdfile += "help.dta";
@@ -1718,7 +1713,7 @@ bool  RsInit::RsClearAutoLogin()
      		std::cerr << std::endl;
 		return true;
 	}
-#endif
+
 	return false;
 
 }
