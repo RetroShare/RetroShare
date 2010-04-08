@@ -31,7 +31,7 @@
 #include <sstream>
 #include "pqi/authssl.h"
 #include "pqi/authgpg.h"
-
+#include "rsiface/rsinit.h"
 #include "util/rsdebug.h"
 const int p3facemsgzone = 11453;
 
@@ -157,6 +157,8 @@ void    RsServer::ConfigFinalSave()
 {
 	/* force saving of transfers TODO */
 	//ftserver->saveFileTransferStatus();
+	if(!RsInit::getAutoLogin())
+		RsInit::RsClearAutoLogin();
 
         //AuthSSL::getAuthSSL()->FinalSaveCertificates();
 	mConfigMgr->completeConfiguration();
@@ -164,6 +166,8 @@ void    RsServer::ConfigFinalSave()
 
 void RsServer::rsGlobalShutDown()
 {
+
+
 	ConfigFinalSave(); // save configuration before exit
 	mConnMgr->shutdown(); /* Handles UPnP */
 }
