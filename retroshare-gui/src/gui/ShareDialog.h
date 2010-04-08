@@ -1,7 +1,7 @@
 /****************************************************************
  *  RetroShare is distributed under the following license:
  *
- *  Copyright (C) 2006, crypton
+ *  Copyright (C) 2006 - 2010 RetroShare Team
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -19,61 +19,45 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-
-#ifndef _SHAREMANAGER_H
-#define _SHAREMANAGER_H
+#ifndef _SHAREDIALOG_H
+#define _SHAREDIALOG_H
 
 #include <QDialog>
 #include <QFileDialog>
 
-#include "ui_ShareManager.h"
+#include "ui_ShareDialog.h"
 
-class ShareManager : public QDialog
+class ShareDialog : public QDialog
 {
   Q_OBJECT
 
 	public:
-	  static void showYourself() ;
 
-private:
   /** Default constructor */
-  ShareManager( QWidget *parent = 0, Qt::WFlags flags = 0);
+  ShareDialog( QWidget *parent = 0, Qt::WFlags flags = 0);
   /** Default destructor */
 
-  /** Loads the settings for this page */
-  void load();
   bool messageBoxOk(QString);
 
 public slots:
 
-  void showShareDialog();
-
+  /** Loads the settings for this page */
+  void load();
 
 protected:
 	virtual void showEvent(QShowEvent * event);
 
 private slots:
 
-  /** Create the context popup menu and it's submenus */
-  void shareddirListCostumPopupMenu( QPoint point );
-
-  void addShareDirectory();
-  void removeShareDirectory();
-  void updateFlags(bool);
-
+  void browseDirectory();
+  void addDirectory();
+  void closedialog();
 
 private:
 
-
-  static ShareManager *_instance ;
-
-  /** Define the popup menus for the Context menu */
-  QMenu* contextMnu;
-    /** Defines the actions for the context menu */
-  QAction* removeAct;
-
+  std::string currentDir;
   /** Qt Designer generated object */
-  Ui::ShareManager ui;
+  Ui::ShareDialog ui;
 };
 
 #endif

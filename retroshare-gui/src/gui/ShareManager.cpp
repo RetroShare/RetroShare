@@ -21,6 +21,7 @@
 #include "ShareManager.h"
 
 #include "rsiface/rsfiles.h"
+#include "ShareDialog.h"
 
 #include <QContextMenuEvent>
 #include <QMenu>
@@ -47,7 +48,7 @@ ShareManager::ShareManager(QWidget *parent, Qt::WFlags flags)
   ui.setupUi(this);
 
 
-  connect(ui.addButton, SIGNAL(clicked( bool ) ), this , SLOT( addShareDirectory() ) );
+  connect(ui.addButton, SIGNAL(clicked( bool ) ), this , SLOT( showShareDialog() ) );
   connect(ui.removeButton, SIGNAL(clicked( bool ) ), this , SLOT( removeShareDirectory() ) );
   connect(ui.closeButton, SIGNAL(clicked()), this, SLOT(close()));
 
@@ -255,4 +256,10 @@ void ShareManager::showEvent(QShowEvent *event)
 	{
 		load();
 	}
+}
+
+void ShareManager::showShareDialog()
+{
+	  static ShareDialog *sharedlg = new ShareDialog(this);
+      sharedlg->show();
 }

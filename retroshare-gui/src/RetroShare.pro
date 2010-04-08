@@ -164,6 +164,7 @@ HEADERS +=  rshare.h \
             gui/SearchDialog.h \
             gui/SharedFilesDialog.h \
             gui/ShareManager.h \
+            gui/ShareDialog.h \
             gui/SFListDelegate.h \
             gui/SoundManager.h \
             gui/FileTransferInfoWidget.h \
@@ -276,6 +277,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/SendLinkDialog.ui \
             gui/SharedFilesDialog.ui \
             gui/ShareManager.ui \
+            gui/ShareDialog.ui \
             gui/MessagesDialog.ui \
             gui/MessagesPopupDialog.ui \
             gui/help/browser/helpbrowser.ui \
@@ -347,6 +349,7 @@ SOURCES +=  main.cpp \
             gui/AddLinksDialog.cpp \
             gui/SharedFilesDialog.cpp \
             gui/ShareManager.cpp \
+            gui/ShareDialog.cpp \
             gui/SFListDelegate.cpp \
             gui/SoundManager.cpp \
             gui/MessagesDialog.cpp \
