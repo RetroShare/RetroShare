@@ -1409,7 +1409,6 @@ int	AuthGPG::privateSignCertificate(std::string id)
 		return 0;
 	}
 	
-        delete &stack;
         if(GPG_ERR_NO_ERROR != (ERR = gpgme_op_edit(CTX, signKey, keySignCallback, &params, out))) {
 		return 0;	
 	}
