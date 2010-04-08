@@ -830,25 +830,6 @@ bool RsInit::SelectGPGAccount(std::string id)
 }
 
 
-//bool RsInit::LoadGPGPassword(std::string inPGPpasswd)
-//{
-//
-//	bool ok = false;
-//        if (0 < AuthGPG::getAuthGPG() -> LoadGPGPassword(inPGPpasswd))
-//	{
-//		ok = true;
-//		std::cerr << "PGP LoadPwd Success!";
-//		std::cerr << std::endl;
-//	}
-//	else
-//	{
-//		std::cerr << "PGP LoadPwd Failed!";
-//		std::cerr << std::endl;
-//	}
-//	return ok;
-//}
-
-
 bool     RsInit::GeneratePGPCertificate(std::string name, std::string email, std::string passwd, std::string &pgpId, std::string &errString) {
         return AuthGPG::getAuthGPG()->GeneratePGPCertificate(name, email, passwd, pgpId, errString);
 }
@@ -1223,6 +1204,8 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 		/* wipe password */
 		RsInitConfig::passwd = "";
 		create_configinit(RsInitConfig::basedir, RsInitConfig::preferedId);
+                //don't autorise the password callback again because it will lead to deadlock due to QT reentrance
+                AuthGPG::getAuthGPG()->setAutorisePasswordCallbackNotify(false);
 		return 1;
 	}
 
