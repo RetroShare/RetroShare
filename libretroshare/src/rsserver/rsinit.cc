@@ -296,100 +296,107 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored)
 #endif
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
-	int c;
-	/* getopt info: every availiable option is listet here. if it is followed by a ':' it
-	   needs an argument. If it is followed by a '::' the argument is optional.
-	*/
-	while((c = getopt(argc, argv,"hesamui:p:c:w:l:d:")) != -1)
-	{
-		switch (c)
-		{
-			case 'a':
-				RsInitConfig::autoLogin = true;
-				RsInitConfig::startMinimised = true;
-				std::cerr << "AutoLogin Allowed / Start Minimised On";
-				std::cerr << std::endl;
-				break;
-			case 'm':
-				RsInitConfig::startMinimised = true;
-				std::cerr << "Start Minimised On";
-				std::cerr << std::endl;
-				break;
-			case 'l':
-				strncpy(RsInitConfig::logfname, optarg, 1024);
-				std::cerr << "LogFile (" << RsInitConfig::logfname;
-				std::cerr << ") Selected" << std::endl;
-				RsInitConfig::haveLogFile = true;
-				break;
-			case 'w':
-				RsInitConfig::passwd = optarg;
-				std::cerr << "Password Specified(" << RsInitConfig::passwd;
-				std::cerr << ") Selected" << std::endl;
-				RsInitConfig::havePasswd = true;
-				break;
-			case 'i':
-				strncpy(RsInitConfig::inet, optarg, 256);
-				std::cerr << "New Inet Addr(" << RsInitConfig::inet;
-				std::cerr << ") Selected" << std::endl;
-				RsInitConfig::forceLocalAddr = true;
-				break;
-			case 'p':
-				RsInitConfig::port = atoi(optarg);
-				std::cerr << "New Listening Port(" << RsInitConfig::port;
-				std::cerr << ") Selected" << std::endl;
-				break;
-			case 'c':
-				RsInitConfig::basedir = optarg;
-				std::cerr << "New Base Config Dir(";
-				std::cerr << RsInitConfig::basedir;
-				std::cerr << ") Selected" << std::endl;
-				break;
-			case 's':
-				RsInitConfig::outStderr = true;
-				RsInitConfig::haveLogFile = false;
-				std::cerr << "Output to Stderr";
-				std::cerr << std::endl;
-				break;
-			case 'd':
-				RsInitConfig::haveDebugLevel = true;
-				RsInitConfig::debugLevel = atoi(optarg);
-				std::cerr << "Opt for new Debug Level";
-				std::cerr << std::endl;
-				break;
-			case 'u':
-				RsInitConfig::udpListenerOnly = true;
-				std::cerr << "Opt for only udpListener";
-				std::cerr << std::endl;
-				break;
-			case 'e':
-				RsInitConfig::forceExtPort = true;
-				std::cerr << "Opt for External Port Mode";
-				std::cerr << std::endl;
-				break;
-			case 'h':
-				std::cerr << "Help: " << std::endl;
-				std::cerr << "The commandline options are for retroshare-nogui, a headless server in a shell, or systems without QT." << std::endl << std::endl;
-				std::cerr << "-l [logfile]      Set the logfilename" << std::endl;
-				std::cerr << "-w [password]     Set the password" << std::endl;
-				std::cerr << "-i [ip_adress]    Set IP Adress to use" << std::endl;
-				std::cerr << "-p [port]         Set the Port to listen on" << std::endl;
-				std::cerr << "-c [basedir]      Set the config basdir" << std::endl;
-				std::cerr << "-s                Output to Stderr" << std::endl;
-				std::cerr << "-d [debuglevel]   Set the debuglevel" << std::endl;
-				std::cerr << "-a                AutoLogin (Windows Only) + StartMinimised" << std::endl;
-				std::cerr << "-m                StartMinimised" << std::endl;
-				std::cerr << "-u                Only listen to UDP" << std::endl;
-				std::cerr << "-e                Use a forwarded external Port" << std::endl << std::endl;
-				std::cerr << "Example" << std::endl;
-				std::cerr << "./retroshare-nogui -wmysecretpassword -e" << std::endl;
-				exit(1);
-				break;
-			default:
-				std::cerr << "Unknown Option!" << std::endl;
-				std::cerr << "Use '-h' for help." << std::endl;
-				exit(1);
-		}
-	}
+         int c;
+         std::string prefPgpName = "";
+         /* getopt info: every availiable option is listed here. if it is followed by a ':' it
+            needs an argument. If it is followed by a '::' the argument is optional.
+         */
+         while((c = getopt(argc, argv,"hesamui:p:c:w:l:d:U:")) != -1)
+         {
+                 switch (c)
+                 {
+                         case 'a':
+                                 RsInitConfig::autoLogin = true;
+                                 RsInitConfig::startMinimised = true;
+                                 std::cerr << "AutoLogin Allowed / Start Minimised On";
+                                 std::cerr << std::endl;
+                                 break;
+                         case 'm':
+                                 RsInitConfig::startMinimised = true;
+                                 std::cerr << "Start Minimised On";
+                                 std::cerr << std::endl;
+                                 break;
+                         case 'l':
+                                 strncpy(RsInitConfig::logfname, optarg, 1024);
+                                 std::cerr << "LogFile (" << RsInitConfig::logfname;
+                                 std::cerr << ") Selected" << std::endl;
+                                 RsInitConfig::haveLogFile = true;
+                                 break;
+                         case 'w':
+                                 RsInitConfig::passwd = optarg;
+                                 std::cerr << "Password Specified(" << RsInitConfig::passwd;
+                                 std::cerr << ") Selected" << std::endl;
+                                 RsInitConfig::havePasswd = true;
+                                 break;
+                         case 'i':
+                                 strncpy(RsInitConfig::inet, optarg, 256);
+                                 std::cerr << "New Inet Addr(" << RsInitConfig::inet;
+                                 std::cerr << ") Selected" << std::endl;
+                                 RsInitConfig::forceLocalAddr = true;
+                                 break;
+                         case 'p':
+                                 RsInitConfig::port = atoi(optarg);
+                                 std::cerr << "New Listening Port(" << RsInitConfig::port;
+                                 std::cerr << ") Selected" << std::endl;
+                                 break;
+                         case 'c':
+                                 RsInitConfig::basedir = optarg;
+                                 std::cerr << "New Base Config Dir(";
+                                 std::cerr << RsInitConfig::basedir;
+                                 std::cerr << ") Selected" << std::endl;
+                                 break;
+                         case 's':
+                                 RsInitConfig::outStderr = true;
+                                 RsInitConfig::haveLogFile = false;
+                                 std::cerr << "Output to Stderr";
+                                 std::cerr << std::endl;
+                                 break;
+                         case 'd':
+                                 RsInitConfig::haveDebugLevel = true;
+                                 RsInitConfig::debugLevel = atoi(optarg);
+                                 std::cerr << "Opt for new Debug Level";
+                                 std::cerr << std::endl;
+                                 break;
+                         case 'u':
+                                 RsInitConfig::udpListenerOnly = true;
+                                 std::cerr << "Opt for only udpListener";
+                                 std::cerr << std::endl;
+                                 break;
+                         case 'e':
+                                 RsInitConfig::forceExtPort = true;
+                                 std::cerr << "Opt for External Port Mode";
+                                 std::cerr << std::endl;
+                                 break;
+                         case 'U':
+                                 prefPgpName = optarg;
+                                 std::cerr << "Opt for User Id ";
+                                 std::cerr << std::endl;
+                                 break;
+                         case 'h':
+                                 std::cerr << "Help: " << std::endl;
+                                 std::cerr << "The commandline options are for retroshare-nogui, a headless server in a shell, or systems without QT." << std::endl << std::endl;
+                                 std::cerr << "-l [logfile]      Set the logfilename" << std::endl;
+                                 std::cerr << "-w [password]     Set the password" << std::endl;
+                                 std::cerr << "-i [ip_adress]    Set IP Adress to use" << std::endl;
+                                 std::cerr << "-p [port]         Set the Port to listen on" << std::endl;
+                                 std::cerr << "-c [basedir]      Set the config basdir" << std::endl;
+                                 std::cerr << "-s                Output to Stderr" << std::endl;
+                                 std::cerr << "-d [debuglevel]   Set the debuglevel" << std::endl;
+                                 std::cerr << "-a                AutoLogin (Windows Only) + StartMinimised" << std::endl;
+                                 std::cerr << "-m                StartMinimised" << std::endl;
+                                 std::cerr << "-u                Only listen to UDP" << std::endl;
+                                 std::cerr << "-e                Use a forwarded external Port" << std::endl << std::endl;
+                                 std::cerr << "-U [User Name]    Sets Account to Use, Useful when Autologin is enabled" << std::endl;
+                                 std::cerr << "Example" << std::endl;
+                                 std::cerr << "./retroshare-nogui -wmysecretpassword -e" << std::endl;
+                                 exit(1);
+                                 break;
+                         default:
+                                 std::cerr << "Unknown Option!" << std::endl;
+                                 std::cerr << "Use '-h' for help." << std::endl;
+                                 exit(1);
+                 }
+         }
 
 
 	// set the default Debug Level...
@@ -479,6 +486,27 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored)
 	std::list<accountId>::iterator it;
 	getAvailableAccounts(RsInitConfig::accountIds);
 
+        // if a different user id has been passed to cmd line check for that instead
+
+        bool pgpNameFound = false;
+        if(prefPgpName != ""){
+
+            for(it = RsInitConfig::accountIds.begin() ; it!= RsInitConfig::accountIds.end() ; it++){
+
+                if(prefPgpName == it->pgpName){
+
+                    RsInitConfig::preferedId = it->sslId;
+                    pgpNameFound = true;
+                }
+            }
+            if(!pgpNameFound){
+                std::cerr << "Invalid User name -U pgpName not Found" << std::endl;
+                exit(1);
+            }
+        }
+
+
+
 	/* check that preferedId */
 	std::string userName;
 	std::string userId;
@@ -498,6 +526,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored)
 	{
 		std::cerr << "No Existing User" << std::endl;
 		RsInitConfig::preferedId == "";
+
 	}
 
 
