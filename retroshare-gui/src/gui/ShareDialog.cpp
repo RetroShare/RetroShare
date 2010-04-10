@@ -65,11 +65,10 @@ void ShareDialog::browseDirectory()
 	QString qdir = QFileDialog::getExistingDirectory(this, tr("Select A Folder To Share"), "", QFileDialog::DontUseNativeDialog | QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
 
 	/* add it to the server */
-	std::string dir = qdir.toStdString();
 	currentDir = qdir.toStdString();
-	if (dir != "")
+	if (currentDir != "")
 	{		
-		ui.localpath_lineEdit->setText(QString::fromStdString(dir));
+		ui.localpath_lineEdit->setText(QString::fromStdString(currentDir));
 	}
 }
 
