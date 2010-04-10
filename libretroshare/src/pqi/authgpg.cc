@@ -359,9 +359,9 @@ bool   AuthGPG::storeAllKeys_locked()
         if (GPG_ERR_NO_ERROR != gpgme_op_keylist_start (CTX, "", 0))
         {
                 std::cerr << "AuthGPG::storeAllKeys_locked() Error iterating through KeyList" << std::endl;
-                if (rsicontrol != NULL) {
-                    rsicontrol->getNotify().notifyErrorMsg(0,0,"Error reading gpg keyring, cannot acess key list.");
-                }
+//                if (rsicontrol != NULL) {
+//                    rsicontrol->getNotify().notifyErrorMsg(0,0,"Error reading gpg keyring, cannot acess key list.");
+//                }
 		gpgme_set_keylist_mode(CTX, origmode);
 		return false;
         }
@@ -371,9 +371,9 @@ bool   AuthGPG::storeAllKeys_locked()
         ERR = gpgme_op_keylist_next (CTX, &KEY);
         if (GPG_ERR_NO_ERROR != ERR) {
                 std::cerr << "AuthGPG::storeAllKeys_locked() didn't find any gpg key in the keyring" << std::endl;
-                if (rsicontrol != NULL) {
-                    rsicontrol->getNotify().notifyErrorMsg(0,0,"Error reading gpg keyring, cannot find any key in the list.");
-                }
+//                if (rsicontrol != NULL) {
+//                    rsicontrol->getNotify().notifyErrorMsg(0,0,"Error reading gpg keyring, cannot find any key in the list.");
+//                }
                 return false;
         } else {
                 //let's start a new list

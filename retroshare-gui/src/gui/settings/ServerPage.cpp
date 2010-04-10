@@ -165,13 +165,13 @@ void ServerPage::load()
 /** Loads the settings for this page */
 void ServerPage::updateStatus()
 {
+	if(!isVisible())
+		return ;
 
 	/* load up configuration from rsPeers */
 	RsPeerDetails detail;
 	if (!rsPeers->getPeerDetails(rsPeers->getOwnId(), detail))
-	{
 		return;
-	}
 
 	/* only update if can't edit */
 	if (!ui.localPort->isEnabled())
@@ -185,8 +185,6 @@ void ServerPage::updateStatus()
 	ui.localAddress->setText(QString::fromStdString(detail.localAddr));
 	/* set the server address */
 	ui.extAddress->setText(QString::fromStdString(detail.extAddr));
-
-
 }
 
 void ServerPage::toggleUPnP()
@@ -220,14 +218,11 @@ void ServerPage::saveAddresses()
 
 	bool saveAddr = false;
 
-
 	RsPeerDetails detail;
 	std::string ownId = rsPeers->getOwnId();
 
 	if (!rsPeers->getPeerDetails(ownId, detail))
-	{
 		return;
-	}
 
 	int netIndex = ui.netModeComboBox->currentIndex();
 
@@ -248,26 +243,18 @@ void ServerPage::saveAddresses()
 	}
 
 	if (detail.tryNetMode != netMode)
-	{
 		rsPeers->setNetworkMode(ownId, netMode);
-	}
 
 	int visState = 0;
 	/* Check if vis has changed */
 	if (0 == ui.discComboBox->currentIndex())
-	{
 		visState |= RS_VS_DISC_ON;
-	}
 
 	if (visState != detail.visState)
-	{
 		rsPeers->setVisState(ownId, visState);
-	}
 
 	if (0 != netIndex)
-	{
 		saveAddr = true;
-	}
 
 	if (saveAddr)
 	{

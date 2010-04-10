@@ -824,9 +824,6 @@ void SearchDialog::insertFile(const std::string& txt,qulonglong searchId, const 
 
 	if(nb_results[searchId] >= ui._max_results_SB->value())
 		return ;
-	else
-		++nb_results[searchId] ;
-
 
 	// 1 - look in result window whether the file already exists.
 	//
@@ -957,6 +954,8 @@ void SearchDialog::insertFile(const std::string& txt,qulonglong searchId, const 
 
 	if(!found)
 	{
+		++nb_results[searchId] ;
+
 		/* translate search results */
 		
 		QTreeWidgetItem *item = new QTreeWidgetItem();
