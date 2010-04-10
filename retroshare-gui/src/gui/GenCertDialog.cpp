@@ -210,7 +210,9 @@ void GenCertDialog::genPerson()
 	std::cerr << " generating sslPasswd." << std::endl;
 	qsrand(time(NULL));
 	std::string sslPasswd = "";
-	for( int i = 0 ; i < 6 ; ++i )
+	const int PWD_LEN = RsInit::getSslPwdLen();
+
+	for( int i = 0 ; i < PWD_LEN ; ++i )
 	{
 	    int iNumber;
 	    iNumber = qrand()%25 + 65;

@@ -401,7 +401,7 @@ QAction* MainWindow::createPageAction(QIcon img, QString text, QActionGroup *gro
 {
     QAction *action = new QAction(img, text, group);
     action->setCheckable(true);
-    action->setFont(FONT);
+//    action->setFont(FONT);
     return action;
 }
 
@@ -409,7 +409,7 @@ QAction* MainWindow::createPageAction(QIcon img, QString text, QActionGroup *gro
  * the specified slot (if given). */
 void MainWindow::addAction(QAction *action, const char *slot)
 {
-    action->setFont(FONT);
+//    action->setFont(FONT);
     ui.toolBar->addAction(action);
     connect(action, SIGNAL(triggered()), this, slot);
 }

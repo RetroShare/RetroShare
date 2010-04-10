@@ -125,6 +125,7 @@ static const std::string configKeyDir = "keys";
 static const std::string configCaFile = "cacerts.pem";
 static const std::string configLogFileName = "retro.log";
 static const std::string configHelpName = "retro.htm";
+static const int SSLPWD_LEN = 6;
 
 std::list<accountId> RsInitConfig::accountIds;
 std::string RsInitConfig::preferedId;
@@ -193,7 +194,7 @@ void RsInit::InitRsConfig()
 	strcpy(RsInitConfig::inet, "127.0.0.1");
 	strcpy(RsInitConfig::logfname, "");
 
-	RsInitConfig::autoLogin      = true; // Always on now.
+	RsInitConfig::autoLogin      = false; // .
 	RsInitConfig::startMinimised = false;
 	RsInitConfig::passwd         = "";
 	RsInitConfig::havePasswd     = false;
@@ -503,12 +504,17 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored)
 	/* if existing user, and havePasswd .... we can skip the login prompt */
 	if (existingUser)
 	{
+
 		if (RsInitConfig::havePasswd)
 		{
 			return 1;
 		}
+
+		RsInit::LoadPassword(RsInitConfig::preferedId, "");
+
 		if (RsTryAutoLogin())
 		{
+			RsInit::setAutoLogin(true);
 			return 1;
 		}
 	}
@@ -1047,6 +1053,7 @@ bool     RsInit::LoadPassword(std::string id, std::string inPwd)
 	RsInitConfig::preferedId = id;
 	RsInitConfig::configDir = RsInitConfig::basedir + RsInitConfig::dirSeperator + id;
 	RsInitConfig::passwd = inPwd;
+
 	RsInitConfig::havePasswd = true;
 
         // Create the filename.
@@ -1071,6 +1078,7 @@ bool     RsInit::LoadPassword(std::string id, std::string inPwd)
 
 int RsInit::LoadCertificates(bool autoLoginNT)
 {
+
 	if (RsInitConfig::load_cert == "")
 	{
 	  std::cerr << "RetroShare needs a certificate" << std::endl;
@@ -1083,15 +1091,29 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 	  return 0;
 	}
 
+	RsInitConfig::autoLogin = autoLoginNT;
 	bool ok = false;
+	bool have_help = false;
+
+	// Check if help file exists
+	std::string help_file_name = RsInitConfig::configDir + RsInitConfig::dirSeperator +
+				configKeyDir + RsInitConfig::dirSeperator + "help.dta";
+	FILE* helpFile = fopen(help_file_name.c_str(), "r");
+
+	if(helpFile != NULL){
+		have_help = true;
+		fclose(helpFile);
+	}
 
 	/* The SSL / SSL + PGP version requires, SSL init + PGP init.  */
 	const char* sslPassword;
 	sslPassword = RsInitConfig::passwd.c_str();
+
+
 	//check if password is already in memory
-	if ((RsInitConfig::havePasswd) && (RsInitConfig::passwd != ""))
+	if (((RsInitConfig::havePasswd) && (RsInitConfig::passwd != "")) && !have_help)
 	{
-		std::cerr << "RetroShare have a ssl Password" << std::endl;
+		std::cerr << "RetroShare has a ssl Password" << std::endl;
 		sslPassword = RsInitConfig::passwd.c_str();
 
 		std::cerr << "let's store the ssl Password into a pgp ecrypted file" << std::endl;
@@ -1110,7 +1132,10 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 		gpgme_data_release (plain);
 		fclose(sslPassphraseFile);
 
-	} else {
+	} else
+	if(!have_help)	{
+
+
 		//let's read the password from an encrypted file
 		//let's check if there's a ssl_passpharese_file that we can decrypt with PGP
 		FILE *sslPassphraseFile = fopen(RsInitConfig::ssl_passphrase_file.c_str(), "r");
@@ -1133,6 +1158,7 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 			    std::cerr << "Decrypting went ok !" << std::endl;
                             gpgme_data_write (plain, "", 1);
 			    sslPassword = gpgme_data_release_and_get_mem(plain, NULL);
+			    std::cerr << "sslpassword: " << sslPassword << std::endl;
 			} else {
 			    gpgme_data_release (plain);
                             std::cerr << "Error : decrypting went wrong !" << std::endl;
@@ -1143,7 +1169,19 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 		}
 	}
 
+
+
+	if(have_help){
+		sslPassword = RsInitConfig::passwd.c_str();
+	}
+	else{
+		RsInitConfig::passwd.insert(0, sslPassword, RsInit::getSslPwdLen());
+	}
+
+
+
 	std::cerr << "RsInitConfig::load_key.c_str() : " << RsInitConfig::load_key.c_str() << std::endl;
+
         if (0 < AuthSSL::getAuthSSL() -> InitAuth(RsInitConfig::load_cert.c_str(), RsInitConfig::load_key.c_str(), sslPassword))
 	{
 		ok = true;
@@ -1156,7 +1194,7 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 
 	if (ok)
 	{
-		if (autoLoginNT)
+		if (autoLoginNT && (!have_help))
 		{
 			std::cerr << "RetroShare will AutoLogin next time";
 			std::cerr << std::endl;
@@ -1289,6 +1327,9 @@ std::string make_path_unix(std::string path)
 /* WINDOWS STRUCTURES FOR DPAPI */
 
 #ifndef WINDOWS_SYS /* UNIX */
+
+#include <openssl/rc4.h>
+
 #else
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
@@ -1358,11 +1399,44 @@ extern BOOL WINAPI CryptUnprotectData(
 bool  RsInit::RsStoreAutoLogin()
 {
 	std::cerr << "RsStoreAutoLogin()" << std::endl;
-	/* Windows only */
+
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS /* UNIX */
-	return false;
+
+	/* WARNING: Autologin is inherently unsafe */
+	std::string helpFileName = RsInitConfig::configDir + RsInitConfig::dirSeperator +
+				configKeyDir + RsInitConfig::dirSeperator + "help.dta";
+	FILE* helpFile = fopen(helpFileName.c_str(), "w");
+
+	if(helpFile == NULL){
+		std::cerr << "\nRsStoreAutoLogin(): Failed to open help file\n" << std::endl;
+		return false;
+	}
+
+	/* encrypt help */
+
+	const int DAT_LEN = RsInitConfig::passwd.length();
+	const int KEY_DAT_LEN = RsInitConfig::load_cert.length();
+	unsigned char* key_data = (unsigned char*)RsInitConfig::load_cert.c_str();
+	unsigned char* indata = (unsigned char*)RsInitConfig::passwd.c_str();
+	unsigned char* outdata = new unsigned char[DAT_LEN];
+
+	RC4_KEY* key = new RC4_KEY;
+	RC4_set_key(key, KEY_DAT_LEN, key_data);
+
+	RC4(key, DAT_LEN, indata, outdata);
+
+
+	fprintf(helpFile, "%s", outdata);
+	fclose(helpFile);
+
+	delete key;
+	delete[] outdata;
+
+
+	return true;
 #else
+
 	/* store password encrypted in a file */
 	std::string entropy = RsInitConfig::load_cert;
 
@@ -1415,7 +1489,7 @@ bool  RsInit::RsStoreAutoLogin()
 
 		/* save the data to the file */
 		std::string passwdfile = RsInitConfig::configDir;
-		passwdfile += RsInitConfig::dirSeperator;
+		passwdfile += RsInitConfig::dirSeperator  + configKeyDir + RsInitConfig::dirSeperator;
 		passwdfile += "help.dta";
 
      		//std::cerr << "Save to: " << passwdfile;
@@ -1440,7 +1514,6 @@ bool  RsInit::RsStoreAutoLogin()
 	free(pbDataInput);
 	free(pbDataEnt);
 	LocalFree(DataOut.pbData);
-
 #endif
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
@@ -1451,17 +1524,47 @@ bool  RsInit::RsStoreAutoLogin()
 
 bool  RsInit::RsTryAutoLogin()
 {
+
 	std::cerr << "RsTryAutoLogin()" << std::endl;
-	/* Windows only */
+
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS /* UNIX */
-	return false;
-#else
-	/* Require a AutoLogin flag in the config to do this */
-	if (!RsInitConfig::autoLogin)
-	{
+	std::string helpFileName = RsInitConfig::basedir + RsInitConfig::dirSeperator + RsInitConfig::preferedId + RsInitConfig::dirSeperator +
+				configKeyDir + RsInitConfig::dirSeperator + "help.dta";
+
+	FILE* helpFile = fopen(helpFileName.c_str(), "r");
+
+	if(helpFile == NULL){
+		std::cerr << "\nFailed to open help file\n" << std::endl;
 		return false;
 	}
+
+	/* decrypt help */
+
+	const int DAT_LEN = RsInit::getSslPwdLen();
+	const int KEY_DAT_LEN = RsInitConfig::load_cert.length();
+	unsigned char* key_data  = (unsigned char*)RsInitConfig::load_cert.c_str();
+	unsigned char* indata = new unsigned char[DAT_LEN];
+	unsigned char* outdata = new unsigned char[DAT_LEN];
+
+	fscanf(helpFile, "%s", indata);
+
+	RC4_KEY* key = new RC4_KEY;
+	RC4_set_key(key, KEY_DAT_LEN, key_data);
+
+	RC4(key, DAT_LEN, indata, outdata);
+
+	RsInitConfig::passwd.clear();
+	RsInitConfig::passwd.insert(0, (char*)outdata, DAT_LEN);
+
+
+	fclose(helpFile);
+
+	delete[] indata;
+	delete[] outdata;
+	delete key;
+	return true;
+#else
 
 	/* try to load from file */
 	std::string entropy = RsInitConfig::load_cert;
@@ -1469,7 +1572,7 @@ bool  RsInit::RsTryAutoLogin()
 
 	/* open the data to the file */
 	std::string passwdfile = RsInitConfig::configDir;
-	passwdfile += RsInitConfig::dirSeperator;
+	passwdfile += RsInitConfig::dirSeperator + configKeyDir + RsInitConfig::dirSeperator;
 	passwdfile += "help.dta";
 
 	DATA_BLOB DataIn;
@@ -1575,12 +1678,8 @@ bool  RsInit::RsTryAutoLogin()
 
 bool  RsInit::RsClearAutoLogin()
 {
-/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#ifndef WINDOWS_SYS /* UNIX */
-	return false;
-#else
 	std::string passwdfile = RsInitConfig::configDir;
-	passwdfile += RsInitConfig::dirSeperator;
+	passwdfile += RsInitConfig::dirSeperator + configKeyDir + RsInitConfig::dirSeperator;
 	passwdfile += "help.dta";
 
 	FILE *fp = fopen(passwdfile.c_str(), "wb");
@@ -1588,15 +1687,18 @@ bool  RsInit::RsClearAutoLogin()
 	{
 		fwrite(" ", 1, 1, fp);
 		fclose(fp);
+		bool removed = remove(passwdfile.c_str());
 
-     		std::cerr << "AutoLogin Data cleared! ";
+		if(removed != 0)
+			std::cerr << "RsClearAutoLogin(): Failed to Removed help file" << std::endl;
+
+     		std::cerr << "AutoLogin Data cleared ";
      		std::cerr << std::endl;
 		return true;
 	}
+
 	return false;
-#endif
-/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
-	return false;
+
 }
 
 
@@ -1631,6 +1733,17 @@ bool	RsInit::setStartMinimised()
 	return RsInitConfig::startMinimised;
 }
 
+int RsInit::getSslPwdLen(){
+	return SSLPWD_LEN;
+}
+
+bool RsInit::getAutoLogin(){
+	return RsInitConfig::autoLogin;
+}
+
+void RsInit::setAutoLogin(bool autoLogin){
+	RsInitConfig::autoLogin = autoLogin;
+}
 
 /*
  *

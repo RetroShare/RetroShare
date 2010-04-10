@@ -71,7 +71,7 @@ class RsInit
 		/* Login SSL */
 		static bool	LoadPassword(std::string id, std::string passwd) ;
 
-		/* Final Certificate load. This can be called if:
+		/** Final Certificate load. This can be called if:
 		 * a) InitRetroshare() returns true -> autoLoad/password Set.
 		 * b) SelectGPGAccount() && LoadPassword()
 		 */
@@ -82,6 +82,11 @@ class RsInit
 		static std::string 	RsConfigDirectory();
                 static std::string      RsProfileConfigDirectory();
 		static bool	setStartMinimised() ;
+
+		static int getSslPwdLen();
+		static bool getAutoLogin();
+		static void setAutoLogin(bool autoLogin);
+		static bool RsClearAutoLogin() ;
 
 
 	private:
@@ -98,9 +103,10 @@ class RsInit
 		/* Auto Login */
 		static bool RsStoreAutoLogin() ;
 		static bool RsTryAutoLogin() ;
-		static bool RsClearAutoLogin() ;
+
 
 };
+
 
 
 #endif
