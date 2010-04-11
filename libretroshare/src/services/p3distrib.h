@@ -49,34 +49,6 @@
  * (2) integrate with Cache Source/Store for data transmission.
  * (3) integrate with Serialiser for messages
  * (4) bring over the final key parts from existing p3channel.
- *
- *****************************************************************
- *
- * Group Description:
- *
- * Master Public/Private Key: (Admin Key) used to control 
- *	Group Name/Description/Icon.
- * 	Filter Lists.
- *	Publish Keys.
- *	
- * Publish Keys. (multiple possible)
- * Filters: blacklist or whitelist.
- * TimeStore Length ??? (could make it a minimum of this and system one)
- *
- * Everyone gets:
- *    Master Public Key.
- *    Publish Public Keys.
- *	blacklist, or whitelist filter. (Only useful for Non-Anonymous groups)
- *	Name, Desc, 
- *	etc.
- *	
- * Admins get Master Private Key.
- * Publishers get Publish Private Key.
- *	- Channels only some get publish key.
- *	- Forums everyone gets publish private key.
- * 
- * Create a Signing structure for Messages in general.
- *
  */
 
 const uint32_t GROUP_MAX_FWD_OFFSET = (60 * 60 * 24 * 2); /* 2 Days */
@@ -118,8 +90,9 @@ const uint32_t GROUP_KEY_DISTRIB_ADMIN		= 0x0040;
 #endif
 
 
+//! key to be sent member or members of a groups
 /*!
- * allows group members to access
+ * This key but be of many types, including private/public publish key, or admin prite key for group
  */
 class GroupKey
 {
@@ -131,11 +104,13 @@ class GroupKey
 	uint32_t type;
 	std::string keyId;
 	time_t   startTS, endTS;
-	EVP_PKEY *key;
+	EVP_PKEY *key; /// public key
 };
 
-
-
+//! aggregates various information on group activities (i.e. messages, posts, etc)
+/*!
+ * The aim is to use this to keep track of group changes, so client can respond (get messages, post etc)
+ */
 class GroupInfo
 {
 	public:
@@ -145,8 +120,8 @@ class GroupInfo
 		return;
 	}
 
-	std::string grpId; 
-	RsDistribGrp *distribGroup;
+	std::string grpId; /// the group id
+	RsDistribGrp *distribGroup; /// item which contains further information on group
 
 	std::list<std::string> sources;
 	std::map<std::string, RsDistribMsg *> msgs;
@@ -160,15 +135,15 @@ class GroupInfo
 	uint32_t     grpFlags;     /* PRIVACY & AUTHEN */
 
 
-	uint32_t pop; 	    /* sources.size() */
-	time_t   lastPost;  /* modded as msgs added */
+	uint32_t pop; 	    /// sources.size()
+	time_t   lastPost;  /// modded as msgs added
 
 /***********************************/
 
-	uint32_t flags;     /* PUBLISH, SUBSCRIBE, ADMIN */
+	uint32_t flags;     /// PUBLISH, SUBSCRIBE, ADMIN
 
-	/* current active Publish Key */
-	std::string publishKeyId;
+
+	std::string publishKeyId; /// current active Publish Key
 	std::map<std::string, GroupKey> publishKeys;
 
 	GroupKey adminKey;
@@ -182,22 +157,24 @@ class GroupInfo
 
 	uint32_t type;
 
-	/* FLAG for GUI - set if changed */
+	/// FLAG for Client - set if changed
 	bool grpChanged;
 };
 
 
 std::ostream &operator<<(std::ostream &out, const GroupInfo &info);
 
-
-
+//! information on what cache stores group info
+/*!
+ * This can refer to idividual cache message, data etc
+ */
 class GroupCache
 {
 	public:
 
 	std::string filename;
 	time_t start, end;
-	uint16_t cacheSubId;
+	uint16_t cacheSubId; /// used to resolve complete cache id
 };
 
 	/* Flags for locked_notifyGroupChanged() ***/
@@ -209,6 +186,35 @@ const uint32_t GRP_NEW_MSG      = 0x0004;
 const uint32_t GRP_SUBSCRIBED   = 0x0005;
 const uint32_t GRP_UNSUBSCRIBED = 0x0006;
 
+
+//! Class service to implement group messages
+/*!
+ *
+ * Group Description:
+ *
+ * Master Public/Private Key: (Admin Key) used to control
+ *	Group Name/Description/Icon.
+ * 	Filter Lists.
+ *	Publish Keys.
+ *
+ * Publish Keys. (multiple possible)
+ * Filters: blacklist or whitelist.
+ * TimeStore Length ??? (could make it a minimum of this and system one)
+ *
+ * Everyone gets:
+ *    Master Public Key.
+ *    Publish Public Keys.
+ *	blacklist, or whitelist filter. (Only useful for Non-Anonymous groups)
+ *	Name, Desc,
+ *	etc.
+ *
+ * Admins get Master Private Key.
+ * Publishers get Publish Private Key.
+ *	- Channels only some get publish key.
+ *	- Forums everyone gets publish private key.
+ *
+ * Create a Signing structure for Messages in general.
+ */
 class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, public nullService
 {
 	public:
@@ -226,8 +232,8 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 /* TO FINISH */
 
 	public:
-virtual bool   loadLocalCache(const CacheData &data); /* overloaded from Cache Source */
-virtual int    loadCache(const CacheData &data); /* overloaded from Cache Store */
+virtual bool   loadLocalCache(const CacheData &data); /// overloaded from Cache Source
+virtual int    loadCache(const CacheData &data); /// overloaded from Cache Store
 
 	private:
 	/* top level load */
@@ -382,7 +388,9 @@ bool    locked_updateChildTS(GroupInfo &gi, RsDistribMsg *msg);
 	public:
 
 void	printGroups(std::ostream &out);
-
+/*!
+ * returns list of ids for group caches that have changed
+ */
 bool 	groupsChanged(std::list<std::string> &groupIds);
 
 /***************************************************************************************/
@@ -394,7 +402,7 @@ bool 	groupsChanged(std::list<std::string> &groupIds);
 	/* storage */
 	protected:
 
-	RsMutex distribMtx; /* Protects All Data Below */
+	RsMutex distribMtx; /// Protects All Data Below
 	std::string mOwnId;
 
 	private:	
