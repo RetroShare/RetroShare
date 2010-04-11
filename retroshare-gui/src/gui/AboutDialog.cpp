@@ -48,6 +48,17 @@ AboutDialog::AboutDialog(QWidget* parent)
     frame->setLayout(l);
     tWidget = NULL;
     installAWidget();
+    
+    /* get libretroshare version */
+    std::map<std::string, std::string>::iterator vit;
+    std::map<std::string, std::string> versions;
+    const RsConfig &conf = rsiface->getConfig();
+    bool retv = rsDisc->getDiscVersions(versions);
+    if (retv && versions.end() != (vit = versions.find(conf.ownId)))
+    {
+      QString version = QString::fromStdString(vit->second);
+      setWindowTitle(tr("About RetroShare %1").arg(version));    
+    }
         
 #ifdef Q_OS_WIN
     setWindowFlags(windowFlags() | Qt::MSWindowsFixedSizeDialogHint);
@@ -124,8 +135,20 @@ void AboutDialog::sl_levelChanged(int level) {
 
 void AboutDialog::updateTitle() {
     if (tWidget == NULL) {
-        setWindowTitle(tr("About RetroShare"));
-    } else {
+        
+        /* get libretroshare version */
+        std::map<std::string, std::string>::iterator vit;
+        std::map<std::string, std::string> versions;
+        const RsConfig &conf = rsiface->getConfig();
+        bool retv = rsDisc->getDiscVersions(versions);
+        if (retv && versions.end() != (vit = versions.find(conf.ownId)))
+        {
+
+        QString version = QString::fromStdString(vit->second);
+        setWindowTitle(tr("About RetroShare %1").arg(version));
+          
+        }
+        } else {
         setWindowTitle(tr("Have fun ;-)"));
     }
 }
