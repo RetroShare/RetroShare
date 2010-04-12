@@ -361,7 +361,7 @@ void MainWindow::updateStatus()
 	if(new_msg)
 	{
 		trayIcon->setIcon(QIcon(":/images/newmsg.png"));
-		trayIcon->setToolTip(tr("RetroShare") + "\n" + tr("You has a new message"));
+		trayIcon->setToolTip(tr("RetroShare") + "\n" + tr("You have received a new message"));
 	}    
 	else if (online == 0)
 	{
