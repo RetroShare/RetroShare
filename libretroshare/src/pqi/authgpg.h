@@ -54,7 +54,8 @@
 
 const time_t STORE_KEY_TIMEOUT = 60; //store key is call around every 60sec
 
-/* gpgcert is the identifier for a person.
+/*!
+ * gpgcert is the identifier for a person.
  * It is a wrapper class for a GPGme OpenPGP certificate.
  */
 class gpgcert
@@ -81,11 +82,17 @@ class gpgcert
 		gpgme_key_t key;
 };
 
-/*
+/*!
  * The certificate map type
  */
 typedef std::map<std::string, gpgcert> certmap;
 	
+//! provides basic gpg functionality
+/*!
+ *
+ * This provides retroshare basic gpg functionality and
+ * key/web-of-trust management, also handle cert intialisation for retroshare
+ */
 class AuthGPG : public p3Config
 {
 	private:
@@ -112,6 +119,9 @@ class AuthGPG : public p3Config
         AuthGPG();
         ~AuthGPG();
 
+        /**
+         * @param ids list of gpg certificate ids (note, not the actual certificates)
+         */
         bool    availableGPGCertificatesWithPrivateKeys(std::list<std::string> &ids);
 
 	/* SKTAN */
@@ -255,7 +265,9 @@ private:
 
 };
 
-/* Sign a key */
+/*!
+ *  Sign a key
+ **/
 typedef enum
 {
   SIGN_START,
@@ -271,7 +283,9 @@ typedef enum
 } SignState;
 
 
-/* Change the key ownertrust */
+/*!
+ *  Change the key ownertrust
+ **/
 typedef enum
 {
   TRUST_START,
@@ -285,7 +299,8 @@ typedef enum
 
 
 
-/* This is the generic data object passed to the 
+/*!
+ * This is the generic data object passed to the
  * callback function in a gpgme_op_edit operation. 
  * The contents of this object are modified during 
  * each callback, to keep track of states, errors 
@@ -295,14 +310,16 @@ class EditParams
 {
 	public: 
 	int state;
-	/* The return code of gpgme_op_edit() is the return value of
+
+	/*!
+	 *  The return code of gpgme_op_edit() is the return value of
 	 * the last invocation of the callback. But returning an error 
 	 * from the callback does not abort the edit operation, so we 
 	 * must remember any error.
 	 */		
 	gpg_error_t err;
 	
-	/* Parameters specific to the key operation */	
+	/// Parameters specific to the key operation
 	void *oParams;
 	
 	EditParams(int state, void *oParams) {
@@ -313,7 +330,9 @@ class EditParams
 			
 };
 
-/* Data specific to key signing */
+/*!
+ *  Data specific to key signing
+ **/
 class SignParams 
 {
 	public:
@@ -325,7 +344,9 @@ class SignParams
 	}
 };
 
-/* Data specific to key signing */
+/*!
+ * Data specific to key signing
+ **/
 class TrustParams
 {
         public:
