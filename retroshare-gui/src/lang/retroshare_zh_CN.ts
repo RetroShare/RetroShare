@@ -4051,12 +4051,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.cpp" line="255"/>
+        <location filename="../gui/GenCertDialog.cpp" line="257"/>
         <source>Select Trusted Friend</source>
         <translation>选择信赖的好友</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.cpp" line="256"/>
+        <location filename="../gui/GenCertDialog.cpp" line="258"/>
         <source>Certificates (*.pqi *.pem)</source>
         <translation>证书 (*.pqi *.pem)</translation>
     </message>
@@ -4260,6 +4260,11 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/settings/GeneralPage.ui" line="551"/>
         <source>Do not Minimize to Tray Icon</source>
         <translation>不要最小化到托盘图标</translation>
+    </message>
+    <message>
+        <location filename="../gui/settings/GeneralPage.ui" line="561"/>
+        <source>Auto Login</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/settings/GeneralPage.ui" line="525"/>
@@ -4929,6 +4934,11 @@ p, li { white-space: pre-wrap; }
         <translation>频道 </translation>
     </message>
     <message>
+        <location filename="../gui/MainWindow.cpp" line="364"/>
+        <source>You have received a new message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../gui/MainWindow.cpp" line="539"/>
         <source>Internal Error</source>
         <translation>内部错误</translation>
@@ -5019,9 +5029,8 @@ p, li { white-space: pre-wrap; }
         <translation>(&amp;Q)退出</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="364"/>
         <source>You has a new message</source>
-        <translation>你有新邮件</translation>
+        <translation type="obsolete">你有新邮件</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="493"/>
@@ -8582,8 +8591,12 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/settings/rsettingswin.cpp" line="163"/>
+        <source>Error Saving Configuration on page </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Error Saving Configuration</source>
-        <translation>保存配置出错</translation>
+        <translation type="obsolete">保存配置出错</translation>
     </message>
 </context>
 <context>
@@ -8910,8 +8923,8 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/SearchDialog.cpp" line="318"/>
         <location filename="../gui/SearchDialog.cpp" line="341"/>
-        <location filename="../gui/SearchDialog.cpp" line="859"/>
-        <location filename="../gui/SearchDialog.cpp" line="989"/>
+        <location filename="../gui/SearchDialog.cpp" line="856"/>
+        <location filename="../gui/SearchDialog.cpp" line="988"/>
         <source>/</source>
         <translation></translation>
     </message>
@@ -9574,13 +9587,12 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">共享文件</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.ui" line="563"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;Files&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -9714,7 +9726,7 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;span style=&quot; font-size:18pt; color:#55aaff;&quot;&gt;註冊&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:18pt; color:#55aaff;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.ui" line="652"/>
+        <location filename="../gui/StartDialog.ui" line="614"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -9727,7 +9739,12 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;创建新文件...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.ui" line="663"/>
+        <location filename="../gui/StartDialog.ui" line="693"/>
+        <source>Remember Password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/StartDialog.ui" line="603"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -9779,27 +9796,41 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">自動登錄</translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.ui" line="595"/>
+        <location filename="../gui/StartDialog.ui" line="633"/>
         <source>Log In</source>
         <translation>登錄</translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.cpp" line="165"/>
+        <location filename="../gui/StartDialog.cpp" line="168"/>
         <source>Login Failure</source>
         <translation>登录失败</translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.cpp" line="166"/>
+        <location filename="../gui/StartDialog.cpp" line="169"/>
         <source>Maybe password is wrong</source>
         <translation>密码错误</translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.cpp" line="177"/>
-        <source>Create a New Profil</source>
-        <translation>创建新用户资料</translation>
+        <location filename="../gui/StartDialog.cpp" line="182"/>
+        <source>Create a New Profile</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.cpp" line="178"/>
+        <location filename="../gui/StartDialog.cpp" line="213"/>
+        <source>Insecure</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/StartDialog.cpp" line="214"/>
+        <source>Auto Login is not Secure: Password stored on disk</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create a New Profil</source>
+        <translation type="obsolete">创建新用户资料</translation>
+    </message>
+    <message>
+        <location filename="../gui/StartDialog.cpp" line="183"/>
         <source>This will generate a new Profile
  Are you sure you want to continue</source>
         <translation>这将会产生一个新的配置文件

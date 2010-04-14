@@ -5214,12 +5214,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Génération d&apos;une nouvelle clé GPG, veuillez patienter. Confirmez votre mot de passe GPG quand il vous le sera demandé.</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.cpp" line="255"/>
+        <location filename="../gui/GenCertDialog.cpp" line="257"/>
         <source>Select Trusted Friend</source>
         <translation>Choisir les ami sûrs</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.cpp" line="256"/>
+        <location filename="../gui/GenCertDialog.cpp" line="258"/>
         <source>Certificates (*.pqi *.pem)</source>
         <translation>Certificats (*.pqi *.pem)</translation>
     </message>
@@ -5436,8 +5436,9 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Ne pas réduire dans la zone de notification</translation>
     </message>
     <message>
+        <location filename="../gui/settings/GeneralPage.ui" line="561"/>
         <source>Auto Login</source>
-        <translation type="obsolete">Auto-login</translation>
+        <translation type="unfinished">Auto-login</translation>
     </message>
     <message>
         <source>Show MainWindow at Startup</source>
@@ -6714,11 +6715,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="364"/>
-        <source>You has a new message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../gui/MainWindow.cpp" line="539"/>
         <source>Internal Error</source>
         <translation type="unfinished">Erreur interne</translation>
@@ -6812,6 +6808,11 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/MainWindow.cpp" line="311"/>
         <source>&amp;Quit</source>
         <translation>&amp;Quitter</translation>
+    </message>
+    <message>
+        <location filename="../gui/MainWindow.cpp" line="364"/>
+        <source>You have received a new message</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="493"/>
@@ -11030,8 +11031,12 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/settings/rsettingswin.cpp" line="163"/>
+        <source>Error Saving Configuration on page </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Error Saving Configuration</source>
-        <translation type="unfinished">Une erreur est survenue lors de l&apos;enregistrement de la configuration</translation>
+        <translation type="obsolete">Une erreur est survenue lors de l&apos;enregistrement de la configuration</translation>
     </message>
 </context>
 <context>
@@ -11247,8 +11252,8 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/SearchDialog.cpp" line="318"/>
         <location filename="../gui/SearchDialog.cpp" line="341"/>
-        <location filename="../gui/SearchDialog.cpp" line="859"/>
-        <location filename="../gui/SearchDialog.cpp" line="989"/>
+        <location filename="../gui/SearchDialog.cpp" line="856"/>
+        <location filename="../gui/SearchDialog.cpp" line="988"/>
         <source>/</source>
         <translation type="unfinished">/</translation>
     </message>
@@ -12226,13 +12231,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Mes dossiers</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.ui" line="563"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;Files&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -12356,12 +12360,12 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Nom:</translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.ui" line="595"/>
+        <location filename="../gui/StartDialog.ui" line="633"/>
         <source>Log In</source>
         <translation>Se connecter</translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.ui" line="652"/>
+        <location filename="../gui/StartDialog.ui" line="614"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -12374,7 +12378,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Créer un nouveau profil...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.ui" line="663"/>
+        <location filename="../gui/StartDialog.ui" line="603"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -12389,6 +12393,11 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/StartDialog.ui" line="683"/>
         <source>Name (GPG Id) - location:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/StartDialog.ui" line="693"/>
+        <source>Remember Password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -12439,22 +12448,36 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Mot de passe : </translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.cpp" line="165"/>
+        <location filename="../gui/StartDialog.cpp" line="168"/>
         <source>Login Failure</source>
         <translation type="unfinished">Connexion échouée</translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.cpp" line="166"/>
+        <location filename="../gui/StartDialog.cpp" line="169"/>
         <source>Maybe password is wrong</source>
         <translation type="unfinished">Le mot de passe est peut-être incorrect</translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.cpp" line="177"/>
-        <source>Create a New Profil</source>
-        <translation type="unfinished">Créer un nouveau profil</translation>
+        <location filename="../gui/StartDialog.cpp" line="182"/>
+        <source>Create a New Profile</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.cpp" line="178"/>
+        <location filename="../gui/StartDialog.cpp" line="213"/>
+        <source>Insecure</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/StartDialog.cpp" line="214"/>
+        <source>Auto Login is not Secure: Password stored on disk</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create a New Profil</source>
+        <translation type="obsolete">Créer un nouveau profil</translation>
+    </message>
+    <message>
+        <location filename="../gui/StartDialog.cpp" line="183"/>
         <source>This will generate a new Profile
  Are you sure you want to continue</source>
         <translation type="unfinished">Ceci generera un nouveau profil.
