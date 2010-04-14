@@ -5,7 +5,6 @@
     <name>AboutDialog</name>
     <message>
         <location filename="../gui/AboutDialog.ui" line="23"/>
-        <location filename="../gui/AboutDialog.cpp" line="127"/>
         <source>About RetroShare</source>
         <translation>RetroShare について</translation>
     </message>
@@ -20,22 +19,28 @@
         <translation>閉じる</translation>
     </message>
     <message>
-        <location filename="../gui/AboutDialog.cpp" line="73"/>
+        <location filename="../gui/AboutDialog.cpp" line="60"/>
+        <location filename="../gui/AboutDialog.cpp" line="148"/>
+        <source>About RetroShare %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/AboutDialog.cpp" line="84"/>
         <source>Max score: %1</source>
         <translation>Max score: %1</translation>
     </message>
     <message>
-        <location filename="../gui/AboutDialog.cpp" line="117"/>
+        <location filename="../gui/AboutDialog.cpp" line="128"/>
         <source>Score: %1</source>
         <translation>Score: %1</translation>
     </message>
     <message>
-        <location filename="../gui/AboutDialog.cpp" line="121"/>
+        <location filename="../gui/AboutDialog.cpp" line="132"/>
         <source>Level: %1</source>
         <translation>Level: %1</translation>
     </message>
     <message>
-        <location filename="../gui/AboutDialog.cpp" line="129"/>
+        <location filename="../gui/AboutDialog.cpp" line="152"/>
         <source>Have fun ;-)</source>
         <translation>Have fun ;-)</translation>
     </message>
@@ -2228,187 +2233,187 @@ p, li { white-space: pre-wrap; }
         <translation>件名を追加してください</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="870"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="869"/>
         <source>&amp;File</source>
         <translation>ファイル(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="875"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="874"/>
         <source>&amp;New</source>
         <translation>新規(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="880"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="879"/>
         <source>&amp;Open...</source>
         <translation>開く(&amp;O)...</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="887"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="886"/>
         <source>&amp;Save</source>
         <translation>保存(&amp;S)</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="893"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="892"/>
         <source>Save &amp;As...</source>
         <translation>名前をつけて保存(&amp;A)...</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="898"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="897"/>
         <source>&amp;Print...</source>
         <translation>印刷(&amp;P)...</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="903"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="902"/>
         <source>Print Preview...</source>
         <translation>印刷プレビュー...</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="907"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="906"/>
         <source>&amp;Export PDF...</source>
         <translation>PDFにエクスポート(&amp;E)...</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="914"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="913"/>
         <source>&amp;Quit</source>
         <translation>終了(&amp;Q)</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="922"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="921"/>
         <source>&amp;Edit</source>
         <translation>編集(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="926"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="925"/>
         <source>&amp;Undo</source>
         <translation>元に戻す(&amp;U)</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="929"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="928"/>
         <source>&amp;Redo</source>
         <translation>やり直す(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="933"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="932"/>
         <source>Cu&amp;t</source>
         <translation>切り取り(&amp;T)</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="936"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="935"/>
         <source>&amp;Copy</source>
         <translation>コピー(&amp;C)</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="939"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="938"/>
         <source>&amp;Paste</source>
         <translation>貼り付け(&amp;P)</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="947"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="946"/>
         <source>&amp;View</source>
         <translation>表示(&amp;V)</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="957"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="956"/>
         <source>&amp;Insert</source>
         <translation>挿入(&amp;I)</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="962"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="961"/>
         <source>&amp;Image</source>
         <translation>イメージ(&amp;I)</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="987"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="986"/>
         <source>F&amp;ormat</source>
         <translation>フォーマット(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="990"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="989"/>
         <source>&amp;Bold</source>
         <translation>太字(&amp;B)</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1002"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1001"/>
         <source>&amp;Italic</source>
         <translation>斜体(&amp;I)</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1014"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1013"/>
         <source>&amp;Underline</source>
         <translation>下線(&amp;U)</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1033"/>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1039"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1032"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1038"/>
         <source>&amp;Left</source>
         <translation>左寄せ(&amp;L)</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1034"/>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1038"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1033"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1037"/>
         <source>C&amp;enter</source>
         <translation>中央揃え(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1035"/>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1037"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1034"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1036"/>
         <source>&amp;Right</source>
         <translation>右寄せ(&amp;R)</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1041"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1040"/>
         <source>&amp;Justify</source>
         <translation>均等揃え(&amp;J)</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1063"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1062"/>
         <source>&amp;Text Color...</source>
         <translation>文字色(&amp;T)...</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1136"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1135"/>
         <source>Application</source>
         <translation>アプリケーション</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1137"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1136"/>
         <source>The document has been modified.
 Do you want to save your changes?</source>
         <translation>ドキュメントが変更されています.
 変更を保存しますか?</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1158"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1157"/>
         <source>Open File...</source>
         <translation>ファイルを開く...</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1159"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1158"/>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
         <translation>HTML ファイル (*.htm *.html);;すべてのファイル (*)</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1178"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1177"/>
         <source>Save as...</source>
         <translation>名前をつけて保存...</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1179"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1178"/>
         <source>ODF files (*.odt);;HTML-Files (*.htm *.html);;All Files (*)</source>
         <translation>ODF ファイル(*.odt); HTML ファイル (*.htm *.html); すべてのファイル (*)</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1195"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1194"/>
         <source>Print Document</source>
         <translation>ドキュメントを印刷</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1259"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1258"/>
         <source>Choose Image</source>
         <translation>イメージを選択</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1260"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="1259"/>
         <source>Image Files supported (*.png *.jpeg *.jpg *.gif)</source>
         <translation>サポートされているイメージ ファイル (*.png *.jpeg *.jpg *.gif)</translation>
     </message>
@@ -4158,12 +4163,12 @@ p, li { white-space: pre-wrap; }
         <translation>新規 GPG キーを生成中. しばらくお待ちください. GPG パスワードをたずねられたら入力してください.</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.cpp" line="255"/>
+        <location filename="../gui/GenCertDialog.cpp" line="257"/>
         <source>Select Trusted Friend</source>
         <translation>信頼している友達を選択</translation>
     </message>
     <message>
-        <location filename="../gui/GenCertDialog.cpp" line="256"/>
+        <location filename="../gui/GenCertDialog.cpp" line="258"/>
         <source>Certificates (*.pqi *.pem)</source>
         <translation>証明書  (*.pqi *.pem)</translation>
     </message>
@@ -4310,6 +4315,11 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/settings/GeneralPage.ui" line="551"/>
         <source>Do not Minimize to Tray Icon</source>
         <translation>トレイ アイコンに最小化しない</translation>
+    </message>
+    <message>
+        <location filename="../gui/settings/GeneralPage.ui" line="561"/>
+        <source>Auto Login</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4979,39 +4989,38 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="163"/>
+        <location filename="../gui/MainWindow.cpp" line="164"/>
         <source>Network</source>
         <translation>ネットワーク</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="167"/>
+        <location filename="../gui/MainWindow.cpp" line="168"/>
         <source>Friends</source>
         <translation>友達</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="175"/>
+        <location filename="../gui/MainWindow.cpp" line="176"/>
         <source>Transfers</source>
         <translation>転送</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="183"/>
+        <location filename="../gui/MainWindow.cpp" line="184"/>
         <source>Messages</source>
         <translation>メッセージ</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="188"/>
+        <location filename="../gui/MainWindow.cpp" line="189"/>
         <source>Channels</source>
         <translation>チャネル</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="194"/>
+        <location filename="../gui/MainWindow.cpp" line="195"/>
         <source>Blogs</source>
         <translation>ブログ</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="363"/>
         <source>You has a new message</source>
-        <translation>新しいメッセージがあります</translation>
+        <translation type="obsolete">新しいメッセージがあります</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="542"/>
@@ -5035,12 +5044,12 @@ p, li { white-space: pre-wrap; }
         <translation>表示</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="315"/>
-        <location filename="../gui/MainWindow.cpp" line="363"/>
-        <location filename="../gui/MainWindow.cpp" line="368"/>
-        <location filename="../gui/MainWindow.cpp" line="373"/>
-        <location filename="../gui/MainWindow.cpp" line="378"/>
-        <location filename="../gui/MainWindow.cpp" line="383"/>
+        <location filename="../gui/MainWindow.cpp" line="316"/>
+        <location filename="../gui/MainWindow.cpp" line="367"/>
+        <location filename="../gui/MainWindow.cpp" line="372"/>
+        <location filename="../gui/MainWindow.cpp" line="377"/>
+        <location filename="../gui/MainWindow.cpp" line="382"/>
+        <location filename="../gui/MainWindow.cpp" line="387"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
@@ -5080,12 +5089,12 @@ p, li { white-space: pre-wrap; }
         <translation>クィック スタート ウィザード</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="171"/>
+        <location filename="../gui/MainWindow.cpp" line="172"/>
         <source>Search</source>
         <translation>検索</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="179"/>
+        <location filename="../gui/MainWindow.cpp" line="180"/>
         <source>Files</source>
         <translation>ファイル</translation>
     </message>
@@ -5094,14 +5103,19 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">共用登録簿を加えなさい</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="295"/>
+        <location filename="../gui/MainWindow.cpp" line="296"/>
         <source>Show/Hide</source>
         <translation>表示/非表示</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="310"/>
+        <location filename="../gui/MainWindow.cpp" line="311"/>
         <source>&amp;Quit</source>
         <translation>終了 (&amp;Q)</translation>
+    </message>
+    <message>
+        <location filename="../gui/MainWindow.cpp" line="367"/>
+        <source>You have %1 new message</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.cpp" line="496"/>
@@ -5114,27 +5128,27 @@ p, li { white-space: pre-wrap; }
         <translation>メッセンジャーを開く</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="307"/>
+        <location filename="../gui/MainWindow.cpp" line="308"/>
         <source>Minimize</source>
         <translation>最小化</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="308"/>
+        <location filename="../gui/MainWindow.cpp" line="309"/>
         <source>Maximize</source>
         <translation>最大化</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="204"/>
+        <location filename="../gui/MainWindow.cpp" line="205"/>
         <source>Links Cloud</source>
         <translation>リンク クラウド</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="125"/>
+        <location filename="../gui/MainWindow.cpp" line="124"/>
         <source>RetroShare %1 a secure decentralised communication platform</source>
         <translation>RetroShare %1 セキュアで分散型のコミュニケーション プラットフォーム</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="227"/>
+        <location filename="../gui/MainWindow.cpp" line="228"/>
         <source>Unfinished</source>
         <translation>未完了</translation>
     </message>
@@ -5149,12 +5163,12 @@ p, li { white-space: pre-wrap; }
         <translation>バージョン情報</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="210"/>
+        <location filename="../gui/MainWindow.cpp" line="211"/>
         <source>News Feed</source>
         <translation>ニュース フィード</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="199"/>
+        <location filename="../gui/MainWindow.cpp" line="200"/>
         <source>Forums</source>
         <translation>フォーラム</translation>
     </message>
@@ -5173,7 +5187,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete"> 設定</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="216"/>
+        <location filename="../gui/MainWindow.cpp" line="217"/>
         <source>Plugins</source>
         <translation>プラグイン</translation>
     </message>
@@ -5284,12 +5298,12 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1427"/>
+        <location filename="../gui/MessagesDialog.ui" line="1424"/>
         <source>Size</source>
         <translation>サイズ</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1098"/>
+        <location filename="../gui/MessagesDialog.ui" line="1095"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -5371,44 +5385,44 @@ p, li { white-space: pre-wrap; }
         <translation>送信済</translation>
     </message>
     <message>
+        <location filename="../gui/MessagesDialog.ui" line="1444"/>
         <location filename="../gui/MessagesDialog.ui" line="1447"/>
-        <location filename="../gui/MessagesDialog.ui" line="1450"/>
         <source>Print...</source>
         <translation>印刷...</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1455"/>
+        <location filename="../gui/MessagesDialog.ui" line="1452"/>
         <source>Print Preview</source>
         <translation>印刷プレビュー</translation>
     </message>
     <message>
+        <location filename="../gui/MessagesDialog.ui" line="1457"/>
         <location filename="../gui/MessagesDialog.ui" line="1460"/>
-        <location filename="../gui/MessagesDialog.ui" line="1463"/>
         <source>Buttons Icon Only</source>
         <translation>アイコンのみ</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1468"/>
+        <location filename="../gui/MessagesDialog.ui" line="1465"/>
         <source>Buttons Text Beside Icon</source>
         <translation>アイコンの横にテキスト</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1471"/>
+        <location filename="../gui/MessagesDialog.ui" line="1468"/>
         <source>Buttons with Text</source>
         <translation>テキスト</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1476"/>
+        <location filename="../gui/MessagesDialog.ui" line="1473"/>
         <source>Buttons Text Under Icon</source>
         <translation>アイコンの下にテキスト</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1479"/>
+        <location filename="../gui/MessagesDialog.ui" line="1476"/>
         <source>Set Text Under Icon</source>
         <translation>アイコンの下にテキストを設定</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1484"/>
+        <location filename="../gui/MessagesDialog.ui" line="1481"/>
         <source>Save As...</source>
         <translation>名前をつけて保存...</translation>
     </message>
@@ -5438,12 +5452,12 @@ p, li { white-space: pre-wrap; }
         <translation>ドキュメントを印刷</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1422"/>
+        <location filename="../gui/MessagesDialog.ui" line="1419"/>
         <source>File Name</source>
         <translation>ファイル名</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1432"/>
+        <location filename="../gui/MessagesDialog.ui" line="1429"/>
         <source>Sources</source>
         <translation>ソース</translation>
     </message>
@@ -5570,12 +5584,12 @@ p, li { white-space: pre-wrap; }
         <translation>件名</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1239"/>
+        <location filename="../gui/MessagesDialog.ui" line="1236"/>
         <source>Subject:</source>
         <translation>件名:</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1304"/>
+        <location filename="../gui/MessagesDialog.ui" line="1301"/>
         <source>From:</source>
         <translation></translation>
     </message>
@@ -5584,12 +5598,12 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">日付:</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1369"/>
+        <location filename="../gui/MessagesDialog.ui" line="1366"/>
         <source>To:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1153"/>
+        <location filename="../gui/MessagesDialog.ui" line="1150"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -5600,7 +5614,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;おすすめのファイルをすべてダウンロード&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1437"/>
+        <location filename="../gui/MessagesDialog.ui" line="1434"/>
         <source>Hash</source>
         <translation>ハッシュ</translation>
     </message>
@@ -5702,24 +5716,6 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/MessagesPopupDialog.ui" line="72"/>
         <source>PrintPreview</source>
         <translation>印刷プレビュー</translation>
-    </message>
-    <message>
-        <location filename="../gui/MessagesPopupDialog.cpp" line="129"/>
-        <location filename="../gui/MessagesPopupDialog.cpp" line="134"/>
-        <source>&lt;strong&gt;Unread:&lt;/strong&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/MessagesPopupDialog.cpp" line="141"/>
-        <location filename="../gui/MessagesPopupDialog.cpp" line="146"/>
-        <source>&lt;strong&gt;Inbox:&lt;/strong&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/MessagesPopupDialog.cpp" line="153"/>
-        <location filename="../gui/MessagesPopupDialog.cpp" line="158"/>
-        <source>&lt;strong&gt;Outbox:&lt;/strong&gt;</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8580,8 +8576,12 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/settings/rsettingswin.cpp" line="163"/>
+        <source>Error Saving Configuration on page </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Error Saving Configuration</source>
-        <translation>設定の保存エラー</translation>
+        <translation type="obsolete">設定の保存エラー</translation>
     </message>
 </context>
 <context>
@@ -8804,8 +8804,8 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/SearchDialog.cpp" line="318"/>
         <location filename="../gui/SearchDialog.cpp" line="341"/>
-        <location filename="../gui/SearchDialog.cpp" line="859"/>
-        <location filename="../gui/SearchDialog.cpp" line="989"/>
+        <location filename="../gui/SearchDialog.cpp" line="856"/>
+        <location filename="../gui/SearchDialog.cpp" line="988"/>
         <source>/</source>
         <translation></translation>
     </message>
@@ -9297,40 +9297,117 @@ behind a firewall or a VPN.</source>
     </message>
 </context>
 <context>
+    <name>ShareDialog</name>
+    <message>
+        <location filename="../gui/ShareDialog.ui" line="17"/>
+        <source>RetroShare Share Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ShareDialog.ui" line="92"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:26pt; font-weight:600; color:#ffffff;&quot;&gt;Share Folder&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ShareDialog.ui" line="121"/>
+        <source>Share Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ShareDialog.ui" line="129"/>
+        <source>Local Path</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ShareDialog.ui" line="155"/>
+        <source>Browse</source>
+        <translation type="unfinished">ブラウズ</translation>
+    </message>
+    <message>
+        <location filename="../gui/ShareDialog.ui" line="168"/>
+        <source>Virtual Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ShareDialog.ui" line="180"/>
+        <source>Share Flags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ShareDialog.ui" line="186"/>
+        <source>Anonymous shared Network Wide</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ShareDialog.ui" line="189"/>
+        <source>Anonymous</source>
+        <translation type="unfinished">匿名</translation>
+    </message>
+    <message>
+        <location filename="../gui/ShareDialog.ui" line="196"/>
+        <source>Browseable by Friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ShareDialog.ui" line="199"/>
+        <source>Friends</source>
+        <translation type="unfinished">友達</translation>
+    </message>
+    <message>
+        <location filename="../gui/ShareDialog.ui" line="237"/>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
+    </message>
+    <message>
+        <location filename="../gui/ShareDialog.ui" line="269"/>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ShareDialog.cpp" line="65"/>
+        <source>Select A Folder To Share</source>
+        <translation type="unfinished">共有するフォルダを選択</translation>
+    </message>
+</context>
+<context>
     <name>ShareManager</name>
     <message>
-        <location filename="../gui/ShareManager.cpp" line="56"/>
+        <location filename="../gui/ShareManager.cpp" line="57"/>
         <source>Add a Share Directory</source>
         <translation>共有フォルダを追加</translation>
     </message>
     <message>
-        <location filename="../gui/ShareManager.cpp" line="57"/>
+        <location filename="../gui/ShareManager.cpp" line="58"/>
         <source>Stop sharing selected Directory</source>
         <translation>選択したフォルダの共有を中止</translation>
     </message>
     <message>
-        <location filename="../gui/ShareManager.cpp" line="176"/>
+        <location filename="../gui/ShareManager.cpp" line="177"/>
         <source>Select A Folder To Share</source>
         <translation>共有するフォルダを選択</translation>
     </message>
     <message>
-        <location filename="../gui/ShareManager.cpp" line="229"/>
+        <location filename="../gui/ShareManager.cpp" line="230"/>
         <source>Do you really want to stop sharing this directory ? </source>
         <translation>本当にこのフォルダの共有を中止しますか?</translation>
     </message>
     <message>
         <location filename="../gui/ShareManager.ui" line="234"/>
-        <location filename="../gui/ShareManager.cpp" line="76"/>
+        <location filename="../gui/ShareManager.cpp" line="77"/>
         <source>Remove</source>
         <translation>削除</translation>
     </message>
     <message>
-        <location filename="../gui/ShareManager.cpp" line="233"/>
+        <location filename="../gui/ShareManager.cpp" line="234"/>
         <source>Warning!</source>
         <translation>警告!</translation>
     </message>
     <message>
-        <location filename="../gui/ShareManager.cpp" line="188"/>
+        <location filename="../gui/ShareManager.cpp" line="189"/>
         <source>Shared Directory Added!</source>
         <translation>共有フォルダが追加されました!</translation>
     </message>
@@ -9661,12 +9738,17 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:18pt; color:#55aaff;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.ui" line="595"/>
+        <location filename="../gui/StartDialog.ui" line="633"/>
         <source>Log In</source>
         <translation>ログイン</translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.ui" line="652"/>
+        <location filename="../gui/StartDialog.ui" line="693"/>
+        <source>Remember Password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/StartDialog.ui" line="614"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -9679,7 +9761,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;新規プロファイルを作成...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.ui" line="663"/>
+        <location filename="../gui/StartDialog.ui" line="603"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -9701,19 +9783,33 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">名前 - 場所:</translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.cpp" line="170"/>
+        <location filename="../gui/StartDialog.cpp" line="168"/>
         <source>Login Failure</source>
         <translation>ログインに失敗</translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.cpp" line="171"/>
+        <location filename="../gui/StartDialog.cpp" line="169"/>
         <source>Maybe password is wrong</source>
         <translation>おそらくパスワードが間違っています</translation>
     </message>
     <message>
         <location filename="../gui/StartDialog.cpp" line="182"/>
+        <source>Create a New Profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/StartDialog.cpp" line="213"/>
+        <source>Insecure</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/StartDialog.cpp" line="214"/>
+        <source>Auto Login is not Secure: Password stored on disk</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Create a New Profil</source>
-        <translation>プロファイルを新規作成</translation>
+        <translation type="obsolete">プロファイルを新規作成</translation>
     </message>
     <message>
         <location filename="../gui/StartDialog.cpp" line="183"/>
@@ -9846,7 +9942,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/unfinished/StatisticDialog.ui" line="930"/>
-        <location filename="../gui/unfinished/StatisticDialog.cpp" line="270"/>
+        <location filename="../gui/unfinished/StatisticDialog.cpp" line="261"/>
         <source>Show Settings</source>
         <translation>設定を表示</translation>
     </message>
@@ -9896,24 +9992,21 @@ p, li { white-space: pre-wrap; }
         <translation>キャンセル </translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/StatisticDialog.cpp" line="266"/>
+        <location filename="../gui/unfinished/StatisticDialog.cpp" line="257"/>
         <source>Hide Settings</source>
         <translation>設定を非表示</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/StatisticDialog.cpp" line="302"/>
         <source>%1 KIB</source>
-        <translation type="unfinished">%1 KB</translation>
+        <translation type="obsolete">%1 KB</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/StatisticDialog.cpp" line="305"/>
         <source>%1 MIB</source>
-        <translation type="unfinished">%1 MB</translation>
+        <translation type="obsolete">%1 MB</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/StatisticDialog.cpp" line="308"/>
         <source>%1 GIB</source>
-        <translation type="unfinished">%1 GB</translation>
+        <translation type="obsolete">%1 GB</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/StatisticDialog.cpp" line="126"/>
@@ -10079,7 +10172,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TBoard</name>
     <message>
-        <location filename="../gui/AboutDialog.cpp" line="407"/>
+        <location filename="../gui/AboutDialog.cpp" line="430"/>
         <source>Pause</source>
         <translation>ポーズ</translation>
     </message>
@@ -10396,7 +10489,7 @@ p, li { white-space: pre-wrap; }
         <translation>ハッシュ</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="255"/>
+        <location filename="../gui/TransfersDialog.cpp" line="254"/>
         <source>Play</source>
         <translation>再生</translation>
     </message>
@@ -10436,32 +10529,31 @@ p, li { white-space: pre-wrap; }
         <translation>Retoroshare リンクをコピー</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="235"/>
+        <location filename="../gui/TransfersDialog.cpp" line="234"/>
         <source>Paste retroshare Link</source>
         <translation>Retoroshare リンクを貼り付け</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="316"/>
         <source>View</source>
-        <translation type="unfinished">表示</translation>
+        <translation type="obsolete">表示</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="237"/>
+        <location filename="../gui/TransfersDialog.cpp" line="236"/>
         <source>Down</source>
         <translation>下へ</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="239"/>
+        <location filename="../gui/TransfersDialog.cpp" line="238"/>
         <source>Up</source>
         <translation>上へ</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="241"/>
+        <location filename="../gui/TransfersDialog.cpp" line="240"/>
         <source>Top</source>
         <translation>先頭</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="243"/>
+        <location filename="../gui/TransfersDialog.cpp" line="242"/>
         <source>Bottom</source>
         <translation>末尾</translation>
     </message>
@@ -10470,52 +10562,52 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">キューで移動...</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="325"/>
+        <location filename="../gui/TransfersDialog.cpp" line="315"/>
         <source>Priority (Speed)...</source>
         <translation>優先度 (速度)...</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="245"/>
+        <location filename="../gui/TransfersDialog.cpp" line="244"/>
         <source>Streaming</source>
         <translation>ストリーミング</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="253"/>
+        <location filename="../gui/TransfersDialog.cpp" line="252"/>
         <source>Random</source>
         <translation>ランダム</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="331"/>
+        <location filename="../gui/TransfersDialog.cpp" line="321"/>
         <source>Chunk strategy</source>
         <translation>チャンクの方針</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="693"/>
+        <location filename="../gui/TransfersDialog.cpp" line="675"/>
         <source>Queued</source>
         <translation>キュー済</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="946"/>
+        <location filename="../gui/TransfersDialog.cpp" line="875"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="1038"/>
+        <location filename="../gui/TransfersDialog.cpp" line="967"/>
         <source>Details:</source>
         <translation>詳細:</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="1259"/>
+        <location filename="../gui/TransfersDialog.cpp" line="1188"/>
         <source>Open Transfer</source>
         <translation>転送を開く</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="1260"/>
+        <location filename="../gui/TransfersDialog.cpp" line="1189"/>
         <source>File %1 is not completed. If it is a media file, try to preview it.</source>
         <translation>ファイル %1 は完了していません. もしそれがメディア ファイルならプレビューを試みてください.</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="944"/>
+        <location filename="../gui/TransfersDialog.cpp" line="873"/>
         <source>Are you sure that you want to cancel and delete these files?</source>
         <translation>本当にこれらのファイルをキャンセルして削除しますか?</translation>
     </message>
@@ -10542,84 +10634,84 @@ p, li { white-space: pre-wrap; }
         <translation>ピア</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="247"/>
-        <location filename="../gui/TransfersDialog.cpp" line="705"/>
+        <location filename="../gui/TransfersDialog.cpp" line="246"/>
+        <location filename="../gui/TransfersDialog.cpp" line="687"/>
         <source>Slower</source>
         <translation>遅く</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="249"/>
-        <location filename="../gui/TransfersDialog.cpp" line="706"/>
-        <location filename="../gui/TransfersDialog.cpp" line="708"/>
+        <location filename="../gui/TransfersDialog.cpp" line="248"/>
+        <location filename="../gui/TransfersDialog.cpp" line="688"/>
+        <location filename="../gui/TransfersDialog.cpp" line="690"/>
         <source>Average</source>
         <translation>平均</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="251"/>
-        <location filename="../gui/TransfersDialog.cpp" line="707"/>
+        <location filename="../gui/TransfersDialog.cpp" line="250"/>
+        <location filename="../gui/TransfersDialog.cpp" line="689"/>
         <source>Faster</source>
         <translation>速く</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="318"/>
+        <location filename="../gui/TransfersDialog.cpp" line="308"/>
         <source>Move in Queue...</source>
         <translation>キュー内で移動...</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="688"/>
-        <location filename="../gui/TransfersDialog.cpp" line="750"/>
-        <location filename="../gui/TransfersDialog.cpp" line="851"/>
+        <location filename="../gui/TransfersDialog.cpp" line="557"/>
+        <location filename="../gui/TransfersDialog.cpp" line="670"/>
+        <location filename="../gui/TransfersDialog.cpp" line="794"/>
         <source>Failed</source>
         <translation>失敗</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="689"/>
-        <location filename="../gui/TransfersDialog.cpp" line="751"/>
-        <location filename="../gui/TransfersDialog.cpp" line="852"/>
+        <location filename="../gui/TransfersDialog.cpp" line="561"/>
+        <location filename="../gui/TransfersDialog.cpp" line="671"/>
+        <location filename="../gui/TransfersDialog.cpp" line="795"/>
         <source>Okay</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="690"/>
-        <location filename="../gui/TransfersDialog.cpp" line="853"/>
+        <location filename="../gui/TransfersDialog.cpp" line="672"/>
+        <location filename="../gui/TransfersDialog.cpp" line="796"/>
         <source>Waiting</source>
         <translation>待機中</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="691"/>
+        <location filename="../gui/TransfersDialog.cpp" line="673"/>
         <source>Downloading</source>
         <translation>ダウンロード中</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="692"/>
-        <location filename="../gui/TransfersDialog.cpp" line="754"/>
-        <location filename="../gui/TransfersDialog.cpp" line="855"/>
-        <location filename="../gui/TransfersDialog.cpp" line="856"/>
+        <location filename="../gui/TransfersDialog.cpp" line="573"/>
+        <location filename="../gui/TransfersDialog.cpp" line="674"/>
+        <location filename="../gui/TransfersDialog.cpp" line="798"/>
+        <location filename="../gui/TransfersDialog.cpp" line="799"/>
         <source>Complete</source>
         <translation>完了</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="694"/>
+        <location filename="../gui/TransfersDialog.cpp" line="676"/>
         <source>Paused</source>
         <translation>ポーズ</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="695"/>
+        <location filename="../gui/TransfersDialog.cpp" line="677"/>
         <source>Unknown</source>
         <translation>不明</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="745"/>
+        <location filename="../gui/TransfersDialog.cpp" line="724"/>
         <source>version: </source>
         <translation>バージョン:</translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="753"/>
+        <location filename="../gui/TransfersDialog.cpp" line="569"/>
         <source>Transferring</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="854"/>
+        <location filename="../gui/TransfersDialog.cpp" line="797"/>
         <source>Uploading</source>
         <translation>アップロード中</translation>
     </message>
