@@ -32,6 +32,12 @@
 #include "pqi/pqihash.h"
 #include <stdio.h>
 
+
+//! handles writing to binary files
+/*!
+ * This allows for handling of binary file within Rs, In particular writing
+ * binary data to file declared in constructor
+ */
 class BinFileInterface: public BinInterface
 {
 public:
@@ -72,7 +78,11 @@ private:
 	uint64_t bcount;
 };
 
-
+//! handles writing to reading/writing to memory
+/*!
+ * This provide a memory interface for storing information in memory
+ * to be sent/read elsewhere
+ */
 class BinMemInterface: public BinInterface
 {
 public:
