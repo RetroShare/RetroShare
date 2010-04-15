@@ -69,7 +69,8 @@
 /* Images for Status icons */
 #define IMAGE_ONLINE             ":/images/im-user.png"
 #define IMAGE_OFFLINE            ":/images/im-user-offline.png"
-
+#define IMAGE_AWAY             ":/images/im-user-away.png"
+#define IMAGE_BUSY            ":/images/im-user-busy.png"
 
 /******
  * #define MSG_DEBUG 1
@@ -112,8 +113,12 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
   connect( ui.actionHide_Offline_Friends, SIGNAL(triggered()), this, SLOT(insertPeers()));
   
   connect(ui.messagelineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(savestatusmessage()));
-  //connect(ui.statuscomboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(savestatus()));
-  
+  connect(ui.statuscomboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(savestatus()));
+
+  QTimer *timer = new QTimer(this);
+  timer->connect(timer, SIGNAL(timeout()), this, SLOT(sendStatus()));
+  timer->start(5000); /* five seconds */
+
 	/* to hide the header  */
 	ui.messengertreeWidget->header()->hide(); 
  
@@ -147,7 +152,7 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
   updateAvatar();
   loadmystatusmessage();
   
-  //loadstatus();
+  loadstatus();
   
   displayMenu();
   updateMessengerDisplay();
@@ -446,11 +451,36 @@ void  MessengerWindow::insertPeers()
                 }
             }
 
+            std::list<StatusInfo> statusInfo;
+            rsStatus->getStatus(statusInfo);
+            RsPeerDetails ssl_details;
+
             int i = 0;
             if (gpg_connected) {
                 gpg_item->setHidden(false);
-                gpg_item -> setIcon(0,(QIcon(IMAGE_ONLINE)));
-                gpg_item -> setText(1, tr("Online"));
+                gpg_item -> setText(1, tr("Online")); // set to online regardless on update
+
+                std::list<StatusInfo>::iterator it = statusInfo.begin();
+
+                for(; it  != statusInfo.end(); it++){
+                	rsPeers->getPeerDetails(it->id, ssl_details);
+                	if(detail.id == ssl_details.gpg_id){
+                		std::string status;
+                		rsStatus->getStatusString(it->status, status);
+                		gpg_item -> setText(1, QString::fromStdString(status));
+
+                		if(it->status == RS_STATUS_ONLINE)
+                			 gpg_item -> setIcon(0,(QIcon(IMAGE_ONLINE)));
+                		else
+                			if(it->status == RS_STATUS_AWAY)
+                				gpg_item -> setIcon(0,(QIcon(IMAGE_AWAY)));
+                			else
+								if(it->status == RS_STATUS_BUSY)
+									gpg_item -> setIcon(0,(QIcon(IMAGE_BUSY)));
+
+                	}
+                }
+
                                 
                 QFont font;
                 font.setBold(true);
@@ -543,48 +573,12 @@ void MessengerWindow::chatfriend()
     QTreeWidgetItem *i = getCurrentPeer();
 
     if (!i)
-	return;
-
-    //std::string name = (i -> text(2)).toStdString();
-    std::string id = (i -> text(3)).toStdString();
-
-    bool oneLocationConnected = false;
-
-    RsPeerDetails detail;
-    if (!rsPeers->getPeerDetails(id, detail)) {
     	return;
-    }
 
-    if (detail.isOnlyGPGdetail) {
-        //let's get the ssl child details, and open all the chat boxes
-        std::list<std::string> sslIds;
-        rsPeers->getSSLChildListOfGPGId(detail.gpg_id, sslIds);
-        for (std::list<std::string>::iterator it = sslIds.begin(); it != sslIds.end(); it++) {
-            RsPeerDetails sslDetails;
-            if (rsPeers->getPeerDetails(*it, sslDetails)) {
-                if (sslDetails.state & RS_PEER_STATE_CONNECTED) {
-                    oneLocationConnected = true;
-                    getPrivateChat(*it, sslDetails.name + " - " + sslDetails.location, RS_CHAT_REOPEN);
-                }
-            }
-        }
-    } else {
-        if (detail.state & RS_PEER_STATE_CONNECTED) {
-            oneLocationConnected = true;
-            getPrivateChat(id, detail.name + " - " + detail.location, RS_CHAT_REOPEN);
-        }
-    }
+    emit startChat(i);
 
-    if (!oneLocationConnected) {
-    	/* info dialog */
-    	if ((QMessageBox::question(this, tr("Friend Not Online"),tr("Your Friend is offline \nDo you want to send them a Message instead"),QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
-      {
-        sendMessage();
-      }
-
-    }
-    return;
 }
+
 
 QTreeWidgetItem *MessengerWindow::getCurrentPeer()
 {
@@ -943,10 +937,19 @@ void MessengerWindow::loadstatus()
 	}
 		
 	StatusInfo si;
-	if (!rsStatus->getStatus(ownId, si))
+	std::list<StatusInfo> statusList;
+	std::list<StatusInfo>::iterator it;
+
+	if (!rsStatus->getStatus(statusList))
 	{
 		return;
 	}
+
+	for(it=statusList.begin();  it != statusList.end(); it++){
+		if(it->id == ownId)
+			si = *it;
+	}
+
 
 	/* set status mode */
 	int statusIndex = 0;
@@ -1011,7 +1014,7 @@ void MessengerWindow::savestatus()
   si.id = ownId;
 	si.status = status;
 
-	rsStatus->setStatus(si);
+	rsStatus->sendStatus(si);
 	
 	//rsiface->unlockData(); /* UnLock Interface */
 

@@ -41,6 +41,7 @@
 #include "rsiface/rsmsgs.h"
 #include "rsiface/rsfiles.h"
 
+
 #include "gui/feeds/AttachFileItem.h"
 #include <time.h>
 
@@ -342,6 +343,7 @@ void PopupChatDialog::checkChat()
 		sendChat();
 	else
 		updateStatusTyping() ;
+
 }
 
 

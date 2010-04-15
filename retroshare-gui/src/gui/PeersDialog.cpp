@@ -103,7 +103,8 @@ PeersDialog::PeersDialog(QWidget *parent)
 
 
   connect( ui.peertreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( peertreeWidgetCostumPopupMenu( QPoint ) ) );
-  connect( ui.peertreeWidget, SIGNAL( itemDoubleClicked ( QTreeWidgetItem *, int)), this, SLOT(chatfriend()));
+  connect( ui.peertreeWidget, SIGNAL( itemDoubleClicked ( QTreeWidgetItem *, int)), this, SLOT(chatfriend(QTreeWidgetItem *)));
+  connect( this , SIGNAL( startChat( QTreeWidgetItem *) ), this, SLOT(chatfriend(QTreeWidgetItem *)));
 
   connect( ui.avatartoolButton, SIGNAL(clicked()), SLOT(getAvatar()));
   connect( ui.mypersonalstatuslabel, SIGNAL(clicked()), SLOT(statusmessage()));
@@ -250,7 +251,7 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
       connect( collapseAll , SIGNAL( triggered() ), ui.peertreeWidget, SLOT(collapseAll()) );
 
       chatAct = new QAction(QIcon(IMAGE_CHAT), tr( "Chat" ), this );
-      connect( chatAct , SIGNAL( triggered() ), this, SLOT( chatfriend() ) );
+      connect( chatAct , SIGNAL( triggered() ), this, SLOT( chatfriendproxy() ) );
 
       msgAct = new QAction(QIcon(IMAGE_MSG), tr( "Message Friend" ), this );
       connect( msgAct , SIGNAL( triggered() ), this, SLOT( msgfriend() ) );
@@ -614,15 +615,27 @@ void PeersDialog::exportfriend()
 
 }
 
-void PeersDialog::chatfriend()
-{
-    QTreeWidgetItem *i = getCurrentPeer();
+void PeersDialog::chatfriendproxy(){
 
-    if (!i)
+	QTreeWidgetItem* i = getCurrentPeer();
+
+	if(!i)
+		return;
+
+	emit startChat(i);
 	return;
+}
+
+void PeersDialog::chatfriend(QTreeWidgetItem* currPeer)
+{
+ //   QTreeWidgetItem *currPeer = getCurrentPeer();
+
+    if (!currPeer){
+    	return;
+    }
 
     //std::string name = (i -> text(2)).toStdString();
-    std::string id = (i -> text(3)).toStdString();
+    std::string id = (currPeer -> text(3)).toStdString();
 
     bool oneLocationConnected = false;
 
@@ -745,7 +758,7 @@ void PeersDialog::removefriend()
 	if (!c)
 	{
 #ifdef PEERS_DEBUG
-        	std::cerr << "PeersDialog::removefriend() Noone Selected -- sorry" << std::endl;
+        	std::cerr << "PeersDialog::removefriend() None Selected -- sorry" << std::endl;
 #endif
 		return;
 	}

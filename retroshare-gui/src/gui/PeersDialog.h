@@ -102,7 +102,8 @@ private slots:
 		/** Remove friend  */
 		void removefriend();
 		/** start a chat with a friend **/
-		void chatfriend();
+		void chatfriend(QTreeWidgetItem* );
+		void chatfriendproxy();
 		void msgfriend();
 
 		void configurefriend();
@@ -142,6 +143,7 @@ private slots:
 signals:
 		void friendsUpdated() ;
 		void notifyGroupChat(const QString&,const QString&) ;
+		void startChat(QTreeWidgetItem* );
 
 private:
 		class QLabel *iconLabel, *textLabel;

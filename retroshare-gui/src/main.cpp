@@ -167,6 +167,7 @@ int main(int argc, char *argv[])
 	QObject::connect(w->peersDialog,SIGNAL(friendsUpdated()),w->networkDialog,SLOT(insertConnect())) ;
 	QObject::connect(w->peersDialog,SIGNAL(notifyGroupChat(const QString&,const QString&)),w,SLOT(displaySystrayMsg(const QString&,const QString&)),Qt::QueuedConnection) ;
 
+	QObject::connect(w->messengerWindow,SIGNAL(startChat(QTreeWidgetItem* )),w->peersDialog,SLOT(chatfriend(QTreeWidgetItem* ))) ;
 	/* only show window, if not startMinimized */
 	RshareSettings  *_settings = new RshareSettings();
 

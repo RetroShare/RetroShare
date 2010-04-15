@@ -107,7 +107,7 @@ stop: 0.9 #4c4c4c, stop: 1 #333333);
            <item row="1" column="0">
             <widget class="QComboBox" name="statuscomboBox">
              <property name="enabled">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
              <property name="toolTip">
               <string>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -403,7 +403,7 @@ stop:0 #FEFEFE, stop:1 #E8E8E8);
      <x>0</x>
      <y>0</y>
      <width>295</width>
-     <height>21</height>
+     <height>27</height>
     </rect>
    </property>
   </widget>

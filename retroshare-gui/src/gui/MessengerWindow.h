@@ -109,6 +109,7 @@ private slots:
 
 signals:
 		void friendsUpdated() ;
+		void startChat(QTreeWidgetItem* );
   
 private:
 

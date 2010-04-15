@@ -211,7 +211,7 @@ void StartDialog::notSecureWarning() {
 		if(ui.autologin_checkbox->isChecked()){
             QMessageBox::StandardButton sb = QMessageBox::warning ( NULL,
                             tr("Insecure"),
-                            tr("Auto Login is not Secure: Password stored on disk"),
+                            tr("Auto-Login is not Secure \n It can be disabled in General Settings"),
 			QMessageBox::Ok);
 		}
 
