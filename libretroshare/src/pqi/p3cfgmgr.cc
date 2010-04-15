@@ -60,7 +60,7 @@ void	p3ConfigMgr::tick()
 		if (it->second->HasConfigChanged(0))
 		{
 
-#ifdef CONFIG_DEBUG 
+#ifdef CONFIG_DEBUG
 			std::cerr << "p3ConfigMgr::tick() Config Changed - Element: ";
 			std::cerr << it->first;
 			std::cerr << std::endl;
@@ -88,7 +88,7 @@ void	p3ConfigMgr::saveConfiguration()
 {
 	RsStackMutex stack(cfgMtx); /***** LOCK STACK MUTEX ****/
 
-#ifdef CONFIG_DEBUG 
+#ifdef CONFIG_DEBUG
 	std::cerr << "p3ConfigMgr::saveConfiguration()";
 	std::cerr << std::endl;
 #endif
@@ -100,7 +100,7 @@ void	p3ConfigMgr::saveConfiguration()
 	{
 		if (it->second->HasConfigChanged(1))
 		{
-#ifdef CONFIG_DEBUG 
+#ifdef CONFIG_DEBUG
 			std::cerr << "p3ConfigMgr::saveConfiguration() Saving Element: ";
 			std::cerr << it->first;
 			std::cerr << std::endl;
@@ -109,7 +109,7 @@ void	p3ConfigMgr::saveConfiguration()
 		}
 		/* save metaconfig */
 
-#ifdef CONFIG_DEBUG 
+#ifdef CONFIG_DEBUG
 		std::cerr << "p3ConfigMgr::saveConfiguration() Element: ";
 		std::cerr << it->first << " Hash: " << it->second->Hash();
 		std::cerr << std::endl;
@@ -130,7 +130,7 @@ void	p3ConfigMgr::saveConfiguration()
 		item->tlvkvs.pairs.push_back(kv);
 	}
 
-#ifdef CONFIG_DEBUG 
+#ifdef CONFIG_DEBUG
 	std::cerr << "p3ConfigMgr::saveConfiguration() Complete MetaConfigItem: ";
 	std::cerr << std::endl;
 	item->print(std::cerr, 20);
@@ -169,7 +169,7 @@ void	p3ConfigMgr::saveConfiguration()
     BinMemInterface *signbio = new BinMemInterface(signature.c_str(),
     		signature.length(), BIN_FLAGS_READABLE);
 
-#ifdef CONFIG_DEBUG 
+#ifdef CONFIG_DEBUG
 	std::cerr << "p3ConfigMgr::saveConfiguration() MetaFile Signature:";
 	std::cerr << std::endl;
 	std::cerr << signature;
@@ -288,7 +288,7 @@ void	p3ConfigMgr::loadConfiguration()
 {
 	RsStackMutex stack(cfgMtx); /***** LOCK STACK MUTEX ****/
 
-#ifdef CONFIG_DEBUG 
+#ifdef CONFIG_DEBUG
 	std::cerr << "p3ConfigMgr::loadConfiguration()";
 	std::cerr << std::endl;
 #endif
@@ -351,7 +351,7 @@ void	p3ConfigMgr::loadConfiguration()
 		return;
 	}
 
-#ifdef CONFIG_DEBUG 
+#ifdef CONFIG_DEBUG
 	std::cerr << "p3ConfigMgr::loadConfiguration() Loaded MetaConfigItem: ";
 	std::cerr << std::endl;
 	item->print(std::cerr, 20);
@@ -381,7 +381,7 @@ void	p3ConfigMgr::loadConfiguration()
 		cit = configs.find(confId);
 		if (cit != configs.end())
 		{
-#ifdef CONFIG_DEBUG 
+#ifdef CONFIG_DEBUG
 			std::cerr << "p3ConfigMgr::loadConfiguration() Element: ";
 			std::cerr << confId << " Hash: " << hashin;
 			std::cerr << std::endl;
@@ -395,7 +395,7 @@ void	p3ConfigMgr::loadConfiguration()
 
 	delete item;
 
-#ifdef CONFIG_DEBUG 
+#ifdef CONFIG_DEBUG
 	std::cerr << "p3ConfigMgr::loadConfiguration() Done!";
 	std::cerr << std::endl;
 #endif
@@ -587,7 +587,7 @@ bool p3Config::getHashAttempt(const std::string& loadHash, std::string& hashstr,
 
 	while(NULL != (item = stream.GetItem()))
 	{
-#ifdef CONFIG_DEBUG 
+#ifdef CONFIG_DEBUG
 		std::cerr << "p3Config::loadConfiguration() loaded item:";
 		std::cerr << std::endl;
 		item->print(std::cerr, 0);
@@ -596,7 +596,7 @@ bool p3Config::getHashAttempt(const std::string& loadHash, std::string& hashstr,
 		load.push_back(item);
 	}
 
-#ifdef CONFIG_DEBUG 
+#ifdef CONFIG_DEBUG
 	std::cerr << "p3Config::loadConfiguration() loaded " << load.size();
 	std::cerr << " Elements from File: " << cfg_fname;
 	std::cerr << std::endl;
@@ -609,7 +609,7 @@ bool p3Config::getHashAttempt(const std::string& loadHash, std::string& hashstr,
 	if (hashstr != loadHash)
 	{
 
-#ifdef CONFIG_DEBUG 
+#ifdef CONFIG_DEBUG
 		std::cerr << "p3Config::loadConfiguration() ERROR: Hash != MATCHloaded";
 		std::cerr << std::endl;
 #endif
@@ -639,7 +639,7 @@ bool	p3Config::saveConfiguration()
 	std::string cfg_fname = Filename(); // get configuration file name
 	std::string cfg_fname_backup = Filename()+".tmp"; // backup file for two pass save
 
-#ifdef CONFIG_DEBUG 
+#ifdef CONFIG_DEBUG
         std::cerr << "Writting p3config file " << cfg_fname << std::endl ;
         std::cerr << "p3Config::saveConfiguration() toSave " << toSave.size();
 	std::cerr << " Elements to File: " << cfg_fname;
@@ -790,7 +790,7 @@ p3GeneralConfig::p3GeneralConfig()
 		// General Configuration System
 std::string     p3GeneralConfig::getSetting(std::string opt)
 {
-#ifdef CONFIG_DEBUG 
+#ifdef CONFIG_DEBUG
 	std::cerr << "p3GeneralConfig::getSetting(" << opt << ")";
 	std::cerr << std::endl;
 #endif
@@ -808,7 +808,7 @@ std::string     p3GeneralConfig::getSetting(std::string opt)
 
 void            p3GeneralConfig::setSetting(std::string opt, std::string val)
 {
-#ifdef CONFIG_DEBUG 
+#ifdef CONFIG_DEBUG
 	std::cerr << "p3GeneralConfig::setSetting(" << opt << " = " << val << ")";
 	std::cerr << std::endl;
 #endif
@@ -845,7 +845,7 @@ std::list<RsItem *> p3GeneralConfig::saveList(bool &cleanup)
 {
 	RsStackMutex stack(cfgMtx); /***** LOCK STACK MUTEX ****/
 
-#ifdef CONFIG_DEBUG 
+#ifdef CONFIG_DEBUG
 	std::cerr << "p3GeneralConfig::saveList() KV sets: " << settings.size();
 	std::cerr << std::endl;
 #endif
@@ -878,10 +878,10 @@ std::list<RsItem *> p3GeneralConfig::saveList(bool &cleanup)
 	return savelist;
 }
 
-		
+
 bool    p3GeneralConfig::loadList(std::list<RsItem *> load)
 {
-#ifdef CONFIG_DEBUG 
+#ifdef CONFIG_DEBUG
 	std::cerr << "p3GeneralConfig::loadList() count: " << load.size();
 	std::cerr << std::endl;
 #endif
@@ -898,7 +898,7 @@ bool    p3GeneralConfig::loadList(std::list<RsItem *> load)
 		item = dynamic_cast<RsConfigKeyValueSet *>(*it);
 		if (item)
 		{
-			for(kit = item->tlvkvs.pairs.begin(); 
+			for(kit = item->tlvkvs.pairs.begin();
 				kit != item->tlvkvs.pairs.end(); kit++)
 			{
 				settings[kit->key] = kit->value;
@@ -915,7 +915,7 @@ bool    p3GeneralConfig::loadList(std::list<RsItem *> load)
 
 
 /**** MUTEX NOTE:
- * have protected all, but think that 
+ * have protected all, but think that
  * only the Indication and hash really need it
  */
 
@@ -926,49 +926,49 @@ pqiConfig::pqiConfig(uint32_t t)
 }
 
 pqiConfig::~pqiConfig()
-{ 
-	return; 
+{
+	return;
 }
 
-uint32_t   pqiConfig::Type()      
-{ 
+uint32_t   pqiConfig::Type()
+{
 	RsStackMutex stack(cfgMtx); /***** LOCK STACK MUTEX ****/
-	return type;     
+	return type;
 }
 
-std::string pqiConfig::Filename() 
-{ 
+std::string pqiConfig::Filename()
+{
 	RsStackMutex stack(cfgMtx); /***** LOCK STACK MUTEX ****/
-	return filename; 
-}	
-
-std::string pqiConfig::Hash()     
-{ 
-	RsStackMutex stack(cfgMtx); /***** LOCK STACK MUTEX ****/
-	return hash;     
+	return filename;
 }
 
-void	pqiConfig::IndicateConfigChanged() 
-{ 
+std::string pqiConfig::Hash()
+{
 	RsStackMutex stack(cfgMtx); /***** LOCK STACK MUTEX ****/
-	ConfInd.IndicateChanged(); 
+	return hash;
 }
 
-bool	pqiConfig::HasConfigChanged(uint16_t idx)     
-{ 
+void	pqiConfig::IndicateConfigChanged()
+{
 	RsStackMutex stack(cfgMtx); /***** LOCK STACK MUTEX ****/
-	return  ConfInd.Changed(idx); 
+	ConfInd.IndicateChanged();
 }
 
-void    pqiConfig::setFilename(std::string name) 
-{ 
+bool	pqiConfig::HasConfigChanged(uint16_t idx)
+{
 	RsStackMutex stack(cfgMtx); /***** LOCK STACK MUTEX ****/
-	filename = name; 
+	return  ConfInd.Changed(idx);
 }
 
-void	pqiConfig::setHash(std::string h) 
-{ 
+void    pqiConfig::setFilename(std::string name)
+{
 	RsStackMutex stack(cfgMtx); /***** LOCK STACK MUTEX ****/
-	hash = h; 
+	filename = name;
+}
+
+void	pqiConfig::setHash(std::string h)
+{
+	RsStackMutex stack(cfgMtx); /***** LOCK STACK MUTEX ****/
+	hash = h;
 }
 

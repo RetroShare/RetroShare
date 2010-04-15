@@ -76,7 +76,7 @@ const uint32_t CONFIG_TYPE_FT_EXTRA_LIST= 0x0008;
 const uint32_t CONFIG_TYPE_FT_CONTROL 	 = 0x0009;
 const uint32_t CONFIG_TYPE_FT_DWLQUEUE	 = 0x000A;
 
-/* turtle router */
+/// turtle router
 const uint32_t CONFIG_TYPE_TURTLE	 	 = 0x0020;
 
 /* wish these ids where higher...
@@ -84,6 +84,7 @@ const uint32_t CONFIG_TYPE_TURTLE	 	 = 0x0020;
  */
 const uint32_t CONFIG_TYPE_RANK_LINK 	 = 0x0011;
 const uint32_t CONFIG_TYPE_CHAT 	       = 0x0012;
+const uint32_t CONFIG_TYPE_STATUS 		 = 0x0013;
 
 /* standard services */
 const uint32_t CONFIG_TYPE_QBLOG 	= 0x0101;
@@ -98,6 +99,8 @@ const uint32_t CONFIG_TYPE_CACHE 	= 0xff01;
 class p3ConfigMgr;
 
 
+
+//! abstract class for configuration saving
 /*!
  * Aim is that active objects in retroshare can dervie from this class
  * and implement their method of saving and loading their configuration
@@ -109,12 +112,15 @@ class pqiConfig
 virtual ~pqiConfig();
 
 /**
- * loadHash This is the hash that will be compared to confirm saved configuration has not
+ * loads configuration of object
+ * @param loadHash This is the hash that will be compared to confirm saved configuration has not
  * been tampered with
  */
 virtual bool	loadConfiguration(std::string &loadHash) = 0;
 
-
+/**
+ * save configuration of object
+ */
 virtual bool	saveConfiguration() = 0;
 
 /**
@@ -181,6 +187,12 @@ void	setHash(std::string h);
 class p3ConfigMgr
 {
 	public:
+
+		/**
+		 * @param bdir base directory: where config files will be saved
+		 * @param fname file name for global configuration
+		 * @param signame file name for global signature
+		 */
         p3ConfigMgr(std::string bdir, std::string fname, std::string signame);
 
         /**
@@ -191,11 +203,12 @@ class p3ConfigMgr
 
         /**
          * save all added configuation including configuration files
+         * creates global signature file
          */
         void	saveConfiguration();
 
         /**
-         * save all loaded configurations
+         * loads all configurations
          */
         void	loadConfiguration();
 
@@ -244,6 +257,12 @@ std::map<uint32_t, pqiConfig *> configs;
 
 /***************************************************************************************************/
 
+
+//! abstract class for configuration saving, aimed at rs services that uses RsItem config data
+/*!
+ * The aim of this class is to provide a way for rs services and object to save particular
+ * configurations an items (and load them up as well).
+ */
 class p3Config: public pqiConfig
 {
 	public:
@@ -257,8 +276,19 @@ virtual bool	saveConfiguration();
 
 	/* Key Functions to be overloaded for Full Configuration */
 virtual RsSerialiser *setupSerialiser() = 0;
+
+/**
+ * saves list of derived object
+ * @return list of config items derived object wants to saves
+ */
 virtual std::list<RsItem *> saveList(bool &cleanup) = 0;
+
+/**
+ * loads up list of configs items for derived object
+ * @param load list of config items to load up
+ */
 virtual bool	loadList(std::list<RsItem *> load) = 0;
+
 /**
  * callback for mutex unlocking
  * in derived classes (should only be needed if cleanup = false)
