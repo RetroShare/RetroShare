@@ -66,7 +66,7 @@ virtual int	close();
 virtual bool 	cansend() { return (bin_flags | BIN_FLAGS_WRITEABLE);   }
 virtual bool    bandwidthLimited() { return false; }
 
-	/* if HASHing is switched on */
+//! if HASHing is switched on
 virtual std::string gethash();
 virtual uint64_t bytecount();
 
@@ -80,8 +80,8 @@ private:
 
 //! handles writing to reading/writing to memory
 /*!
- * This provide a memory interface for storing information in memory
- * to be sent/read elsewhere
+ * This provide a memory interface for storing/retrieving information in memory
+ * to be read/sent elsewhere
  */
 class BinMemInterface: public BinInterface
 {
