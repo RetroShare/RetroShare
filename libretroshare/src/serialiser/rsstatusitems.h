@@ -26,8 +26,6 @@
  *
  */
 
-#include <map>
-
 #include "serialiser/rsserviceids.h"
 #include "serialiser/rsserial.h"
 

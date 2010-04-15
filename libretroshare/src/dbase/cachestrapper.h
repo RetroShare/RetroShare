@@ -146,7 +146,8 @@ virtual ~CacheSource() {}
 	 */
 virtual bool 	cachesAvailable(RsPeerId pid, std::map<CacheId, CacheData> &ids);
 
-	/* function called at startup to load from 
+	/*!
+	 * function called at startup to load from
 	 * configuration file....
 	 * to be overloaded by inherited class 
 	 */

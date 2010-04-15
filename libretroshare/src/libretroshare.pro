@@ -16,7 +16,7 @@ debug {
 #	DEFINES *= NET_DEBUG
 #	DEFINES *= DISTRIB_DEBUG
 #	DEFINES *= P3TURTLE_DEBUG FT_DEBUG DEBUG_FTCHUNK MPLEX_DEBUG
-#	DEFINES *= CONN_DEBUG
+#	DEFINES *= STATUS_DEBUG SERV_DEBUG RSSERIAL_DEBUG #CONN_DEBUG 
 
         QMAKE_CXXFLAGS -= -fomit-frame-pointer
         QMAKE_CXXFLAGS *= -g -fno-omit-frame-pointer
@@ -238,6 +238,7 @@ HEADERS += dbase/cachestrapper.h \
            rsserver/p3peers.h \
            rsserver/p3photo.h \
            rsserver/p3rank.h \
+           rsserver/p3status.h \
            serialiser/rsbaseitems.h \
            serialiser/rsbaseserial.h \
            serialiser/rschannelitems.h \
@@ -275,7 +276,7 @@ HEADERS += dbase/cachestrapper.h \
            services/p3blogs.h \
            services/p3ranking.h \
            services/p3service.h \
-           services/p3status.h \
+           services/p3statusservice.h \
 	   turtle/p3turtle.h \
 	   turtle/turtletypes.h \
 	   turtle/rsturtleitem.h \
@@ -312,6 +313,7 @@ SOURCES += \
 				rsserver/p3photo.cc \
 				rsserver/p3rank.cc \
 				rsserver/p3peers.cc \
+				rsserver/p3status.cc \
 				ft/ftcontroller.cc \
 				ft/ftserver.cc \
 				ft/ftdbase.cc \
@@ -333,7 +335,7 @@ SOURCES += \
 				services/p3forums.cc \
 				services/p3blogs.cc \
 				services/p3Qblog.cc \
-				services/p3status.cc \
+				services/p3statusservice.cc \
 				services/p3distrib.cc \
 				services/p3photoservice.cc \
 				services/p3disc.cc \

@@ -6,7 +6,7 @@
  *
  * RetroShare C++ .
  *
- * Copyright 2007-2008 by Vinny Do.
+ * Copyright 2007-2008 by Vinny Do, Chris Evi-Parker.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -33,29 +33,32 @@ extern RsStatus *rsStatus;
 #include <iostream>
 #include <string>
 #include <inttypes.h>
+#include <list>
 
 const uint32_t RS_STATUS_OFFLINE = 0x0001;
 const uint32_t RS_STATUS_AWAY    = 0x0002;
 const uint32_t RS_STATUS_BUSY    = 0x0003;
 const uint32_t RS_STATUS_ONLINE  = 0x0004;
 
-std::string RsStatusString(uint32_t status);
 
 class StatusInfo
 {
 	public:
 	std::string id;
 	uint32_t status;
+	time_t time_stamp; /// for owner time set, and for their peers time sent
 };
 
 class RsStatus
 {
 	public:
-virtual bool getStatus(std::string id, StatusInfo& statusInfo) = 0;
-virtual bool setStatus(StatusInfo& statusInfo)                 = 0;
+virtual bool getStatus(std::list<StatusInfo>& statusInfo) = 0;
+virtual bool sendStatus(StatusInfo& statusInfo)                 = 0;
+virtual bool statusAvailable() = 0;
+
+virtual void getStatusString(uint32_t status, std::string& statusString) = 0;
 
 };
 
-std::ostream& operator<<(std::ostream& out, const StatusInfo& statusInfo);
 
 #endif

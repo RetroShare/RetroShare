@@ -57,14 +57,22 @@ class p3ChatService: public p3Service, public p3Config
 		void  setOwnCustomStateString(const std::string&) ;
 		std::string getOwnCustomStateString() ;
 
-		/// gets the peer's avatar in jpeg format, if available. Null otherwise. Also asks the peer to send
-		/// its avatar, if not already available. Creates a new unsigned char array. It's the caller's
-		/// responsibility to delete this ones used.
-		///
+		/*! gets the peer's avatar in jpeg format, if available. Null otherwise. Also asks the peer to send
+		* its avatar, if not already available. Creates a new unsigned char array. It's the caller's
+		* responsibility to delete this ones used.
+		*/
 		void getAvatarJpegData(const std::string& peer_id,unsigned char *& data,int& size) ;
 
-		/// Sets the avatar data and size. Data is copied, so should be destroyed by the caller.
+		/*!
+		 * Sets the avatar data and size for client's account
+		 * @param data is copied, so should be destroyed by the caller
+		 *
+		 */
 		void setOwnAvatarJpegData(const unsigned char *data,int size) ;
+
+		/*!
+		 * Gets the avatar data for clients account
+		 */
 		void getOwnAvatarJpegData(unsigned char *& data,int& size) ;
 
 		std::list<RsChatMsgItem *> getChatQueue(); 

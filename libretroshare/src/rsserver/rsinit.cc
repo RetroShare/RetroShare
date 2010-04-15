@@ -1818,7 +1818,7 @@ RsTurtle *rsTurtle = NULL ;
 #include "services/p3photoservice.h"
 #include "services/p3forums.h"
 #include "services/p3channels.h"
-#include "services/p3status.h"
+#include "services/p3statusservice.h"
 #include "services/p3Qblog.h"
 #include "services/p3blogs.h"
 #include "turtle/p3turtle.h"
@@ -1839,6 +1839,7 @@ RsTurtle *rsTurtle = NULL ;
 #include "rsserver/p3discovery.h"
 #include "rsserver/p3photo.h"
 #include "rsserver/p3blog.h"
+#include "rsserver/p3status.h"
 #include "rsiface/rsgame.h"
 
 #include "pqi/p3notify.h" // HACK - moved to pqi for compilation order.
@@ -1848,7 +1849,7 @@ RsTurtle *rsTurtle = NULL ;
 #define RS_RELEASE 1
 ****/
 
-#define RS_RELEASE 1
+//#define RS_RELEASE 1
 
 
 RsControl *createRsControl(RsIface &iface, NotifyBase &notify)
@@ -1975,6 +1976,7 @@ int RsServer::StartupRetroShare()
         ad = new p3disc(mConnMgr, pqih);
 	msgSrv = new p3MsgService(mConnMgr);
 	chatSrv = new p3ChatService(mConnMgr);
+	mStatusSrv = new p3StatusService(mConnMgr);
 
         p3tunnel *tn = new p3tunnel(mConnMgr, pqih);
 	pqih -> addService(tn);
@@ -1988,6 +1990,7 @@ int RsServer::StartupRetroShare()
 	pqih -> addService(ad);
 	pqih -> addService(msgSrv);
 	pqih -> addService(chatSrv);
+	pqih ->addService(mStatusSrv);
 
 	/* create Cache Services */
 	std::string config_dir = RsInitConfig::configDir;
@@ -2091,6 +2094,7 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("channels.cfg", mChannels);
 	mConfigMgr->addConfiguration("turtle.cfg", tr);
         mConfigMgr->addConfiguration("p3disc.cfg", ad);
+        mConfigMgr->addConfiguration("p3Status.cfg", mStatusSrv);
 
 	ftserver->addConfiguration(mConfigMgr);
 
@@ -2207,7 +2211,7 @@ int RsServer::StartupRetroShare()
 #ifndef RS_RELEASE
 	rsGameLauncher = gameLauncher;
 	rsPhoto = new p3Photo(photoService);
-	rsStatus = new p3Status();
+	rsStatus = new p3Status(mStatusSrv);
 	rsQblog = new p3Blog(mQblog);
 #else
 	rsGameLauncher = NULL;
