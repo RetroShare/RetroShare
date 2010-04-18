@@ -5176,12 +5176,12 @@ p, li { white-space: pre-wrap; }
         <translation>从 </translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1424"/>
+        <location filename="../gui/MessagesDialog.ui" line="1466"/>
         <source>Size</source>
         <translation>大小 </translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1095"/>
+        <location filename="../gui/MessagesDialog.ui" line="1137"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -5238,22 +5238,22 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="998"/>
-        <location filename="../gui/MessagesDialog.cpp" line="1267"/>
-        <location filename="../gui/MessagesDialog.cpp" line="1279"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1277"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1289"/>
         <source>Inbox</source>
         <translation>收件箱</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="1007"/>
-        <location filename="../gui/MessagesDialog.cpp" line="1293"/>
         <location filename="../gui/MessagesDialog.cpp" line="1303"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1313"/>
         <source>Outbox</source>
         <translation>发件箱</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="1016"/>
-        <location filename="../gui/MessagesDialog.cpp" line="1316"/>
         <location filename="../gui/MessagesDialog.cpp" line="1326"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1336"/>
         <source>Draft</source>
         <translation>草稿 </translation>
     </message>
@@ -5263,44 +5263,58 @@ p, li { white-space: pre-wrap; }
         <translation>发送电子邮件</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1444"/>
-        <location filename="../gui/MessagesDialog.ui" line="1447"/>
+        <location filename="../gui/MessagesDialog.ui" line="1060"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1349"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1359"/>
+        <source>Total Inbox:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/MessagesDialog.ui" line="1068"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1371"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1381"/>
+        <source>Total Sent:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/MessagesDialog.ui" line="1486"/>
+        <location filename="../gui/MessagesDialog.ui" line="1489"/>
         <source>Print...</source>
         <translation>打印</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1452"/>
+        <location filename="../gui/MessagesDialog.ui" line="1494"/>
         <source>Print Preview</source>
         <translation>打印预览</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1457"/>
-        <location filename="../gui/MessagesDialog.ui" line="1460"/>
+        <location filename="../gui/MessagesDialog.ui" line="1499"/>
+        <location filename="../gui/MessagesDialog.ui" line="1502"/>
         <source>Buttons Icon Only</source>
         <translation>按钮图标只</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1465"/>
+        <location filename="../gui/MessagesDialog.ui" line="1507"/>
         <source>Buttons Text Beside Icon</source>
         <translation>按钮的文本旁边图标</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1468"/>
+        <location filename="../gui/MessagesDialog.ui" line="1510"/>
         <source>Buttons with Text</source>
         <translation>按钮与文本</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1473"/>
+        <location filename="../gui/MessagesDialog.ui" line="1515"/>
         <source>Buttons Text Under Icon</source>
         <translation>按钮的文字在图标</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1476"/>
+        <location filename="../gui/MessagesDialog.ui" line="1518"/>
         <source>Set Text Under Icon</source>
         <translation>设置下的文本，图标</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1481"/>
+        <location filename="../gui/MessagesDialog.ui" line="1523"/>
         <source>Save As...</source>
         <translation>另存为</translation>
     </message>
@@ -5330,12 +5344,12 @@ p, li { white-space: pre-wrap; }
         <translation>打印文档</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1419"/>
+        <location filename="../gui/MessagesDialog.ui" line="1461"/>
         <source>File Name</source>
         <translation>文案名称 </translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1429"/>
+        <location filename="../gui/MessagesDialog.ui" line="1471"/>
         <source>Sources</source>
         <translation>来源</translation>
     </message>
@@ -5466,12 +5480,12 @@ p, li { white-space: pre-wrap; }
         <translation>题目</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1236"/>
+        <location filename="../gui/MessagesDialog.ui" line="1278"/>
         <source>Subject:</source>
         <translation>题目:</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1301"/>
+        <location filename="../gui/MessagesDialog.ui" line="1343"/>
         <source>From:</source>
         <translation>发送方:</translation>
     </message>
@@ -5480,12 +5494,12 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">日期:</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1366"/>
+        <location filename="../gui/MessagesDialog.ui" line="1408"/>
         <source>To:</source>
         <translation>至:</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1150"/>
+        <location filename="../gui/MessagesDialog.ui" line="1192"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -5496,7 +5510,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;推荐下载所有文件&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="1434"/>
+        <location filename="../gui/MessagesDialog.ui" line="1476"/>
         <source>Hash</source>
         <translation></translation>
     </message>
@@ -5611,115 +5625,113 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MessengerWindow</name>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="172"/>
+        <location filename="../gui/MessengerWindow.cpp" line="177"/>
         <source>Expand all</source>
         <translation type="unfinished">全部展开</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="175"/>
+        <location filename="../gui/MessengerWindow.cpp" line="180"/>
         <source>Collapse all</source>
         <translation type="unfinished">折叠全部</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="178"/>
+        <location filename="../gui/MessengerWindow.cpp" line="183"/>
         <source>Chat</source>
         <translation>聊天</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="181"/>
+        <location filename="../gui/MessengerWindow.cpp" line="186"/>
         <source>Message Friend</source>
         <translation type="unfinished">讯息好友</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="184"/>
+        <location filename="../gui/MessengerWindow.cpp" line="189"/>
         <source>Connect To Friend</source>
         <translation>连接到好友</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="187"/>
+        <location filename="../gui/MessengerWindow.cpp" line="192"/>
         <source>Peer Details</source>
         <translation type="unfinished">结点详细信息</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="193"/>
+        <location filename="../gui/MessengerWindow.cpp" line="198"/>
         <source>Export Friend</source>
         <translation type="unfinished">导出好友</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="198"/>
+        <location filename="../gui/MessengerWindow.cpp" line="203"/>
         <source>Deny Friend</source>
         <translation type="unfinished">拒绝好友</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="200"/>
+        <location filename="../gui/MessengerWindow.cpp" line="205"/>
         <source>Remove Friend Location</source>
         <translation type="unfinished">删除好友位置</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="219"/>
+        <location filename="../gui/MessengerWindow.cpp" line="224"/>
         <source>&lt;strong&gt;GPG Key&lt;/strong&gt;</source>
         <translation type="unfinished">&lt;strong&gt;GPG 钥匙&lt;/strong&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="221"/>
+        <location filename="../gui/MessengerWindow.cpp" line="226"/>
         <source>&lt;strong&gt;RetroShare instance&lt;/strong&gt;</source>
         <translation type="unfinished">&lt;strong&gt;RetroShare 实例&lt;/strong&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="260"/>
-        <location filename="../gui/MessengerWindow.cpp" line="386"/>
+        <location filename="../gui/MessengerWindow.cpp" line="265"/>
+        <location filename="../gui/MessengerWindow.cpp" line="391"/>
         <source> - </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="385"/>
-        <location filename="../gui/MessengerWindow.cpp" line="386"/>
         <location filename="../gui/MessengerWindow.cpp" line="390"/>
         <location filename="../gui/MessengerWindow.cpp" line="391"/>
+        <location filename="../gui/MessengerWindow.cpp" line="395"/>
+        <location filename="../gui/MessengerWindow.cpp" line="396"/>
         <source>location : </source>
         <translation type="unfinished">位置:</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="387"/>
         <location filename="../gui/MessengerWindow.cpp" line="392"/>
+        <location filename="../gui/MessengerWindow.cpp" line="397"/>
         <source>
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="464"/>
+        <location filename="../gui/MessengerWindow.cpp" line="494"/>
         <source>Available</source>
         <translation type="unfinished">选择不同</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="474"/>
+        <location filename="../gui/MessengerWindow.cpp" line="504"/>
         <source>Offline</source>
         <translation type="unfinished">离线</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="523"/>
+        <location filename="../gui/MessengerWindow.cpp" line="553"/>
         <source>Save Certificate</source>
         <translation type="unfinished">保存证书 </translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="524"/>
+        <location filename="../gui/MessengerWindow.cpp" line="554"/>
         <source>Certificates (*.pqi)</source>
         <translation type="unfinished">证书  (*.pqi)</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="580"/>
         <source>Friend Not Online</source>
-        <translation type="unfinished">好友不在线</translation>
+        <translation type="obsolete">好友不在线</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="580"/>
         <source>Your Friend is offline 
 Do you want to send them a Message instead</source>
-        <translation type="unfinished">您的朋友离线
+        <translation type="obsolete">您的朋友离线
 是否要发送信息给他们，而不是</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="921"/>
+        <location filename="../gui/MessengerWindow.cpp" line="915"/>
         <source>View</source>
         <translation type="unfinished">查看</translation>
     </message>
@@ -5752,7 +5764,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/MessengerWindow.ui" line="130"/>
-        <location filename="../gui/MessengerWindow.cpp" line="453"/>
+        <location filename="../gui/MessengerWindow.cpp" line="461"/>
         <source>Online</source>
         <translation type="unfinished">在线</translation>
     </message>
@@ -6798,12 +6810,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PeersDialog</name>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="252"/>
+        <location filename="../gui/PeersDialog.cpp" line="253"/>
         <source>Chat</source>
         <translation>聊天 </translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="267"/>
+        <location filename="../gui/PeersDialog.cpp" line="268"/>
         <source>Export Friend</source>
         <translation>导出好友</translation>
     </message>
@@ -6812,12 +6824,12 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">删除好友</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="600"/>
+        <location filename="../gui/PeersDialog.cpp" line="601"/>
         <source>Save Certificate</source>
         <translation>保存证书 </translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="601"/>
+        <location filename="../gui/PeersDialog.cpp" line="602"/>
         <source>Certificates (*.pqi)</source>
         <translation>证书  (*.pqi)</translation>
     </message>
@@ -6839,169 +6851,169 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;好友&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="258"/>
+        <location filename="../gui/PeersDialog.cpp" line="259"/>
         <source>Connect To Friend</source>
         <translation>连接到好友</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="169"/>
+        <location filename="../gui/PeersDialog.cpp" line="170"/>
         <source>Welcome to RetroShare&apos;s group chat.</source>
         <translation>欢迎来到RetroShare组聊天。</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="118"/>
+        <location filename="../gui/PeersDialog.cpp" line="119"/>
         <source>Profile</source>
         <translation>外形</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="148"/>
+        <location filename="../gui/PeersDialog.cpp" line="149"/>
         <source>Paste retroshare Link</source>
         <translation type="unfinished">粘贴retroshare链接</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="246"/>
+        <location filename="../gui/PeersDialog.cpp" line="247"/>
         <source>Expand all</source>
         <translation>全部展开</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="249"/>
+        <location filename="../gui/PeersDialog.cpp" line="250"/>
         <source>Collapse all</source>
         <translation>折叠全部</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="255"/>
+        <location filename="../gui/PeersDialog.cpp" line="256"/>
         <source>Message Friend</source>
         <translation>讯息好友</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="261"/>
+        <location filename="../gui/PeersDialog.cpp" line="262"/>
         <source>Peer Details</source>
         <translation>结点详细信息</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="272"/>
+        <location filename="../gui/PeersDialog.cpp" line="273"/>
         <source>Deny Friend</source>
         <translation>拒绝好友</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="274"/>
+        <location filename="../gui/PeersDialog.cpp" line="275"/>
         <source>Remove Friend Location</source>
         <translation>删除好友位置</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="293"/>
+        <location filename="../gui/PeersDialog.cpp" line="294"/>
         <source>&lt;strong&gt;GPG Key&lt;/strong&gt;</source>
         <translation>&lt;strong&gt;GPG 钥匙&lt;/strong&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="295"/>
+        <location filename="../gui/PeersDialog.cpp" line="296"/>
         <source>&lt;strong&gt;RetroShare instance&lt;/strong&gt;</source>
         <translation>&lt;strong&gt;RetroShare 实例&lt;/strong&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="344"/>
+        <location filename="../gui/PeersDialog.cpp" line="345"/>
         <source> (me)</source>
         <translation> (我)</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="478"/>
         <location filename="../gui/PeersDialog.cpp" line="479"/>
-        <location filename="../gui/PeersDialog.cpp" line="481"/>
+        <location filename="../gui/PeersDialog.cpp" line="480"/>
         <location filename="../gui/PeersDialog.cpp" line="482"/>
+        <location filename="../gui/PeersDialog.cpp" line="483"/>
         <source>location : </source>
         <translation>位置:</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="478"/>
         <location filename="../gui/PeersDialog.cpp" line="479"/>
+        <location filename="../gui/PeersDialog.cpp" line="480"/>
         <source> - </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="542"/>
+        <location filename="../gui/PeersDialog.cpp" line="543"/>
         <source>Online</source>
         <translation>在线</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="552"/>
+        <location filename="../gui/PeersDialog.cpp" line="553"/>
         <source>Available</source>
         <translation>选择不同</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="562"/>
+        <location filename="../gui/PeersDialog.cpp" line="563"/>
         <source>Offline</source>
         <translation>离线</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="656"/>
+        <location filename="../gui/PeersDialog.cpp" line="669"/>
         <source>Friend Not Online</source>
         <translation>好友不在线</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="656"/>
+        <location filename="../gui/PeersDialog.cpp" line="669"/>
         <source>Your Friend is offline 
 Do you want to send them a Message instead</source>
         <translation>您的朋友离线
 是否要发送信息给他们，而不是</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="1541"/>
+        <location filename="../gui/PeersDialog.cpp" line="1554"/>
         <source>Create a new Channel</source>
         <translation>创建一个新频道</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="1545"/>
+        <location filename="../gui/PeersDialog.cpp" line="1558"/>
         <source>New Channel</source>
         <translation>新频道</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="1566"/>
+        <location filename="../gui/PeersDialog.cpp" line="1579"/>
         <source>Add Extra File</source>
         <translation>添加附件</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="1670"/>
+        <location filename="../gui/PeersDialog.cpp" line="1683"/>
         <source>File Request Confirmation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="1670"/>
+        <location filename="../gui/PeersDialog.cpp" line="1683"/>
         <source>The file has been added to your download list.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="1677"/>
+        <location filename="../gui/PeersDialog.cpp" line="1690"/>
         <source>File Request canceled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="1677"/>
+        <location filename="../gui/PeersDialog.cpp" line="1690"/>
         <source>The file has not been added to your download list, because you already have it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="1685"/>
+        <location filename="../gui/PeersDialog.cpp" line="1698"/>
         <source>File Request Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="1685"/>
+        <location filename="../gui/PeersDialog.cpp" line="1698"/>
         <source>The file link is malformed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="1739"/>
-        <location filename="../gui/PeersDialog.cpp" line="1744"/>
+        <location filename="../gui/PeersDialog.cpp" line="1752"/>
+        <location filename="../gui/PeersDialog.cpp" line="1757"/>
         <source>Drop file error.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="1739"/>
+        <location filename="../gui/PeersDialog.cpp" line="1752"/>
         <source>File not found or file name not accepted.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="1744"/>
+        <location filename="../gui/PeersDialog.cpp" line="1757"/>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7011,7 +7023,7 @@ Do you want to send them a Message instead</source>
         <translation>发送 </translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="264"/>
+        <location filename="../gui/PeersDialog.cpp" line="265"/>
         <source>Profile View</source>
         <translation>简介检视</translation>
     </message>
@@ -7484,93 +7496,93 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PopupChatDialog</name>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="145"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="146"/>
         <source>Paste retroshare Link</source>
         <translation type="unfinished">粘贴retroshare链接</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="173"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="174"/>
         <source>Chatting with </source>
         <translation>聊天 </translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="395"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="397"/>
         <source>Hide Avatar</source>
         <translation>隐藏头像</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="396"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="398"/>
         <source>:images/hide_toolbox_frame.png</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="400"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="402"/>
         <source>Show Avatar</source>
         <translation>显示头像</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="401"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="403"/>
         <source>:images/show_toolbox_frame.png</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="647"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="649"/>
         <source>Open Style</source>
         <translation>打开样式</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="649"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="651"/>
         <source>Styles (*.htm)</source>
         <translation>样式 (*.htm)</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="754"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="756"/>
         <source>Add Extra File</source>
         <translation>添加附件</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="862"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="864"/>
         <source>Badly formed RS link</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="862"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="864"/>
         <source>This RetroShare link is malformed. This is bug. Please contact the developers.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="870"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="872"/>
         <source>File Request Confirmation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="870"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="872"/>
         <source>The file has been added to your download list.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="876"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="878"/>
         <source>File Request canceled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="876"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="878"/>
         <source>The file has not been added to your download list, because you already have it, or you&apos;re already downloading it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="934"/>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="939"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="936"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="941"/>
         <source>Drop file error.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="934"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="936"/>
         <source>File not found or file name not accepted.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="939"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="941"/>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7580,7 +7592,7 @@ p, li { white-space: pre-wrap; }
         <translation>发送 </translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="111"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="112"/>
         <source> RetroShare - Encrypted Chat</source>
         <translation> RetroShare - 安全聊天</translation>
     </message>
@@ -8404,22 +8416,22 @@ p, li { white-space: pre-wrap; }
         <translation>完成</translation>
     </message>
     <message>
-        <location filename="../gui/QuickStartWizard.cpp" line="196"/>
+        <location filename="../gui/QuickStartWizard.cpp" line="197"/>
         <source>Select A Folder To Share</source>
         <translation>选择一个文件夹共享</translation>
     </message>
     <message>
-        <location filename="../gui/QuickStartWizard.cpp" line="209"/>
+        <location filename="../gui/QuickStartWizard.cpp" line="210"/>
         <source>Shared Directory Added!</source>
         <translation>分享目录已经添加！</translation>
     </message>
     <message>
-        <location filename="../gui/QuickStartWizard.cpp" line="224"/>
+        <location filename="../gui/QuickStartWizard.cpp" line="225"/>
         <source>Do you really want to stop sharing this directory ? </source>
         <translation>你真的要停止共享此目录？</translation>
     </message>
     <message>
-        <location filename="../gui/QuickStartWizard.cpp" line="228"/>
+        <location filename="../gui/QuickStartWizard.cpp" line="229"/>
         <source>Warning!</source>
         <translation>注意！</translation>
     </message>
@@ -9793,7 +9805,8 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/StartDialog.cpp" line="214"/>
-        <source>Auto Login is not Secure: Password stored on disk</source>
+        <source>Auto-Login is not Secure 
+ It can be disabled in General Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
