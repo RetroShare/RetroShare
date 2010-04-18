@@ -113,11 +113,12 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
   connect( ui.actionHide_Offline_Friends, SIGNAL(triggered()), this, SLOT(insertPeers()));
   
   connect(ui.messagelineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(savestatusmessage()));
-  connect(ui.statuscomboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(savestatus()));
+
 
   QTimer *timer = new QTimer(this);
-  timer->connect(timer, SIGNAL(timeout()), this, SLOT(sendStatus()));
-  timer->start(5000); /* five seconds */
+  timer->connect(timer, SIGNAL(timeout()), this, SLOT(savestatus()));
+  timer->start(1000); /* one second */
+
 
 	/* to hide the header  */
 	ui.messengertreeWidget->header()->hide(); 
@@ -148,12 +149,14 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
   itemFont = QFont("ARIAL", 10);
 	itemFont.setBold(true);
 	
+
+  loadOwnStatus(); // hack; placed in constructor to preempt sendstatus, so status loaded from file
   insertPeers(); 		
   updateAvatar();
   loadmystatusmessage();
   
-  loadstatus();
-  
+
+
   displayMenu();
   updateMessengerDisplay();
   
@@ -272,7 +275,10 @@ void MessengerWindow::updateMessengerDisplay()
 void  MessengerWindow::insertPeers()
 {
    std::list<std::string> gpgFriends;
-	std::list<std::string>::iterator it;
+   std::list<std::string>::iterator it;
+
+   std::list<StatusInfo> statusInfo;
+   rsStatus->getStatus(statusInfo);
 
         if (!rsPeers) {
                 /* not ready yet! */
@@ -451,8 +457,6 @@ void  MessengerWindow::insertPeers()
                 }
             }
 
-            std::list<StatusInfo> statusInfo;
-            rsStatus->getStatus(statusInfo);
             RsPeerDetails ssl_details;
 
             int i = 0;
@@ -922,20 +926,11 @@ void MessengerWindow::displayMenu()
 }
 
 /** Load own status Online,Away,Busy **/
-void MessengerWindow::loadstatus()
+void MessengerWindow::loadOwnStatus()
 {
-	//rsiface->lockData(); /* Lock Interface */
 
-
-	/* load up configuration from rsPeers */
-	RsPeerDetails detail;
 	std::string ownId = rsPeers->getOwnId();
 
-	if (!rsPeers->getPeerDetails(ownId, detail))
-	{
-		return;
-	}
-		
 	StatusInfo si;
 	std::list<StatusInfo> statusList;
 	std::list<StatusInfo>::iterator it;
@@ -955,9 +950,6 @@ void MessengerWindow::loadstatus()
 	int statusIndex = 0;
 	switch(si.status)
 	{
-		case RS_STATUS_OFFLINE:
-			statusIndex = 3;
-			break;
 		case RS_STATUS_AWAY:
 			statusIndex = 2;
 			break;		
@@ -972,7 +964,6 @@ void MessengerWindow::loadstatus()
 	
 	ui.statuscomboBox->setCurrentIndex(statusIndex);
 	
-	//rsiface->unlockData(); /* UnLock Interface */
 }
 
 /** Save own status Online,Away,Busy **/
@@ -996,9 +987,6 @@ void MessengerWindow::savestatus()
 	int status = 0;
 	switch(statusIndex)
 	{
-		case 3:
-			status = RS_STATUS_OFFLINE;
-			break;
 		case 2:
 			status = RS_STATUS_AWAY;
 			break;
@@ -1017,5 +1005,5 @@ void MessengerWindow::savestatus()
 	rsStatus->sendStatus(si);
 	
 	//rsiface->unlockData(); /* UnLock Interface */
-
+	return;
 }

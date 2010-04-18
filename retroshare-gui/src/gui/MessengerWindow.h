@@ -57,7 +57,7 @@ public slots:
   void updatePeersAvatar(const QString& peer_id);
   void updateAvatar();
   void loadmystatusmessage();
-  void loadstatus();
+  void loadOwnStatus();
   
   LogoBar & getLogoBar() const;
 

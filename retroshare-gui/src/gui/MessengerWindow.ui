@@ -152,15 +152,6 @@ p, li { white-space: pre-wrap; }
                 <normaloff>:/images/im-user-away.png</normaloff>:/images/im-user-away.png</iconset>
               </property>
              </item>
-             <item>
-              <property name="text">
-               <string>Apear Offline</string>
-              </property>
-              <property name="icon">
-               <iconset resource="images.qrc">
-                <normaloff>:/images/im-user-offline.png</normaloff>:/images/im-user-offline.png</iconset>
-              </property>
-             </item>
             </widget>
            </item>
            <item row="2" column="0">
