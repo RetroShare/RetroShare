@@ -55,11 +55,7 @@ bool p3Status::statusAvailable(){
 
 void p3Status::getStatusString(uint32_t status, std::string& statusString){
 
-	if (status == RS_STATUS_OFFLINE){
-
-		statusString = "Offline";
-
-	}else if (status == RS_STATUS_AWAY){
+	if (status == RS_STATUS_AWAY){
 
 		statusString = "Away";
 

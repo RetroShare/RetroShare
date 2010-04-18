@@ -127,6 +127,7 @@ bool p3StatusService::getStatus(std::list<StatusInfo>& statusInfo)
 		for(mit = mStatusInfoMap.begin(); mit != mStatusInfoMap.end(); mit++){
 			statusInfo.push_back(mit->second);
 		}
+
 	}
 
 	return true;
@@ -142,17 +143,24 @@ bool p3StatusService::sendStatus(StatusInfo& statusInfo)
 		if(statusInfo.id != mConnMgr->getOwnId())
 			return false;
 
-		mStatusInfoMap[statusInfo.id] = statusInfo;
+		// If your id is not set, set it
+		if(mStatusInfoMap.find(statusInfo.id) == mStatusInfoMap.end()){
+
+			std::pair<std::string, StatusInfo> pr(statusInfo.id, statusInfo);
+			mStatusInfoMap.insert(pr);
+			IndicateConfigChanged();
+		}else
+		if(mStatusInfoMap[statusInfo.id].status != statusInfo.status){
+
+			IndicateConfigChanged();
+			mStatusInfoMap[statusInfo.id] = statusInfo;
+		}
+
+
 		mConnMgr->getOnlineList(onlineList);
 	}
 
-
-
-	//statusItem->PeerId(statusInfo.id);
-
 	std::list<std::string>::iterator it;
-
-
 
 #ifdef STATUS_DEBUG
 	std::cerr << "p3StatusService::sendStatus() " << std::endl;
@@ -252,25 +260,27 @@ bool p3StatusService::loadList(std::list<RsItem*> load){
 
 	// load your status from last rs session
 	StatusInfo own_info;
-	std::list<RsItem*>::iterator it = load.begin();
+	std::list<RsItem*>::const_iterator it = load.begin();
 
 	if(it == load.end()){
 		std::cerr << "p3StatusService::loadList(): Failed to load " << std::endl;
 		return false;
 	}
 
+	for(; it != load.end(); it++){
 	RsStatusItem* own_status = dynamic_cast<RsStatusItem* >(*it);
 
 
 	if(own_status != NULL){
 
-		own_info.id = own_status->PeerId();
+		own_info.id = mConnMgr->getOwnId();
 		own_info.status = own_status->status;
 		own_info.time_stamp = own_status->sendTime;
+		delete own_status;
 
 		{
 			RsStackMutex stack(mStatusMtx);
-			std::pair<std::string, StatusInfo> pr(own_info.id, own_info);
+			std::pair<std::string, StatusInfo> pr(mConnMgr->getOwnId(), own_info);
 			mStatusInfoMap.insert(pr);
 		}
 
@@ -280,6 +290,7 @@ bool p3StatusService::loadList(std::list<RsItem*> load){
 				  << std::endl;
 	}
 
+	}
 	return false;
 }
 

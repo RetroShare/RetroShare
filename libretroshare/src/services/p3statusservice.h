@@ -54,6 +54,9 @@ virtual int status();
 
 /********* RsStatus ***********/
 
+/**
+ * Status is set to offline as default if no info received from relevant peer
+ */
 virtual bool getStatus(std::list<StatusInfo>& statusInfo);
 virtual bool sendStatus(StatusInfo& statusInfo);
 virtual bool statusAvailable();

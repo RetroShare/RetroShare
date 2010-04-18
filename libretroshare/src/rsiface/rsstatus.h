@@ -35,12 +35,14 @@ extern RsStatus *rsStatus;
 #include <inttypes.h>
 #include <list>
 
-const uint32_t RS_STATUS_OFFLINE = 0x0001;
-const uint32_t RS_STATUS_AWAY    = 0x0002;
-const uint32_t RS_STATUS_BUSY    = 0x0003;
-const uint32_t RS_STATUS_ONLINE  = 0x0004;
+const uint32_t RS_STATUS_AWAY    = 0x0001;
+const uint32_t RS_STATUS_BUSY    = 0x0002;
+const uint32_t RS_STATUS_ONLINE  = 0x0003;
 
-
+//! data object for peer status information
+/*!
+ * data object used for peer status information
+ */
 class StatusInfo
 {
 	public:
@@ -49,14 +51,39 @@ class StatusInfo
 	time_t time_stamp; /// for owner time set, and for their peers time sent
 };
 
+
+//! Interface to retroshare for Rs status
+/*!
+ * Provides an interface for retroshare's status functionality
+ */
 class RsStatus
 {
 	public:
-virtual bool getStatus(std::list<StatusInfo>& statusInfo) = 0;
-virtual bool sendStatus(StatusInfo& statusInfo)                 = 0;
-virtual bool statusAvailable() = 0;
 
-virtual void getStatusString(uint32_t status, std::string& statusString) = 0;
+	/**
+	 * This retrieves the status info on the client's peers
+	 * @param statusInfo is populated with client's peer's status
+	 */
+	virtual bool getStatus(std::list<StatusInfo>& statusInfo) = 0;
+
+	/**
+	 * send the client's status to his/her peers
+	 * @param statusInfo the status of the peers
+	 * @return will return false if status info does not belong to client
+	 */
+	virtual bool sendStatus(StatusInfo& statusInfo)                 = 0;
+
+	/**
+	 * checks to see if any status items have been received
+	 */
+	virtual bool statusAvailable() = 0;
+
+	/**
+	 * translates the status field of a peer to a string
+	 * @status the status id that needs to be translated
+	 * @statusString the string translation is passed here
+	 */
+	virtual void getStatusString(uint32_t status, std::string& statusString) = 0;
 
 };
 
