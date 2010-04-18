@@ -141,9 +141,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     connect(ui.actionAdd_Share, SIGNAL(triggered() ), this , SLOT( openShareManager() ) );
     connect(ui.actionOptions, SIGNAL(triggered()), this, SLOT( showSettings()) );
     connect(ui.actionMessenger, SIGNAL(triggered()), this, SLOT( showMessengerWindow()) );
-    #ifdef RS_RELEASE_VERSION
-    ui.actionMessenger->setVisible(false);
-    #endif
+
+    ui.actionMessenger->setVisible(true);
+
     connect(ui.actionAbout, SIGNAL(triggered()), this, SLOT( showabout()) );
     //connect(ui.actionColor, SIGNAL(triggered()), this, SLOT( setStyle()) );
 
