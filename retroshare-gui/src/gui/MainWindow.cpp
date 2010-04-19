@@ -329,6 +329,9 @@ void MainWindow::displaySystrayMsg(const QString& title,const QString& msg)
 
 void MainWindow::updateStatus()
 {
+	// This call is essential to remove locks due to QEventLoop re-entrance while asking gpg passwds. Dont' remove it!
+	if(RsAutoUpdatePage::eventsLocked())
+		return ;
 
 	if (ratesstatus)
 		ratesstatus->getRatesStatus();

@@ -969,6 +969,9 @@ void MessengerWindow::loadOwnStatus()
 /** Save own status Online,Away,Busy **/
 void MessengerWindow::savestatus()
 {
+	if(RsAutoUpdatePage::eventsLocked())
+		return ;
+
 	//rsiface->lockData(); /* Lock Interface */
 
 	RsPeerDetails detail;

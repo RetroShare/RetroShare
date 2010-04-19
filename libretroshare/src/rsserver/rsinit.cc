@@ -1234,7 +1234,7 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 		RsInitConfig::passwd = "";
 		create_configinit(RsInitConfig::basedir, RsInitConfig::preferedId);
                 //don't autorise the password callback again because it will lead to deadlock due to QT reentrance
-                AuthGPG::getAuthGPG()->setAutorisePasswordCallbackNotify(false);
+//                AuthGPG::getAuthGPG()->setAutorisePasswordCallbackNotify(false);
 		return 1;
 	}
 

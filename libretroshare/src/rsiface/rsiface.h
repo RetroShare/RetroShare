@@ -208,7 +208,7 @@ class NotifyBase
 	virtual void notifyOwnAvatarChanged() {}
 	virtual void notifyOwnStatusMessageChanged() {}
 
-        virtual std::string askForPassword(const std::string& key_details) { return "" ;}
+	virtual std::string askForPassword(const std::string& key_details,bool prev_is_bad) { return "" ;}
 };
 
 const int NOTIFY_LIST_NEIGHBOURS   		= 1;

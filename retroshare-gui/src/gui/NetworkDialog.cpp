@@ -710,6 +710,9 @@ void NetworkDialog::displayInfoLogMenu(const QPoint& pos) {
 
 void NetworkDialog::getNetworkStatus()
 {
+	if(RsAutoUpdatePage::eventsLocked())
+		return ;
+
     rsiface->lockData(); /* Lock Interface */
 
     /* now the extra bit .... switch on check boxes */
@@ -766,6 +769,9 @@ void NetworkDialog::getNetworkStatus()
 
 void NetworkDialog::updateNetworkStatus()
 {
+	if(RsAutoUpdatePage::eventsLocked())
+		return ;
+
     rsiface->lockData(); /* Lock Interface */
 
     /* now the extra bit .... switch on check boxes */

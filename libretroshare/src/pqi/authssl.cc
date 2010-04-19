@@ -1894,60 +1894,67 @@ int pem_passwd_cb(char *buf, int size, int rwflag, void *password)
 	return(strlen(buf));
 }
 
-bool AuthSSL::LocalStoreCert(X509* x509) {
-            //store the certificate in the local cert list
-            std::string peerId;
-            if(!getX509id(x509, peerId))
-            {
-                #ifdef AUTHSSL_DEBUG
-                std::cerr << "AuthSSL::LocalStoreCert() Cannot retrieve peer id from certificate." << std::endl;
-                #endif
-                return false;
-            }
-            if (peerId != mOwnId) {
-                if (mCerts[peerId]) {
-                    #ifdef AUTHSSL_DEBUG
-                    std::cerr << "AuthSSL::LocalStoreCert() get duplicate for " << mCerts[peerId]->id << std::endl;
-                    #endif
-                    /* have a duplicate */
-                    /* check that they are exact */
-                    if (0 != X509_cmp(mCerts[peerId]->certificate, x509))
-                    {
-                            /* MAJOR ERROR */
-                            std::cerr << "ERROR : AuthSSL::ValidateCertificate() got two different ssl certificate from the same peer. It could be a security intrusion attempt (man in the middle).";
-                            std::cerr << std::endl;
-                            return false;
-                    }
-                } else {
-                    RsStackMutex stack(sslMtx); /******* LOCKED ******/
+bool AuthSSL::LocalStoreCert(X509* x509) 
+{
+	//store the certificate in the local cert list
+	std::string peerId;
+	if(!getX509id(x509, peerId))
+	{
+#ifdef AUTHSSL_DEBUG
+		std::cerr << "AuthSSL::LocalStoreCert() Cannot retrieve peer id from certificate." << std::endl;
+#endif
+		return false;
+	}
+	if (peerId != mOwnId) 
+	{
+		if (mCerts[peerId]) 
+		{
+#ifdef AUTHSSL_DEBUG
+			std::cerr << "AuthSSL::LocalStoreCert() get duplicate for " << mCerts[peerId]->id << std::endl;
+#endif
+			/* have a duplicate */
+			/* check that they are exact */
+			if (0 != X509_cmp(mCerts[peerId]->certificate, x509))
+			{
+				/* MAJOR ERROR */
+				std::cerr << "ERROR : AuthSSL::ValidateCertificate() got two different ssl certificate from the same peer. It could be a security intrusion attempt (man in the middle).";
+				std::cerr << std::endl;
+				return false;
+			}
+		} 
+		else 
+		{
+			RsStackMutex stack(sslMtx); /******* LOCKED ******/
 
-                    #ifdef AUTHSSL_DEBUG
-                    std::cerr << "AuthSSL::LocalStoreCert() storing certificate for " << peerId << std::endl;
-                    #endif
-                    //have a deep copy of the x509 cert
-                    BIO *bp = BIO_new(BIO_s_mem());
-                    PEM_write_bio_X509(bp, x509);
-                    X509 *certCopy = PEM_read_bio_X509(bp, NULL, 0, NULL);certCopy->cert_info->key->pkey;
+#ifdef AUTHSSL_DEBUG
+			std::cerr << "AuthSSL::LocalStoreCert() storing certificate for " << peerId << std::endl;
+#endif
+			//have a deep copy of the x509 cert
+			BIO *bp = BIO_new(BIO_s_mem());
+			PEM_write_bio_X509(bp, x509);
+			X509 *certCopy = PEM_read_bio_X509(bp, NULL, 0, NULL);
 
-                    mCerts[peerId] = new sslcert(certCopy, peerId);
-                    /* cert->cert_info->key->pkey is NULL until we call SSL_CTX_use_certificate(),
-                    * so we do it here then...  */
-                    SSL_CTX *newSslctx = SSL_CTX_new(TLSv1_method());
-                    SSL_CTX_set_cipher_list(newSslctx, "DEFAULT");
-                    SSL_CTX_use_certificate(newSslctx, mCerts[peerId]->certificate);
+			mCerts[peerId] = new sslcert(certCopy, peerId);
+			/* cert->cert_info->key->pkey is NULL until we call SSL_CTX_use_certificate(),
+			 * so we do it here then...  */
+			SSL_CTX *newSslctx = SSL_CTX_new(TLSv1_method());
+			SSL_CTX_set_cipher_list(newSslctx, "DEFAULT");
+			SSL_CTX_use_certificate(newSslctx, mCerts[peerId]->certificate);
 
-                    #ifdef AUTHSSL_DEBUG
-                    std::cerr << "AuthSSL::LocalStoreCert() storing certificate with public key : " << mCerts[peerId]->certificate->cert_info->key->pkey << std::endl;
-                    #endif
+#ifdef AUTHSSL_DEBUG
+			std::cerr << "AuthSSL::LocalStoreCert() storing certificate with public key : " << mCerts[peerId]->certificate->cert_info->key->pkey << std::endl;
+#endif
 
-                    IndicateConfigChanged();
-                }
-            } else {
-                #ifdef AUTHSSL_DEBUG
-                std::cerr << "AuthSSL::LocalStoreCert() not storing certificate because it's our own " << peerId << std::endl;
-                #endif
-            }
-        }
+			IndicateConfigChanged();
+		}
+	} else {
+#ifdef AUTHSSL_DEBUG
+		std::cerr << "AuthSSL::LocalStoreCert() not storing certificate because it's our own " << peerId << std::endl;
+#endif
+	}
+
+	return true ;
+}
 
 int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
 {

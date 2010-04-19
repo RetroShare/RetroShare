@@ -21,6 +21,10 @@ class RsAutoUpdatePage: public MainPage
 		RsAutoUpdatePage(int ms_update_period = 1000,QWidget *parent=NULL) ;
 
 		virtual void updateDisplay() {}
+	
+		static void lockAllEvents() ;
+		static void unlockAllEvents() ;
+		static bool eventsLocked() ;
 
 	protected:
 		virtual void showEvent(QShowEvent *e) ;
@@ -30,4 +34,7 @@ class RsAutoUpdatePage: public MainPage
 
 	private:
 		QTimer *_timer ;
+
+		static bool _locked ;
 };
+

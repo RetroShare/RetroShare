@@ -211,7 +211,7 @@ void StartDialog::notSecureWarning() {
 		if(ui.autologin_checkbox->isChecked()){
             QMessageBox::StandardButton sb = QMessageBox::warning ( NULL,
                             tr("Insecure"),
-                            tr("Auto-Login is not Secure \n It can be disabled in General Settings"),
+                            tr("Auto Login is not so much secure:\n    - Your SSL certificate will be stored unprotected. \n    - Your PGP key will however not be stored.\nThis choice be reverted in settings."),
 			QMessageBox::Ok);
 		}
 
