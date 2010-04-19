@@ -1248,8 +1248,11 @@ bool AuthGPG::LoadCertificateFromString(std::string str, std::string &gpg_id)
 #ifdef GPG_DEBUG
         std::cerr << "AuthGPG::LoadCertificateFromString() returning with gpg_id : " << gpg_id << std::endl;
 #endif
-
-	return true;
+        if (gpg_id == "") {
+            return false;
+        } else {
+            return true;
+        }
 }
 
 /*****************************************************************
