@@ -39,7 +39,7 @@ class RsMutex
 	public:
 
 	RsMutex() 
-	{ 
+        {
 		pthread_mutex_init(&realMutex, NULL); 
 #ifdef RSTHREAD_SELF_LOCKING_GUARD
 		_thread_id = 0 ;
@@ -96,6 +96,41 @@ class RsStackMutex
 
 	private:
 	RsMutex &mMtx;
+};
+
+class RsReadWriteMutex: public RsMutex
+{
+        public:
+        RsReadWriteMutex();
+
+        void readLock();
+        void readUnlock();
+        void writeLock();
+        void writeUnlock();
+
+        void rwlock(uint32_t type);
+        void rwunlock(uint32_t type);
+
+        const static uint32_t READ_LOCK = 0x0001;
+        const static uint32_t WRITE_LOCK = 0x0002;
+
+
+        private:
+        int readLocks;
+        RsMutex internalCounterMtx;
+};
+
+class RsStackReadWriteMutex
+{
+        public:
+
+        RsStackReadWriteMutex(RsReadWriteMutex &mtx): mMtx(mtx) {  mMtx.writeLock(); writeLock = true;}
+        RsStackReadWriteMutex(RsReadWriteMutex &mtx, uint32_t type): mMtx(mtx) {  if (type == RsReadWriteMutex::READ_LOCK) {mMtx.readLock(); writeLock = false;} else {mMtx.writeLock(); writeLock = true;} }
+        ~RsStackReadWriteMutex() { if(writeLock) {mMtx.writeUnlock();} else {mMtx.readUnlock();} }
+
+        private:
+        RsReadWriteMutex &mMtx;
+        bool writeLock;
 };
 
 class RsThread;

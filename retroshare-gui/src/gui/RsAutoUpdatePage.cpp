@@ -3,6 +3,8 @@
 #include "RsAutoUpdatePage.h"
 #include "MessengerWindow.h"
 
+bool RsAutoUpdatePage::_locked = false ;
+
 RsAutoUpdatePage::RsAutoUpdatePage(int ms_update_period,QWidget *parent)
 	: MainPage(parent)
 {
@@ -16,14 +18,15 @@ RsAutoUpdatePage::RsAutoUpdatePage(int ms_update_period,QWidget *parent)
 void RsAutoUpdatePage::showEvent(QShowEvent *event)
 {
         //std::cout << "RsAutoUpdatePage::showEvent() In show event !!" << std::endl ;
-	updateDisplay();
+	if(!_locked)
+		updateDisplay();
 }
 
 void RsAutoUpdatePage::timerUpdate()
 {
 	// only update when the widget is visible.
 	//
-	if(!isVisible())
+	if(_locked || !isVisible())
 		return ;
 	
 	updateDisplay();
@@ -31,3 +34,6 @@ void RsAutoUpdatePage::timerUpdate()
 	update() ;				// Qt flush
 }
 
+void RsAutoUpdatePage::lockAllEvents() { _locked = true ; }
+void RsAutoUpdatePage::unlockAllEvents() { _locked = false ; }
+bool RsAutoUpdatePage::eventsLocked() { return _locked ; }

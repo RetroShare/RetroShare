@@ -24,6 +24,7 @@
 #include <rshare.h>
 #include <control/bandwidthevent.h>
 #include "bwgraph.h"
+#include <gui/RsAutoUpdatePage.h>
 #include "rsiface/rsiface.h"
 
 #include <sstream>
@@ -119,6 +120,9 @@ BandwidthGraph::timerEvent( QTimerEvent * )
 void 
 BandwidthGraph::updategraphstatus( )
 {
+	if(RsAutoUpdatePage::eventsLocked())
+		return ;
+
  	/* set users/friends/network */
 	float downKb = 0;
 	float upKb = 0;
