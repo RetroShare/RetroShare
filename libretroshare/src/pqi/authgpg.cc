@@ -1210,7 +1210,7 @@ bool AuthGPG::LoadCertificateFromString(std::string str, std::string &gpg_id)
             if(res == NULL || res->imports == NULL)
                     return false ;
 
-            std::string fingerprint = std::string(res->imports->fpr);
+            fingerprint = std::string(res->imports->fpr);
     #ifdef GPG_DEBUG
             std::cerr << "AuthGPG::LoadCertificateFromString() Importing considered folowing fpr : " << fingerprint << std::endl;
     #endif
