@@ -981,7 +981,11 @@ bool 	p3Peers::loadDetailsFromStringCert(std::string certstr, RsPeerDetails &pd)
             std::cerr << "ConnectFriendWizard : Parse ip address error." << std::endl;
         }
 
-        return true;
+        if (pd.gpg_id == "") {
+            return false;
+        } else {
+            return true;
+        }
 }
 
 
