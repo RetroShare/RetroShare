@@ -126,12 +126,12 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
 
 	QHeaderView * _header = ui.messengertreeWidget->header () ;   
 	_header->setResizeMode (0, QHeaderView::Stretch);
-	_header->setResizeMode (1, QHeaderView::Interactive);
+	_header->setResizeMode (1, QHeaderView::Custom);
 	_header->setStretchLastSection(false);
 
 
 	_header->resizeSection ( 0, 200 );
-  _header->resizeSection ( 1, 100 );      
+  _header->resizeSection ( 1, 42 );      
  
 	//LogoBar
 	_rsLogoBarmessenger = NULL;
@@ -389,19 +389,19 @@ void  MessengerWindow::insertPeers()
                 sslItem -> setText(3, QString::fromStdString(sslDetail.id));
 
                 if (rsMsgs->getCustomStateString(sslDetail.id) != "") {
-                    sslItem -> setText( 0, tr("location : ") + QString::fromStdString(sslDetail.location) );
+                    sslItem -> setText( 0, tr("location : ") + QString::fromStdString(sslDetail.location) + " " + QString::fromStdString(sslDetail.autoconnect) );
                     sslItem -> setToolTip( 0, tr("location : ") + QString::fromStdString(sslDetail.location) + tr(" - ") + QString::fromStdString(rsMsgs->getCustomStateString(sslDetail.id)));
                     gpg_item -> setText(0, QString::fromStdString(detail.name) + tr("\n") + QString::fromStdString(rsMsgs->getCustomStateString(sslDetail.id)));
 
                 } else {
-                    sslItem -> setText( 0, tr("location : ") + QString::fromStdString(sslDetail.location));
+                    sslItem -> setText( 0, tr("location : ") + QString::fromStdString(sslDetail.location) + " " + QString::fromStdString(sslDetail.autoconnect));
                     sslItem -> setToolTip( 0, tr("location : ") + QString::fromStdString(sslDetail.location));
                     gpg_item -> setText(0, QString::fromStdString(detail.name) + tr("\n") + QString::fromStdString(sslDetail.location));
                 }
                 
 
                 /* not displayed, used to find back the item */                
-                sslItem -> setText(1, QString::fromStdString(sslDetail.autoconnect));
+                //sslItem -> setText(1, QString::fromStdString(sslDetail.autoconnect));
                 
                 int i;
                 if (sslDetail.state & RS_PEER_STATE_CONNECTED) {
@@ -410,7 +410,6 @@ void  MessengerWindow::insertPeers()
                     
                     /* change color and icon */            
                     sslItem -> setIcon(0,(QIcon(":/images/connect_established.png")));
-                    sslItem -> setIcon(1,(QIcon(":/images/encrypted32.png")));
                     QFont font;
                     font.setBold(true);
                     for(i = 0; i < 3; i++) {
@@ -457,7 +456,7 @@ void  MessengerWindow::insertPeers()
             int i = 0;
             if (gpg_connected) {
                 gpg_item->setHidden(false);
-                gpg_item -> setText(1, tr("Online")); // set to online regardless on update
+                //gpg_item -> setText(1, tr("Online")); // set to online regardless on update
 
                 std::list<StatusInfo>::iterator it = statusInfo.begin();
 
@@ -515,7 +514,7 @@ void  MessengerWindow::insertPeers()
             } else if (gpg_online) {
                 gpg_item->setHidden(ui.actionHide_Offline_Friends->isChecked());
                 gpg_item -> setIcon(0,(QIcon(IMAGE_AVAIBLE)));
-                gpg_item -> setText(1, tr("Available"));
+                //gpg_item -> setText(1, tr("Available"));
                 QFont font;
                 font.setBold(true);
                 for(i = 0; i < 3; i++) {
@@ -525,7 +524,7 @@ void  MessengerWindow::insertPeers()
             } else {
                 gpg_item->setHidden(ui.actionHide_Offline_Friends->isChecked());
                 gpg_item -> setIcon(0,(QIcon(IMAGE_OFFLINE)));
-                gpg_item -> setText(1, tr("Offline"));
+                //gpg_item -> setText(1, tr("Offline"));
                 QFont font;
                 font.setBold(false);
                 for(i = 0; i < 3; i++) {
