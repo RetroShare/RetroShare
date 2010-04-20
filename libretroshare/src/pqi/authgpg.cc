@@ -34,7 +34,7 @@
 
 //#define GPG_DEBUG 1
 
-// initialisation du pointeur de singleton à zéro
+// initialisation du pointeur de singleton �  zéro
 AuthGPG *AuthGPG::instance_gpg = new AuthGPG();
 
 /* Turn a set of parameters into a string */
@@ -94,7 +94,7 @@ gpg_error_t pgp_pwd_callback(void *hook, const char *uid_hint, const char *passp
             #endif
             text = "";
         } else {
-            text = rsicontrol->getNotify().askForPassword(uid_hint);
+            text = rsicontrol->getNotify().askForPassword(uid_hint, prev_was_bad);
             #ifdef GPG_DEBUG
             std::cerr << "pgp_pwd_callback() got GPG passwd from gui." << std::endl;
             #endif
