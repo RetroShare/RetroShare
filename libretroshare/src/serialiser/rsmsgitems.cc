@@ -335,7 +335,7 @@ RsChatAvatarItem::RsChatAvatarItem(void *data,uint32_t size)
 	/* get mandatory parts first */
 	ok &= getRawUInt32(data, rssize, &offset,&image_size);
 
-	image_data = (unsigned char *)malloc(image_size*sizeof(unsigned char)) ;
+	image_data = new unsigned char[image_size] ;
 	memcpy(image_data,(void*)((unsigned char*)data+offset),image_size) ;
 	offset += image_size ;
 
