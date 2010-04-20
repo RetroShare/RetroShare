@@ -149,8 +149,11 @@ uint32_t RsChatAvatarItem::serial_size()
 
 RsChatAvatarItem::~RsChatAvatarItem()
 {
-	free(image_data) ;
-	image_data = NULL ;
+	if(image_data != NULL)
+	{
+		delete[] image_data ;
+		image_data = NULL ;
+	}
 }
 
 /* serialise the data to the buffer */
