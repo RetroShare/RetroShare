@@ -486,18 +486,21 @@ void  MessengerWindow::insertPeers()
                                     avatar.loadFromData(data,size,"PNG") ;
                                     QIcon avatar_icon(avatar);
                                     QSize av_icon_size(100, 100);
-                                    gpg_item-> setIcon(0, avatar_icon);
+                                    gpg_item-> setIcon(1, avatar_icon);
                                     delete[] data;
 
                                 }else
-                                    if(it->status == RS_STATUS_ONLINE)
-                                         gpg_item -> setIcon(0,(QIcon(IMAGE_ONLINE)));
-                                    else
-                                        if(it->status == RS_STATUS_AWAY)
-                                            gpg_item -> setIcon(0,(QIcon(IMAGE_AWAY)));
-                                        else
-                                            if(it->status == RS_STATUS_BUSY)
-                                                gpg_item -> setIcon(0,(QIcon(IMAGE_BUSY)));
+                                {
+                                    gpg_item -> setIcon(1,(QIcon(":/images/no_avatar.png")));
+                                }
+                                if(it->status == RS_STATUS_ONLINE)
+                                   gpg_item -> setIcon(0,(QIcon(IMAGE_ONLINE)));
+                                else
+                                if(it->status == RS_STATUS_AWAY)
+                                   gpg_item -> setIcon(0,(QIcon(IMAGE_AWAY)));
+                                else
+                                if(it->status == RS_STATUS_BUSY)
+                                   gpg_item -> setIcon(0,(QIcon(IMAGE_BUSY)));
                 	}
                     }
                 }
