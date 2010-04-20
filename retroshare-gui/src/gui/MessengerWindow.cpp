@@ -491,7 +491,7 @@ void  MessengerWindow::insertPeers()
 
                                 }else
                                 {
-                                    gpg_item -> setIcon(1,(QIcon(":/images/no_avatar.png")));
+                                    gpg_item -> setIcon(1,(QIcon(":/images/no_avatar_70.png")));
                                 }
                                 if(it->status == RS_STATUS_ONLINE)
                                    gpg_item -> setIcon(0,(QIcon(IMAGE_ONLINE)));
