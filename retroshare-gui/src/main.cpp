@@ -146,7 +146,7 @@ int main(int argc, char *argv[])
 	QObject::connect(notify,SIGNAL(filesPreModChanged(bool))          ,w->sharedfilesDialog		,SLOT(preModDirectories(bool)          )) ;
 	QObject::connect(notify,SIGNAL(filesPostModChanged(bool))         ,w->sharedfilesDialog		,SLOT(postModDirectories(bool)         )) ;
 	QObject::connect(notify,SIGNAL(transfersChanged())                ,w->transfersDialog  		,SLOT(insertTransfers()                )) ;
-	QObject::connect(notify,SIGNAL(friendsChanged())                  ,w->messengerWindow  		,SLOT(insertPeers()                    )) ;
+        QObject::connect(notify,SIGNAL(friendsChanged())                  ,w->messengerWindow 		,SLOT(insertPeers()                    )) ;
 	QObject::connect(notify,SIGNAL(friendsChanged())                  ,w->peersDialog      		,SLOT(insertPeers()                    )) ;
 	QObject::connect(notify,SIGNAL(neighborsChanged())                ,w->networkDialog    		,SLOT(insertConnect()                  )) ;
 	QObject::connect(notify,SIGNAL(messagesChanged())                 ,w->messagesDialog   		,SLOT(insertMessages()                 )) ;
