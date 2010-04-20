@@ -34,7 +34,7 @@
 
 //#define GPG_DEBUG 1
 
-// initialisation du pointeur de singleton �  zéro
+// initialisation du pointeur de singleton à zéro
 AuthGPG *AuthGPG::instance_gpg = new AuthGPG();
 
 /* Turn a set of parameters into a string */
@@ -71,57 +71,37 @@ gpgcert::~gpgcert()
 	}
 }
 
-static std::string gpg_password_static;
-static bool is_set_gpg_password_static = false;
-
-
+#define GPG_DEBUG2
 gpg_error_t pgp_pwd_callback(void *hook, const char *uid_hint, const char *passphrase_info, int prev_was_bad, int fd)
 {
-    #ifdef GPG_DEBUG
-    fprintf(stderr, "pgp_pwd_callback() called.\n");
-    #endif
+#ifdef GPG_DEBUG2
+	fprintf(stderr, "pgp_pwd_callback() called.\n");
+#endif
+	std::string text = rsicontrol->getNotify().askForPassword(uid_hint,prev_was_bad);
 
-    std::string text;
-    if (is_set_gpg_password_static) {
-        #ifdef GPG_DEBUG
-        fprintf(stderr, "pgp_pwd_callback() using already setted password.\n");
-        #endif
-        text = gpg_password_static;
-    } else {
-        if(prev_was_bad || !AuthGPG::getAuthGPG()->getAutorisePasswordCallbackNotify()) {
-            #ifdef GPG_DEBUG
-            fprintf(stderr, "pgp_pwd_callback() allow only one try to be consistent with gpg agent.\n");
-            #endif
-            text = "";
-        } else {
-            text = rsicontrol->getNotify().askForPassword(uid_hint, prev_was_bad);
-            #ifdef GPG_DEBUG
-            std::cerr << "pgp_pwd_callback() got GPG passwd from gui." << std::endl;
-            #endif
-            gpg_password_static = text;
-            is_set_gpg_password_static = true;
-        }
-    }
-
-#ifndef WINDOWS_SYS
-	write(fd, text.c_str(), text.size());
-	write(fd, "\n", 1); /* needs a new line? */
-#else
-	DWORD written = 0;
-	HANDLE winFd = (HANDLE) fd;
-	WriteFile(winFd, text.c_str(), text.size(), &written, NULL);
-	WriteFile(winFd, "\n", 1, &written, NULL); 
+#ifdef GPG_DEBUG2
+	std::cerr << "pgp_pwd_callback() got GPG passwd from gui." << std::endl;
 #endif
 
-        #ifdef GPG_DEBUG
-        fprintf(stderr, "pgp_pwd_callback() password setted\n");
-        #endif
+	if((void*)fd != NULL)
+	{
+#ifndef WINDOWS_SYS
+		write(fd, text.c_str(), text.size());
+		write(fd, "\n", 1); /* needs a new line? */
+#else
+		DWORD written = 0;
+		HANDLE winFd = (HANDLE) fd;
+		WriteFile(winFd, text.c_str(), text.size(), &written, NULL);
+		WriteFile(winFd, "\n", 1, &written, NULL); 
+#endif
+	}
+
+#ifdef GPG_DEBUG2
+	fprintf(stderr, "pgp_pwd_callback() password setted\n");
+#endif
 
 	return 0;
 }
-
-static char *PgpPassword = NULL;
-
 
 AuthGPG::AuthGPG()
         :gpgmeInit(false),gpgmeKeySelected(false),autorisePasswordCallbackNotify(true),p3Config(CONFIG_TYPE_AUTHGPG)
@@ -275,7 +255,7 @@ int	AuthGPG::GPGInit(std::string ownId)
 
         {
             RsStackReadWriteMutex stack(pgpMtx, RsReadWriteMutex::WRITE_LOCK); /******* LOCKED ******/
-            is_set_gpg_password_static= false;
+
             if (!gpgmeInit) {
                     return 0;
             }
@@ -523,7 +503,6 @@ bool   AuthGPG::updateTrustAllKeys_locked()
 
 
 	/* have to do this the hard way! */
-	gpgme_trust_item_t ti = NULL;
 	std::map<std::string, gpgcert>::iterator it;
 
 	for(it = mKeyList.begin(); it != mKeyList.end(); it++)
@@ -545,6 +524,8 @@ bool   AuthGPG::updateTrustAllKeys_locked()
 
 		/* Loop until end of key */
 #ifdef GPG_DEBUG
+	gpgme_trust_item_t ti = NULL;
+
 		for(int i = 0;(GPG_ERR_NO_ERROR == (ERR = gpgme_op_trustlist_next (CTX, &ti))); i++)
 		{
 			std::string keyid = ti->keyid;
@@ -742,7 +723,6 @@ bool AuthGPG::DoOwnSignature_locked(const void *data, unsigned int datalen, void
 
 	/* now extract the data from gpgmeSig */
 	size_t len = 0; 
-	int len2 = len;
 //	gpgme_data_write (gpgmeSig, "", 1); 	// to be able to convert it into a string
 	char *export_sig = gpgme_data_release_and_get_mem(gpgmeSig, &len);
 #ifdef GPG_DEBUG
@@ -1234,7 +1214,6 @@ bool AuthGPG::LoadCertificateFromString(std::string str, std::string &gpg_id)
     #ifdef GPG_DEBUG
             std::cerr << "AuthGPG::LoadCertificateFromString() Importing considered folowing fpr : " << fingerprint << std::endl;
     #endif
-
             imported = res->imported;
 
     #ifdef GPG_DEBUG
@@ -1388,21 +1367,22 @@ int	AuthGPG::privateSignCertificate(std::string id)
 	 * Once the key is signed, it moves from Others to Peers list ??? 
 	 */
 
-        RsStackReadWriteMutex stack(pgpMtx, RsReadWriteMutex::WRITE_LOCK); /******* LOCKED ******/
-        certmap::iterator it;
+	RsStackReadWriteMutex stack(pgpMtx, RsReadWriteMutex::WRITE_LOCK); /******* LOCKED ******/
+	certmap::iterator it;
+
 	if (mKeyList.end() == (it = mKeyList.find(id)))
 	{
 		return false;
 	}
 
 	gpgme_key_t signKey = it->second.key;
-        gpgme_key_t ownKey  = mOwnGpgCert.key;
-	
-        class SignParams sparams("0");
+	gpgme_key_t ownKey  = mOwnGpgCert.key;
+
+	class SignParams sparams("0");
 	class EditParams params(SIGN_START, &sparams);
 	gpgme_data_t out;
-        gpg_error_t ERR;
-	
+	gpg_error_t ERR;
+
 	if(GPG_ERR_NO_ERROR != (ERR = gpgme_data_new(&out))) {
 		return 0;
 	}
@@ -1413,6 +1393,7 @@ int	AuthGPG::privateSignCertificate(std::string id)
 	}
 	
         if(GPG_ERR_NO_ERROR != (ERR = gpgme_op_edit(CTX, signKey, keySignCallback, &params, out))) {
+
 		return 0;	
 	}
 
