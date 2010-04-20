@@ -2207,16 +2207,15 @@ int RsServer::StartupRetroShare()
 	rsChannels = mChannels;
 	rsRanks = new p3Rank(mRanking);
 	rsBlogs = mBlogs;
+	rsStatus = new p3Status(mStatusSrv);
 
 #ifndef RS_RELEASE
 	rsGameLauncher = gameLauncher;
 	rsPhoto = new p3Photo(photoService);
-	rsStatus = new p3Status(mStatusSrv);
 	rsQblog = new p3Blog(mQblog);
 #else
 	rsGameLauncher = NULL;
 	rsPhoto = NULL;
-	rsStatus = NULL;
 	rsQblog = NULL;
 #endif
 
