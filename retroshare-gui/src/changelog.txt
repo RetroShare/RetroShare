@@ -1,3 +1,30 @@
+Changes for v0.5.0a
+
+* removed double definition of fingerprint
+* Fixed deadlock when asking for GPG passwd with gpg callback during session.
+* Added a method lockAllEvents()/unlockAllEvents() to remove timer updates in RsAutoUpdatePage
+* Updated passwd message to be more user-friendly
+* removed some warnings in authgpg.cc
+* added commandline option '-U' to allow user to access different profile 
+  - in the situation where autologin is enabled 
+  - BUG found (or rather autologin induced it), if one asks to make friends to a 
+  peer (in ConfCertDialg) 'within' a session that uses autologin it freezes   
+* add the internal counter mutex lock. Move the code of the rw mutec to the rsthreads.cc file
+* fix a code bug
+* add a read / write lock and r
+* Fix a bug when adding a cert
+* Fixed new message string
+* added gpg initialization for autologin
+  - your friends are not authenticated if not
+* Added support for Auto-login 
+  - Using rc4 to store ssl pword on file for linux,  for windows already using cryptprotect
+  - yes its not safe, but its the user's choice to keep pword or not
+  - consider using method closely hooked to linux kernel (another layer of obfuscation)
+  - windows i believe is stronger (because its proprietary/ heavily obfuscated)
+  - added checkbox in start dialog including warning (autologin not safe)
+  - added check box in gen setting to disable autologin on shutdown
+* block the notify callback of authgpg when the main windows is launched
+
 Changes for v0.5.0
 
 * corrected small bug in max search determination
