@@ -29,6 +29,7 @@
 #include <gui/settings/rsharesettings.h>
 #include <gui/common/rwindow.h>
 #include "chat/PopupChatDialog.h"
+#include "RsAutoUpdatePage.h"
 
 
 class LogoBar;

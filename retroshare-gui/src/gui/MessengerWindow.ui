@@ -368,8 +368,8 @@ stop:0 #FEFEFE, stop:1 #E8E8E8);
          </property>
          <property name="iconSize">
           <size>
-           <width>18</width>
-           <height>18</height>
+           <width>40</width>
+           <height>40</height>
           </size>
          </property>
          <property name="indentation">
@@ -378,6 +378,9 @@ stop:0 #FEFEFE, stop:1 #E8E8E8);
          <property name="columnCount">
           <number>0</number>
          </property>
+         <attribute name="headerShowSortIndicator" stdset="0">
+          <bool>false</bool>
+         </attribute>
          <attribute name="headerShowSortIndicator" stdset="0">
           <bool>false</bool>
          </attribute>
@@ -394,7 +397,7 @@ stop:0 #FEFEFE, stop:1 #E8E8E8);
      <x>0</x>
      <y>0</y>
      <width>295</width>
-     <height>27</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

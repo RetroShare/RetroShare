@@ -96,7 +96,7 @@ void MessengerWindow::releaseInstance()
 
 /** Constructor */
 MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
-: RWindow("MessengerWindow", parent, flags)
+    : RWindow("MessengerWindow", parent, flags)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
@@ -113,11 +113,6 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
   connect( ui.actionHide_Offline_Friends, SIGNAL(triggered()), this, SLOT(insertPeers()));
   
   connect(ui.messagelineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(savestatusmessage()));
-
-
-  QTimer *timer = new QTimer(this);
-  timer->connect(timer, SIGNAL(timeout()), this, SLOT(savestatus()));
-  timer->start(1000); /* one second */
 
 
 	/* to hide the header  */
@@ -164,6 +159,7 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
 #ifdef Q_WS_WIN
 #endif
 }
+
 
 void MessengerWindow::messengertreeWidgetCostumPopupMenu( QPoint point )
 {
@@ -457,7 +453,6 @@ void  MessengerWindow::insertPeers()
                 }
             }
 
-            RsPeerDetails ssl_details;
 
             int i = 0;
             if (gpg_connected) {
@@ -466,23 +461,45 @@ void  MessengerWindow::insertPeers()
 
                 std::list<StatusInfo>::iterator it = statusInfo.begin();
 
-                for(; it  != statusInfo.end(); it++){
-                	rsPeers->getPeerDetails(it->id, ssl_details);
-                	if(detail.id == ssl_details.gpg_id){
+
+                for(; it != statusInfo.end() ; it++){
+
+                    std::list<std::string>::iterator cont_it = sslContacts.begin();
+
+                    // don't forget the kids
+                    for(;  cont_it != sslContacts.end(); cont_it++){
+
+
+                        if((it->id == *cont_it) && (rsPeers->isOnline(*cont_it))){
+
                 		std::string status;
                 		rsStatus->getStatusString(it->status, status);
                 		gpg_item -> setText(1, QString::fromStdString(status));
 
-                		if(it->status == RS_STATUS_ONLINE)
-                			 gpg_item -> setIcon(0,(QIcon(IMAGE_ONLINE)));
-                		else
-                			if(it->status == RS_STATUS_AWAY)
-                				gpg_item -> setIcon(0,(QIcon(IMAGE_AWAY)));
-                			else
-								if(it->status == RS_STATUS_BUSY)
-									gpg_item -> setIcon(0,(QIcon(IMAGE_BUSY)));
+                                unsigned char *data = NULL;
+                                int size = 0 ;
+                                rsMsgs->getAvatarData(it->id ,data,size);
 
+                                if(size != 0){
+
+                                    QPixmap avatar ;
+                                    avatar.loadFromData(data,size,"PNG") ;
+                                    QIcon avatar_icon(avatar);
+                                    QSize av_icon_size(100, 100);
+                                    gpg_item-> setIcon(0, avatar_icon);
+                                    delete[] data;
+
+                                }else
+                                    if(it->status == RS_STATUS_ONLINE)
+                                         gpg_item -> setIcon(0,(QIcon(IMAGE_ONLINE)));
+                                    else
+                                        if(it->status == RS_STATUS_AWAY)
+                                            gpg_item -> setIcon(0,(QIcon(IMAGE_AWAY)));
+                                        else
+                                            if(it->status == RS_STATUS_BUSY)
+                                                gpg_item -> setIcon(0,(QIcon(IMAGE_BUSY)));
                 	}
+                    }
                 }
 
                                 
