@@ -40,7 +40,7 @@ linux-* {
 	HEADERS += upnp/UPnPBase.h
 	SOURCES += upnp/UPnPBase.cpp
 
-	CONFIG += version_detail_bash_script
+	#CONFIG += version_detail_bash_script
 }
 
 linux-g++ {
