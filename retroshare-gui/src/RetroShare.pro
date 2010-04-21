@@ -17,7 +17,7 @@ debug {
 ################################# Linux ##########################################
 # Put lib dir in QMAKE_LFLAGS so it appears before -L/usr/lib
 linux-* {
-	CONFIG += version_detail_bash_script
+	#CONFIG += version_detail_bash_script
 	QMAKE_CXXFLAGS *= -D_FILE_OFFSET_BITS=64
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
         LIBS += -lssl -lgpgme -lupnp
