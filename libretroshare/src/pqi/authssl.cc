@@ -1662,8 +1662,11 @@ bool    AuthSSL::encrypt(void *&out, int &outlen, const void *in, int inlen, std
             return false;
         }
 
-        //ekl=EVP_PKEY_encrypt_old (ek,key,EVP_CIPHER_CTX_key_length(&cipher_ctx), public_key); //use this line for openssl 1.0
+#if OPENSSL_VERSION_NUMBER >= 0x10000000L
+        ekl=EVP_PKEY_encrypt_old(ek,key,EVP_CIPHER_CTX_key_length(&cipher_ctx), public_key);
+#else
         ekl=EVP_PKEY_encrypt(ek,key,EVP_CIPHER_CTX_key_length(&cipher_ctx), public_key);
+#endif
 
         /// ** copied implementation of EVP_SealInit of openssl V *** ///
 
@@ -1769,8 +1772,11 @@ bool    AuthSSL::decrypt(void *&out, int &outlen, const void *in, int inlen)
             return false;
         }
 
-        //i=EVP_PKEY_decrypt_old (key,encryptKey,ekeylen,own_private_key); //use this line for openssl 1.0
+#if OPENSSL_VERSION_NUMBER >= 0x10000000L
+        i=EVP_PKEY_decrypt_old(key,encryptKey,ekeylen,own_private_key);
+#else
         i=EVP_PKEY_decrypt(key,encryptKey,ekeylen,own_private_key);
+#endif
         if ((i <= 0) || !EVP_CIPHER_CTX_set_key_length(&ectx, i))
         {
             return false;
