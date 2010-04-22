@@ -791,7 +791,13 @@ void p3ConnectMgr::networkConsistencyCheck()
 
         if (!doNetReset) {//set an external address. if ip adresses are different, let's use the stun address, then the extaddrfinder and then the upnp address.
             struct sockaddr_in extAddr;
-            if (getExtFinderExtAddress(extAddr)) {
+            if (!ownState.dyndns.empty () && getIPAddressFromString (ownState.dyndns.c_str (), &extAddr.sin_addr)) {
+                #ifdef CONN_DEBUG_TICK
+                std::cerr << "p3ConnectMgr::networkConsistencyCheck() using getIPAddressFromString for ownState.serveraddr." << std::endl;
+                #endif
+                extAddr.sin_port = ownState.currentserveraddr.sin_port;
+                ownState.currentserveraddr = extAddr;
+            } if (getExtFinderExtAddress(extAddr)) {
                 netExtFinderAddressCheck(); //so we put the extra address flag ok.
                 #ifdef CONN_DEBUG_TICK
                 std::cerr << "p3ConnectMgr::networkConsistencyCheck() using getExtFinderExtAddress for ownState.serveraddr." << std::endl;
@@ -2359,12 +2365,49 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
                     peerConnectAddress pca;
                     pca.addr = ipListIt->ipAddr;
                     pca.type = RS_NET_CONN_TCP_UNKNOW_TOPOLOGY;
-                    //fir the delay, we add a random time and some more time when the friend list is big
+                    //for the delay, we add a random time and some more time when the friend list is big
                     pca.delay = P3CONNMGR_TCP_DEFAULT_DELAY + rand() % 3 + (mFriendList.size() / 5);
                     pca.ts = time(NULL);
                     pca.period = 0;
                     it->second.connAddrs.push_back(pca);
                 }
+        }
+
+        if (!it->second.dyndns.empty()) {
+            struct in_addr addr;
+            u_short port = it->second.currentserveraddr.sin_port ? it->second.currentserveraddr.sin_port : it->second.currentlocaladdr.sin_port;
+            if (port) {
+                if (getIPAddressFromString (it->second.dyndns.c_str (), &addr)) {
+                    bool found = false;
+                    for (std::list<peerConnectAddress>::iterator cit = it->second.connAddrs.begin(); cit != it->second.connAddrs.end(); cit++) {
+                        if (cit->addr.sin_addr.s_addr == addr.s_addr &&
+                            cit->addr.sin_port == port &&
+                            cit->type == RS_NET_CONN_TCP_UNKNOW_TOPOLOGY) {
+#ifdef CONN_DEBUG
+                            std::cerr << "p3ConnectMgr::retryConnectTCP() tcp attempt already in list." << std::endl;
+#endif
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if (!found) {
+#ifdef CONN_DEBUG
+                        std::cerr << "Adding tcp connection attempt list." << std::endl;
+#endif
+                        peerConnectAddress pca;
+                        pca.addr.sin_family = AF_INET;
+                        pca.addr.sin_addr.s_addr = addr.s_addr;
+                        pca.addr.sin_port = port;
+                        pca.type = RS_NET_CONN_TCP_UNKNOW_TOPOLOGY;
+                        //for the delay, we add a random time and some more time when the friend list is big
+                        pca.delay = P3CONNMGR_TCP_DEFAULT_DELAY + rand() % 3 + (mFriendList.size() / 5);
+                        pca.ts = time(NULL);
+                        pca.period = 0;
+                        it->second.connAddrs.push_back(pca);
+                    }
+                }
+            }
         }
 
         //add the supposed external address UDP
@@ -2630,6 +2673,36 @@ bool    p3ConnectMgr::setExtAddress(std::string id, struct sockaddr_in addr)
 	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
 	return true;
+}
+
+bool p3ConnectMgr::setDynDNS(std::string id, std::string dyndns)
+{
+    if (id == AuthSSL::getAuthSSL()->OwnId())
+    {
+        ownState.dyndns = dyndns;
+        return true;
+    }
+
+    RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+    /* check if it is a friend */
+    std::map<std::string, peerConnectState>::iterator it;
+    if (mFriendList.end() == (it = mFriendList.find(id)))
+    {
+            if (mOthersList.end() == (it = mOthersList.find(id)))
+            {
+                    #ifdef CONN_DEBUG
+                                    std::cerr << "p3ConnectMgr::setLocalAddress() cannot add addres info : peer id not found in friend list  id: " << id << std::endl;
+                    #endif
+                    return false;
+            }
+    }
+
+    /* "it" points to peer */
+    it->second.dyndns = dyndns;
+
+    IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+
+    return true;
 }
 
 bool    p3ConnectMgr::setAddressList(std::string id, std::list<IpAddressTimed> IpAddressTimedList)
@@ -2912,6 +2985,7 @@ std::list<RsItem *> p3ConnectMgr::saveList(bool &cleanup)
 
         item->currentlocaladdr = ownState.currentlocaladdr;
         item->currentremoteaddr = ownState.currentserveraddr;
+        item->dyndns = ownState.dyndns;
 	item->ipAddressList = ownState.getIpAddressList();
 
 #ifdef CONN_DEBUG
@@ -2937,7 +3011,8 @@ std::list<RsItem *> p3ConnectMgr::saveList(bool &cleanup)
 		item->lastContact = (it->second).lastcontact;
 		item->currentlocaladdr = (it->second).currentlocaladdr;
                 item->currentremoteaddr = (it->second).currentserveraddr;
-		item->ipAddressList = (it->second).getIpAddressList();
+                item->dyndns = (it->second).dyndns;
+                item->ipAddressList = (it->second).getIpAddressList();
 
 		saveData.push_back(item);
 #ifdef CONN_DEBUG
@@ -3043,6 +3118,7 @@ bool  p3ConnectMgr::loadList(std::list<RsItem *> load)
                         }
                         setLocalAddress(pitem->pid, pitem->currentlocaladdr);
                         setExtAddress(pitem->pid, pitem->currentremoteaddr);
+                        setDynDNS (pitem->pid, pitem->dyndns);
                         setAddressList(pitem->pid, pitem->ipAddressList);
 		}
 		else if (sitem)

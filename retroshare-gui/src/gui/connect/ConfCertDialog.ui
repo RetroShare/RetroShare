@@ -141,6 +141,13 @@
                 </property>
                </widget>
               </item>
+              <item>
+               <widget class="QLabel" name="label_3">
+                <property name="text">
+                 <string>Dynamic DNS</string>
+                </property>
+               </widget>
+              </item>
              </layout>
             </item>
             <item>
@@ -150,6 +157,9 @@
               </item>
               <item>
                <widget class="QLineEdit" name="extAddress"/>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="dynDNS"/>
               </item>
              </layout>
             </item>
@@ -168,6 +178,22 @@
                  <string>Port</string>
                 </property>
                </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer_3">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Fixed</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>27</height>
+                 </size>
+                </property>
+               </spacer>
               </item>
              </layout>
             </item>
@@ -198,6 +224,19 @@
                  <number>7812</number>
                 </property>
                </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer_2">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
               </item>
              </layout>
             </item>

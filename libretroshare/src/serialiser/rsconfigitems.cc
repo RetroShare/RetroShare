@@ -740,6 +740,7 @@ void RsPeerNetItem::clear()
 
 	sockaddr_clear(&currentlocaladdr);
 	sockaddr_clear(&currentremoteaddr);
+        dyndns.clear();
 }
 
 std::ostream &RsPeerNetItem::print(std::ostream &out, uint16_t indent)
@@ -774,6 +775,9 @@ std::ostream &RsPeerNetItem::print(std::ostream &out, uint16_t indent)
 	out << ":" << htons(currentremoteaddr.sin_port) << std::endl;
 
         printIndent(out, int_Indent);
+        out << "DynDNS: " << dyndns << std::endl;
+
+        printIndent(out, int_Indent);
         out << "ipAdressList: size : " << ipAddressList.size() << ", adresses : " << std::endl;
         for (std::list<IpAddressTimed>::iterator ipListIt = ipAddressList.begin(); ipListIt!=(ipAddressList.end()); ipListIt++) {
                 printIndent(out, int_Indent);
@@ -797,6 +801,7 @@ uint32_t RsPeerConfigSerialiser::sizeNet(RsPeerNetItem *i)
 	s += 4; /* lastContact */
 	s += GetTlvIpAddrPortV4Size(); /* localaddr */ 
 	s += GetTlvIpAddrPortV4Size(); /* remoteaddr */ 
+        s += GetTlvStringSize(i->dyndns);
 
 	//add the size of the ip list
         int ipListSize = i->ipAddressList.size();
@@ -840,6 +845,7 @@ bool RsPeerConfigSerialiser::serialiseNet(RsPeerNetItem *item, void *data, uint3
 	ok &= setRawUInt32(data, tlvsize, &offset, item->lastContact); /* Mandatory */
 	ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, TLV_TYPE_IPV4_LOCAL, &(item->currentlocaladdr));
 	ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, TLV_TYPE_IPV4_REMOTE, &(item->currentremoteaddr));
+        ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_DYNDNS, item->dyndns);
 
 	//store the ip list
 	std::list<IpAddressTimed>::iterator ipListIt;
@@ -900,6 +906,7 @@ RsPeerNetItem *RsPeerConfigSerialiser::deserialiseNet(void *data, uint32_t *size
 	ok &= getRawUInt32(data, rssize, &offset, &(item->lastContact)); /* Mandatory */
 	ok &= GetTlvIpAddrPortV4(data, rssize, &offset, TLV_TYPE_IPV4_LOCAL, &(item->currentlocaladdr));
 	ok &= GetTlvIpAddrPortV4(data, rssize, &offset, TLV_TYPE_IPV4_REMOTE, &(item->currentremoteaddr));
+        ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_DYNDNS, item->dyndns);
 
 	//get the ip adress list
 	std::list<IpAddressTimed> ipTimedList;

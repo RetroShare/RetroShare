@@ -450,6 +450,16 @@ p, li { white-space: pre-wrap; }
               </item>
              </widget>
             </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_2">
+              <property name="text">
+               <string>Dynamic DNS:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QLineEdit" name="DynDNS"/>
+            </item>
            </layout>
           </item>
           <item row="1" column="0">
@@ -635,6 +645,15 @@ p, li { white-space: pre-wrap; }
               </attribute>
               <attribute name="verticalHeaderDefaultSectionSize">
                <number>22</number>
+              </attribute>
+              <attribute name="verticalHeaderVisible">
+               <bool>false</bool>
+              </attribute>
+              <attribute name="verticalHeaderDefaultSectionSize">
+               <number>22</number>
+              </attribute>
+              <attribute name="horizontalHeaderCascadingSectionResizes">
+               <bool>true</bool>
               </attribute>
               <column>
                <property name="text">

@@ -68,5 +68,7 @@ bool isLoopbackNet(struct in_addr *addr);
 bool isPrivateNet(struct in_addr *addr);
 bool isExternalNet(struct in_addr *addr);
 
+/* convert addresses */
+bool getIPAddressFromString (const char *addr_str, struct in_addr *addr);
 
 #endif /* RS_UNIVERSAL_NETWORK_HEADER */

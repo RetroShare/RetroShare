@@ -79,6 +79,7 @@ std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
 	struct sockaddr_in currentlocaladdr;             /* Mandatory */
 	struct sockaddr_in currentremoteaddr;            /* Mandatory */
+        std::string dyndns;
 
         std::list<IpAddressTimed> ipAddressList;
 };

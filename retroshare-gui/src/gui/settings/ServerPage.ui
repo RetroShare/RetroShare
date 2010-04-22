@@ -691,6 +691,13 @@
              </property>
             </widget>
            </item>
+           <item>
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>Dynamic DNS</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
          <item>
@@ -743,6 +750,9 @@
               <number>7812</number>
              </property>
             </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLineEdit" name="dynDNS"/>
            </item>
           </layout>
          </item>

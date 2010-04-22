@@ -42,6 +42,7 @@ const std::string CERT_SSL_ID = "--SSLID--";
 const std::string CERT_LOCATION = "--LOCATION--";
 const std::string CERT_LOCAL_IP = "--LOCAL--";
 const std::string CERT_EXT_IP = "--EXT--";
+const std::string CERT_DYNDNS = "--DYNDNS--";
 
 
 
@@ -308,6 +309,7 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 	d.localPort	= ntohs(best_local_addr.sin_port);
 	d.extAddr	= inet_ntoa(best_servr_addr.sin_addr);
 	d.extPort	= ntohs(best_servr_addr.sin_port);
+        d.dyndns        = pcs.dyndns;
 	d.lastConnect	= pcs.lastcontact;
 	d.connectPeriod = 0;
 	std::list<std::string> ipAddressList;
@@ -729,6 +731,10 @@ bool 	p3Peers::setExtAddress(std::string id, std::string addr_str, uint16_t port
 	return false;
 }
 
+bool p3Peers::setDynDNS(std::string id, std::string dyndns)
+{
+    return mConnMgr->setDynDNS(id, dyndns);
+}
 
 bool 	p3Peers::setNetworkMode(std::string id, uint32_t extNetMode)
 {
@@ -800,6 +806,9 @@ p3Peers::GetRetroshareInvite()
             std::ostringstream out2;
             out2 << ownDetail.extPort;
             invite += out2.str() + ";";
+            if (!ownDetail.dyndns.empty()) {
+                invite += "\n" + CERT_DYNDNS + ownDetail.dyndns + ";";
+            }
         }
 
         #ifdef P3PEERS_DEBUG
@@ -976,6 +985,19 @@ bool 	p3Peers::loadDetailsFromStringCert(std::string certstr, RsPeerDetails &pd)
                 }
             }
 
+            //let's parse DynDNS
+            parsePosition = certstr.find(CERT_DYNDNS);
+            std::cerr << "location DynDNS : " << parsePosition << std::endl;
+            if (parsePosition != std::string::npos) {
+                parsePosition += CERT_DYNDNS.length();
+                std::string subCert = certstr.substr(parsePosition);
+                parsePosition = subCert.find(";");
+                if (parsePosition != std::string::npos) {
+                    std::string DynDNS = subCert.substr(0, parsePosition);
+                    std::cerr << "DynDNS : " << DynDNS << std::endl;
+                    pd.dyndns = DynDNS;
+                }
+            }
 
         } catch (...) {
             std::cerr << "ConnectFriendWizard : Parse ip address error." << std::endl;

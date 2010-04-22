@@ -123,5 +123,15 @@ bool    isExternalNet(struct in_addr *addr)
 	return true;
 }
 
+bool getIPAddressFromString (const char *addr_str, struct in_addr *addr)
+{
+    if (addr_str && addr) {
+        hostent *pHost = gethostbyname (addr_str);
+        if (pHost) {
+            addr->s_addr = *(unsigned long*) (pHost->h_addr);
+            return true;
+        }
+    }
 
-
+    return false;
+}

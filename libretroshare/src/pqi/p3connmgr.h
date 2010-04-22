@@ -158,6 +158,7 @@ class peerConnectState
         //used to store current ip (for config and connection management)
 	struct sockaddr_in currentlocaladdr;             /* Mandatory */
 	struct sockaddr_in currentserveraddr;            /* Mandatory */
+        std::string dyndns;
 
         time_t lastcontact; 
 
@@ -228,6 +229,7 @@ bool	getNetStatusExtraAddressCheckOk();
 void 	setOwnNetConfig(uint32_t netMode, uint32_t visState);
 bool 	setLocalAddress(std::string id, struct sockaddr_in addr);
 bool 	setExtAddress(std::string id, struct sockaddr_in addr);
+bool    setDynDNS(std::string id, std::string dyndns);
 bool    setAddressList(std::string id, std::list<IpAddressTimed> IpAddressTimedList);
 
 bool 	setNetworkMode(std::string id, uint32_t netMode);

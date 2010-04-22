@@ -106,6 +106,7 @@ class RsPeerDetails
         uint16_t                localPort;
         std::string             extAddr;
         uint16_t                extPort;
+        std::string             dyndns;
 	std::list<std::string>  ipAddressList;
 
 	uint32_t		netMode;
@@ -166,6 +167,7 @@ virtual	bool connectAttempt(std::string ssl_id)			= 0;
 virtual bool setLocation(std::string ssl_id, std::string location) = 0;//location is shown in the gui to differentiate ssl certs
 virtual	bool setLocalAddress(std::string ssl_id, std::string addr, uint16_t port) = 0;
 virtual	bool setExtAddress(  std::string ssl_id, std::string addr, uint16_t port) = 0;
+virtual	bool setDynDNS(std::string id, std::string addr) = 0;
 virtual	bool setNetworkMode(std::string ssl_id, uint32_t netMode) 	= 0;
 virtual bool setVisState(std::string ssl_id, uint32_t vis)		= 0;
 

@@ -160,6 +160,8 @@ void ServerPage::load()
 		/* set the server address */
 	ui.extAddress->setText(QString::fromStdString(detail.extAddr));
 	ui.extPort -> setValue(detail.extPort);
+        /* set DynDNS */
+        ui.dynDNS -> setText(QString::fromStdString(detail.dyndns));
 }
 
 /** Loads the settings for this page */
@@ -262,7 +264,9 @@ void ServerPage::saveAddresses()
 	  rsPeers->setExtAddress(rsPeers->getOwnId(), ui.extAddress->text().toStdString(), ui.extPort->value());
 	}
 
-	rsicontrol->ConfigSetDataRates( ui.totalDownloadRate->value(), ui.totalUploadRate->value() );
+        rsPeers->setDynDNS(rsPeers->getOwnId(), ui.dynDNS->text().toStdString());
+
+        rsicontrol->ConfigSetDataRates( ui.totalDownloadRate->value(), ui.totalUploadRate->value() );
 	load();
 }
 

@@ -75,6 +75,7 @@ virtual	bool connectAttempt(std::string id);
 virtual bool setLocation(std::string ssl_id, std::string location);//location is shown in the gui to differentiate ssl certs
 virtual	bool setLocalAddress(std::string id, std::string addr, uint16_t port);
 virtual	bool setExtAddress(std::string id, std::string addr, uint16_t port);
+virtual	bool setDynDNS(std::string id, std::string dyndns);
 virtual	bool setNetworkMode(std::string id, uint32_t netMode);
 virtual bool setVisState(std::string id, uint32_t mode); 
 
