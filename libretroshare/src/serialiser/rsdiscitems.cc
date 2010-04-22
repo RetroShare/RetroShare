@@ -416,7 +416,9 @@ RsDiscReply *RsDiscSerialiser::deserialiseReply(void *data, uint32_t *pktsize)
             memcpy(peerNetdata,  (void *) (((char *) data) + offset), peerNetSize);
             RsPeerNetItem *rsPeerNetItem = (RsPeerNetItem*)rss->deserialise(peerNetdata, &peerNetSize);
             offset += peerNetSize;
-            item->rsPeerList.push_back(*rsPeerNetItem);
+
+				if(rsPeerNetItem != NULL)
+					item->rsPeerList.push_back(*rsPeerNetItem);
 	}
 
         if (offset != rssize) {
