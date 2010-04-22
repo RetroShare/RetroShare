@@ -2436,8 +2436,7 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
                 pca.type = RS_NET_CONN_UDP;
                 pca.delay = P3CONNMGR_UDP_DEFAULT_DELAY;
                 pca.ts = time(NULL);
-                // pseudo random number generator from Wikipedia/Numerical Recipies.
-                pca.period = P3CONNMGR_UDP_DEFAULT_PERIOD + ((time(NULL)*1664525 + 1013904223) % P3CONNMGR_UDP_DEFAULT_PERIOD); //add a random period between 1 and 2 times P3CONNMGR_UDP_DEFAULT_PERIOD
+                pca.period = P3CONNMGR_UDP_DEFAULT_PERIOD + (rand() % P3CONNMGR_UDP_DEFAULT_PERIOD);
                 it->second.connAddrs.push_back(pca);
             }
         } else {
@@ -2446,7 +2445,7 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
             #endif
         }
 
-        //ad the tunnel attempt
+        //add the tunnel attempt
         bool found = false;
         for (std::list<peerConnectAddress>::iterator cit = it->second.connAddrs.begin(); cit != it->second.connAddrs.end(); cit++) {
             if (cit->type == RS_NET_CONN_TUNNEL) {
