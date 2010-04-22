@@ -364,7 +364,9 @@ stop:0 #FEFEFE, stop:1 #E8E8E8);
           <enum>Qt::CustomContextMenu</enum>
          </property>
          <property name="styleSheet">
-          <string notr="true">border: 1px solid #CCCCCC;</string>
+          <string notr="true">QTreeWidget#messengertreeWidget{
+border: 1px solid #CCCCCC;
+}</string>
          </property>
          <property name="iconSize">
           <size>
@@ -378,9 +380,6 @@ stop:0 #FEFEFE, stop:1 #E8E8E8);
          <property name="columnCount">
           <number>0</number>
          </property>
-         <attribute name="headerShowSortIndicator" stdset="0">
-          <bool>false</bool>
-         </attribute>
          <attribute name="headerShowSortIndicator" stdset="0">
           <bool>false</bool>
          </attribute>
