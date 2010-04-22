@@ -115,6 +115,11 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
   connect(ui.messagelineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(savestatusmessage()));
 
 
+  QTimer *timer = new QTimer(this);
+  timer->connect(timer, SIGNAL(timeout()), this, SLOT(savestatus()));
+  timer->start(1000); /* one second */
+
+
 	/* to hide the header  */
 	ui.messengertreeWidget->header()->hide(); 
  
@@ -471,9 +476,9 @@ void  MessengerWindow::insertPeers()
 
                         if((it->id == *cont_it) && (rsPeers->isOnline(*cont_it))){
 
-                		std::string status;
-                		rsStatus->getStatusString(it->status, status);
-                		gpg_item -> setText(1, QString::fromStdString(status));
+								std::string status;
+								rsStatus->getStatusString(it->status, status);
+								gpg_item -> setText(1, QString::fromStdString(status));
 
                                 unsigned char *data = NULL;
                                 int size = 0 ;
