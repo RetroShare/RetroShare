@@ -906,7 +906,8 @@ RsPeerNetItem *RsPeerConfigSerialiser::deserialiseNet(void *data, uint32_t *size
 	ok &= getRawUInt32(data, rssize, &offset, &(item->lastContact)); /* Mandatory */
 	ok &= GetTlvIpAddrPortV4(data, rssize, &offset, TLV_TYPE_IPV4_LOCAL, &(item->currentlocaladdr));
 	ok &= GetTlvIpAddrPortV4(data, rssize, &offset, TLV_TYPE_IPV4_REMOTE, &(item->currentremoteaddr));
-        ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_DYNDNS, item->dyndns);
+        //ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_DYNDNS, item->dyndns);
+        GetTlvString(data, rssize, &offset, TLV_TYPE_STR_DYNDNS, item->dyndns); //use this line for backward compatibility
 
 	//get the ip adress list
 	std::list<IpAddressTimed> ipTimedList;
@@ -923,7 +924,8 @@ RsPeerNetItem *RsPeerConfigSerialiser::deserialiseNet(void *data, uint32_t *size
 	}
         item->ipAddressList = ipTimedList;
 
-	if (offset != rssize)
+        //if (offset != rssize)
+        if (false) //use this line for backward compatibility
 	{
 
 		/* error */
