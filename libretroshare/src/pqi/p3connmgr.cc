@@ -2406,6 +2406,32 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
                         pca.period = 0;
                         it->second.connAddrs.push_back(pca);
                     }
+
+                    //add an udp attempt with the dns address
+                    found = false;
+                    for (std::list<peerConnectAddress>::iterator cit = it->second.connAddrs.begin(); cit != it->second.connAddrs.end(); cit++) {
+                        if ( cit->type == RS_NET_CONN_UDP) {
+                            #ifdef CONN_DEBUG
+                            rslog(RSL_DEBUG_BASIC, p3connectzone, "p3ConnectMgr::retryConnectTCP() udp attempt already in list.");
+                            #endif
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        #ifdef CONN_DEBUG
+                        rslog(RSL_DEBUG_BASIC, p3connectzone, "p3ConnectMgr::retryConnectTCP() Adding udp connection attempt.");
+                        #endif
+                        peerConnectAddress pca;
+                        pca.addr.sin_family = AF_INET;
+                        pca.addr.sin_addr.s_addr = addr.s_addr;
+                        pca.addr.sin_port = port;
+                        pca.type = RS_NET_CONN_UDP;
+                        pca.delay = P3CONNMGR_UDP_DEFAULT_DELAY;
+                        pca.ts = time(NULL);
+                        pca.period = P3CONNMGR_UDP_DEFAULT_PERIOD + (rand() % P3CONNMGR_UDP_DEFAULT_PERIOD);
+                        it->second.connAddrs.push_back(pca);
+                    }
                 }
             }
         }
