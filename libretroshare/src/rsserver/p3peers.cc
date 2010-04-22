@@ -733,6 +733,9 @@ bool 	p3Peers::setExtAddress(std::string id, std::string addr_str, uint16_t port
 
 bool p3Peers::setDynDNS(std::string id, std::string dyndns)
 {
+#ifdef P3PEERS_DEBUG
+        std::cerr << "p3Peers::setDynDNS() called with id: " << id << " dyndns: " << dyndns <<std::endl;
+#endif
     return mConnMgr->setDynDNS(id, dyndns);
 }
 

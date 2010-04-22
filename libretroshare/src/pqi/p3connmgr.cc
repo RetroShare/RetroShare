@@ -2691,7 +2691,7 @@ bool p3ConnectMgr::setDynDNS(std::string id, std::string dyndns)
             if (mOthersList.end() == (it = mOthersList.find(id)))
             {
                     #ifdef CONN_DEBUG
-                                    std::cerr << "p3ConnectMgr::setLocalAddress() cannot add addres info : peer id not found in friend list  id: " << id << std::endl;
+                                    std::cerr << "p3ConnectMgr::setDynDNS() cannot add dyn dns info : peer id not found in friend list  id: " << id << std::endl;
                     #endif
                     return false;
             }

@@ -150,6 +150,8 @@ void ConfCertDialog::loadDialog()
             ui.extAddress->setText(QString::fromStdString(detail.extAddr));
             ui.extPort -> setValue(detail.extPort);
 
+            ui.dynDNS->setText(QString::fromStdString(detail.dyndns));
+
             ui.ipAddressList->clear();
             for(std::list<std::string>::const_iterator it(detail.ipAddressList.begin());it!=detail.ipAddressList.end();++it)
                    ui.ipAddressList->addItem(QString::fromStdString(*it));
@@ -311,7 +313,7 @@ void ConfCertDialog::applyDialog()
             /* check if the data is the same */
             bool localChanged = false;
             bool extChanged = false;
-            bool fwChanged = false;
+            bool dnsChanged = false;
 
             /* set local address */
             if ((detail.localAddr != ui.localAddress->text().toStdString()) || (detail.localPort != ui.localPort -> value()))
@@ -320,6 +322,9 @@ void ConfCertDialog::applyDialog()
             if ((detail.extAddr != ui.extAddress->text().toStdString()) || (detail.extPort != ui.extPort -> value()))
                     extChanged = true;
 
+            if ((detail.dyndns != ui.dynDNS->text().toStdString()))
+                    dnsChanged = true;
+
             /* now we can action the changes */
             if (localChanged)
                     rsPeers->setLocalAddress(mId, ui.localAddress->text().toStdString(), ui.localPort->value());
@@ -327,7 +332,10 @@ void ConfCertDialog::applyDialog()
             if (extChanged)
                     rsPeers->setExtAddress(mId,ui.extAddress->text().toStdString(), ui.extPort->value());
 
-            if(localChanged || extChanged)
+            if (dnsChanged)
+                    rsPeers->setDynDNS(mId, ui.dynDNS->text().toStdString());
+
+            if(localChanged || extChanged || dnsChanged)
                     emit configChanged() ;
         }
 
