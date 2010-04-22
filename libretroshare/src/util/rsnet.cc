@@ -25,6 +25,7 @@
 
 #include "util/rsnet.h"
 #include <string.h>
+#include <netdb.h>
 
 /* enforce LITTLE_ENDIAN on Windows */
 #ifdef WINDOWS_SYS
