@@ -236,6 +236,7 @@ private:
     QLineEdit* ext_friend_port;
     QLineEdit* local_friend_ip;
     QLineEdit* local_friend_port;
+    QLineEdit* dyndns;
 };
 
 //============================================================================

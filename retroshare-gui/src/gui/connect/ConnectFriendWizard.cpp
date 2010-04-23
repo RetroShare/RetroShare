@@ -136,6 +136,10 @@ ConnectFriendWizard::accept()
                 std::cerr << "ConnectFriendWizard::accept() : setting ip local address." << std::endl;
                 rsPeers->setLocalAddress(ssl_Id, this->field("local_friend_ip").toString().toStdString(), this->field("local_friend_port").toInt());
             }
+            if (!this->field("dyndns").isNull()) {
+                std::cerr << "ConnectFriendWizard::accept() : setting DynDNS." << std::endl;
+                rsPeers->setDynDNS(ssl_Id, this->field("dyndns").toString().toStdString());
+            }
             if (!this->field(LOCATION_FIELD_CONNECT_FRIEND_WIZARD).isNull()) {
                 std::cerr << "ConnectFriendWizard::accept() : setting peerLocation." << std::endl;
                 rsPeers->setLocation(ssl_Id, this->field(LOCATION_FIELD_CONNECT_FRIEND_WIZARD).toString().toStdString());
@@ -396,6 +400,7 @@ int TextPage::nextId() const {
         wizard()->setField("ext_friend_port", QString::number(pd.extPort));
         wizard()->setField("local_friend_ip", QString::fromStdString(pd.localAddr));
         wizard()->setField("local_friend_port", QString::number(pd.localPort));
+        wizard()->setField("dyndns", QString::fromStdString(pd.dyndns));
 
         return ConnectFriendWizard::Page_Conclusion ;
     }
@@ -828,6 +833,10 @@ ConclusionPage::ConclusionPage(QWidget *parent) : QWizardPage(parent) {
     local_friend_port = new QLineEdit(this);
     local_friend_port->setVisible(false);
     registerField("local_friend_port",local_friend_port);
+
+    dyndns = new QLineEdit(this);
+    dyndns->setVisible(false);
+    registerField("dyndns",dyndns);
 }
 
 //============================================================================
