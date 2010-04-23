@@ -256,8 +256,11 @@ bool upnphandler::shutdown_upnp()
  */
 
 upnphandler::upnphandler()
-	:toEnable(false), toStart(false), toStop(false),
-	eport(0),iport(0), eport_curr(0)
+	:
+	upnpState(RS_UPNP_S_UNINITIALISED),
+	 cUPnPControlPoint(NULL),
+	   toEnable(false), toStart(false), toStop(false),
+	iport(0),eport(0), eport_curr(0)
 {
 }
 
