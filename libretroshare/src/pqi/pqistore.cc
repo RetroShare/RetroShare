@@ -333,7 +333,15 @@ int     pqistore::readPkt(RsItem **item_out)
 	int extralen = getRsItemSize(block) - blen;
 	if (extralen > 0)
 	{
+	   if(extralen > blen + maxlen)
+	   {
+		  std::cerr << "pqistore: ERROR: Inconsistency in packet format (extralen=" << extralen << ", maxlen=" << maxlen << "). Wasting the whole file." << std::endl ;
+		  free(block) ;
+		  return 0 ;
+	   }
+
 		void *extradata = (void *) (((char *) block) + blen);
+
 		if (extralen != (tmplen = bio->readdata(extradata, extralen)))
 		{
 
