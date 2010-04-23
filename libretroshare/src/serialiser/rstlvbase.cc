@@ -138,7 +138,7 @@ bool SkipUnknownTlv(void *data, uint32_t size, uint32_t *offset)
 
 	/* extract the type and size */
 	void *tlvstart = right_shift_void_pointer(data, *offset);
-	uint16_t tlvtype = GetTlvType(tlvstart);
+	//uint16_t tlvtype = GetTlvType(tlvstart);
 	uint32_t tlvsize = GetTlvSize(tlvstart);
 
 	/* check that there is size */
@@ -409,7 +409,15 @@ bool GetTlvString(void *data, uint32_t size, uint32_t *offset,
 	if (!data)
 		return false;
 
-	if (size < *offset + TLV_HEADER_SIZE)
+	// Check if we have a null string (this happens with certs)
+	//
+	if (size == *offset)
+	{
+	   in = "" ;
+	   return true ;
+	}
+
+	if (size < *offset)
 	{
 #ifdef TLV_BASE_DEBUG
 		std::cerr << "GetTlvString() FAILED - not enough space" << std::endl;

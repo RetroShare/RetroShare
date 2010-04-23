@@ -427,7 +427,11 @@ bool  RsTlvKeySignature::GetTlv(void *data, uint32_t size, uint32_t *offset) /* 
 
 	ok &= GetTlvString(data, tlvend, offset, TLV_TYPE_STR_KEYID, keyId);
 	ok &= signData.GetTlv(data, tlvend, offset);  
-        ok &= GetTlvString(data, tlvend, offset, TLV_TYPE_STR_CERT_SSL, sslCert);
+
+	// The ssl cert is possibly void, i.e. an empty string. This is handled by
+	// GetTlvString().
+	//
+	ok &= GetTlvString(data, tlvend, offset, TLV_TYPE_STR_CERT_SSL, sslCert);
    
 	/***************************************************************************
 	 * NB: extra components could be added (for future expansion of the type).
