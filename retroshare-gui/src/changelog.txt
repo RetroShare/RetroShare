@@ -14,10 +14,10 @@ Changes for v0.5.0a
 * added commandline option '-U' to allow user to access different profile 
   - in the situation where autologin is enabled 
   - BUG found (or rather autologin induced it), if one asks to make friends to a 
-  peer (in ConfCertDialg) 'within' a session that uses autologin it freezes   
+  peer (in ConfCertDialog) 'within' a session that uses autologin it freezes   
 * add the internal counter mutex lock. Move the code of the rw mutec to the rsthreads.cc file
 * fix a code bug
-* add a read / write lock and r
+* add a read / write lock and refactor authgpg with it
 * Fix a bug when adding a cert
 * Fixed new message string
 * added gpg initialization for autologin

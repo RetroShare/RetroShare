@@ -107,7 +107,7 @@ stop: 0.9 #4c4c4c, stop: 1 #333333);
            <item row="1" column="0">
             <widget class="QComboBox" name="statuscomboBox">
              <property name="enabled">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="toolTip">
               <string>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -372,7 +372,9 @@ stop:0 #FEFEFE, stop:1 #E8E8E8);
           <enum>Qt::CustomContextMenu</enum>
          </property>
          <property name="styleSheet">
-          <string notr="true">border: 1px solid #CCCCCC;</string>
+          <string notr="true">QTreeWidget#messengertreeWidget{
+border: 1px solid #CCCCCC;
+}</string>
          </property>
          <property name="iconSize">
           <size>
