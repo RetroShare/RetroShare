@@ -1,5 +1,11 @@
 Changes for v0.5.0a
 
+* corrected handling of null strings in RsTlvBase::GetTlvString()
+* suppressed uninitialized memory read
+* added security check against malformed packets
+* added a security check to avoid core dump when a bad p3discReply packet is received
+* corrected other mismatched free/delete in avatar items
+* corrected mismatched free/delete in avatar items. Might have caused random crashes.
 * removed double definition of fingerprint
 * Fixed deadlock when asking for GPG passwd with gpg callback during session.
 * Added a method lockAllEvents()/unlockAllEvents() to remove timer updates in RsAutoUpdatePage
