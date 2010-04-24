@@ -47,6 +47,8 @@ ShareManager::ShareManager(QWidget *parent, Qt::WFlags flags)
   /* Invoke Qt Designer generated QObject setup routine */
   ui.setupUi(this);
 
+  isLoading = false;
+	load();
 
   connect(ui.addButton, SIGNAL(clicked( bool ) ), this , SLOT( showShareDialog() ) );
   connect(ui.removeButton, SIGNAL(clicked( bool ) ), this , SLOT( removeShareDirectory() ) );
@@ -57,20 +59,23 @@ ShareManager::ShareManager(QWidget *parent, Qt::WFlags flags)
 	ui.addButton->setToolTip(tr("Add a Share Directory"));
 	ui.removeButton->setToolTip(tr("Stop sharing selected Directory"));
 
-	load();
-
   ui.shareddirList->horizontalHeader()->setResizeMode( 0,QHeaderView::Stretch);
   ui.shareddirList->horizontalHeader()->setResizeMode( 2,QHeaderView::Interactive); 
  
   ui.shareddirList->horizontalHeader()->resizeSection( 0, 360 );
   ui.shareddirList->horizontalHeader()->setStretchLastSection(false);
 
+  setAttribute(Qt::WA_DeleteOnClose, true);
 
+}
+
+ShareManager::~ShareManager()
+{
+	_instance = NULL;
 }
 
 void ShareManager::shareddirListCostumPopupMenu( QPoint point )
 {
-
       QMenu contextMnu( this );
       QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
 
@@ -86,6 +91,7 @@ void ShareManager::shareddirListCostumPopupMenu( QPoint point )
 /** Loads the settings for this page */
 void ShareManager::load()
 {
+	isLoading = true;
 	std::cerr << "ShareManager:: In load !!!!!" << std::endl ;
 
 	std::list<SharedDirInfo>::const_iterator it;
@@ -95,16 +101,21 @@ void ShareManager::load()
 	/* get a link to the table */
 	QTableWidget *listWidget = ui.shareddirList;
 
-	/* remove old items ??? */
-	listWidget->clearContents() ;
-	listWidget->setRowCount(0) ;
+	/* set new row count */
+	listWidget->setRowCount(dirs.size());
 
 	connect(this,SIGNAL(itemClicked(QTableWidgetItem*)),this,SLOT(updateFlags(QTableWidgetItem*))) ;
+
+#ifndef USE_COMBOBOX
+	QString ToolTips [2] = { QString("If checked, the share is anonymously shared to anybody."),
+                                 QString("If checked, the share is browsable by your friends.") };
+	int Flags [2] = { RS_FILE_HINTS_NETWORK_WIDE, RS_FILE_HINTS_BROWSABLE };
+#endif
+
 
 	int row=0 ;
 	for(it = dirs.begin(); it != dirs.end(); it++,++row)
 	{
-		listWidget->insertRow(row) ;
 		listWidget->setItem(row,0,new QTableWidgetItem(QString::fromUtf8((*it).filename.c_str())));
 #ifdef USE_COMBOBOX
 		QComboBox *cb = new QComboBox ;
@@ -136,20 +147,19 @@ void ShareManager::load()
 
 		cb->setCurrentIndex(index) ;
 #else
-		QCheckBox *cb1 = new QCheckBox ;
-		QCheckBox *cb2 = new QCheckBox ;
+		int col;
+		for (col = 1; col <= 2; col++) {
+			QModelIndex index = listWidget->model()->index(row, col, QModelIndex());
+			QCheckBox *cb = (QCheckBox*) listWidget->indexWidget(index);
+			if (cb == NULL) {
+				cb = new QCheckBox;
+				cb->setToolTip(ToolTips [col - 1]);
+				listWidget->setCellWidget(row, col, cb);
 
-		cb1->setChecked( (*it).shareflags & RS_FILE_HINTS_NETWORK_WIDE ) ;
-		cb2->setChecked( (*it).shareflags & RS_FILE_HINTS_BROWSABLE ) ;
-
-		cb1->setToolTip(QString("If checked, the share is anonymously shared to anybody.")) ;
-		cb2->setToolTip(QString("If checked, the share is browsable by your friends.")) ;
-
-		listWidget->setCellWidget(row,1,cb1);
-		listWidget->setCellWidget(row,2,cb2);
-
-		QObject::connect(cb1,SIGNAL(toggled(bool)),this,SLOT(updateFlags(bool))) ;
-		QObject::connect(cb2,SIGNAL(toggled(bool)),this,SLOT(updateFlags(bool))) ;
+				QObject::connect(cb, SIGNAL(toggled(bool)), this, SLOT(updateFlags(bool))) ;
+			}
+			cb->setChecked((*it).shareflags & Flags [col - 1]);
+		}
 #endif
 	}
 
@@ -157,6 +167,8 @@ void ShareManager::load()
 
 	listWidget->update(); /* update display */
 	update();
+
+	isLoading = false ;
 }
 
 void ShareManager::showYourself()
@@ -165,7 +177,21 @@ void ShareManager::showYourself()
 		_instance = new ShareManager(NULL,0) ;
 
 	_instance->show() ;
+	_instance->activateWindow();
 }
+
+/*static*/ void ShareManager::postModDirectories(bool update_local)
+{
+	if (_instance == NULL || _instance->isHidden()) {
+		return;
+	}
+	
+	if (update_local) {
+		_instance->load();
+	}
+}
+
+
 
 void ShareManager::addShareDirectory()
 {
@@ -193,6 +219,9 @@ void ShareManager::addShareDirectory()
 
 void ShareManager::updateFlags(bool b)
 {
+	if(isLoading)
+		return ;
+
 	std::cerr << "Updating flags (b=" << b << ") !!!" << std::endl ;
 
 	std::list<SharedDirInfo>::iterator it;

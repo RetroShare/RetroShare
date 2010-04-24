@@ -35,11 +35,14 @@
 
 #include "rsettingswin.h"
 
+RSettingsWin *RSettingsWin::_instance = NULL;
+int RSettingsWin::lastPage = 0;
+
 RSettingsWin::RSettingsWin(QWidget * parent, Qt::WFlags flags)
                             : QDialog(parent, flags)
 {
     setupUi(this);
-    setAttribute(Qt::WA_QuitOnClose, false);
+    setAttribute(Qt::WA_DeleteOnClose, true);
     setModal(false);
 
     initStackedWidget();
@@ -48,10 +51,45 @@ RSettingsWin::RSettingsWin(QWidget * parent, Qt::WFlags flags)
     connect(okButton, SIGNAL(clicked( bool )), this, SLOT( saveChanges()) );
 }
 
+RSettingsWin::~RSettingsWin()
+{
+    lastPage = stackedWidget->currentIndex ();
+    _instance = NULL;
+}
+
 void
 RSettingsWin::closeEvent (QCloseEvent * event)
 {
     QWidget::closeEvent(event);
+}
+
+/*static*/ void RSettingsWin::showYourself(QWidget *parent)
+{
+    if(_instance == NULL) {
+        _instance = new RSettingsWin(parent);
+    }
+
+    if (_instance->isHidden()) {
+        _instance->setNewPage(lastPage);
+    }
+    _instance->show();
+    _instance->activateWindow();
+}
+
+/*static*/ void RSettingsWin::postModDirectories(bool update_local)
+{
+    if (_instance == NULL || _instance->isHidden() || _instance->stackedWidget == NULL) {
+       return;
+    }
+
+    if (update_local) {
+        if (_instance->stackedWidget->currentIndex() == Directories) {
+            ConfigPage *Page = (ConfigPage*) _instance->stackedWidget->currentWidget();
+            if (Page) {
+                Page->load();
+            }
+        }
+    }
 }
 
 void

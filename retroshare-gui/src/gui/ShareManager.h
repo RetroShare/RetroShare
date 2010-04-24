@@ -34,11 +34,13 @@ class ShareManager : public QDialog
 
 	public:
 	  static void showYourself() ;
+	  static void postModDirectories(bool update_local);
 
 private:
   /** Default constructor */
   ShareManager( QWidget *parent = 0, Qt::WFlags flags = 0);
   /** Default destructor */
+  ~ShareManager();
 
   /** Loads the settings for this page */
   void load();
@@ -65,7 +67,8 @@ private slots:
 private:
 
 
-  static ShareManager *_instance ;
+  static ShareManager *_instance;
+  bool isLoading;
 
   /** Define the popup menus for the Context menu */
   QMenu* contextMnu;

@@ -788,16 +788,16 @@ void    FileIndexMonitor::getSharedDirectories(std::list<SharedDirInfo> &dirs)
 	RsStackMutex stack(fiMutex) ; /* LOCKED DIRS */
 
 	/* must provide pendingDirs, as other parts depend on instanteous response */
-//	if (pendingDirs)
-//		dirs = pendingDirList;
-//	else
-//	{
+        if (pendingDirs)
+                dirs = pendingDirList;
+        else
+        {
 		/* get actual list (not pending stuff) */
 		std::map<std::string, SharedDirInfo>::const_iterator it;
 
 		for(it = directoryMap.begin(); it != directoryMap.end(); it++)
 			dirs.push_back(it->second) ;
-//	}
+        }
 }
 
 
