@@ -399,6 +399,14 @@ void MainWindow::updateHashingInfo(const QString& s)
 	}
 }
 
+void MainWindow::postModDirectories(bool update_local)
+{
+    RSettingsWin::postModDirectories(update_local);
+    ShareManager::postModDirectories(update_local);
+
+    QCoreApplication::flush();
+}
+
 /** Creates a new action associated with a config page. */
 QAction* MainWindow::createPageAction(QIcon img, QString text, QActionGroup *group)
 {
@@ -448,7 +456,7 @@ void MainWindow::addFriend()
 /** Shows Share Manager */
 void MainWindow::openShareManager()
 {
-	 ShareManager::showYourself();
+    ShareManager::showYourself();
 }
 
 
@@ -463,11 +471,7 @@ MainWindow::showMess(MainWindow::Page page)
 /** Shows Options */
 void MainWindow::showSettings()
 {
-    static RSettingsWin *win = new RSettingsWin(this);
-    if (win->isHidden())
-        win->setNewPage(0);
-    win->show();
-    win->activateWindow();
+    RSettingsWin::showYourself(this);
 }
 
 /** Shows Messenger window */
@@ -621,8 +625,8 @@ void MainWindow::loadStyleSheet(const QString &sheetName)
 
 void MainWindow::showabout()
 {
-    static AboutDialog *adlg = new AboutDialog(this);
-    adlg->exec();
+    AboutDialog adlg(this);
+    adlg.exec();
 }
 
 /** Displays the help browser and displays the most recently viewed help
@@ -644,8 +648,8 @@ void MainWindow::showHelpDialog(const QString &topic)
 
 void MainWindow::on_actionQuick_Start_Wizard_activated()
 {
-    QuickStartWizard *qstartwizard = new QuickStartWizard(this);
-    qstartwizard->exec();
+    QuickStartWizard qstartwizard(this);
+    qstartwizard.exec();
 }
 
 /** Called when the user changes the UI translation. */

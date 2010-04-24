@@ -34,8 +34,12 @@ class RSettingsWin: public QDialog, private Ui::Settings
         enum PageType { General = 0, Server, Transfer,
                         Directories, Notify, Security, Appearance, Fileassociations, Sound };
 
+        static void showYourself(QWidget *parent);
+        static void postModDirectories(bool update_local);
+
+    protected:
         RSettingsWin(QWidget * parent = 0, Qt::WFlags flags = 0);
-        ~RSettingsWin() {}
+        ~RSettingsWin();
 
     public slots:
         //! Go to a specific part of the control panel.
@@ -49,6 +53,10 @@ class RSettingsWin: public QDialog, private Ui::Settings
     	void loadSettings();
         void closeEvent (QCloseEvent * event);
         void initStackedWidget();
+
+    private:
+        static RSettingsWin *_instance;
+        static int lastPage;
 };
 
 #endif // !RSETTINGSWIN_HPP_

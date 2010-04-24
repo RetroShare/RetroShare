@@ -104,7 +104,8 @@ public slots:
 
     void updateHashingInfo(const QString&) ;
     void displayErrorMessage(int,int,const QString&) ;
-    
+    void postModDirectories(bool update_local);
+
 protected:
     void closeEvent(QCloseEvent *);
     

@@ -35,11 +35,6 @@ DirectoriesPage::DirectoriesPage(QWidget * parent, Qt::WFlags flags)
 
     //load();
 
-  	connect(ui.incomingButton, SIGNAL(clicked( bool ) ), this , SLOT( setIncomingDirectory() ) );
-  	connect(ui.partialButton, SIGNAL(clicked( bool ) ), this , SLOT( setPartialsDirectory() ) );
-  	connect(ui.checkBox, SIGNAL(stateChanged(int)), this, SLOT(shareDownloadDirectory(int)));
-  	connect(ui.editButton, SIGNAL(clicked()), this, SLOT(editDirectories()));
-
 #ifdef TO_REMOVE
 	ui.addButton->setToolTip(tr("Add a Share Directory"));
 	ui.removeButton->setToolTip(tr("Remove Shared Directory"));
@@ -50,12 +45,17 @@ DirectoriesPage::DirectoriesPage(QWidget * parent, Qt::WFlags flags)
 
     if (rsFiles->getShareDownloadDirectory())
     {
-    	ui.checkBox->setDown(true);		/* signal not emitted */
+        ui.checkBox->setChecked(true);		/* signal not emitted */
     }
     else
     {
-    	ui.checkBox->setDown(false);	/* signal not emitted */
+        ui.checkBox->setChecked(false);	/* signal not emitted */
     }
+
+    connect(ui.incomingButton, SIGNAL(clicked( bool ) ), this , SLOT( setIncomingDirectory() ) );
+    connect(ui.partialButton, SIGNAL(clicked( bool ) ), this , SLOT( setPartialsDirectory() ) );
+    connect(ui.checkBox, SIGNAL(stateChanged(int)), this, SLOT(shareDownloadDirectory(int)));
+    connect(ui.editButton, SIGNAL(clicked()), this, SLOT(editDirectories()));
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -118,6 +118,9 @@ void DirectoriesPage::load()
 	/* get a link to the table */
 	QListWidget *listWidget = ui.dirList;
 
+	/* save current index */
+	QModelIndex rootIndex = listWidget->rootIndex();
+
 	/* remove old items ??? */
 	listWidget->clear();
 
@@ -126,6 +129,9 @@ void DirectoriesPage::load()
 		/* (0) Dir Name */
 		listWidget->addItem(QString::fromStdString((*it).filename));
 	}
+
+	/* set saved index */
+	listWidget->setCurrentIndex(rootIndex);
 
 	ui.incomingDir->setText(QString::fromStdString(rsFiles->getDownloadDirectory()));
 	ui.partialsDir->setText(QString::fromStdString(rsFiles->getPartialsDirectory()));
