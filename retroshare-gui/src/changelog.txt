@@ -1,5 +1,9 @@
 Changes for v0.5.0a
 
+* Bug fix: Checkbox for automatic share of the incoming directory doesn't correctly set with setDown, use setChecked
+* ShareManager and RSettingsWin doesn't need to be created all the time
+* RSettingsWin: Save the last active page for the current runtime
+* ShareManager and DirectoryPage: Show changed shared directories direct after the change
 * corrected handling of null strings in RsTlvBase::GetTlvString()
 * suppressed uninitialized memory read
 * added security check against malformed packets
