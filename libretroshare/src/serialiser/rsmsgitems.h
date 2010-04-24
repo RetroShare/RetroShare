@@ -39,7 +39,10 @@ const uint32_t RS_CHAT_FLAG_PRIVATE 		 	= 0x0001;
 const uint32_t RS_CHAT_FLAG_REQUESTS_AVATAR	= 0x0002;
 const uint32_t RS_CHAT_FLAG_CONTAINS_AVATAR	= 0x0004;
 const uint32_t RS_CHAT_FLAG_AVATAR_AVAILABLE = 0x0008;
-const uint32_t RS_CHAT_FLAG_CUSTOM_STATE		= 0x0010;	// used for transmitting peer status string 
+
+const uint32_t RS_CHAT_FLAG_CUSTOM_STATE		= 0x0001;	// used for transmitting peer status string
+const uint32_t RS_CHAT_FLAG_REQUEST_CUSTOM_STATE = 0x0002;
+const uint32_t RS_CHAT_FLAG_CUSTOM_STATE_AVAILABLE = 0x0004;
 const uint32_t RS_CHAT_FLAG_PUBLIC  		 	= 0x0020;
 
 const uint8_t RS_PKT_SUBTYPE_CHAT_AVATAR = 0x03 ;	// default is 0x01
