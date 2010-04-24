@@ -27,10 +27,7 @@
 #ifndef SERVICE_CHAT_HEADER
 #define SERVICE_CHAT_HEADER
 
-/* 
- * The basic Chat service.
- *
- */
+
 
 #include <list>
 #include <string>
@@ -39,6 +36,14 @@
 #include "services/p3service.h"
 #include "pqi/p3connmgr.h"
 
+
+//!The basic Chat service.
+ /**
+  *
+  * Can be used to send and receive chats, immediate status (using notify), avatars, and custom status
+  * This service uses rsnotify (callbacks librs clients (e.g. rs-gui))
+  * @see NotifyBase
+  */
 class p3ChatService: public p3Service, public p3Config
 {
 	public:
@@ -48,13 +53,43 @@ class p3ChatService: public p3Service, public p3Config
 		virtual int   tick();
 		virtual int   status();
 
+		/*!
+		 * public chat sent to all peers
+		 */
 		int	sendChat(std::wstring msg);
+
+		/*!
+		 * chat is sent to specifc peer
+		 * @param id peer to send caht msg to
+		 */
 		int	sendPrivateChat(std::wstring msg, std::string id);
+
+		/*!
+		 * can be used to send status msgs, these status updates are meant for immediate use by peer at other end
+		 * e.g currently used to update user when a peer 'is typing' during a chat
+		 */
 		void  sendStatusString(const std::string& peer_id,const std::string& status_str) ;
+
+		/*!
+		 * send to all peers online
+		 *@see sendStatusString()
+		 */
 		void  sendGroupChatStatusString(const std::string& status_str) ;
 
+		/*!
+		 * this retrieves custom status for a peers, if not generate a request for the user
+		 * @param peer_id the id of the peer you want status string for
+		 */
 		std::string getCustomStateString(const std::string& peer_id) ;
+
+		/*!
+		 * sets the client's custom status, generates 'status available' item sent to all online peers
+		 */
 		void  setOwnCustomStateString(const std::string&) ;
+
+		/*!
+		 * @return client's custom string
+		 */
 		std::string getOwnCustomStateString() ;
 
 		/*! gets the peer's avatar in jpeg format, if available. Null otherwise. Also asks the peer to send
@@ -66,7 +101,6 @@ class p3ChatService: public p3Service, public p3Config
 		/*!
 		 * Sets the avatar data and size for client's account
 		 * @param data is copied, so should be destroyed by the caller
-		 *
 		 */
 		void setOwnAvatarJpegData(const unsigned char *data,int size) ;
 
@@ -75,10 +109,19 @@ class p3ChatService: public p3Service, public p3Config
 		 */
 		void getOwnAvatarJpegData(unsigned char *& data,int& size) ;
 
+
+		/*!
+		 * This retrieves all chat msg items and also (important!)
+		 * processes chat-status items that are in service item queue. chat msg item requests are also processed and not returned
+		 */
 		std::list<RsChatMsgItem *> getChatQueue(); 
 
 		/************* from p3Config *******************/
 		virtual RsSerialiser *setupSerialiser() ;
+
+		/*!
+		 * chat msg items and custom status are saved
+		 */
 		virtual std::list<RsItem*> saveList(bool& cleanup) ;
 		virtual bool loadList(std::list<RsItem*> load) ;
 
