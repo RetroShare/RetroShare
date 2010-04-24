@@ -325,7 +325,7 @@ std::list<RsChatMsgItem *> p3ChatService::getChatQueue()
 				//
 				if(it!=_avatars.end() && it->second->_peer_is_new)
 				{
-					std::cerr << "Adatar is new for peer. ending info above" << std::endl ;
+					std::cerr << "Avatar is new for peer. ending info above" << std::endl ;
 					ci->chatFlags |= RS_CHAT_FLAG_AVATAR_AVAILABLE ;
 				}
 
@@ -337,29 +337,36 @@ std::list<RsChatMsgItem *> p3ChatService::getChatQueue()
 
 		RsChatStatusItem *cs = dynamic_cast<RsChatStatusItem*>(item) ;
 
-		if(cs != NULL)
-		{
-			// we should notify for a status string for the current peer.
+		if(cs != NULL){
+
 #ifdef CHAT_DEBUG
 			std::cerr << "Received status string \"" << cs->status_string << "\"" << std::endl ;
 #endif
-			if(cs->flags & RS_CHAT_FLAG_PRIVATE)
-				rsicontrol->getNotify().notifyChatStatus(cs->PeerId(),cs->status_string,true) ;
 
-			if(cs->flags & RS_CHAT_FLAG_PUBLIC)
-				rsicontrol->getNotify().notifyChatStatus(cs->PeerId(),cs->status_string,false) ;
+			if(cs->flags & RS_CHAT_FLAG_REQUEST_CUSTOM_STATE){ // no state here just a request.
+				sendCustomState(cs->PeerId()) ;
 
-			if(cs->flags & RS_CHAT_FLAG_CUSTOM_STATE)
-			{
-#ifdef CHAT_DEBUG
-				std::cout << "Received custom status string packet from peer " << cs->PeerId() << ": " << cs->status_string << ". Storing it and notifying." << std::endl ;
-#endif
-				receiveStateString(cs->PeerId(),cs->status_string) ;	// store it
-				rsicontrol->getNotify().notifyCustomState(cs->PeerId()) ;
 			}
+			else // Check if new custom string is available at peer's. If so, send a request to get the custom string.
+				if(cs->flags & RS_CHAT_FLAG_CUSTOM_STATE){
 
-			delete item ;
+					receiveStateString(cs->PeerId(),cs->status_string) ;	// store it
+					rsicontrol->getNotify().notifyCustomState(cs->PeerId()) ;
+				}else
+					if(cs->flags & RS_CHAT_FLAG_CUSTOM_STATE_AVAILABLE){
+
+					std::cerr << "New custom state is available for peer " << cs->PeerId() << ", sending request" << std::endl ;
+					sendCustomStateRequest(cs->PeerId()) ;
+					}else
+						if(cs->flags & RS_CHAT_FLAG_PRIVATE)
+							rsicontrol->getNotify().notifyChatStatus(cs->PeerId(),cs->status_string,true) ;
+						else
+							if(cs->flags & RS_CHAT_FLAG_PUBLIC)
+								rsicontrol->getNotify().notifyChatStatus(cs->PeerId(),cs->status_string,false) ;
+
+			delete item;
 			continue ;
+
 		}
 
 		RsChatAvatarItem *ca = dynamic_cast<RsChatAvatarItem*>(item) ;
@@ -383,6 +390,7 @@ std::list<RsChatMsgItem *> p3ChatService::getChatQueue()
 
 void p3ChatService::setOwnCustomStateString(const std::string& s)
 {
+	std::list<std::string> onlineList;
 	{
 		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
@@ -393,9 +401,23 @@ void p3ChatService::setOwnCustomStateString(const std::string& s)
 
 		for(std::map<std::string,StateStringInfo>::iterator it(_state_strings.begin());it!=_state_strings.end();++it)
 			it->second._own_is_new = true ;
+
+		mConnMgr->getOnlineList(onlineList);
 	}
 
 	rsicontrol->getNotify().notifyOwnStatusMessageChanged() ;
+
+	// alert your online peers to your newly set status
+	std::list<std::string>::iterator it(onlineList.begin());
+	for(; it != onlineList.end(); it++){
+
+		RsChatStatusItem *cs = new RsChatStatusItem();
+		cs->flags = RS_CHAT_FLAG_CUSTOM_STATE_AVAILABLE;
+		cs->status_string = "";
+		cs->PeerId(*it);
+		sendItem(cs);
+	}
+
 	IndicateConfigChanged();
 }
 
@@ -430,7 +452,7 @@ void p3ChatService::receiveStateString(const std::string& id,const std::string& 
 {
 	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 #ifdef CHAT_DEBUG
-   std::cerr << "p3chatservice: received avatar jpeg data for peer " << id << ". Storing it." << std::endl ;
+   std::cerr << "p3chatservice: received custom state string for peer " << id << ". Storing it." << std::endl ;
 #endif
 
    bool new_peer = (_state_strings.find(id) == _state_strings.end()) ;
@@ -501,13 +523,15 @@ std::string p3ChatService::getCustomStateString(const std::string& peer_id)
 #endif
 	   return it->second._custom_status_string ;
 	}
-	else
-	{
+
+
 #ifdef CHAT_DEBUG
-		std::cerr << "No status string for this peer. Not requesting it." << std::endl ;
+		std::cerr << "No status string for this peer. requesting it." << std::endl ;
 #endif
-		return std::string() ;
-	}
+
+
+	sendCustomStateRequest(peer_id);
+	return std::string() ;
 }
 
 void p3ChatService::getAvatarJpegData(const std::string& peer_id,unsigned char *& data,int& size) 
@@ -520,7 +544,7 @@ void p3ChatService::getAvatarJpegData(const std::string& peer_id,unsigned char *
 #ifdef CHAT_DEBUG
 	std::cerr << "p3chatservice:: avatar for peer " << peer_id << " requested from above. " << std::endl ;
 #endif
-	// has avatar. Return it strait away.
+	// has avatar. Return it straight away.
 	//
 	if(it!=_avatars.end())
 	{
@@ -558,6 +582,22 @@ void p3ChatService::sendAvatarRequest(const std::string& peer_id)
 #endif
 
 	sendItem(ci);
+}
+
+void p3ChatService::sendCustomStateRequest(const std::string& peer_id){
+
+	RsChatStatusItem* cs = new RsChatStatusItem;
+
+	cs->PeerId(peer_id);
+	cs->flags = RS_CHAT_FLAG_PRIVATE | RS_CHAT_FLAG_REQUEST_CUSTOM_STATE ;
+	cs->status_string = std::string();
+
+#ifdef CHAT_DEBUG
+	std::cerr << "p3ChatService::sending request for status, to peer " << peer_id << std::endl ;
+	std::cerr << std::endl;
+#endif
+
+	sendItem(cs);
 }
 
 RsChatStatusItem *p3ChatService::makeOwnCustomStateStringItem()
@@ -606,6 +646,24 @@ void p3ChatService::sendAvatarJpegData(const std::string& peer_id)
         std::cerr << "Doing nothing" << std::endl ;
 #endif
    }
+}
+
+void p3ChatService::sendCustomState(const std::string& peer_id){
+
+#ifdef CHAT_DEBUG
+std::cerr << "p3chatservice: sending requested status string for peer " << peer_id << std::endl ;
+#endif
+
+	if(_custom_status_string != ""){
+		RsChatStatusItem *cs = makeOwnCustomStateStringItem();
+		cs->PeerId(peer_id);
+
+		sendItem(cs);
+	}else{
+#ifdef CHAT_DEBUG
+		std::cerr << "doing nothing" << std::endl;
+#endif
+	}
 }
 
 bool p3ChatService::loadList(std::list<RsItem*> load)

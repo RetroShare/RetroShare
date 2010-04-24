@@ -91,12 +91,18 @@ class p3ChatService: public p3Service, public p3Config
 		/// Send avatar info to peer in jpeg format.
 		void sendAvatarJpegData(const std::string& peer_id) ;
 
+		/// Send custom state info to peer
+		void sendCustomState(const std::string& peer_id);
+
 		/// Receive the avatar in a chat item, with RS_CHAT_RECEIVE_AVATAR flag.
 		void receiveAvatarJpegData(RsChatAvatarItem *ci) ;	// new method
 		void receiveStateString(const std::string& id,const std::string& s) ;
 
 		/// Sends a request for an avatar to the peer of given id
 		void sendAvatarRequest(const std::string& peer_id) ;
+
+		/// Send a request for custom status string
+		void sendCustomStateRequest(const std::string& peer_id);
 
 		RsChatAvatarItem *makeOwnAvatarItem() ;
 		RsChatStatusItem *makeOwnCustomStateStringItem() ;
