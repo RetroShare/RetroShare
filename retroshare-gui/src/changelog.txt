@@ -1,3 +1,69 @@
+Changes for v0.5.1*
+
+* custom status now sent without needing to have a private chat
+  - getcustom status now generate a requests to that peer.
+  - setowncustom status now generates an 'status available' item sent to all peers
+* added new const ids for custom status 'request' and 'available'
+* Udp connection uses now dyndns when available
+* Remove some error detection in deserial for dynDNS backward compatibility
+* Add the setDynDNS to the confcertdialog
+* fixed MessengerWindow TreeWidget stylesheet
+* fixed to get work rsStatus under Windows 
+* display Avatar icons on second item in MessengerWindow, when no Avatar pictures is available show a default one.
+* restored open messenger to main window left hand panel
+* replaced messenger peer icons with avatars
+* removed offline status msg
+* sendstatus is now on qtimer - think of replacing with rs notify call back
+  - hack to load file status from previous rs session
+  - also removed 'offline' status
+* Added to count new messages on Tray icon Tooltip.
+* implemented simple rsStatus for messenger window
+* fixed minor bug with messenger window (starts new pop-up chat dialog when peer responds, if private chat started from messenger window) 
+* removed double definition
+* Added ShareDialog for ShareManager
+* sorting on date in messages and showing time only for same day messages
+* Fixed some labels font display problem
+* Improved Display Messages Labels: From, Date, Subject, To, redesign the To Label to display it more user friendly
+* Added to display text for Dir counts
+* Added to display filesize in Bytes for Details
+
+Changes for v0.5.0a
+
+* Bug fix: Checkbox for automatic share of the incoming directory doesn't correctly set with setDown, use setChecked
+* ShareManager and RSettingsWin doesn't need to be created all the time
+* RSettingsWin: Save the last active page for the current runtime
+* ShareManager and DirectoryPage: Show changed shared directories direct after the change
+* corrected handling of null strings in RsTlvBase::GetTlvString()
+* suppressed uninitialized memory read
+* added security check against malformed packets
+* added a security check to avoid core dump when a bad p3discReply packet is received
+* corrected other mismatched free/delete in avatar items
+* corrected mismatched free/delete in avatar items. Might have caused random crashes.
+* removed double definition of fingerprint
+* Fixed deadlock when asking for GPG passwd with gpg callback during session.
+* Added a method lockAllEvents()/unlockAllEvents() to remove timer updates in RsAutoUpdatePage
+* Updated passwd message to be more user-friendly
+* removed some warnings in authgpg.cc
+* added commandline option '-U' to allow user to access different profile 
+  - in the situation where autologin is enabled 
+  - BUG found (or rather autologin induced it), if one asks to make friends to a 
+  peer (in ConfCertDialog) 'within' a session that uses autologin it freezes   
+* add the internal counter mutex lock. Move the code of the rw mutec to the rsthreads.cc file
+* fix a code bug
+* add a read / write lock and refactor authgpg with it
+* Fix a bug when adding a cert
+* Fixed new message string
+* added gpg initialization for autologin
+  - your friends are not authenticated if not
+* Added support for Auto-login 
+  - Using rc4 to store ssl pword on file for linux,  for windows already using cryptprotect
+  - yes its not safe, but its the user's choice to keep pword or not
+  - consider using method closely hooked to linux kernel (another layer of obfuscation)
+  - windows i believe is stronger (because its proprietary/ heavily obfuscated)
+  - added checkbox in start dialog including warning (autologin not safe)
+  - added check box in gen setting to disable autologin on shutdown
+* block the notify callback of authgpg when the main windows is launched
+
 Changes for v0.5.0
 
 * corrected small bug in max search determination
