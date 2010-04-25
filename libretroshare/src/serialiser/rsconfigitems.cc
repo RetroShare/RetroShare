@@ -901,6 +901,17 @@ RsPeerNetItem *RsPeerConfigSerialiser::deserialiseNet(void *data, uint32_t *size
 	ok &= GetTlvIpAddrPortV4(data, rssize, &offset, TLV_TYPE_IPV4_LOCAL, &(item->currentlocaladdr));
 	ok &= GetTlvIpAddrPortV4(data, rssize, &offset, TLV_TYPE_IPV4_REMOTE, &(item->currentremoteaddr));
 
+	// This is for compatibility with DYNDNS transfer. This code shoudl be removed some weeks after the
+	// version with dns code is released.
+	//
+	   std::string tmpstr ;
+		if(GetTlvString(data, rssize, &offset, TLV_TYPE_STR_DYNDNS, tmpstr))
+			std::cerr << "Got a DYNDNS entry in p3disc. Peer is using a more recent version. Skipping this entry." << std::endl ;
+#ifdef RSSERIAL_DEBUG
+		else
+			std::cerr << "no DNS entry." << std::endl ;
+#endif
+
 	//get the ip adress list
 	std::list<IpAddressTimed> ipTimedList;
 	while (offset < rssize) {

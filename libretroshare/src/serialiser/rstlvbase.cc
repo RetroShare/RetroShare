@@ -38,7 +38,7 @@ inline void* right_shift_void_pointer(void* p, uint32_t len) {
 }
 //*********************
 
-#define TLV_BASE_DEBUG 1
+// #define TLV_BASE_DEBUG 1
 
 /**** Basic TLV Functions ****/
 uint16_t GetTlvSize(void *data) {
