@@ -469,9 +469,6 @@ bool   AuthGPG::storeAllKeys_locked()
 
 		/* store in map */
                 mKeyList[nu.id] = nu;
-                std::cerr << "nu.name" << nu.name << std::endl;
-                std::cerr << "nu.trustLvl" << nu.trustLvl << std::endl;
-                std::cerr << "nu.accept_connection" << nu.accept_connection << std::endl;
                 if (nu.trustLvl < 2 && nu.accept_connection) {
                     //add it to the list of key that we will force the trust to 2
                     gpg_change_trust_list.push_back(nu.id);
