@@ -2603,24 +2603,27 @@ bool    p3ConnectMgr::setLocalAddress(std::string id, struct sockaddr_in addr)
 
         if (id == AuthSSL::getAuthSSL()->OwnId())
 	{
+            if (ownState.currentlocaladdr.sin_addr.s_addr != addr.sin_addr.s_addr ||
+                ownState.currentlocaladdr.sin_port != addr.sin_port) {
                 {
-                        RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
-                        ownState.currentlocaladdr = addr;
-                        //avoid 0 for port and address
-                        if (ownState.currentlocaladdr.sin_addr.s_addr == 0) {
-                            ownState.currentlocaladdr.sin_addr.s_addr = 1;
-                        }
-                        if (addr.sin_port == 0) {
-                            ownState.currentlocaladdr.sin_port = 1;
-                        }
+                    RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+                    ownState.currentlocaladdr = addr;
+                    //avoid 0 for port and address
+                    if (ownState.currentlocaladdr.sin_addr.s_addr == 0) {
+                        ownState.currentlocaladdr.sin_addr.s_addr = 1;
+                    }
+                    if (addr.sin_port == 0) {
+                        ownState.currentlocaladdr.sin_port = 1;
+                    }
                 }
                 IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
                 if ((ownState.netMode & RS_NET_MODE_ACTUAL) == RS_NET_MODE_EXT ||
                     (ownState.netMode & RS_NET_MODE_ACTUAL) == RS_NET_MODE_UDP) {
                     netReset();
                 }
-                return true;
-	}
+            }
+            return true;
+        }
 
         RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
         /* check if it is a friend */
