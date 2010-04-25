@@ -279,11 +279,8 @@ int	AuthGPG::GPGInit(std::string ownId)
             lvl = mOwnGpgCert.validLvl;
         }
 
-        //check the validity of the private key. When set to unknown, it caused signature and text encryptions bugs
-        if (lvl < 2) {
-            std::cerr << "AuthGPG::GPGInit() abnormal validity set to private key. Switch it to none by default." << std::endl;
-            privateTrustCertificate(mOwnGpgId, 4);
-        }
+        //force the validity of the private key. When set to unknown, it caused signature and text encryptions bugs
+        privateTrustCertificate(mOwnGpgId, 5);
 
         //printAllKeys_locked();
 
@@ -313,7 +310,7 @@ bool   AuthGPG::storeAllKeys_locked()
         std::cerr << "AuthGPG::storeAllKeys_locked()" << std::endl;
 #endif
 
-        RsStackReadWriteMutex stack(pgpMtx, RsReadWriteMutex::WRITE_LOCK); /******* LOCKED ******/
+        pgpMtx.writeLock();
 
         gpg_error_t ERR;
 	if (!gpgmeInit)
@@ -359,6 +356,8 @@ bool   AuthGPG::storeAllKeys_locked()
                 //let's start a new list
                 mKeyList.clear();
         }
+
+        std::list<std::string> gpg_change_trust_list;
         for(int i = 0;GPG_ERR_NO_ERROR == ERR; i++)
 	{
 		/* store in pqiAuthDetails */
@@ -470,6 +469,13 @@ bool   AuthGPG::storeAllKeys_locked()
 
 		/* store in map */
                 mKeyList[nu.id] = nu;
+                std::cerr << "nu.name" << nu.name << std::endl;
+                std::cerr << "nu.trustLvl" << nu.trustLvl << std::endl;
+                std::cerr << "nu.accept_connection" << nu.accept_connection << std::endl;
+                if (nu.trustLvl < 2 && nu.accept_connection) {
+                    //add it to the list of key that we will force the trust to 2
+                    gpg_change_trust_list.push_back(nu.id);
+                }
 
                 //store own key
                 if (nu.id == mOwnGpgId) {
@@ -487,6 +493,14 @@ bool   AuthGPG::storeAllKeys_locked()
 	} 
 
 	gpgme_set_keylist_mode(CTX, origmode);
+        pgpMtx.writeUnlock();
+
+        std::list<std::string>::iterator it;
+        for(it = gpg_change_trust_list.begin(); it != gpg_change_trust_list.end(); it++)
+        {
+                privateTrustCertificate(*it, 3);
+        }
+
 	return true;
 
 }
@@ -1273,13 +1287,16 @@ bool AuthGPG::setAcceptToConnectGPGCertificate(std::string gpg_id, bool acceptan
 
         /* reload stuff now ... */
         storeAllKeys_locked();
-        RsStackReadWriteMutex stack(pgpMtx, RsReadWriteMutex::WRITE_LOCK); /******* LOCKED ******/
+        pgpMtx.writeLock();
         certmap::iterator it;
         if (mKeyList.end() == (it = mKeyList.find(gpg_id))) {
                 return false;
         }
         it->second.accept_connection = acceptance;
         mAcceptToConnectMap[gpg_id] = acceptance;
+
+        pgpMtx.writeUnlock();
+        storeAllKeys_locked();
 
         IndicateConfigChanged();
 
@@ -1411,12 +1428,12 @@ int	AuthGPG::privateRevokeCertificate(std::string id)
 int	AuthGPG::privateTrustCertificate(std::string id, int trustlvl)
 {
 	/* The certificate should be in Peers list ??? */	
-        if(!isGPGSigned(id)) {
+        if(!isGPGAccepted(id)) {
 		std::cerr << "Invalid Certificate" << std::endl;
 		return 0;
 	}
 	
-        RsStackReadWriteMutex stack(pgpMtx, RsReadWriteMutex::WRITE_LOCK); /******* LOCKED ******/
+        pgpMtx.writeLock();
         gpgcert trustCert = mKeyList.find(id)->second;
 	gpgme_key_t trustKey = trustCert.key;
         std::string trustString;
@@ -1437,6 +1454,9 @@ int	AuthGPG::privateTrustCertificate(std::string id, int trustlvl)
 
         //the key ref has changed, we got to get rid of the old reference.
         trustCert.key = NULL;
+        pgpMtx.writeUnlock();
+
+        storeAllKeys_locked();
 		
 	return 1;
 }
