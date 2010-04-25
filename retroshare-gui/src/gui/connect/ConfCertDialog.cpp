@@ -262,9 +262,23 @@ void ConfCertDialog::loadDialog()
                     ui.radioButton_trust_marginnaly->setIcon(QIcon(":/images/security-medium-off-48.png"));
                 } else {
                     ui.web_of_trust_label->setText(tr("Your trust in this peer is not set."));
+
+                    //we have to set up the set exclusive to false in order to uncheck it all
+                    ui.radioButton_trust_fully->setAutoExclusive(false);
+                    ui.radioButton_trust_marginnaly->setAutoExclusive(false);
+                    ui.radioButton_trust_never->setAutoExclusive(false);
+
                     ui.radioButton_trust_fully->setChecked(false);
                     ui.radioButton_trust_marginnaly->setChecked(false);
                     ui.radioButton_trust_never->setChecked(false);
+
+                    ui.radioButton_trust_fully->setAutoExclusive(true);
+                    ui.radioButton_trust_marginnaly->setAutoExclusive(true);
+                    ui.radioButton_trust_never->setAutoExclusive(true);
+
+                    ui.radioButton_trust_never->setIcon(QIcon(":/images/security-low-off-48.png"));
+                    ui.radioButton_trust_fully->setIcon(QIcon(":/images/security-high-off-48.png"));
+                    ui.radioButton_trust_marginnaly->setIcon(QIcon(":/images/security-medium-off-48.png"));
                }
            }
 
