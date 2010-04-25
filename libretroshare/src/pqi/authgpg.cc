@@ -104,7 +104,7 @@ gpg_error_t pgp_pwd_callback(void *hook, const char *uid_hint, const char *passp
 }
 
 AuthGPG::AuthGPG()
-        :gpgmeInit(false),gpgmeKeySelected(false),autorisePasswordCallbackNotify(true),p3Config(CONFIG_TYPE_AUTHGPG)
+        :gpgmeInit(false),gpgmeKeySelected(false),p3Config(CONFIG_TYPE_AUTHGPG)
 {
         {
             RsStackReadWriteMutex stack(pgpMtx, RsReadWriteMutex::WRITE_LOCK); /******* LOCKED ******/
@@ -307,196 +307,202 @@ bool   AuthGPG::storeAllKeys_timed() {
 bool   AuthGPG::storeAllKeys_locked()
 {
 #ifdef GPG_DEBUG
-        std::cerr << "AuthGPG::storeAllKeys_locked()" << std::endl;
+	std::cerr << "AuthGPG::storeAllKeys_locked()" << std::endl;
 #endif
 
-        pgpMtx.writeLock();
-
-        gpg_error_t ERR;
-	if (!gpgmeInit)
+	std::list<std::string> gpg_change_trust_list;
 	{
-                std::cerr << "AuthGPG::storeAllKeys_locked() Error since GPG is not initialised" << std::endl;
-		return false;
-	}
-	
-#ifdef GPG_DEBUG
-        std::cerr << "AuthGPG::storeAllKeys_locked() clearing existing ones" << std::endl;
-#endif
+		RsStackReadWriteMutex stack(pgpMtx, RsReadWriteMutex::WRITE_LOCK);
 
-	/* enable SIG mode */
-	gpgme_keylist_mode_t origmode = gpgme_get_keylist_mode(CTX);
-	gpgme_keylist_mode_t mode = origmode | GPGME_KEYLIST_MODE_SIGS;
-
-	gpgme_set_keylist_mode(CTX, mode);
-
-         /* store keys */
-	gpgme_key_t KEY = NULL;
-
-	/* Initiates a key listing 0 = All Keys */
-        if (GPG_ERR_NO_ERROR != gpgme_op_keylist_start (CTX, "", 0))
-        {
-                std::cerr << "AuthGPG::storeAllKeys_locked() Error iterating through KeyList" << std::endl;
-//                if (rsicontrol != NULL) {
-//                    rsicontrol->getNotify().notifyErrorMsg(0,0,"Error reading gpg keyring, cannot acess key list.");
-//                }
-		gpgme_set_keylist_mode(CTX, origmode);
-		return false;
-        }
-
-        /* Loop until end of key */
-        mStoreKeyTime = time(NULL);
-        ERR = gpgme_op_keylist_next (CTX, &KEY);
-        if (GPG_ERR_NO_ERROR != ERR) {
-                std::cerr << "AuthGPG::storeAllKeys_locked() didn't find any gpg key in the keyring" << std::endl;
-//                if (rsicontrol != NULL) {
-//                    rsicontrol->getNotify().notifyErrorMsg(0,0,"Error reading gpg keyring, cannot find any key in the list.");
-//                }
-                return false;
-        } else {
-                //let's start a new list
-                mKeyList.clear();
-        }
-
-        std::list<std::string> gpg_change_trust_list;
-        for(int i = 0;GPG_ERR_NO_ERROR == ERR; i++)
-	{
-		/* store in pqiAuthDetails */
-		gpgcert nu;
-
-		/* NB subkeys is a linked list and can contain multiple keys.
-		 * first key is primary.
-		 */
-
-		if ((!KEY->subkeys) || (!KEY->uids))
+		gpg_error_t ERR;
+		if (!gpgmeInit)
 		{
-                        std::cerr << "AuthGPG::storeAllKeys_locked() Invalid Key in List... skipping" << std::endl;
-			continue;
+			std::cerr << "AuthGPG::storeAllKeys_locked() Error since GPG is not initialised" << std::endl;
+			return false;
 		}
 
-		/* In general MainSubKey is used to sign all others!
-		 * Don't really need to worry about other ids either.
-		 */
-		gpgme_subkey_t mainsubkey = KEY->subkeys;
-                nu.id  = mainsubkey->keyid;
-                nu.fpr = mainsubkey->fpr;
-
 #ifdef GPG_DEBUG
-                std::cerr << "MAIN KEYID: " << nu.id << " FPR: " << nu.fpr << std::endl;
-
-		gpgme_subkey_t subkeylist = KEY->subkeys;
-		while(subkeylist != NULL)
-		{
-                        std::cerr << "\tKEYID: " << subkeylist->keyid << " FPR: " << subkeylist->fpr << std::endl;
-
-			subkeylist = subkeylist->next;
-		}
+		std::cerr << "AuthGPG::storeAllKeys_locked() clearing existing ones" << std::endl;
 #endif
 
+		/* enable SIG mode */
+		gpgme_keylist_mode_t origmode = gpgme_get_keylist_mode(CTX);
+		gpgme_keylist_mode_t mode = origmode | GPGME_KEYLIST_MODE_SIGS;
 
-		/* NB uids is a linked list and can contain multiple ids.
-		 * first id is primary.
-		 */
-		gpgme_user_id_t mainuid = KEY->uids;
-                nu.name  = mainuid->name;
-                nu.email = mainuid->email;
-		gpgme_key_sig_t mainsiglist = mainuid->signatures;
-                std::map<std::string, bool>::iterator itAccept;
-                if (mAcceptToConnectMap.end() != (itAccept = mAcceptToConnectMap.find(nu.id))) {
-                    nu.accept_connection = itAccept->second;
-                } else {
-                    nu.accept_connection = false;
-                    mAcceptToConnectMap[nu.id] = false;
-                }
-                nu.ownsign = false;
-		while(mainsiglist != NULL)
+		gpgme_set_keylist_mode(CTX, mode);
+
+		/* store keys */
+		gpgme_key_t KEY = NULL;
+
+		/* Initiates a key listing 0 = All Keys */
+		if (GPG_ERR_NO_ERROR != gpgme_op_keylist_start (CTX, "", 0))
 		{
-			if (mainsiglist->status == GPG_ERR_NO_ERROR)
+			std::cerr << "AuthGPG::storeAllKeys_locked() Error iterating through KeyList" << std::endl;
+			//                if (rsicontrol != NULL) {
+			//                    rsicontrol->getNotify().notifyErrorMsg(0,0,"Error reading gpg keyring, cannot acess key list.");
+			//                }
+			gpgme_set_keylist_mode(CTX, origmode);
+			return false;
+		}
+
+		/* Loop until end of key */
+		mStoreKeyTime = time(NULL);
+		ERR = gpgme_op_keylist_next (CTX, &KEY);
+		if (GPG_ERR_NO_ERROR != ERR) {
+			std::cerr << "AuthGPG::storeAllKeys_locked() didn't find any gpg key in the keyring" << std::endl;
+			//                if (rsicontrol != NULL) {
+			//                    rsicontrol->getNotify().notifyErrorMsg(0,0,"Error reading gpg keyring, cannot find any key in the list.");
+			//                }
+			return false;
+		} else {
+			//let's start a new list
+			mKeyList.clear();
+		}
+
+		for(int i = 0;GPG_ERR_NO_ERROR == ERR; i++)
+		{
+			/* store in pqiAuthDetails */
+			gpgcert nu;
+
+			/* NB subkeys is a linked list and can contain multiple keys.
+			 * first key is primary.
+			 */
+
+			if ((!KEY->subkeys) || (!KEY->uids))
 			{
-				/* add as a signature ... even if the 
-				 * we haven't go the peer yet. 
-				 * (might be yet to come).
-				 */
-				std::string keyid = mainsiglist->keyid;
-                                if (nu.signers.end() == std::find(
-                                        nu.signers.begin(),
-                                        nu.signers.end(),keyid))
+				std::cerr << "AuthGPG::storeAllKeys_locked() Invalid Key in List... skipping" << std::endl;
+				continue;
+			}
+
+			/* In general MainSubKey is used to sign all others!
+			 * Don't really need to worry about other ids either.
+			 */
+			gpgme_subkey_t mainsubkey = KEY->subkeys;
+			nu.id  = mainsubkey->keyid;
+			nu.fpr = mainsubkey->fpr;
+
+#ifdef GPG_DEBUG
+			std::cerr << "MAIN KEYID: " << nu.id << " FPR: " << nu.fpr << std::endl;
+
+			gpgme_subkey_t subkeylist = KEY->subkeys;
+			while(subkeylist != NULL)
+			{
+				std::cerr << "\tKEYID: " << subkeylist->keyid << " FPR: " << subkeylist->fpr << std::endl;
+
+				subkeylist = subkeylist->next;
+			}
+#endif
+
+
+			/* NB uids is a linked list and can contain multiple ids.
+			 * first id is primary.
+			 */
+			gpgme_user_id_t mainuid = KEY->uids;
+			nu.name  = mainuid->name;
+			nu.email = mainuid->email;
+			gpgme_key_sig_t mainsiglist = mainuid->signatures;
+			std::map<std::string, bool>::iterator itAccept;
+			if (mAcceptToConnectMap.end() != (itAccept = mAcceptToConnectMap.find(nu.id))) {
+				nu.accept_connection = itAccept->second;
+			} else {
+				nu.accept_connection = false;
+				mAcceptToConnectMap[nu.id] = false;
+			}
+			nu.ownsign = false;
+			while(mainsiglist != NULL)
+			{
+				if (mainsiglist->status == GPG_ERR_NO_ERROR)
 				{
-                                        nu.signers.push_back(keyid);
+					/* add as a signature ... even if the 
+					 * we haven't go the peer yet. 
+					 * (might be yet to come).
+					 */
+					std::string keyid = mainsiglist->keyid;
+					if (nu.signers.end() == std::find(
+								nu.signers.begin(),
+								nu.signers.end(),keyid))
+					{
+						nu.signers.push_back(keyid);
+					}
+					if (keyid == mOwnGpgId) {
+						nu.ownsign = true;
+					}
 				}
-                               if (keyid == mOwnGpgId) {
-                                    nu.ownsign = true;
-                                }
+				mainsiglist = mainsiglist->next;
 			}
-			mainsiglist = mainsiglist->next;
-		}
 
 #ifdef GPG_DEBUG
-		gpgme_user_id_t uidlist = KEY->uids;
-		while(uidlist != NULL)
-		{
-			std::cerr << "\tUID: " << uidlist->uid;
-			std::cerr << " NAME: " << uidlist->name;
-			std::cerr << " EMAIL: " << uidlist->email;
-			std::cerr << " VALIDITY: " << uidlist->validity;
-			std::cerr << std::endl;
-			gpgme_key_sig_t usiglist = uidlist->signatures;
-			while(usiglist != NULL)
+			gpgme_user_id_t uidlist = KEY->uids;
+			while(uidlist != NULL)
 			{
-				std::cerr << "\t\tSIG KEYID: " << usiglist->keyid;
-				std::cerr << " UID: " << usiglist->uid;
-				std::cerr << " NAME: " << usiglist->name;
-				std::cerr << " EMAIL: " << usiglist->email;
-				std::cerr << " VALIDITY: " << (usiglist->status == GPG_ERR_NO_ERROR);
+				std::cerr << "\tUID: " << uidlist->uid;
+				std::cerr << " NAME: " << uidlist->name;
+				std::cerr << " EMAIL: " << uidlist->email;
+				std::cerr << " VALIDITY: " << uidlist->validity;
 				std::cerr << std::endl;
+				gpgme_key_sig_t usiglist = uidlist->signatures;
+				while(usiglist != NULL)
+				{
+					std::cerr << "\t\tSIG KEYID: " << usiglist->keyid;
+					std::cerr << " UID: " << usiglist->uid;
+					std::cerr << " NAME: " << usiglist->name;
+					std::cerr << " EMAIL: " << usiglist->email;
+					std::cerr << " VALIDITY: " << (usiglist->status == GPG_ERR_NO_ERROR);
+					std::cerr << std::endl;
 
-				usiglist = usiglist->next;
+					usiglist = usiglist->next;
+				}
+
+				uidlist = uidlist->next;
 			}
-
-			uidlist = uidlist->next;
-		}
 #endif
 
-		/* signatures are attached to uids... but only supplied
-		 * if GPGME_KEYLIST_MODE_SIGS is on.
-		 * signature notation supplied is GPGME_KEYLIST_MODE_SIG_NOTATION is on
-		 */
-                nu.trustLvl = KEY->owner_trust;
-                nu.validLvl = mainuid->validity;
+			/* signatures are attached to uids... but only supplied
+			 * if GPGME_KEYLIST_MODE_SIGS is on.
+			 * signature notation supplied is GPGME_KEYLIST_MODE_SIG_NOTATION is on
+			 */
+			nu.trustLvl = KEY->owner_trust;
+			nu.validLvl = mainuid->validity;
 
-		/* grab a reference, so the key remains */
-		gpgme_key_ref(KEY);
-		nu.key = KEY;
+			/* grab a reference, so the key remains */
+			gpgme_key_ref(KEY);
+			nu.key = KEY;
 
-		/* store in map */
-                mKeyList[nu.id] = nu;
-                if (nu.trustLvl < 2 && nu.accept_connection) {
-                    //add it to the list of key that we will force the trust to 2
-                    gpg_change_trust_list.push_back(nu.id);
-                }
+			/* store in map */
+			mKeyList[nu.id] = nu;
+#ifdef GPG_DEBUG
+			std::cerr << "nu.name" << nu.name << std::endl;
+			std::cerr << "nu.trustLvl" << nu.trustLvl << std::endl;
+			std::cerr << "nu.accept_connection" << nu.accept_connection << std::endl;
+#endif
+			if (nu.trustLvl < 2 && nu.accept_connection) {
+				//add it to the list of key that we will force the trust to 2
+				gpg_change_trust_list.push_back(nu.id);
+			}
 
-                //store own key
-                if (nu.id == mOwnGpgId) {
-                    mOwnGpgCert = nu;
-                }
+			//store own key
+			if (nu.id == mOwnGpgId) {
+				mOwnGpgCert = nu;
+			}
 
-                ERR = gpgme_op_keylist_next (CTX, &KEY);
+			ERR = gpgme_op_keylist_next (CTX, &KEY);
+		}
+
+		if (GPG_ERR_NO_ERROR != gpgme_op_keylist_end(CTX))
+		{
+			std::cerr << "Error ending KeyList" << std::endl;
+			gpgme_set_keylist_mode(CTX, origmode);
+			return false;
+		} 
+
+		gpgme_set_keylist_mode(CTX, origmode);
 	}
 
-	if (GPG_ERR_NO_ERROR != gpgme_op_keylist_end(CTX))
+	std::list<std::string>::iterator it;
+	for(it = gpg_change_trust_list.begin(); it != gpg_change_trust_list.end(); it++)
 	{
-                std::cerr << "Error ending KeyList" << std::endl;
-		gpgme_set_keylist_mode(CTX, origmode);
-		return false;
-	} 
-
-	gpgme_set_keylist_mode(CTX, origmode);
-        pgpMtx.writeUnlock();
-
-        std::list<std::string>::iterator it;
-        for(it = gpg_change_trust_list.begin(); it != gpg_change_trust_list.end(); it++)
-        {
-                privateTrustCertificate(*it, 3);
-        }
+		privateTrustCertificate(*it, 3);
+	}
 
 	return true;
 
@@ -1284,15 +1290,15 @@ bool AuthGPG::setAcceptToConnectGPGCertificate(std::string gpg_id, bool acceptan
 
         /* reload stuff now ... */
         storeAllKeys_locked();
-        pgpMtx.writeLock();
-        certmap::iterator it;
-        if (mKeyList.end() == (it = mKeyList.find(gpg_id))) {
-                return false;
-        }
-        it->second.accept_connection = acceptance;
-        mAcceptToConnectMap[gpg_id] = acceptance;
-
-        pgpMtx.writeUnlock();
+		  {
+			  RsStackReadWriteMutex stack(pgpMtx, RsReadWriteMutex::WRITE_LOCK);
+			  certmap::iterator it;
+			  if (mKeyList.end() == (it = mKeyList.find(gpg_id))) {
+				  return false;
+			  }
+			  it->second.accept_connection = acceptance;
+			  mAcceptToConnectMap[gpg_id] = acceptance;
+		  }
         storeAllKeys_locked();
 
         IndicateConfigChanged();
@@ -1430,28 +1436,30 @@ int	AuthGPG::privateTrustCertificate(std::string id, int trustlvl)
 		return 0;
 	}
 	
-        pgpMtx.writeLock();
-        gpgcert trustCert = mKeyList.find(id)->second;
-	gpgme_key_t trustKey = trustCert.key;
-        std::string trustString;
-        std::ostringstream trustStrOut;
-        trustStrOut << trustlvl;
-        class TrustParams sparams(trustStrOut.str());
-        class EditParams params(TRUST_START, &sparams);
-	gpgme_data_t out;
-        gpg_error_t ERR;
-	
-	
-	if(GPG_ERR_NO_ERROR != (ERR = gpgme_data_new(&out))) {
-		return 0;
-	}
+		  {
+			  RsStackReadWriteMutex stack(pgpMtx, RsReadWriteMutex::WRITE_LOCK);
 
-	if(GPG_ERR_NO_ERROR != (ERR = gpgme_op_edit(CTX, trustKey, trustCallback, &params, out)))
-		return 0;
+			  gpgcert trustCert = mKeyList.find(id)->second;
+			  gpgme_key_t trustKey = trustCert.key;
+			  std::string trustString;
+			  std::ostringstream trustStrOut;
+			  trustStrOut << trustlvl;
+			  class TrustParams sparams(trustStrOut.str());
+			  class EditParams params(TRUST_START, &sparams);
+			  gpgme_data_t out;
+			  gpg_error_t ERR;
 
-        //the key ref has changed, we got to get rid of the old reference.
-        trustCert.key = NULL;
-        pgpMtx.writeUnlock();
+
+			  if(GPG_ERR_NO_ERROR != (ERR = gpgme_data_new(&out))) {
+				  return 0;
+			  }
+
+			  if(GPG_ERR_NO_ERROR != (ERR = gpgme_op_edit(CTX, trustKey, trustCallback, &params, out)))
+				  return 0;
+
+			  //the key ref has changed, we got to get rid of the old reference.
+			  trustCert.key = NULL;
+		  }
 
         storeAllKeys_locked();
 		
@@ -1600,6 +1608,7 @@ static std::string setKeyPairParams(bool useRsa, unsigned int blen,
  * from the keyring
  */
 
+#ifdef UNUSED_CODE
 static gpgme_key_t getKey(gpgme_ctx_t CTX, std::string name, std::string comment, std::string email) {
 	
 	gpgme_key_t key;
@@ -1643,6 +1652,7 @@ static gpgme_key_t getKey(gpgme_ctx_t CTX, std::string name, std::string comment
 	} 
 	return NULL;	
 }
+#endif
 
 
 /* Callback function for key signing */
@@ -1653,7 +1663,7 @@ static gpg_error_t keySignCallback(void *opaque, gpgme_status_code_t status, \
 	class EditParams *params = (class EditParams *)opaque;
 	class SignParams *sparams = (class SignParams *)params->oParams;
 	const char *result = NULL;
-
+#ifdef GPG_DEBUG
         fprintf(stderr,"keySignCallback status: %d args: %s, params->state: %d\n", status, args, params->state);
 
 	/* printf stuff out */
@@ -1695,6 +1705,7 @@ static gpg_error_t keySignCallback(void *opaque, gpgme_status_code_t status, \
                 fprintf(stderr,"keySignCallback params->state SIGN_ENTER_PASSPHRASE\n");
         if (params->state == SIGN_ERROR)
                 fprintf(stderr,"keySignCallback params->state SIGN_ERROR");
+#endif
 
 
 	if(status == GPGME_STATUS_EOF ||
@@ -1714,7 +1725,9 @@ static gpg_error_t keySignCallback(void *opaque, gpgme_status_code_t status, \
 	switch (params->state)
     	{
     		case SIGN_START:
+#ifdef GPG_DEBUG
 			fprintf(stderr,"keySignCallback SIGN_START\n");
+#endif
 
       			if (status == GPGME_STATUS_GET_LINE &&
 				(!std::string("keyedit.prompt").compare(args)))
@@ -1729,7 +1742,9 @@ static gpg_error_t keySignCallback(void *opaque, gpgme_status_code_t status, \
 			}
       			break;
     		case SIGN_COMMAND:
+#ifdef GPG_DEBUG
 			fprintf(stderr,"keySignCallback SIGN_COMMAND\n");
+#endif
 
       			if (status == GPGME_STATUS_GET_BOOL &&
 				(!std::string("keyedit.sign_all.okay").compare(args)))
@@ -1775,7 +1790,9 @@ static gpg_error_t keySignCallback(void *opaque, gpgme_status_code_t status, \
         		}
       			break;
     		case SIGN_UIDS:
+#ifdef GPG_DEBUG
 			fprintf(stderr,"keySignCallback SIGN_UIDS\n");
+#endif
 
       			if (status == GPGME_STATUS_GET_LINE &&
 				(!std::string("sign_uid.expire").compare(args)))
@@ -1809,7 +1826,9 @@ static gpg_error_t keySignCallback(void *opaque, gpgme_status_code_t status, \
         		}
       			break;
     		case SIGN_SET_EXPIRE:
+#ifdef GPG_DEBUG
 			fprintf(stderr,"keySignCallback SIGN_SET_EXPIRE\n");
+#endif
 
       			if (status == GPGME_STATUS_GET_LINE &&
 				(!std::string("sign_uid.class").compare(args)))
@@ -1824,7 +1843,9 @@ static gpg_error_t keySignCallback(void *opaque, gpgme_status_code_t status, \
         		}
       			break;
     		case SIGN_SET_CHECK_LEVEL:
+#ifdef GPG_DEBUG
 			fprintf(stderr,"keySignCallback SIGN_SET_CHECK_LEVEL\n");
+#endif
 
       			if (status == GPGME_STATUS_GET_BOOL &&
 				(!std::string("sign_uid.okay").compare(args)))
@@ -1839,7 +1860,9 @@ static gpg_error_t keySignCallback(void *opaque, gpgme_status_code_t status, \
         		}
       			break;
                 case SIGN_ENTER_PASSPHRASE:
+#ifdef GPG_DEBUG
                         fprintf(stderr,"keySignCallback SIGN_ENTER_PASSPHRASE\n");
+#endif
 
                         if (status == GPGME_STATUS_GOOD_PASSPHRASE)
                         {
@@ -1852,7 +1875,9 @@ static gpg_error_t keySignCallback(void *opaque, gpgme_status_code_t status, \
                         }
                         break;
     		case SIGN_CONFIRM:			
+#ifdef GPG_DEBUG
 			fprintf(stderr,"keySignCallback SIGN_CONFIRM\n");
+#endif
 
       			if (status == GPGME_STATUS_GET_LINE &&	
 				(!std::string("keyedit.prompt").compare(args)))
@@ -1867,7 +1892,9 @@ static gpg_error_t keySignCallback(void *opaque, gpgme_status_code_t status, \
         		}
       			break;
     		case SIGN_QUIT:
+#ifdef GPG_DEBUG
 			fprintf(stderr,"keySignCallback SIGN_QUIT\n");
+#endif
 
       			if (status == GPGME_STATUS_GET_BOOL &&
 				(!std::string("keyedit.save.okay").compare(args)))
@@ -1882,7 +1909,9 @@ static gpg_error_t keySignCallback(void *opaque, gpgme_status_code_t status, \
         		}
       			break;
     		case SIGN_ERROR:
+#ifdef GPG_DEBUG
 			fprintf(stderr,"keySignCallback SIGN_ERROR\n");
+#endif
 
       			if (status == GPGME_STATUS_GET_LINE &&
 				(!std::string("keyedit.prompt").compare(args)))
@@ -1904,7 +1933,9 @@ static gpg_error_t keySignCallback(void *opaque, gpgme_status_code_t status, \
 
 	if (result)
 	{
+#ifdef GPG_DEBUG
 		fprintf(stderr,"keySignCallback result:%s\n", result);
+#endif
 #ifndef WINDOWS_SYS
 		if (*result)
 		{
@@ -1941,6 +1972,7 @@ static gpgme_error_t trustCallback(void *opaque, gpgme_status_code_t status, \
         const char *result = NULL;
 
                 /* printf stuff out */
+#ifdef GPG_DEBUG
         if (status == GPGME_STATUS_EOF)
                 fprintf(stderr,"keySignCallback GPGME_STATUS_EOF\n");
         if (status == GPGME_STATUS_GOT_IT)
@@ -1973,6 +2005,7 @@ static gpgme_error_t trustCallback(void *opaque, gpgme_status_code_t status, \
                 fprintf(stderr,"keySignCallback params->state TRUST_QUIT\n");
         if (params->state == TRUST_ERROR)
                 fprintf(stderr,"keySignCallback params->state TRUST_ERROR\n");
+#endif
 
 
 	if(status == GPGME_STATUS_EOF ||
@@ -2159,11 +2192,3 @@ bool AuthGPG::loadList(std::list<RsItem*> load)
         return true;
 }
 
-void AuthGPG::setAutorisePasswordCallbackNotify(bool autorise) {
-    autorisePasswordCallbackNotify = autorise;
-    return;
-}
-
-bool AuthGPG::getAutorisePasswordCallbackNotify() {
-    return autorisePasswordCallbackNotify;
-}

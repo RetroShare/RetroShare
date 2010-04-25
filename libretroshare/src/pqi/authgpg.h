@@ -130,9 +130,6 @@ class AuthGPG : public p3Config
 
   	bool    printKeys();
 
-        void setAutorisePasswordCallbackNotify(bool);
-        bool getAutorisePasswordCallbackNotify();
-
 /*********************************************************************************/
 /************************* STAGE 1 ***********************************************/
 /*********************************************************************************/
@@ -253,8 +250,6 @@ private:
 
     bool gpgmeKeySelected;
     
-    bool autorisePasswordCallbackNotify;
-
     gpgme_engine_info_t INFO;
     gpgme_ctx_t CTX;
 
