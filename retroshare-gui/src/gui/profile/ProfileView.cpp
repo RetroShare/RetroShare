@@ -23,6 +23,8 @@
 #include "gui/profile/ProfileEdit.h"
 
 #include "rsiface/rspeers.h"
+#include "rsiface/rsmsgs.h"
+
 #include "rsiface/rsQblog.h"
 
 #include <sstream>
@@ -55,6 +57,7 @@ ProfileView::ProfileView(QWidget *parent)
   connect(ui.closeButton, SIGNAL(clicked()), this, SLOT(closeView()));
   connect(ui.profileditButton, SIGNAL(clicked()), this, SLOT(profileEdit()));
 
+  loadAvatar();
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -193,11 +196,19 @@ void ProfileView::update()
 	std::list< std::pair<std::wstring, std::wstring> >::iterator pit;
 	std::list<FileInfo> files;
 	std::list<FileInfo>::iterator fit;
+	
+	RsPeerDetails detail;
+	if (!rsPeers->getPeerDetails(pId, detail))
+	{
+            QMessageBox::information(this,
+                     tr("RetroShare"),
+                     tr("Error : cannot get peer details."));
+        }
 
 	rsQblog -> getPeerLatestBlog(pId, PostTs, BlogPost);
 
 	ui.idLineEdit->setText(QString::fromStdString(pId));
-	ui.nameLineEdit->setText(QString::fromStdString("username"));
+	ui.nameLineEdit->setText(QString::fromStdString(detail.name));
 	{
 		std::ostringstream out;
 		out << PostTs;
@@ -293,4 +304,29 @@ void ProfileView::filesClear()
 
 /* add must be done from Shared Files */
 
+void ProfileView::loadAvatar()
+{
+
+   unsigned char *data = NULL;
+   int size = 0 ;
+
+   rsMsgs->getAvatarData(pId,data,size); 
+
+
+   if(size != 0)
+   {   
+    // set the image
+    QPixmap pix ;
+    pix.loadFromData(data,size,"PNG") ;
+    ui.photoLabel->setPixmap(pix);   
+    delete[] data ;
+
+   }
+   else
+   {
+     ui.photoLabel->setPixmap(QPixmap(":/images/user/personal64.png"));
+   }
+
+
+}  
 

@@ -38,10 +38,12 @@ public:
   ProfileView(QWidget *parent = 0);
   /** Default Destructor */
 
-void  setPeerId(std::string id);
+void setPeerId(std::string id);
 
-void  clear();
-void  update();
+void clear();
+void update();
+void loadAvatar();
+
 
 public slots:
 
