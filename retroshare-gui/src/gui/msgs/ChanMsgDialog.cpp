@@ -60,7 +60,7 @@
 
 /** Constructor */
 ChanMsgDialog::ChanMsgDialog(bool msg, QWidget *parent, Qt::WFlags flags)
-: mIsMsg(msg), QMainWindow(parent, flags), mCheckAttachment(true)
+: QMainWindow(parent, flags), mIsMsg(msg), mCheckAttachment(true)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
@@ -408,41 +408,55 @@ RsCertId getSenderRsCertId(QTreeWidgetItem *i)
 
 
 	/* get the list of peers from the RsIface.  */
-void  ChanMsgDialog::insertFileList(const std::list<DirDetails>& files_info)
+void  ChanMsgDialog::insertFileList(const std::list<DirDetails>& dir_info)
 {
-//	rsiface->lockData();   /* Lock Interface */
-
-	_recList.clear() ;
-
-//	const std::list<FileInfo> &recList = rsiface->getRecommendList();
+	std::list<FileInfo> files_info;
 	std::list<DirDetails>::const_iterator it;
 
-	/* get a link to the table */
-	QTreeWidget *tree = ui.msgFileList;
-
-	tree->clear(); 
-	tree->setColumnCount(5); 
-
-	QList<QTreeWidgetItem *> items;
-	for(it = files_info.begin(); it != files_info.end(); it++)
+	/* convert dir_info to files_info */
+	for(it = dir_info.begin(); it != dir_info.end(); it++)
 	{
 		FileInfo info ;
 		info.fname = it->name ;
 		info.hash = it->hash ;
 		info.rank = 0;//it->rank ;
 		info.size = it->count ;
-                info.inRecommend = true;
-		_recList.push_back(info) ;
+		info.inRecommend = true;
+		files_info.push_back(info) ;
+	}
+
+	insertFileList(files_info);
+}
+
+void  ChanMsgDialog::insertFileList(const std::list<FileInfo>& files_info)
+{
+//	rsiface->lockData();   /* Lock Interface */
+
+	_recList.clear() ;
+
+//	const std::list<FileInfo> &recList = rsiface->getRecommendList();
+	std::list<FileInfo>::const_iterator it;
+
+	/* get a link to the table */
+	QTreeWidget *tree = ui.msgFileList;
+
+	tree->clear();
+	tree->setColumnCount(5);
+
+	QList<QTreeWidgetItem *> items;
+	for(it = files_info.begin(); it != files_info.end(); it++)
+	{
+		_recList.push_back(*it) ;
 
 		/* make a widget per person */
 		QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
 
-		item->setText(0, QString::fromStdString(it->name));			/* (0) Filename */
-		item->setText(1, misc::friendlyUnit(it->count));			 		/* (1) Size */
+		item->setText(0, QString::fromStdString(it->fname));			/* (0) Filename */
+		item->setText(1, misc::friendlyUnit(it->size));			 		/* (1) Size */
 		item->setText(2, QString::number(0)) ;//it->rank));
 		item->setText(3, QString::fromStdString(it->hash));
 		item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
-		item->setCheckState(0, Qt::Checked);
+		item->setCheckState(0, it->inRecommend ? Qt::Checked : Qt::Unchecked);
 
 		/* add to the list */
 		items.append(item);
@@ -455,7 +469,6 @@ void  ChanMsgDialog::insertFileList(const std::list<DirDetails>& files_info)
 
 	tree->update(); /* update display */
 }
-
 
 void  ChanMsgDialog::newMsg()
 {
@@ -1233,13 +1246,13 @@ void ChanMsgDialog::fileHashingFinished(AttachFileItem* file) {
 
 	//convert char massageString to w_char
 	wchar_t* message;
-	int requiredSize = mbstowcs(NULL, messageString, 0); // C4996
+        size_t requiredSize = mbstowcs(NULL, messageString, 0); // C4996
 	/* Add one to leave room for the NULL terminator */
 	message = (wchar_t *)malloc( (requiredSize + 1) * sizeof( wchar_t ));
 	if (! message) {
 	    std::cerr << ("Memory allocation failure.\n");
 	}
-	int size = mbstowcs( message, messageString, requiredSize + 1); // C4996
+        size_t size = mbstowcs( message, messageString, requiredSize + 1); // C4996
 	if (size == (size_t) (-1)) {
 	   printf("Couldn't convert string--invalid multibyte character.\n");
 	}

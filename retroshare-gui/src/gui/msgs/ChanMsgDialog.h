@@ -53,6 +53,7 @@ public:
   void  insertSendList(); /* for Msgs */
   void  insertChannelSendList(); /* for Channels */
   void  insertFileList(const std::list<DirDetails>&); /* for Both */
+  void  insertFileList(const std::list<FileInfo>&);
   void  insertTitleText(std::string title);
   void  insertPastedText(std::string msg) ;
   void  insertForwardPastedText(std::string msg);
