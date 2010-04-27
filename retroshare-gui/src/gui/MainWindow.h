@@ -45,6 +45,7 @@
 
 #include "ui_MainWindow.h"
 #include "gui/common/rwindow.h"
+#include "idle/idle.h"
 
 class PeerStatus;
 class NATStatus;
@@ -90,6 +91,8 @@ public:
     MessagesDialog    *messagesDialog;
     SharedFilesDialog *sharedfilesDialog;
     MessengerWindow   *messengerWindow;
+	Idle 			  *idle;
+
 #ifdef UNFINISHED    
     ApplicationWindow   *applicationWindow;
 #endif

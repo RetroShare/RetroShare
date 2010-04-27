@@ -266,6 +266,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     /* Creates a tray icon with a context menu and adds it to the system's * notification area. */
     createTrayIcon();
 
+    idle = new Idle();
+    idle->start();
+
     QTimer *timer = new QTimer(this);
     timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
     timer->start(1000);
