@@ -138,7 +138,11 @@ private slots:
 		void addExtraFile();
 		void anchorClicked (const QUrl &);
 		void addAttachment(std::string);
+		
+		bool fileSave();
+    bool fileSaveAs();
 
+		void setCurrentFileName(const QString &fileName);
 
 signals:
 		void friendsUpdated() ;
@@ -149,7 +153,9 @@ private:
 		class QLabel *iconLabel, *textLabel;
 		class QWidget *widget;
 		class QWidgetAction *widgetAction;
-		class QSpacerItem *spacerItem; 
+		class QSpacerItem *spacerItem;
+		     
+    QString fileName; 
 
 		/* Worker Functions */
 		/* (1) Update Display */
@@ -169,7 +175,7 @@ private:
 		QAction* exportfriendAct;
 		QAction* removefriendAct;
 
-                //QTreeWidget *peertreeWidget;
+    //QTreeWidget *peertreeWidget;
 
 		IMHistoryKeeper historyKeeper;
 

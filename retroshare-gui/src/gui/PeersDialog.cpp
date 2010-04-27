@@ -156,6 +156,7 @@ PeersDialog::PeersDialog(QWidget *parent)
   connect(ui.textitalicChatButton, SIGNAL(clicked()), this, SLOT(setFont()));
   connect(ui.fontsButton, SIGNAL(clicked()), this, SLOT(getFont()));
   connect(ui.colorChatButton, SIGNAL(clicked()), this, SLOT(setColor()));
+  connect(ui.actionSave_History, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
 
   ui.fontsButton->setIcon(QIcon(QString(":/images/fonts.png")));
 
@@ -179,6 +180,7 @@ PeersDialog::PeersDialog(QWidget *parent)
 
   QMenu * grpchatmenu = new QMenu();
   grpchatmenu->addAction(ui.actionClearChat);
+  grpchatmenu->addAction(ui.actionSave_History);
   grpchatmenu->addAction(ui.actionDisable_Emoticons);
   ui.menuButton->setMenu(grpchatmenu);
 
@@ -1788,4 +1790,37 @@ void PeersDialog::dragEnterEvent(QDragEnterEvent *event)
 	{
                 std::cerr << "PeersDialog::dragEnterEvent() No Urls" << std::endl;
 	}
+}
+
+bool PeersDialog::fileSave()
+{
+    if (fileName.isEmpty())
+        return fileSaveAs();
+
+    QFile file(fileName);
+    if (!file.open(QFile::WriteOnly))
+        return false;
+    QTextStream ts(&file);
+    ts.setCodec(QTextCodec::codecForName("UTF-8"));
+    ts << ui.msgText->document()->toPlainText();
+    ui.msgText->document()->setModified(false);
+    return true;
+}
+
+bool PeersDialog::fileSaveAs()
+{
+    QString fn = QFileDialog::getSaveFileName(this, tr("Save as..."),
+                                              QString(), tr("Text File (*.txt );;All Files (*)"));
+    if (fn.isEmpty())
+        return false;
+    setCurrentFileName(fn);
+    return fileSave();    
+}
+
+void PeersDialog::setCurrentFileName(const QString &fileName)
+{
+    this->fileName = fileName;
+    ui.msgText->document()->setModified(false);
+
+    setWindowModified(false);
 }

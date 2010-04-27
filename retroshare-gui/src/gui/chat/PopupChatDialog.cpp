@@ -96,6 +96,7 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   connect(ui.colorButton, SIGNAL(clicked()), this, SLOT(setColor()));
   connect(ui.emoteiconButton, SIGNAL(clicked()), this, SLOT(smileyWidget()));
   connect(ui.styleButton, SIGNAL(clicked()), SLOT(changeStyle()));
+  connect(ui.actionSave_Chat_History, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
 
   connect(ui.textBrowser, SIGNAL(anchorClicked(const QUrl &)), SLOT(anchorClicked(const QUrl &)));
 
@@ -133,6 +134,7 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   
   QMenu * toolmenu = new QMenu();
   toolmenu->addAction(ui.actionClear_Chat);
+  toolmenu->addAction(ui.actionSave_Chat_History);
   toolmenu->addAction(ui.action_Disable_Emoticons);
   ui.pushtoolsButton->setMenu(toolmenu);
 
@@ -978,4 +980,35 @@ void PopupChatDialog::dragEnterEvent(QDragEnterEvent *event)
 	}
 }
 
+bool PopupChatDialog::fileSave()
+{
+    if (fileName.isEmpty())
+        return fileSaveAs();
 
+    QFile file(fileName);
+    if (!file.open(QFile::WriteOnly))
+        return false;
+    QTextStream ts(&file);
+    ts.setCodec(QTextCodec::codecForName("UTF-8"));
+    ts << ui.textBrowser->document()->toPlainText();
+    ui.textBrowser->document()->setModified(false);
+    return true;
+}
+
+bool PopupChatDialog::fileSaveAs()
+{
+    QString fn = QFileDialog::getSaveFileName(this, tr("Save as..."),
+                                              QString(), tr("Text File (*.txt );;All Files (*)"));
+    if (fn.isEmpty())
+        return false;
+    setCurrentFileName(fn);
+    return fileSave();    
+}
+
+void PopupChatDialog::setCurrentFileName(const QString &fileName)
+{
+    this->fileName = fileName;
+    ui.textBrowser->document()->setModified(false);
+
+    setWindowModified(false);
+}

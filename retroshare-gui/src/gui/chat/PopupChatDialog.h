@@ -61,9 +61,7 @@ public:
   void updateAvatar();
 
   QString loadEmptyStyle(); 
-
-
-   QPixmap picture;
+  QPixmap picture;
 
    
 public slots:
@@ -107,6 +105,10 @@ private slots:
   void getAvatar();
   
   void on_actionClear_Chat_triggered();
+  
+  bool fileSave();
+  bool fileSaveAs();
+  void setCurrentFileName(const QString &fileName);
 
   
 private:
@@ -117,13 +119,13 @@ private:
    QAction     *actionTextBold;
    QAction     *actionTextUnderline;
    QAction     *actionTextItalic;
-	QAction		*pasteLinkAct ;
+	 QAction		*pasteLinkAct ;
    
    std::string dialogId, dialogName;
    unsigned int lastChatTime;
    std::string  lastChatName;
    
-	time_t last_status_send_time ;
+   time_t last_status_send_time ;
    QHash<QString, QString> smileys;
    QColor mCurrentColor;
    QFont  mCurrentFont;
@@ -131,7 +133,8 @@ private:
    QString styleHtm;
    QString emptyStyle;
    QStringList history;
-   QString wholeChat;
+   QString wholeChat;  
+   QString fileName; 
 
   /** Qt Designer generated object */
   Ui::PopupChatDialog ui;
