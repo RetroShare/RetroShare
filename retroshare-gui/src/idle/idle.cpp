@@ -126,5 +126,5 @@ int Idle::secondsIdle()
 
 void Idle::doCheck()
 {
-	secondsIdle(secondsIdle());
+	emit secondsIdle(secondsIdle());
 }
