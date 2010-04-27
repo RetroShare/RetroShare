@@ -42,6 +42,8 @@ public:
   /** Default Constructor */
   MessagesDialog(QWidget *parent = 0);
   /** Default Destructor */
+  ~MessagesDialog();
+
   void insertMsgTxtAndFiles(QModelIndex index = QModelIndex());
   virtual void keyPressEvent(QKeyEvent *) ;
  void updateMessageSummaryList();
@@ -57,7 +59,9 @@ private slots:
   void msgfilelistWidgetCostumPopupMenu(QPoint);  
 
   void changeBox( int newrow );
-  void updateCurrentMessage(const QModelIndex&); 
+  void updateCurrentMessage();
+  void currentChanged(const QModelIndex&);
+  void clicked(const QModelIndex&);
 
   void newmessage();
 
@@ -127,6 +131,9 @@ private:
   
   QFont mFont;
 
+  // timer and index for showing message
+  QTimer *timer;
+  QModelIndex timerIndex;
   
   /** Qt Designer generated object */
   Ui::MessagesDialog ui;

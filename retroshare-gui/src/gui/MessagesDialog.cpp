@@ -69,7 +69,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
   connect( ui.messagestreeView, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( messageslistWidgetCostumPopupMenu( QPoint ) ) );
   connect( ui.msgList, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( msgfilelistWidgetCostumPopupMenu( QPoint ) ) );
-  connect( ui.messagestreeView, SIGNAL(clicked ( const QModelIndex &) ) , this, SLOT( updateCurrentMessage( const QModelIndex & ) ) );
+  connect( ui.messagestreeView, SIGNAL(clicked ( const QModelIndex &) ) , this, SLOT( clicked( const QModelIndex & ) ) );
   connect( ui.listWidget, SIGNAL( currentRowChanged ( int) ), this, SLOT( changeBox ( int) ) );
   
   connect(ui.newmessageButton, SIGNAL(clicked()), this, SLOT(newmessage()));
@@ -126,7 +126,10 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     ui.messagestreeView->setRootIsDecorated(false);
     ui.messagestreeView->setSortingEnabled(true); 
     ui.messagestreeView->sortByColumn(3, Qt::DescendingOrder);
-     
+
+    // connect after setting model
+    connect( ui.messagestreeView->selectionModel(), SIGNAL(currentChanged ( QModelIndex, QModelIndex ) ) , this, SLOT( currentChanged( const QModelIndex & ) ) );
+
   /* hide the Tree +/- */
   ui.msgList->setRootIsDecorated( false );
   ui.msgList->setSelectionMode( QAbstractItemView::ExtendedSelection );
@@ -172,16 +175,28 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 	 mFont = QFont("Arial", 10, QFont::Bold);
    ui.subjectText->setFont(mFont);
 
-	//sertting default filter by column as subject
+	//setting default filter by column as subject
     proxyModel->setFilterKeyColumn(ui.filterColumnComboBox->currentIndex());
     
       ui.clearButton->hide();
 
-        
+    // create timer for navigation
+    timer = new QTimer(this);
+    timer->setInterval(300);
+    timer->setSingleShot(true);
+    connect(timer, SIGNAL(timeout()), this, SLOT(updateCurrentMessage()));
+
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
 #endif
+}
+
+MessagesDialog::~MessagesDialog()
+{
+    // stop and delete timer
+    timer->stop();
+    delete(timer);
 }
 
 void MessagesDialog::keyPressEvent(QKeyEvent *e)
@@ -761,11 +776,30 @@ void MessagesDialog::insertMessages()
    	ui.messagestreeView->hideColumn(5);
 }
 
-void MessagesDialog::updateCurrentMessage(const QModelIndex &index )
+// current row in messagestreeView has changed
+void MessagesDialog::currentChanged(const QModelIndex &index )
 {
-	insertMsgTxtAndFiles(index);
-	setMsgAsRead(index);
-	updateMessageSummaryList();
+    timer->stop();
+    timerIndex = index;
+    timer->start();
+}
+
+// click in messagestreeView
+void MessagesDialog::clicked(const QModelIndex &index )
+{
+    timer->stop();
+    timerIndex = index;
+    // show current message directly
+    updateCurrentMessage();
+}
+
+// show current message directly
+void MessagesDialog::updateCurrentMessage()
+{
+        timer->stop();
+        insertMsgTxtAndFiles(timerIndex);
+        setMsgAsRead(timerIndex);
+        updateMessageSummaryList();
 }
 
 void MessagesDialog::setMsgAsRead(const QModelIndex &index)
