@@ -33,6 +33,12 @@ class p3ChatService;
 
 class RsChatMsgItem;
 
+//! provides retroshares chatservice and messaging service
+/*!
+ * Provides rs with the ability to send/receive messages, immediate status,
+ * custom status, avatar and
+ * chats (public(group) and private) to peers
+ */
 class p3Msgs: public RsMsgs 
 {
    public:
@@ -44,6 +50,9 @@ class p3Msgs: public RsMsgs
 	  /****************************************/
 	  /* Message Items */
 
+	  /*!
+	   * @param msgList ref to list summarising client's msgs
+	   */
 	  virtual bool getMessageSummaries(std::list<MsgInfoSummary> &msgList);
 	  virtual bool getMessage(std::string mId, MessageInfo &msg);
 
@@ -51,23 +60,61 @@ class p3Msgs: public RsMsgs
 	  virtual bool MessageDelete(std::string mid);
 	  virtual bool MessageRead(std::string mid);
 
-	  // gets avatar from peer id in jpeg format.
+	  /*!
+	   * gets avatar from peer, image data in jpeg format
+	   */
 	  virtual void getAvatarData(std::string pid,unsigned char *& data,int& size);
+
+	  /*!
+	   * sets clients avatar, image data should be in jpeg format
+	   */
 	  virtual void setOwnAvatarData(const unsigned char *data,int size);
+
+	  /*!
+	   * retrieve clients avatar, image data in jpeg format
+	   */
 	  virtual void getOwnAvatarData(unsigned char *& data,int& size);
 
-	  // gets/set avatar from peer id in jpeg format.
+	  /*!
+	   * sets clients custom status (e.g. "i'm tired")
+	   */
 	  virtual void setCustomStateString(const std::string&  status_string) ;
+
+	  /*!
+	   * retrieves client's custom status
+	   */
 	  virtual std::string getCustomStateString() ;
+
+	  /*!
+	   * retrieves peer's custom status
+	   */
 	  virtual std::string getCustomStateString(const std::string& peer_id) ;
 	  
 
 	  /****************************************/
 	  /* Chat */
+	  /*!
+	   * @return whether chat is available
+	   */
 	  virtual bool    chatAvailable();
 	  virtual	bool 	ChatSend(ChatInfo &ci);
+
+	  /*!
+	   * @param chats ref to list of received chats is stored here
+	   */
 	  virtual	bool	getNewChat(std::list<ChatInfo> &chats);
+
+	  /*!
+	   * sends immediate status string to a specific peer, e.g. in a private chat
+	   * @param peer_id peer to send status string to
+	   * @param status_string immediate status to send
+	   */
 	  virtual void    sendStatusString(const std::string& peer_id,const std::string& status_string) ;
+
+	  /*!
+	   * sends immediate status to all peers
+	   * @param status_string immediate status to send
+	   */
 	  virtual void    sendGroupChatStatusString(const std::string& status_string) ;
 
 	  /****************************************/
