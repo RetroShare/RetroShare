@@ -48,17 +48,17 @@ public:
   static MessengerWindow* getInstance();
   static void releaseInstance();
   
-  virtual void updateMessengerDisplay() ;	// overloaded from RsAutoUpdatePage
 
 public slots:
-  void  insertPeers();
+
   /** Called when this dialog is to be displayed */
   void show();
-  
+  void updateMessengerDisplay() ;
   void updatePeersAvatar(const QString& peer_id);
   void updateAvatar();
   void loadmystatusmessage();
   void loadOwnStatus();
+  void checkAndSetIdle(int idleTime);
   
   LogoBar & getLogoBar() const;
 
@@ -99,8 +99,8 @@ private slots:
 	
 	void savestatusmessage();
 	
-	void savestatus();
 	
+
 	void on_actionSort_Peers_Descending_Order_activated();
   void on_actionSort_Peers_Ascending_Order_activated();
   void on_actionRoot_is_decorated_activated();
@@ -120,7 +120,14 @@ private:
 
   /* (2) Utility Fns */
   QTreeWidgetItem *getCurrentPeer();
-  
+  void savestatus();
+  void  insertPeers();
+  // idle function
+  void setIdle(bool Idle);
+  bool isIdle;
+  const unsigned long maxTimeBeforeIdle;
+
+
   std::map<std::string, PopupChatDialog *> chatDialogs;
 
 		class QLabel *iconLabel, *textLabel;

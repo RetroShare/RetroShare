@@ -71,6 +71,7 @@
 #define IMAGE_OFFLINE            ":/images/im-user-offline.png"
 #define IMAGE_AWAY             ":/images/im-user-away.png"
 #define IMAGE_BUSY            ":/images/im-user-busy.png"
+#define IMAGE_INACTIVE		":/images/im-user-inactive.png"
 
 /******
  * #define MSG_DEBUG 1
@@ -96,7 +97,7 @@ void MessengerWindow::releaseInstance()
 
 /** Constructor */
 MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
-    : RWindow("MessengerWindow", parent, flags)
+    : 	maxTimeBeforeIdle(10), RWindow("MessengerWindow", parent, flags)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
@@ -116,7 +117,7 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
 
 
   QTimer *timer = new QTimer(this);
-  timer->connect(timer, SIGNAL(timeout()), this, SLOT(savestatus()));
+  timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateMessengerDisplay()));
   timer->start(1000); /* one second */
 
 
@@ -148,8 +149,8 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
 
   itemFont = QFont("ARIAL", 10);
 	itemFont.setBold(true);
-	
 
+  isIdle = false;
   loadOwnStatus(); // hack; placed in constructor to preempt sendstatus, so status loaded from file
   insertPeers(); 		
   updateAvatar();
@@ -260,6 +261,8 @@ void MessengerWindow::messengertreeWidgetCostumPopupMenu( QPoint point )
 
 void MessengerWindow::updateMessengerDisplay()
 {
+	if(RsAutoUpdatePage::eventsLocked())
+		return ;
         // add self nick and Avatar to Friends.
         RsPeerDetails pd ;
         if (rsPeers->getPeerDetails(rsPeers->getOwnId(),pd)) {
@@ -269,7 +272,8 @@ void MessengerWindow::updateMessengerDisplay()
                 ui.nicklabel->setText(titleStr.arg(QString::fromStdString(pd.name) + tr(" - ") + QString::fromStdString(pd.location))) ;
         }
 
-        insertPeers() ;
+        insertPeers();
+        savestatus();
 }
 
 /* get the list of peers from the RsIface.  */
@@ -280,6 +284,10 @@ void  MessengerWindow::insertPeers()
 
    std::list<StatusInfo> statusInfo;
    rsStatus->getStatus(statusInfo);
+
+  // if(isIdle)
+    //   QMessageBox::StandardButton sb = QMessageBox::warning ( NULL, tr("Idle"),
+      //                  tr("You are Idle"), QMessageBox::Ok);
 
         if (!rsPeers) {
                 /* not ready yet! */
@@ -497,15 +505,26 @@ void  MessengerWindow::insertPeers()
                                 {
                                     gpg_item -> setIcon(1,(QIcon(":/images/no_avatar_70.png")));
                                 }
-                                if(it->status == RS_STATUS_ONLINE)
+                                if(it->status == RS_STATUS_INACTIVE){
+                                	gpg_item -> setIcon(0,(QIcon(IMAGE_INACTIVE)));
+									gpg_item -> setToolTip(0, tr("Peer Idle"));
+                                }
+                                else
+                                if(it->status == RS_STATUS_ONLINE){
                                    gpg_item -> setIcon(0,(QIcon(IMAGE_ONLINE)));
+								   gpg_item -> setToolTip(0, tr("Peer Online"));
+                                }
                                 else
-                                if(it->status == RS_STATUS_AWAY)
+                                if(it->status == RS_STATUS_AWAY){
                                    gpg_item -> setIcon(0,(QIcon(IMAGE_AWAY)));
+								   gpg_item -> setToolTip(0, tr("Peer Away"));
+                                }
                                 else
-                                if(it->status == RS_STATUS_BUSY)
+                                if(it->status == RS_STATUS_BUSY){
                                    gpg_item -> setIcon(0,(QIcon(IMAGE_BUSY)));
-                	}
+                                   gpg_item -> setToolTip(0, tr("Peer Busy"));
+                                }
+                        }
                     }
                 }
 
@@ -993,10 +1012,6 @@ void MessengerWindow::loadOwnStatus()
 /** Save own status Online,Away,Busy **/
 void MessengerWindow::savestatus()
 {
-	if(RsAutoUpdatePage::eventsLocked())
-		return ;
-
-	//rsiface->lockData(); /* Lock Interface */
 
 	RsPeerDetails detail;
 	std::string ownId = rsPeers->getOwnId();
@@ -1007,13 +1022,20 @@ void MessengerWindow::savestatus()
 	}	
 		
 	StatusInfo si;
+	int statusIndex;
 
-	int statusIndex = ui.statuscomboBox->currentIndex();
+	if(!isIdle)
+		statusIndex = ui.statuscomboBox->currentIndex();
+	else
+		statusIndex = 3;
 
 	/* Check if status has changed */
 	int status = 0;
 	switch(statusIndex)
 	{
+		case 3:
+			status = RS_STATUS_INACTIVE;
+			break;
 		case 2:
 			status = RS_STATUS_AWAY;
 			break;
@@ -1031,6 +1053,21 @@ void MessengerWindow::savestatus()
 
 	rsStatus->sendStatus(si);
 	
-	//rsiface->unlockData(); /* UnLock Interface */
 	return;
+}
+
+void MessengerWindow::checkAndSetIdle(int idleTime){
+
+	if((idleTime >= maxTimeBeforeIdle) && !isIdle){
+		setIdle(true);
+	}else
+		if((idleTime < maxTimeBeforeIdle) && isIdle){
+			setIdle(false);
+		}
+
+	return;
+}
+
+void MessengerWindow::setIdle(bool idle){
+	isIdle = idle;
 }
