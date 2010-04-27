@@ -84,7 +84,7 @@ RSettingsWin::closeEvent (QCloseEvent * event)
 
     if (update_local) {
         if (_instance->stackedWidget->currentIndex() == Directories) {
-            ConfigPage *Page = (ConfigPage*) _instance->stackedWidget->currentWidget();
+            ConfigPage *Page = dynamic_cast<ConfigPage *> (_instance->stackedWidget->currentWidget());
             if (Page) {
                 Page->load();
             }
@@ -109,6 +109,8 @@ RSettingsWin::initStackedWidget()
     stackedWidget->addWidget(new FileAssociationsPage() );
     stackedWidget->addWidget(new SoundPage() );
     #endif
+
+    loadSettings();	/* load saved settings */
 
     setNewPage(General);
 }
@@ -163,7 +165,6 @@ RSettingsWin::setNewPage(int page)
     }
 
     pageName->setText(text);
-    loadSettings();	/* load saved settings */
     stackedWidget->setCurrentIndex(page);
     listWidget->setCurrentRow(page);
 }
@@ -171,12 +172,14 @@ RSettingsWin::setNewPage(int page)
 void
 RSettingsWin::loadSettings()
 {
-  /* Call each config page's load() method to load its data */
-  int i, count = stackedWidget->count();
-  for (i = 0; i < count; i++) {
-	  ConfigPage *page = (ConfigPage *) stackedWidget->widget(i);
-	  page->load();
-  }
+    /* Call each config page's load() method to load its data */
+    int i, count = stackedWidget->count();
+    for (i = 0; i < count; i++) {
+        ConfigPage *page = dynamic_cast<ConfigPage *> (stackedWidget->widget(i));
+        if (page) {
+            page->load();
+        }
+    }
 }
 
 /** Saves changes made to settings. */
@@ -191,7 +194,7 @@ RSettingsWin::saveChanges()
 	{
 		ConfigPage *page = dynamic_cast<ConfigPage *>(stackedWidget->widget(i));
 
-		if(!page->save(errmsg)) 
+                if(page && !page->save(errmsg))
 		{
 			/* Display the offending page */
 			stackedWidget->setCurrentWidget(page);

@@ -859,7 +859,7 @@ void PopupChatDialog::anchorClicked (const QUrl& link )
 
 		if(!rslink.valid())
 		{
-			QMessageBox mb(tr("Badly formed RS link"), tr("This RetroShare link is malformed. This is bug. Please contact the developers."),QMessageBox::Information,QMessageBox::Ok,0,0);
+			QMessageBox mb(tr("Badly formed RS link"), tr("This RetroShare link is malformed. This is bug. Please contact the developers.\n\nNote: this possibly comes from a bug in Qt4.6. Try to right-click + copy link location."),QMessageBox::Information,QMessageBox::Ok,0,0);
 			mb.setButtonText( QMessageBox::Ok, "OK" );
 			mb.exec();
 			return ;

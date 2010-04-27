@@ -429,6 +429,17 @@ void MessagesDialog::forwardmessage()
 	std::string cited_text(doc.toPlainText().toStdString()) ;
 
 	nMsgDialog->insertForwardPastedText(cited_text) ;
+
+	std::list<FileInfo>& files_info = msgInfo.files;
+
+	/* enable all files for sending */
+	std::list<FileInfo>::iterator it;
+	for(it = files_info.begin(); it != files_info.end(); it++)
+	{
+		it->inRecommend = true;
+	}
+
+	nMsgDialog->insertFileList(files_info);
 	//nMsgDialog->addRecipient( msgInfo.srcId ) ;
 	nMsgDialog->show();
 	nMsgDialog->activateWindow();
