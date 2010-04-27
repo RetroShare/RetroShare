@@ -147,7 +147,7 @@ int main(int argc, char *argv[])
 	QObject::connect(notify,SIGNAL(filesPostModChanged(bool))         ,w->sharedfilesDialog		,SLOT(postModDirectories(bool)         )) ;
 	QObject::connect(notify,SIGNAL(filesPostModChanged(bool))         ,w                            ,SLOT(postModDirectories(bool)         )) ;
 	QObject::connect(notify,SIGNAL(transfersChanged())                ,w->transfersDialog  		,SLOT(insertTransfers()                )) ;
-        QObject::connect(notify,SIGNAL(friendsChanged())                  ,w->messengerWindow 		,SLOT(insertPeers()                    )) ;
+        QObject::connect(notify,SIGNAL(friendsChanged())                  ,w->messengerWindow 		,SLOT(updateMessengerDisplay()                   )) ;
 	QObject::connect(notify,SIGNAL(friendsChanged())                  ,w->peersDialog      		,SLOT(insertPeers()                    )) ;
 	QObject::connect(notify,SIGNAL(neighborsChanged())                ,w->networkDialog    		,SLOT(insertConnect()                  )) ;
 	QObject::connect(notify,SIGNAL(messagesChanged())                 ,w->messagesDialog   		,SLOT(insertMessages()                 )) ;
@@ -169,6 +169,8 @@ int main(int argc, char *argv[])
 	QObject::connect(w->peersDialog,SIGNAL(notifyGroupChat(const QString&,const QString&)),w,SLOT(displaySystrayMsg(const QString&,const QString&)),Qt::QueuedConnection) ;
 
 	QObject::connect(w->messengerWindow,SIGNAL(startChat(QTreeWidgetItem* )),w->peersDialog,SLOT(chatfriend(QTreeWidgetItem* ))) ;
+	QObject::connect(w->idle, SIGNAL(secondsIdle(int)), w->messengerWindow, SLOT(checkAndSetIdle(int)));
+
 	/* only show window, if not startMinimized */
 	RshareSettings  *_settings = new RshareSettings();
 
