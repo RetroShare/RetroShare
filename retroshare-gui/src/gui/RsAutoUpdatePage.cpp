@@ -30,7 +30,6 @@ void RsAutoUpdatePage::timerUpdate()
 		return ;
 	
 	updateDisplay();
-	MessengerWindow::getInstance()->insertPeers();
 	update() ;				// Qt flush
 }
 
