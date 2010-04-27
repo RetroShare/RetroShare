@@ -1131,7 +1131,14 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 
 	if(helpFile != NULL){
 		have_help = true;
-		fclose(helpFile);
+                fclose(helpFile);
+
+                if(RsInitConfig::passwd == ""){ // in case user chooses a different user later in setup
+                    RsInitConfig::havePasswd = RsTryAutoLogin();
+                    have_help = RsInitConfig::havePasswd;
+                }
+
+
 	}
 
 	/* The SSL / SSL + PGP version requires, SSL init + PGP init.  */
@@ -1142,7 +1149,7 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 	//check if password is already in memory
 	if (((RsInitConfig::havePasswd) && (RsInitConfig::passwd != "")) && !have_help)
 	{
-		std::cerr << "RetroShare has a ssl Password" << std::endl;
+                std::cerr << "RetroShare has an ssl Password" << std::endl;
 		sslPassword = RsInitConfig::passwd.c_str();
 
 		std::cerr << "let's store the ssl Password into a pgp ecrypted file" << std::endl;
@@ -1576,7 +1583,11 @@ bool  RsInit::RsTryAutoLogin()
 	unsigned char* indata = new unsigned char[DAT_LEN];
 	unsigned char* outdata = new unsigned char[DAT_LEN];
 
-	fscanf(helpFile, "%s", indata);
+	if(fscanf(helpFile, "%s", indata) != 1)
+	{
+		std::cerr << "Can't read RSA key in help file " << helpFileName << ". Sorry." << std::endl ;
+		return false ;
+	}
 
 	RC4_KEY* key = new RC4_KEY;
 	RC4_set_key(key, KEY_DAT_LEN, key_data);
