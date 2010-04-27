@@ -21,14 +21,47 @@
  ****************************************************************
 -->
 
-<Contents name="RetroShare Help" html="index.html">
-  <Topic id="config" name="Configuring RetroShare" html="config.html">
-    <Topic id="general" name="General Settings" html="config.html" section="general"/>
-    <Topic id="server" name="Server Settings" html="config.html" section="server"/>
-    <Topic id="directories" name="Directories Settings" html="config.html" section="directories"/>
-    <Topic id="appearance" name="Appearance Settings" html="config.html" section="appearance"/>
-  </Topic>
-  <Topic id="commands" name="Commandline Options" html="commandline.html"/>
-  <Topic id="links" name="Helpful Links" html="links.html"/>
-</Contents>
+<html>
+<body>
+
+<h1>Commandline Options</h1>
+<hr />
+
+<p>
+The commandline options are for retroshare-nogui, a headless server in a shell, or systems without QT. 
+</p>
+
+<a name="commands"/>
+<h3>Commands:</h3>
+
+<ul>
+  <li><b>-h Show the help </b></li>
+  <li><b>-l [logfile] Set the logfilename  </b></li>
+  <li><b>-w [password] Set the password  </b></li>
+  <li><b>-i [ip_adress] Set IP Adress to use </b></li>
+  <li><b>-p [port] Set the Port to listen on  </b></li>
+  <li><b>-c [basedir] Set the config basdir</b></li>
+  <li><b>-s Output to Stderr  </b></li>
+  <li><b>-d [debuglevel] Set the debuglevel  </b></li>
+  <li><b>-u Only listen to UDP  </b></li>
+  <li><b>-e Use a forwarded external Port </b></li>
+  <li><b>-U username (ssl id) to login with </b></li>
+</ul>
+
+<a name="example"/>
+<h3>Example:</h3>
+
+<ul>
+  <li><b>./retroshare-nogui -w mysecretpassword -e </b></li>
+</ul>
+  
+
+
+
+
+
+
+
+</body>
+</html>
 
