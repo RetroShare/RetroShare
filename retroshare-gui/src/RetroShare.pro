@@ -1,4 +1,4 @@
-CONFIG += qt gui uic qrc resources uitools newsettings
+CONFIG += qt gui uic qrc resources uitools newsettings idle
 QT     += network xml script opengl
 
 TEMPLATE = app
@@ -20,7 +20,8 @@ linux-* {
 	#CONFIG += version_detail_bash_script
 	QMAKE_CXXFLAGS *= -D_FILE_OFFSET_BITS=64
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
-        LIBS += -lssl -lgpgme -lupnp
+        LIBS += -lssl -lgpgme -lupnp -lXss
+	DEFINES *= HAVE_XSS # for idle time, libx screensaver extensions
 }
 
 linux-g++ {
@@ -100,6 +101,7 @@ macx {
 	LIBS += ../../../miniupnpc-1.0/libminiupnpc.a
 
     	INCLUDEPATH += .
+	#DEFINES* = MAC_IDLE # for idle feature
 
 }
 
@@ -555,6 +557,7 @@ HEADERS += gui/unfinished/ApplicationWindow.h \
            gui/unfinished/PhotoDialog.h \
            gui/unfinished/PhotoShow.h \
            gui/unfinished/StatisticDialog.h
+	   
 
 FORMS += gui/unfinished/ApplicationWindow.ui \
          gui/unfinished/CalDialog.ui \
@@ -573,6 +576,15 @@ SOURCES += gui/unfinished/ApplicationWindow.cpp \
            gui/unfinished/StatisticDialog.cpp
 
           DEFINES *= UNFINISHED
+}
+
+idle {
+
+HEADERS += idle/idle.h
+         
+SOURCES += idle/idle.cpp \
+	   idle/idle_platform.cpp 
+
 }
 
 
