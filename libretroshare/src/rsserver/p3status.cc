@@ -66,6 +66,11 @@ void p3Status::getStatusString(uint32_t status, std::string& statusString){
 		}else if (status == RS_STATUS_ONLINE){
 
 			statusString = "Online";
+
+		}else if(status == RS_STATUS_INACTIVE){
+
+			statusString = "Inactive";
+
 		}
 
 	return;

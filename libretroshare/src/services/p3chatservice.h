@@ -65,7 +65,7 @@ class p3ChatService: public p3Service, public p3Config
 		int	sendPrivateChat(std::wstring msg, std::string id);
 
 		/*!
-		 * can be used to send status msgs, these status updates are meant for immediate use by peer at other end
+		 * can be used to send 'immediate' status msgs, these status updates are meant for immediate use by peer (not saved by rs)
 		 * e.g currently used to update user when a peer 'is typing' during a chat
 		 */
 		void  sendStatusString(const std::string& peer_id,const std::string& status_str) ;
@@ -77,7 +77,7 @@ class p3ChatService: public p3Service, public p3Config
 		void  sendGroupChatStatusString(const std::string& status_str) ;
 
 		/*!
-		 * this retrieves custom status for a peers, if not generate a request for the user
+		 * this retrieves custom status for a peers, generate a requests to the peer
 		 * @param peer_id the id of the peer you want status string for
 		 */
 		std::string getCustomStateString(const std::string& peer_id) ;
@@ -106,6 +106,7 @@ class p3ChatService: public p3Service, public p3Config
 
 		/*!
 		 * Gets the avatar data for clients account
+		 * data is in jpeg format
 		 */
 		void getOwnAvatarJpegData(unsigned char *& data,int& size) ;
 
@@ -113,6 +114,9 @@ class p3ChatService: public p3Service, public p3Config
 		/*!
 		 * This retrieves all chat msg items and also (important!)
 		 * processes chat-status items that are in service item queue. chat msg item requests are also processed and not returned
+		 * (important! also) notifications sent to notify base  on receipt avatar, immediate status and custom status
+		 * : notifyCustomState, notifyChatStatus, notifyPeerHasNewAvatar
+		 * @see NotifyBase
 		 */
 		std::list<RsChatMsgItem *> getChatQueue(); 
 

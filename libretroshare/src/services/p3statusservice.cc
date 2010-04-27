@@ -143,19 +143,22 @@ bool p3StatusService::sendStatus(StatusInfo& statusInfo)
 		if(statusInfo.id != mConnMgr->getOwnId())
 			return false;
 
-		// If your id is not set, set it
-		if(mStatusInfoMap.find(statusInfo.id) == mStatusInfoMap.end()){
+		// don't save inactive status
+		if(statusInfo.status != RS_STATUS_INACTIVE){
 
-			std::pair<std::string, StatusInfo> pr(statusInfo.id, statusInfo);
-			mStatusInfoMap.insert(pr);
-			IndicateConfigChanged();
-		}else
-		if(mStatusInfoMap[statusInfo.id].status != statusInfo.status){
+			// If your id is not set, set it
+			if(mStatusInfoMap.find(statusInfo.id) == mStatusInfoMap.end()){
 
-			IndicateConfigChanged();
-			mStatusInfoMap[statusInfo.id] = statusInfo;
+				std::pair<std::string, StatusInfo> pr(statusInfo.id, statusInfo);
+				mStatusInfoMap.insert(pr);
+				IndicateConfigChanged();
+			}else
+			if(mStatusInfoMap[statusInfo.id].status != statusInfo.status){
+
+				IndicateConfigChanged();
+				mStatusInfoMap[statusInfo.id] = statusInfo;
+			}
 		}
-
 
 		mConnMgr->getOnlineList(onlineList);
 	}
