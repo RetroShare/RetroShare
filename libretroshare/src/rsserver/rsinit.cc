@@ -1583,7 +1583,11 @@ bool  RsInit::RsTryAutoLogin()
 	unsigned char* indata = new unsigned char[DAT_LEN];
 	unsigned char* outdata = new unsigned char[DAT_LEN];
 
-	fscanf(helpFile, "%s", indata);
+	if(fscanf(helpFile, "%s", indata) != 1)
+	{
+		std::cerr << "Can't read RSA key in help file " << helpFileName << ". Sorry." << std::endl ;
+		return false ;
+	}
 
 	RC4_KEY* key = new RC4_KEY;
 	RC4_set_key(key, KEY_DAT_LEN, key_data);
