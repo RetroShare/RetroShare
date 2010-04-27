@@ -61,7 +61,7 @@ const uint32_t MAX_NETWORK_INIT =	70; /* timeout before network reset */
 
 const uint32_t MIN_TIME_BETWEEN_NET_RESET = 		5;
 
-const uint32_t PEER_IP_CONNECT_STATE_MAX_LIST_SIZE =     	6;
+const uint32_t PEER_IP_CONNECT_STATE_MAX_LIST_SIZE =     	4;
 
 /****
  * #define CONN_DEBUG 1
@@ -3581,9 +3581,9 @@ void peerConnectState::updateIpAddressList(IpAddressTimed ipTimed) { //purge old
 #endif
                 if (ipTimed.ipAddr.sin_addr.s_addr == 0 || ipTimed.ipAddr.sin_port == 0 ||
                     ipTimed.ipAddr.sin_addr.s_addr == 1|| ipTimed.ipAddr.sin_port == 1 ||
-		    std::string(inet_ntoa(ipTimed.ipAddr.sin_addr)) == "1.1.1.1") {
+                    std::string(inet_ntoa(ipTimed.ipAddr.sin_addr)) == "1.1.1.1" || isLoopbackNet(&ipTimed.ipAddr.sin_addr)) {
 #ifdef CONN_DEBUG
-			std::cerr << "peerConnectState::updateIpAdressList() ip parameter is 0.0.0.0, 1.1.1.1 or port is 0, ignoring." << std::endl;
+                        std::cerr << "peerConnectState::updateIpAdressList() ip parameter is 0.0.0.0, 1.1.1.1, or loopback, or port is 0, ignoring." << std::endl;
 #endif
 		    return;
 		}
