@@ -216,6 +216,7 @@
         <file>images/im-user-offline.png</file>
         <file>images/im-user-away.png</file>
         <file>images/im-user-busy.png</file>
+	<file>images/im-user-inactive.png</file>
         <file>images/informations_24x24.png</file>
         <file>images/invite-friend24.png</file>
         <file>images/connect_friend.png</file>
