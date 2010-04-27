@@ -2366,7 +2366,7 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
                     pca.addr = ipListIt->ipAddr;
                     pca.type = RS_NET_CONN_TCP_UNKNOW_TOPOLOGY;
                     //for the delay, we add a random time and some more time when the friend list is big
-                    pca.delay = P3CONNMGR_TCP_DEFAULT_DELAY + rand() % 3 + (mFriendList.size() / 5);
+                    pca.delay = P3CONNMGR_TCP_DEFAULT_DELAY + rand() % 3 + (mFriendList.size() / 3);
                     pca.ts = time(NULL);
                     pca.period = 0;
                     it->second.connAddrs.push_back(pca);
