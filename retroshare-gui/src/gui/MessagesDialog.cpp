@@ -743,6 +743,15 @@ void MessagesDialog::insertMessages()
         			item1 -> setIcon(QIcon(":/images/message-mail.png"));
       			}
 		}
+		
+		if ((it -> msgflags & RS_MSG_BOXMASK) == RS_MSG_OUTBOX )
+		{
+			 MessagesModel->setHeaderData(2, Qt::Horizontal, tr("Recipient"));
+		}
+		else
+		{
+			 MessagesModel->setHeaderData(2, Qt::Horizontal, tr("From"));
+		}
 
 		// No of Files.
 		{
@@ -1285,6 +1294,8 @@ void MessagesDialog::updateMessageSummaryList()
 	int newInboxCount = 0;
 	int newOutboxCount = 0;
 	int newDraftCount = 0;
+	int newSentboxCount = 0;
+	int inboxCount = 0;
 
 	/*calculating the new messages*/
 	for(it = msgList.begin(); it != msgList.end(); it++)
@@ -1293,6 +1304,10 @@ void MessagesDialog::updateMessageSummaryList()
 		{
 			newInboxCount ++;
 		}
+		if ((it -> msgflags & RS_MSG_BOXMASK) == RS_MSG_INBOX )
+		{
+			inboxCount ++;
+		}
 		if ((it -> msgflags & RS_MSG_BOXMASK) == RS_MSG_OUTBOX )
 		{
 			newOutboxCount ++;
@@ -1300,6 +1315,10 @@ void MessagesDialog::updateMessageSummaryList()
 		if ((it -> msgflags & RS_MSG_BOXMASK) == RS_MSG_DRAFTBOX )
 		{
 			newDraftCount ++;
+		}
+	  if ((it -> msgflags & RS_MSG_BOXMASK) == RS_MSG_SENTBOX )
+		{
+			newSentboxCount ++;
 		}
 	}	
 
@@ -1374,6 +1393,50 @@ void MessagesDialog::updateMessageSummaryList()
 		qf.setBold(false);
 		item->setFont(qf);
 		
+	}
+	
+	/* Total Inbox */
+	if(inboxCount != 0)
+	{
+		QListWidgetItem* item = ui.listWidget->item(5);
+
+		textItem = tr("Total Inbox:") + " "  + QString::number(inboxCount);
+		item->setText(textItem);
+		/*QFont qf = item->font();
+		qf.setBold(true);
+		item->setFont(qf);*/
+	}
+	else
+	{
+		QListWidgetItem* item = ui.listWidget->item(5);
+
+		textItem = tr("Total Inbox:") + " "  + "0";
+		item->setText(textItem);
+		/*QFont qf = item->font();
+		qf.setBold(false);
+		item->setFont(qf);*/
+	}
+	
+	/* Total Sent */
+	if(newSentboxCount != 0)
+	{
+		QListWidgetItem* item = ui.listWidget->item(6);
+
+		textItem = tr("Total Sent:") + " "  + QString::number(newSentboxCount);
+		item->setText(textItem);
+		/*QFont qf = item->font();
+		qf.setBold(true);
+		item->setFont(qf);*/
+	}
+	else
+	{
+		QListWidgetItem* item = ui.listWidget->item(6);
+
+		textItem = tr("Total Sent:") + " "  + "0";
+		item->setText(textItem);
+		/*QFont qf = item->font();
+		qf.setBold(false);
+		item->setFont(qf);*/
 	}	
 }
 
