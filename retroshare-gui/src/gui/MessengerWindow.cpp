@@ -97,7 +97,7 @@ void MessengerWindow::releaseInstance()
 
 /** Constructor */
 MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
-    : 	maxTimeBeforeIdle(10), RWindow("MessengerWindow", parent, flags)
+    : 	maxTimeBeforeIdle(30), RWindow("MessengerWindow", parent, flags)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
