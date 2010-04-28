@@ -173,8 +173,8 @@ void AboutDialog::mousePressEvent(QMouseEvent *e) {
 
 void AboutDialog::on_help_button_clicked()
 {
-    static HelpDialog *helpdlg = new HelpDialog (this);
-    helpdlg->show();
+    HelpDialog helpdlg (this);
+    helpdlg.exec();
 }
 
 AWidget::AWidget() {
