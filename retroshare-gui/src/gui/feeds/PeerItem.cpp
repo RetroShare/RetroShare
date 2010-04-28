@@ -22,6 +22,7 @@
 
 #include "PeerItem.h"
 #include "FeedHolder.h"
+#include "../RsAutoUpdatePage.h"
 
 #include "rsiface/rspeers.h"
 
@@ -146,56 +147,58 @@ void PeerItem::updateItem()
 	std::cerr << "PeerItem::updateItem()";
 	std::cerr << std::endl;
 #endif
-	RsPeerDetails details;
-	if (!rsPeers->getPeerDetails(mPeerId, details))
-	{
-		return;
-	}
+	if(!RsAutoUpdatePage::eventsLocked()) {
+		RsPeerDetails details;
+		if (!rsPeers->getPeerDetails(mPeerId, details))
+		{
+			return;
+		}
 
-	/* top Level info */
-	QString status = QString::fromStdString(RsPeerStateString(details.state));
+		/* top Level info */
+		QString status = QString::fromStdString(RsPeerStateString(details.state));
 
 #if 0
-	/* Append additional status info from status service */
-	StatusInfo statusInfo;
-	if ((rsStatus) && (rsStatus->getStatus(*it, statusInfo)))
-	{
-		status.append(QString::fromStdString("/" + RsStatusString(statusInfo.status)));
-	}
+		/* Append additional status info from status service */
+		StatusInfo statusInfo;
+		if ((rsStatus) && (rsStatus->getStatus(*it, statusInfo)))
+		{
+			status.append(QString::fromStdString("/" + RsStatusString(statusInfo.status)));
+		}
 #endif
-	statusLabel->setText(status);
-	trustLabel->setText(QString::fromStdString(
-		RsPeerTrustString(details.trustLvl)));
+		statusLabel->setText(status);
+		trustLabel->setText(QString::fromStdString(
+			RsPeerTrustString(details.trustLvl)));
 
-	{
-		std::ostringstream out;
-		out << details.localAddr << ":";
-		out << details.localPort << "/";
-		out << details.extAddr << ":";
-		out << details.extPort;
-		ipLabel->setText(QString::fromStdString(out.str()));
+		{
+			std::ostringstream out;
+			out << details.localAddr << ":";
+			out << details.localPort << "/";
+			out << details.extAddr << ":";
+			out << details.extPort;
+			ipLabel->setText(QString::fromStdString(out.str()));
+		}
+
+		connLabel->setText(QString::fromStdString(details.autoconnect));
+		QDateTime date = QDateTime::fromTime_t(details.lastConnect);
+		QString stime = date.toString(Qt::LocalDate);
+		lastLabel-> setText(stime);
+
+		/* do buttons */
+		chatButton->setEnabled(details.state & RS_PEER_STATE_CONNECTED);
+		if (details.state & RS_PEER_STATE_FRIEND)
+		{
+			addButton->setEnabled(false);
+			removeButton->setEnabled(true);
+			msgButton->setEnabled(true);
+		}
+		else
+		{
+			addButton->setEnabled(true);
+			removeButton->setEnabled(false);
+			msgButton->setEnabled(false);
+		}
 	}
 
-	connLabel->setText(QString::fromStdString(details.autoconnect));
-	QDateTime date = QDateTime::fromTime_t(details.lastConnect);
-  QString stime = date.toString(Qt::LocalDate);
-  lastLabel-> setText(stime);
-
-	/* do buttons */
-	chatButton->setEnabled(details.state & RS_PEER_STATE_CONNECTED);
-	if (details.state & RS_PEER_STATE_FRIEND)
-	{
-		addButton->setEnabled(false);
-		removeButton->setEnabled(true);
-		msgButton->setEnabled(true);
-	}
-	else
-	{
-		addButton->setEnabled(true);
-		removeButton->setEnabled(false);
-		msgButton->setEnabled(false);
-	}
-		
 	/* slow Tick  */
 	int msec_rate = 10129;
 
