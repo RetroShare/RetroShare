@@ -74,7 +74,7 @@ void ForumNewItem::updateItemStatic()
 
 		descLabel->setText(QString::fromStdWString(fi.forumDesc));
 
-		if (fi.forumFlags & RS_DISTRIB_SUBSCRIBED)
+		if (fi.subscribeFlags & RS_DISTRIB_SUBSCRIBED)
 		{
 			subscribeButton->setEnabled(false);
 			//postButton->setEnabled(true);
