@@ -289,12 +289,12 @@ void SearchDialog::download()
 
 			 if(!rsFiles -> FileRequest((item->text(SR_NAME_COL)).toStdString(),
 						 (item->text(SR_HASH_COL)).toStdString(),
-						 (item->text(SR_REALSIZE_COL)).toInt(),
+						 (item->text(SR_REALSIZE_COL)).toULongLong(),
 						 "", RS_FILE_HINTS_NETWORK_WIDE, srcIds))
 				 attemptDownloadLocal = true ;
 			 else
 			 {
-				 std::cout << "isuing file request from search dialog: -" << (item->text(SR_NAME_COL)).toStdString() << "-" << (item->text(SR_HASH_COL)).toStdString() << "-" << (item->text(SR_REALSIZE_COL)).toInt() << "-ids=" ;
+				 std::cout << "isuing file request from search dialog: -" << (item->text(SR_NAME_COL)).toStdString() << "-" << (item->text(SR_HASH_COL)).toStdString() << "-" << (item->text(SR_REALSIZE_COL)).toULongLong() << "-ids=" ;
 				 for(std::list<std::string>::const_iterator it(srcIds.begin());it!=srcIds.end();++it)
 					 std::cout << *it << "-" << std::endl ;
 			 }
@@ -320,14 +320,14 @@ void SearchDialog::downloadDirectory(const QTreeWidgetItem *item, const QString 
 
 		rsFiles->FileRequest(item->text(SR_NAME_COL).toStdString(),
 				item->text(SR_HASH_COL).toStdString(),
-				item->text(SR_REALSIZE_COL).toInt(),
+				item->text(SR_REALSIZE_COL).toULongLong(),
 				cleanPath.toStdString(),RS_FILE_HINTS_NETWORK_WIDE, srcIds);
 
 		std::cout << "SearchDialog::downloadDirectory(): "\
 				"issuing file request from search dialog: -"
 			<< (item->text(SR_NAME_COL)).toStdString()
 			<< "-" << (item->text(SR_HASH_COL)).toStdString()
-			<< "-" << (item->text(SR_REALSIZE_COL)).toInt()
+			<< "-" << (item->text(SR_REALSIZE_COL)).toULongLong()
 			<< "-ids=" ;
 		for(std::list<std::string>::const_iterator it(srcIds.begin());
 				it!=srcIds.end();++it)
