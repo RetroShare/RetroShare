@@ -519,6 +519,7 @@ void ftController::locked_topQueue(uint32_t pos)
 		locked_checkQueueElement(p) ;
 	}
 	_queue[0]=tmp ;
+
 	locked_checkQueueElement(0) ;
 }
 void ftController::locked_bottomQueue(uint32_t pos)
@@ -552,8 +553,11 @@ void ftController::locked_checkQueueElement(uint32_t pos)
 {
 	_queue[pos]->mQueuePosition = pos ;
 
-	if(pos < _max_active_downloads)
+	if(pos < _max_active_downloads && _queue[pos]->mState != ftFileControl::PAUSED)
 	{
+		if(_queue[pos]->mState == ftFileControl::QUEUED)
+			_queue[pos]->mCreator->resetRecvTimeStamp() ;
+
 		_queue[pos]->mState = ftFileControl::DOWNLOADING ;
 
 		if(_queue[pos]->mFlags & RS_FILE_HINTS_NETWORK_WIDE)
@@ -1150,6 +1154,9 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 	ftFileCreator *fc = new ftFileCreator(savepath, size, hash);
 	ftTransferModule *tm = new ftTransferModule(fc, mDataplex,this);
 
+#ifdef CONTROL_DEBUG
+	std::cerr << "Note: setting chunk strategy to " << mDefaultChunkStrategy <<std::endl ;
+#endif
 	fc->setChunkStrategy(mDefaultChunkStrategy) ;
 
 	/* add into maps */
@@ -1950,9 +1957,17 @@ bool  ftController::loadConfigMap(std::map<std::string, std::string> &configMap)
 	if (configMap.end() != (mit = configMap.find(default_chunk_strategy_ss)))
 	{
 		if(mit->second == "STREAMING")
+		{
 			setDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_STREAMING) ;
+			std::cerr << "Note: loading default value for chunk strategy: streaming" << std::endl;
+		}
 		else if(mit->second == "RANDOM")
+		{
 			setDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_RANDOM) ;
+			std::cerr << "Note: loading default value for chunk strategy: random" << std::endl;
+		}
+		else
+			std::cerr << "**** ERROR ***: Unknown value for default chunk strategy in keymap." << std::endl ;
 	}
 
 	return true;
@@ -1966,6 +1981,9 @@ FileChunksInfo::ChunkStrategy ftController::defaultChunkStrategy()
 void ftController::setDefaultChunkStrategy(FileChunksInfo::ChunkStrategy S)
 {
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+#ifdef CONTROL_DEBUG
+	std::cerr << "Note: in frController: setting chunk strategy to " << S << std::endl ;
+#endif
 	mDefaultChunkStrategy = S ;
 	IndicateConfigChanged() ;
 }
