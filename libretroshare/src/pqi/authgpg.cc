@@ -26,6 +26,8 @@
 
 #include "authgpg.h"
 #include <rsiface/rsiface.h>
+#include <rsiface/rsinit.h>
+#include <util/rsdir.h>
 #include <iostream>
 #include <sstream>
 #include <algorithm>
@@ -34,7 +36,7 @@
 
 //#define GPG_DEBUG 1
 
-// initialisation du pointeur de singleton Ã  zÃ©ro
+// initialisation du pointeur de singleton à zéro
 AuthGPG *AuthGPG::instance_gpg = new AuthGPG();
 
 /* Turn a set of parameters into a string */
@@ -162,23 +164,43 @@ AuthGPG::AuthGPG()
                     return;
             }
 
-            /* setup the protocol */
-            if (GPG_ERR_NO_ERROR != gpgme_set_protocol(CTX, GPGME_PROTOCOL_OpenPGP))
-            {
-                    std::cerr << "Error creating Setting Protocol" << std::endl;
-                    return;
-            }
-
             gpgme_set_passphrase_cb(CTX, pgp_pwd_callback, (void *) NULL);
-
-            gpgmeInit = true;
         }
+}
 
-        storeAllKeys_locked();
-        #ifdef GPG_DEBUG
-        printAllKeys_locked();
-        #endif
-        //updateTrustAllKeys_locked();
+/* Initialize */
+bool AuthGPG::InitAuth ()
+{
+    std::string HomeDir;
+
+#ifdef WINDOWS_SYS
+    if (RsInit::isPortable ()) {
+        // set home dir of gpg to configdir\gnupg
+        HomeDir = RsInit::RsConfigDirectory() + RsInit::dirSeperator() + "gnupg";
+
+        if (!RsDirUtil::checkCreateDirectory(HomeDir)) {
+            std::cerr << "Error creating gnupg directory" << std::endl;
+            return false;
+        }
+    }
+#endif
+
+    /* setup protocol and homedir */
+    if (GPG_ERR_NO_ERROR != gpgme_ctx_set_engine_info(CTX, GPGME_PROTOCOL_OpenPGP, NULL, HomeDir.empty () ? NULL : HomeDir.c_str ()))
+    {
+        std::cerr << "Error creating Setting Protocol" << std::endl;
+        return false;
+    }
+
+    gpgmeInit = true;
+
+    storeAllKeys_locked();
+    #ifdef GPG_DEBUG
+    printAllKeys_locked();
+    #endif
+    //updateTrustAllKeys_locked();
+
+    return true;
 }
 
 /* This function is called when retroshare is first started

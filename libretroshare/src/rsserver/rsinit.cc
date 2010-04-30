@@ -70,6 +70,9 @@ class RsInitConfig
                 /* Directories (SetupBaseDir) */
                 static std::string basedir;
                 static std::string homePath;
+#ifdef WINDOWS_SYS
+                static bool portable;
+#endif
 
 		static std::list<accountId> accountIds;
 		static std::string preferedId;
@@ -148,6 +151,9 @@ char RsInitConfig::dirSeperator;
 /* Directories */
 std::string RsInitConfig::basedir;
 std::string RsInitConfig::homePath;
+#ifdef WINDOWS_SYS
+bool RsInitConfig::portable = false;
+#endif
 
 /* Listening Port */
 bool RsInitConfig::forceExtPort;
@@ -202,10 +208,16 @@ void RsInit::InitRsConfig()
 	RsInitConfig::debugLevel	= PQL_WARNING;
 	RsInitConfig::udpListenerOnly = false;
 
-	RsInitConfig::/* setup the homePath (default save location) */
-
+	/* setup the homePath (default save location) */
 	RsInitConfig::homePath = getHomePath();
 
+#ifdef WINDOWS_SYS
+	// test for portable version
+	if (GetFileAttributes ("gpg.exe") != -1 && GetFileAttributes ("gpgme-w32spawn.exe") != -1) {
+		// use portable version
+		RsInitConfig::portable = true;
+	}
+#endif
 
 	/* Setup the Debugging */
 	// setup debugging for desired zones.
@@ -482,6 +494,10 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored)
 	// first check config directories, and set bootstrap values.
 	setupBaseDir();
 	get_configinit(RsInitConfig::basedir, RsInitConfig::preferedId);
+
+        /* Initialize AuthGPG */
+        AuthGPG::getAuthGPG()->InitAuth();
+
 	//std::list<accountId> ids;
 	std::list<accountId>::iterator it;
 	getAvailableAccounts(RsInitConfig::accountIds);
@@ -629,35 +645,40 @@ void RsInit::setupBaseDir()
 		RsInitConfig::basedir = h;
 		RsInitConfig::basedir += "/.retroshare";
 #else
-		char *h = getenv("APPDATA");
-		std::cerr << "retroShare::basedir() -> $APPDATA = ";
-		std::cerr << h << std::endl;
-		char *h2 = getenv("HOMEDRIVE");
-		std::cerr << "retroShare::basedir() -> $HOMEDRIVE = ";
-		std::cerr << h2 << std::endl;
-		char *h3 = getenv("HOMEPATH");
-		std::cerr << "retroShare::basedir() -> $HOMEPATH = ";
-		std::cerr << h3 << std::endl;
-		if (h == NULL)
-		{
-			// generating default
-			std::cerr << "load_check_basedir() getEnv Error --Win95/98?";
-		  	std::cerr << std::endl;
+		if (RsInitConfig::portable) {
+			// use directory "Data" in portable version
+			RsInitConfig::basedir = "Data";
+		} else {
+			char *h = getenv("APPDATA");
+			std::cerr << "retroShare::basedir() -> $APPDATA = ";
+			std::cerr << h << std::endl;
+			char *h2 = getenv("HOMEDRIVE");
+			std::cerr << "retroShare::basedir() -> $HOMEDRIVE = ";
+			std::cerr << h2 << std::endl;
+			char *h3 = getenv("HOMEPATH");
+			std::cerr << "retroShare::basedir() -> $HOMEPATH = ";
+			std::cerr << h3 << std::endl;
+			if (h == NULL)
+			{
+				// generating default
+				std::cerr << "load_check_basedir() getEnv Error --Win95/98?";
+				std::cerr << std::endl;
 
-			RsInitConfig::basedir="C:\\Retro";
+				RsInitConfig::basedir="C:\\Retro";
 
-		}
-		else
-		{
-			RsInitConfig::basedir = h;
-		}
+			}
+			else
+			{
+				RsInitConfig::basedir = h;
+			}
 
-		if (!RsDirUtil::checkCreateDirectory(RsInitConfig::basedir))
-		{
-			std::cerr << "Cannot Create BaseConfig Dir" << std::endl;
-			exit(1);
+			if (!RsDirUtil::checkCreateDirectory(RsInitConfig::basedir))
+			{
+				std::cerr << "Cannot Create BaseConfig Dir" << std::endl;
+				exit(1);
+			}
+			RsInitConfig::basedir += "\\RetroShare";
 		}
-		RsInitConfig::basedir += "\\RetroShare";
 #endif
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 	}
@@ -1755,6 +1776,16 @@ bool  RsInit::RsClearAutoLogin()
 
 
 
+
+char RsInit::dirSeperator()
+{
+	return RsInitConfig::dirSeperator;
+}
+
+bool RsInit::isPortable()
+{
+	return RsInitConfig::portable;
+}
 
 std::string RsInit::RsConfigDirectory()
 {

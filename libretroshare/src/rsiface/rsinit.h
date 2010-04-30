@@ -43,6 +43,8 @@ class RsInit
 		/* PreLogin */
 		static void	InitRsConfig() ;
 		static int 	InitRetroShare(int argc, char **argv);
+		static char dirSeperator();
+		static bool isPortable();
 
 
 		/* Account Details (Combined GPG+SSL Setup) */

@@ -145,6 +145,9 @@ class AuthGPG : public p3Config
  ****/
   bool    active(); 
 
+  /* Initialize */
+  bool    InitAuth ();
+
         /* Init by generating new Own PGP Cert, or selecting existing PGP Cert */
   int     GPGInit(std::string ownId);
   bool    CloseAuth();
