@@ -51,13 +51,8 @@ private slots:
   void checkUpdate();
 
   void changedForum( QTreeWidgetItem *curr, QTreeWidgetItem *prev );
-  void changedThread( QTreeWidgetItem *curr, QTreeWidgetItem *prev );
-  void changedThread2();
+  void changedThread();
 
-  void changeBox( int newrow );
-  void updateMessages ( QTreeWidgetItem * item, int column );
-
-  void newmessage();
 
   void replytomessage();
   //void print();
@@ -76,18 +71,31 @@ private slots:
   void unsubscribeToForum();
 
   void showForumDetails();
-  
+
+  void previousMessage ();
+  void nextMessage ();
+
 private:
 
   void forumSubscribe(bool subscribe);
   bool getCurrentMsg(std::string &cid, std::string &mid);
+  void FillForums(QTreeWidgetItem *Forum, QList<QTreeWidgetItem *> &ChildList);
+  void FillThreads(QList<QTreeWidgetItem *> &ThreadList);
+  void FillChildren(QTreeWidgetItem *Parent, QTreeWidgetItem *NewParent);
+
+  QTreeWidgetItem *YourForums;
+  QTreeWidgetItem *SubscribedForums;
+  QTreeWidgetItem *PopularForums;
+  QTreeWidgetItem *OtherForums;
 
   std::string mCurrForumId;
   std::string mCurrThreadId;
   std::string mCurrPostId;
   
-  QFont mForumNameFont;
-  QFont itemFont;
+  QFont m_ForumNameFont;
+  QFont m_ItemFont;
+  int m_LastViewType;
+  std::string m_LastForumID;
   
   QHash<QString, QString> smileys;
   

@@ -59,7 +59,8 @@ CreateForumMsg::CreateForumMsg(std::string fId, std::string pId)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
-  
+  setAttribute(Qt::WA_DeleteOnClose, true);
+
   RshareSettings config;
   config.loadWidgetInformation(this);
   

@@ -960,7 +960,10 @@ background: white;}</string>
            </widget>
           </item>
           <item row="0" column="3">
-           <widget class="QPushButton" name="pushButton_2">
+           <widget class="QPushButton" name="previousButton">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -989,7 +992,10 @@ background: white;}</string>
            </widget>
           </item>
           <item row="0" column="4">
-           <widget class="QPushButton" name="pushButton">
+           <widget class="QPushButton" name="nextButton">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
