@@ -552,7 +552,9 @@ void p3disc::recvPeerDetails(RsDiscReply *item)
                     //their info is fresher than ours (there is a 10000 seconds margin), update ours
                     mConnMgr->setLocalAddress(pitem->pid, pitem->currentlocaladdr);
                     mConnMgr->setExtAddress(pitem->pid, pitem->currentremoteaddr);
-                    mConnMgr->setDynDNS(pitem->pid, pitem->dyndns);
+                    if (pitem->dyndns != "") {
+                        mConnMgr->setDynDNS(pitem->pid, pitem->dyndns);
+                    }
                     mConnMgr->setNetworkMode(pitem->pid, pitem->netMode);
                     if (item->PeerId() == pitem->pid) {
                         mConnMgr->setVisState(pitem->pid, pitem->visState); //update vistate only if it's from the peer itself
