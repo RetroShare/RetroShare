@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>569</width>
-    <height>493</height>
+    <height>603</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -689,7 +689,11 @@ border: 1px solid #CCCCCC;}</string>
             </widget>
            </item>
            <item row="2" column="1">
-            <widget class="QLineEdit" name="name_input"/>
+            <widget class="QLineEdit" name="name_input">
+             <property name="toolTip">
+              <string>Enter here your nickname</string>
+             </property>
+            </widget>
            </item>
            <item row="3" column="0">
             <widget class="QLabel" name="email_label">
@@ -699,7 +703,13 @@ border: 1px solid #CCCCCC;}</string>
             </widget>
            </item>
            <item row="3" column="1">
-            <widget class="QLineEdit" name="email_input"/>
+            <widget class="QLineEdit" name="email_input">
+             <property name="toolTip">
+              <string>Be careful: this email will be visible to your friends and friends 
+of your friends. This information is required by GPG, but to stay 
+anonymous, you can use a fake email.</string>
+             </property>
+            </widget>
            </item>
            <item row="4" column="0">
             <widget class="QLabel" name="password_label">
@@ -710,6 +720,9 @@ border: 1px solid #CCCCCC;}</string>
            </item>
            <item row="4" column="1">
             <widget class="QLineEdit" name="password_input">
+             <property name="toolTip">
+              <string>Put a strong password here. This password protects your GPG key.</string>
+             </property>
              <property name="inputMask">
               <string/>
              </property>

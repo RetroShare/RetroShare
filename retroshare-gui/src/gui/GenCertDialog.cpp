@@ -24,6 +24,7 @@
 #include "GenCertDialog.h"
 #include "InfoDialog.h"
 #include "gui/settings/rsharesettings.h"
+#include <QAbstractEventDispatcher>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QMovie>
@@ -177,7 +178,7 @@ void GenCertDialog::genPerson()
             }
             //generate a new gpg key
             std::string err_string;
-            ui.no_gpg_key_label->setText(tr("Generating new GPG key, please be patient. Fill in your GPG password when asked."));
+            ui.no_gpg_key_label->setText(tr("Generating new GPG key, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. \n\nFill in your GPG password when asked, to sign your new key."));
             ui.no_gpg_key_label->show();
 //            QMovie *movie = new QMovie(":/images/loader/progress.gif");
 //            ui.progress_label->setMovie(movie);
@@ -197,12 +198,19 @@ void GenCertDialog::genPerson()
             ui.infopushButton->hide();
             ui.genButton->hide();
             ui.label_location2->hide();
-            QMessageBox::StandardButton info = QMessageBox::information( NULL,
-                            "Generating GPG key",
-                            "This process can take some time, please be patient after pressing the OK button",
-                              QMessageBox::Ok);
+//            QMessageBox::StandardButton info = QMessageBox::information( NULL,
+//                            "Generating GPG key",
+//                            "This process can take some time (approximately one minute), please be patient after pressing the OK button",
+//                              QMessageBox::Ok);
             //info->
+				setCursor(Qt::WaitCursor) ;
+
+				QCoreApplication::processEvents();
+				while(QAbstractEventDispatcher::instance()->processEvents(QEventLoop::AllEvents)) ; 
+
             RsInit::GeneratePGPCertificate(ui.name_input->text().toStdString(), ui.email_input->text().toStdString(), ui.password_input->text().toStdString(), PGPId, err_string);
+
+				setCursor(Qt::ArrowCursor) ;
         }
 
 
