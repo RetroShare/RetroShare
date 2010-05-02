@@ -32,7 +32,7 @@ class CreateForum : public QDialog
   Q_OBJECT
 
 public:
-  CreateForum(QWidget *parent = 0, bool isForum = true);
+  CreateForum(QWidget *parent = 0);
 
 void  newForum(); /* cleanup */
 
@@ -51,13 +51,6 @@ private slots:
 void  createForum();
 void  cancelForum();
 
-void addChannelLogo();
-
-
-private:
-
-
-  bool mIsForum;
 };
 
 #endif
