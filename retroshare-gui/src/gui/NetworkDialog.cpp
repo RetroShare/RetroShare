@@ -75,8 +75,7 @@ RsCertId getNeighRsCertId(QTreeWidgetItem *i);
 
 /** Constructor */
 NetworkDialog::NetworkDialog(QWidget *parent)
-: RsAutoUpdatePage(10000,parent), 	// updates every 10 sec.
-	connectdialog(NULL)
+: RsAutoUpdatePage(10000,parent) 	// updates every 10 sec.
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
@@ -89,9 +88,6 @@ NetworkDialog::NetworkDialog(QWidget *parent)
   connect( ui.unvalidGPGkeyWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( connecttreeWidgetCostumPopupMenu( QPoint ) ) );
   connect( ui.unvalidGPGkeyWidget, SIGNAL( itemSelectionChanged()), ui.connecttreeWidget, SLOT( clearSelection() ) );
 
-  /* create a single connect dialog */
-  connectdialog = new ConnectDialog();
-  
   connect(ui.infoLog, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(displayInfoLogMenu(const QPoint&)));
 
   connect(ui.showUnvalidKeys, SIGNAL(clicked()), this, SLOT(insertConnect()));
@@ -210,8 +206,6 @@ void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point )
     if (!wi)
     	return;
 
-//		 return ;
-
       QMenu contextMnu( this );
       QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
       contextMnu.clear();
@@ -298,34 +292,21 @@ void NetworkDialog::peerdetails()
          ConfCertDialog::show(getCurrentNeighbour()->text(4).toStdString());
 }
 
-/** Shows Peer Information/Auth Dialog */
-void NetworkDialog::showpeerdetails(std::string id)
-{
-#ifdef NET_DEBUG 
-    std::cerr << "NetworkDialog::showpeerdetails()" << std::endl;
-#endif
-    if ((connectdialog) && (connectdialog -> loadPeer(id)))
-    {
-    	connectdialog->show();
-    }
-}
-
-
 /** Open a QFileDialog to browse for a pem/pqi file. */
 void NetworkDialog::loadcert()
 {
   /* Create a new input dialog, which allows users to create files, too */
-  QFileDialog *dialog = new QFileDialog(this, tr("Select a pem/pqi File"));
-  //dialog->setDirectory(QFileInfo(ui.lineTorConfig->text()).absoluteDir());
-  //dialog->selectFile(QFileInfo(ui.lineTorConfig->text()).fileName());
-  dialog->setFileMode(QFileDialog::AnyFile);
-  dialog->setReadOnly(false);
+  QFileDialog dialog (this, tr("Select a pem/pqi File"));
+  //dialog.setDirectory(QFileInfo(ui.lineTorConfig->text()).absoluteDir());
+  //dialog.selectFile(QFileInfo(ui.lineTorConfig->text()).fileName());
+  dialog.setFileMode(QFileDialog::AnyFile);
+  dialog.setReadOnly(false);
 
   /* Prompt the user to select a file or create a new one */
-  if (!dialog->exec() || dialog->selectedFiles().isEmpty()) {
+  if (!dialog.exec() || dialog.selectedFiles().isEmpty()) {
     return;
   }
-  QString filename = QDir::convertSeparators(dialog->selectedFiles().at(0));
+  QString filename = QDir::convertSeparators(dialog.selectedFiles().at(0));
  
   /* Check if the file exists */
   QFile torrcFile(filename);
@@ -383,8 +364,8 @@ void NetworkDialog::insertConnect()
         while (index < connectWidget->topLevelItemCount()) {
             std::string gpg_widget_id = (connectWidget->topLevelItem(index))->text(4).toStdString();
             RsPeerDetails detail;
-            if (!rsPeers->getGPGDetails(gpg_widget_id, detail) || detail.validLvl < 3) {
-                connectWidget->takeTopLevelItem(index);
+            if (!rsPeers->getGPGDetails(gpg_widget_id, detail) || (detail.validLvl < 3 && !detail.accept_connection)) {
+                delete connectWidget->takeTopLevelItem(index);
             } else {
                 index++;
             }
@@ -393,8 +374,8 @@ void NetworkDialog::insertConnect()
         while (index < ui.unvalidGPGkeyWidget->topLevelItemCount()) {
             std::string gpg_widget_id = (ui.unvalidGPGkeyWidget->topLevelItem(index))->text(4).toStdString();
             RsPeerDetails detail;
-            if (!rsPeers->getGPGDetails(gpg_widget_id, detail) || detail.validLvl >= 3) {
-                ui.unvalidGPGkeyWidget->takeTopLevelItem(index);
+            if (!rsPeers->getGPGDetails(gpg_widget_id, detail) || detail.validLvl >= 3 || detail.accept_connection) {
+                delete ui.unvalidGPGkeyWidget->takeTopLevelItem(index);
             } else {
                 index++;
             }
@@ -586,7 +567,7 @@ std::string NetworkDialog::loadneighbour()
 
 void NetworkDialog::addneighbour()
 {
-        QTreeWidgetItem *c = getCurrentNeighbour();
+//        QTreeWidgetItem *c = getCurrentNeighbour();
 #ifdef NET_DEBUG 
         std::cerr << "NetworkDialog::addneighbour()" << std::endl;
 #endif
@@ -597,7 +578,7 @@ void NetworkDialog::addneighbour()
 
 void NetworkDialog::authneighbour()
 {
-        QTreeWidgetItem *c = getCurrentNeighbour();
+//        QTreeWidgetItem *c = getCurrentNeighbour();
 #ifdef NET_DEBUG 
         std::cerr << "NetworkDialog::authneighbour()" << std::endl;
 #endif
@@ -611,17 +592,17 @@ void NetworkDialog::authneighbour()
 void NetworkDialog::on_actionAddFriend_activated()
 {
   /* Create a new input dialog, which allows users to create files, too */
-  QFileDialog *dialog = new QFileDialog(this, tr("Select a pem/pqi File"));
-  //dialog->setDirectory(QFileInfo(ui.lineTorConfig->text()).absoluteDir());
-  //dialog->selectFile(QFileInfo(ui.lineTorConfig->text()).fileName());
-  dialog->setFileMode(QFileDialog::AnyFile);
-  dialog->setReadOnly(false);
+  QFileDialog dialog (this, tr("Select a pem/pqi File"));
+  //dialog.setDirectory(QFileInfo(ui.lineTorConfig->text()).absoluteDir());
+  //dialog.selectFile(QFileInfo(ui.lineTorConfig->text()).fileName());
+  dialog.setFileMode(QFileDialog::AnyFile);
+  dialog.setReadOnly(false);
 
   /* Prompt the user to select a file or create a new one */
-  if (!dialog->exec() || dialog->selectedFiles().isEmpty()) {
+  if (!dialog.exec() || dialog.selectedFiles().isEmpty()) {
     return;
   }
-  QString filename = QDir::convertSeparators(dialog->selectedFiles().at(0));
+  QString filename = QDir::convertSeparators(dialog.selectedFiles().at(0));
  
   /* Check if the file exists */
   QFile torrcFile(filename);
@@ -692,10 +673,8 @@ void NetworkDialog::on_actionClearLog_triggered() {
 
 void NetworkDialog::on_actionCreate_New_Profile_activated()
 {
-    static GenCertDialog *gencertdialog = new GenCertDialog();
-    gencertdialog->show();
-    
-
+//    GenCertDialog gencertdialog (this);
+//    gencertdialog.exec ();
 }
 
 void NetworkDialog::displayInfoLogMenu(const QPoint& pos) {

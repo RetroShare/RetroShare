@@ -148,7 +148,7 @@ void GenCertDialog::genPerson()
         if (!genNewGPGKey) {
             if (ui.location_input->text().length() < 3) {
                     /* Message Dialog */
-                    QMessageBox::StandardButton sb = QMessageBox::warning ( NULL,
+                    QMessageBox::warning ( NULL,
                                     tr("Generate GPG key Failure"),
                                     tr("Location field is required with a minimum of 3 characters"),
                                       QMessageBox::Ok);
@@ -158,7 +158,7 @@ void GenCertDialog::genPerson()
             if (pgpidx < 0)
             {
                     /* Message Dialog */
-                    QMessageBox::StandardButton sb = QMessageBox::warning ( NULL,
+                    QMessageBox::warning ( NULL,
                                     "Generate ID Failure",
                                     "Missing PGP Certificate",
                                       QMessageBox::Ok);
@@ -170,7 +170,7 @@ void GenCertDialog::genPerson()
             if (ui.password_input->text().length() < 3 || ui.name_input->text().length() < 3
                 || ui.email_input->text().length() < 3 || ui.location_label->text().length() < 3) {
                     /* Message Dialog */
-                    QMessageBox::StandardButton sb = QMessageBox::warning ( NULL,
+                    QMessageBox::warning ( NULL,
                                     tr("Generate GPG key Failure"),
                                     tr("All fields are required with a minimum of 3 characters"),
                                       QMessageBox::Ok);
@@ -245,7 +245,7 @@ void GenCertDialog::genPerson()
 	else
 	{
 		/* Message Dialog */
-		QMessageBox::StandardButton sb = QMessageBox::warning ( NULL,
+                QMessageBox::warning ( NULL,
 	                        "Generate ID Failure",
 				"Failed to Generate your new Certificate, maybe PGP password is wrong !",
 			          QMessageBox::Ok);
@@ -312,7 +312,7 @@ void GenCertDialog::loadCertificates()
 	else
 	{
 		/* some error msg */
-		QMessageBox::StandardButton sb = QMessageBox::warning ( NULL,
+                QMessageBox::warning ( NULL,
 	                        "Generate ID Failure",
 			        "Failed to Load your new Certificate!",
 			          QMessageBox::Ok);
@@ -321,6 +321,6 @@ void GenCertDialog::loadCertificates()
 
 void GenCertDialog::infodlg()
 {
-    static InfoDialog *infodialog = new InfoDialog();
-    infodialog->show();
+    InfoDialog infodialog (this);
+    infodialog.exec ();
 }

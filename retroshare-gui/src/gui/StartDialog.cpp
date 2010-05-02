@@ -22,7 +22,6 @@
 #include <rshare.h>
 #include <rsiface/rsinit.h>
 #include "StartDialog.h"
-#include "GenCertDialog.h"
 #include "InfoDialog.h"
 #include "LogoBar.h"
 #include <QFileDialog>
@@ -132,7 +131,7 @@ void StartDialog::loadPerson()
         if (pgpidx < 0)
         {
                 /* Message Dialog */
-                QMessageBox::StandardButton sb = QMessageBox::warning ( NULL,
+                QMessageBox::warning ( NULL,
                                 "Load Person Failure",
                                 "Missing PGP Certificate",
                                   QMessageBox::Ok);
@@ -164,7 +163,7 @@ void StartDialog::loadCertificates()
 	else
 	{
 		/* some error msg */
-                QMessageBox::StandardButton sb = QMessageBox::warning ( NULL,
+                QMessageBox::warning ( NULL,
                                 tr("Login Failure"),
                                 tr("Maybe password is wrong"),
 				QMessageBox::Ok);
@@ -175,15 +174,12 @@ void StartDialog::loadCertificates()
 
 void StartDialog::on_labelProfile_linkActivated(QString link)
 {
-    //static GenCertDialog *gencertdialog = new GenCertDialog();
-    //gencertdialog->show();
-    
     QMessageBox::StandardButton sb = QMessageBox::question ( NULL,
                         tr("Create a New Profile"),
                         tr("This will generate a new Profile\n Are you sure you want to continue"),
-			(QMessageBox::Ok | QMessageBox::No));
+                        (QMessageBox::Yes | QMessageBox::No));
 
-    if (sb == QMessageBox::Ok)
+    if (sb == QMessageBox::Yes)
     {
     	reqNewCert = true;
     	close();
@@ -192,8 +188,8 @@ void StartDialog::on_labelProfile_linkActivated(QString link)
 
 void StartDialog::on_labelInfo_linkActivated(QString link)
 {
-    static InfoDialog *infodialog = new InfoDialog();
-    infodialog->show();
+    InfoDialog infodialog (this);
+    infodialog.exec ();
 }
 
 bool StartDialog::requestedNewCert()
@@ -209,7 +205,7 @@ void StartDialog::notSecureWarning() {
 
 	/* some error msg */
 		if(ui.autologin_checkbox->isChecked()){
-            QMessageBox::StandardButton sb = QMessageBox::warning ( NULL,
+            QMessageBox::warning ( NULL,
                             tr("Insecure"),
                             tr("Auto Login is not so much secure:\n    - Your SSL certificate will be stored unprotected. \n    - Your PGP key will however not be stored.\nThis choice be reverted in settings."),
 			QMessageBox::Ok);

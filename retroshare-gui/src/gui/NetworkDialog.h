@@ -44,8 +44,6 @@ public:
   NetworkDialog(QWidget *parent = 0);
   /** Default Destructor */
 
-  void  showpeerdetails(std::string id);
-
   //void load();
   virtual void updateDisplay() ; // overloaded from RsAutoUpdatePage
   
@@ -112,9 +110,6 @@ private:
   QAction* authAct;
   QAction* loadcertAct;
   QAction* exportcertAct;
-
-  /* connection dialog */
-  ConnectDialog *connectdialog;
 
   QTreeWidget *connecttreeWidget;
   

@@ -91,6 +91,7 @@ int main(int argc, char *argv[])
 
 			/* if we're logged in */
 			genCert = sd->requestedNewCert();
+			delete (sd);
 		}
 		else
 		{
@@ -99,19 +100,8 @@ int main(int argc, char *argv[])
 
 		if (genCert)
 		{
-			GenCertDialog *gd = new GenCertDialog();
-
-			gd->show();
-
-			while(gd -> isVisible())
-			{
-				rshare.processEvents();
-#ifdef WIN32
-				Sleep(10);
-#else // __LINUX__
-				usleep(10000);
-#endif
-			}
+			GenCertDialog gd;
+			gd.exec ();
 		}
 	}
 	else

@@ -40,7 +40,6 @@
 #include "profile/ProfileWidget.h"
 #include "profile/StatusMessage.h"
 
-#include "GenCertDialog.h"
 #include "gui/connect/ConnectFriendWizard.h"
 #include "gui/forums/CreateForum.h"
 #include "gui/channels/CreateChannel.h"
