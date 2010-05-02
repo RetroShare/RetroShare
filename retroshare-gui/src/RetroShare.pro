@@ -1,4 +1,4 @@
-CONFIG += qt gui uic qrc resources uitools newsettings idle 
+CONFIG += qt gui uic qrc resources uitools idle
 QT     += network xml script opengl
 
 TEMPLATE = app
@@ -207,7 +207,7 @@ HEADERS +=  rshare.h \
             gui/profile/ProfileWidget.h \
             gui/profile/StatusMessage.h \
             gui/chat/PopupChatDialog.h \
-	    	gui/channels/CreateChannel.h \
+            gui/channels/CreateChannel.h \
             gui/channels/ChannelDetails.h \
             gui/channels/CreateChannelMsg.h \
             gui/connect/ConnectDialog.h \
@@ -216,7 +216,19 @@ HEADERS +=  rshare.h \
             gui/msgs/textformat.h \
             gui/images/retroshare_win.rc.h \
             gui/settings/rsharesettings.h \
-            gui/settings/rsettings.h \        
+            gui/settings/rsettings.h \
+            gui/settings/rsettingswin.h \
+            gui/settings/GeneralPage.h \
+            gui/settings/DirectoriesPage.h \
+            gui/settings/ServerPage.h \
+            gui/settings/NetworkPage.h \
+            gui/settings/NotifyPage.h \
+            gui/settings/CryptoPage.h \
+            gui/settings/AppearancePage.h \
+            gui/settings/FileAssociationsPage.h \
+            gui/settings/SoundPage.h \
+            gui/settings/TransferPage.h \
+            gui/settings/AddFileAssociationDialog.h \
             gui/toaster/MessageToaster.h \
             gui/toaster/OnlineToaster.h \
             gui/toaster/ChatToaster.h \
@@ -293,13 +305,23 @@ FORMS +=    gui/StartDialog.ui \
             gui/profile/ProfileEdit.ui \
             gui/profile/ProfileWidget.ui \
             gui/profile/StatusMessage.ui \
-	    	gui/channels/CreateChannel.ui \
+            gui/channels/CreateChannel.ui \
             gui/channels/CreateChannelMsg.ui \
             gui/channels/ChannelDetails.ui \
             gui/chat/PopupChatDialog.ui \
             gui/connect/ConnectDialog.ui \
             gui/connect/ConfCertDialog.ui \
             gui/msgs/ChanMsgDialog.ui \
+            gui/settings/settings.ui \
+            gui/settings/GeneralPage.ui \
+            gui/settings/DirectoriesPage.ui \
+            gui/settings/ServerPage.ui \
+            gui/settings/NetworkPage.ui \
+            gui/settings/NotifyPage.ui \
+            gui/settings/CryptoPage.ui \
+            gui/settings/AppearancePage.ui \
+            gui/settings/TransferPage.ui \
+            gui/settings/SoundPage.ui \
             gui/toaster/CallToaster.ui \
             gui/toaster/ChatToaster.ui \
             gui/toaster/MessageToaster.ui \
@@ -389,7 +411,7 @@ SOURCES +=  main.cpp \
             gui/profile/ProfileEdit.cpp \
             gui/profile/ProfileWidget.cpp \
             gui/profile/StatusMessage.cpp \      
-	    	gui/channels/CreateChannel.cpp \
+            gui/channels/CreateChannel.cpp \
             gui/channels/CreateChannelMsg.cpp \
             gui/channels/ChannelDetails.cpp \
             gui/chat/PopupChatDialog.cpp \
@@ -400,7 +422,19 @@ SOURCES +=  main.cpp \
             gui/common/rwindow.cpp \ 
             gui/common/html.cpp \
             gui/settings/rsharesettings.cpp \
-            gui/settings/rsettings.cpp \ 
+            gui/settings/rsettings.cpp \
+            gui/settings/rsettingswin.cpp \
+            gui/settings/GeneralPage.cpp \
+            gui/settings/DirectoriesPage.cpp \
+            gui/settings/ServerPage.cpp \
+            gui/settings/NetworkPage.cpp \ 
+            gui/settings/NotifyPage.cpp \
+            gui/settings/CryptoPage.cpp \
+            gui/settings/AppearancePage.cpp \
+            gui/settings/FileAssociationsPage.cpp \
+            gui/settings/SoundPage.cpp \
+            gui/settings/TransferPage.cpp \
+            gui/settings/AddFileAssociationDialog.cpp \
             gui/statusbar/peerstatus.cpp \  
             gui/statusbar/natstatus.cpp \
             gui/statusbar/ratesstatus.cpp \  
@@ -478,48 +512,6 @@ pluginmgr {
             	gui/PluginManager.h      
 
         DEFINES *= PLUGINMGR
-
-}
-
-newsettings {
-	    SOURCES += 	gui/settings/rsettingswin.cpp \
-			gui/settings/GeneralPage.cpp \
-			gui/settings/DirectoriesPage.cpp \
-			gui/settings/ServerPage.cpp \
-			gui/settings/NetworkPage.cpp \ 
-			gui/settings/NotifyPage.cpp \
-			gui/settings/CryptoPage.cpp \
-			gui/settings/AppearancePage.cpp \
-			gui/settings/FileAssociationsPage.cpp \
-			gui/settings/SoundPage.cpp \
-			gui/settings/TransferPage.cpp \
-			gui/settings/AddFileAssociationDialog.cpp
-	    
-	    HEADERS +=  gui/settings/rsettingswin.h \
-			gui/settings/GeneralPage.h \
-			gui/settings/DirectoriesPage.h \
-			gui/settings/ServerPage.h \
-			gui/settings/NetworkPage.h \
-			gui/settings/NotifyPage.h \
-			gui/settings/CryptoPage.h \
-			gui/settings/AppearancePage.h \
-			gui/settings/FileAssociationsPage.h \
-			gui/settings/SoundPage.h \
-			gui/settings/TransferPage.h \
-			gui/settings/AddFileAssociationDialog.h
-
-	    FORMS +=    gui/settings/settings.ui \
-			gui/settings/GeneralPage.ui \
-			gui/settings/DirectoriesPage.ui \
-			gui/settings/ServerPage.ui \
-			gui/settings/NetworkPage.ui \
-			gui/settings/NotifyPage.ui \
-			gui/settings/CryptoPage.ui \
-			gui/settings/AppearancePage.ui \
-			gui/settings/TransferPage.ui \
-			gui/settings/SoundPage.ui
-
-	   DEFINES *= NEWSETTINGS
 
 }
 
