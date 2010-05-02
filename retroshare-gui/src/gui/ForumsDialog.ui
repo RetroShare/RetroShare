@@ -982,6 +982,9 @@ background: white;}</string>
               <height>24</height>
              </size>
             </property>
+            <property name="toolTip">
+             <string>Previous</string>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -1013,6 +1016,9 @@ background: white;}</string>
               <width>24</width>
               <height>24</height>
              </size>
+            </property>
+            <property name="toolTip">
+             <string>Next</string>
             </property>
             <property name="text">
              <string/>
