@@ -300,34 +300,32 @@ class misc : public QObject{
 
     // Take a number of seconds and return an user-friendly
     // time duration like "1d 2h 10m".
-    static QString userFriendlyDuration(qlonglong seconds) {
-      if(seconds < 0) {
-        return tr("Unknown");
-      }
-      if(seconds < 60) {
-        return tr("< 1m", "< 1 minute");
-      }
-      int minutes = seconds / 60;
-      if(minutes < 60) {
-        return tr("%1 minutes","e.g: 10minutes").arg(QString::QString::fromUtf8(misc::toString(minutes).c_str()));
-      }
-      int hours = minutes / 60;
-      minutes = minutes - hours*60;
-       if(hours < 24) {
-        return tr("%1h %2m", "e.g: 3hours 5minutes").arg(QString::fromUtf8(misc::toString(hours).c_str())).arg(QString::fromUtf8(misc::toString(minutes).c_str()));
-      }
-      int days = hours / 24;
-      hours = hours - days * 24;
-      if(days < 365) {
-        return tr("%1d %2h %3m", "e.g: 2days 10hours 2minutes").arg(QString::fromUtf8(misc::toString(days).c_str())).arg(QString::fromUtf8(misc::toString(hours).c_str())).arg(QString::fromUtf8(misc::toString(minutes).c_str()));
-      }
-      int years = days / 365;
-      days = days - years * 365;
-      if(years > 1) {
-        return tr("%1y %2d %3h %4m", "e.g: 2 years 2days 10hours 2minutes").arg(QString::fromUtf8(misc::toString(years).c_str())).arg(QString::fromUtf8(misc::toString(days).c_str())).arg(QString::fromUtf8(misc::toString(hours).c_str())).arg(QString::fromUtf8(misc::toString(minutes).c_str()));
-      }
-      return tr("Unknown");
-    }
+	 static QString userFriendlyDuration(qlonglong seconds) 
+	 {
+		 if(seconds < 0) {
+			 return tr("Unknown");
+		 }
+		 if(seconds < 60) {
+			 return tr("< 1m", "< 1 minute");
+		 }
+		 int minutes = seconds / 60;
+		 if(minutes < 60) {
+			 return tr("%1 minutes","e.g: 10minutes").arg(QString::QString::fromUtf8(misc::toString(minutes).c_str()));
+		 }
+		 int hours = minutes / 60;
+		 minutes = minutes - hours*60;
+		 if(hours < 24) {
+			 return tr("%1h %2m", "e.g: 3hours 5minutes").arg(QString::fromUtf8(misc::toString(hours).c_str())).arg(QString::fromUtf8(misc::toString(minutes).c_str()));
+		 }
+		 int days = hours / 24;
+		 hours = hours - days * 24;
+		 if(days < 365) {
+			 return tr("%1d %2h", "e.g: 2days 10hours").arg(QString::fromUtf8(misc::toString(days).c_str())).arg(QString::fromUtf8(misc::toString(hours).c_str()));
+		 }
+		 int years = days / 365;
+		 days = days - years * 365;
+		 return tr("%1y %2d", "e.g: 2 years 2days ").arg(QString::fromUtf8(misc::toString(years).c_str())).arg(QString::fromUtf8(misc::toString(days).c_str()));
+	 }
 };
 
 //  Trick to get a portable sleep() function

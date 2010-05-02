@@ -148,6 +148,7 @@ HEADERS +=  rshare.h \
             gui/mainpage.h \
             gui/mainpagestack.h \
             gui/MainWindow.h \
+            gui/RSHumanReadableDelegate.h \
             gui/TurtleRouterDialog.h \
             gui/AboutDialog.h \
             gui/AddLinksDialog.h \
