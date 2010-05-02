@@ -1784,7 +1784,11 @@ char RsInit::dirSeperator()
 
 bool RsInit::isPortable()
 {
-	return RsInitConfig::portable;
+#ifdef WINDOWS_SYS
+    return RsInitConfig::portable;
+#else
+    return false;
+#endif
 }
 
 std::string RsInit::RsConfigDirectory()
