@@ -43,6 +43,7 @@
 #include "GenCertDialog.h"
 #include "gui/connect/ConnectFriendWizard.h"
 #include "gui/forums/CreateForum.h"
+#include "gui/channels/CreateChannel.h"
 
 #include <sstream>
 #include <time.h>
@@ -1550,7 +1551,8 @@ void PeersDialog::on_actionCreate_New_Forum_activated()
 
 void PeersDialog::on_actionCreate_New_Channel_activated()
 {
-    CreateForum *cf = new CreateForum(NULL, false);
+
+    CreateChannel *cf = new CreateChannel(NULL);
     ((MainPageStack*)this->parent())->setCurrentIndex(6); // swtich to forum view
 
     cf->setWindowTitle(tr("Create a new Channel"));
@@ -1559,7 +1561,7 @@ void PeersDialog::on_actionCreate_New_Channel_activated()
                                "color:#32CD32;\">%1</span>");
     cf->ui.textlabelcreatforums->setText( titleStr.arg( tr("New Channel") ) ) ;
     cf->show();
-    
+
 }
 
 /** Loads own personal status */
