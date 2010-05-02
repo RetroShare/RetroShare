@@ -25,6 +25,7 @@
 #include "SearchDialog.h"
 #include "RetroShareLink.h"
 #include "msgs/ChanMsgDialog.h"
+#include <gui/RSHumanReadableDelegate.h>
 
 #include "rsiface/rsiface.h"
 #include "rsiface/rsexpr.h"
@@ -61,11 +62,8 @@
 #define SR_TYPE_COL         3
 #define SR_AGE_COL          4
 #define SR_HASH_COL         5
-
 #define SR_SEARCH_ID_COL    6
-
 #define SR_UID_COL          7
-#define SR_REALSIZE_COL     8
 
 /* indicies for search summary item columns SS_ = Search Summary */
 #define SS_TEXT_COL         0
@@ -123,21 +121,24 @@ SearchDialog::SearchDialog(QWidget *parent)
     connect( ui.resetButton, SIGNAL(clicked()), this, SLOT(clearKeyword()));
     connect( ui.lineEdit, SIGNAL( textChanged(const QString &)), this, SLOT(togglereset()));
 
-    //connect( ui.searchSummaryWidget, SIGNAL( itemSelectionChanged ( void ) ), this, SLOT( selectSearchResults( void ) ) );
-
     connect( ui.searchResultWidget, SIGNAL( itemDoubleClicked ( QTreeWidgetItem *, int)), this, SLOT(download()));
 
     connect ( ui.searchSummaryWidget, SIGNAL( currentItemChanged ( QTreeWidgetItem *, QTreeWidgetItem * ) ),
                     this, SLOT( selectSearchResults( void ) ) );
 
-    //connect(ui.FileTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onComboIndexChanged(int)));
     connect(ui.FileTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(selectSearchResults(int)));
 
     /* hide the Tree +/- */
     ui.searchResultWidget -> setRootIsDecorated( true );
     ui.searchResultWidget -> setColumnHidden( SR_UID_COL,true );
-    ui.searchResultWidget -> setColumnHidden( SR_REALSIZE_COL,true );
     ui.searchSummaryWidget -> setRootIsDecorated( false );
+
+	 // We set some delegates to handle the display of size and date.
+	 // To allow a proper sorting, be careful to pad at right with spaces. This
+	 // is achieved by using QString("%1").arg(number,15,10).
+	 //
+	 ui.searchResultWidget->setItemDelegateForColumn(SR_SIZE_COL,new RSHumanReadableSizeDelegate()) ;
+	 ui.searchResultWidget->setItemDelegateForColumn(SR_AGE_COL,new RSHumanReadableAgeDelegate()) ;
 
     /* make it extended selection */
     ui.searchResultWidget -> setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -279,22 +280,15 @@ void SearchDialog::download()
 			 std::cerr << "SearchDialog::download() Calling File Request";
 			 std::cerr << std::endl;
 			 std::list<std::string> srcIds;
-#ifdef SUSPENDED
-			 // I suspend this. For turtle F2F download, we dont' need sources: 
-			 // 	- if we put sources, they make double with some tunnels.
-			 // 	- they won't transfer because ASSUME_AVAILABILITY can't be used,
-			 // 		and no chunk maps are transfered except in tunnels.
-			 srcIds.push_back(item->text(SR_UID_COL).toStdString()) ;
-#endif
 
 			 if(!rsFiles -> FileRequest((item->text(SR_NAME_COL)).toStdString(),
 						 (item->text(SR_HASH_COL)).toStdString(),
-						 (item->text(SR_REALSIZE_COL)).toULongLong(),
+						 (item->text(SR_SIZE_COL)).toULongLong(),
 						 "", RS_FILE_HINTS_NETWORK_WIDE, srcIds))
 				 attemptDownloadLocal = true ;
 			 else
 			 {
-				 std::cout << "isuing file request from search dialog: -" << (item->text(SR_NAME_COL)).toStdString() << "-" << (item->text(SR_HASH_COL)).toStdString() << "-" << (item->text(SR_REALSIZE_COL)).toULongLong() << "-ids=" ;
+				 std::cout << "isuing file request from search dialog: -" << (item->text(SR_NAME_COL)).toStdString() << "-" << (item->text(SR_HASH_COL)).toStdString() << "-" << (item->text(SR_SIZE_COL)).toULongLong() << "-ids=" ;
 				 for(std::list<std::string>::const_iterator it(srcIds.begin());it!=srcIds.end();++it)
 					 std::cout << *it << "-" << std::endl ;
 			 }
@@ -308,11 +302,9 @@ void SearchDialog::download()
 
 void SearchDialog::downloadDirectory(const QTreeWidgetItem *item, const QString &base)
 {
-	if (!item->childCount()) {
+	if (!item->childCount()) 
+	{
 		std::list<std::string> srcIds;
-#ifdef SUSPENDED
-		srcIds.push_back(item->text(SR_UID_COL).toStdString());
-#endif
 
 		QString path = QString::fromStdString(rsFiles->getDownloadDirectory())
 						+ tr("/") + base + tr("/");
@@ -320,14 +312,14 @@ void SearchDialog::downloadDirectory(const QTreeWidgetItem *item, const QString 
 
 		rsFiles->FileRequest(item->text(SR_NAME_COL).toStdString(),
 				item->text(SR_HASH_COL).toStdString(),
-				item->text(SR_REALSIZE_COL).toULongLong(),
+				item->text(SR_SIZE_COL).toULongLong(),
 				cleanPath.toStdString(),RS_FILE_HINTS_NETWORK_WIDE, srcIds);
 
 		std::cout << "SearchDialog::downloadDirectory(): "\
 				"issuing file request from search dialog: -"
 			<< (item->text(SR_NAME_COL)).toStdString()
 			<< "-" << (item->text(SR_HASH_COL)).toStdString()
-			<< "-" << (item->text(SR_REALSIZE_COL)).toULongLong()
+			<< "-" << (item->text(SR_SIZE_COL)).toULongLong()
 			<< "-ids=" ;
 		for(std::list<std::string>::const_iterator it(srcIds.begin());
 				it!=srcIds.end();++it)
@@ -671,9 +663,8 @@ void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, 
 		child->setText(SR_NAME_COL, QString::fromUtf8(dir.name.c_str()));
 		child->setText(SR_HASH_COL, QString::fromStdString(dir.hash));
 		QString ext = QFileInfo(QString::fromStdString(dir.name)).suffix();
-		child->setText(SR_SIZE_COL, misc::friendlyUnit(dir.count));
-		child->setText(SR_AGE_COL, misc::userFriendlyDuration(dir.age));
-		child->setText(SR_REALSIZE_COL, QString::number(dir.count));
+		child->setText(SR_SIZE_COL, QString("%1").arg(dir.count,(int)15,(int)10));	// very important for sorting
+		child->setText(SR_AGE_COL, QString("%1").arg(dir.age,15,10));
 		child->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
 		
 		child->setText(SR_ID_COL, QString::number(1));
@@ -700,9 +691,9 @@ void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, 
 		child->setIcon(SR_NAME_COL, QIcon(IMAGE_DIRECTORY));
 		child->setText(SR_NAME_COL, QString::fromUtf8(dir.name.c_str()));
 		child->setText(SR_HASH_COL, QString::fromStdString(dir.hash));
-		child->setText(SR_SIZE_COL, misc::toQString(dir.count));
-		child->setText(SR_AGE_COL, misc::userFriendlyDuration(dir.age));
-		child->setText(SR_REALSIZE_COL, QString::number(dir.count));
+		//child->setText(SR_SIZE_COL, misc::toQString(dir.count));
+		child->setText(SR_SIZE_COL, QString("%1").arg(dir.count,15,10));	// very important for sorting
+		child->setText(SR_AGE_COL, QString("%1").arg(dir.age,15,10));
 		child->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
 		child->setText(SR_ID_COL, QString::number(1));
 		child->setTextAlignment( SR_ID_COL, Qt::AlignRight );
@@ -763,9 +754,8 @@ void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, 
     child->setIcon(SR_NAME_COL, QIcon(IMAGE_DIRECTORY));
     child->setText(SR_NAME_COL, QString::fromUtf8(dir.name.c_str()));
     child->setText(SR_HASH_COL, QString::fromStdString(dir.hash));
-    child->setText(SR_SIZE_COL, misc::toQString(dir.count));
-    child->setText(SR_AGE_COL, misc::userFriendlyDuration(dir.min_age));
-    child->setText(SR_REALSIZE_COL, QString::number(dir.count));
+	 child->setText(SR_SIZE_COL, QString("%1").arg(dir.count,(int)15,(int)10));	// very important for sorting
+	 child->setText(SR_AGE_COL, QString("%1").arg(dir.min_age,15,10));
     child->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
     child->setText(SR_ID_COL, QString::number(1));
     child->setTextAlignment( SR_ID_COL, Qt::AlignRight );
@@ -969,9 +959,8 @@ void SearchDialog::insertFile(const std::string& txt,qulonglong searchId, const 
 		 * to facilitate downlaods we need to save the file size too
 		 */
 
-		item->setText(SR_SIZE_COL, misc::friendlyUnit(file.size));
-		item->setText(SR_REALSIZE_COL, QString::number(file.size));
-		item->setText(SR_AGE_COL, misc::userFriendlyDuration(file.age));
+		item->setText(SR_SIZE_COL, QString("%1").arg(file.size,15,10));	// very important for sorting
+		item->setText(SR_AGE_COL, QString("%1").arg(file.age,15,10));
 		item->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
 		if(searchType == FRIEND_SEARCH)
 		{
@@ -1204,7 +1193,7 @@ void SearchDialog::copysearchLink()
 			 std::cerr << std::endl;
 
 			 QString fhash = item->text(SR_HASH_COL);
-			 qulonglong fsize = item->text(SR_REALSIZE_COL).toULongLong();
+			 qulonglong fsize = item->text(SR_SIZE_COL).toULongLong();
 			 QString fname = item->text(SR_NAME_COL);
 
 			 RetroShareLink link(fname, fsize, fhash);
