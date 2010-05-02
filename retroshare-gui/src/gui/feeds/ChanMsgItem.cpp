@@ -47,14 +47,10 @@ ChanMsgItem::ChanMsgItem(FeedHolder *parent, uint32_t feedId, std::string chanId
   /* general ones */
   connect( expandButton, SIGNAL( clicked( void ) ), this, SLOT( toggle ( void ) ) );
   connect( clearButton, SIGNAL( clicked( void ) ), this, SLOT( removeItem ( void ) ) );
-  //connect( gotoButton, SIGNAL( clicked( void ) ), this, SLOT( gotoHome ( void ) ) );
 
-  /* specific ones */
-  connect( playButton, SIGNAL( clicked( void ) ), this, SLOT( playMedia ( void ) ) );
+  /* specific */
   connect( unsubscribeButton, SIGNAL( clicked( void ) ), this, SLOT( unsubscribeChannel ( void ) ) );
-  connect( downloadButton, SIGNAL( clicked( ) ), this, SLOT( downloadMedia () ) );
 
-  
 
   small();
   updateItemStatic();
@@ -123,21 +119,15 @@ void ChanMsgItem::updateItemStatic()
 		layout->addWidget(fi);
 	}
 
-	playButton->setEnabled(false);
 	
 	if (mIsHome)
 	{
-		/* disable buttons */
+		/* disable buttons: deletion facility not enabled with cache services yet */
 		clearButton->setEnabled(false);
-		//gotoButton->setEnabled(false);
-		unsubscribeButton->setEnabled(false);
-
 		clearButton->hide();
 	}
 
-	/* don't really want this at all! */
-	unsubscribeButton->hide();
-	//playButton->hide();
+
 }
 
 
@@ -162,15 +152,7 @@ void ChanMsgItem::updateItem()
 		}
 	}
 
-	/***
-	 * At this point cannot create a playlist....
-	 * so can't enable play for all.
 
-	if (mFileItems.size() > 0)
-	{
-		playButton->setEnabled(true);
-	}
-	***/
 }
 
 
@@ -218,32 +200,20 @@ void ChanMsgItem::gotoHome()
 #endif
 }
 
-/*********** SPECIFIC FUNCTIOSN ***********************/
+/*********** SPECIFIC FUNCTIONS ***********************/
 
 
 void ChanMsgItem::unsubscribeChannel()
 {
-#ifdef DEBUG_ITEM
-	std::cerr << "ChanMsgItem::unsubscribeChannel()";
-	std::cerr << std::endl;
-#endif
+ #ifdef DEBUG_ITEM
+ 	std::cerr << "ChanMsgItem::unsubscribeChannel()";
+ 	std::cerr << std::endl;
+ #endif
+
+	if (rsChannels)
+	{
+		rsChannels->channelSubscribe(mChanId, false);
+	}
+	updateItemStatic();
 }
-
-
-void ChanMsgItem::playMedia()
-{
-#ifdef DEBUG_ITEM
-	std::cerr << "ChanMsgItem::playMedia()";
-	std::cerr << std::endl;
-#endif
-}
-
-void ChanMsgItem::downloadMedia()
-{
-#ifdef DEBUG_ITEM
-	std::cerr << "ChanMsgItem::downloadMedia()";
-	std::cerr << std::endl;
-#endif
-}
-
 
