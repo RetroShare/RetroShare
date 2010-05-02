@@ -124,7 +124,9 @@ void ChanMsgItem::updateItemStatic()
 	{
 		/* disable buttons: deletion facility not enabled with cache services yet */
 		clearButton->setEnabled(false);
+		unsubscribeButton->setEnabled(false);
 		clearButton->hide();
+		unsubscribeButton->hide();
 	}
 
 
