@@ -1,4 +1,4 @@
-CONFIG += qt gui uic qrc resources uitools newsettings idle
+CONFIG += qt gui uic qrc resources uitools newsettings idle 
 QT     += network xml script opengl
 
 TEMPLATE = app
@@ -207,6 +207,7 @@ HEADERS +=  rshare.h \
             gui/profile/ProfileWidget.h \
             gui/profile/StatusMessage.h \
             gui/chat/PopupChatDialog.h \
+	    	gui/channels/CreateChannel.h \
             gui/channels/ChannelDetails.h \
             gui/channels/CreateChannelMsg.h \
             gui/connect/ConnectDialog.h \
@@ -292,6 +293,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/profile/ProfileEdit.ui \
             gui/profile/ProfileWidget.ui \
             gui/profile/StatusMessage.ui \
+	    	gui/channels/CreateChannel.ui \
             gui/channels/CreateChannelMsg.ui \
             gui/channels/ChannelDetails.ui \
             gui/chat/PopupChatDialog.ui \
@@ -387,6 +389,7 @@ SOURCES +=  main.cpp \
             gui/profile/ProfileEdit.cpp \
             gui/profile/ProfileWidget.cpp \
             gui/profile/StatusMessage.cpp \      
+	    	gui/channels/CreateChannel.cpp \
             gui/channels/CreateChannelMsg.cpp \
             gui/channels/ChannelDetails.cpp \
             gui/chat/PopupChatDialog.cpp \
