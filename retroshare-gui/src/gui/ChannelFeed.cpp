@@ -35,7 +35,7 @@
 
 #include "gui/feeds/ChanMsgItem.h"
 
-#include "gui/forums/CreateForum.h"
+#include "gui/channels/CreateChannel.h"
 #include "gui/channels/ChannelDetails.h"
 #include "gui/channels/CreateChannelMsg.h"
 
@@ -183,7 +183,7 @@ void ChannelFeed::channelListCustomPopupMenu( QPoint point )
 
 void ChannelFeed::createChannel()
 {
-	CreateForum *cf = new CreateForum(NULL, false);
+	CreateChannel *cf = new CreateChannel(NULL);
 
 	cf->setWindowTitle(tr("Create a new Channel"));
 	cf->ui.labelicon->setPixmap(QPixmap(":/images/add_channel64.png"));
@@ -390,14 +390,14 @@ void ChannelFeed::updateChannelListOwn(std::list<std::string> &ids)
 		QStandardItem *ownGroup = model->item(OWN);
 		QList<QStandardItem *> channel;
 		QStandardItem *item1 = new QStandardItem();
-		QStandardItem *item2 = new QStandardItem();
-		QStandardItem *item3 = new QStandardItem();
+		QStandardItem *chPopItem = new QStandardItem();
+		QStandardItem *chIdItem = new QStandardItem();
 
 		ChannelInfo ci;
 		if (rsChannels && rsChannels->getChannelInfo(*iit, ci)) {
 			item1->setData(QVariant(QString::fromStdWString(ci.channelName)), Qt::DisplayRole);
-			//item2->setData(QVariant(QString::number(ci.pop)), Qt::DisplayRole);
-			item3->setData(QVariant(QString::fromStdString(ci.channelId)), Qt::DisplayRole);
+			//chPopItem->setData(QVariant(QString::number(ci.pop)), Qt::DisplayRole);
+			chIdItem->setData(QVariant(QString::fromStdString(ci.channelId)), Qt::DisplayRole);
 			item1->setToolTip(tr("Popularity: %1\nFetches: %2\nAvailable: %3"
 					).arg(QString::number(ci.pop)).arg(9999).arg(9999));
 					
@@ -405,38 +405,38 @@ void ChannelFeed::updateChannelListOwn(std::list<std::string> &ids)
         /* set Popularity icon  */
         if (popcount == 0) 
         {
-            item2->setData(QIcon(QString::fromUtf8(":/images/hot_0.png")), Qt::DecorationRole);
+            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_0.png")), Qt::DecorationRole);
         } 
         else if (popcount < 2) 
         {
-            item2->setData(QIcon(QString::fromUtf8(":/images/hot_1.png")), Qt::DecorationRole);
+            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_1.png")), Qt::DecorationRole);
         } 
         else if (popcount < 4) 
         {
-            item2->setData(QIcon(QString::fromUtf8(":/images/hot_2.png")), Qt::DecorationRole);
+            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_2.png")), Qt::DecorationRole);
         } 
         else if (popcount < 8) 
         {
-            item2->setData(QIcon(QString::fromUtf8(":/images/hot_3.png")), Qt::DecorationRole);
+            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_3.png")), Qt::DecorationRole);
         } 
         else if (popcount < 16) {
-            item2->setData(QIcon(QString::fromUtf8(":/images/hot_4.png")), Qt::DecorationRole);
+            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_4.png")), Qt::DecorationRole);
         } 
         else
         {
-            item2->setData(QIcon(QString::fromUtf8(":/images/hot_5.png")), Qt::DecorationRole);
+            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_5.png")), Qt::DecorationRole);
         } 		
 					
 					
 		} else {
 			item1->setData(QVariant(QString("Unknown Channel")), Qt::DisplayRole);
-			item2->setData(QVariant(QString::fromStdString(*iit)), Qt::DisplayRole);
+			chPopItem->setData(QVariant(QString::fromStdString(*iit)), Qt::DisplayRole);
 			item1->setToolTip("Unknown Channel\nNo Description");
 		}
     
 		channel.append(item1);
-		channel.append(item2);
-		channel.append(item3);
+		channel.append(chPopItem);
+		channel.append(chIdItem);
 		ownGroup->appendRow(channel);
 	}
 }
@@ -455,22 +455,53 @@ void ChannelFeed::updateChannelListSub(std::list<std::string> &ids)
 		QStandardItem *ownGroup = model->item(SUBSCRIBED);
 		QList<QStandardItem *> channel;
 		QStandardItem *item1 = new QStandardItem();
-		QStandardItem *item2 = new QStandardItem();
+		QStandardItem *chPopItem = new QStandardItem();
+		QStandardItem *chIdItem = new QStandardItem();
 
 		ChannelInfo ci;
 		if (rsChannels && rsChannels->getChannelInfo(*iit, ci)) {
 			item1->setData(QVariant(QString::fromStdWString(ci.channelName)), Qt::DisplayRole);
-			item2->setData(QVariant(QString::fromStdString(ci.channelId)), Qt::DisplayRole);
+			chIdItem->setData(QVariant(QString::fromStdString(ci.channelId)), Qt::DisplayRole);
 			item1->setToolTip(tr("Popularity: %1\nFetches: %2\nAvailable: %3"
 					).arg(QString::number(ci.pop)).arg(9999).arg(9999));
-		} else {
-			item1->setData(QVariant(QString("Unknown Channel")), Qt::DisplayRole);
-			item2->setData(QVariant(QString::fromStdString(*iit)), Qt::DisplayRole);
-			item1->setToolTip("Unknown Channel\nNo Description");
-		}
+
+		      /* set Popularity icon  */
+		      int popcount = ci.pop;
+
+		        if (popcount == 0)
+		        {
+		            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_0.png")), Qt::DecorationRole);
+		        }
+		        else if (popcount < 2)
+		        {
+		            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_1.png")), Qt::DecorationRole);
+		        }
+		        else if (popcount < 4)
+		        {
+		            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_2.png")), Qt::DecorationRole);
+		        }
+		        else if (popcount < 8)
+		        {
+		            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_3.png")), Qt::DecorationRole);
+		        }
+		        else if (popcount < 16) {
+		            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_4.png")), Qt::DecorationRole);
+		        }
+		        else
+		        {
+		            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_5.png")), Qt::DecorationRole);
+		        }
+
+
+				} else {
+					item1->setData(QVariant(QString("Unknown Channel")), Qt::DisplayRole);
+					chPopItem->setData(QVariant(QString::fromStdString(*iit)), Qt::DisplayRole);
+					item1->setToolTip("Unknown Channel\nNo Description");
+				}
 
 		channel.append(item1);
-		channel.append(item2);
+		channel.append(chPopItem);
+		channel.append(chIdItem);
 		ownGroup->appendRow(channel);
 	}
 
@@ -489,23 +520,54 @@ void ChannelFeed::updateChannelListPop(std::list<std::string> &ids)
 #endif
 		QStandardItem *ownGroup = model->item(POPULAR);
 		QList<QStandardItem *> channel;
-		QStandardItem *item1 = new QStandardItem();
-		QStandardItem *item2 = new QStandardItem();
+		QStandardItem *chNameItem = new QStandardItem();
+		QStandardItem *chPopItem = new QStandardItem();
+		QStandardItem *chIdItem = new QStandardItem();
 
 		ChannelInfo ci;
 		if (rsChannels && rsChannels->getChannelInfo(*iit, ci)) {
-			item1->setData(QVariant(QString::fromStdWString(ci.channelName)), Qt::DisplayRole);
-			item2->setData(QVariant(QString::fromStdString(ci.channelId)), Qt::DisplayRole);
-			item1->setToolTip(tr("Popularity: %1\nFetches: %2\nAvailable: %3"
+			chNameItem->setData(QVariant(QString::fromStdWString(ci.channelName)), Qt::DisplayRole);
+			chIdItem->setData(QVariant(QString::fromStdString(ci.channelId)), Qt::DisplayRole);
+			chNameItem->setToolTip(tr("Popularity: %1\nFetches: %2\nAvailable: %3"
 					).arg(QString::number(ci.pop)).arg(9999).arg(9999));
-		} else {
-			item1->setData(QVariant(QString("Unknown Channel")), Qt::DisplayRole);
-			item2->setData(QVariant(QString::fromStdString(*iit)), Qt::DisplayRole);
-			item1->setToolTip("Unknown Channel\nNo Description");
-		}
 
-		channel.append(item1);
-		channel.append(item2);
+	      /* set Popularity icon  */
+	      int popcount = ci.pop;
+
+	        if (popcount == 0)
+	        {
+	            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_0.png")), Qt::DecorationRole);
+	        }
+	        else if (popcount < 2)
+	        {
+	            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_1.png")), Qt::DecorationRole);
+	        }
+	        else if (popcount < 4)
+	        {
+	            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_2.png")), Qt::DecorationRole);
+	        }
+	        else if (popcount < 8)
+	        {
+	            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_3.png")), Qt::DecorationRole);
+	        }
+	        else if (popcount < 16) {
+	            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_4.png")), Qt::DecorationRole);
+	        }
+	        else
+	        {
+	            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_5.png")), Qt::DecorationRole);
+	        }
+
+
+			} else {
+				chNameItem->setData(QVariant(QString("Unknown Channel")), Qt::DisplayRole);
+				chPopItem->setData(QVariant(QString::fromStdString(*iit)), Qt::DisplayRole);
+				chNameItem->setToolTip("Unknown Channel\nNo Description");
+			}
+
+		channel.append(chNameItem);
+		channel.append(chPopItem);
+		channel.append(chIdItem);
 		ownGroup->appendRow(channel);
 	}
 }
@@ -523,23 +585,54 @@ void ChannelFeed::updateChannelListOther(std::list<std::string> &ids)
 #endif
 		QStandardItem *ownGroup = model->item(OTHER);
 		QList<QStandardItem *> channel;
-		QStandardItem *item1 = new QStandardItem();
-		QStandardItem *item2 = new QStandardItem();
+		QStandardItem *chNameItem = new QStandardItem();
+		QStandardItem *chPopItem = new QStandardItem();
+		QStandardItem *chIdItem = new QStandardItem();
 
 		ChannelInfo ci;
 		if (rsChannels && rsChannels->getChannelInfo(*iit, ci)) {
-			item1->setData(QVariant(QString::fromStdWString(ci.channelName)), Qt::DisplayRole);
-			item2->setData(QVariant(QString::fromStdString(ci.channelId)), Qt::DisplayRole);
-			item1->setToolTip(tr("Popularity: %1\nFetches: %2\nAvailable: %3"
+			chNameItem->setData(QVariant(QString::fromStdWString(ci.channelName)), Qt::DisplayRole);
+			chPopItem->setData(QVariant(QString::fromStdString(ci.channelId)), Qt::DisplayRole);
+			chNameItem->setToolTip(tr("Popularity: %1\nFetches: %2\nAvailable: %3"
 					).arg(QString::number(ci.pop)).arg(9999).arg(9999));
-		} else {
-			item1->setData(QVariant(QString("Unknown Channel")), Qt::DisplayRole);
-			item2->setData(QVariant(QString::fromStdString(*iit)), Qt::DisplayRole);
-			item1->setToolTip("Unknown Channel\nNo Description");
-		}
 
-		channel.append(item1);
-		channel.append(item2);
+		      /* set Popularity icon  */
+		      int popcount = ci.pop;
+
+		        if (popcount == 0)
+		        {
+		            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_0.png")), Qt::DecorationRole);
+		        }
+		        else if (popcount < 2)
+		        {
+		            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_1.png")), Qt::DecorationRole);
+		        }
+		        else if (popcount < 4)
+		        {
+		            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_2.png")), Qt::DecorationRole);
+		        }
+		        else if (popcount < 8)
+		        {
+		            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_3.png")), Qt::DecorationRole);
+		        }
+		        else if (popcount < 16) {
+		            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_4.png")), Qt::DecorationRole);
+		        }
+		        else
+		        {
+		            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_5.png")), Qt::DecorationRole);
+		        }
+
+
+				} else {
+					chNameItem->setData(QVariant(QString("Unknown Channel")), Qt::DisplayRole);
+					chPopItem->setData(QVariant(QString::fromStdString(*iit)), Qt::DisplayRole);
+					chNameItem->setToolTip("Unknown Channel\nNo Description");
+				}
+
+		channel.append(chNameItem);
+		channel.append(chPopItem);
+		channel.append(chIdItem);
 		ownGroup->appendRow(channel);
 	}
 }
