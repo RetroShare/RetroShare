@@ -7,12 +7,7 @@
 #include <rsiface/rsturtle.h>
 #endif
 
-#include "gui/NetworkDialog.h"
-#include "gui/PeersDialog.h"
-#include "gui/SharedFilesDialog.h"
-#include "gui/TransfersDialog.h"
-#include "gui/MessagesDialog.h"
-#include "gui/MessengerWindow.h"
+#include "gui/RsAutoUpdatePage.h"
 
 #include "gui/toaster/OnlineToaster.h"
 #include "gui/toaster/MessageToaster.h"

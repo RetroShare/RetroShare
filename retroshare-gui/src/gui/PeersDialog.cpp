@@ -44,6 +44,8 @@
 #include "gui/forums/CreateForum.h"
 #include "gui/channels/CreateChannel.h"
 
+#include "MainWindow.h"
+
 #include <sstream>
 #include <time.h>
 #include <sys/stat.h>
@@ -391,7 +393,7 @@ void  PeersDialog::insertPeers()
                 }
             }
             if (!found) {
-                peertreeWidget->takeTopLevelItem(index);
+                delete (peertreeWidget->takeTopLevelItem(index));
             } else {
                 index++;
             }
@@ -418,7 +420,7 @@ void  PeersDialog::insertPeers()
             if ((!rsPeers->getPeerDetails(*it, detail) || !detail.accept_connection)
                 && detail.gpg_id != rsPeers->getGPGOwnId()) {
                 //don't accept anymore connection, remove from the view
-                peertreeWidget->takeTopLevelItem(peertreeWidget->indexOfTopLevelItem(gpg_item));
+                delete (peertreeWidget->takeTopLevelItem(peertreeWidget->indexOfTopLevelItem(gpg_item)));
                 continue;
             }
 
@@ -438,7 +440,7 @@ void  PeersDialog::insertPeers()
             while (childIndex < gpg_item->childCount()) {
                 std::string ssl_id = (gpg_item->child(childIndex))->text(3).toStdString();
                 if (!rsPeers->isFriend(ssl_id)) {
-                    gpg_item->takeChild(childIndex);
+                    delete (gpg_item->takeChild(childIndex));
                 } else {
                     childIndex++;
                 }
@@ -706,6 +708,8 @@ void PeersDialog::msgfriend()
 
     nMsgDialog->newMsg();
     nMsgDialog->show();
+
+    /* window will destroy itself! */
 }
 
 
@@ -1531,37 +1535,35 @@ void PeersDialog::changeAvatarClicked()
 
 void PeersDialog::on_actionAdd_Friend_activated() 
 {
-    ConnectFriendWizard* connectwiz = new ConnectFriendWizard(this);
+    ConnectFriendWizard connectwiz (this);
 
-    // set widget to be deleted after close
-    connectwiz->setAttribute( Qt::WA_DeleteOnClose, true);
-
-
-    connectwiz->show();
+    connectwiz.exec ();
 }
 
 void PeersDialog::on_actionCreate_New_Forum_activated()
 {
-    ((MainPageStack*)this->parent())->setCurrentIndex(8); // swtich to forum view
-    static CreateForum *cf = new CreateForum(this);
-    cf->show();
+    MainWindow::activatePage (MainWindow::Forums);
+
+    CreateForum cf (this);
+    cf.exec();
     
 }
 
 void PeersDialog::on_actionCreate_New_Channel_activated()
 {
+#ifndef RS_RELEASE_VERSION
+    MainWindow::activatePage (MainWindow::Channels);
 
-    CreateChannel *cf = new CreateChannel(NULL);
-    ((MainPageStack*)this->parent())->setCurrentIndex(6); // swtich to forum view
-
-    cf->setWindowTitle(tr("Create a new Channel"));
-    cf->ui.labelicon->setPixmap(QPixmap(":/images/add_channel64.png"));
+    CreateChannel cf (this);
+    cf.setWindowTitle(tr("Create a new Channel"));
+    cf.ui.labelicon->setPixmap(QPixmap(":/images/add_channel64.png"));
     QString titleStr("<span style=\"font-size:24pt; font-weight:500;"
                                "color:#32CD32;\">%1</span>");
-    cf->ui.textlabelcreatforums->setText( titleStr.arg( tr("New Channel") ) ) ;
-    cf->show();
-
+    cf.ui.textlabelcreatforums->setText( titleStr.arg( tr("New Channel") ) ) ;
+    cf.exec();
+#endif
 }
+
 
 /** Loads own personal status */
 void PeersDialog::loadmypersonalstatus()
@@ -1572,8 +1574,8 @@ void PeersDialog::loadmypersonalstatus()
 
 void PeersDialog::statusmessage()
 {
-    static StatusMessage *statusmsgdialog = new StatusMessage();
-    statusmsgdialog->show();
+    StatusMessage statusmsgdialog (this);
+    statusmsgdialog.exec();
 }
 
 void PeersDialog::addExtraFile()

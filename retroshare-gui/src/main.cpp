@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
 
 	rsicontrol->StartupRetroShare();
 
-	MainWindow *w = new MainWindow;
+	MainWindow *w = MainWindow::Create ();
 
 	// I'm using a signal to transfer the hashing info to the mainwindow, because Qt schedules signals properly to
 	// avoid clashes between infos from threads.

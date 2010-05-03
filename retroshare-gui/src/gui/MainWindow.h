@@ -39,6 +39,11 @@
 #include "SharedFilesDialog.h"
 #include "MessengerWindow.h"
 #include "PluginsPage.h"
+#include "ForumsDialog.h"
+
+#ifndef RS_RELEASE_VERSION
+#include "ChannelFeed.h"
+#endif
 
 #include "bwgraph/bwgraph.h"
 #include "help/browser/helpbrowser.h"
@@ -50,6 +55,16 @@
 class PeerStatus;
 class NATStatus;
 class RatesStatus;
+class ForumsDialog;
+
+#ifndef RS_RELEASE_VERSION
+class LinksDialog;
+class NewsFeed;
+#endif
+
+#ifdef BLOGS
+class BlogsDialog;
+#endif
 
 class MainWindow : public RWindow
 {
@@ -72,8 +87,8 @@ public:
 
     };
 
-    /** Default Constructor */
-    MainWindow(QWidget *parent = 0, Qt::WFlags flags = 0);
+    /** Create main window */
+    static MainWindow *Create ();
 
     /** Destructor. */
     ~MainWindow();
@@ -91,9 +106,20 @@ public:
     MessagesDialog    *messagesDialog;
     SharedFilesDialog *sharedfilesDialog;
     MessengerWindow   *messengerWindow;
-	Idle 			  *idle;
+    ForumsDialog      *forumsDialog;
+    Idle              *idle;
 
-#ifdef UNFINISHED    
+#ifndef RS_RELEASE_VERSION
+    ChannelFeed       *channelFeed;
+    LinksDialog       *linksDialog;
+    NewsFeed          *newsFeed;
+#endif
+
+#ifdef BLOGS
+    BlogsDialog       *blogsFeed;
+#endif
+
+#ifdef UNFINISHED
     ApplicationWindow   *applicationWindow;
 #endif
     PluginsPage*   pluginsPage ;
@@ -104,12 +130,17 @@ public slots:
     //void show();
     /** Shows the config dialog with focus set to the given page. */
     void showWindow(Page page);
+    /** Set focus to the given page. */
+    static void activatePage (Page page);
 
     void updateHashingInfo(const QString&) ;
     void displayErrorMessage(int,int,const QString&) ;
     void postModDirectories(bool update_local);
 
 protected:
+    /** Default Constructor */
+    MainWindow(QWidget *parent = 0, Qt::WFlags flags = 0);
+
     void closeEvent(QCloseEvent *);
     
     /** Called when the user changes the UI translation. */
@@ -141,7 +172,7 @@ private slots:
     /** Called when a child window requests the given help <b>topic</b>. */
     void showHelpDialog(const QString &topic);
 
-    void showMess(MainWindow::Page page = MainWindow::Messages);
+    void showMess();
     void showSettings();
     void setStyle();
 
@@ -157,6 +188,8 @@ private:
     void createActions();
     
     void createTrayIcon();
+
+    static MainWindow *_instance;
 
     /** Defines the actions for the tray menu */
     QAction* _settingsAct;

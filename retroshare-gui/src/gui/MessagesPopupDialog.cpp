@@ -23,7 +23,6 @@
 #include "MessagesPopupDialog.h"
 #include "MessagesDialog.h"
 
-#include "msgs/ChanMsgDialog.h"
 #include "util/printpreview.h"
 
 #include "rsiface/rsiface.h"

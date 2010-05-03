@@ -349,6 +349,8 @@ void SharedFilesDialog::sendremoteLinkTo()
     nMsgDialog->insertMsgText(RSLinkClipboard::toHtml().toStdString());
 
     nMsgDialog->show();
+
+    /* window will destroy itself! */
 }
 
 void SharedFilesDialog::sendLinkTo()
@@ -370,6 +372,8 @@ void SharedFilesDialog::sendLinkTo()
     nMsgDialog->insertMsgText(RSLinkClipboard::toHtml().toStdString());
 
     nMsgDialog->show();
+
+    /* window will destroy itself! */
 }
 
 void SharedFilesDialog::sendHtmlLinkTo(  )
@@ -390,6 +394,8 @@ void SharedFilesDialog::sendHtmlLinkTo(  )
     nMsgDialog->insertMsgText(RSLinkClipboard::toHtml().toStdString());
 
     nMsgDialog->show();
+
+    /* window will destroy itself! */
 }
 
 //void SharedFilesDialog::sendLinktoChat()
@@ -525,6 +531,8 @@ void SharedFilesDialog::recommendFilesTo( std::string rsid )
 
 	nMsgDialog->sendMessage();
 	nMsgDialog->close();
+
+	/* window will destroy itself! */
 }
 
 void SharedFilesDialog::recommendFilesToMsg( std::string rsid )
@@ -548,6 +556,8 @@ void SharedFilesDialog::recommendFilesToMsg( std::string rsid )
 
 	std::cout << "recommending to " << rsid << std::endl ;
 	nMsgDialog->addRecipient(rsid) ;
+
+	/* window will destroy itself! */
 }
 
 //#endif

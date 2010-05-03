@@ -1289,6 +1289,8 @@ void ForumsDialog::replytomessage()
         nMsgDialog->addRecipient( msgInfo.srcId ) ;
         nMsgDialog->show();
         nMsgDialog->activateWindow();
+
+        /* window will destroy itself! */
     }
     else
     {

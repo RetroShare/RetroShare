@@ -1218,6 +1218,8 @@ void SearchDialog::sendLinkTo( )
 
     nMsgDialog->insertMsgText(RSLinkClipboard::toHtml().toStdString()) ;
     nMsgDialog->show();
+
+    /* window will destroy itself! */
 }
 
 void SearchDialog::togglereset()

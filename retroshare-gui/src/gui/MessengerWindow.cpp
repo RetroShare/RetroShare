@@ -97,7 +97,7 @@ void MessengerWindow::releaseInstance()
 
 /** Constructor */
 MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
-    : 	maxTimeBeforeIdle(30), RWindow("MessengerWindow", parent, flags)
+    : 	RWindow("MessengerWindow", parent, flags), maxTimeBeforeIdle(30)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
@@ -572,12 +572,9 @@ std::string getPeersRsCertId(QTreeWidgetItem *i)
 /** Add a Friend ShortCut */
 void MessengerWindow::addFriend()
 {
-    ConnectFriendWizard* connwiz = new ConnectFriendWizard(this);
-    // set widget to be deleted after close
-    connwiz->setAttribute( Qt::WA_DeleteOnClose, true);
+    ConnectFriendWizard connwiz (this);
 
-    connwiz->show();
-
+    connwiz.exec ();
 }
 
 /** Open a QFileDialog to browse for export a file. */
@@ -808,7 +805,7 @@ void MessengerWindow::show()
     QWidget::show();
   } else {
     QWidget::activateWindow();
-    setWindowState(windowState() & ~Qt::WindowMinimized | Qt::WindowActive);
+    setWindowState((windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
     QWidget::raise();
   }
 }
@@ -858,6 +855,8 @@ void MessengerWindow::sendMessage()
 
     nMsgDialog->newMsg();
     nMsgDialog->show();
+
+    /* window will destroy itself! */
 }
 
 LogoBar & MessengerWindow::getLogoBar() const {
@@ -1058,10 +1057,10 @@ void MessengerWindow::savestatus()
 
 void MessengerWindow::checkAndSetIdle(int idleTime){
 
-	if((idleTime >= maxTimeBeforeIdle) && !isIdle){
+        if((idleTime >= (int) maxTimeBeforeIdle) && !isIdle){
 		setIdle(true);
 	}else
-		if((idleTime < maxTimeBeforeIdle) && isIdle){
+                if((idleTime < (int) maxTimeBeforeIdle) && isIdle){
 			setIdle(false);
 		}
 

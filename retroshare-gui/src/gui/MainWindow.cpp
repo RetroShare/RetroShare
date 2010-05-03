@@ -27,7 +27,6 @@
 #include <QIcon>
 #include <QPixmap>
 
-#include "ChannelFeed.h"
 #include "ShareManager.h"
 #include "NetworkView.h"
 #include "LinksDialog.h"
@@ -103,6 +102,17 @@
 #define IMAGE_TWOONLINE         ":/images/rstray2.png"
 #define IMAGE_BLOGS             ":/images/kblogger.png"
 
+/*static*/ MainWindow *MainWindow::_instance = NULL;
+
+/** create main window */
+/*static*/ MainWindow *MainWindow::Create ()
+{
+    if (_instance == NULL) {
+        _instance = new MainWindow ();
+    }
+
+    return _instance;
+}
 
 /** Constructor */
 MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
@@ -184,29 +194,24 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
                       messageAction = createPageAction(QIcon(IMAGE_MESSAGES), tr("Messages"), grp));   
 
     #ifndef RS_RELEASE_VERSION
-    ChannelFeed *channelFeed = NULL;
     ui.stackPages->add(channelFeed = new ChannelFeed(ui.stackPages),
                       createPageAction(QIcon(IMAGE_CHANNELS), tr("Channels"), grp));
     #endif
 
     #ifdef BLOGS
-    BlogsDialog *blogsFeed = NULL;
     ui.stackPages->add(blogsFeed = new BlogsDialog(ui.stackPages),
 		createPageAction(QIcon(IMAGE_BLOGS), tr("Blogs"), grp));
     #endif
                       
-    ForumsDialog *forumsDialog = NULL;
     ui.stackPages->add(forumsDialog = new ForumsDialog(ui.stackPages),
                        createPageAction(QIcon(IMAGE_FORUMS), tr("Forums"), grp));  
 
     #ifndef RS_RELEASE_VERSION
-    LinksDialog *linksDialog = NULL;
     ui.stackPages->add(linksDialog = new LinksDialog(ui.stackPages),
 			createPageAction(QIcon(IMAGE_LINKS), tr("Links Cloud"), grp));
     #endif
 
     #ifndef RS_RELEASE_VERSION
-    NewsFeed *newsFeed = NULL;
     ui.stackPages->add(newsFeed = new NewsFeed(ui.stackPages),
 		createPageAction(QIcon(IMAGE_NEWSFEED), tr("News Feed"), grp));
     #endif
@@ -440,9 +445,60 @@ void MainWindow::showWindow(Page page)
     /* Show the dialog. */
     RWindow::showWindow();
     /* Set the focus to the specified page. */
-    ui.stackPages->setCurrentIndex((int)page);
+    activatePage (page);
 }
 
+/** Set focus to the given page. */
+/*static*/ void MainWindow::activatePage(Page page)
+{
+    if (_instance == NULL) {
+        return;
+    }
+
+    MainPage *Page = NULL;
+
+    switch (page) {
+    case Network:
+        Page = _instance->networkDialog;
+        break;
+    case Friends:
+        Page = _instance->peersDialog;
+        break;
+    case Search:
+        Page = _instance->searchDialog;
+        break;
+    case Transfers:
+        Page = _instance->transfersDialog;
+        break;
+    case SharedDirectories:
+        Page = _instance->sharedfilesDialog;
+        break;
+    case Messages:
+        Page = _instance->messagesDialog;
+        break;
+#ifndef RS_RELEASE_VERSION
+    case Links:
+        Page = _instance->linksDialog;
+        break;
+    case Channels:
+        Page = _instance->channelFeed;
+        break;
+#endif
+    case Forums:
+        Page = _instance->forumsDialog;
+        break;
+#ifdef BLOGS
+    case Blogs:
+        Page = _instance->blogsFeed;
+        break;
+#endif
+    }
+
+    if (Page) {
+        /* Set the focus to the specified page. */
+        _instance->ui.stackPages->setCurrentPage(Page);
+    }
+}
 
 
 /***** TOOL BAR FUNCTIONS *****/
@@ -450,13 +506,9 @@ void MainWindow::showWindow(Page page)
 /** Add a Friend ShortCut */
 void MainWindow::addFriend()
 {
-    ConnectFriendWizard* connwiz = new ConnectFriendWizard(this);
+    ConnectFriendWizard connwiz (this);
 
-    // set widget to be deleted after close
-    connwiz->setAttribute( Qt::WA_DeleteOnClose, true);
-
-
-    connwiz->show();
+    connwiz.exec ();
 }
 
 /** Shows Share Manager */
@@ -468,9 +520,9 @@ void MainWindow::openShareManager()
 
 /** Shows Messages Dialog */
 void
-MainWindow::showMess(MainWindow::Page page)
+MainWindow::showMess()
 {
-  showWindow(page);
+  showWindow(MainWindow::Messages);
 }
 
 

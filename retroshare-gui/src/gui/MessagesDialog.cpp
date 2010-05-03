@@ -346,6 +346,8 @@ void MessagesDialog::replytomessage()
 	nMsgDialog->addRecipient( msgInfo.srcId ) ;
 	nMsgDialog->show();
 	nMsgDialog->activateWindow();
+
+	/* window will destroy itself! */
 }
 
 void MessagesDialog::replyallmessage()
@@ -401,6 +403,8 @@ void MessagesDialog::replyallmessage()
     
 	nMsgDialog->show();
 	nMsgDialog->activateWindow();
+
+	/* window will destroy itself! */
 }
 
 void MessagesDialog::forwardmessage()
@@ -458,6 +462,8 @@ void MessagesDialog::forwardmessage()
 	//nMsgDialog->addRecipient( msgInfo.srcId ) ;
 	nMsgDialog->show();
 	nMsgDialog->activateWindow();
+
+	/* window will destroy itself! */
 }
 
 void MessagesDialog::togglefileview()
