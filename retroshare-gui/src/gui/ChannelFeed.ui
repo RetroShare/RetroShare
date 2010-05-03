@@ -82,7 +82,7 @@
         <property name="maximumSize">
          <size>
           <width>220</width>
-          <height>16777215</height>
+          <height>38</height>
          </size>
         </property>
         <property name="baseSize">
@@ -191,35 +191,6 @@ p, li { white-space: pre-wrap; }
            </property>
           </widget>
          </item>
-         <item row="0" column="2">
-          <widget class="QPushButton" name="configPushButton">
-           <property name="styleSheet">
-            <string>QPushButton::menu-indicator {
-     subcontrol-origin: padding;
-     subcontrol-position: bottom right;
- }
-
- QPushButton::menu-indicator:pressed, QPushButton::menu-indicator:open {
-     position: relative;
-     top: 2px; left: 2px; /* shift the arrow by 2 px */
- }
-
- QPushButton:hover {
-	border: 1px solid #CCCCCC;
- }</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset>
-             <normaloff>images/settings16.png</normaloff>images/settings16.png</iconset>
-           </property>
-           <property name="flat">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
          <item row="0" column="1">
           <spacer name="horizontalSpacer_2">
            <property name="orientation">
@@ -245,6 +216,20 @@ p, li { white-space: pre-wrap; }
             </size>
            </property>
           </spacer>
+         </item>
+         <item row="0" column="2">
+          <widget class="QToolButton" name="configPushButton">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="images.qrc">
+             <normaloff>:/images/settings16.png</normaloff>:/images/settings16.png</iconset>
+           </property>
+           <property name="autoRaise">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -569,8 +554,8 @@ border-image: url(:/images/btn_26_pressed.png) 4;
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>425</width>
-             <height>325</height>
+             <width>429</width>
+             <height>331</height>
             </rect>
            </property>
            <property name="styleSheet">
