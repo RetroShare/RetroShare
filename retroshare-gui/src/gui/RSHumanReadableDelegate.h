@@ -48,6 +48,40 @@ class RSHumanReadableDelegate: public QAbstractItemDelegate
 			return QSize(50,17) ;
 		}
 		virtual void paint(QPainter *painter,const QStyleOptionViewItem & option, const QModelIndex & index) const = 0;
+
+	protected:
+		virtual void setPainterOptions(QPainter *painter,QStyleOptionViewItem& option,const QModelIndex& index) const
+		{
+			// This part of the code is copied from DLListDelegate.cpp
+			//
+			QPalette::ColorGroup cg = option.state & QStyle::State_Enabled ? QPalette::Normal : QPalette::Disabled;
+			QVariant value = index.data(Qt::TextColorRole);
+
+			if(value.isValid() && qvariant_cast<QColor>(value).isValid()) 
+				option.palette.setColor(QPalette::Text, qvariant_cast<QColor>(value));
+
+			// select pen color
+			if(option.state & QStyle::State_Selected)
+				painter->setPen(option.palette.color(cg, QPalette::HighlightedText));
+			else 
+				painter->setPen(option.palette.color(cg, QPalette::Text));
+
+			// draw the background color 
+			if(option.showDecorationSelected && (option.state & QStyle::State_Selected)) 
+			{
+				if(cg == QPalette::Normal && !(option.state & QStyle::State_Active)) 
+					cg = QPalette::Inactive;
+
+				painter->fillRect(option.rect, option.palette.brush(cg, QPalette::Highlight));
+			} 
+			else 
+			{
+				value = index.data(Qt::BackgroundColorRole);
+
+				if(value.isValid() && qvariant_cast<QColor>(value).isValid()) 
+					painter->fillRect(option.rect, qvariant_cast<QColor>(value));
+			}
+		}
 };
 
 class RSHumanReadableAgeDelegate: public RSHumanReadableDelegate
@@ -55,7 +89,10 @@ class RSHumanReadableAgeDelegate: public RSHumanReadableDelegate
 	public:
 		virtual void paint(QPainter *painter,const QStyleOptionViewItem & option, const QModelIndex & index) const
 		{
-			painter->drawText(option.rect, Qt::AlignCenter, misc::userFriendlyDuration(index.data().toLongLong())) ;
+			QStyleOptionViewItem opt(option) ;
+			setPainterOptions(painter,opt,index) ;
+
+			painter->drawText(opt.rect, Qt::AlignCenter, misc::userFriendlyDuration(index.data().toLongLong())) ;
 		}
 };
 
@@ -64,7 +101,10 @@ class RSHumanReadableSizeDelegate: public RSHumanReadableDelegate
 	public:
 		virtual void paint(QPainter *painter,const QStyleOptionViewItem & option, const QModelIndex & index) const
 		{
-			painter->drawText(option.rect, Qt::AlignRight, misc::friendlyUnit(index.data().toULongLong()));
+			QStyleOptionViewItem opt(option) ;
+			setPainterOptions(painter,opt,index) ;
+
+			painter->drawText(opt.rect, Qt::AlignRight, misc::friendlyUnit(index.data().toULongLong()));
 		}
 };
 
