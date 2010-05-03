@@ -24,6 +24,7 @@
 
 #include "PopupChatDialog.h"
 #include <gui/RetroShareLink.h>
+#include "rshare.h"
 
 #include <QTextCodec>
 #include <QTextEdit>
@@ -66,6 +67,9 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
 {
   /* Invoke Qt Designer generated QObject setup routine */
   ui.setupUi(this);
+  
+  /* Create RshareSettings object */
+  _settings = new RshareSettings();
 
   RshareSettings config;
   config.loadWidgetInformation(this);
@@ -135,7 +139,7 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   QMenu * toolmenu = new QMenu();
   toolmenu->addAction(ui.actionClear_Chat);
   toolmenu->addAction(ui.actionSave_Chat_History);
-  toolmenu->addAction(ui.action_Disable_Emoticons);
+  //toolmenu->addAction(ui.action_Disable_Emoticons);
   ui.pushtoolsButton->setMenu(toolmenu);
 
   
@@ -303,7 +307,7 @@ void PopupChatDialog::addChatMsg(ChatInfo *ci)
 std::cout << "PopupChatDialog:addChatMsg message : " << message.toStdString() << std::endl;
 #endif
 
-  if(!ui.action_Disable_Emoticons->isChecked())
+  if (_settings->value(QString::fromUtf8("Emoteicons_PrivatChat"), true).toBool())
   {
 	QHashIterator<QString, QString> i(smileys);
 	while(i.hasNext())

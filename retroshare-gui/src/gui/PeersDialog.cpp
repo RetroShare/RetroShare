@@ -174,16 +174,20 @@ PeersDialog::PeersDialog(QWidget *parent)
               QString::fromUtf8("blue"));
 
   QStringList him;
-  historyKeeper.getMessages(him, "", "THIS", 8);
-  foreach(QString mess, him)
-      ui.msgText->append(mess);
-      //setChatInfo(mess,  "green");
+  
+  if (_settings->value(QString::fromUtf8("GroupChat_History"), true).toBool())
+  {
+    historyKeeper.getMessages(him, "", "THIS", 8);
+    foreach(QString mess, him)
+    ui.msgText->append(mess);
+  }  
 
+  //setChatInfo(mess,  "green");
 
   QMenu * grpchatmenu = new QMenu();
   grpchatmenu->addAction(ui.actionClearChat);
   grpchatmenu->addAction(ui.actionSave_History);
-  grpchatmenu->addAction(ui.actionDisable_Emoticons);
+  //grpchatmenu->addAction(ui.actionDisable_Emoticons);
   ui.menuButton->setMenu(grpchatmenu);
 
   _underline = false;
@@ -1007,8 +1011,8 @@ void PeersDialog::insertChat()
                     count ++;
                 }
 
-                if(!ui.actionDisable_Emoticons->isChecked()) 
-                { 
+                if (_settings->value(QString::fromUtf8("Emoteicons_GroupChat"), true).toBool())
+                {                 
                 QHashIterator<QString, QString> i(smileys);
                 while(i.hasNext())
                 {
@@ -1017,6 +1021,7 @@ void PeersDialog::insertChat()
                             extraTxt.replace(code, "<img src=\"" + i.value() + "\" />");
                 }
                 }
+
 
                 if ((msgWidget->verticalScrollBar()->maximum() - 30) < msgWidget->verticalScrollBar()->value() ) {
                 msgWidget->append(extraTxt);

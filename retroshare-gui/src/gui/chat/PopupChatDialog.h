@@ -135,6 +135,9 @@ private:
    QStringList history;
    QString wholeChat;  
    QString fileName; 
+   
+  /** A RshareSettings object used for saving/loading settings */
+  RshareSettings* _settings;
 
   /** Qt Designer generated object */
   Ui::PopupChatDialog ui;
