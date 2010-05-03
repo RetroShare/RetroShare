@@ -43,6 +43,7 @@
 class DLListDelegate;
 class ULListDelegate;
 class QStandardItemModel;
+class DetailsDialog;
 
 class TransfersDialog : public RsAutoUpdatePage
 {
@@ -57,7 +58,9 @@ public:
     virtual void keyPressEvent(QKeyEvent *) ;
     virtual void updateDisplay() ;				// derived from RsAutoUpdateWidget
 
-    public slots:
+    static DetailsDialog *detailsdlg;
+
+public slots:
     void insertTransfers();
 
 //    void handleDownloadRequest(const QString& url);
@@ -107,6 +110,7 @@ private slots:
 //    void saveSortIndicatorUpl(int logicalIndex, Qt::SortOrder order);
 
     void showDetailsDialog();
+    void updateDetailsDialog();
 
 signals:
     void playFiles(QStringList files);

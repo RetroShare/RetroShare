@@ -36,8 +36,8 @@
 #include <QStandardItemModel>
 
 #include "util/misc.h"
-#include <rsiface/rsfiles.h>
-#include <rsiface/rstypes.h>
+
+#include "TransfersDialog.h"
 
 /** Default constructor */
 DetailsDialog::DetailsDialog(QWidget *parent, Qt::WFlags flags)
@@ -47,6 +47,8 @@ DetailsDialog::DetailsDialog(QWidget *parent, Qt::WFlags flags)
 	ui.setupUi(this);
 
  
+    setAttribute ( Qt::WA_DeleteOnClose, true );
+
     CommentsModel = new QStandardItemModel(0, 3);
     CommentsModel->setHeaderData(0, Qt::Horizontal, tr("Rating"));
     CommentsModel->setHeaderData(1, Qt::Horizontal, tr("Comments"));
@@ -63,15 +65,12 @@ DetailsDialog::DetailsDialog(QWidget *parent, Qt::WFlags flags)
 	_coheader->resizeSection ( 1, 240 );
 	_coheader->resizeSection ( 2, 100 );
 	
-	updateDisplay();
-
- 
 }
 
 /** Destructor. */
 DetailsDialog::~DetailsDialog()
 {
-   
+    TransfersDialog::detailsdlg = NULL;
 }
 
 void DetailsDialog::on_ok_dButton_clicked()
@@ -91,18 +90,17 @@ DetailsDialog::show()
 {
     ui.tabWidget->setCurrentIndex(0);
     if (!this->isVisible()) {
-    QDialog::show();
-  } else {
-    QDialog::activateWindow();
-    setWindowState(windowState() & ~Qt::WindowMinimized | Qt::WindowActive);
-    QDialog::raise();
-  }
+        QDialog::show();
+    } else {
+        QDialog::activateWindow();
+        setWindowState((windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
+        QDialog::raise();
+    }
 }
 
 void DetailsDialog::closeEvent (QCloseEvent * event)
 {
   QWidget::closeEvent(event);
-  
 }
 
 void DetailsDialog::setFileName(const QString & filename) 
@@ -113,7 +111,6 @@ void DetailsDialog::setFileName(const QString & filename)
     c = CommentsModel->rowCount();
     CommentsModel->removeRows(0,c);
     
-    {
     c = CommentsModel->rowCount();
     CommentsModel->insertRow(c);
     
@@ -125,7 +122,6 @@ void DetailsDialog::setFileName(const QString & filename)
     
     index = CommentsModel->index(c, 2);
     CommentsModel->setData(index, filename);
-    }
     
     ui.name_label_2->setText(filename);
     
@@ -171,19 +167,19 @@ void DetailsDialog::setDatarate(const double & datarate)
       ui.datarate_line->setText(temp);
 }
 
-void DetailsDialog::setCompleted(const qulonglong & completed) 
+void DetailsDialog::setCompleted(const QString & completed)
 {
-	ui.completed_line->setText(misc::friendlyUnit(completed));
+        ui.completed_line->setText(completed);
 }
 
-void DetailsDialog::setRemaining(const qulonglong & remaining) 
+void DetailsDialog::setRemaining(const QString & remaining)
 {
-	ui.remaining_line->setText(misc::friendlyUnit(remaining));
+        ui.remaining_line->setText(remaining);
 }
 
-void DetailsDialog::setDownloadtime(const qulonglong & downloadtime) 
+void DetailsDialog::setDownloadtime(const QString & downloadtime)
 {
-	ui.downloadtime_line->setText(misc::userFriendlyDuration(downloadtime));
+        ui.downloadtime_line->setText(downloadtime);
 }
 
 void DetailsDialog::setLink(const QString & link) 
@@ -191,33 +187,12 @@ void DetailsDialog::setLink(const QString & link)
 	ui.Linktext->setText(link);
 }
 
-void DetailsDialog::showEvent(QShowEvent *event)
+void DetailsDialog::setChunkSize(uint32_t chunksize)
 {
-    updateDisplay();
+    ui.chunksizelabel->setText(misc::friendlyUnit(chunksize));
 }
 
-void DetailsDialog::updateDisplay()
+void DetailsDialog::setNumberOfChunks(size_t numberofchunks)
 {
-       
-       bool ok=true ;
-       FileInfo nfo ;
-       if(!rsFiles->FileDetails(_file_hash, RS_FILE_HINTS_DOWNLOAD, nfo)) 
-       ok = false ;
-       FileChunksInfo info ;
-       if(!rsFiles->FileDownloadChunksDetails(_file_hash, info)) 
-       ok = false ;
-            
-       if(ok)
-       {
-       uint32_t blockSize = info.chunk_size ;
-
-       ui.chunksizelabel->setText(misc::friendlyUnit(blockSize));
-       ui.numberofchunkslabel->setText(QString::number(info.chunks.size()));
-
-       }
-
-            
-}            
-
-
-            
+    ui.numberofchunkslabel->setText(QString::number(numberofchunks));
+}

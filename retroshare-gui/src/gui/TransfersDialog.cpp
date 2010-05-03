@@ -74,6 +74,8 @@
 
 Q_DECLARE_METATYPE(FileProgressInfo) 
 
+DetailsDialog *TransfersDialog::detailsdlg = NULL;
+
 /** Constructor */
 TransfersDialog::TransfersDialog(QWidget *parent)
 : RsAutoUpdatePage(1000,parent)
@@ -185,7 +187,7 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     ui.fileTransferInfoWidget->setFrameStyle(QFrame::NoFrame);
     ui.fileTransferInfoWidget->setFocusPolicy(Qt::NoFocus);
 
-    QObject::connect(ui.downloadList,SIGNAL(clicked(const QModelIndex&)),this,SLOT(showFileDetails())) ;
+    QObject::connect(ui.downloadList->selectionModel(),SIGNAL(selectionChanged (const QItemSelection&, const QItemSelection&)),this,SLOT(showFileDetails())) ;
 
     TurtleRouterDialog *trdl = new TurtleRouterDialog();
     ui.tunnelInfoWidget->setWidget(trdl);
@@ -622,7 +624,14 @@ void TransfersDialog::delUploadItem(int row)
 void TransfersDialog::updateDisplay()
 {
 	insertTransfers();
+        updateDetailsDialog ();
 }
+
+static void QListDelete (const QList <QStandardItem*> &List)
+{
+    qDeleteAll (List.begin (), List.end ());
+}
+
 void TransfersDialog::insertTransfers() 
 {
 	/* get the download lists */
@@ -746,7 +755,7 @@ void TransfersDialog::insertTransfers()
 		//
 		for(int r=dlItem->rowCount()-1;r>=0;--r)
 			if(used_rows.find(r) == used_rows.end())
-				dlItem->takeRow(r) ;
+				QListDelete (dlItem->takeRow(r)) ;
 	}
 	// remove hashes that where not shown
 	//first clean the model in case some files are not download anymore
@@ -757,7 +766,7 @@ void TransfersDialog::insertTransfers()
 		std::string hash = DLListModel->item(removeIndex, ID)->data(Qt::EditRole).toString().toStdString();
 
 		if(used_hashes.find(hash) == used_hashes.end())
-			DLListModel->takeRow(removeIndex);
+			QListDelete (DLListModel->takeRow(removeIndex));
 		 else 
 			removeIndex++;
 	}
@@ -845,7 +854,7 @@ void TransfersDialog::insertTransfers()
 		std::string hash = ULListModel->item(removeIndex, UHASH)->data(Qt::EditRole).toString().toStdString();
 
 		if(used_hashes.find(hash) == used_hashes.end())
-			ULListModel->takeRow(removeIndex);
+			QListDelete (ULListModel->takeRow(removeIndex));
 		 else 
 			removeIndex++;
 	}
@@ -927,69 +936,120 @@ void TransfersDialog::copyLink ()
 
 void TransfersDialog::showDetailsDialog()
 {
-    static DetailsDialog *detailsdlg = new DetailsDialog();
-    
+    if (detailsdlg == NULL) {
+        // create window
+        detailsdlg = new DetailsDialog ();
+    }
+
+    updateDetailsDialog ();
+
+    detailsdlg->show();
+}
+
+void TransfersDialog::updateDetailsDialog()
+{
+    if (detailsdlg == NULL) {
+        return;
+    }
+
     QModelIndexList lst = ui.downloadList->selectionModel ()->selectedIndexes ();
     
     std::string file_hash ;
+    QString fhash;
+    QString fsize;
+    QString fname;
+    QString fstatus;
+    QString fpriority;
+    QString fsources;
+
+    qulonglong filesize = 0;
+    double fdatarate = 0;
+    qulonglong fcompleted = 0;
+    qulonglong fremaining = 0;
+
+    qulonglong fdownloadtime = 0;
 
     for (int i = 0; i < lst.count (); i++)
     {
         if (lst[i].column () == 0)
         {
             QModelIndex& ind = lst[i];
-            QString fhash = ind.model ()->data (ind.model ()->index (ind.row (), ID )).toString() ;
-            QString fsize = ind.model ()->data (ind.model ()->index (ind.row (), SIZE)).toString() ;
-            QString fname = ind.model ()->data (ind.model ()->index (ind.row (), NAME)).toString() ;
-            QString fstatus = ind.model ()->data (ind.model ()->index (ind.row (), STATUS)).toString() ;
-            QString fpriority = ind.model ()->data (ind.model ()->index (ind.row (), PRIORITY)).toString() ;
-            QString fsources= ind.model ()->data (ind.model ()->index (ind.row (), SOURCES)).toString() ;
-            
-            qulonglong filesize = ind.model ()->data (ind.model ()->index (ind.row (), SIZE)).toULongLong() ;
-            double fdatarate = ind.model ()->data (ind.model ()->index (ind.row (), DLSPEED)).toDouble() ;            
-            qulonglong fcompleted = ind.model ()->data (ind.model ()->index (ind.row (), COMPLETED)).toULongLong() ;
-            qulonglong fremaining = ind.model ()->data (ind.model ()->index (ind.row (), REMAINING)).toULongLong() ;
-            
-            qulonglong fdownloadtime = ind.model ()->data (ind.model ()->index (ind.row (), DOWNLOADTIME)).toULongLong() ;
-            
-            int nb_select = 0 ;
-            
-            for(int i = 0; i <= DLListModel->rowCount(); i++) 
-            if(selection->isRowSelected(i, QModelIndex())) 
-            {
-              file_hash = getID(i, DLListModel).toStdString();
-              ++nb_select ;
-            }
-            
-            detailsdlg->setFileHash(file_hash);
-            
-            // Set Details.. Window Title
-            detailsdlg->setWindowTitle(tr("Details:") + fname);
+            fhash = ind.model ()->data (ind.model ()->index (ind.row (), ID )).toString() ;
+            fsize = ind.model ()->data (ind.model ()->index (ind.row (), SIZE)).toString() ;
+            fname = ind.model ()->data (ind.model ()->index (ind.row (), NAME)).toString() ;
+            fstatus = ind.model ()->data (ind.model ()->index (ind.row (), STATUS)).toString() ;
+            fpriority = ind.model ()->data (ind.model ()->index (ind.row (), PRIORITY)).toString() ;
+            fsources= ind.model ()->data (ind.model ()->index (ind.row (), SOURCES)).toString() ;
 
-            // General GroupBox
-            detailsdlg->setHash(fhash);
-            detailsdlg->setFileName(fname);
-            detailsdlg->setSize(filesize);
-            detailsdlg->setStatus(fstatus);
-            detailsdlg->setPriority(fpriority);
-            detailsdlg->setType(QFileInfo(fname).suffix());
-            
-            // Transfer GroupBox
-            detailsdlg->setSources(fsources);
-            detailsdlg->setDatarate(fdatarate);
-            detailsdlg->setCompleted(fcompleted);
-            detailsdlg->setRemaining(fremaining);
-            
-            //Date GroupBox
-            detailsdlg->setDownloadtime(fdownloadtime);
-            
-            // retroshare link(s) Tab
-            RetroShareLink link(fname, filesize, fhash);
-            detailsdlg->setLink(link.toString());
-            
-            detailsdlg->show();
+            filesize = ind.model ()->data (ind.model ()->index (ind.row (), SIZE)).toULongLong() ;
+            fdatarate = ind.model ()->data (ind.model ()->index (ind.row (), DLSPEED)).toDouble() ;
+            fcompleted = ind.model ()->data (ind.model ()->index (ind.row (), COMPLETED)).toULongLong() ;
+            fremaining = ind.model ()->data (ind.model ()->index (ind.row (), REMAINING)).toULongLong() ;
+
+            fdownloadtime = ind.model ()->data (ind.model ()->index (ind.row (), DOWNLOADTIME)).toULongLong() ;
+
+// maybe show all links in retroshare link(s) Tab
+//            int nb_select = 0 ;
+//
+//            for(int i = 0; i <= DLListModel->rowCount(); i++)
+//            if(selection->isRowSelected(i, QModelIndex()))
+//            {
+//              file_hash = getID(i, DLListModel).toStdString();
+//              ++nb_select ;
+//            }
+
+            file_hash = getID(ind.row(), DLListModel).toStdString();
+
             break;
         }
+    }
+
+    detailsdlg->setFileHash(file_hash);
+
+    // Set Details.. Window Title
+    detailsdlg->setWindowTitle(tr("Details:") + fname);
+
+    // General GroupBox
+    detailsdlg->setHash(fhash);
+    detailsdlg->setFileName(fname);
+    detailsdlg->setSize(filesize);
+    detailsdlg->setStatus(fstatus);
+    detailsdlg->setPriority(fpriority);
+    detailsdlg->setType(QFileInfo(fname).suffix());
+
+    // Transfer GroupBox
+    detailsdlg->setSources(fsources);
+    detailsdlg->setDatarate(fdatarate);
+    if (fname.isEmpty()) {
+        detailsdlg->setCompleted(misc::friendlyUnit(-1));
+        detailsdlg->setRemaining(misc::friendlyUnit(-1));
+    } else {
+        detailsdlg->setCompleted(misc::friendlyUnit(fcompleted));
+        detailsdlg->setRemaining(misc::friendlyUnit(fremaining));
+    }
+
+    //Date GroupBox
+    if (fname.isEmpty()) {
+        detailsdlg->setDownloadtime(misc::userFriendlyDuration(-1));
+    } else {
+        detailsdlg->setDownloadtime(misc::userFriendlyDuration(fdownloadtime));
+    }
+
+    // retroshare link(s) Tab
+    if (fname.isEmpty()) {
+        detailsdlg->setLink("");
+    } else {
+        RetroShareLink link(fname, filesize, fhash);
+        detailsdlg->setLink(link.toString());
+    }
+
+    FileChunksInfo info ;
+    if (fhash.isEmpty() == false && rsFiles->FileDownloadChunksDetails(fhash.toStdString(), info)) {
+        detailsdlg->setChunkSize(info.chunk_size);
+        detailsdlg->setNumberOfChunks(info.chunks.size());
+    } else {
+        detailsdlg->setChunkSize(0);
+        detailsdlg->setNumberOfChunks(0);
     }
 }
 
@@ -1312,6 +1372,8 @@ void TransfersDialog::showFileDetails()
 	std::cout << "calling update " << std::endl ;
 	dynamic_cast<FileTransferInfoWidget*>(ui.fileTransferInfoWidget->widget())->updateDisplay() ;
 	std::cout << "done" << std::endl ;
+
+        updateDetailsDialog ();
 }
 
 double TransfersDialog::getProgress(int , QStandardItemModel *)

@@ -41,8 +41,6 @@ public:
   /** Default destructor */
   ~DetailsDialog();
   
-  void updateDisplay() ;
-
 	void setFileHash(const std::string& hash) { _file_hash = hash ; }
 
 public slots:
@@ -57,16 +55,16 @@ public slots:
 	void setPriority(const QString & priority); 
 	void setSources(const QString & sources);
 	void setDatarate(const double & datarate);
-	void setCompleted(const qulonglong & completed); 
-  void setRemaining(const qulonglong & remaining) ;
-  void setDownloadtime(const qulonglong & downloadtime); 
+        void setCompleted(const QString & completed);
+  void setRemaining(const QString & remaining) ;
+  void setDownloadtime(const QString & downloadtime);
   void setType(const QString & type); 
+  void setChunkSize(const uint32_t chunksize);
+  void setNumberOfChunks(const size_t numberofchunks);
 
  
 protected:
   void closeEvent (QCloseEvent * event);
-  
-	virtual void showEvent(QShowEvent * event);
   
 private slots:
   void on_ok_dButton_clicked();
