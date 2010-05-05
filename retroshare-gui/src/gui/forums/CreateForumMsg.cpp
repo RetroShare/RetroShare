@@ -149,9 +149,7 @@ void  CreateForumMsg::newMsg()
 		if (fi.forumFlags & RS_DISTRIB_AUTHEN_REQ)
 		{
 			ui.signBox->setChecked(true);
-			//ui.signBox->setEnabled(false);
-			// For Testing.
-			ui.signBox->setEnabled(true);
+			ui.signBox->setEnabled(false);
 		}
 		else
 		{
@@ -199,7 +197,6 @@ void  CreateForumMsg::createMsg()
 	rsForums->ForumMessageSend(msgInfo);
 
 	close();
-	return;
 }
 
 

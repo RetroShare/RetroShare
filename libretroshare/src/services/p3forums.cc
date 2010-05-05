@@ -207,6 +207,10 @@ bool p3Forums::getForumThreadMsgList(std::string fId, std::string pId, std::list
 		tis.title = fmsg->title;
 		tis.msg  = fmsg->msg;
 
+		if (fmsg->personalSignature.keyId.empty() == false) {
+			tis.msgflags |= RS_DISTRIB_AUTHEN_REQ;
+		}
+
 		msgs.push_back(tis);
 	}
 	return true;
@@ -240,6 +244,10 @@ bool p3Forums::getForumMessage(std::string fId, std::string mId, ForumMsgInfo &i
 	// should only use actual signature ....
 	//info.srcId = fmsg->srcId;
 	info.srcId = fmsg->personalSignature.keyId;
+
+	if (fmsg->personalSignature.keyId.empty() == false) {
+		info.msgflags |= RS_DISTRIB_AUTHEN_REQ;
+	}
 
 	return true;
 }
