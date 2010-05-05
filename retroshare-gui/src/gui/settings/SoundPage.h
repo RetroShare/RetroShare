@@ -47,7 +47,7 @@ public:
 private slots:
 
   void on_cmd_openFile();
-	void on_cmd_openFile2();
+        //void on_cmd_openFile2();
 	void on_cmd_openFile3();
 	void on_cmd_openFile4();
 	void on_cmd_openFile5();

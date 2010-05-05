@@ -283,6 +283,7 @@ void NotifyQt::UpdateGUI()
 					OnlineToaster * onlineToaster = new OnlineToaster();
 					onlineToaster->setMessage(QString::fromStdString(realmsg));
 					onlineToaster->show();
+					onlineToaster->play();
 				}
 					break;
 			}

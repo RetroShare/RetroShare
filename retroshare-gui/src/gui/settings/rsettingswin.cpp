@@ -107,10 +107,10 @@ RSettingsWin::initStackedWidget()
     stackedWidget->addWidget(new CryptoPage());
     stackedWidget->addWidget(new ChatPage());
     stackedWidget->addWidget(new AppearancePage());
-    #ifndef RS_RELEASE_VERSION
-    stackedWidget->addWidget(new FileAssociationsPage() );
+    //  #ifndef RS_RELEASE_VERSION
+    // stackedWidget->addWidget(new FileAssociationsPage() );
     stackedWidget->addWidget(new SoundPage() );
-    #endif
+    // #endif
 
     loadSettings();	/* load saved settings */
 
@@ -156,16 +156,16 @@ RSettingsWin::setNewPage(int page)
             text = tr("Appearance");
 	    pageicon->setPixmap(QPixmap(":/images/looknfeel.png"));
             break;
-        #ifndef RS_RELEASE_VERSION
+      /*//  #ifndef RS_RELEASE_VERSION
         case Fileassociations:
             text = tr("File Associations");
 	    pageicon->setPixmap(QPixmap(":/images/filetype-association.png"));
-            break;
+            break;*/
         case Sound:
             text = tr("Sound");
 	    pageicon->setPixmap(QPixmap(":/images/sound.png"));
             break;
-        #endif
+      //  #endif
         default:
             text = tr("UnknownPage");// impossible case
     }

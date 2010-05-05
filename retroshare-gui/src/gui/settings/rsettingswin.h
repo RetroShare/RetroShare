@@ -32,7 +32,7 @@ class RSettingsWin: public QDialog, private Ui::Settings
 
     public:
         enum PageType { General = 0, Server, Transfer,
-                        Directories, Notify, Security,  Chat, Appearance, Fileassociations, Sound };
+                        Directories, Notify, Security,  Chat, Appearance, Sound,Fileassociations };
 
         static void showYourself(QWidget *parent);
         static void postModDirectories(bool update_local);

@@ -154,6 +154,9 @@ private:
 		class QWidget *widget;
 		class QWidgetAction *widgetAction;
 		class QSpacerItem *spacerItem;
+
+		///play the sound when recv a message
+		 void playsound();
 		     
     QString fileName; 
 

@@ -21,8 +21,10 @@
 #define ONLINETOASTER_H
 
 #include "IQtToaster.h"
+#include <gui/settings/rsharesettings.h>
 
 #include <QtCore/QObject>
+#include <QSound>
 
 class QtToaster;
 
@@ -49,6 +51,7 @@ public:
 	void setPixmap(const QPixmap & pixmap);
 
 	void show();
+        void play();
 
 Q_SIGNALS:
 
@@ -61,6 +64,7 @@ private Q_SLOTS:
 	void close();
 
 private:
+        RshareSettings* _settings;
 
 	Ui::OnlineToaster * _ui;
 

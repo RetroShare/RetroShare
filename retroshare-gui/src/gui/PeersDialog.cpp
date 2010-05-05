@@ -69,6 +69,8 @@
 #include <QHashIterator>
 #include <QDesktopServices>
 
+#include <QSound>
+
 /* Images for context menu icons */
 #define IMAGE_REMOVEFRIEND       ":/images/removefriend16.png"
 #define IMAGE_EXPIORTFRIEND      ":/images/exportpeers_16x16.png"
@@ -964,6 +966,7 @@ void PeersDialog::insertChat()
 		{
 			PopupChatDialog *pcd = getPrivateChat(it->rsid, it->name, chatflags);
 			pcd->addChatMsg(&(*it));
+			playsound();
 			QApplication::alert(pcd);
 			continue;
 		}
@@ -1831,4 +1834,20 @@ void PeersDialog::setCurrentFileName(const QString &fileName)
     ui.msgText->document()->setModified(false);
 
     setWindowModified(false);
+}
+
+////play sound when recv a message
+void PeersDialog::playsound(){
+    _settings = new RshareSettings();
+        _settings->beginGroup("Sound");
+            _settings->beginGroup("SoundFilePath");
+                   QString OnlineSound= _settings->value("NewChatMessage","").toString();
+        _settings->endGroup();
+        _settings->beginGroup("Enable");
+                  bool flag= _settings->value("NewChatMessage",false).toBool();
+        _settings->endGroup();
+    _settings->endGroup();
+    if(!OnlineSound.isEmpty()&&flag)
+        if(QSound::isAvailable())
+        QSound::play(OnlineSound);
 }

@@ -35,7 +35,7 @@ SoundPage::SoundPage(QWidget * parent, Qt::WFlags flags)
   _settings = new RshareSettings();
 
         connect(ui.cmd_openFile,  SIGNAL(clicked(bool) ),this,SLOT(on_cmd_openFile()));
-	connect(ui.cmd_openFile_2,SIGNAL(clicked(bool) ),this,SLOT(on_cmd_openFile2()));
+        //connect(ui.cmd_openFile_2,SIGNAL(clicked(bool) ),this,SLOT(on_cmd_openFile2()));
 	connect(ui.cmd_openFile_3,SIGNAL(clicked(bool) ),this,SLOT(on_cmd_openFile3()));
 	connect(ui.cmd_openFile_4,SIGNAL(clicked(bool) ),this,SLOT(on_cmd_openFile4()));
 	connect(ui.cmd_openFile_5,SIGNAL(clicked(bool) ),this,SLOT(on_cmd_openFile5()));
@@ -54,7 +54,7 @@ SoundPage::save(QString &errmsg)
   _settings->beginGroup("Sound");
 		_settings->beginGroup("Enable");
 			_settings->setValue("User_go_Online",ui.checkBoxSound->isChecked());
-			_settings->setValue("User_go_Offline",ui.checkBoxSound_2->isChecked());
+                        //_settings->setValue("User_go_Offline",ui.checkBoxSound_2->isChecked());
 			_settings->setValue("FileSend_Finished",ui.checkBoxSound_3->isChecked());
 			_settings->setValue("FileRecive_Incoming",ui.checkBoxSound_4->isChecked());
 			_settings->setValue("FileRecive_Finished",ui.checkBoxSound_5->isChecked());
@@ -62,7 +62,7 @@ SoundPage::save(QString &errmsg)
 			_settings->endGroup();
 		_settings->beginGroup("SoundFilePath");
 			_settings->setValue("User_go_Online",ui.txt_SoundFile->text());
-			_settings->setValue("User_go_Offline",ui.txt_SoundFile2->text());
+                        //_settings->setValue("User_go_Offline",ui.txt_SoundFile2->text());
 			_settings->setValue("FileSend_Finished",ui.txt_SoundFile3->text());
 			_settings->setValue("FileRecive_Incoming",ui.txt_SoundFile4->text());
 			_settings->setValue("FileRecive_Finished",ui.txt_SoundFile5->text());
@@ -82,14 +82,14 @@ SoundPage::load()
 	_settings->beginGroup("Sound");
 		_settings->beginGroup("SoundFilePath");
 			ui.txt_SoundFile->setText(_settings->value("User_go_Online","").toString());
-			ui.txt_SoundFile2->setText(_settings->value("User_go_Offline","").toString());
+                        //ui.txt_SoundFile2->setText(_settings->value("User_go_Offline","").toString());
 			ui.txt_SoundFile3->setText(_settings->value("FileSend_Finished","").toString());
 			ui.txt_SoundFile4->setText(_settings->value("FileRecive_Incoming","").toString());
 			ui.txt_SoundFile5->setText(_settings->value("FileRecive_Finished","").toString());
 			ui.txt_SoundFile6->setText(_settings->value("NewChatMessage","").toString());
 
 			if(!ui.txt_SoundFile->text().isEmpty())ui.checkBoxSound->setEnabled(true);
-			if(!ui.txt_SoundFile2->text().isEmpty())ui.checkBoxSound_2->setEnabled(true);
+                        //if(!ui.txt_SoundFile2->text().isEmpty())ui.checkBoxSound_2->setEnabled(true);
 			if(!ui.txt_SoundFile3->text().isEmpty())ui.checkBoxSound_3->setEnabled(true);
 			if(!ui.txt_SoundFile4->text().isEmpty())ui.checkBoxSound_4->setEnabled(true);
 			if(!ui.txt_SoundFile5->text().isEmpty())ui.checkBoxSound_5->setEnabled(true);
@@ -99,7 +99,7 @@ SoundPage::load()
 
 		_settings->beginGroup("Enable");
 			ui.checkBoxSound->setChecked(_settings->value("User_go_Online",false).toBool());
-			ui.checkBoxSound_2->setChecked(_settings->value("User_go_Offline",false).toBool());
+                        //ui.checkBoxSound_2->setChecked(_settings->value("User_go_Offline",false).toBool());
 			ui.checkBoxSound_3->setChecked(_settings->value("FileSend_Finished",false).toBool());
 			ui.checkBoxSound_4->setChecked(_settings->value("FileRecive_Incoming",false).toBool());
 			ui.checkBoxSound_5->setChecked(_settings->value("FileRecive_Finished",false).toBool());
@@ -120,7 +120,7 @@ void SoundPage::on_cmd_openFile()
 		ui.checkBoxSound->setEnabled(true);
 }
 
-void SoundPage::on_cmd_openFile2()
+/*void SoundPage::on_cmd_openFile2()
 {
 	ui.txt_SoundFile2->setText(QFileDialog::getOpenFileName(this,"Open File", ".", "wav (*.wav)"));
 	if(ui.txt_SoundFile2->text().isEmpty()){
@@ -130,7 +130,7 @@ void SoundPage::on_cmd_openFile2()
 	else
 		ui.checkBoxSound_2->setEnabled(true);
 
-}
+}*/
 void SoundPage::on_cmd_openFile3()
 {
 	ui.txt_SoundFile3->setText(QFileDialog::getOpenFileName(this,"Open File", ".", "wav (*.wav)"));
