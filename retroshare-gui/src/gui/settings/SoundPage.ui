@@ -503,7 +503,7 @@
       <item row="0" column="0">
        <widget class="QGroupBox" name="groupBox_12">
         <property name="title">
-         <string>User</string>
+         <string>Friend</string>
         </property>
         <layout class="QGridLayout" name="gridLayout_5">
          <item row="0" column="0">
@@ -572,16 +572,6 @@
          <string>FileSend</string>
         </property>
         <layout class="QGridLayout" name="gridLayout_3">
-         <item row="0" column="0">
-          <widget class="QCheckBox" name="checkBoxSound_3">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string>Finished</string>
-           </property>
-          </widget>
-         </item>
          <item row="0" column="1">
           <widget class="QLineEdit" name="txt_SoundFile3">
            <property name="enabled">
@@ -596,11 +586,20 @@
            </property>
           </widget>
          </item>
+         <item row="0" column="0">
+          <widget class="QCheckBox" name="checkBoxSound_3">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Finished</string>
+           </property>
+          </widget>
+         </item>
         </layout>
         <zorder>txt_SoundFile3</zorder>
         <zorder>cmd_openFile_3</zorder>
         <zorder>checkBoxSound_3</zorder>
-        <zorder>groupBox_15</zorder>
        </widget>
       </item>
       <item row="3" column="0">

@@ -34,12 +34,15 @@ SoundPage::SoundPage(QWidget * parent, Qt::WFlags flags)
   /* Create RshareSettings object */
   _settings = new RshareSettings();
 
-        connect(ui.cmd_openFile,  SIGNAL(clicked(bool) ),this,SLOT(on_cmd_openFile()));
-        //connect(ui.cmd_openFile_2,SIGNAL(clicked(bool) ),this,SLOT(on_cmd_openFile2()));
+  connect(ui.cmd_openFile,  SIGNAL(clicked(bool) ),this,SLOT(on_cmd_openFile()));
+  //connect(ui.cmd_openFile_2,SIGNAL(clicked(bool) ),this,SLOT(on_cmd_openFile2()));
 	connect(ui.cmd_openFile_3,SIGNAL(clicked(bool) ),this,SLOT(on_cmd_openFile3()));
 	connect(ui.cmd_openFile_4,SIGNAL(clicked(bool) ),this,SLOT(on_cmd_openFile4()));
 	connect(ui.cmd_openFile_5,SIGNAL(clicked(bool) ),this,SLOT(on_cmd_openFile5()));
 	connect(ui.cmd_openFile_6,SIGNAL(clicked(bool) ),this,SLOT(on_cmd_openFile6()));
+	
+	ui.groupBox_13->hide();
+	ui.groupBox_14->hide();
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
