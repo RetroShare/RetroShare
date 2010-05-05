@@ -49,8 +49,11 @@ MessagesPopupDialog::MessagesPopupDialog(QWidget* parent, Qt::WFlags flags)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
-  
+
+  setAttribute ( Qt::WA_DeleteOnClose, true );
+
   messagesdlg = new MessagesDialog();
+  messagesdlg->setAttribute ( Qt::WA_DeleteOnClose, true );
 
   QVBoxLayout *layout = new QVBoxLayout(ui.centralwidget);
   layout->addWidget(messagesdlg);

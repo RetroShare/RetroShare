@@ -365,7 +365,7 @@ void NetworkDialog::insertConnect()
             std::string gpg_widget_id = (connectWidget->topLevelItem(index))->text(4).toStdString();
             RsPeerDetails detail;
             if (!rsPeers->getGPGDetails(gpg_widget_id, detail) || (detail.validLvl < 3 && !detail.accept_connection)) {
-                delete connectWidget->takeTopLevelItem(index);
+                delete (connectWidget->takeTopLevelItem(index));
             } else {
                 index++;
             }
@@ -375,7 +375,7 @@ void NetworkDialog::insertConnect()
             std::string gpg_widget_id = (ui.unvalidGPGkeyWidget->topLevelItem(index))->text(4).toStdString();
             RsPeerDetails detail;
             if (!rsPeers->getGPGDetails(gpg_widget_id, detail) || detail.validLvl >= 3 || detail.accept_connection) {
-                delete ui.unvalidGPGkeyWidget->takeTopLevelItem(index);
+                delete (ui.unvalidGPGkeyWidget->takeTopLevelItem(index));
             } else {
                 index++;
             }

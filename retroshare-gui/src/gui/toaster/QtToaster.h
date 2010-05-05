@@ -39,7 +39,8 @@ class QtToaster : public QObject {
 	Q_OBJECT
 public:
 
-	QtToaster(QWidget * toaster, QFrame * toasterWindowFrame);
+	QtToaster(QObject *master, QWidget * toaster, QFrame * toasterWindowFrame);
+	~QtToaster();
 
 	/**
 	 * Sets the time with the toaster on top.
@@ -59,6 +60,8 @@ private Q_SLOTS:
 private:
 
 	QWidget * _toaster;
+
+	QObject *_master;
 
 	QTimer * _timer;
 

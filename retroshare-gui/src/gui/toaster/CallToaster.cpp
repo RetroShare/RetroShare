@@ -62,7 +62,7 @@ CallToaster::CallToaster()
 
 	connect(_ui->closeButton, SIGNAL(clicked()), SLOT(close()));
 
-	_toaster = new QtToaster(_callToasterWidget, _ui->windowFrame);
+	_toaster = new QtToaster(this, _callToasterWidget, _ui->windowFrame);
 	_toaster->setTimeOnTop(10000);
 }
 

@@ -28,7 +28,7 @@
 
 static const unsigned TIME_TO_SHOW = 20;
 
-QtToaster::QtToaster(QWidget * toaster, QFrame * toasterWindowFrame)
+QtToaster::QtToaster(QObject *master, QWidget * toaster, QFrame * toasterWindowFrame)
 	: QObject(toaster) {
 
 	_timer = NULL;
@@ -36,12 +36,21 @@ QtToaster::QtToaster(QWidget * toaster, QFrame * toasterWindowFrame)
 
 	_toaster = toaster;
 	_toaster->setParent(_toaster->parentWidget(), Qt::ToolTip | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
-	
-	_toaster->setWindowFlags(_toaster->windowFlags() | Qt::ToolTip);
 
-	WidgetBackgroundImage::setBackgroundImage(toasterWindowFrame, ":images/toaster/toaster-backrs4.png", WidgetBackgroundImage::AdjustSize);
+	_toaster->setWindowFlags(_toaster->windowFlags() | Qt::ToolTip);
+	_toaster->setAttribute ( Qt::WA_DeleteOnClose, true );
+
+        _master = master;
+        WidgetBackgroundImage::setBackgroundImage(toasterWindowFrame, ":images/toaster/toaster-backrs4.png", WidgetBackgroundImage::AdjustSize);
 
 	_toaster->resize(184, 128);
+}
+
+QtToaster::~QtToaster()
+{
+    if (_master) {
+        delete (_master);
+    }
 }
 
 void QtToaster::setTimeOnTop(unsigned time) {
@@ -53,6 +62,8 @@ void QtToaster::close() {
 		_timer->stop();
 	}
 	_toaster->close();
+
+	delete (this);
 }
 
 void QtToaster::show() {

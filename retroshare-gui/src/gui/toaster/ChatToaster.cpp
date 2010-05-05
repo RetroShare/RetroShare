@@ -47,7 +47,7 @@ ChatToaster::ChatToaster()
 
 	connect(_ui->closeButton, SIGNAL(clicked()), SLOT(close()));
 
-	_toaster = new QtToaster(_chatToasterWidget, _ui->windowFrame);
+	_toaster = new QtToaster(this, _chatToasterWidget, _ui->windowFrame);
 	_toaster->setTimeOnTop(5000);
 }
 

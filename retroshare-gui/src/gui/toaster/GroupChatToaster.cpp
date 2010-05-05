@@ -37,7 +37,7 @@ GroupChatToaster::GroupChatToaster()
 
 	connect(_ui->closeButton, SIGNAL(clicked()), SLOT(close()));
 
-	_toaster = new QtToaster(_GroupChatToasterWidget, _ui->windowFrame);
+	_toaster = new QtToaster(this, _GroupChatToasterWidget, _ui->windowFrame);
 	_toaster->setTimeOnTop(5000);
 }
 

@@ -24,7 +24,10 @@ MessageToaster::MessageToaster( QWidget * parent, Qt::WFlags f)
 		: QWidget(parent, f)
 {
 	setupUi(this);
-	// set window flags
+
+	setAttribute ( Qt::WA_DeleteOnClose, true );
+
+        // set window flags
 	QWidget::setWindowFlags(Qt::ToolTip | Qt::WindowStaysOnTopHint);
 	// init the timer
 	displayTimer = new QTimer(this);
@@ -45,7 +48,10 @@ MessageToaster::~MessageToaster()
 
 void MessageToaster::displayTimerOnTimer()
 {
-	if (!isVisible()) return;
+	if (!isVisible()) {
+		close();
+		return;
+	}
 
 	QDesktopWidget *desktop = QApplication::desktop();
 	QRect availableGeometry  = desktop->availableGeometry(this);
@@ -68,6 +74,7 @@ void MessageToaster::displayTimerOnTimer()
 			displayState = dsWaiting;
 			displayTimer->stop();
 			hide();
+			close();
 		}
 	else if (displayState == dsWaiting)
 	{
@@ -97,8 +104,10 @@ void MessageToaster::closeClicked()
 
 void MessageToaster::openmessageClicked()
 {
-	  static MessagesPopupDialog *msgdialog = new MessagesPopupDialog();
+    MessagesPopupDialog *msgdialog = new MessagesPopupDialog();
     msgdialog->show();
+
+    /* window will destroy itself! */
 }
 
 void MessageToaster::setMessage(const QString & message) 

@@ -37,7 +37,7 @@ OnlineToaster::OnlineToaster()
 
 	connect(_ui->closeButton, SIGNAL(clicked()), SLOT(close()));
 
-	_toaster = new QtToaster(_onlineToasterWidget, _ui->windowFrame);
+	_toaster = new QtToaster(this, _onlineToasterWidget, _ui->windowFrame);
 	_toaster->setTimeOnTop(5000);
 }
 
