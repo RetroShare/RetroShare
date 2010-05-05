@@ -40,6 +40,8 @@ SubDestItem::SubDestItem(uint32_t type, std::string groupId, std::string inReply
   /* Invoke the Qt Designer generated object setup routine */
   setupUi(this);
 
+  setAttribute ( Qt::WA_DeleteOnClose, true );
+
   connect( cancelButton, SIGNAL( clicked( void ) ), this, SLOT( cancel ( void ) ) );
 
   updateItemStatic();

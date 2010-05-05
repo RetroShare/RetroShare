@@ -41,6 +41,8 @@ MsgItem::MsgItem(FeedHolder *parent, uint32_t feedId, std::string msgId, bool is
   /* Invoke the Qt Designer generated object setup routine */
   setupUi(this);
 
+  setAttribute ( Qt::WA_DeleteOnClose, true );
+
   /* general ones */
   connect( expandButton, SIGNAL( clicked( void ) ), this, SLOT( toggle ( void ) ) );
   connect( clearButton, SIGNAL( clicked( void ) ), this, SLOT( removeItem ( void ) ) );

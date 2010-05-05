@@ -65,7 +65,9 @@ CreateBlogMsg::CreateBlogMsg(std::string cId ,QWidget* parent, Qt::WFlags flags)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
-	
+
+	setAttribute ( Qt::WA_DeleteOnClose, true );
+
 	setupFileActions();
   setupEditActions();
   setupViewActions();

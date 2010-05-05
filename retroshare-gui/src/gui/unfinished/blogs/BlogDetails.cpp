@@ -41,6 +41,8 @@ BlogDetails::BlogDetails(QWidget *parent, Qt::WFlags flags)
   /* Invoke Qt Designer generated QObject setup routine */
   ui.setupUi(this);
 
+  setAttribute ( Qt::WA_DeleteOnClose, true );
+
   connect(ui.applyButton, SIGNAL(clicked()), this, SLOT(applyDialog()));
   connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(closeinfodlg()));
 

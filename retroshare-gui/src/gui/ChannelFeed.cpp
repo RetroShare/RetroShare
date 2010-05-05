@@ -134,6 +134,12 @@ ChannelFeed::ChannelFeed(QWidget *parent)
 
 void ChannelFeed::channelListCustomPopupMenu( QPoint point )
 {
+      ChannelInfo ci;
+      if (!rsChannels->getChannelInfo(mChannelId, ci))
+      {
+            return;
+      }
+
       QMenu contextMnu( this );
       QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
       
@@ -150,13 +156,7 @@ void ChannelFeed::channelListCustomPopupMenu( QPoint point )
       connect( channeldetailsAct , SIGNAL( triggered() ), this, SLOT( showChannelDetails() ) );
 
       contextMnu.clear();
-      
-      ChannelInfo ci;
-      if (!rsChannels->getChannelInfo(mChannelId, ci))
-      {
-      return;
-      }
-                        
+
       if (ci.channelFlags & RS_DISTRIB_PUBLISH)
       {
         contextMnu.addAction( postchannelAct );
@@ -183,14 +183,14 @@ void ChannelFeed::channelListCustomPopupMenu( QPoint point )
 
 void ChannelFeed::createChannel()
 {
-	CreateChannel *cf = new CreateChannel(NULL);
+	CreateChannel cf (this);
 
-	cf->setWindowTitle(tr("Create a new Channel"));
-	cf->ui.labelicon->setPixmap(QPixmap(":/images/add_channel64.png"));
+	cf.setWindowTitle(tr("Create a new Channel"));
+	cf.ui.labelicon->setPixmap(QPixmap(":/images/add_channel64.png"));
 	QString titleStr("<span style=\"font-size:24pt; font-weight:500;"
                                "color:#32CD32;\">%1</span>");
-	cf->ui.textlabelcreatforums->setText( titleStr.arg( tr("New Channel") ) ) ;
-	cf->show();
+	cf.ui.textlabelcreatforums->setText( titleStr.arg( tr("New Channel") ) ) ;
+	cf.exec();
 }
 
 void ChannelFeed::channelSelection()
@@ -231,7 +231,8 @@ void ChannelFeed::openMsg(uint32_t type, std::string grpId, std::string inReplyT
 	msgDialog->addDestination(type, grpId, inReplyTo);
 
 	msgDialog->show();
-	return;
+
+	/* window will destroy itself! */
 }
 
 void ChannelFeed::createMsg()
@@ -244,7 +245,8 @@ void ChannelFeed::createMsg()
 	CreateChannelMsg *msgDialog = new CreateChannelMsg(mChannelId);
 
 	msgDialog->show();
-	return;
+
+	/* window will destroy itself! */
 }
 
 void ChannelFeed::selectChannel( std::string cId)
@@ -752,9 +754,8 @@ void ChannelFeed::showChannelDetails()
 	if (!rsChannels)
 		return;
 
-  static ChannelDetails *channelui = new ChannelDetails();
+	ChannelDetails channelui (this);
 
-	channelui->showDetails(mChannelId);
-	channelui->show();
-
+	channelui.showDetails(mChannelId);
+	channelui.exec();
 }

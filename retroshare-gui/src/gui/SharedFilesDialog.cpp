@@ -417,6 +417,8 @@ void SharedFilesDialog::sendLinkToCloud()
 
 	nAddLinksDialog->addLinkComment();
 	nAddLinksDialog->close();
+
+	/* window will destroy itself! */
 }
 
 void SharedFilesDialog::addLinkToCloud()
@@ -426,6 +428,8 @@ void SharedFilesDialog::addLinkToCloud()
 	AddLinksDialog *nAddLinksDialog = new AddLinksDialog(QApplication::clipboard()->text());
 
 	nAddLinksDialog->show();
+
+	/* window will destroy itself! */
 }
 
 void SharedFilesDialog::playselectedfiles()

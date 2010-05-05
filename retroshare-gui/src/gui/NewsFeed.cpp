@@ -385,6 +385,10 @@ void NewsFeed::deleteFeedItem(QWidget *item, uint32_t type)
 	std::cerr << "NewsFeed::deleteFeedItem()";
 	std::cerr << std::endl;
 #endif
+
+        if (item) {
+            item->close ();
+        }
 }
 
 void NewsFeed::openChat(std::string peerId)
@@ -408,6 +412,7 @@ void NewsFeed::openMsg(uint32_t type, std::string grpId, std::string inReplyTo)
 
 	msgDialog->show();
 
+	/* window will destroy itself! */
 }
 
 

@@ -42,6 +42,8 @@ GeneralMsgDialog::GeneralMsgDialog(QWidget *parent, uint32_t type)
 	/* Invoke the Qt Designer generated object setup routine */
 	setupUi(this);
 
+	setAttribute ( Qt::WA_DeleteOnClose, true );
+
         connect(addButton, SIGNAL(clicked()), this, SLOT(newDestination()));
         connect(typeComboBox, SIGNAL(currentIndexChanged( int )), this, SLOT(updateGroupId()));
 

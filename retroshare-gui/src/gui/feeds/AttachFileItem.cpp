@@ -69,6 +69,8 @@ AttachFileItem::AttachFileItem(std::string hash, std::string name, uint64_t size
   	/* Invoke the Qt Designer generated object setup routine */
   	setupUi(this);
 
+	setAttribute ( Qt::WA_DeleteOnClose, true );
+
 	mMode = flags & AFI_MASK_STATE;
 	mType = flags & AFI_MASK_TYPE;
 

@@ -40,6 +40,8 @@ AddLinksDialog::AddLinksDialog(QString url, QWidget *parent)
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
 
+  setAttribute ( Qt::WA_DeleteOnClose, true );
+
   /* add button */
   connect(ui.addLinkButton, SIGNAL(clicked()), this, SLOT(addLinkComment()));
   connect(ui.closepushButton, SIGNAL(clicked()), this, SLOT(close()));

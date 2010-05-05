@@ -72,6 +72,8 @@ SubFileItem::SubFileItem(std::string hash, std::string name, uint64_t size,
   	/* Invoke the Qt Designer generated object setup routine */
   	setupUi(this);
 
+	setAttribute ( Qt::WA_DeleteOnClose, true );
+
 	mMode = flags & SFI_MASK_STATE;
 	mType = flags & SFI_MASK_TYPE;
 

@@ -119,6 +119,12 @@ BlogsDialog::BlogsDialog(QWidget *parent)
 
 void BlogsDialog::blogListCustomPopupMenu( QPoint point )
 {
+      BlogInfo bi;
+      if (!rsBlogs->getBlogInfo(mBlogId, bi))
+      {
+      return;
+      }
+
       QMenu contextMnu( this );
       QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
       
@@ -135,13 +141,7 @@ void BlogsDialog::blogListCustomPopupMenu( QPoint point )
       connect( blogdetailsAct , SIGNAL( triggered() ), this, SLOT( showBlogDetails() ) );
       
       contextMnu.clear();
-      
-      BlogInfo bi;
-      if (!rsBlogs->getBlogInfo(mBlogId, bi))
-      {
-      return;
-      }
-                        
+
       if (bi.blogFlags & RS_DISTRIB_PUBLISH)
       {
         contextMnu.addAction( createblogpostAct );
@@ -168,10 +168,10 @@ void BlogsDialog::blogListCustomPopupMenu( QPoint point )
 
 void BlogsDialog::createBlog()
 {
-	CreateBlog *cf = new CreateBlog(NULL, false);
+	CreateBlog cf (this, false);
 
-	cf->setWindowTitle(tr("Create a new Blog"));
-	cf->show();
+	cf.setWindowTitle(tr("Create a new Blog"));
+	cf.exec();
 }
 
 void BlogsDialog::blogSelection()
@@ -211,7 +211,8 @@ void BlogsDialog::openMsg(uint32_t type, std::string grpId, std::string inReplyT
 	msgDialog->addDestination(type, grpId, inReplyTo);
 
 	msgDialog->show();
-	return;
+
+	/* window will destroy itself! */
 }
 
 void BlogsDialog::createMsg()
@@ -224,7 +225,8 @@ void BlogsDialog::createMsg()
 	CreateBlogMsg *msgDialog = new CreateBlogMsg(mBlogId);
 
 	msgDialog->show();
-	return;
+
+	/* window will destroy itself! */
 }
 
 void BlogsDialog::selectBlog( std::string bId)
@@ -605,9 +607,10 @@ void BlogsDialog::showBlogDetails()
 	if (!rsBlogs)
 		return;
 
-  static BlogDetails *blogui = new BlogDetails();
+	BlogDetails *blogui = new BlogDetails();
 
 	blogui->showDetails(mBlogId);
 	blogui->show();
 
+	/* window will destroy itself! */
 }

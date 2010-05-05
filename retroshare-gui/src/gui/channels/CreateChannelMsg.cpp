@@ -40,6 +40,8 @@ CreateChannelMsg::CreateChannelMsg(std::string cId)
 	/* Invoke the Qt Designer generated object setup routine */
 	setupUi(this);
 
+	setAttribute ( Qt::WA_DeleteOnClose, true );
+
 	connect(buttonBox, SIGNAL(accepted()), this, SLOT(sendMsg()));
   connect(buttonBox, SIGNAL(rejected()), this, SLOT(cancelMsg()));
 
