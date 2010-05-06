@@ -26,6 +26,7 @@
 #include <QObject>
 #include <QModelIndex>
 #include <QVariant>
+#include <stdint.h>
 
 #include "ui_DetailsDialog.h"
 
