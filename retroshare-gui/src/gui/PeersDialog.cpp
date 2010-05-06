@@ -783,8 +783,13 @@ void PeersDialog::removefriend()
 
 	if (rsPeers)
 	{
-		rsPeers->removeFriend(getPeerRsCertId(c));
-		emit friendsUpdated() ;
+		if ((QMessageBox::question(this, tr("RetroShare"),tr("Do you want to remove this Friend?"),QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
+		{
+      rsPeers->removeFriend(getPeerRsCertId(c));
+      emit friendsUpdated() ;
+		}
+		else
+		return;
 	}
 }
 
