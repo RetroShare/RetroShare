@@ -173,6 +173,7 @@ int p3disc::handleIncoming()
 		}
                 else if (NULL != (dta = dynamic_cast<RsDiscHeartbeat *> (item))) {
                         recvHeartbeatMsg(dta);
+                        delete item;
                         return 1;
                 }
 		delete item;
