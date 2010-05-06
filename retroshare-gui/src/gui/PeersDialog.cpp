@@ -169,7 +169,7 @@ PeersDialog::PeersDialog(QWidget *parent)
   pxm.fill(_currentColor);
   ui.colorChatButton->setIcon(pxm);
 
-  mCurrentFont = QFont("Comic Sans MS", 12);
+  mCurrentFont = QFont("Comic Sans MS", 11);
   ui.lineEdit->setFont(mCurrentFont);
 
   setChatInfo(tr("Welcome to RetroShare's group chat."),
