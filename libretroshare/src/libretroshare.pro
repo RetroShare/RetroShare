@@ -1,5 +1,6 @@
 TEMPLATE = lib
 CONFIG += staticlib release
+CONFIG -= qt
 TARGET = retroshare
 
 profiling {
@@ -33,8 +34,16 @@ linux-* {
 	INCLUDEPATH += . $${SSL_DIR} $${UPNP_DIR}
 
 	#gpg files
-	HEADERS += /usr/include/gpg-error.h
-	HEADERS += /usr/include/gpgme.h
+	system(which gpg-error-config >/dev/null 2>&1) {
+		INCLUDEPATH += $$system(gpg-error-config --cflags | sed -e "s/-I//g")
+	} else {
+		message(Could not find gpg-error-config on your system, assuming gpg-error.h is in /usr/include)
+	}
+	system(which gpgme-config >/dev/null 2>&1) {
+		INCLUDEPATH += $$system(gpgme-config --cflags | sed -e "s/-I//g")
+	} else {
+		message(Could not find gpgme-config on your system, assuming gpgme.h is in /usr/include)
+	}
 
 	#libupnp implementation files
 	HEADERS += upnp/UPnPBase.h
