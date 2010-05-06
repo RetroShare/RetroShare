@@ -105,6 +105,11 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 
     ui.downloadList->setAutoScroll(false) ;
 
+    // workaround for Qt bug, should be solved in next Qt release 4.7.0
+    // http://bugreports.qt.nokia.com/browse/QTBUG-8270
+    QShortcut *Shortcut = new QShortcut(QKeySequence (Qt::Key_Delete), ui.downloadList, 0, 0, Qt::WidgetShortcut);
+    connect(Shortcut, SIGNAL(activated()), this, SLOT( cancel ()));
+
   	//Selection Setup
     selection = ui.downloadList->selectionModel();
 
@@ -257,16 +262,17 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 	connect( playAct , SIGNAL( triggered() ), this, SLOT( openTransfer() ) );
 }
 
-void TransfersDialog::keyPressEvent(QKeyEvent *e)
-{
-	if(e->key() == Qt::Key_Delete)
-	{
-		cancel() ;
-		e->accept() ;
-	}
-	else
-		RsAutoUpdatePage::keyPressEvent(e) ;
-}
+// replaced by shortcut
+//void TransfersDialog::keyPressEvent(QKeyEvent *e)
+//{
+//	if(e->key() == Qt::Key_Delete)
+//	{
+//		cancel() ;
+//		e->accept() ;
+//	}
+//	else
+//		RsAutoUpdatePage::keyPressEvent(e) ;
+//}
 
 void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 {
@@ -877,18 +883,25 @@ QString TransfersDialog::getPeerName(const std::string& id) const
 
 void TransfersDialog::cancel()
 {
-	QString queryWrn2;
-	queryWrn2.clear();
-	queryWrn2.append(tr("Are you sure that you want to cancel and delete these files?"));
+    bool first = true;
+    for(int i = 0; i < DLListModel->rowCount(); i++) {
+        if(selection->isRowSelected(i, QModelIndex())) {
+            if (first) {
+                first = false;
+                QString queryWrn2;
+                queryWrn2.clear();
+                queryWrn2.append(tr("Are you sure that you want to cancel and delete these files?"));
 
-	if ((QMessageBox::question(this, tr("RetroShare"),queryWrn2,QMessageBox::Ok|QMessageBox::No, QMessageBox::Ok))== QMessageBox::Ok)
-		for(int i = 0; i <= DLListModel->rowCount(); i++)
-			if(selection->isRowSelected(i, QModelIndex()))
-			{
-				std::string id = getID(i, DLListModel).toStdString();
+                if ((QMessageBox::question(this, tr("RetroShare"),queryWrn2,QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes)) == QMessageBox::No) {
+                    break;
+                }
+            }
 
-				rsFiles->FileCancel(id); /* hash */
-			}
+            std::string id = getID(i, DLListModel).toStdString();
+
+            rsFiles->FileCancel(id); /* hash */
+        }
+    }
 }
 
 //void TransfersDialog::handleDownloadRequest(const QString& url)

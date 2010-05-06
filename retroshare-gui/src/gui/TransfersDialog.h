@@ -55,7 +55,8 @@ public:
     /** Default Destructor */
     ~TransfersDialog();
 
-    virtual void keyPressEvent(QKeyEvent *) ;
+// replaced by shortcut
+//    virtual void keyPressEvent(QKeyEvent *) ;
     virtual void updateDisplay() ;				// derived from RsAutoUpdateWidget
 
     static DetailsDialog *detailsdlg;

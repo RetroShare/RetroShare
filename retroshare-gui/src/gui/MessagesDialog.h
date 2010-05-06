@@ -45,7 +45,8 @@ public:
   ~MessagesDialog();
 
   void insertMsgTxtAndFiles(QModelIndex index = QModelIndex());
-  virtual void keyPressEvent(QKeyEvent *) ;
+// replaced by shortcut
+//  virtual void keyPressEvent(QKeyEvent *) ;
  void updateMessageSummaryList();
 
 public slots:
@@ -134,7 +135,7 @@ private:
   // timer and index for showing message
   QTimer *timer;
   QModelIndex timerIndex;
-  
+
   /** Qt Designer generated object */
   Ui::MessagesDialog ui;
 };

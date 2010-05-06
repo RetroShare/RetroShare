@@ -55,7 +55,8 @@ public:
 
 		QPixmap picture;
 		virtual void updateDisplay() ;	// overloaded from RsAutoUpdatePage
-    virtual void keyPressEvent(QKeyEvent *) ;
+// replaced by shortcut
+//		virtual void keyPressEvent(QKeyEvent *) ;
 
 public slots:
 

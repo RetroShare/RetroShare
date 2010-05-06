@@ -220,6 +220,11 @@ PeersDialog::PeersDialog(QWidget *parent)
   loadmypersonalstatus();
   loadEmoticonsgroupchat();
 
+  // workaround for Qt bug, should be solved in next Qt release 4.7.0
+  // http://bugreports.qt.nokia.com/browse/QTBUG-8270
+  QShortcut *Shortcut = new QShortcut(QKeySequence (Qt::Key_Delete), ui.peertreeWidget, 0, 0, Qt::WidgetShortcut);
+  connect(Shortcut, SIGNAL(activated()), this, SLOT( removefriend ()));
+
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
@@ -334,16 +339,17 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
       contextMnu.exec( mevent->globalPos() );
 }
 
-void PeersDialog::keyPressEvent(QKeyEvent *e)
-{
-	if(e->key() == Qt::Key_Delete)
-	{
-		removefriend() ;
-		e->accept() ;
-	}
-	else
-		MainPage::keyPressEvent(e) ;
-}
+// replaced by shortcut
+//void PeersDialog::keyPressEvent(QKeyEvent *e)
+//{
+//	if(e->key() == Qt::Key_Delete)
+//	{
+//		removefriend() ;
+//		e->accept() ;
+//	}
+//	else
+//		MainPage::keyPressEvent(e) ;
+//}
 
 void PeersDialog::updateDisplay()
 {

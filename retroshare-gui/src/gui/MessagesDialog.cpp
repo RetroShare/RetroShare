@@ -130,6 +130,11 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     // connect after setting model
     connect( ui.messagestreeView->selectionModel(), SIGNAL(currentChanged ( QModelIndex, QModelIndex ) ) , this, SLOT( currentChanged( const QModelIndex & ) ) );
 
+    // workaround for Qt bug, should be solved in next Qt release 4.7.0
+    // http://bugreports.qt.nokia.com/browse/QTBUG-8270
+    QShortcut *Shortcut = new QShortcut(QKeySequence (Qt::Key_Delete), ui.messagestreeView, 0, 0, Qt::WidgetShortcut);
+    connect(Shortcut, SIGNAL(activated()), this, SLOT( removemessage ()));
+
   /* hide the Tree +/- */
   ui.msgList->setRootIsDecorated( false );
   ui.msgList->setSelectionMode( QAbstractItemView::ExtendedSelection );
@@ -199,16 +204,17 @@ MessagesDialog::~MessagesDialog()
     delete(timer);
 }
 
-void MessagesDialog::keyPressEvent(QKeyEvent *e)
-{
-	if(e->key() == Qt::Key_Delete)
-	{
-		removemessage() ;
-		e->accept() ;
-	}
-	else
-		MainPage::keyPressEvent(e) ;
-}
+// replaced by shortcut
+//void MessagesDialog::keyPressEvent(QKeyEvent *e)
+//{
+//	if(e->key() == Qt::Key_Delete)
+//	{
+//		removemessage() ;
+//		e->accept() ;
+//	}
+//	else
+//		MainPage::keyPressEvent(e) ;
+//}
 
 void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint point )
 {
