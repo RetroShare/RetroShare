@@ -79,7 +79,9 @@ MessagesDialog::MessagesDialog(QWidget *parent)
   connect(ui.forwardmessageButton, SIGNAL(clicked()), this, SLOT(forwardmessage()));
 
   connect(ui.actionPrint, SIGNAL(triggered()), this, SLOT(print()));
+  ui.actionPrint->setDisabled(true);
   connect(ui.actionPrintPreview, SIGNAL(triggered()), this, SLOT(printpreview()));
+  ui.actionPrintPreview->setDisabled(true);
   connect(ui.printbutton, SIGNAL(clicked()), this, SLOT(print()));
 
 
@@ -93,7 +95,8 @@ MessagesDialog::MessagesDialog(QWidget *parent)
   connect(ui.actionTextUnderIcon, SIGNAL(triggered()), this, SLOT(buttonstextundericon()));
   
   connect(ui.actionSave_as, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
-  
+  ui.actionSave_as->setDisabled(true);
+
   connect( ui.clearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
   connect( ui.filterPatternLineEdit, SIGNAL( textChanged(const QString &)), this, SLOT(toggleclearButton()));
   
@@ -120,6 +123,8 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     proxyModel = new QSortFilterProxyModel(this);
     proxyModel->setDynamicSortFilter(true);
     proxyModel->setSourceModel(MessagesModel);
+    proxyModel->setSortRole(Qt::UserRole);
+    proxyModel->sort (3, Qt::DescendingOrder);
     ui.messagestreeView->setModel(proxyModel);
     ui.messagestreeView->setSelectionBehavior(QTreeView::SelectRows);
     
@@ -216,82 +221,102 @@ MessagesDialog::~MessagesDialog()
 //		MainPage::keyPressEvent(e) ;
 //}
 
+int MessagesDialog::getSelectedMsgCount ()
+{
+    //To check if the selection has more than one row.
+    QList<QModelIndex> selectedIndexList = ui.messagestreeView->selectionModel() -> selectedIndexes ();
+    QList<int> rowList;
+    for(QList<QModelIndex>::iterator it = selectedIndexList.begin(); it != selectedIndexList.end(); it++)
+    {
+        int row = it->row();
+        if (rowList.contains(row) == false)
+        {
+            rowList.append(row);
+        }
+    }
+
+    return rowList.size();
+}
+
 void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint point )
 {
-      QMenu contextMnu( this );
-      QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
+    QMenu contextMnu( this );
+    QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
 
-      contextMnu.clear();
+    contextMnu.clear();
 
-      newmsgAct = new QAction(QIcon(IMAGE_MESSAGE), tr( "New Message" ), this );
-      connect( newmsgAct , SIGNAL( triggered() ), this, SLOT( newmessage() ) );
-      
-	//To check if the selection has more than one row.
-		QList<QModelIndex> selectedIndexList = ui.messagestreeView->selectionModel() -> selectedIndexes ();
-		QList<int> rowList;
-		for(QList<QModelIndex>::iterator it = selectedIndexList.begin(); it != selectedIndexList.end(); it++)
-		{
-			
-			int row = it->row();
-			if (rowList.contains(row) == false)
-			{
-				rowList.append(row);
-			}
-		}
-		
-		int nn = rowList.size();
-		if(nn > 1)
-		{
-			removemsgAct = new QAction(QIcon(IMAGE_MESSAGEREMOVE), tr( "Remove Messages" ), this );
-			connect( removemsgAct , SIGNAL( triggered() ), this, SLOT( removemessage() ) );
-			contextMnu.addAction( removemsgAct);
-		}
-		else if(nn == 1)
-		{
-			replytomsgAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr( "Reply to Message" ), this );
-			connect( replytomsgAct , SIGNAL( triggered() ), this, SLOT( replytomessage() ) );
-			contextMnu.addAction( replytomsgAct);
+    /** Defines the actions for the context menu */
+    QAction* newmsgAct = NULL;
+    QAction* replytomsgAct = NULL;
+    QAction* replyallmsgAct = NULL;
+    QAction* forwardmsgAct = NULL;
+    QAction* removemsgAct = NULL;
 
-			replyallmsgAct = new QAction(QIcon(IMAGE_MESSAGEREPLYALL), tr( "Reply to All" ), this );
-			connect( replyallmsgAct , SIGNAL( triggered() ), this, SLOT( replyallmessage() ) );
-			contextMnu.addAction( replyallmsgAct);
+    replytomsgAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr( "Reply to Message" ), this );
+    connect( replytomsgAct , SIGNAL( triggered() ), this, SLOT( replytomessage() ) );
+    contextMnu.addAction( replytomsgAct);
 
-			forwardmsgAct = new QAction(QIcon(IMAGE_MESSAGEFORWARD), tr( "Forward Message" ), this );
-			connect( forwardmsgAct , SIGNAL( triggered() ), this, SLOT( forwardmessage() ) );
-			contextMnu.addAction( forwardmsgAct);
+    replyallmsgAct = new QAction(QIcon(IMAGE_MESSAGEREPLYALL), tr( "Reply to All" ), this );
+    connect( replyallmsgAct , SIGNAL( triggered() ), this, SLOT( replyallmessage() ) );
+    contextMnu.addAction( replyallmsgAct);
 
-			contextMnu.addSeparator(); 
+    forwardmsgAct = new QAction(QIcon(IMAGE_MESSAGEFORWARD), tr( "Forward Message" ), this );
+    connect( forwardmsgAct , SIGNAL( triggered() ), this, SLOT( forwardmessage() ) );
+    contextMnu.addAction( forwardmsgAct);
 
-			removemsgAct = new QAction(QIcon(IMAGE_MESSAGEREMOVE), tr( "Remove Message" ), this );
-			connect( removemsgAct , SIGNAL( triggered() ), this, SLOT( removemessage() ) );
-			contextMnu.addAction( removemsgAct);
-		}
-      contextMnu.addAction( ui.actionSave_as);
-		  contextMnu.addAction( ui.actionPrintPreview);
-      contextMnu.addAction( ui.actionPrint);
-      contextMnu.addSeparator(); 
-      contextMnu.addAction( newmsgAct);
-      contextMnu.exec( mevent->globalPos() );
+    contextMnu.addSeparator();
+
+    int nCount = getSelectedMsgCount ();
+
+    if (nCount > 1) {
+        removemsgAct = new QAction(QIcon(IMAGE_MESSAGEREMOVE), tr( "Remove Messages" ), this );
+    } else {
+        removemsgAct = new QAction(QIcon(IMAGE_MESSAGEREMOVE), tr( "Remove Message" ), this );
+    }
+
+    connect( removemsgAct , SIGNAL( triggered() ), this, SLOT( removemessage() ) );
+    contextMnu.addAction( removemsgAct);
+
+    contextMnu.addAction( ui.actionSave_as);
+    contextMnu.addAction( ui.actionPrintPreview);
+    contextMnu.addAction( ui.actionPrint);
+    contextMnu.addSeparator();
+
+    newmsgAct = new QAction(QIcon(IMAGE_MESSAGE), tr( "New Message" ), this );
+    connect( newmsgAct , SIGNAL( triggered() ), this, SLOT( newmessage() ) );
+    contextMnu.addAction( newmsgAct);
+
+    if (nCount != 1) {
+        replytomsgAct->setDisabled(true);
+        replyallmsgAct->setDisabled(true);
+        forwardmsgAct->setDisabled(true);
+    }
+    if (nCount == 0) {
+        removemsgAct->setDisabled(true);
+    }
+
+    contextMnu.exec( mevent->globalPos() );
 }
 
 
 void MessagesDialog::msgfilelistWidgetCostumPopupMenu( QPoint point )
 {
+    QAction* getRecAct = NULL;
+    QAction* getAllRecAct = NULL;
 
-      QMenu contextMnu( this );
-      QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
+    QMenu contextMnu( this );
+    QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
 
-      getRecAct = new QAction(QIcon(IMAGE_DOWNLOAD), tr( "Download" ), this );
-      connect( getRecAct , SIGNAL( triggered() ), this, SLOT( getcurrentrecommended() ) );
+    getRecAct = new QAction(QIcon(IMAGE_DOWNLOAD), tr( "Download" ), this );
+    connect( getRecAct , SIGNAL( triggered() ), this, SLOT( getcurrentrecommended() ) );
       
-//     getAllRecAct = new QAction(QIcon(IMAGE_DOWNLOADALL), tr( "Download" ), this );
-//     connect( getAllRecAct , SIGNAL( triggered() ), this, SLOT( getallrecommended() ) );
+//   getAllRecAct = new QAction(QIcon(IMAGE_DOWNLOADALL), tr( "Download" ), this );
+//   connect( getAllRecAct , SIGNAL( triggered() ), this, SLOT( getallrecommended() ) );
 
-
-      contextMnu.clear();
-      contextMnu.addAction( getRecAct);
-//      contextMnu.addAction( getAllRecAct);
-      contextMnu.exec( mevent->globalPos() );
+    contextMnu.clear();
+    contextMnu.addAction( getRecAct);
+//    contextMnu.addAction( getAllRecAct);
+    contextMnu.exec( mevent->globalPos() );
 }
 
 void MessagesDialog::newmessage()
@@ -572,6 +597,8 @@ void MessagesDialog::getallrecommended()
 
 void MessagesDialog::changeBox(int)
 {
+	MessagesModel->removeRows (0, MessagesModel->rowCount());
+
 	insertMessages();
 	insertMsgTxtAndFiles();
 }
@@ -580,33 +607,21 @@ void MessagesDialog::insertMessages()
 {
 	std::cerr <<"MessagesDialog::insertMessages called";
 	fflush(0);
-    int c;
-    c = MessagesModel->rowCount();
-    MessagesModel->removeRows(0,c);
-    //ui.messagestreeView->showColumn(4);
-    //ui.messagestreeView->showColumn(5);
+
 	std::list<MsgInfoSummary> msgList;
 	std::list<MsgInfoSummary>::const_iterator it;
 
 	rsMsgs -> getMessageSummaries(msgList);
-
-	/* get the MsgId of the current one ... */
-
-	std::string cid;
-	std::string mid;
-
-	bool oldSelected = getCurrentMsg(cid, mid);
-	QStandardItem *newSelected = NULL;
-
-	/* remove old items ??? */
 
 	int listrow = ui.listWidget -> currentRow();
 
 	std::cerr << "MessagesDialog::insertMessages()" << std::endl;
 	std::cerr << "Current Row: " << listrow << std::endl;
 	fflush(0);
+
 	/* check the mode we are in */
 	unsigned int msgbox = 0;
+	bool bFill = true;
 	switch(listrow)
 	{
 		case 3:
@@ -619,182 +634,235 @@ void MessagesDialog::insertMessages()
 			msgbox = RS_MSG_OUTBOX;
 			break;
 		case 0:
-		default:
 			msgbox = RS_MSG_INBOX;
-
 			break;
+		default:
+			bFill = false;
 	}
 
-	//std::list<std::string>::iterator it;
-	for(it = msgList.begin(); it != msgList.end(); it++)
-	{
-		/* check the message flags, to decide which
-		 * group it should go in...
-		 *
-		 * InBox 
-		 * OutBox 
-		 * Drafts 
-		 * Sent 
-		 *
-		 * FLAGS = OUTGOING.
-		 * 	-> Outbox/Drafts/Sent
-		 * 	  + SENT -> Sent
-		 *	  + IN_PROGRESS -> Draft.
-		 *	  + nuffing -> Outbox.
-		 * FLAGS = INCOMING = (!OUTGOING)
-		 * 	-> + NEW -> Bold.
-		 *
-		 */
+	if (bFill) {
+		/* remove old items */
+		int nRowCount = MessagesModel->rowCount();
+		int nRow = 0;
+		for (nRow = 0; nRow < nRowCount; ) {
+			for(it = msgList.begin(); it != msgList.end(); it++) {
+				if ((it->msgflags & RS_MSG_BOXMASK) != msgbox) {
+					continue;
+				}
 
-		if ((it -> msgflags & RS_MSG_BOXMASK) != msgbox)
-		{
-			//std::cerr << "Msg from other box: " << it->msgflags;
-			//std::cerr << std::endl;
-			continue;
+				if (it->msgId == MessagesModel->item(nRow, 5)->text().toStdString()) {
+					break;
+				}
+			}
+
+			if (it == msgList.end ()) {
+				MessagesModel->removeRow (nRow);
+				nRowCount = MessagesModel->rowCount();
+			} else {
+				nRow++;
+			}
 		}
 
-		/* make a widget per friend */
-    
-    QStandardItem *item0 = new QStandardItem();
-    QStandardItem *item1 = new QStandardItem();
-    QStandardItem *item2 = new QStandardItem();
-    QStandardItem *item3 = new QStandardItem();
-    QStandardItem *item4 = new QStandardItem();
-    QStandardItem *item5 = new QStandardItem();
-    
-    //set this false if you want to expand on double click
-    item0->setEditable(false);
-    item1->setEditable(false);
-    item2->setEditable(false);
-    item3->setEditable(false);
-    item4->setEditable(false);
-    
-
-		/* So Text should be:
-		 * (1) Msg / Broadcast
-		 * (1b) Person / Channel Name
-		 * (2) Rank
-		 * (3) Date
-		 * (4) Title
-		 * (5) Msg
-		 * (6) File Count
-		 * (7) File Total
-		 */
-
-		// Date First.... (for sorting)
+		for(it = msgList.begin(); it != msgList.end(); it++)
 		{
-			QDateTime qdatetime;
-			qdatetime.setTime_t(it->ts);
-			
-			//if the mail is on same date show only time.
-			if (qdatetime.daysTo(QDateTime::currentDateTime()) == 0)
+			/* check the message flags, to decide which
+			 * group it should go in...
+			 *
+			 * InBox 
+			 * OutBox 
+			 * Drafts 
+			 * Sent 
+			 *
+			 * FLAGS = OUTGOING.
+			 * 	-> Outbox/Drafts/Sent
+			 * 	  + SENT -> Sent
+			 *	  + IN_PROGRESS -> Draft.
+			 *	  + nuffing -> Outbox.
+			 * FLAGS = INCOMING = (!OUTGOING)
+			 * 	-> + NEW -> Bold.
+			 *
+			 */
+
+			if ((it -> msgflags & RS_MSG_BOXMASK) != msgbox)
 			{
-				QTime qtime = qdatetime.time();
-				QVariant varTime(qtime);
-				item3->setData(varTime, Qt::DisplayRole);
+				//std::cerr << "Msg from other box: " << it->msgflags;
+				//std::cerr << std::endl;
+				continue;
+			}
+
+			// search exisisting items
+			nRowCount = MessagesModel->rowCount();
+			for (nRow = 0; nRow < nRowCount; nRow++) {
+				if (it->msgId == MessagesModel->item(nRow, 5)->text().toStdString()) {
+					break;
+				}
+			}
+
+			/* make a widget per friend */
+
+			QStandardItem *item0 = NULL;
+			QStandardItem *item1 = NULL;
+			QStandardItem *item2 = NULL;
+			QStandardItem *item3 = NULL;
+			QStandardItem *item4 = NULL;
+			QStandardItem *item5 = NULL;
+
+			bool bInsert = false;
+
+			if (nRow < nRowCount) {
+				item0 = MessagesModel->item(nRow, 0);
+				item1 = MessagesModel->item(nRow, 1);
+				item2 = MessagesModel->item(nRow, 2);
+				item3 = MessagesModel->item(nRow, 3);
+				item4 = MessagesModel->item(nRow, 4);
+				item5 = MessagesModel->item(nRow, 5);
+			} else {
+				item0 = new QStandardItem();
+				item1 = new QStandardItem();
+				item2 = new QStandardItem();
+				item3 = new QStandardItem();
+				item4 = new QStandardItem();
+				item5 = new QStandardItem();
+				bInsert = true;
+			}
+
+			//set this false if you want to expand on double click
+			item0->setEditable(false);
+			item1->setEditable(false);
+			item2->setEditable(false);
+			item3->setEditable(false);
+			item4->setEditable(false);
+
+			/* So Text should be:
+			 * (1) Msg / Broadcast
+			 * (1b) Person / Channel Name
+			 * (2) Rank
+			 * (3) Date
+			 * (4) Title
+			 * (5) Msg
+			 * (6) File Count
+			 * (7) File Total
+			 */
+
+			// Date First.... (for sorting)
+			{
+				QDateTime qdatetime;
+				qdatetime.setTime_t(it->ts);
+				
+				//if the mail is on same date show only time.
+				if (qdatetime.daysTo(QDateTime::currentDateTime()) == 0)
+				{
+					QTime qtime = qdatetime.time();
+					QVariant varTime(qtime);
+					item3->setData(varTime, Qt::DisplayRole);
+				}
+				else
+				{
+					QVariant varDateTime(qdatetime);
+					item3->setData(varDateTime, Qt::DisplayRole);
+				}
+				// for sorting
+				item3->setData(qdatetime, Qt::UserRole);
+			}
+
+			//  From ....
+			{
+				item2 -> setText(QString::fromStdString(rsPeers->getPeerName(it->srcId)));
+				item2->setData(item2->text(), Qt::UserRole);
+                        }
+
+			// Subject
+			item1 -> setText(QString::fromStdWString(it->title));
+			item1->setData(item1->text(), Qt::UserRole);
+
+			if ((it -> msgflags & RS_MSG_NEW) == RS_MSG_NEW)
+			{
+				QFont qf = item1->font();
+				qf.setBold(true);
+				item1->setFont(qf);
+				
+			}
+			
+			// Change Message icon when Subject is Re: or Fwd:
+			QString text = QString::fromStdWString(it->title);
+
+			if (text.startsWith("Re:", Qt::CaseInsensitive))
+			{
+				item1 -> setIcon(QIcon(":/images/message-mail-replied-read.png"));
+			}
+			else if (text.startsWith("Fwd:", Qt::CaseInsensitive))
+			{
+				item1 -> setIcon(QIcon(":/images/message-mail-forwarded-read.png"));
 			}
 			else
 			{
-				QVariant varDateTime(qdatetime);
-				item3->setData(varDateTime, Qt::DisplayRole);
+				item1 -> setIcon(QIcon(":/images/message-mail-read.png"));
 			}
-		}
-
-		//  From ....
-		{
-			item2 -> setText(QString::fromStdString(rsPeers->getPeerName(it->srcId)));
-		}
-
-		// Subject
-      item1 -> setText(QString::fromStdWString(it->title));
-		
-		if ((it -> msgflags & RS_MSG_NEW) == RS_MSG_NEW)
-		{
-			QFont qf = item1->font();
-			qf.setBold(true);
-			item1->setFont(qf);
 			
-		}
-		
-		// Change Message icon when Subject is Re: or Fwd:
-		QString text = QString::fromStdWString(it->title);
-			
-    if (text.startsWith("Re:", Qt::CaseInsensitive))
-    {
-      item1 -> setIcon(QIcon(":/images/message-mail-replied-read.png"));
-    }
-    else if (text.startsWith("Fwd:", Qt::CaseInsensitive))
-    {
-      item1 -> setIcon(QIcon(":/images/message-mail-forwarded-read.png"));
-    }
-    else
-		{
-      item1 -> setIcon(QIcon(":/images/message-mail-read.png"));
-		}
-		
-		if (it -> msgflags & RS_MSG_NEW)
-		{
-			for(int i = 0; i < 10; i++)
+			if (it -> msgflags & RS_MSG_NEW)
 			{
-				/*QFont qf = item->font(i);
-				qf.setBold(true);
-				item->setFont(i, qf);*/
+				for(int i = 0; i < 10; i++)
+				{
+					/*QFont qf = item->font(i);
+					qf.setBold(true);
+					item->setFont(i, qf);*/
+				}
+				QString text = QString::fromStdWString(it->title);
+				
+				if (text.startsWith("Re:", Qt::CaseInsensitive))
+				{
+					item1 -> setIcon(QIcon(":/images/message-mail-replied.png"));
+				}
+					else if (text.startsWith("Fwd:", Qt::CaseInsensitive))
+				{
+					item1 -> setIcon(QIcon(":/images/message-mail-forwarded.png"));
+				}
+				else
+				{
+					item1 -> setIcon(QIcon(":/images/message-mail.png"));
+				}
 			}
-			QString text = QString::fromStdWString(it->title);
-			
-      			if (text.startsWith("Re:", Qt::CaseInsensitive))
-      			{
-       				item1 -> setIcon(QIcon(":/images/message-mail-replied.png"));
-      			}
-      				else if (text.startsWith("Fwd:", Qt::CaseInsensitive))
-      			{
-        			item1 -> setIcon(QIcon(":/images/message-mail-forwarded.png"));
-      			}
-      			else
-      			{
-        			item1 -> setIcon(QIcon(":/images/message-mail.png"));
-      			}
-		}
-		
-		if ((it -> msgflags & RS_MSG_BOXMASK) == RS_MSG_OUTBOX )
-		{
-			 MessagesModel->setHeaderData(2, Qt::Horizontal, tr("Recipient"));
-		}
-		else
-		{
-			 MessagesModel->setHeaderData(2, Qt::Horizontal, tr("From"));
-		}
 
-		// No of Files.
-		{
-			std::ostringstream out;
-			out << it -> count;
-			item0 -> setText(QString::fromStdString(out.str()));
-			//item -> setTextAlignment( 0, Qt::AlignCenter );
-		}
-	
-		item4 -> setText(QString::fromStdString(it->srcId));
-		item5 -> setText(QString::fromStdString(it->msgId));
-		
-		if ((oldSelected) && (mid == it->msgId))
-		{
-			//newSelected = item;
-		}
+			if ((it -> msgflags & RS_MSG_BOXMASK) == RS_MSG_OUTBOX )
+			{
+				 MessagesModel->setHeaderData(2, Qt::Horizontal, tr("Recipient"));
+			}
+			else
+			{
+				 MessagesModel->setHeaderData(2, Qt::Horizontal, tr("From"));
+			}
 
-		/* add to the list */
-		QList<QStandardItem *> itemList;
-		itemList.append(item0);
-		itemList.append(item1);
-		itemList.append(item2);
-		itemList.append(item3);
-		itemList.append(item4);
-		itemList.append(item5);
-		MessagesModel->appendRow(itemList);
+			// No of Files.
+			{
+				std::ostringstream out;
+				out << it -> count;
+				item0 -> setText(QString::fromStdString(out.str()));
+                                item0->setData(item0->text(), Qt::UserRole);
+                                //item -> setTextAlignment( 0, Qt::AlignCenter );
+			}
+
+			item4 -> setText(QString::fromStdString(it->srcId));
+			item5 -> setText(QString::fromStdString(it->msgId));
+
+			if (bInsert) {
+				/* add to the list */
+				QList<QStandardItem *> itemList;
+				itemList.append(item0);
+				itemList.append(item1);
+				itemList.append(item2);
+				itemList.append(item3);
+				itemList.append(item4);
+				itemList.append(item5);
+				MessagesModel->appendRow(itemList);
+			}
+		}
+	} else {
+		MessagesModel->removeRows (0, MessagesModel->rowCount());
 	}
-	
+
 	updateMessageSummaryList();
-   	ui.messagestreeView->hideColumn(4);
-   	ui.messagestreeView->hideColumn(5);
+	ui.messagestreeView->hideColumn(4);
+	ui.messagestreeView->hideColumn(5);
 }
 
 // current row in messagestreeView has changed
@@ -890,6 +958,10 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index)
 		ui.msgList->clear();
 		ui.msgText->clear();
 
+                ui.actionSave_as->setDisabled(true);
+                ui.actionPrintPreview->setDisabled(true);
+                ui.actionPrint->setDisabled(true);
+
 		return;
 	}
 	else
@@ -903,6 +975,16 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index)
 		mid = item->text().toStdString();
 	}
 
+        int nCount = getSelectedMsgCount ();
+        if (nCount == 1) {
+            ui.actionSave_as->setEnabled(true);
+            ui.actionPrintPreview->setEnabled(true);
+            ui.actionPrint->setEnabled(true);
+        } else {
+            ui.actionSave_as->setDisabled(true);
+            ui.actionPrintPreview->setDisabled(true);
+            ui.actionPrint->setDisabled(true);
+        }
 
 	/* Save the Data.... for later */
 
@@ -1312,34 +1394,34 @@ void MessagesDialog::updateMessageSummaryList()
 	/*calculating the new messages*/
 	for(it = msgList.begin(); it != msgList.end(); it++)
 	{
-		if ((it -> msgflags & RS_MSG_BOXMASK) == RS_MSG_INBOX && ((it -> msgflags & RS_MSG_NEW) == RS_MSG_NEW))
-		{
-			newInboxCount ++;
-		}
-		if ((it -> msgflags & RS_MSG_BOXMASK) == RS_MSG_INBOX )
+		if ((it -> msgflags & RS_MSG_BOXMASK) == RS_MSG_INBOX)
 		{
 			inboxCount ++;
+			if ((it -> msgflags & RS_MSG_NEW) == RS_MSG_NEW) {
+				newInboxCount ++;
+			}
 		}
-		if ((it -> msgflags & RS_MSG_BOXMASK) == RS_MSG_OUTBOX )
+		if ((it -> msgflags & RS_MSG_BOXMASK) == RS_MSG_OUTBOX)
 		{
 			newOutboxCount ++;
 		}
-		if ((it -> msgflags & RS_MSG_BOXMASK) == RS_MSG_DRAFTBOX )
+		if ((it -> msgflags & RS_MSG_BOXMASK) == RS_MSG_DRAFTBOX)
 		{
 			newDraftCount ++;
 		}
-	  if ((it -> msgflags & RS_MSG_BOXMASK) == RS_MSG_SENTBOX )
+		if ((it -> msgflags & RS_MSG_BOXMASK) == RS_MSG_SENTBOX )
 		{
 			newSentboxCount ++;
 		}
-	}	
+	}
 
-		QString textItem;
+	QString textItem;
 	/*updating the labels in leftcolumn*/
-	if(newInboxCount != 0)
+
+	//QList<QListWidgetItem *> QListWidget::findItems ( const QString & text, Qt::MatchFlags flags ) const
+	QListWidgetItem* item = ui.listWidget->item(0);
+	if (newInboxCount != 0)
 	{
-		//QList<QListWidgetItem *> QListWidget::findItems ( const QString & text, Qt::MatchFlags flags ) const
-		QListWidgetItem* item = ui.listWidget->item(0);
 		textItem = tr("Inbox") + " " + "(" + QString::number(newInboxCount)+")";
 		item->setText(textItem);
 		QFont qf = item->font();
@@ -1350,8 +1432,6 @@ void MessagesDialog::updateMessageSummaryList()
 	}
 	else
 	{
-		QListWidgetItem* item = ui.listWidget->item(0);
-
 		textItem = tr("Inbox");
 		item->setText(textItem);
 		QFont qf = item->font();
@@ -1361,11 +1441,10 @@ void MessagesDialog::updateMessageSummaryList()
 		item->setForeground(QBrush(QColor(0, 0, 0)));	
 	}
 	
-	if(newOutboxCount != 0)
+	//QList<QListWidgetItem *> QListWidget::findItems ( const QString & text, Qt::MatchFlags flags ) const
+	item = ui.listWidget->item(1);
+	if (newOutboxCount != 0)
 	{
-		//QList<QListWidgetItem *> QListWidget::findItems ( const QString & text, Qt::MatchFlags flags ) const
-		QListWidgetItem* item = ui.listWidget->item(1);
-
 		textItem = tr("Outbox") + " " + "(" + QString::number(newOutboxCount)+")";
 		item->setText(textItem);
 		QFont qf = item->font();
@@ -1374,8 +1453,6 @@ void MessagesDialog::updateMessageSummaryList()
 	}
 	else
 	{
-		QListWidgetItem* item = ui.listWidget->item(1);
-
 		textItem = tr("Outbox");
 		item->setText(textItem);
 		QFont qf = item->font();
@@ -1384,11 +1461,11 @@ void MessagesDialog::updateMessageSummaryList()
 		
 	}	
 	
-	if(newDraftCount != 0)
-	{
-		//QList<QListWidgetItem *> QListWidget::findItems ( const QString & text, Qt::MatchFlags flags ) const
-		QListWidgetItem* item = ui.listWidget->item(2);
 
+	//QList<QListWidgetItem *> QListWidget::findItems ( const QString & text, Qt::MatchFlags flags ) const
+	item = ui.listWidget->item(2);
+	if (newDraftCount != 0)
+	{
 		textItem = tr("Draft") + "(" + QString::number(newDraftCount)+")";
 		item->setText(textItem);
 		QFont qf = item->font();
@@ -1397,8 +1474,6 @@ void MessagesDialog::updateMessageSummaryList()
 	}
 	else
 	{
-		QListWidgetItem* item = ui.listWidget->item(2);
-
 		textItem = tr("Draft");
 		item->setText(textItem);
 		QFont qf = item->font();
@@ -1406,50 +1481,16 @@ void MessagesDialog::updateMessageSummaryList()
 		item->setFont(qf);
 		
 	}
-	
+
 	/* Total Inbox */
-	if(inboxCount != 0)
-	{
-		QListWidgetItem* item = ui.listWidget->item(5);
+	item = ui.listWidget->item(5);
+	textItem = tr("Total Inbox:") + " "  + QString::number(inboxCount);
+	item->setText(textItem);
 
-		textItem = tr("Total Inbox:") + " "  + QString::number(inboxCount);
-		item->setText(textItem);
-		/*QFont qf = item->font();
-		qf.setBold(true);
-		item->setFont(qf);*/
-	}
-	else
-	{
-		QListWidgetItem* item = ui.listWidget->item(5);
-
-		textItem = tr("Total Inbox:") + " "  + "0";
-		item->setText(textItem);
-		/*QFont qf = item->font();
-		qf.setBold(false);
-		item->setFont(qf);*/
-	}
-	
 	/* Total Sent */
-	if(newSentboxCount != 0)
-	{
-		QListWidgetItem* item = ui.listWidget->item(6);
-
-		textItem = tr("Total Sent:") + " "  + QString::number(newSentboxCount);
-		item->setText(textItem);
-		/*QFont qf = item->font();
-		qf.setBold(true);
-		item->setFont(qf);*/
-	}
-	else
-	{
-		QListWidgetItem* item = ui.listWidget->item(6);
-
-		textItem = tr("Total Sent:") + " "  + "0";
-		item->setText(textItem);
-		/*QFont qf = item->font();
-		qf.setBold(false);
-		item->setFont(qf);*/
-	}	
+	item = ui.listWidget->item(6);
+	textItem = tr("Total Sent:") + " "  + QString::number(newSentboxCount);
+	item->setText(textItem);
 }
 
 /** clear Filter **/

@@ -110,24 +110,11 @@ private:
 
   void setCurrentFileName(const QString &fileName);
 
-
+  int getSelectedMsgCount ();
 
   std::string mCurrCertId;
   std::string mCurrMsgId;
 
-  /** Define the popup menus for the Context menu */
-  QMenu* contextMnu;
-  
-   /** Defines the actions for the context menu */
-  QAction* newmsgAct;
-  QAction* replytomsgAct;
-  QAction* replyallmsgAct;
-  QAction* forwardmsgAct;
-  QAction* removemsgAct;
-
-  QAction* getRecAct;
-  QAction* getAllRecAct;
-     
   QString fileName;
   
   QFont mFont;

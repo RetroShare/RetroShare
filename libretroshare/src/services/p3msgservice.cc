@@ -186,66 +186,75 @@ int     p3MsgService::checkOutgoingMessages()
 	 * if online, send
 	 */
 
-	const std::string ownId = mConnMgr->getOwnId();
+	bool changed = false ;
 
-	std::list<uint32_t>::iterator it;
-	std::list<uint32_t> toErase;
-
-	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
-
-	std::map<uint32_t, RsMsgItem *>::iterator mit;
-	for(mit = msgOutgoing.begin(); mit != msgOutgoing.end(); mit++)
 	{
+		const std::string ownId = mConnMgr->getOwnId();
 
-		/* find the certificate */
-		std::string pid = mit->second->PeerId();
-		peerConnectState pstate;
-		bool toSend = false;
+		std::list<uint32_t>::iterator it;
+		std::list<uint32_t> toErase;
 
-		if (mConnMgr->getFriendNetStatus(pid, pstate))
+		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+
+		std::map<uint32_t, RsMsgItem *>::iterator mit;
+		for(mit = msgOutgoing.begin(); mit != msgOutgoing.end(); mit++)
 		{
-			if (pstate.state & RS_PEER_S_CONNECTED)
+
+			/* find the certificate */
+			std::string pid = mit->second->PeerId();
+			peerConnectState pstate;
+			bool toSend = false;
+
+			if (mConnMgr->getFriendNetStatus(pid, pstate))
+			{
+				if (pstate.state & RS_PEER_S_CONNECTED)
+				{
+					toSend = true;
+				}
+			}
+			else if (pid == ownId) /* FEEDBACK Msg to Ourselves */
 			{
 				toSend = true;
 			}
-		}
-		else if (pid == ownId) /* FEEDBACK Msg to Ourselves */
-		{
-			toSend = true;
+
+			if (toSend)
+			{
+				/* send msg */
+				pqioutput(PQL_DEBUG_BASIC, msgservicezone, 
+					"p3MsgService::checkOutGoingMessages() Sending out message");
+				/* remove the pending flag */
+				(mit->second)->msgFlags &= ~RS_MSG_FLAGS_PENDING;
+
+				sendItem(mit->second);
+				toErase.push_back(mit->first);
+
+				changed = true ;
+			}
+			else
+			{
+				pqioutput(PQL_DEBUG_BASIC, msgservicezone, 
+					"p3MsgService::checkOutGoingMessages() Delaying until available...");
+			}
 		}
 
-		if (toSend)
+		/* clean up */
+		for(it = toErase.begin(); it != toErase.end(); it++)
 		{
-			/* send msg */
-			pqioutput(PQL_DEBUG_BASIC, msgservicezone, 
-				"p3MsgService::checkOutGoingMessages() Sending out message");
-			/* remove the pending flag */
-			(mit->second)->msgFlags &= ~RS_MSG_FLAGS_PENDING;
-
-			sendItem(mit->second);
-			toErase.push_back(mit->first);
+			mit = msgOutgoing.find(*it);
+			if (mit != msgOutgoing.end())
+			{
+				msgOutgoing.erase(mit);
+			}
 		}
-		else
+
+		if (toErase.size() > 0)
 		{
-			pqioutput(PQL_DEBUG_BASIC, msgservicezone, 
-				"p3MsgService::checkOutGoingMessages() Delaying until available...");
+			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 		}
 	}
 
-	/* clean up */
-	for(it = toErase.begin(); it != toErase.end(); it++)
-	{
-		mit = msgOutgoing.find(*it);
-		if (mit != msgOutgoing.end())
-		{
-			msgOutgoing.erase(mit);
-		}
-	}
-
-	if (toErase.size() > 0)
-	{
-		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
-	}
+	if(changed)
+		rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
 
 	return 0;
 }
