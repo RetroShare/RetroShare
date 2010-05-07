@@ -550,8 +550,32 @@ void 	FileIndexMonitor::updateCycle()
 	}
 }
 
+static std::string friendlyUnit(uint64_t val) 
+{
+	const std::string units[4] = {"B","KB","MB","GB"};
+	char buf[50] ;
+
+	double fact = 1.0 ;
+	
+	for(unsigned int i=0; i<5; ++i) 
+		if(double(val)/fact < 1024.0)
+		{
+			sprintf(buf,"%2.2f",double(val)/fact) ;
+			return std::string(buf) + " " + units[i];
+		}
+		else
+			fact *= 1024.0f ;
+
+	sprintf(buf,"%2.2f",double(val)/fact) ;
+	return  std::string(buf) + " TB";
+}
+
+
 void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 {
+	// Size interval at which we save the file lists
+	static const uint64_t MAX_SIZE_WITHOUT_SAVING = 10737418240ull ; // 10 GB
+
 	cb->notifyListPreChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
 
 	time_t stamp = time(NULL);
@@ -572,6 +596,7 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 
 	uint32_t cnt=0 ;
 	uint64_t size=0 ;
+	uint64_t last_save_size=0 ;
 
 	/* update files */
 	for(uint32_t i=0;i<to_hash.size();++i)
@@ -581,7 +606,7 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 			// rather send a completion ratio based on the size of files vs/ total size.
 			//
 			std::ostringstream tmpout;
-			tmpout << cnt+1 << "/" << n_files << " (" << int(size/double(total_size)*100.0) << "%) : " << to_hash[i].fentries[j].name ;
+			tmpout << cnt+1 << "/" << n_files << " (" << friendlyUnit(size) << " - " << int(size/double(total_size)*100.0) << "%) : " << to_hash[i].fentries[j].name ;
 			
 			cb->notifyHashingInfo("Hashing file " + tmpout.str()) ;
 
@@ -602,15 +627,28 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 			size += to_hash[i].fentries[j].size ;
 
 			/* don't hit the disk too hard! */
-			/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS
+			/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 			usleep(40000); /* 40 msec */
 #else
 
 			Sleep(40);
 #endif
-			/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
+			// Save the hashing result every 60 seconds, so has to save what is already hashed.
+			std::cerr << "size - last_save_size = " << size - last_save_size << ", max=" << MAX_SIZE_WITHOUT_SAVING << std::endl ;
+			if(size > last_save_size + MAX_SIZE_WITHOUT_SAVING)
+			{
+				cb->notifyHashingInfo("Saving file index...") ;
+#ifdef WINDOWS_SYS
+				Sleep(1000) ;
+#else
+				sleep(1) ;
+#endif
+				RsStackMutex stack(fiMutex); /**** LOCKED DIRS ****/
+				FileIndexMonitor::locked_saveFileIndexes() ;
+				last_save_size = size ;
+			}
 		}
 
 	cb->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
