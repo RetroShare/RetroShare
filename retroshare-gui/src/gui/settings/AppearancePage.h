@@ -40,7 +40,7 @@ class AppearancePage : public ConfigPage
       /** Default Constructor */
       AppearancePage(QWidget * parent = 0, Qt::WFlags flags = 0);
       /** Default Destructor */
-      ~AppearancePage() {}
+      ~AppearancePage();
 
       /** Saves the changes on this page */
       bool save(QString &errmsg);

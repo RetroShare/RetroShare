@@ -59,6 +59,11 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WFlags flags)
 #endif
 }
 
+AppearancePage::~AppearancePage()
+{
+    delete _settings;
+}
+
 /** Saves the changes on this page */
 bool
 AppearancePage::save(QString &errmsg)

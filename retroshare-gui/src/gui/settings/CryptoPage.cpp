@@ -55,6 +55,11 @@ CryptoPage::CryptoPage(QWidget * parent, Qt::WFlags flags)
 #endif
 }
 
+CryptoPage::~CryptoPage()
+{
+    delete _settings;
+}
+
 void
 CryptoPage::closeEvent (QCloseEvent * event)
 {

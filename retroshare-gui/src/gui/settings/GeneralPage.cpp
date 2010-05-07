@@ -49,10 +49,10 @@ GeneralPage::GeneralPage(QWidget * parent, Qt::WFlags flags)
 }
 
 /** Destructor */
-/*GeneralPage::~GeneralPage()
+GeneralPage::~GeneralPage()
 {
   delete _settings;
-}*/
+}
 
 /** Saves the changes on this page */
 bool

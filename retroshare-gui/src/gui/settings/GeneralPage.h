@@ -42,7 +42,7 @@ public:
   /** Default Constructor */
   GeneralPage(QWidget * parent = 0, Qt::WFlags flags = 0);
     /** Default Destructor */
-  ~GeneralPage() {}
+  ~GeneralPage();
 
   /** Saves the changes on this page */
   bool save(QString &errmsg);

@@ -55,6 +55,11 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WFlags flags)
 #endif
 }
 
+NotifyPage::~NotifyPage()
+{
+    delete _settings;
+}
+
 void
 NotifyPage::closeEvent (QCloseEvent * event)
 {

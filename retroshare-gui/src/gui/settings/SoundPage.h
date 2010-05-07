@@ -37,7 +37,7 @@ public:
   /** Default Constructor */
   SoundPage(QWidget * parent = 0, Qt::WFlags flags = 0);
   /** Default Destructor */
-  ~SoundPage() {}
+  ~SoundPage();
 
   /** Saves the changes on this page */
   bool save(QString &errmsg);

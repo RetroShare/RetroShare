@@ -39,7 +39,7 @@ class CryptoPage : public ConfigPage
       /** Default Constructor */
       CryptoPage(QWidget * parent = 0, Qt::WFlags flags = 0);
       /** Default Destructor */
-      ~CryptoPage() {}
+      ~CryptoPage();
 
 
       /** Saves the changes on this page */

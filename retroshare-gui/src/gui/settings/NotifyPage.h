@@ -37,8 +37,8 @@ class NotifyPage : public ConfigPage
   public:
       /** Default Constructor */
       NotifyPage(QWidget * parent = 0, Qt::WFlags flags = 0);
-      ~NotifyPage() {}
       /** Default Destructor */
+      ~NotifyPage();
 
       /** Saves the changes on this page */
       bool save(QString &errmsg);

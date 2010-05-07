@@ -50,6 +50,11 @@ SoundPage::SoundPage(QWidget * parent, Qt::WFlags flags)
 #endif
 }
 
+SoundPage::~SoundPage()
+{
+    delete _settings;
+}
+
 /** Saves the changes on this page */
 bool
 SoundPage::save(QString &errmsg)
