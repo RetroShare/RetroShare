@@ -42,7 +42,9 @@ class RsInit
 
 		/* PreLogin */
 		static void	InitRsConfig() ;
-		static int 	InitRetroShare(int argc, char **argv);
+		static int 	InitRetroShare(int argc, char **argv,
+					bool strictCheck=true);
+
 		static char dirSeperator();
 		static bool isPortable();
 

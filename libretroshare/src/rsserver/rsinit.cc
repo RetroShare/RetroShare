@@ -251,7 +251,7 @@ void RsInit::InitRsConfig()
 
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS
-int RsInit::InitRetroShare(int argc, char **argv)
+int RsInit::InitRetroShare(int argc, char **argv, bool strictCheck)
 {
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #else
@@ -262,7 +262,7 @@ int RsInit::InitRetroShare(int argc, char **argv)
       #include <pthread.h>
    #endif
 
-int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored)
+int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck)
 {
 
   /* THIS IS A HACK TO ALLOW WINDOWS TO ACCEPT COMMANDLINE ARGUMENTS */
@@ -404,9 +404,11 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored)
                                  exit(1);
                                  break;
                          default:
-                                 std::cerr << "Unknown Option!" << std::endl;
-                                 std::cerr << "Use '-h' for help." << std::endl;
-                                 exit(1);
+				if (strictCheck) {
+                                   std::cerr << "Unknown Option!" << std::endl;
+                                   std::cerr << "Use '-h' for help." << std::endl;
+                                   exit(1);
+				}
                  }
          }
 
