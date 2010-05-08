@@ -61,11 +61,12 @@ std::ostream &operator<<(std::ostream &out, const ChannelMsgInfo &info)
 RsChannels *rsChannels = NULL;
 
 
-/* Channels will be initially stored for 1 year
- * remember 2^16 = 64K max units in store period.
+/* remember 2^16 = 64K max units in store period.
  * PUBPERIOD * 2^16 = max STORE PERIOD */
-#define CHANNEL_STOREPERIOD (90*24*3600)    /*  30 * 24 * 3600 - secs in a year */
-#define CHANNEL_PUBPERIOD   600              /* 10 minutes ... (max = 455 days) */
+#define CHANNEL_STOREPERIOD (30*24*3600)    /*  30 * 24 * 3600 - secs in a 30 day month */
+#define TEST_CHANNEL_STOREPERIOD (24*3600)   /* one day */
+#define CHANNEL_PUBPERIOD   6              /* 10 minutes ... (max = 455 days) */
+#define MAX_AUTO_DL 1E9 /* auto download of attachment limit; 1 GIG */
 
 p3Channels::p3Channels(uint16_t type, CacheStrapper *cs, 
 		CacheTransfer *cft, RsFiles *files, 
@@ -81,6 +82,7 @@ p3Channels::p3Channels(uint16_t type, CacheStrapper *cs,
         if (!RsDirUtil::checkCreateDirectory(mChannelsDir)) {
                 std::cerr << "p3Channels() Failed to create Channels Directory: " << mChannelsDir << std::endl;
 	}
+
 
 	return; 
 }
@@ -227,6 +229,7 @@ bool p3Channels::ChannelMessageSend(ChannelMsgInfo &info)
 	std::list<FileInfo>::iterator it;
 	for(it = info.files.begin(); it != info.files.end(); it++)
 	{
+
 		RsTlvFileItem mfi;
 		mfi.hash = it -> hash;
 		mfi.name = it -> fname;
@@ -240,6 +243,134 @@ bool p3Channels::ChannelMessageSend(ChannelMsgInfo &info)
 	return true;
 }
 
+
+bool p3Channels::channelExtraFileHash(std::string path, std::string chId, FileInfo& fInfo){
+
+	// get file name
+	std::string fname, fnameBuff;
+	std::string::reverse_iterator rit;
+
+	for(rit = path.rbegin(); *rit != '/' ; rit++){
+		fnameBuff.push_back(*rit);
+	}
+
+	// reverse string buff for correct file name
+	fname.append(fnameBuff.rbegin(), fnameBuff.rend());
+	bool fileTooLarge = false;
+
+	// first copy file into channel directory
+	if(!cpyMsgFileToChFldr(path, fname, chId, fileTooLarge)){
+
+		if(!fileTooLarge)
+			return false;
+
+	}
+
+	uint32_t flags = RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_EXTRA;
+
+	// then hash file, but hash file at original location if its too large
+	// and get file info too
+	if(fileTooLarge){
+
+		if(!mRsFiles->ExtraFileHash(path, CHANNEL_STOREPERIOD, flags))
+			return false;
+
+		fInfo.path = path;
+
+	}else{
+
+		std::string localpath = mChannelsDir + "/" + chId + "/" + fname;
+		if(!mRsFiles->ExtraFileHash(localpath, CHANNEL_STOREPERIOD, flags))
+			return false;
+
+		fInfo.path = localpath;
+	}
+
+	fInfo.fname = fname;
+
+	return true;
+}
+
+bool p3Channels::cpyMsgFileToChFldr(std::string path, std::string fname, std::string chId, bool& fileTooLarge){
+
+	FILE *outFile = NULL, *inFile = fopen(path.c_str(), "rb");
+
+	long buffSize = 0;
+	char* buffer = NULL;
+
+	if(inFile){
+
+		// obtain file size:
+		fseek (inFile , 0 , SEEK_END);
+		buffSize = ftell (inFile);
+		rewind (inFile);
+
+		// don't copy if file over 100mb
+		if(buffSize > (MAX_AUTO_DL / 10) ){
+			fileTooLarge = true;
+			fclose(inFile);
+			return false;
+
+		}
+
+		// allocate memory to contain the whole file:
+		buffer = (char*) malloc (sizeof(char)*buffSize);
+
+		if(!buffer){
+			fclose(inFile);
+			return false;
+		}
+
+		fread (buffer,1,buffSize,inFile);
+		fclose(inFile);
+
+		std::string localpath = mChannelsDir + "/" + chId + "/" + fname;
+		outFile = fopen(localpath.c_str(), "wb");
+	}
+
+	if(outFile){
+
+		fwrite(buffer, 1, buffSize, outFile);
+		fclose(outFile);
+	}else{
+		std::cerr << "p3Channels::cpyMsgFiletoFldr(): Failed to copy Channel Msg file to its channel folder"
+				  << std::endl;
+
+		if((buffSize > 0) && (buffer != NULL))
+			free(buffer);
+
+		return false;
+	}
+
+	if((buffSize > 0) && (buffer != NULL))
+		free(buffer);
+
+	return true;
+
+}
+
+bool p3Channels::channelExtraFileRemove(std::string hash, std::string chId){
+
+	uint32_t flags = RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_EXTRA;
+
+	/* remove copy from channels directory */
+
+	FileInfo fInfo;
+	mRsFiles->FileDetails(hash, flags, fInfo);
+	std::string chPath = mChannelsDir + "/" + chId + "/" + fInfo.fname;
+
+	if(remove(chPath.c_str()) == 0){
+		std::cerr << "p3Channel::channelExtraFileRemove() Removed file :"
+				  << chPath.c_str() << std::endl;
+
+	}else{
+		std::cerr << "p3Channel::channelExtraFileRemove() Failed to remove file :"
+				  << chPath.c_str() << std::endl;
+	}
+
+	return mRsFiles->ExtraFileRemove(hash, flags);
+
+}
 
 std::string p3Channels::createChannel(std::wstring channelName, std::wstring channelDesc, uint32_t channelFlags)
 {
@@ -321,9 +452,7 @@ bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std
 	 * it is upto ftserver/ftcontroller/ftextralist
 	 * */
 
-        //bool download = (grp->flags & (RS_DISTRIB_ADMIN | 
-	//		RS_DISTRIB_PUBLISH | RS_DISTRIB_SUBSCRIBED))
-        bool download = (grp->flags & RS_DISTRIB_SUBSCRIBED);
+	bool download = (grp->flags & RS_DISTRIB_SUBSCRIBED);
 
 	/* check subscribed */
 	if (!download)
@@ -334,7 +463,7 @@ bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std
 	/* check age */
 	time_t age = time(NULL) - msg->timestamp;
 
-	if (age > (time_t)DOWNLOAD_PERIOD)
+	if (age > (time_t)DOWNLOAD_PERIOD )
 	{
 		return true;
 	}
@@ -365,8 +494,9 @@ bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std
                 std::cerr << " to: " << localpath << " from: " << id << std::endl;
                 #endif
 
-		mRsFiles->FileRequest(fname, hash, size, 
-					localpath, flags, srcIds);
+        if(size < MAX_AUTO_DL)
+        	mRsFiles->FileRequest(fname, hash, size,
+        			localpath, flags, srcIds);
 	}
 
 
@@ -397,8 +527,6 @@ bool p3Channels::locked_eventNewMsg(GroupInfo *grp, RsDistribMsg *msg, std::stri
 	 * */
 	return locked_eventDuplicateMsg(grp, msg, id);
 }
-
-
 
 
 void p3Channels::locked_notifyGroupChanged(GroupInfo &grp, uint32_t flags)
@@ -472,7 +600,72 @@ void p3Channels::locked_notifyGroupChanged(GroupInfo &grp, uint32_t flags)
 	return p3GroupDistrib::locked_notifyGroupChanged(grp, flags);
 }
 
+void p3Channels::cleanUpOldFiles(){
 
+	time_t now = time(NULL);
+	std::list<ChannelInfo> chList;
+	std::list<ChannelInfo>::iterator ch_it;
+
+	// first get channel list
+	if(!getChannelList(chList))
+		return;
+
+	std::list<ChannelMsgSummary> msgList;
+	std::list<ChannelMsgSummary>::iterator msg_it;
+
+	// then msg for each channel
+	for(ch_it = chList.begin(); ch_it != chList.end(); ch_it++){
+
+		if(!getChannelMsgList(ch_it->channelId, msgList))
+			continue;
+
+		std::string channelname = ch_it->channelId;
+		std::string localpath = mChannelsDir + "/" + channelname;
+
+		for(msg_it = msgList.begin(); msg_it != msgList.end(); msg_it++){
+
+			ChannelMsgInfo chMsgInfo;
+			if(!getChannelMessage(ch_it->channelId, msg_it->msgId, chMsgInfo))
+				continue;
+
+			// if msg not old, leave it alone
+			if( chMsgInfo.ts > (now - CHANNEL_STOREPERIOD))
+				continue;
+
+			std::list<FileInfo>::iterator file_it;
+			// get the files
+			for(file_it = chMsgInfo.files.begin(); file_it != chMsgInfo.files.end(); file_it++){
+
+				std::string msgFile = localpath + "/" + file_it->fname;
+
+				if(mRsFiles){
+					if(mRsFiles->ExtraFileRemove(file_it->hash, ~(RS_FILE_HINTS_DOWNLOAD | RS_FILE_HINTS_UPLOAD)))
+							std::cerr << "p3Channels::clearOldFIles() failed to remove files from extras" << std::endl;
+
+					if(remove(msgFile.c_str()) == 0){
+						std::cerr << "p3Channels::clearOldFiles() file removed: "
+								  << msgFile << std::endl;
+					}else{
+						std::cerr << "p3Channels::clearOldFiles() failed to remove file: "
+								  << msgFile << std::endl;
+					}
+
+				}else{
+					std::cerr << "p3Channels::cleanUpOldFiles() : Pointer passed to (this) Invalid" << std::endl;
+				}
+
+
+			}
+
+		}
+
+	}
+
+	// clean up local caches
+	clear_local_caches(now); //how about remote caches, remember its hardwired
+
+	return;
+}
 
 /****************************************/
 

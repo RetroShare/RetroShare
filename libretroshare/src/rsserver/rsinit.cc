@@ -1104,7 +1104,8 @@ bool     RsInit::LoadPassword(std::string id, std::string inPwd)
 	RsInitConfig::configDir = RsInitConfig::basedir + RsInitConfig::dirSeperator + id;
 	RsInitConfig::passwd = inPwd;
 
-	RsInitConfig::havePasswd = true;
+	if(inPwd != "")
+		RsInitConfig::havePasswd = true;
 
         // Create the filename.
         std::string basename = RsInitConfig::configDir + RsInitConfig::dirSeperator;
@@ -2062,7 +2063,7 @@ int RsServer::StartupRetroShare()
 	mCacheStrapper -> addCachePair(cp4);
 	pqih -> addService(mForums);  /* This must be also ticked as a service */
 
-	p3Channels *mChannels = new p3Channels(RS_SERVICE_TYPE_CHANNEL,
+	mChannels = new p3Channels(RS_SERVICE_TYPE_CHANNEL,
 			mCacheStrapper, mCacheTransfer, rsFiles,
                         localcachedir, remotecachedir, channelsdir);
 
@@ -2210,7 +2211,6 @@ int RsServer::StartupRetroShare()
 
 	pqih->init_listener();
 	mConnMgr->addNetListener(pqih); /* add listener so we can reset all sockets later */
-
 
 
 

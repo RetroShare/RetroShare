@@ -166,8 +166,8 @@ void    RsServer::ConfigFinalSave()
 
 void RsServer::rsGlobalShutDown()
 {
-
-
+	// TODO: cache should also clean up old files
+	mChannels->cleanUpOldFiles();
 	ConfigFinalSave(); // save configuration before exit
 	mConnMgr->shutdown(); /* Handles UPnP */
 }

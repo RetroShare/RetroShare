@@ -33,7 +33,12 @@
 #include "serialiser/rstlvtypes.h"
 #include "serialiser/rschannelitems.h"
 
-
+//! Channels is a distributed 'feed' service
+/*!
+ *  The channels service allows peers to subscirbe to each feeds published by
+ *  their peers. Using the p3groupdistrib class to enable management of
+ *  publication and viewing keys
+ */
 class p3Channels: public p3GroupDistrib, public RsChannels 
 {
 	public:
@@ -41,6 +46,12 @@ class p3Channels: public p3GroupDistrib, public RsChannels
 	p3Channels(uint16_t type, CacheStrapper *cs, CacheTransfer *cft, RsFiles *files,
                 std::string srcdir, std::string storedir, std::string channelsdir);
 virtual ~p3Channels();
+
+/*!
+ * cleans up local info and dowloaded files older than one month,
+ * should be called during shutdown of rs
+ */
+void cleanUpOldFiles();
 
 /****************************************/
 /********* rsChannels Interface ***********/
@@ -57,6 +68,8 @@ virtual bool getChannelMessage(std::string cId, std::string mId, ChannelMsgInfo 
 virtual	bool ChannelMessageSend(ChannelMsgInfo &info);
 
 virtual bool channelSubscribe(std::string cId, bool subscribe);
+virtual bool channelExtraFileHash(std::string path, std::string chId, FileInfo& fInfo);
+virtual bool channelExtraFileRemove(std::string hash, std::string chId);
 
 /***************************************************************************************/
 /****************** Event Feedback (Overloaded form p3distrib) *************************/
@@ -81,6 +94,8 @@ virtual RsDistribGrp *locked_createPrivateDistribGrp(GroupInfo &info);
 /****************************************/
 
 	private:
+
+bool cpyMsgFileToChFldr(std::string path, std::string fname, std::string chId, bool& fileTooLarge);
 
 	RsFiles *mRsFiles;
 	std::string mChannelsDir;

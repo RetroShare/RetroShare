@@ -112,6 +112,19 @@ virtual bool getChannelMessage(std::string cId, std::string mId, ChannelMsgInfo 
 virtual	bool ChannelMessageSend(ChannelMsgInfo &info)                 = 0;
 
 virtual bool channelSubscribe(std::string cId, bool subscribe)	= 0;
+
+/*!
+ * This hashes a file which is not already shared by client or his peers,
+ * The file is copied into the channels directory if its not too large (> 100mb)
+ * @param path This is full path to file
+ * @param channel Id
+ */
+virtual bool channelExtraFileHash(std::string path, std::string chId, FileInfo& fInfo) = 0;
+
+/*!
+ * This removes hashed extra files, and also removes channels directory copy if it exists
+ */
+virtual bool channelExtraFileRemove(std::string hash, std::string chId) = 0;
 /****************************************/
 
 };
