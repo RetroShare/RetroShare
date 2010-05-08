@@ -235,12 +235,10 @@ HEADERS += dbase/cachestrapper.h \
            rsiface/rsnotify.h \
            rsiface/rspeers.h \
            rsiface/rsphoto.h \
-           rsiface/rsQblog.h \
            rsiface/rsblogs.h \
            rsiface/rsrank.h \
            rsiface/rsstatus.h \
            rsiface/rstypes.h \
-           rsserver/p3blog.h \
            rsserver/p3discovery.h \
            rsserver/p3face.h \
            rsserver/p3msgs.h \
@@ -281,7 +279,6 @@ HEADERS += dbase/cachestrapper.h \
            services/p3gameservice.h \
            services/p3msgservice.h \
            services/p3photoservice.h \
-           services/p3Qblog.h \
            services/p3blogs.h \
            services/p3ranking.h \
            services/p3service.h \
@@ -316,7 +313,6 @@ SOURCES += \
 				rsserver/rsinit.cc \
 				rsserver/p3face-config.cc \
 				rsserver/p3face-server.cc \
-				rsserver/p3blog.cc \
 				rsserver/p3discovery.cc \
 				rsserver/p3msgs.cc \
 				rsserver/p3photo.cc \
@@ -343,7 +339,6 @@ SOURCES += \
 				services/p3channels.cc \
 				services/p3forums.cc \
 				services/p3blogs.cc \
-				services/p3Qblog.cc \
 				services/p3statusservice.cc \
 				services/p3distrib.cc \
 				services/p3photoservice.cc \

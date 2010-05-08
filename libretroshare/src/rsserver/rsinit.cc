@@ -1866,7 +1866,6 @@ RsTurtle *rsTurtle = NULL ;
 #include "services/p3forums.h"
 #include "services/p3channels.h"
 #include "services/p3statusservice.h"
-#include "services/p3Qblog.h"
 #include "services/p3blogs.h"
 #include "turtle/p3turtle.h"
 #include "services/p3tunnel.h"
@@ -1885,7 +1884,6 @@ RsTurtle *rsTurtle = NULL ;
 #include "rsserver/p3msgs.h"
 #include "rsserver/p3discovery.h"
 #include "rsserver/p3photo.h"
-#include "rsserver/p3blog.h"
 #include "rsserver/p3status.h"
 #include "rsiface/rsgame.h"
 
@@ -2092,14 +2090,6 @@ int RsServer::StartupRetroShare()
         CachePair cp2(photoService, photoService, CacheId(RS_SERVICE_TYPE_PHOTO, 0));
 	mCacheStrapper -> addCachePair(cp2);
 
-	mQblog = new p3Qblog(mConnMgr, RS_SERVICE_TYPE_QBLOG, 			/* ...then for Qblog */
-			mCacheStrapper, mCacheTransfer,
-			localcachedir, remotecachedir, 3600 * 24 * 30 * 6); // 6 Months
-
-	CachePair cp3(mQblog, mQblog, CacheId(RS_SERVICE_TYPE_QBLOG, 0));
-	mCacheStrapper -> addCachePair(cp3);
-
-
 #else
 	mQblog = NULL;
 #endif
@@ -2258,11 +2248,9 @@ int RsServer::StartupRetroShare()
 #ifndef RS_RELEASE
 	rsGameLauncher = gameLauncher;
 	rsPhoto = new p3Photo(photoService);
-	rsQblog = new p3Blog(mQblog);
 #else
 	rsGameLauncher = NULL;
 	rsPhoto = NULL;
-	rsQblog = NULL;
 #endif
 
 

@@ -213,12 +213,6 @@ void 	RsServer::run()
 				/* Tick slow services */
 				if (mRanking)
 					mRanking->tick();
-				
-				
-				if(mQblog)
-					mQblog->tick();
-					
-
 
 #if 0
 				std::string opt;
