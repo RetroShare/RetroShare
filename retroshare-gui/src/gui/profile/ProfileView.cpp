@@ -25,8 +25,6 @@
 #include "rsiface/rspeers.h"
 #include "rsiface/rsmsgs.h"
 
-#include "rsiface/rsQblog.h"
-
 #include <sstream>
 
 #include <QContextMenuEvent>
@@ -184,11 +182,6 @@ void ProfileView::update()
 
 	mIsOwnId = true; /* switche on context menues */
 
-	if (!rsQblog)
-	{
-		clear();
-		return;
-	}
 
     uint32_t PostTs;
 	std::wstring BlogPost;
@@ -205,7 +198,6 @@ void ProfileView::update()
                      tr("Error : cannot get peer details."));
         }
 
-	rsQblog -> getPeerLatestBlog(pId, PostTs, BlogPost);
 
 	ui.idLineEdit->setText(QString::fromStdString(pId));
 	ui.nameLineEdit->setText(QString::fromStdString(detail.name));

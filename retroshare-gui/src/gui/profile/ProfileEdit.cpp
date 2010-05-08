@@ -22,7 +22,6 @@
 #include "gui/profile/ProfileEdit.h"
 
 #include "rsiface/rspeers.h"
-#include "rsiface/rsQblog.h"
 
 #include <sstream>
 
@@ -89,12 +88,6 @@ void ProfileEdit::update()
 {
 	/* load it up! */
 	std::string pId = "OwnId";
-
-	if (!rsQblog)
-	{
-		clear();
-		return;
-	}
 
 	std::list< std::pair<std::wstring, std::wstring> > profile;
 	std::list< std::pair<std::wstring, std::wstring> >::iterator pit;
