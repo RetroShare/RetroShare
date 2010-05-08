@@ -76,7 +76,7 @@ void BlogMsgItem::updateItemStatic()
 	for(i = 0; i < total; i++)
 	{
 		/* add file */
-		SubFileItem *fi = new SubFileItem("dummyHash", "dummy_File", 1283918, SFI_STATE_REMOTE, mPeerId);
+		SubFileItem *fi = new SubFileItem("dummyHash", "dummy_File", "", 1283918, SFI_STATE_REMOTE, mPeerId);
 		mFileItems.push_back(fi);
 
 		QLayout *layout = expandFrame->layout();

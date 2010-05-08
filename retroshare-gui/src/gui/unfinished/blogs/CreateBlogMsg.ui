@@ -14,7 +14,7 @@
    <string>New Blog Post</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../images.qrc">
+   <iconset resource="../../images.qrc">
     <normaloff>:/images/rstray3.png</normaloff>:/images/rstray3.png</iconset>
   </property>
   <property name="styleSheet">
@@ -94,7 +94,7 @@ border: 1px solid #CCCCCC;}</string>
            <item row="1" column="0">
             <widget class="QTabWidget" name="tabWidget_2">
              <property name="currentIndex">
-              <number>0</number>
+              <number>1</number>
              </property>
              <widget class="QWidget" name="tab_3">
               <attribute name="title">
@@ -149,145 +149,6 @@ border: 1px solid #CCCCCC;}</string>
            </item>
           </layout>
          </widget>
-         <widget class="QWidget" name="tab_2">
-          <attribute name="icon">
-           <iconset resource="../images.qrc">
-            <normaloff>:/images/attachment.png</normaloff>:/images/attachment.png</iconset>
-          </attribute>
-          <attribute name="title">
-           <string>Attachments</string>
-          </attribute>
-          <layout class="QVBoxLayout" name="verticalLayout_2">
-           <property name="spacing">
-            <number>0</number>
-           </property>
-           <property name="margin">
-            <number>0</number>
-           </property>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_3">
-             <property name="spacing">
-              <number>0</number>
-             </property>
-             <property name="leftMargin">
-              <number>6</number>
-             </property>
-             <property name="rightMargin">
-              <number>6</number>
-             </property>
-             <item>
-              <widget class="QLabel" name="label_3">
-               <property name="text">
-                <string/>
-               </property>
-               <property name="pixmap">
-                <pixmap resource="../images.qrc">:/images/attachment.png</pixmap>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="label_4">
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>26</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>Attachments</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer>
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>334</width>
-                 <height>26</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QPushButton" name="addFileButton">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>34</width>
-                 <height>34</height>
-                </size>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="icon">
-                <iconset resource="../images.qrc">
-                 <normaloff>:/images/add-share24.png</normaloff>:/images/add-share24.png</iconset>
-               </property>
-               <property name="iconSize">
-                <size>
-                 <width>24</width>
-                 <height>24</height>
-                </size>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <widget class="QScrollArea" name="scrollArea">
-             <property name="verticalScrollBarPolicy">
-              <enum>Qt::ScrollBarAlwaysOn</enum>
-             </property>
-             <property name="widgetResizable">
-              <bool>true</bool>
-             </property>
-             <widget class="QWidget" name="scrollAreaWidgetContents">
-              <property name="geometry">
-               <rect>
-                <x>0</x>
-                <y>0</y>
-                <width>639</width>
-                <height>341</height>
-               </rect>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout">
-               <item>
-                <layout class="QVBoxLayout" name="verticalLayout_3"/>
-               </item>
-               <item>
-                <spacer name="verticalSpacer">
-                 <property name="orientation">
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>438</width>
-                   <height>137</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
-             </widget>
-            </widget>
-           </item>
-          </layout>
-         </widget>
         </widget>
        </item>
       </layout>
@@ -301,7 +162,7 @@ border: 1px solid #CCCCCC;}</string>
      <x>0</x>
      <y>0</y>
      <width>666</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>
@@ -348,7 +209,7 @@ border: 1px solid #CCCCCC;}</string>
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../images.qrc">
+    <iconset resource="../../images.qrc">
      <normaloff>:/images/textedit/hi22-action-format-text-blockquote.png</normaloff>:/images/textedit/hi22-action-format-text-blockquote.png</iconset>
    </property>
    <property name="text">
@@ -357,7 +218,7 @@ border: 1px solid #CCCCCC;}</string>
   </action>
   <action name="actionIncreasefontsize">
    <property name="icon">
-    <iconset resource="../images.qrc">
+    <iconset resource="../../images.qrc">
      <normaloff>:/images/textedit/format_font_size_more.png</normaloff>:/images/textedit/format_font_size_more.png</iconset>
    </property>
    <property name="text">
@@ -366,7 +227,7 @@ border: 1px solid #CCCCCC;}</string>
   </action>
   <action name="actionDecreasefontsize">
    <property name="icon">
-    <iconset resource="../images.qrc">
+    <iconset resource="../../images.qrc">
      <normaloff>:/images/textedit/format_font_size_less.png</normaloff>:/images/textedit/format_font_size_less.png</iconset>
    </property>
    <property name="text">
@@ -375,7 +236,7 @@ border: 1px solid #CCCCCC;}</string>
   </action>
   <action name="actionBold">
    <property name="icon">
-    <iconset resource="../images.qrc">
+    <iconset resource="../../images.qrc">
      <normaloff>:/images/textedit/textbold.png</normaloff>:/images/textedit/textbold.png</iconset>
    </property>
    <property name="text">
@@ -384,7 +245,7 @@ border: 1px solid #CCCCCC;}</string>
   </action>
   <action name="actionUnderline">
    <property name="icon">
-    <iconset resource="../images.qrc">
+    <iconset resource="../../images.qrc">
      <normaloff>:/images/textedit/textunder.png</normaloff>:/images/textedit/textunder.png</iconset>
    </property>
    <property name="text">
@@ -393,7 +254,7 @@ border: 1px solid #CCCCCC;}</string>
   </action>
   <action name="actionItalic">
    <property name="icon">
-    <iconset resource="../images.qrc">
+    <iconset resource="../../images.qrc">
      <normaloff>:/images/textedit/textitalic.png</normaloff>:/images/textedit/textitalic.png</iconset>
    </property>
    <property name="text">
@@ -412,7 +273,7 @@ border: 1px solid #CCCCCC;}</string>
   </action>
   <action name="actionCode">
    <property name="icon">
-    <iconset resource="../images.qrc">
+    <iconset resource="../../images.qrc">
      <normaloff>:/images/textedit/hi22-action-format-text-code.png</normaloff>:/images/textedit/hi22-action-format-text-code.png</iconset>
    </property>
    <property name="text">
@@ -421,7 +282,7 @@ border: 1px solid #CCCCCC;}</string>
   </action>
   <action name="actionsplitPost">
    <property name="icon">
-    <iconset resource="../images.qrc">
+    <iconset resource="../../images.qrc">
      <normaloff>:/images/textedit/hi22-action-insert-more-mark.png</normaloff>:/images/textedit/hi22-action-insert-more-mark.png</iconset>
    </property>
    <property name="text">
@@ -430,7 +291,7 @@ border: 1px solid #CCCCCC;}</string>
   </action>
   <action name="actionOrderedlist">
    <property name="icon">
-    <iconset resource="../images.qrc">
+    <iconset resource="../../images.qrc">
      <normaloff>:/images/textedit/format-list-ordered.png</normaloff>:/images/textedit/format-list-ordered.png</iconset>
    </property>
    <property name="text">
@@ -439,7 +300,7 @@ border: 1px solid #CCCCCC;}</string>
   </action>
   <action name="actionUnorderedlist">
    <property name="icon">
-    <iconset resource="../images.qrc">
+    <iconset resource="../../images.qrc">
      <normaloff>:/images/textedit/format-list-unordered.png</normaloff>:/images/textedit/format-list-unordered.png</iconset>
    </property>
    <property name="text">
@@ -451,7 +312,7 @@ border: 1px solid #CCCCCC;}</string>
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../images.qrc">
+    <iconset resource="../../images.qrc">
      <normaloff>:/images/textedit/editcut.png</normaloff>:/images/textedit/editcut.png</iconset>
    </property>
    <property name="text">
@@ -460,7 +321,7 @@ border: 1px solid #CCCCCC;}</string>
   </action>
   <action name="actionUndo">
    <property name="icon">
-    <iconset resource="../images.qrc">
+    <iconset resource="../../images.qrc">
      <normaloff>:/images/textedit/editundo.png</normaloff>:/images/textedit/editundo.png</iconset>
    </property>
    <property name="text">
@@ -475,9 +336,8 @@ border: 1px solid #CCCCCC;}</string>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
+  <include location="../../images.qrc"/>
+  <include location="../../images.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -250,7 +250,7 @@ void CreateChannelMsg::addAttachment(std::string hash, std::string fname, uint64
 
 	/* add widget in for new destination */
 
-	uint32_t flags = SFI_TYPE_ATTACH;
+	uint32_t flags = SFI_TYPE_CHANNEL;
 	if (local)
 	{
 		flags |= SFI_STATE_LOCAL;
@@ -262,7 +262,7 @@ void CreateChannelMsg::addAttachment(std::string hash, std::string fname, uint64
 		return;
 	}
 
-	SubFileItem *file = new SubFileItem(hash, fname, size, flags, srcId);
+	SubFileItem *file = new SubFileItem(hash, fname, "", size, flags, srcId); // destroyed when fileFrame (this subfileitem) is destroyed
 
 	mAttachments.push_back(file);
 	QLayout *layout = fileFrame->layout();
@@ -300,15 +300,17 @@ void CreateChannelMsg::addAttachment(std::string path)
 	std::cerr << "CreateChannelMsg::addAttachment()";
 	std::cerr << std::endl;
 
-	/* add to ExtraList here, 
-	 * use default TIMEOUT of 30 days (time to fetch it).
-	 */
-	//uint32_t period = 30 * 24 * 60 * 60;
-	//uint32_t flags = 0;
-	//rsFiles->ExtraFileHash(localpath, period, flags);
-
 	/* add widget in for new destination */
-	SubFileItem *file = new SubFileItem(path);
+	uint32_t flags =  SFI_TYPE_CHANNEL | SFI_STATE_EXTRA;
+
+	// channels creates copy of file into channels directory and shares this
+
+	FileInfo fInfo;
+	rsChannels->channelExtraFileHash(path, mChannelId, fInfo);
+
+	// file is not innitial
+	SubFileItem *file = new SubFileItem(fInfo.hash, fInfo.fname, fInfo.path, fInfo.size,
+			flags, mChannelId); // destroyed when fileFrame (this subfileitem) is destroyed
 
 	mAttachments.push_back(file);
 	QLayout *layout = fileFrame->layout();
@@ -335,9 +337,12 @@ void CreateChannelMsg::checkAttachmentReady()
 		{
 			if (!(*fit)->ready())
 			{
-				/* 
+				/* ensure file is hashed or file will be hashed, thus
+				 * recognized by librs but not correctly by gui (can't
+				 * formally remove it)
 				 */
 				buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+				buttonBox->button(QDialogButtonBox::Cancel)->setEnabled(false);
 				break;
 
 
@@ -349,6 +354,7 @@ void CreateChannelMsg::checkAttachmentReady()
 	if (fit == mAttachments.end())
 	{
 		buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
+		buttonBox->button(QDialogButtonBox::Cancel)->setEnabled(true);
 	}
 
 	/* repeat... */
@@ -359,8 +365,16 @@ void CreateChannelMsg::checkAttachmentReady()
 
 void CreateChannelMsg::cancelMsg()
 {
-	std::cerr << "CreateChannelMsg::cancelMsg()";
+	std::cerr << "CreateChannelMsg::cancelMsg() :"
+			  << "Deleting EXTRA attachments" << std::endl;
+
 	std::cerr << std::endl;
+
+	std::list<SubFileItem* >::const_iterator it;
+
+	for(it = mAttachments.begin(); it != mAttachments.end(); it++)
+		rsChannels->channelExtraFileRemove((*it)->FileHash(), mChannelId);
+
 	close();
 	return;
 }
@@ -410,13 +424,14 @@ void CreateChannelMsg::sendMsg()
 			files.push_back(fi);
 
 			/* commence downloads - if we don't have the file */
+
 			if (!(*fit)->done())
 			{
 				if ((*fit)->ready())
 				{
 					(*fit)->download();
 				}
-				// Skips unhashed files.
+			// Skips unhashed files.
 			}
 		}
 	}
@@ -435,7 +450,7 @@ void CreateChannelMsg::sendMessage(std::wstring subject, std::wstring msg, std::
                    tr("Please add a Subject"),
                    QMessageBox::Ok, QMessageBox::Ok);
                    
-		return; //Don't add  a empty Subject!!
+		return; //Don't add  an empty Subject!!
 	}
 	else
 

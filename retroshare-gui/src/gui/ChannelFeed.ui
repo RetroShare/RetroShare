@@ -147,7 +147,7 @@ p, li { white-space: pre-wrap; }
            </item>
           </layout>
          </item>
-         <item row="0" column="4">
+         <item row="0" column="2">
           <widget class="QPushButton" name="channelpushButton">
            <property name="enabled">
             <bool>true</bool>
@@ -192,19 +192,6 @@ p, li { white-space: pre-wrap; }
           </widget>
          </item>
          <item row="0" column="1">
-          <spacer name="horizontalSpacer_2">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="0" column="3">
           <spacer name="horizontalSpacer_3">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -216,20 +203,6 @@ p, li { white-space: pre-wrap; }
             </size>
            </property>
           </spacer>
-         </item>
-         <item row="0" column="2">
-          <widget class="QToolButton" name="configPushButton">
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="images.qrc">
-             <normaloff>:/images/settings16.png</normaloff>:/images/settings16.png</iconset>
-           </property>
-           <property name="autoRaise">
-            <bool>true</bool>
-           </property>
-          </widget>
          </item>
         </layout>
        </widget>
@@ -554,8 +527,8 @@ border-image: url(:/images/btn_26_pressed.png) 4;
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>429</width>
-             <height>331</height>
+             <width>425</width>
+             <height>325</height>
             </rect>
            </property>
            <property name="styleSheet">

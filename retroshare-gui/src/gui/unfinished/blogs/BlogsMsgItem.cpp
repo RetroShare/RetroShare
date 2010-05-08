@@ -103,20 +103,6 @@ void BlogsMsgItem::updateItemStatic()
 	QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm:ss");
 	datetimelabel->setText(timestamp);
 	
-		
-
-	std::list<FileInfo>::iterator it;
-	for(it = cmi.files.begin(); it != cmi.files.end(); it++)
-	{
-		/* add file */
-		SubFileItem *fi = new SubFileItem(it->hash, it->fname, it->size, 
-				SFI_STATE_REMOTE | SFI_TYPE_CHANNEL, "");
-		mFileItems.push_back(fi);
-
-		QLayout *layout = expandFrame->layout();
-		layout->addWidget(fi);
-	}
-
 	//playButton->setEnabled(false);
 	
 	if (mIsHome)
@@ -139,32 +125,11 @@ void BlogsMsgItem::updateItem()
 {
 	/* fill in */
 #ifdef DEBUG_ITEM
-	std::cerr << "ChanMsgItem::updateItem()";
+	std::cerr << "BlogMsgItem::updateItem()";
 	std::cerr << std::endl;
 #endif
-	int msec_rate = 10000;
 
-	/* Very slow Tick to check when all files are downloaded */
-	std::list<SubFileItem *>::iterator it;
-	for(it = mFileItems.begin(); it != mFileItems.end(); it++)
-	{
-		if (!(*it)->done())
-		{
-			/* loop again */
-	  		QTimer::singleShot( msec_rate, this, SLOT(updateItem( void ) ));
-			return;
-		}
-	}
 
-	/***
-	 * At this point cannot create a playlist....
-	 * so can't enable play for all.
-
-	if (mFileItems.size() > 0)
-	{
-		playButton->setEnabled(true);
-	}
-	***/
 }
 
 

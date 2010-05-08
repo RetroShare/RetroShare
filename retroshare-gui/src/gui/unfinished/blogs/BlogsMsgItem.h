@@ -64,7 +64,6 @@ private:
 
 	bool mIsHome;
 
-	std::list<SubFileItem *> mFileItems;
 };
 
 

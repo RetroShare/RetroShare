@@ -129,7 +129,7 @@ void MsgItem::updateItemStatic()
 	for(it = mi.files.begin(); it != mi.files.end(); it++)
 	{
 		/* add file */
-		SubFileItem *fi = new SubFileItem(it->hash, it->fname, it->size, SFI_STATE_REMOTE, mi.srcId);
+		SubFileItem *fi = new SubFileItem(it->hash, it->fname, it->path, it->size, SFI_STATE_REMOTE, mi.srcId);
 		mFileItems.push_back(fi);
 
 		QLayout *layout = expandFrame->layout();

@@ -61,13 +61,7 @@ public:
 
   void  Create_New_Image_Tag( const QString urlremoteorlocal );
 
-protected:
-virtual void dragEnterEvent(QDragEnterEvent *event);
-virtual void dropEvent(QDropEvent *event);
-
 private slots:
-	void addExtraFile();
-	void checkAttachmentReady();
 
 	void cancelMsg();
 	void sendMsg();
@@ -129,15 +123,10 @@ private:
   void colorChanged(const QColor &c);
   void alignmentChanged(Qt::Alignment a);
 
-  void parseRsFileListAttachments(std::string attachList);
 
-  void sendMessage(std::wstring subject, std::wstring msg, std::list<FileInfo> &files);
+  void sendMessage(std::wstring subject, std::wstring msg);
   
   std::string mBlogId;
-
-	std::list<SubFileItem *> mAttachments;
-
-	bool mCheckAttachment;
 	
 	  QAction *actionSave,
 	      *actionTextBold,

@@ -113,8 +113,8 @@ void ChanMsgItem::updateItemStatic()
 	for(it = cmi.files.begin(); it != cmi.files.end(); it++)
 	{
 		/* add file */
-		SubFileItem *fi = new SubFileItem(it->hash, it->fname, it->size, 
-				SFI_STATE_REMOTE | SFI_TYPE_CHANNEL, "");
+		SubFileItem *fi = new SubFileItem(it->hash, it->fname, it->path, it->size,
+				SFI_STATE_REMOTE | SFI_TYPE_CHANNEL, mChanId);
 		mFileItems.push_back(fi);
 
 		QLayout *layout = expandFrame->layout();

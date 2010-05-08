@@ -65,9 +65,10 @@
 const uint32_t SFI_DEFAULT_PERIOD 	= (30 * 3600 * 24); /* 30 Days */
 
 /** Constructor */
-SubFileItem::SubFileItem(std::string hash, std::string name, uint64_t size, 
+SubFileItem::SubFileItem(std::string hash, std::string name, std::string path, uint64_t size,
 						uint32_t flags, std::string srcId)
-:QWidget(NULL), mFileHash(hash), mFileName(name), mFileSize(size), mSrcId(srcId)
+:QWidget(NULL), mFileHash(hash), mFileName(name), mFileSize(size), mSrcId(srcId),
+ mPath(path)
 {
   	/* Invoke the Qt Designer generated object setup routine */
   	setupUi(this);
@@ -77,35 +78,12 @@ SubFileItem::SubFileItem(std::string hash, std::string name, uint64_t size,
 	mMode = flags & SFI_MASK_STATE;
 	mType = flags & SFI_MASK_TYPE;
 
-	if (mMode == SFI_STATE_EXTRA)
-	{
-		mMode = SFI_STATE_ERROR;
-	}
 	/**** Enable ****
 	*****/
 
 	/* all other states are possible */
 
 	if (!rsFiles) 
-	{
-		mMode = SFI_STATE_ERROR;
-	}
-
-	Setup();
-}
-
-/** Constructor */
-SubFileItem::SubFileItem(std::string path)
-:QWidget(NULL), mPath(path), mFileSize(0)
-{
-  	/* Invoke the Qt Designer generated object setup routine */
-  	setupUi(this);
-
-	mMode = SFI_STATE_EXTRA;
-	mType = SFI_TYPE_ATTACH;
-
-	/* ask for Files to hash/prepare it for us */
-	if ((!rsFiles) || (!rsFiles->ExtraFileHash(path, SFI_DEFAULT_PERIOD, 0)))
 	{
 		mMode = SFI_STATE_ERROR;
 	}
@@ -581,12 +559,33 @@ void SubFileItem::cancel()
 
 void SubFileItem::play()
 {
-#ifdef DEBUG_ITEM
-	std::cerr << "SubFileItem::play() :" << mPath;
-	std::cerr << std::endl;
-#endif
+	FileInfo info;
+	uint32_t flags = RS_FILE_HINTS_DOWNLOAD | RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_NETWORK_WIDE;
 
-	//openFile(mPath);
+
+	if (!rsFiles->FileDetails( mFileHash, flags, info))
+		return;
+
+	if (done()) {
+
+		/* open file with a suitable application */
+		QFileInfo qinfo;
+		qinfo.setFile(info.path.c_str());
+		if (qinfo.exists()) {
+			if (!QDesktopServices::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()))) {
+				std::cerr << "openTransfer(): can't open file " << info.path << std::endl;
+			}
+		}else{
+			QMessageBox::information(this, tr("Play File"),
+					tr("File %1 does not exist at location.").arg(info.path.c_str()));
+			return;
+		}
+	} else {
+		/* rise a message box for incompleted download file */
+		QMessageBox::information(this, tr("Play File"),
+				tr("File %1 is not completed.").arg(info.fname.c_str()));
+		return;
+	}
 
 }
 

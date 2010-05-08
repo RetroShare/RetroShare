@@ -41,14 +41,21 @@ const uint32_t SFI_STATE_UPLOAD 	= 0x0006;
 const uint32_t SFI_TYPE_CHANNEL 	= 0x0010;
 const uint32_t SFI_TYPE_ATTACH 		= 0x0020;
 
+
+//! This create a gui widget that allows users to access files shared by user
+/*!
+ * Widget that allows user to share files with a visual attachment interface
+ * Note: extra files (files not already shared/hashed in rs) need to
+ * be hashed by the clients of this class or else objects of this class will
+ * have reduced functionality
+ */
 class SubFileItem : public QWidget, private Ui::SubFileItem
 {
   Q_OBJECT
 
 public:
   	/** Default Constructor */
-  	SubFileItem(std::string localpath);
-	SubFileItem(std::string hash, std::string name, uint64_t size,
+	SubFileItem(std::string hash, std::string name, std::string path, uint64_t size,
 					uint32_t flags, std::string srcId);
 
   	/** Default Destructor */
