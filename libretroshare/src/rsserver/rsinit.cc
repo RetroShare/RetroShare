@@ -26,9 +26,6 @@
 /* This is an updated startup class. Class variables are hidden from
  * the GUI / External via a hidden class */
 
-
-
-
 #include <unistd.h>
 #include "util/rsdebug.h"
 #include "util/rsdir.h"
