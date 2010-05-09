@@ -358,25 +358,26 @@ void MainWindow::updateStatus()
 	std::list<MsgInfoSummary>::const_iterator it;
 
 	rsMsgs -> getMessageSummaries(msgList);
-	bool new_msg = false ;
 	int newInboxCount = 0;
 
 	for(it = msgList.begin(); it != msgList.end(); it++)
 		if ((it -> msgflags & RS_MSG_BOXMASK) == RS_MSG_INBOX && ((it -> msgflags & RS_MSG_NEW) == RS_MSG_NEW))
-			new_msg = true ;
 			newInboxCount ++;
-			
 
-	if(new_msg)
-		messageAction->setIcon(QIcon(QPixmap(":/images/messages_new.png"))) ;
-	else
-		messageAction->setIcon(QIcon(QPixmap(":/images/evolution.png"))) ;
+        if(newInboxCount)
+                messageAction->setIcon(QIcon(QPixmap(":/images/messages_new.png"))) ;
+        else
+                messageAction->setIcon(QIcon(QPixmap(":/images/evolution.png"))) ;
 
-	if(new_msg)
+	if(newInboxCount)
 	{
 		trayIcon->setIcon(QIcon(":/images/newmsg.png"));
-		trayIcon->setToolTip(tr("RetroShare") + "\n" + tr("You have %1 new message").arg(newInboxCount));
-	}    
+		if (newInboxCount > 1) {
+			trayIcon->setToolTip(tr("RetroShare") + "\n" + tr("You have %1 new messages").arg(newInboxCount));
+		} else {
+			trayIcon->setToolTip(tr("RetroShare") + "\n" + tr("You have %1 new message").arg(newInboxCount));
+		}
+	}
 	else if (online == 0)
 	{
 		trayIcon->setIcon(QIcon(IMAGE_NOONLINE));
