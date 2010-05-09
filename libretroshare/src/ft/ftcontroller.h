@@ -175,6 +175,7 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 		bool 	FileDetails(std::string hash, FileInfo &info);
 
 		bool moveFile(const std::string& source,const std::string& dest) ;
+		bool copyFile(const std::string& source,const std::string& dest) ;
 
 		/***************************************************************/
 		/********************** Cache Transfer *************************/
