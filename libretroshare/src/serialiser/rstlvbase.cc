@@ -41,7 +41,7 @@ inline void* right_shift_void_pointer(void* p, uint32_t len) {
 #define TLV_BASE_DEBUG 1
 
 /**** Basic TLV Functions ****/
-uint16_t GetTlvSize(void *data) {
+uint32_t GetTlvSize(void *data) {
 	if (!data)
 		return 0;
 
@@ -394,7 +394,7 @@ bool SetTlvString(void *data, uint32_t size, uint32_t *offset,
 
 	void * to  = right_shift_void_pointer(data, *offset);
 
-	uint16_t strlen = tlvsize - TLV_HEADER_SIZE;
+	uint32_t strlen = tlvsize - TLV_HEADER_SIZE;
 	memcpy(to, out.c_str(), strlen);
 
 	*offset += strlen;
@@ -456,7 +456,7 @@ bool GetTlvString(void *data, uint32_t size, uint32_t *offset,
 	}
 
 	char *strdata = (char *) right_shift_void_pointer(tlvstart, TLV_HEADER_SIZE);
-	uint16_t strsize = tlvsize - TLV_HEADER_SIZE; /* remove the header */
+	uint32_t strsize = tlvsize - TLV_HEADER_SIZE; /* remove the header */
         if (strsize <= 0) {
             in = "";
         } else {
@@ -560,7 +560,7 @@ bool GetTlvWideString(void *data, uint32_t size, uint32_t *offset,
 	bool ok = true;
 	/* remove the header, calc string length */
 	*offset += TLV_HEADER_SIZE;
-	uint16_t strlen = (tlvsize - TLV_HEADER_SIZE) / RS_WCHAR_SIZE; 
+	uint32_t strlen = (tlvsize - TLV_HEADER_SIZE) / RS_WCHAR_SIZE; 
 
 	/* Must convert manually to ensure its always the same! */
 	for(uint32_t i = 0; i < strlen; i++)

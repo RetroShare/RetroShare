@@ -56,7 +56,6 @@
 /*****
  * #define CHAT_DEBUG 1
  *****/
-#define CHAT_DEBUG 1
 
 /** Default constructor */
 PopupChatDialog::PopupChatDialog(std::string id, std::string name, 
