@@ -209,7 +209,7 @@ const uint16_t TLV_TYPE_IMAGE         = 0x1060;
 
 
 /**** Basic TLV Functions ****/
-uint16_t GetTlvSize(void *data);
+uint32_t GetTlvSize(void *data);
 uint16_t GetTlvType(void *data);
 bool     SetTlvBase(void *data, uint32_t size, uint32_t *offset, uint16_t type, uint32_t len);
 bool     SetTlvSize(void *data, uint32_t size, uint32_t len);
