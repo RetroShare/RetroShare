@@ -161,13 +161,15 @@ int main(int argc, char *argv[])
 	QObject::connect(w->messengerWindow,SIGNAL(startChat(QTreeWidgetItem* )),w->peersDialog,SLOT(chatfriend(QTreeWidgetItem* ))) ;
 	QObject::connect(w->idle, SIGNAL(secondsIdle(int)), w->messengerWindow, SLOT(checkAndSetIdle(int)));
 
-	/* only show window, if not startMinimized */
-	RshareSettings  *_settings = new RshareSettings();
-
-  if(!_settings->value(QString::fromUtf8("StartMinimized"), false).toBool()) 
 	{
+		/* only show window, if not startMinimized */
+                RshareSettings _settings;
 
-		w->show();
+		if(!_settings.value(QString::fromUtf8("StartMinimized"), false).toBool()) 
+		{
+
+			w->show();
+		}
 	}
 
 	/* Startup a Timer to keep the gui's updated */

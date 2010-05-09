@@ -352,6 +352,8 @@ std::list<std::string> getLocalInterfaces()
 		addrs.push_back(inet_ntoa(addr));
 	}
 
+	free (iptable);
+
 	return addrs;
 }
 

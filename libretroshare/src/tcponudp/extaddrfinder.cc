@@ -267,7 +267,7 @@ ExtAddrFinder::~ExtAddrFinder()
 
 	delete _found ;
 	delete _searching ;
-	delete _addr ;
+	free (_addr) ;
 }
 
 ExtAddrFinder::ExtAddrFinder()
