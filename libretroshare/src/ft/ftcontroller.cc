@@ -609,7 +609,24 @@ bool ftController::moveFile(const std::string& source,const std::string& dest)
 #endif
 	// We could not rename, probably because we're dealing with different file systems.
 	// Let's copy then.
+	
+	if(!copyFile(source,dest))
+		return false ;
 
+	// copy was successfull, let's delete the original
+	std::cerr << "deleting original file " << source << std::endl ;
+
+	if(0 == remove(source.c_str()))
+		return true ;
+	else
+	{
+		getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "File erase error", "Error while removing hash file " + dest + "\nRead-only file system ?");
+		return false ;
+	}
+}
+
+bool ftController::copyFile(const std::string& source,const std::string& dest)
+{
 	std::string error ;
 
 	static const int BUFF_SIZE = 10485760 ; // 10 MB buffer to speed things up.
@@ -648,19 +665,11 @@ bool ftController::moveFile(const std::string& source,const std::string& dest)
 	fclose(in) ;
 	fclose(out) ;
 
-	// copy was successfull, let's delete the original
-	std::cerr << "deleting original file " << source << std::endl ;
-
 	free(buffer) ;
 
-	if(0 == remove(source.c_str()))
-		return true ;
-	else
-	{
-		getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "File erase error", "Error while removing hash file " + dest + "\nRead-only file system ?");
-		return false ;
-	}
+	return true ;
 }
+
 
 
 bool ftController::completeFile(std::string hash)
@@ -1709,14 +1718,33 @@ void    ftController::statusChange(const std::list<pqipeer> &plist)
 bool ftController::RequestCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size)
 {
 #ifdef CONTROL_DEBUG
-	std::cerr << "ftController::RequestCacheFile(" << id << ",";
-	std::cerr << path << "," << hash << "," << size << ")";
-	std::cerr << std::endl;
+ std::cerr << "ftController::RequestCacheFile(" << id << ",";
+ std::cerr << path << "," << hash << "," << size << ")";
+ std::cerr << std::endl;
 #endif
 
 	/* Request File */
 	std::list<std::string> ids;
 	ids.push_back(id);
+
+	FileInfo info ;
+	if(mSearch->search(hash, RS_FILE_HINTS_CACHE, info))
+	{
+#ifdef CONTROL_DEBUG
+		std::cerr << "I already have this file:" << std::endl ;
+		std::cerr << "  path: " << info.path << std::endl ;
+		std::cerr << "  fname: " << info.fname << std::endl ;
+		std::cerr << "  hash: " << info.hash << std::endl ;
+
+		std::cerr << "Copying it !!" << std::endl ;
+#endif
+
+		if(copyFile(info.path,path+"/"+hash))
+		{
+			CompletedCache(hash);
+			return true ;
+		}
+	}
 
 	FileRequest(hash, hash, size, path, RS_FILE_HINTS_CACHE | RS_FILE_HINTS_NO_SEARCH, ids);
 
