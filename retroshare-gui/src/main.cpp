@@ -168,13 +168,15 @@ int main(int argc, char *argv[])
 	QObject::connect(w->peersDialog,SIGNAL(friendsUpdated()),w->networkDialog,SLOT(insertConnect())) ;
 	QObject::connect(w->peersDialog,SIGNAL(notifyGroupChat(const QString&,const QString&)),w,SLOT(displaySystrayMsg(const QString&,const QString&)),Qt::QueuedConnection) ;
 
-	/* only show window, if not startMinimized */
-	RshareSettings  *_settings = new RshareSettings();
-
-  if(!_settings->value(QString::fromUtf8("StartMinimized"), false).toBool()) 
 	{
+		/* only show window, if not startMinimized */
+                RshareSettings _settings;
 
-		w->show();
+		if(!_settings.value(QString::fromUtf8("StartMinimized"), false).toBool()) 
+		{
+
+			w->show();
+		}
 	}
 
 	/* Startup a Timer to keep the gui's updated */
