@@ -430,7 +430,7 @@ void QuickStartWizard::saveChanges()
 {
 	QString str;
 
-	bool saveAddr = false;
+	//bool saveAddr = false;
 
 
 	RsPeerDetails detail;

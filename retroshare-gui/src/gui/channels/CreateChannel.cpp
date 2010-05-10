@@ -75,10 +75,9 @@ void  CreateChannel::createChannel()
 
 	if(name.isEmpty())
 	{	/* error message */
-		int ret = QMessageBox::warning(this, tr("RetroShare"),
-                   tr("Please add a Name"),
-                   QMessageBox::Ok, QMessageBox::Ok);
-                   
+		QMessageBox::warning(this, tr("RetroShare"),tr("Please add a Name"),
+		QMessageBox::Ok, QMessageBox::Ok);
+
 		return; //Don't add  a empty name!!
 	}
 	else

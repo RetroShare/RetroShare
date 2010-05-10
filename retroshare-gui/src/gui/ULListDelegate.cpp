@@ -49,7 +49,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 	QRect pixmapRect;
 	QPixmap pixmap;
 	qlonglong fileSize;
-	double progress, ulspeed, multi;
+	double ulspeed, multi;
 	QString temp , status;
 	qlonglong transferred;
 

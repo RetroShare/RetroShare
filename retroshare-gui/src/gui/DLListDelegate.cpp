@@ -48,7 +48,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 	QRect pixmapRect;
 	QPixmap pixmap;
 	qlonglong fileSize;
-	double progress, dlspeed, multi;
+	double dlspeed, multi;
 	int seconds,minutes, hours, days;
 	qlonglong remaining;
 	QString temp , status;
