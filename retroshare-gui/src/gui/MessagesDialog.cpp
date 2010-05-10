@@ -57,6 +57,14 @@
 #define IMAGE_DOWNLOAD    	   ":/images/start.png"
 #define IMAGE_DOWNLOADALL          ":/images/startall.png"
 
+#define COLUMN_COUNT   6
+#define COLUMN_NUMBER  0
+#define COLUMN_SUBJECT 1
+#define COLUMN_FROM    2
+#define COLUMN_DATE    3
+#define COLUMN_SRCID   4
+#define COLUMN_MSGID   5
+
 /** Constructor */
 MessagesDialog::MessagesDialog(QWidget *parent)
 : MainPage(parent)
@@ -112,25 +120,25 @@ MessagesDialog::MessagesDialog(QWidget *parent)
   mCurrMsgId  = "";
   
     // Set the QStandardItemModel 
-    MessagesModel = new QStandardItemModel(0, 6);
-    MessagesModel->setHeaderData(0, Qt::Horizontal, tr("#"));
-    MessagesModel->setHeaderData(1, Qt::Horizontal, tr("Subject"));
-    MessagesModel->setHeaderData(2, Qt::Horizontal, tr("From"));
-    MessagesModel->setHeaderData(3, Qt::Horizontal, tr("Date"));    
-    MessagesModel->setHeaderData(4, Qt::Horizontal, tr("SRCID"));
-    MessagesModel->setHeaderData(5, Qt::Horizontal, tr("MSGID"));
+    MessagesModel = new QStandardItemModel(0, COLUMN_COUNT);
+    MessagesModel->setHeaderData(COLUMN_NUMBER,  Qt::Horizontal, tr("#"));
+    MessagesModel->setHeaderData(COLUMN_SUBJECT, Qt::Horizontal, tr("Subject"));
+    MessagesModel->setHeaderData(COLUMN_FROM,    Qt::Horizontal, tr("From"));
+    MessagesModel->setHeaderData(COLUMN_DATE,    Qt::Horizontal, tr("Date"));
+    MessagesModel->setHeaderData(COLUMN_SRCID,   Qt::Horizontal, tr("SRCID"));
+    MessagesModel->setHeaderData(COLUMN_MSGID,   Qt::Horizontal, tr("MSGID"));
    
     proxyModel = new QSortFilterProxyModel(this);
     proxyModel->setDynamicSortFilter(true);
     proxyModel->setSourceModel(MessagesModel);
     proxyModel->setSortRole(Qt::UserRole);
-    proxyModel->sort (3, Qt::DescendingOrder);
+    proxyModel->sort (COLUMN_DATE, Qt::DescendingOrder);
     ui.messagestreeView->setModel(proxyModel);
     ui.messagestreeView->setSelectionBehavior(QTreeView::SelectRows);
     
     ui.messagestreeView->setRootIsDecorated(false);
     ui.messagestreeView->setSortingEnabled(true); 
-    ui.messagestreeView->sortByColumn(3, Qt::DescendingOrder);
+    ui.messagestreeView->sortByColumn(COLUMN_DATE, Qt::DescendingOrder);
 
     // connect after setting model
     connect( ui.messagestreeView->selectionModel(), SIGNAL(currentChanged ( QModelIndex, QModelIndex ) ) , this, SLOT( currentChanged( const QModelIndex & ) ) );
@@ -146,13 +154,13 @@ MessagesDialog::MessagesDialog(QWidget *parent)
   
   /* Set header resize modes and initial section sizes */
   QHeaderView * msgwheader = ui.messagestreeView->header () ;
-  msgwheader->setResizeMode (0, QHeaderView::Custom);
-  msgwheader->setResizeMode (3, QHeaderView::Interactive);
+  msgwheader->setResizeMode (COLUMN_NUMBER, QHeaderView::Custom);
+  msgwheader->setResizeMode (COLUMN_DATE, QHeaderView::Interactive);
     
-  msgwheader->resizeSection ( 0, 24 );
-  msgwheader->resizeSection ( 1, 250 );
-  msgwheader->resizeSection ( 2, 140 );
-  msgwheader->resizeSection ( 3, 140 );
+  msgwheader->resizeSection ( COLUMN_NUMBER,  24 );
+  msgwheader->resizeSection ( COLUMN_SUBJECT, 250 );
+  msgwheader->resizeSection ( COLUMN_FROM,    140 );
+  msgwheader->resizeSection ( COLUMN_DATE,    140 );
   
     /* Set header resize modes and initial section sizes */
 	QHeaderView * msglheader = ui.msgList->header () ;
@@ -700,38 +708,27 @@ void MessagesDialog::insertMessages()
 
 			/* make a widget per friend */
 
-			QStandardItem *item0 = NULL;
-			QStandardItem *item1 = NULL;
-			QStandardItem *item2 = NULL;
-			QStandardItem *item3 = NULL;
-			QStandardItem *item4 = NULL;
-			QStandardItem *item5 = NULL;
+			QStandardItem *item [COLUMN_COUNT];
 
 			bool bInsert = false;
 
 			if (nRow < nRowCount) {
-				item0 = MessagesModel->item(nRow, 0);
-				item1 = MessagesModel->item(nRow, 1);
-				item2 = MessagesModel->item(nRow, 2);
-				item3 = MessagesModel->item(nRow, 3);
-				item4 = MessagesModel->item(nRow, 4);
-				item5 = MessagesModel->item(nRow, 5);
+				for (int i = 0; i < COLUMN_COUNT; i++) {
+					item[i] = MessagesModel->item(nRow, i);
+				}
 			} else {
-				item0 = new QStandardItem();
-				item1 = new QStandardItem();
-				item2 = new QStandardItem();
-				item3 = new QStandardItem();
-				item4 = new QStandardItem();
-				item5 = new QStandardItem();
+				for (int i = 0; i < COLUMN_COUNT; i++) {
+					item[i] = new QStandardItem();
+				}
 				bInsert = true;
 			}
 
 			//set this false if you want to expand on double click
-			item0->setEditable(false);
-			item1->setEditable(false);
-			item2->setEditable(false);
-			item3->setEditable(false);
-			item4->setEditable(false);
+			item[COLUMN_NUMBER]->setEditable(false);
+			item[COLUMN_SUBJECT]->setEditable(false);
+			item[COLUMN_FROM]->setEditable(false);
+			item[COLUMN_DATE]->setEditable(false);
+			item[COLUMN_SRCID]->setEditable(false);
 
 			/* So Text should be:
 			 * (1) Msg / Broadcast
@@ -744,59 +741,62 @@ void MessagesDialog::insertMessages()
 			 * (7) File Total
 			 */
 
+			QString dateString;
 			// Date First.... (for sorting)
 			{
 				QDateTime qdatetime;
 				qdatetime.setTime_t(it->ts);
+
+				// add string to all data
+				dateString = qdatetime.toString("_yyyyMMdd_hhmmss");
 				
 				//if the mail is on same date show only time.
 				if (qdatetime.daysTo(QDateTime::currentDateTime()) == 0)
 				{
 					QTime qtime = qdatetime.time();
 					QVariant varTime(qtime);
-					item3->setData(varTime, Qt::DisplayRole);
+					item[COLUMN_DATE]->setData(varTime, Qt::DisplayRole);
 				}
 				else
 				{
 					QVariant varDateTime(qdatetime);
-					item3->setData(varDateTime, Qt::DisplayRole);
+					item[COLUMN_DATE]->setData(varDateTime, Qt::DisplayRole);
 				}
 				// for sorting
-				item3->setData(qdatetime, Qt::UserRole);
+				item[COLUMN_DATE]->setData(qdatetime, Qt::UserRole);
 			}
 
 			//  From ....
 			{
-				item2 -> setText(QString::fromStdString(rsPeers->getPeerName(it->srcId)));
-				item2->setData(item2->text(), Qt::UserRole);
+				item[COLUMN_FROM] -> setText(QString::fromStdString(rsPeers->getPeerName(it->srcId)));
+				item[COLUMN_FROM]->setData(item[COLUMN_FROM]->text() + dateString, Qt::UserRole);
                         }
 
 			// Subject
-			item1 -> setText(QString::fromStdWString(it->title));
-			item1->setData(item1->text(), Qt::UserRole);
+			QString text = QString::fromStdWString(it->title);
+			item[COLUMN_SUBJECT] -> setText(text);
+			item[COLUMN_SUBJECT]->setData(text + dateString, Qt::UserRole);
 
 			if ((it -> msgflags & RS_MSG_NEW) == RS_MSG_NEW)
 			{
-				QFont qf = item1->font();
+				QFont qf = item[COLUMN_SUBJECT]->font();
 				qf.setBold(true);
-				item1->setFont(qf);
+				item[COLUMN_SUBJECT]->setFont(qf);
 				
 			}
 			
 			// Change Message icon when Subject is Re: or Fwd:
-			QString text = QString::fromStdWString(it->title);
-
 			if (text.startsWith("Re:", Qt::CaseInsensitive))
 			{
-				item1 -> setIcon(QIcon(":/images/message-mail-replied-read.png"));
+				item[COLUMN_SUBJECT] -> setIcon(QIcon(":/images/message-mail-replied-read.png"));
 			}
 			else if (text.startsWith("Fwd:", Qt::CaseInsensitive))
 			{
-				item1 -> setIcon(QIcon(":/images/message-mail-forwarded-read.png"));
+				item[COLUMN_SUBJECT] -> setIcon(QIcon(":/images/message-mail-forwarded-read.png"));
 			}
 			else
 			{
-				item1 -> setIcon(QIcon(":/images/message-mail-read.png"));
+				item[COLUMN_SUBJECT] -> setIcon(QIcon(":/images/message-mail-read.png"));
 			}
 			
 			if (it -> msgflags & RS_MSG_NEW)
@@ -807,19 +807,17 @@ void MessagesDialog::insertMessages()
 					qf.setBold(true);
 					item->setFont(i, qf);*/
 				}
-				QString text = QString::fromStdWString(it->title);
-				
 				if (text.startsWith("Re:", Qt::CaseInsensitive))
 				{
-					item1 -> setIcon(QIcon(":/images/message-mail-replied.png"));
+					item[COLUMN_SUBJECT] -> setIcon(QIcon(":/images/message-mail-replied.png"));
 				}
 					else if (text.startsWith("Fwd:", Qt::CaseInsensitive))
 				{
-					item1 -> setIcon(QIcon(":/images/message-mail-forwarded.png"));
+					item[COLUMN_SUBJECT] -> setIcon(QIcon(":/images/message-mail-forwarded.png"));
 				}
 				else
 				{
-					item1 -> setIcon(QIcon(":/images/message-mail.png"));
+					item[COLUMN_SUBJECT] -> setIcon(QIcon(":/images/message-mail.png"));
 				}
 			}
 
@@ -836,23 +834,20 @@ void MessagesDialog::insertMessages()
 			{
 				std::ostringstream out;
 				out << it -> count;
-				item0 -> setText(QString::fromStdString(out.str()));
-                                item0->setData(item0->text(), Qt::UserRole);
-                                //item -> setTextAlignment( 0, Qt::AlignCenter );
+				item[COLUMN_NUMBER] -> setText(QString::fromStdString(out.str()));
+				item[COLUMN_NUMBER]->setData(item[COLUMN_NUMBER]->text() + dateString, Qt::UserRole);
+				//item -> setTextAlignment( 0, Qt::AlignCenter );
 			}
 
-			item4 -> setText(QString::fromStdString(it->srcId));
-			item5 -> setText(QString::fromStdString(it->msgId));
+			item[COLUMN_SRCID] -> setText(QString::fromStdString(it->srcId));
+			item[COLUMN_MSGID] -> setText(QString::fromStdString(it->msgId));
 
 			if (bInsert) {
 				/* add to the list */
 				QList<QStandardItem *> itemList;
-				itemList.append(item0);
-				itemList.append(item1);
-				itemList.append(item2);
-				itemList.append(item3);
-				itemList.append(item4);
-				itemList.append(item5);
+				for (int i = 0; i < COLUMN_COUNT; i++) {
+					itemList.append(item[i]);
+				}
 				MessagesModel->appendRow(itemList);
 			}
 		}
@@ -861,8 +856,8 @@ void MessagesDialog::insertMessages()
 	}
 
 	updateMessageSummaryList();
-	ui.messagestreeView->hideColumn(4);
-	ui.messagestreeView->hideColumn(5);
+	ui.messagestreeView->hideColumn(COLUMN_SRCID);
+	ui.messagestreeView->hideColumn(COLUMN_MSGID);
 }
 
 // current row in messagestreeView has changed
@@ -901,7 +896,7 @@ void MessagesDialog::setMsgAsRead(const QModelIndex &index)
 	}
 	else
 	{
-		for(int i = 0; i < 6; i++)
+		for(int i = 0; i < COLUMN_COUNT; i++)
 		{
 
 			QStandardItem* item;
@@ -911,7 +906,7 @@ void MessagesDialog::setMsgAsRead(const QModelIndex &index)
 			item->setFont(qf);
 
 			//change the icon to read. this need to be done when user clicks to the new message
-			if(i == 1)
+			if(i == COLUMN_SUBJECT)
 			{
 			  text = item->text();
     			  if (text.startsWith("Re:", Qt::CaseInsensitive))
@@ -928,7 +923,7 @@ void MessagesDialog::setMsgAsRead(const QModelIndex &index)
 			  }
 
 			}
-			if(i == 5)
+			if(i == COLUMN_MSGID)
 			{
 				std::string mid(item->text().toStdString());
 				rsMsgs->MessageRead(mid);
@@ -967,11 +962,11 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index)
 	else
 	{
 		QStandardItem * item;
-		item = MessagesModel->item(currentIndex.row(),4);
+		item = MessagesModel->item(currentIndex.row(),COLUMN_SRCID);
 		cid = item->text().toStdString();
 		fflush(0);
 		
-		item = MessagesModel->item(currentIndex.row(),5);
+		item = MessagesModel->item(currentIndex.row(),COLUMN_MSGID);
 		mid = item->text().toStdString();
 	}
 
@@ -1115,10 +1110,10 @@ bool MessagesDialog::getCurrentMsg(std::string &cid, std::string &mid)
 	}
 
 	QStandardItem *item;
-	item = MessagesModel->item(rowSelected,4);
+	item = MessagesModel->item(rowSelected,COLUMN_SRCID);
 	cid = item->text().toStdString();
 	
-	item = MessagesModel->item(rowSelected,5);
+	item = MessagesModel->item(rowSelected,COLUMN_MSGID);
 	mid = item->text().toStdString();
 	return true;
 }
@@ -1140,7 +1135,7 @@ void MessagesDialog::removemessage()
 
 	for(QList<int>::const_iterator it1(rowList.begin());it1!=rowList.end();++it1)
 	{
-		rsMsgs->MessageDelete(MessagesModel->item((*it1),5)->text().toStdString());
+		rsMsgs->MessageDelete(MessagesModel->item((*it1),COLUMN_MSGID)->text().toStdString());
 	}
 
 	insertMessages();
