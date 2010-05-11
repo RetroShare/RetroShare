@@ -1242,25 +1242,8 @@ void ChanMsgDialog::fileHashingFinished(AttachFileItem* file) {
 	    std::cerr << "ChanMsgDialog::anchorClicked mesgString : " << mesgString << std::endl;
 #endif
 
-	const char * messageString = mesgString.c_str ();
-
-	//convert char massageString to w_char
-	wchar_t* message;
-        size_t requiredSize = mbstowcs(NULL, messageString, 0); // C4996
-	/* Add one to leave room for the NULL terminator */
-	message = (wchar_t *)malloc( (requiredSize + 1) * sizeof( wchar_t ));
-	if (! message) {
-	    std::cerr << ("Memory allocation failure.\n");
-	}
-        size_t size = mbstowcs( message, messageString, requiredSize + 1); // C4996
-	if (size == (size_t) (-1)) {
-	   printf("Couldn't convert string--invalid multibyte character.\n");
-	}
-  	
-	ui.msgText->setHtml(QString::fromStdWString(message));
+	ui.msgText->textCursor().insertHtml(QString::fromStdString(mesgString));
 	ui.msgText->setFocus( Qt::OtherFocusReason );
-	
-
 }
 
 void ChanMsgDialog::checkAttachmentReady()
