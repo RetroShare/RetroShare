@@ -25,8 +25,6 @@
 
 #include <QDialog>
 
-#include <gui/settings/rsharesettings.h>
-
 #include "ui_StatusMessage.h"
 
 class StatusMessage : public QDialog
@@ -51,10 +49,6 @@ private slots:
   
   
 private:
-  /** A RshareSettings object used for saving/loading settings */
-  RshareSettings* _settings;
-
-
   /** Qt Designer generated object */
   Ui::StatusMessage ui;
 

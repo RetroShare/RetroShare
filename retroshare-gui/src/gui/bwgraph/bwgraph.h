@@ -28,7 +28,6 @@
 #include <QEvent>
 #include <QTimer>
 
-#include <gui/settings/rsharesettings.h>
 #include <gui/common/rwindow.h>
 
 #include "ui_bwgraph.h"
@@ -77,11 +76,6 @@ private:
   /** Loads the saved Bandwidth Graph settings */
   void loadSettings();
 
-  /** A TorControl object used to talk to Tor. */
- // TorControl* _torControl;
-  /** A VidaliaSettings object that handles getting/saving settings */
-  RshareSettings* _settings;
-  
   /** Qt Designer generated object */
   Ui::BandwidthGraph ui;
 };

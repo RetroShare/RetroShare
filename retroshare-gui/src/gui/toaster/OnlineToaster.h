@@ -21,7 +21,6 @@
 #define ONLINETOASTER_H
 
 #include "IQtToaster.h"
-#include <gui/settings/rsharesettings.h>
 
 #include <QtCore/QObject>
 #include <QSound>
@@ -64,8 +63,6 @@ private Q_SLOTS:
 	void close();
 
 private:
-        RshareSettings* _settings;
-
 	Ui::OnlineToaster * _ui;
 
 	QWidget * _onlineToasterWidget;

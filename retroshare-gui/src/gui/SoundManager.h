@@ -25,9 +25,6 @@
 #include <QSettings>
 #include <QtGui>
 
-#include "settings/rsharesettings.h"
-
-
 class SoundManager :public QObject
 {
 	Q_OBJECT
@@ -60,8 +57,6 @@ class SoundManager :public QObject
 		bool enable_eventFileRecive_Incoming;
 		bool enable_eventFileRecive_Finished;
 		bool enable_eventNewChatMessage;
-		
-		/** A RshareSettings object used for saving/loading settings */
-    RshareSettings* _settings;
+
 };
 #endif

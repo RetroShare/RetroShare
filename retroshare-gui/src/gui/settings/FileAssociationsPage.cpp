@@ -116,10 +116,10 @@ FileAssociationsPage::FileAssociationsPage(QWidget * parent, Qt::WFlags flags)
 //    connect( addNewAssotiationButton, SIGNAL( clicked() ),
 //             this,                    SLOT( testButtonClicked() ) );
 
-    settings = new RshareSettings();
+//    RshareSettings settings;
                //new QSettings( qApp->applicationDirPath()+"/sett.ini",
                //               QSettings::IniFormat);
-    settings->beginGroup("FileAssociations");
+//    settings.beginGroup("FileAssociations");
 
 
 
@@ -129,7 +129,6 @@ FileAssociationsPage::FileAssociationsPage(QWidget * parent, Qt::WFlags flags)
 
 FileAssociationsPage::~FileAssociationsPage()
 {
-    delete settings ;
 }
 
 //============================================================================
@@ -137,25 +136,25 @@ FileAssociationsPage::~FileAssociationsPage()
 bool
 FileAssociationsPage::save (QString &errmsg)
 {
-    //RshareSettings* settings = new RshareSettings();
+//    RshareSettings settings;
 
 
-//    settings->beginGroup("FileAssotiations");
-//    settings->setValue(".s01", "s01 test");
-//    settings->setValue(".s02", "s02 test");
-//    settings->setValue(".s03", "s03 test");
-//    settings->setValue(".s04", "s04 test");
+//    settings.beginGroup("FileAssotiations");
+//    settings.setValue(".s01", "s01 test");
+//    settings.setValue(".s02", "s02 test");
+//    settings.setValue(".s03", "s03 test");
+//    settings.setValue(".s04", "s04 test");
 //     QMap<QString, QString>::const_iterator ati = ations.constBegin();
 //     while (ati != ations.constEnd())
 //     {
-//         settings->setValue( ati.key(), ati.value() );
+//         settings.setValue( ati.key(), ati.value() );
 //         qDebug() << "  - " << ati.key() << ati.value() << "\n" ;
 //         ati++;
 //     }
 //
-//     settings->endGroup();
+//     settings.endGroup();
 
-    settings->sync();
+//    settings.sync();
 
 //    delete settings;
 /*    */
@@ -167,12 +166,12 @@ FileAssociationsPage::save (QString &errmsg)
 void
 FileAssociationsPage::load()
 {
-    //RshareSettings* settings = new RshareSettings();
+    RshareSettings settings;
 //     QSettings* settings = new QSettings( qApp->applicationDirPath()+"/sett.ini",
 //                                          QSettings::IniFormat);
 //
-//     settings->beginGroup("FileAssotiations");
-    QStringList keys = settings->allKeys();
+//     settings.beginGroup("FileAssotiations");
+    QStringList keys = settings.allKeys();
 
     table->setRowCount( keys.count() );
 
@@ -180,7 +179,7 @@ FileAssociationsPage::load()
     QStringList::const_iterator ki;
     for(ki=keys.constBegin(); ki!=keys.constEnd(); ki++)
     {
-        QString val = (settings->value(*ki, "")).toString();
+        QString val = (settings.value(*ki, "")).toString();
 
         addNewItemToTable( rowi, 0, *ki );
         addNewItemToTable( rowi, 1, val );
@@ -207,7 +206,8 @@ FileAssociationsPage::remove()
     QTableWidgetItem const * titem = table->item( currentRow,0);
     QString key = (titem->data(QTableWidgetItem::Type)).toString();
 
-    settings->remove(key);
+    RshareSettings settings;
+    settings.remove(key);
     table->removeRow( currentRow );
 
     if ( table->rowCount()==0 )
@@ -235,7 +235,8 @@ FileAssociationsPage::addnew()
         QString currCmd = afad.resultCommand() ;
 
 
-        if ( !settings->contains(currType) )//new item should be added only if
+        RshareSettings settings;
+        if ( !settings.contains(currType) )//new item should be added only if
         {                              // it wasn't entered before.
             int nridx = table->rowCount();//new row index
             table->setRowCount(nridx+1);
@@ -256,7 +257,7 @@ FileAssociationsPage::addnew()
             }
         }
 
-        settings->setValue(currType, currCmd);
+        settings.setValue(currType, currCmd);
 
         removeAction->setEnabled(true);
         editAction->setEnabled(true);
@@ -289,7 +290,8 @@ FileAssociationsPage::edit()
 
         titem->setData(QTableWidgetItem::Type, currCmd);
 
-        settings->setValue(currType, currCmd);
+        RshareSettings settings;
+        settings.setValue(currType, currCmd);
     }
 }
 

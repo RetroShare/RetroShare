@@ -23,8 +23,6 @@
 #ifndef _CONNECTDIALOG_H
 #define _CONNECTDIALOG_H
 
-#include <gui/settings/rsharesettings.h>
-
 #include "ui_ConnectDialog.h"
 
 
@@ -69,9 +67,6 @@ void setAuthCode(std::string id, std::string code);
   std::string authCode;
   std::string authId;
 
-  /** A VidaliaSettings object that handles getting/saving settings */
-  RshareSettings* _settings;
-  
   /** Qt Designer generated object */
   Ui::ConnectDialog ui;
 };

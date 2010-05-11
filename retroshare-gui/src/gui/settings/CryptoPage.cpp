@@ -39,9 +39,6 @@ CryptoPage::CryptoPage(QWidget * parent, Qt::WFlags flags)
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
 
-  /* Create RshareSettings object */
-  _settings = new RshareSettings();
-
   connect(ui.copykeyButton, SIGNAL(clicked()), this, SLOT(copyPublicKey()));
   connect(ui.saveButton, SIGNAL(clicked()), this, SLOT(fileSaveAs()));
 
@@ -57,7 +54,6 @@ CryptoPage::CryptoPage(QWidget * parent, Qt::WFlags flags)
 
 CryptoPage::~CryptoPage()
 {
-    delete _settings;
 }
 
 void

@@ -27,6 +27,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include "util/Widget.h"
+#include "settings/rsharesettings.h"
 
 /* Define the format used for displaying the date and time */
 #define DATETIME_FMT  "MMM dd hh:mm:ss"
@@ -40,17 +41,15 @@ StartDialog::StartDialog(QWidget *parent, Qt::WFlags flags)
   /* Invoke Qt Designer generated QObject setup routine */
   ui.setupUi(this);
 
-  RshareSettings config;
-  config.loadWidgetInformation(this);
+  /* Create Bandwidth Graph related QObjects */
+  RshareSettings settings;
+  settings.loadWidgetInformation(this);
  
   _rsLogoBar = NULL;
  
   //LogoBar
   _rsLogoBar = new LogoBar(ui.callBarFrame);
   Widget::createLayout(ui.callBarFrame)->addWidget(_rsLogoBar);
-
-  /* Create Bandwidth Graph related QObjects */
-  _settings = new RshareSettings();
   
   ui.loadButton->setFocus();
 
@@ -110,8 +109,8 @@ void StartDialog::show()
 
 void StartDialog::closeEvent (QCloseEvent * event)
 {
- RshareSettings config;
- config.saveWidgetInformation(this);
+ RshareSettings settings;
+ settings.saveWidgetInformation(this);
 
  QWidget::closeEvent(event);
 }

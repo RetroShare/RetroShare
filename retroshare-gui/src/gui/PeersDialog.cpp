@@ -32,6 +32,7 @@
 #include "rsiface/rsstatus.h"
 #include "rsiface/rsmsgs.h"
 #include "rsiface/rsnotify.h"
+#include "settings/rsharesettings.h"
 
 #include "chat/PopupChatDialog.h"
 #include "msgs/ChanMsgDialog.h"
@@ -100,9 +101,6 @@ PeersDialog::PeersDialog(QWidget *parent)
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
   
-  /* Create RshareSettings object */
-  _settings = new RshareSettings();
-
   last_status_send_time = 0 ;
 
 
@@ -176,8 +174,9 @@ PeersDialog::PeersDialog(QWidget *parent)
               QString::fromUtf8("blue"));
 
   QStringList him;
-  
-  if (_settings->value(QString::fromUtf8("GroupChat_History"), true).toBool())
+
+  RshareSettings settings;
+  if (settings.value(QString::fromUtf8("GroupChat_History"), true).toBool())
   {
     historyKeeper.getMessages(him, "", "THIS", 8);
     foreach(QString mess, him)
@@ -229,6 +228,16 @@ PeersDialog::PeersDialog(QWidget *parent)
 #ifdef Q_WS_WIN
 
 #endif
+}
+
+PeersDialog::~PeersDialog ()
+{
+    std::map<std::string, PopupChatDialog *>::iterator it;
+    for (it = chatDialogs.begin(); it != chatDialogs.end(); it++) {
+        if (it->second) {
+            delete (it->second);
+        }
+    }
 }
 
 void PeersDialog::pasteLink()
@@ -1025,7 +1034,7 @@ void PeersDialog::insertChat()
                     count ++;
                 }
 
-                if (_settings->value(QString::fromUtf8("Emoteicons_GroupChat"), true).toBool())
+                if (settings.value(QString::fromUtf8("Emoteicons_GroupChat"), true).toBool())
                 {                 
                 QHashIterator<QString, QString> i(smileys);
                 while(i.hasNext())
@@ -1849,16 +1858,16 @@ void PeersDialog::setCurrentFileName(const QString &fileName)
 
 ////play sound when recv a message
 void PeersDialog::playsound(){
-    _settings = new RshareSettings();
-        _settings->beginGroup("Sound");
-            _settings->beginGroup("SoundFilePath");
-                   QString OnlineSound= _settings->value("NewChatMessage","").toString();
-        _settings->endGroup();
-        _settings->beginGroup("Enable");
-                  bool flag= _settings->value("NewChatMessage",false).toBool();
-        _settings->endGroup();
-    _settings->endGroup();
+    RshareSettings settings;
+    settings.beginGroup("Sound");
+        settings.beginGroup("SoundFilePath");
+            QString OnlineSound= settings.value("NewChatMessage","").toString();
+        settings.endGroup();
+        settings.beginGroup("Enable");
+             bool flag= settings.value("NewChatMessage",false).toBool();
+        settings.endGroup();
+    settings.endGroup();
     if(!OnlineSound.isEmpty()&&flag)
         if(QSound::isAvailable())
-        QSound::play(OnlineSound);
+            QSound::play(OnlineSound);
 }

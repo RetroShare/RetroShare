@@ -26,8 +26,6 @@
 #include <QFileDialog>
 #include <QtGui>
 
-#include "settings/rsharesettings.h"
-
 #include "mainpage.h"
 #include "ui_NetworkDialog.h"
 #include "RsAutoUpdatePage.h"
@@ -42,7 +40,6 @@ class NetworkDialog : public RsAutoUpdatePage
 public:
   /** Default Constructor */
   NetworkDialog(QWidget *parent = 0);
-  /** Default Destructor */
 
   //void load();
   virtual void updateDisplay() ; // overloaded from RsAutoUpdatePage
@@ -95,9 +92,6 @@ private slots:
 
 
 private:
-  /** A RetroShare Settings object used for saving/loading settings */
-  RshareSettings *_settings;
-
   QTreeWidgetItem *getCurrentNeighbour();
 
   /** Define the popup menus for the Context menu */

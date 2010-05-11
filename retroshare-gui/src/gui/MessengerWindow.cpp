@@ -39,6 +39,7 @@
 #include "util/PixmapMerging.h"
 #include "LogoBar.h"
 #include "util/Widget.h"
+#include "settings/rsharesettings.h"
 
 #include "gui/connect/ConnectFriendWizard.h"
 
@@ -102,9 +103,6 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
 	
-	/* Create RshareSettings object */
-  _settings = new RshareSettings();
-  
 	connect( ui.messengertreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( messengertreeWidgetCostumPopupMenu( QPoint ) ) );
   connect( ui.messengertreeWidget, SIGNAL(itemDoubleClicked ( QTreeWidgetItem *, int)), this, SLOT(chatfriend()));
 
@@ -921,14 +919,14 @@ void MessengerWindow::loadmystatusmessage()
 /** Save own status message */
 void  MessengerWindow::savestatusmessage()
 {
-  _settings->beginGroup("Profile");
+  RshareSettings settings;
+  settings.beginGroup("Profile");
 
-			_settings->setValue("StatusMessage",ui.messagelineEdit->text());
+    settings.setValue("StatusMessage",ui.messagelineEdit->text());
 
-	_settings->endGroup();
+  settings.endGroup();
 	
-	rsMsgs->setCustomStateString(ui.messagelineEdit->text().toStdString());
-
+  rsMsgs->setCustomStateString(ui.messagelineEdit->text().toStdString());
 }
 
 void MessengerWindow::on_actionSort_Peers_Descending_Order_activated()

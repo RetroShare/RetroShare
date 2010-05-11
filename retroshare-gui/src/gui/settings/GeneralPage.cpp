@@ -25,6 +25,7 @@
 #include "GeneralPage.h"
 #include <util/stringutil.h>
 #include <QSystemTrayIcon>
+#include "rsharesettings.h"
 
 /** Constructor */
 GeneralPage::GeneralPage(QWidget * parent, Qt::WFlags flags)
@@ -32,9 +33,6 @@ GeneralPage::GeneralPage(QWidget * parent, Qt::WFlags flags)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
-
- /* Create RshareSettings object */
-  _settings = new RshareSettings();
 
   connect(ui.autoLogin, SIGNAL(clicked()), this, SLOT(setAutoLogin()));
 
@@ -51,20 +49,20 @@ GeneralPage::GeneralPage(QWidget * parent, Qt::WFlags flags)
 /** Destructor */
 GeneralPage::~GeneralPage()
 {
-  delete _settings;
 }
 
 /** Saves the changes on this page */
 bool
 GeneralPage::save(QString &errmsg)
 {
-  _settings->setValue(QString::fromUtf8("StartMinimized"), startMinimized());
+  RshareSettings settings;
+  settings.setValue(QString::fromUtf8("StartMinimized"), startMinimized());
 
-  _settings->setValue(QString::fromUtf8("doQuit"), quit());
+  settings.setValue(QString::fromUtf8("doQuit"), quit());
   
-  _settings->setValue(QString::fromUtf8("ClosetoTray"), closetoTray());
+  settings.setValue(QString::fromUtf8("ClosetoTray"), closetoTray());
   
-  _settings->setRunRetroshareOnBoot(
+  settings.setRunRetroshareOnBoot(
   ui.chkRunRetroshareAtSystemStartup->isChecked());
 
   return true;
@@ -74,14 +72,14 @@ GeneralPage::save(QString &errmsg)
 void
 GeneralPage::load()
 {
-  ui.chkRunRetroshareAtSystemStartup->setChecked(
-  _settings->runRetroshareOnBoot());
+  RshareSettings settings;
+  ui.chkRunRetroshareAtSystemStartup->setChecked(settings.runRetroshareOnBoot());
 
-  ui.checkStartMinimized->setChecked(_settings->value(QString::fromUtf8("StartMinimized"), false).toBool());
+  ui.checkStartMinimized->setChecked(settings.value(QString::fromUtf8("StartMinimized"), false).toBool());
 
-  ui.checkQuit->setChecked(_settings->value(QString::fromUtf8("doQuit"), false).toBool());
+  ui.checkQuit->setChecked(settings.value(QString::fromUtf8("doQuit"), false).toBool());
   
-  ui.checkClosetoTray->setChecked(_settings->value(QString::fromUtf8("ClosetoTray"), false).toBool());
+  ui.checkClosetoTray->setChecked(settings.value(QString::fromUtf8("ClosetoTray"), false).toBool());
 
 
 }
@@ -106,8 +104,8 @@ bool GeneralPage::closetoTray() const {
 void
 GeneralPage::toggleShowOnStartup(bool checked)
 {
-  //RshareSettings _settings;
-  _settings->setShowMainWindowAtStart(checked);
+  RshareSettings settings;
+  settings.setShowMainWindowAtStart(checked);
 }
 
 void GeneralPage::setAutoLogin(){

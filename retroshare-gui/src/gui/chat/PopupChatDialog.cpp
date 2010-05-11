@@ -41,6 +41,7 @@
 #include "rsiface/rspeers.h"
 #include "rsiface/rsmsgs.h"
 #include "rsiface/rsfiles.h"
+#include "gui/settings/rsharesettings.h"
 
 
 #include "gui/feeds/AttachFileItem.h"
@@ -67,11 +68,9 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   /* Invoke Qt Designer generated QObject setup routine */
   ui.setupUi(this);
   
-  /* Create RshareSettings object */
-  _settings = new RshareSettings();
+  RshareSettings settings;
 
-  RshareSettings config;
-  config.loadWidgetInformation(this);
+  settings.loadWidgetInformation(this);
   this->move(qrand()%100, qrand()%100); //avoid to stack multiple popup chat windows on the same position
 
   
@@ -201,7 +200,6 @@ void PopupChatDialog::updateStatusString(const QString& status_string)
 /** Destructor. */
 PopupChatDialog::~PopupChatDialog()
 {
-
 }
 
 /** 
@@ -244,8 +242,8 @@ void PopupChatDialog::flash()
 
 void PopupChatDialog::closeEvent (QCloseEvent * event)
 {
-    RshareSettings config;
-    config.saveWidgetInformation(this);
+    RshareSettings settings;
+    settings.saveWidgetInformation(this);
 
     hide();
     event->ignore();
@@ -306,7 +304,8 @@ void PopupChatDialog::addChatMsg(ChatInfo *ci)
 std::cout << "PopupChatDialog:addChatMsg message : " << message.toStdString() << std::endl;
 #endif
 
-  if (_settings->value(QString::fromUtf8("Emoteicons_PrivatChat"), true).toBool())
+  RshareSettings settings;
+  if (settings.value(QString::fromUtf8("Emoteicons_PrivatChat"), true).toBool())
   {
 	QHashIterator<QString, QString> i(smileys);
 	while(i.hasNext())

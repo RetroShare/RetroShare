@@ -25,8 +25,6 @@
 #include <QFileDialog>
 #include <QtGui/QWidget>
 
-#include "rsharesettings.h"
-
 #include "configpage.h"
 #include "ui_NotifyPage.h"
 
@@ -53,9 +51,6 @@ class NotifyPage : public ConfigPage
   private:
 
        void closeEvent (QCloseEvent * event);
-
-      /** A RshareSettings object used for saving/loading settings */
-      RshareSettings* _settings;
 
       /** Qt Designer generated object */
       Ui::NotifyPage ui;

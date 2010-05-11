@@ -33,6 +33,7 @@
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
 #include "rsiface/rsdisc.h"
+#include "settings/rsharesettings.h"
 #include <algorithm>
 
 /* for GPGME */
@@ -80,9 +81,6 @@ NetworkDialog::NetworkDialog(QWidget *parent)
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
   
-  /* Create RshareSettings object */
-  _settings = new RshareSettings();
-
   connect( ui.connecttreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( connecttreeWidgetCostumPopupMenu( QPoint ) ) );
   connect( ui.connecttreeWidget, SIGNAL( itemSelectionChanged()), ui.unvalidGPGkeyWidget, SLOT( clearSelection() ) );
   connect( ui.unvalidGPGkeyWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( connecttreeWidgetCostumPopupMenu( QPoint ) ) );
@@ -813,42 +811,46 @@ void NetworkDialog::updateNetworkStatus()
 
 void NetworkDialog::on_actionTabsnorth_activated()
 {
-	_settings->beginGroup("NetworkDialog");
+  RshareSettings settings;
+  settings.beginGroup("NetworkDialog");
 	
   ui.networkTab->setTabPosition(QTabWidget::North);
   
-  _settings->setValue("TabWidget_Position",ui.networkTab->tabPosition());
-  _settings->endGroup();
+  settings.setValue("TabWidget_Position",ui.networkTab->tabPosition());
+  settings.endGroup();
 }
 
 void NetworkDialog::on_actionTabssouth_activated()
 {
-	_settings->beginGroup("NetworkDialog");
+  RshareSettings settings;
+  settings.beginGroup("NetworkDialog");
 
   ui.networkTab->setTabPosition(QTabWidget::South);
   
-  _settings->setValue("TabWidget_Position",ui.networkTab->tabPosition());  
-  _settings->endGroup();
+  settings.setValue("TabWidget_Position",ui.networkTab->tabPosition());
+  settings.endGroup();
 }
 
 void NetworkDialog::on_actionTabswest_activated()
 {
-	_settings->beginGroup("NetworkDialog");
+  RshareSettings settings;
+  settings.beginGroup("NetworkDialog");
 
   ui.networkTab->setTabPosition(QTabWidget::West);
   
-  _settings->setValue("TabWidget_Position",ui.networkTab->tabPosition());  
-  _settings->endGroup();
+  settings.setValue("TabWidget_Position",ui.networkTab->tabPosition());
+  settings.endGroup();
 }
 
 void NetworkDialog::on_actionTabsright_activated()
 {
-	_settings->beginGroup("NetworkDialog");
+  RshareSettings settings;
+  settings.beginGroup("NetworkDialog");
 	
   ui.networkTab->setTabPosition(QTabWidget::East);
   
-  _settings->setValue("TabWidget_Position",ui.networkTab->tabPosition());  
-  _settings->endGroup();
+  settings.setValue("TabWidget_Position",ui.networkTab->tabPosition());
+  settings.endGroup();
 }
 
 void NetworkDialog::on_actionTabsTriangular_activated()
@@ -865,31 +867,29 @@ void NetworkDialog::on_actionTabsRounded_activated()
 
 void NetworkDialog::loadtabsettings()
 {
-_settings->beginGroup("NetworkDialog");
+  RshareSettings settings;
+  settings.beginGroup("NetworkDialog");
 
-if(_settings->value("TabWidget_Position","0").toInt() == 0)
-{
-qDebug() << "Tab North";
-ui.networkTab->setTabPosition(QTabWidget::North);
-}
+  if(settings.value("TabWidget_Position","0").toInt() == 0)
+  {
+    qDebug() << "Tab North";
+    ui.networkTab->setTabPosition(QTabWidget::North);
+  }
+  else if (settings.value("TabWidget_Position","1").toInt() == 1)
+  {
+    qDebug() << "Tab South";
+    ui.networkTab->setTabPosition(QTabWidget::South);
+  }
+  else if (settings.value("TabWidget_Position","2").toInt() ==2)
+  {
+    qDebug() << "Tab West";
+    ui.networkTab->setTabPosition(QTabWidget::West);
+  }
+  else if(settings.value("TabWidget_Position","3").toInt() ==3)
+  {
+    qDebug() << "Tab East";
+    ui.networkTab->setTabPosition(QTabWidget::East);
+  }
 
-else if (_settings->value("TabWidget_Position","1").toInt() == 1)
-{
-qDebug() << "Tab South";
-ui.networkTab->setTabPosition(QTabWidget::South);
-}
-
-else if (_settings->value("TabWidget_Position","2").toInt() ==2)
-{
-qDebug() << "Tab West";
-ui.networkTab->setTabPosition(QTabWidget::West);
-}
-
-else if(_settings->value("TabWidget_Position","3").toInt() ==3)
-{
-qDebug() << "Tab East";
-ui.networkTab->setTabPosition(QTabWidget::East);
-}
-
-_settings->endGroup();
+  settings.endGroup();
 }

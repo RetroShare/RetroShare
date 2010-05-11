@@ -27,13 +27,10 @@
 #include <QMessageBox>
 #include <QModelIndex>
 
-//#include <config/rsharesettings.h>
-
 #include <rsiface/rsfiles.h>
 #include "mainpage.h"
 #include "ui_SearchDialog.h"
 #include "advsearch/advancedsearchdialog.h"
-#include "settings/rsharesettings.h"
 
 #define FRIEND_SEARCH 1
 #define ANONYMOUS_SEARCH 2

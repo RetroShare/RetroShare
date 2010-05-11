@@ -30,6 +30,7 @@
 #include <QDir>
 #include <rshare.h>
 #include "gui/MainWindow.h"
+#include "gui/settings/rsharesettings.h"
 
 #include "helpbrowser.h"
 

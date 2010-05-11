@@ -26,6 +26,7 @@
 #include <sstream>
 
 #include "rsiface/rsnotify.h"
+#include "rsharesettings.h"
 
 #include <QTimer>
 
@@ -38,9 +39,6 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WFlags flags)
   ui.setupUi(this);
   setAttribute(Qt::WA_QuitOnClose, false);
   setWindowTitle(windowTitle() + QLatin1String(" - Notify"));
-
-  /* Create RshareSettings object */
-  _settings = new RshareSettings();
 
   //load();
 
@@ -57,7 +55,6 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WFlags flags)
 
 NotifyPage::~NotifyPage()
 {
-    delete _settings;
 }
 
 void
@@ -111,9 +108,10 @@ NotifyPage::save(QString &errmsg)
 	if (ui.chat_Focus->isChecked())
 		chatflags |= RS_CHAT_FOCUS;
 
-	_settings->setNotifyFlags(notifyflags);
-	_settings->setNewsFeedFlags(newsflags);
-	_settings->setChatFlags(chatflags);
+        RshareSettings settings;
+        settings.setNotifyFlags(notifyflags);
+        settings.setNewsFeedFlags(newsflags);
+        settings.setChatFlags(chatflags);
 
 	load();
  	return true;
@@ -124,10 +122,11 @@ NotifyPage::save(QString &errmsg)
 void NotifyPage::load()
 {
 	/* extract from rsNotify the flags */
+        RshareSettings settings;
 
-	uint notifyflags = _settings->getNotifyFlags();
-	uint newsflags = _settings->getNewsFeedFlags();
-	uint chatflags   = _settings->getChatFlags();
+        uint notifyflags = settings.getNotifyFlags();
+        uint newsflags = settings.getNewsFeedFlags();
+        uint chatflags   = settings.getChatFlags();
 
 	ui.popup_Connect->setChecked(notifyflags & RS_POPUP_CONNECT);
 	ui.popup_NewMsg->setChecked(notifyflags & RS_POPUP_MSG);

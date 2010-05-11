@@ -25,8 +25,6 @@
 #include <QFileDialog>
 #include <QMovie>
 
-//#include <config/rsharesettings.h>
-
 #include "RsAutoUpdatePage.h"
 #include "ui_SharedFilesDialog.h"
 

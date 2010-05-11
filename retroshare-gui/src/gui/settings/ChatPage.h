@@ -25,8 +25,6 @@
 #include <QFileDialog>
 #include <QtGui/QWidget>
 
-#include "rsharesettings.h"
-
 #include "configpage.h"
 #include "ui_ChatPage.h"
 
@@ -53,9 +51,6 @@ class ChatPage : public ConfigPage
 
 
   private:
-      /** A RshareSettings object used for saving/loading settings */
-      RshareSettings* _settings;
-
       void closeEvent (QCloseEvent * event);
       
 

@@ -46,6 +46,7 @@ public:
 		/** Default Constructor */
 		PeersDialog(QWidget *parent = 0);
 		/** Default Destructor */
+		~PeersDialog ();
 
 		PopupChatDialog *getPrivateChat(std::string id, std::string name, uint chatflags);
 		void clearOldChats();
@@ -192,9 +193,6 @@ private:
 		std::map<std::string, PopupChatDialog *> chatDialogs;
 
 		QFont mCurrentFont; /* how the text will come out */
-
-		/** A RshareSettings object used for saving/loading settings */
-		RshareSettings* _settings;
 
 		/** Qt Designer generated object */
 		Ui::PeersDialog ui;

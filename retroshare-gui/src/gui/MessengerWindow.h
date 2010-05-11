@@ -26,7 +26,6 @@
 #include "mainpage.h"
 #include "ui_MessengerWindow.h"
 
-#include <gui/settings/rsharesettings.h>
 #include <gui/common/rwindow.h>
 #include "chat/PopupChatDialog.h"
 #include "RsAutoUpdatePage.h"
@@ -66,7 +65,6 @@ protected:
   void closeEvent (QCloseEvent * event);
   /** Default Constructor */
   MessengerWindow(QWidget *parent = 0, Qt::WFlags flags = 0);
-  /** Default Destructor */
 
 
 private slots:
@@ -151,9 +149,6 @@ private:
   
   QFont itemFont;
   
-  /** A RshareSettings object used for saving/loading settings */
-  RshareSettings* _settings;
-
   /** Qt Designer generated object */
   Ui::MessengerWindow ui;
 };

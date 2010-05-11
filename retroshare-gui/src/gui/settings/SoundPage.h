@@ -24,8 +24,6 @@
 
 #include <QFileDialog>
 
-#include "rsharesettings.h"
-
 #include "configpage.h"
 #include "ui_SoundPage.h"
 
@@ -54,9 +52,6 @@ private slots:
 	void on_cmd_openFile6();
 
 private:
-  /** A RshareSettings object used for saving/loading settings */
-  RshareSettings* _settings;
-
   /** Qt Designer generated object */
   Ui::SoundPage ui;
 };

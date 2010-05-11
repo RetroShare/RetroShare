@@ -30,8 +30,6 @@
 #include "gui/mainpage.h"
 #include "gui/linetypes.h"
 
-#include "gui/settings/rsharesettings.h"
-
 #include "ui_StatisticDialog.h"
 
 /** Redraw graph every 1000ms **/
@@ -73,9 +71,6 @@ private:
   /** Loads the saved Bandwidth Graph settings */
   void loadSettings();
  
-  /** A RetroShareSettings object that handles getting/saving settings */
-  RshareSettings* _settings;
-
   /** Qt Designer generated object */
   Ui::StatisticDialog ui;
 };

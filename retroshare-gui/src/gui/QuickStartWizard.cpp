@@ -31,6 +31,7 @@
 #include "rsiface/rsfiles.h"
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
+#include "settings/rsharesettings.h"
 
 
 QuickStartWizard::QuickStartWizard(QWidget *parent) :
@@ -40,9 +41,6 @@ QuickStartWizard::QuickStartWizard(QWidget *parent) :
 
 	  ui.pagesWizard->setCurrentIndex(0);
 	  
-	  /* Create RshareSettings object */
-    _settings = new RshareSettings();
-    
           loadNetwork();
 	  loadShare();
 	  loadGeneral();
@@ -72,7 +70,6 @@ QuickStartWizard::QuickStartWizard(QWidget *parent) :
 
 QuickStartWizard::~QuickStartWizard()
 {
-    //delete ui;
 }
 
 void QuickStartWizard::changeEvent(QEvent *e)
@@ -173,12 +170,12 @@ void QuickStartWizard::on_pushButtonSystemBack_clicked()
 
 void QuickStartWizard::on_pushButtonSystemFinish_clicked()
 {
-	
-  _settings->setValue(QString::fromUtf8("StartMinimized"), startMinimized());
+  RshareSettings settings;
+  settings.setValue(QString::fromUtf8("StartMinimized"), startMinimized());
 
-  _settings->setValue(QString::fromUtf8("doQuit"), quitbox());
+  settings.setValue(QString::fromUtf8("doQuit"), quitbox());
   
-  _settings->setRunRetroshareOnBoot(ui.checkBoxRunRetroshareAtSystemStartup->isChecked());
+  settings.setRunRetroshareOnBoot(ui.checkBoxRunRetroshareAtSystemStartup->isChecked());
   
   saveChanges();
   
@@ -359,13 +356,14 @@ bool QuickStartWizard::messageBoxOk(QString msg)
 void
 QuickStartWizard::loadGeneral()
 {
-  ui.checkBoxRunRetroshareAtSystemStartup->setChecked(_settings->runRetroshareOnBoot());
+  RshareSettings settings;
+  ui.checkBoxRunRetroshareAtSystemStartup->setChecked(settings.runRetroshareOnBoot());
 
-  ui.checkBoxStartMinimized->setChecked(_settings->value(QString::fromUtf8("StartMinimized"), false).toBool());
+  ui.checkBoxStartMinimized->setChecked(settings.value(QString::fromUtf8("StartMinimized"), false).toBool());
 
-  ui.checkBoxQuit->setChecked(_settings->value(QString::fromUtf8("doQuit"), false).toBool());
+  ui.checkBoxQuit->setChecked(settings.value(QString::fromUtf8("doQuit"), false).toBool());
   
-        //ui.checkBoxQuickWizard->setChecked(_settings->value(QString::fromUtf8("FirstRun"), false).toBool());
+        //ui.checkBoxQuickWizard->setChecked(settings.value(QString::fromUtf8("FirstRun"), false).toBool());
 }
 
 bool QuickStartWizard::quitbox() const {

@@ -22,7 +22,6 @@
 #ifndef _MESSAGESDIALOG_H
 #define _MESSAGESDIALOG_H
 
-#include "settings/rsharesettings.h"
 #include <list>
 #include <QFileDialog>
 #include <QModelIndex>
@@ -99,9 +98,6 @@ private slots:
   void toggleclearButton();
 
 private:
-  /** A RetroShare Settings object used for saving/loading settings */
-  RshareSettings *_settings;
-
 	class QStandardItemModel *MessagesModel;
   QSortFilterProxyModel *proxyModel;
 

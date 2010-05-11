@@ -35,9 +35,6 @@ ConnectDialog::ConnectDialog(QWidget *parent, Qt::WFlags flags)
 {
   /* Invoke Qt Designer generated QObject setup routine */
   ui.setupUi(this);
-
-  /* Create Bandwidth Graph related QObjects */
-  _settings = new RshareSettings();
   
   // Create the status bar
   statusBar()->showMessage("Peer Informations");
@@ -53,7 +50,6 @@ ConnectDialog::ConnectDialog(QWidget *parent, Qt::WFlags flags)
 /** Destructor. */
 ConnectDialog::~ConnectDialog()
 {
-  delete _settings;
 }
 
 /** 

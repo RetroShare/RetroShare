@@ -19,12 +19,10 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 #include "SoundManager.h"
+#include "settings/rsharesettings.h"
 
 SoundManager::SoundManager()
 {
-	/* Create RshareSettings object */
-  _settings = new RshareSettings();
-	
 	isMute=false;
 	reInit();
 }
@@ -80,25 +78,26 @@ void SoundManager::event_NewChatMessage()
 
 void SoundManager::reInit()
 {
-	_settings->beginGroup("Sound");
-		_settings->beginGroup("Enable");
-			enable_eventUser_go_Online = _settings->value("User_go_Online",false).toBool();
-			enable_eventUser_go_Offline = _settings->value("User_go_Offline",false).toBool();
-			enable_eventFileSend_Finished = _settings->value("FileSend_Finished",false).toBool();
-			enable_eventFileRecive_Incoming = _settings->value("FileRecive_Incoming",false).toBool();
-			enable_eventFileRecive_Finished = _settings->value("FileRecive_Finished",false).toBool();
-			enable_eventNewChatMessage = _settings->value("NewChatMessage",false).toBool();
-		_settings->endGroup();
+	RshareSettings settings;
 
-		_settings->beginGroup("SoundFilePath");
-		SoundFileUser_go_Online = _settings->value("User_go_Online","").toString();
-		SoundFileUser_go_Offline =_settings->value("User_go_Offline","").toString();
-		SoundFileFileSend_Finished = _settings->value("FileSend_Finished","").toString();
-		SoundFileFileRecive_Incoming = _settings->value("FileRecive_Incoming","").toString();
-		SoundFileFileRecive_Finished = _settings->value("FileRecive_Finished","").toString();
-		SoundFileNewChatMessage = _settings->value("NewChatMessage","").toString();
-		_settings->endGroup();
-	_settings->endGroup();
-	delete _settings;
+        settings.beginGroup("Sound");
+		settings.beginGroup("Enable");
+			enable_eventUser_go_Online = settings.value("User_go_Online",false).toBool();
+			enable_eventUser_go_Offline = settings.value("User_go_Offline",false).toBool();
+			enable_eventFileSend_Finished = settings.value("FileSend_Finished",false).toBool();
+			enable_eventFileRecive_Incoming = settings.value("FileRecive_Incoming",false).toBool();
+			enable_eventFileRecive_Finished = settings.value("FileRecive_Finished",false).toBool();
+			enable_eventNewChatMessage = settings.value("NewChatMessage",false).toBool();
+		settings.endGroup();
+
+		settings.beginGroup("SoundFilePath");
+		SoundFileUser_go_Online = settings.value("User_go_Online","").toString();
+		SoundFileUser_go_Offline =settings.value("User_go_Offline","").toString();
+		SoundFileFileSend_Finished = settings.value("FileSend_Finished","").toString();
+		SoundFileFileRecive_Incoming = settings.value("FileRecive_Incoming","").toString();
+		SoundFileFileRecive_Finished = settings.value("FileRecive_Finished","").toString();
+		SoundFileNewChatMessage = settings.value("NewChatMessage","").toString();
+		settings.endGroup();
+	settings.endGroup();
 }
 

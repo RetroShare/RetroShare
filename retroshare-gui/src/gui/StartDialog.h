@@ -23,7 +23,6 @@
 #ifndef _STARTDIALOG_H
 #define _STARTDIALOG_H
 
-#include "settings/rsharesettings.h"
 #include "rsiface/rsiface.h"
 /********
 #if (QT_VERSION >= 040300)
@@ -42,8 +41,6 @@ class StartDialog : public QMainWindow
 public:
   /** Default constructor */
   StartDialog(QWidget *parent = 0, Qt::WFlags flags = 0);
-  /** Default destructor */
-  //~StartDialog();
 
   bool  requestedNewCert();
 
@@ -74,10 +71,6 @@ private:
   /** Loads the saved connectidialog settings */
 //  void loadSettings();
   void loadCertificates();
-
-
-  /** A VidaliaSettings object that handles getting/saving settings */
-  RshareSettings* _settings;
   
   LogoBar * _rsLogoBar;
   

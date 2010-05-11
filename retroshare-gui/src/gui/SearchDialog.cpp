@@ -33,6 +33,7 @@
 #include "rsiface/rspeers.h"
 #include "rsiface/rsturtle.h"
 #include "util/misc.h"
+#include "settings/rsharesettings.h"
 
 #include <iostream>
 #include <sstream>

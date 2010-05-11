@@ -22,6 +22,7 @@
 
 #include <rshare.h>
 #include "AppearancePage.h"
+#include "rsharesettings.h"
 
 
 /** Constructor */
@@ -30,9 +31,6 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WFlags flags)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
-
-  /* Create RshareSettings object */
-  _settings = new RshareSettings();
 
   connect(ui.styleSheetCombo, SIGNAL(clicked()), this, SLOT(loadStyleSheet()));
 
@@ -61,7 +59,6 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WFlags flags)
 
 AppearancePage::~AppearancePage()
 {
-    delete _settings;
 }
 
 /** Saves the changes on this page */
@@ -72,9 +69,10 @@ AppearancePage::save(QString &errmsg)
 	QString languageCode =
     LanguageSupport::languageCode(ui.cmboLanguage->currentText());
 
-	_settings->setLanguageCode(languageCode);
-	_settings->setInterfaceStyle(ui.cmboStyle->currentText());
-	_settings->setSheetName(ui.styleSheetCombo->currentText());
+        RshareSettings settings;
+        settings.setLanguageCode(languageCode);
+        settings.setInterfaceStyle(ui.cmboStyle->currentText());
+        settings.setSheetName(ui.styleSheetCombo->currentText());
 
     /* Set to new style */
 	Rshare::setStyle(ui.cmboStyle->currentText());
@@ -87,20 +85,21 @@ AppearancePage::save(QString &errmsg)
 void
 AppearancePage::load()
 {
+    RshareSettings settings;
 
-	int index = ui.cmboLanguage->findData(_settings->getLanguageCode());
+        int index = ui.cmboLanguage->findData(settings.getLanguageCode());
 	ui.cmboLanguage->setCurrentIndex(index);
 
 	index = ui.cmboStyle->findData(Rshare::style().toLower());
 	ui.cmboStyle->setCurrentIndex(index);
 
-    ui.styleSheetCombo->setCurrentIndex(ui.styleSheetCombo->findText(_settings->getSheetName()));
+    ui.styleSheetCombo->setCurrentIndex(ui.styleSheetCombo->findText(settings.getSheetName()));
 
     /** load saved internal styleSheet **/
-    //QFile file(":/qss/" + (_settings->getSheetName().toLower()) + ".qss");
+    //QFile file(":/qss/" + (settings.getSheetName().toLower()) + ".qss");
 
     /** load saved extern Stylesheets **/
-    QFile file(QApplication::applicationDirPath() + "/qss/" + (_settings->getSheetName().toLower()) + ".qss");
+    QFile file(QApplication::applicationDirPath() + "/qss/" + (settings.getSheetName().toLower()) + ".qss");
 
     file.open(QFile::ReadOnly);
     QString styleSheet = QLatin1String(file.readAll());

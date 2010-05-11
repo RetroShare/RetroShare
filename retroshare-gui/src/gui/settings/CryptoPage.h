@@ -25,7 +25,6 @@
 #include <QFileDialog>
 #include <QtGui/QWidget>
 
-#include "rsharesettings.h"
 #include "gui/connect/ConnectFriendWizard.h"
 
 #include "configpage.h"
@@ -58,9 +57,6 @@ class CryptoPage : public ConfigPage
 
 
   private:
-      /** A RshareSettings object used for saving/loading settings */
-      RshareSettings* _settings;
-
       void closeEvent (QCloseEvent * event);
       
       void setCurrentFileName(const QString &fileName);

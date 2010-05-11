@@ -29,6 +29,7 @@
 #include <QDesktopWidget>
 #include <rshare.h>
 #include "rwindow.h"
+#include "gui/settings/rsharesettings.h"
 
 
 /** Default constructor. */
@@ -36,14 +37,12 @@ RWindow::RWindow(QString name, QWidget *parent, Qt::WFlags flags)
  : QMainWindow(parent, flags)
 {
   _name     = name;
-  _settings = new RSettings(name);
 }
 
 /** Destructor. */
 RWindow::~RWindow()
 {
   saveWindowState();
-  delete _settings;
 }
 
 /** Associates a shortcut key sequence with a slot. */
@@ -98,14 +97,16 @@ RWindow::restoreWindowState()
 QVariant
 RWindow::getSetting(QString setting, QVariant defaultValue)
 {
-  return _settings->value(setting, defaultValue);
+  RshareSettings settings;
+  return settings.value(setting, defaultValue);
 }
 
 /** Saves a value associated with a property name for this window object. */
 void
 RWindow::saveSetting(QString prop, QVariant value)
 {
-  _settings->setValue(prop, value);
+  RshareSettings settings;
+  settings.setValue(prop, value);
 }
 
 /** Overloaded QWidget::setVisible(). If this window is already visible and

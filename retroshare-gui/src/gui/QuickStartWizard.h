@@ -25,7 +25,6 @@
 #include <QtGui/QDialog>
 #include <QtGui/QWizard>
 
-#include "settings/rsharesettings.h"
 #include "ui_QuickStartWizard.h"
 
 
@@ -54,9 +53,6 @@ private:
     Ui::QuickStartWizard ui;
     
     bool messageBoxOk(QString);
-      
-     /** A RetroShare Settings object used for saving/loading settings */
-    RshareSettings *_settings;
 
 private Q_SLOTS:
         void on_pushButtonSharesRemove_clicked();

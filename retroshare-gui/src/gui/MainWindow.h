@@ -205,9 +205,6 @@ private:
     /** A BandwidthGraph object which handles monitoring RetroShare bandwidth usage */
     BandwidthGraph* _bandwidthGraph;
 
-    /** A RetroShareSettings object used for saving/loading settings */
-    RshareSettings* _settings;
-
     /** Creates a new action for a Main page. */
     QAction* createPageAction(QIcon img, QString text, QActionGroup *group);
     /** Adds a new action to the toolbar. */

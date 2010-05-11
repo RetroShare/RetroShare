@@ -787,15 +787,15 @@ SharedFilesDialog::tryToAddNewAssotiation()
 
     if (ti==QDialog::Accepted)
     {
-        RshareSettings* settings = new RshareSettings();
+        RshareSettings settings;
         //QSettings settings( qApp->applicationDirPath()+"/sett.ini",
         //                    QSettings::IniFormat);
-        settings->beginGroup("FileAssotiations");
+        settings.beginGroup("FileAssotiations");
 
         QString currType = afad.resultFileType() ;
         QString currCmd = afad.resultCommand() ;
 
-        settings->setValue(currType, currCmd);
+        settings.setValue(currType, currCmd);
     }
 }
 

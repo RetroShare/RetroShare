@@ -25,6 +25,7 @@
 
 #include "rsiface/rsdisc.h"
 #include "rsiface/rsiface.h"
+#include "settings/rsharesettings.h"
 
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QPainter>
@@ -355,9 +356,6 @@ void AWidget::drawWater(QRgb* srcImage,QRgb* dstImage) {
 TBoard::TBoard(QWidget *parent) {
     Q_UNUSED(parent);
     
-    /* Create RshareSettings object */
-    _settings = new RshareSettings();
-    
     setFocusPolicy(Qt::StrongFocus);
     isStarted = false;
     isPaused = false;
@@ -365,13 +363,16 @@ TBoard::TBoard(QWidget *parent) {
     nextPiece.setRandomShape();
     score = 0;
     level = 0;
-    maxScore = _settings->value("/about/maxsc").toInt();
+
+    RshareSettings settings;
+    maxScore = settings.value("/about/maxsc").toInt();
 }
 TBoard::~TBoard() {
-    int oldMax = _settings->value("/about/maxsc").toInt();
+    RshareSettings settings;
+    int oldMax = settings.value("/about/maxsc").toInt();
     int newMax = qMax(maxScore, score);
     if (oldMax < newMax) {
-        _settings->setValue("/about/maxsc", newMax);
+        settings.setValue("/about/maxsc", newMax);
     }
 }
 

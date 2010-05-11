@@ -23,8 +23,6 @@
 #ifndef _GB2_ABOUT_DIALOG_
 #define _GB2_ABOUT_DIALOG_
 
-#include "settings/rsharesettings.h"
-
 #include "ui_AboutDialog.h"
 
 #include <QtCore/QBasicTimer>
@@ -194,9 +192,6 @@ private:
     int maxScore;
     int level;
     TPiece::Shape board[BoardWidth * BoardHeight];
-    
-    /** A RetroShare Settings object used for saving/loading settings */
-    RshareSettings *_settings;
 };
 
 class NextPieceLabel : public QLabel {

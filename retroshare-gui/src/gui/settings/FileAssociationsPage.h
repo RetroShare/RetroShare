@@ -44,7 +44,6 @@ class QLabel;
 class QLineEdit;
 
 //class QSettings;
-class RshareSettings;
 
 //=============================================================================
 //! Dialog for setting file assotiations for RS
@@ -73,9 +72,6 @@ protected:
     QTableWidget* table;
     QPushButton* addNewAssotiationButton;
     QString settingsFileName;
-
-    RshareSettings* settings;
-//    QSettings* settings;
 
     void addNewItemToTable(int row, int column, QString itemText);
 

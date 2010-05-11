@@ -68,7 +68,6 @@ signals:
 
 private:
   QString _name;  /**< Name associated with this window. */
-  RSettings* _settings; /**< Object used to store window properties */
 };
 
 #endif

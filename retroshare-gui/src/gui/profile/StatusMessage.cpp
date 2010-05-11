@@ -24,6 +24,7 @@
 #include "rsiface/rspeers.h"
 #include "rsiface/rsdisc.h"
 #include "rsiface/rsmsgs.h"
+#include "gui/settings/rsharesettings.h"
 
 
 #include <QTime>
@@ -39,9 +40,6 @@ StatusMessage::StatusMessage(QWidget *parent, Qt::WFlags flags)
   /* Invoke Qt Designer generated QObject setup routine */
   ui.setupUi(this);
   
-  /* Create RshareSettings object */
-  _settings = new RshareSettings();
-  
   connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(close()));
   connect(ui.okButton, SIGNAL(clicked()), this, SLOT(save()));
   
@@ -52,8 +50,6 @@ StatusMessage::StatusMessage(QWidget *parent, Qt::WFlags flags)
 /** Destructor. */
 StatusMessage::~StatusMessage()
 {
-  delete _settings;
-
 }
 
 void StatusMessage::closeEvent (QCloseEvent * event)
@@ -65,11 +61,12 @@ void StatusMessage::closeEvent (QCloseEvent * event)
 /** Saves the changes on this page */
 void StatusMessage::save()
 {
-  _settings->beginGroup("Profile");
+    RshareSettings settings;
+    settings.beginGroup("Profile");
 
-			_settings->setValue("StatusMessage",ui.txt_StatusMessage->text());
+        settings.setValue("StatusMessage",ui.txt_StatusMessage->text());
 
-	_settings->endGroup();
+    settings.endGroup();
 	
 	rsMsgs->setCustomStateString(ui.txt_StatusMessage->text().toStdString());
 

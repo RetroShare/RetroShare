@@ -27,7 +27,6 @@
 #include <QFileDialog>
 #include <QLineEdit>
 
-#include "rsharesettings.h"
 #include "rsiface/rsiface.h"
 
 #include "configpage.h"
@@ -64,11 +63,6 @@ private slots:
   void setAutoLogin();
 
 private:
-  /** A RetroShare Settings object used for saving/loading settings */
-  RshareSettings *_settings;
-
-
-
   /** Qt Designer generated object */
   Ui::GeneralPage ui;
 };

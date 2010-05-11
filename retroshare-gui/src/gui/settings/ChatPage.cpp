@@ -21,6 +21,7 @@
 
 #include "rsiface/rspeers.h" //for rsPeers variable
 #include "rsiface/rsiface.h"
+#include "rsharesettings.h"
 
 #include <QtGui>
 #include <QClipboard>
@@ -38,9 +39,6 @@ ChatPage::ChatPage(QWidget * parent, Qt::WFlags flags)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
-
-  /* Create RshareSettings object */
-  _settings = new RshareSettings();
 
   //connect(ui.copykeyButton, SIGNAL(clicked()), this, SLOT(copyPublicKey()));
   //connect(ui.saveButton, SIGNAL(clicked()), this, SLOT(fileSaveAs()));
@@ -66,11 +64,12 @@ ChatPage::closeEvent (QCloseEvent * event)
 bool
 ChatPage::save(QString &errmsg)
 {
-  _settings->setValue(QString::fromUtf8("Emoteicons_PrivatChat"), emotePrivatChat());
+  RshareSettings settings;
+  settings.setValue(QString::fromUtf8("Emoteicons_PrivatChat"), emotePrivatChat());
 
-  _settings->setValue(QString::fromUtf8("Emoteicons_GroupChat"), emoteGroupChat());
+  settings.setValue(QString::fromUtf8("Emoteicons_GroupChat"), emoteGroupChat());
 
-  _settings->setValue(QString::fromUtf8("GroupChat_History"), groupchatHistory());
+  settings.setValue(QString::fromUtf8("GroupChat_History"), groupchatHistory());
 
  	return true;
 }
@@ -79,12 +78,13 @@ ChatPage::save(QString &errmsg)
 void
 ChatPage::load()
 {
+  RshareSettings settings;
 
-  ui.checkBox_emoteprivchat->setChecked(_settings->value(QString::fromUtf8("Emoteicons_PrivatChat"), true).toBool());
+  ui.checkBox_emoteprivchat->setChecked(settings.value(QString::fromUtf8("Emoteicons_PrivatChat"), true).toBool());
 
-  ui.checkBox_emotegroupchat->setChecked(_settings->value(QString::fromUtf8("Emoteicons_GroupChat"), true).toBool());
+  ui.checkBox_emotegroupchat->setChecked(settings.value(QString::fromUtf8("Emoteicons_GroupChat"), true).toBool());
   
-  ui.checkBox_groupchathistory->setChecked(_settings->value(QString::fromUtf8("GroupChat_History"), true).toBool());
+  ui.checkBox_groupchathistory->setChecked(settings.value(QString::fromUtf8("GroupChat_History"), true).toBool());
 
 }
 

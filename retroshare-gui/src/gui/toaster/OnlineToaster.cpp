@@ -22,6 +22,7 @@
 #include "ui_OnlineToaster.h"
 
 #include "QtToaster.h"
+#include "gui/settings/rsharesettings.h"
 
 #include <QtGui/QtGui>
 
@@ -67,19 +68,16 @@ void OnlineToaster::chatButtonSlot() {
 }
 
 void OnlineToaster::play(){
-    _settings = new RshareSettings();
-        _settings->beginGroup("Sound");
-            _settings->beginGroup("SoundFilePath");
-                   QString OnlineSound= _settings->value("User_go_Online","").toString();
-        _settings->endGroup();
-        _settings->beginGroup("Enable");
-                  bool flag= _settings->value("User_go_Online",false).toBool();
-        _settings->endGroup();
-    _settings->endGroup();
+    RshareSettings settings;
+        settings.beginGroup("Sound");
+            settings.beginGroup("SoundFilePath");
+                   QString OnlineSound= settings.value("User_go_Online","").toString();
+        settings.endGroup();
+        settings.beginGroup("Enable");
+                  bool flag= settings.value("User_go_Online",false).toBool();
+        settings.endGroup();
+    settings.endGroup();
     if(!OnlineSound.isEmpty()&&flag)
         if(QSound::isAvailable())
         QSound::play(OnlineSound);
-
-
-     // delete _settings;
 }

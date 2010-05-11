@@ -57,6 +57,7 @@
 #include "gui/connect/ConnectFriendWizard.h"
 #include "util/rsversion.h"
 #include "settings/rsettingswin.h"
+#include "settings/rsharesettings.h"
 
 #include <sstream>
 #include <iomanip>
@@ -121,12 +122,11 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     /* Invoke the Qt Designer generated QObject setup routine */
     ui.setupUi(this);
     
-    /* Create RshareSettings object */
-    _settings = new RshareSettings();
-    
-    if (_settings->value(QString::fromUtf8("FirstRun"), true).toBool())
+    RshareSettings settings;
+
+    if (settings.value(QString::fromUtf8("FirstRun"), true).toBool())
     {
-                _settings->setValue(QString::fromUtf8("FirstRun"), false);
+                settings.setValue(QString::fromUtf8("FirstRun"), false);
 		QuickStartWizard *qstartWizard = new QuickStartWizard(this);
 		qstartWizard->exec();
     }
@@ -287,8 +287,9 @@ MainWindow::~MainWindow()
     delete peerstatus;
     delete natstatus;
     delete ratesstatus;
-    delete _settings;
-#ifdef UNFINISHED   
+    MessengerWindow::releaseInstance();
+    messengerWindow = NULL;
+#ifdef UNFINISHED
     delete applicationWindow;
 #endif    
 }
@@ -580,8 +581,9 @@ void MainWindow::createActions()
 */
 void MainWindow::doQuit()
 {
+	RshareSettings settings;
 
-	if(!_settings->value(QString::fromUtf8("doQuit"), false).toBool())
+	if(!settings.value(QString::fromUtf8("doQuit"), false).toBool())
 	{
 	  QString queryWrn;
 	  queryWrn.clear();
@@ -609,7 +611,9 @@ void MainWindow::closeEvent(QCloseEvent *e)
 {
     static bool firstTime = true;
 
-   if(!_settings->value(QString::fromUtf8("ClosetoTray"), false).toBool())
+   RshareSettings settings;
+
+   if(!settings.value(QString::fromUtf8("ClosetoTray"), false).toBool())
    {
       if (trayIcon->isVisible()) {
           if (firstTime)

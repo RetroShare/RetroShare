@@ -26,7 +26,6 @@
 #include <QStyleFactory>
 #include <QtGui>
 
-#include "rsharesettings.h"
 #include <lang/languagesupport.h>
 
 #include "configpage.h"
@@ -53,9 +52,6 @@ class AppearancePage : public ConfigPage
 
 
   private:
-        /** A RshareSettings object used for saving/loading settings */
-      RshareSettings* _settings;
-
       void loadStyleSheet(const QString &sheetName);
       void loadqss();
 

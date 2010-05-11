@@ -72,9 +72,6 @@ MessagesDialog::MessagesDialog(QWidget *parent)
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
   
-    /* Create RshareSettings object */
-  _settings = new RshareSettings();
-
   connect( ui.messagestreeView, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( messageslistWidgetCostumPopupMenu( QPoint ) ) );
   connect( ui.msgList, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( msgfilelistWidgetCostumPopupMenu( QPoint ) ) );
   connect( ui.messagestreeView, SIGNAL(clicked ( const QModelIndex &) ) , this, SLOT( clicked( const QModelIndex & ) ) );
@@ -1252,7 +1249,9 @@ void MessagesDialog::setCurrentFileName(const QString &fileName)
 
 void MessagesDialog::buttonsicononly()
 {
-    _settings->beginGroup("MessageDialog");
+    RshareSettings settings;
+
+    settings.beginGroup("MessageDialog");
     
     ui.newmessageButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
     ui.removemessageButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
@@ -1262,20 +1261,22 @@ void MessagesDialog::buttonsicononly()
     ui.printbutton->setToolButtonStyle(Qt::ToolButtonIconOnly);
     ui.viewtoolButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
     
-    _settings->setValue("ToolButon_Stlye1",ui.newmessageButton->toolButtonStyle());
-    _settings->setValue("ToolButon_Stlye2",ui.removemessageButton->toolButtonStyle());  
-    _settings->setValue("ToolButon_Stlye3",ui.replymessageButton->toolButtonStyle());  
-    _settings->setValue("ToolButon_Stlye4",ui.replyallmessageButton->toolButtonStyle());  
-    _settings->setValue("ToolButon_Stlye5",ui.forwardmessageButton->toolButtonStyle());  
-    _settings->setValue("ToolButon_Stlye6",ui.printbutton->toolButtonStyle());  
-    _settings->setValue("ToolButon_Stlye7",ui.viewtoolButton->toolButtonStyle());   
+    settings.setValue("ToolButon_Stlye1",ui.newmessageButton->toolButtonStyle());
+    settings.setValue("ToolButon_Stlye2",ui.removemessageButton->toolButtonStyle());
+    settings.setValue("ToolButon_Stlye3",ui.replymessageButton->toolButtonStyle());
+    settings.setValue("ToolButon_Stlye4",ui.replyallmessageButton->toolButtonStyle());
+    settings.setValue("ToolButon_Stlye5",ui.forwardmessageButton->toolButtonStyle());
+    settings.setValue("ToolButon_Stlye6",ui.printbutton->toolButtonStyle());
+    settings.setValue("ToolButon_Stlye7",ui.viewtoolButton->toolButtonStyle());
 
-    _settings->endGroup();
+    settings.endGroup();
 }
 
 void MessagesDialog::buttonstextbesideicon()
 {
-    _settings->beginGroup("MessageDialog");
+    RshareSettings settings;
+
+    settings.beginGroup("MessageDialog");
 	
     ui.newmessageButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     ui.removemessageButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
@@ -1285,21 +1286,23 @@ void MessagesDialog::buttonstextbesideicon()
     ui.printbutton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     ui.viewtoolButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     
-    _settings->setValue("ToolButon_Stlye1",ui.newmessageButton->toolButtonStyle());
-    _settings->setValue("ToolButon_Stlye2",ui.removemessageButton->toolButtonStyle());  
-    _settings->setValue("ToolButon_Stlye3",ui.replymessageButton->toolButtonStyle());  
-    _settings->setValue("ToolButon_Stlye4",ui.replyallmessageButton->toolButtonStyle());  
-    _settings->setValue("ToolButon_Stlye5",ui.forwardmessageButton->toolButtonStyle());  
-    _settings->setValue("ToolButon_Stlye6",ui.printbutton->toolButtonStyle());  
-    _settings->setValue("ToolButon_Stlye7",ui.viewtoolButton->toolButtonStyle());   
+    settings.setValue("ToolButon_Stlye1",ui.newmessageButton->toolButtonStyle());
+    settings.setValue("ToolButon_Stlye2",ui.removemessageButton->toolButtonStyle());
+    settings.setValue("ToolButon_Stlye3",ui.replymessageButton->toolButtonStyle());
+    settings.setValue("ToolButon_Stlye4",ui.replyallmessageButton->toolButtonStyle());
+    settings.setValue("ToolButon_Stlye5",ui.forwardmessageButton->toolButtonStyle());
+    settings.setValue("ToolButon_Stlye6",ui.printbutton->toolButtonStyle());
+    settings.setValue("ToolButon_Stlye7",ui.viewtoolButton->toolButtonStyle());
 
-    _settings->endGroup();
+    settings.endGroup();
 
 }
 
 void MessagesDialog::buttonstextundericon()
 {
-    _settings->beginGroup("MessageDialog");
+    RshareSettings settings;
+
+    settings.beginGroup("MessageDialog");
 
     ui.newmessageButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     ui.removemessageButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
@@ -1309,22 +1312,24 @@ void MessagesDialog::buttonstextundericon()
     ui.printbutton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     ui.viewtoolButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
 
-    _settings->setValue("ToolButon_Stlye1",ui.newmessageButton->toolButtonStyle());
-    _settings->setValue("ToolButon_Stlye2",ui.removemessageButton->toolButtonStyle());  
-    _settings->setValue("ToolButon_Stlye3",ui.replymessageButton->toolButtonStyle());  
-    _settings->setValue("ToolButon_Stlye4",ui.replyallmessageButton->toolButtonStyle());  
-    _settings->setValue("ToolButon_Stlye5",ui.forwardmessageButton->toolButtonStyle());  
-    _settings->setValue("ToolButon_Stlye6",ui.printbutton->toolButtonStyle());  
-    _settings->setValue("ToolButon_Stlye7",ui.viewtoolButton->toolButtonStyle());   
+    settings.setValue("ToolButon_Stlye1",ui.newmessageButton->toolButtonStyle());
+    settings.setValue("ToolButon_Stlye2",ui.removemessageButton->toolButtonStyle());
+    settings.setValue("ToolButon_Stlye3",ui.replymessageButton->toolButtonStyle());
+    settings.setValue("ToolButon_Stlye4",ui.replyallmessageButton->toolButtonStyle());
+    settings.setValue("ToolButon_Stlye5",ui.forwardmessageButton->toolButtonStyle());
+    settings.setValue("ToolButon_Stlye6",ui.printbutton->toolButtonStyle());
+    settings.setValue("ToolButon_Stlye7",ui.viewtoolButton->toolButtonStyle());
 
-    _settings->endGroup();
+    settings.endGroup();
 }
 
 void MessagesDialog::loadToolButtonsettings()
 {
-    _settings->beginGroup("MessageDialog");
+    RshareSettings settings;
 
-    if(_settings->value("ToolButon_Stlye1","0").toInt() == 0)
+    settings.beginGroup("MessageDialog");
+
+    if(settings.value("ToolButon_Stlye1","0").toInt() == 0)
     {
     qDebug() << "ToolButon IconOnly";
     ui.newmessageButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
@@ -1336,7 +1341,7 @@ void MessagesDialog::loadToolButtonsettings()
     ui.viewtoolButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
     }
 
-    else if (_settings->value("ToolButon_Stlye1","2").toInt() ==2)
+    else if (settings.value("ToolButon_Stlye1","2").toInt() ==2)
     {
     qDebug() << "ToolButon TextBesideIcon";
     ui.newmessageButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
@@ -1348,7 +1353,7 @@ void MessagesDialog::loadToolButtonsettings()
     ui.viewtoolButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     }
 
-    else if(_settings->value("ToolButon_Stlye1","3").toInt() ==3)
+    else if(settings.value("ToolButon_Stlye1","3").toInt() ==3)
     {
     qDebug() << "ToolButton TextUnderIcon";
     ui.newmessageButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
@@ -1360,7 +1365,7 @@ void MessagesDialog::loadToolButtonsettings()
     ui.viewtoolButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     }
 
-    _settings->endGroup();
+    settings.endGroup();
 }
 
 void MessagesDialog::filterRegExpChanged()
