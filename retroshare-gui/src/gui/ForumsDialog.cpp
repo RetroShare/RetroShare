@@ -871,7 +871,7 @@ void ForumsDialog::insertThreads()
 
 void ForumsDialog::FillThreads(QList<QTreeWidgetItem *> &ThreadList)
 {
-    int Index;
+    int Index = 0;
     QTreeWidgetItem *Thread;
 
     // iterate all new threads
@@ -926,7 +926,7 @@ void ForumsDialog::FillThreads(QList<QTreeWidgetItem *> &ThreadList)
 
 void ForumsDialog::FillChildren(QTreeWidgetItem *Parent, QTreeWidgetItem *NewParent)
 {
-    int Index;
+    int Index = 0;
     int NewIndex;
     int NewCount = NewParent->childCount();
 
