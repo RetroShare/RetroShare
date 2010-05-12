@@ -25,6 +25,7 @@
 #include <QFileDialog>
 
 #include "chat/PopupChatDialog.h"
+#include "chat/HandleRichText.h"
 #include "RsAutoUpdatePage.h"
 
 #include "mainpage.h"
@@ -159,8 +160,12 @@ private:
 
 		///play the sound when recv a message
 		 void playsound();
-		     
-    QString fileName; 
+
+		QString fileName; 
+
+		/** store default information for embedding HTML */
+		RsChat::EmbedInHtmlAhref defEmbedAhref;
+		RsChat::EmbedInHtmlImg defEmbedImg;
 
 		/* Worker Functions */
 		/* (1) Update Display */
@@ -187,7 +192,7 @@ private:
 		QColor _currentColor;
 		bool _underline;
 		time_t last_status_send_time ;
-		
+
 		QHash<QString, QString> smileys;
 
 		std::map<std::string, PopupChatDialog *> chatDialogs;
@@ -198,5 +203,5 @@ private:
 		Ui::PeersDialog ui;
 };
 
-#endif
 
+#endif

@@ -998,13 +998,12 @@ void PeersDialog::insertChat()
                 QString name = QString::fromStdString(it->name);
                 QString line = "<span style=\"color:#C00000\">" + timestamp + "</span>" +
                                 "<span style=\"color:#2D84C9\"><strong>" + " " + name + "</strong></span>";
+		QString msgContents = QString::fromStdWString(it->msg);
 
                 //std::cerr << "PeersDialog::insertChat(): 1.11\n";
-                historyKeeper.addMessage(name, "THIS", QString::fromStdWString(it->msg));
+		historyKeeper.addMessage(name, "THIS", msgContents);
                 //std::cerr << "PeersDialog::insertChat(): 1.12\n";
                 extraTxt += line;
-
-                extraTxt += QString::fromStdWString(it->msg);
 
                 // notify with a systray icon msg
                 if(it->rsid != rsPeers->getOwnId())
@@ -1020,31 +1019,20 @@ void PeersDialog::insertChat()
                               emit notifyGroupChat(QString("New group chat"), notifyMsg);
                 }
 
-                //replace http://, https:// and www. with <a href> links
-                QRegExp rx("(retroshare://[^ <>]*)|(https?://[^ <>]*)|(www\\.[^ <>]*)");
-                int count = 0;
-                int pos = 200; //ignore the first 200 char because of the standard DTD ref
-                while ( (pos = rx.indexIn(extraTxt, pos)) != -1 ) {
-                    //we need to look ahead to see if it's already a well formed link
-                    if (extraTxt.mid(pos - 6, 6) != "href=\"" && extraTxt.mid(pos - 6, 6) != "href='" && extraTxt.mid(pos - 6, 6) != "ttp://" ) {
-                        QString tempMessg = extraTxt.left(pos) + "<a href=\"" + rx.cap(count) + "\">" + rx.cap(count) + "</a>" + extraTxt.mid(pos + rx.matchedLength(), -1);
-                        extraTxt = tempMessg;
-                    }
-                    pos += rx.matchedLength() + 15;
-                    count ++;
-                }
+		// create a DOM tree object from the message and embed contents with HTML tags
+		QDomDocument doc;
+		doc.setContent(msgContents);
 
-                if (settings.value(QString::fromUtf8("Emoteicons_GroupChat"), true).toBool())
-                {                 
-                QHashIterator<QString, QString> i(smileys);
-                while(i.hasNext())
-                {
-                    i.next();
-                    foreach(QString code, i.key().split("|"))
-                            extraTxt.replace(code, "<img src=\"" + i.value() + "\" />");
-                }
-                }
+		// embed links
+		QDomElement body = doc.documentElement();
+		RsChat::embedHtml(doc, body, defEmbedAhref);
 
+		// embed smileys
+		if (settings.value(QString::fromUtf8("Emoteicons_GroupChat"), true).toBool())
+			RsChat::embedHtml(doc, body, defEmbedImg);
+
+		msgContents = doc.toString(-1);		// -1 removes any annoying carriage return misinterpreted by QTextEdit
+		extraTxt += msgContents;
 
                 if ((msgWidget->verticalScrollBar()->maximum() - 30) < msgWidget->verticalScrollBar()->value() ) {
                 msgWidget->append(extraTxt);
@@ -1357,7 +1345,7 @@ void PeersDialog::loadEmoticonsgroupchat()
 	#endif
 	if(!sm_file.open(QIODevice::ReadOnly))
 	{
-		std::cerr << "Could not open resouce file :/emoticons/emotes.acs" << endl ;
+		std::cerr << "Could not open resouce file :/emoticons/emotes.acs" << std::endl ;
 		return ;
 	}
 	sm_codes = sm_file.readAll();
@@ -1407,6 +1395,9 @@ void PeersDialog::loadEmoticonsgroupchat()
 			smileys.insert(smcode, ":/"+smfile);
 			#endif
 	}
+
+	// init <img> embedder
+	defEmbedImg.InitFromAwkwardHash(smileys);
 }
 
 void PeersDialog::smileyWidgetgroupchat()
@@ -1661,13 +1652,13 @@ void PeersDialog::fileHashingFinished(AttachFileItem* file) {
 	}
 
         //convert fileSize from uint_64 to string for html link
-	char fileSizeChar [100];
-	sprintf(fileSizeChar, "%lld", file->FileSize());
-	std::string fileSize = *(&fileSizeChar);
+//	char fileSizeChar [100];
+//	sprintf(fileSizeChar, "%lld", file->FileSize());
+//	std::string fileSize = *(&fileSizeChar);
 
 	std::string mesgString = RetroShareLink(QString::fromStdString(file->FileName()),
-														file->FileSize(),
-														QString::fromStdString(file->FileHash())).toHtml().toStdString() ;
+						file->FileSize(),
+						QString::fromStdString(file->FileHash())).toHtml().toStdString() ;
 
 //	std::string mesgString = "<a href='retroshare://file|" + (file->FileName()) + "|" + fileSize + "|" + (file->FileHash()) + "'>" 
 //	+ "retroshare://file|" + (file->FileName()) + "|" + fileSize +  "|" + (file->FileHash())  + "</a>";
@@ -1679,13 +1670,13 @@ void PeersDialog::fileHashingFinished(AttachFileItem* file) {
 
 	//convert char massageString to w_char
 	wchar_t* message;
-	int requiredSize = mbstowcs(NULL, messageString, 0); // C4996
+	size_t requiredSize = mbstowcs(NULL, messageString, 0); // C4996
 	/* Add one to leave room for the NULL terminator */
 	message = (wchar_t *)malloc( (requiredSize + 1) * sizeof( wchar_t ));
 	if (! message) {
 	    std::cerr << ("Memory allocation failure.\n");
 	}
-	int size = mbstowcs( message, messageString, requiredSize + 1); // C4996
+	size_t size = mbstowcs( message, messageString, requiredSize + 1); // C4996
 	if (size == (size_t) (-1)) {
 	   printf("Couldn't convert string--invalid multibyte character.\n");
 	}
