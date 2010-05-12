@@ -629,8 +629,6 @@ bool ftController::copyFile(const std::string& source,const std::string& dest)
 {
 	std::string error ;
 
-	static const int BUFF_SIZE = 10485760 ; // 10 MB buffer to speed things up.
-	void *buffer = malloc(BUFF_SIZE) ;
 	FILE *in = fopen(source.c_str(),"rb") ;
 
 	if(in == NULL)
@@ -644,11 +642,17 @@ bool ftController::copyFile(const std::string& source,const std::string& dest)
 	if(out == NULL)
 	{
 		getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "File copy error", "Error while copying file " + dest + "\nCheck for disk full, or write permission ?\nOriginal file kept under the name "+source);
+		fclose (in);
 		return false ;
 	}
 
 	size_t s=0;
 	size_t T=0;
+
+	static const int BUFF_SIZE = 10485760 ; // 10 MB buffer to speed things up.
+	void *buffer = malloc(BUFF_SIZE) ;
+
+	bool bRet = true;
 
 	while( (s = fread(buffer,1,BUFF_SIZE,in)) > 0)
 	{
@@ -658,7 +662,8 @@ bool ftController::copyFile(const std::string& source,const std::string& dest)
 		if(t != s)
 		{
 			getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "File copy error", "Error while copying file " + dest + "\nIs your disc full ?\nOriginal file kept under the name "+source);
-			return false ;
+			bRet = false ;
+			break;
 		}
 	}
 

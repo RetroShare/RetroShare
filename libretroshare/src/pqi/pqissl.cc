@@ -224,6 +224,7 @@ int 	pqissl::reset()
 	active = false;
 	sockfd = -1;
 	waiting = WAITING_NOT;
+	SSL_free (ssl_connection);
 	ssl_connection = NULL;
 	sameLAN = false;
 	n_read_zero = 0;

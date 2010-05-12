@@ -430,21 +430,25 @@ void  PeersDialog::insertPeers()
             #endif
 
             /* make a widget per friend */
-            QTreeWidgetItem *gpg_item;
+            QTreeWidgetItem *gpg_item = NULL;
             QList<QTreeWidgetItem *> list = peertreeWidget->findItems(QString::fromStdString(*it), Qt::MatchExactly, 3);
-            if (list.size() == 1) {
+            if (list.size() > 0) {
                 gpg_item = list.front();
-            } else {
-                gpg_item = new QTreeWidgetItem(0); //set type to 0 for custom popup menu
-                gpg_item->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
             }
 
             RsPeerDetails detail;
             if ((!rsPeers->getPeerDetails(*it, detail) || !detail.accept_connection)
                 && detail.gpg_id != rsPeers->getGPGOwnId()) {
                 //don't accept anymore connection, remove from the view
-                delete (peertreeWidget->takeTopLevelItem(peertreeWidget->indexOfTopLevelItem(gpg_item)));
+                if (gpg_item) {
+                    delete (peertreeWidget->takeTopLevelItem(peertreeWidget->indexOfTopLevelItem(gpg_item)));
+                }
                 continue;
+            }
+
+            if (gpg_item == NULL) {
+                gpg_item = new QTreeWidgetItem(0); //set type to 0 for custom popup menu
+                gpg_item->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
             }
 
             //use to mark item as updated
@@ -475,7 +479,7 @@ void  PeersDialog::insertPeers()
             std::list<std::string> sslContacts;
             rsPeers->getSSLChildListOfGPGId(detail.gpg_id, sslContacts);
             for(std::list<std::string>::iterator sslIt = sslContacts.begin(); sslIt != sslContacts.end(); sslIt++) {
-                QTreeWidgetItem *sslItem;
+                QTreeWidgetItem *sslItem = NULL;
 
                 //find the corresponding sslItem child item of the gpg item
                 bool newChild = true;
@@ -486,9 +490,6 @@ void  PeersDialog::insertPeers()
                         break;
                     }
                 }
-                if (newChild) {
-                   sslItem = new QTreeWidgetItem(1); //set type to 1 for custom popup menu
-                }
 
                 RsPeerDetails sslDetail;
                 if (!rsPeers->getPeerDetails(*sslIt, sslDetail) || !rsPeers->isFriend(*sslIt)) {
@@ -496,7 +497,13 @@ void  PeersDialog::insertPeers()
                     std::cerr << "Removing widget from the view : id : " << *sslIt << std::endl;
                     #endif
                     //child has disappeared, remove it from the gpg_item
-                    gpg_item->removeChild(sslItem);
+                    if (sslItem) {
+                        gpg_item->removeChild(sslItem);
+                    }
+                }
+
+                if (newChild) {
+                   sslItem = new QTreeWidgetItem(1); //set type to 1 for custom popup menu
                 }
 
                 /* not displayed, used to find back the item */
@@ -557,8 +564,8 @@ void  PeersDialog::insertPeers()
                 std::cerr << "PeersDialog::insertPeers() inserting sslItem." << std::endl;
                 #endif
                 /* add sl child to the list. If item is already in the list, it won't be duplicated thanks to Qt */
-                gpg_item->addChild(sslItem);
                 if (newChild) {
+                    gpg_item->addChild(sslItem);
                     gpg_item->setExpanded(true);
                 }
             }
@@ -1099,6 +1106,7 @@ void PeersDialog::sendMsg()
 
 void  PeersDialog::insertSendList()
 {
+#ifdef false
 	std::list<std::string> peers;
 	std::list<std::string>::iterator it;
 
@@ -1160,6 +1168,7 @@ void  PeersDialog::insertSendList()
 	//sendWidget->insertTopLevelItems(0, items);
 
 	//sendWidget->update(); /* update display */
+#endif
 }
 
 

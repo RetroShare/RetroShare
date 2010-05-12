@@ -188,6 +188,8 @@ int IntroPage::nextId() const
     if (textRadioButton->isChecked()) return ConnectFriendWizard::Page_Text;
     if (certRadioButton->isChecked()) return ConnectFriendWizard::Page_Cert;
     if (foffRadioButton->isChecked()) return ConnectFriendWizard::Page_Foff;
+
+    return ConnectFriendWizard::Page_Foff;
 }
 //
 //============================================================================
