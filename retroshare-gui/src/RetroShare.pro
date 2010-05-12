@@ -11,7 +11,7 @@ MOC_DIR = temp/moc
 
 #CONFIG += debug
 debug {
-        QMAKE_CXXFLAGS *= -g
+	QMAKE_CFLAGS += -g
 }
 
 ################################# Linux ##########################################
@@ -19,8 +19,15 @@ debug {
 linux-* {
 	CONFIG += version_detail_bash_script
 	QMAKE_CXXFLAGS *= -D_FILE_OFFSET_BITS=64
+
+	system(which gpgme-config >/dev/null 2>&1) {
+		INCLUDEPATH += $$system(gpgme-config --cflags | sed -e "s/-I//g")
+	} else {
+		message(Could not find gpgme-config on your system, assuming gpgme.h is in /usr/include)
+	}
+
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
-        LIBS += -lssl -lgpgme -lupnp
+		LIBS += -lssl -lgpgme -lupnp
 }
 
 linux-g++ {
@@ -205,6 +212,7 @@ HEADERS +=  rshare.h \
             gui/profile/ProfileWidget.h \
             gui/profile/StatusMessage.h \
             gui/chat/PopupChatDialog.h \
+            gui/chat/HandleRichText.h \
             gui/channels/ChannelDetails.h \
             gui/channels/CreateChannelMsg.h \
             gui/connect/ConnectDialog.h \
@@ -386,6 +394,7 @@ SOURCES +=  main.cpp \
             gui/channels/CreateChannelMsg.cpp \
             gui/channels/ChannelDetails.cpp \
             gui/chat/PopupChatDialog.cpp \
+            gui/chat/HandleRichText.cpp \
             gui/connect/ConnectDialog.cpp \
             gui/connect/ConfCertDialog.cpp \
             gui/msgs/ChanMsgDialog.cpp \
