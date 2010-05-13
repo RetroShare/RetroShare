@@ -1,3 +1,27 @@
+Changes for v0.5.0c
+
+* Fixes two problems in the current group chat:
+  - the parser fails to embed two links in the same sentence
+  - the parser can potentially put smileys in the middle of <a> tags
+  Solution:
+  Since the message is in HTML, it is parsed into a DOM tree, then that DOM tree
+  is traversed and only the text nodes are parsed (see HandleRichText.cpp for details).
+  Bonus fixes:
+  - missing std:: for endl (which was falling back to its Qt counterpart)
+  - commenting useless code in PeersDialog::smileyWidgetgroupchat()
+  - replacing int by size_t
+  - RetroShare.pro now queries gpgme-config for its include path
+* fixed Memory leaks:
+	- getLocalInterfaces -> iptable = (MIB_IPADDRTABLE *) malloc(dwSize);
+	- main -> RshareSettings  *_settings = new RshareSettings();
+	- ExtAddrFinder::~ExtAddrFinder - use free for pointer allocated with malloc
+*	fixed RetroShare stopped responding during signing a key and asking for password.
+	- The QSingleShotTimer of ConfCertDialog wants to update the gui and stopped in  PeerItem::updateItem.
+* fixed chat bug that was truncating some messages, due to using a uint16_t to store a local size. Totally backward compatible.
+* fixed	crash with second open of HelpDialog solved
+* implemented a short circuit to local cache transfers. 
+  - This saves a large number of file descriptors, and improves reactivity of the software
+
 Changes for v0.5.0b
 
 * suppressed unused files 
