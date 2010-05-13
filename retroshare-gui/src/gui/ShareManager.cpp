@@ -289,6 +289,6 @@ void ShareManager::showEvent(QShowEvent *event)
 
 void ShareManager::showShareDialog()
 {
-	  static ShareDialog *sharedlg = new ShareDialog(this);
-      sharedlg->show();
+	 ShareDialog sharedlg (this);
+   sharedlg.exec();
 }
