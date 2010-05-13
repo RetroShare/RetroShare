@@ -351,19 +351,11 @@ void MainWindow::updateStatus()
 	if (natstatus)
 		natstatus->getNATStatus();
 
-	std::list<std::string> ids;
-	rsPeers->getOnlineList(ids);
-	int online = ids.size();
+	unsigned int online = 0;
+	rsPeers->getPeerCount (NULL, &online);
 
-	std::list<MsgInfoSummary> msgList;
-	std::list<MsgInfoSummary>::const_iterator it;
-
-	rsMsgs -> getMessageSummaries(msgList);
-	int newInboxCount = 0;
-
-	for(it = msgList.begin(); it != msgList.end(); it++)
-		if ((it -> msgflags & RS_MSG_BOXMASK) == RS_MSG_INBOX && ((it -> msgflags & RS_MSG_NEW) == RS_MSG_NEW))
-			newInboxCount ++;
+	unsigned int newInboxCount = 0;
+	rsMsgs->getMessageCount (NULL, &newInboxCount, NULL, NULL, NULL);
 
         if(newInboxCount)
                 messageAction->setIcon(QIcon(QPixmap(":/images/messages_new.png"))) ;

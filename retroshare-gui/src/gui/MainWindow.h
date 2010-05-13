@@ -79,12 +79,14 @@ public:
         Transfers, 				/** Transfers page. */
         SharedDirectories,   			/** Shared Directories page. */
         Messages,  		           	/** Messages page. */
+#ifndef RS_RELEASE_VERSION
         Links,  				/** Links page. */
         Channels,  				/** Channels page. */
+#endif
         Forums,  				/** Forums page. */
-        Blogs  				/** Blogs page. */
-
-
+#ifdef BLOGS
+        Blogs,  				/** Blogs page. */
+#endif
     };
 
     /** Create main window */

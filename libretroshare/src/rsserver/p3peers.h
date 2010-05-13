@@ -46,6 +46,7 @@ virtual std::string getOwnId();
 virtual bool	getOnlineList(std::list<std::string> &ids);
 virtual bool	getFriendList(std::list<std::string> &ids);
 //virtual bool	getOthersList(std::list<std::string> &ids);
+virtual void    getPeerCount (unsigned int *pnFriendCount, unsigned int *pnOnlineCount);
 
 virtual bool    isOnline(std::string id);
 virtual bool    isFriend(std::string id);

@@ -57,6 +57,7 @@ bool 	getMessageNotifications(std::list<MsgInfoSummary> &noteList);
 
 bool 	getMessageSummaries(std::list<MsgInfoSummary> &msgList);
 bool 	getMessage(std::string mid, MessageInfo &msg);
+void    getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox);
 
 bool    removeMsgId(std::string mid); 
 bool    markMsgIdRead(std::string mid);

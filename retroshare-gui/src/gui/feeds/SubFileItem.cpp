@@ -67,8 +67,7 @@ const uint32_t SFI_DEFAULT_PERIOD 	= (30 * 3600 * 24); /* 30 Days */
 /** Constructor */
 SubFileItem::SubFileItem(std::string hash, std::string name, std::string path, uint64_t size,
 						uint32_t flags, std::string srcId)
-:QWidget(NULL), mFileHash(hash), mFileName(name), mFileSize(size), mSrcId(srcId),
- mPath(path)
+:QWidget(NULL), mPath(path), mFileHash(hash), mFileName(name), mFileSize(size), mSrcId(srcId)
 {
   	/* Invoke the Qt Designer generated object setup routine */
   	setupUi(this);

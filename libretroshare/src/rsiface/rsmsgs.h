@@ -121,6 +121,7 @@ virtual ~RsMsgs() { return; }
 
 virtual bool getMessageSummaries(std::list<MsgInfoSummary> &msgList) = 0;
 virtual bool getMessage(std::string mId, MessageInfo &msg)  = 0;
+virtual void getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox) = 0;
 
 virtual	bool MessageSend(MessageInfo &info)                 = 0;
 virtual bool MessageDelete(std::string mid)                 = 0;

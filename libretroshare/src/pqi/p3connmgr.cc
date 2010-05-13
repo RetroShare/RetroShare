@@ -1523,6 +1523,23 @@ void p3ConnectMgr::getFriendList(std::list<std::string> &peers)
 //}
 
 
+void p3ConnectMgr::getPeerCount (unsigned int *pnFriendCount, unsigned int *pnOnlineCount)
+{
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
+	if (pnFriendCount) *pnFriendCount = mFriendList.size();
+	if (pnOnlineCount) {
+		*pnOnlineCount = 0;
+
+		std::map<std::string, peerConnectState>::iterator it;
+		for(it = mFriendList.begin(); it != mFriendList.end(); it++) {
+			if (it->second.state & RS_PEER_S_CONNECTED) {
+				(*pnOnlineCount)++;
+			}
+		}
+	}
+}
+
 
 bool p3ConnectMgr::connectAttempt(std::string id, struct sockaddr_in &addr, 
                                 uint32_t &delay, uint32_t &period, uint32_t &type)

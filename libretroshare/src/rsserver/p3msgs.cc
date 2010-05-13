@@ -62,7 +62,10 @@ bool p3Msgs::getMessage(std::string mid, MessageInfo &msg)
 	return mMsgSrv->getMessage(mid, msg);
 }
 
-
+void p3Msgs::getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox)
+{
+	mMsgSrv->getMessageCount(pnInbox, pnInboxNew, pnOutbox, pnDraftbox, pnSentbox);
+}
 
 /****************************************/
 /****************************************/

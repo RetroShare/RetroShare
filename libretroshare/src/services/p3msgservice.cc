@@ -455,7 +455,7 @@ bool p3MsgService::getMessageSummaries(std::list<MsgInfoSummary> &msgList)
 		initRsMIS(mit->second, mis);
 		msgList.push_back(mis);
 	}
-	return 1;
+	return true;
 }
 
 
@@ -481,6 +481,44 @@ bool p3MsgService::getMessage(std::string mId, MessageInfo &msg)
 	return true;
 }
 
+void p3MsgService::getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox)
+{
+    RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+
+    if (pnInbox) *pnInbox = 0;
+    if (pnInboxNew) *pnInboxNew = 0;
+    if (pnOutbox) *pnOutbox = 0;
+    if (pnDraftbox) *pnDraftbox = 0;
+    if (pnSentbox) *pnSentbox = 0;
+
+    std::map<uint32_t, RsMsgItem *>::iterator mit;
+    std::map<uint32_t, RsMsgItem *> *apMsg [2] = { &imsg, &msgOutgoing };
+
+    for (int i = 0; i < 2; i++) {
+        for (mit = apMsg [i]->begin(); mit != apMsg [i]->end(); mit++) {
+            MsgInfoSummary mis;
+            initRsMIS(mit->second, mis);
+
+            switch (mis.msgflags & RS_MSG_BOXMASK) {
+            case RS_MSG_INBOX:
+                    if (pnInbox) (*pnInbox)++;
+                    if ((mis.msgflags & RS_MSG_NEW) == RS_MSG_NEW) {
+                        if (pnInboxNew) (*pnInboxNew)++;
+                    }
+                    break;
+            case RS_MSG_OUTBOX:
+                    if (pnOutbox) (*pnOutbox)++;
+                    break;
+            case RS_MSG_DRAFTBOX:
+                    if (pnDraftbox) (*pnDraftbox)++;
+                    break;
+            case RS_MSG_SENTBOX:
+                    if (pnSentbox) (*pnSentbox)++;
+                    break;
+            }
+        }
+    }
+}
 
 /* remove based on the unique mid (stored in sid) */
 bool    p3MsgService::removeMsgId(std::string mid)

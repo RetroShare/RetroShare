@@ -258,6 +258,7 @@ bool	getOthersNetStatus(std::string id, peerConnectState &state);
 void	getOnlineList(std::list<std::string> &ssl_peers);
 void	getFriendList(std::list<std::string> &ssl_peers);
 //void	getOthersList(std::list<std::string> &peers); /deprecated
+void    getPeerCount (unsigned int *pnFriendCount, unsigned int *pnOnlineCount);
 
 
 	/**************** handle monitors *****************/

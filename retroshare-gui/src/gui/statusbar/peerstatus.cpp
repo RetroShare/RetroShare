@@ -63,25 +63,21 @@ void PeerStatus::getPeerStatus()
 {
     /* set users/friends/network */
 
-    std::list<std::string> ids;
-    rsPeers->getOnlineList(ids);
-    int online = ids.size();
-
-    ids.clear();
-    rsPeers->getFriendList(ids);
-    int friends = ids.size();
+    unsigned int nFriendCount = 0;
+    unsigned int nOnlineCount = 0;
+    rsPeers->getPeerCount (&nFriendCount, &nOnlineCount);
 
     std::ostringstream out;
-    out << friends << " ";
+    out << nFriendCount << " ";
     
     std::ostringstream out2;
-    out2 << online << " ";
+    out2 << nOnlineCount << " ";
 
 
     if (statusPeers)
           statusPeers -> setText( tr("<span style=\"color:#000000\"><strong>Friends:</strong></span>") + " " + QString::fromStdString(out.str()) + " | " + tr("<span style=\"color:#0000FF\"><strong>Online:</strong></span>") + " " + QString::fromStdString(out2.str()) );
     		
-    if (online > 0) 
+    if (nOnlineCount > 0)
     {
         iconLabel->setPixmap(QPixmap::QPixmap(":/images/user/identity16.png"));
     }

@@ -1381,39 +1381,14 @@ void MessagesDialog::filterColumnChanged()
 
 void MessagesDialog::updateMessageSummaryList()
 {
-	std::list<MsgInfoSummary> msgList;
-	std::list<MsgInfoSummary>::const_iterator it;
+	unsigned int newInboxCount = 0;
+	unsigned int newOutboxCount = 0;
+	unsigned int newDraftCount = 0;
+	unsigned int newSentboxCount = 0;
+	unsigned int inboxCount = 0;
 
-	rsMsgs -> getMessageSummaries(msgList);
-	int newInboxCount = 0;
-	int newOutboxCount = 0;
-	int newDraftCount = 0;
-	int newSentboxCount = 0;
-	int inboxCount = 0;
-
-	/*calculating the new messages*/
-	for(it = msgList.begin(); it != msgList.end(); it++)
-	{
-		if ((it -> msgflags & RS_MSG_BOXMASK) == RS_MSG_INBOX)
-		{
-			inboxCount ++;
-			if ((it -> msgflags & RS_MSG_NEW) == RS_MSG_NEW) {
-				newInboxCount ++;
-			}
-		}
-		if ((it -> msgflags & RS_MSG_BOXMASK) == RS_MSG_OUTBOX)
-		{
-			newOutboxCount ++;
-		}
-		if ((it -> msgflags & RS_MSG_BOXMASK) == RS_MSG_DRAFTBOX)
-		{
-			newDraftCount ++;
-		}
-		if ((it -> msgflags & RS_MSG_BOXMASK) == RS_MSG_SENTBOX )
-		{
-			newSentboxCount ++;
-		}
-	}
+	/* calculating the new messages */
+ 	rsMsgs->getMessageCount (&inboxCount, &newInboxCount, &newOutboxCount, &newDraftCount, &newSentboxCount);
 
 	QString textItem;
 	/*updating the labels in leftcolumn*/

@@ -138,6 +138,7 @@ virtual std::string getOwnId()					= 0;
 virtual bool	getOnlineList(std::list<std::string> &ssl_ids)	= 0;
 virtual bool	getFriendList(std::list<std::string> &ssl_ids)	= 0;
 //virtual bool	getOthersList(std::list<std::string> &ssl_ids)	= 0;
+virtual void    getPeerCount (unsigned int *pnFriendCount, unsigned int *pnnOnlineCount) = 0;
 
 virtual bool    isOnline(std::string ssl_id)			= 0;
 virtual bool    isFriend(std::string ssl_id)			= 0;
