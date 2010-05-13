@@ -7,8 +7,8 @@
 
 #include <string>
 
-#define LIB_VERSION "0.5.0a"
-#define SVN_REVISION "Revision: 2762  date : 23:28:44 04.22.10"
+#define LIB_VERSION "0.5.0c"
+#define SVN_REVISION "Revision: 2892  date : 19:49:40 05.10.10"
 
 namespace RsUtil {
 
