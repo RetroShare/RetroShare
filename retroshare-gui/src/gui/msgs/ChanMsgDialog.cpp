@@ -1237,7 +1237,7 @@ void ChanMsgDialog::fileHashingFinished(AttachFileItem* file) {
 	std::string fileSize = *(&fileSizeChar);
 
 	std::string mesgString = "<a href='retroshare://file|" + (file->FileName()) + "|" + fileSize + "|" + (file->FileHash()) + "'>" 
-	+ "retroshare://file|" + (file->FileName()) + "|" + fileSize +  "|" + (file->FileHash())  + "</a>";
+	+ "retroshare://file|" + (file->FileName()) + "|" + fileSize +  "|" + (file->FileHash())  + "</a>" + "<br>";
 #ifdef CHAT_DEBUG
 	    std::cerr << "ChanMsgDialog::anchorClicked mesgString : " << mesgString << std::endl;
 #endif
