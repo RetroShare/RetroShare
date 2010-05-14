@@ -1307,6 +1307,9 @@ void PeersDialog::setFont()
   mCurrentFont.setItalic(ui.textitalicChatButton->isChecked());
   ui.lineEdit->setFont(mCurrentFont);
   ui.lineEdit->setTextColor(_currentColor);
+  RshareSettings settings;
+  settings.setValue(QString::fromUtf8("ChatScreenFont"), mCurrentFont.toString());
+
 
   ui.lineEdit->setFocus();
 
