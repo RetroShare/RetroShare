@@ -36,7 +36,8 @@ CreateBlog::CreateBlog(QWidget *parent, bool isForum)
   // connect up the buttons.
   connect( ui.cancelButton, SIGNAL( clicked ( bool ) ), this, SLOT( cancelBlog( ) ) );
   connect( ui.createButton, SIGNAL( clicked ( bool ) ), this, SLOT( createBlog( ) ) );
-  
+  connect( ui.LogoButton, SIGNAL(clicked() ), this , SLOT(addBlogLogo()));
+  connect( ui.blogLogoButton, SIGNAL(clicked() ), this , SLOT(addBlogLogo()));
 
   newBlog();
 
@@ -118,9 +119,20 @@ void  CreateBlog::createBlog()
 		flags |= RS_DISTRIB_AUTHEN_ANON;
 	}
 
+	QByteArray ba;
+	QBuffer buffer(&ba);
+
+	if(!picture.isNull()){
+		// send chan image
+
+		buffer.open(QIODevice::WriteOnly);
+		picture.save(&buffer, "PNG"); // writes image into ba in PNG format
+	}
+
 	if (rsBlogs)
 	{
-			rsBlogs->createBlog(name.toStdWString(), desc.toStdWString(), flags);
+			rsBlogs->createBlog(name.toStdWString(), desc.toStdWString(), flags,
+					(unsigned char*) ba.data(), ba.size());
 	}
 
 
@@ -128,6 +140,28 @@ void  CreateBlog::createBlog()
 	return;
 }
 
+void CreateBlog::addBlogLogo(){
+
+	QString fileName = QFileDialog::getOpenFileName(this, "Load File", QDir::homePath(), "Pictures (*.png *.xpm *.jpg)");
+	if(!fileName.isEmpty())
+	{
+		picture = QPixmap(fileName).scaled(64,64, Qt::IgnoreAspectRatio);
+
+		// to show the selected
+		ui.blogLogoButton->setIcon(picture);
+
+		std::cerr << "Sending avatar image down the pipe" << std::endl ;
+
+		// send avatar down the pipe for other peers to get it.
+		QByteArray ba;
+		QBuffer buffer(&ba);
+		buffer.open(QIODevice::WriteOnly);
+		picture.save(&buffer, "PNG"); // writes image into ba in PNG format
+
+		std::cerr << "Image size = " << ba.size() << std::endl ;
+	}
+
+}
 
 void  CreateBlog::cancelBlog()
 {

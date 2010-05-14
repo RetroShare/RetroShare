@@ -26,6 +26,7 @@
 #include <QMap>
 #include <QPointer>
 #include <QObject>
+#include <qsettings.h>
 
 #include "ui_CreateBlogMsg.h"
 #include <stdint.h>

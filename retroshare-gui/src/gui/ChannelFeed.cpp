@@ -43,6 +43,8 @@
 #include "GeneralMsgDialog.h"
 
 
+#define CHAN_DEFAULT_IMAGE ":/images/channels.png"
+
 /****
  * #define CHAN_DEBUG
  ***/
@@ -655,8 +657,17 @@ void ChannelFeed::updateChannelMsgs()
 		return;
 	}
 	
+	if(ci.pngImageLen != 0){
+
+		QPixmap chanImage;
+		chanImage.loadFromData(ci.pngChanImage, ci.pngImageLen, "PNG");
+		iconLabel->setPixmap(chanImage);
+	}else{
+		QPixmap defaulImage(CHAN_DEFAULT_IMAGE);
+		iconLabel->setPixmap(defaulImage);
+	}
 	iconLabel->setEnabled(true);
-	
+
 	/* set textcolor for Channel name  */
 	QString channelStr("<span style=\"font-size:22pt; font-weight:500;"
                                "color:#4F4F4F;\">%1</span>");

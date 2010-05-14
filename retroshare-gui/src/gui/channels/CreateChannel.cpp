@@ -33,6 +33,8 @@ CreateChannel::CreateChannel(QWidget *parent)
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
   
+  picture = NULL;
+
   // connect up the buttons.
   connect( ui.cancelButton, SIGNAL( clicked ( bool ) ), this, SLOT( cancelChannel( ) ) );
   connect( ui.createButton, SIGNAL( clicked ( bool ) ), this, SLOT( createChannel( ) ) );
@@ -103,10 +105,19 @@ void  CreateChannel::createChannel()
 	{
 		flags |= RS_DISTRIB_AUTHEN_ANON;
 	}
+	QByteArray ba;
+	QBuffer buffer(&ba);
+
+	if(!picture.isNull()){
+		// send chan image
+
+		buffer.open(QIODevice::WriteOnly);
+		picture.save(&buffer, "PNG"); // writes image into ba in PNG format
+	}
 
 	if (rsChannels)
 	{
-		rsChannels->createChannel(name.toStdWString(), desc.toStdWString(), flags);
+		rsChannels->createChannel(name.toStdWString(), desc.toStdWString(), flags, (unsigned char*)ba.data(), ba.size());
 	}
 
 	close();
@@ -139,8 +150,6 @@ void CreateChannel::addChannelLogo()
 		picture.save(&buffer, "PNG"); // writes image into ba in PNG format
 
 		std::cerr << "Image size = " << ba.size() << std::endl ;
-
-		//rsMsgs->setOwnAvatarData((unsigned char *)(ba.data()),ba.size()) ;	// last char 0 included.
 
 	}
 }

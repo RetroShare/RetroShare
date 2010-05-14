@@ -49,6 +49,7 @@ private slots:
 	/* actions to take.... */
 void  createBlog();
 void  cancelBlog();
+void addBlogLogo();
 
 
 private:
