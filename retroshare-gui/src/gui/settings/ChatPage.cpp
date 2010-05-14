@@ -57,11 +57,14 @@ bool
 ChatPage::save(QString &errmsg)
 {
   RshareSettings settings;
+  settings.beginGroup("Chat");
 
   settings.setValue(QString::fromUtf8("Emoteicons_PrivatChat"), emotePrivatChat());
   settings.setValue(QString::fromUtf8("Emoteicons_GroupChat"), emoteGroupChat());
   settings.setValue(QString::fromUtf8("GroupChat_History"), groupchatHistory());
   settings.setValue(QString::fromUtf8("ChatScreenFont"), fontTempChat.toString());
+  
+  settings.endGroup();
 
   return true;
 }
@@ -71,12 +74,15 @@ void
 ChatPage::load()
 {
   RshareSettings settings;
+  settings.beginGroup("Chat");
 
   ui.checkBox_emoteprivchat->setChecked(settings.value(QString::fromUtf8("Emoteicons_PrivatChat"), true).toBool());
   ui.checkBox_emotegroupchat->setChecked(settings.value(QString::fromUtf8("Emoteicons_GroupChat"), true).toBool());
   ui.checkBox_groupchathistory->setChecked(settings.value(QString::fromUtf8("GroupChat_History"), true).toBool());
 
   fontTempChat.fromString(settings.value(QString::fromUtf8("ChatScreenFont")).toString());
+  
+  settings.endGroup();
 
   ui.labelChatFontPreview->setText(fontTempChat.rawName());
   ui.labelChatFontPreview->setFont(fontTempChat);
