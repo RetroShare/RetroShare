@@ -55,7 +55,6 @@ public:
 		void loadEmoticonsgroupchat();
 		//  void setChatDialog(ChatDialog *cd);
 
-		QPixmap picture;
 		virtual void updateDisplay() ;	// overloaded from RsAutoUpdatePage
 // replaced by shortcut
 //		virtual void keyPressEvent(QKeyEvent *) ;

@@ -1,4 +1,4 @@
-/****************************************************************
+﻿/****************************************************************
  *  RetroShare is distributed under the following license:
  *
  *  Copyright (C) 2006,2007 crypton
@@ -1536,6 +1536,7 @@ void PeersDialog::getAvatar()
 	QString fileName = QFileDialog::getOpenFileName(this, "Load File", QDir::homePath(), "Pictures (*.png *.xpm *.jpg *.tiff *.gif)");
 	if(!fileName.isEmpty())
 	{
+		QPixmap picture;
 		picture = QPixmap(fileName).scaled(82,82, Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
 
                 #ifdef PEERS_DEBUG
