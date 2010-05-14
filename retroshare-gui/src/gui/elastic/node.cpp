@@ -45,7 +45,6 @@
 #include <QMenu>
 #include <QCursor>
 #include <QPoint>
-#include <QMouseEvent>
 
 #include "edge.h"
 #include "arrow.h"

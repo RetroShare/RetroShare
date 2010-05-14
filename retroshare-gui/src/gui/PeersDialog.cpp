@@ -62,7 +62,6 @@
 #include <QMenu>
 #include <QCursor>
 #include <QPoint>
-#include <QMouseEvent>
 #include <QPixmap>
 #include <QMessageBox>
 #include <QHeaderView>
@@ -255,8 +254,7 @@ void PeersDialog::contextMenu( QPoint point )
 	QMenu contextMnu(this);
 	contextMnu.addAction( pasteLinkAct);
 
-	QMouseEvent mevent(QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier);
-	contextMnu.exec( mevent.globalPos() );
+	contextMnu.exec(QCursor::pos());
 }
 
 void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
@@ -266,9 +264,6 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
            //no peer selected
            return;
        }
-
-      QMenu contextMnu( this );
-      QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
 
       QAction* expandAll = new QAction(tr( "Expand all" ), this );
       connect( expandAll , SIGNAL( triggered() ), ui.peertreeWidget, SLOT (expandAll()) );
@@ -332,7 +327,8 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
       QWidgetAction *widgetAction = new QWidgetAction(this); 
       widgetAction->setDefaultWidget(widget); 
 
-      contextMnu.clear();
+      QMenu contextMnu( this );
+
       contextMnu.addAction( widgetAction);
       contextMnu.addAction( chatAct);
       contextMnu.addAction( msgAct);
@@ -347,7 +343,8 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
       contextMnu.addSeparator();
       contextMnu.addAction( expandAll);
       contextMnu.addAction( collapseAll);
-      contextMnu.exec( mevent->globalPos() );
+
+      contextMnu.exec(QCursor::pos());
 }
 
 // replaced by shortcut

@@ -29,7 +29,6 @@
 #include <QMenu>
 #include <QCursor>
 #include <QPoint>
-#include <QMouseEvent>
 #include <QPixmap>
 #include <QHeaderView>
 #include <QModelIndex>

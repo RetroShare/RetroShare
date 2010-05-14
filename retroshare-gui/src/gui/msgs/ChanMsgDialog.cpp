@@ -33,29 +33,7 @@
 
 #include <sstream>
 #include <QtGui>
-#include <QContextMenuEvent>
-#include <QCloseEvent>
-#include <QColorDialog>
-#include <QClipboard>
-#include <QFile>
-#include <QFileDialog>
-#include <QFileInfo>
-#include <QMenu>
-#include <QCursor>
-#include <QPoint>
-#include <QMouseEvent>
-#include <QMessageBox>
-#include <QPixmap>
-#include <QPrintDialog>
-#include <QPrinter>
-#include <QHeaderView>
-#include <QTextCharFormat>
-#include <QTextCodec>
-#include <QTextEdit>
-#include <QTextCursor>
-#include <QTextList>
-#include <QTextStream>
-#include <QTextDocumentFragment>
+
 
 
 /** Constructor */

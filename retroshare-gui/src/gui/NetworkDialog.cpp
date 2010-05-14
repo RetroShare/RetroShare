@@ -49,7 +49,6 @@
 #include <QMenu>
 #include <QCursor>
 #include <QPoint>
-#include <QMouseEvent>
 #include <QPixmap>
 #include <QHeaderView>
 
@@ -205,8 +204,6 @@ void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point )
     	return;
 
       QMenu contextMnu( this );
-      QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
-      contextMnu.clear();
 
                 std::string peer_id = wi->text(4).toStdString() ;
 
@@ -253,7 +250,7 @@ void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point )
 		contextMnu.addAction( peerdetailsAct);
 
 
-		contextMnu.exec( mevent->globalPos() );
+		contextMnu.exec(QCursor::pos());
 }
 
 void NetworkDialog::denyFriend()

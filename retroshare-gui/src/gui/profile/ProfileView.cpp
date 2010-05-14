@@ -27,16 +27,16 @@
 
 #include <sstream>
 
-#include <QContextMenuEvent>
+//#include <QContextMenuEvent>
 #include <QMenu>
-#include <QFile>
+//#include <QFile>
 #include <QFileDialog>
-#include <QCursor>
-#include <QPoint>
-#include <QMouseEvent>
+//#include <QCursor>
+//#include <QPoint>
+//#include <QMouseEvent>
 #include <QMessageBox>
-#include <QPixmap>
-#include <QPrintDialog>
+//#include <QPixmap>
+//#include <QPrintDialog>
 
 
 /** Constructor */
@@ -72,7 +72,6 @@ void ProfileView::imageCustomPopupMenu( QPoint point )
       }
 
       QMenu contextMnu( this );
-      QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
 
       QAction *clearImageAct = new QAction( tr( "Clear Photo" ), this );
       QAction *changeImageAct = new QAction( tr( "Change Photo" ), this );
@@ -80,10 +79,10 @@ void ProfileView::imageCustomPopupMenu( QPoint point )
       connect( clearImageAct , SIGNAL( triggered() ), this, SLOT( clearimage() ) );
       connect( changeImageAct , SIGNAL( triggered() ), this, SLOT( selectimagefile() ) );
 
-      contextMnu.clear();
       contextMnu.addAction( clearImageAct );
       contextMnu.addAction( changeImageAct );
-      contextMnu.exec( mevent->globalPos() );
+
+      contextMnu.exec(QCursor::pos());
 }
 
 
@@ -95,29 +94,23 @@ void ProfileView::profileCustomPopupMenu( QPoint point )
       }
 
       QMenu contextMnu( this );
-      QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
 
       QAction *editAct = new QAction( tr( "Edit Profile" ), this );
-
       connect( editAct , SIGNAL( triggered() ), this, SLOT( profileEdit() ) );
 
-      contextMnu.clear();
       contextMnu.addAction( editAct );
-      contextMnu.exec( mevent->globalPos() );
+
+      contextMnu.exec(QCursor::pos());
 }
 
 void ProfileView::fileCustomPopupMenu( QPoint point )
 {
-
       QMenu contextMnu( this );
-      QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
 
       QAction *downloadAct = NULL;
       QAction *downloadAllAct = NULL;
       QAction *removeAct = NULL;
       QAction *clearAct = NULL;
-
-      contextMnu.clear();
 
       if (mIsOwnId)
       {
@@ -140,7 +133,7 @@ void ProfileView::fileCustomPopupMenu( QPoint point )
         contextMnu.addAction( downloadAllAct );
       }
 
-      contextMnu.exec( mevent->globalPos() );
+      contextMnu.exec(QCursor::pos());
 }
 
 

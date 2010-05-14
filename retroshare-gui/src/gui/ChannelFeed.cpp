@@ -19,12 +19,6 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 #include <QtGui>
-#include <QContextMenuEvent>
-#include <QCursor>
-#include <QMenu>
-#include <QMouseEvent>
-#include <QPixmap>
-#include <QPoint>
 
 #include <iostream>
 #include <algorithm>
@@ -143,7 +137,6 @@ void ChannelFeed::channelListCustomPopupMenu( QPoint point )
       }
 
       QMenu contextMnu( this );
-      QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
       
       postchannelAct = new QAction(QIcon(":/images/mail_reply.png"), tr( "Post to Channel" ), this );
       connect( postchannelAct , SIGNAL( triggered() ), this, SLOT( createMsg() ) );
@@ -156,8 +149,6 @@ void ChannelFeed::channelListCustomPopupMenu( QPoint point )
       
       channeldetailsAct = new QAction(QIcon(":/images/info16.png"), tr( "Show Channel Details" ), this );
       connect( channeldetailsAct , SIGNAL( triggered() ), this, SLOT( showChannelDetails() ) );
-
-      contextMnu.clear();
 
       if (ci.channelFlags & RS_DISTRIB_PUBLISH)
       {
@@ -178,9 +169,7 @@ void ChannelFeed::channelListCustomPopupMenu( QPoint point )
         contextMnu.addAction( channeldetailsAct );
       }
 
-      contextMnu.exec( mevent->globalPos() );
-
-
+      contextMnu.exec(QCursor::pos());
 }
 
 void ChannelFeed::createChannel()

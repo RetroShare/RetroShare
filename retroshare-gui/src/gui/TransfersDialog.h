@@ -133,8 +133,6 @@ private:
     /** Create the actions on the tray menu or menubar */
     void createActions();
 
-    /** Define the popup menus for the Context menu */
-    QMenu* contextMnu;
     /** Defines the actions for the context menu */
     QAction* showdowninfoAct;
     QAction* playAct;

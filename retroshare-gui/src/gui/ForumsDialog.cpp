@@ -34,20 +34,6 @@
 #include <sstream>
 #include <algorithm>
 
-#include <QContextMenuEvent>
-#include <QCursor>
-#include <QDateTime>
-#include <QFile>
-#include <QFileInfo>
-#include <QMenu>
-#include <QMouseEvent>
-#include <QPixmap>
-#include <QPoint>
-#include <QPrintDialog>
-#include <QPrinter>
-#include <QHeaderView>
-#include <QTimer>
-#include <QMessageBox>
 #include <QtGui>
 
 /* Images for context menu icons */
@@ -176,7 +162,6 @@ ForumsDialog::ForumsDialog(QWidget *parent)
 void ForumsDialog::forumListCustomPopupMenu( QPoint point )
 {
     QMenu contextMnu( this );
-    QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
 
     QAction *subForumAct = new QAction(QIcon(IMAGE_SUBSCRIBE), tr( "Subscribe to Forum" ), this );
     subForumAct->setDisabled (true);
@@ -210,19 +195,18 @@ void ForumsDialog::forumListCustomPopupMenu( QPoint point )
         detailsForumAct->setEnabled (true);
     }
 
-    contextMnu.clear();
     contextMnu.addAction( subForumAct );
     contextMnu.addAction( unsubForumAct );
     contextMnu.addSeparator();
     contextMnu.addAction( newForumAct );
     contextMnu.addAction( detailsForumAct );
-    contextMnu.exec( mevent->globalPos() );
+
+    contextMnu.exec(QCursor::pos());
 }
 
 void ForumsDialog::threadListCustomPopupMenu( QPoint point )
 {
     QMenu contextMnu( this );
-    QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
 
     QAction *replyAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr( "Reply" ), this );
     replyAct->setDisabled (true);
@@ -250,14 +234,14 @@ void ForumsDialog::threadListCustomPopupMenu( QPoint point )
         }
     }
 
-    contextMnu.clear();
     contextMnu.addAction( replyAct);
     contextMnu.addAction( viewAct);
     contextMnu.addAction( replyauthorAct);
     contextMnu.addSeparator();
     contextMnu.addAction( expandAll);
     contextMnu.addAction( collapseAll);
-    contextMnu.exec( mevent->globalPos() );
+
+    contextMnu.exec(QCursor::pos());
 }
 
 void ForumsDialog::togglefileview()

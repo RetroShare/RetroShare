@@ -25,25 +25,6 @@
 
 #include <gui/RetroShareLink.h>
 #include <QtGui>
-#include <QFileDialog>
-#include <QString>
-#include <QTextStream>
-#include <QHashIterator>
-#include <QDesktopServices>
-#include <QTextCodec>
-#include <QTextEdit>
-#include <QTextCursor>
-#include <QTextList>
-#include <QString>
-#include <QtDebug>
-#include <QIcon>
-#include <QPixmap>
-#include <QContextMenuEvent>
-#include <QMenu>
-#include <QCursor>
-#include <QPoint>
-#include <QMouseEvent>
-#include <QPixmap>
 
 #include "rsiface/rsforums.h"
 #include "rsiface/rsfiles.h"
@@ -100,8 +81,7 @@ void CreateForumMsg::forumMessageCostumPopupMenu( QPoint point )
     contextMnu->addAction( pasteLinkAct);
     contextMnu->addAction( pasteLinkFullAct);
 
-    QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
-    contextMnu->exec( mevent->globalPos() );
+    contextMnu->exec(QCursor::pos());
 }
 
 

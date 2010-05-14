@@ -39,7 +39,6 @@
 #include <QMenu>
 #include <QCursor>
 #include <QPoint>
-#include <QMouseEvent>
 #include <QPixmap>
 #include <QPrintDialog>
 #include <QPrinter>
@@ -246,9 +245,6 @@ int MessagesDialog::getSelectedMsgCount ()
 void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint point )
 {
     QMenu contextMnu( this );
-    QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
-
-    contextMnu.clear();
 
     /** Defines the actions for the context menu */
     QAction* newmsgAct = NULL;
@@ -300,17 +296,16 @@ void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint point )
         removemsgAct->setDisabled(true);
     }
 
-    contextMnu.exec( mevent->globalPos() );
+    contextMnu.exec(QCursor::pos());
 }
 
 
 void MessagesDialog::msgfilelistWidgetCostumPopupMenu( QPoint point )
 {
     QAction* getRecAct = NULL;
-    QAction* getAllRecAct = NULL;
+//    QAction* getAllRecAct = NULL;
 
     QMenu contextMnu( this );
-    QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
 
     getRecAct = new QAction(QIcon(IMAGE_DOWNLOAD), tr( "Download" ), this );
     connect( getRecAct , SIGNAL( triggered() ), this, SLOT( getcurrentrecommended() ) );
@@ -318,10 +313,9 @@ void MessagesDialog::msgfilelistWidgetCostumPopupMenu( QPoint point )
 //   getAllRecAct = new QAction(QIcon(IMAGE_DOWNLOADALL), tr( "Download" ), this );
 //   connect( getAllRecAct , SIGNAL( triggered() ), this, SLOT( getallrecommended() ) );
 
-    contextMnu.clear();
     contextMnu.addAction( getRecAct);
 //    contextMnu.addAction( getAllRecAct);
-    contextMnu.exec( mevent->globalPos() );
+    contextMnu.exec(QCursor::pos());
 }
 
 void MessagesDialog::newmessage()

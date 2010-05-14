@@ -172,8 +172,6 @@ private:
 		/* (2) Utility Fns */
 		QTreeWidgetItem *getCurrentPeer();
 
-		/** Define the popup menus for the Context menu */
-		QMenu* contextMnu;
 		/** Defines the actions for the context menu */
 		QAction* chatAct;
 		QAction* pasteLinkAct;

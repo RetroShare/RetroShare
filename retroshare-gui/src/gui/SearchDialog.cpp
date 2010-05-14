@@ -42,7 +42,6 @@
 #include <QMenu>
 #include <QCursor>
 #include <QPoint>
-#include <QMouseEvent>
 #include <QPixmap>
 #include <QHeaderView>
 
@@ -91,7 +90,6 @@ bool SearchDialog::initialised = false;
 SearchDialog::SearchDialog(QWidget *parent)
 : MainPage(parent),
 	advSearchDialog(NULL),
-	contextMnu(NULL), contextMnu2(NULL),
 	nextSearchId(1)
 {
     /* Invoke the Qt Designer generated object setup routine */
@@ -228,40 +226,33 @@ void SearchDialog::initialiseFileTypeMappings()
 
 void SearchDialog::searchtableWidgetCostumPopupMenu( QPoint point )
 {
-      // block the popup if no results available
-      if ((ui.searchResultWidget->selectedItems()).size() == 0) return;
+    // block the popup if no results available
+    if ((ui.searchResultWidget->selectedItems()).size() == 0) return;
 
-      // create the menu as required
-      if (contextMnu == 0)
-      {
-        contextMnu = new QMenu(this);
+    downloadAct = new QAction(QIcon(IMAGE_START), tr( "Download" ), this );
+    connect( downloadAct , SIGNAL( triggered() ), this, SLOT( download() ) );
 
-        downloadAct = new QAction(QIcon(IMAGE_START), tr( "Download" ), this );
-        connect( downloadAct , SIGNAL( triggered() ), this, SLOT( download() ) );
-
-        copysearchlinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Link" ), this );
-        connect( copysearchlinkAct , SIGNAL( triggered() ), this, SLOT( copysearchLink() ) );
+    copysearchlinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Link" ), this );
+    connect( copysearchlinkAct , SIGNAL( triggered() ), this, SLOT( copysearchLink() ) );
         
-        sendrslinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Link" ), this );
-	      connect( sendrslinkAct , SIGNAL( triggered() ), this, SLOT( sendLinkTo( ) ) );
+    sendrslinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Link" ), this );
+    connect( sendrslinkAct , SIGNAL( triggered() ), this, SLOT( sendLinkTo( ) ) );
 
-        broadcastonchannelAct = new QAction( tr( "Broadcast on Channel" ), this );
-        connect( broadcastonchannelAct , SIGNAL( triggered() ), this, SLOT( broadcastonchannel() ) );
+    broadcastonchannelAct = new QAction( tr( "Broadcast on Channel" ), this );
+    connect( broadcastonchannelAct , SIGNAL( triggered() ), this, SLOT( broadcastonchannel() ) );
 
-        recommendtofriendsAct = new QAction( tr( "Recommend to Friends" ), this );
-        connect( recommendtofriendsAct , SIGNAL( triggered() ), this, SLOT( recommendtofriends() ) );
+    recommendtofriendsAct = new QAction( tr( "Recommend to Friends" ), this );
+    connect( recommendtofriendsAct , SIGNAL( triggered() ), this, SLOT( recommendtofriends() ) );
 
+    QMenu contextMnu(this);
 
-        contextMnu->clear();
-        contextMnu->addAction( downloadAct);
-        contextMnu->addSeparator();
+    contextMnu.addAction( downloadAct);
+    contextMnu.addSeparator();
 
-		  contextMnu->addAction( copysearchlinkAct);
-		  contextMnu->addAction( sendrslinkAct);
-      }
+    contextMnu.addAction( copysearchlinkAct);
+    contextMnu.addAction( sendrslinkAct);
 
-      QMouseEvent *mevent = new QMouseEvent(QEvent::MouseButtonPress,point,Qt::RightButton, Qt::RightButton,Qt::NoModifier);
-      contextMnu->exec( mevent->globalPos() );
+    contextMnu.exec(QCursor::pos());
 }
 
 void SearchDialog::download()
@@ -366,28 +357,22 @@ void SearchDialog::recommendtofriends()
 /** context menu searchTablewidget2 **/
 void SearchDialog::searchtableWidget2CostumPopupMenu( QPoint point )
 {
-
     // block the popup if no results available
     if ((ui.searchSummaryWidget->selectedItems()).size() == 0) return;
 
     // create the menu as required
-    if (contextMnu2 == 0)
-    {
-        contextMnu2 = new QMenu( this );
+    searchRemoveAct = new QAction(QIcon(IMAGE_REMOVE), tr( "Remove" ), this );
+    connect( searchRemoveAct , SIGNAL( triggered() ), this, SLOT( searchRemove() ) );
 
-        searchRemoveAct = new QAction(QIcon(IMAGE_REMOVE), tr( "Remove" ), this );
-        connect( searchRemoveAct , SIGNAL( triggered() ), this, SLOT( searchRemove() ) );
+    searchRemoveAllAct = new QAction(QIcon(IMAGE_REMOVEALL), tr( "Remove All" ), this );
+    connect( searchRemoveAllAct , SIGNAL( triggered() ), this, SLOT( searchRemoveAll() ) );
 
-        searchRemoveAllAct = new QAction(QIcon(IMAGE_REMOVEALL), tr( "Remove All" ), this );
-        connect( searchRemoveAllAct , SIGNAL( triggered() ), this, SLOT( searchRemoveAll() ) );
+    QMenu contextMnu(this);
 
-        contextMnu2->clear();
-        contextMnu2->addAction( searchRemoveAct);
-        contextMnu2->addAction( searchRemoveAllAct);
-    }
+    contextMnu.addAction( searchRemoveAct);
+    contextMnu.addAction( searchRemoveAllAct);
 
-    QMouseEvent *mevent2 = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
-    contextMnu2->exec( mevent2->globalPos() );
+    contextMnu.exec(QCursor::pos());
 }
 
 /** remove selected search result **/

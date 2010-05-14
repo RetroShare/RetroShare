@@ -49,14 +49,6 @@
 #include <iostream>
 #include <sstream>
 
-#include <QContextMenuEvent>
-#include <QMenu>
-#include <QCursor>
-#include <QPoint>
-#include <QPixmap>
-#include <QMouseEvent>
-#include <QHeaderView>
-
 /* Images for context menu icons */
 #define IMAGE_REMOVEFRIEND       ":/images/removefriend16.png"
 #define IMAGE_EXPIORTFRIEND      ":/images/exportpeers_16x16.png"
@@ -175,7 +167,6 @@ void MessengerWindow::messengertreeWidgetCostumPopupMenu( QPoint point )
 	  	}
 
       QMenu contextMnu( this );
-      QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
 
       QAction* expandAll = new QAction(tr( "Expand all" ), this );
       connect( expandAll , SIGNAL( triggered() ), ui.messengertreeWidget, SLOT (expandAll()) );
@@ -239,7 +230,6 @@ void MessengerWindow::messengertreeWidgetCostumPopupMenu( QPoint point )
       QWidgetAction *widgetAction = new QWidgetAction(this); 
       widgetAction->setDefaultWidget(widget); 
 
-      contextMnu.clear();
       contextMnu.addAction( widgetAction);
       contextMnu.addAction( chatAct);
       contextMnu.addAction( sendMessageAct);
@@ -254,7 +244,7 @@ void MessengerWindow::messengertreeWidgetCostumPopupMenu( QPoint point )
       contextMnu.addSeparator();
       contextMnu.addAction( expandAll);
       contextMnu.addAction( collapseAll);
-      contextMnu.exec( mevent->globalPos() );
+      contextMnu.exec(QCursor::pos());
 }
 
 void MessengerWindow::updateMessengerDisplay()

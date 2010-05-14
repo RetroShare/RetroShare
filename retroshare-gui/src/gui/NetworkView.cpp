@@ -27,8 +27,6 @@
 
 #include <gpgme.h>
 
-#include <QMenu>
-#include <QMouseEvent>
 #include <QGraphicsItem>
 
 #include <iostream>
@@ -70,20 +68,6 @@ NetworkView::NetworkView(QWidget *parent)
 //	_header->resizeSection ( 1, 50 );
 //	_header->resizeSection ( 2, 150 );
 
-}
-
-void NetworkView::peerCustomPopupMenu( QPoint point )
-{
-
-      QMenu contextMnu( this );
-      QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
-
-      //QAction * voteupAct = new QAction(QIcon(IMAGE_EXPIORTFRIEND), tr( "Vote Link Up" ), this );
-      //connect( voteupAct , SIGNAL( triggered() ), this, SLOT( voteup() ) );
-
-      contextMnu.clear();
-      //contextMnu.addAction(voteupAct);
-      contextMnu.exec( mevent->globalPos() );
 }
 
 void NetworkView::changedFoFCheckBox( )

@@ -94,8 +94,6 @@ private slots:
 private:
   QTreeWidgetItem *getCurrentNeighbour();
 
-  /** Define the popup menus for the Context menu */
-  QMenu* contextMnu;
   /** Defines the actions for the context menu */
   QAction* peerdetailsAct;
   QAction* denyFriendAct;

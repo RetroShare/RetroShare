@@ -106,11 +106,6 @@ private:
 /** the advanced search dialog instance */
     AdvancedSearchDialog * advSearchDialog;
 
-/** Define the popup menus for the Context menu */
-    QMenu* contextMnu;
-
-    QMenu* contextMnu2;
-
 /** Defines the actions for the context menu */
     QAction* downloadAct;
     QAction* copysearchlinkAct;

@@ -45,7 +45,6 @@
 #include <QMenu>
 #include <QCursor>
 #include <QPoint>
-#include <QMouseEvent>
 #include <QPixmap>
 #include <QHeaderView>
 #include <QTimer>
@@ -222,9 +221,6 @@ void SharedFilesDialog::forceCheck()
 
 void SharedFilesDialog::shareddirtreeviewCostumPopupMenu( QPoint point )
 {
-      QMenu contextMnu( this );
-      QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
-
       downloadAct = new QAction(QIcon(IMAGE_DOWNLOAD), tr( "Download" ), this );
       connect( downloadAct , SIGNAL( triggered() ), this, SLOT( downloadRemoteSelected() ) );
 
@@ -239,13 +235,14 @@ void SharedFilesDialog::shareddirtreeviewCostumPopupMenu( QPoint point )
     //  connect( addMsgAct , SIGNAL( triggered() ), this, SLOT( addMsgRemoteSelected() ) );
 
 
-      contextMnu.clear();
+      QMenu contextMnu( this );
       contextMnu.addAction( downloadAct);
       contextMnu.addSeparator();
       contextMnu.addAction( copyremotelinkAct);
       contextMnu.addAction( sendremotelinkAct);
    //   contextMnu.addAction( addMsgAct);
-      contextMnu.exec( mevent->globalPos() );
+
+      contextMnu.exec(QCursor::pos());
 }
 
 
@@ -721,8 +718,7 @@ void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
 		  contextMnu2.addMenu( &msgMenu);
 	  }
 
-	QMouseEvent mevent2( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
-	contextMnu2.exec( mevent2.globalPos() );
+          contextMnu2.exec(QCursor::pos());
 }
 
 //============================================================================

@@ -26,18 +26,6 @@
 #include <gui/RetroShareLink.h>
 #include "rshare.h"
 
-#include <QTextCodec>
-#include <QTextEdit>
-#include <QToolBar>
-#include <QTextCursor>
-#include <QTextList>
-#include <QString>
-#include <QtDebug>
-#include <QIcon>
-#include <QPixmap>
-#include <QHashIterator>
-#include <QDesktopServices>
-
 #include "rsiface/rspeers.h"
 #include "rsiface/rsmsgs.h"
 #include "rsiface/rsfiles.h"
@@ -169,8 +157,7 @@ void PopupChatDialog::contextMenu( QPoint point )
 	QMenu contextMnu(this);
 	contextMnu.addAction( pasteLinkAct);
 
-	QMouseEvent mevent(QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier);
-	contextMnu.exec( mevent.globalPos() );
+        contextMnu.exec(QCursor::pos());
 }
 
 void PopupChatDialog::resetStatusBar() 

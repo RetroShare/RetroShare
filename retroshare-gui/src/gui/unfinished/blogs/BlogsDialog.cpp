@@ -22,8 +22,6 @@
 #include <QContextMenuEvent>
 #include <QCursor>
 #include <QMenu>
-#include <QMouseEvent>
-#include <QPixmap>
 #include <QPoint>
 
 #include <iostream>
@@ -126,7 +124,6 @@ void BlogsDialog::blogListCustomPopupMenu( QPoint point )
       }
 
       QMenu contextMnu( this );
-      QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
       
       QAction *createblogpostAct = new QAction(QIcon(":/images/mail_reply.png"), tr( "Post to Blog" ), this );
       connect( createblogpostAct , SIGNAL( triggered() ), this, SLOT( createMsg() ) );
@@ -161,9 +158,7 @@ void BlogsDialog::blogListCustomPopupMenu( QPoint point )
         contextMnu.addAction( blogdetailsAct );
       }
 
-      contextMnu.exec( mevent->globalPos() );
-
-
+      contextMnu.exec(QCursor::pos());
 }
 
 void BlogsDialog::createBlog()

@@ -28,8 +28,6 @@
 #include <QCheckBox>
 #include <QCursor>
 #include <QPoint>
-#include <QMouseEvent>
-#include <QPixmap>
 #include <QHeaderView>
 
 #include <QMessageBox>
@@ -77,15 +75,13 @@ ShareManager::~ShareManager()
 void ShareManager::shareddirListCostumPopupMenu( QPoint point )
 {
       QMenu contextMnu( this );
-      QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
 
       removeAct = new QAction(QIcon(IMAGE_CANCEL), tr( "Remove" ), this );
       connect( removeAct , SIGNAL( triggered() ), this, SLOT( removeShareDirectory() ) );
 
-
-      contextMnu.clear();
       contextMnu.addAction( removeAct );
-      contextMnu.exec( mevent->globalPos() );
+
+      contextMnu.exec(QCursor::pos());
 }
 
 /** Loads the settings for this page */

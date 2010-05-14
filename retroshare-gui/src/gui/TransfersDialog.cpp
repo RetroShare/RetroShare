@@ -39,7 +39,6 @@
 #include <QMenu>
 #include <QCursor>
 #include <QPoint>
-#include <QMouseEvent>
 #include <QPixmap>
 #include <QHeaderView>
 #include <QStandardItemModel>
@@ -276,9 +275,6 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 
 void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 {
-	QMenu contextMnu( this );
-	QMouseEvent mevent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
-
 	std::set<QStandardItem *> items;
 	std::set<QStandardItem *>::iterator it;
 	getIdOfSelectedItems(items);
@@ -331,7 +327,7 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 	chunkMenu.addAction(chunkStreamingAct);
 	chunkMenu.addAction(chunkRandomAct);
 
-	contextMnu.clear();
+        QMenu contextMnu( this );
 
 	if (addPlayOption)
 		contextMnu.addAction(playAct);
@@ -414,7 +410,7 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 
 	contextMnu.addSeparator();
 
-	contextMnu.exec( mevent.globalPos() );
+        contextMnu.exec(QCursor::pos());
 }
 
 TransfersDialog::~TransfersDialog()

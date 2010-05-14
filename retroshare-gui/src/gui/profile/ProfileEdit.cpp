@@ -25,16 +25,7 @@
 
 #include <sstream>
 
-#include <QContextMenuEvent>
 #include <QMenu>
-#include <QFile>
-#include <QFileDialog>
-#include <QCursor>
-#include <QPoint>
-#include <QMouseEvent>
-#include <QMessageBox>
-#include <QPixmap>
-#include <QPrintDialog>
 
 
 /** Constructor */
@@ -60,9 +51,7 @@ ProfileEdit::ProfileEdit(QWidget *parent)
 
 void ProfileEdit::profileCustomPopupMenu( QPoint point )
 {
-
       QMenu contextMnu( this );
-      QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
 
       QAction *removeAct = new QAction( tr( "Remove Profile Entry" ), this );
       QAction *moveupAct = new QAction( tr( "Move Profile Entry Up" ), this );
@@ -72,11 +61,11 @@ void ProfileEdit::profileCustomPopupMenu( QPoint point )
       connect( moveupAct , SIGNAL( triggered() ), this, SLOT( profileEntryMoveUp() ) );
       connect( movedownAct , SIGNAL( triggered() ), this, SLOT( profileEntryMoveDown() ) );
 
-      contextMnu.clear();
       contextMnu.addAction( removeAct );
       contextMnu.addAction( moveupAct );
       contextMnu.addAction( movedownAct );
-      contextMnu.exec( mevent->globalPos() );
+
+      contextMnu.exec(QCursor::pos());
 }
 
 void ProfileEdit::clear()

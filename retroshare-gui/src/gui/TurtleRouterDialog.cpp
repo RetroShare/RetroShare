@@ -1,7 +1,5 @@
 #include <iostream>
 #include <QTimer>
-#include <QMenu>
-#include <QMouseEvent>
 #include <rsiface/rsturtle.h>
 #include "TurtleRouterDialog.h"
 

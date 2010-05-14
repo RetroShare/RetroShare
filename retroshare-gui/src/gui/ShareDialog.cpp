@@ -23,13 +23,6 @@
 #include "rsiface/rsfiles.h"
 
 #include <QContextMenuEvent>
-#include <QMenu>
-#include <QCheckBox>
-#include <QCursor>
-#include <QPoint>
-#include <QMouseEvent>
-#include <QPixmap>
-#include <QHeaderView>
 
 #include <QMessageBox>
 #include <QComboBox>

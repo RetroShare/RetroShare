@@ -30,13 +30,6 @@
 #include <QtCore/QFile>
 #include <QtCore/QTextStream>
 
-#include <QContextMenuEvent>
-#include <QMenu>
-#include <QCursor>
-#include <QPoint>
-#include <QMouseEvent>
-#include <QPixmap>
-
 /* Images for context menu icons */
 #define IMAGE_DOWNLOAD       ":/images/start.png"
 

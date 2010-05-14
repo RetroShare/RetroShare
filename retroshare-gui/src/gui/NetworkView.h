@@ -38,9 +38,6 @@ public:
 
 private slots:
 
-  /** Create the context popup menu and it's submenus */
-void peerCustomPopupMenu( QPoint point );
-
 void insertPeers();
 void insertSignatures();
 void insertConnections();

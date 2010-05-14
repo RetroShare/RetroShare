@@ -38,14 +38,7 @@
 #include <iostream>
 #include <sstream>
 
-#include <QContextMenuEvent>
 #include <QMenu>
-#include <QCursor>
-#include <QPoint>
-#include <QMouseEvent>
-#include <QPixmap>
-#include <QMessageBox>
-#include <QHeaderView>
 #include <QTimer>
 
 /* Images for context menu icons */
@@ -144,7 +137,6 @@ void LinksDialog::linkTreeWidgetCostumPopupMenu( QPoint point )
 {
 
       QMenu contextMnu( this );
-      QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
 
       voteupAct = new QAction(QIcon(IMAGE_EXPORTFRIEND), tr( "Share Link Anonymously" ), this );
       connect( voteupAct , SIGNAL( triggered() ), this, SLOT( voteup_anon() ) );
@@ -172,14 +164,13 @@ void LinksDialog::linkTreeWidgetCostumPopupMenu( QPoint point )
 	downloadAct = new QAction(QIcon(IMAGE_DOWNLOAD), tr("Download"), this);
 	connect(downloadAct, SIGNAL(triggered()), this, SLOT(downloadSelected()));
 
-      contextMnu.clear();
       contextMnu.addAction(voteupAct);
       contextMnu.addSeparator();
       contextMnu.addMenu(voteMenu);
       contextMnu.addSeparator();
       contextMnu.addAction(downloadAct);
 
-      contextMnu.exec( mevent->globalPos() );
+      contextMnu.exec(QCursor::pos());
 }
 
 void LinksDialog::changedSortRank( int index )

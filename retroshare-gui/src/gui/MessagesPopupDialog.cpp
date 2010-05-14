@@ -31,17 +31,6 @@
 #include "rsiface/rsfiles.h"
 #include <sstream>
 
-#include <QContextMenuEvent>
-#include <QMenu>
-#include <QCursor>
-#include <QPoint>
-#include <QMouseEvent>
-#include <QPixmap>
-#include <QPrintDialog>
-#include <QPrinter>
-#include <QDateTime>
-#include <QHeaderView>
-
 
 /** Constructor */
 MessagesPopupDialog::MessagesPopupDialog(QWidget* parent, Qt::WFlags flags)
