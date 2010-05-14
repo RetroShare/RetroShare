@@ -42,18 +42,18 @@ class ChatPage : public ConfigPage
       bool save(QString &errmsg);
       /** Loads the settings for this page */
       void load();
-      
+
       bool emotePrivatChat() const;
       bool emoteGroupChat() const;
       bool groupchatHistory() const;
 
-  private slots:
+      QFont fontTempChat;
 
+  private slots:
+      void on_pushButtonChangeChatFont_clicked();
 
   private:
       void closeEvent (QCloseEvent * event);
-      
-
 
       /** Qt Designer generated object */
       Ui::ChatPage ui;

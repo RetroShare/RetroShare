@@ -168,7 +168,8 @@ PeersDialog::PeersDialog(QWidget *parent)
   pxm.fill(_currentColor);
   ui.colorChatButton->setIcon(pxm);
 
-  mCurrentFont = QFont("Comic Sans MS", 11);
+  RshareSettings settings;
+  mCurrentFont.fromString(settings.value(QString::fromUtf8("ChatScreenFont")).toString());
   ui.lineEdit->setFont(mCurrentFont);
 
   setChatInfo(tr("Welcome to RetroShare's group chat."),
@@ -176,7 +177,6 @@ PeersDialog::PeersDialog(QWidget *parent)
 
   QStringList him;
 
-  RshareSettings settings;
   if (settings.value(QString::fromUtf8("GroupChat_History"), true).toBool())
   {
     historyKeeper.getMessages(him, "", "THIS", 8);

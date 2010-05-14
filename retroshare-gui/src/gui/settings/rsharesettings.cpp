@@ -119,6 +119,7 @@ void RshareSettings::initSettings()
   setDefault(SETTING_CHAT_FLAGS, defChat);
   setDefault(SETTING_NOTIFY_FLAGS, defNotify);
 
+  setDefault(QString::fromUtf8("ChatScreenFont"), QFont("Comic Sans MS", 11).toString());
 }
 
 /** Gets/sets the currently saved chat avatar. */

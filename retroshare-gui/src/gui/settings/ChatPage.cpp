@@ -40,13 +40,6 @@ ChatPage::ChatPage(QWidget * parent, Qt::WFlags flags)
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
 
-  //connect(ui.copykeyButton, SIGNAL(clicked()), this, SLOT(copyPublicKey()));
-  //connect(ui.saveButton, SIGNAL(clicked()), this, SLOT(fileSaveAs()));
-
-
-  //loadPublicKey();
-
-
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
@@ -56,7 +49,6 @@ ChatPage::ChatPage(QWidget * parent, Qt::WFlags flags)
 void
 ChatPage::closeEvent (QCloseEvent * event)
 {
-
     QWidget::closeEvent(event);
 }
 
@@ -65,13 +57,13 @@ bool
 ChatPage::save(QString &errmsg)
 {
   RshareSettings settings;
+
   settings.setValue(QString::fromUtf8("Emoteicons_PrivatChat"), emotePrivatChat());
-
   settings.setValue(QString::fromUtf8("Emoteicons_GroupChat"), emoteGroupChat());
-
   settings.setValue(QString::fromUtf8("GroupChat_History"), groupchatHistory());
+  settings.setValue(QString::fromUtf8("ChatScreenFont"), fontTempChat.toString());
 
- 	return true;
+  return true;
 }
 
 /** Loads the settings for this page */
@@ -81,11 +73,13 @@ ChatPage::load()
   RshareSettings settings;
 
   ui.checkBox_emoteprivchat->setChecked(settings.value(QString::fromUtf8("Emoteicons_PrivatChat"), true).toBool());
-
   ui.checkBox_emotegroupchat->setChecked(settings.value(QString::fromUtf8("Emoteicons_GroupChat"), true).toBool());
-  
   ui.checkBox_groupchathistory->setChecked(settings.value(QString::fromUtf8("GroupChat_History"), true).toBool());
 
+  fontTempChat.fromString(settings.value(QString::fromUtf8("ChatScreenFont")).toString());
+
+  ui.labelChatFontPreview->setText(fontTempChat.rawName());
+  ui.labelChatFontPreview->setFont(fontTempChat);
 }
 
 bool ChatPage::emotePrivatChat() const {
@@ -101,4 +95,15 @@ bool ChatPage::emoteGroupChat() const {
 bool ChatPage::groupchatHistory() const {
   if(ui.checkBox_groupchathistory->isChecked()) return true;
   return ui.checkBox_groupchathistory->isChecked();
+}
+
+void ChatPage::on_pushButtonChangeChatFont_clicked()
+{
+	bool ok;
+	QFont font = QFontDialog::getFont(&ok, fontTempChat, this);
+	if (ok) {
+		fontTempChat = font;
+		ui.labelChatFontPreview->setText(fontTempChat.rawName());
+		ui.labelChatFontPreview->setFont(fontTempChat);
+	}
 }
