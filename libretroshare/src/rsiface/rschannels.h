@@ -34,6 +34,10 @@
 #include "rsiface/rstypes.h"
 #include "rsiface/rsdistrib.h" /* For FLAGS */
 
+//! Stores information for a give channel id
+/*!
+ * Stores all information for a given channel id
+ */
 class ChannelInfo 
 {
 	public:
@@ -43,11 +47,16 @@ class ChannelInfo
 	std::wstring channelDesc;
 
 	uint32_t channelFlags;
-	uint32_t pop;
+	uint32_t pop; /// popularity
+
+	unsigned char* pngChanImage;
+	uint32_t pngImageLen;
 
 	time_t lastPost;
 };
 
+
+//! Stores information on a message within a channel
 class ChannelMsgInfo 
 {
 	public:
@@ -59,14 +68,14 @@ class ChannelMsgInfo
 
 	std::wstring subject;
 	std::wstring msg;
-	time_t ts;
+	time_t ts; /// time stamp
 
 	std::list<FileInfo> files;
-	uint32_t count;
-	uint64_t size;
+	uint32_t count; /// file count
+	uint64_t size; /// size of all files
 };
 
-
+//! gives a more brief account of a channel message than channelMsgInfo
 class ChannelMsgSummary 
 {
 	public:
@@ -78,8 +87,8 @@ class ChannelMsgSummary
 
 	std::wstring subject;
 	std::wstring msg;
-	uint32_t count; /* file count     */
-	time_t ts;
+	uint32_t count; /// file count
+	time_t ts; /// time stamp
 
 };
 
@@ -90,6 +99,12 @@ std::ostream &operator<<(std::ostream &out, const ChannelMsgInfo &info);
 class RsChannels;
 extern RsChannels   *rsChannels;
 
+/*!
+ * retroshare interface to the channels distributed group service
+ * Channels user to create feeds similar to RSS feed where you can share files
+ * with other users, when you subscribe to a channel you immediately begin downloading
+ * the file shared on that channel. Channel feeds are shared anonymously
+ */
 class RsChannels 
 {
 	public:
@@ -99,18 +114,56 @@ virtual ~RsChannels() { return; }
 
 /****************************************/
 
+/*!
+ *  returns a list of channel id that have changed (i.e. received new message, chan descr update)
+ *  @param chanIds this is populated with channel ids that have changed
+ */
 virtual bool channelsChanged(std::list<std::string> &chanIds) = 0;
 
+/*!
+ * @param chanName name of the channel
+ * @param chanDesc a short description for the created channel
+ * @param chanFlags admin details on created channel group see rsdistrib.h for flags types
+ * @param pngImageData point at image data in PNG format
+ * @param imageSize size of the image data
+ */
+virtual std::string createChannel(std::wstring chanName, std::wstring chanDesc, uint32_t chanFlags,
+		unsigned char* pngImageData, uint32_t imageSize) = 0;
 
-virtual std::string createChannel(std::wstring chanName, std::wstring chanDesc, uint32_t chanFlags) = 0;
-
+/*!
+ * retrieve channel information
+ * @param cId channel id
+ * @param ci channel info is store here
+ */
 virtual bool getChannelInfo(std::string cId, ChannelInfo &ci) = 0;
+
+/*!
+ * @param chanList populated channelinfo for all channels
+ */
 virtual bool getChannelList(std::list<ChannelInfo> &chanList) = 0;
+
+/*!
+ * get a message summary list for a given channel id
+ * @param cId channel id user wants messages for
+ * @param msgs summary of messages for the given cId
+ */
 virtual bool getChannelMsgList(std::string cId, std::list<ChannelMsgSummary> &msgs) = 0;
+
+/*!
+ * retrieve more comprehensive message info given channel id and message id
+ */
 virtual bool getChannelMessage(std::string cId, std::string mId, ChannelMsgInfo &msg) = 0;
 
+/*!
+ * send message contain in message info to the id indicated within it (make sure you set the channel id of the message info)
+ * @param info message to be sent
+ */
 virtual	bool ChannelMessageSend(ChannelMsgInfo &info)                 = 0;
 
+/*!
+ * @param cId the channel id
+ * @param subscribe set to true if you want to subscribe and to false to unsubscribe
+ */
 virtual bool channelSubscribe(std::string cId, bool subscribe)	= 0;
 
 /*!
@@ -123,8 +176,10 @@ virtual bool channelExtraFileHash(std::string path, std::string chId, FileInfo& 
 
 /*!
  * This removes hashed extra files, and also removes channels directory copy if it exists
+ * @param chId channel id
  */
 virtual bool channelExtraFileRemove(std::string hash, std::string chId) = 0;
+
 /****************************************/
 
 };

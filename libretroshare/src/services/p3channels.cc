@@ -65,7 +65,7 @@ RsChannels *rsChannels = NULL;
  * PUBPERIOD * 2^16 = max STORE PERIOD */
 #define CHANNEL_STOREPERIOD (30*24*3600)    /*  30 * 24 * 3600 - secs in a 30 day month */
 #define TEST_CHANNEL_STOREPERIOD (24*3600)   /* one day */
-#define CHANNEL_PUBPERIOD   6              /* 10 minutes ... (max = 455 days) */
+#define CHANNEL_PUBPERIOD   600              /* 10 minutes ... (max = 455 days) */
 #define MAX_AUTO_DL 1E9 /* auto download of attachment limit; 1 GIG */
 
 p3Channels::p3Channels(uint16_t type, CacheStrapper *cs, 
@@ -118,6 +118,16 @@ bool p3Channels::getChannelInfo(std::string cId, ChannelInfo &ci)
 
 	ci.pop = gi->sources.size();
 	ci.lastPost = gi->lastPost;
+
+	if(gi->grpIcon.image_type == RSTLV_IMAGE_TYPE_PNG){
+
+		ci.pngChanImage = (unsigned char*) gi->grpIcon.binData.bin_data;
+		ci.pngImageLen = gi->grpIcon.binData.bin_len;
+	}else{
+
+		ci.pngChanImage = NULL;
+		ci.pngImageLen = 0;
+	}
 
 	return true;
 }
@@ -372,9 +382,12 @@ bool p3Channels::channelExtraFileRemove(std::string hash, std::string chId){
 
 }
 
-std::string p3Channels::createChannel(std::wstring channelName, std::wstring channelDesc, uint32_t channelFlags)
+
+std::string p3Channels::createChannel(std::wstring channelName, std::wstring channelDesc, uint32_t channelFlags,
+		unsigned char* pngImageData, uint32_t imageSize)
 {
-        std::string id = createGroup(channelName, channelDesc, channelFlags);
+
+        std::string id = createGroup(channelName, channelDesc, channelFlags, pngImageData, imageSize);
 
 	return id;
 }

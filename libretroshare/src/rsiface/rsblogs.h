@@ -45,6 +45,9 @@ class BlogInfo
 	uint32_t blogFlags;
 	uint32_t pop;
 
+	unsigned char* pngChanImage;
+	uint32_t pngImageLen;
+
 	time_t lastPost;
 };
 
@@ -108,7 +111,8 @@ virtual ~RsBlogs() { return; }
 virtual bool blogsChanged(std::list<std::string> &blogIds) = 0;
 
 
-virtual std::string createBlog(std::wstring blogName, std::wstring blogDesc, uint32_t blogFlags) = 0;
+virtual std::string createBlog(std::wstring blogName, std::wstring blogDesc, uint32_t blogFlags,
+		unsigned char* pngImageData, uint32_t imageSize) = 0;
 
 virtual bool getBlogInfo(std::string cId, BlogInfo &ci) = 0;
 virtual bool getBlogList(std::list<BlogInfo> &chanList) = 0;

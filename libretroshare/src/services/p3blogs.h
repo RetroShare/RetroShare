@@ -56,7 +56,8 @@ virtual bool blogsChanged(std::list<std::string> &blogIds);
 /**
  * creates a new blog
  */
-virtual std::string createBlog(std::wstring blogName, std::wstring blogDesc, uint32_t blogFlags);
+virtual std::string createBlog(std::wstring blogName, std::wstring blogDesc, uint32_t blogFlags,
+		unsigned char* pngImageData, uint32_t imageSize);
 
 /**
  * @param cId the id for the blog
@@ -98,22 +99,7 @@ virtual bool BlogMessageReply(BlogMsgInfo &info);
  */
 virtual bool isReply(BlogMsgInfo& info);
 
-/**
- * Deletes a blog by group id
- *
- */
-virtual bool deleteBlog(std::string cId);
 
-/**
- * Delete a blog message
- * @param cId the group id the blog message belongs to
- * @param mId the message id within the group
- */
-virtual bool deleteBlogMsg(std::string cId, std::string mId);
-
-virtual bool isBlogDeleted(std::string cId);
-
-virtual bool isBlogMsgDeleted(std::string cId, std::string mId);
 /***************************************************************************************/
 /****************** Event Feedback (Overloaded form p3distrib) *************************/
 /***************************************************************************************/

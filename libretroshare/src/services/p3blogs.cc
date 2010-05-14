@@ -124,6 +124,14 @@ bool p3Blogs::getBlogInfo(std::string cId, BlogInfo &ci)
 	ci.pop = gi->sources.size();
 	ci.lastPost = gi->lastPost;
 
+	if(gi->grpIcon.image_type == RSTLV_IMAGE_TYPE_PNG){
+		ci.pngChanImage = (unsigned char*) gi->grpIcon.binData.bin_data;
+		ci.pngImageLen = gi->grpIcon.binData.bin_len;
+	}else{
+		ci.pngChanImage = NULL;
+		ci.pngImageLen = 0;
+	}
+
 	return true;
 }
 
@@ -269,9 +277,11 @@ bool p3Blogs::isReply(BlogMsgInfo& info){
 	return !info.msgIdReply.empty();
 }
 
-std::string p3Blogs::createBlog(std::wstring blogName, std::wstring blogDesc, uint32_t blogFlags)
+std::string p3Blogs::createBlog(std::wstring blogName, std::wstring blogDesc, uint32_t blogFlags,
+		unsigned char* pngImageData, uint32_t imageSize)
 {
-        std::string id = createGroup(blogName, blogDesc, blogFlags);
+
+	std::string id = createGroup(blogName, blogDesc, blogFlags, pngImageData, imageSize);
 
 	return id;
 }
@@ -309,23 +319,6 @@ bool p3Blogs::blogSubscribe(std::string cId, bool subscribe)
 	std::cerr << std::endl;
 
 	return subscribeToGroup(cId, subscribe);
-}
-
-
-bool p3Blogs::deleteBlogMsg(std::string cId, std::string mId){
-	return false;
-}
-
-bool p3Blogs::isBlogDeleted(std::string cId){
-	return false;
-}
-
-bool p3Blogs::isBlogMsgDeleted(std::string cId, std::string mId){
-	return false;
-}
-
-bool p3Blogs::deleteBlog(std::string cId){
-	return false;
 }
 
 

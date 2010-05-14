@@ -265,8 +265,9 @@ bool p3Forums::ForumMessageSend(ForumMsgInfo &info)
 
 std::string p3Forums::createForum(std::wstring forumName, std::wstring forumDesc, uint32_t forumFlags)
 {
+
         std::string id = createGroup(forumName, forumDesc, 
-				convertToInternalFlags(forumFlags));
+				convertToInternalFlags(forumFlags), NULL, 0);
 
 	return id;
 }

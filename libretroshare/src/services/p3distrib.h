@@ -150,7 +150,7 @@ class GroupInfo
 
 	/* NOT USED YET */
 
-	//PIXMAP *GroupIcon;
+	RsTlvImage grpIcon;
 
 	bool publisher, allowAnon, allowUnknown;
 	bool subscribed, listener;
@@ -259,7 +259,7 @@ void    loadGroupKey(RsDistribGrpKey *newKey);
 /* TO FINISH */
 
 	public:
-std::string createGroup(std::wstring name, std::wstring desc, uint32_t flags);
+std::string createGroup(std::wstring name, std::wstring desc, uint32_t flags, unsigned char*, uint32_t imageSize);
 //std::string modGroupDescription(std::string grpId, std::string discription);
 //std::string modGroupIcon(std::string grpId, PIXMAP *icon);
 
@@ -300,7 +300,9 @@ RsDistribMsg *locked_getGroupMsg(std::string grpId, std::string msgId);
 /***************************************************************************************/
 
 	protected:
-	/* root version of this function must be called */
+/*!
+ *  root version (p3Distrib::) of this function must be called
+ **/
 virtual void locked_notifyGroupChanged(GroupInfo &info, uint32_t flags);
 virtual bool locked_eventDuplicateMsg(GroupInfo *, RsDistribMsg *, std::string id) = 0;
 virtual bool locked_eventNewMsg(GroupInfo *, RsDistribMsg *, std::string id) = 0;

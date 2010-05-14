@@ -207,6 +207,8 @@ const uint16_t TLV_TYPE_KEYSIGNATURE  = 0x1050;
 
 const uint16_t TLV_TYPE_IMAGE         = 0x1060;
 
+const uint32_t RSTLV_IMAGE_TYPE_PNG = 0x0001;
+const uint32_t RSTLV_IMAGE_TYPE_JPG = 0x0002;
 
 /**** Basic TLV Functions ****/
 uint32_t GetTlvSize(void *data);

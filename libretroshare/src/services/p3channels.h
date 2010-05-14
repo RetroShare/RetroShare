@@ -33,11 +33,11 @@
 #include "serialiser/rstlvtypes.h"
 #include "serialiser/rschannelitems.h"
 
+
 //! Channels is a distributed 'feed' service
 /*!
- *  The channels service allows peers to subscirbe to each feeds published by
- *  their peers. Using the p3groupdistrib class to enable management of
- *  publication and viewing keys
+ * Implementations of rschannels interface
+ *  @see rsChannels for definition of implemented interface
  */
 class p3Channels: public p3GroupDistrib, public RsChannels 
 {
@@ -48,7 +48,7 @@ class p3Channels: public p3GroupDistrib, public RsChannels
 virtual ~p3Channels();
 
 /*!
- * cleans up local info and dowloaded files older than one month,
+ * cleans up dowloaded files older than one month,
  * should be called during shutdown of rs
  */
 void cleanUpOldFiles();
@@ -58,7 +58,8 @@ void cleanUpOldFiles();
 
 virtual bool channelsChanged(std::list<std::string> &chanIds);
 
-virtual std::string createChannel(std::wstring chanName, std::wstring chanDesc, uint32_t chanFlags);
+virtual std::string createChannel(std::wstring chanName, std::wstring chanDesc, uint32_t chanFlags,
+		unsigned char* pngImageData, uint32_t size);
 
 virtual bool getChannelInfo(std::string cId, ChannelInfo &ci);
 virtual bool getChannelList(std::list<ChannelInfo> &chanList);

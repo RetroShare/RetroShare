@@ -1486,7 +1486,8 @@ RSA *extractPrivateKey(RsTlvSecurityKey &key)
 }
 
 
-std::string p3GroupDistrib::createGroup(std::wstring name, std::wstring desc, uint32_t flags)
+std::string p3GroupDistrib::createGroup(std::wstring name, std::wstring desc, uint32_t flags,
+		unsigned char* pngImageData, uint32_t imageSize)
 {
 #ifdef DISTRIB_DEBUG
 	std::cerr << "p3GroupDistrib::createGroup()" << std::endl;
@@ -1513,6 +1514,11 @@ std::string p3GroupDistrib::createGroup(std::wstring name, std::wstring desc, ui
 	newGrp->timestamp = now;
 	newGrp->grpFlags = flags & (RS_DISTRIB_PRIVACY_MASK | RS_DISTRIB_AUTHEN_MASK);
 	newGrp->grpControlFlags = 0;
+
+	// explicit member wise copy for grp image
+	newGrp->grpPixmap.binData.bin_data = pngImageData;
+	newGrp->grpPixmap.binData.bin_len = imageSize;
+	newGrp->grpPixmap.image_type = RSTLV_IMAGE_TYPE_PNG;
 
 	/* set keys */
 	setRSAPublicKey(newGrp->adminKey, rsa_admin_pub);
@@ -1904,6 +1910,9 @@ bool 	p3GroupDistrib::locked_updateGroupInfo(GroupInfo &info, RsDistribGrp *newG
 	info.grpDesc = newGrp->grpDesc;
 	info.grpCategory = newGrp->grpCategory;
 	info.grpFlags   = newGrp->grpFlags; 
+	info.grpIcon.binData.bin_data = newGrp->grpPixmap.binData.bin_data;
+	info.grpIcon.binData.bin_len = newGrp->grpPixmap.binData.bin_len;
+	info.grpIcon.image_type = newGrp->grpPixmap.image_type;
 
 	/* pop already calculated */
 	/* last post handled seperately */
