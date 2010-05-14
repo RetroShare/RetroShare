@@ -478,7 +478,11 @@ bool ftDataMultiplex::handleRecvServerChunkMapRequest(const std::string& peerId,
 		RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
 
 		it = mServers.find(hash) ;
-		it->second->getAvailabilityMap(cmap);
+
+		if(it == mServers.end())	// handleSearchRequest should have filled mServers[hash], but we have been off-mutex since,
+			return false ;				// so it's safer to check again.
+		else
+			it->second->getAvailabilityMap(cmap);
 	}
 
 	mDataSend->sendChunkMap(peerId,hash,cmap);
