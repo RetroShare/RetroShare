@@ -393,17 +393,26 @@ void ChannelFeed::updateChannelListOwn(std::list<std::string> &ids)
 #endif
 		QStandardItem *ownGroup = model->item(OWN);
 		QList<QStandardItem *> channel;
-		QStandardItem *item1 = new QStandardItem();
+		QStandardItem *chNameItem = new QStandardItem();
 		QStandardItem *chPopItem = new QStandardItem();
 		QStandardItem *chIdItem = new QStandardItem();
 
 		ChannelInfo ci;
 		if (rsChannels && rsChannels->getChannelInfo(*iit, ci)) {
-			item1->setData(QVariant(QString::fromStdWString(ci.channelName)), Qt::DisplayRole);
+			chNameItem->setData(QVariant(QString::fromStdWString(ci.channelName)), Qt::DisplayRole);
 			//chPopItem->setData(QVariant(QString::number(ci.pop)), Qt::DisplayRole);
 			chIdItem->setData(QVariant(QString::fromStdString(ci.channelId)), Qt::DisplayRole);
-			item1->setToolTip(tr("Popularity: %1\nFetches: %2\nAvailable: %3"
-					).arg(QString::number(ci.pop)).arg(9999).arg(9999));
+			chNameItem->setToolTip(tr("Popularity: %1\nFetches: %2\nAvailable: %3").arg(QString::number(ci.pop)).arg(9999).arg(9999));
+			
+			  if(ci.pngImageLen != 0){
+
+        QPixmap chanImage;
+        chanImage.loadFromData(ci.pngChanImage, ci.pngImageLen, "PNG");
+        chNameItem->setData(QIcon(chanImage), Qt::DecorationRole);
+        }else{
+        QPixmap defaulImage(CHAN_DEFAULT_IMAGE);
+        chNameItem->setData(QIcon(defaulImage), Qt::DecorationRole);
+        }
 					
         int popcount = ci.pop;		
         /* set Popularity icon  */
@@ -433,12 +442,12 @@ void ChannelFeed::updateChannelListOwn(std::list<std::string> &ids)
 					
 					
 		} else {
-			item1->setData(QVariant(QString("Unknown Channel")), Qt::DisplayRole);
+			chNameItem->setData(QVariant(QString("Unknown Channel")), Qt::DisplayRole);
 			chPopItem->setData(QVariant(QString::fromStdString(*iit)), Qt::DisplayRole);
-			item1->setToolTip("Unknown Channel\nNo Description");
+			chNameItem->setToolTip("Unknown Channel\nNo Description");
 		}
     
-		channel.append(item1);
+		channel.append(chNameItem);
 		channel.append(chPopItem);
 		channel.append(chIdItem);
 		ownGroup->appendRow(channel);
@@ -458,16 +467,25 @@ void ChannelFeed::updateChannelListSub(std::list<std::string> &ids)
 #endif
 		QStandardItem *ownGroup = model->item(SUBSCRIBED);
 		QList<QStandardItem *> channel;
-		QStandardItem *item1 = new QStandardItem();
+		QStandardItem *chNameItem = new QStandardItem();
 		QStandardItem *chPopItem = new QStandardItem();
 		QStandardItem *chIdItem = new QStandardItem();
 
 		ChannelInfo ci;
 		if (rsChannels && rsChannels->getChannelInfo(*iit, ci)) {
-			item1->setData(QVariant(QString::fromStdWString(ci.channelName)), Qt::DisplayRole);
+			chNameItem->setData(QVariant(QString::fromStdWString(ci.channelName)), Qt::DisplayRole);
 			chIdItem->setData(QVariant(QString::fromStdString(ci.channelId)), Qt::DisplayRole);
-			item1->setToolTip(tr("Popularity: %1\nFetches: %2\nAvailable: %3"
-					).arg(QString::number(ci.pop)).arg(9999).arg(9999));
+			chNameItem->setToolTip(tr("Popularity: %1\nFetches: %2\nAvailable: %3").arg(QString::number(ci.pop)).arg(9999).arg(9999));
+			
+          if(ci.pngImageLen != 0){
+
+          QPixmap chanImage;
+          chanImage.loadFromData(ci.pngChanImage, ci.pngImageLen, "PNG");
+          chNameItem->setData(QIcon(chanImage), Qt::DecorationRole);
+          }else{
+          QPixmap defaulImage(CHAN_DEFAULT_IMAGE);
+          chNameItem->setData(QIcon(defaulImage), Qt::DecorationRole);
+          }
 
 		      /* set Popularity icon  */
 		      int popcount = ci.pop;
@@ -498,12 +516,12 @@ void ChannelFeed::updateChannelListSub(std::list<std::string> &ids)
 
 
 				} else {
-					item1->setData(QVariant(QString("Unknown Channel")), Qt::DisplayRole);
+					chNameItem->setData(QVariant(QString("Unknown Channel")), Qt::DisplayRole);
 					chPopItem->setData(QVariant(QString::fromStdString(*iit)), Qt::DisplayRole);
-					item1->setToolTip("Unknown Channel\nNo Description");
+					chNameItem->setToolTip("Unknown Channel\nNo Description");
 				}
 
-		channel.append(item1);
+		channel.append(chNameItem);
 		channel.append(chPopItem);
 		channel.append(chIdItem);
 		ownGroup->appendRow(channel);
@@ -532,8 +550,17 @@ void ChannelFeed::updateChannelListPop(std::list<std::string> &ids)
 		if (rsChannels && rsChannels->getChannelInfo(*iit, ci)) {
 			chNameItem->setData(QVariant(QString::fromStdWString(ci.channelName)), Qt::DisplayRole);
 			chIdItem->setData(QVariant(QString::fromStdString(ci.channelId)), Qt::DisplayRole);
-			chNameItem->setToolTip(tr("Popularity: %1\nFetches: %2\nAvailable: %3"
-					).arg(QString::number(ci.pop)).arg(9999).arg(9999));
+			chNameItem->setToolTip(tr("Popularity: %1\nFetches: %2\nAvailable: %3").arg(QString::number(ci.pop)).arg(9999).arg(9999));
+			
+			  if(ci.pngImageLen != 0){
+
+        QPixmap chanImage;
+        chanImage.loadFromData(ci.pngChanImage, ci.pngImageLen, "PNG");
+        chNameItem->setData(QIcon(chanImage), Qt::DecorationRole);
+        }else{
+        QPixmap defaulImage(CHAN_DEFAULT_IMAGE);
+        chNameItem->setData(QIcon(defaulImage), Qt::DecorationRole);
+        }
 
 	      /* set Popularity icon  */
 	      int popcount = ci.pop;
