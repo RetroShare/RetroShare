@@ -36,7 +36,7 @@
 
 //#define GPG_DEBUG 1
 
-// initialisation du pointeur de singleton à zéro
+// initializing the singleton pointer
 AuthGPG *AuthGPG::instance_gpg = new AuthGPG();
 
 /* Turn a set of parameters into a string */
@@ -770,7 +770,7 @@ bool AuthGPG::DoOwnSignature_locked(const void *data, unsigned int datalen, void
 
 	if (len < *outl)	// -1 because we added a 0 at the end.
 	{
-		fprintf(stderr,"Length is smaller. Reducing to %d\n",len) ;
+		std::cerr << "Length is smaller. Reducing to " << len << std::endl;
 		*outl = len;
 	}
 	memmove(buf_sigout, export_sig, *outl);

@@ -53,7 +53,8 @@ static void getPage(const std::string& server_name,std::string& page)
 {
 	page = "" ;
 	int sockfd,n=0;                   // socket descriptor
-	struct sockaddr_in serveur= {0};  // server's parameters
+	struct sockaddr_in serveur;       // server's parameters
+	memset(&serveur.sin_zero, 0, sizeof(serveur.sin_zero));
 	struct hostent *hostinfo=NULL;    // structure for storing the server's ip
 
 	char buf[1024];
