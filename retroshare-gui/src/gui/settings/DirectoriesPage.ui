@@ -557,7 +557,7 @@
    <item row="2" column="0">
     <widget class="QGroupBox" name="groupBox_3">
      <property name="title">
-      <string>Partials Direcrtory</string>
+      <string>Partials Directory</string>
      </property>
      <layout class="QGridLayout">
       <item row="0" column="0">
@@ -614,7 +614,7 @@
          <bool>true</bool>
         </property>
         <property name="text">
-         <string>Automatically share incoming directory (Recommanded)</string>
+         <string>Automatically share incoming directory (recommended)</string>
         </property>
         <property name="checked">
          <bool>true</bool>
