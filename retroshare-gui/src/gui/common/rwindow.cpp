@@ -97,7 +97,7 @@ RWindow::restoreWindowState()
 QVariant
 RWindow::getSetting(QString setting, QVariant defaultValue)
 {
-  RshareSettings settings;
+  RshareSettings settings(_name.toStdString());
   return settings.value(setting, defaultValue);
 }
 
@@ -105,7 +105,7 @@ RWindow::getSetting(QString setting, QVariant defaultValue)
 void
 RWindow::saveSetting(QString prop, QVariant value)
 {
-  RshareSettings settings;
+  RshareSettings settings(_name.toStdString());
   settings.setValue(prop, value);
 }
 

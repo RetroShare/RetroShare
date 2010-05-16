@@ -308,7 +308,7 @@ void  MessengerWindow::insertPeers()
                 }
             }
             if (!found) {
-                peertreeWidget->takeTopLevelItem(index);
+                delete (peertreeWidget->takeTopLevelItem(index));
             } else {
                 index++;
             }
@@ -335,7 +335,7 @@ void  MessengerWindow::insertPeers()
             if ((!rsPeers->getPeerDetails(*it, detail) || !detail.accept_connection)
                 && detail.gpg_id != rsPeers->getGPGOwnId()) {
                 //don't accept anymore connection, remove from the view
-                peertreeWidget->takeTopLevelItem(peertreeWidget->indexOfTopLevelItem(gpg_item));
+                delete (peertreeWidget->takeTopLevelItem(peertreeWidget->indexOfTopLevelItem(gpg_item)));
                 continue;
             }
 
@@ -352,7 +352,7 @@ void  MessengerWindow::insertPeers()
             while (childIndex < gpg_item->childCount()) {
                 std::string ssl_id = (gpg_item->child(childIndex))->text(3).toStdString();
                 if (!rsPeers->isFriend(ssl_id)) {
-                    gpg_item->takeChild(childIndex);
+                    delete (gpg_item->takeChild(childIndex));
                 } else {
                     childIndex++;
                 }
@@ -364,7 +364,7 @@ void  MessengerWindow::insertPeers()
             std::list<std::string> sslContacts;
             rsPeers->getSSLChildListOfGPGId(detail.gpg_id, sslContacts);
             for(std::list<std::string>::iterator sslIt = sslContacts.begin(); sslIt != sslContacts.end(); sslIt++) {
-                QTreeWidgetItem *sslItem;
+                QTreeWidgetItem *sslItem = NULL;
 
                 //find the corresponding sslItem child item of the gpg item
                 bool newChild = true;
@@ -375,15 +375,19 @@ void  MessengerWindow::insertPeers()
                         break;
                     }
                 }
-                if (newChild) {
-                   sslItem = new QTreeWidgetItem(1); //set type to 1 for custom popup menu
-                }
 
                 RsPeerDetails sslDetail;
                 if (!rsPeers->getPeerDetails(*sslIt, sslDetail) || !rsPeers->isFriend(*sslIt)) {
                     std::cerr << "Removing widget from the view : id : " << *sslIt << std::endl;
-                    //child has disappeared, remove it from the gpg_item
-                    gpg_item->removeChild(sslItem);
+                    if (sslItem) {
+                        //child has disappeared, remove it from the gpg_item
+                        gpg_item->removeChild(sslItem);
+                    }
+                    continue;
+                }
+
+                if (sslItem == NULL) {
+                   sslItem = new QTreeWidgetItem(1); //set type to 1 for custom popup menu
                 }
 
                 /* not displayed, used to find back the item */
