@@ -614,7 +614,7 @@
          <bool>true</bool>
         </property>
         <property name="text">
-         <string>Automatically share incoming directory (recommended)</string>
+         <string>Automatically share incoming directory (Recommended)</string>
         </property>
         <property name="checked">
          <bool>true</bool>
