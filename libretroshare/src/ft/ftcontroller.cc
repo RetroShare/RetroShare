@@ -1177,20 +1177,6 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 	ftFileControl *ftfc = new ftFileControl(fname, savepath, destination, size, hash, flags, fc, tm, callbackCode);
 	ftfc->mCreateTime = time(NULL);
 
-	locked_addToQueue(ftfc) ;
-
-#ifdef CONTROL_DEBUG
-	std::cerr << "ftController::FileRequest() Created ftFileCreator @: " << fc;
-	std::cerr << std::endl;
-	std::cerr << "ftController::FileRequest() Created ftTransModule @: " << tm;
-	std::cerr << std::endl;
-	std::cerr << "ftController::FileRequest() Created ftFileControl." ;
-	std::cerr << std::endl;
-#endif
-
-	/* add to ClientModule */
-	mDataplex->addTransferModule(tm, fc);
-
 	/* now add source peers (and their current state) */
 	tm->setFileSources(srcIds);
 
@@ -1204,9 +1190,24 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 		setPeerState(tm, *it, rate, mConnMgr->isOnline(*it));
 	}
 
+	/* add structures into the accessible data. Needs to be locked */
+	{
+		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+		locked_addToQueue(ftfc) ;
 
-	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
-	mDownloads[hash] = ftfc;
+#ifdef CONTROL_DEBUG
+		std::cerr << "ftController::FileRequest() Created ftFileCreator @: " << fc;
+		std::cerr << std::endl;
+		std::cerr << "ftController::FileRequest() Created ftTransModule @: " << tm;
+		std::cerr << std::endl;
+		std::cerr << "ftController::FileRequest() Created ftFileControl." ;
+		std::cerr << std::endl;
+#endif
+
+		/* add to ClientModule */
+		mDataplex->addTransferModule(tm, fc);
+		mDownloads[hash] = ftfc;
+	}
 
 	IndicateConfigChanged(); /* completed transfer -> save */
 	return true;
