@@ -40,6 +40,7 @@
 	#include <netinet/in.h>
 
 #else
+	#include "util/rswin.h"
 	#include <stdint.h>
 	#include <winsock2.h>
 	#include <ws2tcpip.h>

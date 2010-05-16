@@ -23,6 +23,10 @@
  *
  */
 
+#ifdef WINDOWS_SYS
+#include "util/rswin.h"
+#endif
+
 #include "ft/ftextralist.h"
 #include "serialiser/rsconfigitems.h"
 #include "util/rsdir.h"
@@ -423,7 +427,13 @@ bool    ftExtraList::loadList(std::list<RsItem *> load)
 		}
 
 		/* open file */
+#ifdef WINDOWS_SYS
+		std::wstring filepathW;
+		librs::util::ConvertUtf8ToUtf16(fi->file.path, filepathW);
+		FILE *fd = _wfopen(filepathW.c_str(), L"rb");
+#else
 		FILE *fd = fopen(fi->file.path.c_str(), "rb");
+#endif
 		if (fd == NULL)
 		{
 			delete (*it);

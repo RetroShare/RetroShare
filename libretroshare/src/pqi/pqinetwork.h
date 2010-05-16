@@ -45,12 +45,7 @@
 
 #else
 
-/* This defines the platform to be WinXP or later...
- * and is needed for getaddrinfo.... (not used anymore)
- *
- */
-
-#define _WIN32_WINNT 0x0501
+#include "util/rswin.h"
 
 #include "util/rsnet.h" /* more generic networking header */
 

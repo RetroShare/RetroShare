@@ -21,12 +21,16 @@
  *
  */
 
-#include <util/rswin.h>
+#ifdef WINDOWS_SYS
+#include "util/rswin.h"
+#endif
+
 #include "dbase/fimonitor.h"
 #include "util/rsdir.h"
 #include "serialiser/rsserviceids.h"
 #include "rsiface/rsiface.h"
 #include "rsiface/rsnotify.h"
+#include "util/folderiterator.h"
 #include <errno.h>
 
 #include <iostream>
@@ -357,8 +361,8 @@ void 	FileIndexMonitor::updateCycle()
 #endif
 
 		/* check for the dir existance */
-		DIR *dir = opendir(realpath.c_str());
-		if (!dir)
+                librs::util::FolderIterator dirIt(realpath);
+                if (!dirIt.isValid())
 		{
 #ifdef FIM_DEBUG
 			std::cerr << "FileIndexMonitor::updateCycle()";
@@ -397,23 +401,29 @@ void 	FileIndexMonitor::updateCycle()
 		 * files checked to see if they have changed. (rehashed)
 		 */
 
-		struct dirent *dent;
 		struct stat64 buf;
 
 		to_hash.push_back(DirContentToHash()) ;
 		to_hash.back().realpath = realpath ;
 		to_hash.back().dirpath = dirpath ;
 
-		while(NULL != (dent = readdir(dir)))
+                while(dirIt.readdir())
 		{
 			/* check entry type */
-			std::string fname = dent -> d_name;
+                        std::string fname;
+                        dirIt.d_name(fname);
 			std::string fullname = realpath + "/" + fname;
 #ifdef FIM_DEBUG
 			std::cerr << "calling stats on " << fullname <<std::endl;
 #endif
 
+#ifdef WINDOWS_SYS
+                        std::wstring wfullname;
+                        librs::util::ConvertUtf8ToUtf16(fullname, wfullname);
+                        if (-1 != _wstati64(wfullname.c_str(), &buf))
+#else
 			if (-1 != stat64(fullname.c_str(), &buf))
+#endif
 			{
 #ifdef FIM_DEBUG
 				std::cerr << "buf.st_mode: " << buf.st_mode <<std::endl;
@@ -508,7 +518,7 @@ void 	FileIndexMonitor::updateCycle()
 		olddir = NULL;
 
 		/* close directory */
-		closedir(dir);
+                dirIt.closedir();
 	}
 
 	// Now, hash all files at once.
@@ -968,7 +978,16 @@ bool FileIndexMonitor::hashFile(std::string fullpath, FileEntry& fent)
 #ifdef FIM_DEBUG
 	std::cerr << "File to hash = " << f_hash << std::endl;
 #endif
-	if (NULL == (fd = fopen64(f_hash.c_str(), "rb")))	return false;
+
+#ifdef WINDOWS_SYS
+        std::wstring wf_hash;
+        librs::util::ConvertUtf8ToUtf16(f_hash, wf_hash);
+        if (NULL == (fd = _wfopen(wf_hash.c_str(), L"rb")))
+            return false;
+#else
+        if (NULL == (fd = fopen64(f_hash.c_str(), "rb")))
+            return false;
+#endif
 
 	SHA1_Init(sha_ctx);
 	while((len = fread(gblBuf,1, 512, fd)) > 0)

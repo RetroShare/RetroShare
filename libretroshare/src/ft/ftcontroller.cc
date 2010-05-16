@@ -35,6 +35,10 @@
  *
  */
 
+#ifdef WINDOWS_SYS
+#include "util/rswin.h"
+#endif
+
 #include "ft/ftcontroller.h"
 
 #include "ft/ftfilecreator.h"
@@ -591,7 +595,17 @@ bool ftController::moveFile(const std::string& source,const std::string& dest)
 {
 	// First try a rename
 	//
+
+#ifdef WINDOWS_SYS
+	std::wstring sourceW;
+	std::wstring destW;
+	librs::util::ConvertUtf8ToUtf16(source,sourceW);
+	librs::util::ConvertUtf8ToUtf16(dest,destW);
+
+	if( 0 == MoveFileW(sourceW.c_str(), destW.c_str()))
+#else
 	if (0 == rename(source.c_str(), dest.c_str()))
+#endif
 	{
 #ifdef CONTROL_DEBUG
                 std::cerr << "ftController::completeFile() renaming to: ";
@@ -609,14 +623,22 @@ bool ftController::moveFile(const std::string& source,const std::string& dest)
 #endif
 	// We could not rename, probably because we're dealing with different file systems.
 	// Let's copy then.
-	
+
+#ifdef WINDOWS_SYS
+	if(CopyFileW(sourceW.c_str(), destW.c_str(), FALSE) == 0)
+#else
 	if(!copyFile(source,dest))
+#endif
 		return false ;
 
 	// copy was successfull, let's delete the original
 	std::cerr << "deleting original file " << source << std::endl ;
 
+#ifdef WINDOWS_SYS
+	if(0 == DeleteFileW(sourceW.c_str()))
+#else
 	if(0 == remove(source.c_str()))
+#endif
 		return true ;
 	else
 	{
@@ -627,8 +649,6 @@ bool ftController::moveFile(const std::string& source,const std::string& dest)
 
 bool ftController::copyFile(const std::string& source,const std::string& dest)
 {
-	std::string error ;
-
 	FILE *in = fopen(source.c_str(),"rb") ;
 
 	if(in == NULL)
@@ -967,8 +987,13 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 			destination = dest + "/" + fname;
 
 		// create void file with the target name.
+#ifdef WINDOWS_SYS
+		std::wstring destinationW;
+		librs::util::ConvertUtf8ToUtf16(destination, destinationW);
+		FILE *f = _wfopen(destinationW.c_str(), L"w");
+#else
 		FILE *f = fopen(destination.c_str(),"w") ;
-
+#endif
 		if(f == NULL)
 			std::cerr << "Could not open file " << destination << " for writting." << std::endl ;
 		else

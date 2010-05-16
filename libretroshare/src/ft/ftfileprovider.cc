@@ -5,6 +5,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#ifdef WINDOWS_SYS
+#include "util/rswin.h"
+#endif // WINDOWS_SYS
+
+
 static const time_t UPLOAD_CHUNK_MAPS_TIME = 30 ;	// time to ask for a new chunkmap from uploaders in seconds.
 
 ftFileProvider::ftFileProvider(std::string path, uint64_t size, std::string
@@ -240,14 +245,24 @@ int ftFileProvider::initializeFileAttrs()
 	 * attempt to open file 
 	 */
 
+#ifdef WINDOWS_SYS
+	std::wstring wfile_name;
+	librs::util::ConvertUtf8ToUtf16(file_name, wfile_name);
+	fd = _wfopen(wfile_name.c_str(), L"r+b");
+#else
 	fd = fopen64(file_name.c_str(), "r+b");
+#endif
 	if (!fd)
 	{
 		std::cerr << "ftFileProvider::initializeFileAttrs() Failed to open (r+b): ";
 		std::cerr << file_name << std::endl;
 
 		/* try opening read only */
+#ifdef WINDOWS_SYS
+		fd = _wfopen(wfile_name.c_str(), L"rb");
+#else
 		fd = fopen64(file_name.c_str(), "rb");
+#endif
 		if (!fd)
 		{
 			std::cerr << "ftFileProvider::initializeFileAttrs() Failed to open (rb): ";

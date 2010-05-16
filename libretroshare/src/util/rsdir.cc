@@ -39,6 +39,7 @@
 #include <fstream>
 
 #if defined(WIN32) || defined(__CYGWIN__)
+#include "util/rswin.h"
 #include "wtypes.h"
 #include <winioctl.h>
 #else
@@ -345,8 +346,15 @@ bool RsDirUtil::getFileHash(std::string filepath,
 	unsigned char sha_buf[SHA_DIGEST_LENGTH];
 	unsigned char gblBuf[512];
 
+#ifdef WINDOWS_SYS
+	std::wstring filepathW;
+	librs::util::ConvertUtf8ToUtf16(filepath, filepathW);
+	if (NULL == (fd = _wfopen(filepathW.c_str(), L"rb")))
+		return false;
+#else
 	if (NULL == (fd = fopen(filepath.c_str(), "rb")))
 		return false;
+#endif
 
 	/* determine size */
  	fseek(fd, 0, SEEK_END);
