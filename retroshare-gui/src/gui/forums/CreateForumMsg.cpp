@@ -368,7 +368,7 @@ void CreateForumMsg::fileHashingFinished(AttachFileItem* file) {
 
 	//convert fileSize from uint_64 to string for html link
 	char fileSizeChar [100];
-	sprintf(fileSizeChar, "%lld", file->FileSize());
+	sprintf(fileSizeChar, "%llu", (unsigned long long int)file->FileSize());
 	std::string fileSize = *(&fileSizeChar);
 
 	std::string mesgString = "<a href='retroshare://file|" + (file->FileName()) + "|" + fileSize + "|" + (file->FileHash()) + "'>" 

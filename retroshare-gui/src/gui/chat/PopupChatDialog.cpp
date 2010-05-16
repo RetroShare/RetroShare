@@ -799,13 +799,6 @@ void PopupChatDialog::fileHashingFinished(AttachFileItem* file)
 	  rsiface->unlockData(); /* Unlock Interface */
 	}
 
-	//convert fileSize from uint_64 to string for html link
-	char fileSizeChar [100];
-	sprintf(fileSizeChar, "%lld", file->FileSize());
-	std::string fileSize = *(&fileSizeChar);
-
-//	std::string mesgString = "<a href='file:?fileHash=" + (file->FileHash()) + "&fileName=" + (file->FileName()) + "&fileSize=" + fileSize + "'>" + (file->FileName()) + "</a>";
-
 	std::string mesgString = RetroShareLink(QString::fromStdString(file->FileName()),file->FileSize(),QString::fromStdString(file->FileHash())).toHtml().toStdString() ;
 
 #ifdef CHAT_DEBUG
