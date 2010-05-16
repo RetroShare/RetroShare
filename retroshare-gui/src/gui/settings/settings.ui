@@ -247,9 +247,6 @@
      </item>
      <item>
       <widget class="QPushButton" name="applyButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
        <property name="minimumSize">
         <size>
          <width>0</width>
@@ -258,19 +255,6 @@
        </property>
        <property name="text">
         <string>Apply</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="okButton">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>22</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>OK</string>
        </property>
       </widget>
      </item>
@@ -283,7 +267,7 @@
  </resources>
  <connections>
   <connection>
-   <sender>okButton</sender>
+   <sender>applyButton</sender>
    <signal>clicked()</signal>
    <receiver>Settings</receiver>
    <slot>accept()</slot>
