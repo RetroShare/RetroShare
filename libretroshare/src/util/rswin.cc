@@ -1,6 +1,9 @@
 #include "util/rswin.h"
 
 
+#ifdef WINDOWS_SYS
+
+
 namespace librs { namespace util {
 
 
@@ -47,3 +50,6 @@ bool ConvertUtf16ToUtf8(const std::wstring& source, std::string& dest) {
 
 
 } } // librs::util
+
+
+#endif // WINDOWS_SYS

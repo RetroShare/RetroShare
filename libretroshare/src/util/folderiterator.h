@@ -42,6 +42,7 @@ private:
     _WIN32_FIND_DATAW fileInfo;
 #else
     DIR* handle;
+    struct dirent* ent;
 #endif
 
 };

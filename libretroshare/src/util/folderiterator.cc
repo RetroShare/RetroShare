@@ -41,7 +41,8 @@ bool FolderIterator::readdir() {
     }
     return FindNextFileW(handle, &fileInfo) != 0;
 #else
-    return readdir(handle) == 0;
+    ent = ::readdir(handle);
+    return ent != 0;
 #endif
 }
 
@@ -56,7 +57,9 @@ bool FolderIterator::d_name(std::string& dest)
         return false;
     }
 #else
-    dest = handle->d_name;
+    if(ent == 0)
+        return false;
+    dest = ent->d_name;
 #endif
 
     return true;
@@ -72,7 +75,7 @@ bool FolderIterator::closedir()
 #ifdef WINDOWS_SYS
     return FindClose(handle) != 0;
 #else
-    return closedir(handle) == 0;
+    return ::closedir(handle) == 0;
 #endif
 }
 
