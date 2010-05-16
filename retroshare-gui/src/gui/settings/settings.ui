@@ -269,7 +269,7 @@
         </size>
        </property>
        <property name="text">
-        <string>Apply</string>
+        <string>OK</string>
        </property>
       </widget>
      </item>
