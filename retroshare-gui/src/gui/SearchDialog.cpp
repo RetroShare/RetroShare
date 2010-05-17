@@ -193,13 +193,13 @@ void SearchDialog::checkText(const QString& txt)
 {
 	if(txt.length() < 3)
 	{
-		std::cout << "setting palette 1" << std::endl ;
+		//std::cout << "setting palette 1" << std::endl ;
 		ui.frame_2->setStyleSheet("QFrame{ border: 2px solid #079E00; background-color: #DBDBDB; }");
 	}
 	else
 	{
 		ui.frame_2->setStyleSheet("QFrame { border: 2px solid #079E00; background-color: white; }");
-		std::cout << "setting palette 2" << std::endl ;
+		//std::cout << "setting palette 2" << std::endl ;
 	}
 }
 
@@ -540,7 +540,7 @@ void SearchDialog::searchKeywords()
 	if(txt.length() < 3)
 		return ;
 
-	std::cerr << "SearchDialog::searchKeywords() : " << txt << std::endl;
+	//std::cerr << "SearchDialog::searchKeywords() : " << txt << std::endl;
 
 	TurtleRequestId req_id ;
 
