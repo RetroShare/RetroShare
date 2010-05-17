@@ -1002,6 +1002,20 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 		return true ;
 	}
 
+	// Bugs in the cache system can cause files with arbitrary size to be
+	// requested, causing a division by zero in ftChunkMap when size > 1MB *
+	// (2^32-1). I thus conservatively check for large size values.
+	//
+	if(size >= 1024ull*1024ull*((1ull << 32) - 1))
+	{
+		std::cerr << "FileRequest Error: unexpected size. This is probably a bug." << std::endl;
+		std::cerr << "  name  = " << fname << std::endl ;
+		std::cerr << "  flags = " << flags << std::endl ;
+		std::cerr << "  dest  = " << dest << std::endl ;
+		std::cerr << "  size  = " << size << std::endl ;
+		return false ;
+	}
+
 	/* If file transfer is not enabled ....
 	 * save request for later. This will also
 	 * mean that we will have to copy local files,
