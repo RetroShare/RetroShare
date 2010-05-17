@@ -385,6 +385,7 @@ void ChannelFeed::updateChannelListOwn(std::list<std::string> &ids)
 		QStandardItem *chNameItem = new QStandardItem();
 		QStandardItem *chPopItem = new QStandardItem();
 		QStandardItem *chIdItem = new QStandardItem();
+		chNameItem->setSizeHint( QSize( 22,22 ) ); 
 
 		ChannelInfo ci;
 		if (rsChannels && rsChannels->getChannelInfo(*iit, ci)) {
@@ -459,6 +460,7 @@ void ChannelFeed::updateChannelListSub(std::list<std::string> &ids)
 		QStandardItem *chNameItem = new QStandardItem();
 		QStandardItem *chPopItem = new QStandardItem();
 		QStandardItem *chIdItem = new QStandardItem();
+		chNameItem->setSizeHint( QSize( 22,22 ) ); 
 
 		ChannelInfo ci;
 		if (rsChannels && rsChannels->getChannelInfo(*iit, ci)) {
@@ -495,7 +497,8 @@ void ChannelFeed::updateChannelListSub(std::list<std::string> &ids)
 		        {
 		            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_3.png")), Qt::DecorationRole);
 		        }
-		        else if (popcount < 16) {
+		        else if (popcount < 16) 
+		        {
 		            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_4.png")), Qt::DecorationRole);
 		        }
 		        else
@@ -534,6 +537,7 @@ void ChannelFeed::updateChannelListPop(std::list<std::string> &ids)
 		QStandardItem *chNameItem = new QStandardItem();
 		QStandardItem *chPopItem = new QStandardItem();
 		QStandardItem *chIdItem = new QStandardItem();
+		chNameItem->setSizeHint( QSize( 22,22 ) ); 
 
 		ChannelInfo ci;
 		if (rsChannels && rsChannels->getChannelInfo(*iit, ci)) {
