@@ -119,15 +119,12 @@ bool p3Channels::getChannelInfo(std::string cId, ChannelInfo &ci)
 	ci.pop = gi->sources.size();
 	ci.lastPost = gi->lastPost;
 
-	if(gi->grpIcon.image_type == RSTLV_IMAGE_TYPE_PNG){
+	ci.pngChanImage = gi->grpIcon.pngImageData;
 
-		ci.pngChanImage = (unsigned char*) gi->grpIcon.binData.bin_data;
-		ci.pngImageLen = gi->grpIcon.binData.bin_len;
-	}else{
-
-		ci.pngChanImage = NULL;
+	if(ci.pngChanImage != NULL)
+		ci.pngImageLen = gi->grpIcon.imageSize;
+	else
 		ci.pngImageLen = 0;
-	}
 
 	return true;
 }
@@ -675,7 +672,7 @@ void p3Channels::cleanUpOldFiles(){
 	}
 
 	// clean up local caches
-	clear_local_caches(now); //how about remote caches, remember its hardwired
+//.	clear_local_caches(now); //how about remote caches, remember its hardwired
 
 	return;
 }

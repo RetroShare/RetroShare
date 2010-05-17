@@ -47,6 +47,7 @@ void 	setRSAPublicKey(RsTlvSecurityKey &key, RSA *rsa_pub);
 void 	setRSAPrivateKey(RsTlvSecurityKey &key, RSA *rsa_priv);
 
 
+
 p3GroupDistrib::p3GroupDistrib(uint16_t subtype, 
 		CacheStrapper *cs, CacheTransfer *cft,
 		std::string sourcedir, std::string storedir, 
@@ -1516,9 +1517,21 @@ std::string p3GroupDistrib::createGroup(std::wstring name, std::wstring desc, ui
 	newGrp->grpControlFlags = 0;
 
 	// explicit member wise copy for grp image
-	newGrp->grpPixmap.binData.bin_data = pngImageData;
-	newGrp->grpPixmap.binData.bin_len = imageSize;
-	newGrp->grpPixmap.image_type = RSTLV_IMAGE_TYPE_PNG;
+	if((pngImageData != NULL) && (imageSize > 0)){
+		newGrp->grpPixmap.binData.bin_data = new unsigned char[imageSize];
+
+		memcpy(newGrp->grpPixmap.binData.bin_data, pngImageData,
+				imageSize*sizeof(unsigned char));
+		newGrp->grpPixmap.binData.bin_len = imageSize;
+		newGrp->grpPixmap.image_type = RSTLV_IMAGE_TYPE_PNG;
+
+	}else{
+		newGrp->grpPixmap.binData.bin_data = NULL;
+		newGrp->grpPixmap.binData.bin_len = 0;
+		newGrp->grpPixmap.image_type = 0;
+	}
+
+
 
 	/* set keys */
 	setRSAPublicKey(newGrp->adminKey, rsa_admin_pub);
@@ -1589,10 +1602,10 @@ std::string p3GroupDistrib::createGroup(std::wstring name, std::wstring desc, ui
 
 	newGrp->adminSignature.TlvClear();
 
-	RsSerialType *serialType = new RsDistribSerialiser(); 
+	RsSerialType *serialType = new RsDistribSerialiser();
 
-	char data[16000];
-	uint32_t size = 16000;
+	uint32_t size = serialType->size(newGrp);
+	char* data = new char[size];
 
 	serialType->serialise(newGrp, data, &size);
 
@@ -1642,8 +1655,7 @@ std::string p3GroupDistrib::createGroup(std::wstring name, std::wstring desc, ui
 
 	delete adKey;
 	delete pubKey;
-
-
+	delete[] data;
 	return grpId;
 }
 
@@ -1664,90 +1676,91 @@ std::string	p3GroupDistrib::publishMsg(RsDistribMsg *msg, bool personalSign)
 	RsDistribSignedMsg *signedMsg = NULL;
 
 	/* ensure Group exists */
-      { /* STACK MUTEX */
-	RsStackMutex stack(distribMtx); /*************  STACK MUTEX ************/
-	GroupInfo *gi = locked_getGroupInfo(grpId);
-	if (!gi)
-	{
-#ifdef DISTRIB_DEBUG
-		std::cerr << "p3GroupDistrib::publishMsg() No Group";
-		std::cerr << std::endl;
-#endif
-		return msgId;
-	}
+	{ /* STACK MUTEX */
 
-	/******************* FIND KEY ******************************/
-	if (!locked_choosePublishKey(*gi))
-	{
-#ifdef DISTRIB_DEBUG
-		std::cerr << "p3GroupDistrib::publishMsg() No Publish Key(1)";
-		std::cerr << std::endl;
-#endif
-		return msgId;
-	}
-
-	/* find valid publish_key */
-	EVP_PKEY *publishKey = NULL;
-	std::map<std::string, GroupKey>::iterator kit;
-	kit = gi->publishKeys.find(gi->publishKeyId);
-	if (kit != gi->publishKeys.end())
-	{
-		publishKey = kit->second.key;
-	}
-
-	if (!publishKey)
-	{
-#ifdef DISTRIB_DEBUG
-		std::cerr << "p3GroupDistrib::publishMsg() No Publish Key";
-		std::cerr << std::endl;
-#endif
-		/* no publish Key */
-		return msgId;
-	}
-	/******************* FIND KEY ******************************/
-
-	signedMsg = new RsDistribSignedMsg();
-
-	RsSerialType *serialType = createSerialiser();
-	uint32_t size = serialType->size(msg);
-	void *data = malloc(size);
-
-	serialType->serialise(msg, data, &size);
-	signedMsg->packet.setBinData(data, size);
-
-	/* sign Packet */
-
-	/* calc and check signature */
-	EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
-
-	EVP_SignInit(mdctx, EVP_sha1());
-	EVP_SignUpdate(mdctx, data, size);
-
-	unsigned int siglen = EVP_PKEY_size(publishKey);
-        unsigned char sigbuf[siglen];
-	int ans = EVP_SignFinal(mdctx, sigbuf, &siglen, publishKey);
-
-	/* save signature */
-	signedMsg->publishSignature.signData.setBinData(sigbuf, siglen);
-	signedMsg->publishSignature.keyId = gi->publishKeyId;
-
-	if (personalSign)
-	{
-		unsigned int siglen = EVP_PKEY_size(publishKey);
-        	unsigned char sigbuf[siglen];
-                if (AuthSSL::getAuthSSL()->SignDataBin(data, size, sigbuf, &siglen))
+		RsStackMutex stack(distribMtx); /*************  STACK MUTEX ************/
+		GroupInfo *gi = locked_getGroupInfo(grpId);
+		if (!gi)
 		{
-			signedMsg->personalSignature.signData.setBinData(sigbuf, siglen);
-                        signedMsg->personalSignature.keyId = AuthSSL::getAuthSSL()->OwnId();
-                        signedMsg->personalSignature.sslCert = AuthSSL::getAuthSSL()->SaveOwnCertificateToString();
+	#ifdef DISTRIB_DEBUG
+			std::cerr << "p3GroupDistrib::publishMsg() No Group";
+			std::cerr << std::endl;
+	#endif
+			return msgId;
 		}
-	}
 
-	/* clean up */
-	delete serialType;
-	EVP_MD_CTX_destroy(mdctx);
+		/******************* FIND KEY ******************************/
+		if (!locked_choosePublishKey(*gi))
+		{
+	#ifdef DISTRIB_DEBUG
+			std::cerr << "p3GroupDistrib::publishMsg() No Publish Key(1)";
+			std::cerr << std::endl;
+	#endif
+			return msgId;
+		}
 
-      } /* END STACK MUTEX */
+		/* find valid publish_key */
+		EVP_PKEY *publishKey = NULL;
+		std::map<std::string, GroupKey>::iterator kit;
+		kit = gi->publishKeys.find(gi->publishKeyId);
+		if (kit != gi->publishKeys.end())
+		{
+			publishKey = kit->second.key;
+		}
+
+		if (!publishKey)
+		{
+	#ifdef DISTRIB_DEBUG
+			std::cerr << "p3GroupDistrib::publishMsg() No Publish Key";
+			std::cerr << std::endl;
+	#endif
+			/* no publish Key */
+			return msgId;
+		}
+		/******************* FIND KEY ******************************/
+
+		signedMsg = new RsDistribSignedMsg();
+
+		RsSerialType *serialType = createSerialiser();
+		uint32_t size = serialType->size(msg);
+		void *data = malloc(size);
+		serialType->serialise(msg, data, &size);
+		signedMsg->packet.setBinData(data, size);
+
+		/* sign Packet */
+
+		/* calc and check signature */
+		EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
+
+		EVP_SignInit(mdctx, EVP_sha1());
+		EVP_SignUpdate(mdctx, data, size);
+
+		unsigned int siglen = EVP_PKEY_size(publishKey);
+			unsigned char sigbuf[siglen];
+		int ans = EVP_SignFinal(mdctx, sigbuf, &siglen, publishKey);
+
+		/* save signature */
+		signedMsg->publishSignature.signData.setBinData(sigbuf, siglen);
+		signedMsg->publishSignature.keyId = gi->publishKeyId;
+
+		if (personalSign)
+		{
+			unsigned int siglen = EVP_PKEY_size(publishKey);
+				unsigned char sigbuf[siglen];
+					if (AuthSSL::getAuthSSL()->SignDataBin(data, size, sigbuf, &siglen))
+			{
+				signedMsg->personalSignature.signData.setBinData(sigbuf, siglen);
+							signedMsg->personalSignature.keyId = AuthSSL::getAuthSSL()->OwnId();
+							signedMsg->personalSignature.sslCert = AuthSSL::getAuthSSL()->SaveOwnCertificateToString();
+			}
+		}
+
+		/* clean up */
+		delete serialType;
+		EVP_MD_CTX_destroy(mdctx);
+		delete[] data;
+
+	} /* END STACK MUTEX */
 
 	/* extract Ids from publishSignature */
 	signedMsg->msgId = getBinDataSign(
@@ -1772,6 +1785,7 @@ std::string	p3GroupDistrib::publishMsg(RsDistribMsg *msg, bool personalSign)
 	 * If we pretend it is coming from an alternative source
 	 * it'll automatically get published with other msgs
 	 */
+
 	signedMsg->PeerId(mOwnId);
 	loadMsg(signedMsg, mOwnId, false);
 
@@ -1794,8 +1808,7 @@ bool 	p3GroupDistrib::validateDistribGrp(RsDistribGrp *newGrp)
 	/* check signature */
 	RsSerialType *serialType = new RsDistribSerialiser(); 
 
-	char data[16000];
-	uint32_t size = 16000;
+
 
 	/* copy out signature (shallow copy) */
 	RsTlvKeySignature tmpSign = newGrp->adminSignature;
@@ -1804,6 +1817,9 @@ bool 	p3GroupDistrib::validateDistribGrp(RsDistribGrp *newGrp)
 
 	/* clear signature */
 	newGrp->adminSignature.ShallowClear();
+
+	uint32_t size = serialType->size(newGrp);
+	char* data = new char[size];
 
 	serialType->serialise(newGrp, data, &size);
 
@@ -1833,7 +1849,7 @@ bool 	p3GroupDistrib::validateDistribGrp(RsDistribGrp *newGrp)
 	EVP_PKEY_free(key);
 	delete serialType;
 	EVP_MD_CTX_destroy(mdctx);
-
+	delete[] data;
 
 	if (ans == 1)
 		return true;
@@ -1879,6 +1895,7 @@ bool 	p3GroupDistrib::locked_checkGroupInfo(GroupInfo &info, RsDistribGrp *newGr
 		return false;
 	}
 
+
 	/* otherwise validate it */
 	return validateDistribGrp(newGrp);
 }
@@ -1903,6 +1920,11 @@ bool 	p3GroupDistrib::locked_updateGroupInfo(GroupInfo &info, RsDistribGrp *newG
 		delete info.distribGroup;
 	}
 
+	if (info.grpIcon.pngImageData != NULL){
+		delete[] info.grpIcon.pngImageData;
+		info.grpIcon.imageSize = 0;
+	}
+
 	info.distribGroup = newGrp;
 
 	/* copy details  */
@@ -1910,9 +1932,18 @@ bool 	p3GroupDistrib::locked_updateGroupInfo(GroupInfo &info, RsDistribGrp *newG
 	info.grpDesc = newGrp->grpDesc;
 	info.grpCategory = newGrp->grpCategory;
 	info.grpFlags   = newGrp->grpFlags; 
-	info.grpIcon.binData.bin_data = newGrp->grpPixmap.binData.bin_data;
-	info.grpIcon.binData.bin_len = newGrp->grpPixmap.binData.bin_len;
-	info.grpIcon.image_type = newGrp->grpPixmap.image_type;
+
+	if((newGrp->grpPixmap.binData.bin_data != NULL) && (newGrp->grpPixmap.binData.bin_len > 0)){
+		info.grpIcon.pngImageData = new unsigned char[newGrp->grpPixmap.binData.bin_len];
+
+		memcpy(info.grpIcon.pngImageData, newGrp->grpPixmap.binData.bin_data,
+				newGrp->grpPixmap.binData.bin_len*sizeof(unsigned char));
+
+		info.grpIcon.imageSize = newGrp->grpPixmap.binData.bin_len;
+	}else{
+		info.grpIcon.pngImageData = NULL;
+		info.grpIcon.imageSize = 0;
+	}
 
 	/* pop already calculated */
 	/* last post handled seperately */

@@ -107,6 +107,24 @@ class GroupKey
 	EVP_PKEY *key; /// public key
 };
 
+class GroupIcon{
+public:
+	GroupIcon(): pngImageData(NULL), imageSize(0) {
+		return;
+	}
+
+	~GroupIcon(){
+
+		if((pngImageData != NULL) && (imageSize > 0))
+			delete[] pngImageData;
+
+			return;
+	}
+
+	unsigned char* pngImageData;
+	int imageSize;
+};
+
 //! aggregates various information on group activities (i.e. messages, posts, etc)
 /*!
  * The aim is to use this to keep track of group changes, so client can respond (get messages, post etc)
@@ -150,7 +168,7 @@ class GroupInfo
 
 	/* NOT USED YET */
 
-	RsTlvImage grpIcon;
+	GroupIcon grpIcon;
 
 	bool publisher, allowAnon, allowUnknown;
 	bool subscribed, listener;
@@ -160,6 +178,7 @@ class GroupInfo
 	/// FLAG for Client - set if changed
 	bool grpChanged;
 };
+
 
 
 std::ostream &operator<<(std::ostream &out, const GroupInfo &info);

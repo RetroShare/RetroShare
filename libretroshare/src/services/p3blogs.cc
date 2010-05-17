@@ -124,13 +124,12 @@ bool p3Blogs::getBlogInfo(std::string cId, BlogInfo &ci)
 	ci.pop = gi->sources.size();
 	ci.lastPost = gi->lastPost;
 
-	if(gi->grpIcon.image_type == RSTLV_IMAGE_TYPE_PNG){
-		ci.pngChanImage = (unsigned char*) gi->grpIcon.binData.bin_data;
-		ci.pngImageLen = gi->grpIcon.binData.bin_len;
-	}else{
-		ci.pngChanImage = NULL;
+	ci.pngChanImage = gi->grpIcon.pngImageData;
+
+	if(ci.pngChanImage != NULL)
+		ci.pngImageLen = gi->grpIcon.imageSize;
+	else
 		ci.pngImageLen = 0;
-	}
 
 	return true;
 }
