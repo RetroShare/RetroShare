@@ -40,6 +40,8 @@
 #include "gui/ChanGroupDelegate.h"
 #include "gui/GeneralMsgDialog.h"
 
+#define BLOG_DEFAULT_IMAGE ":/images/hi64-app-kblogger.png"
+
 
 /** Constructor */
 BlogsDialog::BlogsDialog(QWidget *parent)
@@ -506,6 +508,16 @@ void BlogsDialog::updateBlogMsgs()
 		return;
 	}
 	
+	if(bi.pngImageLen != 0){
+
+		QPixmap blogImage;
+		blogImage.loadFromData(bi.pngChanImage, bi.pngImageLen, "PNG");
+		iconLabel->setPixmap(blogImage);
+	}else{
+		QPixmap defaultImage(BLOG_DEFAULT_IMAGE);
+		iconLabel->setPixmap(defaultImage);
+	}
+	
 	iconLabel->setEnabled(true);
 	
 	/* set textcolor for Blog name  */
@@ -521,16 +533,20 @@ void BlogsDialog::updateBlogMsgs()
 	{
 		subscribeButton->setEnabled(false);
 		unsubscribeButton->setEnabled(true);
+		frame->setStyleSheet("QFrame#frame{ border: 2px solid #6E777F;border-radius: 10px;background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #515D66, stop:1 #75818A); }");
+		
 	}
 	else
 	{
 		subscribeButton->setEnabled(true);
 		unsubscribeButton->setEnabled(false);
+    frame->setStyleSheet("QFrame#frame{ border: 2px solid #6ACEFF;border-radius: 10px;background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #0076B1, stop:1 #12A3EB); }");
 	}
 
 	if (bi.blogFlags & RS_DISTRIB_PUBLISH)
 	{
 		postButton->setEnabled(true);
+		frame->setStyleSheet("QFrame#frame{ border: 2px solid #6ACEFF;border-radius: 10px;background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #0076B1, stop:1 #12A3EB); }");
 	}
 	else
 	{
