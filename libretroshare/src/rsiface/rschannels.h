@@ -60,7 +60,7 @@ class ChannelInfo
 class ChannelMsgInfo 
 {
 	public:
-	ChannelMsgInfo() {}
+	ChannelMsgInfo () : count(0), size(0) {}
 	std::string channelId;
 	std::string msgId;
 
@@ -79,7 +79,7 @@ class ChannelMsgInfo
 class ChannelMsgSummary 
 {
 	public:
-	ChannelMsgSummary() {}
+	ChannelMsgSummary() : count(0) {}
 	std::string channelId;
 	std::string msgId;
 
