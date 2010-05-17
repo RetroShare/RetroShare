@@ -533,14 +533,14 @@ void BlogsDialog::updateBlogMsgs()
 	{
 		subscribeButton->setEnabled(false);
 		unsubscribeButton->setEnabled(true);
-		frame->setStyleSheet("QFrame#frame{ border: 2px solid #6E777F;border-radius: 10px;background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #515D66, stop:1 #75818A); }");
+		frame->setStyleSheet("QFrame#frame{ border: 2px solid #FF0000;border-radius: 10px;background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #B61407, stop:1 #A91106); }");
 		
 	}
 	else
 	{
 		subscribeButton->setEnabled(true);
 		unsubscribeButton->setEnabled(false);
-    frame->setStyleSheet("QFrame#frame{ border: 2px solid #6ACEFF;border-radius: 10px;background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #0076B1, stop:1 #12A3EB); }");
+		frame->setStyleSheet("QFrame#frame{ border: 2px solid #267F00;border-radius: 10px;background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #89D51D, stop:1 #579E10); }");
 	}
 
 	if (bi.blogFlags & RS_DISTRIB_PUBLISH)
