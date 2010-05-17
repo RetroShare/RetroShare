@@ -203,7 +203,8 @@ bool p3Channels::getChannelMessage(std::string fId, std::string mId, ChannelMsgI
 		
 	info.subject = cmsg->subject;
 	info.msg  = cmsg->message;
-
+        info.count = 0;
+        info.size = 0;
 
 	std::list<RsTlvFileItem>::iterator fit;
 	for(fit = cmsg->attachment.items.begin(); 
@@ -384,9 +385,16 @@ std::string p3Channels::createChannel(std::wstring channelName, std::wstring cha
 		unsigned char* pngImageData, uint32_t imageSize)
 {
 
-        std::string id = createGroup(channelName, channelDesc, channelFlags, pngImageData, imageSize);
+        std::string grpId = createGroup(channelName, channelDesc, channelFlags, pngImageData, imageSize);
 
-	return id;
+        // create channel directory
+        std::string channelDir = mChannelsDir + "/" + grpId;
+
+        if(RsDirUtil::checkCreateDirectory(channelDir))
+            std::cerr << "p3Channels::createChannel(): Failed to create channel directory "
+                      << channelDir << std::endl;
+
+        return grpId;
 }
 
 RsSerialType *p3Channels::createSerialiser()
