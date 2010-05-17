@@ -29,7 +29,6 @@
 #include <QDesktopWidget>
 #include <rshare.h>
 #include "rwindow.h"
-#include "gui/settings/rsharesettings.h"
 
 
 /** Default constructor. */
@@ -97,7 +96,7 @@ RWindow::restoreWindowState()
 QVariant
 RWindow::getSetting(QString setting, QVariant defaultValue)
 {
-  RshareSettings settings(_name.toStdString());
+  RSettings settings(_name);
   return settings.value(setting, defaultValue);
 }
 
@@ -105,7 +104,7 @@ RWindow::getSetting(QString setting, QVariant defaultValue)
 void
 RWindow::saveSetting(QString prop, QVariant value)
 {
-  RshareSettings settings(_name.toStdString());
+  RSettings settings(_name);
   settings.setValue(prop, value);
 }
 
