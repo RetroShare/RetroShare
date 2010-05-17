@@ -325,7 +325,9 @@ static void CleanupItems (QList<QTreeWidgetItem *> &Items)
 {
     QList<QTreeWidgetItem *>::iterator Item;
     for (Item = Items.begin (); Item != Items.end (); Item++) {
-        delete (*Item);
+        if (*Item) {
+            delete (*Item);
+        }
     }
 }
 
@@ -550,7 +552,7 @@ void ForumsDialog::FillForums(QTreeWidgetItem *Forum, QList<QTreeWidgetItem *> &
 
     QTreeWidgetItem *Child;
 
-    // iterate all new childs
+    // iterate all new children
     QList<QTreeWidgetItem *>::iterator NewChild;
     for (NewChild = ChildList.begin (); NewChild != ChildList.end (); NewChild++) {
         // search existing child
@@ -565,7 +567,7 @@ void ForumsDialog::FillForums(QTreeWidgetItem *Forum, QList<QTreeWidgetItem *> &
             }
         }
         if (ChildIndexFound >= 0) {
-            // delete all childs between
+            // delete all children between
             while (ChildIndexCur < ChildIndexFound) {
                 Child = Forum->takeChild (ChildIndexCur);
                 delete (Child);
@@ -583,10 +585,11 @@ void ForumsDialog::FillForums(QTreeWidgetItem *Forum, QList<QTreeWidgetItem *> &
         } else {
             // insert new child
             if (ChildIndexCur < ChildCount) {
-                Forum->insertChild (ChildIndexCur, (*NewChild)->clone ());
+                Forum->insertChild (ChildIndexCur, *NewChild);
             } else {
-                Forum->addChild ((*NewChild)->clone ());
+                Forum->addChild (*NewChild);
             }
+            *NewChild = NULL;
         }
         ChildIndexCur++;
     }
@@ -857,9 +860,29 @@ void ForumsDialog::FillThreads(QList<QTreeWidgetItem *> &ThreadList)
 {
     int Index = 0;
     QTreeWidgetItem *Thread;
+    QList<QTreeWidgetItem *>::iterator NewThread;
+
+    // delete not existing
+    while (Index < ui.threadTreeWidget->topLevelItemCount ()) {
+        Thread = ui.threadTreeWidget->topLevelItem (Index);
+
+        // search existing new thread
+        int Found = -1;
+        for (NewThread = ThreadList.begin (); NewThread != ThreadList.end (); NewThread++) {
+            if (Thread->text (5) == (*NewThread)->text (5)) {
+                // found it
+                Found = Index;
+                break;
+            }
+        }
+        if (Found >= 0) {
+            Index++;
+        } else {
+            delete (ui.threadTreeWidget->takeTopLevelItem (Index));
+        }
+    }
 
     // iterate all new threads
-    QList<QTreeWidgetItem *>::iterator NewThread;
     for (NewThread = ThreadList.begin (); NewThread != ThreadList.end (); NewThread++) {
         // search existing thread
         int Found = -1;
@@ -882,28 +905,8 @@ void ForumsDialog::FillThreads(QList<QTreeWidgetItem *> &ThreadList)
             FillChildren (Thread, *NewThread);
         } else {
             // add new thread
-            ui.threadTreeWidget->addTopLevelItem ((*NewThread)->clone ());
-        }
-    }
-
-    // delete rest
-    while (Index < ui.threadTreeWidget->topLevelItemCount ()) {
-        Thread = ui.threadTreeWidget->topLevelItem (Index);
-
-        // search existing new thread
-        int Found = -1;
-        for (NewThread = ThreadList.begin (); NewThread != ThreadList.end (); NewThread++) {
-            if (Thread->text (5) == (*NewThread)->text (5)) {
-                // found it
-                Found = Index;
-                break;
-            }
-        }
-        if (Found >= 0) {
-            Index++;
-        } else {
-            Thread = ui.threadTreeWidget->takeTopLevelItem (Index);
-            delete (Thread);
+            ui.threadTreeWidget->addTopLevelItem (*NewThread);
+            *NewThread = NULL;
         }
     }
 }
@@ -916,6 +919,28 @@ void ForumsDialog::FillChildren(QTreeWidgetItem *Parent, QTreeWidgetItem *NewPar
 
     QTreeWidgetItem *Child;
     QTreeWidgetItem *NewChild;
+
+    // delete not existing
+    while (Index < Parent->childCount ()) {
+        Child = Parent->child (Index);
+
+        // search existing new child
+        int Found = -1;
+        int Count = NewParent->childCount();
+        for (NewIndex = 0; NewIndex < Count; NewIndex++) {
+            NewChild = NewParent->child (NewIndex);
+            if (NewChild->text (5) == Child->text (5)) {
+                // found it
+                Found = Index;
+                break;
+            }
+        }
+        if (Found >= 0) {
+            Index++;
+        } else {
+            delete (Parent->takeChild (Index));
+        }
+    }
 
     // iterate all new children
     for (NewIndex = 0; NewIndex < NewCount; NewIndex++) {
@@ -942,30 +967,9 @@ void ForumsDialog::FillChildren(QTreeWidgetItem *Parent, QTreeWidgetItem *NewPar
             FillChildren (Child, NewChild);
         } else {
             // add new child
-            Parent->addChild (NewChild->clone ());
-        }
-    }
-
-    // delete rest
-    while (Index < Parent->childCount ()) {
-        Child = Parent->child (Index);
-
-        // search existing new child
-        int Found = -1;
-        int Count = NewParent->childCount();
-        for (NewIndex = 0; NewIndex < Count; NewIndex++) {
-            NewChild = NewParent->child (NewIndex);
-            if (NewChild->text (5) == Child->text (5)) {
-                // found it
-                Found = Index;
-                break;
-            }
-        }
-        if (Found >= 0) {
-            Index++;
-        } else {
-            Child = Parent->takeChild (Index);
-            delete (Child);
+            Parent->addChild (NewParent->takeChild(NewIndex));
+            NewIndex--;
+            NewCount--;
         }
     }
 }
