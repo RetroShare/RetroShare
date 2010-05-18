@@ -33,6 +33,8 @@
 #include <sstream>
 #include <iomanip>
 #include <fstream>
+#include <sys/stat.h>
+#include <errno.h>
 
 #include <openssl/sha.h>
 #include <util/rsthreads.h>
@@ -920,20 +922,10 @@ int FileIndex::saveIndex(std::string filename, std::string &fileHash, uint64_t &
 {
 	unsigned char sha_buf[SHA_DIGEST_LENGTH];
 	std::string filenametmp = filename + ".tmp" ;
-	std::ofstream file (filenametmp.c_str(), std::ofstream::binary);
 	std::ostringstream oss;
 
 	size = 0 ;
 	fileHash = "" ;
-
-	if (!file)
-	{
-#ifdef FI_DEBUG
-		std::cerr << "FileIndex::saveIndex error opening file: " << filename;
-		std::cerr << std::endl;
-#endif
-		return 0;
-	}
 
 	/* print version and header */
 	oss << "# FileIndex version 0.1" << std::endl;
@@ -985,16 +977,32 @@ int FileIndex::saveIndex(std::string filename, std::string &fileHash, uint64_t &
 	fileHash = tmpout.str();
 
 	/* finally, save to file */
-	file << oss.str();
 
-	/* get the size out */
-	size=file.tellp();
-	file.close();
+	FILE *file = fopen(filenametmp.c_str(), "wb");
+	if (file == NULL)
+	{
+		std::cerr << "FileIndex::saveIndex error opening file for writting: " << filename << ". Giving up." << std::endl;
+		return 0;
+	}
+	fprintf(file,"%s",oss.str().c_str()) ;
+
+	fclose(file);
 
 	// Use a temp file name so that the file is never half saved.
 	//
 	if(!RsDirUtil::renameFile(filenametmp,filename))
 		return false ;
+
+	/* get the size out */
+	struct stat64 buf;
+
+	if(-1 == stat64(filename.c_str(), &buf))
+	{
+		std::cerr << "Can't determine size of file " << filename << ": errno = " << errno << std::endl ;
+		return false ;
+	}
+
+	size=buf.st_size;
 
 	return true;
 }
