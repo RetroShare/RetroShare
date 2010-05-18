@@ -51,24 +51,6 @@
 #include <time.h>
 #include <sys/stat.h>
 
-#include <QTextCodec>
-#include <QTextEdit>
-#include <QTextCursor>
-#include <QTextList>
-#include <QTextStream>
-#include <QTextDocumentFragment>
-
-#include <QContextMenuEvent>
-#include <QMenu>
-#include <QCursor>
-#include <QPoint>
-#include <QPixmap>
-#include <QMessageBox>
-#include <QHeaderView>
-#include <QtGui/QKeyEvent>
-#include <QHashIterator>
-#include <QDesktopServices>
-
 #include <QSound>
 
 /* Images for context menu icons */
@@ -167,17 +149,16 @@ PeersDialog::PeersDialog(QWidget *parent)
   pxm.fill(_currentColor);
   ui.colorChatButton->setIcon(pxm);
 
-  RshareSettings settings;
+  RSettings settings(QString("Chat"));
+
   mCurrentFont.fromString(settings.value(QString::fromUtf8("ChatScreenFont")).toString());
   ui.lineEdit->setFont(mCurrentFont);
 
-  setChatInfo(tr("Welcome to RetroShare's group chat."),
-              QString::fromUtf8("blue"));
-
-  QStringList him;
+  setChatInfo(tr("Welcome to RetroShare's group chat."), QString::fromUtf8("blue"));
 
   if (settings.value(QString::fromUtf8("GroupChat_History"), true).toBool())
   {
+    QStringList him;
     historyKeeper.getMessages(him, "", "THIS", 8);
     foreach(QString mess, him)
     ui.msgText->append(mess);
@@ -1034,8 +1015,10 @@ void PeersDialog::insertChat()
 		RsChat::embedHtml(doc, body, defEmbedAhref);
 
 		// embed smileys
+		settings.beginGroup("Chat");
 		if (settings.value(QString::fromUtf8("Emoteicons_GroupChat"), true).toBool())
 			RsChat::embedHtml(doc, body, defEmbedImg);
+		settings.endGroup();
 
 		msgContents = doc.toString(-1);		// -1 removes any annoying carriage return misinterpreted by QTextEdit
 		extraTxt += msgContents;
@@ -1305,7 +1288,9 @@ void PeersDialog::setFont()
   ui.lineEdit->setFont(mCurrentFont);
   ui.lineEdit->setTextColor(_currentColor);
   RshareSettings settings;
+  settings.beginGroup("Chat");
   settings.setValue(QString::fromUtf8("ChatScreenFont"), mCurrentFont.toString());
+  settings.endGroup();
 
 
   ui.lineEdit->setFocus();

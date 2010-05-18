@@ -291,7 +291,7 @@ void PopupChatDialog::addChatMsg(ChatInfo *ci)
 std::cout << "PopupChatDialog:addChatMsg message : " << message.toStdString() << std::endl;
 #endif
 
-  RshareSettings settings;
+  RSettings settings(QString("Chat"));
   if (settings.value(QString::fromUtf8("Emoteicons_PrivatChat"), true).toBool())
   {
 	QHashIterator<QString, QString> i(smileys);
@@ -301,8 +301,8 @@ std::cout << "PopupChatDialog:addChatMsg message : " << message.toStdString() <<
 		foreach(QString code, i.key().split("|"))
 			message.replace(code, "<img src=\"" + i.value() + "\" />");
 	}
-	}
-	
+  }
+
 	history /*<< nickColor << color << font << fontSize*/ << timestamp << name << message;
 	
 	QString formatMsg = loadEmptyStyle()/*.replace(nickColor)

@@ -33,16 +33,16 @@ class RSettings : public QSettings
 
 public:
   /** Default constructor. The optional parameter <b>group</b> can be used to
-   * set a prefix that will be prepended to keys specified to VSettings in
+   * set a prefix that will be prepended to keys specified to RSettings in
    * value() and setValue(). */
   RSettings(const QString group = QString());
 
     /** Default constructor. The optional parameter <b>group</b> can be used to
-   * set a prefix that will be prepended to keys specified to VSettings in
+   * set a prefix that will be prepended to keys specified to RSettings in
    * value() and setValue(). */
   RSettings(std::string fileName, const QString group = QString());
 
-  /** Resets all of Vidalia's settings. */
+  /** Resets all settings. */
   static void reset();
 
   /** Returns the saved value associated with <b>key</b>. If no value has been

@@ -81,7 +81,7 @@ RSettings::defaultValue(const QString &key) const
   return QVariant();
 }
 
-/** Resets all of Vidalia's settings. */
+/** Resets all settings. */
 void
 RSettings::reset()
 {

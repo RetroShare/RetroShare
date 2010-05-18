@@ -252,7 +252,7 @@ void RshareSettings::setNotifyFlags(uint flags)
   setValue(SETTING_NOTIFY_FLAGS, flags);
 }
 
-/** Returns true if Vidalia is set to run on system boot. */
+/** Returns true if RetroShare is set to run on system boot. */
 bool
 RshareSettings::runRetroshareOnBoot()
 {
@@ -268,7 +268,7 @@ RshareSettings::runRetroshareOnBoot()
 #endif
 }
 
-/** If <b>run</b> is set to true, then Vidalia will run on system boot. */
+/** If <b>run</b> is set to true, then RetroShare will run on system boot. */
 void
 RshareSettings::setRunRetroshareOnBoot(bool run)
 {

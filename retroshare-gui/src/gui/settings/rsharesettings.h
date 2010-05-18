@@ -38,8 +38,7 @@ class QTableWidget;
 class QToolBar;
 class QMainWindow;
 
-/** Handles saving and restoring RShares's settings, such as the
- * location of Tor, the control port, etc.
+/** Handles saving and restoring RShares's settings
  *
  * NOTE: Qt 4.1 documentation states that constructing a QSettings object is
  * "very fast", so we shouldn't need to create a global instance of this
@@ -75,7 +74,7 @@ public:
   /** Returns true if RetroShare's main window should be visible when the
   * application starts. */
   bool showMainWindowAtStart();
-  /** Sets whether to show Vidalia's main window when the application starts. */
+  /** Sets whether to show main window when the application starts. */
   void setShowMainWindowAtStart(bool show);
   
   /** Returns true if RetroShare should start on system boot. */
