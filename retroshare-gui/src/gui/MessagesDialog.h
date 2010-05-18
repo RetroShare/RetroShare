@@ -108,6 +108,11 @@ private:
 
   int getSelectedMsgCount ();
 
+  /* internal handle splitter */
+  void togglefileview_internal();
+
+  void processSettings(bool bLoad);
+
   std::string mCurrCertId;
   std::string mCurrMsgId;
 

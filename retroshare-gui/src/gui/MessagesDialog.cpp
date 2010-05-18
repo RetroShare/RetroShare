@@ -23,29 +23,15 @@
 #include "MessagesDialog.h"
 #include "msgs/ChanMsgDialog.h"
 #include "gui/RetroShareLink.h"
-#include "gui/toaster/MessageToaster.h"
 #include "util/printpreview.h"
 #include "util/misc.h"
 
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
 #include "rsiface/rsfiles.h"
-#include <sstream>
-#include <iostream>
-#include <string>
 
+#include "settings/RSettings.h"
 #include <QtGui>
-#include <QContextMenuEvent>
-#include <QMenu>
-#include <QCursor>
-#include <QPoint>
-#include <QPixmap>
-#include <QPrintDialog>
-#include <QPrinter>
-#include <QDateTime>
-#include <QHeaderView>
-#include <QModelIndex>
-#include <QStandardItemModel>
 
 /* Images for context menu icons */
 #define IMAGE_MESSAGE		   ":/images/folder-draft.png"
@@ -56,13 +42,50 @@
 #define IMAGE_DOWNLOAD    	   ":/images/start.png"
 #define IMAGE_DOWNLOADALL          ":/images/startall.png"
 
-#define COLUMN_COUNT   6
-#define COLUMN_NUMBER  0
-#define COLUMN_SUBJECT 1
-#define COLUMN_FROM    2
-#define COLUMN_DATE    3
-#define COLUMN_SRCID   4
-#define COLUMN_MSGID   5
+#define COLUMN_COUNT         7
+#define COLUMN_ATTACHEMENTS  0
+#define COLUMN_SUBJECT       1
+#define COLUMN_FROM          2
+#define COLUMN_DATE          3
+#define COLUMN_SRCID         4
+#define COLUMN_MSGID         5
+#define COLUMN_CONTENT       6
+
+static int FilterColumnFromComboBox(int nIndex)
+{
+    switch (nIndex) {
+    case 0:
+        return COLUMN_ATTACHEMENTS;
+    case 1:
+        return COLUMN_SUBJECT;
+    case 2:
+        return COLUMN_FROM;
+    case 3:
+        return COLUMN_DATE;
+    case 4:
+        return COLUMN_CONTENT;
+    }
+
+    return COLUMN_SUBJECT;
+}
+
+static int FilterColumnToComboBox(int nIndex)
+{
+    switch (nIndex) {
+    case COLUMN_ATTACHEMENTS:
+        return 0;
+    case COLUMN_SUBJECT:
+        return 1;
+    case COLUMN_FROM:
+        return 2;
+    case COLUMN_DATE:
+        return 3;
+    case COLUMN_CONTENT:
+        return 4;
+    }
+
+    return FilterColumnToComboBox(COLUMN_SUBJECT);
+}
 
 /** Constructor */
 MessagesDialog::MessagesDialog(QWidget *parent)
@@ -117,13 +140,14 @@ MessagesDialog::MessagesDialog(QWidget *parent)
   
     // Set the QStandardItemModel 
     MessagesModel = new QStandardItemModel(0, COLUMN_COUNT);
-    MessagesModel->setHeaderData(COLUMN_NUMBER,  Qt::Horizontal, tr("#"));
-    MessagesModel->setHeaderData(COLUMN_SUBJECT, Qt::Horizontal, tr("Subject"));
-    MessagesModel->setHeaderData(COLUMN_FROM,    Qt::Horizontal, tr("From"));
-    MessagesModel->setHeaderData(COLUMN_DATE,    Qt::Horizontal, tr("Date"));
-    MessagesModel->setHeaderData(COLUMN_SRCID,   Qt::Horizontal, tr("SRCID"));
-    MessagesModel->setHeaderData(COLUMN_MSGID,   Qt::Horizontal, tr("MSGID"));
-   
+    MessagesModel->setHeaderData(COLUMN_ATTACHEMENTS,  Qt::Horizontal, tr("#"));
+    MessagesModel->setHeaderData(COLUMN_SUBJECT,       Qt::Horizontal, tr("Subject"));
+    MessagesModel->setHeaderData(COLUMN_FROM,          Qt::Horizontal, tr("From"));
+    MessagesModel->setHeaderData(COLUMN_DATE,          Qt::Horizontal, tr("Date"));
+    MessagesModel->setHeaderData(COLUMN_SRCID,         Qt::Horizontal, tr("SRCID"));
+    MessagesModel->setHeaderData(COLUMN_MSGID,         Qt::Horizontal, tr("MSGID"));
+    MessagesModel->setHeaderData(COLUMN_CONTENT,       Qt::Horizontal, tr("Content"));
+
     proxyModel = new QSortFilterProxyModel(this);
     proxyModel->setDynamicSortFilter(true);
     proxyModel->setSourceModel(MessagesModel);
@@ -150,13 +174,12 @@ MessagesDialog::MessagesDialog(QWidget *parent)
   
   /* Set header resize modes and initial section sizes */
   QHeaderView * msgwheader = ui.messagestreeView->header () ;
-  msgwheader->setResizeMode (COLUMN_NUMBER, QHeaderView::Custom);
   msgwheader->setResizeMode (COLUMN_DATE, QHeaderView::Interactive);
     
-  msgwheader->resizeSection ( COLUMN_NUMBER,  24 );
-  msgwheader->resizeSection ( COLUMN_SUBJECT, 250 );
-  msgwheader->resizeSection ( COLUMN_FROM,    140 );
-  msgwheader->resizeSection ( COLUMN_DATE,    140 );
+  msgwheader->resizeSection ( COLUMN_ATTACHEMENTS, 24 );
+  msgwheader->resizeSection ( COLUMN_SUBJECT,      250 );
+  msgwheader->resizeSection ( COLUMN_FROM,         140 );
+  msgwheader->resizeSection ( COLUMN_DATE,         140 );
   
     /* Set header resize modes and initial section sizes */
 	QHeaderView * msglheader = ui.msgList->header () ;
@@ -190,9 +213,16 @@ MessagesDialog::MessagesDialog(QWidget *parent)
    ui.subjectText->setFont(mFont);
 
 	//setting default filter by column as subject
-    proxyModel->setFilterKeyColumn(ui.filterColumnComboBox->currentIndex());
+    proxyModel->setFilterKeyColumn(FilterColumnFromComboBox(ui.filterColumnComboBox->currentIndex()));
     
       ui.clearButton->hide();
+
+    // load settings
+    processSettings(true);
+
+    // fill folder list
+    updateMessageSummaryList();
+    ui.listWidget->setCurrentRow(0);
 
     // create timer for navigation
     timer = new QTimer(this);
@@ -211,6 +241,44 @@ MessagesDialog::~MessagesDialog()
     // stop and delete timer
     timer->stop();
     delete(timer);
+
+    // save settings
+    processSettings(false);
+}
+
+void MessagesDialog::processSettings(bool bLoad)
+{
+    QHeaderView *msgwheader = ui.messagestreeView->header () ;
+
+    RSettings settings(QString("MessageDialog"));
+
+    if (bLoad) {
+        // load settings
+
+        // expandFiles
+        bool bValue = settings.value("expandFiles", true).toBool();
+        ui.expandFilesButton->setChecked(bValue);
+        ui.msgList->setVisible(bValue);
+        togglefileview_internal();
+
+        // filterColumn
+        int nValue = FilterColumnToComboBox(settings.value("filterColumn", true).toInt());
+        ui.filterColumnComboBox->setCurrentIndex(nValue);
+
+        // state of message tree
+        msgwheader->restoreState(settings.value("MessageTree").toByteArray());
+
+        // state of splitter
+        ui.msgSplitter_2->restoreState(settings.value("Splitter2").toByteArray());
+    } else {
+        // save settings
+
+        // state of message tree
+        settings.setValue("MessageTree", msgwheader->saveState());
+
+        // state of splitter
+        settings.setValue("Splitter2", ui.msgSplitter_2->saveState());
+    }
 }
 
 // replaced by shortcut
@@ -496,23 +564,31 @@ void MessagesDialog::forwardmessage()
 	/* window will destroy itself! */
 }
 
+void MessagesDialog::togglefileview_internal()
+{
+    /* if msg header visible -> change icon and tooltip
+    * three widgets...
+    */
+
+    if (ui.expandFilesButton->isChecked())
+    {
+        ui.expandFilesButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
+        ui.expandFilesButton->setToolTip(tr("Hide"));
+    }
+    else
+    {
+        ui.expandFilesButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
+        ui.expandFilesButton->setToolTip(tr("Expand"));
+    }
+}
+
 void MessagesDialog::togglefileview()
 {
-	/* if msg header visible -> change icon and tooltip 
-	 * three widgets...
-	 */
+    // save state of files view
+    RSettings settings(QString("MessageDialog"));
+    settings.setValue("expandFiles", ui.expandFilesButton->isChecked());
 
-	if (ui.expandFilesButton->isChecked())
-	{
-	  ui.expandFilesButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
-	  ui.expandFilesButton->setToolTip(tr("Hide"));
-	}
-	else
-	{
-    ui.expandFilesButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
-	  ui.expandFilesButton->setToolTip(tr("Expand"));
-	}	
-
+    togglefileview_internal();
 }
 
 
@@ -618,6 +694,8 @@ void MessagesDialog::insertMessages()
 	std::cerr << "Current Row: " << listrow << std::endl;
 	fflush(0);
 
+	int nFilterColumn = FilterColumnFromComboBox(ui.filterColumnComboBox->currentIndex());
+
 	/* check the mode we are in */
 	unsigned int msgbox = 0;
 	bool bFill = true;
@@ -715,11 +793,12 @@ void MessagesDialog::insertMessages()
 			}
 
 			//set this false if you want to expand on double click
-			item[COLUMN_NUMBER]->setEditable(false);
+			item[COLUMN_ATTACHEMENTS]->setEditable(false);
 			item[COLUMN_SUBJECT]->setEditable(false);
 			item[COLUMN_FROM]->setEditable(false);
 			item[COLUMN_DATE]->setEditable(false);
 			item[COLUMN_SRCID]->setEditable(false);
+			item[COLUMN_CONTENT]->setEditable(false);
 
 			/* So Text should be:
 			 * (1) Msg / Broadcast
@@ -825,13 +904,26 @@ void MessagesDialog::insertMessages()
 			{
 				std::ostringstream out;
 				out << it -> count;
-				item[COLUMN_NUMBER] -> setText(QString::fromStdString(out.str()));
-				item[COLUMN_NUMBER]->setData(item[COLUMN_NUMBER]->text() + dateString, Qt::UserRole);
+				item[COLUMN_ATTACHEMENTS] -> setText(QString::fromStdString(out.str()));
+				item[COLUMN_ATTACHEMENTS]->setData(item[COLUMN_ATTACHEMENTS]->text() + dateString, Qt::UserRole);
 				//item -> setTextAlignment( 0, Qt::AlignCenter );
 			}
 
 			item[COLUMN_SRCID] -> setText(QString::fromStdString(it->srcId));
 			item[COLUMN_MSGID] -> setText(QString::fromStdString(it->msgId));
+
+			if (nFilterColumn == COLUMN_CONTENT) {
+				// need content for filter
+				MessageInfo msgInfo;
+				if (rsMsgs->getMessage(it->msgId, msgInfo)) {
+					QTextDocument doc;
+					doc.setHtml(QString::fromStdWString(msgInfo.msg));
+					item[COLUMN_CONTENT]->setText(doc.toPlainText().replace(QString("\n"), QString(" ")));
+				} else {
+					std::cerr << "MessagesDialog::insertMsgTxtAndFiles() Couldn't find Msg" << std::endl;
+					item[COLUMN_CONTENT]->setText("");
+				}
+			}
 
 			if (bInsert) {
 				/* add to the list */
@@ -849,6 +941,7 @@ void MessagesDialog::insertMessages()
 	updateMessageSummaryList();
 	ui.messagestreeView->hideColumn(COLUMN_SRCID);
 	ui.messagestreeView->hideColumn(COLUMN_MSGID);
+	ui.messagestreeView->hideColumn(COLUMN_CONTENT);
 }
 
 // current row in messagestreeView has changed
@@ -1243,10 +1336,6 @@ void MessagesDialog::setCurrentFileName(const QString &fileName)
 
 void MessagesDialog::buttonsicononly()
 {
-    RshareSettings settings;
-
-    settings.beginGroup("MessageDialog");
-    
     ui.newmessageButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
     ui.removemessageButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
     ui.replymessageButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
@@ -1254,7 +1343,9 @@ void MessagesDialog::buttonsicononly()
     ui.forwardmessageButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
     ui.printbutton->setToolButtonStyle(Qt::ToolButtonIconOnly);
     ui.viewtoolButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
-    
+
+    RSettings settings(QString("MessageDialog"));
+
     settings.setValue("ToolButon_Stlye1",ui.newmessageButton->toolButtonStyle());
     settings.setValue("ToolButon_Stlye2",ui.removemessageButton->toolButtonStyle());
     settings.setValue("ToolButon_Stlye3",ui.replymessageButton->toolButtonStyle());
@@ -1262,16 +1353,10 @@ void MessagesDialog::buttonsicononly()
     settings.setValue("ToolButon_Stlye5",ui.forwardmessageButton->toolButtonStyle());
     settings.setValue("ToolButon_Stlye6",ui.printbutton->toolButtonStyle());
     settings.setValue("ToolButon_Stlye7",ui.viewtoolButton->toolButtonStyle());
-
-    settings.endGroup();
 }
 
 void MessagesDialog::buttonstextbesideicon()
 {
-    RshareSettings settings;
-
-    settings.beginGroup("MessageDialog");
-	
     ui.newmessageButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     ui.removemessageButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     ui.replymessageButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
@@ -1279,7 +1364,9 @@ void MessagesDialog::buttonstextbesideicon()
     ui.forwardmessageButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     ui.printbutton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     ui.viewtoolButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-    
+
+    RSettings settings(QString("MessageDialog"));
+
     settings.setValue("ToolButon_Stlye1",ui.newmessageButton->toolButtonStyle());
     settings.setValue("ToolButon_Stlye2",ui.removemessageButton->toolButtonStyle());
     settings.setValue("ToolButon_Stlye3",ui.replymessageButton->toolButtonStyle());
@@ -1287,9 +1374,6 @@ void MessagesDialog::buttonstextbesideicon()
     settings.setValue("ToolButon_Stlye5",ui.forwardmessageButton->toolButtonStyle());
     settings.setValue("ToolButon_Stlye6",ui.printbutton->toolButtonStyle());
     settings.setValue("ToolButon_Stlye7",ui.viewtoolButton->toolButtonStyle());
-
-    settings.endGroup();
-
 }
 
 void MessagesDialog::buttonstextundericon()
@@ -1370,7 +1454,16 @@ void MessagesDialog::filterRegExpChanged()
 
 void MessagesDialog::filterColumnChanged()
 {
-    proxyModel->setFilterKeyColumn(ui.filterColumnComboBox->currentIndex());
+    int nFilterColumn = FilterColumnFromComboBox(ui.filterColumnComboBox->currentIndex());
+    if (nFilterColumn == COLUMN_CONTENT) {
+        // need content ... refill
+        insertMessages();
+    }
+    proxyModel->setFilterKeyColumn(nFilterColumn);
+
+    // save index
+    RSettings settings(QString("MessageDialog"));
+    settings.setValue("filterColumn", nFilterColumn);
 }
 
 void MessagesDialog::updateMessageSummaryList()

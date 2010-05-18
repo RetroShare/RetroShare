@@ -935,6 +935,11 @@ border-image: url(:/images/closepressed.png)
           <string>Date</string>
          </property>
         </item>
+        <item>
+         <property name="text">
+          <string>Content</string>
+         </property>
+        </item>
        </widget>
       </item>
      </layout>
