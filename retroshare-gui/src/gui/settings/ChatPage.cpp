@@ -27,7 +27,7 @@
 #include <rshare.h>
 #include "ChatPage.h"
 
-#include "RSettings.h"
+#include "rsettings.h"
 
 /** Constructor */
 ChatPage::ChatPage(QWidget * parent, Qt::WFlags flags)
