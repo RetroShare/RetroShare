@@ -355,6 +355,8 @@ void  LinksDialog::updateLinks()
 		/* (0) Title */
 		{
 			item -> setText(0, QString::fromStdWString(detail.title));
+			item -> setSizeHint(0,  QSize( 20,20 ) ); 
+
 			/* Bold and bigger */
 			/*QFont font = item->font(0);
 			font.setBold(true);
@@ -367,6 +369,8 @@ void  LinksDialog::updateLinks()
 			std::ostringstream out;
 			out << 100 * (detail.rank / (maxRank + 0.01));
 			item -> setText(1, QString::fromStdString(out.str()));
+			item -> setSizeHint(1,  QSize( 20,20 ) ); 
+			
 			/* Bold and bigger */
 			/*QFont font = item->font(1);
 			font.setBold(true);
@@ -377,6 +381,8 @@ void  LinksDialog::updateLinks()
 		/* (2) Link */
 		{
 			item -> setText(2, QString::fromStdWString(detail.link));
+			item -> setSizeHint(2,  QSize( 20,20 ) ); 
+
 			/* Bold and bigger */
 			/*QFont font = item->font(2);
 			font.setBold(true);
