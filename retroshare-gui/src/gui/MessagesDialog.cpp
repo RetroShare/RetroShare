@@ -30,7 +30,7 @@
 #include "rsiface/rspeers.h"
 #include "rsiface/rsfiles.h"
 
-#include "settings/RSettings.h"
+#include "settings/rsettings.h"
 #include <QtGui>
 
 /* Images for context menu icons */
