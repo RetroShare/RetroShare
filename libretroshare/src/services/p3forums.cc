@@ -25,6 +25,7 @@
 
 #include "services/p3forums.h"
 #include "pqi/authssl.h"
+#include "util/rsdir.h"
 
 uint32_t convertToInternalFlags(uint32_t extFlags);
 uint32_t convertToExternalFlags(uint32_t intFlags);
@@ -77,12 +78,17 @@ RsForums *rsForums = NULL;
 #define FORUM_PUBPERIOD   600 		   /* 10 minutes ... (max = 455 days) */
 
 p3Forums::p3Forums(uint16_t type, CacheStrapper *cs, CacheTransfer *cft,
-                        std::string srcdir, std::string storedir)
-	:p3GroupDistrib(type, cs, cft, srcdir, storedir, 
+                        std::string srcdir, std::string storedir, std::string forumDir)
+	:p3GroupDistrib(type, cs, cft, srcdir, storedir, forumDir,
                 CONFIG_TYPE_FORUMS, FORUM_STOREPERIOD, FORUM_PUBPERIOD),
-	mForumsChanged(false)
+	mForumsChanged(false), mForumsDir(forumDir)
 { 
-	//loadDummyData();
+
+	/* create chanDir */
+        if (!RsDirUtil::checkCreateDirectory(mForumsDir)) {
+                std::cerr << "p3Channels() Failed to create forums Directory: " << mForumsDir << std::endl;
+	}
+
 	return; 
 }
 

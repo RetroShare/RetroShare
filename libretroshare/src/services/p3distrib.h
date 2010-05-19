@@ -232,6 +232,8 @@ const uint32_t GRP_UNSUBSCRIBED = 0x0006;
  *	- Channels only some get publish key.
  *	- Forums everyone gets publish private key.
  *
+ * Group id is the public admin keys id
+ *
  * Create a Signing structure for Messages in general.
  */
 class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, public nullService
@@ -240,7 +242,7 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 
 	p3GroupDistrib(uint16_t subtype, 
 		CacheStrapper *cs, CacheTransfer *cft,
-		std::string sourcedir, std::string storedir, 
+		std::string sourcedir, std::string storedir, std::string keyBackUpDir,
 		uint32_t configId, 
                 uint32_t storePeriod, uint32_t pubPeriod);
 
@@ -254,6 +256,12 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 virtual bool   loadLocalCache(const CacheData &data); /// overloaded from Cache Source
 virtual int    loadCache(const CacheData &data); /// overloaded from Cache Store
 
+/**
+ * @param grpId the grpId id for which backup keys should be restored
+ * @return false if failed and vice versa
+ */
+virtual bool restoreGrpKeys(std::string grpId); /// restores a group keys from backup
+
 	private:
 	/* top level load */
 int  	loadAnyCache(const CacheData &data, bool local);
@@ -261,6 +269,7 @@ int  	loadAnyCache(const CacheData &data, bool local);
 	/* load cache files */
 void	loadFileGroups(std::string filename, std::string src, bool local);
 void	loadFileMsgs(std::string filename, uint16_t cacheSubId, std::string src, uint32_t ts, bool local);
+bool backUpKeys(const std::list<RsDistribGrpKey* > &keysToBackUp, std::string grpId);
 
 	protected:
 	/* load cache msgs */	
@@ -441,7 +450,9 @@ bool 	groupsChanged(std::list<std::string> &groupIds);
 	bool mGroupsChanged;
 	bool mGroupsRepublish;
 
-        std::list<RsItem *> saveCleanupList; /* TEMPORARY LIST WHEN SAVING */
+    std::list<RsItem *> saveCleanupList; /* TEMPORARY LIST WHEN SAVING */
+    std::string mKeyBackUpDir;
+    const std::string BACKUP_KEY_FILE;
 
 };
 

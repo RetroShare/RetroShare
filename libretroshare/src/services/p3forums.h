@@ -73,7 +73,7 @@ class p3Forums: public p3GroupDistrib, public RsForums
 	public:
 
 	p3Forums(uint16_t type, CacheStrapper *cs, CacheTransfer *cft,
-                std::string srcdir, std::string storedir);
+                std::string srcdir, std::string storedir, std::string forumdir);
 virtual ~p3Forums();
 
 void	loadDummyData();
@@ -127,6 +127,8 @@ std::string createForumMsg(std::string fId, std::string pId,
 
 
 bool 	mForumsChanged;
+std::string mForumsDir;
+
 };
 
 

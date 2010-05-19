@@ -180,6 +180,12 @@ virtual bool channelExtraFileHash(std::string path, std::string chId, FileInfo& 
  */
 virtual bool channelExtraFileRemove(std::string hash, std::string chId) = 0;
 
+/*!
+ * Restores channel private keys for channel in the event keys stored in configuration files are lost
+ * @param chId channel id to restore keys for
+ */
+virtual bool channelRestoreKeys(std::string chId) = 0;
+
 /****************************************/
 
 };

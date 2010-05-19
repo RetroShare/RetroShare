@@ -51,7 +51,7 @@ void 	setRSAPrivateKey(RsTlvSecurityKey &key, RSA *rsa_priv);
 p3GroupDistrib::p3GroupDistrib(uint16_t subtype, 
 		CacheStrapper *cs, CacheTransfer *cft,
 		std::string sourcedir, std::string storedir, 
-		uint32_t configId, 
+		std::string keyBackUpDir, uint32_t configId,
                 uint32_t storePeriod, uint32_t pubPeriod)
 
 	:CacheSource(subtype, true, cs, sourcedir), 
@@ -60,7 +60,8 @@ p3GroupDistrib::p3GroupDistrib(uint16_t subtype,
 	mStorePeriod(storePeriod), 
 	mPubPeriod(pubPeriod), 
 	mLastPublishTime(0),
-	mMaxCacheSubId(1)
+	mMaxCacheSubId(1),
+	mKeyBackUpDir(keyBackUpDir), BACKUP_KEY_FILE("key.log")
 {
 	/* not much yet */
 	time_t now = time(NULL);
@@ -1499,6 +1500,9 @@ std::string p3GroupDistrib::createGroup(std::wstring name, std::wstring desc, ui
 	std::string grpId;
 	time_t now = time(NULL);
 
+	/* for backup */
+	std::list<RsDistribGrpKey* > grpKeySet;
+
 	/* create Keys */
 	RSA *rsa_admin = RSA_generate_key(2048, 65537, NULL, NULL);
 	RSA *rsa_admin_pub = RSAPublicKey_dup(rsa_admin);
@@ -1533,13 +1537,16 @@ std::string p3GroupDistrib::createGroup(std::wstring name, std::wstring desc, ui
 
 
 
+
 	/* set keys */
 	setRSAPublicKey(newGrp->adminKey, rsa_admin_pub);
 	newGrp->adminKey.keyFlags = RSTLV_KEY_TYPE_PUBLIC_ONLY | RSTLV_KEY_DISTRIB_ADMIN;
 	newGrp->adminKey.startTS = now;
 	newGrp->adminKey.endTS = 0; /* no end */
 
+
 	RsTlvSecurityKey publish_key;
+
 	setRSAPublicKey(publish_key, rsa_publish_pub);
 
 	publish_key.keyFlags = RSTLV_KEY_TYPE_PUBLIC_ONLY;
@@ -1568,6 +1575,7 @@ std::string p3GroupDistrib::createGroup(std::wstring name, std::wstring desc, ui
 	adKey->key.startTS = newGrp->adminKey.startTS;
 	adKey->key.endTS   = newGrp->adminKey.endTS;
 
+
 	RsDistribGrpKey *pubKey = new RsDistribGrpKey();
 	pubKey->grpId = grpId;
 
@@ -1595,6 +1603,13 @@ std::string p3GroupDistrib::createGroup(std::wstring name, std::wstring desc, ui
 
 	grpId = newGrp->adminKey.keyId;
 	newGrp->grpId = grpId;
+
+	/************* Back up Keys  *********************/
+
+	grpKeySet.push_back(adKey);
+	grpKeySet.push_back(pubKey);
+
+	backUpKeys(grpKeySet, grpId);
 
 	/************** Serialise and sign **************************************/
 	EVP_PKEY *key_admin = EVP_PKEY_new();
@@ -1660,6 +1675,114 @@ std::string p3GroupDistrib::createGroup(std::wstring name, std::wstring desc, ui
 }
 
 
+bool p3GroupDistrib::backUpKeys(const std::list<RsDistribGrpKey* >& keysToBackUp, std::string grpId){
+
+#ifdef DISTRIB_DEBUG
+	std::cerr << "P3Distrib::backUpKeys() Backing up keys for grpId: " << grpId << std::endl;
+#endif
+
+	std::string filename =  mKeyBackUpDir + "/" + grpId + "_" + BACKUP_KEY_FILE;
+	std::string filenametmp = filename  + ".tmp";
+
+	BinInterface *bio = new BinFileInterface(filenametmp.c_str(), BIN_FLAGS_WRITEABLE);
+	pqistore *store = createStore(bio, mOwnId, BIN_FLAGS_NO_DELETE | BIN_FLAGS_WRITEABLE);
+
+	std::list<RsDistribGrpKey* >::const_iterator it;
+	bool ok = true;
+
+	for(it=keysToBackUp.begin(); it != keysToBackUp.end(); it++){
+
+		ok &= store->SendItem(*it);
+
+	}
+
+	if(!RsDirUtil::renameFile(filenametmp,filename))
+	{
+		std::ostringstream errlog;
+#ifdef WIN32
+		errlog << "Error " << GetLastError() ;
+#else
+		errlog << "Error " << errno ;
+#endif
+		getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "File rename error", "Error while renaming file " + filename + ": got error "+errlog.str());
+		return false;
+	}
+
+	delete store;
+
+	return ok;
+}
+
+bool p3GroupDistrib::restoreGrpKeys(std::string grpId){
+
+
+#ifdef DISTRIB_DEBUG
+			std::cerr << "p3Distrib::restoreGrpKeys() Attempting to restore private keys for grp: "
+					  << grpId << std::endl;
+#endif
+
+	// build key directory name
+	std::string filename = mKeyBackUpDir + "/"+ grpId + "_" + BACKUP_KEY_FILE;
+
+
+	/* create the serialiser to load keys */
+	BinInterface *bio = new BinFileInterface(filename.c_str(), BIN_FLAGS_READABLE);
+	pqistore *store = createStore(bio, mOwnId, BIN_FLAGS_READABLE);
+
+	RsItem* item;
+	bool ok = true;
+	bool itemAttempted = false;
+
+	RsStackMutex stack(distribMtx);
+
+	GroupInfo* gi = locked_getGroupInfo(grpId);
+
+	//retrieve keys from file and load to appropriate grp
+	while(NULL != (item = store->GetItem())){
+
+		itemAttempted = true;
+		RsDistribGrpKey* key = dynamic_cast<RsDistribGrpKey* >(item);
+
+		if(key == NULL){
+#ifdef DISTRIB_DEBUG
+			std::cerr << "p3groupDistrib::restoreGrpKey() Key file / grp key item not Valid, grp: "
+					  "\ngrpId: " <<  grpId << std::endl;
+#endif
+			return false;
+		}
+
+		if(key->key.keyFlags & RSTLV_KEY_DISTRIB_ADMIN){
+
+			ok &= locked_updateGroupAdminKey(*gi, key);
+
+		}else
+			if((key->key.keyFlags & RSTLV_KEY_DISTRIB_PRIVATE)){
+
+			ok &= locked_updateGroupPublishKey(*gi, key);
+
+		}else{
+
+			ok &= false;
+
+		}
+	}
+
+	locked_notifyGroupChanged(*gi, GRP_SUBSCRIBED);
+	mGroupsRepublish = true;
+
+	ok &= itemAttempted;
+
+#ifdef DISTRIB_DEBUG
+	if(!ok){
+		std::cerr << "p3Distrib::restoreGrpKeys() Failed to restore private keys for grp "
+				  << "\ngrpId: " << grpId << std::endl;
+	}
+#endif
+
+	delete store;
+
+	return ok;
+}
 std::string	p3GroupDistrib::publishMsg(RsDistribMsg *msg, bool personalSign)
 {
 

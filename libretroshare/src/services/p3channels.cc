@@ -71,7 +71,7 @@ RsChannels *rsChannels = NULL;
 p3Channels::p3Channels(uint16_t type, CacheStrapper *cs, 
 		CacheTransfer *cft, RsFiles *files, 
                 std::string srcdir, std::string storedir, std::string chanDir)
-	:p3GroupDistrib(type, cs, cft, srcdir, storedir, 
+	:p3GroupDistrib(type, cs, cft, srcdir, storedir, chanDir,
                         CONFIG_TYPE_CHANNELS, CHANNEL_STOREPERIOD, CHANNEL_PUBPERIOD),
 	mRsFiles(files), 
 	mChannelsDir(chanDir)
@@ -222,6 +222,11 @@ bool p3Channels::getChannelMessage(std::string fId, std::string mId, ChannelMsgI
 	}
 
 	return true;
+}
+
+bool p3Channels::channelRestoreKeys(std::string chId){
+
+	return p3GroupDistrib::restoreGrpKeys(chId);
 }
 
 bool p3Channels::ChannelMessageSend(ChannelMsgInfo &info)

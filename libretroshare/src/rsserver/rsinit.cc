@@ -2042,6 +2042,7 @@ int RsServer::StartupRetroShare()
 	std::string remotecachedir = config_dir + "/cache/remote";
 	std::string channelsdir = config_dir + "/channels";
 	std::string blogsdir = config_dir + "/blogs";
+	std::string forumdir = config_dir + "/forums";
 
 
 	//mRanking = NULL;
@@ -2054,7 +2055,7 @@ int RsServer::StartupRetroShare()
 
 	p3Forums *mForums = new p3Forums(RS_SERVICE_TYPE_FORUM,
 			mCacheStrapper, mCacheTransfer,
-                        localcachedir, remotecachedir);
+                        localcachedir, remotecachedir, forumdir);
 
         CachePair cp4(mForums, mForums, CacheId(RS_SERVICE_TYPE_FORUM, 0));
 	mCacheStrapper -> addCachePair(cp4);

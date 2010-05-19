@@ -74,7 +74,7 @@ RsBlogs *rsBlogs = NULL;
 p3Blogs::p3Blogs(uint16_t type, CacheStrapper *cs, 
 		CacheTransfer *cft, RsFiles *files, 
                 std::string srcdir, std::string storedir, std::string blogDir)
-	:p3GroupDistrib(type, cs, cft, srcdir, storedir, 
+	:p3GroupDistrib(type, cs, cft, srcdir, storedir, blogDir,
                         CONFIG_TYPE_QBLOG, BLOG_STOREPERIOD, BLOG_PUBPERIOD),
 	mRsFiles(files), 
 	mBlogsDir(blogDir)
