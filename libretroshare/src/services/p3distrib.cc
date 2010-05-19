@@ -1767,7 +1767,9 @@ bool p3GroupDistrib::restoreGrpKeys(std::string grpId){
 		}
 	}
 
+	gi->flags |= RS_DISTRIB_SUBSCRIBED;
 	locked_notifyGroupChanged(*gi, GRP_SUBSCRIBED);
+	IndicateConfigChanged();
 	mGroupsRepublish = true;
 
 	ok &= itemAttempted;
