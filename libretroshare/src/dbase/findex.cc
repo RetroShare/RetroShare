@@ -21,7 +21,7 @@
  *
  */
 
-
+#include <util/rswin.h>
 #include "dbase/findex.h"
 #include "rsiface/rsexpr.h"
 #include "util/rsdir.h"
