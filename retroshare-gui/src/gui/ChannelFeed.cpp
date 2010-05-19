@@ -150,6 +150,9 @@ void ChannelFeed::channelListCustomPopupMenu( QPoint point )
       channeldetailsAct = new QAction(QIcon(":/images/info16.png"), tr( "Show Channel Details" ), this );
       connect( channeldetailsAct , SIGNAL( triggered() ), this, SLOT( showChannelDetails() ) );
 
+      restoreKeysAct = new QAction(QIcon(":/images/settings16.png"), tr("Restore Publish Rights for Channel" ), this );
+      connect( restoreKeysAct , SIGNAL( triggered() ), this, SLOT( restoreChannelKeys() ) );
+
       if (ci.channelFlags & RS_DISTRIB_PUBLISH)
       {
         contextMnu.addAction( postchannelAct );
@@ -158,15 +161,19 @@ void ChannelFeed::channelListCustomPopupMenu( QPoint point )
       }
       else if (ci.channelFlags & RS_DISTRIB_SUBSCRIBED)
       {
+
         contextMnu.addAction( unsubscribechannelAct );
         contextMnu.addSeparator();
-        contextMnu.addAction( channeldetailsAct );;
+        contextMnu.addAction( channeldetailsAct );
+    	contextMnu.addAction( restoreKeysAct );
       }
       else
       {      
+
         contextMnu.addAction( subscribechannelAct );
         contextMnu.addSeparator();
         contextMnu.addAction( channeldetailsAct );
+        contextMnu.addAction( restoreKeysAct );
       }
 
       contextMnu.exec(QCursor::pos());
@@ -245,6 +252,11 @@ void ChannelFeed::selectChannel( std::string cId)
 	mChannelId = cId;
 
 	updateChannelMsgs();
+}
+
+void ChannelFeed::restoreChannelKeys(){
+
+	rsChannels->channelRestoreKeys(mChannelId);
 }
 
 void ChannelFeed::selectChannel(const QModelIndex &index)

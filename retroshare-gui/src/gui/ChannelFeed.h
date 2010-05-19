@@ -72,6 +72,7 @@ private slots:
 	void createMsg();
 
   void showChannelDetails();
+  void restoreChannelKeys();
 
 private:
 
@@ -99,6 +100,7 @@ private:
 	QAction* subscribechannelAct;
 	QAction* unsubscribechannelAct;
 	QAction* channeldetailsAct;
+	QAction* restoreKeysAct;
 
 };
 
