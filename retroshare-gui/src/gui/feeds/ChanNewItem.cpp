@@ -25,6 +25,8 @@
 
 #include "rsiface/rschannels.h"
 
+#define CHAN_DEFAULT_IMAGE ":/images/channels.png"
+
 #include <iostream>
 
 /****
@@ -73,6 +75,16 @@ void ChanNewItem::updateItemStatic()
 		nameLabel->setText(QString::fromStdWString(ci.channelName));
 
 		descLabel->setText(QString::fromStdWString(ci.channelDesc));
+		
+		if(ci.pngImageLen != 0){
+
+    QPixmap chanImage;
+    chanImage.loadFromData(ci.pngChanImage, ci.pngImageLen, "PNG");
+    logo_label->setPixmap(QPixmap(chanImage));
+    }else{
+    QPixmap defaulImage(CHAN_DEFAULT_IMAGE);
+    logo_label->setPixmap(QPixmap(defaulImage));
+    }
 
 		if (ci.channelFlags & RS_DISTRIB_SUBSCRIBED)
 		{

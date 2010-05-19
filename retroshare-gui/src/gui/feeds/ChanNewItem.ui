@@ -82,7 +82,7 @@ border-radius: 10px;}</string>
            </font>
           </property>
           <property name="text">
-           <string>Connected</string>
+           <string>New Channel</string>
           </property>
          </widget>
         </item>
@@ -101,6 +101,22 @@ border-radius: 10px;}</string>
            </size>
           </property>
          </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="logo_label">
+          <property name="maximumSize">
+           <size>
+            <width>32</width>
+            <height>32</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Logo</string>
+          </property>
+          <property name="scaledContents">
+           <bool>true</bool>
+          </property>
+         </widget>
         </item>
         <item>
          <widget class="QLabel" name="nameLabel">
@@ -199,7 +215,7 @@ border-radius: 10px;}</string>
           <number>0</number>
          </property>
          <item>
-          <widget class="QGroupBox" name="">
+          <widget class="QGroupBox" name="groupBox">
            <property name="title">
             <string>Channel Decscription</string>
            </property>
@@ -224,7 +240,7 @@ border-radius: 10px;}</string>
               </property>
               <property name="text">
                <string>Description 
- of Forum</string>
+ of Channel</string>
               </property>
              </widget>
             </item>
@@ -253,6 +269,7 @@ border-radius: 10px;}</string>
   </layout>
  </widget>
  <resources>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
