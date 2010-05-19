@@ -213,7 +213,7 @@ int	pqissllistenbase::setuplisten()
 		pqioutput(PQL_ALERT, pqissllistenzone, out.str());
                 std::cerr << out.str() << std::endl;
 
-		return -1;
+		 exit(1) ;
 	}
 	else
 	{

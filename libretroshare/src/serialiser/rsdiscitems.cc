@@ -231,7 +231,7 @@ RsDiscAskInfo *RsDiscSerialiser::deserialiseAskInfo(void *data, uint32_t *pktsiz
 	bool ok = true;
 
 	/* ready to load */
-        RsDiscAskInfo *item = new RsDiscAskInfo();
+	RsDiscAskInfo *item = new RsDiscAskInfo();
 	item->clear();
 
 	/* skip the header */
@@ -303,13 +303,12 @@ uint32_t    RsDiscSerialiser::sizeReply(RsDiscReply *item)
 {
 	uint32_t s = 8; /* header */
 	s += GetTlvStringSize(item->aboutId);
-        s += GetTlvStringSize(item->certGPG);
+	s += GetTlvStringSize(item->certGPG);
 
-        RsPeerConfigSerialiser *rss = new RsPeerConfigSerialiser();
-        for (std::list<RsPeerNetItem>::iterator it = item->rsPeerList.begin(); it != item->rsPeerList.end(); it++){
-            RsPeerNetItem pitem = *it;
-            s += rss->size(&pitem);
-        }
+	RsPeerConfigSerialiser rss ;
+
+	for (std::list<RsPeerNetItem>::iterator it = item->rsPeerList.begin(); it != item->rsPeerList.end(); it++)
+		s += rss.size(&(*it)) ;
 
 	return s;
 }
@@ -339,22 +338,21 @@ bool     RsDiscSerialiser::serialiseReply(RsDiscReply *item, void *data, uint32_
 
 	/* add mandatory parts first */
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PEERID, item->aboutId);
-        ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_CERT_GPG, item->certGPG);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_CERT_GPG, item->certGPG);
 
-        //store the ip list
-        RsPeerConfigSerialiser *rss = new RsPeerConfigSerialiser();
-        std::list<RsPeerNetItem>::iterator pitemIt;
-        for (pitemIt = item->rsPeerList.begin(); pitemIt!=(item->rsPeerList.end()); pitemIt++) {
-            void *pitemData = malloc(16000);
-            uint32_t size = 16000;
-            RsPeerNetItem pitem = *pitemIt;
-            ok &= rss->serialise(&pitem, pitemData, &size);
-            memcpy((void *) (((char *) data) + offset), pitemData, size);
-            free(pitemData);
-            offset += size;
+	//store the ip list
+	RsPeerConfigSerialiser rss ;
+	std::list<RsPeerNetItem>::iterator pitemIt;
+
+	for (pitemIt = item->rsPeerList.begin(); pitemIt!=(item->rsPeerList.end()) && ok; ++pitemIt) 
+	{
+		uint32_t size = 0;
+		ok &= rss.serialise(&(*pitemIt), (void *) (((char *) data) + offset), &size);
+		offset += size;
 	}
 
-        if (offset != tlvsize) {
+	if (offset != tlvsize) 
+	{
 		ok = false;
 #ifdef RSSERIAL_DEBUG
 		std::cerr << "RsDiscSerialiser::serialiseReply() Size Error! " << std::endl;
@@ -404,24 +402,28 @@ RsDiscReply *RsDiscSerialiser::deserialiseReply(void *data, uint32_t *pktsize)
 	offset += 8;
 
 	/* get mandatory parts first */
-        ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PEERID, item->aboutId);
-        ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_CERT_GPG, item->certGPG);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PEERID, item->aboutId);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_CERT_GPG, item->certGPG);
 
-        //get the peernet address list
-        RsPeerConfigSerialiser *rss = new RsPeerConfigSerialiser();
-        std::list<RsPeerNetItem> rsPeerNetItemList;
-        while (offset < rssize) {
-            void *peerNetdata = malloc(16000);
-            uint32_t peerNetSize = (*pktsize) - offset;
-            memcpy(peerNetdata,  (void *) (((char *) data) + offset), peerNetSize);
-            RsPeerNetItem *rsPeerNetItem = (RsPeerNetItem*)rss->deserialise(peerNetdata, &peerNetSize);
-            offset += peerNetSize;
+	//get the peernet address list
+	RsPeerConfigSerialiser rss ;
 
-				if(rsPeerNetItem != NULL)
-					item->rsPeerList.push_back(*rsPeerNetItem);
+	while (offset < rssize) 
+	{
+		uint32_t peerNetSize = rssize - offset ;
+
+		RsPeerNetItem *rsPeerNetItem = (RsPeerNetItem*)rss.deserialise((void *) (((char *) data) + offset), &peerNetSize);
+		offset += peerNetSize;
+
+		if(rsPeerNetItem == NULL)
+			break ;
+		
+		item->rsPeerList.push_back(*rsPeerNetItem);
+		delete rsPeerNetItem ;
 	}
 
-        if (offset != rssize) {
+	if (offset != rssize) 
+	{
 #ifdef RSSERIAL_DEBUG
 		std::cerr << "RsDiscSerialiser::deserialiseReply() offset != rssize" << std::endl;
 #endif
@@ -430,7 +432,8 @@ RsDiscReply *RsDiscSerialiser::deserialiseReply(void *data, uint32_t *pktsize)
 		return NULL;
 	}
 
-        if (!ok) {
+	if (!ok) 
+	{
 #ifdef RSSERIAL_DEBUG
 		std::cerr << "RsDiscSerialiser::deserialiseReply() ok = false" << std::endl;
 #endif
