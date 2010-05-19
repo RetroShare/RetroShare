@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
+    <width>732</width>
     <height>420</height>
    </rect>
   </property>
@@ -792,7 +792,7 @@ p, li { white-space: pre-wrap; }
        </item>
       </layout>
      </widget>
-     <widget class="QSplitter" name="msgSplitter">
+     <widget class="QSplitter" name="threadSplitter">
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
@@ -865,6 +865,90 @@ background: white;}</string>
              <string/>
             </property>
            </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <property name="spacing">
+             <number>1</number>
+            </property>
+            <item>
+             <widget class="QLineEdit" name="filterPatternLineEdit"/>
+            </item>
+            <item>
+             <widget class="QPushButton" name="clearButton">
+              <property name="minimumSize">
+               <size>
+                <width>16</width>
+                <height>16</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16</width>
+                <height>16</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>MS Shell Dlg 2</family>
+               </font>
+              </property>
+              <property name="toolTip">
+               <string>Reset</string>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QPushButton
+{
+ border-image: url(:/images/closenormal.png) 
+}
+                                
+QPushButton:hover 
+{
+border-image: url(:/images/closehover.png) 
+}
+                                
+QPushButton:pressed  {
+border-image: url(:/images/closepressed.png) 
+}</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="filterColumnComboBox">
+              <property name="font">
+               <font>
+                <family>MS Shell Dlg 2</family>
+               </font>
+              </property>
+              <property name="currentIndex">
+               <number>1</number>
+              </property>
+              <item>
+               <property name="text">
+                <string>Date</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Title</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Author</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Content</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item>
            <widget class="QComboBox" name="viewBox">
@@ -1043,6 +1127,12 @@ background: white;}</string>
             <property name="icon">
              <iconset resource="images.qrc">
               <normaloff>:/images/edit_remove24.png</normaloff>:/images/edit_remove24.png</iconset>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
             </property>
            </widget>
           </item>

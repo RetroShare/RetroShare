@@ -31,6 +31,7 @@ class ForumsDialog : public MainPage
 
 public:
   ForumsDialog(QWidget *parent = 0);
+  ~ForumsDialog();
 
   void insertForums();
   void insertPost();
@@ -53,7 +54,6 @@ private slots:
   void changedForum( QTreeWidgetItem *curr, QTreeWidgetItem *prev );
   void changedThread();
 
-
   void replytomessage();
   //void print();
   //void printpreview();
@@ -62,7 +62,7 @@ private slots:
   void markMsgAsRead();  
   
   /* handle splitter */
-  void togglefileview();
+  void togglethreadview();
 
   void showthread();
   void createmessage();
@@ -75,6 +75,12 @@ private slots:
   void previousMessage ();
   void nextMessage ();
 
+  void changedViewBox();
+
+  void filterColumnChanged();
+  void filterRegExpChanged();
+  void clearFilter();
+
 private:
 
   void forumSubscribe(bool subscribe);
@@ -82,6 +88,12 @@ private:
   void FillForums(QTreeWidgetItem *Forum, QList<QTreeWidgetItem *> &ChildList);
   void FillThreads(QList<QTreeWidgetItem *> &ThreadList);
   void FillChildren(QTreeWidgetItem *Parent, QTreeWidgetItem *NewParent);
+
+  void processSettings(bool bLoad);
+  void togglethreadview_internal();
+
+  void FilterItems();
+  bool FilterItem(QTreeWidgetItem *pItem, QString &sPattern, int nFilterColumn);
 
   QTreeWidgetItem *YourForums;
   QTreeWidgetItem *SubscribedForums;
@@ -91,14 +103,14 @@ private:
   std::string mCurrForumId;
   std::string mCurrThreadId;
   std::string mCurrPostId;
-  
+
   QFont m_ForumNameFont;
   QFont m_ItemFont;
   int m_LastViewType;
   std::string m_LastForumID;
-  
+
   QHash<QString, QString> smileys;
-  
+
   std::string fId;
   std::string pId;
 
