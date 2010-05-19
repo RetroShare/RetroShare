@@ -95,7 +95,6 @@ private slots:
   void filterColumnChanged();
   
   void clearFilter();
-  void toggleclearButton();
 
 private:
 	class QStandardItemModel *MessagesModel;

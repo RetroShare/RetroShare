@@ -125,10 +125,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
   ui.actionSave_as->setDisabled(true);
 
   connect( ui.clearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
-  connect( ui.filterPatternLineEdit, SIGNAL( textChanged(const QString &)), this, SLOT(toggleclearButton()));
-  
-  connect(ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)),
-            this, SLOT(filterRegExpChanged()));
+  connect( ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
 
   connect(ui.filterColumnComboBox, SIGNAL(currentIndexChanged(int)),
             this, SLOT(filterColumnChanged()));
@@ -1450,6 +1447,17 @@ void MessagesDialog::filterRegExpChanged()
 {
     QRegExp regExp(ui.filterPatternLineEdit->text(),  Qt::CaseInsensitive , QRegExp::FixedString);
     proxyModel->setFilterRegExp(regExp);
+
+    QString text = ui.filterPatternLineEdit->text();
+
+    if (text.isEmpty())
+    {
+      ui.clearButton->hide();
+    }
+    else
+    {
+      ui.clearButton->show();
+    }
 }
 
 void MessagesDialog::filterColumnChanged()
@@ -1560,20 +1568,4 @@ void MessagesDialog::clearFilter()
 {
  	ui.filterPatternLineEdit->clear();
  	ui.filterPatternLineEdit->setFocus();
-}
-
-/* toggle clearButton */
-void MessagesDialog::toggleclearButton()
-{
-    QString text = ui.filterPatternLineEdit->text();
-    
-    if (text.isEmpty())
-    {
-      ui.clearButton->hide();
-    }
-    else
-    {
-      ui.clearButton->show();
-    }
-    
 }
