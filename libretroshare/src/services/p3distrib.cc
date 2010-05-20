@@ -1848,7 +1848,7 @@ std::string	p3GroupDistrib::publishMsg(RsDistribMsg *msg, bool personalSign)
 
 		RsSerialType *serialType = createSerialiser();
 		uint32_t size = serialType->size(msg);
-		void *data = malloc(size);
+		char *data = new char[size];
 		serialType->serialise(msg, data, &size);
 		signedMsg->packet.setBinData(data, size);
 
