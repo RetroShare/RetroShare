@@ -504,7 +504,9 @@ void BlogsDialog::updateBlogMsgs()
 		subscribeButton->setEnabled(false);
 		unsubscribeButton->setEnabled(false);
 		nameLabel->setText("No Blog Selected");
+		iconLabel->setPixmap(QPixmap(":/images/hi64-app-kblogger.png"));
 		iconLabel->setEnabled(false);
+		frame->setStyleSheet("QFrame#frame{ border: 2px solid #808080;border-radius: 10px;background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #C0C0C0, stop:1 #A0A0A0); }");
 		return;
 	}
 	
@@ -513,9 +515,11 @@ void BlogsDialog::updateBlogMsgs()
 		QPixmap blogImage;
 		blogImage.loadFromData(bi.pngChanImage, bi.pngImageLen, "PNG");
 		iconLabel->setPixmap(blogImage);
+		iconLabel->setStyleSheet("QLabel{border: 2px solid white;}");
 	}else{
 		QPixmap defaultImage(BLOG_DEFAULT_IMAGE);
 		iconLabel->setPixmap(defaultImage);
+		iconLabel->setStyleSheet("QLabel{border: 2px solid white;border-radius: 10px;}");
 	}
 	
 	iconLabel->setEnabled(true);
