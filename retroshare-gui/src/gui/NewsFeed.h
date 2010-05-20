@@ -41,9 +41,9 @@ public:
   /** Default Destructor */
 
 	/* FeedHolder Functions (for FeedItem functionality) */
-virtual void deleteFeedItem(QWidget *item, uint32_t type);
-virtual void openChat(std::string peerId);
-virtual void openMsg(uint32_t type, std::string grpId, std::string inReplyTo);
+  virtual void deleteFeedItem(QWidget *item, uint32_t type);
+  virtual void openChat(std::string peerId);
+  virtual void openMsg(uint32_t type, std::string grpId, std::string inReplyTo);
 
 private slots:
  // void toggleChanMsgItems(bool on);
@@ -52,20 +52,21 @@ private slots:
 
 private:
 
-void	addFeedItemPeerConnect(RsFeedItem &fi);
-void	addFeedItemPeerDisconnect(RsFeedItem &fi);
-void	addFeedItemPeerNew(RsFeedItem &fi);
-void	addFeedItemPeerHello(RsFeedItem &fi);
-void	addFeedItemChanNew(RsFeedItem &fi);
-void	addFeedItemChanUpdate(RsFeedItem &fi);
-void	addFeedItemChanMsg(RsFeedItem &fi);
-void	addFeedItemForumNew(RsFeedItem &fi);
-void	addFeedItemForumUpdate(RsFeedItem &fi);
-void	addFeedItemForumMsg(RsFeedItem &fi);
-void	addFeedItemBlogMsg(RsFeedItem &fi);
-void	addFeedItemChatNew(RsFeedItem &fi);
-void	addFeedItemMessage(RsFeedItem &fi);
-void	addFeedItemFilesNew(RsFeedItem &fi);
+  void	addFeedItemPeerConnect(RsFeedItem &fi);
+  void	addFeedItemPeerDisconnect(RsFeedItem &fi);
+  void	addFeedItemPeerNew(RsFeedItem &fi);
+  void	addFeedItemPeerHello(RsFeedItem &fi);
+  void	addFeedItemChanNew(RsFeedItem &fi);
+  void	addFeedItemChanUpdate(RsFeedItem &fi);
+  void	addFeedItemChanMsg(RsFeedItem &fi);
+  void	addFeedItemForumNew(RsFeedItem &fi);
+  void	addFeedItemForumUpdate(RsFeedItem &fi);
+  void	addFeedItemForumMsg(RsFeedItem &fi);
+  void  addFeedItemBlogNew(RsFeedItem &fi);
+  void	addFeedItemBlogMsg(RsFeedItem &fi);
+  void	addFeedItemChatNew(RsFeedItem &fi);
+  void	addFeedItemMessage(RsFeedItem &fi);
+  void	addFeedItemFilesNew(RsFeedItem &fi);
 ;
 
   QLayout *mLayout;

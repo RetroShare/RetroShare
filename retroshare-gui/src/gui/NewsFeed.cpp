@@ -30,9 +30,10 @@
 #include "feeds/ChanMsgItem.h"
 #include "feeds/ForumNewItem.h"
 #include "feeds/ForumMsgItem.h"
-#include "feeds/PeerItem.h"
+#include "feeds/BlogNewItem.h"
 #include "feeds/BlogMsgItem.h"
 #include "feeds/MsgItem.h"
+#include "feeds/PeerItem.h"
 
 #include "settings/rsharesettings.h"
 
@@ -44,8 +45,9 @@ const uint32_t NEWSFEED_FORUMNEWLIST = 	0x0002;
 const uint32_t NEWSFEED_FORUMMSGLIST = 	0x0003;
 const uint32_t NEWSFEED_CHANNEWLIST = 	0x0004;
 const uint32_t NEWSFEED_CHANMSGLIST = 	0x0005;
-const uint32_t NEWSFEED_BLOGMSGLIST = 	0x0006;
-const uint32_t NEWSFEED_MESSAGELIST = 	0x0007;
+const uint32_t NEWSFEED_BLOGNEWLIST = 	0x0006;
+const uint32_t NEWSFEED_BLOGMSGLIST = 	0x0007;
+const uint32_t NEWSFEED_MESSAGELIST = 	0x0008;
 
 /*****
  * #define NEWS_DEBUG  1
@@ -125,6 +127,10 @@ void NewsFeed::updateFeed()
 					addFeedItemForumMsg(fi);
 				break;
 
+			case RS_FEED_ITEM_BLOG_NEW:
+				if (flags & RS_FEED_TYPE_BLOG)
+					addFeedItemBlogNew(fi);
+				break;
 			case RS_FEED_ITEM_BLOG_MSG:
 				if (flags & RS_FEED_TYPE_BLOG)
 					addFeedItemBlogMsg(fi);
@@ -323,6 +329,21 @@ void	NewsFeed::addFeedItemForumMsg(RsFeedItem &fi)
 #endif
 }
 
+void	NewsFeed::addFeedItemBlogNew(RsFeedItem &fi)
+{
+	/* make new widget */
+	BlogNewItem *bni = new BlogNewItem(this, NEWSFEED_BLOGNEWLIST, fi.mId1, false, true);
+
+	/* store in list */
+
+	/* add to layout */
+	verticalLayout->addWidget(bni);
+
+#ifdef NEWS_DEBUG
+	std::cerr << "NewsFeed::addFeedItemBlogNew()";
+	std::cerr << std::endl;
+#endif
+}
 
 void	NewsFeed::addFeedItemBlogMsg(RsFeedItem &fi)
 {

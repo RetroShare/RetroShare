@@ -274,6 +274,7 @@ HEADERS +=  rshare.h \
             gui/feeds/MsgItem.h \
             gui/feeds/ChanNewItem.h \
             gui/feeds/ChanMsgItem.h \
+            gui/feeds/BlogNewItem.h \
             gui/feeds/BlogMsgItem.h \
             gui/feeds/SubFileItem.h \
             gui/feeds/SubDestItem.h \
@@ -348,6 +349,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/feeds/MsgItem.ui \
             gui/feeds/ChanNewItem.ui \
             gui/feeds/ChanMsgItem.ui \
+            gui/feeds/BlogNewItem.ui \
             gui/feeds/BlogMsgItem.ui \
             gui/feeds/SubFileItem.ui \
             gui/feeds/SubDestItem.ui \
@@ -473,6 +475,7 @@ SOURCES +=  main.cpp \
             gui/feeds/MsgItem.cpp \
             gui/feeds/ChanNewItem.cpp \
             gui/feeds/ChanMsgItem.cpp \
+            gui/feeds/BlogNewItem.cpp \
             gui/feeds/BlogMsgItem.cpp \
             gui/feeds/SubFileItem.cpp \
             gui/feeds/SubDestItem.cpp \
