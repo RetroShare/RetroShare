@@ -23,7 +23,6 @@
 #include <rsiface/rsinit.h>
 #include "GenCertDialog.h"
 #include "InfoDialog.h"
-#include "gui/settings/rsharesettings.h"
 #include <QAbstractEventDispatcher>
 #include <QFileDialog>
 #include <QMessageBox>

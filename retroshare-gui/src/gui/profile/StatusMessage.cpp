@@ -61,13 +61,8 @@ void StatusMessage::closeEvent (QCloseEvent * event)
 /** Saves the changes on this page */
 void StatusMessage::save()
 {
-    RshareSettings settings;
-    settings.beginGroup("Profile");
+    Settings->setValueToGroup("Profile", "StatusMessage",ui.txt_StatusMessage->text());
 
-        settings.setValue("StatusMessage",ui.txt_StatusMessage->text());
-
-    settings.endGroup();
-	
 	rsMsgs->setCustomStateString(ui.txt_StatusMessage->text().toStdString());
 
 	close();

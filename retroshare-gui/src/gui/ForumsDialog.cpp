@@ -31,8 +31,6 @@
 #include "rsiface/rsmsgs.h"
 #include "rsiface/rsforums.h"
 
-#include "settings/rsettings.h"
-
 #include <sstream>
 #include <algorithm>
 
@@ -108,6 +106,8 @@ ForumsDialog::ForumsDialog(QWidget *parent)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
+
+    m_bProcessSettings = false;
 
     connect( ui.forumTreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( forumListCustomPopupMenu( QPoint ) ) );
     connect( ui.threadTreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( threadListCustomPopupMenu( QPoint ) ) );
@@ -219,41 +219,46 @@ ForumsDialog::~ForumsDialog()
 
 void ForumsDialog::processSettings(bool bLoad)
 {
+    m_bProcessSettings = true;
+
     QHeaderView *pHeader = ui.threadTreeWidget->header () ;
 
-    RSettings settings(QString("ForumsDialog"));
+    Settings->beginGroup(QString("ForumsDialog"));
 
     if (bLoad) {
         // load settings
 
         // expandFiles
-        bool bValue = settings.value("expandButton", true).toBool();
+        bool bValue = Settings->value("expandButton", true).toBool();
         ui.expandButton->setChecked(bValue);
         togglethreadview_internal();
 
         // filterColumn
-        int nValue = FilterColumnToComboBox(settings.value("filterColumn", true).toInt());
+        int nValue = FilterColumnToComboBox(Settings->value("filterColumn", true).toInt());
         ui.filterColumnComboBox->setCurrentIndex(nValue);
 
         // index of viewBox
-        ui.viewBox->setCurrentIndex(settings.value("viewBox", VIEW_THREADED).toInt());
+        ui.viewBox->setCurrentIndex(Settings->value("viewBox", VIEW_THREADED).toInt());
 
         // state of thread tree
-        pHeader->restoreState(settings.value("ThreadTree").toByteArray());
+        pHeader->restoreState(Settings->value("ThreadTree").toByteArray());
 
         // state of splitter
-        ui.splitter->restoreState(settings.value("Splitter").toByteArray());
-        ui.threadSplitter->restoreState(settings.value("threadSplitter").toByteArray());
+        ui.splitter->restoreState(Settings->value("Splitter").toByteArray());
+        ui.threadSplitter->restoreState(Settings->value("threadSplitter").toByteArray());
     } else {
         // save settings
 
         // state of thread tree
-        settings.setValue("ThreadTree", pHeader->saveState());
+        Settings->setValue("ThreadTree", pHeader->saveState());
 
         // state of splitter
-        settings.setValue("Splitter", ui.splitter->saveState());
-        settings.setValue("threadSplitter", ui.threadSplitter->saveState());
+        Settings->setValue("Splitter", ui.splitter->saveState());
+        Settings->setValue("threadSplitter", ui.threadSplitter->saveState());
     }
+
+    Settings->endGroup();
+    m_bProcessSettings = false;
 }
 
 void ForumsDialog::forumListCustomPopupMenu( QPoint point )
@@ -344,8 +349,7 @@ void ForumsDialog::threadListCustomPopupMenu( QPoint point )
 void ForumsDialog::togglethreadview()
 {
     // save state of button
-    RSettings settings(QString("ForumsDialog"));
-    settings.setValue("expandButton", ui.expandButton->isChecked());
+    Settings->setValueToGroup("ForumsDialog", "expandButton", ui.expandButton->isChecked());
 
     togglethreadview_internal();
 }
@@ -1436,15 +1440,22 @@ void ForumsDialog::clearFilter()
 
 void ForumsDialog::changedViewBox()
 {
+    if (m_bProcessSettings) {
+        return;
+    }
+
     // save index
-    RSettings settings(QString("ForumsDialog"));
-    settings.setValue("viewBox", ui.viewBox->currentIndex());
+    Settings->setValueToGroup("ForumsDialog", "viewBox", ui.viewBox->currentIndex());
 
     insertThreads();
 }
 
 void ForumsDialog::filterColumnChanged()
 {
+    if (m_bProcessSettings) {
+        return;
+    }
+
     int nFilterColumn = FilterColumnFromComboBox(ui.filterColumnComboBox->currentIndex());
     if (nFilterColumn == COLUMN_CONTENT) {
         // need content ... refill
@@ -1454,8 +1465,7 @@ void ForumsDialog::filterColumnChanged()
     }
 
     // save index
-    RSettings settings(QString("ForumsDialog"));
-    settings.setValue("filterColumn", nFilterColumn);
+    Settings->setValueToGroup("ForumsDialog", "filterColumn", nFilterColumn);
 }
 
 void ForumsDialog::FilterItems()

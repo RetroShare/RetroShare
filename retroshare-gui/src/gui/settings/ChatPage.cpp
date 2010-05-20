@@ -22,12 +22,12 @@
 #include "rsiface/rspeers.h" //for rsPeers variable
 #include "rsiface/rsiface.h"
 
+#include "rsharesettings.h"
+
 #include <QtGui>
 
 #include <rshare.h>
 #include "ChatPage.h"
-
-#include "rsettings.h"
 
 /** Constructor */
 ChatPage::ChatPage(QWidget * parent, Qt::WFlags flags)
@@ -52,12 +52,14 @@ ChatPage::closeEvent (QCloseEvent * event)
 bool
 ChatPage::save(QString &errmsg)
 {
-  RSettings settings(QString("Chat"));
+  Settings->beginGroup(QString("Chat"));
 
-  settings.setValue(QString::fromUtf8("Emoteicons_PrivatChat"), emotePrivatChat());
-  settings.setValue(QString::fromUtf8("Emoteicons_GroupChat"), emoteGroupChat());
-  settings.setValue(QString::fromUtf8("GroupChat_History"), groupchatHistory());
-  settings.setValue(QString::fromUtf8("ChatScreenFont"), fontTempChat.toString());
+  Settings->setValue(QString::fromUtf8("Emoteicons_PrivatChat"), emotePrivatChat());
+  Settings->setValue(QString::fromUtf8("Emoteicons_GroupChat"), emoteGroupChat());
+  Settings->setValue(QString::fromUtf8("GroupChat_History"), groupchatHistory());
+  Settings->setValue(QString::fromUtf8("ChatScreenFont"), fontTempChat.toString());
+
+  Settings->endGroup();
 
   return true;
 }
@@ -66,14 +68,16 @@ ChatPage::save(QString &errmsg)
 void
 ChatPage::load()
 {
-  RSettings settings(QString("Chat"));
+  Settings->beginGroup(QString("Chat"));
 
-  ui.checkBox_emoteprivchat->setChecked(settings.value(QString::fromUtf8("Emoteicons_PrivatChat"), true).toBool());
-  ui.checkBox_emotegroupchat->setChecked(settings.value(QString::fromUtf8("Emoteicons_GroupChat"), true).toBool());
-  ui.checkBox_groupchathistory->setChecked(settings.value(QString::fromUtf8("GroupChat_History"), true).toBool());
+  ui.checkBox_emoteprivchat->setChecked(Settings->value(QString::fromUtf8("Emoteicons_PrivatChat"), true).toBool());
+  ui.checkBox_emotegroupchat->setChecked(Settings->value(QString::fromUtf8("Emoteicons_GroupChat"), true).toBool());
+  ui.checkBox_groupchathistory->setChecked(Settings->value(QString::fromUtf8("GroupChat_History"), true).toBool());
 
-  fontTempChat.fromString(settings.value(QString::fromUtf8("ChatScreenFont")).toString());
-  
+  fontTempChat.fromString(Settings->value(QString::fromUtf8("ChatScreenFont")).toString());
+
+  Settings->endGroup();
+
   ui.labelChatFontPreview->setText(fontTempChat.rawName());
   ui.labelChatFontPreview->setFont(fontTempChat);
 }

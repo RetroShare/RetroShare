@@ -54,6 +54,10 @@ public:
   /** Sets the value associated with <b>key</b> to <b>val</b>. */
   virtual void setValue(const QString &key, const QVariant &val);
 
+  virtual QVariant valueFromGroup(const QString &group, const QString &key,
+                         const QVariant &defaultVal = QVariant());
+  virtual void setValueToGroup(const QString &group, const QString &key, const QVariant &val);
+
 protected:
   /** Sets the default setting for <b>key</b> to <b>val</b>. */
   void setDefault(const QString &key, const QVariant &val);

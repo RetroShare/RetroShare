@@ -728,19 +728,16 @@ SharedFilesDialog::fileAssotiationAction(const QString fileName)
 {
     QAction* result = 0;
 
-    RshareSettings* settings = new RshareSettings();
-    //QSettings* settings= new QSettings(qApp->applicationDirPath()+"/sett.ini",
-    //                            QSettings::IniFormat);
-    settings->beginGroup("FileAssotiations");
+    Settings->beginGroup("FileAssotiations");
 
     QString key = AddFileAssociationDialog::cleanFileType(currentFile) ;
-    if ( settings->contains(key) )
+    if ( Settings->contains(key) )
     {
         result = new QAction(QIcon(IMAGE_PLAY), tr( "Open File" ), this );
         connect( result , SIGNAL( triggered() ),
                  this, SLOT( runCommandForFile() ) );
 
-        currentCommand = (settings->value( key )).toString();
+        currentCommand = (Settings->value( key )).toString();
     }
     else
     {
@@ -750,7 +747,7 @@ SharedFilesDialog::fileAssotiationAction(const QString fileName)
                  this,    SLOT(   tryToAddNewAssotiation() ) );
     }
 
-    delete settings;
+    Settings->endGroup();
 
     return result;
 }
@@ -783,15 +780,10 @@ SharedFilesDialog::tryToAddNewAssotiation()
 
     if (ti==QDialog::Accepted)
     {
-        RshareSettings settings;
-        //QSettings settings( qApp->applicationDirPath()+"/sett.ini",
-        //                    QSettings::IniFormat);
-        settings.beginGroup("FileAssotiations");
-
         QString currType = afad.resultFileType() ;
         QString currCmd = afad.resultCommand() ;
 
-        settings.setValue(currType, currCmd);
+        Settings->setValueToGroup("FileAssotiations", currType, currCmd);
     }
 }
 

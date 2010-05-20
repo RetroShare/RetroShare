@@ -95,6 +95,8 @@ private:
   void FilterItems();
   bool FilterItem(QTreeWidgetItem *pItem, QString &sPattern, int nFilterColumn);
 
+  bool m_bProcessSettings;
+
   QTreeWidgetItem *YourForums;
   QTreeWidgetItem *SubscribedForums;
   QTreeWidgetItem *PopularForums;

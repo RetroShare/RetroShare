@@ -364,15 +364,13 @@ TBoard::TBoard(QWidget *parent) {
     score = 0;
     level = 0;
 
-    RshareSettings settings;
-    maxScore = settings.value("/about/maxsc").toInt();
+    maxScore = Settings->value("/about/maxsc").toInt();
 }
 TBoard::~TBoard() {
-    RshareSettings settings;
-    int oldMax = settings.value("/about/maxsc").toInt();
+    int oldMax = Settings->value("/about/maxsc").toInt();
     int newMax = qMax(maxScore, score);
     if (oldMax < newMax) {
-        settings.setValue("/about/maxsc", newMax);
+        Settings->setValue("/about/maxsc", newMax);
     }
 }
 

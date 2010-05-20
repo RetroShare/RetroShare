@@ -96,8 +96,7 @@ Rshare::Rshare(QStringList args, int &argc, char **argv, QString dir)
 
   /* Check if we're supposed to reset our config before proceeding. */
   if (_args.contains(ARG_RESET)) {
-    RshareSettings settings;
-    settings.reset();
+    Settings->reset();
   }
   
   /* Handle the -loglevel and -logfile options. */
@@ -314,8 +313,7 @@ Rshare::setLanguage(QString languageCode)
 {
   /* If the language code is empty, use the previously-saved setting */
   if (languageCode.isEmpty()) {
-    RshareSettings settings;
-    languageCode = settings.getLanguageCode();
+    languageCode = Settings->getLanguageCode();
   }
   /* Translate into the desired langauge */
   if (LanguageSupport::translate(languageCode)) {
@@ -334,8 +332,7 @@ Rshare::setStyle(QString styleKey)
 {
   /* If no style was specified, use the previously-saved setting */
   if (styleKey.isEmpty()) {
-    RshareSettings settings;
-    styleKey = settings.getInterfaceStyle();
+    styleKey = Settings->getInterfaceStyle();
   }
   /* Apply the specified GUI style */
   if (QApplication::setStyle(styleKey)) {
@@ -350,8 +347,7 @@ Rshare::setSheet(QString sheet)
 {
   /* If no stylesheet was specified, use the previously-saved setting */
   if (sheet.isEmpty()) {
-    RshareSettings settings;
-    sheet = settings.getSheetName();
+    sheet = Settings->getSheetName();
   }
   /* Apply the specified GUI stylesheet */
     _stylesheet = sheet;

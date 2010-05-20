@@ -104,8 +104,6 @@ SearchDialog::SearchDialog(QWidget *parent)
 	initialiseFileTypeMappings();
     }
 
-    RshareSettings rsharesettings;
-
     connect(ui.toggleAdvancedSearchBtn, SIGNAL(clicked()), this, SLOT(showAdvSearchDialog()));
 
     connect( ui.searchResultWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( searchtableWidgetCostumPopupMenu( QPoint ) ) );
@@ -447,9 +445,8 @@ void SearchDialog::hideEvent(QHideEvent * event)
 void SearchDialog::toggleAdvancedSearchDialog(bool toggled)
 {
     // record the users preference for future reference
-    RshareSettings rsharesettings;
     QString key (UI_PREF_ADVANCED_SEARCH);
-    rsharesettings.setValue(key, QVariant(toggled));
+    Settings->setValue(key, QVariant(toggled));
 
     showAdvSearchDialog(toggled);
 }

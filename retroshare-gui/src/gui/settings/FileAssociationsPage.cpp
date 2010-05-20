@@ -166,12 +166,8 @@ FileAssociationsPage::save (QString &errmsg)
 void
 FileAssociationsPage::load()
 {
-    RshareSettings settings;
-//     QSettings* settings = new QSettings( qApp->applicationDirPath()+"/sett.ini",
-//                                          QSettings::IniFormat);
-//
-//     settings.beginGroup("FileAssotiations");
-    QStringList keys = settings.allKeys();
+//     Settings->beginGroup("FileAssotiations");
+    QStringList keys = Settings->allKeys();
 
     table->setRowCount( keys.count() );
 
@@ -179,7 +175,7 @@ FileAssociationsPage::load()
     QStringList::const_iterator ki;
     for(ki=keys.constBegin(); ki!=keys.constEnd(); ki++)
     {
-        QString val = (settings.value(*ki, "")).toString();
+        QString val = (Settings->value(*ki, "")).toString();
 
         addNewItemToTable( rowi, 0, *ki );
         addNewItemToTable( rowi, 1, val );
@@ -187,7 +183,6 @@ FileAssociationsPage::load()
         rowi++;
     }
 
-    //delete settings;
     if (keys.count()==0)
     {
         removeAction->setEnabled(false);
@@ -206,8 +201,7 @@ FileAssociationsPage::remove()
     QTableWidgetItem const * titem = table->item( currentRow,0);
     QString key = (titem->data(QTableWidgetItem::Type)).toString();
 
-    RshareSettings settings;
-    settings.remove(key);
+    Settings->remove(key);
     table->removeRow( currentRow );
 
     if ( table->rowCount()==0 )
@@ -235,8 +229,7 @@ FileAssociationsPage::addnew()
         QString currCmd = afad.resultCommand() ;
 
 
-        RshareSettings settings;
-        if ( !settings.contains(currType) )//new item should be added only if
+        if ( !Settings->contains(currType) )//new item should be added only if
         {                              // it wasn't entered before.
             int nridx = table->rowCount();//new row index
             table->setRowCount(nridx+1);
@@ -257,7 +250,7 @@ FileAssociationsPage::addnew()
             }
         }
 
-        settings.setValue(currType, currCmd);
+        Settings->setValue(currType, currCmd);
 
         removeAction->setEnabled(true);
         editAction->setEnabled(true);
@@ -290,8 +283,7 @@ FileAssociationsPage::edit()
 
         titem->setData(QTableWidgetItem::Type, currCmd);
 
-        RshareSettings settings;
-        settings.setValue(currType, currCmd);
+        Settings->setValue(currType, currCmd);
     }
 }
 

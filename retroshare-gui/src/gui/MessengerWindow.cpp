@@ -804,8 +804,7 @@ void MessengerWindow::show()
 
 void MessengerWindow::closeEvent (QCloseEvent * event)
 {
-	//RshareSettings config;
-	//config.saveWidgetInformation(this);
+	//Settings->saveWidgetInformation(this);
 
     hide();
     event->ignore();
@@ -913,12 +912,7 @@ void MessengerWindow::loadmystatusmessage()
 /** Save own status message */
 void  MessengerWindow::savestatusmessage()
 {
-  RshareSettings settings;
-  settings.beginGroup("Profile");
-
-    settings.setValue("StatusMessage",ui.messagelineEdit->text());
-
-  settings.endGroup();
+  Settings->setValueToGroup("Profile", "StatusMessage",ui.messagelineEdit->text());
 	
   rsMsgs->setCustomStateString(ui.messagelineEdit->text().toStdString());
 }

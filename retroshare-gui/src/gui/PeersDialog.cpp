@@ -149,20 +149,20 @@ PeersDialog::PeersDialog(QWidget *parent)
   pxm.fill(_currentColor);
   ui.colorChatButton->setIcon(pxm);
 
-  RSettings settings(QString("Chat"));
-
-  mCurrentFont.fromString(settings.value(QString::fromUtf8("ChatScreenFont")).toString());
+  Settings->beginGroup(QString("Chat"));
+  mCurrentFont.fromString(Settings->value(QString::fromUtf8("ChatScreenFont")).toString());
   ui.lineEdit->setFont(mCurrentFont);
-
+ 
   setChatInfo(tr("Welcome to RetroShare's group chat."), QString::fromUtf8("blue"));
 
-  if (settings.value(QString::fromUtf8("GroupChat_History"), true).toBool())
+  if (Settings->value(QString::fromUtf8("GroupChat_History"), true).toBool())
   {
     QStringList him;
     historyKeeper.getMessages(him, "", "THIS", 8);
     foreach(QString mess, him)
     ui.msgText->append(mess);
   }  
+  Settings->endGroup();
 
   //setChatInfo(mess,  "green");
 
@@ -956,9 +956,7 @@ void PeersDialog::insertChat()
         QTextEdit *msgWidget = ui.msgText;
 	std::list<ChatInfo>::iterator it;
 
-        /** A RshareSettings object used for saving/loading settings */
-        RshareSettings settings;
-        uint chatflags = settings.getChatFlags();
+        uint chatflags = Settings->getChatFlags();
 
 	/* add in lines at the bottom */
 	for(it = newchat.begin(); it != newchat.end(); it++)
@@ -1015,10 +1013,10 @@ void PeersDialog::insertChat()
 		RsChat::embedHtml(doc, body, defEmbedAhref);
 
 		// embed smileys
-		settings.beginGroup("Chat");
-		if (settings.value(QString::fromUtf8("Emoteicons_GroupChat"), true).toBool())
+		Settings->beginGroup("Chat");
+		if (Settings->value(QString::fromUtf8("Emoteicons_GroupChat"), true).toBool())
 			RsChat::embedHtml(doc, body, defEmbedImg);
-		settings.endGroup();
+		Settings->endGroup();
 
 		msgContents = doc.toString(-1);		// -1 removes any annoying carriage return misinterpreted by QTextEdit
 		extraTxt += msgContents;
@@ -1287,10 +1285,9 @@ void PeersDialog::setFont()
   mCurrentFont.setItalic(ui.textitalicChatButton->isChecked());
   ui.lineEdit->setFont(mCurrentFont);
   ui.lineEdit->setTextColor(_currentColor);
-  RshareSettings settings;
-  settings.beginGroup("Chat");
-  settings.setValue(QString::fromUtf8("ChatScreenFont"), mCurrentFont.toString());
-  settings.endGroup();
+  Settings->beginGroup("Chat");
+  Settings->setValue(QString::fromUtf8("ChatScreenFont"), mCurrentFont.toString());
+  Settings->endGroup();
 
 
   ui.lineEdit->setFocus();
@@ -1848,15 +1845,14 @@ void PeersDialog::setCurrentFileName(const QString &fileName)
 
 ////play sound when recv a message
 void PeersDialog::playsound(){
-    RshareSettings settings;
-    settings.beginGroup("Sound");
-        settings.beginGroup("SoundFilePath");
-            QString OnlineSound= settings.value("NewChatMessage","").toString();
-        settings.endGroup();
-        settings.beginGroup("Enable");
-             bool flag= settings.value("NewChatMessage",false).toBool();
-        settings.endGroup();
-    settings.endGroup();
+    Settings->beginGroup("Sound");
+        Settings->beginGroup("SoundFilePath");
+            QString OnlineSound = Settings->value("NewChatMessage","").toString();
+        Settings->endGroup();
+        Settings->beginGroup("Enable");
+             bool flag = Settings->value("NewChatMessage",false).toBool();
+        Settings->endGroup();
+    Settings->endGroup();
     if(!OnlineSound.isEmpty()&&flag)
         if(QSound::isAvailable())
             QSound::play(OnlineSound);

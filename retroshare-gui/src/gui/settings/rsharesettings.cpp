@@ -69,8 +69,14 @@
 #define DEFAULT_BWGRAPH_FILTER          (BWGRAPH_SEND|BWGRAPH_REC)
 #define DEFAULT_BWGRAPH_ALWAYS_ON_TOP   false
 
-RshareSettings::RshareSettings(std::string filename) : RSettings(filename) {
-    initSettings();
+// the one and only global settings object
+RshareSettings *Settings = NULL;
+
+/*static*/ void RshareSettings::Create ()
+{
+    if (Settings == NULL) {
+        Settings = new RshareSettings ();
+    }
 }
 
 /** Default Constructor */

@@ -30,7 +30,6 @@
 #include "rsiface/rspeers.h"
 #include "rsiface/rsfiles.h"
 
-#include "settings/rsettings.h"
 #include <QtGui>
 
 /* Images for context menu icons */
@@ -93,7 +92,9 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
-  
+
+  m_bProcessSettings = false;
+
   connect( ui.messagestreeView, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( messageslistWidgetCostumPopupMenu( QPoint ) ) );
   connect( ui.msgList, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( msgfilelistWidgetCostumPopupMenu( QPoint ) ) );
   connect( ui.messagestreeView, SIGNAL(clicked ( const QModelIndex &) ) , this, SLOT( clicked( const QModelIndex & ) ) );
@@ -245,37 +246,45 @@ MessagesDialog::~MessagesDialog()
 
 void MessagesDialog::processSettings(bool bLoad)
 {
+    m_bProcessSettings = true;
+
     QHeaderView *msgwheader = ui.messagestreeView->header () ;
 
-    RSettings settings(QString("MessageDialog"));
+    Settings->beginGroup(QString("MessageDialog"));
 
     if (bLoad) {
         // load settings
 
         // expandFiles
-        bool bValue = settings.value("expandFiles", true).toBool();
+        bool bValue = Settings->value("expandFiles", true).toBool();
         ui.expandFilesButton->setChecked(bValue);
         ui.msgList->setVisible(bValue);
         togglefileview_internal();
 
         // filterColumn
-        int nValue = FilterColumnToComboBox(settings.value("filterColumn", true).toInt());
+        int nValue = FilterColumnToComboBox(Settings->value("filterColumn", true).toInt());
         ui.filterColumnComboBox->setCurrentIndex(nValue);
 
         // state of message tree
-        msgwheader->restoreState(settings.value("MessageTree").toByteArray());
+        msgwheader->restoreState(Settings->value("MessageTree").toByteArray());
 
         // state of splitter
-        ui.msgSplitter_2->restoreState(settings.value("Splitter2").toByteArray());
+        ui.msgSplitter->restoreState(Settings->value("Splitter").toByteArray());
+        ui.msgSplitter_2->restoreState(Settings->value("Splitter2").toByteArray());
     } else {
         // save settings
 
         // state of message tree
-        settings.setValue("MessageTree", msgwheader->saveState());
+        Settings->setValue("MessageTree", msgwheader->saveState());
 
         // state of splitter
-        settings.setValue("Splitter2", ui.msgSplitter_2->saveState());
+        Settings->setValue("Splitter", ui.msgSplitter->saveState());
+        Settings->setValue("Splitter2", ui.msgSplitter_2->saveState());
     }
+
+    Settings->endGroup();
+
+    m_bProcessSettings = false;
 }
 
 // replaced by shortcut
@@ -582,8 +591,7 @@ void MessagesDialog::togglefileview_internal()
 void MessagesDialog::togglefileview()
 {
     // save state of files view
-    RSettings settings(QString("MessageDialog"));
-    settings.setValue("expandFiles", ui.expandFilesButton->isChecked());
+    Settings->setValueToGroup("MessageDialog", "expandFiles", ui.expandFilesButton->isChecked());
 
     togglefileview_internal();
 }
@@ -1341,15 +1349,17 @@ void MessagesDialog::buttonsicononly()
     ui.printbutton->setToolButtonStyle(Qt::ToolButtonIconOnly);
     ui.viewtoolButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
 
-    RSettings settings(QString("MessageDialog"));
+    Settings->beginGroup(QString("MessageDialog"));
 
-    settings.setValue("ToolButon_Stlye1",ui.newmessageButton->toolButtonStyle());
-    settings.setValue("ToolButon_Stlye2",ui.removemessageButton->toolButtonStyle());
-    settings.setValue("ToolButon_Stlye3",ui.replymessageButton->toolButtonStyle());
-    settings.setValue("ToolButon_Stlye4",ui.replyallmessageButton->toolButtonStyle());
-    settings.setValue("ToolButon_Stlye5",ui.forwardmessageButton->toolButtonStyle());
-    settings.setValue("ToolButon_Stlye6",ui.printbutton->toolButtonStyle());
-    settings.setValue("ToolButon_Stlye7",ui.viewtoolButton->toolButtonStyle());
+    Settings->setValue("ToolButon_Stlye1",ui.newmessageButton->toolButtonStyle());
+    Settings->setValue("ToolButon_Stlye2",ui.removemessageButton->toolButtonStyle());
+    Settings->setValue("ToolButon_Stlye3",ui.replymessageButton->toolButtonStyle());
+    Settings->setValue("ToolButon_Stlye4",ui.replyallmessageButton->toolButtonStyle());
+    Settings->setValue("ToolButon_Stlye5",ui.forwardmessageButton->toolButtonStyle());
+    Settings->setValue("ToolButon_Stlye6",ui.printbutton->toolButtonStyle());
+    Settings->setValue("ToolButon_Stlye7",ui.viewtoolButton->toolButtonStyle());
+
+    Settings->endGroup();
 }
 
 void MessagesDialog::buttonstextbesideicon()
@@ -1362,23 +1372,21 @@ void MessagesDialog::buttonstextbesideicon()
     ui.printbutton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     ui.viewtoolButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
 
-    RSettings settings(QString("MessageDialog"));
+    Settings->beginGroup(QString("MessageDialog"));
 
-    settings.setValue("ToolButon_Stlye1",ui.newmessageButton->toolButtonStyle());
-    settings.setValue("ToolButon_Stlye2",ui.removemessageButton->toolButtonStyle());
-    settings.setValue("ToolButon_Stlye3",ui.replymessageButton->toolButtonStyle());
-    settings.setValue("ToolButon_Stlye4",ui.replyallmessageButton->toolButtonStyle());
-    settings.setValue("ToolButon_Stlye5",ui.forwardmessageButton->toolButtonStyle());
-    settings.setValue("ToolButon_Stlye6",ui.printbutton->toolButtonStyle());
-    settings.setValue("ToolButon_Stlye7",ui.viewtoolButton->toolButtonStyle());
+    Settings->setValue("ToolButon_Stlye1",ui.newmessageButton->toolButtonStyle());
+    Settings->setValue("ToolButon_Stlye2",ui.removemessageButton->toolButtonStyle());
+    Settings->setValue("ToolButon_Stlye3",ui.replymessageButton->toolButtonStyle());
+    Settings->setValue("ToolButon_Stlye4",ui.replyallmessageButton->toolButtonStyle());
+    Settings->setValue("ToolButon_Stlye5",ui.forwardmessageButton->toolButtonStyle());
+    Settings->setValue("ToolButon_Stlye6",ui.printbutton->toolButtonStyle());
+    Settings->setValue("ToolButon_Stlye7",ui.viewtoolButton->toolButtonStyle());
+
+    Settings->endGroup();
 }
 
 void MessagesDialog::buttonstextundericon()
 {
-    RshareSettings settings;
-
-    settings.beginGroup("MessageDialog");
-
     ui.newmessageButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     ui.removemessageButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     ui.replymessageButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
@@ -1387,24 +1395,24 @@ void MessagesDialog::buttonstextundericon()
     ui.printbutton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     ui.viewtoolButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
 
-    settings.setValue("ToolButon_Stlye1",ui.newmessageButton->toolButtonStyle());
-    settings.setValue("ToolButon_Stlye2",ui.removemessageButton->toolButtonStyle());
-    settings.setValue("ToolButon_Stlye3",ui.replymessageButton->toolButtonStyle());
-    settings.setValue("ToolButon_Stlye4",ui.replyallmessageButton->toolButtonStyle());
-    settings.setValue("ToolButon_Stlye5",ui.forwardmessageButton->toolButtonStyle());
-    settings.setValue("ToolButon_Stlye6",ui.printbutton->toolButtonStyle());
-    settings.setValue("ToolButon_Stlye7",ui.viewtoolButton->toolButtonStyle());
+    Settings->beginGroup("MessageDialog");
 
-    settings.endGroup();
+    Settings->setValue("ToolButon_Stlye1",ui.newmessageButton->toolButtonStyle());
+    Settings->setValue("ToolButon_Stlye2",ui.removemessageButton->toolButtonStyle());
+    Settings->setValue("ToolButon_Stlye3",ui.replymessageButton->toolButtonStyle());
+    Settings->setValue("ToolButon_Stlye4",ui.replyallmessageButton->toolButtonStyle());
+    Settings->setValue("ToolButon_Stlye5",ui.forwardmessageButton->toolButtonStyle());
+    Settings->setValue("ToolButon_Stlye6",ui.printbutton->toolButtonStyle());
+    Settings->setValue("ToolButon_Stlye7",ui.viewtoolButton->toolButtonStyle());
+
+    Settings->endGroup();
 }
 
 void MessagesDialog::loadToolButtonsettings()
 {
-    RshareSettings settings;
+    Settings->beginGroup("MessageDialog");
 
-    settings.beginGroup("MessageDialog");
-
-    if(settings.value("ToolButon_Stlye1","0").toInt() == 0)
+    if(Settings->value("ToolButon_Stlye1","0").toInt() == 0)
     {
     qDebug() << "ToolButon IconOnly";
     ui.newmessageButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
@@ -1416,7 +1424,7 @@ void MessagesDialog::loadToolButtonsettings()
     ui.viewtoolButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
     }
 
-    else if (settings.value("ToolButon_Stlye1","2").toInt() ==2)
+    else if (Settings->value("ToolButon_Stlye1","2").toInt() ==2)
     {
     qDebug() << "ToolButon TextBesideIcon";
     ui.newmessageButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
@@ -1428,7 +1436,7 @@ void MessagesDialog::loadToolButtonsettings()
     ui.viewtoolButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     }
 
-    else if(settings.value("ToolButon_Stlye1","3").toInt() ==3)
+    else if(Settings->value("ToolButon_Stlye1","3").toInt() ==3)
     {
     qDebug() << "ToolButton TextUnderIcon";
     ui.newmessageButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
@@ -1440,7 +1448,7 @@ void MessagesDialog::loadToolButtonsettings()
     ui.viewtoolButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     }
 
-    settings.endGroup();
+    Settings->endGroup();
 }
 
 void MessagesDialog::filterRegExpChanged()
@@ -1462,6 +1470,10 @@ void MessagesDialog::filterRegExpChanged()
 
 void MessagesDialog::filterColumnChanged()
 {
+    if (m_bProcessSettings) {
+        return;
+    }
+
     int nFilterColumn = FilterColumnFromComboBox(ui.filterColumnComboBox->currentIndex());
     if (nFilterColumn == COLUMN_CONTENT) {
         // need content ... refill
@@ -1470,8 +1482,7 @@ void MessagesDialog::filterColumnChanged()
     proxyModel->setFilterKeyColumn(nFilterColumn);
 
     // save index
-    RSettings settings(QString("MessageDialog"));
-    settings.setValue("filterColumn", nFilterColumn);
+    Settings->setValueToGroup("MessageDialog", "filterColumn", nFilterColumn);
 }
 
 void MessagesDialog::updateMessageSummaryList()

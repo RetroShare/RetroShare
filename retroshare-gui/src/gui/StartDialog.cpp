@@ -42,8 +42,7 @@ StartDialog::StartDialog(QWidget *parent, Qt::WFlags flags)
   ui.setupUi(this);
 
   /* Create Bandwidth Graph related QObjects */
-  RshareSettings settings;
-  settings.loadWidgetInformation(this);
+  Settings->loadWidgetInformation(this);
  
   _rsLogoBar = NULL;
  
@@ -109,8 +108,7 @@ void StartDialog::show()
 
 void StartDialog::closeEvent (QCloseEvent * event)
 {
- RshareSettings settings;
- settings.saveWidgetInformation(this);
+ Settings->saveWidgetInformation(this);
 
  QWidget::closeEvent(event);
 }

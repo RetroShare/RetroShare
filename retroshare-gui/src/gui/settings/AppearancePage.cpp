@@ -69,10 +69,9 @@ AppearancePage::save(QString &errmsg)
 	QString languageCode =
     LanguageSupport::languageCode(ui.cmboLanguage->currentText());
 
-        RshareSettings settings;
-        settings.setLanguageCode(languageCode);
-        settings.setInterfaceStyle(ui.cmboStyle->currentText());
-        settings.setSheetName(ui.styleSheetCombo->currentText());
+        Settings->setLanguageCode(languageCode);
+        Settings->setInterfaceStyle(ui.cmboStyle->currentText());
+        Settings->setSheetName(ui.styleSheetCombo->currentText());
 
     /* Set to new style */
 	Rshare::setStyle(ui.cmboStyle->currentText());
@@ -85,21 +84,19 @@ AppearancePage::save(QString &errmsg)
 void
 AppearancePage::load()
 {
-    RshareSettings settings;
-
-        int index = ui.cmboLanguage->findData(settings.getLanguageCode());
+    int index = ui.cmboLanguage->findData(Settings->getLanguageCode());
 	ui.cmboLanguage->setCurrentIndex(index);
 
 	index = ui.cmboStyle->findData(Rshare::style().toLower());
 	ui.cmboStyle->setCurrentIndex(index);
 
-    ui.styleSheetCombo->setCurrentIndex(ui.styleSheetCombo->findText(settings.getSheetName()));
+    ui.styleSheetCombo->setCurrentIndex(ui.styleSheetCombo->findText(Settings->getSheetName()));
 
     /** load saved internal styleSheet **/
     //QFile file(":/qss/" + (settings.getSheetName().toLower()) + ".qss");
 
     /** load saved extern Stylesheets **/
-    QFile file(QApplication::applicationDirPath() + "/qss/" + (settings.getSheetName().toLower()) + ".qss");
+    QFile file(QApplication::applicationDirPath() + "/qss/" + (Settings->getSheetName().toLower()) + ".qss");
 
     file.open(QFile::ReadOnly);
     QString styleSheet = QLatin1String(file.readAll());

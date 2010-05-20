@@ -56,9 +56,7 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   /* Invoke Qt Designer generated QObject setup routine */
   ui.setupUi(this);
   
-  RshareSettings settings;
-
-  settings.loadWidgetInformation(this);
+  Settings->loadWidgetInformation(this);
   this->move(qrand()%100, qrand()%100); //avoid to stack multiple popup chat windows on the same position
 
   
@@ -229,8 +227,7 @@ void PopupChatDialog::flash()
 
 void PopupChatDialog::closeEvent (QCloseEvent * event)
 {
-    RshareSettings settings;
-    settings.saveWidgetInformation(this);
+    Settings->saveWidgetInformation(this);
 
     hide();
     event->ignore();
@@ -291,8 +288,7 @@ void PopupChatDialog::addChatMsg(ChatInfo *ci)
 std::cout << "PopupChatDialog:addChatMsg message : " << message.toStdString() << std::endl;
 #endif
 
-  RSettings settings(QString("Chat"));
-  if (settings.value(QString::fromUtf8("Emoteicons_PrivatChat"), true).toBool())
+  if (Settings->valueFromGroup(QString("Chat"), QString::fromUtf8("Emoteicons_PrivatChat"), true).toBool())
   {
 	QHashIterator<QString, QString> i(smileys);
 	while(i.hasNext())

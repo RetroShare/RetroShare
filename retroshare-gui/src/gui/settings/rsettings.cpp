@@ -64,6 +64,22 @@ RSettings::setValue(const QString &key, const QVariant &val)
     QSettings::setValue(key, val);
 }
 
+QVariant RSettings::valueFromGroup(const QString &group, const QString &key, const QVariant &defaultVal)
+{
+    beginGroup(group);
+    QVariant val = value(key, defaultVal);
+    endGroup();
+
+    return val;
+}
+
+void RSettings::setValueToGroup(const QString &group, const QString &key, const QVariant &val)
+{
+    beginGroup(group);
+    setValue(key, val);
+    endGroup();
+}
+
 /** Sets the default setting for <b>key</b> to <b>val</b>. */
 void
 RSettings::setDefault(const QString &key, const QVariant &val)

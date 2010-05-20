@@ -61,8 +61,7 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
 
     setWindowTitle(tr("RetroShare"));
 
-    RshareSettings config;
-    config.loadWidgetInformation(this);
+    Settings->loadWidgetInformation(this);
 
     // Setting icons
     this->setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
@@ -155,8 +154,7 @@ void ApplicationWindow::createActions()
 
 void ApplicationWindow::closeEvent(QCloseEvent *e)
 {
-    RshareSettings config;
-    config.saveWidgetInformation(this);
+    Settings->saveWidgetInformation(this);
 
     hide();
     e->ignore();

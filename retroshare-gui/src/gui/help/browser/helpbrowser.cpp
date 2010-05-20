@@ -56,8 +56,6 @@
 HelpBrowser::HelpBrowser(QWidget *parent)
  : RWindow("HelpBrowser", parent)
 {
-  RshareSettings _settings;
-
   /* Invoke Qt Designer generated QObject setup routine */
   ui.setupUi(this);
 #if defined(Q_WS_MAC)

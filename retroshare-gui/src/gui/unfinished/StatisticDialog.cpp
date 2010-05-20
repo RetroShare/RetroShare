@@ -43,9 +43,6 @@ StatisticDialog::StatisticDialog(QWidget *parent)
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
 
-  /* Create Bandwidth Graph related QObjects */
-  _settings = new RshareSettings();
-
   /* Bind events to actions */
   createActions();
 
@@ -83,12 +80,6 @@ StatisticDialog::StatisticDialog(QWidget *parent)
 
   Timer=startTimer(REFRESH_RATE);
 
-}
-
-/** Default destructor */
-StatisticDialog::~StatisticDialog()
-{
-  delete _settings;
 }
 
 /**
@@ -182,7 +173,7 @@ StatisticDialog::loadSettings()
 
 
   /* Set the line filter checkboxes accordingly */
-  uint filter = _settings->getBWGraphFilter();
+  uint filter = Settings->getBWGraphFilter();
   ui.chkReceiveRate->setChecked(filter & BWGRAPH_REC);
   ui.chkSendRate->setChecked(filter & BWGRAPH_SEND);
 
@@ -215,13 +206,13 @@ StatisticDialog::saveChanges()
   showSettingsFrame(false);
   
   /* Save the opacity */
-  _settings->setBWGraphOpacity(ui.sldrOpacity->value());
+  Settings->setBWGraphOpacity(ui.sldrOpacity->value());
 
 
   
   /* Save the line filter values */
-  _settings->setBWGraphFilter(BWGRAPH_REC, ui.chkReceiveRate->isChecked());
-  _settings->setBWGraphFilter(BWGRAPH_SEND, ui.chkSendRate->isChecked());
+  Settings->setBWGraphFilter(BWGRAPH_REC, ui.chkReceiveRate->isChecked());
+  Settings->setBWGraphFilter(BWGRAPH_SEND, ui.chkSendRate->isChecked());
 
   /* Update the graph frame settings */
   ui.frmGraph->setShowCounters(ui.chkReceiveRate->isChecked(),

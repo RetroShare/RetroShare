@@ -56,25 +56,24 @@ SoundPage::~SoundPage()
 bool
 SoundPage::save(QString &errmsg)
 {
-  RshareSettings settings;
-  settings.beginGroup("Sound");
-                settings.beginGroup("Enable");
-                        settings.setValue("User_go_Online",ui.checkBoxSound->isChecked());
+  Settings->beginGroup("Sound");
+                Settings->beginGroup("Enable");
+                        Settings->setValue("User_go_Online",ui.checkBoxSound->isChecked());
                         //settings.setValue("User_go_Offline",ui.checkBoxSound_2->isChecked());
-                        settings.setValue("FileSend_Finished",ui.checkBoxSound_3->isChecked());
-                        settings.setValue("FileRecive_Incoming",ui.checkBoxSound_4->isChecked());
-                        settings.setValue("FileRecive_Finished",ui.checkBoxSound_5->isChecked());
-                        settings.setValue("NewChatMessage",ui.checkBoxSound_6->isChecked());
-                        settings.endGroup();
-                settings.beginGroup("SoundFilePath");
-                        settings.setValue("User_go_Online",ui.txt_SoundFile->text());
+                        Settings->setValue("FileSend_Finished",ui.checkBoxSound_3->isChecked());
+                        Settings->setValue("FileRecive_Incoming",ui.checkBoxSound_4->isChecked());
+                        Settings->setValue("FileRecive_Finished",ui.checkBoxSound_5->isChecked());
+                        Settings->setValue("NewChatMessage",ui.checkBoxSound_6->isChecked());
+                        Settings->endGroup();
+                Settings->beginGroup("SoundFilePath");
+                        Settings->setValue("User_go_Online",ui.txt_SoundFile->text());
                         //settings.setValue("User_go_Offline",ui.txt_SoundFile2->text());
-                        settings.setValue("FileSend_Finished",ui.txt_SoundFile3->text());
-                        settings.setValue("FileRecive_Incoming",ui.txt_SoundFile4->text());
-                        settings.setValue("FileRecive_Finished",ui.txt_SoundFile5->text());
-                        settings.setValue("NewChatMessage",ui.txt_SoundFile6->text());
-                settings.endGroup();
-        settings.endGroup();
+                        Settings->setValue("FileSend_Finished",ui.txt_SoundFile3->text());
+                        Settings->setValue("FileRecive_Incoming",ui.txt_SoundFile4->text());
+                        Settings->setValue("FileRecive_Finished",ui.txt_SoundFile5->text());
+                        Settings->setValue("NewChatMessage",ui.txt_SoundFile6->text());
+                Settings->endGroup();
+        Settings->endGroup();
 
 	return true;
 }
@@ -85,15 +84,14 @@ SoundPage::save(QString &errmsg)
 void
 SoundPage::load()
 {
-    RshareSettings settings;
-        settings.beginGroup("Sound");
-                settings.beginGroup("SoundFilePath");
-                        ui.txt_SoundFile->setText(settings.value("User_go_Online","").toString());
+        Settings->beginGroup("Sound");
+                Settings->beginGroup("SoundFilePath");
+                        ui.txt_SoundFile->setText(Settings->value("User_go_Online","").toString());
                         //ui.txt_SoundFile2->setText(settings.value("User_go_Offline","").toString());
-                        ui.txt_SoundFile3->setText(settings.value("FileSend_Finished","").toString());
-                        ui.txt_SoundFile4->setText(settings.value("FileRecive_Incoming","").toString());
-                        ui.txt_SoundFile5->setText(settings.value("FileRecive_Finished","").toString());
-                        ui.txt_SoundFile6->setText(settings.value("NewChatMessage","").toString());
+                        ui.txt_SoundFile3->setText(Settings->value("FileSend_Finished","").toString());
+                        ui.txt_SoundFile4->setText(Settings->value("FileRecive_Incoming","").toString());
+                        ui.txt_SoundFile5->setText(Settings->value("FileRecive_Finished","").toString());
+                        ui.txt_SoundFile6->setText(Settings->value("NewChatMessage","").toString());
 
 			if(!ui.txt_SoundFile->text().isEmpty())ui.checkBoxSound->setEnabled(true);
                         //if(!ui.txt_SoundFile2->text().isEmpty())ui.checkBoxSound_2->setEnabled(true);
@@ -102,17 +100,17 @@ SoundPage::load()
 			if(!ui.txt_SoundFile5->text().isEmpty())ui.checkBoxSound_5->setEnabled(true);
 			if(!ui.txt_SoundFile6->text().isEmpty())ui.checkBoxSound_6->setEnabled(true);
 
-                settings.endGroup();
+                Settings->endGroup();
 
-                settings.beginGroup("Enable");
-                        ui.checkBoxSound->setChecked(settings.value("User_go_Online",false).toBool());
+                Settings->beginGroup("Enable");
+                        ui.checkBoxSound->setChecked(Settings->value("User_go_Online",false).toBool());
                         //ui.checkBoxSound_2->setChecked(settings.value("User_go_Offline",false).toBool());
-                        ui.checkBoxSound_3->setChecked(settings.value("FileSend_Finished",false).toBool());
-                        ui.checkBoxSound_4->setChecked(settings.value("FileRecive_Incoming",false).toBool());
-                        ui.checkBoxSound_5->setChecked(settings.value("FileRecive_Finished",false).toBool());
-                        ui.checkBoxSound_6->setChecked(settings.value("NewChatMessage",false).toBool());
-                settings.endGroup();
-        settings.endGroup();
+                        ui.checkBoxSound_3->setChecked(Settings->value("FileSend_Finished",false).toBool());
+                        ui.checkBoxSound_4->setChecked(Settings->value("FileRecive_Incoming",false).toBool());
+                        ui.checkBoxSound_5->setChecked(Settings->value("FileRecive_Finished",false).toBool());
+                        ui.checkBoxSound_6->setChecked(Settings->value("NewChatMessage",false).toBool());
+                Settings->endGroup();
+        Settings->endGroup();
 }
 
 void SoundPage::on_cmd_openFile()

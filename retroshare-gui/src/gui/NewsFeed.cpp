@@ -74,9 +74,7 @@ void NewsFeed::updateFeed()
 	if (!rsNotify)
 		return;
 
-  	/** A RshareSettings object used for saving/loading settings */
-  	RshareSettings settings;
-	uint flags = settings.getNewsFeedFlags();
+	uint flags = Settings->getNewsFeedFlags();
 
 	/* check for new messages */
 	RsFeedItem fi;

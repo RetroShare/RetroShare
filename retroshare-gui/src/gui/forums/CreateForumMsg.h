@@ -57,7 +57,9 @@ private slots:
 	void addSmileys();
 	void addFile();
 	void addAttachment(std::string);
-	
+
+protected:
+   void closeEvent (QCloseEvent * event);
   
 private:
    /** Define the popup menus for the Context menu */

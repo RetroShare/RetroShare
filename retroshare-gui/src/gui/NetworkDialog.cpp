@@ -808,46 +808,31 @@ void NetworkDialog::updateNetworkStatus()
 
 void NetworkDialog::on_actionTabsnorth_activated()
 {
-  RshareSettings settings;
-  settings.beginGroup("NetworkDialog");
-	
   ui.networkTab->setTabPosition(QTabWidget::North);
   
-  settings.setValue("TabWidget_Position",ui.networkTab->tabPosition());
-  settings.endGroup();
+  Settings->setValueToGroup("NetworkDialog", "TabWidget_Position",ui.networkTab->tabPosition());
 }
 
 void NetworkDialog::on_actionTabssouth_activated()
 {
-  RshareSettings settings;
-  settings.beginGroup("NetworkDialog");
-
   ui.networkTab->setTabPosition(QTabWidget::South);
-  
-  settings.setValue("TabWidget_Position",ui.networkTab->tabPosition());
-  settings.endGroup();
+
+  Settings->setValueToGroup("NetworkDialog", "TabWidget_Position",ui.networkTab->tabPosition());
+
 }
 
 void NetworkDialog::on_actionTabswest_activated()
 {
-  RshareSettings settings;
-  settings.beginGroup("NetworkDialog");
-
   ui.networkTab->setTabPosition(QTabWidget::West);
-  
-  settings.setValue("TabWidget_Position",ui.networkTab->tabPosition());
-  settings.endGroup();
+
+  Settings->setValueToGroup("NetworkDialog", "TabWidget_Position",ui.networkTab->tabPosition());
 }
 
 void NetworkDialog::on_actionTabsright_activated()
 {
-  RshareSettings settings;
-  settings.beginGroup("NetworkDialog");
-	
   ui.networkTab->setTabPosition(QTabWidget::East);
-  
-  settings.setValue("TabWidget_Position",ui.networkTab->tabPosition());
-  settings.endGroup();
+
+  Settings->setValueToGroup("NetworkDialog", "TabWidget_Position",ui.networkTab->tabPosition());
 }
 
 void NetworkDialog::on_actionTabsTriangular_activated()
@@ -864,29 +849,28 @@ void NetworkDialog::on_actionTabsRounded_activated()
 
 void NetworkDialog::loadtabsettings()
 {
-  RshareSettings settings;
-  settings.beginGroup("NetworkDialog");
+  Settings->beginGroup("NetworkDialog");
 
-  if(settings.value("TabWidget_Position","0").toInt() == 0)
+  if(Settings->value("TabWidget_Position","0").toInt() == 0)
   {
     qDebug() << "Tab North";
     ui.networkTab->setTabPosition(QTabWidget::North);
   }
-  else if (settings.value("TabWidget_Position","1").toInt() == 1)
+  else if (Settings->value("TabWidget_Position","1").toInt() == 1)
   {
     qDebug() << "Tab South";
     ui.networkTab->setTabPosition(QTabWidget::South);
   }
-  else if (settings.value("TabWidget_Position","2").toInt() ==2)
+  else if (Settings->value("TabWidget_Position","2").toInt() ==2)
   {
     qDebug() << "Tab West";
     ui.networkTab->setTabPosition(QTabWidget::West);
   }
-  else if(settings.value("TabWidget_Position","3").toInt() ==3)
+  else if(Settings->value("TabWidget_Position","3").toInt() ==3)
   {
     qDebug() << "Tab East";
     ui.networkTab->setTabPosition(QTabWidget::East);
   }
 
-  settings.endGroup();
+  Settings->endGroup();
 }

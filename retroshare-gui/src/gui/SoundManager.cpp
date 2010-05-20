@@ -78,26 +78,23 @@ void SoundManager::event_NewChatMessage()
 
 void SoundManager::reInit()
 {
-	RshareSettings settings;
+        Settings->beginGroup("Sound");
+		Settings->beginGroup("Enable");
+			enable_eventUser_go_Online = Settings->value("User_go_Online",false).toBool();
+			enable_eventUser_go_Offline = Settings->value("User_go_Offline",false).toBool();
+			enable_eventFileSend_Finished = Settings->value("FileSend_Finished",false).toBool();
+			enable_eventFileRecive_Incoming = Settings->value("FileRecive_Incoming",false).toBool();
+			enable_eventFileRecive_Finished = Settings->value("FileRecive_Finished",false).toBool();
+			enable_eventNewChatMessage = Settings->value("NewChatMessage",false).toBool();
+		Settings->endGroup();
 
-        settings.beginGroup("Sound");
-		settings.beginGroup("Enable");
-			enable_eventUser_go_Online = settings.value("User_go_Online",false).toBool();
-			enable_eventUser_go_Offline = settings.value("User_go_Offline",false).toBool();
-			enable_eventFileSend_Finished = settings.value("FileSend_Finished",false).toBool();
-			enable_eventFileRecive_Incoming = settings.value("FileRecive_Incoming",false).toBool();
-			enable_eventFileRecive_Finished = settings.value("FileRecive_Finished",false).toBool();
-			enable_eventNewChatMessage = settings.value("NewChatMessage",false).toBool();
-		settings.endGroup();
-
-		settings.beginGroup("SoundFilePath");
-		SoundFileUser_go_Online = settings.value("User_go_Online","").toString();
-		SoundFileUser_go_Offline =settings.value("User_go_Offline","").toString();
-		SoundFileFileSend_Finished = settings.value("FileSend_Finished","").toString();
-		SoundFileFileRecive_Incoming = settings.value("FileRecive_Incoming","").toString();
-		SoundFileFileRecive_Finished = settings.value("FileRecive_Finished","").toString();
-		SoundFileNewChatMessage = settings.value("NewChatMessage","").toString();
-		settings.endGroup();
-	settings.endGroup();
+		Settings->beginGroup("SoundFilePath");
+		SoundFileUser_go_Online = Settings->value("User_go_Online","").toString();
+		SoundFileUser_go_Offline = Settings->value("User_go_Offline","").toString();
+		SoundFileFileSend_Finished = Settings->value("FileSend_Finished","").toString();
+		SoundFileFileRecive_Incoming = Settings->value("FileRecive_Incoming","").toString();
+		SoundFileFileRecive_Finished = Settings->value("FileRecive_Finished","").toString();
+		SoundFileNewChatMessage = Settings->value("NewChatMessage","").toString();
+		Settings->endGroup();
+	Settings->endGroup();
 }
-

@@ -68,15 +68,14 @@ void OnlineToaster::chatButtonSlot() {
 }
 
 void OnlineToaster::play(){
-    RshareSettings settings;
-        settings.beginGroup("Sound");
-            settings.beginGroup("SoundFilePath");
-                   QString OnlineSound= settings.value("User_go_Online","").toString();
-        settings.endGroup();
-        settings.beginGroup("Enable");
-                  bool flag= settings.value("User_go_Online",false).toBool();
-        settings.endGroup();
-    settings.endGroup();
+        Settings->beginGroup("Sound");
+            Settings->beginGroup("SoundFilePath");
+                   QString OnlineSound = Settings->value("User_go_Online","").toString();
+        Settings->endGroup();
+        Settings->beginGroup("Enable");
+                  bool flag = Settings->value("User_go_Online",false).toBool();
+        Settings->endGroup();
+    Settings->endGroup();
     if(!OnlineSound.isEmpty()&&flag)
         if(QSound::isAvailable())
         QSound::play(OnlineSound);

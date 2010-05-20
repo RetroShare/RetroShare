@@ -42,8 +42,7 @@ class StatisticDialog : public MainPage
 public:
   /** Default Constructor */
   StatisticDialog(QWidget *parent = 0);
-  /** Default Destructor */
-  ~StatisticDialog();
+
 protected:
   /** Called to deliver a bandwidth update event from RetroShare. */
   void customEvent(QEvent *event);

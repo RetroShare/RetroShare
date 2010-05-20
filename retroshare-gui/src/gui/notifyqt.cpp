@@ -242,8 +242,7 @@ void NotifyQt::UpdateGUI()
 		
 		if (rsNotify->NotifyPopupMessage(type, id, msg))
 		{
-			RshareSettings settings;
-			uint popupflags = settings.getNotifyFlags();
+			uint popupflags = Settings->getNotifyFlags();
 
 			/* id the name */
 			std::string name = rsPeers->getPeerName(id);

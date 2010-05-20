@@ -170,12 +170,9 @@ void QuickStartWizard::on_pushButtonSystemBack_clicked()
 
 void QuickStartWizard::on_pushButtonSystemFinish_clicked()
 {
-  RshareSettings settings;
-  settings.setValue(QString::fromUtf8("StartMinimized"), startMinimized());
-
-  settings.setValue(QString::fromUtf8("doQuit"), quitbox());
-  
-  settings.setRunRetroshareOnBoot(ui.checkBoxRunRetroshareAtSystemStartup->isChecked());
+  Settings->setValue(QString::fromUtf8("StartMinimized"), startMinimized());
+  Settings->setValue(QString::fromUtf8("doQuit"), quitbox());
+  Settings->setRunRetroshareOnBoot(ui.checkBoxRunRetroshareAtSystemStartup->isChecked());
   
   saveChanges();
   
@@ -356,14 +353,11 @@ bool QuickStartWizard::messageBoxOk(QString msg)
 void
 QuickStartWizard::loadGeneral()
 {
-  RshareSettings settings;
-  ui.checkBoxRunRetroshareAtSystemStartup->setChecked(settings.runRetroshareOnBoot());
-
-  ui.checkBoxStartMinimized->setChecked(settings.value(QString::fromUtf8("StartMinimized"), false).toBool());
-
-  ui.checkBoxQuit->setChecked(settings.value(QString::fromUtf8("doQuit"), false).toBool());
+  ui.checkBoxRunRetroshareAtSystemStartup->setChecked(Settings->runRetroshareOnBoot());
+  ui.checkBoxStartMinimized->setChecked(Settings->value(QString::fromUtf8("StartMinimized"), false).toBool());
+  ui.checkBoxQuit->setChecked(Settings->value(QString::fromUtf8("doQuit"), false).toBool());
   
-        //ui.checkBoxQuickWizard->setChecked(settings.value(QString::fromUtf8("FirstRun"), false).toBool());
+  //ui.checkBoxQuickWizard->setChecked(settings.value(QString::fromUtf8("FirstRun"), false).toBool());
 }
 
 bool QuickStartWizard::quitbox() const {

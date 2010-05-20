@@ -42,8 +42,7 @@ CreateForumMsg::CreateForumMsg(std::string fId, std::string pId)
   ui.setupUi(this);
   setAttribute(Qt::WA_DeleteOnClose, true);
 
-  RshareSettings config;
-  config.loadWidgetInformation(this);
+  Settings->loadWidgetInformation(this);
   
   connect( ui.forumMessage, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( forumMessageCostumPopupMenu( QPoint ) ) );
   
@@ -179,14 +178,14 @@ void  CreateForumMsg::createMsg()
 	close();
 }
 
+void CreateForumMsg::closeEvent (QCloseEvent * event)
+{
+    Settings->saveWidgetInformation(this);
+}
 
 void CreateForumMsg::cancelMsg()
 {
 	close();
-	return;
-	        
-	RshareSettings config;
-	config.saveWidgetInformation(this);
 }
 
 void CreateForumMsg::loadEmoticonsForums()

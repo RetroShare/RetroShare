@@ -97,7 +97,7 @@ private slots:
   void clearFilter();
 
 private:
-	class QStandardItemModel *MessagesModel;
+  class QStandardItemModel *MessagesModel;
   QSortFilterProxyModel *proxyModel;
 
   bool getCurrentMsg(std::string &cid, std::string &mid);
@@ -111,6 +111,8 @@ private:
   void togglefileview_internal();
 
   void processSettings(bool bLoad);
+
+  bool m_bProcessSettings;
 
   std::string mCurrCertId;
   std::string mCurrMsgId;

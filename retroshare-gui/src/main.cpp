@@ -53,7 +53,10 @@ int main(int argc, char *argv[])
         /* RetroShare Core Objects */
 	RsInit::InitRsConfig();
 	bool okStart = RsInit::InitRetroShare(argc, argv);
-	
+
+	/* create global settings object */
+	RshareSettings::Create ();
+
 	/*
 	Function RsConfigMinimised is not available in SVN, so I commented it out.
         bool startMinimised = RsConfigStartMinimised(config);
@@ -163,9 +166,7 @@ int main(int argc, char *argv[])
 
 	{
 		/* only show window, if not startMinimized */
-                RshareSettings _settings;
-
-		if(!_settings.value(QString::fromUtf8("StartMinimized"), false).toBool()) 
+		if(!Settings->value(QString::fromUtf8("StartMinimized"), false).toBool()) 
 		{
 
 			w->show();
@@ -179,13 +180,11 @@ int main(int argc, char *argv[])
 
 	/* dive into the endless loop */
 	// return ret;
-    int ti = rshare.exec();
-    delete w ;
+	int ti = rshare.exec();
+	delete w ;
+
+	Settings->sync();
+	delete Settings;
+
 	return ti ;
-
 }
-
-
-
-
-

@@ -48,13 +48,8 @@ class RshareSettings : public RSettings
 {
   
 public:
-  /** Default constructor. */
-  RshareSettings();
-
-  /** Default constructor. */
-  RshareSettings(std::string filename);
-
-  void initSettings();
+  /* create settings object */
+  static void Create ();
 
   /** Gets the currently preferred language code for RShare. */
   QString getLanguageCode();
@@ -119,22 +114,27 @@ public:
   uint getNotifyFlags();
   void setNotifyFlags(uint flags);
 
+  //! Save placement, state and size information of a window.
+  void saveWidgetInformation(QWidget *widget);
 
-        //! Save placement, state and size information of a window.
-        void saveWidgetInformation(QWidget *widget);
-        
-        //! Load placement, state and size information of a window.
-        void loadWidgetInformation(QWidget *widget);
-        
-        //! Method overload. Save window and toolbar information.
-        void saveWidgetInformation(QMainWindow *widget, QToolBar *toolBar);
+  //! Load placement, state and size information of a window.
+  void loadWidgetInformation(QWidget *widget);
 
-        //! Method overload. Restore window and toolbar information.
-        void loadWidgetInformation(QMainWindow *widget, QToolBar *toolBar);
+  //! Method overload. Save window and toolbar information.
+  void saveWidgetInformation(QMainWindow *widget, QToolBar *toolBar);
 
+  //! Method overload. Restore window and toolbar information.
+  void loadWidgetInformation(QMainWindow *widget, QToolBar *toolBar);
 
+protected:
+  /** Default constructor. */
+  RshareSettings();
 
+  void initSettings();
 };
+
+// the one and only global settings object
+extern RshareSettings *Settings;
 
 #endif
 

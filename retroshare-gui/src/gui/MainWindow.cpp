@@ -122,11 +122,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     /* Invoke the Qt Designer generated QObject setup routine */
     ui.setupUi(this);
     
-    RshareSettings settings;
-
-    if (settings.value(QString::fromUtf8("FirstRun"), true).toBool())
+    if (Settings->value(QString::fromUtf8("FirstRun"), true).toBool())
     {
-                settings.setValue(QString::fromUtf8("FirstRun"), false);
+		Settings->setValue(QString::fromUtf8("FirstRun"), false);
 		QuickStartWizard *qstartWizard = new QuickStartWizard(this);
 		qstartWizard->exec();
     }
@@ -573,9 +571,7 @@ void MainWindow::createActions()
 */
 void MainWindow::doQuit()
 {
-	RshareSettings settings;
-
-	if(!settings.value(QString::fromUtf8("doQuit"), false).toBool())
+	if(!Settings->value(QString::fromUtf8("doQuit"), false).toBool())
 	{
 	  QString queryWrn;
 	  queryWrn.clear();
@@ -603,9 +599,7 @@ void MainWindow::closeEvent(QCloseEvent *e)
 {
     static bool firstTime = true;
 
-   RshareSettings settings;
-
-   if(!settings.value(QString::fromUtf8("ClosetoTray"), false).toBool())
+   if(!Settings->value(QString::fromUtf8("ClosetoTray"), false).toBool())
    {
       if (trayIcon->isVisible()) {
           if (firstTime)

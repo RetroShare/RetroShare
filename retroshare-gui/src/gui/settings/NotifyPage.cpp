@@ -108,10 +108,9 @@ NotifyPage::save(QString &errmsg)
 	if (ui.chat_Focus->isChecked())
 		chatflags |= RS_CHAT_FOCUS;
 
-        RshareSettings settings;
-        settings.setNotifyFlags(notifyflags);
-        settings.setNewsFeedFlags(newsflags);
-        settings.setChatFlags(chatflags);
+        Settings->setNotifyFlags(notifyflags);
+        Settings->setNewsFeedFlags(newsflags);
+        Settings->setChatFlags(chatflags);
 
 	load();
  	return true;
@@ -122,11 +121,9 @@ NotifyPage::save(QString &errmsg)
 void NotifyPage::load()
 {
 	/* extract from rsNotify the flags */
-        RshareSettings settings;
-
-        uint notifyflags = settings.getNotifyFlags();
-        uint newsflags = settings.getNewsFeedFlags();
-        uint chatflags   = settings.getChatFlags();
+        uint notifyflags = Settings->getNotifyFlags();
+        uint newsflags = Settings->getNewsFeedFlags();
+        uint chatflags = Settings->getChatFlags();
 
 	ui.popup_Connect->setChecked(notifyflags & RS_POPUP_CONNECT);
 	ui.popup_NewMsg->setChecked(notifyflags & RS_POPUP_MSG);

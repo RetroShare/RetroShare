@@ -55,14 +55,13 @@ GeneralPage::~GeneralPage()
 bool
 GeneralPage::save(QString &errmsg)
 {
-  RshareSettings settings;
-  settings.setValue(QString::fromUtf8("StartMinimized"), startMinimized());
+  Settings->setValue(QString::fromUtf8("StartMinimized"), startMinimized());
 
-  settings.setValue(QString::fromUtf8("doQuit"), quit());
+  Settings->setValue(QString::fromUtf8("doQuit"), quit());
   
-  settings.setValue(QString::fromUtf8("ClosetoTray"), closetoTray());
+  Settings->setValue(QString::fromUtf8("ClosetoTray"), closetoTray());
   
-  settings.setRunRetroshareOnBoot(
+  Settings->setRunRetroshareOnBoot(
   ui.chkRunRetroshareAtSystemStartup->isChecked());
 
   return true;
@@ -72,14 +71,13 @@ GeneralPage::save(QString &errmsg)
 void
 GeneralPage::load()
 {
-  RshareSettings settings;
-  ui.chkRunRetroshareAtSystemStartup->setChecked(settings.runRetroshareOnBoot());
+  ui.chkRunRetroshareAtSystemStartup->setChecked(Settings->runRetroshareOnBoot());
 
-  ui.checkStartMinimized->setChecked(settings.value(QString::fromUtf8("StartMinimized"), false).toBool());
+  ui.checkStartMinimized->setChecked(Settings->value(QString::fromUtf8("StartMinimized"), false).toBool());
 
-  ui.checkQuit->setChecked(settings.value(QString::fromUtf8("doQuit"), false).toBool());
+  ui.checkQuit->setChecked(Settings->value(QString::fromUtf8("doQuit"), false).toBool());
   
-  ui.checkClosetoTray->setChecked(settings.value(QString::fromUtf8("ClosetoTray"), false).toBool());
+  ui.checkClosetoTray->setChecked(Settings->value(QString::fromUtf8("ClosetoTray"), false).toBool());
 
 
 }
@@ -104,8 +102,7 @@ bool GeneralPage::closetoTray() const {
 void
 GeneralPage::toggleShowOnStartup(bool checked)
 {
-  RshareSettings settings;
-  settings.setShowMainWindowAtStart(checked);
+  Settings->setShowMainWindowAtStart(checked);
 }
 
 void GeneralPage::setAutoLogin(){

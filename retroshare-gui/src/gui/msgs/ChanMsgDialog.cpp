@@ -48,8 +48,7 @@ ChanMsgDialog::ChanMsgDialog(bool msg, QWidget *parent, Qt::WFlags flags)
     setupViewActions();
     setupInsertActions();
   
-    RshareSettings config;
-    config.loadWidgetInformation(this);
+    Settings->loadWidgetInformation(this);
 
     setAttribute ( Qt::WA_DeleteOnClose, true );
    
@@ -227,8 +226,7 @@ void ChanMsgDialog::closeEvent (QCloseEvent * event)
 		event->ignore();
 		hide();
     
-		RshareSettings config;
-		config.saveWidgetInformation(this);
+		Settings->saveWidgetInformation(this);
     }
 #endif
 
