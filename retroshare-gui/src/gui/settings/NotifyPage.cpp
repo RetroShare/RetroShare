@@ -146,7 +146,6 @@ void NotifyPage::load()
 
 	/* disable ones that don't work yet */
 	ui.notify_Chat->setEnabled(false);
-	ui.notify_Blogs->setEnabled(false);
 	ui.notify_Downloads->setEnabled(false);
 	ui.systray_GroupChat->setEnabled(false);
 	//ui.popup_NewChat->setEnabled(false);

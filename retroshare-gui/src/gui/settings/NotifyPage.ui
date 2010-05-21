@@ -538,13 +538,6 @@
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="notify_Chat">
-            <property name="text">
-             <string>Chat</string>
-            </property>
-           </widget>
-          </item>
-          <item>
            <widget class="QCheckBox" name="notify_Blogs">
             <property name="text">
              <string>Blogs</string>
@@ -555,6 +548,13 @@
            <widget class="QCheckBox" name="notify_Messages">
             <property name="text">
              <string>Messages</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="notify_Chat">
+            <property name="text">
+             <string>Chat</string>
             </property>
            </widget>
           </item>
