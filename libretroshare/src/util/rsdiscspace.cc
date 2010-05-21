@@ -29,19 +29,65 @@
 #include <rsiface/rsinit.h>
 #include "rsdiscspace.h"
 #include <util/rsthreads.h>
+#ifndef WIN32
 #include <sys/statvfs.h>
+#endif
 
 #define DELAY_BETWEEN_CHECKS 2 
  
 /*
  * #define DEBUG_RSDISCSPACE 
  */
+#define DEBUG_RSDISCSPACE 
 
 time_t 	RsDiscSpace::_last_check[3] 	= { 0,0,0 } ;
 uint32_t RsDiscSpace::_size_limit_mb 	= 100 ;
 uint32_t RsDiscSpace::_current_size[3] = { 10000,10000,10000 } ;
 bool		RsDiscSpace::_last_res[3] = { true,true,true };
 RsMutex 	RsDiscSpace::_mtx ;
+
+bool RsDiscSpace::crossSystemDiskStats(const char *file, uint32_t& free_blocks, uint32_t& block_size)
+{
+#if defined(WIN32) || defined(MINGW) || defined(__CYGWIN__)
+
+	DWORD dwFreeClusters;
+	DWORD dwBytesPerSector;
+	DWORD dwSectorPerCluster;
+	DWORD dwTotalClusters;
+
+#ifdef WIN_CROSS_UBUNTU
+	wchar_t szDrive[4];
+	szDrive[0] = file[0] ;
+	szDrive[1] = file[1] ;
+	szDrive[2] = file[2] ;
+#else
+	char szDrive[4];
+
+	memcpy (szDrive, file, 3);
+#endif
+	szDrive[3] = 0;
+
+	if (!GetDiskFreeSpace (szDrive, &dwSectorPerCluster, &dwBytesPerSector, &dwFreeClusters, &dwTotalClusters))
+	{
+		std::cerr << "Size estimate failed for drive " << szDrive << std::endl ;
+		return false;
+	}
+	
+	free_blocks = dwFreeClusters ;
+	block_size = dwSectorPerCluster * dwBytesPerSector ;
+#else
+	struct statvfs buf;
+
+	if (0 != statvfs (file, &buf))
+	{
+		std::cerr << "Size estimate failed for file " << file << std::endl ;
+		return false;
+	}
+	free_blocks = buf.f_bavail;
+	block_size = buf.f_bsize ;
+#endif
+	return true ;
+}
 
 bool RsDiscSpace::checkForDiscSpace(RsDiscSpace::DiscLocation loc)
 {
@@ -51,34 +97,34 @@ bool RsDiscSpace::checkForDiscSpace(RsDiscSpace::DiscLocation loc)
 
 	if(_last_check[loc]+DELAY_BETWEEN_CHECKS < now)
 	{
-		struct statvfs v ;
-		int res = 1;
+		uint32_t free_blocks,block_size ;
+		int rs = false;
 
 #ifdef DEBUG_RSDISCSPACE
 		std::cerr << "Size determination:" << std::endl ;
 #endif
 		switch(loc)
 		{
-			case RS_DOWNLOAD_DIRECTORY: 	res = statvfs(rsFiles->getDownloadDirectory().c_str(),&v) ;
+			case RS_DOWNLOAD_DIRECTORY: 	rs = crossSystemDiskStats(rsFiles->getDownloadDirectory().c_str(),free_blocks,block_size) ;
 #ifdef DEBUG_RSDISCSPACE
 													std::cerr << "  path = " << rsFiles->getDownloadDirectory() << std::endl ;
 #endif
 													break ;
 
-			case RS_PARTIALS_DIRECTORY: 	res = statvfs(rsFiles->getPartialsDirectory().c_str(),&v) ;
+			case RS_PARTIALS_DIRECTORY: 	rs = crossSystemDiskStats(rsFiles->getPartialsDirectory().c_str(),free_blocks,block_size) ;
 #ifdef DEBUG_RSDISCSPACE
 													std::cerr << "  path = " << rsFiles->getPartialsDirectory() << std::endl ;
 #endif
 													break ;
 
-			case RS_CONFIG_DIRECTORY: 		res = statvfs(RsInit::RsConfigDirectory().c_str(),&v) ;
+			case RS_CONFIG_DIRECTORY: 		rs = crossSystemDiskStats(RsInit::RsConfigDirectory().c_str(),free_blocks,block_size) ;
 #ifdef DEBUG_RSDISCSPACE
 													std::cerr << "  path = " << RsInit::RsConfigDirectory() << std::endl ;
 #endif
 													break ;
 		}
 
-		if(res)
+		if(!rs)
 		{
 			std::cerr << "Determination of free disc space failed ! Be careful !" << std::endl ;
 			return true ;
@@ -87,12 +133,11 @@ bool RsDiscSpace::checkForDiscSpace(RsDiscSpace::DiscLocation loc)
 
 		// Now compute the size in megabytes
 		//
-		_current_size[loc] = v.f_bavail * v.f_bsize / (1024*1024) ; // on purpose integer division 
+		_current_size[loc] = block_size * free_blocks / (1024*1024) ; // on purpose integer division 
 
-		bool new_result = (_current_size[loc] > _size_limit_mb) ;
 #ifdef DEBUG_RSDISCSPACE
-		std::cerr << "  f_bavail = " << v.f_bavail << std::endl ;
-		std::cerr << "  f_bsize  = " << v.f_bsize  << std::endl ;
+		std::cerr << "  blocks available = " << free_blocks << std::endl ;
+		std::cerr << "  blocks size      = " << block_size  << std::endl ;
 		std::cerr << "  free MBs = " << _current_size[loc] << std::endl ;
 #endif
 	}
