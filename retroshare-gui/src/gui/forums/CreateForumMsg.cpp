@@ -371,27 +371,14 @@ void CreateForumMsg::fileHashingFinished(AttachFileItem* file) {
 	std::string fileSize = *(&fileSizeChar);
 
 	std::string mesgString = "<a href='retroshare://file|" + (file->FileName()) + "|" + fileSize + "|" + (file->FileHash()) + "'>" 
-	+ "retroshare://file|" + (file->FileName()) + "|" + fileSize +  "|" + (file->FileHash())  + "</a>";
+	+ "retroshare://file|" + (file->FileName()) + "|" + fileSize +  "|" + (file->FileHash())  + "</a>" + "<br>";
 #ifdef CHAT_DEBUG
 	    std::cerr << "CreateForumMsg::anchorClicked mesgString : " << mesgString << std::endl;
 #endif
 
-	const char * messageString = mesgString.c_str ();
-
-	//convert char massageString to w_char
-	wchar_t* message;
-	int requiredSize = mbstowcs(NULL, messageString, 0); // C4996
-	/* Add one to leave room for the NULL terminator */
-	message = (wchar_t *)malloc( (requiredSize + 1) * sizeof( wchar_t ));
-	if (! message) {
-	    std::cerr << ("Memory allocation failure.\n");
-	}
-	int size = mbstowcs( message, messageString, requiredSize + 1); // C4996
-	if (size == (size_t) (-1)) {
-	   printf("Couldn't convert string--invalid multibyte character.\n");
-	}
+  ui.forumMessage->textCursor().insertHtml(QString::fromStdString(mesgString));
   	
-	ui.forumMessage->setHtml(QString::fromStdWString(message));
+	ui.forumMessage->setFocus( Qt::OtherFocusReason );
 
 }
 
