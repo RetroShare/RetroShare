@@ -233,6 +233,7 @@ HEADERS +=  rshare.h \
             gui/settings/NetworkPage.h \
             gui/settings/NotifyPage.h \
             gui/settings/CryptoPage.h \
+            gui/settings/MessagePage.h \
             gui/settings/AppearancePage.h \
             gui/settings/FileAssociationsPage.h \
             gui/settings/SoundPage.h \
@@ -330,6 +331,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/settings/NetworkPage.ui \
             gui/settings/NotifyPage.ui \
             gui/settings/CryptoPage.ui \
+            gui/settings/MessagePage.ui \
             gui/settings/AppearancePage.ui \
             gui/settings/TransferPage.ui \
             gui/settings/SoundPage.ui \
@@ -444,6 +446,7 @@ SOURCES +=  main.cpp \
             gui/settings/NetworkPage.cpp \ 
             gui/settings/NotifyPage.cpp \
             gui/settings/CryptoPage.cpp \
+            gui/settings/MessagePage.cpp \
             gui/settings/AppearancePage.cpp \
             gui/settings/FileAssociationsPage.cpp \
             gui/settings/SoundPage.cpp \

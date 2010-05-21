@@ -30,6 +30,7 @@
 #include "SoundPage.h"
 #include "TransferPage.h"
 #include "ChatPage.h"
+#include "MessagePage.h"
 
 #define IMAGE_GENERAL       ":/images/kcmsystem24.png"
 
@@ -105,12 +106,10 @@ RSettingsWin::initStackedWidget()
     stackedWidget->addWidget(new DirectoriesPage());
     stackedWidget->addWidget(new NotifyPage());
     stackedWidget->addWidget(new CryptoPage());
+    stackedWidget->addWidget(new MessagePage());
     stackedWidget->addWidget(new ChatPage());
     stackedWidget->addWidget(new AppearancePage());
-    //  #ifndef RS_RELEASE_VERSION
-    // stackedWidget->addWidget(new FileAssociationsPage() );
     stackedWidget->addWidget(new SoundPage() );
-    // #endif
 
     loadSettings();	/* load saved settings */
 
@@ -148,6 +147,10 @@ RSettingsWin::setNewPage(int page)
             text = tr("Security");
 	    pageicon->setPixmap(QPixmap(":/images/encrypted32.png"));
             break;
+        case Message:
+            text = tr("Message");
+	    pageicon->setPixmap(QPixmap(":/images/evolution.png"));
+            break;      
         case Chat:
             text = tr("Chat");
 	    pageicon->setPixmap(QPixmap(":/images/chat_24.png"));

@@ -133,6 +133,15 @@
      </item>
      <item>
       <property name="text">
+       <string>Message</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../images.qrc">
+        <normaloff>:/images/evolution.png</normaloff>:/images/evolution.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
        <string>Chat</string>
       </property>
       <property name="icon">
