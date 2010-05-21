@@ -297,6 +297,7 @@ HEADERS += dbase/cachestrapper.h \
            tcponudp/udpsorter.h \
            upnp/upnphandler.h \
            util/folderiterator.h \
+           util/rsdiscspace.h \
 	   util/rsdebug.h \
            util/rsdir.h \
            util/rsnet.h \
@@ -414,6 +415,7 @@ SOURCES += \
 				tcponudp/tou_net.cc \
 				tcponudp/udplayer.cc \
 				util/folderiterator.cc \
+           util/rsdiscspace.cc \
 				util/rsdebug.cc \
 				util/rsdir.cc \
 				util/rsnet.cc \

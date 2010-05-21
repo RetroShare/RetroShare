@@ -47,6 +47,12 @@ const uint32_t FT_STATE_COMPLETE 	= 0x0004 ;
 const uint32_t FT_STATE_QUEUED   	= 0x0005 ;
 const uint32_t FT_STATE_PAUSED   	= 0x0006 ;
 
+// These constants are used by RsDiscSpace
+//
+const uint32_t RS_PARTIALS_DIRECTORY = 0x0000 ;
+const uint32_t RS_DOWNLOAD_DIRECTORY = 0x0001 ;
+const uint32_t RS_CONFIG_DIRECTORY   = 0x0002 ;
+
 class TransferInfo
 {
 	public:

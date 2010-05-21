@@ -1,6 +1,7 @@
 #include "ftfilecreator.h"
 #include <errno.h>
 #include <stdio.h>
+#include <util/rsdiscspace.h>
 
 /*******
  * #define FILE_DEBUG 1
@@ -92,6 +93,9 @@ bool ftFileCreator::addFileData(uint64_t offset, uint32_t chunk_size, void *data
 #endif
 	/* dodgey checking outside of mutex...  much check again inside FileAttrs(). */
 	/* Check File is open */
+
+	if(!RsDiscSpace::checkForDiscSpace(RS_PARTIALS_DIRECTORY))
+		return false ;
 
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 

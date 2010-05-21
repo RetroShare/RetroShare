@@ -138,6 +138,7 @@ public slots:
     void updateHashingInfo(const QString&) ;
     void displayErrorMessage(int,int,const QString&) ;
     void postModDirectories(bool update_local);
+	 void displayDiskSpaceWarning(int loc,int size_limit_mb) ;
 
 protected:
     /** Default Constructor */

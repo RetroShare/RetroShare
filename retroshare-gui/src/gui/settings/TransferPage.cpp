@@ -45,8 +45,11 @@ TransferPage::TransferPage(QWidget * parent, Qt::WFlags flags)
 	else
 		ui._defaultStrategy_CB->setCurrentIndex(1) ;
 
+	ui._diskSpaceLimit_SB->setValue(rsFiles->freeDiskSpaceLimit()) ;
+
 	QObject::connect(ui._queueSize_SB,SIGNAL(valueChanged(int)),this,SLOT(updateQueueSize(int))) ;
 	QObject::connect(ui._defaultStrategy_CB,SIGNAL(activated(int)),this,SLOT(updateDefaultStrategy(int))) ;
+	QObject::connect(ui._diskSpaceLimit_SB,SIGNAL(valueChanged(int)),this,SLOT(updateDiskSizeLimit(int))) ;
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -66,6 +69,11 @@ void TransferPage::updateDefaultStrategy(int i)
 
 		default: ;
 	}
+}
+
+void TransferPage::updateDiskSizeLimit(int s)
+{
+	rsFiles->setFreeDiskSpaceLimit(s) ;
 }
 
 void TransferPage::updateQueueSize(int s)

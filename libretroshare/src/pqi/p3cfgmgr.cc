@@ -31,6 +31,7 @@
 #include "pqi/pqistore.h"
 #include "pqi/pqinotify.h"
 #include <errno.h>
+#include <util/rsdiscspace.h>
 
 #include "serialiser/rsconfigitems.h"
 
@@ -86,6 +87,9 @@ void	p3ConfigMgr::tick()
 
 void	p3ConfigMgr::saveConfiguration()
 {
+	if(!RsDiscSpace::checkForDiscSpace(RS_CONFIG_DIRECTORY))
+		return ;
+
 	RsStackMutex stack(cfgMtx); /***** LOCK STACK MUTEX ****/
 
 #ifdef CONFIG_DEBUG

@@ -115,6 +115,8 @@ class RsFiles
 		virtual bool setChunkStrategy(const std::string& hash,FileChunksInfo::ChunkStrategy) = 0;
 		virtual void setDefaultChunkStrategy(FileChunksInfo::ChunkStrategy) = 0;
 		virtual FileChunksInfo::ChunkStrategy defaultChunkStrategy() = 0;
+		virtual uint32_t freeDiskSpaceLimit() const =0;
+		virtual void setFreeDiskSpaceLimit(uint32_t size_in_mb) =0;
 		virtual bool FileControl(std::string hash, uint32_t flags) = 0;
 		virtual bool FileClearCompleted() = 0;
 

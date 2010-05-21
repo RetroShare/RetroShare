@@ -191,10 +191,10 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(messagesDialog = new MessagesDialog(ui.stackPages),
                       messageAction = createPageAction(QIcon(IMAGE_MESSAGES), tr("Messages"), grp));   
 
-    #ifndef RS_RELEASE_VERSION
+#ifndef RS_RELEASE_VERSION
     ui.stackPages->add(channelFeed = new ChannelFeed(ui.stackPages),
                       createPageAction(QIcon(IMAGE_CHANNELS), tr("Channels"), grp));
-    #endif
+#endif
 
     #ifdef BLOGS
     ui.stackPages->add(blogsFeed = new BlogsDialog(ui.stackPages),
@@ -290,6 +290,28 @@ MainWindow::~MainWindow()
 #ifdef UNFINISHED
     delete applicationWindow;
 #endif    
+}
+
+void MainWindow::displayDiskSpaceWarning(int loc,int size_limit_mb)
+{
+	QString locString ;
+	switch(loc)
+	{
+		case RS_PARTIALS_DIRECTORY: 	locString = "Partials" ;
+												break ;
+
+		case RS_CONFIG_DIRECTORY: 		locString = "Config" ;
+												break ;
+
+		case RS_DOWNLOAD_DIRECTORY: 	locString = "Download" ;
+												break ;
+
+		default:
+												std::cerr << "Error: " << __PRETTY_FUNCTION__ << " was called with an unknown parameter loc=" << loc << std::endl ;
+												return ;
+	}
+	QMessageBox::critical(NULL,tr("Low disk space warning"),
+				tr("The disk space in your ")+locString +tr(" directory is running low (current limit is ")+QString::number(size_limit_mb)+tr("MB). \n\n RetroShare will now safely suspend any disk access to this directory. \n\n Please make some free space and click Ok.")) ;
 }
 
 /** Creates a tray icon with a context menu and adds it to the system

@@ -127,6 +127,8 @@ virtual bool FileClearCompleted();
 virtual bool setChunkStrategy(const std::string& hash,FileChunksInfo::ChunkStrategy s) ;
 virtual void setDefaultChunkStrategy(FileChunksInfo::ChunkStrategy) ;
 virtual FileChunksInfo::ChunkStrategy defaultChunkStrategy() ;
+virtual uint32_t freeDiskSpaceLimit() const ;
+virtual void setFreeDiskSpaceLimit(uint32_t size_in_mb) ;
 
 
 /***

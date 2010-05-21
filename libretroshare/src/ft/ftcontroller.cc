@@ -38,6 +38,7 @@
 #ifdef WINDOWS_SYS
 #include "util/rswin.h"
 #endif
+#include "util/rsdiscspace.h"
 
 #include "ft/ftcontroller.h"
 
@@ -56,6 +57,7 @@
 
 #include "serialiser/rsconfigitems.h"
 #include <stdio.h>
+#include <sstream>
 
 /******
  * #define CONTROL_DEBUG 1
@@ -1812,6 +1814,7 @@ const std::string download_dir_ss("DOWN_DIR");
 const std::string partial_dir_ss("PART_DIR");
 const std::string share_dwl_dir("SHARE_DWL_DIR");
 const std::string default_chunk_strategy_ss("DEFAULT_CHUNK_STRATEGY");
+const std::string free_space_limit_ss("FREE_SPACE_LIMIT");
 
 
 	/* p3Config Interface */
@@ -1844,6 +1847,11 @@ std::list<RsItem *> ftController::saveList(bool &cleanup)
 	configMap[partial_dir_ss] = getPartialsDirectory();
 	configMap[share_dwl_dir] = mShareDownloadDir ? "YES" : "NO";
 	configMap[default_chunk_strategy_ss] = (mDefaultChunkStrategy==FileChunksInfo::CHUNK_STRATEGY_STREAMING) ? "STREAMING" : "RANDOM";
+
+	std::ostringstream s ;
+	s << RsDiscSpace::freeSpaceLimit();
+
+	configMap[free_space_limit_ss] = s.str() ;
 
 	RsConfigKeyValueSet *rskv = new RsConfigKeyValueSet();
 
@@ -2043,7 +2051,31 @@ bool  ftController::loadConfigMap(std::map<std::string, std::string> &configMap)
 			std::cerr << "**** ERROR ***: Unknown value for default chunk strategy in keymap." << std::endl ;
 	}
 
+	if (configMap.end() != (mit = configMap.find(free_space_limit_ss)))
+	{
+		std::istringstream in(mit->second) ;
+		uint32_t size ;
+
+		in >> size ;
+
+		std::cerr << "have read a size limit of " << size <<" MB" << std::endl ;
+
+		RsDiscSpace::setFreeSpaceLimit(size) ;
+	}
 	return true;
+}
+
+void ftController::setFreeDiskSpaceLimit(uint32_t size_in_mb) 
+{
+	RsDiscSpace::setFreeSpaceLimit(size_in_mb) ;
+
+	IndicateConfigChanged() ;
+}
+
+
+uint32_t ftController::freeDiskSpaceLimit() const
+{
+	return RsDiscSpace::freeSpaceLimit() ;
 }
 
 FileChunksInfo::ChunkStrategy ftController::defaultChunkStrategy()

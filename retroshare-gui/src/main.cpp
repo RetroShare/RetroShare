@@ -136,6 +136,7 @@ int main(int argc, char *argv[])
 	std::cerr << "connecting signals and slots" << std::endl ;
 	QObject::connect(notify,SIGNAL(gotTurtleSearchResult(qulonglong,FileDetail)),w->searchDialog	,SLOT(updateFiles(qulonglong,FileDetail))) ;
 	QObject::connect(notify,SIGNAL(hashingInfoChanged(const QString&)),w                   		,SLOT(updateHashingInfo(const QString&))) ;
+	QObject::connect(notify,SIGNAL(diskFull(int,int))						,w                   		,SLOT(displayDiskSpaceWarning(int,int))) ;
 	QObject::connect(notify,SIGNAL(filesPreModChanged(bool))          ,w->sharedfilesDialog		,SLOT(preModDirectories(bool)          )) ;
 	QObject::connect(notify,SIGNAL(filesPostModChanged(bool))         ,w->sharedfilesDialog		,SLOT(postModDirectories(bool)         )) ;
 	QObject::connect(notify,SIGNAL(filesPostModChanged(bool))         ,w                            ,SLOT(postModDirectories(bool)         )) ;

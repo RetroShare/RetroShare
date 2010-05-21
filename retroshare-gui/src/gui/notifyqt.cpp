@@ -51,6 +51,13 @@ std::string NotifyQt::askForPassword(const std::string& key_details,bool prev_is
 	return res ;
 }
 
+void NotifyQt::notifyDiskFull(uint32_t loc,uint32_t size_in_mb)
+{
+	std::cerr << "Notifyqt:: notified that disk is full" << std::endl ;
+
+	emit diskFull(loc,size_in_mb) ;
+}
+
 void NotifyQt::notifyOwnStatusMessageChanged()
 {
         #ifdef NOTIFY_DEBUG
