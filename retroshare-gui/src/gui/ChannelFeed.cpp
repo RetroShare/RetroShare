@@ -685,6 +685,7 @@ void ChannelFeed::updateChannelMsgs()
 		subscribeButton->setEnabled(false);
 		unsubscribeButton->setEnabled(false);
 		nameLabel->setText("No Channel Selected");
+		iconLabel->setPixmap(QPixmap(":/images/channels.png"));
 		iconLabel->setEnabled(false);
 		return;
 	}
@@ -694,9 +695,11 @@ void ChannelFeed::updateChannelMsgs()
 		QPixmap chanImage;
 		chanImage.loadFromData(ci.pngChanImage, ci.pngImageLen, "PNG");
 		iconLabel->setPixmap(chanImage);
+		iconLabel->setStyleSheet("QLabel{border: 3px solid white;}");
 	}else{
 		QPixmap defaulImage(CHAN_DEFAULT_IMAGE);
 		iconLabel->setPixmap(defaulImage);
+		iconLabel->setStyleSheet("QLabel{border: 2px solid white;border-radius: 10px;}");
 	}
 	iconLabel->setEnabled(true);
 
