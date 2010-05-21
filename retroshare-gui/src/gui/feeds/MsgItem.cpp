@@ -28,6 +28,8 @@
 #include "rsiface/rsmsgs.h"
 #include "rsiface/rspeers.h"
 
+#include "gui/msgs/ChanMsgDialog.h"
+
 #include <iostream>
 
 /****
@@ -246,8 +248,29 @@ void MsgItem::replyMsg()
 #endif
 	if (mParent)
 	{
-		mParent->openMsg(FEEDHOLDER_MSG_MESSAGE, mPeerId, mMsgId);
-        }
+		//mParent->openMsg(FEEDHOLDER_MSG_MESSAGE, mPeerId, mMsgId);
+		
+		MessageInfo msgInfo;
+    if (!rsMsgs -> getMessage(mMsgId, msgInfo))
+		return ;
+
+    ChanMsgDialog *nMsgDialog = new ChanMsgDialog(true);
+    nMsgDialog->newMsg();
+    nMsgDialog->insertTitleText( (QString("Re: ") + QString::fromStdWString(msgInfo.title)).toStdString()) ;
+    nMsgDialog->setWindowTitle(tr("Re: ") + QString::fromStdWString(msgInfo.title) ) ;
+
+    QTextDocument doc ;
+    doc.setHtml(QString::fromStdWString(msgInfo.msg)) ;
+    std::string cited_text(doc.toPlainText().toStdString()) ;
+
+    nMsgDialog->insertPastedText(cited_text) ;
+    nMsgDialog->addRecipient( msgInfo.srcId ) ;
+    nMsgDialog->show();
+    nMsgDialog->activateWindow();
+
+    /* window will destroy itself! */
+   
+  }
 }
 
 

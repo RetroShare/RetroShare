@@ -24,7 +24,10 @@
 #include "FeedHolder.h"
 #include "../RsAutoUpdatePage.h"
 
+#include "rsiface/rsmsgs.h"
 #include "rsiface/rspeers.h"
+
+#include "gui/msgs/ChanMsgDialog.h"
 
 #include <iostream>
 #include <sstream>
@@ -282,7 +285,16 @@ void PeerItem::sendMsg()
 
 	if (mParent)
 	{
-		mParent->openMsg(FEEDHOLDER_MSG_MESSAGE, mPeerId, "");
+		//mParent->openMsg(FEEDHOLDER_MSG_MESSAGE, mPeerId, "");
+
+    ChanMsgDialog *nMsgDialog = new ChanMsgDialog(true);
+    nMsgDialog->newMsg();
+
+    nMsgDialog->addRecipient( mPeerId ) ;
+    nMsgDialog->show();
+    nMsgDialog->activateWindow();
+
+    /* window will destroy itself! */
 	}
 }
 
