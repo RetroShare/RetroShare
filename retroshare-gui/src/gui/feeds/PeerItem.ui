@@ -87,6 +87,16 @@ border-radius: 10px}</string>
          </widget>
         </item>
         <item>
+         <widget class="QLabel" name="peernameLabel">
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="text">
+           <string>Peer Name</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <spacer>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>

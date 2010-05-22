@@ -98,8 +98,15 @@ void PeerItem::updateItemStatic()
 				break;
 		}
 
-		title += QString::fromStdString(details.name);
 		titleLabel->setText(title);
+		
+		/* set textcolor for peername  */
+    QString nameStr("<span style=\"font-size:14pt; font-weight:500;"
+                               "color:white;\">%1</span>");
+	
+    /* set Blog name */
+    QString peername =  QString::fromStdString(details.name);
+    peernameLabel->setText(nameStr.arg(peername));
 
 		/* expanded Info */
 		nameLabel->setText(QString::fromStdString(details.name));
