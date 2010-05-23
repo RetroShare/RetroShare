@@ -43,7 +43,6 @@
 
 #include "gui/connect/ConnectFriendWizard.h"
 
-#include "MessagesPopupDialog.h"
 #include "ShareManager.h"
 
 #include <iostream>

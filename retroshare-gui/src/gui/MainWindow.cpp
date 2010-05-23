@@ -451,13 +451,14 @@ void MainWindow::addAction(QAction *action, const char *slot)
 }
 
 /** Shows the MainWindow with focus set to the given page. */
-void MainWindow::showWindow(Page page)
+/*static*/ void MainWindow::showWindow(Page page)
 {
-    /* Show the dialog. */
-    //show();
+    if (_instance == NULL) {
+        return;
+    }
 
     /* Show the dialog. */
-    RWindow::showWindow();
+    _instance->show();
     /* Set the focus to the specified page. */
     activatePage (page);
 }

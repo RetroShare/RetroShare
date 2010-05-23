@@ -95,6 +95,11 @@ public:
     /** Destructor. */
     ~MainWindow();
 
+    /** Shows the MainWindow dialog with focus set to the given page. */
+    static void showWindow(Page page);
+    /** Set focus to the given page. */
+    static void activatePage (Page page);
+
     /* A Bit of a Hack... but public variables for
     * the dialogs, so we can add them to the
     * Notify Class...
@@ -128,13 +133,6 @@ public:
 
 
 public slots:
-    /** Called when this dialog is to be displayed */
-    //void show();
-    /** Shows the config dialog with focus set to the given page. */
-    void showWindow(Page page);
-    /** Set focus to the given page. */
-    static void activatePage (Page page);
-
     void updateHashingInfo(const QString&) ;
     void displayErrorMessage(int,int,const QString&) ;
     void postModDirectories(bool update_local);

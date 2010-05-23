@@ -18,7 +18,7 @@
  */
 
 #include "MessageToaster.h"
-#include "gui/MessagesPopupDialog.h"
+#include "../MainWindow.h"
 
 MessageToaster::MessageToaster( QWidget * parent, Qt::WFlags f)
 		: QWidget(parent, f)
@@ -104,10 +104,7 @@ void MessageToaster::closeClicked()
 
 void MessageToaster::openmessageClicked()
 {
-    MessagesPopupDialog *msgdialog = new MessagesPopupDialog();
-    msgdialog->show();
-
-    /* window will destroy itself! */
+    MainWindow::showWindow (MainWindow::Messages);
 }
 
 void MessageToaster::setMessage(const QString & message) 

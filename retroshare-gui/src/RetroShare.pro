@@ -251,7 +251,6 @@ HEADERS +=  rshare.h \
             gui/common/rwindow.h \
             gui/common/html.h \
             gui/MessagesDialog.h \
-            gui/MessagesPopupDialog.h \
             gui/help/browser/helpbrowser.h \
             gui/help/browser/helptextbrowser.h \
             gui/statusbar/peerstatus.h \
@@ -307,7 +306,6 @@ FORMS +=    gui/StartDialog.ui \
             gui/ShareManager.ui \
             gui/ShareDialog.ui \
             gui/MessagesDialog.ui \
-            gui/MessagesPopupDialog.ui \
             gui/help/browser/helpbrowser.ui \
             gui/HelpDialog.ui \
             gui/InfoDialog.ui \
@@ -396,7 +394,6 @@ SOURCES +=  main.cpp \
             gui/SoundManager.cpp \
             gui/MessagesDialog.cpp \
             gui/FileTransferInfoWidget.cpp \
-            gui/MessagesPopupDialog.cpp \
             gui/im_history/IMHistoryKeeper.cpp        \
             gui/im_history/IMHistoryReader.cpp        \
             gui/im_history/IMHistoryItem.cpp          \
