@@ -195,3 +195,22 @@ bool p3Notify::AddFeedItem(uint32_t type, std::string id1, std::string id2, std:
 	return true;
 }
 
+
+bool p3Notify::ClearFeedItems(uint32_t type)
+{
+	RsStackMutex stack(noteMtx); /************* LOCK MUTEX ************/
+
+	std::list<RsFeedItem>::iterator it;
+	for(it = pendingNewsFeed.begin(); it != pendingNewsFeed.end(); )
+	{
+		if (it->mType == type)
+		{
+			it = pendingNewsFeed.erase(it);
+		}
+		else
+		{
+			it++;
+		}
+	}
+	return true;
+}

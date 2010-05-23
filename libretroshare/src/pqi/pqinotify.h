@@ -44,7 +44,7 @@ virtual bool AddPopupMessage(uint32_t ptype, std::string name, std::string msg) 
 virtual bool AddSysMessage(uint32_t sysid, uint32_t type, std::string title, std::string msg) = 0;
 virtual bool AddLogMessage(uint32_t sysid, uint32_t type, std::string title, std::string msg) = 0;
 virtual bool AddFeedItem(uint32_t type, std::string id1, std::string id2, std::string id3) = 0;
-
+virtual bool ClearFeedItems(uint32_t type) = 0;
 };
 
 extern pqiNotify *getPqiNotify();
