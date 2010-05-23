@@ -990,7 +990,7 @@ void MessagesDialog::insertMessages()
                         for (pit = msgInfo.msgto.begin(); pit != msgInfo.msgto.end(); pit++)
                         {
                             if (text.isEmpty() == false) {
-                                text += ";";
+                                text += ", ";
                             }
 
                             QString sPeer = QString::fromStdString(rsPeers->getPeerName(*pit));
