@@ -169,7 +169,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
     // Set the QStandardItemModel
     MessagesModel = new QStandardItemModel(0, COLUMN_COUNT);
-    MessagesModel->setHeaderData(COLUMN_ATTACHEMENTS,  Qt::Horizontal, tr("#"));
+    MessagesModel->setHeaderData(COLUMN_ATTACHEMENTS,  Qt::Horizontal, QIcon(":/images/attachment.png"), Qt::DecorationRole);
     MessagesModel->setHeaderData(COLUMN_SUBJECT,       Qt::Horizontal, tr("Subject"));
     MessagesModel->setHeaderData(COLUMN_READ,          Qt::Horizontal, QIcon(":/images/message-mail-state-header.png"), Qt::DecorationRole);
     MessagesModel->setHeaderData(COLUMN_FROM,          Qt::Horizontal, tr("From"));
@@ -253,6 +253,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     processSettings(true);
 
     /* Set header sizes for the fixed columns and resize modes, must be set after processSettings */
+    msgwheader->setResizeMode (COLUMN_ATTACHEMENTS, QHeaderView::Fixed);
     msgwheader->setResizeMode (COLUMN_DATE, QHeaderView::Interactive);
     msgwheader->setResizeMode (COLUMN_READ, QHeaderView::Fixed);
     msgwheader->resizeSection (COLUMN_READ, 24);
