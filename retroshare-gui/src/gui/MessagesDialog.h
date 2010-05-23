@@ -33,6 +33,8 @@
 #include "mainpage.h"
 #include "ui_MessagesDialog.h"
 
+class RSettings;
+
 class MessagesDialog : public MainPage 
 {
   Q_OBJECT
@@ -43,7 +45,6 @@ public:
   /** Default Destructor */
   ~MessagesDialog();
 
-  void insertMsgTxtAndFiles(QModelIndex index = QModelIndex());
 // replaced by shortcut
 //  virtual void keyPressEvent(QKeyEvent *) ;
  void updateMessageSummaryList();
@@ -77,6 +78,9 @@ private slots:
   
   void removemessage();
   
+  void markAsRead();
+  void markAsUnread();
+
   void anchorClicked (const QUrl &);
   
   void getcurrentrecommended();
@@ -100,12 +104,15 @@ private:
   class QStandardItemModel *MessagesModel;
   QSortFilterProxyModel *proxyModel;
 
+  void insertMsgTxtAndFiles(QModelIndex index = QModelIndex(), bool bSetToRead = true);
+
   bool getCurrentMsg(std::string &cid, std::string &mid);
-  void setMsgAsRead(const QModelIndex &index); 
+  void setMsgAsReadUnread(const QList<int> &Rows, bool bRead);
 
   void setCurrentFileName(const QString &fileName);
 
-  int getSelectedMsgCount ();
+  int getSelectedMsgCount (QList<int> *pRowsRead, QList<int> *pRowsUnread);
+  bool isMessageRead(int nRow);
 
   /* internal handle splitter */
   void togglefileview_internal();
@@ -118,8 +125,8 @@ private:
   std::string mCurrMsgId;
 
   QString fileName;
-  
   QFont mFont;
+  RSettings *m_pConfig;
 
   // timer and index for showing message
   QTimer *timer;

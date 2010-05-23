@@ -345,3 +345,13 @@ void RshareSettings::loadWidgetInformation(QMainWindow *widget, QToolBar *toolBa
  loadWidgetInformation(widget);
 }
 
+/* Messages */
+bool RshareSettings::getMsgSetToReadOnActivate ()
+{
+    return valueFromGroup("MessageDialog", "SetMsgToReadOnActivate", true).toBool();
+}
+
+void RshareSettings::setMsgSetToReadOnActivate (bool bValue)
+{
+    setValueToGroup("MessageDialog", "SetMsgToReadOnActivate", bValue);
+}

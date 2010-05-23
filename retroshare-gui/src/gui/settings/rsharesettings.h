@@ -126,6 +126,10 @@ public:
   //! Method overload. Restore window and toolbar information.
   void loadWidgetInformation(QMainWindow *widget, QToolBar *toolBar);
 
+  /* Messages */
+  bool getMsgSetToReadOnActivate ();
+  void setMsgSetToReadOnActivate (bool bValue);
+
 protected:
   /** Default constructor. */
   RshareSettings();

@@ -22,12 +22,13 @@
 #include "MessagePage.h"
 #include "rshare.h"
 
+#include "rsharesettings.h"
+
 MessagePage::MessagePage(QWidget * parent, Qt::WFlags flags)
     : ConfigPage(parent, flags)
 {
     ui.setupUi(this);
     setAttribute(Qt::WA_QuitOnClose, false);
-
 }
 
 MessagePage::~MessagePage()
@@ -40,18 +41,19 @@ MessagePage::closeEvent (QCloseEvent * event)
     QWidget::closeEvent(event);
 }
 
-
 /** Saves the changes on this page */
 bool
 MessagePage::save(QString &errmsg)
 {
-	return true;
+    Settings->setMsgSetToReadOnActivate(ui.setMsgToReadOnActivate->isChecked());
+
+    return true;
 }
 
 /** Loads the settings for this page */
 void
 MessagePage::load()
 {
-
+    ui.setMsgToReadOnActivate->setChecked(Settings->getMsgSetToReadOnActivate());
 }
 
