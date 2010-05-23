@@ -269,8 +269,8 @@ void ForumMsgItem::replyToPost()
 	if (mParent)
 	{
 		//mParent->openMsg(FEEDHOLDER_MSG_FORUM, mForumId, mPostId);
-	CreateForumMsg *cfm = new CreateForumMsg(mForumId, mPostId);
-	cfm->show();
+		CreateForumMsg *cfm = new CreateForumMsg(mForumId, mPostId);
+		cfm->show();
 	}
 	
 }

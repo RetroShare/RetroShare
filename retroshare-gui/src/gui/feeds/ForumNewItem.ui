@@ -158,6 +158,17 @@ border-radius: 10px}</string>
          </widget>
         </item>
         <item>
+         <widget class="QPushButton" name="postButton">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../images.qrc">
+            <normaloff>:/images/mail_new.png</normaloff>:/images/mail_new.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
          <spacer>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -211,7 +222,7 @@ border-radius: 10px}</string>
           <number>0</number>
          </property>
          <item>
-          <widget class="QGroupBox" name="">
+          <widget class="QGroupBox" name="groupBox">
            <property name="title">
             <string>Forum Description</string>
            </property>
@@ -271,6 +282,7 @@ border-radius: 10px}</string>
   </layout>
  </widget>
  <resources>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>

@@ -24,6 +24,7 @@
 #include "FeedHolder.h"
 
 #include "rsiface/rsforums.h"
+#include "gui/forums/CreateForumMsg.h"
 
 #include <iostream>
 
@@ -49,7 +50,7 @@ ForumNewItem::ForumNewItem(FeedHolder *parent, uint32_t feedId, std::string foru
   /* specific ones */
   connect( subscribeButton, SIGNAL( clicked( void ) ), this, SLOT( subscribeForum ( void ) ) );
   // To Cheeky to post on a brand new forum....
-  //connect( postButton, SIGNAL( clicked( void ) ), this, SLOT( postToForum ( void ) ) );
+  connect( postButton, SIGNAL( clicked( void ) ), this, SLOT( postToForum ( void ) ) );
 
   small();
   updateItemStatic();
@@ -79,12 +80,12 @@ void ForumNewItem::updateItemStatic()
 		if (fi.subscribeFlags & RS_DISTRIB_SUBSCRIBED)
 		{
 			subscribeButton->setEnabled(false);
-			//postButton->setEnabled(true);
+			postButton->setEnabled(true);
 		}
 		else
 		{
 			subscribeButton->setEnabled(true);
-			//postButton->setEnabled(false);
+			postButton->setEnabled(false);
 		}
 			
 
@@ -209,6 +210,8 @@ void ForumNewItem::postToForum()
 	if (mParent)
 	{
 		//mParent->openMsg(FEEDHOLDER_MSG_FORUM, mForumId, "");
+		CreateForumMsg *cfm = new CreateForumMsg(mForumId, "");
+    cfm->show();
 	}
 }
 
