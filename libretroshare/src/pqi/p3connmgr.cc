@@ -1671,7 +1671,8 @@ bool p3ConnectMgr::connectResult(std::string id, bool success, uint32_t flags, s
                     remote_peer_address.sin_addr.s_addr != 0 &&
                     !(remote_peer_address.sin_addr.s_addr == ownState.currentlocaladdr.sin_addr.s_addr) &&
                     (!isLoopbackNet(&remote_peer_address.sin_addr))
-                    ) {
+                    ) 
+					 {
                     IpAddressTimed ipLocalAddressTimed;
                     ipLocalAddressTimed.ipAddr = remote_peer_address;
                     ipLocalAddressTimed.seenTime = time(NULL);
@@ -3422,8 +3423,6 @@ bool 	p3ConnectMgr::getStunExtAddress(struct sockaddr_in &addr) {
 	return false;
 
 }
-
-#define CONN_DEBUG 1
 
 bool 	p3ConnectMgr::getExtFinderExtAddress(struct sockaddr_in &addr)    
 {
