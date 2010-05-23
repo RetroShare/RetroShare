@@ -161,7 +161,7 @@ void* doExtAddrSearch(void *p)
 	sort(res.begin(),res.end()) ; // eliminates outliers.
 
 
-	if(!inet_aton(res[res.size()/2].c_str(),&(af->_addr->sin_addr)))
+	if(!inet_aton(res[res.size()/2].c_str(),af->_addr))
 	{
 		std::cerr << "ExtAddrFinder: Could not convert " << res[res.size()/2] << " into an address." << std::endl ;
 		{
@@ -194,7 +194,7 @@ void ExtAddrFinder::start_request()
 	pthread_detach(tid); /* so memory is reclaimed in linux */
 }
 
-bool ExtAddrFinder::hasValidIP(struct sockaddr_in *addr)
+bool ExtAddrFinder::hasValidIP(struct in_addr *addr)
 {
 #ifdef EXTADDRSEARCH_DEBUG
 	std::cerr << "ExtAddrFinder: Getting ip." << std::endl ;
@@ -284,10 +284,10 @@ ExtAddrFinder::ExtAddrFinder()
 	_searching = new bool ;
 	*_searching = false ;
 
-        mFoundTS = new time_t;
-        *mFoundTS = time(NULL) - MAX_IP_STORE;
+	mFoundTS = new time_t;
+	*mFoundTS = time(NULL) - MAX_IP_STORE;
 
-	_addr = (sockaddr_in*)malloc(sizeof(sockaddr_in)) ;
+	_addr = (in_addr*)malloc(sizeof(in_addr)) ;
 
 	_ip_servers.push_back(std::string( "checkip.dyndns.org" )) ;
 	_ip_servers.push_back(std::string( "www.showmyip.com"   )) ;

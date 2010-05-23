@@ -12,7 +12,7 @@ class ExtAddrFinder
 		ExtAddrFinder() ;
 		~ExtAddrFinder() ;
 
-		bool hasValidIP(struct sockaddr_in *addr) ;
+		bool hasValidIP(struct in_addr *addr) ;
 		void getIPServersList(std::list<std::string>& ip_servers) { ip_servers = _ip_servers ; }
 
 		void start_request() ;
@@ -24,7 +24,7 @@ class ExtAddrFinder
 
 		time_t   *mFoundTS;
 		RsMutex _addrMtx ;
-		struct sockaddr_in *_addr ;
+		struct in_addr *_addr ;
 		bool *_found ;
 		bool *_searching ;
 		std::list<std::string> _ip_servers ;

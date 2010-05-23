@@ -65,10 +65,10 @@ uint64_t htonll(uint64_t x);
 void sockaddr_clear(struct sockaddr_in *addr);
 
 /* determine network type (moved from pqi/pqinetwork.cc) */
-bool isValidNet(struct in_addr *addr);
-bool isLoopbackNet(struct in_addr *addr);
-bool isPrivateNet(struct in_addr *addr);
-bool isExternalNet(struct in_addr *addr);
+bool isValidNet(const struct in_addr *addr);
+bool isLoopbackNet(const struct in_addr *addr);
+bool isPrivateNet(const struct in_addr *addr);
+bool isExternalNet(const struct in_addr *addr);
 
 /* convert addresses */
 bool getIPAddressFromString (const char *addr_str, struct in_addr *addr);

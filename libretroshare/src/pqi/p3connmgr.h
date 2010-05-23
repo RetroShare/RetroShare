@@ -143,17 +143,14 @@ class peerConnectState
 
         //used to store friends ip lists
 	void sortIpAddressListBySeenTime(); //Sort the ip list ordering by seen time
-	void purgeIpAddressList(); //purge old addresses to keep a small list
 	std::list<IpAddressTimed> getIpAddressList(); //return the sorted ant purged list.
-	void updateIpAddressList(IpAddressTimed ipTimed);
-	void updateIpAddressList(std::list<IpAddressTimed> ipTimedList);
+	void updateIpAddressList(const IpAddressTimed& ipTimed);
+	void updateIpAddressList(const std::list<IpAddressTimed>& ipTimedList);
 	void printIpAddressList();
 
-        static void sortIpAddressListBySeenTime(std::list<IpAddressTimed> &ipTimedList); //Sort the ip list ordering by seen time
-        static bool compare_seen_time (IpAddressTimed first, IpAddressTimed second);
-        static bool is_same_address (IpAddressTimed first, IpAddressTimed second);
+        static bool is_same_address (const IpAddressTimed& first, const IpAddressTimed& second);
         static void printIpAddressList(std::list<IpAddressTimed> ipTimedList);
-        static bool extractExtAddress(std::list<IpAddressTimed> ipAddressList, IpAddressTimed &resultAddress); //extract the last seen external address from the list
+        static bool extractExtAddress(const std::list<IpAddressTimed>& ipAddressList, IpAddressTimed &resultAddress); //extract the last seen external address from the list
 
         //used to store current ip (for config and connection management)
 	struct sockaddr_in currentlocaladdr;             /* Mandatory */
@@ -230,7 +227,7 @@ void 	setOwnNetConfig(uint32_t netMode, uint32_t visState);
 bool 	setLocalAddress(std::string id, struct sockaddr_in addr);
 bool 	setExtAddress(std::string id, struct sockaddr_in addr);
 bool    setDynDNS(std::string id, std::string dyndns);
-bool    setAddressList(std::string id, std::list<IpAddressTimed> IpAddressTimedList);
+bool    setAddressList(const std::string& id, const std::list<IpAddressTimed>& IpAddressTimedList);
 
 bool 	setNetworkMode(std::string id, uint32_t netMode);
 bool 	setVisState(std::string id, uint32_t visState);

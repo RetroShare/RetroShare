@@ -749,120 +749,143 @@ void p3ConnectMgr::netUpnpCheck()
 void p3ConnectMgr::networkConsistencyCheck()
 {
 	time_t delta;
-        #ifdef CONN_DEBUG_TICK
+#ifdef CONN_DEBUG_TICK
 	delta = time(NULL) - mNetInitTS;
-        std::cerr << "p3ConnectMgr::networkConsistencyCheck() time since last reset : " << delta << std::endl;
-        #endif
+	std::cerr << "p3ConnectMgr::networkConsistencyCheck() time since last reset : " << delta << std::endl;
+#endif
 
-        bool doNetReset = false;
+	bool doNetReset = false;
 	//if one of the flag is degrated from true to false during last tick, let's do a reset
-        #ifdef CONN_DEBUG_TICK
-		std::cerr << "p3ConnectMgr::networkConsistencyCheck() net flags : " << std::endl;
-		std::cerr << "	oldnetFlagLocalOk : " << oldnetFlagLocalOk << ". netFlagLocalOk : " << netFlagLocalOk << "." << std::endl;
-		std::cerr << "	oldnetFlagUpnpOk : " << oldnetFlagUpnpOk << ". netFlagUpnpOk : " << netFlagUpnpOk << "." << std::endl;
-		std::cerr << "	oldnetFlagDhtOk : " << oldnetFlagDhtOk << ". netFlagDhtOk : " << netFlagDhtOk << "." << std::endl;
-		std::cerr << "	oldnetFlagStunOk : " << oldnetFlagStunOk << ". netFlagStunOk : " << netFlagStunOk << "." << std::endl;
-		std::cerr << "	oldnetFlagExtraAddressCheckOk : " << oldnetFlagExtraAddressCheckOk << ". netFlagExtraAddressCheckOk : " << netFlagExtraAddressCheckOk << "." << std::endl;
-	#endif
-        if ( !netFlagLocalOk
-	    || (!netFlagUpnpOk && oldnetFlagUpnpOk)
-	    || (!netFlagDhtOk && oldnetFlagDhtOk)
-	    || (!netFlagStunOk && oldnetFlagStunOk)
-	    || (!netFlagExtraAddressCheckOk && oldnetFlagExtraAddressCheckOk)
-	    ) {
-            #ifdef CONN_DEBUG_TICK
-		    std::cerr << "p3ConnectMgr::networkConsistencyCheck() A net flag went down." << std::endl;
-	    #endif
+#ifdef CONN_DEBUG_TICK
+	std::cerr << "p3ConnectMgr::networkConsistencyCheck() net flags : " << std::endl;
+	std::cerr << "	oldnetFlagLocalOk : " << oldnetFlagLocalOk << ". netFlagLocalOk : " << netFlagLocalOk << "." << std::endl;
+	std::cerr << "	oldnetFlagUpnpOk : " << oldnetFlagUpnpOk << ". netFlagUpnpOk : " << netFlagUpnpOk << "." << std::endl;
+	std::cerr << "	oldnetFlagDhtOk : " << oldnetFlagDhtOk << ". netFlagDhtOk : " << netFlagDhtOk << "." << std::endl;
+	std::cerr << "	oldnetFlagStunOk : " << oldnetFlagStunOk << ". netFlagStunOk : " << netFlagStunOk << "." << std::endl;
+	std::cerr << "	oldnetFlagExtraAddressCheckOk : " << oldnetFlagExtraAddressCheckOk << ". netFlagExtraAddressCheckOk : " << netFlagExtraAddressCheckOk << "." << std::endl;
+#endif
+	if ( !netFlagLocalOk
+			|| (!netFlagUpnpOk && oldnetFlagUpnpOk)
+			|| (!netFlagDhtOk && oldnetFlagDhtOk)
+			|| (!netFlagStunOk && oldnetFlagStunOk)
+			|| (!netFlagExtraAddressCheckOk && oldnetFlagExtraAddressCheckOk)
+		) {
+#ifdef CONN_DEBUG_TICK
+		std::cerr << "p3ConnectMgr::networkConsistencyCheck() A net flag went down." << std::endl;
+#endif
 
-	    //don't do a normal shutdown for upnp as it might hang up.
-	    //With a 0 port it will just dereference and not attemps to communicate for shutting down upnp session.
-	    netAssistFirewallPorts(0, 0);
+		//don't do a normal shutdown for upnp as it might hang up.
+		//With a 0 port it will just dereference and not attemps to communicate for shutting down upnp session.
+		netAssistFirewallPorts(0, 0);
 
-	    doNetReset = true;
+		doNetReset = true;
 	}
 
-	connMtx.lock(); /* LOCK MUTEX */
-	//storing old flags
-	oldnetFlagLocalOk = netFlagLocalOk;
-	oldnetFlagUpnpOk = netFlagUpnpOk;
-	oldnetFlagDhtOk = netFlagDhtOk;
-	oldnetFlagStunOk = netFlagStunOk;
-	oldnetFlagExtraAddressCheckOk = netFlagExtraAddressCheckOk;
+	bool haveReliableIP = false ;
 
-        if (!doNetReset) {//set an external address. if ip adresses are different, let's use the stun address, then the extaddrfinder and then the upnp address.
-            struct sockaddr_in extAddr;
-            if (!ownState.dyndns.empty () && getIPAddressFromString (ownState.dyndns.c_str (), &extAddr.sin_addr)) {
-                #ifdef CONN_DEBUG_TICK
-                std::cerr << "p3ConnectMgr::networkConsistencyCheck() using getIPAddressFromString for ownState.serveraddr." << std::endl;
-                #endif
-                extAddr.sin_port = ownState.currentserveraddr.sin_port;
-                ownState.currentserveraddr = extAddr;
-            } if (getExtFinderExtAddress(extAddr)) {
-                netExtFinderAddressCheck(); //so we put the extra address flag ok.
-                #ifdef CONN_DEBUG_TICK
-                std::cerr << "p3ConnectMgr::networkConsistencyCheck() using getExtFinderExtAddress for ownState.serveraddr." << std::endl;
-                #endif
-                ownState.currentserveraddr = extAddr;
-            } else if (getUpnpExtAddress(extAddr)) {
-                #ifdef CONN_DEBUG_TICK
-                    std::cerr << "p3ConnectMgr::networkConsistencyCheck() using getUpnpExtAddress for ownState.serveraddr." << std::endl;
-                #endif
-                ownState.currentserveraddr = extAddr;
-            } else {
-                //try to extract ext address from our own ip address list
-                IpAddressTimed extractedAddress;
-                if (peerConnectState::extractExtAddress(ownState.getIpAddressList(), extractedAddress)) {
-                    ownState.currentserveraddr = extractedAddress.ipAddr;
-                }
+	{
+		RsStackMutex stck(connMtx) ;
 
-                //check if a peer is connected, if yes don't do a net reset
-                bool is_connected = false;
-                std::map<std::string, peerConnectState>::iterator it;
-                for(it = mFriendList.begin(); it != mFriendList.end() && !is_connected; it++)
-                {
-                        /* get last contact detail */
-                        is_connected = it->second.state & RS_PEER_S_CONNECTED;
-                }
-                #ifdef CONN_DEBUG_TICK
-                if (is_connected) {
-                        std::cerr << "p3ConnectMgr::networkConsistencyCheck() not doing a net reset because a peer is connected." << std::endl;
-                    } else {
-                        std::cerr << "p3ConnectMgr::networkConsistencyCheck() no peer is connected." << std::endl;
-                    }
-                #endif
-                doNetReset = !is_connected;
-            }
-        }
-	connMtx.unlock(); /* UNLOCK MUTEX */
+		//storing old flags
+		oldnetFlagLocalOk = netFlagLocalOk;
+		oldnetFlagUpnpOk = netFlagUpnpOk;
+		oldnetFlagDhtOk = netFlagDhtOk;
+		oldnetFlagStunOk = netFlagStunOk;
+		oldnetFlagExtraAddressCheckOk = netFlagExtraAddressCheckOk;
 
-        if (!doNetReset) {
-            //extAddr found,update ip address list
-            IpAddressTimed ipAddressTimed;
-            ipAddressTimed.ipAddr = ownState.currentserveraddr;
-            ipAddressTimed.seenTime = time(NULL);
-            ownState.updateIpAddressList(ipAddressTimed);
-        }
+		if (!doNetReset) 
+		{	// Set an external address. if ip adresses are different, let's use the stun address, then 
+			// the extaddrfinder and then the upnp address.
+			//
+			struct sockaddr_in extAddr;
 
-        //let's do a net reset
-	if (doNetReset) {
+			if (!ownState.dyndns.empty () && getIPAddressFromString (ownState.dyndns.c_str (), &extAddr.sin_addr))
+			{
+#ifdef CONN_DEBUG_TICK
+				std::cerr << "p3ConnectMgr::networkConsistencyCheck() using getIPAddressFromString for ownState.serveraddr." << std::endl;
+#endif
+				extAddr.sin_port = ownState.currentserveraddr.sin_port;
+				ownState.currentserveraddr = extAddr;
+				haveReliableIP = true ;
+			}		
+			else if (getExtFinderExtAddress(extAddr)) 
+			{
+				netExtFinderAddressCheck(); //so we put the extra address flag ok.
+#ifdef CONN_DEBUG_TICK
+				std::cerr << "p3ConnectMgr::networkConsistencyCheck() using getExtFinderExtAddress for ownState.serveraddr." << std::endl;
+#endif
+				ownState.currentserveraddr = extAddr;
+				haveReliableIP = true ;
+			}
+			else if (getUpnpExtAddress(extAddr)) 
+			{
+#ifdef CONN_DEBUG_TICK
+				std::cerr << "p3ConnectMgr::networkConsistencyCheck() using getUpnpExtAddress for ownState.serveraddr." << std::endl;
+#endif
+				ownState.currentserveraddr = extAddr;
+				haveReliableIP = true ;
+			} 
+			else 
+			{
+				//try to extract ext address from our own ip address list
+				IpAddressTimed extractedAddress;
+
+				if (peerConnectState::extractExtAddress(ownState.getIpAddressList(), extractedAddress)) 
+					ownState.currentserveraddr = extractedAddress.ipAddr;
+
+				//check if a peer is connected, if yes don't do a net reset
+				bool is_connected = false;
+				std::map<std::string, peerConnectState>::iterator it;
+				for(it = mFriendList.begin(); it != mFriendList.end() && !is_connected; it++)
+				{
+					/* get last contact detail */
+					is_connected = it->second.state & RS_PEER_S_CONNECTED;
+				}
+#ifdef CONN_DEBUG_TICK
+				if (is_connected) 
+					std::cerr << "p3ConnectMgr::networkConsistencyCheck() not doing a net reset because a peer is connected." << std::endl;
+				else 
+					std::cerr << "p3ConnectMgr::networkConsistencyCheck() no peer is connected." << std::endl;
+#endif
+				doNetReset = !is_connected;
+			}
+		}
+	} /* UNLOCK MUTEX */
+
+	if (haveReliableIP)
+	{
+		//extAddr found,update ip address list
+		IpAddressTimed ipAddressTimed;
+		ipAddressTimed.ipAddr = ownState.currentserveraddr;
+		ipAddressTimed.seenTime = time(NULL);
+
+		ownState.updateIpAddressList(ipAddressTimed);
+	}
+
+	//let's do a net reset
+	if (doNetReset) 
+	{
 		//don't do a reset it if the network init is not finished
 		delta = time(NULL) - mNetInitTS;
 		if (delta > MAX_NETWORK_INIT) {
-                    #ifdef CONN_DEBUG_TICK
-			    std::cerr << "p3ConnectMgr::networkConsistencyCheck() doing a net reset." << std::endl;
-		    #endif
-		    netReset();
-		} else {
-                    #ifdef CONN_DEBUG_TICK
+#ifdef CONN_DEBUG_TICK
+			std::cerr << "p3ConnectMgr::networkConsistencyCheck() doing a net reset." << std::endl;
+#endif
+			netReset();
+		} 
+		else 
+		{
+#ifdef CONN_DEBUG_TICK
 			std::cerr << "p3ConnectMgr::networkConsistencyCheck() reset delayed : p3ConnectMgr time since last reset : " << delta;
 			std::cerr << ". Cannot reset before : " <<  MAX_NETWORK_INIT << " sec" << std::endl;
-		    #endif
+#endif
 		}
-        }
+	}
 }
 
 void p3ConnectMgr::netExtFinderAddressCheck()
-{	struct sockaddr_in tmpip;
+{	
+	struct sockaddr_in tmpip;
 	if (getExtFinderExtAddress(tmpip)) {
             #ifdef CONN_DEBUG_TICK
 		    std::cerr << "p3ConnectMgr::netExtraAddressCheck() return true" << std::endl;
@@ -1674,13 +1697,13 @@ bool p3ConnectMgr::connectResult(std::string id, bool success, uint32_t flags, s
                     remote_peer_address.sin_addr.s_addr != 0 &&
                     !(remote_peer_address.sin_addr.s_addr == ownState.currentlocaladdr.sin_addr.s_addr) &&
                     (!isLoopbackNet(&remote_peer_address.sin_addr))
-                    ) {
+                    ) 
+					 {
                     IpAddressTimed ipLocalAddressTimed;
                     ipLocalAddressTimed.ipAddr = remote_peer_address;
                     ipLocalAddressTimed.seenTime = time(NULL);
                     it->second.updateIpAddressList(ipLocalAddressTimed);
 
-                    it->second.purgeIpAddressList();
     #ifdef CONN_DEBUG
                     std::cerr << "p3ConnectMgr::connectResult() adding current peer adress in list." << std::endl;
                     it->second.printIpAddressList();
@@ -2671,38 +2694,40 @@ bool    p3ConnectMgr::setLocalAddress(std::string id, struct sockaddr_in addr)
 
 bool    p3ConnectMgr::setExtAddress(std::string id, struct sockaddr_in addr)
 {
-        if (id == AuthSSL::getAuthSSL()->OwnId())
+	if (id == AuthSSL::getAuthSSL()->OwnId())
 	{
-            if (ownState.currentserveraddr.sin_addr.s_addr != addr.sin_addr.s_addr ||
-                ownState.currentserveraddr.sin_port != addr.sin_port) {
-                    RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
-                    ownState.currentserveraddr = addr;
-                    //check port and address
-                if (ownState.currentserveraddr.sin_addr.s_addr == 0 || ownState.currentserveraddr.sin_port == 0 ||
-                    ownState.currentserveraddr.sin_addr.s_addr == 1|| ownState.currentserveraddr.sin_port == 1 ||
-                    std::string(inet_ntoa(ownState.currentserveraddr.sin_addr)) == "1.1.1.1") {
-                        //try to extract ext address from the ip address list
-                        IpAddressTimed extractedAddress;
-                        if (peerConnectState::extractExtAddress(ownState.getIpAddressList(), extractedAddress)) {
-                            ownState.currentserveraddr = extractedAddress.ipAddr;
-                        } else {
-                            ownState.currentserveraddr = ownState.currentlocaladdr;
-                        }
-                }
-            }
-                return true;
-        }
+		if (ownState.currentserveraddr.sin_addr.s_addr != addr.sin_addr.s_addr || ownState.currentserveraddr.sin_port != addr.sin_port) 
+		{
+			RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+			ownState.currentserveraddr = addr;
 
-        RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+//			//check port and address
+//			if (ownState.currentserveraddr.sin_addr.s_addr == 0 || ownState.currentserveraddr.sin_port == 0 ||
+//					ownState.currentserveraddr.sin_addr.s_addr == 1|| ownState.currentserveraddr.sin_port == 1 ||
+//					std::string(inet_ntoa(ownState.currentserveraddr.sin_addr)) == "1.1.1.1") 
+//			{
+//				//try to extract ext address from the ip address list
+//				IpAddressTimed extractedAddress;
+//				if (peerConnectState::extractExtAddress(ownState.getIpAddressList(), extractedAddress)) {
+//					ownState.currentserveraddr = extractedAddress.ipAddr;
+//				} else {
+//					ownState.currentserveraddr = ownState.currentlocaladdr;
+//				}
+//			}
+		}
+		return true;
+	}
+
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 	/* check if it is a friend */
-        std::map<std::string, peerConnectState>::iterator it;
+	std::map<std::string, peerConnectState>::iterator it;
 	if (mFriendList.end() == (it = mFriendList.find(id)))
 	{
 		if (mOthersList.end() == (it = mOthersList.find(id)))
 		{
-			#ifdef CONN_DEBUG
-					std::cerr << "p3ConnectMgr::setLocalAddress() cannot add addres info : peer id not found in friend list  id: " << id << std::endl;
-			#endif
+#ifdef CONN_DEBUG
+			std::cerr << "p3ConnectMgr::setLocalAddress() cannot add addres info : peer id not found in friend list  id: " << id << std::endl;
+#endif
 			return false;
 		}
 	}
@@ -2750,45 +2775,48 @@ bool p3ConnectMgr::setDynDNS(std::string id, std::string dyndns)
     return true;
 }
 
-bool    p3ConnectMgr::setAddressList(std::string id, std::list<IpAddressTimed> IpAddressTimedList)
+bool    p3ConnectMgr::setAddressList(const std::string& id, const std::list<IpAddressTimed>& IpAddressTimedList)
 {
-        #ifdef CONN_DEBUG
-                        std::cerr << "p3ConnectMgr::setAddressList() called for id : " << id << std::endl;
-        #endif
+#ifdef CONN_DEBUG
+	std::cerr << "p3ConnectMgr::setAddressList() called for id : " << id << std::endl;
+#endif
 
-        RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
-        /* check if it is our own ip */
-        if (id == getOwnId()) {
-            ownState.updateIpAddressList(IpAddressTimedList);
-            //if we have no ext address from upnp or extAdrFinder, we will use this list for ext ip detection
-            //useless, already done in network consistency check
-//            sockaddr_in extAddr;
-//            if (!getExtFinderExtAddress(extAddr) && !getUpnpExtAddress(extAddr)) { //TODO fix it
-//                IpAddressTimed extractedAddress;
-//                if (peerConnectState::extractExtAddress(IpAddressTimedList, extractedAddress)) {
-//                    #ifdef CONN_DEBUG
-//                                    std::cerr << "p3ConnectMgr::setAddressList() using ip address list to set external addres." << std::endl;
-//                    #endif
-//                    ownState.currentserveraddr.sin_addr = extractedAddress.ipAddr.sin_addr;
-//                    IndicateConfigChanged();
-//                } else {
-//                    #ifdef CONN_DEBUG
-//                                    std::cerr << "p3ConnectMgr::setAddressList() no valuable ext adress found." << std::endl;
-//                    #endif
-//                }
-//            }
-            return true;
-        }
+	/* check if it is our own ip */
+	if (id == getOwnId()) 
+	{
+		ownState.updateIpAddressList(IpAddressTimedList);
 
-        /* check if it is a friend */
+		//if we have no ext address from upnp or extAdrFinder, we will use this list for ext ip detection
+		//useless, already done in network consistency check
+		//            sockaddr_in extAddr;
+		//            if (!getExtFinderExtAddress(extAddr) && !getUpnpExtAddress(extAddr)) { //TODO fix it
+		//                IpAddressTimed extractedAddress;
+		//                if (peerConnectState::extractExtAddress(IpAddressTimedList, extractedAddress)) {
+		//                    #ifdef CONN_DEBUG
+		//                                    std::cerr << "p3ConnectMgr::setAddressList() using ip address list to set external addres." << std::endl;
+		//                    #endif
+		//                    ownState.currentserveraddr.sin_addr = extractedAddress.ipAddr.sin_addr;
+		//                    IndicateConfigChanged();
+		//                } else {
+		//                    #ifdef CONN_DEBUG
+		//                                    std::cerr << "p3ConnectMgr::setAddressList() no valuable ext adress found." << std::endl;
+		//                    #endif
+		//                }
+		//            }
+
+		return true;
+	}
+
+	/* check if it is a friend */
 	std::map<std::string, peerConnectState>::iterator it;
 	if (mFriendList.end() == (it = mFriendList.find(id)))
 	{
-            #ifdef CONN_DEBUG
-            std::cerr << "p3ConnectMgr::setLocalAddress() cannot add addres info : peer id not found in friend list. id: " << id << std::endl;
-            #endif
-            return false;
+#ifdef CONN_DEBUG
+		std::cerr << "p3ConnectMgr::setLocalAddress() cannot add addres info : peer id not found in friend list. id: " << id << std::endl;
+#endif
+		return false;
 	}
 
 	/* "it" points to peer */
@@ -2916,7 +2944,7 @@ bool 	p3ConnectMgr::checkNetAddress()
 		//
 		ownState.currentlocaladdr.sin_addr = getPreferredInterface() ;
 
-                if(ownState.currentlocaladdr.sin_addr.s_addr != 0 && !isLoopbackNet(&(ownState.currentlocaladdr.sin_addr)))
+		if(ownState.currentlocaladdr.sin_addr.s_addr != 0 && !isLoopbackNet(&(ownState.currentlocaladdr.sin_addr)))
 		{
 			if (netFlagLocalOk != true) 
 			{
@@ -2926,20 +2954,19 @@ bool 	p3ConnectMgr::checkNetAddress()
 				netFlagLocalOk = true;
 				IndicateConfigChanged();
 			}
-                } else {
-                    if (netFlagLocalOk != false)
-                    {
+		} 
+		else if (netFlagLocalOk != false)
+		{
 #ifdef CONN_DEBUG
-			    std::cerr << "p3ConnectMgr::checkNetAddress() changing netFlagOk to false." << std::endl;
+			std::cerr << "p3ConnectMgr::checkNetAddress() changing netFlagOk to false." << std::endl;
 #endif
-                            netFlagLocalOk = false;
-                            netFlagExtraAddressCheckOk = false;
-                            netFlagUpnpOk = false;
-                            netFlagDhtOk = false;
-                            netFlagStunOk = false;
-                            IndicateConfigChanged();
-                    }
-                }
+			netFlagLocalOk = false;
+			netFlagExtraAddressCheckOk = false;
+			netFlagUpnpOk = false;
+			netFlagDhtOk = false;
+			netFlagStunOk = false;
+			IndicateConfigChanged();
+		}
 
 		if(isLoopbackNet(&(ownState.currentlocaladdr.sin_addr)))
 			mNetStatus = RS_NET_LOOPBACK;
@@ -2961,11 +2988,11 @@ bool 	p3ConnectMgr::checkNetAddress()
 		ownState.currentserveraddr.sin_family = AF_INET;
 
 		//update ip address list
+		//
 		IpAddressTimed ipAddressTimed;
 		ipAddressTimed.ipAddr = ownState.currentlocaladdr;
 		ipAddressTimed.seenTime = time(NULL);
 		ownState.updateIpAddressList(ipAddressTimed);
-
 
 #ifdef CONN_DEBUG_TICK
 		std::cerr << "p3ConnectMgr::checkNetAddress() Final Local Address: " << inet_ntoa(ownState.currentlocaladdr.sin_addr);
@@ -3190,17 +3217,16 @@ bool  p3ConnectMgr::loadList(std::list<RsItem *> load)
 			vitem->print(std::cerr, 10);
 			std::cerr << std::endl;
 #endif
-                        std::list<RsTlvKeyValue>::iterator kit;
-                        for(kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); kit++) {
-                            if(kit->key == "USE_EXTR_IP_FINDER") {
-                                    use_extr_addr_finder = (kit->value == "TRUE");
-                                    std::cerr << "setting use_extr_addr_finder to " << use_extr_addr_finder << std::endl ;
-                            } else if (kit->key == "ALLOW_TUNNEL_CONNECTION") {
-                                    allow_tunnel_connection = (kit->value == "TRUE");
-                                    std::cerr << "setting allow_tunnel_connection to " << allow_tunnel_connection << std::endl ;
-                            }
-                        }
-			
+			std::list<RsTlvKeyValue>::iterator kit;
+			for(kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); kit++) {
+				if(kit->key == "USE_EXTR_IP_FINDER") {
+					use_extr_addr_finder = (kit->value == "TRUE");
+					std::cerr << "setting use_extr_addr_finder to " << use_extr_addr_finder << std::endl ;
+				} else if (kit->key == "ALLOW_TUNNEL_CONNECTION") {
+					allow_tunnel_connection = (kit->value == "TRUE");
+					std::cerr << "setting allow_tunnel_connection to " << allow_tunnel_connection << std::endl ;
+				}
+			}
 		}
 
 		delete (*it);
@@ -3519,148 +3545,158 @@ bool 	p3ConnectMgr::getStunExtAddress(struct sockaddr_in &addr) {
 
 }
 
-bool 	p3ConnectMgr::getExtFinderExtAddress(struct sockaddr_in &addr)    {
-    if ((use_extr_addr_finder && mExtAddrFinder->hasValidIP(&addr))) {
-        addr.sin_port = ownState.currentlocaladdr.sin_port;
-        return true;
-    } else {
-        return false;
-    }
+bool 	p3ConnectMgr::getExtFinderExtAddress(struct sockaddr_in &addr)    
+{
+	struct in_addr ad ;
+
+	if ((use_extr_addr_finder && mExtAddrFinder->hasValidIP(&ad))) 
+	{
+		addr.sin_port = ownState.currentlocaladdr.sin_port;
+		addr.sin_addr = ad ;
+		return true;
+	} 
+	else 
+		return false;
 }
 
-bool peerConnectState::compare_seen_time (IpAddressTimed first, IpAddressTimed second) { //Sort the ip list ordering by seen time
-    return (first.seenTime < second.seenTime);
-}
-
-bool peerConnectState::is_same_address(IpAddressTimed first, IpAddressTimed second) { //Sort the ip list ordering by seen time
+bool peerConnectState::is_same_address(const IpAddressTimed& first, const IpAddressTimed& second) 
+{
     return (first.ipAddr.sin_addr.s_addr == second.ipAddr.sin_addr.s_addr && first.ipAddr.sin_port == second.ipAddr.sin_port);
 }
 
-void peerConnectState::sortIpAddressListBySeenTime() { //Sort the ip list ordering by seen time
-    sortIpAddressListBySeenTime(this->ipAddressList);
-}
-
-void peerConnectState::sortIpAddressListBySeenTime(std::list<IpAddressTimed> &ipTimedListInput) { //Sort the ip list ordering by seen time
-    ipTimedListInput.sort(peerConnectState::compare_seen_time);
-    ipTimedListInput.reverse();
-}
-
-
-std::list<IpAddressTimed>  peerConnectState::getIpAddressList()  {
-    purgeIpAddressList();
+std::list<IpAddressTimed>  peerConnectState::getIpAddressList()  
+{
     return ipAddressList;
 }
 
-void peerConnectState::purgeIpAddressList() {//purge old and useless addresses to keep a small list
-    std::list<IpAddressTimed>::iterator ipListIt;
-    for (ipListIt = ipAddressList.begin(); ipListIt!=(ipAddressList.end());) {
-        if (ipListIt->ipAddr.sin_addr.s_addr == 0 || ipListIt->ipAddr.sin_port == 0 ||
-            ipListIt->ipAddr.sin_addr.s_addr == 1|| ipListIt->ipAddr.sin_port == 1 ||
-            std::string(inet_ntoa(ipListIt->ipAddr.sin_addr)) == "1.1.1.1") {
-            ipAddressList.erase(ipListIt++);
-	} else {
-	    ++ipListIt;
-	}
-    }
+void peerConnectState::updateIpAddressList(const std::list<IpAddressTimed>& ipTimedList)  //purge old addresses to keep a small list
+{
+		std::list<IpAddressTimed>::const_iterator ipListIt;
 
-    //purge duplicates
-    for (ipListIt = ipAddressList.begin(); ipListIt!=(ipAddressList.end()); ipListIt++) {
-	std::list<IpAddressTimed>::iterator ipListIt2 = ipListIt;
-	++ipListIt2;
-	while (ipListIt2!=(ipAddressList.end())) {
-	    if (is_same_address(*ipListIt2, *ipListIt)) {
-		ipAddressList.erase(ipListIt2++);
-	    } else {
-		++ipListIt2;
-	    }
-	}
-    }
-
-    sortIpAddressListBySeenTime();
-    //keep only a limited number of addresses
-    if (ipAddressList.size() > PEER_IP_CONNECT_STATE_MAX_LIST_SIZE) {
-        ipAddressList.resize(PEER_IP_CONNECT_STATE_MAX_LIST_SIZE);
-    }
-}
-
-void peerConnectState::updateIpAddressList(std::list<IpAddressTimed> ipTimedList) { //purge old addresses to keep a small list
-		std::list<IpAddressTimed>::iterator ipListIt;
-		for (ipListIt = ipTimedList.begin(); ipListIt!=(ipTimedList.end()); ipListIt++) {
+		for (ipListIt = ipTimedList.begin(); ipListIt!=(ipTimedList.end()); ++ipListIt) 
 		    updateIpAddressList(*ipListIt);
-		}
 }
 
-void peerConnectState::updateIpAddressList(IpAddressTimed ipTimed) { //purge old addresses to keep a small list
+void peerConnectState::updateIpAddressList(const IpAddressTimed& ipTimed) 
+{ 
+	//purge old addresses to keep a small list
 #ifdef CONN_DEBUG
-			std::cerr << "peerConnectState::updateIpAdressList() ip " << inet_ntoa(ipTimed.ipAddr.sin_addr);
-			std::cerr << ":" << ntohs(ipTimed.ipAddr.sin_port);
-			std::cerr << std::endl;
+	std::cerr << "peerConnectState::updateIpAdressList() ip " << inet_ntoa(ipTimed.ipAddr.sin_addr);
+	std::cerr << ":" << ntohs(ipTimed.ipAddr.sin_port);
+	std::cerr << std::endl;
 #endif
-                if (ipTimed.ipAddr.sin_addr.s_addr == 0 || ipTimed.ipAddr.sin_port == 0 ||
-                    ipTimed.ipAddr.sin_addr.s_addr == 1|| ipTimed.ipAddr.sin_port == 1 ||
-                    std::string(inet_ntoa(ipTimed.ipAddr.sin_addr)) == "1.1.1.1" || isLoopbackNet(&ipTimed.ipAddr.sin_addr)) {
+	// 1 - check for dummy/unusable values. 
+	//
+	if(isLoopbackNet(&(ipTimed.ipAddr.sin_addr)))
+	{
 #ifdef CONN_DEBUG
-                        std::cerr << "peerConnectState::updateIpAdressList() ip parameter is 0.0.0.0, 1.1.1.1, or loopback, or port is 0, ignoring." << std::endl;
+		std::cerr << "peerConnectState::updateIpAdressList() ip parameter is loopback: disgarding." << std::endl ;
 #endif
-		    return;
-		}
+		return ;
+	}
 
-		//check if the ip list contains the current remote address of the connected peer
-		bool found = false;
-		std::list<IpAddressTimed>::iterator ipListIt;
-		for (ipListIt = ipAddressList.begin(); ipListIt!=(ipAddressList.end()) && !found; ipListIt++) {
-		    if (is_same_address(*ipListIt, ipTimed)) {
+	if(ipTimed.ipAddr.sin_addr.s_addr == 0 || ipTimed.ipAddr.sin_port == 0) 
+	{
+#ifdef CONN_DEBUG
+		std::cerr << "peerConnectState::updateIpAdressList() ip parameter is 0.0.0.0, or port is 0, ignoring." << std::endl;
+#endif
+		return;
+	}
+
+	// 2 - check if the ip list already contains the current remote address of the connected peer. In such a case,
+	//    we update the time stamp.
+	//
+	bool found = false;
+	for (std::list<IpAddressTimed>::iterator ipListIt = ipAddressList.begin(); ipListIt!=(ipAddressList.end()) && !found; ++ipListIt) 
+		if((*ipListIt).ipAddr.sin_addr.s_addr == ipTimed.ipAddr.sin_addr.s_addr)
+		{
 #ifdef CONN_DEBUG
 			std::cerr << "peerConnectState::updateIpAdressList() ip found in the list." << std::endl;
 #endif
 			found = true;
 			//update the seen time
-			if (ipListIt->seenTime < ipTimed.seenTime) {
-			    ipListIt->seenTime = ipTimed.seenTime;
-    #ifdef CONN_DEBUG
-			    std::cerr << "peerConnectState::updateIpAdressList() Update seen time to : " << ipTimed.seenTime << std::endl;
-   #endif
-			}
-		    }
-		}
-
-		if (!found) {
-		    //add the current addresses to the ip list
+			//
+			if (ipListIt->seenTime < ipTimed.seenTime) 
+			{
+				(*ipListIt).seenTime = ipTimed.seenTime;
+				(*ipListIt).ipAddr.sin_port = ipTimed.ipAddr.sin_port ; // keep the port of the most recent address.
 #ifdef CONN_DEBUG
-		    std::cerr << "peerConnectState::updateIpAdressList() adding to the ip list the current remote addr : " << id << " address : " << inet_ntoa(ipTimed.ipAddr.sin_addr);
-		    std::cerr << ":" << ntohs(ipTimed.ipAddr.sin_port);
-		    std::cerr << std::endl;
+				std::cerr << "peerConnectState::updateIpAdressList() Update seen time to : " << ipTimed.seenTime << std::endl;
 #endif
-		    ipAddressList.push_back(ipTimed);
+			}
 		}
 
-}
+	// if not found, insert the address at sorted position into the list
+	//
+	if (!found) 
+	{
+#ifdef CONN_DEBUG
+		std::cerr << "peerConnectState::updateIpAdressList() adding to the ip list the current remote addr : " << id << " address : " << inet_ntoa(ipTimed.ipAddr.sin_addr);
+		std::cerr << ":" << ntohs(ipTimed.ipAddr.sin_port);
+		std::cerr << std::endl;
+#endif
+		bool placed = false ;
 
-void peerConnectState::printIpAddressList() {
-                std::cerr << "peerConnectState::printIpAdressList() current ip list for the peer : " << id << ", size : " << ipAddressList.size() << ", adresses : " << std::endl;
-		for (std::list<IpAddressTimed>::iterator ipListIt = ipAddressList.begin(); ipListIt!=(ipAddressList.end()); ipListIt++) {
-			std::cerr << inet_ntoa(ipListIt->ipAddr.sin_addr) << ":" << ntohs(ipListIt->ipAddr.sin_port) << " seenTime : " << ipListIt->seenTime << std::endl;
+		for(std::list<IpAddressTimed>::iterator ipListIt = ipAddressList.begin(); ipListIt!=(ipAddressList.end()); ++ipListIt) 
+			if(ipTimed.seenTime > (*ipListIt).seenTime)
+			{
+				ipAddressList.insert(ipListIt,ipTimed);
+				placed=true ;
+				break;
+			}
+		if(!placed)
+			ipAddressList.push_back(ipTimed);
+	}
+
+	// 5 - cut to the fixed number of retained addresses.
+	
+	std::list<IpAddressTimed>::iterator it ;
+	int cnt = 0 ;
+	for(it = ipAddressList.begin(); it!=(ipAddressList.end()) ;) 
+		if(cnt >= PEER_IP_CONNECT_STATE_MAX_LIST_SIZE)
+		{
+			std::list<IpAddressTimed>::iterator tmp=it ;
+			++tmp ;
+			ipAddressList.erase(it) ;
+			it=tmp ;
 		}
+		else
+			++it,++cnt ;
+
+	std::cerr << "Adress list updated:" << std::endl ;
+	printIpAddressList();
 }
 
-bool peerConnectState::extractExtAddress(std::list<IpAddressTimed> IpAddressTimedList, IpAddressTimed &resultAddress) {//extract first address that is not the same as local address
-                sortIpAddressListBySeenTime(IpAddressTimedList);
-                //check if the ip list contains the current remote address of the connected peer
-                std::list<IpAddressTimed>::iterator ipListIt;
-                for (ipListIt = IpAddressTimedList.begin(); ipListIt!=(IpAddressTimedList.end()); ++ipListIt) {
-                    //assume address is valid if not private, is not 0 and is not loopback
-                    //if ((ipListIt->ipAddr.sin_addr.s_addr != 0)
-                    if (ipListIt->ipAddr.sin_addr.s_addr != 0 && ipListIt->ipAddr.sin_port != 0 &&
-                        ipListIt->ipAddr.sin_addr.s_addr != 1 && ipListIt->ipAddr.sin_port != 1 &&
-                        std::string(inet_ntoa(ipListIt->ipAddr.sin_addr)) != "1.1.1.1" &&
-                        (!isLoopbackNet(&ipListIt->ipAddr.sin_addr)) &&
-                        (!isPrivateNet(&ipListIt->ipAddr.sin_addr))
-                        ) {
-                            resultAddress = *ipListIt;
-                            return true;
-                    }
-                }
-                return false;
+void peerConnectState::printIpAddressList() 
+{
+	std::cerr << "peerConnectState::printIpAdressList() current ip list for the peer : " << id << ", size : " << ipAddressList.size() << ", adresses : " << std::endl;
+
+	for (std::list<IpAddressTimed>::iterator ipListIt = ipAddressList.begin(); ipListIt!=(ipAddressList.end()); ipListIt++) 
+		std::cerr << inet_ntoa(ipListIt->ipAddr.sin_addr) << ":" 
+					<< ntohs(ipListIt->ipAddr.sin_port) << " seenTime : " 
+					<< ipListIt->seenTime << std::endl;
+	
+}
+
+// Extract first address that is not the same as local address
+//
+bool peerConnectState::extractExtAddress(const std::list<IpAddressTimed>& IpAddressTimedList, IpAddressTimed &resultAddress) 
+{
+	//check if the ip list contains the current remote address of the connected peer
+	//
+	std::list<IpAddressTimed>::const_iterator ipListIt;
+	for (ipListIt = IpAddressTimedList.begin(); ipListIt!=(IpAddressTimedList.end()); ++ipListIt) 
+	{
+		//assume address is valid if not private, is not 0 and is not loopback
+		//if ((ipListIt->ipAddr.sin_addr.s_addr != 0)
+		//
+		if(!isPrivateNet(&ipListIt->ipAddr.sin_addr))
+		{
+			resultAddress = *ipListIt;
+			return true;
+		}
+	}
+	return false;
 }
 
 
