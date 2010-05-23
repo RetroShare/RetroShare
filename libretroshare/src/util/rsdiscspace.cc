@@ -61,9 +61,15 @@ bool RsDiscSpace::crossSystemDiskStats(const char *file, uint32_t& free_blocks, 
 	szDrive[1] = file[1] ;
 	szDrive[2] = file[2] ;
 #else
-	char szDrive[4];
+	char szDrive[4] = "";
 
-	memcpy (szDrive, file, 3);
+	char *pszFullPath = _fullpath (NULL, file, 0);
+	if (pszFullPath == 0) {
+		std::cerr << "Size estimate failed for drive (_fullpath) " << szDrive << std::endl ;
+		return false;
+	}
+	_splitpath (pszFullPath, szDrive, NULL, NULL, NULL);
+	free (pszFullPath);
 #endif
 	szDrive[3] = 0;
 
