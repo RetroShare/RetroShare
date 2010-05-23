@@ -28,7 +28,6 @@
 #include "NetworkDialog.h"
 #include "NetworkView.h"
 #include "TrustView.h"
-#include "connect/ConnectDialog.h"
 #include "GenCertDialog.h"
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"

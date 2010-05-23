@@ -219,7 +219,6 @@ HEADERS +=  rshare.h \
             gui/channels/CreateChannel.h \
             gui/channels/ChannelDetails.h \
             gui/channels/CreateChannelMsg.h \
-            gui/connect/ConnectDialog.h \
             gui/connect/ConfCertDialog.h \
             gui/msgs/MessageComposer.h \
             gui/msgs/textformat.h \
@@ -265,7 +264,6 @@ HEADERS +=  rshare.h \
             gui/elastic/node.h \
             gui/NewsFeed.h \
             gui/ChannelFeed.h \
-            gui/GeneralMsgDialog.h \
             gui/ChanGroupDelegate.h \
             gui/feeds/FeedHolder.h \
             gui/feeds/ForumNewItem.h \
@@ -319,7 +317,6 @@ FORMS +=    gui/StartDialog.ui \
             gui/channels/CreateChannelMsg.ui \
             gui/channels/ChannelDetails.ui \
             gui/chat/PopupChatDialog.ui \
-            gui/connect/ConnectDialog.ui \
             gui/connect/ConfCertDialog.ui \
             gui/msgs/MessageComposer.ui \
             gui/settings/settings.ui \
@@ -342,7 +339,6 @@ FORMS +=    gui/StartDialog.ui \
             gui/advsearch/expressionwidget.ui \
             gui/NewsFeed.ui \
             gui/ChannelFeed.ui \
-            gui/GeneralMsgDialog.ui \
             gui/feeds/ForumNewItem.ui \
             gui/feeds/ForumMsgItem.ui \
             gui/feeds/PeerItem.ui \
@@ -428,7 +424,6 @@ SOURCES +=  main.cpp \
             gui/channels/ChannelDetails.cpp \
             gui/chat/PopupChatDialog.cpp \
             gui/chat/HandleRichText.cpp \
-            gui/connect/ConnectDialog.cpp \
             gui/connect/ConfCertDialog.cpp \
             gui/msgs/MessageComposer.cpp \
             gui/common/vmessagebox.cpp \
@@ -467,7 +462,6 @@ SOURCES +=  main.cpp \
             gui/elastic/node.cpp \
             gui/NewsFeed.cpp \
             gui/ChannelFeed.cpp \
-            gui/GeneralMsgDialog.cpp \
             gui/ChanGroupDelegate.cpp \
             gui/feeds/ForumNewItem.cpp \
             gui/feeds/ForumMsgItem.cpp \

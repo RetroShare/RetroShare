@@ -30,9 +30,6 @@
 #include "ui_NetworkDialog.h"
 #include "RsAutoUpdatePage.h"
 
-#include "connect/ConnectDialog.h"
-
-
 class NetworkDialog : public RsAutoUpdatePage 
 {
   Q_OBJECT

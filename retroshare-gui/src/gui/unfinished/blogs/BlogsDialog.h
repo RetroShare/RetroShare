@@ -49,7 +49,6 @@ public:
 
 virtual void deleteFeedItem(QWidget *item, uint32_t type);
 virtual void openChat(std::string peerId);
-virtual void openMsg(uint32_t type, std::string grpId, std::string inReplyTo);
 
 public slots:
 

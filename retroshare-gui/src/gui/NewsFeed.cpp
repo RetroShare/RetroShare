@@ -37,9 +37,6 @@
 
 #include "settings/rsharesettings.h"
 
-#include "GeneralMsgDialog.h"
-
-
 const uint32_t NEWSFEED_PEERLIST = 	0x0001;
 const uint32_t NEWSFEED_FORUMNEWLIST = 	0x0002;
 const uint32_t NEWSFEED_FORUMMSGLIST = 	0x0003;
@@ -416,22 +413,6 @@ void NewsFeed::openChat(std::string peerId)
 	std::cerr << "NewsFeed::openChat()";
 	std::cerr << std::endl;
 #endif
-}
-
-void NewsFeed::openMsg(uint32_t type, std::string grpId, std::string inReplyTo)
-{
-#ifdef NEWS_DEBUG
-	std::cerr << "NewsFeed::openMsg()";
-	std::cerr << std::endl;
-#endif
-	GeneralMsgDialog *msgDialog = new GeneralMsgDialog(NULL);
-
-
-	msgDialog->addDestination(type, grpId, inReplyTo);
-
-	msgDialog->show();
-
-	/* window will destroy itself! */
 }
 
 

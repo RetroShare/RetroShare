@@ -38,7 +38,6 @@
 #include "BlogDetails.h"
 
 #include "gui/ChanGroupDelegate.h"
-#include "gui/GeneralMsgDialog.h"
 
 #define BLOG_DEFAULT_IMAGE ":/images/hi64-app-kblogger.png"
 
@@ -194,22 +193,6 @@ void BlogsDialog::deleteFeedItem(QWidget *item, uint32_t type)
 void BlogsDialog::openChat(std::string peerId)
 {
 	return;
-}
-
-void BlogsDialog::openMsg(uint32_t type, std::string grpId, std::string inReplyTo)
-{
-#ifdef BLOG_DEBUG
-	std::cerr << "BlogsDialog::openMsg()";
-	std::cerr << std::endl;
-#endif
-	GeneralMsgDialog *msgDialog = new GeneralMsgDialog(NULL);
-
-
-	msgDialog->addDestination(type, grpId, inReplyTo);
-
-	msgDialog->show();
-
-	/* window will destroy itself! */
 }
 
 void BlogsDialog::createMsg()

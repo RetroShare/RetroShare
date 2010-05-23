@@ -208,7 +208,7 @@ void ForumNewItem::postToForum()
 #endif
 	if (mParent)
 	{
-		mParent->openMsg(FEEDHOLDER_MSG_FORUM, mForumId, "");
+		//mParent->openMsg(FEEDHOLDER_MSG_FORUM, mForumId, "");
 	}
 }
 

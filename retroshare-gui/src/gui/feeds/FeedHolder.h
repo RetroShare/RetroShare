@@ -36,7 +36,6 @@ class FeedHolder
 
 virtual void deleteFeedItem(QWidget *item, uint32_t type) = 0;
 virtual	void openChat(std::string peerId) = 0;
-virtual	void openMsg(uint32_t type, std::string grpId, std::string inReplyTo) = 0;
 };
 
 #endif

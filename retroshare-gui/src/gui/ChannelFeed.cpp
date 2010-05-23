@@ -34,8 +34,6 @@
 #include "gui/channels/CreateChannelMsg.h"
 
 #include "gui/ChanGroupDelegate.h"
-#include "GeneralMsgDialog.h"
-
 
 #define CHAN_DEFAULT_IMAGE ":/images/channels.png"
 
@@ -215,22 +213,6 @@ void ChannelFeed::deleteFeedItem(QWidget *item, uint32_t type)
 void ChannelFeed::openChat(std::string peerId)
 {
 	return;
-}
-
-void ChannelFeed::openMsg(uint32_t type, std::string grpId, std::string inReplyTo)
-{
-#ifdef CHAN_DEBUG
-	std::cerr << "ChannelFeed::openMsg()";
-	std::cerr << std::endl;
-#endif
-	GeneralMsgDialog *msgDialog = new GeneralMsgDialog(NULL);
-
-
-	msgDialog->addDestination(type, grpId, inReplyTo);
-
-	msgDialog->show();
-
-	/* window will destroy itself! */
 }
 
 void ChannelFeed::createMsg()
