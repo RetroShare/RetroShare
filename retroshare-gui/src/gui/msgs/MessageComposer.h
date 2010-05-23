@@ -19,8 +19,8 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#ifndef _CHAN_MSG_DIALOG_H
-#define _CHAN_MSG_DIALOG_H
+#ifndef _MESSAGECOMPOSER_H
+#define _MESSAGECOMPOSER_H
 
 #include <QMainWindow>
 #include <QMap>
@@ -28,7 +28,7 @@
 #include <gui/settings/rsharesettings.h>
 #include "gui/feeds/AttachFileItem.h"
 
-#include "ui_ChanMsgDialog.h"
+#include "ui_MessageComposer.h"
 #include "rsiface/rsfiles.h"
 
 class QAction;
@@ -37,14 +37,14 @@ class QFontComboBox;
 class QTextEdit;
 class QTextCharFormat;
 
-class ChanMsgDialog : public QMainWindow 
+class MessageComposer : public QMainWindow 
 {
   Q_OBJECT
 
 public:
   /** Default Constructor */
 
-  ChanMsgDialog(bool isMsg, QWidget *parent = 0, Qt::WFlags flags = 0);
+  MessageComposer(bool isMsg, QWidget *parent = 0, Qt::WFlags flags = 0);
   /** Default Destructor */
 
   void  newMsg();
@@ -173,7 +173,7 @@ private:
   bool mCheckAttachment;
 
   /** Qt Designer generated object */
-  Ui::ChanMsgDialog ui;
+  Ui::MessageComposer ui;
 
   std::list<FileInfo> _recList ;
 };

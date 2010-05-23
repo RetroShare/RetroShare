@@ -20,7 +20,7 @@
  ****************************************************************/
 
 #include "rshare.h"
-#include "ChanMsgDialog.h"
+#include "MessageComposer.h"
 
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
@@ -37,7 +37,7 @@
 
 
 /** Constructor */
-ChanMsgDialog::ChanMsgDialog(bool msg, QWidget *parent, Qt::WFlags flags)
+MessageComposer::MessageComposer(bool msg, QWidget *parent, Qt::WFlags flags)
 : QMainWindow(parent, flags), mIsMsg(msg), mCheckAttachment(true)
 {
     /* Invoke the Qt Designer generated object setup routine */
@@ -200,7 +200,7 @@ ChanMsgDialog::ChanMsgDialog(bool msg, QWidget *parent, Qt::WFlags flags)
 #endif
 }
 
-void ChanMsgDialog::closeEvent (QCloseEvent * event)
+void MessageComposer::closeEvent (QCloseEvent * event)
 {
   //=== uncheck all repecient's boxes =======
     QTreeWidget *sendWidget = ui.msgSendList;
@@ -232,7 +232,7 @@ void ChanMsgDialog::closeEvent (QCloseEvent * event)
 
 }
 
-void  ChanMsgDialog::insertSendList()
+void  MessageComposer::insertSendList()
 {
 	if (!rsPeers)
 	{
@@ -304,7 +304,7 @@ void  ChanMsgDialog::insertSendList()
 }
 
 
-void  ChanMsgDialog::insertChannelSendList()
+void  MessageComposer::insertChannelSendList()
 {
 #if 0
         rsiface->lockData(); /* Lock Interface */
@@ -384,7 +384,7 @@ RsCertId getSenderRsCertId(QTreeWidgetItem *i)
 
 
 	/* get the list of peers from the RsIface.  */
-void  ChanMsgDialog::insertFileList(const std::list<DirDetails>& dir_info)
+void  MessageComposer::insertFileList(const std::list<DirDetails>& dir_info)
 {
 	std::list<FileInfo> files_info;
 	std::list<DirDetails>::const_iterator it;
@@ -404,7 +404,7 @@ void  ChanMsgDialog::insertFileList(const std::list<DirDetails>& dir_info)
 	insertFileList(files_info);
 }
 
-void  ChanMsgDialog::insertFileList(const std::list<FileInfo>& files_info)
+void  MessageComposer::insertFileList(const std::list<FileInfo>& files_info)
 {
 //	rsiface->lockData();   /* Lock Interface */
 
@@ -446,7 +446,7 @@ void  ChanMsgDialog::insertFileList(const std::list<FileInfo>& files_info)
 	tree->update(); /* update display */
 }
 
-void  ChanMsgDialog::newMsg()
+void  MessageComposer::newMsg()
 {
 	/* clear all */
 	QString titlestring = ui.titleEdit->text();
@@ -469,12 +469,12 @@ void  ChanMsgDialog::newMsg()
 //	insertFileList(std::list<DirDetails>());
 }
 
-void  ChanMsgDialog::insertTitleText(std::string title)
+void  MessageComposer::insertTitleText(std::string title)
 {
 	ui.titleEdit->setText(QString::fromStdString(title));
 }
 
-void  ChanMsgDialog::insertPastedText(std::string msg)
+void  MessageComposer::insertPastedText(std::string msg)
 {
 	std::string::size_type i=0 ;
 	while( (i=msg.find_first_of('\n',i+1)) < msg.size())
@@ -489,7 +489,7 @@ void  ChanMsgDialog::insertPastedText(std::string msg)
   ui.msgText->setTextCursor(c);
 }
 
-void  ChanMsgDialog::insertForwardPastedText(std::string msg)
+void  MessageComposer::insertForwardPastedText(std::string msg)
 {
 	std::string::size_type i=0 ;
 	while( (i=msg.find_first_of('\n',i+1)) < msg.size())
@@ -504,7 +504,7 @@ void  ChanMsgDialog::insertForwardPastedText(std::string msg)
   ui.msgText->setTextCursor(c);
 }
 
-void  ChanMsgDialog::insertMsgText(std::string msg)
+void  MessageComposer::insertMsgText(std::string msg)
 {
 	ui.msgText->setText(QString::fromStdString(msg));
 	
@@ -515,14 +515,14 @@ void  ChanMsgDialog::insertMsgText(std::string msg)
   ui.msgText->setTextCursor(c);
 }
 
-void  ChanMsgDialog::insertHtmlText(std::string msg)
+void  MessageComposer::insertHtmlText(std::string msg)
 {
 	ui.msgText->setHtml(QString("<a href='") + QString::fromStdString(std::string(msg + "'> ") ) + QString::fromStdString(std::string(msg)) + "</a>") ;
 	
 }
 
 
-void  ChanMsgDialog::sendMessage()
+void  MessageComposer::sendMessage()
 {
 	/* construct a message */
 	MessageInfo mi;
@@ -562,7 +562,7 @@ void  ChanMsgDialog::sendMessage()
 }
 
 
-void  ChanMsgDialog::cancelMessage()
+void  MessageComposer::cancelMessage()
 {
 	close();
 	return;
@@ -576,7 +576,7 @@ void  ChanMsgDialog::cancelMessage()
  * Chan or Msg Dialog.
  */
 
-void ChanMsgDialog::addRecipient(std::string id) 
+void MessageComposer::addRecipient(std::string id) 
 {
 	QTreeWidget *sendWidget = ui.msgSendList;
 
@@ -588,7 +588,7 @@ void ChanMsgDialog::addRecipient(std::string id)
 }
 
 /* First the Msg (People) ones */
-void ChanMsgDialog::togglePersonItem( QTreeWidgetItem *item, int col )
+void MessageComposer::togglePersonItem( QTreeWidgetItem *item, int col )
 {
         //std::cerr << "TogglePersonItem()" << std::endl;
 
@@ -605,7 +605,7 @@ void ChanMsgDialog::togglePersonItem( QTreeWidgetItem *item, int col )
 }
 
 /* Second  the Channel ones */
-void ChanMsgDialog::toggleChannelItem( QTreeWidgetItem *item, int col )
+void MessageComposer::toggleChannelItem( QTreeWidgetItem *item, int col )
 {
         //std::cerr << "ToggleChannelItem()" << std::endl;
 
@@ -622,7 +622,7 @@ void ChanMsgDialog::toggleChannelItem( QTreeWidgetItem *item, int col )
 }
 
 /* This is actually for both */
-void ChanMsgDialog::toggleRecommendItem( QTreeWidgetItem *item, int col )
+void MessageComposer::toggleRecommendItem( QTreeWidgetItem *item, int col )
 {
         //std::cerr << "ToggleRecommendItem()" << std::endl;
 
@@ -639,7 +639,7 @@ void ChanMsgDialog::toggleRecommendItem( QTreeWidgetItem *item, int col )
 }
 
 
-void ChanMsgDialog::setupFileActions()
+void MessageComposer::setupFileActions()
 {
     QMenu *menu = new QMenu(tr("&File"), this);
     menuBar()->addMenu(menu);
@@ -691,7 +691,7 @@ void ChanMsgDialog::setupFileActions()
     menu->addAction(a);
 }
 
-void ChanMsgDialog::setupEditActions()
+void MessageComposer::setupEditActions()
 {
     QMenu *menu = new QMenu(tr("&Edit"), this);
     menuBar()->addMenu(menu);
@@ -716,7 +716,7 @@ void ChanMsgDialog::setupEditActions()
     actionPaste->setEnabled(!QApplication::clipboard()->text().isEmpty());
 }
 
-void ChanMsgDialog::setupViewActions()
+void MessageComposer::setupViewActions()
 {
     QMenu *menu = new QMenu(tr("&View"), this);
     menuBar()->addMenu(menu);
@@ -729,7 +729,7 @@ void ChanMsgDialog::setupViewActions()
 
 }
 
-void ChanMsgDialog::setupInsertActions()
+void MessageComposer::setupInsertActions()
 {
     QMenu *menu = new QMenu(tr("&Insert"), this);
     menuBar()->addMenu(menu);
@@ -742,35 +742,35 @@ void ChanMsgDialog::setupInsertActions()
 
 }
 
-void ChanMsgDialog::textBold()
+void MessageComposer::textBold()
 {
     QTextCharFormat fmt;
     fmt.setFontWeight(ui.boldbtn->isChecked() ? QFont::Bold : QFont::Normal);
     mergeFormatOnWordOrSelection(fmt);
 }
 
-void ChanMsgDialog::textUnderline()
+void MessageComposer::textUnderline()
 {
     QTextCharFormat fmt;
     fmt.setFontUnderline(ui.underlinebtn->isChecked());
     mergeFormatOnWordOrSelection(fmt);
 }
 
-void ChanMsgDialog::textItalic()
+void MessageComposer::textItalic()
 {
     QTextCharFormat fmt;
     fmt.setFontItalic(ui.italicbtn->isChecked());
     mergeFormatOnWordOrSelection(fmt);
 }
 
-void ChanMsgDialog::textFamily(const QString &f)
+void MessageComposer::textFamily(const QString &f)
 {
     QTextCharFormat fmt;
     fmt.setFontFamily(f);
     mergeFormatOnWordOrSelection(fmt);
 }
 
-void ChanMsgDialog::textSize(const QString &p)
+void MessageComposer::textSize(const QString &p)
 {
     qreal pointSize = p.toFloat();
     if (p.toFloat() > 0) {
@@ -780,7 +780,7 @@ void ChanMsgDialog::textSize(const QString &p)
     }
 }
 
-void ChanMsgDialog::textStyle(int styleIndex)
+void MessageComposer::textStyle(int styleIndex)
 {
     QTextCursor cursor = ui.msgText->textCursor();
 
@@ -836,7 +836,7 @@ void ChanMsgDialog::textStyle(int styleIndex)
     }
 }
 
-void ChanMsgDialog::textColor()
+void MessageComposer::textColor()
 {
     QColor col = QColorDialog::getColor(ui.msgText->textColor(), this);
     if (!col.isValid())
@@ -847,7 +847,7 @@ void ChanMsgDialog::textColor()
     colorChanged(col);
 }
 
-void ChanMsgDialog::textAlign(QAction *a)
+void MessageComposer::textAlign(QAction *a)
 {
     if (a == actionAlignLeft)
         ui.msgText->setAlignment(Qt::AlignLeft);
@@ -859,18 +859,18 @@ void ChanMsgDialog::textAlign(QAction *a)
         ui.msgText->setAlignment(Qt::AlignJustify);
 }
 
-void ChanMsgDialog::currentCharFormatChanged(const QTextCharFormat &format)
+void MessageComposer::currentCharFormatChanged(const QTextCharFormat &format)
 {
     fontChanged(format.font());
     colorChanged(format.foreground().color());
 }
 
-void ChanMsgDialog::cursorPositionChanged()
+void MessageComposer::cursorPositionChanged()
 {
     alignmentChanged(ui.msgText->alignment());
 }
 
-void ChanMsgDialog::mergeFormatOnWordOrSelection(const QTextCharFormat &format)
+void MessageComposer::mergeFormatOnWordOrSelection(const QTextCharFormat &format)
 {
     QTextCursor cursor = ui.msgText->textCursor();
     if (!cursor.hasSelection())
@@ -879,7 +879,7 @@ void ChanMsgDialog::mergeFormatOnWordOrSelection(const QTextCharFormat &format)
     ui.msgText->mergeCurrentCharFormat(format);
 }
 
-void ChanMsgDialog::fontChanged(const QFont &f)
+void MessageComposer::fontChanged(const QFont &f)
 {
     ui.comboFont->setCurrentIndex(ui.comboFont->findText(QFontInfo(f).family()));
     ui.comboSize->setCurrentIndex(ui.comboSize->findText(QString::number(f.pointSize())));
@@ -888,14 +888,14 @@ void ChanMsgDialog::fontChanged(const QFont &f)
     ui.underlinebtn->setChecked(f.underline());
 }
 
-void ChanMsgDialog::colorChanged(const QColor &c)
+void MessageComposer::colorChanged(const QColor &c)
 {
     QPixmap pix(16, 16);
     pix.fill(c);
     ui.colorbtn->setIcon(pix);
 }
 
-void ChanMsgDialog::alignmentChanged(Qt::Alignment a)
+void MessageComposer::alignmentChanged(Qt::Alignment a)
 {
     if (a & Qt::AlignLeft) {
         actionAlignLeft->setChecked(true);
@@ -908,12 +908,12 @@ void ChanMsgDialog::alignmentChanged(Qt::Alignment a)
     }
 }
 
-void ChanMsgDialog::clipboardDataChanged()
+void MessageComposer::clipboardDataChanged()
 {
     actionPaste->setEnabled(!QApplication::clipboard()->text().isEmpty());
 }
 
-void ChanMsgDialog::fileNew()
+void MessageComposer::fileNew()
 {
     if (maybeSave()) {
         ui.msgText->clear();
@@ -921,7 +921,7 @@ void ChanMsgDialog::fileNew()
     }
 }
 
-void ChanMsgDialog::fileOpen()
+void MessageComposer::fileOpen()
 {
     QString fn = QFileDialog::getOpenFileName(this, tr("Open File..."),
                                               QString(), tr("HTML-Files (*.htm *.html);;All Files (*)"));
@@ -929,7 +929,7 @@ void ChanMsgDialog::fileOpen()
         load(fn);
 }
 
-bool ChanMsgDialog::fileSave()
+bool MessageComposer::fileSave()
 {
     if (fileName.isEmpty())
         return fileSaveAs();
@@ -944,7 +944,7 @@ bool ChanMsgDialog::fileSave()
     return true;
 }
 
-bool ChanMsgDialog::fileSaveAs()
+bool MessageComposer::fileSaveAs()
 {
     QString fn = QFileDialog::getSaveFileName(this, tr("Save as..."),
                                               QString(), tr("HTML-Files (*.htm *.html);;All Files (*)"));
@@ -954,7 +954,7 @@ bool ChanMsgDialog::fileSaveAs()
     return fileSave();
 }
 
-void ChanMsgDialog::filePrint()
+void MessageComposer::filePrint()
 {
 #ifndef QT_NO_PRINTER
     QPrinter printer(QPrinter::HighResolution);
@@ -970,7 +970,7 @@ void ChanMsgDialog::filePrint()
 #endif
 }
 
-void ChanMsgDialog::filePrintPdf()
+void MessageComposer::filePrintPdf()
 {
 #ifndef QT_NO_PRINTER
     QString fileName = QFileDialog::getSaveFileName(this, "Export PDF",
@@ -986,7 +986,7 @@ void ChanMsgDialog::filePrintPdf()
 #endif
 }
 
-void ChanMsgDialog::setCurrentFileName(const QString &fileName)
+void MessageComposer::setCurrentFileName(const QString &fileName)
 {
     this->fileName = fileName;
     ui.msgText->document()->setModified(false);
@@ -994,7 +994,7 @@ void ChanMsgDialog::setCurrentFileName(const QString &fileName)
     setWindowModified(false);
 }
 
-bool ChanMsgDialog::load(const QString &f)
+bool MessageComposer::load(const QString &f)
 {
     if (!QFile::exists(f))
         return false;
@@ -1017,7 +1017,7 @@ bool ChanMsgDialog::load(const QString &f)
 }
 
 
-bool ChanMsgDialog::maybeSave()
+bool MessageComposer::maybeSave()
 {
     if (!ui.msgText->document()->isModified())
         return true;
@@ -1037,12 +1037,12 @@ bool ChanMsgDialog::maybeSave()
 }
 
 
-void ChanMsgDialog::toggleContacts()
+void MessageComposer::toggleContacts()
 {
 	ui.contactsdockWidget->setVisible(!ui.contactsdockWidget->isVisible());
 }
 
-void  ChanMsgDialog::addImage()
+void  MessageComposer::addImage()
 {
   
 	QString fileimg = QFileDialog::getOpenFileName( this, tr( "Choose Image" ), 
@@ -1060,7 +1060,7 @@ void  ChanMsgDialog::addImage()
     Create_New_Image_Tag(fileimg);
 }
 
-void  ChanMsgDialog::Create_New_Image_Tag( const QString urlremoteorlocal )
+void  MessageComposer::Create_New_Image_Tag( const QString urlremoteorlocal )
 {
    /*if (image_extension(urlremoteorlocal)) {*/
        QString subtext = QString("<p><img src=\"%1\" />").arg(urlremoteorlocal);
@@ -1071,7 +1071,7 @@ void  ChanMsgDialog::Create_New_Image_Tag( const QString urlremoteorlocal )
    //}
 }
 
-void ChanMsgDialog::fontSizeIncrease()
+void MessageComposer::fontSizeIncrease()
 {
     if ( !( ui.msgText->textCursor().blockFormat().hasProperty( TextFormat::HtmlHeading ) &&
         ui.msgText->textCursor().blockFormat().intProperty( TextFormat::HtmlHeading ) ) ) {
@@ -1085,7 +1085,7 @@ void ChanMsgDialog::fontSizeIncrease()
     ui.msgText->setFocus( Qt::OtherFocusReason );
 }
 
-void ChanMsgDialog::fontSizeDecrease()
+void MessageComposer::fontSizeDecrease()
 {
     if ( !( ui.msgText->textCursor().blockFormat().hasProperty( TextFormat::HtmlHeading ) &&
         ui.msgText->textCursor().blockFormat().intProperty( TextFormat::HtmlHeading ) ) ) {
@@ -1099,7 +1099,7 @@ void ChanMsgDialog::fontSizeDecrease()
     ui.msgText->setFocus( Qt::OtherFocusReason );
 }
 
-void ChanMsgDialog::blockQuote()
+void MessageComposer::blockQuote()
 {
     QTextBlockFormat blockFormat = ui.msgText->textCursor().blockFormat();
     QTextBlockFormat f;
@@ -1117,7 +1117,7 @@ void ChanMsgDialog::blockQuote()
     ui.msgText->textCursor().mergeBlockFormat( f );
 }
 
-void ChanMsgDialog::toggleCode()
+void MessageComposer::toggleCode()
 {
     static QString preFontFamily;
 
@@ -1141,7 +1141,7 @@ void ChanMsgDialog::toggleCode()
     ui.msgText->setFocus( Qt::OtherFocusReason );
 }
 
-void ChanMsgDialog::addPostSplitter()
+void MessageComposer::addPostSplitter()
 {
     QTextBlockFormat f = ui.msgText->textCursor().blockFormat();
     QTextBlockFormat f1 = f;
@@ -1157,7 +1157,7 @@ void ChanMsgDialog::addPostSplitter()
     ui.msgText->textCursor().insertBlock( f1 );
 }
 
-void ChanMsgDialog::attachFile()
+void MessageComposer::attachFile()
 {
 	// select a file
 	QString qfile = QFileDialog::getOpenFileName(this, tr("Add Extra File"), "", "", 0,
@@ -1165,13 +1165,13 @@ void ChanMsgDialog::attachFile()
 	std::string filePath = qfile.toStdString();
 	if (filePath != "")
 	{
-	    ChanMsgDialog::addAttachment(filePath);
+	    MessageComposer::addAttachment(filePath);
 	}
 }
 
-void ChanMsgDialog::addAttachment(std::string filePath) {
+void MessageComposer::addAttachment(std::string filePath) {
 	    /* add a AttachFileItem to the attachment section */
-	    std::cerr << "ChanMsgDialog::addFile() hashing file.";
+	    std::cerr << "MessageComposer::addFile() hashing file.";
 	    std::cerr << std::endl;
 
 	    /* add widget in for new destination */
@@ -1195,14 +1195,14 @@ void ChanMsgDialog::addAttachment(std::string filePath) {
 	    
 }
 
-void ChanMsgDialog::fileHashingFinished(AttachFileItem* file) {
-	std::cerr << "ChanMsgDialog::fileHashingFinished() started.";
+void MessageComposer::fileHashingFinished(AttachFileItem* file) {
+	std::cerr << "MessageComposer::fileHashingFinished() started.";
 	std::cerr << std::endl;
 
 	//check that the file is ok tos end
 	if (file->getState() == AFI_STATE_ERROR) {
 	#ifdef CHAT_DEBUG
-		    std::cerr << "ChanMsgDialog::fileHashingFinished error file is not hashed.";
+		    std::cerr << "MessageComposer::fileHashingFinished error file is not hashed.";
 	#endif
 	    return;
 	}
@@ -1215,14 +1215,14 @@ void ChanMsgDialog::fileHashingFinished(AttachFileItem* file) {
 	std::string mesgString = "<a href='retroshare://file|" + (file->FileName()) + "|" + fileSize + "|" + (file->FileHash()) + "'>" 
 	+ "retroshare://file|" + (file->FileName()) + "|" + fileSize +  "|" + (file->FileHash())  + "</a>" + "<br>";
 #ifdef CHAT_DEBUG
-	    std::cerr << "ChanMsgDialog::anchorClicked mesgString : " << mesgString << std::endl;
+	    std::cerr << "MessageComposer::anchorClicked mesgString : " << mesgString << std::endl;
 #endif
 
 	ui.msgText->textCursor().insertHtml(QString::fromStdString(mesgString));
 	ui.msgText->setFocus( Qt::OtherFocusReason );
 }
 
-void ChanMsgDialog::checkAttachmentReady()
+void MessageComposer::checkAttachmentReady()
 {
 	std::list<AttachFileItem *>::iterator fit;
 

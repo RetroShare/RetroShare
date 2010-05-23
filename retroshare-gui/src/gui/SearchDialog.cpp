@@ -24,7 +24,7 @@
 #include "rshare.h"
 #include "SearchDialog.h"
 #include "RetroShareLink.h"
-#include "msgs/ChanMsgDialog.h"
+#include "msgs/MessageComposer.h"
 #include <gui/RSHumanReadableDelegate.h>
 
 #include "rsiface/rsiface.h"
@@ -1194,7 +1194,7 @@ void SearchDialog::sendLinkTo( )
     copysearchLink();
 
     /* create a message */
-    ChanMsgDialog *nMsgDialog = new ChanMsgDialog(true);
+    MessageComposer *nMsgDialog = new MessageComposer(true);
 
     nMsgDialog->newMsg();
     nMsgDialog->insertTitleText("New RetroShare Link(s)");

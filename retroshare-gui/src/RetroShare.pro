@@ -221,7 +221,7 @@ HEADERS +=  rshare.h \
             gui/channels/CreateChannelMsg.h \
             gui/connect/ConnectDialog.h \
             gui/connect/ConfCertDialog.h \
-            gui/msgs/ChanMsgDialog.h \
+            gui/msgs/MessageComposer.h \
             gui/msgs/textformat.h \
             gui/images/retroshare_win.rc.h \
             gui/settings/rsharesettings.h \
@@ -323,7 +323,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/chat/PopupChatDialog.ui \
             gui/connect/ConnectDialog.ui \
             gui/connect/ConfCertDialog.ui \
-            gui/msgs/ChanMsgDialog.ui \
+            gui/msgs/MessageComposer.ui \
             gui/settings/settings.ui \
             gui/settings/GeneralPage.ui \
             gui/settings/DirectoriesPage.ui \
@@ -433,7 +433,7 @@ SOURCES +=  main.cpp \
             gui/chat/HandleRichText.cpp \
             gui/connect/ConnectDialog.cpp \
             gui/connect/ConfCertDialog.cpp \
-            gui/msgs/ChanMsgDialog.cpp \
+            gui/msgs/MessageComposer.cpp \
             gui/common/vmessagebox.cpp \
             gui/common/rwindow.cpp \ 
             gui/common/html.cpp \

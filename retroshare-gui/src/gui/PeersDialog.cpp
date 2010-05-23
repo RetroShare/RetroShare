@@ -35,7 +35,7 @@
 #include "settings/rsharesettings.h"
 
 #include "chat/PopupChatDialog.h"
-#include "msgs/ChanMsgDialog.h"
+#include "msgs/MessageComposer.h"
 #include "connect/ConfCertDialog.h"
 #include "profile/ProfileView.h"
 #include "profile/ProfileWidget.h"
@@ -712,7 +712,7 @@ void PeersDialog::msgfriend()
     }
 
     /* create a message */
-    ChanMsgDialog *nMsgDialog = new ChanMsgDialog(true);
+    MessageComposer *nMsgDialog = new MessageComposer(true);
 
     nMsgDialog->newMsg();
     nMsgDialog->show();

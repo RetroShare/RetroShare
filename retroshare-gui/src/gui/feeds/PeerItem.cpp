@@ -27,7 +27,7 @@
 #include "rsiface/rsmsgs.h"
 #include "rsiface/rspeers.h"
 
-#include "gui/msgs/ChanMsgDialog.h"
+#include "gui/msgs/MessageComposer.h"
 
 #include <iostream>
 #include <sstream>
@@ -294,7 +294,7 @@ void PeerItem::sendMsg()
 	{
 		//mParent->openMsg(FEEDHOLDER_MSG_MESSAGE, mPeerId, "");
 
-    ChanMsgDialog *nMsgDialog = new ChanMsgDialog(true);
+    MessageComposer *nMsgDialog = new MessageComposer(true);
     nMsgDialog->newMsg();
 
     nMsgDialog->addRecipient( mPeerId ) ;

@@ -21,7 +21,7 @@
 
 
 #include "MessagesDialog.h"
-#include "msgs/ChanMsgDialog.h"
+#include "msgs/MessageComposer.h"
 #include "gui/RetroShareLink.h"
 #include "util/printpreview.h"
 #include "util/misc.h"
@@ -475,7 +475,7 @@ void MessagesDialog::msgfilelistWidgetCostumPopupMenu( QPoint point )
 
 void MessagesDialog::newmessage()
 {
-    ChanMsgDialog *nMsgDialog = new ChanMsgDialog(true);
+    MessageComposer *nMsgDialog = new MessageComposer(true);
 
     /* fill it in */
     //std::cerr << "MessagesDialog::newmessage()" << std::endl;
@@ -504,7 +504,7 @@ void MessagesDialog::replytomessage()
     if (!rsMsgs -> getMessage(mid, msgInfo))
         return ;
 
-    ChanMsgDialog *nMsgDialog = new ChanMsgDialog(true);
+    MessageComposer *nMsgDialog = new MessageComposer(true);
     /* fill it in */
     //std::cerr << "MessagesDialog::newmessage()" << std::endl;
     nMsgDialog->newMsg();
@@ -552,7 +552,7 @@ void MessagesDialog::replyallmessage()
     if (!rsMsgs -> getMessage(mid, msgInfo))
         return ;
 
-    ChanMsgDialog *nMsgDialog = new ChanMsgDialog(true);
+    MessageComposer *nMsgDialog = new MessageComposer(true);
     /* fill it in */
     //std::cerr << "MessagesDialog::newmessage()" << std::endl;
     nMsgDialog->newMsg();
@@ -607,7 +607,7 @@ void MessagesDialog::forwardmessage()
     if (!rsMsgs -> getMessage(mid, msgInfo))
         return ;
 
-    ChanMsgDialog *nMsgDialog = new ChanMsgDialog(true);
+    MessageComposer *nMsgDialog = new MessageComposer(true);
     /* fill it in */
     //std::cerr << "MessagesDialog::newmessage()" << std::endl;
     nMsgDialog->newMsg();

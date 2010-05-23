@@ -24,7 +24,7 @@
 #include "gui/forums/CreateForum.h"
 #include "gui/forums/CreateForumMsg.h"
 #include "gui/forums/ForumDetails.h"
-#include "msgs/ChanMsgDialog.h"
+#include "msgs/MessageComposer.h"
 
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
@@ -1344,7 +1344,7 @@ void ForumsDialog::replytomessage()
 
     if (rsPeers->getPeerName(msgInfo.srcId) !="")
     {
-        ChanMsgDialog *nMsgDialog = new ChanMsgDialog(true);
+        MessageComposer *nMsgDialog = new MessageComposer(true);
         nMsgDialog->newMsg();
         nMsgDialog->insertTitleText( (QString("Re: ") + QString::fromStdWString(msgInfo.title)).toStdString()) ;
         nMsgDialog->setWindowTitle(tr("Re: ") + QString::fromStdWString(msgInfo.title) ) ;

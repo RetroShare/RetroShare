@@ -28,7 +28,7 @@
 #include "rsiface/rsmsgs.h"
 #include "rsiface/rspeers.h"
 
-#include "gui/msgs/ChanMsgDialog.h"
+#include "gui/msgs/MessageComposer.h"
 
 #include <iostream>
 
@@ -254,7 +254,7 @@ void MsgItem::replyMsg()
     if (!rsMsgs -> getMessage(mMsgId, msgInfo))
 		return ;
 
-    ChanMsgDialog *nMsgDialog = new ChanMsgDialog(true);
+    MessageComposer *nMsgDialog = new MessageComposer(true);
     nMsgDialog->newMsg();
     nMsgDialog->insertTitleText( (QString("Re: ") + QString::fromStdWString(msgInfo.title)).toStdString()) ;
     nMsgDialog->setWindowTitle(tr("Re: ") + QString::fromStdWString(msgInfo.title) ) ;

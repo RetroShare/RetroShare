@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ChanMsgDialog</class>
- <widget class="QMainWindow" name="ChanMsgDialog">
+ <class>MessageComposer</class>
+ <widget class="QMainWindow" name="MessageComposer">
   <property name="geometry">
    <rect>
     <x>0</x>

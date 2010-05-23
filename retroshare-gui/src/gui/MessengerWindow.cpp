@@ -33,7 +33,7 @@
 #include "MessengerWindow.h"
 
 #include "chat/PopupChatDialog.h"
-#include "msgs/ChanMsgDialog.h"
+#include "msgs/MessageComposer.h"
 #include "PeersDialog.h"
 #include "connect/ConfCertDialog.h"
 #include "util/PixmapMerging.h"
@@ -842,7 +842,7 @@ void MessengerWindow::sendMessage()
     }
 
     /* create a message */
-    ChanMsgDialog *nMsgDialog = new ChanMsgDialog(true);
+    MessageComposer *nMsgDialog = new MessageComposer(true);
 
     nMsgDialog->newMsg();
     nMsgDialog->show();

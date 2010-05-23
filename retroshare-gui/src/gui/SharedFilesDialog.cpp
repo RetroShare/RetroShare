@@ -29,7 +29,7 @@
 #include "rsiface/rsfiles.h"
 
 #include "util/RsAction.h"
-#include "msgs/ChanMsgDialog.h"
+#include "msgs/MessageComposer.h"
 #include "settings/rsharesettings.h"
 #include "AddLinksDialog.h"
 #include "SendLinkDialog.h"
@@ -334,7 +334,7 @@ void SharedFilesDialog::sendremoteLinkTo()
     copyLinkRemote ();
 
     /* create a message */
-    ChanMsgDialog *nMsgDialog = new ChanMsgDialog(true);
+    MessageComposer *nMsgDialog = new MessageComposer(true);
 
     /* fill it in
     * files are receommended already
@@ -355,7 +355,7 @@ void SharedFilesDialog::sendLinkTo()
     copyLinkLocal ();
 
     /* create a message */
-    ChanMsgDialog *nMsgDialog = new ChanMsgDialog(true);
+    MessageComposer *nMsgDialog = new MessageComposer(true);
 
 
     /* fill it in
@@ -378,7 +378,7 @@ void SharedFilesDialog::sendHtmlLinkTo(  )
     copyLinkLocal ();
 
     /* create a message */
-    ChanMsgDialog *nMsgDialog = new ChanMsgDialog(true);
+    MessageComposer *nMsgDialog = new MessageComposer(true);
 
     /* fill it in
     * files are receommended already
@@ -517,7 +517,7 @@ void SharedFilesDialog::recommendFilesTo( std::string rsid )
 		return ;
 
 	/* create a message */
-	ChanMsgDialog *nMsgDialog = new ChanMsgDialog(true);
+	MessageComposer *nMsgDialog = new MessageComposer(true);
 
 	/* fill it in
 	 * files are receommended already
@@ -547,7 +547,7 @@ void SharedFilesDialog::recommendFilesToMsg( std::string rsid )
 
 	/* create a message */
 
-	ChanMsgDialog *nMsgDialog = new ChanMsgDialog(true);
+	MessageComposer *nMsgDialog = new MessageComposer(true);
 
 	nMsgDialog->insertFileList(files_info) ;
 	nMsgDialog->newMsg();
