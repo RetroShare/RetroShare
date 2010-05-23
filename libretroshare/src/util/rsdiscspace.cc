@@ -83,8 +83,15 @@ bool RsDiscSpace::crossSystemDiskStats(const char *file, uint32_t& free_blocks, 
 		std::cerr << "Size estimate failed for file " << file << std::endl ;
 		return false;
 	}
+
+#ifdef __APPLE__
+	free_blocks = buf.f_bavail;
+	block_size = buf.f_frsize ;
+#else
 	free_blocks = buf.f_bavail;
 	block_size = buf.f_bsize ;
+#endif
+
 #endif
 	return true ;
 }
