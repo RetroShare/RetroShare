@@ -105,6 +105,9 @@ private slots:
   void on_actionRoot_isnot_decorated_activated();
   
   void displayMenu();
+  
+  void filterRegExpChanged();
+  void clearFilter();
 
 signals:
 		void friendsUpdated() ;
@@ -124,7 +127,9 @@ private:
   void setIdle(bool Idle);
   bool isIdle;
   const unsigned long maxTimeBeforeIdle;
-
+  
+  void FilterItems();
+  bool FilterItem(QTreeWidgetItem *pItem, QString &sPattern);
 
   std::map<std::string, PopupChatDialog *> chatDialogs;
 

@@ -101,9 +101,10 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
 	connect( ui.shareButton, SIGNAL(clicked()), SLOT(openShareManager()));
   connect( ui.addIMAccountButton, SIGNAL(clicked( bool ) ), this , SLOT( addFriend() ) );
   connect( ui.actionHide_Offline_Friends, SIGNAL(triggered()), this, SLOT(insertPeers()));
+  connect(ui.clearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
   
   connect(ui.messagelineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(savestatusmessage()));
-
+  connect(ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
 
   QTimer *timer = new QTimer(this);
   timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateMessengerDisplay()));
@@ -145,7 +146,7 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
   updateAvatar();
   loadmystatusmessage();
   
-
+  ui.clearButton->hide();
 
   displayMenu();
   updateMessengerDisplay();
@@ -551,6 +552,10 @@ void  MessengerWindow::insertPeers()
             /* add gpg item to the list. If item is already in the list, it won't be duplicated thanks to Qt */
             peertreeWidget->addTopLevelItem(gpg_item);
         }
+        
+    if (ui.filterPatternLineEdit->text().isEmpty() == false) {
+        FilterItems();
+    }
 }
 
 /* Utility Fns */
@@ -1054,4 +1059,62 @@ void MessengerWindow::checkAndSetIdle(int idleTime){
 
 void MessengerWindow::setIdle(bool idle){
 	isIdle = idle;
+}
+
+/* clear Filter */
+void MessengerWindow::clearFilter()
+{
+    ui.filterPatternLineEdit->clear();
+    ui.filterPatternLineEdit->setFocus();
+}
+
+void MessengerWindow::filterRegExpChanged()
+{
+
+    QString text = ui.filterPatternLineEdit->text();
+
+    if (text.isEmpty()) {
+        ui.clearButton->hide();
+    } else {
+        ui.clearButton->show();
+    }
+
+    FilterItems();
+}
+
+void MessengerWindow::FilterItems()
+{
+    QString sPattern = ui.filterPatternLineEdit->text();
+
+    int nCount = ui.messengertreeWidget->topLevelItemCount ();
+    for (int nIndex = 0; nIndex < nCount; nIndex++) {
+        FilterItem(ui.messengertreeWidget->topLevelItem(nIndex), sPattern);
+    }
+}
+
+bool MessengerWindow::FilterItem(QTreeWidgetItem *pItem, QString &sPattern)
+{
+    bool bVisible = true;
+
+    if (sPattern.isEmpty() == false) {
+        if (pItem->text(0).contains(sPattern, Qt::CaseInsensitive) == false) {
+            bVisible = false;
+        }
+    }
+
+    int nVisibleChildCount = 0;
+    int nCount = pItem->childCount();
+    for (int nIndex = 0; nIndex < nCount; nIndex++) {
+        if (FilterItem(pItem->child(nIndex), sPattern)) {
+            nVisibleChildCount++;
+        }
+    }
+
+    if (bVisible || nVisibleChildCount) {
+        pItem->setHidden(false);
+    } else {
+        pItem->setHidden(true);
+    }
+
+    return (bVisible || nVisibleChildCount);
 }
