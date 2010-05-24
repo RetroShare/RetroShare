@@ -3604,7 +3604,7 @@ void peerConnectState::updateIpAddressList(const IpAddressTimed& ipTimed)
 	}
 
 	// 2 - check if the ip list already contains the current remote address of the connected peer. In such a case,
-	//    we update the time stamp.
+	//    we remove the list entry, and update the time stamp. We only compare ips not ports, so that the last port is kept.
 	//
 	bool found = false;
 	for (std::list<IpAddressTimed>::iterator ipListIt = ipAddressList.begin(); ipListIt!=(ipAddressList.end()) && !found; ++ipListIt) 
@@ -3613,20 +3613,21 @@ void peerConnectState::updateIpAddressList(const IpAddressTimed& ipTimed)
 #ifdef CONN_DEBUG
 			std::cerr << "peerConnectState::updateIpAdressList() ip found in the list." << std::endl;
 #endif
-			found = true;
 			//update the seen time
 			//
-			if (ipListIt->seenTime < ipTimed.seenTime) 
+			if ( (*ipListIt).seenTime < ipTimed.seenTime) 
 			{
-				(*ipListIt).seenTime = ipTimed.seenTime;
-				(*ipListIt).ipAddr.sin_port = ipTimed.ipAddr.sin_port ; // keep the port of the most recent address.
+				ipAddressList.erase(ipListIt) ;
 #ifdef CONN_DEBUG
 				std::cerr << "peerConnectState::updateIpAdressList() Update seen time to : " << ipTimed.seenTime << std::endl;
 #endif
 			}
+			else
+				found = true;	// We keep the entry.
+			break ;
 		}
 
-	// if not found, insert the address at sorted position into the list
+	// if not found (or removed), insert the address at sorted position into the list
 	//
 	if (!found) 
 	{
