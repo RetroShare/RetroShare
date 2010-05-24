@@ -377,6 +377,8 @@ private:
 
 	p3tunnel *mP3tunnel;
 
+        uint32_t retry_period;
+
 	std::map<uint32_t, pqiNetAssistFirewall *> mFwAgents;
 	std::map<uint32_t, pqiNetAssistConnect  *> mDhts;
 

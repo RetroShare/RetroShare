@@ -151,6 +151,7 @@ p3ConnectMgr::p3ConnectMgr()
         allow_tunnel_connection = true;
 	mExtAddrFinder = new ExtAddrFinder;
 	mNetInitTS = 0;
+        retry_period = MIN_RETRY_PERIOD;
 
 	netFlagLocalOk = false;
 	netFlagUpnpOk = false;
@@ -391,7 +392,7 @@ void p3ConnectMgr::netStatusReset()
 	{
 		it->second.state &= ~RS_PEER_S_CONNECTED ;
                 // forces immediate re-connexion in 6 seconds, don't start all connection immediately
-                it->second.lastattempt = time(NULL) - MIN_RETRY_PERIOD + 6 + rand() % 6;
+                it->second.lastattempt = time(NULL) - retry_period + 6 + rand() % 6;
 	}
 
 	IndicateConfigChanged();
@@ -493,7 +494,7 @@ void    p3ConnectMgr::statusTick()
 
 	time_t now = time(NULL);
 	time_t oldavail = now - MAX_AVAIL_PERIOD;
-	time_t retry = now - MIN_RETRY_PERIOD;
+        time_t retry = now - retry_period;
 
       {
       	RsStackMutex stack(connMtx);  /******   LOCK MUTEX ******/
@@ -2093,6 +2094,9 @@ void    p3ConnectMgr::peerConnectRequest(std::string id, struct sockaddr_in radd
 
 bool p3ConnectMgr::addFriend(std::string id, std::string gpg_id, uint32_t netMode, uint32_t visState, time_t lastContact)
 {
+    //set a new retry period, so the more frinds we have the less we launch conection attempts
+    retry_period = MIN_RETRY_PERIOD + rand() % 3 + (mFriendList.size() * 2);
+
     if (id == AuthSSL::getAuthSSL()->OwnId()) {
 #ifdef CONN_DEBUG
                 std::cerr << "p3ConnectMgr::addFriend() cannot add own id as a friend." << std::endl;
