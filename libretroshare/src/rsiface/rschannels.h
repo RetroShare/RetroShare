@@ -186,6 +186,13 @@ virtual bool channelExtraFileRemove(std::string hash, std::string chId) = 0;
  */
 virtual bool channelRestoreKeys(std::string chId) = 0;
 
+/*!
+ * shares keys with peers
+ *@param chId the channel for which private publish keys will be shared
+ *@param peers  peers in this list will be sent keys
+ *
+ */
+virtual bool channelShareKeys(std::string chId, std::list<std::string>& peers) = 0;
 /****************************************/
 
 };

@@ -236,7 +236,7 @@ const uint32_t GRP_UNSUBSCRIBED = 0x0006;
  *
  * Create a Signing structure for Messages in general.
  */
-class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, public nullService
+class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, public p3Service
 {
 	public:
 
@@ -256,12 +256,6 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 virtual bool   loadLocalCache(const CacheData &data); /// overloaded from Cache Source
 virtual int    loadCache(const CacheData &data); /// overloaded from Cache Store
 
-/**
- * @param grpId the grpId id for which backup keys should be restored
- * @return false if failed and vice versa
- */
-virtual bool restoreGrpKeys(std::string grpId); /// restores a group keys from backup
-
 	private:
 	/* top level load */
 int  	loadAnyCache(const CacheData &data, bool local);
@@ -270,6 +264,7 @@ int  	loadAnyCache(const CacheData &data, bool local);
 void	loadFileGroups(std::string filename, std::string src, bool local);
 void	loadFileMsgs(std::string filename, uint16_t cacheSubId, std::string src, uint32_t ts, bool local);
 bool backUpKeys(const std::list<RsDistribGrpKey* > &keysToBackUp, std::string grpId);
+void locked_sharePubKey();
 
 	protected:
 	/* load cache msgs */	
@@ -368,6 +363,28 @@ void	clear_local_caches(time_t now);
 void    locked_publishPendingMsgs();
 uint16_t locked_determineCacheSubId();
 
+/**
+ * @param grpId the grpId id for which backup keys should be restored
+ * @return false if failed and vice versa
+ */
+virtual bool restoreGrpKeys(std::string grpId); /// restores a group keys from backup
+
+/**
+ * @param grpId the group for which to share public keys
+ * @param peers The peers to which public keys should be sent
+ */
+virtual bool sharePubKey(std::string grpId, std::list<std::string>& peers);
+
+/**
+ * attempts to receive publication keys
+ */
+virtual void locked_receivePubKeys();
+
+/**
+ * this load received pub keys, useful in the case that publish keys have been received
+ * but group info hasn't
+ */
+virtual void locked_loadRecvdPubKeys();
 
 
 /***************************************************************************************/
@@ -449,10 +466,16 @@ bool 	groupsChanged(std::list<std::string> &groupIds);
 
 	bool mGroupsChanged;
 	bool mGroupsRepublish;
+	bool mPubKeysRecvd;
 
     std::list<RsItem *> saveCleanupList; /* TEMPORARY LIST WHEN SAVING */
     std::string mKeyBackUpDir;
     const std::string BACKUP_KEY_FILE;
+
+    std::map<std::string, RsDistribGrpKey* > mRecvdPubKeys; /// full publishing keys received from users
+    std::map<std::string, std::list<std::string> > mPendingPubKeyRecipients; /// peers to receive publics key for a given grp
+    time_t mLastKeyPublishTime;
+
 
 };
 

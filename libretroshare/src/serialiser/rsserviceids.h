@@ -87,6 +87,7 @@ const uint16_t RS_SERVICE_TYPE_PHOTO       = 0xf040;
 const uint16_t RS_SERVICE_TYPE_DISTRIB     = 0xf110;
 const uint16_t RS_SERVICE_TYPE_FORUM       = 0xf120;
 const uint16_t RS_SERVICE_TYPE_CHANNEL     = 0xf130;
+const uint16_t RS_SERVICE_TYPE_CHANNEL_SOCKET = 0xf140;
 
 /* Games/External Apps - Service Only */
 const uint16_t RS_SERVICE_TYPE_GAME_LAUNCHER = 0xf200;

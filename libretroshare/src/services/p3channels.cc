@@ -437,6 +437,16 @@ bool p3Channels::channelSubscribe(std::string cId, bool subscribe)
 	return subscribeToGroup(cId, subscribe);
 }
 
+bool p3Channels::channelShareKeys(std::string chId, std::list<std::string>& peers){
+
+#ifdef CHANNEL_DEBUG
+	std::cerr << "p3Channels::channelShareKeys() " << chId << std::endl;
+#endif
+
+	return sharePubKey(chId, peers);
+
+}
+
 
 /***************************************************************************************/
 /****************** Event Feedback (Overloaded form p3distrib) *************************/

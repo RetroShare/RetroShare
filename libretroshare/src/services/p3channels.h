@@ -72,7 +72,7 @@ virtual bool channelSubscribe(std::string cId, bool subscribe);
 virtual bool channelExtraFileHash(std::string path, std::string chId, FileInfo& fInfo);
 virtual bool channelExtraFileRemove(std::string hash, std::string chId);
 virtual bool channelRestoreKeys(std::string chId);
-
+virtual bool channelShareKeys(std::string chId, std::list<std::string>& peers);
 /***************************************************************************************/
 /****************** Event Feedback (Overloaded form p3distrib) *************************/
 /***************************************************************************************/

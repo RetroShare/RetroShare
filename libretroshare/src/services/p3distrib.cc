@@ -26,6 +26,7 @@
 #include <openssl/err.h>
 #include <openssl/ssl.h>
 #include <openssl/evp.h>
+#include <algorithm>
 
 #include "rsiface/rsdistrib.h"
 #include "services/p3distrib.h"
@@ -56,12 +57,12 @@ p3GroupDistrib::p3GroupDistrib(uint16_t subtype,
 
 	:CacheSource(subtype, true, cs, sourcedir), 
 	CacheStore(subtype, true, cs, cft, storedir), 
-        p3Config(configId), nullService(subtype),
+        p3Config(configId), p3Service(RS_SERVICE_TYPE_DISTRIB),
 	mStorePeriod(storePeriod), 
 	mPubPeriod(pubPeriod), 
 	mLastPublishTime(0),
 	mMaxCacheSubId(1),
-	mKeyBackUpDir(keyBackUpDir), BACKUP_KEY_FILE("key.log")
+	mKeyBackUpDir(keyBackUpDir), BACKUP_KEY_FILE("key.log"), mLastKeyPublishTime(0)
 {
 	/* not much yet */
 	time_t now = time(NULL);
@@ -70,6 +71,8 @@ p3GroupDistrib::p3GroupDistrib(uint16_t subtype,
 	mGroupsRepublish = true;
 
         mOwnId = AuthSSL::getAuthSSL()->OwnId();
+
+        addSerialType(new RsDistribSerialiser());
 	return;
 }
 
@@ -88,6 +91,7 @@ int	p3GroupDistrib::tick()
 	{
 		RsStackMutex stack(distribMtx);  /**** STACK LOCKED MUTEX ****/
 		toPublish = (mPendingPublish.size() > 0) && (now > mPubPeriod + mLastPublishTime);
+
 	}
 
 	if (toPublish)
@@ -111,6 +115,32 @@ int	p3GroupDistrib::tick()
 
 		RsStackMutex stack(distribMtx);  /**** STACK LOCKED MUTEX ****/
 		mGroupsRepublish = false;
+	}
+
+	{
+		RsStackMutex stack(distribMtx);
+		toPublish = (mPendingPubKeyRecipients.size() > 0) && (now > 5 + mLastKeyPublishTime);
+	}
+
+	if(toPublish){
+		RsStackMutex stack(distribMtx);
+		locked_sharePubKey();
+	}
+
+	bool toReceive = receivedItems();
+
+	if(toReceive){
+		RsStackMutex stack(distribMtx);
+		locked_receivePubKeys();
+	}
+
+
+	{
+		RsStackMutex stack(distribMtx);
+
+		if(mPubKeysRecvd){
+			locked_loadRecvdPubKeys();
+		}
 	}
 
 	return 0;
@@ -1767,12 +1797,16 @@ bool p3GroupDistrib::restoreGrpKeys(std::string grpId){
 		}
 	}
 
-	gi->flags |= RS_DISTRIB_SUBSCRIBED;
-	locked_notifyGroupChanged(*gi, GRP_SUBSCRIBED);
-	IndicateConfigChanged();
-	mGroupsRepublish = true;
+
 
 	ok &= itemAttempted;
+
+	if(ok){
+		gi->flags |= RS_DISTRIB_SUBSCRIBED;
+		locked_notifyGroupChanged(*gi, GRP_SUBSCRIBED);
+		IndicateConfigChanged();
+		mGroupsRepublish = true;
+	}
 
 #ifdef DISTRIB_DEBUG
 	if(!ok){
@@ -1785,6 +1819,201 @@ bool p3GroupDistrib::restoreGrpKeys(std::string grpId){
 
 	return ok;
 }
+
+
+bool p3GroupDistrib::sharePubKey(std::string grpId, std::list<std::string>& peers){
+
+	RsStackMutex stack(distribMtx);
+
+	// first check that group actually exists
+	if(mGroups.find(grpId) == mGroups.end()){
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::sharePubKey(): Group does not exist" << std::endl;
+#endif
+		return false;
+	}
+
+	// add to pending list to be sent
+	mPendingPubKeyRecipients[grpId] = peers;
+
+	return true;
+}
+
+void p3GroupDistrib::locked_sharePubKey(){
+
+
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::locked_sharePubKey() " << std::endl;
+#endif
+
+	std::map<std::string, std::list<std::string> >::iterator mit;
+	std::list<std::string>::iterator lit;
+
+	// get list of peers that are online
+	std::list<std::string> peersOnline;
+	rsPeers->getOnlineList(peersOnline);
+	std::list<std::string> toDelete;
+
+	/* send public key to peers online */
+
+	for(mit = mPendingPubKeyRecipients.begin();  mit != mPendingPubKeyRecipients.end(); mit++){
+
+		GroupInfo *gi = locked_getGroupInfo(mit->first);
+
+		if(gi == NULL){
+			toDelete.push_back(mit->first); // grp does not exist, stop attempting to share key for dead group
+			continue;
+		}
+
+		// find full public key, and send to given peers
+		std::map<std::string, GroupKey>::iterator kit;
+		for(kit = gi->publishKeys.begin();
+					kit != gi->publishKeys.end(); kit++)
+		{
+			if (kit->second.type & RSTLV_KEY_TYPE_FULL)
+			{
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::locked_sharePubKey() Sharing Key: " << kit->first;
+	std::cerr << std::endl;
+#endif
+
+				// send keys to peers who are online
+				for(lit = mit->second.begin() ; lit != mit->second.end(); lit++){
+
+					if(std::find(peersOnline.begin(), peersOnline.end(), *lit) != peersOnline.end()){
+
+						/* create Key for sharing */
+						RsDistribGrpKey* pubKey = new RsDistribGrpKey();
+
+
+						pubKey->clear();
+						pubKey->grpId = mit->first;
+
+						RSA *rsa_priv = EVP_PKEY_get1_RSA(kit->second.key);
+						setRSAPrivateKey(pubKey->key, rsa_priv);
+						RSA_free(rsa_priv);
+
+						pubKey->key.keyFlags = kit->second.type;
+						pubKey->key.startTS = kit->second.startTS;
+						pubKey->key.endTS   = kit->second.endTS;
+						pubKey->PeerId(*lit);
+						std::cout << *lit << std::endl;
+						sendItem(pubKey);
+
+						// remove peer from list
+						lit = mit->second.erase(lit); // no need to send to peer anymore
+						lit--;
+					}
+				}
+			}
+		}
+
+		// if given peers have all received key(s) then stop sending for group
+		if(mit->second.empty())
+			toDelete.push_back(mit->first);
+	}
+
+	// delete pending peer list which are done with
+	for(lit = toDelete.begin(); lit != toDelete.end(); lit++)
+		mPendingPubKeyRecipients.erase(*lit);
+
+	mLastKeyPublishTime = time(NULL);
+
+	return;
+}
+
+
+void p3GroupDistrib::locked_receivePubKeys(){
+
+
+	RsItem* item;
+
+	while(NULL != (item = recvItem())){
+
+		RsDistribGrpKey* key_item = dynamic_cast<RsDistribGrpKey*>(item);
+
+		if(key_item != NULL){
+
+
+#ifdef STATUS_DEBUG
+			std::cerr << "p3GroupDistrib::locked_receiveKeys()" << std::endl;
+			std::cerr << "PeerId : " << key_item->PeerId() << std::endl;
+			std::cerr << "GrpId: " << key_item->grpId << std::endl;
+			std::cerr << "Got key Item" << std::endl;
+#endif
+			if(key_item->key.keyFlags == RSTLV_KEY_TYPE_FULL){
+				mRecvdPubKeys[key_item->grpId] =  key_item;
+			}
+			else{
+				std::cerr << "p3GroupDistrib::locked_receiveKeys():" << "Not full public key"
+						  << "Deleting item"<< std::endl;
+				delete key_item;
+			}
+		}else{
+			delete item;
+		}
+	}
+
+	if(mRecvdPubKeys.size() != 0){
+		mPubKeysRecvd = true;
+	}
+
+	return;
+}
+
+void p3GroupDistrib::locked_loadRecvdPubKeys(){
+
+	std::map<std::string, RsDistribGrpKey* >::iterator mit;
+	GroupInfo *gi;
+	std::list<std::string> toDelete;
+
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::locked_loadRecvdPubKeys() " << std::endl;
+#endif
+
+	bool ok = false;
+
+	// load received keys
+	for(mit = mRecvdPubKeys.begin(); mit != mRecvdPubKeys.end(); mit++ ){
+
+		gi = locked_getGroupInfo(mit->second->grpId);
+
+		if(gi != NULL){
+
+
+
+			if(locked_updateGroupPublishKey(*gi, mit->second)){
+				toDelete.push_back(mit->first);
+				gi->flags |= RS_DISTRIB_SUBSCRIBED;
+				locked_notifyGroupChanged(*gi, GRP_SUBSCRIBED);
+				ok |= true;
+			}
+			else
+				std::cerr << "p3GroupDistrib::locked_loadRecvdPubKeys(): Failed to load" << std::endl;
+
+		}else{
+
+			std::cerr << "p3GroupDistrib::locked_loadRecvdPubKeys(): group does not exist" << std::endl;
+		}
+
+	}
+
+	if(mRecvdPubKeys.size() == 0)
+		mPubKeysRecvd = false;
+
+
+	if(ok)
+		IndicateConfigChanged();
+
+	std::list<std::string >::iterator lit;
+
+	// delete keys that have been loaded to groups
+	for(lit = toDelete.begin(); lit != toDelete.end(); lit++)
+		mRecvdPubKeys.erase(*lit);
+
+	return;
+}
+
 std::string	p3GroupDistrib::publishMsg(RsDistribMsg *msg, bool personalSign)
 {
 
