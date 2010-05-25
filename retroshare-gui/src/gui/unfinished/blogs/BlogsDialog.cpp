@@ -41,7 +41,6 @@
 
 #define BLOG_DEFAULT_IMAGE ":/images/hi64-app-kblogger.png"
 
-
 /** Constructor */
 BlogsDialog::BlogsDialog(QWidget *parent)
 : MainPage (parent)
@@ -506,6 +505,7 @@ void BlogsDialog::updateBlogMsgs()
 	}
 	
 	iconLabel->setEnabled(true);
+
 	
 	/* set textcolor for Blog name  */
 	QString blogStr("<span style=\"font-size:22pt; font-weight:500;"

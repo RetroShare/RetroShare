@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>534</width>
-    <height>535</height>
+    <width>703</width>
+    <height>611</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Create a new Channel</string>
@@ -87,7 +93,7 @@ p, li { white-space: pre-wrap; }
      </layout>
     </widget>
    </item>
-   <item row="1" column="0">
+   <item row="2" column="0">
     <widget class="QFrame" name="frame">
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
@@ -96,7 +102,7 @@ p, li { white-space: pre-wrap; }
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout_5">
-      <item row="0" column="0" colspan="3">
+      <item row="0" column="0">
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
          <widget class="QLabel" name="label">
@@ -109,6 +115,101 @@ p, li { white-space: pre-wrap; }
          <widget class="QLineEdit" name="channelName"/>
         </item>
        </layout>
+      </item>
+      <item row="0" column="3" rowspan="7">
+       <widget class="QDockWidget" name="contactsdockWidget">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>300</width>
+          <height>524287</height>
+         </size>
+        </property>
+        <property name="sizeIncrement">
+         <size>
+          <width>220</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="baseSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>check peers you would like to share private publish key with</string>
+        </property>
+        <property name="floating">
+         <bool>false</bool>
+        </property>
+        <property name="features">
+         <set>QDockWidget::NoDockWidgetFeatures</set>
+        </property>
+        <property name="windowTitle">
+         <string>Share Key With</string>
+        </property>
+        <widget class="QWidget" name="dockWidgetContents">
+         <layout class="QGridLayout" name="_2">
+          <property name="margin">
+           <number>0</number>
+          </property>
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <item row="0" column="0">
+           <widget class="QTreeWidget" name="keyShareList">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>4</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>20</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>300</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="sizeIncrement">
+             <size>
+              <width>220</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="baseSize">
+             <size>
+              <width>200</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="sortingEnabled">
+             <bool>true</bool>
+            </property>
+            <column>
+             <property name="text">
+              <string>Contacts:</string>
+             </property>
+            </column>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
       </item>
       <item row="1" column="0" colspan="3">
        <layout class="QVBoxLayout">
@@ -136,13 +237,6 @@ p, li { white-space: pre-wrap; }
          <property name="margin">
           <number>6</number>
          </property>
-         <item>
-          <widget class="QRadioButton" name="typePublic">
-           <property name="text">
-            <string>Public - Anyone can read and publish (Shared Publish Key)</string>
-           </property>
-          </widget>
-         </item>
          <item>
           <widget class="QRadioButton" name="typePrivate">
            <property name="text">
@@ -173,16 +267,16 @@ p, li { white-space: pre-wrap; }
           <number>6</number>
          </property>
          <item>
-          <widget class="QRadioButton" name="msgAuth">
+          <widget class="QRadioButton" name="msgAnon">
            <property name="text">
-            <string>Authemticated Messages</string>
+            <string>Anonymous Messages</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QRadioButton" name="msgAnon">
+          <widget class="QRadioButton" name="msgAuth">
            <property name="text">
-            <string>Anonymous Messages</string>
+            <string>Authemticated Messages</string>
            </property>
           </widget>
          </item>
@@ -202,37 +296,42 @@ p, li { white-space: pre-wrap; }
         </layout>
        </widget>
       </item>
-      <item row="5" column="0">
-       <spacer>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>238</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="5" column="1">
-       <widget class="QPushButton" name="cancelButton">
-        <property name="text">
-         <string>Cancel</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="2">
-       <widget class="QPushButton" name="createButton">
-        <property name="text">
-         <string>Create</string>
-        </property>
-        <property name="default">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
       <item row="4" column="0" colspan="3">
+       <widget class="QGroupBox" name="msgGroupBox_2">
+        <property name="title">
+         <string>Key Sharing</string>
+        </property>
+        <layout class="QVBoxLayout" name="_5">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="margin">
+          <number>6</number>
+         </property>
+         <item>
+          <widget class="QCheckBox" name="pubKeyShare_cb">
+           <property name="text">
+            <string>Share Private Publish Key</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="verticalSpacer_3">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="5" column="0" colspan="3">
        <widget class="QGroupBox" name="groupBoxLogo">
         <property name="title">
          <string>Channel Logo</string>
@@ -343,6 +442,36 @@ border-radius: 10px;
           </spacer>
          </item>
         </layout>
+       </widget>
+      </item>
+      <item row="6" column="0">
+       <spacer>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>238</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="6" column="1">
+       <widget class="QPushButton" name="cancelButton">
+        <property name="text">
+         <string>Cancel</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="2">
+       <widget class="QPushButton" name="createButton">
+        <property name="text">
+         <string>Create</string>
+        </property>
+        <property name="default">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
      </layout>

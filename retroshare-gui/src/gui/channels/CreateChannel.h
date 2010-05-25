@@ -52,6 +52,12 @@ void  createChannel();
 void  cancelChannel();
 
 void addChannelLogo();
+void setShareList();
+void togglePersonItem(QTreeWidgetItem* item, int col);
+
+private:
+
+std::list<std::string> mShareList;
 
 };
 
