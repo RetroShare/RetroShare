@@ -67,6 +67,9 @@ public slots:
   void  sendMessage();
   void  cancelMessage();
   void  addImage();
+    
+  void changeFormatType(int styleIndex );
+
 
 protected:
   void closeEvent (QCloseEvent * event);

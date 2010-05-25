@@ -182,10 +182,50 @@ border: 1px solid #CCCCCC;}</string>
                <widget class="QComboBox" name="comboStyle">
                 <property name="maximumSize">
                  <size>
-                  <width>75</width>
+                  <width>16777215</width>
                   <height>16777215</height>
                  </size>
                 </property>
+                <item>
+                 <property name="text">
+                  <string>Paragraph</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Heading 1</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Heading 2</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Heading 2</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Heading 3</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Heading 4</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Heading 5</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Heading 6</string>
+                 </property>
+                </item>
                </widget>
               </item>
               <item row="0" column="1">
@@ -383,7 +423,7 @@ border: 1px solid #CCCCCC;}</string>
                 </property>
                </widget>
               </item>
-              <item row="0" column="10">
+              <item row="0" column="9">
                <widget class="QToolButton" name="colorbtn">
                 <property name="minimumSize">
                  <size>
@@ -408,7 +448,7 @@ border: 1px solid #CCCCCC;}</string>
                 </property>
                </widget>
               </item>
-              <item row="0" column="11">
+              <item row="0" column="10">
                <widget class="QToolButton" name="textalignmentbtn">
                 <property name="minimumSize">
                  <size>
@@ -442,7 +482,7 @@ border: 1px solid #CCCCCC;}</string>
                 </property>
                </widget>
               </item>
-              <item row="0" column="12">
+              <item row="0" column="11">
                <widget class="QToolButton" name="imagebtn">
                 <property name="minimumSize">
                  <size>
@@ -500,7 +540,7 @@ border: 1px solid #CCCCCC;}</string>
                 </property>
                </widget>
               </item>
-              <item row="0" column="15">
+              <item row="0" column="14">
                <spacer>
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
@@ -512,29 +552,6 @@ border: 1px solid #CCCCCC;}</string>
                  </size>
                 </property>
                </spacer>
-              </item>
-              <item row="0" column="9">
-               <widget class="QToolButton" name="splitPostButton">
-                <property name="toolTip">
-                 <string>Split text</string>
-                </property>
-                <property name="text">
-                 <string/>
-                </property>
-                <property name="icon">
-                 <iconset resource="../images.qrc">
-                  <normaloff>:/images/textedit/hi22-action-insert-more-mark.png</normaloff>:/images/textedit/hi22-action-insert-more-mark.png</iconset>
-                </property>
-                <property name="iconSize">
-                 <size>
-                  <width>22</width>
-                  <height>22</height>
-                 </size>
-                </property>
-                <property name="autoRaise">
-                 <bool>true</bool>
-                </property>
-               </widget>
               </item>
              </layout>
             </item>

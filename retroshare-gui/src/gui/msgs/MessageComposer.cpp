@@ -69,7 +69,6 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
     connect(ui.sizedecreaseButton, SIGNAL (clicked()), this, SLOT (fontSizeDecrease()));
     connect(ui.actionQuote, SIGNAL(triggered()), this, SLOT(blockQuote()));
     connect(ui.codeButton, SIGNAL (clicked()), this, SLOT (toggleCode()));
-    connect(ui.splitPostButton, SIGNAL (clicked()), this, SLOT (addPostSplitter()));
 
     connect(ui.msgText, SIGNAL( checkSpellingChanged( bool ) ), this, SLOT( spellChecking( bool ) ) );
   
@@ -135,14 +134,15 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
     actionAlignJustify->setShortcut(Qt::CTRL + Qt::Key_J);
     actionAlignJustify->setCheckable(true);
     
-    ui.comboStyle->addItem("Standard");
+    /*ui.comboStyle->addItem("Standard");
     ui.comboStyle->addItem("Bullet List (Disc)");
     ui.comboStyle->addItem("Bullet List (Circle)");
     ui.comboStyle->addItem("Bullet List (Square)");
     ui.comboStyle->addItem("Ordered List (Decimal)");
     ui.comboStyle->addItem("Ordered List (Alpha lower)");
-    ui.comboStyle->addItem("Ordered List (Alpha upper)");
-    connect(ui.comboStyle, SIGNAL(activated(int)),this, SLOT(textStyle(int)));
+    ui.comboStyle->addItem("Ordered List (Alpha upper)");*/
+    //connect(ui.comboStyle, SIGNAL(activated(int)),this, SLOT(textStyle(int)));
+    connect(ui.comboStyle, SIGNAL(activated(int)),this, SLOT(changeFormatType(int)));
     
     connect(ui.comboFont, SIGNAL(activated(const QString &)), this, SLOT(textFamily(const QString &)));
     
@@ -680,6 +680,10 @@ void MessageComposer::setupInsertActions()
     a = new QAction(QIcon(""), tr("&Image"), this);
     connect(a, SIGNAL(triggered()), this, SLOT(addImage()));
     menu->addAction(a);
+        
+    a = new QAction(QIcon(""), tr("&Horizontal Line"), this);
+    connect(a, SIGNAL(triggered()), this, SLOT(addPostSplitter()));
+    menu->addAction(a);
 
 }
 
@@ -719,6 +723,62 @@ void MessageComposer::textSize(const QString &p)
         fmt.setFontPointSize(pointSize);
         mergeFormatOnWordOrSelection(fmt);
     }
+}
+
+void MessageComposer::changeFormatType(int styleIndex )
+{
+    ui.msgText->setFocus( Qt::OtherFocusReason );
+
+    QTextCursor cursor = ui.msgText->textCursor();
+    //QTextBlockFormat bformat = cursor.blockFormat();
+    QTextBlockFormat bformat;
+    QTextCharFormat cformat;
+
+    switch (styleIndex) {
+         default:
+            case 0:
+            bformat.setProperty( TextFormat::HtmlHeading, QVariant( 0 ) );
+            cformat.setFontWeight( QFont::Normal );
+            cformat.setProperty( QTextFormat::FontSizeAdjustment, QVariant( 0 ) );
+            break;
+        case 1:
+            bformat.setProperty( TextFormat::HtmlHeading, QVariant( 1 ) );
+            cformat.setFontWeight( QFont::Bold );
+            cformat.setProperty( QTextFormat::FontSizeAdjustment, QVariant( 3 ) );
+            break;
+        case 2:
+            bformat.setProperty( TextFormat::HtmlHeading, QVariant( 2 ) );
+            cformat.setFontWeight( QFont::Bold );
+            cformat.setProperty( QTextFormat::FontSizeAdjustment, QVariant( 2 ) );
+            break;
+        case 3:
+            bformat.setProperty( TextFormat::HtmlHeading, QVariant( 3 ) );
+            cformat.setFontWeight( QFont::Bold );
+            cformat.setProperty( QTextFormat::FontSizeAdjustment, QVariant( 1 ) );
+            break;
+        case 4:
+            bformat.setProperty( TextFormat::HtmlHeading, QVariant( 4 ) );
+            cformat.setFontWeight( QFont::Bold );
+            cformat.setProperty( QTextFormat::FontSizeAdjustment, QVariant( 0 ) );
+            break;
+        case 5:
+            bformat.setProperty( TextFormat::HtmlHeading, QVariant( 5 ) );
+            cformat.setFontWeight( QFont::Bold );
+            cformat.setProperty( QTextFormat::FontSizeAdjustment, QVariant( -1 ) );
+            break;
+        case 6:
+            bformat.setProperty( TextFormat::HtmlHeading, QVariant( 6 ) );
+            cformat.setFontWeight( QFont::Bold );
+            cformat.setProperty( QTextFormat::FontSizeAdjustment, QVariant( -2 ) );
+            break;
+    }
+    //cformat.clearProperty( TextFormat::HasCodeStyle );
+
+    cursor.beginEditBlock();
+    cursor.mergeBlockFormat( bformat );
+    cursor.select( QTextCursor::BlockUnderCursor );
+    cursor.mergeCharFormat( cformat );
+    cursor.endEditBlock();
 }
 
 void MessageComposer::textStyle(int styleIndex)
