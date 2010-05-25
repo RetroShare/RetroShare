@@ -62,7 +62,7 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
     connect(ui.imagebtn, SIGNAL(clicked()), this, SLOT(addImage()));
     //connect(ui.linkbtn, SIGNAL(clicked()), this, SLOT(insertLink()));
     connect(ui.actionContactsView, SIGNAL(triggered()), this, SLOT(toggleContacts()));
-    connect(ui.actionSaveas, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
+    connect(ui.actionSaveas, SIGNAL(triggered()), this, SLOT(saveasDraft()));
     connect(ui.actionAttach, SIGNAL(triggered()), this, SLOT(attachFile()));
   
     connect(ui.sizeincreaseButton, SIGNAL (clicked()), this, SLOT (fontSizeIncrease()));
@@ -598,11 +598,11 @@ void MessageComposer::setupFileActions()
 
     actionSave = a = new QAction(QIcon(":/images/textedit/filesave.png"), tr("&Save"), this);
     a->setShortcut(QKeySequence::Save);
-    connect(a, SIGNAL(triggered()), this, SLOT(fileSave()));
+    connect(a, SIGNAL(triggered()), this, SLOT(saveasDraft()));
     a->setEnabled(false);
     menu->addAction(a);
 
-    a = new QAction(tr("Save &As..."), this);
+    a = new QAction(tr("Save &As File"), this);
     connect(a, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
     menu->addAction(a);
     
