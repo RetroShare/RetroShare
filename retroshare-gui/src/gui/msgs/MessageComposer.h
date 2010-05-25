@@ -44,15 +44,13 @@ class MessageComposer : public QMainWindow
 public:
   /** Default Constructor */
 
-  MessageComposer(bool isMsg, QWidget *parent = 0, Qt::WFlags flags = 0);
-  /** Default Destructor */
+  MessageComposer(QWidget *parent = 0, Qt::WFlags flags = 0);
 
-  void  newMsg();
+  void  newMsg(std::string msgId = "");
 
 	/* worker fns */
-  void  insertSendList(); /* for Msgs */
-  void  insertChannelSendList(); /* for Channels */
-  void  insertFileList(const std::list<DirDetails>&); /* for Both */
+  void  insertSendList();
+  void  insertFileList(const std::list<DirDetails>&);
   void  insertFileList(const std::list<FileInfo>&);
   void  insertTitleText(std::string title);
   void  insertPastedText(std::string msg) ;
@@ -80,7 +78,6 @@ private slots:
 
 	/* for toggling flags */
   void togglePersonItem( QTreeWidgetItem *item, int col );
-  void toggleChannelItem( QTreeWidgetItem *item, int col );
   void toggleRecommendItem( QTreeWidgetItem *item, int col );
   
   void fileNew();
@@ -136,6 +133,8 @@ private:
     void colorChanged(const QColor &c);
     void alignmentChanged(Qt::Alignment a);
 
+    void  sendMessage_internal(bool bDraftbox);
+
    /** Define the popup menus for the Context menu */
   QMenu* contextMnu;
   
@@ -165,11 +164,12 @@ private:
   QHash<QString, QString> autoLinkDictionary;
   QHash<QString, QString> autoLinkTitleDictionary;
   QHash<QString, int> autoLinkTargetDictionary;
-  
-  /* maps of files  */
-	std::list<AttachFileItem *> mAttachments;
 
-  bool mIsMsg; /* different behaviour for Msg or ChanMsg */
+  std::string m_sMsgId; // exisiting message
+
+  /* maps of files  */
+  std::list<AttachFileItem *> mAttachments;
+
   bool mCheckAttachment;
 
   /** Qt Designer generated object */

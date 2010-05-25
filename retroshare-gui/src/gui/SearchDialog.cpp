@@ -1194,7 +1194,7 @@ void SearchDialog::sendLinkTo( )
     copysearchLink();
 
     /* create a message */
-    MessageComposer *nMsgDialog = new MessageComposer(true);
+    MessageComposer *nMsgDialog = new MessageComposer();
 
     nMsgDialog->newMsg();
     nMsgDialog->insertTitleText("New RetroShare Link(s)");

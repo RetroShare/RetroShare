@@ -133,6 +133,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     connect( ui.messagestreeView, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( messageslistWidgetCostumPopupMenu( QPoint ) ) );
     connect( ui.msgList, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( msgfilelistWidgetCostumPopupMenu( QPoint ) ) );
     connect( ui.messagestreeView, SIGNAL(clicked ( const QModelIndex &) ) , this, SLOT( clicked( const QModelIndex & ) ) );
+    connect( ui.messagestreeView, SIGNAL(doubleClicked ( const QModelIndex& ) ) , this, SLOT( doubleClicked( const QModelIndex & ) ) );
     connect( ui.listWidget, SIGNAL( currentRowChanged ( int) ), this, SLOT( changeBox ( int) ) );
 
     connect(ui.newmessageButton, SIGNAL(clicked()), this, SLOT(newmessage()));
@@ -475,7 +476,7 @@ void MessagesDialog::msgfilelistWidgetCostumPopupMenu( QPoint point )
 
 void MessagesDialog::newmessage()
 {
-    MessageComposer *nMsgDialog = new MessageComposer(true);
+    MessageComposer *nMsgDialog = new MessageComposer();
 
     /* fill it in */
     //std::cerr << "MessagesDialog::newmessage()" << std::endl;
@@ -504,7 +505,7 @@ void MessagesDialog::replytomessage()
     if (!rsMsgs -> getMessage(mid, msgInfo))
         return ;
 
-    MessageComposer *nMsgDialog = new MessageComposer(true);
+    MessageComposer *nMsgDialog = new MessageComposer();
     /* fill it in */
     //std::cerr << "MessagesDialog::newmessage()" << std::endl;
     nMsgDialog->newMsg();
@@ -552,7 +553,7 @@ void MessagesDialog::replyallmessage()
     if (!rsMsgs -> getMessage(mid, msgInfo))
         return ;
 
-    MessageComposer *nMsgDialog = new MessageComposer(true);
+    MessageComposer *nMsgDialog = new MessageComposer();
     /* fill it in */
     //std::cerr << "MessagesDialog::newmessage()" << std::endl;
     nMsgDialog->newMsg();
@@ -607,7 +608,7 @@ void MessagesDialog::forwardmessage()
     if (!rsMsgs -> getMessage(mid, msgInfo))
         return ;
 
-    MessageComposer *nMsgDialog = new MessageComposer(true);
+    MessageComposer *nMsgDialog = new MessageComposer();
     /* fill it in */
     //std::cerr << "MessagesDialog::newmessage()" << std::endl;
     nMsgDialog->newMsg();
@@ -978,7 +979,7 @@ void MessagesDialog::insertMessages()
 
             //  From ....
             {
-                if (msgbox == RS_MSG_INBOX) {
+                if (msgbox == RS_MSG_INBOX || msgbox == RS_MSG_OUTBOX) {
                     text = QString::fromStdString(rsPeers->getPeerName(it->srcId));
                 } else {
                     if (bGotInfo || rsMsgs->getMessage(it->msgId, msgInfo)) {
@@ -1096,6 +1097,40 @@ void MessagesDialog::clicked(const QModelIndex &index )
     timerIndex = index;
     // show current message directly
     updateCurrentMessage();
+}
+
+// double click in messagestreeView
+void MessagesDialog::doubleClicked(const QModelIndex &index)
+{
+    int mappedRow = proxyModel->mapToSource(index).row();
+
+    QStandardItem *pItem = MessagesModel->item(mappedRow, COLUMN_MSGID);
+    if (pItem == NULL) {
+        return;
+    }
+
+    std::string mid = pItem->text().toStdString();
+
+    MessageInfo msgInfo;
+    if (!rsMsgs->getMessage(mid, msgInfo)) {
+        std::cerr << "MessagesDialog::doubleClicked() Couldn't find Msg" << std::endl;
+        return;
+    }
+
+    if ((msgInfo.msgflags & RS_MSG_BOXMASK) != RS_MSG_DRAFTBOX) {
+        // only draft box for now
+        return;
+    }
+
+    MessageComposer *pMsgDialog = new MessageComposer();
+    /* fill it in */
+    pMsgDialog->newMsg(msgInfo.msgId);
+
+    pMsgDialog->show();
+    pMsgDialog->activateWindow();
+
+    /* window will destroy itself! */
+
 }
 
 // show current message directly
@@ -1316,8 +1351,16 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index, bool bSetToRead)
         ui.dateText-> setText(timestamp);
     }
     ui.toText->setText(msgTxt);
-    ui.fromText->setText("<a style='color: blue;' href='" + QString::fromStdString(rsPeers->getPeerName(msgInfo.srcId)) + "@" + QString::fromStdString(msgInfo.srcId) + "'> " + QString::fromStdString(rsPeers->getPeerName(msgInfo.srcId)) +"</a>");
-    ui.fromText->setToolTip(QString::fromStdString(rsPeers->getPeerName(msgInfo.srcId)) + "@" + QString::fromStdString(msgInfo.srcId));
+
+    std::string sSrcId;
+    if ((msgInfo.msgflags & RS_MSG_BOXMASK) == RS_MSG_OUTBOX) {
+        // outgoing message are from me
+        sSrcId = rsPeers->getOwnId();
+    } else {
+        sSrcId = msgInfo.srcId;
+    }
+    ui.fromText->setText("<a style='color: blue;' href='" + QString::fromStdString(rsPeers->getPeerName(sSrcId)) + "@" + QString::fromStdString(sSrcId) + "'> " + QString::fromStdString(rsPeers->getPeerName(sSrcId)) +"</a>");
+    ui.fromText->setToolTip(QString::fromStdString(rsPeers->getPeerName(sSrcId)) + "@" + QString::fromStdString(sSrcId));
 
     ui.subjectText->setText(QString::fromStdWString(msgInfo.title));
     ui.msgText->setHtml(QString::fromStdWString(msgInfo.msg));

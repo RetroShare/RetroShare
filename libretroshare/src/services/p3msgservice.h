@@ -63,6 +63,7 @@ bool    removeMsgId(std::string mid);
 bool    markMsgIdRead(std::string mid);
 
 bool    MessageSend(MessageInfo &info);
+bool    MessageToDraft(MessageInfo &info);
 
 
 

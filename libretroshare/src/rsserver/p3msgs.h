@@ -57,7 +57,8 @@ class p3Msgs: public RsMsgs
 	  virtual bool getMessage(std::string mId, MessageInfo &msg);
 	  virtual void getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox);
 
-	  virtual	bool MessageSend(MessageInfo &info);
+	  virtual bool MessageSend(MessageInfo &info);
+	  virtual bool MessageToDraft(MessageInfo &info);
 	  virtual bool MessageDelete(std::string mid);
 	  virtual bool MessageRead(std::string mid);
 

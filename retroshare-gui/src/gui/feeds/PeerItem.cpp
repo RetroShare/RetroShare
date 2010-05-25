@@ -294,7 +294,7 @@ void PeerItem::sendMsg()
 	{
 		//mParent->openMsg(FEEDHOLDER_MSG_MESSAGE, mPeerId, "");
 
-    MessageComposer *nMsgDialog = new MessageComposer(true);
+    MessageComposer *nMsgDialog = new MessageComposer();
     nMsgDialog->newMsg();
 
     nMsgDialog->addRecipient( mPeerId ) ;

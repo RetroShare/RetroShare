@@ -846,7 +846,7 @@ void MessengerWindow::sendMessage()
     }
 
     /* create a message */
-    MessageComposer *nMsgDialog = new MessageComposer(true);
+    MessageComposer *nMsgDialog = new MessageComposer();
 
     nMsgDialog->newMsg();
     nMsgDialog->show();

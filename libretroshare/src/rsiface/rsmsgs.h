@@ -124,6 +124,8 @@ virtual bool getMessage(std::string mId, MessageInfo &msg)  = 0;
 virtual void getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox) = 0;
 
 virtual	bool MessageSend(MessageInfo &info)                 = 0;
+virtual bool MessageToDraft(MessageInfo &info)              = 0;
+
 virtual bool MessageDelete(std::string mid)                 = 0;
 virtual bool MessageRead(std::string mid)                   = 0;
 

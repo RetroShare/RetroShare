@@ -63,6 +63,7 @@ private slots:
   void updateCurrentMessage();
   void currentChanged(const QModelIndex&);
   void clicked(const QModelIndex&);
+  void doubleClicked(const QModelIndex &);
 
   void newmessage();
 

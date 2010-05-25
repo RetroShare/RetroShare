@@ -264,9 +264,6 @@ int     p3MsgService::checkOutgoingMessages()
 
 bool    p3MsgService::saveConfiguration()
 {
-	std::list<std::string>::iterator it;
-	std::string empty("");
-
 	pqioutput(PQL_DEBUG_BASIC, msgservicezone, 
 		"p3MsgService::save_config()");
 
@@ -309,8 +306,6 @@ bool    p3MsgService::saveConfiguration()
 
 bool    p3MsgService::loadConfiguration(std::string &loadHash)
 {
-	std::list<std::string>::iterator it;
-
 	std::string msgfile = Filename();
 
 	RsSerialiser *rss = new RsSerialiser();
@@ -659,6 +654,51 @@ bool 	p3MsgService::MessageSend(MessageInfo &info)
 	return true;
 }
 
+bool p3MsgService::MessageToDraft(MessageInfo &info)
+{
+    RsMsgItem *msg = initMIRsMsg(info, mConnMgr->getOwnId());
+    if (msg)
+    {
+        uint32_t msgId = 0;
+        if (info.msgId.empty() == false) {
+            std::istringstream instream(info.msgId);
+            instream >> msgId;
+        }
+
+        if (msgId) {
+            msg->msgId = msgId;
+        } else {
+            msg->msgId = getNewUniqueMsgId(); /* grabs Mtx as well */
+        }
+
+        {
+            RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+
+            /* add pending flag */
+            msg->msgFlags |= (RS_MSG_OUTGOING | RS_MSG_FLAGS_DRAFT);
+
+            if (msgId) {
+                // remove existing message
+                RsMsgItem *existingMsg = imsg[msgId];
+                if (existingMsg) {
+                    delete (existingMsg);
+                }
+                imsg.erase(msgId);
+            }
+            /* STORE MsgID */
+            imsg[msg->msgId] = msg;
+        }
+
+        IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+
+        rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
+
+        return true;
+    }
+
+    return false;
+}
+
 /****************************************/
 /****************************************/
 
@@ -686,7 +726,11 @@ void p3MsgService::initRsMI(RsMsgItem *msg, MessageInfo &mi)
 	{
 		mi.msgflags |= RS_MSG_PENDING;
 	}
-	if (msg->msgFlags & RS_MSG_FLAGS_NEW)
+        if (msg->msgFlags & RS_MSG_FLAGS_DRAFT)
+        {
+                mi.msgflags |= RS_MSG_DRAFT;
+        }
+        if (msg->msgFlags & RS_MSG_FLAGS_NEW)
 	{
 		mi.msgflags |= RS_MSG_NEW;
 	}
@@ -761,7 +805,11 @@ void p3MsgService::initRsMIS(RsMsgItem *msg, MsgInfoSummary &mis)
 	{
 		mis.msgflags |= RS_MSG_PENDING;
 	}
-	if (msg->msgFlags & RS_MSG_FLAGS_NEW)
+        if (msg->msgFlags & RS_MSG_FLAGS_DRAFT)
+        {
+                mis.msgflags |= RS_MSG_DRAFT;
+        }
+        if (msg->msgFlags & RS_MSG_FLAGS_NEW)
 	{
 		mis.msgflags |= RS_MSG_NEW;
 	}

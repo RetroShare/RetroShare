@@ -75,6 +75,11 @@ bool p3Msgs::MessageSend(MessageInfo &info)
 	return mMsgSrv->MessageSend(info);
 }
 
+bool p3Msgs::MessageToDraft(MessageInfo &info)
+{
+    return mMsgSrv->MessageToDraft(info);
+}
+
 /****************************************/
 /****************************************/
 bool p3Msgs::MessageDelete(std::string mid)

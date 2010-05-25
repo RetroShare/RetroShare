@@ -37,8 +37,8 @@
 
 
 /** Constructor */
-MessageComposer::MessageComposer(bool msg, QWidget *parent, Qt::WFlags flags)
-: QMainWindow(parent, flags), mIsMsg(msg), mCheckAttachment(true)
+MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
+: QMainWindow(parent, flags), mCheckAttachment(true)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
@@ -108,17 +108,7 @@ MessageComposer::MessageComposer(bool msg, QWidget *parent, Qt::WFlags flags)
 
     connect(QApplication::clipboard(), SIGNAL(dataChanged()), this, SLOT(clipboardDataChanged()));
 
-    /* if Msg */
-    if (mIsMsg)
-    {
-      connect(ui.msgSendList, SIGNAL(itemChanged( QTreeWidgetItem *, int ) ),
-        this, SLOT(togglePersonItem( QTreeWidgetItem *, int ) ));
-    }
-    else
-    {
-      connect(ui.msgSendList, SIGNAL(itemChanged( QTreeWidgetItem *, int ) ),
-        this, SLOT(toggleChannelItem( QTreeWidgetItem *, int ) ));
-    }
+    connect(ui.msgSendList, SIGNAL(itemChanged( QTreeWidgetItem *, int ) ), this, SLOT(togglePersonItem( QTreeWidgetItem *, int ) ));
 
     connect(ui.msgFileList, SIGNAL(itemChanged( QTreeWidgetItem *, int ) ),
       this, SLOT(toggleRecommendItem( QTreeWidgetItem *, int ) ));
@@ -202,34 +192,41 @@ MessageComposer::MessageComposer(bool msg, QWidget *parent, Qt::WFlags flags)
 
 void MessageComposer::closeEvent (QCloseEvent * event)
 {
-  //=== uncheck all repecient's boxes =======
-    QTreeWidget *sendWidget = ui.msgSendList;
+    bool bClose = true;
 
-	for(int i=0;i<sendWidget->topLevelItemCount();++i)
-		sendWidget->topLevelItem(i)->setCheckState(0,Qt::Unchecked) ;
+    /* Save to Drafts? */
 
-    
-    event->accept();
-    return;
-
-    /* We can save to Drafts.... but we'll do this later.
-     * ... no auto saving for the moment,
-     */
-
-#if 0
-    if (maybeSave())
-    {     
-       event->accept();
+    if (ui.msgText->document()->isModified()) {
+        QMessageBox::StandardButton ret;
+        ret = QMessageBox::warning(this, tr("Save Message"),
+                                   tr("Message has not been Sent.\n"
+                                      "Do you want to save message to draft box?"),
+                                   QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+        switch (ret) {
+        case QMessageBox::Yes:
+            sendMessage_internal(true);
+            break;
+        case QMessageBox::Cancel:
+            bClose = false;
+            break;
+        default:
+            break;
+        }
     }
-    else    
-    {
-		event->ignore();
-		hide();
-    
-		Settings->saveWidgetInformation(this);
-    }
-#endif
 
+    if (bClose) {
+        Settings->saveWidgetInformation(this);
+
+        //=== uncheck all repecient's boxes =======
+        QTreeWidget *sendWidget = ui.msgSendList;
+
+        for (int i=0;i<sendWidget->topLevelItemCount();++i)
+            sendWidget->topLevelItem(i)->setCheckState(0,Qt::Unchecked) ;
+
+        QMainWindow::closeEvent(event);
+    } else {
+        event->ignore();
+    }
 }
 
 void  MessageComposer::insertSendList()
@@ -302,75 +299,6 @@ void  MessageComposer::insertSendList()
 
 	sendWidget->update(); /* update display */
 }
-
-
-void  MessageComposer::insertChannelSendList()
-{
-#if 0
-        rsiface->lockData(); /* Lock Interface */
-
-        std::map<RsChanId,ChannelInfo>::const_iterator it;
-        const std::map<RsChanId,ChannelInfo> &chans =
-                                rsiface->getChannels();
-
-        /* get a link to the table */
-        QTreeWidget *sendWidget = ui.msgSendList;
-
-        /* remove old items ??? */
-	sendWidget->clear();
-	sendWidget->setColumnCount(4);
-
-        QList<QTreeWidgetItem *> items;
-	for(it = chans.begin(); it != chans.end(); it++)
-	{
-		/* make a widget per friend */
-           	QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
-
-		/* (0) Title */
-		item -> setText(0, QString::fromStdString(it->second.chanName));
-		if (it->second.publisher)
-		{
-			item -> setText(1, "Publisher");
-		}
-		else
-		{
-			item -> setText(1, "Listener");
-		}
-
-		{
-			std::ostringstream out;
-			out << it->second.chanId;
-			item -> setText(2, QString::fromStdString(out.str()));
-		}
-
-		item -> setText(3, "Channel");
-
-		item -> setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
-		item -> setCheckState(0, Qt::Unchecked);
-	
-		if (it -> second.inBroadcast)
-		{
-			item -> setCheckState(0, Qt::Checked);
-		}
-		else
-		{
-			item -> setCheckState(0, Qt::Unchecked);
-		}
-
-		/* add to the list */
-		items.append(item);
-	}
-
-	/* add the items in! */
-	sendWidget->insertTopLevelItems(0, items);
-
-
-	rsiface->unlockData(); /* UnLock Interface */
-
-	sendWidget->update(); /* update display */
-#endif
-}
-
 
 
 /* Utility Fns */
@@ -446,27 +374,44 @@ void  MessageComposer::insertFileList(const std::list<FileInfo>& files_info)
 	tree->update(); /* update display */
 }
 
-void  MessageComposer::newMsg()
+void  MessageComposer::newMsg(std::string msgId /*= ""*/)
 {
-	/* clear all */
-	QString titlestring = ui.titleEdit->text();
+    /* clear all */
+    QString titlestring = ui.titleEdit->text();
 
-	setWindowTitle(tr("Compose: ") + titlestring );
-	ui.titleEdit->setText("No Title");
+    setWindowTitle(tr("Compose: ") + titlestring );
+    ui.titleEdit->setText("No Title");
 
-	ui.msgText->setText("");
+    ui.msgText->setText("");
 
-        /* worker fns */
-	if (mIsMsg)
-	{
-		insertSendList();
-	}
-	else
-	{
-		insertChannelSendList();
-	}
+    /* worker fns */
+    insertSendList();
 
-//	insertFileList(std::list<DirDetails>());
+    m_sMsgId = msgId;
+
+    if (m_sMsgId.empty() == false) {
+        // fill existing message
+        MessageInfo msgInfo;
+        if (!rsMsgs->getMessage(m_sMsgId, msgInfo)) {
+            std::cerr << "MessageComposer::newMsg() Couldn't find Msg" << std::endl;
+            m_sMsgId.clear();
+            return;
+        }
+
+        insertTitleText( QString::fromStdWString(msgInfo.title).toStdString());
+        setWindowTitle( tr ("Compose: ") + QString::fromStdWString(msgInfo.title));
+
+        insertMsgText(QString::fromStdWString(msgInfo.msg).toStdString());
+
+        insertFileList(msgInfo.files);
+
+        std::list<std::string>::iterator to;
+        for (to = msgInfo.msgto.begin(); to != msgInfo.msgto.end(); to++ ) {
+            addRecipient(*to) ;
+        }
+
+        ui.msgText->document()->setModified(false);
+    }
 }
 
 void  MessageComposer::insertTitleText(std::string title)
@@ -476,91 +421,102 @@ void  MessageComposer::insertTitleText(std::string title)
 
 void  MessageComposer::insertPastedText(std::string msg)
 {
-	std::string::size_type i=0 ;
-	while( (i=msg.find_first_of('\n',i+1)) < msg.size())
-		msg.replace(i,1,std::string("\n<BR/>> ")) ;
+    std::string::size_type i=0 ;
+    while( (i=msg.find_first_of('\n',i+1)) < msg.size())
+        msg.replace(i,1,std::string("\n<BR/>> ")) ;
 
-	ui.msgText->setHtml(QString("<HTML><font color=\"blue\">")+QString::fromStdString(std::string("> ") + msg)+"</font><br/><br/></HTML>") ;
-	
-	ui.msgText->setFocus( Qt::OtherFocusReason );
-	
-	QTextCursor c =  ui.msgText->textCursor();
-  c.movePosition(QTextCursor::End);
-  ui.msgText->setTextCursor(c);
+    ui.msgText->setHtml(QString("<HTML><font color=\"blue\">")+QString::fromStdString(std::string("> ") + msg)+"</font><br/><br/></HTML>") ;
+
+    ui.msgText->setFocus( Qt::OtherFocusReason );
+
+    QTextCursor c =  ui.msgText->textCursor();
+    c.movePosition(QTextCursor::End);
+    ui.msgText->setTextCursor(c);
+
+    ui.msgText->document()->setModified(true);
 }
 
 void  MessageComposer::insertForwardPastedText(std::string msg)
 {
-	std::string::size_type i=0 ;
-	while( (i=msg.find_first_of('\n',i+1)) < msg.size())
-		msg.replace(i,1,std::string("\n<BR/>> ")) ;
+    std::string::size_type i=0 ;
+    while( (i=msg.find_first_of('\n',i+1)) < msg.size())
+        msg.replace(i,1,std::string("\n<BR/>> ")) ;
 
-	ui.msgText->setHtml(QString("<HTML><blockquote [type=cite]><font color=\"blue\">")+QString::fromStdString(std::string("") + msg)+"</font><br/><br/></blockquote></HTML>") ;
-	
-	ui.msgText->setFocus( Qt::OtherFocusReason );
-	
-	QTextCursor c =  ui.msgText->textCursor();
-  c.movePosition(QTextCursor::End);
-  ui.msgText->setTextCursor(c);
+    ui.msgText->setHtml(QString("<HTML><blockquote [type=cite]><font color=\"blue\">")+QString::fromStdString(std::string("") + msg)+"</font><br/><br/></blockquote></HTML>") ;
+
+    ui.msgText->setFocus( Qt::OtherFocusReason );
+
+    QTextCursor c =  ui.msgText->textCursor();
+    c.movePosition(QTextCursor::End);
+    ui.msgText->setTextCursor(c);
+
+    ui.msgText->document()->setModified(true);
 }
 
 void  MessageComposer::insertMsgText(std::string msg)
 {
-	ui.msgText->setText(QString::fromStdString(msg));
-	
-	ui.msgText->setFocus( Qt::OtherFocusReason );
-	
-	QTextCursor c =  ui.msgText->textCursor();
-  c.movePosition(QTextCursor::End);
-  ui.msgText->setTextCursor(c);
+    ui.msgText->setText(QString::fromStdString(msg));
+
+    ui.msgText->setFocus( Qt::OtherFocusReason );
+
+    QTextCursor c =  ui.msgText->textCursor();
+    c.movePosition(QTextCursor::End);
+    ui.msgText->setTextCursor(c);
+
+    ui.msgText->document()->setModified(true);
 }
 
 void  MessageComposer::insertHtmlText(std::string msg)
 {
-	ui.msgText->setHtml(QString("<a href='") + QString::fromStdString(std::string(msg + "'> ") ) + QString::fromStdString(std::string(msg)) + "</a>") ;
-	
-}
+    ui.msgText->setHtml(QString("<a href='") + QString::fromStdString(std::string(msg + "'> ") ) + QString::fromStdString(std::string(msg)) + "</a>") ;
 
+    ui.msgText->document()->setModified(true);
+}
 
 void  MessageComposer::sendMessage()
 {
-	/* construct a message */
-	MessageInfo mi;
-
-	mi.title = ui.titleEdit->text().toStdWString();
-	mi.msg =   ui.msgText->toHtml().toStdWString();
-	
-
-	rsiface->lockData();   /* Lock Interface */
-
-//	const std::list<FileInfo>& recList = rsiface->getRecommendList();
-	for(std::list<FileInfo>::const_iterator it(_recList.begin()); it != _recList.end(); ++it)
-		if (it -> inRecommend)
-			mi.files.push_back(*it);
-
-	rsiface->unlockData(); /* UnLock Interface */
-
-	/* get the ids from the send list */
-	std::list<std::string> peers;
-	std::list<std::string> msgto;
-	std::list<std::string>::iterator iit;
-
-	rsPeers->getFriendList(peers);
-		
-	for(iit = peers.begin(); iit != peers.end(); iit++)
-	{
-		if (rsicontrol->IsInMsg(*iit))
-		{
-			mi.msgto.push_back(*iit);
-		}
-	}
-
-	rsMsgs->MessageSend(mi);
-
-	close();
-	return;
+    sendMessage_internal(false);
+    close();
 }
 
+void MessageComposer::sendMessage_internal(bool bDraftbox)
+{
+    /* construct a message */
+    MessageInfo mi;
+
+    mi.title = ui.titleEdit->text().toStdWString();
+    mi.msg =   ui.msgText->toHtml().toStdWString();
+
+    rsiface->lockData();   /* Lock Interface */
+
+//	const std::list<FileInfo>& recList = rsiface->getRecommendList();
+    for(std::list<FileInfo>::const_iterator it(_recList.begin()); it != _recList.end(); ++it)
+        if (it -> inRecommend)
+            mi.files.push_back(*it);
+
+    rsiface->unlockData(); /* UnLock Interface */
+
+    /* get the ids from the send list */
+    std::list<std::string> peers;
+    std::list<std::string>::iterator iit;
+
+    rsPeers->getFriendList(peers);
+
+    for(iit = peers.begin(); iit != peers.end(); iit++) {
+        if (rsicontrol->IsInMsg(*iit)) {
+            mi.msgto.push_back(*iit);
+        }
+    }
+
+    if (bDraftbox) {
+        mi.msgId = m_sMsgId;
+        rsMsgs->MessageToDraft(mi);
+    } else {
+        rsMsgs->MessageSend(mi);
+    }
+
+    ui.msgText->document()->setModified(false);
+}
 
 void  MessageComposer::cancelMessage()
 {
@@ -604,24 +560,6 @@ void MessageComposer::togglePersonItem( QTreeWidgetItem *item, int col )
         return;
 }
 
-/* Second  the Channel ones */
-void MessageComposer::toggleChannelItem( QTreeWidgetItem *item, int col )
-{
-        //std::cerr << "ToggleChannelItem()" << std::endl;
-
-        /* extract id */
-        std::string id = (item -> text(2)).toStdString();
-
-        /* get state */
-        bool inBroad = (Qt::Checked == item -> checkState(0)); /* alway column 0 */
-
-        /* call control fns */
-
-        rsicontrol -> SetInBroadcast(id, inBroad);
-        return;
-}
-
-/* This is actually for both */
 void MessageComposer::toggleRecommendItem( QTreeWidgetItem *item, int col )
 {
         //std::cerr << "ToggleRecommendItem()" << std::endl;

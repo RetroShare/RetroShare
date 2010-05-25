@@ -254,7 +254,7 @@ void MsgItem::replyMsg()
     if (!rsMsgs -> getMessage(mMsgId, msgInfo))
 		return ;
 
-    MessageComposer *nMsgDialog = new MessageComposer(true);
+    MessageComposer *nMsgDialog = new MessageComposer();
     nMsgDialog->newMsg();
     nMsgDialog->insertTitleText( (QString("Re: ") + QString::fromStdWString(msgInfo.title)).toStdString()) ;
     nMsgDialog->setWindowTitle(tr("Re: ") + QString::fromStdWString(msgInfo.title) ) ;

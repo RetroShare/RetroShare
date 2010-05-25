@@ -1344,7 +1344,7 @@ void ForumsDialog::replytomessage()
 
     if (rsPeers->getPeerName(msgInfo.srcId) !="")
     {
-        MessageComposer *nMsgDialog = new MessageComposer(true);
+        MessageComposer *nMsgDialog = new MessageComposer();
         nMsgDialog->newMsg();
         nMsgDialog->insertTitleText( (QString("Re: ") + QString::fromStdWString(msgInfo.title)).toStdString()) ;
         nMsgDialog->setWindowTitle(tr("Re: ") + QString::fromStdWString(msgInfo.title) ) ;

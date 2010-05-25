@@ -334,7 +334,7 @@ void SharedFilesDialog::sendremoteLinkTo()
     copyLinkRemote ();
 
     /* create a message */
-    MessageComposer *nMsgDialog = new MessageComposer(true);
+    MessageComposer *nMsgDialog = new MessageComposer();
 
     /* fill it in
     * files are receommended already
@@ -355,7 +355,7 @@ void SharedFilesDialog::sendLinkTo()
     copyLinkLocal ();
 
     /* create a message */
-    MessageComposer *nMsgDialog = new MessageComposer(true);
+    MessageComposer *nMsgDialog = new MessageComposer();
 
 
     /* fill it in
@@ -378,7 +378,7 @@ void SharedFilesDialog::sendHtmlLinkTo(  )
     copyLinkLocal ();
 
     /* create a message */
-    MessageComposer *nMsgDialog = new MessageComposer(true);
+    MessageComposer *nMsgDialog = new MessageComposer();
 
     /* fill it in
     * files are receommended already
@@ -517,7 +517,7 @@ void SharedFilesDialog::recommendFilesTo( std::string rsid )
 		return ;
 
 	/* create a message */
-	MessageComposer *nMsgDialog = new MessageComposer(true);
+        MessageComposer *nMsgDialog = new MessageComposer();
 
 	/* fill it in
 	 * files are receommended already
@@ -547,7 +547,7 @@ void SharedFilesDialog::recommendFilesToMsg( std::string rsid )
 
 	/* create a message */
 
-	MessageComposer *nMsgDialog = new MessageComposer(true);
+        MessageComposer *nMsgDialog = new MessageComposer();
 
 	nMsgDialog->insertFileList(files_info) ;
 	nMsgDialog->newMsg();
