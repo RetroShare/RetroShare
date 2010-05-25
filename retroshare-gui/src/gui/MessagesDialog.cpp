@@ -33,6 +33,9 @@
 
 #include <QtGui>
 
+// Thunder: need a static msgId
+//#define STATIC_MSGID
+
 /* Images for context menu icons */
 #define IMAGE_MESSAGE		   ":/images/folder-draft.png"
 #define IMAGE_MESSAGEREPLY	   ":/images/mail_reply.png"
@@ -423,6 +426,7 @@ void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint point )
     contextMnu.addAction( ui.actionPrint);
     contextMnu.addSeparator();
 
+#ifdef STATIC_MSGID
     markAsRead = new QAction(QIcon(":/images/message-mail-read.png"), tr( "Mark as read" ), this);
     connect(markAsRead , SIGNAL(triggered()), this, SLOT(markAsRead()));
     contextMnu.addAction(markAsRead);
@@ -438,6 +442,7 @@ void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint point )
     }
 
     contextMnu.addSeparator();
+#endif
 
     newmsgAct = new QAction(QIcon(IMAGE_MESSAGE), tr( "New Message" ), this );
     connect( newmsgAct , SIGNAL( triggered() ), this, SLOT( newmessage() ) );
@@ -787,6 +792,7 @@ static void InitIconAndFont(RSettings *pConfig, QStandardItem *pItem [COLUMN_COU
         }
     }
 
+#ifdef STATIC_MSGID
     // show the locale "New" state
     if (bNew == false) {
         // check locale config
@@ -800,6 +806,7 @@ static void InitIconAndFont(RSettings *pConfig, QStandardItem *pItem [COLUMN_COU
     } else {
         pItem[COLUMN_READ]->setIcon(QIcon(":/images/message-mail-state-read.png"));
     }
+#endif
 
     // set font
     for (int i = 0; i < COLUMN_COUNT; i++) {
@@ -1058,7 +1065,11 @@ void MessagesDialog::insertMessages()
 
     ui.messagestreeView->showColumn(COLUMN_ATTACHEMENTS);
     ui.messagestreeView->showColumn(COLUMN_SUBJECT);
+#ifdef STATIC_MSGID
     ui.messagestreeView->showColumn(COLUMN_READ);
+#else
+    ui.messagestreeView->hideColumn(COLUMN_READ);
+#endif
     ui.messagestreeView->showColumn(COLUMN_FROM);
     ui.messagestreeView->showColumn(COLUMN_DATE);
     ui.messagestreeView->hideColumn(COLUMN_SRCID);
@@ -1154,12 +1165,16 @@ void MessagesDialog::setMsgAsReadUnread(const QList<int> &Rows, bool bRead)
         m_pConfig->beginGroup(CONFIG_SECTION_UNREAD);
         if (bRead) {
             // set as read in config
+#ifdef STATIC_MSGID
             m_pConfig->setValue(mid, false);
+#endif
             // set message to read
             rsMsgs->MessageRead(mid.toStdString());
         } else {
             // set as unread in config
+#ifdef STATIC_MSGID
             m_pConfig->setValue(mid, true);
+#endif
         }
         m_pConfig->endGroup();
 
@@ -1715,11 +1730,13 @@ void MessagesDialog::updateMessageSummaryList()
                     newInboxCount++;
                 } else {
                     // check locale config
+#ifdef STATIC_MSGID
                     m_pConfig->beginGroup(CONFIG_SECTION_UNREAD);
                     if (m_pConfig->value(QString::fromStdString(it->msgId), false).toBool()) {
                         newInboxCount++;
                     }
                     m_pConfig->endGroup();
+#endif
                 }
                 break;
         case RS_MSG_OUTBOX:
