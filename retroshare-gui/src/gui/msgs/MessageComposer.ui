@@ -678,8 +678,8 @@ border: 1px solid #CCCCCC;}</string>
    <addaction name="actionContactsView"/>
    <addaction name="separator"/>
    <addaction name="actionAttach"/>
-   <addaction name="actionQuote"/>
    <addaction name="actionSaveas"/>
+   <addaction name="actionQuote"/>
   </widget>
   <action name="actionSend">
    <property name="icon">
