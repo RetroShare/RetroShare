@@ -501,7 +501,10 @@ bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std
 		uint64_t size     = fit->filesize;
 		std::string channelname = grpId;
 		std::string localpath = mChannelsDir + "/" + channelname;
-		uint32_t flags = RS_FILE_HINTS_EXTRA;
+		uint32_t flags = RS_FILE_HINTS_EXTRA | 
+				RS_FILE_HINTS_BACKGROUND | 
+				RS_FILE_HINTS_NETWORK_WIDE;
+
 		std::list<std::string> srcIds;
 
 		srcIds.push_back(id);

@@ -959,7 +959,7 @@ bool ftController::alreadyHaveFile(const std::string& hash)
 	FileInfo info ;
 
 	// check for downloads
-	if(FileDetails(hash, info))
+	if(FileDetails(hash, info) && (info.downloadStatus == FT_STATE_COMPLETE))
 		return true ;
 
 	// check for file lists
