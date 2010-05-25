@@ -605,6 +605,10 @@ void MessageComposer::setupFileActions()
     a = new QAction(tr("Save &As..."), this);
     connect(a, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
     menu->addAction(a);
+    
+    a = new QAction(tr("Save &As Draft"), this);
+    connect(a, SIGNAL(triggered()), this, SLOT(saveasDraft()));
+    menu->addAction(a);
     menu->addSeparator();
 
     a = new QAction(QIcon(":/images/textedit/fileprint.png"), tr("&Print..."), this);
@@ -891,6 +895,12 @@ bool MessageComposer::fileSaveAs()
     setCurrentFileName(fn);
     return fileSave();
 }
+
+void MessageComposer::saveasDraft()
+{
+    sendMessage_internal(true);
+}
+
 
 void MessageComposer::filePrint()
 {

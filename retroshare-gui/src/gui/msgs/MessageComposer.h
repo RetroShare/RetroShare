@@ -84,7 +84,8 @@ private slots:
   void fileOpen();
   bool fileSave();
   bool fileSaveAs();
-  void filePrint(); 
+  void filePrint();
+  void saveasDraft(); 
 
   //void filePrintPreview();
   void filePrintPdf();
