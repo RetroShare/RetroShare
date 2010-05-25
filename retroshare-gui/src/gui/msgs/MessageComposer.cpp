@@ -67,7 +67,6 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
   
     connect(ui.sizeincreaseButton, SIGNAL (clicked()), this, SLOT (fontSizeIncrease()));
     connect(ui.sizedecreaseButton, SIGNAL (clicked()), this, SLOT (fontSizeDecrease()));
-    connect(ui.blockquoteButton, SIGNAL (clicked()), this, SLOT (blockQuote()));
     connect(ui.actionQuote, SIGNAL(triggered()), this, SLOT(blockQuote()));
     connect(ui.codeButton, SIGNAL (clicked()), this, SLOT (toggleCode()));
     connect(ui.splitPostButton, SIGNAL (clicked()), this, SLOT (addPostSplitter()));

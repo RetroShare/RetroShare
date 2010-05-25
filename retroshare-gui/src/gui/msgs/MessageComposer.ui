@@ -212,29 +212,6 @@ border: 1px solid #CCCCCC;}</string>
                </widget>
               </item>
               <item row="0" column="3">
-               <widget class="QToolButton" name="blockquoteButton">
-                <property name="toolTip">
-                 <string>Blockquote</string>
-                </property>
-                <property name="text">
-                 <string/>
-                </property>
-                <property name="icon">
-                 <iconset resource="../images.qrc">
-                  <normaloff>:/images/textedit/hi22-action-format-text-blockquote.png</normaloff>:/images/textedit/hi22-action-format-text-blockquote.png</iconset>
-                </property>
-                <property name="iconSize">
-                 <size>
-                  <width>24</width>
-                  <height>24</height>
-                 </size>
-                </property>
-                <property name="autoRaise">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="4">
                <widget class="QToolButton" name="sizeincreaseButton">
                 <property name="maximumSize">
                  <size>
@@ -263,7 +240,7 @@ border: 1px solid #CCCCCC;}</string>
                 </property>
                </widget>
               </item>
-              <item row="0" column="5">
+              <item row="0" column="4">
                <widget class="QToolButton" name="sizedecreaseButton">
                 <property name="maximumSize">
                  <size>
@@ -292,7 +269,7 @@ border: 1px solid #CCCCCC;}</string>
                 </property>
                </widget>
               </item>
-              <item row="0" column="6">
+              <item row="0" column="5">
                <widget class="QToolButton" name="boldbtn">
                 <property name="minimumSize">
                  <size>
@@ -330,7 +307,7 @@ border: 1px solid #CCCCCC;}</string>
                 </property>
                </widget>
               </item>
-              <item row="0" column="7">
+              <item row="0" column="6">
                <widget class="QToolButton" name="underlinebtn">
                 <property name="minimumSize">
                  <size>
@@ -368,7 +345,7 @@ border: 1px solid #CCCCCC;}</string>
                 </property>
                </widget>
               </item>
-              <item row="0" column="8">
+              <item row="0" column="7">
                <widget class="QToolButton" name="italicbtn">
                 <property name="minimumSize">
                  <size>
@@ -406,7 +383,7 @@ border: 1px solid #CCCCCC;}</string>
                 </property>
                </widget>
               </item>
-              <item row="0" column="11">
+              <item row="0" column="10">
                <widget class="QToolButton" name="colorbtn">
                 <property name="minimumSize">
                  <size>
@@ -431,7 +408,7 @@ border: 1px solid #CCCCCC;}</string>
                 </property>
                </widget>
               </item>
-              <item row="0" column="12">
+              <item row="0" column="11">
                <widget class="QToolButton" name="textalignmentbtn">
                 <property name="minimumSize">
                  <size>
@@ -465,7 +442,7 @@ border: 1px solid #CCCCCC;}</string>
                 </property>
                </widget>
               </item>
-              <item row="0" column="13">
+              <item row="0" column="12">
                <widget class="QToolButton" name="imagebtn">
                 <property name="minimumSize">
                  <size>
@@ -500,7 +477,7 @@ border: 1px solid #CCCCCC;}</string>
                 </property>
                </widget>
               </item>
-              <item row="0" column="9">
+              <item row="0" column="8">
                <widget class="QToolButton" name="codeButton">
                 <property name="toolTip">
                  <string>Sets text font to code style</string>
@@ -523,7 +500,7 @@ border: 1px solid #CCCCCC;}</string>
                 </property>
                </widget>
               </item>
-              <item row="0" column="16">
+              <item row="0" column="15">
                <spacer>
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
@@ -536,7 +513,7 @@ border: 1px solid #CCCCCC;}</string>
                 </property>
                </spacer>
               </item>
-              <item row="0" column="10">
+              <item row="0" column="9">
                <widget class="QToolButton" name="splitPostButton">
                 <property name="toolTip">
                  <string>Split text</string>
