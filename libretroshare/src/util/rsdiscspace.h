@@ -47,7 +47,7 @@ class RsDiscSpace
 		static uint32_t freeSpaceLimit() ;
 
 	private:
-		static bool crossSystemDiskStats(const char *file, uint32_t& free_blocks, uint32_t& block_size) ;
+		static bool crossSystemDiskStats(const char *file, uint64_t& free_blocks, uint64_t& block_size) ;
 
 		static RsMutex _mtx ;
 

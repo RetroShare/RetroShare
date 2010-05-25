@@ -46,7 +46,7 @@ uint32_t RsDiscSpace::_current_size[3] = { 10000,10000,10000 } ;
 bool		RsDiscSpace::_last_res[3] = { true,true,true };
 RsMutex 	RsDiscSpace::_mtx ;
 
-bool RsDiscSpace::crossSystemDiskStats(const char *file, uint32_t& free_blocks, uint32_t& block_size)
+bool RsDiscSpace::crossSystemDiskStats(const char *file, uint64_t& free_blocks, uint64_t& block_size)
 {
 #if defined(WIN32) || defined(MINGW) || defined(__CYGWIN__)
 
@@ -110,7 +110,7 @@ bool RsDiscSpace::checkForDiscSpace(RsDiscSpace::DiscLocation loc)
 
 	if(_last_check[loc]+DELAY_BETWEEN_CHECKS < now)
 	{
-		uint32_t free_blocks,block_size ;
+		uint64_t free_blocks,block_size ;
 		int rs = false;
 
 #ifdef DEBUG_RSDISCSPACE
@@ -146,7 +146,7 @@ bool RsDiscSpace::checkForDiscSpace(RsDiscSpace::DiscLocation loc)
 
 		// Now compute the size in megabytes
 		//
-		_current_size[loc] = block_size * free_blocks / (1024*1024) ; // on purpose integer division 
+		_current_size[loc] = uint32_t(block_size * free_blocks / (uint64_t)(1024*1024)) ; // on purpose integer division 
 
 #ifdef DEBUG_RSDISCSPACE
 		std::cerr << "  blocks available = " << free_blocks << std::endl ;
