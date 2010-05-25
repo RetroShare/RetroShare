@@ -134,6 +134,8 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
     actionAlignJustify->setShortcut(Qt::CTRL + Qt::Key_J);
     actionAlignJustify->setCheckable(true);
     
+    setupFormatActions();
+    
     /*ui.comboStyle->addItem("Standard");
     ui.comboStyle->addItem("Bullet List (Disc)");
     ui.comboStyle->addItem("Bullet List (Circle)");
@@ -685,6 +687,18 @@ void MessageComposer::setupInsertActions()
     connect(a, SIGNAL(triggered()), this, SLOT(addPostSplitter()));
     menu->addAction(a);
 
+}
+
+void MessageComposer::setupFormatActions()
+{
+    QMenu *menu = new QMenu(tr("&Format"), this);
+    menuBar()->addMenu(menu);
+
+    menu->addAction(actionAlignLeft);
+    menu->addAction(actionAlignCenter);
+    menu->addAction(actionAlignRight);
+    menu->addAction(actionAlignJustify);
+  
 }
 
 void MessageComposer::textBold()

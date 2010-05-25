@@ -126,6 +126,7 @@ private:
 	void setupEditActions();
 	void setupViewActions();
 	void setupInsertActions();
+	void setupFormatActions();
 	
 	bool load(const QString &f);
 	bool maybeSave();
