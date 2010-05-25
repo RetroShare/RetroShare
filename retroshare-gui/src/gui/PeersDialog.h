@@ -112,10 +112,7 @@ private slots:
 		void viewprofile();
 
 		/** RsServer Friend Calls */
-		void allowfriend();
 		void connectfriend();
-		void setaddressfriend();
-		void trustfriend();
 
 		void setColor();      
 		void insertSendList();

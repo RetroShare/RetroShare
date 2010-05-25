@@ -430,12 +430,13 @@ void  PeersDialog::insertPeers()
             }
 
             //use to mark item as updated
-            gpg_item->setData(0, Qt::UserRole, true);
+            gpg_item -> setData(0, Qt::UserRole, true);
             gpg_item -> setText(0, QString::fromStdString(detail.name));
+            gpg_item -> setSizeHint(0,  QSize( 26,26 ) ); 
+
 
             gpg_item -> setTextAlignment(0, Qt::AlignLeft | Qt::AlignVCenter );
 
-            //gpg_item -> setText( 1, QString::fromStdString(detail.name));
 
             /* not displayed, used to find back the item */
             gpg_item -> setText(3, QString::fromStdString(detail.id));
@@ -789,20 +790,6 @@ void PeersDialog::removefriend()
 	}
 }
 
-
-void PeersDialog::allowfriend()
-{
-	QTreeWidgetItem *c = getCurrentPeer();
-#ifdef PEERS_DEBUG
-	std::cerr << "PeersDialog::allowfriend()" << std::endl;
-#endif
-	/*
-	bool accept = true;
-	rsServer->FriendStatus(getPeerRsCertId(c), accept);
-	*/
-}
-
-
 void PeersDialog::connectfriend()
 {
 	QTreeWidgetItem *c = getCurrentPeer();
@@ -823,35 +810,6 @@ void PeersDialog::connectfriend()
 		c -> setIcon(0,(QIcon(IMAGE_CONNECT2)));
 	}
 }
-
-void PeersDialog::setaddressfriend()
-{
-	QTreeWidgetItem *c = getCurrentPeer();
-#ifdef PEERS_DEBUG
-	std::cerr << "PeersDialog::setaddressfriend()" << std::endl;
-#endif
-
-	/* need to get the input address / port */
-	/*
- 	std::string addr;
-	unsigned short port;
-	rsServer->FriendSetAddress(getPeerRsCertId(c), addr, port);
-	*/
-}
-
-void PeersDialog::trustfriend()
-{
-	QTreeWidgetItem *c = getCurrentPeer();
-#ifdef PEERS_DEBUG
-	std::cerr << "PeersDialog::trustfriend()" << std::endl;
-#endif
-	/*
-	bool trust = true;
-	rsServer->FriendTrust(getPeerRsCertId(c), trust);
-	*/
-}
-
-
 
 /* GUI stuff -> don't do anything directly with Control */
 void PeersDialog::configurefriend()
