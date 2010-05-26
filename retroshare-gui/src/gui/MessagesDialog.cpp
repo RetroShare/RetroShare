@@ -411,21 +411,7 @@ void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint point )
     QList<int> RowsRead;
     QList<int> RowsUnread;
     int nCount = getSelectedMsgCount (&RowsRead, &RowsUnread);
-
-    if (nCount > 1) {
-        removemsgAct = new QAction(QIcon(IMAGE_MESSAGEREMOVE), tr( "Remove Messages" ), this );
-    } else {
-        removemsgAct = new QAction(QIcon(IMAGE_MESSAGEREMOVE), tr( "Remove Message" ), this );
-    }
-
-    connect( removemsgAct , SIGNAL( triggered() ), this, SLOT( removemessage() ) );
-    contextMnu.addAction( removemsgAct);
-
-    contextMnu.addAction( ui.actionSave_as);
-    contextMnu.addAction( ui.actionPrintPreview);
-    contextMnu.addAction( ui.actionPrint);
-    contextMnu.addSeparator();
-
+    
 #ifdef STATIC_MSGID
     markAsRead = new QAction(QIcon(":/images/message-mail-read.png"), tr( "Mark as read" ), this);
     connect(markAsRead , SIGNAL(triggered()), this, SLOT(markAsRead()));
@@ -443,6 +429,20 @@ void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint point )
 
     contextMnu.addSeparator();
 #endif
+
+    if (nCount > 1) {
+        removemsgAct = new QAction(QIcon(IMAGE_MESSAGEREMOVE), tr( "Remove Messages" ), this );
+    } else {
+        removemsgAct = new QAction(QIcon(IMAGE_MESSAGEREMOVE), tr( "Remove Message" ), this );
+    }
+
+    connect( removemsgAct , SIGNAL( triggered() ), this, SLOT( removemessage() ) );
+    contextMnu.addAction( removemsgAct);
+
+    contextMnu.addAction( ui.actionSave_as);
+    contextMnu.addAction( ui.actionPrintPreview);
+    contextMnu.addAction( ui.actionPrint);
+    contextMnu.addSeparator();
 
     newmsgAct = new QAction(QIcon(IMAGE_MESSAGE), tr( "New Message" ), this );
     connect( newmsgAct , SIGNAL( triggered() ), this, SLOT( newmessage() ) );
