@@ -636,10 +636,14 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 #endif
 
 			// Save the hashing result every 60 seconds, so has to save what is already hashed.
+#ifdef FIM_DEBUG
 			std::cerr << "size - last_save_size = " << size - last_save_size << ", max=" << MAX_SIZE_WITHOUT_SAVING << std::endl ;
+#endif
 			if(size > last_save_size + MAX_SIZE_WITHOUT_SAVING)
 			{
+#ifdef FIM_DEBUG
 				cb->notifyHashingInfo("Saving file index...") ;
+#endif
 #ifdef WINDOWS_SYS
 				Sleep(1000) ;
 #else
