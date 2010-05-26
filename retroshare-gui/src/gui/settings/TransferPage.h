@@ -43,6 +43,7 @@ class TransferPage: public ConfigPage
 	public slots:
 		void updateQueueSize(int) ;
 		void updateDefaultStrategy(int) ;
+		void updateDiskSizeLimit(int) ;
 
 	private:
 

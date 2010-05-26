@@ -146,6 +146,8 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 		bool 	setChunkStrategy(const std::string& hash,FileChunksInfo::ChunkStrategy s);
 		void 	setDefaultChunkStrategy(FileChunksInfo::ChunkStrategy s);
 		FileChunksInfo::ChunkStrategy	defaultChunkStrategy();
+		uint32_t freeDiskSpaceLimit() const ;
+		void setFreeDiskSpaceLimit(uint32_t size_in_mb) ;
 
 		bool 	FileCancel(std::string hash);
 		bool 	FileControl(std::string hash, uint32_t flags);

@@ -272,6 +272,14 @@ bool ftServer::setChunkStrategy(const std::string& hash,FileChunksInfo::ChunkStr
 {
 	return mFtController->setChunkStrategy(hash,s);
 }
+uint32_t ftServer::freeDiskSpaceLimit()const
+{
+	return mFtController->freeDiskSpaceLimit() ;
+}
+void ftServer::setFreeDiskSpaceLimit(uint32_t s)
+{
+	mFtController->setFreeDiskSpaceLimit(s) ;
+}
 void ftServer::setDefaultChunkStrategy(FileChunksInfo::ChunkStrategy s) 
 {
 	mFtController->setDefaultChunkStrategy(s) ;
