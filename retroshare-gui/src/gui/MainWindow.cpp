@@ -515,6 +515,42 @@ void MainWindow::addAction(QAction *action, const char *slot)
     }
 }
 
+/** get page */
+/*static*/ MainPage *MainWindow::getPage (Page page)
+{
+   if (_instance == NULL) {
+       return NULL;
+   }
+
+   switch (page) {
+   case Network:
+       return _instance->networkDialog;
+   case Friends:
+       return _instance->peersDialog;
+   case Search:
+       return _instance->searchDialog;
+   case Transfers:
+       return _instance->transfersDialog;
+   case SharedDirectories:
+       return _instance->sharedfilesDialog;
+   case Messages:
+       return _instance->messagesDialog;
+#ifndef RS_RELEASE_VERSION
+   case Links:
+       return _instance->linksDialog;
+   case Channels:
+       return _instance->channelFeed;
+#endif
+   case Forums:
+       return _instance->forumsDialog;
+#ifdef BLOGS
+   case Blogs:
+       return _instance->blogsFeed;
+#endif
+   }
+
+   return NULL;
+}
 
 /***** TOOL BAR FUNCTIONS *****/
 

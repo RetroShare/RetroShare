@@ -27,22 +27,34 @@
 #include "configpage.h"
 #include "ui_MessagePage.h"
 
+#include "NewTag.h"
+
 class MessagePage : public ConfigPage
 {
-    public:
-        MessagePage(QWidget * parent = 0, Qt::WFlags flags = 0);
-        ~MessagePage();
+    Q_OBJECT
+
+public:
+    MessagePage(QWidget * parent = 0, Qt::WFlags flags = 0);
+    ~MessagePage();
 
     /** Saves the changes on this page */
     bool save(QString &errmsg);
     /** Loads the settings for this page */
     void load();
 
-    private:
+private slots:
+    void addTag();
+    void editTag();
+    void deleteTag();
 
-       void closeEvent (QCloseEvent * event);
+    void currentRowChangedTag(int row);
 
-       Ui::MessagePage ui;
+private:
+    void closeEvent (QCloseEvent * event);
+
+    std::map<int, TagItem> m_TagItems;
+
+    Ui::MessagePage ui;
 };
 
 #endif // !MESSAGEPAGE_H

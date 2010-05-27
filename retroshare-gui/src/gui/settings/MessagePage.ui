@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>556</width>
-    <height>389</height>
+    <width>423</width>
+    <height>340</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -499,28 +499,77 @@
   <property name="contextMenuPolicy">
    <enum>Qt::NoContextMenu</enum>
   </property>
-  <widget class="QGroupBox" name="groupBox">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>10</y>
-     <width>395</width>
-     <height>61</height>
-    </rect>
-   </property>
-   <property name="title">
-    <string>Misc</string>
-   </property>
-   <layout class="QGridLayout" name="gridLayout_2">
-    <item row="0" column="0">
-     <widget class="QCheckBox" name="setMsgToReadOnActivate">
-      <property name="text">
-       <string>Set message to read on activate</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
+  <layout class="QGridLayout" name="gridLayout_3">
+   <item row="0" column="0">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Misc</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="setMsgToReadOnActivate">
+        <property name="text">
+         <string>Set message to read on activate</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string>Tags</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0" colspan="2">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Tags can be used to categorize and prioritize your messages</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" rowspan="4">
+       <widget class="QListWidget" name="tags_listWidget"/>
+      </item>
+      <item row="1" column="1">
+       <widget class="QPushButton" name="addpushButton">
+        <property name="text">
+         <string>Add</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QPushButton" name="editpushButton">
+        <property name="text">
+         <string>Edit</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QPushButton" name="deletepushButton">
+        <property name="text">
+         <string>Delete</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>38</width>
+          <height>116</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections/>

@@ -21,14 +21,25 @@
 
 #include "MessagePage.h"
 #include "rshare.h"
-
 #include "rsharesettings.h"
+
+#include "../MainWindow.h"
+#include "../MessagesDialog.h"
 
 MessagePage::MessagePage(QWidget * parent, Qt::WFlags flags)
     : ConfigPage(parent, flags)
 {
     ui.setupUi(this);
     setAttribute(Qt::WA_QuitOnClose, false);
+
+    connect (ui.addpushButton, SIGNAL(clicked(bool)), this, SLOT (addTag()));
+    connect (ui.editpushButton, SIGNAL(clicked(bool)), this, SLOT (editTag()));
+    connect (ui.deletepushButton, SIGNAL(clicked(bool)), this, SLOT (deleteTag()));
+
+    connect (ui.tags_listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(currentRowChangedTag(int)));
+
+    ui.editpushButton->setEnabled(false);
+    ui.deletepushButton->setEnabled(false);
 }
 
 MessagePage::~MessagePage()
@@ -47,6 +58,13 @@ MessagePage::save(QString &errmsg)
 {
     Settings->setMsgSetToReadOnActivate(ui.setMsgToReadOnActivate->isChecked());
 
+#ifdef STATIC_MSGID
+    MessagesDialog *pPage = (MessagesDialog*) MainWindow::getPage (MainWindow::Messages);
+    if (pPage) {
+        pPage->setTagItems (m_TagItems);
+    }
+#endif
+
     return true;
 }
 
@@ -55,5 +73,112 @@ void
 MessagePage::load()
 {
     ui.setMsgToReadOnActivate->setChecked(Settings->getMsgSetToReadOnActivate());
+
+#ifdef STATIC_MSGID
+    MessagesDialog *pPage = (MessagesDialog*) MainWindow::getPage (MainWindow::Messages);
+    if (pPage) {
+        pPage->getTagItems (m_TagItems);
+
+        // fill items
+        std::map<int, TagItem>::iterator Item;
+        for (Item = m_TagItems.begin(); Item != m_TagItems.end(); Item++) {
+            if (Item->second._delete) {
+                continue;
+            }
+
+            QListWidgetItem *pItemWidget = new QListWidgetItem(Item->second.text, ui.tags_listWidget);
+            pItemWidget->setTextColor(QColor(Item->second.color));
+            pItemWidget->setData(Qt::UserRole, Item->first);
+        }
+
+        if (m_TagItems.size()) {
+            ui.tags_listWidget->setCurrentItem(ui.tags_listWidget->item(0));
+        }
+    } else {
+        ui.tags_listWidget->setEnabled(false);
+        ui.addpushButton->setEnabled(false);
+        ui.editpushButton->setEnabled(false);
+        ui.deletepushButton->setEnabled(false);
+    }
+#else
+    ui.tags_listWidget->setEnabled(false);
+    ui.addpushButton->setEnabled(false);
+    ui.editpushButton->setEnabled(false);
+    ui.deletepushButton->setEnabled(false);
+#endif
 }
 
+void MessagePage::addTag()
+{
+    NewTag Tag(m_TagItems);
+    if (Tag.exec() == QDialog::Accepted && Tag.m_nId) {
+        TagItem &Item = m_TagItems [Tag.m_nId];
+        QListWidgetItem *pItemWidget = new QListWidgetItem(Item.text, ui.tags_listWidget);
+        pItemWidget->setTextColor(QColor(Item.color));
+        pItemWidget->setData(Qt::UserRole, Tag.m_nId);
+    }
+}
+
+void MessagePage::editTag()
+{
+    QListWidgetItem *pItemWidget = ui.tags_listWidget->currentItem();
+    if (pItemWidget == NULL) {
+        return;
+    }
+
+    int nId = pItemWidget->data(Qt::UserRole).toInt();
+    if (nId == 0) {
+        return;
+    }
+
+    NewTag Tag(m_TagItems, nId);
+    if (Tag.exec() == QDialog::Accepted && Tag.m_nId) {
+        TagItem &Item = m_TagItems [Tag.m_nId];
+        pItemWidget->setText(Item.text);
+        pItemWidget->setTextColor(QColor(Item.color));
+    }
+}
+
+void MessagePage::deleteTag()
+{
+    QListWidgetItem *pItemWidget = ui.tags_listWidget->currentItem();
+    if (pItemWidget == NULL) {
+        return;
+    }
+
+    int nId = pItemWidget->data(Qt::UserRole).toInt();
+    if (nId == 0) {
+        return;
+    }
+
+    if (nId < 0) {
+        return;
+    }
+
+    TagItem &Item = m_TagItems [nId];
+    Item._delete = true;
+
+    ui.tags_listWidget->removeItemWidget(pItemWidget);
+    delete (pItemWidget);
+}
+
+void MessagePage::currentRowChangedTag(int row)
+{
+    QListWidgetItem *pItemWidget = ui.tags_listWidget->item(row);
+
+    bool bEditEnable = false;
+    bool bDeleteEnable = false;
+
+    if (pItemWidget) {
+        bEditEnable = true;
+
+        int nId = pItemWidget->data(Qt::UserRole).toInt();
+
+        if (nId > 0) {
+            bDeleteEnable = true;
+        }
+    }
+
+    ui.editpushButton->setEnabled(bEditEnable);
+    ui.deletepushButton->setEnabled(bDeleteEnable);
+}

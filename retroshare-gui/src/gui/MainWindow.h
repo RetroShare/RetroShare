@@ -100,6 +100,9 @@ public:
     /** Set focus to the given page. */
     static void activatePage (Page page);
 
+    /** get page */
+    static MainPage *getPage (Page page);
+
     /* A Bit of a Hack... but public variables for
     * the dialogs, so we can add them to the
     * Notify Class...

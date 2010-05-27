@@ -33,7 +33,12 @@
 #include "mainpage.h"
 #include "ui_MessagesDialog.h"
 
+#include "settings/NewTag.h"
+
 class RSettings;
+
+// Thunder: need a static msgId
+//#define STATIC_MSGID
 
 class MessagesDialog : public MainPage 
 {
@@ -44,6 +49,11 @@ public:
   MessagesDialog(QWidget *parent = 0);
   /** Default Destructor */
   ~MessagesDialog();
+
+#ifdef STATIC_MSGID
+  void getTagItems(std::map<int, TagItem> &Items);
+  void setTagItems(std::map<int, TagItem> &Items);
+#endif
 
 // replaced by shortcut
 //  virtual void keyPressEvent(QKeyEvent *) ;
@@ -78,9 +88,11 @@ private slots:
   bool fileSaveAs();
   
   void removemessage();
-  
+
+#ifdef STATIC_MSGID
   void markAsRead();
   void markAsUnread();
+#endif
 
   void anchorClicked (const QUrl &);
   
@@ -100,6 +112,10 @@ private slots:
   void filterColumnChanged();
   
   void clearFilter();
+#ifdef STATIC_MSGID
+  void tagTriggered(QAction *pAction);
+  void tagAboutToShow();
+#endif
 
 private:
   class QStandardItemModel *MessagesModel;
@@ -112,7 +128,7 @@ private:
 
   void setCurrentFileName(const QString &fileName);
 
-  int getSelectedMsgCount (QList<int> *pRowsRead, QList<int> *pRowsUnread);
+  int getSelectedMsgCount (QList<int> *pRows, QList<int> *pRowsRead, QList<int> *pRowsUnread);
   bool isMessageRead(int nRow);
 
   /* internal handle splitter */
@@ -120,6 +136,10 @@ private:
 
   void processSettings(bool bLoad);
 
+  void setToolbarButtonStyle(Qt::ToolButtonStyle style);
+#ifdef STATIC_MSGID
+  void createTagMenu();
+#endif
   bool m_bProcessSettings;
 
   std::string mCurrCertId;

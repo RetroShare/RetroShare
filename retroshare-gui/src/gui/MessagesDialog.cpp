@@ -33,9 +33,6 @@
 
 #include <QtGui>
 
-// Thunder: need a static msgId
-//#define STATIC_MSGID
-
 /* Images for context menu icons */
 #define IMAGE_MESSAGE		   ":/images/folder-draft.png"
 #define IMAGE_MESSAGEREPLY	   ":/images/mail_reply.png"
@@ -45,7 +42,7 @@
 #define IMAGE_DOWNLOAD    	   ":/images/start.png"
 #define IMAGE_DOWNLOADALL          ":/images/startall.png"
 
-#define COLUMN_COUNT         8
+#define COLUMN_COUNT         9
 #define COLUMN_ATTACHEMENTS  0
 #define COLUMN_SUBJECT       1
 #define COLUMN_READ          2
@@ -54,8 +51,27 @@
 #define COLUMN_SRCID         5
 #define COLUMN_MSGID         6
 #define COLUMN_CONTENT       7
+#define COLUMN_TAGS          8
+
+#define ACTION_TAGSINDEX_SIZE  3
+#define ACTION_TAGSINDEX_TYPE  "Type"
+#define ACTION_TAGSINDEX_ID    "ID"
+#define ACTION_TAGSINDEX_COLOR "Color"
+
+#define ACTION_TAGS_REMOVEALL 0
+#define ACTION_TAGS_TAG       1
+#define ACTION_TAGS_NEWTAG    2
+
+#define CONFIG_FILE (RsInit::RsProfileConfigDirectory() + "/msg_locale.cfg")
 
 #define CONFIG_SECTION_UNREAD   "Unread"
+
+#define CONFIG_SECTION_TAGS     "Tags"
+#define CONFIG_KEY_TEXT         "Text"
+#define CONFIG_KEY_COLOR        "Color"
+
+#define CONFIG_SECTION_TAG      "Tag"
+#define CONFIG_KEY_TAG          "Tag"
 
 class MyItemDelegate : public QItemDelegate
 {
@@ -87,6 +103,51 @@ public:
     }
 };
 
+class MyMenu : public QMenu
+{
+public:
+    MyMenu(const QString &title, QWidget *parent) : QMenu (title, parent)
+    {
+    }
+
+protected:
+    virtual void paintEvent(QPaintEvent *e)
+    {
+        QMenu::paintEvent(e);
+
+        QPainter p(this);
+        QRegion emptyArea = QRegion(rect());
+
+        //draw the items with color
+        foreach (QAction *pAction, actions()) {
+            QRect adjustedActionRect = actionGeometry(pAction);
+            if (!e->rect().intersects(adjustedActionRect))
+               continue;
+
+            const QMap<QString, QVariant> &Values = pAction->data().toMap();
+            if (Values.size () != ACTION_TAGSINDEX_SIZE) {
+                continue;
+            }
+            if (Values [ACTION_TAGSINDEX_TYPE] != ACTION_TAGS_TAG) {
+                continue;
+            }
+
+            //set the clip region to be extra safe (and adjust for the scrollers)
+            QRegion adjustedActionReg(adjustedActionRect);
+            emptyArea -= adjustedActionReg;
+            p.setClipRegion(adjustedActionReg);
+
+            QStyleOptionMenuItem opt;
+            initStyleOption(&opt, pAction);
+
+            opt.palette.setColor(QPalette::ButtonText, QColor(Values [ACTION_TAGSINDEX_COLOR].toInt()));
+
+            opt.rect = adjustedActionRect;
+            style()->drawControl(QStyle::CE_MenuItem, &opt, &p, this);
+        }
+    }
+};
+
 static int FilterColumnFromComboBox(int nIndex)
 {
     switch (nIndex) {
@@ -100,6 +161,8 @@ static int FilterColumnFromComboBox(int nIndex)
         return COLUMN_DATE;
     case 4:
         return COLUMN_CONTENT;
+    case 5:
+        return COLUMN_TAGS;
     }
 
     return COLUMN_SUBJECT;
@@ -118,6 +181,8 @@ static int FilterColumnToComboBox(int nIndex)
         return 3;
     case COLUMN_CONTENT:
         return 4;
+    case COLUMN_TAGS:
+        return 5;
     }
 
     return FilterColumnToComboBox(COLUMN_SUBJECT);
@@ -131,7 +196,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     ui.setupUi(this);
 
     m_bProcessSettings = false;
-    m_pConfig = new RSettings (RsInit::RsProfileConfigDirectory() + "/msg_locale.cfg");
+    m_pConfig = new RSettings (CONFIG_FILE);
 
     connect( ui.messagestreeView, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( messageslistWidgetCostumPopupMenu( QPoint ) ) );
     connect( ui.msgList, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( msgfilelistWidgetCostumPopupMenu( QPoint ) ) );
@@ -178,6 +243,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     MessagesModel->setHeaderData(COLUMN_READ,          Qt::Horizontal, QIcon(":/images/message-mail-state-header.png"), Qt::DecorationRole);
     MessagesModel->setHeaderData(COLUMN_FROM,          Qt::Horizontal, tr("From"));
     MessagesModel->setHeaderData(COLUMN_DATE,          Qt::Horizontal, tr("Date"));
+    MessagesModel->setHeaderData(COLUMN_TAGS,          Qt::Horizontal, tr("Tags"));
     MessagesModel->setHeaderData(COLUMN_SRCID,         Qt::Horizontal, tr("SRCID"));
     MessagesModel->setHeaderData(COLUMN_MSGID,         Qt::Horizontal, tr("MSGID"));
     MessagesModel->setHeaderData(COLUMN_CONTENT,       Qt::Horizontal, tr("Content"));
@@ -266,6 +332,13 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     updateMessageSummaryList();
     ui.listWidget->setCurrentRow(0);
 
+#ifdef STATIC_MSGID
+    // create tag menu
+    createTagMenu();
+#else
+    ui.tagButton->setHidden(true);
+#endif
+
     // create timer for navigation
     timer = new QTimer(this);
     timer->setInterval(300);
@@ -333,6 +406,217 @@ void MessagesDialog::processSettings(bool bLoad)
     m_bProcessSettings = false;
 }
 
+#ifdef STATIC_MSGID
+static void getMessageTags (RSettings *pConfig, QString &msgId, QList<int> &tagIds)
+{
+    pConfig->beginGroup(CONFIG_SECTION_TAG);
+
+    int nSize = pConfig->beginReadArray(msgId);
+
+    for (int i = 0; i < nSize; i++) {
+        pConfig->setArrayIndex(i);
+        int nTagId = pConfig->value(CONFIG_KEY_TAG).toInt();
+        tagIds.push_back(nTagId);
+    }
+    pConfig->endArray();
+
+    pConfig->endGroup();
+}
+
+static void setMessageTags (RSettings *pConfig, QString &msgId, QList<int> &tagIds)
+{
+    pConfig->beginGroup(CONFIG_SECTION_TAG);
+
+    pConfig->remove(msgId);
+
+    if (tagIds.size()) {
+        pConfig->beginWriteArray(msgId, tagIds.size());
+
+        int i = 0;
+        for (QList<int>::iterator tagId = tagIds.begin(); tagId != tagIds.end(); tagId++) {
+            pConfig->setArrayIndex(i++);
+            pConfig->setValue(CONFIG_KEY_TAG, *tagId);
+        }
+        pConfig->endArray();
+    }
+
+    pConfig->endGroup();
+}
+
+void MessagesDialog::getTagItems(std::map<int, TagItem> &Items)
+{
+    TagItem Item;
+
+    // create standard enties ... id = sort, maybe later own member
+    Item.text = tr("Important");
+    Item.color = QColor(255, 0, 0).rgb();
+    Items [-5] = Item;
+
+    Item.text = tr("Privat");
+    Item.color = QColor(0, 153, 0).rgb();
+    Items [-4] = Item;
+
+    Item.text = tr("Todo");
+    Item.color = QColor(51, 51, 255).rgb();
+    Items [-3] = Item;
+
+    Item.text = tr("Work");
+    Item.color = QColor(255, 153, 0).rgb();
+    Items [-2] = Item;
+
+    Item.text = tr("Later");
+    Item.color = QColor(153, 51, 153).rgb();
+    Items [-1] = Item;
+
+    // load user tags and colors
+    m_pConfig->beginGroup(CONFIG_SECTION_TAGS);
+
+    QStringList ids = m_pConfig->childGroups();
+    for (QStringList::iterator id = ids.begin(); id != ids.end(); id++) {
+        int nId = 0;
+        std::istringstream instream((*id).toStdString());
+        instream >> nId;
+
+        m_pConfig->beginGroup(*id);
+
+        if (nId < 0) {
+            // standard tag
+            Item = Items[nId];
+        } else {
+            Item.text = m_pConfig->value(CONFIG_KEY_TEXT).toString();
+        }
+        Item.color = m_pConfig->value(CONFIG_KEY_COLOR, Item.color).toUInt();
+
+        m_pConfig->endGroup();
+
+        Items [nId] = Item;
+    }
+
+    m_pConfig->endGroup();
+}
+
+void MessagesDialog::setTagItems(std::map<int, TagItem> &Items)
+{
+    // process deleted tags
+    QList<int> tagIdsToDelete;
+    std::map<int, TagItem>::iterator Item;
+    for (Item = Items.begin(); Item != Items.end(); Item++) {
+        if (Item->second._delete) {
+            tagIdsToDelete.push_back(Item->first);
+        }
+    }
+
+    if (tagIdsToDelete.size()) {
+        // iterate all saved tags on messages and remove the id's
+
+        // get all msgIds with tags
+        m_pConfig->beginGroup(CONFIG_SECTION_TAG);
+        QStringList msgIds = m_pConfig->childGroups();
+        m_pConfig->endGroup();
+
+        for (QStringList::iterator msgId = msgIds.begin(); msgId != msgIds.end(); msgId++) {
+            QList<int> tagIds;
+            getMessageTags (m_pConfig, *msgId, tagIds);
+
+            bool bSave = false;
+
+            for (QList<int>::iterator tagIdToDelete = tagIdsToDelete.begin(); tagIdToDelete != tagIdsToDelete.end(); tagIdToDelete++) {
+                QList<int>::iterator tagId = qFind(tagIds.begin(), tagIds.end(), *tagIdToDelete);
+                if (tagId != tagIds.end()) {
+                    tagIds.erase(tagId);
+                    bSave = true;
+                }
+            }
+
+            if (bSave) {
+                setMessageTags (m_pConfig, *msgId, tagIds);
+            }
+        }
+    }
+
+    // save tags
+    m_pConfig->remove(CONFIG_SECTION_TAGS);
+
+    m_pConfig->beginGroup(CONFIG_SECTION_TAGS);
+
+    for (Item = Items.begin(); Item != Items.end(); Item++) {
+        if (Item->second._delete) {
+            continue;
+        }
+
+        QString sId;
+        sId.sprintf("%d", Item->first);
+        m_pConfig->beginGroup(sId);
+
+        if (Item->first > 0) {
+            m_pConfig->setValue(CONFIG_KEY_TEXT, Item->second.text);
+        }
+        m_pConfig->setValue(CONFIG_KEY_COLOR, Item->second.color);
+
+        m_pConfig->endGroup();
+    }
+
+    m_pConfig->endGroup();
+
+    createTagMenu();
+    insertMessages();
+}
+
+void MessagesDialog::createTagMenu()
+{
+    QMenu *pMenu = new MyMenu (tr("Tag"), this);
+    connect(pMenu, SIGNAL(triggered (QAction*)), this, SLOT(tagTriggered(QAction*)));
+    connect(pMenu, SIGNAL(aboutToShow()), this, SLOT(tagAboutToShow()));
+
+    std::map<int, TagItem> TagItems;
+    getTagItems(TagItems);
+
+    bool bUser = false;
+
+    QAction *pAction;
+    QMap<QString, QVariant> Values;
+
+    if (TagItems.size()) {
+        pAction = new QAction(tr("Remove All Tags"), pMenu);
+        Values [ACTION_TAGSINDEX_TYPE] = ACTION_TAGS_REMOVEALL;
+        Values [ACTION_TAGSINDEX_ID] = 0;
+        Values [ACTION_TAGSINDEX_COLOR] = 0;
+        pAction->setData (Values);
+        pMenu->addAction(pAction);
+
+        pMenu->addSeparator();
+
+        std::map<int, TagItem>::iterator Item;
+        for (Item = TagItems.begin(); Item != TagItems.end(); Item++) {
+            pAction = new QAction(Item->second.text, pMenu);
+            Values [ACTION_TAGSINDEX_TYPE] = ACTION_TAGS_TAG;
+            Values [ACTION_TAGSINDEX_ID] = Item->first;
+            Values [ACTION_TAGSINDEX_COLOR] = Item->second.color;
+            pAction->setData (Values);
+            pAction->setCheckable(true);
+
+            if (Item->first > 0 && bUser == false) {
+                bUser = true;
+                pMenu->addSeparator();
+            }
+
+            pMenu->addAction(pAction);
+        }
+
+        pMenu->addSeparator();
+    }
+
+    pAction = new QAction(tr("New tag ..."), pMenu);
+    Values [ACTION_TAGSINDEX_TYPE] = ACTION_TAGS_NEWTAG;
+    Values [ACTION_TAGSINDEX_ID] = 0;
+    Values [ACTION_TAGSINDEX_COLOR] = 0;
+    pAction->setData (Values);
+    pMenu->addAction(pAction);
+
+    ui.tagButton->setMenu(pMenu);
+}
+#endif
+
 // replaced by shortcut
 //void MessagesDialog::keyPressEvent(QKeyEvent *e)
 //{
@@ -345,7 +629,7 @@ void MessagesDialog::processSettings(bool bLoad)
 //		MainPage::keyPressEvent(e) ;
 //}
 
-int MessagesDialog::getSelectedMsgCount (QList<int> *pRowsRead, QList<int> *pRowsUnread)
+int MessagesDialog::getSelectedMsgCount (QList<int> *pRows, QList<int> *pRowsRead, QList<int> *pRowsUnread)
 {
     if (pRowsRead) pRowsRead->clear();
     if (pRowsUnread) pRowsUnread->clear();
@@ -360,8 +644,11 @@ int MessagesDialog::getSelectedMsgCount (QList<int> *pRowsRead, QList<int> *pRow
         {
             rowList.append(row);
 
-            if (pRowsRead || pRowsUnread) {
+            if (pRows || pRowsRead || pRowsUnread) {
                 int mappedRow = proxyModel->mapToSource(*it).row();
+
+                if (pRows) pRows->append(mappedRow);
+
                 if (MessagesModel->item(mappedRow, COLUMN_SUBJECT)->font().bold()) {
                     if (pRowsUnread) pRowsUnread->append(mappedRow);
                 } else {
@@ -386,23 +673,16 @@ void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint point )
     QMenu contextMnu( this );
 
     /** Defines the actions for the context menu */
-    QAction* newmsgAct = NULL;
-    QAction* replytomsgAct = NULL;
-    QAction* replyallmsgAct = NULL;
-    QAction* forwardmsgAct = NULL;
-    QAction* removemsgAct = NULL;
-    QAction* markAsRead = NULL;
-    QAction* markAsUnread = NULL;
 
-    replytomsgAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr( "Reply to Message" ), this );
+    QAction *replytomsgAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr( "Reply to Message" ), this );
     connect( replytomsgAct , SIGNAL( triggered() ), this, SLOT( replytomessage() ) );
     contextMnu.addAction( replytomsgAct);
 
-    replyallmsgAct = new QAction(QIcon(IMAGE_MESSAGEREPLYALL), tr( "Reply to All" ), this );
+    QAction *replyallmsgAct = new QAction(QIcon(IMAGE_MESSAGEREPLYALL), tr( "Reply to All" ), this );
     connect( replyallmsgAct , SIGNAL( triggered() ), this, SLOT( replyallmessage() ) );
     contextMnu.addAction( replyallmsgAct);
 
-    forwardmsgAct = new QAction(QIcon(IMAGE_MESSAGEFORWARD), tr( "Forward Message" ), this );
+    QAction *forwardmsgAct = new QAction(QIcon(IMAGE_MESSAGEFORWARD), tr( "Forward Message" ), this );
     connect( forwardmsgAct , SIGNAL( triggered() ), this, SLOT( forwardmessage() ) );
     contextMnu.addAction( forwardmsgAct);
 
@@ -410,17 +690,17 @@ void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint point )
 
     QList<int> RowsRead;
     QList<int> RowsUnread;
-    int nCount = getSelectedMsgCount (&RowsRead, &RowsUnread);
-    
+    int nCount = getSelectedMsgCount (NULL, &RowsRead, &RowsUnread);
+
 #ifdef STATIC_MSGID
-    markAsRead = new QAction(QIcon(":/images/message-mail-read.png"), tr( "Mark as read" ), this);
+    QAction *markAsRead = new QAction(QIcon(":/images/message-mail-read.png"), tr( "Mark as read" ), this);
     connect(markAsRead , SIGNAL(triggered()), this, SLOT(markAsRead()));
     contextMnu.addAction(markAsRead);
     if (RowsUnread.size() == 0) {
         markAsRead->setDisabled(true);
     }
 
-    markAsUnread = new QAction(QIcon(":/images/message-mail.png"), tr( "Mark as unread" ), this);
+    QAction *markAsUnread = new QAction(QIcon(":/images/message-mail.png"), tr( "Mark as unread" ), this);
     connect(markAsUnread , SIGNAL(triggered()), this, SLOT(markAsUnread()));
     contextMnu.addAction(markAsUnread);
     if (RowsRead.size() == 0) {
@@ -428,9 +708,14 @@ void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint point )
     }
 
     contextMnu.addSeparator();
+
+    // add tags
+    contextMnu.addMenu(ui.tagButton->menu());
+    contextMnu.addSeparator();
 #endif
 
-    if (nCount > 1) {
+    QAction *removemsgAct;
+   if (nCount > 1) {
         removemsgAct = new QAction(QIcon(IMAGE_MESSAGEREMOVE), tr( "Remove Messages" ), this );
     } else {
         removemsgAct = new QAction(QIcon(IMAGE_MESSAGEREMOVE), tr( "Remove Message" ), this );
@@ -444,7 +729,7 @@ void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint point )
     contextMnu.addAction( ui.actionPrint);
     contextMnu.addSeparator();
 
-    newmsgAct = new QAction(QIcon(IMAGE_MESSAGE), tr( "New Message" ), this );
+    QAction *newmsgAct = new QAction(QIcon(IMAGE_MESSAGE), tr( "New Message" ), this );
     connect( newmsgAct , SIGNAL( triggered() ), this, SLOT( newmessage() ) );
     contextMnu.addAction( newmsgAct);
 
@@ -835,7 +1120,6 @@ void MessagesDialog::insertMessages()
     std::cerr << "Current Row: " << listrow << std::endl;
     fflush(0);
 
-    int i;
     int nFilterColumn = FilterColumnFromComboBox(ui.filterColumnComboBox->currentIndex());
 
     /* check the mode we are in */
@@ -866,6 +1150,11 @@ void MessagesDialog::insertMessages()
     }
 
     if (bFill) {
+#ifdef STATIC_MSGID
+        std::map<int, TagItem> TagItems;
+        getTagItems(TagItems);
+#endif
+
         /* remove old items */
         int nRowCount = MessagesModel->rowCount();
         int nRow = 0;
@@ -933,18 +1222,18 @@ void MessagesDialog::insertMessages()
             bool bInsert = false;
 
             if (nRow < nRowCount) {
-                for (i = 0; i < COLUMN_COUNT; i++) {
+                for (int i = 0; i < COLUMN_COUNT; i++) {
                     item[i] = MessagesModel->item(nRow, i);
                 }
             } else {
-                for (i = 0; i < COLUMN_COUNT; i++) {
+                for (int i = 0; i < COLUMN_COUNT; i++) {
                     item[i] = new QStandardItem();
                 }
                 bInsert = true;
             }
 
             //set this false if you want to expand on double click
-            for (i = 0; i < COLUMN_COUNT; i++) {
+            for (int i = 0; i < COLUMN_COUNT; i++) {
                 item[i]->setEditable(false);
             }
 
@@ -1022,11 +1311,38 @@ void MessagesDialog::insertMessages()
             item[COLUMN_SUBJECT]->setData(text + dateString, Qt::UserRole);
 
             // internal data
+            QString msgId = QString::fromStdString(it->msgId);
             item[COLUMN_SRCID]->setText(QString::fromStdString(it->srcId));
-            item[COLUMN_MSGID]->setText(QString::fromStdString(it->msgId));
+            item[COLUMN_MSGID]->setText(msgId);
 
             // Init icon and font
             InitIconAndFont(m_pConfig, item, it->msgflags);
+
+#ifdef STATIC_MSGID
+            // Tags
+            QList<int> tagIds;
+            getMessageTags (m_pConfig, msgId, tagIds);
+            qSort(tagIds.begin(), tagIds.end());
+
+            text.clear();
+
+            for (QList<int>::iterator tagId = tagIds.begin(); tagId != tagIds.end(); tagId++) {
+                if (text.isEmpty() == false) {
+                    text += ",";
+                }
+                text += TagItems[*tagId].text;
+            }
+            item[COLUMN_TAGS]->setText(text);
+
+            // set color
+            QBrush Brush; // standard
+            if (tagIds.size()) {
+                Brush = QBrush(TagItems [tagIds [0]].color);
+            }
+            for (int i = 0; i < COLUMN_COUNT; i++) {
+                item[i]->setForeground(Brush);
+            }
+#endif
 
             // No of Files.
             {
@@ -1053,7 +1369,7 @@ void MessagesDialog::insertMessages()
             if (bInsert) {
                 /* add to the list */
                 QList<QStandardItem *> itemList;
-                for (i = 0; i < COLUMN_COUNT; i++) {
+                for (int i = 0; i < COLUMN_COUNT; i++) {
                     itemList.append(item[i]);
                 }
                 MessagesModel->appendRow(itemList);
@@ -1072,6 +1388,11 @@ void MessagesDialog::insertMessages()
 #endif
     ui.messagestreeView->showColumn(COLUMN_FROM);
     ui.messagestreeView->showColumn(COLUMN_DATE);
+#ifdef STATIC_MSGID
+    ui.messagestreeView->showColumn(COLUMN_TAGS);
+#else
+    ui.messagestreeView->hideColumn(COLUMN_TAGS);
+#endif
     ui.messagestreeView->hideColumn(COLUMN_SRCID);
     ui.messagestreeView->hideColumn(COLUMN_MSGID);
     ui.messagestreeView->hideColumn(COLUMN_CONTENT);
@@ -1182,10 +1503,11 @@ void MessagesDialog::setMsgAsReadUnread(const QList<int> &Rows, bool bRead)
     }
 }
 
+#ifdef STATIC_MSGID
 void MessagesDialog::markAsRead()
 {
     QList<int> RowsUnread;
-    getSelectedMsgCount (NULL, &RowsUnread);
+    getSelectedMsgCount (NULL, NULL, &RowsUnread);
 
     setMsgAsReadUnread (RowsUnread, true);
     updateMessageSummaryList();
@@ -1194,11 +1516,12 @@ void MessagesDialog::markAsRead()
 void MessagesDialog::markAsUnread()
 {
     QList<int> RowsRead;
-    getSelectedMsgCount (&RowsRead, NULL);
+    getSelectedMsgCount (NULL, &RowsRead, NULL);
 
     setMsgAsReadUnread (RowsRead, false);
     updateMessageSummaryList();
 }
+#endif
 
 void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index, bool bSetToRead)
 {
@@ -1238,7 +1561,7 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index, bool bSetToRead)
         mid = item->text().toStdString();
     }
 
-    int nCount = getSelectedMsgCount (NULL, NULL);
+    int nCount = getSelectedMsgCount (NULL, NULL, NULL);
     if (nCount == 1) {
         ui.actionSave_as->setEnabled(true);
         ui.actionPrintPreview->setEnabled(true);
@@ -1445,6 +1768,11 @@ void MessagesDialog::removemessage()
         m_pConfig->beginGroup(CONFIG_SECTION_UNREAD);
         m_pConfig->remove (mid);
         m_pConfig->endGroup();
+
+        // remove tag
+        m_pConfig->beginGroup(CONFIG_SECTION_TAG);
+        m_pConfig->remove (mid);
+        m_pConfig->endGroup();
     }
 
     insertMessages();
@@ -1559,116 +1887,43 @@ void MessagesDialog::setCurrentFileName(const QString &fileName)
     setWindowModified(false);
 }
 
+void MessagesDialog::setToolbarButtonStyle(Qt::ToolButtonStyle style)
+{
+    ui.newmessageButton->setToolButtonStyle(style);
+    ui.removemessageButton->setToolButtonStyle(style);
+    ui.replymessageButton->setToolButtonStyle(style);
+    ui.replyallmessageButton->setToolButtonStyle(style);
+    ui.forwardmessageButton->setToolButtonStyle(style);
+    ui.tagButton->setToolButtonStyle(style);
+    ui.printbutton->setToolButtonStyle(style);
+    ui.viewtoolButton->setToolButtonStyle(style);
+}
+
 void MessagesDialog::buttonsicononly()
 {
-    ui.newmessageButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
-    ui.removemessageButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
-    ui.replymessageButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
-    ui.replyallmessageButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
-    ui.forwardmessageButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
-    ui.printbutton->setToolButtonStyle(Qt::ToolButtonIconOnly);
-    ui.viewtoolButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+    setToolbarButtonStyle(Qt::ToolButtonIconOnly);
 
-    Settings->beginGroup(QString("MessageDialog"));
-
-    Settings->setValue("ToolButon_Stlye1",ui.newmessageButton->toolButtonStyle());
-    Settings->setValue("ToolButon_Stlye2",ui.removemessageButton->toolButtonStyle());
-    Settings->setValue("ToolButon_Stlye3",ui.replymessageButton->toolButtonStyle());
-    Settings->setValue("ToolButon_Stlye4",ui.replyallmessageButton->toolButtonStyle());
-    Settings->setValue("ToolButon_Stlye5",ui.forwardmessageButton->toolButtonStyle());
-    Settings->setValue("ToolButon_Stlye6",ui.printbutton->toolButtonStyle());
-    Settings->setValue("ToolButon_Stlye7",ui.viewtoolButton->toolButtonStyle());
-
-    Settings->endGroup();
+    Settings->setValueToGroup("MessageDialog", "ToolButon_Stlye", Qt::ToolButtonIconOnly);
 }
 
 void MessagesDialog::buttonstextbesideicon()
 {
-    ui.newmessageButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-    ui.removemessageButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-    ui.replymessageButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-    ui.replyallmessageButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-    ui.forwardmessageButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-    ui.printbutton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-    ui.viewtoolButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    setToolbarButtonStyle(Qt::ToolButtonTextBesideIcon);
 
-    Settings->beginGroup(QString("MessageDialog"));
-
-    Settings->setValue("ToolButon_Stlye1",ui.newmessageButton->toolButtonStyle());
-    Settings->setValue("ToolButon_Stlye2",ui.removemessageButton->toolButtonStyle());
-    Settings->setValue("ToolButon_Stlye3",ui.replymessageButton->toolButtonStyle());
-    Settings->setValue("ToolButon_Stlye4",ui.replyallmessageButton->toolButtonStyle());
-    Settings->setValue("ToolButon_Stlye5",ui.forwardmessageButton->toolButtonStyle());
-    Settings->setValue("ToolButon_Stlye6",ui.printbutton->toolButtonStyle());
-    Settings->setValue("ToolButon_Stlye7",ui.viewtoolButton->toolButtonStyle());
-
-    Settings->endGroup();
+    Settings->setValueToGroup("MessageDialog", "ToolButon_Stlye", Qt::ToolButtonTextBesideIcon);
 }
 
 void MessagesDialog::buttonstextundericon()
 {
-    ui.newmessageButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    ui.removemessageButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    ui.replymessageButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    ui.replyallmessageButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    ui.forwardmessageButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    ui.printbutton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    ui.viewtoolButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    setToolbarButtonStyle(Qt::ToolButtonTextUnderIcon);
 
-    Settings->beginGroup("MessageDialog");
-
-    Settings->setValue("ToolButon_Stlye1",ui.newmessageButton->toolButtonStyle());
-    Settings->setValue("ToolButon_Stlye2",ui.removemessageButton->toolButtonStyle());
-    Settings->setValue("ToolButon_Stlye3",ui.replymessageButton->toolButtonStyle());
-    Settings->setValue("ToolButon_Stlye4",ui.replyallmessageButton->toolButtonStyle());
-    Settings->setValue("ToolButon_Stlye5",ui.forwardmessageButton->toolButtonStyle());
-    Settings->setValue("ToolButon_Stlye6",ui.printbutton->toolButtonStyle());
-    Settings->setValue("ToolButon_Stlye7",ui.viewtoolButton->toolButtonStyle());
-
-    Settings->endGroup();
+    Settings->setValueToGroup("MessageDialog", "ToolButon_Stlye", Qt::ToolButtonTextUnderIcon);
 }
 
 void MessagesDialog::loadToolButtonsettings()
 {
-    Settings->beginGroup("MessageDialog");
-
-    if(Settings->value("ToolButon_Stlye1","0").toInt() == 0)
-    {
-        qDebug() << "ToolButon IconOnly";
-        ui.newmessageButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
-        ui.removemessageButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
-        ui.replymessageButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
-        ui.replyallmessageButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
-        ui.forwardmessageButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
-        ui.printbutton->setToolButtonStyle(Qt::ToolButtonIconOnly);
-        ui.viewtoolButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
-    }
-
-    else if (Settings->value("ToolButon_Stlye1","2").toInt() ==2)
-    {
-        qDebug() << "ToolButon TextBesideIcon";
-        ui.newmessageButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-        ui.removemessageButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-        ui.replymessageButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-        ui.replyallmessageButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-        ui.forwardmessageButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-        ui.printbutton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-        ui.viewtoolButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-    }
-
-    else if(Settings->value("ToolButon_Stlye1","3").toInt() ==3)
-    {
-        qDebug() << "ToolButton TextUnderIcon";
-        ui.newmessageButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-        ui.removemessageButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-        ui.replymessageButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-        ui.replyallmessageButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-        ui.forwardmessageButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-        ui.printbutton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-        ui.viewtoolButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    }
-
-    Settings->endGroup();
+    Qt::ToolButtonStyle style = (Qt::ToolButtonStyle) Settings->valueFromGroup("MessageDialog", "ToolButon_Stlye", Qt::ToolButtonIconOnly).toInt();
+    setToolbarButtonStyle(style);
 }
 
 void MessagesDialog::filterRegExpChanged()
@@ -1834,3 +2089,126 @@ void MessagesDialog::clearFilter()
     ui.filterPatternLineEdit->clear();
     ui.filterPatternLineEdit->setFocus();
 }
+
+#ifdef STATIC_MSGID
+void MessagesDialog::tagAboutToShow()
+{
+    // activate actions from the first selected row
+    QList<int> tagIds;
+
+    QList<int> Rows;
+    getSelectedMsgCount (&Rows, NULL, NULL);
+
+    if (Rows.size()) {
+        QStandardItem* pItem = MessagesModel->item(Rows [0], COLUMN_MSGID);
+        QString msgId = pItem->text();
+
+        getMessageTags(m_pConfig, msgId, tagIds);
+    }
+
+    QMenu *pMenu = ui.tagButton->menu();
+
+    foreach(QObject *pObject, pMenu->children()) {
+        QAction *pAction = qobject_cast<QAction*> (pObject);
+        if (pAction == NULL) {
+            continue;
+        }
+
+        const QMap<QString, QVariant> &Values = pAction->data().toMap();
+        if (Values.size () != ACTION_TAGSINDEX_SIZE) {
+            continue;
+        }
+        if (Values [ACTION_TAGSINDEX_TYPE] != ACTION_TAGS_TAG) {
+            continue;
+        }
+
+        QList<int>::iterator tagId = qFind(tagIds.begin(), tagIds.end(), Values [ACTION_TAGSINDEX_ID]);
+        pAction->setChecked(tagId != tagIds.end());
+    }
+}
+
+void MessagesDialog::tagTriggered(QAction *pAction)
+{
+    if (pAction == NULL) {
+        return;
+    }
+
+    const QMap<QString, QVariant> &Values = pAction->data().toMap();
+    if (Values.size () != ACTION_TAGSINDEX_SIZE) {
+        return;
+    }
+
+    bool bRemoveAll = false;
+    int nId = 0;
+    bool bSet = false;
+
+    if (Values [ACTION_TAGSINDEX_TYPE] == ACTION_TAGS_REMOVEALL) {
+        // remove all tags
+        bRemoveAll = true;
+    } else if (Values [ACTION_TAGSINDEX_TYPE] == ACTION_TAGS_NEWTAG) {
+        // new tag
+        std::map<int, TagItem> TagItems;
+        getTagItems(TagItems);
+
+        NewTag Tag(TagItems);
+        if (Tag.exec() == QDialog::Accepted && Tag.m_nId) {
+            // Tag.m_nId
+            setTagItems (TagItems);
+            nId = Tag.m_nId;
+            bSet = true;
+        } else {
+            return;
+        }
+    }  else if (Values [ACTION_TAGSINDEX_TYPE].toInt() == ACTION_TAGS_TAG) {
+        nId = Values [ACTION_TAGSINDEX_ID].toInt();
+        if (nId == 0) {
+            return;
+        }
+        bSet = pAction->isChecked();
+    } else {
+        return;
+    }
+
+    QList<int> Rows;
+    getSelectedMsgCount (&Rows, NULL, NULL);
+    for (int nRow = 0; nRow < Rows.size(); nRow++) {
+        QStandardItem* pItem = MessagesModel->item(Rows [nRow], COLUMN_MSGID);
+        QString msgId = pItem->text();
+
+        if (bRemoveAll) {
+            // remove all
+            m_pConfig->beginGroup(CONFIG_SECTION_TAG);
+            m_pConfig->remove (msgId);
+            m_pConfig->endGroup();
+
+            insertMessages();
+        } else {
+            // set or unset tag
+            QList<int> tagIds;
+            getMessageTags(m_pConfig, msgId, tagIds);
+
+            QList<int>::iterator tagId = qFind(tagIds.begin(), tagIds.end(), pAction->data().toInt());
+
+            bool bSaveAndRefresh = false;
+            if (bSet) {
+                if (tagId == tagIds.end()) {
+                    // not found
+                    tagIds.push_back(nId);
+                    bSaveAndRefresh = true;
+                }
+            } else {
+                if (tagId != tagIds.end()) {
+                    // found
+                    tagIds.erase(tagId);
+                    bSaveAndRefresh = true;
+                }
+            }
+
+            if (bSaveAndRefresh) {
+                setMessageTags(m_pConfig, msgId, tagIds);
+                insertMessages();
+            }
+        }
+    }
+}
+#endif

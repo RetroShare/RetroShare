@@ -733,7 +733,7 @@ p, li { white-space: pre-wrap; }
         </property>
        </widget>
       </item>
-      <item row="0" column="6">
+      <item row="0" column="7">
        <widget class="QToolButton" name="removemessageButton">
         <property name="minimumSize">
          <size>
@@ -777,7 +777,7 @@ p, li { white-space: pre-wrap; }
         </property>
        </widget>
       </item>
-      <item row="0" column="7">
+      <item row="0" column="8">
        <widget class="QToolButton" name="printbutton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -821,7 +821,7 @@ p, li { white-space: pre-wrap; }
         </property>
        </widget>
       </item>
-      <item row="0" column="8">
+      <item row="0" column="9">
        <widget class="QToolButton" name="viewtoolButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -850,7 +850,7 @@ p, li { white-space: pre-wrap; }
         </property>
        </widget>
       </item>
-      <item row="0" column="9">
+      <item row="0" column="10">
        <spacer name="horizontalSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -863,7 +863,7 @@ p, li { white-space: pre-wrap; }
         </property>
        </spacer>
       </item>
-      <item row="0" column="10">
+      <item row="0" column="11">
        <layout class="QHBoxLayout" name="horizontalLayout">
         <property name="spacing">
          <number>1</number>
@@ -920,10 +920,10 @@ border-image: url(:/images/closepressed.png)
         </item>
        </layout>
       </item>
-      <item row="0" column="11">
+      <item row="0" column="12">
        <widget class="QComboBox" name="filterColumnComboBox">
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <item>
          <property name="text">
@@ -950,6 +950,34 @@ border-image: url(:/images/closepressed.png)
           <string>Content</string>
          </property>
         </item>
+        <item>
+         <property name="text">
+          <string>Tags</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="0" column="6">
+       <widget class="QToolButton" name="tagButton">
+        <property name="text">
+         <string>Tag</string>
+        </property>
+        <property name="icon">
+         <iconset resource="images.qrc">
+          <normaloff>:/images/tag24.png</normaloff>:/images/tag24.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="popupMode">
+         <enum>QToolButton::MenuButtonPopup</enum>
+        </property>
+        <property name="autoRaise">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
      </layout>
@@ -1557,8 +1585,8 @@ p, li { white-space: pre-wrap; }
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>150</x>
-     <y>321</y>
+     <x>184</x>
+     <y>348</y>
     </hint>
     <hint type="destinationlabel">
      <x>399</x>
