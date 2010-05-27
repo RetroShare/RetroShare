@@ -132,6 +132,7 @@ void MessagePage::editTag()
     }
 
     NewTag Tag(m_TagItems, nId);
+    Tag.setWindowTitle(tr("Edit Tag"));
     if (Tag.exec() == QDialog::Accepted && Tag.m_nId) {
         TagItem &Item = m_TagItems [Tag.m_nId];
         pItemWidget->setText(Item.text);
