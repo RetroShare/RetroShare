@@ -65,7 +65,11 @@ const uint32_t PEER_IP_CONNECT_STATE_MAX_LIST_SIZE =     	4;
 
 /****
  * #define CONN_DEBUG 1
+ * #define CONN_DEBUG_RESET 1
+ * #define CONN_DEBUG_TICK 1
  ***/
+#define CONN_DEBUG_RESET 1
+
 /****
  * #define P3CONNMGR_NO_TCP_CONNECTIONS 1
  ***/
@@ -165,6 +169,9 @@ p3ConnectMgr::p3ConnectMgr()
 	oldnetFlagStunOk = false;
 	oldnetFlagExtraAddressCheckOk = false;
 
+	#ifdef CONN_DEBUG_RESET
+	std::cerr << "p3ConnectMgr() Calling NetReset" << std::endl;
+	#endif
 	netReset();
 
 	return;
@@ -307,7 +314,7 @@ void p3ConnectMgr::netReset()
 {
 	//don't do a net reset if the MIN_TIME_BETWEEN_NET_RESET is not reached
 	time_t delta = time(NULL) - mNetInitTS;
-	#ifdef CONN_DEBUG
+	#ifdef CONN_DEBUG_RESET
 		std::cerr << "p3ConnectMgr time since last reset : " << delta << std::endl;
 	#endif
 	if (delta < MIN_TIME_BETWEEN_NET_RESET) {
@@ -315,20 +322,28 @@ void p3ConnectMgr::netReset()
 		    RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 		    mNetStatus = RS_NET_NEED_RESET;
 	    }
-	    #ifdef CONN_DEBUG
+	    #ifdef CONN_DEBUG_RESET
 		    std::cerr << "p3ConnectMgr::netStartup() don't do a net reset if the MIN_TIME_BETWEEN_NET_RESET is not reached" << std::endl;
 	    #endif
 	    return;
 	}
 
-        #ifdef CONN_DEBUG
+        #ifdef CONN_DEBUG_RESET
 	std::cerr << "p3ConnectMgr::netReset() shutdown" << std::endl;
         #endif
 
 	shutdown(); /* blocking shutdown call */
 
+        #ifdef CONN_DEBUG_RESET
+	std::cerr << "p3ConnectMgr::netReset() restarting AddrFinder" << std::endl;
+        #endif
 	// Will initiate a new call for determining the external ip.
 	mExtAddrFinder->reset() ;
+
+        #ifdef CONN_DEBUG_RESET
+	std::cerr << "p3ConnectMgr::netReset() resetting NetStatus" << std::endl;
+        #endif
+
 
 	{
 		RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
@@ -339,7 +354,7 @@ void p3ConnectMgr::netReset()
 	/* check Network Address */
 	checkNetAddress();
 
-        #ifdef CONN_DEBUG
+        #ifdef CONN_DEBUG_RESET
 	std::cerr << "p3ConnectMgr::netReset() done" << std::endl;
         #endif
 }
@@ -589,6 +604,9 @@ void p3ConnectMgr::netTick()
 		case RS_NET_NEED_RESET:
 
 #ifdef CONN_DEBUG_TICK
+			std::cerr << "p3ConnectMgr::netTick() STATUS: NEED_RESET" << std::endl;
+#endif
+#ifdef CONN_DEBUG_RESET
 			std::cerr << "p3ConnectMgr::netTick() STATUS: NEED_RESET" << std::endl;
 #endif
 			netReset();
@@ -872,6 +890,9 @@ void p3ConnectMgr::networkConsistencyCheck()
 #ifdef CONN_DEBUG_TICK
 			std::cerr << "p3ConnectMgr::networkConsistencyCheck() doing a net reset." << std::endl;
 #endif
+#ifdef CONN_DEBUG_RESET
+			std::cerr << "p3ConnectMgr::networkConsistencyCheck() Calling NetReset" << std::endl;
+#endif
 			netReset();
 		} 
 		else 
@@ -879,6 +900,10 @@ void p3ConnectMgr::networkConsistencyCheck()
 #ifdef CONN_DEBUG_TICK
 			std::cerr << "p3ConnectMgr::networkConsistencyCheck() reset delayed : p3ConnectMgr time since last reset : " << delta;
 			std::cerr << ". Cannot reset before : " <<  MAX_NETWORK_INIT << " sec" << std::endl;
+#endif
+
+#ifdef CONN_DEBUG_RESET
+			std::cerr << "p3ConnectMgr::networkConsistencyCheck() Reset PENDING" << std::endl;
 #endif
 		}
 	}
@@ -2663,6 +2688,9 @@ bool    p3ConnectMgr::setLocalAddress(std::string id, struct sockaddr_in addr)
                 IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
                 if ((ownState.netMode & RS_NET_MODE_ACTUAL) == RS_NET_MODE_EXT ||
                     (ownState.netMode & RS_NET_MODE_ACTUAL) == RS_NET_MODE_UDP) {
+			#ifdef CONN_DEBUG_RESET
+			std::cerr << "p3ConnectMgr::setLocalAddress() Calling NetReset" << std::endl;
+			#endif
                     netReset();
                 }
             }
@@ -2837,6 +2865,9 @@ bool    p3ConnectMgr::setNetworkMode(std::string id, uint32_t netMode)
 		uint32_t visState = ownState.visState;
 		setOwnNetConfig(netMode, visState);
                 if ((netMode & RS_NET_MODE_ACTUAL) != (ownState.netMode & RS_NET_MODE_ACTUAL)) {
+		#ifdef CONN_DEBUG_RESET
+		std::cerr << "p3ConnectMgr::setNetworkMode() Calling NetReset" << std::endl;
+		#endif
                     netReset();
                 }
 		return true;
@@ -3006,8 +3037,12 @@ bool 	p3ConnectMgr::checkNetAddress()
 
 	if ((old_in_addr != ownState.currentlocaladdr.sin_addr.s_addr) || (old_in_port != ownState.currentlocaladdr.sin_port))
 	{
-#ifdef CONN_DEBUG
+#ifdef CONN_DEBUG_RESET
 		std::cerr << "p3ConnectMgr::checkNetAddress() local address changed, resetting network." << std::endl;
+		std::cerr << "old addr: " << old_in_addr << " : " << old_in_port;
+		std::cerr << std::endl;
+		std::cerr << "new addr: " << ownState.currentlocaladdr.sin_addr.s_addr << " : " << ownState.currentlocaladdr.sin_port;
+		std::cerr << std::endl;
 #endif
 		netReset();
 	}
