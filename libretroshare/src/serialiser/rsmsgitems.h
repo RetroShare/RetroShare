@@ -141,6 +141,7 @@ const uint32_t RS_MSG_FLAGS_OUTGOING = 0x0001;
 const uint32_t RS_MSG_FLAGS_PENDING  = 0x0002;
 const uint32_t RS_MSG_FLAGS_DRAFT    = 0x0004;
 const uint32_t RS_MSG_FLAGS_NEW      = 0x0010;
+const uint32_t RS_MSG_FLAGS_TRASH    = 0x0020;
 
 class RsMsgItem: public RsItem
 {

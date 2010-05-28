@@ -375,7 +375,7 @@ void MainWindow::updateStatus()
 	rsPeers->getPeerCount (NULL, &online);
 
 	unsigned int newInboxCount = 0;
-	rsMsgs->getMessageCount (NULL, &newInboxCount, NULL, NULL, NULL);
+	rsMsgs->getMessageCount (NULL, &newInboxCount, NULL, NULL, NULL, NULL);
 
         if(newInboxCount)
                 messageAction->setIcon(QIcon(QPixmap(":/images/messages_new.png"))) ;

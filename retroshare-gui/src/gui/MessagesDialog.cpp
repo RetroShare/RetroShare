@@ -53,6 +53,14 @@
 #define COLUMN_CONTENT       7
 #define COLUMN_TAGS          8
 
+#define ROW_INBOX         0
+#define ROW_OUTBOX        1
+#define ROW_DRAFTBOX      2
+#define ROW_SENTBOX       3
+#define ROW_TRASHBOX      4
+#define ROW_INBOX_TOTAL   6
+#define ROW_SENTBOX_TOTAL 7
+
 #define ACTION_TAGSINDEX_SIZE  3
 #define ACTION_TAGSINDEX_TYPE  "Type"
 #define ACTION_TAGSINDEX_ID    "ID"
@@ -270,6 +278,8 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     // http://bugreports.qt.nokia.com/browse/QTBUG-8270
     QShortcut *Shortcut = new QShortcut(QKeySequence (Qt::Key_Delete), ui.messagestreeView, 0, 0, Qt::WidgetShortcut);
     connect(Shortcut, SIGNAL(activated()), this, SLOT( removemessage ()));
+    Shortcut = new QShortcut(QKeySequence (Qt::SHIFT | Qt::Key_Delete), ui.messagestreeView, 0, 0, Qt::WidgetShortcut);
+    connect(Shortcut, SIGNAL(activated()), this, SLOT( removemessage ()));
 
     /* hide the Tree +/- */
     ui.msgList->setRootIsDecorated( false );
@@ -330,7 +340,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
     // fill folder list
     updateMessageSummaryList();
-    ui.listWidget->setCurrentRow(0);
+    ui.listWidget->setCurrentRow(ROW_INBOX);
 
 #ifdef STATIC_MSGID
     // create tag menu
@@ -723,6 +733,19 @@ void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint point )
 
     connect( removemsgAct , SIGNAL( triggered() ), this, SLOT( removemessage() ) );
     contextMnu.addAction( removemsgAct);
+
+    int listrow = ui.listWidget -> currentRow();
+    if (listrow == ROW_TRASHBOX) {
+        QAction *undeleteAct = new QAction(tr( "Undelete" ), this );
+        connect(undeleteAct, SIGNAL(triggered()), this, SLOT(undeletemessage()));
+        contextMnu.addAction(undeleteAct);
+
+        if (nCount) {
+            undeleteAct->setEnabled(true);
+        } else {
+            undeleteAct->setDisabled(true);
+        }
+    }
 
     contextMnu.addAction( ui.actionSave_as);
     contextMnu.addAction( ui.actionPrintPreview);
@@ -1124,20 +1147,24 @@ void MessagesDialog::insertMessages()
 
     /* check the mode we are in */
     unsigned int msgbox = 0;
+    bool bTrash = false;
     bool bFill = true;
     switch(listrow)
     {
-    case 3:
-        msgbox = RS_MSG_SENTBOX;
+    case ROW_INBOX:
+        msgbox = RS_MSG_INBOX;
         break;
-    case 2:
-        msgbox = RS_MSG_DRAFTBOX;
-        break;
-    case 1:
+    case ROW_OUTBOX:
         msgbox = RS_MSG_OUTBOX;
         break;
-    case 0:
-        msgbox = RS_MSG_INBOX;
+    case ROW_DRAFTBOX:
+        msgbox = RS_MSG_DRAFTBOX;
+        break;
+    case ROW_SENTBOX:
+        msgbox = RS_MSG_SENTBOX;
+        break;
+    case ROW_TRASHBOX:
+        bTrash = true;
         break;
     default:
         bFill = false;
@@ -1160,8 +1187,17 @@ void MessagesDialog::insertMessages()
         int nRow = 0;
         for (nRow = 0; nRow < nRowCount; ) {
             for(it = msgList.begin(); it != msgList.end(); it++) {
-                if ((it->msgflags & RS_MSG_BOXMASK) != msgbox) {
-                    continue;
+                if (bTrash) {
+                    if ((it->msgflags & RS_MSG_TRASH) == 0) {
+                        continue;
+                    }
+                } else {
+                    if (it->msgflags & RS_MSG_TRASH) {
+                        continue;
+                    }
+                    if ((it->msgflags & RS_MSG_BOXMASK) != msgbox) {
+                        continue;
+                    }
                 }
 
                 if (it->msgId == MessagesModel->item(nRow, COLUMN_MSGID)->text().toStdString()) {
@@ -1197,11 +1233,17 @@ void MessagesDialog::insertMessages()
              *
              */
 
-            if ((it -> msgflags & RS_MSG_BOXMASK) != msgbox)
-            {
-                //std::cerr << "Msg from other box: " << it->msgflags;
-                //std::cerr << std::endl;
-                continue;
+            if (bTrash) {
+                if ((it->msgflags & RS_MSG_TRASH) == 0) {
+                    continue;
+                }
+            } else {
+                if (it->msgflags & RS_MSG_TRASH) {
+                    continue;
+                }
+                if ((it->msgflags & RS_MSG_BOXMASK) != msgbox) {
+                    continue;
+                }
             }
 
             bGotInfo = false;
@@ -1760,23 +1802,48 @@ void MessagesDialog::removemessage()
         }
     }
 
+    bool bDelete = false;
+    int listrow = ui.listWidget -> currentRow();
+    if (listrow == ROW_TRASHBOX) {
+        bDelete = true;
+    } else {
+        if (QApplication::keyboardModifiers() & Qt::ShiftModifier) {
+            bDelete = true;
+        }
+    }
+
     for(QList<int>::const_iterator it1(rowList.begin());it1!=rowList.end();++it1) {
         QString mid = MessagesModel->item((*it1),COLUMN_MSGID)->text();
-        rsMsgs->MessageDelete(mid.toStdString());
+        if (bDelete) {
+            rsMsgs->MessageDelete(mid.toStdString());
 
-        // clean locale config
-        m_pConfig->beginGroup(CONFIG_SECTION_UNREAD);
-        m_pConfig->remove (mid);
-        m_pConfig->endGroup();
+            // clean locale config
+            m_pConfig->beginGroup(CONFIG_SECTION_UNREAD);
+            m_pConfig->remove (mid);
+            m_pConfig->endGroup();
 
-        // remove tag
-        m_pConfig->beginGroup(CONFIG_SECTION_TAG);
-        m_pConfig->remove (mid);
-        m_pConfig->endGroup();
+            // remove tag
+            m_pConfig->beginGroup(CONFIG_SECTION_TAG);
+            m_pConfig->remove (mid);
+            m_pConfig->endGroup();
+        } else {
+            rsMsgs->MessageToTrash(mid.toStdString(), true);
+        }
     }
 
     insertMessages();
-    return;
+}
+
+void MessagesDialog::undeletemessage()
+{
+    QList<int> Rows;
+    getSelectedMsgCount (&Rows, NULL, NULL);
+    for (int nRow = 0; nRow < Rows.size(); nRow++) {
+        QString mid = MessagesModel->item (Rows [nRow], COLUMN_MSGID)->text();
+        rsMsgs->MessageToTrash(mid.toStdString(), false);
+    }
+
+    insertMessages();
 }
 
 void MessagesDialog::print()
@@ -1967,6 +2034,7 @@ void MessagesDialog::updateMessageSummaryList()
     unsigned int newDraftCount = 0;
     unsigned int newSentboxCount = 0;
     unsigned int inboxCount = 0;
+    unsigned int trashboxCount = 0;
 
     /* calculating the new messages */
 //    rsMsgs->getMessageCount (&inboxCount, &newInboxCount, &newOutboxCount, &newDraftCount, &newSentboxCount);
@@ -1978,6 +2046,11 @@ void MessagesDialog::updateMessageSummaryList()
 
     /*calculating the new messages*/
     for (it = msgList.begin(); it != msgList.end(); it++) {
+        if (it->msgflags & RS_MSG_TRASH) {
+            trashboxCount++;
+            continue;
+        }
+
         switch (it->msgflags & RS_MSG_BOXMASK) {
         case RS_MSG_INBOX:
                 inboxCount++;
@@ -2010,7 +2083,7 @@ void MessagesDialog::updateMessageSummaryList()
     /*updating the labels in leftcolumn*/
 
     //QList<QListWidgetItem *> QListWidget::findItems ( const QString & text, Qt::MatchFlags flags ) const
-    QListWidgetItem* item = ui.listWidget->item(0);
+    QListWidgetItem* item = ui.listWidget->item(ROW_INBOX);
     if (newInboxCount != 0)
     {
         textItem = tr("Inbox") + " " + "(" + QString::number(newInboxCount)+")";
@@ -2033,7 +2106,7 @@ void MessagesDialog::updateMessageSummaryList()
     }
 
     //QList<QListWidgetItem *> QListWidget::findItems ( const QString & text, Qt::MatchFlags flags ) const
-    item = ui.listWidget->item(1);
+    item = ui.listWidget->item(ROW_OUTBOX);
     if (newOutboxCount != 0)
     {
         textItem = tr("Outbox") + " " + "(" + QString::number(newOutboxCount)+")";
@@ -2053,7 +2126,7 @@ void MessagesDialog::updateMessageSummaryList()
     }
 
     //QList<QListWidgetItem *> QListWidget::findItems ( const QString & text, Qt::MatchFlags flags ) const
-    item = ui.listWidget->item(2);
+    item = ui.listWidget->item(ROW_DRAFTBOX);
     if (newDraftCount != 0)
     {
         textItem = tr("Draft") + "(" + QString::number(newDraftCount)+")";
@@ -2072,13 +2145,25 @@ void MessagesDialog::updateMessageSummaryList()
 
     }
 
+    item = ui.listWidget->item(ROW_TRASHBOX);
+    if (trashboxCount != 0)
+    {
+        textItem = tr("Trash") + "(" + QString::number(trashboxCount)+")";
+        item->setText(textItem);
+    }
+    else
+    {
+        textItem = tr("Trash");
+        item->setText(textItem);
+    }
+
     /* Total Inbox */
-    item = ui.listWidget->item(5);
+    item = ui.listWidget->item(ROW_INBOX_TOTAL);
     textItem = tr("Total Inbox:") + " "  + QString::number(inboxCount);
     item->setText(textItem);
 
     /* Total Sent */
-    item = ui.listWidget->item(6);
+    item = ui.listWidget->item(ROW_SENTBOX_TOTAL);
     textItem = tr("Total Sent:") + " "  + QString::number(newSentboxCount);
     item->setText(textItem);
 }

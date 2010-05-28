@@ -47,7 +47,8 @@
 #define RS_MSG_OUTBOX    0x03     /* Outbox */
 #define RS_MSG_DRAFTBOX  0x05     /* Draftbox */
 
-#define RS_MSG_NEW       0x0010
+#define RS_MSG_NEW       0x0010   /* New */
+#define RS_MSG_TRASH     0x0020   /* Trash */
 
 class MessageInfo 
 {
@@ -121,10 +122,11 @@ virtual ~RsMsgs() { return; }
 
 virtual bool getMessageSummaries(std::list<MsgInfoSummary> &msgList) = 0;
 virtual bool getMessage(std::string mId, MessageInfo &msg)  = 0;
-virtual void getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox) = 0;
+virtual void getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox, unsigned int *pnTrashbox) = 0;
 
 virtual	bool MessageSend(MessageInfo &info)                 = 0;
 virtual bool MessageToDraft(MessageInfo &info)              = 0;
+virtual bool MessageToTrash(std::string mid, bool bTrash)   = 0;
 
 virtual bool MessageDelete(std::string mid)                 = 0;
 virtual bool MessageRead(std::string mid)                   = 0;

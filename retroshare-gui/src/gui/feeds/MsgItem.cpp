@@ -223,7 +223,7 @@ void MsgItem::gotoHome()
 #endif
 }
 
-/*********** SPECIFIC FUNCTIOSN ***********************/
+/*********** SPECIFIC FUNCTIONS ***********************/
 
 
 void MsgItem::deleteMsg()

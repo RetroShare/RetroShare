@@ -199,6 +199,9 @@ int     p3MsgService::checkOutgoingMessages()
 		std::map<uint32_t, RsMsgItem *>::iterator mit;
 		for(mit = msgOutgoing.begin(); mit != msgOutgoing.end(); mit++)
 		{
+			if (mit->second->msgFlags & RS_MSG_FLAGS_TRASH) {
+				continue;
+			}
 
 			/* find the certificate */
 			std::string pid = mit->second->PeerId();
@@ -476,7 +479,7 @@ bool p3MsgService::getMessage(std::string mId, MessageInfo &msg)
 	return true;
 }
 
-void p3MsgService::getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox)
+void p3MsgService::getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox, unsigned int *pnTrashbox)
 {
     RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
@@ -485,6 +488,7 @@ void p3MsgService::getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxN
     if (pnOutbox) *pnOutbox = 0;
     if (pnDraftbox) *pnDraftbox = 0;
     if (pnSentbox) *pnSentbox = 0;
+    if (pnTrashbox) *pnTrashbox = 0;
 
     std::map<uint32_t, RsMsgItem *>::iterator mit;
     std::map<uint32_t, RsMsgItem *> *apMsg [2] = { &imsg, &msgOutgoing };
@@ -494,6 +498,10 @@ void p3MsgService::getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxN
             MsgInfoSummary mis;
             initRsMIS(mit->second, mis);
 
+            if (mis.msgflags & RS_MSG_TRASH) {
+                if (pnTrashbox) (*pnTrashbox)++;
+                continue;
+            }
             switch (mis.msgflags & RS_MSG_BOXMASK) {
             case RS_MSG_INBOX:
                     if (pnInbox) (*pnInbox)++;
@@ -661,8 +669,7 @@ bool p3MsgService::MessageToDraft(MessageInfo &info)
     {
         uint32_t msgId = 0;
         if (info.msgId.empty() == false) {
-            std::istringstream instream(info.msgId);
-            instream >> msgId;
+            msgId = atoi(info.msgId.c_str());
         }
 
         if (msgId) {
@@ -679,11 +686,13 @@ bool p3MsgService::MessageToDraft(MessageInfo &info)
 
             if (msgId) {
                 // remove existing message
-                RsMsgItem *existingMsg = imsg[msgId];
-                if (existingMsg) {
-                    delete (existingMsg);
+                std::map<uint32_t, RsMsgItem *>::iterator mit;
+                mit = imsg.find(msgId);
+                if (mit != imsg.end()) {
+                    RsMsgItem *mi = mit->second;
+                    imsg.erase(mit);
+                    delete mi;
                 }
-                imsg.erase(msgId);
             }
             /* STORE MsgID */
             imsg[msg->msgId] = msg;
@@ -697,6 +706,58 @@ bool p3MsgService::MessageToDraft(MessageInfo &info)
     }
 
     return false;
+}
+
+/* move message to trash based on the unique mid */
+bool p3MsgService::MessageToTrash(std::string mid, bool bTrash)
+{
+    std::map<uint32_t, RsMsgItem *>::iterator mit;
+    uint32_t msgId = atoi(mid.c_str());
+
+    bool bChanged = false;
+    bool bFound = false;
+
+    {
+        RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+
+        RsMsgItem *mi = NULL;
+
+        mit = imsg.find(msgId);
+        if (mit != imsg.end()) {
+            mi = mit->second;
+        } else {
+            mit = msgOutgoing.find(msgId);
+            if (mit != msgOutgoing.end()) {
+                mi = mit->second;
+            }
+        }
+
+        if (mi) {
+            bFound = true;
+
+            if (bTrash) {
+                if ((mi->msgFlags & RS_MSG_FLAGS_TRASH) == 0) {
+                    mi->msgFlags |= RS_MSG_FLAGS_TRASH;
+                    bChanged = true;
+                }
+            } else {
+                if (mi->msgFlags & RS_MSG_FLAGS_TRASH) {
+                    mi->msgFlags &= ~RS_MSG_FLAGS_TRASH;
+                    bChanged = true;
+                }
+            }
+        }
+    }
+
+    if (bChanged) {
+        IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+
+        checkOutgoingMessages();
+
+        rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
+    }
+
+    return bFound;
 }
 
 /****************************************/
@@ -812,6 +873,10 @@ void p3MsgService::initRsMIS(RsMsgItem *msg, MsgInfoSummary &mis)
         if (msg->msgFlags & RS_MSG_FLAGS_NEW)
 	{
 		mis.msgflags |= RS_MSG_NEW;
+	}
+	if (msg->msgFlags & RS_MSG_FLAGS_TRASH)
+	{
+		mis.msgflags |= RS_MSG_TRASH;
 	}
 
 	mis.srcId = msg->PeerId();

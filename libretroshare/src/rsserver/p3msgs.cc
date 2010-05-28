@@ -62,9 +62,9 @@ bool p3Msgs::getMessage(std::string mid, MessageInfo &msg)
 	return mMsgSrv->getMessage(mid, msg);
 }
 
-void p3Msgs::getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox)
+void p3Msgs::getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox, unsigned int *pnTrashbox)
 {
-	mMsgSrv->getMessageCount(pnInbox, pnInboxNew, pnOutbox, pnDraftbox, pnSentbox);
+	mMsgSrv->getMessageCount(pnInbox, pnInboxNew, pnOutbox, pnDraftbox, pnSentbox, pnTrashbox);
 }
 
 /****************************************/
@@ -78,6 +78,11 @@ bool p3Msgs::MessageSend(MessageInfo &info)
 bool p3Msgs::MessageToDraft(MessageInfo &info)
 {
     return mMsgSrv->MessageToDraft(info);
+}
+
+bool p3Msgs::MessageToTrash(std::string mid, bool bTrash)
+{
+    return mMsgSrv->MessageToTrash(mid, bTrash);
 }
 
 /****************************************/

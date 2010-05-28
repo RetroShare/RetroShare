@@ -88,6 +88,7 @@ private slots:
   bool fileSaveAs();
   
   void removemessage();
+  void undeletemessage();
 
 #ifdef STATIC_MSGID
   void markAsRead();

@@ -55,10 +55,11 @@ class p3Msgs: public RsMsgs
 	   */
 	  virtual bool getMessageSummaries(std::list<MsgInfoSummary> &msgList);
 	  virtual bool getMessage(std::string mId, MessageInfo &msg);
-	  virtual void getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox);
+	  virtual void getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox, unsigned int *pnTrashbox);
 
 	  virtual bool MessageSend(MessageInfo &info);
 	  virtual bool MessageToDraft(MessageInfo &info);
+	  virtual bool MessageToTrash(std::string mid, bool bTrash);
 	  virtual bool MessageDelete(std::string mid);
 	  virtual bool MessageRead(std::string mid);
 

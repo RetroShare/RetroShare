@@ -1074,6 +1074,15 @@ border-image: url(:/images/closepressed.png)
       </item>
       <item>
        <property name="text">
+        <string>Trash</string>
+       </property>
+       <property name="icon">
+        <iconset resource="images.qrc">
+         <normaloff>:/images/folder-trash.png</normaloff>:/images/folder-trash.png</iconset>
+       </property>
+      </item>
+      <item>
+       <property name="text">
         <string/>
        </property>
        <property name="background">
