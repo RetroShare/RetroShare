@@ -2129,7 +2129,7 @@ void MessagesDialog::updateMessageSummaryList()
     item = ui.listWidget->item(ROW_DRAFTBOX);
     if (newDraftCount != 0)
     {
-        textItem = tr("Draft") + "(" + QString::number(newDraftCount)+")";
+        textItem = tr("Drafts") + " " + "(" + QString::number(newDraftCount)+")";
         item->setText(textItem);
         QFont qf = item->font();
         qf.setBold(true);
@@ -2137,7 +2137,7 @@ void MessagesDialog::updateMessageSummaryList()
     }
     else
     {
-        textItem = tr("Draft");
+        textItem = tr("Drafts");
         item->setText(textItem);
         QFont qf = item->font();
         qf.setBold(false);
@@ -2148,7 +2148,7 @@ void MessagesDialog::updateMessageSummaryList()
     item = ui.listWidget->item(ROW_TRASHBOX);
     if (trashboxCount != 0)
     {
-        textItem = tr("Trash") + "(" + QString::number(trashboxCount)+")";
+        textItem = tr("Trash") + " " + "(" + QString::number(trashboxCount)+")";
         item->setText(textItem);
     }
     else
