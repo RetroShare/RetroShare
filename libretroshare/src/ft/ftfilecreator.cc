@@ -70,7 +70,12 @@ void ftFileCreator::closeFile()
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 
 	if(fd != NULL)
+	{
+#ifdef FILE_DEBUG
+		std::cerr << "CLOSED FILE " << (void*)fd << " (" << file_name << ")." << std::endl ;
+#endif
 		fclose(fd) ;
+	}
 
 	fd = NULL ;
 }
@@ -229,7 +234,7 @@ int ftFileCreator::locked_initializeFileAttrs()
 	if (!fd)
 	{
 		std::cerr << "ftFileCreator::initializeFileAttrs() Failed to open (r+b): ";
-		std::cerr << file_name << std::endl;
+		std::cerr << file_name << ", errno = " << errno << std::endl;
 
 		std::cerr << "ftFileCreator::initializeFileAttrs() opening w+b";
 		std::cerr << std::endl;
@@ -239,12 +244,12 @@ int ftFileCreator::locked_initializeFileAttrs()
 		if (!fd)
 		{
 			std::cerr << "ftFileCreator::initializeFileAttrs()";
-			std::cerr << " Failed to open (w+b): "<< file_name << std::endl;
+			std::cerr << " Failed to open (w+b): "<< file_name << ", errno = " << errno << std::endl;
 			return 0;
 		}
 	}
 #ifdef FILE_DEBUG
-	std::cerr << "ftFileCreator::initializeFileAttrs() File Expected Size: " << mSize << " RecvdSize: " << recvdsize << std::endl;
+	std::cerr << "OPENNED FILE " << (void*)fd << " (" << file_name << "), for r/w." << std::endl ;
 #endif
 
 	return 1;

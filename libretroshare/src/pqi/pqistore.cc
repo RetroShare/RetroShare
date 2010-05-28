@@ -331,6 +331,10 @@ int     pqistore::readPkt(RsItem **item_out)
 
 	// workout how much more to read.
 	int extralen = getRsItemSize(block) - blen;
+
+	if(extralen+blen > maxlen)
+		std::cerr << "***** ERROR: trying to read a packet of length " << extralen+blen << ", while the maximum length is " << maxlen << std::endl ;
+
 	if (extralen > 0)
 	{
 	   if(extralen > blen + maxlen)

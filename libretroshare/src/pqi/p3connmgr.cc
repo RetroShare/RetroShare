@@ -3474,7 +3474,7 @@ void peerConnectState::updateIpAddressList(const IpAddressTimed& ipTimed)
 		return ;
 	}
 
-	if(ipTimed.ipAddr.sin_addr.s_addr == 0 || ipTimed.ipAddr.sin_port == 0) 
+	if(ipTimed.ipAddr.sin_addr.s_addr == 0 || ipTimed.ipAddr.sin_addr.s_addr == 1 || ipTimed.ipAddr.sin_port == 0) 
 	{
 #ifdef CONN_DEBUG
 		std::cerr << "peerConnectState::updateIpAdressList() ip parameter is 0.0.0.0, or port is 0, ignoring." << std::endl;
