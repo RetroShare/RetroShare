@@ -82,18 +82,28 @@ bool RsDiscSpace::crossSystemDiskStats(const char *file, uint64_t& free_blocks, 
 	free_blocks = dwFreeClusters ;
 	block_size = dwSectorPerCluster * dwBytesPerSector ;
 #else
+#ifdef __APPLE__
+	struct statvfs buf;
+	
+	if (0 != statvfs (file, &buf))
+	{
+		std::cerr << "Size estimate failed for file " << file << std::endl ;
+		return false;
+	}
+	
+	
+	free_blocks = buf.f_bavail;
+	block_size = buf.f_frsize ;
+#else
 	struct statvfs64 buf;
-
+	
 	if (0 != statvfs64 (file, &buf))
 	{
 		std::cerr << "Size estimate failed for file " << file << std::endl ;
 		return false;
 	}
-
-#ifdef __APPLE__
-	free_blocks = buf.f_bavail;
-	block_size = buf.f_frsize ;
-#else
+	
+	
 	free_blocks = buf.f_bavail;
 	block_size = buf.f_bsize ;
 #endif
