@@ -695,10 +695,20 @@ bool	ftDataMultiplex::handleSearchRequest(const std::string& peerId, const std::
 	 * Do Actual search 
 	 * Could be Cache File, Local or Extra
 	 * (anywhere but remote really)
+	 *
+	 * the network wide and browsable flags are needed, otherwise results get filtered.
+	 * For tunnel creation, the check of browsable/network wide flag is already done, so
+	 * if we get a file download packet here, the source is already allowed to download it.
+	 *
 	 */
 
 	FileInfo info;
-	uint32_t hintflags = (RS_FILE_HINTS_CACHE | RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_SPEC_ONLY);
+	uint32_t hintflags = ( RS_FILE_HINTS_NETWORK_WIDE 
+								| RS_FILE_HINTS_BROWSABLE 
+								| RS_FILE_HINTS_CACHE 
+								| RS_FILE_HINTS_EXTRA 
+								| RS_FILE_HINTS_LOCAL 
+								| RS_FILE_HINTS_SPEC_ONLY);
 
 	if (mSearch->search(hash, hintflags, info))
 	{

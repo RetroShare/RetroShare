@@ -3543,8 +3543,10 @@ void peerConnectState::updateIpAddressList(const IpAddressTimed& ipTimed)
 		else
 			++it,++cnt ;
 
+#ifdef CONN_DEBUG
 	std::cerr << "Adress list updated:" << std::endl ;
 	printIpAddressList();
+#endif
 }
 
 void peerConnectState::printIpAddressList() 

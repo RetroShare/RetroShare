@@ -768,7 +768,12 @@ bool p3Config::backedUpFileSave(const std::string& cfg_fname, const std::string&
 		}
 
 		if(size_file != fwrite(buff, 1, size_file, cfg_file))
+		{
 			getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "Write error", "Error while writing backup configuration file " + cfg_fname_backup + "\nIs your disc full or out of quota ?");
+			fclose(cfg_file);
+			return false ;
+		}
+
 
 		fclose(cfg_file);
 

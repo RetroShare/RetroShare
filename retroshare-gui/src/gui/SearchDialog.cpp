@@ -263,6 +263,21 @@ void SearchDialog::searchtableWidgetCostumPopupMenu( QPoint point )
       contextMnu->exec( mevent->globalPos() );
 }
 
+void SearchDialog::getSourceFriendsForHash(const std::string& hash,std::list<std::string>& srcIds)
+{
+	std::cerr << "Searching sources for file " << hash << std::endl ;
+	srcIds.clear();
+
+	FileInfo finfo ;
+	rsFiles->FileDetails(hash, RS_FILE_HINTS_REMOTE,finfo) ;
+
+	for(std::list<TransferInfo>::const_iterator it(finfo.peers.begin());it!=finfo.peers.end();++it)
+	{
+		std::cerr << "  adding peerid " << (*it).peerId << std::endl ;
+		srcIds.push_back((*it).peerId) ;
+	}
+}
+
 void SearchDialog::download()
 {
     /* should also be able to handle multi-selection */
@@ -280,6 +295,8 @@ void SearchDialog::download()
 			 std::cerr << "SearchDialog::download() Calling File Request";
 			 std::cerr << std::endl;
 			 std::list<std::string> srcIds;
+
+			 getSourceFriendsForHash((item->text(SR_HASH_COL)).toStdString(),srcIds) ;
 
 			 if(!rsFiles -> FileRequest((item->text(SR_NAME_COL)).toStdString(),
 						 (item->text(SR_HASH_COL)).toStdString(),
@@ -309,6 +326,8 @@ void SearchDialog::downloadDirectory(const QTreeWidgetItem *item, const QString 
 		QString path = QString::fromStdString(rsFiles->getDownloadDirectory())
 						+ tr("/") + base + tr("/");
 		QString cleanPath = QDir::cleanPath(path);
+
+		getSourceFriendsForHash((item->text(SR_HASH_COL)).toStdString(),srcIds) ;
 
 		rsFiles->FileRequest(item->text(SR_NAME_COL).toStdString(),
 				item->text(SR_HASH_COL).toStdString(),
