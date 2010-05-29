@@ -5,6 +5,10 @@ if test -d "RetroShare" ;  then
 	exit
 fi
 
+echo Please enter the svn number:
+read svnnumber
+
+version=0.5.0."$svnnumber"
 packages="."
 
 tar zxvf $packages/BaseRetroShareDirs.tgz
@@ -39,6 +43,9 @@ mkdir retroshare-0.5.orig
 cp -r retroshare-0.5/src retroshare-0.5.orig
 
 # Call debuild to make the source debian package
+
+cat retroshare-0.5/debian/control | sed -e s/XXXXXX/"$version"/g > retroshare-0.5/debian/control.tmp
+mv -f retroshare-0.5/debian/control.tmp retroshare-0.5/debian/control
 
 cd retroshare-0.5
 debuild -S -kC737CA98
