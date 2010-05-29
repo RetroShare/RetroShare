@@ -373,9 +373,10 @@ void  PeersDialog::insertPeers()
 
         //add own gpg id, if we have more than on location (ssl client)
         std::list<std::string> ownSslContacts;
-        rsPeers->getSSLChildListOfGPGId(rsPeers->getGPGOwnId(), ownSslContacts);
+        std::string ownId = rsPeers->getGPGOwnId();
+        rsPeers->getSSLChildListOfGPGId(ownId, ownSslContacts);
         if (ownSslContacts.size() > 0) {
-            gpgFriends.push_back(rsPeers->getGPGOwnId());
+            gpgFriends.push_back(ownId);
         }
 
         /* get a link to the table */
@@ -416,7 +417,7 @@ void  PeersDialog::insertPeers()
 
             RsPeerDetails detail;
             if ((!rsPeers->getPeerDetails(*it, detail) || !detail.accept_connection)
-                && detail.gpg_id != rsPeers->getGPGOwnId()) {
+                && detail.gpg_id != ownId) {
                 //don't accept anymore connection, remove from the view
                 if (gpg_item) {
                     delete (peertreeWidget->takeTopLevelItem(peertreeWidget->indexOfTopLevelItem(gpg_item)));
@@ -488,13 +489,15 @@ void  PeersDialog::insertPeers()
                 /* not displayed, used to find back the item */
                 sslItem -> setText(3, QString::fromStdString(sslDetail.id));
 
-                if (rsMsgs->getCustomStateString(sslDetail.id) != "") {
-                    sslItem -> setText( 0, tr("location : ") + QString::fromStdString(sslDetail.location) + tr(" - ") + QString::fromStdString(rsMsgs->getCustomStateString(sslDetail.id)));
-                    sslItem -> setToolTip( 0, tr("location : ") + QString::fromStdString(sslDetail.location) + tr(" - ") + QString::fromStdString(rsMsgs->getCustomStateString(sslDetail.id)));
+                QString sText;
+                std::string customStateString = rsMsgs->getCustomStateString(sslDetail.id);
+                if (customStateString.empty() == false) {
+                    sText = tr("location : ") + QString::fromStdString(sslDetail.location) + tr(" - ") + QString::fromStdString(customStateString);
                 } else {
-                    sslItem -> setText( 0, tr("location : ") + QString::fromStdString(sslDetail.location));
-                    sslItem -> setToolTip( 0, tr("location : ") + QString::fromStdString(sslDetail.location));
+                    sText = tr("location : ") + QString::fromStdString(sslDetail.location);
                 }
+                sslItem -> setText( 0, sText);
+                sslItem -> setToolTip( 0, sText);
 
                 /* not displayed, used to find back the item */                
                 sslItem -> setText(1, QString::fromStdString(sslDetail.autoconnect));
