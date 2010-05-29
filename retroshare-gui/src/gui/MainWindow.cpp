@@ -638,14 +638,12 @@ void MainWindow::doQuit()
 
 		if ((QMessageBox::question(this, tr("Really quit ? "),queryWrn,QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
 		{
-			rsicontrol->rsGlobalShutDown();
 			qApp->quit();
 		}
 		else
-		return;
+			return;
 	}
-	else
-	rsicontrol->rsGlobalShutDown();
+
 	rApp->quit();
 }
 

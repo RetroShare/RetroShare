@@ -267,11 +267,15 @@ void 	FileIndexMonitor::run()
 {
 	updateCycle();
 
-	while(1)
+	while(m_bRun)
 	{
 
 		for(int i = 0; i < updatePeriod; i++)
 		{
+
+			if (m_bRun == false) {
+				return;
+			}
 
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS

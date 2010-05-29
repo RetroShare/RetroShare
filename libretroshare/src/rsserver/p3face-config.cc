@@ -170,5 +170,7 @@ void RsServer::rsGlobalShutDown()
 	mChannels->cleanUpOldFiles();
 	ConfigFinalSave(); // save configuration before exit
 	mConnMgr->shutdown(); /* Handles UPnP */
-}
 
+	join();
+	ftserver->StopThreads();
+}

@@ -93,7 +93,7 @@ void 	RsServer::run()
     int min = 0;
     int loop = 0;
 
-    while(1)
+    while(m_bRun)
     {
 #ifndef WINDOWS_SYS
     	usleep((int) (timeDelta * 1000000));

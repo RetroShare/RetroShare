@@ -258,7 +258,7 @@ void UdpLayer::recv_loop()
         int status;
         struct timeval timeout;
 
-	while(1)
+	while(m_bRun)
 	{
 		/* select on the socket TODO */
                 fd_set rset;

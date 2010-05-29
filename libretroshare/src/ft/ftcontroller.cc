@@ -207,7 +207,7 @@ void ftController::run()
 	/* check the queues */
 	uint32_t cnt = 0 ;
 
-	while(1)
+	while(m_bRun)
 	{
 #ifdef WIN32
 		Sleep(1000);

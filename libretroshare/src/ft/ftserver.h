@@ -98,6 +98,7 @@ void    SetupFtServer(NotifyBase *cb);
 void    connectToTurtleRouter(p3turtle *p) ;
 
 void	StartupThreads();
+void	StopThreads();
 
 	/* own thread */
 virtual void	run();

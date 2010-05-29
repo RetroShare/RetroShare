@@ -80,8 +80,15 @@ pthread_t  createThread(RsThread &thread)
 
 }
 
+RsThread::RsThread ()
+{
+    m_bRun = true;
+}
+
 void RsThread::join() /* waits for the the mTid thread to stop */
 {
+	m_bRun = false;
+
 	void *ptr;
 	pthread_join(mTid, &ptr);
 }
@@ -100,7 +107,7 @@ RsQueueThread::RsQueueThread(uint32_t min, uint32_t max, double relaxFactor )
 
 void RsQueueThread::run()
 {
-	while(1)
+	while(m_bRun)
 	{
 		bool doneWork = false;
 		while(workQueued() && doWork())

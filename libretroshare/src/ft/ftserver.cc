@@ -191,6 +191,37 @@ void    ftServer::StartupThreads()
 	start();
 }
 
+void ftServer::StopThreads()
+{
+	/* stop own thread */
+	join();
+
+	/* stop Dataplex */
+	mFtDataplex->join();
+
+	/* stop Controller thread */
+	mFtController->join();
+
+	/* stop Monitor Thread */
+	mFiMon->join();
+
+	/* self contained threads */
+	/* stop ExtraList Thread */
+	mFtExtra->join();
+
+	delete (mFtDataplex);
+	mFtDataplex = NULL;
+
+	delete (mFtController);
+	mFtController = NULL;
+
+	delete (mFiMon);
+	mFiMon = NULL;
+
+	delete (mFtExtra);
+	mFtExtra = NULL;
+}
+
 CacheStrapper *ftServer::getCacheStrapper()
 {
 	return mCacheStrapper;
@@ -203,7 +234,7 @@ CacheTransfer *ftServer::getCacheTransfer()
 
 void	ftServer::run()
 {
-	while(1)
+	while(m_bRun)
 	{
 		mFtDataplex->deleteUnusedServers() ;
 #ifdef WIN32

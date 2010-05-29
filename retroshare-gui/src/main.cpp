@@ -180,9 +180,10 @@ int main(int argc, char *argv[])
 	timer->start(1000);
 
 	/* dive into the endless loop */
-	// return ret;
 	int ti = rshare.exec();
 	delete w ;
+
+	rsicontrol->rsGlobalShutDown();
 
 	Settings->sync();
 	delete Settings;

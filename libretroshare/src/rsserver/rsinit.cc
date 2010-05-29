@@ -1508,7 +1508,6 @@ bool  RsInit::RsStoreAutoLogin()
 	DataIn.cbData = cbDataInput;
 	DataEnt.pbData = pbDataEnt;
 	DataEnt.cbData = cbDataEnt;
-	LPWSTR pDescrOut = NULL;
 
         CRYPTPROTECT_PROMPTSTRUCT prom;
 
