@@ -119,6 +119,8 @@ private slots:
   void toggleCode();
   void addPostSplitter();
 
+  void filterRegExpChanged();
+  void clearFilter();
   
 private:
   void setTextColor(const QColor& col) ;
@@ -139,6 +141,9 @@ private:
     void alignmentChanged(Qt::Alignment a);
 
     void  sendMessage_internal(bool bDraftbox);
+    
+  void FilterItems();
+  bool FilterItem(QTreeWidgetItem *pItem, QString &sPattern);
 
    /** Define the popup menus for the Context menu */
   QMenu* contextMnu;

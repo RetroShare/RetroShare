@@ -64,6 +64,8 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
     connect(ui.actionContactsView, SIGNAL(triggered()), this, SLOT(toggleContacts()));
     connect(ui.actionSaveas, SIGNAL(triggered()), this, SLOT(saveasDraft()));
     connect(ui.actionAttach, SIGNAL(triggered()), this, SLOT(attachFile()));
+    connect(ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
+    connect(ui.clearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
   
     connect(ui.sizeincreaseButton, SIGNAL (clicked()), this, SLOT (fontSizeIncrease()));
     connect(ui.sizedecreaseButton, SIGNAL (clicked()), this, SLOT (fontSizeDecrease()));
@@ -183,7 +185,8 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
     
     QPalette palette = QApplication::palette();
     codeBackground = palette.color( QPalette::Active, QPalette::Midlight );
-
+    
+    ui.clearButton->hide();
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -290,6 +293,10 @@ void  MessageComposer::insertSendList()
 		/* add to the list */
 		items.append(item);
 	}
+	
+	if (ui.filterPatternLineEdit->text().isEmpty() == false) {
+        FilterItems();
+  }
 
         /* remove old items ??? */
 	sendWidget->clear();
@@ -1274,4 +1281,62 @@ void MessageComposer::checkAttachmentReady()
 	/* repeat... */
 	int msec_rate = 1000;
 	QTimer::singleShot( msec_rate, this, SLOT(checkAttachmentReady(void)));
+}
+
+/* clear Filter */
+void MessageComposer::clearFilter()
+{
+    ui.filterPatternLineEdit->clear();
+    ui.filterPatternLineEdit->setFocus();
+}
+
+void MessageComposer::filterRegExpChanged()
+{
+
+    QString text = ui.filterPatternLineEdit->text();
+
+    if (text.isEmpty()) {
+        ui.clearButton->hide();
+    } else {
+        ui.clearButton->show();
+    }
+
+    FilterItems();
+}
+
+void MessageComposer::FilterItems()
+{
+    QString sPattern = ui.filterPatternLineEdit->text();
+
+    int nCount = ui.msgSendList->topLevelItemCount ();
+    for (int nIndex = 0; nIndex < nCount; nIndex++) {
+        FilterItem(ui.msgSendList->topLevelItem(nIndex), sPattern);
+    }
+}
+
+bool MessageComposer::FilterItem(QTreeWidgetItem *pItem, QString &sPattern)
+{
+    bool bVisible = true;
+
+    if (sPattern.isEmpty() == false) {
+        if (pItem->text(0).contains(sPattern, Qt::CaseInsensitive) == false) {
+            bVisible = false;
+        }
+    }
+
+    int nVisibleChildCount = 0;
+    int nCount = pItem->childCount();
+    for (int nIndex = 0; nIndex < nCount; nIndex++) {
+        if (FilterItem(pItem->child(nIndex), sPattern)) {
+            nVisibleChildCount++;
+        }
+    }
+
+    if (bVisible || nVisibleChildCount) {
+        pItem->setHidden(false);
+    } else {
+        pItem->setHidden(true);
+    }
+
+    return (bVisible || nVisibleChildCount);
 }
