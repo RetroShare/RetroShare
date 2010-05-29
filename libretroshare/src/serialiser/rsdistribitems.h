@@ -127,9 +127,13 @@ class RsDistribGrpKey: public RsItem
 {
 	public:
 
+		RsDistribGrpKey(uint16_t service_type)
+	:RsItem(RS_PKT_VERSION_SERVICE, service_type, RS_PKT_SUBTYPE_DISTRIB_GRP_KEY)
+		{ return; }
+
         RsDistribGrpKey()
 	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DISTRIB, RS_PKT_SUBTYPE_DISTRIB_GRP_KEY)
-	{ return; }
+        { return; }
 
 virtual ~RsDistribGrpKey() { return; }
 
@@ -144,9 +148,12 @@ virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 class RsDistribSerialiser: public RsSerialType
 {
 	public:
-	RsDistribSerialiser()
-	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DISTRIB)
+
+	// optional to allow use in p3service/sockets
+	RsDistribSerialiser(uint16_t service_type = RS_SERVICE_TYPE_DISTRIB)
+	: RsSerialType(RS_PKT_VERSION_SERVICE, service_type), SERVICE_TYPE(service_type)
 	{ return; }
+
 virtual     ~RsDistribSerialiser()
 	{ return; }
 	
@@ -170,6 +177,8 @@ virtual	RsDistribGrpKey *deserialiseGrpKey(void *data, uint32_t *size);
 virtual	uint32_t    sizeSignedMsg(RsDistribSignedMsg *);
 virtual	bool        serialiseSignedMsg  (RsDistribSignedMsg *item, void *data, uint32_t *size);
 virtual	RsDistribSignedMsg *deserialiseSignedMsg(void *data, uint32_t *size);
+
+const uint16_t SERVICE_TYPE;
 
 };
 

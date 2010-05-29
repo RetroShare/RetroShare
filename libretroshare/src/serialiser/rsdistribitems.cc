@@ -331,7 +331,7 @@ RsDistribGrp *RsDistribSerialiser::deserialiseGrp(void *data, uint32_t *pktsize)
 
 
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_TYPE_DISTRIB != getRsItemService(rstype)) ||
+		(SERVICE_TYPE != getRsItemService(rstype)) ||
 		(RS_PKT_SUBTYPE_DISTRIB_GRP != getRsItemSubType(rstype)))
 	{
 #ifdef RSSERIAL_DEBUG 
@@ -491,7 +491,7 @@ RsDistribGrpKey *RsDistribSerialiser::deserialiseGrpKey(void *data, uint32_t *pk
 
 
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_TYPE_DISTRIB != getRsItemService(rstype)) ||
+		(SERVICE_TYPE != getRsItemService(rstype)) ||
 		(RS_PKT_SUBTYPE_DISTRIB_GRP_KEY != getRsItemSubType(rstype)))
 	{
 #ifdef RSSERIAL_DEBUG 
@@ -633,7 +633,7 @@ RsDistribSignedMsg *RsDistribSerialiser::deserialiseSignedMsg(void *data, uint32
 
 
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_TYPE_DISTRIB != getRsItemService(rstype)) ||
+		(SERVICE_TYPE != getRsItemService(rstype)) ||
 		(RS_PKT_SUBTYPE_DISTRIB_SIGNED_MSG != getRsItemSubType(rstype)))
 	{
 #ifdef RSSERIAL_DEBUG 
@@ -755,7 +755,7 @@ RsItem *RsDistribSerialiser::deserialise(void *data, uint32_t *pktsize)
 	uint32_t rstype = getRsItemId(data);
 
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_TYPE_DISTRIB != getRsItemService(rstype))) 
+		(SERVICE_TYPE != getRsItemService(rstype)))
 	{
 		return NULL; /* wrong type */
 	}

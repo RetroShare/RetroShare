@@ -72,7 +72,7 @@ p3GroupDistrib::p3GroupDistrib(uint16_t subtype,
 
         mOwnId = AuthSSL::getAuthSSL()->OwnId();
 
-        addSerialType(new RsDistribSerialiser());
+        addSerialType(new RsDistribSerialiser(getRsItemService(getType())));
 	return;
 }
 
@@ -1883,7 +1883,7 @@ void p3GroupDistrib::locked_sharePubKey(){
 					if(std::find(peersOnline.begin(), peersOnline.end(), *lit) != peersOnline.end()){
 
 						/* create Key for sharing */
-						RsDistribGrpKey* pubKey = new RsDistribGrpKey();
+						RsDistribGrpKey* pubKey = new RsDistribGrpKey(getRsItemService(getType()));
 
 
 						pubKey->clear();
@@ -1935,13 +1935,13 @@ void p3GroupDistrib::locked_receivePubKeys(){
 		if(key_item != NULL){
 
 
-#ifdef STATUS_DEBUG
+#ifdef DISTRIB_DEBUG
 			std::cerr << "p3GroupDistrib::locked_receiveKeys()" << std::endl;
 			std::cerr << "PeerId : " << key_item->PeerId() << std::endl;
 			std::cerr << "GrpId: " << key_item->grpId << std::endl;
 			std::cerr << "Got key Item" << std::endl;
 #endif
-			if(key_item->key.keyFlags == RSTLV_KEY_TYPE_FULL){
+			if(key_item->key.keyFlags & RSTLV_KEY_TYPE_FULL){
 				mRecvdPubKeys[key_item->grpId] =  key_item;
 			}
 			else{
@@ -1984,8 +1984,6 @@ void p3GroupDistrib::locked_loadRecvdPubKeys(){
 
 			if(locked_updateGroupPublishKey(*gi, mit->second)){
 				toDelete.push_back(mit->first);
-				gi->flags |= RS_DISTRIB_SUBSCRIBED;
-				locked_notifyGroupChanged(*gi, GRP_SUBSCRIBED);
 				ok |= true;
 			}
 			else
@@ -2841,7 +2839,7 @@ bool 	p3GroupDistrib::locked_validateDistribSignedMsg(
 
 
 	/* now verify Personal signature */
-        if (signOk == 1 && ((info.grpFlags & RS_DISTRIB_AUTHEN_MASK) & RS_DISTRIB_AUTHEN_REQ))
+        if ((signOk == 1) && ((info.grpFlags & RS_DISTRIB_AUTHEN_MASK) & RS_DISTRIB_AUTHEN_REQ))
 	{
             #ifdef DISTRIB_DEBUG
             std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() Personal Signature. sslCert : " << newMsg->personalSignature.sslCert << std::endl;
