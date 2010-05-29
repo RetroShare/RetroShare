@@ -63,6 +63,7 @@
  * #define CONTROL_DEBUG 1
  * #define DEBUG_DWLQUEUE 1
  *****/
+#define CONTROL_DEBUG 1
 
 static const uint32_t SAVE_TRANSFERS_DELAY 			= 61	; // save transfer progress every 61 seconds.
 static const uint32_t INACTIVE_CHUNKS_CHECK_DELAY 	= 60	; // time after which an inactive chunk is released
@@ -963,7 +964,7 @@ bool ftController::alreadyHaveFile(const std::string& hash)
 		return true ;
 
 	// check for file lists
-	if (mSearch->search(hash, RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_SPEC_ONLY, info))
+	if (mSearch->search(hash, RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_BROWSABLE | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_SPEC_ONLY, info))
 		return true ;
 	
 	return false ;

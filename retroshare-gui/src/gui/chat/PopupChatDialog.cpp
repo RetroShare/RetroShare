@@ -841,13 +841,18 @@ void PopupChatDialog::anchorClicked (const QUrl& link )
 
 		if(!rslink.valid())
 		{
-			QMessageBox mb(tr("Badly formed RS link"), tr("This RetroShare link is malformed. This is bug. Please contact the developers."),QMessageBox::Information,QMessageBox::Ok,0,0);
+			QMessageBox mb(tr("Badly formed RS link"), tr("This RetroShare link is malformed. This is bug. Please contact the developers.\n\nNote: this possibly comes from a bug in Qt4.6. Try to right-click + copy link location, and paste in Transfer Tab."),QMessageBox::Information,QMessageBox::Ok,0,0);
 			mb.setButtonText( QMessageBox::Ok, "OK" );
 			mb.exec();
 			return ;
 		}
+		std::list<std::string> srcIds ;
+		srcIds.push_back(dialogId);
 
-		if(rsFiles->FileRequest(rslink.name().toStdString(), rslink.hash().toStdString(), rslink.size(), "", RS_FILE_HINTS_NETWORK_WIDE, std::list<std::string>()))
+		// I removed the NETWORK WIDE flag. Indeed, somebody can capture the turtle tunnel requests and ask for downloading the file while
+		// it's being downloaded (as partial files are always sources).
+		//
+		if(rsFiles->FileRequest(rslink.name().toStdString(), rslink.hash().toStdString(), rslink.size(), "", 0, srcIds))
 		{
 			QMessageBox mb(tr("File Request Confirmation"), tr("The file has been added to your download list."),QMessageBox::Information,QMessageBox::Ok,0,0);
 			mb.setButtonText( QMessageBox::Ok, "OK" );

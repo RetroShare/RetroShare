@@ -136,8 +136,10 @@ bool ftFiMonitor::search(std::string hash, uint32_t hintflags, FileInfo &info) c
 	std::cerr << std::endl;
 #endif
 
-	// setup search flags according to hintflags
-	uint32_t flags = 0;
+	// Setup search flags according to hintflags. Originally flags was 0. I (cyril) don't know
+	// why we don't just pass hintflags there, so I tried to keep the idea.
+	//
+	uint32_t flags = hintflags & (RS_FILE_HINTS_BROWSABLE | RS_FILE_HINTS_NETWORK_WIDE);
 	
 	if(findLocalFile(hash, flags, path, fsize))
 	{

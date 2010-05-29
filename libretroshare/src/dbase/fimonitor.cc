@@ -62,7 +62,6 @@ FileIndexMonitor::FileIndexMonitor(CacheStrapper *cs, NotifyBase *cb_in,std::str
 FileIndexMonitor::~FileIndexMonitor()
 {
 	/* Data cleanup - TODO */
-	return;
 }
 
 int FileIndexMonitor::SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,uint32_t flags)
@@ -70,7 +69,10 @@ int FileIndexMonitor::SearchKeywords(std::list<std::string> keywords, std::list<
 	results.clear();
 	std::list<FileEntry *> firesults;
 
-	fi.searchTerms(keywords, firesults);
+	{ 
+		RsStackMutex stackM(fiMutex) ;/* LOCKED DIRS */
+		fi.searchTerms(keywords, firesults);
+	}
 
 	return filterResults(firesults,results,flags) ;
 }
@@ -80,7 +82,10 @@ int FileIndexMonitor::SearchBoolExp(Expression *exp, std::list<DirDetails>& resu
 	results.clear();
 	std::list<FileEntry *> firesults;
 
-	fi.searchBoolExp(exp, firesults);
+	{ 
+		RsStackMutex stackM(fiMutex) ;/* LOCKED DIRS */
+		fi.searchBoolExp(exp, firesults);
+	}
 
 	return filterResults(firesults,results,flags) ;
 }
@@ -113,53 +118,64 @@ int FileIndexMonitor::filterResults(std::list<FileEntry*>& firesults,std::list<D
 	return !results.empty() ;
 }
 
-bool FileIndexMonitor::findLocalFile(std::string hash,uint32_t flags, std::string &fullpath, uint64_t &size) const
+bool FileIndexMonitor::findLocalFile(std::string hash,uint32_t hint_flags, std::string &fullpath, uint64_t &size) const
 {
 	std::list<FileEntry *> results;
 	bool ok = false;
 
-	fiMutex.lock(); { /* LOCKED DIRS */
+	{ 
+		RsStackMutex stackM(fiMutex) ;/* LOCKED DIRS */
 
 #ifdef FIM_DEBUG
-	std::cerr << "FileIndexMonitor::findLocalFile() Hash: " << hash << std::endl;
+		std::cerr << "FileIndexMonitor::findLocalFile() Hash: " << hash << std::endl;
 #endif
-	/* search through the fileIndex */
-	fi.searchHash(hash, results);
+		/* search through the fileIndex */
+		fi.searchHash(hash, results);
 
-	if (results.size() > 0)
-	{
-		/* find the full path for the first entry */
-		FileEntry *fe = results.front();
-		DirEntry  *de = fe->parent; /* all files must have a valid parent! */
-
-#ifdef FIM_DEBUG
-		std::cerr << "FileIndexMonitor::findLocalFile() Found Name: " << fe->name << std::endl;
-#endif
-		std::string shpath =  RsDirUtil::removeRootDir(de->path);
-		std::string basedir = RsDirUtil::getRootDir(de->path);
-		std::string realroot = locked_findRealRoot(basedir);
-
-		/* construct full name */
-		if (realroot.length() > 0)
+		if (results.size() > 0)
 		{
-			fullpath = realroot + "/";
-			if (shpath != "")
-			{
-				fullpath += shpath + "/";
-			}
-			fullpath += fe->name;
+			/* find the full path for the first entry */
+			FileEntry *fe = results.front();
+			DirEntry  *de = fe->parent; /* all files must have a valid parent! */
 
-			size = fe->size;
-			ok = true;
-		}
+			uint32_t share_flags = locked_findShareFlags(fe) ;
 #ifdef FIM_DEBUG
-		std::cerr << "FileIndexMonitor::findLocalFile() Found Path: " << fullpath << std::endl;
-		std::cerr << "FileIndexMonitor::findLocalFile() Found Size: " << size << std::endl;
+			std::cerr << "FileIndexMonitor::findLocalFile: Filtering candidate " << fe->name  << ", flags=" << share_flags << ", hint_flags=" << hint_flags << std::endl ;
 #endif
-	}
 
+			if((share_flags & hint_flags & (RS_FILE_HINTS_BROWSABLE | RS_FILE_HINTS_NETWORK_WIDE)) > 0) 
+			{
+#ifdef FIM_DEBUG
+				std::cerr << "FileIndexMonitor::findLocalFile() Found Name: " << fe->name << std::endl;
+#endif
+				std::string shpath =  RsDirUtil::removeRootDir(de->path);
+				std::string basedir = RsDirUtil::getRootDir(de->path);
+				std::string realroot = locked_findRealRoot(basedir);
 
-	} fiMutex.unlock(); /* UNLOCKED DIRS */
+				/* construct full name */
+				if (realroot.length() > 0)
+				{
+					fullpath = realroot + "/";
+					if (shpath != "")
+					{
+						fullpath += shpath + "/";
+					}
+					fullpath += fe->name;
+
+					size = fe->size;
+					ok = true;
+				}
+#ifdef FIM_DEBUG
+				std::cerr << "FileIndexMonitor::findLocalFile() Found Path: " << fullpath << std::endl;
+				std::cerr << "FileIndexMonitor::findLocalFile() Found Size: " << size << std::endl;
+#endif
+			}
+#ifdef FIM_DEBUG
+			else
+				std::cerr << "FileIndexMonitor::findLocalFile() discarded" << std::endl ;
+#endif
+		}
+	}  /* UNLOCKED DIRS */
 
 	return ok;
 }
@@ -168,28 +184,29 @@ bool    FileIndexMonitor::convertSharedFilePath(std::string path, std::string &f
 {
 	bool ok = false;
 
-	fiMutex.lock(); { /* LOCKED DIRS */
+	{ 
+		RsStackMutex stackM(fiMutex) ;/* LOCKED DIRS */
 
 #ifdef FIM_DEBUG
-	std::cerr << "FileIndexMonitor::convertSharedFilePath() path: " << path << std::endl;
+		std::cerr << "FileIndexMonitor::convertSharedFilePath() path: " << path << std::endl;
 #endif
 
-	std::string shpath =  RsDirUtil::removeRootDir(path);
-	std::string basedir = RsDirUtil::getRootDir(path);
-	std::string realroot = locked_findRealRoot(basedir);
+		std::string shpath =  RsDirUtil::removeRootDir(path);
+		std::string basedir = RsDirUtil::getRootDir(path);
+		std::string realroot = locked_findRealRoot(basedir);
 
-	/* construct full name */
-	if (realroot.length() > 0)
-	{
-		fullpath = realroot + "/";
-		fullpath += shpath;
+		/* construct full name */
+		if (realroot.length() > 0)
+		{
+			fullpath = realroot + "/";
+			fullpath += shpath;
 #ifdef FIM_DEBUG
-		std::cerr << "FileIndexMonitor::convertSharedFilePath() Found Path: " << fullpath << std::endl;
+			std::cerr << "FileIndexMonitor::convertSharedFilePath() Found Path: " << fullpath << std::endl;
 #endif
-		ok = true;
-	}
+			ok = true;
+		}
 
-	} fiMutex.unlock(); /* UNLOCKED DIRS */
+	} /* UNLOCKED DIRS */
 
 	return ok;
 }
@@ -248,8 +265,6 @@ void 	FileIndexMonitor::setPeriod(int period)
 void 	FileIndexMonitor::run()
 //void 	FileIndexMonitor::run(std::string& current_job)
 {
-
-//	updateCycle(current_job);
 	updateCycle();
 
 	while(1)
@@ -262,8 +277,7 @@ void 	FileIndexMonitor::run()
 #ifndef WINDOWS_SYS
 			sleep(1);
 #else
-
-                	Sleep(1000);
+			Sleep(1000);
 #endif
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
@@ -836,28 +850,26 @@ void    FileIndexMonitor::getSharedDirectories(std::list<SharedDirInfo> &dirs)
 	RsStackMutex stack(fiMutex) ; /* LOCKED DIRS */
 
 	/* must provide pendingDirs, as other parts depend on instanteous response */
-        if (pendingDirs)
-                dirs = pendingDirList;
-        else
-        {
+	if (pendingDirs)
+		dirs = pendingDirList;
+	else
+	{
 		/* get actual list (not pending stuff) */
 		std::map<std::string, SharedDirInfo>::const_iterator it;
 
 		for(it = directoryMap.begin(); it != directoryMap.end(); it++)
 			dirs.push_back(it->second) ;
-        }
+	}
 }
 
 
 	/* interface */
 void    FileIndexMonitor::forceDirectoryCheck()
 {
-	fiMutex.lock(); { /* LOCKED DIRS */
+	RsStackMutex stack(fiMutex) ; /* LOCKED DIRS */
 
 	if (!mInCheck)
 		mForceCheck = true;
-
-	} fiMutex.unlock(); /* UNLOCKED DIRS */
 }
 
 
@@ -873,18 +885,16 @@ bool    FileIndexMonitor::inDirectoryCheck()
 bool    FileIndexMonitor::internal_setSharedDirectories()
 {
 	int i;
-	fiMutex.lock(); /* LOCKED DIRS */
+	RsStackMutex stack(fiMutex) ; /* LOCKED DIRS */
 
 	if (!pendingDirs)
 	{
 		if (mForceCheck)
 		{
 			mForceCheck = false;
-			fiMutex.unlock(); /* UNLOCKED DIRS */
 			return true;
 		}
 
-		fiMutex.unlock(); /* UNLOCKED DIRS */
 		return false;
 	}
 
@@ -939,7 +949,6 @@ bool    FileIndexMonitor::internal_setSharedDirectories()
 	fi.setRootDirectories(topdirs, 0);
 
 	locked_saveFileIndexes() ;
-	fiMutex.unlock(); /* UNLOCKED DIRS */
 
 	return true;
 }
@@ -1087,35 +1096,44 @@ int FileIndexMonitor::RequestDirDetails(void *ref, DirDetails &details, uint32_t
 	if(ref != NULL)
 	{
 		FileEntry *file = (FileEntry *) ref;
-		DirEntry *dir = dynamic_cast<DirEntry*>(file) ;
-		if(dir == NULL)
-			dir = dynamic_cast<DirEntry*>(file->parent) ;
 
-		if(dir != NULL && dir->parent != NULL)
-			while(dir->parent->parent != NULL)
-				dir = dir->parent ;
+		uint32_t share_flags = locked_findShareFlags(file) ;
 
-		if(dir != NULL && dir->parent != NULL)
-		{
+		details.flags |= (( (share_flags & RS_FILE_HINTS_BROWSABLE   )>0)?DIR_FLAGS_BROWSABLE   :0) ;
+		details.flags |= (( (share_flags & RS_FILE_HINTS_NETWORK_WIDE)>0)?DIR_FLAGS_NETWORK_WIDE:0) ;
+	}
+	return true ;
+}
+
+uint32_t FileIndexMonitor::locked_findShareFlags(FileEntry *file) const
+{
+	uint32_t flags = 0 ;
+
+	DirEntry *dir = dynamic_cast<DirEntry*>(file) ;
+	if(dir == NULL)
+		dir = dynamic_cast<DirEntry*>(file->parent) ;
+
+	if(dir != NULL && dir->parent != NULL)
+		while(dir->parent->parent != NULL)
+			dir = dir->parent ;
+
+	if(dir != NULL && dir->parent != NULL)
+	{
 #ifdef FIM_DEBUG
-			std::cerr << "FileIndexMonitor::RequestDirDetails: top parent name=" << dir->name << std::endl ;
+		std::cerr << "FileIndexMonitor::RequestDirDetails: top parent name=" << dir->name << std::endl ;
 #endif
-			std::map<std::string,SharedDirInfo>::const_iterator it = directoryMap.find(dir->name) ;
+		std::map<std::string,SharedDirInfo>::const_iterator it = directoryMap.find(dir->name) ;
 
-			if(it == directoryMap.end())
-				std::cerr << "*********** ERROR *********** In " << __PRETTY_FUNCTION__ << std::endl ;
-			else
-			{
-				details.flags |= (( (it->second.shareflags & RS_FILE_HINTS_BROWSABLE)>0)?DIR_FLAGS_BROWSABLE:0) ;
-				details.flags |= (( (it->second.shareflags & RS_FILE_HINTS_NETWORK_WIDE)>0)?DIR_FLAGS_NETWORK_WIDE:0) ;
+		if(it == directoryMap.end())
+			std::cerr << "*********** ERROR *********** In " << __PRETTY_FUNCTION__ << std::endl ;
+		else
+			flags = it->second.shareflags & (RS_FILE_HINTS_BROWSABLE | RS_FILE_HINTS_NETWORK_WIDE) ;
 #ifdef FIM_DEBUG
-				std::cerr << "flags = " << details.flags << std::endl ;
+		std::cerr << "flags = " << flags << std::endl ;
 #endif
-			}
-		}
 	}
 
-	return true ;
+	return flags ;
 }
 
 

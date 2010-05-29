@@ -120,11 +120,16 @@ class FileIndexMonitor: public CacheSource, public RsThread
 		/* util fns */
 
 	private:
+		/* the mutex should be locked before calling these 3. */
+
 		// saves file indexs and update the cache.
 		void locked_saveFileIndexes() ;
 
-		/* the mutex should be locked before calling... these. */
+		// Finds the share flags associated with this file entry.
+		uint32_t locked_findShareFlags(FileEntry *fe) const ;
+
 		std::string locked_findRealRoot(std::string base) const;
+
 		void hashFiles(const std::vector<DirContentToHash>& to_hash) ;
 		bool 	hashFile(std::string path, FileEntry &fi); /* To Implement */
 
