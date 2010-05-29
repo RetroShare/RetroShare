@@ -57,7 +57,7 @@ p3GroupDistrib::p3GroupDistrib(uint16_t subtype,
 
 	:CacheSource(subtype, true, cs, sourcedir), 
 	CacheStore(subtype, true, cs, cft, storedir), 
-        p3Config(configId), p3Service(RS_SERVICE_TYPE_DISTRIB),
+        p3Config(configId), p3Service(subtype),
 	mStorePeriod(storePeriod), 
 	mPubPeriod(pubPeriod), 
 	mLastPublishTime(0),
