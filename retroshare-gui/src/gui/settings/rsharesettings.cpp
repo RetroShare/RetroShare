@@ -93,6 +93,8 @@ void RshareSettings::initSettings()
 #if defined(Q_WS_WIN)
   if (styles.contains("windowsvista", Qt::CaseInsensitive))
     setDefault(SETTING_STYLE, "windowsvista");
+  else if (styles.contains("windowsxp", Qt::CaseInsensitive))
+    setDefault(SETTING_STYLE, "windowsxp");
   else
 #endif
   {
