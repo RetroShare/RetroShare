@@ -1,4 +1,4 @@
-Changes for 0.5.0d
+Changes for v0.5.0d
 
 Package improvements:
 
