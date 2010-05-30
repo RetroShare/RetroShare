@@ -149,6 +149,8 @@ protected:
             initStyleOption(&opt, pAction);
 
             opt.palette.setColor(QPalette::ButtonText, QColor(Values [ACTION_TAGSINDEX_COLOR].toInt()));
+            // needed for Cleanlooks
+            opt.palette.setColor(QPalette::Text, QColor(Values [ACTION_TAGSINDEX_COLOR].toInt()));
 
             opt.rect = adjustedActionRect;
             style()->drawControl(QStyle::CE_MenuItem, &opt, &p, this);
