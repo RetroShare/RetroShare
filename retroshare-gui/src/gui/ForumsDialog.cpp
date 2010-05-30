@@ -60,8 +60,8 @@
 #define VIEW_FLAT	2
 
 #define COLUMN_COUNT    7
-#define COLUMN_DATE     0
-#define COLUMN_TITLE    1
+#define COLUMN_TITLE    0
+#define COLUMN_DATE     1
 #define COLUMN_AUTHOR   2
 #define COLUMN_SIGNED   3
 #define COLUMN_PARENTID 4
@@ -147,6 +147,8 @@ ForumsDialog::ForumsDialog(QWidget *parent)
     ttheader->resizeSection ( COLUMN_DATE,  170 );
     ttheader->resizeSection ( COLUMN_TITLE, 170 );
     ttheader->hideSection (COLUMN_CONTENT);
+    
+    ui.threadTreeWidget->sortItems( COLUMN_DATE, Qt::DescendingOrder );
 
 
     m_ForumNameFont = QFont("Times", 12, QFont::Bold);
@@ -842,7 +844,7 @@ void ForumsDialog::insertThreads()
                     if (flatView)
                     {
                         child = new QTreeWidgetItem();
-                        ui.threadTreeWidget->setRootIsDecorated( false );
+                        ui.threadTreeWidget->setRootIsDecorated( true );
                     }
                     else
                     {
