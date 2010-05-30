@@ -1,3 +1,32 @@
+Changes for 0.5.0d
+
+Package improvements:
+
+* suppressed package dependency on gpg-agent
+
+Improvements:
+
+* implemented a free disk space checking method, with a warning when running low
+* fixed proper sorting/updating of IP lists.
+* only keep the most recent port for identical ips.
+* don't start when the local address+port are already in use to avoid corrupting file lists, config files etc
+* added failure tests for fwrite
+* added tests against wrong ip 1.0.0.0 on MacOS
+
+Major bug corrections:
+
+* added missing locks in search requests into fimonitor.cc
+* Suppressed the possibility for browsable only files to be searched by hash from turtle router.
+* cleaned up some deadly code in rsdiscitems.cc, causing crashes
+* improved the security of size determination for file lists, that caused a chain reaction ending in crash at clients.
+* added missign lock in ftcontroller
+
+Minor bug corrections:
+
+* added a check to avoid (possibly rare) data races in data multiplex
+* suppressed double click action for download in Shared File lists
+
+
 Changes for v0.5.0c
 
 * Fixes two problems in the current group chat:
