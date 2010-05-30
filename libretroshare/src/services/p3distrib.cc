@@ -1726,6 +1726,8 @@ bool p3GroupDistrib::backUpKeys(const std::list<RsDistribGrpKey* >& keysToBackUp
 
 	}
 
+        delete store;
+
 	if(!RsDirUtil::renameFile(filenametmp,filename))
 	{
 		std::ostringstream errlog;
@@ -1737,8 +1739,6 @@ bool p3GroupDistrib::backUpKeys(const std::list<RsDistribGrpKey* >& keysToBackUp
 		getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "File rename error", "Error while renaming file " + filename + ": got error "+errlog.str());
 		return false;
 	}
-
-	delete store;
 
 	return ok;
 }
