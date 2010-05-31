@@ -245,6 +245,8 @@
         <file>images/logobar/logo_bar_start.png</file>
         <file>images/logobar/rslogo.png</file>
         <file>images/logobar/rslogo2.png</file>
+        <file>images/mail-signed.png</file>
+        <file>images/mail-signature-unknown.png</file>
         <file>images/mail_delete.png</file>
         <file>images/mail_get.png</file>
         <file>images/mail_reply.png</file>

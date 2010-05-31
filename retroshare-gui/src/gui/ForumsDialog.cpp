@@ -784,6 +784,7 @@ void ForumsDialog::insertThreads()
         rsForums->getForumMessage(fId,tit->msgId,msginfo) ;
 
         item->setText(COLUMN_TITLE, QString::fromStdWString(tit->title));
+        item->setSizeHint(COLUMN_TITLE, QSize( 18,18 ) );
 
         if (rsPeers->getPeerName(msginfo.srcId) !="")
         {
@@ -797,10 +798,12 @@ void ForumsDialog::insertThreads()
         if (msginfo.msgflags & RS_DISTRIB_AUTHEN_REQ)
         {
             item->setText(COLUMN_SIGNED, tr("signed"));
+            item->setIcon(COLUMN_SIGNED,(QIcon(":/images/mail-signed.png")));
         }
         else
         {
             item->setText(COLUMN_SIGNED, tr("none"));
+            item->setIcon(COLUMN_SIGNED,(QIcon(":/images/mail-signature-unknown.png")));
         }
 
         if (nFilterColumn == COLUMN_CONTENT) {
@@ -876,6 +879,7 @@ void ForumsDialog::insertThreads()
                     rsForums->getForumMessage(fId,mit->msgId,msginfo) ;
 
                     child->setText(COLUMN_TITLE, QString::fromStdWString(mit->title));
+                    child->setSizeHint(COLUMN_TITLE, QSize( 17,17 ) );
 
                     if (rsPeers->getPeerName(msginfo.srcId) !="")
                     {
@@ -889,10 +893,12 @@ void ForumsDialog::insertThreads()
                     if (msginfo.msgflags & RS_DISTRIB_AUTHEN_REQ)
                     {
                         child->setText(COLUMN_SIGNED, tr("signed"));
+                        child->setIcon(COLUMN_SIGNED,(QIcon(":/images/mail-signed.png")));
                     }
                     else
                     {
                         child->setText(COLUMN_SIGNED, tr("none"));
+                        child->setIcon(COLUMN_SIGNED,(QIcon(":/images/mail-signature-unknown.png")));
                     }
 
                     if (nFilterColumn == COLUMN_CONTENT) {
