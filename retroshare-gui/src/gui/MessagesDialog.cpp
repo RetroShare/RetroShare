@@ -58,8 +58,6 @@
 #define ROW_DRAFTBOX      2
 #define ROW_SENTBOX       3
 #define ROW_TRASHBOX      4
-#define ROW_INBOX_TOTAL   6
-#define ROW_SENTBOX_TOTAL 7
 
 #define ACTION_TAGSINDEX_SIZE  3
 #define ACTION_TAGSINDEX_TYPE  "Type"
@@ -2160,14 +2158,12 @@ void MessagesDialog::updateMessageSummaryList()
     }
 
     /* Total Inbox */
-    item = ui.listWidget->item(ROW_INBOX_TOTAL);
     textItem = tr("Total Inbox:") + " "  + QString::number(inboxCount);
-    item->setText(textItem);
+    ui.totalInbox_label->setText(textItem);
 
     /* Total Sent */
-    item = ui.listWidget->item(ROW_SENTBOX_TOTAL);
     textItem = tr("Total Sent:") + " "  + QString::number(newSentboxCount);
-    item->setText(textItem);
+    ui.totalSentbox_label->setText(textItem);
 }
 
 /** clear Filter **/

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>656</width>
-    <height>487</height>
+    <width>775</width>
+    <height>511</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -505,10 +505,7 @@
   <property name="contextMenuPolicy">
    <enum>Qt::DefaultContextMenu</enum>
   </property>
-  <layout class="QGridLayout" name="gridLayout_3">
-   <property name="spacing">
-    <number>0</number>
-   </property>
+  <layout class="QGridLayout" name="gridLayout_4">
    <item row="0" column="0">
     <widget class="QFrame" name="frame">
      <property name="sizePolicy">
@@ -984,145 +981,281 @@ border-image: url(:/images/closepressed.png)
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QSplitter" name="splitter_3">
+    <widget class="QSplitter" name="splitter">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QListWidget" name="listWidget">
-      <property name="minimumSize">
-       <size>
-        <width>140</width>
-        <height>0</height>
-       </size>
-      </property>
+     <widget class="QFrame" name="frame_2">
       <property name="maximumSize">
        <size>
         <width>140</width>
         <height>16777215</height>
        </size>
       </property>
-      <property name="font">
-       <font>
-        <pointsize>9</pointsize>
-       </font>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
       </property>
-      <property name="styleSheet">
-       <string notr="true"/>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
       </property>
-      <property name="lineWidth">
-       <number>1</number>
-      </property>
-      <property name="midLineWidth">
-       <number>0</number>
-      </property>
-      <property name="resizeMode">
-       <enum>QListView::Fixed</enum>
-      </property>
-      <property name="spacing">
-       <number>0</number>
-      </property>
-      <property name="gridSize">
-       <size>
-        <width>100</width>
-        <height>18</height>
-       </size>
-      </property>
-      <property name="modelColumn">
-       <number>0</number>
-      </property>
-      <property name="uniformItemSizes">
-       <bool>false</bool>
-      </property>
-      <property name="wordWrap">
-       <bool>false</bool>
-      </property>
-      <item>
-       <property name="text">
-        <string>Inbox</string>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <property name="horizontalSpacing">
+        <number>6</number>
        </property>
-       <property name="icon">
-        <iconset resource="images.qrc">
-         <normaloff>:/images/folder-inbox.png</normaloff>:/images/folder-inbox.png</iconset>
+       <property name="verticalSpacing">
+        <number>0</number>
        </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Outbox</string>
+       <property name="margin">
+        <number>0</number>
        </property>
-       <property name="icon">
-        <iconset resource="images.qrc">
-         <normaloff>:/images/folder-outbox.png</normaloff>:/images/folder-outbox.png</iconset>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Draft</string>
-       </property>
-       <property name="icon">
-        <iconset resource="images.qrc">
-         <normaloff>:/images/folder-draft.png</normaloff>:/images/folder-draft.png</iconset>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Sent</string>
-       </property>
-       <property name="icon">
-        <iconset resource="images.qrc">
-         <normaloff>:/images/folder-sent.png</normaloff>:/images/folder-sent.png</iconset>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Trash</string>
-       </property>
-       <property name="icon">
-        <iconset resource="images.qrc">
-         <normaloff>:/images/folder-trash.png</normaloff>:/images/folder-trash.png</iconset>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="background">
-        <brush brushstyle="NoBrush">
-         <color alpha="255">
-          <red>0</red>
-          <green>0</green>
-          <blue>0</blue>
-         </color>
-        </brush>
-       </property>
-       <property name="foreground">
-        <brush brushstyle="NoBrush">
-         <color alpha="255">
-          <red>0</red>
-          <green>0</green>
-          <blue>0</blue>
-         </color>
-        </brush>
-       </property>
-       <property name="flags">
-        <set>ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Total Inbox:</string>
-       </property>
-       <property name="flags">
-        <set>ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Total Sent:</string>
-       </property>
-       <property name="flags">
-        <set>ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
-       </property>
-      </item>
+       <item row="1" column="0">
+        <widget class="QListWidget" name="listWidget">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>140</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="baseSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>9</pointsize>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
+         <property name="lineWidth">
+          <number>1</number>
+         </property>
+         <property name="midLineWidth">
+          <number>0</number>
+         </property>
+         <property name="isWrapping" stdset="0">
+          <bool>false</bool>
+         </property>
+         <property name="resizeMode">
+          <enum>QListView::Fixed</enum>
+         </property>
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="gridSize">
+          <size>
+           <width>100</width>
+           <height>18</height>
+          </size>
+         </property>
+         <property name="modelColumn">
+          <number>0</number>
+         </property>
+         <property name="uniformItemSizes">
+          <bool>false</bool>
+         </property>
+         <property name="wordWrap">
+          <bool>false</bool>
+         </property>
+         <item>
+          <property name="text">
+           <string>Inbox</string>
+          </property>
+          <property name="icon">
+           <iconset resource="images.qrc">
+            <normaloff>:/images/folder-inbox.png</normaloff>:/images/folder-inbox.png</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Outbox</string>
+          </property>
+          <property name="icon">
+           <iconset resource="images.qrc">
+            <normaloff>:/images/folder-outbox.png</normaloff>:/images/folder-outbox.png</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Draft</string>
+          </property>
+          <property name="icon">
+           <iconset resource="images.qrc">
+            <normaloff>:/images/folder-draft.png</normaloff>:/images/folder-draft.png</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Sent</string>
+          </property>
+          <property name="icon">
+           <iconset resource="images.qrc">
+            <normaloff>:/images/folder-sent.png</normaloff>:/images/folder-sent.png</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Trash</string>
+          </property>
+          <property name="icon">
+           <iconset resource="images.qrc">
+            <normaloff>:/images/folder-trash.png</normaloff>:/images/folder-trash.png</iconset>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QListWidget" name="tagWidget">
+         <property name="maximumSize">
+          <size>
+           <width>140</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="baseSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QToolButton" name="Folders_Button">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>21</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>140</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QToolButton#Folders_Button{ 
+background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+stop:0 #FEFEFE, stop:1 #E8E8E8);
+
+border: 1px solid #CCCCCC;}</string>
+         </property>
+         <property name="text">
+          <string>Folders</string>
+         </property>
+         <property name="icon">
+          <iconset resource="images.qrc">
+           <normaloff>:/images/foldermail.png</normaloff>:/images/foldermail.png</iconset>
+         </property>
+         <property name="checkable">
+          <bool>false</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonTextBesideIcon</enum>
+         </property>
+         <property name="autoRaise">
+          <bool>true</bool>
+         </property>
+         <property name="arrowType">
+          <enum>Qt::NoArrow</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QToolButton" name="Tags_Button">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>21</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>140</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QToolButton#Tags_Button{ 
+background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+stop:0 #FEFEFE, stop:1 #E8E8E8);
+
+border: 1px solid #CCCCCC;}</string>
+         </property>
+         <property name="text">
+          <string>Tags</string>
+         </property>
+         <property name="icon">
+          <iconset resource="images.qrc">
+           <normaloff>:/images/tag24.png</normaloff>:/images/tag24.png</iconset>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonTextBesideIcon</enum>
+         </property>
+         <property name="arrowType">
+          <enum>Qt::NoArrow</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="totalInbox_label">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>18</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>9</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Total Inbox:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="totalSentbox_label">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>18</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>9</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Total Sent:</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
      <widget class="QSplitter" name="msgSplitter">
       <property name="orientation">
@@ -1600,6 +1733,22 @@ p, li { white-space: pre-wrap; }
     <hint type="destinationlabel">
      <x>399</x>
      <y>397</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>Tags_Button</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>tagWidget</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>78</x>
+     <y>287</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>78</x>
+     <y>399</y>
     </hint>
    </hints>
   </connection>
