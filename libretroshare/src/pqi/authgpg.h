@@ -109,7 +109,8 @@ class AuthGPG : public p3Config
         // store all keys in map mKeyList to avoid calling gpgme exe repeatedly
   	bool    storeAllKeys_locked();
         bool    storeAllKeys_timed();
-        bool    updateTrustAllKeys_locked();
+// Not used anymore
+//        bool    updateTrustAllKeys_locked();
 
   	bool    printAllKeys_locked();
   	bool    printOwnKeys_locked();

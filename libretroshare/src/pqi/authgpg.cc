@@ -531,74 +531,74 @@ bool   AuthGPG::storeAllKeys_locked()
 }
 
 // update trust on all available keys. Not used anymore
-bool   AuthGPG::updateTrustAllKeys_locked()
-{
-	gpg_error_t ERR;
-	if (!gpgmeInit)
-	{
-                std::cerr << "Error since GPG is not initialised" << std::endl;
-		return false;
-	}
-
-
-	/* have to do this the hard way! */
-	std::map<std::string, gpgcert>::iterator it;
-
-	for(it = mKeyList.begin(); it != mKeyList.end(); it++)
-	{
-		/* check for trust items associated with key */	
-                std::string peerid = it->second.email;
-#ifdef GPG_DEBUG
-                std::cerr << "Searching GPGme for TrustInfo on: " << peerid << std::endl;
-#endif
-
-		/* Initiates a key listing. NB: maxlevel is ignored!*/
-		if (GPG_ERR_NO_ERROR != (ERR = gpgme_op_trustlist_start (CTX, peerid.c_str(), 0)))
-		{
-                        std::cerr << "Error Starting Trust List" << std::endl;
-			ProcessPGPmeError(ERR);
-			continue;
-		} 
-
-
-		/* Loop until end of key */
-#ifdef GPG_DEBUG
-	gpgme_trust_item_t ti = NULL;
-
-		for(int i = 0;(GPG_ERR_NO_ERROR == (ERR = gpgme_op_trustlist_next (CTX, &ti))); i++)
-		{
-			std::string keyid = ti->keyid;
-			int type = ti->type;
-			int level = ti->level;
-	
-			/* identify the peers, and add trust level */
-			std::cerr << "GPGme Trust Item for: " << keyid;
-			std::cerr << std::endl;
-	
-			std::cerr << "\t Type: " << type;
-			std::cerr << " Level: " << level;
-			std::cerr << std::endl;
-	
-			std::cerr << "\t Owner Trust: " << ti->owner_trust;
-			std::cerr << " Validity: " << ti->validity;
-			std::cerr << " Name: " << ti->name;
-			std::cerr << std::endl;
-		}
-                std::cerr << "End of TrustList Iteration." << std::endl;
-#endif
-		ProcessPGPmeError(ERR);
-
-		if (GPG_ERR_NO_ERROR != gpgme_op_trustlist_end(CTX))
-		{
-                        std::cerr << "Error ending TrustList" << std::endl;
-
-			ProcessPGPmeError(ERR);
-		} 
-	}
-
-	return true;
-
-}
+//bool   AuthGPG::updateTrustAllKeys_locked()
+//{
+//	gpg_error_t ERR;
+//	if (!gpgmeInit)
+//	{
+//                std::cerr << "Error since GPG is not initialised" << std::endl;
+//		return false;
+//	}
+//
+//
+//	/* have to do this the hard way! */
+//	std::map<std::string, gpgcert>::iterator it;
+//
+//	for(it = mKeyList.begin(); it != mKeyList.end(); it++)
+//	{
+//		/* check for trust items associated with key */
+//                std::string peerid = it->second.email;
+//#ifdef GPG_DEBUG
+//                std::cerr << "Searching GPGme for TrustInfo on: " << peerid << std::endl;
+//#endif
+//
+//		/* Initiates a key listing. NB: maxlevel is ignored!*/
+//		if (GPG_ERR_NO_ERROR != (ERR = gpgme_op_trustlist_start (CTX, peerid.c_str(), 0)))
+//		{
+//                        std::cerr << "Error Starting Trust List" << std::endl;
+//			ProcessPGPmeError(ERR);
+//			continue;
+//		}
+//
+//
+//		/* Loop until end of key */
+//#ifdef GPG_DEBUG
+//	gpgme_trust_item_t ti = NULL;
+//
+//		for(int i = 0;(GPG_ERR_NO_ERROR == (ERR = gpgme_op_trustlist_next (CTX, &ti))); i++)
+//		{
+//			std::string keyid = ti->keyid;
+//			int type = ti->type;
+//			int level = ti->level;
+//
+//			/* identify the peers, and add trust level */
+//			std::cerr << "GPGme Trust Item for: " << keyid;
+//			std::cerr << std::endl;
+//
+//			std::cerr << "\t Type: " << type;
+//			std::cerr << " Level: " << level;
+//			std::cerr << std::endl;
+//
+//			std::cerr << "\t Owner Trust: " << ti->owner_trust;
+//			std::cerr << " Validity: " << ti->validity;
+//			std::cerr << " Name: " << ti->name;
+//			std::cerr << std::endl;
+//		}
+//                std::cerr << "End of TrustList Iteration." << std::endl;
+//#endif
+//		ProcessPGPmeError(ERR);
+//
+//		if (GPG_ERR_NO_ERROR != gpgme_op_trustlist_end(CTX))
+//		{
+//                        std::cerr << "Error ending TrustList" << std::endl;
+//
+//			ProcessPGPmeError(ERR);
+//		}
+//	}
+//
+//	return true;
+//
+//}
 
 bool   AuthGPG::printAllKeys_locked()
 {
