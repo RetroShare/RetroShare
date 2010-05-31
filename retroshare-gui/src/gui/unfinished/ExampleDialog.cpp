@@ -44,8 +44,8 @@
 #define IMAGE_EXPIORTFRIEND      ":/images/exportpeers_16x16.png"
 #define IMAGE_CHAT               ":/images/chat.png"
 /* Images for Status icons */
-#define IMAGE_ONLINE             ":/images/donline.png"
-#define IMAGE_OFFLINE            ":/images/dhidden.png"
+#define IMAGE_ONLINE             ":/images/im-user.png"
+#define IMAGE_OFFLINE            ":/images/im-user-offline.png"
 
 /** Constructor */
 ExampleDialog::ExampleDialog(QWidget *parent)

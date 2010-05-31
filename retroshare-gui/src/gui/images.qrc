@@ -96,30 +96,19 @@
         <file>images/console-small-hover.png</file>
         <file>images/console-small-up.png</file>
         <file>images/contact_new128.png</file>
-        <file>images/dadd.png</file>
-        <file>images/dauthed.png</file>
-        <file>images/daway.png</file>
-        <file>images/dbrb.png</file>
-        <file>images/dbusy.png</file>
-        <file>images/dchat.png</file>
-        <file>images/ddeny.png</file>
         <file>images/delete.png</file>
         <file>images/deleteall.png</file>
         <file>images/deletemail-pressed.png</file>
         <file>images/deletemail24.png</file>
-        <file>images/dhidden.png</file>
         <file>images/directoryadd_24x24_shadow.png</file>
         <file>images/directoryremove_24x24_shadow.png</file>
         <file>images/directoryselect_24x24_shadow.png</file>
         <file>images/diskSave.png</file>
-        <file>images/dlunch.png</file>
         <file>images/document_save.png</file>
-        <file>images/donline.png</file>
         <file>images/down.png</file>
         <file>images/down_24x24.png</file>
         <file>images/download.png</file>
         <file>images/download16.png</file>
-        <file>images/dphone.png</file>
         <file>images/edit_add24.png</file>
         <file>images/edit-bold.png</file>
         <file>images/edit-italic.png</file>
@@ -219,7 +208,7 @@
         <file>images/im-user-offline.png</file>
         <file>images/im-user-away.png</file>
         <file>images/im-user-busy.png</file>
-	<file>images/im-user-inactive.png</file>
+        <file>images/im-user-inactive.png</file>
         <file>images/informations_24x24.png</file>
         <file>images/invite-friend24.png</file>
         <file>images/connect_friend.png</file>

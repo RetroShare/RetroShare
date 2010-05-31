@@ -47,8 +47,6 @@
 #define IMAGE_REMOVE             ":/images/cancel.png"
 #define IMAGE_CHAT               ":/images/chat.png"
 /* Images for Status icons */
-#define IMAGE_ONLINE             ":/images/donline.png"
-#define IMAGE_OFFLINE            ":/images/dhidden.png"
 #define IMAGE_PEER               ":/images/user/identity16.png"
 #define IMAGE_PHOTOS              ":/images/image16.png"
 

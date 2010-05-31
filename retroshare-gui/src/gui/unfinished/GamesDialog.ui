@@ -268,7 +268,7 @@ p, li { white-space: pre-wrap; }
          </property>
          <property name="icon" >
           <iconset resource="images.qrc" >
-           <normaloff>:/images/dadd.png</normaloff>:/images/dadd.png</iconset>
+           <normaloff>:/images/dadd.png</normaloff>:/images/add_user24.png</iconset>
          </property>
         </widget>
        </item>
@@ -327,7 +327,7 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <resources>
-  <include location="images.qrc" />
+  <include location="../images.qrc" />
  </resources>
  <connections/>
 </ui>

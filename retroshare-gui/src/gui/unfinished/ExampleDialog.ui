@@ -637,7 +637,7 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <resources>
-  <include location="images.qrc" />
+  <include location="../images.qrc" />
  </resources>
  <connections/>
 </ui>
