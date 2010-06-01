@@ -662,6 +662,7 @@ void MessagesDialog::fillTags()
     for (Item = TagItems.begin(); Item != TagItems.end(); Item++) {
         pItem = new QListWidgetItem (Item->second.text, ui.tagWidget);
         pItem->setForeground(QBrush(QColor(Item->second.color)));
+        pItem->setIcon(QIcon(":/images/foldermail.png"));
         pItem->setData(Qt::UserRole, Item->first);
         pItem->setData(Qt::UserRole + 1, Item->second.text); // for updateMessageSummaryList
 
