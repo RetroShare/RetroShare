@@ -70,6 +70,9 @@ private slots:
   void msgfilelistWidgetCostumPopupMenu(QPoint);  
 
   void changeBox( int newrow );
+#ifdef STATIC_MSGID
+  void changeTag( int newrow );
+#endif
   void updateCurrentMessage();
   void currentChanged(const QModelIndex&);
   void clicked(const QModelIndex&);
@@ -139,9 +142,17 @@ private:
 
   void setToolbarButtonStyle(Qt::ToolButtonStyle style);
 #ifdef STATIC_MSGID
-  void createTagMenu();
+  void fillTags();
 #endif
   bool m_bProcessSettings;
+  bool m_bInChange;
+
+  enum { LIST_NOTHING,
+         LIST_BOX,
+#ifdef STATIC_MSGID
+         LIST_TAG
+#endif
+     } m_eListMode;
 
   std::string mCurrCertId;
   std::string mCurrMsgId;

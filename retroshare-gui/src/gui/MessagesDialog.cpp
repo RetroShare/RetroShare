@@ -204,6 +204,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     ui.setupUi(this);
 
     m_bProcessSettings = false;
+    m_bInChange = false;
     m_pConfig = new RSettings (CONFIG_FILE);
 
     connect( ui.messagestreeView, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( messageslistWidgetCostumPopupMenu( QPoint ) ) );
@@ -211,6 +212,9 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     connect( ui.messagestreeView, SIGNAL(clicked ( const QModelIndex &) ) , this, SLOT( clicked( const QModelIndex & ) ) );
     connect( ui.messagestreeView, SIGNAL(doubleClicked ( const QModelIndex& ) ) , this, SLOT( doubleClicked( const QModelIndex & ) ) );
     connect( ui.listWidget, SIGNAL( currentRowChanged ( int) ), this, SLOT( changeBox ( int) ) );
+#ifdef STATIC_MSGID
+    connect( ui.tagWidget, SIGNAL( currentRowChanged ( int) ), this, SLOT( changeTag ( int) ) );
+#endif
 
     connect(ui.newmessageButton, SIGNAL(clicked()), this, SLOT(newmessage()));
     connect(ui.removemessageButton, SIGNAL(clicked()), this, SLOT(removemessage()));
@@ -240,6 +244,8 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     connect( ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
 
     connect(ui.filterColumnComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterColumnChanged()));
+
+    m_eListMode = LIST_NOTHING;
 
     mCurrCertId = "";
     mCurrMsgId  = "";
@@ -344,9 +350,12 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
 #ifdef STATIC_MSGID
     // create tag menu
-    createTagMenu();
+    fillTags();
 #else
     ui.tagButton->setHidden(true);
+
+    ui.Tags_Button->setHidden(true);
+    ui.tagWidget->setHidden(true);
 #endif
 
     // create timer for navigation
@@ -397,6 +406,12 @@ void MessagesDialog::processSettings(bool bLoad)
         // state of message tree
         msgwheader->restoreState(Settings->value("MessageTree").toByteArray());
 
+#ifdef STATIC_MSGID
+        // state of tag list
+        bValue = Settings->value("tagList", true).toBool();
+        ui.Tags_Button->setChecked(bValue);
+#endif
+
         // state of splitter
         ui.msgSplitter->restoreState(Settings->value("Splitter").toByteArray());
         ui.msgSplitter_2->restoreState(Settings->value("Splitter2").toByteArray());
@@ -405,6 +420,11 @@ void MessagesDialog::processSettings(bool bLoad)
 
         // state of message tree
         Settings->setValue("MessageTree", msgwheader->saveState());
+
+#ifdef STATIC_MSGID
+        // state of tag list
+        Settings->setValue("tagList", ui.Tags_Button->isChecked());
+#endif
 
         // state of splitter
         Settings->setValue("Splitter", ui.msgSplitter->saveState());
@@ -417,7 +437,7 @@ void MessagesDialog::processSettings(bool bLoad)
 }
 
 #ifdef STATIC_MSGID
-static void getMessageTags (RSettings *pConfig, QString &msgId, QList<int> &tagIds)
+static void getMessageTags (RSettings *pConfig, QString msgId, QList<int> &tagIds)
 {
     pConfig->beginGroup(CONFIG_SECTION_TAG);
 
@@ -568,18 +588,20 @@ void MessagesDialog::setTagItems(std::map<int, TagItem> &Items)
 
     m_pConfig->endGroup();
 
-    createTagMenu();
+    fillTags();
     insertMessages();
 }
 
-void MessagesDialog::createTagMenu()
+void MessagesDialog::fillTags()
 {
+    std::map<int, TagItem> TagItems;
+    std::map<int, TagItem>::iterator Item;
+    getTagItems(TagItems);
+
+    // create tag menu
     QMenu *pMenu = new MyMenu (tr("Tag"), this);
     connect(pMenu, SIGNAL(triggered (QAction*)), this, SLOT(tagTriggered(QAction*)));
     connect(pMenu, SIGNAL(aboutToShow()), this, SLOT(tagAboutToShow()));
-
-    std::map<int, TagItem> TagItems;
-    getTagItems(TagItems);
 
     bool bUser = false;
 
@@ -596,7 +618,6 @@ void MessagesDialog::createTagMenu()
 
         pMenu->addSeparator();
 
-        std::map<int, TagItem>::iterator Item;
         for (Item = TagItems.begin(); Item != TagItems.end(); Item++) {
             pAction = new QAction(Item->second.text, pMenu);
             Values [ACTION_TAGSINDEX_TYPE] = ACTION_TAGS_TAG;
@@ -624,6 +645,38 @@ void MessagesDialog::createTagMenu()
     pMenu->addAction(pAction);
 
     ui.tagButton->setMenu(pMenu);
+
+    // fill tags
+    m_bInChange = true;
+
+    // save current selection
+    QListWidgetItem *pItem = ui.tagWidget->currentItem();
+    int nSelectecTagId = 0;
+    if (pItem) {
+        nSelectecTagId = pItem->data(Qt::UserRole).toInt();
+    }
+
+    QListWidgetItem *pItemToSelect = NULL;
+
+    ui.tagWidget->clear();
+    for (Item = TagItems.begin(); Item != TagItems.end(); Item++) {
+        pItem = new QListWidgetItem (Item->second.text, ui.tagWidget);
+        pItem->setForeground(QBrush(QColor(Item->second.color)));
+        pItem->setData(Qt::UserRole, Item->first);
+        pItem->setData(Qt::UserRole + 1, Item->second.text); // for updateMessageSummaryList
+
+        if (Item->first == nSelectecTagId) {
+            pItemToSelect = pItem;
+        }
+    }
+
+    if (pItemToSelect) {
+        ui.tagWidget->setCurrentItem(pItemToSelect);
+    }
+
+    m_bInChange = false;
+
+    updateMessageSummaryList();
 }
 #endif
 
@@ -1067,11 +1120,45 @@ void MessagesDialog::getallrecommended()
 
 void MessagesDialog::changeBox(int)
 {
+    if (m_bInChange) {
+        // already in change method
+        return;
+    }
+
+    m_bInChange = true;
+
     MessagesModel->removeRows (0, MessagesModel->rowCount());
+
+    ui.tagWidget->setCurrentItem(NULL);
+    m_eListMode = LIST_BOX;
 
     insertMessages();
     insertMsgTxtAndFiles();
+
+    m_bInChange = false;
 }
+
+#ifdef STATIC_MSGID
+void MessagesDialog::changeTag(int)
+{
+    if (m_bInChange) {
+        // already in change method
+        return;
+    }
+
+    m_bInChange = true;
+
+    MessagesModel->removeRows (0, MessagesModel->rowCount());
+
+    ui.listWidget->setCurrentItem(NULL);
+    m_eListMode = LIST_TAG;
+
+    insertMessages();
+    insertMsgTxtAndFiles();
+
+    m_bInChange = false;
+}
+#endif
 
 static void InitIconAndFont(RSettings *pConfig, QStandardItem *pItem [COLUMN_COUNT], int nFlag)
 {
@@ -1137,10 +1224,7 @@ void MessagesDialog::insertMessages()
 
     rsMsgs -> getMessageSummaries(msgList);
 
-    int listrow = ui.listWidget -> currentRow();
-
     std::cerr << "MessagesDialog::insertMessages()" << std::endl;
-    std::cerr << "Current Row: " << listrow << std::endl;
     fflush(0);
 
     int nFilterColumn = FilterColumnFromComboBox(ui.filterColumnComboBox->currentIndex());
@@ -1149,23 +1233,54 @@ void MessagesDialog::insertMessages()
     unsigned int msgbox = 0;
     bool bTrash = false;
     bool bFill = true;
-    switch(listrow)
-    {
-    case ROW_INBOX:
-        msgbox = RS_MSG_INBOX;
+#ifdef STATIC_MSGID
+    int nTagId = 0;
+#endif
+
+    switch (m_eListMode) {
+    case LIST_NOTHING:
+        bFill = false;
         break;
-    case ROW_OUTBOX:
-        msgbox = RS_MSG_OUTBOX;
+
+    case LIST_BOX:
+        {
+            int listrow = ui.listWidget->currentRow();
+
+            switch (listrow) {
+            case ROW_INBOX:
+                msgbox = RS_MSG_INBOX;
+                break;
+            case ROW_OUTBOX:
+                msgbox = RS_MSG_OUTBOX;
+                break;
+            case ROW_DRAFTBOX:
+                msgbox = RS_MSG_DRAFTBOX;
+                break;
+            case ROW_SENTBOX:
+                msgbox = RS_MSG_SENTBOX;
+                break;
+            case ROW_TRASHBOX:
+                bTrash = true;
+                break;
+            default:
+                bFill = false;
+            }
+        }
         break;
-    case ROW_DRAFTBOX:
-        msgbox = RS_MSG_DRAFTBOX;
+
+#ifdef STATIC_MSGID
+    case LIST_TAG:
+        {
+            QListWidgetItem *pItem = ui.tagWidget->currentItem();
+            if (pItem) {
+                nTagId = pItem->data (Qt::UserRole).toInt();
+            } else {
+                bFill = false;
+            }
+        }
         break;
-    case ROW_SENTBOX:
-        msgbox = RS_MSG_SENTBOX;
-        break;
-    case ROW_TRASHBOX:
-        bTrash = true;
-        break;
+#endif
+
     default:
         bFill = false;
     }
@@ -1182,11 +1297,10 @@ void MessagesDialog::insertMessages()
         getTagItems(TagItems);
 #endif
 
-        /* remove old items */
-        int nRowCount = MessagesModel->rowCount();
-        int nRow = 0;
-        for (nRow = 0; nRow < nRowCount; ) {
-            for(it = msgList.begin(); it != msgList.end(); it++) {
+        /* search messages */
+        std::list<MsgInfoSummary> msgToShow;
+        for(it = msgList.begin(); it != msgList.end(); it++) {
+            if (m_eListMode == LIST_BOX) {
                 if (bTrash) {
                     if ((it->msgflags & RS_MSG_TRASH) == 0) {
                         continue;
@@ -1199,13 +1313,33 @@ void MessagesDialog::insertMessages()
                         continue;
                     }
                 }
+#ifdef STATIC_MSGID
+            } else if (m_eListMode == LIST_TAG) {
+                QList<int> tagIds;
+                getMessageTags (m_pConfig, QString::fromStdString(it->msgId), tagIds);
+                if (qFind(tagIds.begin(), tagIds.end(), nTagId) == tagIds.end()) {
+                    continue;
+                }
+#endif
+            } else {
+                continue;
+            }
 
-                if (it->msgId == MessagesModel->item(nRow, COLUMN_MSGID)->text().toStdString()) {
+            msgToShow.push_back(*it);
+        }
+
+        /* remove old items */
+        int nRowCount = MessagesModel->rowCount();
+        int nRow = 0;
+        for (nRow = 0; nRow < nRowCount; ) {
+            std::string msgIdFromRow = MessagesModel->item(nRow, COLUMN_MSGID)->text().toStdString();
+            for(it = msgToShow.begin(); it != msgToShow.end(); it++) {
+                if (it->msgId == msgIdFromRow) {
                     break;
                 }
             }
 
-            if (it == msgList.end ()) {
+            if (it == msgToShow.end ()) {
                 MessagesModel->removeRow (nRow);
                 nRowCount = MessagesModel->rowCount();
             } else {
@@ -1213,7 +1347,7 @@ void MessagesDialog::insertMessages()
             }
         }
 
-        for(it = msgList.begin(); it != msgList.end(); it++)
+        for(it = msgToShow.begin(); it != msgToShow.end(); it++)
         {
             /* check the message flags, to decide which
              * group it should go in...
@@ -1232,19 +1366,6 @@ void MessagesDialog::insertMessages()
              * 	-> + NEW -> Bold.
              *
              */
-
-            if (bTrash) {
-                if ((it->msgflags & RS_MSG_TRASH) == 0) {
-                    continue;
-                }
-            } else {
-                if (it->msgflags & RS_MSG_TRASH) {
-                    continue;
-                }
-                if ((it->msgflags & RS_MSG_BOXMASK) != msgbox) {
-                    continue;
-                }
-            }
 
             bGotInfo = false;
             msgInfo = MessageInfo(); // clear
@@ -1438,6 +1559,7 @@ void MessagesDialog::insertMessages()
     ui.messagestreeView->hideColumn(COLUMN_SRCID);
     ui.messagestreeView->hideColumn(COLUMN_MSGID);
     ui.messagestreeView->hideColumn(COLUMN_CONTENT);
+
     updateMessageSummaryList();
 }
 
@@ -2044,8 +2166,24 @@ void MessagesDialog::updateMessageSummaryList()
 
     rsMsgs->getMessageSummaries(msgList);
 
+#ifdef STATIC_MSGID
+    QMap<int, int> tagCount;
+#endif
+
     /*calculating the new messages*/
     for (it = msgList.begin(); it != msgList.end(); it++) {
+#ifdef STATIC_MSGID
+        /* calcluate tag count */
+        QList<int> tagIds;
+        getMessageTags (m_pConfig, QString::fromStdString(it->msgId), tagIds);
+        for (QList<int>::iterator tagId = tagIds.begin(); tagId != tagIds.end(); tagId++) {
+            int nCount = tagCount [*tagId];
+            nCount++;
+            tagCount [*tagId] = nCount;
+        }
+#endif
+
+        /* calculate box */
         if (it->msgflags & RS_MSG_TRASH) {
             trashboxCount++;
             continue;
@@ -2086,7 +2224,7 @@ void MessagesDialog::updateMessageSummaryList()
     QListWidgetItem* item = ui.listWidget->item(ROW_INBOX);
     if (newInboxCount != 0)
     {
-        textItem = tr("Inbox") + " " + "(" + QString::number(newInboxCount)+")";
+        textItem = tr("Inbox") + " (" + QString::number(newInboxCount)+")";
         item->setText(textItem);
         QFont qf = item->font();
         qf.setBold(true);
@@ -2109,7 +2247,7 @@ void MessagesDialog::updateMessageSummaryList()
     item = ui.listWidget->item(ROW_OUTBOX);
     if (newOutboxCount != 0)
     {
-        textItem = tr("Outbox") + " " + "(" + QString::number(newOutboxCount)+")";
+        textItem = tr("Outbox") + " (" + QString::number(newOutboxCount)+")";
         item->setText(textItem);
         QFont qf = item->font();
         qf.setBold(true);
@@ -2129,7 +2267,7 @@ void MessagesDialog::updateMessageSummaryList()
     item = ui.listWidget->item(ROW_DRAFTBOX);
     if (newDraftCount != 0)
     {
-        textItem = tr("Drafts") + " " + "(" + QString::number(newDraftCount)+")";
+        textItem = tr("Drafts") + " (" + QString::number(newDraftCount)+")";
         item->setText(textItem);
         QFont qf = item->font();
         qf.setBold(true);
@@ -2148,7 +2286,7 @@ void MessagesDialog::updateMessageSummaryList()
     item = ui.listWidget->item(ROW_TRASHBOX);
     if (trashboxCount != 0)
     {
-        textItem = tr("Trash") + " " + "(" + QString::number(trashboxCount)+")";
+        textItem = tr("Trash") + " (" + QString::number(trashboxCount)+")";
         item->setText(textItem);
     }
     else
@@ -2164,6 +2302,22 @@ void MessagesDialog::updateMessageSummaryList()
     /* Total Sent */
     textItem = tr("Total Sent:") + " "  + QString::number(newSentboxCount);
     ui.totalSentbox_label->setText(textItem);
+
+#ifdef STATIC_MSGID
+    /* set tag counts */
+    int nRowCount = ui.tagWidget->count();
+    for (int nRow = 0; nRow < nRowCount; nRow++) {
+        QListWidgetItem *pItem = ui.tagWidget->item(nRow);
+        int nCount = tagCount[pItem->data(Qt::UserRole).toInt()];
+
+        QString sText = pItem->data(Qt::UserRole + 1).toString();
+        if (nCount) {
+            sText += " (" + QString::number(nCount) + ")";
+        }
+
+        pItem->setText(sText);
+    }
+#endif
 }
 
 /** clear Filter **/
@@ -2270,7 +2424,7 @@ void MessagesDialog::tagTriggered(QAction *pAction)
             QList<int> tagIds;
             getMessageTags(m_pConfig, msgId, tagIds);
 
-            QList<int>::iterator tagId = qFind(tagIds.begin(), tagIds.end(), pAction->data().toInt());
+            QList<int>::iterator tagId = qFind(tagIds.begin(), tagIds.end(), nId);
 
             bool bSaveAndRefresh = false;
             if (bSet) {
