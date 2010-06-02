@@ -46,11 +46,13 @@ private slots:
     void addTag();
     void editTag();
     void deleteTag();
+    void defaultTag();
 
     void currentRowChangedTag(int row);
 
 private:
     void closeEvent (QCloseEvent * event);
+    void fillTagItems();
 
     std::map<int, TagItem> m_TagItems;
 

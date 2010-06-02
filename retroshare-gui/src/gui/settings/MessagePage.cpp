@@ -35,6 +35,7 @@ MessagePage::MessagePage(QWidget * parent, Qt::WFlags flags)
     connect (ui.addpushButton, SIGNAL(clicked(bool)), this, SLOT (addTag()));
     connect (ui.editpushButton, SIGNAL(clicked(bool)), this, SLOT (editTag()));
     connect (ui.deletepushButton, SIGNAL(clicked(bool)), this, SLOT (deleteTag()));
+    connect (ui.defaultTagButton, SIGNAL(clicked(bool)), this, SLOT (defaultTag()));
 
     connect (ui.tags_listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(currentRowChangedTag(int)));
 
@@ -80,32 +81,39 @@ MessagePage::load()
         pPage->getTagItems (m_TagItems);
 
         // fill items
-        std::map<int, TagItem>::iterator Item;
-        for (Item = m_TagItems.begin(); Item != m_TagItems.end(); Item++) {
-            if (Item->second._delete) {
-                continue;
-            }
-
-            QListWidgetItem *pItemWidget = new QListWidgetItem(Item->second.text, ui.tags_listWidget);
-            pItemWidget->setTextColor(QColor(Item->second.color));
-            pItemWidget->setData(Qt::UserRole, Item->first);
-        }
-
-        if (m_TagItems.size()) {
-            ui.tags_listWidget->setCurrentItem(ui.tags_listWidget->item(0));
-        }
+        fillTagItems();
     } else {
+        // MessagesDialog not available
         ui.tags_listWidget->setEnabled(false);
         ui.addpushButton->setEnabled(false);
         ui.editpushButton->setEnabled(false);
         ui.deletepushButton->setEnabled(false);
+        ui.defaultTagButton->setEnabled(false);
     }
 #else
     ui.tags_listWidget->setEnabled(false);
     ui.addpushButton->setEnabled(false);
     ui.editpushButton->setEnabled(false);
     ui.deletepushButton->setEnabled(false);
+    ui.defaultTagButton->setEnabled(false);
 #endif
+}
+
+// fill items
+void MessagePage::fillTagItems()
+{
+    ui.tags_listWidget->clear();
+
+    std::map<int, TagItem>::iterator Item;
+    for (Item = m_TagItems.begin(); Item != m_TagItems.end(); Item++) {
+        if (Item->second._delete) {
+            continue;
+        }
+
+        QListWidgetItem *pItemWidget = new QListWidgetItem(Item->second.text, ui.tags_listWidget);
+        pItemWidget->setTextColor(QColor(Item->second.color));
+        pItemWidget->setData(Qt::UserRole, Item->first);
+    }
 }
 
 void MessagePage::addTag()
@@ -161,6 +169,14 @@ void MessagePage::deleteTag()
 
     ui.tags_listWidget->removeItemWidget(pItemWidget);
     delete (pItemWidget);
+}
+
+void MessagePage::defaultTag()
+{
+#ifdef STATIC_MSGID
+    MessagesDialog::initStandardTagItems(m_TagItems);
+#endif
+    fillTagItems();
 }
 
 void MessagePage::currentRowChangedTag(int row)

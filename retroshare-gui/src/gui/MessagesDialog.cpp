@@ -473,30 +473,31 @@ static void setMessageTags (RSettings *pConfig, QString &msgId, QList<int> &tagI
     pConfig->endGroup();
 }
 
+/*static*/ void MessagesDialog::initStandardTagItems(std::map<int, TagItem> &Items)
+{
+    // create standard enties ... id = sort, maybe later own member
+    Items [-5].text = tr("Important");
+    Items [-5].color = QColor(255, 0, 0).rgb();
+
+    Items [-4].text = tr("Work");
+    Items [-4].color = QColor(255, 153, 0).rgb();
+
+    Items [-3].text = tr("Personal");
+    Items [-3].color = QColor(0, 153, 0).rgb();
+
+    Items [-2].text = tr("Todo");
+    Items [-2].color = QColor(51, 51, 255).rgb();
+
+    Items [-1].text = tr("Later");
+    Items [-1].color = QColor(153, 51, 153).rgb();
+}
+
 void MessagesDialog::getTagItems(std::map<int, TagItem> &Items)
 {
-    TagItem Item;
+    initStandardTagItems (Items);
 
-    // create standard enties ... id = sort, maybe later own member
-    Item.text = tr("Important");
-    Item.color = QColor(255, 0, 0).rgb();
-    Items [-5] = Item;
-    
-    Item.text = tr("Work");
-    Item.color = QColor(255, 153, 0).rgb();
-    Items [-4] = Item;
-
-    Item.text = tr("Personal");
-    Item.color = QColor(0, 153, 0).rgb();
-    Items [-3] = Item;
-
-    Item.text = tr("Todo");
-    Item.color = QColor(51, 51, 255).rgb();
-    Items [-2] = Item;
-
-    Item.text = tr("Later");
-    Item.color = QColor(153, 51, 153).rgb();
-    Items [-1] = Item;
+    // create standard enties
+    initStandardTagItems(Items);
 
     // load user tags and colors
     m_pConfig->beginGroup(CONFIG_SECTION_TAGS);
@@ -509,6 +510,7 @@ void MessagesDialog::getTagItems(std::map<int, TagItem> &Items)
 
         m_pConfig->beginGroup(*id);
 
+        TagItem Item;
         if (nId < 0) {
             // standard tag
             Item = Items[nId];

@@ -51,6 +51,7 @@ public:
   ~MessagesDialog();
 
 #ifdef STATIC_MSGID
+  static void initStandardTagItems(std::map<int, TagItem> &Items);
   void getTagItems(std::map<int, TagItem> &Items);
   void setTagItems(std::map<int, TagItem> &Items);
 #endif
