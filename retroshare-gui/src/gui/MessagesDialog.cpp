@@ -481,17 +481,17 @@ void MessagesDialog::getTagItems(std::map<int, TagItem> &Items)
     Item.text = tr("Important");
     Item.color = QColor(255, 0, 0).rgb();
     Items [-5] = Item;
-
-    Item.text = tr("Privat");
-    Item.color = QColor(0, 153, 0).rgb();
+    
+    Item.text = tr("Work");
+    Item.color = QColor(255, 153, 0).rgb();
     Items [-4] = Item;
+
+    Item.text = tr("Personal");
+    Item.color = QColor(0, 153, 0).rgb();
+    Items [-3] = Item;
 
     Item.text = tr("Todo");
     Item.color = QColor(51, 51, 255).rgb();
-    Items [-3] = Item;
-
-    Item.text = tr("Work");
-    Item.color = QColor(255, 153, 0).rgb();
     Items [-2] = Item;
 
     Item.text = tr("Later");
