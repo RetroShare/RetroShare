@@ -1274,18 +1274,28 @@ void MessagesDialog::insertMessages()
             switch (listrow) {
             case ROW_INBOX:
                 msgbox = RS_MSG_INBOX;
+                ui.tabWidget->setTabIcon ( 0, QIcon(":/images/folder-inbox.png") );
+                ui.tabWidget->setTabText ( 0, tr ("Inbox") );
                 break;
             case ROW_OUTBOX:
                 msgbox = RS_MSG_OUTBOX;
+                ui.tabWidget->setTabIcon ( 0, QIcon(":/images/folder-outbox.png") );
+                ui.tabWidget->setTabText ( 0, tr ("Outbox") );
                 break;
             case ROW_DRAFTBOX:
                 msgbox = RS_MSG_DRAFTBOX;
+                ui.tabWidget->setTabIcon ( 0, QIcon(":/images/folder-draft.png") );
+                ui.tabWidget->setTabText ( 0, tr ("Drafts") );
                 break;
             case ROW_SENTBOX:
                 msgbox = RS_MSG_SENTBOX;
+                ui.tabWidget->setTabIcon ( 0, QIcon(":/images/folder-sent.png") );
+                ui.tabWidget->setTabText ( 0, tr ("Sent") );
                 break;
             case ROW_TRASHBOX:
                 bTrash = true;
+                ui.tabWidget->setTabIcon ( 0, QIcon(":/images/folder-trash.png") );
+                ui.tabWidget->setTabText ( 0, tr ("Trash") );
                 break;
             default:
                 bFill = false;
