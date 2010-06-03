@@ -9,3 +9,5 @@ qmake libretroshare.pro
 
 mingw32-make
 
+pause
+

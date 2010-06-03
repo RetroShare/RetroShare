@@ -9,3 +9,5 @@ qmake RetroShare.pro
 
 mingw32-make
 
+pause
+
