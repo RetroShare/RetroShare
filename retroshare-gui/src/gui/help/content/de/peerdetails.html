@@ -21,15 +21,43 @@
  ****************************************************************
 -->
 
-<Contents name="RetroShare Help" html="index.html">
-  <Topic id="config" name="Configuring RetroShare" html="config.html">
-    <Topic id="general" name="General Settings" html="config.html" section="general"/>
-    <Topic id="server" name="Server Settings" html="config.html" section="server"/>
-    <Topic id="directories" name="Directories Settings" html="config.html" section="directories"/>
-    <Topic id="appearance" name="Appearance Settings" html="config.html" section="appearance"/>
-  </Topic>
-  <Topic id="commands" name="Commandline Options" html="commandline.html"/>
-  <Topic id="trust" name="Trust Settings" html="peerdetails.html"/>
-  <Topic id="links" name="Helpful Links" html="links.html"/>
-</Contents>
+<html>
+<body>
+
+<h1>Peer Details</h1>
+<hr />
+
+<p>
+Peer Details Trust settings and Signing
+</p>
+
+<a name="trust"/>
+<h3>Trust Settings</h3>
+    <td><img src="qrc:/images/trustsettings.png"/></td>
+<p>
+The trust settings refers to the gnupg web of trust mecanism. <br>
+This trust means how you trust your friends when he is signing other gpg keys. <br>
+If you set your trust to "full", it means that when your friend sign a key, this key will be shown as validated by the web of trust in the network view.</p>
+
+
+<a name="signing"/>
+<h3>Signing</h3>
+<p>
+
+You should sign a key when you are sure that the person who claims ownership on this key is the real owner of the key.  <br>
+When you are sure that the name of the key owner is the real name of the emmitter of this key, you may sign it to confirm it. <br>
+Signing the key will be public unless public discovery is not setted. This means you friends can check if you did sign someone's key.</i>
+</p>
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
 

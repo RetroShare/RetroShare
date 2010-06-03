@@ -50,6 +50,7 @@ ConfCertDialog::ConfCertDialog(QWidget *parent, Qt::WFlags flags)
   connect(ui.make_friend_button, SIGNAL(clicked()), this, SLOT(makeFriend()));
   connect(ui.denyFriendButton, SIGNAL(clicked()), this, SLOT(denyFriend()));
   connect(ui.signKeyButton, SIGNAL(clicked()), this, SLOT(signGPGKey()));
+  connect(ui.trusthelpButton, SIGNAL(clicked()), this, SLOT(showHelpDialog()));
 
 
   ui.applyButton->setToolTip(tr("Apply and Close"));
@@ -176,8 +177,6 @@ void ConfCertDialog::loadDialog()
         }
 
         if (detail.gpg_id == rsPeers->getGPGOwnId()) {
-            ui.gpgSignInfoBrowser->hide();
-            ui.gpgTrustInfoBrowser->hide();
             ui.make_friend_button->hide();
             ui.signGPGKeyCheckBox->hide();
             ui.signKeyButton->hide();
@@ -192,8 +191,6 @@ void ConfCertDialog::loadDialog()
             ui.signersBox->setTitle(tr("Your key is signed by : "));
 
         } else {
-            ui.gpgSignInfoBrowser->show();
-            ui.gpgTrustInfoBrowser->show();
             ui.make_friend_button->show();
             ui.signGPGKeyCheckBox->show();
             ui.signKeyButton->show();
@@ -382,5 +379,21 @@ void ConfCertDialog::signGPGKey() {
                                 QMessageBox::Ok);
     }
     loadDialog();
+}
+
+/** Displays the help browser and displays the most recently viewed help
+ * topic. */
+void ConfCertDialog::showHelpDialog()
+{
+  showHelpDialog(QString("trust"));
+}
+
+/**< Shows the help browser and displays the given help <b>topic</b>. */
+void ConfCertDialog::showHelpDialog(const QString &topic)
+{
+  static HelpBrowser *helpBrowser = 0;
+  if (!helpBrowser)
+    helpBrowser = new HelpBrowser(this);
+  helpBrowser->showWindow(topic);
 }
 

@@ -24,6 +24,8 @@
 #define _CONFCERTDIALOG_H
 
 #include <QDialog>
+#include "gui/help/browser/HelpBrowser.h"
+
 
 #include "ui_ConfCertDialog.h"
 
@@ -69,8 +71,12 @@ private slots:
 	void closeinfodlg();
 	void applyDialog();
 	void makeFriend();
-        void denyFriend();
-        void signGPGKey();
+	void denyFriend();
+	void signGPGKey();
+
+	void showHelpDialog();
+	/** Called when a child window requests the given help <b>topic</b>. */
+	void showHelpDialog(const QString &topic);
 
 private:
 

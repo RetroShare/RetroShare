@@ -6,11 +6,13 @@
     <file>en/config.html</file>
     <file>en/links.html</file>
     <file>en/commandline.html</file>
+    <file>en/peerdetails.html</file>
     <!-- German -->
     <file>de/contents.xml</file>
     <file>de/index.html</file>
     <file>de/links.html</file>
     <file>de/commandline.html</file>
+    <file>de/peerdetails.html</file>
   </qresource>
 </RCC>
 
