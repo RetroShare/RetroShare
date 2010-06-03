@@ -156,6 +156,23 @@ protected:
     }
 };
 
+MessagesDialog::LockUpdate::LockUpdate (MessagesDialog *pDialog, bool bUpdate)
+{
+    m_pDialog = pDialog;
+    m_bUpdate = bUpdate;
+
+    m_pDialog->m_nLockUpdate++;
+}
+
+MessagesDialog::LockUpdate::~LockUpdate ()
+{
+    m_pDialog->m_nLockUpdate = qMax (--m_pDialog->m_nLockUpdate, 0);
+
+    if (m_bUpdate && m_pDialog->m_nLockUpdate == 0) {
+        m_pDialog->insertMessages();
+    }
+}
+
 static int FilterColumnFromComboBox(int nIndex)
 {
     switch (nIndex) {
@@ -205,6 +222,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
     m_bProcessSettings = false;
     m_bInChange = false;
+    m_nLockUpdate = 0;
     m_pConfig = new RSettings (CONFIG_FILE);
 
     connect( ui.messagestreeView, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( messageslistWidgetCostumPopupMenu( QPoint ) ) );
@@ -1216,6 +1234,10 @@ static void InitIconAndFont(RSettings *pConfig, QStandardItem *pItem [COLUMN_COU
 
 void MessagesDialog::insertMessages()
 {
+    if (m_nLockUpdate) {
+        return;
+    }
+
     std::cerr <<"MessagesDialog::insertMessages called";
     fflush(0);
 
@@ -1914,6 +1936,8 @@ bool MessagesDialog::getCurrentMsg(std::string &cid, std::string &mid)
 
 void MessagesDialog::removemessage()
 {
+    LockUpdate Lock (this, true);
+
     QList<QModelIndex> selectedIndexList= ui.messagestreeView->selectionModel() -> selectedIndexes ();
     QList<int> rowList;
     QModelIndex selectedIndex;
@@ -1928,7 +1952,7 @@ void MessagesDialog::removemessage()
     }
 
     bool bDelete = false;
-    int listrow = ui.listWidget -> currentRow();
+    int listrow = ui.listWidget->currentRow();
     if (listrow == ROW_TRASHBOX) {
         bDelete = true;
     } else {
@@ -1937,30 +1961,35 @@ void MessagesDialog::removemessage()
         }
     }
 
-    for(QList<int>::const_iterator it1(rowList.begin());it1!=rowList.end();++it1) {
-        QString mid = MessagesModel->item((*it1),COLUMN_MSGID)->text();
-        if (bDelete) {
-            rsMsgs->MessageDelete(mid.toStdString());
+    for(QList<int>::const_iterator it1 = rowList.begin(); it1 != rowList.end(); it1++) {
+        QStandardItem *pItem = MessagesModel->item((*it1), COLUMN_MSGID);
+        if (pItem) {
+            QString mid = pItem->text();
+            if (bDelete) {
+                rsMsgs->MessageDelete(mid.toStdString());
 
-            // clean locale config
-            m_pConfig->beginGroup(CONFIG_SECTION_UNREAD);
-            m_pConfig->remove (mid);
-            m_pConfig->endGroup();
+                // clean locale config
+                m_pConfig->beginGroup(CONFIG_SECTION_UNREAD);
+                m_pConfig->remove (mid);
+                m_pConfig->endGroup();
 
-            // remove tag
-            m_pConfig->beginGroup(CONFIG_SECTION_TAG);
-            m_pConfig->remove (mid);
-            m_pConfig->endGroup();
-        } else {
-            rsMsgs->MessageToTrash(mid.toStdString(), true);
+                // remove tag
+                m_pConfig->beginGroup(CONFIG_SECTION_TAG);
+                m_pConfig->remove (mid);
+                m_pConfig->endGroup();
+            } else {
+                rsMsgs->MessageToTrash(mid.toStdString(), true);
+            }
         }
     }
 
-    insertMessages();
+    // LockUpdate -> insertMessages();
 }
 
 void MessagesDialog::undeletemessage()
 {
+    LockUpdate (this, true);
+
     QList<int> Rows;
     getSelectedMsgCount (&Rows, NULL, NULL);
     for (int nRow = 0; nRow < Rows.size(); nRow++) {
@@ -1968,7 +1997,7 @@ void MessagesDialog::undeletemessage()
         rsMsgs->MessageToTrash(mid.toStdString(), false);
     }
 
-    insertMessages();
+    // LockUpdate -> insertMessages();
 }
 
 void MessagesDialog::print()

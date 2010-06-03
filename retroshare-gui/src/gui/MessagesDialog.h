@@ -123,6 +123,17 @@ private slots:
 #endif
 
 private:
+  class LockUpdate
+  {
+  public:
+      LockUpdate (MessagesDialog *pDialog, bool bUpdate);
+      ~LockUpdate ();
+
+  private:
+      MessagesDialog *m_pDialog;
+      bool m_bUpdate;
+  };
+
   class QStandardItemModel *MessagesModel;
   QSortFilterProxyModel *proxyModel;
 
@@ -147,6 +158,7 @@ private:
 #endif
   bool m_bProcessSettings;
   bool m_bInChange;
+  int m_nLockUpdate; // use with LockUpdate
 
   enum { LIST_NOTHING,
          LIST_BOX,
