@@ -2312,6 +2312,76 @@ bool 	p3GroupDistrib::locked_updateGroupInfo(GroupInfo &info, RsDistribGrp *newG
 }
 
 
+bool p3GroupDistrib::locked_editGroup(std::string grpId, GroupInfo& gi){
+
+#ifdef DISTRIB_DEBUG
+    std::cerr << "p3GroupDistrib::locked_editGroup() " << grpId << std::endl;
+#endif
+
+    GroupInfo* gi_curr = locked_getGroupInfo(grpId);
+
+    if(gi_curr == NULL){
+
+    std::cerr << "p3GroupDistrib::locked_editGroup() Failed, group does not exist " << grpId
+              << std::endl;
+        return false;
+    }
+
+    if(!(gi_curr->flags & RS_DISTRIB_ADMIN))
+        return false;
+
+
+    gi_curr->grpName = gi.grpName;
+    gi_curr->distribGroup->grpName = gi_curr->grpName;
+    gi_curr->grpDesc = gi.grpDesc;
+    gi_curr->distribGroup->grpDesc = gi_curr->grpDesc;
+
+    if((gi.grpIcon.imageSize != 0) && gi.grpIcon.pngImageData != NULL){
+
+        if((gi_curr->distribGroup->grpPixmap.binData.bin_data != NULL) &&
+           (gi_curr->distribGroup->grpPixmap.binData.bin_len != 0))
+            gi_curr->distribGroup->grpPixmap.binData.TlvClear();
+
+        gi_curr->distribGroup->grpPixmap.binData.bin_data = gi_curr->grpIcon.pngImageData;
+        gi_curr->distribGroup->grpPixmap.binData.bin_len = gi_curr->grpIcon.imageSize;
+
+        gi_curr->grpIcon.imageSize = gi.grpIcon.imageSize;
+        gi_curr->grpIcon.pngImageData = gi.grpIcon.pngImageData;
+
+
+    }
+
+    // create new signature for group
+
+    EVP_PKEY *key_admin = gi_curr->adminKey.key;
+    gi_curr->distribGroup->adminSignature.TlvClear();
+    RsSerialType *serialType = new RsDistribSerialiser();
+    uint32_t size = serialType->size(gi_curr->distribGroup);
+    char* data = new char[size];
+    serialType->serialise(gi_curr->distribGroup, data, &size);
+
+    /* calc and check signature */
+    EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
+    EVP_SignInit(mdctx, EVP_sha1());
+    EVP_SignUpdate(mdctx, data, size);
+
+    unsigned int siglen = EVP_PKEY_size(key_admin);
+    unsigned char sigbuf[siglen];
+    int ans = EVP_SignFinal(mdctx, sigbuf, &siglen, key_admin);
+
+    /* save signature */
+    gi_curr->distribGroup->adminSignature.signData.setBinData(sigbuf, siglen);
+    gi_curr->distribGroup->adminSignature.keyId = grpId;
+
+    mGroupsChanged = true;
+    gi_curr->grpChanged = true;
+    mGroupsRepublish = true;
+
+    delete[] data;
+
+    return true;
+}
+
 bool 	p3GroupDistrib::locked_checkGroupKeys(GroupInfo &info)
 {
 #ifdef DISTRIB_DEBUG
@@ -2453,6 +2523,7 @@ bool 	p3GroupDistrib::locked_checkGroupKeys(GroupInfo &info)
 
 	return true;
 }
+
 
 
 

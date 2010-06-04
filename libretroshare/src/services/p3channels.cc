@@ -430,9 +430,9 @@ RsDistribGrp *p3Channels::locked_createPrivateDistribGrp(GroupInfo &info)
 
 bool p3Channels::channelSubscribe(std::string cId, bool subscribe)
 {
-        #ifdef CHANNEL_DEBUG
+#ifdef CHANNEL_DEBUG
         std::cerr << "p3Channels::channelSubscribe() " << cId << std::endl;
-        #endif
+#endif
 
 	return subscribeToGroup(cId, subscribe);
 }
@@ -444,6 +444,33 @@ bool p3Channels::channelShareKeys(std::string chId, std::list<std::string>& peer
 #endif
 
 	return sharePubKey(chId, peers);
+
+}
+
+bool p3Channels::channelEditInfo(std::string chId, ChannelInfo& info){
+
+#ifdef CHANNEL_DEBUG
+    std::cerr << "p3Channels::channelUdateInfo() " << chId << std::endl;
+#endif
+
+    GroupInfo gi;
+
+    RsStackMutex stack(distribMtx);
+
+    gi.grpName = info.channelName;
+    gi.grpDesc = info.channelDesc;
+
+
+    if((info.pngChanImage != NULL) && (info.pngImageLen != 0)){
+        gi.grpIcon.imageSize = info.pngImageLen;
+        gi.grpIcon.pngImageData = info.pngChanImage;
+    }
+    else{
+        gi.grpIcon.imageSize = 0;
+        gi.grpIcon.pngImageData = NULL;
+    }
+
+    return locked_editGroup(chId, gi);
 
 }
 

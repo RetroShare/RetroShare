@@ -73,6 +73,7 @@ virtual bool channelExtraFileHash(std::string path, std::string chId, FileInfo& 
 virtual bool channelExtraFileRemove(std::string hash, std::string chId);
 virtual bool channelRestoreKeys(std::string chId);
 virtual bool channelShareKeys(std::string chId, std::list<std::string>& peers);
+virtual bool channelEditInfo(std::string chId, ChannelInfo &ci);
 /***************************************************************************************/
 /****************** Event Feedback (Overloaded form p3distrib) *************************/
 /***************************************************************************************/

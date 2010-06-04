@@ -386,6 +386,12 @@ virtual void locked_receivePubKeys();
  */
 virtual void locked_loadRecvdPubKeys();
 
+/**
+ * Allows group admin(s) to change group icon, description and name
+ *
+ */
+virtual bool locked_editGroup(std::string grpId, GroupInfo& gi);
+
 
 /***************************************************************************************/
 /***************************************************************************************/
