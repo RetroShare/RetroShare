@@ -41,7 +41,7 @@
 class ChannelInfo 
 {
 	public:
-	ChannelInfo() {}
+    ChannelInfo() : pngChanImage(NULL), pngImageLen(0) {}
 	std::string  channelId;
 	std::wstring channelName;
 	std::wstring channelDesc;
@@ -195,6 +195,12 @@ virtual bool channelRestoreKeys(std::string chId) = 0;
 virtual bool channelShareKeys(std::string chId, std::list<std::string>& peers) = 0;
 /****************************************/
 
+/*!
+ * allows peers to change information for the channel:
+ * can only change channel image, descriptions and name
+ *
+ */
+virtual bool channelEditInfo(std::string chId, ChannelInfo &ci) = 0;
 };
 
 
