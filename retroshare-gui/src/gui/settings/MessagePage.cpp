@@ -59,12 +59,10 @@ MessagePage::save(QString &errmsg)
 {
     Settings->setMsgSetToReadOnActivate(ui.setMsgToReadOnActivate->isChecked());
 
-#ifdef STATIC_MSGID
     MessagesDialog *pPage = (MessagesDialog*) MainWindow::getPage (MainWindow::Messages);
     if (pPage) {
         pPage->setTagItems (m_TagItems);
     }
-#endif
 
     return true;
 }
@@ -75,7 +73,6 @@ MessagePage::load()
 {
     ui.setMsgToReadOnActivate->setChecked(Settings->getMsgSetToReadOnActivate());
 
-#ifdef STATIC_MSGID
     MessagesDialog *pPage = (MessagesDialog*) MainWindow::getPage (MainWindow::Messages);
     if (pPage) {
         pPage->getTagItems (m_TagItems);
@@ -90,13 +87,6 @@ MessagePage::load()
         ui.deletepushButton->setEnabled(false);
         ui.defaultTagButton->setEnabled(false);
     }
-#else
-    ui.tags_listWidget->setEnabled(false);
-    ui.addpushButton->setEnabled(false);
-    ui.editpushButton->setEnabled(false);
-    ui.deletepushButton->setEnabled(false);
-    ui.defaultTagButton->setEnabled(false);
-#endif
 }
 
 // fill items
@@ -173,9 +163,7 @@ void MessagePage::deleteTag()
 
 void MessagePage::defaultTag()
 {
-#ifdef STATIC_MSGID
     MessagesDialog::initStandardTagItems(m_TagItems);
-#endif
     fillTagItems();
 }
 

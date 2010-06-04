@@ -428,6 +428,11 @@ uint32_t    RsMsgSerialiser::sizeItem(RsMsgItem *item)
 	s += item->msgbcc.TlvSize();
 	s += item->attachment.TlvSize();
 
+	if (m_bConfiguration) {
+		// serialise msgId too
+		s += 4;
+	}
+	
 	return s;
 }
 
@@ -467,6 +472,12 @@ bool     RsMsgSerialiser::serialiseItem(RsMsgItem *item, void *data, uint32_t *p
 	ok &= item->msgbcc.SetTlv(data, tlvsize, &offset);
 
 	ok &= item->attachment.SetTlv(data, tlvsize, &offset);
+
+	if (m_bConfiguration) {
+		// serialise msgId too
+		ok &= setRawUInt32(data, tlvsize, &offset, item->msgId);
+	}
+
 	if (offset != tlvsize)
 	{
 		ok = false;
@@ -520,6 +531,12 @@ RsMsgItem *RsMsgSerialiser::deserialiseItem(void *data, uint32_t *pktsize)
 	ok &= item->msgcc.GetTlv(data, rssize, &offset);
 	ok &= item->msgbcc.GetTlv(data, rssize, &offset);
 	ok &= item->attachment.GetTlv(data, rssize, &offset);
+
+	if (m_bConfiguration) {
+		// deserialise msgId too
+		// ok &= getRawUInt32(data, rssize, &offset, &(item->msgId));
+		getRawUInt32(data, rssize, &offset, &(item->msgId)); //use this line for backward compatibility 
+	}
 
 	if (offset != rssize)
 	{

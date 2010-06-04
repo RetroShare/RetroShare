@@ -179,12 +179,12 @@ std::ostream &print(std::ostream &out, uint16_t indent = 0);
 class RsMsgSerialiser: public RsSerialType
 {
 	public:
-	RsMsgSerialiser()
-	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_MSG)
+	RsMsgSerialiser(bool bConfiguration = false)
+	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_MSG), m_bConfiguration (bConfiguration)
 	{ return; }
 	
 	RsMsgSerialiser(uint16_t type)
-	:RsSerialType(RS_PKT_VERSION_SERVICE, type)
+	:RsSerialType(RS_PKT_VERSION_SERVICE, type), m_bConfiguration (false)
 	{ return; }
 	
 virtual     ~RsMsgSerialiser() { return; }
@@ -200,6 +200,7 @@ virtual	uint32_t    sizeItem(RsMsgItem *);
 virtual	bool        serialiseItem  (RsMsgItem *item, void *data, uint32_t *size);
 virtual	RsMsgItem *deserialiseItem(void *data, uint32_t *size);
 
+	bool m_bConfiguration; // is set to true for saving configuration (enables serialising msgId)
 };
 
 /**************************************************************************/

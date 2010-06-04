@@ -276,10 +276,15 @@ bool    p3MsgService::saveConfiguration()
 	std::string msgfile = Filename();
 	std::string msgfiletmp = Filename()+".tmp";
 
+	if (RsDirUtil::createBackup (msgfile) == false) {
+		getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "File backup error", "Error while backing up file " + msgfile);
+		// no error ?
+	}
+
 	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
 	RsSerialiser *rss = new RsSerialiser();
-	rss->addSerialType(new RsMsgSerialiser());
+	rss->addSerialType(new RsMsgSerialiser(true)); // create serialiser for configuration
 
 	BinFileInterface *out = new BinFileInterface(msgfiletmp.c_str(), BIN_FLAGS_WRITEABLE | BIN_FLAGS_HASH_DATA);
 	pqiarchive *pa_out = new pqiarchive(rss, out, BIN_FLAGS_WRITEABLE | BIN_FLAGS_NO_DELETE);
@@ -312,39 +317,25 @@ bool    p3MsgService::loadConfiguration(std::string &loadHash)
 	std::string msgfile = Filename();
 
 	RsSerialiser *rss = new RsSerialiser();
-	rss->addSerialType(new RsMsgSerialiser());
+	rss->addSerialType(new RsMsgSerialiser(true)); // create serialiser for configuration
 
 	BinFileInterface *in = new BinFileInterface(msgfile.c_str(), BIN_FLAGS_READABLE | BIN_FLAGS_HASH_DATA);
         pqiarchive *pa_in = new pqiarchive(rss, in, BIN_FLAGS_READABLE);
 	RsItem *item;
 	RsMsgItem *mitem;
 
+	std::list<RsMsgItem*> items;
 
+	// load items and calculate next unique msgId
 	while((item = pa_in -> GetItem()))
 	{
 		if (NULL != (mitem = dynamic_cast<RsMsgItem *>(item)))
 		{
-			/* switch depending on the PENDING 
-			 * flags
-			 */
 			/* STORE MsgID */
-			mitem->msgId = getNewUniqueMsgId();
-			if (mitem -> msgFlags & RS_MSG_FLAGS_PENDING)
-			{
-				RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
-
-				//std::cerr << "MSG_PENDING";
-				//std::cerr << std::endl;
-				//mitem->print(std::cerr);
-
-				msgOutgoing[mitem->msgId] = mitem;
+			if (mitem->msgId >= mMsgUniqueId) {
+				mMsgUniqueId = mitem->msgId + 1;
 			}
-			else
-			{
-				RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
-
-				imsg[mitem->msgId] = mitem;
-			}
+			items.push_back(mitem);
 		}
 		else
 		{
@@ -352,9 +343,41 @@ bool    p3MsgService::loadConfiguration(std::string &loadHash)
 		}
 	}
 
+        // sort items into lists
+	std::list<RsMsgItem*>::iterator it;
+	for (it = items.begin(); it != items.end(); it++)
+	{
+		mitem = *it;
+
+		/* STORE MsgID */
+		if (mitem->msgId == 0) {
+		    mitem->msgId = getNewUniqueMsgId();
+		}
+
+		/* switch depending on the PENDING
+		 * flags
+		 */
+		if (mitem -> msgFlags & RS_MSG_FLAGS_PENDING)
+		{
+			RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+
+			//std::cerr << "MSG_PENDING";
+			//std::cerr << std::endl;
+			//mitem->print(std::cerr);
+
+			msgOutgoing[mitem->msgId] = mitem;
+		}
+		else
+		{
+			RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+
+			imsg[mitem->msgId] = mitem;
+		}
+	}
+
 	std::string hashin = in->gethash();
 
-	delete pa_in;	
+	delete pa_in;
 
 	if (hashin != loadHash)
 	{

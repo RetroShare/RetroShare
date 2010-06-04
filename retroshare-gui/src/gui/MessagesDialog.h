@@ -37,9 +37,6 @@
 
 class RSettings;
 
-// Thunder: need a static msgId
-//#define STATIC_MSGID
-
 class MessagesDialog : public MainPage 
 {
   Q_OBJECT
@@ -50,11 +47,9 @@ public:
   /** Default Destructor */
   ~MessagesDialog();
 
-#ifdef STATIC_MSGID
   static void initStandardTagItems(std::map<int, TagItem> &Items);
   void getTagItems(std::map<int, TagItem> &Items);
   void setTagItems(std::map<int, TagItem> &Items);
-#endif
 
 // replaced by shortcut
 //  virtual void keyPressEvent(QKeyEvent *) ;
@@ -71,9 +66,7 @@ private slots:
   void msgfilelistWidgetCostumPopupMenu(QPoint);  
 
   void changeBox( int newrow );
-#ifdef STATIC_MSGID
   void changeTag( int newrow );
-#endif
   void updateCurrentMessage();
   void currentChanged(const QModelIndex&);
   void clicked(const QModelIndex&);
@@ -94,10 +87,8 @@ private slots:
   void removemessage();
   void undeletemessage();
 
-#ifdef STATIC_MSGID
   void markAsRead();
   void markAsUnread();
-#endif
 
   void anchorClicked (const QUrl &);
   
@@ -117,10 +108,8 @@ private slots:
   void filterColumnChanged();
   
   void clearFilter();
-#ifdef STATIC_MSGID
   void tagTriggered(QAction *pAction);
   void tagAboutToShow();
-#endif
 
 private:
   class LockUpdate
@@ -153,19 +142,12 @@ private:
   void processSettings(bool bLoad);
 
   void setToolbarButtonStyle(Qt::ToolButtonStyle style);
-#ifdef STATIC_MSGID
   void fillTags();
-#endif
   bool m_bProcessSettings;
   bool m_bInChange;
   int m_nLockUpdate; // use with LockUpdate
 
-  enum { LIST_NOTHING,
-         LIST_BOX,
-#ifdef STATIC_MSGID
-         LIST_TAG
-#endif
-     } m_eListMode;
+  enum { LIST_NOTHING, LIST_BOX, LIST_TAG } m_eListMode;
 
   std::string mCurrCertId;
   std::string mCurrMsgId;

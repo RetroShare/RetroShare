@@ -30,6 +30,7 @@
 #include <unistd.h>
 
 #include "util/rsdir.h"
+#include "pqi/pqinotify.h"
 #include <string>
 #include <iostream>
 #include <algorithm>
@@ -426,6 +427,60 @@ bool RsDirUtil::renameFile(const std::string& from, const std::string& to)
 	}
 
 	return true ;
+}
+
+bool RsDirUtil::createBackup (std::string sFilename, unsigned int nCount)
+{
+#ifdef WINDOWS_SYS
+    if (GetFileAttributes (sFilename.c_str ()) == -1) {
+        // file doesn't exist
+        return true;
+    }
+
+    // search last backup
+    int nLast;
+    for (nLast = nCount; nLast >= 1; nLast--) {
+        std::ostringstream sStream;
+        sStream << sFilename << nLast << ".bak";
+
+        if (GetFileAttributes (sStream.str ().c_str ()) != -1) {
+            break;
+        }
+    }
+
+    // delete max backup
+    if (nLast == nCount) {
+        std::ostringstream sStream;
+        sStream << sFilename << nCount << ".bak";
+        if (DeleteFile (sStream.str ().c_str ()) == FALSE) {
+            getPqiNotify()->AddSysMessage (0, RS_SYS_WARNING, "File delete error", "Error while deleting file " + sStream.str ());
+            return false;
+        }
+        nLast--;
+    }
+
+    // rename backups
+    for (int nIndex = nLast; nIndex >= 1; nIndex--) {
+        std::ostringstream sStream;
+        sStream << sFilename << nIndex << ".bak";
+        std::ostringstream sStream1;
+        sStream1 << sFilename << nIndex + 1 << ".bak";
+
+        if (renameFile (sStream.str (), sStream1.str ()) == false) {
+            getPqiNotify()->AddSysMessage (0, RS_SYS_WARNING, "File rename error", "Error while renaming file " + sStream.str () + " to " + sStream1.str ());
+            return false;
+        }
+    }
+
+    // copy backup
+    std::ostringstream sStream;
+    sStream << sFilename << 1 << ".bak";
+    if (CopyFile (sFilename.c_str (), sStream.str ().c_str (), FALSE) == FALSE) {
+        getPqiNotify()->AddSysMessage (0, RS_SYS_WARNING, "File rename error", "Error while renaming file " + sFilename + " to " + sStream.str ());
+        return false;
+    }
+#endif
+    return true;
 }
 
 #if 0 // NOT ENABLED YET!
