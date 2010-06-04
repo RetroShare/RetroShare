@@ -72,6 +72,7 @@ private slots:
 
   void showChannelDetails();
   void restoreChannelKeys();
+  void editChannelDetail();
 
 private:
 
@@ -100,6 +101,7 @@ private:
 	QAction* unsubscribechannelAct;
 	QAction* channeldetailsAct;
 	QAction* restoreKeysAct;
+        QAction* editChannelDetailAct;
 
 };
 

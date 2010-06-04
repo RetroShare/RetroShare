@@ -32,6 +32,7 @@
 #include "gui/channels/CreateChannel.h"
 #include "gui/channels/ChannelDetails.h"
 #include "gui/channels/CreateChannelMsg.h"
+#include "gui/channels/EditChanDetails.h"
 
 #include "gui/ChanGroupDelegate.h"
 
@@ -151,7 +152,16 @@ void ChannelFeed::channelListCustomPopupMenu( QPoint point )
       restoreKeysAct = new QAction(QIcon(":/images/settings16.png"), tr("Restore Publish Rights for Channel" ), this );
       connect( restoreKeysAct , SIGNAL( triggered() ), this, SLOT( restoreChannelKeys() ) );
 
-      if (ci.channelFlags & RS_DISTRIB_PUBLISH)
+      editChannelDetailAct = new QAction(QIcon(":/images/settings16.png"), tr("Edit Channel Details"), this);
+      connect( editChannelDetailAct, SIGNAL( triggered() ), this, SLOT( editChannelDetail() ) );
+
+      if(ci.channelFlags & (RS_DISTRIB_PUBLISH | RS_DISTRIB_ADMIN)){
+          contextMnu.addAction( postchannelAct );
+          contextMnu.addSeparator();
+          contextMnu.addAction( channeldetailsAct );
+          contextMnu.addAction( editChannelDetailAct);
+      }
+      else if (ci.channelFlags & RS_DISTRIB_PUBLISH)
       {
         contextMnu.addAction( postchannelAct );
         contextMnu.addSeparator();
@@ -213,6 +223,14 @@ void ChannelFeed::deleteFeedItem(QWidget *item, uint32_t type)
 void ChannelFeed::openChat(std::string peerId)
 {
 	return;
+}
+
+void ChannelFeed::editChannelDetail(){
+    
+    EditChanDetails editUi(this, 0, mChannelId);
+    editUi.exec();
+
+    return;
 }
 
 void ChannelFeed::createMsg()
