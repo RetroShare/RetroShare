@@ -4,7 +4,7 @@ QT     += network xml script opengl
 TEMPLATE = app
 TARGET = RetroShare
 
-DEFINES += RS_RELEASE_VERSION
+#DEFINES += RS_RELEASE_VERSION
 RCC_DIR = temp/qrc
 UI_DIR  = temp/ui
 MOC_DIR = temp/moc
@@ -219,6 +219,7 @@ HEADERS +=  rshare.h \
             gui/channels/CreateChannel.h \
             gui/channels/ChannelDetails.h \
             gui/channels/CreateChannelMsg.h \
+            gui/channels/EditChanDetails.h \
             gui/connect/ConfCertDialog.h \
             gui/msgs/MessageComposer.h \
             gui/msgs/textformat.h \
@@ -317,6 +318,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/channels/CreateChannel.ui \
             gui/channels/CreateChannelMsg.ui \
             gui/channels/ChannelDetails.ui \
+            gui/channels/EditChanDetails.ui \
             gui/chat/PopupChatDialog.ui \
             gui/connect/ConfCertDialog.ui \
             gui/msgs/MessageComposer.ui \
@@ -424,6 +426,7 @@ SOURCES +=  main.cpp \
             gui/channels/CreateChannel.cpp \
             gui/channels/CreateChannelMsg.cpp \
             gui/channels/ChannelDetails.cpp \
+            gui/channels/EditChanDetails.cpp \
             gui/chat/PopupChatDialog.cpp \
             gui/chat/HandleRichText.cpp \
             gui/connect/ConfCertDialog.cpp \
