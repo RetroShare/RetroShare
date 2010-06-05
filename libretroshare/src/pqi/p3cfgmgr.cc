@@ -724,12 +724,22 @@ bool p3Config::backedUpFileSave(const std::string& cfg_fname, const std::string&
 		cfg_file = fopen(cfg_fname.c_str(), "wb");
 
 		if(cfg_file == NULL)
+		{
 			std::cerr << "p3Config::backedUpFileSave()  fopen failed for file:" << cfg_fname << std::endl;
+			return false ;
+		}
 	}
 
 	//determine file size
 	fseek(cfg_file, 0L, SEEK_END);
 	size_file = ftell(cfg_file);
+
+	if(size_file < 0) // ftell returns -1 when fails
+	{
+		fclose(cfg_file);
+		size_file = 0 ;
+	}
+
 	fseek(cfg_file, 0L, SEEK_SET);
 
 #ifdef CONFIG_DEBUG
