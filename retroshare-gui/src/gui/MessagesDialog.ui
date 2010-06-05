@@ -1148,60 +1148,12 @@ border-image: url(:/images/closepressed.png)
              </property>
             </widget>
            </item>
-           <item row="0" column="0">
-            <widget class="QToolButton" name="Folders_Button">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>21</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>140</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="layoutDirection">
-              <enum>Qt::LeftToRight</enum>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">QToolButton#Folders_Button{ 
-background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-stop:0 #FEFEFE, stop:1 #E8E8E8);
-
-border: 1px solid #CCCCCC;}</string>
-             </property>
-             <property name="text">
-              <string>Folders</string>
-             </property>
-             <property name="icon">
-              <iconset resource="images.qrc">
-               <normaloff>:/images/foldermail.png</normaloff>:/images/foldermail.png</iconset>
-             </property>
-             <property name="checkable">
-              <bool>false</bool>
-             </property>
-             <property name="checked">
-              <bool>false</bool>
-             </property>
-             <property name="toolButtonStyle">
-              <enum>Qt::ToolButtonTextBesideIcon</enum>
-             </property>
-             <property name="autoRaise">
-              <bool>true</bool>
-             </property>
-             <property name="arrowType">
-              <enum>Qt::NoArrow</enum>
-             </property>
-            </widget>
-           </item>
            <item row="2" column="0">
             <widget class="QToolButton" name="Tags_Button">
              <property name="minimumSize">
               <size>
                <width>0</width>
-               <height>21</height>
+               <height>22</height>
               </size>
              </property>
              <property name="maximumSize">
@@ -1271,6 +1223,45 @@ border: 1px solid #CCCCCC;}</string>
              </property>
              <property name="text">
               <string>Total Sent:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QPushButton" name="Folders_Button">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>22</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>140</width>
+               <height>22</height>
+              </size>
+             </property>
+             <property name="layoutDirection">
+              <enum>Qt::LeftToRight</enum>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">QPushButton#Folders_Button{ 
+background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+stop:0 #FEFEFE, stop:1 #E8E8E8);
+border: 1px solid #CCCCCC;
+text-align: left;
+padding: 4px;
+}
+
+</string>
+             </property>
+             <property name="text">
+              <string>Folders</string>
+             </property>
+             <property name="checkable">
+              <bool>false</bool>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
              </property>
             </widget>
            </item>
