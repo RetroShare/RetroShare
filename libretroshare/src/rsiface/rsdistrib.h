@@ -30,6 +30,7 @@
 #define RS_DISTRIB_PRIVACY_MASK		0x000f   /* who can publish & view */
 #define RS_DISTRIB_AUTHEN_MASK		0x00f0   /* how to publish */
 #define RS_DISTRIB_LISTEN_MASK		0x0f00   /* distribution flags */
+#define RS_DISTRIB_UPDATE_MASK 		0xf000   /* if sending a group info update */
 
 #define RS_DISTRIB_PUBLIC		0x0001   /* anyone can publish */
 #define RS_DISTRIB_PRIVATE		0x0002   /* anyone with key can publish */
@@ -41,6 +42,8 @@
 #define RS_DISTRIB_ADMIN		0x0100   
 #define RS_DISTRIB_PUBLISH		0x0200   
 #define RS_DISTRIB_SUBSCRIBED		0x0400   
+
+#define RS_DISTRIB_UPDATE		0x1000
 
 
 #endif

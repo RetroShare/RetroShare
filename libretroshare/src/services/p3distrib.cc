@@ -894,6 +894,8 @@ void 	p3GroupDistrib::publishDistribGroups()
 			{
 				/* store in Cache File */
 				store->SendItem(grp); /* no delete */
+
+				grp->grpFlags &= (~RS_DISTRIB_UPDATE); // if this is an update, ensure flag is removed after publication
 			}
 
 			/* if they have public keys, publish these too */
@@ -2223,7 +2225,7 @@ bool 	p3GroupDistrib::locked_checkGroupInfo(GroupInfo &info, RsDistribGrp *newGr
 	/* groupInfo */
 
 	/* If adminKey is the same and 
-	 * timestamp is <= timestamp, 
+	 * timestamp is <= timestamp, or not an update (info edit)
 	 * then just discard it.
 	 */
 
@@ -2237,7 +2239,7 @@ bool 	p3GroupDistrib::locked_checkGroupInfo(GroupInfo &info, RsDistribGrp *newGr
 	}
 
 	if ((info.distribGroup) && 
-		(info.distribGroup->timestamp <= newGrp->timestamp))
+		((info.distribGroup->timestamp <= newGrp->timestamp) && !(newGrp->grpFlags & RS_DISTRIB_UPDATE)))
 	{
 #ifdef DISTRIB_DEBUG
 		std::cerr << "p3GroupDistrib::locked_checkGroupInfo() Group Data Old/Same";
@@ -2246,7 +2248,6 @@ bool 	p3GroupDistrib::locked_checkGroupInfo(GroupInfo &info, RsDistribGrp *newGr
 		/* old or same info -> drop it */
 		return false;
 	}
-
 
 	/* otherwise validate it */
 	return validateDistribGrp(newGrp);
@@ -2350,6 +2351,8 @@ bool p3GroupDistrib::locked_editGroup(std::string grpId, GroupInfo& gi){
 
 
     }
+
+	gi_curr->distribGroup->grpFlags |= RS_DISTRIB_UPDATE;
 
     // create new signature for group
 
