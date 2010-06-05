@@ -64,7 +64,7 @@
 #define IMAGE_ONLINE             ":/images/user/identity24.png"
 #define IMAGE_AWAY               ":/images/user/identity24away.png"
 #define IMAGE_BUSY               ":/images/user/identity24busy.png"
-#define IMAGE_INACTIVE           ":/images/user/identity24away.png"
+#define IMAGE_INACTIVE           ":/images/user/identity24idle.png"
 #define IMAGE_OFFLINE            ":/images/user/identityoffline24.png"
 #define IMAGE_OFFLINE2           ":/images/user/identitylightgrey24.png"
 #define IMAGE_AVAIBLE            ":/images/user/identityavaiblecyan24.png"
