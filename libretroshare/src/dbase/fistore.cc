@@ -24,11 +24,12 @@
 #include "dbase/fistore.h"
 #include "rsiface/rsexpr.h"
 #include "serialiser/rsserviceids.h"
+#include "pqi/p3connmgr.h"
 
 FileIndexStore::FileIndexStore(CacheStrapper *cs, CacheTransfer *cft,
-		NotifyBase *cb_in, RsPeerId ownid, std::string cachedir)
+		NotifyBase *cb_in,p3ConnectMgr *cnmgr, RsPeerId ownid, std::string cachedir)
 	:CacheStore(RS_SERVICE_TYPE_FILE_INDEX, false, cs, cft, cachedir),
-		localId(ownid), localindex(NULL), cb(cb_in)
+		localId(ownid), localindex(NULL), cb(cb_in),mConnMgr(cnmgr)
 {
 	return;
 }
@@ -79,47 +80,60 @@ int FileIndexStore::loadCache(const CacheData &data)
 	}
 
 	/* load Cache */
+
 	FileIndex *finew = new FileIndex(data.pid);
 
-	if (finew->loadIndex(data.path + '/' + data.name, data.hash, data.size))
+	if(mConnMgr->isFriend(data.pid))
 	{
+		// We discard file lists from non friends. This is the place to remove file lists of deleted friends
+		// from the cache. Doing this, the file list still shows in a session where we deleted a friend, but will be removed
+		// at next restart.
+		//
+		if (finew->loadIndex(data.path + '/' + data.name, data.hash, data.size))
+		{
 #ifdef FIS_DEBUG2
-		std::cerr << "FileIndexStore::loadCache() Succeeded!" << std::endl;
+			std::cerr << "FileIndexStore::loadCache() Succeeded!" << std::endl;
 #endif
-		/* set the name */
-		finew->root->name = data.pname;
-		if (local)
-		{
-			localindex = finew;
-		}
-		else
-		{
-			indices[data.pid] = finew;
-		}
-		delete fiold;
+			/* set the name */
+			finew->root->name = data.pname;
 
-		/* store in tale */
-		locked_storeCacheEntry(data);
-	}
-	else
-	{
-#ifdef FIS_DEBUG2
-		std::cerr << "FileIndexStore::loadCache() Failed!" << std::endl;
-#endif
-		/* reinstall the old one! */
-		delete finew;
-		if (fiold)
-		{
 			if (local)
 			{
-				localindex = fiold;
+				localindex = finew;
 			}
 			else
 			{
-				indices[data.pid] = fiold;
+				indices[data.pid] = finew;
+			}
+			delete fiold;
+
+			/* store in tale */
+			locked_storeCacheEntry(data);
+		}
+		else
+		{
+#ifdef FIS_DEBUG2
+			std::cerr << "FileIndexStore::loadCache() Failed!" << std::endl;
+#endif
+			/* reinstall the old one! */
+			delete finew;
+			if (fiold)
+			{
+				if (local)
+				{
+					localindex = fiold;
+				}
+				else
+				{
+					indices[data.pid] = fiold;
+				}
 			}
 		}
 	}
+#ifdef FIS_DEBUG
+	else
+		std::cerr << "Discarding file list from deleted peer " << data.pid << std::endl ;
+#endif
 
 	/* need to correct indices(row) for the roots of the FileIndex */
 	int i = 0;

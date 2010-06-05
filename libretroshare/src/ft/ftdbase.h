@@ -33,6 +33,8 @@
  * So they work in the ft world.
  */
 
+class p3ConnectMgr ;
+
 #include "ft/ftsearch.h"
 #include "pqi/p3cfgmgr.h"
 
@@ -45,6 +47,7 @@ class ftFiStore: public FileIndexStore, public ftSearch
 {
 	public:
 	ftFiStore(CacheStrapper *cs, CacheTransfer *cft, NotifyBase *cb_in,
+					p3ConnectMgr *,
                         RsPeerId ownid, std::string cachedir);
 
 	/* overloaded search function */

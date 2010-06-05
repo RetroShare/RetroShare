@@ -135,7 +135,7 @@ void ftServer::SetupFtServer(NotifyBase *cb)
 
 
 	/* Make Cache Source/Store */
-	mFiStore = new ftFiStore(mCacheStrapper, mFtController, cb, ownId, remotecachedir);
+	mFiStore = new ftFiStore(mCacheStrapper, mFtController, cb,mConnMgr, ownId, remotecachedir);
 	mFiMon = new ftFiMonitor(mCacheStrapper,cb, localcachedir, ownId);
 
 	/* now add the set to the cachestrapper */
