@@ -49,6 +49,9 @@ GenCertDialog::GenCertDialog(QWidget *parent, Qt::WFlags flags)
   //connect(ui.friendBox, SIGNAL(stateChanged(int)), this, SLOT(checkChanged(int)));
 
   //ui.genName->setFocus(Qt::OtherFocusReason);
+  
+  QString titleString("<span style=\"font-size:17pt; font-weight:500;"
+                               "color:white;\">%1</span>");
 
     /* get all available pgp private certificates....
      * mark last one as default.
@@ -74,11 +77,17 @@ GenCertDialog::GenCertDialog(QWidget *parent, Qt::WFlags flags)
     if (foundGPGKeys) {
         ui.no_gpg_key_label->hide();
         ui.new_gpg_key_checkbox->setChecked(false);
+        setWindowTitle(tr("Create new Location"));
+        ui.genButton->setText(tr("Generate new Location"));
+        ui.label_3->setText( titleString.arg( tr("Create a new Location") ) ) ;
         genNewGPGKey = false;
     } else {
         ui.no_gpg_key_label->show();
         ui.new_gpg_key_checkbox->setChecked(true);
         ui.new_gpg_key_checkbox->hide();
+        setWindowTitle(tr("Create new Profile"));
+        ui.genButton->setText(tr("Generate new Profile"));
+        ui.label_3->setText( titleString.arg( tr("Create a new Profile") ) ) ;
         genNewGPGKey = true;
     }
     newGPGKeyGenUiSetup();
@@ -115,6 +124,10 @@ void GenCertDialog::closeinfodlg()
 }
 
 void GenCertDialog::newGPGKeyGenUiSetup() {
+
+    QString titleStr("<span style=\"font-size:17pt; font-weight:500;"
+                               "color:white;\">%1</span>");
+
     if (ui.new_gpg_key_checkbox->isChecked()) {
         genNewGPGKey = true;
         ui.name_label->show();
@@ -125,6 +138,9 @@ void GenCertDialog::newGPGKeyGenUiSetup() {
         ui.password_input->show();
         ui.genPGPuserlabel->hide();
         ui.genPGPuser->hide();
+        setWindowTitle(tr("Create new Profile"));
+        ui.genButton->setText(tr("Generate new Profile"));
+        ui.label_3->setText( titleStr.arg( tr("Create a new Profile") ) ) ;
     } else {
         genNewGPGKey = false;
         ui.name_label->hide();
@@ -135,6 +151,9 @@ void GenCertDialog::newGPGKeyGenUiSetup() {
         ui.password_input->hide();
         ui.genPGPuserlabel->show();
         ui.genPGPuser->show();
+        setWindowTitle(tr("Create new Location"));
+        ui.genButton->setText(tr("Generate new Location"));
+        ui.label_3->setText( titleStr.arg( tr("Create a new Location") ) ) ;
     }
 }
 void GenCertDialog::genPerson()
