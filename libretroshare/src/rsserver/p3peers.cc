@@ -1137,10 +1137,15 @@ int ensureExtension(std::string &name, std::string def_ext)
 
 
 RsPeerDetails::RsPeerDetails()
-        :trustLvl(0), ownsign(false), state(0), netMode(0),
-	lastConnect(0), connectPeriod(0)
+        :isOnlyGPGdetail(false),
+	 id(""),gpg_id(""),
+	 name(""),email(""),location(""),
+	org(""),issuer(""),fpr(""),authcode(""),
+		  trustLvl(0), validLvl(0),ownsign(false), 
+	hasSignedMe(false),accept_connection(false),
+	state(0),localAddr(""),localPort(0),extAddr(""),extPort(0),netMode(0),visState(0),
+	lastConnect(0),autoconnect(""),connectPeriod(0)
 {
-	return;
 }
 
 std::ostream &operator<<(std::ostream &out, const RsPeerDetails &detail)

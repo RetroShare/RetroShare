@@ -30,9 +30,9 @@
 
 //#define DB_DEBUG 1
 
-ftFiStore::ftFiStore(CacheStrapper *cs, CacheTransfer *cft, NotifyBase *cb_in,
+ftFiStore::ftFiStore(CacheStrapper *cs, CacheTransfer *cft, NotifyBase *cb_in,p3ConnectMgr *cnmgr,
                         RsPeerId ownid, std::string cachedir)
-	:FileIndexStore(cs, cft, cb_in, ownid, cachedir)
+	:FileIndexStore(cs, cft, cb_in,cnmgr, ownid, cachedir)
 {
 	return;
 }

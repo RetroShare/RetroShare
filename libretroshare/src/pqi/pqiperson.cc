@@ -115,7 +115,7 @@ int	pqiperson::tick()
         //if lastHeartbeatReceived is 0, it might be not activated so don't do a net reset.
         if (active &&
             lastHeartbeatReceived != 0 &&
-            (time(NULL) - lastHeartbeatReceived) > HEARTBEAT_REPEAT_TIME * 10) {
+            (time(NULL) - lastHeartbeatReceived) > HEARTBEAT_REPEAT_TIME * 5) {
             pqioutput(PQL_WARNING, pqipersonzone, "pqiperson::tick() No heartbeat from the peer, assume connection is dead.");
             this->reset();
         }
