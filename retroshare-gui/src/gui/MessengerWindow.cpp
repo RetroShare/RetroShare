@@ -343,6 +343,8 @@ void  MessengerWindow::insertPeers()
             gpg_item->setData(0, Qt::UserRole, true);            
 
             gpg_item -> setTextAlignment(0, Qt::AlignLeft | Qt::AlignVCenter );
+            
+            gpg_item -> setSizeHint(0,  QSize( 27,27 ) ); 
 
             /* not displayed, used to find back the item */
             gpg_item -> setText(3, QString::fromStdString(detail.id));
@@ -468,65 +470,87 @@ void  MessengerWindow::insertPeers()
 
                 for(; it != statusInfo.end() ; it++){
 
-                    std::list<std::string>::iterator cont_it = sslContacts.begin();
+                std::list<std::string>::iterator cont_it = sslContacts.begin();
 
-                    // don't forget the kids
-                    for(;  cont_it != sslContacts.end(); cont_it++){
+                // don't forget the kids
+                for(;  cont_it != sslContacts.end(); cont_it++){
 
 
-                        if((it->id == *cont_it) && (rsPeers->isOnline(*cont_it))){
+                if((it->id == *cont_it) && (rsPeers->isOnline(*cont_it))){
 
 								std::string status;
 								rsStatus->getStatusString(it->status, status);
 								gpg_item -> setText(1, QString::fromStdString(status));
+								
+                  QFont font;
+                  font.setBold(true);
 
-                                unsigned char *data = NULL;
-                                int size = 0 ;
-                                rsMsgs->getAvatarData(it->id ,data,size);
+                  unsigned char *data = NULL;
+                  int size = 0 ;
+                  rsMsgs->getAvatarData(it->id ,data,size);
 
-                                if(size != 0){
+                  if(size != 0){
 
-                                    QPixmap avatar ;
-                                    avatar.loadFromData(data,size,"PNG") ;
-                                    QIcon avatar_icon(avatar);
-                                    QSize av_icon_size(100, 100);
-                                    gpg_item-> setIcon(1, avatar_icon);
-                                    delete[] data;
+                  QPixmap avatar ;
+                  avatar.loadFromData(data,size,"PNG") ;
+                  QIcon avatar_icon(avatar);
+                  QSize av_icon_size(100, 100);
+                  gpg_item-> setIcon(1, avatar_icon);
+                  delete[] data;
 
-                                }else
-                                {
-                                    gpg_item -> setIcon(1,(QIcon(":/images/no_avatar_70.png")));
-                                }
-                                if(it->status == RS_STATUS_INACTIVE){
-                                	gpg_item -> setIcon(0,(QIcon(IMAGE_INACTIVE)));
-									gpg_item -> setToolTip(0, tr("Peer Idle"));
-                                }
-                                else
-                                if(it->status == RS_STATUS_ONLINE){
-                                   gpg_item -> setIcon(0,(QIcon(IMAGE_ONLINE)));
-								   gpg_item -> setToolTip(0, tr("Peer Online"));
-                                }
-                                else
-                                if(it->status == RS_STATUS_AWAY){
-                                   gpg_item -> setIcon(0,(QIcon(IMAGE_AWAY)));
-								   gpg_item -> setToolTip(0, tr("Peer Away"));
-                                }
-                                else
-                                if(it->status == RS_STATUS_BUSY){
-                                   gpg_item -> setIcon(0,(QIcon(IMAGE_BUSY)));
-                                   gpg_item -> setToolTip(0, tr("Peer Busy"));
-                                }
-                        }
+                  }else
+                  {
+                    gpg_item -> setIcon(1,(QIcon(":/images/no_avatar_70.png")));
+                  }
+                  if(it->status == RS_STATUS_INACTIVE)
+                  {
+                    gpg_item -> setIcon(0,(QIcon(IMAGE_INACTIVE)));
+                    gpg_item -> setToolTip(0, tr("Peer Idle"));
+                    
+                    for(i = 0; i < 3; i++) {
+                    gpg_item -> setTextColor(i,(Qt::gray));
+                    gpg_item -> setFont(i,font);
+                    }                    
+                  }
+                  else
+                  if(it->status == RS_STATUS_ONLINE)
+                  {
+                    gpg_item -> setIcon(0,(QIcon(IMAGE_ONLINE)));
+                    gpg_item -> setToolTip(0, tr("Peer Online"));
+                    
+                    for(i = 0; i < 3; i++) {
+                    gpg_item -> setTextColor(i,(Qt::darkBlue));
+                    gpg_item -> setFont(i,font);
                     }
+                  }
+                  else
+                  if(it->status == RS_STATUS_AWAY)
+                  {
+                    gpg_item -> setIcon(0,(QIcon(IMAGE_AWAY)));
+                    gpg_item -> setToolTip(0, tr("Peer Away"));
+                    
+                    for(i = 0; i < 3; i++) {
+                    gpg_item -> setTextColor(i,(Qt::gray));
+                    gpg_item -> setFont(i,font);
+                    } 
+                  }
+                  else
+                  if(it->status == RS_STATUS_BUSY)
+                  {
+                    gpg_item -> setIcon(0,(QIcon(IMAGE_BUSY)));
+                    gpg_item -> setToolTip(0, tr("Peer Busy"));
+                    
+                    for(i = 0; i < 3; i++) {
+                    gpg_item -> setTextColor(i,(Qt::gray));
+                    gpg_item -> setFont(i,font);
+                    } 
+                  }
+                  
+                  }
+                 }
                 }
 
                                 
-                QFont font;
-                font.setBold(true);
-                for(i = 0; i < 3; i++) {
-                    gpg_item -> setTextColor(i,(Qt::darkBlue));
-                    gpg_item -> setFont(i,font);
-                }
             } else if (gpg_online) {
                 gpg_item->setHidden(ui.actionHide_Offline_Friends->isChecked());
                 gpg_item -> setIcon(0,(QIcon(IMAGE_AVAIBLE)));
