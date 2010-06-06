@@ -146,9 +146,8 @@ p3ConnectMgr::p3ConnectMgr()
 	ownState.netMode = RS_NET_MODE_UDP;
 	ownState.netMode |= RS_NET_MODE_TRY_UPNP;
 
-	//use_extr_addr_finder = true ;
-	use_extr_addr_finder = false;
-        allow_tunnel_connection = true;
+	use_extr_addr_finder = true ;
+	allow_tunnel_connection = true;
 	mExtAddrFinder = new ExtAddrFinder;
 	mNetInitTS = 0;
 
