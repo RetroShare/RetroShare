@@ -339,9 +339,6 @@ void PopupChatDialog::sendChat()
 	QTextEdit *chatWidget = ui.chattextEdit;
 
         ChatInfo ci;
-        
-
-	
 
 	{
           rsiface->lockData(); /* Lock Interface */
@@ -784,7 +781,6 @@ void PopupChatDialog::fileHashingFinished(AttachFileItem* file)
 
 	ChatInfo ci;
 
-
 	{
 	  rsiface->lockData(); /* Lock Interface */
 	  const RsConfig &conf = rsiface->getConfig();
@@ -795,28 +791,13 @@ void PopupChatDialog::fileHashingFinished(AttachFileItem* file)
 	  rsiface->unlockData(); /* Unlock Interface */
 	}
 
-	std::string mesgString = RetroShareLink(QString::fromStdString(file->FileName()),file->FileSize(),QString::fromStdString(file->FileHash())).toHtml().toStdString() ;
+        QString message = RetroShareLink(QString::fromStdString(file->FileName()),file->FileSize(),QString::fromStdString(file->FileHash())).toHtml();
 
 #ifdef CHAT_DEBUG
-	    std::cerr << "PopupChatDialog::anchorClicked mesgString : " << mesgString << std::endl;
+            std::cerr << "PopupChatDialog::anchorClicked message : " << message.toStdString() << std::endl;
 #endif
 
-	const char * messageString = mesgString.c_str ();
-
-	//convert char massageString to w_char
-	wchar_t* message;
-	int requiredSize = mbstowcs(NULL, messageString, 0); // C4996
-	/* Add one to leave room for the NULL terminator */
-	message = (wchar_t *)malloc( (requiredSize + 1) * sizeof( wchar_t ));
-	if (! message) {
-	    std::cerr << ("Memory allocation failure.\n");
-	}
-	int size = mbstowcs( message, messageString, requiredSize + 1); // C4996
-	if (size == (size_t) (-1)) {
-	   printf("Couldn't convert string--invalid multibyte character.\n");
-	}
-
-	ci.msg = message;
+        ci.msg = message.toStdWString();
 	ci.chatflags = RS_CHAT_PRIVATE;
 
 	addChatMsg(&ci);
