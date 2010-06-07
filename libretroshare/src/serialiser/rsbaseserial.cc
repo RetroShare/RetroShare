@@ -204,7 +204,7 @@ bool getRawString(void *data, uint32_t size, uint32_t *offset, std::string &outS
 		return false;
 	}
 	uint8_t *buf = &(((uint8_t *) data)[*offset]);
-	for (int i = 0; i < len; i++)
+        for (uint32_t i = 0; i < len; i++)
 	{
 		outStr += buf[i];
 	}

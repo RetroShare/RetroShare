@@ -48,35 +48,35 @@ std::string cleanUpCertificate(std::string badCertificate)
 	*/
 	char * cleanCertificate=new char[badCertificate.length()+100];
 	//The entire certificate begin tag
-	char * beginCertTag="-----BEGIN";
+        const char * beginCertTag="-----BEGIN";
 	//The entire certificate end tag
-	char * endCertTag="-----END"; 
+        const char * endCertTag="-----END";
 	//Tag containing dots. The common part of both start and end tags 
-	char * commonTag="-----";
+        const char * commonTag="-----";
 	//Only BEGIN part of the begin tag
-	char * beginTag="BEGIN";
+        const char * beginTag="BEGIN";
 	//Only END part of the end tag
-	char * endTag="END";
+        const char * endTag="END";
 	//The start index of the ----- part of the certificate begin tag
-	int beginCertStartIdx1=0;
+        size_t beginCertStartIdx1=0;
 	//The start index of the BEGIN part of the certificate begin tag
-	int beginCertStartIdx2=0;
+        size_t beginCertStartIdx2=0;
 	//The start index of the end part(-----) of the certificate begin tag. The begin tag ends with -----. Example -----BEGIN XPGP CERTIFICATE-----
-	int beginCertEndIdx=0;
+        size_t beginCertEndIdx=0;
 	//The start index of the ----- part of the certificate end tag
-	int endCertStartIdx1=0;
+        size_t endCertStartIdx1=0;
 	//The start index of the END part of the certificate end tag
-	int endCertStartIdx2=0;
+        size_t endCertStartIdx2=0;
 	//The start index of the end part(-----) of the certificate end tag. The begin tag ends with -----. Example -----BEGIN XPGP CERTIFICATE-----
-	int endCertEndIdx=0;
+        size_t endCertEndIdx=0;
 	//The length of the bad certificate.
-	int lengthOfCert=badCertificate.length();
+        size_t lengthOfCert=badCertificate.length();
 	//The current index value in the cleaned certificate.
-	int currCleanCertIdx=0;
+        size_t currCleanCertIdx=0;
 	//The current index value in the bad certificate
-	int currBadCertIdx=0;
+        size_t currBadCertIdx=0;
 	//Temporary index value
-	int tmpIdx=0;
+        size_t tmpIdx=0;
 	//Boolean flag showing if the begin tag or the end tag has been found
 	bool found=false;
 	/*
@@ -94,7 +94,7 @@ std::string cleanUpCertificate(std::string badCertificate)
 		if(beginCertStartIdx2!=std::string::npos)
 		{
 			found=true;
-			for(int i=beginCertStartIdx1+strlen(commonTag);i<beginCertStartIdx2;i++)
+                        for(size_t i=beginCertStartIdx1+strlen(commonTag);i<beginCertStartIdx2;i++)
 			{
 				if(badCertificate[i]!=' ' && badCertificate[i]!='\n' )
 				{
@@ -139,7 +139,7 @@ std::string cleanUpCertificate(std::string badCertificate)
 		if(endCertStartIdx2!=std::string::npos)
 		{
 			found=true;
-			for(int i=endCertStartIdx1+strlen(commonTag);i<endCertStartIdx2;i++)
+                        for(size_t i=endCertStartIdx1+strlen(commonTag);i<endCertStartIdx2;i++)
 			{
 				if(badCertificate[i]!=' '&& badCertificate[i]!='\n')
 				{
@@ -171,7 +171,7 @@ std::string cleanUpCertificate(std::string badCertificate)
 	/*
 	Copying the begin tag(-----BEGIN) to the clean certificate
 	*/
-	for(int i=0;i<strlen(beginCertTag);i++)
+        for(size_t i=0;i<strlen(beginCertTag);i++)
 	{
 		cleanCertificate[currCleanCertIdx+i]=beginCertTag[i];
 				
@@ -209,7 +209,7 @@ std::string cleanUpCertificate(std::string badCertificate)
 	/*
 	Copying the end part of the certificate start tag(-----). 
 	*/
-	for(int i=0;i<strlen(commonTag);i++)
+        for(size_t i=0;i<strlen(commonTag);i++)
 	{
 		cleanCertificate[currCleanCertIdx]='-';
 		currCleanCertIdx++;
@@ -282,7 +282,7 @@ std::string cleanUpCertificate(std::string badCertificate)
 	Copying the begining part of the certificate end tag. Copying
 	-----END part of the tag.
 	*/
-	for(int i=0;i<strlen(endCertTag);i++)
+        for(size_t i=0;i<strlen(endCertTag);i++)
 	{
 		cleanCertificate[currCleanCertIdx+i]=endCertTag[i];
 				
@@ -321,7 +321,7 @@ std::string cleanUpCertificate(std::string badCertificate)
 	/*
 	Copying the end part(-----) of the end tag in the certificate. 
 	*/	
-	for(int i=0;i<strlen(commonTag);i++)
+        for(size_t i=0;i<strlen(commonTag);i++)
 	{
 		cleanCertificate[currCleanCertIdx]='-';
 		currCleanCertIdx++;
@@ -333,29 +333,25 @@ std::string cleanUpCertificate(std::string badCertificate)
 	Copying over the cleaned certificate to a new buffer.
 	*/
 	char * cleanCert=new char[currCleanCertIdx+1];
-	for(int i=0;i<currCleanCertIdx;i++ )
+        for(size_t i=0;i<currCleanCertIdx;i++ )
 	{
 		cleanCert[i]=cleanCertificate[i];
 	}
 	cleanCert[currCleanCertIdx]='\0';
 	std::string  cleanCertificateStr=cleanCert;
-	delete cleanCertificate;
-	//delete cleanCert;
+        delete[] cleanCertificate;
+        delete[] cleanCert;
+
 	return  cleanCertificateStr;
-
-
-
-
-
 }
 
 int findEndIdxOfCertStartTag(std::string badCertificate)
 {
-	int idxTag1=0;
-	int tmpIdx=0;
-	int idxTag2=0;
-	char * tag1="---";
-	char * tag2="---";
+        size_t idxTag1=0;
+        size_t tmpIdx=0;
+        size_t idxTag2=0;
+        const char * tag1="---";
+        const char * tag2="---";
 	bool found=false;
 	while(found==false && (idxTag1=badCertificate.find(tag1,tmpIdx))!=std::string::npos)
 	{
@@ -364,7 +360,7 @@ int findEndIdxOfCertStartTag(std::string badCertificate)
 		if(idxTag2!=std::string::npos)
 		{
 			found=true;
-			for(int i=idxTag1+strlen(tag1);i<idxTag2;i++)
+                        for(size_t i=idxTag1+strlen(tag1);i<idxTag2;i++)
 			{
 				if(badCertificate[i]!=' ')
 				{

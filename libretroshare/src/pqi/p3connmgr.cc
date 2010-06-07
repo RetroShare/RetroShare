@@ -3691,7 +3691,7 @@ void peerConnectState::updateIpAddressList(const IpAddressTimed& ipTimed)
 	// 5 - cut to the fixed number of retained addresses.
 	
 	std::list<IpAddressTimed>::iterator it ;
-	int cnt = 0 ;
+        uint32_t cnt = 0 ;
 	for(it = ipAddressList.begin(); it!=(ipAddressList.end()) ;) 
 		if(cnt >= PEER_IP_CONNECT_STATE_MAX_LIST_SIZE)
 		{

@@ -106,7 +106,7 @@ gpg_error_t pgp_pwd_callback(void *hook, const char *uid_hint, const char *passp
 }
 
 AuthGPG::AuthGPG()
-        :gpgmeInit(false),gpgmeKeySelected(false),p3Config(CONFIG_TYPE_AUTHGPG)
+        :p3Config(CONFIG_TYPE_AUTHGPG),gpgmeInit(false),gpgmeKeySelected(false)
 {
         {
             RsStackReadWriteMutex stack(pgpMtx, RsReadWriteMutex::WRITE_LOCK); /******* LOCKED ******/

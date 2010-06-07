@@ -403,7 +403,7 @@ X509 *SignX509Certificate(X509_NAME *issuer, EVP_PKEY *privkey, X509_REQ *req, l
 
 
 AuthSSL::AuthSSL()
-        :init(0), sslctx(NULL), own_private_key(NULL), own_public_key(NULL), p3Config(CONFIG_TYPE_AUTHSSL)
+        : p3Config(CONFIG_TYPE_AUTHSSL), init(0), sslctx(NULL), own_private_key(NULL), own_public_key(NULL)
 {
 }
 

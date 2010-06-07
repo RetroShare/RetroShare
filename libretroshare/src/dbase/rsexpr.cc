@@ -82,7 +82,7 @@ bool PathExpression::eval(FileEntry *file){
 bool ExtExpression::eval(FileEntry *file){
 	std::string ext;
 	/*Get the part of the string after the last instance of . in the filename */
-	unsigned int index = file->name.find_last_of('.');
+	size_t index = file->name.find_last_of('.');
 	if (index != std::string::npos) {
 		ext = file->name.substr(index+1);
 		if (ext != "" ){
