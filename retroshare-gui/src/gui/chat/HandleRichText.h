@@ -103,7 +103,7 @@ public:
 };
 
 
-void embedHtml(QDomDocument& doc, QDomElement& currentElement, const EmbedInHtml& embedInfos);
+void embedHtml(QDomDocument& doc, QDomElement& currentElement, EmbedInHtml& embedInfos);
 
 
 } // namespace RsChat
