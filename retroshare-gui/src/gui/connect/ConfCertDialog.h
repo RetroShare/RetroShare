@@ -24,7 +24,7 @@
 #define _CONFCERTDIALOG_H
 
 #include <QDialog>
-#include "gui/help/browser/HelpBrowser.h"
+#include "gui/help/browser/helpbrowser.h"
 
 
 #include "ui_ConfCertDialog.h"
