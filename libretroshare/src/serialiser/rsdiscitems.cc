@@ -36,6 +36,7 @@
 /***
 #define RSSERIAL_DEBUG 1
 ***/
+#define RSSERIAL_DEBUG 1
 
 #include <iostream>
 
@@ -346,8 +347,11 @@ bool     RsDiscSerialiser::serialiseReply(RsDiscReply *item, void *data, uint32_
 
 	for (pitemIt = item->rsPeerList.begin(); pitemIt!=(item->rsPeerList.end()) && ok; ++pitemIt) 
 	{
-		uint32_t size = 0;
+		uint32_t size = ~(uint32_t)0;	// we must be conservative otherwise the serialiser returns false !!
+
 		ok &= rss.serialise(&(*pitemIt), (void *) (((char *) data) + offset), &size);
+
+		// The size has been updated to its exact value.
 		offset += size;
 	}
 
@@ -355,7 +359,7 @@ bool     RsDiscSerialiser::serialiseReply(RsDiscReply *item, void *data, uint32_
 	{
 		ok = false;
 #ifdef RSSERIAL_DEBUG
-		std::cerr << "RsDiscSerialiser::serialiseReply() Size Error! " << std::endl;
+		std::cerr << "RsDiscSerialiser::serialiseReply() Size Error: " << tlvsize << " != " << offset << std::endl;
 #endif
 	}
 
