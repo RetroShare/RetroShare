@@ -43,7 +43,7 @@ RatesStatus::RatesStatus(QWidget *parent)
     hbox->setSpacing(6);
     
     iconLabel = new QLabel( this );
-    iconLabel->setPixmap(QPixmap::QPixmap(":/images/up0down0.png"));
+    iconLabel->setPixmap(QPixmap(":/images/up0down0.png"));
     // iconLabel doesn't change over time, so we didn't need a minimum size
     hbox->addWidget(iconLabel);
     
@@ -78,22 +78,22 @@ void RatesStatus::getRatesStatus()
     		
     if( upKb > 0 || downKb < 0  )
     {
-        iconLabel->setPixmap(QPixmap::QPixmap(":/images/up1down0.png"));
+        iconLabel->setPixmap(QPixmap(":/images/up1down0.png"));
     }
     
     if( upKb < 0 || downKb > 0 )
     {
-        iconLabel->setPixmap(QPixmap::QPixmap(":/images/up0down1.png"));
+        iconLabel->setPixmap(QPixmap(":/images/up0down1.png"));
     }
     
     if( upKb > 0 || downKb > 0 )
     {
-        iconLabel->setPixmap(QPixmap::QPixmap(":/images/up1down1.png"));
+        iconLabel->setPixmap(QPixmap(":/images/up1down1.png"));
     }
         
     else
     {
-        iconLabel->setPixmap(QPixmap::QPixmap(":/images/up0down0.png"));
+        iconLabel->setPixmap(QPixmap(":/images/up0down0.png"));
     }
  		
 
