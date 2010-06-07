@@ -55,10 +55,8 @@ void EmbedInHtmlImg::InitFromAwkwardHash(const QHash< QString, QString >& hash)
  * @param[in,out] currentElement The current node (which is of type Element)
  * @param[in] embedInfos The regular expression and the type of embedding to use
  */
-void embedHtml(QDomDocument& doc, QDomElement& currentElement, const EmbedInHtml& _embedInfos)
+void embedHtml(QDomDocument& doc, QDomElement& currentElement, EmbedInHtml& embedInfos)
 {
-	EmbedInHtml embedInfos(_embedInfos) ;
-
 	if(embedInfos.myRE.pattern().length() == 0)	// we'll get stuck with an empty regexp
 		return;
 
