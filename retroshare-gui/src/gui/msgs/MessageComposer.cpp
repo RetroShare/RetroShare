@@ -26,6 +26,7 @@
 #include "rsiface/rspeers.h"
 #include "rsiface/rsmsgs.h"
 
+#include "gui/RetroShareLink.h"
 #include <gui/settings/rsharesettings.h>
 #include "gui/feeds/AttachFileItem.h"
 #include "textformat.h"
@@ -1235,19 +1236,13 @@ void MessageComposer::fileHashingFinished(AttachFileItem* file) {
 	    return;
 	}
 
-	//convert fileSize from uint_64 to string for html link
-	char fileSizeChar [100];
-	sprintf(fileSizeChar, "%lld", file->FileSize());
-	std::string fileSize = *(&fileSizeChar);
-
-	std::string mesgString = "<a href='retroshare://file|" + (file->FileName()) + "|" + fileSize + "|" + (file->FileHash()) + "'>" 
-	+ "retroshare://file|" + (file->FileName()) + "|" + fileSize +  "|" + (file->FileHash())  + "</a>" + "<br>";
+        RetroShareLink message(QString::fromStdString(file->FileName()), file->FileSize(), QString::fromStdString(file->FileHash()));
 #ifdef CHAT_DEBUG
-	    std::cerr << "MessageComposer::anchorClicked mesgString : " << mesgString << std::endl;
+        std::cerr << "MessageComposer::anchorClicked message : " << message.toHtmlFull().toStdString() << std::endl;
 #endif
 
-	ui.msgText->textCursor().insertHtml(QString::fromStdString(mesgString));
-	ui.msgText->setFocus( Qt::OtherFocusReason );
+        ui.msgText->textCursor().insertHtml(message.toHtmlFull() + QString("<br>"));
+        ui.msgText->setFocus( Qt::OtherFocusReason );
 }
 
 void MessageComposer::checkAttachmentReady()
