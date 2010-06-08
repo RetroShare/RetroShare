@@ -595,9 +595,6 @@ p, li { white-space: pre-wrap; }
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="maxLength">
-               <number>20</number>
-              </property>
               <property name="readOnly">
                <bool>true</bool>
               </property>

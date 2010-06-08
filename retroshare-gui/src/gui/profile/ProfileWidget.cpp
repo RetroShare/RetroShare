@@ -94,8 +94,9 @@ void ProfileWidget::showEvent ( QShowEvent * event )
 	/* set the server address */
 	ui.extAddress->setText(QString::fromStdString(detail.extAddr));
         ui.extPort -> setText(QString::number(detail.extPort));
-
+        /* set DynDNS */
         ui.dyndns->setText(QString::fromStdString(detail.dyndns));
+        ui.dyndns->setCursorPosition (0);
 	
 	  std::list<std::string> ids;
 	  ids.clear();

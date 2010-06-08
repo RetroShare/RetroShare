@@ -34,7 +34,6 @@
 
 #include "chat/PopupChatDialog.h"
 #include "msgs/MessageComposer.h"
-#include "PeersDialog.h"
 #include "connect/ConfCertDialog.h"
 #include "util/PixmapMerging.h"
 #include "LogoBar.h"

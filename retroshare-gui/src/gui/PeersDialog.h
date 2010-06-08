@@ -149,6 +149,8 @@ signals:
 		void startChat(QTreeWidgetItem* );
 
 private:
+		void processSettings(bool bLoad);
+
 		class QLabel *iconLabel, *textLabel;
 		class QWidget *widget;
 		class QWidgetAction *widgetAction;

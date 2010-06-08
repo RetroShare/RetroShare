@@ -27,12 +27,6 @@
 #include <QIcon>
 #include <QPixmap>
 
-#include "ShareManager.h"
-#include "NetworkView.h"
-#include "LinksDialog.h"
-#include "ForumsDialog.h"
-#include "NewsFeed.h"
-
 #ifdef BLOGS
 #include "gui/unfinished/blogs/BlogsDialog.h"
 #endif 
@@ -40,6 +34,18 @@
 #include "rshare.h"
 #include "MainWindow.h"
 #include "MessengerWindow.h"
+#include "NetworkDialog.h"
+#include "SearchDialog.h"
+#include "TransfersDialog.h"
+#include "MessagesDialog.h"
+#include "SharedFilesDialog.h"
+#include "PluginsPage.h"
+#include "ShareManager.h"
+#include "NetworkView.h"
+#include "LinksDialog.h"
+#include "ForumsDialog.h"
+#include "NewsFeed.h"
+#include "PeersDialog.h"
 #include "HelpDialog.h"
 #include "AboutDialog.h"
 #include "QuickStartWizard.h"

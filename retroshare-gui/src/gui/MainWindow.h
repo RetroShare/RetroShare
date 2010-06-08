@@ -31,15 +31,6 @@
 #include "unfinished/ApplicationWindow.h"
 #endif
 
-#include "NetworkDialog.h"
-#include "PeersDialog.h"
-#include "SearchDialog.h"
-#include "TransfersDialog.h"
-#include "MessagesDialog.h"
-#include "SharedFilesDialog.h"
-#include "MessengerWindow.h"
-#include "PluginsPage.h"
-#include "ForumsDialog.h"
 
 #ifndef RS_RELEASE_VERSION
 #include "ChannelFeed.h"
@@ -56,6 +47,15 @@ class PeerStatus;
 class NATStatus;
 class RatesStatus;
 class ForumsDialog;
+class PeersDialog;
+class ChatDialog;
+class NetworkDialog;
+class SearchDialog;
+class TransfersDialog;
+class MessagesDialog;
+class SharedFilesDialog;
+class MessengerWindow;
+class PluginsPage;
 
 #ifndef RS_RELEASE_VERSION
 class LinksDialog;

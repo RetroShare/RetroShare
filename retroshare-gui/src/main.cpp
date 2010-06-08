@@ -22,11 +22,18 @@
 #include <QtGui>
 #include <QObject>
 #include <rshare.h>
-#include <gui/MainWindow.h>
-#include <gui/StartDialog.h>
-#include <gui/GenCertDialog.h>
-#include <gui/settings/rsharesettings.h>
-#include <gui/connect/ConfCertDialog.h>
+#include "gui/MainWindow.h"
+#include "gui/PeersDialog.h"
+#include "gui/SearchDialog.h"
+#include "gui/TransfersDialog.h"
+#include "gui/MessagesDialog.h"
+#include "gui/SharedFilesDialog.h"
+#include "gui/MessengerWindow.h"
+#include "gui/NetworkDialog.h"
+#include "gui/StartDialog.h"
+#include "gui/GenCertDialog.h"
+#include "gui/settings/rsharesettings.h"
+#include "gui/connect/ConfCertDialog.h"
 
 /*** WINDOWS DON'T LIKE THIS - REDEFINES VER numbers.
 #include <gui/qskinobject/qskinobject.h>
