@@ -90,29 +90,29 @@ RsCertId getNeighRsCertId(QTreeWidgetItem *i);
 NetworkDialog::NetworkDialog(QWidget *parent)
 : RsAutoUpdatePage(10000,parent) 	// updates every 10 sec.
 {
-  /* Invoke the Qt Designer generated object setup routine */
-  ui.setupUi(this);
+    /* Invoke the Qt Designer generated object setup routine */
+    ui.setupUi(this);
   
-  connect( ui.connecttreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( connecttreeWidgetCostumPopupMenu( QPoint ) ) );
-  connect( ui.connecttreeWidget, SIGNAL( itemSelectionChanged()), ui.unvalidGPGkeyWidget, SLOT( clearSelection() ) );
-  connect( ui.unvalidGPGkeyWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( connecttreeWidgetCostumPopupMenu( QPoint ) ) );
-  connect( ui.unvalidGPGkeyWidget, SIGNAL( itemSelectionChanged()), ui.connecttreeWidget, SLOT( clearSelection() ) );
+    connect( ui.connecttreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( connecttreeWidgetCostumPopupMenu( QPoint ) ) );
+    connect( ui.connecttreeWidget, SIGNAL( itemSelectionChanged()), ui.unvalidGPGkeyWidget, SLOT( clearSelection() ) );
+    connect( ui.unvalidGPGkeyWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( connecttreeWidgetCostumPopupMenu( QPoint ) ) );
+    connect( ui.unvalidGPGkeyWidget, SIGNAL( itemSelectionChanged()), ui.connecttreeWidget, SLOT( clearSelection() ) );
 
-  connect( ui.infoLog, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(displayInfoLogMenu(const QPoint&)));
+    connect( ui.infoLog, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(displayInfoLogMenu(const QPoint&)));
   
-  connect( ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
-  connect( ui.filterColumnComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterColumnChanged()));
-  connect( ui.clearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
+    connect( ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
+    connect( ui.filterColumnComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterColumnChanged()));
+    connect( ui.clearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
 
-  connect( ui.showUnvalidKeys, SIGNAL(clicked()), this, SLOT(insertConnect()));
+    connect( ui.showUnvalidKeys, SIGNAL(clicked()), this, SLOT(insertConnect()));
 
 
-  /* hide the Tree +/- */
-  ui.connecttreeWidget -> setRootIsDecorated( false );
-      ui.connecttreeWidget->setColumnCount(5);
-    ui.unvalidGPGkeyWidget->setColumnCount(5);
+    /* hide the Tree +/- */
+    ui.connecttreeWidget -> setRootIsDecorated( false );
+    ui.connecttreeWidget -> setColumnCount(5);
+    ui.unvalidGPGkeyWidget-> setColumnCount(5);
 
-  /* Set header resize modes and initial section sizes */
+    /* Set header resize modes and initial section sizes */
     QHeaderView * _header = ui.connecttreeWidget->header () ;
     _header->setResizeMode (0, QHeaderView::Custom);
     _header->setResizeMode (1, QHeaderView::Interactive);
@@ -199,7 +199,6 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     
     getNetworkStatus();
     updateNetworkStatus();
-    //load();
     loadtabsettings();
 
     #ifdef RS_RELEASE_VERSION
@@ -226,14 +225,14 @@ void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point )
 
 	std::string peer_id = wi->text(4).toStdString() ;
 
-	// That's what context menus are made for
+    // That's what context menus are made for
 		RsPeerDetails detail;
         if(!rsPeers->getGPGDetails(peer_id, detail))		// that is not suppose to fail.
 			return ;
 
-        if(peer_id != rsPeers->getGPGOwnId())
+		if(peer_id != rsPeers->getGPGOwnId())
 		{
-            if(detail.accept_connection)
+			if(detail.accept_connection)
 			{
 				denyFriendAct = new QAction(QIcon(IMAGE_DENIED), tr( "Deny friend" ), this );
 
@@ -257,7 +256,7 @@ void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point )
 #endif
 			}
 		}
-        if (  peer_id == rsPeers->getGPGOwnId())
+		if(peer_id == rsPeers->getGPGOwnId())
 		{
 		    exportcertAct = new QAction(QIcon(IMAGE_EXPIORT), tr( "Export my Cert" ), this );
 		    connect( exportcertAct , SIGNAL( triggered() ), this, SLOT( on_actionExportKey_activated() ) );
@@ -297,13 +296,13 @@ void NetworkDialog::deleteCert()
 
 void NetworkDialog::makeFriend()
 {
-        ConfCertDialog::showTrust(getCurrentNeighbour()->text(4).toStdString());
+    ConfCertDialog::showTrust(getCurrentNeighbour()->text(4).toStdString());
 }
 
 /** Shows Peer Information/Auth Dialog */
 void NetworkDialog::peerdetails()
 {
-         ConfCertDialog::show(getCurrentNeighbour()->text(4).toStdString());
+    ConfCertDialog::show(getCurrentNeighbour()->text(4).toStdString());
 }
 
 /** Open a QFileDialog to browse for a pem/pqi file. */
@@ -460,24 +459,25 @@ void NetworkDialog::insertConnect()
 		*/
 		QColor backgrndcolor;
 		
-        if (detail.accept_connection)
+		if (detail.accept_connection)
 		{
-            if (detail.ownsign) 
+			if (detail.ownsign) 
 			{
-                item -> setText(0, "0");
+				item -> setText(0, "0");
 				item -> setIcon(0,(QIcon(IMAGE_AUTHED)));
-                backgrndcolor=QColor("#45ff45");//bright green
-            } 
+				backgrndcolor=QColor("#45ff45");//bright green
+			} 
 			else 
 			{
-                item -> setText(0, "0");
-                item -> setIcon(0,(QIcon(IMAGE_AUTHED)));
-                backgrndcolor=QColor("#43C043");//light green
-            }
-        } 
+				item -> setText(0, "0");
+				item -> setIcon(0,(QIcon(IMAGE_AUTHED)));
+				backgrndcolor=QColor("#43C043");//light green
+			}
+		} 
 		else 
 		{
 				item -> setText(0, "1");
+
 			if (detail.hasSignedMe)
 			{
 				backgrndcolor=QColor("#42B2B2"); //kind of darkCyan
@@ -487,7 +487,7 @@ void NetworkDialog::insertConnect()
 			}
 			else
 			{
-                backgrndcolor=Qt::lightGray;
+				backgrndcolor=Qt::lightGray;
 				item -> setIcon(0,(QIcon(IMAGE_DENIED)));
 			}
 		}
@@ -498,15 +498,15 @@ void NetworkDialog::insertConnect()
 			item -> setBackground(i,QBrush(backgrndcolor));
 
 		/* add to the list */
-        if (detail.accept_connection || detail.validLvl >= 3) 
+		if (detail.accept_connection || detail.validLvl >= 3) 
 		{
 			/* add gpg item to the list. If item is already in the list, it won't be duplicated thanks to Qt */
 			connectWidget->addTopLevelItem(item);
-        } 
+		} 
 		else 
 		{
-            ui.unvalidGPGkeyWidget->addTopLevelItem(item);
-        }
+			ui.unvalidGPGkeyWidget->addTopLevelItem(item);
+		}
 
 	}
 
@@ -816,28 +816,6 @@ void NetworkDialog::updateNetworkStatus()
 
     rsiface->unlockData(); /* UnLock Interface */
 }
-
-/*void NetworkDialog::load()
-{
-  //ui.check_net->setCheckable(true);
-	ui.check_upnp->setCheckable(true);
-	ui.check_dht->setCheckable(true);
-	ui.check_ext->setCheckable(true);
-	ui.check_udp->setCheckable(true);
-	ui.check_tcp->setCheckable(true);
-
-	//ui.check_net->setEnabled(false);
-	ui.check_upnp->setEnabled(false);
-	ui.check_dht->setEnabled(false);
-	ui.check_ext->setEnabled(false);
-	ui.check_udp->setEnabled(false);
-	ui.check_tcp->setEnabled(false);
-
-	ui.radio_nonet->setEnabled(false);
-	ui.radio_netLimited->setEnabled(false);
-	ui.radio_netUdp->setEnabled(false);
-	ui.radio_netServer->setEnabled(false);
-}*/
 
 void NetworkDialog::on_actionTabsnorth_activated()
 {
