@@ -354,6 +354,9 @@ bool TextPage::fileSave()
     QFile file(fileName);
     if (!file.open(QFile::WriteOnly))
         return false;
+
+    //Todo: move save to file to p3Peers::SaveCertificateToFile
+
     QTextStream ts(&file);
     ts.setCodec(QTextCodec::codecForName("UTF-8"));
     ts << userCertEdit->document()->toPlainText();
@@ -609,8 +612,7 @@ CertificatePage::CertificatePage(QWidget *parent) : QWizardPage(parent) {
                                   
     userFileCreateButton = new QPushButton;
     userFileCreateButton->setText(tr("Export my certificate..."));
-    connect(userFileCreateButton, SIGNAL( clicked() ),
-            this,                 SLOT( generateCertificateCalled()));
+    connect(userFileCreateButton, SIGNAL( clicked() ), this, SLOT( generateCertificateCalled()));
 
     userFileLayout = new QHBoxLayout;
     userFileLayout->addWidget(userFileLabel);
@@ -628,8 +630,7 @@ CertificatePage::CertificatePage(QWidget *parent) : QWizardPage(parent) {
 
     friendFileNameOpenButton= new QPushButton;
     friendFileNameOpenButton->setText(tr("Browse"));
-    connect(friendFileNameOpenButton, SIGNAL( clicked()),
-            this                   , SLOT( loadFriendCert()));
+    connect(friendFileNameOpenButton, SIGNAL( clicked()), this, SLOT( loadFriendCert()));
     
     friendFileLayout = new QHBoxLayout;
     friendFileLayout->addWidget(friendFileNameEdit) ;
@@ -662,22 +663,38 @@ void CertificatePage::loadFriendCert() {
 void CertificatePage::generateCertificateCalled() {
     qDebug() << "  generateCertificateCalled";
 
+    std::string cert = rsPeers->saveCertificateToString(rsPeers->getOwnId());
+    if (cert.empty()) {
+        QMessageBox::information(this, tr("RetroShare"),
+                         tr("Sorry, create certificate failed"),
+                         QMessageBox::Ok, QMessageBox::Ok);
+        return;
+    }
+
     QString qdir = QFileDialog::getSaveFileName(this,
                                                 tr("Please choose a filename"),
                                                 QDir::homePath(),
                                                 "RetroShare Certificate (*.rsc)");
+    //Todo: move save to file to p3Peers::SaveCertificateToFile
 
-    if ( rsPeers->saveCertificateToFile(rsPeers->getOwnId(), qdir.toStdString()) )
-    {
-        QMessageBox::information(this, tr("RetroShare"),
-                         tr("Certificate file successfully created"),
-                         QMessageBox::Ok, QMessageBox::Ok);
-    }
-    else
-    {
-        QMessageBox::information(this, tr("RetroShare"),
-                         tr("Sorry, certificate file creation failed"),
-                         QMessageBox::Ok, QMessageBox::Ok);
+    if (qdir.isEmpty() == false) {
+        QFile CertFile (qdir);
+        if (CertFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            if (CertFile.write(QByteArray(cert.c_str())) > 0) {
+                QMessageBox::information(this, tr("RetroShare"),
+                                 tr("Certificate file successfully created"),
+                                 QMessageBox::Ok, QMessageBox::Ok);
+            } else {
+                QMessageBox::information(this, tr("RetroShare"),
+                                 tr("Sorry, certificate file creation failed"),
+                                 QMessageBox::Ok, QMessageBox::Ok);
+            }
+            CertFile.close();
+        } else {
+            QMessageBox::information(this, tr("RetroShare"),
+                             tr("Sorry, certificate file creation failed"),
+                             QMessageBox::Ok, QMessageBox::Ok);
+        }
     }
 }
 
@@ -689,39 +706,57 @@ bool CertificatePage::isComplete() const {
 
 //============================================================================
 
-int CertificatePage::nextId() const {
-    std::string id;
-    
+int CertificatePage::nextId() const
+{
     QString fn = friendFileNameEdit->text();
-    if (QFile::exists(fn))
-    {
-        std::string fnstr = fn.toStdString();
-//        if ( rsPeers->LoadCertificateFromFile(fnstr, id) )
-        if ( false )
-        {
-            wizard()->setField(SSL_ID_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(id));
-            
-            return ConnectFriendWizard::Page_Conclusion;
+    if (QFile::exists(fn)) {
+        //Todo: move read from file to p3Peers::loadCertificateFromFile
+
+        // read from file
+        std::string certstr;
+        QFile CertFile (fn);
+        if (CertFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            certstr = QString (CertFile.readAll()).toStdString();
+            CertFile.close();
         }
-        else
-        {
-            wizard()->setField("errorMessage",
-//                     QString(tr("Certificate Load Failed:something is wrong with %1 ")).arg(fn) );
-                     QString(tr("Not implemented ")));
+
+        if (certstr.empty() == false) {
+            RsPeerDetails pd;
+            if ( rsPeers->loadDetailsFromStringCert(certstr, pd) ) {
+#ifdef FRIEND_WIZARD_DEBUG
+                std::cerr << "ConnectFriendWizard got id : " << pd.id << "; gpg_id : " << pd.gpg_id << std::endl;
+#endif
+                wizard()->setField(SSL_ID_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(pd.id));
+                wizard()->setField(GPG_ID_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(pd.gpg_id));
+                wizard()->setField(LOCATION_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(pd.location));
+                wizard()->setField(CERT_STRING_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(certstr));
+
+                wizard()->setField("ext_friend_ip", QString::fromStdString(pd.extAddr));
+                wizard()->setField("ext_friend_port", QString::number(pd.extPort));
+                wizard()->setField("local_friend_ip", QString::fromStdString(pd.localAddr));
+                wizard()->setField("local_friend_port", QString::number(pd.localPort));
+                wizard()->setField("dyndns", QString::fromStdString(pd.dyndns));
+
+                return ConnectFriendWizard::Page_Conclusion ;
+            } else {
+                wizard()->setField("errorMessage", QString(tr("Certificate Load Failed:something is wrong with %1 ")).arg(fn) );
+                return ConnectFriendWizard::Page_ErrorMessage;
+            }
+        } else {
+            wizard()->setField("errorMessage", QString(tr("Certificate Load Failed:can't read from file %1 ")).arg(fn) );
             return ConnectFriendWizard::Page_ErrorMessage;
         }
-    }
-    else
-    {
+    } else {
         QString mess =
-            QString(tr("Certificate Load Failed:file %1 not found"))
-                    .arg(fn);
+                QString(tr("Certificate Load Failed:file %1 not found"))
+                .arg(fn);
 
         wizard()->setField("errorMessage", mess);
 
         return ConnectFriendWizard::Page_ErrorMessage;
-    }    
+    }
 }
+
 //
 //============================================================================
 //============================================================================
