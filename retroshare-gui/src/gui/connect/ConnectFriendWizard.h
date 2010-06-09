@@ -118,6 +118,9 @@ public:
     int nextId() const;
     bool isComplete() const ;
 
+    void dropEvent(QDropEvent *event);
+    void dragEnterEvent(QDragEnterEvent *event);
+
 private:
     QGroupBox* userFileFrame;
     QLabel *userFileLabel;
@@ -134,6 +137,8 @@ private:
 private slots:
     void generateCertificateCalled();
     void loadFriendCert();
+    
+
 };
 
 //============================================================================

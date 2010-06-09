@@ -24,6 +24,7 @@
 #include "rsiface/rspeers.h" //for rsPeers variable
 #include "rsiface/rsiface.h"
 
+#include <QtGui>
 #include <QLineEdit>
 #include <QTextEdit>
 #include <QLabel>
@@ -168,7 +169,7 @@ IntroPage::IntroPage(QWidget *parent)
                    "to do this:")) ;
 
     textRadioButton = new QRadioButton(tr("&Enter the certificate manually"));
-    certRadioButton = new QRadioButton(tr("&Use *.rsc files with certificates" ));
+    certRadioButton = new QRadioButton(tr("&You get a certificate file from your friend" ));
     foffRadioButton = new QRadioButton(tr("&Make friend with selected friends of my friends" ));
     textRadioButton->setChecked(true);
 
@@ -609,6 +610,8 @@ CertificatePage::CertificatePage(QWidget *parent) : QWizardPage(parent) {
                                   "Also, you can use a file generated "
                                   "before."));
     userFileLabel->setWordWrap(true);
+    
+    setAcceptDrops(true);
                                   
     userFileCreateButton = new QPushButton;
     userFileCreateButton->setText(tr("Export my certificate..."));
@@ -620,11 +623,11 @@ CertificatePage::CertificatePage(QWidget *parent) : QWizardPage(parent) {
 
     userFileFrame = new QGroupBox;
     userFileFrame->setFlat(true);
-    userFileFrame->setTitle(tr("Export my certificate..."));
+    userFileFrame->setTitle(tr("Import friend's certificate..."));
     userFileFrame->setLayout(userFileLayout);
 
-    friendFileLabel = new QLabel(tr("Specify path to your friend's "
-                                    "certificate in the box below " ) );
+    friendFileLabel = new QLabel(tr("Drag and Drop your friends's certificate in this Window or specify path "
+                                    "in the box below " ) );
     friendFileNameEdit = new QLineEdit;
     registerField("friendCertificateFile*", friendFileNameEdit);
 
@@ -649,7 +652,7 @@ CertificatePage::CertificatePage(QWidget *parent) : QWizardPage(parent) {
 void CertificatePage::loadFriendCert() {
     QString fileName =
         QFileDialog::getOpenFileName(this, tr("Select Certificate"),
-                                     "", tr("RetroShare Certificates (*.rsc)"));
+                                     "", tr("RetroShare Certificate (*.rsc );;All Files (*)"));
 
     if (!fileName.isNull())
     {
@@ -696,6 +699,41 @@ void CertificatePage::generateCertificateCalled() {
                              QMessageBox::Ok, QMessageBox::Ok);
         }
     }
+}
+
+//============================================================================
+
+void CertificatePage::dragEnterEvent(QDragEnterEvent *event)
+{
+    // accept just text/uri-list mime format
+    if (event->mimeData()->hasFormat("text/uri-list")) 
+    {     
+        event->acceptProposedAction();
+    }
+}
+ 
+ 
+void CertificatePage::dropEvent(QDropEvent *event)
+{
+	QList<QUrl> urlList;
+	QString fName;
+	QFileInfo info;
+
+	if (event->mimeData()->hasUrls())
+	{
+		urlList = event->mimeData()->urls(); // returns list of QUrls
+		// if just text was dropped, urlList is empty (size == 0)
+
+		if ( urlList.size() > 0) // if at least one QUrl is present in list
+		{
+			fName = urlList[0].toLocalFile(); // convert first QUrl to local path
+			info.setFile( fName ); // information about file
+			if ( info.isFile() ) 
+			friendFileNameEdit->setText( fName ); // if is file, setText
+		}
+	}
+	
+	event->acceptProposedAction();
 }
 
 //============================================================================
