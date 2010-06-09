@@ -60,7 +60,7 @@ virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 	/* Not Serialised */
 
 	std::string msgId;   /* Msg Id */
-	uint32_t childTS; /* timestamp of most recent child */
+	time_t childTS; /* timestamp of most recent child */
 	RsTlvKeySignature publishSignature;
 	RsTlvKeySignature personalSignature;
 };

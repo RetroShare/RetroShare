@@ -186,7 +186,6 @@ int FileIndexStore::RequestDirDetails(void *ref, DirDetails &details, uint32_t f
 	std::cerr << "FileIndexStore::RequestDirDetails() ref=" << ref << " flags: " << flags << std::endl;
 #endif
 
-	bool found = true;
 	std::map<RsPeerId, FileIndex *>::const_iterator pit;
 
 	lockData();
@@ -307,7 +306,6 @@ int FileIndexStore::SearchKeywords(std::list<std::string> keywords, std::list<Di
 	std::list<FileEntry *> firesults;
 
 	results.clear() ;
-	time_t now = time(NULL);
 
 #ifdef FIS_DEBUG
 	std::cerr << "FileIndexStore::SearchKeywords()" << std::endl;
@@ -361,8 +359,6 @@ int FileIndexStore::searchBoolExp(Expression * exp, std::list<DirDetails> &resul
 	std::map<RsPeerId, FileIndex *>::const_iterator pit;
 	std::list<FileEntry *>::iterator rit;
 	std::list<FileEntry *> firesults;
-
-	time_t now = time(NULL);
 
 #ifdef FIS_DEBUG
 	std::cerr << "FileIndexStore::searchBoolExp()" << std::endl;

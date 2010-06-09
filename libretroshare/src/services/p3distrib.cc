@@ -64,9 +64,6 @@ p3GroupDistrib::p3GroupDistrib(uint16_t subtype,
 	mMaxCacheSubId(1),
 	mKeyBackUpDir(keyBackUpDir), BACKUP_KEY_FILE("key.log"), mLastKeyPublishTime(0)
 {
-	/* not much yet */
-	time_t now = time(NULL);
-
 	/* force publication of groups (cleared if local cache file found) */
 	mGroupsRepublish = true;
 
@@ -90,7 +87,7 @@ int	p3GroupDistrib::tick()
 
 	{
 		RsStackMutex stack(distribMtx);  /**** STACK LOCKED MUTEX ****/
-		toPublish = (mPendingPublish.size() > 0) && (now > mPubPeriod + mLastPublishTime);
+		toPublish = (mPendingPublish.size() > 0) && (now > (time_t) (mPubPeriod + mLastPublishTime));
 
 	}
 
@@ -352,7 +349,7 @@ void	p3GroupDistrib::loadFileMsgs(std::string filename, uint16_t cacheSubId, std
 			mMaxCacheSubId = cacheSubId;
 		}
 
-		if ((ts < now) && (ts > mLastPublishTime))
+		if (((time_t) ts < now) && ((time_t) ts > mLastPublishTime))
 		{
 #ifdef DISTRIB_DEBUG
 			std::cerr << "p3GroupDistrib::loadFileMsgs() New LastPublishTime";
@@ -1528,7 +1525,6 @@ std::string p3GroupDistrib::createGroup(std::wstring name, std::wstring desc, ui
 	std::cerr << std::endl;
 #endif
 	/* Create a Group */
-	GroupInfo grpInfo;
 	std::string grpId;
 	time_t now = time(NULL);
 
@@ -1664,7 +1660,7 @@ std::string p3GroupDistrib::createGroup(std::wstring name, std::wstring desc, ui
 
 	unsigned int siglen = EVP_PKEY_size(key_admin);
         unsigned char sigbuf[siglen];
-	int ans = EVP_SignFinal(mdctx, sigbuf, &siglen, key_admin);
+	EVP_SignFinal(mdctx, sigbuf, &siglen, key_admin);
 
 	/* save signature */
 	newGrp->adminSignature.signData.setBinData(sigbuf, siglen);
@@ -2091,7 +2087,7 @@ std::string	p3GroupDistrib::publishMsg(RsDistribMsg *msg, bool personalSign)
 
 		unsigned int siglen = EVP_PKEY_size(publishKey);
 			unsigned char sigbuf[siglen];
-		int ans = EVP_SignFinal(mdctx, sigbuf, &siglen, publishKey);
+		EVP_SignFinal(mdctx, sigbuf, &siglen, publishKey);
 
 		/* save signature */
 		signedMsg->publishSignature.signData.setBinData(sigbuf, siglen);
@@ -2370,7 +2366,7 @@ bool p3GroupDistrib::locked_editGroup(std::string grpId, GroupInfo& gi){
 
     unsigned int siglen = EVP_PKEY_size(key_admin);
     unsigned char sigbuf[siglen];
-    int ans = EVP_SignFinal(mdctx, sigbuf, &siglen, key_admin);
+    EVP_SignFinal(mdctx, sigbuf, &siglen, key_admin);
 
     /* save signature */
     gi_curr->distribGroup->adminSignature.signData.setBinData(sigbuf, siglen);
@@ -3009,11 +3005,10 @@ bool	p3GroupDistrib::locked_checkDistribMsg(
 
 	/* check timestamp */
 	time_t now = time(NULL);
-	time_t min = now - mStorePeriod;
-	time_t minPub = now - mStorePeriod / 2.0;
-	time_t max = now + GROUP_MAX_FWD_OFFSET;
+	uint32_t min = now - mStorePeriod;
+	uint32_t max = now + GROUP_MAX_FWD_OFFSET;
 
-	if ((msg->timestamp < min) || (msg->timestamp > max))
+        if ((msg->timestamp < min) || (msg->timestamp > max))
 	{
 #ifdef DISTRIB_DEBUG
 		std::cerr << "p3GroupDistrib::locked_checkDistribMsg() TS out of range";

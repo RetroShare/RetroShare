@@ -117,7 +117,7 @@ int SetRedirectAndTest(struct UPNPUrls * urls,
 	char externalIPAddress[16];
 	char intClient[16];
 	char intPort[6];
-	char leaseDuration[] = "3600"; /* 60 mins */
+//	char leaseDuration[] = "3600"; /* 60 mins */
 	int r;
 	int ok = 1;
 

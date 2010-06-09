@@ -369,7 +369,7 @@ bool p3Blogs::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std::s
 	}
 
 	/* check age */
-	time_t age = time(NULL) - msg->timestamp;
+	uint32_t age = time(NULL) - msg->timestamp;
 
 	if (age > DOWNLOAD_PERIOD)
 	{

@@ -46,7 +46,9 @@ static std::string setKeyPairParams(bool useRsa, unsigned int blen,
                 std::string name, std::string comment, std::string email,
                 std::string inPassphrase);
 
+#ifdef UNUSED_CODE
 static gpgme_key_t getKey(gpgme_ctx_t, std::string, std::string, std::string);
+#endif
 
 static gpg_error_t keySignCallback(void *, gpgme_status_code_t, \
 		const char *, int);
@@ -732,7 +734,10 @@ bool AuthGPG::DoOwnSignature_locked(const void *data, unsigned int datalen, void
 		return false;
 	}
 
-	gpgme_sign_result_t res = gpgme_op_sign_result(CTX);
+#ifdef GPG_DEBUG
+	gpgme_sign_result_t res =
+#endif
+	gpgme_op_sign_result(CTX);
 
 #ifdef GPG_DEBUG
 	if (res)
