@@ -86,7 +86,10 @@ private slots:
 
   void on_actionTabsRounded_activated();
   void on_actionTabsTriangular_activated();
-
+  
+  void filterColumnChanged();
+  void filterRegExpChanged();
+  void clearFilter();
 
 private:
   QTreeWidgetItem *getCurrentNeighbour();
@@ -103,6 +106,9 @@ private:
   QTreeWidget *connecttreeWidget;
   
   class NetworkView *networkview;
+  
+  void FilterItems();
+  bool FilterItem(QTreeWidgetItem *pItem, QString &sPattern, int nFilterColumn);
 
   /** Qt Designer generated object */
   Ui::NetworkDialog ui;

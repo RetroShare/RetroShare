@@ -65,6 +65,20 @@
 #define IMAGE_DENIED         ":/images/denied16.png"
 #define IMAGE_TRUSTED        ":/images/rs-2.png"
 
+#define COLUMN_PEERNAME    1
+#define COLUMN_PEERID     4
+
+static int FilterColumnFromComboBox(int nIndex)
+{
+    switch (nIndex) {
+    case 0:
+        return COLUMN_PEERNAME;
+    case 1:
+        return COLUMN_PEERID;
+    }
+
+    return COLUMN_PEERNAME;
+}
 
 RsCertId getNeighRsCertId(QTreeWidgetItem *i);
 
@@ -84,9 +98,13 @@ NetworkDialog::NetworkDialog(QWidget *parent)
   connect( ui.unvalidGPGkeyWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( connecttreeWidgetCostumPopupMenu( QPoint ) ) );
   connect( ui.unvalidGPGkeyWidget, SIGNAL( itemSelectionChanged()), ui.connecttreeWidget, SLOT( clearSelection() ) );
 
-  connect(ui.infoLog, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(displayInfoLogMenu(const QPoint&)));
+  connect( ui.infoLog, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(displayInfoLogMenu(const QPoint&)));
+  
+  connect( ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
+  connect( ui.filterColumnComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterColumnChanged()));
+  connect( ui.clearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
 
-  connect(ui.showUnvalidKeys, SIGNAL(clicked()), this, SLOT(insertConnect()));
+  connect( ui.showUnvalidKeys, SIGNAL(clicked()), this, SLOT(insertConnect()));
 
 
   /* hide the Tree +/- */
@@ -188,6 +206,8 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     ui.tabBottom->removeTab(0); //hide the logs tab
     #endif
     
+    ui.clearButton->hide();
+    
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -202,18 +222,18 @@ void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point )
     if (!wi)
     	return;
 
-      QMenu contextMnu( this );
+	QMenu contextMnu( this );
 
-                std::string peer_id = wi->text(4).toStdString() ;
+	std::string peer_id = wi->text(4).toStdString() ;
 
-                // That's what context menus are made for
+	// That's what context menus are made for
 		RsPeerDetails detail;
-                if(!rsPeers->getGPGDetails(peer_id, detail))		// that is not suppose to fail.
+        if(!rsPeers->getGPGDetails(peer_id, detail))		// that is not suppose to fail.
 			return ;
 
-                if(peer_id != rsPeers->getGPGOwnId())
+        if(peer_id != rsPeers->getGPGOwnId())
 		{
-                        if(detail.accept_connection)
+            if(detail.accept_connection)
 			{
 				denyFriendAct = new QAction(QIcon(IMAGE_DENIED), tr( "Deny friend" ), this );
 
@@ -237,7 +257,7 @@ void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point )
 #endif
 			}
 		}
-                if (  peer_id == rsPeers->getGPGOwnId())
+        if (  peer_id == rsPeers->getGPGOwnId())
 		{
 		    exportcertAct = new QAction(QIcon(IMAGE_EXPIORT), tr( "Export my Cert" ), this );
 		    connect( exportcertAct , SIGNAL( triggered() ), this, SLOT( on_actionExportKey_activated() ) );
@@ -346,12 +366,14 @@ void NetworkDialog::insertConnect()
 		return;
 	}
 
-        std::list<std::string> neighs; //these are GPG ids
+    std::list<std::string> neighs; //these are GPG ids
 	std::list<std::string>::iterator it;
-        rsPeers->getGPGAllList(neighs);
+    rsPeers->getGPGAllList(neighs);
+        
+    int nFilterColumn = FilterColumnFromComboBox(ui.filterColumnComboBox->currentIndex());
 
 	/* get a link to the table */
-        QTreeWidget *connectWidget = ui.connecttreeWidget;
+    QTreeWidget *connectWidget = ui.connecttreeWidget;
 
         //remove items
         int index = 0;
@@ -410,10 +432,10 @@ void NetworkDialog::insertConnect()
                         item->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
 
                         /* (1) Person */
-                        item -> setText(1, QString::fromStdString(detail.name));
+                        item -> setText(COLUMN_PEERNAME, QString::fromStdString(detail.name));
 
                         /* (4) key id */
-                        item -> setText(4, QString::fromStdString(detail.id));
+                        item -> setText(COLUMN_PEERID, QString::fromStdString(detail.id));
                     }
                 }
 
@@ -438,45 +460,53 @@ void NetworkDialog::insertConnect()
 		*/
 		QColor backgrndcolor;
 		
-                if (detail.accept_connection)
+        if (detail.accept_connection)
 		{
-                    if (detail.ownsign) {
-                        item -> setText(0, "0");
-			item -> setIcon(0,(QIcon(IMAGE_AUTHED)));
-                        backgrndcolor=QColor("#45ff45");//bright green
-                    } else {
-                        item -> setText(0, "0");
-                        item -> setIcon(0,(QIcon(IMAGE_AUTHED)));
-                        backgrndcolor=QColor("#43C043");//light green
-                    }
-                } else {
-                        item -> setText(0, "1");
-                        if (detail.hasSignedMe)
+            if (detail.ownsign) 
 			{
-                                backgrndcolor=QColor("#42B2B2"); //kind of darkCyan
-                                item -> setIcon(0,(QIcon(IMAGE_DENIED)));
+                item -> setText(0, "0");
+				item -> setIcon(0,(QIcon(IMAGE_AUTHED)));
+                backgrndcolor=QColor("#45ff45");//bright green
+            } 
+			else 
+			{
+                item -> setText(0, "0");
+                item -> setIcon(0,(QIcon(IMAGE_AUTHED)));
+                backgrndcolor=QColor("#43C043");//light green
+            }
+        } 
+		else 
+		{
+				item -> setText(0, "1");
+			if (detail.hasSignedMe)
+			{
+				backgrndcolor=QColor("#42B2B2"); //kind of darkCyan
+				item -> setIcon(0,(QIcon(IMAGE_DENIED)));
 				for(int k=0;k<8;++k)
-                                        item -> setToolTip(k,QString::fromStdString(detail.name) + QString(tr(" has authenticated you. \nRight-click and select 'make friend' to be able to connect."))) ;
+				item -> setToolTip(k,QString::fromStdString(detail.name) + QString(tr(" has authenticated you. \nRight-click and select 'make friend' to be able to connect."))) ;
 			}
 			else
 			{
-                                backgrndcolor=Qt::lightGray;
+                backgrndcolor=Qt::lightGray;
 				item -> setIcon(0,(QIcon(IMAGE_DENIED)));
 			}
 		}
 
 		// Color each Background column in the Network Tab except the first one => 1-9
 		// whith the determinated color
-                for(int i = 0; i <10; i++)
+			for(int i = 0; i <10; i++)
 			item -> setBackground(i,QBrush(backgrndcolor));
 
 		/* add to the list */
-                if (detail.accept_connection || detail.validLvl >= 3) {
-                    /* add gpg item to the list. If item is already in the list, it won't be duplicated thanks to Qt */
-                    connectWidget->addTopLevelItem(item);
-                } else {
-                    ui.unvalidGPGkeyWidget->addTopLevelItem(item);
-                }
+        if (detail.accept_connection || detail.validLvl >= 3) 
+		{
+			/* add gpg item to the list. If item is already in the list, it won't be duplicated thanks to Qt */
+			connectWidget->addTopLevelItem(item);
+        } 
+		else 
+		{
+            ui.unvalidGPGkeyWidget->addTopLevelItem(item);
+        }
 
 	}
 
@@ -494,9 +524,9 @@ void NetworkDialog::insertConnect()
         }
         self_item -> setText(0, "0");
         self_item->setIcon(0,(QIcon(IMAGE_AUTHED)));
-        self_item->setText(1,QString::fromStdString(ownGPGDetails.name) + " (yourself)") ;
+        self_item->setText(COLUMN_PEERNAME,QString::fromStdString(ownGPGDetails.name) + " (yourself)") ;
         self_item->setText(2,"N/A");
-        self_item->setText(4, QString::fromStdString(ownGPGDetails.id));
+        self_item->setText(COLUMN_PEERID, QString::fromStdString(ownGPGDetails.id));
 
         // Color each Background column in the Network Tab except the first one => 1-9
         for(int i=0;i<10;++i)
@@ -512,6 +542,10 @@ void NetworkDialog::insertConnect()
         }
         connectWidget->update(); /* update display */
         ui.unvalidGPGkeyWidget->update(); /* update display */
+        
+        if (ui.filterPatternLineEdit->text().isEmpty() == false) {
+        FilterItems();
+        }
 
 }
 
@@ -872,4 +906,72 @@ void NetworkDialog::loadtabsettings()
   }
 
   Settings->endGroup();
+}
+
+/* clear Filter */
+void NetworkDialog::clearFilter()
+{
+    ui.filterPatternLineEdit->clear();
+    ui.filterPatternLineEdit->setFocus();
+}
+
+void NetworkDialog::filterRegExpChanged()
+{
+
+    QString text = ui.filterPatternLineEdit->text();
+
+    if (text.isEmpty()) {
+        ui.clearButton->hide();
+    } else {
+        ui.clearButton->show();
+    }
+
+    FilterItems();
+}
+
+void NetworkDialog::filterColumnChanged()
+{
+
+    int nFilterColumn = FilterColumnFromComboBox(ui.filterColumnComboBox->currentIndex());
+
+     FilterItems();
+
+}
+
+void NetworkDialog::FilterItems()
+{
+    QString sPattern = ui.filterPatternLineEdit->text();
+    int nFilterColumn = FilterColumnFromComboBox(ui.filterColumnComboBox->currentIndex());
+
+    int nCount = ui.connecttreeWidget->topLevelItemCount ();
+    for (int nIndex = 0; nIndex < nCount; nIndex++) {
+        FilterItem(ui.connecttreeWidget->topLevelItem(nIndex), sPattern, nFilterColumn);
+    }
+}
+
+bool NetworkDialog::FilterItem(QTreeWidgetItem *pItem, QString &sPattern, int nFilterColumn)
+{
+    bool bVisible = true;
+
+    if (sPattern.isEmpty() == false) {
+        if (pItem->text(nFilterColumn).contains(sPattern, Qt::CaseInsensitive) == false) {
+            bVisible = false;
+        }
+    }
+
+    int nVisibleChildCount = 0;
+    int nCount = pItem->childCount();
+    for (int nIndex = 0; nIndex < nCount; nIndex++) {
+        if (FilterItem(pItem->child(nIndex), sPattern, nFilterColumn)) {
+            nVisibleChildCount++;
+        }
+    }
+
+    if (bVisible || nVisibleChildCount) {
+        pItem->setHidden(false);
+    } else {
+        pItem->setHidden(true);
+    }
+
+    return (bVisible || nVisibleChildCount);
 }
