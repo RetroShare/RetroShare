@@ -369,8 +369,6 @@ void NetworkDialog::insertConnect()
 	std::list<std::string>::iterator it;
     rsPeers->getGPGAllList(neighs);
         
-    int nFilterColumn = FilterColumnFromComboBox(ui.filterColumnComboBox->currentIndex());
-
 	/* get a link to the table */
     QTreeWidget *connectWidget = ui.connecttreeWidget;
 
@@ -909,8 +907,6 @@ void NetworkDialog::filterRegExpChanged()
 
 void NetworkDialog::filterColumnChanged()
 {
-
-    int nFilterColumn = FilterColumnFromComboBox(ui.filterColumnComboBox->currentIndex());
 
      FilterItems();
 
