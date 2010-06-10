@@ -125,3 +125,13 @@ bool    isExternalNet(const struct in_addr *addr)
 
 
 
+std::ostream &operator<<(std::ostream &out, const struct sockaddr_in &addr)
+{
+	out << "[" << inet_ntoa(addr.sin_addr) << ":";
+	out << htons(addr.sin_port) << "]";
+	return out;
+}
+
+
+
+
