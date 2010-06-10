@@ -144,23 +144,22 @@ int p3disc::handleIncoming()
 	// While messages read
 	while(NULL != (item = recvItem()))
 	{
-                RsDiscAskInfo *inf = NULL;
+		RsDiscAskInfo *inf = NULL;
 		RsDiscReply *dri = NULL;
-                //RsDiscIssuer *dii = NULL;
 		RsDiscVersion *dvi = NULL;
-                RsDiscHeartbeat *dta = NULL;
+		RsDiscHeartbeat *dta = NULL;
 
                 #ifdef P3DISC_DEBUG
-                std::cerr << "p3disc::handleIncoming() Received Message!" << std::endl;
-                item -> print(std::cerr);
-                std::cerr  << std::endl;
+		std::cerr << "p3disc::handleIncoming() Received Message!" << std::endl;
+		item -> print(std::cerr);
+		std::cerr  << std::endl;
                 #endif
 
 
 		// if discovery reply then respond if haven't already.
                 if (NULL != (dri = dynamic_cast<RsDiscReply *> (item)))	{
 
-                        recvPeerDetails(dri);
+			recvPeerDetails(dri);
 			nhandled++;
 		}
                 else if (NULL != (dvi = dynamic_cast<RsDiscVersion *> (item))) {
@@ -168,20 +167,20 @@ int p3disc::handleIncoming()
 			nhandled++;
 		}
                 else if (NULL != (inf = dynamic_cast<RsDiscAskInfo *> (item))) /* Ping */ {
-                        recvAskInfo(inf);
+			recvAskInfo(inf);
 			nhandled++;
 		}
                 else if (NULL != (dta = dynamic_cast<RsDiscHeartbeat *> (item))) {
-                        recvHeartbeatMsg(dta);
-                        delete item;
-                        return 1;
-                }
+			recvHeartbeatMsg(dta);
+			nhandled++ ;
+		}
+		
 		delete item;
 	}
         #ifdef P3DISC_DEBUG
-        std::cerr << "p3disc::handleIncoming() finished." << std::endl;
+	std::cerr << "p3disc::handleIncoming() finished." << std::endl;
         #endif
-        return nhandled;
+	return nhandled;
 }
 
 
@@ -190,26 +189,26 @@ int p3disc::handleIncoming()
 void p3disc::statusChange(const std::list<pqipeer> &plist)
 {
         #ifdef P3DISC_DEBUG
-        std::cerr << "p3disc::statusChange()" << std::endl;
+	std::cerr << "p3disc::statusChange()" << std::endl;
         #endif
 
 	std::list<pqipeer>::const_iterator pit;
 	/* if any have switched to 'connected' then we notify */
         for(pit =  plist.begin(); pit != plist.end(); pit++) {
                 if ((pit->state & RS_PEER_S_FRIEND) && (pit->actions & RS_PEER_CONNECTED)) {
-                        sendOwnVersion(pit->id);
-                        sendAllInfoToJustConnectedPeer(pit->id);
-                        sendJustConnectedPeerInfoToAllPeer(pit->id);
-                } else if (!(pit->state & RS_PEER_S_FRIEND) && (pit->actions & RS_PEER_MOVED)) {
-                        this->removeFriend(pit->id);
-                } else if ((pit->state & RS_PEER_S_FRIEND) && (pit->actions & RS_PEER_NEW)) {
-                    this->askInfoToAllPeers(pit->id);
-                }
-        }
-        #ifdef P3DISC_DEBUG
-        std::cerr << "p3disc::statusChange() finished." << std::endl;
+			sendOwnVersion(pit->id);
+			sendAllInfoToJustConnectedPeer(pit->id);
+			sendJustConnectedPeerInfoToAllPeer(pit->id);
+		} 
+		else if (!(pit->state & RS_PEER_S_FRIEND) && (pit->actions & RS_PEER_MOVED)) 
+			removeFriend(pit->id);
+		else if ((pit->state & RS_PEER_S_FRIEND) && (pit->actions & RS_PEER_NEW)) 
+			askInfoToAllPeers(pit->id);
+		  }
+#ifdef P3DISC_DEBUG
+	std::cerr << "p3disc::statusChange() finished." << std::endl;
         #endif
-        return;
+	return;
 }
 
 void p3disc::sendAllInfoToJustConnectedPeer(std::string id)
@@ -217,68 +216,68 @@ void p3disc::sendAllInfoToJustConnectedPeer(std::string id)
 	/* get a peer lists */
 
         #ifdef P3DISC_DEBUG
-        std::cerr << "p3disc::sendAllInfoToJustConnectedPeer() id: " << id << std::endl;
+	std::cerr << "p3disc::sendAllInfoToJustConnectedPeer() id: " << id << std::endl;
         #endif
-        RsPeerDetails pd;
-        rsPeers->getPeerDetails(id, pd);
-        if (!pd.accept_connection || (!pd.ownsign && pd.gpg_id != rsPeers->getGPGOwnId())) { //only send info when connection is accepted and gpg key is signed or our own key
+	RsPeerDetails pd;
+	rsPeers->getPeerDetails(id, pd);
+	if (!pd.accept_connection || (!pd.ownsign && pd.gpg_id != rsPeers->getGPGOwnId())) { //only send info when connection is accepted and gpg key is signed or our own key
             #ifdef P3DISC_DEBUG
-            std::cerr << "p3disc::sendAllInfoToJustConnectedPeer() we're not sending the info because the destination gpg key is not signed or not accepted." << std::cerr << std::endl;
+		std::cerr << "p3disc::sendAllInfoToJustConnectedPeer() we're not sending the info because the destination gpg key is not signed or not accepted." << std::cerr << std::endl;
             #endif
-            return;
-        }
+		return;
+	}
 
 
-        std::list<std::string> friendIds;
-        std::list<std::string>::iterator friendIdsIt;
-        std::set<std::string> gpgIds;;
+	std::list<std::string> friendIds;
+	std::list<std::string>::iterator friendIdsIt;
+	std::set<std::string> gpgIds;;
 
-        rsPeers->getFriendList(friendIds);
+	rsPeers->getFriendList(friendIds);
 
 	/* send them a list of all friend's details */
         for(friendIdsIt = friendIds.begin(); friendIdsIt != friendIds.end(); friendIdsIt++) {
 		/* get details */
 		peerConnectState detail;
-                if (!mConnMgr->getFriendNetStatus(*friendIdsIt, detail)) {
+		if (!mConnMgr->getFriendNetStatus(*friendIdsIt, detail)) {
 			/* major error! */
 			continue;
 		}
 
-                if (!(detail.visState & RS_VIS_STATE_NODISC)) {
-                        gpgIds.insert(detail.gpg_id);
+		if (!(detail.visState & RS_VIS_STATE_NODISC)) {
+			gpgIds.insert(detail.gpg_id);
 		}
-        }
+	}
 
-        //add own info
-        gpgIds.insert(rsPeers->getGPGOwnId());
+	//add own info
+	gpgIds.insert(rsPeers->getGPGOwnId());
 
-        //send details for each gpg Ids
-        std::set<std::string>::iterator gpgIdsIt;
+	//send details for each gpg Ids
+	std::set<std::string>::iterator gpgIdsIt;
         for (gpgIdsIt = gpgIds.begin(); gpgIdsIt != gpgIds.end(); gpgIdsIt++) {
-            sendPeerDetails(id, *gpgIdsIt);
+		sendPeerDetails(id, *gpgIdsIt);
         }
 
         #ifdef P3DISC_DEBUG
-        std::cerr << "p3disc::sendAllInfoToJustConnectedPeer() finished." << std::endl;
+	std::cerr << "p3disc::sendAllInfoToJustConnectedPeer() finished." << std::endl;
         #endif
 }
 
 void p3disc::sendJustConnectedPeerInfoToAllPeer(std::string connectedPeerId)
 {
-        /* get a peer lists */
+	/* get a peer lists */
 
 #ifdef P3DISC_DEBUG
-        std::cerr << "p3disc::sendJustConnectedPeerInfoToAllPeer() connectedPeerId : " << connectedPeerId << std::endl;
+	std::cerr << "p3disc::sendJustConnectedPeerInfoToAllPeer() connectedPeerId : " << connectedPeerId << std::endl;
 #endif
-        std::string gpg_connectedPeerId = rsPeers->getGPGId(connectedPeerId);
-        std::list<std::string> onlineIds;
-        std::list<std::string>::iterator onlineIdsIt;
+	std::string gpg_connectedPeerId = rsPeers->getGPGId(connectedPeerId);
+	std::list<std::string> onlineIds;
+	std::list<std::string>::iterator onlineIdsIt;
 
-        rsPeers->getOnlineList(onlineIds);
+	rsPeers->getOnlineList(onlineIds);
 
-        /* send them a list of all friend's details */
+	/* send them a list of all friend's details */
         for(onlineIdsIt = onlineIds.begin(); onlineIdsIt != onlineIds.end(); onlineIdsIt++) {
-                sendPeerDetails(*onlineIdsIt, gpg_connectedPeerId);
+		sendPeerDetails(*onlineIdsIt, gpg_connectedPeerId);
         }
 }
 
@@ -286,40 +285,40 @@ void p3disc::sendJustConnectedPeerInfoToAllPeer(std::string connectedPeerId)
 void p3disc::sendPeerDetails(std::string to, std::string about) {
 
         #ifdef P3DISC_DEBUG
-        std::cerr << "p3disc::sendPeerDetails() called. Sending details of: " << about << " to: " << to << std::endl;
+	std::cerr << "p3disc::sendPeerDetails() called. Sending details of: " << about << " to: " << to << std::endl;
         #endif
 
-        RsPeerDetails pd;
-        rsPeers->getPeerDetails(to, pd);
-        if (!pd.accept_connection || !pd.ownsign) {
+	RsPeerDetails pd;
+	rsPeers->getPeerDetails(to, pd);
+	if (!pd.accept_connection || !pd.ownsign) {
             #ifdef P3DISC_DEBUG
-            std::cerr << "p3disc::sendPeerDetails() we're not sending the info because the destination gpg key is not signed or not accepted." << std::cerr << std::endl;
+		std::cerr << "p3disc::sendPeerDetails() we're not sending the info because the destination gpg key is not signed or not accepted." << std::cerr << std::endl;
             #endif
-            return;
-        }
+		return;
+	}
 
 
-        // if off discard item.
-        peerConnectState detail;
+	// if off discard item.
+	peerConnectState detail;
         if (!mConnMgr->getOwnNetStatus(detail) || (detail.visState & RS_VIS_STATE_NODISC)) {
-            return;
+		return;
         }
 
-        about = rsPeers->getGPGId(about);
-        if (about == "") {
+	about = rsPeers->getGPGId(about);
+	if (about == "") {
             #ifdef P3DISC_DEBUG
-            std::cerr << "p3disc::sendPeerDetails() no info about this id" << std::endl;
+		std::cerr << "p3disc::sendPeerDetails() no info about this id" << std::endl;
             #endif
-            return;
-        }
+		return;
+	}
 
-        peerConnectState detailAbout;
-        if (mConnMgr->getFriendNetStatus(about, detailAbout) && detailAbout.visState & RS_VIS_STATE_NODISC) {
+	peerConnectState detailAbout;
+	if (mConnMgr->getFriendNetStatus(about, detailAbout) && detailAbout.visState & RS_VIS_STATE_NODISC) {
             #ifdef P3DISC_DEBUG
-            std::cerr << "p3disc::sendPeerDetails() don't send info about this peer because he has no disc enabled." << std::endl;
+		std::cerr << "p3disc::sendPeerDetails() don't send info about this peer because he has no disc enabled." << std::endl;
             #endif
-            return;
-        }
+		return;
+	}
 
 	// Construct a message
 	RsDiscReply *di = new RsDiscReply();
@@ -329,78 +328,84 @@ void p3disc::sendPeerDetails(std::string to, std::string about) {
 	di -> PeerId(to);
 	di -> aboutId = about;
 
-        // set the ip addresse list.
-        std::list<std::string> sslChilds;
-        rsPeers->getSSLChildListOfGPGId(about, sslChilds);
-        bool shouldWeSendGPGKey = false;//the GPG key is send only if we've got a valid friend with DISC enabled
-        for (std::list<std::string>::iterator sslChildIt = sslChilds.begin(); sslChildIt != sslChilds.end(); sslChildIt++) {
-            peerConnectState detail;
-            if (!mConnMgr->getFriendNetStatus(*sslChildIt, detail) || detail.visState & RS_VIS_STATE_NODISC) {
-                    continue;
-            }
-            shouldWeSendGPGKey = true;
-            RsPeerNetItem *rsPeerNetItem = new RsPeerNetItem();
-            rsPeerNetItem->clear();
+	// set the ip addresse list.
+	std::list<std::string> sslChilds;
+	rsPeers->getSSLChildListOfGPGId(about, sslChilds);
+	bool shouldWeSendGPGKey = false;//the GPG key is send only if we've got a valid friend with DISC enabled
 
-            rsPeerNetItem->pid = detail.id;
-            rsPeerNetItem->gpg_id = detail.gpg_id;
-            rsPeerNetItem->location = detail.location;
-            rsPeerNetItem->netMode = detail.netMode;
-            rsPeerNetItem->visState = detail.visState;
-            rsPeerNetItem->lastContact = detail.lastcontact;
-            rsPeerNetItem->currentlocaladdr = detail.currentlocaladdr;
-            rsPeerNetItem->currentremoteaddr = detail.currentserveraddr;
-            rsPeerNetItem->dyndns = detail.dyndns;
-            rsPeerNetItem->ipAddressList = detail.getIpAddressList();
+	for (std::list<std::string>::iterator sslChildIt = sslChilds.begin(); sslChildIt != sslChilds.end(); sslChildIt++) 
+		if(to != *sslChildIt)	// We don't send info to a peer about itself, but we allow sending info
+		{								// about peers with the same GPG id.
+			peerConnectState detail;
+			if (!mConnMgr->getFriendNetStatus(*sslChildIt, detail) || detail.visState & RS_VIS_STATE_NODISC) {
+				continue;
+			}
+			shouldWeSendGPGKey = true;
+			RsPeerNetItem *rsPeerNetItem = new RsPeerNetItem();
+			rsPeerNetItem->clear();
 
-            di->rsPeerList.push_back(*rsPeerNetItem);
-        }
+			rsPeerNetItem->pid = detail.id;
+			rsPeerNetItem->gpg_id = detail.gpg_id;
+			rsPeerNetItem->location = detail.location;
+			rsPeerNetItem->netMode = detail.netMode;
+			rsPeerNetItem->visState = detail.visState;
+			rsPeerNetItem->lastContact = detail.lastcontact;
+			rsPeerNetItem->currentlocaladdr = detail.currentlocaladdr;
+			rsPeerNetItem->currentremoteaddr = detail.currentserveraddr;
+			rsPeerNetItem->dyndns = detail.dyndns;
+			rsPeerNetItem->ipAddressList = detail.getIpAddressList();
 
-        //send own details
-        if (about == rsPeers->getGPGOwnId()) {
-            peerConnectState detail;
-            if (mConnMgr->getOwnNetStatus(detail)) {
-                shouldWeSendGPGKey = true;
-                RsPeerNetItem *rsPeerNetItem = new RsPeerNetItem();
-                rsPeerNetItem->clear();
-                rsPeerNetItem->pid = detail.id;
-                rsPeerNetItem->gpg_id = detail.gpg_id;
-                rsPeerNetItem->location = detail.location;
-                rsPeerNetItem->netMode = detail.netMode;
-                rsPeerNetItem->visState = detail.visState;
-                rsPeerNetItem->lastContact = time(NULL);
-                rsPeerNetItem->currentlocaladdr = detail.currentlocaladdr;
-                rsPeerNetItem->currentremoteaddr = detail.currentserveraddr;
-                rsPeerNetItem->dyndns = detail.dyndns;
-                rsPeerNetItem->ipAddressList = detail.getIpAddressList();
+			di->rsPeerList.push_back(*rsPeerNetItem);
+		}
 
-                di->rsPeerList.push_back(*rsPeerNetItem);
-            }
-        }
 
-        if (!shouldWeSendGPGKey) {
+	//send own details
+	if (about == rsPeers->getGPGOwnId()) 
+	{
+		peerConnectState detail;
+		if (mConnMgr->getOwnNetStatus(detail)) 
+		{
+			shouldWeSendGPGKey = true;
+			RsPeerNetItem *rsPeerNetItem = new RsPeerNetItem();
+			rsPeerNetItem->clear();
+			rsPeerNetItem->pid = detail.id;
+			rsPeerNetItem->gpg_id = detail.gpg_id;
+			rsPeerNetItem->location = detail.location;
+			rsPeerNetItem->netMode = detail.netMode;
+			rsPeerNetItem->visState = detail.visState;
+			rsPeerNetItem->lastContact = time(NULL);
+			rsPeerNetItem->currentlocaladdr = detail.currentlocaladdr;
+			rsPeerNetItem->currentremoteaddr = detail.currentserveraddr;
+			rsPeerNetItem->dyndns = detail.dyndns;
+			rsPeerNetItem->ipAddressList = detail.getIpAddressList();
+
+			di->rsPeerList.push_back(*rsPeerNetItem);
+		}
+	}
+
+	if (!shouldWeSendGPGKey) {
             #ifdef P3DISC_DEBUG
-            std::cerr << "p3disc::sendPeerDetails() GPG key should not be send, no friend with disc on found about it." << std::endl;
+		std::cerr << "p3disc::sendPeerDetails() GPG key should not be send, no friend with disc on found about it." << std::endl;
             #endif
-            return;
-        }
-        std::string cert = AuthGPG::getAuthGPG()->SaveCertificateToString(about);
-        if (cert == "") {
+		return;
+	}
+	std::string cert = AuthGPG::getAuthGPG()->SaveCertificateToString(about);
+	if (cert == "") {
             #ifdef P3DISC_DEBUG
-            std::cerr << "p3disc::sendPeerDetails() don't send details because the gpg cert is not good" << std::endl;
+		std::cerr << "p3disc::sendPeerDetails() don't send details because the gpg cert is not good" << std::endl;
             #endif
-            return;
-        }
-        di -> certGPG = cert;
+		return;
+	}
+	di -> certGPG = cert;
 
-        // Send off message
+	// Send off message
 #ifdef P3DISC_DEBUG
-        di->print(std::cerr, 5);
+	di->print(std::cerr, 5);
 #endif
-        sendItem(di);
+	sendItem(di);
 
 #ifdef P3DISC_DEBUG
-        std::cerr << "p3disc::sendPeerDetails() discovery reply sent." << std::endl;
+	std::cerr << "p3disc::sendPeerDetails() discovery reply sent." << std::endl;
 #endif
 }
 
@@ -453,7 +458,8 @@ void p3disc::askInfoToAllPeers(std::string about)
 
 
         peerConnectState connectState;
-        if (!mConnMgr->getFriendNetStatus(about, connectState) || (connectState.visState & RS_VIS_STATE_NODISC)) {
+        if (!mConnMgr->getFriendNetStatus(about, connectState)) // || (connectState.visState & RS_VIS_STATE_NODISC)) {
+		  {
             #ifdef P3DISC_DEBUG
             std::cerr << "p3disc::askInfoToAllPeers() friend disc is off, don't send the request." << std::endl;
             #endif
@@ -502,93 +508,119 @@ void p3disc::askInfoToAllPeers(std::string about)
 
 void p3disc::recvPeerDetails(RsDiscReply *item)
 {
-        // if off discard item.
-        peerConnectState detail;
-        if (!mConnMgr->getOwnNetStatus(detail) || (detail.visState & RS_VIS_STATE_NODISC)) {
-            return;
-        }
+	// discovery is only disabled for sending, not for receiving.
+//	// if off discard item.
+//	peerConnectState detail;
+//	if (!mConnMgr->getOwnNetStatus(detail) || (detail.visState & RS_VIS_STATE_NODISC)) {
+//		return;
+//	}
 
 #ifdef P3DISC_DEBUG
-        std::cerr << "p3disc::recvPeerFriendMsg() From: " << item->PeerId() << " About " << item->aboutId << std::endl;
+	std::cerr << "p3disc::recvPeerFriendMsg() From: " << item->PeerId() << " About " << item->aboutId << std::endl;
 #endif
-        std::string certGpgId;
+	std::string certGpgId;
         if (!AuthGPG::getAuthGPG()->LoadCertificateFromString(item->certGPG, certGpgId)) {
             #ifdef P3DISC_DEBUG
-            std::cerr << "p3disc::recvPeerFriendMsg() gpg cert is not good, aborting" << std::endl;
+		std::cerr << "p3disc::recvPeerFriendMsg() gpg cert is not good, aborting" << std::endl;
             #endif
-            return;
-        }
+		return;
+	}
         if (item->aboutId == "" || item->aboutId != certGpgId) {
  #ifdef P3DISC_DEBUG
-        std::cerr << "p3disc::recvPeerFriendMsg() Error : about id is not the same as gpg id." << std::endl;
+		std::cerr << "p3disc::recvPeerFriendMsg() Error : about id is not the same as gpg id." << std::endl;
 #endif
-           return;
-        }
+		return;
+	}
 
-        for (std::list<RsPeerNetItem>::iterator pitem = item->rsPeerList.begin(); pitem != item->rsPeerList.end(); pitem++) {
-            //don't update dummy friends
-            if (rsPeers->isDummyFriend(pitem->pid)) {
-                continue;
-            }
+	for (std::list<RsPeerNetItem>::iterator pitem = item->rsPeerList.begin(); pitem != item->rsPeerList.end(); pitem++) 
+	{
+		// there's no way we can receive from a peer some info about our own dummy friend
+		//don't update dummy friends
+		//if (rsPeers->isDummyFriend(pitem->pid)) {
+		//    continue;
+		//}
 
-            addDiscoveryData(item->PeerId(), pitem->pid, pitem->currentlocaladdr, pitem->currentremoteaddr, 0, time(NULL));
+		addDiscoveryData(item->PeerId(), pitem->pid, pitem->currentlocaladdr, pitem->currentremoteaddr, 0, time(NULL));
 
             #ifdef P3DISC_DEBUG
             std::cerr << "p3disc::recvPeerFriendMsg() Peer Config Item:" << std::endl;
-            pitem->print(std::cerr, 10);
-            std::cerr << std::endl;
-            #endif
-            if (pitem->pid != rsPeers->getOwnId()) {
-                //check that the friend is not a deleted one
-                if (deletedSSLFriendsIds.find(pitem->pid) == deletedSSLFriendsIds.end()) {
-                    //||  {
-                    mConnMgr->addFriend(pitem->pid, pitem->gpg_id, pitem->netMode, RS_VIS_STATE_NODISC, 0); //add with no disc by default. If friend already exist, it will do nothing
-                } else if (pitem->lastContact > ((uint32_t)deletedSSLFriendsIds[pitem->pid] + 3600*24)) { // the friend was seen up and running 24 hours after we deleted it, we will readd it
-                    mConnMgr->addFriend(pitem->pid, pitem->gpg_id, pitem->netMode, RS_VIS_STATE_NODISC, 0); //add with no disc by default. If friend already exist, it will do nothing
-                }
-                RsPeerDetails storedDetails;
-                if (rsPeers->getPeerDetails(pitem->pid, storedDetails) //update only if we got a detail
-                    && ((!(storedDetails.state & RS_PEER_CONNECTED) && storedDetails.lastConnect < (pitem->lastContact - 10000))
-                        || item->PeerId() == pitem->pid)) { //update if it's fresh info or if it's from the peer itself
-                    //their info is fresher than ours (there is a 10000 seconds margin), update ours
-                    mConnMgr->setLocalAddress(pitem->pid, pitem->currentlocaladdr);
-                    mConnMgr->setExtAddress(pitem->pid, pitem->currentremoteaddr);
-                    if (pitem->dyndns != "") {
-                        mConnMgr->setDynDNS(pitem->pid, pitem->dyndns);
-                    }
-                    mConnMgr->setNetworkMode(pitem->pid, pitem->netMode);
-                    if (item->PeerId() == pitem->pid) {
-                        mConnMgr->setVisState(pitem->pid, pitem->visState); //update vistate only if it's from the peer itself
-                    }
-                    if (storedDetails.location == "") {
-                        mConnMgr->setLocation(pitem->pid, pitem->location);
-                    }
-                }
 
-                //useless, we will exploit the list in the connect manager
-//            } else {
-//                if (pitem->currentremoteaddr.sin_addr.s_addr != 0 && pitem->currentremoteaddr.sin_port != 0 &&
-//                    pitem->currentremoteaddr.sin_addr.s_addr != 1 && pitem->currentremoteaddr.sin_port != 1 &&
-//                    std::string(inet_ntoa(pitem->currentremoteaddr.sin_addr)) != "1.1.1.1" &&
-//                    (!isLoopbackNet(&pitem->currentremoteaddr.sin_addr)) &&
-//                    (!isPrivateNet(&pitem->currentremoteaddr.sin_addr))
-//                    ) {
-//                    //the current server address given by the peer looks nice, let's use it for our own ext address if needed
-//                    sockaddr_in tempAddr;
-//                    if (!mConnMgr->getExtFinderExtAddress(tempAddr) && !mConnMgr->getUpnpExtAddress(tempAddr)) {
-//                        //don't change the port, just the ip
-//                        pitem->currentremoteaddr.sin_port = mConnMgr->ownState.currentserveraddr.sin_port;
-//                        mConnMgr->setExtAddress(mConnMgr->getOwnId(), pitem->currentremoteaddr);
-//                    }
-//                }
-            }
-            //allways update address list
-            mConnMgr->setAddressList(pitem->pid, pitem->ipAddressList);
+		pitem->print(std::cerr, 10);
+		std::cerr << std::endl;
+#endif
+		if (pitem->pid != rsPeers->getOwnId()) 
+		{
+			// Apparently, the connect manager won't add a friend if the gpg id is not
+			// trusted. However, this should be tested here for consistency and security 
+			// in case of modifications in mConnMgr.
+			//
+			if(AuthGPG::getAuthGPG()->isGPGAccepted(pitem->gpg_id) ||  pitem->gpg_id == AuthGPG::getAuthGPG()->getGPGOwnId())
+			{
+				// Add with no disc by default. If friend already exists, it will do nothing
+				//
+#ifdef P3DISC_DEBUG
+				std::cerr << "--> Adding to friends list " << pitem->pid << " - " << pitem->gpg_id << std::endl;
+#endif
+				mConnMgr->addFriend(pitem->pid, pitem->gpg_id, pitem->netMode, 0, 0); 
+				RsPeerDetails storedDetails;
 
-        }
+				// Update if know this peer, and if it's not already connected.
+				//
+				if(rsPeers->getPeerDetails(pitem->pid, storedDetails) && !(storedDetails.state & RS_PEER_CONNECTED)) 
+				{ 
+#ifdef P3DISC_DEBUG
+					std::cerr << "Friend is not connected -> updating info" << std::endl;
+					std::cerr << "   -> network mode: " << pitem->netMode << std::endl;
+					std::cerr << "   ->     location: " << pitem->location << std::endl;
+#endif
+					// Update if it's fresh info or if it's from the peer itself
+					// their info is fresher than ours, update ours
+					//
+					mConnMgr->setNetworkMode(pitem->pid, pitem->netMode);
+					mConnMgr->setLocation(pitem->pid, pitem->location);
+
+					// The info from the peer itself is ultimately trustable, so we can override some info,
+					// such as:
+					// 	- local and global addresses
+					//
+					if (item->PeerId() == pitem->pid) 
+					{
+#ifdef P3DISC_DEBUG
+						std::cerr << "Info sent by the peer itself -> updating self info:" << std::endl;
+						std::cerr << "  -> current local  addr = " << pitem->currentlocaladdr << std::endl;
+						std::cerr << "  -> current remote addr = " << pitem->currentremoteaddr << std::endl;
+						std::cerr << "  -> clearing NODISC flag " << std::endl;
+#endif
+						mConnMgr->setLocalAddress(pitem->pid, pitem->currentlocaladdr);
+						mConnMgr->setExtAddress(pitem->pid, pitem->currentremoteaddr);
+						pitem->visState &= ~RS_VIS_STATE_NODISC ;
+						mConnMgr->setVisState(pitem->pid, pitem->visState); 
+					}
+				}
+#ifdef P3DISC_DEBUG
+				std::cerr << "Friend is already connected -> not updating" << std::endl;
+#endif
+				// allways update address list and dns, except if it's ours
+				if (pitem->dyndns != "") 
+					mConnMgr->setDynDNS(pitem->pid, pitem->dyndns);
+
+				mConnMgr->setAddressList(pitem->pid, pitem->ipAddressList);
+			}
+#ifdef P3DISC_DEBUG
+			else
+				std::cerr << "  skipping unknown gpg id " << pitem->gpg_id << std::endl ;
+#endif
+		}
+#ifdef P3DISC_DEBUG
+		else
+			std::cerr << "Skipping info about own id " << pitem->pid << std::endl ;
+#endif
+
+	}
+
 	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_NEIGHBOURS, NOTIFY_TYPE_MOD);
 
-        /* cleanup (handled by caller) */
+	/* cleanup (handled by caller) */
 }
 
 void p3disc::recvPeerVersionMsg(RsDiscVersion *item)
@@ -629,20 +661,20 @@ void p3disc::recvAskInfo(RsDiscAskInfo *item) {
 
 void p3disc::removeFriend(std::string ssl_id) {
 #ifdef P3DISC_DEBUG
-        std::cerr << "p3disc::removeFriend() called for : " << ssl_id << std::endl;
+	std::cerr << "p3disc::removeFriend() called for : " << ssl_id << std::endl;
 #endif
-    //if we deleted the gpg_id, don't store the friend deletion as if we add back the gpg_id, we won't have the ssl friends back
-        std::string gpg_id = rsPeers->getGPGId(ssl_id);
+	//if we deleted the gpg_id, don't store the friend deletion as if we add back the gpg_id, we won't have the ssl friends back
+	std::string gpg_id = rsPeers->getGPGId(ssl_id);
 #ifdef P3DISC_DEBUG
-        std::cerr << "p3disc::removeFriend() gpg_id : " << gpg_id << std::endl;
+	std::cerr << "p3disc::removeFriend() gpg_id : " << gpg_id << std::endl;
 #endif
-    if (gpg_id == AuthGPG::getAuthGPG()->getGPGOwnId() || rsPeers->isGPGAccepted(rsPeers->getGPGId(ssl_id))) {
+	if (gpg_id == AuthGPG::getAuthGPG()->getGPGOwnId() || rsPeers->isGPGAccepted(rsPeers->getGPGId(ssl_id))) {
  #ifdef P3DISC_DEBUG
-        std::cerr << "p3disc::removeFriend() storing the friend deletion." << ssl_id << std::endl;
+		std::cerr << "p3disc::removeFriend() storing the friend deletion." << ssl_id << std::endl;
 #endif
-        deletedSSLFriendsIds[ssl_id] = time(NULL);//just keep track of the deleted time
-        IndicateConfigChanged();
-    }
+		deletedSSLFriendsIds[ssl_id] = time(NULL);//just keep track of the deleted time
+		IndicateConfigChanged();
+	}
 }
 
 /*************************************************************************************/

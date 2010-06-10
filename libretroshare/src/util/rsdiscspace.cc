@@ -38,7 +38,6 @@
 /*
  * #define DEBUG_RSDISCSPACE 
  */
-#define DEBUG_RSDISCSPACE 
 
 time_t 	RsDiscSpace::_last_check[3] 	= { 0,0,0 } ;
 uint32_t RsDiscSpace::_size_limit_mb 	= 100 ;

@@ -89,13 +89,6 @@ class   udpPacket
 };
 
 
-std::ostream &operator<<(std::ostream &out, const struct sockaddr_in &addr)
-{
-	out << "[" << inet_ntoa(addr.sin_addr) << ":";
-	out << htons(addr.sin_port) << "]";
-	return out;
-}
-
 
 bool operator==(const struct sockaddr_in &addr, const struct sockaddr_in &addr2)
 {

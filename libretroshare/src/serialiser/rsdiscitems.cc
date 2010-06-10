@@ -347,7 +347,7 @@ bool     RsDiscSerialiser::serialiseReply(RsDiscReply *item, void *data, uint32_
 
 	for (pitemIt = item->rsPeerList.begin(); pitemIt!=(item->rsPeerList.end()) && ok; ++pitemIt) 
 	{
-		uint32_t size = ~(uint32_t)0;	// we must be conservative otherwise the serialiser returns false !!
+		uint32_t size = *pktsize - offset ;//~(uint32_t)0;	// we must be conservative otherwise the serialiser returns false !!
 
 		ok &= rss.serialise(&(*pitemIt), (void *) (((char *) data) + offset), &size);
 

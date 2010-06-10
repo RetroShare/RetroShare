@@ -29,6 +29,7 @@
 #include <inttypes.h>
 #include <stdlib.h>	/* Included because GCC4.4 wants it */
 #include <string.h> 	/* Included because GCC4.4 wants it */
+#include <iostream>
 
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS
@@ -72,5 +73,7 @@ bool isExternalNet(const struct in_addr *addr);
 
 /* convert addresses */
 bool getIPAddressFromString (const char *addr_str, struct in_addr *addr);
+
+std::ostream& operator<<(std::ostream& o,const struct sockaddr_in&) ;
 
 #endif /* RS_UNIVERSAL_NETWORK_HEADER */
