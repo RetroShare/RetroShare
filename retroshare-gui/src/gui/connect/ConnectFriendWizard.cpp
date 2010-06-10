@@ -677,7 +677,7 @@ void CertificatePage::generateCertificateCalled() {
     QString qdir = QFileDialog::getSaveFileName(this,
                                                 tr("Please choose a filename"),
                                                 QDir::homePath(),
-                                                "RetroShare Certificate (*.rsc)");
+                                                tr("RetroShare Certificate (*.rsc );;All Files (*)"));
     //Todo: move save to file to p3Peers::SaveCertificateToFile
 
     if (qdir.isEmpty() == false) {
