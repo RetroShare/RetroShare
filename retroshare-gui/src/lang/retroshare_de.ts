@@ -9054,8 +9054,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Download time</source>
         <comment>i.e: Estimated Time of Arrival / Time left</comment>
-        <translation>Download Zeit
-</translation>
+        <translation>Download Zeit</translation>
     </message>
     <message>
         <source>Peer</source>
