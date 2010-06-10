@@ -198,7 +198,7 @@ void CreateForumMsg::loadEmoticonsForums()
 	#endif
 	if(!sm_file.open(QIODevice::ReadOnly))
 	{
-		std::cerr << "Could not open resouce file :/emoticons/emotes.acs" << endl ;
+            std::cerr << "Could not open resouce file :/emoticons/emotes.acs" << std::endl ;
 		return ;
 	}
 	sm_codes = sm_file.readAll();

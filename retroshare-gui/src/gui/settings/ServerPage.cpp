@@ -229,7 +229,7 @@ void ServerPage::saveAddresses()
 	int netIndex = ui.netModeComboBox->currentIndex();
 
 	/* Check if netMode has changed */
-	int netMode = 0;
+	uint32_t netMode = 0;
 	switch(netIndex)
 	{
 		case 2:
@@ -247,7 +247,7 @@ void ServerPage::saveAddresses()
 	if (detail.tryNetMode != netMode)
 		rsPeers->setNetworkMode(ownId, netMode);
 
-	int visState = 0;
+	uint32_t visState = 0;
 	/* Check if vis has changed */
 	if (0 == ui.discComboBox->currentIndex())
 		visState |= RS_VS_DISC_ON;

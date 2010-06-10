@@ -119,7 +119,7 @@ void QuickStartWizard::on_pushButtonConnectionNext_clicked()
         rsPeers->setNetworkMode(rsPeers->getOwnId(), netMode);
 
         /* Check if vis has changed */
-        int visState = 0;
+        uint32_t visState = 0;
         if (0 == ui.discoveryComboBox->currentIndex())
         {
                 visState |= RS_VS_DISC_ON;
@@ -453,7 +453,7 @@ void QuickStartWizard::saveChanges()
 	}
         rsPeers->setNetworkMode(ownId, netMode);
 
-        int visState = 0;
+        uint32_t visState = 0;
         /* Check if vis has changed */
         if (0 == ui.discoveryComboBox->currentIndex())
         {

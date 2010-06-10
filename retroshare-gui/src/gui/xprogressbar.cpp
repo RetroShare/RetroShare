@@ -198,9 +198,9 @@ void xProgressBar::paint()
 	if(ss > 1)	// for small files we use a more progressive display
 	{
 		if(!_pinfo.cmap._map.empty())
-			for(int i=0;i<ss;++i)
+			for(uint32_t i=0;i<ss;++i)
 			{
-				int j=0 ;
+				uint32_t j=0 ;
 				while(i+j<ss && _pinfo.cmap[i+j])
 					++j ;
 

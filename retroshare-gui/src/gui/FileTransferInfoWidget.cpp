@@ -194,7 +194,7 @@ void FileTransferInfoWidget::draw(const FileInfo& nfo,const FileChunksInfo& info
 	 //
 	 int nb_chunks = info.file_size/info.chunk_size + !!(info.file_size % info.chunk_size);
 
-	 for(uint i=0;i<availability_map_size_X;++i)
+	 for(int i=0;i<availability_map_size_X;++i)
 	 {
 		 int nb_src = 0 ;
 		 int chunk_num = (int)floor(i/float(availability_map_size_X)*(nb_chunks-1)) ;
@@ -209,7 +209,7 @@ void FileTransferInfoWidget::draw(const FileInfo& nfo,const FileChunksInfo& info
 	 y += block_sep + availability_map_size_Y ;
 	 painter->setPen(QColor::fromRgb(70,70,70)) ;
 	 painter->drawLine(0,y,maxWidth,y) ;
-	 y += block_sep ;
+         y += block_sep ;
 
 	 // various info:
 	 //

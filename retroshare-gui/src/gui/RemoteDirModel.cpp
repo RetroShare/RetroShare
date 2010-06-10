@@ -40,8 +40,8 @@
 
 RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
         : QAbstractItemModel(parent),
-         RemoteMode(mode), nIndex(1), indexSet(1) /* ass zero index cant be used */,
-         ageIndicator(IND_ALWAYS)
+         ageIndicator(IND_ALWAYS),
+         RemoteMode(mode), nIndex(1), indexSet(1) /* ass zero index cant be used */
 {
 	setSupportedDragActions(Qt::CopyAction);
 	treeStyle();
