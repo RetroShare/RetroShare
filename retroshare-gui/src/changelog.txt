@@ -1,3 +1,36 @@
+Changes for v0.5.0e
+
+* Made a pass on the code in p3disc. 
+
+* Corrected some bugs:
+    - suppressed an unwanted return in packet treatment
+    - prevented sending info to a peer about itself
+    - changed askInfoToAllPeers() such as not to discard info from peers with
+      NODISC flag (because we especially need info for these)
+    - enabled receiving p3disc info even if p3discovery is disabled. Indeed,
+      disabeling p3disc is a measure of protection, so it should limit the 
+      export of p3disc info, not the import.
+    - removed test discarding info about dummy friends, because it is useless
+    - don't discard info about peers that have the NODISC flag (meaning that we
+      especially need info for them)
+    - added safety check about received GPG keys. Before we relied on this test
+      being performed by p3ConnMgr::addFriend()
+    - added some debug info
+
+* put correct (i.e. non conservative) size for RsDiscReply packets
+
+* corrected bug in rsdiscitem that prevented RsDiscReply packets to transfer cp serialiser/rsdiscitems.cc
+
+* switched ip addr finder to on by default (users seem to request it, and its not harmful)
+
+* automatic removal of file lists from deleted peers, at restart (After double check that this does not alter exchange of file lists in any way)
+
+* set heartbeat values to intermediate value
+
+* added verification for file size computation (bug correction)
+
+* augmented the heartbeat parameters, to reduce the stress on connections. Seems to help a lot when the traffic is high.
+
 Changes for v0.5.0d
 
 Package improvements:
