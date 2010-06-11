@@ -101,12 +101,22 @@ public:
 
     bool operator<(const QTreeWidgetItem &other) const
     {
+        int role = Qt::DisplayRole;
         int column = m_pWidget ? m_pWidget->sortColumn() : 0;
-        if (column == COLUMN_STATE) {
-            // sort by state set in user role
-            const QVariant v1 = data(column, Qt::UserRole);
-            const QVariant v2 = other.data(column, Qt::UserRole);
-            return v1.toString() < v2.toString();
+
+        switch (column) {
+        case COLUMN_STATE:
+                // sort by state set in user role
+                role = Qt::UserRole;
+
+                // no break;
+
+        case COLUMN_NAME:
+            {
+                const QVariant v1 = data(column, role);
+                const QVariant v2 = other.data(column, role);
+                return (v1.toString().compare (v2.toString(), Qt::CaseInsensitive) < 0);
+            }
         }
 
         // let the standard do the sort
