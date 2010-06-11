@@ -20,8 +20,8 @@
  ****************************************************************/
 
 
-#define GUI_VERSION "0.5.0d"
-#define GUI_REVISION "Revision: 3016  date : 14:29:45 05.29.10"
+#define GUI_VERSION "0.5.0e"
+#define GUI_REVISION "Revision: 3036  date : 16:19:15 06.10.10"
 
 
 #include <QString>
