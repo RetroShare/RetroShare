@@ -2207,6 +2207,35 @@ void MessagesDialog::updateMessageSummaryList()
                 break;
         }
     }
+    
+
+    int listrow = ui.listWidget->currentRow();
+    QString textTotal;
+
+    switch (listrow) 
+    {
+        case ROW_INBOX:
+            textTotal = tr("Total:") + " "  + QString::number(inboxCount);
+            ui.total_label->setText(textTotal);
+            break;
+        case ROW_OUTBOX:
+            textTotal = tr("Total:") + " "  + QString::number(newOutboxCount);
+            ui.total_label->setText(textTotal);
+            break;
+        case ROW_DRAFTBOX:
+            textTotal = tr("Total:") + " "  + QString::number(newDraftCount);
+            ui.total_label->setText(textTotal);
+            break;
+        case ROW_SENTBOX:
+            textTotal = tr("Total:") + " "  + QString::number(newSentboxCount);
+            ui.total_label->setText(textTotal);
+            break;
+        case ROW_TRASHBOX:
+            textTotal = tr("Total:") + " "  + QString::number(trashboxCount);
+            ui.total_label->setText(textTotal);
+            break;
+    }
+
 
     QString textItem;
     /*updating the labels in leftcolumn*/
@@ -2286,13 +2315,6 @@ void MessagesDialog::updateMessageSummaryList()
         item->setText(textItem);
     }
 
-    /* Total Inbox */
-    textItem = tr("Total Inbox:") + " "  + QString::number(inboxCount);
-    ui.totalInbox_label->setText(textItem);
-
-    /* Total Sent */
-    textItem = tr("Total Sent:") + " "  + QString::number(newSentboxCount);
-    ui.totalSentbox_label->setText(textItem);
 
     /* set tag counts */
     int nRowCount = ui.tagWidget->count();

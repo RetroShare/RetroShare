@@ -985,6 +985,14 @@ border-image: url(:/images/closepressed.png)
    </item>
    <item row="1" column="0">
     <widget class="QTabWidget" name="tabWidget">
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QTabBar::tab {
+}
+</string>
+     </property>
      <property name="currentIndex">
       <number>0</number>
      </property>
@@ -1191,7 +1199,7 @@ border: 1px solid #CCCCCC;}</string>
             </widget>
            </item>
            <item row="4" column="0">
-            <widget class="QLabel" name="totalInbox_label">
+            <widget class="QLabel" name="total_label">
              <property name="minimumSize">
               <size>
                <width>0</width>
@@ -1205,24 +1213,6 @@ border: 1px solid #CCCCCC;}</string>
              </property>
              <property name="text">
               <string>Total Inbox:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="0">
-            <widget class="QLabel" name="totalSentbox_label">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>18</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>9</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Total Sent:</string>
              </property>
             </widget>
            </item>
@@ -1452,7 +1442,7 @@ p, li { white-space: pre-wrap; }
                    </property>
                    <property name="minimumSize">
                     <size>
-                     <width>60</width>
+                     <width>0</width>
                      <height>12</height>
                     </size>
                    </property>
@@ -1517,7 +1507,7 @@ p, li { white-space: pre-wrap; }
                    </property>
                    <property name="minimumSize">
                     <size>
-                     <width>60</width>
+                     <width>0</width>
                      <height>12</height>
                     </size>
                    </property>
@@ -1582,7 +1572,7 @@ p, li { white-space: pre-wrap; }
                    </property>
                    <property name="minimumSize">
                     <size>
-                     <width>60</width>
+                     <width>0</width>
                      <height>12</height>
                     </size>
                    </property>
