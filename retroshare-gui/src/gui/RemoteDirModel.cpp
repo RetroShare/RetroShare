@@ -229,86 +229,84 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
         rsFiles->FileDetails(details.hash, 0, finfo);
 
         return QString::fromStdString(finfo.path) ;
-    }
+    } /* end of FileNameRole */
 
     if (role == Qt::TextColorRole)
     {
         FileInfo finfo;
         rsFiles->FileDetails(details.hash, 0, finfo);
 
-		  if(details.min_age > ageIndicator)
-			  return Qt::gray ;
-		  else
-			  return Qt::black ;
-    }
+        if(details.min_age > ageIndicator)
+            return Qt::gray ;
+        else
+            return Qt::black ;
+    } /* end of TextColorRole */
 
 
-   if (role == Qt::DecorationRole)
-	 {
-	    FileInfo finfo;
-      rsFiles->FileDetails(details.hash, 0, finfo);
+    if (role == Qt::DecorationRole)
+    {
+        FileInfo finfo;
+        rsFiles->FileDetails(details.hash, 0, finfo);
 	 
-
-		 if (details.type == DIR_TYPE_PERSON)
-		 {
-			 switch(coln)
-			 {
-				 case 0:
-           if(details.min_age > ageIndicator)
-					 {
-						 return QIcon(":/images/folder_grey.png");
-           }
-           else if (ageIndicator == IND_LAST_DAY )
-           {
-           	 return QIcon(":/images/folder_green.png");
-           }
-           else if (ageIndicator == IND_LAST_WEEK )
-           {
-           	 return QIcon(":/images/folder_yellow.png");
-           }
-           else if (ageIndicator == IND_LAST_MONTH )
-           {
-           	 return QIcon(":/images/folder_red.png");
-           }
-           else
-           {
-					 return (QIcon(peerIcon));
-					 }
-					 break;
+        if (details.type == DIR_TYPE_PERSON)
+        {
+            switch(coln)
+            {
+                case 0:
+                if(details.min_age > ageIndicator)
+                {
+                    return QIcon(":/images/folder_grey.png");
+                }
+                else if (ageIndicator == IND_LAST_DAY )
+                {
+                    return QIcon(":/images/folder_green.png");
+                }
+                else if (ageIndicator == IND_LAST_WEEK )
+                {
+                    return QIcon(":/images/folder_yellow.png");
+                }
+                else if (ageIndicator == IND_LAST_MONTH )
+                {
+                    return QIcon(":/images/folder_red.png");
+                }
+                else
+                {
+                    return (QIcon(peerIcon));
+                }
+                break;
 			 }
 		 }
 		 else if (details.type == DIR_TYPE_DIR)
 		 {
-			 switch(coln)
-			 {
-				 case 0:
-           if(details.min_age > ageIndicator)
-					 {
-						 return QIcon(":/images/folder_grey.png");
-           }
-           else if (ageIndicator == IND_LAST_DAY )
-           {
-           	 return QIcon(":/images/folder_green.png");
-           }
-           else if (ageIndicator == IND_LAST_WEEK )
-           {
-           	 return QIcon(":/images/folder_yellow.png");
-           }
-           else if (ageIndicator == IND_LAST_MONTH )
-           {
-           	 return QIcon(":/images/folder_red.png");
-           }
-					 else
-					 {
-						 return(QIcon(categoryIcon));
-					 }
-					 break;
+            switch(coln)
+            {
+                case 0:
+                if(details.min_age > ageIndicator)
+                {
+                    return QIcon(":/images/folder_grey.png");
+                }
+                else if (ageIndicator == IND_LAST_DAY )
+                {
+                    return QIcon(":/images/folder_green.png");
+                }
+                else if (ageIndicator == IND_LAST_WEEK )
+                {
+                    return QIcon(":/images/folder_yellow.png");
+                }
+                else if (ageIndicator == IND_LAST_MONTH )
+                {
+                    return QIcon(":/images/folder_red.png");
+                }
+                else
+                {
+                    return(QIcon(categoryIcon));
+                }
+                break;
 			 }
 		 }
 		 else if (details.type == DIR_TYPE_FILE) /* File */
 		 {
 			 // extensions predefined
-			 //QString name;
 			 switch(coln)
 			 {
 				 case 0:
@@ -316,7 +314,6 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
 					 if (ext == "jpg" || ext == "jpeg" || ext == "png" || ext == "gif"
 							 || ext == "bmp" || ext == "ico" || ext == "svg")
 					 {
-						 //setIcon(0, QIcon(":/images/FileTypePicture.png"));
 						 QIcon icon(":/images/FileTypePicture.png");
 						 return icon;
 					 }
@@ -324,20 +321,17 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
 							 || ext == "mkv" || ext == "mp4" || ext == "flv" || ext == "mov"
 							 || ext == "vob" || ext == "qt" || ext == "rm" || ext == "3gp")
 					 {
-						 //setIcon(0, QIcon(":/images/videofile.png"));
 						 QIcon icon(":/images/FileTypeVideo.png");
 						 return icon;
 					 }
 					 else if (ext == "ogg" || ext == "mp3" || ext == "wav" || ext == "wma" || ext == "xpm")
 					 {
-						 //setIcon(0, QIcon(":/images/soundfile.png"));
 						 QIcon icon(":/images/FileTypeAudio.png");
 						 return icon;
 					 }
 					 else if (ext == "tar" || ext == "bz2" || ext == "zip" || ext == "gz" || ext == "7z"
 							 || ext == "rar" || ext == "rpm" || ext == "deb")
 					 {
-						 //setIcon(0, QIcon(":/images/compressedfile.png"));
 						 QIcon icon(":/images/FileTypeArchive.png");
 						 return icon;
 					 }
@@ -349,32 +343,27 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
 					 }
 					 else if (ext == "iso" || ext == "nrg" || ext == "mdf" )
 					 {
-						 //setIcon(0, QIcon(":/images/txtfile.png"));
 						 QIcon icon(":/images/FileTypeCDImage.png");
 						 return icon;
 					 }
 					 else if (ext == "txt" || ext == "cpp" || ext == "c" || ext == "h")
 					 {
-						 //setIcon(0, QIcon(":/images/txtfile.png"));
 						 QIcon icon(":/images/FileTypeDocument.png");
 						 return icon;
 					 }
 					 else if (ext == "doc" || ext == "rtf" || ext == "sxw" || ext == "xls"
 							 || ext == "sxc" || ext == "odt" || ext == "ods")
 					 {
-						 //setIcon(0, QIcon(":/images/docfile.png"));
 						 QIcon icon(":/images/FileTypeDocument.png");
 						 return icon;
 					 }
 					 else if (ext == "html" || ext == "htm" || ext == "php")
 					 {
-						 //setIcon(0, QIcon(":/images/netfile.png"));
 						 QIcon icon(":/images/FileTypeDocument.png");
 						 return icon;
 					 }
 					 else
 					 {
-						 //setIcon(0, QIcon(":/images/file.png"));
 						 QIcon icon(":/images/FileTypeAny.png");
 						 return icon;
 					 }
@@ -385,20 +374,33 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
 		 {
 			 return QVariant();
 		 }
-	 }
+	 } /* end of DecorationRole */
 
-     /*************
+     /*****************
      Qt::EditRole
      Qt::ToolTipRole
      Qt::StatusTipRole
      Qt::WhatsThisRole
      Qt::SizeHintRole
      ****************/
+     
+    if (role == Qt::SizeHintRole)
+    {       
+        return QSize(18, 18);     
+    } /* end of SizeHintRole */ 
+     
+    if (role == Qt::TextAlignmentRole)
+	{
+        if(coln == 1)
+		{
+            return int( Qt::AlignRight | Qt::AlignVCenter);
+		}
+    } /* end of TextAlignmentRole */     
 
-     if (role == Qt::DisplayRole)
-     {
+    if (role == Qt::DisplayRole)
+    {
 
-        /*
+    /*
 	 * Person:  name,  id, 0, 0;
 	 * File  :  name,  size, rank, (0) ts
 	 * Dir   :  name,  (0) count, (0) path, (0) ts
@@ -429,31 +431,31 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
 				break;
 			case 1:
 				{
-					std::ostringstream out;
-        return  misc::friendlyUnit(details.count);
-		}
+                std::ostringstream out;
+                return  misc::friendlyUnit(details.count);
+                }
 			break;
 			case 2:
-		{
-        std::ostringstream out;
-        return  misc::userFriendlyDuration(details.age);
-		}
+                {
+                std::ostringstream out;
+                return  misc::userFriendlyDuration(details.age);
+                }
 			break;
 			case 3:
-		{
-        return getFlagsString(details.flags);
-		}
+                {
+                return getFlagsString(details.flags);
+                }
 			break;
 			case 4:
-		{
-			QString ind("");
-			if (ageIndicator != IND_ALWAYS)
-				ind = getAgeIndicatorString(details);
-			return ind;
-		}
+                {
+                QString ind("");
+                if (ageIndicator != IND_ALWAYS)
+                ind = getAgeIndicatorString(details);
+                return ind;
+                }
             break;
 			default:
-		return QString(tr("FILE"));
+                return QString(tr("FILE"));
 			break;
 		}
 	}
@@ -470,34 +472,18 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
 					out << details.count;
 					if (details.count > 1)
 					{
-					return QString::fromStdString(out.str()) + " " + tr("Files");
+                    return QString::fromStdString(out.str()) + " " + tr("Files");
 					}
 					else
-					return QString::fromStdString(out.str()) + " " + tr("File");
+                    return QString::fromStdString(out.str()) + " " + tr("File");
 				}
 				break;
 			case 2:
-					//return QString::fromUtf8("Folder");
 					return misc::userFriendlyDuration(details.min_age);
 				break;
 			case 3:
 					return getFlagsString(details.flags);
 				break;
-//            case 4:
-//            {
-//            	if (ageIndicator == IND_DEFAULT)
-//            		return QString("");
-//            	QModelIndex pidx = parent(index);
-//            	QModelIndex pidxs = pidx.sibling(pidx.row(), 4);
-//            	if (pidxs.isValid() && pidxs.data() != tr(""))
-//            		return pidxs.data();
-//            	else {
-//            		QString ind("");
-//            		getAgeIndicatorRec(details, ind);
-//            		return ind;
-//            	}
-//            }
- //               break;
 			default:
 				return QString(tr("DIR"));
 				break;
@@ -506,17 +492,8 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
    } /* end of DisplayRole */
    return QVariant();
 
-	if (role == Qt::TextAlignmentRole)
-	{
-		if(coln == 1)
-		{
-			return int( Qt::AlignRight | Qt::AlignVCenter);
-		}
 
-
-	}
-	return QVariant();
- }
+}
 
 void RemoteDirModel::getAgeIndicatorRec(DirDetails &details, QString &ret) const {
 	if (details.type == DIR_TYPE_FILE) {
