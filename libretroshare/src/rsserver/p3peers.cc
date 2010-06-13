@@ -276,8 +276,9 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
         std::cerr << "p3Peers::getPeerDetails() called for id : " << id << std::endl;
         #endif
         //first, check if it's a gpg or a ssl id.
+        std::string sOwnId = AuthSSL::getAuthSSL()->OwnId();
         peerConnectState pcs;
-        if (id != AuthSSL::getAuthSSL()->OwnId() && !mConnMgr->getFriendNetStatus(id, pcs)) {
+        if (id != sOwnId && !mConnMgr->getFriendNetStatus(id, pcs)) {
             //assume is not SSL, because every ssl_id has got a friend correspondance in mConnMgr
             #ifdef P3PEERS_DEBUG
             std::cerr << "p3Peers::getPeerDetails() got a gpg id and is returning GPG details only for id : " << id << std::endl;
@@ -289,7 +290,7 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
         std::cerr << "p3Peers::getPeerDetails() got a SSL id and is returning SSL and GPG details for id : " << id << std::endl;
         #endif
 
-        if (id == AuthSSL::getAuthSSL()->OwnId()) {
+        if (id == sOwnId) {
                 mConnMgr->getOwnNetStatus(pcs);
                 pcs.gpg_id = AuthGPG::getAuthGPG()->getGPGOwnId();
         }
@@ -322,14 +323,13 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
         d.dyndns        = pcs.dyndns;
 	d.lastConnect	= pcs.lastcontact;
 	d.connectPeriod = 0;
-	std::list<std::string> ipAddressList;
 	std::list<IpAddressTimed> pcsList = pcs.getIpAddressList();
+	d.ipAddressList.clear();
 	for (std::list<IpAddressTimed>::iterator ipListIt = pcsList.begin(); ipListIt!=(pcsList.end()); ipListIt++) {
 	    std::ostringstream toto;
             toto << ntohs(ipListIt->ipAddr.sin_port) << "    " << (time(NULL) - ipListIt->seenTime) << " sec";
-            ipAddressList.push_back(std::string(inet_ntoa(ipListIt->ipAddr.sin_addr)) + ":" + toto.str());
+            d.ipAddressList.push_back(std::string(inet_ntoa(ipListIt->ipAddr.sin_addr)) + ":" + toto.str());
 	}
-	d.ipAddressList = ipAddressList;
 
 
 	/* Translate */

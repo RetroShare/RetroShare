@@ -996,17 +996,19 @@ bool	AuthGPG::getGPGDetails(std::string id, RsPeerDetails &d)
 	certmap::iterator it;
 	if (mKeyList.end() != (it = mKeyList.find(id))) 
 	{
-		d.id = it->second.id; //keep, it but can be bug gen
-		d.gpg_id = it->second.id;
-		d.name = it->second.name;
-		d.email = it->second.email;
-		d.trustLvl = it->second.trustLvl;
-		d.validLvl = it->second.validLvl;
-		d.ownsign = it->second.ownsign;
-		d.gpgSigners = it->second.signers;
-		d.fpr = it->second.fpr;
+		gpgcert &cert = it->second;
 
-		d.accept_connection = it->second.accept_connection;
+		d.id = cert.id; //keep, it but can be bug gen
+		d.gpg_id = cert.id;
+		d.name = cert.name;
+		d.email = cert.email;
+		d.trustLvl = cert.trustLvl;
+		d.validLvl = cert.validLvl;
+		d.ownsign = cert.ownsign;
+		d.gpgSigners = cert.signers;
+		d.fpr = cert.fpr;
+
+		d.accept_connection = cert.accept_connection;
 
 		//did the peer signed me ?
 		d.hasSignedMe = false;
@@ -1019,7 +1021,7 @@ bool	AuthGPG::getGPGDetails(std::string id, RsPeerDetails &d)
 			}
 
 #ifdef GPG_DEBUG
-		std::cerr << "AuthGPG::getPGPDetails() Name : " << it->second.name << std::endl;
+		std::cerr << "AuthGPG::getPGPDetails() Name : " << cert.name << std::endl;
 #endif
 		return true;
 	} 

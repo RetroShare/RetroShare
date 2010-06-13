@@ -83,7 +83,7 @@ virtual bool loadList(std::list<RsItem*> load);
 
 	private:
 
-virtual std::list<RsStatusItem* > getStatusQueue();
+virtual void getStatusQueue(std::list<RsStatusItem* > &ilist);
 
 p3ConnectMgr *mConnMgr;
 

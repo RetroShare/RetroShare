@@ -65,8 +65,8 @@ bool p3StatusService::getStatus(std::list<StatusInfo>& statusInfo)
 
 	statusInfo.clear();
 
-	std::list<RsStatusItem* > status_items = getStatusQueue();
-	std::list<RsStatusItem* >::iterator rit;
+	std::list<RsStatusItem* > status_items;
+	getStatusQueue(status_items);
 	std::map<std::string, StatusInfo>::iterator mit;
 	std::list<std::string> peers, peersOnline;
 	std::list<std::string>::iterator pit, pit_online;
@@ -98,29 +98,24 @@ bool p3StatusService::getStatus(std::list<StatusInfo>& statusInfo)
 		}
 
 		// now note members who have sent specific status updates
-		for(rit = status_items.begin(); rit != status_items.end(); rit++){
-
-			RsStatusItem* si = dynamic_cast<RsStatusItem* >(*rit);
-
-			if(si == NULL){
-				std::cerr << "p3Status::getStatus() " << "Failed to cast Item \n" << std::endl;
-			}
-
+		while (status_items.size()){
+			RsStatusItem* si = status_items.front();
+			status_items.pop_front();
 
 			mit = mStatusInfoMap.find(si->PeerId());
 
-
+			if(mit != mStatusInfoMap.end()){
+				mit->second.id = si->PeerId();
+				mit->second.status = si->status;
+				mit->second.time_stamp = si->sendTime;
 #ifdef	STATUS_DEBUG
-			if(mit == mStatusInfoMap.end()){
+			} else {
 				std::cerr << "p3GetStatus() " << "Could not find Peer" << si->PeerId();
 				std::cerr << std::endl;
-			}
 #endif
+			}
 
-			mit->second.id = si->PeerId();
-			mit->second.status = si->status;
-			mit->second.time_stamp = si->sendTime;
-
+			delete (si);
 		}
 
 		// then fill up statusInfo list with this information
@@ -190,31 +185,31 @@ bool p3StatusService::statusAvailable(){
 
 /******************************/
 
-std::list<RsStatusItem* > p3StatusService::getStatusQueue(){
-
-
+void p3StatusService::getStatusQueue(std::list<RsStatusItem* > &ilist)
+{
 	time_t time_now = time(NULL);
 
 	RsItem* item;
-	std::list<RsStatusItem* > ilist;
 
 	while(NULL != (item = recvItem())){
 
 		RsStatusItem* status_item = dynamic_cast<RsStatusItem*>(item);
 
-		if(status_item != NULL){
-#ifdef STATUS_DEBUG
-			std::cerr << "p3StatusService::getStatusQueue()" << std::endl;
-			std::cerr << "PeerId : " << status_item->PeerId() << std::endl;
-			std::cerr << "Status: " << status_item->status << std::endl;
-			std::cerr << "Got status Item" << std::endl;
-#endif
-			status_item->recvTime = time_now;
-			ilist.push_back(status_item);
+		if(status_item == NULL) {
+			std::cerr << "p3Status::getStatusQueue() " << "Failed to cast Item \n" << std::endl;
+			delete (item);
+			continue;
 		}
-	}
 
-	return ilist;
+#ifdef STATUS_DEBUG
+                std::cerr << "p3StatusService::getStatusQueue()" << std::endl;
+                std::cerr << "PeerId : " << status_item->PeerId() << std::endl;
+                std::cerr << "Status: " << status_item->status << std::endl;
+                std::cerr << "Got status Item" << std::endl;
+#endif
+                status_item->recvTime = time_now;
+                ilist.push_back(status_item);
+	}
 }
 
 /* p3Config */

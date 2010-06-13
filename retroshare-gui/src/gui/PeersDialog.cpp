@@ -512,9 +512,11 @@ void  PeersDialog::insertPeers()
                 continue;
             }
 
+            bool bNew = false;
             if (gpg_item == NULL) {
                 gpg_item = new MyTreeWidgetItem(peertreeWidget, 0); //set type to 0 for custom popup menu
                 gpg_item->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
+                bNew = true;
             }
 
             gpg_item -> setText(COLUMN_NAME, QString::fromStdString(detail.name));
@@ -565,6 +567,7 @@ void  PeersDialog::insertPeers()
                     if (sslItem) {
                         gpg_item->removeChild(sslItem);
                     }
+                    continue;
                 }
 
                 if (newChild) {
@@ -733,8 +736,10 @@ void  PeersDialog::insertPeers()
                 }
             }
 
-            /* add gpg item to the list. If item is already in the list, it won't be duplicated thanks to Qt */
-            peertreeWidget->addTopLevelItem(gpg_item);
+            if (bNew) {
+                /* add gpg item to the list */
+                peertreeWidget->addTopLevelItem(gpg_item);
+            }
         }
 }
 
