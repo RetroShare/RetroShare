@@ -1369,7 +1369,7 @@ void p3ConnectMgr::tickMonitors()
 					if (notify)
 					{
 						notify->AddPopupMessage(RS_POPUP_CONNECT, 
-							peer.id, "Online: ");
+                                                        peer.id,"", "Online: ");
 
 
 						notify->AddFeedItem(RS_FEED_ITEM_PEER_CONNECT, peer.id, "", "");
