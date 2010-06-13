@@ -166,9 +166,11 @@ class GroupInfo
 
 	GroupKey adminKey;
 
-	/* NOT USED YET */
 
 	GroupIcon grpIcon;
+	/* NOT USED YET */
+
+	std::map<std::string, RsDistribMsg* > decrypted_msg_cache; /// stores a cache of messages that have been decrypted
 
 	bool publisher, allowAnon, allowUnknown;
 	bool subscribed, listener;
@@ -388,10 +390,31 @@ virtual void locked_loadRecvdPubKeys();
 
 /**
  * Allows group admin(s) to change group icon, description and name
- *
+ *@param grpId group id
+ *@param gi the changes to grp name, icon, and description should be reflected here
  */
 virtual bool locked_editGroup(std::string grpId, GroupInfo& gi);
 
+/**
+ * encrypts data using envelope encryption (taken from open ssl's evp_sealinit )
+ * only full publish key holders for can encrypt data for given group
+ *@param out
+ *@param outlen
+ *@param in
+ *@param inlen
+ */
+virtual bool encrypt(void *&out, int &outlen, const void *in, int inlen, std::string grpId);
+
+
+/**
+ * decrypts data using evelope decryption (taken from open ssl's evp_sealinit )
+ * only full publish key holders can decrypt data for a group
+ *@param out where decrypted data is written to
+ *@param outlen
+ *@param in
+ *@param inlen
+ */
+virtual bool decrypt(void *&out, int &outlen, const void *in, int inlen, std::string grpId);
 
 /***************************************************************************************/
 /***************************************************************************************/

@@ -26,6 +26,7 @@
 #include <openssl/err.h>
 #include <openssl/ssl.h>
 #include <openssl/evp.h>
+#include <openssl/rand.h>
 #include <algorithm>
 
 #include "rsiface/rsdistrib.h"
@@ -626,9 +627,26 @@ void	p3GroupDistrib::loadMsg(RsDistribSignedMsg *newMsg, std::string src, bool l
 		return;
 	}
 
+	if(git->second.grpFlags & RS_DISTRIB_ENCRYPTED){
+
+		void *out_data = NULL;
+		int outlen = 0;
+
+		if(decrypt(out_data, outlen, newMsg->packet.bin_data, newMsg->packet.bin_len, newMsg->grpId)){
+			newMsg->packet.TlvClear();
+			newMsg->packet.setBinData(out_data, outlen);
+		}else{
+
+			if((out_data != NULL) && (outlen != 0))
+				delete[] out_data;
+
+			return;
+		}
+	}
 
 	/* convert Msg */
 	RsDistribMsg *msg = unpackDistribSignedMsg(newMsg);
+
 	if (!msg)
 	{
 #ifdef DISTRIB_DEBUG
@@ -2067,6 +2085,7 @@ std::string	p3GroupDistrib::publishMsg(RsDistribMsg *msg, bool personalSign)
 			/* no publish Key */
 			return msgId;
 		}
+
 		/******************* FIND KEY ******************************/
 
 		signedMsg = new RsDistribSignedMsg();
@@ -2075,7 +2094,29 @@ std::string	p3GroupDistrib::publishMsg(RsDistribMsg *msg, bool personalSign)
 		uint32_t size = serialType->size(msg);
 		char *data = new char[size];
 		serialType->serialise(msg, data, &size);
-		signedMsg->packet.setBinData(data, size);
+
+		char *out_data = NULL;
+		uint32_t out_size = 0;
+
+		// encrypt data if group is private
+
+		if(gi->grpFlags & RS_DISTRIB_ENCRYPTED){
+
+			if(encrypt((void*&)out_data, (int&)out_size, (void*&)data, (int)size, grpId)){
+
+				delete[] data;
+			}else{
+
+				return msgId;
+			}
+
+		}else
+		{
+			out_data = data;
+			out_size = size;
+		}
+
+		signedMsg->packet.setBinData(out_data, out_size);
 
 		/* sign Packet */
 
@@ -2083,7 +2124,7 @@ std::string	p3GroupDistrib::publishMsg(RsDistribMsg *msg, bool personalSign)
 		EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
 
 		EVP_SignInit(mdctx, EVP_sha1());
-		EVP_SignUpdate(mdctx, data, size);
+		EVP_SignUpdate(mdctx, out_data, size);
 
 		unsigned int siglen = EVP_PKEY_size(publishKey);
 			unsigned char sigbuf[siglen];
@@ -2097,7 +2138,7 @@ std::string	p3GroupDistrib::publishMsg(RsDistribMsg *msg, bool personalSign)
 		{
 			unsigned int siglen = EVP_PKEY_size(publishKey);
 				unsigned char sigbuf[siglen];
-					if (AuthSSL::getAuthSSL()->SignDataBin(data, size, sigbuf, &siglen))
+					if (AuthSSL::getAuthSSL()->SignDataBin(out_data, size, sigbuf, &siglen))
 			{
 				signedMsg->personalSignature.signData.setBinData(sigbuf, siglen);
 							signedMsg->personalSignature.keyId = AuthSSL::getAuthSSL()->OwnId();
@@ -2108,7 +2149,7 @@ std::string	p3GroupDistrib::publishMsg(RsDistribMsg *msg, bool personalSign)
 		/* clean up */
 		delete serialType;
 		EVP_MD_CTX_destroy(mdctx);
-		delete[] data;
+		delete[] out_data;
 
 	} /* END STACK MUTEX */
 
@@ -3094,6 +3135,259 @@ void    p3GroupDistrib::printGroups(std::ostream &out)
 	}
 }
 
+bool p3GroupDistrib::encrypt(void *& out, int& outlen, const void *in, int inlen, std::string grpId)
+{
+
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::decrypt() " << std::endl;
+#endif
+
+	GroupInfo* gi = locked_getGroupInfo(grpId);
+	RSA *rsa_publish_pub = NULL;
+	EVP_PKEY *public_key = NULL, *private_key = NULL;
+
+	if(gi == NULL){
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::decrypt(): Cannot find group, grpId " << grpId
+				  << std::endl;
+#endif
+		return false;
+
+	}
+
+	/*  generate public key */
+
+	std::map<std::string, GroupKey>::iterator kit;
+
+	for(kit = gi->publishKeys.begin(); kit != gi->publishKeys.end(); kit++ ){
+
+		// Does not allow for possibility of different keys
+
+		if((kit->second.type & RSTLV_KEY_TYPE_FULL) && (kit->second.key->type == EVP_PKEY_RSA)){
+			private_key = kit->second.key;
+			break;
+		}
+
+	}
+
+	if(kit == gi->publishKeys.end()){
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::encrypt(): Cannot find full key, grpId " << grpId
+				  << std::endl;
+#endif
+		return false;
+	}
+
+
+	RSA* rsa_publish = EVP_PKEY_get1_RSA(private_key);
+	rsa_publish_pub = RSAPublicKey_dup(rsa_publish);
+
+
+	if(rsa_publish_pub  != NULL){
+		public_key = EVP_PKEY_new();
+		EVP_PKEY_assign_RSA(public_key, rsa_publish_pub);
+	}else{
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::encrypt(): Could not generate publish key " << grpId
+				  << std::endl;
+#endif
+		return false;
+	}
+
+    int out_offset = 0;
+    out = malloc(inlen + 2048);
+
+    /// ** from demos/maurice/example1.c of openssl V1.0 *** ///
+    unsigned char * iv = new unsigned char [16];
+    memset(iv, '\0', 16);
+    unsigned char * ek = new unsigned char [EVP_PKEY_size(public_key) + 1024];
+    uint32_t ekl, net_ekl;
+    unsigned char * cryptBuff = new unsigned char [inlen + 16];
+    memset(cryptBuff, '\0', sizeof(cryptBuff));
+    int cryptBuffL = 0;
+    unsigned char key[256];
+
+    /// ** copied implementation of EVP_SealInit of openssl V1.0 *** ///;
+    EVP_CIPHER_CTX cipher_ctx;
+    EVP_CIPHER_CTX_init(&cipher_ctx);
+
+    if(!EVP_EncryptInit_ex(&cipher_ctx,EVP_aes_256_cbc(),NULL,NULL,NULL)) {
+        return false;
+    }
+
+    if (EVP_CIPHER_CTX_rand_key(&cipher_ctx, key) <= 0) {
+        return false;
+    }
+
+    if (EVP_CIPHER_CTX_iv_length(&cipher_ctx)) {
+        RAND_pseudo_bytes(iv,EVP_CIPHER_CTX_iv_length(&cipher_ctx));
+    }
+
+    if(!EVP_EncryptInit_ex(&cipher_ctx,NULL,NULL,key,iv)) {
+        return false;
+    }
+
+#if OPENSSL_VERSION_NUMBER >= 0x10000000L
+    ekl=EVP_PKEY_encrypt_old(ek,key,EVP_CIPHER_CTX_key_length(&cipher_ctx), public_key);
+#else
+    ekl=EVP_PKEY_encrypt(ek,key,EVP_CIPHER_CTX_key_length(&cipher_ctx), public_key);
+#endif
+
+    /// ** copied implementation of EVP_SealInit of openssl V *** ///
+
+    net_ekl = htonl(ekl);
+    memcpy((void*)((unsigned long int)out + (unsigned long int)out_offset), (char*)&net_ekl, sizeof(net_ekl));
+    out_offset += sizeof(net_ekl);
+
+    memcpy((void*)((unsigned long int)out + (unsigned long int)out_offset), ek, ekl);
+    out_offset += ekl;
+
+    memcpy((void*)((unsigned long int)out + (unsigned long int)out_offset), iv, 16);
+    out_offset += 16;
+
+    EVP_EncryptUpdate(&cipher_ctx, cryptBuff, &cryptBuffL, (unsigned char*)in, inlen);
+    memcpy((void*)((unsigned long int)out + (unsigned long int)out_offset), cryptBuff, cryptBuffL);
+    out_offset += cryptBuffL;
+
+    EVP_EncryptFinal_ex(&cipher_ctx, cryptBuff, &cryptBuffL);
+    memcpy((void*)((unsigned long int)out + (unsigned long int)out_offset), cryptBuff, cryptBuffL);
+    out_offset += cryptBuffL;
+
+    outlen = out_offset;
+
+    EVP_EncryptInit_ex(&cipher_ctx,NULL,NULL,NULL,NULL);
+    EVP_CIPHER_CTX_cleanup(&cipher_ctx);
+
+
+    delete[] ek;
+
+#ifdef DISTRIB_DEBUG
+    std::cerr << "p3GroupDistrib::encrypt() finished with outlen : " << outlen << std::endl;
+#endif
+
+    return true;
+}
+
+bool p3GroupDistrib::decrypt(void *& out, int& outlen, const void *in, int inlen, std::string grpId)
+{
+
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::decrypt() " << std::endl;
+#endif
+
+	GroupInfo* gi = locked_getGroupInfo(grpId);
+	EVP_PKEY *private_key;
+
+	if(gi == NULL){
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::decrypt(): Cannot find group, grpId " << grpId
+				  << std::endl;
+#endif
+		return false;
+	}
+
+	std::map<std::string, GroupKey>::iterator kit;
+
+	for(kit = gi->publishKeys.begin(); kit != gi->publishKeys.end(); kit++ ){
+
+
+		if((kit->second.type & RSTLV_KEY_TYPE_FULL) && (kit->second.key->type == EVP_PKEY_RSA)){
+			private_key = kit->second.key;
+			break;
+		}
+	}
+
+	if(kit == gi->publishKeys.end()){
+#ifdef DISTRIB_DEBUG
+		std::cerr << "p3GroupDistrib::decrypt(): Cannot find full key, grpId " << grpId
+				  << std::endl;
+#endif
+		return false;
+	}
+
+	out = malloc(inlen + 16);
+	int in_offset = 0;
+	unsigned char * buf = new unsigned char [inlen + 16];
+	memset(buf, '\0', sizeof(buf));
+	int buflen = 0;
+	EVP_CIPHER_CTX ectx;
+	unsigned char * iv = new unsigned char [16];
+	memset(iv, '\0', 16);
+	unsigned char *encryptKey;
+	unsigned int ekeylen;
+
+
+	memcpy(&ekeylen, (void*)((unsigned long int)in + (unsigned long int)in_offset), sizeof(ekeylen));
+	in_offset += sizeof(ekeylen);
+
+	ekeylen = ntohl(ekeylen);
+
+	if (ekeylen != EVP_PKEY_size(private_key))
+	{
+			fprintf(stderr, "keylength mismatch");
+			return false;
+	}
+
+	encryptKey = new unsigned char [sizeof(char) * ekeylen];
+
+	memcpy(encryptKey, (void*)((unsigned long int)in + (unsigned long int)in_offset), ekeylen);
+	in_offset += ekeylen;
+
+	memcpy(iv, (void*)((unsigned long int)in + (unsigned long int)in_offset), 16);
+	in_offset += 16;
+
+	/// ** copied implementation of EVP_SealInit of openssl V1.0 *** ///;
+
+	unsigned char *key=NULL;
+	int i=0;
+
+	EVP_CIPHER_CTX_init(&ectx);
+	if(!EVP_DecryptInit_ex(&ectx,EVP_aes_256_cbc(),NULL, NULL,NULL)) return false;
+
+	key=(unsigned char *)OPENSSL_malloc(256);
+	if (key == NULL)
+	{
+		return false;
+	}
+
+	#if OPENSSL_VERSION_NUMBER >= 0x10000000L
+	i=EVP_PKEY_decrypt_old(key,encryptKey,ekeylen,private_key);
+	#else
+	i=EVP_PKEY_decrypt(key,encryptKey,ekeylen,private_key);
+	#endif
+	if ((i <= 0) || !EVP_CIPHER_CTX_set_key_length(&ectx, i))
+	{
+		return false;
+	}
+
+	if(!EVP_DecryptInit_ex(&ectx,NULL,NULL,key,iv)) return false;
+	/// ** copied implementation of EVP_SealInit of openssl V1.0 *** ///;
+
+
+	if (!EVP_DecryptUpdate(&ectx, buf, &buflen, (unsigned char*)((unsigned long int)in + (unsigned long int)in_offset), inlen - in_offset)) {
+		return false;
+	}
+	memcpy(out, buf, buflen);
+	int out_offset = buflen;
+
+	if (!EVP_DecryptFinal(&ectx, buf, &buflen)) {
+		return false;
+	}
+	memcpy((void*)((unsigned long int)out + (unsigned long int)out_offset), buf, buflen);
+	out_offset += buflen;
+	outlen = out_offset;
+
+	EVP_DecryptInit_ex(&ectx,NULL,NULL, NULL,NULL);
+	EVP_CIPHER_CTX_cleanup(&ectx);
+
+	delete[] encryptKey;
+
+	#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::decrypt() finished with outlen : " << outlen << std::endl;
+	#endif
+
+	return true;
+}
 
 
 std::ostream &operator<<(std::ostream &out, const GroupInfo &info)
