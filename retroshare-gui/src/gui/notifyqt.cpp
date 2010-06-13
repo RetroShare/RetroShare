@@ -247,13 +247,12 @@ void NotifyQt::UpdateGUI()
 		uint32_t type;
 		std::string title, id, msg;
 		
-		if (rsNotify->NotifyPopupMessage(type, id, msg))
+		if (rsNotify->NotifyPopupMessage(type, id, title, msg))
 		{
 			uint popupflags = Settings->getNotifyFlags();
 
 			/* id the name */
 			std::string name = rsPeers->getPeerName(id);
-                        //std::cerr << "NotifyQT got message for peer id : " << id << "; name : " << name << std::endl;
 			std::string realmsg = "<strong>" + name + "</strong>";
 			switch(type)
 			{
@@ -261,8 +260,9 @@ void NotifyQt::UpdateGUI()
 				if (popupflags & RS_POPUP_MSG)
 				{
 					MessageToaster * msgToaster = new MessageToaster();
-					//msgToaster->setMessage(QString::fromStdString(title));
+					msgToaster->setMessage(QString::fromStdString(msg));
 					msgToaster->setName(QString::fromStdString(realmsg));
+					msgToaster->setTitle(QString::fromStdString(title));
 					msgToaster->displayPopup();
 				}
 					break;
