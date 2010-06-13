@@ -41,7 +41,7 @@ Q_OBJECT
 		~MessageToaster();
 		
 		void displayPopup();
-		
+        void setTitle(const QString &title);
 		void setMessage(const QString & message);
 		void setName(const QString & name);
 
