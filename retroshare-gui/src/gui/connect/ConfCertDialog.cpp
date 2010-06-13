@@ -51,7 +51,7 @@ ConfCertDialog::ConfCertDialog(QWidget *parent, Qt::WFlags flags)
   connect(ui.denyFriendButton, SIGNAL(clicked()), this, SLOT(denyFriend()));
   connect(ui.signKeyButton, SIGNAL(clicked()), this, SLOT(signGPGKey()));
   connect(ui.trusthelpButton, SIGNAL(clicked()), this, SLOT(showHelpDialog()));
-
+  connect(ui.signers_listWidget, SIGNAL(customContextMenuRequested( QPoint ) ), this, SLOT( listWidgetContextMenuPopup( QPoint ) ) );
 
   ui.applyButton->setToolTip(tr("Apply and Close"));
 }
@@ -286,11 +286,11 @@ void ConfCertDialog::loadDialog()
             }
        }
 
-        ui.signers->clear() ;
+        ui.signers_listWidget->clear() ;
         for(std::list<std::string>::const_iterator it(detail.gpgSigners.begin());it!=detail.gpgSigners.end();++it) {	
             RsPeerDetails signerDetail;
             if (rsPeers->getGPGDetails(*it, signerDetail)) {
-                ui.signers->append(QString::fromStdString(signerDetail.name));
+                ui.signers_listWidget->addItem(QString::fromStdString(signerDetail.name));
             }
         }
 }
@@ -385,15 +385,39 @@ void ConfCertDialog::signGPGKey() {
  * topic. */
 void ConfCertDialog::showHelpDialog()
 {
-  showHelpDialog(QString("trust"));
+    showHelpDialog(QString("trust"));
 }
 
 /**< Shows the help browser and displays the given help <b>topic</b>. */
 void ConfCertDialog::showHelpDialog(const QString &topic)
 {
-  static HelpBrowser *helpBrowser = 0;
-  if (!helpBrowser)
+    static HelpBrowser *helpBrowser = 0;
+    if (!helpBrowser)
     helpBrowser = new HelpBrowser(this);
-  helpBrowser->showWindow(topic);
+    helpBrowser->showWindow(topic);
 }
 
+void ConfCertDialog::listWidgetContextMenuPopup( const QPoint &pos)
+{
+    QListWidgetItem *CurrentItem = ui.signers_listWidget->currentItem();
+    if ( ! CurrentItem )
+        return; 
+
+    QMenu menu( this );
+    QAction *copyPeer = new QAction(tr("Copy Peer Name"), this );
+    connect( copyPeer , SIGNAL( triggered() ), this, SLOT( copyToClipboard() ) );
+    menu.addAction(copyPeer );
+    menu.exec(QCursor::pos());
+ 
+}
+
+void ConfCertDialog::copyToClipboard( )
+{
+    QListWidgetItem *CurrentItem = ui.signers_listWidget->currentItem();
+    if ( ! CurrentItem )
+        return; 
+
+    QClipboard * cb = QApplication::clipboard();
+    QString text = CurrentItem->text();
+    cb->setText( text, QClipboard::Clipboard );
+}

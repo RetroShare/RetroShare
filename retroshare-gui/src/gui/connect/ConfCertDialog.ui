@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>489</width>
-    <height>485</height>
+    <height>505</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,7 +21,7 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="stabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="icon">
@@ -250,7 +250,14 @@
            </widget>
           </item>
           <item>
-           <widget class="QListWidget" name="ipAddressList"/>
+           <widget class="QListWidget" name="ipAddressList">
+            <property name="contextMenuPolicy">
+             <enum>Qt::DefaultContextMenu</enum>
+            </property>
+            <property name="selectionMode">
+             <enum>QAbstractItemView::MultiSelection</enum>
+            </property>
+           </widget>
           </item>
           <item>
            <spacer>
@@ -433,7 +440,11 @@
             </property>
             <layout class="QVBoxLayout" name="_11">
              <item>
-              <widget class="QTextBrowser" name="signers"/>
+              <widget class="QListWidget" name="signers_listWidget">
+               <property name="contextMenuPolicy">
+                <enum>Qt::CustomContextMenu</enum>
+               </property>
+              </widget>
              </item>
             </layout>
            </widget>

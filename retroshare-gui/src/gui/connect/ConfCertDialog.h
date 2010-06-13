@@ -34,8 +34,8 @@ class ConfCertDialog : public QDialog
   Q_OBJECT
 
 	public:
-	  static void show(const std::string& id) ;
-          static void showTrust(const std::string& id) ;
+        static void show(const std::string& id) ;
+        static void showTrust(const std::string& id) ;
 
 	  static ConfCertDialog *instance() ;
 signals:
@@ -47,10 +47,10 @@ private:
   /** Default destructor */
 
 
-void 	loadId(std::string id);
+    void loadId(std::string id);
 
 #if 0
-void setInfo(std::string name, 
+    void setInfo(std::string name, 
 		std::string trust, 
 		std::string org,
 		std::string loc,
@@ -58,15 +58,16 @@ void setInfo(std::string name,
 		std::string signers);
 #endif
 
-private slots:
-  /** Overloaded QWidget.show */
-  void show();
-  void showTrust();
-
 protected:
-  void closeEvent (QCloseEvent * event);
-  
+    void closeEvent (QCloseEvent * event);
+      
 private slots:
+
+    /** Overloaded QWidget.show */
+    void show();
+    void showTrust();    
+
+    void listWidgetContextMenuPopup( const QPoint &pos);
 
 	void closeinfodlg();
 	void applyDialog();
@@ -77,18 +78,18 @@ private slots:
 	void showHelpDialog();
 	/** Called when a child window requests the given help <b>topic</b>. */
 	void showHelpDialog(const QString &topic);
+	
+	void copyToClipboard();
 
 private:
-
-  /** Loads the saved connectidialog settings */
-//  void loadSettings();
  
-void 	loadDialog();
+    void loadDialog();
 
-std::string mId;
-bool isPGPId;
-  /** Qt Designer generated object */
-  Ui::ConfCertDialog ui;
+    std::string mId;
+    bool isPGPId;
+    
+    /** Qt Designer generated object */
+    Ui::ConfCertDialog ui;
 
 };
 
