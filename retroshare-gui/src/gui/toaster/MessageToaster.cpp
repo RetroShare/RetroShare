@@ -107,9 +107,17 @@ void MessageToaster::openmessageClicked()
     MainWindow::showWindow (MainWindow::Messages);
 }
 
+void MessageToaster::setTitle(const QString & title)
+{
+    subjectline->setText("Sub: " + title);
+    subjectline->setToolTip(title);
+}
+
+
 void MessageToaster::setMessage(const QString & message) 
 {
-	messagelabel->setText(message);
+        contentBrowser->setText(message);
+        contentBrowser->setToolTip(message);
 }
 
 void MessageToaster::setName(const QString & name) 
