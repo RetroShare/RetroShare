@@ -152,8 +152,10 @@ int 	p3MsgService::incomingMsgs()
 			pqiNotify *notify = getPqiNotify();
 			if (notify)
 			{
-				notify->AddPopupMessage(RS_POPUP_MSG, mi->PeerId(), 
-						"from: ");
+                                std::string message , title;
+                                notify->AddPopupMessage(RS_POPUP_MSG, mi->PeerId(),
+                                                title.assign(mi->subject.begin(), mi->subject.end()),
+                                                message.assign(mi->message.begin(),mi->message.end()));
 
 				std::ostringstream out;
 				out << mi->msgId;
@@ -421,9 +423,11 @@ void p3MsgService::loadWelcomeMsg()
 	/* Load Welcome Message */
 	RsMsgItem *msg = new RsMsgItem();
 
-	msg -> PeerId(mConnMgr->getOwnId());
+       //msg -> PeerId(mConnMgr->getOwnId());
 
-	msg -> sendTime = time(NULL);
+        msg -> sendTime = time(NULL);
+        msg -> recvTime = time(NULL);
+        msg -> msgFlags =  RS_MSG_FLAGS_NEW;
 
 	msg -> subject = L"Welcome to Retroshare";
 
