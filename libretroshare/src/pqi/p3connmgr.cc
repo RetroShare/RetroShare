@@ -2906,7 +2906,6 @@ bool    p3ConnectMgr::setLocation(std::string id, std::string location)
 
         /* check if it is a friend */
         std::map<std::string, peerConnectState>::iterator it;
-        bool isFriend = false;
         if (mFriendList.end() == (it = mFriendList.find(id))) {
             return false;
         } else {
