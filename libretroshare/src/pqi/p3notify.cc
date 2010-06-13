@@ -78,7 +78,7 @@ bool p3Notify::NotifyLogMessage(uint32_t &sysid, uint32_t &type,
 }
 
 
-bool p3Notify::NotifyPopupMessage(uint32_t &ptype, std::string &name, std::string &msg)
+bool p3Notify::NotifyPopupMessage(uint32_t &ptype, std::string &name, std::string &title, std::string &msg)
 {
 	RsStackMutex stack(noteMtx); /************* LOCK MUTEX ************/
 	if (pendingPopupMsgs.size() > 0)
@@ -88,6 +88,7 @@ bool p3Notify::NotifyPopupMessage(uint32_t &ptype, std::string &name, std::strin
 
 		ptype = pmsg.type;
 		name = pmsg.name;
+                title = pmsg.title;
 		msg = pmsg.msg;
 
 		return true;
@@ -121,7 +122,7 @@ bool p3Notify::SetPopupMessageMode(uint32_t ptype, uint32_t mode)
 
 
 	/* Input from libretroshare */
-bool p3Notify::AddPopupMessage(uint32_t ptype, std::string name, std::string msg)
+bool p3Notify::AddPopupMessage(uint32_t ptype, std::string name, std::string title, std::string msg)
 {
 	RsStackMutex stack(noteMtx); /************* LOCK MUTEX ************/
 
@@ -129,6 +130,7 @@ bool p3Notify::AddPopupMessage(uint32_t ptype, std::string name, std::string msg
 
 	pmsg.type = ptype;
 	pmsg.name = name;
+        pmsg.title = title;
 	pmsg.msg = msg;
 
 	pendingPopupMsgs.push_back(pmsg);
