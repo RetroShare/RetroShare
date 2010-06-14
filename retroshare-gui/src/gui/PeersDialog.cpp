@@ -364,7 +364,7 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
       hbox->setSpacing(6);
     
       iconLabel = new QLabel( this );
-      iconLabel->setPixmap(QPixmap::QPixmap(":/images/user/friends24.png"));
+      iconLabel->setPixmap(QPixmap(":/images/user/friends24.png"));
       iconLabel->setMaximumSize( iconLabel->frameSize().height() + 24, 24 );
       hbox->addWidget(iconLabel);
        

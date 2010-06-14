@@ -787,29 +787,29 @@ void NetworkDialog::updateNetworkStatus()
              
       if(config.netUpnpOk)
       {
-         ui.iconlabel_upnp->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));
+         ui.iconlabel_upnp->setPixmap(QPixmap(":/images/ledon1.png"));
       }
       else
       {    
-         ui.iconlabel_upnp->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
+         ui.iconlabel_upnp->setPixmap(QPixmap(":/images/ledoff1.png"));
       }
                               
       if (config.netLocalOk)
       {
-	  ui.iconlabel_netLimited->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));
+          ui.iconlabel_netLimited->setPixmap(QPixmap(":/images/ledon1.png"));
       }
       else
       {          
-          ui.iconlabel_netLimited->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
+          ui.iconlabel_netLimited->setPixmap(QPixmap(":/images/ledoff1.png"));
       }
 
       if (config.netExtraAddressOk)
       {
-	  ui.iconlabel_ext->setPixmap(QPixmap::QPixmap(":/images/ledon1.png"));
+          ui.iconlabel_ext->setPixmap(QPixmap(":/images/ledon1.png"));
       }
       else
       {
-	  ui.iconlabel_ext->setPixmap(QPixmap::QPixmap(":/images/ledoff1.png"));
+          ui.iconlabel_ext->setPixmap(QPixmap(":/images/ledoff1.png"));
       }
 
     rsiface->unlockData(); /* UnLock Interface */

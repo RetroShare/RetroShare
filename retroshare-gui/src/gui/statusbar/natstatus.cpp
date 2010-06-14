@@ -47,7 +47,7 @@ NATStatus::NATStatus(QWidget *parent)
     hbox->addWidget(statusNAT);
     
     iconLabel = new QLabel( this );
-    iconLabel->setPixmap(QPixmap::QPixmap(":/images/grayled.png"));
+    iconLabel->setPixmap(QPixmap(":/images/grayled.png"));
     // iconLabel doesn't change over time, so we didn't need a minimum size
     hbox->addWidget(iconLabel);
     
@@ -105,22 +105,22 @@ void NATStatus::getNATStatus()
     
     if (config.netUpnpOk)
     {
-    iconLabel->setPixmap(QPixmap::QPixmap(":/images/greenled.png"));
+    iconLabel->setPixmap(QPixmap(":/images/greenled.png"));
     iconLabel->setToolTip(tr("OK | RetroShare Server"));
     }
     else if (config.netStunOk || config.netExtraAddressOk)
     {
-    iconLabel->setPixmap(QPixmap::QPixmap(":/images/greenled.png"));
+    iconLabel->setPixmap(QPixmap(":/images/greenled.png"));
     iconLabel->setToolTip(tr("Internet connection"));
     }
     else if (config.netLocalOk)
     {
-    iconLabel->setPixmap(QPixmap::QPixmap(":/images/grayled.png"));
+    iconLabel->setPixmap(QPixmap(":/images/grayled.png"));
     iconLabel->setToolTip(tr("No internet connection"));
     }
     else
     {
-    iconLabel->setPixmap(QPixmap::QPixmap(":/images/redled.png"));
+    iconLabel->setPixmap(QPixmap(":/images/redled.png"));
     iconLabel->setToolTip(tr("No local network"));
     }
 		
