@@ -21,6 +21,7 @@
  ****************************************************************/
 
 #include <rshare.h>
+#include <iostream>
 
 #include "rsettings.h"
 #include "rsiface/rsinit.h"
@@ -32,13 +33,17 @@
 RSettings::RSettings(const QString settingsGroup)
 : QSettings(QString::fromStdString(SETTINGS_FILE), QSettings::IniFormat)
 {
-  if (!settingsGroup.isEmpty())
-    beginGroup(settingsGroup);
+    std::string sPreferedId;
+    m_bValid = RsInit::getPreferedAccountId(sPreferedId);
+
+    if (!settingsGroup.isEmpty())
+        beginGroup(settingsGroup);
 }
 
 RSettings::RSettings(std::string fileName, const QString settingsGroup)
 : QSettings(QString::fromStdString(fileName), QSettings::IniFormat)
 {
+  m_bValid = true;
   if (!settingsGroup.isEmpty())
     beginGroup(settingsGroup);
 }
@@ -50,18 +55,25 @@ RSettings::RSettings(std::string fileName, const QString settingsGroup)
 QVariant
 RSettings::value(const QString &key, const QVariant &defaultVal) const
 {
-  return QSettings::value(key, defaultVal.isNull() ? defaultValue(key)
-                                                   : defaultVal);
+    if (m_bValid == false) {
+        // return only default value
+        return defaultVal.isNull() ? defaultValue(key) : defaultVal;
+    }
+    return QSettings::value(key, defaultVal.isNull() ? defaultValue(key) : defaultVal);
 }
 
 /** Sets the value associated with <b>key</b> to <b>val</b>. */
 void
 RSettings::setValue(const QString &key, const QVariant &val)
 {
-  if (val == defaultValue(key))
-    QSettings::remove(key);
-  else if (val != value(key))
-    QSettings::setValue(key, val);
+    if (m_bValid == false) {
+        std::cerr << "RSettings::setValue() Calling on invalid object, key = " << key.toStdString() << std::endl;
+        return;
+    }
+    if (val == defaultValue(key))
+        QSettings::remove(key);
+    else if (val != value(key))
+        QSettings::setValue(key, val);
 }
 
 QVariant RSettings::valueFromGroup(const QString &group, const QString &key, const QVariant &defaultVal)

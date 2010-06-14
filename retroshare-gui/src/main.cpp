@@ -61,7 +61,9 @@ int main(int argc, char *argv[])
 	RsInit::InitRsConfig();
 	bool okStart = RsInit::InitRetroShare(argc, argv);
 
-	/* create global settings object */
+	/* create global settings object
+	   path maybe wrong, when no profile exist
+	   in this case it can be use only for default values */
 	RshareSettings::Create ();
 
 	/*
@@ -131,6 +133,9 @@ int main(int argc, char *argv[])
 	}
 
 	rsicontrol->StartupRetroShare();
+
+	/* recreate global settings object, now with correct path */
+	RshareSettings::Create ();
 
 	MainWindow *w = MainWindow::Create ();
 

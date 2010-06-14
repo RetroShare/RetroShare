@@ -59,6 +59,8 @@ public:
   virtual void setValueToGroup(const QString &group, const QString &key, const QVariant &val);
 
 protected:
+  bool m_bValid; // is valid - dependent on RsInit::getPreferedAccountId
+
   /** Sets the default setting for <b>key</b> to <b>val</b>. */
   void setDefault(const QString &key, const QVariant &val);
   /** Returns the default setting value associated with <b>key</b>. If

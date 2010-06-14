@@ -74,13 +74,19 @@ RshareSettings *Settings = NULL;
 
 /*static*/ void RshareSettings::Create ()
 {
+    if (Settings && Settings->m_bValid == false) {
+        // recreate with correct path
+        delete (Settings);
+        Settings = NULL;
+    }
     if (Settings == NULL) {
         Settings = new RshareSettings ();
     }
 }
 
 /** Default Constructor */
-RshareSettings::RshareSettings() {
+RshareSettings::RshareSettings()
+{
     initSettings();
 }
 
