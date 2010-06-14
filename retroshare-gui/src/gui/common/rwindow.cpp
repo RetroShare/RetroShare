@@ -36,6 +36,7 @@ RWindow::RWindow(QString name, QWidget *parent, Qt::WFlags flags)
  : QMainWindow(parent, flags)
 {
   _name     = name;
+  m_bSaveStateOnClose = false;
 }
 
 /** Destructor. */
@@ -55,6 +56,11 @@ RWindow::setShortcut(QString shortcut, const char *slot)
 void
 RWindow::saveWindowState()
 {
+  if (m_bSaveStateOnClose == false) {
+    // nothing to save
+    return;
+  }
+
 #if QT_VERSION >= 0x040200
   saveSetting("Geometry", saveGeometry());
 #else
@@ -67,6 +73,8 @@ RWindow::saveWindowState()
 void
 RWindow::restoreWindowState()
 {
+    m_bSaveStateOnClose = true; // now we save the window state on close
+
 #if QT_VERSION >= 0x040200
   QByteArray geometry = getSetting("Geometry", QByteArray()).toByteArray();
   if (geometry.isEmpty())

@@ -68,6 +68,7 @@ signals:
 
 private:
   QString _name;  /**< Name associated with this window. */
+  bool m_bSaveStateOnClose; // is set to true in restoreWindowState
 };
 
 #endif
