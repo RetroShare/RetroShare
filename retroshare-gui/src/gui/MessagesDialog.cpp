@@ -755,11 +755,21 @@ void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint point )
     connect( forwardmsgAct , SIGNAL( triggered() ), this, SLOT( forwardmessage() ) );
     contextMnu.addAction( forwardmsgAct);
 
-    contextMnu.addSeparator();
-
     QList<int> RowsRead;
     QList<int> RowsUnread;
     int nCount = getSelectedMsgCount (NULL, &RowsRead, &RowsUnread);
+
+    QAction *editAct = new QAction(tr( "Edit..." ), this );
+    connect(editAct, SIGNAL(triggered()), this, SLOT(editmessage()));
+    contextMnu.addAction(editAct);
+
+    if (nCount == 1) {
+        editAct->setEnabled(true);
+    } else {
+        editAct->setDisabled(true);
+    }
+
+    contextMnu.addSeparator();
 
     QAction *markAsRead = new QAction(QIcon(":/images/message-mail-read.png"), tr( "Mark as read" ), this);
     connect(markAsRead , SIGNAL(triggered()), this, SLOT(markAsRead()));
@@ -782,7 +792,7 @@ void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint point )
     contextMnu.addSeparator();
 
     QAction *removemsgAct;
-   if (nCount > 1) {
+    if (nCount > 1) {
         removemsgAct = new QAction(QIcon(IMAGE_MESSAGEREMOVE), tr( "Remove Messages" ), this );
     } else {
         removemsgAct = new QAction(QIcon(IMAGE_MESSAGEREMOVE), tr( "Remove Message" ), this );
@@ -854,6 +864,30 @@ void MessagesDialog::newmessage()
     nMsgDialog->show();
     nMsgDialog->activateWindow();
 
+
+    /* window will destroy itself! */
+}
+
+void MessagesDialog::editmessage()
+{
+    std::string cid;
+    std::string mid;
+
+    if(!getCurrentMsg(cid, mid))
+        return ;
+
+    MessageInfo msgInfo;
+    if (!rsMsgs->getMessage(mid, msgInfo)) {
+        std::cerr << "MessagesDialog::editmessage() Couldn't find Msg" << std::endl;
+        return;
+    }
+
+    MessageComposer *pMsgDialog = new MessageComposer();
+    /* fill it in */
+    pMsgDialog->newMsg(msgInfo.msgId);
+
+    pMsgDialog->show();
+    pMsgDialog->activateWindow();
 
     /* window will destroy itself! */
 }
@@ -1594,35 +1628,11 @@ void MessagesDialog::clicked(const QModelIndex &index )
 // double click in messagestreeView
 void MessagesDialog::doubleClicked(const QModelIndex &index)
 {
-    int mappedRow = proxyModel->mapToSource(index).row();
+    /* activate row */
+    clicked (index);
 
-    QStandardItem *pItem = MessagesModel->item(mappedRow, COLUMN_MSGID);
-    if (pItem == NULL) {
-        return;
-    }
-
-    std::string mid = pItem->text().toStdString();
-
-    MessageInfo msgInfo;
-    if (!rsMsgs->getMessage(mid, msgInfo)) {
-        std::cerr << "MessagesDialog::doubleClicked() Couldn't find Msg" << std::endl;
-        return;
-    }
-
-    if ((msgInfo.msgflags & RS_MSG_BOXMASK) != RS_MSG_DRAFTBOX) {
-        // only draft box for now
-        return;
-    }
-
-    MessageComposer *pMsgDialog = new MessageComposer();
-    /* fill it in */
-    pMsgDialog->newMsg(msgInfo.msgId);
-
-    pMsgDialog->show();
-    pMsgDialog->activateWindow();
-
-    /* window will destroy itself! */
-
+    /* edit message */
+    editmessage();
 }
 
 // show current message directly

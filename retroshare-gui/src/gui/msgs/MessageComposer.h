@@ -175,7 +175,8 @@ private:
   QHash<QString, QString> autoLinkTitleDictionary;
   QHash<QString, int> autoLinkTargetDictionary;
 
-  std::string m_sMsgId; // exisiting message
+  std::string m_sMsgId; // existing message id
+  int m_nBox;           // box from the existing message
 
   /* maps of files  */
   std::list<AttachFileItem *> mAttachments;

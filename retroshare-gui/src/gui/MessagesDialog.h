@@ -73,6 +73,7 @@ private slots:
   void doubleClicked(const QModelIndex &);
 
   void newmessage();
+  void editmessage();
 
   void replytomessage();
   void replyallmessage();

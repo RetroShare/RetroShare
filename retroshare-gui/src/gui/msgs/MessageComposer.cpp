@@ -43,7 +43,9 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
-    
+
+    m_nBox = -1; // not defined
+
     setupFileActions();
     setupEditActions();
     setupViewActions();
@@ -397,6 +399,7 @@ void  MessageComposer::newMsg(std::string msgId /*= ""*/)
     insertSendList();
 
     m_sMsgId = msgId;
+    m_nBox = -1; // not defined
 
     if (m_sMsgId.empty() == false) {
         // fill existing message
@@ -406,6 +409,8 @@ void  MessageComposer::newMsg(std::string msgId /*= ""*/)
             m_sMsgId.clear();
             return;
         }
+
+        m_nBox = msgInfo.msgflags & RS_MSG_BOXMASK;
 
         insertTitleText( QString::fromStdWString(msgInfo.title).toStdString());
         setWindowTitle( tr ("Compose: ") + QString::fromStdWString(msgInfo.title));
@@ -518,7 +523,10 @@ void MessageComposer::sendMessage_internal(bool bDraftbox)
     }
 
     if (bDraftbox) {
-        mi.msgId = m_sMsgId;
+        if (m_nBox != -1 && (m_nBox & RS_MSG_DRAFTBOX) == RS_MSG_DRAFTBOX) {
+            // only save draft box to draft box again, for all other message create a new one in draft box
+            mi.msgId = m_sMsgId;
+        }
         rsMsgs->MessageToDraft(mi);
     } else {
         rsMsgs->MessageSend(mi);
