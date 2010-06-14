@@ -76,6 +76,7 @@ GenCertDialog::GenCertDialog(QWidget *parent, Qt::WFlags flags)
 
     if (foundGPGKeys) {
         ui.no_gpg_key_label->hide();
+        ui.progressBar->hide();
         ui.new_gpg_key_checkbox->setChecked(false);
         setWindowTitle(tr("Create new Location"));
         ui.genButton->setText(tr("Generate new Location"));
@@ -198,10 +199,7 @@ void GenCertDialog::genPerson()
             std::string err_string;
             ui.no_gpg_key_label->setText(tr("Generating new GPG key, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. \n\nFill in your GPG password when asked, to sign your new key."));
             ui.no_gpg_key_label->show();
-//            QMovie *movie = new QMovie(":/images/loader/progress.gif");
-//            ui.progress_label->setMovie(movie);
-//            movie->start();
-//            movie->setSpeed(100); // 2x speed
+            ui.progressBar->show();
             ui.new_gpg_key_checkbox->hide();
             ui.name_label->hide();
             ui.name_input->hide();
