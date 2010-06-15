@@ -357,6 +357,20 @@ void MainWindow::createTrayIcon()
     trayIcon->show();
 }
 
+/*static*/ void MainWindow::installGroupChatNotifier()
+{
+    if (_instance == NULL) {
+        // nothing to do
+        return;
+    }
+
+    if(Settings->getDisplayTrayGroupChat()) {
+        QObject::connect(_instance->peersDialog, SIGNAL(notifyGroupChat(const QString&,const QString&)), _instance, SLOT(displaySystrayMsg(const QString&,const QString&)), Qt::QueuedConnection);
+    } else {
+        QObject::disconnect(_instance->peersDialog, SIGNAL(notifyGroupChat(const QString&,const QString&)), _instance, SLOT(displaySystrayMsg(const QString&,const QString&)));
+    }
+}
+
 void MainWindow::displaySystrayMsg(const QString& title,const QString& msg)
 {
     trayIcon->showMessage(title, msg, QSystemTrayIcon::Information, 3000);

@@ -114,6 +114,9 @@ public:
   uint getNotifyFlags();
   void setNotifyFlags(uint flags);
 
+  bool getDisplayTrayGroupChat();
+  void setDisplayTrayGroupChat(bool bValue);
+
   //! Save placement, state and size information of a window.
   void saveWidgetInformation(QWidget *widget);
 

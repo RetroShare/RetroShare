@@ -28,6 +28,8 @@
 #include "rsiface/rsnotify.h"
 #include "rsharesettings.h"
 
+#include "gui/MainWindow.h"
+
 #include <QTimer>
 
 
@@ -63,97 +65,91 @@ NotifyPage::closeEvent (QCloseEvent * event)
 bool
 NotifyPage::save(QString &errmsg)
 {
-	/* extract from rsNotify the flags */
+    /* extract from rsNotify the flags */
 
-	uint notifyflags = 0;
-	uint newsflags   = 0;
-	uint chatflags   = 0;
+    uint notifyflags = 0;
+    uint newsflags   = 0;
+    uint chatflags   = 0;
 
-	if (ui.popup_Connect->isChecked())
-		notifyflags |= RS_POPUP_CONNECT;
+    if (ui.popup_Connect->isChecked())
+        notifyflags |= RS_POPUP_CONNECT;
 
-	if (ui.popup_NewMsg->isChecked())
-		notifyflags |= RS_POPUP_MSG;
+    if (ui.popup_NewMsg->isChecked())
+        notifyflags |= RS_POPUP_MSG;
 
-	//if (ui.popup_NewChat->isChecked())
-		notifyflags |= RS_POPUP_CHAT;
+    //if (ui.popup_NewChat->isChecked())
+    notifyflags |= RS_POPUP_CHAT;
 
-	//if (ui.popup_Call->isChecked())
-	//	notifyflags |= RS_POPUP_CALL;
+    //if (ui.popup_Call->isChecked())
+    //	notifyflags |= RS_POPUP_CALL;
 
 
-	if (ui.notify_Peers->isChecked())
-		newsflags |= RS_FEED_TYPE_PEER;
-	if (ui.notify_Channels->isChecked())
-		newsflags |= RS_FEED_TYPE_CHAN;
-	if (ui.notify_Forums->isChecked())
-		newsflags |= RS_FEED_TYPE_FORUM;
-	if (ui.notify_Blogs->isChecked())
-		newsflags |= RS_FEED_TYPE_BLOG;
-	if (ui.notify_Chat->isChecked())
-		newsflags |= RS_FEED_TYPE_CHAT;
-	if (ui.notify_Messages->isChecked())
-		newsflags |= RS_FEED_TYPE_MSG;
+    if (ui.notify_Peers->isChecked())
+        newsflags |= RS_FEED_TYPE_PEER;
+    if (ui.notify_Channels->isChecked())
+        newsflags |= RS_FEED_TYPE_CHAN;
+    if (ui.notify_Forums->isChecked())
+        newsflags |= RS_FEED_TYPE_FORUM;
+    if (ui.notify_Blogs->isChecked())
+        newsflags |= RS_FEED_TYPE_BLOG;
+    if (ui.notify_Chat->isChecked())
+        newsflags |= RS_FEED_TYPE_CHAT;
+    if (ui.notify_Messages->isChecked())
+        newsflags |= RS_FEED_TYPE_MSG;
 
-	if (ui.chat_NewWindow->isChecked())
-		chatflags |= RS_CHAT_OPEN_NEW;
-	if (ui.chat_Reopen->isChecked())
-		chatflags |= RS_CHAT_REOPEN;
-	if (ui.chat_Focus->isChecked())
-		chatflags |= RS_CHAT_FOCUS;
+    if (ui.chat_NewWindow->isChecked())
+        chatflags |= RS_CHAT_OPEN_NEW;
+    if (ui.chat_Reopen->isChecked())
+        chatflags |= RS_CHAT_REOPEN;
+    if (ui.chat_Focus->isChecked())
+        chatflags |= RS_CHAT_FOCUS;
 
     Settings->setNotifyFlags(notifyflags);
     Settings->setNewsFeedFlags(newsflags);
     Settings->setChatFlags(chatflags);
-     
-    Settings->setValue(QString::fromUtf8("DisplayTrayGroupChat"), trayGroupChat());   
 
-	load();
- 	return true;
+    Settings->setDisplayTrayGroupChat(ui.systray_GroupChat->isChecked());
+    MainWindow::installGroupChatNotifier();
+
+    load();
+    return true;
 }
 
 
 /** Loads the settings for this page */
 void NotifyPage::load()
 {
-	/* extract from rsNotify the flags */
+    /* extract from rsNotify the flags */
     uint notifyflags = Settings->getNotifyFlags();
     uint newsflags = Settings->getNewsFeedFlags();
     uint chatflags = Settings->getChatFlags();
 
-	ui.popup_Connect->setChecked(notifyflags & RS_POPUP_CONNECT);
-	ui.popup_NewMsg->setChecked(notifyflags & RS_POPUP_MSG);
-	ui.systray_GroupChat->setChecked(true) ;
+    ui.popup_Connect->setChecked(notifyflags & RS_POPUP_CONNECT);
+    ui.popup_NewMsg->setChecked(notifyflags & RS_POPUP_MSG);
+    ui.systray_GroupChat->setChecked(true) ;
     //ui.popup_NewChat->setChecked(notifyflags & RS_POPUP_CHAT);
-	//ui.popup_Call->setChecked(notifyflags & RS_POPUP_CALL);
+    //ui.popup_Call->setChecked(notifyflags & RS_POPUP_CALL);
 
-	ui.notify_Peers->setChecked(newsflags & RS_FEED_TYPE_PEER);
-	ui.notify_Channels->setChecked(newsflags & RS_FEED_TYPE_CHAN);
-	ui.notify_Forums->setChecked(newsflags & RS_FEED_TYPE_FORUM);
-	ui.notify_Blogs->setChecked(newsflags & RS_FEED_TYPE_BLOG);
-	ui.notify_Chat->setChecked(newsflags & RS_FEED_TYPE_CHAT);
-	ui.notify_Messages->setChecked(newsflags & RS_FEED_TYPE_MSG);
+    ui.notify_Peers->setChecked(newsflags & RS_FEED_TYPE_PEER);
+    ui.notify_Channels->setChecked(newsflags & RS_FEED_TYPE_CHAN);
+    ui.notify_Forums->setChecked(newsflags & RS_FEED_TYPE_FORUM);
+    ui.notify_Blogs->setChecked(newsflags & RS_FEED_TYPE_BLOG);
+    ui.notify_Chat->setChecked(newsflags & RS_FEED_TYPE_CHAT);
+    ui.notify_Messages->setChecked(newsflags & RS_FEED_TYPE_MSG);
 
-	ui.chat_NewWindow->setChecked(chatflags & RS_CHAT_OPEN_NEW);
-	ui.chat_Reopen->setChecked(chatflags & RS_CHAT_REOPEN);
-	ui.chat_Focus->setChecked(chatflags & RS_CHAT_FOCUS);
+    ui.chat_NewWindow->setChecked(chatflags & RS_CHAT_OPEN_NEW);
+    ui.chat_Reopen->setChecked(chatflags & RS_CHAT_REOPEN);
+    ui.chat_Focus->setChecked(chatflags & RS_CHAT_FOCUS);
 
-    ui.systray_GroupChat->setChecked(Settings->value(QString::fromUtf8("DisplayTrayGroupChat"), false).toBool());
+    ui.systray_GroupChat->setChecked(Settings->getDisplayTrayGroupChat());
 
-	/* disable ones that don't work yet */
-	ui.notify_Chat->setEnabled(false);
-	//ui.popup_NewChat->setEnabled(false);
+    /* disable ones that don't work yet */
+    ui.notify_Chat->setEnabled(false);
+    //ui.popup_NewChat->setEnabled(false);
 }
 
 
 /** Loads the settings for this page */
 void NotifyPage::updateStatus()
 {
-
 }
-
-bool NotifyPage::trayGroupChat() const {
-  if(ui.systray_GroupChat->isChecked()) return true;
-  return ui.systray_GroupChat->isChecked();
-}
-

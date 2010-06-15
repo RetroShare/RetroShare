@@ -172,24 +172,17 @@ int main(int argc, char *argv[])
 
 	QObject::connect(ConfCertDialog::instance(),SIGNAL(configChanged()),w->networkDialog,SLOT(insertConnect())) ;
 	QObject::connect(w->peersDialog,SIGNAL(friendsUpdated()),w->networkDialog,SLOT(insertConnect())) ;
-	
-	{
-        if(Settings->value(QString::fromUtf8("DisplayTrayGroupChat"), true).toBool())
-        { 
-            QObject::connect(w->peersDialog,SIGNAL(notifyGroupChat(const QString&,const QString&)),w,SLOT(displaySystrayMsg(const QString&,const QString&)),Qt::QueuedConnection) ;
-        }
-	}
+
+	w->installGroupChatNotifier();
 
 	QObject::connect(w->messengerWindow,SIGNAL(startChat(QTreeWidgetItem* )),w->peersDialog,SLOT(chatfriend(QTreeWidgetItem* ))) ;
 	QObject::connect(w->idle, SIGNAL(secondsIdle(int)), w->messengerWindow, SLOT(checkAndSetIdle(int)));
 
+	/* only show window, if not startMinimized */
+	if(!Settings->value(QString::fromUtf8("StartMinimized"), false).toBool())
 	{
-		/* only show window, if not startMinimized */
-		if(!Settings->value(QString::fromUtf8("StartMinimized"), false).toBool()) 
-		{
 
-			w->show();
-		}
+		w->show();
 	}
 
 	/* Startup a Timer to keep the gui's updated */

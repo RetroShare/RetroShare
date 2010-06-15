@@ -132,6 +132,8 @@ void RshareSettings::initSettings()
   setDefault(SETTING_NEWSFEED_FLAGS, defNewsFeed);
   setDefault(SETTING_CHAT_FLAGS, defChat);
   setDefault(SETTING_NOTIFY_FLAGS, defNotify);
+
+  setDefault("DisplayTrayGroupChat", true);
 }
 
 /** Gets/sets the currently saved chat avatar. */
@@ -262,6 +264,16 @@ uint RshareSettings::getNotifyFlags()
 void RshareSettings::setNotifyFlags(uint flags)
 {
   setValue(SETTING_NOTIFY_FLAGS, flags);
+}
+
+bool RshareSettings::getDisplayTrayGroupChat()
+{
+    return value("DisplayTrayGroupChat").toBool();
+}
+
+void RshareSettings::setDisplayTrayGroupChat(bool bValue)
+{
+    setValue("DisplayTrayGroupChat", bValue);
 }
 
 /** Returns true if RetroShare is set to run on system boot. */

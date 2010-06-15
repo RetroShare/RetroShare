@@ -134,6 +134,7 @@ public:
 #endif
     PluginsPage*   pluginsPage ;
 
+    static void installGroupChatNotifier();
 
 public slots:
     void updateHashingInfo(const QString&) ;
