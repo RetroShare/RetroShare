@@ -542,8 +542,8 @@ void p3disc::recvPeerDetails(RsDiscReply *item)
 
 		addDiscoveryData(item->PeerId(), pitem->pid, pitem->currentlocaladdr, pitem->currentremoteaddr, 0, time(NULL));
 
-            #ifdef P3DISC_DEBUG
-            std::cerr << "p3disc::recvPeerFriendMsg() Peer Config Item:" << std::endl;
+#ifdef P3DISC_DEBUG
+		std::cerr << "p3disc::recvPeerFriendMsg() Peer Config Item:" << std::endl;
 
 		pitem->print(std::cerr, 10);
 		std::cerr << std::endl;
@@ -599,6 +599,10 @@ void p3disc::recvPeerDetails(RsDiscReply *item)
 				}
 #ifdef P3DISC_DEBUG
 				std::cerr << "Friend is already connected -> not updating" << std::endl;
+
+				std::cerr << "Setting address list to peer " << pitem->pid << ", to be:" << std::endl ;
+				for(std::list<IpAddressTimed>::const_iterator it(pitem->ipAddressList.begin());it!=pitem->ipAddressList.end();++it)
+					std::cerr << "   " << (*it).ipAddr << " (" << (*it).seenTime << ")" << std::endl ;
 #endif
 				// allways update address list and dns, except if it's ours
 				if (pitem->dyndns != "") 

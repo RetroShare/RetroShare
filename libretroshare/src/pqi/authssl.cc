@@ -2048,6 +2048,10 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
             //sslcert *cert = NULL;
             std::string certId;
             getX509id(X509_STORE_CTX_get_current_cert(ctx), certId);
+
+				if(certId == mConnMgr->getOwnId())
+					return false ;
+
             if (!mConnMgr->isFriend(certId)) {
                 //we've got a new ssl id
                 preverify_ok = false;
