@@ -1396,38 +1396,21 @@ p, li { white-space: pre-wrap; }
                 <number>6</number>
                </property>
                <property name="leftMargin">
-                <number>0</number>
+                <number>6</number>
                </property>
                <property name="topMargin">
                 <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>6</number>
                </property>
                <property name="bottomMargin">
                 <number>0</number>
                </property>
                <item>
-                <layout class="QVBoxLayout">
-                 <item>
-                  <spacer>
-                   <property name="orientation">
-                    <enum>Qt::Vertical</enum>
-                   </property>
-                   <property name="sizeType">
-                    <enum>QSizePolicy::Preferred</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>2</width>
-                     <height>40</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                </layout>
-               </item>
-               <item>
                 <layout class="QGridLayout">
                  <property name="horizontalSpacing">
-                  <number>0</number>
+                  <number>6</number>
                  </property>
                  <property name="verticalSpacing">
                   <number>3</number>
@@ -1435,7 +1418,7 @@ p, li { white-space: pre-wrap; }
                  <item row="0" column="0">
                   <widget class="QLabel" name="subjectlabel">
                    <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
@@ -1461,6 +1444,9 @@ p, li { white-space: pre-wrap; }
                    </property>
                    <property name="text">
                     <string>Subject:</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -1500,7 +1486,7 @@ p, li { white-space: pre-wrap; }
                  <item row="1" column="0">
                   <widget class="QLabel" name="fromlabel">
                    <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
@@ -1526,6 +1512,9 @@ p, li { white-space: pre-wrap; }
                    </property>
                    <property name="text">
                     <string>From:</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
@@ -1565,7 +1554,7 @@ p, li { white-space: pre-wrap; }
                  <item row="2" column="0">
                   <widget class="QLabel" name="tolabel">
                    <property name="sizePolicy">
-                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
@@ -1591,6 +1580,9 @@ p, li { white-space: pre-wrap; }
                    </property>
                    <property name="text">
                     <string>To:</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                    </property>
                   </widget>
                  </item>
