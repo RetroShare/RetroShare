@@ -662,22 +662,38 @@ void NetworkDialog::on_actionExportKey_activated()
 {
     qDebug() << "  exportcert";
 
-    QString qdir = QFileDialog::getSaveFileName(this,
-                                                "Please choose a filename",
-                                                QDir::homePath(),
-                                                "RetroShare Certificate (*.pqi)");
-
-    if ( rsPeers->saveCertificateToFile(rsPeers->getOwnId(), qdir.toStdString()) )
-    {
+    std::string cert = rsPeers->saveCertificateToString(rsPeers->getOwnId());
+    if (cert.empty()) {
         QMessageBox::information(this, tr("RetroShare"),
-                         tr("Certificate file successfully created"),
+                         tr("Sorry, create certificate failed"),
                          QMessageBox::Ok, QMessageBox::Ok);
+        return;
     }
-    else
-    {
-        QMessageBox::information(this, tr("RetroShare"),
-                         tr("Sorry, certificate file creation failed"),
-                         QMessageBox::Ok, QMessageBox::Ok);
+
+    QString qdir = QFileDialog::getSaveFileName(this,
+                                                tr("Please choose a filename"),
+                                                QDir::homePath(),
+                                                tr("RetroShare Certificate (*.rsc );;All Files (*)"));
+    //Todo: move save to file to p3Peers::SaveCertificateToFile
+
+    if (qdir.isEmpty() == false) {
+        QFile CertFile (qdir);
+        if (CertFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            if (CertFile.write(QByteArray(cert.c_str())) > 0) {
+                QMessageBox::information(this, tr("RetroShare"),
+                                 tr("Certificate file successfully created"),
+                                 QMessageBox::Ok, QMessageBox::Ok);
+            } else {
+                QMessageBox::information(this, tr("RetroShare"),
+                                 tr("Sorry, certificate file creation failed"),
+                                 QMessageBox::Ok, QMessageBox::Ok);
+            }
+            CertFile.close();
+        } else {
+            QMessageBox::information(this, tr("RetroShare"),
+                             tr("Sorry, certificate file creation failed"),
+                             QMessageBox::Ok, QMessageBox::Ok);
+        }
     }
 }
 

@@ -42,6 +42,8 @@ class NotifyPage : public ConfigPage
       bool save(QString &errmsg);
       /** Loads the settings for this page */
       void load();
+      
+      bool trayGroupChat() const;
 
   public slots:
       void updateStatus();

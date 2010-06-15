@@ -40,11 +40,7 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WFlags flags)
   setAttribute(Qt::WA_QuitOnClose, false);
   setWindowTitle(windowTitle() + QLatin1String(" - Notify"));
 
-  //load();
 
-   //QTimer *timer = new QTimer(this);
-   //timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
-   //timer->start(1000);
 
 
   /* Hide platform specific features */
@@ -98,8 +94,6 @@ NotifyPage::save(QString &errmsg)
 		newsflags |= RS_FEED_TYPE_CHAT;
 	if (ui.notify_Messages->isChecked())
 		newsflags |= RS_FEED_TYPE_MSG;
-	if (ui.notify_Downloads->isChecked())
-		newsflags |= RS_FEED_TYPE_FILES;
 
 	if (ui.chat_NewWindow->isChecked())
 		chatflags |= RS_CHAT_OPEN_NEW;
@@ -108,9 +102,11 @@ NotifyPage::save(QString &errmsg)
 	if (ui.chat_Focus->isChecked())
 		chatflags |= RS_CHAT_FOCUS;
 
-        Settings->setNotifyFlags(notifyflags);
-        Settings->setNewsFeedFlags(newsflags);
-        Settings->setChatFlags(chatflags);
+    Settings->setNotifyFlags(notifyflags);
+    Settings->setNewsFeedFlags(newsflags);
+    Settings->setChatFlags(chatflags);
+     
+    Settings->setValue(QString::fromUtf8("DisplayTrayGroupChat"), trayGroupChat());   
 
 	load();
  	return true;
@@ -121,14 +117,14 @@ NotifyPage::save(QString &errmsg)
 void NotifyPage::load()
 {
 	/* extract from rsNotify the flags */
-        uint notifyflags = Settings->getNotifyFlags();
-        uint newsflags = Settings->getNewsFeedFlags();
-        uint chatflags = Settings->getChatFlags();
+    uint notifyflags = Settings->getNotifyFlags();
+    uint newsflags = Settings->getNewsFeedFlags();
+    uint chatflags = Settings->getChatFlags();
 
 	ui.popup_Connect->setChecked(notifyflags & RS_POPUP_CONNECT);
 	ui.popup_NewMsg->setChecked(notifyflags & RS_POPUP_MSG);
 	ui.systray_GroupChat->setChecked(true) ;
-  //ui.popup_NewChat->setChecked(notifyflags & RS_POPUP_CHAT);
+    //ui.popup_NewChat->setChecked(notifyflags & RS_POPUP_CHAT);
 	//ui.popup_Call->setChecked(notifyflags & RS_POPUP_CALL);
 
 	ui.notify_Peers->setChecked(newsflags & RS_FEED_TYPE_PEER);
@@ -137,17 +133,15 @@ void NotifyPage::load()
 	ui.notify_Blogs->setChecked(newsflags & RS_FEED_TYPE_BLOG);
 	ui.notify_Chat->setChecked(newsflags & RS_FEED_TYPE_CHAT);
 	ui.notify_Messages->setChecked(newsflags & RS_FEED_TYPE_MSG);
-	ui.notify_Downloads->setChecked(newsflags & RS_FEED_TYPE_FILES);
 
 	ui.chat_NewWindow->setChecked(chatflags & RS_CHAT_OPEN_NEW);
 	ui.chat_Reopen->setChecked(chatflags & RS_CHAT_REOPEN);
 	ui.chat_Focus->setChecked(chatflags & RS_CHAT_FOCUS);
 
+    ui.systray_GroupChat->setChecked(Settings->value(QString::fromUtf8("DisplayTrayGroupChat"), false).toBool());
 
 	/* disable ones that don't work yet */
 	ui.notify_Chat->setEnabled(false);
-	ui.notify_Downloads->setEnabled(false);
-	ui.systray_GroupChat->setEnabled(false);
 	//ui.popup_NewChat->setEnabled(false);
 }
 
@@ -158,5 +152,8 @@ void NotifyPage::updateStatus()
 
 }
 
-
+bool NotifyPage::trayGroupChat() const {
+  if(ui.systray_GroupChat->isChecked()) return true;
+  return ui.systray_GroupChat->isChecked();
+}
 

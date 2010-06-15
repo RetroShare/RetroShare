@@ -558,13 +558,6 @@
             </property>
            </widget>
           </item>
-          <item>
-           <widget class="QCheckBox" name="notify_Downloads">
-            <property name="text">
-             <string>Downloads</string>
-            </property>
-           </widget>
-          </item>
          </layout>
         </widget>
        </item>
