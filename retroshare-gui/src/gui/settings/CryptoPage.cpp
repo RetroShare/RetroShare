@@ -81,10 +81,10 @@ CryptoPage::load()
 void
 CryptoPage::loadPublicKey()
 {
-	QFont font("Courier New",9,50,false) ;
-	ui.certtextEdit->setFont(font) ;
+    QFont font("Courier New",9,50,false) ;
+    ui.certtextEdit->setFont(font) ;
 
-    ui.certtextEdit->setPlainText(QString::fromStdString(rsPeers->GetRetroshareInvite()));
+    ui.certtextEdit->setPlainText(QString::fromStdString(rsPeers->saveCertificateToString(rsPeers->getOwnId())));
     ui.certtextEdit->setReadOnly(true);
     ui.certtextEdit->setMinimumHeight(200);
 }

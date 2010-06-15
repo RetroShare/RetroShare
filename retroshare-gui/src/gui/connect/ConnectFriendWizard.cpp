@@ -661,7 +661,7 @@ void CertificatePage::loadFriendCert() {
 void CertificatePage::generateCertificateCalled() {
     qDebug() << "  generateCertificateCalled";
 
-    std::string cert = rsPeers->saveCertificateToString(rsPeers->getOwnId());
+    std::string cert = rsPeers->GetRetroshareInvite();
     if (cert.empty()) {
         QMessageBox::information(this, tr("RetroShare"),
                          tr("Sorry, create certificate failed"),
@@ -677,7 +677,7 @@ void CertificatePage::generateCertificateCalled() {
 
     if (qdir.isEmpty() == false) {
         QFile CertFile (qdir);
-        if (CertFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        if (CertFile.open(QIODevice::WriteOnly/* | QIODevice::Text*/)) {
             if (CertFile.write(QByteArray(cert.c_str())) > 0) {
                 QMessageBox::information(this, tr("RetroShare"),
                                  tr("Certificate file successfully created"),
