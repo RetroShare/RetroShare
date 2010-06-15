@@ -128,7 +128,7 @@ void StartDialog::loadPerson()
         if (pgpidx < 0)
         {
                 /* Message Dialog */
-                QMessageBox::warning ( NULL,
+                QMessageBox::warning ( this,
                                 "Load Person Failure",
                                 "Missing PGP Certificate",
                                   QMessageBox::Ok);
@@ -160,7 +160,7 @@ void StartDialog::loadCertificates()
 	else
 	{
 		/* some error msg */
-                QMessageBox::warning ( NULL,
+                QMessageBox::warning ( this,
                                 tr("Login Failure"),
                                 tr("Maybe password is wrong"),
 				QMessageBox::Ok);
@@ -171,16 +171,15 @@ void StartDialog::loadCertificates()
 
 void StartDialog::on_labelProfile_linkActivated(QString link)
 {
-    QMessageBox::StandardButton sb = QMessageBox::question ( NULL,
-                        tr("Create a New Profile"),
-                        tr("This will generate a new Profile\n Are you sure you want to continue"),
-                        (QMessageBox::Yes | QMessageBox::No));
 
-    if (sb == QMessageBox::Yes)
+    if ((QMessageBox::question(this, tr("Create a New Profile"),tr("This will generate a new Profile\n Are you sure you want to continue?"),QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
     {
-    	reqNewCert = true;
-    	close();
+        reqNewCert = true;
+        close();
     }
+    else
+    return;                    
+
 }
 
 void StartDialog::on_labelInfo_linkActivated(QString link)
@@ -202,7 +201,7 @@ void StartDialog::notSecureWarning() {
 
 	/* some error msg */
 		if(ui.autologin_checkbox->isChecked()){
-            QMessageBox::warning ( NULL,
+            QMessageBox::warning ( this,
                             tr("Insecure"),
                             tr("Auto Login is not so much secure:\n    - Your SSL certificate will be stored unprotected. \n    - Your PGP key will however not be stored.\nThis choice be reverted in settings."),
 			QMessageBox::Ok);
