@@ -321,8 +321,16 @@ int	pqistreamer::queue_outpqi(RsItem *pqi)
 	}
 
 	/* decide which type of packet it is */
-	RsFileData *dta = dynamic_cast<RsFileData *>(pqi);
+	RsFileData *dta = dynamic_cast<RsFileData *>(pqi);		// This is the old test method
 	bool isCntrl = (dta == NULL);
+
+	if(pqi->queueType() == RsItem::DATA_QUEUE)				// this is the new test method. More general.
+	{
+#ifdef DEBUG_PQISTREAMER
+		std::cerr << "PQISTREAMER:: got a data queue packet !!" << std::endl ;
+#endif
+		isCntrl = false ;
+	}
 
         uint32_t pktsize = rsSerialiser->size(pqi);
 	void *ptr = malloc(pktsize);

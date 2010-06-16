@@ -92,6 +92,9 @@ uint8_t  PacketSubType();
 	RsItem(uint8_t ver, uint16_t service, uint8_t subtype);
 uint16_t  PacketService(); /* combined Packet class/type (mid 16bits) */
 
+typedef enum { CONTROL_QUEUE, DATA_QUEUE } QueueType ;
+virtual QueueType queueType() const { return CONTROL_QUEUE ; }
+
 	private:
 uint32_t type;
 std::string peerId;
@@ -164,7 +167,8 @@ class RsRawItem: public RsItem
 {
 	public:
 	RsRawItem(uint32_t t, uint32_t size)
-        :RsItem(t), len(size) { data = malloc(len);}
+        :RsItem(t), len(size), _queue_type(RsItem::CONTROL_QUEUE) 
+	{ data = malloc(len);}
 
 virtual ~RsRawItem()
 	{
@@ -180,9 +184,13 @@ void  *		getRawData()   { return data; }
 virtual void clear() { return; } /* what can it do? */
 virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
+virtual RsItem::QueueType queueType() const { return _queue_type ;}
+void setQueueType(const RsItem::QueueType& t) { _queue_type = t ;}
+
 	private:
 	void *data;
 	uint32_t len;
+	RsItem::QueueType _queue_type ;
 };
 
 

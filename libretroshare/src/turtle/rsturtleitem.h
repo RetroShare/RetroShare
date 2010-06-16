@@ -174,6 +174,9 @@ class RsTurtleGenericTunnelItem: public RsTurtleItem
 		/// requests are server packets, whereas file data are client packets.
 		
 		virtual Direction travelingDirection() const = 0 ;
+
+		/// Generic tunnel items (such as file data) are added into the data queue
+		virtual RsItem::QueueType queueType() const { return RsItem::DATA_QUEUE ; }
 };
 
 /***********************************************************************************/
