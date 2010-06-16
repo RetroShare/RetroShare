@@ -604,7 +604,7 @@ bool ftController::moveFile(const std::string& source,const std::string& dest)
 	librs::util::ConvertUtf8ToUtf16(source,sourceW);
 	librs::util::ConvertUtf8ToUtf16(dest,destW);
 
-	if( 0 == MoveFileW(sourceW.c_str(), destW.c_str()))
+	if( 0 != MoveFileW(sourceW.c_str(), destW.c_str()))
 #else
 	if (0 == rename(source.c_str(), dest.c_str()))
 #endif
@@ -637,7 +637,7 @@ bool ftController::moveFile(const std::string& source,const std::string& dest)
 	std::cerr << "deleting original file " << source << std::endl ;
 
 #ifdef WINDOWS_SYS
-	if(0 == DeleteFileW(sourceW.c_str()))
+	if(0 != DeleteFileW(sourceW.c_str()))
 #else
 	if(0 == remove(source.c_str()))
 #endif
