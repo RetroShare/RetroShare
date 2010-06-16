@@ -552,6 +552,8 @@ void p3disc::recvPeerDetails(RsDiscReply *item)
 			//
 			if(AuthGPG::getAuthGPG()->isGPGAccepted(pitem->gpg_id) ||  pitem->gpg_id == AuthGPG::getAuthGPG()->getGPGOwnId())
 			{
+				bool merge = true ;
+
 				// Add with no disc by default. If friend already exists, it will do nothing
 				//
 #ifdef P3DISC_DEBUG
@@ -578,6 +580,7 @@ void p3disc::recvPeerDetails(RsDiscReply *item)
 					// The info from the peer itself is ultimately trustable, so we can override some info,
 					// such as:
 					// 	- local and global addresses
+					// 	- address list
 					//
 					if (item->PeerId() == pitem->pid) 
 					{
@@ -591,6 +594,11 @@ void p3disc::recvPeerDetails(RsDiscReply *item)
 						mConnMgr->setExtAddress(pitem->pid, pitem->currentremoteaddr);
 						pitem->visState &= ~RS_VIS_STATE_NODISC ;
 						mConnMgr->setVisState(pitem->pid, pitem->visState); 
+
+						// When the peer sends his own list of IPs, the info replaces the existing info, because the
+						// peer is the primary source of his own IPs.
+						//
+						merge = false ;
 					}
 				}
 #ifdef P3DISC_DEBUG
@@ -602,7 +610,7 @@ void p3disc::recvPeerDetails(RsDiscReply *item)
 #endif
 
 				// allways update address list, except if it's ours
-				mConnMgr->setAddressList(pitem->pid, pitem->ipAddressList);
+				mConnMgr->updateAddressList(pitem->pid, pitem->ipAddressList,merge);
 			}
 #ifdef P3DISC_DEBUG
 			else
