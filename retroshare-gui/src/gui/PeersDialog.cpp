@@ -284,6 +284,9 @@ void PeersDialog::processSettings(bool bLoad)
         // state of peer tree
         header->restoreState(Settings->value("PeerTree").toByteArray());
 
+        // state of hideUnconnected
+        ui.hide_unconnected->setChecked(Settings->value("hideUnconnected", false).toBool());
+
         // state of splitter
         ui.splitter->restoreState(Settings->value("Splitter").toByteArray());
     } else {
@@ -291,6 +294,9 @@ void PeersDialog::processSettings(bool bLoad)
 
         // state of peer tree
         Settings->setValue("PeerTree", header->saveState());
+
+        // state of hideUnconnected
+        Settings->setValue("hideUnconnected", ui.hide_unconnected->isChecked());
 
         // state of splitter
         Settings->setValue("Splitter", ui.splitter->saveState());
