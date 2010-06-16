@@ -1277,6 +1277,7 @@ bool AuthGPG::LoadCertificateFromString(std::string str, std::string &gpg_id)
 	}
         //retrieve the id of the key
         certmap::iterator it;
+		  gpg_id = "" ;
         RsStackReadWriteMutex stack(pgpMtx, RsReadWriteMutex::READ_LOCK); /******* LOCKED ******/
         for(it = mKeyList.begin(); it != mKeyList.end(); it++)
         {

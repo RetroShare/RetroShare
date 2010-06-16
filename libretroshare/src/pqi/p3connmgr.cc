@@ -317,7 +317,7 @@ void p3ConnectMgr::netReset()
 	#ifdef CONN_DEBUG_RESET
 		std::cerr << "p3ConnectMgr time since last reset : " << delta << std::endl;
 	#endif
-	if (delta < MIN_TIME_BETWEEN_NET_RESET) {
+	if (delta < (time_t)MIN_TIME_BETWEEN_NET_RESET) {
 	    {
 		    RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 		    mNetStatus = RS_NET_NEED_RESET;
@@ -594,7 +594,7 @@ void p3ConnectMgr::netTick()
 	connMtx.unlock(); /* UNLOCK MUTEX */
         /* start tcp network - if necessary */
         //TODO : implement stop listeners in net reset
-        if (!mListenerActive && netStatus != RS_NET_NEED_RESET && (time(NULL) - mNetInitTS) > (MIN_TIME_BETWEEN_NET_RESET + 2)) {//start connection 2 second after the possible next one net reset
+        if (!mListenerActive && netStatus != RS_NET_NEED_RESET && (time(NULL) - mNetInitTS) > (time_t)(MIN_TIME_BETWEEN_NET_RESET + 2)) {//start connection 2 second after the possible next one net reset
             startListeners();
         }
 
@@ -678,7 +678,7 @@ void p3ConnectMgr::netDhtInit()
 #endif
 	connMtx.lock();   /*   LOCK MUTEX */
 
-	uint32_t vs = ownState.visState;
+	//uint32_t vs = ownState.visState;
 
 	connMtx.unlock(); /* UNLOCK MUTEX */
 
@@ -727,7 +727,7 @@ void p3ConnectMgr::netUpnpCheck()
 	struct sockaddr_in extAddr;
 	int upnpState = netAssistFirewallActive();
 
-	if ((upnpState == 0) && (delta > MAX_UPNP_INIT))
+	if ((upnpState == 0) && (delta > (time_t)MAX_UPNP_INIT))
 	{
                 #ifdef CONN_DEBUG_TICK
 		std::cerr << "p3ConnectMgr::netUpnpCheck() ";
@@ -2152,21 +2152,22 @@ bool p3ConnectMgr::addFriend(std::string id, std::string gpg_id, uint32_t netMod
 		return true;
 	}
 
-        //Authentication is now tested at connection time, we don't store the ssl cert anymore
-        if (!AuthGPG::getAuthGPG()->isGPGAccepted(gpg_id) &&  gpg_id != AuthGPG::getAuthGPG()->getGPGOwnId())
-        {
+	//Authentication is now tested at connection time, we don't store the ssl cert anymore
+	//
+	if (!AuthGPG::getAuthGPG()->isGPGAccepted(gpg_id) &&  gpg_id != AuthGPG::getAuthGPG()->getGPGOwnId())
+	{
 #ifdef CONN_DEBUG
-                std::cerr << "p3ConnectMgr::addFriend() gpg is not accepted" << std::endl;
+		std::cerr << "p3ConnectMgr::addFriend() gpg is not accepted" << std::endl;
 #endif
-                /* no auth */
-                return false;
-        }
+		/* no auth */
+		return false;
+	}
 
 
         /* check if it is in others */
 //	if (mOthersList.end() != (it = mOthersList.find(id)))
-        if (false)
-        {
+	if (false)
+	{
 		/* (2) in mOthersList -> move over */
 #ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::addFriend() Move from Others" << std::endl;
@@ -2202,7 +2203,7 @@ bool p3ConnectMgr::addFriend(std::string id, std::string gpg_id, uint32_t netMod
 		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
 		return true;
-        }
+	}
 
 #ifdef CONN_DEBUG
 	std::cerr << "p3ConnectMgr::addFriend() Creating New Entry" << std::endl;
@@ -2807,7 +2808,7 @@ bool p3ConnectMgr::setDynDNS(std::string id, std::string dyndns)
     return true;
 }
 
-bool    p3ConnectMgr::setAddressList(const std::string& id, const std::list<IpAddressTimed>& IpAddressTimedList)
+bool    p3ConnectMgr::updateAddressList(const std::string& id, const std::list<IpAddressTimed>& IpAddressTimedList,bool merge)
 {
 #ifdef CONN_DEBUG
 	std::cerr << "p3ConnectMgr::setAddressList() called for id : " << id << std::endl;
@@ -2818,7 +2819,7 @@ bool    p3ConnectMgr::setAddressList(const std::string& id, const std::list<IpAd
 	/* check if it is our own ip */
 	if (id == getOwnId()) 
 	{
-		ownState.updateIpAddressList(IpAddressTimedList);
+		ownState.updateIpAddressList(IpAddressTimedList,merge);
 
 		//if we have no ext address from upnp or extAdrFinder, we will use this list for ext ip detection
 		//useless, already done in network consistency check
@@ -2852,7 +2853,7 @@ bool    p3ConnectMgr::setAddressList(const std::string& id, const std::list<IpAd
 	}
 
 	/* "it" points to peer */
-	it->second.updateIpAddressList(IpAddressTimedList);
+	it->second.updateIpAddressList(IpAddressTimedList,merge);
 	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
 	return true;
@@ -3229,7 +3230,7 @@ bool  p3ConnectMgr::loadList(std::list<RsItem *> load)
                         setLocalAddress(pitem->pid, pitem->currentlocaladdr);
                         setExtAddress(pitem->pid, pitem->currentremoteaddr);
                         setDynDNS (pitem->pid, pitem->dyndns);
-                        setAddressList(pitem->pid, pitem->ipAddressList);
+                        updateAddressList(pitem->pid, pitem->ipAddressList,false);
 		}
 		else if (sitem)
 		{
@@ -3607,12 +3608,15 @@ std::list<IpAddressTimed>  peerConnectState::getIpAddressList()
     return ipAddressList;
 }
 
-void peerConnectState::updateIpAddressList(const std::list<IpAddressTimed>& ipTimedList)  //purge old addresses to keep a small list
+void peerConnectState::updateIpAddressList(const std::list<IpAddressTimed>& ipTimedList,bool merge)  //purge old addresses to keep a small list
 {
-		std::list<IpAddressTimed>::const_iterator ipListIt;
+	if(!merge)
+		ipAddressList.clear() ;
 
-		for (ipListIt = ipTimedList.begin(); ipListIt!=(ipTimedList.end()); ++ipListIt) 
-		    updateIpAddressList(*ipListIt);
+	std::list<IpAddressTimed>::const_iterator ipListIt;
+
+	for (ipListIt = ipTimedList.begin(); ipListIt!=(ipTimedList.end()); ++ipListIt) 
+		updateIpAddressList(*ipListIt);
 }
 
 void peerConnectState::updateIpAddressList(const IpAddressTimed& ipTimed) 

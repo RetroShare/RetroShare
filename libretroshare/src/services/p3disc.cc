@@ -556,6 +556,8 @@ void p3disc::recvPeerDetails(RsDiscReply *item)
 			//
 			if(AuthGPG::getAuthGPG()->isGPGAccepted(pitem->gpg_id) ||  pitem->gpg_id == AuthGPG::getAuthGPG()->getGPGOwnId())
 			{
+				bool merge = true ;
+
 				// Add with no disc by default. If friend already exists, it will do nothing
 				//
 #ifdef P3DISC_DEBUG
@@ -566,7 +568,7 @@ void p3disc::recvPeerDetails(RsDiscReply *item)
 
 				// Update if know this peer, and if it's not already connected.
 				//
-				if(rsPeers->getPeerDetails(pitem->pid, storedDetails) && !(storedDetails.state & RS_PEER_CONNECTED)) 
+				if(rsPeers->getPeerDetails(pitem->pid, storedDetails))
 				{ 
 #ifdef P3DISC_DEBUG
 					std::cerr << "Friend is not connected -> updating info" << std::endl;
@@ -576,12 +578,18 @@ void p3disc::recvPeerDetails(RsDiscReply *item)
 					// Update if it's fresh info or if it's from the peer itself
 					// their info is fresher than ours, update ours
 					//
-					mConnMgr->setNetworkMode(pitem->pid, pitem->netMode);
-					mConnMgr->setLocation(pitem->pid, pitem->location);
+					if(!(storedDetails.state & RS_PEER_CONNECTED)) 
+					{
+						mConnMgr->setNetworkMode(pitem->pid, pitem->netMode);
+						mConnMgr->setLocation(pitem->pid, pitem->location);
+					}
 
 					// The info from the peer itself is ultimately trustable, so we can override some info,
 					// such as:
 					// 	- local and global addresses
+					// 	- address list
+					//
+					// If we enter here, we're necessarily connected to this peer.
 					//
 					if (item->PeerId() == pitem->pid) 
 					{
@@ -591,10 +599,15 @@ void p3disc::recvPeerDetails(RsDiscReply *item)
 						std::cerr << "  -> current remote addr = " << pitem->currentremoteaddr << std::endl;
 						std::cerr << "  -> clearing NODISC flag " << std::endl;
 #endif
-						mConnMgr->setLocalAddress(pitem->pid, pitem->currentlocaladdr);
-						mConnMgr->setExtAddress(pitem->pid, pitem->currentremoteaddr);
+						//mConnMgr->setLocalAddress(pitem->pid, pitem->currentlocaladdr);
+						//mConnMgr->setExtAddress(pitem->pid, pitem->currentremoteaddr);
 						pitem->visState &= ~RS_VIS_STATE_NODISC ;
 						mConnMgr->setVisState(pitem->pid, pitem->visState); 
+
+						// When the peer sends his own list of IPs, the info replaces the existing info, because the
+						// peer is the primary source of his own IPs.
+						//
+						merge = false ;
 					}
 				}
 #ifdef P3DISC_DEBUG
@@ -608,7 +621,7 @@ void p3disc::recvPeerDetails(RsDiscReply *item)
 				if (pitem->dyndns != "") 
 					mConnMgr->setDynDNS(pitem->pid, pitem->dyndns);
 
-				mConnMgr->setAddressList(pitem->pid, pitem->ipAddressList);
+				mConnMgr->updateAddressList(pitem->pid, pitem->ipAddressList,merge);
 			}
 #ifdef P3DISC_DEBUG
 			else

@@ -2075,7 +2075,7 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
                     if (mConnMgr->getFriendNetStatus(peer_id_in_context, detail)) {
                         //transfer ips only if the two peers got the same gpg key
                         if (detail.gpg_id == getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer)) {
-                            mConnMgr->setAddressList(certId, detail.getIpAddressList());
+                            mConnMgr->updateAddressList(certId, detail.getIpAddressList());
                         }
                     }
                 } else {

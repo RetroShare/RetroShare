@@ -144,8 +144,13 @@ class peerConnectState
         //used to store friends ip lists
 	void sortIpAddressListBySeenTime(); //Sort the ip list ordering by seen time
 	std::list<IpAddressTimed> getIpAddressList(); //return the sorted ant purged list.
+
+	// The function that takes a list, can either merge the list into the
+	// existing list (default behavior), or only set the list to the new data,
+	// which might be used if the info is from an authoritative source.
+	//
+	void updateIpAddressList(const std::list<IpAddressTimed>& ipTimedList,bool merge=true);
 	void updateIpAddressList(const IpAddressTimed& ipTimed);
-	void updateIpAddressList(const std::list<IpAddressTimed>& ipTimedList);
 	void printIpAddressList();
 
         static bool is_same_address (const IpAddressTimed& first, const IpAddressTimed& second);
@@ -227,7 +232,7 @@ void 	setOwnNetConfig(uint32_t netMode, uint32_t visState);
 bool 	setLocalAddress(std::string id, struct sockaddr_in addr);
 bool 	setExtAddress(std::string id, struct sockaddr_in addr);
 bool    setDynDNS(std::string id, std::string dyndns);
-bool    setAddressList(const std::string& id, const std::list<IpAddressTimed>& IpAddressTimedList);
+bool    updateAddressList(const std::string& id, const std::list<IpAddressTimed>& IpAddressTimedList,bool merge = true);
 
 bool 	setNetworkMode(std::string id, uint32_t netMode);
 bool 	setVisState(std::string id, uint32_t visState);
