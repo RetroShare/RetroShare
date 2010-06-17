@@ -85,14 +85,22 @@ border: 2px solid #CCCCCC;}</string>
       </property>
       <property name="geometry">
        <rect>
-        <x>85</x>
+        <x>70</x>
         <y>30</y>
-        <width>161</width>
+        <width>211</width>
         <height>20</height>
        </rect>
       </property>
       <property name="autoFillBackground">
        <bool>false</bool>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: transparent;
+border: none;
+color: black;</string>
+      </property>
+      <property name="text">
+       <string>Subject</string>
       </property>
      </widget>
      <widget class="QTextBrowser" name="contentBrowser">
@@ -101,14 +109,18 @@ border: 2px solid #CCCCCC;}</string>
       </property>
       <property name="geometry">
        <rect>
-        <x>85</x>
+        <x>70</x>
         <y>50</y>
-        <width>161</width>
+        <width>191</width>
         <height>60</height>
        </rect>
       </property>
       <property name="autoFillBackground">
        <bool>false</bool>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: transparent;
+border: none;</string>
       </property>
       <property name="verticalScrollBarPolicy">
        <enum>Qt::ScrollBarAlwaysOff</enum>
@@ -116,77 +128,58 @@ border: 2px solid #CCCCCC;}</string>
       <property name="horizontalScrollBarPolicy">
        <enum>Qt::ScrollBarAlwaysOff</enum>
       </property>
+      <property name="html">
+       <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Message&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
      </widget>
-     <widget class="QFrame" name="frame_2">
+     <widget class="QToolButton" name="openmessagebtn">
       <property name="geometry">
        <rect>
-        <x>84</x>
-        <y>29</y>
-        <width>161</width>
-        <height>81</height>
+        <x>260</x>
+        <y>60</y>
+        <width>31</width>
+        <height>31</height>
        </rect>
       </property>
-      <property name="autoFillBackground">
-       <bool>false</bool>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
       </property>
-      <property name="styleSheet">
-       <string notr="true">border: 2.3px solid #CCCCCC;
-</string>
+      <property name="toolTip">
+       <string>Play video</string>
       </property>
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
+      <property name="whatsThis">
+       <string/>
       </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
+      <property name="accessibleName">
+       <string>Play button</string>
       </property>
-      <property name="lineWidth">
-       <number>5</number>
+      <property name="accessibleDescription">
+       <string>Play the downloaded video</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="../images.qrc">
+        <normaloff>:/images/evolution.png</normaloff>:/images/evolution.png</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>22</width>
+        <height>22</height>
+       </size>
+      </property>
+      <property name="autoRaise">
+       <bool>true</bool>
       </property>
      </widget>
     </widget>
    </item>
   </layout>
-  <widget class="QToolButton" name="openmessagebtn">
-   <property name="geometry">
-    <rect>
-     <x>260</x>
-     <y>43</y>
-     <width>31</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="focusPolicy">
-    <enum>Qt::NoFocus</enum>
-   </property>
-   <property name="toolTip">
-    <string>Play video</string>
-   </property>
-   <property name="whatsThis">
-    <string/>
-   </property>
-   <property name="accessibleName">
-    <string>Play button</string>
-   </property>
-   <property name="accessibleDescription">
-    <string>Play the downloaded video</string>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="icon">
-    <iconset resource="../images.qrc">
-     <normaloff>:/images/evolution.png</normaloff>:/images/evolution.png</iconset>
-   </property>
-   <property name="iconSize">
-    <size>
-     <width>22</width>
-     <height>22</height>
-    </size>
-   </property>
-   <property name="autoRaise">
-    <bool>true</bool>
-   </property>
-  </widget>
   <widget class="QLabel" name="lblTitle">
    <property name="geometry">
     <rect>
@@ -265,7 +258,6 @@ border: 2px solid #CCCCCC;}</string>
    </property>
   </widget>
   <zorder>frame</zorder>
-  <zorder>openmessagebtn</zorder>
   <zorder>lblTitle</zorder>
   <zorder>label</zorder>
   <zorder>closebtn</zorder>
@@ -276,6 +268,9 @@ border: 2px solid #CCCCCC;}</string>
   <tabstop>closebtn</tabstop>
  </tabstops>
  <resources>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>
