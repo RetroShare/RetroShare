@@ -29,10 +29,12 @@
 #include "rsiface/rspeers.h"
 #include "rsiface/rsmsgs.h"
 #include "rsiface/rsfiles.h"
+#include "rsiface/rsnotify.h"
 #include "gui/settings/rsharesettings.h"
 
 
 #include "gui/feeds/AttachFileItem.h"
+#include "gui/msgs/MessageComposer.h"
 #include <time.h>
 
 #define appDir QApplication::applicationDirPath()
@@ -45,6 +47,8 @@
 /*****
  * #define CHAT_DEBUG 1
  *****/
+
+static std::map<std::string, PopupChatDialog *> chatDialogs;
 
 /** Default constructor */
 PopupChatDialog::PopupChatDialog(std::string id, std::string name, 
@@ -138,6 +142,145 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
 
   updateAvatar() ;
   updatePeerAvatar(id) ;
+}
+
+/*static*/ PopupChatDialog *PopupChatDialog::getPrivateChat(std::string id, std::string name, uint chatflags)
+{
+   /* see if it exists already */
+   PopupChatDialog *popupchatdialog = NULL;
+   bool show = false;
+
+   if (chatflags & RS_CHAT_REOPEN)
+   {
+        show = true;
+        #ifdef PEERS_DEBUG
+        std::cerr << "reopen flag so: enable SHOW popupchatdialog()" << std::endl;
+        #endif
+   }
+
+   std::map<std::string, PopupChatDialog *>::iterator it;
+   if (chatDialogs.end() != (it = chatDialogs.find(id)))
+   {
+        /* exists already */
+        popupchatdialog = it->second;
+   }
+   else
+   {
+        popupchatdialog = new PopupChatDialog(id, name);
+        chatDialogs[id] = popupchatdialog;
+
+        if (chatflags & RS_CHAT_OPEN_NEW)
+        {
+                #ifdef PEERS_DEBUG
+                std::cerr << "new chat so: enable SHOW popupchatdialog()" << std::endl;
+                #endif
+
+                show = true;
+        }
+   }
+
+   if (show)
+   {
+        #ifdef PEERS_DEBUG
+        std::cerr << "SHOWING popupchatdialog()" << std::endl;
+        #endif
+
+        if (popupchatdialog->isVisible() == false) {
+            if (chatflags & RS_CHAT_FOCUS) {
+                popupchatdialog->show();
+            } else {
+                popupchatdialog->showMinimized();
+            }
+        }
+   }
+
+   /* now only do these if the window is visible */
+   if (popupchatdialog->isVisible())
+   {
+           if (chatflags & RS_CHAT_FOCUS)
+           {
+                #ifdef PEERS_DEBUG
+                std::cerr << "focus chat flag so: GETFOCUS popupchatdialog()" << std::endl;
+                #endif
+
+                popupchatdialog->getfocus();
+           }
+           else
+           {
+                #ifdef PEERS_DEBUG
+                std::cerr << "no focus chat flag so: FLASH popupchatdialog()" << std::endl;
+                #endif
+
+                popupchatdialog->flash();
+           }
+   }
+   else
+   {
+        #ifdef PEERS_DEBUG
+        std::cerr << "not visible ... so leave popupchatdialog()" << std::endl;
+        #endif
+   }
+
+   return popupchatdialog;
+}
+
+/*static*/ void PopupChatDialog::cleanupChat()
+{
+    std::map<std::string, PopupChatDialog *>::iterator it;
+    for (it = chatDialogs.begin(); it != chatDialogs.end(); it++) {
+        if (it->second) {
+            delete (it->second);
+        }
+    }
+
+    chatDialogs.clear();
+}
+
+void PopupChatDialog::chatFriend(std::string id)
+{
+    if (id.empty()){
+        return;
+    }
+
+    bool oneLocationConnected = false;
+
+    RsPeerDetails detail;
+    if (!rsPeers->getPeerDetails(id, detail)) {
+        return;
+    }
+
+    if (detail.isOnlyGPGdetail) {
+        //let's get the ssl child details, and open all the chat boxes
+        std::list<std::string> sslIds;
+        rsPeers->getSSLChildListOfGPGId(detail.gpg_id, sslIds);
+        for (std::list<std::string>::iterator it = sslIds.begin(); it != sslIds.end(); it++) {
+            RsPeerDetails sslDetails;
+            if (rsPeers->getPeerDetails(*it, sslDetails)) {
+                if (sslDetails.state & RS_PEER_STATE_CONNECTED) {
+                    oneLocationConnected = true;
+                    getPrivateChat(*it, sslDetails.name + " - " + sslDetails.location, RS_CHAT_REOPEN | RS_CHAT_FOCUS);
+                }
+            }
+        }
+    } else {
+        if (detail.state & RS_PEER_STATE_CONNECTED) {
+            oneLocationConnected = true;
+            getPrivateChat(id, detail.name + " - " + detail.location, RS_CHAT_REOPEN | RS_CHAT_FOCUS);
+        }
+    }
+
+    if (!oneLocationConnected) {
+        /* info dialog */
+        if ((QMessageBox::question(NULL, tr("Friend Not Online"),tr("Your Friend is offline \nDo you want to send them a Message instead"),QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes) {
+            MessageComposer::msgFriend(id);
+        }
+    }
+}
+
+/*static*/ void PopupChatDialog::updateAllAvatars()
+{
+    for(std::map<std::string, PopupChatDialog *>::const_iterator it(chatDialogs.begin());it!=chatDialogs.end();++it)
+        it->second->updateAvatar() ;
 }
 
 void PopupChatDialog::pasteLink()

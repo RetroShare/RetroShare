@@ -197,6 +197,30 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
 #endif
 }
 
+/*static*/ void MessageComposer::msgFriend(std::string id)
+{
+#ifdef PEERS_DEBUG
+    std::cerr << "MessageComposer::msgfriend()" << std::endl;
+#endif
+
+    rsicontrol -> ClearInMsg();
+    rsicontrol -> SetInMsg(id, true);
+    std::list<std::string> sslIds;
+    rsPeers->getSSLChildListOfGPGId(id, sslIds);
+    for (std::list<std::string>::iterator it = sslIds.begin(); it != sslIds.end(); it++) {
+        //put all sslChilds in message list
+        rsicontrol -> SetInMsg(*it, true);
+    }
+
+    /* create a message */
+    MessageComposer *pMsgDialog = new MessageComposer();
+
+    pMsgDialog->newMsg();
+    pMsgDialog->show();
+
+    /* window will destroy itself! */
+}
+
 void MessageComposer::closeEvent (QCloseEvent * event)
 {
     bool bClose = true;

@@ -66,8 +66,10 @@ signals:
    * <b>topic</b>. */
   void helpRequested(const QString &topic);
 
-private:
+protected:
   QString _name;  /**< Name associated with this window. */
+
+private:
   bool m_bSaveStateOnClose; // is set to true in restoreWindowState
 };
 

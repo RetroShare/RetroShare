@@ -44,11 +44,10 @@ class PopupChatDialog : public QMainWindow
   Q_OBJECT
 
 public:
-  /** Default constructor */
-  PopupChatDialog(std::string id, std::string name, 
-  		QWidget *parent = 0, Qt::WFlags flags = 0);
-  /** Default destructor */
-  ~PopupChatDialog();
+  static PopupChatDialog *getPrivateChat(std::string id, std::string name, uint chatflags);
+  static void cleanupChat();
+  static void chatFriend(std::string id);
+  static void updateAllAvatars();
 
   void updateChat();
   void updatePeerAvatar(const std::string&);
@@ -85,6 +84,12 @@ public slots:
 
 
 protected:
+  /** Default constructor */
+  PopupChatDialog(std::string id, std::string name,
+                QWidget *parent = 0, Qt::WFlags flags = 0);
+  /** Default destructor */
+  ~PopupChatDialog();
+
   void closeEvent (QCloseEvent * event);
   virtual void dragEnterEvent(QDragEnterEvent *event);
   virtual void dropEvent(QDropEvent *event);

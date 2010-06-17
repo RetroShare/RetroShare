@@ -77,24 +77,15 @@
 #define COLUMN_INFO     2
 #define COLUMN_ID       3
 
-// states for sorting (equal values are possible)
-// used in BuildSortString - state + name
-#define PEER_STATE_ONLINE       1
-#define PEER_STATE_AWAY         2
-#define PEER_STATE_BUSY         3
-#define PEER_STATE_AVAILABLE    4
-#define PEER_STATE_INACTIVE     5
-#define PEER_STATE_OFFLINE      6
-
 /******
  * #define PEERS_DEBUG 1
  *****/
 
 // quick and dirty for sorting, better use QTreeView and QSortFilterProxyModel
-class MyTreeWidgetItem : public QTreeWidgetItem
+class MyPeerTreeWidgetItem : public QTreeWidgetItem
 {
 public:
-    MyTreeWidgetItem(QTreeWidget *pWidget, int type) : QTreeWidgetItem(type)
+    MyPeerTreeWidgetItem(QTreeWidget *pWidget, int type) : QTreeWidgetItem(type)
     {
         m_pWidget = pWidget; // can't access the member "view"
     }
@@ -142,7 +133,6 @@ PeersDialog::PeersDialog(QWidget *parent)
 
   connect( ui.peertreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( peertreeWidgetCostumPopupMenu( QPoint ) ) );
   connect( ui.peertreeWidget, SIGNAL( itemDoubleClicked ( QTreeWidgetItem *, int)), this, SLOT(chatfriend(QTreeWidgetItem *)));
-  connect( this , SIGNAL( startChat( QTreeWidgetItem *) ), this, SLOT(chatfriend(QTreeWidgetItem *)));
 
   connect( ui.avatartoolButton, SIGNAL(clicked()), SLOT(getAvatar()));
   connect( ui.mypersonalstatuslabel, SIGNAL(clicked()), SLOT(statusmessage()));
@@ -263,12 +253,6 @@ PeersDialog::~PeersDialog ()
     // save settings
     processSettings(false);
 
-    std::map<std::string, PopupChatDialog *>::iterator it;
-    for (it = chatDialogs.begin(); it != chatDialogs.end(); it++) {
-        if (it->second) {
-            delete (it->second);
-        }
-    }
     delete smWidget;
 }
 
@@ -437,11 +421,6 @@ void PeersDialog::updateDisplay()
         insertPeers() ;
 }
 
-static QString BuildSortString(QTreeWidgetItem *pItem, int nState)
-{
-    return QString ("%1").arg(nState) + " " + pItem->text(COLUMN_NAME);
-}
-
 /* get the list of peers from the RsIface.  */
 void  PeersDialog::insertPeers()
 {
@@ -520,7 +499,7 @@ void  PeersDialog::insertPeers()
 
             bool bNew = false;
             if (gpg_item == NULL) {
-                gpg_item = new MyTreeWidgetItem(peertreeWidget, 0); //set type to 0 for custom popup menu
+                gpg_item = new MyPeerTreeWidgetItem(peertreeWidget, 0); //set type to 0 for custom popup menu
                 gpg_item->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
                 bNew = true;
             }
@@ -577,7 +556,7 @@ void  PeersDialog::insertPeers()
                 }
 
                 if (newChild) {
-                   sslItem = new MyTreeWidgetItem(peertreeWidget, 1); //set type to 1 for custom popup menu
+                   sslItem = new MyPeerTreeWidgetItem(peertreeWidget, 1); //set type to 1 for custom popup menu
                 }
 
                 /* not displayed, used to find back the item */
@@ -652,7 +631,7 @@ void  PeersDialog::insertPeers()
                 gpg_item->setHidden(false);
                 gpg_item -> setIcon(COLUMN_NAME,(QIcon(IMAGE_ONLINE)));
                 gpg_item -> setText(COLUMN_STATE, tr("Online"));
-                gpg_item -> setData(COLUMN_STATE, Qt::UserRole, BuildSortString(gpg_item, PEER_STATE_ONLINE));
+                gpg_item -> setData(COLUMN_STATE, Qt::UserRole, BuildStateSortString(true, gpg_item->text(COLUMN_NAME), PEER_STATE_ONLINE));
 
                 std::list<StatusInfo>::iterator it;
                 for(it = statusInfo.begin(); it != statusInfo.end() ; it++) {
@@ -676,7 +655,7 @@ void  PeersDialog::insertPeers()
                                 gpg_item -> setIcon(COLUMN_NAME,(QIcon(IMAGE_INACTIVE)));
                                 gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Idle"));
                                 gpg_item -> setText(COLUMN_STATE, tr("Idle"));
-                                gpg_item -> setData(COLUMN_STATE, Qt::UserRole, BuildSortString(gpg_item, PEER_STATE_INACTIVE));
+                                gpg_item -> setData(COLUMN_STATE, Qt::UserRole, BuildStateSortString(true, gpg_item->text(COLUMN_NAME), PEER_STATE_INACTIVE));
                                 for(i = 0; i < COLUMN_COUNT; i++) {
                                     gpg_item -> setTextColor(i,(Qt::gray));
                                     gpg_item -> setFont(i,font);
@@ -687,7 +666,7 @@ void  PeersDialog::insertPeers()
                                 gpg_item -> setIcon(COLUMN_NAME,(QIcon(IMAGE_ONLINE)));
                                 gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Online"));
                                 gpg_item -> setText(COLUMN_STATE, tr("Online"));
-                                gpg_item -> setData(COLUMN_STATE, Qt::UserRole, BuildSortString(gpg_item, PEER_STATE_ONLINE));
+                                gpg_item -> setData(COLUMN_STATE, Qt::UserRole, BuildStateSortString(true, gpg_item->text(COLUMN_NAME), PEER_STATE_ONLINE));
                                 for(i = 0; i < COLUMN_COUNT; i++) {
                                     gpg_item -> setTextColor(i,(Qt::darkBlue));
                                     gpg_item -> setFont(i,font);
@@ -698,7 +677,7 @@ void  PeersDialog::insertPeers()
                                 gpg_item -> setIcon(COLUMN_NAME,(QIcon(IMAGE_AWAY)));
                                 gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Away"));
                                 gpg_item -> setText(COLUMN_STATE, tr("Away"));
-                                gpg_item -> setData(COLUMN_STATE, Qt::UserRole, BuildSortString(gpg_item, PEER_STATE_AWAY));
+                                gpg_item -> setData(COLUMN_STATE, Qt::UserRole, BuildStateSortString(true, gpg_item->text(COLUMN_NAME), PEER_STATE_AWAY));
                                 for(i = 0; i < COLUMN_COUNT; i++) {
                                     gpg_item -> setTextColor(i,(Qt::gray));
                                     gpg_item -> setFont(i,font);
@@ -709,7 +688,7 @@ void  PeersDialog::insertPeers()
                                 gpg_item -> setIcon(COLUMN_NAME,(QIcon(IMAGE_BUSY)));
                                 gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Busy"));
                                 gpg_item -> setText(COLUMN_STATE, tr("Busy"));
-                                gpg_item -> setData(COLUMN_STATE, Qt::UserRole, BuildSortString(gpg_item, PEER_STATE_BUSY));
+                                gpg_item -> setData(COLUMN_STATE, Qt::UserRole, BuildStateSortString(true, gpg_item->text(COLUMN_NAME), PEER_STATE_BUSY));
                                 for(i = 0; i < COLUMN_COUNT; i++) {
                                     gpg_item -> setTextColor(i,(Qt::gray));
                                     gpg_item -> setFont(i,font);
@@ -722,7 +701,7 @@ void  PeersDialog::insertPeers()
                 gpg_item->setHidden(bHideUnconnected);
                 gpg_item -> setIcon(COLUMN_NAME,(QIcon(IMAGE_AVAIBLE)));
                 gpg_item -> setText(COLUMN_STATE, tr("Available"));
-                gpg_item -> setData(COLUMN_STATE, Qt::UserRole, BuildSortString(gpg_item, PEER_STATE_AVAILABLE));
+                gpg_item -> setData(COLUMN_STATE, Qt::UserRole, BuildStateSortString(true, gpg_item->text(COLUMN_NAME), PEER_STATE_AVAILABLE));
                 QFont font;
                 font.setBold(true);
                 for(i = 0; i < COLUMN_COUNT; i++) {
@@ -733,7 +712,7 @@ void  PeersDialog::insertPeers()
                 gpg_item->setHidden(bHideUnconnected);
                 gpg_item -> setIcon(COLUMN_NAME,(QIcon(IMAGE_OFFLINE)));
                 gpg_item -> setText(COLUMN_STATE, tr("Offline"));
-                gpg_item -> setData(COLUMN_STATE, Qt::UserRole, BuildSortString(gpg_item, PEER_STATE_OFFLINE));
+                gpg_item -> setData(COLUMN_STATE, Qt::UserRole, BuildStateSortString(true, gpg_item->text(COLUMN_NAME), PEER_STATE_OFFLINE));
                 QFont font;
                 font.setBold(false);
                 for(i = 0; i < COLUMN_COUNT; i++) {
@@ -790,95 +769,31 @@ void PeersDialog::exportfriend()
 
 }
 
-void PeersDialog::chatfriendproxy(){
-
-	QTreeWidgetItem* i = getCurrentPeer();
-
-	if(!i)
-		return;
-
-	emit startChat(i);
-}
-
-void PeersDialog::chatfriend(QTreeWidgetItem* currPeer)
+void PeersDialog::chatfriendproxy()
 {
- //   QTreeWidgetItem *currPeer = getCurrentPeer();
-
-    if (!currPeer){
-    	return;
-    }
-
-    //std::string name = (i -> text(2)).toStdString();
-    std::string id = (currPeer -> text(COLUMN_ID)).toStdString();
-
-    bool oneLocationConnected = false;
-
-    RsPeerDetails detail;
-    if (!rsPeers->getPeerDetails(id, detail)) {
-    	return;
-    }
-
-    if (detail.isOnlyGPGdetail) {
-        //let's get the ssl child details, and open all the chat boxes
-        std::list<std::string> sslIds;
-        rsPeers->getSSLChildListOfGPGId(detail.gpg_id, sslIds);
-        for (std::list<std::string>::iterator it = sslIds.begin(); it != sslIds.end(); it++) {
-            RsPeerDetails sslDetails;
-            if (rsPeers->getPeerDetails(*it, sslDetails)) {
-                if (sslDetails.state & RS_PEER_STATE_CONNECTED) {
-                    oneLocationConnected = true;
-                    getPrivateChat(*it, sslDetails.name + " - " + sslDetails.location, RS_CHAT_REOPEN);
-                }
-            }
-        }
-    } else {
-        if (detail.state & RS_PEER_STATE_CONNECTED) {
-            oneLocationConnected = true;
-            getPrivateChat(id, detail.name + " - " + detail.location, RS_CHAT_REOPEN);
-        }
-    }
-
-    if (!oneLocationConnected) {
-    	/* info dialog */
-    	if ((QMessageBox::question(this, tr("Friend Not Online"),tr("Your Friend is offline \nDo you want to send them a Message instead"),QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
-      {
-         msgfriend();
-      }
-    }
+    chatfriend(getCurrentPeer());
 }
 
+void PeersDialog::chatfriend(QTreeWidgetItem *pPeer)
+{
+    if (pPeer == NULL) {
+        return;
+    }
+
+    std::string id = (pPeer->text(COLUMN_ID)).toStdString();
+    PopupChatDialog::chatFriend(id);
+}
 
 void PeersDialog::msgfriend()
 {
-#ifdef PEERS_DEBUG
-    std::cerr << "SharedFilesDialog::msgfriend()" << std::endl;
-#endif
+    QTreeWidgetItem *peer = getCurrentPeer();
 
-    QTreeWidgetItem *i = getCurrentPeer();
+    if (!peer)
+        return;
 
-    if (!i)
-	return;
-
-    std::string id = (i -> text(COLUMN_ID)).toStdString();
-
-    rsicontrol -> ClearInMsg();
-    rsicontrol -> SetInMsg(id, true);
-    std::list<std::string> sslIds;
-    rsPeers->getSSLChildListOfGPGId(id, sslIds);
-    for (std::list<std::string>::iterator it = sslIds.begin(); it != sslIds.end(); it++) {
-        //put all sslChilds in message list
-        rsicontrol -> SetInMsg(*it, true);
-    }
-
-    /* create a message */
-    MessageComposer *nMsgDialog = new MessageComposer();
-
-    nMsgDialog->newMsg();
-    nMsgDialog->show();
-
-    /* window will destroy itself! */
+    std::string id = (peer->text(COLUMN_ID)).toStdString();
+    MessageComposer::msgFriend(id);
 }
-
 
 QTreeWidgetItem *PeersDialog::getCurrentPeer()
 {
@@ -1027,7 +942,7 @@ void PeersDialog::updatePeersAvatar(const QString& peer_id)
 	std::cerr << "PeersDialog: Got notified of new avatar for peer " << peer_id.toStdString() << std::endl ;
         #endif
 
-	PopupChatDialog *pcd = getPrivateChat(peer_id.toStdString(),rsPeers->getPeerName(peer_id.toStdString()), 0);
+        PopupChatDialog *pcd = PopupChatDialog::getPrivateChat(peer_id.toStdString(),rsPeers->getPeerName(peer_id.toStdString()), 0);
 	pcd->updatePeerAvatar(peer_id.toStdString());
 }
 
@@ -1035,7 +950,7 @@ void PeersDialog::updatePeerStatusString(const QString& peer_id,const QString& s
 {
 	if(is_private_chat)
 	{
-		PopupChatDialog *pcd = getPrivateChat(peer_id.toStdString(),rsPeers->getPeerName(peer_id.toStdString()), 0);
+                PopupChatDialog *pcd = PopupChatDialog::getPrivateChat(peer_id.toStdString(),rsPeers->getPeerName(peer_id.toStdString()), 0);
 		pcd->updateStatusString(status_string);
 	}
 	else
@@ -1085,7 +1000,7 @@ void PeersDialog::insertChat()
 		/* are they private? */
 		if (it->chatflags & RS_CHAT_PRIVATE)
 		{
-			PopupChatDialog *pcd = getPrivateChat(it->rsid, it->name, chatflags);
+                        PopupChatDialog *pcd = PopupChatDialog::getPrivateChat(it->rsid, it->name, chatflags);
 			pcd->addChatMsg(&(*it));
 			playsound();
 			QApplication::alert(pcd);
@@ -1288,90 +1203,6 @@ void PeersDialog::toggleSendItem( QTreeWidgetItem *item, int col )
 }
 
 //============================================================================
-
-PopupChatDialog *
-PeersDialog::getPrivateChat(std::string id, std::string name, uint chatflags)
-{
-   /* see if it exists already */
-   PopupChatDialog *popupchatdialog = NULL;
-   bool show = false;
-
-   if (chatflags & RS_CHAT_REOPEN)
-   {
-  	show = true;
-        #ifdef PEERS_DEBUG
-        std::cerr << "reopen flag so: enable SHOW popupchatdialog()" << std::endl;
-#endif
-   }
-
-
-   std::map<std::string, PopupChatDialog *>::iterator it;
-   if (chatDialogs.end() != (it = chatDialogs.find(id)))
-   {
-   	/* exists already */
-   	popupchatdialog = it->second;
-   }
-   else
-   {
-   	popupchatdialog = new PopupChatDialog(id, name);
-	chatDialogs[id] = popupchatdialog;
-
-	if (chatflags & RS_CHAT_OPEN_NEW)
-	{
-                #ifdef PEERS_DEBUG
-                std::cerr << "new chat so: enable SHOW popupchatdialog()" << std::endl;
-                #endif
-
-		show = true;
-	}
-   }
-
-   if (show)
-   {
-        #ifdef PEERS_DEBUG
-        std::cerr << "SHOWING popupchatdialog()" << std::endl;
-        #endif
-
-	popupchatdialog->show();
-   }
-
-   /* now only do these if the window is visible */
-   if (popupchatdialog->isVisible())
-   {
-	   if (chatflags & RS_CHAT_FOCUS)
-	   {
-                #ifdef PEERS_DEBUG
-                std::cerr << "focus chat flag so: GETFOCUS popupchatdialog()" << std::endl;
-                #endif
-
-		popupchatdialog->getfocus();
-	   }
-	   else
-	   {
-                #ifdef PEERS_DEBUG
-                std::cerr << "no focus chat flag so: FLASH popupchatdialog()" << std::endl;
-                #endif
-
-		popupchatdialog->flash();
-	   }
-   }
-   else
-   {
-        #ifdef PEERS_DEBUG
-        std::cerr << "not visible ... so leave popupchatdialog()" << std::endl;
-        #endif
-   }
-
-   return popupchatdialog;
-}
-
-//============================================================================
-
-void PeersDialog::clearOldChats()
-{
-	/* nothing yet */
-
-}
 
 void PeersDialog::setColor()
 {
@@ -1623,8 +1454,7 @@ void PeersDialog::updateAvatar()
 	pix.loadFromData(data,size,"PNG") ;
 	ui.avatartoolButton->setIcon(pix); // writes image into ba in PNG format
 
-   for(std::map<std::string, PopupChatDialog *>::const_iterator it(chatDialogs.begin());it!=chatDialogs.end();++it)
-		it->second->updateAvatar() ;
+        PopupChatDialog::updateAllAvatars();
 
 	delete[] data ;
 }

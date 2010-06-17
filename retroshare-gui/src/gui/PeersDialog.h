@@ -33,6 +33,17 @@
 
 #include "im_history/IMHistoryKeeper.h"
 
+// states for sorting (equal values are possible)
+// used in BuildSortString - state + name
+#define PEER_STATE_ONLINE       1
+#define PEER_STATE_AWAY         2
+#define PEER_STATE_BUSY         3
+#define PEER_STATE_AVAILABLE    4
+#define PEER_STATE_INACTIVE     5
+#define PEER_STATE_OFFLINE      6
+
+#define BuildStateSortString(bEnabled,sName,nState) bEnabled ? (QString ("%1").arg(nState) + " " + sName) : sName
+
 class QFont;
 class QAction;
 class QTextEdit;
@@ -48,9 +59,6 @@ public:
 		PeersDialog(QWidget *parent = 0);
 		/** Default Destructor */
 		~PeersDialog ();
-
-		PopupChatDialog *getPrivateChat(std::string id, std::string name, uint chatflags);
-		void clearOldChats();
 
 		void loadEmoticonsgroupchat();
 		//  void setChatDialog(ChatDialog *cd);
@@ -146,7 +154,6 @@ private slots:
 signals:
 		void friendsUpdated() ;
 		void notifyGroupChat(const QString&,const QString&) ;
-		void startChat(QTreeWidgetItem* );
 
 private:
 		void processSettings(bool bLoad);
@@ -191,8 +198,6 @@ private:
 
 		QHash<QString, QString> smileys;
 		QWidget *smWidget;
-
-		std::map<std::string, PopupChatDialog *> chatDialogs;
 
 		QFont mCurrentFont; /* how the text will come out */
 

@@ -46,6 +46,8 @@ public:
 
   MessageComposer(QWidget *parent = 0, Qt::WFlags flags = 0);
 
+  static void msgFriend(std::string id);
+
   void  newMsg(std::string msgId = "");
 
 	/* worker fns */

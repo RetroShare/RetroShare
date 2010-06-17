@@ -441,6 +441,9 @@ border: 1px solid #CCCCCC;
          <property name="indentation">
           <number>22</number>
          </property>
+         <property name="sortingEnabled">
+          <bool>true</bool>
+         </property>
          <property name="columnCount">
           <number>0</number>
          </property>
@@ -489,16 +492,14 @@ border: 1px solid #CCCCCC;
    </property>
   </action>
   <action name="actionRoot_is_decorated">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Set root is Decorated</string>
    </property>
    <property name="toolTip">
     <string>Set Root Decorated</string>
-   </property>
-  </action>
-  <action name="actionRoot_isnot_decorated">
-   <property name="text">
-    <string>Set Root is not Decorated</string>
    </property>
   </action>
   <action name="actionHide_Offline_Friends">
@@ -507,6 +508,14 @@ border: 1px solid #CCCCCC;
    </property>
    <property name="text">
     <string>Hide Offline Friends</string>
+   </property>
+  </action>
+  <action name="actionSort_by_State">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Sort by State</string>
    </property>
   </action>
  </widget>

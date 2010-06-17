@@ -175,7 +175,6 @@ int main(int argc, char *argv[])
 
 	w->installGroupChatNotifier();
 
-	QObject::connect(w->messengerWindow,SIGNAL(startChat(QTreeWidgetItem* )),w->peersDialog,SLOT(chatfriend(QTreeWidgetItem* ))) ;
 	QObject::connect(w->idle, SIGNAL(secondsIdle(int)), w->messengerWindow, SLOT(checkAndSetIdle(int)));
 
 	/* only show window, if not startMinimized */
@@ -193,6 +192,9 @@ int main(int argc, char *argv[])
 	/* dive into the endless loop */
 	int ti = rshare.exec();
 	delete w ;
+
+	/* cleanup */
+	PopupChatDialog::cleanupChat();
 
 	rsicontrol->rsGlobalShutDown();
 
