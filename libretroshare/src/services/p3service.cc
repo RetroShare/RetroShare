@@ -198,6 +198,7 @@ RsRawItem *p3Service::send()
 	if (raw)
 	{
 		raw->PeerId(si->PeerId());
+		raw->setQueueType(si->queueType()) ;
 	}
 
 	/* cleanup */
