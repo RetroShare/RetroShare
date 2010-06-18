@@ -1439,13 +1439,16 @@ int	AuthGPG::privateSignCertificate(std::string id)
 
 	gpgme_signers_clear(CTX);
 	if(GPG_ERR_NO_ERROR != (ERR = gpgme_signers_add(CTX, ownKey))) {
+		gpgme_data_release(out);
 		return 0;
 	}
 	
-        if(GPG_ERR_NO_ERROR != (ERR = gpgme_op_edit(CTX, signKey, keySignCallback, &params, out))) {
-
+	if(GPG_ERR_NO_ERROR != (ERR = gpgme_op_edit(CTX, signKey, keySignCallback, &params, out))) {
+		gpgme_data_release(out);
 		return 0;	
 	}
+
+	gpgme_data_release(out);
 
 	return 1;
 }
@@ -1466,32 +1469,35 @@ int	AuthGPG::privateTrustCertificate(std::string id, int trustlvl)
 		return 0;
 	}
 	
-		  {
-			  RsStackMutex stack(gpgMtx);
+	{
+		RsStackMutex stack(gpgMtx);
 
-			  gpgcert trustCert = mKeyList.find(id)->second;
-			  gpgme_key_t trustKey = trustCert.key;
-			  std::string trustString;
-			  std::ostringstream trustStrOut;
-			  trustStrOut << trustlvl;
-			  class TrustParams sparams(trustStrOut.str());
-			  class EditParams params(TRUST_START, &sparams);
-			  gpgme_data_t out;
-			  gpg_error_t ERR;
+		gpgcert trustCert = mKeyList.find(id)->second;
+		gpgme_key_t trustKey = trustCert.key;
+		std::string trustString;
+		std::ostringstream trustStrOut;
+		trustStrOut << trustlvl;
+		class TrustParams sparams(trustStrOut.str());
+		class EditParams params(TRUST_START, &sparams);
+		gpgme_data_t out;
+		gpg_error_t ERR;
 
+		if(GPG_ERR_NO_ERROR != (ERR = gpgme_data_new(&out))) {
+			return 0;
+		}
 
-			  if(GPG_ERR_NO_ERROR != (ERR = gpgme_data_new(&out))) {
-				  return 0;
-			  }
+		if(GPG_ERR_NO_ERROR != (ERR = gpgme_op_edit(CTX, trustKey, trustCallback, &params, out))) {
+			gpgme_data_release(out);
+			return 0;
+		}
 
-			  if(GPG_ERR_NO_ERROR != (ERR = gpgme_op_edit(CTX, trustKey, trustCallback, &params, out)))
-				  return 0;
+		gpgme_data_release(out);
 
-			  //the key ref has changed, we got to get rid of the old reference.
-			  trustCert.key = NULL;
-		  }
+		//the key ref has changed, we got to get rid of the old reference.
+		trustCert.key = NULL;
+	}
 
-        storeAllKeys_locked();
+	storeAllKeys_locked();
 		
 	return 1;
 }
