@@ -151,49 +151,50 @@ void RsQueueThread::run()
 	}
 }
 
-RsReadWriteMutex::RsReadWriteMutex():readLocks(0) {
-}
-
-void RsReadWriteMutex::readLock() {
-    internalCounterMtx.lock();//lock internal read counter
-    if (readLocks == 0) {
-        lock(); //lock normal mutex
-    }
-    readLocks++;
-    internalCounterMtx.unlock();
-}
-
-void RsReadWriteMutex::readUnlock() {
-    internalCounterMtx.lock();//lock internal read counter
-    if (readLocks == 1) {
-        unlock();
-    }
-    if (readLocks != 0) {
-        readLocks--;
-    }
-    internalCounterMtx.unlock();
-}
-
-void RsReadWriteMutex::writeLock() {
-    lock();
-}
-
-void RsReadWriteMutex::writeUnlock() {
-    unlock();
-}
-
-void RsReadWriteMutex::rwlock(uint32_t type) {
-    if (type & READ_LOCK) {
-        readLock();
-    } else {
-        writeLock();
-    }
-}
-
-void RsReadWriteMutex::rwunlock(uint32_t type) {
-    if (type & READ_LOCK) {
-        readUnlock();
-    } else {
-        writeUnlock();
-    }
-}
+// maybe we can use it again
+//RsReadWriteMutex::RsReadWriteMutex():readLocks(0) {
+//}
+//
+//void RsReadWriteMutex::readLock() {
+//    internalCounterMtx.lock();//lock internal read counter
+//    if (readLocks == 0) {
+//        lock(); //lock normal mutex
+//    }
+//    readLocks++;
+//    internalCounterMtx.unlock();
+//}
+//
+//void RsReadWriteMutex::readUnlock() {
+//    internalCounterMtx.lock();//lock internal read counter
+//    if (readLocks == 1) {
+//        unlock();
+//    }
+//    if (readLocks != 0) {
+//        readLocks--;
+//    }
+//    internalCounterMtx.unlock();
+//}
+//
+//void RsReadWriteMutex::writeLock() {
+//    lock();
+//}
+//
+//void RsReadWriteMutex::writeUnlock() {
+//    unlock();
+//}
+//
+//void RsReadWriteMutex::rwlock(uint32_t type) {
+//    if (type & READ_LOCK) {
+//        readLock();
+//    } else {
+//        writeLock();
+//    }
+//}
+//
+//void RsReadWriteMutex::rwunlock(uint32_t type) {
+//    if (type & READ_LOCK) {
+//        readUnlock();
+//    } else {
+//        writeUnlock();
+//    }
+//}

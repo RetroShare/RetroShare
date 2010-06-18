@@ -244,7 +244,7 @@ private:
 
     static AuthGPG *instance_gpg; // pointeur vers le singleton
 
-    RsReadWriteMutex pgpMtx;
+    RsMutex gpgMtx;
     /* Below is protected via the mutex */
 
     certmap mKeyList;
