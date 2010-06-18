@@ -295,37 +295,14 @@ void BlogsDialog::updateBlogList()
 	}
 
 	uint32_t i = 0;
-	uint32_t popLimit = 0;
 	std::multimap<uint32_t, std::string>::reverse_iterator rit;
-	for(rit = popMap.rbegin(); ((rit != popMap.rend()) && (i < popCount)); rit++, i++)
+	for(rit = popMap.rbegin(); rit != popMap.rend(); rit++)
 	{
-		popIds.push_back(rit->second);
-	}
-
-	if (rit != popMap.rend())
-	{
-		popLimit = rit->first;
-	}
-
-	for(it = channelList.begin(); it != channelList.end(); it++)
-	{
-		/* ignore the ones we've done already */
-		uint32_t flags = it->blogFlags;
-
-		if (flags & RS_DISTRIB_ADMIN)
-		{
-			continue;
-		}
-		else if (flags & RS_DISTRIB_SUBSCRIBED)
-		{
-			continue;
-		}
-		else
-		{
-			if (it->pop < popLimit)
-			{
-				otherIds.push_back(it->blogId);
-			}
+		if(i < popCount){
+			popIds.push_back(rit->second);
+			i++;
+		}else{
+			otherIds.push_back(rit->second);
 		}
 	}
 
