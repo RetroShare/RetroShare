@@ -76,7 +76,7 @@ public slots:
 		void setChatInfo(QString info, QColor color=QApplication::palette().color(QPalette::WindowText));
 		void resetStatusBar() ;
 
-    void fileHashingFinished(AttachFileItem* file);
+        void fileHashingFinished(AttachFileItem* file);
 
 		void smileyWidgetgroupchat();
 		void addSmileys();
@@ -147,9 +147,13 @@ private slots:
 		void addAttachment(std::string);
 		
 		bool fileSave();
-    bool fileSaveAs();
+        bool fileSaveAs();
 
 		void setCurrentFileName(const QString &fileName);
+		
+		void displayMenu();
+		void statusColumn();
+
 
 signals:
 		void friendsUpdated() ;

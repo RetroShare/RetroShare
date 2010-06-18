@@ -141,7 +141,8 @@ PeersDialog::PeersDialog(QWidget *parent)
   connect( ui.addfileButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
   connect( ui.msgText, SIGNAL(anchorClicked(const QUrl &)), SLOT(anchorClicked(const QUrl &)));
 
-  connect(ui.hide_unconnected, SIGNAL(clicked()), this, SLOT(insertPeers()));
+  connect(ui.action_Hide_Offline_Friends, SIGNAL(triggered()), this, SLOT(insertPeers()));
+  connect(ui.action_Hide_Status_Column, SIGNAL(triggered()), this, SLOT(statusColumn()));
 
   ui.peertabWidget->setTabPosition(QTabWidget::North);
   ui.peertabWidget->addTab(new ProfileWidget(),QString(tr("Profile")));
@@ -233,6 +234,7 @@ PeersDialog::PeersDialog(QWidget *parent)
   updateAvatar();
   loadmypersonalstatus();
   loadEmoticonsgroupchat();
+  displayMenu();
 
   // load settings
   processSettings(true);
@@ -269,7 +271,10 @@ void PeersDialog::processSettings(bool bLoad)
         header->restoreState(Settings->value("PeerTree").toByteArray());
 
         // state of hideUnconnected
-        ui.hide_unconnected->setChecked(Settings->value("hideUnconnected", false).toBool());
+        ui.action_Hide_Offline_Friends->setChecked(Settings->value("hideUnconnected", false).toBool());
+        
+        // state of hideStatusColumn
+        ui.action_Hide_Status_Column->setChecked(Settings->value("hideStatusColumn", false).toBool());
 
         // state of splitter
         ui.splitter->restoreState(Settings->value("Splitter").toByteArray());
@@ -280,7 +285,10 @@ void PeersDialog::processSettings(bool bLoad)
         Settings->setValue("PeerTree", header->saveState());
 
         // state of hideUnconnected
-        Settings->setValue("hideUnconnected", ui.hide_unconnected->isChecked());
+        Settings->setValue("hideUnconnected", ui.action_Hide_Offline_Friends->isChecked());
+        
+        // state of hideStatusColumn
+        Settings->setValue("hideStatusColumn", ui.action_Hide_Status_Column->isChecked());
 
         // state of splitter
         Settings->setValue("Splitter", ui.splitter->saveState());
@@ -439,7 +447,7 @@ void  PeersDialog::insertPeers()
                 return;
         }
 
-        bool bHideUnconnected = ui.hide_unconnected->isChecked();
+        bool bHideUnconnected = ui.action_Hide_Offline_Friends->isChecked();
 
         rsPeers->getGPGAcceptedList(gpgFriends);
 
@@ -1802,4 +1810,32 @@ void PeersDialog::playsound(){
     if(!OnlineSound.isEmpty()&&flag)
         if(QSound::isAvailable())
             QSound::play(OnlineSound);
+}
+
+void PeersDialog::displayMenu()
+{
+    QMenu *displaymenu = new QMenu();
+
+    displaymenu->addAction(ui.action_Hide_Offline_Friends);
+    displaymenu->addAction(ui.action_Hide_Status_Column);
+
+    ui.displayButton->setMenu(displaymenu);
+}
+
+void PeersDialog::statusColumn()
+{
+    /* Set header resize modes and initial section sizes */
+    QHeaderView * peerheader = ui.peertreeWidget->header();
+
+    if(ui.action_Hide_Status_Column->isChecked())
+    {
+        ui.peertreeWidget->setColumnHidden ( 1, true);
+        peerheader->resizeSection ( 0, 200 );
+    }    
+    else
+    {
+        ui.peertreeWidget->setColumnHidden ( 1, false);
+        peerheader->resizeSection ( 0, 200 );
+    }
+    
 }
