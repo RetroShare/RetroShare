@@ -142,7 +142,7 @@ void  CreateChannel::newChannel()
 	/* enforce Private for the moment */
 	ui.typePrivate->setChecked(true);
 
-	ui.typeEncrypted->setEnabled(false);
+        ui.typeEncrypted->setEnabled(true);
 
 	ui.msgAnon->setChecked(true);
 	ui.msgAuth->setEnabled(false);
@@ -243,20 +243,9 @@ void CreateChannel::addChannelLogo()
 	QString fileName = QFileDialog::getOpenFileName(this, "Load File", QDir::homePath(), "Pictures (*.png *.xpm *.jpg)");
 	if(!fileName.isEmpty())
 	{
-		picture = QPixmap(fileName).scaled(64,64, Qt::IgnoreAspectRatio);
-		
-		// to show the selected 
-		ui.ChannelLogoButton->setIcon(picture);
+            picture = QPixmap(fileName).scaled(64,64, Qt::IgnoreAspectRatio);
 
-		std::cerr << "Sending avatar image down the pipe" << std::endl ;
-
-		// send avatar down the pipe for other peers to get it.
-		QByteArray ba;
-		QBuffer buffer(&ba);
-		buffer.open(QIODevice::WriteOnly);
-		picture.save(&buffer, "PNG"); // writes image into ba in PNG format
-
-		std::cerr << "Image size = " << ba.size() << std::endl ;
-
+            // to show the selected
+            ui.ChannelLogoButton->setIcon(picture);
 	}
 }
