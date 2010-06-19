@@ -495,7 +495,6 @@ bool 	groupsChanged(std::list<std::string> &groupIds);
 
 	bool mGroupsChanged;
 	bool mGroupsRepublish;
-	bool mPubKeysRecvd;
 
     std::list<RsItem *> saveCleanupList; /* TEMPORARY LIST WHEN SAVING */
     std::string mKeyBackUpDir;
@@ -503,7 +502,7 @@ bool 	groupsChanged(std::list<std::string> &groupIds);
 
     std::map<std::string, RsDistribGrpKey* > mRecvdPubKeys; /// full publishing keys received from users
     std::map<std::string, std::list<std::string> > mPendingPubKeyRecipients; /// peers to receive publics key for a given grp
-    time_t mLastKeyPublishTime;
+    time_t mLastKeyPublishTime, mLastRecvdKeyTime;
 
 
 };

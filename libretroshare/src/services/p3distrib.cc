@@ -67,7 +67,7 @@ p3GroupDistrib::p3GroupDistrib(uint16_t subtype,
 	mPubPeriod(pubPeriod), 
 	mLastPublishTime(0),
 	mMaxCacheSubId(1),
-	mKeyBackUpDir(keyBackUpDir), BACKUP_KEY_FILE("key.log"), mLastKeyPublishTime(0)
+	mKeyBackUpDir(keyBackUpDir), BACKUP_KEY_FILE("key.log"), mLastKeyPublishTime(0), mLastRecvdKeyTime(0)
 {
 	/* force publication of groups (cleared if local cache file found) */
 	mGroupsRepublish = true;
@@ -121,7 +121,7 @@ int	p3GroupDistrib::tick()
 
 	{
 		RsStackMutex stack(distribMtx);
-		toPublish = (mPendingPubKeyRecipients.size() > 0) && (now > 5 + mLastKeyPublishTime);
+		toPublish = (mPendingPubKeyRecipients.size() > 0) && (now > (time_t) (mPubPeriod + mLastKeyPublishTime));
 	}
 
 	if(toPublish){
@@ -140,9 +140,11 @@ int	p3GroupDistrib::tick()
 	{
 		RsStackMutex stack(distribMtx);
 
-		if(mPubKeysRecvd){
+	toReceive = (mRecvdPubKeys.size() > 0) &&  (now > (time_t) (mPubPeriod + mLastRecvdKeyTime));
+
+		if(toReceive)
 			locked_loadRecvdPubKeys();
-		}
+
 	}
 
 	return 0;
@@ -514,7 +516,13 @@ void	p3GroupDistrib::loadGroupKey(RsDistribGrpKey *newKey)
 		std::cerr << "p3GroupDistrib::loadGroupKey() Group Not Found - discarding Key";
 		std::cerr << std::endl;
 #endif
-		delete newKey;
+
+		// if this is an in-date publish key then keep to see if group arrives later
+		if(((time_t)(newKey->key.startTS + mStorePeriod) > time(NULL)) && !(newKey->key.keyFlags & RSTLV_KEY_DISTRIB_ADMIN))
+			mRecvdPubKeys.insert(std::pair<std::string, RsDistribGrpKey*>(gid, newKey));
+		else
+			delete newKey;
+
 		return;
 	}
 
@@ -1378,6 +1386,32 @@ std::list<RsItem *> p3GroupDistrib::saveList(bool &cleanup)
 		}
 	}
 
+	// also save pending private publish keys you may have
+	std::map<std::string, RsDistribGrpKey* >::iterator pendKeyIt;
+
+	for(pendKeyIt = mRecvdPubKeys.begin(); pendKeyIt != mRecvdPubKeys.end(); pendKeyIt++)
+	{
+
+		RsDistribGrpKey *pubKey = new RsDistribGrpKey();
+		pubKey->grpId = pendKeyIt->first;
+		const unsigned char *keyptr = (const unsigned char *)
+				pendKeyIt->second->key.keyData.bin_data;
+		long keylen = pendKeyIt->second->key.keyData.bin_len;
+
+		RSA *rsa_priv = d2i_RSAPrivateKey(NULL, &(keyptr), keylen);
+
+		setRSAPrivateKey(pubKey->key, rsa_priv);
+		RSA_free(rsa_priv);
+
+		pubKey->key.keyFlags = pendKeyIt->second->key.keyFlags;
+		pubKey->key.startTS = pendKeyIt->second->key.startTS;
+		pubKey->key.endTS   = pendKeyIt->second->key.endTS;
+
+		saveData.push_back(pubKey);
+		saveCleanupList.push_back(pubKey);
+
+	}
+
 	return saveData;
 }
 
@@ -1985,9 +2019,8 @@ void p3GroupDistrib::locked_receivePubKeys(){
 		}
 	}
 
-	if(mRecvdPubKeys.size() != 0){
-		mPubKeysRecvd = true;
-	}
+	if(!mRecvdPubKeys.empty())
+		IndicateConfigChanged();
 
 	return;
 }
@@ -2027,8 +2060,8 @@ void p3GroupDistrib::locked_loadRecvdPubKeys(){
 
 	}
 
-	if(mRecvdPubKeys.size() == 0)
-		mPubKeysRecvd = false;
+
+		mLastRecvdKeyTime = time(NULL);
 
 
 	if(ok)
