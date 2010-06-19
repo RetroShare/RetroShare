@@ -1,4 +1,4 @@
-CONFIG += qt gui uic qrc resources uitools idle
+CONFIG += qt gui uic qrc resources uitools idle blogs
 QT     += network xml script opengl
 
 TEMPLATE = app
@@ -220,6 +220,7 @@ HEADERS +=  rshare.h \
             gui/channels/ChannelDetails.h \
             gui/channels/CreateChannelMsg.h \
             gui/channels/EditChanDetails.h \
+            gui/channels/ShareKey.h \
             gui/connect/ConfCertDialog.h \
             gui/msgs/MessageComposer.h \
             gui/msgs/textformat.h \
@@ -319,6 +320,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/channels/CreateChannelMsg.ui \
             gui/channels/ChannelDetails.ui \
             gui/channels/EditChanDetails.ui \
+            gui/channels/ShareKey.ui \
             gui/chat/PopupChatDialog.ui \
             gui/connect/ConfCertDialog.ui \
             gui/msgs/MessageComposer.ui \
@@ -427,6 +429,7 @@ SOURCES +=  main.cpp \
             gui/channels/CreateChannelMsg.cpp \
             gui/channels/ChannelDetails.cpp \
             gui/channels/EditChanDetails.cpp \
+            gui/channels/ShareKey.cpp \
             gui/chat/PopupChatDialog.cpp \
             gui/chat/HandleRichText.cpp \
             gui/connect/ConfCertDialog.cpp \
