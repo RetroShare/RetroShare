@@ -1552,8 +1552,8 @@ void MessagesDialog::insertMessages()
                 std::ostringstream out;
                 out << it -> count;
                 item[COLUMN_ATTACHEMENTS] -> setText(QString::fromStdString(out.str()));
-                item[COLUMN_ATTACHEMENTS]->setData(item[COLUMN_ATTACHEMENTS]->text() + dateString, Qt::UserRole);
-                //item -> setTextAlignment( 0, Qt::AlignCenter );
+                item[COLUMN_ATTACHEMENTS] -> setData(item[COLUMN_ATTACHEMENTS]->text() + dateString, Qt::UserRole);
+                item[COLUMN_ATTACHEMENTS] -> setTextAlignment(Qt::AlignHCenter);
             }
 
             if (nFilterColumn == COLUMN_CONTENT) {
