@@ -631,18 +631,23 @@ void	p3GroupDistrib::loadMsg(RsDistribSignedMsg *newMsg, std::string src, bool l
 		return;
 	}
 
+        void *temp_ptr = newMsg->packet.bin_data;
+        int temp_len = newMsg->packet.bin_len;
+
 	if(git->second.grpFlags & RS_DISTRIB_ENCRYPTED){
 
-		void *out_data = NULL;
-		int outlen = 0;
+                void *out_data = NULL;
+                int out_len = 0;
 
-		if(decrypt(out_data, outlen, newMsg->packet.bin_data, newMsg->packet.bin_len, newMsg->grpId)){
-			newMsg->packet.TlvClear();
-			newMsg->packet.setBinData(out_data, outlen);
+                if(decrypt(out_data, out_len, newMsg->packet.bin_data, newMsg->packet.bin_len, newMsg->grpId)){
+                        newMsg->packet.TlvShallowClear();
+                        newMsg->packet.setBinData(out_data, out_len);
+                        delete[] (unsigned char*) out_data;
+
 		}else{
 
-			if((out_data != NULL) && (outlen != 0))
-				delete[] out_data;
+                        if((out_data != NULL) && (out_len != 0))
+                                delete[] (unsigned char*) out_data;
 
 			return;
 		}
@@ -694,6 +699,12 @@ void	p3GroupDistrib::loadMsg(RsDistribSignedMsg *newMsg, std::string src, bool l
 		std::cerr << "p3GroupDistrib::loadMsg() To be Published!";
 		std::cerr << std::endl;
 #endif
+
+                if(git->second.grpFlags & RS_DISTRIB_ENCRYPTED){
+                    newMsg->packet.TlvClear();
+                    newMsg->packet.setBinData(temp_ptr, temp_len);
+                }
+
 		locked_toPublishMsg(newMsg);
 	}
 	else
@@ -2128,7 +2139,7 @@ std::string	p3GroupDistrib::publishMsg(RsDistribMsg *msg, bool personalSign)
 		EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
 
 		EVP_SignInit(mdctx, EVP_sha1());
-		EVP_SignUpdate(mdctx, out_data, size);
+                EVP_SignUpdate(mdctx, out_data, out_size);
 
 		unsigned int siglen = EVP_PKEY_size(publishKey);
 			unsigned char sigbuf[siglen];
@@ -2142,7 +2153,7 @@ std::string	p3GroupDistrib::publishMsg(RsDistribMsg *msg, bool personalSign)
 		{
 			unsigned int siglen = EVP_PKEY_size(publishKey);
 				unsigned char sigbuf[siglen];
-					if (AuthSSL::getAuthSSL()->SignDataBin(out_data, size, sigbuf, &siglen))
+                                        if (AuthSSL::getAuthSSL()->SignDataBin(out_data, out_size, sigbuf, &siglen))
 			{
 				signedMsg->personalSignature.signData.setBinData(sigbuf, siglen);
 							signedMsg->personalSignature.keyId = AuthSSL::getAuthSSL()->OwnId();
