@@ -422,6 +422,7 @@ void MessagesDialog::processSettings(bool bLoad)
         // state of splitter
         ui.msgSplitter->restoreState(Settings->value("Splitter").toByteArray());
         ui.msgSplitter_2->restoreState(Settings->value("Splitter2").toByteArray());
+        ui.listSplitter->restoreState(Settings->value("Splitter3").toByteArray());
     } else {
         // save settings
 
@@ -434,6 +435,7 @@ void MessagesDialog::processSettings(bool bLoad)
         // state of splitter
         Settings->setValue("Splitter", ui.msgSplitter->saveState());
         Settings->setValue("Splitter2", ui.msgSplitter_2->saveState());
+        Settings->setValue("Splitter3", ui.listSplitter->saveState());
     }
 
     Settings->endGroup();
