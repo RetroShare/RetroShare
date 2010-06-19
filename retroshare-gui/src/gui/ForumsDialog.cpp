@@ -175,24 +175,32 @@ ForumsDialog::ForumsDialog(QWidget *parent)
     YourForums->setText(0, tr("Your Forums"));
     YourForums->setFont(0, m_ItemFont);
     YourForums->setIcon(0,(QIcon(IMAGE_FOLDER)));
+    YourForums->setSizeHint(0, QSize( 18,18 ) );
+    YourForums->setForeground(0, QBrush(QColor(79, 79, 79)));
     TopList.append(YourForums);
 
     SubscribedForums = new QTreeWidgetItem((QTreeWidget*)0);
     SubscribedForums->setText(0, tr("Subscribed Forums"));
     SubscribedForums->setFont(0, m_ItemFont);
     SubscribedForums->setIcon(0,(QIcon(IMAGE_FOLDERRED)));
+    SubscribedForums->setSizeHint(0, QSize( 18,18 ) );
+    SubscribedForums->setForeground(0, QBrush(QColor(79, 79, 79)));
     TopList.append(SubscribedForums);
 
     PopularForums = new QTreeWidgetItem();
     PopularForums->setText(0, tr("Popular Forums"));
     PopularForums->setFont(0, m_ItemFont);
     PopularForums->setIcon(0,(QIcon(IMAGE_FOLDERGREEN)));
+    PopularForums->setSizeHint(0, QSize( 18,18 ) );
+    PopularForums->setForeground(0, QBrush(QColor(79, 79, 79)));
     TopList.append(PopularForums);
 
     OtherForums = new QTreeWidgetItem();
     OtherForums->setText(0, tr("Other Forums"));
     OtherForums->setFont(0, m_ItemFont);
     OtherForums->setIcon(0,(QIcon(IMAGE_FOLDERYELLOW)));
+    OtherForums->setSizeHint(0, QSize( 18,18 ) );
+    OtherForums->setForeground(0, QBrush(QColor(79, 79, 79)));
     TopList.append(OtherForums);
 
     ui.forumTreeWidget->addTopLevelItems(TopList);
