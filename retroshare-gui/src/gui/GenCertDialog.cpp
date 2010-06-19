@@ -86,6 +86,7 @@ GenCertDialog::GenCertDialog(QWidget *parent, Qt::WFlags flags)
         ui.no_gpg_key_label->show();
         ui.new_gpg_key_checkbox->setChecked(true);
         ui.new_gpg_key_checkbox->hide();
+        ui.progressBar->hide();
         setWindowTitle(tr("Create new Profile"));
         ui.genButton->setText(tr("Generate new Profile"));
         ui.label_3->setText( titleString.arg( tr("Create a new Profile") ) ) ;
