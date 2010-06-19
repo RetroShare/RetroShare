@@ -33,6 +33,7 @@
 #include "gui/channels/ChannelDetails.h"
 #include "gui/channels/CreateChannelMsg.h"
 #include "gui/channels/EditChanDetails.h"
+#include "gui/channels/ShareKey.h"
 
 #include "gui/ChanGroupDelegate.h"
 
@@ -155,17 +156,22 @@ void ChannelFeed::channelListCustomPopupMenu( QPoint point )
       editChannelDetailAct = new QAction(QIcon(":/images/settings16.png"), tr("Edit Channel Details"), this);
       connect( editChannelDetailAct, SIGNAL( triggered() ), this, SLOT( editChannelDetail() ) );
 
-      if(ci.channelFlags & (RS_DISTRIB_PUBLISH | RS_DISTRIB_ADMIN)){
+      shareKeyAct = new QAction(QIcon(":/images/gpgp_key_generate.png"), tr("Share Key"), this);
+      connect( shareKeyAct, SIGNAL( triggered() ), this, SLOT( shareKey() ) );
+
+      if((ci.channelFlags & RS_DISTRIB_PUBLISH) && (ci.channelFlags & RS_DISTRIB_ADMIN)){
           contextMnu.addAction( postchannelAct );
           contextMnu.addSeparator();
           contextMnu.addAction( channeldetailsAct );
           contextMnu.addAction( editChannelDetailAct);
+          contextMnu.addAction( shareKeyAct );
       }
       else if (ci.channelFlags & RS_DISTRIB_PUBLISH)
       {
         contextMnu.addAction( postchannelAct );
         contextMnu.addSeparator();
         contextMnu.addAction( channeldetailsAct );
+        contextMnu.addAction( shareKeyAct );
       }
       else if (ci.channelFlags & RS_DISTRIB_SUBSCRIBED)
       {
@@ -229,6 +235,14 @@ void ChannelFeed::editChannelDetail(){
     
     EditChanDetails editUi(this, 0, mChannelId);
     editUi.exec();
+
+    return;
+}
+
+void ChannelFeed::shareKey()
+{
+    ShareKey shareUi(this, 0, mChannelId);
+    shareUi.exec();
 
     return;
 }

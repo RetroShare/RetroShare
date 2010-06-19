@@ -73,6 +73,7 @@ private slots:
   void showChannelDetails();
   void restoreChannelKeys();
   void editChannelDetail();
+  void shareKey();
 
 private:
 
@@ -102,6 +103,7 @@ private:
 	QAction* channeldetailsAct;
 	QAction* restoreKeysAct;
         QAction* editChannelDetailAct;
+        QAction* shareKeyAct;
 
 };
 
