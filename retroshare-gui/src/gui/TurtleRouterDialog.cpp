@@ -58,7 +58,7 @@ void TurtleRouterDialog::updateDisplay()
 		if(parent->text(0) == QString("Unknown hashes"))
 			unknown_hash_found = true ;
 
-		QString str = QString::fromStdString( "Tunnel id: " + tunnels_info[i][0] + "\t [" + tunnels_info[i][2] + "] --> [" + tunnels_info[i][1] + "]\t\t last transfer: " + tunnels_info[i][4]) ;
+		QString str = QString::fromStdString( "Tunnel id: " + tunnels_info[i][0] + "\t [" + tunnels_info[i][2] + "] --> [" + tunnels_info[i][1] + "]\t\t last transfer: " + tunnels_info[i][4] + "\t Speed: " + tunnels_info[i][5] ) ;
 		stl.clear() ;
 		stl.push_back(str) ;
 

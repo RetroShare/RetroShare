@@ -59,11 +59,12 @@
 // an in-depth test would be better to get an idea of what the ideal values
 // could ever be.
 //
-static const time_t TUNNEL_REQUESTS_LIFE_TIME 	= 120 ;		/// life time for tunnel requests in the cache.
-static const time_t SEARCH_REQUESTS_LIFE_TIME 	= 120 ;		/// life time for search requests in the cache
+static const time_t TUNNEL_REQUESTS_LIFE_TIME 	=  30 ;		/// life time for tunnel requests in the cache.
+static const time_t SEARCH_REQUESTS_LIFE_TIME 	=  30 ;		/// life time for search requests in the cache
 static const time_t REGULAR_TUNNEL_DIGGING_TIME = 300 ;		/// maximum interval between two tunnel digging campaigns.
 static const time_t MAXIMUM_TUNNEL_IDLE_TIME 	=  60 ;		/// maximum life time of an unused tunnel.
 static const time_t TUNNEL_MANAGEMENT_LAPS_TIME	=  10 ;		/// look into tunnels regularly every 10 sec.
+static const time_t TUNNEL_SPEED_ESTIMATE_LAPSE	=   2 ;		/// estimate tunnel speed every 2 seconds
 
 p3turtle::p3turtle(p3ConnectMgr *cm,ftServer *fs)
 	:p3Service(RS_SERVICE_TYPE_TURTLE), p3Config(CONFIG_TYPE_TURTLE), mConnMgr(cm)
@@ -79,6 +80,7 @@ p3turtle::p3turtle(p3ConnectMgr *cm,ftServer *fs)
 	_last_clean_time = 0 ;
 	_last_tunnel_management_time = 0 ;
 	_last_tunnel_campaign_time = 0 ;
+	_last_tunnel_speed_estimate_time = 0 ;
 }
 
 int p3turtle::tick()
@@ -113,6 +115,12 @@ int p3turtle::tick()
 #endif
 		autoWash() ;					// clean old/unused tunnels and file hashes, as well as search and tunnel requests.
 		_last_clean_time = now ;
+	}
+
+	if(now >= TUNNEL_SPEED_ESTIMATE_LAPSE + _last_tunnel_speed_estimate_time)
+	{
+		estimateTunnelSpeeds() ;
+		_last_tunnel_speed_estimate_time = now ;
 	}
 
 #ifdef P3TURTLE_DEBUG
@@ -214,7 +222,7 @@ void p3turtle::manageTunnels()
 			_last_tunnel_campaign_time = now ;
 		}
 		for(std::map<TurtleFileHash,TurtleFileHashInfo>::const_iterator it(_incoming_file_hashes.begin());it!=_incoming_file_hashes.end();++it)
-			if(it->second.tunnels.empty()		// digg new tunnels is no tunnels are available
+			if(it->second.tunnels.empty()		// digg new tunnels if no tunnels are available
 				|| _force_digg_new_tunnels		// digg new tunnels when forced to (e.g. a new peer has connected)
 				|| tunnel_campain)				// force digg new tunnels at regular (large) interval
 			{
@@ -229,6 +237,20 @@ void p3turtle::manageTunnels()
 
 	for(unsigned int i=0;i<hashes_to_digg.size();++i)
 		diggTunnel(hashes_to_digg[i]) ;
+}
+
+void p3turtle::estimateTunnelSpeeds()
+{
+	RsStackMutex stack(mTurtleMtx) ;
+
+	for(std::map<TurtleTunnelId,TurtleTunnel>::iterator it(_local_tunnels.begin());it!=_local_tunnels.end();++it)
+	{
+		TurtleTunnel& tunnel(it->second) ;
+
+		float speed_estimate = tunnel.transfered_bytes / float(TUNNEL_SPEED_ESTIMATE_LAPSE) ;
+		tunnel.speed_Bps = 0.75*tunnel.speed_Bps + 0.25*speed_estimate ;
+		tunnel.transfered_bytes = 0 ;
+	}
 }
 
 void p3turtle::autoWash()
@@ -788,6 +810,8 @@ void p3turtle::routeGenericTunnelItem(RsTurtleGenericTunnelItem *item)
 		if(item->shouldStampTunnel())
 			tunnel.time_stamp = time(NULL) ;
 
+		tunnel.transfered_bytes += item->serial_size() ;
+
 		// Let's figure out whether this packet is for us or not.
 
 		if(direction == RsTurtleGenericTunnelItem::DIRECTION_CLIENT && tunnel.local_src != mConnMgr->getOwnId())
@@ -1077,6 +1101,8 @@ void p3turtle::sendFileData(const std::string& peerId, const std::string& hash, 
 	item->chunk_offset = offset ;
 	item->chunk_size = chunksize ;
 	item->chunk_data = malloc(chunksize) ;
+
+	tunnel.transfered_bytes += item->serial_size();
 
 	if(item->chunk_data == NULL)
 	{
@@ -1378,6 +1404,8 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 			tt.hash = item->file_hash ;
 			tt.local_dst = mConnMgr->getOwnId() ;	// this means us
 			tt.time_stamp = time(NULL) ;
+			tt.transfered_bytes = 0 ;
+			tt.speed_Bps = 0.0f ;
 
 			_local_tunnels[res_item->tunnel_id] = tt ;
 
@@ -1469,6 +1497,8 @@ void p3turtle::handleTunnelResult(RsTurtleTunnelOkItem *item)
 			tunnel.local_dst = item->PeerId() ;
 			tunnel.hash = "" ;
 			tunnel.time_stamp = time(NULL) ;
+			tunnel.transfered_bytes = 0 ;
+			tunnel.speed_Bps = 0.0f ;
 
 #ifdef P3TURTLE_DEBUG
 			std::cerr << "  storing tunnel info. src=" << tunnel.local_src << ", dst=" << tunnel.local_dst << ", id=" << item->tunnel_id << std::endl ;
@@ -1743,6 +1773,28 @@ bool p3turtle::performLocalHashSearch(const TurtleFileHash& hash,FileInfo& info)
 	return rsFiles->FileDetails(hash, RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_SPEC_ONLY | RS_FILE_HINTS_DOWNLOAD, info);
 }
 
+static std::string printFloatNumber(float num,bool friendly=false)
+{;
+	std::ostringstream out ;
+
+	if(friendly)
+	{
+		char tmp[100] ;
+		std::string units[4] = { "B/s","KB/s","MB/s","GB/s" } ;
+
+		int k=0 ;
+		while(num >= 800.0f && k<5)
+			num /= 1024.0f,++k;
+
+		sprintf(tmp,"%3.2f %s",num,units[k].c_str()) ;
+		return std::string(tmp) ;
+	}
+	else
+	{
+		out << num ;
+		return out.str() ;
+	}
+}
 static std::string printNumber(uint64_t num,bool hex=false)
 {
 	if(hex)
@@ -1804,6 +1856,7 @@ void p3turtle::getInfo(	std::vector<std::vector<std::string> >& hashes_info,
 
 		tunnel.push_back(it->second.hash) ;
 		tunnel.push_back(printNumber(now-it->second.time_stamp) + " secs ago") ;
+		tunnel.push_back(printFloatNumber(it->second.speed_Bps,true)) ;
 	}
 
 	search_reqs_info.clear();

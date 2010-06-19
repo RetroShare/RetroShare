@@ -132,10 +132,6 @@
 // Questions:
 // 	- should tunnels be re-used ? nope. The only useful case would be when two peers are exchanging files, which happens quite rarely.
 //
-// TODO:
-// 	- derive most packets from RsTurtleTunnelPacketItem, that can be handled
-// 	as raw data through a tunnel. This will avoid replicating most of the
-// 	tunnel handling code.
 
 
 #ifndef MRK_PQI_TURTLE_H
@@ -171,11 +167,18 @@ class TurtleRequestInfo
 class TurtleTunnel
 {
 	public:
+		/* For all tunnels */
+
 		TurtlePeerId local_src ;		// where packets come from. Direction to the source.
 		TurtlePeerId local_dst ;		// where packets should go. Direction to the destination.
-		TurtleFileHash hash;				// for starting and ending tunnels only. Null otherwise.
-		TurtleVirtualPeerId vpid;		// same, but contains the virtual peer id for this tunnel.
 		uint32_t	time_stamp ;			// last time the tunnel was actually used. Used for cleaning old tunnels.
+		uint32_t transfered_bytes ;	// total bytes transferred in this tunnel.
+		float speed_Bps ;             // speed of the traffic through the tunnel
+
+		/* For ending/starting tunnels only. */
+
+		TurtleFileHash hash;				// Hash of the file for this tunnel
+		TurtleVirtualPeerId vpid;		// Virtual peer id for this tunnel.
 };
 
 // This class keeps trace of the activity for the file hashes the turtle router is asked to monitor.
@@ -306,6 +309,9 @@ class p3turtle: public p3Service, public pqiMonitor, public RsTurtle,/* public f
 		/// adds info related to a new virtual peer.
 		void addDistantPeer(const TurtleFileHash&, TurtleTunnelId) ;	
 
+		/// estimates the speed of the traffic into tunnels.
+		void estimateTunnelSpeeds() ;
+
 		//----------------------------- Routing functions ----------------------------//
 		
 		/// Handle tunnel digging for current file hashes
@@ -377,6 +383,7 @@ class p3turtle: public p3Service, public pqiMonitor, public RsTurtle,/* public f
 		time_t _last_clean_time ;
 		time_t _last_tunnel_management_time ;
 		time_t _last_tunnel_campaign_time ;
+		time_t _last_tunnel_speed_estimate_time ;
 
 		std::list<pqipeer> _online_peers;
 
