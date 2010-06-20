@@ -243,7 +243,7 @@ void CreateChannel::addChannelLogo()
 	QString fileName = QFileDialog::getOpenFileName(this, "Load File", QDir::homePath(), "Pictures (*.png *.xpm *.jpg)");
 	if(!fileName.isEmpty())
 	{
-            picture = QPixmap(fileName).scaled(64,64, Qt::IgnoreAspectRatio);
+            picture = QPixmap(fileName).scaled(64,64, Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
 
             // to show the selected
             ui.ChannelLogoButton->setIcon(picture);

@@ -479,7 +479,7 @@ void CreateChannelMsg::addThumbnail()
 	QString fileName = QFileDialog::getOpenFileName(this, "Load File", QDir::homePath(), "Pictures (*.png *.xpm *.jpg)");
 	if(!fileName.isEmpty())
 	{
-		picture = QPixmap(fileName).scaled(156,107, Qt::IgnoreAspectRatio);
+		picture = QPixmap(fileName).scaled(156,107, Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
 		
 		// to show the selected 
 		thumbnail_label->setPixmap(picture);

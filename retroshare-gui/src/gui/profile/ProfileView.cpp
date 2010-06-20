@@ -244,7 +244,7 @@ void ProfileView::selectimagefile()
 							"Pictures (*.png *.xpm *.jpg)");
 	if(!fileName.isEmpty())
 	{
-		picture = QPixmap(fileName).scaled(108,108, Qt::IgnoreAspectRatio);
+		picture = QPixmap(fileName).scaled(108,108, Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
 		ui.photoLabel->setPixmap(picture);
 	}
 }
