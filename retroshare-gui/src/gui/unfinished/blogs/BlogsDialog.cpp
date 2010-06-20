@@ -52,6 +52,10 @@ BlogsDialog::BlogsDialog(QWidget *parent)
   	connect(postButton, SIGNAL(clicked()), this, SLOT(createMsg()));
   	connect(subscribeButton, SIGNAL( clicked( void ) ), this, SLOT( subscribeBlog ( void ) ) );
   	connect(unsubscribeButton, SIGNAL( clicked( void ) ), this, SLOT( unsubscribeBlog ( void ) ) );
+  	
+    connect(treeView, SIGNAL(clicked(const QModelIndex &)), this, SLOT(selectBlog(const QModelIndex &)));
+    connect(treeView, SIGNAL(activated(const QModelIndex &)), this, SLOT(toggleSelection(const QModelIndex &)));
+    connect(treeView, SIGNAL(customContextMenuRequested( QPoint ) ), this, SLOT( blogListCustomPopupMenu( QPoint ) ) );
 
   	mBlogId = "";
   	mPeerId = rsPeers->getOwnId(); // add your id
@@ -64,51 +68,46 @@ BlogsDialog::BlogsDialog(QWidget *parent)
     treeView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     treeView->setItemDelegate(new ChanGroupDelegate());
-    //treeView->setRootIsDecorated(false);
 
     // hide header and id column
     treeView->setHeaderHidden(true);
     treeView->hideColumn(1);
+    
+    itemFont = QFont("ARIAL", 10);
+    itemFont.setBold(true);
 	
-    QStandardItem *item1 = new QStandardItem(tr("Own Blogs"));
-    QStandardItem *item2 = new QStandardItem(tr("Subscribed Blogs"));
-    QStandardItem *item3 = new QStandardItem(tr("Popular Blogs"));
-    QStandardItem *item4 = new QStandardItem(tr("Other Blogs"));
+    QStandardItem *OwnBlogs = new QStandardItem(tr("Own Blogs"));
+    OwnBlogs->setForeground(QBrush(QColor(79, 79, 79)));
+    OwnBlogs->setFont(itemFont);
+    
+    QStandardItem *SubscribedBlogs = new QStandardItem(tr("Subscribed Blogs"));
+    SubscribedBlogs->setForeground(QBrush(QColor(79, 79, 79)));
+    SubscribedBlogs->setFont(itemFont);
 
-    model->appendRow(item1);
-    model->appendRow(item2);
-    model->appendRow(item3);
-    model->appendRow(item4);
+    QStandardItem *PopularBlogs = new QStandardItem(tr("Popular Blogs"));
+    PopularBlogs->setForeground(QBrush(QColor(79, 79, 79)));
+    PopularBlogs->setFont(itemFont);
 
-    connect(treeView, SIGNAL(clicked(const QModelIndex &)), this, SLOT(selectBlog(const QModelIndex &)));
-    connect(treeView, SIGNAL(activated(const QModelIndex &)), this, SLOT(toggleSelection(const QModelIndex &)));
-    connect(treeView, SIGNAL(customContextMenuRequested( QPoint ) ), this, SLOT( blogListCustomPopupMenu( QPoint ) ) );
+    QStandardItem *OtherBlogs = new QStandardItem(tr("Other Blogs"));
+    OtherBlogs->setForeground(QBrush(QColor(79, 79, 79)));        
+    OtherBlogs->setFont(itemFont);
+
+    model->appendRow(OwnBlogs);
+    model->appendRow(SubscribedBlogs);
+    model->appendRow(PopularBlogs);
+    model->appendRow(OtherBlogs);
 
     //added from ahead
     updateBlogList();
 
     mBlogFont = QFont("MS SANS SERIF", 22);
-    nameLabel->setFont(mBlogFont);
-    
+    nameLabel->setFont(mBlogFont);    
     nameLabel->setMinimumWidth(20);
-    
-    itemFont = QFont("ARIAL", 10);
-    itemFont.setBold(true);
-    item1->setFont(itemFont);
-    item2->setFont(itemFont);
-    item3->setFont(itemFont);
-    item4->setFont(itemFont);
-		  
-    item1->setForeground(QBrush(QColor(79, 79, 79)));
-    item2->setForeground(QBrush(QColor(79, 79, 79)));
-    item3->setForeground(QBrush(QColor(79, 79, 79)));
-    item4->setForeground(QBrush(QColor(79, 79, 79)));
-  
+		   
     QMenu *blogmenu = new QMenu();
     blogmenu->addAction(actionCreate_Blog); 
     blogmenu->addSeparator();
     blogpushButton->setMenu(blogmenu);
-
 	
     QTimer *timer = new QTimer(this);
     timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
@@ -326,25 +325,25 @@ void BlogsDialog::updateBlogListOwn(std::list<std::string> &ids)
 		std::cerr << "BlogsDialog::updateBlogListOwn(): " << *iit << std::endl;
 #endif
 		QStandardItem *ownGroup = model->item(OWN);
-		QList<QStandardItem *> channel;
-		QStandardItem *item1 = new QStandardItem();
-		QStandardItem *item2 = new QStandardItem();
+		QList<QStandardItem *> blog;
+		QStandardItem *blogNameitem = new QStandardItem();
+		QStandardItem *blogIditem = new QStandardItem();
 
 		BlogInfo bi;
 		if (rsBlogs && rsBlogs->getBlogInfo(*iit, bi)) {
-			item1->setData(QVariant(QString::fromStdWString(bi.blogName)), Qt::DisplayRole);
-			item2->setData(QVariant(QString::fromStdString(bi.blogId)), Qt::DisplayRole);
-			item1->setToolTip(tr("Popularity: %1\nFetches: %2\nAvailable: %3"
+			blogNameitem->setData(QVariant(QString::fromStdWString(bi.blogName)), Qt::DisplayRole);
+			blogIditem->setData(QVariant(QString::fromStdString(bi.blogId)), Qt::DisplayRole);
+			blogNameitem->setToolTip(tr("Popularity: %1\nFetches: %2\nAvailable: %3"
 					).arg(QString::number(bi.pop)).arg(9999).arg(9999));
 		} else {
-			item1->setData(QVariant(QString("Unknown Blog")), Qt::DisplayRole);
-			item2->setData(QVariant(QString::fromStdString(*iit)), Qt::DisplayRole);
-			item1->setToolTip("Unknown Blog\nNo Description");
+			blogNameitem->setData(QVariant(QString("Unknown Blog")), Qt::DisplayRole);
+			blogIditem->setData(QVariant(QString::fromStdString(*iit)), Qt::DisplayRole);
+			blogNameitem->setToolTip("Unknown Blog\nNo Description");
 		}
 
-		channel.append(item1);
-		channel.append(item2);
-		ownGroup->appendRow(channel);
+		blog.append(blogNameitem);
+		blog.append(blogIditem);
+		ownGroup->appendRow(blog);
 	}
 }
 
@@ -360,25 +359,25 @@ void BlogsDialog::updateBlogListSub(std::list<std::string> &ids)
 		std::cerr << "BlogsDialog::updateBlogListSub(): " << *iit << std::endl;
 #endif
 		QStandardItem *ownGroup = model->item(SUBSCRIBED);
-		QList<QStandardItem *> channel;
-		QStandardItem *item1 = new QStandardItem();
-		QStandardItem *item2 = new QStandardItem();
+		QList<QStandardItem *> blog;
+		QStandardItem *blogNameitem = new QStandardItem();
+		QStandardItem *blogIditem = new QStandardItem();
 
 		BlogInfo bi;
 		if (rsBlogs && rsBlogs->getBlogInfo(*iit, bi)) {
-			item1->setData(QVariant(QString::fromStdWString(bi.blogName)), Qt::DisplayRole);
-			item2->setData(QVariant(QString::fromStdString(bi.blogId)), Qt::DisplayRole);
-			item1->setToolTip(tr("Popularity: %1\nFetches: %2\nAvailable: %3"
+			blogNameitem->setData(QVariant(QString::fromStdWString(bi.blogName)), Qt::DisplayRole);
+			blogIditem->setData(QVariant(QString::fromStdString(bi.blogId)), Qt::DisplayRole);
+			blogNameitem->setToolTip(tr("Popularity: %1\nFetches: %2\nAvailable: %3"
 					).arg(QString::number(bi.pop)).arg(9999).arg(9999));
 		} else {
-			item1->setData(QVariant(QString("Unknown Blog")), Qt::DisplayRole);
-			item2->setData(QVariant(QString::fromStdString(*iit)), Qt::DisplayRole);
-			item1->setToolTip("Unknown Blog\nNo Description");
+			blogNameitem->setData(QVariant(QString("Unknown Blog")), Qt::DisplayRole);
+			blogIditem->setData(QVariant(QString::fromStdString(*iit)), Qt::DisplayRole);
+			blogNameitem->setToolTip("Unknown Blog\nNo Description");
 		}
 
-		channel.append(item1);
-		channel.append(item2);
-		ownGroup->appendRow(channel);
+		blog.append(blogNameitem);
+		blog.append(blogIditem);
+		ownGroup->appendRow(blog);
 	}
 
 }
@@ -395,25 +394,25 @@ void BlogsDialog::updateBlogListPop(std::list<std::string> &ids)
 		std::cerr << "BlogsDialog::updateBlogListPop(): " << *iit << std::endl;
 #endif
 		QStandardItem *ownGroup = model->item(POPULAR);
-		QList<QStandardItem *> channel;
-		QStandardItem *item1 = new QStandardItem();
-		QStandardItem *item2 = new QStandardItem();
+		QList<QStandardItem *> blog;
+		QStandardItem *blogNameitem = new QStandardItem();
+		QStandardItem *blogIditem = new QStandardItem();
 
 		BlogInfo bi;
 		if (rsBlogs && rsBlogs->getBlogInfo(*iit, bi)) {
-			item1->setData(QVariant(QString::fromStdWString(bi.blogName)), Qt::DisplayRole);
-			item2->setData(QVariant(QString::fromStdString(bi.blogId)), Qt::DisplayRole);
-			item1->setToolTip(tr("Popularity: %1\nFetches: %2\nAvailable: %3"
+			blogNameitem->setData(QVariant(QString::fromStdWString(bi.blogName)), Qt::DisplayRole);
+			blogIditem->setData(QVariant(QString::fromStdString(bi.blogId)), Qt::DisplayRole);
+			blogNameitem->setToolTip(tr("Popularity: %1\nFetches: %2\nAvailable: %3"
 					).arg(QString::number(bi.pop)).arg(9999).arg(9999));
 		} else {
-			item1->setData(QVariant(QString("Unknown Blog")), Qt::DisplayRole);
-			item2->setData(QVariant(QString::fromStdString(*iit)), Qt::DisplayRole);
-			item1->setToolTip("Unknown Blog\nNo Description");
+			blogNameitem->setData(QVariant(QString("Unknown Blog")), Qt::DisplayRole);
+			blogIditem->setData(QVariant(QString::fromStdString(*iit)), Qt::DisplayRole);
+			blogNameitem->setToolTip("Unknown Blog\nNo Description");
 		}
 
-		channel.append(item1);
-		channel.append(item2);
-		ownGroup->appendRow(channel);
+		blog.append(blogNameitem);
+		blog.append(blogIditem);
+		ownGroup->appendRow(blog);
 	}
 }
 
@@ -429,25 +428,25 @@ void BlogsDialog::updateBlogListOther(std::list<std::string> &ids)
 		std::cerr << "BlogsDialog::updateBlogListOther(): " << *iit << std::endl;
 #endif
 		QStandardItem *ownGroup = model->item(OTHER);
-		QList<QStandardItem *> channel;
-		QStandardItem *item1 = new QStandardItem();
-		QStandardItem *item2 = new QStandardItem();
+		QList<QStandardItem *> blog;
+		QStandardItem *blogNameitem = new QStandardItem();
+		QStandardItem *blogIditem = new QStandardItem();
 
 		BlogInfo bi;
 		if (rsBlogs && rsBlogs->getBlogInfo(*iit, bi)) {
-			item1->setData(QVariant(QString::fromStdWString(bi.blogName)), Qt::DisplayRole);
-			item2->setData(QVariant(QString::fromStdString(bi.blogId)), Qt::DisplayRole);
-			item1->setToolTip(tr("Popularity: %1\nFetches: %2\nAvailable: %3"
+			blogNameitem->setData(QVariant(QString::fromStdWString(bi.blogName)), Qt::DisplayRole);
+			blogIditem->setData(QVariant(QString::fromStdString(bi.blogId)), Qt::DisplayRole);
+			blogNameitem->setToolTip(tr("Popularity: %1\nFetches: %2\nAvailable: %3"
 					).arg(QString::number(bi.pop)).arg(9999).arg(9999));
 		} else {
-			item1->setData(QVariant(QString("Unknown Blog")), Qt::DisplayRole);
-			item2->setData(QVariant(QString::fromStdString(*iit)), Qt::DisplayRole);
-			item1->setToolTip("Unknown Blog\nNo Description");
+			blogNameitem->setData(QVariant(QString("Unknown Blog")), Qt::DisplayRole);
+			blogIditem->setData(QVariant(QString::fromStdString(*iit)), Qt::DisplayRole);
+			blogNameitem->setToolTip("Unknown Blog\nNo Description");
 		}
 
-		channel.append(item1);
-		channel.append(item2);
-		ownGroup->appendRow(channel);
+		blog.append(blogNameitem);
+		blog.append(blogIditem);
+		ownGroup->appendRow(blog);
 	}
 }
 
@@ -490,7 +489,7 @@ void BlogsDialog::updateBlogMsgs()
 	
 	/* set Blog name */
 	QString bname = QString::fromStdWString(bi.blogName);
-  nameLabel->setText(blogStr.arg(bname));
+    nameLabel->setText(blogStr.arg(bname));
 
 	/* do buttons */
 	if (bi.blogFlags & RS_DISTRIB_SUBSCRIBED)
