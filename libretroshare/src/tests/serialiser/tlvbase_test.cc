@@ -30,6 +30,7 @@
 #include <string.h>
 #include <string>
 #include <iostream>
+#include <limits.h>
 
 #include "serialiser/rstlvbase.h"
 #include "util/utest.h"
@@ -57,11 +58,15 @@ int test_RsTlvBase()
 	
 	
 	std::string out;
-	
+
+	// First two bytes are type.	
 	data[0]=0;
 	data[1]=0;
+	// Next 4 bytes is size.
 	data[2]=0;
-	data[3]=8;
+	data[3]=0;
+	data[4]=0;
+	data[5]=10;
 	uint32_t off =0;
 	GetTlvString((void*)data, 20, &off, 0, out);
 	
@@ -69,7 +74,7 @@ int test_RsTlvBase()
 	
 	std::cout << "Output is : " << out << std::endl;
 	
-	uint16_t data2[] = {0, 0x0300};
+	uint16_t data2[] = {0, 0, 0x0300};
 	
 	uint16_t  t = GetTlvSize((void*) data2);
 	
@@ -84,16 +89,17 @@ int test_RsTlvBase()
 	
 	//*************Test SetTlvBase***********
 	{
-		uint16_t data3 [2];
+		uint16_t data3 [3];
 		off =0;
 		uint32_t *offset = &off;
-		uint32_t const SIZE_SetTlvBase=4;
+		uint32_t const SIZE_SetTlvBase=6;
 		uint32_t val_before = *offset;
-		SetTlvBase((void *)data3, SIZE_SetTlvBase,  offset,  0x0011, 0x0001);
+		uint32_t base_set_size = 0x1234567;
+		SetTlvBase((void *)data3, SIZE_SetTlvBase,  offset,  0x0011, base_set_size);
 		
 		CHECK(*offset - val_before  == SIZE_SetTlvBase);
 		CHECK(0x0011 == ntohs(data3[0]));
-		CHECK(0x0001 == ntohs(data3[1]));
+		CHECK(base_set_size == ntohl(*((uint32_t *) &(data3[1]))));
 		
 		
 	}
@@ -105,41 +111,42 @@ int test_RsTlvBase()
 	*   test GetTlvUInt32 & SetTlvGetUInt32
 	*/
 	{
-		uint16_t data4[4];
+		uint16_t data4[5];
 		bool ok = true;
 		uint32_t off =0;
 		uint32_t pre_set_off = off;
 		uint32_t* offset = &off;
 		uint32_t out = 3324;
 		*offset =0;
-		ok = SetTlvUInt32((void*)data4, 8, offset, 0x0011, out);
-		CHECK(*offset - pre_set_off == 8);
+		ok = SetTlvUInt32((void*)data4, 10, offset, 0x0011, out);
+		CHECK(*offset - pre_set_off == 10);
 		
 		uint32_t readPos = 0;
 		offset = &readPos;
 		uint32_t in =0;
-		ok &= GetTlvUInt32((void*)data4, 8, offset, 0x0011, &in);
-		CHECK(*offset - pre_set_off == 8);
+		ok &= GetTlvUInt32((void*)data4, 10, offset, 0x0011, &in);
+		CHECK(*offset - pre_set_off == 10);
 		CHECK(in == out);
 		
 		std::cerr<<"in = " <<in <<std::endl;
 		std::cout << "*offset = " <<*offset <<std::endl;
-		std::cout <<std::hex << data4[2]<< "  "  <<data4[3] <<std::endl;
+		std::cout <<std::hex << data4[3]<< "  "  <<data4[4] <<std::endl;
 	}
 	
 	
-	
+	uint32_t i;
+	for(i = 0; i < UINT_MAX / 2; i *= 2, i += 111)	
 	{
-		uint16_t data4[4];
-		data4[0] = 0x0500; /* type (little-endian?) */
-		data4[1] = 0x0800; /* size (little-endian?) */
-		data4[3]=0x0000;
-		data4[2] = 0xFFFF;
+		uint16_t data4[5];
+		data4[0] = htons(5); /* type */
+		*((uint32_t *) &(data4[1])) = htonl(10); /* length */
+		uint32_t int_val = i;
+		*((uint32_t *) &(data4[3])) = htonl(int_val); /* value */
 		uint32_t  got;
-		uint32_t off =0;
-		uint32_t*offset = &off;
-		GetTlvUInt32((void*)data4, 8, offset, 5,  &got);
-		CHECK(got ==0xFFFF0000);
+		uint32_t off = 0;
+		uint32_t *offset = &off;
+		GetTlvUInt32((void*)data4, 10, offset, 5,  &got);
+		CHECK(got == int_val);
 		std::cout << " got = " << std::hex << got <<std::endl;
 		
 	}
@@ -152,17 +159,20 @@ int test_RsTlvBase()
 	*/
 	{
 		std::string teststring = "Hello RS!";
-		uint16_t data5[4 + 20];
+		uint16_t data5[6 + 20];
 		uint32_t pos =0;
 		uint32_t* offset = &pos;
 		uint32_t pre_pos = pos;
 		SetTlvString((void*)data5, sizeof(data5), offset, TLV_TYPE_STR_NAME, teststring);
-		uint16_t tlvsize = GetTlvStringSize(teststring);
+		uint32_t tlvsize = GetTlvStringSize(teststring);
 		CHECK(tlvsize == *offset);
 		CHECK(data5[0] == htons(TLV_TYPE_STR_NAME));
-		CHECK(data5[1] == htons(tlvsize));
+		uint32_t encoded_size = ntohl(*((uint32_t *) &(data5[1])));
+		CHECK(tlvsize ==  encoded_size);
+		std::cerr << "tlvsize: " << tlvsize << " encoded_size: " << encoded_size;
+		std::cerr << std::endl;
 
-		std::string str((char*) ((char*)data5 +4) ,strlen("Hello RS!"));
+		std::string str((char*) ((char*)data5 +6) ,strlen("Hello RS!"));
 		CHECK(str == "Hello RS!");
 		
 //		std::cout <<str <<std::endl;
@@ -173,10 +183,10 @@ int test_RsTlvBase()
 		pos =0;
 		GetTlvString((void*)data5, sizeof(data5), offset, TLV_TYPE_STR_NAME, out_str);
 		CHECK(out_str == "Hello RS!");
-		CHECK(*offset == sizeof(uint16_t)*2 + out_str.size());
-		uint16_t data6[2];
+		CHECK(*offset == sizeof(uint16_t)*3 + out_str.size());
+		uint16_t data6[3];
 		*offset =0;
-		SetTlvSize((void*)data6, sizeof(data6),    0x00000022);
+		CHECK(SetTlvSize((void*)data6, sizeof(data6),    0x00000022));
 		std::cout << std::hex << data6[1] <<std::endl;
 	
 	}
