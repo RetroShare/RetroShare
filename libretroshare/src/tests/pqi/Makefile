@@ -7,10 +7,11 @@ RS_TOP_DIR = ../..
 include $(RS_TOP_DIR)/tests/scripts/config.mk
 ###############################################################
 
-TESTOBJ  = net_test.o dht_test.o net_test1.o netiface_test.o dht_test.o
+TESTOBJ  = net_test.o dht_test.o net_test1.o netiface_test.o dht_test.o 
+TESTOBJ  += pkt_test.o pqiarchive_test.o
 #conn_test.o 
 
-TESTS  = net_test net_test1 netiface_test
+TESTS  = net_test net_test1 netiface_test pqiarchive_test
 
 MANUAL_TESTS = dht_test 
 #conn_test
@@ -37,6 +38,10 @@ net_test1: net_test1.o
 
 netiface_test: netiface_test.o 
 	$(CC) $(CFLAGS) -o netiface_test netiface_test.o $(LIBS)
+
+pqiarchive_test: pqiarchive_test.o pkt_test.o
+	$(CC) $(CFLAGS) -o pqiarchive_test pkt_test.o pqiarchive_test.o $(LIBS)
+
 
 clobber: remove_extra_files
 
