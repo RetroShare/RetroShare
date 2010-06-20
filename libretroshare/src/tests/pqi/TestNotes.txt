@@ -1,0 +1,96 @@
+
+There are a huge amount of testing to be done here.
+
+Components and Tests.
+============================================================
+------------------------------------------------------------
+Basic Components
+------------------------------------------------------------
+pqinetwork.cc: net_test, net_test1, netiface_test
+pqi_base.cc:    no need.
+pqimonitor.cc:  no need.
+p3notify.cc:    no need.
+pqisecurity.cc: no need.
+pqiservice.cc:  no need.
+cleanupxpgp.cc  to test.
+
+------------------------------------------------------------
+Serialisation Components
+------------------------------------------------------------
+pqiarchive.cc
+pqibin.cc
+pqistreamer.cc
+pqistore.cc
+
+------------------------------------------------------------
+SSL Network Components
+------------------------------------------------------------
+pqiloopback.cc
+pqissltunnel.cc
+pqissludp.cc
+pqissl.cc
+pqiperson.cc
+pqipersongrp.cc
+pqisslpersongrp.cc
+pqissllistener.cc
+
+------------------------------------------------------------
+Authentication Components
+------------------------------------------------------------
+sslcert.cc
+xpgpcert.cc
+authgpg.cc
+authssl.cc
+
+------------------------------------------------------------
+Manager Components
+------------------------------------------------------------
+p3connmgr.cc
+pqihandler.cc
+p3dhtmgr.cc:  dht_test
+p3cfgmgr.cc
+
+============================================================
+Test Specifics
+============================================================
+------------------------------------------------------------
+net_test
+------------------------------------------------------------
+Tested Code: pqinetwork.cc, rsnet.cc
+Description:
+(1) Tests ntohll / htonll
+(2) Demonstrates inet_netof / inet_network strange behaviour.
+(3) Tests socket binding.
+
+------------------------------------------------------------
+net_test1
+------------------------------------------------------------
+Tested Code: pqinetwork.cc, rsnet.cc
+Description:
+(1) isExternalNet()
+(2) isPrivateNet()
+(3) isLoopbackNet()
+(4) sameNet()
+(5) isValidNet()
+(6) isSameSubnet()
+(7) pqi_inet_netof()
+
+------------------------------------------------------------
+netiface_test
+------------------------------------------------------------
+Tested Code: pqinetwork.cc
+Description :
+(1) getPreferredInterface()
+(2) getLocalInterfaces()
+
+This is currently a manual test - needs to be converted.
+
+------------------------------------------------------------
+dht_test
+------------------------------------------------------------
+Tested Code : p3dhtmgr.cc
+Description :
+
+This is a manual test of the DHT manager. needs to be 
+converted to an automatic test.
+
