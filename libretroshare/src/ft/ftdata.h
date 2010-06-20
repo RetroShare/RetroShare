@@ -81,6 +81,8 @@ class ftDataRecv
 		virtual bool recvChunkMap(const std::string& peer_id,const std::string& hash,const CompressedChunkMap& cmap,bool is_client) = 0;
 };
 
+	/**************** FOR TESTING ***********************/
+
 /******* Pair of Send/Recv (Only need to handle Send side) ******/
 class ftDataSendPair: public ftDataSend
 {
@@ -90,12 +92,19 @@ class ftDataSendPair: public ftDataSend
 virtual ~ftDataSendPair() { return; }
 
 	/* Client Send */
-virtual bool    sendDataRequest(std::string peerId, std::string hash, 
+virtual bool    sendDataRequest(const std::string &peerId, const std::string &hash, 
 			uint64_t size, uint64_t offset, uint32_t chunksize);
 
 	/* Server Send */
-virtual bool    sendData(std::string peerId, std::string hash, uint64_t size,
+virtual bool    sendData(const std::string &peerId, const std::string &hash, uint64_t size,
                         uint64_t offset, uint32_t chunksize, void *data);
+
+	/* Send a request for a chunk map */
+virtual bool 	sendChunkMapRequest(const std::string& peer_id,const std::string& hash);
+
+	/* Send a chunk map */
+virtual bool 	sendChunkMap(const std::string& peer_id,const std::string& hash, 
+			const CompressedChunkMap& cmap);
 
 	ftDataRecv *mDataRecv;
 };
@@ -107,12 +116,19 @@ class ftDataSendDummy: public ftDataSend
 virtual ~ftDataSendDummy() { return; }
 
 	/* Client Send */
-virtual bool    sendDataRequest(std::string peerId, std::string hash, 
+virtual bool    sendDataRequest(const std::string &peerId, const std::string &hash, 
 			uint64_t size, uint64_t offset, uint32_t chunksize);
 
 	/* Server Send */
-virtual bool    sendData(std::string peerId, std::string hash, uint64_t size,
+virtual bool    sendData(const std::string &peerId, const std::string &hash, uint64_t size,
                         uint64_t offset, uint32_t chunksize, void *data);
+
+	/* Send a request for a chunk map */
+virtual bool 	sendChunkMapRequest(const std::string& peer_id,const std::string& hash);
+
+	/* Send a chunk map */
+virtual bool 	sendChunkMap(const std::string& peer_id,const std::string& hash, 
+			const CompressedChunkMap& cmap);
 
 };
 
@@ -123,13 +139,20 @@ class ftDataRecvDummy: public ftDataRecv
 virtual ~ftDataRecvDummy() { return; }
 
 	/* Client Recv */
-virtual bool    recvData(std::string peerId, std::string hash, uint64_t size, 
-			uint64_t offset, uint32_t chunksize, void *data);
+virtual bool    recvData(const std::string& peerId, const std::string& hash, 
+		uint64_t size, uint64_t offset, uint32_t chunksize, void *data);
 
 	/* Server Recv */
-virtual bool    recvDataRequest(std::string peerId, std::string hash, 
-			uint64_t size, uint64_t offset, uint32_t chunksize);
+virtual bool    recvDataRequest(const std::string& peerId, const std::string& hash, 
+		uint64_t size, uint64_t offset, uint32_t chunksize);
 
+	/* Send a request for a chunk map */
+virtual bool recvChunkMapRequest(const std::string& peer_id,const std::string& hash,
+		bool is_client);
+
+	/* Send a chunk map */
+virtual bool recvChunkMap(const std::string& peer_id,const std::string& hash,
+		const CompressedChunkMap& cmap,bool is_client);
 
 };
 

@@ -63,6 +63,7 @@ ifdef PQI_USE_XPGP
 LIBS +=  -lssl -lcrypto  -lpthread
 #LIBS +=  -L$(UPNPC_DIR) -lminiupnpc
 LIBS +=  $(XLIB) -ldl -lz 
+LIBS +=  -lupnp
 LIBS +=  -lgpgme
 	
 RSLIBS = $(LIBS)
