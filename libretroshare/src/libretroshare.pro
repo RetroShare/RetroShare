@@ -268,7 +268,7 @@ HEADERS += dbase/cachestrapper.h \
            serialiser/rstlvkeys.h \
            serialiser/rstlvkvwide.h \
            serialiser/rstlvtypes.h \
-#           serialiser/rstlvutil.h \
+           serialiser/rstlvutil.h \
            services/p3channels.h \
            services/p3chatservice.h \
            services/p3disc.h \
@@ -399,7 +399,7 @@ SOURCES += \
 				serialiser/rsbaseitems.cc \
 				serialiser/rstlvkvwide.cc \
 				serialiser/rstlvimage.cc \
-#				serialiser/rstlvutil.cc \
+				serialiser/rstlvutil.cc \
 				serialiser/rstlvfileitem.cc \
 				serialiser/rstlvkeys.cc \
 				serialiser/rsbaseserial.cc \
