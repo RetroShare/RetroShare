@@ -13,9 +13,7 @@ TESTOBJ += rsserial_test.o rstlvwidetest.o tlvrandom_test.o
 
 TESTS  = tlvbase_test tlvbase_test2 tlvfileitem_test 
 TESTS += tlvitems_test tlvstack_test tlvconfig_test
-TESTS += rstlvwidetest tlvrandom_test
-#rsserial_test 
-
+TESTS += rstlvwidetest tlvrandom_test rsserial_test 
 #rsbaseitem_test
 
 all: tests
