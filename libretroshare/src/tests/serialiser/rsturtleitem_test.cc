@@ -245,11 +245,11 @@ template<class T> int test_RsTurtleItem()
 	uint32_t size = srl.size(&rsfi);
 	bool done = srl.serialise(&rsfi, (void *) buffer, &sersize);
 
-	std::cerr << "test_RsFileItem() size: " << size << std::endl;
-	std::cerr << "test_RsFileItem() done: " << done << std::endl;
-	std::cerr << "test_RsFileItem() sersize: " << sersize << std::endl;
+	std::cerr << "test_Item() size: " << size << std::endl;
+	std::cerr << "test_Item() done: " << done << std::endl;
+	std::cerr << "test_Item() sersize: " << sersize << std::endl;
 
-	std::cerr << "test_RsFileItem() serialised:" << std::endl;
+	std::cerr << "test_Item() serialised:" << std::endl;
 	displayRawPacket(std::cerr, (void *) buffer, sersize);
 
 	CHECK(done == true);
@@ -283,15 +283,18 @@ int main()
 {
 	std::cerr << "RsTurtleItem Tests" << std::endl;
 
-	test_RsTurtleItem<RsTurtleFileMapRequestItem>(); REPORT("Serialise/Deserialise RsTurtleFileMapRequestItem");
-	test_RsTurtleItem<RsTurtleFileMapItem       >(); REPORT("Serialise/Deserialise RsTurtleFileMapItem");
-	test_RsTurtleItem<RsTurtleFileDataItem      >(); REPORT("Serialise/Deserialise RsTurtleFileDataItem");
-	test_RsTurtleItem<RsTurtleFileRequestItem   >(); REPORT("Serialise/Deserialise RsTurtleFileRequestItem");
-	test_RsTurtleItem<RsTurtleTunnelOkItem      >(); REPORT("Serialise/Deserialise RsTurtleTunnelOkItem   ");
-	test_RsTurtleItem<RsTurtleOpenTunnelItem    >(); REPORT("Serialise/Deserialise RsTurtleOpenTunnelItem ");
-	test_RsTurtleItem<RsTurtleSearchResultItem  >(); REPORT("Serialise/Deserialise RsTurtleSearchResultItem ");
-	test_RsTurtleItem<RsTurtleStringSearchRequestItem    >(); REPORT("Serialise/Deserialise RsTurtleStringSearchRequestItem ");
-	test_RsTurtleItem<RsTurtleRegExpSearchRequestItem    >(); REPORT("Serialise/Deserialise RsTurtleRegExpSearchRequestItem ");
+	for(uint32_t i=0;i<20;++i)
+	{
+		test_RsTurtleItem<RsTurtleFileMapRequestItem>(); REPORT("Serialise/Deserialise RsTurtleFileMapRequestItem");
+		test_RsTurtleItem<RsTurtleFileMapItem       >(); REPORT("Serialise/Deserialise RsTurtleFileMapItem");
+		test_RsTurtleItem<RsTurtleFileDataItem      >(); REPORT("Serialise/Deserialise RsTurtleFileDataItem");
+		test_RsTurtleItem<RsTurtleFileRequestItem   >(); REPORT("Serialise/Deserialise RsTurtleFileRequestItem");
+		test_RsTurtleItem<RsTurtleTunnelOkItem      >(); REPORT("Serialise/Deserialise RsTurtleTunnelOkItem   ");
+		test_RsTurtleItem<RsTurtleOpenTunnelItem    >(); REPORT("Serialise/Deserialise RsTurtleOpenTunnelItem ");
+		test_RsTurtleItem<RsTurtleSearchResultItem  >(); REPORT("Serialise/Deserialise RsTurtleSearchResultItem ");
+		test_RsTurtleItem<RsTurtleStringSearchRequestItem    >(); REPORT("Serialise/Deserialise RsTurtleStringSearchRequestItem ");
+		test_RsTurtleItem<RsTurtleRegExpSearchRequestItem    >(); REPORT("Serialise/Deserialise RsTurtleRegExpSearchRequestItem ");
+	}
 	
 	FINALREPORT("RsturtleItem Tests");
 
