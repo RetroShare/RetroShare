@@ -494,24 +494,29 @@ bool	ftDataMultiplex::handleRecvData(const std::string& peerId,
 			const std::string& hash, uint64_t size, 
 			uint64_t offset, uint32_t chunksize, void *data)
 {
-	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
-	std::map<std::string, ftClient>::iterator it;
-	if (mClients.end() == (it = mClients.find(hash)))
+	ftTransferModule *transfer_module = NULL ;
+
 	{
+		RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
+		std::map<std::string, ftClient>::iterator it;
+		if (mClients.end() == (it = mClients.find(hash)))
+		{
 #ifdef MPLEX_DEBUG
-		std::cerr << "ftDataMultiplex::handleRecvData() ERROR: No matching Client!";
-		std::cerr << std::endl;
+			std::cerr << "ftDataMultiplex::handleRecvData() ERROR: No matching Client!";
+			std::cerr << std::endl;
 #endif
-		/* error */
-		return false;
-	}
+			/* error */
+			return false;
+		}
 
 #ifdef MPLEX_DEBUG
-	std::cerr << "ftDataMultiplex::handleRecvData() Passing to Module";
-	std::cerr << std::endl;
+		std::cerr << "ftDataMultiplex::handleRecvData() Passing to Module";
+		std::cerr << std::endl;
 #endif
-	
-	(it->second).mModule->recvFileData(peerId, offset, chunksize, data);
+
+		transfer_module = (it->second).mModule ;
+	}
+	transfer_module->recvFileData(peerId, offset, chunksize, data);
 
 	return true;
 }
