@@ -426,7 +426,8 @@ void NetworkDialog::insertConnect()
                         std::cerr << "NetworkDialog::insertConnect() creating new tree widget item : " << *it << std::endl;
                         #endif
                         item = new QTreeWidgetItem(0);
-                        item->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
+                        item -> setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
+                        item -> setSizeHint(0, QSize( 18,18 ) );
 
                         /* (1) Person */
                         item -> setText(COLUMN_PEERNAME, QString::fromStdString(detail.name));
