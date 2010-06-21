@@ -49,7 +49,8 @@ win32 {
 	UI_DIR  = temp/ui
 	MOC_DIR = temp/moc
 
-    LIBS += -L"../../../../lib" -lretroshare -lssl -lcrypto -lpthreadGC2d -lminiupnpc -lz
+    LIBS += ../../libretroshare/src/lib/libretroshare.a
+    LIBS += -L"../../../../lib" -lssl -lcrypto -lpthreadGC2d -lminiupnpc -lz
     LIBS += -lws2_32 -luuid -lole32 -liphlpapi -lcrypt32-cygwin -gdi32
     LIBS += -lole32 -lwinmm
 }

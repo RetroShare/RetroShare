@@ -51,7 +51,7 @@ void NotifyTxt::notifyListChange(int list, int type)
 		case NOTIFY_LIST_FRIENDS:
 			displayFriends();
 			break;
-		case NOTIFY_LIST_DIRLIST:
+		case NOTIFY_LIST_DIRLIST_FRIENDS:
 			displayDirectories();
 			break;
 		case NOTIFY_LIST_SEARCHLIST:
@@ -73,16 +73,15 @@ void NotifyTxt::notifyListChange(int list, int type)
 }
 
 			
-			
 void NotifyTxt::displayNeighbours()
 {
-	std::list<std::string> ids;
+	std::list<std::string> neighs;
 	std::list<std::string>::iterator it;
 
-	rsPeers->getOthersList(ids);
+	rsPeers->getGPGAllList(neighs);
 
 	std::ostringstream out;
-	for(it = ids.begin(); it != ids.end(); it++)
+	for(it = neighs.begin(); it != neighs.end(); it++)
 	{
 		RsPeerDetails detail;
 		rsPeers->getPeerDetails(*it, detail);
