@@ -257,7 +257,6 @@ HEADERS += dbase/cachestrapper.h \
            serialiser/rsgameitems.h \
            serialiser/rsmsgitems.h \
            serialiser/rsphotoitems.h \
-           serialiser/rsqblogitems.h \
            serialiser/rsblogitems.h \
            serialiser/rsrankitems.h \
            serialiser/rsserial.h \
@@ -384,7 +383,6 @@ SOURCES += \
 				pqi/pqinetwork.cc \
 				pqi/pqisecurity.cc \
 				serialiser/rsblogitems.cc \
-				serialiser/rsqblogitems.cc \
 				serialiser/rsstatusitems.cc \
 				serialiser/rschannelitems.cc \
 				serialiser/rstunnelitems.cc \
