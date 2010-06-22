@@ -7,15 +7,15 @@ RS_TOP_DIR = ../..
 include $(RS_TOP_DIR)/tests/scripts/config.mk
 ###############################################################
 
-TESTOBJ  = tlvbase_test.o tlvbase_test2.o tlvfileitem_test.o 
-TESTOBJ += tlvitems_test.o tlvstack_test.o tlvconfig_test.o 
-TESTOBJ += rsserial_test.o rstlvwidetest.o tlvrandom_test.o
-TESTOBJ += rsturtleitem_test.o rstunnelitem_test.o
+TESTOBJ  = tlvbase_test.o tlvbase_test2.o rstunnelitem_test.o
+TESTOBJ += tlvitems_test.o tlvstack_test.o rsserial_test.o 
+TESTOBJ += rstlvwidetest.o tlvrandom_test.o rsturtleitem_test.o
+TESTOBJ += tlvtypes_test.o
 
-TESTS  = tlvbase_test tlvbase_test2 tlvfileitem_test 
-TESTS += tlvitems_test tlvstack_test tlvconfig_test
-TESTS += rstlvwidetest tlvrandom_test rsserial_test 
-TESTS += rsturtleitem_test rstunnelitem_test
+TESTS  = tlvbase_test tlvbase_test2 rstlvwidetest
+TESTS += tlvitems_test tlvstack_test rstunnelitem_test
+TESTS +=  tlvrandom_test rsserial_test rsturtleitem_test
+TESTS +=  tlvtypes_test
 
 #rsbaseitem_test
 
@@ -27,17 +27,11 @@ tlvbase_test : tlvbase_test.o
 tlvbase_test2 : tlvbase_test2.o
 	$(CC) $(CFLAGS) -o tlvbase_test2 tlvbase_test2.o $(OBJ) $(LIBS) 
 
-tlvfileitem_test : tlvfileitem_test.o
-	$(CC) $(CFLAGS) -o tlvfileitem_test tlvfileitem_test.o $(OBJ) $(LIBS) 
-
 tlvitems_test : tlvitems_test.o
 	$(CC) $(CFLAGS) -o tlvitems_test tlvitems_test.o $(OBJ) $(LIBS) 
 
 tlvstack_test : tlvstack_test.o
 	$(CC) $(CFLAGS) -o tlvstack_test tlvstack_test.o $(OBJ) $(LIBS) 
-
-tlvconfig_test : tlvconfig_test.o
-	$(CC) $(CFLAGS) -o tlvconfig_test tlvconfig_test.o $(OBJ) $(LIBS) 
 
 rsserial_test : rsserial_test.o
 	$(CC) $(CFLAGS) -o rsserial_test rsserial_test.o $(OBJ) $(LIBS) 
@@ -56,6 +50,9 @@ rsturtleitem_test : rsturtleitem_test.o
 
 rstunnelitem_test : rstunnelitem_test.o
 	$(CC) $(CFLAGS) -o rstunnelitem_test rstunnelitem_test.o $(OBJ) $(LIBS)
+	
+tlvtypes_test : tlvtypes_test.o
+	$(CC) $(CFLAGS) -o tlvtypes_test tlvtypes_test.o $(OBJ) $(LIBS)
 
 
 ###############################################################
