@@ -82,6 +82,12 @@ RsItem *RsTunnelSerialiser::deserialise(void *data, uint32_t *size)
 	}
 }
 
+RsTunnelDataItem::~RsTunnelDataItem()
+{
+	if(encoded_data != NULL)
+		free(encoded_data) ;
+}
+
 bool RsTunnelDataItem::serialize(void *data,uint32_t& pktsize)
 {
 #ifdef P3TUNNEL_DEBUG
@@ -109,25 +115,27 @@ bool RsTunnelDataItem::serialize(void *data,uint32_t& pktsize)
 	/* add mandatory parts first */
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, sourcePeerId);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, relayPeerId);
-        ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, destPeerId);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, destPeerId);
 
 	ok &= setRawUInt32(data, tlvsize, &offset, encoded_data_len) ;
-        memcpy((void*)((unsigned char*)data+offset),encoded_data,encoded_data_len) ;
+
+	if(encoded_data != NULL)
+		memcpy((void*)((unsigned char*)data+offset),encoded_data,encoded_data_len) ;
 
 #ifdef P3TUNNEL_DEBUG
-        std::cerr << "RsTunnelDataItem::serialise() (offset + encoded_data_len) " << (offset + encoded_data_len) << std::endl;
-        std::cerr << "RsTunnelDataItem::serialise() tlvsize " << tlvsize << std::endl;
+	std::cerr << "RsTunnelDataItem::serialise() (offset + encoded_data_len) " << (offset + encoded_data_len) << std::endl;
+	std::cerr << "RsTunnelDataItem::serialise() tlvsize " << tlvsize << std::endl;
 #endif
 
-        if ((offset + encoded_data_len) != tlvsize )
+	if ((offset + encoded_data_len) != tlvsize )
 	{
 		ok = false;
-                std::cerr << "RsTunnelDataItem::serialiseTransfer() Size Error! " << std::endl;
+		std::cerr << "RsTunnelDataItem::serialiseTransfer() Size Error! " << std::endl;
 	}
 
-        #ifdef P3TUNNEL_DEBUG
-        std::cerr << "RsTunnelDataItem::serialize() packet size inside serialised data : " << getRsItemSize(data) << std::endl ;
-        #endif
+#ifdef P3TUNNEL_DEBUG
+	std::cerr << "RsTunnelDataItem::serialize() packet size inside serialised data : " << getRsItemSize(data) << std::endl ;
+#endif
 
 	return ok;
 }
@@ -215,11 +223,16 @@ RsTunnelDataItem *RsTunnelDataItem::deserialise(void *data,uint32_t pktsize)
 
 	ok &= getRawUInt32(data, pktsize, &offset, &item->encoded_data_len) ;
 
-	if(!ok)					// return early to avoid calling malloc with 0 size
+	if(!ok)					// return early to avoid calling malloc with invalid size
 		return NULL ;
 
-	item->encoded_data = (void*)malloc(item->encoded_data_len) ;
-	memcpy(item->encoded_data, (void*)((unsigned char*)data+offset), item->encoded_data_len);
+	if(item->encoded_data_len > 0)
+	{
+		item->encoded_data = (void*)malloc(item->encoded_data_len) ;
+		memcpy(item->encoded_data, (void*)((unsigned char*)data+offset), item->encoded_data_len);
+	}
+	else
+		item->encoded_data = NULL ;
 
 	if ((offset + item->encoded_data_len) != rssize)
 	{

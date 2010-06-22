@@ -47,6 +47,8 @@ class RsTunnelItem: public RsItem
 	public:
 		RsTunnelItem(uint8_t tunnel_subtype) : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_TYPE_TUNNEL,tunnel_subtype) {}
 
+		virtual ~RsTunnelItem() {}
+
 		virtual bool serialize(void *data,uint32_t& size) = 0 ;	// Isn't it better that items can serialize themselves ?
                 virtual uint32_t serial_size() { return  0;}
 
@@ -56,8 +58,13 @@ class RsTunnelItem: public RsItem
 class RsTunnelDataItem: public RsTunnelItem
 {
 	public:
-		RsTunnelDataItem() : RsTunnelItem(RS_TUNNEL_SUBTYPE_DATA) {}
-		RsTunnelDataItem(void *data,uint32_t size) ;		// deserialization
+		RsTunnelDataItem() : RsTunnelItem(RS_TUNNEL_SUBTYPE_DATA) 
+		{
+			encoded_data = NULL ;	// To comply with the destructor below.
+		}
+		virtual ~RsTunnelDataItem() ;
+
+		static RsTunnelDataItem *deserialise(void *data,uint32_t size) ;		// deserialization
 
 		uint32_t encoded_data_len;
 		void *encoded_data;
@@ -76,7 +83,9 @@ class RsTunnelHandshakeItem: public RsTunnelItem
 {
         public:
                 RsTunnelHandshakeItem() : RsTunnelItem(RS_TUNNEL_SUBTYPE_HANDSHAKE) {}
-                RsTunnelHandshakeItem(void *data,uint32_t size) ;		// deserialization
+					 virtual ~RsTunnelHandshakeItem() {}
+
+                static RsTunnelHandshakeItem *deserialise(void *data,uint32_t size) ;		// deserialization
 
                 std::string sourcePeerId ;
                 std::string relayPeerId ;
