@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>482</width>
-    <height>406</height>
+    <height>448</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -110,6 +110,9 @@ border: 1px solid #CCCCCC;}</string>
          </property>
          <item>
           <widget class="QToolButton" name="attachFileButton">
+           <property name="toolTip">
+            <string>Attach File</string>
+           </property>
            <property name="text">
             <string/>
            </property>
@@ -233,41 +236,53 @@ border: 1px solid #CCCCCC;}</string>
           </widget>
          </item>
          <item row="1" column="0">
-          <widget class="QScrollArea" name="scrollArea">
-           <property name="widgetResizable">
-            <bool>true</bool>
+          <widget class="QGroupBox" name="groupBox_2">
+           <property name="title">
+            <string>Attach files via drag and drop</string>
            </property>
-           <widget class="QWidget" name="scrollAreaWidgetContents">
-            <property name="geometry">
-             <rect>
-              <x>0</x>
-              <y>0</y>
-              <width>460</width>
-              <height>60</height>
-             </rect>
-            </property>
-            <layout class="QGridLayout" name="gridLayout_6">
-             <property name="margin">
-              <number>0</number>
-             </property>
-             <item row="1" column="0">
-              <layout class="QVBoxLayout" name="verticalLayout"/>
-             </item>
-             <item row="2" column="0">
-              <spacer name="verticalSpacer">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
+           <layout class="QGridLayout" name="gridLayout_7">
+            <item row="0" column="0">
+             <widget class="QScrollArea" name="scrollArea">
+              <property name="toolTip">
+               <string>You can attach files via drag and drop here in this window</string>
+              </property>
+              <property name="widgetResizable">
+               <bool>true</bool>
+              </property>
+              <widget class="QWidget" name="scrollAreaWidgetContents">
+               <property name="geometry">
+                <rect>
+                 <x>0</x>
+                 <y>0</y>
+                 <width>440</width>
+                 <height>60</height>
+                </rect>
                </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>40</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </widget>
+               <layout class="QGridLayout" name="gridLayout_6">
+                <property name="margin">
+                 <number>0</number>
+                </property>
+                <item row="1" column="0">
+                 <layout class="QVBoxLayout" name="verticalLayout"/>
+                </item>
+                <item row="2" column="0">
+                 <spacer name="verticalSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>40</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </widget>
+             </widget>
+            </item>
+           </layout>
           </widget>
          </item>
         </layout>

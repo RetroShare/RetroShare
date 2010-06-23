@@ -36,46 +36,49 @@ class CreateForumMsg : public QMainWindow
   Q_OBJECT
 
 public:
-  CreateForumMsg(std::string fId, std::string pId);
+    CreateForumMsg(std::string fId, std::string pId);
 
-  void  newMsg(); /* cleanup */
+    void newMsg(); /* cleanup */
   
-  void loadEmoticonsForums();
+    void loadEmoticonsForums();
   
 private slots:
-  /** Create the context popup menu and it's submenus */
-  void forumMessageCostumPopupMenu( QPoint point );
+    /** Create the context popup menu and it's submenus */
+    void forumMessageCostumPopupMenu( QPoint point );
 
-  void fileHashingFinished(AttachFileItem* file);
+    void fileHashingFinished(AttachFileItem* file);
 	/* actions to take.... */
-  void  createMsg();
-  void  cancelMsg();
-  void pasteLink();
-  void pasteLinkFull();
+    void createMsg();
+    void cancelMsg();
+    void pasteLink();
+    void pasteLinkFull();
 
-  void smileyWidgetForums();
+    void smileyWidgetForums();
 	void addSmileys();
 	void addFile();
 	void addAttachment(std::string);
 
 protected:
-   void closeEvent (QCloseEvent * event);
+    void closeEvent (QCloseEvent * event);
+    virtual void dragEnterEvent(QDragEnterEvent *event);
+    virtual void dropEvent(QDropEvent *event);
+
   
 private:
-   /** Define the popup menus for the Context menu */
-   QMenu* contextMnu;
+    /** Define the popup menus for the Context menu */
+    QMenu* contextMnu;
     
-   /** Defines the actions for the context menu */
-   QAction* pasteLinkAct;
-   QAction* pasteLinkFullAct;
+    /** Defines the actions for the context menu */
+    QAction* pasteLinkAct;
+    QAction* pasteLinkFullAct;
 
-  std::string mForumId;
-  std::string mParentId;
+    std::string mForumId;
+    std::string mParentId;
   
-  QHash<QString, QString> smileys;
+    QHash<QString, QString> smileys;
 
-  /** Qt Designer generated object */
-  Ui::CreateForumMsg ui;
+    /** Qt Designer generated object */
+    Ui::CreateForumMsg ui;
 };
 
 #endif
