@@ -324,9 +324,9 @@ void ForumsDialog::threadListCustomPopupMenu( QPoint point )
     replyAct->setDisabled (true);
     connect( replyAct , SIGNAL( triggered() ), this, SLOT( createmessage() ) );
 
-    QAction *viewAct = new QAction(QIcon(IMAGE_DOWNLOADALL), tr( "Start New Thread" ), this );
-    viewAct->setDisabled (true);
-    connect( viewAct , SIGNAL( triggered() ), this, SLOT( showthread() ) );
+    QAction *newthreadAct = new QAction(QIcon(IMAGE_DOWNLOADALL), tr( "Start New Thread" ), this );
+    newthreadAct->setDisabled (true);
+    connect( newthreadAct , SIGNAL( triggered() ), this, SLOT( showthread() ) );
 
     QAction *replyauthorAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr( "Reply to Author" ), this );
     replyauthorAct->setDisabled (true);
@@ -339,7 +339,7 @@ void ForumsDialog::threadListCustomPopupMenu( QPoint point )
     connect( collapseAll , SIGNAL( triggered() ), ui.threadTreeWidget, SLOT(collapseAll()) );
 
     if (!mCurrForumId.empty ()) {
-        viewAct->setEnabled (true);
+        newthreadAct->setEnabled (true);
         if (!mCurrPostId.empty ()) {
             replyAct->setEnabled (true);
             replyauthorAct->setEnabled (true);
@@ -347,7 +347,7 @@ void ForumsDialog::threadListCustomPopupMenu( QPoint point )
     }
 
     contextMnu.addAction( replyAct);
-    contextMnu.addAction( viewAct);
+    contextMnu.addAction( newthreadAct);
     contextMnu.addAction( replyauthorAct);
     contextMnu.addSeparator();
     contextMnu.addAction( expandAll);
@@ -394,6 +394,21 @@ void ForumsDialog::checkUpdate()
         {
             /* update threads as well */
             insertThreads();
+        }
+    }
+    
+    ForumInfo fi;
+    if (rsForums && !mCurrForumId.empty ()) {
+        if (rsForums->getForumInfo (mCurrForumId, fi)) {
+            if (fi.subscribeFlags & (RS_DISTRIB_ADMIN | RS_DISTRIB_SUBSCRIBED)) {
+                ui.newmessageButton->setEnabled (true);
+                ui.newthreadButton->setEnabled (true);
+            }
+            else 
+            {
+                ui.newmessageButton->setEnabled (false);
+                ui.newthreadButton->setEnabled (false);
+            }
         }
     }
 }
