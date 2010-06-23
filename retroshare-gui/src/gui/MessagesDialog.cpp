@@ -1785,7 +1785,7 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index, bool bSetToRead)
     /* get the MessageInfo */
 
     tree->clear();
-    tree->setColumnCount(5);
+    tree->setColumnCount(4);
 
     QList<QTreeWidgetItem *> items;
     for(it = recList.begin(); it != recList.end(); it++)
