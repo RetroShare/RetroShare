@@ -89,6 +89,36 @@ int main(int argc, char **argv)
 
 #define NUM_CHILDREN  3
 
+pqiperson *createTestPerson(std::string id, pqipersongrp *ppg);
+
+class pqipersongrpTestHarness: public pqipersongrp
+{
+        public:
+        pqipersongrpTestHarness(SecurityPolicy *pol, unsigned long flags)
+        :pqipersongrp(pol, flags) 
+	{ 
+		return; 
+	}
+
+        protected:
+
+        /********* FUNCTIONS to OVERLOAD for specialisation ********/
+virtual pqilistener *createListener(struct sockaddr_in laddr)
+{
+	return new pqilistener(laddr);	
+}
+
+virtual pqiperson   *createPerson(std::string id, pqilistener *listener)
+{
+	return createTestPerson(id, this);
+}
+
+        /********* FUNCTIONS to OVERLOAD for specialisation ********/
+};
+
+
+
+
 pqiperson *createTestPerson(std::string id, pqipersongrp *ppg)
 {
 	/* now add test children */
@@ -155,7 +185,16 @@ int test_person_basic_reset()
 
 	/* create test person */
 	std::string id = "12345678901234567890123456789012";
-	pqipersongrp *ppg = NULL;
+
+	pqipersongrp *ppg = pqipersongrpTestHarness(NULL, 0);
+
+	/* setup fake other bits */
+
+
+	/* add peers - and watch it all happen! */
+
+
+
 	pqiperson *person = createTestPerson(id, ppg);
 
 	/* reset person */
