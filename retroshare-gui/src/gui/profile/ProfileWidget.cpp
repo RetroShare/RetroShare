@@ -42,8 +42,9 @@ ProfileWidget::ProfileWidget(QWidget *parent, Qt::WFlags flags)
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);
   
-
     connect(ui.editstatuspushButton,SIGNAL(clicked()), this, SLOT(statusmessagedlg()));
+    
+    ui.onlinesince->setText(QDateTime::currentDateTime().toString(DATETIME_FMT));
 
 }
 
@@ -106,9 +107,7 @@ void ProfileWidget::showEvent ( QShowEvent * event )
     std::ostringstream out;
     out << friends << "";
     ui.friendsEdit->setText(QString::fromStdString(out.str()));
-    
-    ui.onlinesince->setText(QDateTime::currentDateTime().toString(DATETIME_FMT));
-	
+    	
     }
 
 }
