@@ -40,8 +40,11 @@ const int pqipersongrpzone = 354;
 /********************************** SSL Specific features ***************************/
 
 #include "pqi/pqissl.h"
-#include "pqi/pqissltunnel.h"
 #include "pqi/pqissllistener.h"
+
+#ifndef PQI_DISABLE_TUNNEL
+#include "pqi/pqissltunnel.h"
+#endif
 
 #ifndef PQI_DISABLE_UDP
   #include "pqi/pqissludp.h"
@@ -81,13 +84,16 @@ pqiperson * pqisslpersongrp::createPerson(std::string id, pqilistener *listener)
 
 	pqip -> addChildInterface(PQI_CONNECT_TCP, pqisc);
 
+#ifndef PQI_DISABLE_TUNNEL
         pqissltunnel *pqitun 	= new pqissltunnel(pqip, mConnMgr);
+
 	RsSerialiser *rss3 = new RsSerialiser();
 	rss3->addSerialType(new RsFileItemSerialiser());
 	rss3->addSerialType(new RsCacheItemSerialiser());
 	rss3->addSerialType(new RsServiceSerialiser());
 	pqiconnect *pqicontun 	= new pqiconnect(rss3, pqitun);
 	pqip -> addChildInterface(PQI_CONNECT_TUNNEL, pqicontun);
+#endif
 
 #ifndef PQI_DISABLE_UDP
         pqissludp *pqius 	= new pqissludp(pqip, mConnMgr);

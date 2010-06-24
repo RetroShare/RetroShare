@@ -1,5 +1,6 @@
 TEMPLATE = lib
-CONFIG += staticlib release
+#CONFIG += staticlib release
+CONFIG += staticlib testnetwork
 CONFIG -= qt
 TARGET = retroshare
 
@@ -7,6 +8,26 @@ profiling {
 	QMAKE_CXXFLAGS -= -fomit-frame-pointer
 	QMAKE_CXXFLAGS *= -pg -g -fno-omit-frame-pointer
 }
+
+testnetwork {
+	DEFINES *= PQI_DISABLE_UDP
+	DEFINES *= PQI_DISABLE_TUNNEL
+
+	DEFINES *= AUTHSSL_DEBUG GPG_DEBUG 
+	DEFINES *= CONN_DEBUG 
+	# DEFINES *= P3DISC_DEBUG 
+
+ 	DEFINES *= PGRP_DEBUG
+ 	DEFINES *= PERSON_DEBUG
+	DEFINES *= DEBUG_PQISSL
+
+	#DEFINES *= DEBUG_UDP_SORTER DEBUG_UDP_LAYER EXTADDRSEARCH_DEBUG
+
+        QMAKE_CXXFLAGS -= -fomit-frame-pointer
+        QMAKE_CXXFLAGS *= -g -fno-omit-frame-pointer
+}
+
+
 
 #CONFIG += debug
 debug {

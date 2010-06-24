@@ -1866,7 +1866,10 @@ RsTurtle *rsTurtle = NULL ;
 #include "services/p3statusservice.h"
 #include "services/p3blogs.h"
 #include "turtle/p3turtle.h"
+
+#ifndef PQI_DISABLE_TUNNEL
 #include "services/p3tunnel.h"
+#endif
 
 #include <list>
 #include <string>
@@ -2021,9 +2024,11 @@ int RsServer::StartupRetroShare()
 	chatSrv = new p3ChatService(mConnMgr);
 	mStatusSrv = new p3StatusService(mConnMgr);
 
+#ifndef PQI_DISABLE_TUNNEL
         p3tunnel *tn = new p3tunnel(mConnMgr, pqih);
 	pqih -> addService(tn);
 	mConnMgr->setP3tunnel(tn);
+#endif
 
 	p3turtle *tr = new p3turtle(mConnMgr,ftserver) ;
 	rsTurtle = tr ;
