@@ -10,12 +10,12 @@ include $(RS_TOP_DIR)/tests/scripts/config.mk
 TESTOBJ  = tlvbase_test.o tlvbase_test2.o rstunnelitem_test.o
 TESTOBJ += tlvitems_test.o tlvstack_test.o rsserial_test.o 
 TESTOBJ += rstlvwidetest.o tlvrandom_test.o rsturtleitem_test.o
-TESTOBJ += tlvtypes_test.o
+TESTOBJ += tlvtypes_test.o support.o distribitem_test.o  
 
 TESTS  = tlvbase_test tlvbase_test2 rstlvwidetest
 TESTS += tlvitems_test tlvstack_test rstunnelitem_test
 TESTS +=  tlvrandom_test rsserial_test rsturtleitem_test
-TESTS +=  tlvtypes_test
+TESTS +=  tlvtypes_test distribitem_test
 
 #rsbaseitem_test
 
@@ -53,6 +53,9 @@ rstunnelitem_test : rstunnelitem_test.o
 	
 tlvtypes_test : tlvtypes_test.o
 	$(CC) $(CFLAGS) -o tlvtypes_test tlvtypes_test.o $(OBJ) $(LIBS)
+	
+distribitem_test : distribitem_test.o support.o
+	$(CC) $(CFLAGS) -o distrib_test distribitem_test.o support.o $(OBJ) $(LIBS)
 
 
 ###############################################################

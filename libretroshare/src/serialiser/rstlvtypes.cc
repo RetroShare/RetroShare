@@ -83,7 +83,7 @@ RsTlvBinaryData::~RsTlvBinaryData()
 
 
 /// used to allocate memory andinitialize binary data member 
-bool     RsTlvBinaryData::setBinData(void *data, uint32_t size)
+bool     RsTlvBinaryData::setBinData(const void *data, uint32_t size)
 {
 	/* ready to load */
 	TlvClear();

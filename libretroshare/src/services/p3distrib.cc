@@ -1638,6 +1638,7 @@ std::string p3GroupDistrib::createGroup(std::wstring name, std::wstring desc, ui
 	newGrp->adminKey.keyFlags = RSTLV_KEY_TYPE_PUBLIC_ONLY | RSTLV_KEY_DISTRIB_ADMIN;
 	newGrp->adminKey.startTS = now;
 	newGrp->adminKey.endTS = 0; /* no end */
+	grpId = newGrp->adminKey.keyId;
 
 
 	RsTlvSecurityKey publish_key;
@@ -1696,7 +1697,6 @@ std::string p3GroupDistrib::createGroup(std::wstring name, std::wstring desc, ui
 	publish_key.keyData.bin_data = NULL;
 	publish_key.keyData.bin_len = 0;
 
-	grpId = newGrp->adminKey.keyId;
 	newGrp->grpId = grpId;
 
 	/************* Back up Keys  *********************/
