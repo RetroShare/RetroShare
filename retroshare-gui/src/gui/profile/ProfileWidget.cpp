@@ -34,16 +34,17 @@
 /* Define the format used for displaying the date and time */
 #define DATETIME_FMT  "MMM dd hh:mm:ss"
 
+
 /** Default constructor */
 ProfileWidget::ProfileWidget(QWidget *parent, Qt::WFlags flags)
   : QWidget(parent, flags)
 {
-  /* Invoke Qt Designer generated QObject setup routine */
-  ui.setupUi(this);
+    /* Invoke Qt Designer generated QObject setup routine */
+    ui.setupUi(this);
   
-  connect(ui.editstatuspushButton,SIGNAL(clicked()), this, SLOT(statusmessagedlg()));
 
-  //loadDialog();
+    connect(ui.editstatuspushButton,SIGNAL(clicked()), this, SLOT(statusmessagedlg()));
+
 }
 
 /** Destructor. */
@@ -52,62 +53,63 @@ ProfileWidget::~ProfileWidget()
 
 }
 
-
 void ProfileWidget::closeEvent (QCloseEvent * event)
 {
- QWidget::closeEvent(event);
+    QWidget::closeEvent(event);
 }
 
 void ProfileWidget::showEvent ( QShowEvent * event )
 {
 
 	RsPeerDetails detail;
-      if (rsPeers->getPeerDetails(rsPeers->getOwnId(),detail))
-      {
+    if (rsPeers->getPeerDetails(rsPeers->getOwnId(),detail))
+    {
 
-        ui.name->setText(QString::fromStdString(detail.name));
+    ui.name->setText(QString::fromStdString(detail.name));
 	ui.country->setText(QString::fromStdString(detail.location));
   
-        ui.peerid->setText(QString::fromStdString(detail.id));
+    ui.peerid->setText(QString::fromStdString(detail.id));
         
 	// Dont Show a timestamp in RS calculate the day
 	QDateTime date = QDateTime::fromTime_t(detail.lastConnect);
 	QString stime = date.toString(Qt::LocalDate);
 
-        /* set retroshare version */
-        std::map<std::string, std::string>::iterator vit;
-        std::map<std::string, std::string> versions;
+    /* set retroshare version */
+    std::map<std::string, std::string>::iterator vit;
+    std::map<std::string, std::string> versions;
 	bool retv = rsDisc->getDiscVersions(versions);
 	if (retv && versions.end() != (vit = versions.find(detail.id)))
 	{
 		ui.version->setText(QString::fromStdString(vit->second));
 	}
 
-        ui.ipAddressList->clear();
-        for(std::list<std::string>::const_iterator it(detail.ipAddressList.begin());it!=detail.ipAddressList.end();++it)
-        ui.ipAddressList->addItem(QString::fromStdString(*it));
+    ui.ipAddressList->clear();
+    for(std::list<std::string>::const_iterator it(detail.ipAddressList.begin());it!=detail.ipAddressList.end();++it)
+    ui.ipAddressList->addItem(QString::fromStdString(*it));
 
 
 	/* set local address */
 	ui.localAddress->setText(QString::fromStdString(detail.localAddr));
-        ui.localPort -> setText(QString::number(detail.localPort));
+    ui.localPort -> setText(QString::number(detail.localPort));
 	/* set the server address */
 	ui.extAddress->setText(QString::fromStdString(detail.extAddr));
-        ui.extPort -> setText(QString::number(detail.extPort));
-        /* set DynDNS */
-        ui.dyndns->setText(QString::fromStdString(detail.dyndns));
-        ui.dyndns->setCursorPosition (0);
+    ui.extPort -> setText(QString::number(detail.extPort));
+    /* set DynDNS */
+    ui.dyndns->setText(QString::fromStdString(detail.dyndns));
+    ui.dyndns->setCursorPosition (0);
 	
-	  std::list<std::string> ids;
-	  ids.clear();
+    std::list<std::string> ids;
+    ids.clear();
     rsPeers->getGPGAcceptedList(ids);
     int friends = ids.size();
     
     std::ostringstream out;
     out << friends << "";
     ui.friendsEdit->setText(QString::fromStdString(out.str()));
+    
+    ui.onlinesince->setText(QDateTime::currentDateTime().toString(DATETIME_FMT));
 	
-  }
+    }
 
 }
 
