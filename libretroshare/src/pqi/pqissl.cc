@@ -966,10 +966,6 @@ int 	pqissl::Initiate_SSL_Connection()
 
 	ssl_connection = ssl;
 
-        //store the peer id in the context for the callback check
-        AuthSSL::ex_data_ctx_index = SSL_get_ex_new_index(0, NULL, NULL, NULL, NULL);
-        SSL_set_ex_data(ssl, AuthSSL::ex_data_ctx_index, const_cast<char*> (PeerId().c_str()));
-
         net_internal_SSL_set_fd(ssl, sockfd);
 	if (err < 1)
 	{

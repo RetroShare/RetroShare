@@ -50,11 +50,9 @@
 /********************************************************************************/
 /********************************************************************************/
 
+
 // initialisation du pointeur de singleton à zéro
 AuthSSL *AuthSSL::instance_ssl = new AuthSSL();
-
-// initialisation du pointeur de ex data du ssl context
-int AuthSSL::ex_data_ctx_index = 0;
 
 
 sslcert::sslcert(X509 *x509, std::string pid)
@@ -2048,57 +2046,6 @@ int AuthSSL::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
             //sslcert *cert = NULL;
             std::string certId;
             getX509id(X509_STORE_CTX_get_current_cert(ctx), certId);
-
-				if(certId == mConnMgr->getOwnId())
-					return false ;
-
-            if (!mConnMgr->isFriend(certId)) {
-                //we've got a new ssl id
-                preverify_ok = false;
-                mConnMgr->addFriend(certId, getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer));
-            }
-
-            //is the connection was initiated by us, then it was for a specific peer id wich is stored is in the context
-            //check that the peerid in the context is the same as the cert one
-            SSL *ssl = (SSL*) X509_STORE_CTX_get_ex_data(ctx, SSL_get_ex_data_X509_STORE_CTX_idx());
-            if (SSL_get_ex_data(ssl, AuthSSL::ex_data_ctx_index)) {
-                char *peer_id_in_context = (char*) SSL_get_ex_data(ssl, AuthSSL::ex_data_ctx_index);
-                if (std::string(certId.c_str()) != std::string(peer_id_in_context)) {
-                    //the connection was asked for a given peer and get connected to another peer
-                    #ifdef AUTHSSL_DEBUG
-                    fprintf(stderr, "AuthSSL::VerifyX509Callback peer id in context not the same as cert, aborting connection.\n");
-                    #endif
-                    preverify_ok = false;
-
-                    //tranfer the ip address to the new peer
-                    peerConnectState detail;
-                    if (mConnMgr->getFriendNetStatus(peer_id_in_context, detail)) {
-                        //transfer ips only if the two peers got the same gpg key
-                        if (detail.gpg_id == getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer)) {
-                            mConnMgr->updateAddressList(certId, detail.getIpAddressList());
-                        }
-                    }
-                } else {
-                    #ifdef AUTHSSL_DEBUG
-                    fprintf(stderr, "AuthSSL::VerifyX509Callback peer id in context is the same as cert, continung connection.\n");
-                    #endif
-                }
-            }
-
-            //set location
-            mConnMgr->setLocation(certId, getX509LocString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->subject));
-
-            //Check if peer isn't already connected
-            peerConnectState detail;
-            if (mConnMgr->getFriendNetStatus(certId, detail)) {
-                if (detail.state & RS_PEER_CONNECTED && !(detail.connecttype & RS_NET_CONN_TUNNEL)) {
-                    #ifdef AUTHSSL_DEBUG
-                    fprintf(stderr, "AuthSSL::VerifyX509Callback this peer is already connected, refuse a new connection.\n");
-                    #endif
-                    preverify_ok = false;
-                }
-            }
-
 
         }
 

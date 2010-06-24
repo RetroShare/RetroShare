@@ -54,9 +54,12 @@
 
 typedef std::string SSL_id;
 
-class AuthSSL;
+/* This #define removes Connection Manager references in AuthSSL.
+ * They should not be here. What about Objects and orthogonality?
+ * This code is also stopping immediate reconnections from working.
+ */
 
-class p3ConnectMgr;
+class AuthSSL;
 
 class sslcert
 {
@@ -184,8 +187,6 @@ static int ex_data_ctx_index; //used to pass the peer id in the ssl context
 
   static AuthSSL *getAuthSSL() throw() // pour obtenir l'instance
       { return instance_ssl; }
-
-        p3ConnectMgr *mConnMgr;
 
     private:
 
