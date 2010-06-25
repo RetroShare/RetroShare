@@ -842,7 +842,7 @@ void 	p3GroupDistrib::locked_publishPendingMsgs()
 			resave = true;
 		}
 
-		if(store->SendItem(*it)) /* deletes it */
+		if(!store->SendItem(*it)) /* deletes it */
 		{
 			ok &= false;
 		}
@@ -857,7 +857,7 @@ void 	p3GroupDistrib::locked_publishPendingMsgs()
 	newCache.recvd = now;
 
 	/* cleanup */
-
+	mPendingPublish.clear();
 	delete store;
 
 	if(!RsDirUtil::renameFile(filenametmp,filename))
@@ -877,10 +877,9 @@ void 	p3GroupDistrib::locked_publishPendingMsgs()
 
 	/* push file to CacheSource */
 
-	if(ok){
-		mPendingPublish.clear();
+	if(ok)
 		refreshCache(newCache);
-	}
+
 
 	if (ok && resave)
 	{
