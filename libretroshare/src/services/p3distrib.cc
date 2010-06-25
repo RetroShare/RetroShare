@@ -734,6 +734,8 @@ void 	p3GroupDistrib::locked_publishPendingMsgs()
 	CacheData newCache;
 	time_t now = time(NULL);
 
+	bool ok = true; // hass msg/cache file been written successfully
+
 	newCache.pid = mOwnId;
 	newCache.cid.type = CacheSource::getCacheType();
 	newCache.cid.subid = locked_determineCacheSubId(); 
@@ -770,7 +772,10 @@ void 	p3GroupDistrib::locked_publishPendingMsgs()
 			resave = true;
 		}
 
-		store->SendItem(*it); /* deletes it */
+		if(!store->SendItem(*it)) /* deletes it */
+		{
+			ok &= false;
+		}
 	}
 
 	/* Extract File Information from pqistore */
@@ -788,6 +793,7 @@ void 	p3GroupDistrib::locked_publishPendingMsgs()
 	if(!RsDirUtil::renameFile(filenametmp,filename))
 	{
 		std::ostringstream errlog;
+		ok &= false;
 #ifdef WIN32
 		errlog << "Error " << GetLastError() ;
 #else
@@ -800,9 +806,12 @@ void 	p3GroupDistrib::locked_publishPendingMsgs()
 	mLastPublishTime = now;
 
 	/* push file to CacheSource */
-	refreshCache(newCache);
 
-	if (resave)
+	if(ok)
+		refreshCache(newCache);
+
+
+	if (ok && resave)
 	{
 #ifdef DISTRIB_DEBUG
 		std::cerr << "p3GroupDistrib::locked_publishPendingMsgs() Indicate Save Data Changed";
