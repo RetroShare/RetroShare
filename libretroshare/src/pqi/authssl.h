@@ -176,11 +176,10 @@ virtual bool 	ValidateCertificate(X509 *x509, std::string &peerId); /* validate 
 
 	public: /* SSL specific functions used in pqissl/pqissllistener */
 SSL_CTX *getCTX();
-static int ex_data_ctx_index; //used to pass the peer id in the ssl context
 
-
-//bool 	FailedCertificate(X509 *x509, bool incoming);     /* store for discovery */
-//bool 	CheckCertificate(std::string peerId, X509 *x509); /* check that they are exact match */
+/* Restored these functions: */
+bool 	FailedCertificate(X509 *x509, bool incoming);     /* store for discovery */
+bool 	CheckCertificate(std::string peerId, X509 *x509); /* check that they are exact match */
 
 	/* Special Config Loading (backwards compatibility) */
 //bool  	loadCertificates(bool &oldFormat, std::map<std::string, std::string> &keyValueMap);

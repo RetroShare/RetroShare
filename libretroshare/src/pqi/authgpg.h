@@ -98,8 +98,8 @@ class AuthGPG : public p3Config
 	private:
 
 	/* Internal functions */
-        bool 	DoOwnSignature_locked(const void *, unsigned int, void *, unsigned int *);
-        bool    VerifySignature_locked(const void *data, int datalen, const void *sig, unsigned int siglen, std::string withfingerprint);
+        bool 	DoOwnSignature(const void *, unsigned int, void *, unsigned int *);
+        bool    VerifySignature(const void *data, int datalen, const void *sig, unsigned int siglen, std::string withfingerprint);
 
         /* Sign/Trust stuff */
         int	privateSignCertificate(GPG_id id);
@@ -107,8 +107,9 @@ class AuthGPG : public p3Config
         int	privateTrustCertificate(GPG_id id, int trustlvl);
 
         // store all keys in map mKeyList to avoid calling gpgme exe repeatedly
-  	bool    storeAllKeys_locked();
-        bool    storeAllKeys_timed();
+  	bool    storeAllKeys();
+        bool    storeAllKeys_tick();
+
 // Not used anymore
 //        bool    updateTrustAllKeys_locked();
 

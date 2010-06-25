@@ -1601,11 +1601,19 @@ bool    AuthSSL::ValidateCertificate(X509 *x509, std::string &peerId)
 }
 
 /* store for discovery */
-//bool    AuthSSL::FailedCertificate(X509 *x509, bool incoming)
-//{
-//	std::string id;
-//	return ProcessX509(x509, id);
-//}
+bool    AuthSSL::FailedCertificate(X509 *x509, bool incoming)
+{
+	//std::string id;
+	//return ProcessX509(x509, id);
+	return true;
+}
+
+bool    AuthSSL::CheckCertificate(std::string id, X509 *x509)
+{
+	//std::string id;
+	//return ProcessX509(x509, id);
+	return true;
+}
 
 bool    AuthSSL::encrypt(void *&out, int &outlen, const void *in, int inlen, std::string peerId)
 {
