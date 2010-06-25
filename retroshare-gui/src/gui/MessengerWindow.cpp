@@ -65,11 +65,15 @@
 #define IMAGE_BUSY            ":/images/im-user-busy.png"
 #define IMAGE_INACTIVE		":/images/im-user-inactive.png"
 
-#define COLUMN_COUNT    4
+#define COLUMN_COUNT    3
 #define COLUMN_NAME     0
 #define COLUMN_STATE    1
 #define COLUMN_INFO     2
-#define COLUMN_ID       3
+
+#define COLUMN_DATA     0 // column for storing the userdata id
+
+#define ROLE_SORT  Qt::UserRole
+#define ROLE_ID    Qt::UserRole + 1
 
 /******
  * #define MSG_DEBUG 1
@@ -92,8 +96,8 @@ public:
         switch (column) {
         case COLUMN_NAME:
             {
-                const QVariant v1 = data(column, Qt::UserRole);
-                const QVariant v2 = other.data(column, Qt::UserRole);
+                const QVariant v1 = data(column, ROLE_SORT);
+                const QVariant v2 = other.data(column, ROLE_SORT);
                 return (v1.toString().compare (v2.toString(), Qt::CaseInsensitive) < 0);
             }
         }
@@ -153,7 +157,6 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
 
     /* Set header resize modes and initial section sizes */
     ui.messengertreeWidget->setColumnCount(COLUMN_COUNT);
-    ui.messengertreeWidget->setColumnHidden ( COLUMN_ID, true);
     ui.messengertreeWidget->setColumnHidden ( COLUMN_INFO, true);
     ui.messengertreeWidget->sortItems( COLUMN_NAME, Qt::AscendingOrder );
 
@@ -385,7 +388,7 @@ void  MessengerWindow::insertPeers()
     //remove items that are not fiends anymore
     int index = 0;
     while (index < peertreeWidget->topLevelItemCount()) {
-        std::string gpg_widget_id = (peertreeWidget->topLevelItem(index))->text(COLUMN_ID).toStdString();
+        std::string gpg_widget_id = peertreeWidget->topLevelItem(index)->data(COLUMN_DATA, ROLE_ID).toString().toStdString();
         std::list<std::string>::iterator gpgfriendIt;
         bool found = false;
         for (gpgfriendIt =  gpgFriends.begin(); gpgfriendIt != gpgFriends.end(); gpgfriendIt++) {
@@ -409,9 +412,14 @@ void  MessengerWindow::insertPeers()
 
         /* make a widget per friend */
         QTreeWidgetItem *gpg_item = NULL;
-        QList<QTreeWidgetItem *> list = peertreeWidget->findItems(QString::fromStdString(*it), Qt::MatchExactly, COLUMN_ID);
-        if (list.size() == 1) {
-            gpg_item = list.front();
+        QTreeWidgetItem *gpg_item_loop = NULL;
+        QString gpgid = QString::fromStdString(*it);
+        for (int nIndex = 0; nIndex < peertreeWidget->topLevelItemCount(); nIndex++) {
+            gpg_item_loop = peertreeWidget->topLevelItem(nIndex);
+            if (gpg_item_loop->data(COLUMN_DATA, ROLE_ID).toString() == gpgid) {
+                gpg_item = gpg_item_loop;
+                break;
+            }
         }
 
         RsPeerDetails detail;
@@ -432,12 +440,12 @@ void  MessengerWindow::insertPeers()
         gpg_item -> setSizeHint(COLUMN_NAME,  QSize( 27,27 ) );
 
         /* not displayed, used to find back the item */
-        gpg_item -> setText(COLUMN_ID, QString::fromStdString(detail.id));
+        gpg_item -> setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(detail.id));
 
         //remove items that are not friends anymore
         int childIndex = 0;
         while (childIndex < gpg_item->childCount()) {
-            std::string ssl_id = (gpg_item->child(childIndex))->text(COLUMN_ID).toStdString();
+            std::string ssl_id = gpg_item->child(childIndex)->data(COLUMN_DATA, ROLE_ID).toString().toStdString();
             if (!rsPeers->isFriend(ssl_id)) {
                 delete (gpg_item->takeChild(childIndex));
             } else {
@@ -456,7 +464,7 @@ void  MessengerWindow::insertPeers()
             //find the corresponding sslItem child item of the gpg item
             bool newChild = true;
             for (int childIndex = 0; childIndex < gpg_item->childCount(); childIndex++) {
-                if (gpg_item->child(childIndex)->text(COLUMN_ID).toStdString() == *sslIt) {
+                if (gpg_item->child(childIndex)->data(COLUMN_DATA, ROLE_ID).toString().toStdString() == *sslIt) {
                     sslItem = gpg_item->child(childIndex);
                     newChild = false;
                     break;
@@ -478,7 +486,7 @@ void  MessengerWindow::insertPeers()
             }
 
             /* not displayed, used to find back the item */
-            sslItem -> setText(COLUMN_ID, QString::fromStdString(sslDetail.id));
+            sslItem -> setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(sslDetail.id));
 
             QString sCustomString = QString::fromStdString(rsMsgs->getCustomStateString(sslDetail.id));
             if (sCustomString != "") {
@@ -587,7 +595,7 @@ void  MessengerWindow::insertPeers()
                         {
                             gpg_item -> setIcon(COLUMN_NAME,(QIcon(IMAGE_INACTIVE)));
                             gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Idle"));
-                            gpg_item->setData(COLUMN_NAME, Qt::UserRole, BuildStateSortString(bSortState, gpg_item->text(COLUMN_NAME), PEER_STATE_INACTIVE));
+                            gpg_item->setData(COLUMN_NAME, ROLE_SORT, BuildStateSortString(bSortState, gpg_item->text(COLUMN_NAME), PEER_STATE_INACTIVE));
 
                             for(i = 0; i < COLUMN_COUNT; i++) {
                                 gpg_item -> setTextColor(i,(Qt::gray));
@@ -598,7 +606,7 @@ void  MessengerWindow::insertPeers()
                         {
                             gpg_item -> setIcon(COLUMN_NAME,(QIcon(IMAGE_ONLINE)));
                             gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Online"));
-                            gpg_item->setData(COLUMN_NAME, Qt::UserRole, BuildStateSortString(bSortState, gpg_item->text(COLUMN_NAME), PEER_STATE_ONLINE));
+                            gpg_item->setData(COLUMN_NAME, ROLE_SORT, BuildStateSortString(bSortState, gpg_item->text(COLUMN_NAME), PEER_STATE_ONLINE));
 
                             for(i = 0; i < COLUMN_COUNT; i++) {
                                 gpg_item -> setTextColor(i,(Qt::darkBlue));
@@ -609,7 +617,7 @@ void  MessengerWindow::insertPeers()
                         {
                             gpg_item -> setIcon(COLUMN_NAME,(QIcon(IMAGE_AWAY)));
                             gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Away"));
-                            gpg_item->setData(COLUMN_NAME, Qt::UserRole, BuildStateSortString(bSortState, gpg_item->text(COLUMN_NAME), PEER_STATE_AWAY));
+                            gpg_item->setData(COLUMN_NAME, ROLE_SORT, BuildStateSortString(bSortState, gpg_item->text(COLUMN_NAME), PEER_STATE_AWAY));
 
                             for(i = 0; i < COLUMN_COUNT; i++) {
                                 gpg_item -> setTextColor(i,(Qt::gray));
@@ -620,7 +628,7 @@ void  MessengerWindow::insertPeers()
                         {
                             gpg_item -> setIcon(COLUMN_NAME,(QIcon(IMAGE_BUSY)));
                             gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Busy"));
-                            gpg_item->setData(COLUMN_NAME, Qt::UserRole, BuildStateSortString(bSortState, gpg_item->text(COLUMN_NAME), PEER_STATE_BUSY));
+                            gpg_item->setData(COLUMN_NAME, ROLE_SORT, BuildStateSortString(bSortState, gpg_item->text(COLUMN_NAME), PEER_STATE_BUSY));
 
                             for(i = 0; i < COLUMN_COUNT; i++) {
                                 gpg_item -> setTextColor(i,(Qt::gray));
@@ -634,7 +642,7 @@ void  MessengerWindow::insertPeers()
         } else if (gpg_online) {
             gpg_item->setHidden(ui.actionHide_Offline_Friends->isChecked());
             gpg_item -> setIcon(COLUMN_NAME,(QIcon(IMAGE_AVAIBLE)));
-            gpg_item->setData(COLUMN_NAME, Qt::UserRole, BuildStateSortString(bSortState, gpg_item->text(COLUMN_NAME), PEER_STATE_ONLINE));
+            gpg_item->setData(COLUMN_NAME, ROLE_SORT, BuildStateSortString(bSortState, gpg_item->text(COLUMN_NAME), PEER_STATE_ONLINE));
             //gpg_item -> setText(COLUMN_STATE, tr("Available"));
             QFont font;
             font.setBold(true);
@@ -645,7 +653,7 @@ void  MessengerWindow::insertPeers()
         } else {
             gpg_item->setHidden(ui.actionHide_Offline_Friends->isChecked());
             gpg_item -> setIcon(COLUMN_NAME,(QIcon(IMAGE_OFFLINE)));
-            gpg_item->setData(COLUMN_NAME, Qt::UserRole, BuildStateSortString(bSortState, gpg_item->text(COLUMN_NAME), PEER_STATE_OFFLINE));
+            gpg_item->setData(COLUMN_NAME, ROLE_SORT, BuildStateSortString(bSortState, gpg_item->text(COLUMN_NAME), PEER_STATE_OFFLINE));
             //gpg_item -> setText(COLUMN_STATE, tr("Offline"));
             QFont font;
             font.setBold(false);
@@ -667,7 +675,7 @@ void  MessengerWindow::insertPeers()
 /* Utility Fns */
 std::string getPeersRsCertId(QTreeWidgetItem *i)
 {
-    std::string id = (i -> text(COLUMN_ID)).toStdString();
+    std::string id = i -> data(COLUMN_DATA, ROLE_ID).toString().toStdString();
     return id;
 }
 
@@ -725,7 +733,7 @@ void MessengerWindow::chatfriend(QTreeWidgetItem *pPeer)
         return;
     }
 
-    std::string id = (pPeer->text(COLUMN_ID)).toStdString();
+    std::string id = pPeer->data(COLUMN_DATA, ROLE_ID).toString().toStdString();
     PopupChatDialog::chatFriend(id);
 }
 
@@ -865,7 +873,7 @@ void MessengerWindow::sendMessage()
     if (!peer)
         return;
 
-    std::string id = (peer->text(COLUMN_ID)).toStdString();
+    std::string id = peer->data(COLUMN_DATA, ROLE_ID).toString().toStdString();
     MessageComposer::msgFriend(id);
 }
 
