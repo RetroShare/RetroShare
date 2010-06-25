@@ -180,10 +180,10 @@ void	setHash(std::string h);
 
 /*!
  * MUTEX NOTE
- * None - because no-one calls any functions besides tick() when the system is running.
- * Takes care of updating, saving configurations within retroshare and also
- * adding new configurations
+ * Class data is protected by mutex's so that anyone can call these
+ * functions, at any time.
  */
+
 class p3ConfigMgr
 {
 	public:
