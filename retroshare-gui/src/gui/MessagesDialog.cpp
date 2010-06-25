@@ -42,16 +42,20 @@
 #define IMAGE_DOWNLOAD    	   ":/images/start.png"
 #define IMAGE_DOWNLOADALL          ":/images/startall.png"
 
-#define COLUMN_COUNT         9
+#define COLUMN_COUNT         7
 #define COLUMN_ATTACHEMENTS  0
 #define COLUMN_SUBJECT       1
 #define COLUMN_READ          2
 #define COLUMN_FROM          3
 #define COLUMN_DATE          4
-#define COLUMN_SRCID         5
-#define COLUMN_MSGID         6
-#define COLUMN_CONTENT       7
-#define COLUMN_TAGS          8
+#define COLUMN_CONTENT       5
+#define COLUMN_TAGS          6
+
+#define COLUMN_DATA          0 // column for storing the userdata like msgid and srcid
+
+#define ROLE_SORT  Qt::UserRole
+#define ROLE_MSGID Qt::UserRole + 1
+#define ROLE_SRCID Qt::UserRole + 2
 
 #define ROW_INBOX         0
 #define ROW_OUTBOX        1
@@ -274,14 +278,12 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     MessagesModel->setHeaderData(COLUMN_FROM,          Qt::Horizontal, tr("From"));
     MessagesModel->setHeaderData(COLUMN_DATE,          Qt::Horizontal, tr("Date"));
     MessagesModel->setHeaderData(COLUMN_TAGS,          Qt::Horizontal, tr("Tags"));
-    MessagesModel->setHeaderData(COLUMN_SRCID,         Qt::Horizontal, tr("SRCID"));
-    MessagesModel->setHeaderData(COLUMN_MSGID,         Qt::Horizontal, tr("MSGID"));
     MessagesModel->setHeaderData(COLUMN_CONTENT,       Qt::Horizontal, tr("Content"));
 
     proxyModel = new QSortFilterProxyModel(this);
     proxyModel->setDynamicSortFilter(true);
     proxyModel->setSourceModel(MessagesModel);
-    proxyModel->setSortRole(Qt::UserRole);
+    proxyModel->setSortRole(ROLE_SORT);
     proxyModel->sort (COLUMN_DATE, Qt::DescendingOrder);
     ui.messagestreeView->setModel(proxyModel);
     ui.messagestreeView->setSelectionBehavior(QTreeView::SelectRows);
@@ -1201,7 +1203,7 @@ void MessagesDialog::changeTag(int)
 static void InitIconAndFont(RSettings *pConfig, QStandardItem *pItem [COLUMN_COUNT], int nFlag)
 {
     QString sText = pItem [COLUMN_SUBJECT]->text();
-    QString mid = pItem [COLUMN_MSGID]->text();
+    QString mid = pItem [COLUMN_DATA]->data(ROLE_MSGID).toString();
 
     bool bNew = (nFlag & RS_MSG_NEW);
 
@@ -1374,7 +1376,7 @@ void MessagesDialog::insertMessages()
         int nRowCount = MessagesModel->rowCount();
         int nRow = 0;
         for (nRow = 0; nRow < nRowCount; ) {
-            std::string msgIdFromRow = MessagesModel->item(nRow, COLUMN_MSGID)->text().toStdString();
+            std::string msgIdFromRow = MessagesModel->item(nRow, COLUMN_DATA)->data(ROLE_MSGID).toString().toStdString();
             for(it = msgToShow.begin(); it != msgToShow.end(); it++) {
                 if (it->msgId == msgIdFromRow) {
                     break;
@@ -1415,7 +1417,7 @@ void MessagesDialog::insertMessages()
             // search exisisting items
             nRowCount = MessagesModel->rowCount();
             for (nRow = 0; nRow < nRowCount; nRow++) {
-                if (it->msgId == MessagesModel->item(nRow, COLUMN_MSGID)->text().toStdString()) {
+                if (it->msgId == MessagesModel->item(nRow, COLUMN_DATA)->data(ROLE_MSGID).toString().toStdString()) {
                     break;
                 }
             }
@@ -1475,7 +1477,7 @@ void MessagesDialog::insertMessages()
                     item[COLUMN_DATE]->setData(varDateTime, Qt::DisplayRole);
                 }
                 // for sorting
-                item[COLUMN_DATE]->setData(qdatetime, Qt::UserRole);
+                item[COLUMN_DATE]->setData(qdatetime, ROLE_SORT);
             }
 
             //  From ....
@@ -1507,18 +1509,18 @@ void MessagesDialog::insertMessages()
                     }
                 }
                 item[COLUMN_FROM]->setText(text);
-                item[COLUMN_FROM]->setData(text + dateString, Qt::UserRole);
+                item[COLUMN_FROM]->setData(text + dateString, ROLE_SORT);
             }
 
             // Subject
             text = QString::fromStdWString(it->title);
             item[COLUMN_SUBJECT]->setText(text);
-            item[COLUMN_SUBJECT]->setData(text + dateString, Qt::UserRole);
+            item[COLUMN_SUBJECT]->setData(text + dateString, ROLE_SORT);
 
             // internal data
             QString msgId = QString::fromStdString(it->msgId);
-            item[COLUMN_SRCID]->setText(QString::fromStdString(it->srcId));
-            item[COLUMN_MSGID]->setText(msgId);
+            item[COLUMN_DATA]->setData(QString::fromStdString(it->srcId), ROLE_SRCID);
+            item[COLUMN_DATA]->setData(msgId, ROLE_MSGID);
 
             // Init icon and font
             InitIconAndFont(m_pConfig, item, it->msgflags);
@@ -1552,7 +1554,7 @@ void MessagesDialog::insertMessages()
                 std::ostringstream out;
                 out << it -> count;
                 item[COLUMN_ATTACHEMENTS] -> setText(QString::fromStdString(out.str()));
-                item[COLUMN_ATTACHEMENTS] -> setData(item[COLUMN_ATTACHEMENTS]->text() + dateString, Qt::UserRole);
+                item[COLUMN_ATTACHEMENTS] -> setData(item[COLUMN_ATTACHEMENTS]->text() + dateString, ROLE_SORT);
                 item[COLUMN_ATTACHEMENTS] -> setTextAlignment(Qt::AlignHCenter);
             }
 
@@ -1588,8 +1590,6 @@ void MessagesDialog::insertMessages()
     ui.messagestreeView->showColumn(COLUMN_FROM);
     ui.messagestreeView->showColumn(COLUMN_DATE);
     ui.messagestreeView->showColumn(COLUMN_TAGS);
-    ui.messagestreeView->hideColumn(COLUMN_SRCID);
-    ui.messagestreeView->hideColumn(COLUMN_MSGID);
     ui.messagestreeView->hideColumn(COLUMN_CONTENT);
 
     updateMessageSummaryList();
@@ -1653,7 +1653,7 @@ void MessagesDialog::setMsgAsReadUnread(const QList<int> &Rows, bool bRead)
             item[nCol] = MessagesModel->item(Rows [nRow], nCol);
         }
 
-        QString mid = item[COLUMN_MSGID]->text();
+        QString mid = item[COLUMN_DATA]->data(ROLE_MSGID).toString();
 
         m_pConfig->beginGroup(CONFIG_SECTION_UNREAD);
         if (bRead) {
@@ -1718,13 +1718,13 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index, bool bSetToRead)
     }
     else
     {
-        QStandardItem * item;
-        item = MessagesModel->item(currentIndex.row(),COLUMN_SRCID);
-        cid = item->text().toStdString();
-        fflush(0);
-
-        item = MessagesModel->item(currentIndex.row(),COLUMN_MSGID);
-        mid = item->text().toStdString();
+        QStandardItem *item;
+        item = MessagesModel->item(currentIndex.row(),COLUMN_DATA);
+        if (item == NULL) {
+            return;
+        }
+        cid = item->data(ROLE_SRCID).toString().toStdString();
+        mid = item->data(ROLE_MSGID).toString().toStdString();
     }
 
     int nCount = getSelectedMsgCount (NULL, NULL, NULL);
@@ -1902,12 +1902,12 @@ bool MessagesDialog::getCurrentMsg(std::string &cid, std::string &mid)
         rowSelected = currentIndex.row();
     }
 
-    QStandardItem *item;
-    item = MessagesModel->item(rowSelected,COLUMN_SRCID);
-    cid = item->text().toStdString();
-
-    item = MessagesModel->item(rowSelected,COLUMN_MSGID);
-    mid = item->text().toStdString();
+    QStandardItem *item = MessagesModel->item(rowSelected,COLUMN_DATA);
+    if (item == NULL) {
+        return false;
+    }
+    cid = item->data(ROLE_SRCID).toString().toStdString();
+    mid = item->data(ROLE_MSGID).toString().toStdString();
     return true;
 }
 
@@ -1939,9 +1939,9 @@ void MessagesDialog::removemessage()
     }
 
     for(QList<int>::const_iterator it1 = rowList.begin(); it1 != rowList.end(); it1++) {
-        QStandardItem *pItem = MessagesModel->item((*it1), COLUMN_MSGID);
+        QStandardItem *pItem = MessagesModel->item((*it1), COLUMN_DATA);
         if (pItem) {
-            QString mid = pItem->text();
+            QString mid = pItem->data(ROLE_MSGID).toString();
             if (bDelete) {
                 rsMsgs->MessageDelete(mid.toStdString());
 
@@ -1970,7 +1970,7 @@ void MessagesDialog::undeletemessage()
     QList<int> Rows;
     getSelectedMsgCount (&Rows, NULL, NULL);
     for (int nRow = 0; nRow < Rows.size(); nRow++) {
-        QString mid = MessagesModel->item (Rows [nRow], COLUMN_MSGID)->text();
+        QString mid = MessagesModel->item (Rows [nRow], COLUMN_DATA)->data(ROLE_MSGID).toString();
         rsMsgs->MessageToTrash(mid.toStdString(), false);
     }
 
@@ -2359,8 +2359,8 @@ void MessagesDialog::tagAboutToShow()
     getSelectedMsgCount (&Rows, NULL, NULL);
 
     if (Rows.size()) {
-        QStandardItem* pItem = MessagesModel->item(Rows [0], COLUMN_MSGID);
-        QString msgId = pItem->text();
+        QStandardItem* pItem = MessagesModel->item(Rows [0], COLUMN_DATA);
+        QString msgId = pItem->data(ROLE_MSGID).toString();
 
         getMessageTags(m_pConfig, msgId, tagIds);
     }
@@ -2431,8 +2431,8 @@ void MessagesDialog::tagTriggered(QAction *pAction)
     QList<int> Rows;
     getSelectedMsgCount (&Rows, NULL, NULL);
     for (int nRow = 0; nRow < Rows.size(); nRow++) {
-        QStandardItem* pItem = MessagesModel->item(Rows [nRow], COLUMN_MSGID);
-        QString msgId = pItem->text();
+        QStandardItem* pItem = MessagesModel->item(Rows [nRow], COLUMN_DATA);
+        QString msgId = pItem->data(ROLE_MSGID).toString();
 
         if (bRemoveAll) {
             // remove all
