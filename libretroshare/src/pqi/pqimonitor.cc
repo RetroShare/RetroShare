@@ -44,7 +44,7 @@ pqiConnectCbDummy::~pqiConnectCbDummy()
 }
 
 void    pqiConnectCbDummy::peerStatus(std::string id, 
-			struct sockaddr_in laddr, struct sockaddr_in raddr, std::list<IpAddressTimed> ipAddressList,
+			struct sockaddr_in laddr, struct sockaddr_in raddr,
                        uint32_t type, uint32_t mode, uint32_t source)
 {
 	std::cerr << "pqiConnectCbDummy::peerStatus()";

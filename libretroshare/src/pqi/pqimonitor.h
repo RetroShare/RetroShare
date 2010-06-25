@@ -34,7 +34,6 @@
 #include <inttypes.h>
 #include <string>
 #include <list>
-#include "serialiser/rsconfigitems.h"
 
 /************** Define Type/Mode/Source ***************/
 
@@ -109,7 +108,7 @@ class pqiConnectCb
 	public:
 virtual ~pqiConnectCb() { return; }
 virtual void	peerStatus(std::string id, 
-			struct sockaddr_in laddr, struct sockaddr_in raddr, std::list<IpAddressTimed> ipAddressList,
+			struct sockaddr_in laddr, struct sockaddr_in raddr, 
 			uint32_t type, uint32_t flags, uint32_t source) = 0;
 
 virtual void    peerConnectRequest(std::string id,              
@@ -126,7 +125,7 @@ class pqiConnectCbDummy: public pqiConnectCb
 	pqiConnectCbDummy();
 virtual ~pqiConnectCbDummy();
 virtual void	peerStatus(std::string id, 
-			struct sockaddr_in laddr, struct sockaddr_in raddr,  std::list<IpAddressTimed> ipAddressList,
+			struct sockaddr_in laddr, struct sockaddr_in raddr, 
 			uint32_t type, uint32_t mode, uint32_t source);
 
 virtual void    peerConnectRequest(std::string id,              
