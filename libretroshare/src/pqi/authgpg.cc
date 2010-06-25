@@ -377,6 +377,7 @@ bool   AuthGPG::storeAllKeys_locked()
 			//                if (rsicontrol != NULL) {
 			//                    rsicontrol->getNotify().notifyErrorMsg(0,0,"Error reading gpg keyring, cannot find any key in the list.");
 			//                }
+			gpgme_set_keylist_mode(CTX, origmode);
 			return false;
 		} else {
 			//let's start a new list
@@ -731,6 +732,8 @@ bool AuthGPG::DoOwnSignature_locked(const void *data, unsigned int datalen, void
 	{
 		ProcessPGPmeError(ERR);
                 std::cerr << "AuthGPG::Sign FAILED ERR: " << ERR << std::endl;
+		gpgme_data_release(gpgmeSig);
+		gpgme_data_release(gpgmeData);
 		return false;
 	}
 
@@ -841,6 +844,8 @@ bool AuthGPG::VerifySignature_locked(const void *data, int datalen, const void *
 #ifdef GPG_DEBUG
 		fprintf(stderr, "VerifySignature Failed to get Result\n");
 #endif
+		gpgme_data_release(gpgmeData);
+		gpgme_data_release(gpgmeSig);
 		return false ;
 	}
 
@@ -1247,14 +1252,17 @@ bool AuthGPG::LoadCertificateFromString(std::string str, std::string &gpg_id)
             if (GPG_ERR_NO_ERROR != gpgme_op_import (CTX,gpgmeData))
             {
                     std::cerr << "AuthGPG::LoadCertificateFromString() Error Importing Certificate" << std::endl;
+                    gpgme_data_release (gpgmeData);
                     return false ;
             }
 
 
             gpgme_import_result_t res = gpgme_op_import_result(CTX);
 
-            if(res == NULL || res->imports == NULL)
+            if(res == NULL || res->imports == NULL) {
+                    gpgme_data_release (gpgmeData);
                     return false ;
+            }
 
             fingerprint = std::string(res->imports->fpr);
     #ifdef GPG_DEBUG
