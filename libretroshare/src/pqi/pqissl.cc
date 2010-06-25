@@ -61,7 +61,8 @@ const int PQISSL_REMOTE_FLAG = 0x02;
 const int PQISSL_UDP_FLAG = 0x02;
 ***********/
 
-static const int PQISSL_MAX_READ_ZERO_COUNT = 40;
+static const int PQISSL_MAX_READ_ZERO_COUNT = 20;
+static const int PQISSL_SSL_CONNECT_TIMEOUT = 30;
 
 /********** PQI SSL STUFF ******************************************
  *
@@ -93,11 +94,11 @@ pqissl::pqissl(pqissllistener *l, PQInterface *parent, p3ConnectMgr *cm)
 	sslmode(PQISSL_ACTIVE), ssl_connection(NULL), sockfd(-1), 
 	pqil(l),  // no init for remote_addr.
 	readpkt(NULL), pktlen(0), 
+	attempt_ts(0),
 	net_attempt(0), net_failure(0), net_unreachable(0), 
 	sameLAN(false), n_read_zero(0), 
 	mConnectDelay(0), mConnectTS(0),
-        mConnectTimeout(0), mTimeoutTS(0), quietShutdown(false),
-        mConnMgr(cm)
+        mConnectTimeout(0), mTimeoutTS(0), mConnMgr(cm)
 
 {
 	/* set address to zero */
@@ -108,6 +109,21 @@ pqissl::pqissl(pqissllistener *l, PQInterface *parent, p3ConnectMgr *cm)
 	  out << "pqissl for PeerId: " << PeerId();
 	  rslog(RSL_ALERT, pqisslzone, out.str());
 	}
+
+#if 0
+	if (!(AuthSSL::getAuthSSL()->isAuthenticated(PeerId())))
+	{
+  	  rslog(RSL_ALERT, pqisslzone, 
+	    "pqissl::Warning Certificate Not Approved!");
+
+  	  rslog(RSL_ALERT, pqisslzone, 
+	    "\t pqissl will not initialise....");
+
+	}
+#else
+  	  rslog(RSL_ALERT, pqisslzone, 
+	    "pqissl::Warning SSL Certificate Approval Not CHECKED??");
+#endif
 
 	return;
 }
@@ -195,21 +211,15 @@ int 	pqissl::reset()
 	out << "\tssl_con: " << ssl_connection << std::endl;
 	out << std::endl;
 
-        bool neededReset = false;
+	bool neededReset = false;
 
-	if (ssl_connection != NULL && sockfd > 0)
+	if (ssl_connection != NULL)
 	{
 		out << "pqissl::reset() Shutting down SSL Connection";
 		out << std::endl;
-                if (quietShutdown) {
-                    ssl_connection->quiet_shutdown = 1;
-                    SSL_shutdown(ssl_connection);
-                } else {
-                    ssl_connection->quiet_shutdown = 0;
-                    SSL_shutdown(ssl_connection);
-                }
+		SSL_shutdown(ssl_connection);
+		SSL_free (ssl_connection);
 
-                quietShutdown = false;
 		neededReset = true;	
 	}
 
@@ -224,13 +234,11 @@ int 	pqissl::reset()
 	active = false;
 	sockfd = -1;
 	waiting = WAITING_NOT;
-	SSL_free (ssl_connection);
 	ssl_connection = NULL;
 	sameLAN = false;
 	n_read_zero = 0;
 	total_len = 0 ;
         mTimeoutTS = 0;
-        listen();
 
 	if (neededReset)
 	{
@@ -359,15 +367,7 @@ int	pqissl::tick()
 			out << "Continuing Connection Attempt!";
 			rslog(RSL_DEBUG_BASIC, pqisslzone, out.str());
 
-                        if (mTimeoutTS != 0 && time(NULL) > mTimeoutTS)
-                        {
-                                rslog(RSL_DEBUG_BASIC, pqisslzone,
-                                        "pqissl::Authorise_SSL_Connection() Connection Timed Out!");
-                                /* as sockfd is valid, this should close it all up */
-                                reset();
-                        } else {
-                            ConnectAttempt();
-                        }
+                        ConnectAttempt();
 			return 1;
 		}
 	}
@@ -710,16 +710,6 @@ int 	pqissl::Basic_Connection_Complete()
 	rslog(RSL_DEBUG_BASIC, pqisslzone, 
 	  "pqissl::Basic_Connection_Complete()...");
 
-#ifdef DEBUG_PQISSL_TUNNEL
-        rslog(RSL_DEBUG_BASIC, pqisslzone,
-          "pqissl::Basic_Connection_Complete() parent()->PeerId() : " + parent()->PeerId());
-        if (parent()->PeerId() == "a0f6dfa2478e327a5687eaffe68882d3" || parent()->PeerId() == "9a033552091254bf9875edabe0bfd0e2") {
-            rslog(RSL_DEBUG_BASIC, pqisslzone,
-              "pqissl::Basic_Connection_Complete() resetting connection for test purpose.");
-            reset();
-        }
-#endif
-
 	/* new TimeOut code. */
 	if (time(NULL) > mTimeoutTS)
 	{
@@ -738,14 +728,14 @@ int 	pqissl::Basic_Connection_Complete()
 
 	if (waiting != WAITING_SOCK_CONNECT)
 	{
-		rslog(RSL_DEBUG_BASIC, pqisslzone, 
+		rslog(RSL_ALERT, pqisslzone, 
 	  		"pqissl::Basic_Connection_Complete() Wrong Mode");
 		return -1;
 	}
 
         if (sockfd == -1)
         {
-                rslog(RSL_DEBUG_BASIC, pqisslzone,
+                rslog(RSL_ALERT, pqisslzone,
                         "pqissl::Basic_Connection_Complete() problem with the socket descriptor. Aborting");
                 reset();
                 return -1;
@@ -758,9 +748,6 @@ int 	pqissl::Basic_Connection_Complete()
 	FD_ZERO(&ReadFDs);
 	FD_ZERO(&WriteFDs);
 	FD_ZERO(&ExceptFDs);
-
-	if(sockfd < 0)
-		return -1 ;
 
 	FD_SET(sockfd, &ReadFDs);
 	FD_SET(sockfd, &WriteFDs);
@@ -948,16 +935,18 @@ int 	pqissl::Initiate_SSL_Connection()
   	rslog(RSL_DEBUG_BASIC, pqisslzone, 
 	  "pqissl::Initiate_SSL_Connection() Basic Connection Okay");
 
+	// setup timeout value.
+	ssl_connect_timeout = time(NULL) + PQISSL_SSL_CONNECT_TIMEOUT;
+
 	// Perform SSL magic.
 	// library already inited by sslroot().
-        SSL_CTX *ssl_ctx = AuthSSL::getAuthSSL()->getCTX();
-
-        SSL *ssl = SSL_new(ssl_ctx);
+	SSL *ssl = SSL_new(AuthSSL::getAuthSSL()->getCTX());
 	if (ssl == NULL)
 	{
   		rslog(RSL_ALERT, pqisslzone, 
 		  "pqissl::Initiate_SSL_Connection() SSL_new failed!");
 
+		exit(1);
 		return -1;
 	}
 	
@@ -966,7 +955,7 @@ int 	pqissl::Initiate_SSL_Connection()
 
 	ssl_connection = ssl;
 
-        net_internal_SSL_set_fd(ssl, sockfd);
+	net_internal_SSL_set_fd(ssl, sockfd);
 	if (err < 1)
 	{
 		std::ostringstream out;
@@ -1046,7 +1035,7 @@ int 	pqissl::SSL_Connection_Complete()
 			out.str());
 
 		// attempt real error.
-                //Extract_Failed_SSL_Certificate();
+		Extract_Failed_SSL_Certificate();
 
 		reset();
 		waiting = WAITING_FAIL_INTERFACE;
@@ -1073,7 +1062,7 @@ int 	pqissl::Extract_Failed_SSL_Certificate()
 	// Get the Peer Certificate....
 	X509 *peercert = SSL_get_peer_certificate(ssl_connection);
 
-        if (peercert == NULL)
+	if (peercert == NULL)
 	{
   		rslog(RSL_WARNING, pqisslzone, 
 		  "pqissl::Extract_Failed_SSL_Certificate() Peer Didnt Give Cert");
@@ -1081,14 +1070,14 @@ int 	pqissl::Extract_Failed_SSL_Certificate()
 	}
 
   	rslog(RSL_DEBUG_BASIC, pqisslzone, 
-          "pqissl::Extract_Failed_SSL_Certificate() Have Peer Cert - (Not) Registering (anymore)");
+	  "pqissl::Extract_Failed_SSL_Certificate() Have Peer Cert - Registering");
 
 	// save certificate... (and ip locations)
 	// false for outgoing....
 	// we actually connected to remote_addr, 
 	// 	which could be 
 	//      (pqissl's case) sslcert->serveraddr or sslcert->localaddr.
-        //AuthSSL::getAuthSSL()->FailedCertificate(peercert, false);
+        AuthSSL::getAuthSSL()->FailedCertificate(peercert, false);
 
 	return 1;
 }
@@ -1099,9 +1088,9 @@ int 	pqissl::Extract_Failed_SSL_Certificate()
 int 	pqissl::Authorise_SSL_Connection()
 {
   	rslog(RSL_DEBUG_BASIC, pqisslzone, 
-          "pqissl::Authorise_SSL_Connection()");
+	  "pqissl::Authorise_SSL_Connection()");
 
-        if (time(NULL) > mTimeoutTS)
+        if (time(NULL) > ssl_connect_timeout)
         {
 		rslog(RSL_DEBUG_BASIC, pqisslzone,
 			"pqissl::Authorise_SSL_Connection() Connection Timed Out!");
@@ -1114,8 +1103,6 @@ int 	pqissl::Authorise_SSL_Connection()
 	{
 		return err;
 	}
-
-        stoplistening();
 
   	rslog(RSL_DEBUG_BASIC, pqisslzone, 
 	  "pqissl::Authorise_SSL_Connection() SSL_Connection_Complete");
@@ -1149,8 +1136,38 @@ int 	pqissl::Authorise_SSL_Connection()
   	rslog(RSL_DEBUG_BASIC, pqisslzone, 
 	  "pqissl::Authorise_SSL_Connection() Have Peer Cert");
 
-        accept(ssl_connection, sockfd, remote_addr);
-        return 1;
+	// save certificate... (and ip locations)
+	// false for outgoing....
+	// we actually connected to remote_addr, 
+	// 	which could be 
+	//      (pqissl's case) sslcert->serveraddr or sslcert->localaddr.
+
+	AuthSSL::getAuthSSL()->CheckCertificate(PeerId(), peercert);
+	bool certCorrect = true; /* WE know it okay already! */
+
+	// check it's the right one.
+	if (certCorrect)
+	{
+		// then okay...
+		std::ostringstream out;
+	  	out << "pqissl::Authorise_SSL_Connection() Accepting Conn. Peer: " << PeerId();
+  		rslog(RSL_WARNING, pqisslzone, out.str());
+
+		accept(ssl_connection, sockfd, remote_addr);
+		return 1;
+	}
+
+	{
+		std::ostringstream out;
+	  	out << "pqissl::Authorise_SSL_Connection() Something Wrong ... ";
+		out << " Shutdown. Peer: " << PeerId();
+  		rslog(RSL_WARNING, pqisslzone, out.str());
+	}
+
+	// else shutdown ssl connection.
+
+	reset();
+	return 0;
 }
 
 int	pqissl::accept(SSL *ssl, int fd, struct sockaddr_in foreign_addr) // initiate incoming connection.
@@ -1343,7 +1360,6 @@ int 	pqissl::senddata(void *data, int len)
 			out << std::endl;
 			std::cerr << out.str() ;
 			rslog(RSL_ALERT, pqisslzone, out.str());
-                        quietShutdown = true;
 			reset();
 			return -1;
 		}
@@ -1447,7 +1463,6 @@ int 	pqissl::readdata(void *data, int len)
 				if (PQISSL_MAX_READ_ZERO_COUNT < n_read_zero)
 				{
 					out << "Count passed Limit, shutting down!";
-                                        quietShutdown = true;
 					reset();
 				}
 
@@ -1464,8 +1479,7 @@ int 	pqissl::readdata(void *data, int len)
 				out << "Socket Closed Abruptly.... Resetting PQIssl";
 				out << std::endl;
 				rslog(RSL_ALERT, pqisslzone, out.str());
-                                quietShutdown = true;
-                                reset();
+				reset();
 				std::cerr << out.str() << std::endl ;
 				return -1;
 			}
@@ -1605,7 +1619,7 @@ bool 	pqissl::moretoread()
 bool 	pqissl::cansend()
 {
         if (n_read_zero > 0) {
-        rslog(RSL_DEBUG_ALL, pqisslzone,
+        rslog(RSL_ALERT, pqisslzone,
                 "pqissl::cansend() read socket returns 0, so we don't wanna send know.");
             return false;
         }

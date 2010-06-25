@@ -177,7 +177,7 @@ virtual int net_internal_fcntl_nonblock(int fd) { return unix_fcntl_nonblock(fd)
 	int pktlen;
 	int total_len ; // saves the reading state accross successive calls.
 
-        //int attempt_ts;
+	int attempt_ts;
 
 	// Some flags to indicate
 	// the status of the various interfaces
@@ -190,13 +190,12 @@ virtual int net_internal_fcntl_nonblock(int fd) { return unix_fcntl_nonblock(fd)
 
 	int n_read_zero; /* a counter to determine if the connection is really dead */
 
-        //int ssl_connect_timeout; /* timeout to ensure that we don't get stuck (can happen on udp!) */
+	int ssl_connect_timeout; /* timeout to ensure that we don't get stuck (can happen on udp!) */
 
 	uint32_t mConnectDelay;
 	time_t   mConnectTS;
 	uint32_t mConnectTimeout;
 	time_t   mTimeoutTS;
-        bool quietShutdown;
 
 	p3ConnectMgr *mConnMgr;
 

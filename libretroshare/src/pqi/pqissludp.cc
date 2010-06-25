@@ -253,7 +253,7 @@ int 	pqissludp::Basic_Connection_Complete()
 	{
 		std::ostringstream out;
 	  	out << "pqissludp::Basic_Connection_Complete() Connection Timed Out. ";
-                out << "Peer: " << PeerId() << " Timeout: ";
+		out << "Peer: " << PeerId() << " Period: ";
 		out << mConnectTimeout;
 
 		rslog(RSL_WARNING, pqissludpzone, out.str());
@@ -411,25 +411,11 @@ bool 	pqissludp::connect_parameter(uint32_t type, uint32_t value)
 		std::ostringstream out;
 		out << "pqissludp::connect_parameter() Peer: " << PeerId() << " PERIOD: " << value;
 		rslog(RSL_WARNING, pqissludpzone, out.str());
+
 		mConnectPeriod = value;
 		return true;
-        }else if (type == NET_PARAM_CONNECT_DELAY)
-        {
-                std::ostringstream out;
-                out << "pqissludp::connect_parameter() Peer: " << PeerId() << " DELAY: " << value;
-                rslog(RSL_WARNING, pqissludpzone, out.str());
-                mConnectDelay = value;
-                return true;
-        }
-        else if (type == NET_PARAM_CONNECT_TIMEOUT)
-        {
-                std::ostringstream out;
-                out << "pqissludp::connect_parameter() Peer: " << PeerId() << " TIMEOUT: " << value;
-                rslog(RSL_WARNING, pqissludpzone, out.str());
-                mConnectTimeout = value;
-                return true;
-        }
-        return pqissl::connect_parameter(type, value);
+	}
+	return pqissl::connect_parameter(type, value);
 }
 
 /********** PQI STREAMER OVERLOADING *********************************/
