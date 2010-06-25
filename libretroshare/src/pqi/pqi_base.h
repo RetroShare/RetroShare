@@ -139,7 +139,6 @@ virtual int	notifyEvent(NetInterface *ni, int event) { return 0; }
 const uint32_t PQI_CONNECT_TCP = 0x0001;
 const uint32_t PQI_CONNECT_UDP = 0x0002;
 const uint32_t PQI_CONNECT_TUNNEL = 0x0003;
-const uint32_t PQI_CONNECT_DO_NEXT_ATTEMPT = 0x0004;
 
 
 #define BIN_FLAGS_NO_CLOSE  0x0001
@@ -218,9 +217,6 @@ static const int NET_CONNECT_FAILED       = 5;
 static const uint32_t NET_PARAM_CONNECT_DELAY   = 1;
 static const uint32_t NET_PARAM_CONNECT_PERIOD  = 2;
 static const uint32_t NET_PARAM_CONNECT_TIMEOUT = 3;
-//static const uint32_t NET_PARAM_CONNECT_TUNNEL_SOURCE_PEER_ID   = 4;
-//static const uint32_t NET_PARAM_CONNECT_TUNNEL_RELAY_PEER_ID   = 5;
-//static const uint32_t NET_PARAM_CONNECT_TUNNEL_DEST_PEER_ID   = 6;
 
 
 /*!
