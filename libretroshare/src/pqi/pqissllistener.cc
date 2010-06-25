@@ -213,7 +213,8 @@ int	pqissllistenbase::setuplisten()
 		pqioutput(PQL_ALERT, pqissllistenzone, out.str());
                 std::cerr << out.str() << std::endl;
 
-		 exit(1) ;
+		exit(1); 
+		return -1;
 	}
 	else
 	{
@@ -231,6 +232,7 @@ int	pqissllistenbase::setuplisten()
 		pqioutput(PQL_ALERT, pqissllistenzone, out.str());
 		std::cerr << out.str() << std::endl;
 
+		exit(1); 
 		return -1;
 	}
 	else
@@ -391,7 +393,7 @@ int	pqissllistenbase::continueSSL(SSL *ssl, struct sockaddr_in remote_addr, bool
 		}
 
 		/* we have failed -> get certificate if possible */
-                //Extract_Failed_SSL_Certificate(ssl, &remote_addr);
+		Extract_Failed_SSL_Certificate(ssl, &remote_addr);
 
 		// other wise delete ssl connection.
 		// kill connection....
@@ -470,11 +472,11 @@ int 	pqissllistenbase::Extract_Failed_SSL_Certificate(SSL *ssl, struct sockaddr_
 	}
 
   	pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, 
-          "pqissllistenbase::Extract_Failed_SSL_Certificate() Have Peer Cert - (Not) Registering (Anymore)");
+	  "pqissllistenbase::Extract_Failed_SSL_Certificate() Have Peer Cert - Registering");
 
 	// save certificate... (and ip locations)
 	// false for outgoing....
-        //AuthSSL::getAuthSSL()->FailedCertificate(peercert, true);
+        AuthSSL::getAuthSSL()->FailedCertificate(peercert, true);
 
 	return 1;
 }
@@ -656,15 +658,9 @@ int pqissllistener::completeConnection(int fd, SSL *ssl, struct sockaddr_in &rem
 		 	out << "\tagainst: " << it->first << std::endl;
 			if (it -> first == newPeerId)
 			{
+				// accept even if already connected.
 		 	        out << "\t\tMatch!";
-                                //check if peer is not already connected
-                                peerConnectState pcs;
-                                if (mConnMgr->getFriendNetStatus(newPeerId, pcs) && (pcs.state & RS_PEER_CONNECTED && !(pcs.connecttype & RS_NET_CONN_TUNNEL))) {
-                                    out << "\t\tPeer is already connected !";
-                                    break;
-                                } else {
-                                    found = true;
-                                }
+                                found = true;
 			}
 			else
 			{
@@ -675,15 +671,25 @@ int pqissllistener::completeConnection(int fd, SSL *ssl, struct sockaddr_in &rem
   	        pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, out.str());
 	}
 	
-        if (found == false) {
-            std::ostringstream out;
-            out << "Don't accept connection because friend is not found or (probably) already connected";
-            out << " for Connection:" << inet_ntoa(remote_addr.sin_addr);
-            out << std::endl;
-            out << "pqissllistenbase: Will shut it down!" << std::endl;
-            pqioutput(PQL_WARNING, pqissllistenzone, out.str());
-            X509_free(peercert);
-            return -1;
+	if (found == false)
+	{
+		std::ostringstream out;
+		out << "No Matching Certificate";
+		out << " for Connection:" << inet_ntoa(remote_addr.sin_addr);
+		out << std::endl;
+		out << "pqissllistenbase: Will shut it down!" << std::endl;
+  	        pqioutput(PQL_WARNING, pqissllistenzone, out.str());
+
+		// but as it passed the authentication step, 
+		// we can add it into the AuthSSL, and mConnMgr.
+
+		AuthSSL::getAuthSSL()->CheckCertificate(newPeerId, peercert);
+
+		/* now need to get GPG id too */
+		//mConnMgr->addPeer(newPeerId);
+
+		X509_free(peercert);
+		return -1;
 	}
 
 	pqissl *pqis = it -> second;
