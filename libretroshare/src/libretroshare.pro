@@ -24,6 +24,7 @@ testnetwork {
 	#DEFINES *= DEBUG_UDP_SORTER DEBUG_UDP_LAYER EXTADDRSEARCH_DEBUG
 
         QMAKE_CXXFLAGS -= -fomit-frame-pointer
+        QMAKE_CXXFLAGS -= -O2 
         QMAKE_CXXFLAGS *= -g -fno-omit-frame-pointer
 }
 
@@ -40,7 +41,7 @@ debug {
 #	DEFINES *= P3TURTLE_DEBUG FT_DEBUG DEBUG_FTCHUNK MPLEX_DEBUG
 #	DEFINES *= STATUS_DEBUG SERV_DEBUG RSSERIAL_DEBUG #CONN_DEBUG 
 
-        QMAKE_CXXFLAGS -= -fomit-frame-pointer
+        QMAKE_CXXFLAGS -= -O2 -fomit-frame-pointer
         QMAKE_CXXFLAGS *= -g -fno-omit-frame-pointer
 }
 
@@ -242,8 +243,6 @@ HEADERS += dbase/cachestrapper.h \
            pqi/pqisslpersongrp.h \
            pqi/pqissludp.h \
            pqi/pqistreamer.h \
-           pqi/sslcert.h \
-           pqi/xpgpcert.h \
            rsiface/rschannels.h \
            rsiface/rsdisc.h \
            rsiface/rsdistrib.h \
@@ -326,9 +325,11 @@ HEADERS += dbase/cachestrapper.h \
            util/rswin.h \
            util/rsversion.h 
 
+# These are test programs.... how did they get into the src list???
+#			dht/dht_check_peers.cc \
+#			dht/dht_bootstrap.cc \
+
 SOURCES += \
-				dht/dht_check_peers.cc \
-				dht/dht_bootstrap.cc \
 				rsserver/p3face-msgs.cc \
 				rsserver/rsiface.cc \
 				rsserver/rstypes.cc \
@@ -365,7 +366,7 @@ SOURCES += \
 				services/p3distrib.cc \
 				services/p3photoservice.cc \
 				services/p3disc.cc \
-				services/p3tunnel.cc \
+# removed because getPeer() dont exist		services/p3tunnel.cc \
 				services/p3ranking.cc \
 				services/p3gamelauncher.cc \
 				services/p3msgservice.cc \

@@ -660,7 +660,7 @@ void p3disc::recvHeartbeatMsg(RsDiscHeartbeat *item)
         std::cerr << std::endl;
 #endif
 
-        mPqiPersonGrp->getPeer(item->PeerId())->receiveHeartbeat();
+        mPqiPersonGrp->tagHeartbeatRecvd(item->PeerId());
 
         return;
 }
