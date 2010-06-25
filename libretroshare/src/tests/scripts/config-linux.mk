@@ -11,7 +11,7 @@ endif
 
 # Need to define miniupnpc version because API  changed a little between v1.0 and 1.2
 # put 10 for 1.0 and 12 for 1.2
-#DEFINES += -DMINIUPNPC_VERSION=10
+DEFINES += -D_FILE_OFFSET_BITS=64
 
 include $(RS_TOP_DIR)/tests/scripts/checks.mk
 
