@@ -699,7 +699,18 @@ bool    CacheStrapper::findCache(std::string hash, CacheData &data) const
 	return false;
 }
 	
+bool CacheStrapper::CacheExist(CacheData& data){
 	
+	std::string filename = data.path + "/" + data.name;
+	FILE* file = NULL;
+	file = fopen(filename.c_str(), "r");
+
+	if(file == NULL)
+		return false;
+
+	fclose(file);
+	return true;
+}
 
 /***************************************************************************/
 /****************************** CONFIGURATION HANDLING *********************/
@@ -746,7 +757,8 @@ std::list<RsItem *> CacheStrapper::saveList(bool &cleanup)
 
 		for(tit = ownTmp.begin(); tit != ownTmp.end(); tit++)
 		{
-			ownCaches.push_back(tit->second);
+			if(CacheExist(tit->second))
+				ownCaches.push_back(tit->second);
 		}
 	}
 

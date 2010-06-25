@@ -304,6 +304,12 @@ bool    findCache(std::string hash, CacheData &data) const;
 void 	listCaches(std::ostream &out);
 void 	listPeerStatus(std::ostream &out);
 
+/**
+ * Checks if the cache physically exist at path given
+ * @param data
+ * @return whether it exists or not
+ */
+bool 	CacheExist(CacheData& data);
 
 	/* Config */
         protected:
