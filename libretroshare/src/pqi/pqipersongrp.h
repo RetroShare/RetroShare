@@ -67,13 +67,15 @@ virtual void    statusChange(const std::list<pqipeer> &plist);
 
 	/******************* Peer Control **************************/
 virtual int addPeer(std::string id); /* can be overloaded for testing */
-virtual pqiperson *getPeer(std::string id); /* can be overloaded for testing */
 int     removePeer(std::string id);
 int     connectPeer(std::string id);
 
+	/* Work-around to dodgy pointer stuff */
+int	tagHeartbeatRecvd(std::string id);
+
 	/*** callback from children ****/
 bool    notifyConnect(std::string id, uint32_t type, bool success, struct sockaddr_in remote_peer_address);
-bool    notifyConnect(std::string id, uint32_t type, bool success);
+//bool    notifyConnect(std::string id, uint32_t type, bool success);
 
 	// tick interfaces.
 virtual int tick();

@@ -81,7 +81,6 @@ int     pqiperson::SendItem(RsItem *i)
 		out << " Now deleting...";
 		delete i;
 	}
-
 	pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
 	return 0; // queued.	
 }
@@ -173,7 +172,7 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 	}
 
 	/* find the pqi, */
-        pqiconnect *pqi = NULL;
+	pqiconnect *pqi = NULL;
 	uint32_t    type = 0;
 	std::map<uint32_t, pqiconnect *>::iterator it;
 		
@@ -184,16 +183,16 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 	 	std::ostringstream out;
 	  	out << "pqiperson::connectattempt() Kid# ";
 	  	out << i << " of " << kids.size();
-                out << std::endl;
-                out << " type: " << (it->first);
+	  	out << std::endl;
+		out << " type: " << (it->first);
 		out << " ni: " << (it->second)->ni;
 		out << " in_ni: " << ni;
 	  	pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
-                i++;
+		i++;
 
 		if ((it->second)->thisNetInterface(ni))
 		{
-                        pqi = (it->second);
+			pqi = (it->second);
 			type = (it->first);
 		}
 	}
@@ -203,6 +202,7 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 	  pqioutput(PQL_WARNING, pqipersonzone, "Unknown notfyEvent Source!");
 	  return -1;
 	}
+		
 
 	switch(newState)
 	{
@@ -233,11 +233,11 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 
 	  		pqioutput(PQL_WARNING, pqipersonzone, 
 				"CONNECT_SUCCESS->marking so! (resetting others)");
-                        // mark as active.
+			// mark as active.
 			active = true;
                         lastHeartbeatReceived = 0;
 			activepqi = pqi;
-                        inConnectAttempt = false;
+	  		inConnectAttempt = false;
 
 			/* reset all other children? (clear up long UDP attempt) */
 			for(it = kids.begin(); it != kids.end(); it++)
@@ -262,7 +262,7 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 
 		if (active)
 		{
-                        if (activepqi->thisNetInterface(ni))
+			if (activepqi == pqi)
 			{
 	  			pqioutput(PQL_WARNING, pqipersonzone, 
 					"CONNECT_FAILED->marking so!");
@@ -280,14 +280,12 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 		}
 
 		/* notify up (But not if we are actually active: rtn -1 case above) */
-                if (!active) {
-                    if (pqipg)
-                            pqipg->notifyConnect(PeerId(), type, false);
-                } else {
-                     if (pqipg)
-                           pqipg->notifyConnect(PeerId(), PQI_CONNECT_DO_NEXT_ATTEMPT, false);
-                    return -1;
-                }
+		if (pqipg)
+		{
+                        struct sockaddr_in raddr;
+			sockaddr_clear(&raddr);
+			pqipg->notifyConnect(PeerId(), type, false, raddr);
+		}
 
 		return 1;
 

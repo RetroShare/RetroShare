@@ -290,7 +290,6 @@ void    pqipersongrp::statusChange(const std::list<pqipeer> &plist)
 
 		if (it->actions & RS_PEER_CONNECT_REQ)
 		{
-
 			connectPeer(it->id);
 		}
 	  }
@@ -366,6 +365,7 @@ int     pqipersongrp::removePeer(std::string id)
 		//RemoveSearchModule(mod);
 		secpolicy_delete(mod -> sp);
 		pqiperson *p = (pqiperson *) mod -> pqi;
+		p -> stoplistening();
 		p -> reset();
 		delete p;
 		mods.erase(it);
@@ -373,26 +373,32 @@ int     pqipersongrp::removePeer(std::string id)
 	return 1;
 }
 
-pqiperson     *pqipersongrp::getPeer(std::string id)
+int pqipersongrp::tagHeartbeatRecvd(std::string id)
 {
-	std::map<std::string, SearchModule *>::iterator it;
+        std::map<std::string, SearchModule *>::iterator it;
 
 #ifdef PGRP_DEBUG
-	std::cerr << " pqipersongrp::getPeer() id: " << id;
-	std::cerr << std::endl;
+        std::cerr << " pqipersongrp::tagHeartbeatRecvd() id: " << id;
+        std::cerr << std::endl;
 #endif
 
-	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+        RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
-	it = mods.find(id);
-	if (it != mods.end())
-	{
-		SearchModule *mod = it->second;
-		pqiperson *p = (pqiperson *) mod -> pqi;
-		return p;
-	}
-	return NULL;
+        it = mods.find(id);
+        if (it != mods.end())
+        {
+                SearchModule *mod = it->second;
+                pqiperson *p = (pqiperson *) mod -> pqi;
+		p->receiveHeartbeat();
+		return 1;
+        }
+        return 0;
 }
+
+
+
+
+
 
 int     pqipersongrp::connectPeer(std::string id)
 {
@@ -489,16 +495,9 @@ int     pqipersongrp::connectPeer(std::string id)
 	return 1;
 }
 
-bool    pqipersongrp::notifyConnect(std::string id, uint32_t ptype, bool success) {
-    struct sockaddr_in remote_peer_address;
-    sockaddr_clear(&remote_peer_address);
-
-	return notifyConnect(id, ptype, success, remote_peer_address);
-}
-
-bool    pqipersongrp::notifyConnect(std::string id, uint32_t ptype, bool success, struct sockaddr_in remote_peer_address)
+bool    pqipersongrp::notifyConnect(std::string id, uint32_t ptype, bool success, struct sockaddr_in raddr)
 {
-        uint32_t type = 0;
+	uint32_t type = 0;
 	if (ptype == PQI_CONNECT_TCP)
 	{
 		type = RS_NET_CONN_TCP_ALL;
@@ -512,13 +511,9 @@ bool    pqipersongrp::notifyConnect(std::string id, uint32_t ptype, bool success
 		type = RS_NET_CONN_TUNNEL;
 	}
 
-        if (mConnMgr) {
-           if (ptype == PQI_CONNECT_DO_NEXT_ATTEMPT) {
-                        mConnMgr->doNextAttempt(id);
-            } else {
-                        mConnMgr->connectResult(id, success, type, remote_peer_address);
-            }
-        }
+	
+	if (mConnMgr)
+		mConnMgr->connectResult(id, success, type, raddr);
 	
 	return (NULL != mConnMgr);
 }
