@@ -269,7 +269,7 @@ void	removeMonitor(pqiMonitor *mon);
 
 	/******* overloaded from pqiConnectCb *************/
 virtual void    peerStatus(std::string id, 
-			struct sockaddr_in laddr, struct sockaddr_in raddr, std::list<IpAddressTimed> ipAddressList,
+			struct sockaddr_in laddr, struct sockaddr_in raddr, 
                         uint32_t type, uint32_t flags, uint32_t source);
 virtual void    peerConnectRequest(std::string id, 
 			struct sockaddr_in raddr, uint32_t source);

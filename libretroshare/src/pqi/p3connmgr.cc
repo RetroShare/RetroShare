@@ -1821,9 +1821,12 @@ bool p3ConnectMgr::doNextAttempt(std::string id)
 
 
 void    p3ConnectMgr::peerStatus(std::string id, 
-			struct sockaddr_in laddr, struct sockaddr_in raddr, std::list<IpAddressTimed> ipDiscAddressList,
+			struct sockaddr_in laddr, struct sockaddr_in raddr, 
                        uint32_t type, uint32_t flags, uint32_t source)
 {
+	/* HACKED UP FIX ****/
+
+	std::list<IpAddressTimed> ipDiscAddressList;
         std::map<std::string, peerConnectState>::iterator it;
 	bool isFriend = true;
 
