@@ -101,22 +101,28 @@ bool p3Notify::NotifyPopupMessage(uint32_t &ptype, std::string &name, std::strin
 	/* Control over Messages */
 bool p3Notify::GetSysMessageList(std::map<uint32_t, std::string> &list)
 {
+	(void) list; /* suppress unused parameter warning */	
 	return false;
 }
 
 bool p3Notify::GetPopupMessageList(std::map<uint32_t, std::string> &list)
 {
+	(void) list; /* suppress unused parameter warning */	
 	return false;
 }
 
 
 bool p3Notify::SetSysMessageMode(uint32_t sysid, uint32_t mode)
 {
+	(void) sysid; /* suppress unused parameter warning */	
+	(void) mode; /* suppress unused parameter warning */	
 	return false;
 }
 
 bool p3Notify::SetPopupMessageMode(uint32_t ptype, uint32_t mode)
 {
+	(void) ptype; /* suppress unused parameter warning */	
+	(void) mode; /* suppress unused parameter warning */	
 	return false;
 }
 

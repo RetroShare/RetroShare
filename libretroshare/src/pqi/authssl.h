@@ -99,9 +99,6 @@ virtual bool	active();
 virtual int	InitAuth(const char *srvr_cert, const char *priv_key, 
 					const char *passwd);
 virtual bool	CloseAuth();
-virtual int     setConfigDirectories(std::string confFile, std::string neighDir);
-SSL_CTX *	getNewSslCtx();
-
 
 	/*********** Overloaded Functions from p3AuthMgr **********/
 	
@@ -120,51 +117,32 @@ virtual	std::string getOwnLocation();
 //virtual std::string getGPGId(SSL_id id);
 //virtual bool    getCertDetails(std::string id, sslcert &cert);
 
-	/* High Level Load/Save Configuration */
-//virtual bool FinalSaveCertificates();
-//virtual bool CheckSaveCertificates();
-//virtual bool saveCertificates();
-//virtual bool loadCertificates();
-
 	/* Load/Save certificates */
-
-virtual bool LoadDetailsFromStringCert(std::string pem, RsPeerDetails &pd);
 virtual	std::string SaveOwnCertificateToString();
-virtual std::string ConvertCertificateToString(X509* x509);
-//virtual bool LoadCertificateFromFile(std::string filename, std::string &id);
-//virtual bool SaveCertificateToFile(std::string id, std::string filename);
-//bool 	ProcessX509(X509 *x509, std::string &id);
-//
-//virtual bool LoadCertificateFromBinary(const uint8_t *ptr, uint32_t len, std::string &id);
-//virtual	bool SaveCertificateToBinary(std::string id, uint8_t **ptr, uint32_t *len);
 	
-	/* Sign / Encrypt / Verify Data (TODO) */
-virtual bool 	SignData(std::string input, std::string &sign);
-virtual bool 	SignData(const void *data, const uint32_t len, std::string &sign);
-virtual bool 	SignDataBin(std::string, unsigned char*, unsigned int*);
-virtual bool    SignDataBin(const void*, uint32_t, unsigned char*, unsigned int*);
-virtual bool    VerifySignBin(const void*, uint32_t, unsigned char*, unsigned int, sslcert* cert);
-virtual bool    VerifyOwnSignBin(const void*, uint32_t, unsigned char*, unsigned int);
-virtual bool    VerifyOtherSignBin(const void*, uint32_t, unsigned char*, unsigned int, std::string sslCert);
+	/* Sign / Encrypt / Verify Data */
+bool 	SignData(std::string input, std::string &sign);
+bool 	SignData(const void *data, const uint32_t len, std::string &sign);
+
+bool 	SignDataBin(std::string, unsigned char*, unsigned int*);
+bool    SignDataBin(const void*, uint32_t, unsigned char*, unsigned int*);
+bool    VerifyOwnSignBin(const void*, uint32_t, unsigned char*, unsigned int);
+bool	VerifySignBin(const void *data, const uint32_t len,
+                        unsigned char *sign, unsigned int signlen, SSL_id sslId);
 
 // return : false if encrypt failed
 bool     encrypt(void *&out, int &outlen, const void *in, int inlen, std::string peerId);
-
 // return : false if decrypt fails
 bool     decrypt(void *&out, int &outlen, const void *in, int inlen);
 
 
-	/*********** Overloaded Functions from p3AuthMgr **********/
-
-	/************* Virtual Functions from AuthSSL *************/
-X509* 	SignX509Req(X509_REQ *req, long days);
-bool 	AuthX509(X509 *x509);
+X509* 	SignX509ReqWithGPG(X509_REQ *req, long days);
+bool 	AuthX509WithGPG(X509 *x509);
 
 
-virtual int 	VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx);
-virtual bool 	ValidateCertificate(X509 *x509, std::string &peerId); /* validate + get id */
+int 	VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx);
+bool 	ValidateCertificate(X509 *x509, std::string &peerId); /* validate + get id */
 
-	/************* Virtual Functions from AuthSSL *************/
 
 /*****************************************************************/
 /***********************  p3config  ******************************/
@@ -181,9 +159,6 @@ SSL_CTX *getCTX();
 bool 	FailedCertificate(X509 *x509, bool incoming);     /* store for discovery */
 bool 	CheckCertificate(std::string peerId, X509 *x509); /* check that they are exact match */
 
-	/* Special Config Loading (backwards compatibility) */
-//bool  	loadCertificates(bool &oldFormat, std::map<std::string, std::string> &keyValueMap);
-
   static AuthSSL *getAuthSSL() throw() // pour obtenir l'instance
       { return instance_ssl; }
 
@@ -192,61 +167,28 @@ bool 	CheckCertificate(std::string peerId, X509 *x509); /* check that they are e
         // the single instance of this
         static AuthSSL *instance_ssl;
 
-	/* Helper Functions */
-X509 *	loadX509FromPEM(std::string pem);
-X509 *	loadX509FromFile(std::string fname, std::string hash);
-bool    saveX509ToFile(X509 *x509, std::string fname, std::string &hash);
-
-X509 *	loadX509FromDER(const uint8_t *ptr, uint32_t len);
-bool 	saveX509ToDER(X509 *x509, uint8_t **ptr, uint32_t *len);
 bool    LocalStoreCert(X509* x509);
+bool 	RemoveX509(std::string id);
 
 	/*********** LOCKED Functions ******/
-//bool 	locked_FindCert(std::string id, sslcert **cert);
-
+bool 	locked_FindCert(std::string id, sslcert **cert);
 
 	/* Data */
-        RsMutex sslMtx;  /**** LOCKING */
-
-	int init;
-	std::string mCertConfigFile;
-	std::string mNeighDir;
-
+	/* these variables are constants -> don't need to protect */
 	SSL_CTX *sslctx;
-
 	std::string mOwnId;
 	sslcert *mOwnCert;
-        EVP_PKEY *own_private_key;
-        EVP_PKEY *own_public_key;
+
+        RsMutex sslMtx;  /* protects all below */
+
+
+        EVP_PKEY *mOwnPrivateKey;
+        EVP_PKEY *mOwnPublicKey;
+
+	int init;
 
         std::map<std::string, sslcert *> mCerts;
 
 };
-
-X509_REQ *GenerateX509Req(
-                std::string pkey_file, std::string passwd,
-                std::string name, std::string email, std::string org,
-                std::string loc, std::string state, std::string country,
-                int nbits_in, std::string &errString);
-
-X509 *SignX509Certificate(X509_NAME *issuer, EVP_PKEY *privkey, X509_REQ *req, long days);
-
-
-/* Helper Functions */
-int printSSLError(SSL *ssl, int retval, int err, unsigned long err2, std::ostream &out);
-std::string getX509NameString(X509_NAME *name);
-std::string getX509CNString(X509_NAME *name);
-
-std::string getX509OrgString(X509_NAME *name);
-std::string getX509LocString(X509_NAME *name);
-std::string getX509CountryString(X509_NAME *name);
-
-std::string getX509Info(X509 *cert);
-bool 	getX509id(X509 *x509, std::string &xid);
-
-int     LoadCheckX509andGetIssuerName(const char *cert_file, 
-			std::string &issuerName, std::string &userId);
-int     LoadCheckX509andGetLocation(const char *cert_file,
-                        std::string &location, std::string &userId);
 
 #endif // MRK_AUTH_SSL_HEADER

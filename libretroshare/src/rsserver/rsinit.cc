@@ -44,6 +44,7 @@
 #include <signal.h>
 
 #include "pqi/authssl.h"
+#include "pqi/sslfns.h"
 #include "pqi/authgpg.h"
 
 class accountId
@@ -795,16 +796,15 @@ static bool checkAccount(std::string accountdir, accountId &id)
 	bool ret = false;
 
 	/* check against authmanagers private keys */
-        LoadCheckX509andGetLocation(cert_name.c_str(), id.location, id.sslId);
-        #ifdef AUTHSSL_DEBUG
-        std::cerr << "location: " << id.location << " id: " << id.sslId << std::endl;
-        #endif
-
-        std::string tmpid;
-        if (LoadCheckX509andGetIssuerName(cert_name.c_str(), id.pgpId, tmpid))
+        if (LoadCheckX509(cert_name.c_str(), id.pgpId, id.location, id.sslId))
         {
+        	#ifdef AUTHSSL_DEBUG
+        	std::cerr << "location: " << id.location << " id: " << id.sslId << std::endl;
+        	#endif
+
+
                 #ifdef GPG_DEBUG
-                std::cerr << "issuerName: " << id.pgpId << " id: " << tmpid << std::endl;
+                std::cerr << "issuerName: " << id.pgpId << " id: " << id.sslId << std::endl;
                 #endif
                 RsInit::GetPGPLoginDetails(id.pgpId, id.pgpName, id.pgpEmail);
                 #ifdef GPG_DEBUG
@@ -936,7 +936,7 @@ bool     RsInit::GenerateSSLCertificate(std::string gpg_id, std::string org, std
 			nbits, errString);
 
 	long days = 3000;
-        X509 *x509 = AuthSSL::getAuthSSL()->SignX509Req(req, days);
+        X509 *x509 = AuthSSL::getAuthSSL()->SignX509ReqWithGPG(req, days);
 
 	X509_REQ_free(req);
 	if (x509 == NULL) {
@@ -1001,7 +1001,8 @@ bool     RsInit::GenerateSSLCertificate(std::string gpg_id, std::string org, std
 	/* try to load it, and get Id */
 
         std::string location;
-        if (LoadCheckX509andGetLocation(cert_name.c_str(), location, sslId) == 0) {
+        std::string gpgid;
+        if (LoadCheckX509(cert_name.c_str(), gpgid, location, sslId) == 0) {
             std::cerr << "RsInit::GenerateSSLCertificate() Cannot check own signature, maybe the files are corrupted." << std::endl;
             return false;
         }
@@ -1951,28 +1952,15 @@ int RsServer::StartupRetroShare()
 	// Load up Certificates, and Old Configuration (if present)
         std::cerr << "Load up Certificates, and Old Configuration (if present)." << std::endl;
 
-	std::string certConfigFile = RsInitConfig::configDir.c_str();
-	std::string certNeighDir   = RsInitConfig::configDir.c_str();
 	std::string emergencySaveDir = RsInitConfig::configDir.c_str();
 	std::string emergencyPartialsDir = RsInitConfig::configDir.c_str();
-	if (certConfigFile != "")
+	if (emergencySaveDir != "")
 	{
-		certConfigFile += "/";
-		certNeighDir += "/";
 		emergencySaveDir += "/";
 		emergencyPartialsDir += "/";
 	}
-	certConfigFile += configConfFile;
-	certNeighDir +=   configCertDir;
 	emergencySaveDir += "Downloads";
 	emergencyPartialsDir += "Partials";
-
-	/* if we've loaded an old format file! */
-	std::map<std::string, std::string> oldConfigMap;
-
-        AuthSSL::getAuthSSL() -> setConfigDirectories(certConfigFile, certNeighDir);
-
-        //AuthSSL::getAuthSSL() -> loadCertificates();
 
 	/**************************************************************************/
 	/* setup classes / structures */

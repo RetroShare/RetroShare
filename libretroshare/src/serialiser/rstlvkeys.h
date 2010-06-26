@@ -95,7 +95,7 @@ virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
 	std::string keyId;		// Mandatory :
         RsTlvBinaryData signData; 	// Mandatory :
-        std::string sslCert;               // Mandatory :
+	// NO Certificates in Signatures... add as separate data type.
 };
 
 

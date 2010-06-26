@@ -210,6 +210,7 @@ HEADERS += dbase/cachestrapper.h \
            ft/ftserver.h \
            ft/fttransfermodule.h \
 #	   ft/ftdwlqueue.h \
+	   pqi/sslfns.h \
            pqi/authssl.h \
            pqi/authgpg.h \
            pqi/cleanupxpgp.h \
@@ -330,6 +331,32 @@ HEADERS += dbase/cachestrapper.h \
 #			dht/dht_bootstrap.cc \
 
 SOURCES += \
+	   			pqi/sslfns.cc \
+				pqi/authssl.cc \
+				pqi/authgpg.cc \
+				pqi/cleanupxpgp.cc \
+				pqi/p3notify.cc \
+				pqi/pqipersongrp.cc \
+				pqi/pqihandler.cc \
+				pqi/pqiservice.cc \
+				pqi/pqiperson.cc \
+				pqi/pqissludp.cc \
+				pqi/pqisslpersongrp.cc \
+				pqi/pqissllistener.cc \
+				pqi/pqissl.cc \
+                                pqi/pqissltunnel.cc \
+				pqi/pqistore.cc \
+#				pqi/p3authmgr.cc \
+				pqi/p3cfgmgr.cc \
+				pqi/p3connmgr.cc \
+				pqi/p3dhtmgr.cc \
+				pqi/pqiarchive.cc \
+				pqi/pqibin.cc \
+				pqi/pqimonitor.cc \
+				pqi/pqistreamer.cc \
+				pqi/pqiloopback.cc \
+				pqi/pqinetwork.cc \
+				pqi/pqisecurity.cc \
 				rsserver/p3face-msgs.cc \
 				rsserver/rsiface.cc \
 				rsserver/rstypes.cc \
@@ -379,31 +406,6 @@ SOURCES += \
 				dbase/fistore.cc \
 				dbase/fimonitor.cc \
 				dbase/findex.cc \
-				pqi/authssl.cc \
-				pqi/authgpg.cc \
-				pqi/cleanupxpgp.cc \
-				pqi/p3notify.cc \
-				pqi/pqipersongrp.cc \
-				pqi/pqihandler.cc \
-				pqi/pqiservice.cc \
-				pqi/pqiperson.cc \
-				pqi/pqissludp.cc \
-				pqi/pqisslpersongrp.cc \
-				pqi/pqissllistener.cc \
-				pqi/pqissl.cc \
-                                pqi/pqissltunnel.cc \
-				pqi/pqistore.cc \
-#				pqi/p3authmgr.cc \
-				pqi/p3cfgmgr.cc \
-				pqi/p3connmgr.cc \
-				pqi/p3dhtmgr.cc \
-				pqi/pqiarchive.cc \
-				pqi/pqibin.cc \
-				pqi/pqimonitor.cc \
-				pqi/pqistreamer.cc \
-				pqi/pqiloopback.cc \
-				pqi/pqinetwork.cc \
-				pqi/pqisecurity.cc \
 				serialiser/rsblogitems.cc \
 				serialiser/rsstatusitems.cc \
 				serialiser/rschannelitems.cc \

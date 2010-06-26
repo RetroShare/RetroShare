@@ -2198,8 +2198,10 @@ std::string	p3GroupDistrib::publishMsg(RsDistribMsg *msg, bool personalSign)
                                         if (AuthSSL::getAuthSSL()->SignDataBin(out_data, out_size, sigbuf, &siglen))
 			{
 				signedMsg->personalSignature.signData.setBinData(sigbuf, siglen);
-							signedMsg->personalSignature.keyId = AuthSSL::getAuthSSL()->OwnId();
-							signedMsg->personalSignature.sslCert = AuthSSL::getAuthSSL()->SaveOwnCertificateToString();
+				signedMsg->personalSignature.keyId = AuthSSL::getAuthSSL()->OwnId();
+					
+				// Don't want to send our certificate everywhere.
+				//signedMsg->personalSignature.sslCert = AuthSSL::getAuthSSL()->SaveOwnCertificateToString();
 			}
 		}
 
@@ -3009,30 +3011,13 @@ bool 	p3GroupDistrib::locked_validateDistribSignedMsg(
 	/* now verify Personal signature */
         if ((signOk == 1) && ((info.grpFlags & RS_DISTRIB_AUTHEN_MASK) & RS_DISTRIB_AUTHEN_REQ))
 	{
-            #ifdef DISTRIB_DEBUG
-            std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() Personal Signature. sslCert : " << newMsg->personalSignature.sslCert << std::endl;
-            #endif
-
-            //check the sslCert
-            RsPeerDetails pd;
-            if (!AuthSSL::getAuthSSL()->LoadDetailsFromStringCert(newMsg->personalSignature.sslCert, pd)) {
-                #ifdef DISTRIB_DEBUG
-                    std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() Fail - ssl cert not valid" << std::endl;
-                #endif
-                signOk = 0;
-            } else if (pd.id != newMsg->personalSignature.keyId) {
-                #ifdef DISTRIB_DEBUG
-                    std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() Fail - ssl cert id does not match the personal signature key id" << std::endl;
-                #endif
-                signOk = 0;
-            } else {
                 unsigned int personalsiglen =
                                 newMsg->personalSignature.signData.bin_len;
                 unsigned char *personalsigbuf = (unsigned char *)
                                 newMsg->personalSignature.signData.bin_data;
-                bool sslSign = AuthSSL::getAuthSSL()->VerifyOtherSignBin(
+                bool sslSign = AuthSSL::getAuthSSL()->VerifySignBin(
                         newMsg->packet.bin_data, newMsg->packet.bin_len,
-                        personalsigbuf, personalsiglen, newMsg->personalSignature.sslCert);
+                        personalsigbuf, personalsiglen, newMsg->personalSignature.keyId);
                 if (sslSign) {
                     #ifdef DISTRIB_DEBUG
                     std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() Success for ssl signature." << std::endl;
@@ -3044,7 +3029,6 @@ bool 	p3GroupDistrib::locked_validateDistribSignedMsg(
                     #endif
                     signOk = 0;
                 }
-            }
 	}
 
 	if (signOk == 1)

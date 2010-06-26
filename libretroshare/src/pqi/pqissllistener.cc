@@ -30,6 +30,7 @@
 #include "pqi/pqissl.h"
 #include "pqi/pqissllistener.h"
 #include "pqi/pqinetwork.h"
+#include "pqi/sslfns.h"
 
 #include <errno.h>
 #include <openssl/err.h>

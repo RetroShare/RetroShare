@@ -29,6 +29,7 @@
 
 #include "pqi/pqissl.h"
 #include "pqi/pqinetwork.h"
+#include "pqi/sslfns.h"
 
 #include "util/rsnet.h"
 #include "util/rsdebug.h"

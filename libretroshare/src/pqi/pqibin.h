@@ -147,8 +147,17 @@ virtual int listen();
 virtual int stoplistening();
 virtual int disconnect();
 virtual int reset();
-virtual bool connect_parameter(uint32_t type, uint32_t value) { return false; }
-virtual int getConnectAddress(struct sockaddr_in &raddr) {return 0;}
+virtual bool connect_parameter(uint32_t type, uint32_t value) 
+	{ 
+		(void) type; /* suppress unused parameter warning */
+		(void) value; /* suppress unused parameter warning */
+		return false; 
+	}
+virtual int getConnectAddress(struct sockaddr_in &raddr) 
+	{
+		(void) raddr; /* suppress unused parameter warning */
+		return 0;
+	}
 
 	// Bin Interface.
 virtual int     tick();

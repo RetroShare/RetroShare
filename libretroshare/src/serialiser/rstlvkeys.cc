@@ -371,8 +371,6 @@ uint32_t RsTlvKeySignature::TlvSize()
 
 	s += GetTlvStringSize(keyId); 
 	s += signData.TlvSize();
-        s += GetTlvStringSize(sslCert);
-
 	return s;
 
 }
@@ -395,7 +393,6 @@ bool  RsTlvKeySignature::SetTlv(void *data, uint32_t size, uint32_t *offset) /* 
 
 	ok &= SetTlvString(data, tlvend, offset, TLV_TYPE_STR_KEYID, keyId);  
 	ok &= signData.SetTlv(data, tlvend, offset);  
-        ok &= SetTlvString(data, tlvend, offset, TLV_TYPE_STR_CERT_SSL, sslCert);
 
 	return ok;
 
@@ -428,11 +425,6 @@ bool  RsTlvKeySignature::GetTlv(void *data, uint32_t size, uint32_t *offset) /* 
 	ok &= GetTlvString(data, tlvend, offset, TLV_TYPE_STR_KEYID, keyId);
 	ok &= signData.GetTlv(data, tlvend, offset);  
 
-	// The ssl cert is possibly void, i.e. an empty string. This is handled by
-	// GetTlvString().
-	//
-	ok &= GetTlvString(data, tlvend, offset, TLV_TYPE_STR_CERT_SSL, sslCert);
-   
 	/***************************************************************************
 	 * NB: extra components could be added (for future expansion of the type).
 	 *            or be present (if this code is reading an extended version).

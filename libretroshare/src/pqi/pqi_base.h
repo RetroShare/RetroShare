@@ -125,7 +125,12 @@ virtual int     status() { return 0; }
 virtual std::string PeerId() { return peerId; }
 
 	// the callback from NetInterface Connection Events.
-virtual int	notifyEvent(NetInterface *ni, int event) { return 0; }
+virtual int	notifyEvent(NetInterface *ni, int event) 
+	{ 
+		(void) ni; /* remove unused parameter warnings */
+		(void) event; /* remove unused parameter warnings */
+		return 0; 
+	}
 
 	private:
 
