@@ -56,6 +56,10 @@ ChannelFeed::ChannelFeed(QWidget *parent)
   	connect(unsubscribeButton, SIGNAL( clicked( void ) ), this, SLOT( unsubscribeChannel ( void ) ) );
 
 	/*************** Setup Left Hand Side (List of Channels) ****************/
+	
+    connect(treeView, SIGNAL(clicked(const QModelIndex &)), this, SLOT(selectChannel(const QModelIndex &)));
+	connect(treeView, SIGNAL(activated(const QModelIndex &)), this, SLOT(toggleSelection(const QModelIndex &)));
+	connect(treeView, SIGNAL(customContextMenuRequested( QPoint ) ), this, SLOT( channelListCustomPopupMenu( QPoint ) ) );
 
   	mChannelId = "";
 	model = new QStandardItemModel(0, 3, this);
@@ -67,60 +71,56 @@ ChannelFeed::ChannelFeed(QWidget *parent)
 	treeView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
 	treeView->setItemDelegate(new ChanGroupDelegate());
-	treeView->setRootIsDecorated(false);
+	treeView->setRootIsDecorated(true);
 
 	// hide header and id column
 	treeView->setHeaderHidden(true);
 	treeView->hideColumn(2);
 	
 	/* Set header resize modes and initial section sizes TreeView*/
-  QHeaderView * _header = treeView->header () ;
-  _header->setResizeMode ( 1, QHeaderView::Custom);
-  _header->resizeSection ( 0, 190 );
-  _header->resizeSection ( 1, 22 );
-  _header->resizeSection ( 2, 22 );
+    QHeaderView * _header = treeView->header () ;
+    _header->setResizeMode ( 1, QHeaderView::Custom);
+    _header->resizeSection ( 0, 190 );
+    _header->resizeSection ( 1, 22 );
+    _header->resizeSection ( 2, 22 );
+    
+    // set ChannelList Font  
+	itemFont = QFont("ARIAL", 10);
+	itemFont.setBold(true);
 	
-	QStandardItem *item1 = new QStandardItem(tr("Own Channels"));
-	QStandardItem *item2 = new QStandardItem(tr("Subscribed Channels"));
-	QStandardItem *item3 = new QStandardItem(tr("Popular Channels"));
-	QStandardItem *item4 = new QStandardItem(tr("Other Channels"));
+	QStandardItem *ownChannels = new QStandardItem(tr("Own Channels"));
+    ownChannels->setFont(itemFont);
+    ownChannels->setForeground(QBrush(QColor(79, 79, 79)));
 
-	model->appendRow(item1);
-	model->appendRow(item2);
-	model->appendRow(item3);
-	model->appendRow(item4);
+	QStandardItem *subcribedChannels = new QStandardItem(tr("Subscribed Channels"));
+    subcribedChannels->setFont(itemFont);    
+    subcribedChannels->setForeground(QBrush(QColor(79, 79, 79)));
+    
+	QStandardItem *popularChannels = new QStandardItem(tr("Popular Channels"));	
+    popularChannels->setFont(itemFont);
+    popularChannels->setForeground(QBrush(QColor(79, 79, 79)));
+    
+	QStandardItem *otherChannels = new QStandardItem(tr("Other Channels"));
+    otherChannels->setFont(itemFont);
+    otherChannels->setForeground(QBrush(QColor(79, 79, 79)));
 
-	connect(treeView, SIGNAL(clicked(const QModelIndex &)), this, SLOT(selectChannel(const QModelIndex &)));
-	connect(treeView, SIGNAL(activated(const QModelIndex &)), this, SLOT(toggleSelection(const QModelIndex &)));
-	connect(treeView, SIGNAL(customContextMenuRequested( QPoint ) ), this, SLOT( channelListCustomPopupMenu( QPoint ) ) );
+	model->appendRow(ownChannels);
+	model->appendRow(subcribedChannels);
+	model->appendRow(popularChannels);
+	model->appendRow(otherChannels);
 
 	//added from ahead
 	updateChannelList();
-
-	mChannelFont = QFont("MS SANS SERIF", 22);
-	nameLabel->setFont(mChannelFont);
     
+	mChannelFont = QFont("MS SANS SERIF", 22);	
+	nameLabel->setFont(mChannelFont);    
 	nameLabel->setMinimumWidth(20);
   
-  // set ChannelList Font  
-	itemFont = QFont("ARIAL", 10);
-	itemFont.setBold(true);
-	item1->setFont(itemFont);
-	item2->setFont(itemFont);
-	item3->setFont(itemFont);
-	item4->setFont(itemFont);
-	
-	// set ChannelList Foreground Color	  
-  item1->setForeground(QBrush(QColor(79, 79, 79)));
-  item2->setForeground(QBrush(QColor(79, 79, 79)));
-  item3->setForeground(QBrush(QColor(79, 79, 79)));
-  item4->setForeground(QBrush(QColor(79, 79, 79)));
-  
-  // Setup Channel Menu:
-  QMenu *channelmenu = new QMenu();
-  channelmenu->addAction(actionCreate_Channel); 
-  channelmenu->addSeparator();
-  channelpushButton->setMenu(channelmenu);
+    // Setup Channel Menu:
+    QMenu *channelmenu = new QMenu();
+    channelmenu->addAction(actionCreate_Channel); 
+    channelmenu->addSeparator();
+    channelpushButton->setMenu(channelmenu);
 
 	
 	QTimer *timer = new QTimer(this);
@@ -159,12 +159,13 @@ void ChannelFeed::channelListCustomPopupMenu( QPoint point )
       shareKeyAct = new QAction(QIcon(":/images/gpgp_key_generate.png"), tr("Share Key"), this);
       connect( shareKeyAct, SIGNAL( triggered() ), this, SLOT( shareKey() ) );
 
-      if((ci.channelFlags & RS_DISTRIB_PUBLISH) && (ci.channelFlags & RS_DISTRIB_ADMIN)){
-          contextMnu.addAction( postchannelAct );
-          contextMnu.addSeparator();
-          contextMnu.addAction( channeldetailsAct );
-          contextMnu.addAction( editChannelDetailAct);
-          contextMnu.addAction( shareKeyAct );
+      if((ci.channelFlags & RS_DISTRIB_PUBLISH) && (ci.channelFlags & RS_DISTRIB_ADMIN))
+      {
+        contextMnu.addAction( postchannelAct );
+        contextMnu.addSeparator();
+        contextMnu.addAction( channeldetailsAct );
+        contextMnu.addAction( editChannelDetailAct);
+        contextMnu.addAction( shareKeyAct );
       }
       else if (ci.channelFlags & RS_DISTRIB_PUBLISH)
       {
@@ -175,7 +176,6 @@ void ChannelFeed::channelListCustomPopupMenu( QPoint point )
       }
       else if (ci.channelFlags & RS_DISTRIB_SUBSCRIBED)
       {
-
         contextMnu.addAction( unsubscribechannelAct );
         contextMnu.addSeparator();
         contextMnu.addAction( channeldetailsAct );
@@ -183,7 +183,6 @@ void ChannelFeed::channelListCustomPopupMenu( QPoint point )
       }
       else
       {      
-
         contextMnu.addAction( subscribechannelAct );
         contextMnu.addSeparator();
         contextMnu.addAction( channeldetailsAct );
