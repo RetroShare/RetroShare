@@ -211,7 +211,7 @@ void RsInit::InitRsConfig()
 
 #ifdef WINDOWS_SYS
 	// test for portable version
-        if (GetFileAttributes ("gpg.exe") != (DWORD) -1 && GetFileAttributes ("gpgme-w32spawn.exe") != (DWORD) -1) {
+        if (GetFileAttributes (L"gpg.exe") != (DWORD) -1 && GetFileAttributes (L"gpgme-w32spawn.exe") != (DWORD) -1) {
 		// use portable version
 		RsInitConfig::portable = true;
 	}

@@ -402,7 +402,7 @@ bool RsDirUtil::renameFile(const std::string& from, const std::string& to)
 #else
 	std::string f(from),t(to) ;
 #endif
-	while (!MoveFileEx(f.c_str(), t.c_str(), MOVEFILE_REPLACE_EXISTING))
+	while (!MoveFileExA(f.c_str(), t.c_str(), MOVEFILE_REPLACE_EXISTING))
 #else
 	while (rename(from.c_str(), to.c_str()) < 0)
 #endif
@@ -432,7 +432,7 @@ bool RsDirUtil::renameFile(const std::string& from, const std::string& to)
 bool RsDirUtil::createBackup (std::string sFilename, unsigned int nCount)
 {
 #ifdef WINDOWS_SYS
-    if (GetFileAttributes (sFilename.c_str ()) == -1) {
+    if (GetFileAttributesA (sFilename.c_str ()) == -1) {
         // file doesn't exist
         return true;
     }
@@ -443,7 +443,7 @@ bool RsDirUtil::createBackup (std::string sFilename, unsigned int nCount)
         std::ostringstream sStream;
         sStream << sFilename << nLast << ".bak";
 
-        if (GetFileAttributes (sStream.str ().c_str ()) != -1) {
+        if (GetFileAttributesA (sStream.str ().c_str ()) != -1) {
             break;
         }
     }
@@ -452,7 +452,7 @@ bool RsDirUtil::createBackup (std::string sFilename, unsigned int nCount)
     if (nLast == nCount) {
         std::ostringstream sStream;
         sStream << sFilename << nCount << ".bak";
-        if (DeleteFile (sStream.str ().c_str ()) == FALSE) {
+        if (DeleteFileA (sStream.str ().c_str ()) == FALSE) {
             getPqiNotify()->AddSysMessage (0, RS_SYS_WARNING, "File delete error", "Error while deleting file " + sStream.str ());
             return false;
         }
@@ -475,7 +475,7 @@ bool RsDirUtil::createBackup (std::string sFilename, unsigned int nCount)
     // copy backup
     std::ostringstream sStream;
     sStream << sFilename << 1 << ".bak";
-    if (CopyFile (sFilename.c_str (), sStream.str ().c_str (), FALSE) == FALSE) {
+    if (CopyFileA (sFilename.c_str (), sStream.str ().c_str (), FALSE) == FALSE) {
         getPqiNotify()->AddSysMessage (0, RS_SYS_WARNING, "File rename error", "Error while renaming file " + sFilename + " to " + sStream.str ());
         return false;
     }

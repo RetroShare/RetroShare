@@ -117,9 +117,11 @@ win32 {
 		QMAKE_CC = g++
 		OBJECTS_DIR = temp/obj
 		MOC_DIR = temp/moc
-		DEFINES = WINDOWS_SYS WIN32 STATICLIB MINGW
+		DEFINES *= WINDOWS_SYS WIN32 STATICLIB MINGW
                 DEFINES *= MINIUPNPC_VERSION=13
 		DESTDIR = lib
+
+		DEFINES -= DEBUG_PQISSL
 
                 #miniupnp implementation files
                 HEADERS += upnp/upnputil.h

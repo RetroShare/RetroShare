@@ -64,7 +64,7 @@ bool RsDiscSpace::crossSystemDiskStats(const char *file, uint64_t& free_blocks, 
 
 	char *pszFullPath = _fullpath (NULL, file, 0);
 	if (pszFullPath == 0) {
-		std::cerr << "Size estimate failed for drive (_fullpath) " << szDrive << std::endl ;
+		std::cerr << "Size estimate failed for drive (_fullpath) " << std::endl ;
 		return false;
 	}
 	_splitpath (pszFullPath, szDrive, NULL, NULL, NULL);
@@ -72,7 +72,7 @@ bool RsDiscSpace::crossSystemDiskStats(const char *file, uint64_t& free_blocks, 
 #endif
 	szDrive[3] = 0;
 
-	if (!GetDiskFreeSpace (szDrive, &dwSectorPerCluster, &dwBytesPerSector, &dwFreeClusters, &dwTotalClusters))
+	if (!GetDiskFreeSpaceA (szDrive, &dwSectorPerCluster, &dwBytesPerSector, &dwFreeClusters, &dwTotalClusters))
 	{
 		std::cerr << "Size estimate failed for drive " << szDrive << std::endl ;
 		return false;
