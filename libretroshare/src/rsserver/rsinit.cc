@@ -173,6 +173,27 @@ bool RsInitConfig::udpListenerOnly;
 static bool getAvailableAccounts(std::list<accountId> &ids);
 static bool checkAccount(std::string accountdir, accountId &id);
 
+static std::string toUpperCase(const std::string& s)
+{
+	std::string res(s) ;
+
+	for(uint32_t i=0;i<res.size();++i)
+		if(res[i] > 96 && res[i] < 123)
+			res[i] -= 97-65 ;
+
+	return res ;
+}
+
+static std::string toLowerCase(const std::string& s)
+{
+	std::string res(s) ;
+
+	for(uint32_t i=0;i<res.size();++i)
+		if(res[i] > 64 && res[i] < 91)
+			res[i] += 97-65 ;
+
+	return res ;
+}
 
 void RsInit::InitRsConfig()
 {
@@ -297,7 +318,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored)
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
          int c;
-         std::string prefPgpName = "";
+         std::string prefUserString = "";
          /* getopt info: every availiable option is listed here. if it is followed by a ':' it
             needs an argument. If it is followed by a '::' the argument is optional.
          */
@@ -368,7 +389,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored)
                                  std::cerr << std::endl;
                                  break;
                          case 'U':
-                                 prefPgpName = optarg;
+                                 prefUserString = optarg;
                                  std::cerr << "Opt for User Id ";
                                  std::cerr << std::endl;
                                  break;
@@ -385,10 +406,8 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored)
                                  std::cerr << "-a                AutoLogin (Windows Only) + StartMinimised" << std::endl;
                                  std::cerr << "-m                StartMinimised" << std::endl;
                                  std::cerr << "-u                Only listen to UDP" << std::endl;
-                                 std::cerr << "-e                Use a forwarded external Port" << std::endl << std::endl;
-                                 std::cerr << "-U [User Name]    Sets Account to Use, Useful when Autologin is enabled" << std::endl;
-                                 std::cerr << "Example" << std::endl;
-                                 std::cerr << "./retroshare-nogui -wmysecretpassword -e" << std::endl;
+                                 std::cerr << "-e                Use a forwarded external Port" << std::endl ;
+                                 std::cerr << "-U [User Name/GPG id/SSL id]  Sets Account to Use, Useful when Autologin is enabled." << std::endl;
                                  exit(1);
                                  break;
                          default:
@@ -488,22 +507,28 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored)
 
         // if a different user id has been passed to cmd line check for that instead
 
-        bool pgpNameFound = false;
-        if(prefPgpName != ""){
+	std::string lower_case_user_string = toLowerCase(prefUserString) ;
+	std::string upper_case_user_string = toUpperCase(prefUserString) ;
 
-            for(it = RsInitConfig::accountIds.begin() ; it!= RsInitConfig::accountIds.end() ; it++){
+	bool pgpNameFound = false;
+	if(prefUserString != "")
+	{
 
-                if(prefPgpName == it->pgpName){
+		for(it = RsInitConfig::accountIds.begin() ; it!= RsInitConfig::accountIds.end() ; it++)
+		{
+			std::cerr << "Checking account (gpgid = " << it->pgpId << ", name=" << it->pgpName << ", sslId=" << it->sslId << ")" << std::endl ;
 
-                    RsInitConfig::preferedId = it->sslId;
-                    pgpNameFound = true;
-                }
-            }
-            if(!pgpNameFound){
-                std::cerr << "Invalid User name -U pgpName not Found" << std::endl;
-                exit(1);
-            }
-        }
+			if(prefUserString == it->pgpName || upper_case_user_string == it->pgpId || lower_case_user_string == it->sslId)
+			{
+				RsInitConfig::preferedId = it->sslId;
+				pgpNameFound = true;
+			}
+		}
+		if(!pgpNameFound){
+			std::cerr << "Invalid User name/GPG id/SSL id: not found in list" << std::endl;
+			exit(1);
+		}
+	}
 
 
 

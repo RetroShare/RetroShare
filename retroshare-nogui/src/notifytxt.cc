@@ -26,6 +26,7 @@
 
 #include "notifytxt.h"
 #include "rsiface/rspeers.h"
+#include <string.h>
 
 #include <iostream>
 #include <sstream>
@@ -40,18 +41,25 @@ void NotifyTxt::notifyChat()
 	return;
 }
 
+std::string NotifyTxt::askForPassword(const std::string& key_details,bool prev_is_bad)
+{
+	char *password = getpass(("Please enter GPG password for key "+key_details+": ").c_str()) ;
+	return std::string(password);
+}
+
+
 void NotifyTxt::notifyListChange(int list, int type)
 {
 	std::cerr << "NotifyTxt::notifyListChange()" << std::endl;
 	switch(list)
 	{
-		case NOTIFY_LIST_NEIGHBOURS:
-			displayNeighbours();
-			break;
+//		case NOTIFY_LIST_NEIGHBOURS:
+//			displayNeighbours();
+//			break;
 		case NOTIFY_LIST_FRIENDS:
 			displayFriends();
 			break;
-		case NOTIFY_LIST_DIRLIST:
+		case NOTIFY_LIST_DIRLIST_FRIENDS:
 			displayDirectories();
 			break;
 		case NOTIFY_LIST_SEARCHLIST:
@@ -71,18 +79,16 @@ void NotifyTxt::notifyListChange(int list, int type)
 	}
 	return;
 }
-
-			
 			
 void NotifyTxt::displayNeighbours()
 {
-	std::list<std::string> ids;
+	std::list<std::string> neighs;
 	std::list<std::string>::iterator it;
 
-	rsPeers->getOthersList(ids);
+	rsPeers->getGPGAllList(neighs);
 
 	std::ostringstream out;
-	for(it = ids.begin(); it != ids.end(); it++)
+	for(it = neighs.begin(); it != neighs.end(); it++)
 	{
 		RsPeerDetails detail;
 		rsPeers->getPeerDetails(*it, detail);

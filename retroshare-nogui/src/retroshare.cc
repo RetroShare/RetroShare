@@ -46,8 +46,6 @@
  * The startup routine's are defined in rsiface.h
  */
 
-RsControl *rsicontrol ;
-
 int main(int argc, char **argv)
 {
 	/* Retroshare startup is configured using an RsInit object.
@@ -79,8 +77,6 @@ int main(int argc, char **argv)
 	  * otherwise loaded from commandline.
 	  */
 
-	 /* Key + Certificate are loaded into libretroshare */
-	RsInit::LoadCertificates(false);
 
 	/* Now setup the libretroshare interface objs 
 	 * You will need to create you own NotifyXXX class
@@ -88,17 +84,17 @@ int main(int argc, char **argv)
 
 	NotifyTxt *notify = new NotifyTxt();
 	RsIface *iface = createRsIface(*notify);
-        RsControl *rsServer = createRsControl(*iface, *notify);
+	RsControl *rsServer = createRsControl(*iface, *notify);
+	rsicontrol = rsServer ;
 
 	notify->setRsIface(iface);
 
+	/* Key + Certificate are loaded into libretroshare */
+
+	RsInit::LoadCertificates(false);
+
 	/* Start-up libretroshare server threads */
-
 	rsServer -> StartupRetroShare();
-
-	rsicontrol = rsServer ;
-	RsInit::passwd = "" ;
-	//CleanupRsConfig(config);
 	
 	/* pass control to the GUI */
 	while(1)
