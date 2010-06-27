@@ -48,6 +48,7 @@ mv retroshare-0.5/src/retroshare-gui/RetroShare.pro retroshare-0.5/src/retroshar
 
 ./cleanProFile.sh retroshare-0.5/src/libretroshare/libretroshare.pro
 ./cleanProFile.sh retroshare-0.5/src/retroshare-gui/retroshare-gui.pro
+./cleanProFile.sh retroshare-0.5/src/retroshare-gui/retroshare-nogui.pro
 
 echo "DESTDIR = ../../libretroshare/src/lib/" > /tmp/toto75299
 cat retroshare-0.5/src/libretroshare/libretroshare.pro /tmp/toto75299 > /tmp/toto752992
