@@ -2,24 +2,26 @@ TEMPLATE = app
 TARGET = retroshare-nogui
 
 ################################# Linux ##########################################
+linux-* {
+	#CONFIG += version_detail_bash_script
+	QMAKE_CXXFLAGS *= -D_FILE_OFFSET_BITS=64
+
+	system(which gpgme-config >/dev/null 2>&1) {
+		INCLUDEPATH += $$system(gpgme-config --cflags | sed -e "s/-I//g")
+	} else {
+		message(Could not find gpgme-config on your system, assuming gpgme.h is in /usr/include)
+	}
+
+	LIBS += ../../libretroshare/src/lib/libretroshare.a
+	LIBS += -lssl -lgpgme -lupnp 
+}
 
 linux-g++ {
 	OBJECTS_DIR = temp/linux-g++/obj
-
-	LIBS += ../../../../lib/linux-g++/libretroshare.a 
-	LIBS += ../../../../lib/linux-g++/libminiupnpc.a 
-	LIBS += ../../../../lib/linux-g++/libssl.a 
-	LIBS += ../../../../lib/linux-g++/libcrypto.a
-    LIBS += -lz
 }
+
 linux-g++-64 {
 	OBJECTS_DIR = temp/linux-g++-64/obj
-
-	LIBS += ../../../../lib/linux-g++-64/libretroshare.a 
-	LIBS += ../../../../lib/linux-g++-64/libminiupnpc.a 
-	LIBS += ../../../../lib/linux-g++-64/libssl.a 
-	LIBS += ../../../../lib/linux-g++-64/libcrypto.a
-    LIBS += -lz
 }
 
 #################### Cross compilation for windows under Linux ###################
