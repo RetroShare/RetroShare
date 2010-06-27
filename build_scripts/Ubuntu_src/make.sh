@@ -1,5 +1,7 @@
 #!/bin/sh
 
+echo Getting svn revision...
+echo
 svn=`svn up | cut -d\  -f3 | cut -d. -f1`
 
 echo This script will
@@ -10,10 +12,12 @@ echo   - rebuild the source package for the karmic i386 arch.
 echo   - svn number is $svn. Is this correct ?
 echo 
 echo Type ^C to abort, or type enter to proceed.
+read tmp
 
-rm -rf ./retroshare-0.5
-./clean.sh
-./makeSourcePackage.sh
+echo cleaning...
+rm -rf ./retroshare-0.5 2> /dev/null
+#./clean.sh >& /dev/null
+#./makeSourcePackage.sh
 
 sudo PBUILDFOLDER=/var/cache/pbuilder pbuilder-dist lucid i386 build *.dsc
 cp /var/cache/pbuilder/lucid-i386_result/retroshare_0.5-1_i386.deb ./RetroShare_0.5."$svn"_lucid_i386.deb
