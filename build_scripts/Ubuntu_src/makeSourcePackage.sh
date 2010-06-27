@@ -24,6 +24,12 @@ cd retroshare-0.5/src/retroshare-gui/
 svn co https://retroshare.svn.sourceforge.net/svnroot/retroshare/branches/v0.5.0/retroshare-gui/src . 
 #tar zxvf ../../../retroshare-gui.tgz
 cd ../../..
+#
+cd retroshare-0.5/src/retroshare-nogui/
+svn co https://retroshare.svn.sourceforge.net/svnroot/retroshare/branches/v0.5.0/retroshare-nogui/src . 
+#tar zxvf ../../../retroshare-gui.tgz
+cd ../../..
+
 
 # setup version numbers
 cat retroshare-0.5/src/libretroshare/util/rsversion.h | grep -v SVN_REVISION > /tmp/toto2342
