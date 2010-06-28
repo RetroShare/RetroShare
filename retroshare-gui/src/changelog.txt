@@ -1,3 +1,13 @@
+Changes for v0.5.0f
+
+* restored the retroshare-nogui executable
+* bug corrections in cachestrapper
+* bug corrections in RsTunnelItem and p3tunnel
+* better error handling in rstunnelitem on windows
+* removed deadlock in data multiplex
+* improved p3disc info update
+
+
 Changes for v0.5.0e
 
 * Made a pass on the code in p3disc. 
