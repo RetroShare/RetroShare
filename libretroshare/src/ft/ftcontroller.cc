@@ -919,6 +919,9 @@ bool	ftController::handleAPendingRequest()
 		req = mPendingRequests.front();
 		mPendingRequests.pop_front();
 	}
+#ifdef CONTROL_DEBUG
+	std::cerr << "Requesting pending hash " << req.mHash << std::endl ;
+#endif
 
 	FileRequest(req.mName, req.mHash, req.mSize, req.mDest, req.mFlags, req.mSrcIds);
 
@@ -942,6 +945,10 @@ bool	ftController::handleAPendingRequest()
 			}
 			else
 			{
+#ifdef CONTROL_DEBUG
+				std::cerr << "Hash " << req.mHash << " is in downloads" << std::endl ;
+				std::cerr << "  setting chunk strategy to " << rsft->chunk_strategy << std::endl;
+#endif
 				(fit->second)->mCreator->setAvailabilityMap(rsft->compressed_chunk_map) ;
 				(fit->second)->mCreator->setChunkStrategy((FileChunksInfo::ChunkStrategy)(rsft->chunk_strategy)) ;
 			}
@@ -949,6 +956,10 @@ bool	ftController::handleAPendingRequest()
 			delete rsft ;
 			mPendingChunkMaps.erase(it) ;
 		}
+#ifdef CONTROL_DEBUG
+		else
+			std::cerr << "No pending chunkmap for hash " << req.mHash << std::endl ;
+#endif
 	}
 
 	return true ;

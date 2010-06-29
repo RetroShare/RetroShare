@@ -169,9 +169,7 @@ bool ChunkMap::getDataChunk(const std::string& peer_id,uint32_t size_hint,ftChun
 			case FileChunksInfo::CHUNK_STRATEGY_RANDOM: 		c = getAvailableChunk(rand()%_map.size(),peer_id,source_chunk_map_needed) ;
 																			break ;
 			default:
-#ifdef DEBUG_FTCHUNK
 													std::cerr << "!!! ChunkMap::getDataChunk: error!: unknown strategy" << std::endl ;
-#endif
 													return false ;
 		}
 

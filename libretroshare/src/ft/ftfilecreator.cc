@@ -138,7 +138,7 @@ bool ftFileCreator::addFileData(uint64_t offset, uint32_t chunk_size, void *data
 #ifdef FILE_DEBUG
 	std::cerr << "ftFileCreator::addFileData() added Data...";
 	std::cerr << std::endl;
-	std::cerr << " pos: " << pos;
+	std::cerr << " pos: " << offset;
 	std::cerr << std::endl;
 #endif
 	/* 
@@ -317,6 +317,13 @@ FileChunksInfo::ChunkStrategy ftFileCreator::getChunkStrategy()
 void ftFileCreator::setChunkStrategy(FileChunksInfo::ChunkStrategy s)
 {
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
+
+	// Let's check, for safety.
+	if(s != FileChunksInfo::CHUNK_STRATEGY_STREAMING && s != FileChunksInfo::CHUNK_STRATEGY_RANDOM)
+	{
+		std::cerr << "ftFileCreator::ERROR: invalid chunk strategy " << s << "!" << " setting default value " << FileChunksInfo::CHUNK_STRATEGY_STREAMING << std::endl ;
+		s = FileChunksInfo::CHUNK_STRATEGY_STREAMING ;
+	}
 
 #ifdef FILE_DEBUG
 	std::cerr << "ftFileCtreator: setting chunk strategy to " << s << std::endl ;
