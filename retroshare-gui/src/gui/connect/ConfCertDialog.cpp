@@ -127,8 +127,11 @@ void ConfCertDialog::loadDialog()
         }
 
 	ui.name->setText(QString::fromStdString(detail.name));
-        ui.peerid->setText(QString::fromStdString(detail.id));
+    ui.peerid->setText(QString::fromStdString(detail.id));
+    ui.rsid->setText(QString::fromStdString(detail.name) + "@" + QString::fromStdString(detail.id));
+
         if (!detail.isOnlyGPGdetail) {
+            
             ui.loc->setText(QString::fromStdString(detail.location));
             // Dont Show a timestamp in RS calculate the day
             QDateTime date = QDateTime::fromTime_t(detail.lastConnect);
@@ -165,7 +168,11 @@ void ConfCertDialog::loadDialog()
             ui.label_version->show();
 
             ui.groupBox->show();
+            ui.rsid->hide();
+            ui.label_rsid->hide();
         } else {
+            ui.rsid->show();
+            ui.label_rsid->show();
             ui.loc->hide();
             ui.label_loc->hide();
             ui.lastcontact->hide();
@@ -290,7 +297,7 @@ void ConfCertDialog::loadDialog()
         for(std::list<std::string>::const_iterator it(detail.gpgSigners.begin());it!=detail.gpgSigners.end();++it) {	
             RsPeerDetails signerDetail;
             if (rsPeers->getGPGDetails(*it, signerDetail)) {
-                ui.signers_listWidget->addItem(QString::fromStdString(signerDetail.name));
+                ui.signers_listWidget->addItem(QString::fromStdString(signerDetail.name) + " (" + QString::fromStdString(signerDetail.id) +")");
             }
         }
 }
@@ -404,7 +411,7 @@ void ConfCertDialog::listWidgetContextMenuPopup( const QPoint &pos)
         return; 
 
     QMenu menu( this );
-    QAction *copyPeer = new QAction(tr("Copy Peer Name"), this );
+    QAction *copyPeer = new QAction(tr("Copy Peer"), this );
     connect( copyPeer , SIGNAL( triggered() ), this, SLOT( copyToClipboard() ) );
     menu.addAction(copyPeer );
     menu.exec(QCursor::pos());

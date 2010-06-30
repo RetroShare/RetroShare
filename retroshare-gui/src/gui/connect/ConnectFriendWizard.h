@@ -34,7 +34,7 @@ class ConnectFriendWizard : public QWizard
 
 public:
 
-    enum { Page_Intro, Page_Text, Page_Cert, Page_ErrorMessage, Page_Conclusion,Page_Foff };
+    enum { Page_Intro, Page_Text, Page_Cert, Page_ErrorMessage, Page_Conclusion,Page_Foff, Page_Rsid };
 
     ConnectFriendWizard(QWidget *parent = 0);
 
@@ -60,6 +60,7 @@ private:
     QRadioButton *textRadioButton;
     QRadioButton *certRadioButton;
     QRadioButton *foffRadioButton;
+    QRadioButton *rsidRadioButton;
 };
 
 //============================================================================
@@ -245,5 +246,36 @@ private:
 };
 
 //============================================================================
+//! A page for exchanging RSID , for "Add friend" wizard.
+class RsidPage : public QWizardPage
+{
+    Q_OBJECT
+
+public:
+    RsidPage(QWidget *parent = 0);
+
+    int nextId() const;
+    bool isComplete() const ;
+
+
+private:
+    QGroupBox* userRsidFrame;
+    QLabel *userFileLabel;
+    QHBoxLayout* userRsidLayout;
+    
+    QLabel* friendRsidLabel;
+    QLineEdit *friendRsidEdit;
+    QHBoxLayout* friendRSIDLayout;
+
+    QVBoxLayout* RsidLayout;    
+
+private slots:
+
+    
+
+};
+
+//============================================================================
+
 
 #endif

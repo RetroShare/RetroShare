@@ -73,6 +73,8 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent)
     setPage(Page_Text, new TextPage);
     setPage(Page_Cert, new CertificatePage);
     setPage(Page_Foff, new FofPage);
+    setPage(Page_Rsid, new RsidPage);
+
     setPage(Page_ErrorMessage, new ErrorMessagePage);
     setPage(Page_Conclusion, new ConclusionPage);
 
@@ -168,12 +170,14 @@ IntroPage::IntroPage(QWidget *parent)
     textRadioButton = new QRadioButton(tr("&Enter the certificate manually"));
     certRadioButton = new QRadioButton(tr("&You get a certificate file from your friend" ));
     foffRadioButton = new QRadioButton(tr("&Make friend with selected friends of my friends" ));
+    rsidRadioButton = new QRadioButton(tr("&Enter RetroShare ID manually" ));
     textRadioButton->setChecked(true);
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(textRadioButton);
     layout->addWidget(certRadioButton);
     layout->addWidget(foffRadioButton);
+    layout->addWidget(rsidRadioButton);
     setLayout(layout);
 }
 //
@@ -184,6 +188,7 @@ int IntroPage::nextId() const
     if (textRadioButton->isChecked()) return ConnectFriendWizard::Page_Text;
     if (certRadioButton->isChecked()) return ConnectFriendWizard::Page_Cert;
     if (foffRadioButton->isChecked()) return ConnectFriendWizard::Page_Foff;
+    if (rsidRadioButton->isChecked()) return ConnectFriendWizard::Page_Rsid;
 
     return ConnectFriendWizard::Page_Foff;
 }
@@ -1008,3 +1013,78 @@ void ConclusionPage::initializePage() {
 
 //============================================================================
 //
+
+//
+//============================================================================
+//============================================================================
+//============================================================================
+
+RsidPage::RsidPage(QWidget *parent) : QWizardPage(parent) {
+    QString titleStr("<span style=\"font-size:14pt; font-weight:500;"
+                               "color:#32cd32;\">%1</span>");
+    setTitle( titleStr.arg( tr("RetroShare ID") ) ) ;
+
+    setSubTitle(tr("Use RetroShare ID for adding a Friend which is available in your network."));
+    
+
+    setAcceptDrops(true);
+                                  
+    userRsidLayout = new QHBoxLayout;
+
+    userRsidFrame = new QGroupBox;
+    userRsidFrame->setFlat(true);
+    userRsidFrame->setTitle(tr("Add Friends RetroShare ID..."));
+    userRsidFrame->setLayout(userRsidLayout);
+
+    friendRsidLabel = new QLabel(tr("Paste Friends RetroShare ID "
+                                    "in the box below " ) );
+    friendRsidEdit = new QLineEdit;
+    registerField("friendRSID*", friendRsidEdit);
+
+    
+    friendRSIDLayout = new QHBoxLayout;
+    friendRSIDLayout->addWidget(friendRsidEdit) ;
+    
+    RsidLayout = new QVBoxLayout;
+    RsidLayout->addWidget(userRsidFrame);
+    RsidLayout->addWidget(friendRsidLabel);
+    RsidLayout->addLayout(friendRSIDLayout);
+
+    setLayout(RsidLayout);
+}
+
+
+//============================================================================
+
+bool RsidPage::isComplete() const {
+    return !( (friendRsidEdit->text()).isEmpty() );              
+}
+
+int RsidPage::nextId() const {
+
+    std::string rsidstr;
+    rsidstr = friendRsidEdit->text().toStdString();
+    QString rsidstring = friendRsidEdit->text();
+
+    if (rsidstr.empty() == false) {
+    RsPeerDetails pd;
+    if ( rsPeers->getPeerDetails(rsidstr, pd) ) {
+
+        wizard()->setField(SSL_ID_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(pd.id));
+        wizard()->setField(GPG_ID_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(pd.gpg_id));
+        wizard()->setField(LOCATION_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(pd.location));
+        //wizard()->setField(CERT_STRING_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(certstr));
+
+        wizard()->setField("ext_friend_ip", QString::fromStdString(pd.extAddr));
+        wizard()->setField("ext_friend_port", QString::number(pd.extPort));
+        wizard()->setField("local_friend_ip", QString::fromStdString(pd.localAddr));
+        wizard()->setField("local_friend_port", QString::number(pd.localPort));
+        wizard()->setField("dyndns", QString::fromStdString(pd.dyndns));
+
+        return ConnectFriendWizard::Page_Conclusion ;
+        } else {
+            wizard()->setField("errorMessage", QString(tr("This Peer %1 is not available in your Network")).arg(rsidstring) );
+            return ConnectFriendWizard::Page_ErrorMessage;
+        }
+    }
+}
