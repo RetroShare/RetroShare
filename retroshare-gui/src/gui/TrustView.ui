@@ -14,7 +14,11 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout" >
    <item>
-    <widget class="QTableWidget" name="trustTableTW" />
+    <widget class="QTableWidget" name="trustTableTW">
+     <property name="editTriggers">
+      <set>QAbstractItemView::NoEditTriggers</set>
+     </property>
+    </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout" >

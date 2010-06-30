@@ -465,8 +465,7 @@ void FofPage::updatePeersList(int e) {
 	selectedPeersTW->clearContents() ;
         selectedPeersTW->setRowCount(0) ;
 
-	std::list<std::string> ids ;
-        rsPeers->getGPGAllList(ids) ;
+	std::string sOwnId = rsPeers->getGPGOwnId();
 
 	int row = 0 ;
 
@@ -480,6 +479,11 @@ void FofPage::updatePeersList(int e) {
         rsPeers->getGPGAllList(gpg_ids);
         for(std::list<std::string>::const_iterator it(gpg_ids.begin());it!=gpg_ids.end();++it)
 	{
+		if (*it == sOwnId) {
+			// its me
+			continue;
+		}
+
 		std::cerr << "examining peer " << *it << " (name=" << rsPeers->getPeerName(*it) ;
 		RsPeerDetails details ;
 
