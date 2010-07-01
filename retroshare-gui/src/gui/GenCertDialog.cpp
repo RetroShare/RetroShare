@@ -320,19 +320,27 @@ void GenCertDialog::checkChanged(int i)
 
 void GenCertDialog::loadCertificates()
 {
-	bool autoSave = false; 
-	/* Final stage of loading */
-	if (RsInit::LoadCertificates(autoSave))
+	int retVal = RsInit::LockAndLoadCertificates(false);
+	switch(retVal)
 	{
-		close();
-	}
-	else
-	{
-		/* some error msg */
-                QMessageBox::warning ( NULL,
-	                        "Generate ID Failure",
-			        "Failed to Load your new Certificate!",
-			          QMessageBox::Ok);
+		case 0: close();
+				break;
+		case 1:	QMessageBox::warning(	this,
+										tr("Multiple instances"),
+										tr("Another RetroShare using the same profile is "
+											"already running on your system. Please close "
+											"that instance first") );
+				break;
+		case 2:	QMessageBox::warning(	this,
+										tr("Multiple instances"),
+										tr("An unexpected error occurred when Retroshare"
+											"tried to acquire the single instance lock") );
+				break;
+		case 3:	QMessageBox::warning(	this,
+										tr("Generate ID Failure"),
+										tr("Failed to Load your new Certificate!") );
+				break;
+		default: std::cerr << "StartDialog::loadCertificates() unexpected switch value " << retVal << std::endl;
 	}
 }
 

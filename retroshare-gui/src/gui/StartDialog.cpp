@@ -152,18 +152,27 @@ void StartDialog::loadPerson()
 void StartDialog::loadCertificates()
 {
 	/* Final stage of loading */
-
-	if (RsInit::LoadCertificates(ui.autologin_checkbox->isChecked()))
+	int retVal = RsInit::LockAndLoadCertificates(ui.autologin_checkbox->isChecked());
+	switch(retVal)
 	{
-		close();
-	}
-	else
-	{
-		/* some error msg */
-                QMessageBox::warning ( this,
-                                tr("Login Failure"),
-                                tr("Maybe password is wrong"),
-				QMessageBox::Ok);
+		case 0: close();
+				break;
+		case 1:	QMessageBox::warning(	this,
+										tr("Multiple instances"),
+										tr("Another RetroShare using the same profile is "
+											"already running on your system. Please close "
+											"that instance first, or choose another profile") );
+				break;
+		case 2:	QMessageBox::warning(	this,
+										tr("Multiple instances"),
+										tr("An unexpected error occurred when Retroshare"
+											"tried to acquire the single instance lock") );
+				break;
+		case 3: QMessageBox::warning(	this,
+										tr("Login Failure"),
+										tr("Maybe password is wrong") );
+				break;
+		default: std::cerr << "StartDialog::loadCertificates() unexpected switch value " << retVal << std::endl;
 	}
 }
 

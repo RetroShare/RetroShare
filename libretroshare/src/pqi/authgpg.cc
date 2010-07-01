@@ -310,7 +310,7 @@ int	AuthGPG::GPGInit(std::string ownId)
 
         std::cerr << "AuthGPG::GPGInit finished." << std::endl;
 
-        return true;
+		return 1;
 }
 
  AuthGPG::~AuthGPG()
@@ -780,7 +780,7 @@ bool AuthGPG::DoOwnSignature(const void *data, unsigned int datalen, void *buf_s
 //	gpgme_data_write (gpgmeSig, "", 1); 	// to be able to convert it into a string
 	char *export_sig = gpgme_data_release_and_get_mem(gpgmeSig, &len);
 #ifdef GPG_DEBUG
-	fprintf(stderr, "AuthGPG::Signature len: %d \n", len);
+	std::cerr << "AuthGPG::Signature len: " << len << std::endl;
 #endif
 
 	if (len < *outl)	// -1 because we added a 0 at the end.

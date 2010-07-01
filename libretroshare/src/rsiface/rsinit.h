@@ -66,7 +66,7 @@ class RsInit
                 static bool	GeneratePGPCertificate(std::string name, std::string email, std::string passwd, std::string &pgpId, std::string &errString);
 
 		/* Login PGP */
-		static bool 	SelectGPGAccount(std::string id);
+		static bool 	SelectGPGAccount(const std::string& gpgId);
 		static bool 	LoadGPGPassword(std::string passwd);
 
 		/* Create SSL Certificates */
@@ -78,8 +78,11 @@ class RsInit
 		/** Final Certificate load. This can be called if:
 		 * a) InitRetroshare() returns true -> autoLoad/password Set.
 		 * b) SelectGPGAccount() && LoadPassword()
+		 *
+		 * This wrapper is used to lock the profile first before
+		 * finalising the login
 		 */
-		static int 	LoadCertificates(bool autoLoginNT) ;
+		static int 	LockAndLoadCertificates(bool autoLoginNT);
 
 
 		/* Post Login Options */
@@ -108,6 +111,12 @@ class RsInit
 		static bool RsStoreAutoLogin() ;
 		static bool RsTryAutoLogin() ;
 
+		/* Lock/unlock profile directory */
+		static int	LockConfigDirectory(const std::string& accountDir);
+		static void	UnlockConfigDirectory();
+
+		/* The true LoadCertificates() method */
+		static int 	LoadCertificates(bool autoLoginNT) ;
 
 };
 

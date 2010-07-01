@@ -91,7 +91,19 @@ int main(int argc, char **argv)
 
 	/* Key + Certificate are loaded into libretroshare */
 
-	RsInit::LoadCertificates(false);
+	int retVal = RsInit::LockAndLoadCertificates(false);
+	switch(retVal)
+	{
+		case 0:	break;
+		case 1:	std::cerr << "Error: another instance of retroshare is already using this profile" << std::endl;
+				return 1;
+		case 2: std::cerr << "An unexpected error occurred while locking the profile" << std::endl;
+				return 1;
+		case 3: std::cerr << "An error occurred while login with the profile" << std::endl;
+				return 1;
+		default: std::cerr << "Main: Unexpected switch value " << retVal << std::endl;
+				return 1;
+	}
 
 	/* Start-up libretroshare server threads */
 	rsServer -> StartupRetroShare();

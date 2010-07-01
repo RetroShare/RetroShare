@@ -27,6 +27,12 @@
  * the GUI / External via a hidden class */
 
 #include <unistd.h>
+
+// for locking instances
+#ifndef WINDOWS_SYS
+#include <errno.h>
+#endif
+
 #include "util/rsdebug.h"
 #include "util/rsdir.h"
 #include "rsiface/rsinit.h"
@@ -77,6 +83,11 @@ class RsInitConfig
 
 		/* for certificate creation */
                 //static std::string gpgPasswd;
+
+#ifndef WINDOWS_SYS
+		static int lockHandle;
+#else
+#endif
 
 		/* These fields are needed for login */
                 static std::string loginId;
@@ -130,6 +141,11 @@ static const int SSLPWD_LEN = 6;
 
 std::list<accountId> RsInitConfig::accountIds;
 std::string RsInitConfig::preferedId;
+
+#ifndef WINDOWS_SYS
+	int RsInitConfig::lockHandle;
+#else
+#endif
 
 std::string RsInitConfig::configDir;
 std::string RsInitConfig::load_cert;
@@ -203,6 +219,7 @@ void RsInit::InitRsConfig()
 {
 #ifndef WINDOWS_SYS
 	RsInitConfig::dirSeperator = '/'; // For unix.
+	RsInitConfig::lockHandle = -1;
 #else
 	RsInitConfig::dirSeperator = '\\'; // For windows.
 #endif
@@ -878,29 +895,102 @@ int      RsInit::GetPGPLoginDetails(std::string id, std::string &name, std::stri
         }
 }
 
+/*
+ * To prevent several running instances from using the same directory
+ * simultaneously we have to use a global lock.
+ * We use a lock file on Unix systems.
+ *
+ * Return value:
+ * 0 : Success
+ * 1 : Another instance already has the lock
+ * 2 : Unexpected error
+ */
+int RsInit::LockConfigDirectory(const std::string& accountDir)
+{
+/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
+#ifndef WINDOWS_SYS
+	const std::string lockFile = accountDir + RsInitConfig::dirSeperator + "lock";
+
+	if(RsInitConfig::lockHandle != -1)
+		close(RsInitConfig::lockHandle);
+
+	// open the file in write mode, create it if necessary, truncate it (it should be empty)
+	RsInitConfig::lockHandle = open(lockFile.c_str(), O_WRONLY | O_CREAT | O_TRUNC);
+
+	if(RsInitConfig::lockHandle == -1)
+	{
+		std::cerr << "Could not open lock file " << lockFile.c_str() << std::flush;
+		perror(NULL);
+		return 2;
+	}
+
+	// see "man fcntl" for the details, in short: non blocking lock creation on the whole file contents
+	struct flock lockDetails;
+	lockDetails.l_type = F_WRLCK;
+	lockDetails.l_whence = SEEK_SET;
+	lockDetails.l_start = 0;
+	lockDetails.l_len = 0;
+
+	if(fcntl(RsInitConfig::lockHandle, F_SETLK, &lockDetails) == -1)
+	{
+		int fcntlErr = errno;
+		std::cerr << "Could not request lock on file " << lockFile.c_str() << std::flush;
+		perror(NULL);
+
+		// there's no lock so let's release the file handle immediately
+		close(RsInitConfig::lockHandle);
+		RsInitConfig::lockHandle = -1;
+
+		if(fcntlErr == EACCES || fcntlErr == EAGAIN)
+			return 1;
+		else
+			return 2;
+	}
+
+	return 0;
+#else
+	return 0;
+#endif
+/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
+}
+
+/*
+ * Unlock the currently locked profile, if there is one.
+ * For Unix systems we simply close the handle of the lock file.
+ */
+void	RsInit::UnlockConfigDirectory()
+{
+/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
+#ifndef WINDOWS_SYS
+	if(RsInitConfig::lockHandle != -1)
+	{
+		close(RsInitConfig::lockHandle);
+		RsInitConfig::lockHandle = -1;
+	}
+#else
+#endif
+/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
+}
+
+
 /* Before any SSL stuff can be loaded, the correct PGP must be selected / generated:
  **/
 
-bool RsInit::SelectGPGAccount(std::string id)
+bool RsInit::SelectGPGAccount(const std::string& gpgId)
 {
-	bool ok = false;
-	std::string gpgId = id;
-	std::string name = id;
+	bool retVal = false;
 
-        if (0 < AuthGPG::getAuthGPG() -> GPGInit(gpgId))
+	if (0 < AuthGPG::getAuthGPG() -> GPGInit(gpgId))
 	{
-		ok = true;
-                std::cerr << "PGP Auth Success! ";
-		std::cerr << "ID: " << id << " NAME: " << name;
-		std::cerr << std::endl;
+		retVal = true;
+		std::cerr << "PGP Auth Success!";
 	}
 	else
-	{
 		std::cerr << "PGP Auth Failed!";
-		std::cerr << "ID: " << id << " NAME: " << name;
-		std::cerr << std::endl;
-	}
-	return ok;
+
+	std::cerr << " ID: " << gpgId << std::endl;
+
+	return retVal;
 }
 
 
@@ -1044,7 +1134,6 @@ bool     RsInit::GenerateSSLCertificate(std::string gpg_id, std::string org, std
 		std::cerr << "rename FAILED" << std::endl;
 	}
 
-
 	/* Flag as first time run */
 	RsInitConfig::firsttime_run = true;
 
@@ -1145,13 +1234,40 @@ bool     RsInit::LoadPassword(std::string id, std::string inPwd)
 }
 
 
+/**
+ * Locks the profile directory and tries to finalize the login procedure
+ *
+ * Return value:
+ * 0 : success
+ * 1 : another instance is already running
+ * 2 : unexpected error while locking
+ * 3 : unexpected error while loading certificates
+ */
+int 	RsInit::LockAndLoadCertificates(bool autoLoginNT)
+{
+	int retVal = LockConfigDirectory(RsInitConfig::configDir);
+	if(retVal != 0)
+		return retVal;
 
-/***************************** FINAL LOADING OF SETUP *************************
+	retVal = LoadCertificates(autoLoginNT);
+	if(retVal != 1) {
+		UnlockConfigDirectory();
+		return 3;
+	}
+
+	return 0;
+}
+
+
+/** *************************** FINAL LOADING OF SETUP *************************
  * Requires:
  *     PGPid to be selected (Password not required).
  *     CertId to be selected (Password Required).
+ *
+ * Return value:
+ * 0 : unexpected error
+ * 1 : success
  */
-
 int RsInit::LoadCertificates(bool autoLoginNT)
 {
 
@@ -1224,7 +1340,7 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 		FILE *sslPassphraseFile = fopen(RsInitConfig::ssl_passphrase_file.c_str(), "r");
 		if (sslPassphraseFile == NULL)
 		{
-                        std::cerr << "No password povided, and no sslPassphraseFile : " << RsInitConfig::ssl_passphrase_file.c_str() << std::endl;
+			std::cerr << "No password provided, and no sslPassphraseFile : " << RsInitConfig::ssl_passphrase_file.c_str() << std::endl;
 			return 0;
 		} else {
                         std::cerr << "opening sslPassphraseFile : " << RsInitConfig::ssl_passphrase_file.c_str() << std::endl;
