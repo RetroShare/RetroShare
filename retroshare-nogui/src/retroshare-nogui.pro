@@ -46,7 +46,7 @@ win32-x-g++ {
 #################################### Windows #####################################
 
 win32 {
-    CONFIG += console
+    CONFIG += console release
     OBJECTS_DIR = temp/obj
     RCC_DIR = temp/qrc
 	UI_DIR  = temp/ui
@@ -57,6 +57,8 @@ win32 {
     LIBS += -lssl -lcrypto -lgpgme -lpthreadGC2d -lminiupnpc -lz
     LIBS += -lws2_32 -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32
     LIBS += -lole32 -lwinmm
+    
+    RC_FILE = resources/retroshare_win.rc
     
     DEFINES *= WINDOWS_SYS
 }
