@@ -1062,29 +1062,39 @@ bool RsidPage::isComplete() const {
 
 int RsidPage::nextId() const {
 
-    std::string rsidstr;
-    rsidstr = friendRsidEdit->text().toStdString();
     QString rsidstring = friendRsidEdit->text();
 
-    if (rsidstr.empty() == false) {
-    RsPeerDetails pd;
-    if ( rsPeers->getPeerDetails(rsidstr, pd) ) {
+    if (rsidstring.isEmpty() == false) {
+        // search for peer id in string
+        std::string rsidstr;
 
-        wizard()->setField(SSL_ID_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(pd.id));
-        wizard()->setField(GPG_ID_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(pd.gpg_id));
-        wizard()->setField(LOCATION_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(pd.location));
-        //wizard()->setField(CERT_STRING_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(certstr));
+        int nIndex = rsidstring.indexOf("@");
+        if (nIndex >= 0) {
+            // found "@", extract peer id from string
+            rsidstr = rsidstring.mid(nIndex + 1).toStdString();
+        } else {
+            // maybe its only the peer id
+            rsidstr = rsidstring.toStdString();
+        }
+        RsPeerDetails pd;
+        if ( rsPeers->getPeerDetails(rsidstr, pd) ) {
+            wizard()->setField(SSL_ID_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(pd.id));
+            wizard()->setField(GPG_ID_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(pd.gpg_id));
+            wizard()->setField(LOCATION_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(pd.location));
+            //wizard()->setField(CERT_STRING_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(certstr));
 
-        wizard()->setField("ext_friend_ip", QString::fromStdString(pd.extAddr));
-        wizard()->setField("ext_friend_port", QString::number(pd.extPort));
-        wizard()->setField("local_friend_ip", QString::fromStdString(pd.localAddr));
-        wizard()->setField("local_friend_port", QString::number(pd.localPort));
-        wizard()->setField("dyndns", QString::fromStdString(pd.dyndns));
+            wizard()->setField("ext_friend_ip", QString::fromStdString(pd.extAddr));
+            wizard()->setField("ext_friend_port", QString::number(pd.extPort));
+            wizard()->setField("local_friend_ip", QString::fromStdString(pd.localAddr));
+            wizard()->setField("local_friend_port", QString::number(pd.localPort));
+            wizard()->setField("dyndns", QString::fromStdString(pd.dyndns));
 
-        return ConnectFriendWizard::Page_Conclusion ;
+            return ConnectFriendWizard::Page_Conclusion ;
         } else {
             wizard()->setField("errorMessage", QString(tr("This Peer %1 is not available in your Network")).arg(rsidstring) );
             return ConnectFriendWizard::Page_ErrorMessage;
         }
     }
+
+    return ConnectFriendWizard::Page_Rsid;
 }
