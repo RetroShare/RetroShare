@@ -72,7 +72,6 @@ const uint32_t PEER_IP_CONNECT_STATE_MAX_LIST_SIZE =     	4;
  * #define CONN_DEBUG_TICK 1
  ***/
 
-
 /****
  * #define P3CONNMGR_NO_TCP_CONNECTIONS 1
  ***/
@@ -2360,6 +2359,42 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
 	/* UDP automatically searches -> no need to push start */
 
 	// Just push all the addresses onto the stack.
+	/* try "current addresses" first */
+	if (isValidNet(&(it->second.currentlocaladdr.sin_addr)))
+	{
+#ifdef CONN_DEBUG
+		std::cerr << "Adding tcp connection attempt: ";
+		std::cerr << "Current Local Addr: " << inet_ntoa(it->second.currentlocaladdr.sin_addr);
+		std::cerr << ":" << ntohs(it->second.currentlocaladdr.sin_port);
+		std::cerr << std::endl;
+#endif
+		peerConnectAddress pca;
+		pca.addr = it->second.currentlocaladdr;
+		pca.type = RS_NET_CONN_TCP_LOCAL;
+		pca.delay = P3CONNMGR_TCP_DEFAULT_DELAY;
+		pca.ts = time(NULL);
+		pca.period = P3CONNMGR_TCP_DEFAULT_PERIOD;
+		it->second.connAddrs.push_back(pca);
+	}
+
+	if (isValidNet(&(it->second.currentserveraddr.sin_addr)))
+	{
+#ifdef CONN_DEBUG
+		std::cerr << "Adding tcp connection attempt: ";
+		std::cerr << "Current Ext Addr: " << inet_ntoa(it->second.currentserveraddr.sin_addr);
+		std::cerr << ":" << ntohs(it->second.currentserveraddr.sin_port);
+		std::cerr << std::endl;
+#endif
+		peerConnectAddress pca;
+		pca.addr = it->second.currentserveraddr;
+		pca.type = RS_NET_CONN_TCP_EXTERNAL;
+		pca.delay = P3CONNMGR_TCP_DEFAULT_DELAY;
+		pca.ts = time(NULL);
+		pca.period = P3CONNMGR_TCP_DEFAULT_PERIOD;
+		it->second.connAddrs.push_back(pca);
+	}
+
+	/* now try historical addresses */
 	/* try local addresses first */
 	std::list<pqiIpAddress>::iterator ait;
 	for(ait = it->second.ipAddrs.mLocal.mAddrs.begin(); 

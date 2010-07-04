@@ -148,6 +148,7 @@ std::string AuthGPGtest::getGPGOwnName()
 	return "DUMMY_OWN_NAME";
 }
 
+
 #if 0
 std::string AuthGPGtest::getGPGOwnEmail()
 {

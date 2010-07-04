@@ -47,6 +47,8 @@
  * #define DISTRIB_DEBUG 1
  ****/
 
+//#define DISTRIB_DEBUG 1
+
 RSA *extractPublicKey(RsTlvSecurityKey &key);
 RSA *extractPrivateKey(RsTlvSecurityKey &key);
 void 	setRSAPublicKey(RsTlvSecurityKey &key, RSA *rsa_pub);
@@ -2193,15 +2195,12 @@ std::string	p3GroupDistrib::publishMsg(RsDistribMsg *msg, bool personalSign)
 
 		if (personalSign)
 		{
-			unsigned int siglen = EVP_PKEY_size(publishKey);
-				unsigned char sigbuf[siglen];
-                                        if (AuthSSL::getAuthSSL()->SignDataBin(out_data, out_size, sigbuf, &siglen))
+			unsigned int siglen = MAX_GPG_SIGNATURE_SIZE;
+			unsigned char sigbuf[siglen];
+                        if (AuthGPG::getAuthGPG()->SignDataBin(out_data, out_size, sigbuf, &siglen))
 			{
 				signedMsg->personalSignature.signData.setBinData(sigbuf, siglen);
-				signedMsg->personalSignature.keyId = AuthSSL::getAuthSSL()->OwnId();
-					
-				// Don't want to send our certificate everywhere.
-				//signedMsg->personalSignature.sslCert = AuthSSL::getAuthSSL()->SaveOwnCertificateToString();
+				signedMsg->personalSignature.keyId = AuthGPG::getAuthGPG()->getGPGOwnId();
 			}
 		}
 
@@ -3015,17 +3014,25 @@ bool 	p3GroupDistrib::locked_validateDistribSignedMsg(
                                 newMsg->personalSignature.signData.bin_len;
                 unsigned char *personalsigbuf = (unsigned char *)
                                 newMsg->personalSignature.signData.bin_data;
-                bool sslSign = AuthSSL::getAuthSSL()->VerifySignBin(
+
+		RsPeerDetails signerDetails;
+		std::string gpg_fpr;
+		if (AuthGPG::getAuthGPG()->getGPGDetails(newMsg->personalSignature.keyId, signerDetails))
+		{
+			gpg_fpr = signerDetails.fpr;
+		}
+
+                bool gpgSign = AuthGPG::getAuthGPG()->VerifySignBin(
                         newMsg->packet.bin_data, newMsg->packet.bin_len,
-                        personalsigbuf, personalsiglen, newMsg->personalSignature.keyId);
-                if (sslSign) {
+                        personalsigbuf, personalsiglen, gpg_fpr);
+                if (gpgSign) {
                     #ifdef DISTRIB_DEBUG
-                    std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() Success for ssl signature." << std::endl;
+                    std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() Success for gpg signature." << std::endl;
                     #endif
                     signOk = 1;
                 } else {
                     #ifdef DISTRIB_DEBUG
-                    std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() Fail for ssl signature." << std::endl;
+                    std::cerr << "p3GroupDistrib::locked_validateDistribSignedMsg() Fail for gpg signature." << std::endl;
                     #endif
                     signOk = 0;
                 }

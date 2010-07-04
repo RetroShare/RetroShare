@@ -762,15 +762,13 @@ bool AuthGPGimpl::DoOwnSignature(const void *data, unsigned int datalen, void *b
 		return false;
 	}
 
-#ifdef GPG_DEBUG
-	gpgme_sign_result_t res =
-#endif
-	gpgme_op_sign_result(CTX);
+	gpgme_sign_result_t res = gpgme_op_sign_result(CTX);
 
-#ifdef GPG_DEBUG
 	if (res)
 	{
+#ifdef GPG_DEBUG
 		fprintf(stderr, "Sign Got Result\n");
+#endif
 	}
 	else
 	{
@@ -780,6 +778,7 @@ bool AuthGPGimpl::DoOwnSignature(const void *data, unsigned int datalen, void *b
 	gpgme_invalid_key_t ik = res->invalid_signers;
 	gpgme_new_signature_t sg = res->signatures;
 
+#ifdef GPG_DEBUG
 	while(ik != NULL)
 	{
                 fprintf(stderr, "AuthGPGimpl::Sign, Invalid by: %s\n", ik->fpr);

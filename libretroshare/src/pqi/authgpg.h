@@ -54,6 +54,8 @@
 
 const time_t STORE_KEY_TIMEOUT = 60; //store key is call around every 60sec
 
+#define MAX_GPG_SIGNATURE_SIZE  4096
+
 /*!
  * gpgcert is the identifier for a person.
  * It is a wrapper class for a GPGme OpenPGP certificate.
@@ -152,6 +154,7 @@ virtual std::string getGPGEmail(GPG_id pgp_id) = 0;
     /* PGP web of trust management */
 virtual std::string getGPGOwnId() = 0;
 virtual std::string getGPGOwnName() = 0;
+
 //virtual std::string getGPGOwnEmail() = 0;
 virtual bool	getGPGDetails(std::string id, RsPeerDetails &d) = 0;
 virtual bool	getGPGAllList(std::list<std::string> &ids) = 0;
@@ -269,6 +272,7 @@ virtual std::string getGPGEmail(GPG_id pgp_id);
     /* PGP web of trust management */
 virtual std::string getGPGOwnId();
 virtual std::string getGPGOwnName();
+
 //virtual std::string getGPGOwnEmail();
 virtual bool	getGPGDetails(std::string id, RsPeerDetails &d);
 virtual bool	getGPGAllList(std::list<std::string> &ids);

@@ -87,6 +87,7 @@ virtual std::string getGPGEmail(GPG_id pgp_id);
     /* PGP web of trust management */
 virtual std::string getGPGOwnId();
 virtual std::string getGPGOwnName();
+
 //virtual std::string getGPGOwnEmail();
 virtual bool	getGPGDetails(std::string id, RsPeerDetails &d);
 virtual bool	getGPGAllList(std::list<std::string> &ids);

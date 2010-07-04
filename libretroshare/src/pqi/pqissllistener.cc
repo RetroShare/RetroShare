@@ -687,8 +687,9 @@ int pqissllistener::completeConnection(int fd, SSL *ssl, struct sockaddr_in &rem
 		AuthSSL::getAuthSSL()->CheckCertificate(newPeerId, peercert);
 
 		/* now need to get GPG id too */
-		//mConnMgr->addPeer(newPeerId);
-
+	        std::string pgpid = getX509CNString(peercert->cert_info->issuer);
+		mConnMgr->addFriend(newPeerId, pgpid);
+	
 		X509_free(peercert);
 		return -1;
 	}
