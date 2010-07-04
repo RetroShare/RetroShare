@@ -32,62 +32,58 @@
  */
 
 
-
-
-
+#include "conn_harness.h"
+#include "ppg_harness.h"
 
 #include "pqi/pqiperson.h"
 #include "pqi/pqibin.h"
 
-#include "testconnect.h"
-
 #include "util/rsnet.h"
 #include <iostream>
 #include <sstream>
-#include "util/utest.h"
-
-INITTEST();
-
-int test_person_basic_reset();
-int test_person_basic_listen();
-
-
-int main(int argc, char **argv)
-{
-	std::cerr << "pqiperson_test" << std::endl;
-
-	test_person_basic_reset();
-	test_person_basic_listen();
-
-	FINALREPORT("pqiperson_test");
-
-	return TESTRESULT();
-}
-
-/******************************************************
- *
- * tests()
- *
- **** ensure that functions call children 
- * pqiperson::reset()
- * pqiperson::listen()
- * pqiperson::stoplistening()
- *
- * 
- * pqiperson::connect(...)
- *   -> check that gets through to children.
- *   -> check that cannot have simultaneous connections.
- *   -> 
- *
- */
-
 
 /*******************************************************
  *
  * Test structure
  *****************/
 
-#define NUM_CHILDREN  3
+
+pqiperson *createTestPerson(std::string id, pqipersongrp *ppg);
+
+pqipersongrpTestHarness *mPqiPersonGrpTH = NULL;
+
+void setupPqiPersonGrpTH()
+{
+	mPqiPersonGrpTH = new pqipersongrpTestHarness(NULL, 0);
+}
+
+void tickPqiPersonGrpTH()
+{
+	mPqiPersonGrpTH->tick();
+}
+
+
+pqipersongrpTestHarness::pqipersongrpTestHarness(SecurityPolicy *pol, unsigned long flags)
+        :pqipersongrp(pol, flags) 
+{ 
+	return; 
+}
+
+        /********* FUNCTIONS to OVERLOAD for specialisation ********/
+pqilistener *pqipersongrpTestHarness::createListener(struct sockaddr_in laddr)
+{
+	return new pqilistener();	
+}
+
+pqiperson   *pqipersongrpTestHarness::createPerson(std::string id, pqilistener *listener)
+{
+	return createTestPerson(id, this);
+}
+
+        /********* FUNCTIONS to OVERLOAD for specialisation ********/
+
+
+
 
 pqiperson *createTestPerson(std::string id, pqipersongrp *ppg)
 {
@@ -113,7 +109,7 @@ pqiperson *createTestPerson(std::string id, pqipersongrp *ppg)
 
         NetBinDummy *dummy1 = new NetBinDummy(pqip, id, PQI_CONNECT_TCP);
 	pqiconnect *pqisc = new testConnect(rss, dummy1);
-	addTestConnect(pqisc);
+	addTestConnect(pqisc, pqip);
 	pqip -> addChildInterface(PQI_CONNECT_TCP, pqisc);
 
 	RsSerialiser *rss2 = new RsSerialiser();
@@ -123,7 +119,7 @@ pqiperson *createTestPerson(std::string id, pqipersongrp *ppg)
 
         NetBinDummy *dummy2 = new NetBinDummy(pqip, id, PQI_CONNECT_TUNNEL);
 	pqiconnect *pqicontun 	= new testConnect(rss2, dummy2);
-	addTestConnect(pqicontun);
+	addTestConnect(pqicontun, pqip);
 	pqip -> addChildInterface(PQI_CONNECT_TUNNEL, pqicontun);
 
 
@@ -134,92 +130,10 @@ pqiperson *createTestPerson(std::string id, pqipersongrp *ppg)
 
         NetBinDummy *dummy3 = new NetBinDummy(pqip, id, PQI_CONNECT_UDP);
         pqiconnect *pqiusc 	= new testConnect(rss3, dummy3);
-	addTestConnect(pqiusc);
+	addTestConnect(pqiusc, pqip);
         pqip -> addChildInterface(PQI_CONNECT_UDP, pqiusc);
 
 	return pqip;
-}
-
-
-/* First Sets of Tests are very basic:
- *   reset()
- *   connect()
- *   listen() / stoplistening()
- *   disconnect()
- */
-
-int test_person_basic_reset()
-{
-	/* reset test */
-	resetTestConnects();
-
-	/* create test person */
-	std::string id = "12345678901234567890123456789012";
-	pqipersongrp *ppg = NULL;
-	pqiperson *person = createTestPerson(id, ppg);
-
-	/* reset person */
-	person->reset();
-
-	/* count number of resets */
-	CHECK(NUM_CHILDREN == testCounter);
-
-	int i;
-	for(i = 0; i < NUM_CHILDREN; i++)
-	{
-		CHECK(testResetTimes[i].size() == 1);
-		CHECK(testConnectState[i] == 0);
-		CHECK(testConnectTimes[i].size() == 0);
-	}
-
-	/* clean up */
-	delete person;
-
-	REPORT("test_person_basic_reset()");
-
-	return 1;
-}
-
-
-int test_person_basic_listen()
-{
-	/* reset test */
-	resetTestConnects();
-
-	/* create test person */
-	std::string id = "12345678901234567890123456789012";
-	pqipersongrp *ppg = NULL;
-	pqiperson *person = createTestPerson(id, ppg);
-
-	/* reset person */
-	person->listen();
-
-	/* count number of resets */
-	CHECK(NUM_CHILDREN == testCounter);
-
-	int i;
-	for(i = 0; i < NUM_CHILDREN; i++)
-	{
-		CHECK(testResetTimes[i].size() == 0);
-		CHECK(testConnectTimes[i].size() == 0);
-		CHECK(testConnectState[i] == TST_STATE_LISTEN);
-	}
-
-	person->stoplistening();
-
-	for(i = 0; i < NUM_CHILDREN; i++)
-	{
-		CHECK(testResetTimes[i].size() == 0);
-		CHECK(testConnectTimes[i].size() == 0);
-		CHECK(testConnectState[i] == 0);
-	}
-
-	/* clean up */
-	delete person;
-
-	REPORT("test_person_basic_listen()");
-
-	return 1;
 }
 
 

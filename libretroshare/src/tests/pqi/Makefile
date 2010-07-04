@@ -7,12 +7,18 @@ RS_TOP_DIR = ../..
 include $(RS_TOP_DIR)/tests/scripts/config.mk
 ###############################################################
 
-TESTOBJ  = net_test.o dht_test.o net_test1.o netiface_test.o dht_test.o 
-TESTOBJ  += pkt_test.o testconnect.o pqiarchive_test.o pqiperson_test.o
+# Generic Test Harnesses.
+TESTOBJ  = conn_harness.o ppg_harness.o
+
+TESTOBJ  += net_test.o dht_test.o net_test1.o netiface_test.o dht_test.o 
+TESTOBJ  += pkt_test.o pqiarchive_test.o pqiperson_test.o
 TESTOBJ  += extaddrfinder_test.o
+TESTOBJ  += p3connmgr_reset_test.o p3connmgr_connect_test.o 
 #conn_test.o 
 
 TESTS  = net_test net_test1 netiface_test pqiarchive_test pqiperson_test extaddrfinder_test
+TESTS  = p3connmgr_reset_test p3connmgr_connect_test
+#TESTS  = p3connmgr_test1
 
 MANUAL_TESTS = dht_test 
 #conn_test
@@ -48,6 +54,18 @@ pqiperson_test: pqiperson_test.o testconnect.o
 
 extaddrfinder_test: extaddrfinder_test.o 
 	$(CC) $(CFLAGS) -o extaddrfinder_test extaddrfinder_test.o $(LIBS)
+
+p3connmgr_reset_test: p3connmgr_reset_test.o 
+	$(CC) $(CFLAGS) -o p3connmgr_reset_test p3connmgr_reset_test.o $(LIBS)
+
+
+p3connmgr_connect_test: p3connmgr_connect_test.o conn_harness.o ppg_harness.o
+	$(CC) $(CFLAGS) -o p3connmgr_connect_test p3connmgr_connect_test.o conn_harness.o ppg_harness.o $(LIBS)
+
+
+p3connmgr_test1: p3connmgr_test1.o 
+	$(CC) $(CFLAGS) -o p3connmgr_test1 p3connmgr_test1.o $(LIBS)
+
 
 
 clobber: remove_extra_files

@@ -141,7 +141,7 @@ pqiperson *createTestPerson(std::string id, pqipersongrp *ppg)
 	rss->addSerialType(new RsCacheItemSerialiser());
 	rss->addSerialType(new RsServiceSerialiser());
 
-        NetBinDummy *dummy1 = new NetBinDummy(pqip, id, PQI_CONNECT_TUNNEL);
+        NetBinDummy *dummy1 = new NetBinDummy(pqip, id, PQI_CONNECT_TCP);
 	pqiconnect *pqisc = new testConnect(rss, dummy1);
 	addTestConnect(pqisc);
 	pqip -> addChildInterface(PQI_CONNECT_TCP, pqisc);
