@@ -30,9 +30,10 @@
 #include <memory>
 #include <vector>
 
-#include "upnp.h"
-#include "upnptools.h"
-#include "upnpdebug.h"
+#include <upnp/upnp.h>
+#include <upnp/upnptools.h>
+#include <upnp/upnpdebug.h>
+
 #include "util/rsthreads.h"
 
 #include <iostream>

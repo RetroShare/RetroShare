@@ -12,7 +12,7 @@
 
 #include "util/rsthreads.h"
 
-#include "upnp.h"
+#include <upnp/upnp.h>
 #include "upnp/UPnPBase.h"
 
 #define RS_UPNP_S_UNINITIALISED  0

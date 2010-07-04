@@ -525,6 +525,10 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 	 * 2) Get List of Available Accounts.
 	 * 4) Get List of GPG Accounts.
 	 */
+	/* create singletons */
+	AuthSSLInit();
+	AuthGPGInit();
+
         AuthSSL::getAuthSSL() -> InitAuth(NULL, NULL, NULL);
 
 	// first check config directories, and set bootstrap values.
@@ -2249,7 +2253,7 @@ int RsServer::StartupRetroShare()
 
 	//mConfigMgr->addConfiguration("ftserver.cfg", ftserver);
 	//
-        mConfigMgr->addConfiguration("gpg_prefs.cfg", AuthGPG::getAuthGPG());
+        mConfigMgr->addConfiguration("gpg_prefs.cfg", (AuthGPGimpl *) AuthGPG::getAuthGPG());
         mConfigMgr->loadConfiguration();
 
         //mConfigMgr->addConfiguration("sslcerts.cfg", AuthSSL::getAuthSSL());

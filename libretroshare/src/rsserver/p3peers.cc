@@ -307,30 +307,27 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 	/* generate */
 	d.authcode  	= "AUTHCODE";
 
-
-	//TODO : check use of this details
-	// From all addresses, show the most recent one if no address is currently in use.
-	struct sockaddr_in best_local_addr = (!strcmp(inet_ntoa(pcs.currentlocaladdr.sin_addr),"0.0.0.0"))?getPreferredAddress(pcs.dht.laddr,pcs.dht.ts,pcs.disc.laddr,pcs.disc.ts,pcs.peer.laddr,pcs.peer.ts):pcs.currentlocaladdr ;
-	struct sockaddr_in best_servr_addr = (!strcmp(inet_ntoa(pcs.currentserveraddr.sin_addr),"0.0.0.0"))?getPreferredAddress(pcs.dht.raddr,pcs.dht.ts,pcs.disc.raddr,pcs.disc.ts,pcs.peer.raddr,pcs.peer.ts):pcs.currentserveraddr ;
-		
-
 	/* fill from pcs */
 
-	d.localAddr	= inet_ntoa(best_local_addr.sin_addr);
-	d.localPort	= ntohs(best_local_addr.sin_port);
-	d.extAddr	= inet_ntoa(best_servr_addr.sin_addr);
-	d.extPort	= ntohs(best_servr_addr.sin_port);
+	d.localAddr	= inet_ntoa(pcs.currentlocaladdr.sin_addr);
+	d.localPort	= ntohs(pcs.currentlocaladdr.sin_port);
+	d.extAddr	= inet_ntoa(pcs.currentserveraddr.sin_addr);
+	d.extPort	= ntohs(pcs.currentserveraddr.sin_port);
         d.dyndns        = pcs.dyndns;
 	d.lastConnect	= pcs.lastcontact;
 	d.connectPeriod = 0;
-	std::list<IpAddressTimed> pcsList = pcs.getIpAddressList();
-	d.ipAddressList.clear();
-	for (std::list<IpAddressTimed>::iterator ipListIt = pcsList.begin(); ipListIt!=(pcsList.end()); ipListIt++) {
+
+
+	std::list<pqiIpAddress>::iterator it;
+	for(it = pcs.ipAddrs.mExt.mAddrs.begin(); 
+			it != pcs.ipAddrs.mExt.mAddrs.end(); it++)
+	{
 	    std::ostringstream toto;
-            toto << ntohs(ipListIt->ipAddr.sin_port) << "    " << (time(NULL) - ipListIt->seenTime) << " sec";
-            d.ipAddressList.push_back(std::string(inet_ntoa(ipListIt->ipAddr.sin_addr)) + ":" + toto.str());
+            toto << ntohs(it->mAddr.sin_port) << "    " << (time(NULL) - it->mSeenTime) << " sec";
+            d.ipAddressList.push_back(std::string(inet_ntoa(it->mAddr.sin_addr)) + ":" + toto.str());
 	}
 
+		
 
 	/* Translate */
 	

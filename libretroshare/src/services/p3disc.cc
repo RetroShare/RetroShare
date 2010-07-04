@@ -353,7 +353,9 @@ void p3disc::sendPeerDetails(std::string to, std::string about) {
 			rsPeerNetItem->currentlocaladdr = detail.currentlocaladdr;
 			rsPeerNetItem->currentremoteaddr = detail.currentserveraddr;
 			rsPeerNetItem->dyndns = detail.dyndns;
-			rsPeerNetItem->ipAddressList = detail.getIpAddressList();
+                	detail.ipAddrs.mLocal.loadTlv(rsPeerNetItem->localAddrList);
+                	detail.ipAddrs.mExt.loadTlv(rsPeerNetItem->extAddrList);
+
 
 			di->rsPeerList.push_back(*rsPeerNetItem);
 		}
@@ -377,7 +379,9 @@ void p3disc::sendPeerDetails(std::string to, std::string about) {
 			rsPeerNetItem->currentlocaladdr = detail.currentlocaladdr;
 			rsPeerNetItem->currentremoteaddr = detail.currentserveraddr;
 			rsPeerNetItem->dyndns = detail.dyndns;
-			rsPeerNetItem->ipAddressList = detail.getIpAddressList();
+                	detail.ipAddrs.mLocal.loadTlv(rsPeerNetItem->localAddrList);
+                	detail.ipAddrs.mExt.loadTlv(rsPeerNetItem->extAddrList);
+
 
 			di->rsPeerList.push_back(*rsPeerNetItem);
 		}
@@ -610,18 +614,25 @@ void p3disc::recvPeerDetails(RsDiscReply *item)
 						merge = false ;
 					}
 				}
+
+				pqiIpAddrSet addrsFromPeer;	
+				addrsFromPeer.mLocal.loadTlv(pitem->localAddrList);
+                		addrsFromPeer.mExt.loadTlv(pitem->extAddrList);
+
+
 #ifdef P3DISC_DEBUG
 				std::cerr << "Friend is already connected -> not updating" << std::endl;
 
 				std::cerr << "Setting address list to peer " << pitem->pid << ", to be:" << std::endl ;
-				for(std::list<IpAddressTimed>::const_iterator it(pitem->ipAddressList.begin());it!=pitem->ipAddressList.end();++it)
-					std::cerr << "   " << (*it).ipAddr << " (" << (*it).seenTime << ")" << std::endl ;
+
+				addrsFromPeer.printAddrs(std::cerr);
+				std::cerr << std::endl;
 #endif
 				// allways update address list and dns, except if it's ours
 				if (pitem->dyndns != "") 
 					mConnMgr->setDynDNS(pitem->pid, pitem->dyndns);
 
-				mConnMgr->updateAddressList(pitem->pid, pitem->ipAddressList,merge);
+				mConnMgr->updateAddressList(pitem->pid, addrsFromPeer);
 			}
 #ifdef P3DISC_DEBUG
 			else

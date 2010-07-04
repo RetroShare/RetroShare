@@ -214,7 +214,9 @@ HEADERS += dbase/cachestrapper.h \
 #	   ft/ftdwlqueue.h \
 	   pqi/sslfns.h \
            pqi/authssl.h \
+           pqi/authssltest.h \
            pqi/authgpg.h \
+           pqi/authgpgtest.h \
            pqi/cleanupxpgp.h \
  #          pqi/p3authmgr.h \
            pqi/p3cfgmgr.h \
@@ -230,6 +232,7 @@ HEADERS += dbase/cachestrapper.h \
            pqi/pqihandler.h \
            pqi/pqihash.h \
            pqi/pqiindic.h \
+	   pqi/pqiipset.h \
            pqi/pqilistener.h \
 	   pqi/pqiloopback.h \
            pqi/pqimonitor.h \
@@ -291,6 +294,7 @@ HEADERS += dbase/cachestrapper.h \
            serialiser/rstlvkvwide.h \
            serialiser/rstlvtypes.h \
            serialiser/rstlvutil.h \
+           serialiser/rstlvaddrs.h \
            services/p3channels.h \
            services/p3chatservice.h \
            services/p3disc.h \
@@ -335,7 +339,9 @@ HEADERS += dbase/cachestrapper.h \
 SOURCES += \
 	   			pqi/sslfns.cc \
 				pqi/authssl.cc \
+				pqi/authssltest.cc \
 				pqi/authgpg.cc \
+				pqi/authgpgtest.cc \
 				pqi/cleanupxpgp.cc \
 				pqi/p3notify.cc \
 				pqi/pqipersongrp.cc \
@@ -352,6 +358,7 @@ SOURCES += \
 				pqi/p3cfgmgr.cc \
 				pqi/p3connmgr.cc \
 				pqi/p3dhtmgr.cc \
+	   			pqi/pqiipset.cc \
 				pqi/pqiarchive.cc \
 				pqi/pqibin.cc \
 				pqi/pqimonitor.cc \
@@ -430,6 +437,7 @@ SOURCES += \
 				serialiser/rstlvbase.cc \
 				serialiser/rstlvtypes.cc \
 				serialiser/rsserial.cc \
+           			serialiser/rstlvaddrs.cc \
 				tcponudp/extaddrfinder.cc \
 				tcponudp/bss_tou.c \
 				tcponudp/tcpstream.cc \
