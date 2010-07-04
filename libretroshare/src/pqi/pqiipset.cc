@@ -75,7 +75,7 @@ bool 	pqiIpAddrList::updateIpAddressList(const pqiIpAddress &addr)
 #endif
 		add = true;
 	}
-	else if (mAddrs.begin()->mSeenTime < addr.mSeenTime)
+	else if (mAddrs.back().mSeenTime < addr.mSeenTime)
 	{
 #ifdef IPADDR_DEBUG
 		std::cerr << "pqiIpAddrList::updateIpAddressList() oldAddr: Add";
@@ -121,11 +121,11 @@ bool 	pqiIpAddrList::updateIpAddressList(const pqiIpAddress &addr)
 		}
 	}
 
-	// ordered by increasing time. (oldest at front)
+	// ordered by decreaseing time. (newest at front)
 	bool added = false;
 	for(it = mAddrs.begin(); it != mAddrs.end(); it++)
 	{
-		if (it->mSeenTime > addr.mSeenTime)
+		if (it->mSeenTime < addr.mSeenTime)
 		{
 #ifdef IPADDR_DEBUG
 			std::cerr << "pqiIpAddrList::updateIpAddressList() added orig SeenTime: " << it->mSeenTime << " new SeenTime: " << addr.mSeenTime;
@@ -147,13 +147,13 @@ bool 	pqiIpAddrList::updateIpAddressList(const pqiIpAddress &addr)
 	}
 
 	/* pop if necessary */
-	if (mAddrs.size() > MAX_ADDRESS_LIST_SIZE)
+	while (mAddrs.size() > MAX_ADDRESS_LIST_SIZE)
 	{
 #ifdef IPADDR_DEBUG
-		std::cerr << "pqiIpAddrList::updateIpAddressList() popping front";
+		std::cerr << "pqiIpAddrList::updateIpAddressList() popping back";
 		std::cerr << std::endl;
 #endif
-		mAddrs.pop_front();
+		mAddrs.pop_back();
 	}
 
 	return newAddr;

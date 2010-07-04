@@ -36,7 +36,6 @@
 /***
 #define RSSERIAL_DEBUG 1
 ***/
-#define RSSERIAL_DEBUG 1
 
 #include <iostream>
 

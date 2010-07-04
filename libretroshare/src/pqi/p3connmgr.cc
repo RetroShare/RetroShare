@@ -72,9 +72,6 @@ const uint32_t PEER_IP_CONNECT_STATE_MAX_LIST_SIZE =     	4;
  * #define CONN_DEBUG_TICK 1
  ***/
 
-#define CONN_DEBUG 1
-#define CONN_DEBUG_RESET 1
-#define CONN_DEBUG_TICK 1
 
 /****
  * #define P3CONNMGR_NO_TCP_CONNECTIONS 1
@@ -200,9 +197,9 @@ p3ConnectMgr::p3ConnectMgr()
 		mOldNetFlags = pqiNetStatus();
 	}
 	
-	#ifdef CONN_DEBUG_RESET
-	std::cerr << "p3ConnectMgr() Calling NetReset" << std::endl;
-	#endif
+#ifdef CONN_DEBUG
+	std::cerr << "p3ConnectMgr() Startup" << std::endl;
+#endif
 
 	netReset();
 
@@ -234,7 +231,9 @@ void p3ConnectMgr::setIPServersEnabled(bool b)
 	{
 		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 	}
+#ifdef CONN_DEBUG
 	std::cerr << "p3ConnectMgr: setIPServers to " << b << std::endl ; 
+#endif
 }
 
 void p3ConnectMgr::setTunnelConnection(bool b)
@@ -395,9 +394,9 @@ void p3ConnectMgr::netReset()
 	}
 #endif
 
-        #ifdef CONN_DEBUG_RESET
-	std::cerr << "p3ConnectMgr::netReset() shutdown" << std::endl;
-        #endif
+#ifdef CONN_DEBUG_RESET
+	std::cerr << "p3ConnectMgr::netReset() Called" << std::endl;
+#endif
 
 	shutdown(); /* blocking shutdown call */
 
@@ -406,13 +405,19 @@ void p3ConnectMgr::netReset()
 	{
 #ifdef CONN_DEBUG_RESET
 		std::cerr << "p3ConnectMgr::netReset() restarting AddrFinder" << std::endl;
- #endif
+#endif
 		mExtAddrFinder->reset() ;
 	}
+	else
+	{
+#ifdef CONN_DEBUG_RESET
+		std::cerr << "p3ConnectMgr::netReset() ExtAddrFinder Disabled" << std::endl;
+#endif
+	}
 
-        #ifdef CONN_DEBUG_RESET
+#ifdef CONN_DEBUG_RESET
 	std::cerr << "p3ConnectMgr::netReset() resetting NetStatus" << std::endl;
-        #endif
+#endif
 
 	/* reset udp network - handled by tou_init! */
 	/* reset tcp network - if necessary */
@@ -425,12 +430,16 @@ void p3ConnectMgr::netReset()
 		*      as it calls back to p3ConnMgr.
 		*/
 		
+#ifdef CONN_DEBUG_RESET
 		std::cerr << "p3ConnectMgr::netReset() resetting listeners" << std::endl;
+#endif
 		std::list<pqiNetListener *>::const_iterator it;
 		for(it = mNetListeners.begin(); it != mNetListeners.end(); it++)
 		{
-		std::cerr << "p3ConnectMgr::netReset() reset listener" << std::endl;
-		(*it)->reset_listener();
+			(*it)->reset_listener();
+#ifdef CONN_DEBUG_RESET
+			std::cerr << "p3ConnectMgr::netReset() reset listener" << std::endl;
+#endif
 		}
 	}
 
@@ -443,10 +452,11 @@ void p3ConnectMgr::netReset()
 	/* check Network Address. This happens later */
 	//checkNetAddress();
 
-        #ifdef CONN_DEBUG_RESET
+#ifdef CONN_DEBUG_RESET
 	std::cerr << "p3ConnectMgr::netReset() done" << std::endl;
-        #endif
+#endif
 }
+
 
 /* to allow resets of network stuff */
 void    p3ConnectMgr::addNetListener(pqiNetListener *listener)
@@ -490,6 +500,7 @@ void p3ConnectMgr::netStartup()
 
 	mNetInitTS = time(NULL);
 	netStatusReset_locked();
+
 #ifdef CONN_DEBUG_RESET
 	std::cerr << "p3ConnectMgr::netStartup() resetting mNetInitTS / Status" << std::endl;
 #endif
@@ -547,6 +558,10 @@ void p3ConnectMgr::tick()
 
 bool p3ConnectMgr::shutdown() /* blocking shutdown call */
 {
+#ifdef CONN_DEBUG
+	std::cerr << "p3ConnectMgr::shutdown()";
+	std::cerr << std::endl;
+#endif
 	{
 		RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 		mNetStatus = RS_NET_UNKNOWN;
@@ -629,7 +644,7 @@ void p3ConnectMgr::netTick()
 {
 
 #ifdef CONN_DEBUG_TICK
-	//std::cerr << "p3ConnectMgr::netTick()" << std::endl;
+	std::cerr << "p3ConnectMgr::netTick()" << std::endl;
 #endif
 
 	// Check whether we are stuck on loopback. This happens if RS starts when
@@ -651,17 +666,14 @@ void p3ConnectMgr::netTick()
 	{
 		case RS_NET_NEEDS_RESET:
 
-#ifdef CONN_DEBUG_TICK
-			std::cerr << "p3ConnectMgr::netTick() STATUS: NEEDS_RESET" << std::endl;
-#endif
-#ifdef CONN_DEBUG_RESET
+#if defined(CONN_DEBUG_TICK) || defined(CONN_DEBUG_RESET)
 			std::cerr << "p3ConnectMgr::netTick() STATUS: NEEDS_RESET" << std::endl;
 #endif
 			netReset();
 			break;
 
 		case RS_NET_UNKNOWN:
-#ifdef CONN_DEBUG_TICK
+#if defined(CONN_DEBUG_TICK) || defined(CONN_DEBUG_RESET)
 			std::cerr << "p3ConnectMgr::netTick() STATUS: UNKNOWN" << std::endl;
 #endif
 
@@ -671,7 +683,7 @@ void p3ConnectMgr::netTick()
 #define STARTUP_DELAY 5
 			if (age < STARTUP_DELAY)
 			{
-#ifdef CONN_DEBUG_TICK
+#if defined(CONN_DEBUG_TICK) || defined(CONN_DEBUG_RESET)
 				std::cerr << "p3ConnectMgr::netTick() Delaying Startup" << std::endl;
 #endif
 			}
@@ -683,14 +695,14 @@ void p3ConnectMgr::netTick()
 			break;
 
 		case RS_NET_UPNP_INIT:
-#ifdef CONN_DEBUG_TICK
+#if defined(CONN_DEBUG_TICK) || defined(CONN_DEBUG_RESET)
 			std::cerr << "p3ConnectMgr::netTick() STATUS: UPNP_INIT" << std::endl;
 #endif
 			netUpnpInit();
 			break;
 
 		case RS_NET_UPNP_SETUP:
-#ifdef CONN_DEBUG_TICK
+#if defined(CONN_DEBUG_TICK) || defined(CONN_DEBUG_RESET)
 			std::cerr << "p3ConnectMgr::netTick() STATUS: UPNP_SETUP" << std::endl;
 #endif
 			netUpnpCheck();
@@ -698,7 +710,7 @@ void p3ConnectMgr::netTick()
 
 
 		case RS_NET_EXT_SETUP:
-#ifdef CONN_DEBUG_TICK
+#if defined(CONN_DEBUG_TICK) || defined(CONN_DEBUG_RESET)
 			std::cerr << "p3ConnectMgr::netTick() STATUS: EXT_SETUP" << std::endl;
 #endif
 			netExtCheck();
@@ -715,7 +727,7 @@ void p3ConnectMgr::netTick()
 		case RS_NET_LOOPBACK:
                         //don't do a shutdown because a client in a computer without local network might be usefull for debug.
                         //shutdown();
-#ifdef CONN_DEBUG_TICK
+#if defined(CONN_DEBUG_TICK) || defined(CONN_DEBUG_RESET)
                         std::cerr << "p3ConnectMgr::netTick() STATUS: RS_NET_LOOPBACK" << std::endl;
 #endif
 		default:
@@ -728,7 +740,7 @@ void p3ConnectMgr::netTick()
 
 void p3ConnectMgr::netUdpInit()
 {
-#ifdef CONN_DEBUG
+#if defined(CONN_DEBUG_RESET)
 	std::cerr << "p3ConnectMgr::netUdpInit()" << std::endl;
 #endif
 	connMtx.lock();   /*   LOCK MUTEX */
@@ -744,7 +756,7 @@ void p3ConnectMgr::netUdpInit()
 
 void p3ConnectMgr::netDhtInit()
 {
-#ifdef CONN_DEBUG
+#if defined(CONN_DEBUG_RESET)
 	std::cerr << "p3ConnectMgr::netDhtInit()" << std::endl;
 #endif
 	connMtx.lock();   /*   LOCK MUTEX */
@@ -759,7 +771,7 @@ void p3ConnectMgr::netDhtInit()
 
 void p3ConnectMgr::netUpnpInit()
 {
-#ifdef CONN_DEBUG
+#if defined(CONN_DEBUG_RESET)
 	std::cerr << "p3ConnectMgr::netUpnpInit()" << std::endl;
 #endif
 	uint16_t eport, iport;
@@ -789,9 +801,9 @@ void p3ConnectMgr::netUpnpCheck()
 
 	time_t delta = time(NULL) - mNetInitTS;
 
-        #ifdef CONN_DEBUG_TICK
+#if defined(CONN_DEBUG_TICK) || defined(CONN_DEBUG_RESET)
 		std::cerr << "p3ConnectMgr::netUpnpCheck() age: " << delta << std::endl;
-	#endif
+#endif
 
 	connMtx.unlock(); /* UNLOCK MUTEX */
 
@@ -801,10 +813,10 @@ void p3ConnectMgr::netUpnpCheck()
 	if (((upnpState == 0) && (delta > (time_t)MAX_UPNP_INIT)) ||
 	    ((upnpState > 0) && (delta > (time_t)MAX_UPNP_COMPLETE)))
 	{
-                #ifdef CONN_DEBUG_TICK
+#if defined(CONN_DEBUG_TICK) || defined(CONN_DEBUG_RESET)
 		std::cerr << "p3ConnectMgr::netUpnpCheck() ";
 		std::cerr << "Upnp Check failed." << std::endl;
-                #endif
+#endif
 		/* fallback to UDP startup */
 		connMtx.lock();   /*   LOCK MUTEX */
 
@@ -816,7 +828,7 @@ void p3ConnectMgr::netUpnpCheck()
 	}
 	else if ((upnpState > 0) && netAssistExtAddress(extAddr))
 	{
-#ifdef CONN_DEBUG_TICK
+#if defined(CONN_DEBUG_TICK) || defined(CONN_DEBUG_RESET)
 		std::cerr << "p3ConnectMgr::netUpnpCheck() ";
 		std::cerr << "Upnp Check success state: " << upnpState << std::endl;
 #endif
@@ -829,7 +841,7 @@ void p3ConnectMgr::netUpnpCheck()
 		 */
 		if (isValidNet(&(extAddr.sin_addr)))
 		{
-#ifdef CONN_DEBUG_TICK
+#if defined(CONN_DEBUG_TICK) || defined(CONN_DEBUG_RESET)
 			std::cerr << "p3ConnectMgr::netUpnpCheck() ";
 			std::cerr << "UpnpAddr: " << inet_ntoa(extAddr.sin_addr);
 			std::cerr << ":" << ntohs(extAddr.sin_port);
@@ -848,10 +860,10 @@ void p3ConnectMgr::netUpnpCheck()
 	}
 	else
 	{
-                #ifdef CONN_DEBUG_TICK
+#if defined(CONN_DEBUG_TICK) || defined(CONN_DEBUG_RESET)
 		std::cerr << "p3ConnectMgr::netUpnpCheck() ";
 		std::cerr << "Upnp Check Continues: status: " << upnpState << std::endl;
-                #endif
+#endif
 	}
 
 }
@@ -859,7 +871,7 @@ void p3ConnectMgr::netUpnpCheck()
 
 void p3ConnectMgr::netExtCheck()
 {
-#ifdef CONN_DEBUG
+#if defined(CONN_DEBUG_TICK) || defined(CONN_DEBUG_RESET)
 	std::cerr << "p3ConnectMgr::netExtCheck()" << std::endl;
 #endif
 	{
@@ -872,14 +884,14 @@ void p3ConnectMgr::netExtCheck()
 		/* (1) UPnP -> which handles itself */
 		if (!mNetFlags.mExtAddrOk)
 		{
-#ifdef CONN_DEBUG
+#if defined(CONN_DEBUG_TICK) || defined(CONN_DEBUG_RESET)
 			std::cerr << "p3ConnectMgr::netExtCheck() Ext Not Ok" << std::endl;
 #endif
 
 			/* net Assist */
 			if (netAssistExtAddress(tmpip))
 			{
-#ifdef CONN_DEBUG
+#if defined(CONN_DEBUG_TICK) || defined(CONN_DEBUG_RESET)
 				std::cerr << "p3ConnectMgr::netExtCheck() Ext supplied from netAssistExternalAddress()" << std::endl;
 #endif
 				if (isValidNet(&(tmpip.sin_addr)))
@@ -892,7 +904,7 @@ void p3ConnectMgr::netExtCheck()
 				}	
 				else
 				{
-#ifdef CONN_DEBUG
+#if defined(CONN_DEBUG_TICK) || defined(CONN_DEBUG_RESET)
 					std::cerr << "p3ConnectMgr::netExtCheck() Bad Address supplied from netAssistExternalAddress()" << std::endl;
 #endif
 				}
@@ -906,23 +918,32 @@ void p3ConnectMgr::netExtCheck()
 			/* ExtAddrFinder */
 			if (mUseExtAddrFinder)
 			{
+#if defined(CONN_DEBUG_TICK) || defined(CONN_DEBUG_RESET)
 				std::cerr << "p3ConnectMgr::netExtCheck() checking ExtAddrFinder" << std::endl;
+#endif
 				bool extFinderOk = mExtAddrFinder->hasValidIP(&(tmpip.sin_addr));
 				if (extFinderOk)
 				{
+#if defined(CONN_DEBUG_TICK) || defined(CONN_DEBUG_RESET)
 					std::cerr << "p3ConnectMgr::netExtCheck() Ext supplied by ExtAddrFinder" << std::endl;
+#endif
 					/* best guess at port */
 					tmpip.sin_port = mNetFlags.mLocalAddr.sin_port;
-#ifdef CONN_DEBUG_TICK
-			std::cerr << "p3ConnectMgr::netExtCheck() ";
-			std::cerr << "ExtAddr: " << inet_ntoa(tmpip.sin_addr);
-			std::cerr << ":" << ntohs(tmpip.sin_port);
-			std::cerr << std::endl;
+#if defined(CONN_DEBUG_TICK) || defined(CONN_DEBUG_RESET)
+					std::cerr << "p3ConnectMgr::netExtCheck() ";
+					std::cerr << "ExtAddr: " << inet_ntoa(tmpip.sin_addr);
+					std::cerr << ":" << ntohs(tmpip.sin_port);
+					std::cerr << std::endl;
 #endif
 
 					mNetFlags.mExtAddr = tmpip;
 					mNetFlags.mExtAddrOk = true;
 					mNetFlags.mExtAddrStableOk = isStable;
+
+					/* XXX HACK TO FIX */
+#warning "ALLOWING ExtAddrFinder -> ExtAddrStableOk = true (which it is not normally)"
+					mNetFlags.mExtAddrStableOk = true;
+
 				}
 			}
 		}
@@ -933,7 +954,7 @@ void p3ConnectMgr::netExtCheck()
 		if (mNetFlags.mExtAddrOk)
 		{
 
-#ifdef CONN_DEBUG_TICK
+#if defined(CONN_DEBUG_TICK) || defined(CONN_DEBUG_RESET)
 			std::cerr << "p3ConnectMgr::netExtCheck() ";
 			std::cerr << "ExtAddr: " << inet_ntoa(mNetFlags.mExtAddr.sin_addr);
 			std::cerr << ":" << ntohs(mNetFlags.mExtAddr.sin_port);
@@ -949,11 +970,13 @@ void p3ConnectMgr::netExtCheck()
 			mOwnState.ipAddrs.mExt.updateIpAddressList(addrInfo);
 
 			mNetStatus = RS_NET_DONE;
+#if defined(CONN_DEBUG_TICK) || defined(CONN_DEBUG_RESET)
 			std::cerr << "p3ConnectMgr::netExtCheck() Ext Ok: RS_NET_DONE" << std::endl;
+#endif
 
 			if (!mNetFlags.mExtAddrStableOk)
 			{
-#ifdef CONN_DEBUG
+#if defined(CONN_DEBUG_TICK) || defined(CONN_DEBUG_RESET)
 				std::cerr << "p3ConnectMgr::netUdpCheck() UDP Unstable :( ";
 				std::cerr <<  std::endl;
 				std::cerr << "p3ConnectMgr::netUdpCheck() We are unreachable";
@@ -994,7 +1017,9 @@ void p3ConnectMgr::netExtCheck()
 
 		if (mNetFlags.mExtAddrOk)
 		{
+#if defined(CONN_DEBUG_TICK) || defined(CONN_DEBUG_RESET)
 			std::cerr << "p3ConnectMgr::netExtCheck() setting netAssistSetAddress()" << std::endl;
+#endif
 			netAssistSetAddress(mNetFlags.mLocalAddr, mNetFlags.mExtAddr, mOwnState.netMode);
 		}
 #if 0
@@ -1009,7 +1034,9 @@ void p3ConnectMgr::netExtCheck()
 		/* flag unreachables! */
 		if ((mNetFlags.mExtAddrOk) && (!mNetFlags.mExtAddrStableOk))
 		{
+#if defined(CONN_DEBUG_TICK) || defined(CONN_DEBUG_RESET)
 			std::cerr << "p3ConnectMgr::netExtCheck() Ext Unstable - Unreachable Check" << std::endl;
+#endif
 			netUnreachableCheck();
 		}
 	}

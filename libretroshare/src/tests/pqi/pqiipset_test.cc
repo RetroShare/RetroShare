@@ -68,6 +68,20 @@ bool test_addr_list()
 		addr.mSeenTime = time(NULL) - i;
 
 		list.updateIpAddressList(addr);
+
+		if (i < 100 + 4)
+		{
+			/* check that was added to the back */
+			CHECK(list.mAddrs.back().mSeenTime == addr.mSeenTime);
+			CHECK(list.mAddrs.back().mAddr.sin_addr.s_addr == addr.mAddr.sin_addr.s_addr);
+			CHECK(list.mAddrs.back().mAddr.sin_port == addr.mAddr.sin_port);
+		}
+		else
+		{
+			/* check that wasn't added to the back */
+			CHECK(list.mAddrs.back().mSeenTime != addr.mSeenTime);
+			CHECK(list.mAddrs.back().mAddr.sin_addr.s_addr != addr.mAddr.sin_addr.s_addr);
+		}
 	}
 
 	/* print out the list */
@@ -97,19 +111,19 @@ bool test_addr_list()
 	}
 
 	/* make sure it more recent than the previous ones */
-	for(int i = 100; i > 89; i--)
+	for(int i = 99; i > 89; i--)
 	{
 		addr.mSeenTime = time(NULL) - i;
 		list.updateIpAddressList(addr);
 
-		/* check that was added to the back */
-		CHECK(list.mAddrs.back().mSeenTime == addr.mSeenTime);
-		CHECK(list.mAddrs.back().mAddr.sin_addr.s_addr == addr.mAddr.sin_addr.s_addr);
-		CHECK(list.mAddrs.back().mAddr.sin_port == addr.mAddr.sin_port);
+		/* check that was added to the front */
+		CHECK(list.mAddrs.front().mSeenTime == addr.mSeenTime);
+		CHECK(list.mAddrs.front().mAddr.sin_addr.s_addr == addr.mAddr.sin_addr.s_addr);
+		CHECK(list.mAddrs.front().mAddr.sin_port == addr.mAddr.sin_port);
 	}
 
 	/* print out the list */
-	std::cerr << "IpAddressList (last item to be 192.168.2.200:8812)";
+	std::cerr << "IpAddressList (first item to be 192.168.2.200:8812)";
 	std::cerr << std::endl;
 	list.printIpAddressList(std::cerr);
 	std::cerr << std::endl;
@@ -124,9 +138,9 @@ bool test_addr_list()
 		list.updateIpAddressList(addr);
 
 		/* check that was added to the back */
-		CHECK(list.mAddrs.back().mSeenTime == addr.mSeenTime);
-		CHECK(list.mAddrs.back().mAddr.sin_addr.s_addr == addr.mAddr.sin_addr.s_addr);
-		CHECK(list.mAddrs.back().mAddr.sin_port == addr.mAddr.sin_port);
+		CHECK(list.mAddrs.front().mSeenTime == addr.mSeenTime);
+		CHECK(list.mAddrs.front().mAddr.sin_addr.s_addr == addr.mAddr.sin_addr.s_addr);
+		CHECK(list.mAddrs.front().mAddr.sin_port == addr.mAddr.sin_port);
 
 	}
 
