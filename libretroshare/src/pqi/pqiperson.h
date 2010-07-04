@@ -50,7 +50,7 @@ class pqiconnect: public pqistreamer, public NetInterface
 public:
 	pqiconnect(RsSerialiser *rss, NetBinInterface *ni_in)
 	:pqistreamer(rss, ni_in->PeerId(), ni_in, 0),  // pqistreamer will cleanup NetInterface.
-	 NetInterface(NULL, ni_in->PeerId()),     // No need for callback.
+	NetInterface(NULL, ni_in->PeerId()), // No need for callback
 	 ni(ni_in) 
 	{ 
 		if (!ni_in)

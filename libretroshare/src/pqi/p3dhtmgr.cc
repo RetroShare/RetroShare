@@ -1756,14 +1756,28 @@ bool p3DhtMgr::dhtResultSearch(std::string idhash,
 
 	if (doCb)
 	{
-		std::list<IpAddressTimed> ipAddressList;
-		mConnCb->peerStatus(ent.id, ent.laddr, ent.raddr,
-				ent.type, 0, RS_CB_DHT);
+		pqiIpAddrSet addrs;
+
+		pqiIpAddress laddr;
+		laddr.mAddr = ent.laddr;
+		laddr.mSeenTime = time(NULL);
+		laddr.mSrc = RS_CB_DHT;
+
+		addrs.updateLocalAddrs(laddr);
+
+		pqiIpAddress eaddr;
+		eaddr.mAddr = ent.raddr;
+		eaddr.mSeenTime = time(NULL);
+		eaddr.mSrc = RS_CB_DHT;
+
+		addrs.updateExtAddrs(eaddr);
+
+		mConnCb->peerStatus(ent.id, addrs, ent.type, 0, RS_CB_DHT);
 	}
 
 	if (doStun)
 	{
-		mConnCb->stunStatus(idhash, raddr, type, stunFlags);
+		//mConnCb->stunStatus(idhash, raddr, type, stunFlags);
 	}
 			
 	return true;

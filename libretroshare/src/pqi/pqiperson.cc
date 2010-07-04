@@ -408,6 +408,10 @@ int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr, uint32_t delay, 
 	  	std::cerr << out.str();
 	  	//pqioutput(PQL_DEBUG_BASIC, pqipersonzone, out.str());
 #endif
+		/* notify of fail! */
+
+		pqipg->notifyConnect(PeerId(), type, false, raddr);
+
 		return 0;
 	}
 

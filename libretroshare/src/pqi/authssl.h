@@ -49,7 +49,7 @@
 
 #include "pqi/pqi_base.h"
 #include "pqi/pqinetwork.h"
-#include "rsiface/rspeers.h"
+//#include "rsiface/rspeers.h"
 #include "pqi/p3cfgmgr.h"
 
 typedef std::string SSL_id;
@@ -86,13 +86,82 @@ class sslcert
         X509* certificate;
 };
 
+/* required to install instance */
+extern void    AuthSSLInit();
 
-class AuthSSL : public p3Config
+class AuthSSL
+{
+	public:
+	AuthSSL();
+
+static AuthSSL *getAuthSSL();
+
+        /* Initialisation Functions (Unique) */
+virtual bool    validateOwnCertificate(X509 *x509, EVP_PKEY *pkey) = 0;
+
+virtual bool	active() = 0;
+virtual int	InitAuth(const char *srvr_cert, const char *priv_key, 
+					const char *passwd) = 0;
+virtual bool	CloseAuth() = 0;
+
+	/*********** Overloaded Functions from p3AuthMgr **********/
+	
+        /* get Certificate Id */
+virtual	std::string OwnId() = 0;
+virtual	std::string getOwnLocation() = 0;
+//virtual bool    getAllList(std::list<std::string> &ids);
+//virtual bool    getAuthenticatedList(std::list<std::string> &ids);
+//virtual bool    getUnknownList(std::list<std::string> &ids);
+//virtual bool    getSSLChildListOfGPGId(std::string gpg_id, std::list<std::string> &ids);
+
+	/* get Details from the Certificates */
+//virtual bool    isAuthenticated(std::string id);
+//virtual	std::string getName(std::string id);
+//virtual std::string getIssuerName(std::string id);
+//virtual std::string getGPGId(SSL_id id);
+//virtual bool    getCertDetails(std::string id, sslcert &cert);
+
+	/* Load/Save certificates */
+virtual	std::string SaveOwnCertificateToString() = 0;
+	
+	/* Sign / Encrypt / Verify Data */
+virtual bool 	SignData(std::string input, std::string &sign) = 0;
+virtual bool 	SignData(const void *data, const uint32_t len, std::string &sign) = 0;
+
+virtual bool 	SignDataBin(std::string, unsigned char*, unsigned int*) = 0;
+virtual bool    SignDataBin(const void*, uint32_t, unsigned char*, unsigned int*) = 0;
+virtual bool    VerifyOwnSignBin(const void*, uint32_t, unsigned char*, unsigned int) = 0;
+virtual bool	VerifySignBin(const void *data, const uint32_t len,
+                        unsigned char *sign, unsigned int signlen, SSL_id sslId) = 0;
+
+// return : false if encrypt failed
+virtual bool     encrypt(void *&out, int &outlen, const void *in, int inlen, std::string peerId) = 0;
+// return : false if decrypt fails
+virtual bool     decrypt(void *&out, int &outlen, const void *in, int inlen) = 0;
+
+
+virtual X509* 	SignX509ReqWithGPG(X509_REQ *req, long days) = 0;
+virtual bool 	AuthX509WithGPG(X509 *x509) = 0;
+
+
+virtual int 	VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx) = 0;
+virtual bool 	ValidateCertificate(X509 *x509, std::string &peerId) = 0; /* validate + get id */
+
+	public: /* SSL specific functions used in pqissl/pqissllistener */
+virtual SSL_CTX *getCTX() = 0;
+
+/* Restored these functions: */
+virtual bool 	FailedCertificate(X509 *x509, bool incoming) = 0;     /* store for discovery */
+virtual bool 	CheckCertificate(std::string peerId, X509 *x509) = 0; /* check that they are exact match */
+};
+
+
+class AuthSSLimpl : public AuthSSL, public p3Config
 {
 	public:
 
         /* Initialisation Functions (Unique) */
-	AuthSSL();
+	AuthSSLimpl();
 bool    validateOwnCertificate(X509 *x509, EVP_PKEY *pkey);
 
 virtual bool	active();
@@ -121,27 +190,27 @@ virtual	std::string getOwnLocation();
 virtual	std::string SaveOwnCertificateToString();
 	
 	/* Sign / Encrypt / Verify Data */
-bool 	SignData(std::string input, std::string &sign);
-bool 	SignData(const void *data, const uint32_t len, std::string &sign);
+virtual bool 	SignData(std::string input, std::string &sign);
+virtual bool 	SignData(const void *data, const uint32_t len, std::string &sign);
 
-bool 	SignDataBin(std::string, unsigned char*, unsigned int*);
-bool    SignDataBin(const void*, uint32_t, unsigned char*, unsigned int*);
-bool    VerifyOwnSignBin(const void*, uint32_t, unsigned char*, unsigned int);
-bool	VerifySignBin(const void *data, const uint32_t len,
+virtual bool 	SignDataBin(std::string, unsigned char*, unsigned int*);
+virtual bool    SignDataBin(const void*, uint32_t, unsigned char*, unsigned int*);
+virtual bool    VerifyOwnSignBin(const void*, uint32_t, unsigned char*, unsigned int);
+virtual bool	VerifySignBin(const void *data, const uint32_t len,
                         unsigned char *sign, unsigned int signlen, SSL_id sslId);
 
 // return : false if encrypt failed
-bool     encrypt(void *&out, int &outlen, const void *in, int inlen, std::string peerId);
+virtual bool     encrypt(void *&out, int &outlen, const void *in, int inlen, std::string peerId);
 // return : false if decrypt fails
-bool     decrypt(void *&out, int &outlen, const void *in, int inlen);
+virtual bool     decrypt(void *&out, int &outlen, const void *in, int inlen);
 
 
-X509* 	SignX509ReqWithGPG(X509_REQ *req, long days);
-bool 	AuthX509WithGPG(X509 *x509);
+virtual X509* 	SignX509ReqWithGPG(X509_REQ *req, long days);
+virtual bool 	AuthX509WithGPG(X509 *x509);
 
 
-int 	VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx);
-bool 	ValidateCertificate(X509 *x509, std::string &peerId); /* validate + get id */
+virtual int 	VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx);
+virtual bool 	ValidateCertificate(X509 *x509, std::string &peerId); /* validate + get id */
 
 
 /*****************************************************************/
@@ -153,14 +222,12 @@ bool 	ValidateCertificate(X509 *x509, std::string &peerId); /* validate + get id
 /*****************************************************************/
 
 	public: /* SSL specific functions used in pqissl/pqissllistener */
-SSL_CTX *getCTX();
+virtual SSL_CTX *getCTX();
 
 /* Restored these functions: */
-bool 	FailedCertificate(X509 *x509, bool incoming);     /* store for discovery */
-bool 	CheckCertificate(std::string peerId, X509 *x509); /* check that they are exact match */
+virtual bool 	FailedCertificate(X509 *x509, bool incoming);     /* store for discovery */
+virtual bool 	CheckCertificate(std::string peerId, X509 *x509); /* check that they are exact match */
 
-  static AuthSSL *getAuthSSL() throw() // pour obtenir l'instance
-      { return instance_ssl; }
 
     private:
 

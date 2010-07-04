@@ -25,6 +25,7 @@
 
 #include "pqi/pqimonitor.h"
 #include "pqi/pqinetwork.h"
+#include "pqi/pqiipset.h"
 #include "util/rsprint.h"
 
 /***** DUMMY Connect CB for testing *****/
@@ -43,21 +44,19 @@ pqiConnectCbDummy::~pqiConnectCbDummy()
 	return; 
 }
 
-void    pqiConnectCbDummy::peerStatus(std::string id, 
-			struct sockaddr_in laddr, struct sockaddr_in raddr,
+void    pqiConnectCbDummy::peerStatus(std::string id, const pqiIpAddrSet &addrs,
                        uint32_t type, uint32_t mode, uint32_t source)
 {
 	std::cerr << "pqiConnectCbDummy::peerStatus()";
 	std::cerr << " id: " << id;
-
-	std::cerr << " laddr: " << inet_ntoa(laddr.sin_addr);
-	std::cerr << " lport: " << ntohs(laddr.sin_port);
-	std::cerr << " raddr: " << inet_ntoa(raddr.sin_addr);
-	std::cerr << " rport: " << ntohs(raddr.sin_port);
-
 	std::cerr << " type: " << type;
 	std::cerr << " mode: " << mode;
 	std::cerr << " source: " << source;
+	std::cerr << std::endl;
+
+	std::cerr << " addrs: ";
+	std::cerr << std::endl;
+	addrs.printAddrs(std::cerr);
 	std::cerr << std::endl;
 }
 
@@ -72,6 +71,7 @@ void    pqiConnectCbDummy::peerConnectRequest(std::string id,
 	std::cerr << std::endl;
 }
 
+#if 0
 void    pqiConnectCbDummy::stunStatus(std::string id, struct sockaddr_in raddr, 
 							uint32_t type, uint32_t flags)
 {
@@ -82,5 +82,6 @@ void    pqiConnectCbDummy::stunStatus(std::string id, struct sockaddr_in raddr,
 	std::cerr << " flags: " << flags;
 	std::cerr << std::endl;
 }
+#endif
 
 

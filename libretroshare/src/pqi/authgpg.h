@@ -58,6 +58,8 @@ const time_t STORE_KEY_TIMEOUT = 60; //store key is call around every 60sec
  * gpgcert is the identifier for a person.
  * It is a wrapper class for a GPGme OpenPGP certificate.
  */
+class AuthGPG;
+
 class gpgcert
 {
 	public:
@@ -93,9 +95,253 @@ typedef std::map<std::string, gpgcert> certmap;
  * This provides retroshare basic gpg functionality and
  * key/web-of-trust management, also handle cert intialisation for retroshare
  */
-class AuthGPG : public p3Config
+
+extern void AuthGPGInit();
+
+class AuthGPG 
 {
+
+	public:
+        //AuthGPG();
+
+static AuthGPG *getAuthGPG();
+
+        /**
+         * @param ids list of gpg certificate ids (note, not the actual certificates)
+         */
+virtual bool    availableGPGCertificatesWithPrivateKeys(std::list<std::string> &ids) = 0;
+virtual	bool    printKeys() = 0;
+
+/*********************************************************************************/
+/************************* STAGE 1 ***********************************************/
+/*********************************************************************************/
+/*****
+ * STAGE 1: Initialisation.... As we are switching to OpenPGP the init functions
+ * will be different. Just move the initialisation functions over....
+ *
+ * As GPGMe requires external calls to the GPG executable, which could potentially
+ * be expensive, We'll want to cache the GPG keys in this class.
+ * This should be done at initialisation, and saved in a map.
+ * (see storage at the end of the class)
+ *
+ ****/
+virtual bool    active() = 0; 
+
+  /* Initialize */
+virtual bool    InitAuth () = 0;
+
+        /* Init by generating new Own PGP Cert, or selecting existing PGP Cert */
+virtual int     GPGInit(std::string ownId) = 0;
+virtual bool    CloseAuth() = 0;
+virtual bool    GeneratePGPCertificate(std::string name, std::string email, std::string passwd, std::string &pgpId, std::string &errString) = 0;
+  
+/*********************************************************************************/
+/************************* STAGE 3 ***********************************************/
+/*********************************************************************************/
+/*****
+ * STAGE 3: These are some of the most commonly used functions in Retroshare.
+ *
+ * More commonly used functions.
+ *
+ * provide access to details in cache list.
+ *
+ ****/
+virtual std::string getGPGName(GPG_id pgp_id) = 0;
+virtual std::string getGPGEmail(GPG_id pgp_id) = 0;
+
+    /* PGP web of trust management */
+virtual std::string getGPGOwnId() = 0;
+virtual std::string getGPGOwnName() = 0;
+//virtual std::string getGPGOwnEmail() = 0;
+virtual bool	getGPGDetails(std::string id, RsPeerDetails &d) = 0;
+virtual bool	getGPGAllList(std::list<std::string> &ids) = 0;
+virtual bool	getGPGValidList(std::list<std::string> &ids) = 0;
+virtual bool	getGPGAcceptedList(std::list<std::string> &ids) = 0;
+virtual bool	getGPGSignedList(std::list<std::string> &ids) = 0;
+virtual bool	isGPGValid(std::string id) = 0;
+virtual bool	isGPGSigned(std::string id) = 0;
+virtual bool	isGPGAccepted(std::string id) = 0;
+virtual bool        isGPGId(GPG_id id) = 0;
+
+/*********************************************************************************/
+/************************* STAGE 4 ***********************************************/
+/*********************************************************************************/
+/*****
+ * STAGE 4: Loading and Saving Certificates. (Strings and Files)
+ *
+ ****/
+virtual bool LoadCertificateFromString(std::string pem, std::string &gpg_id) = 0;
+virtual std::string SaveCertificateToString(std::string id) = 0;
+
+/*********************************************************************************/
+/************************* STAGE 6 ***********************************************/
+/*********************************************************************************/
+/*****
+ * STAGE 6: Authentication, Trust and Signing.
+ *
+ * This is some of the harder functions, but they should have been 
+ * done in gpgroot already.
+ *
+ ****/
+virtual bool setAcceptToConnectGPGCertificate(std::string gpg_id, bool acceptance) = 0; //don't act on the gpg key, use a seperate set
+virtual bool SignCertificateLevel0(std::string id) = 0;
+virtual bool RevokeCertificate(std::string id) = 0;  /* Particularly hard - leave for later */
+//virtual bool TrustCertificateNone(std::string id) = 0;
+//virtual bool TrustCertificateMarginally(std::string id) = 0;
+//virtual bool TrustCertificateFully(std::string id) = 0;
+virtual bool TrustCertificate(std::string id,  int trustlvl) = 0; //trustlvl is 2 for none, 3 for marginal and 4 for full trust
+
+/*********************************************************************************/
+/************************* STAGE 7 ***********************************************/
+/*********************************************************************************/
+/*****
+ * STAGE 7: Signing Data.
+ *
+ * There should also be Encryption Functions... (do later).
+ *
+ ****/
+//virtual bool SignData(std::string input, std::string &sign) = 0;
+//virtual bool SignData(const void *data, const uint32_t len, std::string &sign) = 0;
+//virtual bool SignDataBin(std::string input, unsigned char *sign, unsigned int *signlen) = 0;
+virtual bool SignDataBin(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen) = 0;
+virtual bool VerifySignBin(const void*, uint32_t, unsigned char*, unsigned int, std::string withfingerprint) = 0;
+virtual bool decryptText(gpgme_data_t CIPHER, gpgme_data_t PLAIN) = 0;
+virtual bool encryptText(gpgme_data_t PLAIN, gpgme_data_t CIPHER) = 0;
+//END of PGP public functions
+
+
+};
+
+/* The real implementation! */
+
+
+class AuthGPGimpl : public AuthGPG, public p3Config
+{
+	public:
+
+        AuthGPGimpl();
+        ~AuthGPGimpl();
+
+        /**
+         * @param ids list of gpg certificate ids (note, not the actual certificates)
+         */
+virtual bool    availableGPGCertificatesWithPrivateKeys(std::list<std::string> &ids);
+
+virtual bool    printKeys();
+
+/*********************************************************************************/
+/************************* STAGE 1 ***********************************************/
+/*********************************************************************************/
+/*****
+ * STAGE 1: Initialisation.... As we are switching to OpenPGP the init functions
+ * will be different. Just move the initialisation functions over....
+ *
+ * As GPGMe requires external calls to the GPG executable, which could potentially
+ * be expensive, We'll want to cache the GPG keys in this class.
+ * This should be done at initialisation, and saved in a map.
+ * (see storage at the end of the class)
+ *
+ ****/
+virtual bool    active(); 
+
+  /* Initialize */
+virtual bool    InitAuth ();
+
+        /* Init by generating new Own PGP Cert, or selecting existing PGP Cert */
+virtual int     GPGInit(std::string ownId);
+virtual bool    CloseAuth();
+virtual bool    GeneratePGPCertificate(std::string name, std::string email, std::string passwd, std::string &pgpId, std::string &errString);
+  
+/*********************************************************************************/
+/************************* STAGE 3 ***********************************************/
+/*********************************************************************************/
+/*****
+ * STAGE 3: These are some of the most commonly used functions in Retroshare.
+ *
+ * More commonly used functions.
+ *
+ * provide access to details in cache list.
+ *
+ ****/
+virtual std::string getGPGName(GPG_id pgp_id);
+virtual std::string getGPGEmail(GPG_id pgp_id);
+
+    /* PGP web of trust management */
+virtual std::string getGPGOwnId();
+virtual std::string getGPGOwnName();
+//virtual std::string getGPGOwnEmail();
+virtual bool	getGPGDetails(std::string id, RsPeerDetails &d);
+virtual bool	getGPGAllList(std::list<std::string> &ids);
+virtual bool	getGPGValidList(std::list<std::string> &ids);
+virtual bool	getGPGAcceptedList(std::list<std::string> &ids);
+virtual bool	getGPGSignedList(std::list<std::string> &ids);
+virtual bool	isGPGValid(std::string id);
+virtual bool	isGPGSigned(std::string id);
+virtual bool	isGPGAccepted(std::string id);
+virtual bool        isGPGId(GPG_id id);
+
+/*********************************************************************************/
+/************************* STAGE 4 ***********************************************/
+/*********************************************************************************/
+/*****
+ * STAGE 4: Loading and Saving Certificates. (Strings and Files)
+ *
+ ****/
+virtual bool LoadCertificateFromString(std::string pem, std::string &gpg_id);
+virtual std::string SaveCertificateToString(std::string id);
+
+/*********************************************************************************/
+/************************* STAGE 6 ***********************************************/
+/*********************************************************************************/
+/*****
+ * STAGE 6: Authentication, Trust and Signing.
+ *
+ * This is some of the harder functions, but they should have been 
+ * done in gpgroot already.
+ *
+ ****/
+virtual bool setAcceptToConnectGPGCertificate(std::string gpg_id, bool acceptance); //don't act on the gpg key, use a seperate set
+virtual bool SignCertificateLevel0(std::string id);
+virtual bool RevokeCertificate(std::string id);  /* Particularly hard - leave for later */
+
+//virtual bool TrustCertificateNone(std::string id);
+//virtual bool TrustCertificateMarginally(std::string id);
+//virtual bool TrustCertificateFully(std::string id);
+virtual bool TrustCertificate(std::string id,  int trustlvl); //trustlvl is 2 for none, 3 for marginal and 4 for full trust
+
+/*********************************************************************************/
+/************************* STAGE 7 ***********************************************/
+/*********************************************************************************/
+/*****
+ * STAGE 7: Signing Data.
+ *
+ * There should also be Encryption Functions... (do later).
+ *
+ ****/
+//virtual bool SignData(std::string input, std::string &sign);
+//virtual bool SignData(const void *data, const uint32_t len, std::string &sign);
+//virtual bool SignDataBin(std::string input, unsigned char *sign, unsigned int *signlen);
+virtual bool SignDataBin(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen);
+virtual bool VerifySignBin(const void*, uint32_t, unsigned char*, unsigned int, std::string withfingerprint);
+virtual bool decryptText(gpgme_data_t CIPHER, gpgme_data_t PLAIN);
+virtual bool encryptText(gpgme_data_t PLAIN, gpgme_data_t CIPHER);
+//END of PGP public functions
+
+        protected:
+/*****************************************************************/
+/***********************  p3config  ******************************/
+        /* Key Functions to be overloaded for Full Configuration */
+        virtual RsSerialiser *setupSerialiser();
+        virtual std::list<RsItem *> saveList(bool &cleanup);
+        virtual bool    loadList(std::list<RsItem *> load);
+/*****************************************************************/
+
 	private:
+
+	/* SKTAN */
+	//void showData(gpgme_data_t dh);
+	//void createDummyFriends(void); //NYI
+
 
 	/* Internal functions */
         bool 	DoOwnSignature(const void *, unsigned int, void *, unsigned int *);
@@ -116,130 +362,6 @@ class AuthGPG : public p3Config
   	bool    printAllKeys_locked();
   	bool    printOwnKeys_locked();
 
-	public:
-
-        AuthGPG();
-        ~AuthGPG();
-
-        /**
-         * @param ids list of gpg certificate ids (note, not the actual certificates)
-         */
-        bool    availableGPGCertificatesWithPrivateKeys(std::list<std::string> &ids);
-
-	/* SKTAN */
-	void showData(gpgme_data_t dh);
-	void createDummyFriends(void); //NYI
-
-  	bool    printKeys();
-
-/*********************************************************************************/
-/************************* STAGE 1 ***********************************************/
-/*********************************************************************************/
-/*****
- * STAGE 1: Initialisation.... As we are switching to OpenPGP the init functions
- * will be different. Just move the initialisation functions over....
- *
- * As GPGMe requires external calls to the GPG executable, which could potentially
- * be expensive, We'll want to cache the GPG keys in this class.
- * This should be done at initialisation, and saved in a map.
- * (see storage at the end of the class)
- *
- ****/
-  bool    active(); 
-
-  /* Initialize */
-  bool    InitAuth ();
-
-        /* Init by generating new Own PGP Cert, or selecting existing PGP Cert */
-  int     GPGInit(std::string ownId);
-  bool    CloseAuth();
-  bool    GeneratePGPCertificate(std::string name, std::string email, std::string passwd, std::string &pgpId, std::string &errString);
-  
-/*********************************************************************************/
-/************************* STAGE 3 ***********************************************/
-/*********************************************************************************/
-/*****
- * STAGE 3: These are some of the most commonly used functions in Retroshare.
- *
- * More commonly used functions.
- *
- * provide access to details in cache list.
- *
- ****/
-    std::string getGPGName(GPG_id pgp_id);
-    std::string getGPGEmail(GPG_id pgp_id);
-
-    /* PGP web of trust management */
-    std::string getGPGOwnId();
-    std::string getGPGOwnName();
-    std::string getGPGOwnEmail();
-    bool	getGPGDetails(std::string id, RsPeerDetails &d);
-    bool	getGPGAllList(std::list<std::string> &ids);
-    bool	getGPGValidList(std::list<std::string> &ids);
-    bool	getGPGAcceptedList(std::list<std::string> &ids);
-    bool	getGPGSignedList(std::list<std::string> &ids);
-    bool	isGPGValid(std::string id);
-    bool	isGPGSigned(std::string id);
-    bool	isGPGAccepted(std::string id);
-    bool        isGPGId(GPG_id id);
-
-/*********************************************************************************/
-/************************* STAGE 4 ***********************************************/
-/*********************************************************************************/
-/*****
- * STAGE 4: Loading and Saving Certificates. (Strings and Files)
- *
- ****/
-  bool LoadCertificateFromString(std::string pem, std::string &gpg_id);
-  std::string SaveCertificateToString(std::string id);
-
-/*********************************************************************************/
-/************************* STAGE 6 ***********************************************/
-/*********************************************************************************/
-/*****
- * STAGE 6: Authentication, Trust and Signing.
- *
- * This is some of the harder functions, but they should have been 
- * done in gpgroot already.
- *
- ****/
-  bool setAcceptToConnectGPGCertificate(std::string gpg_id, bool acceptance); //don't act on the gpg key, use a seperate set
-  bool SignCertificateLevel0(std::string id);
-  bool RevokeCertificate(std::string id);  /* Particularly hard - leave for later */
-  bool TrustCertificateNone(std::string id);
-  bool TrustCertificateMarginally(std::string id);
-  bool TrustCertificateFully(std::string id);
-  bool TrustCertificate(std::string id,  int trustlvl); //trustlvl is 2 for none, 3 for marginal and 4 for full trust
-
-/*********************************************************************************/
-/************************* STAGE 7 ***********************************************/
-/*********************************************************************************/
-/*****
- * STAGE 7: Signing Data.
- *
- * There should also be Encryption Functions... (do later).
- *
- ****/
-  bool SignData(std::string input, std::string &sign);
-  bool SignData(const void *data, const uint32_t len, std::string &sign);
-  bool SignDataBin(std::string input, unsigned char *sign, unsigned int *signlen);
-  bool SignDataBin(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen);
-  bool VerifySignBin(const void*, uint32_t, unsigned char*, unsigned int, std::string withfingerprint);
-  bool decryptText(gpgme_data_t CIPHER, gpgme_data_t PLAIN);
-  bool encryptText(gpgme_data_t PLAIN, gpgme_data_t CIPHER);
-//END of PGP public functions
-
-  static AuthGPG *getAuthGPG() throw() // pour obtenir l'instance
-      { return instance_gpg; }
-
-        protected:
-/*****************************************************************/
-/***********************  p3config  ******************************/
-        /* Key Functions to be overloaded for Full Configuration */
-        virtual RsSerialiser *setupSerialiser();
-        virtual std::list<RsItem *> saveList(bool &cleanup);
-        virtual bool    loadList(std::list<RsItem *> load);
-/*****************************************************************/
 
 private:
 

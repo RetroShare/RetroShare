@@ -90,7 +90,7 @@ const int pqisslzone = 37714;
  *
  */
 
-pqissltunnel::pqissltunnel(PQInterface *parent, p3ConnectMgr *cm)
+pqissltunnel::pqissltunnel(PQInterface *parent, p3ConnectMgr *cm, p3tunnel *p3t)
         :NetBinInterface(parent, parent->PeerId()), mConnMgr(cm)
 {
 	active = false;
@@ -108,7 +108,7 @@ pqissltunnel::pqissltunnel(PQInterface *parent, p3ConnectMgr *cm)
 //	  rslog(RSL_ALERT, pqisslzone,
 //	    "\t pqissltunnel will not initialise....");
 //	}
-	mP3tunnel = mConnMgr->getP3tunnel();
+	mP3tunnel = p3t;
 	current_data_offset = 0;
 	curent_data_packet.length = 0;
 

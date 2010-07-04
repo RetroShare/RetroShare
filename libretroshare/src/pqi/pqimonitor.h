@@ -34,6 +34,7 @@
 #include <inttypes.h>
 #include <string>
 #include <list>
+#include "pqi/pqiipset.h"
 
 /************** Define Type/Mode/Source ***************/
 
@@ -93,7 +94,7 @@ virtual ~pqiMonitor() { return; }
 
 	void setConnectionMgr(p3ConnectMgr *cm) { mConnMgr = cm; }
 virtual void	statusChange(const std::list<pqipeer> &plist) = 0;
-
+//virtual void	ownStatusChange(pqipeer &) { return; } // SIGNAL reset or similar.
 //virtual void	peerStatus(std::string id, uint32_t mode) = 0;
 
 	protected:
@@ -107,14 +108,13 @@ class pqiConnectCb
 {
 	public:
 virtual ~pqiConnectCb() { return; }
-virtual void	peerStatus(std::string id, 
-			struct sockaddr_in laddr, struct sockaddr_in raddr, 
+virtual void	peerStatus(std::string id, const pqiIpAddrSet &addrs,
 			uint32_t type, uint32_t flags, uint32_t source) = 0;
 
 virtual void    peerConnectRequest(std::string id,              
                         struct sockaddr_in raddr, uint32_t source) = 0;
 
-virtual void	stunStatus(std::string id, struct sockaddr_in raddr, uint32_t type, uint32_t flags) = 0;
+//virtual void	stunStatus(std::string id, struct sockaddr_in raddr, uint32_t type, uint32_t flags) = 0;
 };
 
 
@@ -124,14 +124,13 @@ class pqiConnectCbDummy: public pqiConnectCb
 	public:
 	pqiConnectCbDummy();
 virtual ~pqiConnectCbDummy();
-virtual void	peerStatus(std::string id, 
-			struct sockaddr_in laddr, struct sockaddr_in raddr, 
+virtual void	peerStatus(std::string id, const pqiIpAddrSet &addrs,
 			uint32_t type, uint32_t mode, uint32_t source);
 
 virtual void    peerConnectRequest(std::string id,              
                         struct sockaddr_in raddr, uint32_t source);
 
-virtual void	stunStatus(std::string id, struct sockaddr_in raddr, uint32_t type, uint32_t flags);
+//virtual void	stunStatus(std::string id, struct sockaddr_in raddr, uint32_t type, uint32_t flags);
 };
 
 

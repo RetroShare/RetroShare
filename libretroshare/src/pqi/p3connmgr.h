@@ -27,12 +27,11 @@
 #define MRK_PQI_CONNECTION_MANAGER_HEADER
 
 #include "pqi/pqimonitor.h"
-#include "serialiser/rsconfigitems.h"
+#include "pqi/pqiipset.h"
 
 //#include "pqi/p3dhtmgr.h"
 //#include "pqi/p3upnpmgr.h"
 #include "pqi/pqiassist.h"
-#include "services/p3tunnel.h"
 
 #include "pqi/p3cfgmgr.h"
 
@@ -84,8 +83,9 @@ const uint32_t RS_NET_CONN_TUNNEL 		= 0x0f00;
 
 const uint32_t RS_NET_CONN_TCP_LOCAL 		= 0x0001;
 const uint32_t RS_NET_CONN_TCP_EXTERNAL 	= 0x0002;
-const uint32_t RS_NET_CONN_TCP_UNKNOW_TOPOLOGY	= 0x0003;
-const uint32_t RS_NET_CONN_UDP           	= 0x0010;
+const uint32_t RS_NET_CONN_TCP_UNKNOW_TOPOLOGY	= 0x0004;
+const uint32_t RS_NET_CONN_UDP_DHT_SYNC 	= 0x0010;
+const uint32_t RS_NET_CONN_UDP_PEER_SYNC 	= 0x0020; /* coming soon */
 
 /* extra flags */
 // not sure if needed yet.
@@ -96,8 +96,8 @@ const uint32_t RS_NET_CONN_UDP           	= 0x0010;
 
 /* flags of peerStatus */
 const uint32_t RS_NET_FLAGS_USE_DISC		= 0x0001;
-const uint32_t RS_NET_FLAGS_USE_DHT			= 0x0002;
-const uint32_t RS_NET_FLAGS_ONLINE			= 0x0004;
+const uint32_t RS_NET_FLAGS_USE_DHT		= 0x0002;
+const uint32_t RS_NET_FLAGS_ONLINE		= 0x0004;
 const uint32_t RS_NET_FLAGS_EXTERNAL_ADDR	= 0x0008;
 const uint32_t RS_NET_FLAGS_STABLE_UDP		= 0x0010;
 const uint32_t RS_NET_FLAGS_TRUSTS_ME 		= 0x0020;
@@ -111,7 +111,7 @@ class peerAddrInfo
 
 	bool 		found;
 	uint32_t 	type;
-	struct sockaddr_in laddr, raddr;
+	pqiIpAddrSet	addrs;
 	time_t		ts;
 };
 
@@ -129,33 +129,16 @@ class peerConnectAddress
 
 class peerConnectState
 {
-	private:
-	std::list<IpAddressTimed> ipAddressList;
-
 	public:
 	peerConnectState(); /* init */
 
-        std::string id;
-        std::string gpg_id;
+	std::string id;
+	std::string gpg_id;
 
 	uint32_t netMode; /* EXT / UPNP / UDP / INVALID */
 	uint32_t visState; /* STD, GRAY, DARK */	
 
-        //used to store friends ip lists
-	void sortIpAddressListBySeenTime(); //Sort the ip list ordering by seen time
-	std::list<IpAddressTimed> getIpAddressList(); //return the sorted ant purged list.
-
-	// The function that takes a list, can either merge the list into the
-	// existing list (default behavior), or only set the list to the new data,
-	// which might be used if the info is from an authoritative source.
-	//
-	void updateIpAddressList(const std::list<IpAddressTimed>& ipTimedList,bool merge=true);
-	void updateIpAddressList(const IpAddressTimed& ipTimed);
-	void printIpAddressList();
-
-        static bool is_same_address (const IpAddressTimed& first, const IpAddressTimed& second);
-        static void printIpAddressList(std::list<IpAddressTimed> ipTimedList);
-        static bool extractExtAddress(const std::list<IpAddressTimed>& ipAddressList, IpAddressTimed &resultAddress); //extract the last seen external address from the list
+	struct sockaddr_in localaddr, serveraddr;
 
         //used to store current ip (for config and connection management)
 	struct sockaddr_in currentlocaladdr;             /* Mandatory */
@@ -163,6 +146,9 @@ class peerConnectState
         std::string dyndns;
 
         time_t lastcontact; 
+
+	/* list of addresses from various sources */
+	pqiIpAddrSet ipAddrs;
 
 	/***** Below here not stored permanently *****/
 
@@ -186,7 +172,36 @@ class peerConnectState
 	peerConnectAddress currentConnAddrAttempt;
 	std::list<peerConnectAddress> connAddrs;
 
+
 };
+
+class pqiNetStatus
+{
+	public:
+
+	pqiNetStatus();
+
+        bool mLocalAddrOk;     // Local address is not loopback.
+        bool mExtAddrOk;       // have external address.
+        bool mExtAddrStableOk; // stable external address.
+        bool mUpnpOk;          // upnp is ok.
+        bool mDhtOk;           // dht is ok.
+
+	struct sockaddr_in mLocalAddr; // percieved ext addr.
+	struct sockaddr_in mExtAddr; // percieved ext addr.
+
+	bool mResetReq; // Not Used yet!.
+
+	void print(std::ostream &out);
+
+	bool NetOk() // minimum to believe network is okay.`
+	{
+		return (mLocalAddrOk && mExtAddrOk);
+	}
+};
+
+class p3tunnel; 
+
 
 std::string textPeerConnectState(peerConnectState &state);
 
@@ -203,9 +218,9 @@ void 	tick();
 void	addNetAssistConnect(uint32_t type, pqiNetAssistConnect *);
 void	addNetAssistFirewall(uint32_t type, pqiNetAssistFirewall *);
 
-bool	checkNetAddress(); /* check our address is sensible */
+void    addNetListener(pqiNetListener *listener);
 
-void	addNetListener(pqiNetListener *listener);
+bool	checkNetAddress(); /* check our address is sensible */
 
 	/*************** External Control ****************/
 bool	shutdown(); /* blocking shutdown call */
@@ -216,11 +231,12 @@ bool    getUPnPState();
 bool	getUPnPEnabled();
 bool	getDHTEnabled();
 
-bool  getIPServersEnabled() { return use_extr_addr_finder ;}
+bool  getIPServersEnabled();
 void  setIPServersEnabled(bool b) ;
 void  getIPServersList(std::list<std::string>& ip_servers) ;
-void  setTunnelConnection(bool b) ;
-bool  getTunnelConnection() { return allow_tunnel_connection ;}
+
+void 	setTunnelConnection(bool b);
+bool 	getTunnelConnection();
 
 bool	getNetStatusLocalOk();
 bool	getNetStatusUpnpOk();
@@ -228,11 +244,15 @@ bool	getNetStatusDhtOk();
 bool	getNetStatusStunOk();
 bool	getNetStatusExtraAddressCheckOk();
 
+bool 	getUpnpExtAddress(struct sockaddr_in &addr);
+bool 	getExtFinderAddress(struct sockaddr_in &addr);
+void 	getNetStatus(pqiNetStatus &status);
+
 void 	setOwnNetConfig(uint32_t netMode, uint32_t visState);
 bool 	setLocalAddress(std::string id, struct sockaddr_in addr);
 bool 	setExtAddress(std::string id, struct sockaddr_in addr);
 bool    setDynDNS(std::string id, std::string dyndns);
-bool    updateAddressList(const std::string& id, const std::list<IpAddressTimed>& IpAddressTimedList,bool merge = true);
+bool    updateAddressList(const std::string& id, const pqiIpAddrSet &addrs);
 
 bool 	setNetworkMode(std::string id, uint32_t netMode);
 bool 	setVisState(std::string id, uint32_t visState);
@@ -268,25 +288,17 @@ void	addMonitor(pqiMonitor *mon);
 void	removeMonitor(pqiMonitor *mon);
 
 	/******* overloaded from pqiConnectCb *************/
-virtual void    peerStatus(std::string id, 
-			struct sockaddr_in laddr, struct sockaddr_in raddr, 
+virtual void    peerStatus(std::string id, const pqiIpAddrSet &addrs, 
                         uint32_t type, uint32_t flags, uint32_t source);
 virtual void    peerConnectRequest(std::string id, 
 			struct sockaddr_in raddr, uint32_t source);
-virtual void    stunStatus(std::string id, struct sockaddr_in raddr, uint32_t type, uint32_t flags);
+//virtual void    stunStatus(std::string id, struct sockaddr_in raddr, uint32_t type, uint32_t flags);
 
 	/****************** Connections *******************/
 bool 	connectAttempt(std::string id, struct sockaddr_in &addr, 
 				uint32_t &delay, uint32_t &period, uint32_t &type);
 bool 	connectResult(std::string id, bool success, uint32_t flags, struct sockaddr_in remote_peer_address);
-bool    doNextAttempt(std::string id);
 
-p3tunnel* 	getP3tunnel();
-void 	setP3tunnel(p3tunnel *p3tun);
-
-bool 	getUpnpExtAddress(struct sockaddr_in &addr);
-bool 	getStunExtAddress(struct sockaddr_in &addr);
-bool 	getExtFinderExtAddress(struct sockaddr_in &addr);
 
 
 protected:
@@ -307,9 +319,6 @@ bool netAssistFirewallPorts(uint16_t iport, uint16_t eport);
 
 		/* Assist Connect */
 virtual bool netAssistFriend(std::string id, bool on);
-virtual bool netAssistAddStun(std::string id);
-virtual bool netAssistStun(bool on);
-virtual bool netAssistNotify(std::string id);
 virtual bool netAssistSetAddress( struct sockaddr_in &laddr,
                                         struct sockaddr_in &eaddr,
 					uint32_t mode);
@@ -327,7 +336,6 @@ void 	netDhtInit();
 void 	netUdpInit();
 void 	netStunInit();
 
-void 	netStatusReset();
 
 
 void	netInit();
@@ -338,16 +346,7 @@ void 	netExtCheck();
 void 	netUpnpInit();
 void 	netUpnpCheck();
 
-void 	netExtFinderAddressCheck();
 void    netUnreachableCheck();
-
-	/* Udp / Stun functions */
-void 	udpStunPeer(std::string id, struct sockaddr_in &addr);
-
-void 	stunInit();
-bool 	stunCheck();
-void 	stunCollect(std::string id, struct sockaddr_in addr, uint32_t flags);
-bool    addBootstrapStunPeers();
 
 void 	networkConsistencyCheck();
 
@@ -356,10 +355,6 @@ void 	tickMonitors();
 
 	/* connect attempts */
 bool	retryConnectTCP(std::string id);
-bool	retryConnectNotify(std::string id);
-
-	/* temporary for testing */
-//virtual void 	loadConfiguration() { return; }
 
 	protected:
 /*****************************************************************/
@@ -370,74 +365,47 @@ bool	retryConnectNotify(std::string id);
 	virtual bool    loadList(std::list<RsItem *> load);
 /*****************************************************************/
 
-
-#if 0
-
-void 	setupOwnNetConfig(RsPeerConfigItem *item);
-void 	addPeer(RsPeerConfigItem *item);
-
-#endif
+//void 	setupOwnNetConfig(RsPeerConfigItem *item);
+//void 	addPeer(RsPeerConfigItem *item);
 
 private:
+	// These should have there own Mutex Protection,
+	//p3tunnel *mP3tunnel;
+	ExtAddrFinder *mExtAddrFinder ;
 
-	p3tunnel *mP3tunnel;
-
-        uint32_t retry_period;
-
+	/* These are considered static from a MUTEX perspective */
 	std::map<uint32_t, pqiNetAssistFirewall *> mFwAgents;
 	std::map<uint32_t, pqiNetAssistConnect  *> mDhts;
 
+        std::list<pqiNetListener *> mNetListeners;
+
+
 	RsMutex connMtx; /* protects below */
 
-	std::list<pqiNetListener *>  mNetListeners;
-        void    stopListeners();
-        void    startListeners();
+void 	netStatusReset_locked();
+
+        uint32_t mRetryPeriod;
 
 	time_t   mNetInitTS;
 	uint32_t mNetStatus;
-        bool     mListenerActive;
-
-	uint32_t mStunStatus;
-	uint32_t mStunFound;
-	bool 	 mStunMoreRequired;
 
 	bool     mStatusChanged;
 
 	std::list<pqiMonitor *> clients;
 
-	ExtAddrFinder *mExtAddrFinder ;
-	bool use_extr_addr_finder ;
-        bool allow_tunnel_connection ;
+	bool mUseExtAddrFinder;
+	bool mAllowTunnelConnection;
 
 	/* external Address determination */
 	//bool mUpnpAddrValid, mStunAddrValid;
-	//bool mStunAddrStable;
 	//struct sockaddr_in mUpnpExtAddr;
-	struct sockaddr_in mStunExtAddr;
 
 	/* network status flags (read by rsiface) */
-	bool netFlagLocalOk;
-	bool netFlagUpnpOk;
-	bool netFlagDhtOk;
-	bool netFlagStunOk;
-	bool netFlagExtraAddressCheckOk;
+	pqiNetStatus mNetFlags;
+	pqiNetStatus mOldNetFlags;
 
-	/* old network status flags in order to detect changes */
-	bool oldnetFlagLocalOk;
-	bool oldnetFlagUpnpOk;
-	bool oldnetFlagDhtOk;
-	bool oldnetFlagStunOk;
-	bool oldnetFlagExtraAddressCheckOk;
+	peerConnectState mOwnState;
 
-public:
-        peerConnectState ownState;
-
-protected:
-
-void addPeer(std::string id, std::string name); /* tmp fn */
-
-
-	std::list<std::string> mStunList;
 	std::map<std::string, peerConnectState> mFriendList;
 	std::map<std::string, peerConnectState> mOthersList;
 };

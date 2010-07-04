@@ -479,12 +479,18 @@ int     pqipersongrp::connectPeer(std::string id)
 		ptype = PQI_CONNECT_TUNNEL;
 		timeout = period * 2;
 #ifdef PGRP_DEBUG
-		std::cerr << " pqipersongrp::connectPeer() connecting with UDP: Timeout :" << timeout;
+		std::cerr << " pqipersongrp::connectPeer() connecting with Tunnel: Timeout :" << timeout;
 		std::cerr << std::endl;
 #endif
 	}
 	else
+	{
+#ifdef PGRP_DEBUG
+		std::cerr << " pqipersongrp::connectPeer() Ignoring Unknown Type:" << type;
+		std::cerr << std::endl;
+#endif
 		return 0;
+	}
 
 	p->connect(ptype, addr, delay, period, timeout);
 
