@@ -319,12 +319,19 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 
 
 	std::list<pqiIpAddress>::iterator it;
+	for(it = pcs.ipAddrs.mLocal.mAddrs.begin(); 
+			it != pcs.ipAddrs.mLocal.mAddrs.end(); it++)
+	{
+	    std::ostringstream toto;
+            toto << ntohs(it->mAddr.sin_port) << "    " << (time(NULL) - it->mSeenTime) << " sec";
+            d.ipAddressList.push_back("L:" + std::string(inet_ntoa(it->mAddr.sin_addr)) + ":" + toto.str());
+	}
 	for(it = pcs.ipAddrs.mExt.mAddrs.begin(); 
 			it != pcs.ipAddrs.mExt.mAddrs.end(); it++)
 	{
 	    std::ostringstream toto;
             toto << ntohs(it->mAddr.sin_port) << "    " << (time(NULL) - it->mSeenTime) << " sec";
-            d.ipAddressList.push_back(std::string(inet_ntoa(it->mAddr.sin_addr)) + ":" + toto.str());
+            d.ipAddressList.push_back("E:" + std::string(inet_ntoa(it->mAddr.sin_addr)) + ":" + toto.str());
 	}
 
 		

@@ -642,6 +642,7 @@ void p3ConnectMgr::netTick()
 	connMtx.lock();   /*   LOCK MUTEX */
 
 	uint32_t netStatus = mNetStatus;
+	time_t   age = time(NULL) - mNetInitTS;
 
 	connMtx.unlock(); /* UNLOCK MUTEX */
         /* start tcp network - if necessary */
@@ -663,7 +664,22 @@ void p3ConnectMgr::netTick()
 #ifdef CONN_DEBUG_TICK
 			std::cerr << "p3ConnectMgr::netTick() STATUS: UNKNOWN" << std::endl;
 #endif
-			netStartup();
+
+			/* add a small delay to stop restarting straight after a RESET 
+			 * This is so can we shutdown cleanly
+			 */
+#define STARTUP_DELAY 5
+			if (age < STARTUP_DELAY)
+			{
+#ifdef CONN_DEBUG_TICK
+				std::cerr << "p3ConnectMgr::netTick() Delaying Startup" << std::endl;
+#endif
+			}
+			else
+			{
+				netStartup();
+			}
+
 			break;
 
 		case RS_NET_UPNP_INIT:
@@ -916,14 +932,24 @@ void p3ConnectMgr::netExtCheck()
 		/* finalise address */
 		if (mNetFlags.mExtAddrOk)
 		{
+
+#ifdef CONN_DEBUG_TICK
+			std::cerr << "p3ConnectMgr::netExtCheck() ";
+			std::cerr << "ExtAddr: " << inet_ntoa(mNetFlags.mExtAddr.sin_addr);
+			std::cerr << ":" << ntohs(mNetFlags.mExtAddr.sin_port);
+			std::cerr << std::endl;
+#endif
+			//update ip address list
+			mOwnState.currentserveraddr = mNetFlags.mExtAddr;
+
+			pqiIpAddress addrInfo;
+			addrInfo.mAddr = mNetFlags.mExtAddr;
+			addrInfo.mSeenTime = time(NULL);
+			addrInfo.mSrc = 0;
+			mOwnState.ipAddrs.mExt.updateIpAddressList(addrInfo);
+
 			mNetStatus = RS_NET_DONE;
 			std::cerr << "p3ConnectMgr::netExtCheck() Ext Ok: RS_NET_DONE" << std::endl;
-#ifdef CONN_DEBUG_TICK
-		std::cerr << "p3ConnectMgr::netExtCheck() ";
-		std::cerr << "ExtAddr: " << inet_ntoa(mNetFlags.mExtAddr.sin_addr);
-		std::cerr << ":" << ntohs(mNetFlags.mExtAddr.sin_port);
-		std::cerr << std::endl;
-#endif
 
 			if (!mNetFlags.mExtAddrStableOk)
 			{
@@ -1637,7 +1663,7 @@ bool p3ConnectMgr::connectResult(std::string id, bool success, uint32_t flags, s
 
 	if (success)
 	{
-                /* update address (will come although through from DISC) */
+                /* update address (should also come through from DISC) */
 
 #ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::connectResult() Connect!: id: " << id << std::endl;
@@ -1651,27 +1677,43 @@ bool p3ConnectMgr::connectResult(std::string id, bool success, uint32_t flags, s
 		it->second.actions |= RS_PEER_CONNECTED;
 		it->second.lastcontact = time(NULL);  /* time of connect */
                 it->second.connecttype = flags;
+
+
+		/* only update the peer's address if we were in a connect attempt.
+		 * Otherwise, they connected to us, and the address will be a
+		 * random port of their outgoing TCP socket
+		 *
+		 * NB even if we received the connection, the IP address is likely to okay.
+		 */
+
                 //used to send back to the peer it's own ext address
-                it->second.currentserveraddr = remote_peer_address;
+                //it->second.currentserveraddr = remote_peer_address;
 
-                //add the ip address in the address list if we were in a connect attempt and the attempt address is the same as the connect result
-                 pqiIpAddress raddr;
-                 raddr.mAddr = remote_peer_address;
-                 raddr.mSeenTime = time(NULL);
-                 raddr.mSrc = 0;
-		if (isPrivateNet(&(remote_peer_address.sin_addr)))
+		if ((it->second.inConnAttempt) &&
+        		(it->second.currentConnAddrAttempt.addr.sin_addr.s_addr 
+					== remote_peer_address.sin_addr.s_addr) &&
+        		(it->second.currentConnAddrAttempt.addr.sin_port 
+					== remote_peer_address.sin_port))
 		{
-                 	it->second.ipAddrs.updateLocalAddrs(raddr);
+                 	pqiIpAddress raddr;
+                 	raddr.mAddr = remote_peer_address;
+                 	raddr.mSeenTime = time(NULL);
+                 	raddr.mSrc = 0;
+			if (isPrivateNet(&(remote_peer_address.sin_addr)))
+			{
+                 		it->second.ipAddrs.updateLocalAddrs(raddr);
+                		it->second.currentlocaladdr = remote_peer_address;
+			}
+			else
+			{
+                 		it->second.ipAddrs.updateExtAddrs(raddr);
+                		it->second.currentserveraddr = remote_peer_address;
+			}
+#ifdef CONN_DEBUG
+			std::cerr << "p3ConnectMgr::connectResult() adding current peer address in list." << std::endl;
+			it->second.ipAddrs.printAddrs(std::cerr);
+#endif
 		}
-		else
-		{
-                 	it->second.ipAddrs.updateExtAddrs(raddr);
-		}
-
-    #ifdef CONN_DEBUG
-                    std::cerr << "p3ConnectMgr::connectResult() adding current peer adress in list." << std::endl;
-                    it->second.ipAddrs.printAddrs(std::cerr);
-    #endif
 
                 /* remove other attempts */
                 it->second.inConnAttempt = false;
@@ -2771,7 +2813,6 @@ bool 	p3ConnectMgr::checkNetAddress()
 			addrChanged = true;
 		}
 
-#if 0
 		/* if localaddr = serveraddr, then ensure that the ports
 		 * are the same (modify server)... this mismatch can
 		 * occur when the local port is changed....
@@ -2780,7 +2821,6 @@ bool 	p3ConnectMgr::checkNetAddress()
 		{
 			mOwnState.currentserveraddr.sin_port = mOwnState.currentlocaladdr.sin_port;
 		}
-#endif
 
 		// ensure that address family is set, otherwise windows Barfs.
 		mOwnState.currentlocaladdr.sin_family = AF_INET;
@@ -2796,6 +2836,10 @@ bool 	p3ConnectMgr::checkNetAddress()
 #ifdef CONN_DEBUG_TICK
 		std::cerr << "p3ConnectMgr::checkNetAddress() Final Local Address: " << inet_ntoa(mOwnState.currentlocaladdr.sin_addr);
 		std::cerr << ":" << ntohs(mOwnState.currentlocaladdr.sin_port) << std::endl;
+		std::cerr << "p3ConnectMgr::checkNetAddress() Addres History: ";
+		std::cerr << std::endl;
+		mOwnState.ipAddrs.printAddrs(std::cerr);
+		std::cerr << std::endl;
 #endif
 	}
 

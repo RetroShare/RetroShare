@@ -213,7 +213,7 @@ bool    pqiIpAddrSet::updateLocalAddrs(const pqiIpAddress &addr)
 
 bool    pqiIpAddrSet::updateExtAddrs(const pqiIpAddress &addr)
 {
-	return	mLocal.updateIpAddressList(addr);
+	return	mExt.updateIpAddressList(addr);
 }
 
 bool    pqiIpAddrSet::updateAddrs(const pqiIpAddrSet &addrs)
