@@ -919,7 +919,8 @@ int RsInit::LockConfigDirectory(const std::string& accountDir)
 		close(RsInitConfig::lockHandle);
 
 	// open the file in write mode, create it if necessary, truncate it (it should be empty)
-	RsInitConfig::lockHandle = open(lockFile.c_str(), O_WRONLY | O_CREAT | O_TRUNC);
+	RsInitConfig::lockHandle = open(lockFile.c_str(), O_WRONLY | O_CREAT | O_TRUNC,
+						S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 
 	if(RsInitConfig::lockHandle == -1)
 	{
