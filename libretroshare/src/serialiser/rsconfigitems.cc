@@ -33,6 +33,9 @@
 
 #include <iostream>
 
+// For transition.
+RsPeerNetItem *convertToNetItem(RsPeerOldNetItem *old);
+
 /*************************************************************************/
 
 uint32_t    RsFileConfigSerialiser::size(RsItem *i)
@@ -658,9 +661,14 @@ RsPeerConfigSerialiser::~RsPeerConfigSerialiser()
 
 uint32_t    RsPeerConfigSerialiser::size(RsItem *i)
 {
-	RsPeerNetItem *pni;
+	RsPeerOldNetItem *oldpni;
 	RsPeerStunItem *psi;
+	RsPeerNetItem *pni;
 
+	if (NULL != (oldpni = dynamic_cast<RsPeerOldNetItem *>(i)))
+	{
+		return sizeOldNet(oldpni);
+	}
 	if (NULL != (pni = dynamic_cast<RsPeerNetItem *>(i)))
 	{
 		return sizeNet(pni);
@@ -676,9 +684,14 @@ uint32_t    RsPeerConfigSerialiser::size(RsItem *i)
 /* serialise the data to the buffer */
 bool    RsPeerConfigSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsize)
 {
+	RsPeerOldNetItem *oldpni;
 	RsPeerNetItem *pni;
 	RsPeerStunItem *psi;
 
+	if (NULL != (oldpni = dynamic_cast<RsPeerOldNetItem *>(i)))
+	{
+		return serialiseOldNet(oldpni, data, pktsize);
+	}
 	if (NULL != (pni = dynamic_cast<RsPeerNetItem *>(i)))
 	{
 		return serialiseNet(pni, data, pktsize);
@@ -706,8 +719,14 @@ RsItem *RsPeerConfigSerialiser::deserialise(void *data, uint32_t *pktsize)
 		return NULL; /* wrong type */
 	}
 
+	RsPeerOldNetItem *old = NULL;
 	switch(getRsItemSubType(rstype))
 	{
+		case RS_PKT_SUBTYPE_PEER_OLD_NET:
+			old = deserialiseOldNet(data, pktsize);
+			/* upgrade mechanism */
+			return convertToNetItem(old);
+			break;
 		case RS_PKT_SUBTYPE_PEER_NET:
 			return deserialiseNet(data, pktsize);
 			break;
@@ -724,12 +743,12 @@ RsItem *RsPeerConfigSerialiser::deserialise(void *data, uint32_t *pktsize)
 
 /*************************************************************************/
 
-RsPeerNetItem::~RsPeerNetItem()
+RsPeerOldNetItem::~RsPeerOldNetItem()
 {
 	return;
 }
 
-void RsPeerNetItem::clear()
+void RsPeerOldNetItem::clear()
 {
 	pid.clear();
         gpg_id.clear();
@@ -743,9 +762,9 @@ void RsPeerNetItem::clear()
         dyndns.clear();
 }
 
-std::ostream &RsPeerNetItem::print(std::ostream &out, uint16_t indent)
+std::ostream &RsPeerOldNetItem::print(std::ostream &out, uint16_t indent)
 {
-	printRsItemBase(out, "RsPeerNetItem", indent);
+	printRsItemBase(out, "RsPeerOldNetItem", indent);
 	uint16_t int_Indent = indent + 2;
 
 	printIndent(out, int_Indent);
@@ -784,6 +803,253 @@ std::ostream &RsPeerNetItem::print(std::ostream &out, uint16_t indent)
                 out << inet_ntoa(ipListIt->ipAddr.sin_addr) << ":" << ntohs(ipListIt->ipAddr.sin_port) << " seenTime : " << ipListIt->seenTime << std::endl;
         }
 
+        printRsItemEnd(out, "RsPeerOldNetItem", indent);
+	return out;
+}
+
+/*************************************************************************/
+
+uint32_t RsPeerConfigSerialiser::sizeOldNet(RsPeerOldNetItem *i)
+{	
+	uint32_t s = 8; /* header */
+	s += GetTlvStringSize(i->pid); /* peerid */ 
+        s += GetTlvStringSize(i->gpg_id);
+        s += GetTlvStringSize(i->location);
+        s += 4; /* netMode */
+	s += 4; /* visState */
+	s += 4; /* lastContact */
+	s += GetTlvIpAddrPortV4Size(); /* localaddr */ 
+	s += GetTlvIpAddrPortV4Size(); /* remoteaddr */ 
+        s += GetTlvStringSize(i->dyndns);
+
+	//add the size of the ip list
+        int ipListSize = i->ipAddressList.size();
+	s += ipListSize * GetTlvIpAddrPortV4Size();
+	s += ipListSize * 8; //size of an uint64
+
+	return s;
+
+}
+
+bool RsPeerConfigSerialiser::serialiseOldNet(RsPeerOldNetItem *item, void *data, uint32_t *size)
+{
+	uint32_t tlvsize = RsPeerConfigSerialiser::sizeOldNet(item);
+	uint32_t offset = 0;
+
+	if(*size < tlvsize)
+		return false; /* not enough space */
+
+	*size = tlvsize;
+
+	bool ok = true;
+
+	// serialise header
+
+	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+
+#ifdef RSSERIAL_DEBUG
+	std::cerr << "RsPeerConfigSerialiser::serialiseNet() Header: " << ok << std::endl;
+	std::cerr << "RsPeerConfigSerialiser::serialiseNet() Header test: " << tlvsize << std::endl;
+#endif
+
+	/* skip the header */
+	offset += 8;
+
+	/* add mandatory parts first */
+        ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PEERID, item->pid); /* Mandatory */
+        ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GPGID, item->gpg_id); /* Mandatory */
+        ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_LOCATION, item->location); /* Mandatory */
+        ok &= setRawUInt32(data, tlvsize, &offset, item->netMode); /* Mandatory */
+	ok &= setRawUInt32(data, tlvsize, &offset, item->visState); /* Mandatory */
+	ok &= setRawUInt32(data, tlvsize, &offset, item->lastContact); /* Mandatory */
+	ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, TLV_TYPE_IPV4_LOCAL, &(item->currentlocaladdr));
+	ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, TLV_TYPE_IPV4_REMOTE, &(item->currentremoteaddr));
+        ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_DYNDNS, item->dyndns);
+
+	//store the ip list
+	std::list<IpAddressTimed>::iterator ipListIt;
+        for (ipListIt = item->ipAddressList.begin(); ipListIt!=(item->ipAddressList.end()); ipListIt++) {
+	    ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, TLV_TYPE_IPV4_REMOTE, &(ipListIt->ipAddr));
+	    ok &= setRawUInt64(data, tlvsize, &offset, ipListIt->seenTime);
+	}
+
+	if(offset != tlvsize)
+	{
+		ok = false;
+#ifdef RSSERIAL_DEBUG
+		std::cerr << "RsPeerConfigSerialiser::serialise() Size Error! " << std::endl;
+#endif
+	}
+
+	return ok;
+
+}
+
+RsPeerOldNetItem *RsPeerConfigSerialiser::deserialiseOldNet(void *data, uint32_t *size)
+{
+	/* get the type and size */
+	uint32_t rstype = getRsItemId(data);
+	uint32_t rssize = getRsItemSize(data);
+
+	uint32_t offset = 0;
+
+
+	if ((RS_PKT_VERSION1 != getRsItemVersion(rstype)) ||
+		(RS_PKT_CLASS_CONFIG != getRsItemClass(rstype)) ||
+		(RS_PKT_TYPE_PEER_CONFIG  != getRsItemType(rstype)) ||
+		(RS_PKT_SUBTYPE_PEER_OLD_NET != getRsItemSubType(rstype)))
+	{
+		return NULL; /* wrong type */
+	}
+
+	if (*size < rssize)    /* check size */
+		return NULL; /* not enough data */
+
+	/* set the packet length */
+	*size = rssize;
+
+	bool ok = true;
+
+	RsPeerOldNetItem *item = new RsPeerOldNetItem();
+	item->clear();
+
+	/* skip the header */
+	offset += 8;
+
+	/* get mandatory parts first */
+        ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PEERID, item->pid); /* Mandatory */
+        ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_GPGID, item->gpg_id); /* Mandatory */
+        ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_LOCATION, item->location); /* Mandatory */
+        ok &= getRawUInt32(data, rssize, &offset, &(item->netMode)); /* Mandatory */
+	ok &= getRawUInt32(data, rssize, &offset, &(item->visState)); /* Mandatory */
+	ok &= getRawUInt32(data, rssize, &offset, &(item->lastContact)); /* Mandatory */
+	ok &= GetTlvIpAddrPortV4(data, rssize, &offset, TLV_TYPE_IPV4_LOCAL, &(item->currentlocaladdr));
+	ok &= GetTlvIpAddrPortV4(data, rssize, &offset, TLV_TYPE_IPV4_REMOTE, &(item->currentremoteaddr));
+        //ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_DYNDNS, item->dyndns);
+        GetTlvString(data, rssize, &offset, TLV_TYPE_STR_DYNDNS, item->dyndns); //use this line for backward compatibility
+
+	//get the ip adress list
+	std::list<IpAddressTimed> ipTimedList;
+	while (offset < rssize) {
+	    IpAddressTimed ipTimed;
+            sockaddr_clear(&ipTimed.ipAddr);
+            ok &= GetTlvIpAddrPortV4(data, rssize, &offset, TLV_TYPE_IPV4_REMOTE, &ipTimed.ipAddr);
+            if (!ok) { break;}
+            uint64_t time = 0;
+            ok &= getRawUInt64(data, rssize, &offset, &time);
+            if (!ok) { break;}
+	    ipTimed.seenTime = time;
+	    ipTimedList.push_back(ipTimed);
+	}
+        item->ipAddressList = ipTimedList;
+
+        //if (offset != rssize)
+        if (false) //use this line for backward compatibility
+	{
+
+		/* error */
+		delete item;
+		return NULL;
+	}
+
+	return item;
+}
+
+/****************************************************************************/
+RsPeerNetItem *convertToNetItem(RsPeerOldNetItem *old)
+{
+	RsPeerNetItem *item = new RsPeerNetItem();
+
+	/* copy over data */
+	item->pid = old->pid;
+        item->gpg_id = old->gpg_id;
+        item->location = old->location;
+	item->netMode = old->netMode;
+	item->visState = old->visState;
+	item->lastContact = old->lastContact;
+
+	item->currentlocaladdr = old->currentlocaladdr;
+	item->currentremoteaddr = old->currentremoteaddr;
+        item->dyndns = old->dyndns;
+
+	std::list<IpAddressTimed>::iterator it;
+	for(it = old->ipAddressList.begin(); it != old->ipAddressList.end(); it++)
+	{
+		RsTlvIpAddressInfo info;
+		info.addr = it->ipAddr;
+		info.seenTime = it->seenTime;
+		info.source = 0;
+
+		item->extAddrList.addrs.push_back(info);
+	}
+
+	/* delete old data */
+	delete old;
+
+	return item;
+}
+
+/****************************************************************************/
+
+RsPeerNetItem::~RsPeerNetItem()
+{
+	return;
+}
+
+void RsPeerNetItem::clear()
+{
+	pid.clear();
+        gpg_id.clear();
+        location.clear();
+	netMode = 0;
+	visState = 0;
+	lastContact = 0;
+
+	sockaddr_clear(&currentlocaladdr);
+	sockaddr_clear(&currentremoteaddr);
+        dyndns.clear();
+
+	localAddrList.TlvClear();
+	extAddrList.TlvClear();
+}
+
+std::ostream &RsPeerNetItem::print(std::ostream &out, uint16_t indent)
+{
+	printRsItemBase(out, "RsPeerNetItem", indent);
+	uint16_t int_Indent = indent + 2;
+
+	printIndent(out, int_Indent);
+    	out << "PeerId: " << pid << std::endl; 
+
+        printIndent(out, int_Indent);
+        out << "GPGid: " << gpg_id << std::endl;
+
+        printIndent(out, int_Indent);
+        out << "location: " << location << std::endl;
+
+    	printIndent(out, int_Indent);
+	out << "netMode: " << netMode << std::endl;
+
+	printIndent(out, int_Indent);
+	out << "visState: " << visState << std::endl;
+	
+	printIndent(out, int_Indent);
+	out << "lastContact: " << lastContact << std::endl;
+
+	printIndent(out, int_Indent);
+	out << "currentlocaladdr: " << inet_ntoa(currentlocaladdr.sin_addr);
+	out << ":" << htons(currentlocaladdr.sin_port) << std::endl;
+
+	printIndent(out, int_Indent);
+	out << "currentremoteaddr: " << inet_ntoa(currentremoteaddr.sin_addr);
+	out << ":" << htons(currentremoteaddr.sin_port) << std::endl;
+
+        printIndent(out, int_Indent);
+        out << "DynDNS: " << dyndns << std::endl;
+
+	localAddrList.print(out, int_Indent);
+	extAddrList.print(out, int_Indent);
+
         printRsItemEnd(out, "RsPeerNetItem", indent);
 	return out;
 }
@@ -804,9 +1070,8 @@ uint32_t RsPeerConfigSerialiser::sizeNet(RsPeerNetItem *i)
         s += GetTlvStringSize(i->dyndns);
 
 	//add the size of the ip list
-        int ipListSize = i->ipAddressList.size();
-	s += ipListSize * GetTlvIpAddrPortV4Size();
-	s += ipListSize * 8; //size of an uint64
+	s += i->localAddrList.TlvSize();
+	s += i->extAddrList.TlvSize();
 
 	return s;
 
@@ -847,12 +1112,8 @@ bool RsPeerConfigSerialiser::serialiseNet(RsPeerNetItem *item, void *data, uint3
 	ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, TLV_TYPE_IPV4_REMOTE, &(item->currentremoteaddr));
         ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_DYNDNS, item->dyndns);
 
-	//store the ip list
-	std::list<IpAddressTimed>::iterator ipListIt;
-        for (ipListIt = item->ipAddressList.begin(); ipListIt!=(item->ipAddressList.end()); ipListIt++) {
-	    ok &= SetTlvIpAddrPortV4(data, tlvsize, &offset, TLV_TYPE_IPV4_REMOTE, &(ipListIt->ipAddr));
-	    ok &= setRawUInt64(data, tlvsize, &offset, ipListIt->seenTime);
-	}
+	ok &= item->localAddrList.SetTlv(data, tlvsize, &offset);
+	ok &= item->extAddrList.SetTlv(data, tlvsize, &offset);
 
 	if(offset != tlvsize)
 	{
@@ -906,23 +1167,10 @@ RsPeerNetItem *RsPeerConfigSerialiser::deserialiseNet(void *data, uint32_t *size
 	ok &= getRawUInt32(data, rssize, &offset, &(item->lastContact)); /* Mandatory */
 	ok &= GetTlvIpAddrPortV4(data, rssize, &offset, TLV_TYPE_IPV4_LOCAL, &(item->currentlocaladdr));
 	ok &= GetTlvIpAddrPortV4(data, rssize, &offset, TLV_TYPE_IPV4_REMOTE, &(item->currentremoteaddr));
-        //ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_DYNDNS, item->dyndns);
-        GetTlvString(data, rssize, &offset, TLV_TYPE_STR_DYNDNS, item->dyndns); //use this line for backward compatibility
+        ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_DYNDNS, item->dyndns); 
+	ok &= item->localAddrList.GetTlv(data, rssize, &offset);
+	ok &= item->extAddrList.GetTlv(data, rssize, &offset);
 
-	//get the ip adress list
-	std::list<IpAddressTimed> ipTimedList;
-	while (offset < rssize) {
-	    IpAddressTimed ipTimed;
-            sockaddr_clear(&ipTimed.ipAddr);
-            ok &= GetTlvIpAddrPortV4(data, rssize, &offset, TLV_TYPE_IPV4_REMOTE, &ipTimed.ipAddr);
-            if (!ok) { break;}
-            uint64_t time = 0;
-            ok &= getRawUInt64(data, rssize, &offset, &time);
-            if (!ok) { break;}
-	    ipTimed.seenTime = time;
-	    ipTimedList.push_back(ipTimed);
-	}
-        item->ipAddressList = ipTimedList;
 
         //if (offset != rssize)
         if (false) //use this line for backward compatibility

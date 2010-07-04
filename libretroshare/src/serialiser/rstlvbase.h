@@ -207,6 +207,14 @@ const uint16_t TLV_TYPE_KEYSIGNATURE  = 0x1050;
 
 const uint16_t TLV_TYPE_IMAGE         = 0x1060;
 
+const uint16_t TLV_TYPE_ADDRESS_INFO  = 0x1070;
+const uint16_t TLV_TYPE_ADDRESS_SET   = 0x1071;
+
+
+
+
+
+
 const uint32_t RSTLV_IMAGE_TYPE_PNG = 0x0001;
 const uint32_t RSTLV_IMAGE_TYPE_JPG = 0x0002;
 
