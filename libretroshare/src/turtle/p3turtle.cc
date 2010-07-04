@@ -441,8 +441,9 @@ void p3turtle::locked_closeTunnel(TurtleTunnelId tid,std::vector<std::pair<Turtl
 #ifdef P3TURTLE_DEBUG
 		std::cerr << "    Tunnel is a ending point. Also removing associated outgoing hash." ;
 #endif
-		if(_outgoing_file_hashes.find(it->second.hash) != _outgoing_file_hashes.end())
-			_outgoing_file_hashes.erase(_outgoing_file_hashes.find(it->second.hash)) ;
+		std::map<TurtleFileHash,FileInfo>::iterator itHash = _outgoing_file_hashes.find(it->second.hash);
+		if(itHash != _outgoing_file_hashes.end())
+			_outgoing_file_hashes.erase(itHash) ;
 	}
 
 	_local_tunnels.erase(it) ;
@@ -801,6 +802,7 @@ void p3turtle::routeGenericTunnelItem(RsTurtleGenericTunnelItem *item)
 #ifdef P3TURTLE_DEBUG
 			std::cerr << "p3turtle: got file map with unknown tunnel id " << (void*)item->tunnelId() << std::endl ;
 #endif
+			delete item;
 			return ;
 		}
 
@@ -1107,6 +1109,7 @@ void p3turtle::sendFileData(const std::string& peerId, const std::string& hash, 
 	if(item->chunk_data == NULL)
 	{
 		std::cerr << "p3turtle: Warning: failed malloc of " << chunksize << " bytes for sending data packet." << std::endl ;
+		delete item;
 		return ;
 	}
 	memcpy(item->chunk_data,(void*)((uint8_t*)data),chunksize) ;
