@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>241</width>
-    <height>327</height>
+    <width>255</width>
+    <height>386</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -31,8 +31,10 @@
         </size>
        </property>
        <property name="styleSheet">
-        <string notr="true">background-color: rgb(255, 255, 255);
-background-image: url(:/images/connect/connectFriendBanner.png);</string>
+        <string notr="true">QFrame#frame{
+background-color: rgb(255, 255, 255);
+background-image: url(:/images/connect/connectFriendBanner.png);
+}</string>
        </property>
        <property name="frameShape">
         <enum>QFrame::NoFrame</enum>
@@ -82,7 +84,7 @@ p, li { white-space: pre-wrap; }
         </property>
         <property name="maximumSize">
          <size>
-          <width>300</width>
+          <width>52487</width>
           <height>524287</height>
          </size>
         </property>
@@ -134,20 +136,26 @@ p, li { white-space: pre-wrap; }
             </property>
             <property name="maximumSize">
              <size>
-              <width>300</width>
+              <width>1677215</width>
               <height>16777215</height>
              </size>
             </property>
             <property name="sizeIncrement">
              <size>
-              <width>220</width>
+              <width>0</width>
               <height>0</height>
              </size>
             </property>
             <property name="baseSize">
              <size>
-              <width>200</width>
+              <width>0</width>
               <height>0</height>
+             </size>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>16</width>
+              <height>16</height>
              </size>
             </property>
             <property name="sortingEnabled">
