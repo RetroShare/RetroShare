@@ -35,6 +35,7 @@
 #include <iomanip>
 #include <iostream>
 
+//#define TLV_DEBUG 1
 
 /************************************* RsTlvSecurityKey ************************************/
 
@@ -88,7 +89,13 @@ bool  RsTlvSecurityKey::SetTlv(void *data, uint32_t size, uint32_t *offset) /* s
 	uint32_t tlvend  = *offset + tlvsize;
 
 	if (size < tlvend)
+	{
+#ifdef TLV_DEBUG
+		std::cerr << "RsTlvSecurityKey::SetTlv() Failed not enough space";
+		std::cerr << std::endl;
+#endif
 		return false; /* not enough space */
+	}
 
 	bool ok = true;
 
@@ -118,10 +125,22 @@ bool  RsTlvSecurityKey::GetTlv(void *data, uint32_t size, uint32_t *offset) /* s
 	uint32_t tlvend = *offset + tlvsize;
 
 	if (size < tlvend)    /* check size */
+	{
+#ifdef TLV_DEBUG
+		std::cerr << "RsTlvSecurityKey::GetTlv() Fail, not enough space";
+		std::cerr << std::endl;
+#endif
 		return false; /* not enough space */
+	}
 
 	if (tlvtype != TLV_TYPE_SECURITYKEY) /* check type */
+	{
+#ifdef TLV_DEBUG
+		std::cerr << "RsTlvSecurityKey::GetTlv() Fail, wrong type";
+		std::cerr << std::endl;
+#endif
 		return false;
+	}
 
 	bool ok = true;
 
@@ -151,6 +170,14 @@ bool  RsTlvSecurityKey::GetTlv(void *data, uint32_t size, uint32_t *offset) /* s
 		std::cerr << std::endl;
 #endif
 		*offset = tlvend;
+	}
+
+	if (!ok)
+	{
+#ifdef TLV_DEBUG
+		std::cerr << "RsTlvSecurityKey::GetTlv() Failed somewhere ok == false";
+		std::cerr << std::endl;
+#endif
 	}
 
 	return ok;
@@ -225,7 +252,13 @@ bool  RsTlvSecurityKeySet::SetTlv(void *data, uint32_t size, uint32_t *offset) /
 	uint32_t tlvend  = *offset + tlvsize;
 
 	if (size < tlvend)
+	{
+#ifdef TLV_DEBUG
+		std::cerr << "RsTlvSecurityKeySet::SetTlv() Failed not enough space";
+		std::cerr << std::endl;
+#endif
 		return false; /* not enough space */
+	}
 
 	bool ok = true;
 
@@ -382,17 +415,31 @@ bool  RsTlvKeySignature::SetTlv(void *data, uint32_t size, uint32_t *offset) /* 
 	uint32_t tlvend  = *offset + tlvsize;
 
 	if (size < tlvend)
+	{
+#ifdef TLV_DEBUG
+		std::cerr << "RsTlvKeySignature::SetTlv() Fail, not enough space";
+		std::cerr << std::endl;
+#endif
 		return false; /* not enough space */
+	}
 
 	bool ok = true;
 
 	/* start at data[offset] */
         /* add mandatory parts first */
 
-	ok &= SetTlvBase(data, tlvend, offset, TLV_TYPE_SECURITYKEY, tlvsize);
+	ok &= SetTlvBase(data, tlvend, offset, TLV_TYPE_KEYSIGNATURE, tlvsize);
 
 	ok &= SetTlvString(data, tlvend, offset, TLV_TYPE_STR_KEYID, keyId);  
 	ok &= signData.SetTlv(data, tlvend, offset);  
+
+	if (!ok)
+	{
+#ifdef TLV_DEBUG
+		std::cerr << "RsTlvKeySignature::SetTlv() Failed somewhere";
+		std::cerr << std::endl;
+#endif
+	}
 
 	return ok;
 
@@ -409,10 +456,22 @@ bool  RsTlvKeySignature::GetTlv(void *data, uint32_t size, uint32_t *offset) /* 
 	uint32_t tlvend = *offset + tlvsize;
 
 	if (size < tlvend)    /* check size */
+	{
+#ifdef TLV_DEBUG
+		std::cerr << "RsTlvKeySignature::GetTlv() Not Enough Space";
+		std::cerr << std::endl;
+#endif
 		return false; /* not enough space */
+	}
 
-	if (tlvtype != TLV_TYPE_SECURITYKEY) /* check type */
+	if (tlvtype != TLV_TYPE_KEYSIGNATURE) /* check type */
+	{
+#ifdef TLV_DEBUG
+		std::cerr << "RsTlvKeySignature::GetTlv() Type Fail";
+		std::cerr << std::endl;
+#endif
 		return false;
+	}
 
 	bool ok = true;
 
