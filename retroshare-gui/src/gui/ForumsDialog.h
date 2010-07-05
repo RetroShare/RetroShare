@@ -23,9 +23,10 @@
 #define _FORUMSDIALOG_H
 
 #include "mainpage.h"
+#include "RsAutoUpdatePage.h"
 #include "ui_ForumsDialog.h"
 
-class ForumsDialog : public MainPage 
+class ForumsDialog : public RsAutoUpdatePage 
 {
   Q_OBJECT
 
@@ -37,7 +38,9 @@ public:
   void insertPost();
   
   void loadForumEmoticons();
-  
+ 
+  /* overloaded from RsAuthUpdatePage */ 
+  virtual void updateDisplay();
   
 private slots:
 
@@ -49,7 +52,6 @@ private slots:
 
   void newforum();
 
-  void checkUpdate();
 
   void changedForum( QTreeWidgetItem *curr, QTreeWidgetItem *prev );
   void changedThread();

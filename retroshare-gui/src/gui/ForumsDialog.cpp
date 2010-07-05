@@ -102,7 +102,7 @@ static int FilterColumnToComboBox(int nIndex)
 
 /** Constructor */
 ForumsDialog::ForumsDialog(QWidget *parent)
-: MainPage(parent)
+: RsAutoUpdatePage(1000,parent)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
@@ -129,10 +129,6 @@ ForumsDialog::ForumsDialog(QWidget *parent)
     connect(ui.clearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
     connect(ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
     connect(ui.filterColumnComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterColumnChanged()));
-
-    QTimer *timer = new QTimer(this);
-    timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
-    timer->start(1000);
 
     /* Set header resize modes and initial section sizes */
     QHeaderView * ftheader = ui.forumTreeWidget->header () ;
@@ -377,7 +373,7 @@ void ForumsDialog::togglethreadview_internal()
     }
 }
 
-void ForumsDialog::checkUpdate()
+void ForumsDialog::updateDisplay()
 {
     std::list<std::string> forumIds;
     std::list<std::string>::iterator it;
