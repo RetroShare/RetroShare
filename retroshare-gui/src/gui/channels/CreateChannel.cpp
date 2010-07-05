@@ -33,19 +33,19 @@
 CreateChannel::CreateChannel(QWidget *parent)
 : QDialog(parent)
 {
-  /* Invoke the Qt Designer generated object setup routine */
-  ui.setupUi(this);
+    /* Invoke the Qt Designer generated object setup routine */
+    ui.setupUi(this);
   
-  picture = NULL;
+    picture = NULL;
 
-  // connect up the buttons.
-  connect( ui.cancelButton, SIGNAL( clicked ( bool ) ), this, SLOT( cancelChannel( ) ) );
-  connect( ui.createButton, SIGNAL( clicked ( bool ) ), this, SLOT( createChannel( ) ) );
+    // connect up the buttons.
+    connect( ui.cancelButton, SIGNAL( clicked ( bool ) ), this, SLOT( cancelChannel( ) ) );
+    connect( ui.createButton, SIGNAL( clicked ( bool ) ), this, SLOT( createChannel( ) ) );
   
-  connect( ui.LogoButton, SIGNAL(clicked() ), this , SLOT(addChannelLogo()));	
-	connect( ui.ChannelLogoButton, SIGNAL(clicked() ), this , SLOT(addChannelLogo()));
+    connect( ui.LogoButton, SIGNAL(clicked() ), this , SLOT(addChannelLogo()));	
+    connect( ui.ChannelLogoButton, SIGNAL(clicked() ), this , SLOT(addChannelLogo()));
 	connect( ui.pubKeyShare_cb, SIGNAL( clicked() ), this, SLOT( setShareList( ) ));
-	connect(ui.keyShareList, SIGNAL(itemChanged( QTreeWidgetItem *, int ) ),
+	connect( ui.keyShareList, SIGNAL(itemChanged( QTreeWidgetItem *, int ) ),
 	        this, SLOT(togglePersonItem( QTreeWidgetItem *, int ) ));
 
 	if(!ui.pubKeyShare_cb->isChecked()){
@@ -55,7 +55,7 @@ CreateChannel::CreateChannel(QWidget *parent)
 				this->size().height());
 	}
 
-  newChannel();
+    newChannel();
 
 }
 
@@ -108,6 +108,7 @@ void CreateChannel::setShareList(){
 			if (detail.state & RS_PEER_STATE_CONNECTED) {
 				item -> setTextColor(0,(Qt::darkBlue));
 			}
+            item -> setSizeHint(0,  QSize( 17,17 ) );
 
 			item -> setText(1, QString::fromStdString(detail.id));
 
@@ -142,7 +143,7 @@ void  CreateChannel::newChannel()
 	/* enforce Private for the moment */
 	ui.typePrivate->setChecked(true);
 
-        ui.typeEncrypted->setEnabled(true);
+    ui.typeEncrypted->setEnabled(true);
 
 	ui.msgAnon->setChecked(true);
 	ui.msgAuth->setEnabled(false);
