@@ -132,6 +132,7 @@ void ShareKey::setShareList(){
             if (detail.state & RS_PEER_STATE_CONNECTED) {
                     item -> setTextColor(0,(Qt::darkBlue));
             }
+            item -> setSizeHint(0,  QSize( 17,17 ) );
 
             item -> setText(1, QString::fromStdString(detail.id));
 
