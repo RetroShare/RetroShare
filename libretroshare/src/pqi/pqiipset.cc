@@ -23,6 +23,7 @@
  *
  */
 
+#include <time.h>
 #include "pqi/pqiipset.h"
 
 bool pqiIpAddress::sameAddress(const pqiIpAddress &a) const
