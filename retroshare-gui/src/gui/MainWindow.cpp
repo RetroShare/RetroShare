@@ -382,17 +382,18 @@ void MainWindow::updateStatus()
 	if(RsAutoUpdatePage::eventsLocked())
 		return ;
 
+	unsigned int nFriendCount = 0;
+	unsigned int nOnlineCount = 0;
+	rsPeers->getPeerCount (&nFriendCount, &nOnlineCount);
+
 	if (ratesstatus)
 		ratesstatus->getRatesStatus();
 
 	if (peerstatus)
-		peerstatus->getPeerStatus();
+		peerstatus->getPeerStatus(nFriendCount, nOnlineCount);
 
 	if (natstatus)
 		natstatus->getNATStatus();
-
-	unsigned int online = 0;
-	rsPeers->getPeerCount (NULL, &online);
 
 	unsigned int newInboxCount = 0;
 	rsMsgs->getMessageCount (NULL, &newInboxCount, NULL, NULL, NULL, NULL);
@@ -411,17 +412,17 @@ void MainWindow::updateStatus()
 			trayIcon->setToolTip(tr("RetroShare") + "\n" + tr("You have %1 new message").arg(newInboxCount));
 		}
 	}
-	else if (online == 0)
+	else if (nOnlineCount == 0)
 	{
 		trayIcon->setIcon(QIcon(IMAGE_NOONLINE));
 		trayIcon->setToolTip(tr("RetroShare"));
 	}
-	else if (online < 2)
+	else if (nOnlineCount < 2)
 	{
 		trayIcon->setIcon(QIcon(IMAGE_ONEONLINE));
 		trayIcon->setToolTip(tr("RetroShare"));
 	}
-	else if (online < 3)
+	else if (nOnlineCount < 3)
 	{
 		trayIcon->setIcon(QIcon(IMAGE_TWOONLINE));
 		trayIcon->setToolTip(tr("RetroShare"));

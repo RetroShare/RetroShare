@@ -59,13 +59,9 @@ PeerStatus::~PeerStatus()
 {
 }
 
-void PeerStatus::getPeerStatus()
+void PeerStatus::getPeerStatus(unsigned int nFriendCount, unsigned int nOnlineCount)
 {
     /* set users/friends/network */
-
-    unsigned int nFriendCount = 0;
-    unsigned int nOnlineCount = 0;
-    rsPeers->getPeerCount (&nFriendCount, &nOnlineCount);
 
     std::ostringstream out;
     out << nFriendCount << " ";

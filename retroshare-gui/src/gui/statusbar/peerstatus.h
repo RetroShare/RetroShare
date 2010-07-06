@@ -34,7 +34,7 @@ public:
 
     ~PeerStatus();
 
-    void getPeerStatus( );
+    void getPeerStatus(unsigned int nFriendCount, unsigned int nOnlineCount);
     
 
 private:
