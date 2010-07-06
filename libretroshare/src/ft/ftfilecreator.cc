@@ -2,6 +2,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <util/rsdiscspace.h>
+#include <util/rsdir.h>
 
 /*******
  * #define FILE_DEBUG 1
@@ -102,50 +103,62 @@ bool ftFileCreator::addFileData(uint64_t offset, uint32_t chunk_size, void *data
 	if(!RsDiscSpace::checkForDiscSpace(RS_PARTIALS_DIRECTORY))
 		return false ;
 
-	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
-
-	if (fd == NULL)
-		if (!locked_initializeFileAttrs())
-			return false;
-
-	/* 
-	 * check its at the correct location 
-	 */
-	if (offset + chunk_size > mSize)
+	bool complete = false ;
 	{
-		chunk_size = mSize - offset;
-		std::cerr <<"Chunk Size greater than total file size, adjusting chunk "	<< "size " << chunk_size << std::endl;
+		RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 
-	}
+		if (fd == NULL)
+			if (!locked_initializeFileAttrs())
+				return false;
 
-	/* 
-	 * go to the offset of the file 
-	 */
-	if (0 != fseeko64(this->fd, offset, SEEK_SET))
-	{
-		std::cerr << "ftFileCreator::addFileData() Bad fseek at offset " << offset << ", fd=" << (void*)(this->fd) << ", size=" << mSize << ", errno=" << errno << std::endl;
-		return 0;
-	}
-	
-	if (1 != fwrite(data, chunk_size, 1, this->fd))
-	{
-        	std::cerr << "ftFileCreator::addFileData() Bad fwrite." << std::endl;
-        	std::cerr << "ERRNO: " << errno << std::endl;
+		/* 
+		 * check its at the correct location 
+		 */
+		if (offset + chunk_size > mSize)
+		{
+			chunk_size = mSize - offset;
+			std::cerr <<"Chunk Size greater than total file size, adjusting chunk "	<< "size " << chunk_size << std::endl;
 
-		return 0;
-	}
+		}
+
+		/* 
+		 * go to the offset of the file 
+		 */
+		if (0 != fseeko64(this->fd, offset, SEEK_SET))
+		{
+			std::cerr << "ftFileCreator::addFileData() Bad fseek at offset " << offset << ", fd=" << (void*)(this->fd) << ", size=" << mSize << ", errno=" << errno << std::endl;
+			return 0;
+		}
+
+		if (1 != fwrite(data, chunk_size, 1, this->fd))
+		{
+			std::cerr << "ftFileCreator::addFileData() Bad fwrite." << std::endl;
+			std::cerr << "ERRNO: " << errno << std::endl;
+
+			return 0;
+		}
 
 #ifdef FILE_DEBUG
-	std::cerr << "ftFileCreator::addFileData() added Data...";
-	std::cerr << std::endl;
-	std::cerr << " pos: " << offset;
-	std::cerr << std::endl;
+		std::cerr << "ftFileCreator::addFileData() added Data...";
+		std::cerr << std::endl;
+		std::cerr << " pos: " << offset;
+		std::cerr << std::endl;
 #endif
-	/* 
-	 * Notify ftFileChunker about chunks received 
-	 */
-	locked_notifyReceived(offset,chunk_size);
+		/* 
+		 * Notify ftFileChunker about chunks received 
+		 */
+		locked_notifyReceived(offset,chunk_size);
 
+		complete = chunkMap.isComplete();
+	}
+	if(complete)
+	{
+#ifdef FILE_DEBUG
+		std::cerr << "ftFileCreator::addFileData() File is complete: closing" << std::endl ;
+#endif
+		closeFile();
+	}
+  
 	/* 
 	 * FIXME HANDLE COMPLETION HERE - Any better way?
 	 */
@@ -451,3 +464,17 @@ bool ftFileCreator::finished()
 	return chunkMap.isComplete() ;
 }
 
+bool ftFileCreator::hashReceivedData(std::string& hash)
+{
+	RsStackMutex stack(ftcMutex) ;
+
+	return RsDirUtil::hashFile(file_name,hash) ;
+}
+
+#include <stdexcept>
+bool ftFileCreator::crossCheckChunkMap(const CRC32Map& ref)
+{
+	// still to be implemented.
+	throw std::runtime_error(std::string("Unimplemented function ") + __PRETTY_FUNCTION__) ;
+	return true ;
+}

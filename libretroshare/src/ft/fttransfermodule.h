@@ -106,6 +106,7 @@ public:
 		PQIFILE_NOT_ONLINE,
 		PQIFILE_DOWNLOADING,
 		PQIFILE_COMPLETE,
+		PQIFILE_CHECKING,
 		PQIFILE_FAIL,
 		PQIFILE_FAIL_CANCEL,
 		PQIFILE_FAIL_NOT_AVAIL,
@@ -138,7 +139,9 @@ public:
   bool getPeerState(std::string peerId,uint32_t &state,uint32_t &tfRate);  
   uint32_t getDataRate(std::string peerId);
   bool cancelTransfer();
+  bool cancelFileTransferUpward();
   bool completeFileTransfer();
+  bool isCheckingHash() ;
 
   //interface to multiplex module
   bool recvFileData(std::string peerId, uint64_t offset, 
@@ -164,6 +167,8 @@ private:
   bool locked_recvPeerData(peerInfo &info, uint64_t offset,
 			uint32_t chunk_size, void *data);
   
+  bool checkFile() ;
+  bool checkCRC() ;
   
   /* These have independent Mutexes / are const locally (no Mutex protection)*/
   ftFileCreator *mFileCreator;
@@ -178,9 +183,11 @@ private:
   std::list<std::string>         mOnlinePeers;
   std::map<std::string,peerInfo> mFileSources;
   	
-  uint16_t     mFlag;  //2:file canceled, 1:transfer complete, 0: not complete
+  uint16_t     mFlag;  //2:file canceled, 1:transfer complete, 0: not complete, 3: checking hash, 4: checking chunks
   double desiredRate;
   double actualRate;
+
+  CRC32Map _crc32map ;
 
   ftFileStatus mFileStatus; //used for pause/resume file transfer
 };

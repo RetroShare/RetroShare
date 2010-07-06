@@ -42,7 +42,6 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <openssl/sha.h>
 #include <stdio.h>
 
 //***********
@@ -640,7 +639,7 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 
 			FileEntry fe(to_hash[i].fentries[j]) ;	// copied, because hashFile updates the hash member
 
-			if (hashFile(to_hash[i].realpath, fe))
+			if(RsDirUtil::hashFile(to_hash[i].realpath + "/" + to_hash[i].fentries[j].name, fe.hash))
 			{
 				RsStackMutex stack(fiMutex); /**** LOCKED DIRS ****/
 
@@ -975,66 +974,6 @@ std::string FileIndexMonitor::locked_findRealRoot(std::string rootdir) const
 	}
 
 	return realroot;
-}
-
-
-
-bool FileIndexMonitor::hashFile(std::string fullpath, FileEntry& fent)
-{
-	std::string f_hash = fullpath + "/" + fent.name;
-	FILE *fd;
-	int  len;
-	SHA_CTX *sha_ctx = new SHA_CTX;
-	unsigned char sha_buf[SHA_DIGEST_LENGTH];
-	unsigned char gblBuf[512];
-
-#ifdef FIM_DEBUG
-	std::cerr << "File to hash = " << f_hash << std::endl;
-#endif
-
-#ifdef WINDOWS_SYS
-        std::wstring wf_hash;
-        librs::util::ConvertUtf8ToUtf16(f_hash, wf_hash);
-        if (NULL == (fd = _wfopen(wf_hash.c_str(), L"rb")))
-            return false;
-#else
-        if (NULL == (fd = fopen64(f_hash.c_str(), "rb")))
-            return false;
-#endif
-
-	SHA1_Init(sha_ctx);
-	while((len = fread(gblBuf,1, 512, fd)) > 0)
-	{
-		SHA1_Update(sha_ctx, gblBuf, len);
-	}
-
-	/* reading failed for some reason */
-	if (ferror(fd))
-	{
-#ifdef FIM_DEBUG
-		std::cerr << "read error !!" << std::endl;
-#endif
-		delete sha_ctx;
-		fclose(fd);
-		return false;
-	}
-
-	SHA1_Final(&sha_buf[0], sha_ctx);
-
-	/* TODO: Actually we should store the hash data as binary ...
-	 * but then it shouldn't be put in a string.
-	 */
-
-        std::ostringstream tmpout;
-	for(int i = 0; i < SHA_DIGEST_LENGTH; i++)
-	{
-		tmpout << std::setw(2) << std::setfill('0') << std::hex << (unsigned int) (sha_buf[i]);
-	}
-	fent.hash = tmpout.str();
-
-	delete sha_ctx;
-	fclose(fd);
-	return true;
 }
 
 int FileIndexMonitor::RequestDirDetails(std::string uid, std::string path, DirDetails &details) const

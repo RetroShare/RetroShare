@@ -58,8 +58,12 @@ const int32_t FT_TM_FAST_RTT    = 1.0;
 const int32_t FT_TM_STD_RTT     = 5.0;
 const int32_t FT_TM_SLOW_RTT    = 9.0;
 
+#define FT_TM_FLAG_DOWNLOADING 0
+#define FT_TM_FLAG_CHECKING    3
+#define FT_TM_FLAG_CHECKING    3
+
 ftTransferModule::ftTransferModule(ftFileCreator *fc, ftDataMultiplex *dm, ftController *c)
-	:mFileCreator(fc), mMultiplexor(dm), mFtController(c), mFlag(0)
+	:mFileCreator(fc), mMultiplexor(dm), mFtController(c), mFlag(FT_TM_FLAG_DOWNLOADING)
 {
   	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
 
@@ -376,31 +380,37 @@ bool ftTransferModule::queryInactive()
 {
 	/* NB: Not sure about this lock... might cause deadlock.
 	 */
-  	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
+	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
 
 #ifdef FT_DEBUG
-        std::cerr << "ftTransferModule::queryInactive()" << std::endl;
+	std::cerr << "ftTransferModule::queryInactive()" << std::endl;
 #endif
 
-  	if (mFileStatus.stat == ftFileStatus::PQIFILE_INIT)
+	if (mFileStatus.stat == ftFileStatus::PQIFILE_INIT)
 		mFileStatus.stat = ftFileStatus::PQIFILE_DOWNLOADING;
 
-  	if (mFileStatus.stat != ftFileStatus::PQIFILE_DOWNLOADING)
-  	{
+	if (mFileStatus.stat == ftFileStatus::PQIFILE_CHECKING)
+		return false ;
+
+	if (mFileStatus.stat != ftFileStatus::PQIFILE_DOWNLOADING)
+	{
 		if (mFileStatus.stat == ftFileStatus::PQIFILE_FAIL_CANCEL)
 			mFlag = 2; //file canceled by user
 		return false;
 	}
 
-  	std::map<std::string,peerInfo>::iterator mit;
-  	for(mit = mFileSources.begin(); mit != mFileSources.end(); mit++)
-  	{
+	std::map<std::string,peerInfo>::iterator mit;
+	for(mit = mFileSources.begin(); mit != mFileSources.end(); mit++)
+	{
 		locked_tickPeerTransfer(mit->second);
 	}
 	if(mFileCreator->finished())	// transfer is complete
-		mFlag = 1;      
+	{
+		mFileStatus.stat = ftFileStatus::PQIFILE_CHECKING ;
+		mFlag = 3;      
+	}
 
-  	return true; 
+	return true; 
 }
 
 bool ftTransferModule::cancelTransfer()
@@ -411,6 +421,12 @@ bool ftTransferModule::cancelTransfer()
   return 1;
 }
 
+bool ftTransferModule::cancelFileTransferUpward()
+{
+	if (mFtController)
+		mFtController->FileCancel(mHash);
+	return true;
+}
 bool ftTransferModule::completeFileTransfer()
 {
 #ifdef FT_DEBUG
@@ -463,11 +479,80 @@ int ftTransferModule::tick()
 		  break;
 	  case 2: //file transfer canceled
 		  break;
+	  case 3: 
+		  // Check if file hash matches the hashed data
+		  checkFile() ;
+		  break ;
+	  case 4:
+		  // File is waiting for CRC32 map. Check if received, and re-set matched chunks
+		  checkCRC() ;
+		  break ;
 	  default:
 		  break;
   }
     
   return 0;
+}
+
+bool ftTransferModule::isCheckingHash()
+{
+  	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
+	return mFlag == 3 ;
+}
+bool ftTransferModule::checkFile()
+{
+	{
+		RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
+#ifdef FT_DEBUG
+		std::cerr << "ftTransferModule::checkFile(): checking File " << mHash << std::endl ;
+#endif
+		std::string hash_check ;
+
+		if(!mFileCreator->hashReceivedData(hash_check))
+		{
+			std::cerr << "ftTransferModule::checkFile(): Impossible to hash received file " << mHash << " for check. What is happenning?" << std::endl ;
+			return false ;
+		}
+
+		if(hash_check == mHash)
+		{
+			mFlag = 1 ;	// Transfer is complete.
+#ifdef FT_DEBUG
+			std::cerr << "ftTransferModule::checkFile(): File verification complete ! Setting mFlag to 1" << std::endl ;
+#endif
+			return true ;
+		}
+	
+		mFlag = 4 ;	// Ask for CRC map. But for now, cancel file transfer.
+		mFileStatus.stat = ftFileStatus::PQIFILE_FAIL_CANCEL ;
+	}
+	cancelFileTransferUpward() ;
+	std::cerr << "(EE) ftTransferModule::checkFile(): File verification failed for hash " << mHash << "! Asking for CRC map. mFlag=4. For now: cancelling file transfer." << std::endl ;
+	//askForCRCMap() ;
+	
+	return false ;
+}
+
+bool ftTransferModule::checkCRC()
+{
+#ifdef FT_DEBUG
+	std::cerr << "ftTransferModule::checkCRC(): looking for CRC32 map." << std::endl ;
+#endif
+
+	if(_crc32map.empty())
+		return false ;
+
+#ifdef FT_DEBUG
+	std::cerr << "ftTransferModule::checkCRC(): got a CRC32 map. Matching chunks..." << std::endl ;
+#endif
+
+	mFileCreator->crossCheckChunkMap(_crc32map) ;
+	mFlag = 0 ;
+
+#ifdef FT_DEBUG
+	std::cerr << "ftTransferModule::checkCRC(): Done. Restarting download." << std::endl ;
+#endif
+	return true ;
 }
 
 

@@ -57,6 +57,17 @@ class ftFileCreator: public ftFileProvider
 		void setChunkStrategy(FileChunksInfo::ChunkStrategy s) ;
 		FileChunksInfo::ChunkStrategy getChunkStrategy() ;
 
+		// Computes a sha1sum of the partial file, to check that the data is overall consistent.
+		//
+		bool hashReceivedData(std::string& hash) ;
+
+		// Computes a CRC32 map of all chunks, for comparison with reference, and re-starting invalid chunks.
+		//
+		bool CRC32ReceivedData(CRC32Map& crc_map) ;
+
+		// Checks the CRC32 of all chunks against the given CRC32 map. Re-flag the bad chunks as being void.
+		//
+		bool crossCheckChunkMap(const CRC32Map& crc_map) ;
 		/* 
 		 * creation functions for FileCreator 
 		 */

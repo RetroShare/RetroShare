@@ -39,13 +39,14 @@ typedef std::string   RsChanId;
 typedef std::string   RsMsgId;
 typedef std::string   RsAuthId;
 
-const uint32_t FT_STATE_FAILED		= 0x0000 ;
-const uint32_t FT_STATE_OKAY			= 0x0001 ;
-const uint32_t FT_STATE_WAITING 		= 0x0002 ;
-const uint32_t FT_STATE_DOWNLOADING	= 0x0003 ;
-const uint32_t FT_STATE_COMPLETE 	= 0x0004 ;
-const uint32_t FT_STATE_QUEUED   	= 0x0005 ;
-const uint32_t FT_STATE_PAUSED   	= 0x0006 ;
+const uint32_t FT_STATE_FAILED			= 0x0000 ;
+const uint32_t FT_STATE_OKAY				= 0x0001 ;
+const uint32_t FT_STATE_WAITING 			= 0x0002 ;
+const uint32_t FT_STATE_DOWNLOADING		= 0x0003 ;
+const uint32_t FT_STATE_COMPLETE 		= 0x0004 ;
+const uint32_t FT_STATE_QUEUED   		= 0x0005 ;
+const uint32_t FT_STATE_PAUSED   		= 0x0006 ;
+const uint32_t FT_STATE_CHECKING_HASH	= 0x0007 ;
 
 // These constants are used by RsDiscSpace
 //
@@ -335,6 +336,23 @@ class CompressedChunkMap
 		inline void reset(uint32_t j) { _map[j >> 5] &= ~(1 << (j & 31)) ; }
 
 		/// compressed map, one bit per chunk
+		std::vector<uint32_t> _map ;
+};
+
+class CRC32Map
+{
+	public:
+		// Build from a file.
+		//
+		CRC32Map(const std::string& fname,uint32_t chunk_size) ;
+		CRC32Map() {}
+
+		// Compares two maps and returns the valid chunks in a compressed chunk map.
+		//
+		friend CompressedChunkMap compare(const CRC32Map& crc1,const CRC32Map& crc2) ;
+
+		bool empty() const { return _map.empty() ; }
+	private:
 		std::vector<uint32_t> _map ;
 };
 

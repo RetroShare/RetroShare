@@ -36,6 +36,9 @@
 #include <algorithm>
 #include <stdio.h>
 #include <dirent.h>
+#include <openssl/sha.h>
+#include <iomanip>
+#include <sstream>
 
 #include <fstream>
 
@@ -72,6 +75,121 @@ std::string 	RsDirUtil::getTopDir(std::string dir)
 	}
 
 	return top;
+}
+
+class CRC32Table
+{
+	public:
+		inline uint32_t operator[](unsigned char i) const { return _data[i] ; }
+
+		CRC32Table()
+		{
+			_data = new uint32_t[256] ;
+			uint32_t polynmial = 0x04c11db7 ;
+
+			for(uint32_t i=0;i<256;++i)
+			{
+				uint32_t a = reflect(i,8)<<24 ;
+
+				for(uint32_t j=0;j<8;++j)
+					a = (a << 1)^ ( (a&(1<<31))?polynmial:0) ;
+
+				_data[i] = reflect(a,32) ;
+			}
+		}
+		// Swap bits 0-7, 1-6, etc.
+		//
+		uint32_t reflect(uint32_t ref,unsigned char ch)
+		{
+			uint32_t val = 0 ;
+			for(int i=1;i<ch+1;i++,ref>>=1)
+				if(ref & 1)
+					val |= (1 << (ch-i)) ;
+			return val ;
+		}
+		~CRC32Table() { delete[] _data ; }
+
+	private:
+		uint32_t *_data ;
+};
+
+uint32_t rs_CRC32(const unsigned char *data,uint32_t len) 
+{
+	static const CRC32Table crc32_table ;
+	uint32_t a = 0xffffffff ;
+
+	for(const unsigned char *buf=data;len>=0;len--)
+		a = (a >> 8) ^ crc32_table[ (a & 0xff) ^ *buf++] ;
+
+	return a ^ 0xffffffff ;
+}
+
+bool RsDirUtil::hashFile(const std::string& f_hash, std::string& hash)
+{
+	FILE *fd;
+	int  len;
+	SHA_CTX *sha_ctx = new SHA_CTX;
+	unsigned char sha_buf[SHA_DIGEST_LENGTH];
+	unsigned char *gblBuf = new unsigned char[1024*1024*10];	// 10MB buffer.
+
+#ifdef FIM_DEBUG
+	std::cerr << "File to hash = " << f_hash << std::endl;
+#endif
+
+#ifdef WINDOWS_SYS
+        std::wstring wf_hash;
+        librs::util::ConvertUtf8ToUtf16(f_hash, wf_hash);
+        if (NULL == (fd = _wfopen(wf_hash.c_str(), L"rb")))
+            goto hashing_failed ;
+#else
+        if (NULL == (fd = fopen64(f_hash.c_str(), "rb")))
+            goto hashing_failed ;
+#endif
+
+	SHA1_Init(sha_ctx);
+	while((len = fread(gblBuf,1, 512, fd)) > 0)
+	{
+		SHA1_Update(sha_ctx, gblBuf, len);
+	}
+
+	/* reading failed for some reason */
+	if (ferror(fd))
+	{
+#ifdef FIM_DEBUG
+		std::cerr << "read error !!" << std::endl;
+#endif
+		goto hashing_failed ;
+	}
+
+	SHA1_Final(&sha_buf[0], sha_ctx);
+
+	/* TODO: Actually we should store the hash data as binary ...
+	 * but then it shouldn't be put in a string.
+	 */
+
+	{
+		std::ostringstream tmpout;
+		for(int i = 0; i < SHA_DIGEST_LENGTH; i++)
+		{
+			tmpout << std::setw(2) << std::setfill('0') << std::hex << (unsigned int) (sha_buf[i]);
+		}
+		hash = tmpout.str();
+	}
+
+	delete sha_ctx;
+	delete[] gblBuf ;
+	fclose(fd);
+	return true;
+
+hashing_failed:
+
+	delete sha_ctx;
+	delete[] gblBuf ;
+
+	if(fd != NULL)
+		fclose(fd) ;
+
+	return false ;
 }
 
 std::string 	RsDirUtil::removeTopDir(std::string dir)

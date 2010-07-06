@@ -40,11 +40,14 @@ std::string 	removeRootDir(std::string path);
 std::string     removeTopDir(std::string dir);
 std::string 	removeRootDirs(std::string path, std::string root);
 
+bool		hashFile(const std::string& full_path,std::string& hash) ;
 
 // Renames file from to file to. Files should be on the same file system.
 //	returns true if succeed, false otherwise.
 bool		renameFile(const std::string& from,const std::string& to) ;
 bool		createBackup (std::string sFilename, unsigned int nCount = 5);
+
+uint32_t rs_CRC32(const unsigned char *data,uint32_t len) ;
 
 int     	breakupDirList(std::string path,
                         	std::list<std::string> &subdirs);

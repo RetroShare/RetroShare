@@ -743,6 +743,7 @@ void TransfersDialog::insertTransfers()
 			case FT_STATE_COMPLETE:     status = tr("Complete"); break;
 			case FT_STATE_QUEUED:       status = tr("Queued"); break;
 			case FT_STATE_PAUSED:       status = tr("Paused"); break;
+			case FT_STATE_CHECKING_HASH:status = tr("Checking..."); break;
 			default:                    status = tr("Unknown"); break;
 		}
 

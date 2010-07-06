@@ -1652,6 +1652,9 @@ bool 	ftController::FileDetails(std::string hash, FileInfo &info)
 	if(it->second->mState == ftFileControl::PAUSED)
 		info.downloadStatus = FT_STATE_PAUSED ;
 
+	if((!completed) && it->second->mTransfer->isCheckingHash())
+		info.downloadStatus = FT_STATE_CHECKING_HASH ;
+
 	info.tfRate = totalRate;
 	info.size = (it->second)->mSize;
 
