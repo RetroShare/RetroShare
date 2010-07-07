@@ -24,7 +24,6 @@
 #include "rsiface/rspeers.h" //for rsPeers variable
 #include "rsiface/rsiface.h"
 
-#include <QtGui>
 #include <QLineEdit>
 #include <QTextEdit>
 #include <QLabel>
@@ -33,25 +32,21 @@
 #include <QCheckBox>
 #include <QGroupBox>
 #include <QComboBox>
-#include <QtGui>
 #include <QClipboard>
 #include <QTableWidget>
 #include <QHeaderView>
-
+#include <QApplication>
 #include <QFileDialog>
-
-#include <QGridLayout>
+#include <QTextCodec>
 #include <QVBoxLayout>
-#include <QHBoxLayout>
-
 #include <QMessageBox>
-
-#include <QRegExpValidator>
-#include <QRegExp>
+#include <QDesktopServices>
+#include <QFile>
+#include <QUrl>
+#include <QTextStream>
+#include <QDragEnterEvent>
 
 #include <QDebug>
-#include <sstream>
-#include <iostream>
 #include <set>
 
 #define SSL_ID_FIELD_CONNECT_FRIEND_WIZARD "idField"
@@ -291,30 +286,24 @@ TextPage::TextPage(QWidget *parent)
 //============================================================================
 //
 
-#include <iostream>
-//#include <windows.h>
-
 void 
 TextPage::runEmailClient()
 {
-	std::string mailstr = "mailto:";
-  
-  mailstr += "?subject=RetroShare Invite";
+    /* search and replace the end of lines with: "%0D%0A" */
+    size_t loc;
+    std::string cert = userCertEdit->toPlainText().toStdString();
+    while ((loc = cert.find("\n")) != cert.npos) {
+        cert.replace(loc, 1, "%0D%0A");
+    }
 
-	mailstr += "&body=";
+    std::string mailstr = "mailto:";
+    mailstr += "?subject=RetroShare Invite";
+    mailstr += "&body=" + cert;
 
-	mailstr += (userCertEdit->toPlainText()).toStdString();
+    std::cerr << "MAIL STRING:" << mailstr.c_str() << std::endl;
 
-	/* search and replace the end of lines with: "%0D%0A" */
-	std::cerr << "MAIL STRING:" << mailstr.c_str() << std::endl;
-	size_t loc;
-	while((loc = mailstr.find("\n")) != mailstr.npos)
-	{
-		/* sdfkasdflkjh */
-		mailstr.replace(loc, 1, "%0D%0A");
-	}
-
-  QDesktopServices::openUrl( QUrl::fromEncoded( mailstr.c_str() ) );
+    /* pass the url directly to QDesktopServices::openUrl */
+    QDesktopServices::openUrl (QUrl (QString::fromStdString(mailstr)));
 }
 
 //
