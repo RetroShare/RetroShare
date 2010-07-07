@@ -34,7 +34,7 @@ class ConnectFriendWizard : public QWizard
 
 public:
 
-    enum { Page_Intro, Page_Text, Page_Cert, Page_ErrorMessage, Page_Conclusion,Page_Foff, Page_Rsid };
+    enum { Page_Intro, Page_Text, Page_Cert, Page_ErrorMessage, Page_Conclusion,Page_Foff, Page_Rsid, Page_Email };
 
     ConnectFriendWizard(QWidget *parent = 0);
 
@@ -61,6 +61,7 @@ private:
     QRadioButton *certRadioButton;
     QRadioButton *foffRadioButton;
     QRadioButton *rsidRadioButton;
+    QRadioButton *emailRadioButton;
 };
 
 //============================================================================
@@ -277,5 +278,39 @@ private slots:
 
 //============================================================================
 
+//============================================================================
+//! A page for Email Invite
+class EmailPage : public QWizardPage
+{
+    Q_OBJECT
+
+public:
+    EmailPage(QWidget *parent = 0);
+
+    int nextId() const;
+    bool isComplete() const ;
+
+
+private:
+    QLabel* addressLabel;
+    QLineEdit *addressEdit;
+    
+    QLabel* subjectLabel;
+    QLineEdit *subjectEdit;
+    
+    QTextEdit* inviteTextEdit;
+    
+    QHBoxLayout* emailhbox2Layout;
+    QHBoxLayout* emailhbox3Layout;
+
+    QVBoxLayout* emailvboxLayout;    
+
+private slots:
+
+    
+
+};
+
+//============================================================================
 
 #endif

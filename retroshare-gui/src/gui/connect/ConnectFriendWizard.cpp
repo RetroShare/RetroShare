@@ -69,6 +69,7 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent)
     setPage(Page_Cert, new CertificatePage);
     setPage(Page_Foff, new FofPage);
     setPage(Page_Rsid, new RsidPage);
+    setPage(Page_Email, new EmailPage);
 
     setPage(Page_ErrorMessage, new ErrorMessagePage);
     setPage(Page_Conclusion, new ConclusionPage);
@@ -166,6 +167,8 @@ IntroPage::IntroPage(QWidget *parent)
     certRadioButton = new QRadioButton(tr("&You get a certificate file from your friend" ));
     foffRadioButton = new QRadioButton(tr("&Make friend with selected friends of my friends" ));
     rsidRadioButton = new QRadioButton(tr("&Enter RetroShare ID manually" ));
+    emailRadioButton = new QRadioButton(tr("&Send a Invitation by Email \n (She/He receives a email with instructions howto to download RetroShare) " ));
+
     textRadioButton->setChecked(true);
 
     QVBoxLayout *layout = new QVBoxLayout;
@@ -173,6 +176,7 @@ IntroPage::IntroPage(QWidget *parent)
     layout->addWidget(certRadioButton);
     layout->addWidget(foffRadioButton);
     layout->addWidget(rsidRadioButton);
+    layout->addWidget(emailRadioButton);
     setLayout(layout);
 }
 //
@@ -184,6 +188,7 @@ int IntroPage::nextId() const
     if (certRadioButton->isChecked()) return ConnectFriendWizard::Page_Cert;
     if (foffRadioButton->isChecked()) return ConnectFriendWizard::Page_Foff;
     if (rsidRadioButton->isChecked()) return ConnectFriendWizard::Page_Rsid;
+    if (emailRadioButton->isChecked()) return ConnectFriendWizard::Page_Email;
 
     return ConnectFriendWizard::Page_Foff;
 }
@@ -286,24 +291,28 @@ TextPage::TextPage(QWidget *parent)
 //============================================================================
 //
 
-void 
-TextPage::runEmailClient()
+static void sendMail (std::string sAddress, std::string sSubject, std::string sBody)
 {
     /* search and replace the end of lines with: "%0D%0A" */
     size_t loc;
-    std::string cert = userCertEdit->toPlainText().toStdString();
-    while ((loc = cert.find("\n")) != cert.npos) {
-        cert.replace(loc, 1, "%0D%0A");
+    while ((loc = sBody.find("\n")) != sBody.npos) {
+        sBody.replace(loc, 1, "%0D%0A");
     }
 
-    std::string mailstr = "mailto:";
-    mailstr += "?subject=RetroShare Invite";
-    mailstr += "&body=" + cert;
+    std::string mailstr = "mailto:" + sAddress;
+    mailstr += "?subject=" + sSubject;
+    mailstr += "&body=" + sBody;
 
     std::cerr << "MAIL STRING:" << mailstr.c_str() << std::endl;
 
     /* pass the url directly to QDesktopServices::openUrl */
     QDesktopServices::openUrl (QUrl (QString::fromStdString(mailstr)));
+}
+
+void 
+TextPage::runEmailClient()
+{
+    sendMail ("", tr("RetroShare Invite").toStdString(), userCertEdit->toPlainText().toStdString());
 }
 
 //
@@ -1028,6 +1037,7 @@ RsidPage::RsidPage(QWidget *parent) : QWizardPage(parent) {
     friendRsidLabel = new QLabel(tr("Paste Friends RetroShare ID "
                                     "in the box below " ) );
     friendRsidEdit = new QLineEdit;
+    friendRsidEdit->setWhatsThis(tr("Enter the RetroShare ID of your Friend, e.g. Peer@BDE8D16A46D938CF "));
     registerField("friendRSID*", friendRsidEdit);
 
     
@@ -1070,7 +1080,6 @@ int RsidPage::nextId() const {
             wizard()->setField(SSL_ID_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(pd.id));
             wizard()->setField(GPG_ID_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(pd.gpg_id));
             wizard()->setField(LOCATION_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(pd.location));
-            //wizard()->setField(CERT_STRING_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(certstr));
 
             wizard()->setField("ext_friend_ip", QString::fromStdString(pd.extAddr));
             wizard()->setField("ext_friend_port", QString::number(pd.extPort));
@@ -1086,4 +1095,77 @@ int RsidPage::nextId() const {
     }
 
     return ConnectFriendWizard::Page_Rsid;
+}
+
+//
+//============================================================================
+//============================================================================
+//============================================================================
+
+EmailPage::EmailPage(QWidget *parent) : QWizardPage(parent) {
+    QString titleStr("<span style=\"font-size:14pt; font-weight:500;"
+                               "color:#32cd32;\">%1</span>");
+    setTitle( titleStr.arg( tr("Invite Friend by Email") ) ) ;
+
+    setSubTitle(tr("Enter your friends' email addresses (seperate each on with a semicolon)"));
+                                      
+    addressLabel = new QLabel(tr("Your friends' email addresses:" ) );
+    addressEdit = new QLineEdit;
+    addressEdit->setWhatsThis(tr("Enter Friends Email addresses"));
+    registerField("addressEdit*", addressEdit);
+
+    subjectLabel = new QLabel(tr("Subject:" ) );
+    subjectEdit = new QLineEdit;
+    subjectEdit->setText(tr("Friend invites you to check out RetroShare"));
+    registerField("subjectEdit*", subjectEdit);
+
+    emailhbox2Layout = new QHBoxLayout;
+    emailhbox2Layout->addWidget(addressLabel);
+    emailhbox2Layout->addWidget(addressEdit) ;
+
+    emailhbox3Layout = new QHBoxLayout;
+
+    emailhbox3Layout->addWidget(subjectLabel);
+    emailhbox3Layout->addWidget(subjectEdit ) ;
+
+    inviteTextEdit = new QTextEdit;
+    inviteTextEdit->setReadOnly(true);
+    inviteTextEdit->setHtml(tr("Friend uses RetroShare to communicate securely, and invites you to join him to share files together. <br>"
+                               "RetroShare is free and using it is safe: it contains no viruses, no spyware, no adware and it can easily be uninstalled. <br>"
+                               "For more information, see our website http://retroshare.sourceforge.net/ "
+                               "or download the software here http://retroshare.sourceforge.net/downloads.html. <br>"
+                               "See you soon on RetroShare!"));
+
+    emailvboxLayout = new QVBoxLayout;
+    emailvboxLayout->addLayout(emailhbox2Layout);
+    emailvboxLayout->addLayout(emailhbox3Layout);
+    emailvboxLayout->addWidget(inviteTextEdit ) ;
+
+    QFont font("Courier New",11,50,false);
+    font.setStyleHint(QFont::TypeWriter,QFont::PreferMatch);
+    font.setStyle(QFont::StyleNormal);
+    inviteTextEdit->setFont(font);
+
+    setLayout(emailvboxLayout);
+}
+
+//============================================================================
+
+bool EmailPage::isComplete() const {
+    return !( (addressEdit->text()).isEmpty() );
+}
+
+int EmailPage::nextId() const {
+
+    QString mailaddresses = addressEdit->text();
+
+    if (mailaddresses.isEmpty() == false) 
+    {
+        std::string body = inviteTextEdit->toPlainText().toStdString();
+        body += "\n\n" + rsPeers->GetRetroshareInvite();
+            
+        sendMail (mailaddresses.toStdString(), subjectEdit->text().toStdString(), body);
+    }
+
+    return ConnectFriendWizard::Page_Email;
 }
