@@ -1156,16 +1156,21 @@ bool EmailPage::isComplete() const {
 }
 
 int EmailPage::nextId() const {
+    return -1;
+}
 
+bool EmailPage::validatePage()
+{
     QString mailaddresses = addressEdit->text();
 
-    if (mailaddresses.isEmpty() == false) 
+    if (mailaddresses.isEmpty() == false)
     {
         std::string body = inviteTextEdit->toPlainText().toStdString();
         body += "\n\n" + rsPeers->GetRetroshareInvite();
-            
+
         sendMail (mailaddresses.toStdString(), subjectEdit->text().toStdString(), body);
+        return true;
     }
 
-    return ConnectFriendWizard::Page_Email;
+    return false;
 }

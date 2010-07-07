@@ -289,7 +289,7 @@ public:
 
     int nextId() const;
     bool isComplete() const ;
-
+    bool validatePage();
 
 private:
     QLabel* addressLabel;
