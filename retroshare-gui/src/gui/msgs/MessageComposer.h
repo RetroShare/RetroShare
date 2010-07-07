@@ -123,7 +123,8 @@ private slots:
 
   void filterRegExpChanged();
   void clearFilter();
-  
+  void titleChanged();
+
 private:
   void setTextColor(const QColor& col) ;
 	void setupFileActions();
@@ -146,6 +147,8 @@ private:
     
   void FilterItems();
   bool FilterItem(QTreeWidgetItem *pItem, QString &sPattern);
+
+  void calculateTitle();
 
    /** Define the popup menus for the Context menu */
   QMenu* contextMnu;

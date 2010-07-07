@@ -69,7 +69,8 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
     connect(ui.actionAttach, SIGNAL(triggered()), this, SLOT(attachFile()));
     connect(ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
     connect(ui.clearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
-  
+    connect(ui.titleEdit, SIGNAL(textChanged(const QString &)), this, SLOT(titleChanged()));
+
     connect(ui.sizeincreaseButton, SIGNAL (clicked()), this, SLOT (fontSizeIncrease()));
     connect(ui.sizedecreaseButton, SIGNAL (clicked()), this, SLOT (fontSizeDecrease()));
     connect(ui.actionQuote, SIGNAL(triggered()), this, SLOT(blockQuote()));
@@ -409,14 +410,21 @@ void  MessageComposer::insertFileList(const std::list<FileInfo>& files_info)
 	tree->update(); /* update display */
 }
 
+/* title changed */
+void MessageComposer::titleChanged()
+{
+    calculateTitle();
+    ui.msgText->document()->setModified(true);
+}
+
+void MessageComposer::calculateTitle()
+{
+    setWindowTitle(tr("Compose: ") + ui.titleEdit->text());
+}
+
 void  MessageComposer::newMsg(std::string msgId /*= ""*/)
 {
     /* clear all */
-    QString titlestring = ui.titleEdit->text();
-
-    setWindowTitle(tr("Compose: ") + titlestring );
-    ui.titleEdit->setText("No Title");
-
     ui.msgText->setText("");
 
     /* worker fns */
@@ -437,7 +445,6 @@ void  MessageComposer::newMsg(std::string msgId /*= ""*/)
         m_nBox = msgInfo.msgflags & RS_MSG_BOXMASK;
 
         insertTitleText( QString::fromStdWString(msgInfo.title).toStdString());
-        setWindowTitle( tr ("Compose: ") + QString::fromStdWString(msgInfo.title));
 
         insertMsgText(QString::fromStdWString(msgInfo.msg).toStdString());
 
@@ -449,7 +456,11 @@ void  MessageComposer::newMsg(std::string msgId /*= ""*/)
         }
 
         ui.msgText->document()->setModified(false);
+    } else {
+        insertTitleText(tr("No Title").toStdString());
     }
+
+    calculateTitle();
 }
 
 void  MessageComposer::insertTitleText(std::string title)
