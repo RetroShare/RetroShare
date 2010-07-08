@@ -20,7 +20,7 @@
  ****************************************************************/
 
 
-#define GUI_VERSION "0.5.0f"
+#define GUI_VERSION "0.5.0g"
 #define GUI_REVISION "Revision: 3230  date : 13:53:59 06.28.10"
 
 
