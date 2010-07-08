@@ -1,3 +1,8 @@
+Changes for v0.5.0g
+
+* corrected a bug that caused file copy error: a closeFile() was missing when the file is complete. 
+
+
 Changes for v0.5.0f
 
 * restored the retroshare-nogui executable
