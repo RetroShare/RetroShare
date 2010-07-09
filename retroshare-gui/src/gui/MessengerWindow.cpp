@@ -373,11 +373,13 @@ void  MessengerWindow::insertPeers()
 
     rsPeers->getGPGAcceptedList(gpgFriends);
 
+    std::string sOwnId = rsPeers->getGPGOwnId();
+
     //add own gpg id, if we have more than on location (ssl client)
     std::list<std::string> ownSslContacts;
-    rsPeers->getSSLChildListOfGPGId(rsPeers->getGPGOwnId(), ownSslContacts);
+    rsPeers->getSSLChildListOfGPGId(sOwnId, ownSslContacts);
     if (ownSslContacts.size() > 0) {
-        gpgFriends.push_back(rsPeers->getGPGOwnId());
+        gpgFriends.push_back(sOwnId);
     }
 
     /* get a link to the table */
@@ -406,7 +408,7 @@ void  MessengerWindow::insertPeers()
 
     //add the gpg friends
     for(it = gpgFriends.begin(); it != gpgFriends.end(); it++) {
-        //            if (*it == rsPeers->getGPGOwnId()) {
+        //            if (*it == sOwnId) {
         //                continue;
         //            }
 
@@ -424,7 +426,7 @@ void  MessengerWindow::insertPeers()
 
         RsPeerDetails detail;
         if ((!rsPeers->getPeerDetails(*it, detail) || !detail.accept_connection)
-            && detail.gpg_id != rsPeers->getGPGOwnId()) {
+            && detail.gpg_id != sOwnId) {
             //don't accept anymore connection, remove from the view
             delete (peertreeWidget->takeTopLevelItem(peertreeWidget->indexOfTopLevelItem(gpg_item)));
             continue;
