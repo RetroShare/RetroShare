@@ -39,8 +39,9 @@ extern RsFiles  *rsFiles;
 class Expression;
 
 /* These are used mainly by ftController at the moment */
-const uint32_t RS_FILE_CTRL_PAUSE	 = 0x00000100;
-const uint32_t RS_FILE_CTRL_START	 = 0x00000200;
+const uint32_t RS_FILE_CTRL_PAUSE	 		= 0x00000100;
+const uint32_t RS_FILE_CTRL_START	 		= 0x00000200;
+const uint32_t RS_FILE_CTRL_FORCE_CHECK	= 0x00000400;
 
 const uint32_t RS_FILE_RATE_TRICKLE	 = 0x00000001;
 const uint32_t RS_FILE_RATE_SLOW	 = 0x00000002;

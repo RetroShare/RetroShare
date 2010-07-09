@@ -58,7 +58,10 @@ class ftFileCreator: public ftFileProvider
 		FileChunksInfo::ChunkStrategy getChunkStrategy() ;
 
 		// Computes a sha1sum of the partial file, to check that the data is overall consistent.
-		//
+		// This function is not mutexed. This is a bit dangerous, but otherwise we might stuck the GUI for a 
+		// long time. Therefore, we must pay attention not to call this function
+		// at a time file_name nor hash can be modified, which is quite easy.
+
 		bool hashReceivedData(std::string& hash) ;
 
 		// Computes a CRC32 map of all chunks, for comparison with reference, and re-starting invalid chunks.

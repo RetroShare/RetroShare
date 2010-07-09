@@ -27,6 +27,7 @@
  * #define FT_DEBUG 1
  *****/
 
+#define FT_DEBUG 1
 #include "fttransfermodule.h"
 
 /*************************************************************************
@@ -58,9 +59,11 @@ const int32_t FT_TM_FAST_RTT    = 1.0;
 const int32_t FT_TM_STD_RTT     = 5.0;
 const int32_t FT_TM_SLOW_RTT    = 9.0;
 
-#define FT_TM_FLAG_DOWNLOADING 0
-#define FT_TM_FLAG_CHECKING    3
-#define FT_TM_FLAG_CHECKING    3
+#define FT_TM_FLAG_DOWNLOADING 	0
+#define FT_TM_FLAG_CANCELED		1
+#define FT_TM_FLAG_COMPLETE 		2
+#define FT_TM_FLAG_CHECKING 		3
+#define FT_TM_FLAG_CHUNK_CRC 		4
 
 ftTransferModule::ftTransferModule(ftFileCreator *fc, ftDataMultiplex *dm, ftController *c)
 	:mFileCreator(fc), mMultiplexor(dm), mFtController(c), mFlag(FT_TM_FLAG_DOWNLOADING)
@@ -69,7 +72,9 @@ ftTransferModule::ftTransferModule(ftFileCreator *fc, ftDataMultiplex *dm, ftCon
 
 	mHash = mFileCreator->getHash();
 	mSize = mFileCreator->getFileSize();
-        mFileStatus.hash = mHash;
+	mFileStatus.hash = mHash;
+
+	_hash_thread = NULL ;
 
 	// Dummy for Testing (should be handled independantly for 
 	// each peer.
@@ -380,34 +385,36 @@ bool ftTransferModule::queryInactive()
 {
 	/* NB: Not sure about this lock... might cause deadlock.
 	 */
-	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
+	{
+		RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
 
 #ifdef FT_DEBUG
-	std::cerr << "ftTransferModule::queryInactive()" << std::endl;
+		std::cerr << "ftTransferModule::queryInactive()" << std::endl;
 #endif
 
-	if (mFileStatus.stat == ftFileStatus::PQIFILE_INIT)
-		mFileStatus.stat = ftFileStatus::PQIFILE_DOWNLOADING;
+		if (mFileStatus.stat == ftFileStatus::PQIFILE_INIT)
+			mFileStatus.stat = ftFileStatus::PQIFILE_DOWNLOADING;
 
-	if (mFileStatus.stat == ftFileStatus::PQIFILE_CHECKING)
-		return false ;
+		if (mFileStatus.stat == ftFileStatus::PQIFILE_CHECKING)
+			return false ;
 
-	if (mFileStatus.stat != ftFileStatus::PQIFILE_DOWNLOADING)
-	{
-		if (mFileStatus.stat == ftFileStatus::PQIFILE_FAIL_CANCEL)
-			mFlag = 2; //file canceled by user
-		return false;
-	}
+		if (mFileStatus.stat != ftFileStatus::PQIFILE_DOWNLOADING)
+		{
+			if (mFileStatus.stat == ftFileStatus::PQIFILE_FAIL_CANCEL)
+				mFlag = FT_TM_FLAG_COMPLETE; //file canceled by user
+			return false;
+		}
 
-	std::map<std::string,peerInfo>::iterator mit;
-	for(mit = mFileSources.begin(); mit != mFileSources.end(); mit++)
-	{
-		locked_tickPeerTransfer(mit->second);
-	}
-	if(mFileCreator->finished())	// transfer is complete
-	{
-		mFileStatus.stat = ftFileStatus::PQIFILE_CHECKING ;
-		mFlag = 3;      
+		std::map<std::string,peerInfo>::iterator mit;
+		for(mit = mFileSources.begin(); mit != mFileSources.end(); mit++)
+		{
+			locked_tickPeerTransfer(mit->second);
+		}
+		if(mFileCreator->finished())	// transfer is complete
+		{
+			mFileStatus.stat = ftFileStatus::PQIFILE_CHECKING ;
+			mFlag = FT_TM_FLAG_CHECKING;      
+		}
 	}
 
 	return true; 
@@ -471,20 +478,18 @@ int ftTransferModule::tick()
 
   switch (flags)
   {
-	  case 0: //file transfer not complete
+	  case FT_TM_FLAG_DOWNLOADING: //file transfer not complete
 		  adjustSpeed();
 		  break;
-	  case 1: //file transfer complete
+	  case FT_TM_FLAG_COMPLETE: //file transfer complete
 		  completeFileTransfer();
 		  break;
-	  case 2: //file transfer canceled
+	  case FT_TM_FLAG_CANCELED: //file transfer canceled
 		  break;
-	  case 3: 
-		  // Check if file hash matches the hashed data
+	  case FT_TM_FLAG_CHECKING: // Check if file hash matches the hashed data
 		  checkFile() ;
 		  break ;
-	  case 4:
-		  // File is waiting for CRC32 map. Check if received, and re-set matched chunks
+	  case FT_TM_FLAG_CHUNK_CRC: // File is waiting for CRC32 map. Check if received, and re-set matched chunks
 		  checkCRC() ;
 		  break ;
 	  default:
@@ -497,8 +502,42 @@ int ftTransferModule::tick()
 bool ftTransferModule::isCheckingHash()
 {
   	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
-	return mFlag == 3 ;
+#ifdef FT_DEBUG
+	std::cerr << "isCheckingHash(): mFlag=" << mFlag << std::endl;
+#endif
+	return mFlag == FT_TM_FLAG_CHECKING ;
 }
+
+class HashThread: public RsThread
+{
+	public:
+		HashThread(ftFileCreator *m) 
+			: _m(m),_finished(false),_hash("") {}
+
+		virtual void run()
+		{
+			_m->hashReceivedData(_hash) ;
+
+			RsStackMutex stack(_hashThreadMtx) ;
+			_finished = true ;
+		}
+		std::string hash() 
+		{
+			RsStackMutex stack(_hashThreadMtx) ;
+			return _hash ;
+		}
+		bool finished() 
+		{
+			RsStackMutex stack(_hashThreadMtx) ;
+			return _finished ;
+		}
+	private:
+		RsMutex _hashThreadMtx ;
+		ftFileCreator *_m ;
+		bool _finished ;
+		std::string _hash ;
+};
+
 bool ftTransferModule::checkFile()
 {
 	{
@@ -506,24 +545,42 @@ bool ftTransferModule::checkFile()
 #ifdef FT_DEBUG
 		std::cerr << "ftTransferModule::checkFile(): checking File " << mHash << std::endl ;
 #endif
-		std::string hash_check ;
 
-		if(!mFileCreator->hashReceivedData(hash_check))
+		// if we don't have a hashing thread, create one.
+
+		if(_hash_thread == NULL)
 		{
-			std::cerr << "ftTransferModule::checkFile(): Impossible to hash received file " << mHash << " for check. What is happenning?" << std::endl ;
+			// Note: using new is really important to avoid copy and write errors in the thread.
+			//
+			_hash_thread = new HashThread(mFileCreator) ;
+			_hash_thread->start() ;
+#ifdef FT_DEBUG
+			std::cerr << "ftTransferModule::checkFile(): launched hashing thread for file " << mHash << std::endl ;
+#endif
 			return false ;
 		}
 
-		if(hash_check == mHash)
+		if(!_hash_thread->finished())
 		{
-			mFlag = 1 ;	// Transfer is complete.
 #ifdef FT_DEBUG
-			std::cerr << "ftTransferModule::checkFile(): File verification complete ! Setting mFlag to 1" << std::endl ;
+			std::cerr << "ftTransferModule::checkFile(): file " << mHash << " is being hashed.?" << std::endl ;
 #endif
+			return false ;
+		}
+
+		if(_hash_thread->hash() == mHash)
+		{
+			mFlag = FT_TM_FLAG_COMPLETE ;	// Transfer is complete.
+#ifdef FT_DEBUG
+			std::cerr << "ftTransferModule::checkFile(): hash finished. File verification complete ! Setting mFlag to 1" << std::endl ;
+#endif
+			delete _hash_thread ;
+			_hash_thread = NULL ;
 			return true ;
 		}
 	
-		mFlag = 4 ;	// Ask for CRC map. But for now, cancel file transfer.
+		delete _hash_thread ;
+		mFlag = FT_TM_FLAG_CHUNK_CRC ;	// Ask for CRC map. But for now, cancel file transfer.
 		mFileStatus.stat = ftFileStatus::PQIFILE_FAIL_CANCEL ;
 	}
 	cancelFileTransferUpward() ;
@@ -547,7 +604,7 @@ bool ftTransferModule::checkCRC()
 #endif
 
 	mFileCreator->crossCheckChunkMap(_crc32map) ;
-	mFlag = 0 ;
+	mFlag = FT_TM_FLAG_DOWNLOADING ;
 
 #ifdef FT_DEBUG
 	std::cerr << "ftTransferModule::checkCRC(): Done. Restarting download." << std::endl ;

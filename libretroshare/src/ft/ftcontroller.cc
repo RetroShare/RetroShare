@@ -1395,7 +1395,7 @@ bool 	ftController::FileCancel(std::string hash)
 	return true;
 }
 
-bool 	ftController::FileControl(std::string hash, uint32_t flags)
+bool 	ftController::FileControl(const std::string& hash, uint32_t flags)
 {
 //#ifdef CONTROL_DEBUG
 	std::cerr << "ftController::FileControl(" << hash << ",";

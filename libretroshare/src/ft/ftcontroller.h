@@ -70,7 +70,8 @@ class ftFileControl
 					COMPLETED        = 1, 
 					ERROR_COMPLETION = 2, 
 					QUEUED           = 3,
-					PAUSED           = 4 
+					PAUSED           = 4,
+					CHECKING_HASH    = 5
 		};
 
 		ftFileControl();
@@ -150,7 +151,7 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 		void setFreeDiskSpaceLimit(uint32_t size_in_mb) ;
 
 		bool 	FileCancel(std::string hash);
-		bool 	FileControl(std::string hash, uint32_t flags);
+		bool 	FileControl(const std::string& hash, uint32_t flags);
 		bool 	FileClearCompleted();
 		bool 	FlagFileComplete(std::string hash);
 		bool  getFileDownloadChunksDetails(const std::string& hash,FileChunksInfo& info);

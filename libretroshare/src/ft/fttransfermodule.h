@@ -51,6 +51,8 @@ const uint32_t  PQIPEER_DOWNLOADING          = 0x0002;
 const uint32_t  PQIPEER_IDLE                 = 0x0004;
 const uint32_t  PQIPEER_SUSPEND              = 0x0010;
 
+class HashThread ;
+
 class peerInfo
 {
 public:
@@ -190,6 +192,8 @@ private:
   CRC32Map _crc32map ;
 
   ftFileStatus mFileStatus; //used for pause/resume file transfer
+
+  HashThread *_hash_thread ;
 };
 
 #endif  //FT_TRANSFER_MODULE_HEADER

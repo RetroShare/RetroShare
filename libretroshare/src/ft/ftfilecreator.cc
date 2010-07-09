@@ -466,8 +466,12 @@ bool ftFileCreator::finished()
 
 bool ftFileCreator::hashReceivedData(std::string& hash)
 {
-	RsStackMutex stack(ftcMutex) ;
-
+	// csoler: No mutex here please !
+	//
+	// This is a bit dangerous, but otherwise we might stuck the GUI for a 
+	// long time. Therefore, we must pay attention not to call this function
+	// at a time file_name nor hash can be modified, which is easy.
+	//
 	return RsDirUtil::hashFile(file_name,hash) ;
 }
 
