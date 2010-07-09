@@ -170,7 +170,8 @@ MessagesDialog::LockUpdate::LockUpdate (MessagesDialog *pDialog, bool bUpdate)
 
 MessagesDialog::LockUpdate::~LockUpdate ()
 {
-    m_pDialog->m_nLockUpdate = qMax (--m_pDialog->m_nLockUpdate, 0);
+    if(--m_pDialog->m_nLockUpdate < 0)
+        m_pDialog->m_nLockUpdate = 0;
 
     if (m_bUpdate && m_pDialog->m_nLockUpdate == 0) {
         m_pDialog->insertMessages();

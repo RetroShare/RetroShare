@@ -100,7 +100,7 @@ RSettingsWin::initStackedWidget()
     stackedWidget->setCurrentIndex(-1);
     stackedWidget->removeWidget(stackedWidget->widget(0));
 
-    stackedWidget->addWidget(new GeneralPage(false));
+    stackedWidget->addWidget(new GeneralPage(0));
     stackedWidget->addWidget(new ServerPage());
     stackedWidget->addWidget(new TransferPage());
     stackedWidget->addWidget(new DirectoriesPage());
