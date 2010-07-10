@@ -1,0 +1,128 @@
+#ifndef BITDHT_UDP_LAYER_H
+#define BITDHT_UDP_LAYER_H
+
+/*
+ * bitdht/udplayer.h
+ *
+ * BitDHT: An Flexible DHT library.
+ *
+ * Copyright 2010 by Robert Fernie
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License Version 3 as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA.
+ *
+ * Please report all bugs and problems to "bitdht@lunamutt.com".
+ *
+ */
+
+
+
+
+#include <netinet/in.h> 
+
+#include "util/bdthreads.h"
+
+#include <iosfwd>
+#include <list>
+#include <deque>
+
+/****
+ * #define UDP_LOOPBACK_TESTING	1
+ ***/
+
+
+std::ostream &operator<<(std::ostream &out,  const struct sockaddr_in &addr);
+bool operator==(const struct sockaddr_in &addr, const struct sockaddr_in &addr2);
+bool operator<(const struct sockaddr_in &addr, const struct sockaddr_in &addr2);
+
+std::string printPkt(void *d, int size);
+std::string printPktOffset(unsigned int offset, void *d, unsigned int size);
+
+
+/* UdpLayer ..... is the bottom layer which 
+ * just sends and receives Udp packets.
+ */
+
+class UdpReceiver
+{
+	public:
+virtual ~UdpReceiver() {}
+virtual int recvPkt(void *data, int size, struct sockaddr_in &from) = 0;
+virtual int status(std::ostream &out) = 0;
+};
+
+class UdpPublisher
+{
+	public:
+virtual ~UdpPublisher() {}
+virtual	int sendPkt(const void *data, int size, struct sockaddr_in &to, int ttl) = 0;
+};
+
+
+class UdpLayer: public bdThread
+{
+	public:
+
+	UdpLayer(UdpReceiver *recv, struct sockaddr_in &local);
+virtual ~UdpLayer() { return; }
+
+int 	reset(struct sockaddr_in &local); /* calls join, close, openSocket */
+
+int     status(std::ostream &out);
+
+	/* setup connections */
+	int closeSocket();
+	int openSocket();
+
+	/* RsThread functions */
+virtual void run(); /* called once the thread is started */
+
+void	recv_loop(); /* uses callback to UdpReceiver */
+
+	/* Higher Level Interface */
+	//int  readPkt(void *data, int *size, struct sockaddr_in &from);
+	int  sendPkt(const void *data, int size, struct sockaddr_in &to, int ttl);
+
+	/* monitoring / updates */
+	int okay();
+	int tick();
+
+
+	/* data */
+	/* internals */
+	protected:
+
+virtual	int receiveUdpPacket(void *data, int *size, struct sockaddr_in &from);
+virtual	int sendUdpPacket(const void *data, int size, struct sockaddr_in &to);
+ 
+	int setTTL(int t);
+	int getTTL();
+
+	/* low level */
+	private:
+
+	UdpReceiver *recv;
+
+	struct sockaddr_in laddr; /* local addr */
+
+	int  errorState;
+	int sockfd;
+	int ttl;
+	bool stopThread;
+
+	bdMutex sockMtx;
+};
+
+
+#endif
