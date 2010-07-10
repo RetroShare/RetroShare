@@ -12,12 +12,12 @@ include $(TEST_TOP_DIR)/scripts/config.mk
 # Generic Test Harnesses.
 TESTOBJ  = bdmetric_test.o bdmsgs_test.o bdnode_test.o  bdspace_test.o 
 TESTOBJ  += bdmgr_multitest.o bdnode_multitest1.o bdquery_test.o bdstore_test.o
-TESTOBJ  += bdmidids_test.o bdnode_test2.o bdspace_test2.o 
+TESTOBJ  += bdmidids_test.o bdnode_test2.o bdspace_test2.o udpbitdht_nettest.o
 #TESTOBJ += bencode_test.o bdudp_test.o
 
 TESTS  = bdmetric_test bdmsgs_test bdnode_test  bdspace_test 
 TESTS  += bdmgr_multitest bdnode_multitest1 bdquery_test bdstore_test
-TESTS  += bdmidids_test bdnode_test2 bdspace_test2 
+TESTS  += bdmidids_test bdnode_test2 bdspace_test2 udpbitdht_nettest
 #TESTS  += bencode_test bdudp_test
 
 MANUAL_TESTS = 
@@ -63,7 +63,7 @@ bdudp_test: bdudp_test.o
 	$(CC) $(CFLAGS) -o bdudp_test bdudp_test.o $(LIBS)
 
 udpbitdht_nettest: udpbitdht_nettest.o
-	$(CC) $(CFLAGS) -o udpbitdht_test udpbitdht_test.o $(LIBS)
+	$(CC) $(CFLAGS) -o udpbitdht_nettest udpbitdht_nettest.o $(LIBS)
 
 bencode_test: bencode_test.o
 	$(CC) $(CFLAGS) -o bencode_test bencode_test.o $(LIBS)

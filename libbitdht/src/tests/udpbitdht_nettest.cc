@@ -24,9 +24,9 @@
  */
 
 
-#include "udpbitdht.h"
-#include "udpstack.h"
-#include "bdstddht.h"
+#include "udp/udpbitdht.h"
+#include "udp/udpstack.h"
+#include "bitdht/bdstddht.h"
 
 #include <string.h>
 #include <stdlib.h>
