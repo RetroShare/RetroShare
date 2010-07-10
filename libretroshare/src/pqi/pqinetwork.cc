@@ -345,7 +345,7 @@ bool getLocalInterfaces(std::list<struct in_addr> &addrs)
 		out << std::endl;
 		pqioutput(PQL_DEBUG_BASIC, pqinetzone, out.str());
 
-		addrs.push_back(addr.sin_addr));
+		addrs.push_back(addr.sin_addr);
 	}
 
 	free (iptable);
