@@ -31,7 +31,7 @@
 #include "pqi/p3cfgmgr.h"
 #include "services/p3service.h"
 #include "dbase/cachestrapper.h"
-#include "serialiser/rsforumitems.h"
+#include "serialiser/rsdistribitems.h"
 
 #include <openssl/ssl.h>
 #include <openssl/evp.h>
@@ -90,23 +90,29 @@ const uint32_t GROUP_KEY_DISTRIB_ADMIN		= 0x0040;
 #endif
 
 
-//! key to be sent member or members of a groups
+//! for storing group keys to members of a group
 /*!
  * This key but be of many types, including private/public publish key, or admin prite key for group
+ * @see p3GroupDistrib
  */
 class GroupKey
 {
 	public:
 
-	GroupKey()
-	:type(0), startTS(0), endTS(0), key(NULL) { return; }
+		GroupKey()
+		:type(0), startTS(0), endTS(0), key(NULL) { return; }
 
-	uint32_t type;
-	std::string keyId;
-	time_t   startTS, endTS;
-	EVP_PKEY *key; /// public key
+		uint32_t type; /// whether key is full or public
+		std::string keyId;
+		time_t   startTS, endTS;
+		EVP_PKEY *key; /// actual group key in evp format
 };
 
+//! used to store group picture
+/*!
+ * ensures use of png image format
+ * @see p3GroupDistrib
+ */
 class GroupIcon{
 public:
 	GroupIcon(): pngImageData(NULL), imageSize(0) {
@@ -121,64 +127,67 @@ public:
 			return;
 	}
 
-	unsigned char* pngImageData;
+	unsigned char* pngImageData; /// pointer to image data in png format
 	int imageSize;
 };
 
-//! aggregates various information on group activities (i.e. messages, posts, etc)
+//! used by p3groupDistrib to store mirror info found in rsDistribGroup (i.e. messages, posts, etc)
 /*!
- * The aim is to use this to keep track of group changes, so client can respond (get messages, post etc)
+ * used by p3Groudistrib to store group info, also used to communicate group information
+ * to p3groupdistrib inherited classes. contain
+ * @see rsDistribGroup
  */
 class GroupInfo
 {
 	public:
-	GroupInfo()
-	:distribGroup(NULL), grpFlags(0), pop(0), lastPost(0), flags(0), grpChanged(false)
-	{
-		return;
-	}
 
-	std::string grpId; /// the group id
-	RsDistribGrp *distribGroup; /// item which contains further information on group
+		GroupInfo()
+		:distribGroup(NULL), grpFlags(0), pop(0), lastPost(0), flags(0), grpChanged(false)
+		{
+			return;
+		}
 
-	std::list<std::string> sources;
-	std::map<std::string, RsDistribMsg *> msgs;
+		std::string grpId; /// the group id
+		RsDistribGrp *distribGroup; /// item which contains further information on group
 
-/***********************************/
+		std::list<std::string> sources;
+		std::map<std::string, RsDistribMsg *> msgs;
 
-	/* Copied from DistribGrp */
-	std::wstring grpName;
-	std::wstring grpDesc;
-	std::wstring grpCategory;
-	uint32_t     grpFlags;     /* PRIVACY & AUTHEN */
+	/***********************************/
 
-
-	uint32_t pop; 	    /// sources.size()
-	time_t   lastPost;  /// modded as msgs added
-
-/***********************************/
-
-	uint32_t flags;     /// PUBLISH, SUBSCRIBE, ADMIN
+		/* Copied from DistribGrp */
+		std::wstring grpName;
+		std::wstring grpDesc; /// group description
+		std::wstring grpCategory;
+		uint32_t     grpFlags;     /// PRIVACY & AUTHENTICATION
 
 
-	std::string publishKeyId; /// current active Publish Key
-	std::map<std::string, GroupKey> publishKeys;
+		uint32_t pop; 	    /// popularity sources.size()
+		time_t   lastPost;  /// modded as msgs added
 
-	GroupKey adminKey;
+	/***********************************/
+
+		uint32_t flags;     /// PUBLISH, SUBSCRIBE, ADMIN
 
 
-	GroupIcon grpIcon;
-	/* NOT USED YET */
+		std::string publishKeyId; /// current active Publish Key
+		std::map<std::string, GroupKey> publishKeys;
 
-	std::map<std::string, RsDistribMsg* > decrypted_msg_cache; /// stores a cache of messages that have been decrypted
+		GroupKey adminKey;
 
-	bool publisher, allowAnon, allowUnknown;
-	bool subscribed, listener;
 
-	uint32_t type;
+		GroupIcon grpIcon;
+		/* NOT USED YET */
 
-	/// FLAG for Client - set if changed
-	bool grpChanged;
+		std::map<std::string, RsDistribMsg* > decrypted_msg_cache; /// stores a cache of messages that have been decrypted
+
+		bool publisher, allowAnon, allowUnknown;
+		bool subscribed, listener;
+
+		uint32_t type;
+
+		/// FLAG for Client - set if changed
+		bool grpChanged;
 };
 
 
@@ -193,9 +202,9 @@ class GroupCache
 {
 	public:
 
-	std::string filename;
-	time_t start, end;
-	uint16_t cacheSubId; /// used to resolve complete cache id
+		std::string filename;
+		time_t start, end;
+		uint16_t cacheSubId; /// used to resolve complete cache id
 };
 
 	/* Flags for locked_notifyGroupChanged() ***/
@@ -208,7 +217,7 @@ const uint32_t GRP_SUBSCRIBED   = 0x0005;
 const uint32_t GRP_UNSUBSCRIBED = 0x0006;
 
 
-//! Class service to implement group messages
+//! Cache based service to implement group messaging
 /*!
  *
  * Group Description:
@@ -218,9 +227,8 @@ const uint32_t GRP_UNSUBSCRIBED = 0x0006;
  * 	Filter Lists.
  *	Publish Keys.
  *
- * Publish Keys. (multiple possible)
- * Filters: blacklist or whitelist.
- * TimeStore Length ??? (could make it a minimum of this and system one)
+ * Publish Keys.
+ * TimeStore Length determined by inheriting class
  *
  * Everyone gets:
  *    Master Public Key.
@@ -236,17 +244,16 @@ const uint32_t GRP_UNSUBSCRIBED = 0x0006;
  *
  * Group id is the public admin keys id
  *
- * Create a Signing structure for Messages in general.
  */
 class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, public p3Service
 {
 	public:
 
-	p3GroupDistrib(uint16_t subtype, 
-		CacheStrapper *cs, CacheTransfer *cft,
-		std::string sourcedir, std::string storedir, std::string keyBackUpDir,
-		uint32_t configId, 
-                uint32_t storePeriod, uint32_t pubPeriod);
+		p3GroupDistrib(uint16_t subtype,
+			CacheStrapper *cs, CacheTransfer *cft,
+			std::string sourcedir, std::string storedir, std::string keyBackUpDir,
+			uint32_t configId,
+					uint32_t storePeriod, uint32_t pubPeriod);
 
 
 /***************************************************************************************/
@@ -255,24 +262,45 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 /* TO FINISH */
 
 	public:
-virtual bool   loadLocalCache(const CacheData &data); /// overloaded from Cache Source
-virtual int    loadCache(const CacheData &data); /// overloaded from Cache Store
+
+		virtual bool   loadLocalCache(const CacheData &data); /// overloaded from Cache Source
+		virtual int    loadCache(const CacheData &data); /// overloaded from Cache Store
 
 	private:
-	/* top level load */
-int  	loadAnyCache(const CacheData &data, bool local);
 
-	/* load cache files */
-void	loadFileGroups(std::string filename, std::string src, bool local);
-void	loadFileMsgs(std::string filename, uint16_t cacheSubId, std::string src, uint32_t ts, bool local);
-bool backUpKeys(const std::list<RsDistribGrpKey* > &keysToBackUp, std::string grpId);
-void locked_sharePubKey();
+		/* top level load */
+		int  	loadAnyCache(const CacheData &data, bool local);
+
+			/* load cache files */
+		void	loadFileGroups(std::string filename, std::string src, bool local);
+		void	loadFileMsgs(std::string filename, uint16_t cacheSubId, std::string src, uint32_t ts, bool local);
+		bool backUpKeys(const std::list<RsDistribGrpKey* > &keysToBackUp, std::string grpId);
+		void locked_sharePubKey();
 
 	protected:
-	/* load cache msgs */	
-void	loadMsg(RsDistribSignedMsg *msg, std::string src, bool local);
-void	loadGroup(RsDistribGrp *newGrp);
-void    loadGroupKey(RsDistribGrpKey *newKey);
+
+			/* load cache msgs */
+
+		/*!
+		 * msg is loaded to its group and republished,
+		 * msg decrypted if grp is private
+		 * @param msg msg to loaded
+		 * @param src src of msg (peer id)
+		 * @param local is this a local cache msg (your msg)
+		 */
+		void	loadMsg(RsDistribSignedMsg *msg, std::string src, bool local);
+
+		/*!
+		 * adds newgrp to grp set, GroupInfo type created and stored
+		 * @param newGrp grp to be added
+		 */
+		void	loadGroup(RsDistribGrp *newGrp);
+
+		/*!
+		 * Adds new keys dependent on whether it is an admin or publish key
+		 * @param newKey key to be added
+		 */
+		void    loadGroupKey(RsDistribGrpKey *newKey);
 
 
 /***************************************************************************************/
@@ -284,53 +312,101 @@ void    loadGroupKey(RsDistribGrpKey *newKey);
 /* TO FINISH */
 
 	public:
-std::string createGroup(std::wstring name, std::wstring desc, uint32_t flags, unsigned char*, uint32_t imageSize);
-//std::string modGroupDescription(std::string grpId, std::string discription);
-//std::string modGroupIcon(std::string grpId, PIXMAP *icon);
 
-std::string publishMsg(RsDistribMsg *msg, bool personalSign);
+		/*!
+		 * This create a distributed grp which is sent via cache system to connected peers
+		 * @param name name of the group created
+		 * @param desc description of the group
+		 * @param flags privacy flag
+		 * @param pngImageData pointer to image data, data is copied
+		 * @param imageSize size of the image passed
+		 * @return id of the group
+		 */
+		std::string createGroup(std::wstring name, std::wstring desc, uint32_t flags, unsigned char *pngImageData, uint32_t imageSize);
 
-bool	subscribeToGroup(std::string grpId, bool subscribe);
+		/*!
+		 * msg is packed into a signed message (and encrypted msg grp is private) and then sent via cache system to connnected peers
+		 * @param msg
+		 * @param personalSign whether to personal to sign image (this is done using gpg cert)
+		 * @return the msg id
+		 */
+		std::string publishMsg(RsDistribMsg *msg, bool personalSign);
+
+		/*!
+		 *
+		 * @param grpId id of group to subscribe to
+		 * @param subscribe true to subscribe and vice versa
+		 * @return
+		 */
+		bool	subscribeToGroup(std::string grpId, bool subscribe);
 
 
-/***************************************************************************************/
-/***************************************************************************************/
+		/***************************************************************************************/
+		/***************************************************************************************/
 
-/***************************************************************************************/
-/****************************** Access Content   ***************************************/
-/***************************************************************************************/
+		/***************************************************************************************/
+		/****************************** Access Content   ***************************************/
+		/***************************************************************************************/
+
 	public:
 
-	/* get Group Lists */
-bool 	getAllGroupList(std::list<std::string> &grpids);
-bool 	getSubscribedGroupList(std::list<std::string> &grpids);
-bool 	getPublishGroupList(std::list<std::string> &grpids);
-bool 	getPopularGroupList(uint32_t popMin, uint32_t popMax, std::list<std::string> &grpids);
+		/*!
+		 *  get Group Lists
+		 */
+		bool 	getAllGroupList(std::list<std::string> &grpids);
+		bool 	getSubscribedGroupList(std::list<std::string> &grpids);
+		bool 	getPublishGroupList(std::list<std::string> &grpids);
+
+		/*!
+		 *
+		 * @param popMin lower limit for a grp's populairty in grpids
+		 * @param popMax upper limit  for a grp's popularity in grpids
+		 * @param grpids grpids of grps which adhere to upper and lower limit of popularity
+		 * @return nothing returned
+		 */
+		void 	getPopularGroupList(uint32_t popMin, uint32_t popMax, std::list<std::string> &grpids);
 
 
-	/* get Msg Lists */
-bool 	getAllMsgList(std::string grpId, std::list<std::string> &msgIds);
-bool 	getParentMsgList(std::string grpId, std::string pId, std::list<std::string> &msgIds);
-bool 	getTimePeriodMsgList(std::string grpId, uint32_t timeMin, 
-					uint32_t timeMax, std::list<std::string> &msgIds);
+			/* get Msg Lists */
+		bool 	getAllMsgList(std::string grpId, std::list<std::string> &msgIds);
+		bool 	getParentMsgList(std::string grpId, std::string pId, std::list<std::string> &msgIds);
+		bool 	getTimePeriodMsgList(std::string grpId, uint32_t timeMin,
+							uint32_t timeMax, std::list<std::string> &msgIds);
 
 
-GroupInfo *locked_getGroupInfo(std::string grpId);
-RsDistribMsg *locked_getGroupMsg(std::string grpId, std::string msgId);
+		GroupInfo *locked_getGroupInfo(std::string grpId);
+		RsDistribMsg *locked_getGroupMsg(std::string grpId, std::string msgId);
 
-	/* Filter Messages */
+		/* Filter Messages */
 
 /***************************************************************************************/
 /***************************** Event Feedback ******************************************/
 /***************************************************************************************/
 
 	protected:
-/*!
- *  root version (p3Distrib::) of this function must be called
- **/
-virtual void locked_notifyGroupChanged(GroupInfo &info, uint32_t flags);
-virtual bool locked_eventDuplicateMsg(GroupInfo *, RsDistribMsg *, std::string id) = 0;
-virtual bool locked_eventNewMsg(GroupInfo *, RsDistribMsg *, std::string id) = 0;
+		/*!
+		 *  root version (p3Distrib::) of this function must be called
+		 */
+		virtual void locked_notifyGroupChanged(GroupInfo &info, uint32_t flags);
+
+		/*!
+		 * client (inheriting class) should use this to determing behaviour of
+		 * their service when a duplicate msg is found
+		 * @param group should be called when duplicate message loaded
+		 * @param the duplicate message
+		 * @param id
+		 * @return successfully executed or not
+		 */
+		virtual bool locked_eventDuplicateMsg(GroupInfo *, RsDistribMsg *, std::string id) = 0;
+
+		/*!
+		 * Inheriting class should implement this as a response to a new msg arriving
+		 * @param
+		 * @param
+		 * @param id src of msg (peer id)
+		 * @return
+		 */
+		virtual bool locked_eventNewMsg(GroupInfo *, RsDistribMsg *, std::string id) = 0;
 
 /***************************************************************************************/
 /********************************* p3Config ********************************************/
@@ -339,16 +415,17 @@ virtual bool locked_eventNewMsg(GroupInfo *, RsDistribMsg *, std::string id) = 0
 
 	protected:
 
-virtual RsSerialiser *setupSerialiser();
-virtual std::list<RsItem *> saveList(bool &cleanup);
-virtual void 	saveDone();
-virtual bool    loadList(std::list<RsItem *> load);
+		virtual RsSerialiser *setupSerialiser();
+		virtual std::list<RsItem *> saveList(bool &cleanup);
+		virtual void 	saveDone();
+		virtual bool    loadList(std::list<RsItem *> load);
 
 /***************************************************************************************/
 /***************************************************************************************/
 
 	public:
-virtual int 	tick(); /* overloaded form pqiService */
+
+		virtual int 	tick(); /* overloaded form pqiService */
 
 /***************************************************************************************/
 /**************************** Publish Content ******************************************/
@@ -356,91 +433,171 @@ virtual int 	tick(); /* overloaded form pqiService */
 /* TO FINISH */
 	protected:
 
-	/* create/mod cache content */
-void	locked_toPublishMsg(RsDistribSignedMsg *msg);
-void 	publishPendingMsgs();
-void 	publishDistribGroups();
-void	clear_local_caches(time_t now);
+		/* create/mod cache content */
 
-void    locked_publishPendingMsgs();
-uint16_t locked_determineCacheSubId();
+		/*!
+		 *	adds msg to pending msg map
+		 *  @param msg a signed message by peer
+		 */
+		void	locked_toPublishMsg(RsDistribSignedMsg *msg);
 
-/**
- * @param grpId the grpId id for which backup keys should be restored
- * @return false if failed and vice versa
- */
-virtual bool restoreGrpKeys(std::string grpId); /// restores a group keys from backup
+		/*!
+		 *  adds pending msg
+		 */
+		void 	publishPendingMsgs();
 
-/**
- * @param grpId the group for which to share public keys
- * @param peers The peers to which public keys should be sent
- */
-virtual bool sharePubKey(std::string grpId, std::list<std::string>& peers);
+		/*!
+		 * sends created groups to cache, to be passed to cache listeners
+		 */
+		void 	publishDistribGroups();
 
-/**
- * attempts to receive publication keys
- */
-virtual void locked_receivePubKeys();
+		/*!
+		 * removes old caches based on store period (anything that has been in local cache longer
+		 * than the store period is deleted
+		 * @param now the current time when method is called
+		 */
+		void	clear_local_caches(time_t now);
 
-/**
- * this load received pub keys, useful in the case that publish keys have been received
- * but group info hasn't
- */
-virtual void locked_loadRecvdPubKeys();
+		/*!
+		 * assumes RsDistribMtx is locked when call is made
+		 */
+		void    locked_publishPendingMsgs();
 
-/**
- * Allows group admin(s) to change group icon, description and name
- *@param grpId group id
- *@param gi the changes to grp name, icon, and description should be reflected here
- */
-virtual bool locked_editGroup(std::string grpId, GroupInfo& gi);
+		/*!
+		 * @return cache sub id
+		 */
+		uint16_t locked_determineCacheSubId();
 
-/**
- * encrypts data using envelope encryption (taken from open ssl's evp_sealinit )
- * only full publish key holders for can encrypt data for given group
- *@param out
- *@param outlen
- *@param in
- *@param inlen
- */
-virtual bool encrypt(void *&out, int &outlen, const void *in, int inlen, std::string grpId);
+		/**
+		 * grp keys are backed up when a grp is created this allows user to retrieve lost keys in case config saving fails
+		 * @param grpId the grpId id for which backup keys should be restored
+		 * @return false if failed and vice versa
+		 */
+		virtual bool restoreGrpKeys(std::string grpId); /// restores a group keys from backup
 
+		/**
+		 * Allows user to send keys to a list of peers
+		 * @param grpId the group for which to share public keys
+		 * @param peers The peers to which public keys should be sent
+		 */
+		virtual bool sharePubKey(std::string grpId, std::list<std::string>& peers);
 
-/**
- * decrypts data using evelope decryption (taken from open ssl's evp_sealinit )
- * only full publish key holders can decrypt data for a group
- *@param out where decrypted data is written to
- *@param outlen
- *@param in
- *@param inlen
- */
-virtual bool decrypt(void *&out, int &outlen, const void *in, int inlen, std::string grpId);
+		/**
+		 * Attempt to receive publication keys
+		 */
+		virtual void locked_receivePubKeys();
 
-/***************************************************************************************/
-/***************************************************************************************/
+		/**
+		 * This loads received pub keys
+		 *
+		 */
+		virtual void locked_loadRecvdPubKeys();
 
-/***************************************************************************************/
-/*************************** Overloaded Functions **************************************/
-/***************************************************************************************/
+		/**
+		 * Allows group admin(s) to change group icon, description and name
+		 *@param grpId group id
+		 *@param gi the changes to grp name, icon, and description should be reflected here
+		 */
+		virtual bool locked_editGroup(std::string grpId, GroupInfo& gi);
 
-	/* Overloaded by inherited classes to Pack/UnPack their messages */
-virtual RsSerialType *createSerialiser() = 0;
-
-	/* Used to Create/Load Cache Files only */
-virtual pqistore *createStore(BinInterface *bio, std::string src, uint32_t bioflags);
-
-virtual bool    validateDistribGrp(RsDistribGrp *newGrp);
-virtual bool    locked_checkGroupInfo(GroupInfo  &info, RsDistribGrp *newGrp);
-virtual bool    locked_updateGroupInfo(GroupInfo &info, RsDistribGrp *newGrp);
-virtual bool    locked_checkGroupKeys(GroupInfo &info);
-virtual bool    locked_updateGroupAdminKey(GroupInfo &info, RsDistribGrpKey *newKey);
-virtual bool    locked_updateGroupPublishKey(GroupInfo &info, RsDistribGrpKey *newKey);
+		/**
+		 * Encrypts data using envelope encryption (taken from open ssl's evp_sealinit )
+		 * only full publish key holders can encrypt data for given group
+		 *@param out
+		 *@param outlen
+		 *@param in
+		 *@param inlen
+		 */
+		virtual bool encrypt(void *&out, int &outlen, const void *in, int inlen, std::string grpId);
 
 
-virtual bool    locked_validateDistribSignedMsg(GroupInfo &info, RsDistribSignedMsg *msg);
-virtual RsDistribMsg* unpackDistribSignedMsg(RsDistribSignedMsg *newMsg);
-virtual bool    locked_checkDistribMsg(GroupInfo &info, RsDistribMsg *msg);
-virtual bool    locked_choosePublishKey(GroupInfo &info);
+		/**
+		 * Decrypts data using evelope decryption (taken from open ssl's evp_sealinit )
+		 * only full publish key holders can decrypt data for a group
+		 *@param out where decrypted data is written to
+		 *@param outlen
+		 *@param in
+		 *@param inlen
+		 */
+		virtual bool decrypt(void *&out, int &outlen, const void *in, int inlen, std::string grpId);
+
+	/***************************************************************************************/
+	/***************************************************************************************/
+
+	/***************************************************************************************/
+	/*************************** Overloaded Functions **************************************/
+	/***************************************************************************************/
+
+		/*!
+		 * Overloaded by inherited classes to Pack/UnPack their messages
+		 * @return inherited class's serialiser
+		 */
+		virtual RsSerialType *createSerialiser() = 0;
+
+		/*! Used to Create/Load Cache Files only
+		 * @param bio binary i/o
+		 * @param src peer id from which write/read content originates
+		 * @param bioflags read write permision for bio
+		 * @return pointer to pqistore instance
+		 */
+		virtual pqistore *createStore(BinInterface *bio, std::string src, uint32_t bioflags);
+
+		/*!
+		 * checks to see if admin signature is valid
+		 * @param newGrp grp to validate
+		 * @return true if group's signature is valid
+		 */
+		virtual bool    validateDistribGrp(RsDistribGrp *newGrp);
+		virtual bool    locked_checkGroupInfo(GroupInfo  &info, RsDistribGrp *newGrp);
+		virtual bool    locked_updateGroupInfo(GroupInfo &info, RsDistribGrp *newGrp);
+		virtual bool    locked_checkGroupKeys(GroupInfo &info);
+
+		/*!
+		 * @param info group for which admin key will be added to
+		 * @param newKey admin key
+		 * @return true if key successfully added
+		 */
+		virtual bool    locked_updateGroupAdminKey(GroupInfo &info, RsDistribGrpKey *newKey);
+
+
+		/*!
+		 * @param info group for which publish key will be added to
+		 * @param newKey publish key
+		 * @return true if publish key successfully added
+		 */
+		virtual bool    locked_updateGroupPublishKey(GroupInfo &info, RsDistribGrpKey *newKey);
+
+
+		/*!
+		 * uses groupinfo public key to verify signature of signed message
+		 * @param info groupinfo for which msg is meant for
+		 * @param msg
+		 * @return false if verfication of signature is not passed
+		 */
+		virtual bool    locked_validateDistribSignedMsg(GroupInfo &info, RsDistribSignedMsg *msg);
+
+		/*!
+		 * Use this to retrieve packed message from a signed message
+		 * @param newMsg signed message
+		 * @return pointer to unpacked msg
+		 */
+		virtual RsDistribMsg* unpackDistribSignedMsg(RsDistribSignedMsg *newMsg);
+
+
+		/*!
+		 * message is checked to see if it is in a valid time range
+		 * @param info
+		 * @param msg message to be checked
+		 * @return false if msg is outside correct time range
+		 */
+		virtual bool    locked_checkDistribMsg(GroupInfo &info, RsDistribMsg *msg);
+
+		/*!
+		 * chooses the best publish key based on it being full and latest
+		 * @param info group to choose publish key
+		 * @return true if a publish key could be found
+		 */
+		virtual bool    locked_choosePublishKey(GroupInfo &info);
 
 
 //virtual RsDistribGrp *locked_createPublicDistribGrp(GroupInfo &info);
@@ -451,9 +608,10 @@ virtual bool    locked_choosePublishKey(GroupInfo &info);
 /***************************** Utility Functions ***************************************/
 /***************************************************************************************/
 /* TO FINISH */
-	/* utilities */
-std::string HashRsItem(const RsItem *item);
-bool    locked_updateChildTS(GroupInfo &gi, RsDistribMsg *msg);
+
+			/* utilities */
+		std::string HashRsItem(const RsItem *item);
+		bool    locked_updateChildTS(GroupInfo &gi, RsDistribMsg *msg);
 
 /***************************************************************************************/
 /***************************************************************************************/
@@ -463,11 +621,12 @@ bool    locked_updateChildTS(GroupInfo &gi, RsDistribMsg *msg);
 /***************************************************************************************/
 	public:
 
-void	printGroups(std::ostream &out);
-/*!
- * returns list of ids for group caches that have changed
- */
-bool 	groupsChanged(std::list<std::string> &groupIds);
+		void	printGroups(std::ostream &out);
+
+		/*!
+		 * returns list of ids for group caches that have changed
+		 */
+		bool 	groupsChanged(std::list<std::string> &groupIds);
 
 /***************************************************************************************/
 /***************************************************************************************/
@@ -478,33 +637,32 @@ bool 	groupsChanged(std::list<std::string> &groupIds);
 	/* storage */
 	protected:
 
-	RsMutex distribMtx; /// Protects All Data Below
-	std::string mOwnId;
+		RsMutex distribMtx; /// Protects all class atrributes
+		std::string mOwnId; /// rs peer id
 
 	private:	
+
+		std::list<GroupCache> mLocalCaches;
+		std::map<std::string, GroupInfo> mGroups;
+		uint32_t mStorePeriod, mPubPeriod;
+
+		/* Message Publishing */
+		std::list<RsDistribSignedMsg *> mPendingPublish;
+		time_t mLastPublishTime;
+		std::map<uint32_t, uint16_t> mLocalCacheTs;
+		uint16_t mMaxCacheSubId;
+
+		bool mGroupsChanged;
+		bool mGroupsRepublish;
+
+		std::list<RsItem *> saveCleanupList; /* TEMPORARY LIST WHEN SAVING */
+		std::string mKeyBackUpDir;
+		const std::string BACKUP_KEY_FILE;
+
+		std::map<std::string, RsDistribGrpKey* > mRecvdPubKeys; /// full publishing keys received from users
+		std::map<std::string, std::list<std::string> > mPendingPubKeyRecipients; /// peers to receive publics key for a given grp
+		time_t mLastKeyPublishTime, mLastRecvdKeyTime;
 	
-	std::list<GroupCache> mLocalCaches;
-	std::map<std::string, GroupInfo> mGroups;
-	uint32_t mStorePeriod, mPubPeriod;
-
-	/* Message Publishing */
-	std::list<RsDistribSignedMsg *> mPendingPublish; 
-	time_t mLastPublishTime;
-	std::map<uint32_t, uint16_t> mLocalCacheTs;
-	uint16_t mMaxCacheSubId;
-
-	bool mGroupsChanged;
-	bool mGroupsRepublish;
-
-    std::list<RsItem *> saveCleanupList; /* TEMPORARY LIST WHEN SAVING */
-    std::string mKeyBackUpDir;
-    const std::string BACKUP_KEY_FILE;
-
-    std::map<std::string, RsDistribGrpKey* > mRecvdPubKeys; /// full publishing keys received from users
-    std::map<std::string, std::list<std::string> > mPendingPubKeyRecipients; /// peers to receive publics key for a given grp
-    time_t mLastKeyPublishTime, mLastRecvdKeyTime;
-
-
 };
 
 

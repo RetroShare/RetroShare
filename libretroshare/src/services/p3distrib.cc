@@ -1097,7 +1097,7 @@ bool p3GroupDistrib::getPublishGroupList(std::list<std::string> &grpids)
 	return true;
 }
 
-bool p3GroupDistrib::getPopularGroupList(uint32_t popMin, uint32_t popMax, std::list<std::string> &grpids)
+void p3GroupDistrib::getPopularGroupList(uint32_t popMin, uint32_t popMax, std::list<std::string> &grpids)
 {
 	RsStackMutex stack(distribMtx); /*************  STACK MUTEX ************/
 	std::map<std::string, GroupInfo>::iterator git;
@@ -1109,7 +1109,7 @@ bool p3GroupDistrib::getPopularGroupList(uint32_t popMin, uint32_t popMax, std::
 			grpids.push_back(git->first);
 		}
 	}
-	return true;
+	return;
 }
 
 

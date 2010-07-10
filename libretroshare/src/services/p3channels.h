@@ -37,7 +37,7 @@
 //! Channels is a distributed 'feed' service
 /*!
  * Implementations of rschannels interface
- *  @see rsChannels for definition of implemented interface
+ *  @see RsChannels for definition of implemented interface
  */
 class p3Channels: public p3GroupDistrib, public RsChannels 
 {
