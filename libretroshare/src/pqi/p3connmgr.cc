@@ -2617,9 +2617,10 @@ bool    p3ConnectMgr::setExtAddress(std::string id, struct sockaddr_in addr)
 		}
 	}
 
-#if 0
 	/* "it" points to peer */
 	it->second.currentserveraddr = addr;
+
+#if 0
 	//update ip address list
 	IpAddressTimed ipAddressTimed;
 	ipAddressTimed.ipAddr = addr;
