@@ -203,7 +203,7 @@ int test_isValidNet()
 	CHECK(isValidNet(&localnet1_addr)==true);
 
 	CHECK(inet_aton(invalid_addrstr, &invalid_addr)==0);
-	std::cerr << inet_ntoa(invalid_addr) << std::endl;
+	std::cerr << rs_inet_ntoa(invalid_addr) << std::endl;
 	//CHECK(isValidNet(&invalid_addr)==false);
 
 	REPORT("isValidNet()");

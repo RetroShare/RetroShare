@@ -69,7 +69,7 @@ int 	tou_init(const struct sockaddr *my_addr, socklen_t addrlen)
 		if (!(udps->okay()))
 		{
 			std::cerr << "tou_init() FATAL ERROR: Cannot reset Udp Socket to: "
-				<< inet_ntoa(addr->sin_addr) << ":" << ntohs(addr->sin_port);
+				<< rs_inet_ntoa(addr->sin_addr) << ":" << ntohs(addr->sin_port);
 			std::cerr << std::endl;
 
                         return 0;

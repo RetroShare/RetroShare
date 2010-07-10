@@ -384,7 +384,7 @@ int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr, uint32_t delay, 
 	  std::ostringstream out;
 	  out << "pqiperson::connect() Id: " << PeerId();
 	  out << " type: " << type;
-	  out << " addr: " << inet_ntoa(raddr.sin_addr);
+	  out << " addr: " << rs_inet_ntoa(raddr.sin_addr);
 	  out << ":" << ntohs(raddr.sin_port);
 	  out << " delay: " << delay;
 	  out << " period: " << period;

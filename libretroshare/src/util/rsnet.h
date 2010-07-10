@@ -76,4 +76,8 @@ bool getIPAddressFromString (const char *addr_str, struct in_addr *addr);
 
 std::ostream& operator<<(std::ostream& o,const struct sockaddr_in&) ;
 
+/* thread-safe version of inet_ntoa */
+std::string rs_inet_ntoa(struct in_addr in);
+
+
 #endif /* RS_UNIVERSAL_NETWORK_HEADER */

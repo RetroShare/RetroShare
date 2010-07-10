@@ -786,11 +786,11 @@ std::ostream &RsPeerOldNetItem::print(std::ostream &out, uint16_t indent)
 	out << "lastContact: " << lastContact << std::endl;
 
 	printIndent(out, int_Indent);
-	out << "currentlocaladdr: " << inet_ntoa(currentlocaladdr.sin_addr);
+	out << "currentlocaladdr: " << rs_inet_ntoa(currentlocaladdr.sin_addr);
 	out << ":" << htons(currentlocaladdr.sin_port) << std::endl;
 
 	printIndent(out, int_Indent);
-	out << "currentremoteaddr: " << inet_ntoa(currentremoteaddr.sin_addr);
+	out << "currentremoteaddr: " << rs_inet_ntoa(currentremoteaddr.sin_addr);
 	out << ":" << htons(currentremoteaddr.sin_port) << std::endl;
 
         printIndent(out, int_Indent);
@@ -800,7 +800,7 @@ std::ostream &RsPeerOldNetItem::print(std::ostream &out, uint16_t indent)
         out << "ipAdressList: size : " << ipAddressList.size() << ", adresses : " << std::endl;
         for (std::list<IpAddressTimed>::iterator ipListIt = ipAddressList.begin(); ipListIt!=(ipAddressList.end()); ipListIt++) {
                 printIndent(out, int_Indent);
-                out << inet_ntoa(ipListIt->ipAddr.sin_addr) << ":" << ntohs(ipListIt->ipAddr.sin_port) << " seenTime : " << ipListIt->seenTime << std::endl;
+                out << rs_inet_ntoa(ipListIt->ipAddr.sin_addr) << ":" << ntohs(ipListIt->ipAddr.sin_port) << " seenTime : " << ipListIt->seenTime << std::endl;
         }
 
         printRsItemEnd(out, "RsPeerOldNetItem", indent);
@@ -1037,11 +1037,11 @@ std::ostream &RsPeerNetItem::print(std::ostream &out, uint16_t indent)
 	out << "lastContact: " << lastContact << std::endl;
 
 	printIndent(out, int_Indent);
-	out << "currentlocaladdr: " << inet_ntoa(currentlocaladdr.sin_addr);
+	out << "currentlocaladdr: " << rs_inet_ntoa(currentlocaladdr.sin_addr);
 	out << ":" << htons(currentlocaladdr.sin_port) << std::endl;
 
 	printIndent(out, int_Indent);
-	out << "currentremoteaddr: " << inet_ntoa(currentremoteaddr.sin_addr);
+	out << "currentremoteaddr: " << rs_inet_ntoa(currentremoteaddr.sin_addr);
 	out << ":" << htons(currentremoteaddr.sin_port) << std::endl;
 
         printIndent(out, int_Indent);

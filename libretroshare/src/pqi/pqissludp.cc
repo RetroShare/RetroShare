@@ -158,7 +158,7 @@ int 	pqissludp::Initiate_Connection()
 		std::ostringstream out;
 		out << "pqissludp::Initiate_Connection() ";
 		out << "Connecting To: " << PeerId();
-		out << " via: " << inet_ntoa(remote_addr.sin_addr) << ":";
+		out << " via: " << rs_inet_ntoa(remote_addr.sin_addr) << ":";
 		out << ntohs(remote_addr.sin_port) << " ";
 		if (sslmode)
 		{

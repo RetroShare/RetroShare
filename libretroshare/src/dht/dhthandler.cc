@@ -30,7 +30,7 @@ std::ostream &operator<<(std::ostream &out, dhtentry &ent)
 {
 	out << "DHTENTRY(" << ent.id << "): Status: " << ent.status;
 	out << std::endl;
-	out << "\taddr: " << inet_ntoa(ent.addr.sin_addr) << ":" << ntohs(ent.addr.sin_port);
+	out << "\taddr: " << rs_inet_ntoa(ent.addr.sin_addr) << ":" << ntohs(ent.addr.sin_port);
 	out << std::endl;
 	out << "\tlastTS: " << time(NULL) - ent.lastTs << " secs ago";
 	out << "\tFlags: " << ent.flags;
@@ -522,8 +522,9 @@ int dhthandler::publishOwnId()
 
 	/* to store the ip address and flags */
 	char metalist[1024];
+	std::string addr = rs_inet_ntoa(ownId.addr.sin_addr),
 	sprintf(metalist, "rsid=%s:%d;flags=%04X;", 
-		inet_ntoa(ownId.addr.sin_addr), 
+		addr.c_str(),
 		ntohs(ownId.addr.sin_port), 
 		ownId.flags);
 

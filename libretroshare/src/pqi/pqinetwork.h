@@ -103,8 +103,8 @@ int sockaddr_cmp(struct sockaddr_in &addr1, struct sockaddr_in &addr2 );
 int inaddr_cmp(struct sockaddr_in addr1, struct sockaddr_in addr2 );
 int inaddr_cmp(struct sockaddr_in addr1, unsigned long);
 
-struct in_addr getPreferredInterface(); // returns best addr.
-std::list<std::string> getLocalInterfaces(); // returns all possible addrs.
+bool    getPreferredInterface(struct in_addr &prefAddr); // returns best addr.
+bool getLocalInterfaces(std::list<struct in_addr> &addrs); // returns all possible addrs.
 
 	// checks (addr1 & 255.255.255.0) == (addr2 & 255.255.255.0)
 bool    isSameSubnet(struct in_addr *addr1, struct in_addr *addr2);

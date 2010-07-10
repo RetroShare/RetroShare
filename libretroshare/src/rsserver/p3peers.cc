@@ -257,6 +257,7 @@ bool    p3Peers::isFriend(std::string ssl_id)
         return mConnMgr->isFriend(ssl_id);
 }
 
+#if 0
 static struct sockaddr_in getPreferredAddress(	const struct sockaddr_in& addr1,time_t ts1,
 																const struct sockaddr_in& addr2,time_t ts2,
 																const struct sockaddr_in& addr3,time_t ts3)
@@ -264,11 +265,12 @@ static struct sockaddr_in getPreferredAddress(	const struct sockaddr_in& addr1,t
 	time_t ts = ts1 ;
 	struct sockaddr_in addr = addr1 ;
 
-	if(ts2 > ts && strcmp(inet_ntoa(addr2.sin_addr),"0.0.0.0")) { ts = ts2 ; addr = addr2 ; }
-	if(ts3 > ts && strcmp(inet_ntoa(addr3.sin_addr),"0.0.0.0")) { ts = ts3 ; addr = addr3 ; }
+	if(ts2 > ts && strcmp(rs_inet_ntoa(addr2.sin_addr),"0.0.0.0")) { ts = ts2 ; addr = addr2 ; }
+	if(ts3 > ts && strcmp(rs_inet_ntoa(addr3.sin_addr),"0.0.0.0")) { ts = ts3 ; addr = addr3 ; }
 
 	return addr ;
 }
+#endif
 
 bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 {
@@ -309,9 +311,9 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 
 	/* fill from pcs */
 
-	d.localAddr	= inet_ntoa(pcs.currentlocaladdr.sin_addr);
+	d.localAddr	= rs_inet_ntoa(pcs.currentlocaladdr.sin_addr);
 	d.localPort	= ntohs(pcs.currentlocaladdr.sin_port);
-	d.extAddr	= inet_ntoa(pcs.currentserveraddr.sin_addr);
+	d.extAddr	= rs_inet_ntoa(pcs.currentserveraddr.sin_addr);
 	d.extPort	= ntohs(pcs.currentserveraddr.sin_port);
         d.dyndns        = pcs.dyndns;
 	d.lastConnect	= pcs.lastcontact;
@@ -324,14 +326,14 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 	{
 	    std::ostringstream toto;
             toto << ntohs(it->mAddr.sin_port) << "    " << (time(NULL) - it->mSeenTime) << " sec";
-            d.ipAddressList.push_back("L:" + std::string(inet_ntoa(it->mAddr.sin_addr)) + ":" + toto.str());
+            d.ipAddressList.push_back("L:" + std::string(rs_inet_ntoa(it->mAddr.sin_addr)) + ":" + toto.str());
 	}
 	for(it = pcs.ipAddrs.mExt.mAddrs.begin(); 
 			it != pcs.ipAddrs.mExt.mAddrs.end(); it++)
 	{
 	    std::ostringstream toto;
             toto << ntohs(it->mAddr.sin_port) << "    " << (time(NULL) - it->mSeenTime) << " sec";
-            d.ipAddressList.push_back("E:" + std::string(inet_ntoa(it->mAddr.sin_addr)) + ":" + toto.str());
+            d.ipAddressList.push_back("E:" + std::string(rs_inet_ntoa(it->mAddr.sin_addr)) + ":" + toto.str());
 	}
 
 		
@@ -398,9 +400,9 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
                 if (pcs.currentConnAddrAttempt.type & RS_NET_CONN_TUNNEL) {
                     autostr << "Trying tunnel connection";
                 } else if (pcs.currentConnAddrAttempt.type & RS_NET_CONN_TCP_ALL) {
-                    autostr << "Trying TCP : " << inet_ntoa(pcs.currentConnAddrAttempt.addr.sin_addr) << ":" <<  ntohs(pcs.currentConnAddrAttempt.addr.sin_port);
+                    autostr << "Trying TCP : " << rs_inet_ntoa(pcs.currentConnAddrAttempt.addr.sin_addr) << ":" <<  ntohs(pcs.currentConnAddrAttempt.addr.sin_port);
                 } else if (pcs.currentConnAddrAttempt.type & RS_NET_CONN_UDP_ALL) {
-                    autostr << "Trying UDP : " << inet_ntoa(pcs.currentConnAddrAttempt.addr.sin_addr) << ":" <<  ntohs(pcs.currentConnAddrAttempt.addr.sin_port);
+                    autostr << "Trying UDP : " << rs_inet_ntoa(pcs.currentConnAddrAttempt.addr.sin_addr) << ":" <<  ntohs(pcs.currentConnAddrAttempt.addr.sin_port);
                 }
 	}
 	else if (pcs.state & RS_PEER_S_CONNECTED)

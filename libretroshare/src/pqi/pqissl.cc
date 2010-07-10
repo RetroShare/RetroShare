@@ -601,7 +601,7 @@ int 	pqissl::Initiate_Connection()
 		out << "pqissl::Initiate_Connection() ";
 		out << "Connecting To: ";
 		out << PeerId() << " via: ";
-		out << inet_ntoa(addr.sin_addr);
+		out << rs_inet_ntoa(addr.sin_addr);
 		out << ":" << ntohs(addr.sin_port);
   		rslog(RSL_WARNING, pqisslzone, out.str());
 	}
@@ -1267,9 +1267,9 @@ int	pqissl::accept(SSL *ssl, int fd, struct sockaddr_in foreign_addr) // initiat
 	  out << std::endl;
 	  out << "\t\tchecking for same LAN";
 	  out << std::endl;
-	  out << "\t localaddr: " << inet_ntoa(details.currentlocaladdr.sin_addr);
+	  out << "\t localaddr: " << rs_inet_ntoa(details.currentlocaladdr.sin_addr);
 	  out << std::endl;
-	  out << "\t remoteaddr: " << inet_ntoa(remote_addr.sin_addr);
+	  out << "\t remoteaddr: " << rs_inet_ntoa(remote_addr.sin_addr);
 	  out << std::endl;
 	  if (sameLAN)
 	  {

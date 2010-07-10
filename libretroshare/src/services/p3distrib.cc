@@ -40,6 +40,7 @@
 #include "util/rsdir.h"
 #include "pqi/pqinotify.h"
 #include "pqi/pqibin.h"
+#include "pqi/sslfns.h"
 #include "pqi/authssl.h"
 #include "pqi/authgpg.h"
 

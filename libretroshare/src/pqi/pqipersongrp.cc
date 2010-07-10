@@ -447,7 +447,7 @@ int     pqipersongrp::connectPeer(std::string id)
 
 #ifdef PGRP_DEBUG
 	std::cerr << " pqipersongrp::connectPeer() connectAttempt data id: " << id;
-	std::cerr << " addr: " << inet_ntoa(addr.sin_addr) << ":" << ntohs(addr.sin_port);
+	std::cerr << " addr: " << rs_inet_ntoa(addr.sin_addr) << ":" << ntohs(addr.sin_port);
 	std::cerr << " delay: " << delay;
 	std::cerr << " period: " << period;
 	std::cerr << " type: " << type;

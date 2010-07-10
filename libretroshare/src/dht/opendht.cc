@@ -573,7 +573,7 @@ bool OpenDHTClient::openDHT_sendMessage(std::string msg, std::string &response)
 #ifdef	OPENDHT_DEBUG
 	std::cerr << "OpenDHTClient::openDHT_sendMessage()";
 	std::cerr << " Connecting to:" << host << ":" << port;
-	std::cerr << " (" << inet_ntoa(addr.sin_addr) << ":" << ntohs(addr.sin_port) << ")";
+	std::cerr << " (" << rs_inet_ntoa(addr.sin_addr) << ":" << ntohs(addr.sin_port) << ")";
 	std::cerr << std::endl;
 #endif
 
@@ -724,7 +724,7 @@ bool OpenDHTClient::openDHT_getDHTList(std::string &response)
 #ifdef	OPENDHT_DEBUG
 	std::cerr << "OpenDHTClient::openDHT_getDHTList()";
 	std::cerr << " Connecting to:" << host << ":" << port;
-	std::cerr << " (" << inet_ntoa(addr.sin_addr) << ":" << ntohs(addr.sin_port) << ")";
+	std::cerr << " (" << rs_inet_ntoa(addr.sin_addr) << ":" << ntohs(addr.sin_port) << ")";
 	std::cerr << std::endl;
 #endif
 

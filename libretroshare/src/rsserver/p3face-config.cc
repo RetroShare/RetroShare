@@ -110,13 +110,13 @@ int RsServer::UpdateAllConfig()
         mConnMgr->getOwnNetStatus(pstate);
 
 	/* ports */
-	config.localAddr = inet_ntoa(pstate.currentlocaladdr.sin_addr);
+	config.localAddr = rs_inet_ntoa(pstate.currentlocaladdr.sin_addr);
 	config.localPort = ntohs(pstate.currentlocaladdr.sin_port);
 
 	config.firewalled = true;
 	config.forwardPort  = true;
 	
-	config.extAddr = inet_ntoa(pstate.currentserveraddr.sin_addr);
+	config.extAddr = rs_inet_ntoa(pstate.currentserveraddr.sin_addr);
 	config.extPort = ntohs(pstate.currentserveraddr.sin_port);
 
 	/* data rates */

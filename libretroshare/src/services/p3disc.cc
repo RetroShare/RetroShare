@@ -878,10 +878,10 @@ int p3disc::idServers()
 		out << "Neighbour: " << (nit->second).id;
 		out << std::endl;
 		out << "-> LocalAddr: ";
-		out <<  inet_ntoa(nit->second.localAddr.sin_addr);
+		out <<  rs_inet_ntoa(nit->second.localAddr.sin_addr);
 		out << ":" << ntohs(nit->second.localAddr.sin_port) << std::endl;
 		out << "-> RemoteAddr: ";
-		out <<  inet_ntoa(nit->second.remoteAddr.sin_addr);
+		out <<  rs_inet_ntoa(nit->second.remoteAddr.sin_addr);
 		out << ":" << ntohs(nit->second.remoteAddr.sin_port) << std::endl;
 		out << "  Last Contact: ";
 		out << cts - (nit->second.ts) << " sec ago";
@@ -896,11 +896,11 @@ int p3disc::idServers()
 			out << "\tConnected via: " << (sit->first);
 			out << std::endl;
 			out << "\t\tLocalAddr: ";
-			out <<  inet_ntoa(sit->second.localAddr.sin_addr);
+			out <<  rs_inet_ntoa(sit->second.localAddr.sin_addr);
 			out <<":"<< ntohs(sit->second.localAddr.sin_port);
 			out << std::endl;
 			out << "\t\tRemoteAddr: ";
-			out <<  inet_ntoa(sit->second.remoteAddr.sin_addr);
+			out <<  rs_inet_ntoa(sit->second.remoteAddr.sin_addr);
 			out <<":"<< ntohs(sit->second.remoteAddr.sin_port);
 
 			out << std::endl;

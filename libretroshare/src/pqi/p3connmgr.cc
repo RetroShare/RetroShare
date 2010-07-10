@@ -72,6 +72,8 @@ const uint32_t PEER_IP_CONNECT_STATE_MAX_LIST_SIZE =     	4;
  * #define CONN_DEBUG_TICK 1
  ***/
 
+#define CONN_DEBUG_RESET 1
+
 /****
  * #define P3CONNMGR_NO_TCP_CONNECTIONS 1
  ***/
@@ -129,9 +131,9 @@ std::string textPeerConnectState(peerConnectState &state)
 	out << "Id: " << state.id << std::endl;
 	out << "NetMode: " << state.netMode << std::endl;
 	out << "VisState: " << state.visState << std::endl;
-	out << "laddr: " << inet_ntoa(state.currentlocaladdr.sin_addr)
+	out << "laddr: " << rs_inet_ntoa(state.currentlocaladdr.sin_addr)
 		<< ":" << ntohs(state.currentlocaladdr.sin_port) << std::endl;
-	out << "eaddr: " << inet_ntoa(state.currentserveraddr.sin_addr)
+	out << "eaddr: " << rs_inet_ntoa(state.currentserveraddr.sin_addr)
 		<< ":" << ntohs(state.currentserveraddr.sin_port) << std::endl;
 
 	std::string output = out.str();
@@ -161,8 +163,8 @@ void pqiNetStatus::print(std::ostream &out)
         out << " mDhtOk: " << mDhtOk;
         out << " mResetReq: " << mResetReq;
         out << std::endl;
-	out << "mLocalAddr: " << inet_ntoa(mLocalAddr.sin_addr) << ":" << ntohs(mLocalAddr.sin_port) << " ";
-	out << "mExtAddr: " << inet_ntoa(mExtAddr.sin_addr) << ":" << ntohs(mExtAddr.sin_port) << " ";
+	out << "mLocalAddr: " << rs_inet_ntoa(mLocalAddr.sin_addr) << ":" << ntohs(mLocalAddr.sin_port) << " ";
+	out << "mExtAddr: " << rs_inet_ntoa(mExtAddr.sin_addr) << ":" << ntohs(mExtAddr.sin_port) << " ";
 	out << " NetOk: " << NetOk();
         out << std::endl;
 }
@@ -842,7 +844,7 @@ void p3ConnectMgr::netUpnpCheck()
 		{
 #if defined(CONN_DEBUG_TICK) || defined(CONN_DEBUG_RESET)
 			std::cerr << "p3ConnectMgr::netUpnpCheck() ";
-			std::cerr << "UpnpAddr: " << inet_ntoa(extAddr.sin_addr);
+			std::cerr << "UpnpAddr: " << rs_inet_ntoa(extAddr.sin_addr);
 			std::cerr << ":" << ntohs(extAddr.sin_port);
 			std::cerr << std::endl;
 #endif
@@ -930,7 +932,7 @@ void p3ConnectMgr::netExtCheck()
 					tmpip.sin_port = mNetFlags.mLocalAddr.sin_port;
 #if defined(CONN_DEBUG_TICK) || defined(CONN_DEBUG_RESET)
 					std::cerr << "p3ConnectMgr::netExtCheck() ";
-					std::cerr << "ExtAddr: " << inet_ntoa(tmpip.sin_addr);
+					std::cerr << "ExtAddr: " << rs_inet_ntoa(tmpip.sin_addr);
 					std::cerr << ":" << ntohs(tmpip.sin_port);
 					std::cerr << std::endl;
 #endif
@@ -955,7 +957,7 @@ void p3ConnectMgr::netExtCheck()
 
 #if defined(CONN_DEBUG_TICK) || defined(CONN_DEBUG_RESET)
 			std::cerr << "p3ConnectMgr::netExtCheck() ";
-			std::cerr << "ExtAddr: " << inet_ntoa(mNetFlags.mExtAddr.sin_addr);
+			std::cerr << "ExtAddr: " << rs_inet_ntoa(mNetFlags.mExtAddr.sin_addr);
 			std::cerr << ":" << ntohs(mNetFlags.mExtAddr.sin_port);
 			std::cerr << std::endl;
 #endif
@@ -1637,7 +1639,7 @@ bool p3ConnectMgr::connectAttempt(std::string id, struct sockaddr_in &addr,
 
 #ifdef CONN_DEBUG
         	std::cerr << "p3ConnectMgr::connectAttempt() found an address: id: " << id << std::endl;
-		std::cerr << " laddr: " << inet_ntoa(addr.sin_addr) << " lport: " << ntohs(addr.sin_port) << " delay: " << delay << " period: " << period;
+		std::cerr << " laddr: " << rs_inet_ntoa(addr.sin_addr) << " lport: " << ntohs(addr.sin_port) << " delay: " << delay << " period: " << period;
 		std::cerr << " type: " << type << std::endl;
 #endif
         if (addr.sin_addr.s_addr == 0 || addr.sin_port == 0) {
@@ -2035,13 +2037,13 @@ void    p3ConnectMgr::peerConnectRequest(std::string id, struct sockaddr_in radd
                        							uint32_t source)
 {
 #ifdef CONN_DEBUG
-	std::cerr << "p3ConnectMgr::peerConnectRequest() id: " << id << " raddr: " << inet_ntoa(raddr.sin_addr) << ":" << ntohs(raddr.sin_port);
+	std::cerr << "p3ConnectMgr::peerConnectRequest() id: " << id << " raddr: " << rs_inet_ntoa(raddr.sin_addr) << ":" << ntohs(raddr.sin_port);
 	std::cerr << " source: " << source << std::endl;
 #endif
 	{
 		/* Log */
 		std::ostringstream out;
-		out << "p3ConnectMgr::peerConnectRequest() id: " << id << " raddr: " << inet_ntoa(raddr.sin_addr);
+		out << "p3ConnectMgr::peerConnectRequest() id: " << id << " raddr: " << rs_inet_ntoa(raddr.sin_addr);
 		out << ":" << ntohs(raddr.sin_port) << " source: " << source;
 		rslog(RSL_WARNING, p3connectzone, out.str());
 	}
@@ -2364,7 +2366,7 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
 	{
 #ifdef CONN_DEBUG
 		std::cerr << "Adding tcp connection attempt: ";
-		std::cerr << "Current Local Addr: " << inet_ntoa(it->second.currentlocaladdr.sin_addr);
+		std::cerr << "Current Local Addr: " << rs_inet_ntoa(it->second.currentlocaladdr.sin_addr);
 		std::cerr << ":" << ntohs(it->second.currentlocaladdr.sin_port);
 		std::cerr << std::endl;
 #endif
@@ -2381,7 +2383,7 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
 	{
 #ifdef CONN_DEBUG
 		std::cerr << "Adding tcp connection attempt: ";
-		std::cerr << "Current Ext Addr: " << inet_ntoa(it->second.currentserveraddr.sin_addr);
+		std::cerr << "Current Ext Addr: " << rs_inet_ntoa(it->second.currentserveraddr.sin_addr);
 		std::cerr << ":" << ntohs(it->second.currentserveraddr.sin_port);
 		std::cerr << std::endl;
 #endif
@@ -2402,7 +2404,7 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
 	{
 #ifdef CONN_DEBUG
 		std::cerr << "Adding tcp connection attempt: ";
-		std::cerr << "Local Addr: " << inet_ntoa(ait->mAddr.sin_addr);
+		std::cerr << "Local Addr: " << rs_inet_ntoa(ait->mAddr.sin_addr);
 		std::cerr << ":" << ntohs(ait->mAddr.sin_port);
 		std::cerr << std::endl;
 #endif
@@ -2420,7 +2422,7 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
 	{
 #ifdef CONN_DEBUG
 		std::cerr << "Adding tcp connection attempt: ";
-		std::cerr << "Ext Addr: " << inet_ntoa(ait->mAddr.sin_addr);
+		std::cerr << "Ext Addr: " << rs_inet_ntoa(ait->mAddr.sin_addr);
 		std::cerr << ":" << ntohs(ait->mAddr.sin_port);
 		std::cerr << std::endl;
 #endif
@@ -2445,7 +2447,7 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
 		{
 #ifdef CONN_DEBUG
 			std::cerr << "Adding tcp connection attempt: ";
-			std::cerr << "DynDNS Addr: " << inet_ntoa(addr);
+			std::cerr << "DynDNS Addr: " << rs_inet_ntoa(addr);
 			std::cerr << ":" << ntohs(port);
 			std::cerr << std::endl;
 #endif
@@ -2817,25 +2819,58 @@ bool    p3ConnectMgr::setVisState(std::string id, uint32_t visState)
 
 bool 	p3ConnectMgr::checkNetAddress()
 {
-	struct in_addr prefAddr = getPreferredInterface();
+	bool addrChanged = false;
+	bool validAddr = false;
+	
+	struct in_addr prefAddr;
 	struct sockaddr_in oldAddr;
 
-	bool addrChanged = false;
+	validAddr = getPreferredInterface(prefAddr);
 
+	/* if we don't have a valid address - reset */
+	if (!validAddr)
+	{
+#ifdef CONN_DEBUG_RESET
+		std::cerr << "p3ConnectMgr::checkNetAddress() no Valid Network Address, resetting network." << std::endl;
+		std::cerr << std::endl;
+#endif
+		netReset();
+		IndicateConfigChanged();
+		return false;
+	}
+	
+	
+	/* check addresses */
+	
 	{
 		RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+		
+		oldAddr = mOwnState.currentlocaladdr;
+		addrChanged = (prefAddr.s_addr != mOwnState.currentlocaladdr.sin_addr.s_addr);
+
 #ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::checkNetAddress()";
 		std::cerr << std::endl;
-		std::cerr << "Current Local: " << inet_ntoa(mOwnState.currentlocaladdr.sin_addr);
+		std::cerr << "Current Local: " << rs_inet_ntoa(mOwnState.currentlocaladdr.sin_addr);
 		std::cerr << ":" << ntohs(mOwnState.currentlocaladdr.sin_port);
 		std::cerr << std::endl;
-		std::cerr << "Current Preferred: " << inet_ntoa(prefAddr);
+		std::cerr << "Current Preferred: " << rs_inet_ntoa(prefAddr);
 		std::cerr << std::endl;
 #endif
-
-		oldAddr = mOwnState.currentlocaladdr;
-		addrChanged = (prefAddr.s_addr != mOwnState.currentlocaladdr.sin_addr.s_addr);
+		
+#ifdef CONN_DEBUG_RESET
+		if (addrChanged)
+		{
+			std::cerr << "p3ConnectMgr::checkNetAddress() Address Changed!";
+			std::cerr << std::endl;
+			std::cerr << "Current Local: " << rs_inet_ntoa(mOwnState.currentlocaladdr.sin_addr);
+			std::cerr << ":" << ntohs(mOwnState.currentlocaladdr.sin_port);
+			std::cerr << std::endl;
+			std::cerr << "Current Preferred: " << rs_inet_ntoa(prefAddr);
+			std::cerr << std::endl;
+		}
+#endif
+		
 		// update address.
 		mOwnState.currentlocaladdr.sin_addr = prefAddr;
 	
@@ -2897,7 +2932,7 @@ bool 	p3ConnectMgr::checkNetAddress()
 		mOwnState.ipAddrs.mLocal.updateIpAddressList(addrInfo);
 
 #ifdef CONN_DEBUG_TICK
-		std::cerr << "p3ConnectMgr::checkNetAddress() Final Local Address: " << inet_ntoa(mOwnState.currentlocaladdr.sin_addr);
+		std::cerr << "p3ConnectMgr::checkNetAddress() Final Local Address: " << rs_inet_ntoa(mOwnState.currentlocaladdr.sin_addr);
 		std::cerr << ":" << ntohs(mOwnState.currentlocaladdr.sin_port) << std::endl;
 		std::cerr << "p3ConnectMgr::checkNetAddress() Addres History: ";
 		std::cerr << std::endl;

@@ -112,16 +112,16 @@ bool test_local_address_manipulation()
 	inet_aton(localnet4_addrstr, &(localnet4_addr.sin_addr));
 
 
-	std::cerr << "Loopback  Addr " << inet_ntoa(loopback_addr.sin_addr);
+	std::cerr << "Loopback  Addr " << rs_inet_ntoa(loopback_addr.sin_addr);
 	std::cerr << std::endl;
 
-	std::cerr << "Localnet1 Addr " << inet_ntoa(localnet1_addr.sin_addr);
+	std::cerr << "Localnet1 Addr " << rs_inet_ntoa(localnet1_addr.sin_addr);
 	std::cerr << std::endl;
-	std::cerr << "Localnet2 Addr " << inet_ntoa(localnet2_addr.sin_addr);
+	std::cerr << "Localnet2 Addr " << rs_inet_ntoa(localnet2_addr.sin_addr);
 	std::cerr << std::endl;
-	std::cerr << "Localnet3 Addr " << inet_ntoa(localnet3_addr.sin_addr);
+	std::cerr << "Localnet3 Addr " << rs_inet_ntoa(localnet3_addr.sin_addr);
 	std::cerr << std::endl;
-	std::cerr << "Localnet4 Addr " << inet_ntoa(localnet4_addr.sin_addr);
+	std::cerr << "Localnet4 Addr " << rs_inet_ntoa(localnet4_addr.sin_addr);
 	std::cerr << std::endl;
 	std::cerr << std::endl;
 
@@ -137,13 +137,13 @@ bool test_local_address_manipulation()
 	addr2.sin_addr.s_addr = htonl(inet_network(loopback_addrstr));
 
 	std::cerr << "Loopback Net(expected): " << addr_ans_str;
-	std::cerr << " -> " << inet_ntoa(addr_ans.sin_addr);
-	std::cerr << " Net(1):" << inet_ntoa(addr1.sin_addr);
-	std::cerr << " Net(2):" << inet_ntoa(addr2.sin_addr);
+	std::cerr << " -> " << rs_inet_ntoa(addr_ans.sin_addr);
+	std::cerr << " Net(1):" << rs_inet_ntoa(addr1.sin_addr);
+	std::cerr << " Net(2):" << rs_inet_ntoa(addr2.sin_addr);
 	std::cerr << std::endl;
 
-        //CHECK( 0 == strcmp(addr_ans_str.c_str(), inet_ntoa(addr1.sin_addr)));
-        //CHECK( 0 == strcmp(addr_ans_str.c_str(), inet_ntoa(addr2.sin_addr)));
+        //CHECK( 0 == strcmp(addr_ans_str.c_str(), rs_inet_ntoa(addr1.sin_addr)));
+        //CHECK( 0 == strcmp(addr_ans_str.c_str(), rs_inet_ntoa(addr2.sin_addr)));
 
 
 	addr_ans_str = "192.168.0.0";
@@ -152,13 +152,13 @@ bool test_local_address_manipulation()
 	addr2.sin_addr.s_addr = htonl(inet_network(localnet1_addrstr));
 
 	std::cerr << "Localnet1 Net(expected): " << addr_ans_str;
-	std::cerr << " -> " << inet_ntoa(addr_ans.sin_addr);
-	std::cerr << " Net(1):" << inet_ntoa(addr1.sin_addr);
-	std::cerr << " Net(2):" << inet_ntoa(addr2.sin_addr);
+	std::cerr << " -> " << rs_inet_ntoa(addr_ans.sin_addr);
+	std::cerr << " Net(1):" << rs_inet_ntoa(addr1.sin_addr);
+	std::cerr << " Net(2):" << rs_inet_ntoa(addr2.sin_addr);
 	std::cerr << std::endl;
 
-        //CHECK( 0 == strcmp(addr_ans_str.c_str(), inet_ntoa(addr1.sin_addr)));
-        //CHECK( 0 == strcmp(addr_ans_str.c_str(), inet_ntoa(addr2.sin_addr)));
+        //CHECK( 0 == strcmp(addr_ans_str.c_str(), rs_inet_ntoa(addr1.sin_addr)));
+        //CHECK( 0 == strcmp(addr_ans_str.c_str(), rs_inet_ntoa(addr2.sin_addr)));
 
 	addr_ans_str = "10.0.0.0";
 	inet_aton(addr_ans_str.c_str(), &(addr_ans.sin_addr));
@@ -166,14 +166,14 @@ bool test_local_address_manipulation()
 	addr2.sin_addr.s_addr = htonl(inet_network(localnet2_addrstr));
 
 	std::cerr << "Localnet2 Net(expected): " << addr_ans_str;
-	std::cerr << " -> " << inet_ntoa(addr_ans.sin_addr);
-	std::cerr << " Net(1):" << inet_ntoa(addr1.sin_addr);
-	std::cerr << " Net(2):" << inet_ntoa(addr2.sin_addr);
+	std::cerr << " -> " << rs_inet_ntoa(addr_ans.sin_addr);
+	std::cerr << " Net(1):" << rs_inet_ntoa(addr1.sin_addr);
+	std::cerr << " Net(2):" << rs_inet_ntoa(addr2.sin_addr);
 	std::cerr << std::endl;
 
 
-        //CHECK( 0 == strcmp(addr_ans_str.c_str(), inet_ntoa(addr1.sin_addr)));
-        //CHECK( 0 == strcmp(addr_ans_str.c_str(), inet_ntoa(addr2.sin_addr)));
+        //CHECK( 0 == strcmp(addr_ans_str.c_str(), rs_inet_ntoa(addr1.sin_addr)));
+        //CHECK( 0 == strcmp(addr_ans_str.c_str(), rs_inet_ntoa(addr2.sin_addr)));
 
 
 	addr_ans_str = "10.0.0.0";
@@ -182,14 +182,14 @@ bool test_local_address_manipulation()
 	addr2.sin_addr.s_addr = htonl(inet_network(localnet3_addrstr));
 
 	std::cerr << "Localnet3 Net(expected): " << addr_ans_str;
-	std::cerr << " -> " << inet_ntoa(addr_ans.sin_addr);
-	std::cerr << " Net(1):" << inet_ntoa(addr1.sin_addr);
-	std::cerr << " Net(2):" << inet_ntoa(addr2.sin_addr);
+	std::cerr << " -> " << rs_inet_ntoa(addr_ans.sin_addr);
+	std::cerr << " Net(1):" << rs_inet_ntoa(addr1.sin_addr);
+	std::cerr << " Net(2):" << rs_inet_ntoa(addr2.sin_addr);
 	std::cerr << std::endl;
 
 
-        //CHECK( 0 == strcmp(addr_ans_str.c_str(), inet_ntoa(addr1.sin_addr)));
-        //CHECK( 0 == strcmp(addr_ans_str.c_str(), inet_ntoa(addr2.sin_addr)));
+        //CHECK( 0 == strcmp(addr_ans_str.c_str(), rs_inet_ntoa(addr1.sin_addr)));
+        //CHECK( 0 == strcmp(addr_ans_str.c_str(), rs_inet_ntoa(addr2.sin_addr)));
 
 
 	addr_ans_str = "192.168.0.0";
@@ -198,14 +198,14 @@ bool test_local_address_manipulation()
 	addr2.sin_addr.s_addr = htonl(inet_network(localnet4_addrstr));
 
 	std::cerr << "Localnet4 Net(expected): " << addr_ans_str;
-	std::cerr << " -> " << inet_ntoa(addr_ans.sin_addr);
-	std::cerr << " Net(1):" << inet_ntoa(addr1.sin_addr);
-	std::cerr << " Net(2):" << inet_ntoa(addr2.sin_addr);
+	std::cerr << " -> " << rs_inet_ntoa(addr_ans.sin_addr);
+	std::cerr << " Net(1):" << rs_inet_ntoa(addr1.sin_addr);
+	std::cerr << " Net(2):" << rs_inet_ntoa(addr2.sin_addr);
 	std::cerr << std::endl;
 
 
-        //CHECK( 0 == strcmp(addr_ans_str.c_str(), inet_ntoa(addr1.sin_addr)));
-        //CHECK( 0 == strcmp(addr_ans_str.c_str(), inet_ntoa(addr2.sin_addr)));
+        //CHECK( 0 == strcmp(addr_ans_str.c_str(), rs_inet_ntoa(addr1.sin_addr)));
+        //CHECK( 0 == strcmp(addr_ans_str.c_str(), rs_inet_ntoa(addr2.sin_addr)));
 
         REPORT("Test Local Address Manipulation");
 	return true;
@@ -264,12 +264,12 @@ bool test_address_listen()
 
 	sockaddr_clear(&addr2);
 	addr2.sin_family = AF_INET;
-	addr2.sin_addr = getPreferredInterface(); // returns best addr.
+	getPreferredInterface(addr2.sin_addr); // returns best addr.
 	addr2.sin_port = htons(13245);
 
 	sockaddr_clear(&addr3);
 	addr3.sin_family = AF_INET;
-	addr3.sin_addr = getPreferredInterface(); // returns best addr.
+	getPreferredInterface(addr3.sin_addr); // returns best addr.
 	addr3.sin_port = htons(23451);
 
 	/* test bind to loopback, and preferred interfaces */
@@ -293,7 +293,7 @@ bool test_bind_addr(struct sockaddr_in addr)
 
         std::cerr << "\tAddress Family: " << (int) addr.sin_family;
         std::cerr << std::endl;
-        std::cerr << "\tAddress: " << inet_ntoa(addr.sin_addr);
+        std::cerr << "\tAddress: " << rs_inet_ntoa(addr.sin_addr);
         std::cerr << std::endl;
         std::cerr << "\tPort: " << ntohs(addr.sin_port);
         std::cerr << std::endl;

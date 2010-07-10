@@ -36,27 +36,86 @@
 
 
 bool test_iface();
+bool test_iface_loop();
 
 int main(int argc, char **argv)
 {
+	bool repeat = false;
+	if (argc > 1)
+	{
+		repeat = true;
+	}
 
 	test_iface();
+
+	if (repeat)
+	{
+		test_iface_loop();
+	}
+
 	return 1;
 }
 
-	/* test 1: byte manipulation */
+	/* test 1: single check if interfaces */
 bool test_iface()
 {
-	struct in_addr pref_iface  = getPreferredInterface(); 
-	std::list<std::string> ifaces = getLocalInterfaces();
-	std::list<std::string>::iterator it;
+	struct in_addr pref_iface;
+	std::list<struct in_addr> ifaces;
+	std::list<struct in_addr>::iterator it;
+
+	getPreferredInterface(pref_iface); 
+	getLocalInterfaces(ifaces);
+
 	std::cerr << "test_iface()" << std::endl;
 	for(it = ifaces.begin(); it != ifaces.end(); it++)
 	{
-		std::cerr << "available iface: " << *it << std::endl;
+		std::cerr << "available iface: " << rs_inet_ntoa(*it) << std::endl;
 	}
-	std::cerr << "preferred " << inet_ntoa(pref_iface) << std::endl;
+	std::cerr << "preferred " << rs_inet_ntoa(pref_iface) << std::endl;
 
+	return true;
+}
+
+	/* test 2: catch changing interfaces */
+bool test_iface_loop()
+{
+	std::cerr << "test_iface_loop()" << std::endl;
+	struct in_addr curr_pref_iface;
+	getPreferredInterface(curr_pref_iface); 
+	time_t start = time(NULL);
+	while(1)
+	{
+		struct in_addr pref_iface;
+		std::list<struct in_addr> ifaces;
+		std::list<struct in_addr>::iterator it;
+
+		getPreferredInterface(pref_iface); 
+		getLocalInterfaces(ifaces);
+
+
+		std::cerr << "T(" << time(NULL) - start << ") ";
+
+		for(it = ifaces.begin(); it != ifaces.end(); it++)
+		{
+			std::cerr << " I: " << rs_inet_ntoa(*it);
+		}
+		std::cerr << " P: " << rs_inet_ntoa(pref_iface) << std::endl;
+
+		if (curr_pref_iface.s_addr !=
+			pref_iface.s_addr)
+		{
+			std::cerr << "+++++++++++++ Address CHANGED ++++++++++";
+			std::cerr << std::endl;
+			std::cerr << "+++++++++++++ Address CHANGED ++++++++++";
+			std::cerr << std::endl;
+			std::cerr << "+++++++++++++ Address CHANGED ++++++++++";
+			std::cerr << std::endl;
+
+			curr_pref_iface = pref_iface;
+		}
+
+		sleep(1);
+	}
 	return true;
 }
 

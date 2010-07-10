@@ -65,7 +65,7 @@ void    pqiConnectCbDummy::peerConnectRequest(std::string id,
 {
 	std::cerr << "pqiConnectCbDummy::peerConnectRequest()";
 	std::cerr << " id: " << id;
-	std::cerr << " raddr: " << inet_ntoa(raddr.sin_addr);
+	std::cerr << " raddr: " << rs_inet_ntoa(raddr.sin_addr);
 	std::cerr << ":" << ntohs(raddr.sin_port);
 	std::cerr << " source: " << source;
 	std::cerr << std::endl;
@@ -76,7 +76,7 @@ void    pqiConnectCbDummy::stunStatus(std::string id, struct sockaddr_in raddr,
 							uint32_t type, uint32_t flags)
 {
 	std::cerr << "pqiConnectCbDummy::stunStatus()";
-	std::cerr << " idhash: " << RsUtil::BinToHex(id) << " raddr: " << inet_ntoa(raddr.sin_addr);
+	std::cerr << " idhash: " << RsUtil::BinToHex(id) << " raddr: " << rs_inet_ntoa(raddr.sin_addr);
 	std::cerr << ":" << ntohs(raddr.sin_port);
 	std::cerr << " type: " << type;
 	std::cerr << " flags: " << flags;

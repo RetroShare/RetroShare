@@ -19,25 +19,16 @@ endif
 # MAC_I386_BUILD = 1
 # MAC_PPC_BUILD = 1
 
-#MAC_I386_BUILD = 1
+MAC_I386_BUILD = 1
 #MAC_PPC_BUILD = 1
 
 ifndef MAC_I386_BUILD
 	MAC_PPC_BUILD = 1
 endif
 
-# flags for components....
-#PQI_USE_SSLONLY = 1
-#PQI_USE_XPGP = 1
+UPNPC_DIR=../../../../../../src/miniupnpc-1.0
 
-#PQI_USE_PROXY = 1
-#PQI_USE_CHANNELS = 1
-#USE_FILELOOK = 1
-
-SSL_DIR=../../../../../src/openssl-0.9.7g-xpgp-0.1c
-UPNPC_DIR=../../../../../src/miniupnpc-1.0
-
-include $(RS_TOP_DIR)/scripts/checks.mk
+include $(RS_TOP_DIR)/tests/scripts/checks.mk
 
 ############ ENFORCE DIRECTORY NAMING ########################
 
@@ -73,59 +64,13 @@ CFLAGS += $(INCLUDE)
 
 # This Line is for Universal BUILD for 10.4 + 10.5 
 # (but unlikely to work unless Qt Libraries are build properly)
-# CFLAGS += -isysroot /Developer/SDKs/MacOSX10.4u.sdk 
-
-ifdef PQI_USE_XPGP
-        INCLUDE += -I $(SSL_DIR)/include
-        CFLAGS += -DPQI_USE_XPGP
-endif
-
-ifdef PQI_USE_SSLONLY
-        CFLAGS += -DPQI_USE_SSLONLY
-endif
-
-ifdef PQI_USE_PROXY
-	CFLAGS += -DPQI_USE_PROXY
-endif
-
-ifdef PQI_USE_CHANNELS
-	CFLAGS += -DPQI_USE_CHANNELS
-endif
-
-ifdef USE_FILELOOK
-	CFLAGS += -DUSE_FILELOOK
-endif
-
+#CFLAGS += -isysroot /Developer/SDKs/MacOSX10.5.sdk 
 
 # RSCFLAGS = -Wall -O3 $(INCLUDE) 
 
 #########################################################################
 # OS Compile Options
 #########################################################################
-
-# For the SSL BIO compilation. (Copied from OpenSSL compilation flags)
-BIOCC  = gcc
-
-
-# Flags for architecture builds. 
-ifdef MAC_I386_BUILD
-	BIOCFLAGS = -arch i386 -I $(SSL_DIR)/include -DOPENSSL_SYSNAME_MACOSX -DOPENSSL_THREADS -D_REENTRANT -DOPENSSL_NO_KRB5 -O3 -fomit-frame-pointer -fno-common 
-endif
-
-ifdef MAC_PPC_BUILD
-	BIOCFLAGS = -arch ppc -I $(SSL_DIR)/include -DOPENSSL_SYSNAME_MACOSX -DOPENSSL_THREADS -D_REENTRANT -DOPENSSL_NO_KRB5 -O3 -fomit-frame-pointer -fno-common -DB_ENDIAN
-endif
-
-
-
-# MacOSX flags
-# BIOCFLAGS =  -I $(SSL_DIR)/include -DOPENSSL_SYSNAME_MACOSX -DOPENSSL_THREADS -D_REENTRANT -DOPENSSL_NO_KRB5 -O3 -fomit-frame-pointer -fno-common -DB_ENDIAN
-
-# This is for the Universal Build...
-# but is unlikely to work... as options are PPC specific.... 
-# 
-# BIOCFLAGS =  -arch ppc -arch i386 -I $(SSL_DIR)/include -DOPENSSL_SYSNAME_MACOSX -DOPENSSL_THREADS -D_REENTRANT -DOPENSSL_NO_KRB5 -O3 -fomit-frame-pointer -fno-common -DB_ENDIAN
-
 
 #########################################################################
 # OS specific Linking.
@@ -135,7 +80,7 @@ LIBS = -Wl,-search_paths_first
 
 # for Univeral BUILD
 # LIBS += -arch ppc -arch i386
-# LIBS += -Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk -arch ppc -arch i386
+#LIBS += -Wl,-syslibroot,/Developer/SDKs/MacOSX10.5u.sdk 
 
 LIBS +=  -L$(LIBDIR) -lretroshare 
 ifdef PQI_USE_XPGP

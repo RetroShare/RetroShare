@@ -128,10 +128,8 @@ std::string socket_errorType(int err)
 #include <net/if.h> 
 #include <sys/ioctl.h> 
 
-std::list<std::string> getLocalInterfaces()
+bool getLocalInterfaces(std::list<struct in_addr> &addrs)
 {
-	std::list<std::string> addrs;
-	
 	int sock = 0;
 	struct ifreq ifreq;
 
@@ -143,17 +141,17 @@ std::list<std::string> getLocalInterfaces()
 	{
 		pqioutput(PQL_ALERT, pqinetzone, 
 			"Cannot Determine Local Addresses!");
-                return addrs;
+		return false;
 	}
 
 	if (!ifptr)
 	{
 		pqioutput(PQL_ALERT, pqinetzone, 
 			"getLocalInterfaces(): ERROR if_nameindex == NULL");
+		return false;
 	}
 
 	// loop through the interfaces.
-	//for(; *(char *)ifptr != 0; ifptr++)
 	for(; ifptr->if_index != 0; ifptr++)
 	{
 		//copy in the interface name to look up address of
@@ -170,7 +168,7 @@ std::list<std::string> getLocalInterfaces()
 		{
 			struct sockaddr_in *aptr = 
 				(struct sockaddr_in *) &ifreq.ifr_addr;
-			const char *astr=inet_ntoa(aptr -> sin_addr);
+			std::string astr =rs_inet_ntoa(aptr -> sin_addr);
 
 			std::ostringstream out;
 			out << "Iface: ";
@@ -193,14 +191,14 @@ std::list<std::string> getLocalInterfaces()
 			if((ifreq.ifr_flags & IFF_UP) == 0) continue ;
 			if((ifreq.ifr_flags & IFF_RUNNING) == 0) continue ;
 
-			addrs.push_back(astr);
+			addrs.push_back(aptr->sin_addr);
 		}
 	}
 	// free socket -> or else run out of fds.
 	close(sock);
 
 	if_freenameindex(iflist);
-	return addrs;
+	return (addrs.size() > 0);
 }
 
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
@@ -317,10 +315,8 @@ std::string socket_errorType(int err)
 // A function to determine the interfaces on your computer....
 // No idea of how to do this in windows....
 // see if it compiles.
-std::list<std::string> getLocalInterfaces()
+bool getLocalInterfaces(std::list<struct in_addr> &addrs)
 {
-	std::list<std::string> addrs;
-
 
 	/* USE MIB IPADDR Interface */
 	PMIB_IPADDRTABLE iptable =  NULL;
@@ -345,16 +341,16 @@ std::list<std::string> getLocalInterfaces()
 
 		out << "Iface(" << iptable->table[i].dwIndex << ") ";
 		addr.s_addr = iptable->table[i].dwAddr;
-		out << " => " << inet_ntoa(addr);
+		out << " => " << rs_inet_ntoa(addr);
 		out << std::endl;
 		pqioutput(PQL_DEBUG_BASIC, pqinetzone, out.str());
 
-		addrs.push_back(inet_ntoa(addr));
+		addrs.push_back(addr.sin_addr));
 	}
 
 	free (iptable);
 
-	return addrs;
+	return (addrs.size() > 0);
 }
 
 // implement the improved unix inet address fn.
@@ -383,7 +379,7 @@ in_addr_t inet_network(const char *inet_name)
 	{
 #ifdef NET_DEBUG
 //		std::cerr << "inet_network(" << inet_name << ") : ";
-//		std::cerr << inet_ntoa(addr) << std::endl;
+//		std::cerr << rs_inet_ntoa(addr) << std::endl;
 #endif
 		return ntohl(inet_netof(addr));
 	}
@@ -411,7 +407,7 @@ in_addr_t pqi_inet_netof(struct in_addr addr)
 	unsigned long cbit = haddr & 0xffffff00UL;
 
 #ifdef NET_DEBUG
-	std::cerr << "inet_netof(" << inet_ntoa(addr) << ") ";
+	std::cerr << "inet_netof(" << rs_inet_ntoa(addr) << ") ";
 #endif
 
 	if (!((haddr >> 31) | 0x0UL)) // MSB = 0
@@ -487,9 +483,9 @@ int inaddr_cmp(struct sockaddr_in addr1, struct sockaddr_in addr2 )
 {
 #ifdef NET_DEBUG
 	std::ostringstream out;
-	out << "inaddr_cmp(" << inet_ntoa(addr1.sin_addr);
+	out << "inaddr_cmp(" << rs_inet_ntoa(addr1.sin_addr);
 	out << "-" << addr1.sin_addr.s_addr;
-	out << "," << inet_ntoa(addr2.sin_addr);
+	out << "," << rs_inet_ntoa(addr2.sin_addr);
 	out << "-" << addr2.sin_addr.s_addr << ")" << std::endl;
 	pqioutput(PQL_DEBUG_BASIC, pqinetzone, out.str());
 #endif
@@ -511,8 +507,8 @@ int inaddr_cmp(struct sockaddr_in addr1, unsigned long addr2)
 	inaddr_tmp.s_addr = addr2;
 
 	std::ostringstream out;
-	out << "inaddr_cmp2(" << inet_ntoa(addr1.sin_addr);
-	out << " vs " << inet_ntoa(inaddr_tmp);
+	out << "inaddr_cmp2(" << rs_inet_ntoa(addr1.sin_addr);
+	out << " vs " << rs_inet_ntoa(inaddr_tmp);
 	out << " /or/ ";
 	out << std::hex << std::setw(10) << addr1.sin_addr.s_addr;
 	out << " vs "   << std::setw(10) << addr2 << ")" << std::endl;
@@ -529,11 +525,10 @@ int inaddr_cmp(struct sockaddr_in addr1, unsigned long addr2)
 }
 
 
-struct in_addr getPreferredInterface() // returns best addr.
+bool 	getPreferredInterface(struct in_addr &prefAddr) // returns best addr.
 {
-
-	std::list<std::string> addrs =  getLocalInterfaces();
-	std::list<std::string>::iterator it;
+	std::list<struct in_addr> addrs;
+	std::list<struct in_addr>::iterator it;
 	struct in_addr addr_zero = {0}, addr_loop = {0}, addr_priv = {0}, addr_ext = {0}, addr = {0};
 
 	bool found_zero = false;
@@ -541,22 +536,38 @@ struct in_addr getPreferredInterface() // returns best addr.
 	bool found_priv = false;
 	bool found_ext = false;
 
+	if (!getLocalInterfaces(addrs))
+	{
+		return false;
+	}
+
 	// find the first of each of these.
 	// if ext - take first.
 	// if no ext -> first priv
 	// if no priv -> first loopback.
 	
+#ifdef NET_DEBUG
+	std::cerr << "getPreferredInterface() " << addrs.size() << " interfaces." << std::endl;
+#endif
+
 	for(it = addrs.begin(); it != addrs.end(); it++)
 	{
-		inet_aton((*it).c_str(), &addr);
+		struct in_addr addr = *it;
 
-		//std::cout << "Examining addr = " << (void*)addr.s_addr << std::endl ;
+#ifdef NET_DEBUG
+		std::cerr << "Examining addr: " << rs_inet_ntoa(addr);
+		std::cerr << " => " << (uint32_t) addr.s_addr << std::endl ;
+#endif
 
 		// for windows silliness (returning 0.0.0.0 as valid addr!).
 		if (addr.s_addr == 0)
 		{
 			if (!found_zero)
 			{
+#ifdef NET_DEBUG
+				std::cerr << "\tFound Zero Address" << std::endl ;
+#endif
+
 				found_zero = true;
 				addr_zero = addr;
 			}
@@ -565,6 +576,10 @@ struct in_addr getPreferredInterface() // returns best addr.
 		{
 			if (!found_loopback)
 			{
+#ifdef NET_DEBUG
+				std::cerr << "\tFound Loopback Address" << std::endl ;
+#endif
+
 				found_loopback = true;
 				addr_loop = addr;
 			}
@@ -573,6 +588,10 @@ struct in_addr getPreferredInterface() // returns best addr.
 		{
 			if (!found_priv)
 			{
+#ifdef NET_DEBUG
+				std::cerr << "\tFound Private Address" << std::endl ;
+#endif
+
 				found_priv = true;
 				addr_priv = addr;
 			}
@@ -582,7 +601,7 @@ struct in_addr getPreferredInterface() // returns best addr.
 			if (!found_ext)
 			{
 #ifdef NET_DEBUG
-				std::cerr << "Found external address " << (void*)addr.s_addr << std::endl ;
+				std::cerr << "\tFound Other Address (Ext?) " << std::endl ;
 #endif
 				found_ext = true;
 				addr_ext = addr;
@@ -591,30 +610,42 @@ struct in_addr getPreferredInterface() // returns best addr.
 	}
 
 	if(found_ext)					// external address is best.
-		return addr_ext ;
+	{
+		prefAddr = addr_ext;
+		return true;
+	}
 
 	if (found_priv)
-		return addr_priv;
+	{
+		prefAddr = addr_priv;
+		return true;
+	}
 
 	// next bit can happen under windows, 
 	// a general address is still
 	// preferable to a loopback device.
 	if (found_zero)
-		return addr_zero;
+	{
+		prefAddr = addr_zero;
+		return true;
+	}
 
 	if (found_loopback)
-		return addr_loop;
+	{
+		prefAddr = addr_loop;
+		return true;
+	}
 
 	// shound be 255.255.255.255 (error).
-	addr.s_addr = 0xffffffff;
-	return addr;
+	prefAddr.s_addr = 0xffffffff;
+	return false;
 }
 
 bool    sameNet(struct in_addr *addr, struct in_addr *addr2)
 {
 #ifdef NET_DEBUG
-	std::cerr << "sameNet: " << inet_ntoa(*addr);
-	std::cerr << " VS " << inet_ntoa(*addr2);
+	std::cerr << "sameNet: " << rs_inet_ntoa(*addr);
+	std::cerr << " VS " << rs_inet_ntoa(*addr2);
 	std::cerr << std::endl;
 #endif
 	struct in_addr addrnet, addrnet2;
@@ -623,8 +654,8 @@ bool    sameNet(struct in_addr *addr, struct in_addr *addr2)
 	addrnet2.s_addr = inet_netof(*addr2);
 
 #ifdef NET_DEBUG
-	std::cerr << " (" << inet_ntoa(addrnet);
-	std::cerr << " =?= " << inet_ntoa(addrnet2);
+	std::cerr << " (" << rs_inet_ntoa(addrnet);
+	std::cerr << " =?= " << rs_inet_ntoa(addrnet2);
 	std::cerr << ")" << std::endl;
 #endif
 
@@ -703,7 +734,7 @@ bool LookupDNSAddr(std::string name, struct sockaddr_in &addr)
 
 #ifdef NET_DEBUG
 		std::cerr << "LookupDNSAddr() getaddrinfo found address" << std::endl;
-		std::cerr << "addr: " << inet_ntoa(addr.sin_addr) << std::endl;
+		std::cerr << "addr: " << rs_inet_ntoa(addr.sin_addr) << std::endl;
 		std::cerr << "port: " << ntohs(addr.sin_port) << std::endl;
 #endif
 		return true;

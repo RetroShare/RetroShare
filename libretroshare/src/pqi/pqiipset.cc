@@ -198,7 +198,7 @@ void 	pqiIpAddrList::printIpAddressList(std::ostream &out) const
 	time_t now = time(NULL);
 	for(it = mAddrs.begin(); it != mAddrs.end(); it++)
 	{
-		out << inet_ntoa(it->mAddr.sin_addr) << ":" 
+		out << rs_inet_ntoa(it->mAddr.sin_addr) << ":" 
 					<< ntohs(it->mAddr.sin_port) << " ( " 
 					<< now - it->mSeenTime << " old) " << std::endl;
 	

@@ -170,8 +170,8 @@ virtual bool dhtPublish(std::string id,
 		uint32_t type, std::string sign)
 {
 	std::cerr << "DhtMgrTester::dhtPublish() id: " << RsUtil::BinToHex(id);
-	std::cerr << " laddr: " << inet_ntoa(laddr.sin_addr) << " lport: " << ntohs(laddr.sin_port);
-	std::cerr << " raddr: " << inet_ntoa(raddr.sin_addr) << " rport: " << ntohs(raddr.sin_port);
+	std::cerr << " laddr: " << rs_inet_ntoa(laddr.sin_addr) << " lport: " << ntohs(laddr.sin_port);
+	std::cerr << " raddr: " << rs_inet_ntoa(raddr.sin_addr) << " rport: " << ntohs(raddr.sin_port);
 	std::cerr << " type: " << type << " sign: " << sign;
 	std::cerr << std::endl;
 

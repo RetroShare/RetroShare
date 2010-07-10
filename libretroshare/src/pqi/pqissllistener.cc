@@ -165,7 +165,7 @@ int	pqissllistenbase::setuplisten()
 		out << "pqissllistenbase::setuplisten()";
 		out << "\tAddress Family: " << (int) laddr.sin_family;
 		out << std::endl;
-		out << "\tSetup Address: " << inet_ntoa(laddr.sin_addr);
+		out << "\tSetup Address: " << rs_inet_ntoa(laddr.sin_addr);
 		out << std::endl;
 		out << "\tSetup Port: " << ntohs(laddr.sin_port);
 
@@ -339,7 +339,7 @@ int	pqissllistenbase::acceptconnection()
 	{
 	  std::ostringstream out;
 	  out << "Accepted Connection from ";
-	  out << inet_ntoa(remote_addr.sin_addr) << ":" << ntohs(remote_addr.sin_port);
+	  out << rs_inet_ntoa(remote_addr.sin_addr) << ":" << ntohs(remote_addr.sin_port);
 	  pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, out.str());
 	}
 
@@ -676,7 +676,7 @@ int pqissllistener::completeConnection(int fd, SSL *ssl, struct sockaddr_in &rem
 	{
 		std::ostringstream out;
 		out << "No Matching Certificate";
-		out << " for Connection:" << inet_ntoa(remote_addr.sin_addr);
+		out << " for Connection:" << rs_inet_ntoa(remote_addr.sin_addr);
 		out << std::endl;
 		out << "pqissllistenbase: Will shut it down!" << std::endl;
   	        pqioutput(PQL_WARNING, pqissllistenzone, out.str());

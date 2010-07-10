@@ -143,7 +143,7 @@ std::ostream &RsTlvIpAddressInfo::print(std::ostream &out, uint16_t indent)
 	uint16_t int_Indent = indent + 2;
 
 	printIndent(out, int_Indent);
-	out << "Address:" << inet_ntoa(addr.sin_addr);
+	out << "Address:" << rs_inet_ntoa(addr.sin_addr);
         out << ":" << htons(addr.sin_port) << std::endl;
 
 	printIndent(out, int_Indent);

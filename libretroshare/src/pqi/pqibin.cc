@@ -27,6 +27,8 @@
 
 
 #include "pqi/pqibin.h"
+#include "util/rsnet.h"
+
 
 BinFileInterface::BinFileInterface(const char *fname, int flags)
 	:bin_flags(flags), buf(NULL), hash(NULL), bcount(0)
@@ -376,7 +378,7 @@ NetBinDummy::NetBinDummy(PQInterface *parent, std::string id, uint32_t t)
 int NetBinDummy::connect(struct sockaddr_in raddr)
 {
 	std::cerr << "NetBinDummy::connect(";
-	std::cerr << inet_ntoa(raddr.sin_addr) << ":";
+	std::cerr << rs_inet_ntoa(raddr.sin_addr) << ":";
 	std::cerr << htons(raddr.sin_port);
 	std::cerr << ") ";
 	printNetBinID(std::cerr, PeerId(), type);

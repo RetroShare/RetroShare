@@ -203,9 +203,9 @@ bool p3DhtMgr::setExternalInterface(
 
 #ifdef DHT_DEBUG
         std::cerr << "p3DhtMgr::setExternalInterface()";
-        std::cerr << " laddr: " << inet_ntoa(ownEntry.laddr.sin_addr);
+        std::cerr << " laddr: " << rs_inet_ntoa(ownEntry.laddr.sin_addr);
 	std::cerr << " lport: " << ntohs(ownEntry.laddr.sin_port);
-        std::cerr << " raddr: " << inet_ntoa(ownEntry.raddr.sin_addr);
+        std::cerr << " raddr: " << rs_inet_ntoa(ownEntry.raddr.sin_addr);
 	std::cerr << " rport: " << ntohs(ownEntry.raddr.sin_port);
         std::cerr << " type: " << ownEntry.type;
         std::cerr << " state: " << ownEntry.state;
@@ -215,9 +215,9 @@ bool p3DhtMgr::setExternalInterface(
 	/* Log External Interface too */
 	std::ostringstream out;
         out << "p3DhtMgr::setExternalInterface()";
-        out << " laddr: " << inet_ntoa(ownEntry.laddr.sin_addr);
+        out << " laddr: " << rs_inet_ntoa(ownEntry.laddr.sin_addr);
 	out << " lport: " << ntohs(ownEntry.laddr.sin_port);
-        out << " raddr: " << inet_ntoa(ownEntry.raddr.sin_addr);
+        out << " raddr: " << rs_inet_ntoa(ownEntry.raddr.sin_addr);
 	out << " rport: " << ntohs(ownEntry.raddr.sin_port);
         out << " type: " << ownEntry.type;
         out << " state: " << ownEntry.state;
@@ -608,9 +608,9 @@ int p3DhtMgr::checkOwnDHTKeys()
 #ifdef DHT_DEBUG
 	        	std::cerr << "PUBLISH: ";
 	        	std::cerr << " hash1: " << RsUtil::BinToHex(peer.hash1);
-	        	std::cerr << " laddr: " << inet_ntoa(peer.laddr.sin_addr);
+	        	std::cerr << " laddr: " << rs_inet_ntoa(peer.laddr.sin_addr);
 			std::cerr << ":" << ntohs(peer.laddr.sin_port);
-	        	std::cerr << "   raddr: " << inet_ntoa(peer.raddr.sin_addr);
+	        	std::cerr << "   raddr: " << rs_inet_ntoa(peer.raddr.sin_addr);
 			std::cerr << ":" << ntohs(peer.raddr.sin_port);
 	        	std::cerr << "   type: " << peer.type;
 			std::cerr << std::endl;
@@ -621,9 +621,9 @@ int p3DhtMgr::checkOwnDHTKeys()
 				std::ostringstream out;
 				out << "p3DhtMgr::checkOwnDHTKeys() PUBLISH OWN ADDR:"; 
 	        		out << " hash1: " << RsUtil::BinToHex(peer.hash1);
-			        out << " laddr: " << inet_ntoa(peer.laddr.sin_addr);
+			        out << " laddr: " << rs_inet_ntoa(peer.laddr.sin_addr);
 				out << " :" << ntohs(peer.laddr.sin_port);
-			        out << " raddr: " << inet_ntoa(peer.raddr.sin_addr);
+			        out << " raddr: " << rs_inet_ntoa(peer.raddr.sin_addr);
 				out << ":" << ntohs(peer.raddr.sin_port);
 			        out << " type: " << peer.type;
 			
@@ -1358,9 +1358,9 @@ bool p3DhtMgr::dhtPublish(std::string idhash,
 	std::cerr << "p3DhtMgr::dhtPublish()" << std::endl;
 
        	std::cerr << "PUBLISHing: idhash: " << RsUtil::BinToHex(idhash);
-       	std::cerr << " laddr: " << inet_ntoa(laddr.sin_addr);
+       	std::cerr << " laddr: " << rs_inet_ntoa(laddr.sin_addr);
 	std::cerr << ":" << ntohs(laddr.sin_port);
-       	std::cerr << "   raddr: " << inet_ntoa(raddr.sin_addr);
+       	std::cerr << "   raddr: " << rs_inet_ntoa(raddr.sin_addr);
 	std::cerr << ":" << ntohs(raddr.sin_port);
        	std::cerr << "   type: " << type;
        	std::cerr << "   sign: " << sign;
@@ -1372,17 +1372,17 @@ bool p3DhtMgr::dhtPublish(std::string idhash,
 
 	std::ostringstream out;
 	out << "RSDHT:" << std::setw(2) << std::setfill('0') << DHT_MODE_SEARCH << ": ";
-	out << "IPL="   << inet_ntoa(laddr.sin_addr) << ":"  << ntohs(laddr.sin_port) << ", ";
-	out << "IPE="   << inet_ntoa(raddr.sin_addr) << ":"  << ntohs(raddr.sin_port) << ", ";
+	out << "IPL="   << rs_inet_ntoa(laddr.sin_addr) << ":"  << ntohs(laddr.sin_port) << ", ";
+	out << "IPE="   << rs_inet_ntoa(raddr.sin_addr) << ":"  << ntohs(raddr.sin_port) << ", ";
 	out << "type="  << std::setw(4) << std::setfill('0') << std::hex << type << ", ";
 
 /*******
 	char valuearray[1024];
 	snprintf(valuearray, 1024, "RSDHT:%02d: IPL=%s:%d, IPE=%s:%d, type=%04X,",
 			DHT_MODE_SEARCH,
-	                inet_ntoa(laddr.sin_addr),
+	                rs_inet_ntoa(laddr.sin_addr),
 	                ntohs(laddr.sin_port),
-	                inet_ntoa(raddr.sin_addr),
+	                rs_inet_ntoa(raddr.sin_addr),
 	                ntohs(raddr.sin_port),
 	                type);
 
@@ -1712,9 +1712,9 @@ bool p3DhtMgr::dhtResultSearch(std::string idhash,
 			/* Log */
 			std::ostringstream out;
 		        out << "p3DhtMgr::dhtSearchResult() for Id: " << it->first;
-		        out << " laddr: " << inet_ntoa(laddr.sin_addr);
+		        out << " laddr: " << rs_inet_ntoa(laddr.sin_addr);
 			out << ":" << ntohs(laddr.sin_port);
-		        out << " raddr: " << inet_ntoa(raddr.sin_addr);
+		        out << " raddr: " << rs_inet_ntoa(raddr.sin_addr);
 			out << ":" << ntohs(raddr.sin_port);
 		        out << " type: " << ownEntry.type;
 		
@@ -1798,8 +1798,8 @@ void printDhtPeerEntry(dhtPeerEntry *ent, std::ostream &out)
 	out << " notifyPending: " << ent->notifyPending;
 	out << " notifyTS: " << ent->notifyTS;
 	out << std::endl;
-	out << " laddr: " << inet_ntoa(ent->laddr.sin_addr) << ":" << ntohs(ent->laddr.sin_port);
-	out << " raddr: " << inet_ntoa(ent->raddr.sin_addr) << ":" << ntohs(ent->raddr.sin_port);
+	out << " laddr: " << rs_inet_ntoa(ent->laddr.sin_addr) << ":" << ntohs(ent->laddr.sin_port);
+	out << " raddr: " << rs_inet_ntoa(ent->raddr.sin_addr) << ":" << ntohs(ent->raddr.sin_port);
 	out << " type: " << ent->type;
 	out << std::endl;
 	out << " hash1: " << RsUtil::BinToHex(ent->hash1);

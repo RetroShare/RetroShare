@@ -24,6 +24,7 @@
  */
 
 #include "util/rsnet.h"
+#include "util/rsthreads.h"
 #include <string.h>
 
 #ifdef WINDOWS_SYS
@@ -146,5 +147,18 @@ std::ostream &operator<<(std::ostream &out, const struct sockaddr_in &addr)
 	out << "[" << inet_ntoa(addr.sin_addr) << ":";
 	out << htons(addr.sin_port) << "]";
 	return out;
+}
+
+
+/* thread-safe version of inet_ntoa */
+
+static RsMutex inetMtx;
+
+std::string rs_inet_ntoa(struct in_addr in)
+{
+	RsStackMutex stack(inetMtx);
+
+	std::string addr(inet_ntoa(in));
+	return addr;
 }
 

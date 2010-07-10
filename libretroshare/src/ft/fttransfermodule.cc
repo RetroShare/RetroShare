@@ -27,7 +27,7 @@
  * #define FT_DEBUG 1
  *****/
 
-#define FT_DEBUG 1
+//#define FT_DEBUG 1
 #include "fttransfermodule.h"
 
 /*************************************************************************

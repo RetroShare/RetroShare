@@ -35,6 +35,7 @@
 
 #include <openssl/evp.h>
 #include <openssl/x509.h>
+#include <openssl/ssl.h>
 
 #include <inttypes.h>
 #include <string>
@@ -46,6 +47,21 @@
 /********************************************************************************/
 /********************************************************************************/
 /********************************************************************************/
+
+
+// IF we are compiling against ssl0.9.7 - these functions don't exist.
+
+#if !defined(EVP_CIPHER_CTX_rand_key)
+	#define SSLFNS_ADD_CIPHER_CTX_RAND_KEY  1
+#endif
+
+#if defined(SSLFNS_ADD_CIPHER_CTX_RAND_KEY)
+
+int EVP_CIPHER_CTX_rand_key(EVP_CIPHER_CTX *ctx, unsigned char *key);
+
+#endif
+
+
 
 X509_REQ *GenerateX509Req(
 		std::string pkey_file, std::string passwd,

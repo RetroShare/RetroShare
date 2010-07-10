@@ -254,7 +254,7 @@ bool UdpSorter::locked_handleStunPkt(void *data, int size, struct sockaddr_in &f
 	{
 #ifdef DEBUG_UDP_SORTER
 		std::cerr << "UdpSorter::handleStunPkt() got Request from: ";
-		std::cerr << inet_ntoa(from.sin_addr) << ":" << ntohs(from.sin_port);
+		std::cerr << rs_inet_ntoa(from.sin_addr) << ":" << ntohs(from.sin_port);
 		std::cerr << std::endl;
 #endif
 		{
@@ -292,7 +292,7 @@ bool UdpSorter::locked_handleStunPkt(void *data, int size, struct sockaddr_in &f
 		{
 #ifdef DEBUG_UDP_SORTER
 			std::cerr << "UdpSorter::handleStunPkt() got Ext Addr: ";
-			std::cerr << inet_ntoa(eAddr.sin_addr) << ":" << ntohs(eAddr.sin_port);
+			std::cerr << rs_inet_ntoa(eAddr.sin_addr) << ":" << ntohs(eAddr.sin_port);
 			std::cerr << std::endl;
 #endif
 			{
@@ -339,7 +339,7 @@ bool    UdpSorter::externalAddr(struct sockaddr_in &external, uint8_t &stable)
 			stable = 0;
 
 #ifdef DEBUG_UDP_SORTER
-		std::cerr << "UdpSorter::externalAddr() eaddr:" << inet_ntoa(external.sin_addr);
+		std::cerr << "UdpSorter::externalAddr() eaddr:" << rs_inet_ntoa(external.sin_addr);
 		std::cerr << ":" << ntohs(external.sin_port) << " stable: " << (int) stable;
 		std::cerr << std::endl;
 #endif
@@ -395,9 +395,9 @@ int     UdpSorter::doStun(struct sockaddr_in stun_addr)
 #ifdef DEBUG_UDP_SORTER
 	std::ostringstream out;
 	out << "UdpSorter::doStun() Sent Stun Packet(" << sentlen << ") from:";
-	out << inet_ntoa(laddr.sin_addr) << ":" << ntohs(laddr.sin_port);
+	out << rs_inet_ntoa(laddr.sin_addr) << ":" << ntohs(laddr.sin_port);
 	out << " to:";
-	out << inet_ntoa(stun_addr.sin_addr) << ":" << ntohs(stun_addr.sin_port);
+	out << rs_inet_ntoa(stun_addr.sin_addr) << ":" << ntohs(stun_addr.sin_port);
 
 	std::cerr << out.str() << std::endl;
 
@@ -436,7 +436,7 @@ bool    UdpStun_response(void *stun_pkt, int size, struct sockaddr_in &addr)
 #ifdef DEBUG_UDP_SORTER
 	std::ostringstream out;
 	out << "UdpSorter::response() Recvd a Stun Response, ext_addr: ";
-	out << inet_ntoa(addr.sin_addr) << ":" << ntohs(addr.sin_port);
+	out << rs_inet_ntoa(addr.sin_addr) << ":" << ntohs(addr.sin_port);
 	std::cerr << out.str() << std::endl;
 #endif
 
@@ -722,9 +722,9 @@ bool    UdpSorter::locked_recvdStun(const struct sockaddr_in &remote, const stru
 #ifdef DEBUG_UDP_SORTER
 	std::ostringstream out;
 	out << "UdpSorter::locked_recvdStun() from:";
-	out << inet_ntoa(remote.sin_addr) << ":" << ntohs(remote.sin_port);
+	out << rs_inet_ntoa(remote.sin_addr) << ":" << ntohs(remote.sin_port);
 	out << " claiming ExtAddr is:";
-	out << inet_ntoa(extaddr.sin_addr) << ":" << ntohs(extaddr.sin_port);
+	out << rs_inet_ntoa(extaddr.sin_addr) << ":" << ntohs(extaddr.sin_port);
 
 	std::cerr << out.str() << std::endl;
 #endif
@@ -841,9 +841,9 @@ bool    UdpSorter::locked_printStunList()
 	std::list<TouStunPeer>::iterator it;
 	for(it = mStunList.begin(); it != mStunList.end(); it++)
 	{
-		out << "id:" << RsUtil::BinToHex(it->id) << " addr: " << inet_ntoa(it->remote.sin_addr);
+		out << "id:" << RsUtil::BinToHex(it->id) << " addr: " << rs_inet_ntoa(it->remote.sin_addr);
 		out << ":" << htons(it->remote.sin_port);
-		out << " eaddr: " << inet_ntoa(it->eaddr.sin_addr);
+		out << " eaddr: " << rs_inet_ntoa(it->eaddr.sin_addr);
 		out << ":" << htons(it->eaddr.sin_port);
 		out << " failCount: " << it->failCount;
 		out << " lastSend: " << now - it->lastsend;
