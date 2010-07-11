@@ -529,7 +529,11 @@ bool 	getPreferredInterface(struct in_addr &prefAddr) // returns best addr.
 {
 	std::list<struct in_addr> addrs;
 	std::list<struct in_addr>::iterator it;
-	struct in_addr addr_zero = {0}, addr_loop = {0}, addr_priv = {0}, addr_ext = {0}, addr = {0};
+	struct in_addr addr_zero, addr_loop, addr_priv, addr_ext;
+
+#ifdef NET_DEBUG
+	struct in_addr addr;
+#endif
 
 	bool found_zero = false;
 	bool found_loopback = false;
@@ -540,6 +544,15 @@ bool 	getPreferredInterface(struct in_addr &prefAddr) // returns best addr.
 	{
 		return false;
 	}
+
+	memset(&addr_zero, 0, sizeof(addr_zero));
+	memset(&addr_loop, 0, sizeof(addr_loop));
+	memset(&addr_priv, 0, sizeof(addr_priv));
+	memset(&addr_ext, 0, sizeof(addr_ext));
+
+#ifdef NET_DEBUG
+	memset(&addr, 0, sizeof(addr));
+#endif
 
 	// find the first of each of these.
 	// if ext - take first.
@@ -918,4 +931,3 @@ int	WinToUnixError(int error)
 
 #endif
 /******************* WINDOWS SPECIFIC PART ******************/
-

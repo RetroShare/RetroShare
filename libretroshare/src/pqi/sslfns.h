@@ -51,7 +51,7 @@
 
 // IF we are compiling against ssl0.9.7 - these functions don't exist.
 
-#if !defined(EVP_CIPHER_CTX_rand_key)
+#if (OPENSSL_VERSION_NUMBER & 0xfffff000) < 0x00908000
 	#define SSLFNS_ADD_CIPHER_CTX_RAND_KEY  1
 #endif
 
