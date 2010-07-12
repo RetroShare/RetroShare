@@ -123,7 +123,10 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
   
     /* to hide the header  */
     //ui.msgSendList->header()->hide(); 
-  
+
+    /* sort send list by name ascending */
+    ui.msgSendList->sortItems(0, Qt::AscendingOrder);
+
     QActionGroup *grp = new QActionGroup(this);
     connect(grp, SIGNAL(triggered(QAction *)), this, SLOT(textAlign(QAction *)));
 
@@ -191,6 +194,9 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
     codeBackground = palette.color( QPalette::Active, QPalette::Midlight );
     
     ui.clearButton->hide();
+
+    /* set focus to subject */
+    ui.titleEdit->setFocus();
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
