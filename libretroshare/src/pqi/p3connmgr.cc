@@ -1014,8 +1014,6 @@ void p3ConnectMgr::netExtCheck()
 			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 		}
 
-		connMtx.unlock(); /* UNLOCK MUTEX */
-
 		if (mNetFlags.mExtAddrOk)
 		{
 #if defined(CONN_DEBUG_TICK) || defined(CONN_DEBUG_RESET)
@@ -1038,6 +1036,7 @@ void p3ConnectMgr::netExtCheck()
 #if defined(CONN_DEBUG_TICK) || defined(CONN_DEBUG_RESET)
 			std::cerr << "p3ConnectMgr::netExtCheck() Ext Unstable - Unreachable Check" << std::endl;
 #endif
+			connMtx.unlock(); /* UNLOCK MUTEX */
 			netUnreachableCheck();
 		}
 	}
