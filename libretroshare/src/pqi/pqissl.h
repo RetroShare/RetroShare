@@ -189,6 +189,7 @@ virtual int net_internal_fcntl_nonblock(int fd) { return unix_fcntl_nonblock(fd)
 	bool sameLAN; /* flag use to allow high-speed transfers */
 
 	int n_read_zero; /* a counter to determine if the connection is really dead */
+	time_t mReadZeroTS; /* timestamp of first READ_ZERO occurance */
 
 	int ssl_connect_timeout; /* timeout to ensure that we don't get stuck (can happen on udp!) */
 

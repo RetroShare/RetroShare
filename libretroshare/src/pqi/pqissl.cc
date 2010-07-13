@@ -63,6 +63,8 @@ const int PQISSL_UDP_FLAG = 0x02;
 ***********/
 
 static const int PQISSL_MAX_READ_ZERO_COUNT = 20;
+static const time_t PQISSL_MAX_READ_ZERO_TIME = 15; // 15 seconds of no data => reset. (atm HeartBeat pkt sent 5 secs)
+
 static const int PQISSL_SSL_CONNECT_TIMEOUT = 30;
 
 /********** PQI SSL STUFF ******************************************
@@ -97,7 +99,7 @@ pqissl::pqissl(pqissllistener *l, PQInterface *parent, p3ConnectMgr *cm)
 	readpkt(NULL), pktlen(0), 
 	attempt_ts(0),
 	net_attempt(0), net_failure(0), net_unreachable(0), 
-	sameLAN(false), n_read_zero(0), 
+	sameLAN(false), n_read_zero(0), mReadZeroTS(0), 
 	mConnectDelay(0), mConnectTS(0),
         mConnectTimeout(0), mTimeoutTS(0), mConnMgr(cm)
 
@@ -238,6 +240,7 @@ int 	pqissl::reset()
 	ssl_connection = NULL;
 	sameLAN = false;
 	n_read_zero = 0;
+	mReadZeroTS = 0;
 	total_len = 0 ;
         mTimeoutTS = 0;
 
@@ -1454,21 +1457,26 @@ int 	pqissl::readdata(void *data, int len)
 				 * and ZERO error.... we catch this case by counting how many times
 				 * it occurs in a row (cos the other one will not).
 				 */
+				if (n_read_zero == 0)
+				{
+					/* first read_zero */
+					mReadZeroTS = time(NULL);
+				}
 
 				++n_read_zero;
-                                out << "ssl read : SSL_ERROR_ZERO_RETURN -- Blocking the writing process while waiting for more information.";
-				out << std::endl;
-				out << " Has socket closed been properly closed? nReadZero: " << n_read_zero;
+                                out << "ssl read : SSL_ERROR_ZERO_RETURN : nReadZero: " << n_read_zero;
 				out << std::endl;
 
-				if (PQISSL_MAX_READ_ZERO_COUNT < n_read_zero)
+				if ((PQISSL_MAX_READ_ZERO_COUNT < n_read_zero)
+					&& (time(NULL) - mReadZeroTS > PQISSL_MAX_READ_ZERO_TIME)) 
 				{
 					out << "Count passed Limit, shutting down!";
+					out << " ReadZero Age: " << time(NULL) - mReadZeroTS;
 					reset();
 				}
 
 				rslog(RSL_ALERT, pqisslzone, out.str());
-//				std::cerr << out.str() << std::endl ;
+				std::cerr << out.str() << std::endl ;
 				return -1;
 			}
 
@@ -1619,11 +1627,6 @@ bool 	pqissl::moretoread()
 
 bool 	pqissl::cansend()
 {
-        if (n_read_zero > 0) {
-        rslog(RSL_ALERT, pqisslzone,
-                "pqissl::cansend() read socket returns 0, so we don't wanna send know.");
-            return false;
-        }
 	rslog(RSL_DEBUG_ALL, pqisslzone, 
 		"pqissl::cansend() polling socket!");
 
