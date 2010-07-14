@@ -3187,6 +3187,7 @@ void    p3GroupDistrib::printGroups(std::ostream &out)
 bool p3GroupDistrib::encrypt(void *& out, int& outlen, const void *in, int inlen, std::string grpId)
 {
 
+
 #ifdef DISTRIB_DEBUG
 	std::cerr << "p3GroupDistrib::decrypt() " << std::endl;
 #endif
@@ -3243,70 +3244,58 @@ bool p3GroupDistrib::encrypt(void *& out, int& outlen, const void *in, int inlen
 		return false;
 	}
 
+    EVP_CIPHER_CTX ctx;
+    int eklen, net_ekl;
+    unsigned char *ek;
+    unsigned char iv[EVP_MAX_IV_LENGTH];
+    EVP_CIPHER_CTX_init(&ctx);
+    int out_currOffset = 0;
     int out_offset = 0;
-    out = malloc(inlen + 2048);
 
-    /// ** from demos/maurice/example1.c of openssl V1.0 *** ///
-    unsigned char * iv = new unsigned char [16];
-    memset(iv, '\0', 16);
-    unsigned char * ek = new unsigned char [EVP_PKEY_size(public_key) + 1024];
-    uint32_t ekl, net_ekl;
-    unsigned char * cryptBuff = new unsigned char [inlen + 16];
-    memset(cryptBuff, '\0', sizeof(cryptBuff));
-    int cryptBuffL = 0;
-    unsigned char key[256];
+    int max_evp_key_size = EVP_PKEY_size(public_key);
+    ek = (unsigned char*)malloc(max_evp_key_size);
+    const EVP_CIPHER *cipher = EVP_aes_128_cbc();
+    int cipher_block_size = EVP_CIPHER_block_size(cipher);
+    int size_net_ekl = sizeof(net_ekl);
 
-    /// ** copied implementation of EVP_SealInit of openssl V1.0 *** ///;
-    EVP_CIPHER_CTX cipher_ctx;
-    EVP_CIPHER_CTX_init(&cipher_ctx);
+    int max_outlen = inlen + cipher_block_size + EVP_MAX_IV_LENGTH + max_evp_key_size + size_net_ekl;
 
-    if(!EVP_EncryptInit_ex(&cipher_ctx,EVP_aes_256_cbc(),NULL,NULL,NULL)) {
-        return false;
-    }
+    // intialize context and send store encrypted cipher in ek
+	if(!EVP_SealInit(&ctx, EVP_aes_128_cbc(), &ek, &eklen, iv, &public_key, 1)) return false;
 
-    if (EVP_CIPHER_CTX_rand_key(&cipher_ctx, key) <= 0) {
-        return false;
-    }
+	// now assign memory to out accounting for data, and cipher block size, key length, and key length val
+    out = new unsigned char[inlen + cipher_block_size + size_net_ekl + eklen + EVP_MAX_IV_LENGTH];
 
-    if (EVP_CIPHER_CTX_iv_length(&cipher_ctx)) {
-        RAND_pseudo_bytes(iv,EVP_CIPHER_CTX_iv_length(&cipher_ctx));
-    }
+	net_ekl = htonl(eklen);
+	memcpy((unsigned char*)out + out_offset, &net_ekl, size_net_ekl);
+	out_offset += size_net_ekl;
 
-    if(!EVP_EncryptInit_ex(&cipher_ctx,NULL,NULL,key,iv)) {
-        return false;
-    }
+	memcpy((unsigned char*)out + out_offset, ek, eklen);
+	out_offset += eklen;
 
-#if OPENSSL_VERSION_NUMBER >= 0x10000000L
-    ekl=EVP_PKEY_encrypt_old(ek,key,EVP_CIPHER_CTX_key_length(&cipher_ctx), public_key);
-#else
-    ekl=EVP_PKEY_encrypt(ek,key,EVP_CIPHER_CTX_key_length(&cipher_ctx), public_key);
-#endif
+	memcpy((unsigned char*)out + out_offset, iv, EVP_MAX_IV_LENGTH);
+	out_offset += EVP_MAX_IV_LENGTH;
 
-    /// ** copied implementation of EVP_SealInit of openssl V *** ///
+	// now encrypt actual data
+	if(!EVP_SealUpdate(&ctx, (unsigned char*) out + out_offset, &out_currOffset, (unsigned char*) in, inlen)) return false;
 
-    net_ekl = htonl(ekl);
-    memcpy((void*)((unsigned long int)out + (unsigned long int)out_offset), (char*)&net_ekl, sizeof(net_ekl));
-    out_offset += sizeof(net_ekl);
+	// move along to partial block space
+	out_offset += out_currOffset;
 
-    memcpy((void*)((unsigned long int)out + (unsigned long int)out_offset), ek, ekl);
-    out_offset += ekl;
+	// add padding
+	if(!EVP_SealFinal(&ctx, (unsigned char*) out + out_offset, &out_currOffset)) return false;
 
-    memcpy((void*)((unsigned long int)out + (unsigned long int)out_offset), iv, 16);
-    out_offset += 16;
+	// move to end
+	out_offset += out_currOffset;
 
-    EVP_EncryptUpdate(&cipher_ctx, cryptBuff, &cryptBuffL, (unsigned char*)in, inlen);
-    memcpy((void*)((unsigned long int)out + (unsigned long int)out_offset), cryptBuff, cryptBuffL);
-    out_offset += cryptBuffL;
+	// make sure offset has not gone passed valid memory bounds
+	if(out_offset > max_outlen) return false;
 
-    EVP_EncryptFinal_ex(&cipher_ctx, cryptBuff, &cryptBuffL);
-    memcpy((void*)((unsigned long int)out + (unsigned long int)out_offset), cryptBuff, cryptBuffL);
-    out_offset += cryptBuffL;
+	// free encrypted key data
+	free(ek);
 
-    outlen = out_offset;
-
-    EVP_EncryptInit_ex(&cipher_ctx,NULL,NULL,NULL,NULL);
-    EVP_CIPHER_CTX_cleanup(&cipher_ctx);
-
+	outlen = out_offset;
+	return true;
 
     delete[] ek;
 
@@ -3354,86 +3343,42 @@ bool p3GroupDistrib::decrypt(void *& out, int& outlen, const void *in, int inlen
 		return false;
 	}
 
-	out = malloc(inlen + 16);
-	int in_offset = 0;
-	unsigned char * buf = new unsigned char [inlen + 16];
-	memset(buf, '\0', sizeof(buf));
-	int buflen = 0;
-	EVP_CIPHER_CTX ectx;
-	unsigned char * iv = new unsigned char [16];
-	memset(iv, '\0', 16);
-	unsigned char *encryptKey;
-	unsigned int ekeylen;
+    EVP_CIPHER_CTX ctx;
+    int eklen = 0, net_ekl = 0;
+    unsigned char *ek = NULL;
+    unsigned char iv[EVP_MAX_IV_LENGTH];
+    ek = (unsigned char*)malloc(EVP_PKEY_size(private_key));
+    EVP_CIPHER_CTX_init(&ctx);
 
+    int in_offset = 0, out_currOffset = 0;
+    int size_net_ekl = sizeof(net_ekl);
 
-	memcpy(&ekeylen, (void*)((unsigned long int)in + (unsigned long int)in_offset), sizeof(ekeylen));
-	in_offset += sizeof(ekeylen);
+    memcpy(&net_ekl, (unsigned char*)in, size_net_ekl);
+    eklen = ntohl(net_ekl);
+    in_offset += size_net_ekl;
 
-	ekeylen = ntohl(ekeylen);
+    memcpy(ek, (unsigned char*)in + in_offset, eklen);
+    in_offset += eklen;
 
-	if (ekeylen != EVP_PKEY_size(private_key))
-	{
-			fprintf(stderr, "keylength mismatch");
-			return false;
-	}
+    memcpy(iv, (unsigned char*)in + in_offset, EVP_MAX_IV_LENGTH);
+    in_offset += EVP_MAX_IV_LENGTH;
 
-	encryptKey = new unsigned char [sizeof(char) * ekeylen];
+    const EVP_CIPHER* cipher = EVP_aes_128_cbc();
 
-	memcpy(encryptKey, (void*)((unsigned long int)in + (unsigned long int)in_offset), ekeylen);
-	in_offset += ekeylen;
+    if(!EVP_OpenInit(&ctx, cipher, ek, eklen, iv, private_key)) return false;
 
-	memcpy(iv, (void*)((unsigned long int)in + (unsigned long int)in_offset), 16);
-	in_offset += 16;
+    out = new unsigned char[inlen - in_offset];
 
-	/// ** copied implementation of EVP_SealInit of openssl V1.0 *** ///;
+    if(!EVP_OpenUpdate(&ctx, (unsigned char*) out, &out_currOffset, (unsigned char*)in + in_offset, inlen - in_offset)) return false;
 
-	unsigned char *key=NULL;
-	int i=0;
+    in_offset += out_currOffset;
+    outlen += out_currOffset;
 
-	EVP_CIPHER_CTX_init(&ectx);
-	if(!EVP_DecryptInit_ex(&ectx,EVP_aes_256_cbc(),NULL, NULL,NULL)) return false;
+    if(!EVP_OpenFinal(&ctx, (unsigned char*)out + out_currOffset, &out_currOffset)) return false;
 
-	key=(unsigned char *)OPENSSL_malloc(256);
-	if (key == NULL)
-	{
-		return false;
-	}
+    outlen += out_currOffset;
 
-	#if OPENSSL_VERSION_NUMBER >= 0x10000000L
-	i=EVP_PKEY_decrypt_old(key,encryptKey,ekeylen,private_key);
-	#else
-	i=EVP_PKEY_decrypt(key,encryptKey,ekeylen,private_key);
-	#endif
-	if ((i <= 0) || !EVP_CIPHER_CTX_set_key_length(&ectx, i))
-	{
-		return false;
-	}
-
-	if(!EVP_DecryptInit_ex(&ectx,NULL,NULL,key,iv)) return false;
-	/// ** copied implementation of EVP_SealInit of openssl V1.0 *** ///;
-
-
-	if (!EVP_DecryptUpdate(&ectx, buf, &buflen, (unsigned char*)((unsigned long int)in + (unsigned long int)in_offset), inlen - in_offset)) {
-		return false;
-	}
-	memcpy(out, buf, buflen);
-	int out_offset = buflen;
-
-	if (!EVP_DecryptFinal(&ectx, buf, &buflen)) {
-		return false;
-	}
-	memcpy((void*)((unsigned long int)out + (unsigned long int)out_offset), buf, buflen);
-	out_offset += buflen;
-	outlen = out_offset;
-
-	EVP_DecryptInit_ex(&ectx,NULL,NULL, NULL,NULL);
-	EVP_CIPHER_CTX_cleanup(&ectx);
-
-	delete[] encryptKey;
-
-	#ifdef DISTRIB_DEBUG
-	std::cerr << "p3GroupDistrib::decrypt() finished with outlen : " << outlen << std::endl;
-	#endif
+    free(ek);
 
 	return true;
 }
