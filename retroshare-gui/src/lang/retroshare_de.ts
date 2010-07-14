@@ -5625,7 +5625,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>New tag ...</source>
-        <translation>Neuer SChlagwort...</translation>
+        <translation>Neues Schlagwort...</translation>
     </message>
     <message>
         <source>Mark as read</source>
