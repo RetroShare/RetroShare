@@ -53,7 +53,7 @@ AddLinksDialog::AddLinksDialog(QString url, QWidget *parent)
 
   RetroShareLink link(url);
 
-  if(link.valid())
+  if(link.valid() && link.type() == RetroShareLink::TYPE_FILE)
 	  ui.titleLineEdit->setText(link.name());
   else
 	  ui.titleLineEdit->setText("New File");

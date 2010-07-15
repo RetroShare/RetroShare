@@ -80,6 +80,9 @@ private slots:
     /** show peers details for each friend **/
     void configurefriend();
 
+    void recommendfriend();
+    void pastePerson();
+
     /** Open Shared Manager **/
     void openShareManager();
 
@@ -121,19 +124,6 @@ private:
 
     void FilterItems();
     bool FilterItem(QTreeWidgetItem *pItem, QString &sPattern);
-
-    class QLabel *iconLabel, *textLabel;
-    class QWidget *widget;
-    class QWidgetAction *widgetAction;
-    class QSpacerItem *spacerItem;
-
-    /** Defines the actions for the context menu */
-    QAction* chatAct;
-    QAction* sendMessageAct;
-    QAction* connectfriendAct;
-    QAction* configurefriendAct;
-    QAction* exportfriendAct;
-    QAction* removefriendAct;
 
     QTreeView *messengertreeWidget;
 

@@ -42,6 +42,7 @@
 #include "settings/rsharesettings.h"
 
 #include "gui/connect/ConnectFriendWizard.h"
+#include "RetroShareLink.h"
 #include "PeersDialog.h"
 #include "ShareManager.h"
 
@@ -57,6 +58,7 @@
 #define IMAGE_PEERINFO           ":/images/peerdetails_16x16.png"
 #define IMAGE_AVAIBLE            ":/images/user/identityavaiblecyan24.png"
 #define IMAGE_CONNECT2           ":/images/reload24.png"
+#define IMAGE_PASTELINK          ":/images/pasterslink.png"
 
 /* Images for Status icons */
 #define IMAGE_ONLINE             ":/images/im-user.png"
@@ -257,35 +259,46 @@ void MessengerWindow::messengertreeWidgetCostumPopupMenu( QPoint point )
 
       QMenu contextMnu( this );
 
-      QAction* expandAll = new QAction(tr( "Expand all" ), this );
+      QAction* expandAll = new QAction(tr( "Expand all" ), &contextMnu );
       connect( expandAll , SIGNAL( triggered() ), ui.messengertreeWidget, SLOT (expandAll()) );
 
-      QAction* collapseAll = new QAction(tr( "Collapse all" ), this );
+      QAction* collapseAll = new QAction(tr( "Collapse all" ), &contextMnu );
       connect( collapseAll , SIGNAL( triggered() ), ui.messengertreeWidget, SLOT(collapseAll()) );
 
-      chatAct = new QAction(QIcon(IMAGE_CHAT), tr( "Chat" ), this );
+      QAction* chatAct = new QAction(QIcon(IMAGE_CHAT), tr( "Chat" ), &contextMnu );
       connect( chatAct , SIGNAL( triggered() ), this, SLOT( chatfriendproxy() ) );
 
-      sendMessageAct = new QAction(QIcon(IMAGE_MSG), tr( "Message Friend" ), this );
+      QAction* sendMessageAct = new QAction(QIcon(IMAGE_MSG), tr( "Message Friend" ), &contextMnu );
       connect( sendMessageAct , SIGNAL( triggered() ), this, SLOT( sendMessage() ) );
 
-      connectfriendAct = new QAction(QIcon(IMAGE_CONNECT), tr( "Connect To Friend" ), this );
+      QAction* connectfriendAct = new QAction(QIcon(IMAGE_CONNECT), tr( "Connect To Friend" ), &contextMnu );
       connect( connectfriendAct , SIGNAL( triggered() ), this, SLOT( connectfriend() ) );
 
-      configurefriendAct = new QAction(QIcon(IMAGE_PEERINFO), tr( "Peer Details" ), this );
+      QAction* configurefriendAct = new QAction(QIcon(IMAGE_PEERINFO), tr( "Peer Details" ), &contextMnu );
       connect( configurefriendAct , SIGNAL( triggered() ), this, SLOT( configurefriend() ) );
 
-      //profileviewAct = new QAction(QIcon(IMAGE_PEERINFO), tr( "Profile View" ), this );
+      QAction* recommendfriendAct = new QAction(QIcon(IMAGE_EXPIORTFRIEND), tr( "Recomend this Friend to..." ), &contextMnu );
+      connect( recommendfriendAct , SIGNAL( triggered() ), this, SLOT( recommendfriend() ) );
+
+      QAction* pastePersonAct = new QAction(QIcon(IMAGE_PASTELINK), tr( "Paste retroshare Link" ), &contextMnu );
+      if(!RSLinkClipboard::empty(RetroShareLink::TYPE_PERSON)) {
+          connect( pastePersonAct , SIGNAL( triggered() ), this, SLOT( pastePerson() ) );
+      } else {
+          pastePersonAct->setDisabled(true);
+      }
+
+      //QAction* profileviewAct = new QAction(QIcon(IMAGE_PEERINFO), tr( "Profile View" ), &contextMnu );
       //connect( profileviewAct , SIGNAL( triggered() ), this, SLOT( viewprofile() ) );
 
-      exportfriendAct = new QAction(QIcon(IMAGE_EXPIORTFRIEND), tr( "Export Friend" ), this );
+      QAction* exportfriendAct = new QAction(QIcon(IMAGE_EXPIORTFRIEND), tr( "Export Friend" ), &contextMnu );
       connect( exportfriendAct , SIGNAL( triggered() ), this, SLOT( exportfriend() ) );
 
+      QAction* removefriendAct;
       if (c->type() == 0) {
           //this is a GPG key
-          removefriendAct = new QAction(QIcon(IMAGE_REMOVEFRIEND), tr( "Deny Friend" ), this );
+          removefriendAct = new QAction(QIcon(IMAGE_REMOVEFRIEND), tr( "Deny Friend" ), &contextMnu );
       } else {
-          removefriendAct = new QAction(QIcon(IMAGE_REMOVEFRIEND), tr( "Remove Friend Location" ), this );
+          removefriendAct = new QAction(QIcon(IMAGE_REMOVEFRIEND), tr( "Remove Friend Location" ), &contextMnu );
       }
       connect( removefriendAct , SIGNAL( triggered() ), this, SLOT( removefriend() ) );
 
@@ -293,25 +306,26 @@ void MessengerWindow::messengertreeWidgetCostumPopupMenu( QPoint point )
       QWidget *widget = new QWidget();
       widget->setStyleSheet( ".QWidget{background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #FEFEFE, stop:1 #E8E8E8); border: 1px solid #CCCCCC;}");  
       
-      QHBoxLayout *hbox = new QHBoxLayout();
+      QHBoxLayout *hbox = new QHBoxLayout(&contextMnu);
       hbox->setMargin(0);
       hbox->setSpacing(6);
     
-      iconLabel = new QLabel( this );
+      QLabel *iconLabel = new QLabel(&contextMnu);
       iconLabel->setPixmap(QPixmap(":/images/user/friends24.png"));
       iconLabel->setMaximumSize( iconLabel->frameSize().height() + 24, 24 );
       hbox->addWidget(iconLabel);
-       
+
+      QLabel *textLabel;
       if (c->type() == 0) {
           //this is a GPG key
-         textLabel = new QLabel( tr("<strong>GPG Key</strong>"), this );
+         textLabel = new QLabel( tr("<strong>GPG Key</strong>"), &contextMnu );
       } else {
-         textLabel = new QLabel( tr("<strong>RetroShare instance</strong>"), this );
+         textLabel = new QLabel( tr("<strong>RetroShare instance</strong>"), &contextMnu );
       }
 
       hbox->addWidget(textLabel);
-      
-      spacerItem = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+      QSpacerItem *spacerItem = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
       hbox->addItem(spacerItem); 
        
       widget->setLayout( hbox );
@@ -324,10 +338,13 @@ void MessengerWindow::messengertreeWidgetCostumPopupMenu( QPoint point )
       contextMnu.addAction( sendMessageAct);
       contextMnu.addAction( configurefriendAct);
       //contextMnu.addAction( profileviewAct);
-      if (c->type() != 0) {
+      if (c->type() == 0) {
+          contextMnu.addAction( recommendfriendAct);
+      } else {
           //this is a SSL key
           contextMnu.addAction( connectfriendAct);
       }
+      contextMnu.addAction(pastePersonAct);
       contextMnu.addAction( removefriendAct);
       //contextMnu.addAction( exportfriendAct);
       contextMnu.addSeparator();
@@ -827,6 +844,23 @@ void MessengerWindow::connectfriend()
 void MessengerWindow::configurefriend()
 {
 	ConfCertDialog::show(getPeersRsCertId(getCurrentPeer()));
+}
+
+void MessengerWindow::recommendfriend()
+{
+    QTreeWidgetItem *peer = getCurrentPeer();
+
+    if (!peer)
+        return;
+
+    std::list <std::string> ids;
+    ids.push_back(peer->data(COLUMN_DATA, ROLE_ID).toString().toStdString());
+    MessageComposer::recommendFriend(ids);
+}
+
+void MessengerWindow::pastePerson()
+{
+    RSLinkClipboard::process(RetroShareLink::TYPE_PERSON, RSLINK_PROCESS_NOTIFY_ERROR);
 }
 
 void MessengerWindow::updatePeersAvatar(const QString& peer_id)

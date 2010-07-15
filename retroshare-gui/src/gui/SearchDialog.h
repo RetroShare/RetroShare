@@ -108,16 +108,6 @@ private:
 /** the advanced search dialog instance */
     AdvancedSearchDialog * advSearchDialog;
 
-/** Defines the actions for the context menu */
-    QAction* downloadAct;
-    QAction* copysearchlinkAct;
-    QAction* sendrslinkAct;
-    QAction* broadcastonchannelAct;
-    QAction* recommendtofriendsAct;
-
-    QAction* searchRemoveAct;
-    QAction* searchRemoveAllAct;
-
 /** Contains the mapping of filetype combobox to filetype extensions */
     static const int FILETYPE_IDX_ANY;
     static const int FILETYPE_IDX_ARCHIVE;

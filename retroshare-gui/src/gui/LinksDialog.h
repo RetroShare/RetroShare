@@ -82,13 +82,6 @@ void  updateComments(std::string rid, std::string pid);
   /* (2) Utility Fns */
   QTreeWidgetItem *getCurrentLine();
 
-  /** Define the popup menus for the Context menu */
-  QMenu* contextMnu;
-    /** Defines the actions for the context menu */
-  QAction* voteupAct;
-  QAction* votedownAct;
-  QAction* downloadAct;
-
   QTreeWidget *exampletreeWidget;
 
   /** Qt Designer generated object */

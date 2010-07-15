@@ -405,8 +405,12 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 	if(!items.empty())
 		contextMnu.addAction( copylinkAct);
 
-	if(!RSLinkClipboard::empty())
-		contextMnu.addAction( pastelinkAct);
+	if(!RSLinkClipboard::empty(RetroShareLink::TYPE_FILE)) {
+		pastelinkAct->setEnabled(true);
+	} else {
+		pastelinkAct->setDisabled(true);
+	}
+	contextMnu.addAction( pastelinkAct);
 
 	contextMnu.addSeparator();
 
@@ -1123,12 +1127,7 @@ void TransfersDialog::updateDetailsDialog()
 
 void TransfersDialog::pasteLink()
 {
-	const std::vector<RetroShareLink>& links(RSLinkClipboard::pasteLinks()) ;
-
-	for(uint32_t i=0;i<links.size();++i)
-		if (links[i].valid())
-			if(!rsFiles->FileRequest(links[i].name().toStdString(), links[i].hash().toStdString(),links[i].size(), "", RS_FILE_HINTS_NETWORK_WIDE, std::list<std::string>()))
-				QMessageBox::critical(NULL,"Download refused","The file "+links[i].name()+" could not be downloaded. Do you already have it ?") ;
+    RSLinkClipboard::process(RetroShareLink::TYPE_FILE, RSLINK_PROCESS_NOTIFY_ERROR);
 }
 
 void TransfersDialog::getIdOfSelectedItems(std::set<QStandardItem *>& items)

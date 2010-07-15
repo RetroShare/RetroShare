@@ -266,6 +266,8 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
     connect(ui.filterColumnComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterColumnChanged()));
 
+    ui.msgText->setOpenLinks(false);
+
     m_eListMode = LIST_NOTHING;
 
     mCurrCertId = "";
@@ -748,15 +750,15 @@ void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint point )
 
     /** Defines the actions for the context menu */
 
-    QAction *replytomsgAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr( "Reply to Message" ), this );
+    QAction *replytomsgAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr( "Reply to Message" ), &contextMnu );
     connect( replytomsgAct , SIGNAL( triggered() ), this, SLOT( replytomessage() ) );
     contextMnu.addAction( replytomsgAct);
 
-    QAction *replyallmsgAct = new QAction(QIcon(IMAGE_MESSAGEREPLYALL), tr( "Reply to All" ), this );
+    QAction *replyallmsgAct = new QAction(QIcon(IMAGE_MESSAGEREPLYALL), tr( "Reply to All" ), &contextMnu );
     connect( replyallmsgAct , SIGNAL( triggered() ), this, SLOT( replyallmessage() ) );
     contextMnu.addAction( replyallmsgAct);
 
-    QAction *forwardmsgAct = new QAction(QIcon(IMAGE_MESSAGEFORWARD), tr( "Forward Message" ), this );
+    QAction *forwardmsgAct = new QAction(QIcon(IMAGE_MESSAGEFORWARD), tr( "Forward Message" ), &contextMnu );
     connect( forwardmsgAct , SIGNAL( triggered() ), this, SLOT( forwardmessage() ) );
     contextMnu.addAction( forwardmsgAct);
 
@@ -764,7 +766,7 @@ void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint point )
     QList<int> RowsUnread;
     int nCount = getSelectedMsgCount (NULL, &RowsRead, &RowsUnread);
 
-    QAction *editAct = new QAction(tr( "Edit..." ), this );
+    QAction *editAct = new QAction(tr( "Edit..." ), &contextMnu );
     connect(editAct, SIGNAL(triggered()), this, SLOT(editmessage()));
     contextMnu.addAction(editAct);
 
@@ -776,14 +778,14 @@ void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint point )
 
     contextMnu.addSeparator();
 
-    QAction *markAsRead = new QAction(QIcon(":/images/message-mail-read.png"), tr( "Mark as read" ), this);
+    QAction *markAsRead = new QAction(QIcon(":/images/message-mail-read.png"), tr( "Mark as read" ), &contextMnu);
     connect(markAsRead , SIGNAL(triggered()), this, SLOT(markAsRead()));
     contextMnu.addAction(markAsRead);
     if (RowsUnread.size() == 0) {
         markAsRead->setDisabled(true);
     }
 
-    QAction *markAsUnread = new QAction(QIcon(":/images/message-mail.png"), tr( "Mark as unread" ), this);
+    QAction *markAsUnread = new QAction(QIcon(":/images/message-mail.png"), tr( "Mark as unread" ), &contextMnu);
     connect(markAsUnread , SIGNAL(triggered()), this, SLOT(markAsUnread()));
     contextMnu.addAction(markAsUnread);
     if (RowsRead.size() == 0) {
@@ -798,9 +800,9 @@ void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint point )
 
     QAction *removemsgAct;
     if (nCount > 1) {
-        removemsgAct = new QAction(QIcon(IMAGE_MESSAGEREMOVE), tr( "Remove Messages" ), this );
+        removemsgAct = new QAction(QIcon(IMAGE_MESSAGEREMOVE), tr( "Remove Messages" ), &contextMnu );
     } else {
-        removemsgAct = new QAction(QIcon(IMAGE_MESSAGEREMOVE), tr( "Remove Message" ), this );
+        removemsgAct = new QAction(QIcon(IMAGE_MESSAGEREMOVE), tr( "Remove Message" ), &contextMnu );
     }
 
     connect( removemsgAct , SIGNAL( triggered() ), this, SLOT( removemessage() ) );
@@ -808,7 +810,7 @@ void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint point )
 
     int listrow = ui.listWidget -> currentRow();
     if (listrow == ROW_TRASHBOX) {
-        QAction *undeleteAct = new QAction(tr( "Undelete" ), this );
+        QAction *undeleteAct = new QAction(tr( "Undelete" ), &contextMnu );
         connect(undeleteAct, SIGNAL(triggered()), this, SLOT(undeletemessage()));
         contextMnu.addAction(undeleteAct);
 
@@ -824,7 +826,7 @@ void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint point )
     contextMnu.addAction( ui.actionPrint);
     contextMnu.addSeparator();
 
-    QAction *newmsgAct = new QAction(QIcon(IMAGE_MESSAGE), tr( "New Message" ), this );
+    QAction *newmsgAct = new QAction(QIcon(IMAGE_MESSAGE), tr( "New Message" ), &contextMnu );
     connect( newmsgAct , SIGNAL( triggered() ), this, SLOT( newmessage() ) );
     contextMnu.addAction( newmsgAct);
 
@@ -843,15 +845,12 @@ void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint point )
 
 void MessagesDialog::msgfilelistWidgetCostumPopupMenu( QPoint point )
 {
-    QAction* getRecAct = NULL;
-//    QAction* getAllRecAct = NULL;
-
     QMenu contextMnu( this );
 
-    getRecAct = new QAction(QIcon(IMAGE_DOWNLOAD), tr( "Download" ), this );
+    QAction* getRecAct = new QAction(QIcon(IMAGE_DOWNLOAD), tr( "Download" ), &contextMnu );
     connect( getRecAct , SIGNAL( triggered() ), this, SLOT( getcurrentrecommended() ) );
 
-//   getAllRecAct = new QAction(QIcon(IMAGE_DOWNLOADALL), tr( "Download" ), this );
+//   QAction* getAllRecAct = new QAction(QIcon(IMAGE_DOWNLOADALL), tr( "Download" ), &contextMnu );
 //   connect( getAllRecAct , SIGNAL( triggered() ), this, SLOT( getallrecommended() ) );
 
     contextMnu.addAction( getRecAct);
@@ -2004,53 +2003,9 @@ void MessagesDialog::printpreview()
 
 void MessagesDialog::anchorClicked (const QUrl& link )
 {
-#ifdef FORUM_DEBUG
     std::cerr << "MessagesDialog::anchorClicked link.scheme() : " << link.scheme().toStdString() << std::endl;
-#endif
 
-    if (link.scheme() == "retroshare")
-    {
-        RetroShareLink rslnk(link.toString()) ;
-
-#ifdef FORUM_DEBUG
-        std::cerr << "MessagesDialog::anchorClicked FileRequest : fileName : " << fileName << ". fileHash : " << fileHash << ". fileSize : " << fileSize << std::endl;
-#endif
-
-        if(rslnk.valid())
-        {
-            std::list<std::string> srcIds;
-
-            if(rsFiles->FileRequest(rslnk.name().toStdString(), rslnk.hash().toStdString(), rslnk.size(), "", RS_FILE_HINTS_NETWORK_WIDE, srcIds))
-            {
-                QMessageBox mb(tr("File Request Confirmation"), tr("The file has been added to your download list."),QMessageBox::Information,QMessageBox::Ok,0,0);
-                mb.setButtonText( QMessageBox::Ok, "OK" );
-                mb.exec();
-            }
-            else
-            {
-                QMessageBox mb(tr("File Request canceled"), tr("The file has not been added to your download list, because you already have it."),QMessageBox::Information,QMessageBox::Ok,0,0);
-                mb.setButtonText( QMessageBox::Ok, "OK" );
-                mb.exec();
-            }
-        }
-        else
-        {
-            QMessageBox mb(tr("File Request Error"), tr("The file link is malformed."),QMessageBox::Information,QMessageBox::Ok,0,0);
-            mb.setButtonText( QMessageBox::Ok, "OK" );
-            mb.exec();
-        }
-    }
-    else if (link.scheme() == "http")
-    {
-        QDesktopServices::openUrl(link);
-    }
-    else if (link.scheme() == "")
-    {
-        //it's probably a web adress, let's add http:// at the beginning of the link
-        QString newAddress = link.toString();
-        newAddress.prepend("http://");
-        QDesktopServices::openUrl(QUrl(newAddress));
-    }
+    RetroShareLink::processUrl(link, NULL, RSLINK_PROCESS_NOTIFY_ALL);
 }
 
 bool MessagesDialog::fileSave()

@@ -138,30 +138,30 @@ void LinksDialog::linkTreeWidgetCostumPopupMenu( QPoint point )
 
       QMenu contextMnu( this );
 
-      voteupAct = new QAction(QIcon(IMAGE_EXPORTFRIEND), tr( "Share Link Anonymously" ), this );
+      QAction *voteupAct = new QAction(QIcon(IMAGE_EXPORTFRIEND), tr( "Share Link Anonymously" ), &contextMnu );
       connect( voteupAct , SIGNAL( triggered() ), this, SLOT( voteup_anon() ) );
 
 
-      	QMenu *voteMenu = new QMenu( tr("Vote on Link"), this );
+      	QMenu *voteMenu = new QMenu( tr("Vote on Link"), &contextMnu );
       	voteMenu->setIcon(QIcon(IMAGE_EXPORTFRIEND));
 
-      	QAction *vote_p2 = new QAction( QIcon(IMAGE_GREAT), "[+2] Great", this );
+      	QAction *vote_p2 = new QAction( QIcon(IMAGE_GREAT), "[+2] Great", &contextMnu );
         connect( vote_p2 , SIGNAL( triggered() ), this, SLOT( voteup_p2() ) );
 	voteMenu->addAction(vote_p2);
-      	QAction *vote_p1 = new QAction( QIcon(IMAGE_GOOD), "[+1] Good", this );
+      	QAction *vote_p1 = new QAction( QIcon(IMAGE_GOOD), "[+1] Good", &contextMnu );
         connect( vote_p1 , SIGNAL( triggered() ), this, SLOT( voteup_p1() ) );
 	voteMenu->addAction(vote_p1);
-      	QAction *vote_p0 = new QAction( QIcon(IMAGE_OK), "[+0] Okay", this );
+      	QAction *vote_p0 = new QAction( QIcon(IMAGE_OK), "[+0] Okay", &contextMnu );
         connect( vote_p0 , SIGNAL( triggered() ), this, SLOT( voteup_p0() ) );
 	voteMenu->addAction(vote_p0);
-      	QAction *vote_m1 = new QAction( QIcon(IMAGE_SUX), "[-1] Sux", this );
+      	QAction *vote_m1 = new QAction( QIcon(IMAGE_SUX), "[-1] Sux", &contextMnu );
         connect( vote_m1 , SIGNAL( triggered() ), this, SLOT( voteup_m1() ) );
 	voteMenu->addAction(vote_m1);
-      	QAction *vote_m2 = new QAction( QIcon(IMAGE_BADLINK), "[-2] BAD LINK", this );
+      	QAction *vote_m2 = new QAction( QIcon(IMAGE_BADLINK), "[-2] BAD LINK", &contextMnu );
         connect( vote_m2 , SIGNAL( triggered() ), this, SLOT( voteup_m2() ) );
 	voteMenu->addAction(vote_m2);
 
-	downloadAct = new QAction(QIcon(IMAGE_DOWNLOAD), tr("Download"), this);
+	QAction *downloadAct = new QAction(QIcon(IMAGE_DOWNLOAD), tr("Download"), &contextMnu);
 	connect(downloadAct, SIGNAL(triggered()), this, SLOT(downloadSelected()));
 
       contextMnu.addAction(voteupAct);
@@ -976,7 +976,7 @@ void LinksDialog::downloadSelected()
 
 	RetroShareLink rslink(QString::fromStdWString(detail.link));
 
-	if(!rslink.valid())
+	if(!rslink.valid() || rslink.type() != RetroShareLink::TYPE_FILE)
 	{
 		QMessageBox::critical(NULL,"Badly formed link","This link is badly formed. Can't parse/use it. This is a bug. Please contact the developers.") ;
 		return ;

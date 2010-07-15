@@ -227,22 +227,22 @@ void SearchDialog::searchtableWidgetCostumPopupMenu( QPoint point )
     // block the popup if no results available
     if ((ui.searchResultWidget->selectedItems()).size() == 0) return;
 
-    downloadAct = new QAction(QIcon(IMAGE_START), tr( "Download" ), this );
+    QMenu contextMnu(this);
+
+    QAction* downloadAct = new QAction(QIcon(IMAGE_START), tr( "Download" ), &contextMnu );
     connect( downloadAct , SIGNAL( triggered() ), this, SLOT( download() ) );
 
-    copysearchlinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Link" ), this );
+    QAction* copysearchlinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Link" ), &contextMnu );
     connect( copysearchlinkAct , SIGNAL( triggered() ), this, SLOT( copysearchLink() ) );
         
-    sendrslinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Link" ), this );
+    QAction* sendrslinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Link" ), &contextMnu );
     connect( sendrslinkAct , SIGNAL( triggered() ), this, SLOT( sendLinkTo( ) ) );
 
-    broadcastonchannelAct = new QAction( tr( "Broadcast on Channel" ), this );
+    QAction* broadcastonchannelAct = new QAction( tr( "Broadcast on Channel" ), &contextMnu );
     connect( broadcastonchannelAct , SIGNAL( triggered() ), this, SLOT( broadcastonchannel() ) );
 
-    recommendtofriendsAct = new QAction( tr( "Recommend to Friends" ), this );
+    QAction* recommendtofriendsAct = new QAction( tr( "Recommend to Friends" ), &contextMnu );
     connect( recommendtofriendsAct , SIGNAL( triggered() ), this, SLOT( recommendtofriends() ) );
-
-    QMenu contextMnu(this);
 
     contextMnu.addAction( downloadAct);
     contextMnu.addSeparator();
@@ -377,14 +377,14 @@ void SearchDialog::searchtableWidget2CostumPopupMenu( QPoint point )
     // block the popup if no results available
     if ((ui.searchSummaryWidget->selectedItems()).size() == 0) return;
 
+    QMenu contextMnu(this);
+
     // create the menu as required
-    searchRemoveAct = new QAction(QIcon(IMAGE_REMOVE), tr( "Remove" ), this );
+    QAction* searchRemoveAct = new QAction(QIcon(IMAGE_REMOVE), tr( "Remove" ), &contextMnu );
     connect( searchRemoveAct , SIGNAL( triggered() ), this, SLOT( searchRemove() ) );
 
-    searchRemoveAllAct = new QAction(QIcon(IMAGE_REMOVEALL), tr( "Remove All" ), this );
+    QAction* searchRemoveAllAct = new QAction(QIcon(IMAGE_REMOVEALL), tr( "Remove All" ), &contextMnu );
     connect( searchRemoveAllAct , SIGNAL( triggered() ), this, SLOT( searchRemoveAll() ) );
-
-    QMenu contextMnu(this);
 
     contextMnu.addAction( searchRemoveAct);
     contextMnu.addAction( searchRemoveAllAct);
@@ -1201,7 +1201,7 @@ void SearchDialog::copysearchLink()
 			 RetroShareLink link(fname, fsize, fhash);
 
 			 std::cerr << "new link added to clipboard: " << link.toString().toStdString() << std::endl ;
-			 if(link.valid())
+			 if(link.valid() && link.type() == RetroShareLink::TYPE_FILE)
 				 urls.push_back(link) ;
 		 } 
 	 }

@@ -234,21 +234,21 @@ void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point )
 		{
 			if(detail.accept_connection)
 			{
-				denyFriendAct = new QAction(QIcon(IMAGE_DENIED), tr( "Deny friend" ), this );
+				QAction* denyFriendAct = new QAction(QIcon(IMAGE_DENIED), tr( "Deny friend" ), &contextMnu );
 
 				connect( denyFriendAct , SIGNAL( triggered() ), this, SLOT( denyFriend() ) );
 				contextMnu.addAction( denyFriendAct);
 			}
 			else	// not a friend
 			{
-				makefriendAct = new QAction(QIcon(IMAGE_MAKEFRIEND), tr( "Make friend" ), this );
+				QAction* makefriendAct = new QAction(QIcon(IMAGE_MAKEFRIEND), tr( "Make friend" ), &contextMnu );
 
 				connect( makefriendAct , SIGNAL( triggered() ), this, SLOT( makeFriend() ) );
 				contextMnu.addAction( makefriendAct);
 #ifdef TODO
 				if(detail.validLvl > RS_TRUST_LVL_MARGINAL)		// it's a denied old friend.
 				{
-					deleteCertAct = new QAction(QIcon(IMAGE_PEERDETAILS), tr( "Delete certificate" ), this );
+					QAction* deleteCertAct = new QAction(QIcon(IMAGE_PEERDETAILS), tr( "Delete certificate" ), &contextMnu );
 					connect( deleteCertAct, SIGNAL( triggered() ), this, SLOT( deleteCert() ) );
 					contextMnu.addAction( deleteCertAct );
 				}
@@ -258,12 +258,12 @@ void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point )
 		}
 		if(peer_id == rsPeers->getGPGOwnId())
 		{
-		    exportcertAct = new QAction(QIcon(IMAGE_EXPIORT), tr( "Export my Cert" ), this );
+			QAction* exportcertAct = new QAction(QIcon(IMAGE_EXPIORT), tr( "Export my Cert" ), &contextMnu );
 		    connect( exportcertAct , SIGNAL( triggered() ), this, SLOT( on_actionExportKey_activated() ) );
 		    contextMnu.addAction( exportcertAct);
 		}
 
-		peerdetailsAct = new QAction(QIcon(IMAGE_PEERDETAILS), tr( "Peer details..." ), this );
+		QAction* peerdetailsAct = new QAction(QIcon(IMAGE_PEERDETAILS), tr( "Peer details..." ), &contextMnu );
 		connect( peerdetailsAct , SIGNAL( triggered() ), this, SLOT( peerdetails() ) );
 		contextMnu.addAction( peerdetailsAct);
 

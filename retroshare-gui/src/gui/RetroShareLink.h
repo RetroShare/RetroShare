@@ -37,38 +37,62 @@
 #include <QVector>
 #include <QUrl>
 
+#define RSLINK_PROCESS_NOTIFY_SUCCESS	1 // notify on success
+#define RSLINK_PROCESS_NOTIFY_ERROR	2 // notify on error
+
+#define RSLINK_PROCESS_NOTIFY_ALL      -1
+
 class RetroShareLink
 {
 	public:
-		RetroShareLink(const QUrl& url);
-		RetroShareLink(const QString& name, uint64_t size, const QString& hash);
+		enum enumType { TYPE_UNKNOWN, TYPE_FILE, TYPE_PERSON };
 
+	public:
+		RetroShareLink(const QUrl& url);
+		RetroShareLink(const QString& url);
+		// file
+		RetroShareLink(const QString& name, uint64_t size, const QString& hash);
+		// person
+		RetroShareLink(const QString& name, const QString& hash);
+
+		enumType type() const {return _type; }
 		uint64_t size() const { return _size ; }
 		const QString& name() const { return _name ; }
 		const QString& hash() const { return _hash ; }
 
+		// get nice name for anchor
+		QString niceName() const;
+
 		/// returns the string retroshare://file|name|size|hash
+		///                    retroshare://person|name|hash
 		QString toString() const ;
 		/// returns the string <a href="retroshare://file|name|size|hash">name</a>
+		///                    <a href="retroshare://person|name|hash">name@hash</a>
 		QString toHtml() const ;
 		/// returns the string <a href="retroshare://file|name|size|hash">retroshare://file|name|size|hash</a>
+		///                    <a href="retroshare://person|name|hash">retroshare://person|name|hash</a>
 		QString toHtmlFull() const ;
 
 		QUrl toUrl() const ;
 
-		bool valid() const { return _size > 0 ; }
+		bool valid() const { return _valid; }
 
-		bool operator==(const RetroShareLink& l) const { return _hash == l._hash ; }
+		bool operator==(const RetroShareLink& l) const { return _type == l._type && _hash == l._hash ; }
+
+		bool process(std::list<std::string> *psrcIds, int flag);
+		static bool processUrl(const QUrl &url, std::list<std::string> *psrcIds, int flag);
+
 	private:
+		void fromString(const QString &url);
 		void check() ;
 		static bool checkHash(const QString& hash) ;
 		static bool checkName(const QString& hash) ;
 
-		static const QString HEADER_NAME;
-
-		QString 	_name;
+		bool     _valid;
+		enumType _type;
+		QString  _name;
 		uint64_t _size;
-		QString 	_hash;
+		QString  _hash;
 };
 
 /// This class handles the copy/paste of links. Every member is static to ensure unicity.
@@ -89,7 +113,7 @@ class RSLinkClipboard
 		// Get the liste of pasted links, either from the internal RS links, or by default
 		// from the clipboard.
 		//
-		static std::vector<RetroShareLink> pasteLinks() ;
+		static void pasteLinks(std::vector<RetroShareLink> &links) ;
 
 		// Produces a list of links with no html structure.
 		static QString toString() ;
@@ -105,13 +129,15 @@ class RSLinkClipboard
 		// Returns true is no links are found to paste.
 		// Useful for menus.
 		//
-		static bool empty();
+		static bool empty(RetroShareLink::enumType type = RetroShareLink::TYPE_UNKNOWN);
+
+		// Returns the count of processed links
+		// Useful for menus.
+		//
+		static int process(RetroShareLink::enumType type = RetroShareLink::TYPE_UNKNOWN, int flag = RSLINK_PROCESS_NOTIFY_ALL);
 
 	private:
-		static std::vector<RetroShareLink> parseClipboard() ;
+		static void parseClipboard(std::vector<RetroShareLink> &links) ;
 };
 
-
-
 #endif
-

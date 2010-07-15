@@ -221,13 +221,15 @@ void SharedFilesDialog::forceCheck()
 
 void SharedFilesDialog::shareddirtreeviewCostumPopupMenu( QPoint point )
 {
-      downloadAct = new QAction(QIcon(IMAGE_DOWNLOAD), tr( "Download" ), this );
+      QMenu contextMnu( this );
+
+      QAction *downloadAct = new QAction(QIcon(IMAGE_DOWNLOAD), tr( "Download" ), &contextMnu );
       connect( downloadAct , SIGNAL( triggered() ), this, SLOT( downloadRemoteSelected() ) );
 
-      copyremotelinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Link" ), this );
+      QAction *copyremotelinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Link" ), &contextMnu );
       connect( copyremotelinkAct , SIGNAL( triggered() ), this, SLOT( copyLinkRemote() ) );
 
-      sendremotelinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Link" ), this );
+      QAction *sendremotelinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Link" ), &contextMnu );
       connect( sendremotelinkAct , SIGNAL( triggered() ), this, SLOT( sendremoteLinkTo(  ) ) );
 
 
@@ -235,7 +237,6 @@ void SharedFilesDialog::shareddirtreeviewCostumPopupMenu( QPoint point )
     //  connect( addMsgAct , SIGNAL( triggered() ), this, SLOT( addMsgRemoteSelected() ) );
 
 
-      QMenu contextMnu( this );
       contextMnu.addAction( downloadAct);
       contextMnu.addSeparator();
       contextMnu.addAction( copyremotelinkAct);
@@ -291,7 +292,7 @@ void SharedFilesDialog::copyLink (const QModelIndexList& lst, bool remote)
 
 					 RetroShareLink link(details.name.c_str(), details.count, details.hash.c_str());
 
-					 if(link.valid())
+					 if(link.valid() && link.type() == RetroShareLink::TYPE_FILE)
 						 urls.push_back(link) ;
             }
         }
@@ -299,7 +300,7 @@ void SharedFilesDialog::copyLink (const QModelIndexList& lst, bool remote)
 		  {
 			  RetroShareLink link(details.name.c_str(), details.count, details.hash.c_str());
 
-			  if(link.valid())
+			  if(link.valid() && link.type() == RetroShareLink::TYPE_FILE)
 				  urls.push_back(link) ;
 		  }
     }

@@ -181,6 +181,7 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
 	
 	  /* Set header resize modes and initial section sizes */
     ui.msgFileList->setColumnCount(5);
+    ui.msgFileList->setColumnHidden ( 4, true);
      
     QHeaderView * _smheader = ui.msgFileList->header () ;   
   
@@ -206,9 +207,7 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
 
 /*static*/ void MessageComposer::msgFriend(std::string id)
 {
-#ifdef PEERS_DEBUG
-    std::cerr << "MessageComposer::msgfriend()" << std::endl;
-#endif
+//    std::cerr << "MessageComposer::msgfriend()" << std::endl;
 
     rsicontrol -> ClearInMsg();
     rsicontrol -> SetInMsg(id, true);
@@ -223,6 +222,57 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
     MessageComposer *pMsgDialog = new MessageComposer();
 
     pMsgDialog->newMsg();
+    pMsgDialog->show();
+
+    /* window will destroy itself! */
+}
+
+void MessageComposer::recommendFriend(std::list <std::string> &peerids)
+{
+//    std::cerr << "MessageComposer::recommendFriend()" << std::endl;
+
+    if (peerids.size() == 0) {
+        return;
+    }
+
+//    rsicontrol -> ClearInMsg();
+//    rsicontrol -> SetInMsg(id, true);
+
+    /* create a message */
+    MessageComposer *pMsgDialog = new MessageComposer();
+
+    pMsgDialog->newMsg();
+    pMsgDialog->setWindowTitle(tr("Compose: ") + tr("Friend Recommendation")) ;
+    pMsgDialog->insertTitleText(tr("Friend Recommendation(s)").toStdString());
+
+    std::string sMsgText = tr("I recommend a good friend of me, you can trust him too when you trust me.").toStdString();
+    sMsgText += "<br><br>";
+
+    /* process peer ids */
+    std::list<FileInfo> files_info;
+    std::list <std::string>::iterator peerid;
+    for (peerid = peerids.begin(); peerid != peerids.end(); peerid++) {
+        RsPeerDetails detail;
+        if (rsPeers->getPeerDetails(*peerid, detail) == false) {
+            std::cerr << "MessageComposer::recommendFriend() Couldn't find peer id " << *peerid << std::endl;
+            continue;
+        }
+
+        RetroShareLink link(QString::fromStdString(detail.name), QString::fromStdString(detail.id));
+        if (link.valid() == false || link.type() != RetroShareLink::TYPE_PERSON) {
+            continue;
+        }
+        sMsgText += link.toHtmlFull().toStdString() + "<br>";
+
+//        FileInfo info;
+//        info.fname = link.name().toStdString();
+//        info.hash = link.hash().toStdString();
+//        info.inRecommend = true;
+//        files_info.push_back(info);
+    }
+    pMsgDialog->insertMsgText(sMsgText);
+
+//    pMsgDialog->insertFileList(files_info);
     pMsgDialog->show();
 
     /* window will destroy itself! */
@@ -544,7 +594,6 @@ void MessageComposer::sendMessage_internal(bool bDraftbox)
 
     rsiface->lockData();   /* Lock Interface */
 
-//	const std::list<FileInfo>& recList = rsiface->getRecommendList();
     for(std::list<FileInfo>::const_iterator it(_recList.begin()); it != _recList.end(); ++it)
         if (it -> inRecommend)
             mi.files.push_back(*it);

@@ -94,15 +94,6 @@ private slots:
 private:
   QTreeWidgetItem *getCurrentNeighbour();
 
-  /** Defines the actions for the context menu */
-  QAction* peerdetailsAct;
-  QAction* denyFriendAct;
-  QAction* deleteCertAct;
-  QAction* makefriendAct;
-  QAction* authAct;
-  QAction* loadcertAct;
-  QAction* exportcertAct;
-
   QTreeWidget *connecttreeWidget;
   
   class NetworkView *networkview;

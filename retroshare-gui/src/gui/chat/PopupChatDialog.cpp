@@ -958,46 +958,9 @@ void PopupChatDialog::anchorClicked (const QUrl& link )
 	std::cerr << "PopupChatDialog::anchorClicked link.scheme() : " << link.scheme().toStdString() << std::endl;
 #endif
 
-
-	if(link.scheme() == "retroshare")
-	{
-		RetroShareLink rslink(link) ;
-
-		if(!rslink.valid())
-		{
-			QMessageBox mb(tr("Badly formed RS link"), tr("This RetroShare link is malformed. This is bug. Please contact the developers.\n\nNote: this possibly comes from a bug in Qt4.6. Try to right-click + copy link location, and paste in Transfer Tab."),QMessageBox::Information,QMessageBox::Ok,0,0);
-			mb.setButtonText( QMessageBox::Ok, "OK" );
-			mb.exec();
-			return ;
-		}
-		std::list<std::string> srcIds ;
-		srcIds.push_back(dialogId);
-
-		// I removed the NETWORK WIDE flag. Indeed, somebody can capture the turtle tunnel requests and ask for downloading the file while
-		// it's being downloaded (as partial files are always sources).
-		//
-		if(rsFiles->FileRequest(rslink.name().toStdString(), rslink.hash().toStdString(), rslink.size(), "", 0, srcIds))
-		{
-			QMessageBox mb(tr("File Request Confirmation"), tr("The file has been added to your download list."),QMessageBox::Information,QMessageBox::Ok,0,0);
-			mb.setButtonText( QMessageBox::Ok, "OK" );
-			mb.exec();
-		}
-		else
-		{
-			QMessageBox mb(tr("File Request canceled"), tr("The file has not been added to your download list, because you already have it, or you're already downloading it."),QMessageBox::Information,QMessageBox::Ok,0,0);
-			mb.setButtonText( QMessageBox::Ok, "OK" );
-			mb.exec();
-		}
-	}
-	else if (link.scheme() == "http") 
-		QDesktopServices::openUrl(link);
-	else if (link.scheme() == "") 
-	{
-		//it's probably a web adress, let's add http:// at the beginning of the link
-		QString newAddress = link.toString();
-		newAddress.prepend("http://");
-		QDesktopServices::openUrl(QUrl(newAddress));
-	}
+	std::list<std::string> srcIds;
+	srcIds.push_back(dialogId);
+        RetroShareLink::processUrl(link, &srcIds, RSLINK_PROCESS_NOTIFY_ALL);
 }
 
 void PopupChatDialog::dropEvent(QDropEvent *event)

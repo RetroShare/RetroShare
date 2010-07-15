@@ -100,16 +100,11 @@ private:
 
    void copyLink (const QModelIndexList& lst, bool remote);
 
-  /** Defines the actions for the context menu for QTreeView */
-  QAction* downloadAct;
-  QAction* addMsgAct;
-
   /** Defines the actions for the context menu for QTreeWidget */
   QAction* openfileAct;
   QAction* openfolderAct;
   QAction* copyremotelinkAct;
   QAction* copylinklocalAct;
-  QAction* sendremotelinkAct;
   QAction* sendlinkAct;
   QAction* sendhtmllinkAct;
   QAction* sendlinkCloudAct;

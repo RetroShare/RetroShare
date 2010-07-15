@@ -115,6 +115,9 @@ private slots:
 		void chatfriend(QTreeWidgetItem* );
 		void chatfriendproxy();
 		void msgfriend();
+		void recommendfriend();
+		void pastePerson();
+
 
 		void configurefriend();
 		void viewprofile();
@@ -183,14 +186,7 @@ private:
 		QTreeWidgetItem *getCurrentPeer();
 
 		/** Defines the actions for the context menu */
-		QAction* chatAct;
 		QAction* pasteLinkAct;
-		QAction* msgAct;
-		QAction* connectfriendAct;
-		QAction* profileviewAct;
-		QAction* configurefriendAct;
-		QAction* exportfriendAct;
-		QAction* removefriendAct;
 
     //QTreeWidget *peertreeWidget;
 

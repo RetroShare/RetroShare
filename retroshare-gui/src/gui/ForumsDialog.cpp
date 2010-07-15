@@ -271,18 +271,18 @@ void ForumsDialog::forumListCustomPopupMenu( QPoint point )
 {
     QMenu contextMnu( this );
 
-    QAction *subForumAct = new QAction(QIcon(IMAGE_SUBSCRIBE), tr( "Subscribe to Forum" ), this );
+    QAction *subForumAct = new QAction(QIcon(IMAGE_SUBSCRIBE), tr( "Subscribe to Forum" ), &contextMnu );
     subForumAct->setDisabled (true);
     connect( subForumAct , SIGNAL( triggered() ), this, SLOT( subscribeToForum() ) );
 
-    QAction *unsubForumAct = new QAction(QIcon(IMAGE_UNSUBSCRIBE), tr( "Unsubscribe to Forum" ), this );
+    QAction *unsubForumAct = new QAction(QIcon(IMAGE_UNSUBSCRIBE), tr( "Unsubscribe to Forum" ), &contextMnu );
     unsubForumAct->setDisabled (true);
     connect( unsubForumAct , SIGNAL( triggered() ), this, SLOT( unsubscribeToForum() ) );
 
-    QAction *newForumAct = new QAction(QIcon(IMAGE_NEWFORUM), tr( "New Forum" ), this );
+    QAction *newForumAct = new QAction(QIcon(IMAGE_NEWFORUM), tr( "New Forum" ), &contextMnu );
     connect( newForumAct , SIGNAL( triggered() ), this, SLOT( newforum() ) );
 
-    QAction *detailsForumAct = new QAction(QIcon(IMAGE_INFO), tr( "Show Forum Details" ), this );
+    QAction *detailsForumAct = new QAction(QIcon(IMAGE_INFO), tr( "Show Forum Details" ), &contextMnu );
     detailsForumAct->setDisabled (true);
     connect( detailsForumAct , SIGNAL( triggered() ), this, SLOT( showForumDetails() ) );
 
@@ -316,22 +316,22 @@ void ForumsDialog::threadListCustomPopupMenu( QPoint point )
 {
     QMenu contextMnu( this );
 
-    QAction *replyAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr( "Reply" ), this );
+    QAction *replyAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr( "Reply" ), &contextMnu );
     replyAct->setDisabled (true);
     connect( replyAct , SIGNAL( triggered() ), this, SLOT( createmessage() ) );
 
-    QAction *newthreadAct = new QAction(QIcon(IMAGE_DOWNLOADALL), tr( "Start New Thread" ), this );
+    QAction *newthreadAct = new QAction(QIcon(IMAGE_DOWNLOADALL), tr( "Start New Thread" ), &contextMnu );
     newthreadAct->setDisabled (true);
     connect( newthreadAct , SIGNAL( triggered() ), this, SLOT( showthread() ) );
 
-    QAction *replyauthorAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr( "Reply to Author" ), this );
+    QAction *replyauthorAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr( "Reply to Author" ), &contextMnu );
     replyauthorAct->setDisabled (true);
     connect( replyauthorAct , SIGNAL( triggered() ), this, SLOT( replytomessage() ) );
 
-    QAction* expandAll = new QAction(tr( "Expand all" ), this );
+    QAction* expandAll = new QAction(tr( "Expand all" ), &contextMnu );
     connect( expandAll , SIGNAL( triggered() ), ui.threadTreeWidget, SLOT (expandAll()) );
 
-    QAction* collapseAll = new QAction(tr( "Collapse all" ), this );
+    QAction* collapseAll = new QAction(tr( "Collapse all" ), &contextMnu );
     connect( collapseAll , SIGNAL( triggered() ), ui.threadTreeWidget, SLOT(collapseAll()) );
 
     if (!mCurrForumId.empty ()) {
@@ -1396,50 +1396,10 @@ void ForumsDialog::replytomessage()
 void ForumsDialog::anchorClicked (const QUrl& link )
 {
     #ifdef FORUM_DEBUG
-		    std::cerr << "ForumsDialog::anchorClicked link.scheme() : " << link.scheme().toStdString() << std::endl;
+    std::cerr << "ForumsDialog::anchorClicked link.scheme() : " << link.scheme().toStdString() << std::endl;
     #endif
 
-	if (link.scheme() == "retroshare")
-	{
-		RetroShareLink rslnk(link.toString()) ;
-
-		if(rslnk.valid())
-		{
-			std::list<std::string> srcIds;
-
-			if(rsFiles->FileRequest(rslnk.name().toStdString(), rslnk.hash().toStdString(), rslnk.size(), "", RS_FILE_HINTS_NETWORK_WIDE, srcIds))
-			{
-				QMessageBox mb(tr("File Request Confirmation"), tr("The file has been added to your download list."),QMessageBox::Information,QMessageBox::Ok,0,0);
-				mb.setButtonText( QMessageBox::Ok, "OK" );
-				mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
-				mb.exec();
-			}
-			else
-			{
-				QMessageBox mb(tr("File Request canceled"), tr("The file has not been added to your download list, because you already have it."),QMessageBox::Information,QMessageBox::Ok,0,0);
-				mb.setButtonText( QMessageBox::Ok, "OK" );
-				mb.exec();
-			}
-		}
-		else
-		{
-			QMessageBox mb(tr("File Request Error"), tr("The file link is malformed."),QMessageBox::Information,QMessageBox::Ok,0,0);
-			mb.setButtonText( QMessageBox::Ok, "OK" );
-			mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
-			mb.exec();
-		}
-	}
-	else if (link.scheme() == "http")
-	{
-		QDesktopServices::openUrl(link);
-	}
-	else if (link.scheme() == "")
-	{
-		//it's probably a web adress, let's add http:// at the beginning of the link
-		QString newAddress = link.toString();
-		newAddress.prepend("http://");
-		QDesktopServices::openUrl(QUrl(newAddress));
-	}
+    RetroShareLink::processUrl(link, NULL, RSLINK_PROCESS_NOTIFY_ALL);
 }
 
 void ForumsDialog::filterRegExpChanged()
