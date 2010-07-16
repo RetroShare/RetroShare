@@ -245,7 +245,7 @@ void MessageComposer::recommendFriend(std::list <std::string> &peerids)
     pMsgDialog->setWindowTitle(tr("Compose: ") + tr("Friend Recommendation")) ;
     pMsgDialog->insertTitleText(tr("Friend Recommendation(s)").toStdString());
 
-    std::string sMsgText = tr("I recommend a good friend of me, you can trust him too when you trust me.").toStdString();
+    std::string sMsgText = tr("I recommend a good friend of me, you can trust him too when you trust me. <br> Copy person link and paste to Friends list").toStdString();
     sMsgText += "<br><br>";
 
     /* process peer ids */
