@@ -349,7 +349,7 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
     QAction* recommendfriendAct = new QAction(QIcon(IMAGE_EXPIORTFRIEND), tr( "Recomend this Friend to..." ), &contextMnu );
     connect( recommendfriendAct , SIGNAL( triggered() ), this, SLOT( recommendfriend() ) );
 
-    QAction* pastePersonAct = new QAction(QIcon(IMAGE_PASTELINK), tr( "Paste retroshare Link" ), &contextMnu );
+    QAction* pastePersonAct = new QAction(QIcon(IMAGE_PASTELINK), tr( "Paste Person Link" ), &contextMnu );
     if(!RSLinkClipboard::empty(RetroShareLink::TYPE_PERSON)) {
         connect( pastePersonAct , SIGNAL( triggered() ), this, SLOT( pastePerson() ) );
     } else {
