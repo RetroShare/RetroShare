@@ -19,7 +19,6 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include <QtGui>
 #include <QObject>
 #include <rshare.h>
 #include "gui/MainWindow.h"
@@ -34,6 +33,7 @@
 #include "gui/GenCertDialog.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/connect/ConfCertDialog.h"
+#include "idle/idle.h"
 
 /*** WINDOWS DON'T LIKE THIS - REDEFINES VER numbers.
 #include <gui/qskinobject/qskinobject.h>
@@ -194,12 +194,9 @@ int main(int argc, char *argv[])
 
 	w->installGroupChatNotifier();
 
-	QObject::connect(w->idle, SIGNAL(secondsIdle(int)), w->messengerWindow, SLOT(checkAndSetIdle(int)));
-
 	/* only show window, if not startMinimized */
 	if(!Settings->value(QString::fromUtf8("StartMinimized"), false).toBool())
 	{
-
 		w->show();
 	}
 

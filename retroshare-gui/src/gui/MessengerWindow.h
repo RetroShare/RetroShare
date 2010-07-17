@@ -47,8 +47,6 @@ public slots:
     void updatePeersAvatar(const QString& peer_id);
     void updateAvatar();
     void loadmystatusmessage();
-    void loadOwnStatus();
-    void checkAndSetIdle(int idleTime);
 
     LogoBar & getLogoBar() const;
 
@@ -91,6 +89,7 @@ private slots:
 
     void changeAvatarClicked();
 
+    void statusChanged(int index);
     void savestatusmessage();
 
     void on_actionSort_Peers_Descending_Order_activated();
@@ -115,12 +114,7 @@ private:
 
     /* (2) Utility Fns */
     QTreeWidgetItem *getCurrentPeer();
-    void savestatus();
     void  insertPeers();
-    // idle function
-    void setIdle(bool Idle);
-    bool isIdle;
-    const unsigned long maxTimeBeforeIdle;
 
     void FilterItems();
     bool FilterItem(QTreeWidgetItem *pItem, QString &sPattern);

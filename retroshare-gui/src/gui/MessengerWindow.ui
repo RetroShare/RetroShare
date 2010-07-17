@@ -125,33 +125,6 @@ p, li { white-space: pre-wrap; }
              <property name="modelColumn">
               <number>0</number>
              </property>
-             <item>
-              <property name="text">
-               <string>Online</string>
-              </property>
-              <property name="icon">
-               <iconset resource="images.qrc">
-                <normaloff>:/images/im-user.png</normaloff>:/images/im-user.png</iconset>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Busy</string>
-              </property>
-              <property name="icon">
-               <iconset resource="images.qrc">
-                <normaloff>:/images/im-user-busy.png</normaloff>:/images/im-user-busy.png</iconset>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Away</string>
-              </property>
-              <property name="icon">
-               <iconset resource="images.qrc">
-                <normaloff>:/images/im-user-away.png</normaloff>:/images/im-user-away.png</iconset>
-              </property>
-             </item>
             </widget>
            </item>
            <item row="2" column="0">

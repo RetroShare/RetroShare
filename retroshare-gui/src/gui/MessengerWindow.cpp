@@ -31,6 +31,7 @@
 
 #include "rshare.h"
 #include "MessengerWindow.h"
+#include "MainWindow.h"
 #include "RsAutoUpdatePage.h"
 
 #include "chat/PopupChatDialog.h"
@@ -131,7 +132,7 @@ void MessengerWindow::releaseInstance()
 
 /** Constructor */
 MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
-    : 	RWindow("MessengerWindow", parent, flags), maxTimeBeforeIdle(30)
+    : 	RWindow("MessengerWindow", parent, flags)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
@@ -147,6 +148,7 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
     connect(ui.clearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
 
     connect(ui.messagelineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(savestatusmessage()));
+    connect(ui.statuscomboBox, SIGNAL(activated(int)), this, SLOT(statusChanged(int)));
     connect(ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
 
     QTimer *timer = new QTimer(this);
@@ -187,8 +189,10 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
     // load settings
     processSettings(true);
 
-    isIdle = false;
-    loadOwnStatus(); // hack; placed in constructor to preempt sendstatus, so status loaded from file
+    MainWindow *pMainWindow = MainWindow::getInstance();
+    if (pMainWindow) {
+        pMainWindow->initializeStatusObject(ui.statuscomboBox);
+    }
     insertPeers();
     updateAvatar();
     loadmystatusmessage();
@@ -206,6 +210,11 @@ MessengerWindow::~MessengerWindow ()
 {
     // save settings
     processSettings(false);
+
+    MainWindow *pMainWindow = MainWindow::getInstance();
+    if (pMainWindow) {
+        pMainWindow->removeStatusObject(ui.statuscomboBox);
+    }
 }
 
 void MessengerWindow::processSettings(bool bLoad)
@@ -367,7 +376,6 @@ void MessengerWindow::updateMessengerDisplay()
         }
 
         insertPeers();
-        savestatus();
 }
 
 /* get the list of peers from the RsIface.  */
@@ -973,11 +981,23 @@ void MessengerWindow::loadmystatusmessage()
 }
 
 /** Save own status message */
-void  MessengerWindow::savestatusmessage()
+void MessengerWindow::savestatusmessage()
 {
   Settings->setValueToGroup("Profile", "StatusMessage",ui.messagelineEdit->text());
 	
   rsMsgs->setCustomStateString(ui.messagelineEdit->text().toStdString());
+}
+
+void MessengerWindow::statusChanged(int index)
+{
+    if (index < 0) {
+        return;
+    }
+
+    MainWindow *pMainWindow = MainWindow::getInstance();
+    if (pMainWindow) {
+        pMainWindow->setStatus(ui.statuscomboBox, ui.statuscomboBox->itemData(index, Qt::UserRole).toInt());
+    }
 }
 
 void MessengerWindow::on_actionSort_Peers_Descending_Order_activated()
@@ -1005,110 +1025,6 @@ void MessengerWindow::displayMenu()
     lookmenu->addAction(ui.actionRoot_is_decorated);
 
     ui.displaypushButton->setMenu(lookmenu);
-}
-
-/** Load own status Online,Away,Busy **/
-void MessengerWindow::loadOwnStatus()
-{
-
-	std::string ownId = rsPeers->getOwnId();
-
-	StatusInfo si;
-	std::list<StatusInfo> statusList;
-	std::list<StatusInfo>::iterator it;
-
-	if (!rsStatus->getStatus(statusList))
-	{
-		return;
-	}
-
-	for(it=statusList.begin();  it != statusList.end(); it++){
-		if(it->id == ownId)
-			si = *it;
-	}
-
-
-	/* set status mode */
-	int statusIndex = 0;
-	switch(si.status)
-	{
-		case RS_STATUS_AWAY:
-			statusIndex = 2;
-			break;		
-		case RS_STATUS_BUSY:
-			statusIndex = 1;
-			break;
-		default:
-		case RS_STATUS_ONLINE:
-			statusIndex = 0;
-			break;
-	}
-	
-	ui.statuscomboBox->setCurrentIndex(statusIndex);
-	
-}
-
-/** Save own status Online,Away,Busy **/
-void MessengerWindow::savestatus()
-{
-
-	RsPeerDetails detail;
-	std::string ownId = rsPeers->getOwnId();
-
-	if (!rsPeers->getPeerDetails(ownId, detail))
-	{
-		return;
-	}	
-		
-	StatusInfo si;
-	int statusIndex;
-
-	if(!isIdle)
-		statusIndex = ui.statuscomboBox->currentIndex();
-	else
-		statusIndex = 3;
-
-	/* Check if status has changed */
-	int status = 0;
-	switch(statusIndex)
-	{
-		case 3:
-			status = RS_STATUS_INACTIVE;
-			break;
-		case 2:
-			status = RS_STATUS_AWAY;
-			break;
-		case 1:
-			status = RS_STATUS_BUSY;
-			break;
-		default:
-		case 0:
-			status = RS_STATUS_ONLINE;
-			break;
-	}
-	
-  si.id = ownId;
-	si.status = status;
-
-	rsStatus->sendStatus(si);
-	
-	return;
-}
-
-void MessengerWindow::checkAndSetIdle(int idleTime){
-
-        if((idleTime >= (int) maxTimeBeforeIdle) && !isIdle){
-		setIdle(true);
-	}else
-                if((idleTime < (int) maxTimeBeforeIdle) && isIdle){
-			setIdle(false);
-		}
-
-	return;
-}
-
-void MessengerWindow::setIdle(bool idle){
-	isIdle = idle;
 }
 
 /* clear Filter */

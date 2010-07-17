@@ -22,10 +22,8 @@
 #ifndef _MainWindow_H
 #define _MainWindow_H
 
-#include <QtGui>
-#include <QMainWindow>
-#include <QFileDialog>
 #include <QSystemTrayIcon>
+#include <set>
 
 #ifdef UNFINISHED
 #include "unfinished/ApplicationWindow.h"
@@ -38,8 +36,8 @@
 
 #include "ui_MainWindow.h"
 #include "gui/common/rwindow.h"
-#include "idle/idle.h"
 
+class Idle;
 class PeerStatus;
 class NATStatus;
 class RatesStatus;
@@ -88,6 +86,7 @@ public:
 
     /** Create main window */
     static MainWindow *Create ();
+    static MainWindow *getInstance();
 
     /** Destructor. */
     ~MainWindow();
@@ -133,11 +132,17 @@ public:
 
     static void installGroupChatNotifier();
 
+    /* initialize widget with status informations, status constant stored in data or in Qt::UserRole */
+    void initializeStatusObject(QObject *pObject);
+    void removeStatusObject(QObject *pObject);
+    void setStatus(QObject *pObject, int nStatus);
+
 public slots:
     void updateHashingInfo(const QString&) ;
     void displayErrorMessage(int,int,const QString&) ;
     void postModDirectories(bool update_local);
 	 void displayDiskSpaceWarning(int loc,int size_limit_mb) ;
+    void checkAndSetIdle(int idleTime);
 
 protected:
     /** Default Constructor */
@@ -177,6 +182,7 @@ private slots:
     void showMess();
     void showSettings();
     void setStyle();
+    void statusChanged(QAction *pAction);
 
     /** Called when user attempts to quit via quit button*/
     void doQuit();
@@ -223,8 +229,19 @@ private:
     RatesStatus *ratesstatus;
 
     QLabel *_hashing_info_label ;
-    
-	 QAction *messageAction ;
+
+    QAction *messageAction ;
+
+    /* Status */
+    std::set <QObject*> m_apStatusObjects; // added objects for status
+    bool m_bStatusLoadDone;
+
+    void loadOwnStatus();
+
+    // idle function
+    void setIdle(bool Idle);
+    bool isIdle;
+    const unsigned long maxTimeBeforeIdle;
 
     /** Qt Designer generated object */
     Ui::MainWindow ui;
