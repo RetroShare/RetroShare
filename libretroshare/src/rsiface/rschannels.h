@@ -55,6 +55,15 @@ class ChannelInfo
 	time_t lastPost;
 };
 
+//! for storing a channel msgs thumbnail picture
+class ChannelMsgThumbnail
+{
+public:
+	ChannelMsgThumbnail() : image_thumbnail(NULL), im_thumbnail_size(0) {}
+
+	unsigned char* image_thumbnail;
+	int im_thumbnail_size;
+};
 
 //! Stores information on a message within a channel
 class ChannelMsgInfo 
@@ -73,7 +82,11 @@ class ChannelMsgInfo
 	std::list<FileInfo> files;
 	uint32_t count; /// file count
 	uint64_t size; /// size of all files
+
+	ChannelMsgThumbnail thumbnail;
+
 };
+
 
 //! gives a more brief account of a channel message than channelMsgInfo
 class ChannelMsgSummary 

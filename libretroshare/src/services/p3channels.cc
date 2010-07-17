@@ -221,6 +221,15 @@ bool p3Channels::getChannelMessage(std::string fId, std::string mId, ChannelMsgI
 		info.size += fi.size;
 	}
 
+	if((cmsg->thumbnail.binData.bin_data != NULL) && (cmsg->thumbnail.image_type == RSTLV_IMAGE_TYPE_PNG))
+	{
+		info.thumbnail.image_thumbnail =
+				(unsigned char*) cmsg->thumbnail.binData.bin_data;
+
+		info.thumbnail.im_thumbnail_size =
+				cmsg->thumbnail.binData.bin_len;
+	}
+
 	return true;
 }
 
@@ -250,6 +259,24 @@ bool p3Channels::ChannelMessageSend(ChannelMsgInfo &info)
 		cmsg -> attachment.items.push_back(mfi);
 	}
 
+	// explicit member wise copy for grp image
+	if((info.thumbnail.image_thumbnail != NULL) &&
+			(info.thumbnail.im_thumbnail_size > 0)){
+
+		cmsg->thumbnail.binData.bin_data =
+				new unsigned char[info.thumbnail.im_thumbnail_size];
+
+		memcpy(cmsg->thumbnail.binData.bin_data, info.thumbnail.image_thumbnail,
+				info.thumbnail.im_thumbnail_size*sizeof(unsigned char));
+		cmsg->thumbnail.binData.bin_len = info.thumbnail.im_thumbnail_size;
+		cmsg->thumbnail.image_type = RSTLV_IMAGE_TYPE_PNG;
+
+	}else{
+
+		cmsg->thumbnail.binData.bin_data = NULL;
+		cmsg->thumbnail.binData.bin_len = 0;
+		cmsg->thumbnail.image_type = 0;
+	}
 
 	std::string msgId = publishMsg(cmsg, true);
 

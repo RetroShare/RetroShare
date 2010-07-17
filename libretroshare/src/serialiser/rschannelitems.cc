@@ -42,6 +42,7 @@ void 	RsChannelMsg::clear()
 	message.clear();
 
 	attachment.TlvClear();
+	thumbnail.TlvClear();
 }
 
 std::ostream &RsChannelMsg::print(std::ostream &out, uint16_t indent)
@@ -65,6 +66,10 @@ std::ostream &RsChannelMsg::print(std::ostream &out, uint16_t indent)
 	out << "Attachment: " << std::endl;
 	attachment.print(out, int_Indent);
 
+	printIndent(out, int_Indent);
+	out << "Thumbnail: " << std::endl;
+	thumbnail.print(out, int_Indent);
+
         printRsItemEnd(out, "RsChannelMsg", indent);
         return out;
 }
@@ -84,6 +89,7 @@ uint32_t    RsChannelSerialiser::sizeMsg(RsChannelMsg *item)
 	s += GetTlvWideStringSize(item->subject);
 	s += GetTlvWideStringSize(item->message);
 	s += item->attachment.TlvSize();
+	s += item->thumbnail.TlvSize();
 
 	return s;
 }
@@ -124,6 +130,9 @@ bool     RsChannelSerialiser::serialiseMsg(RsChannelMsg *item, void *data, uint3
 
 	ok &= item->attachment.SetTlv(data, tlvsize, &offset);
 	std::cerr << "RsChannelSerialiser::serialiseMsg() Attachment: " << ok << std::endl;
+
+	ok &= item->thumbnail.SetTlv(data, tlvsize, &offset);
+	std::cerr << "RsChannelSerialiser::serialiseMsg() thumbnail: " << ok << std::endl;
 
 	if (offset != tlvsize)
 	{
@@ -174,7 +183,9 @@ RsChannelMsg *RsChannelSerialiser::deserialiseMsg(void *data, uint32_t *pktsize)
 	/* RsChannelMsg */
 	ok &= GetTlvWideString(data, rssize, &offset, TLV_TYPE_WSTR_SUBJECT, item->subject);
 	ok &= GetTlvWideString(data, rssize, &offset, TLV_TYPE_WSTR_MSG, item->message);
-        ok &= item->attachment.GetTlv(data, rssize, &offset);
+    ok &= item->attachment.GetTlv(data, rssize, &offset);
+    ok &= item->thumbnail.GetTlv(data, rssize, &offset);
+
 
 	if (offset != rssize)
 	{

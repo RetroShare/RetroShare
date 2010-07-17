@@ -454,6 +454,11 @@ void CreateChannelMsg::sendMessage(std::wstring subject, std::wstring msg, std::
 	}
 	else
 
+
+
+
+
+
 	/* rsChannels */
 	if (rsChannels)
 	{
@@ -465,6 +470,18 @@ void CreateChannelMsg::sendMessage(std::wstring subject, std::wstring msg, std::
 		msgInfo.subject = subject;
 		msgInfo.msg = msg;
 		msgInfo.files = files;
+
+		QByteArray ba;
+		QBuffer buffer(&ba);
+
+		if(!picture.isNull()){
+			// send chan image
+
+			buffer.open(QIODevice::WriteOnly);
+			picture.save(&buffer, "PNG"); // writes image into ba in PNG format
+			msgInfo.thumbnail.image_thumbnail = (unsigned char*) ba.data();
+			msgInfo.thumbnail.im_thumbnail_size = ba.size();
+		}
 				
 		rsChannels->ChannelMessageSend(msgInfo);
 	}

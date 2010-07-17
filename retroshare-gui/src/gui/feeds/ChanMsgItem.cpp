@@ -121,6 +121,14 @@ void ChanMsgItem::updateItemStatic()
 		layout->addWidget(fi);
 	}
 
+	if(cmi.thumbnail.image_thumbnail != NULL)
+	{
+		QPixmap thumbnail;
+		thumbnail.loadFromData(cmi.thumbnail.image_thumbnail, cmi.thumbnail.im_thumbnail_size,
+				"PNG");
+
+		label->setPixmap(thumbnail);
+	}
 	
 	if (mIsHome)
 	{

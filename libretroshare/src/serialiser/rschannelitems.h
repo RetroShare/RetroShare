@@ -59,6 +59,7 @@ virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
         std::wstring message;
 
         RsTlvFileSet attachment;
+        RsTlvImage thumbnail;
 
 };
 
