@@ -15,7 +15,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
@@ -23,13 +23,9 @@
 #ifndef _CREATE_FORUM_MSG_DIALOG_H
 #define _CREATE_FORUM_MSG_DIALOG_H
 
-#include <QtGui>
-#include <QWidget>
-#include <string>
-
-#include "gui/feeds/AttachFileItem.h"
-
 #include "ui_CreateForumMsg.h"
+
+class AttachFileItem;
 
 class CreateForumMsg : public QMainWindow
 {
@@ -39,9 +35,9 @@ public:
     CreateForumMsg(std::string fId, std::string pId);
 
     void newMsg(); /* cleanup */
-  
+
     void loadEmoticonsForums();
-  
+
 private slots:
     /** Create the context popup menu and it's submenus */
     void forumMessageCostumPopupMenu( QPoint point );
@@ -54,27 +50,20 @@ private slots:
     void pasteLinkFull();
 
     void smileyWidgetForums();
-	void addSmileys();
-	void addFile();
-	void addAttachment(std::string);
+    void addSmileys();
+    void addFile();
+    void addAttachment(std::string);
 
 protected:
     void closeEvent (QCloseEvent * event);
     virtual void dragEnterEvent(QDragEnterEvent *event);
     virtual void dropEvent(QDropEvent *event);
 
-  
-private:
-    /** Define the popup menus for the Context menu */
-    QMenu* contextMnu;
-    
-    /** Defines the actions for the context menu */
-    QAction* pasteLinkAct;
-    QAction* pasteLinkFullAct;
 
+private:
     std::string mForumId;
     std::string mParentId;
-  
+
     QHash<QString, QString> smileys;
 
     /** Qt Designer generated object */

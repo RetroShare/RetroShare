@@ -15,169 +15,166 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
 #include "CreateForumMsg.h"
 
-#include <gui/settings/rsharesettings.h>
+#include <QMenu>
+#include <QMessageBox>
+#include <QFile>
+#include <QFileDialog>
+#include <QDesktopWidget>
+#include <QDropEvent>
 
-#include <gui/RetroShareLink.h>
-#include <QtGui>
 
 #include "rsiface/rsforums.h"
 #include "rsiface/rsfiles.h"
 
-#include <sys/stat.h>
-
+#include "gui/settings/rsharesettings.h"
+#include "gui/RetroShareLink.h"
 #include "gui/feeds/AttachFileItem.h"
 
-#include <sstream>
+#include <sys/stat.h>
 
 
 /** Constructor */
 CreateForumMsg::CreateForumMsg(std::string fId, std::string pId)
 : QMainWindow(NULL), mForumId(fId), mParentId(pId)
 {
-  /* Invoke the Qt Designer generated object setup routine */
-  ui.setupUi(this);
-  setAttribute(Qt::WA_DeleteOnClose, true);
+    /* Invoke the Qt Designer generated object setup routine */
+    ui.setupUi(this);
+    setAttribute(Qt::WA_DeleteOnClose, true);
 
-  Settings->loadWidgetInformation(this);
-  
-  connect( ui.forumMessage, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( forumMessageCostumPopupMenu( QPoint ) ) );
-  
-  // connect up the buttons.
-  connect( ui.postmessage_action, SIGNAL( triggered (bool) ), this, SLOT( createMsg( ) ) );
-  connect( ui.close_action, SIGNAL( triggered (bool) ), this, SLOT( cancelMsg( ) ) );
-  connect( ui.emoticonButton, SIGNAL(clicked()), this, SLOT(smileyWidgetForums()));
-  connect( ui.attachFileButton, SIGNAL(clicked() ), this , SLOT(addFile()));
-  connect( ui.pastersButton, SIGNAL(clicked() ), this , SLOT(pasteLink()));
-  
-  
+    Settings->loadWidgetInformation(this);
 
-  newMsg();
-  
-  loadEmoticonsForums();
+    connect( ui.forumMessage, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( forumMessageCostumPopupMenu( QPoint ) ) );
 
+    // connect up the buttons.
+    connect( ui.postmessage_action, SIGNAL( triggered (bool) ), this, SLOT( createMsg( ) ) );
+    connect( ui.close_action, SIGNAL( triggered (bool) ), this, SLOT( cancelMsg( ) ) );
+    connect( ui.emoticonButton, SIGNAL(clicked()), this, SLOT(smileyWidgetForums()));
+    connect( ui.attachFileButton, SIGNAL(clicked() ), this , SLOT(addFile()));
+    connect( ui.pastersButton, SIGNAL(clicked() ), this , SLOT(pasteLink()));
+
+    newMsg();
+
+    loadEmoticonsForums();
 }
 
 /** context menu searchTablewidget2 **/
 void CreateForumMsg::forumMessageCostumPopupMenu( QPoint point )
 {
+    QMenu contextMnu (this);
 
-	if(RSLinkClipboard::empty())
-		return ;
+    QAction *pasteLinkAct = new QAction(QIcon(":/images/pasterslink.png"), tr( "Paste retroshare Link" ), &contextMnu );
+    QAction *pasteLinkFullAct = new QAction(QIcon(":/images/pasterslink.png"), tr( "Paste retroshare Link Full" ), &contextMnu );
 
-    contextMnu = new QMenu( this );
+    if (RSLinkClipboard::empty()) {
+        pasteLinkAct->setDisabled (true);
+        pasteLinkFullAct->setDisabled (true);
+    } else {
+        connect(pasteLinkAct , SIGNAL(triggered()), this, SLOT(pasteLink()));
+        connect(pasteLinkFullAct , SIGNAL(triggered()), this, SLOT(pasteLinkFull()));
+    }
 
-    pasteLinkAct = new QAction(QIcon(":/images/pasterslink.png"), tr( "Paste retroshare Link" ), this );
-    connect( pasteLinkAct , SIGNAL( triggered() ), this, SLOT( pasteLink() ) );
+    contextMnu.addAction(pasteLinkAct);
+    contextMnu.addAction(pasteLinkFullAct);
 
-    pasteLinkFullAct = new QAction(QIcon(":/images/pasterslink.png"), tr( "Paste retroshare Link Full" ), this );
-    connect( pasteLinkFullAct , SIGNAL( triggered() ), this, SLOT( pasteLinkFull() ) );
-
-    contextMnu->clear();
-    contextMnu->addAction( pasteLinkAct);
-    contextMnu->addAction( pasteLinkFullAct);
-
-    contextMnu->exec(QCursor::pos());
+    contextMnu.exec(QCursor::pos());
 }
 
 
 void  CreateForumMsg::newMsg()
 {
-	/* clear all */
-	ForumInfo fi;
-	if (rsForums->getForumInfo(mForumId, fi))
-	{
-		ForumMsgInfo msg;
+    /* clear all */
+    ForumInfo fi;
+    if (rsForums->getForumInfo(mForumId, fi))
+    {
+        ForumMsgInfo msg;
 
-		QString name = QString::fromStdWString(fi.forumName);
-		QString subj;
-		if ((mParentId != "") && (rsForums->getForumMessage(
-				mForumId, mParentId, msg)))
-		{
-			name += " In Reply to: ";
-			name += QString::fromStdWString(msg.title);
-			
-			QString text = QString::fromStdWString(msg.title);
-			
-			if (text.startsWith("Re:", Qt::CaseInsensitive))
-			{
-			subj = QString::fromStdWString(msg.title);
-			}
-			else
-			{
-			subj = "Re: " + QString::fromStdWString(msg.title);
-			}
-			
-		}
+        QString name = QString::fromStdWString(fi.forumName);
+        QString subj;
+        if ((mParentId != "") && (rsForums->getForumMessage(mForumId, mParentId, msg)))
+        {
+            name += " In Reply to: ";
+            name += QString::fromStdWString(msg.title);
 
-		ui.forumName->setText(name);
-		ui.forumSubject->setText(subj);
-		
-		if (!ui.forumSubject->text().isEmpty())
-		{
-      ui.forumMessage->setFocus();
+            QString text = QString::fromStdWString(msg.title);
+
+            if (text.startsWith("Re:", Qt::CaseInsensitive))
+            {
+                subj = QString::fromStdWString(msg.title);
+            }
+            else
+            {
+                subj = "Re: " + QString::fromStdWString(msg.title);
+            }
+
+        }
+
+        ui.forumName->setText(name);
+        ui.forumSubject->setText(subj);
+
+        if (!ui.forumSubject->text().isEmpty())
+        {
+            ui.forumMessage->setFocus();
+        }
+        else
+        {
+            ui.forumSubject->setFocus();
+        }
+
+        if (fi.forumFlags & RS_DISTRIB_AUTHEN_REQ)
+        {
+            ui.signBox->setChecked(true);
+            ui.signBox->setEnabled(false);
+        }
+        else
+        {
+            ui.signBox->setEnabled(true);
+        }
     }
-		else
-		{
-      ui.forumSubject->setFocus();
-		}
 
-		if (fi.forumFlags & RS_DISTRIB_AUTHEN_REQ)
-		{
-			ui.signBox->setChecked(true);
-			ui.signBox->setEnabled(false);
-		}
-		else
-		{
-			ui.signBox->setEnabled(true);
-		}
-	}
-
-	ui.forumMessage->setText("");
+    ui.forumMessage->setText("");
 }
 
 void  CreateForumMsg::createMsg()
 {
-	QString name = ui.forumSubject->text();
-	QString desc = ui.forumMessage->toHtml();
-	
-	if(name.isEmpty())
-	{	/* error message */
-		QMessageBox::warning(this, tr("RetroShare"),tr("Please set a Forum Subject and Forum Message"),
-    QMessageBox::Ok, QMessageBox::Ok);
-                   
-		return; //Don't add  a empty Subject!!
-	}
+    QString name = ui.forumSubject->text();
+    QString desc = ui.forumMessage->toHtml();
 
+    if(name.isEmpty())
+    {	/* error message */
+        QMessageBox::warning(this, tr("RetroShare"),tr("Please set a Forum Subject and Forum Message"),
+                             QMessageBox::Ok, QMessageBox::Ok);
 
-	ForumMsgInfo msgInfo;
+        return; //Don't add  a empty Subject!!
+    }
 
-	msgInfo.forumId = mForumId;
-	msgInfo.threadId = "";
-	msgInfo.parentId = mParentId;
-	msgInfo.msgId = "";
+    ForumMsgInfo msgInfo;
 
-	msgInfo.title = name.toStdWString();
-	msgInfo.msg = desc.toStdWString();
-        msgInfo.msgflags = 0;
+    msgInfo.forumId = mForumId;
+    msgInfo.threadId = "";
+    msgInfo.parentId = mParentId;
+    msgInfo.msgId = "";
 
-	if (ui.signBox->isChecked())
-	{
-		msgInfo.msgflags = RS_DISTRIB_AUTHEN_REQ;
-	}
+    msgInfo.title = name.toStdWString();
+    msgInfo.msg = desc.toStdWString();
+    msgInfo.msgflags = 0;
 
+    if (ui.signBox->isChecked())
+    {
+        msgInfo.msgflags = RS_DISTRIB_AUTHEN_REQ;
+    }
 
-	if ((msgInfo.msg == L"") && (msgInfo.title == L""))
-		return; /* do nothing */
+    if ((msgInfo.msg == L"") && (msgInfo.title == L""))
+        return; /* do nothing */
 
-	rsForums->ForumMessageSend(msgInfo);
+    rsForums->ForumMessageSend(msgInfo);
 
-	close();
+    close();
 }
 
 void CreateForumMsg::closeEvent (QCloseEvent * event)
@@ -187,7 +184,7 @@ void CreateForumMsg::closeEvent (QCloseEvent * event)
 
 void CreateForumMsg::cancelMsg()
 {
-	close();
+    close();
 }
 
 void CreateForumMsg::loadEmoticonsForums()
@@ -344,7 +341,7 @@ void CreateForumMsg::addAttachment(std::string filePath) {
 	    /* add widget in for new destination */
 	    AttachFileItem *file = new AttachFileItem(filePath);
 	    //file->
-	    	    
+
 	    ui.verticalLayout->addWidget(file, 1, 0);
 
 	    //when the file is local or is finished hashing, call the fileHashingFinished method to send a forum message
@@ -372,14 +369,14 @@ void CreateForumMsg::fileHashingFinished(AttachFileItem* file) {
 	sprintf(fileSizeChar, "%llu", (unsigned long long int)file->FileSize());
 	std::string fileSize = *(&fileSizeChar);
 
-	std::string mesgString = "<a href='retroshare://file|" + (file->FileName()) + "|" + fileSize + "|" + (file->FileHash()) + "'>" 
+	std::string mesgString = "<a href='retroshare://file|" + (file->FileName()) + "|" + fileSize + "|" + (file->FileHash()) + "'>"
 	+ "retroshare://file|" + (file->FileName()) + "|" + fileSize +  "|" + (file->FileHash())  + "</a>" + "<br>";
 #ifdef CHAT_DEBUG
 	    std::cerr << "CreateForumMsg::anchorClicked mesgString : " << mesgString << std::endl;
 #endif
 
     ui.forumMessage->textCursor().insertHtml(QString::fromStdString(mesgString));
-  	
+
 	ui.forumMessage->setFocus( Qt::OtherFocusReason );
 
 }
