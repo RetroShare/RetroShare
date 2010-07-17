@@ -197,10 +197,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(messagesDialog = new MessagesDialog(ui.stackPages),
                       messageAction = createPageAction(QIcon(IMAGE_MESSAGES), tr("Messages"), grp));   
 
-#ifndef RS_RELEASE_VERSION
     ui.stackPages->add(channelFeed = new ChannelFeed(ui.stackPages),
                       createPageAction(QIcon(IMAGE_CHANNELS), tr("Channels"), grp));
-#endif
 
     #ifdef BLOGS
     ui.stackPages->add(blogsFeed = new BlogsDialog(ui.stackPages),

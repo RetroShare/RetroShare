@@ -31,10 +31,7 @@
 #include "unfinished/ApplicationWindow.h"
 #endif
 
-
-#ifndef RS_RELEASE_VERSION
 #include "ChannelFeed.h"
-#endif
 
 #include "bwgraph/bwgraph.h"
 #include "help/browser/helpbrowser.h"
@@ -75,18 +72,18 @@ public:
     enum Page {
         Network            = 0,  		/** Network page. */
         Friends,              	 		/** Peers page. */
-        Search,					/** Search page. */
-        Transfers, 				/** Transfers page. */
+        Search,					        /** Search page. */
+        Transfers, 				        /** Transfers page. */
         SharedDirectories,   			/** Shared Directories page. */
-        Messages,  		           	/** Messages page. */
-#ifndef RS_RELEASE_VERSION
-        Links,  				/** Links page. */
-        Channels,  				/** Channels page. */
-#endif
-        Forums,  				/** Forums page. */
+        Messages,  		           	    /** Messages page. */
+        Channels,  				        /** Channels page. */
+        Forums,  				        /** Forums page. */
 #ifdef BLOGS
-        Blogs,  				/** Blogs page. */
+        Blogs,  				        /** Blogs page. */
 #endif
+#ifndef RS_RELEASE_VERSION
+        Links,  				        /** Links page. */
+#endif        
     };
 
     /** Create main window */
@@ -117,10 +114,10 @@ public:
     SharedFilesDialog *sharedfilesDialog;
     MessengerWindow   *messengerWindow;
     ForumsDialog      *forumsDialog;
+    ChannelFeed       *channelFeed;
     Idle              *idle;
 
 #ifndef RS_RELEASE_VERSION
-    ChannelFeed       *channelFeed;
     LinksDialog       *linksDialog;
     NewsFeed          *newsFeed;
 #endif
