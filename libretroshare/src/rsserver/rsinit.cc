@@ -2000,7 +2000,7 @@ RsTurtle *rsTurtle = NULL ;
 #include "util/rsdir.h"
 
 #include "upnp/upnphandler.h"
-#include "dht/opendhtmgr.h"
+//#include "dht/opendhtmgr.h"
 
 #include "services/p3disc.h"
 #include "services/p3msgservice.h"

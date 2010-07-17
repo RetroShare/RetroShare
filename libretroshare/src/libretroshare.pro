@@ -1,6 +1,6 @@
 TEMPLATE = lib
 #CONFIG += staticlib release
-CONFIG += staticlib testnetwork
+CONFIG += staticlib testnetwork 
 CONFIG -= qt
 TARGET = retroshare
 
@@ -49,6 +49,15 @@ debug {
 
         QMAKE_CXXFLAGS -= -O2 -fomit-frame-pointer
         QMAKE_CXXFLAGS *= -g -fno-omit-frame-pointer
+}
+
+bitdht {
+
+HEADERS +=	dht/p3bitdht.h 
+SOURCES +=	dht/p3bitdht.cc 
+
+        BITDHT_DIR = ../../libbitdht/src
+	INCLUDEPATH += . $${BITDHT_DIR}
 }
 
 
@@ -210,12 +219,7 @@ HEADERS +=	dbase/cachestrapper.h \
 			dbase/findex.h \
 			dbase/fistore.h
 
-HEADERS +=	dht/b64.h \
-			dht/dhtclient.h \
-			dht/dhthandler.h \
-			dht/opendht.h \
-			dht/opendhtmgr.h \
-			dht/opendhtstr.h
+#HEADERS +=	dht/p3bitdht.h \
 
 HEADERS +=	ft/ftchunkmap.h \
 			ft/ftcontroller.h \
@@ -345,10 +349,7 @@ SOURCES +=	dbase/cachestrapper.cc \
 			dbase/fistore.cc \
 			dbase/rsexpr.cc
 
-SOURCES +=	dht/b64.cc \
-			dht/opendhtmgr.cc \
-			dht/opendht.cc \
-			dht/opendhtstr.cc
+#SOURCES +=	dht/p3bitdht.cc \
 
 SOURCES +=	ft/ftchunkmap.cc \
 			ft/ftcontroller.cc \
