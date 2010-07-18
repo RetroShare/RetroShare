@@ -26,8 +26,7 @@
  *
  */
 
-
-#include "bdiface.h"
+#include "bitdht/bdiface.h"
 
 /*******
  * These type of parameters are now DHT Function dependent
@@ -52,9 +51,6 @@
 #define BITDHT_MAX_SEND_PERIOD	600   // retry every 10 secs.
 #define BITDHT_MAX_RECV_PERIOD	1500   // out-of-date
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
 
 #include <list>
 #include <string>

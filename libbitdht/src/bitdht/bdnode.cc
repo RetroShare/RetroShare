@@ -23,10 +23,12 @@
  *
  */
 
-#include "bdnode.h"
+#include "bitdht/bdnode.h"
 
-#include "bencode.h"
-#include "bdmsgs.h"
+#include "bitdht/bencode.h"
+#include "bitdht/bdmsgs.h"
+
+#include "util/bdnet.h"
 
 #include <string.h>
 #include <stdlib.h>
@@ -34,10 +36,6 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
-
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
 
 
 #define BITDHT_QUERY_START_PEERS    10

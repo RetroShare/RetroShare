@@ -65,9 +65,15 @@ int main(int argc, char **argv)
 	bdDhtFunctions *fns = new bdStdDht();
 
 	bdNodeId id;
+
+/**
 	memcpy(((char *) id.data), "1234567890abcdefghi", 20);
 	uint32_t *deltaptr = (uint32_t *) (id.data);
 	(*deltaptr) += htonl(delta);
+**/
+
+	bdStdRandomNodeId(&id);
+
 
 	std::cerr << "Using NodeId: ";
 	fns->bdPrintNodeId(std::cerr, &id);

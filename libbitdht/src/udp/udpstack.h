@@ -2,7 +2,7 @@
 #define BITDHT_UDP_STACK_RECEIVER_H
 
 /*
- * bitdht/udpstack.h
+ * udp/udpstack.h
  *
  * BitDHT: An Flexible DHT library.
  *
@@ -27,9 +27,8 @@
  */
 
 
-#include <netinet/in.h>
-
 #include "util/bdthreads.h"
+#include "util/bdnet.h"
 
 #include <iosfwd>
 #include <list>
@@ -38,7 +37,7 @@
 #include <iosfwd>
 #include <map>
 
-#include "udplayer.h"
+#include "udp/udplayer.h"
 
 /* UdpStackReceiver is a Generic Receiver of info from a UdpLayer class.
  * it provides a UdpReceiver class, and accepts a stack of UdpReceivers, 

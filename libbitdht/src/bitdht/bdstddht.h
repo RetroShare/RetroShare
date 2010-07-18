@@ -27,16 +27,12 @@
  */
 
 
-#include "bdiface.h"
+#include "bitdht/bdiface.h"
 
 #define BITDHT_STANDARD_BUCKET_SIZE 20
 #define BITDHT_STANDARD_BUCKET_SIZE_BITS 5
 
 #define BITDHT_STANDARD_N_BUCKETS  BITDHT_KEY_BITLEN
-
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
 
 #include <list>
 #include <string>

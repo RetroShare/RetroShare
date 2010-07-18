@@ -23,7 +23,7 @@
 #include <stdlib.h> /* malloc() realloc() free() strtoll() */
 #include <string.h> /* memset() */
 
-#include "bencode.h"
+#include "bitdht/bencode.h"
 
 /***
  * #define BE_DEBUG_DECODE 1

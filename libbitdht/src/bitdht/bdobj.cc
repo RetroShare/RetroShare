@@ -1,4 +1,3 @@
-#include "bdobj.h"
 
 /*
  * bitdht/bdobj.cc
@@ -25,6 +24,7 @@
  *
  */
 
+#include "bitdht/bdobj.h"
 
 
 void bdPrintTransId(std::ostream &out, bdToken *transId)

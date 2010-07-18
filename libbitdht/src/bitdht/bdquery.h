@@ -27,9 +27,9 @@
  */
 
 
-#include "bdiface.h"
-#include "bdpeer.h"
-#include "bdobj.h"
+#include "bitdht/bdiface.h"
+#include "bitdht/bdpeer.h"
+#include "bitdht/bdobj.h"
 
 /* Query result flags are in bdiface.h */
 

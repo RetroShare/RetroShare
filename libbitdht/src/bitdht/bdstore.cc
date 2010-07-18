@@ -24,11 +24,8 @@
  */
 
 
-#include "bdstore.h"
-
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#include "bitdht/bdstore.h"
+#include "util/bdnet.h"
 
 #include <stdio.h>
 #include <iostream>

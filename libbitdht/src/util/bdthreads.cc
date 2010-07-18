@@ -1,9 +1,9 @@
 /*
- * bitdht/bdthreads.cc
+ * util/bdthreads.cc
  *
  * BitDHT: An Flexible DHT library.
  *
- * Copyright 2010 by Robert Fernie
+ * Copyright 2004-2010 by Robert Fernie
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public

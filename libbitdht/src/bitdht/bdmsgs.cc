@@ -25,8 +25,8 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "bencode.h"
-#include "bdmsgs.h"
+#include "bitdht/bencode.h"
+#include "bitdht/bdmsgs.h"
 
 
 int create_ping_message();

@@ -24,8 +24,8 @@
  */
 
 
-#include "bdstddht.h"
-#include "bdpeer.h"
+#include "bitdht/bdstddht.h"
+#include "bitdht/bdpeer.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -34,11 +34,6 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
-
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-
 
 /**
  * #define BITDHT_DEBUG 1

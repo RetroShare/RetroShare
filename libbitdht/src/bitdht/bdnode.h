@@ -27,11 +27,11 @@
  */
 
 
-#include "bdpeer.h"
-#include "bdquery.h"
-#include "bdstore.h"
-#include "bdobj.h"
-#include "bdhash.h"
+#include "bitdht/bdpeer.h"
+#include "bitdht/bdquery.h"
+#include "bitdht/bdstore.h"
+#include "bitdht/bdobj.h"
+#include "bitdht/bdhash.h"
 
 
 #define BD_QUERY_NEIGHBOURS		1

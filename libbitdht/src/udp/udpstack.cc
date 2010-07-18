@@ -1,5 +1,5 @@
 /*
- * bitdht/udpstack.cc
+ * udp/udpstack.cc
  *
  * BitDHT: An Flexible DHT library.
  *
@@ -23,17 +23,13 @@
  *
  */
 
-#include "udpstack.h"
+#include "udp/udpstack.h"
 
 #include <iostream>
 #include <sstream>
 #include <iomanip>
 #include <string.h>
 #include <stdlib.h>
-
-#include <arpa/inet.h>
-#include <fcntl.h>
-#include <errno.h>
 
 #include <algorithm>
 

@@ -38,7 +38,8 @@ linux-g++-64 {
 win32-x-g++ {	
 	OBJECTS_DIR = temp/win32xgcc/obj
 	DESTDIR = lib.win32xgcc
-	DEFINES *= WINDOWS_SYS WIN32 WIN_CROSS_UBUNTU
+	# These have been replaced by _WIN32 && __MINGW32__
+	# DEFINES *= WINDOWS_SYS WIN32 WIN_CROSS_UBUNTU
 	QMAKE_CXXFLAGS *= -Wmissing-include-dirs
 	QMAKE_CC = i586-mingw32msvc-g++
 	QMAKE_LIB = i586-mingw32msvc-ar
@@ -53,7 +54,9 @@ win32 {
 		QMAKE_CC = g++
 		OBJECTS_DIR = temp/obj
 		MOC_DIR = temp/moc
-		DEFINES *= WINDOWS_SYS WIN32 STATICLIB MINGW
+		DEFINES *= STATICLIB 
+		# These have been replaced by _WIN32 && __MINGW32__
+		#DEFINES *= WINDOWS_SYS WIN32 STATICLIB MINGW
 		DESTDIR = lib
 }
 
@@ -84,6 +87,7 @@ HEADERS += \
 	bitdht/bdnode.h		\
 	bitdht/bdmanager.h	\
 	bitdht/bdstddht.h	\
+	util/bdnet.h	\
 	util/bdthreads.h	\
 	udp/udplayer.h   	\
 	udp/udpstack.h		\
@@ -100,6 +104,7 @@ SOURCES += \
 	bitdht/bdnode.cc	\
 	bitdht/bdmanager.cc	\
 	bitdht/bdstddht.cc	\
+	util/bdnet.cc  	\
 	util/bdthreads.cc  	\
 	udp/udplayer.cc		\
 	udp/udpstack.cc		\

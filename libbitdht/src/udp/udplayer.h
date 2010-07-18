@@ -2,11 +2,11 @@
 #define BITDHT_UDP_LAYER_H
 
 /*
- * bitdht/udplayer.h
+ * udp/udplayer.h
  *
  * BitDHT: An Flexible DHT library.
- *
- * Copyright 2010 by Robert Fernie
+ * 
+ * Copyright 2004-2010 by Robert Fernie
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,20 +27,14 @@
  */
 
 
-
-
 #include <netinet/in.h> 
 
 #include "util/bdthreads.h"
+#include "util/bdnet.h"
 
 #include <iosfwd>
 #include <list>
 #include <deque>
-
-/****
- * #define UDP_LOOPBACK_TESTING	1
- ***/
-
 
 std::ostream &operator<<(std::ostream &out,  const struct sockaddr_in &addr);
 bool operator==(const struct sockaddr_in &addr, const struct sockaddr_in &addr2);
@@ -122,6 +116,22 @@ virtual	int sendUdpPacket(const void *data, int size, struct sockaddr_in &to);
 	bool stopThread;
 
 	bdMutex sockMtx;
+};
+
+
+/* For Testing - drops packets */
+class LossyUdpLayer: public UdpLayer
+{
+	public:
+  LossyUdpLayer(UdpReceiver *udpr, struct sockaddr_in &local, double frac);
+virtual ~LossyUdpLayer();
+
+        protected:
+
+virtual int receiveUdpPacket(void *data, int *size, struct sockaddr_in &from);
+virtual int sendUdpPacket(const void *data, int size, struct sockaddr_in &to);
+
+	double lossFraction;
 };
 
 

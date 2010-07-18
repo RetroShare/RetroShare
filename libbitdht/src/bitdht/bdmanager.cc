@@ -37,19 +37,17 @@
  * This is pretty specific to RS requirements.
  ****/
 
-#include "bdiface.h"
-#include "bdstddht.h"
-#include "bdmanager.h"
-#include "bdmsgs.h"
-#include "bencode.h"
+#include "bitdht/bdiface.h"
+#include "bitdht/bdstddht.h"
+#include "bitdht/bdmanager.h"
+#include "bitdht/bdmsgs.h"
+#include "bitdht/bencode.h"
 
 #include <algorithm>
 #include <sstream>
 #include <iomanip>
 
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#include "util/bdnet.h"
 
 /***
  * #define DEBUG_MGR 1

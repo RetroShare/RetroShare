@@ -31,9 +31,7 @@
 #include <string>
 #include <inttypes.h>
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
+#include "util/bdnet.h"
 
 /*
  * Functions and Classes required for Interfacing with the BitDht.

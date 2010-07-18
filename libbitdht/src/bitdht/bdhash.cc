@@ -24,8 +24,8 @@
  */
 
 
-#include "bdhash.h"
-#include "bdstddht.h"
+#include "bitdht/bdhash.h"
+#include "bitdht/bdstddht.h"
 #include <iostream>
 
 bdHashEntry::bdHashEntry(std::string value, std::string secret, time_t lifetime, time_t store)

@@ -25,11 +25,8 @@
  */
 
 
-#include "bdquery.h"
-
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+#include "bitdht/bdquery.h"
+#include "util/bdnet.h"
 
 #include <stdlib.h>
 #include <stdio.h>

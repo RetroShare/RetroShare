@@ -30,9 +30,9 @@
 #include <stdio.h>
 #include <inttypes.h>
 #include <list>
-#include "bencode.h"
-#include "bdobj.h"
-#include "bdpeer.h"
+#include "bitdht/bencode.h"
+#include "bitdht/bdobj.h"
+#include "bitdht/bdpeer.h"
 
 #define BITDHT_MSG_TYPE_UNKNOWN         0
 #define BITDHT_MSG_TYPE_PING            1

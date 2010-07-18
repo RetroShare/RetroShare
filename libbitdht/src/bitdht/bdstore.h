@@ -28,8 +28,8 @@
 
 
 #include <string>
-#include "bdiface.h"
-#include "bdpeer.h"
+#include "bitdht/bdiface.h"
+#include "bitdht/bdpeer.h"
 
 class bdStore
 {

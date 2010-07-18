@@ -26,7 +26,7 @@
  *
  */
 
-#include "bdpeer.h"
+#include "bitdht/bdpeer.h"
 
 #include <list>
 #include <string>
