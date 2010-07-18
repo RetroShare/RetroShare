@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
 
 	rsiface = NULL;
 
-	NotifyQt   *notify = new NotifyQt();
+	NotifyQt *notify = NotifyQt::Create();
 	createRsIface(*notify);
 	createRsControl(*rsiface, *notify);
 
@@ -173,7 +173,6 @@ int main(int argc, char *argv[])
 	QObject::connect(notify,SIGNAL(filesPostModChanged(bool))         ,w->sharedfilesDialog		,SLOT(postModDirectories(bool)         )) ;
 	QObject::connect(notify,SIGNAL(filesPostModChanged(bool))         ,w                            ,SLOT(postModDirectories(bool)         )) ;
 	QObject::connect(notify,SIGNAL(transfersChanged())                ,w->transfersDialog  		,SLOT(insertTransfers()                )) ;
-        QObject::connect(notify,SIGNAL(friendsChanged())                  ,w->messengerWindow 		,SLOT(updateMessengerDisplay()                   )) ;
 	QObject::connect(notify,SIGNAL(friendsChanged())                  ,w->peersDialog      		,SLOT(insertPeers()                    )) ;
 	QObject::connect(notify,SIGNAL(neighborsChanged())                ,w->networkDialog    		,SLOT(insertConnect()                  )) ;
 	QObject::connect(notify,SIGNAL(messagesChanged())                 ,w->messagesDialog   		,SLOT(insertMessages()                 )) ;
@@ -182,9 +181,7 @@ int main(int argc, char *argv[])
 	QObject::connect(notify,SIGNAL(peerHasNewCustomStateString(const QString&)),w->peersDialog,SLOT(updatePeersCustomStateString(const QString&)));
 	QObject::connect(notify,SIGNAL(peerHasNewAvatar(const QString&)),w->peersDialog,SLOT(updatePeersAvatar(const QString&)));
 	QObject::connect(notify,SIGNAL(ownAvatarChanged()),w->peersDialog,SLOT(updateAvatar()));
-	QObject::connect(notify,SIGNAL(ownAvatarChanged()),w->messengerWindow,SLOT(updateAvatar()));
 	QObject::connect(notify,SIGNAL(ownStatusMessageChanged()),w->peersDialog,SLOT(loadmypersonalstatus()));
-	QObject::connect(notify,SIGNAL(ownStatusMessageChanged()),w->messengerWindow,SLOT(loadmystatusmessage()));
 
 	QObject::connect(notify,SIGNAL(logInfoChanged(const QString&)),w->networkDialog,SLOT(setLogInfo(QString))) ;
 	QObject::connect(notify,SIGNAL(errorOccurred(int,int,const QString&)),w,SLOT(displayErrorMessage(int,int,const QString&))) ;

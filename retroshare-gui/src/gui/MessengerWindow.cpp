@@ -46,6 +46,7 @@
 #include "RetroShareLink.h"
 #include "PeersDialog.h"
 #include "ShareManager.h"
+#include "gui/notifyqt.h"
 
 #include <iostream>
 #include <sstream>
@@ -81,7 +82,9 @@
 /******
  * #define MSG_DEBUG 1
  *****/
-MessengerWindow* MessengerWindow::mv = 0;
+
+MessengerWindow* MessengerWindow::_instance = NULL;
+static std::set<std::string> *expandedPeers = NULL;
 
 // quick and dirty for sorting, better use QTreeView and QSortFilterProxyModel
 class MyMessengerTreeWidgetItem : public QTreeWidgetItem
@@ -113,21 +116,31 @@ private:
     QTreeWidget *m_pWidget; // the member "view" is private
 };
 
+/*static*/ void MessengerWindow::showYourself ()
+{
+    if (_instance == NULL) {
+        _instance = new MessengerWindow();
+    }
+
+    _instance->show();
+    _instance->activateWindow();
+}
+
 MessengerWindow* MessengerWindow::getInstance()
 {
-	if(mv == 0)
-	{
-		mv = new MessengerWindow();
-	}
-	return mv;
+    return _instance;
 }
 
 void MessengerWindow::releaseInstance()
 {
-	if(mv != 0)
-	{
-		delete mv;
-	}
+    if (_instance) {
+        delete _instance;
+    }
+    if (expandedPeers) {
+        /* delete saved expanded peers */
+        delete(expandedPeers);
+        expandedPeers = NULL;
+    }
 }
 
 /** Constructor */
@@ -136,6 +149,8 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
+
+    setAttribute ( Qt::WA_DeleteOnClose, true );
 
     connect( ui.messengertreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( messengertreeWidgetCostumPopupMenu( QPoint ) ) );
     connect( ui.messengertreeWidget, SIGNAL(itemDoubleClicked ( QTreeWidgetItem *, int)), this, SLOT(chatfriend(QTreeWidgetItem *)));
@@ -151,10 +166,13 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
     connect(ui.statuscomboBox, SIGNAL(activated(int)), this, SLOT(statusChanged(int)));
     connect(ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
 
+    connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(updateMessengerDisplay()));
+    connect(NotifyQt::getInstance(), SIGNAL(ownAvatarChanged()), this, SLOT(updateAvatar()));
+    connect(NotifyQt::getInstance(), SIGNAL(ownStatusMessageChanged()), this, SLOT(loadmystatusmessage()));
+
     QTimer *timer = new QTimer(this);
     timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateMessengerDisplay()));
     timer->start(1000); /* one second */
-
 
     /* to hide the header  */
     ui.messengertreeWidget->header()->hide();
@@ -168,7 +186,6 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
     _header->setResizeMode (COLUMN_NAME, QHeaderView::Stretch);
     _header->setResizeMode (COLUMN_STATE, QHeaderView::Custom);
     _header->setStretchLastSection(false);
-
 
     _header->resizeSection ( COLUMN_NAME, 200 );
     _header->resizeSection ( COLUMN_STATE, 42 );
@@ -215,6 +232,8 @@ MessengerWindow::~MessengerWindow ()
     if (pMainWindow) {
         pMainWindow->removeStatusObject(ui.statuscomboBox);
     }
+
+    _instance = NULL;
 }
 
 void MessengerWindow::processSettings(bool bLoad)
@@ -260,11 +279,11 @@ void MessengerWindow::processSettings(bool bLoad)
 void MessengerWindow::messengertreeWidgetCostumPopupMenu( QPoint point )
 {
       QTreeWidgetItem *c = getCurrentPeer();
-	  	if (!c) 
-	  	{
- 	  	  //no peer selected
-	  	  return;
-	  	}
+      if (!c)
+      {
+          //no peer selected
+          return;
+      }
 
       QMenu contextMnu( this );
 
@@ -692,10 +711,21 @@ void  MessengerWindow::insertPeers()
 
         /* add gpg item to the list. If item is already in the list, it won't be duplicated thanks to Qt */
         peertreeWidget->addTopLevelItem(gpg_item);
+
+        if (expandedPeers && expandedPeers->find(detail.gpg_id) != expandedPeers->end()) {
+            /* we have information about expanded peers and the peer was expanded */
+            gpg_item->setExpanded(true);
+        }
     }
 
     if (ui.filterPatternLineEdit->text().isEmpty() == false) {
         FilterItems();
+    }
+
+    if (expandedPeers) {
+        /* we don't need the informations anymore */
+        delete(expandedPeers);
+        expandedPeers = NULL;
     }
 }
 
@@ -882,32 +912,28 @@ void MessengerWindow::updatePeersAvatar(const QString& peer_id)
 //============================================================================
 
 
-/** Overloads the default show  */
-void MessengerWindow::show()
-{
-
-  if (!this->isVisible()) {
-    QWidget::show();
-  } else {
-    QWidget::activateWindow();
-    setWindowState((windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
-    QWidget::raise();
-  }
-}
-
 void MessengerWindow::closeEvent (QCloseEvent * event)
 {
-	//Settings->saveWidgetInformation(this);
+    /* save the expanded peers */
+    if (expandedPeers == NULL) {
+        expandedPeers = new std::set<std::string>;
+    } else {
+        expandedPeers->clear();
+    }
 
-    hide();
-    event->ignore();
+    for (int nIndex = 0; nIndex < ui.messengertreeWidget->topLevelItemCount(); nIndex++) {
+        QTreeWidgetItem *item = ui.messengertreeWidget->topLevelItem(nIndex);
+        if (item->isExpanded()) {
+            expandedPeers->insert(expandedPeers->end(), item->data(COLUMN_DATA, ROLE_ID).toString().toStdString());
+        }
+    }
+
 }
 
 /** Shows Share Manager */
 void MessengerWindow::openShareManager()
 {
 	ShareManager::showYourself();
-
 }
 
 void MessengerWindow::sendMessage()
@@ -927,7 +953,6 @@ LogoBar & MessengerWindow::getLogoBar() const {
 
 void MessengerWindow::changeAvatarClicked() 
 {
-
 	updateAvatar();
 }
 

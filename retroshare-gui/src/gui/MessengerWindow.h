@@ -37,12 +37,11 @@ class MessengerWindow : public RWindow
  public:
     QPixmap picture;
 
+    static void showYourself ();
     static MessengerWindow* getInstance();
     static void releaseInstance();
 
 public slots:
-    /** Called when this dialog is to be displayed */
-    void show();
     void updateMessengerDisplay() ;
     void updatePeersAvatar(const QString& peer_id);
     void updateAvatar();
@@ -105,7 +104,7 @@ signals:
     void friendsUpdated() ;
   
 private:
-    static MessengerWindow *mv;
+    static MessengerWindow *_instance;
 
     void processSettings(bool bLoad);
 

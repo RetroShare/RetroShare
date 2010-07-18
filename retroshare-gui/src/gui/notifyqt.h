@@ -22,9 +22,8 @@ class NotifyQt: public QObject, public NotifyBase
 {
 	Q_OBJECT
 	public:
-		NotifyQt()
-		: cDialog(NULL)
-	{ return; }
+		static NotifyQt *Create ();
+		static NotifyQt *getInstance ();
 
 		virtual ~NotifyQt() { return; }
 
@@ -72,6 +71,9 @@ class NotifyQt: public QObject, public NotifyBase
 		void	UpdateGUI(); /* called by timer */
 
 	private:
+		NotifyQt() : cDialog(NULL) { return; }
+
+		static NotifyQt *_instance;
 
 //		void displayNeighbours();
 //		void displayFriends();

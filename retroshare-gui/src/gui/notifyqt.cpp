@@ -24,6 +24,22 @@
  * #define NOTIFY_DEBUG
  ****/
 
+/*static*/ NotifyQt *NotifyQt::_instance = NULL;
+
+/*static*/ NotifyQt *NotifyQt::Create ()
+{
+    if (_instance == NULL) {
+        _instance = new NotifyQt ();
+    }
+
+    return _instance;
+}
+
+/*static*/ NotifyQt *NotifyQt::getInstance ()
+{
+    return _instance;
+}
+
 void NotifyQt::notifyErrorMsg(int list, int type, std::string msg)
 {
 	emit errorOccurred(list,type,QString::fromStdString(msg)) ;

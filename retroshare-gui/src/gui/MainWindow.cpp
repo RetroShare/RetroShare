@@ -154,8 +154,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     /* Create all the dialogs of which we only want one instance */
     _bandwidthGraph = new BandwidthGraph();
 
-    /*messengerWindow instance is created statically so that RsAutoUpdatePage can access it*/ 
-    messengerWindow = MessengerWindow::getInstance();
     #ifdef UNFINISHED
     applicationWindow = new ApplicationWindow();
     applicationWindow->hide();
@@ -304,10 +302,9 @@ MainWindow::~MainWindow()
     delete natstatus;
     delete ratesstatus;
     MessengerWindow::releaseInstance();
-    messengerWindow = NULL;
 #ifdef UNFINISHED
     delete applicationWindow;
-#endif    
+#endif
 }
 
 void MainWindow::displayDiskSpaceWarning(int loc,int size_limit_mb)
@@ -624,7 +621,7 @@ void MainWindow::showSettings()
 /** Shows Messenger window */
 void MainWindow::showMessengerWindow()
 {
-    messengerWindow->show();
+    MessengerWindow::showYourself();
 }
 
 
@@ -640,13 +637,11 @@ void MainWindow::showApplWindow()
  * tray menu configuration. */
 void MainWindow::createActions()
 {
-
     _settingsAct = new QAction(QIcon(IMAGE_PREFERENCES), tr("Options"), this);
     connect(_settingsAct, SIGNAL(triggered()), this, SLOT(showSettings()));
 
     _bandwidthAct = new QAction(QIcon(IMAGE_BWGRAPH), tr("Bandwidth Graph"), this);
-    connect(_bandwidthAct, SIGNAL(triggered()),
-            _bandwidthGraph, SLOT(showWindow()));
+    connect(_bandwidthAct, SIGNAL(triggered()), _bandwidthGraph, SLOT(showWindow()));
 
     _messengerwindowAct = new QAction(QIcon(IMAGE_RSM16), tr("Open Messenger"), this);
     connect(_messengerwindowAct, SIGNAL(triggered()),this, SLOT(showMessengerWindow()));
@@ -659,8 +654,6 @@ void MainWindow::createActions()
 #endif
     _helpAct = new QAction(QIcon(IMG_HELP), tr("Help"), this);
     connect(_helpAct, SIGNAL(triggered()), this, SLOT(showHelpDialog()));
-
-
 }
 
 /** If the user attempts to quit the app, a check-warning is issued. This warning can be

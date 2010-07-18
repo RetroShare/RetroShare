@@ -111,7 +111,6 @@ public:
     ChatDialog        *chatDialog;
     MessagesDialog    *messagesDialog;
     SharedFilesDialog *sharedfilesDialog;
-    MessengerWindow   *messengerWindow;
     ForumsDialog      *forumsDialog;
     ChannelFeed       *channelFeed;
     Idle              *idle;
