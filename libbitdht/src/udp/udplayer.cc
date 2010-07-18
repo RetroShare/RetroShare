@@ -336,7 +336,7 @@ int UdpLayer::openSocket()
 
 
 #ifdef UDP_LOOPBACK_TESTING
-        inet_aton("127.0.0.1", &(laddr.sin_addr));
+        bdnet_inet_aton("127.0.0.1", &(laddr.sin_addr));
 #endif
 
 #ifdef OPEN_UNIVERSAL_PORT

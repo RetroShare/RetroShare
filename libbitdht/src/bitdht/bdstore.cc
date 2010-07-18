@@ -62,7 +62,7 @@ bdStore::bdStore(std::string file, bdDhtFunctions *fns)
 	{
 		if (2 == sscanf(line, "%s %hd", addr_str, &port))
 		{
-			if (inet_aton(addr_str, &(addr.sin_addr)))
+			if (bdnet_inet_aton(addr_str, &(addr.sin_addr)))
 			{
 				addr.sin_port = htons(port);
 				bdPeer peer;
