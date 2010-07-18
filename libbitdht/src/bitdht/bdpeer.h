@@ -27,6 +27,7 @@
  */
 
 #include "bitdht/bdiface.h"
+#include <time.h>
 
 /*******
  * These type of parameters are now DHT Function dependent
