@@ -26,9 +26,6 @@
  *
  */
 
-
-#include <netinet/in.h> 
-
 #include "util/bdthreads.h"
 #include "util/bdnet.h"
 
