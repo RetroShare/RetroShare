@@ -182,6 +182,7 @@ private slots:
     void showSettings();
     void setStyle();
     void statusChanged(QAction *pAction);
+    void statusChangedComboBox(int index);
 
     /** Called when user attempts to quit via quit button*/
     void doQuit();
@@ -226,6 +227,7 @@ private:
     PeerStatus *peerstatus;
     NATStatus *natstatus;
     RatesStatus *ratesstatus;
+    QComboBox *statusComboBox;
 
     QLabel *_hashing_info_label ;
 

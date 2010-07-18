@@ -239,7 +239,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
     connect(grp, SIGNAL(triggered(QAction *)), ui.stackPages, SLOT(showPage(QAction *)));
 
-#ifdef UNFINISHED    
+#ifdef UNFINISHED
     ui.toolBar->addSeparator();
     addAction(new QAction(QIcon(IMAGE_UNFINISHED), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));
 #endif
@@ -248,13 +248,26 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     grp->actions()[0]->setChecked(true);
 
     /** StatusBar section ********/
+    /* initialize combobox in status bar */
+    statusComboBox = new QComboBox(statusBar());
+    initializeStatusObject(statusComboBox);
+    connect(statusComboBox, SIGNAL(activated(int)), this, SLOT(statusChangedComboBox(int)));
+
+    QWidget *widget = new QWidget();
+    QHBoxLayout *hbox = new QHBoxLayout();
+    hbox->setMargin(0);
+    hbox->setSpacing(6);
+    hbox->addWidget(statusComboBox);
+    widget->setLayout(hbox);
+    statusBar()->addWidget(widget);
+
     peerstatus = new PeerStatus();
     statusBar()->addWidget(peerstatus);
 
     natstatus = new NATStatus();
     statusBar()->addWidget(natstatus);
 
-	  QWidget *widget = new QWidget();
+    widget = new QWidget();
     QSizePolicy sizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
     sizePolicy.setHorizontalStretch(0);
     sizePolicy.setVerticalStretch(0);
@@ -283,6 +296,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     createTrayIcon();
 
     loadOwnStatus(); // hack; placed in constructor to preempt sendstatus, so status loaded from file
+
+    /* Set focus to the current page */
+    ui.stackPages->currentWidget()->setFocus();
 
     idle = new Idle();
     idle->start();
@@ -992,4 +1008,14 @@ void MainWindow::statusChanged(QAction *pAction)
     }
 
     setStatus(pAction->parent(), pAction->data().toInt());
+}
+
+/* new status from combobox in statusbar */
+void MainWindow::statusChangedComboBox(int index)
+{
+    if (index < 0) {
+        return;
+    }
+
+    setStatus(statusComboBox, statusComboBox->itemData(index, Qt::UserRole).toInt());
 }
