@@ -2243,6 +2243,7 @@ int RsServer::StartupRetroShare()
 	mConnMgr->addMonitor(mCacheStrapper);
 	mConnMgr->addMonitor(ad);
 	mConnMgr->addMonitor(msgSrv);
+	mConnMgr->addMonitor(mStatusSrv);
 
 	/* must also add the controller as a Monitor...
 	 * a little hack to get it to work.

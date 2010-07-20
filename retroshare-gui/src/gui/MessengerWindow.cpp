@@ -163,16 +163,16 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
     connect(ui.clearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
 
     connect(ui.messagelineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(savestatusmessage()));
-    connect(ui.statuscomboBox, SIGNAL(activated(int)), this, SLOT(statusChanged(int)));
     connect(ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
 
     connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(updateMessengerDisplay()));
     connect(NotifyQt::getInstance(), SIGNAL(ownAvatarChanged()), this, SLOT(updateAvatar()));
     connect(NotifyQt::getInstance(), SIGNAL(ownStatusMessageChanged()), this, SLOT(loadmystatusmessage()));
 
-    QTimer *timer = new QTimer(this);
+    timer = new QTimer(this);
     timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateMessengerDisplay()));
-    timer->start(1000); /* one second */
+    timer->setInterval(1000); /* one second */
+    timer->setSingleShot(true);
 
     /* to hide the header  */
     ui.messengertreeWidget->header()->hide();
@@ -208,7 +208,7 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
 
     MainWindow *pMainWindow = MainWindow::getInstance();
     if (pMainWindow) {
-        pMainWindow->initializeStatusObject(ui.statuscomboBox);
+        pMainWindow->initializeStatusObject(ui.statuscomboBox, true);
     }
     insertPeers();
     updateAvatar();
@@ -383,18 +383,19 @@ void MessengerWindow::messengertreeWidgetCostumPopupMenu( QPoint point )
 
 void MessengerWindow::updateMessengerDisplay()
 {
-	if(RsAutoUpdatePage::eventsLocked())
-		return ;
+    if (RsAutoUpdatePage::eventsLocked() == false) {
         // add self nick and Avatar to Friends.
-        RsPeerDetails pd ;
+        RsPeerDetails pd;
         if (rsPeers->getPeerDetails(rsPeers->getOwnId(),pd)) {
-        
-                QString titleStr("<span style=\"font-size:14pt; font-weight:500;"
-                       "color:#FFFFFF;\">%1</span>");
-                ui.nicklabel->setText(titleStr.arg(QString::fromStdString(pd.name) + tr(" - ") + QString::fromStdString(pd.location))) ;
+            QString titleStr("<span style=\"font-size:14pt; font-weight:500;"
+                   "color:#FFFFFF;\">%1</span>");
+            ui.nicklabel->setText(titleStr.arg(QString::fromStdString(pd.name) + tr(" - ") + QString::fromStdString(pd.location)));
         }
 
         insertPeers();
+    }
+
+    timer->start();
 }
 
 /* get the list of peers from the RsIface.  */
@@ -1008,21 +1009,7 @@ void MessengerWindow::loadmystatusmessage()
 /** Save own status message */
 void MessengerWindow::savestatusmessage()
 {
-  Settings->setValueToGroup("Profile", "StatusMessage",ui.messagelineEdit->text());
-	
-  rsMsgs->setCustomStateString(ui.messagelineEdit->text().toStdString());
-}
-
-void MessengerWindow::statusChanged(int index)
-{
-    if (index < 0) {
-        return;
-    }
-
-    MainWindow *pMainWindow = MainWindow::getInstance();
-    if (pMainWindow) {
-        pMainWindow->setStatus(ui.statuscomboBox, ui.statuscomboBox->itemData(index, Qt::UserRole).toInt());
-    }
+    rsMsgs->setCustomStateString(ui.messagelineEdit->text().toStdString());
 }
 
 void MessengerWindow::on_actionSort_Peers_Descending_Order_activated()

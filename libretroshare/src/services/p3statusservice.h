@@ -41,7 +41,7 @@
  * custom string.
  * @see rsiface/rsstatus.h for status constants
  */
-class p3StatusService: public p3Service, public p3Config
+class p3StatusService: public p3Service, public p3Config, public pqiMonitor
 {
 	public:
 
@@ -52,13 +52,18 @@ virtual ~p3StatusService();
 virtual int tick();
 virtual int status();
 
+/*************** pqiMonitor callback ***********************/
+virtual void    statusChange(const std::list<pqipeer> &plist);
+
 /********* RsStatus ***********/
 
 /**
  * Status is set to offline as default if no info received from relevant peer
  */
+virtual bool getOwnStatus(StatusInfo& statusInfo);
 virtual bool getStatus(std::list<StatusInfo>& statusInfo);
-virtual bool sendStatus(StatusInfo& statusInfo);
+/* id = "", status is sent to all online peers */
+virtual bool sendStatus(const std::string &id, uint32_t status);
 virtual bool statusAvailable();
 
 /******************************/

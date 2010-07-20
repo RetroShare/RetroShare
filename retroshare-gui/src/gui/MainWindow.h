@@ -132,7 +132,7 @@ public:
     static void installGroupChatNotifier();
 
     /* initialize widget with status informations, status constant stored in data or in Qt::UserRole */
-    void initializeStatusObject(QObject *pObject);
+    void initializeStatusObject(QObject *pObject, bool bConnect);
     void removeStatusObject(QObject *pObject);
     void setStatus(QObject *pObject, int nStatus);
 
@@ -181,7 +181,7 @@ private slots:
     void showMess();
     void showSettings();
     void setStyle();
-    void statusChanged(QAction *pAction);
+    void statusChangedMenu(QAction *pAction);
     void statusChangedComboBox(int index);
 
     /** Called when user attempts to quit via quit button*/

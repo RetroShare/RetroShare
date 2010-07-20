@@ -37,15 +37,19 @@ p3Status::~p3Status(){
 	return;
 }
 
+bool p3Status::getOwnStatus(StatusInfo& statusInfo){
+
+	return mStatusSrv->getOwnStatus(statusInfo);
+}
+
 bool p3Status::getStatus(std::list<StatusInfo >& statusInfo){
 
 	return mStatusSrv->getStatus(statusInfo);
 }
 
+bool p3Status::sendStatus(std::string id, uint32_t status){
 
-bool p3Status::sendStatus(StatusInfo& statusInfo){
-
-	return mStatusSrv->sendStatus(statusInfo);
+	return mStatusSrv->sendStatus(id, status);
 }
 
 bool p3Status::statusAvailable(){

@@ -250,8 +250,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     /** StatusBar section ********/
     /* initialize combobox in status bar */
     statusComboBox = new QComboBox(statusBar());
-    initializeStatusObject(statusComboBox);
-    connect(statusComboBox, SIGNAL(activated(int)), this, SLOT(statusChangedComboBox(int)));
+    initializeStatusObject(statusComboBox, true);
 
     QWidget *widget = new QWidget();
     QHBoxLayout *hbox = new QHBoxLayout();
@@ -295,7 +294,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     /* Creates a tray icon with a context menu and adds it to the system's * notification area. */
     createTrayIcon();
 
-    loadOwnStatus(); // hack; placed in constructor to preempt sendstatus, so status loaded from file
+    loadOwnStatus();
 
     /* Set focus to the current page */
     ui.stackPages->currentWidget()->setFocus();
@@ -356,8 +355,7 @@ void MainWindow::createTrayIcon()
     trayMenu->addAction(QIcon(IMAGE_RETROSHARE), tr("Show/Hide"), this, SLOT(toggleVisibilitycontextmenu()));
 
     QMenu *pStatusMenu = trayMenu->addMenu(tr("Status"));
-    initializeStatusObject(pStatusMenu);
-    connect(pStatusMenu, SIGNAL(triggered (QAction*)), this, SLOT(statusChanged(QAction*)));
+    initializeStatusObject(pStatusMenu, true);
 
     trayMenu->addSeparator();
     trayMenu->addAction(_messengerwindowAct);
@@ -830,27 +828,6 @@ void MainWindow::setStyle()
 
 }
 
-/* get own status */
-static int getOwnStatus()
-{
-    std::string ownId = rsPeers->getOwnId();
-
-    StatusInfo si;
-    std::list<StatusInfo> statusList;
-    std::list<StatusInfo>::iterator it;
-
-    if (!rsStatus->getStatus(statusList)) {
-        return -1;
-    }
-
-    for (it = statusList.begin(); it != statusList.end(); it++){
-        if (it->id == ownId)
-            return it->status;
-    }
-
-    return -1;
-}
-
 /* set status object to status value */
 static void setStatusObject(QObject *pObject, int nStatus)
 {
@@ -888,10 +865,12 @@ void MainWindow::loadOwnStatus()
 {
     m_bStatusLoadDone = true;
 
-    int nStatus = getOwnStatus();
-
-    for (std::set <QObject*>::iterator it = m_apStatusObjects.begin(); it != m_apStatusObjects.end(); it++) {
-        setStatusObject(*it, nStatus);
+    StatusInfo statusInfo;
+    if (rsStatus->getOwnStatus(statusInfo)) {
+        /* send status to all added objects */
+        for (std::set <QObject*>::iterator it = m_apStatusObjects.begin(); it != m_apStatusObjects.end(); it++) {
+            setStatusObject(*it, statusInfo.status);
+        }
     }
 }
 
@@ -899,8 +878,7 @@ void MainWindow::checkAndSetIdle(int idleTime)
 {
     if ((idleTime >= (int) maxTimeBeforeIdle) && !isIdle) {
         setIdle(true);
-    }else
-        if((idleTime < (int) maxTimeBeforeIdle) && isIdle) {
+    } else if ((idleTime < (int) maxTimeBeforeIdle) && isIdle) {
         setIdle(false);
     }
 
@@ -910,13 +888,18 @@ void MainWindow::checkAndSetIdle(int idleTime)
 void MainWindow::setIdle(bool idle)
 {
     isIdle = idle;
-    setStatus(NULL, getOwnStatus());
+
+    StatusInfo statusInfo;
+    if (rsStatus->getOwnStatus(statusInfo)) {
+        setStatus(NULL, statusInfo.status);
+    }
 }
 
 /* add and initialize status object */
-void MainWindow::initializeStatusObject(QObject *pObject)
+void MainWindow::initializeStatusObject(QObject *pObject, bool bConnect)
 {
     if (m_apStatusObjects.find(pObject) != m_apStatusObjects.end()) {
+        /* already added */
         return;
     }
 
@@ -944,6 +927,10 @@ void MainWindow::initializeStatusObject(QObject *pObject)
         pAction->setCheckable(true);
         pMenu->addAction(pAction);
         pGroup->addAction(pAction);
+
+        if (bConnect) {
+            connect(pMenu, SIGNAL(triggered (QAction*)), this, SLOT(statusChangedMenu(QAction*)));
+        }
     } else {
         /* initialize combobox */
         QComboBox *pComboBox = dynamic_cast<QComboBox*>(pObject);
@@ -951,15 +938,19 @@ void MainWindow::initializeStatusObject(QObject *pObject)
             pComboBox->addItem(QIcon(":/images/im-user.png"), tr("Online"), RS_STATUS_ONLINE);
             pComboBox->addItem(QIcon(":/images/im-user-busy.png"), tr("Busy"), RS_STATUS_BUSY);
             pComboBox->addItem(QIcon(":/images/im-user-away.png"), tr("Away"), RS_STATUS_AWAY);
+
+            if (bConnect) {
+                connect(pComboBox, SIGNAL(activated(int)), this, SLOT(statusChangedComboBox(int)));
+            }
         }
         /* add more objects here */
     }
 
     if (m_bStatusLoadDone) {
         /* loadOwnStatus done, set own status directly */
-        int nStatus = getOwnStatus();
-        if (nStatus != -1) {
-            setStatusObject(pObject, nStatus);
+        StatusInfo statusInfo;
+        if (rsStatus->getOwnStatus(statusInfo)) {
+            setStatusObject(pObject, statusInfo.status);
         }
     }
 }
@@ -968,29 +959,20 @@ void MainWindow::initializeStatusObject(QObject *pObject)
 void MainWindow::removeStatusObject(QObject *pObject)
 {
     m_apStatusObjects.erase(pObject);
+
+    /* disconnect all signals between the object and MainWindow */
+    disconnect(pObject, NULL, this, NULL);
 }
 
 /** Save own status Online,Away,Busy **/
 void MainWindow::setStatus(QObject *pObject, int nStatus)
 {
-    RsPeerDetails detail;
-    std::string ownId = rsPeers->getOwnId();
-
-    if (!rsPeers->getPeerDetails(ownId, detail)) {
-        return;
-    }
-
-    StatusInfo si;
-
     if (isIdle && nStatus == (int) RS_STATUS_ONLINE) {
-        /* set idle state only when I am in online state */
+        /* set idle only when I am online */
         nStatus = RS_STATUS_INACTIVE;
     }
 
-    si.id = ownId;
-    si.status = nStatus;
-
-    rsStatus->sendStatus(si);
+    rsStatus->sendStatus("", nStatus);
 
     /* set status in all status objects, but the calling one */
     for (std::set <QObject*>::iterator it = m_apStatusObjects.begin(); it != m_apStatusObjects.end(); it++) {
@@ -1001,7 +983,7 @@ void MainWindow::setStatus(QObject *pObject, int nStatus)
 }
 
 /* new status from context menu */
-void MainWindow::statusChanged(QAction *pAction)
+void MainWindow::statusChangedMenu(QAction *pAction)
 {
     if (pAction == NULL) {
         return;
@@ -1017,5 +999,6 @@ void MainWindow::statusChangedComboBox(int index)
         return;
     }
 
-    setStatus(statusComboBox, statusComboBox->itemData(index, Qt::UserRole).toInt());
+    /* no object known */
+    setStatus(NULL, statusComboBox->itemData(index, Qt::UserRole).toInt());
 }

@@ -9,10 +9,12 @@ RsAutoUpdatePage::RsAutoUpdatePage(int ms_update_period,QWidget *parent)
 	: MainPage(parent)
 {
 	_timer = new QTimer ;
+	_timer->setInterval(ms_update_period);
+	_timer->setSingleShot(true);
 
 	QObject::connect(_timer,SIGNAL(timeout()),this,SLOT(timerUpdate())) ;
 
-	_timer->start(ms_update_period) ;
+	_timer->start() ;
 }
 
 void RsAutoUpdatePage::showEvent(QShowEvent *event)
@@ -26,11 +28,12 @@ void RsAutoUpdatePage::timerUpdate()
 {
 	// only update when the widget is visible.
 	//
-	if(_locked || !isVisible())
-		return ;
-	
-	updateDisplay();
-	update() ;				// Qt flush
+	if(_locked == false && isVisible()) {
+		updateDisplay();
+		update() ;				// Qt flush
+	}
+
+	_timer->start() ;
 }
 
 void RsAutoUpdatePage::lockAllEvents() { _locked = true ; }

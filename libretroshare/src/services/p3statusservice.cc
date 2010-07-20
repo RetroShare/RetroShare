@@ -53,6 +53,23 @@ p3StatusService::~p3StatusService()
 {
 }
 
+bool p3StatusService::getOwnStatus(StatusInfo& statusInfo)
+{
+	std::map<std::string, StatusInfo>::iterator it;
+	std::string ownId = mConnMgr->getOwnId();
+
+	RsStackMutex stack(mStatusMtx);
+	it = mStatusInfoMap.find(ownId);
+
+	if (it == mStatusInfoMap.end()){
+		std::cerr << "p3StatusService::saveList() :" << "Did not find your status" << ownId << std::endl;
+		return false;
+	}
+
+	statusInfo = it->second;
+
+	return true;
+}
 
 bool p3StatusService::getStatus(std::list<StatusInfo>& statusInfo)
 {
@@ -128,15 +145,17 @@ bool p3StatusService::getStatus(std::list<StatusInfo>& statusInfo)
 	return true;
 }
 
-bool p3StatusService::sendStatus(StatusInfo& statusInfo)
+/* id = "", status is sent to all online peers */
+bool p3StatusService::sendStatus(const std::string &id, uint32_t status)
 {
+	StatusInfo statusInfo;
 	std::list<std::string> onlineList;
 
 	{
 		RsStackMutex stack(mStatusMtx);
 
-		if(statusInfo.id != mConnMgr->getOwnId())
-			return false;
+		statusInfo.id = mConnMgr->getOwnId();
+		statusInfo.status = status;
 
 		// don't save inactive status
 		if(statusInfo.status != RS_STATUS_INACTIVE){
@@ -147,15 +166,18 @@ bool p3StatusService::sendStatus(StatusInfo& statusInfo)
 				std::pair<std::string, StatusInfo> pr(statusInfo.id, statusInfo);
 				mStatusInfoMap.insert(pr);
 				IndicateConfigChanged();
-			}else
-			if(mStatusInfoMap[statusInfo.id].status != statusInfo.status){
+			} else if(mStatusInfoMap[statusInfo.id].status != statusInfo.status){
 
 				IndicateConfigChanged();
 				mStatusInfoMap[statusInfo.id] = statusInfo;
 			}
 		}
 
-		mConnMgr->getOnlineList(onlineList);
+		if (id.empty()) {
+			mConnMgr->getOnlineList(onlineList);
+		} else {
+			onlineList.push_back(id);
+		}
 	}
 
 	std::list<std::string>::iterator it;
@@ -174,10 +196,8 @@ bool p3StatusService::sendStatus(StatusInfo& statusInfo)
 		sendItem(statusItem);
 	}
 
-
 	return true;
 }
-
 
 bool p3StatusService::statusAvailable(){
 	return receivedItems();
@@ -301,5 +321,18 @@ int p3StatusService::status(){
 	return 1;
 }
 
+/*************** pqiMonitor callback ***********************/
 
-
+void p3StatusService::statusChange(const std::list<pqipeer> &plist)
+{
+	StatusInfo statusInfo;
+	std::list<pqipeer>::const_iterator it;
+	for (it = plist.begin(); it != plist.end(); it++) {
+		if ((it->state & RS_PEER_S_FRIEND) && (it->state & RS_PEER_CONNECTED)) {
+			/* send current status */
+			if (statusInfo.id.empty() == false || getOwnStatus(statusInfo)) {
+				sendStatus(it->id, statusInfo.status);
+			}
+		}
+	}
+}

@@ -654,16 +654,10 @@ void p3ChatService::sendCustomState(const std::string& peer_id){
 std::cerr << "p3chatservice: sending requested status string for peer " << peer_id << std::endl ;
 #endif
 
-	if(_custom_status_string != ""){
-		RsChatStatusItem *cs = makeOwnCustomStateStringItem();
-		cs->PeerId(peer_id);
+	RsChatStatusItem *cs = makeOwnCustomStateStringItem();
+	cs->PeerId(peer_id);
 
-		sendItem(cs);
-	}else{
-#ifdef CHAT_DEBUG
-		std::cerr << "doing nothing" << std::endl;
-#endif
-	}
+	sendItem(cs);
 }
 
 bool p3ChatService::loadList(std::list<RsItem*> load)

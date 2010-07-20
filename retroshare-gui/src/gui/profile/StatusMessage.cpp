@@ -52,27 +52,19 @@ StatusMessage::~StatusMessage()
 {
 }
 
-void StatusMessage::closeEvent (QCloseEvent * event)
-{
- QDialog::closeEvent(event);
-}
-
-
 /** Saves the changes on this page */
 void StatusMessage::save()
 {
-    Settings->setValueToGroup("Profile", "StatusMessage",ui.txt_StatusMessage->text());
+    rsMsgs->setCustomStateString(ui.txt_StatusMessage->text().toStdString());
 
-	rsMsgs->setCustomStateString(ui.txt_StatusMessage->text().toStdString());
-
-	close();
+    close();
 }
 
 
 /** Loads the settings for this page */
 void StatusMessage::load()
 {	
-  ui.txt_StatusMessage->setText(QString::fromStdString(rsMsgs->getCustomStateString()));
+    ui.txt_StatusMessage->setText(QString::fromStdString(rsMsgs->getCustomStateString()));
 }
 
 

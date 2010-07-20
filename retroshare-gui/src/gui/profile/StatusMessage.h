@@ -31,23 +31,19 @@ class StatusMessage : public QDialog
 {
   Q_OBJECT
 
-	public:
+public:
   /** Default constructor */
   StatusMessage(QWidget *parent = 0, Qt::WFlags flags = 0);
   /** Default destructor */
   ~StatusMessage();
 
-protected:
-  void closeEvent (QCloseEvent * event);
-  
 private slots:
 
   /** Saves the changes on this page */
   void save();
   /** Loads the settings for this page */
   void load();
-  
-  
+
 private:
   /** Qt Designer generated object */
   Ui::StatusMessage ui;

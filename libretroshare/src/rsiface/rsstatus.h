@@ -48,6 +48,13 @@ const uint32_t RS_STATUS_INACTIVE = 0x0004;
 class StatusInfo
 {
 	public:
+	StatusInfo()
+	{
+		status = 0;
+		time_stamp = 0;
+	}
+
+	public:
 	std::string id;
 	uint32_t status;
 	time_t time_stamp; /// for owner time set, and for their peers time sent
@@ -63,6 +70,12 @@ class RsStatus
 	public:
 
 	/**
+	 * This retrieves the own status info
+	 * @param statusInfo is populated with own status
+	 */
+	virtual bool getOwnStatus(StatusInfo& statusInfo) = 0;
+
+	/**
 	 * This retrieves the status info on the client's peers
 	 * @param statusInfo is populated with client's peer's status
 	 */
@@ -70,10 +83,11 @@ class RsStatus
 
 	/**
 	 * send the client's status to his/her peers
-	 * @param statusInfo the status of the peers
+	 * @param id the peer to send the status (empty, send to all)
+	 * @param status the status of the peers
 	 * @return will return false if status info does not belong to client
 	 */
-	virtual bool sendStatus(StatusInfo& statusInfo)                 = 0;
+	virtual bool sendStatus(std::string id, uint32_t status)                 = 0;
 
 	/**
 	 * checks to see if any status items have been received

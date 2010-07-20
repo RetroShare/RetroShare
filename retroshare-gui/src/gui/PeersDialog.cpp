@@ -1578,8 +1578,7 @@ void PeersDialog::on_actionCreate_New_Channel_activated()
 /** Loads own personal status */
 void PeersDialog::loadmypersonalstatus()
 {
-  
-  ui.mypersonalstatuslabel->setText(QString::fromStdString(rsMsgs->getCustomStateString()));
+    ui.mypersonalstatuslabel->setText(QString::fromStdString(rsMsgs->getCustomStateString()));
 }
 
 void PeersDialog::statusmessage()

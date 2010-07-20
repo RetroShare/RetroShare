@@ -88,7 +88,6 @@ private slots:
 
     void changeAvatarClicked();
 
-    void statusChanged(int index);
     void savestatusmessage();
 
     void on_actionSort_Peers_Descending_Order_activated();
@@ -110,6 +109,7 @@ private:
 
     /* Worker Functions */
     /* (1) Update Display */
+    QTimer *timer;
 
     /* (2) Utility Fns */
     QTreeWidgetItem *getCurrentPeer();
