@@ -63,6 +63,8 @@ GeneralPage::save(QString &errmsg)
   
   Settings->setRunRetroshareOnBoot(
   ui.chkRunRetroshareAtSystemStartup->isChecked());
+  
+  Settings->setMaxTimeBeforeIdle(ui.spinBox->value());
 
   return true;
 }
@@ -78,6 +80,8 @@ GeneralPage::load()
   ui.checkQuit->setChecked(Settings->value(QString::fromUtf8("doQuit"), false).toBool());
   
   ui.checkClosetoTray->setChecked(Settings->value(QString::fromUtf8("ClosetoTray"), false).toBool());
+  
+  ui.spinBox->setValue(Settings->getMaxTimeBeforeIdle());
 
 
 }
