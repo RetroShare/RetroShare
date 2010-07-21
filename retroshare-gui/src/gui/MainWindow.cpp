@@ -129,7 +129,7 @@
 
 /** Constructor */
 MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
-    : RWindow("MainWindow", parent, flags), maxTimeBeforeIdle(30)
+    : RWindow("MainWindow", parent, flags)
 {
     /* Invoke the Qt Designer generated QObject setup routine */
     ui.setupUi(this);
@@ -876,9 +876,10 @@ void MainWindow::loadOwnStatus()
 
 void MainWindow::checkAndSetIdle(int idleTime)
 {
-    if ((idleTime >= (int) maxTimeBeforeIdle) && !isIdle) {
+    int maxTimeBeforeIdle = Settings->getMaxTimeBeforeIdle();
+    if ((idleTime >= maxTimeBeforeIdle) && !isIdle) {
         setIdle(true);
-    } else if ((idleTime < (int) maxTimeBeforeIdle) && isIdle) {
+    } else if ((idleTime < maxTimeBeforeIdle) && isIdle) {
         setIdle(false);
     }
 

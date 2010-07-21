@@ -133,11 +133,18 @@ public:
   bool getMsgSetToReadOnActivate ();
   void setMsgSetToReadOnActivate (bool bValue);
 
+  /* time before idle */
+  uint getMaxTimeBeforeIdle();
+  void setMaxTimeBeforeIdle(uint nValue);
+
 protected:
   /** Default constructor. */
   RshareSettings();
 
   void initSettings();
+
+  /* member for fast access */
+  int m_maxTimeBeforeIdle;
 };
 
 // the one and only global settings object

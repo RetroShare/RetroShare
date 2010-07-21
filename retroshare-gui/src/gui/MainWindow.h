@@ -242,7 +242,6 @@ private:
     // idle function
     void setIdle(bool Idle);
     bool isIdle;
-    const unsigned long maxTimeBeforeIdle;
 
     /** Qt Designer generated object */
     Ui::MainWindow ui;

@@ -87,6 +87,8 @@ RshareSettings *Settings = NULL;
 /** Default Constructor */
 RshareSettings::RshareSettings()
 {
+    m_maxTimeBeforeIdle = -1;
+
     initSettings();
 }
 
@@ -374,4 +376,20 @@ bool RshareSettings::getMsgSetToReadOnActivate ()
 void RshareSettings::setMsgSetToReadOnActivate (bool bValue)
 {
     setValueToGroup("MessageDialog", "SetMsgToReadOnActivate", bValue);
+}
+
+/* time before idle */
+uint RshareSettings::getMaxTimeBeforeIdle()
+{
+    if (m_maxTimeBeforeIdle == -1) {
+        m_maxTimeBeforeIdle = valueFromGroup("General", "maxTimeBeforeIdle", 30).toUInt();
+    }
+
+    return m_maxTimeBeforeIdle;
+}
+
+void RshareSettings::setMaxTimeBeforeIdle(uint nValue)
+{
+    m_maxTimeBeforeIdle = nValue;
+    setValueToGroup("General", "maxTimeBeforeIdle", nValue);
 }
