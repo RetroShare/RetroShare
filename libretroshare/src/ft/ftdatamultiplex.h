@@ -110,19 +110,25 @@ class ftDataMultiplex: public ftDataRecv, public RsQueueThread
 		/* Server/client Send */
 		bool	sendChunkMapRequest(const std::string& peerId, const std::string& hash) ;
 
+		/* Client Send */
+		bool	sendCRCMapRequest(const std::string& peerId, const std::string& hash,const CompressedChunkMap& chnks) ;
+
 		/*************** RECV INTERFACE (provides ftDataRecv) ****************/
 
 		/* Client Recv */
 		virtual bool recvData(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize, void *data);
+		/* Server Recv */
+		virtual bool	recvDataRequest(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize);
 
 		/// Receive a request for a chunk map
 		virtual bool recvChunkMapRequest(const std::string& peer_id,const std::string& hash,bool is_client) ;
 		/// Receive a chunk map
 		virtual bool recvChunkMap(const std::string& peer_id,const std::string& hash,const CompressedChunkMap& cmap,bool is_client) ;
-
-		/* Server Recv */
-		virtual bool	recvDataRequest(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize);
-
+		/// Receive a CRC map
+		virtual bool recvCRCMap(const std::string& peer_id,const std::string& hash,const CRC32Map& crc_map) ;
+		/// Receive a CRC map request
+		virtual bool recvCRCMapRequest(const std::string& peer_id,const std::string& hash) ;
+		
 		// Returns the chunk map from the file uploading client. Also initiates a chunk map request if this 
 		// map is too old. This supposes that the caller will ask again in a few seconds.
 		//
@@ -142,6 +148,7 @@ class ftDataMultiplex: public ftDataRecv, public RsQueueThread
 		bool handleSearchRequest(const std::string& peerId, const std::string& hash);
 		bool handleRecvClientChunkMapRequest(const std::string& peerId, const std::string& hash) ;
 		bool handleRecvServerChunkMapRequest(const std::string& peerId, const std::string& hash) ;
+		bool handleRecvCRC32MapRequest(const std::string& peerId, const std::string& hash, const CompressedChunkMap& map) ;
 
 		/* We end up doing the actual server job here */
 		bool    locked_handleServerRequest(ftFileProvider *provider, std::string peerId, std::string hash, uint64_t size, uint64_t offset, uint32_t chunksize);

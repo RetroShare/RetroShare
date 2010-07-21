@@ -72,6 +72,7 @@ private slots:
     void downloadListCostumPopupMenu( QPoint point );
 
     void cancel();
+    void forceCheck();
     /** removes finished Downloads**/
     void clearcompleted();
 
@@ -137,6 +138,7 @@ private:
     QAction* showdowninfoAct;
     QAction* playAct;
     QAction* cancelAct;
+    QAction* forceCheckAct;
     QAction* clearcompletedAct;
     QAction* copylinkAct;
     QAction* pastelinkAct;

@@ -120,10 +120,9 @@ ftController *getController() const { return mFtController ; }
 /***
  * Control of Downloads
  ***/
-virtual bool FileRequest(std::string fname, std::string hash, uint64_t size,
-	std::string dest, uint32_t flags, std::list<std::string> srcIds);
-virtual bool FileCancel(std::string hash);
-virtual bool FileControl(std::string hash, uint32_t flags);
+virtual bool FileRequest(const std::string& fname, const std::string& hash, uint64_t size, const std::string& dest, uint32_t flags, const std::list<std::string>& srcIds);
+virtual bool FileCancel(const std::string& hash);
+virtual bool FileControl(const std::string& hash, uint32_t flags);
 virtual bool FileClearCompleted();
 virtual bool setChunkStrategy(const std::string& hash,FileChunksInfo::ChunkStrategy s) ;
 virtual void setDefaultChunkStrategy(FileChunksInfo::ChunkStrategy) ;
@@ -213,6 +212,9 @@ virtual bool sendData(const std::string& peerId, const std::string& hash, uint64
 virtual bool sendDataRequest(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize);
 virtual bool sendChunkMapRequest(const std::string& peer_id,const std::string& hash) ;
 virtual bool sendChunkMap(const std::string& peer_id,const std::string& hash,const CompressedChunkMap& cmap) ;
+virtual bool sendCRC32MapRequest(const std::string&, const std::string&) ;
+virtual bool sendCRC32Map(const std::string&, const std::string&, const CRC32Map&) ;
+
 
 
 	/*************** Internal Transfer Fns *************************/

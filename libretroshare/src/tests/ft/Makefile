@@ -7,11 +7,11 @@ RS_TOP_DIR = ../..
 include $(RS_TOP_DIR)/tests/scripts/config.mk
 ###############################################################
 
-TESTOBJ  = ftfileprovidertest.o ftfilecreatortest.o ftextralisttest.o ftdataplextest.o fttransfermoduletest.o 
+TESTOBJ  = ftfileprovidertest.o ftfilecreatortest.o ftextralisttest.o ftdataplextest.o fttransfermoduletest.o ftcrc32test.o
 #ftserver1test.o ftserver2test.o ftserver3test.o
 
 
-TESTS  = ftfileprovidertest ftfilecreatortest ftextralisttest ftdataplextest fttransfermoduletest 
+TESTS  = ftfileprovidertest ftfilecreatortest ftextralisttest ftdataplextest fttransfermoduletest ftcrc32test 
 #ftserver1test ftserver2test fttransfermoduletest ftserver3test
 
 all: tests
@@ -39,6 +39,9 @@ ftserver2test : ftserver2test.o
 
 ftserver3test : ftserver3test.o 
 	$(CC) $(CFLAGS) -o ftserver3test ftserver3test.o $(LIBS)
+
+ftcrc32test : ftcrc32test.o 
+	$(CC) $(CFLAGS) -O0 -g -o ftcrc32test ftcrc32test.o $(LIBS)
 
 ###############################################################
 include $(RS_TOP_DIR)/tests/scripts/rules.mk

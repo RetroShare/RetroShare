@@ -28,6 +28,7 @@
  *****/
 
 //#define FT_DEBUG 1
+#include <rsiface/rsturtle.h>
 #include "fttransfermodule.h"
 
 /*************************************************************************
@@ -52,12 +53,18 @@ const uint32_t FT_TM_MAX_RESETS  = 5;
 const uint32_t FT_TM_MINIMUM_CHUNK = 128; /* ie 1/8Kb / sec */
 const uint32_t FT_TM_RESTART_DOWNLOAD = 20; /* 20 seconds */
 const uint32_t FT_TM_DOWNLOAD_TIMEOUT = 10; /* 10 seconds */
+const uint32_t FT_TM_CRC_MAP_MAX_WAIT_PER_GIG = 10; /* 10 seconds */
 
 const double FT_TM_MAX_INCREASE = 1.00;
 const double FT_TM_MIN_INCREASE = -0.10;
 const int32_t FT_TM_FAST_RTT    = 1.0;
 const int32_t FT_TM_STD_RTT     = 5.0;
 const int32_t FT_TM_SLOW_RTT    = 9.0;
+
+const uint32_t FT_TM_CRC_MAP_STATE_DONT_HAVE = 0 ;
+const uint32_t FT_TM_CRC_MAP_STATE_NOCHECK 	= 1 ;
+const uint32_t FT_TM_CRC_MAP_STATE_ASKED 		= 2 ;
+const uint32_t FT_TM_CRC_MAP_STATE_HAVE 		= 3 ;
 
 #define FT_TM_FLAG_DOWNLOADING 	0
 #define FT_TM_FLAG_CANCELED		1
@@ -505,7 +512,7 @@ bool ftTransferModule::isCheckingHash()
 #ifdef FT_DEBUG
 	std::cerr << "isCheckingHash(): mFlag=" << mFlag << std::endl;
 #endif
-	return mFlag == FT_TM_FLAG_CHECKING ;
+	return mFlag == FT_TM_FLAG_CHECKING || mFlag == FT_TM_FLAG_CHUNK_CRC;
 }
 
 class HashThread: public RsThread
@@ -580,9 +587,11 @@ bool ftTransferModule::checkFile()
 		}
 	
 		delete _hash_thread ;
-		mFlag = FT_TM_FLAG_CHUNK_CRC ;	// Ask for CRC map. But for now, cancel file transfer.
-		mFileStatus.stat = ftFileStatus::PQIFILE_FAIL_CANCEL ;
+
 	}
+	forceCheck() ;
+	return true ;
+
 	cancelFileTransferUpward() ;
 	std::cerr << "(EE) ftTransferModule::checkFile(): File verification failed for hash " << mHash << "! Asking for CRC map. mFlag=4. For now: cancelling file transfer." << std::endl ;
 	//askForCRCMap() ;
@@ -590,28 +599,172 @@ bool ftTransferModule::checkFile()
 	return false ;
 }
 
+void ftTransferModule::forceCheck()
+{
+	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
+#ifdef FT_DEBUG
+	std::cerr << "ftTransferModule::forceCheck(): setting flags to force check." << std::endl ;
+#endif
+	mFlag = FT_TM_FLAG_CHUNK_CRC ;	// Ask for CRC map. But for now, cancel file transfer.
+
+	// setup flags for CRC state machine to work properly
+	_crcmap_state = FT_TM_CRC_MAP_STATE_DONT_HAVE ;
+	_crcmap_last_asked_time = 0 ;
+	_crcmap_last_source_id = -1 ;
+}
+
 bool ftTransferModule::checkCRC()
 {
+	// We have a finite state machine here.
+	//
+	// The states are, for each chunk, and what should be done:
+	// 	DONT_HAVE
+	// 		-> ask for the chunk CRC
+	// 	ASKED
+	// 		-> do nothing
+	// 	RECEIVED
+	// 		-> check the chunk
+	// 	CHECKED
+	//			-> do nothing
+	//
+	//	CRCs are asked by group of CRC_REQUEST_MAX_SIZE chunks at a time. The response may contain a different
+	//	number of CRCs, depending on the availability. 
+	//
+	//	Server side: 
+	//		- Only complete files can compute CRCs, as the CRCs of downloaded chunks in an unchecked file are un-verified.
+	//		- CRCs of files are cached, so that they don't get computed twice.
+	//
 #ifdef FT_DEBUG
 	std::cerr << "ftTransferModule::checkCRC(): looking for CRC32 map." << std::endl ;
 #endif
 
-	if(_crc32map.empty())
-		return false ;
+	// Loop over chunks. Collect the ones to ask for, and hash the ones received.
+	// If we have 
+	//
+	time_t now = time(NULL) ;
 
+	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
+
+	switch(_crcmap_state)
+	{
+		case FT_TM_CRC_MAP_STATE_NOCHECK:
 #ifdef FT_DEBUG
-	std::cerr << "ftTransferModule::checkCRC(): got a CRC32 map. Matching chunks..." << std::endl ;
+			std::cerr << "ftTransferModule::checkCRC(): state is NOCHECK. Doing nothing." << std::endl ;
+#endif
+			break ;
+
+		case FT_TM_CRC_MAP_STATE_ASKED:
+			std::cerr << "FT_TM_CRC_MAP_STATE_ASKED: last time is " << _crcmap_last_asked_time << std::endl ;
+			std::cerr << "FT_TM_CRC_MAP_STATE_ASKED: now       is " << now << std::endl ;
+			std::cerr << "Limit is " << (uint64_t)_crcmap_last_asked_time + (uint64_t)(FT_TM_CRC_MAP_MAX_WAIT_PER_GIG * (1+mSize/float(1024ull*1024ull*1024ull)))  << std::endl ;
+			if( (uint64_t)_crcmap_last_asked_time + (uint64_t)(FT_TM_CRC_MAP_MAX_WAIT_PER_GIG * (1+mSize/float(1024ull*1024ull*1024ull))) >  (uint64_t)now)
+			{
+#ifdef FT_DEBUG
+				std::cerr << "ftTransferModule::checkCRC(): state is NOCHECK. Doing nothing." << std::endl ;
+#endif
+				break ;
+			}
+#ifdef FT_DEBUG
+			else
+				std::cerr << "ftTransferModule::checkCRC(): state is ASKED, but time is too long. Asking again." << std::endl ;
 #endif
 
-	mFileCreator->crossCheckChunkMap(_crc32map) ;
-	mFlag = FT_TM_FLAG_DOWNLOADING ;
+		case FT_TM_CRC_MAP_STATE_DONT_HAVE:
+			{
+				// Ask the ones we should ask for.  We use a very coarse strategy now: we
+				// send the request to a random source.  We'll make this more sensible
+				// later.
 
 #ifdef FT_DEBUG
-	std::cerr << "ftTransferModule::checkCRC(): Done. Restarting download." << std::endl ;
+				std::cerr << "ftTransferModule::checkCRC(): state is DONT_HAVE. Selecting a source for asking a CRC map." << std::endl ;
 #endif
+				//				if(_crcmap_last_source_id < 0)
+				//					_crcmap_last_source_id=lrand48() ;
+
+				//				_crcmap_last_source_id = (_crcmap_last_source_id+1)%mFileSources.size() ;
+
+				int n=0 ;
+				bool found = false ;
+				std::map<std::string,peerInfo>::const_iterator mit ;
+				for(mit = mFileSources.begin();mit != mFileSources.end();++mit)
+					if(rsTurtle->isTurtlePeer(mit->first))
+					{
+						found=true ;
+						break ;
+					}
+
+				if(found)
+				{
+#ifdef FT_DEBUG
+					std::cerr << "ftTransferModule::checkCRC(): sending CRC map request to source " << mit->first << std::endl ;
+#endif
+					_crcmap_last_asked_time = now ;
+					mMultiplexor->sendCRCMapRequest(mit->first,mHash,CompressedChunkMap());
+
+					_crcmap_state = FT_TM_CRC_MAP_STATE_ASKED ;
+				}
+				else
+					std::cerr << "ERROR: No file source to ask a chunkmap to!" << std::endl ;
+			}
+			break ;
+
+		case FT_TM_CRC_MAP_STATE_HAVE:
+			{
+#ifdef FT_DEBUG
+				std::cerr << "ftTransferModule::checkCRC(): got a CRC32 map. Matching chunks..." << std::endl ;
+#endif
+				// The CRCmap is complete. Let's cross check it with existing chunks in ftFileCreator !
+				//
+				uint32_t bad_chunks ;
+				uint32_t incomplete_chunks ;
+
+				if(!mFileCreator->crossCheckChunkMap(_crcmap,bad_chunks,incomplete_chunks))
+				{
+					std::cerr << "ftTransferModule::checkCRC(): could not check CRC chunks!" << std::endl ;
+					return false;
+				}
+
+				// go back to download stage, if not all chunks are correct.
+				//
+				if(bad_chunks > 0)
+				{
+					mFlag = FT_TM_FLAG_DOWNLOADING ;
+#ifdef FT_DEBUG
+					std::cerr << "ftTransferModule::checkCRC(): Done. " << bad_chunks << " bad chunks found. Restarting download for these chunks only." << std::endl ;
+#endif
+				}
+				else if(incomplete_chunks > 0)
+				{
+					mFlag = FT_TM_FLAG_DOWNLOADING ;
+#ifdef FT_DEBUG
+					std::cerr << "ftTransferModule::checkCRC(): Done. all chunks ok. Continuing download for remaining chunks." << std::endl ;
+#endif
+				}
+				else
+				{
+					mFlag = FT_TM_FLAG_COMPLETE ;
+#ifdef FT_DEBUG
+					std::cerr << "ftTransferModule::checkCRC(): Done. CRC check is ok, file is complete." << std::endl ;
+#endif
+				}
+
+				_crcmap_state = FT_TM_CRC_MAP_STATE_NOCHECK ;
+			}
+	}
+
 	return true ;
 }
 
+void ftTransferModule::addCRC32Map(const CRC32Map& crc_map)
+{
+  	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
+
+	// Note: for now, we only send complete CRC32 maps, so the crc_map is always complete. When we
+	// send partial CRC maps, we will have to check them for completness.
+	//
+	_crcmap_state = FT_TM_CRC_MAP_STATE_HAVE ;
+	_crcmap = crc_map ;
+}
 
 void ftTransferModule::adjustSpeed()
 {

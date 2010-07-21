@@ -23,6 +23,8 @@
  *
  */
 
+//#define P3TURTLE_DEBUG 
+
 #include <stdexcept>
 #include <stdlib.h>
 #include <assert.h>
@@ -856,10 +858,16 @@ void p3turtle::routeGenericTunnelItem(RsTurtleGenericTunnelItem *item)
 
 		case RS_TURTLE_SUBTYPE_FILE_MAP_REQUEST:	handleRecvFileMapRequest(dynamic_cast<RsTurtleFileMapRequestItem *>(item)) ;
 																break ;
-		default:
-															std::cerr << "WARNING: Unknown packet type received: id=" << (void*)(item->PacketSubType()) << ". Is somebody trying to DOS you ?" << std::endl ;
+
+		case RS_TURTLE_SUBTYPE_FILE_CRC : 			handleRecvFileCRC32Map(dynamic_cast<RsTurtleFileCrcItem *>(item)) ;
+																break ;
+
+		case RS_TURTLE_SUBTYPE_FILE_CRC_REQUEST:	handleRecvFileCRC32MapRequest(dynamic_cast<RsTurtleFileCrcRequestItem *>(item)) ;
+																break ;
+	default:
+																std::cerr << "WARNING: Unknown packet type received: id=" << (void*)(item->PacketSubType()) << ". Is somebody trying to poison you ?" << std::endl ;
 #ifdef P3TURTLE_DEBUG
-															exit(-1) ;
+																exit(-1) ;
 #endif
 	}
 
@@ -1043,6 +1051,79 @@ void p3turtle::handleRecvFileMap(RsTurtleFileMapItem *item)
 	_ft_server->getMultiplexer()->recvChunkMap(vpid,hash,item->compressed_map,item->direction == RsTurtleGenericTunnelItem::DIRECTION_CLIENT) ;
 }
 
+void p3turtle::handleRecvFileCRC32MapRequest(RsTurtleFileCrcRequestItem *item)
+{
+#ifdef P3TURTLE_DEBUG
+	std::cerr << "p3Turtle: received file CRC32 Map Request item:" << std::endl ;
+	item->print(std::cerr,1) ;
+#endif
+	std::string hash,vpid ;
+	{
+		RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
+
+		std::map<TurtleTunnelId,TurtleTunnel>::iterator it2(_local_tunnels.find(item->tunnel_id)) ;
+
+		if(it2 == _local_tunnels.end())
+		{
+#ifdef P3TURTLE_DEBUG
+			std::cerr << "p3turtle: got file data with unknown tunnel id " << (void*)item->tunnel_id << std::endl ;
+#endif
+			return ;
+		}
+
+		TurtleTunnel& tunnel(it2->second) ;
+#ifdef P3TURTLE_DEBUG
+		assert(!tunnel.hash.empty()) ;
+
+		std::cerr << "  This is an endpoint for this file crc request." << std::endl ;
+		std::cerr << "  Forwarding data to the multiplexer." << std::endl ;
+		std::cerr << "  using peer_id=" << tunnel.vpid << ", hash=" << tunnel.hash << std::endl ;
+#endif
+		// we should check that there is no backward call to the turtle router!
+		//
+		hash = tunnel.hash ;
+		vpid = tunnel.vpid ;
+	}
+
+	_ft_server->getMultiplexer()->recvCRCMapRequest(vpid,hash) ;
+}
+
+void p3turtle::handleRecvFileCRC32Map(RsTurtleFileCrcItem *item)
+{
+#ifdef P3TURTLE_DEBUG
+	std::cerr << "p3Turtle: received file CRC32 Map item:" << std::endl ;
+	item->print(std::cerr,1) ;
+#endif
+	std::string hash,vpid ;
+	{
+		RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
+
+		std::map<TurtleTunnelId,TurtleTunnel>::iterator it2(_local_tunnels.find(item->tunnel_id)) ;
+
+		if(it2 == _local_tunnels.end())
+		{
+#ifdef P3TURTLE_DEBUG
+			std::cerr << "p3turtle: got file CRC32 map with unknown tunnel id " << (void*)item->tunnel_id << std::endl ;
+#endif
+			return ;
+		}
+
+		TurtleTunnel& tunnel(it2->second) ;
+
+#ifdef P3TURTLE_DEBUG
+		assert(!tunnel.hash.empty()) ;
+
+		std::cerr << "  This is an endpoint for this file map." << std::endl ;
+		std::cerr << "  Forwarding data to the multiplexer." << std::endl ;
+		std::cerr << "  using peer_id=" << tunnel.vpid << ", hash=" << tunnel.hash << std::endl ;
+#endif
+		// We should check that there is no backward call to the turtle router!
+		//
+		vpid = tunnel.vpid ;
+		hash = tunnel.hash ;
+	}
+	_ft_server->getMultiplexer()->recvCRCMap(vpid,hash,item->crc_map) ;
+}
 // Send a data request into the correct tunnel for the given file hash
 void p3turtle::sendDataRequest(const std::string& peerId, const std::string& hash, uint64_t, uint64_t offset, uint32_t chunksize)
 {
@@ -1210,55 +1291,66 @@ void p3turtle::sendChunkMap(const std::string& peerId,const std::string& hash,co
 	sendItem(item) ;
 }
 
-// This function is actually not needed: Search request to the turtle router are:
-// 	- distant search requests, handled by the router
-// 	- search requests over files being downloaded, handled by rsFiles !!
-//
-//bool p3turtle::search(std::string hash, uint64_t, uint32_t hintflags, FileInfo &info) const
-//{
-//	if(! (hintflags & RS_FILE_HINTS_TURTLE))		// this should not happen, but it's a security.
-//		return false;
-//
-//	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
-//
-//#ifdef P3TURTLE_DEBUG
-//	std::cerr << "p3turtle: received file search request for hash " << hash << "." << std::endl ;
-//#endif
-//
-//	std::map<TurtleFileHash,TurtleFileHashInfo>::const_iterator it = _incoming_file_hashes.find(hash) ;
-//
-//	if(_incoming_file_hashes.end() != it)
-//	{
-//		info.fname = it->second.name;
-//		info.size = it->second.size;
-//		info.hash = it->first;
-//
-//		for(unsigned int i=0;i<it->second.tunnels.size();++i)
-//		{
-//			TransferInfo ti;
-//			ti.peerId = getTurtlePeerId(it->second.tunnels[i]);
-//			ti.name = "Distant peer for hash=" + hash ;
-//			ti.tfRate = 0;
-//			info.peers.push_back(ti);
-//		}
-//
-//#ifdef P3TURTLE_DEBUG
-//		std::cerr << "  Found these tunnels for that hash:. "<< std::endl ;
-//		for(unsigned int i=0;i<it->second.tunnels.size();++i)
-//			std::cerr << "    " << (void*)it->second.tunnels[i] << std::endl ;
-//
-//		std::cerr << "  answered yes. "<< std::endl ;
-//#endif
-//		return true ;
-//	}
-//	else
-//	{
-//#ifdef P3TURTLE_DEBUG
-//		std::cerr << "  responding false." << std::endl ;
-//#endif
-//		return false ;
-//	}
-//}
+void p3turtle::sendCRC32MapRequest(const std::string& peerId,const std::string& hash)
+{
+	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
+
+	// get the proper tunnel for this file hash and peer id.
+	std::map<TurtleVirtualPeerId,TurtleTunnelId>::const_iterator it(_virtual_peers.find(peerId)) ;
+
+	if(it == _virtual_peers.end())
+	{
+#ifdef P3TURTLE_DEBUG
+		std::cerr << "p3turtle::sendCRC32MapRequest: cannot find virtual peer " << peerId << " in VP list." << std::endl ;
+#endif
+		return ;
+	}
+	TurtleTunnelId tunnel_id = it->second ;
+	TurtleTunnel& tunnel(_local_tunnels[tunnel_id]) ;
+
+#ifdef P3TURTLE_DEBUG
+	assert(hash == tunnel.hash) ;
+#endif
+	RsTurtleFileCrcRequestItem *item = new RsTurtleFileCrcRequestItem;
+	item->tunnel_id = tunnel_id ;	
+//	item->crc_map = cmap ;
+	item->PeerId(tunnel.local_dst) ;
+
+#ifdef P3TURTLE_DEBUG
+	std::cerr << "p3turtle: sending CRC32 map request to peer " << peerId << ", hash=0x" << hash << ") through tunnel " << (void*)item->tunnel_id << ", next peer=" << item->PeerId() << std::endl ;
+#endif
+	sendItem(item) ;
+}
+void p3turtle::sendCRC32Map(const std::string& peerId,const std::string& hash,const CRC32Map& cmap)
+{
+	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
+
+	// get the proper tunnel for this file hash and peer id.
+	std::map<TurtleVirtualPeerId,TurtleTunnelId>::const_iterator it(_virtual_peers.find(peerId)) ;
+
+	if(it == _virtual_peers.end())
+	{
+#ifdef P3TURTLE_DEBUG
+		std::cerr << "p3turtle::senddataRequest: cannot find virtual peer " << peerId << " in VP list." << std::endl ;
+#endif
+		return ;
+	}
+	TurtleTunnelId tunnel_id = it->second ;
+	TurtleTunnel& tunnel(_local_tunnels[tunnel_id]) ;
+
+#ifdef P3TURTLE_DEBUG
+	assert(hash == tunnel.hash) ;
+#endif
+	RsTurtleFileCrcItem *item = new RsTurtleFileCrcItem ;
+	item->tunnel_id = tunnel_id ;	
+	item->crc_map = cmap ;
+	item->PeerId(tunnel.local_src) ;
+
+#ifdef P3TURTLE_DEBUG
+	std::cerr << "p3turtle: sending CRC32 map to peer " << peerId << ", hash=0x" << hash << ") through tunnel " << (void*)item->tunnel_id << ", next peer=" << item->PeerId() << std::endl ;
+#endif
+	sendItem(item) ;
+}
 
 bool p3turtle::isTurtlePeer(const std::string& peer_id) const
 {

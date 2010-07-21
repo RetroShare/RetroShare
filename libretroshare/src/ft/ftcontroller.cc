@@ -63,6 +63,7 @@
  * #define CONTROL_DEBUG 1
  * #define DEBUG_DWLQUEUE 1
  *****/
+//#define CONTROL_DEBUG 1
 
 static const uint32_t SAVE_TRANSFERS_DELAY 			= 61	; // save transfer progress every 61 seconds.
 static const uint32_t INACTIVE_CHUNKS_CHECK_DELAY 	= 60	; // time after which an inactive chunk is released
@@ -980,10 +981,12 @@ bool ftController::alreadyHaveFile(const std::string& hash)
 	return false ;
 }
 
-bool 	ftController::FileRequest(std::string fname, std::string hash,
-			uint64_t size, std::string dest, uint32_t flags,
-			std::list<std::string> &srcIds)
+bool 	ftController::FileRequest(const std::string& fname, const std::string& hash,
+			uint64_t size, const std::string& dest, uint32_t flags,
+			const std::list<std::string> &_srcIds)
 {
+	std::list<std::string> srcIds(_srcIds) ;
+
 	/* check if we have the file */
 
 	if(alreadyHaveFile(hash))
@@ -1047,8 +1050,8 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 	}
 
 	FileInfo info;
-	std::list<std::string>::iterator it;
-	std::list<TransferInfo>::iterator pit;
+	std::list<std::string>::const_iterator it;
+	std::list<TransferInfo>::const_iterator pit;
 
 #ifdef CONTROL_DEBUG
 	std::cerr << "ftController::FileRequest(" << fname << ",";
@@ -1077,7 +1080,7 @@ bool 	ftController::FileRequest(std::string fname, std::string hash,
 	{ 
 		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-		std::map<std::string, ftFileControl*>::iterator dit = mDownloads.find(hash);
+		std::map<std::string, ftFileControl*>::const_iterator dit = mDownloads.find(hash);
 
 		if (dit != mDownloads.end())
 		{
@@ -1312,7 +1315,7 @@ bool ftController::setChunkStrategy(const std::string& hash,FileChunksInfo::Chun
 	return true ;
 }
 
-bool 	ftController::FileCancel(std::string hash)
+bool 	ftController::FileCancel(const std::string& hash)
 {
 	rsTurtle->stopMonitoringFileTunnels(hash) ;
 
@@ -1418,12 +1421,20 @@ bool 	ftController::FileControl(const std::string& hash, uint32_t flags)
 	{
 		case RS_FILE_CTRL_PAUSE:
 			mit->second->mState = ftFileControl::PAUSED ;
-	std::cerr << "setting state to " << ftFileControl::PAUSED << std::endl ;
+			std::cerr << "setting state to " << ftFileControl::PAUSED << std::endl ;
 			break;
+
 		case RS_FILE_CTRL_START:
 			mit->second->mState = ftFileControl::DOWNLOADING ;
-	std::cerr << "setting state to " << ftFileControl::DOWNLOADING << std::endl ;
+			std::cerr << "setting state to " << ftFileControl::DOWNLOADING << std::endl ;
 			break;
+
+		case RS_FILE_CTRL_FORCE_CHECK:
+//			mit->second->mState = ftFileControl::CHECKING_HASH ;
+			mit->second->mTransfer->forceCheck();
+			std::cerr << "setting state to " << ftFileControl::CHECKING_HASH << std::endl ;
+			break;
+
 		default:
 			return false;
 	}

@@ -32,6 +32,8 @@
 #include <list>
 #include <stdint.h>
 
+class CRC32Map ;
+
 namespace RsDirUtil {
 
 std::string 	getTopDir(std::string);
@@ -47,7 +49,13 @@ bool		hashFile(const std::string& full_path,std::string& hash) ;
 bool		renameFile(const std::string& from,const std::string& to) ;
 bool		createBackup (std::string sFilename, unsigned int nCount = 5);
 
+// returns the CRC32 of the data of length len
+//
 uint32_t rs_CRC32(const unsigned char *data,uint32_t len) ;
+
+// Computes the CRC32 map of a complete file, with given size and chunk size.
+//
+bool crc32File(FILE *f,uint64_t file_size,uint32_t chunk_size,CRC32Map& map) ;
 
 int     	breakupDirList(std::string path,
                         	std::list<std::string> &subdirs);

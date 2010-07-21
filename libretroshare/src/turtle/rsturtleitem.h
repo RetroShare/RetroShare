@@ -20,6 +20,8 @@ const uint8_t RS_TURTLE_SUBTYPE_FILE_DATA      			= 0x08 ;
 const uint8_t RS_TURTLE_SUBTYPE_REGEXP_SEARCH_REQUEST = 0x09 ;
 const uint8_t RS_TURTLE_SUBTYPE_FILE_MAP              = 0x10 ;
 const uint8_t RS_TURTLE_SUBTYPE_FILE_MAP_REQUEST      = 0x11 ;
+const uint8_t RS_TURTLE_SUBTYPE_FILE_CRC              = 0x12 ;
+const uint8_t RS_TURTLE_SUBTYPE_FILE_CRC_REQUEST      = 0xfe ;	// test value
 
 /***********************************************************************************/
 /*                           Basic Turtle Item Class                               */
@@ -265,6 +267,50 @@ class RsTurtleFileMapItem: public RsTurtleGenericTunnelItem
 												
 		virtual std::ostream& print(std::ostream& o, uint16_t) ;
 
+		virtual bool serialize(void *data,uint32_t& size) ;	
+		virtual uint32_t serial_size() ; 
+};
+
+class RsTurtleFileCrcRequestItem: public RsTurtleGenericTunnelItem			
+{
+	public:
+		RsTurtleFileCrcRequestItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_CRC_REQUEST) {}
+		RsTurtleFileCrcRequestItem(void *data,uint32_t size) ;		// deserialization
+
+		virtual bool shouldStampTunnel() const { return false ; }
+		virtual TurtleTunnelId tunnelId() const { return tunnel_id ; }
+		virtual Direction travelingDirection() const { return DIRECTION_SERVER ; }
+
+		uint32_t tunnel_id ;		// id of the tunnel to travel through. Also used for identifying the file source
+										// this info from the file size, but this allows a security check.
+												
+//		CompressedChunkMap _map ;	// list of chunks for which we need the CRC
+
+		virtual std::ostream& print(std::ostream& o, uint16_t) ;
+
+		virtual bool serialize(void *data,uint32_t& size) ;	
+		virtual uint32_t serial_size() ; 
+};
+
+
+class RsTurtleFileCrcItem: public RsTurtleGenericTunnelItem			
+{
+	public:
+		RsTurtleFileCrcItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_CRC) {}
+		RsTurtleFileCrcItem(void *data,uint32_t size) ;		// deserialization
+
+		virtual bool shouldStampTunnel() const { return true ; }
+		virtual TurtleTunnelId tunnelId() const { return tunnel_id ; }
+		virtual Direction travelingDirection() const { return DIRECTION_CLIENT ; }
+
+		uint32_t tunnel_id ;		// id of the tunnel to travel through. Also used for identifying the file source
+										// this info from the file size, but this allows a security check.
+												
+		CRC32Map crc_map ;// Map info for the file in compressed format. Each *bit* in the array uint's says "I have" or "I don't have"
+								// by default, we suppose the peer has all the chunks. This info will thus be and-ed 
+								// with the default file map for this source.
+												
+		virtual std::ostream& print(std::ostream& o, uint16_t) ;
 		virtual bool serialize(void *data,uint32_t& size) ;	
 		virtual uint32_t serial_size() ; 
 };

@@ -41,6 +41,7 @@
 	/*************** SEND INTERFACE *******************/
 
 class CompressedChunkMap ;
+class CRC32Map ;
 
 class ftDataSend
 {
@@ -57,6 +58,10 @@ class ftDataSend
 		virtual bool sendChunkMapRequest(const std::string& peer_id,const std::string& hash) = 0;
 		/// Send a chunk map
 		virtual bool sendChunkMap(const std::string& peer_id,const std::string& hash,const CompressedChunkMap& cmap) = 0;
+		/// Send a request for a chunk crc map
+		virtual bool sendCRC32MapRequest(const std::string& peer_id,const std::string& hash) = 0;
+		/// Send a chunk crc map
+		virtual bool sendCRC32Map(const std::string& peer_id,const std::string& hash,const CRC32Map& crc_map) = 0;
 };
 
 

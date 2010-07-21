@@ -53,7 +53,8 @@ ftClient::ftClient(ftTransferModule *module, ftFileCreator *creator)
 const uint32_t FT_DATA						= 0x0001;		// data cuhnk to be stored
 const uint32_t FT_DATA_REQ					= 0x0002;		// data request to be treated
 const uint32_t FT_CLIENT_CHUNK_MAP_REQ	= 0x0003;		// chunk map request to be treated by client
-const uint32_t FT_SERVER_CHUNK_MAP_REQ	= 0x0004;		// chunk map reuqest to be treated by server
+const uint32_t FT_SERVER_CHUNK_MAP_REQ	= 0x0004;		// chunk map request to be treated by server
+const uint32_t FT_CRC32MAP_REQ        	= 0x0005;		// crc32 map request to be treated by server
 
 ftRequest::ftRequest(uint32_t type, std::string peerId, std::string hash, uint64_t size, uint64_t offset, uint32_t chunk, void *data)
 	:mType(type), mPeerId(peerId), mHash(hash), mSize(size),
@@ -250,7 +251,19 @@ bool	ftDataMultiplex::recvChunkMapRequest(const std::string& peerId, const std::
 	return true;
 }
 
+bool	ftDataMultiplex::recvCRCMapRequest(const std::string& peerId, const std::string& hash/*,const CompressedChunkMap& map*/)
+{
+#ifdef MPLEX_DEBUG
+	std::cerr << "ftDataMultiplex::recvChunkMapRequest() Server Recv";
+	std::cerr << std::endl;
+#endif
+	/* Store in Queue */
+	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
 
+	mRequestQueue.push_back(ftRequest(FT_CRC32MAP_REQ,peerId,hash,0,0,0,NULL));
+
+	return true;
+}
 
 /*********** BACKGROUND THREAD OPERATIONS ***********/
 bool 	ftDataMultiplex::workQueued()
@@ -326,6 +339,14 @@ bool 	ftDataMultiplex::doWork()
 				handleRecvServerChunkMapRequest(req.mPeerId,req.mHash) ;
 				break ;
 
+			case FT_CRC32MAP_REQ:
+#ifdef MPLEX_DEBUG
+				std::cerr << "ftDataMultiplex::doWork() Handling FT_CLIENT_CRC32_MAP_REQ";
+				std::cerr << std::endl;
+#endif
+				handleRecvCRC32MapRequest(req.mPeerId,req.mHash,CompressedChunkMap()) ;
+				break ;
+
 			default:
 #ifdef MPLEX_DEBUG
 				std::cerr << "ftDataMultiplex::doWork() Ignoring UNKNOWN";
@@ -360,6 +381,27 @@ bool 	ftDataMultiplex::doWork()
 		handleRecvDataRequest(req.mPeerId, req.mHash, req.mSize, req.mOffset, req.mChunk) ;
 
 	return true;
+}
+
+bool ftDataMultiplex::recvCRCMap(const std::string& peerId, const std::string& hash,const CRC32Map& crc_map)
+{
+	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
+
+	std::map<std::string, ftClient>::iterator it = mClients.find(hash);
+
+	if(it == mClients.end())
+	{
+		std::cerr << "ftDataMultiplex::recvCRCMap() ERROR: No matching Client for CRC32map. This is an error. " << hash << " !" << std::endl;
+		/* error */
+		return false;
+	}
+
+#ifdef MPLEX_DEBUG
+	std::cerr << "ftDataMultiplex::recvCRCMap() Passing crc map of file " << hash << ", to FT Module" << std::endl;
+#endif
+
+	(it->second).mModule->addCRC32Map(crc_map);
+	return true ;
 }
 
 // A chunk map has arrived. It can be two different situations:
@@ -410,6 +452,53 @@ bool ftDataMultiplex::recvChunkMap(const std::string& peerId, const std::string&
 	}
 
 	return false;
+}
+
+bool ftDataMultiplex::handleRecvCRC32MapRequest(const std::string& peerId, const std::string& hash,const CompressedChunkMap&)
+{
+	std::map<std::string, ftFileProvider *>::iterator it ;
+	bool found = true ;
+
+	{
+		RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
+
+		it = mServers.find(hash) ;
+
+		if(it == mServers.end())
+			found = false ;
+	}
+
+	if(!found)
+	{
+#ifdef MPLEX_DEBUG
+		std::cerr << "ftDataMultiplex::handleRecvChunkMapReq() ERROR: No matching file Provider for hash " << hash ;
+		std::cerr << std::endl;
+#endif
+		if(!handleSearchRequest(peerId,hash))	
+			return false ;
+
+#ifdef MPLEX_DEBUG
+		std::cerr << "ftDataMultiplex::handleRecvChunkMapReq() A new file Provider has been made up for hash " << hash ;
+		std::cerr << std::endl;
+#endif
+	}
+
+	CRC32Map cmap ;
+	{
+		RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
+
+		it = mServers.find(hash) ;
+
+		if(it == mServers.end())	// handleSearchRequest should have filled mServers[hash], but we have been off-mutex since,
+			return false ;				// so it's safer to check again.
+		else if(!it->second->getCRC32Map(cmap))
+			return false ;
+	}
+
+	std::cerr << "File CRC32 map was successfully computed. Sending it." << std::endl ;
+
+	mDataSend->sendCRC32Map(peerId,hash,cmap);
+	return true ;
 }
 
 bool ftDataMultiplex::handleRecvClientChunkMapRequest(const std::string& peerId, const std::string& hash)
@@ -639,7 +728,10 @@ bool ftDataMultiplex::sendChunkMapRequest(const std::string& peer_id,const std::
 {
 	return mDataSend->sendChunkMapRequest(peer_id,hash);
 }
-
+bool ftDataMultiplex::sendCRCMapRequest(const std::string& peer_id,const std::string& hash,const CompressedChunkMap&)
+{
+	return mDataSend->sendCRC32MapRequest(peer_id,hash);
+}
 void ftDataMultiplex::deleteUnusedServers()
 {
 	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/

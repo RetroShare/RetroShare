@@ -99,9 +99,9 @@ class ftFileControl
 class ftPendingRequest
 {
         public:
-        ftPendingRequest(std::string fname, std::string hash,
-                        uint64_t size, std::string dest, uint32_t flags,
-                        std::list<std::string> &srcIds)
+        ftPendingRequest(const std::string& fname, const std::string& hash,
+                        uint64_t size, const std::string& dest, uint32_t flags,
+                        const std::list<std::string> &srcIds)
         : mName(fname), mHash(hash), mSize(size),
         mDest(dest), mFlags(flags),mSrcIds(srcIds) { return; }
 
@@ -137,9 +137,9 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 		/********************** Controller Access **********************/
 		/***************************************************************/
 
-		bool 	FileRequest(std::string fname, std::string hash,
-				uint64_t size, std::string dest, uint32_t flags,
-				std::list<std::string> &sourceIds);
+		bool 	FileRequest(const std::string& fname, const std::string& hash,
+				uint64_t size, const std::string& dest, uint32_t flags,
+				const std::list<std::string> &sourceIds);
 
 		/// Do we already have this file, either in download or in file lists ?
 		bool  alreadyHaveFile(const std::string& hash) ;
@@ -150,7 +150,7 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 		uint32_t freeDiskSpaceLimit() const ;
 		void setFreeDiskSpaceLimit(uint32_t size_in_mb) ;
 
-		bool 	FileCancel(std::string hash);
+		bool 	FileCancel(const std::string& hash);
 		bool 	FileControl(const std::string& hash, uint32_t flags);
 		bool 	FileClearCompleted();
 		bool 	FlagFileComplete(std::string hash);

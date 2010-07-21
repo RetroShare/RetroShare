@@ -216,6 +216,9 @@ TransfersDialog::TransfersDialog(QWidget *parent)
    resumeAct = new QAction(QIcon(IMAGE_RESUME), tr("Resume"), this);
    connect(resumeAct, SIGNAL(triggered()), this, SLOT(resumeFileTransfer()));
 
+   forceCheckAct = new QAction(QIcon(IMAGE_CANCEL), tr( "Force Check" ), this );
+   connect( forceCheckAct , SIGNAL( triggered() ), this, SLOT( forceCheck() ) );
+
    cancelAct = new QAction(QIcon(IMAGE_CANCEL), tr( "Cancel" ), this );
    connect( cancelAct , SIGNAL( triggered() ), this, SLOT( cancel() ) );
 
@@ -381,7 +384,10 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 		}
 
 		if(info.downloadStatus != FT_STATE_COMPLETE)
+		{
+			contextMnu.addAction( forceCheckAct);
 			contextMnu.addAction( cancelAct);
+		}
 
 		contextMnu.addSeparator();
 	}
@@ -940,6 +946,11 @@ QString TransfersDialog::getPeerName(const std::string& id) const
 		return res ;
 }
 
+void TransfersDialog::forceCheck()
+{
+	if (!controlTransferFile(RS_FILE_CTRL_FORCE_CHECK))
+		std::cerr << "resumeFileTransfer(): can't force check file transfer" << std::endl;
+}
 void TransfersDialog::cancel()
 {
     bool first = true;

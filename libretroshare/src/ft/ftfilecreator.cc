@@ -472,13 +472,55 @@ bool ftFileCreator::hashReceivedData(std::string& hash)
 	// long time. Therefore, we must pay attention not to call this function
 	// at a time file_name nor hash can be modified, which is easy.
 	//
+	if(!finished())
+		return false ;
+
 	return RsDirUtil::hashFile(file_name,hash) ;
 }
 
-#include <stdexcept>
-bool ftFileCreator::crossCheckChunkMap(const CRC32Map& ref)
+bool ftFileCreator::crossCheckChunkMap(const CRC32Map& ref,uint32_t& bad_chunks,uint32_t& incomplete_chunks)
 {
-	// still to be implemented.
-	throw std::runtime_error(std::string("Unimplemented function ") + __PRETTY_FUNCTION__) ;
+	{
+		RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
+
+		CompressedChunkMap map ;
+		chunkMap.getAvailabilityMap(map) ;
+		uint32_t nb_chunks = ref.size() ;
+		static const uint32_t chunk_size = ChunkMap::CHUNKMAP_FIXED_CHUNK_SIZE ;
+
+		std::cerr << "ftFileCreator::crossCheckChunkMap(): comparing chunks..." << std::endl;
+
+		if(!locked_initializeFileAttrs() )
+			return false ;
+
+		unsigned char *buff = new unsigned char[chunk_size] ;
+		incomplete_chunks = 0 ;
+		bad_chunks = 0 ;
+		uint32_t len = 0 ;
+
+		for(uint32_t i=0;i<nb_chunks;++i)
+			if(map[i])
+				if(fseek(fd,(uint64_t)i * (uint64_t)chunk_size,SEEK_SET)==0 && (len = fread(buff,1,chunk_size,fd)) > 0)
+				{
+					if( RsDirUtil::rs_CRC32(buff,len) != ref[i])
+					{
+						++bad_chunks ;
+						++incomplete_chunks ;
+						map.reset(i) ;
+					}
+				}
+				else
+					return false ;
+			else
+				++incomplete_chunks ;
+
+		delete[] buff ;
+
+		if(bad_chunks > 0)
+			chunkMap.setAvailabilityMap(map) ;
+	}
+	closeFile() ;
 	return true ;
 }
+
+

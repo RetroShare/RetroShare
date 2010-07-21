@@ -5,6 +5,7 @@
 #include "turtletypes.h"
 #include "rsturtleitem.h"
 
+//#define P3TURTLE_DEBUG
 // -----------------------------------------------------------------------------------//
 // --------------------------------  Serialization. --------------------------------- // 
 // -----------------------------------------------------------------------------------//
@@ -139,6 +140,31 @@ uint32_t RsTurtleFileMapItem::serial_size()
 	return s ;
 }
 
+uint32_t RsTurtleFileCrcRequestItem::serial_size()
+{
+	uint32_t s = 0 ;
+
+	s += 8 ; // header
+	s += 4 ; // tunnel id 
+
+	return s ;
+}
+
+uint32_t RsTurtleFileCrcItem::serial_size()
+{
+	uint32_t s = 0 ;
+
+	s += 8 ; // header
+	s += 4 ; // tunnel id 
+
+	s += 4 ; // size of _map
+	s += 4 ; // size of _crcs
+
+	s += 4 * crc_map._crcs.size() ;
+	s += 4 * crc_map._map._map.size() ;
+
+	return s ;
+}
 //
 // ---------------------------------- Serialization ----------------------------------//
 //
@@ -174,6 +200,8 @@ RsItem *RsTurtleSerialiser::deserialise(void *data, uint32_t *size)
 			case RS_TURTLE_SUBTYPE_FILE_DATA    			:	return new RsTurtleFileDataItem(data,*size) ;
 			case RS_TURTLE_SUBTYPE_FILE_MAP_REQUEST		:	return new RsTurtleFileMapRequestItem(data,*size) ;
 			case RS_TURTLE_SUBTYPE_FILE_MAP     			:	return new RsTurtleFileMapItem(data,*size) ;
+			case RS_TURTLE_SUBTYPE_FILE_CRC_REQUEST		:	return new RsTurtleFileCrcRequestItem(data,*size) ;
+			case RS_TURTLE_SUBTYPE_FILE_CRC     			:	return new RsTurtleFileCrcItem(data,*size) ;
 
 			default:
 																std::cerr << "Unknown packet type in RsTurtle!" << std::endl ;
@@ -255,6 +283,82 @@ bool RsTurtleFileMapItem::serialize(void *data,uint32_t& pktsize)
 #ifdef RSSERIAL_DEBUG
 		std::cerr << "RsFileConfigSerialiser::serialiseTransfer() Size Error! " << std::endl;
 #endif
+	}
+
+	return ok;
+}
+
+bool RsTurtleFileCrcRequestItem::serialize(void *data,uint32_t& pktsize)
+{
+#ifdef P3TURTLE_DEBUG
+	std::cerr << "RsTurtleFileCrcRequestItem::serialize(): serializing packet:" << std::endl ;
+	print(std::cerr,2) ;
+#endif
+	uint32_t tlvsize = serial_size();
+	uint32_t offset = 0;
+
+	if (pktsize < tlvsize)
+		return false; /* not enough space */
+
+	pktsize = tlvsize;
+
+	bool ok = true;
+
+	ok &= setRsItemHeader(data,tlvsize,PacketId(), tlvsize);
+
+	/* skip the header */
+	offset += 8;
+
+	/* add mandatory parts first */
+
+	ok &= setRawUInt32(data, tlvsize, &offset, tunnel_id);
+
+	if (offset != tlvsize)
+	{
+		ok = false;
+		std::cerr << "RsFileConfigSerialiser::serialiseTransfer() Size Error! " << std::endl;
+	}
+
+	return ok;
+}
+
+bool RsTurtleFileCrcItem::serialize(void *data,uint32_t& pktsize)
+{
+#ifdef P3TURTLE_DEBUG
+	std::cerr << "RsTurtleFileCrcItem::serialize(): serializing packet:" << std::endl ;
+	print(std::cerr,2) ;
+#endif
+	uint32_t tlvsize = serial_size();
+	uint32_t offset = 0;
+
+	if (pktsize < tlvsize)
+		return false; /* not enough space */
+
+	pktsize = tlvsize;
+
+	bool ok = true;
+
+	ok &= setRsItemHeader(data,tlvsize,PacketId(), tlvsize);
+
+	/* skip the header */
+	offset += 8;
+
+	/* add mandatory parts first */
+
+	ok &= setRawUInt32(data, tlvsize, &offset, tunnel_id);
+	ok &= setRawUInt32(data, tlvsize, &offset, crc_map._map._map.size());
+	ok &= setRawUInt32(data, tlvsize, &offset, crc_map._crcs.size());
+
+	for(uint32_t i=0;i<crc_map._map._map.size() && ok;++i)
+		ok &= setRawUInt32(data, tlvsize, &offset, crc_map._map._map[i]);
+
+	for(uint32_t i=0;i<crc_map._crcs.size() && ok;++i)
+		ok &= setRawUInt32(data, tlvsize, &offset, crc_map._crcs[i]);
+
+	if (offset != tlvsize)
+	{
+		ok = false;
+		std::cerr << "RsFileConfigSerialiser::serialiseTransfer() Size Error! " << std::endl;
 	}
 
 	return ok;
@@ -494,6 +598,62 @@ RsTurtleFileMapRequestItem::RsTurtleFileMapRequestItem(void *data,uint32_t pktsi
 	bool ok = true ;
 	ok &= getRawUInt32(data, pktsize, &offset, &tunnel_id);
 	ok &= getRawUInt32(data, pktsize, &offset, &direction);
+
+#ifdef WINDOWS_SYS // No Exceptions in Windows compile. (drbobs).
+#else
+	if (offset != pktsize)
+		throw std::runtime_error("Size error while deserializing.") ;
+	if (!ok)
+		throw std::runtime_error("Unknown error while deserializing.") ;
+#endif
+}
+
+RsTurtleFileCrcItem::RsTurtleFileCrcItem(void *data,uint32_t pktsize)
+	: RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_CRC)
+{
+#ifdef P3TURTLE_DEBUG
+	std::cerr << "  type = file map item" << std::endl ;
+#endif
+	uint32_t offset = 8; // skip the header 
+
+	/* add mandatory parts first */
+
+	bool ok = true ;
+	uint32_t s1,s2 ;
+	ok &= getRawUInt32(data, pktsize, &offset, &tunnel_id);
+	ok &= getRawUInt32(data, pktsize, &offset, &s1) ;
+	ok &= getRawUInt32(data, pktsize, &offset, &s2) ;
+
+	crc_map._map._map.resize(s1) ;
+	crc_map._crcs.resize(s2) ;
+
+	for(uint32_t i=0;i<s1 && ok;++i)
+		ok &= getRawUInt32(data, pktsize, &offset, &(crc_map._map._map[i])) ;
+
+	for(uint32_t i=0;i<s2 && ok;++i)
+		ok &= getRawUInt32(data, pktsize, &offset, &(crc_map._crcs[i])) ;
+
+#ifdef WINDOWS_SYS // No Exceptions in Windows compile. (drbobs).
+#else
+	if (offset != pktsize)
+		throw std::runtime_error("Size error while deserializing.") ;
+	if (!ok)
+		throw std::runtime_error("Unknown error while deserializing.") ;
+#endif
+}
+
+RsTurtleFileCrcRequestItem::RsTurtleFileCrcRequestItem(void *data,uint32_t pktsize)
+	: RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_CRC_REQUEST)
+{
+#ifdef P3TURTLE_DEBUG
+	std::cerr << "  type = file map request item" << std::endl ;
+#endif
+	uint32_t offset = 8; // skip the header 
+
+	/* add mandatory parts first */
+
+	bool ok = true ;
+	ok &= getRawUInt32(data, pktsize, &offset, &tunnel_id);
 
 #ifdef WINDOWS_SYS // No Exceptions in Windows compile. (drbobs).
 #else
@@ -925,3 +1085,28 @@ std::ostream& RsTurtleFileMapRequestItem::print(std::ostream& o, uint16_t)
 	return o ;
 }
 
+std::ostream& RsTurtleFileCrcItem::print(std::ostream& o, uint16_t)
+{
+	o << "File CRC item:" << std::endl ;
+
+	o << "  tunnel id : " << (void*)tunnel_id << std::endl ;
+	o << "  map      : " ;
+
+	for(uint32_t i=0;i<crc_map._map._map.size();++i)
+		o << (void*)crc_map._map._map[i] << std::endl ;
+
+	o << "  CRC      : " ;
+
+	for(uint32_t i=0;i<crc_map._crcs.size();++i)
+		o << (void*)crc_map._crcs[i] << std::endl ;
+
+	return o ;
+}
+std::ostream& RsTurtleFileCrcRequestItem::print(std::ostream& o, uint16_t)
+{
+	o << "File CRC request item:" << std::endl ;
+
+	o << "  tunnel id : " << (void*)tunnel_id << std::endl ;
+
+	return o ;
+}

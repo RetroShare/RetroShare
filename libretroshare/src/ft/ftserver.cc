@@ -281,7 +281,7 @@ bool ftServer::checkHash(const std::string& hash,std::string& error_string)
 	return true ;
 }
 
-bool ftServer::FileRequest(std::string fname, std::string hash, uint64_t size, std::string dest, uint32_t flags, std::list<std::string> srcIds)
+bool ftServer::FileRequest(const std::string& fname, const std::string& hash, uint64_t size, const std::string& dest, uint32_t flags, const std::list<std::string>& srcIds)
 {
 	std::string error_string ;
 
@@ -319,8 +319,7 @@ FileChunksInfo::ChunkStrategy ftServer::defaultChunkStrategy()
 {
 	return mFtController->defaultChunkStrategy() ;
 }
-
-bool ftServer::FileCancel(std::string hash)
+bool ftServer::FileCancel(const std::string& hash)
 {
 	// Remove from both queue and ftController, by default.
 	//
@@ -329,7 +328,7 @@ bool ftServer::FileCancel(std::string hash)
 	return true ;
 }
 
-bool ftServer::FileControl(std::string hash, uint32_t flags)
+bool ftServer::FileControl(const std::string& hash, uint32_t flags)
 {
 	return mFtController->FileControl(hash, flags);
 }
@@ -743,6 +742,8 @@ bool ftServer::sendChunkMapRequest(const std::string& peerId,const std::string& 
 {
 	if(mTurtleRouter->isTurtlePeer(peerId))
 		mTurtleRouter->sendChunkMapRequest(peerId,hash) ;
+	else
+		std::cerr << "ftServer: Warning: not sending chunk map request to peer " << peerId << ", because it's not a turtle tunnel." << std::endl ;
 
 	// We only send chunkmap requests to turtle peers. This will be a problem at display time for
 	// direct friends, so I'll see later whether I code it or not.
@@ -753,12 +754,36 @@ bool ftServer::sendChunkMap(const std::string& peerId,const std::string& hash,co
 {
 	if(mTurtleRouter->isTurtlePeer(peerId))
 		mTurtleRouter->sendChunkMap(peerId,hash,map) ;
+	else
+		std::cerr << "ftServer: Warning: not sending chunk map to peer " << peerId << ", because it's not a turtle tunnel." << std::endl ;
+
+	// We only send chunkmap requests to turtle peers. This will be a problem at display time for
+	// direct friends, so I'll see later whether I code it or not.
+	return true ;
+}
+bool ftServer::sendCRC32MapRequest(const std::string& peerId,const std::string& hash)
+{
+	if(mTurtleRouter->isTurtlePeer(peerId))
+		mTurtleRouter->sendCRC32MapRequest(peerId,hash) ;
+	else
+		std::cerr << "ftServer: Warning: not sending CRC map request to peer " << peerId << ", because it's not a turtle tunnel." << std::endl ;
 
 	// We only send chunkmap requests to turtle peers. This will be a problem at display time for
 	// direct friends, so I'll see later whether I code it or not.
 	return true ;
 }
 
+bool ftServer::sendCRC32Map(const std::string& peerId,const std::string& hash,const CRC32Map& map)
+{
+	if(mTurtleRouter->isTurtlePeer(peerId))
+		mTurtleRouter->sendCRC32Map(peerId,hash,map) ;
+	else
+		std::cerr << "ftServer: Warning: not sending CRC map to peer " << peerId << ", because it's not a turtle tunnel." << std::endl ;
+
+	// We only send chunkmap requests to turtle peers. This will be a problem at display time for
+	// direct friends, so I'll see later whether I code it or not.
+	return true ;
+}
 
 //const uint32_t	MAX_FT_CHUNK  = 32 * 1024; /* 32K */
 //const uint32_t	MAX_FT_CHUNK  = 16 * 1024; /* 16K */

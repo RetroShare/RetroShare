@@ -64,13 +64,11 @@ class ftFileCreator: public ftFileProvider
 
 		bool hashReceivedData(std::string& hash) ;
 
-		// Computes a CRC32 map of all chunks, for comparison with reference, and re-starting invalid chunks.
-		//
-		bool CRC32ReceivedData(CRC32Map& crc_map) ;
-
 		// Checks the CRC32 of all chunks against the given CRC32 map. Re-flag the bad chunks as being void.
+		//        bad_chunks: count of achieved chunks that don't match the CRC
+		// incomplete_chunks: count of any bad or not yet downloaded chunk
 		//
-		bool crossCheckChunkMap(const CRC32Map& crc_map) ;
+		bool crossCheckChunkMap(const CRC32Map& ref,uint32_t& bad_chunks,uint32_t& incomplete_chunks) ;
 		/* 
 		 * creation functions for FileCreator 
 		 */
@@ -106,6 +104,12 @@ class ftFileCreator: public ftFileProvider
 		//
 		virtual void getAvailabilityMap(CompressedChunkMap& cmap) ;
 		void setAvailabilityMap(const CompressedChunkMap& cmap) ;
+
+		// Provides a complete per-chunk CRC32 map to client who want to check their data.
+		// This is overloads ftFileProvider, but returns false, because we can't ensure that unchecked chunks
+		// will provide a CRC32 that is faithful to the original hash.
+		//
+		virtual bool getCRC32Map(CRC32Map& crc_map) { return false ; }
 
 		// This is called when receiving the availability map from a source peer, for the file being handled.
 		//

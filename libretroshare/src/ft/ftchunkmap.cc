@@ -419,17 +419,28 @@ void ChunkMap::getAvailabilityMap(CompressedChunkMap& compressed_map) const
 #endif
 }
 
+uint32_t ChunkMap::getNumberOfChunks(uint64_t size)
+{
+	uint64_t n = size/(uint64_t)CHUNKMAP_FIXED_CHUNK_SIZE ;
+
+	if(size % (uint64_t)CHUNKMAP_FIXED_CHUNK_SIZE != 0)
+		++n ;
+
+	uint32_t value = n & 0xffffffffull ;
+
+	if((uint64_t)value != n)
+	{
+		std::cerr << "ERROR: number of chunks is a totally absurd value. File size is " << size << ", chunks are " << n << "!!" << std::endl ;
+		return 0 ;
+	}
+	return value ;
+}
+
 void ChunkMap::buildPlainMap(uint64_t size, CompressedChunkMap& map)
 {
-	uint32_t chunk_size(CHUNKMAP_FIXED_CHUNK_SIZE) ;	// 1MB chunks
-	uint64_t n = size/(uint64_t)chunk_size ;
-
-	if(size % (uint64_t)chunk_size != 0)
-		++n ;
+	uint32_t n = getNumberOfChunks(size) ;
 
 	map = CompressedChunkMap(n,~uint32_t(0)) ;
 }
-
-
 
 

@@ -144,6 +144,9 @@ class ChunkMap
 		//
 		static void buildPlainMap(uint64_t size,CompressedChunkMap& map) ;
 
+		/// Computes the number of chunks for the given file size.
+		static uint32_t getNumberOfChunks(uint64_t size) ;
+		
 		/// This function is used by the parent ftFileProvider to know whether the chunk can be sent or not.
 		bool isChunkAvailable(uint64_t offset, uint32_t chunk_size) const ;
 
@@ -162,6 +165,7 @@ class ChunkMap
 		bool isComplete() const { return _file_is_complete ; }
 
 		void getChunksInfo(FileChunksInfo& info) const ;
+
 	protected:
 		/// handles what size the last chunk has.
 		uint32_t sizeOfChunk(uint32_t chunk_number) const ;

@@ -31,6 +31,7 @@
 
 #include "util/rsdir.h"
 #include "pqi/pqinotify.h"
+#include <rsiface/rstypes.h>
 #include <string>
 #include <iostream>
 #include <algorithm>
@@ -113,15 +114,47 @@ class CRC32Table
 		uint32_t *_data ;
 };
 
-uint32_t rs_CRC32(const unsigned char *data,uint32_t len) 
+static const CRC32Table crc32_table ;
+
+uint32_t RsDirUtil::rs_CRC32(const unsigned char *data,uint32_t _len) 
 {
-	static const CRC32Table crc32_table ;
 	uint32_t a = 0xffffffff ;
+	int64_t len = _len ;
 
 	for(const unsigned char *buf=data;len>=0;len--)
 		a = (a >> 8) ^ crc32_table[ (a & 0xff) ^ *buf++] ;
 
 	return a ^ 0xffffffff ;
+}
+
+bool RsDirUtil::crc32File(FILE *fd, uint64_t file_size,uint32_t chunk_size, CRC32Map& crc_map) 
+{
+	if(fseek(fd,0,SEEK_SET) != 0)
+	{
+		std::cerr << "crc32File(): cannot fseek to beginnign of the file !!" << std::endl ;
+		return false ;
+	}
+
+	crc_map = CRC32Map(file_size,chunk_size) ;
+
+	unsigned char *buff = new unsigned char[chunk_size] ;
+	int len ;
+	uint64_t total_size = 0 ;
+	uint32_t nb_chunk = 0;
+
+	while((len = fread(buff,(size_t)1, (size_t)chunk_size, fd)) > 0)
+	{
+		crc_map.set(nb_chunk++,rs_CRC32(buff,len)) ;
+		total_size += len ;
+	}
+	delete[] buff ;
+
+	if(file_size != total_size)
+	{
+		std::cerr << "RsDirUtil::crc32File(): ERROR. The file size does not match the announced size." << std::endl ;
+		return false ;
+	}
+	return true ;
 }
 
 bool RsDirUtil::hashFile(const std::string& f_hash, std::string& hash)

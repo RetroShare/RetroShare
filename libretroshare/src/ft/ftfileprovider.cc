@@ -292,3 +292,16 @@ int ftFileProvider::initializeFileAttrs()
 
 	return 1;
 }
+
+bool ftFileProvider::getCRC32Map(CRC32Map& crc_map)
+{
+	if(!initializeFileAttrs())
+	{
+		std::cerr << "ftFileProvider::getCRC32Map(...): ERROR: can't initialize file !" << std::endl ;
+		return false ;
+	}
+
+	std::cerr << "ftFileProvider::getClientMap(): computing CRC32 map for file " << file_name << " (" << hash << ")" << std::endl ;
+	return RsDirUtil::crc32File(fd,mSize,ChunkMap::CHUNKMAP_FIXED_CHUNK_SIZE,crc_map) ;
+}
+
