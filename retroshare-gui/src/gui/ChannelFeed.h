@@ -23,6 +23,8 @@
 #define _CHANNEL_FEED_DIALOG_H
 
 #include "mainpage.h"
+#include "RsAutoUpdatePage.h"
+
 #include "ui_ChannelFeed.h"
 
 #include <QStandardItemModel>
@@ -36,7 +38,7 @@
 
 class ChanMsgItem;
 
-class ChannelFeed : public MainPage, public FeedHolder, private Ui::ChannelFeed
+class ChannelFeed : public RsAutoUpdatePage, public FeedHolder, private Ui::ChannelFeed
 {
   Q_OBJECT
 
@@ -46,8 +48,11 @@ public:
   /** Default Destructor */
 
 
-virtual void deleteFeedItem(QWidget *item, uint32_t type);
-virtual void openChat(std::string peerId);
+    virtual void deleteFeedItem(QWidget *item, uint32_t type);
+    virtual void openChat(std::string peerId);
+
+    /* overloaded from RsAuthUpdatePage */ 
+    virtual void updateDisplay();
 
 public slots:
 
@@ -57,9 +62,7 @@ public slots:
 
 private slots:
 
-  void channelListCustomPopupMenu( QPoint point );
-
-	void checkUpdate();
+    void channelListCustomPopupMenu( QPoint point );
 
 	void createChannel();
 
@@ -70,10 +73,10 @@ private slots:
 	
 	void createMsg();
 
-  void showChannelDetails();
-  void restoreChannelKeys();
-  void editChannelDetail();
-  void shareKey();
+    void showChannelDetails();
+    void restoreChannelKeys();
+    void editChannelDetail();
+    void shareKey();
 
 private:
 
@@ -102,8 +105,8 @@ private:
 	QAction* unsubscribechannelAct;
 	QAction* channeldetailsAct;
 	QAction* restoreKeysAct;
-        QAction* editChannelDetailAct;
-        QAction* shareKeyAct;
+    QAction* editChannelDetailAct;
+    QAction* shareKeyAct;
 
 };
 

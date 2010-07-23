@@ -45,7 +45,7 @@
 
 /** Constructor */
 ChannelFeed::ChannelFeed(QWidget *parent)
-: MainPage (parent)
+: RsAutoUpdatePage(1000,parent)
 {
   	/* Invoke the Qt Designer generated object setup routine */
   	setupUi(this);
@@ -123,9 +123,7 @@ ChannelFeed::ChannelFeed(QWidget *parent)
     channelpushButton->setMenu(channelmenu);
 
 	
-	QTimer *timer = new QTimer(this);
-	timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
-	timer->start(1000);
+
 }
 
 void ChannelFeed::channelListCustomPopupMenu( QPoint point )
@@ -285,7 +283,7 @@ void ChannelFeed::selectChannel(const QModelIndex &index)
 	updateChannelMsgs();
 }
 
-void ChannelFeed::checkUpdate()
+void ChannelFeed::updateDisplay()
 {
 	std::list<std::string> chanIds;
 	std::list<std::string>::iterator it;
