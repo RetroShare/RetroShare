@@ -23,19 +23,16 @@
 #define _MESSAGECOMPOSER_H
 
 #include <QMainWindow>
-#include <QMap>
-#include <QPointer>
-#include <gui/settings/rsharesettings.h>
-#include "gui/feeds/AttachFileItem.h"
-
+#include <QSettings>
+#include "rsiface/rstypes.h"
 #include "ui_MessageComposer.h"
-#include "rsiface/rsfiles.h"
 
 class QAction;
 class QComboBox;
 class QFontComboBox;
 class QTextEdit;
 class QTextCharFormat;
+class AttachFileItem;
 
 class MessageComposer : public QMainWindow 
 {

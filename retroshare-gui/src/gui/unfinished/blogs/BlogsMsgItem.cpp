@@ -18,18 +18,13 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
-#include <QtGui>
+
 #include <QDateTime>
 
 #include "BlogsMsgItem.h"
-
 #include "gui/feeds/FeedHolder.h"
-#include "gui/feeds/SubFileItem.h"
 
 #include "rsiface/rsblogs.h"
-
-#include <iostream>
-#include <sstream>
 
 
 /****

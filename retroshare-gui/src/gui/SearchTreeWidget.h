@@ -22,7 +22,7 @@
 #ifndef _SEARCH_TREE_WIDGET_H
 #define _SEARCH_TREE_WIDGET_H
 
-#include <QtGui>
+#include <QTreeWidget>
 
 class SearchTreeWidget : public QTreeWidget
 {

@@ -18,7 +18,6 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
-#include <QtGui>
 
 #include "ChanNewItem.h"
 #include "FeedHolder.h"
@@ -26,8 +25,6 @@
 #include "rsiface/rschannels.h"
 
 #define CHAN_DEFAULT_IMAGE ":/images/channels.png"
-
-#include <iostream>
 
 /****
  * #define DEBUG_ITEM 1

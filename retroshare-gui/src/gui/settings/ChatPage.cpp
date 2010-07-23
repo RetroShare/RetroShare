@@ -19,15 +19,11 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include "rsiface/rspeers.h" //for rsPeers variable
-#include "rsiface/rsiface.h"
+#include <QFontDialog>
+
+#include "ChatPage.h"
 
 #include "rsharesettings.h"
-
-#include <QtGui>
-
-#include <rshare.h>
-#include "ChatPage.h"
 
 /** Constructor */
 ChatPage::ChatPage(QWidget * parent, Qt::WFlags flags)

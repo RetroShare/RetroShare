@@ -22,11 +22,7 @@
 #ifndef _CREATEBLOGMSG_H
 #define _CREATEBLOGMSG_H
 
-#include <QMainWindow>
-#include <QMap>
-#include <QPointer>
-#include <QObject>
-#include <qsettings.h>
+#include <QSettings>
 
 #include "ui_CreateBlogMsg.h"
 #include <stdint.h>

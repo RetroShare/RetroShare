@@ -19,31 +19,17 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include <set>
+#include <QMessageBox>
 
-#include "rshare.h"
 #include "SearchDialog.h"
 #include "RetroShareLink.h"
 #include "msgs/MessageComposer.h"
-#include <gui/RSHumanReadableDelegate.h>
-
-#include "rsiface/rsiface.h"
-#include "rsiface/rsexpr.h"
-#include "rsiface/rsfiles.h"
-#include "rsiface/rspeers.h"
-#include "rsiface/rsturtle.h"
-#include "util/misc.h"
+#include "gui/RSHumanReadableDelegate.h"
 #include "settings/rsharesettings.h"
+#include "advsearch/advancedsearchdialog.h"
 
-#include <iostream>
-#include <sstream>
-
-#include <QContextMenuEvent>
-#include <QMenu>
-#include <QCursor>
-#include <QPoint>
-#include <QPixmap>
-#include <QHeaderView>
+#include "rsiface/rsfiles.h"
+#include "rsiface/rsturtle.h"
 
 /* Images for context menu icons */
 #define IMAGE_START  		    ":/images/download.png"

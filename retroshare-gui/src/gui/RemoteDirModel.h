@@ -23,12 +23,11 @@
 #define REMOTE_DIR_MODEL
 
 #include <QAbstractItemModel>
+#include <QIcon>
 #include <vector>
-#include <list>
-#include <string>
-#include "rsiface/rsfiles.h"
-#include "util/misc.h"
-#include "rsiface/rstypes.h"
+#include <stdint.h>
+
+class DirDetails;
 
 static const uint32_t IND_LAST_DAY    = 3600*24 ;
 static const uint32_t IND_LAST_WEEK   = 3600*24*7 ;

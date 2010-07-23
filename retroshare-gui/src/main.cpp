@@ -20,6 +20,7 @@
  ****************************************************************/
 
 #include <QObject>
+#include <QMessageBox>
 #include <rshare.h>
 #include "gui/MainWindow.h"
 #include "gui/PeersDialog.h"

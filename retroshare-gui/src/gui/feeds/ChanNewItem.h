@@ -23,8 +23,6 @@
 #define _CHANNEL_NEW_ITEM_DIALOG_H
 
 #include "ui_ChanNewItem.h"
-
-#include <string>
 #include <stdint.h>
 
 class FeedHolder;

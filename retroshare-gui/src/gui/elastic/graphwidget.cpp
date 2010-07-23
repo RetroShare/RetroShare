@@ -80,7 +80,6 @@ GraphWidget::GraphWidget(QWidget *parent)
 bool GraphWidget::clearGraph()
 {
     QGraphicsScene *oldscene = scene();
-    Node *oldcenterNode = centerNode;
 
     QGraphicsScene *scene = new QGraphicsScene(this);
     scene->setItemIndexMethod(QGraphicsScene::NoIndex);

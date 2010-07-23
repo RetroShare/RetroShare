@@ -19,7 +19,18 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include <QtGui>
+#include <QMessageBox>
+#include <QTimer>
+#include <QScrollBar>
+#include <QCloseEvent>
+#include <QColorDialog>
+#include <QDateTime>
+#include <QFontDialog>
+#include <QDir>
+#include <QDesktopWidget>
+#include <QFileDialog>
+#include <QBuffer>
+#include <QTextCodec>
 #include <sys/stat.h>
 
 #include "PopupChatDialog.h"
@@ -30,6 +41,7 @@
 #include "rsiface/rsmsgs.h"
 #include "rsiface/rsfiles.h"
 #include "rsiface/rsnotify.h"
+#include "rsiface/rsiface.h"
 #include "gui/settings/rsharesettings.h"
 
 

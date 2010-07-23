@@ -22,14 +22,10 @@
 #ifndef _SHAREDFILESDIALOG_H
 #define _SHAREDFILESDIALOG_H
 
-#include <QFileDialog>
-#include <QMovie>
-
 #include "RsAutoUpdatePage.h"
 #include "ui_SharedFilesDialog.h"
 
-#include "rsiface/rstypes.h"
-#include "gui/RemoteDirModel.h"
+class RemoteDirModel;
 
 class SharedFilesDialog : public RsAutoUpdatePage
 {

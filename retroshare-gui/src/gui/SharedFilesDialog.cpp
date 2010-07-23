@@ -19,40 +19,25 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include "rshare.h"
+#include <QString>
+#include <QTreeView>
+#include <QClipboard>
+#include <QMenu>
+#include <QMovie>
+#include <QProcess>
+
 #include "SharedFilesDialog.h"
 #include "settings/AddFileAssociationDialog.h"
-
-#include "rsiface/rsiface.h"
-#include "rsiface/rsmsgs.h"
-#include "rsiface/rspeers.h"
-#include "rsiface/rsfiles.h"
-
 #include "util/RsAction.h"
 #include "msgs/MessageComposer.h"
 #include "settings/rsharesettings.h"
 #include "AddLinksDialog.h"
-#include "SendLinkDialog.h"
-
 #include "RetroShareLink.h"
+#include "gui/RemoteDirModel.h"
 
-#include <iostream>
-#include <sstream>
+#include "rsiface/rspeers.h"
+#include "rsiface/rsfiles.h"
 
-#include <QClipboard>
-#include <QDesktopServices>
-#include <QContextMenuEvent>
-#include <QMenu>
-#include <QCursor>
-#include <QPoint>
-#include <QPixmap>
-#include <QHeaderView>
-#include <QTimer>
-#include <QMovie>
-#include <QLabel>
-
-#include <QMessageBox>
-#include <QProcess>
 
 /* Images for context menu icons */
 #define IMAGE_DOWNLOAD       ":/images/download16.png"

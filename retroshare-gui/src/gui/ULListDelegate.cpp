@@ -19,15 +19,10 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include <rsiface/rstypes.h>
-#include <QModelIndex>
-#include <QPainter>
-#include <QStyleOptionProgressBarV2>
-#include <QProgressBar>
-#include <QApplication>
-#include <QtGui>
+#include <QFileDialog>
 
 #include "ULListDelegate.h"
+#include "xprogressbar.h"
 
 Q_DECLARE_METATYPE(FileProgressInfo)
 

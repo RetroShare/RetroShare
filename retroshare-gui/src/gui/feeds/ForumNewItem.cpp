@@ -18,15 +18,12 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
-#include <QtGui>
 
 #include "ForumNewItem.h"
 #include "FeedHolder.h"
 
 #include "rsiface/rsforums.h"
 #include "gui/forums/CreateForumMsg.h"
-
-#include <iostream>
 
 /****
  * #define DEBUG_ITEM 1

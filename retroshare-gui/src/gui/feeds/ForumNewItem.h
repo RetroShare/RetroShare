@@ -23,8 +23,6 @@
 #define _FORUM_NEW_ITEM_DIALOG_H
 
 #include "ui_ForumNewItem.h"
-
-#include <string>
 #include <stdint.h>
 
 class FeedHolder;

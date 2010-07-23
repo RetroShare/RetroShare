@@ -18,13 +18,12 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
-#include <QtGui>
+
+#include <QTimer>
 
 #include "AttachFileItem.h"
 
 #include "rsiface/rsfiles.h"
-
-#include <iostream>
 
 /****
  * #define DEBUG_ITEM 1

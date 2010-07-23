@@ -23,8 +23,6 @@
 #define _BLOG_NEW_ITEM_DIALOG_H
 
 #include "ui_BlogNewItem.h"
-
-#include <string>
 #include <stdint.h>
 
 class FeedHolder;

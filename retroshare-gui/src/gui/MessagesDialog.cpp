@@ -19,19 +19,29 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <QItemDelegate>
+#include <QPainter>
+#include <QPaintEvent>
+#include <QStandardItemModel>
+#include <QShortcut>
+#include <QTimer>
+#include <QDateTime>
+#include <QPrinter>
+#include <QPrintDialog>
+#include <QTextStream>
+#include <QTextCodec>
 
 #include "MessagesDialog.h"
 #include "msgs/MessageComposer.h"
 #include "gui/RetroShareLink.h"
 #include "util/printpreview.h"
+#include "settings/rsharesettings.h"
 #include "util/misc.h"
 
 #include "rsiface/rsinit.h"
-#include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
 #include "rsiface/rsfiles.h"
 
-#include <QtGui>
 
 /* Images for context menu icons */
 #define IMAGE_MESSAGE		   ":/images/folder-draft.png"

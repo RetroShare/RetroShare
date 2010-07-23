@@ -26,9 +26,7 @@
 
 class FeedHolder;
 
-#include <string>
 #include <stdint.h>
-
 class ForumMsgItem : public QWidget, private Ui::ForumMsgItem
 {
   Q_OBJECT

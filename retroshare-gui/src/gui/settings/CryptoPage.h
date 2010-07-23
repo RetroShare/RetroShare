@@ -22,11 +22,6 @@
 #ifndef _CRYPTOPAGE_H
 #define _CRYPTOPAGE_H
 
-#include <QFileDialog>
-#include <QtGui/QWidget>
-
-#include "gui/connect/ConnectFriendWizard.h"
-
 #include "configpage.h"
 #include "ui_CryptoPage.h"
 

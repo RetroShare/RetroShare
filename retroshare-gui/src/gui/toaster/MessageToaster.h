@@ -26,8 +26,6 @@
 #ifndef MESSAGETOASTER_H
 #define MESSAGETOASTER_H
 
-#include <QtGui>
-
 #include "ui_MessageToaster.h"
 
 enum DisplayState {dsInactive, dsShowing, dsWaiting, dsHiding};

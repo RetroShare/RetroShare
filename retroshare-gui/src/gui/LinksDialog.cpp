@@ -19,27 +19,20 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include <QFile>
-#include <QFileInfo>
+#include <QMenu>
+#include <QTimer>
+#include <QMessageBox>
 #include <QDateTime>
-
 #include <QDesktopServices>
-#include <QUrl>
 
-#include "common/vmessagebox.h"
-
-//#include "rshare.h"
 #include "LinksDialog.h"
 #include "RetroShareLink.h"
 #include "rsiface/rspeers.h"
 #include "rsiface/rsrank.h"
 #include "rsiface/rsfiles.h"
 
-#include <iostream>
 #include <sstream>
 
-#include <QMenu>
-#include <QTimer>
 
 /* Images for context menu icons */
 #define IMAGE_EXPORTFRIEND      ":/images/exportpeers_16x16.png"

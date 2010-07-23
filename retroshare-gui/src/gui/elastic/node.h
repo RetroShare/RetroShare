@@ -38,10 +38,7 @@
 #define NODE_H
 
 #include <QGraphicsItem>
-#include <QList>
 #include <stdint.h>
-
-#include <string>
 
 #define ELASTIC_NODE_TYPE_OWN		1
 #define ELASTIC_NODE_TYPE_FRIEND	2

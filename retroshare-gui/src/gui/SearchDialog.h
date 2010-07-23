@@ -22,15 +22,12 @@
 #ifndef _SEARCHDIALOG_H
 #define _SEARCHDIALOG_H
 
-#include <QFileDialog>
-
-#include <QMessageBox>
-#include <QModelIndex>
-
-#include <rsiface/rsfiles.h>
-#include "mainpage.h"
+#include "rsiface/rstypes.h"
 #include "ui_SearchDialog.h"
-#include "advsearch/advancedsearchdialog.h"
+#include "mainpage.h"
+
+class AdvancedSearchDialog;
+class Expression;
 
 #define FRIEND_SEARCH 1
 #define ANONYMOUS_SEARCH 2

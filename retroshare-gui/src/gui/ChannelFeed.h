@@ -27,8 +27,6 @@
 
 #include "ui_ChannelFeed.h"
 
-#include <QStandardItemModel>
-
 #include "gui/feeds/FeedHolder.h"
 
 #define OWN	0
@@ -37,6 +35,7 @@
 #define OTHER	3
 
 class ChanMsgItem;
+class QStandardItemModel;
 
 class ChannelFeed : public RsAutoUpdatePage, public FeedHolder, private Ui::ChannelFeed
 {

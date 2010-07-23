@@ -20,12 +20,17 @@
  ****************************************************************/
 
 #ifdef WIN32
-	#include <windows.h>
+        #include <windows.h>
 #endif
 
-#include <set>
+#include <QMenu>
+#include <QStandardItemModel>
+#include <QTreeView>
+#include <QShortcut>
+#include <QFileInfo>
+#include <QMessageBox>
+#include <QDesktopServices>
 
-#include "rshare.h"
 #include "TransfersDialog.h"
 #include "RetroShareLink.h"
 #include "DetailsDialog.h"
@@ -35,21 +40,9 @@
 #include "TurtleRouterDialog.h"
 #include "xprogressbar.h"
 
-#include <QContextMenuEvent>
-#include <QMenu>
-#include <QCursor>
-#include <QPoint>
-#include <QPixmap>
-#include <QHeaderView>
-#include <QStandardItemModel>
-#include <QUrl>
-
-#include <sstream>
 #include "rsiface/rsfiles.h"
 #include "rsiface/rspeers.h"
 #include "rsiface/rsdisc.h"
-#include "rsiface/rstypes.h"
-#include <algorithm>
 #include "util/misc.h"
 
 /* Images for context menu icons */

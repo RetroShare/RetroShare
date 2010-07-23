@@ -18,22 +18,12 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
+
+#include <QLabel>
+
 #include "natstatus.h"
 
-#include <QtGui>
-#include <QString>
-
-#include <QLayout>
-#include <QLabel>
-#include <QIcon>
-#include <QPainter>
-#include <QPixmap>
-
 #include "rsiface/rsiface.h"
-#include "rsiface/rspeers.h"
-
-#include <sstream>
-#include <iomanip>
 
 NATStatus::NATStatus(QWidget *parent)
  : QWidget(parent)

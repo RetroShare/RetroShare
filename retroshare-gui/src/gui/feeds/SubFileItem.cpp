@@ -18,16 +18,17 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
-#include <QtGui>
+
+#include <QTimer>
+#include <QMessageBox>
+#include <QFileDialog>
+#include <QDesktopServices>
+#include <QUrl>
 
 #include "SubFileItem.h"
 
 #include "rsiface/rsfiles.h"
 
-/* hack for openFile() */
-#include "gui/MainWindow.h"
-
-#include <iostream>
 
 /****
  * #define DEBUG_ITEM 1

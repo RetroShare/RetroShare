@@ -25,9 +25,9 @@
 #include "gui/mainpage.h"
 #include "ui_BlogsDialog.h"
 
-#include <QStandardItemModel>
-
 #include "gui/feeds/FeedHolder.h"
+
+class QStandardItemModel;
 
 #define OWN	0
 #define SUBSCRIBED	1

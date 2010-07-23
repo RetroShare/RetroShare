@@ -24,6 +24,7 @@
 #include <QtDebug>
 #include <QIcon>
 #include <QPixmap>
+#include <QColorDialog>
 
 #ifdef BLOGS
 #include "gui/unfinished/blogs/BlogsDialog.h"
@@ -47,6 +48,13 @@
 #include "HelpDialog.h"
 #include "AboutDialog.h"
 #include "QuickStartWizard.h"
+#include "ChannelFeed.h"
+#include "bwgraph/bwgraph.h"
+#include "help/browser/helpbrowser.h"
+
+#ifdef UNFINISHED
+#include "unfinished/ApplicationWindow.h"
+#endif
 
 #include "gui/TurtleRouterDialog.h"
 #include "idle/idle.h"

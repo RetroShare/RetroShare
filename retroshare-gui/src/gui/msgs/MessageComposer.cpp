@@ -19,6 +19,18 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <QMessageBox>
+#include <QCloseEvent>
+#include <QClipboard>
+#include <QTextCodec>
+#include <QPrintDialog>
+#include <QPrinter>
+#include <QFileDialog>
+#include <QTextList>
+#include <QColorDialog>
+#include <QTextDocumentFragment>
+#include <QTimer>
+
 #include "rshare.h"
 #include "MessageComposer.h"
 
@@ -31,10 +43,6 @@
 #include "gui/feeds/AttachFileItem.h"
 #include "textformat.h"
 #include "util/misc.h"
-
-#include <sstream>
-#include <QtGui>
-
 
 
 /** Constructor */

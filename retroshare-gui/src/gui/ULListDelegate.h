@@ -23,7 +23,6 @@
 #define ULLISTDELEGATE_H
 
 #include <QAbstractItemDelegate>
-#include "xprogressbar.h"
 
 // Defines for upload list list columns
 #define UNAME 0

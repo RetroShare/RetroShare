@@ -22,8 +22,6 @@
 #ifndef _CREATE_BLOG_DIALOG_H
 #define _CREATE_BLOG_DIALOG_H
 
-#include <QMainWindow>
-
 #include "ui_CreateBlog.h"
 
 class CreateBlog : public QDialog

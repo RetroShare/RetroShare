@@ -18,7 +18,6 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
-#include <QtGui>
 
 #include "BlogNewItem.h"
 #include "FeedHolder.h"
@@ -27,7 +26,6 @@
 
 #define BLOG_DEFAULT_IMAGE ":/images/hi64-app-kblogger.png"
 
-#include <iostream>
 
 /****
  * #define DEBUG_ITEM 1

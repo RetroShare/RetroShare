@@ -23,8 +23,6 @@
 #define _ATTACH_FILE_ITEM_DIALOG_H
 
 #include "ui_AttachFileItem.h"
-
-#include <string>
 #include <stdint.h>
 
 const uint32_t AFI_MASK_STATE  		= 0x000f;

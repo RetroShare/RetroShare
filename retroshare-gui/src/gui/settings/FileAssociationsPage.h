@@ -24,14 +24,6 @@
 
 #include "configpage.h"
 
-#include <QString>
-#include <QWidget>
-#include <QtGui>
-//#include <QMap>
-
-//#include <QFrame>
-//#include <QDialog>
-
 class QToolBar;
 class QAction;
 class QTableWidget;

@@ -19,7 +19,11 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <QStyleFactory>
+#include <QFileInfo>
+#include <QDir>
 
+#include "lang/languagesupport.h"
 #include <rshare.h>
 #include "AppearancePage.h"
 #include "rsharesettings.h"

@@ -18,22 +18,13 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
+
+#include <QHBoxLayout>
+#include <QLabel>
+
 #include "peerstatus.h"
 
-#include <QtGui>
-#include <QString>
-
-#include <QLayout>
-#include <QLabel>
-#include <QIcon>
-#include <QPainter>
-#include <QPixmap>
-
-#include "rsiface/rsiface.h"
-#include "rsiface/rspeers.h"
-
 #include <sstream>
-#include <iomanip>
 
 PeerStatus::PeerStatus(QWidget *parent)
  : QWidget(parent)

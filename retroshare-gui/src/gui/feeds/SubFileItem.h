@@ -23,10 +23,7 @@
 #define _SUB_FILE_ITEM_DIALOG_H
 
 #include "ui_SubFileItem.h"
-
-#include <string>
 #include <stdint.h>
-
 const uint32_t SFI_MASK_STATE  		= 0x000f;
 const uint32_t SFI_MASK_TYPE   		= 0x00f0;
 const uint32_t SFI_MASK_FT     		= 0x0f00;

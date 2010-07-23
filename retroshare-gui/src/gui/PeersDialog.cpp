@@ -21,6 +21,13 @@
 
 #include <QFile>
 #include <QFileInfo>
+#include <QShortcut>
+#include <QWidgetAction>
+#include <QScrollBar>
+#include <QDesktopWidget>
+#include <QColorDialog>
+#include <QFontDialog>
+#include <QDropEvent>
 #include "common/vmessagebox.h"
 #include <gui/mainpagestack.h>
 
@@ -43,6 +50,7 @@
 #include "gui/connect/ConnectFriendWizard.h"
 #include "gui/forums/CreateForum.h"
 #include "gui/channels/CreateChannel.h"
+#include "gui/feeds/AttachFileItem.h"
 #include "RetroShareLink.h"
 
 #include "MainWindow.h"

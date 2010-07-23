@@ -23,8 +23,6 @@
 #define _PEER_ITEM_DIALOG_H
 
 #include "ui_PeerItem.h"
-
-#include <string>
 #include <stdint.h>
 
 const uint32_t PEER_TYPE_STD	 = 0x0001;

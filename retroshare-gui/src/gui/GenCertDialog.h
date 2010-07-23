@@ -23,7 +23,7 @@
 #ifndef _GENCERTDIALOG_H
 #define _GENCERTDIALOG_H
 
-#include "rsiface/rsiface.h"
+//#include "rsiface/rsiface.h"
 
 #include "ui_GenCertDialog.h"
 

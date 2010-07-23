@@ -22,12 +22,6 @@
 #ifndef _APPERARANCEPAGE_H
 #define _APPERARANCEPAGE_H
 
-#include <QFileDialog>
-#include <QStyleFactory>
-#include <QtGui>
-
-#include <lang/languagesupport.h>
-
 #include "configpage.h"
 #include "ui_AppearancePage.h"
 

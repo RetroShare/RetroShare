@@ -25,18 +25,11 @@
 #include <QSystemTrayIcon>
 #include <set>
 
-#ifdef UNFINISHED
-#include "unfinished/ApplicationWindow.h"
-#endif
-
-#include "ChannelFeed.h"
-
-#include "bwgraph/bwgraph.h"
-#include "help/browser/helpbrowser.h"
-
 #include "ui_MainWindow.h"
 #include "gui/common/rwindow.h"
 
+class QComboBox;
+class QLabel;
 class Idle;
 class PeerStatus;
 class NATStatus;
@@ -51,6 +44,8 @@ class MessagesDialog;
 class SharedFilesDialog;
 class MessengerWindow;
 class PluginsPage;
+class ChannelFeed;
+class BandwidthGraph;
 
 #ifndef RS_RELEASE_VERSION
 class LinksDialog;
@@ -59,6 +54,10 @@ class NewsFeed;
 
 #ifdef BLOGS
 class BlogsDialog;
+#endif
+
+#ifdef UNFINISHED
+class ApplicationWindow;
 #endif
 
 class MainWindow : public RWindow

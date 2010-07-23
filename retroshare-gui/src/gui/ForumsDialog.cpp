@@ -19,22 +19,25 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <QMenu>
+#include <QFile>
+#include <QDateTime>
+#include <QMessageBox>
+
 #include "ForumsDialog.h"
 #include "gui/RetroShareLink.h"
 #include "gui/forums/CreateForum.h"
 #include "gui/forums/CreateForumMsg.h"
 #include "gui/forums/ForumDetails.h"
 #include "msgs/MessageComposer.h"
+#include "gui/settings/rsharesettings.h"
 
-#include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
-#include "rsiface/rsmsgs.h"
 #include "rsiface/rsforums.h"
 
 #include <sstream>
 #include <algorithm>
 
-#include <QtGui>
 
 /* Images for context menu icons */
 #define IMAGE_MESSAGE        ":/images/folder-draft.png"

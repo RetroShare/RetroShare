@@ -23,12 +23,6 @@
 #ifndef _GENERALPAGE_H
 #define _GENERALPAGE_H
 
-#include <QtGui>
-#include <QFileDialog>
-#include <QLineEdit>
-
-#include "rsiface/rsiface.h"
-
 #include "configpage.h"
 #include "ui_GeneralPage.h"
 

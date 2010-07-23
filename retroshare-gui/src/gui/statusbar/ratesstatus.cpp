@@ -18,19 +18,11 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
-#include "ratesstatus.h"
 
-#include <QtGui>
-#include <QString>
-
-#include <QLayout>
 #include <QLabel>
-#include <QIcon>
-#include <QPainter>
-#include <QPixmap>
 
+#include "ratesstatus.h"
 #include "rsiface/rsiface.h"
-#include "rsiface/rspeers.h"
 
 #include <sstream>
 #include <iomanip>
@@ -98,5 +90,3 @@ void RatesStatus::getRatesStatus()
  		
 
 }
-
-

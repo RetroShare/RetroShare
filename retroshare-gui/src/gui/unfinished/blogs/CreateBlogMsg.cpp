@@ -18,46 +18,25 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
-#include <QtGui>
-//#include <QtWebKit>
-#include <QAction>
-#include <QApplication>
+
 #include <QClipboard>
 #include <QColorDialog>
-#include <QComboBox>
 #include <QFontComboBox>
 #include <QFile>
 #include <QFileDialog>
-#include <QFileInfo>
-#include <QFontDatabase>
-#include <QMenu>
-#include <QMenuBar>
 #include <QPrintDialog>
 #include <QPrinter>
 #include <QTextCodec>
-#include <QTextEdit>
-#include <QToolBar>
-#include <QTextCursor>
 #include <QTextDocumentWriter>
-#include <QTextList>
-#include <QtDebug>
-#include <QCloseEvent>
+#include <QTextDocumentFragment>
 #include <QMessageBox>
 #include <QPrintPreviewDialog>
+#include <QTextBlock>
 
 #include "CreateBlogMsg.h"
-
-#include "gui/feeds/SubFileItem.h"
 #include "gui/msgs/textformat.h"
 
-#include "rsiface/rstypes.h"
-#include "rsiface/rspeers.h"
-#include "rsiface/rsforums.h"
 #include "rsiface/rsblogs.h"
-#include "rsiface/rsmsgs.h"
-#include "rsiface/rsfiles.h"
-
-#include <iostream>
 
 /** Constructor */
 CreateBlogMsg::CreateBlogMsg(std::string cId ,QWidget* parent, Qt::WFlags flags)
@@ -215,7 +194,7 @@ void CreateBlogMsg::sendMessage(std::wstring subject, std::wstring msg)
 
 	if(name.isEmpty())
 	{	/* error message */
-		int ret = QMessageBox::warning(this, tr("RetroShare"),
+		QMessageBox::warning(this, tr("RetroShare"),
                    tr("Please add a Subject"),
                    QMessageBox::Ok, QMessageBox::Ok);
                    

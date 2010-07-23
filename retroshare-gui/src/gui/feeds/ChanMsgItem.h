@@ -23,8 +23,6 @@
 #define _CHAN_MSG_ITEM_DIALOG_H
 
 #include "ui_ChanMsgItem.h"
-
-#include <string>
 #include <stdint.h>
 
 class FeedHolder;

@@ -23,9 +23,8 @@
 #define _BLOGS_MSG_ITEM_DIALOG_H
 
 #include "ui_BlogsMsgItem.h"
-
-#include <string>
 #include <stdint.h>
+
 
 class FeedHolder;
 class SubFileItem;

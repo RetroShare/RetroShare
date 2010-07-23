@@ -20,11 +20,8 @@
  ****************************************************************/
 #ifndef PEERSTATUS_H
 #define PEERSTATUS_H
-#include "gui/MainWindow.h"
-
 
 #include <QWidget>
-
 
 class PeerStatus : public QWidget
 {

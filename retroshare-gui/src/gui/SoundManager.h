@@ -20,10 +20,8 @@
  ****************************************************************/
 #ifndef SOUND_MANAGER_H
 #define SOUND_MANAGER_H
- 
-#include <QSound>
-#include <QSettings>
-#include <QtGui>
+
+#include <QObject>
 
 class SoundManager :public QObject
 {

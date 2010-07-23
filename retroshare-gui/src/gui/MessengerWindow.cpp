@@ -21,6 +21,7 @@
 
 #include <QFile>
 #include <QFileInfo>
+#include <QWidgetAction>
 #include "common/vmessagebox.h"
 
 #include "rsiface/rsiface.h"

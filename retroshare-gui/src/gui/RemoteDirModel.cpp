@@ -19,20 +19,20 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include <set>
+#include <QFileInfo>
+#include <QDir>
+#include <QDesktopServices>
+#include <QUrl>
+#include <QMimeData>
 
 #include "RemoteDirModel.h"
 #include "rsiface/rsfiles.h"
 #include "rsiface/rstypes.h"
-
-#include <QtGui>
-#include <QIcon>
-#include <QPixmap>
-#include <iostream>
-#include <sstream>
-#include <math.h>
-#include <algorithm>
 #include "util/misc.h"
+
+#include <set>
+#include <sstream>
+#include <algorithm>
 
 /*****
  * #define RDM_DEBUG

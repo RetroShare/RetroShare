@@ -19,24 +19,12 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include "DetailsDialog.h"
-
-#include <QAction>
-#include <QTreeView>
-#include <QList>
-#include <QtDebug>
-#include <QContextMenuEvent>
-#include <QMenu>
-#include <QCursor>
-#include <QPoint>
-#include <QPixmap>
-#include <QHeaderView>
-#include <QModelIndex>
 #include <QStandardItemModel>
 
-#include "util/misc.h"
-
+#include "DetailsDialog.h"
 #include "TransfersDialog.h"
+
+#include "util/misc.h"
 
 /** Default constructor */
 DetailsDialog::DetailsDialog(QWidget *parent, Qt::WFlags flags)

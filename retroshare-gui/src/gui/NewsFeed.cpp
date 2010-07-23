@@ -18,11 +18,10 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
-#include <QtGui>
+
+#include <QTimer>
 
 #include "NewsFeed.h"
-
-#include <iostream>
 
 #include "rsiface/rsnotify.h"
 

@@ -23,20 +23,12 @@
 #ifndef _POPUPCHATDIALOG_H
 #define _POPUPCHATDIALOG_H
 
-#include <QtGui>
-#include <QDialog>
-
 #include "ui_PopupChatDialog.h"
-
-#include "rsiface/rsiface.h"
-#include "gui/feeds/AttachFileItem.h"
-
-
 
 class QAction;
 class QTextEdit;
 class QTextCharFormat;
-
+class AttachFileItem;
 class ChatInfo;
 
 class PopupChatDialog : public QMainWindow

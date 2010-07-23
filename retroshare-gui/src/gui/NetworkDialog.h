@@ -23,10 +23,6 @@
 #ifndef _CONNECTIONSDIALOG_H
 #define _CONNECTIONSDIALOG_H
 
-#include <QFileDialog>
-#include <QtGui>
-
-#include "mainpage.h"
 #include "ui_NetworkDialog.h"
 #include "RsAutoUpdatePage.h"
 

@@ -18,7 +18,6 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
-#include <QtGui>
 
 #include "SubDestItem.h"
 #include "FeedHolder.h"
@@ -26,8 +25,6 @@
 #include "rsiface/rspeers.h"
 #include "rsiface/rsforums.h"
 #include "rsiface/rschannels.h"
-
-#include <iostream>
 
 /****
  * #define DEBUG_ITEM 1

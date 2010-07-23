@@ -22,10 +22,6 @@
 #ifndef DIRECTORIESPAGE_H
 # define DIRECTORIESPAGE_H
 
-#include <QFileDialog>
-#include <QWidget>
-#include <QtGui>
-
 #include "configpage.h"
 #include "ui_DirectoriesPage.h"
 

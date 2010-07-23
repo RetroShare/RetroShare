@@ -18,13 +18,11 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
-#include <QtGui>
-#include <QContextMenuEvent>
-#include <QCursor>
-#include <QMenu>
-#include <QPoint>
 
-#include <iostream>
+#include <QMenu>
+#include <QTimer>
+#include <QStandardItemModel>
+
 #include <algorithm>
 
 #include "rsiface/rsblogs.h"

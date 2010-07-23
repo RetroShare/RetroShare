@@ -23,8 +23,6 @@
 #define _SUB_DEST_ITEM_DIALOG_H
 
 #include "ui_SubDestItem.h"
-
-#include <string>
 #include <stdint.h>
 
 class SubDestItem : public QWidget, private Ui::SubDestItem

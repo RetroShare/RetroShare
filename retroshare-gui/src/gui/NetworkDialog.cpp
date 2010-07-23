@@ -19,39 +19,24 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include <QFile>
-#include <QFileInfo>
-#include <QCursor>
+#include <QTreeWidget>
+#include <QFileDialog>
+#include <QDebug>
+#include <QTimer>
+#include <QTime>
+#include <QMenu>
 
-#include "rshare.h"
-#include "common/vmessagebox.h"
-#include "NetworkDialog.h"
-#include "NetworkView.h"
-#include "TrustView.h"
-#include "GenCertDialog.h"
 #include "rsiface/rsiface.h"
 #include "rsiface/rspeers.h"
 #include "rsiface/rsdisc.h"
-#include "settings/rsharesettings.h"
-#include <algorithm>
 
-/* for GPGME */
-#include "rsiface/rsinit.h"
-
-#include <gpgme.h>
-
-#include <sstream>
-
-#include <QTimer>
-#include <QTime>
-#include <QContextMenuEvent>
-#include <QMenu>
-#include <QCursor>
-#include <QPoint>
-#include <QPixmap>
-#include <QHeaderView>
-
+#include "common/vmessagebox.h"
+#include "NetworkDialog.h"
+#include "TrustView.h"
+#include "GenCertDialog.h"
 #include "connect/ConfCertDialog.h"
+#include "settings/rsharesettings.h"
+
 
 /* Images for context menu icons */
 #define IMAGE_LOADCERT       ":/images/loadcert16.png"

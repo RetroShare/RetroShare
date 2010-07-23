@@ -23,8 +23,6 @@
 #ifndef _CREATE_CHANNEL_DIALOG_H
 #define _CREATE_CHANNEL_DIALOG_H
 
-#include <QMainWindow>
-
 #include "ui_CreateChannel.h"
 
 class CreateChannel : public QDialog

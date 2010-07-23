@@ -22,8 +22,6 @@
 #ifndef _LINKS_DIALOG_H
 #define _LINKS_DIALOG_H
 
-#include <QFileDialog>
-
 #include "mainpage.h"
 #include "ui_LinksDialog.h"
 

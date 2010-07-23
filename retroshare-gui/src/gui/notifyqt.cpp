@@ -1,3 +1,5 @@
+#include <QInputDialog>
+#include <QMessageBox>
 
 #include "notifyqt.h"
 #include "rsiface/rsnotify.h"

@@ -20,12 +20,17 @@
  ****************************************************************/
 #include "ConfCertDialog.h"
 
-#include "rsiface/rsiface.h"
+#include <QMessageBox>
+#include <QDateTime>
+#include <QMenu>
+#include <QClipboard>
+
+#include <iostream>
+
 #include "rsiface/rspeers.h"
 #include "rsiface/rsdisc.h"
 
-#include <QTime>
-#include <QtGui>
+#include "gui/help/browser/helpbrowser.h"
 
 ConfCertDialog *ConfCertDialog::instance()
 {

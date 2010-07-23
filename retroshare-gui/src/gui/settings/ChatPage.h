@@ -22,9 +22,6 @@
 #ifndef _CHATPAGE_H
 #define _CHATPAGE_H
 
-#include <QFileDialog>
-#include <QtGui/QWidget>
-
 #include "configpage.h"
 #include "ui_ChatPage.h"
 

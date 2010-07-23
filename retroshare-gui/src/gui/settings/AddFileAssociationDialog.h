@@ -23,7 +23,6 @@
 #define __AddFileAssociationDialog__
 
 
-#include <QString>
 #include <QDialog>
 
 class QPushButton;

@@ -18,17 +18,18 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
-#include <QtGui>
+
+#include <QDragEnterEvent>
+#include <QUrl>
+#include <QFileDialog>
+#include <QTimer>
+#include <QMessageBox>
+#include <QBuffer>
 
 #include "CreateChannelMsg.h"
-
 #include "gui/feeds/SubFileItem.h"
 
-#include "rsiface/rstypes.h"
-#include "rsiface/rspeers.h"
-#include "rsiface/rsforums.h"
 #include "rsiface/rschannels.h"
-#include "rsiface/rsmsgs.h"
 #include "rsiface/rsfiles.h"
 
 #include <iostream>
@@ -446,7 +447,7 @@ void CreateChannelMsg::sendMessage(std::wstring subject, std::wstring msg, std::
 
 	if(name.isEmpty())
 	{	/* error message */
-		int ret = QMessageBox::warning(this, tr("RetroShare"),
+		QMessageBox::warning(this, tr("RetroShare"),
                    tr("Please add a Subject"),
                    QMessageBox::Ok, QMessageBox::Ok);
                    

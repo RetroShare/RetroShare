@@ -19,18 +19,15 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include "rsiface/rspeers.h" //for rsPeers variable
-#include "rsiface/rsiface.h"
-
-#include <QtGui>
+#include <QMessageBox>
 #include <QClipboard>
+#include <QFileDialog>
+#include <QTextStream>
+#include <QTextCodec>
 
-#include <rshare.h>
 #include "CryptoPage.h"
 
-#include <sstream>
-#include <iostream>
-#include <set>
+#include "rsiface/rspeers.h" //for rsPeers variable
 
 /** Constructor */
 CryptoPage::CryptoPage(QWidget * parent, Qt::WFlags flags)

@@ -21,13 +21,8 @@
 
 #include "NetworkView.h"
 #include "rsiface/rspeers.h"
-#include "rsiface/rsdisc.h"
-
-#include "rsiface/rsinit.h"
 
 #include <gpgme.h>
-
-#include <QGraphicsItem>
 
 #include <iostream>
 #include <algorithm>

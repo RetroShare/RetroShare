@@ -34,28 +34,22 @@
 **
 ****************************************************************************/
 
-#include <QFileDialog>
-#include <QtGui>
-
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
 #include <QStyleOption>
-#include <QContextMenuEvent>
 #include <QMenu>
-#include <QCursor>
-#include <QPoint>
 
 #include "edge.h"
 #include "arrow.h"
 #include "node.h"
 #include "graphwidget.h"
 #include <math.h>
+#include "../connect/ConfCertDialog.h"
+
 #include "rsiface/rspeers.h"
 
 #include <iostream>
-
-#include "../connect/ConfCertDialog.h"
 
 Node::Node(GraphWidget *graphWidget, uint32_t t, std::string id_in, std::string n)
     : graph(graphWidget), ntype(t), id(id_in), name(n),
@@ -386,11 +380,11 @@ void Node::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 				QMenu *sslMenu =  menu.addMenu (sslTitle);
 				if (RS_PEER_STATE_FRIEND & d2.state)
 				{
-	     				QAction *sslAction = sslMenu->addAction("Deny");
+					sslMenu->addAction("Deny");
 				}
 				else
 				{
-	     				QAction *sslAction = sslMenu->addAction("Allow");
+					sslMenu->addAction("Allow");
 				}
 				nssl++;
 			}
@@ -421,10 +415,10 @@ void Node::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 		}
 		case ELASTIC_NODE_TYPE_FRIEND:
 		{
-     			QAction *chatAction = menu.addAction("Chat");
-     			QAction *msgAction = menu.addAction("Msg");
+			menu.addAction("Chat");
+			menu.addAction("Msg");
 			menu.addSeparator();
-     			QAction *connction = menu.addAction("Connect");
+			menu.addAction("Connect");
 			menu.addSeparator();
 			break;
 		}
@@ -436,12 +430,12 @@ void Node::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 		{
 			if (haveSSLcerts)
 			{
-     				QAction *makeAction = menu.addAction("Sign Peer and Add Friend");
+				menu.addAction("Sign Peer and Add Friend");
 				menu.addSeparator();
 			}
 			else
 			{
-     				QAction *makeAction = menu.addAction("Sign Peer to Authenticate");
+				menu.addAction("Sign Peer to Authenticate");
 				menu.addSeparator();
 			}
 			break;
@@ -451,12 +445,12 @@ void Node::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 		{
 			if (haveSSLcerts)
 			{
-     				QAction *makeAction = menu.addAction("Sign Peer and Add Friend");
+				menu.addAction("Sign Peer and Add Friend");
 				menu.addSeparator();
 			}
 			else
 			{
-     				QAction *makeAction = menu.addAction("Sign Peer to Authenticate");
+				menu.addAction("Sign Peer to Authenticate");
 				menu.addSeparator();
 			}
 			break;
@@ -467,9 +461,9 @@ void Node::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
      QObject::connect( detailAction , SIGNAL( triggered() ), this, SLOT( peerdetails() ) );
      connect( detailAction , SIGNAL( triggered() ), this, SLOT( peerdetails() ) );
 
-     QAction *expAction = menu.addAction("Export Certificate");
+     menu.addAction("Export Certificate");
 
-     QAction *selectedAction = menu.exec(event->screenPos());
+     menu.exec(event->screenPos());
 } 
 
 void Node::peerdetails()

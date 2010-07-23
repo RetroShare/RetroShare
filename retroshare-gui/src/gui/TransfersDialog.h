@@ -24,18 +24,8 @@
 
 #include <set>
 
-#include <QFileDialog>
-#include <QProgressBar>
-#include <QtGui>
-#include <QObject>
-#include <QModelIndex>
-#include <QVariant>
-#include <stdint.h>
-
-#include <rsiface/rstypes.h>
-#include "mainpage.h"
+#include "rsiface/rstypes.h"
 #include "RsAutoUpdatePage.h"
-#include "xprogressbar.h"
 
 #include "ui_TransfersDialog.h"
 
@@ -43,7 +33,9 @@
 class DLListDelegate;
 class ULListDelegate;
 class QStandardItemModel;
+class QStandardItem;
 class DetailsDialog;
+class FileProgressInfo;
 
 class TransfersDialog : public RsAutoUpdatePage
 {

@@ -22,12 +22,7 @@
 #ifndef _DETAILSDIALOG_H
 #define _DETAILSDIALOG_H
 
-#include <QtGui>
-#include <QObject>
-#include <QModelIndex>
-#include <QVariant>
 #include <stdint.h>
-
 #include "ui_DetailsDialog.h"
 
 class FileChunksInfo ;

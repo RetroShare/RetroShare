@@ -23,8 +23,6 @@
 #ifndef _CREATE_FORUM_DIALOG_H
 #define _CREATE_FORUM_DIALOG_H
 
-#include <QMainWindow>
-
 #include "ui_CreateForum.h"
 
 class CreateForum : public QDialog

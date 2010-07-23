@@ -18,20 +18,19 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
-#include <QtGui>
+
+#include <QDateTime>
+#include <QTimer>
 
 #include "PeerItem.h"
 #include "FeedHolder.h"
 #include "../RsAutoUpdatePage.h"
+#include "gui/msgs/MessageComposer.h"
 
 #include "rsiface/rsmsgs.h"
 #include "rsiface/rspeers.h"
 
-#include "gui/msgs/MessageComposer.h"
-
-#include <iostream>
 #include <sstream>
-#include <time.h>
 
 /*****
  * #define DEBUG_ITEM 1
