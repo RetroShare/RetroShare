@@ -63,8 +63,12 @@ virtual RsCacheItem    * 	GetSearchResult();
 // file i/o
 virtual int     SendFileRequest(RsFileRequest *ns);
 virtual int     SendFileData(RsFileData *ns);
-virtual RsFileRequest *	GetFileRequest();
-virtual RsFileData *	GetFileData();
+virtual int     SendFileChunkMapRequest(RsFileChunkMapRequest *ns);
+virtual int     SendFileChunkMap(RsFileChunkMap *ns);
+virtual RsFileRequest         *GetFileRequest();
+virtual RsFileData            *GetFileData();
+virtual RsFileChunkMapRequest *GetFileChunkMapRequest();
+virtual RsFileChunkMap        *GetFileChunkMap();
 
 // Rest of P3Interface
 virtual int 	tick();
@@ -101,8 +105,7 @@ void	locked_SortnStoreItem(RsItem *item);
 	SecurityPolicy *globsec;
 
 	// Temporary storage...
-	std::list<RsItem *> in_result, in_search, 
-		in_request, in_data, in_service;
+	std::list<RsItem *> in_result, in_search, in_request, in_data, in_service,in_chunkmap,in_chunkmap_request;
 
 	private:
 

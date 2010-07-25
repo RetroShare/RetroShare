@@ -66,6 +66,12 @@ virtual int     SendFileRequest(RsFileRequest *) = 0;
 virtual RsFileData *GetFileData() = 0;
 virtual int     SendFileData(RsFileData *) = 0;
 
+virtual RsFileChunkMapRequest *GetFileChunkMapRequest() = 0;
+virtual int     SendFileChunkMapRequest(RsFileChunkMapRequest *) = 0;
+
+virtual RsFileChunkMap *GetFileChunkMap() = 0;
+virtual int     SendFileChunkMap(RsFileChunkMap *) = 0;
+
 };
 
 class P3Interface: public SearchInterface

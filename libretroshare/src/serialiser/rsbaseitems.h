@@ -28,15 +28,20 @@
 
 #include <map>
 
+#include <rsiface/rstypes.h>
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvtypes.h"
 
 const uint8_t RS_PKT_TYPE_FILE          = 0x01;
 const uint8_t RS_PKT_TYPE_CACHE         = 0x02;
 
-const uint8_t RS_PKT_SUBTYPE_FI_REQUEST  = 0x01;
-const uint8_t RS_PKT_SUBTYPE_FI_DATA     = 0x02;
-const uint8_t RS_PKT_SUBTYPE_FI_TRANSFER = 0x03;
+const uint8_t RS_PKT_SUBTYPE_FI_REQUEST            = 0x01;
+const uint8_t RS_PKT_SUBTYPE_FI_DATA               = 0x02;
+const uint8_t RS_PKT_SUBTYPE_FI_TRANSFER           = 0x03;
+const uint8_t RS_PKT_SUBTYPE_FI_CHUNK_MAP_REQUEST  = 0x04;
+const uint8_t RS_PKT_SUBTYPE_FI_CHUNK_MAP          = 0x05;
+const uint8_t RS_PKT_SUBTYPE_FI_CRC32_MAP_REQUEST  = 0x06;
+const uint8_t RS_PKT_SUBTYPE_FI_CRC32_MAP          = 0x07;
 
 const uint8_t RS_PKT_SUBTYPE_CACHE_ITEM    = 0x01;
 const uint8_t RS_PKT_SUBTYPE_CACHE_REQUEST = 0x02;
@@ -77,32 +82,68 @@ std::ostream &print(std::ostream &out, uint16_t indent = 0);
 	RsTlvFileData fd;
 };
 
+class RsFileChunkMapRequest: public RsItem
+{
+	public:
+		RsFileChunkMapRequest() 
+			:RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_BASE, RS_PKT_TYPE_FILE, RS_PKT_SUBTYPE_FI_CHUNK_MAP_REQUEST)
+		{}
+		virtual ~RsFileChunkMapRequest() {}
+		virtual void clear() {}
+
+		bool is_client ; 		// is the request for a client, or a server ? 
+		std::string hash ;	// hash of the file for which we request the chunk map
+
+		std::ostream &print(std::ostream &out, uint16_t indent = 0);
+};
+
+class RsFileChunkMap: public RsItem
+{
+	public:
+		RsFileChunkMap() 
+			:RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_BASE, RS_PKT_TYPE_FILE, RS_PKT_SUBTYPE_FI_CHUNK_MAP)
+		{}
+		virtual ~RsFileChunkMap() {}
+		virtual void clear() {}
+
+		bool is_client ; 		// is the request for a client, or a server ? 
+		std::string hash ;	// hash of the file for which we request the chunk map
+		CompressedChunkMap compressed_map ; // Chunk map of the file.
+
+		std::ostream &print(std::ostream &out, uint16_t indent = 0);
+};
 /**************************************************************************/
 
 class RsFileItemSerialiser: public RsSerialType
 {
 	public:
-	RsFileItemSerialiser()
-	:RsSerialType(RS_PKT_VERSION1, RS_PKT_CLASS_BASE, 
-		RS_PKT_TYPE_FILE)
+		RsFileItemSerialiser()
+			:RsSerialType(RS_PKT_VERSION1, RS_PKT_CLASS_BASE, 
+					RS_PKT_TYPE_FILE)
 	{ return; }
-virtual     ~RsFileItemSerialiser() { return; }
-	
-virtual	uint32_t    size(RsItem *);
-virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
-virtual	RsItem *    deserialise(void *data, uint32_t *size);
+		virtual     ~RsFileItemSerialiser() { return; }
+
+		virtual	uint32_t    size(RsItem *);
+		virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
+		virtual	RsItem *    deserialise(void *data, uint32_t *size);
 
 	private:
 
-	/* sub types */
-virtual	uint32_t    sizeReq(RsFileRequest *);
-virtual	bool        serialiseReq (RsFileRequest *item, void *data, uint32_t *size);
-virtual	RsFileRequest *  deserialiseReq(void *data, uint32_t *size);
+		/* sub types */
+		virtual	uint32_t    sizeReq(RsFileRequest *);
+		virtual	uint32_t    sizeData(RsFileData *);
+		virtual	uint32_t    sizeChunkMapReq(RsFileChunkMapRequest *);
+		virtual	uint32_t    sizeChunkMap(RsFileChunkMap *);
 
-virtual	uint32_t    sizeData(RsFileData *);
-virtual	bool        serialiseData (RsFileData *item, void *data, uint32_t *size);
-virtual	RsFileData *  deserialiseData(void *data, uint32_t *size);
+		virtual	bool        serialiseReq (RsFileRequest *item, void *data, uint32_t *size);
+		virtual	bool        serialiseData (RsFileData *item, void *data, uint32_t *size);
+		virtual	bool        serialiseChunkMapReq(RsFileChunkMapRequest *item, void *data, uint32_t *size);
+		virtual	bool        serialiseChunkMap(RsFileChunkMap *item, void *data, uint32_t *size);
 
+		virtual	RsFileRequest         *deserialiseReq(void *data, uint32_t *size);
+		virtual	RsFileChunkMapRequest *deserialiseChunkMapReq(void *data, uint32_t *size);
+		virtual	RsFileChunkMap        *deserialiseChunkMap(void *data, uint32_t *size);
+		virtual	RsFileData            *deserialiseData(void *data, uint32_t *size);
 };
 
 /**************************************************************************/

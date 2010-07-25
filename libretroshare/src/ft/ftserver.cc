@@ -738,27 +738,50 @@ bool	ftServer::sendDataRequest(const std::string& peerId, const std::string& has
 	return true;
 }
 
-bool ftServer::sendChunkMapRequest(const std::string& peerId,const std::string& hash)
+bool ftServer::sendChunkMapRequest(const std::string& peerId,const std::string& hash,bool is_client)
 {
 	if(mTurtleRouter->isTurtlePeer(peerId))
-		mTurtleRouter->sendChunkMapRequest(peerId,hash) ;
+		mTurtleRouter->sendChunkMapRequest(peerId,hash,is_client) ;
 	else
-		std::cerr << "ftServer: Warning: not sending chunk map request to peer " << peerId << ", because it's not a turtle tunnel." << std::endl ;
+	{
+		/* create a packet */
+		/* push to networking part */
+		RsFileChunkMapRequest *rfi = new RsFileChunkMapRequest();
 
-	// We only send chunkmap requests to turtle peers. This will be a problem at display time for
-	// direct friends, so I'll see later whether I code it or not.
+		/* id */
+		rfi->PeerId(peerId);
+
+		/* file info */
+		rfi->hash = hash; /* ftr->hash; */
+		rfi->is_client = is_client ;
+
+		mP3iface->SendFileChunkMapRequest(rfi);
+	}
+
 	return true ;
 }
 
-bool ftServer::sendChunkMap(const std::string& peerId,const std::string& hash,const CompressedChunkMap& map)
+bool ftServer::sendChunkMap(const std::string& peerId,const std::string& hash,const CompressedChunkMap& map,bool is_client)
 {
 	if(mTurtleRouter->isTurtlePeer(peerId))
-		mTurtleRouter->sendChunkMap(peerId,hash,map) ;
+		mTurtleRouter->sendChunkMap(peerId,hash,map,is_client) ;
 	else
-		std::cerr << "ftServer: Warning: not sending chunk map to peer " << peerId << ", because it's not a turtle tunnel." << std::endl ;
+	{
+		/* create a packet */
+		/* push to networking part */
+		RsFileChunkMap *rfi = new RsFileChunkMap();
 
-	// We only send chunkmap requests to turtle peers. This will be a problem at display time for
-	// direct friends, so I'll see later whether I code it or not.
+		/* id */
+		rfi->PeerId(peerId);
+
+		/* file info */
+		rfi->hash = hash; /* ftr->hash; */
+		rfi->is_client = is_client; /* ftr->hash; */
+		rfi->compressed_map = map; /* ftr->hash; */
+
+		mP3iface->SendFileChunkMap(rfi);
+	}
+
 	return true ;
 }
 bool ftServer::sendCRC32MapRequest(const std::string& peerId,const std::string& hash)
@@ -1022,6 +1045,8 @@ bool    ftServer::handleFileData()
 	// now File Input.
 	RsFileRequest *fr;
 	RsFileData *fd;
+	RsFileChunkMapRequest *fcmr;
+	RsFileChunkMap *fcm;
 
 	int i_init = 0;
 	int i = 0;
@@ -1082,7 +1107,48 @@ FileInfo(ffr);
 		fd->fd.binData.TlvShallowClear();
 		delete fd;
 	}
+	// now file chunkmap requests
+	i_init = i;
+	while((fcmr = mP3iface -> GetFileChunkMapRequest()) != NULL )
+	{
+#ifdef SERVER_DEBUG
+		std::cerr << "ftServer::handleFileData() Recvd ChunkMap request" << std::endl;
+		std::ostringstream out;
+		if (i == i_init)
+		{
+			out << "Incoming(Net) File Data:" << std::endl;
+		}
+		fcmr -> print(out);
+		rslog(RSL_DEBUG_BASIC, ftserverzone, out.str());
+#endif
+		i++; /* count */
 
+		/* incoming data */
+		mFtDataplex->recvChunkMapRequest(fcmr->PeerId(), fcmr->hash,fcmr->is_client) ;
+
+		delete fcmr;
+	}
+	// now file chunkmaps 
+	i_init = i;
+	while((fcm = mP3iface -> GetFileChunkMap()) != NULL )
+	{
+#ifdef SERVER_DEBUG
+		std::cerr << "ftServer::handleFileData() Recvd ChunkMap request" << std::endl;
+		std::ostringstream out;
+		if (i == i_init)
+		{
+			out << "Incoming(Net) File Data:" << std::endl;
+		}
+		fcm -> print(out);
+		rslog(RSL_DEBUG_BASIC, ftserverzone, out.str());
+#endif
+		i++; /* count */
+
+		/* incoming data */
+		mFtDataplex->recvChunkMap(fcm->PeerId(), fcm->hash,fcm->compressed_map,fcm->is_client) ;
+
+		delete fcm;
+	}
 	if (i > 0)
 	{
 		return 1;

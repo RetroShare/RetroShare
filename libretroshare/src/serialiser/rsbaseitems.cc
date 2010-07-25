@@ -26,6 +26,7 @@
 
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rsbaseitems.h"
+#include "serialiser/rstlvbase.h"
 
 /***
 #define RSSERIAL_DEBUG 1
@@ -39,6 +40,8 @@ uint32_t    RsFileItemSerialiser::size(RsItem *i)
 {
 	RsFileRequest *rfr;
 	RsFileData    *rfd;
+	RsFileChunkMapRequest    *rfcmr;
+	RsFileChunkMap *rfcm;
 
 	if (NULL != (rfr = dynamic_cast<RsFileRequest *>(i)))
 	{
@@ -47,6 +50,14 @@ uint32_t    RsFileItemSerialiser::size(RsItem *i)
 	else if (NULL != (rfd = dynamic_cast<RsFileData *>(i)))
 	{
 		return sizeData(rfd);
+	}
+	else if (NULL != (rfcmr = dynamic_cast<RsFileChunkMapRequest *>(i)))
+	{
+		return sizeChunkMapReq(rfcmr);
+	}
+	else if (NULL != (rfcm = dynamic_cast<RsFileChunkMap *>(i)))
+	{
+		return sizeChunkMap(rfcm);
 	}
 
 	return 0;
@@ -57,6 +68,8 @@ bool    RsFileItemSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsize
 {
 	RsFileRequest *rfr;
 	RsFileData    *rfd;
+	RsFileChunkMapRequest    *rfcmr;
+	RsFileChunkMap *rfcm;
 
 	if (NULL != (rfr = dynamic_cast<RsFileRequest *>(i)))
 	{
@@ -66,7 +79,14 @@ bool    RsFileItemSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsize
 	{
 		return serialiseData(rfd, data, pktsize);
 	}
-
+	else if (NULL != (rfcmr = dynamic_cast<RsFileChunkMapRequest *>(i)))
+	{
+		return serialiseChunkMapReq(rfcmr,data,pktsize);
+	}
+	else if (NULL != (rfcm = dynamic_cast<RsFileChunkMap *>(i)))
+	{
+		return serialiseChunkMap(rfcm,data,pktsize);
+	}
 	return false;
 }
 
@@ -89,6 +109,12 @@ RsItem *RsFileItemSerialiser::deserialise(void *data, uint32_t *pktsize)
 			break;
 		case RS_PKT_SUBTYPE_FI_DATA:
 			return deserialiseData(data, pktsize);
+			break;
+		case RS_PKT_SUBTYPE_FI_CHUNK_MAP_REQUEST:
+			return deserialiseChunkMapReq(data, pktsize);
+			break;
+		case RS_PKT_SUBTYPE_FI_CHUNK_MAP:
+			return deserialiseChunkMap(data, pktsize);
 			break;
 		default:
 			return NULL;
@@ -238,7 +264,25 @@ void 	RsFileData::clear()
 {
 	fd.TlvClear();
 }
-
+std::ostream &RsFileChunkMap::print(std::ostream &out, uint16_t indent)
+{
+        printRsItemBase(out, "RsFileChunkMap", indent);
+	uint16_t int_Indent = indent + 2;
+        printIndent(out, int_Indent); out << "PeerId: " << PeerId() << std::endl ;
+        printIndent(out, int_Indent); out << "  hash: " << hash << std::endl ;
+        printIndent(out, int_Indent); out << "chunks: " << (void*)(compressed_map._map[0]) << "..." << std::endl ;
+        printRsItemEnd(out, "RsFileChunkMap", indent);
+        return out;
+}
+std::ostream &RsFileChunkMapRequest::print(std::ostream &out, uint16_t indent)
+{
+        printRsItemBase(out, "RsFileChunkMapRequest", indent);
+	uint16_t int_Indent = indent + 2;
+        printIndent(out, int_Indent); out << "PeerId: " << PeerId() << std::endl ;
+        printIndent(out, int_Indent); out << "  hash: " << hash << std::endl ;
+        printRsItemEnd(out, "RsFileChunkMapRequest", indent);
+        return out;
+}
 std::ostream &RsFileData::print(std::ostream &out, uint16_t indent)
 {
         printRsItemBase(out, "RsFileData", indent);
@@ -344,7 +388,207 @@ RsFileData *RsFileItemSerialiser::deserialiseData(void *data, uint32_t *pktsize)
 	return item;
 }
 
+uint32_t    RsFileItemSerialiser::sizeChunkMapReq(RsFileChunkMapRequest *item)
+{
+	uint32_t s = 8; /* header  */
+	s += 1 ; 							// is_client
+	s += GetTlvStringSize(item->hash) ; // hash
 
+	return s;
+}
+uint32_t    RsFileItemSerialiser::sizeChunkMap(RsFileChunkMap *item)
+{
+	uint32_t s = 8; /* header  */
+	s += 1 ; 								// is_client
+	s += GetTlvStringSize(item->hash) ; 	// hash
+	s += 4 ;									// compressed map size
+	s += 4 * item->compressed_map._map.size() ; // compressed chunk map
+
+	return s;
+}
+/* serialise the data to the buffer */
+bool     RsFileItemSerialiser::serialiseChunkMapReq(RsFileChunkMapRequest *item, void *data, uint32_t *pktsize)
+{
+	uint32_t tlvsize = sizeChunkMapReq(item);
+	uint32_t offset = 0;
+
+	if (*pktsize < tlvsize)
+		return false; /* not enough space */
+
+	*pktsize = tlvsize;
+
+	bool ok = true;
+
+	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+
+#ifdef RSSERIAL_DEBUG
+	std::cerr << "RsFileItemSerialiser::serialiseData() Header: " << ok << std::endl;
+#endif
+
+	/* skip the header */
+	offset += 8;
+
+	/* add mandatory parts first */
+	ok &= setRawUInt8(data, tlvsize, &offset, item->is_client);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, item->hash);
+
+	if (offset != tlvsize)
+	{
+		ok = false;
+#ifdef RSSERIAL_DEBUG
+		std::cerr << "RsFileItemSerialiser::serialiseData() Size Error! " << std::endl;
+#endif
+	}
+
+	return ok;
+}
+bool     RsFileItemSerialiser::serialiseChunkMap(RsFileChunkMap *item, void *data, uint32_t *pktsize)
+{
+	uint32_t tlvsize = sizeChunkMap(item);
+	uint32_t offset = 0;
+
+	if (*pktsize < tlvsize)
+		return false; /* not enough space */
+
+	*pktsize = tlvsize;
+
+	bool ok = true;
+
+	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+
+#ifdef RSSERIAL_DEBUG
+	std::cerr << "RsFileItemSerialiser::serialiseData() Header: " << ok << std::endl;
+#endif
+
+	/* skip the header */
+	offset += 8;
+
+	/* add mandatory parts first */
+	ok &= setRawUInt8(data, tlvsize, &offset, item->is_client);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, item->hash);
+	ok &= setRawUInt32(data, tlvsize, &offset, item->compressed_map._map.size());
+
+	for(uint32_t i=0;i<item->compressed_map._map.size();++i)
+		ok &= setRawUInt32(data, tlvsize, &offset, item->compressed_map._map[i]);
+
+	if (offset != tlvsize)
+	{
+		ok = false;
+#ifdef RSSERIAL_DEBUG
+		std::cerr << "RsFileItemSerialiser::serialiseData() Size Error! " << std::endl;
+#endif
+	}
+
+	return ok;
+}
+RsFileChunkMapRequest *RsFileItemSerialiser::deserialiseChunkMapReq(void *data, uint32_t *pktsize)
+{
+	/* get the type and size */
+	uint32_t rstype = getRsItemId(data);
+	uint32_t rssize = getRsItemSize(data);
+
+	uint32_t offset = 0;
+
+	if ((RS_PKT_VERSION1 != getRsItemVersion(rstype)) ||
+		(RS_PKT_CLASS_BASE != getRsItemClass(rstype)) ||
+		(RS_PKT_TYPE_FILE  != getRsItemType(rstype)) ||
+		(RS_PKT_SUBTYPE_FI_CHUNK_MAP_REQUEST != getRsItemSubType(rstype)))
+	{
+		return NULL; /* wrong type */
+	}
+
+	if (*pktsize < rssize)    /* check size */
+		return NULL; /* not enough data */
+
+	/* set the packet length */
+	*pktsize = rssize;
+
+	bool ok = true;
+
+	/* ready to load */
+	RsFileChunkMapRequest *item = new RsFileChunkMapRequest();
+	item->clear();
+
+	/* skip the header */
+	offset += 8;
+	uint8_t tmp ;
+	ok &= getRawUInt8(data, *pktsize, &offset, &tmp); item->is_client = tmp; 
+	ok &= GetTlvString(data, *pktsize, &offset, TLV_TYPE_STR_VALUE, item->hash); 	// file hash
+
+	if (offset != rssize)
+	{
+		/* error */
+		delete item;
+		return NULL;
+	}
+
+	if (!ok)
+	{
+		delete item;
+		return NULL;
+	}
+
+	return item;
+}
+RsFileChunkMap *RsFileItemSerialiser::deserialiseChunkMap(void *data, uint32_t *pktsize)
+{
+	/* get the type and size */
+	uint32_t rstype = getRsItemId(data);
+	uint32_t rssize = getRsItemSize(data);
+
+	uint32_t offset = 0;
+
+	if ((RS_PKT_VERSION1 != getRsItemVersion(rstype)) ||
+		(RS_PKT_CLASS_BASE != getRsItemClass(rstype)) ||
+		(RS_PKT_TYPE_FILE  != getRsItemType(rstype)) ||
+		(RS_PKT_SUBTYPE_FI_CHUNK_MAP != getRsItemSubType(rstype)))
+	{
+		return NULL; /* wrong type */
+	}
+
+	if (*pktsize < rssize)    /* check size */
+		return NULL; /* not enough data */
+
+	/* set the packet length */
+	*pktsize = rssize;
+
+	bool ok = true;
+
+	/* ready to load */
+	RsFileChunkMap *item = new RsFileChunkMap();
+	item->clear();
+
+	/* skip the header */
+	offset += 8;
+	uint8_t tmp ;
+	ok &= getRawUInt8(data, *pktsize, &offset, &tmp); item->is_client = tmp; 
+	ok &= GetTlvString(data, *pktsize, &offset, TLV_TYPE_STR_VALUE, item->hash); 	// file hash
+	uint32_t size =0;
+	ok &= getRawUInt32(data, *pktsize, &offset, &size); 
+
+	if(ok)
+	{
+		item->compressed_map._map.resize(size) ;
+
+		for(uint32_t i=0;i<size && ok;++i)
+			ok &= getRawUInt32(data, *pktsize, &offset, &(item->compressed_map._map[i])); 
+	}
+
+	if (offset != rssize)
+	{
+		/* error */
+		delete item;
+		return NULL;
+	}
+
+	if (!ok)
+	{
+		delete item;
+		return NULL;
+	}
+
+	return item;
+}
 /*************************************************************************/
 /*************************************************************************/
 
@@ -696,7 +940,6 @@ bool    RsServiceSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsize)
         #ifdef RSSERIAL_DEBUG
                 std::cerr << "tlvsize : " << tlvsize << std::endl;
         #endif
-        uint32_t offset = 0;
 
 	if (*pktsize < tlvsize)
 		return false; /* not enough space */

@@ -284,10 +284,10 @@ class p3turtle: public p3Service, public pqiMonitor, public RsTurtle,/* public f
 		void sendFileData(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t baseoffset, uint32_t chunksize, void *data) ;
 
 		/// Send a request for the chunk map of this file to the given peer
-		void sendChunkMapRequest(const std::string& peerId, const std::string& hash) ;
+		void sendChunkMapRequest(const std::string& peerId, const std::string& hash,bool is_client) ;
 
 		/// Send a chunk map of this file to the given peer
-		void sendChunkMap(const std::string& peerId, const std::string& hash,const CompressedChunkMap& cmap) ;
+		void sendChunkMap(const std::string& peerId, const std::string& hash,const CompressedChunkMap& cmap,bool is_client) ;
 
 		/// Send a request for the crc32 map of this file to the given peer
 		void sendCRC32MapRequest(const std::string& peerId, const std::string& hash) ;

@@ -311,7 +311,14 @@ int     pqihandler::SendFileData(RsFileData *ns)
 {
 	return HandleRsItem(ns, 0);
 }
-
+int     pqihandler::SendFileChunkMapRequest(RsFileChunkMapRequest *ns)
+{
+	return HandleRsItem(ns, 0);
+}
+int     pqihandler::SendFileChunkMap(RsFileChunkMap *ns)
+{
+	return HandleRsItem(ns, 0);
+}
 int     pqihandler::SendRsRawItem(RsRawItem *ns)
 {
 	pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
@@ -450,24 +457,35 @@ void pqihandler::locked_SortnStoreItem(RsItem *item)
 
 	      case RS_PKT_TYPE_FILE:
 	        switch(subtype)
-	        {
-	          case RS_PKT_SUBTYPE_FI_REQUEST:
-	            pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
-	              "SortnStore -> File Request");
-	            in_request.push_back(item);
-		    item = NULL;
-		    break;
+			  {
+				  case RS_PKT_SUBTYPE_FI_REQUEST:
+					  pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
+							  "SortnStore -> File Request");
+					  in_request.push_back(item);
+					  item = NULL;
+					  break;
 
-	          case RS_PKT_SUBTYPE_FI_DATA:
-	            pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
-	              "SortnStore -> File Data");
-	            in_data.push_back(item);
-		    item = NULL;
-		    break;
+				  case RS_PKT_SUBTYPE_FI_DATA:
+					  pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, "SortnStore -> File Data");
+					  in_data.push_back(item);
+					  item = NULL;
+					  break;
 
-		  default:
-		    break; /* no match! */
-		}
+				  case RS_PKT_SUBTYPE_FI_CHUNK_MAP_REQUEST:
+					  pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, "SortnStore -> File ChunkMap Request");
+					  in_chunkmap_request.push_back(item);
+					  item = NULL;
+					  break;
+
+				  case RS_PKT_SUBTYPE_FI_CHUNK_MAP:
+					  pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, "SortnStore -> File ChunkMap");
+					  in_chunkmap.push_back(item);
+					  item = NULL;
+					  break;
+
+				  default:
+					  break; /* no match! */
+			  }
 	        break;
 
 	      default:
@@ -549,6 +567,34 @@ RsFileData *pqihandler::GetFileData()
 	}
 	return NULL;
 }
+RsFileChunkMapRequest *pqihandler::GetFileChunkMapRequest()
+{
+	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+
+	if (in_chunkmap_request.size() != 0)
+	{
+		RsFileChunkMapRequest *fi = dynamic_cast<RsFileChunkMapRequest *>(in_chunkmap_request.front());
+		if (!fi) { delete in_chunkmap_request.front(); }
+		in_chunkmap_request.pop_front();
+		return fi;
+	}
+	return NULL;
+}
+RsFileChunkMap *pqihandler::GetFileChunkMap()
+{
+	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+
+	if (in_chunkmap.size() != 0)
+	{
+		RsFileChunkMap *fi = dynamic_cast<RsFileChunkMap *>(in_chunkmap.front());
+		if (!fi) { delete in_chunkmap.front(); }
+		in_chunkmap.pop_front();
+		return fi;
+	}
+	return NULL;
+}
+
+
 
 RsRawItem *pqihandler::GetRsRawItem()
 {

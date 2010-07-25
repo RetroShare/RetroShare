@@ -1202,7 +1202,7 @@ void p3turtle::sendFileData(const std::string& peerId, const std::string& hash, 
 	sendItem(item) ;
 }
 
-void p3turtle::sendChunkMapRequest(const std::string& peerId,const std::string& hash)
+void p3turtle::sendChunkMapRequest(const std::string& peerId,const std::string& hash,bool is_client)
 {
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
@@ -1229,16 +1229,18 @@ void p3turtle::sendChunkMapRequest(const std::string& peerId,const std::string& 
 
 	if(tunnel.local_src == ownid)
 	{
+		assert(!is_client) ;
 		item->direction = RsTurtleGenericTunnelItem::DIRECTION_SERVER ;	
 		item->PeerId(tunnel.local_dst) ;
 	}
 	else if(tunnel.local_dst == ownid)
 	{
+		assert(is_client) ;
 		item->direction = RsTurtleGenericTunnelItem::DIRECTION_CLIENT ;	
 		item->PeerId(tunnel.local_src) ;
 	}
 	else
-		std::cerr << "p3turtle::sendChunkMap: consistency error!" << std::endl ;
+		std::cerr << "p3turtle::sendChunkMapRequest: consistency error!" << std::endl ;
 
 #ifdef P3TURTLE_DEBUG
 	std::cerr << "p3turtle: sending chunk map req to peer " << peerId << ", hash=0x" << hash << ") through tunnel " << (void*)item->tunnel_id << ", next peer=" << item->PeerId() << std::endl ;
@@ -1246,7 +1248,7 @@ void p3turtle::sendChunkMapRequest(const std::string& peerId,const std::string& 
 	sendItem(item) ;
 }
 
-void p3turtle::sendChunkMap(const std::string& peerId,const std::string& hash,const CompressedChunkMap& cmap)
+void p3turtle::sendChunkMap(const std::string& peerId,const std::string& hash,const CompressedChunkMap& cmap,bool is_client)
 {
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
@@ -1274,11 +1276,13 @@ void p3turtle::sendChunkMap(const std::string& peerId,const std::string& hash,co
 
 	if(tunnel.local_src == ownid)
 	{
+		assert(!is_client) ;
 		item->direction = RsTurtleGenericTunnelItem::DIRECTION_SERVER ;	
 		item->PeerId(tunnel.local_dst) ;
 	}
 	else if(tunnel.local_dst == ownid)
 	{
+		assert(is_client) ;
 		item->direction = RsTurtleGenericTunnelItem::DIRECTION_CLIENT ;	
 		item->PeerId(tunnel.local_src) ;
 	}

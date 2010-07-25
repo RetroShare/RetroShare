@@ -528,7 +528,7 @@ bool ftDataMultiplex::handleRecvClientChunkMapRequest(const std::string& peerId,
 		(it->second).mCreator->getAvailabilityMap(cmap);
 	}
 
-	mDataSend->sendChunkMap(peerId,hash,cmap);
+	mDataSend->sendChunkMap(peerId,hash,cmap,false);
 
 	return true ;
 }
@@ -574,7 +574,7 @@ bool ftDataMultiplex::handleRecvServerChunkMapRequest(const std::string& peerId,
 			it->second->getAvailabilityMap(cmap);
 	}
 
-	mDataSend->sendChunkMap(peerId,hash,cmap);
+	mDataSend->sendChunkMap(peerId,hash,cmap,true);
 
 	return true;
 }
@@ -719,14 +719,14 @@ bool ftDataMultiplex::getClientChunkMap(const std::string& upload_hash,const std
 	// If the map is too old then we should ask an other map to the peer.
 	//
 	if(too_old)
-		sendChunkMapRequest(peerId,upload_hash);
+		sendChunkMapRequest(peerId,upload_hash,true);
 
 	return true ;
 }
 
-bool ftDataMultiplex::sendChunkMapRequest(const std::string& peer_id,const std::string& hash)
+bool ftDataMultiplex::sendChunkMapRequest(const std::string& peer_id,const std::string& hash,bool is_client)
 {
-	return mDataSend->sendChunkMapRequest(peer_id,hash);
+	return mDataSend->sendChunkMapRequest(peer_id,hash,is_client);
 }
 bool ftDataMultiplex::sendCRCMapRequest(const std::string& peer_id,const std::string& hash,const CompressedChunkMap&)
 {

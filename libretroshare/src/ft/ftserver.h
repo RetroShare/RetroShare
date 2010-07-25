@@ -210,8 +210,8 @@ virtual bool 	unshareDownloadDirectory();
 public:
 virtual bool sendData(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize, void *data);
 virtual bool sendDataRequest(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize);
-virtual bool sendChunkMapRequest(const std::string& peer_id,const std::string& hash) ;
-virtual bool sendChunkMap(const std::string& peer_id,const std::string& hash,const CompressedChunkMap& cmap) ;
+virtual bool sendChunkMapRequest(const std::string& peer_id,const std::string& hash,bool is_client) ;
+virtual bool sendChunkMap(const std::string& peer_id,const std::string& hash,const CompressedChunkMap& cmap,bool is_client) ;
 virtual bool sendCRC32MapRequest(const std::string&, const std::string&) ;
 virtual bool sendCRC32Map(const std::string&, const std::string&, const CRC32Map&) ;
 

@@ -108,7 +108,7 @@ class ftDataMultiplex: public ftDataRecv, public RsQueueThread
 		bool	sendData(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize, void *data);
 
 		/* Server/client Send */
-		bool	sendChunkMapRequest(const std::string& peerId, const std::string& hash) ;
+		bool	sendChunkMapRequest(const std::string& peerId, const std::string& hash,bool is_client) ;
 
 		/* Client Send */
 		bool	sendCRCMapRequest(const std::string& peerId, const std::string& hash,const CompressedChunkMap& chnks) ;

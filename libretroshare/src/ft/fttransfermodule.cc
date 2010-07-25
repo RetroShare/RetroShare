@@ -348,7 +348,7 @@ bool ftTransferModule::getChunk(const std::string& peer_id,uint32_t size_hint,ui
   	bool val = mFileCreator->getMissingChunk(peer_id,size_hint,offset, chunk_size,source_peer_map_needed);
 
 	if(source_peer_map_needed)
-		mMultiplexor->sendChunkMapRequest(peer_id, mHash) ;
+		mMultiplexor->sendChunkMapRequest(peer_id, mHash,false) ;
 
 #ifdef FT_DEBUG
 	if (val)
@@ -683,7 +683,6 @@ bool ftTransferModule::checkCRC()
 
 				//				_crcmap_last_source_id = (_crcmap_last_source_id+1)%mFileSources.size() ;
 
-				int n=0 ;
 				bool found = false ;
 				std::map<std::string,peerInfo>::const_iterator mit ;
 				for(mit = mFileSources.begin();mit != mFileSources.end();++mit)
