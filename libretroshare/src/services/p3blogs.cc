@@ -510,7 +510,19 @@ void p3Blogs::locked_notifyGroupChanged(GroupInfo &grp, uint32_t flags)
 	return p3GroupDistrib::locked_notifyGroupChanged(grp, flags);
 }
 
+//TODO: if you want to enable config saving and loading implement this
+bool p3Blogs::childLoadList(std::list<RsItem* >& configSaves)
+{
+	return true;
+}
 
+//TODO:
+std::list<RsItem *> p3Blogs::childSaveList()
+{
+	std::list<RsItem *> saveL;
+
+	return saveL;
+}
 
 /****************************************/
 

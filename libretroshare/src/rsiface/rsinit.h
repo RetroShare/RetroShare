@@ -27,7 +27,7 @@
  */
 
 
-/* Initialisation Class (not publicly disclosed to RsIFace) */
+
 
 /****
  * #define RS_USE_PGPSSL 1
@@ -35,21 +35,43 @@
 
 #define RS_USE_PGPSSL 1
 
+/*!
+ * Initialisation Class (not publicly disclosed to RsIFace)
+ */
 class RsInit
 {
 	public:
 		/* reorganised RsInit system */
 
-		/* PreLogin */
+		/*!
+		 * PreLogin
+		 * Call before init retroshare, initialises rsinitconfig's public attributes
+		 */
 		static void	InitRsConfig() ;
+
+		/*!
+		 * Should be called to load up ssl cert and private key, and intialises gpg
+		 * this must be called before accessing rsserver (e.g. ::startupretroshare)
+		 * @param argc passed from executable
+		 * @param argv commandline arguments passed to executable
+		 * @param strictCheck set to true if you want rs to continue executing if invalid argument passed and vice versa
+		 * @return one is initialisation has been successful
+		 */
 		static int 	InitRetroShare(int argc, char **argv,
 					bool strictCheck=true);
 
+		/*!
+		 * This return directory seperator for different platforms, not an issue anymore as C library can distinguish
+		 * @returns directory of seperator used for different platforms
+		 *
+		 */
 		static char dirSeperator();
 		static bool isPortable();
 
 
-		/* Account Details (Combined GPG+SSL Setup) */
+		/*!
+		 *  Account Details (Combined GPG+SSL Setup)
+		 */
 		static bool 	getPreferedAccountId(std::string &id);
                 static bool     getPGPEngineFileName(std::string &fileName);
 		static bool 	getAccountIds(std::list<std::string> &ids);
@@ -60,22 +82,31 @@ class RsInit
 		static bool	ValidateCertificate(std::string &userName) ;
 
 
-		/* Generating GPGme Account */
+		/*!
+		 *  Generating GPGme Account
+		 */
 		static int 	GetPGPLogins(std::list<std::string> &pgpIds);
 		static int 	GetPGPLoginDetails(std::string id, std::string &name, std::string &email);
                 static bool	GeneratePGPCertificate(std::string name, std::string email, std::string passwd, std::string &pgpId, std::string &errString);
 
-		/* Login PGP */
+		/*!
+		 * Login GGP
+		 */
 		static bool 	SelectGPGAccount(const std::string& gpgId);
 		static bool 	LoadGPGPassword(std::string passwd);
 
-		/* Create SSL Certificates */
+		/*!
+		 * Create SSL Certificates
+		 */
 		static bool	GenerateSSLCertificate(std::string name, std::string org, std::string loc, std::string country, std::string passwd, std::string &sslId, std::string &errString);
 
-		/* Login SSL */
+		/*!
+		 * intialises directories for passwords and ssl keys
+		 */
 		static bool	LoadPassword(std::string id, std::string passwd) ;
 
-		/** Final Certificate load. This can be called if:
+		/*!
+		 * Final Certificate load. This can be called if:
 		 * a) InitRetroshare() returns true -> autoLoad/password Set.
 		 * b) SelectGPGAccount() && LoadPassword()
 		 *
@@ -85,9 +116,12 @@ class RsInit
 		static int 	LockAndLoadCertificates(bool autoLoginNT);
 
 
-		/* Post Login Options */
+		/*!
+		 * Post Login Options
+		 */
 		static std::string 	RsConfigDirectory();
-                static std::string      RsProfileConfigDirectory();
+
+        static std::string  RsProfileConfigDirectory();
 		static bool	setStartMinimised() ;
 
 		static int getSslPwdLen();
@@ -97,6 +131,7 @@ class RsInit
 
 
 	private:
+
 		/* PreLogin */
 		static std::string getHomePath() ;
 		static void setupBaseDir();

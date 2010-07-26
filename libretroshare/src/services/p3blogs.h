@@ -118,8 +118,8 @@ virtual RsSerialType *createSerialiser();
 virtual bool    locked_checkDistribMsg(RsDistribMsg *msg);
 virtual RsDistribGrp *locked_createPublicDistribGrp(GroupInfo &info);
 virtual RsDistribGrp *locked_createPrivateDistribGrp(GroupInfo &info);
-
-
+virtual bool childLoadList(std::list<RsItem* >& configSaves);
+virtual std::list<RsItem *> childSaveList();
 /****************************************/
 
 	private:

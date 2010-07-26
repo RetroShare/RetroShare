@@ -420,6 +420,16 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		virtual void 	saveDone();
 		virtual bool    loadList(std::list<RsItem *> load);
 
+		/*!
+		 * called by top class, child can use to save configs
+		 */
+		virtual std::list<RsItem *> childSaveList() = 0;
+
+		/*!
+		 * called by top class, child can use to load configs
+		 */
+		virtual bool childLoadList(std::list<RsItem *>& configSaves) = 0;
+
 /***************************************************************************************/
 /***************************************************************************************/
 

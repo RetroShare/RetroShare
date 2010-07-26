@@ -38,6 +38,7 @@ RsSerialType* init_item(RsDistribGrpKey&);
 RsSerialType* init_item(RsDistribSignedMsg&);
 RsSerialType* init_item(RsChannelMsg&);
 RsSerialType* init_item(RsForumMsg&);
+RsSerialType* init_item(RsForumReadStatus&);
 RsSerialType* init_item(RsBlogMsg&);
 
 bool operator==(const RsDistribGrp& , const RsDistribGrp& );
@@ -45,6 +46,7 @@ bool operator==(const RsDistribGrpKey& , const RsDistribGrpKey& );
 bool operator==(const RsDistribSignedMsg& , const RsDistribSignedMsg& );
 bool operator==(const RsChannelMsg& , const RsChannelMsg& );
 bool operator==(const RsForumMsg& , const RsForumMsg& );
+bool operator==(const RsForumReadStatus&, const RsForumReadStatus& );
 bool operator==(const RsBlogMsg& , const RsBlogMsg& );
 
 void init_item(RsTlvSecurityKey&);

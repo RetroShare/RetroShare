@@ -757,6 +757,17 @@ void p3Channels::cleanUpOldFiles(){
 	return;
 }
 
+//TODO: if you want to config saving and loading for channel distrib service implement this method further
+bool p3Channels::childLoadList(std::list<RsItem* >& configSaves)
+{
+	return true;
+}
+
+std::list<RsItem *> p3Channels::childSaveList()
+{
+	return saveList;
+}
+
 /****************************************/
 
 #if 0

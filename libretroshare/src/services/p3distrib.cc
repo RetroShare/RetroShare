@@ -1424,6 +1424,27 @@ std::list<RsItem *> p3GroupDistrib::saveList(bool &cleanup)
 
 	}
 
+	std::list<RsItem *> childSaveL = childSaveList();
+	std::list<RsItem *>::iterator cit = childSaveL.begin();
+	RsSerialType *childSer = createSerialiser();
+	uint32_t pktSize = 0;
+	unsigned char *data = NULL;
+
+	for(; cit != childSaveL.end() ; cit++)
+	{
+		RsDistribConfigData* childConfig = new RsDistribConfigData();
+
+		pktSize = childSer->size(*cit);
+		data = new unsigned char[pktSize];
+		childSer->serialise(*cit, data, &pktSize);
+		childConfig->service_data.setBinData(data, pktSize);
+		delete[] data;
+		saveData.push_back(childConfig);
+		saveCleanupList.push_back(childConfig);
+	}
+
+	delete childSer;
+
 	return saveData;
 }
 
@@ -1445,6 +1466,12 @@ void    p3GroupDistrib::saveDone()
 bool    p3GroupDistrib::loadList(std::list<RsItem *> load)
 {
 	std::list<RsItem *>::iterator lit;
+
+	/* for child config data */
+	std::list<RsItem* > childLoadL;
+	RsSerialType* childSer = createSerialiser();
+	uint32_t pktSize;
+
 	for(lit = load.begin(); lit != load.end(); lit++)
 	{
 		/* decide what type it is */
@@ -1452,6 +1479,7 @@ bool    p3GroupDistrib::loadList(std::list<RsItem *> load)
 		RsDistribGrp *newGrp = NULL;
 		RsDistribGrpKey *newKey = NULL;
 		RsDistribSignedMsg *newMsg = NULL;
+		RsDistribConfigData* newChildConfig = NULL;
 
 		if ((newGrp = dynamic_cast<RsDistribGrp *>(*lit)))
 		{
@@ -1469,12 +1497,23 @@ bool    p3GroupDistrib::loadList(std::list<RsItem *> load)
 			newMsg->PeerId(mOwnId);
 			loadMsg(newMsg, mOwnId, false); /* false so it'll pushed to PendingPublish list */
 		}
+		else if ((newChildConfig = dynamic_cast<RsDistribConfigData *>(*lit)))
+		{
+			RsItem* childConfigItem = childSer->deserialise(newChildConfig->service_data.bin_data,
+					&newChildConfig->service_data.bin_len);
+
+			childLoadL.push_back(childConfigItem);
+
+		}
 	}
 
 	/* no need to republish until something new comes in */
 	RsStackMutex stack(distribMtx); /******* STACK LOCKED MUTEX ***********/
-	mGroupsRepublish = false;
 
+	childLoadList(childLoadL); // send configurations down to child
+
+	mGroupsRepublish = false;
+	delete childSer;
 	return true;
 }
 

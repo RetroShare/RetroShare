@@ -65,7 +65,6 @@ void init_item(RsTlvSecurityKey& sk)
 void init_item(RsTlvKeySignature& ks)
 {
 	randString(SHORT_STR, ks.keyId);
-	randString(LARGE_STR, ks.sslCert);
 
 	std::string signData;
 	randString(LARGE_STR, signData);
@@ -154,7 +153,6 @@ bool operator==(const RsTlvKeySignature& ks1, const RsTlvKeySignature& ks2)
 {
 
 	if(ks1.keyId != ks2.keyId) return false;
-	if(ks1.sslCert != ks2.sslCert) return false;
 	if(!(ks1.signData == ks2.signData)) return false;
 
 	return true;
@@ -350,6 +348,7 @@ RsSerialType* init_item(RsChannelMsg& chMsg)
 	randString(SHORT_STR, chMsg.subject);
 	randString(SHORT_STR, chMsg.threadId);
 	chMsg.timestamp = rand()%31452;
+	init_item(chMsg.thumbnail);
 	init_item(chMsg.attachment);
 
 	return new RsChannelSerialiser();
@@ -365,6 +364,8 @@ bool operator==(const RsChannelMsg& chMsg1,const  RsChannelMsg& chMsg2)
 	if(chMsg1.subject != chMsg2.subject) return false;
 	if(chMsg2.threadId != chMsg2.threadId) return false;
 	if(chMsg1.timestamp != chMsg2.timestamp) return false;
+	if(!(chMsg1.thumbnail.binData == chMsg2.thumbnail.binData)) return false;
+	if(chMsg1.thumbnail.image_type != chMsg2.thumbnail.image_type) return false;
 
 	return true;
 }
@@ -372,23 +373,41 @@ bool operator==(const RsChannelMsg& chMsg1,const  RsChannelMsg& chMsg2)
 RsSerialType* init_item(RsForumMsg& fMsg)
 {
 
+	fMsg.timestamp = rand()%242;
+	randString(SHORT_STR, fMsg.grpId);
+	randString(LARGE_STR, fMsg.msg);
+	randString(SHORT_STR, fMsg.parentId);
+	randString(SHORT_STR, fMsg.srcId);
+	randString(SHORT_STR, fMsg.threadId);
+	randString(SHORT_STR, fMsg.title);
+
 	return new RsForumSerialiser();
 }
 
 
 
-bool operator==(RsForumMsg& fMsg1, RsForumMsg& fMsg2)
+bool operator==(const RsForumMsg& fMsg1, const RsForumMsg& fMsg2)
 {
+	if(fMsg1.grpId != fMsg2.grpId) return false;
+	if(fMsg1.msg != fMsg2.msg) return false;
+	if(fMsg1.parentId != fMsg2.parentId) return false;
+	if(fMsg1.srcId != fMsg2.srcId) return false;
+	if(fMsg1.threadId != fMsg2.threadId) return false;
+	if(fMsg1.timestamp != fMsg2.timestamp) return false;
+	if(fMsg1.title != fMsg2.title) return false;
+
 	return true;
 }
 
 RsSerialType* init_item(RsBlogMsg& bMsg)
 {
+
 	return new RsBlogSerialiser();
 }
 
 bool operator==(RsBlogMsg& bMsg1, RsBlogMsg& bMsg2)
 {
+
 
 	return true;
 }
@@ -469,7 +488,8 @@ int main(){
 	test_RsDistribItem<RsDistribGrpKey>(); REPORT("Serialise/Deserialise RsDistribGrpKey");
 	test_RsDistribItem<RsDistribSignedMsg>(); REPORT("Serialise/Deserialise RsDistribSignedMsg");
 	test_RsDistribItem<RsChannelMsg>(); REPORT("Serialise/Deserialise RsChannelMsg");
-	//test_RsDistribItem<RsForumMsg>(); REPORT("Serialise/Deserialise RsForumMsg");
+	test_RsDistribItem<RsForumMsg>(); REPORT("Serialise/Deserialise RsForumMsg");
+	//test_RsDistribItem<RsForumReadStatus>(); REPORT("Serialise/Deserialise RsForumReadStatus");
 	//test_RsDistribItem<RsBlogMsg>(); REPORT("Serialise/Deserialise RsBlogMsg");
 
 

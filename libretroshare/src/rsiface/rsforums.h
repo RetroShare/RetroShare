@@ -65,7 +65,7 @@ class ForumMsgInfo
 		ForumMsgInfo() 
 		{
 			msgflags = 0 ;
-			ts = childTS = 0 ;
+			ts = childTS = status = 0 ;
 		}
 		std::string forumId;
 		std::string threadId;
@@ -80,6 +80,7 @@ class ForumMsgInfo
 		std::wstring msg;
 		time_t ts;
 		time_t childTS;
+		uint32_t status;
 };
 
 
@@ -132,7 +133,7 @@ virtual bool getForumList(std::list<ForumInfo> &forumList) = 0;
 virtual bool getForumThreadList(std::string fId, std::list<ThreadInfoSummary> &msgs) = 0;
 virtual bool getForumThreadMsgList(std::string fId, std::string pId, std::list<ThreadInfoSummary> &msgs) = 0;
 virtual bool getForumMessage(std::string fId, std::string mId, ForumMsgInfo &msg) = 0;
-
+virtual bool setMessageStatus(const std::string& fId,const std::string& mId,const uint32_t status) = 0;
 virtual	bool ForumMessageSend(ForumMsgInfo &info)                 = 0;
 
 virtual bool forumSubscribe(std::string fId, bool subscribe)	= 0;

@@ -92,6 +92,8 @@ virtual RsSerialType *createSerialiser();
 virtual bool    locked_checkDistribMsg(RsDistribMsg *msg);
 virtual RsDistribGrp *locked_createPublicDistribGrp(GroupInfo &info);
 virtual RsDistribGrp *locked_createPrivateDistribGrp(GroupInfo &info);
+virtual bool childLoadList(std::list<RsItem* >& configSaves);
+virtual std::list<RsItem *> childSaveList();
 
 
 /****************************************/
@@ -102,6 +104,7 @@ bool cpyMsgFileToChFldr(std::string path, std::string fname, std::string chId, b
 
 	RsFiles *mRsFiles;
 	std::string mChannelsDir;
+	std::list<RsItem *> saveList;
 
 };
 

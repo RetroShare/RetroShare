@@ -67,6 +67,7 @@ class RsForumMsg: public RsDistribMsg
 
 #endif
 
+const uint32_t FORUM_MSG_STATUS_READ = 1;
 
 class p3Forums: public p3GroupDistrib, public RsForums 
 {
@@ -90,8 +91,9 @@ virtual bool getForumList(std::list<ForumInfo> &forumList);
 virtual bool getForumThreadList(std::string fId, std::list<ThreadInfoSummary> &msgs);
 virtual bool getForumThreadMsgList(std::string fId, std::string tId, std::list<ThreadInfoSummary> &msgs);
 virtual bool getForumMessage(std::string fId, std::string mId, ForumMsgInfo &msg);
-
+virtual void setReadStatus(const std::string& forumId,const std::string& msgId,const uint32_t status);
 virtual	bool ForumMessageSend(ForumMsgInfo &info);
+virtual bool setMessageStatus(const std::string& fId, const std::string& mId,const uint32_t status);
 
 virtual bool forumSubscribe(std::string fId, bool subscribe);
 
@@ -115,6 +117,8 @@ virtual RsSerialType *createSerialiser();
 virtual bool    locked_checkDistribMsg(RsDistribMsg *msg);
 virtual RsDistribGrp *locked_createPublicDistribGrp(GroupInfo &info);
 virtual RsDistribGrp *locked_createPrivateDistribGrp(GroupInfo &info);
+virtual bool childLoadList(std::list<RsItem *>& );
+virtual std::list<RsItem *> childSaveList();
 
 
 /****************************************/
@@ -128,6 +132,10 @@ std::string createForumMsg(std::string fId, std::string pId,
 
 bool 	mForumsChanged;
 std::string mForumsDir;
+std::list<RsItem *> mSaveList; // store save data
+
+std::list<RsForumReadStatus *> mReadStatus;
+
 
 };
 

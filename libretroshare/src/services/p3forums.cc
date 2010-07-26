@@ -262,8 +262,17 @@ bool p3Forums::ForumMessageSend(ForumMsgInfo &info)
 {
 	bool signIt = (info.msgflags == RS_DISTRIB_AUTHEN_REQ);
 
-	createForumMsg(info.forumId, info.parentId, 
+	std::string mId = createForumMsg(info.forumId, info.parentId,
 		info.title, info.msg, signIt);
+
+	setMessageStatus(info.forumId, mId, FORUM_MSG_STATUS_READ);
+
+	return true;
+}
+
+bool p3Forums::setMessageStatus(const std::string& fId,const std::string& mId,const uint32_t status)
+{
+	setReadStatus(fId, mId, status);
 
 	return true;
 }
@@ -517,4 +526,60 @@ void    p3Forums::loadDummyData()
 	mForumsChanged = true;
 }
 
+std::list<RsItem* > p3Forums::childSaveList()
+{
+	return mSaveList;
+}
 
+void p3Forums::setReadStatus(const std::string& forumId, const std::string& msgId, const uint32_t status)
+{
+	RsStackMutex stack(distribMtx);
+
+	std::list<RsForumReadStatus *>::iterator lit = mReadStatus.begin();
+
+	for(; lit != mReadStatus.end(); lit++)
+	{
+
+		if((*lit)->forumId == forumId)
+		{
+				(*lit)->msgReadStatus[msgId] = status;
+				break;
+		}
+
+	}
+
+	// if forum id does not exist create one
+	if(lit == mReadStatus.end())
+	{
+		RsForumReadStatus* rsi = new RsForumReadStatus();
+		rsi->forumId = forumId;
+		rsi->msgReadStatus[msgId] = status;
+		mReadStatus.push_back(rsi);
+		mSaveList.push_back(rsi);
+	}
+
+	return;
+}
+
+bool p3Forums::childLoadList(std::list<RsItem* >& configSaves)
+{
+	RsForumReadStatus* drs = NULL;
+	std::list<RsItem* >::iterator it;
+
+	for(it = configSaves.begin(); it != configSaves.end(); it++)
+	{
+		if(NULL != (drs = dynamic_cast<RsForumReadStatus* >(*it)))
+		{
+			mReadStatus.push_back(drs);
+			mSaveList.push_back(drs);
+		}
+		else
+		{
+			std::cerr << "p3Forums::childLoadList(): Configs items loaded were incorrect!"
+					  << std::endl;
+			return false;
+		}
+	}
+
+	return true;
+}
