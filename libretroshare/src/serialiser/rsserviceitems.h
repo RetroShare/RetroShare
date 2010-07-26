@@ -173,36 +173,6 @@ virtual	RsItem *    deserialise(void *data, uint32_t *size);
 
 /**************************************************************************/
 
-class RsBlogMsg: public RsItem
-{
-	public:
-	RsBlogMsg() 
-	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_QBLOG, 
-		RS_PKT_SUBTYPE_DEFAULT)
-	{ return; }
-virtual ~RsBlogMsg();
-virtual void clear();
-
-	RsTlvBinaryData cert;   /* Mandatory */
-	RsTlvFileSet  files;  /* Mandatory */
-	RsTlvBinaryData sign;   /* Mandatory */
-};
-
-class RsBlogMsgSerialiser: public RsSerialType
-{
-	public:
-	RsBlogMsgSerialiser()
-        :RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_QBLOG)
-	{ return; }
-
-virtual     ~RsBlogMsgSerialiser();
-	
-virtual	uint32_t    size(RsItem *);
-virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
-virtual	RsItem *    deserialise(void *data, uint32_t *size);
-
-};
-
 /**************************************************************************/
 
 #endif /* RS_SERVICE_ITEMS_H */

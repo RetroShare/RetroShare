@@ -37,10 +37,58 @@
 const uint8_t RS_PKT_SUBTYPE_DISTRIB_GRP      		= 0x01;
 const uint8_t RS_PKT_SUBTYPE_DISTRIB_GRP_KEY   		= 0x02;
 const uint8_t RS_PKT_SUBTYPE_DISTRIB_SIGNED_MSG  	= 0x03;
+const uint8_t RS_PKT_SUBTYPE_DISTRIB_CONFIG_DATA	= 0x04;
 
 /**************************************************************************/
 
+/*!
+ * This should be derived from to store RsDistrib child objects
+ * save data
+ */
+class RsDistribChildConfig: public RsItem
+{
+public:
+	RsDistribChildConfig(uint16_t servtype, uint8_t subtype)
+	: RsItem(RS_PKT_VERSION_SERVICE, servtype, subtype) {return;}
 
+	virtual ~RsDistribChildConfig() { return; }
+
+	virtual void clear();
+	virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+
+	/// use this to id the type of data you want to save
+	uint32_t save_type;
+};
+
+
+/*!
+ * This should be used to save the service data such as settings
+ */
+class RsDistribConfigData: public RsItem
+{
+public:
+	RsDistribConfigData()
+	: RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DISTRIB, RS_PKT_SUBTYPE_DISTRIB_CONFIG_DATA), service_data(TLV_TYPE_BIN_SERIALISE)
+	{return;}
+
+	virtual ~RsDistribConfigData() { return; }
+
+	virtual void clear();
+
+	virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+
+	// this is where a derived distrib service saves its data
+	RsTlvBinaryData service_data;
+
+};
+
+
+/*!
+ * This is used by p3Distrib for storing messages
+ * of derived services, attributes are given for writing
+ * personal signatures (confirms user) and publish signatures (to
+ * confirm consistency source)
+ */
 class RsDistribMsg: public RsItem
 {
         public:
@@ -53,18 +101,32 @@ virtual void clear();
 virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
 	std::string grpId; /* Grp Id */
-	std::string parentId; /* Parent Msg Id */
-	std::string threadId; /* Thread Msg Id */
-        uint32_t    timestamp;
+
+	/// Parent Msg Id, msgs above a thread
+	std::string parentId;
+
+	/// Thread Msg Id: useful identifyingfor responses
+	///to a forum msg and replies in general
+	std::string threadId;
+    uint32_t    timestamp;
 
 	/* Not Serialised */
 
 	std::string msgId;   /* Msg Id */
 	time_t childTS; /* timestamp of most recent child */
+
+	/// used to confirm the message is from a group author, or someone with valid publish key
 	RsTlvKeySignature publishSignature;
+
+	/// used to confirm message is from a particular peer
 	RsTlvKeySignature personalSignature;
 };
 
+
+/*!
+ * This is used as a storage container for messages from a service
+ * via the binary data container (packet)
+ */
 class RsDistribSignedMsg: public RsItem
 {
 	public:
@@ -78,14 +140,17 @@ virtual ~RsDistribSignedMsg() { return; }
 virtual void clear();
 virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
-	std::string 	  grpId;
-	std::string 	  msgId;    /* from publishSignature */
-        uint32_t    	  flags;
+		std::string 	  grpId;
+
+		/// should be taken publishSignature
+		std::string 	  msgId;
+		uint32_t    	  flags;
         uint32_t    	  timestamp;
 
-	RsTlvBinaryData   packet;
-	RsTlvKeySignature publishSignature;
-	RsTlvKeySignature personalSignature;
+        /// in order to tranfer messages from service level to distrib level
+		RsTlvBinaryData   packet;
+		RsTlvKeySignature publishSignature;
+		RsTlvKeySignature personalSignature;
 };
 
 
@@ -177,6 +242,12 @@ virtual	RsDistribGrpKey *deserialiseGrpKey(void *data, uint32_t *size);
 virtual	uint32_t    sizeSignedMsg(RsDistribSignedMsg *);
 virtual	bool        serialiseSignedMsg  (RsDistribSignedMsg *item, void *data, uint32_t *size);
 virtual	RsDistribSignedMsg *deserialiseSignedMsg(void *data, uint32_t *size);
+
+	/* For RS_PKT_SUBTYPE_DISTRIB_SAVE_DATA */
+virtual uint32_t sizeConfigData(RsDistribConfigData *);
+virtual bool serialiseConfigData(RsDistribConfigData *item, void *data, uint32_t *size);
+virtual RsDistribConfigData *deserialiseConfigData(void* data, uint32_t *size);
+
 
 const uint16_t SERVICE_TYPE;
 

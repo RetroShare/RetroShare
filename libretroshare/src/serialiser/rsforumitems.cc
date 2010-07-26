@@ -45,28 +45,70 @@ void 	RsForumMsg::clear()
 
 std::ostream &RsForumMsg::print(std::ostream &out, uint16_t indent)
 {
-        printRsItemBase(out, "RsForumMsg", indent);
+    printRsItemBase(out, "RsForumMsg", indent);
 	uint16_t int_Indent = indent + 2;
 
 	RsDistribMsg::print(out, int_Indent);
 
-        printIndent(out, int_Indent);
-        out << "srcId: " << srcId << std::endl;
+    printIndent(out, int_Indent);
+    out << "srcId: " << srcId << std::endl;
 
-        printIndent(out, int_Indent);
+    printIndent(out, int_Indent);
 
 	std::string cnv_title(title.begin(), title.end());
-        out << "title:  " << cnv_title  << std::endl;
+	out << "title:  " << cnv_title  << std::endl;
 
-        printIndent(out, int_Indent);
+	printIndent(out, int_Indent);
 
 	std::string cnv_msg(msg.begin(), msg.end());
-        out << "msg:  " << cnv_msg  << std::endl;
+	out << "msg:  " << cnv_msg  << std::endl;
 
-        printRsItemEnd(out, "RsForumMsg", indent);
-        return out;
+	printRsItemEnd(out, "RsForumMsg", indent);
+	return out;
 }
 
+void RsForumReadStatus::clear()
+{
+
+	RsDistribChildConfig::clear();
+
+	forumId.clear();
+	msgReadStatus.clear();
+
+	return;
+
+}
+
+std::ostream& RsForumReadStatus::print(std::ostream &out, uint16_t indent = 0)
+{
+
+    printRsItemBase(out, "RsForumMsg", indent);
+    uint16_t int_Indent = indent + 2;
+
+    RsDistribChildConfig::print(out, int_Indent);
+
+    printIndent(out, int_Indent);
+    out << "ForumId: " << forumId << std::endl;
+
+    printIndent(out, int_Indent);
+    out << "ForumId: " << forumId << std::endl;
+
+    std::map<std::string, uint32_t>::iterator mit = msgReadStatus.begin();
+
+    for(; mit != msgReadStatus.end(); mit++)
+    {
+
+        printIndent(out, int_Indent);
+        out << "msgId : " << mit->first << std::endl;
+
+        printIndent(out, int_Indent);
+        out << " status : " << mit->second << std::endl;
+
+    }
+
+    printRsItemEnd(out, "RsForumMsg", indent);
+    return out;
+}
 
 /*************************************************************************/
 /*************************************************************************/
@@ -87,6 +129,7 @@ uint32_t    RsForumSerialiser::sizeMsg(RsForumMsg *item)
 
 	return s;
 }
+
 
 /* serialise the data to the buffer */
 bool     RsForumSerialiser::serialiseMsg(RsForumMsg *item, void *data, uint32_t *pktsize)
@@ -199,19 +242,224 @@ RsForumMsg *RsForumSerialiser::deserialiseMsg(void *data, uint32_t *pktsize)
 }
 
 
+/*************************************************************************/
+/*************************************************************************/
+
+uint32_t    RsForumSerialiser::sizeReadStatus(RsForumReadStatus *item)
+{
+	uint32_t s = 8; /* header */
+	/* RsDistribChildConfig stuff */
+
+	s += GetTlvUInt32Size(); /* save_type */
+
+	/* RsForumReadStatus stuff */
+
+	GetTlvStringSize(item->forumId);
+
+	std::map<std::string, uint32_t>::iterator mit = item->msgReadStatus.begin();
+
+	for(; mit != item->msgReadStatus.end(); mit++)
+	{
+		GetTlvStringSize(mit->first); /* key */
+		s += GetTlvUInt32Size(); /* value */
+	}
+
+	return s;
+}
+
+/* serialise the data to the buffer */
+bool     RsForumSerialiser::serialiseReadStatus(RsForumReadStatus *item, void *data, uint32_t *pktsize)
+{
+	uint32_t tlvsize = sizeReadStatus(item);
+	uint32_t offset = 0;
+
+	if (*pktsize < tlvsize)
+		return false; /* not enough space */
+
+	*pktsize = tlvsize;
+
+	bool ok = true;
+
+	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+
+	std::cerr << "RsForumSerialiser::serialiseReadStatus() Header: " << ok << std::endl;
+	std::cerr << "RsForumSerialiser::serialiseReadStatus() Size: " << tlvsize << std::endl;
+
+	/* skip the header */
+	offset += 8;
+
+	/* RsDistribMsg first */
+
+	ok &= setRawUInt32(data, tlvsize, &offset, item->save_type);
+	std::cerr << "RsForumSerialiser::serialiseReadStatus() save_type: " << ok << std::endl;
+
+
+
+	/* RsForumMsg */
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GROUPID, item->forumId);
+	std::cerr << "RsForumSerialiser::serialiseReadStatus() forumId: " << ok << std::endl;
+
+	std::map<std::string, uint32_t>::iterator mit = item->msgReadStatus.begin();
+
+	for(; mit != item->msgReadStatus.end(); mit++)
+	{
+		ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_MSGID, mit->first); /* key */
+		ok &= setRawUInt32(data, tlvsize, &offset, mit->second); /* value */
+	}
+
+	std::cerr << "RsForumSerialiser::serialiseReadStatus() msgReadStatus: " << ok << std::endl;
+
+	if (offset != tlvsize)
+	{
+		ok = false;
+		std::cerr << "RsForumSerialiser::serialiseReadStatus() Size Error! " << std::endl;
+	}
+
+	return ok;
+}
+
+
+
+RsForumReadStatus *RsForumSerialiser::deserialiseReadStatus(void *data, uint32_t *pktsize)
+{
+	/* get the type and size */
+	uint32_t rstype = getRsItemId(data);
+	uint32_t rssize = getRsItemSize(data);
+
+	uint32_t offset = 0;
+
+
+	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
+		(RS_SERVICE_TYPE_FORUM != getRsItemService(rstype)) ||
+		(RS_PKT_SUBTYPE_FORUM_READ_STATUS != getRsItemSubType(rstype)))
+	{
+		return NULL; /* wrong type */
+	}
+
+	if (*pktsize < rssize)    /* check size */
+		return NULL; /* not enough data */
+
+	/* set the packet length */
+	*pktsize = rssize;
+
+	bool ok = true;
+
+	/* ready to load */
+	RsForumReadStatus *item = new RsForumReadStatus();
+	item->clear();
+
+	/* skip the header */
+	offset += 8;
+
+	/* RsDistribMsg first */
+	ok &= getRawUInt32(data, rssize, &offset, &(item->save_type));
+
+	/* RsForumMsg */
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_GROUPID, item->forumId);
+
+	std::string key;
+	uint32_t value;
+
+	while(offset != rssize)
+	{
+		key.clear();
+		value = 0;
+
+		ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_MSGID, key); /* key */
+
+		/* incomplete key value pair? then fail*/
+		if(offset == rssize)
+		{
+			delete item;
+			return NULL;
+		}
+
+		ok &= getRawUInt32(data, rssize, &offset, &value); /* value */
+
+		item->msgReadStatus.insert(std::pair<std::string, uint32_t>(key, value));
+	}
+
+	if (!ok)
+	{
+		delete item;
+		return NULL;
+	}
+
+	return item;
+}
+
+/************************************************************/
+
 uint32_t    RsForumSerialiser::size(RsItem *item)
 {
-	return sizeMsg((RsForumMsg *) item);
+	RsForumMsg* dfm;
+	RsForumReadStatus* drs;
+
+	if( NULL != ( dfm = dynamic_cast<RsForumMsg*>(item)))
+	{
+		return sizeMsg(dfm);
+	}
+	else if(NULL != (drs = dynamic_cast<RsForumReadStatus* >(item)))
+	{
+		return sizeReadStatus(drs);
+	}
+
+	return false;
 }
+
 
 bool     RsForumSerialiser::serialise(RsItem *item, void *data, uint32_t *pktsize)
 {
-	return serialiseMsg((RsForumMsg *) item, data, pktsize);
+
+#ifdef RSSERIAL_DEBUG
+	std::cerr << "RsForumSerialiser::serialise()" << std::endl;
+#endif
+
+	RsForumMsg* dfm;
+	RsForumReadStatus* drs;
+
+	if( NULL != ( dfm = dynamic_cast<RsForumMsg*>(item)))
+	{
+		return serialiseMsg(dfm, data, pktsize);
+	}
+	else if(NULL != (drs = dynamic_cast<RsForumReadStatus* >(item)))
+	{
+		return serialiseReadStatus(drs, data, pktsize);
+	}
+
+	return NULL;
 }
 
 RsItem *RsForumSerialiser::deserialise(void *data, uint32_t *pktsize)
 {
-	return deserialiseMsg(data, pktsize);
+
+#ifdef RSSERIAL_DEBUG
+	std::cerr << "RsForumSerialiser::deserialise()" << std::endl;
+#endif
+
+	/* get the type and size */
+	uint32_t rstype = getRsItemId(data);
+
+	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
+		(RS_SERVICE_TYPE_FORUM != getRsItemService(rstype)))
+	{
+		return NULL; /* wrong type */
+	}
+
+	switch(getRsItemSubType(rstype))
+	{
+		case RS_PKT_SUBTYPE_FORUM_MSG:
+			return deserialiseMsg(data, pktsize);
+			break;
+		case RS_PKT_SUBTYPE_FORUM_READ_STATUS:
+			return deserialiseReadStatus(data, pktsize);
+			break;
+		default:
+			return NULL;
+			break;
+	}
+
+	return NULL;
 }
 
 

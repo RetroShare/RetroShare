@@ -35,8 +35,9 @@
 
 #include "serialiser/rsdistribitems.h"
 
-const uint8_t RS_PKT_SUBTYPE_FORUM_GRP      = 0x01;
-const uint8_t RS_PKT_SUBTYPE_FORUM_MSG      = 0x02;
+const uint8_t RS_PKT_SUBTYPE_FORUM_GRP         = 0x01;
+const uint8_t RS_PKT_SUBTYPE_FORUM_MSG         = 0x02;
+const uint8_t RS_PKT_SUBTYPE_FORUM_READ_STATUS = 0x03;
 
 /**************************************************************************/
 
@@ -59,6 +60,27 @@ virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
         std::wstring title;
         std::wstring msg;
+
+};
+
+/*!
+ * This is used to keep track of whether a message has been read
+ * by client
+ */
+class RsForumReadStatus : public RsDistribChildConfig
+{
+public:
+	RsForumReadStatus()
+	: RsDistribChildConfig(RS_SERVICE_TYPE_FORUM, RS_PKT_SUBTYPE_FORUM_READ_STATUS)
+	{ return; }
+
+	virtual void clear();
+	virtual std::ostream& print(std::ostream &out, uint16_t indent);
+
+	std::string forumId;
+
+	/// a map which contains the read for messages within a forum
+	std::map<std::string, uint32_t> msgReadStatus;
 
 };
 
@@ -86,6 +108,10 @@ virtual	RsItem *    deserialise(void *data, uint32_t *size);
 virtual	uint32_t    sizeMsg(RsForumMsg *);
 virtual	bool        serialiseMsg(RsForumMsg *item, void *data, uint32_t *size);
 virtual	RsForumMsg *deserialiseMsg(void *data, uint32_t *size);
+
+virtual uint32_t sizeReadStatus(RsForumReadStatus* );
+virtual bool serialiseReadStatus(RsForumReadStatus* item, void* data, uint32_t *size);
+virtual RsForumReadStatus *deserialiseReadStatus(void* data, uint32_t *size);
 
 };
 

@@ -49,32 +49,64 @@ void 	RsDistribMsg::clear()
 
 std::ostream &RsDistribMsg::print(std::ostream &out, uint16_t indent)
 {
-        printRsItemBase(out, "RsDistribMsg", indent);
+	printRsItemBase(out, "RsDistribMsg", indent);
 	uint16_t int_Indent = indent + 2;
-        printIndent(out, int_Indent);
-        out << "grpId: " << grpId << std::endl;
-        printIndent(out, int_Indent);
-        out << "parentId: " << parentId << std::endl;
-        printIndent(out, int_Indent);
-        out << "threadId: " << threadId << std::endl;
+	printIndent(out, int_Indent);
+	out << "grpId: " << grpId << std::endl;
+	printIndent(out, int_Indent);
+	out << "parentId: " << parentId << std::endl;
+	printIndent(out, int_Indent);
+	out << "threadId: " << threadId << std::endl;
 
-        printIndent(out, int_Indent);
-        out << "timestamp:  " << timestamp  << std::endl;
+	printIndent(out, int_Indent);
+	out << "timestamp:  " << timestamp  << std::endl;
 
-        printIndent(out, int_Indent);
-        out << "<<<<<<<< Not Serialised >>>>>>>>" << std::endl;
+	printIndent(out, int_Indent);
+	out << "<<<<<<<< Not Serialised >>>>>>>>" << std::endl;
 
-        printIndent(out, int_Indent);
-        out << "msgId: " << msgId << std::endl;
+	printIndent(out, int_Indent);
+	out << "msgId: " << msgId << std::endl;
 	publishSignature.print(out, int_Indent);
 	personalSignature.print(out, int_Indent);
 
-        out << "<<<<<<<< Not Serialised >>>>>>>>" << std::endl;
+	out << "<<<<<<<< Not Serialised >>>>>>>>" << std::endl;
 
-        printRsItemEnd(out, "RsDistribMsg", indent);
-        return out;
+	printRsItemEnd(out, "RsDistribMsg", indent);
+	return out;
 }
 
+void RsDistribChildConfig::clear()
+{
+	save_type = 0;
+}
+
+std::ostream& RsDistribChildConfig::print(std::ostream &out, uint16_t indent)
+{
+	printRsItemBase(out, "RsDistribChildConfig", indent);
+	uint16_t int_Indent = indent + 2;
+
+	printIndent(out, int_Indent);
+	out << "save_type: " << save_type << std::endl;
+
+	printRsItemEnd(out, "RsDistribChildConfig", indent);
+	return out;
+}
+
+void RsDistribConfigData::clear()
+{
+	service_data.TlvClear();
+}
+
+std::ostream& RsDistribConfigData::print(std::ostream &out, uint16_t indent)
+{
+	printRsItemBase(out, "RsDistribConfigData", indent);
+	uint16_t int_Indent = indent + 2;
+
+	service_data.print(out, int_Indent);
+
+	printRsItemEnd(out, "RsDistribChildConfig", indent);
+	return out;
+}
 
 void 	RsDistribSignedMsg::clear()
 {
@@ -697,6 +729,136 @@ RsDistribSignedMsg *RsDistribSerialiser::deserialiseSignedMsg(void *data, uint32
 
 
 
+/*********************** save data *******************************/
+
+
+uint32_t    RsDistribSerialiser::sizeConfigData(RsDistribConfigData *item)
+{
+	uint32_t s = 8; /* header */
+
+	/* RsDistribSignedMsg stuff */
+	s += item->service_data.TlvSize();
+
+	return s;
+}
+
+/* serialise the data to the buffer */
+bool     RsDistribSerialiser::serialiseConfigData(RsDistribConfigData *item, void *data, uint32_t *pktsize)
+{
+#ifdef RSSERIAL_DEBUG
+	std::cerr << "RsDistribSerialiser::serialiseConfigData()" << std::endl;
+#endif
+	uint32_t tlvsize = sizeConfigData(item);
+	uint32_t offset = 0;
+
+	if (*pktsize < tlvsize)
+	{
+#ifdef RSSERIAL_DEBUG
+		std::cerr << "RsDistribSerialiser::serialiseConfigData() FAIL no space" << std::endl;
+#endif
+		return false; /* not enough space */
+	}
+
+	*pktsize = tlvsize;
+
+	bool ok = true;
+
+	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+
+	/* skip the header */
+	offset += 8;
+
+	/* RsDistribSignedMsg */
+	ok &= item->service_data.SetTlv(data, tlvsize, &offset);
+
+	if (offset != tlvsize)
+	{
+#ifdef RSSERIAL_DEBUG
+		std::cerr << "RsDistribSerialiser::serialiseConfigData() FAIL Size Error! " << std::endl;
+#endif
+		ok = false;
+	}
+
+#ifdef RSSERIAL_DEBUG
+	if (!ok)
+	{
+		std::cerr << "RsDistribSerialiser::serialiseConfigData() NOK" << std::endl;
+	}
+#endif
+
+	return ok;
+}
+
+
+RsDistribConfigData *RsDistribSerialiser::deserialiseConfigData(void *data, uint32_t *pktsize)
+{
+#ifdef RSSERIAL_DEBUG
+	std::cerr << "RsDistribSerialiser::deserialiseConfigData()" << std::endl;
+#endif
+	/* get the type and size */
+	uint32_t rstype = getRsItemId(data);
+	uint32_t rssize = getRsItemSize(data);
+
+	uint32_t offset = 0;
+
+
+	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
+		(SERVICE_TYPE != getRsItemService(rstype)) ||
+		(RS_PKT_SUBTYPE_DISTRIB_CONFIG_DATA != getRsItemSubType(rstype)))
+	{
+#ifdef RSSERIAL_DEBUG
+		std::cerr << "RsDistribSerialiser::deserialiseSignedMsg() Wrong Type" << std::endl;
+#endif
+		return NULL; /* wrong type */
+	}
+
+	if (*pktsize < rssize)    /* check size */
+	{
+#ifdef RSSERIAL_DEBUG
+		std::cerr << "RsDistribSerialiser::deserialiseSignedMsg() Wrong Size" << std::endl;
+#endif
+		return NULL; /* not enough data */
+	}
+
+	/* set the packet length */
+	*pktsize = rssize;
+
+	bool ok = true;
+
+	/* ready to load */
+	RsDistribConfigData *item = new RsDistribConfigData();
+	item->clear();
+
+	/* skip the header */
+	offset += 8;
+
+	/* RsDistribGrp */
+	ok &= item->service_data.GetTlv(data, rssize, &offset);
+
+	if (offset != rssize)
+	{
+#ifdef RSSERIAL_DEBUG
+		std::cerr << "RsDistribSerialiser::deserialiseSignedMsg() size mismatch" << std::endl;
+#endif
+		/* error */
+		delete item;
+		return NULL;
+	}
+
+	if (!ok)
+	{
+#ifdef RSSERIAL_DEBUG
+		std::cerr << "RsDistribSerialiser::deserialiseSignedMsg() NOK" << std::endl;
+#endif
+		delete item;
+		return NULL;
+	}
+
+	return item;
+}
+
+
+
 
 
 uint32_t    RsDistribSerialiser::size(RsItem *i)
@@ -704,6 +866,7 @@ uint32_t    RsDistribSerialiser::size(RsItem *i)
 	RsDistribGrp *dg;
 	RsDistribGrpKey *dgk;
 	RsDistribSignedMsg *dsm;
+	RsDistribConfigData *dsd;
 
 	/* in order of frequency */
 	if (NULL != (dsm = dynamic_cast<RsDistribSignedMsg *>(i)))
@@ -718,6 +881,10 @@ uint32_t    RsDistribSerialiser::size(RsItem *i)
 	{
 		return sizeGrpKey(dgk);
 	}
+	else if(NULL != (dsd = dynamic_cast<RsDistribConfigData *>(i)))
+	{
+		return sizeConfigData(dsd);
+	}
 
 	return 0;
 }
@@ -730,6 +897,7 @@ bool     RsDistribSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsize
 	RsDistribGrp *dg;
 	RsDistribGrpKey *dgk;
 	RsDistribSignedMsg *dsm;
+	RsDistribConfigData *dsd;
 
 	if (NULL != (dsm = dynamic_cast<RsDistribSignedMsg *>(i)))
 	{
@@ -742,6 +910,10 @@ bool     RsDistribSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsize
 	else if (NULL != (dgk = dynamic_cast<RsDistribGrpKey *>(i)))
 	{
 		return serialiseGrpKey(dgk, data, pktsize);
+	}
+	else if(NULL != (dsd = dynamic_cast<RsDistribConfigData *>(i)))
+	{
+		return serialiseConfigData(dsd, data, pktsize);
 	}
 	return false;
 }
@@ -770,6 +942,9 @@ RsItem *RsDistribSerialiser::deserialise(void *data, uint32_t *pktsize)
 			break;
 		case RS_PKT_SUBTYPE_DISTRIB_SIGNED_MSG:
 			return deserialiseSignedMsg(data, pktsize);
+			break;
+		case RS_PKT_SUBTYPE_DISTRIB_CONFIG_DATA:
+			return deserialiseConfigData(data, pktsize);
 			break;
 		default:
 			return NULL;
