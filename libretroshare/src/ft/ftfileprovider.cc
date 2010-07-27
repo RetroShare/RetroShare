@@ -10,18 +10,16 @@
 #endif // WINDOWS_SYS
 
 
-static const time_t UPLOAD_CHUNK_MAPS_TIME = 30 ;	// time to ask for a new chunkmap from uploaders in seconds.
+static const time_t UPLOAD_CHUNK_MAPS_TIME = 20 ;	// time to ask for a new chunkmap from uploaders in seconds.
 
-ftFileProvider::ftFileProvider(std::string path, uint64_t size, std::string
-hash) : mSize(size), hash(hash), file_name(path), fd(NULL),req_loc(0),transfer_rate(0),total_size(0)
+ftFileProvider::ftFileProvider(std::string path, uint64_t size, std::string hash) 
+	: mSize(size), hash(hash), file_name(path), fd(NULL)
 {
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
-	clients_chunk_maps.clear(); 
+
 #ifdef DEBUG_FT_FILE_PROVIDER
 	std::cout << "Creating file provider for " << hash << std::endl ;
 #endif
-	lastTS = time(NULL) ;
-	lastTS_t = lastTS ;
 }
 
 ftFileProvider::~ftFileProvider(){
@@ -34,15 +32,9 @@ ftFileProvider::~ftFileProvider(){
 	}
 }
 
-void ftFileProvider::setPeerId(const std::string& id)
-{
-	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
-	lastRequestor = id ;
-}
-
 bool	ftFileProvider::fileOk()
 {
-        RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
+	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 	return (fd != NULL);
 }
 
@@ -65,23 +57,52 @@ bool    ftFileProvider::FileDetails(FileInfo &info)
 	info.size = mSize;
 	info.path = file_name;
 	info.fname = RsDirUtil::getTopDir(file_name);
-	info.transfered = req_loc ;
-	info.lastTS = lastTS;
+
+	info.transfered = 0 ; // unused
+	info.lastTS = 0;
 	info.status = FT_STATE_DOWNLOADING ;
 
 	info.peers.clear() ;
+	float total_transfer_rate = 0.0f ;
 
-	TransferInfo inf ;
-	inf.peerId = lastRequestor ;
-	inf.status = FT_STATE_DOWNLOADING ;
+	for(std::map<std::string,PeerUploadInfo>::const_iterator it(uploading_peers.begin());it!=uploading_peers.end();++it)
+	{
+		TransferInfo inf ;
+		inf.peerId = it->first ;
+		inf.status = FT_STATE_DOWNLOADING ;
+		inf.name = info.fname ;
+		inf.transfered = it->second.req_loc ;
 
-	inf.tfRate = transfer_rate/1024.0 ;
-	info.tfRate = transfer_rate/1024.0 ;
-	info.peers.push_back(inf) ;
+		inf.tfRate = it->second.transfer_rate/1024.0 ;
+		total_transfer_rate += it->second.transfer_rate ;
+		info.lastTS = std::max(info.lastTS,it->second.lastTS);
+
+		info.peers.push_back(inf) ;
+	}
+	info.tfRate = total_transfer_rate/1024.0 ;
 
 	/* Use req_loc / req_size to estimate data rate */
 
 	return true;
+}
+
+bool ftFileProvider::purgeOldPeers(time_t now,uint32_t max_duration)
+{
+	bool ret = true ;
+	for(std::map<std::string,PeerUploadInfo>::iterator it(uploading_peers.begin());it!=uploading_peers.end();)
+		if( (*it).second.lastTS+max_duration < (uint32_t)now)
+		{
+			std::map<std::string,PeerUploadInfo>::iterator tmp = it ;
+			++tmp ;
+			uploading_peers.erase(it) ;
+			it=tmp ;
+		}
+		else
+		{
+			ret = false ;
+			++it ;
+		}
+	return ret ;
 }
 
 void ftFileProvider::getAvailabilityMap(CompressedChunkMap& cmap) 
@@ -92,7 +113,7 @@ void ftFileProvider::getAvailabilityMap(CompressedChunkMap& cmap)
 }
 
 
-bool ftFileProvider::getFileData(uint64_t offset, uint32_t &chunk_size, void *data)
+bool ftFileProvider::getFileData(const std::string& peer_id,uint64_t offset, uint32_t &chunk_size, void *data)
 {
 	/* dodgey checking outside of mutex...
 	 * much check again inside FileAttrs().
@@ -158,67 +179,69 @@ bool ftFileProvider::getFileData(uint64_t offset, uint32_t &chunk_size, void *da
 		 * (d) timestamp
 		 */
 
-		time_t now_t = time(NULL) ;
-
-		long int diff = (long int)now_t - (long int)lastTS_t ;	// in bytes/s. Average over multiple samples
-
-#ifdef DEBUG_FT_FILE_PROVIDER
-		std::cout << "diff = " << diff << std::endl ;
-#endif
-
-		if(diff > 3)
-		{
-			transfer_rate = total_size / (float)diff ;
-#ifdef DEBUG_FT_FILE_PROVIDER
-			std::cout << "updated TR = " << transfer_rate << ", total_size=" << total_size << std::endl ;
-#endif
-			lastTS_t = now_t ;
-			total_size = 0 ;
-		}
-
-		req_loc = offset;
-		lastTS = time(NULL) ;
-		req_size = data_size;
-		total_size += req_size ;
+		// This creates the peer info, and updates it.
+		//
+		time_t now = time(NULL) ;
+		uploading_peers[peer_id].updateStatus(offset,data_size,now) ;
 	}
-	else {
+	else 
+	{
 		std::cerr << "No data to read" << std::endl;
 		return 0;
 	}
 	return 1;
 }
 
+void ftFileProvider::PeerUploadInfo::updateStatus(uint64_t offset,uint32_t data_size,time_t now)
+{
+	lastTS = now ;
+	long int diff = (long int)now - (long int)lastTS_t ;	// in bytes/s. Average over multiple samples
+
+#ifdef DEBUG_FT_FILE_PROVIDER
+	std::cout << "diff = " << diff << std::endl ;
+#endif
+
+	if(diff > 3)
+	{
+		transfer_rate = total_size / (float)diff ;
+#ifdef DEBUG_FT_FILE_PROVIDER
+		std::cout << "updated TR = " << transfer_rate << ", total_size=" << total_size << std::endl ;
+#endif
+		lastTS_t = now ;
+		total_size = 0 ;
+	}
+
+	req_loc = offset;
+	req_size = data_size;
+	total_size += req_size ;
+}
+
 void ftFileProvider::setClientMap(const std::string& peer_id,const CompressedChunkMap& cmap)
 {
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 
-	std::pair<CompressedChunkMap,time_t>& map_info(clients_chunk_maps[peer_id]) ;
-
-	map_info.first = cmap ;
-	map_info.second = time(NULL) ;
+	// Create by default.
+	uploading_peers[peer_id].client_chunk_map = cmap ;
+	uploading_peers[peer_id].client_chunk_map_stamp = time(NULL) ;
 }
 
 void ftFileProvider::getClientMap(const std::string& peer_id,CompressedChunkMap& cmap,bool& map_is_too_old)
 {
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 
-	std::map<std::string,std::pair<CompressedChunkMap,time_t> >::iterator it(clients_chunk_maps.find(peer_id)) ;
-	
-	if(it == clients_chunk_maps.end())
-	{
-		clients_chunk_maps[peer_id] = std::pair<CompressedChunkMap,time_t>(CompressedChunkMap(),0) ;
-		it = clients_chunk_maps.find(peer_id) ;
-	}
-	
-	if(time(NULL) - it->second.second > UPLOAD_CHUNK_MAPS_TIME)
+	PeerUploadInfo& pui(uploading_peers[peer_id]) ;
+
+	time_t now = time(NULL) ;
+
+	if(now - pui.client_chunk_map_stamp > UPLOAD_CHUNK_MAPS_TIME)
 	{
 		map_is_too_old = true ;
-		it->second.second = time(NULL) ;	// to avoid re-asking before the TTL
+		pui.client_chunk_map_stamp = now ;	// to avoid re-asking before the TTL
 	}
 	else
 		map_is_too_old = false ;
 
-	cmap = it->second.first ;
+	cmap = pui.client_chunk_map;
 }
 
 int ftFileProvider::initializeFileAttrs()
@@ -272,23 +295,6 @@ int ftFileProvider::initializeFileAttrs()
 			return 0;
 		}
 	}
-
-	/*
-	 * if it opened, find it's length 
-	 * move to the end 
-	 */
-
-//	if (0 != fseeko64(fd, 0L, SEEK_END))
-//	{
-//		std::cerr << "ftFileProvider::initializeFileAttrs() Seek Failed" << std::endl;
-//		return 0;
-//	}
-//
-//	uint64_t recvdsize = ftello64(fd);
-//
-//#ifdef DEBUG_FT_FILE_PROVIDER
-//	std::cerr << "ftFileProvider::initializeFileAttrs() File Expected Size: " << mSize << " RecvdSize: " << recvdsize << std::endl;
-//#endif
 
 	return 1;
 }

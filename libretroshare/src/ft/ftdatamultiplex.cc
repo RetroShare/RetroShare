@@ -684,10 +684,8 @@ bool	ftDataMultiplex::locked_handleServerRequest(ftFileProvider *provider,
 	std::cerr << std::endl;
 #endif
 
-	if (provider->getFileData(offset, chunksize, data))
+	if (provider->getFileData(peerId,offset, chunksize, data))
 	{
-		// setup info
-		provider->setPeerId(peerId) ;
 		/* send data out */
 		sendData(peerId, hash, size, offset, chunksize, data);
 		return true;
@@ -738,26 +736,26 @@ void ftDataMultiplex::deleteUnusedServers()
 
 	//scan the uploads list in ftdatamultiplex and delete the items which time out
 	time_t now = time(NULL);
-	
+
 	for(std::map<std::string, ftFileProvider *>::iterator sit(mServers.begin());sit != mServers.end();)
-			if ((now - sit->second->lastTS) > 10)
-			{
+		if(sit->second->purgeOldPeers(now,10))
+		{
 #ifdef SERVER_DEBUG
-				std::cout << "info.lastTS = " << info.lastTS << ", now=" << now << std::endl ;
+			std::cout << "info.lastTS = " << info.lastTS << ", now=" << now << std::endl ;
 #endif
-				// We don't delete servers that are clients at the same time !
-				if(dynamic_cast<ftFileCreator*>(sit->second) == NULL)
-					delete sit->second;
+			// We don't delete servers that are clients at the same time !
+			if(dynamic_cast<ftFileCreator*>(sit->second) == NULL)
+				delete sit->second;
 
-				std::map<std::string, ftFileProvider *>::iterator tmp(sit);
-				++tmp ;
+			std::map<std::string, ftFileProvider *>::iterator tmp(sit);
+			++tmp ;
 
-				mServers.erase(sit);
+			mServers.erase(sit);
 
-				sit = tmp ;
-			}
-			else
-				++sit ;
+			sit = tmp ;
+		}
+		else
+			++sit ;
 }
 
 bool	ftDataMultiplex::handleSearchRequest(const std::string& peerId, const std::string& hash)

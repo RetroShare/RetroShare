@@ -57,11 +57,12 @@ const uint32_t RS_CONFIG_DIRECTORY   = 0x0002 ;
 class TransferInfo
 {
 	public:
-	/**** Need Some of these Fields ****/
-	std::string peerId;
-	std::string name; /* if has alternative name? */
-	double tfRate; /* kbytes */
-	int  status; /* FT_STATE_... */
+		/**** Need Some of these Fields ****/
+		std::string peerId;
+		std::string name; /* if has alternative name? */
+		double tfRate; /* kbytes */
+		int  status; /* FT_STATE_... */
+		uint64_t transfered ; // used when no chunkmap data is available
 };
 
 enum QueueMove { 	QUEUE_TOP 	 = 0x00, 

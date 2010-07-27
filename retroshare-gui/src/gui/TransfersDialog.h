@@ -44,8 +44,6 @@ Q_OBJECT
 public:
     /** Default Constructor */
     TransfersDialog(QWidget *parent = 0);
-    /** Default Destructor */
-    ~TransfersDialog();
 
 // replaced by shortcut
 //    virtual void keyPressEvent(QKeyEvent *) ;
@@ -111,6 +109,7 @@ signals:
 
 private:
     QString getPeerName(const std::string& peer_id) const ;
+	 static QIcon getIconFromExtension(const QString&) ;
 
     QStandardItemModel *DLListModel;
     QStandardItemModel *ULListModel;
@@ -175,7 +174,7 @@ public slots:
     int addPeerToItem(int row, const QString& name, const QString& coreID, double dlspeed, uint32_t status, const FileProgressInfo& peerInfo);
     void delItem(int row);
 
-    int addUploadItem(const QString& symbol, const QString& name, const QString& coreID, qlonglong size, const FileProgressInfo& pinfo, double dlspeed, const QString& sources, const QString& status, qlonglong completed, qlonglong remaining);
+    int addUploadItem(const QString& symbol, const QString& name, const QString& coreID, qlonglong size, const FileProgressInfo& pinfo, double dlspeed, const QString& sources,const QString& source_id, const QString& status, qlonglong completed, qlonglong remaining);
     void delUploadItem(int row);
 
     void showFileDetails() ;

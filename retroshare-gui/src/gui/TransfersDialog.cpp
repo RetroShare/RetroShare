@@ -143,6 +143,8 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     ULListModel->setHeaderData(UTRANSFERRED, Qt::Horizontal, tr("Transferred", ""));
     ULListModel->setHeaderData(UHASH, Qt::Horizontal, tr("Hash", ""));
     ui.uploadsList->setModel(ULListModel);
+    ULListModel->insertColumn(UUSERID);
+    ui.uploadsList->hideColumn(UUSERID);
     ULDelegate = new ULListDelegate();
     ui.uploadsList->setItemDelegate(ULDelegate);
 
@@ -416,12 +418,6 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
         contextMnu.exec(QCursor::pos());
 }
 
-TransfersDialog::~TransfersDialog()
-{
-	;
-}
-
-
 int TransfersDialog::addItem(const QString&, const QString& name, const QString& coreID, qlonglong fileSize, const FileProgressInfo& pinfo, double dlspeed,
 		const QString& sources,  const QString& status, const QString& priority, qlonglong completed, qlonglong remaining, qlonglong downloadtime)
 {
@@ -447,37 +443,40 @@ int TransfersDialog::addItem(const QString&, const QString& name, const QString&
     DLListModel->setData(DLListModel->index(row, ID), QVariant((QString)coreID));
 
     QString ext = QFileInfo(name).suffix();
-    if (ext == "jpg" || ext == "jpeg" || ext == "tif" || ext == "tiff" || ext == "JPG"|| ext == "png" || ext == "gif"
-    || ext == "bmp" || ext == "ico" || ext == "svg") {
-        DLListModel->setData(DLListModel->index(row,NAME), QIcon(QString::fromUtf8(":/images/FileTypePicture.png")), Qt::DecorationRole);
-    } else if (ext == "avi" ||ext == "AVI" || ext == "mpg" || ext == "mpeg" || ext == "wmv" || ext == "divx" || ext == "ts"
-    || ext == "mkv" || ext == "mp4" || ext == "flv" || ext == "mov" || ext == "asf" || ext == "xvid"
-    || ext == "vob" || ext == "qt" || ext == "rm" || ext == "3gp" || ext == "mpeg" || ext == "ogm") {
-        DLListModel->setData(DLListModel->index(row,NAME), QIcon(QString::fromUtf8(":/images/FileTypeVideo.png")), Qt::DecorationRole);
-    } else if (ext == "ogg" || ext == "mp3" || ext == "MP3"  || ext == "mp1" || ext == "mp2" || ext == "wav" || ext == "wma") {
-        DLListModel->setData(DLListModel->index(row,NAME), QIcon(QString::fromUtf8(":/images/FileTypeAudio.png")), Qt::DecorationRole);
-    } else if (ext == "tar" || ext == "bz2" || ext == "zip" || ext == "gz" || ext == "7z" || ext == "msi"
-    || ext == "rar" || ext == "rpm" || ext == "ace" || ext == "jar" || ext == "tgz" || ext == "lha"
-    || ext == "cab" || ext == "cbz"|| ext == "cbr" || ext == "alz" || ext == "sit" || ext == "arj" || ext == "deb") {
-        DLListModel->setData(DLListModel->index(row,NAME), QIcon(QString::fromUtf8(":/images/FileTypeArchive.png")), Qt::DecorationRole);
-    }else if (ext == "app" || ext == "bat" || ext == "cgi" || ext == "com"
-    || ext == "exe" || ext == "js" || ext == "pif"
-    || ext == "py" || ext == "pl" || ext == "sh" || ext == "vb" || ext == "ws") {
-        DLListModel->setData(DLListModel->index(row,NAME), QIcon(QString::fromUtf8(":/images/FileTypeProgram.png")), Qt::DecorationRole);
-    } else if (ext == "iso" || ext == "nrg" || ext == "mdf" || ext == "img" || ext == "dmg" || ext == "bin" ) {
-        DLListModel->setData(DLListModel->index(row,NAME), QIcon(QString::fromUtf8(":/images/FileTypeCDImage.png")), Qt::DecorationRole);
-    } else if (ext == "txt" || ext == "cpp" || ext == "c" || ext == "h") {
-        DLListModel->setData(DLListModel->index(row,NAME), QIcon(QString::fromUtf8(":/images/FileTypeDocument.png")), Qt::DecorationRole);
-    } else if (ext == "doc" || ext == "rtf" || ext == "sxw" || ext == "xls" || ext == "pps" || ext == "xml"
-    || ext == "sxc" || ext == "odt" || ext == "ods" || ext == "dot" || ext == "ppt" || ext == "css"  ) {
-        DLListModel->setData(DLListModel->index(row,NAME), QIcon(QString::fromUtf8(":/images/FileTypeDocument.png")), Qt::DecorationRole);
-    } else if (ext == "html" || ext == "htm" || ext == "php") {
-        DLListModel->setData(DLListModel->index(row,NAME), QIcon(QString::fromUtf8(":/images/FileTypeDocument.png")), Qt::DecorationRole);
-    } else {
-        DLListModel->setData(DLListModel->index(row,NAME), QIcon(QString::fromUtf8(":/images/FileTypeAny.png")), Qt::DecorationRole);
-    }
+	 DLListModel->setData(DLListModel->index(row,NAME), getIconFromExtension(ext), Qt::DecorationRole);
 
-    return row;
+	 return row ;
+}
+
+QIcon TransfersDialog::getIconFromExtension(const QString& ext)
+{
+	if (ext == "jpg" || ext == "jpeg" || ext == "tif" || ext == "tiff" || ext == "JPG"|| ext == "png" || ext == "gif" || ext == "bmp" || ext == "ico" || ext == "svg") 
+		return QIcon(QString::fromUtf8(":/images/FileTypePicture.png")) ;
+	else if (ext == "avi" ||ext == "AVI" || ext == "mpg" || ext == "mpeg" || ext == "wmv" || ext == "divx" || ext == "ts"
+			|| ext == "mkv" || ext == "mp4" || ext == "flv" || ext == "mov" || ext == "asf" || ext == "xvid"
+			|| ext == "vob" || ext == "qt" || ext == "rm" || ext == "3gp" || ext == "mpeg" || ext == "ogm") 
+		return QIcon(QString::fromUtf8(":/images/FileTypeVideo.png")) ;
+	else if (ext == "ogg" || ext == "mp3" || ext == "MP3"  || ext == "mp1" || ext == "mp2" || ext == "wav" || ext == "wma") 
+		return QIcon(QString::fromUtf8(":/images/FileTypeAudio.png")) ;
+	else if (ext == "tar" || ext == "bz2" || ext == "zip" || ext == "gz" || ext == "7z" || ext == "msi"
+			|| ext == "rar" || ext == "rpm" || ext == "ace" || ext == "jar" || ext == "tgz" || ext == "lha"
+			|| ext == "cab" || ext == "cbz"|| ext == "cbr" || ext == "alz" || ext == "sit" || ext == "arj" || ext == "deb") 
+		return QIcon(QString::fromUtf8(":/images/FileTypeArchive.png")) ;
+	else if (ext == "app" || ext == "bat" || ext == "cgi" || ext == "com"
+			|| ext == "exe" || ext == "js" || ext == "pif"
+			|| ext == "py" || ext == "pl" || ext == "sh" || ext == "vb" || ext == "ws") 
+		return QIcon(QString::fromUtf8(":/images/FileTypeProgram.png")) ;
+	else if (ext == "iso" || ext == "nrg" || ext == "mdf" || ext == "img" || ext == "dmg" || ext == "bin" ) 
+		return QIcon(QString::fromUtf8(":/images/FileTypeCDImage.png")) ;
+	else if (ext == "txt" || ext == "cpp" || ext == "c" || ext == "h") 
+		return QIcon(QString::fromUtf8(":/images/FileTypeDocument.png")) ;
+	else if (ext == "doc" || ext == "rtf" || ext == "sxw" || ext == "xls" || ext == "pps" || ext == "xml"
+			|| ext == "sxc" || ext == "odt" || ext == "ods" || ext == "dot" || ext == "ppt" || ext == "css"  ) 
+		return QIcon(QString::fromUtf8(":/images/FileTypeDocument.png")) ;
+	else if (ext == "html" || ext == "htm" || ext == "php") 
+		return QIcon(QString::fromUtf8(":/images/FileTypeDocument.png")) ;
+	else 
+		return QIcon(QString::fromUtf8(":/images/FileTypeAny.png")) ;
 }
 
 int TransfersDialog::addPeerToItem(int row, const QString& name, const QString& coreID, double dlspeed, uint32_t status, const FileProgressInfo& peerInfo)
@@ -591,85 +590,38 @@ int TransfersDialog::addPeerToItem(int row, const QString& name, const QString& 
 }
 
 
-int TransfersDialog::addUploadItem(const QString&, const QString& name, const QString& coreID, qlonglong fileSize, const FileProgressInfo& pinfo, double dlspeed, const QString& source,  const QString& status, qlonglong completed, qlonglong)
+int TransfersDialog::addUploadItem(	const QString&, const QString& name, const QString& coreID, 
+												qlonglong fileSize, const FileProgressInfo& pinfo, double dlspeed, 
+												const QString& source, const QString& peer_id, const QString& status, qlonglong completed, qlonglong)
 {
-    int row;
-    QList<QStandardItem *> list = ULListModel->findItems(coreID, Qt::MatchExactly, UHASH);
-    if (list.size() > 0) {
-        row = list.front()->row();
-    } else {
-        row = ULListModel->rowCount();
-        ULListModel->insertRow(row);
-    }
+	// Find items does not work reliably, because it (apparently) needs Qt to flush pending events to work, so we can't call it
+	// on a table that was just filled in.
+	//
+	int row ;
+	for(row=0;row<ULListModel->rowCount();++row)
+		if(ULListModel->item(row,UUSERID)->data(Qt::EditRole).toString() == peer_id && ULListModel->item(row,UHASH)->data(Qt::EditRole).toString() == coreID)
+			break ;
 
-    ULListModel->setData(ULListModel->index(row, UNAME), QVariant((QString)" "+name), Qt::DisplayRole);
-    ULListModel->setData(ULListModel->index(row, USIZE), QVariant((qlonglong)fileSize));
-    ULListModel->setData(ULListModel->index(row, UTRANSFERRED), QVariant((qlonglong)completed));
-    ULListModel->setData(ULListModel->index(row, ULSPEED), QVariant((double)dlspeed));
-    ULListModel->setData(ULListModel->index(row, UPROGRESS), QVariant::fromValue(pinfo));
-    ULListModel->setData(ULListModel->index(row, USTATUS), QVariant((QString)status));
-    ULListModel->setData(ULListModel->index(row, USERNAME), QVariant((QString)source));
-    ULListModel->setData(ULListModel->index(row, UHASH), QVariant((QString)coreID));
-    
-    QString ext = QFileInfo(name).suffix();
-    if (ext == "rsfc" || ext == "rsfb")
-    {
-        ULListModel->setData(ULListModel->index(row,UNAME), QIcon(QString::fromUtf8(":/images/folder16.png")), Qt::DecorationRole);
-    }
-    else if (ext == "rsrl")
-    {
-        ULListModel->setData(ULListModel->index(row,UNAME), QIcon(QString::fromUtf8(":/images/irkick.png")), Qt::DecorationRole);
-    }
-    else if (ext == "jpg" || ext == "jpeg" || ext == "tif" || ext == "tiff" || ext == "JPG"|| ext == "png" || ext == "gif"
-    || ext == "bmp" || ext == "ico" || ext == "svg") 
-    {
-        ULListModel->setData(ULListModel->index(row,UNAME), QIcon(QString::fromUtf8(":/images/FileTypePicture.png")), Qt::DecorationRole);
-    } 
-    else if (ext == "avi" ||ext == "AVI" || ext == "mpg" || ext == "mpeg" || ext == "wmv" || ext == "divx" || ext == "ts"
-    || ext == "mkv" || ext == "mp4" || ext == "flv" || ext == "mov" || ext == "asf" || ext == "xvid"
-    || ext == "vob" || ext == "qt" || ext == "rm" || ext == "3gp" || ext == "mpeg" || ext == "ogm") 
-    {
-        ULListModel->setData(ULListModel->index(row,UNAME), QIcon(QString::fromUtf8(":/images/FileTypeVideo.png")), Qt::DecorationRole);
-    } 
-    else if (ext == "ogg" || ext == "mp3" || ext == "MP3"  || ext == "mp1" || ext == "mp2" || ext == "wav" || ext == "wma") 
-    {
-        ULListModel->setData(ULListModel->index(row,UNAME), QIcon(QString::fromUtf8(":/images/FileTypeAudio.png")), Qt::DecorationRole);
-    }
-    else if (ext == "tar" || ext == "bz2" || ext == "zip" || ext == "gz" || ext == "7z" || ext == "msi"
-    || ext == "rar" || ext == "rpm" || ext == "ace" || ext == "jar" || ext == "tgz" || ext == "lha"
-    || ext == "cab" || ext == "cbz"|| ext == "cbr" || ext == "alz" || ext == "sit" || ext == "arj" || ext == "deb") 
-    {
-        ULListModel->setData(ULListModel->index(row,UNAME), QIcon(QString::fromUtf8(":/images/FileTypeArchive.png")), Qt::DecorationRole);
-    }
-    else if (ext == "app" || ext == "bat" || ext == "cgi" || ext == "com" || ext == "exe" || ext == "js" || ext == "pif"
-    || ext == "py" || ext == "pl" || ext == "sh" || ext == "vb" || ext == "ws") 
-    {
-        ULListModel->setData(ULListModel->index(row,UNAME), QIcon(QString::fromUtf8(":/images/FileTypeProgram.png")), Qt::DecorationRole);
-    }
-    else if (ext == "iso" || ext == "nrg" || ext == "mdf" || ext == "img" || ext == "dmg" || ext == "bin" ) 
-    {
-        ULListModel->setData(ULListModel->index(row,UNAME), QIcon(QString::fromUtf8(":/images/FileTypeCDImage.png")), Qt::DecorationRole);
-    }
-    else if (ext == "txt" || ext == "cpp" || ext == "c" || ext == "h") 
-    {
-        ULListModel->setData(ULListModel->index(row,UNAME), QIcon(QString::fromUtf8(":/images/FileTypeDocument.png")), Qt::DecorationRole);
-    }
-    else if (ext == "doc" || ext == "rtf" || ext == "sxw" || ext == "xls" || ext == "pps" || ext == "xml"
-    || ext == "sxc" || ext == "odt" || ext == "ods" || ext == "dot" || ext == "ppt" || ext == "css"  ) 
-    {
-        ULListModel->setData(ULListModel->index(row,UNAME), QIcon(QString::fromUtf8(":/images/FileTypeDocument.png")), Qt::DecorationRole);
-    }
-    else if (ext == "html" || ext == "htm" || ext == "php") 
-    {
-        ULListModel->setData(ULListModel->index(row,UNAME), QIcon(QString::fromUtf8(":/images/FileTypeDocument.png")), Qt::DecorationRole);
-    }
-    else
-    {
-        ULListModel->setData(ULListModel->index(row,UNAME), QIcon(QString::fromUtf8(":/images/FileTypeAny.png")), Qt::DecorationRole);
-    }
+	if(row >= ULListModel->rowCount() )
+	{
+		row = ULListModel->rowCount();
+		ULListModel->insertRow(row);
+	}
 
+	ULListModel->setData(ULListModel->index(row, UNAME),        QVariant((QString)" "+name), Qt::DisplayRole);
+	ULListModel->setData(ULListModel->index(row, USIZE),        QVariant((qlonglong)fileSize));
+	ULListModel->setData(ULListModel->index(row, UTRANSFERRED), QVariant((qlonglong)completed));
+	ULListModel->setData(ULListModel->index(row, ULSPEED),      QVariant((double)dlspeed));
+	ULListModel->setData(ULListModel->index(row, UPROGRESS),    QVariant::fromValue(pinfo));
+	ULListModel->setData(ULListModel->index(row, USTATUS),      QVariant((QString)status));
+	ULListModel->setData(ULListModel->index(row, USERNAME),     QVariant((QString)source));
+	ULListModel->setData(ULListModel->index(row, UHASH),        QVariant((QString)coreID));
+	ULListModel->setData(ULListModel->index(row, UUSERID),      QVariant((QString)peer_id));
 
-    return row;
+	QString ext = QFileInfo(name).suffix();
+	ULListModel->setData(ULListModel->index(row,UNAME), getIconFromExtension(ext), Qt::DecorationRole);
+
+	return row;
 }
 
 
@@ -703,8 +655,6 @@ void TransfersDialog::insertTransfers()
 
 //	std::list<DwlDetails> dwlDetails;
 //	rsFiles->getDwlDetails(dwlDetails);
-
-
 
 	std::set<std::string> used_hashes ;
 
@@ -859,7 +809,7 @@ void TransfersDialog::insertTransfers()
 
 			QString fileHash        = QString::fromStdString(info.hash);
 			QString fileName    	= QString::fromUtf8(info.fname.c_str());
-			QString sources		= getPeerName(pit->peerId);
+			QString source	= getPeerName(pit->peerId);
 
 			QString status;
 			switch(pit->status)
@@ -880,9 +830,9 @@ void TransfersDialog::insertTransfers()
 
 			double dlspeed  	= pit->tfRate * 1024.0;
 			qlonglong fileSize 	= info.size;
-			qlonglong completed 	= info.transfered;
-			double progress 	= (info.size > 0)?(info.transfered * 100.0 / info.size):0.0;
-			qlonglong remaining   = (info.size - info.transfered) / (info.tfRate * 1024.0);
+			qlonglong completed 	= pit->transfered;
+			double progress 	= (info.size > 0)?(pit->transfered * 100.0 / info.size):0.0;
+			qlonglong remaining   = (info.size - pit->transfered) / (pit->tfRate * 1024.0);
 
 			// Estimate the completion. We need something more accurate, meaning that we need to
 			// transmit the completion info.
@@ -903,9 +853,9 @@ void TransfersDialog::insertTransfers()
 			else 
 				pinfo.progress = progress ;
 
-			addUploadItem("", fileName, fileHash, fileSize, pinfo, dlspeed, sources,  status, completed, remaining);
+			addUploadItem("", fileName, fileHash, fileSize, pinfo, dlspeed, source,QString::fromStdString(pit->peerId),  status, completed, remaining);
 
-			used_hashes.insert(info.hash) ;
+			used_hashes.insert(fileHash.toStdString() + pit->peerId) ;
 		}
 	}
 	
@@ -916,9 +866,15 @@ void TransfersDialog::insertTransfers()
 	while (removeIndex < ULListModel->rowCount()) 
 	{
 		std::string hash = ULListModel->item(removeIndex, UHASH)->data(Qt::EditRole).toString().toStdString();
+		std::string peer = ULListModel->item(removeIndex, UUSERID)->data(Qt::EditRole).toString().toStdString();
 
-		if(used_hashes.find(hash) == used_hashes.end())
+		std::cerr<< "searching " << hash+peer << std::endl ;
+
+		if(used_hashes.find(hash + peer) == used_hashes.end())
+		{
+			std::cerr << "found"<< std::endl ;
 			QListDelete (ULListModel->takeRow(removeIndex));
+		}
 		 else 
 			removeIndex++;
 	}

@@ -41,13 +41,11 @@ class ftFileProvider
 		ftFileProvider(std::string path, uint64_t size, std::string hash);
 		virtual ~ftFileProvider();
 
-		virtual bool 	getFileData(uint64_t offset, uint32_t &chunk_size, void *data);
+		virtual bool 	getFileData(const std::string& peer_id,uint64_t offset, uint32_t &chunk_size, void *data);
 		virtual bool    FileDetails(FileInfo &info);
 		std::string getHash();
 		uint64_t getFileSize();
 		bool fileOk();
-
-		void setPeerId(const std::string& id) ;
 
 		// Provides a client for the map of chunks actually present in the file. If the provider is also
 		// a file creator, because the file is actually being downloaded, then the map may be partially complete.
@@ -65,7 +63,9 @@ class ftFileProvider
 		void getClientMap(const std::string& peer_id,CompressedChunkMap& cmap,bool& map_is_too_old) ;
 		void setClientMap(const std::string& peer_id,const CompressedChunkMap& cmap) ;
 
-		time_t    lastTS;   		// used for checking if it's alive
+		// Removes inactive peers from the client list. Returns true if all peers have been removed.
+		//
+		bool purgeOldPeers(time_t now,uint32_t max_duration) ;
 	protected:
 		virtual	int initializeFileAttrs(); /* does for both */
 
@@ -78,17 +78,31 @@ class ftFileProvider
 		 * Structure to gather statistics FIXME: lastRequestor - figure out a 
 		 * way to get last requestor (peerID)
 		 */
-		std::string lastRequestor;
-		uint64_t   req_loc;
-		uint32_t   req_size;
-		time_t    lastTS_t;   	// used for estimating transfer rate.
+		class PeerUploadInfo
+		{
+			public:
+				PeerUploadInfo() 
+					: req_loc(0),req_size(1), lastTS_t(0), transfer_rate(0), total_size(0), client_chunk_map_stamp(0) {}
 
-		// these two are used for speed estimation
-		float 	  transfer_rate ;
-		uint32_t		total_size ;
+				void updateStatus(uint64_t offset,uint32_t data_size,time_t now) ;
 
-		// Info about what the downloading peer already has
-		std::map<std::string,std::pair<CompressedChunkMap,time_t> > clients_chunk_maps ;
+				uint64_t   req_loc;
+				uint32_t   req_size;
+				time_t    lastTS_t; 	// used for estimating transfer rate.
+				time_t    lastTS;   	// last update time (for purging)
+
+				// these two are used for speed estimation
+				float 	  transfer_rate ;
+				uint32_t		total_size ;
+
+				// Info about what the downloading peer already has
+				CompressedChunkMap client_chunk_map ;
+				time_t client_chunk_map_stamp ;
+		};
+
+		// Contains statistics (speed, peer name, etc.) of all uploading peers for that file.
+		//
+		std::map<std::string,PeerUploadInfo> uploading_peers ;
 
 		/* 
 		 * Mutex Required for stuff below 

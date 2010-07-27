@@ -38,7 +38,7 @@ ftFileCreator::ftFileCreator(std::string path, uint64_t size, std::string hash)
 	_last_recv_time_t = time(NULL) ;
 }
 
-bool ftFileCreator::getFileData(uint64_t offset, uint32_t &chunk_size, void *data)
+bool ftFileCreator::getFileData(const std::string& peer_id,uint64_t offset, uint32_t &chunk_size, void *data)
 {
 	// Only send the data if we actually have it.
 	//
@@ -50,7 +50,7 @@ bool ftFileCreator::getFileData(uint64_t offset, uint32_t &chunk_size, void *dat
 	}
 
 	if(have_it)
-		return ftFileProvider::getFileData(offset, chunk_size, data);
+		return ftFileProvider::getFileData(peer_id,offset, chunk_size, data);
 	else
 		return false ;
 }
