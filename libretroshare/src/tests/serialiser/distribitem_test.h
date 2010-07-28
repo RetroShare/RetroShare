@@ -64,6 +64,7 @@ bool operator==(const RsTlvBinaryData&, const RsTlvBinaryData&);
 bool operator==(const RsTlvFileItem&, const RsTlvFileItem&);
 bool operator==(const RsTlvFileSet&, const RsTlvFileSet& );
 bool operator==(const RsTlvHashSet&, const RsTlvHashSet&);
+bool operator==(const RsTlvImage&, const RsTlvImage& );
 
 
 

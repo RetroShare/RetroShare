@@ -40,9 +40,15 @@ void 	RsBlogMsg::clear()
 
 	subject.clear();
 	message.clear();
-	mIdReply.clear();
 
-	attachment.TlvClear();
+	std::list<RsTlvImage >::iterator it = graphic_set.begin();
+
+	for(; it != graphic_set.end(); it++)
+	{
+		it->TlvClear();
+	}
+
+	graphic_set.clear();
 }
 
 std::ostream &RsBlogMsg::print(std::ostream &out, uint16_t indent)
@@ -62,15 +68,13 @@ std::ostream &RsBlogMsg::print(std::ostream &out, uint16_t indent)
 	std::string cnv_message(message.begin(), message.end());
         out << "message:  " << cnv_message  << std::endl;
 
+    	std::list<RsTlvImage >::iterator it = graphic_set.begin();
 
-	printIndent(out, int_Indent);
+    	for(; it != graphic_set.end(); it++)
+    	{
+    		it->print(out, int_Indent);
+    	}
 
-	out << "mIdReply:" << mIdReply << std::endl;
-
-	printIndent(out, int_Indent);
-
-	out << "Attachment: " << std::endl;
-	attachment.print(out, int_Indent);
 
         printRsItemEnd(out, "RsBlogMsg", indent);
         return out;
@@ -85,14 +89,20 @@ uint32_t    RsBlogSerialiser::sizeMsg(RsBlogMsg *item)
 	uint32_t s = 8; /* header */
 	/* RsDistribMsg stuff */
 	s += GetTlvStringSize(item->grpId);
+	s += GetTlvStringSize(item->parentId);
+	s += GetTlvStringSize(item->threadId);
 	s += 4; /* timestamp */
 
-	/* RsChannelMsg stuff */
+	/* RsBlogMsg stuff */
 	s += GetTlvWideStringSize(item->subject);
 	s += GetTlvWideStringSize(item->message);
-	s += GetTlvStringSize(item->mIdReply);
 
-	s += item->attachment.TlvSize();
+	std::list<RsTlvImage >::iterator it = item->graphic_set.begin();
+
+	for(; it != item->graphic_set.end(); it++)
+	{
+		s += it->TlvSize();
+	}
 
 	return s;
 }
@@ -112,34 +122,42 @@ bool     RsBlogSerialiser::serialiseMsg(RsBlogMsg *item, void *data, uint32_t *p
 
 	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
 
-	std::cerr << "RsChannelSerialiser::serialiseMsg() Header: " << ok << std::endl;
-	std::cerr << "RsChannelSerialiser::serialiseMsg() Size: " << tlvsize << std::endl;
+	std::cerr << "RsBlogSerialiser::serialiseMsg() Header: " << ok << std::endl;
+	std::cerr << "RsBlogSerialiser::serialiseMsg() Size: " << tlvsize << std::endl;
 
 	/* skip the header */
 	offset += 8;
 
 	/* RsDistribMsg first */
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
-	std::cerr << "RsChannelSerialiser::serialiseMsg() grpId: " << ok << std::endl;
+	std::cerr << "RsBlogSerialiser::serialiseMsg() grpId: " << ok << std::endl;
+
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PARENTID, item->parentId);
+	std::cerr << "RsBlogSerialiser::serialiseMsg() parentId: " << ok << std::endl;
+
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_THREADID, item->threadId);
+	std::cerr << "RsBlogSerialiser::serialiseMsg() threadpId: " << ok << std::endl;
 
 	ok &= setRawUInt32(data, tlvsize, &offset, item->timestamp);
-	std::cerr << "RsChannelSerialiser::serialiseMsg() timestamp: " << ok << std::endl;
+	std::cerr << "RsBlogSerialiser::serialiseMsg() timestamp: " << ok << std::endl;
 
 	/* RsBlogMsg */
 	ok &= SetTlvWideString(data, tlvsize, &offset, TLV_TYPE_WSTR_SUBJECT, item->subject);
 	std::cerr << "RsBlogSerialiser::serialiseMsg() subject: " << ok << std::endl;
 	ok &= SetTlvWideString(data, tlvsize, &offset, TLV_TYPE_WSTR_MSG, item->message);
 	std::cerr << "RsBlogSerialiser::serialiseMsg() msg: " << ok << std::endl;
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_MSG, item->mIdReply);
-	std::cerr << "RsBlogSerialiser::serialiseMsg() mIdReply: " << ok << std::endl;
 
-	ok &= item->attachment.SetTlv(data, tlvsize, &offset);
-	std::cerr << "RsChannelSerialiser::serialiseMsg() Attachment: " << ok << std::endl;
+	std::list<RsTlvImage >::iterator it = item->graphic_set.begin();
+
+	for(; it != item->graphic_set.end(); it++)
+	{
+		ok &= it->SetTlv(data, tlvsize, &offset);
+	}
 
 	if (offset != tlvsize)
 	{
 		ok = false;
-		std::cerr << "RsChannelSerialiser::serialiseMsg() Size Error! " << std::endl;
+		std::cerr << "RsBlogSerialiser::serialiseMsg() Size Error! " << std::endl;
 	}
 
 	return ok;
@@ -180,15 +198,24 @@ RsBlogMsg *RsBlogSerialiser::deserialiseMsg(void *data, uint32_t *pktsize)
 
 	/* RsDistribMsg first */
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PARENTID, item->parentId);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_THREADID, item->threadId);
 	ok &= getRawUInt32(data, rssize, &offset, &(item->timestamp));
 
 	/* RsBlogMsg */
 
 	ok &= GetTlvWideString(data, rssize, &offset, TLV_TYPE_WSTR_SUBJECT, item->subject);
 	ok &= GetTlvWideString(data, rssize, &offset, TLV_TYPE_WSTR_MSG, item->message);
-	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_MSG, item->mIdReply);
 
-    ok &= item->attachment.GetTlv(data, rssize, &offset);
+	RsTlvImage image;
+	image.TlvClear();
+
+	while(offset != rssize)
+	{
+		image.GetTlv(data, rssize, &offset);
+		item->graphic_set.push_back(image);
+		image.TlvClear();
+	}
 
 	if (offset != rssize)
 	{

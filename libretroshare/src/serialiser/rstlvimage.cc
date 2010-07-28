@@ -192,3 +192,9 @@ std::ostream &RsTlvImage::print(std::ostream &out, uint16_t indent)
 
 }
 
+RsTlvImage::RsTlvImage(const RsTlvImage& rightOp)
+:RsTlvItem(), image_type(0), binData(TLV_TYPE_BIN_IMAGE)
+{
+	this->image_type = rightOp.image_type;
+	this->binData.setBinData(rightOp.binData.bin_data, rightOp.binData.bin_len);
+}

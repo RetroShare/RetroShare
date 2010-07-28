@@ -250,18 +250,18 @@ uint32_t    RsForumSerialiser::sizeReadStatus(RsForumReadStatus *item)
 	uint32_t s = 8; /* header */
 	/* RsDistribChildConfig stuff */
 
-	s += GetTlvUInt32Size(); /* save_type */
+	s += 4; /* save_type */
 
 	/* RsForumReadStatus stuff */
 
-	GetTlvStringSize(item->forumId);
+	s += GetTlvStringSize(item->forumId);
 
 	std::map<std::string, uint32_t>::iterator mit = item->msgReadStatus.begin();
 
 	for(; mit != item->msgReadStatus.end(); mit++)
 	{
-		GetTlvStringSize(mit->first); /* key */
-		s += GetTlvUInt32Size(); /* value */
+		s += GetTlvStringSize(mit->first); /* key */
+		s += 4; /* value */
 	}
 
 	return s;

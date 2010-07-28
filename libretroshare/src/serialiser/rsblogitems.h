@@ -54,13 +54,11 @@ virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
 	 * grpId, timestamp.
 	 * Not Used: parentId, threadId 
 	 */
+	std::wstring subject;
+    std::wstring message;
 
-        std::wstring subject;
-        std::wstring message;
-        /// message id to which the reply applies to
-        std::string mIdReply;
-
-        RsTlvFileSet attachment;
+    /// for adding images to graphics
+    std::list<RsTlvImage > graphic_set;
 
 };
 
@@ -68,7 +66,7 @@ class RsBlogSerialiser: public RsSerialType
 {
 	public:
 	RsBlogSerialiser()
-	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_CHANNEL)
+	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_QBLOG)
 	{ return; }
 virtual     ~RsBlogSerialiser()
 	{ return; }

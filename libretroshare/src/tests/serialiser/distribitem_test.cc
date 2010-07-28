@@ -241,6 +241,15 @@ bool operator==(const RsDistribSignedMsg& sMsg1,const  RsDistribSignedMsg& sMsg2
 	return true;
 }
 
+bool operator==(const RsTlvImage& img1, const RsTlvImage& img2)
+{
+	if(img1.image_type != img2.image_type) return false;
+	if(!(img1.binData == img2.binData)) return false;
+
+	return true;
+
+}
+
 /** channels, forums and blogs **/
 
 void init_item(RsTlvHashSet& hs)
@@ -401,13 +410,87 @@ bool operator==(const RsForumMsg& fMsg1, const RsForumMsg& fMsg2)
 
 RsSerialType* init_item(RsBlogMsg& bMsg)
 {
+	bMsg.timestamp = rand()%223;
+	randString(SHORT_STR, bMsg.grpId);
+	randString(LARGE_STR, bMsg.message);
+	randString(SHORT_STR, bMsg.subject);
+	randString(SHORT_STR, bMsg.parentId);
+	randString(SHORT_STR, bMsg.threadId);
+	RsTlvImage image;
+	int nImages = rand()%5;
+
+	for(int i=0; i < nImages; i++)
+	{
+		init_item(image);
+		bMsg.graphic_set.push_back(image);
+	}
 
 	return new RsBlogSerialiser();
 }
 
-bool operator==(RsBlogMsg& bMsg1, RsBlogMsg& bMsg2)
+RsSerialType* init_item(RsForumReadStatus& fRdStatus)
+{
+	randString(SHORT_STR, fRdStatus.forumId);
+	fRdStatus.save_type = rand()%42;
+
+	std::map<std::string, uint32_t>::iterator mit = fRdStatus.msgReadStatus.begin();
+
+	std::string id;
+	uint32_t status = 0;
+
+	int numMaps = rand()%12;
+
+	for(int i = 0; i < numMaps; i++)
+	{
+		randString(SHORT_STR, id);
+		status = rand()%23;
+
+		fRdStatus.msgReadStatus.insert(std::pair<std::string, uint32_t>(id, status));
+	}
+
+	return new RsForumSerialiser();
+}
+
+bool operator==(const RsForumReadStatus& frs1, const RsForumReadStatus& frs2)
+{
+	if(frs1.forumId != frs2.forumId) return false;
+	if(frs1.save_type != frs2.save_type) return false;
+
+	if(frs1.msgReadStatus.size() != frs2.msgReadStatus.size()) return false;
+
+	std::map<std::string, uint32_t>::const_iterator mit
+		= frs1.msgReadStatus.begin();
+
+
+
+	for(;mit != frs1.msgReadStatus.end(); mit++)
+	{
+		if(mit->second != frs2.msgReadStatus.find(mit->first)->second) return false;
+	}
+
+	return true;
+
+}
+
+bool operator==(const RsBlogMsg& bMsg1,const RsBlogMsg& bMsg2)
 {
 
+	if(bMsg1.timestamp != bMsg2.timestamp) return false;
+	if(bMsg1.grpId != bMsg2.grpId) return false;
+	if(bMsg1.message != bMsg2.message) return false;
+	if(bMsg1.subject != bMsg2.subject) return false;
+	if(bMsg1.threadId != bMsg2.threadId) return false;
+	if(bMsg1.parentId != bMsg2.parentId) return false;
+
+	std::list<RsTlvImage >::const_iterator it1 = bMsg1.graphic_set.begin(),
+			it2 = bMsg2.graphic_set.begin();
+
+	if(bMsg1.graphic_set.size() != bMsg2.graphic_set.size()) return false;
+
+	for(; it1 != bMsg1.graphic_set.end() ; it1++, it2++)
+	{
+		if(!(*it1 == *it2)) return false;
+	}
 
 	return true;
 }
@@ -489,8 +572,8 @@ int main(){
 	test_RsDistribItem<RsDistribSignedMsg>(); REPORT("Serialise/Deserialise RsDistribSignedMsg");
 	test_RsDistribItem<RsChannelMsg>(); REPORT("Serialise/Deserialise RsChannelMsg");
 	test_RsDistribItem<RsForumMsg>(); REPORT("Serialise/Deserialise RsForumMsg");
-	//test_RsDistribItem<RsForumReadStatus>(); REPORT("Serialise/Deserialise RsForumReadStatus");
-	//test_RsDistribItem<RsBlogMsg>(); REPORT("Serialise/Deserialise RsBlogMsg");
+	test_RsDistribItem<RsForumReadStatus>(); REPORT("Serialise/Deserialise RsForumReadStatus");
+	test_RsDistribItem<RsBlogMsg>(); REPORT("Serialise/Deserialise RsBlogMsg");
 
 
 	FINALREPORT("RsDistribItem Tests");

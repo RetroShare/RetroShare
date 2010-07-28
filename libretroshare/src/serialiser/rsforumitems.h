@@ -74,6 +74,8 @@ public:
 	: RsDistribChildConfig(RS_SERVICE_TYPE_FORUM, RS_PKT_SUBTYPE_FORUM_READ_STATUS)
 	{ return; }
 
+	virtual ~RsForumReadStatus() {return; }
+
 	virtual void clear();
 	virtual std::ostream& print(std::ostream &out, uint16_t indent);
 
