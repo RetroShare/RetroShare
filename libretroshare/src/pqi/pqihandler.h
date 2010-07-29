@@ -65,10 +65,14 @@ virtual int     SendFileRequest(RsFileRequest *ns);
 virtual int     SendFileData(RsFileData *ns);
 virtual int     SendFileChunkMapRequest(RsFileChunkMapRequest *ns);
 virtual int     SendFileChunkMap(RsFileChunkMap *ns);
+virtual int     SendFileCRC32MapRequest(RsFileCRC32MapRequest *ns);
+virtual int     SendFileCRC32Map(RsFileCRC32Map *ns);
 virtual RsFileRequest         *GetFileRequest();
 virtual RsFileData            *GetFileData();
 virtual RsFileChunkMapRequest *GetFileChunkMapRequest();
 virtual RsFileChunkMap        *GetFileChunkMap();
+virtual RsFileCRC32MapRequest *GetFileCRC32MapRequest();
+virtual RsFileCRC32Map        *GetFileCRC32Map();
 
 // Rest of P3Interface
 virtual int 	tick();
@@ -105,7 +109,7 @@ void	locked_SortnStoreItem(RsItem *item);
 	SecurityPolicy *globsec;
 
 	// Temporary storage...
-	std::list<RsItem *> in_result, in_search, in_request, in_data, in_service,in_chunkmap,in_chunkmap_request;
+	std::list<RsItem *> in_result, in_search, in_request, in_data, in_service,in_chunkmap,in_chunkmap_request,in_crc32map_request,in_crc32map;
 
 	private:
 

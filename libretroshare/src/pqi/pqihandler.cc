@@ -319,6 +319,14 @@ int     pqihandler::SendFileChunkMap(RsFileChunkMap *ns)
 {
 	return HandleRsItem(ns, 0);
 }
+int     pqihandler::SendFileCRC32MapRequest(RsFileCRC32MapRequest *ns)
+{
+	return HandleRsItem(ns, 0);
+}
+int     pqihandler::SendFileCRC32Map(RsFileCRC32Map *ns)
+{
+	return HandleRsItem(ns, 0);
+}
 int     pqihandler::SendRsRawItem(RsRawItem *ns)
 {
 	pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
@@ -483,6 +491,19 @@ void pqihandler::locked_SortnStoreItem(RsItem *item)
 					  item = NULL;
 					  break;
 
+				  case RS_PKT_SUBTYPE_FI_CRC32_MAP_REQUEST:
+					  pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, "SortnStore -> File Crc32Map Request");
+					  in_crc32map_request.push_back(item);
+					  item = NULL;
+					  break;
+
+				  case RS_PKT_SUBTYPE_FI_CRC32_MAP:
+					  pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, "SortnStore -> File CRC32Map");
+					  in_crc32map.push_back(item);
+					  item = NULL;
+					  break;
+
+
 				  default:
 					  break; /* no match! */
 			  }
@@ -593,7 +614,32 @@ RsFileChunkMap *pqihandler::GetFileChunkMap()
 	}
 	return NULL;
 }
+RsFileCRC32MapRequest *pqihandler::GetFileCRC32MapRequest()
+{
+	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
+	if (in_crc32map_request.size() != 0)
+	{
+		RsFileCRC32MapRequest *fi = dynamic_cast<RsFileCRC32MapRequest *>(in_crc32map_request.front());
+		if (!fi) { delete in_crc32map_request.front(); }
+		in_crc32map_request.pop_front();
+		return fi;
+	}
+	return NULL;
+}
+RsFileCRC32Map *pqihandler::GetFileCRC32Map()
+{
+	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+
+	if (in_crc32map.size() != 0)
+	{
+		RsFileCRC32Map *fi = dynamic_cast<RsFileCRC32Map *>(in_crc32map.front());
+		if (!fi) { delete in_crc32map.front(); }
+		in_crc32map.pop_front();
+		return fi;
+	}
+	return NULL;
+}
 
 
 RsRawItem *pqihandler::GetRsRawItem()

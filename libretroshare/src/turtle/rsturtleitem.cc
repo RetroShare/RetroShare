@@ -161,7 +161,7 @@ uint32_t RsTurtleFileCrcItem::serial_size()
 	s += 4 ; // size of _crcs
 
 	s += 4 * crc_map._crcs.size() ;
-	s += 4 * crc_map._map._map.size() ;
+	s += 4 * crc_map._ccmap._map.size() ;
 
 	return s ;
 }
@@ -346,11 +346,11 @@ bool RsTurtleFileCrcItem::serialize(void *data,uint32_t& pktsize)
 	/* add mandatory parts first */
 
 	ok &= setRawUInt32(data, tlvsize, &offset, tunnel_id);
-	ok &= setRawUInt32(data, tlvsize, &offset, crc_map._map._map.size());
+	ok &= setRawUInt32(data, tlvsize, &offset, crc_map._ccmap._map.size());
 	ok &= setRawUInt32(data, tlvsize, &offset, crc_map._crcs.size());
 
-	for(uint32_t i=0;i<crc_map._map._map.size() && ok;++i)
-		ok &= setRawUInt32(data, tlvsize, &offset, crc_map._map._map[i]);
+	for(uint32_t i=0;i<crc_map._ccmap._map.size() && ok;++i)
+		ok &= setRawUInt32(data, tlvsize, &offset, crc_map._ccmap._map[i]);
 
 	for(uint32_t i=0;i<crc_map._crcs.size() && ok;++i)
 		ok &= setRawUInt32(data, tlvsize, &offset, crc_map._crcs[i]);
@@ -624,11 +624,11 @@ RsTurtleFileCrcItem::RsTurtleFileCrcItem(void *data,uint32_t pktsize)
 	ok &= getRawUInt32(data, pktsize, &offset, &s1) ;
 	ok &= getRawUInt32(data, pktsize, &offset, &s2) ;
 
-	crc_map._map._map.resize(s1) ;
+	crc_map._ccmap._map.resize(s1) ;
 	crc_map._crcs.resize(s2) ;
 
 	for(uint32_t i=0;i<s1 && ok;++i)
-		ok &= getRawUInt32(data, pktsize, &offset, &(crc_map._map._map[i])) ;
+		ok &= getRawUInt32(data, pktsize, &offset, &(crc_map._ccmap._map[i])) ;
 
 	for(uint32_t i=0;i<s2 && ok;++i)
 		ok &= getRawUInt32(data, pktsize, &offset, &(crc_map._crcs[i])) ;
@@ -1092,8 +1092,8 @@ std::ostream& RsTurtleFileCrcItem::print(std::ostream& o, uint16_t)
 	o << "  tunnel id : " << (void*)tunnel_id << std::endl ;
 	o << "  map      : " ;
 
-	for(uint32_t i=0;i<crc_map._map._map.size();++i)
-		o << (void*)crc_map._map._map[i] << std::endl ;
+	for(uint32_t i=0;i<crc_map._ccmap._map.size();++i)
+		o << (void*)crc_map._ccmap._map[i] << std::endl ;
 
 	o << "  CRC      : " ;
 

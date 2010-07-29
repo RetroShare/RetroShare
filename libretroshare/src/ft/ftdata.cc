@@ -47,20 +47,27 @@ bool	ftDataSendPair::sendData(const std::string &peerId, const std::string &hash
 }
 
         /* Send a request for a chunk map */
-bool	ftDataSendPair::sendChunkMapRequest(const std::string& peer_id,const std::string& hash)
+bool	ftDataSendPair::sendChunkMapRequest(const std::string& peer_id,const std::string& hash,bool is_client)
 {
-        bool is_client = true; // What should this be???
 	return 	mDataRecv->recvChunkMapRequest(peer_id,hash,is_client);
 }
 
         /* Send a chunk map */
-bool    ftDataSendPair::sendChunkMap(const std::string& peer_id,const std::string& hash,
-                        const CompressedChunkMap& cmap)
+bool    ftDataSendPair::sendChunkMap(const std::string& peer_id,const std::string& hash, const CompressedChunkMap& cmap,bool is_client)
 {
-	bool is_client = true; // What should this be???
 	return mDataRecv->recvChunkMap(peer_id,hash,cmap, is_client);
 }
+        /* Send a request for a chunk map */
+bool	ftDataSendPair::sendCRC32MapRequest(const std::string& peer_id,const std::string& hash)
+{
+	return 	mDataRecv->recvCRC32MapRequest(peer_id,hash);
+}
 
+        /* Send a chunk map */
+bool    ftDataSendPair::sendCRC32Map(const std::string& peer_id,const std::string& hash, const CRC32Map& crcmap)
+{
+	return mDataRecv->recvCRC32Map(peer_id,hash,crcmap) ;
+}
 	/* Client Send */
 bool	ftDataSendDummy::sendDataRequest(const std::string &peerId, const std::string &hash, 
 			uint64_t size, uint64_t offset, uint32_t chunksize)
@@ -77,18 +84,26 @@ bool	ftDataSendDummy::sendData(const std::string &peerId, const std::string &has
 
 
         /* Send a request for a chunk map */
-bool	ftDataSendDummy::sendChunkMapRequest(const std::string& peer_id,const std::string& hash)
+bool	ftDataSendDummy::sendChunkMapRequest(const std::string& peer_id,const std::string& hash,bool is_client)
 {
 	return true;
 }
 
         /* Send a chunk map */
-bool    ftDataSendDummy::sendChunkMap(const std::string& peer_id,const std::string& hash,
-                        const CompressedChunkMap& cmap)
+bool    ftDataSendDummy::sendChunkMap(const std::string& peer_id,const std::string& hash, const CompressedChunkMap& cmap,bool is_client)
+{
+	return true;
+}
+bool	ftDataSendDummy::sendCRC32MapRequest(const std::string& peer_id,const std::string& hash)
 {
 	return true;
 }
 
+        /* Send a chunk map */
+bool    ftDataSendDummy::sendCRC32Map(const std::string& peer_id,const std::string& hash, const CRC32Map& cmap)
+{
+	return true;
+}
 
 	/* Client Recv */
 bool	ftDataRecvDummy::recvData(const std::string &peerId, const std::string &hash, 

@@ -27,7 +27,6 @@
  * #define FT_DEBUG 1
  *****/
 
-//#define FT_DEBUG 1
 #include <rsiface/rsturtle.h>
 #include "fttransfermodule.h"
 
@@ -53,7 +52,7 @@ const uint32_t FT_TM_MAX_RESETS  = 5;
 const uint32_t FT_TM_MINIMUM_CHUNK = 128; /* ie 1/8Kb / sec */
 const uint32_t FT_TM_RESTART_DOWNLOAD = 20; /* 20 seconds */
 const uint32_t FT_TM_DOWNLOAD_TIMEOUT = 10; /* 10 seconds */
-const uint32_t FT_TM_CRC_MAP_MAX_WAIT_PER_GIG = 10; /* 10 seconds */
+const uint32_t FT_TM_CRC_MAP_MAX_WAIT_PER_GIG = 20; /* 20 seconds per gigabyte */
 
 const double FT_TM_MAX_INCREASE = 1.00;
 const double FT_TM_MIN_INCREASE = -0.10;
@@ -683,27 +682,18 @@ bool ftTransferModule::checkCRC()
 
 				//				_crcmap_last_source_id = (_crcmap_last_source_id+1)%mFileSources.size() ;
 
-				bool found = false ;
+				int n = rand()%(mFileSources.size()) ;
+				int p=0 ;
 				std::map<std::string,peerInfo>::const_iterator mit ;
-				for(mit = mFileSources.begin();mit != mFileSources.end();++mit)
-					if(rsTurtle->isTurtlePeer(mit->first))
-					{
-						found=true ;
-						break ;
-					}
+				for(mit = mFileSources.begin();mit != mFileSources.end() && p<n;++mit,++p);
 
-				if(found)
-				{
 #ifdef FT_DEBUG
-					std::cerr << "ftTransferModule::checkCRC(): sending CRC map request to source " << mit->first << std::endl ;
+				std::cerr << "ftTransferModule::checkCRC(): sending CRC map request to source " << mit->first << std::endl ;
 #endif
-					_crcmap_last_asked_time = now ;
-					mMultiplexor->sendCRCMapRequest(mit->first,mHash,CompressedChunkMap());
+				_crcmap_last_asked_time = now ;
+				mMultiplexor->sendCRC32MapRequest(mit->first,mHash);
 
-					_crcmap_state = FT_TM_CRC_MAP_STATE_ASKED ;
-				}
-				else
-					std::cerr << "ERROR: No file source to ask a chunkmap to!" << std::endl ;
+				_crcmap_state = FT_TM_CRC_MAP_STATE_ASKED ;
 			}
 			break ;
 

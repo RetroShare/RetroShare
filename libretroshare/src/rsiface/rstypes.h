@@ -346,7 +346,7 @@ class CRC32Map
 		// Build from a file.
 		//
 		CRC32Map(uint64_t file_size,uint32_t chunk_size) 
-			: _crcs( file_size/chunk_size + ( (file_size%chunk_size)>0)), _map(file_size/chunk_size + ( (file_size%chunk_size)>0),0)
+			: _crcs( file_size/chunk_size + ( (file_size%chunk_size)>0)), _ccmap(file_size/chunk_size + ( (file_size%chunk_size)>0),0)
 		{
 		}
 		CRC32Map() {}
@@ -355,15 +355,17 @@ class CRC32Map
 		//
 		friend CompressedChunkMap compare(const CRC32Map& crc1,const CRC32Map& crc2) ;
 
-		void set(uint32_t i,uint32_t val) { _crcs[i] = val ; _map.set(i) ; }
+		inline void set(uint32_t i,uint32_t val) { _crcs[i] = val ; _ccmap.set(i) ; }
 
-		uint32_t operator[](int i) const { return _crcs[i] ; }
-		uint32_t size() const { return _crcs.size() ; }
+		inline uint32_t operator[](int i) const { return _crcs[i] ; }
+		inline uint32_t size() const { return _crcs.size() ; }
 	private:
 		std::vector<uint32_t> _crcs;
-		CompressedChunkMap _map ;
+		CompressedChunkMap _ccmap ;
 
 		friend class RsTurtleFileCrcItem ;
+		friend class RsFileItemSerialiser ;
+		friend class RsFileCRC32Map ;
 };
 
 /* class which encapsulates download details */

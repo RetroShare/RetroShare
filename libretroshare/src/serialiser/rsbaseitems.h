@@ -112,6 +112,35 @@ class RsFileChunkMap: public RsItem
 
 		std::ostream &print(std::ostream &out, uint16_t indent = 0);
 };
+
+class RsFileCRC32MapRequest: public RsItem
+{
+	public:
+		RsFileCRC32MapRequest() 
+			:RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_BASE, RS_PKT_TYPE_FILE, RS_PKT_SUBTYPE_FI_CRC32_MAP_REQUEST)
+		{}
+		virtual ~RsFileCRC32MapRequest() {}
+		virtual void clear() {}
+
+		std::string hash ;	// hash of the file for which we request the chunk map
+
+		std::ostream &print(std::ostream &out, uint16_t indent = 0);
+};
+
+class RsFileCRC32Map: public RsItem
+{
+	public:
+		RsFileCRC32Map() 
+			:RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_BASE, RS_PKT_TYPE_FILE, RS_PKT_SUBTYPE_FI_CRC32_MAP)
+		{}
+		virtual ~RsFileCRC32Map() {}
+		virtual void clear() {}
+
+		std::string hash ; // hash of the file for which we request the chunk map
+		CRC32Map crc_map ; // CRC32 map of the file.
+
+		std::ostream &print(std::ostream &out, uint16_t indent = 0);
+};
 /**************************************************************************/
 
 class RsFileItemSerialiser: public RsSerialType
@@ -134,16 +163,22 @@ class RsFileItemSerialiser: public RsSerialType
 		virtual	uint32_t    sizeData(RsFileData *);
 		virtual	uint32_t    sizeChunkMapReq(RsFileChunkMapRequest *);
 		virtual	uint32_t    sizeChunkMap(RsFileChunkMap *);
+		virtual	uint32_t    sizeCRC32MapReq(RsFileCRC32MapRequest *);
+		virtual	uint32_t    sizeCRC32Map(RsFileCRC32Map *);
 
 		virtual	bool        serialiseReq (RsFileRequest *item, void *data, uint32_t *size);
 		virtual	bool        serialiseData (RsFileData *item, void *data, uint32_t *size);
 		virtual	bool        serialiseChunkMapReq(RsFileChunkMapRequest *item, void *data, uint32_t *size);
 		virtual	bool        serialiseChunkMap(RsFileChunkMap *item, void *data, uint32_t *size);
+		virtual	bool        serialiseCRC32MapReq(RsFileCRC32MapRequest *item, void *data, uint32_t *size);
+		virtual	bool        serialiseCRC32Map(RsFileCRC32Map *item, void *data, uint32_t *size);
 
 		virtual	RsFileRequest         *deserialiseReq(void *data, uint32_t *size);
+		virtual	RsFileData            *deserialiseData(void *data, uint32_t *size);
 		virtual	RsFileChunkMapRequest *deserialiseChunkMapReq(void *data, uint32_t *size);
 		virtual	RsFileChunkMap        *deserialiseChunkMap(void *data, uint32_t *size);
-		virtual	RsFileData            *deserialiseData(void *data, uint32_t *size);
+		virtual	RsFileCRC32MapRequest *deserialiseCRC32MapReq(void *data, uint32_t *size);
+		virtual	RsFileCRC32Map        *deserialiseCRC32Map(void *data, uint32_t *size);
 };
 
 /**************************************************************************/

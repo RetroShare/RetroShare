@@ -88,6 +88,11 @@ class ftDataRecv
 
 		/// Send a chunk map
 		virtual bool recvChunkMap(const std::string& peer_id,const std::string& hash,const CompressedChunkMap& cmap,bool is_client) = 0;
+		/// Send a request for a chunk map
+		virtual bool recvCRC32MapRequest(const std::string& peer_id,const std::string& hash) = 0;
+
+		/// Send a chunk map
+		virtual bool recvCRC32Map(const std::string& peer_id,const std::string& hash,const CRC32Map& crcmap) = 0;
 };
 
 	/**************** FOR TESTING ***********************/
@@ -109,12 +114,16 @@ virtual bool    sendData(const std::string &peerId, const std::string &hash, uin
                         uint64_t offset, uint32_t chunksize, void *data);
 
 	/* Send a request for a chunk map */
-virtual bool 	sendChunkMapRequest(const std::string& peer_id,const std::string& hash);
+virtual bool 	sendChunkMapRequest(const std::string& peer_id,const std::string& hash,bool is_client);
 
 	/* Send a chunk map */
-virtual bool 	sendChunkMap(const std::string& peer_id,const std::string& hash, 
-			const CompressedChunkMap& cmap);
+virtual bool 	sendChunkMap(const std::string& peer_id,const std::string& hash, const CompressedChunkMap& cmap,bool is_client);
 
+	/* Send a request for a chunk map */
+virtual bool 	sendCRC32MapRequest(const std::string& peer_id,const std::string& hash);
+
+	/* Send a chunk map */
+virtual bool 	sendCRC32Map(const std::string& peer_id,const std::string& hash, const CRC32Map& cmap);
 	ftDataRecv *mDataRecv;
 };
 
@@ -133,12 +142,16 @@ virtual bool    sendData(const std::string &peerId, const std::string &hash, uin
                         uint64_t offset, uint32_t chunksize, void *data);
 
 	/* Send a request for a chunk map */
-virtual bool 	sendChunkMapRequest(const std::string& peer_id,const std::string& hash);
+virtual bool 	sendChunkMapRequest(const std::string& peer_id,const std::string& hash,bool is_client);
 
 	/* Send a chunk map */
-virtual bool 	sendChunkMap(const std::string& peer_id,const std::string& hash, 
-			const CompressedChunkMap& cmap);
+virtual bool 	sendChunkMap(const std::string& peer_id,const std::string& hash, const CompressedChunkMap& cmap,bool is_client);
 
+	/* Send a request for a chunk map */
+virtual bool 	sendCRC32MapRequest(const std::string& peer_id,const std::string& hash);
+
+	/* Send a chunk map */
+virtual bool 	sendCRC32Map(const std::string& peer_id,const std::string& hash, const CRC32Map& cmap);
 };
 
 class ftDataRecvDummy: public ftDataRecv
@@ -163,6 +176,11 @@ virtual bool recvChunkMapRequest(const std::string& peer_id,const std::string& h
 virtual bool recvChunkMap(const std::string& peer_id,const std::string& hash,
 		const CompressedChunkMap& cmap,bool is_client);
 
+	/* Send a request for a chunk map */
+virtual bool 	sendCRC32MapRequest(const std::string& peer_id,const std::string& hash);
+
+	/* Send a chunk map */
+virtual bool 	sendCRC32Map(const std::string& peer_id,const std::string& hash, const CompressedChunkMap& cmap);
 };
 
 #endif

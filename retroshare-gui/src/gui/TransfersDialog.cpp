@@ -421,31 +421,33 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 int TransfersDialog::addItem(const QString&, const QString& name, const QString& coreID, qlonglong fileSize, const FileProgressInfo& pinfo, double dlspeed,
 		const QString& sources,  const QString& status, const QString& priority, qlonglong completed, qlonglong remaining, qlonglong downloadtime)
 {
-    int row;
-    QList<QStandardItem *> list = DLListModel->findItems(coreID, Qt::MatchExactly, ID);
-    if (list.size() > 0) {
-        row = list.front()->row();
-    } else {
-        row = DLListModel->rowCount();
-        DLListModel->insertRow(row);
-    }
+	int row ;
+	for(row=0;row<ULListModel->rowCount();++row)
+		if(DLListModel->item(row,ID)->data(Qt::EditRole).toString() == coreID)
+			break ;
 
-    DLListModel->setData(DLListModel->index(row, NAME), QVariant(name));
-    DLListModel->setData(DLListModel->index(row, SIZE), QVariant((qlonglong)fileSize));
-    DLListModel->setData(DLListModel->index(row, COMPLETED), QVariant((qlonglong)completed));
-    DLListModel->setData(DLListModel->index(row, DLSPEED), QVariant((double)dlspeed));
-    DLListModel->setData(DLListModel->index(row, PROGRESS), QVariant::fromValue(pinfo));
-    DLListModel->setData(DLListModel->index(row, SOURCES), QVariant((QString)sources));
-    DLListModel->setData(DLListModel->index(row, STATUS), QVariant((QString)status));
-    DLListModel->setData(DLListModel->index(row, PRIORITY), QVariant((QString)priority));
-    DLListModel->setData(DLListModel->index(row, REMAINING), QVariant((qlonglong)remaining));
-    DLListModel->setData(DLListModel->index(row, DOWNLOADTIME), QVariant((qlonglong)downloadtime));
-    DLListModel->setData(DLListModel->index(row, ID), QVariant((QString)coreID));
+	if(row >= DLListModel->rowCount() )
+	{
+		row = DLListModel->rowCount();
+		DLListModel->insertRow(row);
+	}
 
-    QString ext = QFileInfo(name).suffix();
-	 DLListModel->setData(DLListModel->index(row,NAME), getIconFromExtension(ext), Qt::DecorationRole);
+	DLListModel->setData(DLListModel->index(row, NAME), QVariant(name));
+	DLListModel->setData(DLListModel->index(row, SIZE), QVariant((qlonglong)fileSize));
+	DLListModel->setData(DLListModel->index(row, COMPLETED), QVariant((qlonglong)completed));
+	DLListModel->setData(DLListModel->index(row, DLSPEED), QVariant((double)dlspeed));
+	DLListModel->setData(DLListModel->index(row, PROGRESS), QVariant::fromValue(pinfo));
+	DLListModel->setData(DLListModel->index(row, SOURCES), QVariant((QString)sources));
+	DLListModel->setData(DLListModel->index(row, STATUS), QVariant((QString)status));
+	DLListModel->setData(DLListModel->index(row, PRIORITY), QVariant((QString)priority));
+	DLListModel->setData(DLListModel->index(row, REMAINING), QVariant((qlonglong)remaining));
+	DLListModel->setData(DLListModel->index(row, DOWNLOADTIME), QVariant((qlonglong)downloadtime));
+	DLListModel->setData(DLListModel->index(row, ID), QVariant((QString)coreID));
 
-	 return row ;
+	QString ext = QFileInfo(name).suffix();
+	DLListModel->setData(DLListModel->index(row,NAME), getIconFromExtension(ext), Qt::DecorationRole);
+
+	return row ;
 }
 
 QIcon TransfersDialog::getIconFromExtension(const QString& ext)
@@ -868,13 +870,8 @@ void TransfersDialog::insertTransfers()
 		std::string hash = ULListModel->item(removeIndex, UHASH)->data(Qt::EditRole).toString().toStdString();
 		std::string peer = ULListModel->item(removeIndex, UUSERID)->data(Qt::EditRole).toString().toStdString();
 
-		std::cerr<< "searching " << hash+peer << std::endl ;
-
 		if(used_hashes.find(hash + peer) == used_hashes.end())
-		{
-			std::cerr << "found"<< std::endl ;
 			QListDelete (ULListModel->takeRow(removeIndex));
-		}
 		 else 
 			removeIndex++;
 	}

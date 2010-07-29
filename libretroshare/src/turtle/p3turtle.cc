@@ -1085,7 +1085,7 @@ void p3turtle::handleRecvFileCRC32MapRequest(RsTurtleFileCrcRequestItem *item)
 		vpid = tunnel.vpid ;
 	}
 
-	_ft_server->getMultiplexer()->recvCRCMapRequest(vpid,hash) ;
+	_ft_server->getMultiplexer()->recvCRC32MapRequest(vpid,hash) ;
 }
 
 void p3turtle::handleRecvFileCRC32Map(RsTurtleFileCrcItem *item)
@@ -1122,7 +1122,7 @@ void p3turtle::handleRecvFileCRC32Map(RsTurtleFileCrcItem *item)
 		vpid = tunnel.vpid ;
 		hash = tunnel.hash ;
 	}
-	_ft_server->getMultiplexer()->recvCRCMap(vpid,hash,item->crc_map) ;
+	_ft_server->getMultiplexer()->recvCRC32Map(vpid,hash,item->crc_map) ;
 }
 // Send a data request into the correct tunnel for the given file hash
 void p3turtle::sendDataRequest(const std::string& peerId, const std::string& hash, uint64_t, uint64_t offset, uint32_t chunksize)

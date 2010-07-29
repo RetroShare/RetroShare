@@ -72,6 +72,12 @@ virtual int     SendFileChunkMapRequest(RsFileChunkMapRequest *) = 0;
 virtual RsFileChunkMap *GetFileChunkMap() = 0;
 virtual int     SendFileChunkMap(RsFileChunkMap *) = 0;
 
+virtual RsFileCRC32MapRequest *GetFileCRC32MapRequest() = 0;
+virtual int     SendFileCRC32MapRequest(RsFileCRC32MapRequest *) = 0;
+
+virtual RsFileCRC32Map *GetFileCRC32Map() = 0;
+virtual int     SendFileCRC32Map(RsFileCRC32Map *) = 0;
+
 };
 
 class P3Interface: public SearchInterface

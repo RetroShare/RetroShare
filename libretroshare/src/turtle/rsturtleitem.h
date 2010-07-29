@@ -21,7 +21,7 @@ const uint8_t RS_TURTLE_SUBTYPE_REGEXP_SEARCH_REQUEST = 0x09 ;
 const uint8_t RS_TURTLE_SUBTYPE_FILE_MAP              = 0x10 ;
 const uint8_t RS_TURTLE_SUBTYPE_FILE_MAP_REQUEST      = 0x11 ;
 const uint8_t RS_TURTLE_SUBTYPE_FILE_CRC              = 0x12 ;
-const uint8_t RS_TURTLE_SUBTYPE_FILE_CRC_REQUEST      = 0xfe ;	// test value
+const uint8_t RS_TURTLE_SUBTYPE_FILE_CRC_REQUEST      = 0x13 ;	
 
 /***********************************************************************************/
 /*                           Basic Turtle Item Class                               */
