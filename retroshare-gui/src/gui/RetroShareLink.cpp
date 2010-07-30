@@ -253,10 +253,7 @@ bool RetroShareLink::process(std::list<std::string> *psrcIds, int flag)
                 srcIds = *psrcIds;
             }
 
-            // I removed the NETWORK WIDE flag. Indeed, somebody can capture the turtle tunnel requests and ask for downloading the file while
-            // it's being downloaded (as partial files are always sources).
-            //
-            if (rsFiles->FileRequest(name().toStdString(), hash().toStdString(), size(), "", 0 /*RS_FILE_HINTS_NETWORK_WIDE*/, srcIds)) {
+            if (rsFiles->FileRequest(name().toStdString(), hash().toStdString(), size(), "", RS_FILE_HINTS_NETWORK_WIDE, srcIds)) {
                 if (flag & RSLINK_PROCESS_NOTIFY_SUCCESS) {
                     QMessageBox mb(QObject::tr("File Request Confirmation"), QObject::tr("The file has been added to your download list."),QMessageBox::Information,QMessageBox::Ok,0,0);
                     mb.setButtonText( QMessageBox::Ok, "OK" );
