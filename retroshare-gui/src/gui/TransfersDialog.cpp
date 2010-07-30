@@ -422,7 +422,7 @@ int TransfersDialog::addItem(const QString&, const QString& name, const QString&
 		const QString& sources,  const QString& status, const QString& priority, qlonglong completed, qlonglong remaining, qlonglong downloadtime)
 {
 	int row ;
-	for(row=0;row<ULListModel->rowCount();++row)
+	for(row=0;row<DLListModel->rowCount();++row)
 		if(DLListModel->item(row,ID)->data(Qt::EditRole).toString() == coreID)
 			break ;
 
