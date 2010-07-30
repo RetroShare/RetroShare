@@ -522,9 +522,8 @@ class HashThread: public RsThread
 
 		virtual void run()
 		{
-			_m->hashReceivedData(_hash) ;
-
 			RsStackMutex stack(_hashThreadMtx) ;
+			_m->hashReceivedData(_hash) ;
 			_finished = true ;
 		}
 		std::string hash() 
@@ -586,15 +585,10 @@ bool ftTransferModule::checkFile()
 		}
 	
 		delete _hash_thread ;
+		_hash_thread = NULL ;
 
 	}
 	forceCheck() ;
-	return true ;
-
-	cancelFileTransferUpward() ;
-	std::cerr << "(EE) ftTransferModule::checkFile(): File verification failed for hash " << mHash << "! Asking for CRC map. mFlag=4. For now: cancelling file transfer." << std::endl ;
-	//askForCRCMap() ;
-	
 	return false ;
 }
 
@@ -604,7 +598,7 @@ void ftTransferModule::forceCheck()
 #ifdef FT_DEBUG
 	std::cerr << "ftTransferModule::forceCheck(): setting flags to force check." << std::endl ;
 #endif
-	mFlag = FT_TM_FLAG_CHUNK_CRC ;	// Ask for CRC map. But for now, cancel file transfer.
+	mFlag = FT_TM_FLAG_CHUNK_CRC ;	// Ask for CRC map.
 
 	// setup flags for CRC state machine to work properly
 	_crcmap_state = FT_TM_CRC_MAP_STATE_DONT_HAVE ;
@@ -718,13 +712,13 @@ bool ftTransferModule::checkCRC()
 				if(bad_chunks > 0)
 				{
 					mFlag = FT_TM_FLAG_DOWNLOADING ;
-#ifdef FT_DEBUG
-					std::cerr << "ftTransferModule::checkCRC(): Done. " << bad_chunks << " bad chunks found. Restarting download for these chunks only." << std::endl ;
-#endif
+					mFileStatus.stat = ftFileStatus::PQIFILE_DOWNLOADING;
+					std::cerr << "ftTransferModule::checkCRC(): Done. File has errors: " << bad_chunks << " bad chunks found. Restarting download for these chunks only." << std::endl ;
 				}
 				else if(incomplete_chunks > 0)
 				{
 					mFlag = FT_TM_FLAG_DOWNLOADING ;
+					mFileStatus.stat = ftFileStatus::PQIFILE_DOWNLOADING;
 #ifdef FT_DEBUG
 					std::cerr << "ftTransferModule::checkCRC(): Done. all chunks ok. Continuing download for remaining chunks." << std::endl ;
 #endif

@@ -527,15 +527,15 @@ bool     RsFileItemSerialiser::serialiseCRC32Map(RsFileCRC32Map *item, void *dat
 
 	/* add mandatory parts first */
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, item->hash);
-	ok &= setRawUInt32(data, tlvsize, &offset, item->crc_map._crcs.size());
-
-	for(uint32_t i=0;i<item->crc_map._crcs.size();++i)
-		ok &= setRawUInt32(data, tlvsize, &offset, item->crc_map._crcs[i]);
-
 	ok &= setRawUInt32(data, tlvsize, &offset, item->crc_map._ccmap._map.size());
 
 	for(uint32_t i=0;i<item->crc_map._ccmap._map.size();++i)
 		ok &= setRawUInt32(data, tlvsize, &offset, item->crc_map._ccmap._map[i]);
+
+	ok &= setRawUInt32(data, tlvsize, &offset, item->crc_map._crcs.size());
+
+	for(uint32_t i=0;i<item->crc_map._crcs.size();++i)
+		ok &= setRawUInt32(data, tlvsize, &offset, item->crc_map._crcs[i]);
 
 	if (offset != tlvsize)
 	{
