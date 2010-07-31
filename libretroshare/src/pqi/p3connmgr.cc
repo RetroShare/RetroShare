@@ -430,6 +430,10 @@ void p3ConnectMgr::netReset()
 		* NB: (*it)->reset_listener must be out of the mutex, 
 		*      as it calls back to p3ConnMgr.
 		*/
+
+		RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
+		struct sockaddr_in iaddr = mOwnState.currentlocaladdr;
 		
 #ifdef CONN_DEBUG_RESET
 		std::cerr << "p3ConnectMgr::netReset() resetting listeners" << std::endl;
@@ -437,7 +441,7 @@ void p3ConnectMgr::netReset()
 		std::list<pqiNetListener *>::const_iterator it;
 		for(it = mNetListeners.begin(); it != mNetListeners.end(); it++)
 		{
-			(*it)->reset_listener();
+			(*it)->resetListener(iaddr);
 #ifdef CONN_DEBUG_RESET
 			std::cerr << "p3ConnectMgr::netReset() reset listener" << std::endl;
 #endif
@@ -741,8 +745,10 @@ void p3ConnectMgr::netTick()
 
 void p3ConnectMgr::netUdpInit()
 {
+	// All functionality has been moved elsewhere (pqiNetListener interface)
+#if 0
 #if defined(CONN_DEBUG_RESET)
-	std::cerr << "p3ConnectMgr::netUdpInit()" << std::endl;
+	std::cerr << "p3ConnectMgr::netUdpInit() Does nothing!" << std::endl;
 #endif
 	connMtx.lock();   /*   LOCK MUTEX */
 
@@ -750,8 +756,12 @@ void p3ConnectMgr::netUdpInit()
 
 	connMtx.unlock(); /* UNLOCK MUTEX */
 
+	/* udp port now controlled by udpstack (from libbitdht) */
+	mUdpStack->resetAddress(iaddr);
 	/* open our udp port */
 	tou_init((struct sockaddr *) &iaddr, sizeof(iaddr));
+#endif
+
 }
 
 
@@ -3349,11 +3359,13 @@ bool p3ConnectMgr::netAssistSetAddress( struct sockaddr_in &laddr,
 					struct sockaddr_in &eaddr,
 					uint32_t mode)
 {
+#if 0
 	std::map<uint32_t, pqiNetAssistConnect *>::iterator it;
 	for(it = mDhts.begin(); it != mDhts.end(); it++)
 	{
 		(it->second)->setExternalInterface(laddr, eaddr, mode);
 	}
+#endif
 	return true;
 }
 

@@ -71,7 +71,7 @@ static const double RTT_ALPHA = 0.875;
 // platform independent fractional timestamp.
 static double getCurrentTS();
 
-TcpStream::TcpStream(UdpSorter *lyr)
+TcpStream::TcpStream(UdpPeerReceiver *lyr)
 	:inSize(0), outSizeRead(0), outSizeNet(0), 
 	state(TCP_CLOSED), 
         inStreamActive(false),

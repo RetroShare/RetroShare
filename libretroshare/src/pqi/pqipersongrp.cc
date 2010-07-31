@@ -184,38 +184,30 @@ int	pqipersongrp::init_listener()
 	return 1;
 }
 
-int     pqipersongrp::restart_listener()
+bool    pqipersongrp::resetListener(struct sockaddr_in &local)
 {
         #ifdef PGRP_DEBUG
-	std::cerr << "pqipersongrp::restart_listener()" << std::endl;
+	std::cerr << "pqipersongrp::resetListener()" << std::endl;
         #endif
 
 	// stop it, 
 	// change the address.
 	// restart.
-	bool haveListener = false;
-  { RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
-  	haveListener = (pqil != NULL);
-  } /* UNLOCKED */
 
+ 	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
-	if (haveListener)
+	if (pqil != NULL)
 	{
                 #ifdef PGRP_DEBUG
-		std::cerr << "pqipersongrp::restart_listener() haveListener" << std::endl;
+		std::cerr << "pqipersongrp::resetListener() haveListener" << std::endl;
                 #endif
 
-		peerConnectState state;
-		mConnMgr->getOwnNetStatus(state);
-  
-  		RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
-
 		pqil -> resetlisten();
-		pqil -> setListenAddr(state.currentlocaladdr);
+		pqil -> setListenAddr(local);
 		pqil -> setuplisten();
 
                 #ifdef PGRP_DEBUG
-		std::cerr << "pqipersongrp::restart_listener() done!" << std::endl;
+		std::cerr << "pqipersongrp::resetListener() done!" << std::endl;
                 #endif
 
 	}

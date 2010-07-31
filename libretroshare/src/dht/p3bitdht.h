@@ -47,6 +47,8 @@ class p3BitDht: public pqiNetAssistConnect
 
 virtual	~p3BitDht();
 
+void	start(); /* starts up the bitdht thread */
+
 	/* pqiNetAssist - external interface functions */
 virtual void    enable(bool on);  
 virtual void    shutdown(); /* blocking call */
@@ -62,11 +64,19 @@ virtual bool 	findPeer(std::string id);
 virtual bool 	dropPeer(std::string id);
 
 	/* extract current peer status */
-virtual bool 	getPeerStatus(std::string id, struct sockaddr_in &raddr, 
-					uint32_t &mode);
+virtual bool 	getPeerStatus(std::string id, 
+			struct sockaddr_in &laddr, struct sockaddr_in &raddr, 
+					uint32_t &type, uint32_t &mode);
 
 virtual bool 	getExternalInterface(struct sockaddr_in &raddr, 
 					uint32_t &mode);
+
+	/* notifyPeer/setExtInterface/Bootstrap/Stun 
+	 * hould all be removed from NetAssist?
+	 */
+
+	/* pqiNetAssistConnect - external interface functions */
+
 
 	/* Callback functions - from bitdht */
 int 	NodeCallback(const bdId *id, uint32_t peerflags);

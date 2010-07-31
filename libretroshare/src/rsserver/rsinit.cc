@@ -2037,6 +2037,13 @@ RsTurtle *rsTurtle = NULL ;
 
 #include "pqi/p3notify.h" // HACK - moved to pqi for compilation order.
 
+#include "tcponudp/tou.h"
+#include "tcponudp/rsudpstack.h"
+
+#ifdef RS_USE_BITDHT
+#include "dht/p3bitdht.h"
+#include "udp/udpstack.h"
+#endif
 
 /****
 #define RS_RELEASE 1
@@ -2126,6 +2133,29 @@ int RsServer::StartupRetroShare()
 //        }
 	pqiNetAssistFirewall *mUpnpMgr = new upnphandler();
         //p3DhtMgr  *mDhtMgr  = new OpenDHTMgr(ownId, mConnMgr, RsInitConfig::configDir);
+/**************************** BITDHT ***********************************/
+
+	// Make up an address. XXX
+
+	struct sockaddr_in tmpladdr;
+	sockaddr_clear(&tmpladdr);
+	tmpladdr.sin_port = htons(7812);
+	rsUdpStack *mUdpStack = new rsUdpStack(tmpladdr);
+
+#ifdef RS_USE_BITDHT
+	std::string id = "idon't know?";
+	std::string bootstrapfile = "./bdboot.txt";
+
+	p3BitDht *mBitDht = new p3BitDht(id, mConnMgr, mUdpStack, bootstrapfile);
+        //mUdpStack-stack->addReceiver(udps);
+
+	/* construct the rest of the stack */
+	tou_init(mUdpStack);
+#endif
+
+
+/**************************** BITDHT ***********************************/
+
 
 	SecurityPolicy *none = secpolicy_create();
 	pqih = new pqisslpersongrp(none, flags);
@@ -2206,7 +2236,7 @@ int RsServer::StartupRetroShare()
         CachePair cp5(mChannels, mChannels, CacheId(RS_SERVICE_TYPE_CHANNEL, 0));
 	mCacheStrapper -> addCachePair(cp5);
 	pqih -> addService(mChannels);  /* This must be also ticked as a service */
-	
+#ifdef RS_USE_BLOGS	
 			p3Blogs *mBlogs = new p3Blogs(RS_SERVICE_TYPE_QBLOG,
 			mCacheStrapper, mCacheTransfer, rsFiles,
                         localcachedir, remotecachedir, blogsdir);
@@ -2215,9 +2245,10 @@ int RsServer::StartupRetroShare()
 	mCacheStrapper -> addCachePair(cp6);
 	pqih -> addService(mBlogs);  /* This must be also ticked as a service */
 
+#endif
+
 
 #ifndef RS_RELEASE
-
 	p3GameLauncher *gameLauncher = new p3GameLauncher(mConnMgr);
 	pqih -> addService(gameLauncher);
 
@@ -2227,14 +2258,13 @@ int RsServer::StartupRetroShare()
 
         CachePair cp2(photoService, photoService, CacheId(RS_SERVICE_TYPE_PHOTO, 0));
 	mCacheStrapper -> addCachePair(cp2);
-
-#else
-	mQblog = NULL;
 #endif
 
 	/**************************************************************************/
 
-        //mConnMgr->addNetAssistConnect(1, mDhtMgr);
+#ifdef RS_USE_BITDHT
+        mConnMgr->addNetAssistConnect(1, mBitDht);
+#endif
 	mConnMgr->addNetAssistFirewall(1, mUpnpMgr);
 
 	/**************************************************************************/
@@ -2264,7 +2294,9 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("msgs.cfg", msgSrv);
 	mConfigMgr->addConfiguration("chat.cfg", chatSrv);
 	mConfigMgr->addConfiguration("cache.cfg", mCacheStrapper);
+#ifdef RS_USE_BLOGS	
         mConfigMgr->addConfiguration("blogs.cfg", mBlogs);
+#endif
 	mConfigMgr->addConfiguration("ranklink.cfg", mRanking);
 	mConfigMgr->addConfiguration("forums.cfg", mForums);
 	mConfigMgr->addConfiguration("channels.cfg", mChannels);
@@ -2340,6 +2372,7 @@ int RsServer::StartupRetroShare()
 
 	pqih->init_listener();
 	mConnMgr->addNetListener(pqih); /* add listener so we can reset all sockets later */
+	mConnMgr->addNetListener(mUdpStack); 
 
 
 
@@ -2381,6 +2414,9 @@ int RsServer::StartupRetroShare()
 	ftserver->ResumeTransfers();
 
         //mDhtMgr->start();
+#ifdef RS_USE_BITDHT
+        mBitDht->start();
+#endif
 
 	// create loopback device, and add to pqisslgrp.
 
@@ -2402,7 +2438,9 @@ int RsServer::StartupRetroShare()
 	rsForums = mForums;
 	rsChannels = mChannels;
 	rsRanks = new p3Rank(mRanking);
+#ifdef RS_USE_BLOGS	
 	rsBlogs = mBlogs;
+#endif
 	rsStatus = new p3Status(mStatusSrv);
 
 #ifndef RS_RELEASE

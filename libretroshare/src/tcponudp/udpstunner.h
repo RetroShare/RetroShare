@@ -1,13 +1,15 @@
+#ifndef RS_UDP_STUN_H
+#define RS_UDP_STUN_H
 /*
- * libretroshare/src/tcponudp: udpsorter.h
+ * tcponudp/udpstunner.h
  *
- * TCP-on-UDP (tou) network interface for RetroShare.
+ * libretroshare.
  *
- * Copyright 2007-2008 by Robert Fernie.
+ * Copyright 2010 by Robert Fernie
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
+ * License Version 3 as published by the Free Software Foundation.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -23,28 +25,16 @@
  *
  */
 
+#include <netinet/in.h>
 
-#ifndef TOU_UDP_SORTER_H
-#define TOU_UDP_SORTER_H
+#include "tcponudp/rsudpstack.h"
+#include "util/rsthreads.h"
+#include <string>
 
-/* universal networking functions */
-#include "tou_net.h"
-
-#include <iosfwd>
-#include <map>
-
-#include "udplayer.h"
-/* UdpSorter ..... filters the UDP packets.
+/* UdpStun.
+ * Stuns peers to determine external addresses.
  */
 
-class UdpPeer
-{
-	public:
-virtual void recvPkt(void *data, int size) = 0;
-};
-
-
-	
 class TouStunPeer
 {
 	public:
@@ -72,18 +62,12 @@ class TouStunPeer
 };
 	
 
-class UdpSorter: public UdpReceiver
+class UdpStunner: public UdpSubReceiver
 {
 	public:
 
-	UdpSorter(struct sockaddr_in &local);
-virtual ~UdpSorter() { return; }
-
-bool	resetAddress(struct sockaddr_in &local);
-
-	/* add a TCPonUDP stream */
-int	addUdpPeer(UdpPeer *peer, const struct sockaddr_in &raddr);
-int 	removeUdpPeer(UdpPeer *peer);
+	UdpStunner(UdpPublisher *pub);
+virtual ~UdpStunner() { return; }
 
 bool 	setStunKeepAlive(uint32_t required);
 bool    addStunPeer(const struct sockaddr_in &remote, const char *peerid);
@@ -97,21 +81,11 @@ bool	needStunPeers();
 bool    externalAddr(struct sockaddr_in &remote, uint8_t &stable);
 
 	/* Packet IO */
-		/* pass-through send packets */
-	int  sendPkt(void *data, int size, struct sockaddr_in &to, int ttl);
-		/* callback for recved data (overloaded from UdpReceiver) */
-virtual void recvPkt(void *data, int size, struct sockaddr_in &from);
-
-int     status(std::ostream &out);
-
-	/* setup connections */
-	int openSocket();
+virtual int recvPkt(void *data, int size, struct sockaddr_in &from);
+virtual int status(std::ostream &out);
 
 	/* monitoring / updates */
-	int okay();
 	int tick();
-
-	int close();
 
 	private:
 
@@ -120,7 +94,6 @@ bool 	locked_handleStunPkt(void *data, int size, struct sockaddr_in &from);
 
 int     doStun(struct sockaddr_in stun_addr);
 
-
 	/* stun keepAlive */
 bool    locked_printStunList();
 bool    locked_recvdStun(const struct sockaddr_in &remote, const struct sockaddr_in &extaddr);
@@ -128,13 +101,10 @@ bool    locked_checkExternalAddress();
 
 bool    storeStunPeer(const struct sockaddr_in &remote, const char *peerid, bool sent);
 
-	UdpLayer *udpLayer;
-
-	RsMutex sortMtx; /* for all class data (below) */
-
-	struct sockaddr_in laddr; /* local addr */
+	RsMutex stunMtx; /* for all class data (below) */
 
 	struct sockaddr_in eaddr; /* external addr */
+
         bool eaddrKnown;
 	bool eaddrStable; /* if true then usable. if false -> Symmettric NAT */
 	time_t eaddrTime;
@@ -144,10 +114,6 @@ bool    storeStunPeer(const struct sockaddr_in &remote, const char *peerid, bool
 	time_t mStunLastSend;
 
 	std::list<TouStunPeer> mStunList; /* potentials */
-
-	std::map<struct sockaddr_in, UdpPeer *> streams;
-
-
 
 };
 

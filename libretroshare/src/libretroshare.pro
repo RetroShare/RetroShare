@@ -1,6 +1,7 @@
 TEMPLATE = lib
 #CONFIG += staticlib release
-CONFIG += staticlib testnetwork 
+CONFIG += staticlib testnetwork
+#CONFIG += staticlib testnetwork bitdht
 CONFIG -= qt
 TARGET = retroshare
 
@@ -56,10 +57,39 @@ bitdht {
 HEADERS +=	dht/p3bitdht.h 
 SOURCES +=	dht/p3bitdht.cc 
 
+HEADERS +=	tcponudp/udppeer.h \
+		tcponudp/bio_tou.h \
+		tcponudp/tcppacket.h \
+		tcponudp/tcpstream.h \
+		tcponudp/tou.h \
+
+SOURCES +=	tcponudp/udppeer.cc \
+		tcponudp/tcppacket.cc \
+		tcponudp/tcpstream.cc \
+		tcponudp/tou.cc \
+		tcponudp/bss_tou.c \
+
+# These two aren't actually used (and don't compile) .... 
+# but could be useful later
+#
+#		tcponudp/udpstunner.h \
+#		tcponudp/udpstunner.cc \
+#
+
+
         BITDHT_DIR = ../../libbitdht/src
 	INCLUDEPATH += . $${BITDHT_DIR}
+	DEFINES *= RS_USE_BITDHT
 }
 
+
+use_blogs {
+
+	HEADERS +=	services/p3blogs.h
+	SOURCES +=	services/p3blogs.cc 
+
+	DEFINES *= RS_USE_BLOGS
+}
 
 PUBLIC_HEADERS =	rsiface/rsblogs.h \
 					rsiface/rschannels.h \
@@ -301,8 +331,7 @@ HEADERS +=	serialiser/rsbaseitems.h \
 			serialiser/rstlvutil.h \
 			serialiser/rstunnelitems.h
 
-HEADERS +=	services/p3blogs.h \
-			services/p3channels.h \
+HEADERS +=	services/p3channels.h \
 			services/p3chatservice.h \
 			services/p3disc.h \
 			services/p3distrib.h \
@@ -316,16 +345,9 @@ HEADERS +=	services/p3blogs.h \
 			services/p3service.h \
 			services/p3statusservice.h \
 			services/p3tunnel.h
+#	services/p3blogs.h \
 
-HEADERS +=	tcponudp/bio_tou.h \
-			tcponudp/extaddrfinder.h \
-			tcponudp/tcppacket.h \
-			tcponudp/tcpstream.h \
-			tcponudp/tou.h \
-			tcponudp/tou_errno.h \
-			tcponudp/tou_net.h \
-			tcponudp/udplayer.h \
-			tcponudp/udpsorter.h \
+HEADERS +=	tcponudp/extaddrfinder.h \
 
 HEADERS +=	turtle/p3turtle.h \
 			turtle/rsturtleitem.h \
@@ -349,7 +371,6 @@ SOURCES +=	dbase/cachestrapper.cc \
 			dbase/fistore.cc \
 			dbase/rsexpr.cc
 
-#SOURCES +=	dht/p3bitdht.cc \
 
 SOURCES +=	ft/ftchunkmap.cc \
 			ft/ftcontroller.cc \
@@ -427,8 +448,7 @@ SOURCES +=	serialiser/rsbaseitems.cc \
 			serialiser/rstlvutil.cc \
 			serialiser/rstunnelitems.cc
 
-SOURCES +=	services/p3blogs.cc \
-			services/p3channels.cc \
+SOURCES +=	services/p3channels.cc \
 			services/p3chatservice.cc \
 			services/p3disc.cc \
 			services/p3distrib.cc \
@@ -443,16 +463,6 @@ SOURCES +=	services/p3blogs.cc \
 # removed because getPeer() doesn't exist			services/p3tunnel.cc
 
 SOURCES +=	tcponudp/extaddrfinder.cc \
-			tcponudp/largefile_tou.cc \
-			tcponudp/pair_tou.cc \
-			tcponudp/reset_tou.cc \
-			tcponudp/tcppacket.cc \
-			tcponudp/tcpstream.cc \
-			tcponudp/tou.cc \
-			tcponudp/tou_net.cc \
-			tcponudp/udp_server.cc \
-			tcponudp/udplayer.cc \
-			tcponudp/udpsorter.cc
 
 SOURCES +=	turtle/p3turtle.cc \
 			turtle/rsturtleitem.cc

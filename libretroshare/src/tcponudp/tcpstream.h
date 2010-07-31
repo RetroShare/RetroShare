@@ -36,7 +36,7 @@
  */
 
 #include "tcppacket.h"
-#include "udpsorter.h"
+#include "udppeer.h"
 
 #define MAX_SEG 		1500
 #define TCP_MAX_SEQ 		UINT_MAX
@@ -73,7 +73,7 @@ class TcpStream: public UdpPeer
 	public:
 	/* Top-Level exposed */
 
-	TcpStream(UdpSorter *lyr);
+	TcpStream(UdpPeerReceiver *udp);
 virtual ~TcpStream() { return; }
 
 	/* user interface */
@@ -230,8 +230,8 @@ uint32 	int_rbytes();
 	struct sockaddr_in 	peeraddr;
 	bool 			peerKnown;
 
-	/* UdpSorter (has own Mutex!) */
-	UdpSorter *udp;
+	/* UdpPeerReceiver (has own Mutex!) */
+	UdpPeerReceiver *udp;
 
 };
 

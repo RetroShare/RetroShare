@@ -172,7 +172,7 @@ void 	RsServer::run()
 			lastSec = (int) ts;
 
 			// Every second! (UDP keepalive).
-			tou_tick_stunkeepalive();
+			//tou_tick_stunkeepalive();
 
 			// every five loops (> 5 secs)
 			if (loop % 5 == 0)

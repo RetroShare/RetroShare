@@ -53,39 +53,18 @@
 /* standard C interface (as Unix-like as possible)
  * for the tou (Tcp On Udp) library
  */
+	/*
+	 * Init: 
+	 * (1) need UdpStack item, which has our address already.
+	 */
+
+class UdpStack;
+int  	tou_init(UdpStack *stack);
+
 
 #ifdef  __cplusplus
 extern "C" {
 #endif
-
-	/* The modification to a single UDP socket means
- 	 * that the structure of the TOU interface must be changed.
-	 *
-	 * Init: 
-	 * (1) choose our local address. (a universal bind)
-	 * int  tou_init(const struct sockaddr *my_addr);
-	 * (2) query if we have determined our external address.
-         * int	tou_extaddr(struct sockaddr *ext_addr, socklen_t *addrlen);
-	 * (3) offer more stunpeers, for external address determination.
-         * int	tou_stunpeer(const struct sockaddr *ext_addr, socklen_t addrlen, const char *id);
-	 * (4) repeat (2)+(3) until a valid extaddr is returned.
-	 * (5) if stunkeepalive is required, then periodically send out
-	 *     stun packets to maintain external firewall port.
-	 *
-	 */
-
-int  	tou_init(const struct sockaddr *my_addr, socklen_t addrlen);
-int	tou_extaddr(struct sockaddr *ext_addr, socklen_t *addrlen, uint8_t *stable);
-int	tou_stunpeer(const struct sockaddr *ext_addr, socklen_t addrlen, const char *id);
-int     tou_stunkeepalive(int required);
-int     tou_tick_stunkeepalive();
-
-int     tou_getstunpeer(int i, struct sockaddr *remote_addr, socklen_t *raddrlen,
-                        	struct sockaddr *ext_addr, socklen_t *eaddrlen,
-                        uint32_t *failCount, time_t *lastSend);
-int	tou_needstunpeers();
-
-
 	/* Connections are as similar to UNIX as possible 
 	 * (1) create a socket: tou_socket() this reserves a socket id.
 	 * (2) connect: active: tou_connect() or passive: tou_listenfor().

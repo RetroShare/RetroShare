@@ -33,7 +33,7 @@ static  const int kInitStreamTable = 5;
 #include <stdlib.h>
 #include <string.h>
 
-#include "udplayer.h"
+#include "udp/udpstack.h"
 #include "tcpstream.h"
 #include <vector>
 #include <iostream>
@@ -55,113 +55,32 @@ typedef struct TcpOnUdp_t TcpOnUdp;
 static  std::vector<TcpOnUdp *> tou_streams;
 
 static  int tou_inited = 0;
-static  UdpSorter *udps = NULL;
+
+
+#include "udp/udpstack.h"
+#include "tcponudp/udppeer.h"
+
+static  UdpStack *udpstack = NULL;
+static  UdpPeerReceiver *udps = NULL;
 
 static int	tou_tick_all();
 
 /* 	tou_init - opens the udp port (universal bind) */
-int 	tou_init(const struct sockaddr *my_addr, socklen_t addrlen)
+int 	tou_init(UdpStack *stack)
 {
 	if (tou_inited)
 	{
-		struct sockaddr_in *addr = (struct sockaddr_in *) my_addr;
-		udps->resetAddress(*addr);
-		if (!(udps->okay()))
-		{
-			std::cerr << "tou_init() FATAL ERROR: Cannot reset Udp Socket to: "
-				<< rs_inet_ntoa(addr->sin_addr) << ":" << ntohs(addr->sin_port);
-			std::cerr << std::endl;
-
-                        return 0;
-		}
 		return 1;
 	}
 
 	tou_streams.resize(kInitStreamTable);
 
-	udps = new UdpSorter( *((struct sockaddr_in *) my_addr));
-
-	/* check the bind succeeded */
-	if (!(udps->okay()))
-	{
-		delete (udps);
-		udps = NULL;
-		return -1;
-	}
+	udpstack = stack;
+	udps = new UdpPeerReceiver(stack);
+	stack->addReceiver(udps);
 
 	tou_inited = 1;
 	return 1;
-}
-
-/* 	tou_stunpeer supply tou with stun peers. */
-int 	tou_stunpeer(const struct sockaddr *my_addr, socklen_t addrlen,
-			const char *id)
-{
-	if (!tou_inited)
-		return -1;
-
-	udps->addStunPeer(*(struct sockaddr_in *) my_addr, id);
-	return 0;
-}
-
-int 	tou_stunkeepalive(int required)
-{
-	if (!tou_inited)
-		return -1;
-
-	udps->setStunKeepAlive(required);
-	return 1;
-}
-
-
-int 	tou_getstunpeer(int i, struct sockaddr *remote_addr, socklen_t *raddrlen,
-				struct sockaddr *ext_addr, socklen_t *eaddrlen,
-                	uint32_t *failCount, time_t *lastSend)
-{
-	if (!tou_inited)
-		return -1;
-
-	std::string id;
-
-	bool ret = udps->getStunPeer(i, id,
-                	*((struct sockaddr_in *) remote_addr),
-                	*((struct sockaddr_in *) ext_addr),
-                	*failCount, *lastSend);
-
-	return ret;
-}
-
-int	tou_needstunpeers()
-{
-	if (!tou_inited)
-		return -1;
-
-	if (udps->needStunPeers())
-		return 1;
-	return 0;
-}
-
-	
-
-int     tou_tick_stunkeepalive()
-{
-	if (!tou_inited)
-		return -1;
-
-	udps->tick();
-	return 1;
-}
-
-int     tou_extaddr(struct sockaddr *ext_addr, socklen_t *addrlen, uint8_t *stable)
-{
-	if (!tou_inited)
-		return -1;
-
-	if (udps->externalAddr(*(struct sockaddr_in *) ext_addr, *stable))
-	{
-		return 1;
-	}
-	return 0;
 }
 
 

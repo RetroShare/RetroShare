@@ -138,7 +138,7 @@ virtual void    peerConnectRequest(std::string id,
 class pqiNetListener
 {
 	public:
-virtual int	reset_listener() = 0;
+virtual bool resetListener(struct sockaddr_in &local) = 0;
 
 };
 

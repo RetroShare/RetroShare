@@ -54,9 +54,8 @@ class pqipersongrp: public pqihandler, public pqiMonitor, public p3ServiceServer
 	/*************************** Setup *************************/
 	/* pqilistener */
 
-virtual int reset_listener() { return restart_listener(); }
+virtual bool resetListener(struct sockaddr_in &local); // overloaded from pqiNetListener 
 int     init_listener(); 
-int	restart_listener();
 
 int     setConfig(p3GeneralConfig *cfg);
 int	save_config();

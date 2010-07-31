@@ -32,7 +32,7 @@
  * #include <arpa/inet.h>
  */
 
-#include "tou_net.h" /* for winsock.h -> htons etc */
+#include "util/rsnet.h" /* for winsock.h -> htons etc */
 
 #include <stdlib.h>
 #include <string.h>
