@@ -54,7 +54,7 @@
  * #define DEBUG_MGR_PKT 1
  ***/
 
-//#define DEBUG_MGR 1
+#define DEBUG_MGR 1
 
 bdNodeManager::bdNodeManager(bdNodeId *id, std::string dhtVersion, std::string bootfile, bdDhtFunctions *fns)
 	:bdNode(id, dhtVersion, bootfile, fns)
@@ -141,7 +141,7 @@ void bdNodeManager::iteration()
 			if (modeAge > MAX_STARTUP_TIME)
 			{
 #ifdef DEBUG_MGR
-				std::cerr << "bdNodeManager::iteration(): STARTUP ";
+				std::cerr << "bdNodeManager::iteration(): STARTUP -> REFRESH";
 				std::cerr << std::endl;
 #endif
 				bdNodeId id;
@@ -157,6 +157,10 @@ void bdNodeManager::iteration()
 		case BITDHT_MGR_STATE_ACTIVE:
 			if (modeAge > MAX_REFRESH_TIME)
 			{
+#ifdef DEBUG_MGR
+				std::cerr << "bdNodeManager::iteration(): ACTIVE -> REFRESH";
+				std::cerr << std::endl;
+#endif
 				mMode = BITDHT_MGR_STATE_REFRESH;
 				mModeTS = now;
 			}
@@ -165,6 +169,10 @@ void bdNodeManager::iteration()
 
 		case BITDHT_MGR_STATE_REFRESH:
 			{
+#ifdef DEBUG_MGR
+				std::cerr << "bdNodeManager::iteration(): REFRESH -> ACTIVE";
+				std::cerr << std::endl;
+#endif
 				/* select random ids, and perform searchs to refresh space */
 				mMode = BITDHT_MGR_STATE_ACTIVE;
 				mModeTS = now;

@@ -37,6 +37,8 @@
  * #define DEBUG_UDP_LAYER 		1
  ***/
 
+//#define DEBUG_UDP_LAYER 		1
+
 static const int UDP_DEF_TTL = 64;
 
 /* NB: This #define makes the listener open 0.0.0.0:X port instead
@@ -77,7 +79,8 @@ class   udpPacket
 	int len;
 };
 
-std::ostream &operator<<(std::ostream &out, const struct sockaddr_in &addr)
+//std::ostream &operator<<(std::ostream &out, const struct sockaddr_in &addr)
+std::ostream &operator<<(std::ostream &out, struct sockaddr_in &addr)
 {
 	out << "[" << inet_ntoa(addr.sin_addr) << ":";
 	out << htons(addr.sin_port) << "]";

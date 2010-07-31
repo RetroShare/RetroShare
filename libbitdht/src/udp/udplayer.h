@@ -33,7 +33,10 @@
 #include <list>
 #include <deque>
 
-std::ostream &operator<<(std::ostream &out,  const struct sockaddr_in &addr);
+/* careful - duplicate definitions */
+//std::ostream &operator<<(std::ostream &out,  const struct sockaddr_in &addr);
+std::ostream &operator<<(std::ostream &out,  struct sockaddr_in &addr);
+
 bool operator==(const struct sockaddr_in &addr, const struct sockaddr_in &addr2);
 bool operator<(const struct sockaddr_in &addr, const struct sockaddr_in &addr2);
 

@@ -215,8 +215,8 @@ void bdNode::iteration()
 			genNewTransId(&transId);
 			registerOutgoingMsg(&id, &transId, BITDHT_MSG_TYPE_FIND_NODE);
 
-			msgout_find_node(&id, &transId, &targetNodeId);
 #ifdef DEBUG_NODE_MSGS 
+			msgout_find_node(&id, &transId, &targetNodeId);
 			std::cerr << "bdNode::iteration() Find Node Req for : ";
 			mFns->bdPrintId(std::cerr, &id);
 			std::cerr << " searching for : ";
@@ -371,7 +371,7 @@ void bdNode::addPeer(const bdId *id, uint32_t peerflags)
 
 #ifdef DEBUG_NODE_ACTIONS 
 	fprintf(stderr, "bdNode::addPeer(");
-	bdPrintId(std::cerr, id);
+	mFns->bdPrintId(std::cerr, id);
 	fprintf(stderr, ")\n");
 #endif
 
@@ -484,8 +484,8 @@ void bdNode::processRemoteQuery()
 				std::cerr << "bdNode::processRemoteQuery() Reply to Find Node: ";
 				mFns->bdPrintId(std::cerr, &(query.mId));
 				std::cerr << " searching for : ";
-				bdPrintNodeId(std::cerr, &(query.mQuery));
-				mFns->std::cerr << ", found " << nearest.size() << " nodes ";
+				mFns->bdPrintNodeId(std::cerr, &(query.mQuery));
+				std::cerr << ", found " << nearest.size() << " nodes ";
 				std::cerr << std::endl;
 #endif
 					
