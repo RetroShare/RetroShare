@@ -29,8 +29,12 @@
 #include "feeds/ChanMsgItem.h"
 #include "feeds/ForumNewItem.h"
 #include "feeds/ForumMsgItem.h"
+
+#ifdef BLOGS
 #include "feeds/BlogNewItem.h"
 #include "feeds/BlogMsgItem.h"
+#endif
+
 #include "feeds/MsgItem.h"
 #include "feeds/PeerItem.h"
 
@@ -325,6 +329,7 @@ void	NewsFeed::addFeedItemForumMsg(RsFeedItem &fi)
 
 void	NewsFeed::addFeedItemBlogNew(RsFeedItem &fi)
 {
+#ifdef BLOGS
 	/* make new widget */
 	BlogNewItem *bni = new BlogNewItem(this, NEWSFEED_BLOGNEWLIST, fi.mId1, false, true);
 
@@ -332,6 +337,7 @@ void	NewsFeed::addFeedItemBlogNew(RsFeedItem &fi)
 
 	/* add to layout */
 	verticalLayout->addWidget(bni);
+#endif
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemBlogNew()";
@@ -341,6 +347,7 @@ void	NewsFeed::addFeedItemBlogNew(RsFeedItem &fi)
 
 void	NewsFeed::addFeedItemBlogMsg(RsFeedItem &fi)
 {
+#ifdef BLOGS
 	/* make new widget */
 	BlogMsgItem *bm = new BlogMsgItem(this, NEWSFEED_BLOGMSGLIST, fi.mId1, fi.mId2, false);
 
@@ -348,6 +355,7 @@ void	NewsFeed::addFeedItemBlogMsg(RsFeedItem &fi)
 
 	/* add to layout */
 	verticalLayout->addWidget(bm);
+#endif
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemBlogMsg()";

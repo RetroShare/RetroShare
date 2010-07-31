@@ -1,4 +1,4 @@
-CONFIG += qt gui uic qrc resources uitools idle blogs
+CONFIG += qt gui uic qrc resources uitools idle # bitdht  blogs
 QT     += network xml script opengl
 
 TEMPLATE = app
@@ -13,6 +13,7 @@ MOC_DIR = temp/moc
 debug {
 	QMAKE_CFLAGS += -g
 }
+
 
 ################################# Linux ##########################################
 # Put lib dir in QMAKE_LFLAGS so it appears before -L/usr/lib
@@ -119,6 +120,9 @@ macx {
 
 # ###########################################
 
+bitdht {
+	LIBS += ../../libbitdht/src/lib/libbitdht.a
+}
 
 DEPENDPATH += . \
             rsiface \
@@ -275,8 +279,6 @@ HEADERS +=  rshare.h \
             gui/feeds/MsgItem.h \
             gui/feeds/ChanNewItem.h \
             gui/feeds/ChanMsgItem.h \
-            gui/feeds/BlogNewItem.h \
-            gui/feeds/BlogMsgItem.h \
             gui/feeds/SubFileItem.h \
             gui/feeds/SubDestItem.h \
             gui/feeds/AttachFileItem.h \
@@ -351,8 +353,6 @@ FORMS +=    gui/StartDialog.ui \
             gui/feeds/MsgItem.ui \
             gui/feeds/ChanNewItem.ui \
             gui/feeds/ChanMsgItem.ui \
-            gui/feeds/BlogNewItem.ui \
-            gui/feeds/BlogMsgItem.ui \
             gui/feeds/SubFileItem.ui \
             gui/feeds/SubDestItem.ui \
             gui/feeds/AttachFileItem.ui
@@ -478,8 +478,6 @@ SOURCES +=  main.cpp \
             gui/feeds/MsgItem.cpp \
             gui/feeds/ChanNewItem.cpp \
             gui/feeds/ChanMsgItem.cpp \
-            gui/feeds/BlogNewItem.cpp \
-            gui/feeds/BlogMsgItem.cpp \
             gui/feeds/SubFileItem.cpp \
             gui/feeds/SubDestItem.cpp \
             gui/feeds/AttachFileItem.cpp \
@@ -542,19 +540,25 @@ HEADERS += gui/unfinished/blogs/BlogsDialog.h \
            gui/unfinished/blogs/CreateBlog.h \  
            gui/unfinished/blogs/CreateBlogMsg.h \
            gui/unfinished/blogs/BlogsMsgItem.h \
-           gui/unfinished/blogs/BlogDetails.h
+           gui/unfinished/blogs/BlogDetails.h \
+            gui/feeds/BlogNewItem.h \
+            gui/feeds/BlogMsgItem.h \
 
 FORMS += gui/unfinished/blogs/BlogsDialog.ui \
          gui/unfinished/blogs/CreateBlog.ui \
          gui/unfinished/blogs/CreateBlogMsg.ui \
          gui/unfinished/blogs/BlogsMsgItem.ui \
-         gui/unfinished/blogs/BlogDetails.ui  
+         gui/unfinished/blogs/BlogDetails.ui \ 
+            gui/feeds/BlogNewItem.ui \
+            gui/feeds/BlogMsgItem.ui \
          
 SOURCES += gui/unfinished/blogs/BlogsDialog.cpp \
            gui/unfinished/blogs/CreateBlog.cpp \
            gui/unfinished/blogs/CreateBlogMsg.cpp \
            gui/unfinished/blogs/BlogsMsgItem.cpp \
-           gui/unfinished/blogs/BlogDetails.cpp
+           gui/unfinished/blogs/BlogDetails.cpp \
+            gui/feeds/BlogNewItem.cpp \
+            gui/feeds/BlogMsgItem.cpp \
 
           DEFINES *= BLOGS
 }
