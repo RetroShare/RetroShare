@@ -136,7 +136,7 @@ bool    CacheSource::clearCache(CacheId id)
 	return ret;
 }
 		
-bool    CacheSource::cachesAvailable(RsPeerId pid, std::map<CacheId, CacheData> &ids)
+bool    CacheSource::cachesAvailable(RsPeerId /* pid */, std::map<CacheId, CacheData> &ids)
 {
 	lockData(); /* LOCK MUTEX */
 
@@ -385,6 +385,7 @@ void 	CacheStore::downloadedCache(const CacheData &data)
 	/* called when the download is completed ... updates internal data */
 void 	CacheStore::failedCache(const CacheData &data)
 {
+	(void) data;
 #ifdef CS_DEBUG
 	std::cerr << "CacheStore::failedCache() :" << data << std::endl;
 #endif
@@ -575,9 +576,8 @@ void	CacheStrapper::refreshCache(const CacheData &data)
 }
 
 
-void	CacheStrapper::refreshCacheStore(const CacheData &data)
+void	CacheStrapper::refreshCacheStore(const CacheData & /* data */ )
 {
-
 	/* indicate to save data */
 	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
@@ -595,7 +595,7 @@ bool	CacheStrapper::getCacheUpdates(std::list<std::pair<RsPeerId, CacheData> > &
 
 
 	/* pass to correct CacheSet */
-void	CacheStrapper::recvCacheResponse(CacheData &data, time_t ts)
+void	CacheStrapper::recvCacheResponse(CacheData &data, time_t /* ts */)
 {
 	/* find cache store */
 	std::map<uint16_t, CachePair>::iterator it2;
@@ -666,7 +666,7 @@ void    CacheStrapper::listCaches(std::ostream &out)
 	return;
 }
 
-void    CacheStrapper::listPeerStatus(std::ostream &out)
+void    CacheStrapper::listPeerStatus(std::ostream & /* out */)
 {
 #if 0
 	std::map<RsPeerId, CacheTS>::iterator it;
@@ -1040,6 +1040,9 @@ bool CacheTransfer::RequestCache(CacheData &data, CacheStore *cbStore)
 /* to be overloaded */
 bool CacheTransfer::RequestCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size)
 {
+	(void) id;
+	(void) path;
+	(void) size;
 #ifdef CS_DEBUG
 	std::cerr << "CacheTransfer::RequestCacheFile() : from:" << id << " #";
 	std::cerr << hash << " size: " << size;
@@ -1056,6 +1059,10 @@ bool CacheTransfer::RequestCacheFile(RsPeerId id, std::string path, std::string 
 /* to be overloaded */
 bool CacheTransfer::CancelCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size)
 {
+	(void) id;
+	(void) path;
+	(void) hash;
+	(void) size;
 #ifdef CS_DEBUG
 	std::cerr << "CacheTransfer::CancelCacheFile() : from:" << id << " #";
 	std::cerr << hash << " size: " << size;

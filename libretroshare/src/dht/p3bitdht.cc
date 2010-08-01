@@ -265,8 +265,10 @@ int p3BitDht::lookupRsId(const bdNodeId *id, std::string &pid)
 	nit = mTransToRsId.find(*id);
 	if (nit == mTransToRsId.end())
 	{
+#ifdef DEBUG_BITDHT
 		std::cerr << "p3BitDht::lookupRsId() failed";
 		std::cerr << std::endl;
+#endif
 
 		return 0;
 	}
@@ -319,8 +321,10 @@ int p3BitDht::removeTranslation(const std::string pid)
 /********************** Callback Functions **************************/
 int p3BitDht::NodeCallback(const bdId *id, uint32_t peerflags)
 {
+#ifdef DEBUG_BITDHT
 	std::cerr << "p3BitDht::NodeCallback()";
 	std::cerr << std::endl;
+#endif
 
 	/* is it one that we are interested in? */
 	std::string pid;
@@ -329,6 +333,13 @@ int p3BitDht::NodeCallback(const bdId *id, uint32_t peerflags)
 	{
 		/* we found it ... do callback to p3connmgr */
 		//uint32_t cbflags = ONLINE | UNREACHABLE;
+
+		for(int i = 0; i < 10; i++)
+		{
+			std::cerr << "p3BitDht::NodeCallback() FOUND NODE!!!: ";
+			std::cerr << pid << " flags: " << peerflags;
+			std::cerr << std::endl;
+		}
 
 		return 1;
 	}

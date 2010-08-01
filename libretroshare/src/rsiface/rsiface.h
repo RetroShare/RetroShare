@@ -200,16 +200,16 @@ class NotifyBase
 	virtual void notifyListChange(int list, int type) { (void) list; (void) type; return; }
 	virtual void notifyErrorMsg(int list, int sev, std::string msg) { (void) list; (void) sev; (void) msg; return; }
 	virtual void notifyChat() { return; }
-	virtual void notifyChatStatus(const std::string& peer_id,const std::string& status_string,bool is_private) {}
-	virtual void notifyCustomState(const std::string& peer_id) {}
+	virtual void notifyChatStatus(const std::string& /* peer_id */, const std::string& /* status_string */ ,bool /* is_private */) {}
+	virtual void notifyCustomState(const std::string& /* peer_id */) {}
 	virtual void notifyHashingInfo(std::string fileinfo) { (void)fileinfo; return ; }
-	virtual void notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleFileInfo>& files) { (void)files; }
+	virtual void notifyTurtleSearchResult(uint32_t /* search_id */ ,const std::list<TurtleFileInfo>& files) { (void)files; }
 	virtual void notifyPeerHasNewAvatar(std::string peer_id) { (void)peer_id; }
 	virtual void notifyOwnAvatarChanged() {}
 	virtual void notifyOwnStatusMessageChanged() {}
 	virtual void notifyDiskFull(uint32_t /* location */,uint32_t /* size limit in MB */) {}
 
-	virtual std::string askForPassword(const std::string& key_details,bool prev_is_bad) { return "" ;}
+	virtual std::string askForPassword(const std::string& /* key_details */ ,bool /* prev_is_bad */ ) { return "" ;}
 };
 
 const int NOTIFY_LIST_NEIGHBOURS   		= 1;

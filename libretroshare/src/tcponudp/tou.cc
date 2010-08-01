@@ -120,8 +120,7 @@ int     tou_socket(int /*domain*/, int /*type*/, int /*protocol*/)
 }
 
 /* 	bind - opens the udp port */
-int 	tou_bind(int sockfd, const struct sockaddr *my_addr, 
-					socklen_t addrlen)
+int 	tou_bind(int sockfd, const struct sockaddr * /* my_addr */, socklen_t /* addrlen */ )
 {
 	if (tou_streams[sockfd] == NULL)
 	{
@@ -208,7 +207,7 @@ int 	tou_listenfor(int sockfd, const struct sockaddr *serv_addr,
 	return 0;
 }
 
-int     tou_listen(int sockfd, int backlog)
+int     tou_listen(int /* sockfd */ , int /* backlog */ )
 {
 	tou_tick_all();
 	return 1;
