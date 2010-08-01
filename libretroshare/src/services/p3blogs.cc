@@ -72,24 +72,12 @@ RsBlogs *rsBlogs = NULL;
 #define BLOG_PUBPERIOD   600              /* 10 minutes ... (max = 455 days) */
 
 p3Blogs::p3Blogs(uint16_t type, CacheStrapper *cs, 
-		CacheTransfer *cft, RsFiles *files, 
-                std::string srcdir, std::string storedir, std::string blogDir)
-	:p3GroupDistrib(type, cs, cft, srcdir, storedir, blogDir,
-                        CONFIG_TYPE_QBLOG, BLOG_STOREPERIOD, BLOG_PUBPERIOD),
-	mRsFiles(files), 
-	mBlogsDir(blogDir)
+		CacheTransfer *cft,
+                std::string srcdir, std::string storedir)
+	:p3GroupDistrib(type, cs, cft, srcdir, storedir, "",
+                        CONFIG_TYPE_QBLOG, BLOG_STOREPERIOD, BLOG_PUBPERIOD)
 { 
-	//loadDummyData();
-	
-	/* create chanDir */
-	if (!RsDirUtil::checkCreateDirectory(mBlogsDir))
-	{
-		std::cerr << "p3Blogs() Failed to create Channels Directory: ";
-		std::cerr << mBlogsDir;
-		std::cerr << std::endl;
-	}
-
-	return; 
+		return;
 }
 
 p3Blogs::~p3Blogs() 
@@ -180,8 +168,6 @@ bool p3Blogs::getBlogMsgList(std::string cId, std::list<BlogMsgSummary> &msgs)
 		
 		tis.subject = cmsg->subject;
 		tis.msg  = cmsg->message;
-		tis.count = cmsg->attachment.items.size();
-		tis.msgIdReply = cmsg->mIdReply;
 
 		msgs.push_back(tis);
 	}
@@ -209,22 +195,6 @@ bool p3Blogs::getBlogMessage(std::string fId, std::string mId, BlogMsgInfo &info
 		
 	info.subject = cmsg->subject;
 	info.msg  = cmsg->message;
-	info.msgIdReply = cmsg->mIdReply;
-
-	std::list<RsTlvFileItem>::iterator fit;
-	for(fit = cmsg->attachment.items.begin(); 
-			fit != cmsg->attachment.items.end(); fit++)
-	{
-		FileInfo fi;
-	        fi.fname = RsDirUtil::getTopDir(fit->name);
-		fi.size  = fit->filesize;
-		fi.hash  = fit->hash;
-		fi.path  = fit->path;
-
-		info.files.push_back(fi);
-		info.count++;
-		info.size += fi.size;
-	}
 
 	return true;
 }
@@ -234,22 +204,10 @@ bool p3Blogs::BlogMessageSend(BlogMsgInfo &info)
 
 	RsBlogMsg *cmsg = new RsBlogMsg();
 	cmsg->grpId = info.blogId;
-	cmsg->mIdReply = info.msgIdReply;
 
 	cmsg->subject   = info.subject;
 	cmsg->message   = info.msg;
 	cmsg->timestamp = time(NULL);
-
-	std::list<FileInfo>::iterator it;
-	for(it = info.files.begin(); it != info.files.end(); it++)
-	{
-		RsTlvFileItem mfi;
-		mfi.hash = it -> hash;
-		mfi.name = it -> fname;
-		mfi.filesize = it -> size;
-		cmsg -> attachment.items.push_back(mfi);
-	}
-
 
 	std::string msgId = publishMsg(cmsg, true);
 
@@ -331,83 +289,11 @@ bool p3Blogs::blogSubscribe(std::string cId, bool subscribe)
 const uint32_t DOWNLOAD_PERIOD = 7 * 24 * 3600; 
 
 /* This is called when we receive a msg, and also recalled
- * on a subscription to a channel..
+ *
  */
 
 bool p3Blogs::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std::string id)
 {
-	std::string grpId = msg->grpId;
-	std::string msgId = msg->msgId;
-	std::string nullId;
-
-
-	std::cerr << "p3Blogs::locked_eventDuplicateMsg() ";
-	std::cerr << " grpId: " << grpId << " msgId: " << msgId;
-	std::cerr << " peerId: " << id;
-	std::cerr << std::endl;
-
-
-	RsBlogMsg *chanMsg = dynamic_cast<RsBlogMsg *>(msg);
-	if (!chanMsg)
-	{
-		return true;
-	}
-
-	/* request the files 
-	 * NB: This will result in duplicates.
-	 * it is upto ftserver/ftcontroller/ftextralist
-	 * */
-
-        //bool download = (grp->flags & (RS_DISTRIB_ADMIN | 
-	//		RS_DISTRIB_PUBLISH | RS_DISTRIB_SUBSCRIBED))
-        bool download = (grp->flags & RS_DISTRIB_SUBSCRIBED);
-
-	/* check subscribed */
-	if (!download)
-	{
-		return true;
-	}
-
-	/* check age */
-	uint32_t age = time(NULL) - msg->timestamp;
-
-	if (age > DOWNLOAD_PERIOD)
-	{
-		return true;
-	}
-
-	/* Iterate through files */
-	std::list<RsTlvFileItem>::iterator fit;
-	for(fit = chanMsg->attachment.items.begin(); 
-		fit != chanMsg->attachment.items.end(); fit++)
-	{
-		std::string fname = fit->name;
-		std::string hash  = fit->hash;
-		uint64_t size     = fit->filesize;
-		std::string blogname = grpId;
-		std::string localpath = mBlogsDir + "/" + blogname;
-		uint32_t flags = RS_FILE_HINTS_EXTRA;
-		std::list<std::string> srcIds;
-
-		srcIds.push_back(id);
-
-		/* download it ... and flag for ExtraList 
-		 * don't do pre-search check as FileRequest does it better
-		 *
-		 * FileRequest will ignore request if file is already indexed.
-		 */
-
-		std::cerr << "p3Blogs::locked_eventDuplicateMsg() ";
-		std::cerr << " Downloading: " << fname;
-		std::cerr << " to: " << localpath;
-		std::cerr << " from: " << id;
-		std::cerr << std::endl;
-
-		mRsFiles->FileRequest(fname, hash, size, 
-					localpath, flags, srcIds);
-	}
-
-
 	return true;
 }
 
@@ -473,25 +359,6 @@ void p3Blogs::locked_notifyGroupChanged(GroupInfo &grp, uint32_t flags)
 		case GRP_SUBSCRIBED:
 			std::cerr << "p3Blogs::locked_notifyGroupChanged() SUBSCRIBED";
 			std::cerr << std::endl;
-	{
-		std::string blogdir = mBlogsDir + "/" + grpId;
-
-		std::cerr << "p3Blogs::locked_notifyGroupChanged() ";
-		std::cerr << " creating directory: " << blogdir;
-		std::cerr << std::endl;
-
-		/* create chanDir */
-		if (!RsDirUtil::checkCreateDirectory(blogdir))
-		{
-			std::cerr << "p3Blogs::locked_notifyGroupChanged() ";
-			std::cerr << "Failed to create Blogs Directory: ";
-			std::cerr << blogdir;
-			std::cerr << std::endl;
-		}
-
-		/* check if downloads need to be started? */
-	}
-
 			break;
 		case GRP_UNSUBSCRIBED:
 			std::cerr << "p3Blogs::locked_notifyGroupChanged() UNSUBSCRIBED";

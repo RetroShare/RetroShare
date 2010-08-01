@@ -33,13 +33,22 @@
 #include "serialiser/rstlvtypes.h"
 #include "serialiser/rsblogitems.h"
 
-
+/*!
+ * implements the blog interface using the distrib service. it allows users to send blogs using
+ * retroshare's cache service. its use
+ */
 class p3Blogs: public p3GroupDistrib, public RsBlogs 
 {
 	public:
 
-	p3Blogs(uint16_t type, CacheStrapper *cs, CacheTransfer *cft, RsFiles *files,
-                std::string srcdir, std::string storedir, std::string blogsdir);
+	/*!
+	 * @param CacheStrapper needed to push blogs onto the cache service
+	 * @param CacheTransfer maintains distrib servi
+	 * @param srcdir
+	 * @param storedir
+	 */
+	p3Blogs(uint16_t type, CacheStrapper *cs, CacheTransfer *cft,
+                std::string srcdir, std::string storedir);
 virtual ~p3Blogs();
 
 /****************************************/
@@ -121,11 +130,6 @@ virtual RsDistribGrp *locked_createPrivateDistribGrp(GroupInfo &info);
 virtual bool childLoadList(std::list<RsItem* >& configSaves);
 virtual std::list<RsItem *> childSaveList();
 /****************************************/
-
-	private:
-
-	RsFiles *mRsFiles;
-	std::string mBlogsDir;
 
 };
 
