@@ -734,3 +734,101 @@ int     bdSpace::printDHT()
 	return 1;
 }
 
+
+int     bdSpace::calcSizes()
+{
+	std::vector<bdBucket>::iterator it;
+
+	/* little summary */
+	unsigned long long sum = 0;
+	unsigned long long no_peers = 0;
+	uint32_t count = 0;
+	uint32_t totalcount = 0;
+	bool doPrint = false;
+	bool doAvg = false;
+
+	int i = 0;
+	for(it = buckets.begin(); it != buckets.end(); it++, i++)
+	{
+		int size = it->entries.size();
+		totalcount += size;
+
+		int shift = BITDHT_KEY_BITLEN - i;
+		bool toBig = false;
+
+		if (shift > BITDHT_ULLONG_BITS - mFns->bdBucketBitSize() - 1)
+		{
+			toBig = true;
+			shift = BITDHT_ULLONG_BITS - mFns->bdBucketBitSize() - 1;
+		}
+		unsigned long long no_nets = ((unsigned long long) 1 << shift);
+
+
+		/* use doPrint so it acts as a single switch */
+		if (size && !doAvg && !doPrint)
+		{	
+			doAvg = true;
+		}
+
+		if (size && !doPrint)
+		{	
+			doPrint = true;
+		}
+
+		if (size == 0)
+		{
+			/* reset counters - if empty slot - to discount outliers in average */
+			sum = 0;
+			no_peers = 0;
+			count = 0;
+		}
+
+		if (!toBig)
+		{
+			no_peers = no_nets * size;
+		}
+
+		if (doPrint && doAvg && !toBig)
+		{
+			if (size == mFns->bdNodesPerBucket())
+			{
+				/* last average */
+				doAvg = false;
+			}
+			if (no_peers != 0)
+			{
+				sum += no_peers;
+				count++;	
+			}
+		}
+	}
+
+
+	mLastSize = totalcount;
+	if (count == 0)
+	{
+		mLastNetSize = 0;
+	}
+	else
+	{
+		mLastNetSize = sum / count;
+	}
+
+	return 1;
+}
+
+uint32_t bdSpace::size()
+{
+	calcSizes();
+	return mLastSize;
+}
+
+uint32_t bdSpace::netSize()
+{
+	calcSizes();
+	return mLastNetSize;
+}
+
+
+
+

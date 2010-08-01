@@ -353,9 +353,11 @@ int bdQuery::addPeer(const bdId *id, uint32_t mode)
 		}
 	}
 
+#ifdef DEBUG_QUERY 
         fprintf(stderr, "bdQuery::addPeer(): Closer Peer!: ");
 	mFns->bdPrintId(std::cerr, id);
         fprintf(stderr, "\n");
+#endif
 
 	/* add it in */
 	bdPeer peer;
@@ -502,9 +504,11 @@ int bdQuery::addPotentialPeer(const bdId *id, uint32_t mode)
 		}
 	}
 
+#ifdef DEBUG_QUERY 
         fprintf(stderr, "bdQuery::addPotentialPeer(): Closer Peer!: ");
 	mFns->bdPrintId(std::cerr, id);
         fprintf(stderr, "\n");
+#endif
 
 	/* add it in */
 	bdPeer peer;

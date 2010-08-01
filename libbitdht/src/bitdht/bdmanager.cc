@@ -54,7 +54,7 @@
  * #define DEBUG_MGR_PKT 1
  ***/
 
-#define DEBUG_MGR 1
+//#define DEBUG_MGR 1
 
 bdNodeManager::bdNodeManager(bdNodeId *id, std::string dhtVersion, std::string bootfile, bdDhtFunctions *fns)
 	:bdNode(id, dhtVersion, bootfile, fns)
@@ -94,14 +94,41 @@ void bdNodeManager::addFindNode(bdNodeId *id, uint32_t qflags)
 	/* add to map */
 	bdQueryPeer peer;
 	peer.mId.id = (*id);
-	peer.mStatus = BITDHT_QUERY_QUERYING;
+	peer.mStatus = BITDHT_QUERY_READY; //QUERYING;
 	peer.mQFlags = qflags;
 	mActivePeers[*id] = peer;
 #ifdef DEBUG_MGR
-	std::cerr << "bdNodeManager::addFindNode() Added QueryPeer....";
+	std::cerr << "bdNodeManager::addFindNode() Added QueryPeer as READY....";
 	std::cerr << std::endl;
 #endif
-	addQuery(id, qflags | BITDHT_QFLAGS_DISGUISE); 
+	//addQuery(id, qflags | BITDHT_QFLAGS_DISGUISE); 
+	return;
+}
+
+	/* finds a queued query, and starts it */
+void bdNodeManager::startQueries()
+{
+#ifdef DEBUG_MGR
+	std::cerr << "bdNodeManager::startQueries() ";
+	std::cerr << std::endl;
+#endif
+	/* check if exists already */
+	std::map<bdNodeId, bdQueryPeer>::iterator it;	
+	for(it = mActivePeers.begin(); it != mActivePeers.end(); it++)
+	{
+		if (it->second.mStatus == BITDHT_QUERY_READY)
+		{
+#ifdef DEBUG_MGR
+			std::cerr << "bdNodeManager::startQueries() Found READY Query.";
+			std::cerr << std::endl;
+#endif
+			it->second.mStatus == BITDHT_QUERY_QUERYING;
+
+			uint32_t qflags = it->second.mQFlags | BITDHT_QFLAGS_DISGUISE;
+			addQuery(&(it->first), qflags); 
+			return;
+		}
+	}
 	return;
 }
 
@@ -138,6 +165,7 @@ void bdNodeManager::iteration()
 	{
 		case BITDHT_MGR_STATE_STARTUP:
 			/* 10 seconds startup .... then switch to ACTIVE */
+
 			if (modeAge > MAX_STARTUP_TIME)
 			{
 #ifdef DEBUG_MGR
@@ -148,10 +176,29 @@ void bdNodeManager::iteration()
 				getOwnId(&id);
 				addQuery(&id, BITDHT_QFLAGS_DO_IDLE | BITDHT_QFLAGS_DISGUISE); 
 				
+				mMode = BITDHT_MGR_STATE_FINDSELF;
+				mModeTS = now;
+			}
+			break;
+
+		case BITDHT_MGR_STATE_FINDSELF:
+			/* 60 seconds further startup .... then switch to ACTIVE */
+#define MAX_FINDSELF_TIME	60
+#define MIN_OP_SPACE_SIZE	100
+
+#ifdef DEBUG_MGR
+			std::cerr << "bdNodeManager::iteration() Finding Oneself: NodeSpace Size:" << mNodeSpace.size();
+				std::cerr << std::endl;
+#endif
+
+			if ((modeAge > MAX_FINDSELF_TIME) || 
+				(mNodeSpace.size() > MIN_OP_SPACE_SIZE))
+			{
 				//mMode = BITDHT_MGR_STATE_ACTIVE;
 				mMode = BITDHT_MGR_STATE_REFRESH;
 				mModeTS = now;
 			}
+			
 			break;
 
 		case BITDHT_MGR_STATE_ACTIVE:
@@ -176,6 +223,13 @@ void bdNodeManager::iteration()
 				/* select random ids, and perform searchs to refresh space */
 				mMode = BITDHT_MGR_STATE_ACTIVE;
 				mModeTS = now;
+
+#ifdef DEBUG_MGR
+				std::cerr << "bdNodeManager::iteration(): Starting Query";
+				std::cerr << std::endl;
+#endif
+
+				startQueries();
 
 #ifdef DEBUG_MGR
 				std::cerr << "bdNodeManager::iteration(): Updating Stores";

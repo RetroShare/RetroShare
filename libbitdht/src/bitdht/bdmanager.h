@@ -70,12 +70,13 @@ class bdQueryPeer
 
 
 #define BITDHT_MGR_STATE_STARTUP	1
-#define BITDHT_MGR_STATE_ACTIVE 	2
-#define BITDHT_MGR_STATE_REFRESH 	3
-#define BITDHT_MGR_STATE_QUIET		4
+#define BITDHT_MGR_STATE_FINDSELF	2
+#define BITDHT_MGR_STATE_ACTIVE 	3
+#define BITDHT_MGR_STATE_REFRESH 	4
+#define BITDHT_MGR_STATE_QUIET		5
 
 #define MAX_STARTUP_TIME 10
-#define MAX_REFRESH_TIME 30
+#define MAX_REFRESH_TIME 20
 
 #define BITDHT_MGR_QUERY_FAILURE		1
 #define BITDHT_MGR_QUERY_PEER_OFFLINE		2
@@ -128,6 +129,7 @@ int	status();
 int	checkStatus();
 int 	checkPingStatus();
 int 	SearchOutOfDate();
+void	startQueries();
 
 	std::map<bdNodeId, bdQueryPeer>	mActivePeers;
         std::list<BitDhtCallback *> mCallbacks;

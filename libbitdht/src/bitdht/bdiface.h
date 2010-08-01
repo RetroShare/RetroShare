@@ -132,16 +132,18 @@ virtual void bdPrintNodeId(std::ostream &out, const bdNodeId *a) = 0;
 
 
 /* Status options */
-#define BITDHT_QUERY_QUERYING           1
-#define BITDHT_QUERY_FAILURE            2
-#define BITDHT_QUERY_FOUND_CLOSEST      3
-#define BITDHT_QUERY_PEER_UNREACHABLE   4
-#define BITDHT_QUERY_SUCCESS            5
+#define BITDHT_QUERY_READY		1
+#define BITDHT_QUERY_QUERYING           2
+#define BITDHT_QUERY_FAILURE            3
+#define BITDHT_QUERY_FOUND_CLOSEST      4
+#define BITDHT_QUERY_PEER_UNREACHABLE   5
+#define BITDHT_QUERY_SUCCESS            6
 
 /* Query Flags */
 #define BITDHT_QFLAGS_NONE		0
 #define BITDHT_QFLAGS_DISGUISE		1
 #define BITDHT_QFLAGS_DO_IDLE		2
+#define BITDHT_QFLAGS_INTERNAL		4  // means it runs through startup.
 
 class BitDhtCallback
 {

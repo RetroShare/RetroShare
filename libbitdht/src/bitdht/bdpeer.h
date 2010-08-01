@@ -153,6 +153,10 @@ int	out_of_date_peer(bdId &id); // side-effect updates, send flag on peer.
 int     add_peer(const bdId *id, uint32_t mode);
 int     printDHT();
 
+int	calcSizes();
+uint32_t     	size();
+uint32_t	netSize();
+
 	/* to add later */
 int	updateOwnId(bdNodeId *newOwnId);
 
@@ -161,6 +165,9 @@ int	updateOwnId(bdNodeId *newOwnId);
 	std::vector<bdBucket> buckets;
 	bdNodeId mOwnId;
 	bdDhtFunctions *mFns;
+
+	uint32_t mLastSize;
+	uint32_t mLastNetSize;
 };
 
 

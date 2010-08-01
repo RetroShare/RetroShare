@@ -29,7 +29,7 @@
 
 #include "bitdht/bdiface.h"
 
-#define BITDHT_STANDARD_BUCKET_SIZE 10   // 20 - too many per query.
+#define BITDHT_STANDARD_BUCKET_SIZE 10 // 20 too many per query?
 #define BITDHT_STANDARD_BUCKET_SIZE_BITS 5
 
 #define BITDHT_STANDARD_N_BUCKETS  BITDHT_KEY_BITLEN

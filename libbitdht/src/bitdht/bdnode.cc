@@ -53,6 +53,7 @@
  * #define DEBUG_NODE_MSGOUT 1
  ***/
 
+//#define DEBUG_NODE_MSGS 1
 
 bdNode::bdNode(bdNodeId *ownId, std::string dhtVersion, std::string bootfile, bdDhtFunctions *fns)
 	:mOwnId(*ownId), mNodeSpace(ownId, fns), mStore(bootfile, fns), mDhtVersion(dhtVersion), mFns(fns)
@@ -215,8 +216,9 @@ void bdNode::iteration()
 			genNewTransId(&transId);
 			registerOutgoingMsg(&id, &transId, BITDHT_MSG_TYPE_FIND_NODE);
 
-#ifdef DEBUG_NODE_MSGS 
 			msgout_find_node(&id, &transId, &targetNodeId);
+
+#ifdef DEBUG_NODE_MSGS 
 			std::cerr << "bdNode::iteration() Find Node Req for : ";
 			mFns->bdPrintId(std::cerr, &id);
 			std::cerr << " searching for : ";
@@ -391,6 +393,39 @@ void bdNode::addPeer(const bdId *id, uint32_t peerflags)
 	mStore.addStore(&peer);
 }
 
+
+#if 0
+        // virtual so manager can do callback.
+        // peer flags defined in bdiface.h
+void bdNode::PeerResponse(const bdId *id, const bdNodeId *target, uint32_t peerflags)
+{
+
+#ifdef DEBUG_NODE_ACTIONS 
+	std::cerr << "bdNode::PeerResponse(";
+	mFns->bdPrintId(std::cerr, id);
+	std::cerr << ", target: ";
+	mFns->bdPrintNodeId(std::cerr, target);
+	fprintf(stderr, ")\n");
+#endif
+
+	/* iterate through queries */
+	std::list<bdQuery>::iterator it;
+	for(it = mLocalQueries.begin(); it != mLocalQueries.end(); it++)
+	{
+		it->PeerResponse(id, target, peerflags);
+	}
+
+	mNodeSpace.add_peer(id, peerflags);
+
+	bdPeer peer;
+	peer.mPeerId = *id;
+	peer.mPeerFlags = peerflags;
+	peer.mLastRecvTime = time(NULL);
+	mStore.addStore(&peer);
+}
+
+#endif
+
 /************************************ Query Details        *************************/
 void bdNode::addQuery(const bdNodeId *id, uint32_t qflags)
 {
@@ -481,27 +516,27 @@ void bdNode::processRemoteQuery()
         				}
 					msgout_reply_find_node(&(query.mId), &(query.mTransId), nearList);
 #ifdef DEBUG_NODE_MSGS 
-				std::cerr << "bdNode::processRemoteQuery() Reply to Find Node: ";
-				mFns->bdPrintId(std::cerr, &(query.mId));
-				std::cerr << " searching for : ";
-				mFns->bdPrintNodeId(std::cerr, &(query.mQuery));
-				std::cerr << ", found " << nearest.size() << " nodes ";
-				std::cerr << std::endl;
+					std::cerr << "bdNode::processRemoteQuery() Reply to Find Node: ";
+					mFns->bdPrintId(std::cerr, &(query.mId));
+					std::cerr << " searching for : ";
+					mFns->bdPrintNodeId(std::cerr, &(query.mQuery));
+					std::cerr << ", found " << nearest.size() << " nodes ";
+					std::cerr << std::endl;
 #endif
 					
-					mCounterReplyFindNode = 0;
+					mCounterReplyFindNode++;
 
 					break;
 				}
 				case BD_QUERY_HASH:
 				{
 #ifdef DEBUG_NODE_MSGS 
-				std::cerr << "bdNode::processRemoteQuery() Reply to Query Node: ";
-				mFns->bdPrintId(std::cerr, &(query.mId));
-				std::cerr << " TODO";
-				std::cerr << std::endl;
+					std::cerr << "bdNode::processRemoteQuery() Reply to Query Node: ";
+					mFns->bdPrintId(std::cerr, &(query.mId));
+					std::cerr << " TODO";
+					std::cerr << std::endl;
 #endif
-					mCounterReplyQueryHash = 0;
+					mCounterReplyQueryHash++;
 
 
 					/* TODO */
@@ -519,6 +554,16 @@ void bdNode::processRemoteQuery()
 
 				
 		}
+		else
+		{
+#ifdef DEBUG_NODE_MSGS 
+			std::cerr << "bdNode::processRemoteQuery() Query Too Old: Discarding: ";
+			mFns->bdPrintId(std::cerr, &(query.mId));
+			std::cerr << std::endl;
+#endif
+		}
+
+
 		mRemoteQueries.pop_front();
 	}
 }

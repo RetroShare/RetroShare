@@ -176,12 +176,15 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 	void printQueries();
 
 
-	private:
+	protected:
 
 
 	bdNodeId mOwnId;
 	bdId 	mLikelyOwnId; // Try to workout own id address.
 	bdSpace mNodeSpace;
+
+	private:
+
 	bdStore mStore;
 	std::string mDhtVersion;
 
