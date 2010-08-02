@@ -1,6 +1,10 @@
 TEMPLATE = app
 TARGET = retroshare-nogui
 
+# bitdht config
+bitdht {
+	LIBS += ../../libbitdht/src/lib/libbitdht.a
+}
 ################################# Linux ##########################################
 linux-* {
 	#CONFIG += version_detail_bash_script
