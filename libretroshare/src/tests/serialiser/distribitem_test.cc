@@ -38,68 +38,10 @@
 
 INITTEST()
 
-#define SHORT_STR 100
-#define LARGE_STR 1000
-
 /** base rs distrib items **/
 
 
 
-void init_item(RsTlvSecurityKey& sk)
-{
-	int randnum = rand()%313131;
-
-	sk.endTS = randnum;
-	sk.keyFlags = randnum;
-	sk.startTS = randnum;
-	randString(SHORT_STR, sk.keyId);
-
-	std::string randomStr;
-	randString(LARGE_STR, randomStr);
-
-	sk.keyData.setBinData(randomStr.c_str(), randomStr.size());
-
-	return;
-}
-
-void init_item(RsTlvKeySignature& ks)
-{
-	randString(SHORT_STR, ks.keyId);
-
-	std::string signData;
-	randString(LARGE_STR, signData);
-
-	ks.signData.setBinData(signData.c_str(), signData.size());
-
-	return;
-}
-
-void init_item(RsTlvImage& im)
-{
-	std::string imageData;
-	randString(LARGE_STR, imageData);
-	im.binData.setBinData(imageData.c_str(), imageData.size());
-	im.image_type = RSTLV_IMAGE_TYPE_PNG;
-
-	return;
-}
-
-bool operator==(const RsTlvBinaryData& bd1, const RsTlvBinaryData& bd2)
-{
-	if(bd1.tlvtype != bd2.tlvtype) return false;
-	if(bd1.bin_len != bd2.bin_len) return false;
-
-	unsigned char *bin1 = (unsigned char*)(bd1.bin_data),
-			*bin2 = (unsigned char*)(bd2.bin_data);
-
-	for(uint32_t i=0; i < bd1.bin_len; bin1++, bin2++, i++)
-	{
-		if(*bin1 != *bin2)
-			return false;
-	}
-
-	return true;
-}
 
 RsSerialType* init_item(RsDistribGrp& grp)
 {
@@ -137,63 +79,6 @@ RsSerialType* init_item(RsDistribGrp& grp)
 
 }
 
-bool operator==(const RsTlvSecurityKey& sk1, const RsTlvSecurityKey& sk2)
-{
-
-	if(sk1.startTS != sk2.startTS) return false;
-	if(sk1.endTS != sk2.endTS) return false;
-	if(sk1.keyFlags != sk2.keyFlags) return false;
-	if(sk1.keyId != sk2.keyId) return false;
-	if(!(sk1.keyData == sk1.keyData)) return false;
-
-	return true;
-}
-
-bool operator==(const RsTlvKeySignature& ks1, const RsTlvKeySignature& ks2)
-{
-
-	if(ks1.keyId != ks2.keyId) return false;
-	if(!(ks1.signData == ks2.signData)) return false;
-
-	return true;
-}
-
-bool operator==(const RsTlvPeerIdSet& pids1, const RsTlvPeerIdSet& pids2)
-{
-	std::list<std::string>::const_iterator it1 = pids1.ids.begin(),
-			it2 = pids2.ids.begin();
-
-
-	for(; ((it1 != pids1.ids.end()) && (it2 != pids2.ids.end())); it1++, it2++)
-	{
-		if(*it1 != *it2) return false;
-	}
-
-	return true;
-
-}
-
-bool operator==(const RsDistribGrp& g1, const RsDistribGrp& g2)
-{
-
-	if(g1.grpCategory != g2.grpCategory) return false;
-	if(g1.grpControlFlags != g2.grpControlFlags) return false;
-	if(!(g1.grpControlList == g2.grpControlList)) return false;
-	if(g1.grpDesc != g2.grpDesc) return false;
-	if(g1.grpFlags != g2.grpFlags) return false;
-	if(g1.grpId != g2.grpId) return false;
-	if(g1.grpName != g2.grpName) return false;
-	if(g1.timestamp != g2.timestamp) return false;
-
-	// admin key
-
-	if(!(g1.adminKey == g2.adminKey)) return false;
-	if(!(g1.adminSignature == g2.adminSignature)) return false;
-	if(g1.grpPixmap.image_type != g2.grpPixmap.image_type) return false;
-	if(!(g1.grpPixmap.binData == g2.grpPixmap.binData)) return false;
-
-	return true;
-}
 
 RsSerialType* init_item(RsDistribGrpKey& gk)
 {
@@ -241,114 +126,6 @@ bool operator==(const RsDistribSignedMsg& sMsg1,const  RsDistribSignedMsg& sMsg2
 	return true;
 }
 
-bool operator==(const RsTlvImage& img1, const RsTlvImage& img2)
-{
-	if(img1.image_type != img2.image_type) return false;
-	if(!(img1.binData == img2.binData)) return false;
-
-	return true;
-
-}
-
-/** channels, forums and blogs **/
-
-void init_item(RsTlvHashSet& hs)
-{
-	std::string hash;
-
-	for(int i=0; i < 10; i++)
-	{
-		randString(SHORT_STR, hash);
-		hs.ids.push_back(hash);
-	}
-
-	hs.mType = TLV_TYPE_HASHSET;
-	return;
-}
-
-void init_item(RsTlvPeerIdSet& ps)
-{
-	std::string peer;
-
-	for(int i=0; i < 10; i++)
-	{
-		randString(SHORT_STR, peer);
-		ps.ids.push_back(peer);
-	}
-
-	ps.mType = TLV_TYPE_PEERSET;
-	return;
-}
-
-bool operator==(const RsTlvHashSet& hs1,const RsTlvHashSet& hs2)
-{
-	if(hs1.mType != hs2.mType) return false;
-
-	std::list<std::string>::const_iterator it1 = hs1.ids.begin(),
-			it2 = hs2.ids.begin();
-
-	for(; ((it1 != hs1.ids.end()) && (it2 != hs2.ids.end())); it1++, it2++)
-	{
-		if(*it1 != *it2) return false;
-	}
-
-	return true;
-}
-
-void init_item(RsTlvFileItem& fi)
-{
-	fi.age = rand()%200;
-	fi.filesize = rand()%34030313;
-	randString(SHORT_STR, fi.hash);
-	randString(SHORT_STR, fi.name);
-	randString(SHORT_STR, fi.path);
-	fi.piecesize = rand()%232;
-	fi.pop = rand()%2354;
-	init_item(fi.hashset);
-
-	return;
-}
-
-void init_item(RsTlvFileSet& fSet){
-
-	randString(LARGE_STR, fSet.comment);
-	randString(SHORT_STR, fSet.title);
-	RsTlvFileItem fi1, fi2;
-	init_item(fi1);
-	init_item(fi2);
-	fSet.items.push_back(fi1);
-	fSet.items.push_back(fi2);
-
-	return;
-}
-
-bool operator==(const RsTlvFileSet& fs1,const  RsTlvFileSet& fs2)
-{
-	if(fs1.comment != fs2.comment) return false;
-	if(fs1.title != fs2.title) return false;
-
-	std::list<RsTlvFileItem>::const_iterator it1 = fs1.items.begin(),
-			it2 = fs2.items.begin();
-
-	for(;  ((it1 != fs1.items.end()) && (it2 != fs2.items.end())); it1++, it2++)
-		if(!(*it1 == *it2)) return false;
-
-	return true;
-}
-
-bool operator==(const RsTlvFileItem& fi1,const RsTlvFileItem& fi2)
-{
-	if(fi1.age != fi2.age) return false;
-	if(fi1.filesize != fi2.filesize) return false;
-	if(fi1.hash != fi2.hash) return false;
-	if(!(fi1.hashset == fi2.hashset)) return false;
-	if(fi1.name != fi2.name) return false;
-	if(fi1.path != fi2.path) return false;
-	if(fi1.piecesize != fi2.piecesize) return false;
-	if(fi1.pop != fi2.pop) return false;
-
-	return true;
-}
 
 RsSerialType* init_item(RsChannelMsg& chMsg)
 {
@@ -428,6 +205,31 @@ RsSerialType* init_item(RsBlogMsg& bMsg)
 	return new RsBlogSerialiser();
 }
 
+
+bool operator==(const RsDistribGrp& g1, const RsDistribGrp& g2)
+{
+
+	if(g1.grpCategory != g2.grpCategory) return false;
+	if(g1.grpControlFlags != g2.grpControlFlags) return false;
+	if(!(g1.grpControlList == g2.grpControlList)) return false;
+	if(g1.grpDesc != g2.grpDesc) return false;
+	if(g1.grpFlags != g2.grpFlags) return false;
+	if(g1.grpId != g2.grpId) return false;
+	if(g1.grpName != g2.grpName) return false;
+	if(g1.timestamp != g2.timestamp) return false;
+
+	// admin key
+
+	if(!(g1.adminKey == g2.adminKey)) return false;
+	if(!(g1.adminSignature == g2.adminSignature)) return false;
+	if(g1.grpPixmap.image_type != g2.grpPixmap.image_type) return false;
+	if(!(g1.grpPixmap.binData == g2.grpPixmap.binData)) return false;
+
+	return true;
+}
+
+
+
 RsSerialType* init_item(RsForumReadStatus& fRdStatus)
 {
 	randString(SHORT_STR, fRdStatus.forumId);
@@ -472,6 +274,8 @@ bool operator==(const RsForumReadStatus& frs1, const RsForumReadStatus& frs2)
 
 }
 
+
+
 bool operator==(const RsBlogMsg& bMsg1,const RsBlogMsg& bMsg2)
 {
 
@@ -495,85 +299,17 @@ bool operator==(const RsBlogMsg& bMsg1,const RsBlogMsg& bMsg2)
 	return true;
 }
 
-/**
- * @param T item you want to serialise
- */
-template<class T> int test_RsDistribItem()
-{
-
-	/* make a serialisable RsTurtleItem */
-
-	RsSerialiser srl;
-
-	/* initialise */
-	T rsfi ;
-	RsSerialType *rsfis = init_item(rsfi) ;
-
-	/* attempt to serialise it before we add it to the serialiser */
-
-	CHECK(0 == srl.size(&rsfi));
-
-	static const uint32_t MAX_BUFSIZE = 16000 ;
-
-	char *buffer = new char[MAX_BUFSIZE];
-	uint32_t sersize = MAX_BUFSIZE;
-
-	CHECK(false == srl.serialise(&rsfi, (void *) buffer, &sersize));
-
-	/* now add to serialiser */
-
-	srl.addSerialType(rsfis);
-
-	uint32_t size = srl.size(&rsfi);
-	bool done = srl.serialise(&rsfi, (void *) buffer, &sersize);
-
-	std::cerr << "test_Item() size: " << size << std::endl;
-	std::cerr << "test_Item() done: " << done << std::endl;
-	std::cerr << "test_Item() sersize: " << sersize << std::endl;
-
-	std::cerr << "test_Item() serialised:" << std::endl;
-//	displayRawPacket(std::cerr, (void *) buffer, sersize);
-
-	CHECK(done == true);
-
-	uint32_t sersize2 = sersize;
-	RsItem *output = srl.deserialise((void *) buffer, &sersize2);
-
-	CHECK(output != NULL);
-	CHECK(sersize2 == sersize);
-
-	T *outfi = dynamic_cast<T *>(output);
-
-	CHECK(outfi != NULL);
-
-	if (outfi)
-		CHECK(*outfi == rsfi) ;
-
-	sersize2 = MAX_BUFSIZE;
-	bool done2 = srl.serialise(outfi, (void *) &(buffer[16*8]), &sersize2);
-
-	CHECK(done2) ;
-	CHECK(sersize2 == sersize);
-
-//	displayRawPacket(std::cerr, (void *) buffer, 16 * 8 + sersize2);
-
-	delete[] buffer ;
-
-	return 1;
-}
-
-
 int main(){
 
 	std::cerr << "RsDistribItem Tests" << std::endl;
 
-	test_RsDistribItem<RsDistribGrp>(); REPORT("Serialise/Deserialise RsDistribGrp");
-	test_RsDistribItem<RsDistribGrpKey>(); REPORT("Serialise/Deserialise RsDistribGrpKey");
-	test_RsDistribItem<RsDistribSignedMsg>(); REPORT("Serialise/Deserialise RsDistribSignedMsg");
-	test_RsDistribItem<RsChannelMsg>(); REPORT("Serialise/Deserialise RsChannelMsg");
-	test_RsDistribItem<RsForumMsg>(); REPORT("Serialise/Deserialise RsForumMsg");
-	test_RsDistribItem<RsForumReadStatus>(); REPORT("Serialise/Deserialise RsForumReadStatus");
-	test_RsDistribItem<RsBlogMsg>(); REPORT("Serialise/Deserialise RsBlogMsg");
+	test_RsItem<RsDistribGrp>(); REPORT("Serialise/Deserialise RsDistribGrp");
+	test_RsItem<RsDistribGrpKey>(); REPORT("Serialise/Deserialise RsDistribGrpKey");
+	test_RsItem<RsDistribSignedMsg>(); REPORT("Serialise/Deserialise RsDistribSignedMsg");
+	test_RsItem<RsChannelMsg>(); REPORT("Serialise/Deserialise RsChannelMsg");
+	test_RsItem<RsForumMsg>(); REPORT("Serialise/Deserialise RsForumMsg");
+	test_RsItem<RsForumReadStatus>(); REPORT("Serialise/Deserialise RsForumReadStatus");
+	test_RsItem<RsBlogMsg>(); REPORT("Serialise/Deserialise RsBlogMsg");
 
 
 	FINALREPORT("RsDistribItem Tests");

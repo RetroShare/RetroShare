@@ -10,12 +10,14 @@ include $(RS_TOP_DIR)/tests/scripts/config.mk
 TESTOBJ  = tlvbase_test.o tlvbase_test2.o rstunnelitem_test.o
 TESTOBJ += tlvitems_test.o tlvstack_test.o rsserial_test.o 
 TESTOBJ += rstlvwidetest.o tlvrandom_test.o rsturtleitem_test.o
-TESTOBJ += tlvtypes_test.o support.o distribitem_test.o  
+TESTOBJ += tlvtypes_test.o support.o distribitem_test.o rsmsgitem_test.o  
+TESTOBJ += rsstatusitem_test.o
 
 TESTS  = tlvbase_test tlvbase_test2 rstlvwidetest
 TESTS += tlvitems_test tlvstack_test rstunnelitem_test
 TESTS +=  tlvrandom_test rsserial_test rsturtleitem_test
-TESTS +=  tlvtypes_test distribitem_test
+TESTS +=  tlvtypes_test distribitem_test rsmsgitem_test
+TESTS +=  rsstatusitem_test
 
 #rsbaseitem_test
 
@@ -45,18 +47,23 @@ rstlvwidetest : rstlvwidetest.o
 tlvrandom_test : tlvrandom_test.o
 	$(CC) $(CFLAGS) -o tlvrandom_test tlvrandom_test.o $(OBJ) $(LIBS)
 
-rsturtleitem_test : rsturtleitem_test.o
+rsturtleitem_test : rsturtleitem_test.o support.o
 	$(CC) $(CFLAGS) -o rsturtleitem_test rsturtleitem_test.o $(OBJ) $(LIBS)
 
-rstunnelitem_test : rstunnelitem_test.o
-	$(CC) $(CFLAGS) -o rstunnelitem_test rstunnelitem_test.o $(OBJ) $(LIBS)
+rstunnelitem_test : rstunnelitem_test.o support.o
+	$(CC) $(CFLAGS) -o rstunnelitem_test rstunnelitem_test.o support.o $(OBJ) $(LIBS)
 	
 tlvtypes_test : tlvtypes_test.o
 	$(CC) $(CFLAGS) -o tlvtypes_test tlvtypes_test.o $(OBJ) $(LIBS)
 	
 distribitem_test : distribitem_test.o support.o
-	$(CC) $(CFLAGS) -o distrib_test distribitem_test.o support.o $(OBJ) $(LIBS)
+	$(CC) $(CFLAGS) -o distribitem_test distribitem_test.o support.o $(OBJ) $(LIBS)
 
+rsmsgitem_test : rsmsgitem_test.o support.o
+	$(CC) $(CFLAGS) -o rsmsgitem_test rsmsgitem_test.o support.o $(OBJ) $(LIBS)
+
+rsstatusitem_test : rsstatusitem_test.o support.o
+	$(CC) $(CFLAGS) -o rsstatusitem_test rsstatusitem_test.o support.o $(OBJ) $(LIBS)
 
 ###############################################################
 include $(RS_TOP_DIR)/scripts/rules.mk

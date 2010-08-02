@@ -32,10 +32,11 @@
 #include <serialiser/rstunnelitems.h>
 #include <serialiser/rstlvutil.h>
 #include "util/utest.h"
+#include "support.h"
 
-INITTEST();
 
-void init_item(RsTunnelDataItem& item)
+
+RsTunnelSerialiser* init_item(RsTunnelDataItem& item)
 {
 	uint32_t S = lrand48()%20000 ;
 	item.encoded_data = malloc(S) ;
@@ -45,6 +46,8 @@ void init_item(RsTunnelDataItem& item)
 	item.sourcePeerId = "67641e38df0e75432033d222eae93fff" ;
 	item.relayPeerId = "6013bfc2cea7ab823af7a79fb3ca0df1" ;
 	item.destPeerId = "1d5768db7cd4720d0eb75cc1917da332" ;
+
+	return new RsTunnelSerialiser();
 }
 bool operator==(const RsTunnelDataItem& it1,const RsTunnelDataItem& it2)
 {
@@ -58,7 +61,8 @@ bool operator==(const RsTunnelDataItem& it1,const RsTunnelDataItem& it2)
 			return false ;
 	return true ;
 }
-void init_item(RsTunnelHandshakeItem& item)
+
+RsTunnelSerialiser* init_item(RsTunnelHandshakeItem& item)
 {
 	item.sourcePeerId = "67641e38df0e75432033d222eae93fff" ;
 	item.relayPeerId = "6013bfc2cea7ab823af7a79fb3ca0df1" ;
@@ -69,6 +73,8 @@ void init_item(RsTunnelHandshakeItem& item)
 	for(uint32_t i=0;i<s;++i)
 		item.sslCertPEM += "6013bfc2cea7ab823af7a79fb3ca0df1" ;
 	item.connection_accepted = lrand48() ;
+
+	return new RsTunnelSerialiser();
 }
 bool operator==(const RsTunnelHandshakeItem& it1,const RsTunnelHandshakeItem& it2)
 {
@@ -81,68 +87,7 @@ bool operator==(const RsTunnelHandshakeItem& it1,const RsTunnelHandshakeItem& it
 	return true ;
 }
 
-template<class T> int test_RsItem()
-{
-	/* make a serialisable RsTurtleItem */
-
-	RsSerialiser srl;
-
-	/* initialise */
-	T rsfi ;
-	init_item(rsfi) ;
-
-	/* attempt to serialise it before we add it to the serialiser */
-
-	CHECK(0 == srl.size(&rsfi));
-
-	static const uint32_t MAX_BUFSIZE = 22000 ;
-
-	char *buffer = new char[MAX_BUFSIZE];
-	uint32_t sersize = MAX_BUFSIZE;
-
-	CHECK(false == srl.serialise(&rsfi, (void *) buffer, &sersize));
-
-	/* now add to serialiser */
-
-	RsTunnelSerialiser *rsfis = new RsTunnelSerialiser();
-	srl.addSerialType(rsfis);
-
-	uint32_t size = srl.size(&rsfi);
-	bool done = srl.serialise(&rsfi, (void *) buffer, &sersize);
-
-	std::cerr << "test_Item() size: " << size << std::endl;
-	std::cerr << "test_Item() done: " << done << std::endl;
-	std::cerr << "test_Item() sersize: " << sersize << std::endl;
-
-	std::cerr << "test_Item() serialised:" << std::endl;
-	displayRawPacket(std::cerr, (void *) buffer, sersize);
-
-	CHECK(done == true);
-
-	uint32_t sersize2 = sersize;
-	RsItem *output = srl.deserialise((void *) buffer, &sersize2);
-
-	CHECK(output != NULL);
-	CHECK(sersize2 == sersize);
-
-	T *outfi = dynamic_cast<T *>(output);
-
-	CHECK(outfi != NULL);
-
-	if (outfi)
-		CHECK(*outfi == rsfi) ;
-
-	sersize2 = MAX_BUFSIZE;
-	bool done2 = srl.serialise(outfi, (void *) &(buffer[16*8]), &sersize2);
-
-	CHECK(done2) ;
-	CHECK(sersize2 == sersize);
-
-	displayRawPacket(std::cerr, (void *) buffer, 16 * 8 + sersize2);
-
-	delete[] buffer ;
-	return 1;
-}
+INITTEST();
 
 int main()
 {

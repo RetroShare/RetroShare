@@ -25,13 +25,13 @@
  * Please report all bugs and problems to "retroshare@lunamutt.com".
  *
  */
+
 #include "serialiser/rsdistribitems.h"
 #include "serialiser/rschannelitems.h"
 #include "serialiser/rsforumitems.h"
 #include "serialiser/rsblogitems.h"
 
-#include "serialiser/rstlvkeys.h"
-#include "serialiser/rstlvtypes.h"
+
 
 RsSerialType* init_item(RsDistribGrp&);
 RsSerialType* init_item(RsDistribGrpKey&);
@@ -49,22 +49,6 @@ bool operator==(const RsForumMsg& , const RsForumMsg& );
 bool operator==(const RsForumReadStatus&, const RsForumReadStatus& );
 bool operator==(const RsBlogMsg& , const RsBlogMsg& );
 
-void init_item(RsTlvSecurityKey&);
-void init_item(RsTlvKeySignature&);
-void init_item(RsTlvBinaryData&);
-void init_item(RsTlvFileItem&);
-void init_item(RsTlvFileSet&);
-void init_item(RsTlvHashSet&);
-void init_item(RsTlvPeerIdSet&);
-void init_item(RsTlvImage&);
-
-bool operator==(const RsTlvSecurityKey&, const RsTlvSecurityKey& );
-bool operator==(const RsTlvKeySignature&, const RsTlvKeySignature& );
-bool operator==(const RsTlvBinaryData&, const RsTlvBinaryData&);
-bool operator==(const RsTlvFileItem&, const RsTlvFileItem&);
-bool operator==(const RsTlvFileSet&, const RsTlvFileSet& );
-bool operator==(const RsTlvHashSet&, const RsTlvHashSet&);
-bool operator==(const RsTlvImage&, const RsTlvImage& );
 
 
 

@@ -60,7 +60,10 @@ class RsChatItem: public RsItem
 		virtual uint32_t serial_size() = 0 ; 							// deserialise is handled using a constructor
 };
 
-
+/*!
+ * For sending chat msgs
+ * @see p3ChatService
+ */
 class RsChatMsgItem: public RsChatItem
 {
 	public:
