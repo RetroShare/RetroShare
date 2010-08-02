@@ -79,6 +79,8 @@ SOURCES +=	tcponudp/udppeer.cc \
 
         BITDHT_DIR = ../../libbitdht/src
 	INCLUDEPATH += . $${BITDHT_DIR}
+	# The next line if for compliance with debian packages. Keep it!
+	INCLUDEPATH += ../libbitdht
 	DEFINES *= RS_USE_BITDHT
 }
 
@@ -460,12 +462,15 @@ SOURCES +=	services/p3channels.cc \
 			services/p3ranking.cc \
 			services/p3service.cc \
 			services/p3statusservice.cc
-# removed because getPeer() doesn't exist			services/p3tunnel.cc
+# removed because getPeer() doesn t exist			services/p3tunnel.cc
 
 SOURCES +=	tcponudp/extaddrfinder.cc \
 
 SOURCES +=	turtle/p3turtle.cc \
-			turtle/rsturtleitem.cc
+				turtle/rsturtleitem.cc 
+#				turtle/turtlerouting.cc \
+#				turtle/turtlesearch.cc \
+#				turtle/turtletunnels.cc
 
 SOURCES +=	upnp/upnphandler.cc
 
