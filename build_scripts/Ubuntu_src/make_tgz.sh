@@ -2,10 +2,17 @@
 
 rm BaseRetroShareDirs.tgz 
 
+rm -rf retroshare-0.5/libbitdht/
+rm -rf retroshare-0.5/libretroshare/
+
+rm -rf retroshare-0.5/src/libbitdht/*
+rm -rf retroshare-0.5/src/libbitdht/.svn/
 rm -rf retroshare-0.5/src/libretroshare/*
 rm -rf retroshare-0.5/src/libretroshare/.svn/
 rm -rf retroshare-0.5/src/retroshare-gui/*
 rm -rf retroshare-0.5/src/retroshare-gui/.svn/
+rm -rf retroshare-0.5/src/retroshare-nogui/*
+rm -rf retroshare-0.5/src/retroshare-nogui/.svn/
 
 find retroshare-0.5 -name "*~" -exec \rm {} \;
 

@@ -15,3 +15,4 @@ rm -rf ./retroshare-0.5
 
 sudo pbuilder build *.dsc
 
+cp /var/cache/pbuilder/result/retroshare_0.5-1_i386.deb .
