@@ -1,7 +1,7 @@
 TEMPLATE = lib
 #CONFIG += staticlib release
-CONFIG += staticlib testnetwork
-#CONFIG += staticlib testnetwork bitdht
+#CONFIG += staticlib testnetwork
+CONFIG += staticlib testnetwork bitdht
 CONFIG -= qt
 TARGET = retroshare
 
@@ -34,7 +34,6 @@ testnetwork {
         QMAKE_CXXFLAGS -= -O2 
         QMAKE_CXXFLAGS *= -g -fno-omit-frame-pointer
 }
-
 
 
 #CONFIG += debug

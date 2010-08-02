@@ -1364,6 +1364,26 @@ int 	pqissl::senddata(void *data, int len)
 			out << std::endl;
 			std::cerr << out.str() ;
 			rslog(RSL_ALERT, pqisslzone, out.str());
+
+			/* extra debugging - based on SSL_get_error() man page */
+			{
+				int errsys = errno;
+				int sslerr = 0;
+				std::ostringstream out2;
+				out2 << "SSL_ERROR_SYSCALL, ret == " << tmppktlen;
+				out2 << " errno: " << errsys << std::endl;
+
+				while(0 != (sslerr = ERR_get_error()))
+				{
+					out2 << "SSLERR:" << sslerr << " : ";
+
+					char sslbuf[256] = {0};
+					out2 << ERR_error_string(sslerr, sslbuf);
+					out2 << std::endl;
+				}
+				rslog(RSL_ALERT, pqisslzone, out2.str());
+			}
+
 			reset();
 			return -1;
 		}
@@ -1488,6 +1508,26 @@ int 	pqissl::readdata(void *data, int len)
 				out << "Socket Closed Abruptly.... Resetting PQIssl";
 				out << std::endl;
 				rslog(RSL_ALERT, pqisslzone, out.str());
+
+				/* extra debugging - based on SSL_get_error() man page */
+				{
+					int syserr = errno;
+					int sslerr = 0;
+					std::ostringstream out2;
+					out2 << "SSL_ERROR_SYSCALL, ret == " << tmppktlen;
+					out2 << " errno: " << syserr << std::endl;
+	
+					while(0 != (sslerr = ERR_get_error()))
+					{
+						out2 << "SSLERR:" << sslerr << " : ";
+	
+						char sslbuf[256] = {0};
+						out2 << ERR_error_string(sslerr, sslbuf);
+						out2 << std::endl;
+					}
+					rslog(RSL_ALERT, pqisslzone, out2.str());
+				}
+
 				reset();
 				std::cerr << out.str() << std::endl ;
 				return -1;

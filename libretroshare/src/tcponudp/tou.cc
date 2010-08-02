@@ -66,8 +66,9 @@ static  UdpPeerReceiver *udps = NULL;
 static int	tou_tick_all();
 
 /* 	tou_init - opens the udp port (universal bind) */
-int 	tou_init(UdpStack *stack)
+int 	tou_init(void *in_udpstack)
 {
+	UdpStack *stack = (UdpStack *) in_udpstack;
 	if (tou_inited)
 	{
 		return 1;

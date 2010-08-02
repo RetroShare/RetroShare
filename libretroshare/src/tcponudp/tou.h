@@ -58,8 +58,9 @@
 	 * (1) need UdpStack item, which has our address already.
 	 */
 
-class UdpStack;
-int  	tou_init(UdpStack *stack);
+// hack to avoid classes in C code. (MacOSX complaining)
+// will pass as UdpStack * as void * 
+int  	tou_init(void *udpStack); 
 
 
 #ifdef  __cplusplus

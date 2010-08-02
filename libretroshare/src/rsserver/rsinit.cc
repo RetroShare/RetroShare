@@ -2264,6 +2264,7 @@ int RsServer::StartupRetroShare()
 
 #ifdef RS_USE_BITDHT
         mConnMgr->addNetAssistConnect(1, mBitDht);
+	mConnMgr->addNetListener(mUdpStack); 
 #endif
 	mConnMgr->addNetAssistFirewall(1, mUpnpMgr);
 
@@ -2372,7 +2373,6 @@ int RsServer::StartupRetroShare()
 
 	pqih->init_listener();
 	mConnMgr->addNetListener(pqih); /* add listener so we can reset all sockets later */
-	mConnMgr->addNetListener(mUdpStack); 
 
 
 
