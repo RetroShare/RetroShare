@@ -434,8 +434,9 @@ void  MessengerWindow::insertPeers()
     bool bSortState = ui.actionSort_by_State->isChecked();
 
     //remove items that are not fiends anymore
+    int itemCount = peertreeWidget->topLevelItemCount();
     int index = 0;
-    while (index < peertreeWidget->topLevelItemCount()) {
+    while (index < itemCount) {
         std::string gpg_widget_id = peertreeWidget->topLevelItem(index)->data(COLUMN_DATA, ROLE_ID).toString().toStdString();
         std::list<std::string>::iterator gpgfriendIt;
         bool found = false;
@@ -447,6 +448,8 @@ void  MessengerWindow::insertPeers()
         }
         if (!found) {
             delete (peertreeWidget->takeTopLevelItem(index));
+            // count again
+            itemCount = peertreeWidget->topLevelItemCount();
         } else {
             index++;
         }
@@ -462,7 +465,8 @@ void  MessengerWindow::insertPeers()
         QTreeWidgetItem *gpg_item = NULL;
         QTreeWidgetItem *gpg_item_loop = NULL;
         QString gpgid = QString::fromStdString(*it);
-        for (int nIndex = 0; nIndex < peertreeWidget->topLevelItemCount(); nIndex++) {
+        itemCount = peertreeWidget->topLevelItemCount();
+        for (int nIndex = 0; nIndex < itemCount; nIndex++) {
             gpg_item_loop = peertreeWidget->topLevelItem(nIndex);
             if (gpg_item_loop->data(COLUMN_DATA, ROLE_ID).toString() == gpgid) {
                 gpg_item = gpg_item_loop;
@@ -491,11 +495,14 @@ void  MessengerWindow::insertPeers()
         gpg_item -> setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(detail.id));
 
         //remove items that are not friends anymore
+        int childCount = gpg_item->childCount();
         int childIndex = 0;
-        while (childIndex < gpg_item->childCount()) {
+        while (childIndex < childCount) {
             std::string ssl_id = gpg_item->child(childIndex)->data(COLUMN_DATA, ROLE_ID).toString().toStdString();
             if (!rsPeers->isFriend(ssl_id)) {
                 delete (gpg_item->takeChild(childIndex));
+                // count again
+                childCount = gpg_item->childCount();
             } else {
                 childIndex++;
             }
@@ -511,7 +518,8 @@ void  MessengerWindow::insertPeers()
 
             //find the corresponding sslItem child item of the gpg item
             bool newChild = true;
-            for (int childIndex = 0; childIndex < gpg_item->childCount(); childIndex++) {
+            childCount = gpg_item->childCount();
+            for (int childIndex = 0; childIndex < childCount; childIndex++) {
                 if (gpg_item->child(childIndex)->data(COLUMN_DATA, ROLE_ID).toString().toStdString() == *sslIt) {
                     sslItem = gpg_item->child(childIndex);
                     newChild = false;
@@ -606,7 +614,6 @@ void  MessengerWindow::insertPeers()
 
             std::list<StatusInfo>::iterator it = statusInfo.begin();
 
-
             for(; it != statusInfo.end() ; it++){
 
                 std::list<std::string>::iterator cont_it = sslContacts.begin();
@@ -639,8 +646,9 @@ void  MessengerWindow::insertPeers()
                         } else                         {
                             gpg_item -> setIcon(COLUMN_STATE,(QIcon(":/images/no_avatar_70.png")));
                         }
-                        if(it->status == RS_STATUS_INACTIVE)
-                        {
+
+                        switch (it->status) {
+                        case RS_STATUS_INACTIVE:
                             gpg_item -> setIcon(COLUMN_NAME,(QIcon(IMAGE_INACTIVE)));
                             gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Idle"));
                             gpg_item->setData(COLUMN_NAME, ROLE_SORT, BuildStateSortString(bSortState, gpg_item->text(COLUMN_NAME), PEER_STATE_INACTIVE));
@@ -649,9 +657,9 @@ void  MessengerWindow::insertPeers()
                                 gpg_item -> setTextColor(i,(Qt::gray));
                                 gpg_item -> setFont(i,font);
                             }
-                        }
-                        else if(it->status == RS_STATUS_ONLINE)
-                        {
+                            break;
+
+                        case RS_STATUS_ONLINE:
                             gpg_item -> setIcon(COLUMN_NAME,(QIcon(IMAGE_ONLINE)));
                             gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Online"));
                             gpg_item->setData(COLUMN_NAME, ROLE_SORT, BuildStateSortString(bSortState, gpg_item->text(COLUMN_NAME), PEER_STATE_ONLINE));
@@ -660,9 +668,9 @@ void  MessengerWindow::insertPeers()
                                 gpg_item -> setTextColor(i,(Qt::darkBlue));
                                 gpg_item -> setFont(i,font);
                             }
-                        }
-                        else if(it->status == RS_STATUS_AWAY)
-                        {
+                            break;
+
+                        case RS_STATUS_AWAY:
                             gpg_item -> setIcon(COLUMN_NAME,(QIcon(IMAGE_AWAY)));
                             gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Away"));
                             gpg_item->setData(COLUMN_NAME, ROLE_SORT, BuildStateSortString(bSortState, gpg_item->text(COLUMN_NAME), PEER_STATE_AWAY));
@@ -671,9 +679,9 @@ void  MessengerWindow::insertPeers()
                                 gpg_item -> setTextColor(i,(Qt::gray));
                                 gpg_item -> setFont(i,font);
                             }
-                        }
-                        else if(it->status == RS_STATUS_BUSY)
-                        {
+                            break;
+
+                        case RS_STATUS_BUSY:
                             gpg_item -> setIcon(COLUMN_NAME,(QIcon(IMAGE_BUSY)));
                             gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Busy"));
                             gpg_item->setData(COLUMN_NAME, ROLE_SORT, BuildStateSortString(bSortState, gpg_item->text(COLUMN_NAME), PEER_STATE_BUSY));
@@ -682,6 +690,7 @@ void  MessengerWindow::insertPeers()
                                 gpg_item -> setTextColor(i,(Qt::gray));
                                 gpg_item -> setFont(i,font);
                             }
+                            break;
                         }
 
                     }
