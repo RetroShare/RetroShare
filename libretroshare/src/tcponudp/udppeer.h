@@ -26,7 +26,9 @@
  *
  */
 
+#ifndef WINDOWS_SYS
 #include <netinet/in.h>
+#endif
 
 #include "util/rsthreads.h"
 

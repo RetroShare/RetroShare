@@ -1,5 +1,6 @@
 TEMPLATE = app
 TARGET = retroshare-nogui
+CONFIG += bitdht
 
 ################################# Linux ##########################################
 linux-* {
@@ -55,7 +56,9 @@ win32 {
     LIBS += ../../libretroshare/src/lib/libretroshare.a
     LIBS += -L"../../../../lib" -lssl -lcrypto -lpthreadGC2d -lminiupnpc -lz
     LIBS += -lssl -lcrypto -lgpgme -lpthreadGC2d -lminiupnpc -lz
-    LIBS += -lws2_32 -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32
+# added after bitdht
+#    LIBS += -lws2_32
+    LIBS += -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32
     LIBS += -lole32 -lwinmm
     
     RC_FILE = resources/retroshare_win.rc
@@ -78,6 +81,12 @@ macx {
 bitdht {
 	LIBS += ../../libbitdht/src/lib/libbitdht.a
 }
+
+win32 {
+# must be added after bitdht
+    LIBS += -lws2_32
+}
+
 DEPENDPATH += ../../libretroshare/src
             
 INCLUDEPATH += . ../../libretroshare/src
