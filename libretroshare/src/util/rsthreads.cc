@@ -83,6 +83,12 @@ pthread_t  createThread(RsThread &thread)
 RsThread::RsThread ()
 {
     m_bRun = true;
+
+#ifdef WINDOWS_SYS
+    memset (&mTid, 0, sizeof(mTid));
+#else
+    mTid = 0;
+#endif
 }
 
 void RsThread::join() /* waits for the the mTid thread to stop */

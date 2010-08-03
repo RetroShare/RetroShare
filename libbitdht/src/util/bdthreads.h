@@ -65,14 +65,7 @@ pthread_t  createThread(bdThread &thread);
 class bdThread
 {
 	public:
-	bdThread()
-	{
-#if defined(_WIN32) || defined(__MINGW32__)
-		memset (&mTid, 0, sizeof(mTid));
-#else
-		mTid = 0;
-#endif
-	}
+	bdThread();
 virtual ~bdThread() { return; }
 
 virtual void start() { createThread(*this); }

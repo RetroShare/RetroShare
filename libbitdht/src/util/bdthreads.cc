@@ -64,6 +64,15 @@ pthread_t  createThread(bdThread &thread)
 
 }
 
+bdThread::bdThread()
+{
+#if defined(_WIN32) || defined(__MINGW32__)
+	memset (&mTid, 0, sizeof(mTid));
+#else
+	mTid = 0;
+#endif
+}
+
 void bdThread::join() /* waits for the the mTid thread to stop */
 {
 	void *ptr;
