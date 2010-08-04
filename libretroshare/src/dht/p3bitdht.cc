@@ -155,6 +155,7 @@ bool 	p3BitDht::findPeer(std::string pid)
 	/* add in peer */
 	mUdpBitDht->addFindNode(&nid, BITDHT_QFLAGS_DO_IDLE);
 
+	return true ;
 }
 
 bool 	p3BitDht::dropPeer(std::string pid)
@@ -179,6 +180,8 @@ bool 	p3BitDht::dropPeer(std::string pid)
 		/* error */
 		return false;
 	}
+
+	return true ;
 }
 
 	/* extract current peer status */
