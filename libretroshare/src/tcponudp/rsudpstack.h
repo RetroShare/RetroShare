@@ -60,7 +60,9 @@ class rsUdpStack: public UdpStack, public pqiNetListener
 	/* from pqiNetListener */
 virtual bool resetListener(struct sockaddr_in &local)
 	{
-		std::cerr << "rsUdpStack::resetListener(" << local << ")";
+		// The const_cast below is not so nice but without it, the compiler can't
+		// find the correct operator<<(). No idea why!
+		std::cerr << "rsUdpStack::resetListener(" << const_cast<const struct sockaddr_in &>(local) << ")";
 		std::cerr << std::endl;
 		return resetAddress(local);
 	}
