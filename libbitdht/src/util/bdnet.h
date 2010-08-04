@@ -144,7 +144,7 @@ int bdnet_checkTTL(int fd);
 
 #define ECONNRESET      104
 
-#define ETIMEDOUT       110
+#define ETIMEDOUT       10060 // value from pthread.h
 #define ECONNREFUSED    111
 #define EHOSTDOWN       112
 #define EHOSTUNREACH    113

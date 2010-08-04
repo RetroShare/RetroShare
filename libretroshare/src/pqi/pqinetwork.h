@@ -80,7 +80,7 @@ extern int errno; /* Define extern errno, to duplicate unix behaviour */
 
 #define ECONNRESET      104
 
-#define ETIMEDOUT       110
+#define ETIMEDOUT       10060 // value from pthread.h
 #define ECONNREFUSED    111
 #define EHOSTDOWN       112
 #define EHOSTUNREACH    113
