@@ -156,6 +156,38 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
 
   updateAvatar() ;
   updatePeerAvatar(id) ;
+  
+    // load settings
+  processSettings(true);
+}
+
+/** Destructor. */
+PopupChatDialog::~PopupChatDialog()
+{
+    // save settings
+    processSettings(false);
+
+
+}
+
+void PopupChatDialog::processSettings(bool bLoad)
+{
+
+    Settings->beginGroup(QString("ChatDialog"));
+
+    if (bLoad) {
+        // load settings
+
+        // state of splitter
+        ui.chatsplitter->restoreState(Settings->value("ChatSplitter").toByteArray());
+    } else {
+        // save settings
+
+        // state of splitter
+        Settings->setValue("ChatSplitter", ui.chatsplitter->saveState());
+    }
+
+    Settings->endGroup();
 }
 
 /*static*/ PopupChatDialog *PopupChatDialog::getPrivateChat(std::string id, std::string name, uint chatflags)
@@ -336,12 +368,6 @@ void PopupChatDialog::updateStatusString(const QString& status_string)
 	statusBar()->showMessage(status_string,5000) ; // displays info for 5 secs.
 
 	QTimer::singleShot(5000,this,SLOT(resetStatusBar())) ;
-}
-
-
-/** Destructor. */
-PopupChatDialog::~PopupChatDialog()
-{
 }
 
 /** 
@@ -834,7 +860,7 @@ void PopupChatDialog::updatePeerAvatar(const std::string& peer_id)
            #ifdef CHAT_DEBUG
 	   std::cerr << "Got no image" << std::endl ;
            #endif
-	   ui.avatarlabel->setPixmap(QPixmap(":/images/no_avatar.png"));
+	   ui.avatarlabel->setPixmap(QPixmap(":/images/no_avatar_70.png"));
 		return ;
 	}
 

@@ -112,6 +112,7 @@ private:
 
   void colorChanged(const QColor &c);
   void addAttachment(std::string,int flag);
+  void processSettings(bool bLoad);
 
    QAction     *actionTextBold;
    QAction     *actionTextUnderline;
