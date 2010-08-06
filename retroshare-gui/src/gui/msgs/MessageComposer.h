@@ -24,7 +24,7 @@
 
 #include <QMainWindow>
 #include <QSettings>
-#include "rsiface/rstypes.h"
+#include <retroshare/rstypes.h>
 #include "ui_MessageComposer.h"
 
 class QAction;

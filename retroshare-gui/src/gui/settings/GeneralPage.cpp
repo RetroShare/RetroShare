@@ -21,7 +21,7 @@
 
 #include <iostream>
 #include <rshare.h>
-#include <rsiface/rsinit.h>
+#include <retroshare/rsinit.h>
 #include "GeneralPage.h"
 #include <util/stringutil.h>
 #include <QSystemTrayIcon>

@@ -25,7 +25,7 @@
 
 
 #include "dbase/findex.h"
-#include "rsiface/rsexpr.h"
+#include "retroshare/rsexpr.h"
 #include <algorithm>
 #include <functional>
 

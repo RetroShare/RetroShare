@@ -20,7 +20,7 @@
  ****************************************************************/
 
 #include <rshare.h>
-#include <rsiface/rsinit.h>
+#include <retroshare/rsinit.h>
 #include "GenCertDialog.h"
 #include "InfoDialog.h"
 #include <QAbstractEventDispatcher>

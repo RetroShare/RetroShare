@@ -1,6 +1,6 @@
 #pragma once
 
-#include "rsiface/rsturtle.h"
+#include "retroshare/rsturtle.h"
 
 typedef std::string 	TurtlePeerId ;
 typedef std::string 	TurtleVirtualPeerId ;

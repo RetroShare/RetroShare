@@ -20,10 +20,10 @@
  ****************************************************************/
 #include "ChannelDetails.h"
 
-#include "rsiface/rsiface.h"
-#include "rsiface/rspeers.h"
-#include "rsiface/rsdisc.h"
-#include "rsiface/rschannels.h"
+#include <retroshare/rsiface.h>
+#include <retroshare/rspeers.h>
+#include <retroshare/rsdisc.h>
+#include <retroshare/rschannels.h>
 
 #include <QTime>
 #include <QDateTime>

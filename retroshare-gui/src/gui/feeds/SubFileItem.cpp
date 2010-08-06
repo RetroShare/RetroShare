@@ -27,7 +27,7 @@
 
 #include "SubFileItem.h"
 
-#include "rsiface/rsfiles.h"
+#include <retroshare/rsfiles.h>
 
 
 /****

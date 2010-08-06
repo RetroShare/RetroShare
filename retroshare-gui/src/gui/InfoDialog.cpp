@@ -21,7 +21,7 @@
 
 
 #include "InfoDialog.h"
-#include "rsiface/rsiface.h"
+#include <retroshare/rsiface.h>
 
 #include <iostream>
 #include <sstream>

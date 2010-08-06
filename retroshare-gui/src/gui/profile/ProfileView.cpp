@@ -22,8 +22,8 @@
 #include "gui/profile/ProfileView.h"
 #include "gui/profile/ProfileEdit.h"
 
-#include "rsiface/rspeers.h"
-#include "rsiface/rsmsgs.h"
+#include <retroshare/rspeers.h>
+#include <retroshare/rsmsgs.h>
 
 #include <sstream>
 

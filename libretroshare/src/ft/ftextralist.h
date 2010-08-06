@@ -59,7 +59,7 @@
 
 #include "ft/ftsearch.h"
 #include "util/rsthreads.h"
-#include "rsiface/rsfiles.h"
+#include "retroshare/rsfiles.h"
 #include "pqi/p3cfgmgr.h"
 
 class FileDetails

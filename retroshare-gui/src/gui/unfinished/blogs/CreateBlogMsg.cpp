@@ -36,7 +36,7 @@
 #include "CreateBlogMsg.h"
 #include "gui/msgs/textformat.h"
 
-#include "rsiface/rsblogs.h"
+#include <retroshare/rsblogs.h>
 
 /** Constructor */
 CreateBlogMsg::CreateBlogMsg(std::string cId ,QWidget* parent, Qt::WFlags flags)

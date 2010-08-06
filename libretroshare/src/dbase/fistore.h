@@ -38,7 +38,7 @@ class p3ConnectMgr ;
 
 #include "dbase/findex.h"
 #include "dbase/cachestrapper.h"
-#include "rsiface/rsiface.h"
+#include "retroshare/rsiface.h"
 
 class FileStoreResult
 {

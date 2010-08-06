@@ -1,6 +1,6 @@
 #include <iostream>
 #include <QTimer>
-#include <rsiface/rsturtle.h>
+#include <retroshare/rsturtle.h>
 #include "TurtleRouterDialog.h"
 
 TurtleRouterDialog::TurtleRouterDialog(QWidget *parent)

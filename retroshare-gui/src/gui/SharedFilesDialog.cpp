@@ -35,8 +35,8 @@
 #include "RetroShareLink.h"
 #include "gui/RemoteDirModel.h"
 
-#include "rsiface/rspeers.h"
-#include "rsiface/rsfiles.h"
+#include <retroshare/rspeers.h>
+#include <retroshare/rsfiles.h>
 
 
 /* Images for context menu icons */

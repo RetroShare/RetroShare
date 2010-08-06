@@ -38,9 +38,9 @@
 #include "settings/rsharesettings.h"
 #include "util/misc.h"
 
-#include "rsiface/rsinit.h"
-#include "rsiface/rspeers.h"
-#include "rsiface/rsfiles.h"
+#include <retroshare/rsinit.h>
+#include <retroshare/rspeers.h>
+#include <retroshare/rsfiles.h>
 
 
 /* Images for context menu icons */

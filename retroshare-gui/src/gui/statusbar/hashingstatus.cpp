@@ -29,9 +29,9 @@
 #include <QPainter>
 #include <QPixmap>
 
-#include "rsiface/rsiface.h"
-#include "rsiface/rspeers.h"
-#include "rsiface/notifyqt.h"
+#include <retroshare/rsiface.h>
+#include <retroshare/rspeers.h>
+#include <retroshare/notifyqt.h>
 
 #include <sstream>
 #include <iomanip>

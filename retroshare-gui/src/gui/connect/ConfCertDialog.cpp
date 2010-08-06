@@ -27,8 +27,8 @@
 
 #include <iostream>
 
-#include "rsiface/rspeers.h"
-#include "rsiface/rsdisc.h"
+#include <retroshare/rspeers.h>
+#include <retroshare/rsdisc.h>
 
 #include "gui/help/browser/helpbrowser.h"
 

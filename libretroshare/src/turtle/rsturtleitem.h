@@ -3,9 +3,9 @@
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvbase.h"
 #include "serialiser/rsbaseserial.h"
-#include "rsiface/rsturtle.h"
-#include "rsiface/rsexpr.h"
-#include "rsiface/rstypes.h"
+#include "retroshare/rsturtle.h"
+#include "retroshare/rsexpr.h"
+#include "retroshare/rstypes.h"
 #include "serialiser/rsserviceids.h"
 #include "turtle/turtletypes.h"
 

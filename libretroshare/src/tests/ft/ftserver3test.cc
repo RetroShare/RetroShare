@@ -37,7 +37,7 @@
 #include "util/rswin.h"
 #endif
 
-#include "rsiface/rsexpr.h"
+#include "retroshare/rsexpr.h"
 
 #include "ft/ftserver.h"
 

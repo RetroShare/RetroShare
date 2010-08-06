@@ -24,7 +24,7 @@
 #include <QWidget>
 #include <QLabel>
 
-#include "rsiface/rsexpr.h"
+#include <retroshare/rsexpr.h>
 #include "guiexprelement.h"
 #include "ui_expressionwidget.h"
 

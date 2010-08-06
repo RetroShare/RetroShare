@@ -39,7 +39,7 @@
 #include "arrow.h"
 #include "node.h"
 
-#include "rsiface/rspeers.h"
+#include <retroshare/rspeers.h>
 
 #include <QDebug>
 #include <QGraphicsScene>

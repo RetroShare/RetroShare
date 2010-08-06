@@ -2,8 +2,8 @@
 #include <QTimer>
 #include <QWheelEvent>
 #include <QHeaderView>
-#include "rsiface/rsiface.h"
-#include "rsiface/rspeers.h"
+#include <retroshare/rsiface.h>
+#include <retroshare/rspeers.h>
 
 #include <QTableView>
 #include "TrustView.h"

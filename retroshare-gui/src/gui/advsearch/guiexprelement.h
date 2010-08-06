@@ -38,7 +38,7 @@
 
 #include <iostream>
 
-#include "rsiface/rsexpr.h"
+#include <retroshare/rsexpr.h>
 
 enum ExprSearchType
 {

@@ -28,7 +28,7 @@
 #include "pqi/p3connmgr.h"
 #include "pqi/authssl.h"
 #include "pqi/authgpg.h"
-#include <rsiface/rsinit.h>
+#include "retroshare/rsinit.h"
 #include "pqi/cleanupxpgp.h"
 
 

@@ -20,9 +20,9 @@
  ****************************************************************/
 #include "ProfileWidget.h"
 
-#include "rsiface/rsiface.h"
-#include "rsiface/rspeers.h"
-#include "rsiface/rsdisc.h"
+#include <retroshare/rsiface.h>
+#include <retroshare/rspeers.h>
+#include <retroshare/rsdisc.h>
 
 #include "StatusMessage.h"
 

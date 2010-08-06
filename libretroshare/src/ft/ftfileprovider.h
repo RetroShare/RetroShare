@@ -33,7 +33,7 @@
 #include <iostream>
 #include <stdint.h>
 #include "util/rsthreads.h"
-#include "rsiface/rsfiles.h"
+#include "retroshare/rsfiles.h"
 
 class ftFileProvider
 {

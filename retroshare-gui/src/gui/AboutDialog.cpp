@@ -23,8 +23,8 @@
 #include "AboutDialog.h"
 #include "HelpDialog.h"
 
-#include "rsiface/rsdisc.h"
-#include "rsiface/rsiface.h"
+#include <retroshare/rsdisc.h>
+#include <retroshare/rsiface.h>
 #include "settings/rsharesettings.h"
 
 #include <QtGui/QHBoxLayout>

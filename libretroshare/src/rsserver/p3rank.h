@@ -26,7 +26,7 @@
  *
  */
 
-#include "rsiface/rsrank.h"
+#include "retroshare/rsrank.h"
 #include "services/p3ranking.h"
 
 class p3Rank: public RsRanks

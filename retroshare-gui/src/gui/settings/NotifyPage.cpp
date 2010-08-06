@@ -25,7 +25,7 @@
 #include <iostream>
 #include <sstream>
 
-#include "rsiface/rsnotify.h"
+#include <retroshare/rsnotify.h>
 #include "rsharesettings.h"
 
 #include "gui/MainWindow.h"

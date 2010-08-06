@@ -26,7 +26,7 @@
 
 #include "ui_InfoDialog.h"
 
-#include "rsiface/rstypes.h"
+#include <retroshare/rstypes.h>
 
 class InfoDialog : public QDialog 
 {

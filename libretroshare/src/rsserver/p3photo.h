@@ -26,7 +26,7 @@
  *
  */
 
-#include "rsiface/rsphoto.h"
+#include "retroshare/rsphoto.h"
 #include "services/p3photoservice.h"
 
 class p3Photo: public RsPhoto

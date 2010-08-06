@@ -51,7 +51,7 @@ class p3turtle ;
 #include "pqi/pqimonitor.h"
 #include "pqi/p3cfgmgr.h"
 
-#include "rsiface/rsfiles.h"
+#include "retroshare/rsfiles.h"
 #include "serialiser/rsconfigitems.h"
 
 #include <map>

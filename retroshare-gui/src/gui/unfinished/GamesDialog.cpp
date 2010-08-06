@@ -23,9 +23,9 @@
 #include <QFileInfo>
 
 #include "GamesDialog.h"
-#include "rsiface/rsiface.h"
-#include "rsiface/rsgame.h"
-#include "rsiface/rspeers.h"
+#include <retroshare/rsiface.h>
+#include <retroshare/rsgame.h>
+#include <retroshare/rspeers.h>
 
 #include <iostream>
 #include <sstream>

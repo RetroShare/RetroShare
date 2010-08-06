@@ -31,7 +31,7 @@
 #include <sstream>
 #include "pqi/authssl.h"
 #include "pqi/authgpg.h"
-#include "rsiface/rsinit.h"
+#include "retroshare/rsinit.h"
 #include "util/rsdebug.h"
 const int p3facemsgzone = 11453;
 

@@ -30,7 +30,7 @@
 
 #include "rsharesettings.h"
 
-#include "rsiface/rsnotify.h"
+#include <retroshare/rsnotify.h>
 
 #include <QWidget>
 #include <QMainWindow>

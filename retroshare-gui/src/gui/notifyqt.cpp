@@ -2,11 +2,11 @@
 #include <QMessageBox>
 
 #include "notifyqt.h"
-#include "rsiface/rsnotify.h"
-#include "rsiface/rspeers.h"
-#include "rsiface/rsphoto.h"
+#include <retroshare/rsnotify.h>
+#include <retroshare/rspeers.h>
+#include <retroshare/rsphoto.h>
 #ifdef TURTLE_HOPPING
-#include <rsiface/rsturtle.h>
+#include <retroshare/rsturtle.h>
 #endif
 
 #include "gui/RsAutoUpdatePage.h"

@@ -28,7 +28,7 @@
 //#include "mainpage.h"
 #include "ui_HelpDialog.h"
 
-#include "rsiface/rstypes.h"
+#include <retroshare/rstypes.h>
 
 class HelpDialog : public QDialog 
 {

@@ -32,8 +32,8 @@
 #include "msgs/MessageComposer.h"
 #include "gui/settings/rsharesettings.h"
 
-#include "rsiface/rspeers.h"
-#include "rsiface/rsforums.h"
+#include <retroshare/rspeers.h>
+#include <retroshare/rsforums.h>
 
 #include <sstream>
 #include <algorithm>

@@ -23,7 +23,7 @@
 
 #include "AttachFileItem.h"
 
-#include "rsiface/rsfiles.h"
+#include <retroshare/rsfiles.h>
 
 /****
  * #define DEBUG_ITEM 1

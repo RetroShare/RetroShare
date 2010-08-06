@@ -20,7 +20,7 @@
  ****************************************************************/
 
 #include "NetworkView.h"
-#include "rsiface/rspeers.h"
+#include <retroshare/rspeers.h>
 
 #include <gpgme.h>
 

@@ -41,8 +41,8 @@
 ****/
 
 #include <util/stringutil.h>
-#include "rsiface/rsinit.h"
-#include "rsiface/rsiface.h"
+#include <retroshare/rsinit.h>
+#include <retroshare/rsiface.h>
 #include "gui/notifyqt.h"
 
 int main(int argc, char *argv[])

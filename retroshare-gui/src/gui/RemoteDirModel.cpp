@@ -26,8 +26,8 @@
 #include <QMimeData>
 
 #include "RemoteDirModel.h"
-#include "rsiface/rsfiles.h"
-#include "rsiface/rstypes.h"
+#include <retroshare/rsfiles.h>
+#include <retroshare/rstypes.h>
 #include "util/misc.h"
 
 #include <set>

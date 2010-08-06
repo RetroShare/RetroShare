@@ -25,8 +25,8 @@
  */
 
 
-#include "rsiface/rsiface.h"   /* definition of iface */
-#include "rsiface/rsinit.h"   /* definition of iface */
+#include <retroshare/rsiface.h>   /* definition of iface */
+#include <retroshare/rsinit.h>   /* definition of iface */
 
 #include "notifytxt.h"
 

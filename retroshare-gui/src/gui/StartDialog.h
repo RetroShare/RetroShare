@@ -23,7 +23,7 @@
 #ifndef _STARTDIALOG_H
 #define _STARTDIALOG_H
 
-#include "rsiface/rsiface.h"
+#include <retroshare/rsiface.h>
 /********
 #if (QT_VERSION >= 040300)
 #include "qskinobject/qskinobject.h"

@@ -28,8 +28,8 @@
 #include "dbase/fimonitor.h"
 #include "util/rsdir.h"
 #include "serialiser/rsserviceids.h"
-#include "rsiface/rsiface.h"
-#include "rsiface/rsnotify.h"
+#include "retroshare/rsiface.h"
+#include "retroshare/rsnotify.h"
 #include "util/folderiterator.h"
 #include <errno.h>
 

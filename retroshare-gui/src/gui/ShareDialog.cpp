@@ -20,7 +20,7 @@
  ****************************************************************/
 #include "ShareDialog.h"
 
-#include "rsiface/rsfiles.h"
+#include <retroshare/rsfiles.h>
 
 #include <QContextMenuEvent>
 

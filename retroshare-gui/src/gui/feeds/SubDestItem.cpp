@@ -22,9 +22,9 @@
 #include "SubDestItem.h"
 #include "FeedHolder.h"
 
-#include "rsiface/rspeers.h"
-#include "rsiface/rsforums.h"
-#include "rsiface/rschannels.h"
+#include <retroshare/rspeers.h>
+#include <retroshare/rsforums.h>
+#include <retroshare/rschannels.h>
 
 /****
  * #define DEBUG_ITEM 1

@@ -24,7 +24,7 @@
  */
 
 
-#include "rsiface/rsiface.h"
+#include "retroshare/rsiface.h"
 
 #include "pqi/pqibin.h"
 #include "pqi/pqiarchive.h"

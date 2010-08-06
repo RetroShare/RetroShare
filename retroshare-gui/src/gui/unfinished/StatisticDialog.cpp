@@ -23,7 +23,7 @@
 #include "StatisticDialog.h"
 #include <control/bandwidthevent.h>
 
-#include "rsiface/rsiface.h"
+#include <retroshare/rsiface.h>
 
 #include <QTime>
 #include <QHeaderView>

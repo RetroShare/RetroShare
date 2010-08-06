@@ -28,8 +28,8 @@
 
 //#include "rshare.h"
 #include "CalDialog.h"
-//#include "rsiface/rspeers.h"
-//#include "rsiface/rsrank.h"
+//#include <retroshare/rspeers.h>
+//#include <retroshare/rsrank.h>
 
 #include <iostream>
 #include <sstream>

@@ -24,7 +24,7 @@
 #include "BlogsMsgItem.h"
 #include "gui/feeds/FeedHolder.h"
 
-#include "rsiface/rsblogs.h"
+#include <retroshare/rsblogs.h>
 
 
 /****

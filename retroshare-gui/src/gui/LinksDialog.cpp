@@ -27,9 +27,9 @@
 
 #include "LinksDialog.h"
 #include "RetroShareLink.h"
-#include "rsiface/rspeers.h"
-#include "rsiface/rsrank.h"
-#include "rsiface/rsfiles.h"
+#include <retroshare/rspeers.h>
+#include <retroshare/rsrank.h>
+#include <retroshare/rsfiles.h>
 
 #include <sstream>
 

@@ -27,7 +27,7 @@
 #include "FeedHolder.h"
 #include "SubFileItem.h"
 
-#include "rsiface/rschannels.h"
+#include <retroshare/rschannels.h>
 
 #include <sstream>
 

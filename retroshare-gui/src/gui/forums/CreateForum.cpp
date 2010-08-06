@@ -23,7 +23,7 @@
 
 #include "CreateForum.h"
 
-#include "rsiface/rsforums.h"
+#include <retroshare/rsforums.h>
 
 /** Constructor */
 CreateForum::CreateForum(QWidget *parent)

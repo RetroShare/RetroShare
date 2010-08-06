@@ -29,8 +29,8 @@
 #include "CreateChannelMsg.h"
 #include "gui/feeds/SubFileItem.h"
 
-#include "rsiface/rschannels.h"
-#include "rsiface/rsfiles.h"
+#include <retroshare/rschannels.h>
+#include <retroshare/rsfiles.h>
 
 #include <iostream>
 

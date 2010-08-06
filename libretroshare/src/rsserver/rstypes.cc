@@ -29,7 +29,7 @@
  * only prints stuff out at the moment
  */
 
-#include "rsiface/rstypes.h"
+#include "retroshare/rstypes.h"
 #include <iostream>
 #include <sstream>
 #include <iomanip>

@@ -26,7 +26,7 @@
  *
  */
 
-#include "rsiface/rspeers.h"
+#include "retroshare/rspeers.h"
 #include "pqi/p3connmgr.h"
 
 class p3Peers: public RsPeers 

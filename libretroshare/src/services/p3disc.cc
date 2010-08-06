@@ -24,9 +24,9 @@
  */
 
 
-#include "rsiface/rsiface.h"
-#include "rsiface/rsinit.h" /* for PGPSSL flag */
-#include "rsiface/rspeers.h"
+#include "retroshare/rsiface.h"
+#include "retroshare/rsinit.h" /* for PGPSSL flag */
+#include "retroshare/rspeers.h"
 #include "services/p3disc.h"
 
 #include "pqi/authssl.h"

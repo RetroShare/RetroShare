@@ -27,8 +27,8 @@
 #include "../RsAutoUpdatePage.h"
 #include "gui/msgs/MessageComposer.h"
 
-#include "rsiface/rsmsgs.h"
-#include "rsiface/rspeers.h"
+#include <retroshare/rsmsgs.h>
+#include <retroshare/rspeers.h>
 
 #include <sstream>
 

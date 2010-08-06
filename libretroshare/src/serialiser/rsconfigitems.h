@@ -29,7 +29,7 @@
 #include <map>
 #include <vector>
 
-#include <rsiface/rstypes.h>
+#include "retroshare/rstypes.h"
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvbase.h"
 #include "serialiser/rstlvtypes.h"

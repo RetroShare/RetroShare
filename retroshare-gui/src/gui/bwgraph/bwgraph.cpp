@@ -25,7 +25,7 @@
 #include <control/bandwidthevent.h>
 #include "bwgraph.h"
 #include <gui/RsAutoUpdatePage.h>
-#include "rsiface/rsiface.h"
+#include <retroshare/rsiface.h>
 
 #include <sstream>
 #include <iomanip>

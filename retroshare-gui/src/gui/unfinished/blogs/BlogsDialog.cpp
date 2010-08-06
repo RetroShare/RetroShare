@@ -25,8 +25,8 @@
 
 #include <algorithm>
 
-#include "rsiface/rsblogs.h"
-#include "rsiface/rspeers.h" //to retrieve peer/usrId info
+#include <retroshare/rsblogs.h>
+#include <retroshare/rspeers.h> //to retrieve peer/usrId info
 
 #include "BlogsDialog.h"
 

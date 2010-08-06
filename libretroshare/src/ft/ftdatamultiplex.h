@@ -45,7 +45,7 @@ class ftSearch;
 #include "util/rsthreads.h"
 
 #include "ft/ftdata.h"
-#include "rsiface/rsfiles.h"
+#include "retroshare/rsfiles.h"
 
 
 class ftClient

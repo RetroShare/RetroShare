@@ -31,7 +31,7 @@
 
 #include "util/rsdir.h"
 #include "pqi/pqinotify.h"
-#include <rsiface/rstypes.h>
+#include "retroshare/rstypes.h"
 #include <string>
 #include <iostream>
 #include <algorithm>

@@ -24,8 +24,8 @@
 #include <QMessageBox>
 #include <algorithm>
 
-#include "rsiface/rschannels.h"
-#include "rsiface/rspeers.h"
+#include <retroshare/rschannels.h>
+#include <retroshare/rspeers.h>
 
 ShareKey::ShareKey(QWidget *parent, Qt::WFlags flags, std::string chanId) :
         QDialog(parent, flags), mChannelId(chanId)

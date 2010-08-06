@@ -28,9 +28,9 @@
 #include <QComboBox>
 #include <QHeaderView>
 
-#include "rsiface/rsfiles.h"
-#include "rsiface/rsiface.h"
-#include "rsiface/rspeers.h"
+#include <retroshare/rsfiles.h>
+#include <retroshare/rsiface.h>
+#include <retroshare/rspeers.h>
 #include "settings/rsharesettings.h"
 
 

@@ -40,9 +40,9 @@
 #include "TurtleRouterDialog.h"
 #include "xprogressbar.h"
 
-#include "rsiface/rsfiles.h"
-#include "rsiface/rspeers.h"
-#include "rsiface/rsdisc.h"
+#include <retroshare/rsfiles.h>
+#include <retroshare/rspeers.h>
+#include <retroshare/rsdisc.h>
 #include "util/misc.h"
 
 /* Images for context menu icons */

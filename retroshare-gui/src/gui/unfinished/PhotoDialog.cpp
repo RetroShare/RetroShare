@@ -24,8 +24,8 @@
 
 #include "PhotoDialog.h"
 #include "PhotoShow.h"
-#include "rsiface/rspeers.h"
-#include "rsiface/rsphoto.h"
+#include <retroshare/rspeers.h>
+#include <retroshare/rsphoto.h>
 
 #include <iostream>
 #include <sstream>

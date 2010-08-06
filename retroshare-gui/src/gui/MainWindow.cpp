@@ -62,11 +62,11 @@
 #include "statusbar/peerstatus.h"
 #include "statusbar/natstatus.h"
 #include "statusbar/ratesstatus.h"
-#include "rsiface/rsstatus.h"
+#include <retroshare/rsstatus.h>
 
-#include "rsiface/rsiface.h"
-#include "rsiface/rspeers.h"
-#include "rsiface/rsfiles.h"
+#include <retroshare/rsiface.h>
+#include <retroshare/rspeers.h>
+#include <retroshare/rsfiles.h>
 
 #include "gui/connect/ConnectFriendWizard.h"
 #include "util/rsversion.h"

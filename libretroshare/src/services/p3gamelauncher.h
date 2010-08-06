@@ -37,7 +37,7 @@
 
 #include "services/p3service.h"
 #include "serialiser/rsgameitems.h"
-#include "rsiface/rsgame.h"
+#include "retroshare/rsgame.h"
 
 class p3ConnectMgr;
 

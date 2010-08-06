@@ -24,7 +24,7 @@
 #include <iostream>
 
 #include "rsettings.h"
-#include "rsiface/rsinit.h"
+#include <retroshare/rsinit.h>
 
 /** The file in which all settings will read and written. */
 #define SETTINGS_FILE   (RsInit::RsProfileConfigDirectory() + "/RetroShare.conf")

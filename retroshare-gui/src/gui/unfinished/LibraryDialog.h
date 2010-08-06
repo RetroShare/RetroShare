@@ -27,7 +27,7 @@
 #include "gui/mainpage.h"
 #include "ui_LibraryDialog.h"
 
-#include "rsiface/rstypes.h"
+#include <retroshare/rstypes.h>
 #include "gui/RemoteDirModel.h"
 
 class LibraryDialog : public MainPage 

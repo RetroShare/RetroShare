@@ -33,11 +33,11 @@
 
 #include "rshare.h"
 #include "PeersDialog.h"
-#include "rsiface/rsiface.h"
-#include "rsiface/rspeers.h"
-#include "rsiface/rsstatus.h"
-#include "rsiface/rsmsgs.h"
-#include "rsiface/rsnotify.h"
+#include <retroshare/rsiface.h>
+#include <retroshare/rspeers.h>
+#include <retroshare/rsstatus.h>
+#include <retroshare/rsmsgs.h>
+#include <retroshare/rsnotify.h>
 #include "settings/rsharesettings.h"
 
 #include "chat/PopupChatDialog.h"

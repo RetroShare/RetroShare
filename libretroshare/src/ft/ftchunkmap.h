@@ -1,7 +1,7 @@
 #pragma once
 
 #include <map>
-#include <rsiface/rstypes.h>
+#include "retroshare/rstypes.h"
 
 // ftChunkMap: 
 // 	- handles chunk map over a complete file

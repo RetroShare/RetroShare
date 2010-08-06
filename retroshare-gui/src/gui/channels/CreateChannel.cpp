@@ -27,8 +27,8 @@
 
 #include "CreateChannel.h"
 
-#include "rsiface/rschannels.h"
-#include "rsiface/rspeers.h"
+#include <retroshare/rschannels.h>
+#include <retroshare/rspeers.h>
 
 /** Constructor */
 CreateChannel::CreateChannel(QWidget *parent)

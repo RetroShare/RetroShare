@@ -23,7 +23,7 @@
 #include "gui/ShareManager.h"
 
 #include "rshare.h"
-#include "rsiface/rsfiles.h"
+#include <retroshare/rsfiles.h>
 
 #include <algorithm>
 

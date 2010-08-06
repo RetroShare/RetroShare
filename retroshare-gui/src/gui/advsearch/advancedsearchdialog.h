@@ -28,7 +28,7 @@
 #include <QSizePolicy>
 #include "ui_AdvancedSearchDialog.h"
 #include "expressionwidget.h"
-#include "rsiface/rsexpr.h"
+#include <retroshare/rsexpr.h>
 
 class AdvancedSearchDialog : public QDialog, public Ui::AdvancedSearchDialog 
 {

@@ -32,9 +32,9 @@
 #include <assert.h>
 #endif
 
-#include "rsiface/rsiface.h"
-#include "rsiface/rspeers.h"
-#include "rsiface/rsfiles.h"
+#include "retroshare/rsiface.h"
+#include "retroshare/rspeers.h"
+#include "retroshare/rsfiles.h"
 
 #include "pqi/authssl.h"
 #include "pqi/p3connmgr.h"

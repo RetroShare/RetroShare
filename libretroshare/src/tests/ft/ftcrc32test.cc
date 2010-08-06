@@ -24,7 +24,7 @@
  */
 
 #include <iostream>
-#include <rsiface/rstypes.h>
+#include "retroshare/rstypes.h"
 #include <util/rsdir.h>
 #include <ft/ftchunkmap.h>
 

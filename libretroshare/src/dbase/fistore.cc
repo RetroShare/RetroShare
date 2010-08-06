@@ -22,7 +22,7 @@
  */
 
 #include "dbase/fistore.h"
-#include "rsiface/rsexpr.h"
+#include "retroshare/rsexpr.h"
 #include "serialiser/rsserviceids.h"
 #include "pqi/p3connmgr.h"
 

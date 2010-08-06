@@ -34,9 +34,9 @@
 #include "rshare.h"
 #include "MessageComposer.h"
 
-#include "rsiface/rsiface.h"
-#include "rsiface/rspeers.h"
-#include "rsiface/rsmsgs.h"
+#include <retroshare/rsiface.h>
+#include <retroshare/rspeers.h>
+#include <retroshare/rsmsgs.h>
 
 #include "gui/RetroShareLink.h"
 #include <gui/settings/rsharesettings.h>

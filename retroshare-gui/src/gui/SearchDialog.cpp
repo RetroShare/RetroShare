@@ -28,8 +28,8 @@
 #include "settings/rsharesettings.h"
 #include "advsearch/advancedsearchdialog.h"
 
-#include "rsiface/rsfiles.h"
-#include "rsiface/rsturtle.h"
+#include <retroshare/rsfiles.h>
+#include <retroshare/rsturtle.h>
 
 /* Images for context menu icons */
 #define IMAGE_START  		    ":/images/download.png"

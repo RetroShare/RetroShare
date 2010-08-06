@@ -47,7 +47,7 @@
 #include <math.h>
 #include "../connect/ConfCertDialog.h"
 
-#include "rsiface/rspeers.h"
+#include <retroshare/rspeers.h>
 
 #include <iostream>
 

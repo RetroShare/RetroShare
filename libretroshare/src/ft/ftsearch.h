@@ -34,7 +34,7 @@
  *
  */
 
-#include "rsiface/rsfiles.h" // includes rsiface/rstypes.h too!
+#include "retroshare/rsfiles.h" // includes retroshare/rstypes.h too!
 
 class ftSearch
 {

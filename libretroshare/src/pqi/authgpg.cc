@@ -25,8 +25,8 @@
  */
 
 #include "authgpg.h"
-#include <rsiface/rsiface.h>
-#include <rsiface/rsinit.h>
+#include "retroshare/rsiface.h"
+#include "retroshare/rsinit.h"
 #include <util/rsdir.h>
 #include <iostream>
 #include <sstream>

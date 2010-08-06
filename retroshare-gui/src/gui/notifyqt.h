@@ -1,8 +1,8 @@
 #ifndef RSIFACE_NOTIFY_TXT_H
 #define RSIFACE_NOTIFY_TXT_H
 
-#include "rsiface/rsiface.h"
-#include "rsiface/rsturtle.h"
+#include <retroshare/rsiface.h>
+#include <retroshare/rsturtle.h>
 #include <QObject>
 
 #include <string>

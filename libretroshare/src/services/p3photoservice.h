@@ -33,7 +33,7 @@
 #include "serialiser/rsserial.h"
 #include "serialiser/rsphotoitems.h"
 
-#include "rsiface/rsphoto.h"
+#include "retroshare/rsphoto.h"
 
 /* 
  * Photo Service

@@ -21,8 +21,8 @@
 
 
 #include "HelpDialog.h"
-#include "rsiface/rsiface.h"
-#include "rsiface/rsdisc.h"
+#include <retroshare/rsiface.h>
+#include <retroshare/rsdisc.h>
 
 #include <iostream>
 #include <sstream>

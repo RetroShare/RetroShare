@@ -29,7 +29,7 @@
 
 #include <QVariant>
 
-#include "rsiface/rsmsgs.h"
+#include <retroshare/rsmsgs.h>
 #include "mainpage.h"
 #include "ui_MessagesDialog.h"
 

@@ -19,7 +19,7 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include <rsiface/rstypes.h>
+#include <retroshare/rstypes.h>
 #include <QModelIndex>
 #include <QPainter>
 #include <QStyleOptionProgressBarV2>

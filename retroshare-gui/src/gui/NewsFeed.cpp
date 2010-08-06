@@ -23,7 +23,7 @@
 
 #include "NewsFeed.h"
 
-#include "rsiface/rsnotify.h"
+#include <retroshare/rsnotify.h>
 
 #include "feeds/ChanNewItem.h"
 #include "feeds/ChanMsgItem.h"

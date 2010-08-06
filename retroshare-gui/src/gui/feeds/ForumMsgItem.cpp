@@ -24,7 +24,7 @@
 #include "ForumMsgItem.h"
 #include "FeedHolder.h"
 
-#include "rsiface/rsforums.h"
+#include <retroshare/rsforums.h>
 #include "gui/forums/CreateForumMsg.h"
 
 

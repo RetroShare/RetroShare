@@ -35,7 +35,7 @@
 
 #include "util/rsdebug.h"
 #include "util/rsdir.h"
-#include "rsiface/rsinit.h"
+#include "retroshare/rsinit.h"
 
 #include <list>
 #include <string>
@@ -1980,8 +1980,8 @@ void RsInit::setAutoLogin(bool autoLogin){
 #include "ft/ftserver.h"
 #include "ft/ftcontroller.h"
 
-#include "rsiface/rsiface.h"
-#include "rsiface/rsturtle.h"
+#include "retroshare/rsiface.h"
+#include "retroshare/rsturtle.h"
 
 /* global variable now points straight to 
  * ft/ code so variable defined here.
@@ -2033,7 +2033,7 @@ RsTurtle *rsTurtle = NULL ;
 #include "rsserver/p3discovery.h"
 #include "rsserver/p3photo.h"
 #include "rsserver/p3status.h"
-#include "rsiface/rsgame.h"
+#include "retroshare/rsgame.h"
 
 #include "pqi/p3notify.h" // HACK - moved to pqi for compilation order.
 

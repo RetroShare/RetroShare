@@ -145,7 +145,7 @@
 #include "pqi/pqimonitor.h"
 #include "services/p3service.h"
 #include "ft/ftsearch.h"
-#include "rsiface/rsturtle.h"
+#include "retroshare/rsturtle.h"
 #include "rsturtleitem.h"
 
 class ftServer ;

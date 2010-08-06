@@ -37,11 +37,11 @@
 #include <gui/RetroShareLink.h>
 #include "rshare.h"
 
-#include "rsiface/rspeers.h"
-#include "rsiface/rsmsgs.h"
-#include "rsiface/rsfiles.h"
-#include "rsiface/rsnotify.h"
-#include "rsiface/rsiface.h"
+#include <retroshare/rspeers.h>
+#include <retroshare/rsmsgs.h>
+#include <retroshare/rsfiles.h>
+#include <retroshare/rsnotify.h>
+#include <retroshare/rsiface.h>
 #include "gui/settings/rsharesettings.h"
 
 

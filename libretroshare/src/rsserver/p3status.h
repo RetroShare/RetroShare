@@ -26,7 +26,7 @@
  *
  */
 
-#include "rsiface/rsstatus.h"
+#include "retroshare/rsstatus.h"
 
 
 class p3StatusService;

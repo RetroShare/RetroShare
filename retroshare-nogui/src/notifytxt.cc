@@ -25,7 +25,7 @@
 
 
 #include "notifytxt.h"
-#include "rsiface/rspeers.h"
+#include <retroshare/rspeers.h>
 #include <string.h>
 
 #include <iostream>

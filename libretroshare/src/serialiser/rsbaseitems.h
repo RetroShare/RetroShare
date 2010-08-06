@@ -28,7 +28,7 @@
 
 #include <map>
 
-#include <rsiface/rstypes.h>
+#include "retroshare/rstypes.h"
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvtypes.h"
 

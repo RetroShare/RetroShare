@@ -26,7 +26,7 @@
  *
  */
 
-#include "rsiface/rsnotify.h"
+#include "retroshare/rsnotify.h"
 #include "pqi/pqinotify.h"
 
 #include "util/rsthreads.h"

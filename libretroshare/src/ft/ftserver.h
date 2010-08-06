@@ -44,7 +44,7 @@
 #include <iostream>
 
 #include "ft/ftdata.h"
-#include "rsiface/rsfiles.h"
+#include "retroshare/rsfiles.h"
 //#include "dbase/cachestrapper.h"
 
 #include "pqi/pqi.h"

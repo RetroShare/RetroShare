@@ -29,8 +29,8 @@
 #include <QDropEvent>
 
 
-#include "rsiface/rsforums.h"
-#include "rsiface/rsfiles.h"
+#include <retroshare/rsforums.h>
+#include <retroshare/rsfiles.h>
 
 #include "gui/settings/rsharesettings.h"
 #include "gui/RetroShareLink.h"

@@ -26,7 +26,7 @@
  *
  */
 
-#include "rsiface/rsnotify.h"  /* for ids */
+#include "retroshare/rsnotify.h"  /* for ids */
 
 	/* Interface for System Notification: Implemented in rsserver */
 	/* Global Access -> so we don't need everyone to have a pointer to this! */

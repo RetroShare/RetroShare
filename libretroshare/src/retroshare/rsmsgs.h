@@ -31,7 +31,7 @@
 #include <iostream>
 #include <string>
 
-#include "rsiface/rstypes.h"
+#include "rstypes.h"
 
 /********************** For Messages and Channels *****************/
 

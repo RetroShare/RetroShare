@@ -27,7 +27,7 @@
 
 #include "CryptoPage.h"
 
-#include "rsiface/rspeers.h" //for rsPeers variable
+#include <retroshare/rspeers.h> //for rsPeers variable
 
 /** Constructor */
 CryptoPage::CryptoPage(QWidget * parent, Qt::WFlags flags)

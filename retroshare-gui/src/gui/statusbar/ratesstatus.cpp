@@ -22,7 +22,7 @@
 #include <QLabel>
 
 #include "ratesstatus.h"
-#include "rsiface/rsiface.h"
+#include <retroshare/rsiface.h>
 
 #include <sstream>
 #include <iomanip>

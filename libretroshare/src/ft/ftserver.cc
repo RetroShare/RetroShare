@@ -26,7 +26,7 @@
 #include <sstream>
 #include "util/rsdebug.h"
 #include "util/rsdir.h"
-#include "rsiface/rstypes.h"
+#include "retroshare/rstypes.h"
 const int ftserverzone = 29539;
 
 #include "ft/ftserver.h"

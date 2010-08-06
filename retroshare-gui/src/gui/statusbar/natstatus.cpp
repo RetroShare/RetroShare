@@ -23,7 +23,7 @@
 
 #include "natstatus.h"
 
-#include "rsiface/rsiface.h"
+#include <retroshare/rsiface.h>
 
 NATStatus::NATStatus(QWidget *parent)
  : QWidget(parent)

@@ -34,7 +34,7 @@
 #include <QLinearGradient>
 #include <QLocale>
 
-#include <rsiface/rstypes.h>
+#include <retroshare/rstypes.h>
 
 class FileProgressInfo
 {

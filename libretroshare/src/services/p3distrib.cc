@@ -33,7 +33,7 @@
 #include <openssl/rand.h>
 #include <algorithm>
 
-#include "rsiface/rsdistrib.h"
+#include "retroshare/rsdistrib.h"
 #include "services/p3distrib.h"
 #include "serialiser/rsdistribitems.h"
 

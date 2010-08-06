@@ -43,7 +43,7 @@
 #include <openssl/ssl.h>
 #include <openssl/evp.h>
 #include "util/rsthreads.h"
-#include "rsiface/rspeers.h"
+#include "retroshare/rspeers.h"
 #include <string>
 #include <list>
 #include <set>

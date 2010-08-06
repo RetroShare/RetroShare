@@ -21,8 +21,8 @@
 
 #include "ConnectFriendWizard.h"
 
-#include "rsiface/rspeers.h" //for rsPeers variable
-#include "rsiface/rsiface.h"
+#include <retroshare/rspeers.h> //for rsPeers variable
+#include <retroshare/rsiface.h>
 
 #include <QLineEdit>
 #include <QTextEdit>

@@ -26,7 +26,7 @@
  *
  */
 
-#include "rsiface/rsdisc.h"
+#include "retroshare/rsdisc.h"
 #include "services/p3disc.h"
 
 class p3Discovery: public RsDisc

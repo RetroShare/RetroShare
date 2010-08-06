@@ -26,9 +26,9 @@
 #include <iostream>
 #include <sstream>
 
-#include <rsiface/rsiface.h>
-#include <rsiface/rsfiles.h>
-#include <rsiface/rspeers.h>
+#include <retroshare/rsiface.h>
+#include <retroshare/rsfiles.h>
+#include <retroshare/rspeers.h>
 
 #include <QTimer>
 

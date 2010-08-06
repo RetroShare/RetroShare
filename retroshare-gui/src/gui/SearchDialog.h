@@ -22,7 +22,7 @@
 #ifndef _SEARCHDIALOG_H
 #define _SEARCHDIALOG_H
 
-#include "rsiface/rstypes.h"
+#include <retroshare/rstypes.h>
 #include "ui_SearchDialog.h"
 #include "mainpage.h"
 

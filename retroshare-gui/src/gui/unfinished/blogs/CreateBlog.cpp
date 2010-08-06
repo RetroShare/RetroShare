@@ -25,7 +25,7 @@
 
 #include "CreateBlog.h"
 
-#include "rsiface/rsblogs.h"
+#include <retroshare/rsblogs.h>
 
 /** Constructor */
 CreateBlog::CreateBlog(QWidget *parent, bool isForum)

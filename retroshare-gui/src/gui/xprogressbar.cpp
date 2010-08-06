@@ -25,7 +25,7 @@
  ****************************************************************/
 
 #include <math.h>
-#include <rsiface/rstypes.h>
+#include <retroshare/rstypes.h>
 #include "xprogressbar.h"
 
 xProgressBar::xProgressBar(const FileProgressInfo& pinfo,QRect rect, QPainter *painter, int schemaIndex)

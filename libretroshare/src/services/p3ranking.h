@@ -34,7 +34,7 @@
 
 #include "serialiser/rsserial.h"
 
-#include "rsiface/rsrank.h"
+#include "retroshare/rsrank.h"
 
 /* 
  * A Generic Ranking system.

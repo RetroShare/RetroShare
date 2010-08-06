@@ -24,7 +24,7 @@
 
 #include <set>
 
-#include "rsiface/rstypes.h"
+#include <retroshare/rstypes.h>
 #include "RsAutoUpdatePage.h"
 
 #include "ui_TransfersDialog.h"

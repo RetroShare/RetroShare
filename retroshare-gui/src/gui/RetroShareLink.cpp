@@ -30,8 +30,8 @@
 
 #include "RetroShareLink.h"
 
-#include "rsiface/rsfiles.h"
-#include "rsiface/rspeers.h"
+#include <retroshare/rsfiles.h>
+#include <retroshare/rspeers.h>
 
 #define DEBUG_RSLINK 1
 

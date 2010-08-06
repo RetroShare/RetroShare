@@ -22,7 +22,7 @@
 #include "ChanNewItem.h"
 #include "FeedHolder.h"
 
-#include "rsiface/rschannels.h"
+#include <retroshare/rschannels.h>
 
 #define CHAN_DEFAULT_IMAGE ":/images/channels.png"
 

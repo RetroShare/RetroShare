@@ -92,29 +92,33 @@ use_blogs {
 	DEFINES *= RS_USE_BLOGS
 }
 
-PUBLIC_HEADERS =	rsiface/rsblogs.h \
-					rsiface/rschannels.h \
-					rsiface/rsdisc.h \
-					rsiface/rsdistrib.h \
-					rsiface/rsexpr.h \
-					rsiface/rsfiles.h \
-					rsiface/rsforums.h \
-					rsiface/rsgame.h \
-					rsiface/rsiface.h \
-					rsiface/rsmsgs.h \
-					rsiface/rsnotify.h \
-					rsiface/rspeers.h \
-					rsiface/rsphoto.h \
-					rsiface/rsrank.h \
-					rsiface/rsstatus.h \
-					rsiface/rstypes.h
+PUBLIC_HEADERS =	retroshare/rsblogs.h \
+					retroshare/rschannels.h \
+					retroshare/rsdisc.h \
+					retroshare/rsdistrib.h \
+					retroshare/rsexpr.h \
+					retroshare/rsfiles.h \
+					retroshare/rsforums.h \
+					retroshare/rsiface.h \
+					retroshare/rsinit.h \
+					retroshare/rsmsgs.h \
+					retroshare/rsnotify.h \
+					retroshare/rspeers.h \
+					retroshare/rsrank.h \
+					retroshare/rsstatus.h \
+					retroshare/rsturtle.h \
+					retroshare/rstypes.h
 
 HEADERS += $$PUBLIC_HEADERS
+
+# public headers to be...
+HEADERS +=		retroshare/rsgame.h \
+					retroshare/rsphoto.h
 
 ################################# Linux ##########################################
 linux-* {
 	isEmpty(PREFIX)  { PREFIX = /usr }
-	isEmpty(INC_DIR) { INC_DIR = $${PREFIX}/include/libretroshare/ }
+	isEmpty(INC_DIR) { INC_DIR = $${PREFIX}/include/retroshare/ }
 	isEmpty(LIB_DIR) { LIB_DIR = $${PREFIX}/lib/ }
 
 	DESTDIR = lib
@@ -146,7 +150,7 @@ linux-* {
 	INSTALLS *= target
 
 	# where to put the library's interface
-	include_rsiface.path = $${INC_DIR}/rsiface
+	include_rsiface.path = $${INC_DIR}
 	include_rsiface.files = $$PUBLIC_HEADERS
 	INSTALLS += include_rsiface
 

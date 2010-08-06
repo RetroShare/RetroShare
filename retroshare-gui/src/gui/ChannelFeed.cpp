@@ -26,7 +26,7 @@
 #include <iostream>
 #include <algorithm>
 
-#include "rsiface/rschannels.h"
+#include <retroshare/rschannels.h>
 
 #include "ChannelFeed.h"
 

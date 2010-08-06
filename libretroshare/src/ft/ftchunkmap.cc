@@ -3,8 +3,8 @@
 #endif
 #include <math.h>
 #include <stdlib.h>
-#include <rsiface/rspeers.h>
-#include <rsiface/rsturtle.h>
+#include "retroshare/rspeers.h"
+#include "retroshare/rsturtle.h"
 #include "ftchunkmap.h"
 #include <time.h>
 

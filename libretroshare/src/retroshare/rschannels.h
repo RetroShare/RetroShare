@@ -31,8 +31,8 @@
 #include <iostream>
 #include <string>
 
-#include "rsiface/rstypes.h"
-#include "rsiface/rsdistrib.h" /* For FLAGS */
+#include "rstypes.h"
+#include "rsdistrib.h" /* For FLAGS */
 
 //! Stores information for a give channel id
 /*!

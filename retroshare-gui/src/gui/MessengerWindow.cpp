@@ -24,11 +24,11 @@
 #include <QWidgetAction>
 #include "common/vmessagebox.h"
 
-#include "rsiface/rsiface.h"
-#include "rsiface/rspeers.h"
-#include "rsiface/rsmsgs.h"
-#include "rsiface/rsstatus.h"
-#include "rsiface/rsnotify.h"
+#include <retroshare/rsiface.h>
+#include <retroshare/rspeers.h>
+#include <retroshare/rsmsgs.h>
+#include <retroshare/rsstatus.h>
+#include <retroshare/rsnotify.h>
 
 #include "rshare.h"
 #include "MessengerWindow.h"

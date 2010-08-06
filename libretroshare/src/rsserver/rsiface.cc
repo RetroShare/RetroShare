@@ -26,7 +26,7 @@
 
 
 
-#include "rsiface/rsiface.h"
+#include "retroshare/rsiface.h"
 #include "util/rsdir.h"
 
 /* global variable */			

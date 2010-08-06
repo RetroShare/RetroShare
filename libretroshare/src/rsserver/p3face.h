@@ -34,8 +34,8 @@
 #include "pqi/p3connmgr.h"
 #include "pqi/pqipersongrp.h"
 
-#include "rsiface/rsiface.h"
-#include "rsiface/rstypes.h"
+#include "retroshare/rsiface.h"
+#include "retroshare/rstypes.h"
 #include "util/rsthreads.h"
 
 #include "services/p3disc.h"

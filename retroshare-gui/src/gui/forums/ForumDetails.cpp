@@ -20,10 +20,10 @@
  ****************************************************************/
 #include "ForumDetails.h"
 
-#include "rsiface/rsiface.h"
-#include "rsiface/rspeers.h"
-#include "rsiface/rsdisc.h"
-#include "rsiface/rsforums.h"
+#include <retroshare/rsiface.h>
+#include <retroshare/rspeers.h>
+#include <retroshare/rsdisc.h>
+#include <retroshare/rsforums.h>
 
 #include <QTime>
 #include <QDateTime>

@@ -22,7 +22,7 @@
 #include "BlogNewItem.h"
 #include "FeedHolder.h"
 
-#include "rsiface/rsblogs.h"
+#include <retroshare/rsblogs.h>
 
 #define BLOG_DEFAULT_IMAGE ":/images/hi64-app-kblogger.png"
 

@@ -27,7 +27,7 @@
 #include "dbase/cachestrapper.h"
 #include "dbase/findex.h"
 #include "util/rsthreads.h"
-#include "rsiface/rsfiles.h"
+#include "retroshare/rsfiles.h"
 
 /******************************************************************************************
  * The Local Monitoring Class: FileIndexMonitor.

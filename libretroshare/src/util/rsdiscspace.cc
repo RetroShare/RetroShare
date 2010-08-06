@@ -24,9 +24,9 @@
  */
 
 #include <iostream>
-#include <rsiface/rsfiles.h>
-#include <rsiface/rsiface.h>
-#include <rsiface/rsinit.h>
+#include "retroshare/rsfiles.h"
+#include "retroshare/rsiface.h"
+#include "retroshare/rsinit.h"
 #include "rsdiscspace.h"
 #include <util/rsthreads.h>
 #ifndef WIN32

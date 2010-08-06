@@ -31,7 +31,7 @@
 #include <map>
 #include <iostream>
 
-#include "rsiface/rsmsgs.h"
+#include "retroshare/rsmsgs.h"
 
 #include "pqi/pqi.h"
 #include "pqi/pqiindic.h"

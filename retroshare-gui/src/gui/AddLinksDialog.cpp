@@ -23,7 +23,7 @@
 
 #include "AddLinksDialog.h"
 #include "RetroShareLink.h"
-#include "rsiface/rsrank.h"
+#include <retroshare/rsrank.h>
 
 /* Images for context menu icons */
 #define IMAGE_EXPORTFRIEND      ":/images/exportpeers_16x16.png"

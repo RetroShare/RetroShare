@@ -26,7 +26,7 @@
  *
  */
 
-#include "rsiface/rsmsgs.h"
+#include "retroshare/rsmsgs.h"
 
 class p3MsgService;
 class p3ChatService;

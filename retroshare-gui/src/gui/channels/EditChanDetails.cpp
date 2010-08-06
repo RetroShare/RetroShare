@@ -20,7 +20,7 @@
  ****************************************************************/
 #include "EditChanDetails.h"
 
-#include "rsiface/rschannels.h"
+#include <retroshare/rschannels.h>
 
 #include <list>
 #include <iostream>
