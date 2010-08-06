@@ -29,6 +29,7 @@
 #include <QObject>
 
 #include "RetroShareLink.h"
+#include "util/misc.h"
 
 #include <retroshare/rsfiles.h>
 #include <retroshare/rspeers.h>
@@ -185,6 +186,11 @@ QString RetroShareLink::toHtml() const
 QString RetroShareLink::toHtmlFull() const
 {
     return QString("<a href='") + toString() + "'>" + toString() + "</a>" ;
+}
+
+QString RetroShareLink::toHtmlSize() const
+{
+	return QString("<a href='") + toString() + "'>" + name() +"</a>" + " " + "<HTML><font color=\"blue\">" + "(" +  misc::friendlyUnit(_size)   + ")" +"</font></HTML>";
 }
 
 bool RetroShareLink::checkName(const QString& name)

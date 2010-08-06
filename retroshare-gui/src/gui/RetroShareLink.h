@@ -72,6 +72,8 @@ class RetroShareLink
 		/// returns the string <a href="retroshare://file|name|size|hash">retroshare://file|name|size|hash</a>
 		///                    <a href="retroshare://person|name|hash">retroshare://person|name|hash</a>
 		QString toHtmlFull() const ;
+		
+		QString toHtmlSize() const ;
 
 		QUrl toUrl() const ;
 
@@ -125,6 +127,10 @@ class RSLinkClipboard
 		// produces a list of html links that displays the full links
 		//
 		static QString toHtmlFull();
+		
+        // produces a list of html links that displays with the file name + filesize
+		//
+		static QString toHtmlSize();		
 
 		// Returns true is no links are found to paste.
 		// Useful for menus.
