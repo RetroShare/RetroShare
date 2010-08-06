@@ -544,15 +544,18 @@ void  MessengerWindow::insertPeers()
             /* not displayed, used to find back the item */
             sslItem -> setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(sslDetail.id));
 
-            QString sCustomString = QString::fromStdString(rsMsgs->getCustomStateString(sslDetail.id));
-            if (sCustomString != "") {
-                sslItem -> setText( COLUMN_NAME, tr("location : ") + QString::fromStdString(sslDetail.location) + " " + QString::fromStdString(sslDetail.autoconnect) );
-                sslItem -> setToolTip( COLUMN_NAME, tr("location : ") + QString::fromStdString(sslDetail.location) + tr(" - ") + sCustomString);
-                gpg_item -> setText(COLUMN_NAME, QString::fromStdString(detail.name) + tr("\n") + sCustomString);
-            } else {
+            QString sCustomString;
+            if (sslDetail.state & RS_PEER_STATE_CONNECTED) {
+                sCustomString = QString::fromStdString(rsMsgs->getCustomStateString(sslDetail.id));
+            }
+            if (sCustomString.isEmpty()) {
                 sslItem -> setText( COLUMN_NAME, tr("location : ") + QString::fromStdString(sslDetail.location) + " " + QString::fromStdString(sslDetail.autoconnect));
                 sslItem -> setToolTip( COLUMN_NAME, tr("location : ") + QString::fromStdString(sslDetail.location));
                 gpg_item -> setText(COLUMN_NAME, QString::fromStdString(detail.name) + tr("\n") + QString::fromStdString(sslDetail.location));
+            } else {
+                sslItem -> setText( COLUMN_NAME, tr("location : ") + QString::fromStdString(sslDetail.location) + " " + QString::fromStdString(sslDetail.autoconnect) );
+                sslItem -> setToolTip( COLUMN_NAME, tr("location : ") + QString::fromStdString(sslDetail.location) + tr(" - ") + sCustomString);
+                gpg_item -> setText(COLUMN_NAME, QString::fromStdString(detail.name) + tr("\n") + sCustomString);
             }
 
             /* not displayed, used to find back the item */

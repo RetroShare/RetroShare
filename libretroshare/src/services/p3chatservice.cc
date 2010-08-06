@@ -574,7 +574,7 @@ void p3ChatService::sendAvatarRequest(const std::string& peer_id)
 	ci->PeerId(peer_id);
 	ci->chatFlags = RS_CHAT_FLAG_PRIVATE | RS_CHAT_FLAG_REQUESTS_AVATAR ;
 	ci->sendTime = time(NULL);
-	ci->message = std::wstring() ;
+	ci->message.erase();
 
 #ifdef CHAT_DEBUG
 	std::cerr << "p3ChatService::sending request for avatar, to peer " << peer_id << std::endl ;
@@ -590,7 +590,7 @@ void p3ChatService::sendCustomStateRequest(const std::string& peer_id){
 
 	cs->PeerId(peer_id);
 	cs->flags = RS_CHAT_FLAG_PRIVATE | RS_CHAT_FLAG_REQUEST_CUSTOM_STATE ;
-	cs->status_string = std::string();
+	cs->status_string.erase();
 
 #ifdef CHAT_DEBUG
 	std::cerr << "p3ChatService::sending request for status, to peer " << peer_id << std::endl ;

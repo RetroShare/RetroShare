@@ -608,7 +608,10 @@ void  PeersDialog::insertPeers()
             sslItem -> setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(sslDetail.id));
 
             QString sText;
-            std::string customStateString = rsMsgs->getCustomStateString(sslDetail.id);
+            std::string customStateString;
+            if (sslDetail.state & RS_PEER_STATE_CONNECTED) {
+                customStateString = rsMsgs->getCustomStateString(sslDetail.id);
+            }
             sText = tr("location : ") + QString::fromStdString(sslDetail.location);
             if (customStateString.empty() == false) {
                 sText += tr(" - ") + QString::fromStdString(customStateString);
