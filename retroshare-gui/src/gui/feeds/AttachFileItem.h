@@ -55,6 +55,8 @@ public:
 	std::string FileName() { return mFileName; }
 	uint64_t    FileSize() { return mFileSize; }
 	std::string FilePath() { return mPath; }
+	int 	    getPicFlag()  { return mPicFlag;}
+	void	    setPicFlag(int flag)  { mPicFlag=flag;}	
 
 	void updateItemStatic();
 
@@ -81,6 +83,7 @@ private:
 	uint64_t    mFileSize;
 	std::string mSrcId;
 
+	uint32_t    mPicFlag;
 	uint32_t    mMode;
 	uint32_t    mType;
 	uint64_t    mDivisor;

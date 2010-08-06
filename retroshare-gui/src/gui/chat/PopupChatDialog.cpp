@@ -1,4 +1,5 @@
 /****************************************************************
+ *
  *  RetroShare is distributed under the following license:
  *
  *  Copyright (C) 2006,  crypton
@@ -96,6 +97,7 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   connect(ui.textboldButton, SIGNAL(clicked()), this, SLOT(setFont()));  
   connect(ui.textunderlineButton, SIGNAL(clicked()), this, SLOT(setFont()));  
   connect(ui.textitalicButton, SIGNAL(clicked()), this, SLOT(setFont()));
+  connect(ui.attachPictureButton, SIGNAL(clicked()), this, SLOT(addExtraPicture()));
   connect(ui.fontButton, SIGNAL(clicked()), this, SLOT(getFont())); 
   connect(ui.colorButton, SIGNAL(clicked()), this, SLOT(setColor()));
   connect(ui.emoteiconButton, SIGNAL(clicked()), this, SLOT(smileyWidget()));
@@ -253,14 +255,14 @@ void PopupChatDialog::chatFriend(std::string id)
     if (id.empty()){
         return;
     }
-
+    std::cerr<<" popup dialog chat friend 1"<<std::endl;
     bool oneLocationConnected = false;
 
     RsPeerDetails detail;
     if (!rsPeers->getPeerDetails(id, detail)) {
         return;
     }
-
+    
     if (detail.isOnlyGPGdetail) {
         //let's get the ssl child details, and open all the chat boxes
         std::list<std::string> sslIds;
@@ -453,8 +455,8 @@ std::cout << "PopupChatDialog:addChatMsg message : " << message.toStdString() <<
 			message.replace(code, "<img src=\"" + i.value() + "\" />");
 	}
   }
-
 	history /*<< nickColor << color << font << fontSize*/ << timestamp << name << message;
+	
 	
 	QString formatMsg = loadEmptyStyle()/*.replace(nickColor)
 				    .replace(color)
@@ -463,6 +465,7 @@ std::cout << "PopupChatDialog:addChatMsg message : " << message.toStdString() <<
 				    .replace("%timestamp%", timestamp)
                     		    .replace("%name%", name)
 				    .replace("%message%", message);
+				
 
 	if ((ui.textBrowser->verticalScrollBar()->maximum() - 30) < ui.textBrowser->verticalScrollBar()->value() ) {
 	    ui.textBrowser->append(formatMsg + "\n");
@@ -571,7 +574,10 @@ void PopupChatDialog::getFont()
 void PopupChatDialog::setFont()
 {
 
-  mCurrentFont.setBold(ui.textboldButton->isChecked());
+//  mCurrentFont.setBold(ui.textboldButton->isChecked());
+  bool flag;
+  flag=ui.textboldButton->isChecked();
+  mCurrentFont.setBold(flag);
   mCurrentFont.setUnderline(ui.textunderlineButton->isChecked());
   mCurrentFont.setItalic(ui.textitalicButton->isChecked());
 
@@ -828,7 +834,7 @@ void PopupChatDialog::updatePeerAvatar(const std::string& peer_id)
            #ifdef CHAT_DEBUG
 	   std::cerr << "Got no image" << std::endl ;
            #endif
-	   ui.avatarlabel->setPixmap(QPixmap(":/images/no_avatar_70.png"));
+	   ui.avatarlabel->setPixmap(QPixmap(":/images/no_avatar.png"));
 		return ;
 	}
 
@@ -897,19 +903,34 @@ void PopupChatDialog::addExtraFile()
 	std::string filePath = qfile.toStdString();
 	if (filePath != "")
 	{
-	    PopupChatDialog::addAttachment(filePath);
+	    PopupChatDialog::addAttachment(filePath,0);
 	}
 }
 
-void PopupChatDialog::addAttachment(std::string filePath) 
+void PopupChatDialog::addExtraPicture()
+{
+	// select a picture file
+    QString qfile = QFileDialog::getOpenFileName(this, "Load Picture File", QDir::homePath(), "Pictures (*.png *.xpm *.jpg)",0,
+			        QFileDialog::DontResolveSymlinks);
+	std::string filePath=qfile.toStdString();
+	if(filePath!="")
+	{
+		PopupChatDialog::addAttachment(filePath,1); //picture
+	}
+}
+
+void PopupChatDialog::addAttachment(std::string filePath,int flag) 
 {
 	    /* add a AttachFileItem to the attachment section */
 	    std::cerr << "PopupChatDialog::addExtraFile() hashing file.";
 	    std::cerr << std::endl;
 
 	    /* add widget in for new destination */
-	    AttachFileItem *file = new AttachFileItem(filePath);
+        AttachFileItem *file = new AttachFileItem(filePath);
 	    //file->
+	    
+	    if(flag==1)
+	    	file->setPicFlag(1);
 
 	    ui.vboxLayout->addWidget(file, 1, 0);
 
@@ -920,6 +941,8 @@ void PopupChatDialog::addAttachment(std::string filePath)
 		QObject::connect(file,SIGNAL(fileFinished(AttachFileItem *)), SLOT(fileHashingFinished(AttachFileItem *))) ;
 	    }
 }
+
+
 
 void PopupChatDialog::fileHashingFinished(AttachFileItem* file) 
 {
@@ -945,14 +968,24 @@ void PopupChatDialog::fileHashingFinished(AttachFileItem* file)
 
 	  rsiface->unlockData(); /* Unlock Interface */
 	}
+	
+	QString message;
+	
+    if(file->getPicFlag()==1){
+		message+="<img src=\"file:///";
+		message+=file->FilePath().c_str();
+		message+="\" width=\"100\" height=\"100\">";
+        message+="<br>";
+	}
 
-        QString message = RetroShareLink(QString::fromStdString(file->FileName()),file->FileSize(),QString::fromStdString(file->FileHash())).toHtml();
+    message+= RetroShareLink(QString::fromStdString(file->FileName()),file->FileSize(),QString::fromStdString(file->FileHash())).toHtml();
 
 #ifdef CHAT_DEBUG
             std::cerr << "PopupChatDialog::anchorClicked message : " << message.toStdString() << std::endl;
 #endif
 
-        ci.msg = message.toStdWString();
+
+    ci.msg = message.toStdWString();
 	ci.chatflags = RS_CHAT_PRIVATE;
 
 	addChatMsg(&ci);
@@ -1026,7 +1059,7 @@ void PopupChatDialog::dropEvent(QDropEvent *event)
 				    mb.setButtonText( QMessageBox::Ok, "OK" );
 				    mb.exec();
 				} else {
-				    PopupChatDialog::addAttachment(localpath);
+				    PopupChatDialog::addAttachment(localpath,false);
 				}
 			}
 		}

@@ -89,6 +89,7 @@ protected:
 
 private slots:
   void addExtraFile();
+  void addExtraPicture();
   void showAvatarFrame(bool show);
 
   void setColor();    
@@ -110,7 +111,7 @@ private slots:
 private:
 
   void colorChanged(const QColor &c);
-  void addAttachment(std::string);
+  void addAttachment(std::string,int flag);
 
    QAction     *actionTextBold;
    QAction     *actionTextUnderline;

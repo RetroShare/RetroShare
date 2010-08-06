@@ -72,6 +72,7 @@ AttachFileItem::AttachFileItem(std::string hash, std::string name, uint64_t size
 
 	mMode = flags & AFI_MASK_STATE;
 	mType = flags & AFI_MASK_TYPE;
+	mPicFlag=0;
 
 	if (mMode == AFI_STATE_EXTRA)
 	{
@@ -99,6 +100,7 @@ AttachFileItem::AttachFileItem(std::string path)
 
 	mMode = AFI_STATE_EXTRA;
 	mType = AFI_TYPE_ATTACH;
+	mPicFlag=0;
 
 	/* ask for Files to hash/prepare it for us */
 	if ((!rsFiles) || (!rsFiles->ExtraFileHash(path, AFI_DEFAULT_PERIOD, 0)))
