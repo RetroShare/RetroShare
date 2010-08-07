@@ -39,8 +39,8 @@ INITTEST();
 RsSerialType* init_item(CompressedChunkMap& map)
 {
 	map._map.clear() ;
-	for(uint i=0;i<15;++i)
-		map._map.push_back(lrand48()) ;
+	for(uint32_t i=0;i<15;++i)
+		map._map.push_back(rand()) ;
 
 	return new RsTurtleSerialiser();
 }
@@ -90,7 +90,7 @@ RsSerialType* init_item(RsTurtleFileDataItem& item)
 	item.chunk_size = S ;
 	item.chunk_data = new unsigned char[S] ;
 	for(uint32_t i=0;i<S;++i)
-		((unsigned char *)item.chunk_data)[i] = lrand48()%256 ;
+		((unsigned char *)item.chunk_data)[i] = rand()%256 ;
 	return new RsTurtleSerialiser();
 }
 bool operator==(const RsTurtleFileDataItem& i1,const RsTurtleFileDataItem& i2)
@@ -105,9 +105,9 @@ bool operator==(const RsTurtleFileDataItem& i1,const RsTurtleFileDataItem& i2)
 }
 RsSerialType* init_item(RsTurtleFileRequestItem& item)
 {
-	item.tunnel_id = lrand48() ;
+	item.tunnel_id = rand() ;
 	item.chunk_offset = 0x25ea228437894379ull ;
-	item.chunk_size = lrand48() ;
+	item.chunk_size = rand() ;
 	return new RsTurtleSerialiser();
 }
 bool operator==(const RsTurtleFileRequestItem& it1,const RsTurtleFileRequestItem& it2)
@@ -120,8 +120,8 @@ bool operator==(const RsTurtleFileRequestItem& it1,const RsTurtleFileRequestItem
 }
 RsSerialType* init_item(RsTurtleTunnelOkItem& item)
 {
-	item.tunnel_id = lrand48() ;
-	item.request_id = lrand48() ;
+	item.tunnel_id = rand() ;
+	item.request_id = rand() ;
 	return new RsTurtleSerialiser();
 }
 bool operator==(const RsTurtleTunnelOkItem& it1,const RsTurtleTunnelOkItem& it2)
@@ -132,9 +132,9 @@ bool operator==(const RsTurtleTunnelOkItem& it1,const RsTurtleTunnelOkItem& it2)
 }
 RsSerialType* init_item(RsTurtleOpenTunnelItem& item)
 {
-	item.depth = lrand48() ;
-	item.request_id = lrand48() ;
-	item.partial_tunnel_id = lrand48() ;
+	item.depth = rand() ;
+	item.request_id = rand() ;
+	item.partial_tunnel_id = rand() ;
 	item.file_hash = std::string("c0edcfecc0844ef175d61dd589ab288d262b6bc8") ;
 	return new RsTurtleSerialiser();
 }
@@ -148,14 +148,14 @@ bool operator==(const RsTurtleOpenTunnelItem& it1,const RsTurtleOpenTunnelItem& 
 }
 RsSerialType* init_item(RsTurtleRegExpSearchRequestItem& item)
 {
-	item.request_id = lrand48() ;
-	item.depth = lrand48() ;
+	item.request_id = rand() ;
+	item.depth = rand() ;
 	item.expr._tokens.clear() ;
 	item.expr._ints.clear() ;
 	item.expr._strings.clear() ;
 
-	for(uint32_t i=0;i<10u;++i) item.expr._tokens.push_back(lrand48()%8) ;
-	for(uint32_t i=0;i<6u;++i) item.expr._ints.push_back(lrand48()) ;
+	for(uint32_t i=0;i<10u;++i) item.expr._tokens.push_back(rand()%8) ;
+	for(uint32_t i=0;i<6u;++i) item.expr._ints.push_back(rand()) ;
 	for(uint32_t i=0;i<8u;++i) item.expr._strings.push_back("test string") ;
 	return new RsTurtleSerialiser();
 }
@@ -173,8 +173,8 @@ bool operator==(const RsTurtleRegExpSearchRequestItem& it1,const RsTurtleRegExpS
 }
 RsSerialType* init_item(RsTurtleStringSearchRequestItem& item)
 {
-	item.request_id = lrand48() ;
-	item.depth = lrand48() ;
+	item.request_id = rand() ;
+	item.depth = rand() ;
 	item.match_string = std::string("432hkjfdsjkhjk43r3fw") ;
 	return new RsTurtleSerialiser();
 }
@@ -202,8 +202,8 @@ bool operator==(const TurtleFileInfo& it1,const TurtleFileInfo& it2)
 }
 RsSerialType* init_item(RsTurtleSearchResultItem& item)
 {
-	item.depth = lrand48() ;
-	item.request_id = lrand48() ;
+	item.depth = rand() ;
+	item.request_id = rand() ;
 	item.result.clear() ;
 	static const uint32_t S = 10 ;
 	for(uint32_t i=0;i<S;++i)

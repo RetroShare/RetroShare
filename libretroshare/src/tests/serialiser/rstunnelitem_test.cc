@@ -27,6 +27,7 @@
 /******************************************************************
  */
 
+#include <stdlib.h>
 #include <iostream>
 #include <sstream>
 #include <serialiser/rstunnelitems.h>
@@ -38,11 +39,11 @@
 
 RsTunnelSerialiser* init_item(RsTunnelDataItem& item)
 {
-	uint32_t S = lrand48()%20000 ;
+	uint32_t S = rand()%20000 ;
 	item.encoded_data = malloc(S) ;
 	item.encoded_data_len = S ;
 	for(uint32_t i=0;i<S;++i)
-		((unsigned char *)item.encoded_data)[i] = lrand48()%256 ;
+		((unsigned char *)item.encoded_data)[i] = rand()%256 ;
 	item.sourcePeerId = "67641e38df0e75432033d222eae93fff" ;
 	item.relayPeerId = "6013bfc2cea7ab823af7a79fb3ca0df1" ;
 	item.destPeerId = "1d5768db7cd4720d0eb75cc1917da332" ;
@@ -69,10 +70,10 @@ RsTunnelSerialiser* init_item(RsTunnelHandshakeItem& item)
 	item.destPeerId = "1d5768db7cd4720d0eb75cc1917da332" ;
 
 	item.sslCertPEM = "" ;
-	uint32_t s=lrand48()%20 ;
+	uint32_t s=rand()%20 ;
 	for(uint32_t i=0;i<s;++i)
 		item.sslCertPEM += "6013bfc2cea7ab823af7a79fb3ca0df1" ;
-	item.connection_accepted = lrand48() ;
+	item.connection_accepted = rand() ;
 
 	return new RsTunnelSerialiser();
 }

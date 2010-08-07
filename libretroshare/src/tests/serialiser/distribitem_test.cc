@@ -1,3 +1,4 @@
+<<<<<<< .mine
 /*
  * libretroshare/src/serialiser: distribitem_test.cc
  *
@@ -24,12 +25,12 @@
  */
 
 #include <iostream>
-
+#include <time.h>
 #include "serialiser/rsdistribitems.h"
 #include "serialiser/rschannelitems.h"
 #include "serialiser/rsforumitems.h"
 #include "serialiser/rsblogitems.h"
-#include "retroshare/rsdistrib.h"
+#include "rsiface/rsdistrib.h"
 #include "serialiser/rstlvutil.h"
 #include "util/utest.h"
 #include "support.h"
@@ -316,5 +317,4 @@ int main(){
 
 	return TESTRESULT();
 }
-
 

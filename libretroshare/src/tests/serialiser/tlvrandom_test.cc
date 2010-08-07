@@ -38,6 +38,7 @@
  * many deserialisation as possible.
  */
 
+#include <time.h>
 #include <string.h>
 #include <iostream>
 #include "serialiser/rstlvbase.h"
@@ -73,10 +74,10 @@ int main()
 	time_t startTs = time(NULL);
 	time_t endTs = startTs + TEST_LENGTH;
 
-	srandom(startTs);
+	srand(startTs);
 	for(i = 0; i < dsize; i++)
 	{
-		data[i] = random() % 256;
+		data[i] = rand() % 256;
 	}
 
 	std::cerr << "TlvRandom Tests: setup data." << std::endl;

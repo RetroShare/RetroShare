@@ -48,7 +48,7 @@ tlvrandom_test : tlvrandom_test.o
 	$(CC) $(CFLAGS) -o tlvrandom_test tlvrandom_test.o $(OBJ) $(LIBS)
 
 rsturtleitem_test : rsturtleitem_test.o support.o
-	$(CC) $(CFLAGS) -o rsturtleitem_test rsturtleitem_test.o $(OBJ) $(LIBS)
+	$(CC) $(CFLAGS) -o rsturtleitem_test rsturtleitem_test.o support.o $(OBJ) $(LIBS)
 
 rstunnelitem_test : rstunnelitem_test.o support.o
 	$(CC) $(CFLAGS) -o rstunnelitem_test rstunnelitem_test.o support.o $(OBJ) $(LIBS)
