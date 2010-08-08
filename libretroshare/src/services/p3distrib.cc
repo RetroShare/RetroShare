@@ -1470,7 +1470,6 @@ bool    p3GroupDistrib::loadList(std::list<RsItem *> load)
 	/* for child config data */
 	std::list<RsItem* > childLoadL;
 	RsSerialType* childSer = createSerialiser();
-	uint32_t pktSize;
 
 	for(lit = load.begin(); lit != load.end(); lit++)
 	{
@@ -2205,7 +2204,9 @@ std::string	p3GroupDistrib::publishMsg(RsDistribMsg *msg, bool personalSign)
 
 				delete[] data;
 			}else{
-
+				delete[] data;
+				delete signedMsg;
+				delete serialType;
 				return msgId;
 			}
 
@@ -2233,6 +2234,8 @@ std::string	p3GroupDistrib::publishMsg(RsDistribMsg *msg, bool personalSign)
 		signedMsg->publishSignature.signData.setBinData(sigbuf, siglen);
 		signedMsg->publishSignature.keyId = gi->publishKeyId;
 
+		bool ok = true;
+
 		if (personalSign)
 		{
 			unsigned int siglen = MAX_GPG_SIGNATURE_SIZE;
@@ -2241,6 +2244,8 @@ std::string	p3GroupDistrib::publishMsg(RsDistribMsg *msg, bool personalSign)
 			{
 				signedMsg->personalSignature.signData.setBinData(sigbuf, siglen);
 				signedMsg->personalSignature.keyId = AuthGPG::getAuthGPG()->getGPGOwnId();
+			} else {
+				ok = false;
 			}
 		}
 
@@ -2248,6 +2253,11 @@ std::string	p3GroupDistrib::publishMsg(RsDistribMsg *msg, bool personalSign)
 		delete serialType;
 		EVP_MD_CTX_destroy(mdctx);
 		delete[] out_data;
+
+		if (ok == false) {
+			delete signedMsg;
+			return msgId;
+		}
 
 	} /* END STACK MUTEX */
 

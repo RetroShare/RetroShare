@@ -224,9 +224,6 @@ bool p3Forums::getForumThreadMsgList(std::string fId, std::string pId, std::list
 
 bool p3Forums::getForumMessage(std::string fId, std::string mId, ForumMsgInfo &info)
 {
-	std::list<std::string> msgIds;
-	std::list<std::string>::iterator it;
-
 	RsStackMutex stack(distribMtx); /***** STACK LOCKED MUTEX *****/
 
 	RsDistribMsg *msg = locked_getGroupMsg(fId, mId);
@@ -264,6 +261,10 @@ bool p3Forums::ForumMessageSend(ForumMsgInfo &info)
 
 	std::string mId = createForumMsg(info.forumId, info.parentId,
 		info.title, info.msg, signIt);
+
+	if (mId.empty()) {
+		return false;
+	}
 
 	setMessageStatus(info.forumId, mId, FORUM_MSG_STATUS_READ);
 
@@ -326,6 +327,11 @@ std::string p3Forums::createForumMsg(std::string fId, std::string pId,
 	fmsg->timestamp = time(NULL);
 
 	std::string msgId = publishMsg(fmsg, signIt);
+
+	if (msgId.empty()) {
+		delete(fmsg);
+	}
+
 	return msgId;
 }
 
