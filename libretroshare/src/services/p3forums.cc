@@ -266,16 +266,52 @@ bool p3Forums::ForumMessageSend(ForumMsgInfo &info)
 		return false;
 	}
 
-	setMessageStatus(info.forumId, mId, FORUM_MSG_STATUS_READ);
+	return setMessageStatus(info.forumId, mId, FORUM_MSG_STATUS_READ, FORUM_MSG_STATUS_MASK);
+}
+
+bool p3Forums::setMessageStatus(const std::string& fId,const std::string& mId,const uint32_t status, const uint32_t statusMask)
+{
+	setReadStatus(fId, mId, (status & statusMask));
 
 	return true;
 }
 
-bool p3Forums::setMessageStatus(const std::string& fId,const std::string& mId,const uint32_t status)
+bool p3Forums::getMessageStatus(const std::string& fId, const std::string& mId, uint32_t& status, uint32_t statusMask)
 {
-	setReadStatus(fId, mId, status);
 
-	return true;
+	RsStackMutex stack(distribMtx);
+
+	std::list<RsForumReadStatus *>::iterator lit = mReadStatus.begin();
+
+	for(; lit != mReadStatus.end(); lit++)
+	{
+
+		if((*lit)->forumId == fId)
+		{
+				break;
+		}
+
+	}
+
+	std::map<std::string, uint32_t >::iterator mit;
+
+	if(lit == mReadStatus.end())
+	{
+		return false;
+	}
+	else
+	{
+		mit = (*lit)->msgReadStatus.find(mId);
+
+		if(mit != (*lit)->msgReadStatus.end())
+		{
+			status =  (mit->second & statusMask);
+			return true;
+		}
+
+	}
+
+	return false;
 }
 
 

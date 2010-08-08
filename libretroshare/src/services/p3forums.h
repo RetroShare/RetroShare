@@ -30,44 +30,7 @@
 #include "services/p3distrib.h"
 #include "serialiser/rsforumitems.h"
 
-#if 0
-class RsForumGrp: public RsDistribGrp
-{
-	public:
 
-	RsForumGrp();
-
-	/* orig data (from RsDistribMsg)
-	 * std::string grpId
-	 */
-
-	std::wstring name;
-	std::wstring desc;
-};
-
-class RsForumMsg: public RsDistribMsg
-{
-	public:
-
-	RsForumMsg();
-
-	/* orig data (from RsDistribMsg)
-	 * std::string grpId
-	 * std::string msgId
-	 * std::string threadId
-	 * std::string parentId
-	 * time_t timestamp
-	 */
-
-	/* new data */
-	std::wstring title;
-	std::wstring msg;
-	std::string srcId;
-};
-
-#endif
-
-const uint32_t FORUM_MSG_STATUS_READ = 1;
 
 class p3Forums: public p3GroupDistrib, public RsForums 
 {
@@ -93,7 +56,8 @@ virtual bool getForumThreadMsgList(std::string fId, std::string tId, std::list<T
 virtual bool getForumMessage(std::string fId, std::string mId, ForumMsgInfo &msg);
 virtual void setReadStatus(const std::string& forumId,const std::string& msgId,const uint32_t status);
 virtual	bool ForumMessageSend(ForumMsgInfo &info);
-virtual bool setMessageStatus(const std::string& fId, const std::string& mId,const uint32_t status);
+virtual bool setMessageStatus(const std::string& fId, const std::string& mId, const uint32_t status, const uint32_t statusMask);
+virtual bool getMessageStatus(const std::string& fId, const std::string& mId, uint32_t& status, const uint32_t statusMask);
 
 virtual bool forumSubscribe(std::string fId, bool subscribe);
 
