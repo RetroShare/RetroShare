@@ -172,9 +172,9 @@ void  CreateForumMsg::createMsg()
     if ((msgInfo.msg == L"") && (msgInfo.title == L""))
         return; /* do nothing */
 
-    rsForums->ForumMessageSend(msgInfo);
-
-    close();
+    if (rsForums->ForumMessageSend(msgInfo) == true) {
+        close();
+    }
 }
 
 void CreateForumMsg::closeEvent (QCloseEvent * event)

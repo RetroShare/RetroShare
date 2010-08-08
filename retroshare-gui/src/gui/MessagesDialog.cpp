@@ -55,7 +55,7 @@
 #define COLUMN_COUNT         7
 #define COLUMN_ATTACHEMENTS  0
 #define COLUMN_SUBJECT       1
-#define COLUMN_READ          2
+#define COLUMN_UNREAD        2
 #define COLUMN_FROM          3
 #define COLUMN_DATE          4
 #define COLUMN_CONTENT       5
@@ -63,9 +63,10 @@
 
 #define COLUMN_DATA          0 // column for storing the userdata like msgid and srcid
 
-#define ROLE_SORT  Qt::UserRole
-#define ROLE_MSGID Qt::UserRole + 1
-#define ROLE_SRCID Qt::UserRole + 2
+#define ROLE_SORT   Qt::UserRole
+#define ROLE_MSGID  Qt::UserRole + 1
+#define ROLE_SRCID  Qt::UserRole + 2
+#define ROLE_UNREAD Qt::UserRole + 3
 
 #define ROW_INBOX         0
 #define ROW_OUTBOX        1
@@ -93,10 +94,10 @@
 #define CONFIG_SECTION_TAG      "Tag"
 #define CONFIG_KEY_TAG          "Tag"
 
-class MyItemDelegate : public QItemDelegate
+class MessagesItemDelegate : public QItemDelegate
 {
 public:
-    MyItemDelegate(QObject *parent = 0) : QItemDelegate(parent)
+    MessagesItemDelegate(QObject *parent = 0) : QItemDelegate(parent)
     {
     }
 
@@ -104,7 +105,7 @@ public:
     {
         QStyleOptionViewItem ownOption (option);
 
-        if (index.column() == COLUMN_READ) {
+        if (index.column() == COLUMN_UNREAD) {
             ownOption.state &= ~QStyle::State_HasFocus; // don't show text and focus rectangle
         }
 
@@ -115,7 +116,7 @@ public:
     {
         QStyleOptionViewItem ownOption (option);
 
-        if (index.column() == COLUMN_READ) {
+        if (index.column() == COLUMN_UNREAD) {
             ownOption.state &= ~QStyle::State_HasFocus; // don't show text and focus rectangle
         }
 
@@ -123,10 +124,10 @@ public:
     }
 };
 
-class MyMenu : public QMenu
+class MessagesMenu : public QMenu
 {
 public:
-    MyMenu(const QString &title, QWidget *parent) : QMenu (title, parent)
+    MessagesMenu(const QString &title, QWidget *parent) : QMenu (title, parent)
     {
     }
 
@@ -287,7 +288,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     MessagesModel = new QStandardItemModel(0, COLUMN_COUNT);
     MessagesModel->setHeaderData(COLUMN_ATTACHEMENTS,  Qt::Horizontal, QIcon(":/images/attachment.png"), Qt::DecorationRole);
     MessagesModel->setHeaderData(COLUMN_SUBJECT,       Qt::Horizontal, tr("Subject"));
-    MessagesModel->setHeaderData(COLUMN_READ,          Qt::Horizontal, QIcon(":/images/message-mail-state-header.png"), Qt::DecorationRole);
+    MessagesModel->setHeaderData(COLUMN_UNREAD,        Qt::Horizontal, QIcon(":/images/message-state-header.png"), Qt::DecorationRole);
     MessagesModel->setHeaderData(COLUMN_FROM,          Qt::Horizontal, tr("From"));
     MessagesModel->setHeaderData(COLUMN_DATE,          Qt::Horizontal, tr("Date"));
     MessagesModel->setHeaderData(COLUMN_TAGS,          Qt::Horizontal, tr("Tags"));
@@ -301,7 +302,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     ui.messagestreeView->setModel(proxyModel);
     ui.messagestreeView->setSelectionBehavior(QTreeView::SelectRows);
 
-    QItemDelegate *pDelegate = new MyItemDelegate(this);
+    QItemDelegate *pDelegate = new MessagesItemDelegate(this);
     ui.messagestreeView->setItemDelegate(pDelegate);
 
     ui.messagestreeView->setRootIsDecorated(false);
@@ -326,7 +327,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     QHeaderView * msgwheader = ui.messagestreeView->header () ;
     msgwheader->resizeSection (COLUMN_ATTACHEMENTS, 24);
     msgwheader->resizeSection (COLUMN_SUBJECT,      250);
-    msgwheader->resizeSection (COLUMN_READ,         16);
+    msgwheader->resizeSection (COLUMN_UNREAD,       16);
     msgwheader->resizeSection (COLUMN_FROM,         140);
     msgwheader->resizeSection (COLUMN_DATE,         140);
 
@@ -372,8 +373,8 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     /* Set header sizes for the fixed columns and resize modes, must be set after processSettings */
     msgwheader->setResizeMode (COLUMN_ATTACHEMENTS, QHeaderView::Fixed);
     msgwheader->setResizeMode (COLUMN_DATE, QHeaderView::Interactive);
-    msgwheader->setResizeMode (COLUMN_READ, QHeaderView::Fixed);
-    msgwheader->resizeSection (COLUMN_READ, 24);
+    msgwheader->setResizeMode (COLUMN_UNREAD, QHeaderView::Fixed);
+    msgwheader->resizeSection (COLUMN_UNREAD, 24);
 
     // fill folder list
     updateMessageSummaryList();
@@ -622,7 +623,7 @@ void MessagesDialog::fillTags()
     getTagItems(TagItems);
 
     // create tag menu
-    QMenu *pMenu = new MyMenu (tr("Tag"), this);
+    QMenu *pMenu = new MessagesMenu (tr("Tag"), this);
     connect(pMenu, SIGNAL(triggered (QAction*)), this, SLOT(tagTriggered(QAction*)));
     connect(pMenu, SIGNAL(aboutToShow()), this, SLOT(tagAboutToShow()));
 
@@ -735,7 +736,7 @@ int MessagesDialog::getSelectedMsgCount (QList<int> *pRows, QList<int> *pRowsRea
 
                 if (pRows) pRows->append(mappedRow);
 
-                if (MessagesModel->item(mappedRow, COLUMN_SUBJECT)->font().bold()) {
+                if (MessagesModel->item(mappedRow, COLUMN_DATA)->data(ROLE_UNREAD).toBool()) {
                     if (pRowsUnread) pRowsUnread->append(mappedRow);
                 } else {
                     if (pRowsRead) pRowsRead->append(mappedRow);
@@ -750,8 +751,8 @@ int MessagesDialog::getSelectedMsgCount (QList<int> *pRows, QList<int> *pRowsRea
 bool MessagesDialog::isMessageRead(int nRow)
 {
     QStandardItem *item;
-    item = MessagesModel->item(nRow,COLUMN_SUBJECT);
-    return !item->font().bold();
+    item = MessagesModel->item(nRow,COLUMN_DATA);
+    return !item->data(ROLE_UNREAD).toBool();
 }
 
 void MessagesDialog::messageslistWidgetCostumPopupMenu( QPoint point )
@@ -1226,6 +1227,7 @@ static void InitIconAndFont(RSettings *pConfig, QStandardItem *pItem [COLUMN_COU
         } else {
             pItem[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-mail.png"));
         }
+        pItem[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-state-new.png"));
     } else {
         // Change Message icon when Subject is Re: or Fwd:
         if (sText.startsWith("Re:", Qt::CaseInsensitive)) {
@@ -1235,6 +1237,7 @@ static void InitIconAndFont(RSettings *pConfig, QStandardItem *pItem [COLUMN_COU
         } else {
             pItem[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-mail-read.png"));
         }
+        pItem[COLUMN_SUBJECT]->setIcon(QIcon());
     }
 
     // show the locale "New" state
@@ -1245,10 +1248,11 @@ static void InitIconAndFont(RSettings *pConfig, QStandardItem *pItem [COLUMN_COU
         pConfig->endGroup();
     }
 
+    // set icon
     if (bNew) {
-        pItem[COLUMN_READ]->setIcon(QIcon(":/images/message-mail-state-unread.png"));
+        pItem[COLUMN_UNREAD]->setIcon(QIcon(":/images/message-state-unread.png"));
     } else {
-        pItem[COLUMN_READ]->setIcon(QIcon(":/images/message-mail-state-read.png"));
+        pItem[COLUMN_UNREAD]->setIcon(QIcon(":/images/message-state-read.png"));
     }
 
     // set font
@@ -1257,6 +1261,8 @@ static void InitIconAndFont(RSettings *pConfig, QStandardItem *pItem [COLUMN_COU
         qf.setBold(bNew);
         pItem[i]->setFont(qf);
     }
+
+    pItem[COLUMN_DATA]->setData(bNew, ROLE_UNREAD);
 }
 
 void MessagesDialog::insertMessages()
@@ -1596,7 +1602,7 @@ void MessagesDialog::insertMessages()
 
     ui.messagestreeView->showColumn(COLUMN_ATTACHEMENTS);
     ui.messagestreeView->showColumn(COLUMN_SUBJECT);
-    ui.messagestreeView->showColumn(COLUMN_READ);
+    ui.messagestreeView->showColumn(COLUMN_UNREAD);
     ui.messagestreeView->showColumn(COLUMN_FROM);
     ui.messagestreeView->showColumn(COLUMN_DATE);
     ui.messagestreeView->showColumn(COLUMN_TAGS);
@@ -1620,7 +1626,7 @@ void MessagesDialog::clicked(const QModelIndex &index )
         return;
     }
 
-    if (index.column() == COLUMN_READ) {
+    if (index.column() == COLUMN_UNREAD) {
         int mappedRow = proxyModel->mapToSource(index).row();
 
         QList<int> Rows;

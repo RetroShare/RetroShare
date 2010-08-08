@@ -880,6 +880,15 @@ background: white;}</string>
           </column>
           <column>
            <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="images.qrc">
+             <normaloff>:/images/message-state-header.png</normaloff>:/images/message-state-header.png</iconset>
+           </property>
+          </column>
+          <column>
+           <property name="text">
             <string>Date</string>
            </property>
           </column>

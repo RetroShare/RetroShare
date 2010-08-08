@@ -34,11 +34,9 @@
 #include "rstypes.h"
 #include "rsdistrib.h" /* For FLAGS */
 
-#define RS_FORUMMSG_NEW       0x0010 
-
-#define FORUM_MSG_STATUS_MASK 0x000f
-#define FORUM_MSG_STATUS_READ 0x0001
-#define FORUM_MSG_STATUS_UNREADY_BY_USER 0x0002
+#define FORUM_MSG_STATUS_MASK           0x000f
+#define FORUM_MSG_STATUS_READ           0x0001
+#define FORUM_MSG_STATUS_UNREAD_BY_USER 0x0002
 
 class ForumInfo 
 {
@@ -137,7 +135,7 @@ virtual bool getForumThreadList(std::string fId, std::list<ThreadInfoSummary> &m
 virtual bool getForumThreadMsgList(std::string fId, std::string pId, std::list<ThreadInfoSummary> &msgs) = 0;
 virtual bool getForumMessage(std::string fId, std::string mId, ForumMsgInfo &msg) = 0;
 virtual bool setMessageStatus(const std::string& fId,const std::string& mId, const uint32_t status, const uint32_t statusMask) = 0;
-virtual bool getMessageStatus(const std::string& fId, const std::string& mId, uint32_t& status, const uint32_t statusMask) = 0;
+virtual bool getMessageStatus(const std::string& fId, const std::string& mId, uint32_t& status) = 0;
 virtual	bool ForumMessageSend(ForumMsgInfo &info)                 = 0;
 
 virtual bool forumSubscribe(std::string fId, bool subscribe)	= 0;

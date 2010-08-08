@@ -31,95 +31,98 @@ class ForumsDialog : public RsAutoUpdatePage
   Q_OBJECT
 
 public:
-  ForumsDialog(QWidget *parent = 0);
-  ~ForumsDialog();
+    ForumsDialog(QWidget *parent = 0);
+    ~ForumsDialog();
 
-  void insertForums();
-  void insertPost();
-  
-  void loadForumEmoticons();
- 
-  /* overloaded from RsAuthUpdatePage */ 
-  virtual void updateDisplay();
-  
+    /* overloaded from RsAuthUpdatePage */
+    virtual void updateDisplay();
+
 private slots:
+    void anchorClicked (const QUrl &);
+    /** Create the context popup menu and it's submenus */
+    void forumListCustomPopupMenu( QPoint point );
+    void threadListCustomPopupMenu( QPoint point );
 
-  void anchorClicked (const QUrl &);
-  void insertThreads();
-  /** Create the context popup menu and it's submenus */
-  void forumListCustomPopupMenu( QPoint point ); 
-  void threadListCustomPopupMenu( QPoint point );  
+    void newforum();
 
-  void newforum();
+    void changedForum( QTreeWidgetItem *curr, QTreeWidgetItem *prev );
+    void changedThread();
+    void clickedThread (QTreeWidgetItem *item, int column);
 
+    void replytomessage();
+    //void print();
+    //void printpreview();
 
-  void changedForum( QTreeWidgetItem *curr, QTreeWidgetItem *prev );
-  void changedThread();
+    //void removemessage();
+    void markMsgAsRead();
+    void markMsgAsReadAll();
+    void markMsgAsUnread();
+    void markMsgAsUnreadAll();
 
-  void replytomessage();
-  //void print();
-  //void printpreview();
-  
-  void removemessage();
-  void markMsgAsRead();  
-  
-  /* handle splitter */
-  void togglethreadview();
+    /* handle splitter */
+    void togglethreadview();
 
-  void showthread();
-  void createmessage();
+    void createthread();
+    void createmessage();
 
-  void subscribeToForum();
-  void unsubscribeToForum();
+    void subscribeToForum();
+    void unsubscribeToForum();
 
-  void showForumDetails();
+    void showForumDetails();
 
-  void previousMessage ();
-  void nextMessage ();
+    void previousMessage ();
+    void nextMessage ();
 
-  void changedViewBox();
+    void changedViewBox();
 
-  void filterColumnChanged();
-  void filterRegExpChanged();
-  void clearFilter();
+    void filterColumnChanged();
+    void filterRegExpChanged();
+    void clearFilter();
 
 private:
+    void insertForums();
+    void insertThreads();
+    void insertPost();
 
-  void forumSubscribe(bool subscribe);
-  bool getCurrentMsg(std::string &cid, std::string &mid);
-  void FillForums(QTreeWidgetItem *Forum, QList<QTreeWidgetItem *> &ChildList);
-  void FillThreads(QList<QTreeWidgetItem *> &ThreadList);
-  void FillChildren(QTreeWidgetItem *Parent, QTreeWidgetItem *NewParent);
+    void loadForumEmoticons();
 
-  void processSettings(bool bLoad);
-  void togglethreadview_internal();
+    void forumSubscribe(bool subscribe);
+    void FillForums(QTreeWidgetItem *Forum, QList<QTreeWidgetItem *> &ChildList);
+    void FillThreads(QList<QTreeWidgetItem *> &ThreadList, bool bExpandNewMessages, std::list<QTreeWidgetItem*> &itemToExpand);
+    void FillChildren(QTreeWidgetItem *Parent, QTreeWidgetItem *NewParent, bool bExpandNewMessages, std::list<QTreeWidgetItem*> &itemToExpand);
 
-  void FilterItems();
-  bool FilterItem(QTreeWidgetItem *pItem, QString &sPattern, int nFilterColumn);
+    int getSelectedMsgCount(QList<QTreeWidgetItem*> *pRows, QList<QTreeWidgetItem*> *pRowsRead, QList<QTreeWidgetItem*> *pRowsUnread);
+    void setMsgAsReadUnread(QList<QTreeWidgetItem*> &Rows, bool bRead);
+    void markMsgAsReadUnread(bool bRead, bool bAll);
+    void CalculateIconsAndFonts(QTreeWidgetItem *pItem = NULL);
+    void CalculateIconsAndFonts(QTreeWidgetItem *pItem, bool &bHasReadChilddren, bool &bHasUnreadChilddren);
 
-  bool m_bProcessSettings;
+    void processSettings(bool bLoad);
+    void togglethreadview_internal();
 
-  QTreeWidgetItem *YourForums;
-  QTreeWidgetItem *SubscribedForums;
-  QTreeWidgetItem *PopularForums;
-  QTreeWidgetItem *OtherForums;
+    void FilterItems();
+    bool FilterItem(QTreeWidgetItem *pItem, QString &sPattern, int nFilterColumn);
 
-  std::string mCurrForumId;
-  std::string mCurrThreadId;
-  std::string mCurrPostId;
+    bool m_bProcessSettings;
 
-  QFont m_ForumNameFont;
-  QFont m_ItemFont;
-  int m_LastViewType;
-  std::string m_LastForumID;
+    QTreeWidgetItem *YourForums;
+    QTreeWidgetItem *SubscribedForums;
+    QTreeWidgetItem *PopularForums;
+    QTreeWidgetItem *OtherForums;
 
-  QHash<QString, QString> smileys;
+    std::string mCurrForumId;
+    std::string mCurrThreadId;
+    bool m_bIsForumSubscribed;
 
-  std::string fId;
-  std::string pId;
+    QFont m_ForumNameFont;
+    QFont m_ItemFont;
+    int m_LastViewType;
+    std::string m_LastForumID;
 
-  /** Qt Designer generated object */
-  Ui::ForumsDialog ui;
+    QHash<QString, QString> smileys;
+
+    /** Qt Designer generated object */
+    Ui::ForumsDialog ui;
 };
 
 #endif

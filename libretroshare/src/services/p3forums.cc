@@ -271,13 +271,42 @@ bool p3Forums::ForumMessageSend(ForumMsgInfo &info)
 
 bool p3Forums::setMessageStatus(const std::string& fId,const std::string& mId,const uint32_t status, const uint32_t statusMask)
 {
-	setReadStatus(fId, mId, (status & statusMask));
+	RsStackMutex stack(distribMtx);
+
+	std::list<RsForumReadStatus *>::iterator lit = mReadStatus.begin();
+
+	for(; lit != mReadStatus.end(); lit++)
+	{
+
+		if((*lit)->forumId == fId)
+		{
+				RsForumReadStatus* rsi = *lit;
+				rsi->msgReadStatus[mId] &= ~statusMask;
+				rsi->msgReadStatus[mId] |= (status & statusMask);
+				break;
+		}
+
+	}
+
+	// if forum id does not exist create one
+	if(lit == mReadStatus.end())
+	{
+		RsForumReadStatus* rsi = new RsForumReadStatus();
+		rsi->forumId = fId;
+		rsi->msgReadStatus[mId] = status & statusMask;
+		mReadStatus.push_back(rsi);
+		mSaveList.push_back(rsi);
+	}
+	
+	IndicateConfigChanged();
 
 	return true;
 }
 
-bool p3Forums::getMessageStatus(const std::string& fId, const std::string& mId, uint32_t& status, uint32_t statusMask)
+bool p3Forums::getMessageStatus(const std::string& fId, const std::string& mId, uint32_t& status)
 {
+
+	status = 0;
 
 	RsStackMutex stack(distribMtx);
 
@@ -293,22 +322,17 @@ bool p3Forums::getMessageStatus(const std::string& fId, const std::string& mId, 
 
 	}
 
-	std::map<std::string, uint32_t >::iterator mit;
-
 	if(lit == mReadStatus.end())
 	{
 		return false;
 	}
-	else
+
+	std::map<std::string, uint32_t >::iterator mit = (*lit)->msgReadStatus.find(mId);
+
+	if(mit != (*lit)->msgReadStatus.end())
 	{
-		mit = (*lit)->msgReadStatus.find(mId);
-
-		if(mit != (*lit)->msgReadStatus.end())
-		{
-			status =  (mit->second & statusMask);
-			return true;
-		}
-
+		status = mit->second;
+		return true;
 	}
 
 	return false;
@@ -571,36 +595,6 @@ void    p3Forums::loadDummyData()
 std::list<RsItem* > p3Forums::childSaveList()
 {
 	return mSaveList;
-}
-
-void p3Forums::setReadStatus(const std::string& forumId, const std::string& msgId, const uint32_t status)
-{
-	RsStackMutex stack(distribMtx);
-
-	std::list<RsForumReadStatus *>::iterator lit = mReadStatus.begin();
-
-	for(; lit != mReadStatus.end(); lit++)
-	{
-
-		if((*lit)->forumId == forumId)
-		{
-				(*lit)->msgReadStatus[msgId] = status;
-				break;
-		}
-
-	}
-
-	// if forum id does not exist create one
-	if(lit == mReadStatus.end())
-	{
-		RsForumReadStatus* rsi = new RsForumReadStatus();
-		rsi->forumId = forumId;
-		rsi->msgReadStatus[msgId] = status;
-		mReadStatus.push_back(rsi);
-		mSaveList.push_back(rsi);
-	}
-
-	return;
 }
 
 bool p3Forums::childLoadList(std::list<RsItem* >& configSaves)

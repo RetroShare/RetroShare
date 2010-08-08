@@ -23,6 +23,7 @@
 #include <QFile>
 #include <QDateTime>
 #include <QMessageBox>
+#include <QItemDelegate>
 
 #include "ForumsDialog.h"
 #include "gui/RetroShareLink.h"
@@ -62,45 +63,96 @@
 #define VIEW_THREADED	1
 #define VIEW_FLAT	2
 
-#define COLUMN_COUNT    7
-#define COLUMN_TITLE    0
-#define COLUMN_DATE     1
-#define COLUMN_AUTHOR   2
-#define COLUMN_SIGNED   3
-#define COLUMN_PARENTID 4
-#define COLUMN_MSGID    5
-#define COLUMN_CONTENT  6
+/* Forum constants */
+#define COLUMN_FORUM_COUNT    2
+#define COLUMN_FORUM_TITLE    0
+#define COLUMN_FORUM_DATE     1
+
+#define COLUMN_FORUM_DATA     0
+
+#define ROLE_FORUM_ID         Qt::UserRole
+
+/* Thread constants */
+#define COLUMN_THREAD_COUNT    6
+#define COLUMN_THREAD_TITLE    0
+#define COLUMN_THREAD_READ     1
+#define COLUMN_THREAD_DATE     2
+#define COLUMN_THREAD_AUTHOR   3
+#define COLUMN_THREAD_SIGNED   4
+#define COLUMN_THREAD_CONTENT  5
+
+#define COLUMN_THREAD_DATA     0 // column for storing the userdata like msgid and parentid
+
+#define ROLE_THREAD_MSGID           Qt::UserRole
+#define ROLE_THREAD_STATUS          Qt::UserRole + 1
+// no need to copy, don't count in ROLE_THREAD_COUNT
+#define ROLE_THREAD_READCHILDREN    Qt::UserRole + 2
+#define ROLE_THREAD_UNREADCHILDREN  Qt::UserRole + 3
+
+#define ROLE_THREAD_COUNT           2
+
+#define IS_UNREAD(status) ((status & FORUM_MSG_STATUS_READ) == 0 || (status & FORUM_MSG_STATUS_UNREAD_BY_USER))
+
+class ForumsItemDelegate : public QItemDelegate
+{
+public:
+    ForumsItemDelegate(QObject *parent = 0) : QItemDelegate(parent)
+    {
+    }
+
+    void paint (QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+    {
+        QStyleOptionViewItem ownOption (option);
+
+        if (index.column() == COLUMN_THREAD_READ) {
+            ownOption.state &= ~QStyle::State_HasFocus; // don't show text and focus rectangle
+        }
+
+        QItemDelegate::paint (painter, ownOption, index);
+    }
+
+    QSize sizeHint (const QStyleOptionViewItem &option, const QModelIndex &index) const
+    {
+        QStyleOptionViewItem ownOption (option);
+
+        if (index.column() == COLUMN_THREAD_READ) {
+            ownOption.state &= ~QStyle::State_HasFocus; // don't show text and focus rectangle
+        }
+
+        return QItemDelegate::sizeHint(ownOption, index);
+    }
+};
 
 static int FilterColumnFromComboBox(int nIndex)
 {
     switch (nIndex) {
     case 0:
-        return COLUMN_DATE;
+        return COLUMN_THREAD_DATE;
     case 1:
-        return COLUMN_TITLE;
+        return COLUMN_THREAD_TITLE;
     case 2:
-        return COLUMN_AUTHOR;
+        return COLUMN_THREAD_AUTHOR;
     case 3:
-        return COLUMN_CONTENT;
+        return COLUMN_THREAD_CONTENT;
     }
 
-    return COLUMN_TITLE;
+    return COLUMN_THREAD_TITLE;
 }
 
 static int FilterColumnToComboBox(int nIndex)
 {
     switch (nIndex) {
-    case COLUMN_DATE:
+    case COLUMN_THREAD_DATE:
         return 0;
-    case COLUMN_TITLE:
+    case COLUMN_THREAD_TITLE:
         return 1;
-    case COLUMN_AUTHOR:
+    case COLUMN_THREAD_AUTHOR:
         return 2;
-    case COLUMN_CONTENT:
+    case COLUMN_THREAD_CONTENT:
         return 3;
     }
 
-    return FilterColumnToComboBox(COLUMN_TITLE);
+    return FilterColumnToComboBox(COLUMN_THREAD_TITLE);
 }
 
 /** Constructor */
@@ -111,17 +163,19 @@ ForumsDialog::ForumsDialog(QWidget *parent)
     ui.setupUi(this);
 
     m_bProcessSettings = false;
+    m_bIsForumSubscribed = false;
 
     connect( ui.forumTreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( forumListCustomPopupMenu( QPoint ) ) );
     connect( ui.threadTreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( threadListCustomPopupMenu( QPoint ) ) );
 
     connect(ui.actionCreate_Forum, SIGNAL(triggered()), this, SLOT(newforum()));
     connect(ui.newmessageButton, SIGNAL(clicked()), this, SLOT(createmessage()));
-    connect(ui.newthreadButton, SIGNAL(clicked()), this, SLOT(showthread()));
+    connect(ui.newthreadButton, SIGNAL(clicked()), this, SLOT(createthread()));
 
     connect( ui.forumTreeWidget, SIGNAL( currentItemChanged ( QTreeWidgetItem *, QTreeWidgetItem *) ), this, SLOT( changedForum( QTreeWidgetItem *, QTreeWidgetItem * ) ) );
 
     connect( ui.threadTreeWidget, SIGNAL( itemSelectionChanged() ), this, SLOT( changedThread () ) );
+    connect( ui.threadTreeWidget, SIGNAL( itemClicked(QTreeWidgetItem*,int)), this, SLOT( clickedThread (QTreeWidgetItem*,int) ) );
     connect( ui.viewBox, SIGNAL( currentIndexChanged ( int ) ), this, SLOT( changedViewBox () ) );
     connect( ui.postText, SIGNAL( anchorClicked(const QUrl &)), SLOT(anchorClicked(const QUrl &)));
 
@@ -133,22 +187,26 @@ ForumsDialog::ForumsDialog(QWidget *parent)
     connect(ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
     connect(ui.filterColumnComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterColumnChanged()));
 
+    /* Set own item delegate */
+    QItemDelegate *pDelegate = new ForumsItemDelegate(this);
+    ui.threadTreeWidget->setItemDelegate(pDelegate);
+
     /* Set header resize modes and initial section sizes */
     QHeaderView * ftheader = ui.forumTreeWidget->header () ;
-    ftheader->setResizeMode (0, QHeaderView::Interactive);
-
-    ftheader->resizeSection ( 0, 170 );
+    ftheader->setResizeMode (COLUMN_FORUM_TITLE, QHeaderView::Interactive);
+    ftheader->resizeSection (COLUMN_FORUM_TITLE, 170);
 
     /* Set header resize modes and initial section sizes */
     QHeaderView * ttheader = ui.threadTreeWidget->header () ;
-    ttheader->setResizeMode (0, QHeaderView::Interactive);
+    ttheader->setResizeMode (COLUMN_THREAD_TITLE, QHeaderView::Interactive);
+    ttheader->resizeSection (COLUMN_THREAD_DATE,  190);
+    ttheader->resizeSection (COLUMN_THREAD_TITLE, 170);
 
-    ttheader->resizeSection ( COLUMN_DATE,  170 );
-    ttheader->resizeSection ( COLUMN_TITLE, 170 );
-    ttheader->hideSection (COLUMN_CONTENT);
-    
-    ui.threadTreeWidget->sortItems( COLUMN_DATE, Qt::DescendingOrder );
+    ui.threadTreeWidget->sortItems( COLUMN_THREAD_DATE, Qt::DescendingOrder );
 
+    /* Set text of column "Read" to empty - without this the column has a number as header text */
+    QTreeWidgetItem *headerItem = ui.threadTreeWidget->headerItem();
+    headerItem->setText(COLUMN_THREAD_READ, "");
 
     m_ForumNameFont = QFont("Times", 12, QFont::Bold);
     ui.forumName->setFont(m_ForumNameFont);
@@ -171,35 +229,35 @@ ForumsDialog::ForumsDialog(QWidget *parent)
     QList<QTreeWidgetItem *> TopList;
 
     YourForums = new QTreeWidgetItem();
-    YourForums->setText(0, tr("Your Forums"));
-    YourForums->setFont(0, m_ItemFont);
-    YourForums->setIcon(0,(QIcon(IMAGE_FOLDER)));
-    YourForums->setSizeHint(0, QSize( 18,18 ) );
-    YourForums->setForeground(0, QBrush(QColor(79, 79, 79)));
+    YourForums->setText(COLUMN_FORUM_TITLE, tr("Your Forums"));
+    YourForums->setFont(COLUMN_FORUM_TITLE, m_ItemFont);
+    YourForums->setIcon(COLUMN_FORUM_TITLE,(QIcon(IMAGE_FOLDER)));
+    YourForums->setSizeHint(COLUMN_FORUM_TITLE, QSize( 18,18 ) );
+    YourForums->setForeground(COLUMN_FORUM_TITLE, QBrush(QColor(79, 79, 79)));
     TopList.append(YourForums);
 
     SubscribedForums = new QTreeWidgetItem((QTreeWidget*)0);
-    SubscribedForums->setText(0, tr("Subscribed Forums"));
-    SubscribedForums->setFont(0, m_ItemFont);
-    SubscribedForums->setIcon(0,(QIcon(IMAGE_FOLDERRED)));
-    SubscribedForums->setSizeHint(0, QSize( 18,18 ) );
-    SubscribedForums->setForeground(0, QBrush(QColor(79, 79, 79)));
+    SubscribedForums->setText(COLUMN_FORUM_TITLE, tr("Subscribed Forums"));
+    SubscribedForums->setFont(COLUMN_FORUM_TITLE, m_ItemFont);
+    SubscribedForums->setIcon(COLUMN_FORUM_TITLE,(QIcon(IMAGE_FOLDERRED)));
+    SubscribedForums->setSizeHint(COLUMN_FORUM_TITLE, QSize( 18,18 ) );
+    SubscribedForums->setForeground(COLUMN_FORUM_TITLE, QBrush(QColor(79, 79, 79)));
     TopList.append(SubscribedForums);
 
     PopularForums = new QTreeWidgetItem();
-    PopularForums->setText(0, tr("Popular Forums"));
-    PopularForums->setFont(0, m_ItemFont);
-    PopularForums->setIcon(0,(QIcon(IMAGE_FOLDERGREEN)));
-    PopularForums->setSizeHint(0, QSize( 18,18 ) );
-    PopularForums->setForeground(0, QBrush(QColor(79, 79, 79)));
+    PopularForums->setText(COLUMN_FORUM_TITLE, tr("Popular Forums"));
+    PopularForums->setFont(COLUMN_FORUM_TITLE, m_ItemFont);
+    PopularForums->setIcon(COLUMN_FORUM_TITLE,(QIcon(IMAGE_FOLDERGREEN)));
+    PopularForums->setSizeHint(COLUMN_FORUM_TITLE, QSize( 18,18 ) );
+    PopularForums->setForeground(COLUMN_FORUM_TITLE, QBrush(QColor(79, 79, 79)));
     TopList.append(PopularForums);
 
     OtherForums = new QTreeWidgetItem();
-    OtherForums->setText(0, tr("Other Forums"));
-    OtherForums->setFont(0, m_ItemFont);
-    OtherForums->setIcon(0,(QIcon(IMAGE_FOLDERYELLOW)));
-    OtherForums->setSizeHint(0, QSize( 18,18 ) );
-    OtherForums->setForeground(0, QBrush(QColor(79, 79, 79)));
+    OtherForums->setText(COLUMN_FORUM_TITLE, tr("Other Forums"));
+    OtherForums->setFont(COLUMN_FORUM_TITLE, m_ItemFont);
+    OtherForums->setIcon(COLUMN_FORUM_TITLE,(QIcon(IMAGE_FOLDERYELLOW)));
+    OtherForums->setSizeHint(COLUMN_FORUM_TITLE, QSize( 18,18 ) );
+    OtherForums->setForeground(COLUMN_FORUM_TITLE, QBrush(QColor(79, 79, 79)));
     TopList.append(OtherForums);
 
     ui.forumTreeWidget->addTopLevelItems(TopList);
@@ -214,7 +272,14 @@ ForumsDialog::ForumsDialog(QWidget *parent)
     // load settings
     processSettings(true);
 
-  /* Hide platform specific features */
+    /* Set header sizes for the fixed columns and resize modes, must be set after processSettings */
+    ttheader->resizeSection (COLUMN_THREAD_READ,  24);
+    ttheader->setResizeMode (COLUMN_THREAD_READ, QHeaderView::Fixed);
+    ttheader->hideSection (COLUMN_THREAD_CONTENT);
+
+    insertThreads();
+
+    /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
 #endif
@@ -275,11 +340,11 @@ void ForumsDialog::forumListCustomPopupMenu( QPoint point )
     QMenu contextMnu( this );
 
     QAction *subForumAct = new QAction(QIcon(IMAGE_SUBSCRIBE), tr( "Subscribe to Forum" ), &contextMnu );
-    subForumAct->setDisabled (true);
+    subForumAct->setDisabled (m_bIsForumSubscribed);
     connect( subForumAct , SIGNAL( triggered() ), this, SLOT( subscribeToForum() ) );
 
     QAction *unsubForumAct = new QAction(QIcon(IMAGE_UNSUBSCRIBE), tr( "Unsubscribe to Forum" ), &contextMnu );
-    unsubForumAct->setDisabled (true);
+    unsubForumAct->setEnabled (m_bIsForumSubscribed);
     connect( unsubForumAct , SIGNAL( triggered() ), this, SLOT( unsubscribeToForum() ) );
 
     QAction *newForumAct = new QAction(QIcon(IMAGE_NEWFORUM), tr( "New Forum" ), &contextMnu );
@@ -288,19 +353,6 @@ void ForumsDialog::forumListCustomPopupMenu( QPoint point )
     QAction *detailsForumAct = new QAction(QIcon(IMAGE_INFO), tr( "Show Forum Details" ), &contextMnu );
     detailsForumAct->setDisabled (true);
     connect( detailsForumAct , SIGNAL( triggered() ), this, SLOT( showForumDetails() ) );
-
-    ForumInfo fi;
-    if (rsForums && !mCurrForumId.empty ()) {
-        if (rsForums->getForumInfo (mCurrForumId, fi)) {
-            if ((fi.subscribeFlags & (RS_DISTRIB_ADMIN | RS_DISTRIB_SUBSCRIBED)) == 0) {
-                subForumAct->setEnabled (true);
-            }
-
-            if ((fi.subscribeFlags & (RS_DISTRIB_ADMIN | RS_DISTRIB_SUBSCRIBED)) != 0) {
-                unsubForumAct->setEnabled (true);
-            }
-        }
-    }
 
     if (!mCurrForumId.empty ()) {
         detailsForumAct->setEnabled (true);
@@ -320,15 +372,13 @@ void ForumsDialog::threadListCustomPopupMenu( QPoint point )
     QMenu contextMnu( this );
 
     QAction *replyAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr( "Reply" ), &contextMnu );
-    replyAct->setDisabled (true);
     connect( replyAct , SIGNAL( triggered() ), this, SLOT( createmessage() ) );
 
     QAction *newthreadAct = new QAction(QIcon(IMAGE_DOWNLOADALL), tr( "Start New Thread" ), &contextMnu );
-    newthreadAct->setDisabled (true);
-    connect( newthreadAct , SIGNAL( triggered() ), this, SLOT( showthread() ) );
+    newthreadAct->setEnabled (m_bIsForumSubscribed);
+    connect( newthreadAct , SIGNAL( triggered() ), this, SLOT( createthread() ) );
 
     QAction *replyauthorAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr( "Reply to Author" ), &contextMnu );
-    replyauthorAct->setDisabled (true);
     connect( replyauthorAct , SIGNAL( triggered() ), this, SLOT( replytomessage() ) );
 
     QAction* expandAll = new QAction(tr( "Expand all" ), &contextMnu );
@@ -337,17 +387,67 @@ void ForumsDialog::threadListCustomPopupMenu( QPoint point )
     QAction* collapseAll = new QAction(tr( "Collapse all" ), &contextMnu );
     connect( collapseAll , SIGNAL( triggered() ), ui.threadTreeWidget, SLOT(collapseAll()) );
 
-    if (!mCurrForumId.empty ()) {
-        newthreadAct->setEnabled (true);
-        if (!mCurrPostId.empty ()) {
+    QAction *markMsgAsRead = new QAction(QIcon(":/images/message-mail-read.png"), tr("Mark as read"), &contextMnu);
+    connect(markMsgAsRead , SIGNAL(triggered()), this, SLOT(markMsgAsRead()));
+
+    QAction *markMsgAsReadAll = new QAction(QIcon(":/images/message-mail-read.png"), tr("Mark as read") + " (" + tr ("with children)") + ")", &contextMnu);
+    connect(markMsgAsReadAll, SIGNAL(triggered()), this, SLOT(markMsgAsReadAll()));
+
+    QAction *markMsgAsUnread = new QAction(QIcon(":/images/message-mail.png"), tr("Mark as unread"), &contextMnu);
+    connect(markMsgAsUnread , SIGNAL(triggered()), this, SLOT(markMsgAsUnread()));
+
+    QAction *markMsgAsUnreadAll = new QAction(QIcon(":/images/message-mail.png"), tr("Mark as unread") + " (" + tr ("with children") + ")", &contextMnu);
+    connect(markMsgAsUnreadAll , SIGNAL(triggered()), this, SLOT(markMsgAsUnreadAll()));
+
+    if (m_bIsForumSubscribed) {
+        QList<QTreeWidgetItem*> Rows;
+        QList<QTreeWidgetItem*> RowsRead;
+        QList<QTreeWidgetItem*> RowsUnread;
+        int nCount = getSelectedMsgCount (&Rows, &RowsRead, &RowsUnread);
+
+        if (RowsUnread.size() == 0) {
+
+            markMsgAsRead->setDisabled(true);
+        }
+        if (RowsRead.size() == 0) {
+            markMsgAsUnread->setDisabled(true);
+        }
+
+        bool bHasUnreadChildren = false;
+        bool bHasReadChildren = false;
+        int nRowCount = Rows.count();
+        for (int i = 0; i < nRowCount; i++) {
+            if (bHasUnreadChildren || Rows[i]->data(COLUMN_THREAD_DATA, ROLE_THREAD_UNREADCHILDREN).toBool()) {
+                bHasUnreadChildren = true;
+            }
+            if (bHasReadChildren || Rows[i]->data(COLUMN_THREAD_DATA, ROLE_THREAD_READCHILDREN).toBool()) {
+                bHasReadChildren = true;
+            }
+        }
+        markMsgAsReadAll->setEnabled(bHasUnreadChildren);
+        markMsgAsUnreadAll->setEnabled(bHasReadChildren);
+
+        if (nCount == 1) {
             replyAct->setEnabled (true);
             replyauthorAct->setEnabled (true);
         }
+    } else {
+        markMsgAsRead->setDisabled(true);
+        markMsgAsReadAll->setDisabled(true);
+        markMsgAsUnread->setDisabled(true);
+        markMsgAsUnreadAll->setDisabled(true);
+        replyAct->setDisabled (true);
+        replyauthorAct->setDisabled (true);
     }
 
     contextMnu.addAction( replyAct);
     contextMnu.addAction( newthreadAct);
     contextMnu.addAction( replyauthorAct);
+    contextMnu.addSeparator();
+    contextMnu.addAction(markMsgAsRead);
+    contextMnu.addAction(markMsgAsReadAll);
+    contextMnu.addAction(markMsgAsUnread);
+    contextMnu.addAction(markMsgAsUnreadAll);
     contextMnu.addSeparator();
     contextMnu.addAction( expandAll);
     contextMnu.addAction( collapseAll);
@@ -395,23 +495,7 @@ void ForumsDialog::updateDisplay()
             insertThreads();
         }
     }
-    
-    ForumInfo fi;
-    if (rsForums && !mCurrForumId.empty ()) {
-        if (rsForums->getForumInfo (mCurrForumId, fi)) {
-            if (fi.subscribeFlags & (RS_DISTRIB_ADMIN | RS_DISTRIB_SUBSCRIBED)) {
-                ui.newmessageButton->setEnabled (true);
-                ui.newthreadButton->setEnabled (true);
-            }
-            else 
-            {
-                ui.newmessageButton->setEnabled (false);
-                ui.newthreadButton->setEnabled (false);
-            }
-        }
-    }
 }
-
 
 static void CleanupItems (QList<QTreeWidgetItem *> &Items)
 {
@@ -462,20 +546,20 @@ void ForumsDialog::insertForums()
 			if (it->forumFlags & RS_DISTRIB_AUTHEN_REQ)
 			{
 				name += " (AUTHD)";
-				item -> setIcon(0,(QIcon(IMAGE_FORUMAUTHD)));
+                                item -> setIcon(COLUMN_FORUM_TITLE,(QIcon(IMAGE_FORUMAUTHD)));
 			}
 			else
 			{
-				item -> setIcon(0,(QIcon(IMAGE_FORUM)));
+                                item -> setIcon(COLUMN_FORUM_TITLE,(QIcon(IMAGE_FORUM)));
 			}
 
-			item -> setText(0, name);
+                        item -> setText(COLUMN_FORUM_TITLE, name);
 
 			/* (1) Popularity */
 			{
 				std::ostringstream out;
 				out << it->pop;
-				item -> setToolTip(0, tr("Popularity: ") + QString::fromStdString(out.str()));
+                                item -> setToolTip(COLUMN_FORUM_TITLE, tr("Popularity: ") + QString::fromStdString(out.str()));
 			}
 
 			// Date
@@ -483,10 +567,10 @@ void ForumsDialog::insertForums()
 				QDateTime qtime;
 				qtime.setTime_t(it->lastPost);
 				QString timestamp = qtime.toString("yyyy-MM-dd hh:mm:ss");
-				item -> setText(1, timestamp);
+                                item -> setText(COLUMN_FORUM_DATE, timestamp);
 			}
 			// Id.
-			item -> setText(4, QString::fromStdString(it->forumId));
+                        item -> setData(COLUMN_FORUM_DATA, ROLE_FORUM_ID, QString::fromStdString(it->forumId));
 			AdminList.append(item);
 		}
 		else if (flags & RS_DISTRIB_SUBSCRIBED)
@@ -506,20 +590,20 @@ void ForumsDialog::insertForums()
 			if (it->forumFlags & RS_DISTRIB_AUTHEN_REQ)
 			{
 				name += " (AUTHD)";
-				item -> setIcon(0,(QIcon(IMAGE_FORUMAUTHD)));
+                                item -> setIcon(COLUMN_FORUM_TITLE,(QIcon(IMAGE_FORUMAUTHD)));
 			}
 			else
 			{
-			  item -> setIcon(0,(QIcon(IMAGE_FORUM)));
+                          item -> setIcon(COLUMN_FORUM_TITLE,(QIcon(IMAGE_FORUM)));
 			}
 
-			item -> setText(0, name);
+                        item -> setText(COLUMN_FORUM_TITLE, name);
 
 			/* (1) Popularity */
 			{
 				std::ostringstream out;
 				out << it->pop;
-				item -> setToolTip(0, tr("Popularity: ") + QString::fromStdString(out.str()));
+                                item -> setToolTip(COLUMN_FORUM_TITLE, tr("Popularity: ") + QString::fromStdString(out.str()));
 			}
 
 			// Date
@@ -527,10 +611,10 @@ void ForumsDialog::insertForums()
 				QDateTime qtime;
 				qtime.setTime_t(it->lastPost);
 				QString timestamp = qtime.toString("yyyy-MM-dd hh:mm:ss");
-				item -> setText(3, timestamp);
+                                item -> setText(COLUMN_FORUM_DATE, timestamp);
 			}
 			// Id.
-			item -> setText(4, QString::fromStdString(it->forumId));
+                        item -> setData(COLUMN_FORUM_DATA, ROLE_FORUM_ID, QString::fromStdString(it->forumId));
 			SubList.append(item);
 		}
 		else
@@ -586,21 +670,21 @@ void ForumsDialog::insertForums()
 			if (it->forumFlags & RS_DISTRIB_AUTHEN_REQ)
 			{
 				name += " (AUTHD)";
-				item -> setIcon(0,(QIcon(IMAGE_FORUMAUTHD)));
+                                item -> setIcon(COLUMN_FORUM_TITLE,(QIcon(IMAGE_FORUMAUTHD)));
 			}
 			else
 			{
-			  item -> setIcon(0,(QIcon(IMAGE_FORUM)));
+                          item -> setIcon(COLUMN_FORUM_TITLE,(QIcon(IMAGE_FORUM)));
 			}
 
-			item -> setText(0, name);
+                        item -> setText(COLUMN_FORUM_TITLE, name);
 
 
 			/* (1) Popularity */
 			{
 				std::ostringstream out;
 				out << it->pop;
-				item -> setToolTip(0, tr("Popularity: ") + QString::fromStdString(out.str()));
+                                item -> setToolTip(COLUMN_FORUM_TITLE, tr("Popularity: ") + QString::fromStdString(out.str()));
 			}
 
 			// Date
@@ -608,10 +692,10 @@ void ForumsDialog::insertForums()
 				QDateTime qtime;
 				qtime.setTime_t(it->lastPost);
 				QString timestamp = qtime.toString("yyyy-MM-dd hh:mm:ss");
-				item -> setText(3, timestamp);
+                                item -> setText(COLUMN_FORUM_DATE, timestamp);
 			}
 			// Id.
-			item -> setText(4, QString::fromStdString(it->forumId));
+                        item -> setData(COLUMN_FORUM_DATA, ROLE_FORUM_ID, QString::fromStdString(it->forumId));
 
 			if (it->pop < popLimit)
 			{
@@ -652,7 +736,7 @@ void ForumsDialog::FillForums(QTreeWidgetItem *Forum, QList<QTreeWidgetItem *> &
         int ChildCount = Forum->childCount ();
         for (ChildIndex = ChildIndexCur; ChildIndex < ChildCount; ChildIndex++) {
             Child = Forum->child (ChildIndex);
-            if (Child->text (4) == (*NewChild)->text (4)) {
+            if (Child->data (COLUMN_FORUM_DATA, ROLE_FORUM_ID) == (*NewChild)->data (COLUMN_FORUM_DATA, ROLE_FORUM_ID)) {
                 // found it
                 ChildIndexFound = ChildIndex;
                 break;
@@ -668,10 +752,10 @@ void ForumsDialog::FillForums(QTreeWidgetItem *Forum, QList<QTreeWidgetItem *> &
 
             // set child data
             Child = Forum->child (ChildIndexFound);
-            Child->setIcon (0, (*NewChild)->icon (0));
-            Child->setToolTip (0, (*NewChild)->toolTip (0));
+            Child->setIcon (COLUMN_FORUM_TITLE, (*NewChild)->icon (COLUMN_FORUM_TITLE));
+            Child->setToolTip (COLUMN_FORUM_TITLE, (*NewChild)->toolTip (COLUMN_FORUM_TITLE));
 
-            for (int i = 0; i <= 4; i++) {
+            for (int i = 0; i < COLUMN_FORUM_COUNT; i++) {
                 Child->setText (i, (*NewChild)->text (i));
             }
         } else {
@@ -704,11 +788,92 @@ void ForumsDialog::changedThread ()
     QTreeWidgetItem *curr = ui.threadTreeWidget->currentItem();
 
     if ((!curr) || (!curr->isSelected())) {
-        mCurrPostId = "";
+        mCurrThreadId = "";
     } else {
-        mCurrPostId = (curr->text(COLUMN_MSGID)).toStdString();
+        mCurrThreadId = curr->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID).toString().toStdString();
     }
     insertPost();
+}
+
+void ForumsDialog::clickedThread (QTreeWidgetItem *item, int column)
+{
+    if (mCurrForumId.empty() || m_bIsForumSubscribed == false) {
+        return;
+    }
+
+    if (item == NULL) {
+        return;
+    }
+
+    if (column == COLUMN_THREAD_READ) {
+        QList<QTreeWidgetItem*> Rows;
+        Rows.append(item);
+        uint32_t status = item->data(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
+        setMsgAsReadUnread(Rows, IS_UNREAD(status));
+        return;
+    }
+}
+
+void ForumsDialog::CalculateIconsAndFonts(QTreeWidgetItem *pItem, bool &bHasReadChilddren, bool &bHasUnreadChilddren)
+{
+    uint32_t status = pItem->data(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
+
+    bool bUnread = IS_UNREAD(status);
+
+    // set icon
+    if (bUnread) {
+        pItem->setIcon(COLUMN_THREAD_READ, QIcon(":/images/message-state-unread.png"));
+    } else {
+        pItem->setIcon(COLUMN_THREAD_READ, QIcon(":/images/message-state-read.png"));
+    }
+    if (status & FORUM_MSG_STATUS_READ) {
+        pItem->setIcon(COLUMN_THREAD_TITLE, QIcon());
+    } else {
+        pItem->setIcon(COLUMN_THREAD_TITLE, QIcon(":/images/message-state-new.png"));
+    }
+
+    int nItem;
+    int nItemCount = pItem->childCount();
+
+    bool bMyReadChilddren = false;
+    bool bMyUnreadChilddren = false;
+
+    for (nItem = 0; nItem < nItemCount; nItem++) {
+        CalculateIconsAndFonts(pItem->child(nItem), bMyReadChilddren, bMyUnreadChilddren);
+    }
+
+    // set font
+    for (int i = 0; i < COLUMN_THREAD_COUNT; i++) {
+        QFont qf = pItem->font(i);
+        qf.setBold(bUnread || bMyUnreadChilddren);
+        pItem->setFont(i, qf);
+    }
+
+    pItem->setData(COLUMN_THREAD_DATA, ROLE_THREAD_READCHILDREN, bHasReadChilddren || bMyReadChilddren);
+    pItem->setData(COLUMN_THREAD_DATA, ROLE_THREAD_UNREADCHILDREN, bHasUnreadChilddren || bMyUnreadChilddren);
+
+    bHasReadChilddren = bHasReadChilddren || bMyReadChilddren || !bUnread;
+    bHasUnreadChilddren = bHasUnreadChilddren || bMyUnreadChilddren || bUnread;
+}
+
+void ForumsDialog::CalculateIconsAndFonts(QTreeWidgetItem *pItem /*= NULL*/)
+{
+    bool bDummy1 = false;
+    bool bDummy2 = false;
+
+    if (pItem) {
+        CalculateIconsAndFonts(pItem, bDummy1, bDummy2);
+        return;
+    }
+
+    int nItem;
+    int nItemCount = ui.threadTreeWidget->topLevelItemCount();
+
+    for (nItem = 0; nItem < nItemCount; nItem++) {
+        bDummy1 = false;
+        bDummy2 = false;
+        CalculateIconsAndFonts(ui.threadTreeWidget->topLevelItem(nItem), bDummy1, bDummy2);
+    }
 }
 
 void ForumsDialog::insertThreads()
@@ -716,6 +881,7 @@ void ForumsDialog::insertThreads()
     /* get the current Forum */
     std::cerr << "ForumsDialog::insertThreads()" << std::endl;
 
+    m_bIsForumSubscribed = false;
 
     QTreeWidgetItem *forumItem = ui.forumTreeWidget->currentItem();
     if ((!forumItem) || (forumItem->parent() == NULL))
@@ -727,16 +893,32 @@ void ForumsDialog::insertThreads()
         ui.threadTitle->clear();
         ui.postText->clear();
         /* clear last stored forumID */
-        mCurrForumId = "";
+        mCurrForumId.erase();
+        m_LastForumID.erase();
         std::cerr << "ForumsDialog::insertThreads() Current Thread Invalid" << std::endl;
+
+        ui.newmessageButton->setEnabled (false);
+        ui.newthreadButton->setEnabled (false);
 
         return;
     }
 
     /* store forumId */
-    mCurrForumId = (forumItem->text(4)).toStdString();
-    ui.forumName->setText(forumItem->text(0));
+    mCurrForumId = forumItem->data(COLUMN_FORUM_DATA, ROLE_FORUM_ID).toString().toStdString();
+    ui.forumName->setText(forumItem->text(COLUMN_FORUM_TITLE));
     std::string fId = mCurrForumId;
+
+    ForumInfo fi;
+    if (rsForums->getForumInfo (fId, fi)) {
+        if (fi.subscribeFlags & (RS_DISTRIB_ADMIN | RS_DISTRIB_SUBSCRIBED)) {
+            m_bIsForumSubscribed = true;
+        }
+    } else {
+        return;
+    }
+
+    ui.newmessageButton->setEnabled (m_bIsForumSubscribed);
+    ui.newthreadButton->setEnabled (m_bIsForumSubscribed);
 
     bool flatView = false;
     bool useChildTS = false;
@@ -754,7 +936,16 @@ void ForumsDialog::insertThreads()
                 break;
     }
 
+    bool bExpandNewMessages = Settings->getExpandNewMessages();
+    std::list<QTreeWidgetItem*> itemToExpand;
+
+    bool bFillComplete = false;
+    if (m_LastViewType != ViewType || m_LastForumID != mCurrForumId) {
+        bFillComplete = true;
+    }
+
     int nFilterColumn = FilterColumnFromComboBox(ui.filterColumnComboBox->currentIndex());
+    uint32_t status;
 
     std::list<ThreadInfoSummary> threads;
     std::list<ThreadInfoSummary>::iterator tit;
@@ -771,6 +962,13 @@ void ForumsDialog::insertThreads()
         if (!rsForums->getForumMessage(fId, tit->threadId, msg))
         {
             std::cerr << "ForumsDialog::insertThreads() Failed to Get TopLevel Msg";
+            std::cerr << std::endl;
+            continue;
+        }
+
+        ForumMsgInfo msginfo;
+        if (rsForums->getForumMessage(fId,tit->msgId,msginfo) == false) {
+            std::cerr << "ForumsDialog::insertThreads() Failed to Get Msg";
             std::cerr << std::endl;
             continue;
         }
@@ -800,43 +998,48 @@ void ForumsDialog::insertThreads()
                 txt += " / ";
                 txt += timestamp2;
             }
-            item -> setText(COLUMN_DATE, txt);
+            item -> setText(COLUMN_THREAD_DATE, txt);
         }
-        ForumMsgInfo msginfo ;
-        rsForums->getForumMessage(fId,tit->msgId,msginfo) ;
 
-        item->setText(COLUMN_TITLE, QString::fromStdWString(tit->title));
-        item->setSizeHint(COLUMN_TITLE, QSize( 18,18 ) );
+        item->setText(COLUMN_THREAD_TITLE, QString::fromStdWString(tit->title));
+        item->setSizeHint(COLUMN_THREAD_TITLE, QSize( 18,18 ) );
 
         if (rsPeers->getPeerName(msginfo.srcId) !="")
         {
-            item->setText(COLUMN_AUTHOR, QString::fromStdString(rsPeers->getPeerName(msginfo.srcId)));
+            item->setText(COLUMN_THREAD_AUTHOR, QString::fromStdString(rsPeers->getPeerName(msginfo.srcId)));
         }
         else
         {
-            item->setText(COLUMN_AUTHOR, tr("Anonymous"));
+            item->setText(COLUMN_THREAD_AUTHOR, tr("Anonymous"));
         }
 
         if (msginfo.msgflags & RS_DISTRIB_AUTHEN_REQ)
         {
-            item->setText(COLUMN_SIGNED, tr("signed"));
-            item->setIcon(COLUMN_SIGNED,(QIcon(":/images/mail-signed.png")));
+            item->setText(COLUMN_THREAD_SIGNED, tr("signed"));
+            item->setIcon(COLUMN_THREAD_SIGNED,(QIcon(":/images/mail-signed.png")));
         }
         else
         {
-            item->setText(COLUMN_SIGNED, tr("none"));
-            item->setIcon(COLUMN_SIGNED,(QIcon(":/images/mail-signature-unknown.png")));
+            item->setText(COLUMN_THREAD_SIGNED, tr("none"));
+            item->setIcon(COLUMN_THREAD_SIGNED,(QIcon(":/images/mail-signature-unknown.png")));
         }
 
-        if (nFilterColumn == COLUMN_CONTENT) {
+        if (nFilterColumn == COLUMN_THREAD_CONTENT) {
             // need content for filter
             QTextDocument doc;
             doc.setHtml(QString::fromStdWString(msginfo.msg));
-            item->setText(COLUMN_CONTENT, doc.toPlainText().replace(QString("\n"), QString(" ")));
+            item->setText(COLUMN_THREAD_CONTENT, doc.toPlainText().replace(QString("\n"), QString(" ")));
         }
 
-        item->setText(COLUMN_PARENTID, QString::fromStdString(tit->parentId));
-        item->setText(COLUMN_MSGID, QString::fromStdString(tit->msgId));
+        item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID, QString::fromStdString(tit->msgId));
+
+        if (m_bIsForumSubscribed) {
+            rsForums->getMessageStatus(msginfo.forumId, msginfo.msgId, status);
+        } else {
+            // show message as read
+            status = FORUM_MSG_STATUS_READ;
+        }
+        item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS, status);
 
         std::list<QTreeWidgetItem *> threadlist;
         threadlist.push_back(item);
@@ -846,7 +1049,7 @@ void ForumsDialog::insertThreads()
             /* get children */
             QTreeWidgetItem *parent = threadlist.front();
             threadlist.pop_front();
-            std::string pId = (parent->text(COLUMN_MSGID)).toStdString();
+            std::string pId = parent->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID).toString().toStdString();
 
             std::list<ThreadInfoSummary> msgs;
             std::list<ThreadInfoSummary>::iterator mit;
@@ -864,6 +1067,13 @@ void ForumsDialog::insertThreads()
                 {
                     std::cerr << "ForumsDialog::insertThreads() adding " << mit->msgId;
                     std::cerr << std::endl;
+
+                    ForumMsgInfo msginfo;
+                    if (rsForums->getForumMessage(fId,mit->msgId,msginfo) == false) {
+                        std::cerr << "ForumsDialog::insertThreads() Failed to Get Msg";
+                        std::cerr << std::endl;
+                        continue;
+                    }
 
                     QTreeWidgetItem *child = NULL;
                     if (flatView)
@@ -895,43 +1105,57 @@ void ForumsDialog::insertThreads()
                             txt += " / ";
                             txt += timestamp2;
                         }
-                        child -> setText(COLUMN_DATE, txt);
+                        child -> setText(COLUMN_THREAD_DATE, txt);
                     }
-                    ForumMsgInfo msginfo ;
-                    rsForums->getForumMessage(fId,mit->msgId,msginfo) ;
 
-                    child->setText(COLUMN_TITLE, QString::fromStdWString(mit->title));
-                    child->setSizeHint(COLUMN_TITLE, QSize( 17,17 ) );
+                    child->setText(COLUMN_THREAD_TITLE, QString::fromStdWString(mit->title));
+                    child->setSizeHint(COLUMN_THREAD_TITLE, QSize( 17,17 ) );
 
                     if (rsPeers->getPeerName(msginfo.srcId) !="")
                     {
-                        child->setText(COLUMN_AUTHOR, QString::fromStdString(rsPeers->getPeerName(msginfo.srcId)));
+                        child->setText(COLUMN_THREAD_AUTHOR, QString::fromStdString(rsPeers->getPeerName(msginfo.srcId)));
                     }
                     else
                     {
-                        child->setText(COLUMN_AUTHOR, tr("Anonymous"));
+                        child->setText(COLUMN_THREAD_AUTHOR, tr("Anonymous"));
                     }
 
                     if (msginfo.msgflags & RS_DISTRIB_AUTHEN_REQ)
                     {
-                        child->setText(COLUMN_SIGNED, tr("signed"));
-                        child->setIcon(COLUMN_SIGNED,(QIcon(":/images/mail-signed.png")));
+                        child->setText(COLUMN_THREAD_SIGNED, tr("signed"));
+                        child->setIcon(COLUMN_THREAD_SIGNED,(QIcon(":/images/mail-signed.png")));
                     }
                     else
                     {
-                        child->setText(COLUMN_SIGNED, tr("none"));
-                        child->setIcon(COLUMN_SIGNED,(QIcon(":/images/mail-signature-unknown.png")));
+                        child->setText(COLUMN_THREAD_SIGNED, tr("none"));
+                        child->setIcon(COLUMN_THREAD_SIGNED,(QIcon(":/images/mail-signature-unknown.png")));
                     }
 
-                    if (nFilterColumn == COLUMN_CONTENT) {
+                    if (nFilterColumn == COLUMN_THREAD_CONTENT) {
                         // need content for filter
                         QTextDocument doc;
                         doc.setHtml(QString::fromStdWString(msginfo.msg));
-                        child->setText(COLUMN_CONTENT, doc.toPlainText().replace(QString("\n"), QString(" ")));
+                        child->setText(COLUMN_THREAD_CONTENT, doc.toPlainText().replace(QString("\n"), QString(" ")));
                     }
 
-                    child->setText(COLUMN_PARENTID, QString::fromStdString(mit->parentId));
-                    child->setText(COLUMN_MSGID, QString::fromStdString(mit->msgId));
+                    child->setData(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID, QString::fromStdString(mit->msgId));
+
+                    if (m_bIsForumSubscribed) {
+                        rsForums->getMessageStatus(msginfo.forumId, msginfo.msgId, status);
+                    } else {
+                        // show message as read
+                        status = FORUM_MSG_STATUS_READ;
+                    }
+                    child->setData(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS, status);
+
+                    if (bFillComplete && bExpandNewMessages && IS_UNREAD(status)) {
+                        QTreeWidgetItem *pParent = child;
+                        while ((pParent = pParent->parent()) != NULL) {
+                            if (std::find(itemToExpand.begin(), itemToExpand.end(), pParent) == itemToExpand.end()) {
+                                itemToExpand.push_back(pParent);
+                            }
+                        }
+                    }
 
                     /* setup child */
                     threadlist.push_back(child);
@@ -957,7 +1181,7 @@ void ForumsDialog::insertThreads()
         m_LastForumID = mCurrForumId;
         ui.threadTreeWidget->insertTopLevelItems(0, items);
     } else {
-        FillThreads (items);
+        FillThreads (items, bExpandNewMessages, itemToExpand);
 
         CleanupItems (items);
     }
@@ -966,10 +1190,18 @@ void ForumsDialog::insertThreads()
         FilterItems();
     }
 
+    std::list<QTreeWidgetItem*>::iterator Item;
+    for (Item = itemToExpand.begin(); Item != itemToExpand.end(); Item++) {
+        if ((*Item)->isHidden() == false) {
+            (*Item)->setExpanded(true);
+        }
+    }
+
     insertPost ();
+    CalculateIconsAndFonts();
 }
 
-void ForumsDialog::FillThreads(QList<QTreeWidgetItem *> &ThreadList)
+void ForumsDialog::FillThreads(QList<QTreeWidgetItem *> &ThreadList, bool bExpandNewMessages, std::list<QTreeWidgetItem*> &itemToExpand)
 {
     int Index = 0;
     QTreeWidgetItem *Thread;
@@ -982,7 +1214,7 @@ void ForumsDialog::FillThreads(QList<QTreeWidgetItem *> &ThreadList)
         // search existing new thread
         int Found = -1;
         for (NewThread = ThreadList.begin (); NewThread != ThreadList.end (); NewThread++) {
-            if (Thread->text (COLUMN_MSGID) == (*NewThread)->text (COLUMN_MSGID)) {
+            if (Thread->data (COLUMN_THREAD_DATA, ROLE_THREAD_MSGID) == (*NewThread)->data (COLUMN_THREAD_DATA, ROLE_THREAD_MSGID)) {
                 // found it
                 Found = Index;
                 break;
@@ -1002,29 +1234,45 @@ void ForumsDialog::FillThreads(QList<QTreeWidgetItem *> &ThreadList)
         int Count = ui.threadTreeWidget->topLevelItemCount ();
         for (Index = 0; Index < Count; Index++) {
             Thread = ui.threadTreeWidget->topLevelItem (Index);
-            if (Thread->text (COLUMN_MSGID) == (*NewThread)->text (COLUMN_MSGID)) {
+            if (Thread->data (COLUMN_THREAD_DATA, ROLE_THREAD_MSGID) == (*NewThread)->data (COLUMN_THREAD_DATA, ROLE_THREAD_MSGID)) {
                 // found it
                 Found = Index;
                 break;
             }
         }
+
         if (Found >= 0) {
             // set child data
-            for (int i = 0; i <= COLUMN_COUNT; i++) {
+            int i;
+            for (i = 0; i < COLUMN_THREAD_COUNT; i++) {
                 Thread->setText (i, (*NewThread)->text (i));
+            }
+            for (i = 0; i < ROLE_THREAD_COUNT; i++) {
+                Thread->setData (COLUMN_THREAD_DATA, Qt::UserRole + i, (*NewThread)->data (COLUMN_THREAD_DATA, Qt::UserRole + i));
             }
 
             // fill recursive
-            FillChildren (Thread, *NewThread);
+            FillChildren (Thread, *NewThread, bExpandNewMessages, itemToExpand);
         } else {
             // add new thread
             ui.threadTreeWidget->addTopLevelItem (*NewThread);
+            Thread = *NewThread;
             *NewThread = NULL;
+        }
+
+        uint32_t status = Thread->data (COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
+        if (bExpandNewMessages && IS_UNREAD(status)) {
+            QTreeWidgetItem *pParent = Thread;
+            while ((pParent = pParent->parent()) != NULL) {
+                if (std::find(itemToExpand.begin(), itemToExpand.end(), pParent) == itemToExpand.end()) {
+                    itemToExpand.push_back(pParent);
+                }
+            }
         }
     }
 }
 
-void ForumsDialog::FillChildren(QTreeWidgetItem *Parent, QTreeWidgetItem *NewParent)
+void ForumsDialog::FillChildren(QTreeWidgetItem *Parent, QTreeWidgetItem *NewParent, bool bExpandNewMessages, std::list<QTreeWidgetItem*> &itemToExpand)
 {
     int Index = 0;
     int NewIndex;
@@ -1042,7 +1290,7 @@ void ForumsDialog::FillChildren(QTreeWidgetItem *Parent, QTreeWidgetItem *NewPar
         int Count = NewParent->childCount();
         for (NewIndex = 0; NewIndex < Count; NewIndex++) {
             NewChild = NewParent->child (NewIndex);
-            if (NewChild->text (COLUMN_MSGID) == Child->text (COLUMN_MSGID)) {
+            if (NewChild->data (COLUMN_THREAD_DATA, ROLE_THREAD_MSGID) == Child->data (COLUMN_THREAD_DATA, ROLE_THREAD_MSGID)) {
                 // found it
                 Found = Index;
                 break;
@@ -1064,32 +1312,48 @@ void ForumsDialog::FillChildren(QTreeWidgetItem *Parent, QTreeWidgetItem *NewPar
         int Count = Parent->childCount();
         for (Index = 0; Index < Count; Index++) {
             Child = Parent->child (Index);
-            if (Child->text (COLUMN_MSGID) == NewChild->text (COLUMN_MSGID)) {
+            if (Child->data (COLUMN_THREAD_DATA, ROLE_THREAD_MSGID) == NewChild->data (COLUMN_THREAD_DATA, ROLE_THREAD_MSGID)) {
                 // found it
                 Found = Index;
                 break;
             }
         }
+
         if (Found >= 0) {
             // set child data
-            for (int i = 0; i <= COLUMN_COUNT; i++) {
+            int i;
+            for (i = 0; i < COLUMN_THREAD_COUNT; i++) {
                 Child->setText (i, NewChild->text (i));
+            }
+            for (i = 0; i < ROLE_THREAD_COUNT; i++) {
+                Child->setData (COLUMN_THREAD_DATA, Qt::UserRole + i, NewChild->data (COLUMN_THREAD_DATA, Qt::UserRole + i));
             }
 
             // fill recursive
-            FillChildren (Child, NewChild);
+            FillChildren (Child, NewChild, bExpandNewMessages, itemToExpand);
         } else {
             // add new child
-            Parent->addChild (NewParent->takeChild(NewIndex));
+            Child = NewParent->takeChild(NewIndex);
+            Parent->addChild (Child);
             NewIndex--;
             NewCount--;
+        }
+
+        uint32_t status = Child->data (COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
+        if (bExpandNewMessages && IS_UNREAD(status)) {
+            QTreeWidgetItem *pParent = Child;
+            while ((pParent = pParent->parent()) != NULL) {
+                if (std::find(itemToExpand.begin(), itemToExpand.end(), pParent) == itemToExpand.end()) {
+                    itemToExpand.push_back(pParent);
+                }
+            }
         }
     }
 }
 
 void ForumsDialog::insertPost()
 {
-    if ((mCurrForumId == "") || (mCurrPostId == ""))
+    if ((mCurrForumId == "") || (mCurrThreadId == ""))
     {
         ui.postText->setText("");
         ui.threadTitle->setText("");
@@ -1113,18 +1377,30 @@ void ForumsDialog::insertPost()
 
     /* get the Post */
     ForumMsgInfo msg;
-    if (!rsForums->getForumMessage(mCurrForumId, mCurrPostId, msg))
+    if (!rsForums->getForumMessage(mCurrForumId, mCurrThreadId, msg))
     {
         ui.postText->setText("");
         return;
     }
 
-    /* get the Thread */
-    ForumMsgInfo title;
-    if (!rsForums->getForumMessage(mCurrForumId, mCurrPostId, title))
-    {
-        ui.threadTitle->setText("");
-        return;
+    bool bSetToReadOnActive = Settings->getForumMsgSetToReadOnActivate();
+    uint32_t status = curr->data(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
+
+    QList<QTreeWidgetItem*> Row;
+    Row.append(curr);
+    if (status & FORUM_MSG_STATUS_READ) {
+        if (bSetToReadOnActive && (status & FORUM_MSG_STATUS_UNREAD_BY_USER)) {
+            /* set to read */
+            setMsgAsReadUnread(Row, true);
+        }
+    } else {
+        /* set to read */
+        if (bSetToReadOnActive) {
+            setMsgAsReadUnread(Row, true);
+        } else {
+            /* set to unread by user */
+            setMsgAsReadUnread(Row, false);
+        }
     }
 
     QString extraTxt;
@@ -1139,7 +1415,7 @@ void ForumsDialog::insertPost()
     }
 
     ui.postText->setHtml(extraTxt);
-    ui.threadTitle->setText(QString::fromStdWString(title.title));
+    ui.threadTitle->setText(QString::fromStdWString(msg.title));
 }
 
 void ForumsDialog::previousMessage ()
@@ -1178,16 +1454,9 @@ void ForumsDialog::nextMessage ()
 }
 
 // TODO
-bool ForumsDialog::getCurrentMsg(std::string &cid, std::string &mid)
-{
-	return false;
-}
-
-
-// TODO
+#if 0
 void ForumsDialog::removemessage()
 {
-#if 0
 	//std::cerr << "ForumsDialog::removemessage()" << std::endl;
 	std::string cid, mid;
 	if (!getCurrentMsg(cid, mid))
@@ -1198,34 +1467,124 @@ void ForumsDialog::removemessage()
 	}
 
 	rsMsgs -> MessageDelete(mid);
-
+}
 #endif
-	return;
+
+/* get selected messages
+   the messages tree is single selected, but who knows ... */
+int ForumsDialog::getSelectedMsgCount(QList<QTreeWidgetItem*> *pRows, QList<QTreeWidgetItem*> *pRowsRead, QList<QTreeWidgetItem*> *pRowsUnread)
+{
+    if (pRowsRead) pRowsRead->clear();
+    if (pRowsUnread) pRowsUnread->clear();
+
+    QList<QTreeWidgetItem*> selectedItems = ui.threadTreeWidget->selectedItems();
+    for(QList<QTreeWidgetItem*>::iterator it = selectedItems.begin(); it != selectedItems.end(); it++) {
+        if (pRows) pRows->append(*it);
+        if (pRowsRead || pRowsUnread) {
+            uint32_t status = (*it)->data(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
+            if (IS_UNREAD(status)) {
+                if (pRowsUnread) pRowsUnread->append(*it);
+            } else {
+                if (pRowsRead) pRowsRead->append(*it);
+            }
+        }
+    }
+
+    return selectedItems.size();
 }
 
+void ForumsDialog::setMsgAsReadUnread(QList<QTreeWidgetItem*> &Rows, bool bRead)
+{
+    QList<QTreeWidgetItem*>::iterator Row;
+    bool bChanged = false;
 
-// TODO
+    for (Row = Rows.begin(); Row != Rows.end(); Row++) {
+        uint32_t status = (*Row)->data(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
+
+        /* set always as read ... */
+        uint32_t statusNew = status | FORUM_MSG_STATUS_READ;
+        if (bRead) {
+            /* ... and as read by user */
+            statusNew &= ~FORUM_MSG_STATUS_UNREAD_BY_USER;
+        } else {
+            /* ... and as unread by user */
+            statusNew |= FORUM_MSG_STATUS_UNREAD_BY_USER;
+        }
+        if (status != statusNew) {
+            std::string msgId = (*Row)->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID).toString().toStdString();
+            rsForums->setMessageStatus(mCurrForumId, msgId, statusNew, FORUM_MSG_STATUS_READ | FORUM_MSG_STATUS_UNREAD_BY_USER);
+
+            (*Row)->setData(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS, statusNew);
+            bChanged = true;
+        }
+    }
+
+    if (bChanged) {
+        CalculateIconsAndFonts();
+    }
+}
+
+void ForumsDialog::markMsgAsReadUnread (bool bRead, bool bAll)
+{
+    if (mCurrForumId.empty() || m_bIsForumSubscribed == false) {
+        return;
+    }
+
+    /* get selected messages */
+    QList<QTreeWidgetItem*> Rows;
+    getSelectedMsgCount (&Rows, NULL, NULL);
+
+    if (bAll) {
+        /* add children */
+        QList<QTreeWidgetItem*> AllRows;
+
+        while (Rows.isEmpty() == false) {
+            QTreeWidgetItem *pRow = Rows.takeFirst();
+
+            /* add only items with the right state or with not FORUM_MSG_STATUS_READ */
+            uint32_t status = pRow->data(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
+             if (IS_UNREAD(status) == bRead || (status & FORUM_MSG_STATUS_READ) == 0) {
+                AllRows.append(pRow);
+            }
+
+            for (int i = 0; i < pRow->childCount(); i++) {
+                /* add child to main list and let the main loop do the work */
+                Rows.append(pRow->child(i));
+            }
+        }
+
+        if (AllRows.isEmpty()) {
+            /* nothing to do */
+            return;
+        }
+
+        setMsgAsReadUnread (AllRows, bRead);
+
+        return;
+    }
+
+    setMsgAsReadUnread (Rows, bRead);
+}
+
 void ForumsDialog::markMsgAsRead()
 {
-
-
-#if 0
-	//std::cerr << "ForumsDialog::markMsgAsRead()" << std::endl;
-	std::string cid, mid;
-	if (!getCurrentMsg(cid, mid))
-	{
-		//std::cerr << "ForumsDialog::markMsgAsRead()";
-		//std::cerr << " No Message selected" << std::endl;
-		return;
-	}
-
-	rsMsgs -> MessageRead(mid);
-#endif
-
-	return;
-
+    markMsgAsReadUnread(true, false);
 }
 
+void ForumsDialog::markMsgAsReadAll()
+{
+    markMsgAsReadUnread(true, true);
+}
+
+void ForumsDialog::markMsgAsUnread()
+{
+    markMsgAsReadUnread(false, false);
+}
+
+void ForumsDialog::markMsgAsUnreadAll()
+{
+    markMsgAsReadUnread(false, true);
+}
 
 void ForumsDialog::newforum()
 {
@@ -1236,17 +1595,17 @@ void ForumsDialog::newforum()
 
 void ForumsDialog::createmessage()
 {
-    if (mCurrForumId.empty ()) {
+    if (mCurrForumId.empty () || m_bIsForumSubscribed == false) {
         return;
     }
 
-    CreateForumMsg *cfm = new CreateForumMsg(mCurrForumId, mCurrPostId);
+    CreateForumMsg *cfm = new CreateForumMsg(mCurrForumId, mCurrThreadId);
     cfm->show();
 
     /* window will destroy itself! */
 }
 
-void ForumsDialog::showthread()
+void ForumsDialog::createthread()
 {
     if (mCurrForumId.empty ()) {
         QMessageBox::information(this, tr("RetroShare"),tr("No Forum Selected!"));
@@ -1272,16 +1631,16 @@ void ForumsDialog::unsubscribeToForum()
 
 void ForumsDialog::forumSubscribe(bool subscribe)
 {
-	QTreeWidgetItem *forumItem = ui.forumTreeWidget->currentItem();
-	if ((!forumItem) || (forumItem->parent() == NULL))
-	{
-		return;
-	}
+    QTreeWidgetItem *forumItem = ui.forumTreeWidget->currentItem();
+    if ((!forumItem) || (forumItem->parent() == NULL))
+    {
+        return;
+    }
 
-	/* store forumId */
-	std::string fId = (forumItem->text(4)).toStdString();
+    /* store forumId */
+    std::string fId = forumItem->data(COLUMN_FORUM_DATA, ROLE_FORUM_ID).toString().toStdString();
 
-	rsForums->forumSubscribe(fId, subscribe);
+    rsForums->forumSubscribe(fId, subscribe);
 }
 
 void ForumsDialog::showForumDetails()
@@ -1361,13 +1720,12 @@ void ForumsDialog::loadForumEmoticons()
 
 void ForumsDialog::replytomessage()
 {
-    if (mCurrForumId == "")
-    {
+    if (mCurrForumId.empty()) {
         return;
     }
 
-    fId = mCurrForumId;
-    pId = mCurrPostId;
+    std::string fId = mCurrForumId;
+    std::string pId = mCurrThreadId;
 
     ForumMsgInfo msgInfo ;
     rsForums->getForumMessage(fId,pId,msgInfo) ;
@@ -1447,7 +1805,7 @@ void ForumsDialog::filterColumnChanged()
     }
 
     int nFilterColumn = FilterColumnFromComboBox(ui.filterColumnComboBox->currentIndex());
-    if (nFilterColumn == COLUMN_CONTENT) {
+    if (nFilterColumn == COLUMN_THREAD_CONTENT) {
         // need content ... refill
         insertThreads();
     } else {

@@ -142,6 +142,15 @@
      </item>
      <item>
       <property name="text">
+       <string>Forum</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../images.qrc">
+        <normaloff>:/images/konversation.png</normaloff>:/images/konversation.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
        <string>Chat</string>
       </property>
       <property name="icon">

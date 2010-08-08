@@ -33,6 +33,7 @@
 #include "TransferPage.h"
 #include "ChatPage.h"
 #include "MessagePage.h"
+#include "ForumPage.h"
 
 #define IMAGE_GENERAL       ":/images/kcmsystem24.png"
 
@@ -109,6 +110,7 @@ RSettingsWin::initStackedWidget()
     stackedWidget->addWidget(new NotifyPage());
     stackedWidget->addWidget(new CryptoPage());
     stackedWidget->addWidget(new MessagePage());
+    stackedWidget->addWidget(new ForumPage());
     stackedWidget->addWidget(new ChatPage());
     stackedWidget->addWidget(new AppearancePage());
     stackedWidget->addWidget(new SoundPage() );
@@ -153,6 +155,10 @@ RSettingsWin::setNewPage(int page)
             text = tr("Message");
 	    pageicon->setPixmap(QPixmap(":/images/evolution.png"));
             break;      
+        case Forum:
+            text = tr("Forum");
+            pageicon->setPixmap(QPixmap(":/images/konversation.png"));
+            break;
         case Chat:
             text = tr("Chat");
 	    pageicon->setPixmap(QPixmap(":/images/chat_24.png"));

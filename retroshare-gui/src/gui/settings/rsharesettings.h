@@ -133,6 +133,12 @@ public:
   bool getMsgSetToReadOnActivate ();
   void setMsgSetToReadOnActivate (bool bValue);
 
+  /* Forums */
+  bool getForumMsgSetToReadOnActivate ();
+  void setForumMsgSetToReadOnActivate (bool bValue);
+  bool getExpandNewMessages ();
+  void setExpandNewMessages (bool bValue);
+
   /* time before idle */
   uint getMaxTimeBeforeIdle();
   void setMaxTimeBeforeIdle(uint nValue);

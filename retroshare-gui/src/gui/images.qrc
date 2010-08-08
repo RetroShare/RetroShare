@@ -263,9 +263,10 @@
         <file>images/message-mail-forwarded-read.png</file>
         <file>images/message-mail-replied.png</file>
         <file>images/message-mail-forwarded.png</file>
-        <file>images/message-mail-state-read.png</file>
-        <file>images/message-mail-state-unread.png</file>
-        <file>images/message-mail-state-header.png</file>
+        <file>images/message-state-read.png</file>
+        <file>images/message-state-unread.png</file>
+        <file>images/message-state-header.png</file>
+        <file>images/message-state-new.png</file>
         <file>images/message-news.png</file>
         <file>images/message.png</file>
         <file>images/messages_new.png</file>

@@ -378,6 +378,27 @@ void RshareSettings::setMsgSetToReadOnActivate (bool bValue)
     setValueToGroup("MessageDialog", "SetMsgToReadOnActivate", bValue);
 }
 
+/* Forums */
+bool RshareSettings::getForumMsgSetToReadOnActivate ()
+{
+    return valueFromGroup("ForumDialog", "SetMsgToReadOnActivate", true).toBool();
+}
+
+void RshareSettings::setForumMsgSetToReadOnActivate (bool bValue)
+{
+    setValueToGroup("ForumDialog", "SetMsgToReadOnActivate", bValue);
+}
+
+bool RshareSettings::getExpandNewMessages()
+{
+    return valueFromGroup("ForumDialog", "ExpandNewMessages", true).toBool();
+}
+
+void RshareSettings::setExpandNewMessages (bool bValue)
+{
+    setValueToGroup("ForumDialog", "ExpandNewMessages", bValue);
+}
+
 /* time before idle */
 uint RshareSettings::getMaxTimeBeforeIdle()
 {
