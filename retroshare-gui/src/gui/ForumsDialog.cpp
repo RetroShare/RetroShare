@@ -71,6 +71,9 @@
 #define COLUMN_FORUM_DATA     0
 
 #define ROLE_FORUM_ID         Qt::UserRole
+#define ROLE_FORUM_TITLE      Qt::UserRole + 1
+
+#define ROLE_FORUM_COUNT      2
 
 /* Thread constants */
 #define COLUMN_THREAD_COUNT    6
@@ -554,6 +557,7 @@ void ForumsDialog::insertForums()
 			}
 
                         item -> setText(COLUMN_FORUM_TITLE, name);
+                        item -> setData(COLUMN_FORUM_DATA, ROLE_FORUM_TITLE, name);
 
 			/* (1) Popularity */
 			{
@@ -598,6 +602,7 @@ void ForumsDialog::insertForums()
 			}
 
                         item -> setText(COLUMN_FORUM_TITLE, name);
+                        item -> setData(COLUMN_FORUM_DATA, ROLE_FORUM_TITLE, name);
 
 			/* (1) Popularity */
 			{
@@ -678,6 +683,7 @@ void ForumsDialog::insertForums()
 			}
 
                         item -> setText(COLUMN_FORUM_TITLE, name);
+                        item -> setData(COLUMN_FORUM_DATA, ROLE_FORUM_TITLE, name);
 
 
 			/* (1) Popularity */
@@ -719,6 +725,8 @@ void ForumsDialog::insertForums()
         CleanupItems (SubList);
         CleanupItems (PopList);
         CleanupItems (OtherList);
+
+        updateMessageSummaryList("");
 }
 
 void ForumsDialog::FillForums(QTreeWidgetItem *Forum, QList<QTreeWidgetItem *> &ChildList)
@@ -755,8 +763,12 @@ void ForumsDialog::FillForums(QTreeWidgetItem *Forum, QList<QTreeWidgetItem *> &
             Child->setIcon (COLUMN_FORUM_TITLE, (*NewChild)->icon (COLUMN_FORUM_TITLE));
             Child->setToolTip (COLUMN_FORUM_TITLE, (*NewChild)->toolTip (COLUMN_FORUM_TITLE));
 
-            for (int i = 0; i < COLUMN_FORUM_COUNT; i++) {
+            int i;
+            for (i = 0; i < COLUMN_FORUM_COUNT; i++) {
                 Child->setText (i, (*NewChild)->text (i));
+            }
+            for (i = 0; i < ROLE_FORUM_COUNT; i++) {
+                Child->setData (COLUMN_FORUM_DATA, Qt::UserRole + i, (*NewChild)->data (COLUMN_FORUM_DATA, Qt::UserRole + i));
             }
         } else {
             // insert new child
@@ -1521,6 +1533,7 @@ void ForumsDialog::setMsgAsReadUnread(QList<QTreeWidgetItem*> &Rows, bool bRead)
 
     if (bChanged) {
         CalculateIconsAndFonts();
+        updateMessageSummaryList(mCurrForumId);
     }
 }
 
@@ -1852,4 +1865,40 @@ bool ForumsDialog::FilterItem(QTreeWidgetItem *pItem, QString &sPattern, int nFi
     }
 
     return (bVisible || nVisibleChildCount);
+}
+
+void ForumsDialog::updateMessageSummaryList(std::string forumId)
+{
+    QTreeWidgetItem *apToplevelItem[2] = { YourForums, SubscribedForums };
+    int nToplevelItem;
+
+    for (nToplevelItem = 0; nToplevelItem < 2; nToplevelItem++) {
+        QTreeWidgetItem *pToplevelItem = apToplevelItem[nToplevelItem];
+
+        int nItem;
+        int nItemCount = pToplevelItem->childCount();
+
+        for (nItem = 0; nItem < nItemCount; nItem++) {
+            QTreeWidgetItem *pItem = pToplevelItem->child(nItem);
+            std::string fId = pItem->data(COLUMN_FORUM_DATA, ROLE_FORUM_ID).toString().toStdString();
+            if (forumId.empty() || fId == forumId) {
+                /* calculating the new messages */
+                unsigned int newMessageCount = 0;
+                unsigned int unreadMessageCount = 0;
+                rsForums->getMessageCount(fId, newMessageCount, unreadMessageCount);
+
+                QString sTitle = pItem->data(COLUMN_FORUM_DATA, ROLE_FORUM_TITLE).toString();
+                if (unreadMessageCount) {
+                    sTitle += " (" + QString::number(unreadMessageCount) + ")";
+                }
+
+                pItem->setText(COLUMN_FORUM_TITLE, sTitle);
+
+                if (forumId.empty() == false) {
+                    /* calculate only this forum */
+                    break;
+                }
+            }
+        }
+    }
 }

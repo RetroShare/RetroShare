@@ -139,6 +139,9 @@ virtual bool getMessageStatus(const std::string& fId, const std::string& mId, ui
 virtual	bool ForumMessageSend(ForumMsgInfo &info)                 = 0;
 
 virtual bool forumSubscribe(std::string fId, bool subscribe)	= 0;
+
+virtual	bool getMessageCount(const std::string fId, unsigned int &newCount, unsigned int &unreadCount) = 0;
+
 /****************************************/
 
 };

@@ -67,6 +67,7 @@
 #include <retroshare/rsiface.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsfiles.h>
+#include <retroshare/rsforums.h>
 
 #include "gui/connect/ConnectFriendWizard.h"
 #include "util/rsversion.h"
@@ -223,7 +224,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     #endif
                       
     ui.stackPages->add(forumsDialog = new ForumsDialog(ui.stackPages),
-                       createPageAction(QIcon(IMAGE_FORUMS), tr("Forums"), grp));  
+                       forumAction = createPageAction(QIcon(IMAGE_FORUMS), tr("Forums"), grp));
 
     #ifndef RS_RELEASE_VERSION
     ui.stackPages->add(linksDialog = new LinksDialog(ui.stackPages),
@@ -309,6 +310,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
     /* call once */
     updateMessages();
+    updateForums();
 
     idle = new Idle();
     idle->start();
@@ -397,6 +399,11 @@ void MainWindow::createTrayIcon()
     trayIconMessages = new QSystemTrayIcon(this);
     trayIconMessages->setIcon(QIcon(":/images/newmsg.png"));
     connect(trayIconMessages, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayIconMessagesClicked(QSystemTrayIcon::ActivationReason)));
+
+    // Create the tray icon for forums
+    trayIconForums = new QSystemTrayIcon(this);
+    trayIconForums->setIcon(QIcon(":/images/konversation16.png"));
+    connect(trayIconForums, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayIconForumsClicked(QSystemTrayIcon::ActivationReason)));
 }
 
 /*static*/ void MainWindow::installGroupChatNotifier()
@@ -438,6 +445,30 @@ void MainWindow::updateMessages()
         trayIconMessages->show();
     } else {
         trayIconMessages->hide();
+    }
+}
+
+void MainWindow::updateForums()
+{
+    unsigned int newMessageCount = 0;
+    unsigned int unreadMessageCount = 0;
+    rsForums->getMessageCount("", newMessageCount, unreadMessageCount);
+
+    if (newMessageCount) {
+        forumAction->setIcon(QIcon(QPixmap(":/images/konversation_new.png"))) ;
+    } else {
+        forumAction->setIcon(QIcon(QPixmap(":/images/konversation.png"))) ;
+    }
+
+    if (newMessageCount) {
+        if (newMessageCount > 1) {
+            trayIconForums->setToolTip(tr("RetroShare") + "\n" + tr("You have %1 new messages").arg(newMessageCount));
+        } else {
+            trayIconForums->setToolTip(tr("RetroShare") + "\n" + tr("You have %1 new message").arg(newMessageCount));
+        }
+        trayIconForums->show();
+    } else {
+        trayIconForums->hide();
     }
 }
 
@@ -771,6 +802,13 @@ void MainWindow::trayIconMessagesClicked(QSystemTrayIcon::ActivationReason e)
 {
     if(e == QSystemTrayIcon::Trigger || e == QSystemTrayIcon::DoubleClick) {
         showMess();
+    }
+}
+
+void MainWindow::trayIconForumsClicked(QSystemTrayIcon::ActivationReason e)
+{
+    if(e == QSystemTrayIcon::Trigger || e == QSystemTrayIcon::DoubleClick) {
+        showWindow(MainWindow::Forums);
     }
 }
 

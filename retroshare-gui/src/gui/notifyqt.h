@@ -55,6 +55,7 @@ class NotifyQt: public QObject, public NotifyBase
 		void friendsChanged() const ;
 		void neighborsChanged() const ;
 		void messagesChanged() const ;
+		void forumsChanged() const ; // use connect with Qt::QueuedConnection
 		void configChanged() const ;
 		void logInfoChanged(const QString&) const ;
 		void chatStatusChanged(const QString&,const QString&,bool) const ;

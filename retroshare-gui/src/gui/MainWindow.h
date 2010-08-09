@@ -142,6 +142,7 @@ public slots:
     void displayDiskSpaceWarning(int loc,int size_limit_mb) ;
     void checkAndSetIdle(int idleTime);
     void updateMessages();
+    void updateForums();
 
 protected:
     /** Default Constructor */
@@ -160,6 +161,7 @@ private slots:
     void toggleVisibility(QSystemTrayIcon::ActivationReason e);
     void toggleVisibilitycontextmenu();
     void trayIconMessagesClicked(QSystemTrayIcon::ActivationReason e);
+    void trayIconForumsClicked(QSystemTrayIcon::ActivationReason e);
 
     /** Toolbar fns. */
     void addFriend();
@@ -222,6 +224,7 @@ private:
 
     QSystemTrayIcon *trayIcon;
     QSystemTrayIcon *trayIconMessages;
+    QSystemTrayIcon *trayIconForums;
     QAction *toggleVisibilityAction, *toolAct;
     QMenu *trayMenu;
 
@@ -232,7 +235,8 @@ private:
 
     QLabel *_hashing_info_label ;
 
-    QAction *messageAction ;
+    QAction *messageAction;
+    QAction *forumAction;
 
     /* Status */
     std::set <QObject*> m_apStatusObjects; // added objects for status

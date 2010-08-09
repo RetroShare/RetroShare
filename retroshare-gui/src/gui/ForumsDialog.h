@@ -83,6 +83,7 @@ private:
     void insertForums();
     void insertThreads();
     void insertPost();
+    void updateMessageSummaryList(std::string forumId);
 
     void loadForumEmoticons();
 

@@ -192,6 +192,12 @@ void NotifyQt::notifyListChange(int list, int type)
 #endif
 			emit configChanged() ;
 			break ;
+		case NOTIFY_LIST_FORUMLIST_LOCKED:
+#ifdef NOTIFY_DEBUG
+			std::cerr << "received forum msg changed" << std::endl ;
+#endif
+			emit forumsChanged(); // use connect with Qt::QueuedConnection
+			break;
 		default:
 			break;
 	}

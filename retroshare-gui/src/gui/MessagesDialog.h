@@ -53,7 +53,6 @@ public:
 
 // replaced by shortcut
 //  virtual void keyPressEvent(QKeyEvent *) ;
- void updateMessageSummaryList();
 
 public slots:
   void insertMessages();
@@ -127,6 +126,7 @@ private:
   class QStandardItemModel *MessagesModel;
   QSortFilterProxyModel *proxyModel;
 
+  void updateMessageSummaryList();
   void insertMsgTxtAndFiles(QModelIndex index = QModelIndex(), bool bSetToRead = true);
 
   bool getCurrentMsg(std::string &cid, std::string &mid);

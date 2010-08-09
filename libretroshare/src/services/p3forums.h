@@ -60,6 +60,8 @@ virtual bool getMessageStatus(const std::string& fId, const std::string& mId, ui
 
 virtual bool forumSubscribe(std::string fId, bool subscribe);
 
+virtual	bool getMessageCount(const std::string fId, unsigned int &newCount, unsigned int &unreadCount);
+
 /***************************************************************************************/
 /****************** Event Feedback (Overloaded form p3distrib) *************************/
 /***************************************************************************************/

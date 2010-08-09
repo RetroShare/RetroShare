@@ -220,7 +220,8 @@ const int NOTIFY_LIST_CHANNELLIST  		= 6;
 const int NOTIFY_LIST_TRANSFERLIST 		= 7;
 const int NOTIFY_LIST_CONFIG       		= 8;
 const int NOTIFY_LIST_DIRLIST_LOCAL		= 9;
-const int NOTIFY_LIST_DIRLIST_FRIENDS	= 10;
+const int NOTIFY_LIST_DIRLIST_FRIENDS  	= 10;
+const int NOTIFY_LIST_FORUMLIST_LOCKED	= 11; // use connect with Qt::QueuedConnection
 
 const int NOTIFY_TYPE_SAME   = 0x01;
 const int NOTIFY_TYPE_MOD    = 0x02; /* general purpose, check all */

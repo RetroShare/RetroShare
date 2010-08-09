@@ -26,6 +26,7 @@
 #include "services/p3forums.h"
 #include "pqi/authssl.h"
 #include "util/rsdir.h"
+#include "retroshare/rsiface.h"
 
 uint32_t convertToInternalFlags(uint32_t extFlags);
 uint32_t convertToExternalFlags(uint32_t intFlags);
@@ -271,34 +272,38 @@ bool p3Forums::ForumMessageSend(ForumMsgInfo &info)
 
 bool p3Forums::setMessageStatus(const std::string& fId,const std::string& mId,const uint32_t status, const uint32_t statusMask)
 {
-	RsStackMutex stack(distribMtx);
-
-	std::list<RsForumReadStatus *>::iterator lit = mReadStatus.begin();
-
-	for(; lit != mReadStatus.end(); lit++)
 	{
+		RsStackMutex stack(distribMtx); /***** STACK LOCKED MUTEX *****/
 
-		if((*lit)->forumId == fId)
+		std::list<RsForumReadStatus *>::iterator lit = mReadStatus.begin();
+
+		for(; lit != mReadStatus.end(); lit++)
 		{
-				RsForumReadStatus* rsi = *lit;
-				rsi->msgReadStatus[mId] &= ~statusMask;
-				rsi->msgReadStatus[mId] |= (status & statusMask);
-				break;
+
+			if((*lit)->forumId == fId)
+			{
+					RsForumReadStatus* rsi = *lit;
+					rsi->msgReadStatus[mId] &= ~statusMask;
+					rsi->msgReadStatus[mId] |= (status & statusMask);
+					break;
+			}
+
 		}
 
-	}
+		// if forum id does not exist create one
+		if(lit == mReadStatus.end())
+		{
+			RsForumReadStatus* rsi = new RsForumReadStatus();
+			rsi->forumId = fId;
+			rsi->msgReadStatus[mId] = status & statusMask;
+			mReadStatus.push_back(rsi);
+			mSaveList.push_back(rsi);
+		}
+		
+		IndicateConfigChanged();
+	} /******* UNLOCKED ********/
 
-	// if forum id does not exist create one
-	if(lit == mReadStatus.end())
-	{
-		RsForumReadStatus* rsi = new RsForumReadStatus();
-		rsi->forumId = fId;
-		rsi->msgReadStatus[mId] = status & statusMask;
-		mReadStatus.push_back(rsi);
-		mSaveList.push_back(rsi);
-	}
-	
-	IndicateConfigChanged();
+	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_FORUMLIST_LOCKED, NOTIFY_TYPE_MOD);
 
 	return true;
 }
@@ -436,6 +441,84 @@ bool p3Forums::forumSubscribe(std::string fId, bool subscribe)
 	return subscribeToGroup(fId, subscribe);
 }
 
+bool p3Forums::getMessageCount(const std::string fId, unsigned int &newCount, unsigned int &unreadCount)
+{
+	newCount = 0;
+	unreadCount = 0;
+
+	std::list<std::string> grpIds;
+
+	if (fId.empty()) {
+		// count all messages of all subscribed forums
+		getAllGroupList(grpIds);
+	} else {
+		// count all messages of one forum
+		grpIds.push_back(fId);
+	}
+
+	std::list<std::string>::iterator git;
+	for (git = grpIds.begin(); git != grpIds.end(); git++) {
+		std::string fId = *git;
+		uint32_t grpFlags;
+
+		{
+			// only flag is needed
+			RsStackMutex stack(distribMtx); /***** STACK LOCKED MUTEX *****/
+			GroupInfo *gi = locked_getGroupInfo(fId);
+			if (gi == NULL) {
+				return false;
+			}
+			grpFlags = gi->flags;
+		} /******* UNLOCKED ********/
+
+		if (grpFlags & (RS_DISTRIB_ADMIN | RS_DISTRIB_SUBSCRIBED)) {
+			std::list<std::string> msgIds;
+			if (getAllMsgList(fId, msgIds)) {
+				std::list<std::string>::iterator mit;
+
+				RsStackMutex stack(distribMtx); /***** STACK LOCKED MUTEX *****/
+
+				std::list<RsForumReadStatus *>::iterator lit;
+				for(lit = mReadStatus.begin(); lit != mReadStatus.end(); lit++) {
+					if ((*lit)->forumId == fId) {
+						break;
+					}
+				}
+
+				if (lit == mReadStatus.end()) {
+					// no status available -> all messages are new
+					newCount += msgIds.size();
+					unreadCount += msgIds.size();
+					continue;
+				}
+
+				for (mit = msgIds.begin(); mit != msgIds.end(); mit++) {
+					std::map<std::string, uint32_t >::iterator rit = (*lit)->msgReadStatus.find(*mit);
+
+					if (rit == (*lit)->msgReadStatus.end()) {
+						// no status available -> message is new
+						newCount++;
+						unreadCount++;
+						continue;
+					}
+
+					if (rit->second & FORUM_MSG_STATUS_READ) {
+						// message is not new
+						if (rit->second & FORUM_MSG_STATUS_UNREAD_BY_USER) {
+							// message is unread
+							unreadCount++;
+						}
+					} else {
+						newCount++;
+						unreadCount++;
+					}
+				}
+			} /******* UNLOCKED ********/
+		}
+	}
+
+	return true;
+}
 
 /***************************************************************************************/
 /****************** Event Feedback (Overloaded form p3distrib) *************************/
@@ -453,13 +536,16 @@ void p3Forums::locked_notifyGroupChanged(GroupInfo  &grp, uint32_t flags)
         {
                 case GRP_NEW_UPDATE:
                         getPqiNotify()->AddFeedItem(RS_FEED_ITEM_FORUM_NEW, grpId, msgId, nullId);
+                        rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_FORUMLIST_LOCKED, NOTIFY_TYPE_ADD);
                         break;
                 case GRP_UPDATE:
                         getPqiNotify()->AddFeedItem(RS_FEED_ITEM_FORUM_UPDATE, grpId, msgId, nullId);
+                        rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_FORUMLIST_LOCKED, NOTIFY_TYPE_MOD);
                         break;
                 case GRP_LOAD_KEY:
                         break;
                 case GRP_NEW_MSG:
+                        rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_FORUMLIST_LOCKED, NOTIFY_TYPE_ADD);
                         break;
                 case GRP_SUBSCRIBED:
                         break;
