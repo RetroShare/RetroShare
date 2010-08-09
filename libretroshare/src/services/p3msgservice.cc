@@ -615,10 +615,12 @@ bool    p3MsgService::markMsgIdRead(std::string mid)
 		}
 	}
 
-	if(changed)				// no need to notify, because the msg is always 
-		return true; 		// marked as read from the gui itself, so the gui 
-	else 						// can mark it as read.
+	if(changed) {
+		rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
+		return true;
+	} else {
 		return false;
+	}
 }
 
 /****************************************/

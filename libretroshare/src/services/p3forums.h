@@ -91,14 +91,10 @@ std::string createForumMsg(std::string fId, std::string pId,
 
 	private:
 
-
-
-bool 	mForumsChanged;
 std::string mForumsDir;
 std::list<RsItem *> mSaveList; // store save data
 
 std::list<RsForumReadStatus *> mReadStatus;
-
 
 };
 

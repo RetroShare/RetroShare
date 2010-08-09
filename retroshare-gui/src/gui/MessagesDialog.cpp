@@ -1662,6 +1662,8 @@ void MessagesDialog::updateCurrentMessage()
 
 void MessagesDialog::setMsgAsReadUnread(const QList<int> &Rows, bool bRead)
 {
+    LockUpdate Lock (this, false);
+
     for (int nRow = 0; nRow < Rows.size(); nRow++) {
         QStandardItem* item[COLUMN_COUNT];
         for(int nCol = 0; nCol < COLUMN_COUNT; nCol++)
@@ -1671,20 +1673,25 @@ void MessagesDialog::setMsgAsReadUnread(const QList<int> &Rows, bool bRead)
 
         QString mid = item[COLUMN_DATA]->data(ROLE_MSGID).toString();
 
-        m_pConfig->beginGroup(CONFIG_SECTION_UNREAD);
         if (bRead) {
             // set as read in config
+            m_pConfig->beginGroup(CONFIG_SECTION_UNREAD);
             m_pConfig->setValue(mid, false);
+            m_pConfig->endGroup();
             // set message to read
             rsMsgs->MessageRead(mid.toStdString());
         } else {
             // set as unread in config
+            m_pConfig->beginGroup(CONFIG_SECTION_UNREAD);
             m_pConfig->setValue(mid, true);
+            m_pConfig->endGroup();
         }
-        m_pConfig->endGroup();
 
         InitIconAndFont(m_pConfig, item, 0);
     }
+
+
+    // LockUpdate
 }
 
 void MessagesDialog::markAsRead()

@@ -307,6 +307,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     /* Set focus to the current page */
     ui.stackPages->currentWidget()->setFocus();
 
+    /* call once */
+    updateMessages();
+
     idle = new Idle();
     idle->start();
     connect(idle, SIGNAL(secondsIdle(int)), this, SLOT(checkAndSetIdle(int)));
@@ -359,8 +362,7 @@ void MainWindow::createTrayIcon()
     /** Tray icon Menu **/
     trayMenu = new QMenu(this);
     QObject::connect(trayMenu, SIGNAL(aboutToShow()), this, SLOT(updateMenu()));
-    toggleVisibilityAction =
-    trayMenu->addAction(QIcon(IMAGE_RETROSHARE), tr("Show/Hide"), this, SLOT(toggleVisibilitycontextmenu()));
+    toggleVisibilityAction = trayMenu->addAction(QIcon(IMAGE_RETROSHARE), tr("Show/Hide"), this, SLOT(toggleVisibilitycontextmenu()));
 
     QMenu *pStatusMenu = trayMenu->addMenu(tr("Status"));
     initializeStatusObject(pStatusMenu, true);
@@ -388,9 +390,13 @@ void MainWindow::createTrayIcon()
     trayIcon->setContextMenu(trayMenu);
     trayIcon->setIcon(QIcon(IMAGE_NOONLINE));
 
-    connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this,
-            SLOT(toggleVisibility(QSystemTrayIcon::ActivationReason)));
+    connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(toggleVisibility(QSystemTrayIcon::ActivationReason)));
     trayIcon->show();
+
+    // Create the tray icon for messages
+    trayIconMessages = new QSystemTrayIcon(this);
+    trayIconMessages->setIcon(QIcon(":/images/newmsg.png"));
+    connect(trayIconMessages, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayIconMessagesClicked(QSystemTrayIcon::ActivationReason)));
 }
 
 /*static*/ void MainWindow::installGroupChatNotifier()
@@ -412,62 +418,64 @@ void MainWindow::displaySystrayMsg(const QString& title,const QString& msg)
     trayIcon->showMessage(title, msg, QSystemTrayIcon::Information, 3000);
 }
 
+void MainWindow::updateMessages()
+{
+    unsigned int newInboxCount = 0;
+    rsMsgs->getMessageCount (NULL, &newInboxCount, NULL, NULL, NULL, NULL);
+
+    if(newInboxCount) {
+        messageAction->setIcon(QIcon(QPixmap(":/images/messages_new.png"))) ;
+    } else {
+        messageAction->setIcon(QIcon(QPixmap(":/images/evolution.png"))) ;
+    }
+
+    if (newInboxCount) {
+        if (newInboxCount > 1) {
+            trayIconMessages->setToolTip(tr("RetroShare") + "\n" + tr("You have %1 new messages").arg(newInboxCount));
+        } else {
+            trayIconMessages->setToolTip(tr("RetroShare") + "\n" + tr("You have %1 new message").arg(newInboxCount));
+        }
+        trayIconMessages->show();
+    } else {
+        trayIconMessages->hide();
+    }
+}
+
 void MainWindow::updateStatus()
 {
-	// This call is essential to remove locks due to QEventLoop re-entrance while asking gpg passwds. Dont' remove it!
-	if(RsAutoUpdatePage::eventsLocked())
-		return ;
+    // This call is essential to remove locks due to QEventLoop re-entrance while asking gpg passwds. Dont' remove it!
+    if(RsAutoUpdatePage::eventsLocked())
+        return;
 
-	unsigned int nFriendCount = 0;
-	unsigned int nOnlineCount = 0;
-	rsPeers->getPeerCount (&nFriendCount, &nOnlineCount);
+    unsigned int nFriendCount = 0;
+    unsigned int nOnlineCount = 0;
+    rsPeers->getPeerCount (&nFriendCount, &nOnlineCount);
 
-	if (ratesstatus)
-		ratesstatus->getRatesStatus();
+    if (ratesstatus)
+        ratesstatus->getRatesStatus();
 
-	if (peerstatus)
-		peerstatus->getPeerStatus(nFriendCount, nOnlineCount);
+    if (peerstatus)
+        peerstatus->getPeerStatus(nFriendCount, nOnlineCount);
 
-	if (natstatus)
-		natstatus->getNATStatus();
+    if (natstatus)
+        natstatus->getNATStatus();
 
-	unsigned int newInboxCount = 0;
-	rsMsgs->getMessageCount (NULL, &newInboxCount, NULL, NULL, NULL, NULL);
-
-        if(newInboxCount)
-                messageAction->setIcon(QIcon(QPixmap(":/images/messages_new.png"))) ;
-        else
-                messageAction->setIcon(QIcon(QPixmap(":/images/evolution.png"))) ;
-
-	if(newInboxCount)
-	{
-		trayIcon->setIcon(QIcon(":/images/newmsg.png"));
-		if (newInboxCount > 1) {
-			trayIcon->setToolTip(tr("RetroShare") + "\n" + tr("You have %1 new messages").arg(newInboxCount));
-		} else {
-			trayIcon->setToolTip(tr("RetroShare") + "\n" + tr("You have %1 new message").arg(newInboxCount));
-		}
-	}
-	else if (nOnlineCount == 0)
-	{
-		trayIcon->setIcon(QIcon(IMAGE_NOONLINE));
-		trayIcon->setToolTip(tr("RetroShare"));
-	}
-	else if (nOnlineCount < 2)
-	{
-		trayIcon->setIcon(QIcon(IMAGE_ONEONLINE));
-		trayIcon->setToolTip(tr("RetroShare"));
-	}
-	else if (nOnlineCount < 3)
-	{
-		trayIcon->setIcon(QIcon(IMAGE_TWOONLINE));
-		trayIcon->setToolTip(tr("RetroShare"));
-	}
-	else
-	{
-		trayIcon->setIcon(QIcon(IMAGE_RETROSHARE));
-		trayIcon->setToolTip(tr("RetroShare"));
-	}
+    if (nOnlineCount == 0)
+    {
+        trayIcon->setIcon(QIcon(IMAGE_NOONLINE));
+    }
+    else if (nOnlineCount < 2)
+    {
+        trayIcon->setIcon(QIcon(IMAGE_ONEONLINE));
+    }
+    else if (nOnlineCount < 3)
+    {
+        trayIcon->setIcon(QIcon(IMAGE_TWOONLINE));
+    }
+    else
+    {
+        trayIcon->setIcon(QIcon(IMAGE_RETROSHARE));
+    }
 }
 
 void MainWindow::updateHashingInfo(const QString& s)
@@ -756,6 +764,13 @@ void MainWindow::toggleVisibility(QSystemTrayIcon::ActivationReason e)
         }else{
             hide();
         }
+    }
+}
+
+void MainWindow::trayIconMessagesClicked(QSystemTrayIcon::ActivationReason e)
+{
+    if(e == QSystemTrayIcon::Trigger || e == QSystemTrayIcon::DoubleClick) {
+        showMess();
     }
 }
 

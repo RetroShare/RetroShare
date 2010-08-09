@@ -81,7 +81,7 @@ p3Forums::p3Forums(uint16_t type, CacheStrapper *cs, CacheTransfer *cft,
                         std::string srcdir, std::string storedir, std::string forumDir)
 	:p3GroupDistrib(type, cs, cft, srcdir, storedir, forumDir,
                 CONFIG_TYPE_FORUMS, FORUM_STOREPERIOD, FORUM_PUBPERIOD),
-	mForumsChanged(false), mForumsDir(forumDir)
+	mForumsDir(forumDir)
 { 
 
 	/* create chanDir */
@@ -588,8 +588,6 @@ void    p3Forums::loadDummyData()
 	fi.lastPost = now - 1234;
 
 	forumId = createForum(fi.forumName, fi.forumDesc, fi.forumFlags);
-
-	mForumsChanged = true;
 }
 
 std::list<RsItem* > p3Forums::childSaveList()

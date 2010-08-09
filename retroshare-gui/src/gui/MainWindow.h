@@ -139,8 +139,9 @@ public slots:
     void updateHashingInfo(const QString&) ;
     void displayErrorMessage(int,int,const QString&) ;
     void postModDirectories(bool update_local);
-	 void displayDiskSpaceWarning(int loc,int size_limit_mb) ;
+    void displayDiskSpaceWarning(int loc,int size_limit_mb) ;
     void checkAndSetIdle(int idleTime);
+    void updateMessages();
 
 protected:
     /** Default Constructor */
@@ -158,7 +159,7 @@ private slots:
 
     void toggleVisibility(QSystemTrayIcon::ActivationReason e);
     void toggleVisibilitycontextmenu();
-
+    void trayIconMessagesClicked(QSystemTrayIcon::ActivationReason e);
 
     /** Toolbar fns. */
     void addFriend();
@@ -220,6 +221,7 @@ private:
     void loadStyleSheet(const QString &sheetName);
 
     QSystemTrayIcon *trayIcon;
+    QSystemTrayIcon *trayIconMessages;
     QAction *toggleVisibilityAction, *toolAct;
     QMenu *trayMenu;
 
