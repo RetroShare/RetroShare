@@ -1888,11 +1888,16 @@ void ForumsDialog::updateMessageSummaryList(std::string forumId)
                 rsForums->getMessageCount(fId, newMessageCount, unreadMessageCount);
 
                 QString sTitle = pItem->data(COLUMN_FORUM_DATA, ROLE_FORUM_TITLE).toString();
+                QFont qf = pItem->font(COLUMN_FORUM_TITLE);
                 if (unreadMessageCount) {
                     sTitle += " (" + QString::number(unreadMessageCount) + ")";
+                    qf.setBold(true);
+                } else {
+                    qf.setBold(false);
                 }
 
                 pItem->setText(COLUMN_FORUM_TITLE, sTitle);
+                pItem->setFont(COLUMN_FORUM_TITLE, qf);
 
                 if (forumId.empty() == false) {
                     /* calculate only this forum */
