@@ -142,16 +142,12 @@ bool getIPAddressFromString (const char *addr_str, struct in_addr *addr)
     return false;
 }
 
-#ifndef RS_USE_BITDHT
-// This function is also defined in the bitdht library. I added this to remove the compilation error due to 
-// duplicate definitions.
 std::ostream &operator<<(std::ostream &out, const struct sockaddr_in &addr)
 {
 	out << "[" << inet_ntoa(addr.sin_addr) << ":";
 	out << htons(addr.sin_port) << "]";
 	return out;
 }
-#endif
 
 /* thread-safe version of inet_ntoa */
 
