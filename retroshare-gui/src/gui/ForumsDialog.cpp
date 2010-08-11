@@ -1508,7 +1508,7 @@ int ForumsDialog::getSelectedMsgCount(QList<QTreeWidgetItem*> *pRows, QList<QTre
 void ForumsDialog::setMsgAsReadUnread(QList<QTreeWidgetItem*> &Rows, bool bRead)
 {
     QList<QTreeWidgetItem*>::iterator Row;
-    bool bChanged = false;
+    std::list<QTreeWidgetItem*> changedItems;
 
     for (Row = Rows.begin(); Row != Rows.end(); Row++) {
         uint32_t status = (*Row)->data(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
@@ -1527,12 +1527,21 @@ void ForumsDialog::setMsgAsReadUnread(QList<QTreeWidgetItem*> &Rows, bool bRead)
             rsForums->setMessageStatus(mCurrForumId, msgId, statusNew, FORUM_MSG_STATUS_READ | FORUM_MSG_STATUS_UNREAD_BY_USER);
 
             (*Row)->setData(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS, statusNew);
-            bChanged = true;
+
+            QTreeWidgetItem *parentItem = *Row;
+            while (parentItem->parent()) {
+                parentItem = parentItem->parent();
+            }
+            if (std::find(changedItems.begin(), changedItems.end(), parentItem) == changedItems.end()) {
+                changedItems.push_back(parentItem);
+            }
         }
     }
 
-    if (bChanged) {
-        CalculateIconsAndFonts();
+    if (changedItems.size()) {
+        for (std::list<QTreeWidgetItem*>::iterator it = changedItems.begin(); it != changedItems.end(); it++) {
+            CalculateIconsAndFonts(*it);
+        }
         updateMessageSummaryList(mCurrForumId);
     }
 }
