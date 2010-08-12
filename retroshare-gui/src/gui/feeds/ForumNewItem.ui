@@ -50,25 +50,12 @@ border-radius: 10px}</string>
       <item>
        <layout class="QHBoxLayout">
         <item>
-         <widget class="QPushButton" name="clearButton">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="toolTip">
-           <string>Remove Item</string>
-          </property>
-          <property name="styleSheet">
-           <string notr="true"/>
-          </property>
+         <widget class="QLabel" name="label">
           <property name="text">
            <string/>
           </property>
-          <property name="icon">
-           <iconset resource="../images.qrc">
-            <normaloff>:/images/close_normal.png</normaloff>:/images/close_normal.png</iconset>
+          <property name="pixmap">
+           <pixmap resource="../images.qrc">:/images/konversation.png</pixmap>
           </property>
          </widget>
         </item>
@@ -204,6 +191,29 @@ border-radius: 10px}</string>
           </property>
          </widget>
         </item>
+        <item>
+         <widget class="QPushButton" name="clearButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>Remove Item</string>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../images.qrc">
+            <normaloff>:/images/close_normal.png</normaloff>:/images/close_normal.png</iconset>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
       <item>
@@ -282,6 +292,7 @@ border-radius: 10px}</string>
   </layout>
  </widget>
  <resources>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>

@@ -47,22 +47,12 @@ border-radius: 10px}</string>
       <item>
        <layout class="QHBoxLayout">
         <item>
-         <widget class="QPushButton" name="clearButton">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="toolTip">
-           <string>Remove Item</string>
-          </property>
+         <widget class="QLabel" name="label">
           <property name="text">
            <string/>
           </property>
-          <property name="icon">
-           <iconset resource="../images.qrc">
-            <normaloff>:/images/close_normal.png</normaloff>:/images/close_normal.png</iconset>
+          <property name="pixmap">
+           <pixmap resource="../images.qrc">:/images/konversation.png</pixmap>
           </property>
          </widget>
         </item>
@@ -131,6 +121,26 @@ border-radius: 10px}</string>
           <property name="icon">
            <iconset resource="../images.qrc">
             <normaloff>:/images/edit_add24.png</normaloff>:/images/edit_add24.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="clearButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>Remove Item</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../images.qrc">
+            <normaloff>:/images/close_normal.png</normaloff>:/images/close_normal.png</iconset>
           </property>
          </widget>
         </item>
