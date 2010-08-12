@@ -39,6 +39,7 @@
 #include "feeds/PeerItem.h"
 
 #include "settings/rsharesettings.h"
+#include "chat/PopupChatDialog.h"
 
 const uint32_t NEWSFEED_PEERLIST = 	0x0001;
 const uint32_t NEWSFEED_FORUMNEWLIST = 	0x0002;
@@ -420,6 +421,6 @@ void NewsFeed::openChat(std::string peerId)
 	std::cerr << "NewsFeed::openChat()";
 	std::cerr << std::endl;
 #endif
+
+	PopupChatDialog::chatFriend(peerId);
 }
-
-
