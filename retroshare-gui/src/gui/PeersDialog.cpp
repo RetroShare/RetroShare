@@ -54,6 +54,7 @@
 #include "RetroShareLink.h"
 
 #include "MainWindow.h"
+#include "NewsFeed.h"
 
 #include <sstream>
 #include <time.h>
@@ -159,6 +160,7 @@ PeersDialog::PeersDialog(QWidget *parent)
 
   ui.peertabWidget->setTabPosition(QTabWidget::North);
   ui.peertabWidget->addTab(new ProfileWidget(),QString(tr("Profile")));
+  ui.peertabWidget->addTab(new NewsFeed(),QString(tr("Friend Storm")));
 
   ui.peertreeWidget->setColumnCount(4);
   ui.peertreeWidget->setColumnHidden ( 3, true);

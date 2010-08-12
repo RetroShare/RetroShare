@@ -43,7 +43,6 @@
 #include "NetworkView.h"
 #include "LinksDialog.h"
 #include "ForumsDialog.h"
-#include "NewsFeed.h"
 #include "PeersDialog.h"
 #include "HelpDialog.h"
 #include "AboutDialog.h"
@@ -229,11 +228,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     #ifndef RS_RELEASE_VERSION
     ui.stackPages->add(linksDialog = new LinksDialog(ui.stackPages),
 			createPageAction(QIcon(IMAGE_LINKS), tr("Links Cloud"), grp));
-    #endif
-
-    #ifndef RS_RELEASE_VERSION
-    ui.stackPages->add(newsFeed = new NewsFeed(ui.stackPages),
-		createPageAction(QIcon(IMAGE_NEWSFEED), tr("News Feed"), grp));
     #endif
 
 	#ifndef RS_RELEASE_VERSION

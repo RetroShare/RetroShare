@@ -49,7 +49,6 @@ class BandwidthGraph;
 
 #ifndef RS_RELEASE_VERSION
 class LinksDialog;
-class NewsFeed;
 #endif
 
 #ifdef BLOGS
@@ -116,7 +115,6 @@ public:
 
 #ifndef RS_RELEASE_VERSION
     LinksDialog       *linksDialog;
-    NewsFeed          *newsFeed;
 #endif
 
 #ifdef BLOGS
