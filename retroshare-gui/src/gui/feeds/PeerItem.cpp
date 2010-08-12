@@ -52,8 +52,8 @@ PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, std::string peerId, uint
   /* specific ones */
   connect( chatButton, SIGNAL( clicked( void ) ), this, SLOT( openChat ( void ) ) );
   connect( msgButton, SIGNAL( clicked( void ) ), this, SLOT( sendMsg ( void ) ) );
-  connect( addButton, SIGNAL( clicked( void ) ), this, SLOT( addFriend ( void ) ) );
-  connect( removeButton, SIGNAL( clicked( void ) ), this, SLOT( removeFriend ( void ) ) );
+  //connect( addButton, SIGNAL( clicked( void ) ), this, SLOT( addFriend ( void ) ) );
+  //connect( removeButton, SIGNAL( clicked( void ) ), this, SLOT( removeFriend ( void ) ) );
 
   small();
   updateItemStatic();
@@ -84,7 +84,7 @@ void PeerItem::updateItemStatic()
 				title = "Friend: ";
 				break;
 			case PEER_TYPE_CONNECT:
-				title = "Friend Connected: ";
+				title = "Friend Connected";
 				break;
 			case PEER_TYPE_HELLO:
 				title = "Connect Attempt: ";
@@ -101,7 +101,7 @@ void PeerItem::updateItemStatic()
 		
 		/* set textcolor for peername  */
     QString nameStr("<span style=\"font-size:14pt; font-weight:500;"
-                               "color:white;\">%1</span>");
+                               "color:#990033;\">%1</span>");
 	
     /* set Blog name */
     QString peername =  QString::fromStdString(details.name);
@@ -129,8 +129,8 @@ void PeerItem::updateItemStatic()
 		lastLabel->setText("Unknown Peer");
 
 		chatButton->setEnabled(false);
-		addButton->setEnabled(false);
-		removeButton->setEnabled(false);
+		//addButton->setEnabled(false);
+		//removeButton->setEnabled(false);
 		msgButton->setEnabled(false);
 	}
 
@@ -143,6 +143,7 @@ void PeerItem::updateItemStatic()
 		/* disable buttons */
 		clearButton->hide();
 	}
+
 }
 
 
@@ -196,20 +197,22 @@ void PeerItem::updateItem()
 		chatButton->setEnabled(details.state & RS_PEER_STATE_CONNECTED);
 		if (details.state & RS_PEER_STATE_FRIEND)
 		{
-			addButton->setEnabled(false);
-			removeButton->setEnabled(true);
+			//addButton->setEnabled(false);
+			//removeButton->setEnabled(true);
 			msgButton->setEnabled(true);
 		}
 		else
 		{
-			addButton->setEnabled(true);
-			removeButton->setEnabled(false);
+			//addButton->setEnabled(true);
+			//removeButton->setEnabled(false);
 			msgButton->setEnabled(false);
 		}
 	}
 
 	/* slow Tick  */
 	int msec_rate = 10129;
+	
+    loadAvatar();
 
 	QTimer::singleShot( msec_rate, this, SLOT(updateItem( void ) ));
 	return;
@@ -316,4 +319,31 @@ void PeerItem::openChat()
 		mParent->openChat(mPeerId);
 	}
 }
+
+void PeerItem::loadAvatar()
+{
+
+   unsigned char *data = NULL;
+   int size = 0 ;
+
+   rsMsgs->getAvatarData(mPeerId,data,size); 
+
+
+   if(size != 0)
+   {   
+    // set the image
+    QPixmap pix ;
+    pix.loadFromData(data,size,"PNG") ;
+    avatar_label->setPixmap(pix);   
+    delete[] data ;
+
+   }
+   else
+   {
+     avatar_label->setPixmap(QPixmap(":/images/user/personal64.png"));
+   }
+
+
+}  
+
 

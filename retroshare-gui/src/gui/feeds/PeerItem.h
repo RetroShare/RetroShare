@@ -45,6 +45,8 @@ public:
 
 	void updateItemStatic();
   	void small();
+  	void loadAvatar();
+
 
 private slots:
 	/* default stuff */
