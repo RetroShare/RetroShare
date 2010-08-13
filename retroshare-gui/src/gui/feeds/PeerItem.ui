@@ -28,7 +28,7 @@
      <property name="styleSheet">
       <string notr="true">QFrame#frame{border: 2px solid green;
          background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                     stop: 0 #BDDF7D, stop: 1 #49881F);
+                                     stop: 0 #BDDF7D, stop: 1 #649C35);
 border-radius: 10px}</string>
      </property>
      <property name="frameShape">
