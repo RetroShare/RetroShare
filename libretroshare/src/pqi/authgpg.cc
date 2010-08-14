@@ -58,8 +58,10 @@ AuthGPG *AuthGPG::getAuthGPG()
 
 
 /* Turn a set of parameters into a string */
+#if 0
 static std::string setKeyPairParams(bool useRsa, unsigned int blen,
                 std::string name, std::string comment, std::string email);
+#endif
 static std::string setKeyPairParams(bool useRsa, unsigned int blen,
                 std::string name, std::string comment, std::string email,
                 std::string inPassphrase);
@@ -775,10 +777,10 @@ bool AuthGPGimpl::DoOwnSignature(const void *data, unsigned int datalen, void *b
 		fprintf(stderr, "Sign Failed to get Result\n");
 	}
 
+#ifdef GPG_DEBUG
 	gpgme_invalid_key_t ik = res->invalid_signers;
 	gpgme_new_signature_t sg = res->signatures;
 
-#ifdef GPG_DEBUG
 	while(ik != NULL)
 	{
                 fprintf(stderr, "AuthGPGimpl::Sign, Invalid by: %s\n", ik->fpr);
@@ -1310,7 +1312,7 @@ bool AuthGPGimpl::LoadCertificateFromString(std::string str, std::string &gpg_id
 	}
         //retrieve the id of the key
         certmap::iterator it;
-		  gpg_id = "" ;
+        gpg_id = "" ;
         RsStackMutex stack(gpgMtx); /******* LOCKED ******/
         for(it = mKeyList.begin(); it != mKeyList.end(); it++)
         {
@@ -1565,6 +1567,7 @@ void showData(gpgme_data_t dh)
 }
 #endif
 
+#if 0
 static std::string setKeyPairParams(bool useRsa, unsigned int blen,
                 std::string name, std::string comment, std::string email)
 {
@@ -1598,6 +1601,7 @@ static std::string setKeyPairParams(bool useRsa, unsigned int blen,
 
 	return params.str();
 }
+#endif
 
 static std::string setKeyPairParams(bool useRsa, unsigned int blen,
                 std::string name, std::string comment, std::string email,
