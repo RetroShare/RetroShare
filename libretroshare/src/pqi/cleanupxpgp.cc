@@ -46,7 +46,7 @@ std::string cleanUpCertificate(std::string badCertificate)
 	Buffer for storing the cleaned certificate. In certain cases the 
 	cleanCertificate can be larger than the badCertificate
 	*/
-	char * cleanCertificate=new char[badCertificate.length()+100];
+	std::string cleanCertificate;
 	//The entire certificate begin tag
         const char * beginCertTag="-----BEGIN";
 	//The entire certificate end tag
@@ -71,8 +71,6 @@ std::string cleanUpCertificate(std::string badCertificate)
         size_t endCertEndIdx=0;
 	//The length of the bad certificate.
         size_t lengthOfCert=badCertificate.length();
-	//The current index value in the cleaned certificate.
-        size_t currCleanCertIdx=0;
 	//The current index value in the bad certificate
         size_t currBadCertIdx=0;
 	//Temporary index value
@@ -171,12 +169,7 @@ std::string cleanUpCertificate(std::string badCertificate)
 	/*
 	Copying the begin tag(-----BEGIN) to the clean certificate
 	*/
-        for(size_t i=0;i<strlen(beginCertTag);i++)
-	{
-		cleanCertificate[currCleanCertIdx+i]=beginCertTag[i];
-				
-	}
-	currCleanCertIdx=currCleanCertIdx+strlen(beginCertTag);
+	cleanCertificate += beginCertTag;
 	currBadCertIdx=beginCertStartIdx2+strlen(beginTag);
 	/*
 	Copying the name of the tag e.g XPGP CERTIFICATE. At the same time remove any white spaces and new line
@@ -194,28 +187,22 @@ std::string cleanUpCertificate(std::string badCertificate)
 		}
 		else
 		{
-			cleanCertificate[currCleanCertIdx]=badCertificate[currBadCertIdx];
-			currCleanCertIdx++;
+			cleanCertificate += badCertificate[currBadCertIdx];
 			currBadCertIdx++;
 		}
 	}	
 	/*
 	If the last character is a space we need to remove it.
 	*/
-	if(cleanCertificate[currCleanCertIdx-1]==' ')
+	if(cleanCertificate.substr(cleanCertificate.length()-1, 1) == " ")
 	{
-		currCleanCertIdx--;	
+		cleanCertificate.erase(cleanCertificate.length()-1);
 	}
 	/*
 	Copying the end part of the certificate start tag(-----). 
 	*/
-        for(size_t i=0;i<strlen(commonTag);i++)
-	{
-		cleanCertificate[currCleanCertIdx]='-';
-		currCleanCertIdx++;
-	}	
-	cleanCertificate[currCleanCertIdx]='\n';
-	currCleanCertIdx++;
+	cleanCertificate += commonTag;
+	cleanCertificate += "\n";
 	currBadCertIdx=currBadCertIdx+strlen(commonTag);  
 	/*
 	Remove the white spaces between the end of the certificate begin tag and the actual
@@ -227,16 +214,14 @@ std::string cleanUpCertificate(std::string badCertificate)
         }
 
         //keep the first line : gnupg version
-        cleanCertificate[currCleanCertIdx]= badCertificate[currBadCertIdx];
+        cleanCertificate += badCertificate[currBadCertIdx];
         currBadCertIdx++;
         while(badCertificate[currBadCertIdx]!='\n')
         {
-                cleanCertificate[currCleanCertIdx]= badCertificate[currBadCertIdx];
-                currCleanCertIdx++;
+                cleanCertificate += badCertificate[currBadCertIdx];
                 currBadCertIdx++;
         }
-        cleanCertificate[currCleanCertIdx]= badCertificate[currBadCertIdx];
-        currCleanCertIdx++;
+        cleanCertificate += badCertificate[currBadCertIdx];
         currBadCertIdx++;
 
 	//Start of the actual certificate. Remove spaces in the certificate
@@ -247,8 +232,7 @@ std::string cleanUpCertificate(std::string badCertificate)
 	{
 		if(cntPerLine==64)
 		{
-			cleanCertificate[currCleanCertIdx]='\n';
-			currCleanCertIdx++;
+			cleanCertificate += "\n";
 			cntPerLine=0;
 			continue;
 		}
@@ -262,17 +246,15 @@ std::string cleanUpCertificate(std::string badCertificate)
 			currBadCertIdx++;
 			continue;
 		}
-		cleanCertificate[currCleanCertIdx]=badCertificate[currBadCertIdx];	
+		cleanCertificate += badCertificate[currBadCertIdx];
 		cntPerLine++;
-		currCleanCertIdx++;
 		currBadCertIdx++;
 
 	}
-    if(cleanCertificate[currCleanCertIdx-1]!='\n')
+    if(cleanCertificate.substr(cleanCertificate.length()-1,1)!="\n")
     {
-        cleanCertificate[currCleanCertIdx]='\n';
-        currCleanCertIdx++;
- //       std::cerr<<"zeeeee"<<std::endl;
+        cleanCertificate += "\n";
+//        std::cerr<<"zeeeee"<<std::endl;
     }
     else
     {
@@ -282,12 +264,7 @@ std::string cleanUpCertificate(std::string badCertificate)
 	Copying the begining part of the certificate end tag. Copying
 	-----END part of the tag.
 	*/
-        for(size_t i=0;i<strlen(endCertTag);i++)
-	{
-		cleanCertificate[currCleanCertIdx+i]=endCertTag[i];
-				
-	}
-	currCleanCertIdx=currCleanCertIdx+strlen(endCertTag);
+	cleanCertificate += endCertTag;
 	currBadCertIdx=endCertStartIdx2+strlen(endTag);
  	/*
 	Copying the name of the certificate e.g XPGP CERTIFICATE. The end tag also has the
@@ -305,8 +282,7 @@ std::string cleanUpCertificate(std::string badCertificate)
 		}
 		else
 		{
-			cleanCertificate[currCleanCertIdx]=badCertificate[currBadCertIdx];
-			currCleanCertIdx++;
+			cleanCertificate += badCertificate[currBadCertIdx];
 			currBadCertIdx++;
 			
 		}
@@ -314,35 +290,17 @@ std::string cleanUpCertificate(std::string badCertificate)
 	/*
 	If the last character is a space we need to remove it.
 	*/
-	if(cleanCertificate[currCleanCertIdx-1]==' ')
+	if(cleanCertificate.substr(cleanCertificate.length()-1,1)==" ")
 	{
-		currCleanCertIdx--;	
+		cleanCertificate.erase(cleanCertificate.length()-1);
 	}
 	/*
 	Copying the end part(-----) of the end tag in the certificate. 
 	*/	
-        for(size_t i=0;i<strlen(commonTag);i++)
-	{
-		cleanCertificate[currCleanCertIdx]='-';
-		currCleanCertIdx++;
-	}
-	
-	cleanCertificate[currCleanCertIdx]='\n';
-	currCleanCertIdx++;
-	/*
-	Copying over the cleaned certificate to a new buffer.
-	*/
-	char * cleanCert=new char[currCleanCertIdx+1];
-        for(size_t i=0;i<currCleanCertIdx;i++ )
-	{
-		cleanCert[i]=cleanCertificate[i];
-	}
-	cleanCert[currCleanCertIdx]='\0';
-	std::string  cleanCertificateStr=cleanCert;
-        delete[] cleanCertificate;
-        delete[] cleanCert;
+	cleanCertificate += commonTag;
+	cleanCertificate += "\n";
 
-	return  cleanCertificateStr;
+	return  cleanCertificate;
 }
 
 int findEndIdxOfCertStartTag(std::string badCertificate)
