@@ -3097,6 +3097,8 @@ bool  p3ConnectMgr::loadList(std::list<RsItem *> load)
 	std::cerr << "p3ConnectMgr::loadList() Item Count: " << load.size() << std::endl;
 #endif
 
+	std::string ownId = getOwnId();
+
 	/* load the list of peers */
 	std::list<RsItem *>::iterator it;
 	for(it = load.begin(); it != load.end(); it++)
@@ -3105,7 +3107,7 @@ bool  p3ConnectMgr::loadList(std::list<RsItem *> load)
 		RsConfigKeyValueSet *vitem = dynamic_cast<RsConfigKeyValueSet *>(*it) ;
 		if (pitem)
 		{
-			if (pitem->pid == getOwnId())
+			if (pitem->pid == ownId)
 			{
 #ifdef CONN_DEBUG
 				std::cerr << "p3ConnectMgr::loadList() Own Config Item:" << std::endl;
