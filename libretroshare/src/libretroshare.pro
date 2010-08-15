@@ -369,6 +369,7 @@ HEADERS +=	util/folderiterator.h \
 			util/rsthreads.h \
 			util/rsversion.h \
 			util/rswin.h \
+			util/rsrandom.h \
 
 SOURCES +=	dbase/cachestrapper.cc \
 			dbase/fimonitor.cc \
@@ -485,4 +486,5 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsprint.cc \
 			util/rsthreads.cc \
 			util/rsversion.cc \
-			util/rswin.cc
+			util/rswin.cc \
+			util/rsrandom.cc
