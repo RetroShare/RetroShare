@@ -1801,6 +1801,7 @@ void    p3ConnectMgr::peerStatus(std::string id, const pqiIpAddrSet &addrs,
 
         std::map<std::string, peerConnectState>::iterator it;
 	bool isFriend = true;
+	bool newAddrs;
 
 	time_t now = time(NULL);
 
@@ -2007,6 +2008,8 @@ void    p3ConnectMgr::peerStatus(std::string id, const pqiIpAddrSet &addrs,
 
 		return;
 	}
+
+	newAddrs = it->second.ipAddrs.updateAddrs(addrs);
       } /****** STACK UNLOCK MUTEX *******/
 
 #ifdef CONN_DEBUG
@@ -2019,7 +2022,6 @@ void    p3ConnectMgr::peerStatus(std::string id, const pqiIpAddrSet &addrs,
 
 #endif
 
-	bool newAddrs = it->second.ipAddrs.updateAddrs(addrs);
 #ifndef P3CONNMGR_NO_AUTO_CONNECTION 
 
 #ifndef P3CONNMGR_NO_TCP_CONNECTIONS
@@ -2071,6 +2073,8 @@ void    p3ConnectMgr::peerConnectRequest(std::string id, struct sockaddr_in radd
 
 bool p3ConnectMgr::addFriend(std::string id, std::string gpg_id, uint32_t netMode, uint32_t visState, time_t lastContact)
 {
+    RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
     //set a new retry period, so the more frinds we have the less we launch conection attempts
     mRetryPeriod = MIN_RETRY_PERIOD + (mFriendList.size() * 2);
 
@@ -2091,10 +2095,7 @@ bool p3ConnectMgr::addFriend(std::string id, std::string gpg_id, uint32_t netMod
         std::cerr << "p3ConnectMgr::addFriend() " << id << "; gpg_id : " << gpg_id << std::endl;
 #endif
 
-	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
-
-
-        std::map<std::string, peerConnectState>::iterator it;
+	std::map<std::string, peerConnectState>::iterator it;
 	if (mFriendList.end() != mFriendList.find(id))
 	{
 #ifdef CONN_DEBUG
@@ -2547,35 +2548,34 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
 
 bool    p3ConnectMgr::setLocalAddress(std::string id, struct sockaddr_in addr)
 {
-
-        if (id == AuthSSL::getAuthSSL()->OwnId())
+	if (id == AuthSSL::getAuthSSL()->OwnId())
 	{
 		bool changed = false;
-            	if (mOwnState.currentlocaladdr.sin_addr.s_addr != addr.sin_addr.s_addr ||
-                mOwnState.currentlocaladdr.sin_port != addr.sin_port)
 		{
-			changed = true;
-		}
+			RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+			if (mOwnState.currentlocaladdr.sin_addr.s_addr != addr.sin_addr.s_addr ||
+			    mOwnState.currentlocaladdr.sin_port != addr.sin_port)
+			{
+				changed = true;
+			}
 
-                {
-                    RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
-                    mOwnState.currentlocaladdr = addr;
-                }
+			mOwnState.currentlocaladdr = addr;
+		}
 
 		if (changed)
 		{
-                	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
-                    	netReset();
+			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+			netReset();
 			#ifdef CONN_DEBUG_RESET
 			std::cerr << "p3ConnectMgr::setLocalAddress() Calling NetReset" << std::endl;
 			#endif
-                }
-            	return true;
-        }
+		}
+		return true;
+	}
 
-        RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
-        /* check if it is a friend */
-        std::map<std::string, peerConnectState>::iterator it;
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+	/* check if it is a friend */
+	std::map<std::string, peerConnectState>::iterator it;
 	if (mFriendList.end() == (it = mFriendList.find(id)))
 	{
 		if (mOthersList.end() == (it = mOthersList.find(id)))
@@ -2607,10 +2607,8 @@ bool    p3ConnectMgr::setExtAddress(std::string id, struct sockaddr_in addr)
 {
 	if (id == AuthSSL::getAuthSSL()->OwnId())
 	{
-		{
-			RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
-			mOwnState.currentserveraddr = addr;
-		}
+		RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+		mOwnState.currentserveraddr = addr;
 		return true;
 	}
 
@@ -2649,10 +2647,10 @@ bool p3ConnectMgr::setDynDNS(std::string id, std::string dyndns)
 {
     if (id == AuthSSL::getAuthSSL()->OwnId())
     {
+        RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
         mOwnState.dyndns = dyndns;
         return true;
     }
-
 
     RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
     /* check if it is a friend */
@@ -2720,22 +2718,30 @@ bool    p3ConnectMgr::updateAddressList(const std::string& id, const pqiIpAddrSe
 
 bool    p3ConnectMgr::setNetworkMode(std::string id, uint32_t netMode)
 {
-        if (id == AuthSSL::getAuthSSL()->OwnId())
+	if (id == AuthSSL::getAuthSSL()->OwnId())
 	{
-		uint32_t visState = mOwnState.visState;
+		uint32_t visState;
+		uint32_t oldNetMode;
+		{
+			RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+			visState = mOwnState.visState;
+			oldNetMode = mOwnState.netMode;
+		}
+
 		setOwnNetConfig(netMode, visState);
-                if ((netMode & RS_NET_MODE_ACTUAL) != (mOwnState.netMode & RS_NET_MODE_ACTUAL)) {
-		#ifdef CONN_DEBUG_RESET
-		std::cerr << "p3ConnectMgr::setNetworkMode() Calling NetReset" << std::endl;
-		#endif
-                    netReset();
-                }
+
+		if ((netMode & RS_NET_MODE_ACTUAL) != (oldNetMode & RS_NET_MODE_ACTUAL)) {
+			#ifdef CONN_DEBUG_RESET
+			std::cerr << "p3ConnectMgr::setNetworkMode() Calling NetReset" << std::endl;
+			#endif
+			netReset();
+		}
 		return true;
 	}
 
 	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 	/* check if it is a friend */
-        std::map<std::string, peerConnectState>::iterator it;
+	std::map<std::string, peerConnectState>::iterator it;
 	if (mFriendList.end() == (it = mFriendList.find(id)))
 	{
 		if (mOthersList.end() == (it = mOthersList.find(id)))
