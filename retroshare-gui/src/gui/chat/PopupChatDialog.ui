@@ -27,8 +27,11 @@
     <property name="bottomMargin">
      <number>0</number>
     </property>
-    <property name="spacing">
+    <property name="horizontalSpacing">
      <number>0</number>
+    </property>
+    <property name="verticalSpacing">
+     <number>2</number>
     </property>
     <item row="0" column="1" rowspan="2">
      <widget class="QFrame" name="avatarframe">
@@ -131,8 +134,14 @@ border-image: url(:/images/mystatus_bg.png);
     </item>
     <item row="0" column="2">
      <widget class="QSplitter" name="chatsplitter">
+      <property name="lineWidth">
+       <number>1</number>
+      </property>
       <property name="orientation">
        <enum>Qt::Vertical</enum>
+      </property>
+      <property name="handleWidth">
+       <number>5</number>
       </property>
       <widget class="QTextBrowser" name="textBrowser">
        <property name="sizePolicy">
@@ -152,6 +161,11 @@ border-image: url(:/images/mystatus_bg.png);
          <width>0</width>
          <height>0</height>
         </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QTextBrowser{border: 1px solid #B8B6B1;
+border-radius: 6px;
+background: white;}</string>
        </property>
        <property name="html">
         <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -179,6 +193,11 @@ p, li { white-space: pre-wrap; }
          <width>0</width>
          <height>30</height>
         </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QTextEdit{border: 1px solid #B8B6B1;
+border-radius: 6px;
+background: white;}</string>
        </property>
       </widget>
      </widget>
