@@ -1422,7 +1422,7 @@ Verfügbar: %3</translation>
     </message>
     <message>
         <source>Share Key</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Schlüssel Freigeben</translation>
     </message>
 </context>
 <context>
@@ -2196,7 +2196,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Contacts:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kontakte:</translation>
     </message>
     <message>
         <source>Description</source>
@@ -3312,6 +3312,21 @@ des Forums</translation>
     </message>
 </context>
 <context>
+    <name>ForumPage</name>
+    <message>
+        <source>Misc</source>
+        <translation type="unfinished">Verschiedenes</translation>
+    </message>
+    <message>
+        <source>Set message to read on activate</source>
+        <translation type="unfinished">Setze Nachricht als gelesen beim aktivieren</translation>
+    </message>
+    <message>
+        <source>Expand new messages</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ForumsDialog</name>
     <message>
         <source>Subscribe to Forum</source>
@@ -3379,27 +3394,27 @@ des Forums</translation>
     </message>
     <message>
         <source>File Request Confirmation</source>
-        <translation>Bestätigung der Dateianforderung </translation>
+        <translation type="obsolete">Bestätigung der Dateianforderung </translation>
     </message>
     <message>
         <source>The file has been added to your download list.</source>
-        <translation>Die Datei wurde zur Downloadliste hinzugefügt.</translation>
+        <translation type="obsolete">Die Datei wurde zur Downloadliste hinzugefügt.</translation>
     </message>
     <message>
         <source>File Request canceled</source>
-        <translation>Dateianforderung abgebrochen</translation>
+        <translation type="obsolete">Dateianforderung abgebrochen</translation>
     </message>
     <message>
         <source>The file has not been added to your download list, because you already have it.</source>
-        <translation>Die Datei wurde nich zur Downloadliste hinzugefügt, da sie schon vorhanden ist.</translation>
+        <translation type="obsolete">Die Datei wurde nich zur Downloadliste hinzugefügt, da sie schon vorhanden ist.</translation>
     </message>
     <message>
         <source>File Request Error</source>
-        <translation>Fehler bei der Dateianforderung</translation>
+        <translation type="obsolete">Fehler bei der Dateianforderung</translation>
     </message>
     <message>
         <source>The file link is malformed.</source>
-        <translation>Link ist fehlerhaft.</translation>
+        <translation type="obsolete">Link ist fehlerhaft.</translation>
     </message>
     <message>
         <source>View Whole Thread</source>
@@ -3567,6 +3582,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Content</source>
         <translation>Inhalt</translation>
+    </message>
+    <message>
+        <source>Mark as read</source>
+        <translation type="unfinished">Markiere als gelesen</translation>
+    </message>
+    <message>
+        <source>with children)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mark as unread</source>
+        <translation type="unfinished">Markiere als ungelesen</translation>
+    </message>
+    <message>
+        <source>with children</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4083,6 +4114,18 @@ Fill in your GPG password when asked, to sign your new key.</source>
     <message>
         <source>Start RetroShare when my system starts</source>
         <translation>Starte mit Windows</translation>
+    </message>
+    <message>
+        <source>Idle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Idle Time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>seconds </source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4799,7 +4842,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>News Feed</source>
-        <translation>News Feed</translation>
+        <translation type="obsolete">News Feed</translation>
     </message>
     <message>
         <source>Forums</source>
@@ -4860,6 +4903,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>You have %1 new messages</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Status</source>
+        <translation type="unfinished">Status</translation>
+    </message>
+    <message>
+        <source>Online</source>
+        <translation type="unfinished">Online</translation>
+    </message>
+    <message>
+        <source>Busy</source>
+        <translation type="unfinished">Beschäftigt</translation>
+    </message>
+    <message>
+        <source>Away</source>
+        <translation type="unfinished">Abwesend</translation>
     </message>
 </context>
 <context>
@@ -5172,35 +5231,19 @@ Wollen Sie sie speichern?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Add to To</source>
+        <source>Friend Recommendation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Add to Cc</source>
+        <source>Friend Recommendation(s)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Add to Bcc</source>
+        <source>I recommend a good friend of me, you can trust him too when you trust me. &lt;br&gt; Copy person link and paste to Friends list</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Address:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>To</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cc</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Bcc</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>                   |</source>
+        <source>No Title</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5522,27 +5565,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File Request Confirmation</source>
-        <translation>Datei Anforderung</translation>
+        <translation type="obsolete">Datei Anforderung</translation>
     </message>
     <message>
         <source>The file has been added to your download list.</source>
-        <translation>Die Datei wurde zur Downloadliste hinzugefügt.</translation>
+        <translation type="obsolete">Die Datei wurde zur Downloadliste hinzugefügt.</translation>
     </message>
     <message>
         <source>File Request canceled</source>
-        <translation>Datei Anforderung abgebrochen</translation>
+        <translation type="obsolete">Datei Anforderung abgebrochen</translation>
     </message>
     <message>
         <source>The file has not been added to your download list, because you already have it.</source>
-        <translation>Die Datei wurde nicht zur Downloadliste hinzugefügt, da Sie sie schon haben.</translation>
+        <translation type="obsolete">Die Datei wurde nicht zur Downloadliste hinzugefügt, da Sie sie schon haben.</translation>
     </message>
     <message>
         <source>File Request Error</source>
-        <translation>Datei Anforderungs Fehler</translation>
+        <translation type="obsolete">Datei Anforderungs Fehler</translation>
     </message>
     <message>
         <source>The file link is malformed.</source>
-        <translation>Dateiverknüpfung ist fehlerhaft.</translation>
+        <translation type="obsolete">Dateiverknüpfung ist fehlerhaft.</translation>
     </message>
     <message>
         <source>Save as...</source>
@@ -5889,11 +5932,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Online</source>
-        <translation>Online</translation>
+        <translation type="obsolete">Online</translation>
     </message>
     <message>
         <source>Busy</source>
-        <translation>Beschäftigt</translation>
+        <translation type="obsolete">Beschäftigt</translation>
     </message>
     <message>
         <source>Be right Back</source>
@@ -5901,7 +5944,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Away</source>
-        <translation>Abwesend</translation>
+        <translation type="obsolete">Abwesend</translation>
     </message>
     <message>
         <source>In a Call</source>
@@ -6011,6 +6054,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Sort by State</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Recomend this Friend to...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paste retroshare Link</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6735,8 +6786,8 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;News Feed&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Friends Storm&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6864,11 +6915,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Make Friend</source>
-        <translation>Als Freund wählen</translation>
+        <translation type="obsolete">Als Freund wählen</translation>
     </message>
     <message>
         <source>Remove Friend</source>
-        <translation>Freund entfernen</translation>
+        <translation type="obsolete">Freund entfernen</translation>
     </message>
     <message>
         <source>Send Mail</source>
@@ -6924,6 +6975,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Peer Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Write Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start Chat</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7082,27 +7141,27 @@ Do you want to send them a Message instead</source>
     </message>
     <message>
         <source>File Request Confirmation</source>
-        <translation>Datei Anforderung</translation>
+        <translation type="obsolete">Datei Anforderung</translation>
     </message>
     <message>
         <source>The file has been added to your download list.</source>
-        <translation>Die Datei wurde zur download liste hinzugefügt.</translation>
+        <translation type="obsolete">Die Datei wurde zur download liste hinzugefügt.</translation>
     </message>
     <message>
         <source>File Request canceled</source>
-        <translation>Datei Anforderung abgebrochen</translation>
+        <translation type="obsolete">Datei Anforderung abgebrochen</translation>
     </message>
     <message>
         <source>The file has not been added to your download list, because you already have it.</source>
-        <translation>Die datei wurde nich zu download list hinzugefügt, da sie es schon haben.</translation>
+        <translation type="obsolete">Die datei wurde nich zu download list hinzugefügt, da sie es schon haben.</translation>
     </message>
     <message>
         <source>File Request Error</source>
-        <translation>Datei Anforderung Fehler</translation>
+        <translation type="obsolete">Datei Anforderung Fehler</translation>
     </message>
     <message>
         <source>The file link is malformed.</source>
-        <translation>Datei verknüpfung ist fehlerhaft.</translation>
+        <translation type="obsolete">Datei verknüpfung ist fehlerhaft.</translation>
     </message>
     <message>
         <source>Drop file error.</source>
@@ -7326,6 +7385,18 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hide Status Column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Friends Storm</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Recomend this Friend to...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paste Person Link</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7635,7 +7706,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Badly formed RS link</source>
-        <translation>Falsch geformter RS Link</translation>
+        <translation type="obsolete">Falsch geformter RS Link</translation>
     </message>
     <message>
         <source>This RetroShare link is malformed. This is bug. Please contact the developers.</source>
@@ -7643,11 +7714,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File Request canceled</source>
-        <translation>Dateianforderung abgebrochen</translation>
+        <translation type="obsolete">Dateianforderung abgebrochen</translation>
     </message>
     <message>
         <source>The file has not been added to your download list, because you already have it, or you&apos;re already downloading it.</source>
-        <translation>Die Datei wird nicht heruntergeladen, das Sie sie schon haben oder gerade herunterladen.</translation>
+        <translation type="obsolete">Die Datei wird nicht heruntergeladen, das Sie sie schon haben oder gerade herunterladen.</translation>
     </message>
     <message>
         <source>File not found or file name not accepted.</source>
@@ -7691,7 +7762,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source> RetroShare - Encrypted Chat</source>
-        <translation>RetroShare - Verschlüsselter Chat</translation>
+        <translation type="obsolete">RetroShare - Verschlüsselter Chat</translation>
     </message>
     <message>
         <source>Paste retroshare Link</source>
@@ -7699,7 +7770,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Chatting with </source>
-        <translation>Chatte mit</translation>
+        <translation>Chatte mit </translation>
     </message>
     <message>
         <source>QLabel{
@@ -7737,11 +7808,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File Request Confirmation</source>
-        <translation>Bestätigung der Dateianforderung</translation>
+        <translation type="obsolete">Bestätigung der Dateianforderung</translation>
     </message>
     <message>
         <source>The file has been added to your download list.</source>
-        <translation>Die Datei wurde zur Downloadliste hinzugefügt.</translation>
+        <translation type="obsolete">Die Datei wurde zur Downloadliste hinzugefügt.</translation>
     </message>
     <message>
         <source>File Request Error</source>
@@ -7768,12 +7839,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>This RetroShare link is malformed. This is bug. Please contact the developers.
-
-Note: this possibly comes from a bug in Qt4.6. Try to right-click + copy link location, and paste in Transfer Tab.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save as...</source>
         <translation type="unfinished">Speichern als...</translation>
     </message>
@@ -7789,6 +7854,26 @@ Note: this possibly comes from a bug in Qt4.6. Try to right-click + copy link lo
         <source>Your Friend is offline 
 Do you want to send them a Message instead</source>
         <translation type="unfinished">Dein Freund ist Offline willst du ihm stattdesen eine Nachricht senden</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Attach a Picture</source>
+        <translation>Bild anhängen</translation>
+    </message>
+    <message>
+        <source>RetroShare - </source>
+        <translation></translation>
+    </message>
+    <message>
+        <source> is typing...</source>
+        <translation> macht gerade eine Eingabe...</translation>
     </message>
 </context>
 <context>
@@ -8233,6 +8318,62 @@ p, li { white-space: pre-wrap; }
         <source>Maybe password is wrong</source>
         <translation type="unfinished">Vielleicht ist das Passwort falsch</translation>
     </message>
+    <message>
+        <source>File Request Confirmation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The file has been added to your download list.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File Request canceled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The file has not been added to your download list, because you already have it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Friend Request Confirmation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The friend is already in your list.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The friend has been added to your list.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Friend Request canceled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The friend could not be added to your list.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The friend could not be found.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File Request Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The file link is malformed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File Request</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Process of RetroShare links is not implemented. Please use copy instead.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QuickStartWizard</name>
@@ -8478,6 +8619,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Chat</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Forum</source>
+        <translation type="unfinished">Forum</translation>
     </message>
 </context>
 <context>
@@ -9164,6 +9309,10 @@ Es hilft auch, wenn Sie sich hinter einer Firewall/VPN befinden.</translation>
     <message>
         <source>Sound</source>
         <translation type="unfinished">Sound</translation>
+    </message>
+    <message>
+        <source>Forum</source>
+        <translation type="unfinished">Forum</translation>
     </message>
 </context>
 <context>
@@ -10503,6 +10652,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Checking...</source>
         <translation type="unfinished">Überprüfe...</translation>
+    </message>
+    <message>
+        <source>Force Check</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
