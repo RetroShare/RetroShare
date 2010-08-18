@@ -107,6 +107,8 @@ private slots:
   bool fileSaveAs();
   void setCurrentFileName(const QString &fileName);
 
+    void updateStatus();
+
   
 private:
 

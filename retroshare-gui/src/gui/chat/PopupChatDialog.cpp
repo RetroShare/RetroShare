@@ -42,6 +42,7 @@
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rsfiles.h>
 #include <retroshare/rsnotify.h>
+#include <retroshare/rsstatus.h>
 #include <retroshare/rsiface.h>
 #include "gui/settings/rsharesettings.h"
 
@@ -60,6 +61,7 @@
 /*****
  * #define CHAT_DEBUG 1
  *****/
+
 
 static std::map<std::string, PopupChatDialog *> chatDialogs;
 
@@ -116,7 +118,7 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   //ui.textBrowser->setOpenExternalLinks ( false );
   //ui.textBrowser->setOpenLinks ( false );
 
-  QString title = QString::fromStdString(name) + " :" + tr(" RetroShare - Encrypted Chat")  ;
+  QString title = tr("RetroShare - ") + QString::fromStdString(name)  ;
   setWindowTitle(title);
     
   setWindowIcon(QIcon(QString(":/images/rstray3.png")));
@@ -156,9 +158,11 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
 
   updateAvatar() ;
   updatePeerAvatar(id) ;
+  updateStatus();
   
     // load settings
   processSettings(true);
+  
 }
 
 /** Destructor. */
@@ -356,6 +360,7 @@ void PopupChatDialog::updateStatusTyping()
 {
 	if(time(NULL) - last_status_send_time > 5)	// limit 'peer is typing' packets to at most every 10 sec
 	{
+
 		rsMsgs->sendStatusString(dialogId, rsiface->getConfig().ownName + " is typing...");
 		last_status_send_time = time(NULL) ;
 	}
@@ -1152,4 +1157,43 @@ void PopupChatDialog::setCurrentFileName(const QString &fileName)
     ui.textBrowser->document()->setModified(false);
 
     setWindowModified(false);
+}
+
+void PopupChatDialog::updateStatus()
+{
+    std::list<StatusInfo> statusInfo;
+    rsStatus->getStatus(statusInfo);
+
+    uint32_t status = 0;
+    std::list<StatusInfo>::iterator it = statusInfo.begin();
+
+    for(; it != statusInfo.end() ; it++){
+        if (it->id == dialogId) {
+            status = it->status;
+            break;
+        }
+    }
+
+    switch (status) {
+    case 0:
+        //here show offline state
+        ui.avatarlabel->setStyleSheet("QLabel#avatarlabel{ border-image:url(:/images/mystatus_bg_offline.png); }");
+        break;
+
+    case RS_STATUS_INACTIVE:
+        ui.avatarlabel->setStyleSheet("QLabel#avatarlabel{ border-image:url(:/images/mystatus_bg_idle.png); }");
+        break;
+
+    case RS_STATUS_ONLINE:
+        ui.avatarlabel->setStyleSheet("QLabel#avatarlabel{ border-image:url(:/images/mystatus_bg_online.png); }");
+        break;
+
+    case RS_STATUS_AWAY:
+        ui.avatarlabel->setStyleSheet("QLabel#avatarlabel{ border-image:url(:/images/mystatus_bg_idle.png); }");
+        break;
+
+    case RS_STATUS_BUSY:
+        ui.avatarlabel->setStyleSheet("QLabel#avatarlabel{ border-image:url(:/images/mystatus_bg_busy.png); }");
+        break;
+    }
 }
