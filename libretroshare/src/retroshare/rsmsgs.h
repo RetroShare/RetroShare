@@ -91,6 +91,25 @@ class MsgInfoSummary
 
 };
 
+class MsgTagInfo
+{
+public:
+	MsgTagInfo() {}
+
+	uint32_t tagId;
+	std::string msgId;
+};
+
+class MsgTagType
+{
+public:
+	MsgTagType() {}
+
+	/* map containing tagid-> pair (text, rgb color) */
+	std::map<uint32_t, std::pair<std::string, uint32_t> > types;
+
+};
+
 #define RS_CHAT_PUBLIC 				0x0001
 #define RS_CHAT_PRIVATE 			0x0002
 #define RS_CHAT_AVATAR_AVAILABLE 	0x0004
@@ -106,6 +125,9 @@ class ChatInfo
 
 std::ostream &operator<<(std::ostream &out, const MessageInfo &info);
 std::ostream &operator<<(std::ostream &out, const ChatInfo &info);
+//std::ostream &operator<<(std::ostream &out, const MsgTagInfo);
+//std::ostream &operator<<(std::ostream &out, const MsgTagType);
+
 
 class RsMsgs;
 extern RsMsgs   *rsMsgs;
@@ -130,6 +152,14 @@ virtual bool MessageToTrash(std::string mid, bool bTrash)   = 0;
 
 virtual bool MessageDelete(std::string mid)                 = 0;
 virtual bool MessageRead(std::string mid)                   = 0;
+
+/* message tagging */
+
+virtual bool MessageGetTagTypes(MsgTagType& tags) = 0;
+virtual bool MessageGetMsgTag(std::string msgId, MsgTagInfo& info) = 0;
+
+virtual bool MessageSetTagType(std::string& text, uint32_t tag_id, uint32_t rgb_color) = 0;
+virtual bool MessageSetMsgTag(MsgTagInfo& ) = 0;
 
 /****************************************/
 	/* Chat */

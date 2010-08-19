@@ -35,12 +35,14 @@ RsSerialType* init_item(RsChatMsgItem& );
 RsSerialType* init_item(RsChatStatusItem& );
 RsSerialType* init_item(RsChatAvatarItem& );
 RsSerialType* init_item(RsMsgItem& );
+RsSerialType* init_item(RsMsgTagType& );
+RsSerialType* init_item(RsMsgTags& );
 
 bool operator ==(const RsChatMsgItem& ,const  RsChatMsgItem& );
 bool operator ==(const RsChatStatusItem& , const RsChatStatusItem& );
 bool operator ==(const RsChatAvatarItem&, const RsChatAvatarItem&  );
-
-// TODO: does not test for msgId
+bool operator ==(const RsMsgTagType&, const RsMsgTagType& );
+bool operator ==(const RsMsgTags&, const RsMsgTags& );
 bool operator ==(const RsMsgItem&, const RsMsgItem& );
 
 

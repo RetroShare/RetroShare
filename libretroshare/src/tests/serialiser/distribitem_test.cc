@@ -1,4 +1,3 @@
-<<<<<<< .mine
 /*
  * libretroshare/src/serialiser: distribitem_test.cc
  *
@@ -30,7 +29,7 @@
 #include "serialiser/rschannelitems.h"
 #include "serialiser/rsforumitems.h"
 #include "serialiser/rsblogitems.h"
-#include "rsiface/rsdistrib.h"
+#include "retroshare/rsdistrib.h"
 #include "serialiser/rstlvutil.h"
 #include "util/utest.h"
 #include "support.h"

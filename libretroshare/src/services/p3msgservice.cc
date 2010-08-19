@@ -299,6 +299,16 @@ bool    p3MsgService::saveConfiguration()
 	for(mit = msgOutgoing.begin(); mit != msgOutgoing.end(); mit++)
 		written = written && pa_out -> SendItem(mit->second) ;
 
+	std::map<uint32_t, RsMsgTagType* >::iterator mit2;
+	std::map<std::string, RsMsgTags* >::iterator mit3;
+
+
+	for(mit2 = mTags.begin();  mit2 != mTags.end(); mit2++)
+		written = written && pa_out -> SendItem(mit2->second);
+
+	for(mit3 = mMsgTags.begin();  mit3 != mMsgTags.end(); mit3++)
+			written = written && pa_out -> SendItem(mit3->second);
+
 	setHash(out->gethash());
 	delete pa_out;	
 
@@ -322,9 +332,14 @@ bool    p3MsgService::loadConfiguration(std::string &loadHash)
 	rss->addSerialType(new RsMsgSerialiser(true)); // create serialiser for configuration
 
 	BinFileInterface *in = new BinFileInterface(msgfile.c_str(), BIN_FLAGS_READABLE | BIN_FLAGS_HASH_DATA);
-        pqiarchive *pa_in = new pqiarchive(rss, in, BIN_FLAGS_READABLE);
-	RsItem *item;
-	RsMsgItem *mitem;
+    pqiarchive *pa_in = new pqiarchive(rss, in, BIN_FLAGS_READABLE);
+
+
+    RsItem *item;
+    RsMsgItem *mitem;
+    RsMsgTagType* mtt;
+    RsMsgTags* mti;
+
 
 	std::list<RsMsgItem*> items;
 
@@ -338,6 +353,14 @@ bool    p3MsgService::loadConfiguration(std::string &loadHash)
 				mMsgUniqueId = mitem->msgId + 1;
 			}
 			items.push_back(mitem);
+		}
+		else if(NULL != (mtt = dynamic_cast<RsMsgTagType *>(item)))
+		{
+			mTags.insert(std::pair<uint32_t, RsMsgTagType* >(mtt->tagId, mtt));
+		}
+		else if(NULL != (mti = dynamic_cast<RsMsgTags *>(item)))
+		{
+			mMsgTags.insert(std::pair<std::string, RsMsgTags* >(mti->msgId, mti));
 		}
 		else
 		{
@@ -736,6 +759,61 @@ bool p3MsgService::MessageToDraft(MessageInfo &info)
 
     return false;
 }
+
+bool 	p3MsgService::MessageGetTagTypes(MsgTagType& tags)
+{
+	std::map<uint32_t, RsMsgTagType*>::iterator mit;
+
+	for(mit = mTags.begin(); mit != mTags.end(); mit++)
+	{
+		std::pair<std::string, uint32_t> p(mit->second->text, mit->second->rgb_color);
+		tags.types.insert(std::pair<uint32_t, std::pair<std::string, uint32_t> >(mit->first, p));
+	}
+
+	return true;
+}
+
+bool 	p3MsgService::MessageGetMsgTag(std::string msgId, MsgTagInfo& info)
+{
+
+	std::map<std::string, RsMsgTags*>::iterator mit;
+
+
+	if(mMsgTags.end() != (mit = mMsgTags.find(msgId)))
+	{
+		info.msgId = mit->second->msgId;
+		info.tagId = mit->second->tagId;
+
+		return true;
+	}
+
+	std::cerr << "p3MsgService::MessageGetMsgTag: no tag found for msgId " << msgId << std::endl;
+
+	return false;
+}
+
+bool  	p3MsgService::MessageSetTagType(std::string& text, uint32_t tagId, uint32_t rgb_color)
+{
+
+	RsMsgTagType* tagType = new RsMsgTagType();
+	tagType->rgb_color = rgb_color;
+	tagType->tagId = tagId;
+	tagType->text = text;
+
+	mTags.insert(std::pair<uint32_t, RsMsgTagType*>(tagId, tagType));
+
+}
+
+bool 	p3MsgService::MessageSetMsgTag(MsgTagInfo& tagInfo)
+{
+	RsMsgTags* tag = new RsMsgTags();
+
+	tag->msgId = tagInfo.msgId;
+	tag->tagId = tagInfo.tagId;
+
+	mMsgTags.insert(std::pair<std::string, RsMsgTags*>(tag->msgId, tag));
+}
+
 
 /* move message to trash based on the unique mid */
 bool p3MsgService::MessageToTrash(std::string mid, bool bTrash)

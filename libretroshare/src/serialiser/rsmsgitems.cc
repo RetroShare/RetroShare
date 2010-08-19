@@ -412,8 +412,43 @@ std::ostream &RsMsgItem::print(std::ostream &out, uint16_t indent)
         return out;
 }
 
+void RsMsgTagType::clear()
+{
+	text.clear();
+	tagId = 0;
+	rgb_color = 0;
+}
 
-uint32_t    RsMsgSerialiser::sizeItem(RsMsgItem *item)
+
+void RsMsgTags::clear()
+{
+	msgId.clear();
+	tagId = 0;
+}
+
+std::ostream& RsMsgTagType::print(std::ostream &out, uint16_t indent)
+{
+
+	return out;
+}
+
+std::ostream& RsMsgTags::print(std::ostream &out, uint16_t indent)
+{
+
+	return out;
+}
+
+RsMsgTagType::~RsMsgTagType()
+{
+	return;
+}
+
+RsMsgTags::~RsMsgTags()
+{
+	return;
+}
+
+uint32_t    RsMsgSerialiser::sizeMsgItem(RsMsgItem *item)
 {
 	uint32_t s = 8; /* header */
 	s += 4; /* msgFlags */
@@ -437,9 +472,9 @@ uint32_t    RsMsgSerialiser::sizeItem(RsMsgItem *item)
 }
 
 /* serialise the data to the buffer */
-bool     RsMsgSerialiser::serialiseItem(RsMsgItem *item, void *data, uint32_t *pktsize)
+bool     RsMsgSerialiser::serialiseMsgItem(RsMsgItem *item, void *data, uint32_t *pktsize)
 {
-	uint32_t tlvsize = sizeItem(item);
+	uint32_t tlvsize = sizeMsgItem(item);
 	uint32_t offset = 0;
 
 	if (*pktsize < tlvsize)
@@ -489,7 +524,7 @@ bool     RsMsgSerialiser::serialiseItem(RsMsgItem *item, void *data, uint32_t *p
 	return ok;
 }
 
-RsMsgItem *RsMsgSerialiser::deserialiseItem(void *data, uint32_t *pktsize)
+RsMsgItem *RsMsgSerialiser::deserialiseMsgItem(void *data, uint32_t *pktsize)
 {
 	/* get the type and size */
 	uint32_t rstype = getRsItemId(data);
@@ -554,19 +589,289 @@ RsMsgItem *RsMsgSerialiser::deserialiseItem(void *data, uint32_t *pktsize)
 	return item;
 }
 
-uint32_t    RsMsgSerialiser::size(RsItem *item)
+
+uint32_t RsMsgSerialiser::sizeTagItem(RsMsgTagType* item)
 {
-	return sizeItem((RsMsgItem *) item);
+	uint32_t s = 8; /* header */
+
+	s += GetTlvStringSize(item->text);
+	s +=  4; /* color */
+	s += 4; /* tag id */
+
+	return s;
 }
 
-bool     RsMsgSerialiser::serialise(RsItem *item, void *data, uint32_t *pktsize)
+
+bool RsMsgSerialiser::serialiseTagItem(RsMsgTagType *item, void *data, uint32_t* pktsize)
 {
-	return serialiseItem((RsMsgItem *) item, data, pktsize);
+	uint32_t tlvsize = sizeTagItem(item);
+	uint32_t offset = 0;
+
+	if (*pktsize < tlvsize)
+		return false; /* not enough space */
+
+	*pktsize = tlvsize;
+
+	bool ok = true;
+
+	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+
+#ifdef RSSERIAL_DEBUG
+	std::cerr << "RsMsgSerialiser::serialiseMsgTagItem() Header: " << ok << std::endl;
+	std::cerr << "RsMsgSerialiser::serialiseMsgTagItem() Size: " << tlvsize << std::endl;
+#endif
+
+	/* skip the header */
+	offset += 8;
+
+	/* add mandatory parts first */
+
+	ok &= SetTlvString(data,tlvsize,&offset, TLV_TYPE_STR_NAME, item->text);
+	ok &= setRawUInt32(data, tlvsize, &offset, item->rgb_color);
+	ok &= setRawUInt32(data, tlvsize, &offset, item->tagId);
+
+	if (offset != tlvsize)
+	{
+		ok = false;
+#ifdef RSSERIAL_DEBUG
+		std::cerr << "RsMsgSerialiser::serialiseMsgTagItem() Size Error! " << std::endl;
+#endif
+	}
+
+	return ok;
 }
 
-RsItem *RsMsgSerialiser::deserialise(void *data, uint32_t *pktsize)
+RsMsgTagType* RsMsgSerialiser::deserialiseTagItem(void *data,uint32_t* pktsize)
 {
-	return deserialiseItem(data, pktsize);
+	/* get the type and size */
+	uint32_t rstype = getRsItemId(data);
+	uint32_t rssize = getRsItemSize(data);
+
+	uint32_t offset = 0;
+
+
+	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
+		(RS_SERVICE_TYPE_MSG != getRsItemService(rstype)) ||
+		(RS_PKT_SUBTYPE_MSG_TAG_TYPE != getRsItemSubType(rstype)))
+	{
+		return NULL; /* wrong type */
+	}
+
+	if (*pktsize < rssize)    /* check size */
+		return NULL; /* not enough data */
+
+	/* set the packet length */
+	*pktsize = rssize;
+
+	bool ok = true;
+
+	/* ready to load */
+	RsMsgTagType *item = new RsMsgTagType();
+	item->clear();
+
+	/* skip the header */
+	offset += 8;
+
+
+	/* get mandatory parts first */
+	ok &= GetTlvString(data,rssize,&offset,TLV_TYPE_STR_NAME,item->text);
+	ok &= getRawUInt32(data, rssize, &offset, &(item->rgb_color));
+	ok &= getRawUInt32(data, rssize, &offset, &(item->tagId));
+
+	if (offset != rssize)
+	{
+		/* error */
+		delete item;
+		return NULL;
+	}
+
+	if (!ok)
+	{
+		delete item;
+		return NULL;
+	}
+
+	return item;
+}
+
+uint32_t RsMsgSerialiser::sizeMsgTagItem(RsMsgTags* item)
+{
+	uint32_t s = 8; /* header */
+
+	s += GetTlvStringSize(item->msgId);
+	s += 4; /* tag id */
+
+	return s;
+}
+
+bool RsMsgSerialiser::serialiseMsgTagItem(RsMsgTags *item, void *data, uint32_t* pktsize)
+{
+	uint32_t tlvsize = sizeMsgTagItem(item);
+	uint32_t offset = 0;
+
+	if (*pktsize < tlvsize)
+		return false; /* not enough space */
+
+	*pktsize = tlvsize;
+
+	bool ok = true;
+
+	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+
+#ifdef RSSERIAL_DEBUG
+	std::cerr << "RsMsgSerialiser::serialiseMsgTagItem() Header: " << ok << std::endl;
+	std::cerr << "RsMsgSerialiser::serialiseMsgTagItem() Size: " << tlvsize << std::endl;
+#endif
+
+	/* skip the header */
+	offset += 8;
+
+	ok &= SetTlvString(data,tlvsize,&offset, TLV_TYPE_STR_MSGID, item->msgId);
+	ok &= setRawUInt32(data, tlvsize, &offset, item->tagId);
+
+	if (offset != tlvsize)
+	{
+		ok = false;
+#ifdef RSSERIAL_DEBUG
+		std::cerr << "RsMsgSerialiser::serialiseMsgTagItem() Size Error! " << std::endl;
+#endif
+	}
+
+	return ok;
+}
+
+RsMsgTags* RsMsgSerialiser::deserialiseMsgTagItem(void* data, uint32_t* pktsize)
+{
+	/* get the type and size */
+	uint32_t rstype = getRsItemId(data);
+	uint32_t rssize = getRsItemSize(data);
+
+	uint32_t offset = 0;
+
+
+	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
+		(RS_SERVICE_TYPE_MSG != getRsItemService(rstype)) ||
+		(RS_PKT_SUBTYPE_MSG_TAGS != getRsItemSubType(rstype)))
+	{
+		return NULL; /* wrong type */
+	}
+
+	if (*pktsize < rssize)    /* check size */
+		return NULL; /* not enough data */
+
+	/* set the packet length */
+	*pktsize = rssize;
+
+	bool ok = true;
+
+	/* ready to load */
+	RsMsgTags *item = new RsMsgTags();
+	item->clear();
+
+	/* skip the header */
+	offset += 8;
+
+
+	/* get mandatory parts first */
+	ok &= GetTlvString(data,rssize,&offset,TLV_TYPE_STR_MSGID,item->msgId);
+	ok &= getRawUInt32(data, rssize, &offset, &(item->tagId));
+
+	if (offset != rssize)
+	{
+		/* error */
+		delete item;
+		return NULL;
+	}
+
+	if (!ok)
+	{
+		delete item;
+		return NULL;
+	}
+
+	return item;
+}
+
+uint32_t    RsMsgSerialiser::size(RsItem *i)
+{
+	RsMsgItem *mi;
+	RsMsgTagType *mtt;
+	RsMsgTags *mts;
+
+	/* in order of frequency */
+	if (NULL != (mi = dynamic_cast<RsMsgItem *>(i)))
+	{
+		return sizeMsgItem(mi);
+	}
+	else if (NULL != (mtt = dynamic_cast<RsMsgTagType *>(i)))
+	{
+		return sizeTagItem(mtt);
+	}
+	else if (NULL != (mts = dynamic_cast<RsMsgTags *>(i)))
+	{
+		return sizeMsgTagItem(mts);
+	}
+
+	return 0;
+}
+
+bool     RsMsgSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsize)
+{
+#ifdef RSSERIAL_DEBUG
+	std::cerr << "RsMsgSerialiser::serialise()" << std::endl;
+#endif
+
+	RsMsgItem *mi;
+	RsMsgTagType *mtt;
+	RsMsgTags *mts;
+
+	if (NULL != (mi = dynamic_cast<RsMsgItem *>(i)))
+	{
+		return serialiseMsgItem(mi, data, pktsize);
+	}
+	else if (NULL != (mtt = dynamic_cast<RsMsgTagType *>(i)))
+	{
+		return serialiseTagItem(mtt, data, pktsize);
+	}
+	else if (NULL != (mts = dynamic_cast<RsMsgTags *>(i)))
+	{
+		return serialiseMsgTagItem(mts, data, pktsize);
+	}
+	return false;
+}
+
+RsItem* RsMsgSerialiser::deserialise(void *data, uint32_t *pktsize)
+{
+#ifdef RSSERIAL_DEBUG
+	std::cerr << "RsMsgSerialiser::deserialise()" << std::endl;
+#endif
+
+	/* get the type and size */
+	uint32_t rstype = getRsItemId(data);
+
+	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
+		(RS_SERVICE_TYPE_MSG != getRsItemService(rstype)))
+	{
+		return NULL; /* wrong type */
+	}
+
+	switch(getRsItemSubType(rstype))
+	{
+		case RS_PKT_SUBTYPE_DEFAULT:
+			return deserialiseMsgItem(data, pktsize);
+			break;
+		case RS_PKT_SUBTYPE_MSG_TAG_TYPE:
+			return deserialiseTagItem(data, pktsize);
+			break;
+		case RS_PKT_SUBTYPE_MSG_TAGS:
+			return deserialiseMsgTagItem(data, pktsize);
+			break;
+		default:
+			return NULL;
+			break;
+	}
+
+	return NULL;
 }
 
 

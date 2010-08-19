@@ -107,6 +107,26 @@ bool p3Msgs::MessageRead(std::string mid)
 	return 1;
 }
 
+bool 	p3Msgs::MessageGetTagTypes(MsgTagType& tags)
+{
+	mMsgSrv->MessageGetTagTypes(tags);
+}
+
+bool 	p3Msgs::MessageGetMsgTag(std::string msgId, MsgTagInfo& info)
+{
+	mMsgSrv->MessageGetMsgTag(msgId, info);
+}
+
+bool  p3Msgs::MessageSetTagType(std::string& text, uint32_t tag_id, uint32_t rgb_color)
+{
+	mMsgSrv->MessageSetTagType(text, tag_id, rgb_color);
+}
+
+bool 	p3Msgs::MessageSetMsgTag(MsgTagInfo& tagInfo)
+{
+	mMsgSrv->MessageSetMsgTag(tagInfo);
+}
+
 /****************************************/
 /****************************************/
 bool 	p3Msgs::ChatSend(ChatInfo &ci)

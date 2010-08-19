@@ -47,6 +47,11 @@ const uint32_t RS_CHAT_FLAG_CUSTOM_STATE_AVAILABLE = 0x0080;
 const uint8_t RS_PKT_SUBTYPE_CHAT_AVATAR = 0x03 ;	// default is 0x01
 const uint8_t RS_PKT_SUBTYPE_CHAT_STATUS = 0x04 ;	// default is 0x01
 
+// for defining tags themselves and msg tags
+const uint8_t RS_PKT_SUBTYPE_MSG_TAG_TYPE = 0x03;
+const uint8_t RS_PKT_SUBTYPE_MSG_TAGS = 0x04;
+
+
 class RsChatItem: public RsItem
 {
 	public:
@@ -178,6 +183,43 @@ std::ostream &print(std::ostream &out, uint16_t indent = 0);
 	RsTlvFileSet attachment;
 };
 
+class RsMsgTagType : public RsItem
+{
+public:
+	RsMsgTagType()
+		:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_MSG,
+			RS_PKT_SUBTYPE_MSG_TAG_TYPE)
+		{ return; }
+
+	std::ostream &print(std::ostream &out, uint16_t indent = 0);
+
+
+	virtual ~RsMsgTagType();
+	virtual void clear();
+
+	std::string text;
+	uint32_t rgb_color;
+	uint32_t tagId;
+
+};
+
+class RsMsgTags : public RsItem
+{
+public:
+	RsMsgTags()
+		:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_MSG,
+			RS_PKT_SUBTYPE_MSG_TAGS)
+		{ return; }
+
+	std::ostream &print(std::ostream &out, uint16_t indent = 0);
+
+	virtual ~RsMsgTags();
+	virtual void clear();
+
+	std::string msgId;
+	uint32_t tagId;
+};
+
 class RsMsgSerialiser: public RsSerialType
 {
 	public:
@@ -198,9 +240,19 @@ virtual	RsItem *    deserialise(void *data, uint32_t *size);
 
 	private:
 
-virtual	uint32_t    sizeItem(RsMsgItem *);
-virtual	bool        serialiseItem  (RsMsgItem *item, void *data, uint32_t *size);
-virtual	RsMsgItem *deserialiseItem(void *data, uint32_t *size);
+virtual	uint32_t    sizeMsgItem(RsMsgItem *);
+virtual	bool        serialiseMsgItem  (RsMsgItem *item, void *data, uint32_t *size);
+virtual	RsMsgItem *deserialiseMsgItem(void *data, uint32_t *size);
+
+virtual	uint32_t    sizeTagItem(RsMsgTagType *);
+virtual	bool        serialiseTagItem  (RsMsgTagType *item, void *data, uint32_t *size);
+virtual	RsMsgTagType *deserialiseTagItem(void *data, uint32_t *size);
+
+virtual	uint32_t    sizeMsgTagItem(RsMsgTags *);
+virtual	bool        serialiseMsgTagItem  (RsMsgTags *item, void *data, uint32_t *size);
+virtual	RsMsgTags *deserialiseMsgTagItem(void *data, uint32_t *size);
+
+
 
 	bool m_bConfiguration; // is set to true for saving configuration (enables serialising msgId)
 };

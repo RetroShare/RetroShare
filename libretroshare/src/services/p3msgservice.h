@@ -66,6 +66,11 @@ bool    MessageSend(MessageInfo &info);
 bool    MessageToDraft(MessageInfo &info);
 bool    MessageToTrash(std::string mid, bool bTrash);
 
+bool 	MessageGetTagTypes(MsgTagType& tags);
+bool 	MessageGetMsgTag(std::string msgId, MsgTagInfo& info);
+
+bool  	MessageSetTagType(std::string& text, uint32_t tag_id, uint32_t rgb_color);
+bool 	MessageSetMsgTag(MsgTagInfo& );
 
 void    loadWelcomeMsg(); /* startup message */
 
@@ -108,6 +113,12 @@ RsMsgItem *initMIRsMsg(MessageInfo &info, std::string to);
 
 		/* List of notifications to post via Toaster */
 	std::list<MsgInfoSummary> msgNotifications;
+
+	/* maps for tags types and msg tags */
+
+	std::map<uint32_t, RsMsgTagType*> mTags;
+	std::map<std::string, RsMsgTags*> mMsgTags;
+
 
 	Indicator msgChanged;
 	uint32_t mMsgUniqueId;

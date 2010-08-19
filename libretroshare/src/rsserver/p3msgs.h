@@ -63,6 +63,12 @@ class p3Msgs: public RsMsgs
 	  virtual bool MessageDelete(std::string mid);
 	  virtual bool MessageRead(std::string mid);
 
+	  virtual bool 	MessageGetTagTypes(MsgTagType& tags);
+	  virtual bool 	MessageGetMsgTag(std::string msgId, MsgTagInfo& info);
+
+	  virtual bool  MessageSetTagType(std::string& text, uint32_t tag_id, uint32_t rgb_color);
+	  virtual bool 	MessageSetMsgTag(MsgTagInfo& );
+
 	  /*!
 	   * gets avatar from peer, image data in jpeg format
 	   */

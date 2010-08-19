@@ -74,12 +74,32 @@ RsSerialType* init_item(RsMsgItem& mi)
 	randString(LARGE_STR, mi.message);
 	randString(SHORT_STR, mi.subject);
 
-	mi.recvTime = rand()%32;
+	mi.msgId = rand()%324232;
+	mi.recvTime = rand()%44252;
 	mi.sendTime = mi.recvTime;
 	mi.msgFlags = mi.recvTime;
 
+	return new RsMsgSerialiser(true);
+}
+
+RsSerialType* init_item(RsMsgTagType& mtt)
+{
+	mtt.rgb_color = rand()%5353;
+	mtt.tagId = rand()%24242;
+	randString(SHORT_STR, mtt.text);
+
 	return new RsMsgSerialiser();
 }
+
+
+RsSerialType* init_item(RsMsgTags& mt)
+{
+	randString(SHORT_STR, mt.msgId);
+	mt.tagId = rand()%3334;
+
+	return new RsMsgSerialiser();
+}
+
 
 bool operator ==(const RsChatMsgItem& cmiLeft,const  RsChatMsgItem& cmiRight)
 {
@@ -131,6 +151,7 @@ bool operator ==(const RsMsgItem& miLeft, const RsMsgItem& miRight)
 	if(miLeft.recvTime != miRight.recvTime) return false;
 	if(miLeft.sendTime != miRight.sendTime) return false;
 	if(miLeft.subject != miRight.subject) return false;
+	if(miLeft.msgId != miRight.msgId) return false;
 
 	if(!(miLeft.attachment == miRight.attachment)) return false;
 	if(!(miLeft.msgbcc == miRight.msgbcc)) return false;
@@ -140,7 +161,22 @@ bool operator ==(const RsMsgItem& miLeft, const RsMsgItem& miRight)
 	return true;
 }
 
+bool operator ==(const RsMsgTagType& mttLeft, const RsMsgTagType& mttRight)
+{
+	if(mttLeft.rgb_color != mttRight.rgb_color) return false;
+	if(mttLeft.tagId != mttRight.tagId) return false;
+	if(mttLeft.text != mttRight.text) return false;
 
+	return true;
+}
+
+bool operator ==(const RsMsgTags& mtLeft, const RsMsgTags& mtRight)
+{
+	if(mtLeft.msgId != mtRight.msgId) return false;
+	if(mtLeft.tagId != mtRight.tagId) return false;
+
+	return true;
+}
 
 int main()
 {
@@ -148,6 +184,10 @@ int main()
 	test_RsItem<RsChatStatusItem >(); REPORT("Serialise/Deserialise RsChatStatusItem");
 	test_RsItem<RsChatAvatarItem >(); REPORT("Serialise/Deserialise RsChatAvatarItem");
 	test_RsItem<RsMsgItem >(); REPORT("Serialise/Deserialise RsMsgItem");
+	test_RsItem<RsMsgTagType>(); REPORT("Serialise/Deserialise RsMsgTagType");
+	test_RsItem<RsMsgTags>(); REPORT("Serialise/Deserialise RsMsgTags");
+
+	std::cerr << std::endl;
 
 	FINALREPORT("RsMsgItem Tests");
 
