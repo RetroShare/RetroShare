@@ -36,6 +36,7 @@ extern RsStatus *rsStatus;
 #include <list>
 
 
+const uint32_t RS_STATUS_OFFLINE = 0x0000;
 const uint32_t RS_STATUS_AWAY    = 0x0001;
 const uint32_t RS_STATUS_BUSY    = 0x0002;
 const uint32_t RS_STATUS_ONLINE  = 0x0003;
@@ -79,7 +80,13 @@ class RsStatus
 	 * This retrieves the status info on the client's peers
 	 * @param statusInfo is populated with client's peer's status
 	 */
-	virtual bool getStatus(std::list<StatusInfo>& statusInfo) = 0;
+	virtual bool getStatusList(std::list<StatusInfo>& statusInfo) = 0;
+
+	/**
+	 * This retrieves the status info one peer
+	 * @param statusInfo is populated with client's peer's status
+	 */
+	virtual bool getStatus(std::string &id, StatusInfo &statusInfo) = 0;
 
 	/**
 	 * send the client's status to his/her peers
@@ -88,11 +95,6 @@ class RsStatus
 	 * @return will return false if status info does not belong to client
 	 */
 	virtual bool sendStatus(std::string id, uint32_t status)                 = 0;
-
-	/**
-	 * checks to see if any status items have been received
-	 */
-	virtual bool statusAvailable() = 0;
 
 	/**
 	 * translates the status field of a peer to a string

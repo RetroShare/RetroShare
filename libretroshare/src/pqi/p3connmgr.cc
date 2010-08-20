@@ -1772,6 +1772,7 @@ bool p3ConnectMgr::connectResult(std::string id, bool success, uint32_t flags, s
 	{
 		it->second.state &= (~RS_PEER_S_CONNECTED);
 		it->second.actions |= RS_PEER_DISCONNECTED;
+		mStatusChanged = true;
 
 		it->second.lastcontact = time(NULL);  /* time of disconnect */
 

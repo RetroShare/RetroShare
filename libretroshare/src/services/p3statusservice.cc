@@ -25,6 +25,7 @@
 
 #include "services/p3statusservice.h"
 #include "serialiser/rsstatusitems.h"
+#include "retroshare/rsiface.h"
 
 #include <iostream>
 #include <map>
@@ -55,6 +56,10 @@ p3StatusService::~p3StatusService()
 
 bool p3StatusService::getOwnStatus(StatusInfo& statusInfo)
 {
+#ifdef STATUS_DEBUG
+	std::cerr << "p3StatusService::getOwnStatus() " << std::endl;
+#endif
+
 	std::map<std::string, StatusInfo>::iterator it;
 	std::string ownId = mConnMgr->getOwnId();
 
@@ -71,76 +76,45 @@ bool p3StatusService::getOwnStatus(StatusInfo& statusInfo)
 	return true;
 }
 
-bool p3StatusService::getStatus(std::list<StatusInfo>& statusInfo)
+bool p3StatusService::getStatusList(std::list<StatusInfo>& statusInfo)
 {
-
-	time_t time_now = time(NULL);
-
 #ifdef STATUS_DEBUG
-	std::cerr << "p3StatusService::getStatus() " << std::endl;
+	std::cerr << "p3StatusService::getStatusList() " << std::endl;
 #endif
 
 	statusInfo.clear();
 
-	std::list<RsStatusItem* > status_items;
-	getStatusQueue(status_items);
+	RsStackMutex stack(mStatusMtx);
+
+	// fill up statusInfo list with this information
 	std::map<std::string, StatusInfo>::iterator mit;
-	std::list<std::string> peers, peersOnline;
-	std::list<std::string>::iterator pit, pit_online;
-
-	{
-		RsStackMutex stack(mStatusMtx);
-
-		/* first update map */
-
-		mConnMgr->getFriendList(peers);
-		mConnMgr->getOnlineList(peersOnline);
-		pit_online = peersOnline.begin();
-
-		// ensure member map is up to date with all client's peers
-		for(pit = peers.begin(); pit != peers.end(); pit++){
-
-			mit = mStatusInfoMap.find(*pit);
-
-			if(mit == mStatusInfoMap.end()){
-
-				StatusInfo info;
-				info.id = *pit;
-				info.status = RS_STATUS_ONLINE;
-				info.time_stamp = time_now;
-				std::pair<std::string, StatusInfo> pr(*pit, info);
-				mStatusInfoMap.insert(pr);
-			}
-
-		}
-
-		// now note members who have sent specific status updates
-		while (status_items.size()){
-			RsStatusItem* si = status_items.front();
-			status_items.pop_front();
-
-			mit = mStatusInfoMap.find(si->PeerId());
-
-			if(mit != mStatusInfoMap.end()){
-				mit->second.id = si->PeerId();
-				mit->second.status = si->status;
-				mit->second.time_stamp = si->sendTime;
-#ifdef	STATUS_DEBUG
-			} else {
-				std::cerr << "p3GetStatus() " << "Could not find Peer" << si->PeerId();
-				std::cerr << std::endl;
-#endif
-			}
-
-			delete (si);
-		}
-
-		// then fill up statusInfo list with this information
-		for(mit = mStatusInfoMap.begin(); mit != mStatusInfoMap.end(); mit++){
-			statusInfo.push_back(mit->second);
-		}
-
+	for(mit = mStatusInfoMap.begin(); mit != mStatusInfoMap.end(); mit++){
+		statusInfo.push_back(mit->second);
 	}
+	
+	return true;
+}
+
+bool p3StatusService::getStatus(std::string &id, StatusInfo &statusInfo)
+{
+#ifdef STATUS_DEBUG
+	std::cerr << "p3StatusService::getStatus() " << std::endl;
+#endif
+
+	RsStackMutex stack(mStatusMtx);
+
+	std::map<std::string, StatusInfo>::iterator mit = mStatusInfoMap.find(id);
+	
+	if (mit == mStatusInfoMap.end()) {
+		/* return fake status info as offline */
+		statusInfo = StatusInfo();
+
+		statusInfo.id = id;
+		statusInfo.status = RS_STATUS_OFFLINE;
+		return false;
+	}
+	
+	statusInfo = mit->second;
 
 	return true;
 }
@@ -199,36 +173,63 @@ bool p3StatusService::sendStatus(const std::string &id, uint32_t status)
 	return true;
 }
 
-bool p3StatusService::statusAvailable(){
-	return receivedItems();
-}
-
 /******************************/
 
-void p3StatusService::getStatusQueue(std::list<RsStatusItem* > &ilist)
+void p3StatusService::receiveStatusQueue()
 {
-	time_t time_now = time(NULL);
+	std::map<std::string, uint32_t> changed;
 
-	RsItem* item;
+	{
+		RsStackMutex stack(mStatusMtx);
 
-	while(NULL != (item = recvItem())){
+		RsItem* item;
 
-		RsStatusItem* status_item = dynamic_cast<RsStatusItem*>(item);
+		while(NULL != (item = recvItem())){
 
-		if(status_item == NULL) {
-			std::cerr << "p3Status::getStatusQueue() " << "Failed to cast Item \n" << std::endl;
-			delete (item);
-			continue;
-		}
+			RsStatusItem* status_item = dynamic_cast<RsStatusItem*>(item);
+
+			if(status_item == NULL) {
+				std::cerr << "p3Status::getStatusQueue() " << "Failed to cast Item \n" << std::endl;
+				delete (item);
+				continue;
+			}
 
 #ifdef STATUS_DEBUG
-                std::cerr << "p3StatusService::getStatusQueue()" << std::endl;
-                std::cerr << "PeerId : " << status_item->PeerId() << std::endl;
-                std::cerr << "Status: " << status_item->status << std::endl;
-                std::cerr << "Got status Item" << std::endl;
+			std::cerr << "p3StatusService::getStatusQueue()" << std::endl;
+			std::cerr << "PeerId : " << status_item->PeerId() << std::endl;
+			std::cerr << "Status: " << status_item->status << std::endl;
+			std::cerr << "Got status Item" << std::endl;
 #endif
-                status_item->recvTime = time_now;
-                ilist.push_back(status_item);
+
+			std::map<std::string, StatusInfo>::iterator mit = mStatusInfoMap.find(status_item->PeerId());
+
+			if(mit != mStatusInfoMap.end()){
+				mit->second.id = status_item->PeerId();
+				
+				if (mit->second.status != status_item->status) {
+					changed [mit->second.id] = status_item->status;
+				}
+
+				mit->second.status = status_item->status;
+				mit->second.time_stamp = status_item->sendTime;
+#ifdef	STATUS_DEBUG
+			} else {
+				std::cerr << "getStatus() " << "Could not find Peer" << status_item->PeerId();
+				std::cerr << std::endl;
+#endif
+			}
+
+			delete (status_item);
+		}
+
+	} /* UNLOCKED */
+
+	if (changed.size()) {
+		std::map<std::string, uint32_t>::iterator it;
+		for (it = changed.begin(); it != changed.end(); it++) {
+			rsicontrol->getNotify().notifyPeerStatusChanged(it->first, it->second);
+		}
+		rsicontrol->getNotify().notifyPeerStatusChangedSummary();
 	}
 }
 
@@ -313,7 +314,12 @@ bool p3StatusService::loadList(std::list<RsItem*> load){
 }
 
 
-int p3StatusService::tick(){
+int p3StatusService::tick()
+{
+	if (receivedItems()) {
+		receiveStatusQueue();
+	}
+
 	return 0;
 }
 
@@ -325,14 +331,50 @@ int p3StatusService::status(){
 
 void p3StatusService::statusChange(const std::list<pqipeer> &plist)
 {
+	bool changedState = false;
+
 	StatusInfo statusInfo;
 	std::list<pqipeer>::const_iterator it;
 	for (it = plist.begin(); it != plist.end(); it++) {
-		if ((it->state & RS_PEER_S_FRIEND) && (it->state & RS_PEER_CONNECTED)) {
-			/* send current status */
-			if (statusInfo.id.empty() == false || getOwnStatus(statusInfo)) {
-				sendStatus(it->id, statusInfo.status);
+		if (it->state & RS_PEER_S_FRIEND) {
+			if (it->actions & RS_PEER_DISCONNECTED)
+			{
+				{
+					RsStackMutex stack(mStatusMtx);
+					/* remove peer from status map */
+					mStatusInfoMap.erase(it->id);
+				} /* UNLOCKED */
+
+				changedState = true;
+				rsicontrol->getNotify().notifyPeerStatusChanged(it->id, RS_STATUS_OFFLINE);
+			}
+
+			if (it->actions & RS_PEER_CONNECTED) {
+				/* send current status, only call getOwnStatus once in the loop */
+				if (statusInfo.id.empty() == false || getOwnStatus(statusInfo)) {
+					sendStatus(it->id, statusInfo.status);
+				}
+
+				{
+					RsStackMutex stack(mStatusMtx);
+
+					/* We assume that the peer is online. If not, he send us a new status */
+					StatusInfo info;
+					info.id = it->id;
+					info.status = RS_STATUS_ONLINE;
+					info.time_stamp = time(NULL);
+
+					mStatusInfoMap[it->id] = info;
+				} /* UNLOCKED */
+
+				changedState = true;
+				rsicontrol->getNotify().notifyPeerStatusChanged(it->id, RS_STATUS_ONLINE);
 			}
 		}
+	}
+
+	if (changedState)
+	{
+		rsicontrol->getNotify().notifyPeerStatusChangedSummary();
 	}
 }

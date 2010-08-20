@@ -74,6 +74,7 @@ public slots:
   void updateStatusString(const QString&) ;
   void anchorClicked (const QUrl &);
 
+  void updateStatus(const QString &peer_id, int status);
 
 protected:
   /** Default constructor */
@@ -107,9 +108,7 @@ private slots:
   bool fileSaveAs();
   void setCurrentFileName(const QString &fileName);
 
-    void updateStatus();
 
-  
 private:
 
   void colorChanged(const QColor &c);

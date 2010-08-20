@@ -76,6 +76,26 @@ void NotifyQt::notifyDiskFull(uint32_t loc,uint32_t size_in_mb)
 	emit diskFull(loc,size_in_mb) ;
 }
 
+/* peer has changed the state */
+void NotifyQt::notifyPeerStatusChanged(const std::string& peer_id, uint32_t state)
+{
+        #ifdef NOTIFY_DEBUG
+	std::cerr << "Notifyqt:: notified that peer " << peer_id << " has changed the state to " << state << std::endl;
+        #endif
+
+        emit peerStatusChanged(QString::fromStdString(peer_id), state);
+}
+
+/* one or more peers has changed the states */
+void NotifyQt::notifyPeerStatusChangedSummary()
+{
+        #ifdef NOTIFY_DEBUG
+	std::cerr << "Notifyqt:: notified that one peer has changed the state" << std::endl;
+        #endif
+
+	emit peerStatusChangedSummary();
+}
+
 void NotifyQt::notifyOwnStatusMessageChanged()
 {
         #ifdef NOTIFY_DEBUG

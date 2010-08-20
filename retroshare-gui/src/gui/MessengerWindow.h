@@ -43,7 +43,6 @@ class MessengerWindow : public RWindow
 
 public slots:
     void updateMessengerDisplay() ;
-    void updatePeersAvatar(const QString& peer_id);
     void updateAvatar();
     void loadmystatusmessage();
 

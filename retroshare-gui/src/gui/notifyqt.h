@@ -40,8 +40,11 @@ class NotifyQt: public QObject, public NotifyBase
 		virtual void notifyOwnAvatarChanged() ;
 		virtual void notifyOwnStatusMessageChanged() ;
 		virtual void notifyDiskFull(uint32_t loc,uint32_t size_in_mb) ;
-
-
+		/* peer has changed the state */
+		virtual void notifyPeerStatusChanged(const std::string& peer_id, uint32_t state);
+		/* one or more peers has changed the states */
+		virtual void notifyPeerStatusChangedSummary();
+ 
 		virtual std::string askForPassword(const std::string& key_details,bool prev_is_bad) ;
 
 	signals:
@@ -66,6 +69,8 @@ class NotifyQt: public QObject, public NotifyBase
 		void ownStatusMessageChanged() const ;
 		void errorOccurred(int,int,const QString&) const ;
 		void diskFull(int,int) const ;
+                void peerStatusChanged(const QString& /* peer_id */, int /* status */);
+                void peerStatusChangedSummary() const;
 
 	public slots:
 

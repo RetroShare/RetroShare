@@ -61,10 +61,10 @@ virtual void    statusChange(const std::list<pqipeer> &plist);
  * Status is set to offline as default if no info received from relevant peer
  */
 virtual bool getOwnStatus(StatusInfo& statusInfo);
-virtual bool getStatus(std::list<StatusInfo>& statusInfo);
+virtual bool getStatusList(std::list<StatusInfo>& statusInfo);
+virtual bool getStatus(std::string &id, StatusInfo &statusInfo);
 /* id = "", status is sent to all online peers */
 virtual bool sendStatus(const std::string &id, uint32_t status);
-virtual bool statusAvailable();
 
 /******************************/
 
@@ -88,7 +88,7 @@ virtual bool loadList(std::list<RsItem*> load);
 
 	private:
 
-virtual void getStatusQueue(std::list<RsStatusItem* > &ilist);
+virtual void receiveStatusQueue();
 
 p3ConnectMgr *mConnMgr;
 

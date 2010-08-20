@@ -45,7 +45,7 @@
 #include <retroshare/rsstatus.h>
 #include <retroshare/rsiface.h>
 #include "gui/settings/rsharesettings.h"
-
+#include "gui/notifyqt.h"
 
 #include "gui/feeds/AttachFileItem.h"
 #include "gui/msgs/MessageComposer.h"
@@ -108,6 +108,8 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
 
   connect(ui.textBrowser, SIGNAL(anchorClicked(const QUrl &)), SLOT(anchorClicked(const QUrl &)));
 
+  connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(const QString&, int)), this, SLOT(updateStatus(const QString&, int)));
+
   std::cerr << "Connecting custom context menu" << std::endl;
   ui.chattextEdit->setContextMenuPolicy(Qt::CustomContextMenu) ;
   connect(ui.chattextEdit,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(contextMenu(QPoint)));
@@ -158,11 +160,14 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
 
   updateAvatar() ;
   updatePeerAvatar(id) ;
-  updateStatus();
   
-    // load settings
+  // load settings
   processSettings(true);
-  
+
+  // initialize first status
+  StatusInfo statusInfo;
+  rsStatus->getStatus(dialogId, statusInfo);
+  updateStatus(QString::fromStdString(dialogId), statusInfo.status);
 }
 
 /** Destructor. */
@@ -1159,24 +1164,15 @@ void PopupChatDialog::setCurrentFileName(const QString &fileName)
     setWindowModified(false);
 }
 
-void PopupChatDialog::updateStatus()
+void PopupChatDialog::updateStatus(const QString &peer_id, int status)
 {
-    std::list<StatusInfo> statusInfo;
-    rsStatus->getStatus(statusInfo);
-
-    uint32_t status = 0;
-    std::list<StatusInfo>::iterator it = statusInfo.begin();
-
-    for(; it != statusInfo.end() ; it++){
-        if (it->id == dialogId) {
-            status = it->status;
-            break;
-        }
+    if (peer_id != QString::fromStdString(dialogId)) {
+        // it's not me
+        return;
     }
 
     switch (status) {
-    case 0:
-        //here show offline state
+    case RS_STATUS_OFFLINE:
         ui.avatarlabel->setStyleSheet("QLabel#avatarlabel{ border-image:url(:/images/mystatus_bg_offline.png); }");
         break;
 

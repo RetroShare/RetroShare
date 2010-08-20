@@ -208,6 +208,10 @@ class NotifyBase
 	virtual void notifyOwnAvatarChanged() {}
 	virtual void notifyOwnStatusMessageChanged() {}
 	virtual void notifyDiskFull(uint32_t /* location */,uint32_t /* size limit in MB */) {}
+	/* peer has changed the status */
+	virtual void notifyPeerStatusChanged(const std::string& /* peer_id */, uint32_t /* status */) {}
+	/* one or more peers has changed the states */
+	virtual void notifyPeerStatusChangedSummary() {}
 
 	virtual std::string askForPassword(const std::string& /* key_details */ ,bool /* prev_is_bad */ ) { return "" ;}
 };

@@ -468,7 +468,7 @@ void  PeersDialog::insertPeers()
     std::list<std::string>::iterator it;
 
     std::list<StatusInfo> statusInfo;
-    rsStatus->getStatus(statusInfo);
+    rsStatus->getStatusList(statusInfo);
 
     if (!rsPeers) {
         /* not ready yet! */

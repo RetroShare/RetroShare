@@ -405,7 +405,7 @@ void  MessengerWindow::insertPeers()
     std::list<std::string> gpgFriends;
     std::list<std::string>::iterator it;
     std::list<StatusInfo> statusInfo;
-    rsStatus->getStatus(statusInfo);
+    rsStatus->getStatusList(statusInfo);
 
     // if(isIdle)
     //   QMessageBox::StandardButton sb = QMessageBox::warning ( NULL, tr("Idle"),
@@ -913,14 +913,6 @@ void MessengerWindow::recommendfriend()
 void MessengerWindow::pastePerson()
 {
     RSLinkClipboard::process(RetroShareLink::TYPE_PERSON, RSLINK_PROCESS_NOTIFY_ERROR);
-}
-
-void MessengerWindow::updatePeersAvatar(const QString& peer_id)
-{
-	std::cerr << "PeersDialog: Got notified of new avatar for peer " << peer_id.toStdString() << std::endl ;
-
-        PopupChatDialog *pcd = PopupChatDialog::getPrivateChat(peer_id.toStdString(),rsPeers->getPeerName(peer_id.toStdString()), 0);
-	pcd->updatePeerAvatar(peer_id.toStdString());
 }
 
 //============================================================================
