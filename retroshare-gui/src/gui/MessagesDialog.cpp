@@ -42,6 +42,7 @@
 #include <retroshare/rspeers.h>
 #include <retroshare/rsfiles.h>
 
+#include <algorithm>
 
 /* Images for context menu icons */
 #define IMAGE_MESSAGE		   ":/images/folder-draft.png"
@@ -82,17 +83,6 @@
 #define ACTION_TAGS_REMOVEALL 0
 #define ACTION_TAGS_TAG       1
 #define ACTION_TAGS_NEWTAG    2
-
-#define CONFIG_FILE (RsInit::RsProfileConfigDirectory() + "/msg_locale.cfg")
-
-#define CONFIG_SECTION_UNREAD   "Unread"
-
-#define CONFIG_SECTION_TAGS     "Tags"
-#define CONFIG_KEY_TEXT         "Text"
-#define CONFIG_KEY_COLOR        "Color"
-
-#define CONFIG_SECTION_TAG      "Tag"
-#define CONFIG_KEY_TAG          "Tag"
 
 class MessagesItemDelegate : public QItemDelegate
 {
@@ -189,6 +179,11 @@ MessagesDialog::LockUpdate::~LockUpdate ()
     }
 }
 
+void MessagesDialog::LockUpdate::setUpdate(bool bUpdate)
+{
+    m_bUpdate = bUpdate;
+}
+
 static int FilterColumnFromComboBox(int nIndex)
 {
     switch (nIndex) {
@@ -239,7 +234,6 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     m_bProcessSettings = false;
     m_bInChange = false;
     m_nLockUpdate = 0;
-    m_pConfig = new RSettings (CONFIG_FILE);
 
     connect( ui.messagestreeView, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( messageslistWidgetCostumPopupMenu( QPoint ) ) );
     connect( ui.msgList, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( msgfilelistWidgetCostumPopupMenu( QPoint ) ) );
@@ -403,8 +397,6 @@ MessagesDialog::~MessagesDialog()
 
     // save settings
     processSettings(false);
-
-    delete (m_pConfig);
 }
 
 void MessagesDialog::processSettings(bool bLoad)
@@ -459,168 +451,11 @@ void MessagesDialog::processSettings(bool bLoad)
     m_bProcessSettings = false;
 }
 
-static void getMessageTags (RSettings *pConfig, QString msgId, QList<int> &tagIds)
-{
-    pConfig->beginGroup(CONFIG_SECTION_TAG);
-
-    int nSize = pConfig->beginReadArray(msgId);
-
-    for (int i = 0; i < nSize; i++) {
-        pConfig->setArrayIndex(i);
-        int nTagId = pConfig->value(CONFIG_KEY_TAG).toInt();
-        tagIds.push_back(nTagId);
-    }
-    pConfig->endArray();
-
-    pConfig->endGroup();
-}
-
-static void setMessageTags (RSettings *pConfig, QString &msgId, QList<int> &tagIds)
-{
-    pConfig->beginGroup(CONFIG_SECTION_TAG);
-
-    pConfig->remove(msgId);
-
-    if (tagIds.size()) {
-        pConfig->beginWriteArray(msgId, tagIds.size());
-
-        int i = 0;
-        for (QList<int>::iterator tagId = tagIds.begin(); tagId != tagIds.end(); tagId++) {
-            pConfig->setArrayIndex(i++);
-            pConfig->setValue(CONFIG_KEY_TAG, *tagId);
-        }
-        pConfig->endArray();
-    }
-
-    pConfig->endGroup();
-}
-
-/*static*/ void MessagesDialog::initStandardTagItems(std::map<int, TagItem> &Items)
-{
-    // create standard enties ... id = sort, maybe later own member
-    Items [-5].text = tr("Important");
-    Items [-5].color = QColor(255, 0, 0).rgb();
-
-    Items [-4].text = tr("Work");
-    Items [-4].color = QColor(255, 153, 0).rgb();
-
-    Items [-3].text = tr("Personal");
-    Items [-3].color = QColor(0, 153, 0).rgb();
-
-    Items [-2].text = tr("Todo");
-    Items [-2].color = QColor(51, 51, 255).rgb();
-
-    Items [-1].text = tr("Later");
-    Items [-1].color = QColor(153, 51, 153).rgb();
-}
-
-void MessagesDialog::getTagItems(std::map<int, TagItem> &Items)
-{
-    initStandardTagItems (Items);
-
-    // create standard enties
-    initStandardTagItems(Items);
-
-    // load user tags and colors
-    m_pConfig->beginGroup(CONFIG_SECTION_TAGS);
-
-    QStringList ids = m_pConfig->childGroups();
-    for (QStringList::iterator id = ids.begin(); id != ids.end(); id++) {
-        int nId = 0;
-        std::istringstream instream((*id).toStdString());
-        instream >> nId;
-
-        m_pConfig->beginGroup(*id);
-
-        TagItem Item;
-        if (nId < 0) {
-            // standard tag
-            Item = Items[nId];
-        } else {
-            Item.text = m_pConfig->value(CONFIG_KEY_TEXT).toString();
-        }
-        Item.color = m_pConfig->value(CONFIG_KEY_COLOR, Item.color).toUInt();
-
-        m_pConfig->endGroup();
-
-        Items [nId] = Item;
-    }
-
-    m_pConfig->endGroup();
-}
-
-void MessagesDialog::setTagItems(std::map<int, TagItem> &Items)
-{
-    // process deleted tags
-    QList<int> tagIdsToDelete;
-    std::map<int, TagItem>::iterator Item;
-    for (Item = Items.begin(); Item != Items.end(); Item++) {
-        if (Item->second._delete) {
-            tagIdsToDelete.push_back(Item->first);
-        }
-    }
-
-    if (tagIdsToDelete.size()) {
-        // iterate all saved tags on messages and remove the id's
-
-        // get all msgIds with tags
-        m_pConfig->beginGroup(CONFIG_SECTION_TAG);
-        QStringList msgIds = m_pConfig->childGroups();
-        m_pConfig->endGroup();
-
-        for (QStringList::iterator msgId = msgIds.begin(); msgId != msgIds.end(); msgId++) {
-            QList<int> tagIds;
-            getMessageTags (m_pConfig, *msgId, tagIds);
-
-            bool bSave = false;
-
-            for (QList<int>::iterator tagIdToDelete = tagIdsToDelete.begin(); tagIdToDelete != tagIdsToDelete.end(); tagIdToDelete++) {
-                QList<int>::iterator tagId = qFind(tagIds.begin(), tagIds.end(), *tagIdToDelete);
-                if (tagId != tagIds.end()) {
-                    tagIds.erase(tagId);
-                    bSave = true;
-                }
-            }
-
-            if (bSave) {
-                setMessageTags (m_pConfig, *msgId, tagIds);
-            }
-        }
-    }
-
-    // save tags
-    m_pConfig->remove(CONFIG_SECTION_TAGS);
-
-    m_pConfig->beginGroup(CONFIG_SECTION_TAGS);
-
-    for (Item = Items.begin(); Item != Items.end(); Item++) {
-        if (Item->second._delete) {
-            continue;
-        }
-
-        QString sId;
-        sId.sprintf("%d", Item->first);
-        m_pConfig->beginGroup(sId);
-
-        if (Item->first > 0) {
-            m_pConfig->setValue(CONFIG_KEY_TEXT, Item->second.text);
-        }
-        m_pConfig->setValue(CONFIG_KEY_COLOR, Item->second.color);
-
-        m_pConfig->endGroup();
-    }
-
-    m_pConfig->endGroup();
-
-    fillTags();
-    insertMessages();
-}
-
 void MessagesDialog::fillTags()
 {
-    std::map<int, TagItem> TagItems;
-    std::map<int, TagItem>::iterator Item;
-    getTagItems(TagItems);
+    MsgTagType Tags;
+    rsMsgs->getMessageTagTypes(Tags);
+    std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag;
 
     // create tag menu
     QMenu *pMenu = new MessagesMenu (tr("Tag"), this);
@@ -629,10 +464,11 @@ void MessagesDialog::fillTags()
 
     bool bUser = false;
 
+    QString text;
     QAction *pAction;
     QMap<QString, QVariant> Values;
 
-    if (TagItems.size()) {
+    if (Tags.types.size()) {
         pAction = new QAction(tr("Remove All Tags"), pMenu);
         Values [ACTION_TAGSINDEX_TYPE] = ACTION_TAGS_REMOVEALL;
         Values [ACTION_TAGSINDEX_ID] = 0;
@@ -642,15 +478,20 @@ void MessagesDialog::fillTags()
 
         pMenu->addSeparator();
 
-        for (Item = TagItems.begin(); Item != TagItems.end(); Item++) {
-            pAction = new QAction(Item->second.text, pMenu);
+        for (Tag = Tags.types.begin(); Tag != Tags.types.end(); Tag++) {
+            if (Tag->first < RS_MSGTAGTYPE_USER) {
+                text = tr(Tag->second.first.c_str());
+            } else {
+                text = QString::fromStdString(Tag->second.first);
+            }
+            pAction = new QAction(text, pMenu);
             Values [ACTION_TAGSINDEX_TYPE] = ACTION_TAGS_TAG;
-            Values [ACTION_TAGSINDEX_ID] = Item->first;
-            Values [ACTION_TAGSINDEX_COLOR] = Item->second.color;
+            Values [ACTION_TAGSINDEX_ID] = Tag->first;
+            Values [ACTION_TAGSINDEX_COLOR] = QRgb(Tag->second.second);
             pAction->setData (Values);
             pAction->setCheckable(true);
 
-            if (Item->first > 0 && bUser == false) {
+            if (Tag->first >= RS_MSGTAGTYPE_USER && bUser == false) {
                 bUser = true;
                 pMenu->addSeparator();
             }
@@ -675,7 +516,7 @@ void MessagesDialog::fillTags()
 
     // save current selection
     QListWidgetItem *pItem = ui.tagWidget->currentItem();
-    int nSelectecTagId = 0;
+    uint32_t nSelectecTagId = 0;
     if (pItem) {
         nSelectecTagId = pItem->data(Qt::UserRole).toInt();
     }
@@ -683,14 +524,19 @@ void MessagesDialog::fillTags()
     QListWidgetItem *pItemToSelect = NULL;
 
     ui.tagWidget->clear();
-    for (Item = TagItems.begin(); Item != TagItems.end(); Item++) {
-        pItem = new QListWidgetItem (Item->second.text, ui.tagWidget);
-        pItem->setForeground(QBrush(QColor(Item->second.color)));
+    for (Tag = Tags.types.begin(); Tag != Tags.types.end(); Tag++) {
+        if (Tag->first < RS_MSGTAGTYPE_USER) {
+            text = tr(Tag->second.first.c_str());
+        } else {
+            text = QString::fromStdString(Tag->second.first);
+        }
+        pItem = new QListWidgetItem (text, ui.tagWidget);
+        pItem->setForeground(QBrush(QColor(Tag->second.second)));
         pItem->setIcon(QIcon(":/images/foldermail.png"));
-        pItem->setData(Qt::UserRole, Item->first);
-        pItem->setData(Qt::UserRole + 1, Item->second.text); // for updateMessageSummaryList
+        pItem->setData(Qt::UserRole, Tag->first);
+        pItem->setData(Qt::UserRole + 1, text); // for updateMessageSummaryList
 
-        if (Item->first == nSelectecTagId) {
+        if (Tag->first == nSelectecTagId) {
             pItemToSelect = pItem;
         }
     }
@@ -1211,15 +1057,23 @@ void MessagesDialog::changeTag(int)
     m_bInChange = false;
 }
 
-static void InitIconAndFont(RSettings *pConfig, QStandardItem *pItem [COLUMN_COUNT], int nFlag)
+void MessagesDialog::messagesTagsChanged()
+{
+    if (m_nLockUpdate) {
+        return;
+    }
+
+    fillTags();
+    insertMessages();
+}
+
+static void InitIconAndFont(QStandardItem *pItem [COLUMN_COUNT], int nFlag)
 {
     QString sText = pItem [COLUMN_SUBJECT]->text();
     QString mid = pItem [COLUMN_DATA]->data(ROLE_MSGID).toString();
 
-    bool bNew = (nFlag & RS_MSG_NEW);
-
     // show the real "New" state
-    if (bNew) {
+    if (nFlag & RS_MSG_NEW) {
         if (sText.startsWith("Re:", Qt::CaseInsensitive)) {
             pItem[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-mail-replied.png"));
         } else if (sText.startsWith("Fwd:", Qt::CaseInsensitive)) {
@@ -1240,13 +1094,7 @@ static void InitIconAndFont(RSettings *pConfig, QStandardItem *pItem [COLUMN_COU
         pItem[COLUMN_SUBJECT]->setIcon(QIcon());
     }
 
-    // show the locale "New" state
-    if (bNew == false) {
-        // check locale config
-        pConfig->beginGroup(CONFIG_SECTION_UNREAD);
-        bNew = pConfig->value(mid, false).toBool();
-        pConfig->endGroup();
-    }
+    bool bNew = nFlag & (RS_MSG_NEW | RS_MSG_UNREAD_BY_USER);
 
     // set icon
     if (bNew) {
@@ -1291,7 +1139,7 @@ void MessagesDialog::insertMessages()
     unsigned int msgbox = 0;
     bool bTrash = false;
     bool bFill = true;
-    int nTagId = 0;
+    uint32_t nTagId = 0;
 
     switch (m_eListMode) {
     case LIST_NOTHING:
@@ -1356,8 +1204,8 @@ void MessagesDialog::insertMessages()
     }
 
     if (bFill) {
-        std::map<int, TagItem> TagItems;
-        getTagItems(TagItems);
+        MsgTagType Tags;
+        rsMsgs->getMessageTagTypes(Tags);
 
         /* search messages */
         std::list<MsgInfoSummary> msgToShow;
@@ -1376,9 +1224,9 @@ void MessagesDialog::insertMessages()
                     }
                 }
             } else if (m_eListMode == LIST_TAG) {
-                QList<int> tagIds;
-                getMessageTags (m_pConfig, QString::fromStdString(it->msgId), tagIds);
-                if (qFind(tagIds.begin(), tagIds.end(), nTagId) == tagIds.end()) {
+                MsgTagInfo tagInfo;
+                rsMsgs->getMessageTag(it->msgId, tagInfo);
+                if (std::find(tagInfo.tagIds.begin(), tagInfo.tagIds.end(), nTagId) == tagInfo.tagIds.end()) {
                     continue;
                 }
             } else {
@@ -1539,27 +1387,44 @@ void MessagesDialog::insertMessages()
             item[COLUMN_DATA]->setData(msgId, ROLE_MSGID);
 
             // Init icon and font
-            InitIconAndFont(m_pConfig, item, it->msgflags);
+            InitIconAndFont(item, it->msgflags);
 
             // Tags
-            QList<int> tagIds;
-            getMessageTags (m_pConfig, msgId, tagIds);
-            qSort(tagIds.begin(), tagIds.end());
+            MsgTagInfo tagInfo;
+            rsMsgs->getMessageTag(it->msgId, tagInfo);
 
             text.clear();
 
-            for (QList<int>::iterator tagId = tagIds.begin(); tagId != tagIds.end(); tagId++) {
+            // build tag names
+            std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag;
+            for (std::list<uint32_t>::iterator tagId = tagInfo.tagIds.begin(); tagId != tagInfo.tagIds.end(); tagId++) {
                 if (text.isEmpty() == false) {
                     text += ",";
                 }
-                text += TagItems[*tagId].text;
+                Tag = Tags.types.find(*tagId);
+                if (Tag != Tags.types.end()) {
+                    if (Tag->first < RS_MSGTAGTYPE_USER) {
+                        text += tr(Tag->second.first.c_str());
+                    } else {
+                        text += QString::fromStdString(Tag->second.first);
+                    }
+                } else {
+                    // clean tagId
+                    rsMsgs->setMessageTag(it->msgId, *tagId, false);
+                }
             }
             item[COLUMN_TAGS]->setText(text);
 
             // set color
             QBrush Brush; // standard
-            if (tagIds.size()) {
-                Brush = QBrush(TagItems [tagIds [0]].color);
+            if (tagInfo.tagIds.size()) {
+                Tag = Tags.types.find(tagInfo.tagIds.front());
+                if (Tag != Tags.types.end()) {
+                    Brush = QBrush(Tag->second.second);
+                } else {
+                    // clean tagId
+                    rsMsgs->setMessageTag(it->msgId, tagInfo.tagIds.front(), false);
+                }
             }
             for (int i = 0; i < COLUMN_COUNT; i++) {
                 item[i]->setForeground(Brush);
@@ -1671,25 +1536,12 @@ void MessagesDialog::setMsgAsReadUnread(const QList<int> &Rows, bool bRead)
             item[nCol] = MessagesModel->item(Rows [nRow], nCol);
         }
 
-        QString mid = item[COLUMN_DATA]->data(ROLE_MSGID).toString();
+        std::string mid = item[COLUMN_DATA]->data(ROLE_MSGID).toString().toStdString();
 
-        if (bRead) {
-            // set as read in config
-            m_pConfig->beginGroup(CONFIG_SECTION_UNREAD);
-            m_pConfig->setValue(mid, false);
-            m_pConfig->endGroup();
-            // set message to read
-            rsMsgs->MessageRead(mid.toStdString());
-        } else {
-            // set as unread in config
-            m_pConfig->beginGroup(CONFIG_SECTION_UNREAD);
-            m_pConfig->setValue(mid, true);
-            m_pConfig->endGroup();
+        if (rsMsgs->MessageRead(mid, !bRead)) {
+            InitIconAndFont(item, bRead ? 0 : RS_MSG_UNREAD_BY_USER);
         }
-
-        InitIconAndFont(m_pConfig, item, 0);
     }
-
 
     // LockUpdate
 }
@@ -1784,15 +1636,16 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index, bool bSetToRead)
     bool bSetToReadOnActive = Settings->getMsgSetToReadOnActivate();
 
     if (msgInfo.msgflags & RS_MSG_NEW) {
-        // set to read
-        setMsgAsReadUnread(Rows, true);
+        // set always to read or unread
         if (bSetToReadOnActive == false || bSetToRead == false) {
             // set locally to unread
             setMsgAsReadUnread(Rows, false);
+        } else {
+            setMsgAsReadUnread(Rows, true);
         }
         updateMessageSummaryList();
     } else {
-        if (bSetToRead && bSetToReadOnActive) {
+        if ((msgInfo.msgflags & RS_MSG_UNREAD_BY_USER) && bSetToRead && bSetToReadOnActive) {
             // set to read
             setMsgAsReadUnread(Rows, true);
             updateMessageSummaryList();
@@ -1968,15 +1821,6 @@ void MessagesDialog::removemessage()
             if (bDelete) {
                 rsMsgs->MessageDelete(mid.toStdString());
 
-                // clean locale config
-                m_pConfig->beginGroup(CONFIG_SECTION_UNREAD);
-                m_pConfig->remove (mid);
-                m_pConfig->endGroup();
-
-                // remove tag
-                m_pConfig->beginGroup(CONFIG_SECTION_TAG);
-                m_pConfig->remove (mid);
-                m_pConfig->endGroup();
             } else {
                 rsMsgs->MessageToTrash(mid.toStdString(), true);
             }
@@ -1988,7 +1832,7 @@ void MessagesDialog::removemessage()
 
 void MessagesDialog::undeletemessage()
 {
-    LockUpdate (this, true);
+    LockUpdate Lock (this, true);
 
     QList<int> Rows;
     getSelectedMsgCount (&Rows, NULL, NULL);
@@ -2156,12 +2000,12 @@ void MessagesDialog::updateMessageSummaryList()
 
     QMap<int, int> tagCount;
 
-    /*calculating the new messages*/
+    /* calculating the new messages */
     for (it = msgList.begin(); it != msgList.end(); it++) {
         /* calcluate tag count */
-        QList<int> tagIds;
-        getMessageTags (m_pConfig, QString::fromStdString(it->msgId), tagIds);
-        for (QList<int>::iterator tagId = tagIds.begin(); tagId != tagIds.end(); tagId++) {
+        MsgTagInfo tagInfo;
+        rsMsgs->getMessageTag(it->msgId, tagInfo);
+        for (std::list<uint32_t>::iterator tagId = tagInfo.tagIds.begin(); tagId != tagInfo.tagIds.end(); tagId++) {
             int nCount = tagCount [*tagId];
             nCount++;
             tagCount [*tagId] = nCount;
@@ -2176,15 +2020,8 @@ void MessagesDialog::updateMessageSummaryList()
         switch (it->msgflags & RS_MSG_BOXMASK) {
         case RS_MSG_INBOX:
                 inboxCount++;
-                if ((it->msgflags & RS_MSG_NEW) == RS_MSG_NEW) {
+                if (it->msgflags & (RS_MSG_NEW | RS_MSG_UNREAD_BY_USER)) {
                     newInboxCount++;
-                } else {
-                    // check locale config
-                    m_pConfig->beginGroup(CONFIG_SECTION_UNREAD);
-                    if (m_pConfig->value(QString::fromStdString(it->msgId), false).toBool()) {
-                        newInboxCount++;
-                    }
-                    m_pConfig->endGroup();
                 }
                 break;
         case RS_MSG_OUTBOX:
@@ -2332,16 +2169,16 @@ void MessagesDialog::clearFilter()
 void MessagesDialog::tagAboutToShow()
 {
     // activate actions from the first selected row
-    QList<int> tagIds;
+    MsgTagInfo tagInfo;
 
     QList<int> Rows;
     getSelectedMsgCount (&Rows, NULL, NULL);
 
     if (Rows.size()) {
         QStandardItem* pItem = MessagesModel->item(Rows [0], COLUMN_DATA);
-        QString msgId = pItem->data(ROLE_MSGID).toString();
+        std::string msgId = pItem->data(ROLE_MSGID).toString().toStdString();
 
-        getMessageTags(m_pConfig, msgId, tagIds);
+        rsMsgs->getMessageTag(msgId, tagInfo);
     }
 
     QMenu *pMenu = ui.tagButton->menu();
@@ -2360,8 +2197,8 @@ void MessagesDialog::tagAboutToShow()
             continue;
         }
 
-        QList<int>::iterator tagId = qFind(tagIds.begin(), tagIds.end(), Values [ACTION_TAGSINDEX_ID]);
-        pAction->setChecked(tagId != tagIds.end());
+        std::list<uint32_t>::iterator tagId = std::find(tagInfo.tagIds.begin(), tagInfo.tagIds.end(), Values [ACTION_TAGSINDEX_ID]);
+        pAction->setChecked(tagId != tagInfo.tagIds.end());
     }
 }
 
@@ -2376,6 +2213,8 @@ void MessagesDialog::tagTriggered(QAction *pAction)
         return;
     }
 
+    LockUpdate Lock (this, false);
+
     bool bRemoveAll = false;
     int nId = 0;
     bool bSet = false;
@@ -2385,14 +2224,20 @@ void MessagesDialog::tagTriggered(QAction *pAction)
         bRemoveAll = true;
     } else if (Values [ACTION_TAGSINDEX_TYPE] == ACTION_TAGS_NEWTAG) {
         // new tag
-        std::map<int, TagItem> TagItems;
-        getTagItems(TagItems);
+        MsgTagType Tags;
+        rsMsgs->getMessageTagTypes(Tags);
 
-        NewTag Tag(TagItems);
-        if (Tag.exec() == QDialog::Accepted && Tag.m_nId) {
-            // Tag.m_nId
-            setTagItems (TagItems);
-            nId = Tag.m_nId;
+        NewTag TagDlg(Tags);
+        if (TagDlg.exec() == QDialog::Accepted && TagDlg.m_nId) {
+            std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag = Tags.types.find(TagDlg.m_nId);
+            if (Tag == Tags.types.end()) {
+                return;
+            }
+            if (rsMsgs->setMessageTagType(Tag->first, Tag->second.first, Tag->second.second) == false) {
+                return;
+            }
+            fillTags();
+            nId = TagDlg.m_nId;
             bSet = true;
         } else {
             return;
@@ -2411,41 +2256,21 @@ void MessagesDialog::tagTriggered(QAction *pAction)
     getSelectedMsgCount (&Rows, NULL, NULL);
     for (int nRow = 0; nRow < Rows.size(); nRow++) {
         QStandardItem* pItem = MessagesModel->item(Rows [nRow], COLUMN_DATA);
-        QString msgId = pItem->data(ROLE_MSGID).toString();
+        std::string msgId = pItem->data(ROLE_MSGID).toString().toStdString();
 
         if (bRemoveAll) {
             // remove all
-            m_pConfig->beginGroup(CONFIG_SECTION_TAG);
-            m_pConfig->remove (msgId);
-            m_pConfig->endGroup();
+            rsMsgs->setMessageTag(msgId, 0, false);
+            Lock.setUpdate(true);
 
-            insertMessages();
         } else {
             // set or unset tag
-            QList<int> tagIds;
-            getMessageTags(m_pConfig, msgId, tagIds);
-
-            QList<int>::iterator tagId = qFind(tagIds.begin(), tagIds.end(), nId);
-
-            bool bSaveAndRefresh = false;
-            if (bSet) {
-                if (tagId == tagIds.end()) {
-                    // not found
-                    tagIds.push_back(nId);
-                    bSaveAndRefresh = true;
-                }
-            } else {
-                if (tagId != tagIds.end()) {
-                    // found
-                    tagIds.erase(tagId);
-                    bSaveAndRefresh = true;
-                }
-            }
-
-            if (bSaveAndRefresh) {
-                setMessageTags(m_pConfig, msgId, tagIds);
-                insertMessages();
+            MsgTagInfo tagInfo;
+            if (rsMsgs->setMessageTag(msgId, nId, bSet)) {
+                Lock.setUpdate(true);
             }
         }
     }
+
+    // LockUpdate -> insertMessages();
 }

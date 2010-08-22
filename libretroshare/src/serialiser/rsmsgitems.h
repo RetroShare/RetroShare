@@ -144,11 +144,12 @@ class RsChatSerialiser: public RsSerialType
 
 /**************************************************************************/
 
-const uint32_t RS_MSG_FLAGS_OUTGOING = 0x0001;
-const uint32_t RS_MSG_FLAGS_PENDING  = 0x0002;
-const uint32_t RS_MSG_FLAGS_DRAFT    = 0x0004;
-const uint32_t RS_MSG_FLAGS_NEW      = 0x0010;
-const uint32_t RS_MSG_FLAGS_TRASH    = 0x0020;
+const uint32_t RS_MSG_FLAGS_OUTGOING       = 0x0001;
+const uint32_t RS_MSG_FLAGS_PENDING        = 0x0002;
+const uint32_t RS_MSG_FLAGS_DRAFT          = 0x0004;
+const uint32_t RS_MSG_FLAGS_NEW            = 0x0010;
+const uint32_t RS_MSG_FLAGS_TRASH          = 0x0020;
+const uint32_t RS_MSG_FLAGS_UNREAD_BY_USER = 0x0040;
 
 class RsMsgItem: public RsItem
 {
@@ -216,8 +217,8 @@ public:
 	virtual ~RsMsgTags();
 	virtual void clear();
 
-	std::string msgId;
-	uint32_t tagId;
+	uint32_t msgId;
+	std::list<uint32_t> tagIds;
 };
 
 class RsMsgSerialiser: public RsSerialType

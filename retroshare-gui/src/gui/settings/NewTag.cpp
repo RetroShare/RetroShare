@@ -20,11 +20,13 @@
  ****************************************************************/
 #include "NewTag.h"
 
+#include "retroshare/rsmsgs.h"
+
 #include <QColorDialog>
 
 /** Default constructor */
-NewTag::NewTag(std::map<int, TagItem> &Items, int nId /*= 0*/, QWidget *parent, Qt::WFlags flags)
-  : QDialog(parent, flags), m_Items(Items)
+NewTag::NewTag(MsgTagType &Tags, uint32_t nId /*= 0*/, QWidget *parent, Qt::WFlags flags)
+  : QDialog(parent, flags), m_Tags(Tags)
 {
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);
@@ -40,13 +42,20 @@ NewTag::NewTag(std::map<int, TagItem> &Items, int nId /*= 0*/, QWidget *parent, 
     ui.okButton->setEnabled(false);
 
     if (m_nId) {
-        TagItem &Item = m_Items [m_nId];
-        ui.lineEdit->setText(Item.text);
-        m_Color = Item.color;
+        std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag;
+        Tag = m_Tags.types.find(m_nId);
+        if (Tag != m_Tags.types.end()) {
+            ui.lineEdit->setText(QString::fromStdString(Tag->second.first));
+            m_Color = QRgb(Tag->second.second);
 
-        if (m_nId < 0) {
-            // standard tag
-            ui.lineEdit->setEnabled(false);
+            if (m_nId < RS_MSGTAGTYPE_USER) {
+                // standard tag
+                ui.lineEdit->setEnabled(false);
+            }
+        } else {
+            // tag id not found
+            m_Color = 0;
+            m_nId = 0;
         }
     } else {
         m_Color = 0;
@@ -62,22 +71,19 @@ void NewTag::closeEvent (QCloseEvent * event)
 
 void NewTag::OnOK()
 {
-    TagItem Item;
-    Item.text = ui.lineEdit->text();
-    Item.color = m_Color;
-
     if (m_nId == 0) {
         // calculate new id
-        m_nId = 1;
-        std::map<int, TagItem>::iterator Item;
-        for (Item = m_Items.begin(); Item != m_Items.end(); Item++) {
-            if (Item->first + 1 > m_nId) {
-                m_nId = Item->first + 1;
+        m_nId = RS_MSGTAGTYPE_USER;
+        std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag;
+        for (Tag = m_Tags.types.begin(); Tag != m_Tags.types.end(); Tag++) {
+            if (Tag->first + 1 > m_nId) {
+                m_nId = Tag->first + 1;
             }
         }
     }
 
-    m_Items [m_nId] = Item;
+    std::pair<std::string, uint32_t> newTag(ui.lineEdit->text().toStdString(), m_Color);
+    m_Tags.types [m_nId] = newTag;
 
     setResult(QDialog::Accepted);
     hide();
@@ -92,22 +98,25 @@ void NewTag::OnCancel()
 void NewTag::textChanged(const QString &text)
 {
     bool bEnabled = true;
+    std::string stdText = text.toStdString();
 
     if (text.isEmpty()) {
         bEnabled = false;
     } else {
         // check for existing text
-        std::map<int, TagItem>::iterator Item;
-        for (Item = m_Items.begin(); Item != m_Items.end(); Item++) {
-            if (m_nId && Item->first == m_nId) {
+        std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag;
+        for (Tag = m_Tags.types.begin(); Tag != m_Tags.types.end(); Tag++) {
+            if (m_nId && Tag->first == m_nId) {
+                // its me
                 continue;
             }
 
-            if (Item->second._delete) {
+            if (Tag->second.first.empty()) {
+                // deleted
                 continue;
             }
 
-            if (Item->second.text == text) {
+            if (Tag->second.first == stdText) {
                 bEnabled = false;
                 break;
             }

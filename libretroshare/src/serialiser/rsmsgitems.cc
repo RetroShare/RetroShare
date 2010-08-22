@@ -422,8 +422,8 @@ void RsMsgTagType::clear()
 
 void RsMsgTags::clear()
 {
-	msgId.clear();
-	tagId = 0;
+	msgId = 0;
+	tagIds.clear();
 }
 
 std::ostream& RsMsgTagType::print(std::ostream &out, uint16_t indent)
@@ -698,8 +698,8 @@ uint32_t RsMsgSerialiser::sizeMsgTagItem(RsMsgTags* item)
 {
 	uint32_t s = 8; /* header */
 
-	s += GetTlvStringSize(item->msgId);
-	s += 4; /* tag id */
+	s += 4; /* msgId */
+	s += item->tagIds.size() * 4; /* tagIds */
 
 	return s;
 }
@@ -726,8 +726,13 @@ bool RsMsgSerialiser::serialiseMsgTagItem(RsMsgTags *item, void *data, uint32_t*
 	/* skip the header */
 	offset += 8;
 
-	ok &= SetTlvString(data,tlvsize,&offset, TLV_TYPE_STR_MSGID, item->msgId);
-	ok &= setRawUInt32(data, tlvsize, &offset, item->tagId);
+	ok &= setRawUInt32(data,tlvsize,&offset, item->msgId);
+
+	std::list<uint32_t>::iterator mit = item->tagIds.begin();
+	for(;mit != item->tagIds.end(); mit++)
+	{
+		ok &= setRawUInt32(data, tlvsize, &offset, *mit);
+	}
 
 	if (offset != tlvsize)
 	{
@@ -773,8 +778,17 @@ RsMsgTags* RsMsgSerialiser::deserialiseMsgTagItem(void* data, uint32_t* pktsize)
 
 
 	/* get mandatory parts first */
-	ok &= GetTlvString(data,rssize,&offset,TLV_TYPE_STR_MSGID,item->msgId);
-	ok &= getRawUInt32(data, rssize, &offset, &(item->tagId));
+	ok &= getRawUInt32(data, rssize, &offset, &item->msgId);
+
+	uint32_t tagId;
+	while (offset != rssize)
+	{
+		tagId = 0;
+
+		ok &= getRawUInt32(data, rssize, &offset, &tagId);
+
+		item->tagIds.push_back(tagId);
+	}
 
 	if (offset != rssize)
 	{

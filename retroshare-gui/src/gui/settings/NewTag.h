@@ -26,19 +26,7 @@
 
 #include "ui_NewTag.h"
 
-class TagItem
-{
-public:
-    TagItem()
-    {
-        _delete = false;
-    };
-
-    QString text;
-    QRgb    color;
-
-    bool _delete; // for internal use
-};
+class MsgTagType;
 
 class NewTag : public QDialog
 {
@@ -46,9 +34,9 @@ class NewTag : public QDialog
 
 public:
     /** Default constructor */
-    NewTag(std::map<int, TagItem> &Items, int nId = 0, QWidget *parent = 0, Qt::WFlags flags = 0);
+    NewTag(MsgTagType &Tags, uint32_t nId = 0, QWidget *parent = 0, Qt::WFlags flags = 0);
 
-    int m_nId;
+    uint32_t m_nId;
 
 protected:
     void closeEvent (QCloseEvent * event);
@@ -64,7 +52,7 @@ private slots:
 private:
     void showColor(QRgb color);
 
-    std::map<int, TagItem> &m_Items;
+    MsgTagType &m_Tags;
     QRgb m_Color;
 
     /** Qt Designer generated object */

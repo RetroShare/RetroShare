@@ -300,7 +300,7 @@ bool    p3MsgService::saveConfiguration()
 		written = written && pa_out -> SendItem(mit->second) ;
 
 	std::map<uint32_t, RsMsgTagType* >::iterator mit2;
-	std::map<std::string, RsMsgTags* >::iterator mit3;
+	std::map<uint32_t, RsMsgTags* >::iterator mit3;
 
 
 	for(mit2 = mTags.begin();  mit2 != mTags.end(); mit2++)
@@ -322,6 +322,47 @@ bool    p3MsgService::saveConfiguration()
 	}
 		
 	return true;
+}
+
+// build list of standard tag types
+static void getStandardTagTypes(MsgTagType &tags)
+{
+	/* create standard tag types, the text must be translated in the GUI */
+	tags.types [RS_MSGTAGTYPE_IMPORTANT] = std::pair<std::string, uint32_t> ("Important", 0xFF0000);
+	tags.types [RS_MSGTAGTYPE_WORK]      = std::pair<std::string, uint32_t> ("Work",      0xFF9900);
+	tags.types [RS_MSGTAGTYPE_PERSONAL]  = std::pair<std::string, uint32_t> ("Personal",  0x009900);
+	tags.types [RS_MSGTAGTYPE_TODO]      = std::pair<std::string, uint32_t> ("Todo",      0x3333FF);
+	tags.types [RS_MSGTAGTYPE_LATER]     = std::pair<std::string, uint32_t> ("Later",     0x993399);
+}
+
+// Initialize the standard tag types after load
+void p3MsgService::initStandardTagTypes()
+{
+	bool bChanged = false;
+	std::string ownId = mConnMgr->getOwnId();
+
+	MsgTagType tags;
+	getStandardTagTypes(tags);
+
+	std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator tit;
+	for (tit = tags.types.begin(); tit != tags.types.end(); tit++) {
+		std::map<uint32_t, RsMsgTagType*>::iterator mit = mTags.find(tit->first);
+		if (mit == mTags.end()) {
+			RsMsgTagType* tagType = new RsMsgTagType();
+			tagType->PeerId (ownId);
+			tagType->tagId = tit->first;
+			tagType->text = tit->second.first;
+			tagType->rgb_color = tit->second.second;
+
+			mTags.insert(std::pair<uint32_t, RsMsgTagType*>(tit->first, tagType));
+
+			bChanged = true;
+		}
+	}
+
+	if (bChanged) {
+		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+	}
 }
 
 bool    p3MsgService::loadConfiguration(std::string &loadHash)
@@ -360,7 +401,7 @@ bool    p3MsgService::loadConfiguration(std::string &loadHash)
 		}
 		else if(NULL != (mti = dynamic_cast<RsMsgTags *>(item)))
 		{
-			mMsgTags.insert(std::pair<std::string, RsMsgTags* >(mti->msgId, mti));
+			mMsgTags.insert(std::pair<uint32_t, RsMsgTags* >(mti->msgId, mti));
 		}
 		else
 		{
@@ -437,6 +478,9 @@ bool    p3MsgService::loadConfiguration(std::string &loadHash)
 
 	setHash(hashin);
 
+	/* Initialize standard tag types */
+	initStandardTagTypes();
+
 	return true;
 }
 
@@ -507,7 +551,7 @@ bool p3MsgService::getMessageSummaries(std::list<MsgInfoSummary> &msgList)
 }
 
 
-bool p3MsgService::getMessage(std::string mId, MessageInfo &msg)
+bool p3MsgService::getMessage(std::string &mId, MessageInfo &msg)
 {
   	std::map<uint32_t, RsMsgItem *>::iterator mit;
 	uint32_t msgId = atoi(mId.c_str());
@@ -574,11 +618,16 @@ void p3MsgService::getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxN
 }
 
 /* remove based on the unique mid (stored in sid) */
-bool    p3MsgService::removeMsgId(std::string mid)
+bool    p3MsgService::removeMsgId(std::string &mid)
 {
   	std::map<uint32_t, RsMsgItem *>::iterator mit;
 	uint32_t msgId = atoi(mid.c_str());
-	bool changed = false ;
+	if (msgId == 0) {
+		std::cerr << "p3MsgService::removeMsgId: Unknown msgId " << msgId << std::endl;
+		return false;
+	}
+
+	bool changed = false;
 
 	{
 		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
@@ -586,15 +635,10 @@ bool    p3MsgService::removeMsgId(std::string mid)
 		mit = imsg.find(msgId);
 		if (mit != imsg.end())
 		{
-			changed = true ;
+			changed = true;
 			RsMsgItem *mi = mit->second;
 			imsg.erase(mit);
 			delete mi;
-	//		msgChanged.IndicateChanged();
-
-			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
-
-			return true;
 		}
 
 		mit = msgOutgoing.find(msgId);
@@ -604,25 +648,25 @@ bool    p3MsgService::removeMsgId(std::string mid)
 			RsMsgItem *mi = mit->second;
 			msgOutgoing.erase(mit);
 			delete mi;
-	//		msgChanged.IndicateChanged();
-
-			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
-
-			return true;
 		}
 	}
 
-	if(changed)
-		rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
+	if(changed) {
+		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
-	return false;
+		setMessageTag(mid, 0, false);
+
+		rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
+	}
+
+	return changed;
 }
 
-bool    p3MsgService::markMsgIdRead(std::string mid)
+bool    p3MsgService::markMsgIdRead(std::string &mid, bool bUnreadByUser)
 {
 	std::map<uint32_t, RsMsgItem *>::iterator mit;
 	uint32_t msgId = atoi(mid.c_str());
-	bool changed = false ;
+	bool changed = false;
 
 	{
 		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
@@ -630,20 +674,35 @@ bool    p3MsgService::markMsgIdRead(std::string mid)
 		mit = imsg.find(msgId);
 		if (mit != imsg.end())
 		{
-			changed = true ;
 			RsMsgItem *mi = mit->second;
-			mi -> msgFlags &= ~(RS_MSG_FLAGS_NEW);
 
-			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+			uint32_t msgFlags = mi->msgFlags;
+
+			/* remove new state */
+			mi->msgFlags &= ~(RS_MSG_FLAGS_NEW);
+
+			/* set state from user */
+			if (bUnreadByUser) {
+				mi->msgFlags |= RS_MSG_FLAGS_UNREAD_BY_USER;
+			} else {
+				mi->msgFlags &= ~RS_MSG_FLAGS_UNREAD_BY_USER;
+			}
+
+			if (mi->msgFlags != msgFlags)
+			{
+				changed = true;
+				IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+			}
+		} else {
+			return false;
 		}
+	} /* UNLOCKED */
+
+	if (changed) {
+		rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
 	}
 
-	if(changed) {
-		rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
-		return true;
-	} else {
-		return false;
-	}
+	return true;
 }
 
 /****************************************/
@@ -760,12 +819,13 @@ bool p3MsgService::MessageToDraft(MessageInfo &info)
     return false;
 }
 
-bool 	p3MsgService::MessageGetTagTypes(MsgTagType& tags)
+bool 	p3MsgService::getMessageTagTypes(MsgTagType& tags)
 {
+	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+
 	std::map<uint32_t, RsMsgTagType*>::iterator mit;
 
-	for(mit = mTags.begin(); mit != mTags.end(); mit++)
-	{
+	for(mit = mTags.begin(); mit != mTags.end(); mit++) {
 		std::pair<std::string, uint32_t> p(mit->second->text, mit->second->rgb_color);
 		tags.types.insert(std::pair<uint32_t, std::pair<std::string, uint32_t> >(mit->first, p));
 	}
@@ -773,47 +833,243 @@ bool 	p3MsgService::MessageGetTagTypes(MsgTagType& tags)
 	return true;
 }
 
-bool 	p3MsgService::MessageGetMsgTag(std::string msgId, MsgTagInfo& info)
+bool  	p3MsgService::setMessageTagType(uint32_t tagId, std::string& text, uint32_t rgb_color)
 {
+	int nNotifyType = 0;
 
-	std::map<std::string, RsMsgTags*>::iterator mit;
-
-
-	if(mMsgTags.end() != (mit = mMsgTags.find(msgId)))
 	{
-		info.msgId = mit->second->msgId;
-		info.tagId = mit->second->tagId;
+		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
+		std::map<uint32_t, RsMsgTagType*>::iterator mit;
+		mit = mTags.find(tagId);
+
+		if (mit == mTags.end()) {
+			if (tagId < RS_MSGTAGTYPE_USER) {
+				std::cerr << "p3MsgService::MessageSetTagType: Standard tag type " <<  tagId << " cannot be inserted" << std::endl;
+				return false;
+			}
+
+			/* new tag */
+			RsMsgTagType* tagType = new RsMsgTagType();
+			tagType->PeerId (mConnMgr->getOwnId());
+			tagType->rgb_color = rgb_color;
+			tagType->tagId = tagId;
+			tagType->text = text;
+
+			mTags.insert(std::pair<uint32_t, RsMsgTagType*>(tagId, tagType));
+
+			nNotifyType = NOTIFY_TYPE_ADD;
+		} else {
+			if (mit->second->text != text || mit->second->rgb_color != rgb_color) {
+				/* modify existing tag */
+				if (tagId >= RS_MSGTAGTYPE_USER) {
+					mit->second->text = text;
+				} else {
+					/* don't change text for standard tag types */
+					if (mit->second->text != text) {
+						std::cerr << "p3MsgService::MessageSetTagType: Text " << text << " for standard tag type " <<  tagId << " cannot be changed" << std::endl;
+					}
+				}
+				mit->second->rgb_color = rgb_color;
+
+				nNotifyType = NOTIFY_TYPE_MOD;
+			}
+		}
+
+	} /* UNLOCKED */
+
+	if (nNotifyType) {
+		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+
+		rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_MESSAGE_TAGS, nNotifyType);
+		
 		return true;
 	}
-
-	std::cerr << "p3MsgService::MessageGetMsgTag: no tag found for msgId " << msgId << std::endl;
 
 	return false;
 }
 
-bool  	p3MsgService::MessageSetTagType(std::string& text, uint32_t tagId, uint32_t rgb_color)
+bool    p3MsgService::removeMessageTagType(uint32_t tagId)
 {
+	if (tagId < RS_MSGTAGTYPE_USER) {
+		std::cerr << "p3MsgService::MessageRemoveTagType: Can't delete standard tag type " << tagId << std::endl;
+		return false;
+	}
 
-	RsMsgTagType* tagType = new RsMsgTagType();
-	tagType->rgb_color = rgb_color;
-	tagType->tagId = tagId;
-	tagType->text = text;
+	{
+		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
-	mTags.insert(std::pair<uint32_t, RsMsgTagType*>(tagId, tagType));
+		std::map<uint32_t, RsMsgTagType*>::iterator mit;
+		mit = mTags.find(tagId);
 
+		if (mit == mTags.end()) {
+			/* tag id not found */
+			std::cerr << "p3MsgService::MessageRemoveTagType: Tag Id not found " << tagId << std::endl;
+			return false;
+		}
+
+		/* search for messages with this tag type */
+		std::map<uint32_t, RsMsgTags*>::iterator mit1;
+                for (mit1 = mMsgTags.begin(); mit1 != mMsgTags.end(); ) {
+			RsMsgTags* tag = mit1->second;
+
+			std::list<uint32_t>::iterator lit;
+			lit = std::find(tag->tagIds.begin(), tag->tagIds.end(), tagId);
+			if (lit != tag->tagIds.end()) {
+				tag->tagIds.erase(lit);
+
+				if (tag->tagIds.size() == 0) {
+					/* remove empty tag */
+					delete(tag);
+
+					std::map<uint32_t, RsMsgTags*>::iterator mit2 = mit1;
+					mit1++;
+					mMsgTags.erase(mit2);
+					continue;
+				}
+			}
+			mit1++;
+		}
+
+		/* remove tag type */
+		delete(mit->second);
+		mTags.erase(mit);
+
+	} /* UNLOCKED */
+
+	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+
+	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_MESSAGE_TAGS, NOTIFY_TYPE_DEL);
+
+	return true;
 }
 
-bool 	p3MsgService::MessageSetMsgTag(MsgTagInfo& tagInfo)
+bool 	p3MsgService::getMessageTag(std::string &msgId, MsgTagInfo& info)
 {
-	RsMsgTags* tag = new RsMsgTags();
+	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
-	tag->msgId = tagInfo.msgId;
-	tag->tagId = tagInfo.tagId;
+	uint32_t mid = atoi(msgId.c_str());
+	if (mid == 0) {
+		std::cerr << "p3MsgService::MessageGetMsgTag: Unknown msgId " << msgId << std::endl;
+		return false;
+	}
 
-	mMsgTags.insert(std::pair<std::string, RsMsgTags*>(tag->msgId, tag));
+	std::map<uint32_t, RsMsgTags*>::iterator mit;
+
+	if(mMsgTags.end() != (mit = mMsgTags.find(mid))) {
+		std::ostringstream out;
+		out << mit->second->msgId;
+
+		info.msgId = out.str();
+		info.tagIds = mit->second->tagIds;
+
+		return true;
+	}
+
+	return false;
 }
 
+/* set == false && tagId == 0 --> remove all */
+bool 	p3MsgService::setMessageTag(std::string &msgId, uint32_t tagId, bool set)
+{
+	uint32_t mid = atoi(msgId.c_str());
+	if (mid == 0) {
+		std::cerr << "p3MsgService::MessageSetMsgTag: Unknown msgId " << msgId << std::endl;
+		return false;
+	}
+
+	if (tagId == 0) {
+		if (set == true) {
+			std::cerr << "p3MsgService::MessageSetMsgTag: No valid tagId given " << tagId << std::endl;
+			return false;
+		}
+	}
+	
+	int nNotifyType = 0;
+
+	{
+		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+
+		std::map<uint32_t, RsMsgTags*>::iterator mit;
+		mit = mMsgTags.find(mid);
+
+		if (mit == mMsgTags.end()) {
+			if (set) {
+				/* new msg */
+				RsMsgTags* tag = new RsMsgTags();
+				tag->PeerId (mConnMgr->getOwnId());
+
+				tag->msgId = mid;
+				tag->tagIds.push_back(tagId);
+
+				mMsgTags.insert(std::pair<uint32_t, RsMsgTags*>(tag->msgId, tag));
+
+				nNotifyType = NOTIFY_TYPE_ADD;
+			}
+		} else {
+			RsMsgTags* tag = mit->second;
+
+			/* search existing tagId */
+			std::list<uint32_t>::iterator lit;
+			if (tagId) {
+				lit = std::find(tag->tagIds.begin(), tag->tagIds.end(), tagId);
+			} else {
+				lit = tag->tagIds.end();
+			}
+
+			if (set) {
+				if (lit == tag->tagIds.end()) {
+					tag->tagIds.push_back(tagId);
+					/* keep the list sorted */
+					tag->tagIds.sort();
+					nNotifyType = NOTIFY_TYPE_ADD;
+				}
+			} else {
+				if (tagId == 0) {
+					/* remove all */
+					delete(tag);
+					mMsgTags.erase(mit);
+					nNotifyType = NOTIFY_TYPE_DEL;
+				} else {
+					if (lit != tag->tagIds.end()) {
+						tag->tagIds.erase(lit);
+						nNotifyType = NOTIFY_TYPE_DEL;
+
+						if (tag->tagIds.size() == 0) {
+							/* remove empty tag */
+							delete(tag);
+							mMsgTags.erase(mit);
+						}
+					}
+				}
+			}
+		}
+
+	} /* UNLOCKED */
+
+	if (nNotifyType) {
+		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+
+		rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_MESSAGE_TAGS, nNotifyType);
+
+		return true;
+	}
+
+	return false;
+}
+
+bool    p3MsgService::resetMessageStandardTagTypes(MsgTagType& tags)
+{
+	MsgTagType standardTags;
+	getStandardTagTypes(standardTags);
+
+	std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator mit;
+	for (mit = standardTags.types.begin(); mit != standardTags.types.end(); mit++) {
+		tags.types[mit->first] = mit->second;
+	}
+
+	return true;
+}
 
 /* move message to trash based on the unique mid */
 bool p3MsgService::MessageToTrash(std::string mid, bool bTrash)
@@ -902,6 +1158,14 @@ void p3MsgService::initRsMI(RsMsgItem *msg, MessageInfo &mi)
 	{
 		mi.msgflags |= RS_MSG_NEW;
 	}
+	if (msg->msgFlags & RS_MSG_FLAGS_TRASH)
+	{
+		mi.msgflags |= RS_MSG_TRASH;
+	}
+        if (msg->msgFlags & RS_MSG_FLAGS_UNREAD_BY_USER)
+	{
+		mi.msgflags |= RS_MSG_UNREAD_BY_USER;
+	}
 
 	mi.ts = msg->sendTime;
 	mi.srcId = msg->PeerId();
@@ -984,6 +1248,10 @@ void p3MsgService::initRsMIS(RsMsgItem *msg, MsgInfoSummary &mis)
 	if (msg->msgFlags & RS_MSG_FLAGS_TRASH)
 	{
 		mis.msgflags |= RS_MSG_TRASH;
+	}
+        if (msg->msgFlags & RS_MSG_FLAGS_UNREAD_BY_USER)
+	{
+		mis.msgflags |= RS_MSG_UNREAD_BY_USER;
 	}
 
 	mis.srcId = msg->PeerId();

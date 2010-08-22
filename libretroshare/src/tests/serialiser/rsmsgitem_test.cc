@@ -94,8 +94,12 @@ RsSerialType* init_item(RsMsgTagType& mtt)
 
 RsSerialType* init_item(RsMsgTags& mt)
 {
-	randString(SHORT_STR, mt.msgId);
-	mt.tagId = rand()%3334;
+	mt.msgId = rand()%3334;
+
+	int i;
+	for (i = 0; i < 10; i++) {
+		mt.tagIds.push_back(rand()%21341);
+	}
 
 	return new RsMsgSerialiser();
 }
@@ -173,7 +177,7 @@ bool operator ==(const RsMsgTagType& mttLeft, const RsMsgTagType& mttRight)
 bool operator ==(const RsMsgTags& mtLeft, const RsMsgTags& mtRight)
 {
 	if(mtLeft.msgId != mtRight.msgId) return false;
-	if(mtLeft.tagId != mtRight.tagId) return false;
+	if(mtLeft.tagIds != mtRight.tagIds) return false;
 
 	return true;
 }

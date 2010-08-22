@@ -92,39 +92,45 @@ bool p3Msgs::MessageDelete(std::string mid)
 	//std::cerr << "p3Msgs::MessageDelete() ";
 	//std::cerr << "mid: " << mid << std::endl;
 
-	mMsgSrv -> removeMsgId(mid);
-
-	return 1;
+	return mMsgSrv -> removeMsgId(mid);
 }
 
-bool p3Msgs::MessageRead(std::string mid)
+bool p3Msgs::MessageRead(std::string mid, bool bUnreadByUser)
 {
 	//std::cerr << "p3Msgs::MessageRead() ";
 	//std::cerr << "mid: " << mid << std::endl;
 
-	mMsgSrv -> markMsgIdRead(mid);
-
-	return 1;
+	return mMsgSrv -> markMsgIdRead(mid, bUnreadByUser);
 }
 
-bool 	p3Msgs::MessageGetTagTypes(MsgTagType& tags)
+bool 	p3Msgs::getMessageTagTypes(MsgTagType& tags)
 {
-	mMsgSrv->MessageGetTagTypes(tags);
+	return mMsgSrv->getMessageTagTypes(tags);
 }
 
-bool 	p3Msgs::MessageGetMsgTag(std::string msgId, MsgTagInfo& info)
+bool  p3Msgs::setMessageTagType(uint32_t tagId, std::string& text, uint32_t rgb_color)
 {
-	mMsgSrv->MessageGetMsgTag(msgId, info);
+	return mMsgSrv->setMessageTagType(tagId, text, rgb_color);
 }
 
-bool  p3Msgs::MessageSetTagType(std::string& text, uint32_t tag_id, uint32_t rgb_color)
+bool    p3Msgs::removeMessageTagType(uint32_t tagId)
 {
-	mMsgSrv->MessageSetTagType(text, tag_id, rgb_color);
+	return mMsgSrv->removeMessageTagType(tagId);
 }
 
-bool 	p3Msgs::MessageSetMsgTag(MsgTagInfo& tagInfo)
+bool 	p3Msgs::getMessageTag(std::string msgId, MsgTagInfo& info)
 {
-	mMsgSrv->MessageSetMsgTag(tagInfo);
+	return mMsgSrv->getMessageTag(msgId, info);
+}
+
+bool 	p3Msgs::setMessageTag(std::string msgId, uint32_t tagId, bool set)
+{
+	return mMsgSrv->setMessageTag(msgId, tagId, set);
+}
+
+bool    p3Msgs::resetMessageStandardTagTypes(MsgTagType& tags)
+{
+	return mMsgSrv->resetMessageStandardTagTypes(tags);
 }
 
 /****************************************/

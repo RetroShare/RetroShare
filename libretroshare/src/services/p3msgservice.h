@@ -56,21 +56,25 @@ bool    MsgNotifications();	/* popup - messages */
 bool 	getMessageNotifications(std::list<MsgInfoSummary> &noteList);
 
 bool 	getMessageSummaries(std::list<MsgInfoSummary> &msgList);
-bool 	getMessage(std::string mid, MessageInfo &msg);
+bool 	getMessage(std::string &mid, MessageInfo &msg);
 void    getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox, unsigned int *pnTrashbox);
 
-bool    removeMsgId(std::string mid); 
-bool    markMsgIdRead(std::string mid);
+bool    removeMsgId(std::string &mid); 
+bool    markMsgIdRead(std::string &mid, bool bUnreadByUser);
 
 bool    MessageSend(MessageInfo &info);
 bool    MessageToDraft(MessageInfo &info);
 bool    MessageToTrash(std::string mid, bool bTrash);
 
-bool 	MessageGetTagTypes(MsgTagType& tags);
-bool 	MessageGetMsgTag(std::string msgId, MsgTagInfo& info);
+bool 	getMessageTagTypes(MsgTagType& tags);
+bool  	setMessageTagType(uint32_t tagId, std::string& text, uint32_t rgb_color);
+bool    removeMessageTagType(uint32_t tagId);
 
-bool  	MessageSetTagType(std::string& text, uint32_t tag_id, uint32_t rgb_color);
-bool 	MessageSetMsgTag(MsgTagInfo& );
+bool 	getMessageTag(std::string &msgId, MsgTagInfo& info);
+/* set == false && tagId == 0 --> remove all */
+bool 	setMessageTag(std::string &msgId, uint32_t tagId, bool set);
+
+bool    resetMessageStandardTagTypes(MsgTagType& tags);
 
 void    loadWelcomeMsg(); /* startup message */
 
@@ -100,6 +104,8 @@ void 	initRsMI(RsMsgItem *msg, MessageInfo &mi);
 void 	initRsMIS(RsMsgItem *msg, MsgInfoSummary &mis);
 RsMsgItem *initMIRsMsg(MessageInfo &info, std::string to);
 
+void    initStandardTagTypes();
+
 	p3ConnectMgr *mConnMgr;
 
 	/* Mutex Required for stuff below */
@@ -117,7 +123,7 @@ RsMsgItem *initMIRsMsg(MessageInfo &info, std::string to);
 	/* maps for tags types and msg tags */
 
 	std::map<uint32_t, RsMsgTagType*> mTags;
-	std::map<std::string, RsMsgTags*> mMsgTags;
+	std::map<uint32_t, RsMsgTags*> mMsgTags;
 
 
 	Indicator msgChanged;

@@ -35,8 +35,6 @@
 
 #include "settings/NewTag.h"
 
-class RSettings;
-
 class MessagesDialog : public MainPage 
 {
   Q_OBJECT
@@ -47,16 +45,12 @@ public:
   /** Default Destructor */
   ~MessagesDialog();
 
-  static void initStandardTagItems(std::map<int, TagItem> &Items);
-  void getTagItems(std::map<int, TagItem> &Items);
-  void setTagItems(std::map<int, TagItem> &Items);
-
 // replaced by shortcut
 //  virtual void keyPressEvent(QKeyEvent *) ;
 
 public slots:
   void insertMessages();
-
+  void messagesTagsChanged();
   
 private slots:
 
@@ -118,6 +112,8 @@ private:
       LockUpdate (MessagesDialog *pDialog, bool bUpdate);
       ~LockUpdate ();
 
+      void setUpdate(bool bUpdate);
+
   private:
       MessagesDialog *m_pDialog;
       bool m_bUpdate;
@@ -155,7 +151,6 @@ private:
 
   QString fileName;
   QFont mFont;
-  RSettings *m_pConfig;
 
   // timer and index for showing message
   QTimer *timer;

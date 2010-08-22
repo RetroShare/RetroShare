@@ -22,15 +22,20 @@
 #include "MessagePage.h"
 #include "rshare.h"
 #include "rsharesettings.h"
+#include "retroshare/rsmsgs.h"
+
+#include <algorithm>
 
 #include "../MainWindow.h"
-#include "../MessagesDialog.h"
+#include "NewTag.h"
 
 MessagePage::MessagePage(QWidget * parent, Qt::WFlags flags)
     : ConfigPage(parent, flags)
 {
     ui.setupUi(this);
     setAttribute(Qt::WA_QuitOnClose, false);
+
+    m_pTags = new MsgTagType;
 
     connect (ui.addpushButton, SIGNAL(clicked(bool)), this, SLOT (addTag()));
     connect (ui.editpushButton, SIGNAL(clicked(bool)), this, SLOT (editTag()));
@@ -45,6 +50,7 @@ MessagePage::MessagePage(QWidget * parent, Qt::WFlags flags)
 
 MessagePage::~MessagePage()
 {
+    delete(m_pTags);
 }
 
 void
@@ -59,9 +65,22 @@ MessagePage::save(QString &errmsg)
 {
     Settings->setMsgSetToReadOnActivate(ui.setMsgToReadOnActivate->isChecked());
 
-    MessagesDialog *pPage = (MessagesDialog*) MainWindow::getPage (MainWindow::Messages);
-    if (pPage) {
-        pPage->setTagItems (m_TagItems);
+    std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag;
+    for (Tag = m_pTags->types.begin(); Tag != m_pTags->types.end(); Tag++) {
+        // check for changed tags
+        std::list<uint32_t>::iterator changedTagId;
+        for (changedTagId = m_changedTagIds.begin(); changedTagId != m_changedTagIds.end(); changedTagId++) {
+            if (*changedTagId == Tag->first) {
+                if (Tag->second.first.empty()) {
+                    // delete tag
+                    rsMsgs->removeMessageTagType(Tag->first);
+                    continue;
+                }
+
+                rsMsgs->setMessageTagType(Tag->first, Tag->second.first, Tag->second.second);
+                break;
+            }
+        }
     }
 
     return true;
@@ -73,47 +92,49 @@ MessagePage::load()
 {
     ui.setMsgToReadOnActivate->setChecked(Settings->getMsgSetToReadOnActivate());
 
-    MessagesDialog *pPage = (MessagesDialog*) MainWindow::getPage (MainWindow::Messages);
-    if (pPage) {
-        pPage->getTagItems (m_TagItems);
-
-        // fill items
-        fillTagItems();
-    } else {
-        // MessagesDialog not available
-        ui.tags_listWidget->setEnabled(false);
-        ui.addpushButton->setEnabled(false);
-        ui.editpushButton->setEnabled(false);
-        ui.deletepushButton->setEnabled(false);
-        ui.defaultTagButton->setEnabled(false);
-    }
+    // fill items
+    rsMsgs->getMessageTagTypes(*m_pTags);
+    fillTags();
 }
 
-// fill items
-void MessagePage::fillTagItems()
+// fill tags
+void MessagePage::fillTags()
 {
     ui.tags_listWidget->clear();
 
-    std::map<int, TagItem>::iterator Item;
-    for (Item = m_TagItems.begin(); Item != m_TagItems.end(); Item++) {
-        if (Item->second._delete) {
-            continue;
+    std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag;
+    for (Tag = m_pTags->types.begin(); Tag != m_pTags->types.end(); Tag++) {
+        QString text;
+        if (Tag->first < RS_MSGTAGTYPE_USER) {
+            text = tr(Tag->second.first.c_str());
+        } else {
+            text = QString::fromStdString(Tag->second.first);
         }
-
-        QListWidgetItem *pItemWidget = new QListWidgetItem(Item->second.text, ui.tags_listWidget);
-        pItemWidget->setTextColor(QColor(Item->second.color));
-        pItemWidget->setData(Qt::UserRole, Item->first);
+        QListWidgetItem *pItemWidget = new QListWidgetItem(text, ui.tags_listWidget);
+        pItemWidget->setTextColor(QColor(Tag->second.second));
+        pItemWidget->setData(Qt::UserRole, Tag->first);
     }
 }
 
 void MessagePage::addTag()
 {
-    NewTag Tag(m_TagItems);
-    if (Tag.exec() == QDialog::Accepted && Tag.m_nId) {
-        TagItem &Item = m_TagItems [Tag.m_nId];
-        QListWidgetItem *pItemWidget = new QListWidgetItem(Item.text, ui.tags_listWidget);
-        pItemWidget->setTextColor(QColor(Item.color));
-        pItemWidget->setData(Qt::UserRole, Tag.m_nId);
+    NewTag TagDlg(*m_pTags);
+    if (TagDlg.exec() == QDialog::Accepted && TagDlg.m_nId) {
+        std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag;
+        Tag = m_pTags->types.find(TagDlg.m_nId);
+        if (Tag != m_pTags->types.end()) {
+            QString text;
+            if (Tag->first < RS_MSGTAGTYPE_USER) {
+                text = tr(Tag->second.first.c_str());
+            } else {
+                text = QString::fromStdString(Tag->second.first);
+            }
+            QListWidgetItem *pItemWidget = new QListWidgetItem(text, ui.tags_listWidget);
+            pItemWidget->setTextColor(QColor(Tag->second.second));
+            pItemWidget->setData(Qt::UserRole, TagDlg.m_nId);
+
+            m_changedTagIds.push_back(TagDlg.m_nId);
+        }
     }
 }
 
@@ -124,17 +145,26 @@ void MessagePage::editTag()
         return;
     }
 
-    int nId = pItemWidget->data(Qt::UserRole).toInt();
+    uint32_t nId = pItemWidget->data(Qt::UserRole).toInt();
     if (nId == 0) {
         return;
     }
 
-    NewTag Tag(m_TagItems, nId);
-    Tag.setWindowTitle(tr("Edit Tag"));
-    if (Tag.exec() == QDialog::Accepted && Tag.m_nId) {
-        TagItem &Item = m_TagItems [Tag.m_nId];
-        pItemWidget->setText(Item.text);
-        pItemWidget->setTextColor(QColor(Item.color));
+    NewTag TagDlg(*m_pTags, nId);
+    TagDlg.setWindowTitle(tr("Edit Tag"));
+    if (TagDlg.exec() == QDialog::Accepted && TagDlg.m_nId) {
+        std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag;
+        Tag = m_pTags->types.find(TagDlg.m_nId);
+        if (Tag != m_pTags->types.end()) {
+            if (Tag->first >= RS_MSGTAGTYPE_USER) {
+                pItemWidget->setText(QString::fromStdString(Tag->second.first));
+            }
+            pItemWidget->setTextColor(QColor(Tag->second.second));
+
+            if (std::find(m_changedTagIds.begin(), m_changedTagIds.end(), TagDlg.m_nId) == m_changedTagIds.end()) {
+                m_changedTagIds.push_back(TagDlg.m_nId);
+            }
+        }
     }
 }
 
@@ -145,26 +175,46 @@ void MessagePage::deleteTag()
         return;
     }
 
-    int nId = pItemWidget->data(Qt::UserRole).toInt();
+    uint32_t nId = pItemWidget->data(Qt::UserRole).toInt();
     if (nId == 0) {
         return;
     }
 
-    if (nId < 0) {
+    if (nId < RS_MSGTAGTYPE_USER) {
+        // can't delete standard tag item
         return;
     }
 
-    TagItem &Item = m_TagItems [nId];
-    Item._delete = true;
+    std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag;
+    Tag = m_pTags->types.find(nId);
+    if (Tag != m_pTags->types.end()) {
+        // erase the text for later delete
+        Tag->second.first.erase();
+    }
 
     ui.tags_listWidget->removeItemWidget(pItemWidget);
     delete (pItemWidget);
+
+    if (std::find(m_changedTagIds.begin(), m_changedTagIds.end(), nId) == m_changedTagIds.end()) {
+        m_changedTagIds.push_back(nId);
+    }
 }
 
 void MessagePage::defaultTag()
 {
-    MessagesDialog::initStandardTagItems(m_TagItems);
-    fillTagItems();
+    rsMsgs->resetMessageStandardTagTypes(*m_pTags);
+
+    // add all standard items to changed list
+    std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag;
+    for (Tag = m_pTags->types.begin(); Tag != m_pTags->types.end(); Tag++) {
+        if (Tag->first < RS_MSGTAGTYPE_USER) {
+            if (std::find(m_changedTagIds.begin(), m_changedTagIds.end(), Tag->first) == m_changedTagIds.end()) {
+                m_changedTagIds.push_back(Tag->first);
+            }
+        }
+    }
+
+    fillTags();
 }
 
 void MessagePage::currentRowChangedTag(int row)
@@ -177,9 +227,9 @@ void MessagePage::currentRowChangedTag(int row)
     if (pItemWidget) {
         bEditEnable = true;
 
-        int nId = pItemWidget->data(Qt::UserRole).toInt();
+        uint32_t nId = pItemWidget->data(Qt::UserRole).toInt();
 
-        if (nId > 0) {
+        if (nId >= RS_MSGTAGTYPE_USER) {
             bDeleteEnable = true;
         }
     }

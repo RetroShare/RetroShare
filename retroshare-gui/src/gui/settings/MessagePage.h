@@ -27,7 +27,7 @@
 #include "configpage.h"
 #include "ui_MessagePage.h"
 
-#include "NewTag.h"
+class MsgTagType;
 
 class MessagePage : public ConfigPage
 {
@@ -52,9 +52,11 @@ private slots:
 
 private:
     void closeEvent (QCloseEvent * event);
-    void fillTagItems();
+    void fillTags();
 
-    std::map<int, TagItem> m_TagItems;
+    /* Pointer for not include of rsmsgs.h */
+    MsgTagType *m_pTags;
+    std::list<uint32_t> m_changedTagIds;
 
     Ui::MessagePage ui;
 };
