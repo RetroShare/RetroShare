@@ -24,6 +24,8 @@
 
 #include <QtGui/QWidget>
 
+#include <stdint.h>
+
 #include "configpage.h"
 #include "ui_MessagePage.h"
 
