@@ -30,6 +30,9 @@
     <property name="horizontalSpacing">
      <number>1</number>
     </property>
+    <property name="verticalSpacing">
+     <number>2</number>
+    </property>
     <item row="0" column="0" rowspan="3">
      <widget class="QFrame" name="frame">
       <property name="sizePolicy">
@@ -202,7 +205,9 @@ border-image: url(:/images/mystatus_bg.png);
       <property name="styleSheet">
        <string notr="true">QFrame#infoframe{border: 1px solid #DCDC41;
 border-radius: 6px;
-background: #FFFFD7;}</string>
+background: #FFFFD7;
+background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+stop:0 #FFFFD7, stop:1 #FFFFB2);}</string>
       </property>
       <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
@@ -211,6 +216,25 @@ background: #FFFFD7;}</string>
        <enum>QFrame::Raised</enum>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="maximumSize">
+          <size>
+           <width>16</width>
+           <height>16</height>
+          </size>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="pixmap">
+          <pixmap resource="../images.qrc">:/images/info16.png</pixmap>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+         </property>
+        </widget>
+       </item>
        <item>
         <widget class="QLabel" name="infolabel">
          <property name="text">
