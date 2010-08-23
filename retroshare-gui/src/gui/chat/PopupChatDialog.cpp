@@ -437,7 +437,6 @@ void PopupChatDialog::updateChat()
 
 void PopupChatDialog::addChatMsg(ChatInfo *ci)
 {
-	bool offline = true;
 
 	{
 	  RsPeerDetails detail;
