@@ -84,8 +84,9 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   last_status_send_time = 0 ;
   styleHtm = ":/qss/chat/default.htm";
   
-  /* Hide Avatar frame */
-  showAvatarFrame(false);
+  /* Hide Avatar and Info frame */
+  showAvatarFrame(false);  
+  ui.infoframe->setVisible(false);
 
   connect(ui.avatarFrameButton, SIGNAL(toggled(bool)), this, SLOT(showAvatarFrame(bool)));
 
@@ -446,22 +447,12 @@ void PopupChatDialog::addChatMsg(ChatInfo *ci)
 		std::cerr << "WARNING CANNOT GET PEER INFO!!!!" << std::endl;
 #endif
 	  }
-	  else if (detail.state & RS_PEER_STATE_CONNECTED)
-	  {
-	    offline = false;
-	  }
-	}
 
-	if (offline)
-	{
-	    	QString offlineMsg = "<br>\n<span style=\"color:#1D84C9\"><strong> ----- PEER OFFLINE (Chat will be lost) -----</strong></span> \n<br>";
-                ui.textBrowser->append(offlineMsg);
 	}
 	
-
-        QString timestamp = "[" + QDateTime::currentDateTime().toString("hh:mm:ss") + "]";
-        QString name = QString::fromStdString(ci ->name);        
-        QString message = QString::fromStdWString(ci -> msg);
+    QString timestamp = "[" + QDateTime::currentDateTime().toString("hh:mm:ss") + "]";
+    QString name = QString::fromStdString(ci ->name);        
+    QString message = QString::fromStdWString(ci -> msg);
 
 	//replace http://, https:// and www. with <a href> links
 	QRegExp rx("(retroshare://[^ <>]*)|(https?://[^ <>]*)|(www\\.[^ <>]*)");
@@ -1175,26 +1166,32 @@ void PopupChatDialog::updateStatus(const QString &peer_id, int status)
     case RS_STATUS_OFFLINE:
         ui.avatarlabel->setStyleSheet("QLabel#avatarlabel{ border-image:url(:/images/mystatus_bg_offline.png); }");
         ui.avatarlabel->setEnabled(false);
+        ui.infoframe->setVisible(true);
+        ui.infolabel->setText( QString::fromStdString(dialogName) + tr(" is Offline") +"\n" + tr("Chat message will be lost and not delivered, write instead a Message."));
         break;
 
     case RS_STATUS_INACTIVE:
         ui.avatarlabel->setStyleSheet("QLabel#avatarlabel{ border-image:url(:/images/mystatus_bg_idle.png); }");
         ui.avatarlabel->setEnabled(true);
+        ui.infoframe->setVisible(false);
         break;
 
     case RS_STATUS_ONLINE:
         ui.avatarlabel->setStyleSheet("QLabel#avatarlabel{ border-image:url(:/images/mystatus_bg_online.png); }");
         ui.avatarlabel->setEnabled(true);
+        ui.infoframe->setVisible(false);
         break;
 
     case RS_STATUS_AWAY:
         ui.avatarlabel->setStyleSheet("QLabel#avatarlabel{ border-image:url(:/images/mystatus_bg_idle.png); }");
         ui.avatarlabel->setEnabled(true);
+        ui.infoframe->setVisible(false);
         break;
 
     case RS_STATUS_BUSY:
         ui.avatarlabel->setStyleSheet("QLabel#avatarlabel{ border-image:url(:/images/mystatus_bg_busy.png); }");
         ui.avatarlabel->setEnabled(true);
+        ui.infoframe->setVisible(false);
         break;
     }
 }
