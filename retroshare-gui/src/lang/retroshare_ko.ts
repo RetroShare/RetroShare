@@ -5749,7 +5749,7 @@ Do you want to save message ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/settings/MessagePage.cpp" line="133"/>
+        <location filename="../gui/settings/MessagePage.cpp" line="154"/>
         <source>Edit Tag</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5817,30 +5817,30 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MessagesDialog</name>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="840"/>
+        <location filename="../gui/MessagesDialog.cpp" line="686"/>
         <source>New Message</source>
         <translation>새로운 메시지</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="764"/>
+        <location filename="../gui/MessagesDialog.cpp" line="610"/>
         <source>Reply to Message</source>
         <translation>메시지에 대답 </translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="816"/>
+        <location filename="../gui/MessagesDialog.cpp" line="662"/>
         <source>Remove Message</source>
         <translation>메시지를 제거하십시오</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="945"/>
-        <location filename="../gui/MessagesDialog.cpp" line="293"/>
+        <location filename="../gui/MessagesDialog.cpp" line="287"/>
         <source>Date</source>
         <translation>날짜</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="940"/>
-        <location filename="../gui/MessagesDialog.cpp" line="292"/>
-        <location filename="../gui/MessagesDialog.cpp" line="1353"/>
+        <location filename="../gui/MessagesDialog.cpp" line="286"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1201"/>
         <source>From</source>
         <translation>에서</translation>
     </message>
@@ -5907,19 +5907,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="950"/>
-        <location filename="../gui/MessagesDialog.cpp" line="295"/>
+        <location filename="../gui/MessagesDialog.cpp" line="289"/>
         <source>Content</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="955"/>
-        <location filename="../gui/MessagesDialog.cpp" line="294"/>
+        <location filename="../gui/MessagesDialog.cpp" line="288"/>
         <source>Tags</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="963"/>
-        <location filename="../gui/MessagesDialog.cpp" line="626"/>
+        <location filename="../gui/MessagesDialog.cpp" line="461"/>
         <source>Tag</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5930,17 +5930,17 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="1098"/>
-        <location filename="../gui/MessagesDialog.cpp" line="1309"/>
-        <location filename="../gui/MessagesDialog.cpp" line="2238"/>
-        <location filename="../gui/MessagesDialog.cpp" line="2248"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1157"/>
+        <location filename="../gui/MessagesDialog.cpp" line="2075"/>
+        <location filename="../gui/MessagesDialog.cpp" line="2085"/>
         <source>Inbox</source>
         <translation>들어오는 전자 우편</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="1107"/>
-        <location filename="../gui/MessagesDialog.cpp" line="1314"/>
-        <location filename="../gui/MessagesDialog.cpp" line="2261"/>
-        <location filename="../gui/MessagesDialog.cpp" line="2269"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1162"/>
+        <location filename="../gui/MessagesDialog.cpp" line="2098"/>
+        <location filename="../gui/MessagesDialog.cpp" line="2106"/>
         <source>Outbox</source>
         <translation>나가는 전자 우편</translation>
     </message>
@@ -5951,15 +5951,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="1125"/>
-        <location filename="../gui/MessagesDialog.cpp" line="1324"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1172"/>
         <source>Sent</source>
         <translation>보내진 전자 우편</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="1134"/>
-        <location filename="../gui/MessagesDialog.cpp" line="1329"/>
-        <location filename="../gui/MessagesDialog.cpp" line="2300"/>
-        <location filename="../gui/MessagesDialog.cpp" line="2305"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1177"/>
+        <location filename="../gui/MessagesDialog.cpp" line="2137"/>
+        <location filename="../gui/MessagesDialog.cpp" line="2142"/>
         <source>Trash</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6041,7 +6041,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">모두를 다운로드하십시오 </translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="2011"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1855"/>
         <source>Print Document</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6051,156 +6051,131 @@ p, li { white-space: pre-wrap; }
         <translation>근원</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="346"/>
+        <location filename="../gui/MessagesDialog.cpp" line="340"/>
         <source>Forward selected Message</source>
         <translation>전달 메시지 선택</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="814"/>
+        <location filename="../gui/MessagesDialog.cpp" line="660"/>
         <source>Remove Messages</source>
         <translation>메시지를 제거하십시오</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="772"/>
+        <location filename="../gui/MessagesDialog.cpp" line="618"/>
         <source>Forward Message</source>
         <translation>전달 메시지</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="501"/>
-        <source>Important</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/MessagesDialog.cpp" line="504"/>
-        <source>Work</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/MessagesDialog.cpp" line="507"/>
-        <source>Personal</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/MessagesDialog.cpp" line="510"/>
-        <source>Todo</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/MessagesDialog.cpp" line="513"/>
-        <source>Later</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/MessagesDialog.cpp" line="636"/>
+        <location filename="../gui/MessagesDialog.cpp" line="472"/>
         <source>Remove All Tags</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="664"/>
+        <location filename="../gui/MessagesDialog.cpp" line="505"/>
         <source>New tag ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="780"/>
+        <location filename="../gui/MessagesDialog.cpp" line="626"/>
         <source>Edit...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="792"/>
+        <location filename="../gui/MessagesDialog.cpp" line="638"/>
         <source>Mark as read</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="799"/>
+        <location filename="../gui/MessagesDialog.cpp" line="645"/>
         <source>Mark as unread</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="824"/>
+        <location filename="../gui/MessagesDialog.cpp" line="670"/>
         <source>Undelete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="861"/>
+        <location filename="../gui/MessagesDialog.cpp" line="707"/>
         <source>Download</source>
         <translation>다운로드</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="943"/>
-        <location filename="../gui/MessagesDialog.cpp" line="990"/>
+        <location filename="../gui/MessagesDialog.cpp" line="789"/>
+        <location filename="../gui/MessagesDialog.cpp" line="836"/>
         <source>Re: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="943"/>
-        <location filename="../gui/MessagesDialog.cpp" line="990"/>
-        <location filename="../gui/MessagesDialog.cpp" line="1046"/>
+        <location filename="../gui/MessagesDialog.cpp" line="789"/>
+        <location filename="../gui/MessagesDialog.cpp" line="836"/>
+        <location filename="../gui/MessagesDialog.cpp" line="892"/>
         <source>Compose: </source>
         <translation>구성하십시오</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="1046"/>
+        <location filename="../gui/MessagesDialog.cpp" line="892"/>
         <source>Fwd: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="1080"/>
+        <location filename="../gui/MessagesDialog.cpp" line="926"/>
         <source>Hide</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="1083"/>
+        <location filename="../gui/MessagesDialog.cpp" line="929"/>
         <source>Expand</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="1319"/>
-        <location filename="../gui/MessagesDialog.cpp" line="2281"/>
-        <location filename="../gui/MessagesDialog.cpp" line="2289"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1167"/>
+        <location filename="../gui/MessagesDialog.cpp" line="2118"/>
+        <location filename="../gui/MessagesDialog.cpp" line="2126"/>
         <source>Drafts</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="1355"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1203"/>
         <source>To</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="1518"/>
-        <location filename="../gui/MessagesDialog.cpp" line="1842"/>
-        <location filename="../gui/MessagesDialog.cpp" line="1855"/>
-        <location filename="../gui/MessagesDialog.cpp" line="1868"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1366"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1695"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1708"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1721"/>
         <source>Anonymous</source>
         <translation type="unfinished">익명</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="2051"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1895"/>
         <source>Save as...</source>
         <translation>다른 이름으로 저장</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="2052"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1896"/>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="2209"/>
-        <location filename="../gui/MessagesDialog.cpp" line="2213"/>
-        <location filename="../gui/MessagesDialog.cpp" line="2217"/>
-        <location filename="../gui/MessagesDialog.cpp" line="2221"/>
-        <location filename="../gui/MessagesDialog.cpp" line="2225"/>
+        <location filename="../gui/MessagesDialog.cpp" line="2046"/>
+        <location filename="../gui/MessagesDialog.cpp" line="2050"/>
+        <location filename="../gui/MessagesDialog.cpp" line="2054"/>
+        <location filename="../gui/MessagesDialog.cpp" line="2058"/>
+        <location filename="../gui/MessagesDialog.cpp" line="2062"/>
         <source>Total:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="347"/>
-        <location filename="../gui/MessagesDialog.cpp" line="768"/>
+        <location filename="../gui/MessagesDialog.cpp" line="341"/>
+        <location filename="../gui/MessagesDialog.cpp" line="614"/>
         <source>Reply to All</source>
         <translation>전체 답장</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="935"/>
-        <location filename="../gui/MessagesDialog.cpp" line="290"/>
+        <location filename="../gui/MessagesDialog.cpp" line="284"/>
         <source>Subject</source>
         <translation>주제</translation>
     </message>
@@ -8215,73 +8190,93 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PopupChatDialog</name>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="122"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="124"/>
         <source>RetroShare - </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="157"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="159"/>
         <source>Paste retroshare Link</source>
         <translation type="unfinished">붙여넣기 retroshare 링크</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="325"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="330"/>
         <source>Friend Not Online</source>
         <translation type="unfinished">친구가 아니 온라인</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="325"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="330"/>
         <source>Your Friend is offline 
 Do you want to send them a Message instead</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="364"/>
-        <source> is typing...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="570"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="565"/>
         <source>Hide Avatar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="571"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="566"/>
         <source>:images/hide_toolbox_frame.png</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="575"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="570"/>
         <source>Show Avatar</source>
         <translation>아바타보기</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="576"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="571"/>
         <source>:images/show_toolbox_frame.png</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="825"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="820"/>
         <source>Open Style</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="827"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="822"/>
         <source>Styles (*.htm)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1146"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1141"/>
         <source>Save as...</source>
         <translation type="unfinished">다른 이름으로 저장</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1147"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1142"/>
         <source>Text File (*.txt );;All Files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="569"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1169"/>
+        <source>apears to be Offline</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1176"/>
+        <source>is Idle and may not reply</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1188"/>
+        <source>is Away and may not reply</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1195"/>
+        <source>is Busy and may not reply</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1169"/>
+        <source>Messages will be lost and not delivered, write a rs Mail instead.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="682"/>
         <source>Send</source>
         <translation type="unfinished">보내십시오</translation>
     </message>
@@ -8291,8 +8286,8 @@ Do you want to send them a Message instead</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="78"/>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="119"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="146"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="187"/>
         <source>QLabel{
 border-image: url(:/images/mystatus_bg.png);
 
@@ -8300,7 +8295,12 @@ border-image: url(:/images/mystatus_bg.png);
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="171"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="241"/>
+        <source>TextLabel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="284"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -8313,7 +8313,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="288"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="401"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -8321,102 +8321,102 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="319"/>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="664"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="432"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="715"/>
         <source>Bold</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="348"/>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="674"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="461"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="725"/>
         <source>Underline</source>
         <translation type="unfinished">밑줄</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="377"/>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="669"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="490"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="720"/>
         <source>Italic</source>
         <translation type="unfinished">기울임꼴</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="406"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="519"/>
         <source>Set Font</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="435"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="548"/>
         <source>Text Color</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="504"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="617"/>
         <source>Attach a Picture</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="646"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="697"/>
         <source>toolBar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="679"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="730"/>
         <source>Strike</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="688"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="739"/>
         <source>Avatar</source>
         <translation>아바타</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="691"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="742"/>
         <source>Set your Avatar Picture</source>
         <translation>설정 귀하의 아바타 이미지</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="700"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="751"/>
         <source>Clear Chat</source>
         <translation>취소 채팅</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="708"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="759"/>
         <source>Disable Emoticons</source>
         <translation>이모티콘 사용 안 함</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="713"/>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="716"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="764"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="767"/>
         <source>Save Chat History</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="357"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="362"/>
         <source>Chatting with </source>
         <translation>채팅</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="932"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="927"/>
         <source>Add Extra File</source>
         <translation type="unfinished">추가 파일 추가</translation>
     </message>
     <message>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1079"/>
         <location filename="../gui/chat/PopupChatDialog.cpp" line="1084"/>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1089"/>
         <source>Drop file error.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1084"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1079"/>
         <source>File not found or file name not accepted.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1089"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1084"/>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="533"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="646"/>
         <source>Add a File for your Friend</source>
         <translation type="unfinished"></translation>
     </message>

@@ -5644,23 +5644,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Important</source>
-        <translation>Wichtig</translation>
+        <translation type="obsolete">Wichtig</translation>
     </message>
     <message>
         <source>Work</source>
-        <translation>Dienstlich</translation>
+        <translation type="obsolete">Dienstlich</translation>
     </message>
     <message>
         <source>Personal</source>
-        <translation>Persönlich</translation>
+        <translation type="obsolete">Persönlich</translation>
     </message>
     <message>
         <source>Todo</source>
-        <translation>Zu erledigen</translation>
+        <translation type="obsolete">Zu erledigen</translation>
     </message>
     <message>
         <source>Later</source>
-        <translation>Später</translation>
+        <translation type="obsolete">Später</translation>
     </message>
     <message>
         <source>Remove All Tags</source>
@@ -7873,7 +7873,31 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source> is typing...</source>
-        <translation> macht gerade eine Eingabe...</translation>
+        <translation type="obsolete"> macht gerade eine Eingabe...</translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Messages will be lost and not delivered, write a rs Mail instead.</source>
+        <translation>die Chat Nachricten werden nicht übertragen und gehen verloren, schreibe stattdessen eine rs mail.</translation>
+    </message>
+    <message>
+        <source>apears to be Offline</source>
+        <translation>ist Offline</translation>
+    </message>
+    <message>
+        <source>is Idle and may not reply</source>
+        <translation>antwortet möglicherweise nicht, da der status auf &quot;Idle&quot; gesetzt wurde</translation>
+    </message>
+    <message>
+        <source>is Away and may not reply</source>
+        <translation>antwortet möglicherweise nicht, da der status auf &quot;Abwesend&quot; gesetzt wurde</translation>
+    </message>
+    <message>
+        <source>is Busy and may not reply</source>
+        <translation>antwortet möglicherweise nicht, da der status auf &quot;Beschäftigt&quot; gesetzt wurde</translation>
     </message>
 </context>
 <context>
