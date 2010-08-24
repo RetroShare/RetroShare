@@ -7861,7 +7861,7 @@ Do you want to send them a Message instead</source>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Attach a Picture</source>
@@ -7881,11 +7881,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Messages will be lost and not delivered, write a rs Mail instead.</source>
-        <translation>die Chat Nachricten werden nicht übertragen und gehen verloren, schreibe stattdessen eine rs mail.</translation>
+        <translation type="obsolete">Nachrichten, die Sie versenden gehen bei diesem Kontakt nicht ein. Diesem Kontakt stattdessen eine RS-Mail senden.</translation>
     </message>
     <message>
         <source>apears to be Offline</source>
-        <translation>ist Offline</translation>
+        <translation type="obsolete">ist Offline</translation>
     </message>
     <message>
         <source>is Idle and may not reply</source>
@@ -7898,6 +7898,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>is Busy and may not reply</source>
         <translation>antwortet möglicherweise nicht, da der status auf &quot;Beschäftigt&quot; gesetzt wurde</translation>
+    </message>
+    <message>
+        <source>apears to be Offline.</source>
+        <translation>ist Offline.</translation>
+    </message>
+    <message>
+        <source>Messages you send will be lost and not delivered, rs-Mail this contact instead.</source>
+        <translation>Nachrichten, die Sie versenden gehen bei diesem Kontakt nicht ein. Diesem Kontakt stattdessen eine RS-Mail senden.</translation>
     </message>
 </context>
 <context>

@@ -10580,7 +10580,12 @@ Vill du skicka ett meddelande i stället</translation>
     </message>
     <message>
         <location filename="../gui/chat/PopupChatDialog.cpp" line="1169"/>
-        <source>apears to be Offline</source>
+        <source>apears to be Offline.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1169"/>
+        <source>Messages you send will be lost and not delivered, rs-Mail this contact instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -10596,11 +10601,6 @@ Vill du skicka ett meddelande i stället</translation>
     <message>
         <location filename="../gui/chat/PopupChatDialog.cpp" line="1195"/>
         <source>is Busy and may not reply</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1169"/>
-        <source>Messages will be lost and not delivered, write a rs Mail instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
