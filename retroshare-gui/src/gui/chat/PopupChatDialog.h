@@ -92,6 +92,7 @@ private slots:
   void addExtraFile();
   void addExtraPicture();
   void showAvatarFrame(bool show);
+  void on_closeInfoFrameButton_clicked();
 
   void setColor();    
   void getFont();

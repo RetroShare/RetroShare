@@ -245,6 +245,40 @@ stop:0 #FFFFD7, stop:1 #FFFFB2);}</string>
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QToolButton" name="closeInfoFrameButton">
+         <property name="maximumSize">
+          <size>
+           <width>16</width>
+           <height>16</height>
+          </size>
+         </property>
+         <property name="toolTip">
+          <string>Close</string>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QToolButton
+{
+ border-image: url(:/images/closenormal.png) 
+}
+                                
+QToolButton:hover 
+{
+border-image: url(:/images/closehover.png) 
+}
+                                
+QToolButton:pressed  {
+border-image: url(:/images/closepressed.png) 
+}</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="autoRaise">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
     </item>
@@ -772,6 +806,8 @@ border: 1px solid #CCCCCC;
   </action>
  </widget>
  <resources>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>

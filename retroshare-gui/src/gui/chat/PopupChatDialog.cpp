@@ -572,6 +572,11 @@ void PopupChatDialog::showAvatarFrame(bool show)
     }
 }
 
+void PopupChatDialog::on_closeInfoFrameButton_clicked()
+{
+    ui.infoframe->setVisible(false);
+}
+
 void PopupChatDialog::setColor()
 {	    
 	bool ok;    
