@@ -1166,13 +1166,14 @@ void PopupChatDialog::updateStatus(const QString &peer_id, int status)
         ui.avatarlabel->setStyleSheet("QLabel#avatarlabel{ border-image:url(:/images/mystatus_bg_offline.png); }");
         ui.avatarlabel->setEnabled(false);
         ui.infoframe->setVisible(true);
-        ui.infolabel->setText( QString::fromStdString(dialogName) + tr(" is Offline") +"\n" + tr("Chat message will be lost and not delivered, write instead a Message."));
+        ui.infolabel->setText( QString::fromStdString(dialogName) + tr(" apears to be Offline") +"\n" + tr("Messages will be lost and not delivered, write a rs Mail instead."));
         break;
 
     case RS_STATUS_INACTIVE:
         ui.avatarlabel->setStyleSheet("QLabel#avatarlabel{ border-image:url(:/images/mystatus_bg_idle.png); }");
         ui.avatarlabel->setEnabled(true);
-        ui.infoframe->setVisible(false);
+        ui.infoframe->setVisible(true);
+        ui.infolabel->setText( QString::fromStdString(dialogName) + tr(" answers may not, as the status was set to Idle"));
         break;
 
     case RS_STATUS_ONLINE:
@@ -1184,13 +1185,15 @@ void PopupChatDialog::updateStatus(const QString &peer_id, int status)
     case RS_STATUS_AWAY:
         ui.avatarlabel->setStyleSheet("QLabel#avatarlabel{ border-image:url(:/images/mystatus_bg_idle.png); }");
         ui.avatarlabel->setEnabled(true);
-        ui.infoframe->setVisible(false);
+        ui.infolabel->setText( QString::fromStdString(dialogName) + tr(" answers may not, as the status was set to Away"));
+        ui.infoframe->setVisible(true);
         break;
 
     case RS_STATUS_BUSY:
         ui.avatarlabel->setStyleSheet("QLabel#avatarlabel{ border-image:url(:/images/mystatus_bg_busy.png); }");
         ui.avatarlabel->setEnabled(true);
-        ui.infoframe->setVisible(false);
+        ui.infolabel->setText( QString::fromStdString(dialogName) + tr(" answers may not, as the status was set to Busy"));
+        ui.infoframe->setVisible(true);
         break;
     }
 }
