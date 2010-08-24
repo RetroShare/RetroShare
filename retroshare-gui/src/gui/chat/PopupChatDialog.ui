@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>558</width>
-    <height>427</height>
+    <height>430</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -216,6 +216,9 @@ stop:0 #FFFFD7, stop:1 #FFFFB2);}</string>
        <enum>QFrame::Raised</enum>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout">
+       <property name="margin">
+        <number>6</number>
+       </property>
        <item>
         <widget class="QLabel" name="label">
          <property name="maximumSize">
@@ -769,6 +772,7 @@ border: 1px solid #CCCCCC;
   </action>
  </widget>
  <resources>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>
