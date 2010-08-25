@@ -122,19 +122,6 @@ border-radius: 10px}</string>
          </spacer>
         </item>
         <item>
-         <widget class="QLabel" name="label_10">
-          <property name="font">
-           <font>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Last Contact:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="QLabel" name="lastLabel">
           <property name="sizePolicy">
            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
@@ -142,8 +129,17 @@ border-radius: 10px}</string>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
           <property name="text">
            <string>TextLabel</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
