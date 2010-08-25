@@ -59,6 +59,7 @@
 #include <sstream>
 #include <time.h>
 #include <sys/stat.h>
+#include <algorithm>
 
 #include <QSound>
 
@@ -496,15 +497,7 @@ void  PeersDialog::insertPeers()
     int index = 0;
     while (index < itemCount) {
         std::string gpg_widget_id = (peertreeWidget->topLevelItem(index))->data(COLUMN_DATA, ROLE_ID).toString().toStdString();
-        std::list<std::string>::iterator gpgfriendIt;
-        bool found = false;
-        for (gpgfriendIt = gpgFriends.begin(); gpgfriendIt != gpgFriends.end(); gpgfriendIt++) {
-            if (gpg_widget_id == *gpgfriendIt) {
-                found = true;
-                break;
-            }
-        }
-        if (!found) {
+        if (std::find(gpgFriends.begin(), gpgFriends.end(), gpg_widget_id) == gpgFriends.end()) {
             delete (peertreeWidget->takeTopLevelItem(index));
             // count again
             itemCount = peertreeWidget->topLevelItemCount();

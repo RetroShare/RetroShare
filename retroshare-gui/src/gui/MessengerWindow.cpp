@@ -51,6 +51,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <algorithm>
 
 /* Images for context menu icons */
 #define IMAGE_REMOVEFRIEND       ":/images/removefriend16.png"
@@ -206,6 +207,14 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
 
     // load settings
     processSettings(true);
+
+    // add self nick
+    RsPeerDetails pd;
+    if (rsPeers->getPeerDetails(rsPeers->getOwnId(),pd)) {
+        QString titleStr("<span style=\"font-size:14pt; font-weight:500;"
+               "color:#FFFFFF;\">%1</span>");
+        ui.nicklabel->setText(titleStr.arg(QString::fromStdString(pd.name) + tr(" - ") + QString::fromStdString(pd.location)));
+    }
 
     MainWindow *pMainWindow = MainWindow::getInstance();
     if (pMainWindow) {
@@ -385,14 +394,6 @@ void MessengerWindow::messengertreeWidgetCostumPopupMenu( QPoint point )
 void MessengerWindow::updateMessengerDisplay()
 {
     if (RsAutoUpdatePage::eventsLocked() == false) {
-        // add self nick and Avatar to Friends.
-        RsPeerDetails pd;
-        if (rsPeers->getPeerDetails(rsPeers->getOwnId(),pd)) {
-            QString titleStr("<span style=\"font-size:14pt; font-weight:500;"
-                   "color:#FFFFFF;\">%1</span>");
-            ui.nicklabel->setText(titleStr.arg(QString::fromStdString(pd.name) + tr(" - ") + QString::fromStdString(pd.location)));
-        }
-
         insertPeers();
     }
 
@@ -438,15 +439,7 @@ void  MessengerWindow::insertPeers()
     int index = 0;
     while (index < itemCount) {
         std::string gpg_widget_id = peertreeWidget->topLevelItem(index)->data(COLUMN_DATA, ROLE_ID).toString().toStdString();
-        std::list<std::string>::iterator gpgfriendIt;
-        bool found = false;
-        for (gpgfriendIt =  gpgFriends.begin(); gpgfriendIt != gpgFriends.end(); gpgfriendIt++) {
-            if (gpg_widget_id == *gpgfriendIt) {
-                found = true;
-                break;
-            }
-        }
-        if (!found) {
+        if (std::find(gpgFriends.begin(), gpgFriends.end(), gpg_widget_id) == gpgFriends.end()) {
             delete (peertreeWidget->takeTopLevelItem(index));
             // count again
             itemCount = peertreeWidget->topLevelItemCount();
