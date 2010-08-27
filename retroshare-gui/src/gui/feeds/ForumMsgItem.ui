@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>716</width>
-    <height>340</height>
+    <height>270</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -37,26 +37,41 @@ border-radius: 10px}</string>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QVBoxLayout">
-      <property name="topMargin">
-       <number>6</number>
-      </property>
-      <property name="bottomMargin">
-       <number>6</number>
-      </property>
-      <item>
-       <layout class="QHBoxLayout">
-        <item>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="0" column="0">
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
          <widget class="QLabel" name="label">
+          <property name="minimumSize">
+           <size>
+            <width>48</width>
+            <height>48</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>48</width>
+            <height>48</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel#label{border: 2px solid black;
+background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #F7B552, stop: 1 #FB8428);
+border-radius: 10px}</string>
+          </property>
           <property name="text">
            <string/>
           </property>
           <property name="pixmap">
            <pixmap resource="../images.qrc">:/images/konversation.png</pixmap>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
          </widget>
         </item>
-        <item>
+        <item row="0" column="1">
          <widget class="QLabel" name="titleLabel">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -75,22 +90,29 @@ border-radius: 10px}</string>
           <property name="text">
            <string>Forum Name</string>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+          </property>
          </widget>
         </item>
-        <item>
+       </layout>
+      </item>
+      <item row="0" column="1">
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="0" column="0">
          <spacer name="horizontalSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>40</width>
+            <width>358</width>
             <height>20</height>
            </size>
           </property>
          </spacer>
         </item>
-        <item>
+        <item row="0" column="1">
          <widget class="QLabel" name="timestamplabel">
           <property name="font">
            <font>
@@ -102,9 +124,12 @@ border-radius: 10px}</string>
           <property name="text">
            <string>Timestamp</string>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
          </widget>
         </item>
-        <item>
+        <item row="0" column="2">
          <widget class="QPushButton" name="expandButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -124,7 +149,7 @@ border-radius: 10px}</string>
           </property>
          </widget>
         </item>
-        <item>
+        <item row="0" column="3">
          <widget class="QPushButton" name="clearButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -144,9 +169,22 @@ border-radius: 10px}</string>
           </property>
          </widget>
         </item>
+        <item row="1" column="0" colspan="4">
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>518</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
        </layout>
       </item>
-      <item>
+      <item row="1" column="0" colspan="2">
        <layout class="QHBoxLayout">
         <item>
          <widget class="QLabel" name="label_2">
@@ -265,7 +303,7 @@ border-radius: 10px}</string>
         </item>
        </layout>
       </item>
-      <item>
+      <item row="2" column="0" colspan="2">
        <widget class="QFrame" name="prevFrame">
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
@@ -339,6 +377,9 @@ border-radius: 10px}</string>
              <property name="text">
               <string>Previous Message...</string>
              </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
             </widget>
            </item>
            <item>
@@ -362,7 +403,7 @@ border-radius: 10px}</string>
         </layout>
        </widget>
       </item>
-      <item>
+      <item row="3" column="0" colspan="2">
        <widget class="QFrame" name="nextFrame">
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
@@ -452,6 +493,9 @@ border-radius: 10px}</string>
              <property name="text">
               <string>Currnent Message..</string>
              </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
             </widget>
            </item>
           </layout>
@@ -465,6 +509,9 @@ border-radius: 10px}</string>
   </layout>
  </widget>
  <resources>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

@@ -117,10 +117,10 @@ void ForumMsgItem::updateItemStatic()
 			prevSubLabel->setText(QString::fromStdWString(msg.title));
 			prevMsgLabel->setText(QString::fromStdWString(msg.msg));
 			
-      QDateTime qtime;
-      qtime.setTime_t(msg.ts);
-      QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm:ss");
-      timestamplabel->setText(timestamp);
+            QDateTime qtime;
+            qtime.setTime_t(msg.ts);
+            QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm:ss");
+            timestamplabel->setText(timestamp);
 
 			nextFrame->hide();
 		}
@@ -130,9 +130,9 @@ void ForumMsgItem::updateItemStatic()
 			nextMsgLabel->setText(QString::fromStdWString(msg.msg));
 			
 			QDateTime qtime;
-      qtime.setTime_t(msg.ts);
-      QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm:ss");
-      timestamplabel->setText(timestamp);
+            qtime.setTime_t(msg.ts);
+            QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm:ss");
+            timestamplabel->setText(timestamp);
 			
 			prevSHLabel->setText("In Reply To: ");
 
