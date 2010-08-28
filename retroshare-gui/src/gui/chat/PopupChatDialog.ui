@@ -27,11 +27,8 @@
     <property name="bottomMargin">
      <number>0</number>
     </property>
-    <property name="horizontalSpacing">
+    <property name="spacing">
      <number>1</number>
-    </property>
-    <property name="verticalSpacing">
-     <number>2</number>
     </property>
     <item row="0" column="0" rowspan="3">
      <widget class="QFrame" name="frame">
@@ -105,7 +102,7 @@
      <widget class="QFrame" name="avatarframe">
       <property name="maximumSize">
        <size>
-        <width>118</width>
+        <width>120</width>
         <height>16777215</height>
        </size>
       </property>
@@ -117,13 +114,13 @@
       </property>
       <layout class="QGridLayout">
        <property name="leftMargin">
-        <number>0</number>
+        <number>2</number>
        </property>
        <property name="topMargin">
         <number>0</number>
        </property>
        <property name="rightMargin">
-        <number>0</number>
+        <number>2</number>
        </property>
        <property name="bottomMargin">
         <number>9</number>
@@ -291,7 +288,7 @@ border-image: url(:/images/closepressed.png)
        <enum>Qt::Vertical</enum>
       </property>
       <property name="handleWidth">
-       <number>5</number>
+       <number>2</number>
       </property>
       <widget class="QTextBrowser" name="textBrowser">
        <property name="sizePolicy">
@@ -331,24 +328,46 @@ p, li { white-space: pre-wrap; }
         <bool>false</bool>
        </property>
       </widget>
-      <widget class="QTextEdit" name="chattextEdit">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>30</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QTextEdit{border: 1px solid #B8B6B1;
+      <widget class="QWidget" name="">
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <property name="spacing">
+         <number>1</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="statusLabel">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="margin">
+           <number>0</number>
+          </property>
+          <property name="indent">
+           <number>3</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTextEdit" name="chattextEdit">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QTextEdit{border: 1px solid #B8B6B1;
 border-radius: 6px;
 background: white;}</string>
-       </property>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>
@@ -806,6 +825,7 @@ border: 1px solid #CCCCCC;
   </action>
  </widget>
  <resources>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>

@@ -360,6 +360,7 @@ void PopupChatDialog::contextMenu( QPoint point )
 void PopupChatDialog::resetStatusBar() 
 {
         statusBar()->showMessage(tr("Chatting with ") + QString::fromStdString(dialogName)) ;
+        ui.statusLabel->setText(QString("")) ;
 }
 
 void PopupChatDialog::updateStatusTyping()
@@ -376,7 +377,8 @@ void PopupChatDialog::updateStatusTyping()
 //
 void PopupChatDialog::updateStatusString(const QString& status_string)
 {
-	statusBar()->showMessage(status_string,5000) ; // displays info for 5 secs.
+	//statusBar()->showMessage(status_string,5000) ; // displays info for 5 secs.
+    ui.statusLabel->setText(status_string) ; // displays info for 5 secs.
 
 	QTimer::singleShot(5000,this,SLOT(resetStatusBar())) ;
 }
