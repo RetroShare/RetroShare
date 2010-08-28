@@ -22,9 +22,6 @@
 #ifndef _PEERSDIALOG_H
 #define _PEERSDIALOG_H
 
-#include <QFileDialog>
-
-#include "chat/PopupChatDialog.h"
 #include "chat/HandleRichText.h"
 #include "RsAutoUpdatePage.h"
 
@@ -49,6 +46,7 @@ class QAction;
 class QTextEdit;
 class QTextCharFormat;
 class ChatDialog;
+class AttachFileItem;
 
 class PeersDialog : public RsAutoUpdatePage 
 {

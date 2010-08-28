@@ -28,6 +28,7 @@
 #include "gui/TransfersDialog.h"
 #include "gui/MessagesDialog.h"
 #include "gui/SharedFilesDialog.h"
+#include "gui/chat/PopupChatDialog.h"
 #include "gui/MessengerWindow.h"
 #include "gui/NetworkDialog.h"
 #include "gui/StartDialog.h"

@@ -28,6 +28,7 @@
 #include <QColorDialog>
 #include <QFontDialog>
 #include <QDropEvent>
+#include <QFileDialog>
 #include "common/vmessagebox.h"
 #include <gui/mainpagestack.h>
 
@@ -421,10 +422,8 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
     //contextMnu.addAction( profileviewAct);
     if (c->type() == 0) {
         contextMnu.addAction( recommendfriendAct);
-    } else {
-        //this is a SSL key
-        contextMnu.addAction( connectfriendAct);
     }
+    contextMnu.addAction( connectfriendAct);
     contextMnu.addAction(pastePersonAct);
     contextMnu.addAction( removefriendAct);
     //contextMnu.addAction( exportfriendAct);
@@ -928,23 +927,35 @@ void PeersDialog::removefriend()
 
 void PeersDialog::connectfriend()
 {
-	QTreeWidgetItem *c = getCurrentPeer();
+    QTreeWidgetItem *c = getCurrentPeer();
 #ifdef PEERS_DEBUG
-	std::cerr << "PeersDialog::connectfriend()" << std::endl;
+    std::cerr << "PeersDialog::connectfriend()" << std::endl;
 #endif
-	if (!c)
-	{
+    if (!c)
+    {
 #ifdef PEERS_DEBUG
-        	std::cerr << "PeersDialog::connectfriend() Noone Selected -- sorry" << std::endl;
+        std::cerr << "PeersDialog::connectfriend() Noone Selected -- sorry" << std::endl;
 #endif
-		return;
-	}
+        return;
+    }
 
-	if (rsPeers)
-	{
-		rsPeers->connectAttempt(getPeerRsCertId(c));
-                c -> setIcon(COLUMN_NAME,(QIcon(IMAGE_CONNECT2)));
-	}
+    if (rsPeers)
+    {
+        if (c->type() == 0) {
+            int childCount = c->childCount();
+            for (int childIndex = 0; childIndex < childCount; childIndex++) {
+                QTreeWidgetItem *item = c->child(childIndex);
+                if (item->type() == 1) {
+                    rsPeers->connectAttempt(getPeerRsCertId(item));
+                    item->setIcon(COLUMN_NAME,(QIcon(IMAGE_CONNECT2)));
+                }
+            }
+        } else {
+            //this is a SSL key
+            rsPeers->connectAttempt(getPeerRsCertId(c));
+            c->setIcon(COLUMN_NAME,(QIcon(IMAGE_CONNECT2)));
+        }
+    }
 }
 
 /* GUI stuff -> don't do anything directly with Control */

@@ -22,6 +22,8 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QWidgetAction>
+#include <QTimer>
+#include <QFileDialog>
 #include "common/vmessagebox.h"
 
 #include <retroshare/rsiface.h>
@@ -52,6 +54,7 @@
 #include <iostream>
 #include <sstream>
 #include <algorithm>
+#include <set>
 
 /* Images for context menu icons */
 #define IMAGE_REMOVEFRIEND       ":/images/removefriend16.png"
@@ -378,10 +381,8 @@ void MessengerWindow::messengertreeWidgetCostumPopupMenu( QPoint point )
       //contextMnu.addAction( profileviewAct);
       if (c->type() == 0) {
           contextMnu.addAction( recommendfriendAct);
-      } else {
-          //this is a SSL key
-          contextMnu.addAction( connectfriendAct);
       }
+      contextMnu.addAction( connectfriendAct);
       contextMnu.addAction(pastePersonAct);
       contextMnu.addAction( removefriendAct);
       //contextMnu.addAction( exportfriendAct);
@@ -688,7 +689,6 @@ void  MessengerWindow::insertPeers()
                             }
                             break;
                         }
-
                     }
                 }
             }
@@ -866,23 +866,35 @@ void MessengerWindow::removefriend()
 
 void MessengerWindow::connectfriend()
 {
-	QTreeWidgetItem *c = getCurrentPeer();
+    QTreeWidgetItem *c = getCurrentPeer();
 #ifdef PEERS_DEBUG
-	std::cerr << "PeersDialog::connectfriend()" << std::endl;
+    std::cerr << "PeersDialog::connectfriend()" << std::endl;
 #endif
-	if (!c)
-	{
+    if (!c)
+    {
 #ifdef PEERS_DEBUG
-        	std::cerr << "PeersDialog::connectfriend() Noone Selected -- sorry" << std::endl;
+        std::cerr << "PeersDialog::connectfriend() Noone Selected -- sorry" << std::endl;
 #endif
-		return;
-	}
+        return;
+    }
 
-	if (rsPeers)
-	{
-		rsPeers->connectAttempt(getPeersRsCertId(c));
-                c -> setIcon(COLUMN_NAME,(QIcon(IMAGE_CONNECT2)));
-	}
+    if (rsPeers)
+    {
+        if (c->type() == 0) {
+            int childCount = c->childCount();
+            for (int childIndex = 0; childIndex < childCount; childIndex++) {
+                QTreeWidgetItem *item = c->child(childIndex);
+                if (item->type() == 1) {
+                    rsPeers->connectAttempt(getPeersRsCertId(item));
+                    item->setIcon(COLUMN_NAME,(QIcon(IMAGE_CONNECT2)));
+                }
+            }
+        } else {
+            //this is a SSL key
+            rsPeers->connectAttempt(getPeersRsCertId(c));
+            c->setIcon(COLUMN_NAME,(QIcon(IMAGE_CONNECT2)));
+        }
+    }
 }
 
 /* GUI stuff -> don't do anything directly with Control */
