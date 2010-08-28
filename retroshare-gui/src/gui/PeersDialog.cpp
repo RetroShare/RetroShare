@@ -294,6 +294,7 @@ void PeersDialog::processSettings(bool bLoad)
 
         // state of splitter
         ui.splitter->restoreState(Settings->value("Splitter").toByteArray());
+        ui.splitter_2->restoreState(Settings->value("GroupChatSplitter").toByteArray());
     } else {
         // save settings
 
@@ -308,6 +309,7 @@ void PeersDialog::processSettings(bool bLoad)
 
         // state of splitter
         Settings->setValue("Splitter", ui.splitter->saveState());
+        Settings->setValue("GroupChatSplitter", ui.splitter_2->saveState());
     }
 
     Settings->endGroup();
