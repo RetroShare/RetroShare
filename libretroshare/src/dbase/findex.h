@@ -173,7 +173,7 @@ DirEntry &operator=(DirEntry &src)
 {
 	DirEntry *pdest = this;
 	(*pdest) = src;
-	return src;
+	return *this;
 }
 
 	/* Data */
