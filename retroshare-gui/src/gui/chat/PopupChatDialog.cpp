@@ -867,7 +867,7 @@ void PopupChatDialog::updatePeerAvatar(const std::string& peer_id)
            #ifdef CHAT_DEBUG
 	   std::cerr << "Got no image" << std::endl ;
            #endif
-	   ui.avatarlabel->setPixmap(QPixmap(":/images/no_avatar_70.png"));
+	   ui.avatarlabel->setPixmap(QPixmap(":/images/no_avatar_background.png"));
 		return ;
 	}
 
