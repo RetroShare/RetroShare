@@ -170,6 +170,9 @@ bool p3StatusService::sendStatus(const std::string &id, uint32_t status)
 		sendItem(statusItem);
 	}
 
+	/* send notify of own status change */
+	rsicontrol->getNotify().notifyPeerStatusChanged(statusInfo.id, statusInfo.status);
+
 	return true;
 }
 
