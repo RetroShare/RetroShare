@@ -1003,27 +1003,33 @@ void PeersDialog::resetStatusBar()
 
 void PeersDialog::updateStatusTyping()
 {
-	if(time(NULL) - last_status_send_time > 5)	// limit 'peer is typing' packets to at most every 10 sec
-	{
-                #ifdef PEERS_DEBUG
-		std::cerr << "PeersDialog: sending group chat typing info." << std::endl ;
-                #endif
+    if(time(NULL) - last_status_send_time > 5)	// limit 'peer is typing' packets to at most every 10 sec
+    {
+#ifdef PEERS_DEBUG
+        std::cerr << "PeersDialog: sending group chat typing info." << std::endl ;
+#endif
 
-		rsMsgs->sendGroupChatStatusString(rsiface->getConfig().ownName + " is typing...");
-		last_status_send_time = time(NULL) ;
-	}
+#ifdef ONLY_FOR_LINGUIST
+        tr("is typing...");
+#endif
+
+        rsMsgs->sendGroupChatStatusString("is typing...");
+        last_status_send_time = time(NULL) ;
+    }
 }
+
 // Called by libretroshare through notifyQt to display the peer's status
 //
-void PeersDialog::updateStatusString(const QString& status_string)
+void PeersDialog::updateStatusString(const QString& peer_id, const QString& status_string)
 {
-        #ifdef PEERS_DEBUG
-	std::cerr << "PeersDialog: received group chat typing info. updating gui." << std::endl ;
-        #endif
+#ifdef PEERS_DEBUG
+    std::cerr << "PeersDialog: received group chat typing info. updating gui." << std::endl ;
+#endif
 
-	ui.statusStringLabel->setText(status_string) ; // displays info for 5 secs.
+    QString status = QString::fromStdString(rsPeers->getPeerName(peer_id.toStdString())) + " " + tr(status_string.toAscii());
+    ui.statusStringLabel->setText(status) ; // displays info for 5 secs.
 
-	QTimer::singleShot(5000,this,SLOT(resetStatusBar())) ;
+    QTimer::singleShot(5000,this,SLOT(resetStatusBar())) ;
 }
 
 void PeersDialog::updatePeersCustomStateString(const QString& peer_id)
@@ -1050,19 +1056,19 @@ void PeersDialog::updatePeersAvatar(const QString& peer_id)
 
 void PeersDialog::updatePeerStatusString(const QString& peer_id,const QString& status_string,bool is_private_chat)
 {
-	if(is_private_chat)
-	{
-                PopupChatDialog *pcd = PopupChatDialog::getPrivateChat(peer_id.toStdString(),rsPeers->getPeerName(peer_id.toStdString()), 0);
-		pcd->updateStatusString(status_string);
-	}
-	else
-	{
-                #ifdef PEERS_DEBUG
-		std::cerr << "Updating public chat msg from peer " << rsPeers->getPeerName(peer_id.toStdString()) << ": " << status_string.toStdString() << std::endl ;
-                #endif
+    if(is_private_chat)
+    {
+        PopupChatDialog *pcd = PopupChatDialog::getPrivateChat(peer_id.toStdString(),rsPeers->getPeerName(peer_id.toStdString()), 0);
+        pcd->updateStatusString(peer_id, status_string);
+    }
+    else
+    {
+#ifdef PEERS_DEBUG
+        std::cerr << "Updating public chat msg from peer " << rsPeers->getPeerName(peer_id.toStdString()) << ": " << status_string.toStdString() << std::endl ;
+#endif
 
-		updateStatusString(status_string) ;
-	}
+        updateStatusString(peer_id, status_string);
+    }
 }
 
 void PeersDialog::insertChat()

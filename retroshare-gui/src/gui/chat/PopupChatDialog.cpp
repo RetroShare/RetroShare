@@ -176,13 +176,10 @@ PopupChatDialog::~PopupChatDialog()
 {
     // save settings
     processSettings(false);
-
-
 }
 
 void PopupChatDialog::processSettings(bool bLoad)
 {
-
     Settings->beginGroup(QString("ChatDialog"));
 
     if (bLoad) {
@@ -365,22 +362,25 @@ void PopupChatDialog::resetStatusBar()
 
 void PopupChatDialog::updateStatusTyping()
 {
-	if(time(NULL) - last_status_send_time > 5)	// limit 'peer is typing' packets to at most every 10 sec
-	{
+    if (time(NULL) - last_status_send_time > 5)	// limit 'peer is typing' packets to at most every 10 sec
+    {
+#ifdef ONLY_FOR_LINGUIST
+        tr("is typing...");
+#endif
 
-		rsMsgs->sendStatusString(dialogId, rsiface->getConfig().ownName + " is typing...");
-		last_status_send_time = time(NULL) ;
-	}
+        rsMsgs->sendStatusString(dialogId, "is typing...");
+        last_status_send_time = time(NULL) ;
+    }
 }
 
 // Called by libretroshare through notifyQt to display the peer's status
 //
-void PopupChatDialog::updateStatusString(const QString& status_string)
+void PopupChatDialog::updateStatusString(const QString& peer_id, const QString& status_string)
 {
-	//statusBar()->showMessage(status_string,5000) ; // displays info for 5 secs.
-    ui.statusLabel->setText(status_string) ; // displays info for 5 secs.
+    QString status = QString::fromStdString(rsPeers->getPeerName(peer_id.toStdString())) + " " + tr(status_string.toAscii());
+    ui.statusLabel->setText(status) ; // displays info for 5 secs.
 
-	QTimer::singleShot(5000,this,SLOT(resetStatusBar())) ;
+    QTimer::singleShot(5000,this,SLOT(resetStatusBar())) ;
 }
 
 /** 

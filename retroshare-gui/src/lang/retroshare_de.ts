@@ -7399,6 +7399,10 @@ p, li { white-space: pre-wrap; }
         <source>Paste Person Link</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>is typing...</source>
+        <translation type="unfinished">tippt...</translation>
+    </message>
 </context>
 <context>
     <name>PeersFeed</name>
@@ -7906,6 +7910,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Messages you send will be lost and not delivered, rs-Mail this contact instead.</source>
         <translation>Nachrichten, die Sie versenden gehen bei diesem Kontakt nicht ein. Diesem Kontakt stattdessen eine RS-Mail senden.</translation>
+    </message>
+    <message>
+        <source>is typing...</source>
+        <translation type="unfinished">tippt...</translation>
     </message>
 </context>
 <context>

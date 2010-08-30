@@ -100,7 +100,7 @@ private slots:
 		/** Create the context popup menu and it's submenus */
 		void peertreeWidgetCostumPopupMenu( QPoint point );
 
-		void updateStatusString(const QString& statusString) ;	// called when a peer is typing in group chat 
+		void updateStatusString(const QString& peer_id, const QString& statusString) ;	// called when a peer is typing in group chat
 		void updateStatusTyping() ;										// called each time a key is hit
 
 		//void updatePeerStatusString(const QString& peer_id,const QString& chat_status) ;
