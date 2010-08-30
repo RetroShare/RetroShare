@@ -292,11 +292,6 @@ void MessengerWindow::processSettings(bool bLoad)
 void MessengerWindow::messengertreeWidgetCostumPopupMenu( QPoint point )
 {
       QTreeWidgetItem *c = getCurrentPeer();
-      if (!c)
-      {
-          //no peer selected
-          return;
-      }
 
       QMenu contextMnu( this );
 
@@ -307,19 +302,39 @@ void MessengerWindow::messengertreeWidgetCostumPopupMenu( QPoint point )
       connect( collapseAll , SIGNAL( triggered() ), ui.messengertreeWidget, SLOT(collapseAll()) );
 
       QAction* chatAct = new QAction(QIcon(IMAGE_CHAT), tr( "Chat" ), &contextMnu );
-      connect( chatAct , SIGNAL( triggered() ), this, SLOT( chatfriendproxy() ) );
+      if (c) {
+          connect( chatAct , SIGNAL( triggered() ), this, SLOT( chatfriendproxy() ) );
+      } else {
+          chatAct->setDisabled(true);
+      }
 
       QAction* sendMessageAct = new QAction(QIcon(IMAGE_MSG), tr( "Message Friend" ), &contextMnu );
-      connect( sendMessageAct , SIGNAL( triggered() ), this, SLOT( sendMessage() ) );
+      if (c) {
+          connect( sendMessageAct , SIGNAL( triggered() ), this, SLOT( sendMessage() ) );
+      } else {
+          sendMessageAct->setDisabled(true);
+      }
 
       QAction* connectfriendAct = new QAction(QIcon(IMAGE_CONNECT), tr( "Connect To Friend" ), &contextMnu );
-      connect( connectfriendAct , SIGNAL( triggered() ), this, SLOT( connectfriend() ) );
+      if (c) {
+          connect( connectfriendAct , SIGNAL( triggered() ), this, SLOT( connectfriend() ) );
+      } else {
+          connectfriendAct->setDisabled(true);
+      }
 
       QAction* configurefriendAct = new QAction(QIcon(IMAGE_PEERINFO), tr( "Peer Details" ), &contextMnu );
-      connect( configurefriendAct , SIGNAL( triggered() ), this, SLOT( configurefriend() ) );
+      if (c) {
+          connect( configurefriendAct , SIGNAL( triggered() ), this, SLOT( configurefriend() ) );
+      } else {
+          configurefriendAct->setDisabled(true);
+      }
 
       QAction* recommendfriendAct = new QAction(QIcon(IMAGE_EXPIORTFRIEND), tr( "Recomend this Friend to..." ), &contextMnu );
-      connect( recommendfriendAct , SIGNAL( triggered() ), this, SLOT( recommendfriend() ) );
+      if (c && c->type() == 0) {
+          connect( recommendfriendAct , SIGNAL( triggered() ), this, SLOT( recommendfriend() ) );
+      } else {
+          recommendfriendAct->setDisabled(true);
+      }
 
       QAction* pastePersonAct = new QAction(QIcon(IMAGE_PASTELINK), tr( "Paste retroshare Link" ), &contextMnu );
       if(!RSLinkClipboard::empty(RetroShareLink::TYPE_PERSON)) {
@@ -332,17 +347,22 @@ void MessengerWindow::messengertreeWidgetCostumPopupMenu( QPoint point )
       //connect( profileviewAct , SIGNAL( triggered() ), this, SLOT( viewprofile() ) );
 
       QAction* exportfriendAct = new QAction(QIcon(IMAGE_EXPIORTFRIEND), tr( "Export Friend" ), &contextMnu );
-      connect( exportfriendAct , SIGNAL( triggered() ), this, SLOT( exportfriend() ) );
-
-      QAction* removefriendAct;
-      if (c->type() == 0) {
-          //this is a GPG key
-          removefriendAct = new QAction(QIcon(IMAGE_REMOVEFRIEND), tr( "Deny Friend" ), &contextMnu );
+      if (c) {
+          connect( exportfriendAct , SIGNAL( triggered() ), this, SLOT( exportfriend() ) );
       } else {
-          removefriendAct = new QAction(QIcon(IMAGE_REMOVEFRIEND), tr( "Remove Friend Location" ), &contextMnu );
+          exportfriendAct->setDisabled(true);
       }
-      connect( removefriendAct , SIGNAL( triggered() ), this, SLOT( removefriend() ) );
 
+      QAction* removefriendAct = new QAction(QIcon(IMAGE_REMOVEFRIEND), tr( "Deny Friend" ), &contextMnu );
+      if (c) {
+          if (c->type() == 1) {
+              //this is a SSL key
+              removefriendAct->setText(tr( "Remove Friend Location"));
+          }
+          connect( removefriendAct , SIGNAL( triggered() ), this, SLOT( removefriend() ) );
+      } else {
+          removefriendAct->setDisabled(true);
+      }
 
       QWidget *widget = new QWidget();
       widget->setStyleSheet( ".QWidget{background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #FEFEFE, stop:1 #E8E8E8); border: 1px solid #CCCCCC;}");  
@@ -357,11 +377,10 @@ void MessengerWindow::messengertreeWidgetCostumPopupMenu( QPoint point )
       hbox->addWidget(iconLabel);
 
       QLabel *textLabel;
-      if (c->type() == 0) {
+      textLabel = new QLabel( tr("<strong>RetroShare instance</strong>"), widget );
+      if (c && c->type() == 0) {
           //this is a GPG key
-         textLabel = new QLabel( tr("<strong>GPG Key</strong>"), &contextMnu );
-      } else {
-         textLabel = new QLabel( tr("<strong>RetroShare instance</strong>"), &contextMnu );
+          textLabel->setText(tr("<strong>GPG Key</strong>"));
       }
 
       hbox->addWidget(textLabel);
@@ -379,9 +398,7 @@ void MessengerWindow::messengertreeWidgetCostumPopupMenu( QPoint point )
       contextMnu.addAction( sendMessageAct);
       contextMnu.addAction( configurefriendAct);
       //contextMnu.addAction( profileviewAct);
-      if (c->type() == 0) {
-          contextMnu.addAction( recommendfriendAct);
-      }
+      contextMnu.addAction( recommendfriendAct);
       contextMnu.addAction( connectfriendAct);
       contextMnu.addAction(pastePersonAct);
       contextMnu.addAction( removefriendAct);
@@ -734,6 +751,12 @@ void  MessengerWindow::insertPeers()
         delete(expandedPeers);
         expandedPeers = NULL;
     }
+
+    QTreeWidgetItem *c = getCurrentPeer();
+    if (c && c->isHidden()) {
+        // active item is hidden, deselect it
+        ui.messengertreeWidget->setCurrentItem(NULL);
+    }
 }
 
 /* Utility Fns */
@@ -1077,6 +1100,12 @@ void MessengerWindow::FilterItems()
     int nCount = ui.messengertreeWidget->topLevelItemCount ();
     for (int nIndex = 0; nIndex < nCount; nIndex++) {
         FilterItem(ui.messengertreeWidget->topLevelItem(nIndex), sPattern);
+    }
+
+    QTreeWidgetItem *c = getCurrentPeer();
+    if (c && c->isHidden()) {
+        // active item is hidden, deselect it
+        ui.messengertreeWidget->setCurrentItem(NULL);
     }
 }
 

@@ -335,10 +335,6 @@ void PeersDialog::contextMenu( QPoint point )
 void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
 {
     QTreeWidgetItem *c = getCurrentPeer();
-    if (!c) {
-        //no peer selected
-        return;
-    }
 
     QMenu contextMnu( this );
 
@@ -349,19 +345,39 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
     connect( collapseAll , SIGNAL( triggered() ), ui.peertreeWidget, SLOT(collapseAll()) );
 
     QAction* chatAct = new QAction(QIcon(IMAGE_CHAT), tr( "Chat" ), &contextMnu );
-    connect( chatAct , SIGNAL( triggered() ), this, SLOT( chatfriendproxy() ) );
+    if (c) {
+        connect( chatAct , SIGNAL( triggered() ), this, SLOT( chatfriendproxy() ) );
+    } else {
+        chatAct->setDisabled(true);
+    }
 
     QAction* msgAct = new QAction(QIcon(IMAGE_MSG), tr( "Message Friend" ), &contextMnu );
-    connect( msgAct , SIGNAL( triggered() ), this, SLOT( msgfriend() ) );
+    if (c) {
+        connect( msgAct , SIGNAL( triggered() ), this, SLOT( msgfriend() ) );
+    } else {
+        msgAct->setDisabled(true);
+    }
 
     QAction* connectfriendAct = new QAction(QIcon(IMAGE_CONNECT), tr( "Connect To Friend" ), &contextMnu );
-    connect( connectfriendAct , SIGNAL( triggered() ), this, SLOT( connectfriend() ) );
+    if (c) {
+        connect( connectfriendAct , SIGNAL( triggered() ), this, SLOT( connectfriend() ) );
+    } else {
+        connectfriendAct->setDisabled(true);
+    }
 
     QAction* configurefriendAct = new QAction(QIcon(IMAGE_PEERINFO), tr( "Peer Details" ), &contextMnu );
-    connect( configurefriendAct , SIGNAL( triggered() ), this, SLOT( configurefriend() ) );
+    if (c) {
+        connect( configurefriendAct , SIGNAL( triggered() ), this, SLOT( configurefriend() ) );
+    } else {
+        configurefriendAct->setDisabled(true);
+    }
 
     QAction* recommendfriendAct = new QAction(QIcon(IMAGE_EXPIORTFRIEND), tr( "Recomend this Friend to..." ), &contextMnu );
-    connect( recommendfriendAct , SIGNAL( triggered() ), this, SLOT( recommendfriend() ) );
+    if (c && c->type() == 0) {
+        connect( recommendfriendAct , SIGNAL( triggered() ), this, SLOT( recommendfriend() ) );
+    } else {
+        recommendfriendAct->setDisabled(true);
+    }
 
     QAction* pastePersonAct = new QAction(QIcon(IMAGE_PASTELINK), tr( "Paste Person Link" ), &contextMnu );
     if(!RSLinkClipboard::empty(RetroShareLink::TYPE_PERSON)) {
@@ -371,20 +387,29 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
     }
 
     QAction* profileviewAct = new QAction(QIcon(IMAGE_PEERINFO), tr( "Profile View" ), &contextMnu );
-    connect( profileviewAct , SIGNAL( triggered() ), this, SLOT( viewprofile() ) );
+    if (c) {
+        connect( profileviewAct , SIGNAL( triggered() ), this, SLOT( viewprofile() ) );
+    } else {
+        profileviewAct->setDisabled(true);
+    }
 
     QAction* exportfriendAct = new QAction(QIcon(IMAGE_EXPIORTFRIEND), tr( "Export Friend" ), &contextMnu );
-    connect( exportfriendAct , SIGNAL( triggered() ), this, SLOT( exportfriend() ) );
-
-    QAction* removefriendAct;
-    if (c->type() == 0) {
-        //this is a GPG key
-        removefriendAct = new QAction(QIcon(IMAGE_REMOVEFRIEND), tr( "Deny Friend" ), &contextMnu );
+    if (c) {
+        connect( exportfriendAct , SIGNAL( triggered() ), this, SLOT( exportfriend() ) );
     } else {
-        removefriendAct = new QAction(QIcon(IMAGE_REMOVEFRIEND), tr( "Remove Friend Location" ), &contextMnu );
+        exportfriendAct->setDisabled(true);
     }
-    connect( removefriendAct , SIGNAL( triggered() ), this, SLOT( removefriend() ) );
 
+    QAction* removefriendAct = new QAction(QIcon(IMAGE_REMOVEFRIEND), tr( "Deny Friend" ), &contextMnu );
+    if (c) {
+        if (c->type() == 1) {
+            //this is a SSL key
+            removefriendAct->setText(tr( "Remove Friend Location"));
+        }
+        connect( removefriendAct , SIGNAL( triggered() ), this, SLOT( removefriend() ) );
+    } else {
+        removefriendAct->setDisabled(true);
+    }
 
     QWidget *widget = new QWidget(&contextMnu);
     widget->setStyleSheet( ".QWidget{background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #FEFEFE, stop:1 #E8E8E8); border: 1px solid #CCCCCC;}");
@@ -398,11 +423,10 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
     iconLabel->setMaximumSize( iconLabel->frameSize().height() + 24, 24 );
     hbox->addWidget(iconLabel);
 
-    if (c->type() == 0) {
+    textLabel = new QLabel( tr("<strong>RetroShare instance</strong>"), widget );
+    if (c && c->type() == 0) {
         //this is a GPG key
-        textLabel = new QLabel( tr("<strong>GPG Key</strong>"), widget );
-    } else {
-        textLabel = new QLabel( tr("<strong>RetroShare instance</strong>"), widget );
+        textLabel->setText(tr("<strong>GPG Key</strong>"));
     }
 
     hbox->addWidget(textLabel);
@@ -420,9 +444,7 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
     contextMnu.addAction( msgAct);
     contextMnu.addAction( configurefriendAct);
     //contextMnu.addAction( profileviewAct);
-    if (c->type() == 0) {
-        contextMnu.addAction( recommendfriendAct);
-    }
+    contextMnu.addAction( recommendfriendAct);
     contextMnu.addAction( connectfriendAct);
     contextMnu.addAction(pastePersonAct);
     contextMnu.addAction( removefriendAct);
@@ -770,6 +792,12 @@ void  PeersDialog::insertPeers()
             /* add gpg item to the list */
             peertreeWidget->addTopLevelItem(gpg_item);
         }
+    }
+
+    QTreeWidgetItem *c = getCurrentPeer();
+    if (c && c->isHidden()) {
+        // active item is hidden, deselect it
+        ui.peertreeWidget->setCurrentItem(NULL);
     }
 }
 
