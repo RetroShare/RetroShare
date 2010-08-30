@@ -1015,7 +1015,7 @@ void MessengerWindow::getAvatar()
 	QString fileName = QFileDialog::getOpenFileName(this, "Load File", QDir::homePath(), "Pictures (*.png *.xpm *.jpg)");
 	if(!fileName.isEmpty())
 	{
-		picture = QPixmap(fileName).scaled(82,82, Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
+		picture = QPixmap(fileName).scaled(96,96, Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
 
 		std::cerr << "Sending avatar image down the pipe" << std::endl ;
 

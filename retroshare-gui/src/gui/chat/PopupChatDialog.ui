@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>558</width>
+    <width>504</width>
     <height>430</height>
    </rect>
   </property>
@@ -102,7 +102,7 @@
      <widget class="QFrame" name="avatarframe">
       <property name="maximumSize">
        <size>
-        <width>120</width>
+        <width>132</width>
         <height>16777215</height>
        </size>
       </property>
@@ -140,8 +140,8 @@
           </size>
          </property>
          <property name="styleSheet">
-          <string>QLabel{
-border-image: url(:/images/mystatus_bg.png);
+          <string notr="true">QLabel{
+border-image: url(:/images/avatarstatus_bg.png);
 
 }</string>
          </property>
@@ -181,8 +181,8 @@ border-image: url(:/images/mystatus_bg.png);
           </size>
          </property>
          <property name="styleSheet">
-          <string>QLabel{
-border-image: url(:/images/mystatus_bg.png);
+          <string notr="true">QLabel{
+border-image: url(:/images/avatarstatus_bg.png);
 
 }</string>
          </property>
@@ -328,7 +328,7 @@ p, li { white-space: pre-wrap; }
         <bool>false</bool>
        </property>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <property name="spacing">
          <number>1</number>
@@ -375,7 +375,7 @@ background: white;}</string>
      <widget class="QFrame" name="Chatbuttonframe">
       <property name="minimumSize">
        <size>
-        <width>16</width>
+        <width>347</width>
         <height>46</height>
        </size>
       </property>
@@ -825,6 +825,9 @@ border: 1px solid #CCCCCC;
   </action>
  </widget>
  <resources>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>

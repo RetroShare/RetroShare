@@ -910,7 +910,7 @@ void PopupChatDialog::getAvatar()
 
 	if(!fileName.isEmpty())
 	{
-		picture = QPixmap(fileName).scaled(82,82, Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
+		picture = QPixmap(fileName).scaled(96,96, Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
 
 		std::cerr << "Sending avatar image down the pipe" << std::endl ;
 
@@ -1170,34 +1170,34 @@ void PopupChatDialog::updateStatus(const QString &peer_id, int status)
 
     switch (status) {
     case RS_STATUS_OFFLINE:
-        ui.avatarlabel->setStyleSheet("QLabel#avatarlabel{ border-image:url(:/images/mystatus_bg_offline.png); }");
+        ui.avatarlabel->setStyleSheet("QLabel#avatarlabel{ border-image:url(:/images/avatarstatus_bg_offline.png); }");
         ui.avatarlabel->setEnabled(false);
         ui.infoframe->setVisible(true);
         ui.infolabel->setText( QString::fromStdString(dialogName) + " " + tr("apears to be Offline.") +"\n" + tr("Messages you send will be lost and not delivered, rs-Mail this contact instead."));
         break;
 
     case RS_STATUS_INACTIVE:
-        ui.avatarlabel->setStyleSheet("QLabel#avatarlabel{ border-image:url(:/images/mystatus_bg_idle.png); }");
+        ui.avatarlabel->setStyleSheet("QLabel#avatarlabel{ border-image:url(:/images/avatarstatus_bg_away.png); }");
         ui.avatarlabel->setEnabled(true);
         ui.infoframe->setVisible(true);
         ui.infolabel->setText( QString::fromStdString(dialogName) + " " + tr("is Idle and may not reply"));
         break;
 
     case RS_STATUS_ONLINE:
-        ui.avatarlabel->setStyleSheet("QLabel#avatarlabel{ border-image:url(:/images/mystatus_bg_online.png); }");
+        ui.avatarlabel->setStyleSheet("QLabel#avatarlabel{ border-image:url(:/images/avatarstatus_bg_online.png); }");
         ui.avatarlabel->setEnabled(true);
         ui.infoframe->setVisible(false);
         break;
 
     case RS_STATUS_AWAY:
-        ui.avatarlabel->setStyleSheet("QLabel#avatarlabel{ border-image:url(:/images/mystatus_bg_idle.png); }");
+        ui.avatarlabel->setStyleSheet("QLabel#avatarlabel{ border-image:url(:/images/avatarstatus_bg_away.png); }");
         ui.avatarlabel->setEnabled(true);
         ui.infolabel->setText( QString::fromStdString(dialogName) + " " + tr("is Away and may not reply"));
         ui.infoframe->setVisible(true);
         break;
 
     case RS_STATUS_BUSY:
-        ui.avatarlabel->setStyleSheet("QLabel#avatarlabel{ border-image:url(:/images/mystatus_bg_busy.png); }");
+        ui.avatarlabel->setStyleSheet("QLabel#avatarlabel{ border-image:url(:/images/avatarstatus_bg_busy.png); }");
         ui.avatarlabel->setEnabled(true);
         ui.infolabel->setText( QString::fromStdString(dialogName) + " " + tr("is Busy and may not reply"));
         ui.infoframe->setVisible(true);

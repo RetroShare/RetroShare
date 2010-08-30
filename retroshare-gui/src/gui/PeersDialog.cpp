@@ -1567,7 +1567,7 @@ void PeersDialog::getAvatar()
 	if(!fileName.isEmpty())
 	{
 		QPixmap picture;
-		picture = QPixmap(fileName).scaled(82,82, Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
+		picture = QPixmap(fileName).scaled(96,96, Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
 
                 #ifdef PEERS_DEBUG
 		std::cerr << "Sending avatar image down the pipe" << std::endl ;
