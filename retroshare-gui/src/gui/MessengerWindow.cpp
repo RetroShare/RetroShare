@@ -200,7 +200,6 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
     _rsLogoBarmessenger = new LogoBar(ui.logoframe);
     Widget::createLayout(ui.logoframe)->addWidget(_rsLogoBarmessenger);
 
-    ui.statuscomboBox->setMinimumWidth(20);
     ui.messagelineEdit->setMinimumWidth(20);
 
     itemFont = QFont("ARIAL", 10);
@@ -214,14 +213,14 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
     // add self nick
     RsPeerDetails pd;
     if (rsPeers->getPeerDetails(rsPeers->getOwnId(),pd)) {
-        QString titleStr("<span style=\"font-size:14pt; font-weight:500;"
-               "color:#FFFFFF;\">%1</span>");
-        ui.nicklabel->setText(titleStr.arg(QString::fromStdString(pd.name) + tr(" - ") + QString::fromStdString(pd.location)));
+        ui.statusButton->setText(QString::fromStdString(pd.name) + tr(" - ") + QString::fromStdString(pd.location));
     }
 
     MainWindow *pMainWindow = MainWindow::getInstance();
     if (pMainWindow) {
-        pMainWindow->initializeStatusObject(ui.statuscomboBox, true);
+        QMenu *pStatusMenu = new QMenu();
+        pMainWindow->initializeStatusObject(pStatusMenu, true);
+        ui.statusButton->setMenu(pStatusMenu);
     }
     insertPeers();
     updateAvatar();
@@ -243,7 +242,7 @@ MessengerWindow::~MessengerWindow ()
 
     MainWindow *pMainWindow = MainWindow::getInstance();
     if (pMainWindow) {
-        pMainWindow->removeStatusObject(ui.statuscomboBox);
+        pMainWindow->removeStatusObject(ui.statusButton);
     }
 
     _instance = NULL;
@@ -500,7 +499,7 @@ void  MessengerWindow::insertPeers()
 
         gpg_item -> setTextAlignment(COLUMN_NAME, Qt::AlignLeft | Qt::AlignVCenter );
 
-        gpg_item -> setSizeHint(COLUMN_NAME,  QSize( 27,27 ) );
+        gpg_item -> setSizeHint(COLUMN_NAME,  QSize( 34,34 ) );
 
         /* not displayed, used to find back the item */
         gpg_item -> setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(detail.id));
@@ -653,7 +652,7 @@ void  MessengerWindow::insertPeers()
                             QPixmap avatar ;
                             avatar.loadFromData(data,size,"PNG") ;
                             QIcon avatar_icon(avatar);
-                            QSize av_icon_size(100, 100);
+                            QSize av_icon_size(32, 32);
                             gpg_item-> setIcon(1, avatar_icon);
                             delete[] data;
 
