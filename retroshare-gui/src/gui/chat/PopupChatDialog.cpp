@@ -1212,6 +1212,29 @@ void PopupChatDialog::updateStatus(const QString &peer_id, int status)
 
     if (stdPeerId == rsPeers->getOwnId()) {
         // my status has changed
+        
+        switch (status) {
+        case RS_STATUS_OFFLINE:
+            ui.myavatarlabel->setStyleSheet("QLabel#myavatarlabel{border-image:url(:/images/avatarstatus_bg_offline.png); }");
+            break;
+
+        case RS_STATUS_INACTIVE:
+            ui.myavatarlabel->setStyleSheet("QLabel#myavatarlabel{border-image:url(:/images/avatarstatus_bg_away.png); }");
+            break;
+
+        case RS_STATUS_ONLINE:
+            ui.myavatarlabel->setStyleSheet("QLabel#myavatarlabel{border-image:url(:/images/avatarstatus_bg_online.png); }");
+            break;
+
+        case RS_STATUS_AWAY:
+            ui.myavatarlabel->setStyleSheet("QLabel#myavatarlabel{border-image:url(:/images/avatarstatus_bg_away.png); }");
+            break;
+
+        case RS_STATUS_BUSY:
+            ui.myavatarlabel->setStyleSheet("QLabel#myavatarlabel{border-image:url(:/images/avatarstatus_bg_busy.png); }");
+            break;
+        }
+        
         return;
     }
 
