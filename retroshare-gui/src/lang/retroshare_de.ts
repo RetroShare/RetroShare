@@ -6979,11 +6979,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Write Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Nachricht schreiben</translation>
     </message>
     <message>
         <source>Start Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Chat starten</translation>
     </message>
 </context>
 <context>
@@ -7909,11 +7909,12 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Messages you send will be lost and not delivered, rs-Mail this contact instead.</source>
-        <translation>Nachrichten, die Sie versenden gehen bei diesem Kontakt nicht ein. Diesem Kontakt stattdessen eine RS-Mail senden.</translation>
+        <translation>Nachrichten, die Sie versenden gehen bei diesem Kontakt nicht ein.
+Diesem Kontakt stattdessen eine RS-Mail senden.</translation>
     </message>
     <message>
         <source>is typing...</source>
-        <translation type="unfinished">tippt...</translation>
+        <translation>tippt...</translation>
     </message>
 </context>
 <context>
