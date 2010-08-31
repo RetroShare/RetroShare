@@ -45,14 +45,12 @@ ChatMsgItem::ChatMsgItem(FeedHolder *parent, uint32_t feedId, std::string peerId
     setupUi(this);
 
     /* general ones */
-    connect( expandButton, SIGNAL( clicked( void ) ), this, SLOT( toggle ( void ) ) );
     connect( clearButton, SIGNAL( clicked( void ) ), this, SLOT( removeItem ( void ) ) );
 
     /* specific ones */
     connect( chatButton, SIGNAL( clicked( void ) ), this, SLOT( openChat ( void ) ) );
     connect( msgButton, SIGNAL( clicked( void ) ), this, SLOT( sendMsg ( void ) ) );
 
-    small();
     updateItemStatic();
     updateItem();
     insertChat(message);
@@ -66,8 +64,6 @@ void ChatMsgItem::updateItemStatic()
     RsPeerDetails details;
     if (rsPeers->getPeerDetails(mPeerId, details))
     {
-        QString title;
-        titleLabel->setText(title);
 
         /* set textcolor for peername  */
         QString nameStr("<span style=\"font-size:14pt; font-weight:500;"
@@ -89,15 +85,7 @@ void ChatMsgItem::updateItemStatic()
     std::cerr << std::endl;
 #endif
 
-    if (mIsHome)
-    {
-        /* disable buttons */
-        clearButton->setEnabled(false);
-        //gotoButton->setEnabled(false);
 
-        /* disable buttons */
-        clearButton->hide();
-    }
 }
 
 void ChatMsgItem::updateItem()
@@ -146,33 +134,10 @@ void ChatMsgItem::insertChat(std::string &message)
 #endif
 
     QString timestamp = QDateTime::currentDateTime().toString("hh:mm:ss");
-    lastLabel->setText(timestamp);
+    timestampLabel->setText(timestamp);
 
-    chatText_label->setText(QString::fromStdString(message));
+    chatTextlabel->setText(QString::fromStdString(message));
 }
-
-
-void ChatMsgItem::small()
-{
-	expandFrame->hide();
-}
-
-void ChatMsgItem::toggle()
-{
-	if (expandFrame->isHidden())
-	{
-		expandFrame->show();
-		expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
-	    expandButton->setToolTip("Hide");
-	}
-	else
-	{
-		expandFrame->hide();
-		expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
-	    expandButton->setToolTip("Expand");
-	}
-}
-
 
 void ChatMsgItem::removeItem()
 {
@@ -208,7 +173,6 @@ void ChatMsgItem::sendMsg()
 
 	if (mParent)
 	{
-		//mParent->openMsg(FEEDHOLDER_MSG_MESSAGE, mPeerId, "");
 
     MessageComposer *nMsgDialog = new MessageComposer();
     nMsgDialog->newMsg();

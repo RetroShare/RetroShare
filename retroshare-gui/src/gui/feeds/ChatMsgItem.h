@@ -40,7 +40,6 @@ public:
   /** Default Destructor */
 
 	void updateItemStatic();
-  	void small();
   	void loadAvatar();
 
 
@@ -48,7 +47,6 @@ private slots:
 	/* default stuff */
   	void gotoHome();
   	void removeItem();
-	void toggle();
 
 	void sendMsg();
 	void openChat();
