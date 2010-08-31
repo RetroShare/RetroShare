@@ -40,8 +40,6 @@ public:
   /** Default Destructor */
 
 	void updateItemStatic();
-  	void loadAvatar();
-
 
 private slots:
 	/* default stuff */
@@ -52,6 +50,7 @@ private slots:
 	void openChat();
 
 	void updateItem();
+	void updateAvatar(const QString &peer_id);
 
 private:
         void insertChat(std::string &message);

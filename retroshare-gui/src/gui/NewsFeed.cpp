@@ -24,6 +24,7 @@
 #include "NewsFeed.h"
 
 #include <retroshare/rsnotify.h>
+#include <retroshare/rspeers.h>
 
 #include "feeds/ChanNewItem.h"
 #include "feeds/ChanMsgItem.h"
@@ -374,6 +375,11 @@ void	NewsFeed::addFeedItemChatNew(RsFeedItem &fi)
 	std::cerr << std::endl;
 #endif
 
+	if (fi.mId1 == rsPeers->getOwnId()) {
+		/* chat message from myself */
+		return;
+	}
+
 	/* make new widget */
 	ChatMsgItem *cm = new ChatMsgItem(this, NEWSFEED_CHATMSGLIST, fi.mId1, fi.mId2, true);
 
@@ -399,7 +405,6 @@ void	NewsFeed::addFeedItemMessage(RsFeedItem &fi)
 #endif
 }
 
-
 void	NewsFeed::addFeedItemFilesNew(RsFeedItem &fi)
 {
 #ifdef NEWS_DEBUG
@@ -407,9 +412,6 @@ void	NewsFeed::addFeedItemFilesNew(RsFeedItem &fi)
 	std::cerr << std::endl;
 #endif
 }
-
-
-
 
 /* FeedHolder Functions (for FeedItem functionality) */
 void NewsFeed::deleteFeedItem(QWidget *item, uint32_t type)

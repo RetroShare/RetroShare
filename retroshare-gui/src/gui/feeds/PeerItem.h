@@ -45,8 +45,6 @@ public:
 
 	void updateItemStatic();
   	void small();
-  	void loadAvatar();
-
 
 private slots:
 	/* default stuff */
@@ -60,6 +58,7 @@ private slots:
 	void openChat();
 
 	void updateItem();
+	void updateAvatar(const QString &peer_id);
 
 private:
 	FeedHolder *mParent;

@@ -27,6 +27,8 @@
 #include "../RsAutoUpdatePage.h"
 #include "gui/msgs/MessageComposer.h"
 
+#include "gui/notifyqt.h"
+
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rspeers.h>
 
@@ -55,9 +57,12 @@ PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, std::string peerId, uint
   //connect( addButton, SIGNAL( clicked( void ) ), this, SLOT( addFriend ( void ) ) );
   //connect( removeButton, SIGNAL( clicked( void ) ), this, SLOT( removeFriend ( void ) ) );
 
+  connect(NotifyQt::getInstance(), SIGNAL(peerHasNewAvatar(const QString&)), this, SLOT(updateAvatar(const QString&)));
+
   small();
   updateItemStatic();
   updateItem();
+  updateAvatar(QString::fromStdString(mPeerId));
 }
 
 
@@ -212,12 +217,9 @@ void PeerItem::updateItem()
 	/* slow Tick  */
 	int msec_rate = 10129;
 	
-    loadAvatar();
-
 	QTimer::singleShot( msec_rate, this, SLOT(updateItem( void ) ));
 	return;
 }
-
 
 void PeerItem::small()
 {
@@ -320,8 +322,12 @@ void PeerItem::openChat()
 	}
 }
 
-void PeerItem::loadAvatar()
+void PeerItem::updateAvatar(const QString &peer_id)
 {
+   if (peer_id.toStdString() != mPeerId) {
+       /* it 's not me */
+       return;
+   }
 
    unsigned char *data = NULL;
    int size = 0 ;

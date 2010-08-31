@@ -27,6 +27,8 @@
 #include "../RsAutoUpdatePage.h"
 #include "gui/msgs/MessageComposer.h"
 
+#include "gui/notifyqt.h"
+
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rspeers.h>
 
@@ -51,8 +53,11 @@ ChatMsgItem::ChatMsgItem(FeedHolder *parent, uint32_t feedId, std::string peerId
     connect( chatButton, SIGNAL( clicked( void ) ), this, SLOT( openChat ( void ) ) );
     connect( msgButton, SIGNAL( clicked( void ) ), this, SLOT( sendMsg ( void ) ) );
 
+    connect(NotifyQt::getInstance(), SIGNAL(peerHasNewAvatar(const QString&)), this, SLOT(updateAvatar(const QString&)));
+
     updateItemStatic();
     updateItem();
+    updateAvatar(QString::fromStdString(mPeerId));
     insertChat(message);
 }
 
@@ -84,8 +89,6 @@ void ChatMsgItem::updateItemStatic()
     std::cerr << "ChatMsgItem::updateItemStatic()";
     std::cerr << std::endl;
 #endif
-
-
 }
 
 void ChatMsgItem::updateItem()
@@ -121,8 +124,6 @@ void ChatMsgItem::updateItem()
     /* slow Tick  */
     int msec_rate = 10129;
 
-    loadAvatar();
-
     QTimer::singleShot( msec_rate, this, SLOT(updateItem( void ) ));
     return;
 }
@@ -151,7 +152,6 @@ void ChatMsgItem::removeItem()
 		mParent->deleteFeedItem(this, mFeedId);
 	}
 }
-
 
 void ChatMsgItem::gotoHome()
 {
@@ -198,28 +198,29 @@ void ChatMsgItem::openChat()
 	}
 }
 
-void ChatMsgItem::loadAvatar()
+void ChatMsgItem::updateAvatar(const QString &peer_id)
 {
+    if (peer_id.toStdString() != mPeerId) {
+        /* it 's not me */
+        return;
+    }
 
-   unsigned char *data = NULL;
-   int size = 0 ;
+    unsigned char *data = NULL;
+    int size = 0 ;
 
-   rsMsgs->getAvatarData(mPeerId,data,size); 
+    rsMsgs->getAvatarData(mPeerId,data,size);
 
+    if(size != 0)
+    {
+        // set the image
+        QPixmap pix ;
+        pix.loadFromData(data,size,"PNG") ;
+        avatar_label->setPixmap(pix);
+        delete[] data ;
 
-   if(size != 0)
-   {   
-    // set the image
-    QPixmap pix ;
-    pix.loadFromData(data,size,"PNG") ;
-    avatar_label->setPixmap(pix);   
-    delete[] data ;
-
-   }
-   else
-   {
-     avatar_label->setPixmap(QPixmap(":/images/user/personal64.png"));
-   }
+    }
+    else
+    {
+        avatar_label->setPixmap(QPixmap(":/images/user/personal64.png"));
+    }
 }  
-
-
