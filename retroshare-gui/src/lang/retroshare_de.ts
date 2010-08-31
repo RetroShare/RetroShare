@@ -1426,6 +1426,45 @@ Verfügbar: %3</translation>
     </message>
 </context>
 <context>
+    <name>ChatMsgItem</name>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished">Formular</translation>
+    </message>
+    <message>
+        <source>Peer Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove Item</source>
+        <translation>Eintrag entfernen</translation>
+    </message>
+    <message>
+        <source>Text Label</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Send Mail</source>
+        <translation type="unfinished">Nachricht senden</translation>
+    </message>
+    <message>
+        <source>Write Message</source>
+        <translation>Nachricht schreiben</translation>
+    </message>
+    <message>
+        <source>Chat</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start Chat</source>
+        <translation>Chat starten</translation>
+    </message>
+</context>
+<context>
     <name>ChatPage</name>
     <message>
         <source>Chat Settings</source>
@@ -2609,7 +2648,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hash:</source>
-        <translation>:Prüfsumme</translation>
+        <translation>Prüfsumme:</translation>
     </message>
     <message>
         <source>Hash Label</source>
@@ -3290,7 +3329,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>name</source>
-        <translation>Name</translation>
+        <translation type="obsolete">Name</translation>
     </message>
     <message>
         <source>Subscribe to Forum</source>
@@ -3309,6 +3348,10 @@ p, li { white-space: pre-wrap; }
  of Forum</source>
         <translation>Beschreibung
 des Forums</translation>
+    </message>
+    <message>
+        <source>forumname</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5928,7 +5971,7 @@ p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Change your Status and your display&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;picture here.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Ändern Sie Ihren Status und zeigen Sie hier&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Ihr Bild an.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Ändern Sie Ihren Status und zeigen Sie hier&lt;/p&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Ihr Bild an.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Online</source>
@@ -5995,10 +6038,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Change your Personal Status here...</source>
         <translation>Ändere deinen persönlichen Status...</translation>
-    </message>
-    <message>
-        <source>TextLabel</source>
-        <translation></translation>
     </message>
     <message>
         <source>Share Files for your Friends</source>
@@ -6967,7 +7006,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Last Contact:</source>
-        <translation>letzter Kontakt:</translation>
+        <translation type="obsolete">letzter Kontakt:</translation>
     </message>
     <message>
         <source>TextLabel</source>
@@ -7777,13 +7816,6 @@ p, li { white-space: pre-wrap; }
         <translation>Chatte mit </translation>
     </message>
     <message>
-        <source>QLabel{
-border-image: url(:/images/mystatus_bg.png);
-
-}</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -7915,6 +7947,10 @@ Diesem Kontakt stattdessen eine RS-Mail senden.</translation>
     <message>
         <source>is typing...</source>
         <translation>tippt...</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished">Schliessen</translation>
     </message>
 </context>
 <context>
