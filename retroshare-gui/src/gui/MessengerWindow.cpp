@@ -524,7 +524,7 @@ void  MessengerWindow::insertPeers()
 
         gpg_item -> setTextAlignment(COLUMN_NAME, Qt::AlignLeft | Qt::AlignVCenter );
 
-        gpg_item -> setSizeHint(COLUMN_NAME,  QSize( 34,34 ) );
+        gpg_item -> setSizeHint(COLUMN_NAME,  QSize( 40,40 ) );
 
         /* not displayed, used to find back the item */
         gpg_item -> setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(detail.id));

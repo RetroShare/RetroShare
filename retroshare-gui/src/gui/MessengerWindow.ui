@@ -427,8 +427,8 @@ border: 1px solid #CCCCCC;
          </property>
          <property name="iconSize">
           <size>
-           <width>40</width>
-           <height>40</height>
+           <width>38</width>
+           <height>38</height>
           </size>
          </property>
          <property name="indentation">
