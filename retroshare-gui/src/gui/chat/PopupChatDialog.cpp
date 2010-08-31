@@ -457,7 +457,7 @@ void PopupChatDialog::addChatMsg(ChatInfo *ci)
 	}
 	
     QString timestamp = "[" + QDateTime::currentDateTime().toString("hh:mm:ss") + "]";
-    QString name = QString::fromStdString(ci ->name);        
+    QString name = QString::fromStdString(rsPeers->getPeerName(ci->rsid));
     QString message = QString::fromStdWString(ci -> msg);
 
 	//replace http://, https:// and www. with <a href> links
@@ -536,7 +536,6 @@ void PopupChatDialog::sendChat()
           const RsConfig &conf = rsiface->getConfig();
 
 	  ci.rsid = conf.ownId;
-	  ci.name = conf.ownName;
 
           rsiface->unlockData(); /* Unlock Interface */
 	}
@@ -552,7 +551,6 @@ std::cout << "PopupChatDialog:sendChat " << styleHtm.toStdString() << std::endl;
 
         /* put proper destination */
 	ci.rsid = dialogId;
-	ci.name = dialogName;
 
         rsMsgs -> ChatSend(ci);
         chatWidget ->clear();
@@ -1002,7 +1000,6 @@ void PopupChatDialog::fileHashingFinished(AttachFileItem* file)
 	  const RsConfig &conf = rsiface->getConfig();
 
 	  ci.rsid = conf.ownId;
-	  ci.name = conf.ownName;
 
 	  rsiface->unlockData(); /* Unlock Interface */
 	}
@@ -1030,7 +1027,6 @@ void PopupChatDialog::fileHashingFinished(AttachFileItem* file)
 
 	/* put proper destination */
 	ci.rsid = dialogId;
-	ci.name = dialogName;
 
 	rsMsgs -> ChatSend(ci);
 }

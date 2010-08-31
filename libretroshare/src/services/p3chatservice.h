@@ -27,15 +27,13 @@
 #ifndef SERVICE_CHAT_HEADER
 #define SERVICE_CHAT_HEADER
 
-
-
 #include <list>
 #include <string>
 
 #include "serialiser/rsmsgitems.h"
 #include "services/p3service.h"
 #include "pqi/p3connmgr.h"
-
+#include "retroshare/rsmsgs.h"
 
 //!The basic Chat service.
  /**
@@ -50,6 +48,13 @@ class p3ChatService: public p3Service, public p3Config
 		p3ChatService(p3ConnectMgr *cm);
 
 		/* overloaded */
+		/*!
+		 * This retrieves all chat msg items and also (important!)
+		 * processes chat-status items that are in service item queue. chat msg item requests are also processed and not returned
+		 * (important! also) notifications sent to notify base  on receipt avatar, immediate status and custom status
+		 * : notifyCustomState, notifyChatStatus, notifyPeerHasNewAvatar
+		 * @see NotifyBase
+		 */
 		virtual int   tick();
 		virtual int   status();
 
@@ -112,13 +117,9 @@ class p3ChatService: public p3Service, public p3Config
 
 
 		/*!
-		 * This retrieves all chat msg items and also (important!)
-		 * processes chat-status items that are in service item queue. chat msg item requests are also processed and not returned
-		 * (important! also) notifications sent to notify base  on receipt avatar, immediate status and custom status
-		 * : notifyCustomState, notifyChatStatus, notifyPeerHasNewAvatar
-		 * @see NotifyBase
+		 * This retrieves all chat msg items
 		 */
-		std::list<RsChatMsgItem *> getChatQueue(); 
+		bool getChatQueue(std::list<ChatInfo> &chats);
 
 		/************* from p3Config *******************/
 		virtual RsSerialiser *setupSerialiser() ;
@@ -134,6 +135,12 @@ class p3ChatService: public p3Service, public p3Config
 
 		class AvatarInfo ;
 		class StateStringInfo ;
+
+		// Receive chat queue
+		void receiveChatQueue();
+
+		void initRsChatInfo(RsChatMsgItem *c, ChatInfo &i);
+
 
 		/// Send avatar info to peer in jpeg format.
 		void sendAvatarJpegData(const std::string& peer_id) ;
@@ -155,6 +162,8 @@ class p3ChatService: public p3Service, public p3Config
 		RsChatStatusItem *makeOwnCustomStateStringItem() ;
 
 		p3ConnectMgr *mConnMgr;
+
+		std::list<RsChatMsgItem *> ilist;
 
 		AvatarInfo *_own_avatar ;
 		std::map<std::string,AvatarInfo *> _avatars ;

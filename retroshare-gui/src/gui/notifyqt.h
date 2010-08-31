@@ -70,8 +70,9 @@ class NotifyQt: public QObject, public NotifyBase
 		void ownStatusMessageChanged() const ;
 		void errorOccurred(int,int,const QString&) const ;
 		void diskFull(int,int) const ;
-                void peerStatusChanged(const QString& /* peer_id */, int /* status */);
-                void peerStatusChangedSummary() const;
+		void peerStatusChanged(const QString& /* peer_id */, int /* status */);
+		void peerStatusChangedSummary() const;
+		void chatChanged() const ;
 
 	public slots:
 

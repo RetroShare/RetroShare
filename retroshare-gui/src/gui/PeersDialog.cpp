@@ -226,10 +226,6 @@ PeersDialog::PeersDialog(QWidget *parent)
 
   _underline = false;
 
-  QTimer *timer = new QTimer(this);
-  timer->connect(timer, SIGNAL(timeout()), this, SLOT(insertChat()));
-  timer->start(500); /* half a second */
-  
   QMenu *menu = new QMenu();
   menu->addAction(ui.actionAdd_Friend);
   menu->addSeparator();
@@ -1073,103 +1069,97 @@ void PeersDialog::updatePeerStatusString(const QString& peer_id,const QString& s
 
 void PeersDialog::insertChat()
 {
-	if (!rsMsgs->chatAvailable())
-	{
-                #ifdef PEERS_DEBUG
-		std::cerr << "no chat available." << std::endl ;
-                #endif
-		return;
-	}
+    std::list<ChatInfo> newchat;
+    if (!rsMsgs->getNewChat(newchat))
+    {
+#ifdef PEERS_DEBUG
+        std::cerr << "no chat available." << std::endl ;
+#endif
+        return;
+    }
+#ifdef PEERS_DEBUG
+    std::cerr << "got new chat." << std::endl;
+#endif
+    QTextEdit *msgWidget = ui.msgText;
+    std::list<ChatInfo>::iterator it;
 
-	std::list<ChatInfo> newchat;
-	if (!rsMsgs->getNewChat(newchat))
-	{
-                #ifdef PEERS_DEBUG
-		std::cerr << "could not get new chat." << std::endl ;
-                #endif
-		return;
-	}
-        #ifdef PEERS_DEBUG
-        std::cerr << "got new chat." << std::endl;
-        #endif
-        QTextEdit *msgWidget = ui.msgText;
-	std::list<ChatInfo>::iterator it;
+    uint chatflags = Settings->getChatFlags();
 
-        uint chatflags = Settings->getChatFlags();
+    /* add in lines at the bottom */
+    for(it = newchat.begin(); it != newchat.end(); it++)
+    {
+        std::string msg(it->msg.begin(), it->msg.end());
+#ifdef PEERS_DEBUG
+        std::cerr << "PeersDialog::insertChat(): " << msg << std::endl;
+#endif
 
-	/* add in lines at the bottom */
-	for(it = newchat.begin(); it != newchat.end(); it++)
-	{
-                std::string msg(it->msg.begin(), it->msg.end());
-                #ifdef PEERS_DEBUG
-		std::cerr << "PeersDialog::insertChat(): " << msg << std::endl;
-                #endif
+        std::string peer_name = rsPeers->getPeerName(it->rsid);
 
-		/* are they private? */
-		if (it->chatflags & RS_CHAT_PRIVATE)
-		{
-                        PopupChatDialog *pcd = PopupChatDialog::getPrivateChat(it->rsid, it->name, chatflags);
-			pcd->addChatMsg(&(*it));
-			playsound();
-			QApplication::alert(pcd);
-			continue;
-		}
+        /* are they private? */
+        if (it->chatflags & RS_CHAT_PRIVATE)
+        {
+            PopupChatDialog *pcd = PopupChatDialog::getPrivateChat(it->rsid, peer_name, chatflags);
+            pcd->addChatMsg(&(*it));
+            playsound();
+            QApplication::alert(pcd);
+            continue;
+        }
 
-		std::ostringstream out;
-		QString extraTxt;
+        std::ostringstream out;
+        QString extraTxt;
 
-                QString timestamp = QDateTime::currentDateTime().toString("hh:mm:ss");
-                QString name = QString::fromStdString(it->name);
-                QString line = "<span style=\"color:#C00000\">" + timestamp + "</span>" +
-                                "<span style=\"color:#2D84C9\"><strong>" + " " + name + "</strong></span>";
-		QString msgContents = QString::fromStdWString(it->msg);
+        QString timestamp = QDateTime::currentDateTime().toString("hh:mm:ss");
+        QString name = QString::fromStdString(peer_name);
+        QString line = "<span style=\"color:#C00000\">" + timestamp + "</span>" +
+                       "<span style=\"color:#2D84C9\"><strong>" + " " + name + "</strong></span>";
+        QString msgContents = QString::fromStdWString(it->msg);
 
-                //std::cerr << "PeersDialog::insertChat(): 1.11\n";
-		historyKeeper.addMessage(name, "THIS", msgContents);
-                //std::cerr << "PeersDialog::insertChat(): 1.12\n";
-                extraTxt += line;
+        //std::cerr << "PeersDialog::insertChat(): 1.11\n";
+        historyKeeper.addMessage(name, "THIS", msgContents);
+        //std::cerr << "PeersDialog::insertChat(): 1.12\n";
+        extraTxt += line;
 
-                // notify with a systray icon msg
-                if(it->rsid != rsPeers->getOwnId())
-                {
-                      // This is a trick to translate HTML into text.
-                      QTextEdit editor ;
-                      editor.setHtml(QString::fromStdWString(it->msg));
-                      QString notifyMsg(QString::fromStdString(it->name)+": "+editor.toPlainText()) ;
+        // notify with a systray icon msg
+        if(it->rsid != rsPeers->getOwnId())
+        {
+            // This is a trick to translate HTML into text.
+            QTextEdit editor ;
+            editor.setHtml(QString::fromStdWString(it->msg));
+            QString notifyMsg(name+": "+editor.toPlainText()) ;
 
-                      if(notifyMsg.length() > 30)
-                              emit notifyGroupChat(QString("New group chat"), notifyMsg.left(30)+QString("..."));
-                      else
-                              emit notifyGroupChat(QString("New group chat"), notifyMsg);
-                }
+            if(notifyMsg.length() > 30)
+                emit notifyGroupChat(QString("New group chat"), notifyMsg.left(30)+QString("..."));
+            else
+                emit notifyGroupChat(QString("New group chat"), notifyMsg);
+        }
 
-		// create a DOM tree object from the message and embed contents with HTML tags
-		QDomDocument doc;
-		doc.setContent(msgContents);
+        // create a DOM tree object from the message and embed contents with HTML tags
+        QDomDocument doc;
+        doc.setContent(msgContents);
 
-		// embed links
-		QDomElement body = doc.documentElement();
-		RsChat::embedHtml(doc, body, defEmbedAhref);
+        // embed links
+        QDomElement body = doc.documentElement();
+        RsChat::embedHtml(doc, body, defEmbedAhref);
 
-		// embed smileys
-		Settings->beginGroup("Chat");
-		if (Settings->value(QString::fromUtf8("Emoteicons_GroupChat"), true).toBool())
-			RsChat::embedHtml(doc, body, defEmbedImg);
-		Settings->endGroup();
+        // embed smileys
+        Settings->beginGroup("Chat");
+        if (Settings->value(QString::fromUtf8("Emoteicons_GroupChat"), true).toBool())
+            RsChat::embedHtml(doc, body, defEmbedImg);
+        Settings->endGroup();
 
-		msgContents = doc.toString(-1);		// -1 removes any annoying carriage return misinterpreted by QTextEdit
-		extraTxt += msgContents;
+        msgContents = doc.toString(-1);		// -1 removes any annoying carriage return misinterpreted by QTextEdit
+        extraTxt += msgContents;
 
-                if ((msgWidget->verticalScrollBar()->maximum() - 30) < msgWidget->verticalScrollBar()->value() ) {
-                msgWidget->append(extraTxt);
-                } else {
-                //the vertical scroll is not at the bottom, so just update the text, the scroll will stay at the current position
-                int scroll = msgWidget->verticalScrollBar()->value();
-                msgWidget->setHtml(msgWidget->toHtml() + extraTxt);
-                msgWidget->verticalScrollBar()->setValue(scroll);
-                msgWidget->update();
-                }
-       }
+        if ((msgWidget->verticalScrollBar()->maximum() - 30) < msgWidget->verticalScrollBar()->value() ) {
+            msgWidget->append(extraTxt);
+        } else {
+            //the vertical scroll is not at the bottom, so just update the text, the scroll will stay at the current position
+            int scroll = msgWidget->verticalScrollBar()->value();
+            msgWidget->setHtml(msgWidget->toHtml() + extraTxt);
+            msgWidget->verticalScrollBar()->setValue(scroll);
+            msgWidget->update();
+        }
+    }
 }
 
 void PeersDialog::checkChat()
@@ -1695,7 +1685,6 @@ void PeersDialog::fileHashingFinished(AttachFileItem* file) {
 	  const RsConfig &conf = rsiface->getConfig();
 
 	  ci.rsid = conf.ownId;
-	  ci.name = conf.ownName;
 
 	  rsiface->unlockData(); /* Unlock Interface */
 	}

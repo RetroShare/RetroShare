@@ -30,6 +30,7 @@ class RsFeedItem;
 
 class ForumNewItem;
 class ChanMsgItem;
+class ChatMsgItem;
 
 class NewsFeed : public MainPage, public FeedHolder, private Ui::NewsFeed
 {
@@ -66,7 +67,6 @@ private:
   void	addFeedItemChatNew(RsFeedItem &fi);
   void	addFeedItemMessage(RsFeedItem &fi);
   void	addFeedItemFilesNew(RsFeedItem &fi);
-;
 
   QLayout *mLayout;
 

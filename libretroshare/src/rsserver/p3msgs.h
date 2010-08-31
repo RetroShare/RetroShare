@@ -107,9 +107,9 @@ class p3Msgs: public RsMsgs
 	  /****************************************/
 	  /* Chat */
 	  /*!
-	   * @return whether chat is available
+	   * sends chat (public and private)
+	   * @param ci chat info
 	   */
-	  virtual bool    chatAvailable();
 	  virtual	bool 	ChatSend(ChatInfo &ci);
 
 	  /*!
@@ -134,8 +134,6 @@ class p3Msgs: public RsMsgs
 
 
    private:
-
-	  void initRsChatInfo(RsChatMsgItem *c, ChatInfo &i);
 
 	  p3MsgService  *mMsgSrv;
 	  p3ChatService *mChatSrv;

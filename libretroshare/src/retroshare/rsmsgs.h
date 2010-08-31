@@ -127,7 +127,6 @@ class ChatInfo
 	public:
 	std::string rsid;
 	unsigned int chatflags;
-	std::string name;
 	std::wstring msg;
 };
 
@@ -175,9 +174,8 @@ virtual bool resetMessageStandardTagTypes(MsgTagType& tags) = 0;
 
 /****************************************/
 	/* Chat */
-virtual bool    chatAvailable() 			   = 0;
-virtual	bool 	ChatSend(ChatInfo &ci)                     = 0;
-virtual	bool	getNewChat(std::list<ChatInfo> &chats)	   = 0;
+virtual	bool   ChatSend(ChatInfo &ci)                     = 0;
+virtual	bool   getNewChat(std::list<ChatInfo> &chats)	   = 0;
 virtual void   sendStatusString(const std::string& id,const std::string& status_string) = 0 ;
 virtual void   sendGroupChatStatusString(const std::string& status_string) = 0 ;
 

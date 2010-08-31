@@ -52,6 +52,10 @@ p3ChatService::p3ChatService(p3ConnectMgr *cm)
 
 int	p3ChatService::tick()
 {
+	if (receivedItems()) {
+		receiveChatQueue();
+	}
+
 	return 0;
 }
 
@@ -277,24 +281,24 @@ int     p3ChatService::sendPrivateChat( std::wstring msg, std::string id)
 	return 1;
 }
 
-std::list<RsChatMsgItem *> p3ChatService::getChatQueue()
+void p3ChatService::receiveChatQueue()
 {
+	bool changed = false;
+
 	time_t now = time(NULL);
-
 	RsItem *item ;
-	std::list<RsChatMsgItem *> ilist;
-
+	
 	while(NULL != (item=recvItem()))
 	{
 #ifdef CHAT_DEBUG
-		std::cerr << "p3ChatService::getChatQueue() Item:" << (void*)item << std::endl ;
+		std::cerr << "p3ChatService::receiveChatQueue() Item:" << (void*)item << std::endl ;
 #endif
 		RsChatMsgItem *ci = dynamic_cast<RsChatMsgItem*>(item) ;
 
 		if(ci != NULL)	// real chat message
 		{
 #ifdef CHAT_DEBUG
-			std::cerr << "p3ChatService::getChatQueue() Item:";
+			std::cerr << "p3ChatService::receiveChatQueue() Item:";
 			std::cerr << std::endl;
 			ci->print(std::cerr);
 			std::cerr << std::endl;
@@ -318,9 +322,9 @@ std::list<RsChatMsgItem *> p3ChatService::getChatQueue()
 
 				std::map<std::string,AvatarInfo *>::const_iterator it = _avatars.find(ci->PeerId()) ; 
 
-                                #ifdef CHAT_DEBUG
+#ifdef CHAT_DEBUG
 				std::cerr << "p3chatservice:: avatar requested from above. " << std::endl ;
-                                #endif
+#endif
 				// has avatar. Return it strait away.
 				//
 				if(it!=_avatars.end() && it->second->_peer_is_new)
@@ -329,9 +333,22 @@ std::list<RsChatMsgItem *> p3ChatService::getChatQueue()
 					ci->chatFlags |= RS_CHAT_FLAG_AVATAR_AVAILABLE ;
 				}
 
-				ci->recvTime = now;
-				ilist.push_back(ci);	// don't delete the item !!
+				if ((ci->chatFlags & RS_CHAT_FLAG_PRIVATE) == 0) {
+					std::string message;
+					message.assign(ci->message.begin(), ci->message.end());
+					getPqiNotify()->AddFeedItem(RS_FEED_ITEM_CHAT_NEW, ci->PeerId(), message, "");
+				}
+
+				{
+					RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
+					ci->recvTime = now;
+					ilist.push_back(ci);	// don't delete the item !!
+				} /* UNLOCK */
+
+				changed = true;
 			}
+
 			continue ;
 		}
 
@@ -385,7 +402,54 @@ std::list<RsChatMsgItem *> p3ChatService::getChatQueue()
 		}
 	}
 
-	return ilist;
+	if (changed) {
+		rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHAT, NOTIFY_TYPE_ADD);
+	}
+}
+
+bool p3ChatService::getChatQueue(std::list<ChatInfo> &chats)
+{
+	/* get any messages and push them to iface */
+
+	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
+	// get the items from the list.
+	if (ilist.size() == 0)
+	{
+		return false;
+	}
+
+	std::list<RsChatMsgItem *>::iterator it;
+	while (ilist.size())
+	{
+		RsChatMsgItem *c = ilist.front();
+		ilist.pop_front();
+
+		ChatInfo ci;
+		initRsChatInfo(c, ci);
+		chats.push_back(ci);
+
+		delete c;
+	}
+	return true;
+}
+
+void p3ChatService::initRsChatInfo(RsChatMsgItem *c, ChatInfo &i)
+{
+	i.rsid = c -> PeerId();
+	i.chatflags = 0 ;
+	i.msg  = c -> message;
+
+	if (c -> chatFlags & RS_CHAT_FLAG_PRIVATE)
+	{
+		i.chatflags |= RS_CHAT_PRIVATE;
+		//std::cerr << "RsServer::initRsChatInfo() Chat Private!!!";
+	}
+	else
+	{
+		i.chatflags |= RS_CHAT_PUBLIC;
+		//std::cerr << "RsServer::initRsChatInfo() Chat Public!!!";
+	}
 }
 
 void p3ChatService::setOwnCustomStateString(const std::string& s)

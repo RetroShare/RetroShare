@@ -37,6 +37,7 @@
 
 #include "feeds/MsgItem.h"
 #include "feeds/PeerItem.h"
+#include "feeds/ChatMsgItem.h"
 
 #include "settings/rsharesettings.h"
 #include "chat/PopupChatDialog.h"
@@ -49,6 +50,7 @@ const uint32_t NEWSFEED_CHANMSGLIST = 	0x0005;
 const uint32_t NEWSFEED_BLOGNEWLIST = 	0x0006;
 const uint32_t NEWSFEED_BLOGMSGLIST = 	0x0007;
 const uint32_t NEWSFEED_MESSAGELIST = 	0x0008;
+const uint32_t NEWSFEED_CHATMSGLIST = 	0x0009;
 
 /*****
  * #define NEWS_DEBUG  1
@@ -371,8 +373,15 @@ void	NewsFeed::addFeedItemChatNew(RsFeedItem &fi)
 	std::cerr << "NewsFeed::addFeedItemChatNew()";
 	std::cerr << std::endl;
 #endif
-}
 
+	/* make new widget */
+	ChatMsgItem *cm = new ChatMsgItem(this, NEWSFEED_CHATMSGLIST, fi.mId1, fi.mId2, true);
+
+	/* store in forum list */
+
+	/* add to layout */
+	verticalLayout->insertWidget(0, cm);
+}
 
 void	NewsFeed::addFeedItemMessage(RsFeedItem &fi)
 {

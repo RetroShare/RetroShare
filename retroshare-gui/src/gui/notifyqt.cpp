@@ -224,6 +224,12 @@ void NotifyQt::notifyListChange(int list, int type)
 #endif
 			emit forumsChanged(); // use connect with Qt::QueuedConnection
 			break;
+		case NOTIFY_LIST_CHAT:
+#ifdef NOTIFY_DEBUG
+			std::cerr << "received chat changed" << std::endl ;
+#endif
+			emit chatChanged();
+			break;
 		default:
 			break;
 	}

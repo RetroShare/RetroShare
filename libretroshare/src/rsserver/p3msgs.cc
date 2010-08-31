@@ -159,56 +159,9 @@ void p3Msgs::sendStatusString(const std::string& peer_id,const std::string& stat
 	mChatSrv->sendStatusString(peer_id,status_string);
 }
 
-bool    p3Msgs::chatAvailable()
-{
-	return mChatSrv->receivedItems();
-}
-
 bool	p3Msgs::getNewChat(std::list<ChatInfo> &chats)
 {
-	/* get any messages and push them to iface */
-
-	// get the items from the list.
-	std::list<RsChatMsgItem *> clist = mChatSrv -> getChatQueue();
-	if (clist.size() < 1)
-	{
-		return false;
-	}
-
-	std::list<RsChatMsgItem *>::iterator it;
-	for(it = clist.begin(); it != clist.end(); it++)
-	{
-		ChatInfo ci;
-		initRsChatInfo((*it), ci);
-		chats.push_back(ci);
-		delete (*it);
-	}
-	return true;
-}
-
-/**** HELPER FNS For Chat/Msg/Channel Lists ************
- *
- * The iface->Mutex is required to be locked
- * for intAddChannel / intAddChannelMsg.
- */
-
-void p3Msgs::initRsChatInfo(RsChatMsgItem *c, ChatInfo &i)
-{
-	i.rsid = c -> PeerId();
-        i.name = rsPeers->getPeerName(c -> PeerId());
-	i.chatflags = 0 ;
-	i.msg  = c -> message;
-
-	if (c -> chatFlags & RS_CHAT_FLAG_PRIVATE)
-	{
-		i.chatflags |= RS_CHAT_PRIVATE;
-		//std::cerr << "RsServer::initRsChatInfo() Chat Private!!!";
-	}
-	else
-	{
-		i.chatflags |= RS_CHAT_PUBLIC;
-		//std::cerr << "RsServer::initRsChatInfo() Chat Public!!!";
-	}
+	return mChatSrv->getChatQueue(chats);
 }
 
 void p3Msgs::getOwnAvatarData(unsigned char *& data,int& size)
