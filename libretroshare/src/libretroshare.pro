@@ -5,6 +5,15 @@ CONFIG += staticlib testnetwork bitdht
 CONFIG -= qt
 TARGET = retroshare
 
+# Beware: All data of the stripped services are lost
+#CONFIG += minimal
+
+minimal {
+	CONFIG -= use_blogs bitdht
+
+	DEFINES += MINIMAL_LIBRS
+}
+
 profiling {
 	QMAKE_CXXFLAGS -= -fomit-frame-pointer
 	QMAKE_CXXFLAGS *= -pg -g -fno-omit-frame-pointer
@@ -488,3 +497,25 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsversion.cc \
 			util/rswin.cc \
 			util/rsrandom.cc
+
+minimal {
+	SOURCES -= rsserver/p3msgs.cc \
+			rsserver/p3rank.cc \
+			rsserver/p3status.cc \
+			rsserver/p3photo.cc
+
+	SOURCES -= serialiser/rsforumitems.cc \
+			serialiser/rsstatusitems.cc \
+			serialiser/rsrankitems.cc \
+			serialiser/rschannelitems.cc \
+			serialiser/rsgameitems.cc \
+			serialiser/rsphotoitems.cc
+
+	SOURCES -= services/p3forums.cc \
+			services/p3msgservice.cc \
+			services/p3statusservice.cc \
+			services/p3ranking.cc \
+			services/p3channels.cc \
+			services/p3gamelauncher.cc \
+			services/p3photoservice.cc
+}

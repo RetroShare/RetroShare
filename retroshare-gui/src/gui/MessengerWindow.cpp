@@ -34,22 +34,24 @@
 
 #include "rshare.h"
 #include "MessengerWindow.h"
-#include "MainWindow.h"
 #include "RsAutoUpdatePage.h"
 
+#ifndef MINIMAL_RSGUI
+#include "MainWindow.h"
 #include "chat/PopupChatDialog.h"
 #include "msgs/MessageComposer.h"
+#include "ShareManager.h"
+#include "gui/notifyqt.h"
+#include "gui/connect/ConnectFriendWizard.h"
+#endif // MINIMAL_RSGUI
+#include "PeersDialog.h"
 #include "connect/ConfCertDialog.h"
 #include "util/PixmapMerging.h"
 #include "LogoBar.h"
 #include "util/Widget.h"
 #include "settings/rsharesettings.h"
 
-#include "gui/connect/ConnectFriendWizard.h"
 #include "RetroShareLink.h"
-#include "PeersDialog.h"
-#include "ShareManager.h"
-#include "gui/notifyqt.h"
 
 #include <iostream>
 #include <sstream>
@@ -156,13 +158,18 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
     ui.setupUi(this);
 
     setAttribute ( Qt::WA_DeleteOnClose, true );
+#ifdef MINIMAL_RSGUI
+    setAttribute (Qt::WA_QuitOnClose, true);
+#endif // MINIMAL_RSGUI
 
     connect( ui.messengertreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( messengertreeWidgetCostumPopupMenu( QPoint ) ) );
+#ifndef MINIMAL_RSGUI
     connect( ui.messengertreeWidget, SIGNAL(itemDoubleClicked ( QTreeWidgetItem *, int)), this, SLOT(chatfriend(QTreeWidgetItem *)));
 
     connect( ui.avatarButton, SIGNAL(clicked()), SLOT(getAvatar()));
     connect( ui.shareButton, SIGNAL(clicked()), SLOT(openShareManager()));
     connect( ui.addIMAccountButton, SIGNAL(clicked( bool ) ), this , SLOT( addFriend() ) );
+#endif // MINIMAL_RSGUI
     connect( ui.actionHide_Offline_Friends, SIGNAL(triggered()), this, SLOT(insertPeers()));
     connect( ui.actionSort_by_State, SIGNAL(triggered()), this, SLOT(insertPeers()));
     connect(ui.clearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
@@ -170,9 +177,11 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
     connect(ui.messagelineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(savestatusmessage()));
     connect(ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
 
+#ifndef MINIMAL_RSGUI
     connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(updateMessengerDisplay()));
     connect(NotifyQt::getInstance(), SIGNAL(ownAvatarChanged()), this, SLOT(updateAvatar()));
     connect(NotifyQt::getInstance(), SIGNAL(ownStatusMessageChanged()), this, SLOT(loadmystatusmessage()));
+#endif // MINIMAL_RSGUI
 
     timer = new QTimer(this);
     timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateMessengerDisplay()));
@@ -216,15 +225,19 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
         ui.statusButton->setText(QString::fromStdString(pd.name) + tr(" - ") + QString::fromStdString(pd.location));
     }
 
+#ifndef MINIMAL_RSGUI
     MainWindow *pMainWindow = MainWindow::getInstance();
     if (pMainWindow) {
         QMenu *pStatusMenu = new QMenu();
         pMainWindow->initializeStatusObject(pStatusMenu, true);
         ui.statusButton->setMenu(pStatusMenu);
     }
-    insertPeers();
+
     updateAvatar();
     loadmystatusmessage();
+#endif // MINIMAL_RSGUI
+
+    insertPeers();
 
     ui.clearButton->hide();
 
@@ -240,10 +253,12 @@ MessengerWindow::~MessengerWindow ()
     // save settings
     processSettings(false);
 
+#ifndef MINIMAL_RSGUI
     MainWindow *pMainWindow = MainWindow::getInstance();
     if (pMainWindow) {
         pMainWindow->removeStatusObject(ui.statusButton);
     }
+#endif // MINIMAL_RSGUI
 
     _instance = NULL;
 }
@@ -300,6 +315,7 @@ void MessengerWindow::messengertreeWidgetCostumPopupMenu( QPoint point )
       QAction* collapseAll = new QAction(tr( "Collapse all" ), &contextMnu );
       connect( collapseAll , SIGNAL( triggered() ), ui.messengertreeWidget, SLOT(collapseAll()) );
 
+#ifndef MINIMAL_RSGUI
       QAction* chatAct = new QAction(QIcon(IMAGE_CHAT), tr( "Chat" ), &contextMnu );
       if (c) {
           connect( chatAct , SIGNAL( triggered() ), this, SLOT( chatfriendproxy() ) );
@@ -313,6 +329,7 @@ void MessengerWindow::messengertreeWidgetCostumPopupMenu( QPoint point )
       } else {
           sendMessageAct->setDisabled(true);
       }
+#endif // MINIMAL_RSGUI
 
       QAction* connectfriendAct = new QAction(QIcon(IMAGE_CONNECT), tr( "Connect To Friend" ), &contextMnu );
       if (c) {
@@ -321,6 +338,7 @@ void MessengerWindow::messengertreeWidgetCostumPopupMenu( QPoint point )
           connectfriendAct->setDisabled(true);
       }
 
+#ifndef MINIMAL_RSGUI
       QAction* configurefriendAct = new QAction(QIcon(IMAGE_PEERINFO), tr( "Peer Details" ), &contextMnu );
       if (c) {
           connect( configurefriendAct , SIGNAL( triggered() ), this, SLOT( configurefriend() ) );
@@ -362,6 +380,7 @@ void MessengerWindow::messengertreeWidgetCostumPopupMenu( QPoint point )
       } else {
           removefriendAct->setDisabled(true);
       }
+#endif // MINIMAL_RSGUI
 
       QWidget *widget = new QWidget();
       widget->setStyleSheet( ".QWidget{background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #FEFEFE, stop:1 #E8E8E8); border: 1px solid #CCCCCC;}");  
@@ -393,14 +412,18 @@ void MessengerWindow::messengertreeWidgetCostumPopupMenu( QPoint point )
       widgetAction->setDefaultWidget(widget); 
 
       contextMnu.addAction( widgetAction);
+#ifndef MINIMAL_RSGUI
       contextMnu.addAction( chatAct);
       contextMnu.addAction( sendMessageAct);
       contextMnu.addAction( configurefriendAct);
       //contextMnu.addAction( profileviewAct);
       contextMnu.addAction( recommendfriendAct);
+#endif // MINIMAL_RSGUI
       contextMnu.addAction( connectfriendAct);
+#ifndef MINIMAL_RSGUI
       contextMnu.addAction(pastePersonAct);
       contextMnu.addAction( removefriendAct);
+#endif // MINIMAL_RSGUI
       //contextMnu.addAction( exportfriendAct);
       contextMnu.addSeparator();
       contextMnu.addAction( expandAll);
@@ -423,7 +446,9 @@ void  MessengerWindow::insertPeers()
     std::list<std::string> gpgFriends;
     std::list<std::string>::iterator it;
     std::list<StatusInfo> statusInfo;
+#ifndef MINIMAL_RSGUI
     rsStatus->getStatusList(statusInfo);
+#endif // MINIMAL_RSGUI
 
     // if(isIdle)
     //   QMessageBox::StandardButton sb = QMessageBox::warning ( NULL, tr("Idle"),
@@ -555,9 +580,11 @@ void  MessengerWindow::insertPeers()
             sslItem -> setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(sslDetail.id));
 
             QString sCustomString;
+#ifndef MINIMAL_RSGUI
             if (sslDetail.state & RS_PEER_STATE_CONNECTED) {
                 sCustomString = QString::fromStdString(rsMsgs->getCustomStateString(sslDetail.id));
             }
+#endif // MINIMAL_RSGUI
             if (sCustomString.isEmpty()) {
                 sslItem -> setText( COLUMN_NAME, tr("location : ") + QString::fromStdString(sslDetail.location) + " " + QString::fromStdString(sslDetail.autoconnect));
                 sslItem -> setToolTip( COLUMN_NAME, tr("location : ") + QString::fromStdString(sslDetail.location));
@@ -575,6 +602,21 @@ void  MessengerWindow::insertPeers()
             if (sslDetail.state & RS_PEER_STATE_CONNECTED) {
                 sslItem->setHidden(false);
                 gpg_connected = true;
+
+#ifdef MINIMAL_RSGUI
+// to show the gpg as online, remove it with MINIMAL_RSGUI
+                QFont font1;
+                font1.setBold(true);
+
+                gpg_item->setIcon(COLUMN_NAME,(QIcon(IMAGE_ONLINE)));
+                gpg_item->setToolTip(COLUMN_NAME, tr("Peer Online"));
+                gpg_item->setData(COLUMN_NAME, ROLE_SORT, BuildStateSortString(bSortState, gpg_item->text(COLUMN_NAME), PEER_STATE_ONLINE));
+
+                for(i = 0; i < COLUMN_COUNT; i++) {
+                    gpg_item->setTextColor(i,(Qt::darkBlue));
+                    gpg_item->setFont(i,font1);
+                }
+#endif // MINIMAL_RSGUI
 
                 /* change color and icon */
                 sslItem -> setIcon(COLUMN_NAME,(QIcon(":/images/connect_established.png")));
@@ -625,6 +667,7 @@ void  MessengerWindow::insertPeers()
             gpg_item->setHidden(false);
             //gpg_item -> setText(COLUMN_STATE, tr("Online")); // set to online regardless on update
 
+#ifndef MINIMAL_RSGUI
             std::list<StatusInfo>::iterator it = statusInfo.begin();
 
             for(; it != statusInfo.end() ; it++){
@@ -708,6 +751,7 @@ void  MessengerWindow::insertPeers()
                     }
                 }
             }
+#endif // MINIMAL_RSGUI
         } else if (gpg_online) {
             gpg_item->setHidden(ui.actionHide_Offline_Friends->isChecked());
             gpg_item -> setIcon(COLUMN_NAME,(QIcon(IMAGE_AVAIBLE)));
@@ -765,6 +809,7 @@ std::string getPeersRsCertId(QTreeWidgetItem *i)
     return id;
 }
 
+#ifndef MINIMAL_RSGUI
 /** Add a Friend ShortCut */
 void MessengerWindow::addFriend()
 {
@@ -822,6 +867,7 @@ void MessengerWindow::chatfriend(QTreeWidgetItem *pPeer)
     std::string id = pPeer->data(COLUMN_DATA, ROLE_ID).toString().toStdString();
     PopupChatDialog::chatFriend(id);
 }
+#endif // MINIMAL_RSGUI
 
 QTreeWidgetItem *MessengerWindow::getCurrentPeer()
 {
@@ -864,7 +910,7 @@ QTreeWidgetItem *MessengerWindow::getCurrentPeer()
  * All of these rely on the finding of the current Id.
  */
 
-
+#ifndef MINIMAL_RSGUI
 void MessengerWindow::removefriend()
 {
         QTreeWidgetItem *c = getCurrentPeer();
@@ -885,6 +931,7 @@ void MessengerWindow::removefriend()
 		emit friendsUpdated() ;
 	}
 }
+#endif // MINIMAL_RSGUI
 
 void MessengerWindow::connectfriend()
 {
@@ -919,6 +966,7 @@ void MessengerWindow::connectfriend()
     }
 }
 
+#ifndef MINIMAL_RSGUI
 /* GUI stuff -> don't do anything directly with Control */
 void MessengerWindow::configurefriend()
 {
@@ -941,6 +989,7 @@ void MessengerWindow::pastePerson()
 {
     RSLinkClipboard::process(RetroShareLink::TYPE_PERSON, RSLINK_PROCESS_NOTIFY_ERROR);
 }
+#endif // MINIMAL_RSGUI
 
 //============================================================================
 
@@ -963,6 +1012,11 @@ void MessengerWindow::closeEvent (QCloseEvent * event)
 
 }
 
+LogoBar & MessengerWindow::getLogoBar() const {
+        return *_rsLogoBarmessenger;
+}
+
+#ifndef MINIMAL_RSGUI
 /** Shows Share Manager */
 void MessengerWindow::openShareManager()
 {
@@ -980,11 +1034,7 @@ void MessengerWindow::sendMessage()
     MessageComposer::msgFriend(id);
 }
 
-LogoBar & MessengerWindow::getLogoBar() const {
-	return *_rsLogoBarmessenger;
-}
-
-void MessengerWindow::changeAvatarClicked() 
+void MessengerWindow::changeAvatarClicked()
 {
 	updateAvatar();
 }
@@ -1043,6 +1093,7 @@ void MessengerWindow::savestatusmessage()
 {
     rsMsgs->setCustomStateString(ui.messagelineEdit->text().toStdString());
 }
+#endif // MINIMAL_RSGUI
 
 void MessengerWindow::on_actionSort_Peers_Descending_Order_activated()
 {

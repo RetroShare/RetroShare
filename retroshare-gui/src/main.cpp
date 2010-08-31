@@ -22,15 +22,17 @@
 #include <QObject>
 #include <QMessageBox>
 #include <rshare.h>
+#ifndef MINIMAL_RSGUI
 #include "gui/MainWindow.h"
 #include "gui/PeersDialog.h"
 #include "gui/SearchDialog.h"
 #include "gui/TransfersDialog.h"
 #include "gui/MessagesDialog.h"
 #include "gui/SharedFilesDialog.h"
-#include "gui/chat/PopupChatDialog.h"
-#include "gui/MessengerWindow.h"
 #include "gui/NetworkDialog.h"
+#include "gui/chat/PopupChatDialog.h"
+#endif // MINIMAL_RSGUI
+#include "gui/MessengerWindow.h"
 #include "gui/StartDialog.h"
 #include "gui/GenCertDialog.h"
 #include "gui/settings/rsharesettings.h"
@@ -159,6 +161,9 @@ int main(int argc, char *argv[])
 	/* recreate global settings object, now with correct path */
 	RshareSettings::Create ();
 
+#ifdef MINIMAL_RSGUI
+	MessengerWindow::showYourself();
+#else
 	MainWindow *w = MainWindow::Create ();
 
 	// I'm using a signal to transfer the hashing info to the mainwindow, because Qt schedules signals properly to
@@ -207,13 +212,18 @@ int main(int argc, char *argv[])
 	QTimer *timer = new QTimer(w);
 	timer -> connect(timer, SIGNAL(timeout()), notify, SLOT(UpdateGUI()));
 	timer->start(1000);
+#endif // MINIMAL_RSGUI
+
+	rshare.setQuitOnLastWindowClosed(true);
 
 	/* dive into the endless loop */
 	int ti = rshare.exec();
+#ifndef MINIMAL_RSGUI
 	delete w ;
 
 	/* cleanup */
 	PopupChatDialog::cleanupChat();
+#endif // MINIMAL_RSGUI
 
 	rsicontrol->rsGlobalShutDown();
 

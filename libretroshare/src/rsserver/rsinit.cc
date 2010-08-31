@@ -2184,9 +2184,11 @@ int RsServer::StartupRetroShare()
 
 	/* create Services */
         ad = new p3disc(mConnMgr, pqih);
+#ifndef MINIMAL_LIBRS
 	msgSrv = new p3MsgService(mConnMgr);
 	chatSrv = new p3ChatService(mConnMgr);
 	mStatusSrv = new p3StatusService(mConnMgr);
+#endif // MINIMAL_LIBRS
 
 #ifndef PQI_DISABLE_TUNNEL
         p3tunnel *tn = new p3tunnel(mConnMgr, pqih);
@@ -2200,9 +2202,11 @@ int RsServer::StartupRetroShare()
 	ftserver->connectToTurtleRouter(tr) ;
 
 	pqih -> addService(ad);
+#ifndef MINIMAL_LIBRS
 	pqih -> addService(msgSrv);
 	pqih -> addService(chatSrv);
 	pqih ->addService(mStatusSrv);
+#endif // MINIMAL_LIBRS
 
 	/* create Cache Services */
 	std::string config_dir = RsInitConfig::configDir;
@@ -2213,7 +2217,7 @@ int RsServer::StartupRetroShare()
 	std::string forumdir = config_dir + "/forums";
 
 
-	//mRanking = NULL;
+#ifndef MINIMAL_LIBRS
 	mRanking = new p3Ranking(mConnMgr, RS_SERVICE_TYPE_RANK,     /* declaration of cache enable service rank */
 			mCacheStrapper, mCacheTransfer,
 			localcachedir, remotecachedir, 3600 * 24 * 30 * 6); // 6 Months
@@ -2259,6 +2263,7 @@ int RsServer::StartupRetroShare()
         CachePair cp2(photoService, photoService, CacheId(RS_SERVICE_TYPE_PHOTO, 0));
 	mCacheStrapper -> addCachePair(cp2);
 #endif
+#endif // MINIMAL_LIBRS
 
 	/**************************************************************************/
 
@@ -2273,8 +2278,10 @@ int RsServer::StartupRetroShare()
 	mConnMgr->addMonitor(pqih);
 	mConnMgr->addMonitor(mCacheStrapper);
 	mConnMgr->addMonitor(ad);
+#ifndef MINIMAL_LIBRS
 	mConnMgr->addMonitor(msgSrv);
 	mConnMgr->addMonitor(mStatusSrv);
+#endif // MINIMAL_LIBRS
 
 	/* must also add the controller as a Monitor...
 	 * a little hack to get it to work.
@@ -2292,18 +2299,20 @@ int RsServer::StartupRetroShare()
         //mConfigMgr->addConfiguration("sslcerts.cfg", AuthSSL::getAuthSSL());
         mConfigMgr->addConfiguration("peers.cfg", mConnMgr);
 	mConfigMgr->addConfiguration("general.cfg", mGeneralConfig);
+	mConfigMgr->addConfiguration("cache.cfg", mCacheStrapper);
+#ifndef MINIMAL_LIBRS
 	mConfigMgr->addConfiguration("msgs.cfg", msgSrv);
 	mConfigMgr->addConfiguration("chat.cfg", chatSrv);
-	mConfigMgr->addConfiguration("cache.cfg", mCacheStrapper);
 #ifdef RS_USE_BLOGS	
         mConfigMgr->addConfiguration("blogs.cfg", mBlogs);
 #endif
 	mConfigMgr->addConfiguration("ranklink.cfg", mRanking);
 	mConfigMgr->addConfiguration("forums.cfg", mForums);
 	mConfigMgr->addConfiguration("channels.cfg", mChannels);
+	mConfigMgr->addConfiguration("p3Status.cfg", mStatusSrv);
+#endif // MINIMAL_LIBRS
 	mConfigMgr->addConfiguration("turtle.cfg", tr);
         mConfigMgr->addConfiguration("p3disc.cfg", ad);
-        mConfigMgr->addConfiguration("p3Status.cfg", mStatusSrv);
 
 	ftserver->addConfiguration(mConfigMgr);
 
@@ -2432,9 +2441,10 @@ int RsServer::StartupRetroShare()
 	/* Setup GUI Interfaces. */
 
         rsPeers = new p3Peers(mConnMgr);
-        rsMsgs  = new p3Msgs(msgSrv, chatSrv);
 	rsDisc  = new p3Discovery(ad);
 
+#ifndef MINIMAL_LIBRS
+        rsMsgs  = new p3Msgs(msgSrv, chatSrv);
 	rsForums = mForums;
 	rsChannels = mChannels;
 	rsRanks = new p3Rank(mRanking);
@@ -2450,13 +2460,16 @@ int RsServer::StartupRetroShare()
 	rsGameLauncher = NULL;
 	rsPhoto = NULL;
 #endif
+#endif // MINIMAL_LIBRS
 
 
+#ifndef MINIMAL_LIBRS
 	/* put a welcome message in! */
 	if (RsInitConfig::firsttime_run)
 	{
 		msgSrv->loadWelcomeMsg();
 	}
+#endif // MINIMAL_LIBRS
 
 	// load up the help page
 	std::string helppage = RsInitConfig::basedir + RsInitConfig::dirSeperator;

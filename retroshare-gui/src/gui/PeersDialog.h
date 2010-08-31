@@ -26,7 +26,6 @@
 #include "RsAutoUpdatePage.h"
 
 #include "mainpage.h"
-#include "ui_PeersDialog.h"
 
 #include "im_history/IMHistoryKeeper.h"
 
@@ -40,6 +39,9 @@
 #define PEER_STATE_OFFLINE      6
 
 #define BuildStateSortString(bEnabled,sName,nState) bEnabled ? (QString ("%1").arg(nState) + " " + sName) : sName
+
+#ifndef MINIMAL_RSGUI
+#include "ui_PeersDialog.h"
 
 class QFont;
 class QAction;
@@ -203,5 +205,6 @@ private:
 		Ui::PeersDialog ui;
 };
 
+#endif // MINIMAL_RSGUI
 
 #endif

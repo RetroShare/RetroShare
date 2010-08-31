@@ -11,10 +11,12 @@
 
 #include "gui/RsAutoUpdatePage.h"
 
+#ifndef MINIMAL_RSGUI
 #include "gui/toaster/OnlineToaster.h"
 #include "gui/toaster/MessageToaster.h"
 #include "gui/toaster/ChatToaster.h"
 #include "gui/toaster/CallToaster.h"
+#endif // MINIMAL_RSGUI
 
 #include "gui/settings/rsharesettings.h"
 
@@ -277,6 +279,7 @@ void NotifyQt::notifyListPreChange(int list, int type)
 
 void NotifyQt::UpdateGUI()
 {
+#ifndef MINIMAL_RSGUI
 	/* hack to force updates until we've fixed that part */
 	static  time_t lastTs = 0;
 
@@ -388,6 +391,7 @@ void NotifyQt::UpdateGUI()
 			}
 		}
 	}
+#endif // MINIMAL_RSGUI
 }
 			
 //void NotifyQt::displaySearch()

@@ -41,7 +41,24 @@
 RsServer::RsServer(RsIface &i, NotifyBase &callback)
 	:RsControl(i, callback)
 {
-	return;
+	ftserver = NULL;
+
+	mConnMgr = NULL;
+
+	pqih = NULL;
+
+	/* services */
+	ad = NULL;
+	msgSrv = NULL;
+	chatSrv = NULL;
+	mStatusSrv = NULL;
+	mChannels = NULL;
+	/* caches (that need ticking) */
+	mRanking = NULL;
+
+	/* Config */
+	mConfigMgr = NULL;
+	mGeneralConfig = NULL;
 }
 
 RsServer::~RsServer()
@@ -211,8 +228,10 @@ void 	RsServer::run()
 
 
 				/* Tick slow services */
+#ifndef MINIMAL_LIBRS
 				if (mRanking)
 					mRanking->tick();
+#endif // MINIMAL_LIBRS
 
 #if 0
 				std::string opt;
