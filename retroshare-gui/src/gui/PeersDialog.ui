@@ -518,7 +518,7 @@ border: 1px solid #CCCCCC;}
            <number>2</number>
           </property>
           <item row="0" column="0">
-           <layout class="QGridLayout">
+           <layout class="QGridLayout" name="gridLayout_8">
             <property name="verticalSpacing">
              <number>0</number>
             </property>
@@ -730,7 +730,7 @@ background: white;}</string>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="layoutWidget">
+     <widget class="QWidget" name="layoutWidget_1">
       <layout class="QGridLayout" name="gridLayout_5">
        <property name="verticalSpacing">
         <number>1</number>
@@ -846,6 +846,12 @@ p, li { white-space: pre-wrap; }
           </item>
           <item row="1" column="1">
            <widget class="QPushButton" name="mypersonalstatuslabel">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="toolTip">
              <string>Edit Personal message</string>
             </property>
@@ -947,7 +953,7 @@ background: white;}</string>
                <bool>false</bool>
               </property>
              </widget>
-             <widget class="QWidget" name="layoutWidget">
+             <widget class="QWidget" name="layoutWidget_2">
               <layout class="QVBoxLayout" name="verticalLayout_2">
                <property name="spacing">
                 <number>0</number>
@@ -1337,7 +1343,7 @@ p, li { white-space: pre-wrap; }
                </widget>
               </item>
               <item>
-               <layout class="QGridLayout">
+               <layout class="QGridLayout" name="gridLayout_7">
                 <item row="0" column="0">
                  <spacer>
                   <property name="orientation">
