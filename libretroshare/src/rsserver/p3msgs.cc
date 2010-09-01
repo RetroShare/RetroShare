@@ -135,19 +135,16 @@ bool    p3Msgs::resetMessageStandardTagTypes(MsgTagType& tags)
 
 /****************************************/
 /****************************************/
-bool 	p3Msgs::ChatSend(ChatInfo &ci)
+bool 	p3Msgs::sendPublicChat(std::wstring msg)
 {
 	/* send a message to all for now */
-	if (ci.chatflags & RS_CHAT_PRIVATE)
-	{
-	  mChatSrv -> sendPrivateChat(ci.msg, ci.rsid);
-	}
-	else
-	{
-	  /* global */
-	  mChatSrv -> sendChat(ci.msg);
-	}
-	return true;
+	return mChatSrv -> sendPublicChat(msg);
+}
+
+bool 	p3Msgs::sendPrivateChat(std::string id, std::wstring msg)
+{
+	/* send a message to peer */
+	return mChatSrv -> sendPrivateChat(id, msg);
 }
 
 void p3Msgs::sendGroupChatStatusString(const std::string& status_string) 
@@ -159,9 +156,24 @@ void p3Msgs::sendStatusString(const std::string& peer_id,const std::string& stat
 	mChatSrv->sendStatusString(peer_id,status_string);
 }
 
-bool	p3Msgs::getNewChat(std::list<ChatInfo> &chats)
+int	p3Msgs::getChatQueueCount(bool privateQueue)
 {
-	return mChatSrv->getChatQueue(chats);
+	return mChatSrv->getChatQueueCount(privateQueue);
+}
+
+bool	p3Msgs::getPublicChatQueue(std::list<ChatInfo> &chats)
+{
+	return mChatSrv->getPublicChatQueue(chats);
+}
+
+bool   p3Msgs::getPrivateChatQueueIds(std::list<std::string> &ids)
+{
+	return mChatSrv->getPrivateChatQueueIds(ids);
+}
+
+bool	p3Msgs::getPrivateChatQueue(std::string id, std::list<ChatInfo> &chats)
+{
+	return mChatSrv->getPrivateChatQueue(id, chats);
 }
 
 void p3Msgs::getOwnAvatarData(unsigned char *& data,int& size)

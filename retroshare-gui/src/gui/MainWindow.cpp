@@ -50,6 +50,7 @@
 #include "ChannelFeed.h"
 #include "bwgraph/bwgraph.h"
 #include "help/browser/helpbrowser.h"
+#include "chat/PopupChatDialog.h"
 
 #ifdef UNFINISHED
 #include "unfinished/ApplicationWindow.h"
@@ -67,6 +68,7 @@
 #include <retroshare/rspeers.h>
 #include <retroshare/rsfiles.h>
 #include <retroshare/rsforums.h>
+#include <retroshare/rsnotify.h>
 
 #include "gui/connect/ConnectFriendWizard.h"
 #include "util/rsversion.h"
@@ -398,6 +400,11 @@ void MainWindow::createTrayIcon()
     trayIconForums = new QSystemTrayIcon(this);
     trayIconForums->setIcon(QIcon(":/images/konversation16.png"));
     connect(trayIconForums, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayIconForumsClicked(QSystemTrayIcon::ActivationReason)));
+
+    // Create the tray icon for chat
+    trayIconChat = new QSystemTrayIcon(this);
+    trayIconChat->setIcon(QIcon(":/images/chat.png"));
+    connect(trayIconChat, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayIconChatClicked(QSystemTrayIcon::ActivationReason)));
 }
 
 /*static*/ void MainWindow::installGroupChatNotifier()
@@ -500,6 +507,21 @@ void MainWindow::updateStatus()
     else
     {
         trayIcon->setIcon(QIcon(IMAGE_RETROSHARE));
+    }
+}
+
+void MainWindow::privateChatChanged(int type)
+{
+    /* first process the chat messages */
+    PopupChatDialog::privateChatChanged();
+
+    /* than count the chat messages */
+    int chatCount = rsMsgs->getChatQueueCount(true);
+
+    if (chatCount) {
+        trayIconChat->show();
+    } else {
+        trayIconChat->hide();
     }
 }
 
@@ -766,7 +788,6 @@ void MainWindow::closeEvent(QCloseEvent *e)
 
 }
 
-
 void MainWindow::updateMenu()
 {
     toggleVisibilityAction->setText(isVisible() ? tr("Hide") : tr("Show"));
@@ -803,6 +824,21 @@ void MainWindow::trayIconForumsClicked(QSystemTrayIcon::ActivationReason e)
 {
     if(e == QSystemTrayIcon::Trigger || e == QSystemTrayIcon::DoubleClick) {
         showWindow(MainWindow::Forums);
+    }
+}
+
+void MainWindow::trayIconChatClicked(QSystemTrayIcon::ActivationReason e)
+{
+    if(e == QSystemTrayIcon::Trigger || e == QSystemTrayIcon::DoubleClick) {
+        PopupChatDialog *pcd = NULL;
+        std::list<std::string> ids;
+        if (rsMsgs->getPrivateChatQueueIds(ids) && ids.size()) {
+            pcd = PopupChatDialog::getPrivateChat(ids.front(), RS_CHAT_OPEN_NEW | RS_CHAT_REOPEN | RS_CHAT_FOCUS);
+        }
+
+        if (pcd == NULL) {
+            showWindow(MainWindow::Friends);
+        }
     }
 }
 

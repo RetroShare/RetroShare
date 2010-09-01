@@ -181,7 +181,8 @@ int main(int argc, char *argv[])
 	QObject::connect(notify,SIGNAL(filesPostModChanged(bool))         ,w                            ,SLOT(postModDirectories(bool)         )) ;
 	QObject::connect(notify,SIGNAL(transfersChanged())                ,w->transfersDialog  		,SLOT(insertTransfers()                )) ;
 	QObject::connect(notify,SIGNAL(friendsChanged())                  ,w->peersDialog      		,SLOT(insertPeers()                    )) ;
-	QObject::connect(notify,SIGNAL(chatChanged())                     ,w->peersDialog      		,SLOT(insertChat()                     ));
+	QObject::connect(notify,SIGNAL(publicChatChanged(int))            ,w->peersDialog      		,SLOT(publicChatChanged(int)           ));
+	QObject::connect(notify,SIGNAL(privateChatChanged(int))           ,w                   		,SLOT(privateChatChanged(int)          ));
 	QObject::connect(notify,SIGNAL(neighborsChanged())                ,w->networkDialog    		,SLOT(insertConnect()                  )) ;
 	QObject::connect(notify,SIGNAL(messagesChanged())                 ,w->messagesDialog   		,SLOT(insertMessages()                 )) ;
 	QObject::connect(notify,SIGNAL(messagesTagsChanged())             ,w->messagesDialog   		,SLOT(messagesTagsChanged()            )) ;

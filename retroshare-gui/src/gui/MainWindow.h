@@ -141,6 +141,7 @@ public slots:
     void checkAndSetIdle(int idleTime);
     void updateMessages();
     void updateForums();
+    void privateChatChanged(int type);
 
 protected:
     /** Default Constructor */
@@ -160,6 +161,7 @@ private slots:
     void toggleVisibilitycontextmenu();
     void trayIconMessagesClicked(QSystemTrayIcon::ActivationReason e);
     void trayIconForumsClicked(QSystemTrayIcon::ActivationReason e);
+    void trayIconChatClicked(QSystemTrayIcon::ActivationReason e);
 
     /** Toolbar fns. */
     void addFriend();
@@ -223,6 +225,7 @@ private:
     QSystemTrayIcon *trayIcon;
     QSystemTrayIcon *trayIconMessages;
     QSystemTrayIcon *trayIconForums;
+    QSystemTrayIcon *trayIconChat;
     QAction *toggleVisibilityAction, *toolAct;
     QMenu *trayMenu;
 

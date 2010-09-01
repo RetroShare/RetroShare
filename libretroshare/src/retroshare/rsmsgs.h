@@ -174,8 +174,12 @@ virtual bool resetMessageStandardTagTypes(MsgTagType& tags) = 0;
 
 /****************************************/
 	/* Chat */
-virtual	bool   ChatSend(ChatInfo &ci)                     = 0;
-virtual	bool   getNewChat(std::list<ChatInfo> &chats)	   = 0;
+virtual	bool   sendPublicChat(std::wstring msg) = 0;
+virtual	bool   sendPrivateChat(std::string id, std::wstring msg) = 0;
+virtual	int    getChatQueueCount(bool privateQueue) = 0;
+virtual	bool   getPublicChatQueue(std::list<ChatInfo> &chats) = 0;
+virtual	bool   getPrivateChatQueueIds(std::list<std::string> &ids) = 0;
+virtual	bool   getPrivateChatQueue(std::string id, std::list<ChatInfo> &chats) = 0;
 virtual void   sendStatusString(const std::string& id,const std::string& status_string) = 0 ;
 virtual void   sendGroupChatStatusString(const std::string& status_string) = 0 ;
 

@@ -61,13 +61,13 @@ class p3ChatService: public p3Service, public p3Config
 		/*!
 		 * public chat sent to all peers
 		 */
-		int	sendChat(std::wstring msg);
+		int	sendPublicChat(std::wstring &msg);
 
 		/*!
 		 * chat is sent to specifc peer
-		 * @param id peer to send caht msg to
+		 * @param id peer to send chat msg to
 		 */
-		int	sendPrivateChat(std::wstring msg, std::string id);
+		int	sendPrivateChat(std::string &id, std::wstring &msg);
 
 		/*!
 		 * can be used to send 'immediate' status msgs, these status updates are meant for immediate use by peer (not saved by rs)
@@ -117,9 +117,25 @@ class p3ChatService: public p3Service, public p3Config
 
 
 		/*!
-		 * This retrieves all chat msg items
+		 * returns the count of messages in public or private queue
+		 * @param public or private queue
 		 */
-		bool getChatQueue(std::list<ChatInfo> &chats);
+		int getChatQueueCount(bool privateQueue);
+
+		/*!
+		 * This retrieves all public chat msg items
+		 */
+		bool getPublicChatQueue(std::list<ChatInfo> &chats);
+
+		/*!
+		* @param id's of available private chat messages
+		*/
+		bool getPrivateChatQueueIds(std::list<std::string> &ids);
+
+		/*!
+		 * This retrieves all private chat msg items for peer
+		 */
+		bool getPrivateChatQueue(std::string id, std::list<ChatInfo> &chats);
 
 		/************* from p3Config *******************/
 		virtual RsSerialiser *setupSerialiser() ;
@@ -163,7 +179,8 @@ class p3ChatService: public p3Service, public p3Config
 
 		p3ConnectMgr *mConnMgr;
 
-		std::list<RsChatMsgItem *> ilist;
+		std::list<RsChatMsgItem *> publicList;
+		std::list<RsChatMsgItem *> privateList;
 
 		AvatarInfo *_own_avatar ;
 		std::map<std::string,AvatarInfo *> _avatars ;

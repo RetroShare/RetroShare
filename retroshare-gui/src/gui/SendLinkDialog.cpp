@@ -65,12 +65,6 @@ void SendLinkDialog::insertHtmlText(std::string msg)
 
 void SendLinkDialog::sendLinktoChat()
 {
-	ChatInfo ci;
-	ci.msg = ui.linkText->toHtml().toStdWString();
-	ci.chatflags = RS_CHAT_PUBLIC;
-
-	rsMsgs -> ChatSend(ci);
+	rsMsgs->sendPublicChat(ui.linkText->toHtml().toStdWString());
 	close();
 }
-
-

@@ -70,6 +70,7 @@ public:
 public slots:
 
 		void  insertPeers();
+		void publicChatChanged(int type);
 		void toggleSendItem( QTreeWidgetItem *item, int col );
 
 		void insertChat();
@@ -173,7 +174,7 @@ private:
 		class QSpacerItem *spacerItem;
 
 		///play the sound when recv a message
-		 void playsound();
+		void playsound();
 
 		QString fileName; 
 

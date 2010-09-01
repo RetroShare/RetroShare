@@ -72,7 +72,8 @@ class NotifyQt: public QObject, public NotifyBase
 		void diskFull(int,int) const ;
 		void peerStatusChanged(const QString& /* peer_id */, int /* status */);
 		void peerStatusChangedSummary() const;
-		void chatChanged() const ;
+		void publicChatChanged(int type) const ;
+		void privateChatChanged(int type) const ;
 
 	public slots:
 

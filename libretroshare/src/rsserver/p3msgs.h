@@ -104,19 +104,38 @@ class p3Msgs: public RsMsgs
 	  virtual std::string getCustomStateString(const std::string& peer_id) ;
 	  
 
-	  /****************************************/
-	  /* Chat */
 	  /*!
-	   * sends chat (public and private)
-	   * @param ci chat info
+	   * public chat sent to all peers
 	   */
-	  virtual	bool 	ChatSend(ChatInfo &ci);
+	  virtual	bool	sendPublicChat(std::wstring msg);
 
 	  /*!
-	   * @param chats ref to list of received chats is stored here
+	   * chat is sent to specifc peer
+	   * @param id peer to send chat msg to
 	   */
-	  virtual	bool	getNewChat(std::list<ChatInfo> &chats);
+	  virtual	bool	sendPrivateChat(std::string id, std::wstring msg);
 
+	  /*!
+	   * returns the count of messages in public or private queue
+	   * @param public or private queue
+	   */
+	  virtual	int    getChatQueueCount(bool privateQueue);
+
+	  /*!
+	   * @param chats ref to list of received public chats is stored here
+	   */
+	  virtual	bool	getPublicChatQueue(std::list<ChatInfo> &chats);
+
+	  /*!
+	   * @param id's of available private chat messages
+	   */
+	  virtual	bool   getPrivateChatQueueIds(std::list<std::string> &ids);
+
+
+	  /*!
+	   * @param chats ref to list of received private chats is stored here
+	   */
+	  virtual	bool	getPrivateChatQueue(std::string id, std::list<ChatInfo> &chats);
 	  /*!
 	   * sends immediate status string to a specific peer, e.g. in a private chat
 	   * @param peer_id peer to send status string to

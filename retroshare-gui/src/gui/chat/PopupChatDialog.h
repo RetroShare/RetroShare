@@ -36,23 +36,14 @@ class PopupChatDialog : public QMainWindow
   Q_OBJECT
 
 public:
-  static PopupChatDialog *getPrivateChat(std::string id, std::string name, uint chatflags);
+  static PopupChatDialog *getPrivateChat(std::string id, uint chatflags);
   static void cleanupChat();
   static void chatFriend(std::string id);
   static void updateAllAvatars();
+  static void privateChatChanged();
 
   void updateChat();
   void updatePeerAvatar(const std::string&);
-  void addChatMsg(ChatInfo *ci);
-  
-  void loadEmoticons();
-  void loadEmoticons2();
-
-  void updateAvatar();
-
-  QString loadEmptyStyle(); 
-  QPixmap picture;
-
    
 public slots:
   /** Overloaded QWidget.show */
@@ -84,9 +75,20 @@ protected:
   ~PopupChatDialog();
 
   void closeEvent (QCloseEvent * event);
+  void showEvent (QShowEvent * event);
   virtual void dragEnterEvent(QDragEnterEvent *event);
   virtual void dropEvent(QDropEvent *event);
 
+  void insertChatMsgs();
+  void addChatMsg(std::string &id, std::wstring &msg);
+
+  void loadEmoticons();
+  void loadEmoticons2();
+
+  void updateAvatar();
+
+  QString loadEmptyStyle();
+  QPixmap picture;
 
 private slots:
   void addExtraFile();
@@ -135,7 +137,9 @@ private:
    QStringList history;
    QString wholeChat;  
    QString fileName; 
-   
+
+   bool m_bInsertOnVisible;
+
   /** Qt Designer generated object */
   Ui::PopupChatDialog ui;
 

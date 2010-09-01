@@ -500,6 +500,9 @@ void  PeersDialog::insertPeers()
 
     bool bHideUnconnected = ui.action_Hide_Offline_Friends->isChecked();
 
+    std::list<std::string> privateChatIds;
+    rsMsgs->getPrivateChatQueueIds(privateChatIds);
+
     rsPeers->getGPGAcceptedList(gpgFriends);
 
     //add own gpg id, if we have more than on location (ssl client)
@@ -588,6 +591,7 @@ void  PeersDialog::insertPeers()
         //update the childs (ssl certs)
         bool gpg_connected = false;
         bool gpg_online = false;
+        bool gpg_hasPrivateChat = false;
         std::list<std::string> sslContacts;
         rsPeers->getSSLChildListOfGPGId(detail.gpg_id, sslContacts);
         for(std::list<std::string>::iterator sslIt = sslContacts.begin(); sslIt != sslContacts.end(); sslIt++) {
@@ -641,12 +645,13 @@ void  PeersDialog::insertPeers()
             sslItem -> setData(COLUMN_STATE, ROLE_SORT, sText);
 
             /* change color and icon */
+            QIcon sslIcon;
             int i;
             if (sslDetail.state & RS_PEER_STATE_CONNECTED) {
                 sslItem->setHidden(false);
                 gpg_connected = true;
 
-                sslItem -> setIcon(COLUMN_NAME,(QIcon(":/images/connect_established.png")));
+                sslIcon = QIcon(":/images/connect_established.png");
                 sslItem -> setIcon(COLUMN_STATE,(QIcon(":/images/encrypted32.png")));
                 QFont font;
                 font.setBold(true);
@@ -667,9 +672,9 @@ void  PeersDialog::insertPeers()
             } else {
                 sslItem->setHidden(bHideUnconnected);
                 if (sslDetail.autoconnect != "Offline") {
-                    sslItem -> setIcon(COLUMN_NAME, (QIcon(":/images/connect_creating.png")));
+                    sslIcon = QIcon(":/images/connect_creating.png");
                 } else {
-                    sslItem -> setIcon(COLUMN_NAME, (QIcon(":/images/connect_no.png")));
+                    sslIcon = QIcon(":/images/connect_no.png");
                 }
 
                 QFont font;
@@ -679,6 +684,13 @@ void  PeersDialog::insertPeers()
                     sslItem -> setFont(i,font);
                 }
             }
+
+            if (std::find(privateChatIds.begin(), privateChatIds.end(), sslDetail.id) != privateChatIds.end()) {
+                // private chat is available
+                sslIcon = QIcon(":/images/chat.png");
+                gpg_hasPrivateChat = true;
+            }
+            sslItem -> setIcon(COLUMN_NAME, sslIcon);
 
             #ifdef PEERS_DEBUG
             std::cerr << "PeersDialog::insertPeers() inserting sslItem." << std::endl;
@@ -691,9 +703,10 @@ void  PeersDialog::insertPeers()
         }
 
         int i = 0;
+        QIcon gpgIcon;
         if (gpg_connected) {
             gpg_item->setHidden(false);
-            gpg_item -> setIcon(COLUMN_NAME,(QIcon(IMAGE_ONLINE)));
+            gpgIcon = QIcon(IMAGE_ONLINE);
             gpg_item -> setText(COLUMN_STATE, tr("Online"));
             gpg_item -> setData(COLUMN_STATE, ROLE_SORT, BuildStateSortString(true, gpg_item->text(COLUMN_NAME), PEER_STATE_ONLINE));
 
@@ -764,7 +777,7 @@ void  PeersDialog::insertPeers()
             }
         } else if (gpg_online) {
             gpg_item->setHidden(bHideUnconnected);
-            gpg_item -> setIcon(COLUMN_NAME,(QIcon(IMAGE_AVAIBLE)));
+            gpgIcon = QIcon(IMAGE_AVAIBLE);
             gpg_item -> setText(COLUMN_STATE, tr("Available"));
             gpg_item -> setData(COLUMN_STATE, ROLE_SORT, BuildStateSortString(true, gpg_item->text(COLUMN_NAME), PEER_STATE_AVAILABLE));
             QFont font;
@@ -775,7 +788,7 @@ void  PeersDialog::insertPeers()
             }
         } else {
             gpg_item->setHidden(bHideUnconnected);
-            gpg_item -> setIcon(COLUMN_NAME,(QIcon(IMAGE_OFFLINE)));
+            gpgIcon = QIcon(IMAGE_OFFLINE);
             gpg_item -> setText(COLUMN_STATE, tr("Offline"));
             gpg_item -> setData(COLUMN_STATE, ROLE_SORT, BuildStateSortString(true, gpg_item->text(COLUMN_NAME), PEER_STATE_OFFLINE));
             QFont font;
@@ -785,6 +798,12 @@ void  PeersDialog::insertPeers()
                 gpg_item -> setFont(i,font);
             }
         }
+
+        if (gpg_hasPrivateChat) {
+            gpgIcon = QIcon(":/images/chat.png");
+        }
+
+        gpg_item -> setIcon(COLUMN_NAME, gpgIcon);
 
         if (bNew) {
             /* add gpg item to the list */
@@ -1044,20 +1063,24 @@ void PeersDialog::updatePeersCustomStateString(const QString& peer_id)
 
 void PeersDialog::updatePeersAvatar(const QString& peer_id)
 {
-        #ifdef PEERS_DEBUG
-	std::cerr << "PeersDialog: Got notified of new avatar for peer " << peer_id.toStdString() << std::endl ;
-        #endif
+#ifdef PEERS_DEBUG
+    std::cerr << "PeersDialog: Got notified of new avatar for peer " << peer_id.toStdString() << std::endl ;
+#endif
 
-        PopupChatDialog *pcd = PopupChatDialog::getPrivateChat(peer_id.toStdString(),rsPeers->getPeerName(peer_id.toStdString()), 0);
-	pcd->updatePeerAvatar(peer_id.toStdString());
+    PopupChatDialog *pcd = PopupChatDialog::getPrivateChat(peer_id.toStdString(), 0);
+    if (pcd) {
+        pcd->updatePeerAvatar(peer_id.toStdString());
+    }
 }
 
 void PeersDialog::updatePeerStatusString(const QString& peer_id,const QString& status_string,bool is_private_chat)
 {
     if(is_private_chat)
     {
-        PopupChatDialog *pcd = PopupChatDialog::getPrivateChat(peer_id.toStdString(),rsPeers->getPeerName(peer_id.toStdString()), 0);
-        pcd->updateStatusString(peer_id, status_string);
+        PopupChatDialog *pcd = PopupChatDialog::getPrivateChat(peer_id.toStdString(), 0);
+        if (pcd) {
+            pcd->updateStatusString(peer_id, status_string);
+        }
     }
     else
     {
@@ -1069,10 +1092,17 @@ void PeersDialog::updatePeerStatusString(const QString& peer_id,const QString& s
     }
 }
 
+void PeersDialog::publicChatChanged(int type)
+{
+    if (type == NOTIFY_TYPE_ADD) {
+        insertChat();
+    }
+}
+
 void PeersDialog::insertChat()
 {
     std::list<ChatInfo> newchat;
-    if (!rsMsgs->getNewChat(newchat))
+    if (!rsMsgs->getPublicChatQueue(newchat))
     {
 #ifdef PEERS_DEBUG
         std::cerr << "no chat available." << std::endl ;
@@ -1084,8 +1114,6 @@ void PeersDialog::insertChat()
 #endif
     QTextEdit *msgWidget = ui.msgText;
     std::list<ChatInfo>::iterator it;
-
-    uint chatflags = Settings->getChatFlags();
 
     /* add in lines at the bottom */
     for(it = newchat.begin(); it != newchat.end(); it++)
@@ -1100,10 +1128,7 @@ void PeersDialog::insertChat()
         /* are they private? */
         if (it->chatflags & RS_CHAT_PRIVATE)
         {
-            PopupChatDialog *pcd = PopupChatDialog::getPrivateChat(it->rsid, peer_name, chatflags);
-            pcd->addChatMsg(&(*it));
-            playsound();
-            QApplication::alert(pcd);
+            /* this should not happen */
             continue;
         }
 
@@ -1192,25 +1217,22 @@ void PeersDialog::sendMsg()
 {
     QTextEdit *lineWidget = ui.lineEdit;
 
-	ChatInfo ci;
-	//ci.msg = lineWidget->Text().toStdWString();
-	ci.msg = lineWidget->toHtml().toStdWString();
-	ci.chatflags = RS_CHAT_PUBLIC;
+    //ci.msg = lineWidget->Text().toStdWString();
+    std::wstring message = lineWidget->toHtml().toStdWString();
 
     //historyKeeper.addMessage("THIS", "ALL", lineWidget->toHtml() );
 
-	std::string msg(ci.msg.begin(), ci.msg.end());
-        #ifdef PEERS_DEBUG
-	std::cerr << "PeersDialog::sendMsg(): " << msg << std::endl;
-        #endif
+#ifdef PEERS_DEBUG
+    std::string msg(ci.msg.begin(), ci.msg.end());
+    std::cerr << "PeersDialog::sendMsg(): " << msg << std::endl;
+#endif
 
-	rsMsgs -> ChatSend(ci);
-	ui.lineEdit->clear();
-	setFont();
+    rsMsgs->sendPublicChat(message);
+    ui.lineEdit->clear();
+    setFont();
 
-	/* redraw send list */
-	insertSendList();
-
+    /* redraw send list */
+    insertSendList();
 }
 
 void  PeersDialog::insertSendList()
@@ -1668,64 +1690,35 @@ void PeersDialog::addAttachment(std::string filePath) {
 	    }
 }
 
-void PeersDialog::fileHashingFinished(AttachFileItem* file) {
-        std::cerr << "PeersDialog::fileHashingFinished() started." << std::endl;
+void PeersDialog::fileHashingFinished(AttachFileItem* file)
+{
+    std::cerr << "PeersDialog::fileHashingFinished() started." << std::endl;
 
-	//check that the file is ok tos end
-	if (file->getState() == AFI_STATE_ERROR) {
-            #ifdef PEERS_DEBUG
-            std::cerr << "PopupChatDialog::fileHashingFinished error file is not hashed." << std::endl;
-            #endif
-	    return;
-	}
-
-	ChatInfo ci;
-
-
-	{
-	  rsiface->lockData(); /* Lock Interface */
-	  const RsConfig &conf = rsiface->getConfig();
-
-	  ci.rsid = conf.ownId;
-
-	  rsiface->unlockData(); /* Unlock Interface */
-	}
-
-        //convert fileSize from uint_64 to string for html link
-//	char fileSizeChar [100];
-//	sprintf(fileSizeChar, "%lld", file->FileSize());
-//	std::string fileSize = *(&fileSizeChar);
-
-	std::string mesgString = RetroShareLink(QString::fromStdString(file->FileName()),
-						file->FileSize(),
-						QString::fromStdString(file->FileHash())).toHtml().toStdString() ;
-
-//	std::string mesgString = "<a href='retroshare://file|" + (file->FileName()) + "|" + fileSize + "|" + (file->FileHash()) + "'>" 
-//	+ "retroshare://file|" + (file->FileName()) + "|" + fileSize +  "|" + (file->FileHash())  + "</a>";
+    //check that the file is ok tos end
+    if (file->getState() == AFI_STATE_ERROR) {
 #ifdef PEERS_DEBUG
-	std::cerr << "PeersDialog::fileHashingFinished mesgString : " << mesgString << std::endl;
+        std::cerr << "PopupChatDialog::fileHashingFinished error file is not hashed." << std::endl;
+#endif
+        return;
+    }
+
+    //convert fileSize from uint_64 to string for html link
+    //	char fileSizeChar [100];
+    //	sprintf(fileSizeChar, "%lld", file->FileSize());
+    //	std::string fileSize = *(&fileSizeChar);
+
+    std::string mesgString = RetroShareLink(QString::fromStdString(file->FileName()),
+                                            file->FileSize(),
+                                            QString::fromStdString(file->FileHash())).toHtml().toStdString() ;
+
+    //	std::string mesgString = "<a href='retroshare://file|" + (file->FileName()) + "|" + fileSize + "|" + (file->FileHash()) + "'>"
+    //	+ "retroshare://file|" + (file->FileName()) + "|" + fileSize +  "|" + (file->FileHash())  + "</a>";
+#ifdef PEERS_DEBUG
+    std::cerr << "PeersDialog::fileHashingFinished mesgString : " << mesgString << std::endl;
 #endif
 
-	const char * messageString = mesgString.c_str ();
-
-	//convert char massageString to w_char
-	wchar_t* message;
-	size_t requiredSize = mbstowcs(NULL, messageString, 0); // C4996
-	/* Add one to leave room for the NULL terminator */
-	message = (wchar_t *)malloc( (requiredSize + 1) * sizeof( wchar_t ));
-	if (! message) {
-	    std::cerr << ("Memory allocation failure.\n");
-	}
-	size_t size = mbstowcs( message, messageString, requiredSize + 1); // C4996
-	if (size == (size_t) (-1)) {
-	   printf("Couldn't convert string--invalid multibyte character.\n");
-	}
-
-	ci.msg = message;
-	ci.chatflags = RS_CHAT_PUBLIC;
-
-	rsMsgs -> ChatSend(ci);
-	setFont();
+    rsMsgs->sendPublicChat(QString::fromStdString(mesgString).toStdWString());
+    setFont();
 }
 
 void PeersDialog::anchorClicked (const QUrl& link ) 

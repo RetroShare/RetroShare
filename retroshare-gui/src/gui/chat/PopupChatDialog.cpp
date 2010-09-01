@@ -32,6 +32,7 @@
 #include <QFileDialog>
 #include <QBuffer>
 #include <QTextCodec>
+#include <QSound>
 #include <sys/stat.h>
 
 #include "PopupChatDialog.h"
@@ -65,6 +66,25 @@
 
 static std::map<std::string, PopupChatDialog *> chatDialogs;
 
+// play sound when recv a message
+void playsound()
+{
+    Settings->beginGroup("Sound");
+        Settings->beginGroup("SoundFilePath");
+            QString OnlineSound = Settings->value("NewChatMessage","").toString();
+        Settings->endGroup();
+        Settings->beginGroup("Enable");
+            bool flag = Settings->value("NewChatMessage",false).toBool();
+        Settings->endGroup();
+    Settings->endGroup();
+
+    if (!OnlineSound.isEmpty() && flag) {
+        if (QSound::isAvailable()) {
+            QSound::play(OnlineSound);
+        }
+    }
+}
+
 /** Default constructor */
 PopupChatDialog::PopupChatDialog(std::string id, std::string name, 
 				QWidget *parent, Qt::WFlags flags)
@@ -78,6 +98,7 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   Settings->loadWidgetInformation(this);
   this->move(qrand()%100, qrand()%100); //avoid to stack multiple popup chat windows on the same position
 
+  m_bInsertOnVisible = true;
   
   loadEmoticons();
   
@@ -202,46 +223,49 @@ void PopupChatDialog::processSettings(bool bLoad)
     Settings->endGroup();
 }
 
-/*static*/ PopupChatDialog *PopupChatDialog::getPrivateChat(std::string id, std::string name, uint chatflags)
+/*static*/ PopupChatDialog *PopupChatDialog::getPrivateChat(std::string id, uint chatflags)
 {
-   /* see if it exists already */
-   PopupChatDialog *popupchatdialog = NULL;
-   bool show = false;
+    /* see if it exists already */
+    PopupChatDialog *popupchatdialog = NULL;
+    bool show = false;
 
-   if (chatflags & RS_CHAT_REOPEN)
-   {
+    if (chatflags & RS_CHAT_REOPEN)
+    {
         show = true;
-        #ifdef PEERS_DEBUG
+#ifdef PEERS_DEBUG
         std::cerr << "reopen flag so: enable SHOW popupchatdialog()" << std::endl;
-        #endif
-   }
+#endif
+    }
 
-   std::map<std::string, PopupChatDialog *>::iterator it;
-   if (chatDialogs.end() != (it = chatDialogs.find(id)))
-   {
+    std::map<std::string, PopupChatDialog *>::iterator it;
+    if (chatDialogs.end() != (it = chatDialogs.find(id)))
+    {
         /* exists already */
         popupchatdialog = it->second;
-   }
-   else
-   {
-        popupchatdialog = new PopupChatDialog(id, name);
-        chatDialogs[id] = popupchatdialog;
+    }
+    else
+    {
 
         if (chatflags & RS_CHAT_OPEN_NEW)
         {
-                #ifdef PEERS_DEBUG
+            RsPeerDetails sslDetails;
+            if (rsPeers->getPeerDetails(id, sslDetails)) {
+                popupchatdialog = new PopupChatDialog(id, sslDetails.name + " - " + sslDetails.location);
+                chatDialogs[id] = popupchatdialog;
+#ifdef PEERS_DEBUG
                 std::cerr << "new chat so: enable SHOW popupchatdialog()" << std::endl;
-                #endif
+#endif
 
                 show = true;
+            }
         }
-   }
+    }
 
-   if (show)
-   {
-        #ifdef PEERS_DEBUG
+    if (show && popupchatdialog)
+    {
+#ifdef PEERS_DEBUG
         std::cerr << "SHOWING popupchatdialog()" << std::endl;
-        #endif
+#endif
 
         if (popupchatdialog->isVisible() == false) {
             if (chatflags & RS_CHAT_FOCUS) {
@@ -250,36 +274,36 @@ void PopupChatDialog::processSettings(bool bLoad)
                 popupchatdialog->showMinimized();
             }
         }
-   }
+    }
 
-   /* now only do these if the window is visible */
-   if (popupchatdialog->isVisible())
-   {
-           if (chatflags & RS_CHAT_FOCUS)
-           {
-                #ifdef PEERS_DEBUG
-                std::cerr << "focus chat flag so: GETFOCUS popupchatdialog()" << std::endl;
-                #endif
+    /* now only do these if the window is visible */
+    if (popupchatdialog && popupchatdialog->isVisible())
+    {
+        if (chatflags & RS_CHAT_FOCUS)
+        {
+#ifdef PEERS_DEBUG
+            std::cerr << "focus chat flag so: GETFOCUS popupchatdialog()" << std::endl;
+#endif
 
-                popupchatdialog->getfocus();
-           }
-           else
-           {
-                #ifdef PEERS_DEBUG
-                std::cerr << "no focus chat flag so: FLASH popupchatdialog()" << std::endl;
-                #endif
+            popupchatdialog->getfocus();
+        }
+        else
+        {
+#ifdef PEERS_DEBUG
+            std::cerr << "no focus chat flag so: FLASH popupchatdialog()" << std::endl;
+#endif
 
-                popupchatdialog->flash();
-           }
-   }
-   else
-   {
-        #ifdef PEERS_DEBUG
+            popupchatdialog->flash();
+        }
+    }
+    else
+    {
+#ifdef PEERS_DEBUG
         std::cerr << "not visible ... so leave popupchatdialog()" << std::endl;
-        #endif
-   }
+#endif
+    }
 
-   return popupchatdialog;
+    return popupchatdialog;
 }
 
 /*static*/ void PopupChatDialog::cleanupChat()
@@ -292,6 +316,28 @@ void PopupChatDialog::processSettings(bool bLoad)
     }
 
     chatDialogs.clear();
+}
+
+/*static*/ void PopupChatDialog::privateChatChanged()
+{
+    std::list<std::string> ids;
+    if (!rsMsgs->getPrivateChatQueueIds(ids)) {
+#ifdef PEERS_DEBUG
+        std::cerr << "no chat available." << std::endl ;
+#endif
+        return;
+    }
+
+    uint chatflags = Settings->getChatFlags();
+
+    std::list<std::string>::iterator id;
+    for (id = ids.begin(); id != ids.end(); id++) {
+        PopupChatDialog *pcd = getPrivateChat(*id, chatflags);
+
+        if (pcd) {
+            pcd->insertChatMsgs();
+        }
+    }
 }
 
 void PopupChatDialog::chatFriend(std::string id)
@@ -316,14 +362,14 @@ void PopupChatDialog::chatFriend(std::string id)
             if (rsPeers->getPeerDetails(*it, sslDetails)) {
                 if (sslDetails.state & RS_PEER_STATE_CONNECTED) {
                     oneLocationConnected = true;
-                    getPrivateChat(*it, sslDetails.name + " - " + sslDetails.location, RS_CHAT_REOPEN | RS_CHAT_FOCUS);
+                    getPrivateChat(*it, RS_CHAT_OPEN_NEW | RS_CHAT_REOPEN | RS_CHAT_FOCUS);
                 }
             }
         }
     } else {
         if (detail.state & RS_PEER_STATE_CONNECTED) {
             oneLocationConnected = true;
-            getPrivateChat(id, detail.name + " - " + detail.location, RS_CHAT_REOPEN | RS_CHAT_FOCUS);
+            getPrivateChat(id, RS_CHAT_OPEN_NEW | RS_CHAT_REOPEN | RS_CHAT_FOCUS);
         }
     }
 
@@ -426,6 +472,13 @@ void PopupChatDialog::flash()
   
 }
 
+void PopupChatDialog::showEvent(QShowEvent *event)
+{
+    if (m_bInsertOnVisible) {
+        insertChatMsgs();
+    }
+}
+
 void PopupChatDialog::closeEvent (QCloseEvent * event)
 {
     Settings->saveWidgetInformation(this);
@@ -442,74 +495,95 @@ void PopupChatDialog::updateChat()
 
 }
 
-void PopupChatDialog::addChatMsg(ChatInfo *ci)
+void PopupChatDialog::insertChatMsgs()
 {
+    if (isVisible() == false) {
+        m_bInsertOnVisible = true;
+        return;
+    }
 
-	{
-	  RsPeerDetails detail;
-	  if (!rsPeers->getPeerDetails(dialogId, detail))
-	  {
-#ifdef CHAT_DEBUG 
-		std::cerr << "WARNING CANNOT GET PEER INFO!!!!" << std::endl;
+    m_bInsertOnVisible = false;
+
+    std::list<ChatInfo> newchat;
+    if (!rsMsgs->getPrivateChatQueue(dialogId, newchat))
+    {
+#ifdef PEERS_DEBUG
+        std::cerr << "no chat for " << dialogId << " available." << std::endl ;
 #endif
-	  }
+        return;
+    }
 
-	}
-	
-    QString timestamp = "[" + QDateTime::currentDateTime().toString("hh:mm:ss") + "]";
-    QString name = QString::fromStdString(rsPeers->getPeerName(ci->rsid));
-    QString message = QString::fromStdWString(ci -> msg);
-
-	//replace http://, https:// and www. with <a href> links
-	QRegExp rx("(retroshare://[^ <>]*)|(https?://[^ <>]*)|(www\\.[^ <>]*)");
-	int count = 0;
-        int pos = 100; //ignore the first 100 char because of the standard DTD ref
-	while ( (pos = rx.indexIn(message, pos)) != -1 ) {
-	    //we need to look ahead to see if it's already a well formed link
-	    if (message.mid(pos - 6, 6) != "href=\"" && message.mid(pos - 6, 6) != "href='" && message.mid(pos - 6, 6) != "ttp://" ) {
-		QString tempMessg = message.left(pos) + "<a href=\"" + rx.cap(count) + "\">" + rx.cap(count) + "</a>" + message.mid(pos + rx.matchedLength(), -1);
-		message = tempMessg;
-	    }
-	    pos += rx.matchedLength() + 15;
-            count ++;
+    std::list<ChatInfo>::iterator it;
+    for(it = newchat.begin(); it != newchat.end(); it++) {
+        /* are they public? */
+        if ((it->chatflags & RS_CHAT_PRIVATE) == 0) {
+            /* this should not happen */
+            continue;
         }
 
+        addChatMsg(it->rsid, it->msg);
+    }
+
+    playsound();
+    QApplication::alert(this);
+}
+
+void PopupChatDialog::addChatMsg(std::string &id, std::wstring &msg)
+{
+    QString timestamp = "[" + QDateTime::currentDateTime().toString("hh:mm:ss") + "]";
+    QString name = QString::fromStdString(rsPeers->getPeerName(id));
+    QString message = QString::fromStdWString(msg);
+
+    //replace http://, https:// and www. with <a href> links
+    QRegExp rx("(retroshare://[^ <>]*)|(https?://[^ <>]*)|(www\\.[^ <>]*)");
+    int count = 0;
+    int pos = 100; //ignore the first 100 char because of the standard DTD ref
+    while ( (pos = rx.indexIn(message, pos)) != -1 ) {
+        //we need to look ahead to see if it's already a well formed link
+        if (message.mid(pos - 6, 6) != "href=\"" && message.mid(pos - 6, 6) != "href='" && message.mid(pos - 6, 6) != "ttp://" ) {
+            QString tempMessg = message.left(pos) + "<a href=\"" + rx.cap(count) + "\">" + rx.cap(count) + "</a>" + message.mid(pos + rx.matchedLength(), -1);
+            message = tempMessg;
+        }
+        pos += rx.matchedLength() + 15;
+        count ++;
+    }
+
 #ifdef CHAT_DEBUG
-std::cout << "PopupChatDialog:addChatMsg message : " << message.toStdString() << std::endl;
+    std::cout << "PopupChatDialog:addChatMsg message : " << message.toStdString() << std::endl;
 #endif
 
-  if (Settings->valueFromGroup(QString("Chat"), QString::fromUtf8("Emoteicons_PrivatChat"), true).toBool())
-  {
+    if (Settings->valueFromGroup(QString("Chat"), QString::fromUtf8("Emoteicons_PrivatChat"), true).toBool())
+    {
 	QHashIterator<QString, QString> i(smileys);
 	while(i.hasNext())
 	{
-		i.next();
-		foreach(QString code, i.key().split("|"))
-			message.replace(code, "<img src=\"" + i.value() + "\" />");
+            i.next();
+            foreach(QString code, i.key().split("|"))
+                message.replace(code, "<img src=\"" + i.value() + "\" />");
 	}
-  }
-	history /*<< nickColor << color << font << fontSize*/ << timestamp << name << message;
-	
-	
-	QString formatMsg = loadEmptyStyle()/*.replace(nickColor)
+    }
+    history /*<< nickColor << color << font << fontSize*/ << timestamp << name << message;
+
+
+    QString formatMsg = loadEmptyStyle()/*.replace(nickColor)
 				    .replace(color)
 				    .replace(font)
 				    .replace(fontSize)*/
-				    .replace("%timestamp%", timestamp)
-                    		    .replace("%name%", name)
-				    .replace("%message%", message);
-				
+                        .replace("%timestamp%", timestamp)
+                        .replace("%name%", name)
+                        .replace("%message%", message);
 
-	if ((ui.textBrowser->verticalScrollBar()->maximum() - 30) < ui.textBrowser->verticalScrollBar()->value() ) {
-	    ui.textBrowser->append(formatMsg + "\n");
-	} else {
-	    //the vertical scroll is not at the bottom, so just update the text, the scroll will stay at the current position
-	    int scroll = ui.textBrowser->verticalScrollBar()->value();
-	    ui.textBrowser->setHtml(ui.textBrowser->toHtml() + formatMsg + "\n");
-	    ui.textBrowser->verticalScrollBar()->setValue(scroll);
-	    ui.textBrowser->update();
-	}
-	resetStatusBar() ;
+
+    if ((ui.textBrowser->verticalScrollBar()->maximum() - 30) < ui.textBrowser->verticalScrollBar()->value() ) {
+        ui.textBrowser->append(formatMsg + "\n");
+    } else {
+        //the vertical scroll is not at the bottom, so just update the text, the scroll will stay at the current position
+        int scroll = ui.textBrowser->verticalScrollBar()->value();
+        ui.textBrowser->setHtml(ui.textBrowser->toHtml() + formatMsg + "\n");
+        ui.textBrowser->verticalScrollBar()->setValue(scroll);
+        ui.textBrowser->update();
+    }
+    resetStatusBar() ;
 }
 
 void PopupChatDialog::checkChat()
@@ -527,36 +601,32 @@ void PopupChatDialog::checkChat()
 
 void PopupChatDialog::sendChat()
 {
-	QTextEdit *chatWidget = ui.chattextEdit;
+    QTextEdit *chatWidget = ui.chattextEdit;
 
-        ChatInfo ci;
+    std::string ownId;
 
-	{
-          rsiface->lockData(); /* Lock Interface */
-          const RsConfig &conf = rsiface->getConfig();
+    {
+        rsiface->lockData(); /* Lock Interface */
+        const RsConfig &conf = rsiface->getConfig();
 
-	  ci.rsid = conf.ownId;
+        ownId = conf.ownId;
 
-          rsiface->unlockData(); /* Unlock Interface */
-	}
+        rsiface->unlockData(); /* Unlock Interface */
+    }
 
-        ci.msg = chatWidget->toHtml().toStdWString();
-        ci.chatflags = RS_CHAT_PRIVATE;
+    std::wstring msg = chatWidget->toHtml().toStdWString();
 
 #ifdef CHAT_DEBUG 
-std::cout << "PopupChatDialog:sendChat " << styleHtm.toStdString() << std::endl;
+    std::cout << "PopupChatDialog:sendChat " << styleHtm.toStdString() << std::endl;
 #endif
 
-	addChatMsg(&ci);
+    addChatMsg(ownId, msg);
 
-        /* put proper destination */
-	ci.rsid = dialogId;
+    rsMsgs->sendPrivateChat(dialogId, msg);
+    chatWidget->clear();
+    setFont();
 
-        rsMsgs -> ChatSend(ci);
-        chatWidget ->clear();
-	setFont();
-
-        /* redraw send list */
+    /* redraw send list */
 }
 
 /**
@@ -982,53 +1052,48 @@ void PopupChatDialog::addAttachment(std::string filePath,int flag)
 
 void PopupChatDialog::fileHashingFinished(AttachFileItem* file) 
 {
-	std::cerr << "PopupChatDialog::fileHashingFinished() started.";
-	std::cerr << std::endl;
+    std::cerr << "PopupChatDialog::fileHashingFinished() started.";
+    std::cerr << std::endl;
 
-	//check that the file is ok tos end
-	if (file->getState() == AFI_STATE_ERROR) {
-	#ifdef CHAT_DEBUG
-		    std::cerr << "PopupChatDialog::fileHashingFinished error file is not hashed.";
-	#endif
-	    return;
-	}
+    //check that the file is ok tos end
+    if (file->getState() == AFI_STATE_ERROR) {
+#ifdef CHAT_DEBUG
+        std::cerr << "PopupChatDialog::fileHashingFinished error file is not hashed.";
+#endif
+        return;
+    }
 
-	ChatInfo ci;
+    std::string ownId;
 
-	{
-	  rsiface->lockData(); /* Lock Interface */
-	  const RsConfig &conf = rsiface->getConfig();
+    {
+        rsiface->lockData(); /* Lock Interface */
+        const RsConfig &conf = rsiface->getConfig();
 
-	  ci.rsid = conf.ownId;
+        ownId = conf.ownId;
 
-	  rsiface->unlockData(); /* Unlock Interface */
-	}
-	
-	QString message;
-	
+        rsiface->unlockData(); /* Unlock Interface */
+    }
+
+    QString message;
+
     if(file->getPicFlag()==1){
-		message+="<img src=\"file:///";
-		message+=file->FilePath().c_str();
-		message+="\" width=\"100\" height=\"100\">";
+        message+="<img src=\"file:///";
+        message+=file->FilePath().c_str();
+        message+="\" width=\"100\" height=\"100\">";
         message+="<br>";
-	}
+    }
 
     message+= RetroShareLink(QString::fromStdString(file->FileName()),file->FileSize(),QString::fromStdString(file->FileHash())).toHtmlSize();
 
 #ifdef CHAT_DEBUG
-            std::cerr << "PopupChatDialog::anchorClicked message : " << message.toStdString() << std::endl;
+    std::cerr << "PopupChatDialog::anchorClicked message : " << message.toStdString() << std::endl;
 #endif
 
+    std::wstring msg = message.toStdWString();
 
-    ci.msg = message.toStdWString();
-	ci.chatflags = RS_CHAT_PRIVATE;
+    addChatMsg(ownId, msg);
 
-	addChatMsg(&ci);
-
-	/* put proper destination */
-	ci.rsid = dialogId;
-
-	rsMsgs -> ChatSend(ci);
+    rsMsgs->sendPrivateChat(dialogId, msg);
 }
 
 void PopupChatDialog::anchorClicked (const QUrl& link ) 
