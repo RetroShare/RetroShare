@@ -205,15 +205,17 @@ win32-x-g++ {
 }
 ################################# Windows ##########################################
 
-win32 {
-		QMAKE_CC = g++
-		OBJECTS_DIR = temp/obj
-		MOC_DIR = temp/moc
-		DEFINES *= WINDOWS_SYS WIN32 STATICLIB MINGW
-                DEFINES *= MINIUPNPC_VERSION=13
-		DESTDIR = lib
 
-		DEFINES -= DEBUG_PQISSL
+win32 {
+                QMAKE_CC = g++
+                OBJECTS_DIR = temp/obj
+                MOC_DIR = temp/moc
+                DEFINES *= WINDOWS_SYS WIN32 STATICLIB MINGW
+                DEFINES *= MINIUPNPC_VERSION=13
+                DESTDIR = lib
+
+                DEFINES -= DEBUG_PQISSL
+                DEFINES += USE_CMD_ARGS
 
                 #miniupnp implementation files
                 HEADERS += upnp/upnputil.h
@@ -221,15 +223,17 @@ win32 {
 
 
                 UPNPC_DIR = ../../../../miniupnpc-1.3
-		GPG_ERROR_DIR = ../../../../libgpg-error-1.7
-		GPGME_DIR  = ../../../../gpgme-1.1.8
+                GPG_ERROR_DIR = ../../../../libgpg-error-1.7
+                GPGME_DIR  = ../../../../gpgme-1.1.8
 
-		PTHREADS_DIR = ../../../../pthreads-w32-2-8-0-release
-		ZLIB_DIR = ../../../../zlib-1.2.3
-		SSL_DIR = ../../../../OpenSSL
+                PTHREADS_DIR = ../../../../pthreads-w32-2-8-0-release
+                ZLIB_DIR = ../../../../zlib-1.2.3
+                SSL_DIR = ../../../../OpenSSL
 
-		INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR} $${PTHREADS_DIR} $${ZLIB_DIR} $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src
+
+                INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR} $${PTHREADS_DIR} $${ZLIB_DIR} $${GPGME_DIR}/src $${GPG_ERROR_DIR}/src
 }
+
 
 ################################# MacOSX ##########################################
 
