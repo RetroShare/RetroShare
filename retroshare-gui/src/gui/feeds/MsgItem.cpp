@@ -35,8 +35,8 @@
  ****/
 
 /** Constructor */
-MsgItem::MsgItem(FeedHolder *parent, uint32_t feedId, std::string msgId, bool isHome)
-:QWidget(NULL), mParent(parent), mFeedId(feedId), mMsgId(msgId), mIsHome(isHome)
+MsgItem::MsgItem(FeedHolder *parent, uint32_t feedId, std::string peerId, std::string msgId, bool isHome)
+:QWidget(NULL), mParent(parent), mFeedId(feedId), mPeerId(peerId), mMsgId(msgId), mIsHome(isHome)
 {
   /* Invoke the Qt Designer generated object setup routine */
   setupUi(this);
@@ -56,6 +56,8 @@ MsgItem::MsgItem(FeedHolder *parent, uint32_t feedId, std::string msgId, bool is
   small();
   updateItemStatic();
   updateItem();
+  updateAvatar(QString::fromStdString(mPeerId));
+
 }
 
 
@@ -191,10 +193,14 @@ void MsgItem::toggle()
 	if (expandFrame->isHidden())
 	{
 		expandFrame->show();
+		expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
+        expandButton->setToolTip(tr("Hide"));
 	}
 	else
 	{
 		expandFrame->hide();
+        expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
+        expandButton->setToolTip(tr("Expand"));
 	}
 }
 
@@ -271,8 +277,6 @@ void MsgItem::replyMsg()
   }
 }
 
-
-
 void MsgItem::playMedia()
 {
 #ifdef DEBUG_ITEM
@@ -281,5 +285,30 @@ void MsgItem::playMedia()
 #endif
 }
 
+void MsgItem::updateAvatar(const QString &peer_id)
+{
+    if (peer_id.toStdString() != mPeerId) {
+        /* it 's not me */
+        return;
+    }
 
+    unsigned char *data = NULL;
+    int size = 0 ;
+
+    rsMsgs->getAvatarData(mPeerId,data,size);
+
+    if(size != 0)
+    {
+        // set the image
+        QPixmap pix ;
+        pix.loadFromData(data,size,"PNG") ;
+        avatarlabel->setPixmap(pix);
+        delete[] data ;
+
+    }
+    else
+    {
+        avatarlabel->setPixmap(QPixmap(":/images/user/personal64.png"));
+    }
+}  
 

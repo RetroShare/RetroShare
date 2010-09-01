@@ -397,7 +397,7 @@ void	NewsFeed::addFeedItemChatNew(RsFeedItem &fi)
 void	NewsFeed::addFeedItemMessage(RsFeedItem &fi)
 {
 	/* make new widget */
-	MsgItem *mi = new MsgItem(this, NEWSFEED_MESSAGELIST, fi.mId1, false);
+	MsgItem *mi = new MsgItem(this, NEWSFEED_MESSAGELIST, fi.mId1, fi.mId1, false);
 
 	/* store in list */
 

@@ -34,7 +34,7 @@ class MsgItem : public QWidget, private Ui::MsgItem
 
 public:
   /** Default Constructor */
-  MsgItem(FeedHolder *parent, uint32_t feedId, std::string msgId, bool isHome);
+  MsgItem(FeedHolder *parent, uint32_t feedId, std::string peerId, std::string msgId, bool isHome);
 
   /** Default Destructor */
 
@@ -52,6 +52,7 @@ private slots:
 	void replyMsg();
 
 	void updateItem();
+    void updateAvatar(const QString &peer_id);
 
 private:
 	FeedHolder *mParent;
