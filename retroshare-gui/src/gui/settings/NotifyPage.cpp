@@ -113,6 +113,8 @@ NotifyPage::save(QString &errmsg)
     Settings->setDisplayTrayGroupChat(ui.systray_GroupChat->isChecked());
     MainWindow::installGroupChatNotifier();
 
+    Settings->setAddFeedsAtEnd(ui.addFeedsAtEnd->isChecked());
+
     load();
     return true;
 }
@@ -128,7 +130,6 @@ void NotifyPage::load()
 
     ui.popup_Connect->setChecked(notifyflags & RS_POPUP_CONNECT);
     ui.popup_NewMsg->setChecked(notifyflags & RS_POPUP_MSG);
-    ui.systray_GroupChat->setChecked(true) ;
     //ui.popup_NewChat->setChecked(notifyflags & RS_POPUP_CHAT);
     //ui.popup_Call->setChecked(notifyflags & RS_POPUP_CALL);
 
@@ -146,8 +147,7 @@ void NotifyPage::load()
 
     ui.systray_GroupChat->setChecked(Settings->getDisplayTrayGroupChat());
 
-    /* disable ones that don't work yet */
-
+    ui.addFeedsAtEnd->setChecked(Settings->getAddFeedsAtEnd());
 }
 
 

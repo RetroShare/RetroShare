@@ -117,6 +117,9 @@ public:
   bool getDisplayTrayGroupChat();
   void setDisplayTrayGroupChat(bool bValue);
 
+  bool getAddFeedsAtEnd();
+  void setAddFeedsAtEnd(bool bValue);
+
   //! Save placement, state and size information of a window.
   void saveWidgetInformation(QWidget *widget);
 

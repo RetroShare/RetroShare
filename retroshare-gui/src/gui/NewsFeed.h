@@ -51,6 +51,7 @@ private slots:
 	void updateFeed();
 
 private:
+  void  addFeedItem(QWidget *item);
 
   void	addFeedItemPeerConnect(RsFeedItem &fi);
   void	addFeedItemPeerDisconnect(RsFeedItem &fi);

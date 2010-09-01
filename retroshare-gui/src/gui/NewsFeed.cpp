@@ -155,6 +155,15 @@ void NewsFeed::updateFeed()
 	}
 }
 
+void NewsFeed::addFeedItem(QWidget *item)
+{
+	if (Settings->getAddFeedsAtEnd()) {
+		verticalLayout->addWidget(item);
+	} else {
+		verticalLayout->insertWidget(0, item);
+	}
+}
+
 void	NewsFeed::addFeedItemPeerConnect(RsFeedItem &fi)
 {
 	/* make new widget */
@@ -163,7 +172,7 @@ void	NewsFeed::addFeedItemPeerConnect(RsFeedItem &fi)
 	/* store */
 
 	/* add to layout */
-	verticalLayout->insertWidget(0, pi); 
+	addFeedItem(pi);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemPeerConnect()";
@@ -181,9 +190,7 @@ void	NewsFeed::addFeedItemPeerDisconnect(RsFeedItem &fi)
 	/* store */
 
 	/* add to layout */
-	verticalLayout->insertWidget(0, pi); 
-
-
+	addFeedItem(pi);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemPeerDisconnect()";
@@ -200,8 +207,7 @@ void	NewsFeed::addFeedItemPeerHello(RsFeedItem &fi)
 	/* store */
 
 	/* add to layout */
-	verticalLayout->insertWidget(0, pi); 
-
+	addFeedItem(pi);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemPeerHello()";
@@ -218,7 +224,7 @@ void	NewsFeed::addFeedItemPeerNew(RsFeedItem &fi)
 	/* store */
 
 	/* add to layout */
-	verticalLayout->insertWidget(0, pi); 
+	addFeedItem(pi);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemPeerNew()";
@@ -235,7 +241,7 @@ void	NewsFeed::addFeedItemChanNew(RsFeedItem &fi)
 	/* store in list */
 
 	/* add to layout */
-	verticalLayout->insertWidget(0, cni);
+	addFeedItem(cni);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemChanNew()";
@@ -252,7 +258,7 @@ void	NewsFeed::addFeedItemChanUpdate(RsFeedItem &fi)
 	/* store in list */
 
 	/* add to layout */
-	verticalLayout->insertWidget(0, cni); 
+	addFeedItem(cni);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemChanUpdate()";
@@ -269,7 +275,7 @@ void	NewsFeed::addFeedItemChanMsg(RsFeedItem &fi)
 	/* store in forum list */
 
 	/* add to layout */
-	verticalLayout->insertWidget(0, cm);
+	addFeedItem(cm);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemChanMsg()";
@@ -287,8 +293,7 @@ void	NewsFeed::addFeedItemForumNew(RsFeedItem &fi)
 	mForumNewItems.push_back(fni);
 
 	/* add to layout */
-	verticalLayout->insertWidget(0, fni);
-
+	addFeedItem(fni);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemForumNew()";
@@ -306,7 +311,7 @@ void	NewsFeed::addFeedItemForumUpdate(RsFeedItem &fi)
 	mForumNewItems.push_back(fni);
 
 	/* add to layout */
-	verticalLayout->insertWidget(0, fni);
+	addFeedItem(fni);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemForumUpdate()";
@@ -323,7 +328,7 @@ void	NewsFeed::addFeedItemForumMsg(RsFeedItem &fi)
 	/* store in forum list */
 
 	/* add to layout */
-	verticalLayout->insertWidget(0, fm);
+	addFeedItem(fm);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemForumMsg()";
@@ -340,7 +345,7 @@ void	NewsFeed::addFeedItemBlogNew(RsFeedItem &fi)
 	/* store in list */
 
 	/* add to layout */
-	verticalLayout->insertWidget(0, bni);
+	addFeedItem(bni);
 #endif
 
 #ifdef NEWS_DEBUG
@@ -358,7 +363,7 @@ void	NewsFeed::addFeedItemBlogMsg(RsFeedItem &fi)
 	/* store in forum list */
 
 	/* add to layout */
-	verticalLayout->insertWidget(0, bm);
+	addFeedItem(bm);
 #endif
 
 #ifdef NEWS_DEBUG
@@ -386,7 +391,7 @@ void	NewsFeed::addFeedItemChatNew(RsFeedItem &fi)
 	/* store in forum list */
 
 	/* add to layout */
-	verticalLayout->insertWidget(0, cm);
+	addFeedItem(cm);
 }
 
 void	NewsFeed::addFeedItemMessage(RsFeedItem &fi)
@@ -397,7 +402,7 @@ void	NewsFeed::addFeedItemMessage(RsFeedItem &fi)
 	/* store in list */
 
 	/* add to layout */
-	verticalLayout->insertWidget(0, mi);
+	addFeedItem(mi);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemMessage()";
