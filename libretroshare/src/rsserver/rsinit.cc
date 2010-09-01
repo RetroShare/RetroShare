@@ -303,10 +303,20 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 
   /* THIS IS A HACK TO ALLOW WINDOWS TO ACCEPT COMMANDLINE ARGUMENTS */
 
-  const int MAX_ARGS = 32;
-  int i,j;
+
+
 
   int argc;
+  int i;
+#ifdef USE_CMD_ARGS
+  char** argv = argvIgnored;
+  argc = argcIgnored;
+
+
+#else
+
+  const int MAX_ARGS = 32;
+  int j;
   char *argv[MAX_ARGS];
   char *wholeline = (char*)GetCommandLine();
   int cmdlen = strlen(wholeline);
@@ -321,19 +331,26 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
   argv[0] = dupline;
   for(i = 1, j = 0; (j + 1 < cmdlen) && (i < MAX_ARGS);)
   {
-	/* find next space. */
-	for(;(j + 1 < cmdlen) && (dupline[j] != ' ');j++);
-	if (j + 1 < cmdlen)
-	{
-		dupline[j] = '\0';
-		argv[i++] = &(dupline[j+1]);
-	}
+        /* find next space. */
+        for(;(j + 1 < cmdlen) && (dupline[j] != ' ');j++);
+        if (j + 1 < cmdlen)
+        {
+                dupline[j] = '\0';
+                argv[i++] = &(dupline[j+1]);
+        }
   }
   argc = i;
+
+#endif
+
   for( i=0; i<argc; i++)
   {
     printf("%d: %s\n", i, argv[i]);
   }
+
+
+
+
 
 /* for static PThreads under windows... we need to init the library...
  */
@@ -349,7 +366,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
          /* getopt info: every availiable option is listed here. if it is followed by a ':' it
             needs an argument. If it is followed by a '::' the argument is optional.
          */
-         while((c = getopt(argc, argv,"hesamui:p:c:w:l:d:U:")) != -1)
+         while((c = getopt(argcIgnored, argvIgnored,"hesamui:p:c:w:l:d:U:")) != -1)
          {
                  switch (c)
                  {
