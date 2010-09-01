@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>710</width>
-    <height>168</height>
+    <height>174</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -45,14 +45,14 @@ border-radius: 10px}</string>
        <widget class="QLabel" name="avatarlabel">
         <property name="minimumSize">
          <size>
-          <width>64</width>
-          <height>64</height>
+          <width>70</width>
+          <height>70</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>64</width>
-          <height>64</height>
+          <width>70</width>
+          <height>70</height>
          </size>
         </property>
         <property name="styleSheet">
