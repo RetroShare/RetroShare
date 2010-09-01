@@ -52,6 +52,8 @@
 #include "gui/forums/CreateForum.h"
 #include "gui/channels/CreateChannel.h"
 #include "gui/feeds/AttachFileItem.h"
+#include "gui/im_history/ImHistoryBrowser.h"
+
 #include "RetroShareLink.h"
 
 #include "MainWindow.h"
@@ -221,7 +223,7 @@ PeersDialog::PeersDialog(QWidget *parent)
   QMenu * grpchatmenu = new QMenu();
   grpchatmenu->addAction(ui.actionClearChat);
   grpchatmenu->addAction(ui.actionSave_History);
-  //grpchatmenu->addAction(ui.actionDisable_Emoticons);
+  grpchatmenu->addAction(ui.actionMessageHistory);
   ui.menuButton->setMenu(grpchatmenu);
 
   _underline = false;
@@ -1886,4 +1888,10 @@ void PeersDialog::statusColumn()
         peerheader->resizeSection ( 0, 200 );
     }
     
+}
+
+void PeersDialog::on_actionMessageHistory_triggered()
+{
+    ImHistoryBrowser imBrowser(this);
+    imBrowser.exec();
 }

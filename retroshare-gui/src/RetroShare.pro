@@ -203,10 +203,11 @@ HEADERS +=  rshare.h \
             gui/LogoBar.h \
             gui/xprogressbar.h \
             gui/plugins/PluginInterface.h \
-            gui/im_history/IMHistoryKeeper.h           \
-            gui/im_history/IMHistoryReader.h           \
-            gui/im_history/IMHistoryItem.h             \
-            gui/im_history/IMHistoryWriter.h           \
+            gui/im_history/ImHistoryBrowser.h \
+            gui/im_history/IMHistoryKeeper.h \
+            gui/im_history/IMHistoryReader.h \
+            gui/im_history/IMHistoryItem.h \
+            gui/im_history/IMHistoryWriter.h \
             lang/languagesupport.h \
             util/stringutil.h \
             util/win32.h \
@@ -373,7 +374,8 @@ FORMS +=    gui/StartDialog.ui \
             gui/feeds/ChanMsgItem.ui \
             gui/feeds/SubFileItem.ui \
             gui/feeds/SubDestItem.ui \
-            gui/feeds/AttachFileItem.ui
+            gui/feeds/AttachFileItem.ui \
+            gui/im_history/ImHistoryBrowser.ui \
 
 SOURCES +=  main.cpp \
             rshare.cpp \
@@ -414,10 +416,11 @@ SOURCES +=  main.cpp \
             gui/SoundManager.cpp \
             gui/MessagesDialog.cpp \
             gui/FileTransferInfoWidget.cpp \
-            gui/im_history/IMHistoryKeeper.cpp        \
-            gui/im_history/IMHistoryReader.cpp        \
-            gui/im_history/IMHistoryItem.cpp          \
-            gui/im_history/IMHistoryWriter.cpp        \
+            gui/im_history/ImHistoryBrowser.cpp \
+            gui/im_history/IMHistoryKeeper.cpp \
+            gui/im_history/IMHistoryReader.cpp \
+            gui/im_history/IMHistoryItem.cpp \
+            gui/im_history/IMHistoryWriter.cpp \
             gui/help/browser/helpbrowser.cpp \
             gui/help/browser/helptextbrowser.cpp \
             gui/HelpDialog.cpp \

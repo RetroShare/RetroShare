@@ -1465,15 +1465,12 @@ p, li { white-space: pre-wrap; }
     <string>Edit your status Message</string>
    </property>
   </action>
-  <action name="actionDisable_Emoticons">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
+  <action name="actionMessageHistory">
    <property name="text">
-    <string>Disable Emoticons</string>
+    <string>Browse Message History</string>
    </property>
    <property name="toolTip">
-    <string>Disable Emoticons</string>
+    <string>Browse History</string>
    </property>
   </action>
   <action name="actionSave_History">

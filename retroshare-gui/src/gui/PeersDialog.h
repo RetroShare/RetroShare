@@ -82,6 +82,8 @@ public slots:
 		void addSmileys();
 
 		void on_actionClearChat_triggered();
+		void on_actionMessageHistory_triggered();
+
 		void displayInfoChatMenu(const QPoint& pos);
 
 		// called by notifyQt when another peer is typing (in group chant and private chat)
