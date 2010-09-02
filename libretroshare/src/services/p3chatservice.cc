@@ -375,7 +375,7 @@ void p3ChatService::receiveChatQueue()
 				if(cs->flags & RS_CHAT_FLAG_CUSTOM_STATE){
 
 					receiveStateString(cs->PeerId(),cs->status_string) ;	// store it
-					rsicontrol->getNotify().notifyCustomState(cs->PeerId()) ;
+					rsicontrol->getNotify().notifyCustomState(cs->PeerId(), cs->status_string) ;
 				}else
 					if(cs->flags & RS_CHAT_FLAG_CUSTOM_STATE_AVAILABLE){
 

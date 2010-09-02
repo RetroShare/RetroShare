@@ -133,6 +133,7 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   connect(ui.textBrowser, SIGNAL(anchorClicked(const QUrl &)), SLOT(anchorClicked(const QUrl &)));
 
   connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(const QString&, int)), this, SLOT(updateStatus(const QString&, int)));
+  connect(NotifyQt::getInstance(), SIGNAL(peerHasNewCustomStateString(const QString&, const QString&)), this, SLOT(updatePeersCustomStateString(const QString&, const QString&)));
 
   std::cerr << "Connecting custom context menu" << std::endl;
   ui.chattextEdit->setContextMenuPolicy(Qt::CustomContextMenu) ;
@@ -183,9 +184,7 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
 
   updateAvatar() ;
   updatePeerAvatar(id) ;
-  updateStatusMessage();
 
-  
   // load settings
   processSettings(true);
 
@@ -199,6 +198,10 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   if (rsStatus->getOwnStatus(ownStatusInfo)) {
     updateStatus(QString::fromStdString(ownStatusInfo.id), ownStatusInfo.status);
   }
+
+  // initialize first custom state string
+  QString customStateString = QString::fromStdString(rsMsgs->getCustomStateString(dialogId));
+  updatePeersCustomStateString(QString::fromStdString(dialogId), customStateString);
 }
 
 /** Destructor. */
@@ -1315,39 +1318,18 @@ void PopupChatDialog::updateStatus(const QString &peer_id, int status)
     // ignore status change
 }
 
-void PopupChatDialog::updateStatusMessage()
+void PopupChatDialog::updatePeersCustomStateString(const QString& peer_id, const QString& status_string)
 {
-    if (!rsPeers)
-        return;
+    std::string stdPeerId = peer_id.toStdString();
 
-
-    if(!RsAutoUpdatePage::eventsLocked()) {
-        RsPeerDetails details;
-        if (!rsPeers->getPeerDetails(dialogId, details))
-        {
-            return;
-        }
-
-        QString sCustomString;
-        if (details.state & RS_PEER_STATE_CONNECTED) {
-            sCustomString = QString::fromStdString(rsMsgs->getCustomStateString(details.id));
-        }
-        
-        if (sCustomString.isEmpty()) 
-        {
+    if (stdPeerId == dialogId) {
+        // the peers status string has changed
+        if (status_string.isEmpty()) {
             ui.statusmessagelabel->hide();
-        } 
-        else 
-        {
+        } else {
             ui.statusmessagelabel->show();
-            ui.statusmessagelabel->setText(sCustomString);
+            ui.statusmessagelabel->setText(status_string);
         }
-
     }
-
-    /* slow Tick  */
-    int msec_rate = 10129;
-
-    QTimer::singleShot( msec_rate, this, SLOT(updateStatusMessage( void ) ));
-    return;
 }
+

@@ -114,12 +114,12 @@ void NotifyQt::notifyPeerHasNewAvatar(std::string peer_id)
 	emit peerHasNewAvatar(QString::fromStdString(peer_id)) ;
 }
 
-void NotifyQt::notifyCustomState(const std::string& peer_id) 
+void NotifyQt::notifyCustomState(const std::string& peer_id, const std::string& status_string)
 {
         #ifdef NOTIFY_DEBUG
 	std::cerr << "notifyQt: Received custom status string notification" << std::endl ;
         #endif
-	emit peerHasNewCustomStateString(QString::fromStdString(peer_id)) ;
+	emit peerHasNewCustomStateString(QString::fromStdString(peer_id), QString::fromStdString(status_string)) ;
 }
 
 void NotifyQt::notifyChatStatus(const std::string& peer_id,const std::string& status_string,bool is_private)

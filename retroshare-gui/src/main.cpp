@@ -190,7 +190,6 @@ int main(int argc, char *argv[])
 	QObject::connect(notify,SIGNAL(forumsChanged())                   ,w                   		,SLOT(updateForums()                   ), Qt::QueuedConnection);
 
 	QObject::connect(notify,SIGNAL(chatStatusChanged(const QString&,const QString&,bool)),w->peersDialog,SLOT(updatePeerStatusString(const QString&,const QString&,bool)));
-	QObject::connect(notify,SIGNAL(peerHasNewCustomStateString(const QString&)),w->peersDialog,SLOT(updatePeersCustomStateString(const QString&)));
 	QObject::connect(notify,SIGNAL(peerHasNewAvatar(const QString&)),w->peersDialog,SLOT(updatePeersAvatar(const QString&)));
 	QObject::connect(notify,SIGNAL(ownAvatarChanged()),w->peersDialog,SLOT(updateAvatar()));
 	QObject::connect(notify,SIGNAL(ownStatusMessageChanged()),w->peersDialog,SLOT(loadmypersonalstatus()));

@@ -44,7 +44,7 @@ public:
 
   void updateChat();
   void updatePeerAvatar(const std::string&);
-   
+
 public slots:
   /** Overloaded QWidget.show */
   void show(); 
@@ -53,10 +53,10 @@ public slots:
   void flash(); 
   void pasteLink() ;
   void contextMenu(QPoint) ;
-  	
+
   void smileyWidget();
   void addSmiley();
-  
+
   void changeStyle();
   void fileHashingFinished(AttachFileItem* file);
 
@@ -86,7 +86,6 @@ protected:
   void loadEmoticons2();
 
   void updateAvatar();
-  void updateStatusMessage();
 
 
   QString loadEmptyStyle();
@@ -98,17 +97,18 @@ private slots:
   void showAvatarFrame(bool show);
   void on_closeInfoFrameButton_clicked();
 
-  void setColor();    
+  void setColor();
   void getFont();
   void setFont();
  
   void checkChat();
   void sendChat();
 
+  void updatePeersCustomStateString(const QString& peer_id, const QString& status_string) ;
   void getAvatar();
-  
+
   void on_actionClear_Chat_triggered();
-  
+
   bool fileSave();
   bool fileSaveAs();
   void setCurrentFileName(const QString &fileName);
@@ -120,31 +120,30 @@ private:
   void addAttachment(std::string,int flag);
   void processSettings(bool bLoad);
 
-   QAction     *actionTextBold;
-   QAction     *actionTextUnderline;
-   QAction     *actionTextItalic;
-	 QAction		*pasteLinkAct ;
-   
+   QAction *actionTextBold;
+   QAction *actionTextUnderline;
+   QAction *actionTextItalic;
+   QAction *pasteLinkAct ;
+
    std::string dialogId, dialogName;
    unsigned int lastChatTime;
    std::string  lastChatName;
-   
+
    time_t last_status_send_time ;
    QHash<QString, QString> smileys;
    QColor mCurrentColor;
    QFont  mCurrentFont;
-   
+
    QString styleHtm;
    QString emptyStyle;
    QStringList history;
-   QString wholeChat;  
+   QString wholeChat;
    QString fileName; 
 
    bool m_bInsertOnVisible;
 
   /** Qt Designer generated object */
   Ui::PopupChatDialog ui;
-
 
 };
 

@@ -33,7 +33,7 @@ class NotifyQt: public QObject, public NotifyBase
 		virtual void notifyListChange(int list, int type);
 		virtual void notifyErrorMsg(int list, int sev, std::string msg);
 		virtual void notifyChatStatus(const std::string& peer_id,const std::string& status_string,bool is_private);
-		virtual void notifyCustomState(const std::string& peer_id);
+		virtual void notifyCustomState(const std::string& peer_id, const std::string& status_string);
 		virtual void notifyHashingInfo(std::string fileinfo);
 		virtual void notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleFileInfo>& found_files);
 		virtual void notifyPeerHasNewAvatar(std::string peer_id) ;
@@ -63,7 +63,7 @@ class NotifyQt: public QObject, public NotifyBase
 		void configChanged() const ;
 		void logInfoChanged(const QString&) const ;
 		void chatStatusChanged(const QString&,const QString&,bool) const ;
-		void peerHasNewCustomStateString(const QString&) const ;
+		void peerHasNewCustomStateString(const QString& /* peer_id */, const QString& /* status_string */) const ;
 		void gotTurtleSearchResult(qulonglong search_id,FileDetail file) const ;
 		void peerHasNewAvatar(const QString& peer_id) const ;
 		void ownAvatarChanged() const ;
