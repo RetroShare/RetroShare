@@ -80,7 +80,7 @@
 #define IMAGE_INACTIVE           ":/images/user/identity24idle.png"
 #define IMAGE_OFFLINE            ":/images/user/identityoffline24.png"
 #define IMAGE_OFFLINE2           ":/images/user/identitylightgrey24.png"
-#define IMAGE_AVAIBLE            ":/images/user/identityavaiblecyan24.png"
+#define IMAGE_AVAILABLE          ":/images/user/identityavaiblecyan24.png"
 #define IMAGE_UNREACHABLE        ":/images/user/identityunreachable24.png"
 #define IMAGE_CONNECT2           ":/images/reload24.png"
 #define IMAGE_PASTELINK          ":/images/pasterslink.png"
@@ -729,7 +729,7 @@ void  PeersDialog::insertPeers()
 
                         switch (it->status) {
                         case RS_STATUS_INACTIVE:
-                            gpg_item -> setIcon(COLUMN_NAME,(QIcon(IMAGE_INACTIVE)));
+                            gpgIcon = QIcon(IMAGE_INACTIVE);
                             gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Idle"));
                             gpg_item -> setText(COLUMN_STATE, tr("Idle"));
                             gpg_item -> setData(COLUMN_STATE, ROLE_SORT, BuildStateSortString(true, gpg_item->text(COLUMN_NAME), PEER_STATE_INACTIVE));
@@ -740,7 +740,7 @@ void  PeersDialog::insertPeers()
                             break;
 
                         case RS_STATUS_ONLINE:
-                            gpg_item -> setIcon(COLUMN_NAME,(QIcon(IMAGE_ONLINE)));
+                            gpgIcon = QIcon(IMAGE_ONLINE);
                             gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Online"));
                             gpg_item -> setText(COLUMN_STATE, tr("Online"));
                             gpg_item -> setData(COLUMN_STATE, ROLE_SORT, BuildStateSortString(true, gpg_item->text(COLUMN_NAME), PEER_STATE_ONLINE));
@@ -751,7 +751,7 @@ void  PeersDialog::insertPeers()
                             break;
 
                         case RS_STATUS_AWAY:
-                            gpg_item -> setIcon(COLUMN_NAME,(QIcon(IMAGE_AWAY)));
+                            gpgIcon = QIcon(IMAGE_AWAY);
                             gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Away"));
                             gpg_item -> setText(COLUMN_STATE, tr("Away"));
                             gpg_item -> setData(COLUMN_STATE, ROLE_SORT, BuildStateSortString(true, gpg_item->text(COLUMN_NAME), PEER_STATE_AWAY));
@@ -762,7 +762,7 @@ void  PeersDialog::insertPeers()
                             break;
 
                         case RS_STATUS_BUSY:
-                            gpg_item -> setIcon(COLUMN_NAME,(QIcon(IMAGE_BUSY)));
+                            gpgIcon = QIcon(IMAGE_BUSY);
                             gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Busy"));
                             gpg_item -> setText(COLUMN_STATE, tr("Busy"));
                             gpg_item -> setData(COLUMN_STATE, ROLE_SORT, BuildStateSortString(true, gpg_item->text(COLUMN_NAME), PEER_STATE_BUSY));
@@ -777,7 +777,7 @@ void  PeersDialog::insertPeers()
             }
         } else if (gpg_online) {
             gpg_item->setHidden(bHideUnconnected);
-            gpgIcon = QIcon(IMAGE_AVAIBLE);
+            gpgIcon = QIcon(IMAGE_AVAILABLE);
             gpg_item -> setText(COLUMN_STATE, tr("Available"));
             gpg_item -> setData(COLUMN_STATE, ROLE_SORT, BuildStateSortString(true, gpg_item->text(COLUMN_NAME), PEER_STATE_AVAILABLE));
             QFont font;
