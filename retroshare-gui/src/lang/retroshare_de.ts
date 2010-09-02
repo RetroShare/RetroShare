@@ -4461,6 +4461,13 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>ImHistoryBrowser</name>
+    <message>
+        <source>Message History</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>InfoDialog</name>
     <message>
         <source>Info</source>
@@ -5975,11 +5982,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Online</source>
-        <translation type="obsolete">Online</translation>
+        <translation type="unfinished">Online</translation>
     </message>
     <message>
         <source>Busy</source>
-        <translation type="obsolete">Beschäftigt</translation>
+        <translation type="unfinished">Beschäftigt</translation>
     </message>
     <message>
         <source>Be right Back</source>
@@ -5987,7 +5994,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Away</source>
-        <translation type="obsolete">Abwesend</translation>
+        <translation type="unfinished">Abwesend</translation>
     </message>
     <message>
         <source>In a Call</source>
@@ -6076,20 +6083,8 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Peer Idle</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Peer Online</source>
         <translation type="unfinished">Nachbar Online</translation>
-    </message>
-    <message>
-        <source>Peer Away</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Peer Busy</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Sort by State</source>
@@ -6101,6 +6096,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Paste retroshare Link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Idle</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6197,11 +6196,19 @@ Nachricht hier</translation>
     </message>
     <message>
         <source>subjectLabel</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Re: </source>
-        <translation type="unfinished">Re: </translation>
+        <translation>Re: </translation>
+    </message>
+    <message>
+        <source>Reply Message</source>
+        <translation>Auf Nachricht antworten</translation>
+    </message>
+    <message>
+        <source>Hide</source>
+        <translation>Verbergen</translation>
     </message>
 </context>
 <context>
@@ -6895,6 +6902,10 @@ p, li { white-space: pre-wrap; }
         <source>Display systray message</source>
         <translation>Zeige Systemabschnitts-Nachricht an</translation>
     </message>
+    <message>
+        <source>Add feeds at end</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>NotifyQt</name>
@@ -6978,7 +6989,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Peer Id:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>RsId:</source>
@@ -7014,7 +7025,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Peer Name</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Write Message</source>
@@ -7316,7 +7327,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Disable Emoticons</source>
-        <translation>deaktiviere Emoticons</translation>
+        <translation type="obsolete">deaktiviere Emoticons</translation>
     </message>
     <message>
         <source>Text Color</source>
@@ -7372,7 +7383,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Idle</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Untätig</translation>
     </message>
     <message>
         <source>Peer Online</source>
@@ -7441,6 +7452,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>is typing...</source>
         <translation type="unfinished">tippt...</translation>
+    </message>
+    <message>
+        <source>Browse Message History</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Browse History</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7813,7 +7832,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Chatting with </source>
-        <translation>Chatte mit </translation>
+        <translation type="obsolete">Chatte mit </translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -7872,11 +7891,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Save Chat History</source>
-        <translation type="unfinished"></translation>
+        <translation>Chat Verlauf speichern</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation type="unfinished">Speichern als...</translation>
+        <translation>Speichern als...</translation>
     </message>
     <message>
         <source>Text File (*.txt );;All Files (*)</source>
@@ -7889,7 +7908,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Your Friend is offline 
 Do you want to send them a Message instead</source>
-        <translation type="unfinished">Dein Freund ist Offline willst du ihm stattdesen eine Nachricht senden</translation>
+        <translation>Dein Freund ist Offline willst du ihm stattdessen eine Nachricht senden</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -7913,7 +7932,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>TextLabel</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Messages will be lost and not delivered, write a rs Mail instead.</source>
@@ -7950,7 +7969,27 @@ Diesem Kontakt stattdessen eine RS-Mail senden.</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished">Schliessen</translation>
+        <translation>Schliessen</translation>
+    </message>
+    <message>
+        <source>(Offline)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>(Idle)</source>
+        <translation>(Inaktiv)</translation>
+    </message>
+    <message>
+        <source>(Online)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>(Away)</source>
+        <translation>(Abwesend)</translation>
+    </message>
+    <message>
+        <source>(Busy)</source>
+        <translation>(Beschäftigt)</translation>
     </message>
 </context>
 <context>

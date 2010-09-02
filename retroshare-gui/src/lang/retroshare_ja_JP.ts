@@ -5288,6 +5288,14 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>ImHistoryBrowser</name>
+    <message>
+        <location filename="../gui/im_history/ImHistoryBrowser.ui" line="14"/>
+        <source>Message History</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>InfoDialog</name>
     <message>
         <location filename="../gui/InfoDialog.ui" line="14"/>
@@ -5610,32 +5618,32 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="195"/>
+        <location filename="../gui/MainWindow.cpp" line="197"/>
         <source>Network</source>
         <translation>ネットワーク</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="199"/>
+        <location filename="../gui/MainWindow.cpp" line="201"/>
         <source>Friends</source>
         <translation>友達</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="207"/>
+        <location filename="../gui/MainWindow.cpp" line="209"/>
         <source>Transfers</source>
         <translation>転送</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="215"/>
+        <location filename="../gui/MainWindow.cpp" line="217"/>
         <source>Messages</source>
         <translation>メッセージ</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="218"/>
+        <location filename="../gui/MainWindow.cpp" line="220"/>
         <source>Channels</source>
         <translation>チャネル</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="222"/>
+        <location filename="../gui/MainWindow.cpp" line="224"/>
         <source>Blogs</source>
         <translation>ブログ</translation>
     </message>
@@ -5644,32 +5652,32 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">新しいメッセージがあります</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="738"/>
+        <location filename="../gui/MainWindow.cpp" line="760"/>
         <source>Internal Error</source>
         <translation>内部エラー</translation>
     </message>
     <message>
         <location filename="../gui/MainWindow.ui" line="88"/>
-        <location filename="../gui/MainWindow.cpp" line="695"/>
+        <location filename="../gui/MainWindow.cpp" line="717"/>
         <source>Options</source>
         <translation>オプション</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="772"/>
+        <location filename="../gui/MainWindow.cpp" line="793"/>
         <source>Hide</source>
         <translation>非表示</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="772"/>
+        <location filename="../gui/MainWindow.cpp" line="793"/>
         <source>Show</source>
         <translation>表示</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="385"/>
-        <location filename="../gui/MainWindow.cpp" line="435"/>
-        <location filename="../gui/MainWindow.cpp" line="437"/>
-        <location filename="../gui/MainWindow.cpp" line="459"/>
-        <location filename="../gui/MainWindow.cpp" line="461"/>
+        <location filename="../gui/MainWindow.cpp" line="387"/>
+        <location filename="../gui/MainWindow.cpp" line="442"/>
+        <location filename="../gui/MainWindow.cpp" line="444"/>
+        <location filename="../gui/MainWindow.cpp" line="466"/>
+        <location filename="../gui/MainWindow.cpp" line="468"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
@@ -5709,12 +5717,12 @@ p, li { white-space: pre-wrap; }
         <translation>クィック スタート ウィザード</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="203"/>
+        <location filename="../gui/MainWindow.cpp" line="205"/>
         <source>Search</source>
         <translation>検索</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="211"/>
+        <location filename="../gui/MainWindow.cpp" line="213"/>
         <source>Files</source>
         <translation>ファイル</translation>
     </message>
@@ -5723,73 +5731,73 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">共用登録簿を加えなさい</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="361"/>
+        <location filename="../gui/MainWindow.cpp" line="363"/>
         <source>Show/Hide</source>
         <translation>表示/非表示</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="380"/>
+        <location filename="../gui/MainWindow.cpp" line="382"/>
         <source>&amp;Quit</source>
         <translation>終了 (&amp;Q)</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="437"/>
-        <location filename="../gui/MainWindow.cpp" line="461"/>
+        <location filename="../gui/MainWindow.cpp" line="444"/>
+        <location filename="../gui/MainWindow.cpp" line="468"/>
         <source>You have %1 new message</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="698"/>
+        <location filename="../gui/MainWindow.cpp" line="720"/>
         <source>Bandwidth Graph</source>
         <translation>帯域グラフ</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="701"/>
+        <location filename="../gui/MainWindow.cpp" line="723"/>
         <source>Open Messenger</source>
         <translation>メッセンジャーを開く</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="377"/>
+        <location filename="../gui/MainWindow.cpp" line="379"/>
         <source>Minimize</source>
         <translation>最小化</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="378"/>
+        <location filename="../gui/MainWindow.cpp" line="380"/>
         <source>Maximize</source>
         <translation>最大化</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="230"/>
+        <location filename="../gui/MainWindow.cpp" line="232"/>
         <source>Links Cloud</source>
         <translation>リンク クラウド</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="157"/>
+        <location filename="../gui/MainWindow.cpp" line="159"/>
         <source>RetroShare %1 a secure decentralised communication platform</source>
         <translation>RetroShare %1 セキュアで分散型のコミュニケーション プラットフォーム</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="247"/>
+        <location filename="../gui/MainWindow.cpp" line="249"/>
         <source>Unfinished</source>
         <translation>未完了</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="350"/>
+        <location filename="../gui/MainWindow.cpp" line="352"/>
         <source>Low disk space warning</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="351"/>
+        <location filename="../gui/MainWindow.cpp" line="353"/>
         <source>The disk space in your </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="351"/>
+        <location filename="../gui/MainWindow.cpp" line="353"/>
         <source> directory is running low (current limit is </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="351"/>
+        <location filename="../gui/MainWindow.cpp" line="353"/>
         <source>MB). 
 
  RetroShare will now safely suspend any disk access to this directory. 
@@ -5798,36 +5806,36 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="363"/>
+        <location filename="../gui/MainWindow.cpp" line="365"/>
         <source>Status</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="435"/>
-        <location filename="../gui/MainWindow.cpp" line="459"/>
+        <location filename="../gui/MainWindow.cpp" line="442"/>
+        <location filename="../gui/MainWindow.cpp" line="466"/>
         <source>You have %1 new messages</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="710"/>
+        <location filename="../gui/MainWindow.cpp" line="732"/>
         <source>Help</source>
         <translation>ヘルプ</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="969"/>
-        <location filename="../gui/MainWindow.cpp" line="994"/>
+        <location filename="../gui/MainWindow.cpp" line="1005"/>
+        <location filename="../gui/MainWindow.cpp" line="1030"/>
         <source>Online</source>
         <translation type="unfinished">オンライン</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="975"/>
-        <location filename="../gui/MainWindow.cpp" line="995"/>
+        <location filename="../gui/MainWindow.cpp" line="1011"/>
+        <location filename="../gui/MainWindow.cpp" line="1031"/>
         <source>Busy</source>
         <translation type="unfinished">取り込み中</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="981"/>
-        <location filename="../gui/MainWindow.cpp" line="996"/>
+        <location filename="../gui/MainWindow.cpp" line="1017"/>
+        <location filename="../gui/MainWindow.cpp" line="1032"/>
         <source>Away</source>
         <translation type="unfinished">退席中</translation>
     </message>
@@ -5841,17 +5849,17 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">ニュース フィード</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="226"/>
+        <location filename="../gui/MainWindow.cpp" line="228"/>
         <source>Forums</source>
         <translation>フォーラム</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="704"/>
+        <location filename="../gui/MainWindow.cpp" line="726"/>
         <source>Open Messages</source>
         <translation>メッセンジャーを開く</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="707"/>
+        <location filename="../gui/MainWindow.cpp" line="729"/>
         <source>Applications</source>
         <translation>アプリケーション</translation>
     </message>
@@ -5860,17 +5868,17 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete"> 設定</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="236"/>
+        <location filename="../gui/MainWindow.cpp" line="238"/>
         <source>Plugins</source>
         <translation>プラグイン</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="725"/>
+        <location filename="../gui/MainWindow.cpp" line="747"/>
         <source>Really quit ? </source>
         <translation>本当に終了しますか?</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="723"/>
+        <location filename="../gui/MainWindow.cpp" line="745"/>
         <source>Do you really want to exit RetroShare ?</source>
         <translation>本当に Retoroshare を終了しますか?</translation>
     </message>
@@ -6937,110 +6945,109 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MessengerWindow</name>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="297"/>
+        <location filename="../gui/MessengerWindow.cpp" line="312"/>
         <source>Expand all</source>
         <translation>すべて展開</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="300"/>
+        <location filename="../gui/MessengerWindow.cpp" line="315"/>
         <source>Collapse all</source>
         <translation>すべて折りたたみ</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="303"/>
+        <location filename="../gui/MessengerWindow.cpp" line="319"/>
         <source>Chat</source>
         <translation>チャット</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="310"/>
+        <location filename="../gui/MessengerWindow.cpp" line="326"/>
         <source>Message Friend</source>
         <translation>友達にメッセージを送る</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="317"/>
+        <location filename="../gui/MessengerWindow.cpp" line="334"/>
         <source>Connect To Friend</source>
         <translation>友達に接続</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="324"/>
+        <location filename="../gui/MessengerWindow.cpp" line="342"/>
         <source>Peer Details</source>
         <translation>ピア詳細</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="331"/>
+        <location filename="../gui/MessengerWindow.cpp" line="349"/>
         <source>Recomend this Friend to...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="338"/>
+        <location filename="../gui/MessengerWindow.cpp" line="356"/>
         <source>Paste retroshare Link</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="348"/>
+        <location filename="../gui/MessengerWindow.cpp" line="366"/>
         <source>Export Friend</source>
         <translation>友達をエクスポート</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="355"/>
+        <location filename="../gui/MessengerWindow.cpp" line="373"/>
         <source>Deny Friend</source>
         <translation>友達を拒否</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="359"/>
+        <location filename="../gui/MessengerWindow.cpp" line="377"/>
         <source>Remove Friend Location</source>
         <translation>友達の場所を削除</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="382"/>
+        <location filename="../gui/MessengerWindow.cpp" line="401"/>
         <source>&lt;strong&gt;GPG Key&lt;/strong&gt;</source>
         <translation>&lt;strong&gt;GPG キー&lt;/strong&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="379"/>
+        <location filename="../gui/MessengerWindow.cpp" line="727"/>
+        <location filename="../gui/MessengerWindow.cpp" line="730"/>
+        <source>Idle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/MessengerWindow.cpp" line="398"/>
         <source>&lt;strong&gt;RetroShare instance&lt;/strong&gt;</source>
         <translation>&lt;strong&gt;RetroShare インスタンス&lt;/strong&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="216"/>
-        <location filename="../gui/MessengerWindow.cpp" line="567"/>
+        <location filename="../gui/MessengerWindow.cpp" line="225"/>
+        <location filename="../gui/MessengerWindow.cpp" line="598"/>
         <source> - </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="562"/>
-        <location filename="../gui/MessengerWindow.cpp" line="563"/>
-        <location filename="../gui/MessengerWindow.cpp" line="566"/>
-        <location filename="../gui/MessengerWindow.cpp" line="567"/>
+        <location filename="../gui/MessengerWindow.cpp" line="593"/>
+        <location filename="../gui/MessengerWindow.cpp" line="594"/>
+        <location filename="../gui/MessengerWindow.cpp" line="597"/>
+        <location filename="../gui/MessengerWindow.cpp" line="598"/>
         <source>location : </source>
         <translation>場所:</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="564"/>
-        <location filename="../gui/MessengerWindow.cpp" line="568"/>
+        <location filename="../gui/MessengerWindow.cpp" line="595"/>
+        <location filename="../gui/MessengerWindow.cpp" line="599"/>
+        <location filename="../gui/MessengerWindow.cpp" line="730"/>
+        <location filename="../gui/MessengerWindow.cpp" line="733"/>
+        <location filename="../gui/MessengerWindow.cpp" line="743"/>
+        <location filename="../gui/MessengerWindow.cpp" line="746"/>
+        <location filename="../gui/MessengerWindow.cpp" line="756"/>
+        <location filename="../gui/MessengerWindow.cpp" line="759"/>
+        <location filename="../gui/MessengerWindow.cpp" line="769"/>
+        <location filename="../gui/MessengerWindow.cpp" line="772"/>
         <source>
 </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="666"/>
-        <source>Peer Idle</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/MessengerWindow.cpp" line="677"/>
+        <location filename="../gui/MessengerWindow.cpp" line="617"/>
         <source>Peer Online</source>
         <translation type="unfinished">ピアがオンライン</translation>
-    </message>
-    <message>
-        <location filename="../gui/MessengerWindow.cpp" line="688"/>
-        <source>Peer Away</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/MessengerWindow.cpp" line="699"/>
-        <source>Peer Busy</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Available</source>
@@ -7051,12 +7058,12 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">オフライン</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="793"/>
+        <location filename="../gui/MessengerWindow.cpp" line="870"/>
         <source>Save Certificate</source>
         <translation>証明書を保存</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="794"/>
+        <location filename="../gui/MessengerWindow.cpp" line="871"/>
         <source>Certificates (*.pqi)</source>
         <translation>証明書(*.pqi) </translation>
     </message>
@@ -7101,12 +7108,16 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;画像はこちら.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
+        <location filename="../gui/MessengerWindow.cpp" line="740"/>
+        <location filename="../gui/MessengerWindow.cpp" line="743"/>
         <source>Online</source>
-        <translation type="obsolete">オンライン</translation>
+        <translation type="unfinished">オンライン</translation>
     </message>
     <message>
+        <location filename="../gui/MessengerWindow.cpp" line="766"/>
+        <location filename="../gui/MessengerWindow.cpp" line="769"/>
         <source>Busy</source>
-        <translation type="obsolete">取り込み中</translation>
+        <translation type="unfinished">取り込み中</translation>
     </message>
     <message>
         <location filename="../gui/MessengerWindow.ui" line="149"/>
@@ -7164,8 +7175,10 @@ p, li { white-space: pre-wrap; }
         <translation>オフラインの友達を隠す</translation>
     </message>
     <message>
+        <location filename="../gui/MessengerWindow.cpp" line="753"/>
+        <location filename="../gui/MessengerWindow.cpp" line="756"/>
         <source>Away</source>
-        <translation type="obsolete">退席中</translation>
+        <translation type="unfinished">退席中</translation>
     </message>
     <message>
         <source>Apear Offline</source>
@@ -7247,7 +7260,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MsgItem</name>
     <message>
-        <location filename="../gui/feeds/MsgItem.ui" line="177"/>
+        <location filename="../gui/feeds/MsgItem.ui" line="171"/>
         <source>Reply to Message</source>
         <translation>メッセージに返信</translation>
     </message>
@@ -7257,43 +7270,54 @@ p, li { white-space: pre-wrap; }
         <translation>フォーム</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/MsgItem.ui" line="58"/>
+        <location filename="../gui/feeds/MsgItem.ui" line="139"/>
         <source>Remove Item</source>
         <translation>アイテムを削除</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/MsgItem.ui" line="101"/>
+        <location filename="../gui/feeds/MsgItem.ui" line="87"/>
         <source>Connected</source>
         <translation>接続中</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/MsgItem.ui" line="130"/>
+        <location filename="../gui/feeds/MsgItem.ui" line="119"/>
+        <location filename="../gui/feeds/MsgItem.cpp" line="203"/>
         <source>Expand</source>
         <translation>展開</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/MsgItem.ui" line="154"/>
+        <location filename="../gui/feeds/MsgItem.ui" line="159"/>
         <source>subjectLabel</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/feeds/MsgItem.ui" line="213"/>
+        <location filename="../gui/feeds/MsgItem.ui" line="174"/>
+        <source>Reply Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/feeds/MsgItem.ui" line="210"/>
         <source>Delete Message</source>
         <translation>メッセージを削除</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/MsgItem.ui" line="249"/>
+        <location filename="../gui/feeds/MsgItem.ui" line="230"/>
         <source>Play Media</source>
         <translation>メディアを再生</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/MsgItem.ui" line="280"/>
+        <location filename="../gui/feeds/MsgItem.ui" line="259"/>
         <source>Long 
  message here</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/feeds/MsgItem.cpp" line="258"/>
+        <location filename="../gui/feeds/MsgItem.cpp" line="197"/>
+        <source>Hide</source>
+        <translation type="unfinished">非表示</translation>
+    </message>
+    <message>
+        <location filename="../gui/feeds/MsgItem.cpp" line="264"/>
         <source>Re: </source>
         <translation type="unfinished"></translation>
     </message>
@@ -7939,47 +7963,52 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">ダウンロード</translation>
     </message>
     <message>
-        <location filename="../gui/settings/NotifyPage.ui" line="584"/>
+        <location filename="../gui/settings/NotifyPage.ui" line="571"/>
+        <source>Add feeds at end</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/settings/NotifyPage.ui" line="598"/>
         <source>Toasters</source>
         <translation>トースタ</translation>
     </message>
     <message>
-        <location filename="../gui/settings/NotifyPage.ui" line="596"/>
+        <location filename="../gui/settings/NotifyPage.ui" line="610"/>
         <source>Peer Connect</source>
         <translation>ピア接続</translation>
     </message>
     <message>
-        <location filename="../gui/settings/NotifyPage.ui" line="603"/>
+        <location filename="../gui/settings/NotifyPage.ui" line="617"/>
         <source>New Message</source>
         <translation>新しいメッセージ </translation>
     </message>
     <message>
-        <location filename="../gui/settings/NotifyPage.ui" line="613"/>
+        <location filename="../gui/settings/NotifyPage.ui" line="627"/>
         <source>Private Chat</source>
         <translation>プライベート チャット</translation>
     </message>
     <message>
-        <location filename="../gui/settings/NotifyPage.ui" line="619"/>
+        <location filename="../gui/settings/NotifyPage.ui" line="633"/>
         <source>Open Window for new Peer Chat</source>
         <translation>新しいピア チャットでウィンドウを開く</translation>
     </message>
     <message>
-        <location filename="../gui/settings/NotifyPage.ui" line="626"/>
+        <location filename="../gui/settings/NotifyPage.ui" line="640"/>
         <source>Reopen if closed by user:</source>
         <translation>ユーザーが閉じた場合再度開く:</translation>
     </message>
     <message>
-        <location filename="../gui/settings/NotifyPage.ui" line="633"/>
+        <location filename="../gui/settings/NotifyPage.ui" line="647"/>
         <source>Grab Focus when chat arrives</source>
         <translation>チャットが届いた時フォーカスを取得</translation>
     </message>
     <message>
-        <location filename="../gui/settings/NotifyPage.ui" line="643"/>
+        <location filename="../gui/settings/NotifyPage.ui" line="657"/>
         <source>Group chat</source>
         <translation>グループ チャット</translation>
     </message>
     <message>
-        <location filename="../gui/settings/NotifyPage.ui" line="649"/>
+        <location filename="../gui/settings/NotifyPage.ui" line="663"/>
         <source>Display systray message</source>
         <translation>システムトレイにメッセージを表示</translation>
     </message>
@@ -7987,19 +8016,19 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>NotifyQt</name>
     <message>
-        <location filename="../gui/notifyqt.cpp" line="63"/>
+        <location filename="../gui/notifyqt.cpp" line="65"/>
         <source>GPG key passphrase</source>
         <translation>GPG キー パスワード</translation>
     </message>
     <message>
-        <location filename="../gui/notifyqt.cpp" line="64"/>
+        <location filename="../gui/notifyqt.cpp" line="66"/>
         <source>Wrong password !
 
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/notifyqt.cpp" line="65"/>
+        <location filename="../gui/notifyqt.cpp" line="67"/>
         <source>Please enter the password to unlock the following GPG key:
 </source>
         <translation>次の GPG キーをアンロックするためにパスワードを入力してください:
@@ -8178,12 +8207,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PeersDialog</name>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="343"/>
+        <location filename="../gui/PeersDialog.cpp" line="345"/>
         <source>Chat</source>
         <translation>チャット</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="392"/>
+        <location filename="../gui/PeersDialog.cpp" line="394"/>
         <source>Export Friend</source>
         <translation>友達をエクスポート</translation>
     </message>
@@ -8192,12 +8221,12 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">友人を取除きなさい </translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="824"/>
+        <location filename="../gui/PeersDialog.cpp" line="845"/>
         <source>Save Certificate</source>
         <translation>証明書を保存</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="825"/>
+        <location filename="../gui/PeersDialog.cpp" line="846"/>
         <source>Certificates (*.pqi)</source>
         <translation>証明書(*.pqi) </translation>
     </message>
@@ -8219,133 +8248,133 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;友人&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="357"/>
+        <location filename="../gui/PeersDialog.cpp" line="359"/>
         <source>Connect To Friend</source>
         <translation>友達に接続</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="208"/>
+        <location filename="../gui/PeersDialog.cpp" line="210"/>
         <source>Welcome to RetroShare&apos;s group chat.</source>
         <translation>Retoroshare のグループチャットにようこそ.</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="164"/>
+        <location filename="../gui/PeersDialog.cpp" line="166"/>
         <source>Profile</source>
         <translation>プロファイル</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="165"/>
+        <location filename="../gui/PeersDialog.cpp" line="167"/>
         <source>Friends Storm</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="185"/>
+        <location filename="../gui/PeersDialog.cpp" line="187"/>
         <source>Paste retroshare Link</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="337"/>
+        <location filename="../gui/PeersDialog.cpp" line="339"/>
         <source>Expand all</source>
         <translation>すべて展開</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="340"/>
+        <location filename="../gui/PeersDialog.cpp" line="342"/>
         <source>Collapse all</source>
         <translation>すべて折りたたみ</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="350"/>
+        <location filename="../gui/PeersDialog.cpp" line="352"/>
         <source>Message Friend</source>
         <translation>友達にメッセージを送る</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="364"/>
+        <location filename="../gui/PeersDialog.cpp" line="366"/>
         <source>Peer Details</source>
         <translation>ピア詳細</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="371"/>
+        <location filename="../gui/PeersDialog.cpp" line="373"/>
         <source>Recomend this Friend to...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="378"/>
+        <location filename="../gui/PeersDialog.cpp" line="380"/>
         <source>Paste Person Link</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="399"/>
+        <location filename="../gui/PeersDialog.cpp" line="401"/>
         <source>Deny Friend</source>
         <translation>友達を拒否</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="403"/>
+        <location filename="../gui/PeersDialog.cpp" line="405"/>
         <source>Remove Friend Location</source>
         <translation>友達の場所を削除</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="425"/>
+        <location filename="../gui/PeersDialog.cpp" line="427"/>
         <source>&lt;strong&gt;GPG Key&lt;/strong&gt;</source>
         <translation>&lt;strong&gt;GPG キー&lt;/strong&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="422"/>
+        <location filename="../gui/PeersDialog.cpp" line="424"/>
         <source>&lt;strong&gt;RetroShare instance&lt;/strong&gt;</source>
         <translation>&lt;strong&gt;RetroShare インスタンス&lt;/strong&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="629"/>
+        <location filename="../gui/PeersDialog.cpp" line="635"/>
         <source>location : </source>
         <translation>場所:</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="695"/>
-        <location filename="../gui/PeersDialog.cpp" line="730"/>
+        <location filename="../gui/PeersDialog.cpp" line="710"/>
+        <location filename="../gui/PeersDialog.cpp" line="745"/>
         <source>Online</source>
         <translation>オンライン</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="718"/>
+        <location filename="../gui/PeersDialog.cpp" line="733"/>
         <source>Peer Idle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="719"/>
+        <location filename="../gui/PeersDialog.cpp" line="734"/>
         <source>Idle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="729"/>
+        <location filename="../gui/PeersDialog.cpp" line="744"/>
         <source>Peer Online</source>
         <translation type="unfinished">ピアがオンライン</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="740"/>
+        <location filename="../gui/PeersDialog.cpp" line="755"/>
         <source>Peer Away</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="741"/>
+        <location filename="../gui/PeersDialog.cpp" line="756"/>
         <source>Away</source>
         <translation type="unfinished">退席中</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="751"/>
+        <location filename="../gui/PeersDialog.cpp" line="766"/>
         <source>Peer Busy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="752"/>
+        <location filename="../gui/PeersDialog.cpp" line="767"/>
         <source>Busy</source>
         <translation type="unfinished">取り込み中</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="766"/>
+        <location filename="../gui/PeersDialog.cpp" line="781"/>
         <source>Available</source>
         <translation>利用可能</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="777"/>
+        <location filename="../gui/PeersDialog.cpp" line="792"/>
         <source>Offline</source>
         <translation>オフライン</translation>
     </message>
@@ -8360,32 +8389,32 @@ Do you want to send them a Message instead</source>
 代わりにメッセージを送りますか</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="942"/>
+        <location filename="../gui/PeersDialog.cpp" line="963"/>
         <source>RetroShare</source>
         <translation type="unfinished">RetroShare</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="942"/>
+        <location filename="../gui/PeersDialog.cpp" line="963"/>
         <source>Do you want to remove this Friend?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="1009"/>
+        <location filename="../gui/PeersDialog.cpp" line="1030"/>
         <source>is typing...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="1617"/>
+        <location filename="../gui/PeersDialog.cpp" line="1629"/>
         <source>Create a new Channel</source>
         <translation>チャネルを新規作成</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="1621"/>
+        <location filename="../gui/PeersDialog.cpp" line="1633"/>
         <source>New Channel</source>
         <translation>新規チャネル</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="1642"/>
+        <location filename="../gui/PeersDialog.cpp" line="1654"/>
         <source>Add Extra File</source>
         <translation>さらにファイルを追加</translation>
     </message>
@@ -8414,58 +8443,58 @@ Do you want to send them a Message instead</source>
         <translation type="obsolete">ファイルのリンクが不正です.</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="1774"/>
-        <location filename="../gui/PeersDialog.cpp" line="1779"/>
+        <location filename="../gui/PeersDialog.cpp" line="1757"/>
+        <location filename="../gui/PeersDialog.cpp" line="1762"/>
         <source>Drop file error.</source>
         <translation>ファイルのドロップ エラー.</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="1774"/>
+        <location filename="../gui/PeersDialog.cpp" line="1757"/>
         <source>File not found or file name not accepted.</source>
         <translation>ファイルが見つからないかファイル名が受け入れられません.</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="1779"/>
+        <location filename="../gui/PeersDialog.cpp" line="1762"/>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
         <translation>フォルダーはドロップできません. ファイルのみ可能です.</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="1832"/>
+        <location filename="../gui/PeersDialog.cpp" line="1815"/>
         <source>Save as...</source>
         <translation type="unfinished">名前をつけて保存...</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="1833"/>
+        <location filename="../gui/PeersDialog.cpp" line="1816"/>
         <source>Text File (*.txt );;All Files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="474"/>
+        <location filename="../gui/PeersDialog.cpp" line="476"/>
         <source> (me)</source>
         <translation> (自分)</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="631"/>
+        <location filename="../gui/PeersDialog.cpp" line="637"/>
         <source> - </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1360"/>
+        <location filename="../gui/PeersDialog.ui" line="1366"/>
         <source>Send</source>
         <translation>送信</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="385"/>
+        <location filename="../gui/PeersDialog.cpp" line="387"/>
         <source>Profile View</source>
         <translation>プロファイル表示</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1158"/>
+        <location filename="../gui/PeersDialog.ui" line="1164"/>
         <source>Italic</source>
         <translation>斜体</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1120"/>
+        <location filename="../gui/PeersDialog.ui" line="1126"/>
         <source>Underline</source>
         <translation>下線</translation>
     </message>
@@ -8510,104 +8539,112 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; color:#00aa00;&quot;&gt;ニックネーム (自分)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="850"/>
+        <location filename="../gui/PeersDialog.ui" line="856"/>
         <source>Edit Personal message</source>
         <translation>パーソナル メッセージを編集</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="888"/>
+        <location filename="../gui/PeersDialog.ui" line="894"/>
         <source>Live Chat</source>
         <translation>ライブ チャット</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1082"/>
+        <location filename="../gui/PeersDialog.ui" line="1088"/>
         <source>Bold</source>
         <translation>太字</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1414"/>
+        <location filename="../gui/PeersDialog.ui" line="1420"/>
         <source>Create New Forum</source>
         <translation>フォーラムを新規作成</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1417"/>
+        <location filename="../gui/PeersDialog.ui" line="1423"/>
         <source>Create new Forum</source>
         <translation>フォーラムを新規作成</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1420"/>
+        <location filename="../gui/PeersDialog.ui" line="1426"/>
         <source>F</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1429"/>
+        <location filename="../gui/PeersDialog.ui" line="1435"/>
         <source>Create New Channel</source>
         <translation>チャネルを新規作成</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1432"/>
+        <location filename="../gui/PeersDialog.ui" line="1438"/>
         <source>Create new Channel</source>
         <translation>チャネルを新規作成</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1435"/>
+        <location filename="../gui/PeersDialog.ui" line="1441"/>
         <source>C</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1444"/>
+        <location filename="../gui/PeersDialog.ui" line="1450"/>
         <source>Add your Avatar Picture</source>
         <translation>アバターの画像を追加</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1447"/>
+        <location filename="../gui/PeersDialog.ui" line="1453"/>
         <source>A</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1456"/>
+        <location filename="../gui/PeersDialog.ui" line="1462"/>
         <source>Set your Personal Message</source>
         <translation>パーソナルメッセージを設定</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1459"/>
+        <location filename="../gui/PeersDialog.ui" line="1465"/>
         <source>Edit your status Message</source>
         <translation type="unfinished">状態メッセージを編集</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1467"/>
         <location filename="../gui/PeersDialog.ui" line="1470"/>
-        <source>Disable Emoticons</source>
-        <translation type="unfinished">気分を無効化</translation>
+        <source>Browse Message History</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1475"/>
+        <location filename="../gui/PeersDialog.ui" line="1473"/>
+        <source>Browse History</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Disable Emoticons</source>
+        <translation type="obsolete">気分を無効化</translation>
+    </message>
+    <message>
         <location filename="../gui/PeersDialog.ui" line="1478"/>
+        <location filename="../gui/PeersDialog.ui" line="1481"/>
         <source>Save Chat History</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1486"/>
+        <location filename="../gui/PeersDialog.ui" line="1489"/>
         <source>Hide Offline Friends</source>
         <translation type="unfinished">オフラインの友達を隠す</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1494"/>
+        <location filename="../gui/PeersDialog.ui" line="1497"/>
         <source>Hide Status Column</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1396"/>
+        <location filename="../gui/PeersDialog.ui" line="1402"/>
         <source>Add Friend</source>
         <translation>友達を追加</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1405"/>
+        <location filename="../gui/PeersDialog.ui" line="1411"/>
         <source>Create new Profile</source>
         <translation>プロファイルを新規作成</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1196"/>
+        <location filename="../gui/PeersDialog.ui" line="1202"/>
         <source>Font</source>
         <translation>フォント</translation>
     </message>
@@ -8621,7 +8658,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1231"/>
+        <location filename="../gui/PeersDialog.ui" line="1237"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -8634,12 +8671,12 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;文字色を設定&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1319"/>
+        <location filename="../gui/PeersDialog.ui" line="1325"/>
         <source>Attach File</source>
         <translation>ファイルを添付</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="1387"/>
+        <location filename="../gui/PeersDialog.ui" line="1393"/>
         <source>Clear Chat History</source>
         <translation>チャットの履歴をクリア</translation>
     </message>
@@ -8983,99 +9020,124 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PopupChatDialog</name>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="124"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="148"/>
         <source>RetroShare - </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="158"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="182"/>
         <source>Paste retroshare Link</source>
         <translation>Retoroshare リンクを貼り付け</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="332"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="385"/>
         <source>Friend Not Online</source>
         <translation type="unfinished">友達はオンラインではありません</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="332"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="385"/>
         <source>Your Friend is offline 
 Do you want to send them a Message instead</source>
         <translation type="unfinished">あなたの友達はオフラインです.
 代わりにメッセージを送りますか</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="373"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="425"/>
         <source>is typing...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="570"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="646"/>
         <source>Hide Avatar</source>
         <translation>アバターを非表示</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="571"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="647"/>
         <source>:images/hide_toolbox_frame.png</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="575"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="651"/>
         <source>Show Avatar</source>
         <translation>アバターを表示</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="576"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="652"/>
         <source>:images/show_toolbox_frame.png</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="830"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="906"/>
         <source>Open Style</source>
         <translation>スタイルを開く</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="832"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="908"/>
         <source>Styles (*.htm)</source>
         <translation>スタイル (*.htm)</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1149"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1220"/>
         <source>Save as...</source>
         <translation type="unfinished">名前をつけて保存...</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1150"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1221"/>
         <source>Text File (*.txt );;All Files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1176"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1247"/>
         <source>apears to be Offline.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1176"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1247"/>
         <source>Messages you send will be lost and not delivered, rs-Mail this contact instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1183"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1249"/>
+        <source>(Offline)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1256"/>
         <source>is Idle and may not reply</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1195"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1258"/>
+        <source>(Idle)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1266"/>
+        <source>(Online)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1272"/>
         <source>is Away and may not reply</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1202"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1275"/>
+        <source>(Away)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1281"/>
         <source>is Busy and may not reply</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="738"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1284"/>
+        <source>(Busy)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="826"/>
         <source>Send</source>
         <translation>送信</translation>
     </message>
@@ -9089,17 +9151,20 @@ Do you want to send them a Message instead</source>
         <translation>メイン ウィンドウ</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="241"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="242"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="255"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="268"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="329"/>
         <source>TextLabel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="254"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="342"/>
         <source>Close</source>
         <translation type="unfinished">閉じる</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="318"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="406"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -9112,7 +9177,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="457"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="545"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -9123,81 +9188,80 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;チャット ウィンドウのスタイルを設定&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="488"/>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="771"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="576"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="859"/>
         <source>Bold</source>
         <translation>太字</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="517"/>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="781"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="605"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="869"/>
         <source>Underline</source>
         <translation>下線</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="546"/>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="776"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="634"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="864"/>
         <source>Italic</source>
         <translation>斜体</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="575"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="663"/>
         <source>Set Font</source>
         <translation>フォント設定</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="604"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="692"/>
         <source>Text Color</source>
         <translation>文字色</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="673"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="761"/>
         <source>Attach a Picture</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="753"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="841"/>
         <source>toolBar</source>
         <translation>ツールバー</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="786"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="874"/>
         <source>Strike</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="795"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="883"/>
         <source>Avatar</source>
         <translation>アバター</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="798"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="886"/>
         <source>Set your Avatar Picture</source>
         <translation>アバターの画像を設定</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="807"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="895"/>
         <source>Clear Chat</source>
         <translation>チャットをクリア</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="815"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="903"/>
         <source>Disable Emoticons</source>
         <translation>気分を無効化</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="820"/>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="823"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="908"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="911"/>
         <source>Save Chat History</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="364"/>
         <source>Chatting with </source>
-        <translation>チャットする </translation>
+        <translation type="obsolete">チャットする </translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="937"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1013"/>
         <source>Add Extra File</source>
         <translation>さらにファイルを追加</translation>
     </message>
@@ -9226,23 +9290,23 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">ファイルのリンクが不正です.</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1087"/>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1092"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1158"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1163"/>
         <source>Drop file error.</source>
         <translation>ファイルのドロップ エラー.</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1087"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1158"/>
         <source>File not found or file name not accepted.</source>
         <translation>ファイルが見つからないかファイル名が受け入れられません.</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1092"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1163"/>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
         <translation>フォルダーはドロップできません. ファイルのみ可能です.</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="702"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="790"/>
         <source>Add a File for your Friend</source>
         <translation>友達宛のファイルを追加</translation>
     </message>
@@ -9387,48 +9451,48 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ProfileView</name>
     <message>
-        <location filename="../gui/profile/ProfileView.cpp" line="75"/>
+        <location filename="../gui/profile/ProfileView.cpp" line="77"/>
         <source>Clear Photo</source>
         <translation>フォトをクリア</translation>
     </message>
     <message>
-        <location filename="../gui/profile/ProfileView.cpp" line="76"/>
+        <location filename="../gui/profile/ProfileView.cpp" line="78"/>
         <source>Change Photo</source>
         <translation>フォトを変更</translation>
     </message>
     <message>
         <location filename="../gui/profile/ProfileView.ui" line="183"/>
-        <location filename="../gui/profile/ProfileView.cpp" line="97"/>
+        <location filename="../gui/profile/ProfileView.cpp" line="99"/>
         <source>Edit Profile</source>
         <translation>プロファイルを編集</translation>
     </message>
     <message>
-        <location filename="../gui/profile/ProfileView.cpp" line="116"/>
+        <location filename="../gui/profile/ProfileView.cpp" line="118"/>
         <source>Remove Favourite</source>
         <translation>お気に入りを削除</translation>
     </message>
     <message>
-        <location filename="../gui/profile/ProfileView.cpp" line="117"/>
+        <location filename="../gui/profile/ProfileView.cpp" line="119"/>
         <source>Clear Favourites</source>
         <translation>お気に入りをクリア</translation>
     </message>
     <message>
-        <location filename="../gui/profile/ProfileView.cpp" line="126"/>
+        <location filename="../gui/profile/ProfileView.cpp" line="128"/>
         <source>Download File</source>
         <translation>ファイルをダウンロード</translation>
     </message>
     <message>
-        <location filename="../gui/profile/ProfileView.cpp" line="127"/>
+        <location filename="../gui/profile/ProfileView.cpp" line="129"/>
         <source>Download All</source>
         <translation>すべてダウンロード</translation>
     </message>
     <message>
-        <location filename="../gui/profile/ProfileView.cpp" line="189"/>
+        <location filename="../gui/profile/ProfileView.cpp" line="191"/>
         <source>RetroShare</source>
         <translation type="unfinished">RetroShare</translation>
     </message>
     <message>
-        <location filename="../gui/profile/ProfileView.cpp" line="190"/>
+        <location filename="../gui/profile/ProfileView.cpp" line="192"/>
         <source>Error : cannot get peer details.</source>
         <translation type="unfinished">エラー: ピア詳細を取得できません.</translation>
     </message>
@@ -9797,28 +9861,28 @@ p, li { white-space: pre-wrap; }
         <translation>ハッシュ</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="139"/>
-        <location filename="../main.cpp" line="145"/>
+        <location filename="../main.cpp" line="141"/>
+        <location filename="../main.cpp" line="147"/>
         <source>Multiple instances</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="140"/>
+        <location filename="../main.cpp" line="142"/>
         <source>Another RetroShare using the same profile is already running on your system. Please close that instance first</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="146"/>
+        <location filename="../main.cpp" line="148"/>
         <source>An unexpected error occurred when Retrosharetried to acquire the single instance lock</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="150"/>
+        <location filename="../main.cpp" line="152"/>
         <source>Login Failure</source>
         <translation type="unfinished">ログインに失敗</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="151"/>
+        <location filename="../main.cpp" line="153"/>
         <source>Maybe password is wrong</source>
         <translation type="unfinished">おそらくパスワードが間違っています</translation>
     </message>
