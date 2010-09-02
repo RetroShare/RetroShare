@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>504</width>
-    <height>430</height>
+    <width>528</width>
+    <height>451</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,17 +20,20 @@
    <string notr="true">QToolBar#toolBar{background-image: url(:/images/connect/connectFriendBanner.png)}</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout">
+   <layout class="QGridLayout" name="gridLayout_2">
     <property name="leftMargin">
      <number>0</number>
     </property>
     <property name="bottomMargin">
      <number>0</number>
     </property>
-    <property name="spacing">
+    <property name="horizontalSpacing">
+     <number>0</number>
+    </property>
+    <property name="verticalSpacing">
      <number>1</number>
     </property>
-    <item row="0" column="0" rowspan="3">
+    <item row="0" column="0" rowspan="4">
      <widget class="QFrame" name="frame">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -98,7 +101,7 @@
       </layout>
      </widget>
     </item>
-    <item row="0" column="1" rowspan="3">
+    <item row="0" column="1" rowspan="4">
      <widget class="QFrame" name="avatarframe">
       <property name="maximumSize">
        <size>
@@ -198,6 +201,91 @@ border-image: url(:/images/avatarstatus_bg.png);
      </widget>
     </item>
     <item row="0" column="2">
+     <widget class="QFrame" name="frame_2">
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QGridLayout" name="gridLayout">
+       <property name="leftMargin">
+        <number>2</number>
+       </property>
+       <property name="topMargin">
+        <number>2</number>
+       </property>
+       <property name="rightMargin">
+        <number>6</number>
+       </property>
+       <property name="bottomMargin">
+        <number>6</number>
+       </property>
+       <item row="0" column="0">
+        <widget class="QLabel" name="friendnamelabel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>13</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+           <kerning>true</kerning>
+          </font>
+         </property>
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLabel" name="statuslabel">
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>9</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="3">
+        <widget class="QLabel" name="statusmessagelabel">
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>9</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="1" column="2">
      <widget class="QFrame" name="infoframe">
       <property name="styleSheet">
        <string notr="true">QFrame#infoframe{border: 1px solid #DCDC41;
@@ -279,7 +367,7 @@ border-image: url(:/images/closepressed.png)
       </layout>
      </widget>
     </item>
-    <item row="1" column="2">
+    <item row="2" column="2">
      <widget class="QSplitter" name="chatsplitter">
       <property name="lineWidth">
        <number>1</number>
@@ -371,7 +459,7 @@ background: white;}</string>
       </widget>
      </widget>
     </item>
-    <item row="2" column="2">
+    <item row="3" column="2">
      <widget class="QFrame" name="Chatbuttonframe">
       <property name="minimumSize">
        <size>
@@ -742,7 +830,7 @@ border: 1px solid #CCCCCC;
       </layout>
      </widget>
     </item>
-    <item row="3" column="0" colspan="3">
+    <item row="4" column="0" colspan="3">
      <layout class="QVBoxLayout" name="vboxLayout"/>
     </item>
    </layout>
@@ -825,6 +913,9 @@ border: 1px solid #CCCCCC;
   </action>
  </widget>
  <resources>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>

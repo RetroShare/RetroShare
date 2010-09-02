@@ -47,6 +47,7 @@
 #include <retroshare/rsiface.h>
 #include "gui/settings/rsharesettings.h"
 #include "gui/notifyqt.h"
+#include "../RsAutoUpdatePage.h"
 
 #include "gui/feeds/AttachFileItem.h"
 #include "gui/msgs/MessageComposer.h"
@@ -108,6 +109,7 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   /* Hide Avatar and Info frame */
   showAvatarFrame(false);  
   ui.infoframe->setVisible(false);
+  ui.statusmessagelabel->hide();
 
   connect(ui.avatarFrameButton, SIGNAL(toggled(bool)), this, SLOT(showAvatarFrame(bool)));
 
@@ -181,6 +183,8 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
 
   updateAvatar() ;
   updatePeerAvatar(id) ;
+  updateStatusMessage();
+
   
   // load settings
   processSettings(true);
@@ -407,7 +411,6 @@ void PopupChatDialog::contextMenu( QPoint point )
 
 void PopupChatDialog::resetStatusBar() 
 {
-        statusBar()->showMessage(tr("Chatting with ") + QString::fromStdString(dialogName)) ;
         ui.statusLabel->setText(QString("")) ;
 }
 
@@ -1239,6 +1242,8 @@ void PopupChatDialog::updateStatus(const QString &peer_id, int status)
             ui.avatarlabel->setEnabled(false);
             ui.infoframe->setVisible(true);
             ui.infolabel->setText( QString::fromStdString(dialogName) + " " + tr("apears to be Offline.") +"\n" + tr("Messages you send will be lost and not delivered, rs-Mail this contact instead."));
+            ui.friendnamelabel->setText( QString::fromStdString(dialogName)) ;
+            ui.statuslabel->setText( tr("(Offline)")) ;
             break;
 
         case RS_STATUS_INACTIVE:
@@ -1246,12 +1251,16 @@ void PopupChatDialog::updateStatus(const QString &peer_id, int status)
             ui.avatarlabel->setEnabled(true);
             ui.infoframe->setVisible(true);
             ui.infolabel->setText( QString::fromStdString(dialogName) + " " + tr("is Idle and may not reply"));
+            ui.friendnamelabel->setText( QString::fromStdString(dialogName)) ;
+            ui.statuslabel->setText( tr("(Idle)")) ;
             break;
 
         case RS_STATUS_ONLINE:
             ui.avatarlabel->setStyleSheet("QLabel#avatarlabel{ border-image:url(:/images/avatarstatus_bg_online.png); }");
             ui.avatarlabel->setEnabled(true);
             ui.infoframe->setVisible(false);
+            ui.friendnamelabel->setText( QString::fromStdString(dialogName)) ;
+            ui.statuslabel->setText( tr("(Online)")) ;
             break;
 
         case RS_STATUS_AWAY:
@@ -1259,6 +1268,8 @@ void PopupChatDialog::updateStatus(const QString &peer_id, int status)
             ui.avatarlabel->setEnabled(true);
             ui.infolabel->setText( QString::fromStdString(dialogName) + " " + tr("is Away and may not reply"));
             ui.infoframe->setVisible(true);
+            ui.friendnamelabel->setText( QString::fromStdString(dialogName)) ;
+            ui.statuslabel->setText( tr("(Away)")) ;
             break;
 
         case RS_STATUS_BUSY:
@@ -1266,6 +1277,8 @@ void PopupChatDialog::updateStatus(const QString &peer_id, int status)
             ui.avatarlabel->setEnabled(true);
             ui.infolabel->setText( QString::fromStdString(dialogName) + " " + tr("is Busy and may not reply"));
             ui.infoframe->setVisible(true);
+            ui.friendnamelabel->setText( QString::fromStdString(dialogName));
+            ui.statuslabel->setText( tr("(Busy)")) ;
             break;
         }
         return;
@@ -1300,4 +1313,41 @@ void PopupChatDialog::updateStatus(const QString &peer_id, int status)
     }
 
     // ignore status change
+}
+
+void PopupChatDialog::updateStatusMessage()
+{
+    if (!rsPeers)
+        return;
+
+
+    if(!RsAutoUpdatePage::eventsLocked()) {
+        RsPeerDetails details;
+        if (!rsPeers->getPeerDetails(dialogId, details))
+        {
+            return;
+        }
+
+        QString sCustomString;
+        if (details.state & RS_PEER_STATE_CONNECTED) {
+            sCustomString = QString::fromStdString(rsMsgs->getCustomStateString(details.id));
+        }
+        
+        if (sCustomString.isEmpty()) 
+        {
+            ui.statusmessagelabel->hide();
+        } 
+        else 
+        {
+            ui.statusmessagelabel->show();
+            ui.statusmessagelabel->setText(sCustomString);
+        }
+
+    }
+
+    /* slow Tick  */
+    int msec_rate = 10129;
+
+    QTimer::singleShot( msec_rate, this, SLOT(updateStatusMessage( void ) ));
+    return;
 }

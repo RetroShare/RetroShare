@@ -86,6 +86,8 @@ protected:
   void loadEmoticons2();
 
   void updateAvatar();
+  void updateStatusMessage();
+
 
   QString loadEmptyStyle();
   QPixmap picture;
