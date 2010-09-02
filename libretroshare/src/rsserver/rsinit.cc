@@ -366,7 +366,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
          /* getopt info: every availiable option is listed here. if it is followed by a ':' it
             needs an argument. If it is followed by a '::' the argument is optional.
          */
-         while((c = getopt(argcIgnored, argvIgnored,"hesamui:p:c:w:l:d:U:")) != -1)
+         while((c = getopt(argc, argv,"hesamui:p:c:w:l:d:U:")) != -1)
          {
                  switch (c)
                  {
