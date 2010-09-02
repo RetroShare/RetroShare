@@ -1081,13 +1081,37 @@ void PopupChatDialog::fileHashingFinished(AttachFileItem* file)
     }
 
     QString message;
+    QString ext = QFileInfo(QString::fromStdString(file->FileName())).suffix();
 
     if(file->getPicFlag()==1){
         message+="<img src=\"file:///";
         message+=file->FilePath().c_str();
         message+="\" width=\"100\" height=\"100\">";
         message+="<br>";
-    }
+    }    
+	else if (ext == "ogg" || ext == "mp3" || ext == "MP3"  || ext == "mp1" || ext == "mp2" || ext == "wav" || ext == "wma") 
+	{
+        message+="<img src=\":/images/audio-x-monkey.png";
+        message+="\" width=\"48\" height=\"48\">";
+        message+="<br>";
+	}
+    else if (ext == "avi" || ext == "AVI" || ext == "mpg" || ext == "mpeg" || ext == "wmv" || ext == "ogm"
+    || ext == "mkv" || ext == "mp4" || ext == "flv" || ext == "mov"
+    || ext == "vob" || ext == "qt" || ext == "rm" || ext == "3gp")
+    {
+        message+="<img src=\":/images/video-x-generic.png";
+        message+="\" width=\"48\" height=\"48\">";
+        message+="<br>";
+	}
+    else if (ext == "tar" || ext == "bz2" || ext == "zip" || ext == "gz" || ext == "7z"
+    || ext == "rar" || ext == "rpm" || ext == "deb")
+    {
+        message+="<img src=\":/images/application-x-rar.png";
+        message+="\" width=\"48\" height=\"48\">";
+        message+="<br>";
+	}
+    
+
 
     message+= RetroShareLink(QString::fromStdString(file->FileName()),file->FileSize(),QString::fromStdString(file->FileHash())).toHtmlSize();
 
