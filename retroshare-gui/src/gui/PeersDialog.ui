@@ -718,7 +718,7 @@ background: white;}</string>
          </attribute>
          <column>
           <property name="text">
-           <string>Person</string>
+           <string>Friends</string>
           </property>
          </column>
          <column>

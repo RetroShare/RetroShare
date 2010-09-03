@@ -377,7 +377,7 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
         recommendfriendAct->setDisabled(true);
     }
 
-    QAction* pastePersonAct = new QAction(QIcon(IMAGE_PASTELINK), tr( "Paste Person Link" ), &contextMnu );
+    QAction* pastePersonAct = new QAction(QIcon(IMAGE_PASTELINK), tr( "Paste Friend Link" ), &contextMnu );
     if(!RSLinkClipboard::empty(RetroShareLink::TYPE_PERSON)) {
         connect( pastePersonAct , SIGNAL( triggered() ), this, SLOT( pastePerson() ) );
     } else {
