@@ -305,6 +305,17 @@ void ConfCertDialog::loadDialog()
                 ui.signers_listWidget->addItem(QString::fromStdString(signerDetail.name) + " (" + QString::fromStdString(signerDetail.id) +")");
             }
         }
+
+			  std::string invite = rsPeers->GetRetroshareInvite(detail.id) ; // this needs to be a SSL id
+
+			  ui.userCertificateText->setReadOnly(true);
+			  ui.userCertificateText->setMinimumHeight(200);
+			  ui.userCertificateText->setMinimumWidth(530);
+			  QFont font("Courier New",10,50,false);
+			  font.setStyleHint(QFont::TypeWriter,QFont::PreferMatch);
+			  font.setStyle(QFont::StyleNormal);
+			  ui.userCertificateText->setFont(font);
+			  ui.userCertificateText->setText(QString::fromStdString(invite));
 }
 
 

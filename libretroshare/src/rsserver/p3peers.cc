@@ -806,29 +806,41 @@ p3Peers::setVisState(std::string id, uint32_t extVisState)
 std::string
 p3Peers::GetRetroshareInvite()
 {
+	return GetRetroshareInvite(getOwnId());
+}
+
+std::string
+p3Peers::GetRetroshareInvite(const std::string& ssl_id)
+{
         #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::GetRetroshareInvite()" << std::endl;
         #endif
 
-        std::string invite = AuthGPG::getAuthGPG()->SaveCertificateToString(AuthGPG::getAuthGPG()->getGPGOwnId());
-
         //add the sslid, location, ip local and external address after the signature
-        RsPeerDetails ownDetail;
-        if (getPeerDetails(rsPeers->getOwnId(), ownDetail)) {
-            invite += CERT_SSL_ID + ownDetail.id + ";";
-            invite += CERT_LOCATION + ownDetail.location + ";\n";
-            invite += CERT_LOCAL_IP + ownDetail.localAddr + ":";
-            std::ostringstream out;
-            out << ownDetail.localPort;
-            invite += out.str() + ";";
-            invite += CERT_EXT_IP + ownDetail.extAddr + ":";
-            std::ostringstream out2;
-            out2 << ownDetail.extPort;
-            invite += out2.str() + ";";
-            if (!ownDetail.dyndns.empty()) {
-                invite += "\n" + CERT_DYNDNS + ownDetail.dyndns + ";";
-            }
-        }
+        RsPeerDetails Detail;
+		  std::string invite ;
+
+        if (getPeerDetails(ssl_id, Detail)) 
+		  {
+			  invite = AuthGPG::getAuthGPG()->SaveCertificateToString(Detail.gpg_id);
+
+			  if(!Detail.isOnlyGPGdetail)
+			  {
+				  invite += CERT_SSL_ID + Detail.id + ";";
+				  invite += CERT_LOCATION + Detail.location + ";\n";
+				  invite += CERT_LOCAL_IP + Detail.localAddr + ":";
+				  std::ostringstream out;
+				  out << Detail.localPort;
+				  invite += out.str() + ";";
+				  invite += CERT_EXT_IP + Detail.extAddr + ":";
+				  std::ostringstream out2;
+				  out2 << Detail.extPort;
+				  invite += out2.str() + ";";
+				  if (!Detail.dyndns.empty()) {
+					  invite += "\n" + CERT_DYNDNS + Detail.dyndns + ";";
+				  }
+			  }
+		  }
 
         #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::GetRetroshareInvite() returns : \n" << invite << std::endl;

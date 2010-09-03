@@ -87,6 +87,9 @@ virtual bool getAllowServerIPDetermination() ;
 virtual bool getAllowTunnelConnection() ;
 
 	/* Auth Stuff */
+// Get the invitation (GPG cert + local/ext address + SSL id for the given peer)
+virtual	std::string GetRetroshareInvite(const std::string& ssl_id);
+// same but for own id
 virtual	std::string GetRetroshareInvite();
 
 virtual	bool loadCertificateFromFile(std::string fname, std::string &id, std::string &gpg_id);

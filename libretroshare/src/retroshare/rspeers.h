@@ -179,6 +179,7 @@ virtual bool getAllowServerIPDetermination() = 0 ;
 virtual bool getAllowTunnelConnection() = 0 ;
 
 	/* Auth Stuff */
+virtual	std::string GetRetroshareInvite(const std::string& ssl_id) 			= 0;
 virtual	std::string GetRetroshareInvite() 			= 0;
 
 virtual	bool loadCertificateFromFile(std::string fname, std::string &ssl_id, std::string &gpg_id)  = 0;
