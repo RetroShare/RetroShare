@@ -501,9 +501,9 @@ std::list<RsItem*> p3turtle::saveList(bool& cleanup)
 	return lst ;
 }
 
+#ifdef TO_REMOVE
 bool p3turtle::loadList(std::list<RsItem*> load)
 {
-#ifdef TO_REMOVE
 #ifdef P3TURTLE_DEBUG
 	std::cerr << "p3turtle: loading list..." << std::endl ;
 #endif
@@ -526,9 +526,9 @@ bool p3turtle::loadList(std::list<RsItem*> load)
 		}
 		delete item ;
 	}
-#endif
 	return true ;
 }
+#endif
 
 
 // -----------------------------------------------------------------------------------//
@@ -1125,7 +1125,7 @@ void p3turtle::handleRecvFileCRC32Map(RsTurtleFileCrcItem *item)
 	_ft_server->getMultiplexer()->recvCRC32Map(vpid,hash,item->crc_map) ;
 }
 // Send a data request into the correct tunnel for the given file hash
-void p3turtle::sendDataRequest(const std::string& peerId, const std::string& hash, uint64_t, uint64_t offset, uint32_t chunksize)
+void p3turtle::sendDataRequest(const std::string& peerId, const std::string& , uint64_t, uint64_t offset, uint32_t chunksize)
 {
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
@@ -1158,7 +1158,7 @@ void p3turtle::sendDataRequest(const std::string& peerId, const std::string& has
 }
 
 // Send file data into the correct tunnel for the given file hash
-void p3turtle::sendFileData(const std::string& peerId, const std::string& hash, uint64_t, uint64_t offset, uint32_t chunksize, void *data)
+void p3turtle::sendFileData(const std::string& peerId, const std::string& , uint64_t, uint64_t offset, uint32_t chunksize, void *data)
 {
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
@@ -1202,7 +1202,7 @@ void p3turtle::sendFileData(const std::string& peerId, const std::string& hash, 
 	sendItem(item) ;
 }
 
-void p3turtle::sendChunkMapRequest(const std::string& peerId,const std::string& hash,bool is_client)
+void p3turtle::sendChunkMapRequest(const std::string& peerId,const std::string& ,bool is_client)
 {
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
@@ -1248,7 +1248,7 @@ void p3turtle::sendChunkMapRequest(const std::string& peerId,const std::string& 
 	sendItem(item) ;
 }
 
-void p3turtle::sendChunkMap(const std::string& peerId,const std::string& hash,const CompressedChunkMap& cmap,bool is_client)
+void p3turtle::sendChunkMap(const std::string& peerId,const std::string& ,const CompressedChunkMap& cmap,bool is_client)
 {
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
@@ -1295,7 +1295,7 @@ void p3turtle::sendChunkMap(const std::string& peerId,const std::string& hash,co
 	sendItem(item) ;
 }
 
-void p3turtle::sendCRC32MapRequest(const std::string& peerId,const std::string& hash)
+void p3turtle::sendCRC32MapRequest(const std::string& peerId,const std::string& )
 {
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
@@ -1325,7 +1325,7 @@ void p3turtle::sendCRC32MapRequest(const std::string& peerId,const std::string& 
 #endif
 	sendItem(item) ;
 }
-void p3turtle::sendCRC32Map(const std::string& peerId,const std::string& hash,const CRC32Map& cmap)
+void p3turtle::sendCRC32Map(const std::string& peerId,const std::string& ,const CRC32Map& cmap)
 {
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
