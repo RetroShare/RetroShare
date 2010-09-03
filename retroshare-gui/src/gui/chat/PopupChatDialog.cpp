@@ -106,8 +106,8 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   last_status_send_time = 0 ;
   styleHtm = ":/qss/chat/default.htm";
   
-  /* Hide Avatar and Info frame */
-  showAvatarFrame(false);  
+  /* Hide or show the frames */
+  showAvatarFrame(true);  
   ui.infoframe->setVisible(false);
   ui.statusmessagelabel->hide();
 
@@ -1260,6 +1260,9 @@ void PopupChatDialog::setCurrentFileName(const QString &fileName)
 void PopupChatDialog::updateStatus(const QString &peer_id, int status)
 {
     std::string stdPeerId = peer_id.toStdString();
+    
+    /* set font size for status  */
+    QString statusString("<span style=\"font-size:11pt; font-weight:500;""\">%1</span>");
 
     if (stdPeerId == dialogId) {
         // the peers status has changed
@@ -1269,8 +1272,7 @@ void PopupChatDialog::updateStatus(const QString &peer_id, int status)
             ui.avatarlabel->setEnabled(false);
             ui.infoframe->setVisible(true);
             ui.infolabel->setText( QString::fromStdString(dialogName) + " " + tr("apears to be Offline.") +"\n" + tr("Messages you send will be lost and not delivered, rs-Mail this contact instead."));
-            ui.friendnamelabel->setText( QString::fromStdString(dialogName)) ;
-            ui.statuslabel->setText( tr("(Offline)")) ;
+            ui.friendnamelabel->setText( QString::fromStdString(dialogName) + " " + statusString.arg("(Offline)")) ;
             break;
 
         case RS_STATUS_INACTIVE:
@@ -1278,16 +1280,14 @@ void PopupChatDialog::updateStatus(const QString &peer_id, int status)
             ui.avatarlabel->setEnabled(true);
             ui.infoframe->setVisible(true);
             ui.infolabel->setText( QString::fromStdString(dialogName) + " " + tr("is Idle and may not reply"));
-            ui.friendnamelabel->setText( QString::fromStdString(dialogName)) ;
-            ui.statuslabel->setText( tr("(Idle)")) ;
+            ui.friendnamelabel->setText( QString::fromStdString(dialogName) + " " + statusString.arg("(Idle)")) ;
             break;
 
         case RS_STATUS_ONLINE:
             ui.avatarlabel->setStyleSheet("QLabel#avatarlabel{ border-image:url(:/images/avatarstatus_bg_online.png); }");
             ui.avatarlabel->setEnabled(true);
             ui.infoframe->setVisible(false);
-            ui.friendnamelabel->setText( QString::fromStdString(dialogName)) ;
-            ui.statuslabel->setText( tr("(Online)")) ;
+            ui.friendnamelabel->setText( QString::fromStdString(dialogName) + " " + statusString.arg("(Online)")) ;
             break;
 
         case RS_STATUS_AWAY:
@@ -1295,8 +1295,7 @@ void PopupChatDialog::updateStatus(const QString &peer_id, int status)
             ui.avatarlabel->setEnabled(true);
             ui.infolabel->setText( QString::fromStdString(dialogName) + " " + tr("is Away and may not reply"));
             ui.infoframe->setVisible(true);
-            ui.friendnamelabel->setText( QString::fromStdString(dialogName)) ;
-            ui.statuslabel->setText( tr("(Away)")) ;
+            ui.friendnamelabel->setText( QString::fromStdString(dialogName) + " " + statusString.arg("(Away)")) ;
             break;
 
         case RS_STATUS_BUSY:
@@ -1304,8 +1303,7 @@ void PopupChatDialog::updateStatus(const QString &peer_id, int status)
             ui.avatarlabel->setEnabled(true);
             ui.infolabel->setText( QString::fromStdString(dialogName) + " " + tr("is Busy and may not reply"));
             ui.infoframe->setVisible(true);
-            ui.friendnamelabel->setText( QString::fromStdString(dialogName));
-            ui.statuslabel->setText( tr("(Busy)")) ;
+            ui.friendnamelabel->setText( QString::fromStdString(dialogName) + " " + statusString.arg("(Busy)")) ;
             break;
         }
         return;

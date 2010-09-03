@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>528</width>
+    <width>531</width>
     <height>451</height>
    </rect>
   </property>
@@ -235,7 +235,7 @@ border-image: url(:/images/avatarstatus_bg.png);
        <property name="bottomMargin">
         <number>6</number>
        </property>
-       <item row="0" column="0">
+       <item row="0" column="0" colspan="2">
         <widget class="QLabel" name="friendnamelabel">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -257,20 +257,7 @@ border-image: url(:/images/avatarstatus_bg.png);
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
-        <widget class="QLabel" name="statuslabel">
-         <property name="font">
-          <font>
-           <family>Arial</family>
-           <pointsize>9</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>TextLabel</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0" colspan="3">
+       <item row="1" column="0" colspan="2">
         <widget class="QLabel" name="statusmessagelabel">
          <property name="font">
           <font>
@@ -282,19 +269,6 @@ border-image: url(:/images/avatarstatus_bg.png);
           <string>TextLabel</string>
          </property>
         </widget>
-       </item>
-       <item row="0" column="2">
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
        </item>
       </layout>
      </widget>
@@ -962,6 +936,12 @@ p, li { white-space: pre-wrap; }
   </action>
  </widget>
  <resources>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
