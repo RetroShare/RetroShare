@@ -213,7 +213,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Style Sheet</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -7375,47 +7375,47 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Save Chat History</source>
-        <translation type="unfinished"></translation>
+        <translation>Chat Verlauf speichern</translation>
     </message>
     <message>
         <source>Peer Idle</source>
-        <translation type="unfinished"></translation>
+        <translation>Untätig</translation>
     </message>
     <message>
         <source>Idle</source>
-        <translation type="unfinished">Untätig</translation>
+        <translation>Untätig</translation>
     </message>
     <message>
         <source>Peer Online</source>
-        <translation type="unfinished">Nachbar Online</translation>
+        <translation>Online</translation>
     </message>
     <message>
         <source>Peer Away</source>
-        <translation type="unfinished"></translation>
+        <translation>Abwesend</translation>
     </message>
     <message>
         <source>Away</source>
-        <translation type="unfinished">Abwesend</translation>
+        <translation>Abwesend</translation>
     </message>
     <message>
         <source>Peer Busy</source>
-        <translation type="unfinished"></translation>
+        <translation>Beschäftigt</translation>
     </message>
     <message>
         <source>Busy</source>
-        <translation type="unfinished">Beschäftigt</translation>
+        <translation>Beschäftigt</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Do you want to remove this Friend?</source>
-        <translation type="unfinished"></translation>
+        <translation>Willst du diesen Freund entfernen?</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation type="unfinished">Speichern als...</translation>
+        <translation>Speichern als...</translation>
     </message>
     <message>
         <source>Text File (*.txt );;All Files (*)</source>
@@ -7427,39 +7427,43 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Display&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Anzeige&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Hide Offline Friends</source>
-        <translation type="unfinished">Verstecke offline Freunde</translation>
+        <translation>Verstecke offline Freunde</translation>
     </message>
     <message>
         <source>Hide Status Column</source>
-        <translation type="unfinished"></translation>
+        <translation>Status Spalte ausblenden</translation>
     </message>
     <message>
         <source>Friends Storm</source>
-        <translation type="unfinished"></translation>
+        <translation>Freundes Strom</translation>
     </message>
     <message>
         <source>Recomend this Friend to...</source>
-        <translation type="unfinished"></translation>
+        <translation>Freund weiterempfehlen...</translation>
     </message>
     <message>
         <source>Paste Person Link</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Freund Link einfügen</translation>
     </message>
     <message>
         <source>is typing...</source>
-        <translation type="unfinished">tippt...</translation>
+        <translation>tippt...</translation>
     </message>
     <message>
         <source>Browse Message History</source>
-        <translation type="unfinished"></translation>
+        <translation>Nachrichtenverlauf Anzeigen</translation>
     </message>
     <message>
         <source>Browse History</source>
-        <translation type="unfinished"></translation>
+        <translation>Nachrichtenverlauf</translation>
     </message>
 </context>
 <context>
@@ -7944,7 +7948,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>is Idle and may not reply</source>
-        <translation>antwortet möglicherweise nicht, da der status auf &quot;Idle&quot; gesetzt wurde</translation>
+        <translation>antwortet möglicherweise nicht, da der status auf &quot;Untätig&quot; gesetzt wurde</translation>
     </message>
     <message>
         <source>is Away and may not reply</source>
@@ -7977,7 +7981,7 @@ Diesem Kontakt stattdessen eine RS-Mail senden.</translation>
     </message>
     <message>
         <source>(Idle)</source>
-        <translation>(Inaktiv)</translation>
+        <translation>(Untätig)</translation>
     </message>
     <message>
         <source>(Online)</source>
@@ -9874,15 +9878,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Friend</source>
-        <translation type="unfinished">Freund</translation>
+        <translation>Freund</translation>
     </message>
     <message>
         <source>Browse</source>
-        <translation type="unfinished">Durchsuchen</translation>
+        <translation>Durchsuchen</translation>
     </message>
     <message>
         <source>New Msg</source>
-        <translation type="unfinished">Neue Nachricht</translation>
+        <translation>Neue Nachricht</translation>
     </message>
     <message>
         <source>Brose</source>
