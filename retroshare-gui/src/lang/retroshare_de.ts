@@ -1816,6 +1816,10 @@ und meinen GPG Schlüssel nicht unterzeichnet</translation>
         <source>Copy Peer</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Certificate</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ConnectDialog</name>
@@ -4160,7 +4164,7 @@ Fill in your GPG password when asked, to sign your new key.</source>
     </message>
     <message>
         <source>Idle</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Untätig</translation>
     </message>
     <message>
         <source>Idle Time</source>
@@ -6092,7 +6096,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Recomend this Friend to...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Freund weiterempfehlen...</translation>
     </message>
     <message>
         <source>Paste retroshare Link</source>
@@ -6100,7 +6104,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Idle</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Untätig</translation>
     </message>
 </context>
 <context>
@@ -7976,16 +7980,8 @@ Diesem Kontakt stattdessen eine RS-Mail senden.</translation>
         <translation>Schliessen</translation>
     </message>
     <message>
-        <source>(Offline)</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>(Idle)</source>
         <translation>(Untätig)</translation>
-    </message>
-    <message>
-        <source>(Online)</source>
-        <translation></translation>
     </message>
     <message>
         <source>(Away)</source>
@@ -7994,6 +7990,14 @@ Diesem Kontakt stattdessen eine RS-Mail senden.</translation>
     <message>
         <source>(Busy)</source>
         <translation>(Beschäftigt)</translation>
+    </message>
+    <message>
+        <source>(Online)</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>(Offline)</source>
+        <translation></translation>
     </message>
 </context>
 <context>

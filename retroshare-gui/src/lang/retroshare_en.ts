@@ -1439,7 +1439,7 @@ Available: %3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="616"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="626"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1450,73 +1450,73 @@ Available: %3</source>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.cpp" line="129"/>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="319"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="327"/>
         <source>RetroShare</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.cpp" line="130"/>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="320"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="328"/>
         <source>Error : cannot get peer details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="203"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="211"/>
         <source>Your key is signed by : </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="217"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="225"/>
         <source>Peer key is signed by : </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="246"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="254"/>
         <source>Your trust in this peer is ultimate, it&apos;s probably a key you own.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="255"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="263"/>
         <source>Your trust in this peer is full.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="261"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="269"/>
         <source>Your trust in this peer is marginal.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="267"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="275"/>
         <source>Your trust in this peer is none.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="273"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="281"/>
         <source>Your trust in this peer is not set.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="295"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="303"/>
         <source>Peer has authenticated me as a friend and did sign my GPG key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="297"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="305"/>
         <source>Peer has not authenticated me as a friend and did not sign my GPG key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="389"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="397"/>
         <source>Signature Failure</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="390"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="398"/>
         <source>Maybe password is wrong</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="419"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="427"/>
         <source>Copy Peer</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1597,7 +1597,12 @@ Available: %3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="603"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="585"/>
+        <source>Certificate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="613"/>
         <source>OK</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7690,62 +7695,62 @@ Do you want to send them a Message instead</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1220"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1244"/>
         <source>Save as...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1221"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1245"/>
         <source>Text File (*.txt );;All Files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1247"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1274"/>
         <source>apears to be Offline.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1247"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1274"/>
         <source>Messages you send will be lost and not delivered, rs-Mail this contact instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1249"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1275"/>
         <source>(Offline)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1256"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1282"/>
         <source>is Idle and may not reply</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1258"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1283"/>
         <source>(Idle)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1266"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1290"/>
         <source>(Online)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1272"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1296"/>
         <source>is Away and may not reply</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1275"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1298"/>
         <source>(Away)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1281"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1304"/>
         <source>is Busy and may not reply</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1284"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1306"/>
         <source>(Busy)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7755,20 +7760,19 @@ Do you want to send them a Message instead</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="242"/>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="255"/>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="268"/>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="329"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="256"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="269"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="317"/>
         <source>TextLabel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="342"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="330"/>
         <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="406"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="394"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -7777,7 +7781,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="545"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="666"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -7785,76 +7789,76 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="576"/>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="859"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="700"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="882"/>
         <source>Bold</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="605"/>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="869"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="732"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="892"/>
         <source>Underline</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="634"/>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="864"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="764"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="887"/>
         <source>Italic</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="663"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="796"/>
         <source>Set Font</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="692"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="828"/>
         <source>Text Color</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="761"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="545"/>
         <source>Attach a Picture</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="826"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="610"/>
         <source>Send</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="841"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="855"/>
         <source>toolBar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="874"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="897"/>
         <source>Strike</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="883"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="906"/>
         <source>Avatar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="886"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="909"/>
         <source>Set your Avatar Picture</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="895"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="918"/>
         <source>Clear Chat</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="903"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="926"/>
         <source>Disable Emoticons</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="908"/>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="911"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="931"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="934"/>
         <source>Save Chat History</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7864,23 +7868,23 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1158"/>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1163"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1182"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1187"/>
         <source>Drop file error.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1158"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1182"/>
         <source>File not found or file name not accepted.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1163"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1187"/>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="790"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="574"/>
         <source>Add a File for your Friend</source>
         <translation type="unfinished"></translation>
     </message>
