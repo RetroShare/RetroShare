@@ -25,37 +25,20 @@
 #include <QDateTime>
 #include <QString>
 
-
-
 class IMHistoryItem 
 {
 public:
    IMHistoryItem();
 
-   IMHistoryItem(const QString senderID,
-                 const QString receiverID,
-                 const QString text,
-                 const QDateTime time);
+   IMHistoryItem(bool incoming, std::string &id, const QString &name, const QDateTime &sendTime, const QString &messageText);
 
-   QDateTime time() const;
-   QString   sender();
-   QString   receiver();
-   QString text() const;
-
-   void setTime(QDateTime time);
-   void setTime(QString time);
-   void setSender(QString sender);
-   void setReceiver(QString receiver);
-   void setText(QString text);
+   bool        incoming;
+   std::string id;
+   QString     name;
+   QDateTime   sendTime;
+   QString     messageText;
 
    bool operator<(const IMHistoryItem& item) const;
-protected:
-
-   QDateTime vTime;
-   QString   vSender;
-   QString   vReceiver;
-   QString   vText;
-
 } ;
 
 #endif

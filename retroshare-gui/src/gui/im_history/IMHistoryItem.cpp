@@ -29,79 +29,13 @@ IMHistoryItem::IMHistoryItem()
 
 //============================================================================
 
-IMHistoryItem::IMHistoryItem(const QString senderID,
-                             const QString receiverID,
-                             const QString text,
-                             const QDateTime time)
+IMHistoryItem::IMHistoryItem(bool incomingIn, std::string &idIn, const QString &nameIn, const QDateTime &sendTimeIn, const QString &messageTextIn)
 {
-    setTime(time);
-    setReceiver(receiverID);
-    setText(text);
-    setSender(senderID);
-}
-
-//============================================================================
-
-QDateTime
-IMHistoryItem::time() const
-{
-    return vTime;
-}
-
-//============================================================================
-
-QString
-IMHistoryItem::sender()
-{
-    return vSender;
-}
-
-//============================================================================
-
-QString
-IMHistoryItem::receiver()
-{
-    return vReceiver ;
-}
-
-//============================================================================
-
-QString
-IMHistoryItem::text() const
-{
-    return vText;
-}
-
-//============================================================================
-
-void
-IMHistoryItem::setTime(QDateTime time)
-{
-    vTime = time;
-}
-
-//============================================================================
-
-void
-IMHistoryItem::setSender(QString sender)
-{
-    vSender = sender ;
-}
-
-//============================================================================
-
-void
-IMHistoryItem::setReceiver(QString receiver)
-{
-    vReceiver = receiver;
-}
-
-//============================================================================
-
-void
-IMHistoryItem::setText(QString text)
-{
-    vText = text ;
+    incoming = incomingIn;
+    id = idIn;
+    name = nameIn;
+    sendTime = sendTimeIn;
+    messageText = messageTextIn;
 }
 
 //============================================================================
@@ -110,5 +44,5 @@ IMHistoryItem::setText(QString text)
 bool
 IMHistoryItem::operator<(const IMHistoryItem& item) const
 {
-    return (vTime< item.time()) ;
+    return (sendTime < item.sendTime) ;
 }

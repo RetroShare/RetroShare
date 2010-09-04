@@ -31,6 +31,8 @@ class QTextCharFormat;
 class AttachFileItem;
 class ChatInfo;
 
+#include "ChatStyle.h"
+
 class PopupChatDialog : public QMainWindow
 {
   Q_OBJECT
@@ -79,16 +81,13 @@ protected:
   virtual void dragEnterEvent(QDragEnterEvent *event);
   virtual void dropEvent(QDropEvent *event);
 
-  void insertChatMsgs();
-  void addChatMsg(std::string &id, std::wstring &msg);
+  bool eventFilter(QObject *obj, QEvent *ev);
 
-  void loadEmoticons();
-  void loadEmoticons2();
+  void insertChatMsgs();
+  void addChatMsg(std::string &id, uint sendTime, std::wstring &msg);
 
   void updateAvatar();
 
-
-  QString loadEmptyStyle();
   QPixmap picture;
 
 private slots:
@@ -101,7 +100,6 @@ private slots:
   void getFont();
   void setFont();
  
-  void checkChat();
   void sendChat();
 
   void updatePeersCustomStateString(const QString& peer_id, const QString& status_string) ;
@@ -130,17 +128,15 @@ private:
    std::string  lastChatName;
 
    time_t last_status_send_time ;
-   QHash<QString, QString> smileys;
    QColor mCurrentColor;
    QFont  mCurrentFont;
 
-   QString styleHtm;
-   QString emptyStyle;
-   QStringList history;
+//   QStringList history;
    QString wholeChat;
    QString fileName; 
 
    bool m_bInsertOnVisible;
+   ChatStyle style;
 
   /** Qt Designer generated object */
   Ui::PopupChatDialog ui;

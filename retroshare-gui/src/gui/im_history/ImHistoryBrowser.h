@@ -35,22 +35,20 @@ class ImHistoryBrowser : public QDialog
 
 public:
     /** Default constructor */
-    ImHistoryBrowser(QWidget *parent = 0, Qt::WFlags flags = 0);
+    ImHistoryBrowser(IMHistoryKeeper &histKeeper, QWidget *parent = 0, Qt::WFlags flags = 0);
     /** Default destructor */
-
-
       
 private slots:
-
-
+    void historyAdd(IMHistoryItem item);
+    void historyClear();
 
 private:
+    void addItem(IMHistoryItem &item);
 
-    IMHistoryKeeper historyKeeper;
-    
+    IMHistoryKeeper &historyKeeper;
+
     /** Qt Designer generated object */
     Ui::ImHistoryBrowser ui;
-
 };
 
 #endif

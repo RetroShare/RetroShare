@@ -26,6 +26,8 @@
 #include "FeedHolder.h"
 #include "../RsAutoUpdatePage.h"
 #include "gui/msgs/MessageComposer.h"
+#include "gui/chat/ChatStyle.h"
+#include "gui/settings/rsharesettings.h"
 
 #include "gui/notifyqt.h"
 
@@ -137,7 +139,20 @@ void ChatMsgItem::insertChat(std::string &message)
     QString timestamp = QDateTime::currentDateTime().toString("hh:mm:ss");
     timestampLabel->setText(timestamp);
 
-    chatTextlabel->setText(QString::fromStdString(message));
+    QString formatMsg = QString::fromStdString(message);
+
+    ChatStyle style;
+    unsigned int formatFlag = CHAT_FORMATTEXT_EMBED_LINKS;
+
+    // embed smileys ?
+    if (Settings->valueFromGroup(QString("Chat"), QString::fromUtf8("Emoteicons_GroupChat"), true).toBool()) {
+        style.loadEmoticons();
+        formatFlag |= CHAT_FORMATTEXT_EMBED_SMILEYS;
+     }
+
+    formatMsg = style.formatText(formatMsg, formatFlag);
+
+    chatTextlabel->setText(formatMsg);
 }
 
 void ChatMsgItem::removeItem()

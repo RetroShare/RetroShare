@@ -22,7 +22,7 @@
 #ifndef _PEERSDIALOG_H
 #define _PEERSDIALOG_H
 
-#include "chat/HandleRichText.h"
+#include "chat/ChatStyle.h"
 #include "RsAutoUpdatePage.h"
 
 #include "mainpage.h"
@@ -60,7 +60,6 @@ public:
 		/** Default Destructor */
 		~PeersDialog ();
 
-		void loadEmoticonsgroupchat();
 		//  void setChatDialog(ChatDialog *cd);
 
 		virtual void updateDisplay() ;	// overloaded from RsAutoUpdatePage
@@ -96,6 +95,8 @@ public slots:
 protected:
     virtual void dragEnterEvent(QDragEnterEvent *event);
     virtual void dropEvent(QDropEvent *event);
+    bool eventFilter(QObject *obj, QEvent *ev);
+    void showEvent (QShowEvent *event);
 
 private slots:
 		void pasteLink() ;
@@ -129,7 +130,6 @@ private slots:
 
 		void setColor();      
 		void insertSendList();
-		void checkChat();
 		void sendMsg();
 		
 		void statusmessage();
@@ -166,6 +166,7 @@ signals:
 
 private:
 		void processSettings(bool bLoad);
+                void addChatMsg(bool incoming, bool history, QString &name, QDateTime &sendTime, QString &message);
 
 		class QLabel *iconLabel, *textLabel;
 		class QWidget *widget;
@@ -177,10 +178,6 @@ private:
 
 		QString fileName; 
 
-		/** store default information for embedding HTML */
-		RsChat::EmbedInHtmlAhref defEmbedAhref;
-		RsChat::EmbedInHtmlImg defEmbedImg;
-
 		/* Worker Functions */
 		/* (1) Update Display */
 
@@ -190,16 +187,12 @@ private:
 		/** Defines the actions for the context menu */
 		QAction* pasteLinkAct;
 
-    //QTreeWidget *peertreeWidget;
-
 		IMHistoryKeeper historyKeeper;
+		ChatStyle style;
 
 		QColor _currentColor;
 		bool _underline;
 		time_t last_status_send_time ;
-
-		QHash<QString, QString> smileys;
-		QWidget *smWidget;
 
 		QFont mCurrentFont; /* how the text will come out */
 

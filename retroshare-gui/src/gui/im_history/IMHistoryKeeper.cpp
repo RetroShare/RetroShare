@@ -23,6 +23,7 @@
 
 #include <QFile>
 #include <QIODevice>
+#include <QTimer>
 
 #include <QtAlgorithms> //for qSort
 
@@ -31,148 +32,137 @@
 #include "IMHistoryReader.h"
 #include "IMHistoryWriter.h"
 
-//#include <iostream>
-
 
 //=============================================================================
 
 IMHistoryKeeper::IMHistoryKeeper()
 {
-    hfName = "";
+    historyChanged = false;
+
+    // save histroy every 10 seconds (when changed)
+    saveTimer = new QTimer(this);
+    saveTimer->connect(saveTimer, SIGNAL(timeout()), this, SLOT(saveHistory()));
+    saveTimer->setInterval(10000);
+    saveTimer->start();
 };
-
-//=============================================================================
-
-IMHistoryKeeper::IMHistoryKeeper(QString historyFileName)
-{
-    hfName = historyFileName ;
-    loadHistoryFile( historyFileName );
-    //setHistoryFileName( historyFileName );
-    //IMHistoryWriter wri;
-    //wri.write(hitems, hfName);
-}
 
 //=============================================================================
 
 IMHistoryKeeper::~IMHistoryKeeper()
 {
-   //=== we have to save all messages
-    qSort( hitems.begin(), hitems.end() ) ; // not nesessary, but just in case...
-                                          // it will not take a long time over
-                                        //ordered array
-                                            
-    IMHistoryWriter wri;
-    wri.write(hitems, hfName);
+    saveHistory();
 }
 
 //=============================================================================
 
-void
-IMHistoryKeeper::addMessage(const QString fromID, const QString toID,
-                            const QString messageText)
+void IMHistoryKeeper::init(QString historyFileName)
 {
-    IMHistoryItem item(fromID, toID, messageText,
-                        QDateTime::currentDateTime());
+    hfName = historyFileName;
+    loadHistoryFile();
+}
 
-    hitems.append( item );
+//=============================================================================
+
+void IMHistoryKeeper::addMessage(bool incoming, std::string &id, const QString &name, const QDateTime &sendTime, const QString &messageText)
+{
+    IMHistoryItem item(incoming, id, name, sendTime, messageText);
+
+    hitems.append(item);
+
+    historyChanged = true;
+
+    emit historyAdd(item);
 
     //std::cerr << "IMHistoryKeeper::addMessage "
     //          << messageText.toStdString() << "\n";
 
     //std::cerr << "IMHistoryKeeper::addMessage count is" << hitems.count();
 }
+
 //=============================================================================
 
-int
-IMHistoryKeeper::loadHistoryFile(QString fileName)
+bool IMHistoryKeeper::loadHistoryFile()
 {
     qDebug() << "  IMHistoryKeeper::loadHistoryFile is here";
-    
-    QFile fl(fileName);
-    if ( !fl.exists() )
-    {
-       lastErrorMessage = QString("history file not found (%1)").arg(fileName) ;
-       return 1;
+
+    if (hfName.isEmpty()) {
+        lastErrorMessage = "history file not set";
+        return false;
+    }
+
+    QFile fl(hfName);
+    if (!fl.exists()) {
+       lastErrorMessage = QString("history file not found (%1)").arg(hfName) ;
+       return false;
     }
 
     IMHistoryReader hreader;    
-    if( !hreader.read( hitems, fileName ) )
-    {
+    if (!hreader.read(hitems, hfName)) {
         lastErrorMessage = hreader.errorMessage();
-        return 1;
+        return false;
     }
 
-    qSort( hitems.begin(), hitems.end() )          ;
+    qSort(hitems.begin(), hitems.end());
 
     qDebug() << "  IMHistoryKeeper::loadHistoryFile finished";
-    return 0;
+
+    historyChanged = false;
+
+    return true;
 }
 
 //=============================================================================
 
-QString
-IMHistoryKeeper::errorMessage()
+QString IMHistoryKeeper::errorMessage()
 {
-    return lastErrorMessage;
-    lastErrorMessage = "No error" ;
+    QString errorMessage = lastErrorMessage;
+    lastErrorMessage.clear();
+    return errorMessage;
 }
 
 //=============================================================================
 
-int
-IMHistoryKeeper::getMessages(QStringList& messagesList,
-                             const QString fromID, const QString toID,
-                             const int messagesCount )
+bool IMHistoryKeeper::getMessages(QList<IMHistoryItem> &historyItems, const int messagesCount)
 {
     int messFound = 0;
-    QList<IMHistoryItem> ril;//result item list
+
+    historyItems.clear();
 
     QListIterator<IMHistoryItem> hii(hitems);
     hii.toBack();
-    while (hii.hasPrevious() && (messFound<messagesCount))
-    {
+    while (hii.hasPrevious()) {
         IMHistoryItem hitem = hii.previous();
-        if ( ( (fromID.isEmpty())&&( hitem.receiver()==toID) ) ||
-             ( (hitem.sender()==fromID)&&( hitem.receiver()==toID) ) ||
-             ( (hitem.receiver()== fromID)&&(hitem.sender()==toID) ) )
-        {
-            ril << hitem ;
-            messFound++;
-            if (messFound>=messagesCount)
-                break;
+
+        historyItems.insert(historyItems.begin(), hitem);
+        messFound++;
+        if (messagesCount && messFound >= messagesCount) {
+            break;
         }
     }
 
-    formStringList(ril, messagesList) ;
-
-    return 0; // successful end
+    return true; // successful end
 }
 
 //=============================================================================
 
-void
-IMHistoryKeeper::formStringList(QList<IMHistoryItem>& itemList,
-                                QStringList& strList)
+void IMHistoryKeeper::clear()
 {
-    strList.clear();
+    hitems.clear();
+    historyChanged = true;
 
-    QListIterator<IMHistoryItem> hii(itemList);
-    hii.toBack();
-    while (hii.hasPrevious() )
-    {
-        IMHistoryItem hitem = hii.previous();
+    emit historyClear();
+}
 
-        QString tline;
+//=============================================================================
 
-        tline = QString("<strong><u>%1</u> %2 : </strong>"
-                        "<span style=\"color:#008800\">%3</span>")
-                       .arg(hitem.time().toString( Qt::TextDate ) )
-                       .arg(hitem.sender())
-                       .arg(hitem.text()) ;
-        
-        strList.append( tline );
+void IMHistoryKeeper::saveHistory()
+{
+    if (historyChanged && hfName.isEmpty() == false) {
+        //=== we have to save all messages
+        qSort( hitems.begin(), hitems.end() ) ; // not nesessary, but just in case...
+                                                // it will not take a long time over ordered array
+
+        IMHistoryWriter wri;
+        wri.write(hitems, hfName);
     }
 }
-        
-//=============================================================================
-

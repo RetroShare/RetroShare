@@ -48,34 +48,38 @@ ChatPage::closeEvent (QCloseEvent * event)
 bool
 ChatPage::save(QString &errmsg)
 {
-  Settings->beginGroup(QString("Chat"));
+    Settings->beginGroup(QString("Chat"));
 
-  Settings->setValue(QString::fromUtf8("Emoteicons_PrivatChat"), emotePrivatChat());
-  Settings->setValue(QString::fromUtf8("Emoteicons_GroupChat"), emoteGroupChat());
-  Settings->setValue(QString::fromUtf8("GroupChat_History"), groupchatHistory());
-  Settings->setValue(QString::fromUtf8("ChatScreenFont"), fontTempChat.toString());
+    Settings->setValue(QString::fromUtf8("Emoteicons_PrivatChat"), emotePrivatChat());
+    Settings->setValue(QString::fromUtf8("Emoteicons_GroupChat"), emoteGroupChat());
+    Settings->setValue(QString::fromUtf8("GroupChat_History"), groupchatHistory());
+    Settings->setValue(QString::fromUtf8("ChatScreenFont"), fontTempChat.toString());
 
-  Settings->endGroup();
+    Settings->endGroup();
 
-  return true;
+    Settings->setChatSendMessageWithCtrlReturn(ui.sendMessageWithCtrlReturn->isChecked());
+
+    return true;
 }
 
 /** Loads the settings for this page */
 void
 ChatPage::load()
 {
-  Settings->beginGroup(QString("Chat"));
+    Settings->beginGroup(QString("Chat"));
 
-  ui.checkBox_emoteprivchat->setChecked(Settings->value(QString::fromUtf8("Emoteicons_PrivatChat"), true).toBool());
-  ui.checkBox_emotegroupchat->setChecked(Settings->value(QString::fromUtf8("Emoteicons_GroupChat"), true).toBool());
-  ui.checkBox_groupchathistory->setChecked(Settings->value(QString::fromUtf8("GroupChat_History"), true).toBool());
+    ui.checkBox_emoteprivchat->setChecked(Settings->value(QString::fromUtf8("Emoteicons_PrivatChat"), true).toBool());
+    ui.checkBox_emotegroupchat->setChecked(Settings->value(QString::fromUtf8("Emoteicons_GroupChat"), true).toBool());
+    ui.checkBox_groupchathistory->setChecked(Settings->value(QString::fromUtf8("GroupChat_History"), true).toBool());
 
-  fontTempChat.fromString(Settings->value(QString::fromUtf8("ChatScreenFont")).toString());
+    fontTempChat.fromString(Settings->value(QString::fromUtf8("ChatScreenFont")).toString());
 
-  Settings->endGroup();
+    Settings->endGroup();
 
-  ui.labelChatFontPreview->setText(fontTempChat.rawName());
-  ui.labelChatFontPreview->setFont(fontTempChat);
+    ui.sendMessageWithCtrlReturn->setChecked(Settings->getChatSendMessageWithCtrlReturn());
+
+    ui.labelChatFontPreview->setText(fontTempChat.rawName());
+    ui.labelChatFontPreview->setFont(fontTempChat);
 }
 
 bool ChatPage::emotePrivatChat() const {

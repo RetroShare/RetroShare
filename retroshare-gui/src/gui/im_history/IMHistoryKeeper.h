@@ -25,18 +25,19 @@
 #include <QObject>
 #include <QDebug>
 #include <QString>
-#include <QStringList>
 
 #include "IMHistoryItem.h"
 
+class QTimer;
+
 //! An engine for instant messaging history management
 
-//!     This class holds history for instant messages. It stores all messages
+//! This class holds history for instant messages. It stores all messages
 //! in xml file. Something like
 //! <?xml version="1.0" encoding="UTF-8"?>
 //! <!DOCTYPE history_file>
 //! <history_file format_version="1.0">
-//!   <message dt="10000" sender="ALL" receiver="THIS">manual message</message>
+//!   <message sendTime="10000" id="id" name="Name">manual message</message>
 //!   ...
 //!   other messages in <message..> ... </message> tags
 //!   ...
@@ -45,49 +46,55 @@
 //! The class loads all messages from the file after creation, and saves them
 //! at destruction. This means, the more history user has, the more memory
 //! will be used. Maybe it's not good, but it isn't so large, I think 
-class IMHistoryKeeper//: public QObject
+
+class IMHistoryKeeper : public QObject
 {
-//    Q_OBJECT
+    Q_OBJECT
+
 public:
     IMHistoryKeeper();
     
-    IMHistoryKeeper(QString historyFileName);
-
     //! A destructor
 
     //! Warning: history messages will be saved to the file here. This means,
     //! a IMHistoryKeeper object must be deleted properly.
     virtual ~IMHistoryKeeper();
-    
+
     //! last error description
     QString errorMessage();
 
+    //! initialize history keeper
+    void init(QString historyFileName);
+
     //! Select messages from history
 
-    //! Fills given list with html-decorated messages (see formStringList(..))
-    //! Takes no more then messageText messages from history, where messages
-    //! were sent from fromID to toID, or from toID to fromID. Also, if
-    //! fromID id ""(empty string), all messages, sent to toID, will be
-    //! extracted
-    int getMessages(QStringList& messagesList,
-                    const QString fromID, const QString toID,
-                    const int messagesCount = 5);
+    //! Fills given list with items
+    bool getMessages(QList<IMHistoryItem> &historyItems, const int messagesCount);
 
     //! Adds new message to the history
 
     //! Adds new message to the history, but the message will be saved to
     //! file only after destroing the object
-    void addMessage(const QString fromID, const QString toID,
-                    const QString messageText);
-            
-protected:
-    int loadHistoryFile(QString fileName);
-    void formStringList(QList<IMHistoryItem>& itemList, QStringList& strList);
+    void addMessage(bool incoming, std::string &id, const QString &name, const QDateTime &sendTime, const QString &messageText);
+
+    //! Clear the history
+    void clear();
+
+private:
+    bool loadHistoryFile();
 
     QList<IMHistoryItem> hitems;
     QString hfName ; //! history file name
+    bool historyChanged;
     QString lastErrorMessage;
+    QTimer *saveTimer;
 
+private slots:
+    void saveHistory();
+
+signals:
+    void historyAdd(IMHistoryItem item) const;
+    void historyClear() const;
 };
 
 #endif //  _HISTORY_KEEPER_H_

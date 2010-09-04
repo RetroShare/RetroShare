@@ -289,6 +289,16 @@ void RshareSettings::setAddFeedsAtEnd(bool bValue)
     setValue("AddFeedsAtEnd", bValue);
 }
 
+bool RshareSettings::getChatSendMessageWithCtrlReturn()
+{
+    return valueFromGroup("Chat", "SendMessageWithCtrlReturn", false).toBool();
+}
+
+void RshareSettings::setChatSendMessageWithCtrlReturn(bool bValue)
+{
+    setValueToGroup("Chat", "SendMessageWithCtrlReturn", bValue);
+}
+
 /** Returns true if RetroShare is set to run on system boot. */
 bool
 RshareSettings::runRetroshareOnBoot()

@@ -24,7 +24,6 @@
 #include <QShortcut>
 #include <QWidgetAction>
 #include <QScrollBar>
-#include <QDesktopWidget>
 #include <QColorDialog>
 #include <QFontDialog>
 #include <QDropEvent>
@@ -32,7 +31,7 @@
 #include "common/vmessagebox.h"
 #include <gui/mainpagestack.h>
 
-#include "rshare.h"
+#include "retroshare/rsinit.h"
 #include "PeersDialog.h"
 #include <retroshare/rsiface.h>
 #include <retroshare/rspeers.h>
@@ -139,127 +138,134 @@ private:
 
 /** Constructor */
 PeersDialog::PeersDialog(QWidget *parent)
-            : RsAutoUpdatePage(1500,parent),
-              historyKeeper(Rshare::dataDirectory() + "/his1.xml"),
-              smWidget(0)
+            : RsAutoUpdatePage(1500,parent)
 {
-  /* Invoke the Qt Designer generated object setup routine */
-  ui.setupUi(this);
-  
-  last_status_send_time = 0 ;
+    /* Invoke the Qt Designer generated object setup routine */
+    ui.setupUi(this);
 
+    last_status_send_time = 0 ;
 
-  connect( ui.peertreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( peertreeWidgetCostumPopupMenu( QPoint ) ) );
-  connect( ui.peertreeWidget, SIGNAL( itemDoubleClicked ( QTreeWidgetItem *, int)), this, SLOT(chatfriend(QTreeWidgetItem *)));
+    connect( ui.peertreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( peertreeWidgetCostumPopupMenu( QPoint ) ) );
+    connect( ui.peertreeWidget, SIGNAL( itemDoubleClicked ( QTreeWidgetItem *, int)), this, SLOT(chatfriend(QTreeWidgetItem *)));
 
-  connect( ui.avatartoolButton, SIGNAL(clicked()), SLOT(getAvatar()));
-  connect( ui.mypersonalstatuslabel, SIGNAL(clicked()), SLOT(statusmessage()));
-  connect( ui.actionSet_your_Avatar, SIGNAL(triggered()), this, SLOT(getAvatar()));
-  connect( ui.actionSet_your_Personal_Message, SIGNAL(triggered()), this, SLOT(statusmessage()));
-  connect( ui.addfileButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
-  connect( ui.msgText, SIGNAL(anchorClicked(const QUrl &)), SLOT(anchorClicked(const QUrl &)));
+    connect( ui.avatartoolButton, SIGNAL(clicked()), SLOT(getAvatar()));
+    connect( ui.mypersonalstatuslabel, SIGNAL(clicked()), SLOT(statusmessage()));
+    connect( ui.actionSet_your_Avatar, SIGNAL(triggered()), this, SLOT(getAvatar()));
+    connect( ui.actionSet_your_Personal_Message, SIGNAL(triggered()), this, SLOT(statusmessage()));
+    connect( ui.addfileButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
+    connect( ui.msgText, SIGNAL(anchorClicked(const QUrl &)), SLOT(anchorClicked(const QUrl &)));
 
-  connect(ui.action_Hide_Offline_Friends, SIGNAL(triggered()), this, SLOT(insertPeers()));
-  connect(ui.action_Hide_Status_Column, SIGNAL(triggered()), this, SLOT(statusColumn()));
+    connect(ui.action_Hide_Offline_Friends, SIGNAL(triggered()), this, SLOT(insertPeers()));
+    connect(ui.action_Hide_Status_Column, SIGNAL(triggered()), this, SLOT(statusColumn()));
 
-  ui.peertabWidget->setTabPosition(QTabWidget::North);
-  ui.peertabWidget->addTab(new ProfileWidget(),QString(tr("Profile")));
-  ui.peertabWidget->addTab(new NewsFeed(),QString(tr("Friends Storm")));
+    ui.peertabWidget->setTabPosition(QTabWidget::North);
+    ui.peertabWidget->addTab(new ProfileWidget(),QString(tr("Profile")));
+    ui.peertabWidget->addTab(new NewsFeed(),QString(tr("Friends Storm")));
 
-  ui.peertreeWidget->setColumnCount(4);
-  ui.peertreeWidget->setColumnHidden ( 3, true);
-  ui.peertreeWidget->setColumnHidden ( 2, true);
-  ui.peertreeWidget->sortItems( 0, Qt::AscendingOrder );
+    ui.peertreeWidget->setColumnCount(4);
+    ui.peertreeWidget->setColumnHidden ( 3, true);
+    ui.peertreeWidget->setColumnHidden ( 2, true);
+    ui.peertreeWidget->sortItems( 0, Qt::AscendingOrder );
 
-  // set header text aligment
-  QTreeWidgetItem * headerItem = ui.peertreeWidget->headerItem();
-  headerItem->setTextAlignment(COLUMN_NAME, Qt::AlignHCenter | Qt::AlignVCenter);
-  headerItem->setTextAlignment(COLUMN_STATE, Qt::AlignLeft | Qt::AlignVCenter);
-  headerItem->setTextAlignment(COLUMN_INFO, Qt::AlignHCenter | Qt::AlignVCenter);
+    // set header text aligment
+    QTreeWidgetItem * headerItem = ui.peertreeWidget->headerItem();
+    headerItem->setTextAlignment(COLUMN_NAME, Qt::AlignHCenter | Qt::AlignVCenter);
+    headerItem->setTextAlignment(COLUMN_STATE, Qt::AlignLeft | Qt::AlignVCenter);
+    headerItem->setTextAlignment(COLUMN_INFO, Qt::AlignHCenter | Qt::AlignVCenter);
 
-  connect(ui.lineEdit, SIGNAL(textChanged ( ) ), this, SLOT(checkChat( ) ));
-  connect(ui.Sendbtn, SIGNAL(clicked()), this, SLOT(sendMsg()));
-  connect(ui.emoticonBtn, SIGNAL(clicked()), this, SLOT(smileyWidgetgroupchat()));
+    connect(ui.Sendbtn, SIGNAL(clicked()), this, SLOT(sendMsg()));
+    connect(ui.emoticonBtn, SIGNAL(clicked()), this, SLOT(smileyWidgetgroupchat()));
 
-  ui.lineEdit->setContextMenuPolicy(Qt::CustomContextMenu) ;
-  connect(ui.lineEdit,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(contextMenu(QPoint)));
+    ui.lineEdit->setContextMenuPolicy(Qt::CustomContextMenu) ;
+    connect(ui.lineEdit,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(contextMenu(QPoint)));
 
-  pasteLinkAct = new QAction(QIcon(":/images/pasterslink.png"), tr( "Paste retroshare Link" ), this );
-  connect( pasteLinkAct , SIGNAL( triggered() ), this, SLOT( pasteLink() ) );
+    pasteLinkAct = new QAction(QIcon(":/images/pasterslink.png"), tr( "Paste retroshare Link" ), this );
+    connect( pasteLinkAct , SIGNAL( triggered() ), this, SLOT( pasteLink() ) );
 
-  connect( ui.msgText, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(displayInfoChatMenu(const QPoint&)));
+    connect( ui.msgText, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(displayInfoChatMenu(const QPoint&)));
 
-  connect(ui.textboldChatButton, SIGNAL(clicked()), this, SLOT(setFont()));
-  connect(ui.textunderlineChatButton, SIGNAL(clicked()), this, SLOT(setFont()));
-  connect(ui.textitalicChatButton, SIGNAL(clicked()), this, SLOT(setFont()));
-  connect(ui.fontsButton, SIGNAL(clicked()), this, SLOT(getFont()));
-  connect(ui.colorChatButton, SIGNAL(clicked()), this, SLOT(setColor()));
-  connect(ui.actionSave_History, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
+    connect(ui.textboldChatButton, SIGNAL(clicked()), this, SLOT(setFont()));
+    connect(ui.textunderlineChatButton, SIGNAL(clicked()), this, SLOT(setFont()));
+    connect(ui.textitalicChatButton, SIGNAL(clicked()), this, SLOT(setFont()));
+    connect(ui.fontsButton, SIGNAL(clicked()), this, SLOT(getFont()));
+    connect(ui.colorChatButton, SIGNAL(clicked()), this, SLOT(setColor()));
+    connect(ui.actionSave_History, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
 
-  ui.fontsButton->setIcon(QIcon(QString(":/images/fonts.png")));
+    ui.fontsButton->setIcon(QIcon(QString(":/images/fonts.png")));
 
-  _currentColor = Qt::black;
-  QPixmap pxm(16,16);
-  pxm.fill(_currentColor);
-  ui.colorChatButton->setIcon(pxm);
+    _currentColor = Qt::black;
 
-  Settings->beginGroup(QString("Chat"));
-  mCurrentFont.fromString(Settings->value(QString::fromUtf8("ChatScreenFont")).toString());
-  ui.lineEdit->setFont(mCurrentFont);
- 
-  setChatInfo(tr("Welcome to RetroShare's group chat."), QString::fromUtf8("blue"));
+    QPixmap pxm(16,16);
+    pxm.fill(_currentColor);
+    ui.colorChatButton->setIcon(pxm);
 
-  if (Settings->value(QString::fromUtf8("GroupChat_History"), true).toBool())
-  {
-    QStringList him;
-    historyKeeper.getMessages(him, "", "THIS", 8);
-    foreach(QString mess, him)
-    ui.msgText->append(mess);
-  }  
-  Settings->endGroup();
+    mCurrentFont.fromString(Settings->valueFromGroup("Chat", QString::fromUtf8("ChatScreenFont")).toString());
+    ui.lineEdit->setFont(mCurrentFont);
 
-  //setChatInfo(mess,  "green");
+    style.setStylePath(":/qss/chat/public");
+    style.loadEmoticons();
 
-  QMenu * grpchatmenu = new QMenu();
-  grpchatmenu->addAction(ui.actionClearChat);
-  grpchatmenu->addAction(ui.actionSave_History);
-  grpchatmenu->addAction(ui.actionMessageHistory);
-  ui.menuButton->setMenu(grpchatmenu);
+    setChatInfo(tr("Welcome to RetroShare's group chat."), QString::fromUtf8("blue"));
 
-  _underline = false;
+    if (Settings->valueFromGroup("Chat", QString::fromUtf8("GroupChat_History"), true).toBool()) {
+        historyKeeper.init(QString::fromStdString(RsInit::RsProfileConfigDirectory()) + "/chatPublic.xml");
 
-  QMenu *menu = new QMenu();
-  menu->addAction(ui.actionAdd_Friend);
-  menu->addSeparator();
-  menu->addAction(ui.actionCreate_New_Forum);
-  #ifndef RS_RELEASE_VERSION
-  menu->addAction(ui.actionCreate_New_Channel);
-  #endif
-  menu->addAction(ui.actionSet_your_Avatar);
-  menu->addAction(ui.actionSet_your_Personal_Message);
-  
-  ui.menupushButton->setMenu(menu);
-  
-  //ui.msgText->setOpenExternalLinks ( false );
-  //ui.msgText->setOpenLinks ( false );
-  
-  setAcceptDrops(true);
-  ui.lineEdit->setAcceptDrops(false);
-  
-  updateAvatar();
-  loadmypersonalstatus();
-  loadEmoticonsgroupchat();
-  displayMenu();
+        QList<IMHistoryItem> historyItems;
+        historyKeeper.getMessages(historyItems, 20);
+        foreach(IMHistoryItem item, historyItems) {
+            addChatMsg(item.incoming, true, item.name, item.sendTime, item.messageText);
+        }
+    }
 
-  // load settings
-  processSettings(true);
+    QMenu * grpchatmenu = new QMenu();
+    grpchatmenu->addAction(ui.actionClearChat);
+    grpchatmenu->addAction(ui.actionSave_History);
+    grpchatmenu->addAction(ui.actionMessageHistory);
+    ui.menuButton->setMenu(grpchatmenu);
 
-  // workaround for Qt bug, should be solved in next Qt release 4.7.0
-  // http://bugreports.qt.nokia.com/browse/QTBUG-8270
-  QShortcut *Shortcut = new QShortcut(QKeySequence (Qt::Key_Delete), ui.peertreeWidget, 0, 0, Qt::WidgetShortcut);
-  connect(Shortcut, SIGNAL(activated()), this, SLOT( removefriend ()));
+    _underline = false;
 
-  /* Hide platform specific features */
+    QMenu *menu = new QMenu();
+    menu->addAction(ui.actionAdd_Friend);
+    menu->addSeparator();
+    menu->addAction(ui.actionCreate_New_Forum);
+#ifndef RS_RELEASE_VERSION
+    menu->addAction(ui.actionCreate_New_Channel);
+#endif
+    menu->addAction(ui.actionSet_your_Avatar);
+    menu->addAction(ui.actionSet_your_Personal_Message);
+
+    ui.menupushButton->setMenu(menu);
+
+    //ui.msgText->setOpenExternalLinks ( false );
+    //ui.msgText->setOpenLinks ( false );
+
+    setAcceptDrops(true);
+    ui.lineEdit->setAcceptDrops(false);
+
+    updateAvatar();
+    loadmypersonalstatus();
+    displayMenu();
+
+    // load settings
+    processSettings(true);
+
+    // workaround for Qt bug, should be solved in next Qt release 4.7.0
+    // http://bugreports.qt.nokia.com/browse/QTBUG-8270
+    QShortcut *Shortcut = new QShortcut(QKeySequence (Qt::Key_Delete), ui.peertreeWidget, 0, 0, Qt::WidgetShortcut);
+    connect(Shortcut, SIGNAL(activated()), this, SLOT( removefriend ()));
+
+    ui.lineEdit->installEventFilter(this);
+
+    // add self nick and Avatar to Friends.
+    RsPeerDetails pd ;
+    if (rsPeers->getPeerDetails(rsPeers->getOwnId(),pd)) {
+        QString titleStr("<span style=\"font-size:16pt; font-weight:500;"
+                         "color:#32cd32;\">%1</span>");
+        ui.nicklabel->setText(titleStr.arg(QString::fromStdString(pd.name) + tr(" (me)") + QString::fromStdString(pd.location)));
+    }
+
+    /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
 #endif
@@ -269,8 +275,6 @@ PeersDialog::~PeersDialog ()
 {
     // save settings
     processSettings(false);
-
-    delete smWidget;
 }
 
 void PeersDialog::processSettings(bool bLoad)
@@ -312,6 +316,17 @@ void PeersDialog::processSettings(bool bLoad)
     }
 
     Settings->endGroup();
+}
+
+void PeersDialog::showEvent(QShowEvent *event)
+{
+    static bool first = true;
+    if (first) {
+        // Workaround: now the scroll position is correct calculated
+        first = false;
+        QScrollBar *scrollbar = ui.msgText->verticalScrollBar();
+        scrollbar->setValue(scrollbar->maximum());
+    }
 }
 
 void PeersDialog::pasteLink()
@@ -468,15 +483,7 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
 
 void PeersDialog::updateDisplay()
 {
-        // add self nick and Avatar to Friends.
-        RsPeerDetails pd ;
-        if (rsPeers->getPeerDetails(rsPeers->getOwnId(),pd)) {
-                QString titleStr("<span style=\"font-size:16pt; font-weight:500;"
-                       "color:#32cd32;\">%1</span>");
-                ui.nicklabel->setText(titleStr.arg(QString::fromStdString(pd.name) + tr(" (me)") + QString::fromStdString(pd.location))) ;
-        }
-
-        insertPeers() ;
+    insertPeers() ;
 }
 
 /* get the list of peers from the RsIface.  */
@@ -1087,6 +1094,34 @@ void PeersDialog::publicChatChanged(int type)
     }
 }
 
+void PeersDialog::addChatMsg(bool incoming, bool history, QString &name, QDateTime &sendTime, QString &message)
+{
+    unsigned int formatFlag = CHAT_FORMATMSG_EMBED_LINKS;
+
+    // embed smileys ?
+    if (Settings->valueFromGroup(QString("Chat"), QString::fromUtf8("Emoteicons_GroupChat"), true).toBool()) {
+        formatFlag |= CHAT_FORMATMSG_EMBED_SMILEYS;
+    }
+
+    ChatStyle::enumFormatMessage type;
+    if (incoming) {
+        if (history) {
+            type = ChatStyle::FORMATMSG_HINCOMING;
+        } else {
+            type = ChatStyle::FORMATMSG_INCOMING;
+        }
+    } else {
+        if (history) {
+            type = ChatStyle::FORMATMSG_HOUTGOING;
+        } else {
+            type = ChatStyle::FORMATMSG_OUTGOING;
+        }
+    }
+    QString formatMsg = style.formatMessage(type, name, sendTime, message, formatFlag);
+
+    ui.msgText->append(formatMsg);
+}
+
 void PeersDialog::insertChat()
 {
     std::list<ChatInfo> newchat;
@@ -1100,19 +1135,11 @@ void PeersDialog::insertChat()
 #ifdef PEERS_DEBUG
     std::cerr << "got new chat." << std::endl;
 #endif
-    QTextEdit *msgWidget = ui.msgText;
     std::list<ChatInfo>::iterator it;
 
     /* add in lines at the bottom */
     for(it = newchat.begin(); it != newchat.end(); it++)
     {
-        std::string msg(it->msg.begin(), it->msg.end());
-#ifdef PEERS_DEBUG
-        std::cerr << "PeersDialog::insertChat(): " << msg << std::endl;
-#endif
-
-        std::string peer_name = rsPeers->getPeerName(it->rsid);
-
         /* are they private? */
         if (it->chatflags & RS_CHAT_PRIVATE)
         {
@@ -1120,95 +1147,79 @@ void PeersDialog::insertChat()
             continue;
         }
 
-        std::ostringstream out;
-        QString extraTxt;
+        QDateTime sendTime = QDateTime::fromTime_t(it->sendTime);
+        QString name = QString::fromStdString(rsPeers->getPeerName(it->rsid));
+        QString msg = QString::fromStdWString(it->msg);
 
-        QString timestamp = QDateTime::currentDateTime().toString("hh:mm:ss");
-        QString name = QString::fromStdString(peer_name);
-        QString line = "<span style=\"color:#C00000\">" + timestamp + "</span>" +
-                       "<span style=\"color:#2D84C9\"><strong>" + " " + name + "</strong></span>";
-        QString msgContents = QString::fromStdWString(it->msg);
+#ifdef PEERS_DEBUG
+        std::cerr << "PeersDialog::insertChat(): " << msg << std::endl;
+#endif
 
-        //std::cerr << "PeersDialog::insertChat(): 1.11\n";
-        historyKeeper.addMessage(name, "THIS", msgContents);
-        //std::cerr << "PeersDialog::insertChat(): 1.12\n";
-        extraTxt += line;
+        bool incoming = false;
 
         // notify with a systray icon msg
         if(it->rsid != rsPeers->getOwnId())
         {
+            incoming = true;
+
             // This is a trick to translate HTML into text.
-            QTextEdit editor ;
-            editor.setHtml(QString::fromStdWString(it->msg));
-            QString notifyMsg(name+": "+editor.toPlainText()) ;
+            QTextEdit editor;
+            editor.setHtml(msg);
+            QString notifyMsg = name + ": " + editor.toPlainText();
 
             if(notifyMsg.length() > 30)
-                emit notifyGroupChat(QString("New group chat"), notifyMsg.left(30)+QString("..."));
+                emit notifyGroupChat(QString("New group chat"), notifyMsg.left(30) + QString("..."));
             else
                 emit notifyGroupChat(QString("New group chat"), notifyMsg);
         }
 
-        // create a DOM tree object from the message and embed contents with HTML tags
-        QDomDocument doc;
-        doc.setContent(msgContents);
-
-        // embed links
-        QDomElement body = doc.documentElement();
-        RsChat::embedHtml(doc, body, defEmbedAhref);
-
-        // embed smileys
-        Settings->beginGroup("Chat");
-        if (Settings->value(QString::fromUtf8("Emoteicons_GroupChat"), true).toBool())
-            RsChat::embedHtml(doc, body, defEmbedImg);
-        Settings->endGroup();
-
-        msgContents = doc.toString(-1);		// -1 removes any annoying carriage return misinterpreted by QTextEdit
-        extraTxt += msgContents;
-
-        if ((msgWidget->verticalScrollBar()->maximum() - 30) < msgWidget->verticalScrollBar()->value() ) {
-            msgWidget->append(extraTxt);
-        } else {
-            //the vertical scroll is not at the bottom, so just update the text, the scroll will stay at the current position
-            int scroll = msgWidget->verticalScrollBar()->value();
-            msgWidget->setHtml(msgWidget->toHtml() + extraTxt);
-            msgWidget->verticalScrollBar()->setValue(scroll);
-            msgWidget->update();
-        }
+        historyKeeper.addMessage(incoming, it->rsid, name, sendTime, msg);
+        addChatMsg(incoming, false, name, sendTime, msg);
     }
 }
 
-void PeersDialog::checkChat()
+bool PeersDialog::eventFilter(QObject *obj, QEvent *event)
 {
-	/* if <return> at the end of the text -> we can send it! */
-        QTextEdit *chatWidget = ui.lineEdit;
-        std::string txt = chatWidget->toPlainText().toStdString();
-	if ('\n' == txt[txt.length()-1])
-	{
-		//std::cerr << "Found <return> found at end of :" << txt << ": should send!";
-		//std::cerr << std::endl;
-		if (txt.length()-1 == txt.find('\n')) /* only if on first line! */
-		{
-			/* should remove last char ... */
-			sendMsg();
-		}
-	}
-	else
-	{
-		updateStatusTyping() ;
+    if (obj == ui.lineEdit) {
+        if (event->type() == QEvent::KeyPress) {
+            updateStatusTyping() ;
 
-		//std::cerr << "No <return> found in :" << txt << ":";
-		//std::cerr << std::endl;
-	}
+            QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+            if (keyEvent && (keyEvent->key() == Qt::Key_Enter || keyEvent->key() == Qt::Key_Return)) {
+                // Enter pressed
+                if (Settings->getChatSendMessageWithCtrlReturn()) {
+                    if (keyEvent->modifiers() & Qt::ControlModifier) {
+                        // send message with Ctrl+Enter
+                        sendMsg();
+                        return true; // eat event
+                    }
+                } else {
+                    if (keyEvent->modifiers() & Qt::ControlModifier) {
+                        // insert return
+                        ui.lineEdit->textCursor().insertText("\n");
+                    } else {
+                        // send message with Enter
+                        sendMsg();
+                    }
+                    return true; // eat event
+                }
+            }
+        }
+    }
+    // pass the event on to the parent class
+    return RsAutoUpdatePage::eventFilter(obj, event);
 }
 
 void PeersDialog::sendMsg()
 {
     QTextEdit *lineWidget = ui.lineEdit;
 
-    //ci.msg = lineWidget->Text().toStdWString();
-    std::wstring message = lineWidget->toHtml().toStdWString();
+    if (lineWidget->toPlainText().isEmpty()) {
+        // nothing to send
+        return;
+    }
 
-    //historyKeeper.addMessage("THIS", "ALL", lineWidget->toHtml() );
+    std::wstring message = lineWidget->toHtml().toStdWString();
 
 #ifdef PEERS_DEBUG
     std::string msg(ci.msg.begin(), ci.msg.end());
@@ -1373,7 +1384,8 @@ void PeersDialog::setChatInfo(QString info, QColor color)
 
 void PeersDialog::on_actionClearChat_triggered()
 {
-  ui.msgText->clear();
+    ui.msgText->clear();
+    historyKeeper.clear();
 }
 
 void PeersDialog::displayInfoChatMenu(const QPoint& pos)
@@ -1385,143 +1397,14 @@ void PeersDialog::displayInfoChatMenu(const QPoint& pos)
   myChatMenu.exec(mapToGlobal(pos)+QPoint(0,80));
 }
 
-void PeersDialog::loadEmoticonsgroupchat()
-{
-	QString sm_codes;
-	#if defined(Q_OS_WIN32)
-	QFile sm_file(QApplication::applicationDirPath() + "/emoticons/emotes.acs");
-	#else
-	QFile sm_file(QString(":/smileys/emotes.acs"));
-	#endif
-	if(!sm_file.open(QIODevice::ReadOnly))
-	{
-		std::cerr << "Could not open resouce file :/emoticons/emotes.acs" << std::endl ;
-		return ;
-	}
-	sm_codes = sm_file.readAll();
-	sm_file.close();
-	sm_codes.remove("\n");
-	sm_codes.remove("\r");
-	int i = 0;
-	QString smcode;
-	QString smfile;
-	while(sm_codes[i] != '{')
-	{
-		i++;
-
-	}
-	while (i < sm_codes.length()-2)
-	{
-		smcode = "";
-		smfile = "";
-		while(sm_codes[i] != '\"')
-		{
-			i++;
-		}
-		i++;
-		while (sm_codes[i] != '\"')
-		{
-			smcode += sm_codes[i];
-			i++;
-
-		}
-		i++;
-
-		while(sm_codes[i] != '\"')
-		{
-			i++;
-		}
-		i++;
-		while(sm_codes[i] != '\"' && sm_codes[i+1] != ';')
-		{
-			smfile += sm_codes[i];
-			i++;
-		}
-		i++;
-		if(!smcode.isEmpty() && !smfile.isEmpty())
-			#if defined(Q_OS_WIN32)
-		    smileys.insert(smcode, smfile);
-	        #else
-			smileys.insert(smcode, ":/"+smfile);
-			#endif
-	}
-
-	// init <img> embedder
-	defEmbedImg.InitFromAwkwardHash(smileys);
-}
-
 void PeersDialog::smileyWidgetgroupchat()
 {
-	qDebug("MainWindow::smileyWidget()");
-	if(smWidget == 0) {
-		smWidget = new QWidget(this , Qt::Popup );
-		smWidget->setWindowTitle("Emoticons");
-		smWidget->setWindowIcon(QIcon(QString(":/images/rstray3.png")));
-		//smWidget->setFixedSize(256,256);
-
-		smWidget->setBaseSize( 4*24, (smileys.size()/4)*24  );
-
-		//Warning: this part of code was taken from kadu instant messenger;
-		//         It was EmoticonSelector::alignTo(QWidget* w) function there
-		//         comments are Polish, I dont' know how does it work...
-		// oblicz pozycj� widgetu do kt�rego r�wnamy
-		QWidget* w = ui.emoticonBtn;
-		QPoint w_pos = w->mapToGlobal(QPoint(0,0));
-		// oblicz rozmiar selektora
-		QSize e_size = smWidget->sizeHint();
-		// oblicz rozmiar pulpitu
-		QSize s_size = QApplication::desktop()->size();
-		// oblicz dystanse od widgetu do lewego brzegu i do prawego
-		int l_dist = w_pos.x();
-		int r_dist = s_size.width() - (w_pos.x() + w->width());
-		// oblicz pozycj� w zale�no�ci od tego czy po lewej stronie
-		// jest wi�cej miejsca czy po prawej
-		int x;
-		if (l_dist >= r_dist)
-			x = w_pos.x() - e_size.width();
-		else
-			x = w_pos.x() + w->width();
-		// oblicz pozycj� y - centrujemy w pionie
-		int y = w_pos.y() + w->height()/2 - e_size.height()/2;
-		// je�li wychodzi poza doln� kraw�d� to r�wnamy do niej
-		if (y + e_size.height() > s_size.height())
-			y = s_size.height() - e_size.height();
-		// je�li wychodzi poza g�rn� kraw�d� to r�wnamy do niej
-		if (y < 0)
-			y = 0;
-		// ustawiamy selektor na wyliczonej pozycji
-		smWidget->move(x, y);
-
-		x = 0;
-		y = 0;
-
-		QHashIterator<QString, QString> i(smileys);
-		while(i.hasNext())
-		{
-			i.next();
-			QPushButton *smButton = new QPushButton("", smWidget);
-			smButton->setGeometry(x*24, y*24, 24,24);
-			smButton->setIconSize(QSize(24,24));
-			smButton->setIcon(QPixmap(i.value()));
-			smButton->setToolTip(i.key());
-			//smButton->setFixedSize(24,24);
-			++x;
-			if(x > 4)
-			{
-				x = 0;
-				y++;
-			}
-			connect(smButton, SIGNAL(clicked()), this, SLOT(addSmileys()));
-			connect(smButton, SIGNAL(clicked()), smWidget, SLOT(close()));
-		}
-	}
-
-	smWidget->show();
+    style.showSmileyWidget(this, ui.emoticonBtn, SLOT(addSmileys()));
 }
 
 void PeersDialog::addSmileys()
 {
-	ui.lineEdit->setText(ui.lineEdit->toHtml() + qobject_cast<QPushButton*>(sender())->toolTip().split("|").first());
+    ui.lineEdit->textCursor().insertText(qobject_cast<QPushButton*>(sender())->toolTip().split("|").first());
 }
 
 /* GUI stuff -> don't do anything directly with Control */
@@ -1873,6 +1756,6 @@ void PeersDialog::statusColumn()
 
 void PeersDialog::on_actionMessageHistory_triggered()
 {
-    ImHistoryBrowser imBrowser(this);
+    ImHistoryBrowser imBrowser(historyKeeper, this);
     imBrowser.exec();
 }

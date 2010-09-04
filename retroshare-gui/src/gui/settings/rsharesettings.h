@@ -120,6 +120,9 @@ public:
   bool getAddFeedsAtEnd();
   void setAddFeedsAtEnd(bool bValue);
 
+  bool getChatSendMessageWithCtrlReturn();
+  void setChatSendMessageWithCtrlReturn(bool bValue);
+  
   //! Save placement, state and size information of a window.
   void saveWidgetInformation(QWidget *widget);
 

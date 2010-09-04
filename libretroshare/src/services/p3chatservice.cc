@@ -529,9 +529,10 @@ bool p3ChatService::getPrivateChatQueue(std::string id, std::list<ChatInfo> &cha
 
 void p3ChatService::initRsChatInfo(RsChatMsgItem *c, ChatInfo &i)
 {
-	i.rsid = c -> PeerId();
-	i.chatflags = 0 ;
-	i.msg  = c -> message;
+	i.rsid = c->PeerId();
+	i.chatflags = 0;
+	i.sendTime =c->sendTime;
+	i.msg  = c->message;
 
 	if (c -> chatFlags & RS_CHAT_FLAG_PRIVATE)
 	{

@@ -235,6 +235,7 @@ HEADERS +=  rshare.h \
             gui/profile/StatusMessage.h \
             gui/chat/PopupChatDialog.h \
             gui/chat/HandleRichText.h \
+            gui/chat/ChatStyle.h \
             gui/channels/CreateChannel.h \
             gui/channels/ChannelDetails.h \
             gui/channels/CreateChannelMsg.h \
@@ -453,6 +454,7 @@ SOURCES +=  main.cpp \
             gui/channels/ShareKey.cpp \
             gui/chat/PopupChatDialog.cpp \
             gui/chat/HandleRichText.cpp \
+            gui/chat/ChatStyle.cpp \
             gui/connect/ConfCertDialog.cpp \
             gui/msgs/MessageComposer.cpp \
             gui/common/vmessagebox.cpp \

@@ -28,7 +28,6 @@
 #include <QDateTime>
 #include <QFontDialog>
 #include <QDir>
-#include <QDesktopWidget>
 #include <QFileDialog>
 #include <QBuffer>
 #include <QTextCodec>
@@ -57,8 +56,6 @@
 
 /* Define the format used for displaying the date and time */
 #define DATETIME_FMT  "MMM dd hh:mm:ss"
-
-#include <sstream>
 
 /*****
  * #define CHAT_DEBUG 1
@@ -100,12 +97,11 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   this->move(qrand()%100, qrand()%100); //avoid to stack multiple popup chat windows on the same position
 
   m_bInsertOnVisible = true;
-  
-  loadEmoticons();
-  
+
   last_status_send_time = 0 ;
-  styleHtm = ":/qss/chat/default.htm";
-  
+  style.setStylePath(":/qss/chat/private");
+  style.loadEmoticons();
+
   /* Hide or show the frames */
   showAvatarFrame(true);  
   ui.infoframe->setVisible(false);
@@ -115,8 +111,6 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
 
   connect(ui.actionAvatar, SIGNAL(triggered()),this, SLOT(getAvatar()));
 
-  connect(ui.chattextEdit, SIGNAL(textChanged ( ) ), this, SLOT(checkChat( ) ));
-  
   connect(ui.sendButton, SIGNAL(clicked( ) ), this, SLOT(sendChat( ) ));
   connect(ui.addFileButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
 
@@ -134,6 +128,9 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
 
   connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(const QString&, int)), this, SLOT(updateStatus(const QString&, int)));
   connect(NotifyQt::getInstance(), SIGNAL(peerHasNewCustomStateString(const QString&, const QString&)), this, SLOT(updatePeersCustomStateString(const QString&, const QString&)));
+
+  // hide until it works
+  ui.styleButton->setVisible(false);
 
   std::cerr << "Connecting custom context menu" << std::endl;
   ui.chattextEdit->setContextMenuPolicy(Qt::CustomContextMenu) ;
@@ -202,6 +199,8 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   // initialize first custom state string
   QString customStateString = QString::fromStdString(rsMsgs->getCustomStateString(dialogId));
   updatePeersCustomStateString(QString::fromStdString(dialogId), customStateString);
+
+  ui.chattextEdit->installEventFilter(this);
 }
 
 /** Destructor. */
@@ -527,87 +526,86 @@ void PopupChatDialog::insertChatMsgs()
             continue;
         }
 
-        addChatMsg(it->rsid, it->msg);
+        addChatMsg(it->rsid, it->sendTime, it->msg);
     }
 
     playsound();
     QApplication::alert(this);
 }
 
-void PopupChatDialog::addChatMsg(std::string &id, std::wstring &msg)
+void PopupChatDialog::addChatMsg(std::string &id, uint sendTime, std::wstring &msg)
 {
-    QString timestamp = "[" + QDateTime::currentDateTime().toString("hh:mm:ss") + "]";
+    QDateTime timestamp = QDateTime::fromTime_t(sendTime);
     QString name = QString::fromStdString(rsPeers->getPeerName(id));
     QString message = QString::fromStdWString(msg);
-
-    //replace http://, https:// and www. with <a href> links
-    QRegExp rx("(retroshare://[^ <>]*)|(https?://[^ <>]*)|(www\\.[^ <>]*)");
-    int count = 0;
-    int pos = 100; //ignore the first 100 char because of the standard DTD ref
-    while ( (pos = rx.indexIn(message, pos)) != -1 ) {
-        //we need to look ahead to see if it's already a well formed link
-        if (message.mid(pos - 6, 6) != "href=\"" && message.mid(pos - 6, 6) != "href='" && message.mid(pos - 6, 6) != "ttp://" ) {
-            QString tempMessg = message.left(pos) + "<a href=\"" + rx.cap(count) + "\">" + rx.cap(count) + "</a>" + message.mid(pos + rx.matchedLength(), -1);
-            message = tempMessg;
-        }
-        pos += rx.matchedLength() + 15;
-        count ++;
-    }
 
 #ifdef CHAT_DEBUG
     std::cout << "PopupChatDialog:addChatMsg message : " << message.toStdString() << std::endl;
 #endif
 
-    if (Settings->valueFromGroup(QString("Chat"), QString::fromUtf8("Emoteicons_PrivatChat"), true).toBool())
-    {
-	QHashIterator<QString, QString> i(smileys);
-	while(i.hasNext())
-	{
-            i.next();
-            foreach(QString code, i.key().split("|"))
-                message.replace(code, "<img src=\"" + i.value() + "\" />");
-	}
+    unsigned int formatFlag = CHAT_FORMATMSG_EMBED_LINKS;
+
+    // embed smileys ?
+    if (Settings->valueFromGroup(QString("Chat"), QString::fromUtf8("Emoteicons_PrivatChat"), true).toBool()) {
+        formatFlag |= CHAT_FORMATMSG_EMBED_SMILEYS;
     }
-    history /*<< nickColor << color << font << fontSize*/ << timestamp << name << message;
 
+    ChatStyle::enumFormatMessage type = (id == rsPeers->getOwnId()) ? ChatStyle::FORMATMSG_INCOMING : ChatStyle::FORMATMSG_OUTGOING;
 
-    QString formatMsg = loadEmptyStyle()/*.replace(nickColor)
-				    .replace(color)
-				    .replace(font)
-				    .replace(fontSize)*/
-                        .replace("%timestamp%", timestamp)
-                        .replace("%name%", name)
-                        .replace("%message%", message);
+    QString formatMsg = style.formatMessage(type, name, timestamp, message, formatFlag);
 
+    ui.textBrowser->append(formatMsg);
 
-    if ((ui.textBrowser->verticalScrollBar()->maximum() - 30) < ui.textBrowser->verticalScrollBar()->value() ) {
-        ui.textBrowser->append(formatMsg + "\n");
-    } else {
-        //the vertical scroll is not at the bottom, so just update the text, the scroll will stay at the current position
-        int scroll = ui.textBrowser->verticalScrollBar()->value();
-        ui.textBrowser->setHtml(ui.textBrowser->toHtml() + formatMsg + "\n");
-        ui.textBrowser->verticalScrollBar()->setValue(scroll);
-        ui.textBrowser->update();
-    }
     resetStatusBar() ;
 }
 
-void PopupChatDialog::checkChat()
+bool PopupChatDialog::eventFilter(QObject *obj, QEvent *event)
 {
-	/* if <return> at the end of the text -> we can send it! */
-	QTextEdit *chatWidget = ui.chattextEdit;
-	std::string txt = chatWidget->toPlainText().toStdString();
-	if ('\n' == txt[txt.length()-1] && txt.length()-1 == txt.find('\n')) /* only if on first line! */
-		sendChat();
-	else
-		updateStatusTyping() ;
+    if (obj == ui.chattextEdit) {
+        if (event->type() == QEvent::KeyPress) {
+            updateStatusTyping() ;
 
+            QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+            if (keyEvent && (keyEvent->key() == Qt::Key_Enter || keyEvent->key() == Qt::Key_Return)) {
+                // Enter pressed
+                if (Settings->getChatSendMessageWithCtrlReturn()) {
+                    if (keyEvent->modifiers() & Qt::ControlModifier) {
+                        // send message with Ctrl+Enter
+                        sendChat();
+                        return true; // eat event
+                    }
+                } else {
+                    if (keyEvent->modifiers() & Qt::ControlModifier) {
+                        // insert return
+                        ui.chattextEdit->textCursor().insertText("\n");
+                    } else {
+                        // send message with Enter
+                        sendChat();
+                    }
+                    return true; // eat event
+                }
+            }
+        }
+    }
+    // pass the event on to the parent class
+    return QMainWindow::eventFilter(obj, event);
 }
-
 
 void PopupChatDialog::sendChat()
 {
     QTextEdit *chatWidget = ui.chattextEdit;
+
+    if (chatWidget->toPlainText().isEmpty()) {
+        // nothing to send
+        return;
+    }
+
+    std::wstring msg = chatWidget->toHtml().toStdWString();
+
+    if (msg.empty()) {
+        // nothing to send
+        return;
+    }
 
     std::string ownId;
 
@@ -620,13 +618,11 @@ void PopupChatDialog::sendChat()
         rsiface->unlockData(); /* Unlock Interface */
     }
 
-    std::wstring msg = chatWidget->toHtml().toStdWString();
-
 #ifdef CHAT_DEBUG 
     std::cout << "PopupChatDialog:sendChat " << styleHtm.toStdString() << std::endl;
 #endif
 
-    addChatMsg(ownId, msg);
+    addChatMsg(ownId, time(NULL), msg);
 
     rsMsgs->sendPrivateChat(dialogId, msg);
     chatWidget->clear();
@@ -700,201 +696,21 @@ void PopupChatDialog::setFont()
 
 }
 
-void PopupChatDialog::loadEmoticons2()
-{
-	QDir smdir(QApplication::applicationDirPath() + "/emoticons/kopete");
-	//QDir smdir(":/gui/images/emoticons/kopete");
-	QFileInfoList sminfo = smdir.entryInfoList(QStringList() << "*.gif" << "*.png", QDir::Files, QDir::Name);
-	foreach(QFileInfo info, sminfo)
-	{
-		QString smcode = info.fileName().replace(".gif", "");
-		QString smstring;
-		for(int i = 0; i < 9; i+=3)
-		{
-			smstring += QString((char)smcode.mid(i,3).toInt());
-		}
-		//qDebug(smstring.toAscii());
-		smileys.insert(smstring, info.absoluteFilePath());
-	}
-}
-
-void PopupChatDialog::loadEmoticons()
-{
-	QString sm_codes;
-	#if defined(Q_OS_WIN32)
-	QFile sm_file(QApplication::applicationDirPath() + "/emoticons/emotes.acs");
-	#else
-	QFile sm_file(QString(":/smileys/emotes.acs"));
-	#endif
-	if(!sm_file.open(QIODevice::ReadOnly))
-	{
-		std::cout << "error opening ressource file" << std::endl ;
-		return ;
-	}
-	sm_codes = sm_file.readAll();
-	sm_file.close();
-	sm_codes.remove("\n");
-	sm_codes.remove("\r");
-	int i = 0;
-	QString smcode;
-	QString smfile;
-	while(sm_codes[i] != '{')
-	{
-		i++;
-		
-	}
-	while (i < sm_codes.length()-2)
-	{
-		smcode = "";
-		smfile = "";
-		while(sm_codes[i] != '\"')
-		{
-			i++;
-		}
-		i++;
-		while (sm_codes[i] != '\"')
-		{
-			smcode += sm_codes[i];
-			i++;
-			
-		}
-		i++;
-		
-		while(sm_codes[i] != '\"')
-		{
-			i++;
-		}
-		i++;
-		while(sm_codes[i] != '\"' && sm_codes[i+1] != ';')
-		{
-			smfile += sm_codes[i];
-			i++;
-		}
-		i++;
-		if(!smcode.isEmpty() && !smfile.isEmpty())
-			#if defined(Q_OS_WIN32)
-		    smileys.insert(smcode, smfile);
-	        #else
-			smileys.insert(smcode, ":/"+smfile);
-			#endif
-
-	}
-}
-
 //============================================================================
 
 void PopupChatDialog::smileyWidget()
 { 
-	qDebug("MainWindow::smileyWidget()");
-	QWidget *smWidget = new QWidget(this , Qt::Popup);
-    smWidget->setAttribute( Qt::WA_DeleteOnClose);
-	smWidget->setWindowTitle("Emoticons");
-	smWidget->setWindowIcon(QIcon(QString(":/images/rstray3.png")));
-	smWidget->setBaseSize( 4*24, (smileys.size()/4)*24  );
-
-    //Warning: this part of code was taken from kadu instant messenger;
-    //         It was EmoticonSelector::alignTo(QWidget* w) function there
-    //         comments are Polish, I dont' know how does it work...
-    // oblicz pozycj� widgetu do kt�rego r�wnamy
-    QWidget* w = ui.emoteiconButton;
-    QPoint w_pos = w->mapToGlobal(QPoint(0,0));
-    // oblicz rozmiar selektora
-    QSize e_size = smWidget->sizeHint();
-    // oblicz rozmiar pulpitu
-    QSize s_size = QApplication::desktop()->size();
-    // oblicz dystanse od widgetu do lewego brzegu i do prawego
-    int l_dist = w_pos.x();
-    int r_dist = s_size.width() - (w_pos.x() + w->width());
-    // oblicz pozycj� w zale�no�ci od tego czy po lewej stronie
-    // jest wi�cej miejsca czy po prawej
-    int x;
-    if (l_dist >= r_dist)
-        x = w_pos.x() - e_size.width();
-    else
-        x = w_pos.x() + w->width();
-    // oblicz pozycj� y - centrujemy w pionie
-    int y = w_pos.y() + w->height()/2 - e_size.height()/2;
-    // je�li wychodzi poza doln� kraw�d� to r�wnamy do niej
-    if (y + e_size.height() > s_size.height())
-        y = s_size.height() - e_size.height();
-    // je�li wychodzi poza g�rn� kraw�d� to r�wnamy do niej
-    if (y < 0)
-         y = 0;
-    // ustawiamy selektor na wyliczonej pozycji
-    smWidget->move(x, y);
-	
-	
-	x = 0;
-    y = 0;
-	
-	QHashIterator<QString, QString> i(smileys);
-	while(i.hasNext())
-	{
-		i.next();
-		QPushButton *smButton = new QPushButton("", smWidget);
-		smButton->setGeometry(x*24, y*24, 24,24);
-		smButton->setIconSize(QSize(24,24));
-		smButton->setIcon(QPixmap(i.value()));
-		smButton->setToolTip(i.key());
-		++x;
-		if(x > 4)
-		{
-			x = 0;
-			y++;
-		}
-		connect(smButton, SIGNAL(clicked()), this, SLOT(addSmiley()));
-        connect(smButton, SIGNAL(clicked()), smWidget, SLOT(close()));
-	}
-	
-	smWidget->show();
+    style.showSmileyWidget(this, ui.emoteiconButton, SLOT(addSmiley()));
 }
 
 //============================================================================
 
 void PopupChatDialog::addSmiley()
 {
-	ui.chattextEdit->setText(ui.chattextEdit->toHtml() + qobject_cast<QPushButton*>(sender())->toolTip().split("|").first());
+    ui.chattextEdit->textCursor().insertText(qobject_cast<QPushButton*>(sender())->toolTip().split("|").first());
 }
 
 //============================================================================
-
-QString PopupChatDialog::loadEmptyStyle()
-{
-#ifdef CHAT_DEBUG 
-        std::cout << "PopupChatDialog:loadEmptyStyle " << styleHtm.toStdString() << std::endl;
-#endif
-	QString ret;
-	QFile file(styleHtm);
-	//file.open(QIODevice::ReadOnly);
-       	if (file.open(QIODevice::ReadOnly)) {
-		ret = file.readAll();
-		file.close();
-		QString styleTmp = styleHtm;
-		QString styleCss = styleTmp.remove(styleHtm.lastIndexOf("."), styleHtm.length()-styleHtm.lastIndexOf(".")) + ".css";
-		qDebug() << styleCss.toAscii();
-		QFile css(styleCss);
-		QString tmp;
-		if (css.open(QIODevice::ReadOnly)) {
-			tmp = css.readAll();
-			css.close();
-		}
-		else {
-#ifdef CHAT_DEBUG 
-			std::cerr << "PopupChatDialog:loadEmptyStyle " << "Missing file of default css " << std::endl;
-#endif
-			tmp = "";
-		}
-		ret.replace("%css-style%", tmp);
-		return ret;
-       	}
-	else {
-#ifdef CHAT_DEBUG 
-                std::cerr << "PopupChatDialog:loadEmptyStyle " << "Missing file of default style " << std::endl;
-#endif
-		ret="%timestamp% %name% \n %message% ";
-		return ret;
-	}
-}
 
 void PopupChatDialog::on_actionClear_Chat_triggered()
 {
@@ -903,27 +719,27 @@ void PopupChatDialog::on_actionClear_Chat_triggered()
 
 void PopupChatDialog::changeStyle()
 {
-	QString newStyle = QFileDialog::getOpenFileName(this, tr("Open Style"),
-                                                 appDir + "/style/chat/",
-                                                 tr("Styles (*.htm)"));
-	if(!newStyle.isEmpty())
-	{
-		QString wholeChat;
-		styleHtm = newStyle;
-		
-		
-		for(int i = 0; i < history.size(); i+=4)
-		{
-			QString formatMsg = loadEmptyStyle();
-			wholeChat += formatMsg.replace("%timestamp%", history.at(i+1))
-                                  .replace("%name%", history.at(i+2))
-				                  .replace("%message%", history.at(i+3)) + "\n";
-		}
-		ui.textBrowser->setHtml(wholeChat);
-	}
-	QTextCursor cursor = ui.textBrowser->textCursor();
-	cursor.movePosition(QTextCursor::End);
-	ui.textBrowser->setTextCursor(cursor);
+//	QString newStyle = QFileDialog::getOpenFileName(this, tr("Open Style"),
+//                                                 appDir + "/style/chat/",
+//                                                 tr("Styles (*.htm)"));
+//	if(!newStyle.isEmpty())
+//	{
+//		QString wholeChat;
+//		styleHtm = newStyle;
+//
+//
+//		for(int i = 0; i < history.size(); i+=4)
+//		{
+//                        QString formatMsg = loadEmptyStyle();
+//			wholeChat += formatMsg.replace("%timestamp%", history.at(i+1))
+//                                  .replace("%name%", history.at(i+2))
+//				                  .replace("%message%", history.at(i+3)) + "\n";
+//		}
+//		ui.textBrowser->setHtml(wholeChat);
+//	}
+//	QTextCursor cursor = ui.textBrowser->textCursor();
+//	cursor.movePosition(QTextCursor::End);
+//	ui.textBrowser->setTextCursor(cursor);
 }
 
 void PopupChatDialog::updatePeerAvatar(const std::string& peer_id)
@@ -1121,7 +937,7 @@ void PopupChatDialog::fileHashingFinished(AttachFileItem* file)
 
     std::wstring msg = message.toStdWString();
 
-    addChatMsg(ownId, msg);
+    addChatMsg(ownId, time(NULL), msg);
 
     rsMsgs->sendPrivateChat(dialogId, msg);
 }

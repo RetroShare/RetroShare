@@ -24,22 +24,63 @@
 #include <QDateTime>
 #include <QMenu>
 #include <QClipboard>
+//#include <QDomDocument>
 
 #include "rshare.h"
 
+//#include "gui/chat/HandleRichText.h"
+
 /** Default constructor */
-ImHistoryBrowser::ImHistoryBrowser(QWidget *parent, Qt::WFlags flags)
-  : QDialog(parent, flags), historyKeeper(Rshare::dataDirectory() + "/his1.xml")
+ImHistoryBrowser::ImHistoryBrowser(IMHistoryKeeper &histKeeper, QWidget *parent, Qt::WFlags flags)
+  : QDialog(parent, flags), historyKeeper(histKeeper)
 {
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);
-  
-    QStringList him;
-    historyKeeper.getMessages(him, "", "THIS", 8);
-    foreach(QString mess, him)
-    ui.textBrowser->append(mess);
 
+    connect(&historyKeeper, SIGNAL(historyAdd(IMHistoryItem)), this, SLOT(historyAdd(IMHistoryItem)));
+    connect(&historyKeeper, SIGNAL(historyClear()), this, SLOT(historyClear()));
 
+    QList<IMHistoryItem> historyItems;
+    historyKeeper.getMessages(historyItems, 0);
+    foreach(IMHistoryItem item, historyItems) {
+        addItem(item);
+    }
 }
 
+void ImHistoryBrowser::historyAdd(IMHistoryItem item)
+{
+    addItem(item);
+}
 
+void ImHistoryBrowser::historyClear()
+{
+    ui.textBrowser->clear();
+}
+
+void ImHistoryBrowser::addItem(IMHistoryItem &item)
+{
+    QString timestamp = item.sendTime.toString("hh:mm:ss");
+    QString text = "<span style=\"color:#C00000\">" + timestamp + "</span>" +
+                   "<span style=\"color:#2D84C9\"><strong>" + " " + item.name + "</strong></span>";
+
+    // create a DOM tree object from the message and embed contents with HTML tags
+//    QDomDocument doc;
+//    doc.setContent(item.messageText);
+//
+//    // embed links
+//    QDomElement body = doc.documentElement();
+//    RsChat::embedHtml(doc, body, defEmbedAhref);
+//
+//    // embed smileys
+//    Settings->beginGroup("Chat");
+//    if (Settings->value(QString::fromUtf8("Emoteicons_GroupChat"), true).toBool()) {
+//        RsChat::embedHtml(doc, body, defEmbedImg);
+//    }
+//    Settings->endGroup();
+//
+//    text += doc.toString(-1);		// -1 removes any annoying carriage return misinterpreted by QTextEdit
+
+    text += item.messageText;
+
+    ui.textBrowser->append(text);
+}

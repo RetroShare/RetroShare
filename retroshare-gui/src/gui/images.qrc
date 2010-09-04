@@ -449,11 +449,16 @@
         <file>images/window_fullscreen.png</file>
         <file>images/window_nofullscreen.png</file>
         <file>layouts/default.ui</file>
-        <file>qss/chat/default.htm</file>
-        <file>qss/chat/default.css</file>
-        <file>qss/chat/second.htm</file>
-        <file>qss/chat/second.css</file>
-        <file>qss/chat/second.css</file>
+        <file>qss/chat/private/incoming.htm</file>
+        <file>qss/chat/private/outgoing.htm</file>
+        <file>qss/chat/private/hincoming.htm</file>
+        <file>qss/chat/private/houtgoing.htm</file>
+        <file>qss/chat/private/main.css</file>
+        <file>qss/chat/public/incoming.htm</file>
+        <file>qss/chat/public/outgoing.htm</file>
+        <file>qss/chat/public/hincoming.htm</file>
+        <file>qss/chat/public/houtgoing.htm</file>
+        <file>qss/chat/public/main.css</file>
         <file>smileys/angry.png</file>
         <file>smileys/beer.png</file>
         <file>smileys/cake.png</file>

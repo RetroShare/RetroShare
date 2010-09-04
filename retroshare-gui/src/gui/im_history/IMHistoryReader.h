@@ -41,12 +41,11 @@ public:
 
 private:
     void readUnknownElement();
-    QList<IMHistoryItem> readHistory();
-    IMHistoryItem readMessage();
+    void readHistory(QList<IMHistoryItem> &historyItems);
+    void readMessage(IMHistoryItem &historyItem);
 
     QString errMess;
 } ;
-
 
 #endif
 
