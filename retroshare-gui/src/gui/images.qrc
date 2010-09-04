@@ -459,6 +459,9 @@
         <file>qss/chat/public/hincoming.htm</file>
         <file>qss/chat/public/houtgoing.htm</file>
         <file>qss/chat/public/main.css</file>
+        <file>qss/chat/history/incoming.htm</file>
+        <file>qss/chat/history/outgoing.htm</file>
+        <file>qss/chat/history/main.css</file>
         <file>smileys/angry.png</file>
         <file>smileys/beer.png</file>
         <file>smileys/cake.png</file>

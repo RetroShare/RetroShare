@@ -19,14 +19,85 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <widget class="QTextBrowser" name="textBrowser"/>
-   </item>
-   <item row="1" column="0">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
+    <layout class="QGridLayout" name="mainLayout">
+     <item row="1" column="0">
+      <layout class="QHBoxLayout" name="bottomLine">
+       <item>
+        <layout class="QHBoxLayout" name="filterLayout">
+         <property name="spacing">
+          <number>1</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="pixmap">
+            <pixmap resource="../images.qrc">:/images/find-16.png</pixmap>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="filterPatternLineEdit"/>
+         </item>
+         <item>
+          <widget class="QPushButton" name="clearButton">
+           <property name="minimumSize">
+            <size>
+             <width>16</width>
+             <height>16</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16</width>
+             <height>16</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>Reset</string>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton
+{
+ border-image: url(:/images/closenormal.png) 
+}
+                                
+QPushButton:hover 
+{
+border-image: url(:/images/closehover.png) 
+}
+                                
+QPushButton:pressed  {
+border-image: url(:/images/closepressed.png) 
+}</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QDialogButtonBox" name="buttonBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="standardButtons">
+          <set>QDialogButtonBox::Close</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="0" column="0">
+      <widget class="QListWidget" name="listWidget"/>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
@@ -38,27 +109,11 @@
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
    <receiver>ImHistoryBrowser</receiver>
-   <slot>close()</slot>
+   <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>237</x>
-     <y>312</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>237</x>
-     <y>166</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>rejected()</signal>
-   <receiver>ImHistoryBrowser</receiver>
-   <slot>close()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>237</x>
-     <y>312</y>
+     <x>427</x>
+     <y>310</y>
     </hint>
     <hint type="destinationlabel">
      <x>237</x>

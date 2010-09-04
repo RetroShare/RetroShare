@@ -1756,6 +1756,6 @@ void PeersDialog::statusColumn()
 
 void PeersDialog::on_actionMessageHistory_triggered()
 {
-    ImHistoryBrowser imBrowser(historyKeeper, this);
+    ImHistoryBrowser imBrowser(false, historyKeeper, this);
     imBrowser.exec();
 }

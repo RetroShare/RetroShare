@@ -26,6 +26,7 @@
 #include <QDialog>
 
 #include "IMHistoryKeeper.h"
+#include "gui/chat/ChatStyle.h"
 
 #include "ui_ImHistoryBrowser.h"
 
@@ -35,17 +36,24 @@ class ImHistoryBrowser : public QDialog
 
 public:
     /** Default constructor */
-    ImHistoryBrowser(IMHistoryKeeper &histKeeper, QWidget *parent = 0, Qt::WFlags flags = 0);
+    ImHistoryBrowser(bool isPrivateChat, IMHistoryKeeper &histKeeper, QWidget *parent = 0, Qt::WFlags flags = 0);
     /** Default destructor */
       
 private slots:
     void historyAdd(IMHistoryItem item);
     void historyClear();
 
-private:
-    void addItem(IMHistoryItem &item);
+    void filterRegExpChanged();
+    void clearFilter();
 
+private:
+    QListWidgetItem *addItem(IMHistoryItem &item);
+    void filterItems(QListWidgetItem *item = NULL);
+
+    bool isPrivateChat;
+    bool embedSmileys;
     IMHistoryKeeper &historyKeeper;
+    ChatStyle style;
 
     /** Qt Designer generated object */
     Ui::ImHistoryBrowser ui;

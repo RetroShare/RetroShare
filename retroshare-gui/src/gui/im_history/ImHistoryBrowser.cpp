@@ -18,27 +18,50 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
-#include "ImHistoryBrowser.h"
 
 #include <QMessageBox>
 #include <QDateTime>
 #include <QMenu>
 #include <QClipboard>
-//#include <QDomDocument>
+#include <QTextDocument>
+
+#include "ImHistoryBrowser.h"
+#include "IMHistoryItemDelegate.h"
+#include "IMHistoryItemPainter.h"
 
 #include "rshare.h"
+#include "gui/settings/rsharesettings.h"
 
-//#include "gui/chat/HandleRichText.h"
+#define ROLE_PLAINTEXT Qt::UserRole
 
 /** Default constructor */
-ImHistoryBrowser::ImHistoryBrowser(IMHistoryKeeper &histKeeper, QWidget *parent, Qt::WFlags flags)
+ImHistoryBrowser::ImHistoryBrowser(bool isPrivateChatIn, IMHistoryKeeper &histKeeper, QWidget *parent, Qt::WFlags flags)
   : QDialog(parent, flags), historyKeeper(histKeeper)
 {
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);
 
+    isPrivateChat = isPrivateChatIn;
+
     connect(&historyKeeper, SIGNAL(historyAdd(IMHistoryItem)), this, SLOT(historyAdd(IMHistoryItem)));
     connect(&historyKeeper, SIGNAL(historyClear()), this, SLOT(historyClear()));
+
+    connect(ui.clearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
+    connect(ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
+
+    ui.clearButton->hide();
+
+    // embed smileys ?
+    if (isPrivateChat) {
+        embedSmileys = Settings->valueFromGroup(QString("Chat"), QString::fromUtf8("Emoteicons_PrivatChat"), true).toBool();
+    } else {
+        embedSmileys = Settings->valueFromGroup(QString("Chat"), QString::fromUtf8("Emoteicons_GroupChat"), true).toBool();
+    }
+
+    style.setStylePath(":/qss/chat/history");
+    style.loadEmoticons();
+
+    ui.listWidget->setItemDelegate(new IMHistoryItemDelegate);
 
     QList<IMHistoryItem> historyItems;
     historyKeeper.getMessages(historyItems, 0);
@@ -49,38 +72,93 @@ ImHistoryBrowser::ImHistoryBrowser(IMHistoryKeeper &histKeeper, QWidget *parent,
 
 void ImHistoryBrowser::historyAdd(IMHistoryItem item)
 {
-    addItem(item);
+    QListWidgetItem *itemWidget = addItem(item);
+    if (itemWidget) {
+        filterItems(itemWidget);
+    }
 }
 
 void ImHistoryBrowser::historyClear()
 {
-    ui.textBrowser->clear();
+    ui.listWidget->clear();
 }
 
-void ImHistoryBrowser::addItem(IMHistoryItem &item)
+QListWidgetItem *ImHistoryBrowser::addItem(IMHistoryItem &item)
 {
-    QString timestamp = item.sendTime.toString("hh:mm:ss");
-    QString text = "<span style=\"color:#C00000\">" + timestamp + "</span>" +
-                   "<span style=\"color:#2D84C9\"><strong>" + " " + item.name + "</strong></span>";
+    unsigned int formatFlag = CHAT_FORMATMSG_EMBED_LINKS;
 
-    // create a DOM tree object from the message and embed contents with HTML tags
-//    QDomDocument doc;
-//    doc.setContent(item.messageText);
-//
-//    // embed links
-//    QDomElement body = doc.documentElement();
-//    RsChat::embedHtml(doc, body, defEmbedAhref);
-//
-//    // embed smileys
-//    Settings->beginGroup("Chat");
-//    if (Settings->value(QString::fromUtf8("Emoteicons_GroupChat"), true).toBool()) {
-//        RsChat::embedHtml(doc, body, defEmbedImg);
-//    }
-//    Settings->endGroup();
-//
-//    text += doc.toString(-1);		// -1 removes any annoying carriage return misinterpreted by QTextEdit
+    if (embedSmileys) {
+        formatFlag |= CHAT_FORMATMSG_EMBED_SMILEYS;
+    }
 
-    text += item.messageText;
+    ChatStyle::enumFormatMessage type;
+    if (item.incoming) {
+        type = ChatStyle::FORMATMSG_INCOMING;
+    } else {
+        type = ChatStyle::FORMATMSG_OUTGOING;
+    }
 
-    ui.textBrowser->append(text);
+    QString formatMsg = style.formatMessage(type, item.name, item.sendTime, item.messageText, formatFlag);
+
+    QListWidgetItem *itemWidget = new QListWidgetItem;
+    itemWidget->setData(Qt::DisplayRole, qVariantFromValue(IMHistoryItemPainter(formatMsg)));
+
+    /* calculate plain text */
+    QTextDocument doc;
+    doc.setHtml(item.messageText);
+    itemWidget->setData(ROLE_PLAINTEXT, doc.toPlainText());
+    ui.listWidget->addItem(itemWidget);
+
+    return itemWidget;
+}
+
+void ImHistoryBrowser::filterRegExpChanged()
+{
+    QString text = ui.filterPatternLineEdit->text();
+
+    if (text.isEmpty()) {
+        ui.clearButton->hide();
+    } else {
+        ui.clearButton->show();
+    }
+
+    filterItems();
+}
+
+void ImHistoryBrowser::clearFilter()
+{
+    ui.filterPatternLineEdit->clear();
+    ui.filterPatternLineEdit->setFocus();
+}
+
+void ImHistoryBrowser::filterItems(QListWidgetItem *item)
+{
+    QString text = ui.filterPatternLineEdit->text();
+
+    QRegExp regExp(text);
+    if (item == NULL) {
+        int count = ui.listWidget->count();
+        for (int i = 0; i < count; i++) {
+            item = ui.listWidget->item(i);
+            if (text.isEmpty()) {
+                item->setHidden(false);
+            } else {
+                if (item->data(ROLE_PLAINTEXT).toString().contains(regExp)) {
+                    item->setHidden(false);
+                } else {
+                    item->setHidden(true);
+                }
+            }
+        }
+    } else {
+        if (text.isEmpty()) {
+            item->setHidden(false);
+        } else {
+            if (item->data(ROLE_PLAINTEXT).toString().contains(regExp)) {
+                item->setHidden(false);
+            } else {
+                item->setHidden(true);
+            }
+        }
+    }
 }
