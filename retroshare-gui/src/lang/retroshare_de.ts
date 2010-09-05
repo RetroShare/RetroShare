@@ -7463,7 +7463,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Browse Message History</source>
-        <translation>Nachrichtenverlauf Anzeigen</translation>
+        <translation>Nachrichtenverlauf anzeigen</translation>
     </message>
     <message>
         <source>Browse History</source>

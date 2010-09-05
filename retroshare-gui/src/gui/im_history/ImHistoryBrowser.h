@@ -38,7 +38,8 @@ public:
     /** Default constructor */
     ImHistoryBrowser(bool isPrivateChat, IMHistoryKeeper &histKeeper, QWidget *parent = 0, Qt::WFlags flags = 0);
     /** Default destructor */
-      
+    virtual ~ImHistoryBrowser();
+
 private slots:
     void historyAdd(IMHistoryItem item);
     void historyClear();

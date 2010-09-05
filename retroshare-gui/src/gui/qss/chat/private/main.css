@@ -1,4 +1,4 @@
-.header {
+.name{
 	font-weight: bold;
 }
 
@@ -11,19 +11,9 @@
 	color: #295b07;
 }
 
-.incomingTime {
-	background-color:#dfedff;
-	color: #295b07;
-}
-
 .outgoingHeader {
 	background-color:#f5f5f5;
 	border-color:#fafafa #e3e3e3 #e3e3e3 #fafafa;
-	color: #244578;
-}
-
-.outgoingTime {
-	background-color:#f5f5f5;
 	color: #244578;
 }
 
@@ -33,19 +23,8 @@
 	color: #295b07;
 }
 
-.hincomingTime {
-	background-color:#dfedff;
-	color: #295b07;
-}
-
 .houtgoingHeader {
 	background-color:#f5f5f5;
 	border-color:#fafafa #e3e3e3 #e3e3e3 #fafafa;
 	color: #244578;
 }
-
-.houtgoingTime {
-	background-color:#f5f5f5;
-	color: #244578;
-}
-

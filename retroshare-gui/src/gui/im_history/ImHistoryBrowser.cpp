@@ -68,6 +68,16 @@ ImHistoryBrowser::ImHistoryBrowser(bool isPrivateChatIn, IMHistoryKeeper &histKe
     foreach(IMHistoryItem item, historyItems) {
         addItem(item);
     }
+
+    QByteArray geometry = Settings->valueFromGroup("HistorieBrowser", "Geometry", QByteArray()).toByteArray();
+    if (geometry.isEmpty() == false) {
+        restoreGeometry(geometry);
+    }
+}
+
+ImHistoryBrowser::~ImHistoryBrowser()
+{
+    Settings->setValueToGroup("HistorieBrowser", "Geometry", saveGeometry());
 }
 
 void ImHistoryBrowser::historyAdd(IMHistoryItem item)

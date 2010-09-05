@@ -325,8 +325,16 @@ QString ChatStyle::formatMessage(enumFormatMessage type, QString &name, QDateTim
 //	}
 //    }
 
+    // if the message is on same date show only time
+    QString timeFormat;
+//    if (timestamp.daysTo(QDateTime::currentDateTime()) == 0) {
+//        timeFormat = "hh:mm:ss";
+//    } else {
+        timeFormat = "dd.MM.yyyy hh:mm:ss";
+//    }
+
     QString formatMsg = style.replace("%name%", name)
-                             .replace("%timestamp%", timestamp.toString("hh:mm:ss"))
+                             .replace("%timestamp%", timestamp.toString(timeFormat))
                              .replace("%message%", msg);
 
     return formatMsg;
