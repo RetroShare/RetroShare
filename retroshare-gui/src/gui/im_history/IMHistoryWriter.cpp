@@ -59,6 +59,7 @@ bool IMHistoryWriter::write(QList<IMHistoryItem>& itemList, const QString fileNa
 
     foreach(IMHistoryItem item, itemList) {
         writeStartElement("message");
+        writeAttribute("hiid", QString::number(item.hiid));
         writeAttribute("incoming", QString::number(item.incoming ? 1 : 0));
         writeAttribute("id", QString::fromStdString(item.id));
         writeAttribute("name", item.name);

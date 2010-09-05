@@ -34,14 +34,13 @@ class IMHistoryReader : public QXmlStreamReader
 public:
     IMHistoryReader();
 
-    bool read(QList<IMHistoryItem>& resultList,
-              const QString fileName  );
+    bool read(QList<IMHistoryItem>& resultList, const QString fileName, int &lasthiid);
     
     QString errorMessage();
 
 private:
     void readUnknownElement();
-    void readHistory(QList<IMHistoryItem> &historyItems);
+    void readHistory(QList<IMHistoryItem> &historyItems, int &lasthiid);
     void readMessage(IMHistoryItem &historyItem);
 
     QString errMess;

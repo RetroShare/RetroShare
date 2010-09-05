@@ -35,12 +35,11 @@ IMHistoryReader::IMHistoryReader()
 
 //=============================================================================
 
-bool IMHistoryReader::read(QList<IMHistoryItem>& resultList,
-                      const QString fileName)
+bool IMHistoryReader::read(QList<IMHistoryItem>& resultList, const QString fileName, int &lasthiid)
 {
     errMess = "No error";
 
-    QList<IMHistoryItem> result;
+    resultList.clear();
 
     //==== check for file and open it
     QFile fl(fileName);
@@ -64,7 +63,7 @@ bool IMHistoryReader::read(QList<IMHistoryItem>& resultList,
         readNext();	
         if (isStartElement()) {
             if (name() == "history_file" && attributes().value("format_version") == "1.0") {
-                readHistory(result);
+                readHistory(resultList, lasthiid);
                 break;
             } else {
                 errMess = "The file is not a history file with format version 1.0";
@@ -75,13 +74,11 @@ bool IMHistoryReader::read(QList<IMHistoryItem>& resultList,
 
     if (error()) {
         errMess = errorString();
-    } else {
-        resultList.clear();
-
-        QList<IMHistoryItem>::const_iterator hii;//history items iterator
-        for (hii = result.constBegin(); hii != result.constEnd(); ++hii) {
-            resultList << *hii;
-        }
+//    } else {
+//        QList<IMHistoryItem>::const_iterator hii;//history items iterator
+//        for (hii = result.constBegin(); hii != result.constEnd(); ++hii) {
+//            resultList << *hii;
+//        }
     }
 
     return !error();
@@ -118,13 +115,16 @@ void IMHistoryReader::readUnknownElement()
 
 //=============================================================================
 
-void IMHistoryReader::readHistory(QList<IMHistoryItem> &historyItems)
+void IMHistoryReader::readHistory(QList<IMHistoryItem> &historyItems, int &lasthiid)
 {
     Q_ASSERT(isStartElement());
 
     // qDebug()<< "  " << "node with message " << name() ;
 
     historyItems.clear();
+    lasthiid = 0;
+
+    bool recalculate = false;
 
     while (!atEnd()) {
         readNext();
@@ -136,10 +136,26 @@ void IMHistoryReader::readHistory(QList<IMHistoryItem> &historyItems)
             if ( name() == "message") {
                 IMHistoryItem item;
                 readMessage(item);
+                if (item.hiid == 0) {
+                    recalculate = true;
+                } else {
+                    if (item.hiid > lasthiid) {
+                        lasthiid = item.hiid;
+                    }
+                }
                 historyItems.append(item);
-            }
-            else {
+            } else {
                 readUnknownElement();	
+            }
+        }
+    }
+
+    if (recalculate) {
+        // calculate hiid
+        QList<IMHistoryItem>::iterator item = historyItems.begin();
+        for (item = historyItems.begin(); item != historyItems.end(); item++) {
+            if (item->hiid == 0) {
+                item->hiid = ++lasthiid;
             }
         }
     }
@@ -154,6 +170,7 @@ void IMHistoryReader::readMessage(IMHistoryItem &historyItem)
     if (isStartElement() && (name() == "message")) {
         //=== process attributes
 
+        historyItem.hiid = attributes().value("hiid").toString().toInt();
         historyItem.incoming = (attributes().value("incoming").toString().toInt() == 1);
         historyItem.id = attributes().value("id").toString().toStdString();
         historyItem.name = attributes().value("name").toString();
@@ -180,6 +197,3 @@ void IMHistoryReader::readMessage(IMHistoryItem &historyItem)
     }
 }
 
-//=============================================================================
-//=============================================================================
-//=============================================================================

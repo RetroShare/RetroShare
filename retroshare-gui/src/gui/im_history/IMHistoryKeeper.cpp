@@ -44,6 +44,8 @@ IMHistoryKeeper::IMHistoryKeeper()
     saveTimer->connect(saveTimer, SIGNAL(timeout()), this, SLOT(saveHistory()));
     saveTimer->setInterval(10000);
     saveTimer->start();
+
+    lasthiid = 0;
 };
 
 //=============================================================================
@@ -57,6 +59,8 @@ IMHistoryKeeper::~IMHistoryKeeper()
 
 void IMHistoryKeeper::init(QString historyFileName)
 {
+    lasthiid = 0;
+
     hfName = historyFileName;
     loadHistoryFile();
 }
@@ -65,7 +69,7 @@ void IMHistoryKeeper::init(QString historyFileName)
 
 void IMHistoryKeeper::addMessage(bool incoming, std::string &id, const QString &name, const QDateTime &sendTime, const QString &messageText)
 {
-    IMHistoryItem item(incoming, id, name, sendTime, messageText);
+    IMHistoryItem item(++lasthiid, incoming, id, name, sendTime, messageText);
 
     hitems.append(item);
 
@@ -96,8 +100,8 @@ bool IMHistoryKeeper::loadHistoryFile()
        return false;
     }
 
-    IMHistoryReader hreader;    
-    if (!hreader.read(hitems, hfName)) {
+    IMHistoryReader hreader;
+    if (!hreader.read(hitems, hfName, lasthiid)) {
         lastErrorMessage = hreader.errorMessage();
         return false;
     }
@@ -145,12 +149,69 @@ bool IMHistoryKeeper::getMessages(QList<IMHistoryItem> &historyItems, const int 
 
 //=============================================================================
 
+bool IMHistoryKeeper::getMessage(int hiid, IMHistoryItem &item)
+{
+    QList<IMHistoryItem>::iterator it;
+    for (it = hitems.begin(); it != hitems.end(); it++) {
+        if (it->hiid == hiid) {
+            item = *it;
+            return true;
+        }
+    }
+
+    return false;
+}
+
+//=============================================================================
+
 void IMHistoryKeeper::clear()
 {
     hitems.clear();
     historyChanged = true;
 
+    lasthiid = 0;
+
     emit historyClear();
+}
+
+//=============================================================================
+
+void IMHistoryKeeper::removeMessage(int hiid)
+{
+    QList<IMHistoryItem>::iterator it;
+    for (it = hitems.begin(); it != hitems.end(); it++) {
+        if (it->hiid == hiid) {
+            emit historyRemove(*it);
+            hitems.erase(it);
+            historyChanged = true;
+            break;
+        }
+    }
+}
+
+//=============================================================================
+
+void IMHistoryKeeper::removeMessages(QList<int> &hiids)
+{
+    bool changed = false;
+
+    QList<IMHistoryItem>::iterator it = hitems.begin();
+    while (it != hitems.end()) {
+        if (qFind(hiids, it->hiid) != hiids.end()) {
+            emit historyRemove(*it);
+
+            hitems.erase(it);
+
+            changed = true;
+
+            continue;
+        }
+        it++;
+    }
+
+    if (changed) {
+        historyChanged = true;
+    }
 }
 
 //=============================================================================

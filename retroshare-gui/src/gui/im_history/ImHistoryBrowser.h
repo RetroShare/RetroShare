@@ -30,28 +30,45 @@
 
 #include "ui_ImHistoryBrowser.h"
 
+class QTextEdit;
+
 class ImHistoryBrowser : public QDialog
 {
   Q_OBJECT
 
 public:
     /** Default constructor */
-    ImHistoryBrowser(bool isPrivateChat, IMHistoryKeeper &histKeeper, QWidget *parent = 0, Qt::WFlags flags = 0);
+    ImHistoryBrowser(bool isPrivateChat, IMHistoryKeeper &histKeeper, QTextEdit *edit, QWidget *parent = 0, Qt::WFlags flags = 0);
     /** Default destructor */
     virtual ~ImHistoryBrowser();
 
+protected:
+    bool eventFilter(QObject *obj, QEvent *ev);
+
 private slots:
     void historyAdd(IMHistoryItem item);
+    void historyRemove(IMHistoryItem item);
     void historyClear();
 
     void filterRegExpChanged();
     void clearFilter();
 
+    void itemSelectionChanged();
+    void customContextMenuRequested(QPoint pos);
+
+    void copyMessage();
+    void removeMessages();
+    void clearHistory();
+    void sendMessage();
+
 private:
     QListWidgetItem *addItem(IMHistoryItem &item);
     void filterItems(QListWidgetItem *item = NULL);
 
+    void getSelectedItems(QList<int> &items);
+
     bool isPrivateChat;
+    QTextEdit *textEdit;
     bool embedSmileys;
     IMHistoryKeeper &historyKeeper;
     ChatStyle style;

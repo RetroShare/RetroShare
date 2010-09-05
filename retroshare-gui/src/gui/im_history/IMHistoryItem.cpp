@@ -25,12 +25,14 @@
 
 IMHistoryItem::IMHistoryItem()
 {
+    hiid = 0;
 }
 
 //============================================================================
 
-IMHistoryItem::IMHistoryItem(bool incomingIn, std::string &idIn, const QString &nameIn, const QDateTime &sendTimeIn, const QString &messageTextIn)
+IMHistoryItem::IMHistoryItem(int hiidIn, bool incomingIn, std::string &idIn, const QString &nameIn, const QDateTime &sendTimeIn, const QString &messageTextIn)
 {
+    hiid = hiidIn;
     incoming = incomingIn;
     id = idIn;
     name = nameIn;

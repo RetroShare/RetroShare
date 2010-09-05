@@ -71,6 +71,9 @@ public:
     //! Fills given list with items
     bool getMessages(QList<IMHistoryItem> &historyItems, const int messagesCount);
 
+    //! Get message
+    bool getMessage(int hiid, IMHistoryItem &item);
+
     //! Adds new message to the history
 
     //! Adds new message to the history, but the message will be saved to
@@ -80,6 +83,12 @@ public:
     //! Clear the history
     void clear();
 
+    //! Remove item
+    void removeMessage(int hiid);
+
+    //! Remove items
+    void removeMessages(QList<int> &hiids);
+
 private:
     bool loadHistoryFile();
 
@@ -88,12 +97,14 @@ private:
     bool historyChanged;
     QString lastErrorMessage;
     QTimer *saveTimer;
+    int lasthiid;
 
 private slots:
     void saveHistory();
 
 signals:
     void historyAdd(IMHistoryItem item) const;
+    void historyRemove(IMHistoryItem item) const;
     void historyClear() const;
 };
 

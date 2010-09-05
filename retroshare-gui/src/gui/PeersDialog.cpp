@@ -1385,7 +1385,6 @@ void PeersDialog::setChatInfo(QString info, QColor color)
 void PeersDialog::on_actionClearChat_triggered()
 {
     ui.msgText->clear();
-    historyKeeper.clear();
 }
 
 void PeersDialog::displayInfoChatMenu(const QPoint& pos)
@@ -1756,6 +1755,6 @@ void PeersDialog::statusColumn()
 
 void PeersDialog::on_actionMessageHistory_triggered()
 {
-    ImHistoryBrowser imBrowser(false, historyKeeper, this);
+    ImHistoryBrowser imBrowser(false, historyKeeper, ui.lineEdit, this);
     imBrowser.exec();
 }

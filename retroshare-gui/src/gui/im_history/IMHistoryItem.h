@@ -30,8 +30,9 @@ class IMHistoryItem
 public:
    IMHistoryItem();
 
-   IMHistoryItem(bool incoming, std::string &id, const QString &name, const QDateTime &sendTime, const QString &messageText);
+   IMHistoryItem(int hiid, bool incoming, std::string &id, const QString &name, const QDateTime &sendTime, const QString &messageText);
 
+   int         hiid;
    bool        incoming;
    std::string id;
    QString     name;

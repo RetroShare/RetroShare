@@ -14,7 +14,7 @@
    <string>Message History</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../images.qrc">
+   <iconset>
     <normaloff>:/images/rstray3.png</normaloff>:/images/rstray3.png</iconset>
   </property>
   <property name="sizeGripEnabled">
@@ -23,7 +23,7 @@
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
     <layout class="QGridLayout" name="mainLayout">
-     <item row="1" column="0">
+     <item row="7" column="0">
       <layout class="QHBoxLayout" name="bottomLine">
        <item>
         <layout class="QHBoxLayout" name="filterLayout">
@@ -36,7 +36,7 @@
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap resource="../images.qrc">:/images/find-16.png</pixmap>
+            <pixmap>:/images/find-16.png</pixmap>
            </property>
           </widget>
          </item>
@@ -44,7 +44,7 @@
           <widget class="QLineEdit" name="filterPatternLineEdit"/>
          </item>
          <item>
-          <widget class="QPushButton" name="clearButton">
+          <widget class="QPushButton" name="clearFilterButton">
            <property name="minimumSize">
             <size>
              <width>16</width>
@@ -97,16 +97,72 @@ border-image: url(:/images/closepressed.png)
        </item>
       </layout>
      </item>
+     <item row="6" column="0">
+      <widget class="QListWidget" name="listWidget">
+       <property name="contextMenuPolicy">
+        <enum>Qt::CustomContextMenu</enum>
+       </property>
+       <property name="selectionMode">
+        <enum>QAbstractItemView::ExtendedSelection</enum>
+       </property>
+      </widget>
+     </item>
      <item row="0" column="0">
-      <widget class="QListWidget" name="listWidget"/>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QToolButton" name="copyButton">
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
+         <property name="text">
+          <string>Copy</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>:/images/copy.png</normaloff>:/images/copy.png</iconset>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonTextBesideIcon</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolButton" name="removeButton">
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
+         <property name="text">
+          <string>Remove</string>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>:/images/delete.png</normaloff>:/images/delete.png</iconset>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonTextBesideIcon</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../images.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
    <sender>buttonBox</sender>
