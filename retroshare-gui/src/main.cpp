@@ -163,6 +163,8 @@ int main(int argc, char *argv[])
 
 #ifdef MINIMAL_RSGUI
 	MessengerWindow::showYourself();
+
+	rshare.setQuitOnLastWindowClosed(true);
 #else
 	MainWindow *w = MainWindow::Create ();
 
@@ -213,8 +215,6 @@ int main(int argc, char *argv[])
 	timer -> connect(timer, SIGNAL(timeout()), notify, SLOT(UpdateGUI()));
 	timer->start(1000);
 #endif // MINIMAL_RSGUI
-
-	rshare.setQuitOnLastWindowClosed(true);
 
 	/* dive into the endless loop */
 	int ti = rshare.exec();
