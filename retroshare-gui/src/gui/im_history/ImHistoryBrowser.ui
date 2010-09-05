@@ -103,13 +103,14 @@ border-image: url(:/images/closepressed.png)
  </widget>
  <resources>
   <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>
-   <signal>accepted()</signal>
+   <signal>rejected()</signal>
    <receiver>ImHistoryBrowser</receiver>
-   <slot>accept()</slot>
+   <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>427</x>
