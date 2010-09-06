@@ -413,7 +413,8 @@ void PopupChatDialog::contextMenu( QPoint point )
 
 void PopupChatDialog::resetStatusBar() 
 {
-        ui.statusLabel->setText(QString("")) ;
+        ui.statusLabel->clear();
+        ui.typingpixmapLabel->clear();
 }
 
 void PopupChatDialog::updateStatusTyping()
@@ -435,6 +436,7 @@ void PopupChatDialog::updateStatusString(const QString& peer_id, const QString& 
 {
     QString status = QString::fromStdString(rsPeers->getPeerName(peer_id.toStdString())) + " " + tr(status_string.toAscii());
     ui.statusLabel->setText(status) ; // displays info for 5 secs.
+    ui.typingpixmapLabel->setPixmap(QPixmap(":images/typing.png") );
 
     QTimer::singleShot(5000,this,SLOT(resetStatusBar())) ;
 }

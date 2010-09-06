@@ -222,7 +222,7 @@ border-image: url(:/images/avatarstatus_bg.png);
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <layout class="QGridLayout" name="gridLayout">
+      <layout class="QGridLayout" name="gridLayout_4">
        <property name="leftMargin">
         <number>2</number>
        </property>
@@ -405,11 +405,11 @@ p, li { white-space: pre-wrap; }
        </property>
       </widget>
       <widget class="QWidget" name="layoutWidget">
-       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <layout class="QGridLayout" name="gridLayout_3">
         <property name="spacing">
-         <number>1</number>
+         <number>0</number>
         </property>
-        <item>
+        <item row="0" column="1">
          <widget class="QLabel" name="statusLabel">
           <property name="text">
            <string/>
@@ -422,7 +422,7 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
-        <item>
+        <item row="2" column="0" colspan="2">
          <widget class="QTextEdit" name="chattextEdit">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -440,6 +440,28 @@ p, li { white-space: pre-wrap; }
            <string notr="true">QTextEdit{border: 1px solid #B8B6B1;
 border-radius: 6px;
 background: white;}</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="typingpixmapLabel">
+          <property name="minimumSize">
+           <size>
+            <width>18</width>
+            <height>18</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>18</width>
+            <height>18</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>T</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
@@ -936,6 +958,10 @@ p, li { white-space: pre-wrap; }
   </action>
  </widget>
  <resources>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
