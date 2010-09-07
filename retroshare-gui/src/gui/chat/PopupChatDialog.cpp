@@ -54,6 +54,9 @@
 
 #define appDir QApplication::applicationDirPath()
 
+#define IMAGE_WINDOW         ":/images/rstray3.png"
+#define IMAGE_WINDOW_TYPING  ":/images/typing.png"
+
 /* Define the format used for displaying the date and time */
 #define DATETIME_FMT  "MMM dd hh:mm:ss"
 
@@ -145,7 +148,7 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   QString title = tr("RetroShare - ") + QString::fromStdString(name)  ;
   setWindowTitle(title);
     
-  setWindowIcon(QIcon(QString(":/images/rstray3.png")));
+  setWindowIcon(QIcon(IMAGE_WINDOW));
   
   ui.textboldButton->setIcon(QIcon(QString(":/images/edit-bold.png")));
   ui.textunderlineButton->setIcon(QIcon(QString(":/images/edit-underline.png")));
@@ -415,6 +418,8 @@ void PopupChatDialog::resetStatusBar()
 {
         ui.statusLabel->clear();
         ui.typingpixmapLabel->clear();
+
+        setWindowIcon(QIcon(IMAGE_WINDOW));
 }
 
 void PopupChatDialog::updateStatusTyping()
@@ -437,6 +442,10 @@ void PopupChatDialog::updateStatusString(const QString& peer_id, const QString& 
     QString status = QString::fromStdString(rsPeers->getPeerName(peer_id.toStdString())) + " " + tr(status_string.toAscii());
     ui.statusLabel->setText(status) ; // displays info for 5 secs.
     ui.typingpixmapLabel->setPixmap(QPixmap(":images/typing.png") );
+
+    if (status_string == "is typing...") {
+        setWindowIcon(QIcon(IMAGE_WINDOW_TYPING));
+    }
 
     QTimer::singleShot(5000,this,SLOT(resetStatusBar())) ;
 }
