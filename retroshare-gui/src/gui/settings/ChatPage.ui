@@ -771,7 +771,7 @@
           <attribute name="title">
            <string>Private</string>
           </attribute>
-          <layout class="QVBoxLayout" name="verticalLayout_2">
+          <layout class="QVBoxLayout" name="verticalLayout_3">
            <item>
             <layout class="QHBoxLayout" name="privateListLayout">
              <item>
@@ -875,7 +875,7 @@
           <attribute name="title">
            <string>History</string>
           </attribute>
-          <layout class="QVBoxLayout" name="verticalLayout_3">
+          <layout class="QVBoxLayout" name="verticalLayout_4">
            <item>
             <layout class="QHBoxLayout" name="historyListLayout">
              <item>
