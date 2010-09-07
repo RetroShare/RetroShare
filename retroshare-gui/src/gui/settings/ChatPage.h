@@ -48,9 +48,17 @@ class ChatPage : public ConfigPage
 
   private slots:
       void on_pushButtonChangeChatFont_clicked();
+      void on_publicList_currentRowChanged(int currentRow);
+      void on_privateList_currentRowChanged(int currentRow);
+      void on_historyList_currentRowChanged(int currentRow);
 
   private:
       void closeEvent (QCloseEvent * event);
+      void setPreviewMessages(QString &stylePath, QTextBrowser *textBrowser);
+
+      QString publicStylePath;
+      QString privateStylePath;
+      QString historyStylePath;
 
       /** Qt Designer generated object */
       Ui::ChatPage ui;

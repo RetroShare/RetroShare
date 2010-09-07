@@ -451,18 +451,23 @@
         <file>images/window_fullscreen.png</file>
         <file>images/window_nofullscreen.png</file>
         <file>layouts/default.ui</file>
+        <file>qss/chat/private/info.xml</file>
         <file>qss/chat/private/incoming.htm</file>
         <file>qss/chat/private/outgoing.htm</file>
         <file>qss/chat/private/hincoming.htm</file>
         <file>qss/chat/private/houtgoing.htm</file>
         <file>qss/chat/private/main.css</file>
+        <file>qss/chat/public/info.xml</file>
         <file>qss/chat/public/incoming.htm</file>
         <file>qss/chat/public/outgoing.htm</file>
         <file>qss/chat/public/hincoming.htm</file>
         <file>qss/chat/public/houtgoing.htm</file>
         <file>qss/chat/public/main.css</file>
+        <file>qss/chat/history/info.xml</file>
         <file>qss/chat/history/incoming.htm</file>
         <file>qss/chat/history/outgoing.htm</file>
+        <file>qss/chat/history/hincoming.htm</file>
+        <file>qss/chat/history/houtgoing.htm</file>
         <file>qss/chat/history/main.css</file>
         <file>smileys/angry.png</file>
         <file>smileys/beer.png</file>

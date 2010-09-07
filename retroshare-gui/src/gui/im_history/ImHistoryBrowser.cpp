@@ -70,7 +70,7 @@ ImHistoryBrowser::ImHistoryBrowser(bool isPrivateChatIn, IMHistoryKeeper &histKe
         embedSmileys = Settings->valueFromGroup(QString("Chat"), QString::fromUtf8("Emoteicons_GroupChat"), true).toBool();
     }
 
-    style.setStylePath(":/qss/chat/history");
+    style.setStyleFromSettings(ChatStyle::TYPE_HISTORY);
     style.loadEmoticons();
 
     ui.listWidget->setItemDelegate(new IMHistoryItemDelegate);

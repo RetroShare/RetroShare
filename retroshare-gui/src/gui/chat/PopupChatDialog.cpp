@@ -99,7 +99,7 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   m_bInsertOnVisible = true;
 
   last_status_send_time = 0 ;
-  style.setStylePath(":/qss/chat/private");
+  style.setStyleFromSettings(ChatStyle::TYPE_PRIVATE);
   style.loadEmoticons();
 
   /* Hide or show the frames */

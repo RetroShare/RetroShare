@@ -31,25 +31,29 @@
 	color: #244578;
 }
 
-.hincomingHeader {
+.hincomingTable{
 	background-color:#dfedff;
+}
+
+.hincomingHeader {
 	border-color:#fafafa #d1dfef #d1dfef #fafafa;
 	color: #295b07;
 }
 
 .hincomingTime {
-	background-color:#dfedff;
 	color: #295b07;
 }
 
-.houtgoingHeader {
+.houtgoingTable{
 	background-color:#f5f5f5;
+}
+
+.houtgoingHeader {
 	border-color:#fafafa #e3e3e3 #e3e3e3 #fafafa;
 	color: #244578;
 }
 
 .houtgoingTime {
-	background-color:#f5f5f5;
 	color: #244578;
 }
 

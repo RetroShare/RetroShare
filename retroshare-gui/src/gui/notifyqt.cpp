@@ -399,7 +399,12 @@ void NotifyQt::UpdateGUI()
 	}
 #endif // MINIMAL_RSGUI
 }
-			
+		
+void NotifyQt::notifyChatStyleChanged(int /*ChatStyle::enumStyleType*/ styleType)
+{
+	emit chatStyleChanged(styleType);
+}
+		
 //void NotifyQt::displaySearch()
 //{
 //	iface->lockData(); /* Lock Interface */

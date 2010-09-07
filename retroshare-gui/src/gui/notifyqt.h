@@ -15,7 +15,7 @@ class ChatDialog;
 class MessagesDialog;
 class ChannelsDialog;
 class MessengerWindow;
-struct TurtleFileInfo ;
+struct TurtleFileInfo;
 
 //class NotifyQt: public NotifyBase, public QObject
 class NotifyQt: public QObject, public NotifyBase
@@ -47,6 +47,9 @@ class NotifyQt: public QObject, public NotifyBase
  
 		virtual std::string askForPassword(const std::string& key_details,bool prev_is_bad) ;
 
+		/* Notify from GUI */
+		void notifyChatStyleChanged(int /*ChatStyle::enumStyleType*/ styleType);
+
 	signals:
 		// It's beneficial to send info to the GUI using signals, because signals are thread-safe
 		// as they get queued by Qt.
@@ -74,6 +77,9 @@ class NotifyQt: public QObject, public NotifyBase
 		void peerStatusChangedSummary() const;
 		void publicChatChanged(int type) const ;
 		void privateChatChanged(int type) const ;
+
+		/* Notify from GUI */
+		void chatStyleChanged(int /*ChatStyle::enumStyleType*/ styleType);
 
 	public slots:
 

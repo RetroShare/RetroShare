@@ -83,7 +83,6 @@ public:
 
   /** set the chat avatar. Returns a null image if no avatar is saved. */
   void setChatAvatar(const QImage&) ;
-
   
   /* Get the destination log file. */
   QString getLogFile();
@@ -122,7 +121,17 @@ public:
 
   bool getChatSendMessageWithCtrlReturn();
   void setChatSendMessageWithCtrlReturn(bool bValue);
-  
+
+  /* chat styles */
+  void getPublicChatStyle(QString &stylePath);
+  void setPublicChatStyle(QString stylePath);
+
+  void getPrivateChatStyle(QString &stylePath);
+  void setPrivateChatStyle(QString stylePath);
+
+  void getHistoryChatStyle(QString &stylePath);
+  void setHistoryChatStyle(QString stylePath);
+
   //! Save placement, state and size information of a window.
   void saveWidgetInformation(QWidget *widget);
 

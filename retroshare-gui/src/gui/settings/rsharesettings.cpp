@@ -299,6 +299,36 @@ void RshareSettings::setChatSendMessageWithCtrlReturn(bool bValue)
     setValueToGroup("Chat", "SendMessageWithCtrlReturn", bValue);
 }
 
+void RshareSettings::getPublicChatStyle(QString &stylePath)
+{
+    stylePath = valueFromGroup("Chat", "StylePublic", ":/qss/chat/public").toString();
+}
+
+void RshareSettings::setPublicChatStyle(QString stylePath)
+{
+    setValueToGroup("Chat", "StylePublic", stylePath);
+}
+
+void RshareSettings::getPrivateChatStyle(QString &stylePath)
+{
+    stylePath = valueFromGroup("Chat", "StylePrivate", ":/qss/chat/private").toString();
+}
+
+void RshareSettings::setPrivateChatStyle(QString stylePath)
+{
+    setValueToGroup("Chat", "StylePrivate", stylePath);
+}
+
+void RshareSettings::getHistoryChatStyle(QString &stylePath)
+{
+    stylePath = valueFromGroup("Chat", "StyleHistory", ":/qss/chat/history").toString();
+}
+
+void RshareSettings::setHistoryChatStyle(QString stylePath)
+{
+    setValueToGroup("Chat", "StyleHistory", stylePath);
+}
+
 /** Returns true if RetroShare is set to run on system boot. */
 bool
 RshareSettings::runRetroshareOnBoot()

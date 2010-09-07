@@ -26,9 +26,13 @@
 #include <QFile>
 #include <QIcon>
 #include <QPushButton>
+#include <QXmlStreamReader>
+
 #include <iostream>
 
 #include "ChatStyle.h"
+#include "gui/settings/rsharesettings.h"
+#include "gui/notifyqt.h"
 
 enum enumGetStyle
 {
@@ -39,8 +43,11 @@ enum enumGetStyle
 };
 
 /* Default constructor */
-ChatStyle::ChatStyle()
+ChatStyle::ChatStyle() : QObject()
 {
+    m_styleType = TYPE_UNKNOWN;
+
+    connect(NotifyQt::getInstance(), SIGNAL(chatStyleChanged(int)), SLOT(styleChanged(int)));
 }
 
 /* Destructor. */
@@ -48,12 +55,49 @@ ChatStyle::~ChatStyle()
 {
 }
 
-void ChatStyle::setStylePath(QString path)
+void ChatStyle::styleChanged(int styleType)
 {
-    stylePath = path;
-    if (stylePath.right(1) != "/" && stylePath.right(1) != "\\") {
-        stylePath += "/";
+    if (m_styleType == styleType) {
+        setStyleFromSettings(m_styleType);
     }
+}
+
+bool ChatStyle::setStylePath(QString stylePath)
+{
+    m_styleType = TYPE_UNKNOWN;
+
+    m_styleDir.setPath(QApplication::applicationDirPath());
+    if (m_styleDir.cd(stylePath) == false) {
+        m_styleDir = QDir("");
+        return false;
+    }
+
+    return true;
+}
+
+bool ChatStyle::setStyleFromSettings(enumStyleType styleType)
+{
+    QString stylePath;
+
+    switch (styleType) {
+    case TYPE_PUBLIC:
+        Settings->getPublicChatStyle(stylePath);
+        break;
+    case TYPE_PRIVATE:
+        Settings->getPrivateChatStyle(stylePath);
+        break;
+    case TYPE_HISTORY:
+        Settings->getHistoryChatStyle(stylePath);
+        break;
+    case TYPE_UNKNOWN:
+        return false;
+    }
+
+    bool result = setStylePath(stylePath);
+
+    m_styleType = styleType;
+
+    return result;
 }
 
 void ChatStyle::loadEmoticons()
@@ -204,27 +248,27 @@ void ChatStyle::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
     smWidget->show();
 }
 
-static QString getStyle(QString &stylePath, enumGetStyle type)
+static QString getStyle(QDir &styleDir, enumGetStyle type)
 {
     QString style;
 
-    if (stylePath.isEmpty()) {
+    if (styleDir == QDir("")) {
         return "";
     }
 
     QFile fileHtml;
     switch (type) {
     case GETSTYLE_INCOMING:
-        fileHtml.setFileName(stylePath + "incoming.htm");
+        fileHtml.setFileName(QFileInfo(styleDir, "incoming.htm").absoluteFilePath());
         break;
     case GETSTYLE_OUTGOING:
-        fileHtml.setFileName(stylePath + "outgoing.htm");
+        fileHtml.setFileName(QFileInfo(styleDir, "outgoing.htm").absoluteFilePath());
         break;
     case GETSTYLE_HINCOMING:
-        fileHtml.setFileName(stylePath + "hincoming.htm");
+        fileHtml.setFileName(QFileInfo(styleDir, "hincoming.htm").absoluteFilePath());
         break;
     case GETSTYLE_HOUTGOING:
-        fileHtml.setFileName(stylePath + "houtgoing.htm");
+        fileHtml.setFileName(QFileInfo(styleDir, "houtgoing.htm").absoluteFilePath());
         break;
     default:
         return "";
@@ -234,7 +278,7 @@ static QString getStyle(QString &stylePath, enumGetStyle type)
         style = fileHtml.readAll();
         fileHtml.close();
 
-        QFile fileCss(stylePath + "main.css");
+        QFile fileCss(QFileInfo(styleDir, "main.css").absoluteFilePath());
         QString css;
         if (fileCss.open(QIODevice::ReadOnly)) {
             css = fileCss.readAll();
@@ -273,22 +317,22 @@ QString ChatStyle::formatMessage(enumFormatMessage type, QString &name, QDateTim
 
     switch (type) {
     case FORMATMSG_INCOMING:
-        style = getStyle(stylePath, GETSTYLE_INCOMING);
+        style = getStyle(m_styleDir, GETSTYLE_INCOMING);
         break;
     case FORMATMSG_OUTGOING:
-        style = getStyle(stylePath, GETSTYLE_OUTGOING);
+        style = getStyle(m_styleDir, GETSTYLE_OUTGOING);
         break;
     case FORMATMSG_HINCOMING:
-        style = getStyle(stylePath, GETSTYLE_HINCOMING);
+        style = getStyle(m_styleDir, GETSTYLE_HINCOMING);
         break;
     case FORMATMSG_HOUTGOING:
-        style = getStyle(stylePath, GETSTYLE_HOUTGOING);
+        style = getStyle(m_styleDir, GETSTYLE_HOUTGOING);
         break;
     }
 
     if (style.isEmpty()) {
         // default style
-        style = "%timestamp% %name% \n %message% ";
+        style = "<table width='100%'><tr><td><b>%name%</b></td><td width='130' align='right'>%timestamp%</td></tr></table><table width='100%'><tr><td>%message%</td></tr></table>";
     }
 
     unsigned int formatFlag = 0;
@@ -338,4 +382,156 @@ QString ChatStyle::formatMessage(enumFormatMessage type, QString &name, QDateTim
                              .replace("%message%", msg);
 
     return formatMsg;
+}
+
+static bool getStyleInfo(QString stylePath, QString stylePathRelative, ChatStyleInfo &info)
+{
+    // Initialize info
+    info = ChatStyleInfo();
+
+    QFileInfo file(stylePath, "info.xml");
+
+    QFile xmlFile(file.filePath());
+    if (xmlFile.open(QIODevice::ReadOnly) == false) {
+        // No info file found
+        return false;
+    }
+
+    QDir dir(QApplication::applicationDirPath());
+
+    QXmlStreamReader reader;
+    reader.setDevice(&xmlFile);
+
+    while (reader.atEnd() == false) {
+        reader.readNext();
+        if (reader.isStartElement()) {
+            if (reader.name() == "RetroShare_Style") {
+                if (reader.attributes().value("version") == "1.0") {
+                    info.stylePath = stylePathRelative;
+                    continue;
+                }
+                // Not the right format of the xml file;
+                return false ;
+            }
+
+            if (info.stylePath.isEmpty()) {
+                continue;
+            }
+
+            if (reader.name() == "style") {
+                // read style information
+                while (reader.atEnd() == false) {
+                    reader.readNext();
+                    if (reader.isEndElement()) {
+                        if (reader.name() == "style") {
+                            break;
+                        }
+                        continue;
+                    }
+                    if (reader.isStartElement()) {
+                        if (reader.name() == "name") {
+                            info.styleName = reader.readElementText();
+                            continue;
+                        }
+                        if (reader.name() == "description") {
+                            info.styleDescription = reader.readElementText();
+                            continue;
+                        }
+                        // ingore all other entries
+                    }
+                }
+                continue;
+            }
+
+            if (reader.name() == "author") {
+                // read author information
+                while (reader.atEnd() == false) {
+                    reader.readNext();
+                    if (reader.isEndElement()) {
+                        if (reader.name() == "author") {
+                            break;
+                        }
+                        continue;
+                    }
+                    if (reader.isStartElement()) {
+                        if (reader.name() == "name") {
+                            info.authorName = reader.readElementText();
+                            continue;
+                        }
+                        if (reader.name() == "email") {
+                            info.authorEmail = reader.readElementText();
+                            continue;
+                        }
+                        // ingore all other entries
+                    }
+                }
+                continue;
+            }
+            // ingore all other entries
+        }
+    }
+
+    if (reader.hasError()) {
+        return false;
+    }
+
+    if (info.stylePath.isEmpty()) {
+        return false;
+    }
+    return true;
+}
+
+/*static*/ bool ChatStyle::getAvailableStyles(enumStyleType styleType, QList<ChatStyleInfo> &styles)
+{
+    styles.clear();
+
+    ChatStyleInfo standardInfo;
+    QString stylePath;
+
+    switch (styleType) {
+    case TYPE_PUBLIC:
+        if (getStyleInfo(":/qss/chat/public", ":/qss/chat/public", standardInfo)) {
+            standardInfo.styleDescription = tr("Standard style for public chat");
+            styles.append(standardInfo);
+        }
+        stylePath = "style/public";
+        break;
+    case TYPE_PRIVATE:
+        if (getStyleInfo(":/qss/chat/private", ":/qss/chat/private", standardInfo)) {
+            standardInfo.styleDescription = tr("Standard style for private chat");
+            styles.append(standardInfo);
+        }
+        stylePath = "style/private";
+        break;
+    case TYPE_HISTORY:
+        if (getStyleInfo(":/qss/chat/history", ":/qss/chat/history", standardInfo)) {
+            standardInfo.styleDescription = tr("Standard style for history");
+            styles.append(standardInfo);
+        }
+        stylePath = "style/history";
+        break;
+    case TYPE_UNKNOWN:
+    default:
+        return false;
+    }
+
+    // application path
+    QDir applicationDir(QApplication::applicationDirPath());
+    QDir dir(QApplication::applicationDirPath());
+    if (dir.cd(stylePath) == false) {
+        return true;
+    }
+
+    // get all style directories
+    QFileInfoList dirList = dir.entryInfoList(QDir::AllDirs | QDir::NoDotAndDotDot, QDir::Name);
+
+    // iterate style directories and get info
+    for (QFileInfoList::iterator dir = dirList.begin(); dir != dirList.end(); dir++) {
+        ChatStyleInfo info;
+        if (getStyleInfo(dir->absoluteFilePath(), applicationDir.relativeFilePath(dir->absoluteFilePath()), info)) {
+            styles.append(info);
+        }
+    }
+
+    return true;
 }

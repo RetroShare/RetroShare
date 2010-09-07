@@ -202,7 +202,7 @@ PeersDialog::PeersDialog(QWidget *parent)
     mCurrentFont.fromString(Settings->valueFromGroup("Chat", QString::fromUtf8("ChatScreenFont")).toString());
     ui.lineEdit->setFont(mCurrentFont);
 
-    style.setStylePath(":/qss/chat/public");
+    style.setStyleFromSettings(ChatStyle::TYPE_PUBLIC);
     style.loadEmoticons();
 
     setChatInfo(tr("Welcome to RetroShare's group chat."), QString::fromUtf8("blue"));

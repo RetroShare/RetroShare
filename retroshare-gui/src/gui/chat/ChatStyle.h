@@ -26,6 +26,7 @@
 #include <QString>
 #include <QDateTime>
 #include <QHash>
+#include <QMetaType>
 
 #include "HandleRichText.h"
 
@@ -37,8 +38,25 @@
 #define CHAT_FORMATTEXT_EMBED_SMILEYS  1
 #define CHAT_FORMATTEXT_EMBED_LINKS    2
 
-class ChatStyle
+class ChatStyleInfo
 {
+public:
+    ChatStyleInfo() {}
+
+public:
+    QString stylePath;
+    QString styleName;
+    QString styleDescription;
+    QString authorName;
+    QString authorEmail;
+};
+
+Q_DECLARE_METATYPE(ChatStyleInfo)
+
+class ChatStyle : public QObject
+{
+    Q_OBJECT
+
 public:
     enum enumFormatMessage
     {
@@ -46,6 +64,14 @@ public:
         FORMATMSG_OUTGOING,
         FORMATMSG_HINCOMING,
         FORMATMSG_HOUTGOING
+    };
+
+    enum enumStyleType
+    {
+        TYPE_UNKNOWN,
+        TYPE_PUBLIC,
+        TYPE_PRIVATE,
+        TYPE_HISTORY
     };
 
     QHash<QString, QString> smileys;
@@ -56,16 +82,22 @@ public:
     /* Default destructor */
     ~ChatStyle();
 
-    void setStylePath(QString path);
+    bool setStylePath(QString stylePath);
+    bool setStyleFromSettings(enumStyleType styleType);
     void loadEmoticons();
 
     QString formatMessage(enumFormatMessage type, QString &name, QDateTime &timestamp, QString &message, unsigned int flag);
     QString formatText(QString &message, unsigned int flag);
 
     void showSmileyWidget(QWidget *parent, QWidget *button, const char *slotAddMethod);
+    static bool getAvailableStyles(enumStyleType styleType, QList<ChatStyleInfo> &styles);
+
+private slots:
+    void styleChanged(int styleType);
 
 private:
-    QString stylePath;
+    enumStyleType m_styleType;
+    QDir m_styleDir;
 
     /** store default information for embedding HTML */
     RsChat::EmbedInHtmlAhref defEmbedAhref;
