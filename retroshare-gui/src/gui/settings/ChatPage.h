@@ -47,6 +47,9 @@ class ChatPage : public ConfigPage
       QFont fontTempChat;
 
   private slots:
+      void on_historyComboBoxVariant_currentIndexChanged(int index);
+      void on_privateComboBoxVariant_currentIndexChanged(int index);
+      void on_publicComboBoxVariant_currentIndexChanged(int index);
       void on_pushButtonChangeChatFont_clicked();
       void on_publicList_currentRowChanged(int currentRow);
       void on_privateList_currentRowChanged(int currentRow);
@@ -54,11 +57,15 @@ class ChatPage : public ConfigPage
 
   private:
       void closeEvent (QCloseEvent * event);
-      void setPreviewMessages(QString &stylePath, QTextBrowser *textBrowser);
+      void setPreviewMessages(QString &stylePath, QString styleVariant, QTextBrowser *textBrowser);
+      void fillPreview(QListWidget *listWidget, QComboBox *comboBox, QTextBrowser *textBrowser);
 
       QString publicStylePath;
+      QString publicStyleVariant;
       QString privateStylePath;
+      QString privateStyleVariant;
       QString historyStylePath;
+      QString historyStyleVariant;
 
       /** Qt Designer generated object */
       Ui::ChatPage ui;

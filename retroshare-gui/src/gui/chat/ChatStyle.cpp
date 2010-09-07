@@ -34,6 +34,8 @@
 #include "gui/settings/rsharesettings.h"
 #include "gui/notifyqt.h"
 
+#include <retroshare/rsinit.h>
+
 enum enumGetStyle
 {
     GETSTYLE_INCOMING,
@@ -62,15 +64,18 @@ void ChatStyle::styleChanged(int styleType)
     }
 }
 
-bool ChatStyle::setStylePath(QString stylePath)
+bool ChatStyle::setStylePath(QString stylePath, QString styleVariant)
 {
     m_styleType = TYPE_UNKNOWN;
 
     m_styleDir.setPath(QApplication::applicationDirPath());
     if (m_styleDir.cd(stylePath) == false) {
         m_styleDir = QDir("");
+        m_styleVariant.clear();
         return false;
     }
+
+    m_styleVariant = styleVariant;
 
     return true;
 }
@@ -78,22 +83,23 @@ bool ChatStyle::setStylePath(QString stylePath)
 bool ChatStyle::setStyleFromSettings(enumStyleType styleType)
 {
     QString stylePath;
+    QString styleVariant;
 
     switch (styleType) {
     case TYPE_PUBLIC:
-        Settings->getPublicChatStyle(stylePath);
+        Settings->getPublicChatStyle(stylePath, styleVariant);
         break;
     case TYPE_PRIVATE:
-        Settings->getPrivateChatStyle(stylePath);
+        Settings->getPrivateChatStyle(stylePath, styleVariant);
         break;
     case TYPE_HISTORY:
-        Settings->getHistoryChatStyle(stylePath);
+        Settings->getHistoryChatStyle(stylePath, styleVariant);
         break;
     case TYPE_UNKNOWN:
         return false;
     }
 
-    bool result = setStylePath(stylePath);
+    bool result = setStylePath(stylePath, styleVariant);
 
     m_styleType = styleType;
 
@@ -248,7 +254,7 @@ void ChatStyle::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
     smWidget->show();
 }
 
-static QString getStyle(QDir &styleDir, enumGetStyle type)
+static QString getStyle(QDir &styleDir, QString styleVariant, enumGetStyle type)
 {
     QString style;
 
@@ -284,6 +290,18 @@ static QString getStyle(QDir &styleDir, enumGetStyle type)
             css = fileCss.readAll();
             fileCss.close();
         }
+
+        if (styleVariant.isEmpty() == false) {
+            QFile fileCssVariant(QFileInfo(styleDir, "variants/" + styleVariant + ".css").absoluteFilePath());
+            QString cssVariant;
+            if (fileCssVariant.open(QIODevice::ReadOnly)) {
+                cssVariant = fileCssVariant.readAll();
+                fileCssVariant.close();
+
+                css += "\n" + cssVariant;
+            }
+        }
+
         style.replace("%css-style%", css);
     }
 
@@ -317,16 +335,16 @@ QString ChatStyle::formatMessage(enumFormatMessage type, QString &name, QDateTim
 
     switch (type) {
     case FORMATMSG_INCOMING:
-        style = getStyle(m_styleDir, GETSTYLE_INCOMING);
+        style = getStyle(m_styleDir, m_styleVariant, GETSTYLE_INCOMING);
         break;
     case FORMATMSG_OUTGOING:
-        style = getStyle(m_styleDir, GETSTYLE_OUTGOING);
+        style = getStyle(m_styleDir, m_styleVariant, GETSTYLE_OUTGOING);
         break;
     case FORMATMSG_HINCOMING:
-        style = getStyle(m_styleDir, GETSTYLE_HINCOMING);
+        style = getStyle(m_styleDir, m_styleVariant, GETSTYLE_HINCOMING);
         break;
     case FORMATMSG_HOUTGOING:
-        style = getStyle(m_styleDir, GETSTYLE_HOUTGOING);
+        style = getStyle(m_styleDir, m_styleVariant, GETSTYLE_HOUTGOING);
         break;
     }
 
@@ -481,9 +499,28 @@ static bool getStyleInfo(QString stylePath, QString stylePathRelative, ChatStyle
     return true;
 }
 
+static QString getBaseDir()
+{
+    // application path
+    std::string configDir = RsInit::RsConfigDirectory();
+    QString baseDir = QString::fromStdString(configDir);
+
+#ifdef WIN32
+    if (RsInit::isPortable ()) {
+        // application dir for portable version
+        baseDir = QApplication::applicationDirPath();
+    }
+#endif
+
+    return baseDir;
+}
+
 /*static*/ bool ChatStyle::getAvailableStyles(enumStyleType styleType, QList<ChatStyleInfo> &styles)
 {
     styles.clear();
+
+    // base dir
+    QDir baseDir(getBaseDir());
 
     ChatStyleInfo standardInfo;
     QString stylePath;
@@ -494,31 +531,30 @@ static bool getStyleInfo(QString stylePath, QString stylePathRelative, ChatStyle
             standardInfo.styleDescription = tr("Standard style for public chat");
             styles.append(standardInfo);
         }
-        stylePath = "style/public";
+        stylePath = "stylesheets/public";
         break;
     case TYPE_PRIVATE:
         if (getStyleInfo(":/qss/chat/private", ":/qss/chat/private", standardInfo)) {
             standardInfo.styleDescription = tr("Standard style for private chat");
             styles.append(standardInfo);
         }
-        stylePath = "style/private";
+        stylePath = "stylesheets/private";
         break;
     case TYPE_HISTORY:
         if (getStyleInfo(":/qss/chat/history", ":/qss/chat/history", standardInfo)) {
             standardInfo.styleDescription = tr("Standard style for history");
             styles.append(standardInfo);
         }
-        stylePath = "style/history";
+        stylePath = "stylesheets/history";
         break;
     case TYPE_UNKNOWN:
     default:
         return false;
     }
 
-    // application path
-    QDir applicationDir(QApplication::applicationDirPath());
-    QDir dir(QApplication::applicationDirPath());
+    QDir dir(baseDir);
     if (dir.cd(stylePath) == false) {
+        // no user styles available
         return true;
     }
 
@@ -528,9 +564,42 @@ static bool getStyleInfo(QString stylePath, QString stylePathRelative, ChatStyle
     // iterate style directories and get info
     for (QFileInfoList::iterator dir = dirList.begin(); dir != dirList.end(); dir++) {
         ChatStyleInfo info;
-        if (getStyleInfo(dir->absoluteFilePath(), applicationDir.relativeFilePath(dir->absoluteFilePath()), info)) {
+        if (getStyleInfo(dir->absoluteFilePath(), baseDir.relativeFilePath(dir->absoluteFilePath()), info)) {
             styles.append(info);
         }
+    }
+
+    return true;
+}
+
+/*static*/ bool ChatStyle::getAvailableVariants(QString stylePath, QStringList &variants)
+{
+    variants.clear();
+
+    if (stylePath.isEmpty()) {
+        return false;
+    }
+
+    // application path
+    QDir dir(QApplication::applicationDirPath());
+    if (dir.cd(stylePath) == false) {
+        // style not found
+        return false;
+    }
+
+    if (dir.cd("variants") == false) {
+        // no variants available
+        return true;
+    }
+
+    // get all variants
+    QStringList filters;
+    filters.append("*.css");
+    QFileInfoList fileList = dir.entryInfoList(filters, QDir::Files, QDir::Name);
+
+    // iterate variants
+    for (QFileInfoList::iterator file = fileList.begin(); file != fileList.end(); file++) {
+        variants.append(file->baseName());
     }
 
     return true;

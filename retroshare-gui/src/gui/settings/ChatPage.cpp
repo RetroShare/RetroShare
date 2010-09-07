@@ -27,7 +27,9 @@
 #include "gui/notifyqt.h"
 #include "rsharesettings.h"
 
-static QString loadStyleInfo(ChatStyle::enumStyleType type, QListWidget *listWidget)
+#define VARIANT_STANDARD    "Standard"
+
+static QString loadStyleInfo(ChatStyle::enumStyleType type, QListWidget *listWidget, QComboBox *comboBox, QString &styleVariant)
 {
     QList<ChatStyleInfo> styles;
     QList<ChatStyleInfo>::iterator style;
@@ -38,13 +40,13 @@ static QString loadStyleInfo(ChatStyle::enumStyleType type, QListWidget *listWid
 
     switch (type) {
     case ChatStyle::TYPE_PUBLIC:
-        Settings->getPublicChatStyle(stylePath);
+        Settings->getPublicChatStyle(stylePath, styleVariant);
         break;
     case ChatStyle::TYPE_PRIVATE:
-        Settings->getPrivateChatStyle(stylePath);
+        Settings->getPrivateChatStyle(stylePath, styleVariant);
         break;
     case ChatStyle::TYPE_HISTORY:
-        Settings->getHistoryChatStyle(stylePath);
+        Settings->getHistoryChatStyle(stylePath, styleVariant);
         break;
     case ChatStyle::TYPE_UNKNOWN:
         return "";
@@ -63,6 +65,16 @@ static QString loadStyleInfo(ChatStyle::enumStyleType type, QListWidget *listWid
 
     listWidget->setCurrentItem(activeItem);
 
+    /* now the combobox should be filled */
+
+    int index = comboBox->findText(styleVariant);
+    if (index != -1) {
+        comboBox->setCurrentIndex(index);
+    } else {
+        if (comboBox->count()) {
+            comboBox->setCurrentIndex(0);
+        }
+    }
     return stylePath;
 }
 
@@ -104,8 +116,8 @@ ChatPage::save(QString &errmsg)
     QListWidgetItem *item = ui.publicList->currentItem();
     if (item) {
         info = qVariantValue<ChatStyleInfo>(item->data(Qt::UserRole));
-        if (publicStylePath != info.stylePath) {
-            Settings->setPublicChatStyle(info.stylePath);
+        if (publicStylePath != info.stylePath || publicStyleVariant != ui.publicComboBoxVariant->currentText()) {
+            Settings->setPublicChatStyle(info.stylePath, ui.publicComboBoxVariant->currentText());
             NotifyQt::getInstance()->notifyChatStyleChanged(ChatStyle::TYPE_PUBLIC);
         }
     }
@@ -113,8 +125,8 @@ ChatPage::save(QString &errmsg)
     item = ui.privateList->currentItem();
     if (item) {
         info = qVariantValue<ChatStyleInfo>(item->data(Qt::UserRole));
-        if (privateStylePath != info.stylePath) {
-            Settings->setPrivateChatStyle(info.stylePath);
+        if (privateStylePath != info.stylePath || privateStyleVariant != ui.privateComboBoxVariant->currentText()) {
+            Settings->setPrivateChatStyle(info.stylePath, ui.privateComboBoxVariant->currentText());
             NotifyQt::getInstance()->notifyChatStyleChanged(ChatStyle::TYPE_PRIVATE);
         }
     }
@@ -122,8 +134,8 @@ ChatPage::save(QString &errmsg)
     item = ui.historyList->currentItem();
     if (item) {
         info = qVariantValue<ChatStyleInfo>(item->data(Qt::UserRole));
-        if (historyStylePath != info.stylePath) {
-            Settings->setHistoryChatStyle(info.stylePath);
+        if (historyStylePath != info.stylePath || historyStyleVariant != ui.historyComboBoxVariant->currentText()) {
+            Settings->setHistoryChatStyle(info.stylePath, ui.historyComboBoxVariant->currentText());
             NotifyQt::getInstance()->notifyChatStyleChanged(ChatStyle::TYPE_HISTORY);
         }
     }
@@ -151,9 +163,9 @@ ChatPage::load()
     ui.labelChatFontPreview->setFont(fontTempChat);
 
     /* Load styles */
-    publicStylePath = loadStyleInfo(ChatStyle::TYPE_PUBLIC, ui.publicList);
-    privateStylePath = loadStyleInfo(ChatStyle::TYPE_PRIVATE, ui.privateList);
-    historyStylePath = loadStyleInfo(ChatStyle::TYPE_HISTORY, ui.historyList);
+    publicStylePath = loadStyleInfo(ChatStyle::TYPE_PUBLIC, ui.publicList, ui.publicComboBoxVariant, publicStyleVariant);
+    privateStylePath = loadStyleInfo(ChatStyle::TYPE_PRIVATE, ui.privateList, ui.privateComboBoxVariant, privateStyleVariant);
+    historyStylePath = loadStyleInfo(ChatStyle::TYPE_HISTORY, ui.historyList, ui.historyComboBoxVariant, historyStyleVariant);
 }
 
 bool ChatPage::emotePrivatChat() const {
@@ -182,10 +194,10 @@ void ChatPage::on_pushButtonChangeChatFont_clicked()
 	}
 }
 
-void ChatPage::setPreviewMessages(QString &stylePath, QTextBrowser *textBrowser)
+void ChatPage::setPreviewMessages(QString &stylePath, QString styleVariant, QTextBrowser *textBrowser)
 {
     ChatStyle style;
-    style.setStylePath(stylePath);
+    style.setStylePath(stylePath, styleVariant);
     style.loadEmoticons();
 
     textBrowser->clear();
@@ -210,12 +222,23 @@ void ChatPage::setPreviewMessages(QString &stylePath, QTextBrowser *textBrowser)
     textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_OUTGOING,  nameOutgoing, timestmp, message, CHAT_FORMATTEXT_EMBED_SMILEYS));
 }
 
+void ChatPage::fillPreview(QListWidget *listWidget, QComboBox *comboBox, QTextBrowser *textBrowser)
+{
+    QListWidgetItem *item = listWidget->currentItem();
+    if (item) {
+        ChatStyleInfo info = qVariantValue<ChatStyleInfo>(item->data(Qt::UserRole));
+
+        setPreviewMessages(info.stylePath, comboBox->currentText(), textBrowser);
+    } else {
+        textBrowser->clear();
+    }
+}
+
 void ChatPage::on_publicList_currentRowChanged(int currentRow)
 {
     if (currentRow != -1) {
         QListWidgetItem *item = ui.publicList->item(currentRow);
         ChatStyleInfo info = qVariantValue<ChatStyleInfo>(item->data(Qt::UserRole));
-        setPreviewMessages(info.stylePath, ui.publicPreview);
 
         QString author = info.authorName;
         if (info.authorEmail.isEmpty() == false) {
@@ -223,11 +246,28 @@ void ChatPage::on_publicList_currentRowChanged(int currentRow)
         }
         ui.publicAuthor->setText(author);
         ui.publicDescription->setText(info.styleDescription);
+
+        QStringList variants;
+        ChatStyle::getAvailableVariants(info.stylePath, variants);
+        ui.publicComboBoxVariant->clear();
+        ui.publicComboBoxVariant->setEnabled(variants.size() != 0);
+        ui.publicComboBoxVariant->addItems(variants);
+
+        /* try to find "Standard" */
+        int index = ui.publicComboBoxVariant->findText(VARIANT_STANDARD);
+        if (index != -1) {
+            ui.publicComboBoxVariant->setCurrentIndex(index);
+        } else {
+            ui.publicComboBoxVariant->setCurrentIndex(0);
+        }
     } else {
-        ui.publicPreview->clear();
         ui.publicAuthor->clear();
         ui.publicDescription->clear();
+        ui.publicComboBoxVariant->clear();
+        ui.publicComboBoxVariant->setDisabled(true);
     }
+
+    fillPreview(ui.publicList, ui.publicComboBoxVariant, ui.publicPreview);
 }
 
 void ChatPage::on_privateList_currentRowChanged(int currentRow)
@@ -235,7 +275,6 @@ void ChatPage::on_privateList_currentRowChanged(int currentRow)
     if (currentRow != -1) {
         QListWidgetItem *item = ui.privateList->item(currentRow);
         ChatStyleInfo info = qVariantValue<ChatStyleInfo>(item->data(Qt::UserRole));
-        setPreviewMessages(info.stylePath, ui.privatePreview);
 
         QString author = info.authorName;
         if (info.authorEmail.isEmpty() == false) {
@@ -243,11 +282,28 @@ void ChatPage::on_privateList_currentRowChanged(int currentRow)
         }
         ui.privateAuthor->setText(author);
         ui.privateDescription->setText(info.styleDescription);
+
+        QStringList variants;
+        ChatStyle::getAvailableVariants(info.stylePath, variants);
+        ui.privateComboBoxVariant->clear();
+        ui.privateComboBoxVariant->setEnabled(variants.size() != 0);
+        ui.privateComboBoxVariant->addItems(variants);
+
+        /* try to find "Standard" */
+        int index = ui.privateComboBoxVariant->findText(VARIANT_STANDARD);
+        if (index != -1) {
+            ui.privateComboBoxVariant->setCurrentIndex(index);
+        } else {
+            ui.privateComboBoxVariant->setCurrentIndex(0);
+        }
     } else {
-        ui.privatePreview->clear();
         ui.privateAuthor->clear();
         ui.privateDescription->clear();
+        ui.privateComboBoxVariant->clear();
+        ui.privateComboBoxVariant->setDisabled(true);
     }
+
+    fillPreview(ui.privateList, ui.privateComboBoxVariant, ui.privatePreview);
 }
 
 void ChatPage::on_historyList_currentRowChanged(int currentRow)
@@ -255,7 +311,6 @@ void ChatPage::on_historyList_currentRowChanged(int currentRow)
     if (currentRow != -1) {
         QListWidgetItem *item = ui.historyList->item(currentRow);
         ChatStyleInfo info = qVariantValue<ChatStyleInfo>(item->data(Qt::UserRole));
-        setPreviewMessages(info.stylePath, ui.historyPreview);
 
         QString author = info.authorName;
         if (info.authorEmail.isEmpty() == false) {
@@ -263,9 +318,41 @@ void ChatPage::on_historyList_currentRowChanged(int currentRow)
         }
         ui.historyAuthor->setText(author);
         ui.historyDescription->setText(info.styleDescription);
+
+        QStringList variants;
+        ChatStyle::getAvailableVariants(info.stylePath, variants);
+        ui.historyComboBoxVariant->clear();
+        ui.historyComboBoxVariant->setEnabled(variants.size() != 0);
+        ui.historyComboBoxVariant->addItems(variants);
+
+        /* try to find "Standard" */
+        int index = ui.historyComboBoxVariant->findText(VARIANT_STANDARD);
+        if (index != -1) {
+            ui.historyComboBoxVariant->setCurrentIndex(index);
+        } else {
+            ui.historyComboBoxVariant->setCurrentIndex(0);
+        }
     } else {
-        ui.historyPreview->clear();
         ui.historyAuthor->clear();
         ui.historyDescription->clear();
+        ui.historyComboBoxVariant->clear();
+        ui.historyComboBoxVariant->setDisabled(true);
     }
+
+    fillPreview(ui.historyList, ui.historyComboBoxVariant, ui.historyPreview);
+}
+
+void ChatPage::on_publicComboBoxVariant_currentIndexChanged(int index)
+{
+    fillPreview(ui.publicList, ui.publicComboBoxVariant, ui.publicPreview);
+}
+
+void ChatPage::on_privateComboBoxVariant_currentIndexChanged(int index)
+{
+    fillPreview(ui.privateList, ui.privateComboBoxVariant, ui.privatePreview);
+}
+
+void ChatPage::on_historyComboBoxVariant_currentIndexChanged(int index)
+{
+    fillPreview(ui.historyList, ui.historyComboBoxVariant, ui.historyPreview);
 }

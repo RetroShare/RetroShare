@@ -299,34 +299,40 @@ void RshareSettings::setChatSendMessageWithCtrlReturn(bool bValue)
     setValueToGroup("Chat", "SendMessageWithCtrlReturn", bValue);
 }
 
-void RshareSettings::getPublicChatStyle(QString &stylePath)
+void RshareSettings::getPublicChatStyle(QString &stylePath, QString &styleVariant)
 {
     stylePath = valueFromGroup("Chat", "StylePublic", ":/qss/chat/public").toString();
+    styleVariant = valueFromGroup("Chat", "StylePublicVariant", "").toString();
 }
 
-void RshareSettings::setPublicChatStyle(QString stylePath)
+void RshareSettings::setPublicChatStyle(QString stylePath, QString styleVariant)
 {
     setValueToGroup("Chat", "StylePublic", stylePath);
+    setValueToGroup("Chat", "StylePublicVariant", styleVariant);
 }
 
-void RshareSettings::getPrivateChatStyle(QString &stylePath)
+void RshareSettings::getPrivateChatStyle(QString &stylePath, QString &styleVariant)
 {
     stylePath = valueFromGroup("Chat", "StylePrivate", ":/qss/chat/private").toString();
+    styleVariant = valueFromGroup("Chat", "StylePrivateVariant", "").toString();
 }
 
-void RshareSettings::setPrivateChatStyle(QString stylePath)
+void RshareSettings::setPrivateChatStyle(QString stylePath, QString styleVariant)
 {
     setValueToGroup("Chat", "StylePrivate", stylePath);
+    setValueToGroup("Chat", "StylePrivateVariant", styleVariant);
 }
 
-void RshareSettings::getHistoryChatStyle(QString &stylePath)
+void RshareSettings::getHistoryChatStyle(QString &stylePath, QString &styleVariant)
 {
     stylePath = valueFromGroup("Chat", "StyleHistory", ":/qss/chat/history").toString();
+    styleVariant = valueFromGroup("Chat", "StylePrivateVariant", "").toString();
 }
 
-void RshareSettings::setHistoryChatStyle(QString stylePath)
+void RshareSettings::setHistoryChatStyle(QString stylePath, QString styleVariant)
 {
     setValueToGroup("Chat", "StyleHistory", stylePath);
+    setValueToGroup("Chat", "StylePrivateVariant", styleVariant);
 }
 
 /** Returns true if RetroShare is set to run on system boot. */

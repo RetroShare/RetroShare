@@ -667,24 +667,55 @@
           <attribute name="title">
            <string>Public</string>
           </attribute>
-          <layout class="QVBoxLayout" name="verticalLayout_1">
+          <layout class="QVBoxLayout" name="publicLayout_1">
            <item>
-            <layout class="QHBoxLayout" name="publicListLayout">
+            <layout class="QHBoxLayout" name="publiclLayout_2">
              <item>
-              <widget class="QListWidget" name="publicList">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Ignored">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>150</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-              </widget>
+              <layout class="QVBoxLayout" name="publicLayout_3">
+               <item>
+                <widget class="QListWidget" name="publicList">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>170</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="publicLayout_4">
+                 <item>
+                  <widget class="QLabel" name="publicLabelVariant">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="text">
+                    <string>Variant</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QComboBox" name="publicComboBoxVariant">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
              </item>
              <item>
               <widget class="QTextBrowser" name="publicPreview">
@@ -771,24 +802,55 @@
           <attribute name="title">
            <string>Private</string>
           </attribute>
-          <layout class="QVBoxLayout" name="verticalLayout_3">
+          <layout class="QVBoxLayout" name="privateLayout_1">
            <item>
-            <layout class="QHBoxLayout" name="privateListLayout">
+            <layout class="QHBoxLayout" name="privatelLayout_2">
              <item>
-              <widget class="QListWidget" name="privateList">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Ignored">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>150</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-              </widget>
+              <layout class="QVBoxLayout" name="privateLayout_3">
+               <item>
+                <widget class="QListWidget" name="privateList">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>170</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="privateLayout_4">
+                 <item>
+                  <widget class="QLabel" name="privateLabelVariant">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="text">
+                    <string>Variant</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QComboBox" name="privateComboBoxVariant">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
              </item>
              <item>
               <widget class="QTextBrowser" name="privatePreview">
@@ -875,24 +937,55 @@
           <attribute name="title">
            <string>History</string>
           </attribute>
-          <layout class="QVBoxLayout" name="verticalLayout_4">
+          <layout class="QVBoxLayout" name="historyLayout_1">
            <item>
-            <layout class="QHBoxLayout" name="historyListLayout">
+            <layout class="QHBoxLayout" name="historylLayout_2">
              <item>
-              <widget class="QListWidget" name="historyList">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Ignored">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>150</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-              </widget>
+              <layout class="QVBoxLayout" name="historyLayout_3">
+               <item>
+                <widget class="QListWidget" name="historyList">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>170</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="historyLayout_4">
+                 <item>
+                  <widget class="QLabel" name="historyLabelVariant">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="text">
+                    <string>Variant</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QComboBox" name="historyComboBoxVariant">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
              </item>
              <item>
               <widget class="QTextBrowser" name="historyPreview">

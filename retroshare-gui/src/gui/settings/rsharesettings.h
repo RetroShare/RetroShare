@@ -123,14 +123,14 @@ public:
   void setChatSendMessageWithCtrlReturn(bool bValue);
 
   /* chat styles */
-  void getPublicChatStyle(QString &stylePath);
-  void setPublicChatStyle(QString stylePath);
+  void getPublicChatStyle(QString &stylePath, QString &styleVariant);
+  void setPublicChatStyle(QString stylePath, QString styleVariant);
 
-  void getPrivateChatStyle(QString &stylePath);
-  void setPrivateChatStyle(QString stylePath);
+  void getPrivateChatStyle(QString &stylePath, QString &styleVariant);
+  void setPrivateChatStyle(QString stylePath, QString styleVariant);
 
-  void getHistoryChatStyle(QString &stylePath);
-  void setHistoryChatStyle(QString stylePath);
+  void getHistoryChatStyle(QString &stylePath, QString &styleVariant);
+  void setHistoryChatStyle(QString stylePath, QString styleVariant);
 
   //! Save placement, state and size information of a window.
   void saveWidgetInformation(QWidget *widget);
