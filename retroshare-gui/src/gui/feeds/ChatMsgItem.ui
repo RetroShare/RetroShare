@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>513</width>
+    <width>543</width>
     <height>213</height>
    </rect>
   </property>
@@ -193,7 +193,7 @@ border-radius: 10px}</string>
          <property name="margin">
           <number>0</number>
          </property>
-         <item row="0" column="0" colspan="5">
+         <item row="0" column="0" colspan="6">
           <widget class="QFrame" name="messageframe">
            <property name="frameShape">
             <enum>QFrame::StyledPanel</enum>
@@ -306,10 +306,20 @@ border-radius: 10px}</string>
            </property>
           </spacer>
          </item>
-         <item row="1" column="4">
+         <item row="1" column="5">
           <widget class="QPushButton" name="sendButton">
            <property name="text">
             <string>Send</string>
+           </property>
+           <property name="default">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="4">
+          <widget class="QPushButton" name="cancelButton">
+           <property name="text">
+            <string>Cancel</string>
            </property>
           </widget>
          </item>

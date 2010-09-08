@@ -50,6 +50,8 @@ ChatMsgItem::ChatMsgItem(FeedHolder *parent, uint32_t feedId, std::string peerId
     
     messageframe->setVisible(false);
     sendButton->hide();
+    cancelButton->hide();
+    sendButton->setEnabled(false);
 
     /* general ones */
     connect( clearButton, SIGNAL( clicked( void ) ), this, SLOT( removeItem ( void ) ) );
@@ -58,6 +60,7 @@ ChatMsgItem::ChatMsgItem(FeedHolder *parent, uint32_t feedId, std::string peerId
     connect( chatButton, SIGNAL( clicked( void ) ), this, SLOT( openChat ( void ) ) );
     connect( msgButton, SIGNAL( clicked( void ) ), this, SLOT( sendMsg ( void ) ) );
     connect( quickmsgButton, SIGNAL( clicked( ) ), this, SLOT( togglequickmessage() ) );
+    connect( cancelButton, SIGNAL( clicked( ) ), this, SLOT( togglequickmessage() ) );
     connect( sendButton, SIGNAL( clicked( ) ), this, SLOT( sendMessage() ) );
 
     connect(NotifyQt::getInstance(), SIGNAL(peerHasNewAvatar(const QString&)), this, SLOT(updateAvatar(const QString&)));
@@ -251,11 +254,13 @@ void ChatMsgItem::togglequickmessage()
 	{
         messageframe->setVisible(true);
         sendButton->show();
+        cancelButton->show();
     }
 	else
 	{
         messageframe->setVisible(false);
         sendButton->hide();
+        cancelButton->hide();
     }	
 
 }
@@ -274,6 +279,7 @@ void ChatMsgItem::sendMessage()
     quickmsgText->clear();
     messageframe->setVisible(false);
     sendButton->hide();
+    cancelButton->hide();
 }
 
 void ChatMsgItem::on_quickmsgText_textChanged()

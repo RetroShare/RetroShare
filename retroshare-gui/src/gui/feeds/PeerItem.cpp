@@ -47,6 +47,7 @@ PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, std::string peerId, uint
     setupUi(this);
   
     messageframe->setVisible(false);
+    sendmsgButton->setEnabled(false);
 
     /* general ones */
     connect( expandButton, SIGNAL( clicked( void ) ), this, SLOT( toggle ( void ) ) );
@@ -57,6 +58,8 @@ PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, std::string peerId, uint
     connect( msgButton, SIGNAL( clicked( void ) ), this, SLOT( sendMsg ( void ) ) );
 
     connect( quickmsgButton, SIGNAL( clicked( ) ), this, SLOT( togglequickmessage() ) );
+    connect( cancelButton, SIGNAL( clicked( ) ), this, SLOT( togglequickmessage() ) );
+
     connect( sendmsgButton, SIGNAL( clicked( ) ), this, SLOT( sendMessage() ) );
 
     connect(NotifyQt::getInstance(), SIGNAL(peerHasNewAvatar(const QString&)), this, SLOT(updateAvatar(const QString&)));
@@ -378,3 +381,14 @@ void PeerItem::sendMessage()
     messageframe->setVisible(false);
 }
 
+void PeerItem::on_quickmsgText_textChanged()
+{
+    if (quickmsgText->toPlainText().isEmpty())
+    {
+        sendmsgButton->setEnabled(false);
+    }
+    else
+    {
+        sendmsgButton->setEnabled(true);
+    }
+}
