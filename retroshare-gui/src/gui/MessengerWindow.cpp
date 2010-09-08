@@ -763,10 +763,13 @@ void  MessengerWindow::insertPeers()
                 QFont font;
                 font.setBold(true);
 
+                QString stateString;
+
                 switch (bestPeerState) {
                 case PEER_STATE_INACTIVE:
                     gpgIcon = QIcon(IMAGE_INACTIVE);
                     gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Idle"));
+                    stateString = tr("Idle");
 
                     for(i = 0; i < COLUMN_COUNT; i++) {
                         gpg_item -> setTextColor(i,(Qt::gray));
@@ -777,6 +780,7 @@ void  MessengerWindow::insertPeers()
                 case PEER_STATE_ONLINE:
                     gpgIcon = QIcon(IMAGE_ONLINE);
                     gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Online"));
+                    stateString = tr("Online");
 
                     for(i = 0; i < COLUMN_COUNT; i++) {
                         gpg_item -> setTextColor(i,(Qt::darkBlue));
@@ -787,6 +791,7 @@ void  MessengerWindow::insertPeers()
                 case PEER_STATE_AWAY:
                     gpgIcon = QIcon(IMAGE_AWAY);
                     gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Away"));
+                    stateString = tr("Away");
 
                     for(i = 0; i < COLUMN_COUNT; i++) {
                         gpg_item -> setTextColor(i,(Qt::gray));
@@ -797,6 +802,7 @@ void  MessengerWindow::insertPeers()
                 case PEER_STATE_BUSY:
                     gpgIcon = QIcon(IMAGE_BUSY);
                     gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Busy"));
+                    stateString = tr("Busy");
 
                     for(i = 0; i < COLUMN_COUNT; i++) {
                         gpg_item -> setTextColor(i,(Qt::gray));
@@ -808,13 +814,22 @@ void  MessengerWindow::insertPeers()
 
                 std::map<std::string, QString>::iterator customStateString = sslCustomStateStrings.find(bestSslId);
                 if (customStateString == sslCustomStateStrings.end()) {
-                    std::map<std::string, std::string>::iterator location = sslLocations.find(bestSslId);
-                    if (location == sslLocations.end()) {
+//                    std::map<std::string, std::string>::iterator location = sslLocations.find(bestSslId);
+//                    if (location == sslLocations.end()) {
+//                        /* show only the name */
+//                        gpg_item->setText(COLUMN_NAME, QString::fromStdString(detail.name));
+//                    } else {
+//                        /* show the name with location */
+//                        gpg_item->setText(COLUMN_NAME, QString::fromStdString(detail.name) + "\n" + QString::fromStdString(location->second));
+//                    }
+
+                    /* use state string for location */
+                    if (stateString.isEmpty()) {
                         /* show only the name */
                         gpg_item->setText(COLUMN_NAME, QString::fromStdString(detail.name));
                     } else {
                         /* show the name with location */
-                        gpg_item->setText(COLUMN_NAME, QString::fromStdString(detail.name) + "\n" + QString::fromStdString(location->second));
+                        gpg_item->setText(COLUMN_NAME, QString::fromStdString(detail.name) + "\n" + stateString);
                     }
                 } else {
                     /* show the name with custom state string */
