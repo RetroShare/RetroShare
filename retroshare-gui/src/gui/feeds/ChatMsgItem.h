@@ -51,11 +51,14 @@ private slots:
 
 	void updateItem();
 	void updateAvatar(const QString &peer_id);
+	
+	void togglequickmessage();
+	void sendMessage();
 
 private:
-        void insertChat(std::string &message);
+    void insertChat(std::string &message);
 
-        FeedHolder *mParent;
+    FeedHolder *mParent;
 	uint32_t mFeedId;
 
 	std::string mPeerId;

@@ -47,6 +47,9 @@ ChatMsgItem::ChatMsgItem(FeedHolder *parent, uint32_t feedId, std::string peerId
 {
     /* Invoke the Qt Designer generated object setup routine */
     setupUi(this);
+    
+    messageframe->setVisible(false);
+    sendButton->hide();
 
     /* general ones */
     connect( clearButton, SIGNAL( clicked( void ) ), this, SLOT( removeItem ( void ) ) );
@@ -54,6 +57,9 @@ ChatMsgItem::ChatMsgItem(FeedHolder *parent, uint32_t feedId, std::string peerId
     /* specific ones */
     connect( chatButton, SIGNAL( clicked( void ) ), this, SLOT( openChat ( void ) ) );
     connect( msgButton, SIGNAL( clicked( void ) ), this, SLOT( sendMsg ( void ) ) );
+    connect( quickmsgButton, SIGNAL( clicked( ) ), this, SLOT( togglequickmessage() ) );
+    connect( sendButton, SIGNAL( clicked( ) ), this, SLOT( sendMessage() ) );
+
 
     connect(NotifyQt::getInstance(), SIGNAL(peerHasNewAvatar(const QString&)), this, SLOT(updateAvatar(const QString&)));
 
@@ -122,6 +128,15 @@ void ChatMsgItem::updateItem()
             msgButton->setEnabled(false);
         }
     }
+    
+    /*if (quickmsgText->toPlainText().isEmpty())
+    {
+        sendButton->setEnabled(false);
+    }
+    else
+    {
+        sendButton->setEnabled(true);
+    }*/
 
     /* slow Tick  */
     int msec_rate = 10129;
@@ -239,3 +254,34 @@ void ChatMsgItem::updateAvatar(const QString &peer_id)
         avatar_label->setPixmap(QPixmap(":/images/user/personal64.png"));
     }
 }  
+
+void ChatMsgItem::togglequickmessage()
+{
+	if (messageframe->isHidden())
+	{
+        messageframe->setVisible(true);
+        sendButton->show();
+    }
+	else
+	{
+        messageframe->setVisible(false);
+        sendButton->hide();
+    }	
+
+}
+
+void ChatMsgItem::sendMessage()
+{
+    /* construct a message */
+    MessageInfo mi;
+    
+    mi.title = tr("Quick Message").toStdWString();
+    mi.msg =   quickmsgText->toHtml().toStdWString();
+    mi.msgto.push_back(mPeerId);       
+    
+    rsMsgs->MessageSend(mi);
+
+    quickmsgText->clear();
+    messageframe->setVisible(false);
+    sendButton->hide();
+}
