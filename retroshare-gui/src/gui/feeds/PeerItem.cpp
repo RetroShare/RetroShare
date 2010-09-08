@@ -43,26 +43,28 @@ PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, std::string peerId, uint
 :QWidget(NULL), mParent(parent), mFeedId(feedId),
 	mPeerId(peerId), mType(type), mIsHome(isHome)
 {
-  /* Invoke the Qt Designer generated object setup routine */
-  setupUi(this);
+    /* Invoke the Qt Designer generated object setup routine */
+    setupUi(this);
+  
+    messageframe->setVisible(false);
 
-  /* general ones */
-  connect( expandButton, SIGNAL( clicked( void ) ), this, SLOT( toggle ( void ) ) );
-  connect( clearButton, SIGNAL( clicked( void ) ), this, SLOT( removeItem ( void ) ) );
-  //connect( gotoButton, SIGNAL( clicked( void ) ), this, SLOT( gotoHome ( void ) ) );
+    /* general ones */
+    connect( expandButton, SIGNAL( clicked( void ) ), this, SLOT( toggle ( void ) ) );
+    connect( clearButton, SIGNAL( clicked( void ) ), this, SLOT( removeItem ( void ) ) );
 
-  /* specific ones */
-  connect( chatButton, SIGNAL( clicked( void ) ), this, SLOT( openChat ( void ) ) );
-  connect( msgButton, SIGNAL( clicked( void ) ), this, SLOT( sendMsg ( void ) ) );
-  //connect( addButton, SIGNAL( clicked( void ) ), this, SLOT( addFriend ( void ) ) );
-  //connect( removeButton, SIGNAL( clicked( void ) ), this, SLOT( removeFriend ( void ) ) );
+    /* specific ones */
+    connect( chatButton, SIGNAL( clicked( void ) ), this, SLOT( openChat ( void ) ) );
+    connect( msgButton, SIGNAL( clicked( void ) ), this, SLOT( sendMsg ( void ) ) );
 
-  connect(NotifyQt::getInstance(), SIGNAL(peerHasNewAvatar(const QString&)), this, SLOT(updateAvatar(const QString&)));
+    connect( quickmsgButton, SIGNAL( clicked( ) ), this, SLOT( togglequickmessage() ) );
+    connect( sendmsgButton, SIGNAL( clicked( ) ), this, SLOT( sendMessage() ) );
 
-  small();
-  updateItemStatic();
-  updateItem();
-  updateAvatar(QString::fromStdString(mPeerId));
+    connect(NotifyQt::getInstance(), SIGNAL(peerHasNewAvatar(const QString&)), this, SLOT(updateAvatar(const QString&)));
+
+    small();
+    updateItemStatic();
+    updateItem();
+    updateAvatar(QString::fromStdString(mPeerId));
 }
 
 
@@ -115,9 +117,7 @@ void PeerItem::updateItemStatic()
 		/* expanded Info */
 		nameLabel->setText(QString::fromStdString(details.name));
 		idLabel->setText(QString::fromStdString(details.id));
-		orgLabel->setText(QString::fromStdString(details.org));
 		locLabel->setText(QString::fromStdString(details.location));
-		countryLabel->setText("");
 	}
 	else
 	{
@@ -126,9 +126,7 @@ void PeerItem::updateItemStatic()
 		trustLabel->setText("Unknown Peer");
 		nameLabel->setText("Unknown Peer");
 		idLabel->setText("Unknown Peer");
-		orgLabel->setText("Unknown Peer");
 		locLabel->setText("Unknown Peer");
-		countryLabel->setText("Unknown Peer");
 		ipLabel->setText("Unknown Peer");
 		connLabel->setText("Unknown Peer");
 		lastLabel->setText("Unknown Peer");
@@ -352,4 +350,31 @@ void PeerItem::updateAvatar(const QString &peer_id)
 
 }  
 
+void PeerItem::togglequickmessage()
+{
+	if (messageframe->isHidden())
+	{
+        messageframe->setVisible(true);
+    }
+	else
+	{
+        messageframe->setVisible(false);
+    }	
+
+}
+
+void PeerItem::sendMessage()
+{
+    /* construct a message */
+    MessageInfo mi;
+    
+    mi.title = tr("Quick Message").toStdWString();
+    mi.msg =   quickmsgText->toHtml().toStdWString();
+    mi.msgto.push_back(mPeerId);       
+    
+    rsMsgs->MessageSend(mi);
+
+    quickmsgText->clear();
+    messageframe->setVisible(false);
+}
 

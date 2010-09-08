@@ -59,6 +59,9 @@ private slots:
 
 	void updateItem();
 	void updateAvatar(const QString &peer_id);
+	
+    void togglequickmessage();
+	void sendMessage();
 
 private:
 	FeedHolder *mParent;
