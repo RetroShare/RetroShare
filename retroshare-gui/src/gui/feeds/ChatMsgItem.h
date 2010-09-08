@@ -43,30 +43,30 @@ public:
 
 private slots:
 	/* default stuff */
-  	void gotoHome();
-  	void removeItem();
+	void gotoHome();
+	void removeItem();
 
 	void sendMsg();
 	void openChat();
 
 	void updateItem();
 	void updateAvatar(const QString &peer_id);
-	
+
 	void togglequickmessage();
 	void sendMessage();
 
-private:
-    void insertChat(std::string &message);
+	void on_quickmsgText_textChanged();
 
-    FeedHolder *mParent;
+private:
+	void insertChat(std::string &message);
+
+	FeedHolder *mParent;
 	uint32_t mFeedId;
 
 	std::string mPeerId;
 
 	bool mIsHome;
 };
-
-
 
 #endif
 

@@ -60,7 +60,6 @@ ChatMsgItem::ChatMsgItem(FeedHolder *parent, uint32_t feedId, std::string peerId
     connect( quickmsgButton, SIGNAL( clicked( ) ), this, SLOT( togglequickmessage() ) );
     connect( sendButton, SIGNAL( clicked( ) ), this, SLOT( sendMessage() ) );
 
-
     connect(NotifyQt::getInstance(), SIGNAL(peerHasNewAvatar(const QString&)), this, SLOT(updateAvatar(const QString&)));
 
     updateItemStatic();
@@ -129,15 +128,6 @@ void ChatMsgItem::updateItem()
         }
     }
     
-    /*if (quickmsgText->toPlainText().isEmpty())
-    {
-        sendButton->setEnabled(false);
-    }
-    else
-    {
-        sendButton->setEnabled(true);
-    }*/
-
     /* slow Tick  */
     int msec_rate = 10129;
 
@@ -284,4 +274,16 @@ void ChatMsgItem::sendMessage()
     quickmsgText->clear();
     messageframe->setVisible(false);
     sendButton->hide();
+}
+
+void ChatMsgItem::on_quickmsgText_textChanged()
+{
+    if (quickmsgText->toPlainText().isEmpty())
+    {
+        sendButton->setEnabled(false);
+    }
+    else
+    {
+        sendButton->setEnabled(true);
+    }
 }
