@@ -76,7 +76,7 @@ win32-x-g++ {
 		LIBS += -lws2_32 -luuid -lole32 -liphlpapi -lcrypt32 -gdi32
 		LIBS += -lole32 -lwinmm
 
-		DEFINES *= WIN32 WIN32_CROSS_UBUNTU
+		DEFINES *= WINDOWS_SYS WIN32 WIN32_CROSS_UBUNTU
 
 		INCLUDEPATH += ../../../../gpgme-1.1.8/src/
 		INCLUDEPATH += ../../../../libgpg-error-1.7/src/
@@ -100,6 +100,8 @@ win32 {
     LIBS += -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32
     LIBS += -lole32 -lwinmm
     RC_FILE = gui/images/retroshare_win.rc
+
+    DEFINES += WINDOWS_SYS
 
     GPG_ERROR_DIR = ../../../../libgpg-error-1.7
     GPGME_DIR  = ../../../../gpgme-1.1.8
