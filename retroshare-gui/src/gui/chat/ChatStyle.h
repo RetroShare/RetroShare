@@ -82,7 +82,7 @@ public:
     /* Default destructor */
     ~ChatStyle();
 
-    bool setStylePath(QString stylePath, QString styleVariant);
+    bool setStylePath(const QString &stylePath, const QString &styleVariant);
     bool setStyleFromSettings(enumStyleType styleType);
     void loadEmoticons();
 
@@ -91,7 +91,7 @@ public:
 
     void showSmileyWidget(QWidget *parent, QWidget *button, const char *slotAddMethod);
     static bool getAvailableStyles(enumStyleType styleType, QList<ChatStyleInfo> &styles);
-    static bool getAvailableVariants(QString stylePath, QStringList &variants);
+    static bool getAvailableVariants(const QString &stylePath, QStringList &variants);
 
 private slots:
     void styleChanged(int styleType);

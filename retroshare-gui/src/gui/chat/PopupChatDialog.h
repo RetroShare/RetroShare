@@ -115,6 +115,7 @@ private slots:
 private:
 
   void colorChanged(const QColor &c);
+  void fontChanged(const QFont &font);
   void addAttachment(std::string,int flag);
   void processSettings(bool bLoad);
 

@@ -106,9 +106,9 @@ ChatPage::save(QString &errmsg)
     Settings->setValue(QString::fromUtf8("Emoteicons_PrivatChat"), emotePrivatChat());
     Settings->setValue(QString::fromUtf8("Emoteicons_GroupChat"), emoteGroupChat());
     Settings->setValue(QString::fromUtf8("GroupChat_History"), groupchatHistory());
-    Settings->setValue(QString::fromUtf8("ChatScreenFont"), fontTempChat.toString());
-
     Settings->endGroup();
+
+    Settings->setChatScreenFont(fontTempChat.toString());
 
     Settings->setChatSendMessageWithCtrlReturn(ui.sendMessageWithCtrlReturn->isChecked());
 
@@ -153,9 +153,9 @@ ChatPage::load()
     ui.checkBox_emotegroupchat->setChecked(Settings->value(QString::fromUtf8("Emoteicons_GroupChat"), true).toBool());
     ui.checkBox_groupchathistory->setChecked(Settings->value(QString::fromUtf8("GroupChat_History"), true).toBool());
 
-    fontTempChat.fromString(Settings->value(QString::fromUtf8("ChatScreenFont")).toString());
-
     Settings->endGroup();
+
+    fontTempChat.fromString(Settings->getChatScreenFont());
 
     ui.sendMessageWithCtrlReturn->setChecked(Settings->getChatSendMessageWithCtrlReturn());
 

@@ -299,13 +299,23 @@ void RshareSettings::setChatSendMessageWithCtrlReturn(bool bValue)
     setValueToGroup("Chat", "SendMessageWithCtrlReturn", bValue);
 }
 
+QString RshareSettings::getChatScreenFont()
+{
+    return valueFromGroup("Chat", "ChatScreenFont").toString();
+}
+
+void RshareSettings::setChatScreenFont(const QString &font)
+{
+    setValueToGroup("Chat", "ChatScreenFont", font);
+}
+
 void RshareSettings::getPublicChatStyle(QString &stylePath, QString &styleVariant)
 {
     stylePath = valueFromGroup("Chat", "StylePublic", ":/qss/chat/public").toString();
     styleVariant = valueFromGroup("Chat", "StylePublicVariant", "").toString();
 }
 
-void RshareSettings::setPublicChatStyle(QString stylePath, QString styleVariant)
+void RshareSettings::setPublicChatStyle(const QString &stylePath, const QString &styleVariant)
 {
     setValueToGroup("Chat", "StylePublic", stylePath);
     setValueToGroup("Chat", "StylePublicVariant", styleVariant);
@@ -317,7 +327,7 @@ void RshareSettings::getPrivateChatStyle(QString &stylePath, QString &styleVaria
     styleVariant = valueFromGroup("Chat", "StylePrivateVariant", "").toString();
 }
 
-void RshareSettings::setPrivateChatStyle(QString stylePath, QString styleVariant)
+void RshareSettings::setPrivateChatStyle(const QString &stylePath, const QString &styleVariant)
 {
     setValueToGroup("Chat", "StylePrivate", stylePath);
     setValueToGroup("Chat", "StylePrivateVariant", styleVariant);
@@ -329,7 +339,7 @@ void RshareSettings::getHistoryChatStyle(QString &stylePath, QString &styleVaria
     styleVariant = valueFromGroup("Chat", "StylePrivateVariant", "").toString();
 }
 
-void RshareSettings::setHistoryChatStyle(QString stylePath, QString styleVariant)
+void RshareSettings::setHistoryChatStyle(const QString &stylePath, const QString &styleVariant)
 {
     setValueToGroup("Chat", "StyleHistory", stylePath);
     setValueToGroup("Chat", "StylePrivateVariant", styleVariant);

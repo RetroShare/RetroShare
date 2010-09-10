@@ -199,7 +199,7 @@ PeersDialog::PeersDialog(QWidget *parent)
     pxm.fill(_currentColor);
     ui.colorChatButton->setIcon(pxm);
 
-    mCurrentFont.fromString(Settings->valueFromGroup("Chat", QString::fromUtf8("ChatScreenFont")).toString());
+    mCurrentFont.fromString(Settings->getChatScreenFont());
     ui.lineEdit->setFont(mCurrentFont);
 
     style.setStyleFromSettings(ChatStyle::TYPE_PUBLIC);
@@ -1389,10 +1389,7 @@ void PeersDialog::setFont()
   mCurrentFont.setItalic(ui.textitalicChatButton->isChecked());
   ui.lineEdit->setFont(mCurrentFont);
   ui.lineEdit->setTextColor(_currentColor);
-  Settings->beginGroup("Chat");
-  Settings->setValue(QString::fromUtf8("ChatScreenFont"), mCurrentFont.toString());
-  Settings->endGroup();
-
+  Settings->setChatScreenFont(mCurrentFont.toString());
 
   ui.lineEdit->setFocus();
 

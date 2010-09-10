@@ -250,6 +250,7 @@ HEADERS +=  rshare.h \
             gui/msgs/textformat.h \
             gui/images/retroshare_win.rc.h \
             gui/settings/rsharesettings.h \
+            gui/settings/RsharePeerSettings.h \
             gui/settings/rsettings.h \
             gui/settings/rsettingswin.h \
             gui/settings/GeneralPage.h \
@@ -467,6 +468,7 @@ SOURCES +=  main.cpp \
             gui/common/rwindow.cpp \ 
             gui/common/html.cpp \
             gui/settings/rsharesettings.cpp \
+            gui/settings/RsharePeerSettings.cpp \
             gui/settings/rsettings.cpp \
             gui/settings/rsettingswin.cpp \
             gui/settings/GeneralPage.cpp \

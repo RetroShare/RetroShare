@@ -45,6 +45,7 @@
 #include <retroshare/rsstatus.h>
 #include <retroshare/rsiface.h>
 #include "gui/settings/rsharesettings.h"
+#include "gui/settings/RsharePeerSettings.h"
 #include "gui/notifyqt.h"
 #include "../RsAutoUpdatePage.h"
 
@@ -145,7 +146,7 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   //ui.textBrowser->setOpenExternalLinks ( false );
   //ui.textBrowser->setOpenLinks ( false );
 
-  QString title = tr("RetroShare - ") + QString::fromStdString(name)  ;
+  QString title = tr("RetroShare - ") + QString::fromStdString(name);
   setWindowTitle(title);
     
   setWindowIcon(QIcon(IMAGE_WINDOW));
@@ -173,11 +174,11 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   //toolmenu->addAction(ui.action_Disable_Emoticons);
   ui.pushtoolsButton->setMenu(toolmenu);
 
-  mCurrentColor = Qt::black;
-  mCurrentFont = QFont("Comic Sans MS", 10);
+  mCurrentColor.setNamedColor(PeerSettings->getPrivateChatColor(dialogId));
+  mCurrentFont.fromString(PeerSettings->getPrivateChatFont(dialogId));
 
   colorChanged(mCurrentColor);
-  setFont();
+  fontChanged(mCurrentFont);
 
   pasteLinkAct = new QAction(QIcon(":/images/pasterslink.png"), tr( "Paste retroshare Link" ), this );
   connect( pasteLinkAct , SIGNAL( triggered() ), this, SLOT( pasteLink() ) );
@@ -667,10 +668,11 @@ void PopupChatDialog::on_closeInfoFrameButton_clicked()
 
 void PopupChatDialog::setColor()
 {	    
-	bool ok;    
+    bool ok;
     QRgb color = QColorDialog::getRgba(ui.chattextEdit->textColor().rgba(), &ok, this);
     if (ok) {
         mCurrentColor = QColor(color);
+        PeerSettings->setPrivateChatColor(dialogId, mCurrentColor.name());
         colorChanged(mCurrentColor);
     }
     setFont();
@@ -686,25 +688,35 @@ void PopupChatDialog::colorChanged(const QColor &c)
 void PopupChatDialog::getFont()
 {
     bool ok;
-    mCurrentFont = QFontDialog::getFont(&ok, mCurrentFont, this);
+    QFont font = QFontDialog::getFont(&ok, mCurrentFont, this);
+    if (ok) {
+        fontChanged(font);
+    }
+}
+
+void PopupChatDialog::fontChanged(const QFont &font)
+{
+    mCurrentFont = font;
+
+    ui.textboldButton->setChecked(mCurrentFont.bold());
+    ui.textunderlineButton->setChecked(mCurrentFont.underline());
+    ui.textitalicButton->setChecked(mCurrentFont.italic());
+
     setFont();
 }
 
 void PopupChatDialog::setFont()
 {
+    mCurrentFont.setBold(ui.textboldButton->isChecked());
+    mCurrentFont.setUnderline(ui.textunderlineButton->isChecked());
+    mCurrentFont.setItalic(ui.textitalicButton->isChecked());
 
-//  mCurrentFont.setBold(ui.textboldButton->isChecked());
-  bool flag;
-  flag=ui.textboldButton->isChecked();
-  mCurrentFont.setBold(flag);
-  mCurrentFont.setUnderline(ui.textunderlineButton->isChecked());
-  mCurrentFont.setItalic(ui.textitalicButton->isChecked());
+    ui.chattextEdit->setFont(mCurrentFont);
+    ui.chattextEdit->setTextColor(mCurrentColor);
 
-  ui.chattextEdit->setFont(mCurrentFont);
-  ui.chattextEdit->setTextColor(mCurrentColor);
+    ui.chattextEdit->setFocus();
 
-  ui.chattextEdit->setFocus();
-
+    PeerSettings->setPrivateChatFont(dialogId, mCurrentFont.toString());
 }
 
 //============================================================================

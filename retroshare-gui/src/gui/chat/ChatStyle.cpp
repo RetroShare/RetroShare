@@ -64,7 +64,7 @@ void ChatStyle::styleChanged(int styleType)
     }
 }
 
-bool ChatStyle::setStylePath(QString stylePath, QString styleVariant)
+bool ChatStyle::setStylePath(const QString &stylePath, const QString &styleVariant)
 {
     m_styleType = TYPE_UNKNOWN;
 
@@ -572,7 +572,7 @@ static QString getBaseDir()
     return true;
 }
 
-/*static*/ bool ChatStyle::getAvailableVariants(QString stylePath, QStringList &variants)
+/*static*/ bool ChatStyle::getAvailableVariants(const QString &stylePath, QStringList &variants)
 {
     variants.clear();
 

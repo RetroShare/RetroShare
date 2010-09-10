@@ -122,15 +122,19 @@ public:
   bool getChatSendMessageWithCtrlReturn();
   void setChatSendMessageWithCtrlReturn(bool bValue);
 
+  /* chat font */
+  QString getChatScreenFont();
+  void    setChatScreenFont(const QString &font);
+
   /* chat styles */
   void getPublicChatStyle(QString &stylePath, QString &styleVariant);
-  void setPublicChatStyle(QString stylePath, QString styleVariant);
+  void setPublicChatStyle(const QString &stylePath, const QString &styleVariant);
 
   void getPrivateChatStyle(QString &stylePath, QString &styleVariant);
-  void setPrivateChatStyle(QString stylePath, QString styleVariant);
+  void setPrivateChatStyle(const QString &stylePath, const QString &styleVariant);
 
   void getHistoryChatStyle(QString &stylePath, QString &styleVariant);
-  void setHistoryChatStyle(QString stylePath, QString styleVariant);
+  void setHistoryChatStyle(const QString &stylePath, const QString &styleVariant);
 
   //! Save placement, state and size information of a window.
   void saveWidgetInformation(QWidget *widget);

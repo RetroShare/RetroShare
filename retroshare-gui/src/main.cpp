@@ -36,6 +36,7 @@
 #include "gui/StartDialog.h"
 #include "gui/GenCertDialog.h"
 #include "gui/settings/rsharesettings.h"
+#include "gui/settings/RsharePeerSettings.h"
 #include "gui/connect/ConfCertDialog.h"
 #include "idle/idle.h"
 
@@ -160,6 +161,7 @@ int main(int argc, char *argv[])
 
 	/* recreate global settings object, now with correct path */
 	RshareSettings::Create ();
+	RsharePeerSettings::Create();
 
 #ifdef MINIMAL_RSGUI
 	MessengerWindow::showYourself();
