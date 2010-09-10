@@ -327,6 +327,8 @@ void PeersDialog::showEvent(QShowEvent *event)
         QScrollBar *scrollbar = ui.msgText->verticalScrollBar();
         scrollbar->setValue(scrollbar->maximum());
     }
+
+    RsAutoUpdatePage::showEvent(event);
 }
 
 void PeersDialog::pasteLink()
@@ -566,11 +568,13 @@ void  PeersDialog::insertPeers()
             continue;
         }
 
-        bool bNew = false;
         if (gpg_item == NULL) {
             gpg_item = new MyPeerTreeWidgetItem(peertreeWidget, 0); //set type to 0 for custom popup menu
+
+            /* Add gpg item to the list. Add here, because for setHidden the item must be added */
+            peertreeWidget->addTopLevelItem(gpg_item);
+
             gpg_item->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
-            bNew = true;
         }
 
         gpg_item -> setText(COLUMN_NAME, QString::fromStdString(detail.name));
@@ -630,6 +634,14 @@ void  PeersDialog::insertPeers()
 
             if (newChild) {
                 sslItem = new MyPeerTreeWidgetItem(peertreeWidget, 1); //set type to 1 for custom popup menu
+
+                #ifdef PEERS_DEBUG
+                std::cerr << "PeersDialog::insertPeers() inserting sslItem." << std::endl;
+                #endif
+
+                /* Add ssl child to the list. Add here, because for setHidden the item must be added */
+                gpg_item->addChild(sslItem);
+//                gpg_item->setExpanded(true);
             }
 
             /* not displayed, used to find back the item */
@@ -693,15 +705,6 @@ void  PeersDialog::insertPeers()
             for (int i = 0; i < COLUMN_COUNT; i++) {
                 sslItem -> setTextColor(i, sslColor);
                 sslItem -> setFont(i, sslFont);
-            }
-
-            #ifdef PEERS_DEBUG
-            std::cerr << "PeersDialog::insertPeers() inserting sslItem." << std::endl;
-            #endif
-            /* add ssl child to the list. If item is already in the list, it won't be duplicated thanks to Qt */
-            if (newChild) {
-                gpg_item->addChild(sslItem);
-                gpg_item->setExpanded(true);
             }
         }
 
@@ -847,11 +850,6 @@ void  PeersDialog::insertPeers()
         }
 
         gpg_item -> setIcon(COLUMN_NAME, gpgIcon);
-
-        if (bNew) {
-            /* add gpg item to the list */
-            peertreeWidget->addTopLevelItem(gpg_item);
-        }
     }
 
     QTreeWidgetItem *c = getCurrentPeer();
