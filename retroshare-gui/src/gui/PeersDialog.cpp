@@ -766,58 +766,58 @@ void  PeersDialog::insertPeers()
                 }
             }
 
-            if (bestPeerState) {
-                QFont font;
-                font.setBold(true);
+            if (bestPeerState == 0) {
+                // show as online
+                bestPeerState = PEER_STATE_ONLINE;
+            }
 
-                switch (bestPeerState) {
-                case PEER_STATE_INACTIVE:
-                    gpgIcon = QIcon(IMAGE_INACTIVE);
-                    gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Idle"));
-                    gpg_item -> setText(COLUMN_STATE, tr("Idle"));
+            QFont font;
+            font.setBold(true);
 
-                    for(i = 0; i < COLUMN_COUNT; i++) {
-                        gpg_item -> setTextColor(i,(Qt::gray));
-                        gpg_item -> setFont(i,font);
-                    }
-                    break;
+            switch (bestPeerState) {
+            case PEER_STATE_INACTIVE:
+                gpgIcon = QIcon(IMAGE_INACTIVE);
+                gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Idle"));
+                gpg_item -> setText(COLUMN_STATE, tr("Idle"));
 
-                case PEER_STATE_ONLINE:
-                    gpgIcon = QIcon(IMAGE_ONLINE);
-                    gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Online"));
-                    gpg_item -> setText(COLUMN_STATE, tr("Online"));
-
-                    for(i = 0; i < COLUMN_COUNT; i++) {
-                        gpg_item -> setTextColor(i,(Qt::darkBlue));
-                        gpg_item -> setFont(i,font);
-                    }
-                    break;
-
-                case PEER_STATE_AWAY:
-                    gpgIcon = QIcon(IMAGE_AWAY);
-                    gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Away"));
-                    gpg_item -> setText(COLUMN_STATE, tr("Away"));
-
-                    for(i = 0; i < COLUMN_COUNT; i++) {
-                        gpg_item -> setTextColor(i,(Qt::gray));
-                        gpg_item -> setFont(i,font);
-                    }
-                    break;
-
-                case PEER_STATE_BUSY:
-                    gpgIcon = QIcon(IMAGE_BUSY);
-                    gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Busy"));
-                    gpg_item -> setText(COLUMN_STATE, tr("Busy"));
-
-                    for(i = 0; i < COLUMN_COUNT; i++) {
-                        gpg_item -> setTextColor(i,(Qt::gray));
-                        gpg_item -> setFont(i,font);
-                    }
-                    break;
+                for(i = 0; i < COLUMN_COUNT; i++) {
+                    gpg_item -> setTextColor(i,(Qt::gray));
+                    gpg_item -> setFont(i,font);
                 }
-            } else {
+                break;
+
+            case PEER_STATE_ONLINE:
                 gpgIcon = QIcon(IMAGE_ONLINE);
-                bestPeerState = PEER_STATE_ONLINE; // show as online
+                gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Online"));
+                gpg_item -> setText(COLUMN_STATE, tr("Online"));
+
+                for(i = 0; i < COLUMN_COUNT; i++) {
+                    gpg_item -> setTextColor(i,(Qt::darkBlue));
+                    gpg_item -> setFont(i,font);
+                }
+                break;
+
+            case PEER_STATE_AWAY:
+                gpgIcon = QIcon(IMAGE_AWAY);
+                gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Away"));
+                gpg_item -> setText(COLUMN_STATE, tr("Away"));
+
+                for(i = 0; i < COLUMN_COUNT; i++) {
+                    gpg_item -> setTextColor(i,(Qt::gray));
+                    gpg_item -> setFont(i,font);
+                }
+                break;
+
+            case PEER_STATE_BUSY:
+                gpgIcon = QIcon(IMAGE_BUSY);
+                gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Busy"));
+                gpg_item -> setText(COLUMN_STATE, tr("Busy"));
+
+                for(i = 0; i < COLUMN_COUNT; i++) {
+                    gpg_item -> setTextColor(i,(Qt::gray));
+                    gpg_item -> setFont(i,font);
+                }
+                break;
             }
 
             gpg_item -> setData(COLUMN_STATE, ROLE_SORT, BuildStateSortString(true, gpg_item->text(COLUMN_NAME), PEER_STATE_INACTIVE));

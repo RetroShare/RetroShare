@@ -59,23 +59,23 @@ bool p3Status::sendStatus(std::string id, uint32_t status){
 
 void p3Status::getStatusString(uint32_t status, std::string& statusString){
 
-	if (status == RS_STATUS_AWAY){
-
+	switch (status) {
+	case RS_STATUS_OFFLINE:
+		statusString = "Offline";
+		break;
+	case RS_STATUS_AWAY:
 		statusString = "Away";
-
-		}else if (status == RS_STATUS_BUSY){
-
+		break;
+	case RS_STATUS_BUSY:
 		statusString = "Busy";
-
-		}else if (status == RS_STATUS_ONLINE){
-
-			statusString = "Online";
-
-		}else if(status == RS_STATUS_INACTIVE){
-
-			statusString = "Inactive";
-
-		}
-
-	return;
+		break;
+	case RS_STATUS_ONLINE:
+		statusString = "Online";
+		break;
+	case RS_STATUS_INACTIVE:
+		statusString = "Inactive";
+		break;
+	default:
+		statusString.erase();
+	}
 }

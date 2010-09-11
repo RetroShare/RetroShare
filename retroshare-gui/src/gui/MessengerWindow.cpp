@@ -503,10 +503,6 @@ void  MessengerWindow::insertPeers()
 
     //add the gpg friends
     for(it = gpgFriends.begin(); it != gpgFriends.end(); it++) {
-        //            if (*it == sOwnId) {
-        //                continue;
-        //            }
-
         /* make a widget per friend */
         QTreeWidgetItem *gpg_item = NULL;
         QTreeWidgetItem *gpg_item_loop = NULL;
@@ -770,87 +766,85 @@ void  MessengerWindow::insertPeers()
                 }
             }
 
-            if (bestPeerState) {
-                QFont font;
-                font.setBold(true);
+            if (bestPeerState == 0) {
+                // show as online
+                bestPeerState = PEER_STATE_ONLINE;
+            }
 
-                QString stateString;
+            QFont font;
+            font.setBold(true);
 
-                switch (bestPeerState) {
-                case PEER_STATE_INACTIVE:
-                    gpgIcon = QIcon(IMAGE_INACTIVE);
-                    gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Idle"));
-                    stateString = tr("Idle");
+            QString stateString;
 
-                    for(i = 0; i < COLUMN_COUNT; i++) {
-                        gpg_item -> setTextColor(i,(Qt::gray));
-                        gpg_item -> setFont(i,font);
-                    }
-                    break;
+            switch (bestPeerState) {
+            case PEER_STATE_INACTIVE:
+                gpgIcon = QIcon(IMAGE_INACTIVE);
+                gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Idle"));
+                stateString = tr("Idle");
 
-                case PEER_STATE_ONLINE:
-                    gpgIcon = QIcon(IMAGE_ONLINE);
-                    gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Online"));
-                    stateString = tr("Online");
-
-                    for(i = 0; i < COLUMN_COUNT; i++) {
-                        gpg_item -> setTextColor(i,(Qt::darkBlue));
-                        gpg_item -> setFont(i,font);
-                    }
-                    break;
-
-                case PEER_STATE_AWAY:
-                    gpgIcon = QIcon(IMAGE_AWAY);
-                    gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Away"));
-                    stateString = tr("Away");
-
-                    for(i = 0; i < COLUMN_COUNT; i++) {
-                        gpg_item -> setTextColor(i,(Qt::gray));
-                        gpg_item -> setFont(i,font);
-                    }
-                    break;
-
-                case PEER_STATE_BUSY:
-                    gpgIcon = QIcon(IMAGE_BUSY);
-                    gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Busy"));
-                    stateString = tr("Busy");
-
-                    for(i = 0; i < COLUMN_COUNT; i++) {
-                        gpg_item -> setTextColor(i,(Qt::gray));
-                        gpg_item -> setFont(i,font);
-                    }
-                    break;
+                for(i = 0; i < COLUMN_COUNT; i++) {
+                    gpg_item -> setTextColor(i,(Qt::gray));
+                    gpg_item -> setFont(i,font);
                 }
-                gpg_item->setText(COLUMN_NAME, QString::fromStdString(detail.name));
+                break;
 
-                std::map<std::string, QString>::iterator customStateString = sslCustomStateStrings.find(bestSslId);
-                if (customStateString == sslCustomStateStrings.end()) {
-//                    std::map<std::string, std::string>::iterator location = sslLocations.find(bestSslId);
-//                    if (location == sslLocations.end()) {
-//                        /* show only the name */
-//                        gpg_item->setText(COLUMN_NAME, QString::fromStdString(detail.name));
-//                    } else {
-//                        /* show the name with location */
-//                        gpg_item->setText(COLUMN_NAME, QString::fromStdString(detail.name) + "\n" + QString::fromStdString(location->second));
-//                    }
+            case PEER_STATE_ONLINE:
+                gpgIcon = QIcon(IMAGE_ONLINE);
+                gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Online"));
+                stateString = tr("Online");
 
-                    /* use state string for location */
-                    if (stateString.isEmpty()) {
-                        /* show only the name */
-                        gpg_item->setText(COLUMN_NAME, QString::fromStdString(detail.name));
-                    } else {
-                        /* show the name with location */
-                        gpg_item->setText(COLUMN_NAME, QString::fromStdString(detail.name) + "\n" + stateString);
-                    }
+                for(i = 0; i < COLUMN_COUNT; i++) {
+                    gpg_item -> setTextColor(i,(Qt::darkBlue));
+                    gpg_item -> setFont(i,font);
+                }
+                break;
+
+            case PEER_STATE_AWAY:
+                gpgIcon = QIcon(IMAGE_AWAY);
+                gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Away"));
+                stateString = tr("Away");
+
+                for(i = 0; i < COLUMN_COUNT; i++) {
+                    gpg_item -> setTextColor(i,(Qt::gray));
+                    gpg_item -> setFont(i,font);
+                }
+                break;
+
+            case PEER_STATE_BUSY:
+                gpgIcon = QIcon(IMAGE_BUSY);
+                gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Busy"));
+                stateString = tr("Busy");
+
+                for(i = 0; i < COLUMN_COUNT; i++) {
+                    gpg_item -> setTextColor(i,(Qt::gray));
+                    gpg_item -> setFont(i,font);
+                }
+                break;
+            }
+            gpg_item->setText(COLUMN_NAME, QString::fromStdString(detail.name));
+
+            std::map<std::string, QString>::iterator customStateString = sslCustomStateStrings.find(bestSslId);
+            if (customStateString == sslCustomStateStrings.end()) {
+//                std::map<std::string, std::string>::iterator location = sslLocations.find(bestSslId);
+//                if (location == sslLocations.end()) {
+//                    /* show only the name */
+//                    gpg_item->setText(COLUMN_NAME, QString::fromStdString(detail.name));
+//                } else {
+//                    /* show the name with location */
+//                    gpg_item->setText(COLUMN_NAME, QString::fromStdString(detail.name) + "\n" + QString::fromStdString(location->second));
+//                }
+
+                /* use state string for location */
+                if (stateString.isEmpty()) {
+                    /* show only the name */
+                    gpg_item->setText(COLUMN_NAME, QString::fromStdString(detail.name));
                 } else {
-                    /* show the name with custom state string */
-                    gpg_item->setText(COLUMN_NAME, QString::fromStdString(detail.name) + "\n" + customStateString->second);
+                    /* show the name with location */
+                    gpg_item->setText(COLUMN_NAME, QString::fromStdString(detail.name) + "\n" + stateString);
                 }
             } else {
-                /* show only the name */
-                gpgIcon = QIcon(IMAGE_ONLINE);
-                gpg_item->setText(COLUMN_NAME, QString::fromStdString(detail.name));
-                bestPeerState = PEER_STATE_ONLINE; // show as online
+                /* show the name with custom state string */
+                gpg_item->setText(COLUMN_NAME, QString::fromStdString(detail.name) + "\n" + customStateString->second);
             }
 
             gpg_item->setData(COLUMN_NAME, ROLE_SORT, BuildStateSortString(sortState, gpg_item->text(COLUMN_NAME), bestPeerState));
@@ -1211,36 +1205,34 @@ void MessengerWindow::updateOwnStatus(const QString &peer_id, int status)
 {
     // add self nick + own status
     if (peer_id.toStdString() == rsPeers->getOwnId()) 
-    { 
+    {
         // my status has changed
-        
+        std::string statusString;
+        rsStatus->getStatusString(status, statusString);
+        ui.statusButton->setText(m_nickName + " (" + tr(statusString.c_str()) + ")");
+
         switch (status) {
         case RS_STATUS_OFFLINE:
             ui.avatarButton->setStyleSheet("QToolButton#avatarButton{border-image:url(:/images/mystatus_bg_offline.png); }");
-            ui.statusButton->setText(m_nickName  + tr(" ") + tr("(Offline)"));
             break;
 
         case RS_STATUS_INACTIVE:
             ui.avatarButton->setStyleSheet("QToolButton#avatarButton{border-image:url(:/images/mystatus_bg_idle.png); }");
-            ui.statusButton->setText(m_nickName  + tr(" ") + tr("(Idle)"));
             break;
 
         case RS_STATUS_ONLINE:
             ui.avatarButton->setStyleSheet("QToolButton#avatarButton{border-image:url(:/images/mystatus_bg_online.png); }");
-            ui.statusButton->setText(m_nickName  + tr(" ") + tr("(Online)"));
             break;
 
         case RS_STATUS_AWAY:
             ui.avatarButton->setStyleSheet("QToolButton#avatarButton{border-image:url(:/images/mystatus_bg_idle.png); }");
-            ui.statusButton->setText(m_nickName  + tr(" ") + tr("(Away)"));
             break;
 
         case RS_STATUS_BUSY:
             ui.avatarButton->setStyleSheet("QToolButton#avatarButton{border-image:url(:/images/mystatus_bg_busy.png); }");
-            ui.statusButton->setText(m_nickName  + tr(" ") + tr("(Busy)"));
             break;
         }
-        
+
         return;
     }
 }
