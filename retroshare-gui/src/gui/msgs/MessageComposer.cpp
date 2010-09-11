@@ -52,8 +52,6 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
 
-    m_nBox = -1; // not defined
-
     setupFileActions();
     setupEditActions();
     setupViewActions();
@@ -495,7 +493,7 @@ void  MessageComposer::newMsg(std::string msgId /*= ""*/)
     insertSendList();
 
     m_sMsgId = msgId;
-    m_nBox = -1; // not defined
+    m_sDraftMsgId.clear();
 
     if (m_sMsgId.empty() == false) {
         // fill existing message
@@ -506,7 +504,9 @@ void  MessageComposer::newMsg(std::string msgId /*= ""*/)
             return;
         }
 
-        m_nBox = msgInfo.msgflags & RS_MSG_BOXMASK;
+        if (msgInfo.msgflags & RS_MSG_DRAFT) {
+            m_sDraftMsgId = msgId;
+        }
 
         insertTitleText( QString::fromStdWString(msgInfo.title).toStdString());
 
@@ -621,11 +621,11 @@ void MessageComposer::sendMessage_internal(bool bDraftbox)
     }
 
     if (bDraftbox) {
-        if (m_nBox != -1 && (m_nBox & RS_MSG_DRAFTBOX) == RS_MSG_DRAFTBOX) {
-            // only save draft box to draft box again, for all other message create a new one in draft box
-            mi.msgId = m_sMsgId;
-        }
+        mi.msgId = m_sDraftMsgId;
         rsMsgs->MessageToDraft(mi);
+
+        // use new message id
+        m_sDraftMsgId = mi.msgId;
     } else {
         rsMsgs->MessageSend(mi);
     }

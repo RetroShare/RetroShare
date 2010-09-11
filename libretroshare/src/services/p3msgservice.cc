@@ -807,6 +807,11 @@ bool p3MsgService::MessageToDraft(MessageInfo &info)
             }
             /* STORE MsgID */
             imsg[msg->msgId] = msg;
+
+            // return new message id
+            std::ostringstream out;
+            out << msg->msgId;
+            info.msgId = out.str();
         }
 
         IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
@@ -1267,8 +1272,6 @@ void p3MsgService::initRsMIS(RsMsgItem *msg, MsgInfoSummary &mis)
 	mis.ts = msg->sendTime;
 }
 
-
-
 RsMsgItem *p3MsgService::initMIRsMsg(MessageInfo &info, std::string to)
 {
 	RsMsgItem *msg = new RsMsgItem();
@@ -1320,4 +1323,3 @@ RsMsgItem *p3MsgService::initMIRsMsg(MessageInfo &info, std::string to)
 	//msg->print(std::cerr);
 	return msg;
 }
-

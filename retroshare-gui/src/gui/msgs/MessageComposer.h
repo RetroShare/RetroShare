@@ -178,8 +178,8 @@ private:
   QHash<QString, QString> autoLinkTitleDictionary;
   QHash<QString, int> autoLinkTargetDictionary;
 
-  std::string m_sMsgId; // existing message id
-  int m_nBox;           // box from the existing message
+  std::string m_sMsgId;      // existing message id
+  std::string m_sDraftMsgId; // existing message id
 
   /* maps of files  */
   std::list<AttachFileItem *> mAttachments;
