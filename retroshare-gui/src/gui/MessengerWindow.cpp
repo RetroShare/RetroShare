@@ -181,6 +181,7 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
     connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(updateMessengerDisplay()));
     connect(NotifyQt::getInstance(), SIGNAL(ownAvatarChanged()), this, SLOT(updateAvatar()));
     connect(NotifyQt::getInstance(), SIGNAL(ownStatusMessageChanged()), this, SLOT(loadmystatusmessage()));
+    connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(peerStatusChanged(QString,int)));
 #endif // MINIMAL_RSGUI
 
     timer = new QTimer(this);
@@ -221,11 +222,21 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
 
     // add self nick
     RsPeerDetails pd;
-    if (rsPeers->getPeerDetails(rsPeers->getOwnId(),pd)) {
-        ui.statusButton->setText(QString::fromStdString(pd.name) + tr(" - ") + QString::fromStdString(pd.location));
+    std::string ownId = rsPeers->getOwnId();
+    if (rsPeers->getPeerDetails(ownId, pd)) {
+        /* calculate only once */
+        m_nickName = QString::fromStdString(pd.name) + tr(" - ") + QString::fromStdString(pd.location);
+#ifdef MINIMAL_RSGUI
+         ui.statusButton->setText(m_nickName);
+#endif
     }
 
 #ifndef MINIMAL_RSGUI
+    /* Show nick and current state */
+    StatusInfo statusInfo;
+    rsStatus->getOwnStatus(statusInfo);
+    peerStatusChanged(QString::fromStdString(ownId), statusInfo.status);
+
     MainWindow *pMainWindow = MainWindow::getInstance();
     if (pMainWindow) {
         QMenu *pStatusMenu = new QMenu();
@@ -1195,6 +1206,16 @@ void MessengerWindow::savestatusmessage()
 {
     rsMsgs->setCustomStateString(ui.messagelineEdit->text().toStdString());
 }
+
+void MessengerWindow::peerStatusChanged(const QString &peer_id, int status)
+{
+    if (peer_id.toStdString() == rsPeers->getOwnId()) {
+        std::string statusString;
+        rsStatus->getStatusString(status, statusString);
+        ui.statusButton->setText(m_nickName + " (" + tr(statusString.c_str()) + ")");
+    }
+}
+
 #endif // MINIMAL_RSGUI
 
 void MessengerWindow::on_actionSort_Peers_Descending_Order_activated()

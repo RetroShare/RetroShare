@@ -86,8 +86,14 @@ stop:0 #05538B, stop:1 #E4F1E5);
        </item>
        <item row="0" column="1">
         <layout class="QGridLayout" name="gridLayout_4">
-         <item row="0" column="0" colspan="2">
+         <item row="0" column="0" colspan="3">
           <widget class="QPushButton" name="statusButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="minimumSize">
             <size>
              <width>100</width>
@@ -129,19 +135,6 @@ stop:0 #05538B, stop:1 #E4F1E5);
             <bool>true</bool>
            </property>
           </widget>
-         </item>
-         <item row="0" column="2">
-          <spacer name="horizontalSpacer_2">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>50</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
          </item>
          <item row="1" column="0" colspan="3">
           <widget class="QLineEdit" name="messagelineEdit">

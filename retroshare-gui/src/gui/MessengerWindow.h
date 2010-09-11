@@ -91,6 +91,7 @@ private slots:
     void getAvatar();
 
     void changeAvatarClicked();
+    void peerStatusChanged(const QString &peer_id, int status);
 
     void savestatusmessage();
 #endif // MINIMAL_RSGUI
@@ -128,6 +129,7 @@ private:
     LogoBar * _rsLogoBarmessenger;
 
     QFont itemFont;
+    QString m_nickName;
 
     /** Qt Designer generated object */
     Ui::MessengerWindow ui;
