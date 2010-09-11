@@ -820,7 +820,7 @@ void  PeersDialog::insertPeers()
                 break;
             }
 
-            gpg_item -> setData(COLUMN_STATE, ROLE_SORT, BuildStateSortString(true, gpg_item->text(COLUMN_NAME), PEER_STATE_INACTIVE));
+            gpg_item -> setData(COLUMN_STATE, ROLE_SORT, BuildStateSortString(true, gpg_item->text(COLUMN_NAME), bestPeerState));
         } else if (gpg_online) {
             gpg_item->setHidden(bHideUnconnected);
             gpgIcon = QIcon(IMAGE_AVAILABLE);
