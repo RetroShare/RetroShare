@@ -181,7 +181,7 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
     connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(updateMessengerDisplay()));
     connect(NotifyQt::getInstance(), SIGNAL(ownAvatarChanged()), this, SLOT(updateAvatar()));
     connect(NotifyQt::getInstance(), SIGNAL(ownStatusMessageChanged()), this, SLOT(loadmystatusmessage()));
-    connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(peerStatusChanged(QString,int)));
+    connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(updateOwnStatus(QString,int)));
 #endif // MINIMAL_RSGUI
 
     timer = new QTimer(this);
@@ -235,7 +235,7 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
     /* Show nick and current state */
     StatusInfo statusInfo;
     rsStatus->getOwnStatus(statusInfo);
-    peerStatusChanged(QString::fromStdString(ownId), statusInfo.status);
+    updateOwnStatus(QString::fromStdString(ownId), statusInfo.status);
 
     MainWindow *pMainWindow = MainWindow::getInstance();
     if (pMainWindow) {
@@ -1207,12 +1207,41 @@ void MessengerWindow::savestatusmessage()
     rsMsgs->setCustomStateString(ui.messagelineEdit->text().toStdString());
 }
 
-void MessengerWindow::peerStatusChanged(const QString &peer_id, int status)
+void MessengerWindow::updateOwnStatus(const QString &peer_id, int status)
 {
-    if (peer_id.toStdString() == rsPeers->getOwnId()) {
-        std::string statusString;
-        rsStatus->getStatusString(status, statusString);
-        ui.statusButton->setText(m_nickName + " (" + tr(statusString.c_str()) + ")");
+    // add self nick + own status
+    if (peer_id.toStdString() == rsPeers->getOwnId()) 
+    { 
+        // my status has changed
+        
+        switch (status) {
+        case RS_STATUS_OFFLINE:
+            ui.avatarButton->setStyleSheet("QToolButton#avatarButton{border-image:url(:/images/mystatus_bg_offline.png); }");
+            ui.statusButton->setText(m_nickName  + tr(" ") + tr("(Offline)"));
+            break;
+
+        case RS_STATUS_INACTIVE:
+            ui.avatarButton->setStyleSheet("QToolButton#avatarButton{border-image:url(:/images/mystatus_bg_idle.png); }");
+            ui.statusButton->setText(m_nickName  + tr(" ") + tr("(Idle)"));
+            break;
+
+        case RS_STATUS_ONLINE:
+            ui.avatarButton->setStyleSheet("QToolButton#avatarButton{border-image:url(:/images/mystatus_bg_online.png); }");
+            ui.statusButton->setText(m_nickName  + tr(" ") + tr("(Online)"));
+            break;
+
+        case RS_STATUS_AWAY:
+            ui.avatarButton->setStyleSheet("QToolButton#avatarButton{border-image:url(:/images/mystatus_bg_idle.png); }");
+            ui.statusButton->setText(m_nickName  + tr(" ") + tr("(Away)"));
+            break;
+
+        case RS_STATUS_BUSY:
+            ui.avatarButton->setStyleSheet("QToolButton#avatarButton{border-image:url(:/images/mystatus_bg_busy.png); }");
+            ui.statusButton->setText(m_nickName  + tr(" ") + tr("(Busy)"));
+            break;
+        }
+        
+        return;
     }
 }
 

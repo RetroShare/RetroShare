@@ -91,7 +91,7 @@ private slots:
     void getAvatar();
 
     void changeAvatarClicked();
-    void peerStatusChanged(const QString &peer_id, int status);
+    void updateOwnStatus(const QString &peer_id, int status);
 
     void savestatusmessage();
 #endif // MINIMAL_RSGUI
