@@ -14,7 +14,7 @@
    <string>Blog Details</string>
   </property>
   <property name="windowIcon">
-   <iconset>
+   <iconset resource="../../images.qrc">
     <normaloff>:/images/rstray3.png</normaloff>:/images/rstray3.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
@@ -25,11 +25,11 @@
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="icon">
-       <iconset>
+       <iconset resource="../../images.qrc">
         <normaloff>:/images/info16.png</normaloff>:/images/info16.png</iconset>
       </attribute>
       <attribute name="title">
-       <string>Blogl Details</string>
+       <string>Blog Details</string>
       </attribute>
       <layout class="QGridLayout">
        <item row="0" column="0">
@@ -145,7 +145,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../images.qrc"/>
+  <include location="../../images.qrc"/>
  </resources>
  <connections/>
 </ui>

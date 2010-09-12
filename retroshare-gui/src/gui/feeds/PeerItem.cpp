@@ -91,19 +91,19 @@ void PeerItem::updateItemStatic()
 		switch(mType)
 		{
 			case PEER_TYPE_STD:
-				title = "Friend: ";
+                                title = tr("Friend");
 				break;
 			case PEER_TYPE_CONNECT:
-				title = "Friend Connected";
+                                title = tr("Friend Connected");
 				break;
 			case PEER_TYPE_HELLO:
-				title = "Connect Attempt: ";
+                                title = tr("Connect Attempt");
 				break;
 			case PEER_TYPE_NEW_FOF:
-				title = "Friend of Friend: ";
+                                title = tr("Friend of Friend");
 				break;
 			default:
-				title = "Peer: ";
+                                title = tr("Peer");
 				break;
 		}
 
@@ -124,15 +124,15 @@ void PeerItem::updateItemStatic()
 	}
 	else
 	{
-		statusLabel->setText("Unknown Peer");
-		titleLabel->setText("Unknown Peer");
-		trustLabel->setText("Unknown Peer");
-		nameLabel->setText("Unknown Peer");
-		idLabel->setText("Unknown Peer");
-		locLabel->setText("Unknown Peer");
-		ipLabel->setText("Unknown Peer");
-		connLabel->setText("Unknown Peer");
-		lastLabel->setText("Unknown Peer");
+                statusLabel->setText(tr("Unknown Peer"));
+                titleLabel->setText(tr("Unknown Peer"));
+                trustLabel->setText(tr("Unknown Peer"));
+                nameLabel->setText(tr("Unknown Peer"));
+                idLabel->setText(tr("Unknown Peer"));
+                locLabel->setText(tr("Unknown Peer"));
+                ipLabel->setText(tr("Unknown Peer"));
+                connLabel->setText(tr("Unknown Peer"));
+                lastLabel->setText(tr("Unknown Peer"));
 
 		chatButton->setEnabled(false);
 		//addButton->setEnabled(false);
@@ -233,13 +233,13 @@ void PeerItem::toggle()
 	{
 		expandFrame->show();
 		expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
-	    expandButton->setToolTip("Hide");
+            expandButton->setToolTip(tr("Hide"));
 	}
 	else
 	{
 		expandFrame->hide();
 		expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
-	    expandButton->setToolTip("Expand");
+            expandButton->setToolTip(tr("Expand"));
 	}
 }
 

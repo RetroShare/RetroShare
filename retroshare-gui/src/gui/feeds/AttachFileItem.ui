@@ -77,7 +77,7 @@ background: white;}
          </font>
         </property>
         <property name="text">
-         <string>File Name</string>
+         <string notr="true">File Name</string>
         </property>
         <property name="wordWrap">
          <bool>false</bool>
@@ -148,7 +148,6 @@ background: white;}
   </layout>
  </widget>
  <resources>
-  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

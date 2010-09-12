@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string notr="true"/>
   </property>
   <layout class="QGridLayout">
    <property name="margin">
@@ -88,7 +88,7 @@ border-radius: 10px}</string>
            </font>
           </property>
           <property name="text">
-           <string>Forum Name</string>
+           <string notr="true">Forum Name</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -122,7 +122,7 @@ border-radius: 10px}</string>
            </font>
           </property>
           <property name="text">
-           <string>Timestamp</string>
+           <string notr="true">Timestamp</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -202,7 +202,7 @@ border-radius: 10px}</string>
         <item>
          <widget class="QLabel" name="subjectLabel">
           <property name="text">
-           <string>Subject...</string>
+           <string notr="true">Subject...</string>
           </property>
          </widget>
         </item>
@@ -225,7 +225,7 @@ border-radius: 10px}</string>
         <item>
          <widget class="QLabel" name="srcLabel">
           <property name="text">
-           <string>Persons Name</string>
+           <string notr="true">Persons Name</string>
           </property>
          </widget>
         </item>
@@ -342,7 +342,7 @@ border-radius: 10px}</string>
               </sizepolicy>
              </property>
              <property name="text">
-              <string>Message is about ???</string>
+              <string notr="true">Message is about ???</string>
              </property>
             </widget>
            </item>
@@ -375,7 +375,7 @@ border-radius: 10px}</string>
               </sizepolicy>
              </property>
              <property name="text">
-              <string>Previous Message...</string>
+              <string notr="true">Previous Message...</string>
              </property>
              <property name="wordWrap">
               <bool>true</bool>
@@ -458,7 +458,7 @@ border-radius: 10px}</string>
               </sizepolicy>
              </property>
              <property name="text">
-              <string>Message is about ???</string>
+              <string notr="true">Message is about ???</string>
              </property>
             </widget>
            </item>
@@ -491,7 +491,7 @@ border-radius: 10px}</string>
               </sizepolicy>
              </property>
              <property name="text">
-              <string>Currnent Message..</string>
+              <string notr="true">Current Message..</string>
              </property>
              <property name="wordWrap">
               <bool>true</bool>
@@ -509,9 +509,6 @@ border-radius: 10px}</string>
   </layout>
  </widget>
  <resources>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

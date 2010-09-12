@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string/>
   </property>
   <layout class="QGridLayout">
    <property name="margin">
@@ -84,7 +84,7 @@ stop: 0 #2291E0, stop: 1 #3EB3FF);
            </font>
           </property>
           <property name="text">
-           <string>Connected</string>
+           <string notr="true">Message</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -156,7 +156,7 @@ stop: 0 #2291E0, stop: 1 #3EB3FF);
            </sizepolicy>
           </property>
           <property name="text">
-           <string>subjectLabel</string>
+           <string notr="true">subjectLabel</string>
           </property>
           <property name="wordWrap">
            <bool>true</bool>
@@ -256,7 +256,7 @@ stop: 0 #2291E0, stop: 1 #3EB3FF);
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Long 
+            <string notr="true">Long 
  message here</string>
            </property>
            <property name="wordWrap">

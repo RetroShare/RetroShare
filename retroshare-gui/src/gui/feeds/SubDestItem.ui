@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string/>
   </property>
   <layout class="QGridLayout">
    <property name="margin">
@@ -70,7 +70,7 @@ background: white;}
            </font>
           </property>
           <property name="text">
-           <string>Type</string>
+           <string notr="true">Type</string>
           </property>
           <property name="wordWrap">
            <bool>false</bool>
@@ -115,7 +115,7 @@ background: white;}
            </font>
           </property>
           <property name="text">
-           <string>Person/Channel Name</string>
+           <string notr="true">Person/Channel Name</string>
           </property>
           <property name="wordWrap">
            <bool>false</bool>
@@ -166,7 +166,6 @@ background: white;}
   </layout>
  </widget>
  <resources>
-  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

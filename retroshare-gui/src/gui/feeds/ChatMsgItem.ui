@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string/>
   </property>
   <layout class="QGridLayout" name="gridLayout_1">
    <property name="margin">
@@ -62,7 +62,7 @@ border-radius: 10px}</string>
 }</string>
           </property>
           <property name="text">
-           <string/>
+           <string notr="true"/>
           </property>
           <property name="alignment">
            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -93,7 +93,7 @@ border-radius: 10px}</string>
          <string notr="true"/>
         </property>
         <property name="text">
-         <string>Peer Name</string>
+         <string notr="true">Peer Name</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -129,7 +129,7 @@ border-radius: 10px}</string>
          </font>
         </property>
         <property name="text">
-         <string>TextLabel</string>
+         <string notr="true">TextLabel</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -171,7 +171,7 @@ border-radius: 10px}</string>
          </size>
         </property>
         <property name="text">
-         <string>Text Label</string>
+         <string notr="true">Text Label</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -273,7 +273,7 @@ border-radius: 10px}</string>
             </sizepolicy>
            </property>
            <property name="toolTip">
-            <string>Chat</string>
+            <string>Start Chat</string>
            </property>
            <property name="layoutDirection">
             <enum>Qt::LeftToRight</enum>
@@ -332,7 +332,6 @@ border-radius: 10px}</string>
   </layout>
  </widget>
  <resources>
-  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

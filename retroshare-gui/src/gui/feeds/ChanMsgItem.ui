@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string notr="true"/>
   </property>
   <property name="styleSheet">
    <string notr="true">QToolButton, QPushButton, QComboBox { 
@@ -78,7 +78,7 @@ border-radius: 10px;}</string>
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap resource="../../../../../retroshare-v0.5.0/retroshare-gui/src/gui/images.qrc">:/images/thumb-default-video.png</pixmap>
+           <pixmap resource="../images.qrc">:/images/thumb-default-video.png</pixmap>
           </property>
           <property name="scaledContents">
            <bool>true</bool>
@@ -122,7 +122,7 @@ border-radius: 10px;}</string>
            </font>
           </property>
           <property name="text">
-           <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+           <string notr="true">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:11pt; font-weight:600; font-style:italic;&quot;&gt;
@@ -139,7 +139,7 @@ p, li { white-space: pre-wrap; }
            </font>
           </property>
           <property name="text">
-           <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+           <string notr="true">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
@@ -156,7 +156,7 @@ p, li { white-space: pre-wrap; }
            </sizepolicy>
           </property>
           <property name="text">
-           <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+           <string notr="true">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -195,7 +195,7 @@ p, li { white-space: pre-wrap; }
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../../../../../retroshare-v0.5.0/retroshare-gui/src/gui/images.qrc">
+           <iconset resource="../images.qrc">
             <normaloff>:/images/mail_delete.png</normaloff>:/images/mail_delete.png</iconset>
           </property>
          </widget>
@@ -215,7 +215,7 @@ p, li { white-space: pre-wrap; }
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../../../../../retroshare-v0.5.0/retroshare-gui/src/gui/images.qrc">
+           <iconset resource="../images.qrc">
             <normaloff>:/images/close_normal.png</normaloff>:/images/close_normal.png</iconset>
           </property>
          </widget>
@@ -238,7 +238,7 @@ p, li { white-space: pre-wrap; }
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../../../../../retroshare-v0.5.0/retroshare-gui/src/gui/images.qrc">
+           <iconset resource="../images.qrc">
             <normaloff>:/images/edit_add24.png</normaloff>:/images/edit_add24.png</iconset>
           </property>
          </widget>
@@ -246,7 +246,7 @@ p, li { white-space: pre-wrap; }
         <item row="2" column="1">
          <widget class="QLabel" name="filelabel">
           <property name="text">
-           <string>TextLabel</string>
+           <string notr="true">TextLabel</string>
           </property>
          </widget>
         </item>
@@ -295,7 +295,7 @@ border-radius: 10px;}</string>
          </sizepolicy>
         </property>
         <property name="text">
-         <string>Long 
+         <string notr="true">Long 
  message here</string>
         </property>
        </widget>

@@ -78,7 +78,7 @@ border-radius: 10px}</string>
            <string notr="true"/>
           </property>
           <property name="text">
-           <string>Connected</string>
+           <string notr="true">Forum</string>
           </property>
          </widget>
         </item>
@@ -104,7 +104,7 @@ border-radius: 10px}</string>
            <string notr="true"/>
           </property>
           <property name="text">
-           <string>name</string>
+           <string notr="true">name</string>
           </property>
          </widget>
         </item>
@@ -262,7 +262,7 @@ border-radius: 10px}</string>
                <string notr="true"/>
               </property>
               <property name="text">
-               <string>Description 
+               <string notr="true">Description 
  of Forum</string>
               </property>
              </widget>
@@ -292,21 +292,6 @@ border-radius: 10px}</string>
   </layout>
  </widget>
  <resources>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

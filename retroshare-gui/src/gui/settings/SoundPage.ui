@@ -582,7 +582,7 @@
          <item row="0" column="2">
           <widget class="QPushButton" name="cmd_openFile_3">
            <property name="text">
-            <string>Brose</string>
+            <string>Browse</string>
            </property>
           </widget>
          </item>
@@ -597,9 +597,6 @@
           </widget>
          </item>
         </layout>
-        <zorder>txt_SoundFile3</zorder>
-        <zorder>cmd_openFile_3</zorder>
-        <zorder>checkBoxSound_3</zorder>
        </widget>
       </item>
       <item row="3" column="0">

@@ -528,7 +528,7 @@ static QString getBaseDir()
     switch (styleType) {
     case TYPE_PUBLIC:
         if (getStyleInfo(":/qss/chat/public", ":/qss/chat/public", standardInfo)) {
-            standardInfo.styleDescription = tr("Standard style for public chat");
+            standardInfo.styleDescription = tr("Standard style for group chat");
             styles.append(standardInfo);
         }
         stylePath = "stylesheets/public";

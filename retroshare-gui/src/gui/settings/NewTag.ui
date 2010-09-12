@@ -47,7 +47,7 @@
         </size>
        </property>
        <property name="text">
-        <string>Tag Name:</string>
+        <string>Name:</string>
        </property>
       </widget>
      </item>
@@ -56,6 +56,9 @@
      </item>
      <item row="1" column="5">
       <widget class="QPushButton" name="colorButton">
+       <property name="toolTip">
+        <string>Choose color</string>
+       </property>
        <property name="text">
         <string/>
        </property>
@@ -109,14 +112,6 @@
   </layout>
  </widget>
  <resources>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string notr="true"/>
   </property>
   <layout class="QGridLayout">
    <property name="margin">
@@ -83,7 +83,7 @@ stop:0 #0076B1, stop:1 #12A3EB);}</string>
            </font>
           </property>
           <property name="text">
-           <string>New Blog</string>
+           <string notr="true">New Blog</string>
           </property>
          </widget>
         </item>
@@ -112,7 +112,7 @@ stop:0 #0076B1, stop:1 #12A3EB);}</string>
            </size>
           </property>
           <property name="text">
-           <string>Logo</string>
+           <string notr="true">Logo</string>
           </property>
           <property name="scaledContents">
            <bool>true</bool>
@@ -122,7 +122,7 @@ stop:0 #0076B1, stop:1 #12A3EB);}</string>
         <item>
          <widget class="QLabel" name="nameLabel">
           <property name="text">
-           <string>name</string>
+           <string notr="true">name</string>
           </property>
          </widget>
         </item>
@@ -151,11 +151,7 @@ stop:0 #0076B1, stop:1 #12A3EB);}</string>
            </sizepolicy>
           </property>
           <property name="toolTip">
-           <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Subscribe to Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>Subscribe to Blog</string>
           </property>
           <property name="text">
            <string/>
@@ -228,7 +224,7 @@ p, li { white-space: pre-wrap; }
             <item>
              <widget class="QLabel" name="iconLabel">
               <property name="text">
-               <string/>
+               <string notr="true"/>
               </property>
               <property name="pixmap">
                <pixmap resource="../images.qrc">:/images/contacts24.png</pixmap>
@@ -244,7 +240,7 @@ p, li { white-space: pre-wrap; }
                </sizepolicy>
               </property>
               <property name="text">
-               <string>Description 
+               <string notr="true">Description 
  of Blog</string>
               </property>
              </widget>
@@ -274,22 +270,6 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <resources>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

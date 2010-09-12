@@ -585,7 +585,7 @@
              <item row="2" column="0">
               <widget class="QLabel" name="labelChatFontPreview">
                <property name="text">
-                <string>Font Preview</string>
+                <string notr="true">Font Preview</string>
                </property>
               </widget>
              </item>
@@ -665,7 +665,7 @@
          </property>
          <widget class="QWidget" name="publicTab">
           <attribute name="title">
-           <string>Public</string>
+           <string>Group chat</string>
           </attribute>
           <layout class="QVBoxLayout" name="publicLayout_1">
            <item>
@@ -775,7 +775,7 @@
                   </sizepolicy>
                  </property>
                  <property name="text">
-                  <string>Author</string>
+                  <string notr="true">Author</string>
                  </property>
                 </widget>
                </item>
@@ -788,7 +788,7 @@
                   </sizepolicy>
                  </property>
                  <property name="text">
-                  <string>Description</string>
+                  <string notr="true">Description</string>
                  </property>
                 </widget>
                </item>
@@ -800,7 +800,7 @@
          </widget>
          <widget class="QWidget" name="privateTab">
           <attribute name="title">
-           <string>Private</string>
+           <string>Private chat</string>
           </attribute>
           <layout class="QVBoxLayout" name="privateLayout_1">
            <item>
@@ -910,7 +910,7 @@
                   </sizepolicy>
                  </property>
                  <property name="text">
-                  <string>Author</string>
+                  <string notr="true">Author</string>
                  </property>
                 </widget>
                </item>
@@ -923,7 +923,7 @@
                   </sizepolicy>
                  </property>
                  <property name="text">
-                  <string>Description</string>
+                  <string notr="true">Description</string>
                  </property>
                 </widget>
                </item>
@@ -1045,7 +1045,7 @@
                   </sizepolicy>
                  </property>
                  <property name="text">
-                  <string>Author</string>
+                  <string notr="true">Author</string>
                  </property>
                 </widget>
                </item>
@@ -1058,7 +1058,7 @@
                   </sizepolicy>
                  </property>
                  <property name="text">
-                  <string>Description</string>
+                  <string notr="true">Description</string>
                  </property>
                 </widget>
                </item>

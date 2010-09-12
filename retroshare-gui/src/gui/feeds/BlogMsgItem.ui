@@ -105,7 +105,7 @@ stop:0 #0076B1, stop:1 #12A3EB);}</string>
            </font>
           </property>
           <property name="text">
-           <string>Connected</string>
+           <string notr="true">Blog</string>
           </property>
          </widget>
         </item>
@@ -165,7 +165,7 @@ stop:0 #0076B1, stop:1 #12A3EB);}</string>
            </sizepolicy>
           </property>
           <property name="text">
-           <string>subjectLabel</string>
+           <string notr="true">subjectLabel</string>
           </property>
          </widget>
         </item>
@@ -225,7 +225,7 @@ stop:0 #0076B1, stop:1 #12A3EB);}</string>
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Long 
+            <string notr="true">Long 
  message here</string>
            </property>
           </widget>
@@ -239,7 +239,6 @@ stop:0 #0076B1, stop:1 #12A3EB);}</string>
   </layout>
  </widget>
  <resources>
-  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string/>
   </property>
   <property name="styleSheet">
    <string notr="true">QWidget#SubFileItem{border: none;}</string>
@@ -80,7 +80,7 @@ border-radius: 10px;}
            </font>
           </property>
           <property name="text">
-           <string>File Name</string>
+           <string notr="true">File Name</string>
           </property>
           <property name="wordWrap">
            <bool>false</bool>
@@ -313,7 +313,6 @@ border: 1px solid black;
   </layout>
  </widget>
  <resources>
-  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

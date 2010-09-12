@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string notr="true"/>
   </property>
   <layout class="QGridLayout">
    <property name="margin">
@@ -60,7 +60,7 @@ border-radius: 10px;}</string>
 border-radius: 2px;}</string>
           </property>
           <property name="text">
-           <string>Logo</string>
+           <string notr="true">Logo</string>
           </property>
           <property name="scaledContents">
            <bool>true</bool>
@@ -70,7 +70,7 @@ border-radius: 2px;}</string>
         <item row="0" column="1">
          <widget class="QLabel" name="nameLabel">
           <property name="text">
-           <string>name</string>
+           <string notr="true">name</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -93,7 +93,7 @@ border-radius: 2px;}</string>
            </font>
           </property>
           <property name="text">
-           <string>New Channel</string>
+           <string notr="true">New Channel</string>
           </property>
          </widget>
         </item>
@@ -232,7 +232,7 @@ border-radius: 2px;}</string>
                </sizepolicy>
               </property>
               <property name="text">
-               <string>Description 
+               <string notr="true">Description 
  of Channel</string>
               </property>
              </widget>
@@ -262,20 +262,6 @@ border-radius: 2px;}</string>
   </layout>
  </widget>
  <resources>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>
