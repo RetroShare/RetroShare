@@ -57,8 +57,8 @@
     <message>
         <source>Sorry, can&apos;t determine system default command for this file
 </source>
-        <translation>Entschuldigung. Konnte kein standard Programm zum Öffnen finden.
- </translation>
+        <translation>Entschuldigung. Konnte kein Standard Programm zum Öffnen finden
+</translation>
     </message>
 </context>
 <context>
@@ -6840,46 +6840,6 @@ p, li { white-space: pre-wrap; }
         <source>Process of RetroShare links is not implemented. Please use copy instead.</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Offline</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Away</source>
-        <translation>Abwesend</translation>
-    </message>
-    <message>
-        <source>Busy</source>
-        <translation>Beschäftigt</translation>
-    </message>
-    <message>
-        <source>Online</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Peer is offline</source>
-        <translation>Freund ist offline</translation>
-    </message>
-    <message>
-        <source>Peer is away</source>
-        <translation>Freund ist abwesend</translation>
-    </message>
-    <message>
-        <source>Peer is busy</source>
-        <translation>Freund ist beschäftigt</translation>
-    </message>
-    <message>
-        <source>Peer is online</source>
-        <translation>Freund ist online</translation>
-    </message>
-    <message>
-        <source>Idle</source>
-        <translation>Untätig</translation>
-    </message>
-    <message>
-        <source>Peer is idle</source>
-        <translation>Freund ist untätig</translation>
-    </message>
 </context>
 <context>
     <name>QuickStartWizard</name>
@@ -8250,6 +8210,49 @@ This choice be reverted in settings.</source>
     <message>
         <source>Cumulative</source>
         <translation></translation>
+    </message>
+</context>
+<context>
+    <name>StatusDefs</name>
+    <message>
+        <source>Offline</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Away</source>
+        <translation>Abwesend</translation>
+    </message>
+    <message>
+        <source>Busy</source>
+        <translation>Beschäftigt</translation>
+    </message>
+    <message>
+        <source>Online</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Idle</source>
+        <translation>Untätig</translation>
+    </message>
+    <message>
+        <source>Friend is offline</source>
+        <translation>Freund ist offline</translation>
+    </message>
+    <message>
+        <source>Friend is away</source>
+        <translation>Freund ist abwesend</translation>
+    </message>
+    <message>
+        <source>Friend is busy</source>
+        <translation>Freund ist beschäftigt</translation>
+    </message>
+    <message>
+        <source>Friend is online</source>
+        <translation>Freund ist online</translation>
+    </message>
+    <message>
+        <source>Friend is idle</source>
+        <translation>Freund ist untätig</translation>
     </message>
 </context>
 <context>

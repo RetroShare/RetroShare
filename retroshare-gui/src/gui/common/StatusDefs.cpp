@@ -28,15 +28,15 @@ const QString StatusDefs::name(unsigned int status)
 {
     switch (status) {
     case RS_STATUS_OFFLINE:
-        return QObject::tr("Offline");
+        return qApp->translate("StatusDefs", "Offline");
     case RS_STATUS_AWAY:
-        return QObject::tr("Away");
+        return qApp->translate("StatusDefs", "Away");
     case RS_STATUS_BUSY:
-        return QObject::tr("Busy");
+        return qApp->translate("StatusDefs", "Busy");
     case RS_STATUS_ONLINE:
-        return QObject::tr("Online");
+        return qApp->translate("StatusDefs", "Online");
     case RS_STATUS_INACTIVE:
-        return QObject::tr("Idle");
+        return qApp->translate("StatusDefs", "Idle");
     }
 
     std::cerr << "StatusDefs::name: Unknown status requested " << status;
@@ -85,15 +85,15 @@ const QString StatusDefs::tooltip(unsigned int status)
 {
     switch (status) {
     case RS_STATUS_OFFLINE:
-        return QObject::tr("Peer is offline");
+        return qApp->translate("StatusDefs", "Friend is offline");
     case RS_STATUS_AWAY:
-        return QObject::tr("Peer is away");
+        return qApp->translate("StatusDefs", "Friend is away");
     case RS_STATUS_BUSY:
-        return QObject::tr("Peer is busy");
+        return qApp->translate("StatusDefs", "Friend is busy");
     case RS_STATUS_ONLINE:
-        return QObject::tr("Peer is online");
+        return qApp->translate("StatusDefs", "Friend is online");
     case RS_STATUS_INACTIVE:
-        return QObject::tr("Peer is idle");
+        return qApp->translate("StatusDefs", "Friend is idle");
     }
 
     std::cerr << "StatusDefs::tooltip: Unknown status requested " << status;
