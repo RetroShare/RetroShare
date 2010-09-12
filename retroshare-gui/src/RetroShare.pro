@@ -278,6 +278,7 @@ HEADERS +=  rshare.h \
             gui/common/vmessagebox.h \
             gui/common/rwindow.h \
             gui/common/html.h \
+            gui/common/StatusDefs.h \
             gui/MessagesDialog.h \
             gui/help/browser/helpbrowser.h \
             gui/help/browser/helptextbrowser.h \
@@ -467,6 +468,7 @@ SOURCES +=  main.cpp \
             gui/common/vmessagebox.cpp \
             gui/common/rwindow.cpp \ 
             gui/common/html.cpp \
+            gui/common/StatusDefs.cpp \
             gui/settings/rsharesettings.cpp \
             gui/settings/RsharePeerSettings.cpp \
             gui/settings/rsettings.cpp \
@@ -651,6 +653,7 @@ minimal {
                   gui/settings/rsettings.cpp \
                   gui/settings/rsharesettings.cpp \
                   gui/common/rwindow.cpp \
+                  gui/common/StatusDefs.cpp \
                   gui/LogoBar.cpp \
                   gui/RsAutoUpdatePage.cpp \
                   gui/common/vmessagebox.cpp \
@@ -681,6 +684,7 @@ minimal {
                   gui/settings/rsettings.h \
                   gui/settings/rsharesettings.h \
                   gui/common/rwindow.h \
+                  gui/common/StatusDefs.h \
                   gui/LogoBar.h \
                   gui/RsAutoUpdatePage.h \
                   gui/common/vmessagebox.h \

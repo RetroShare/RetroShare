@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>RetroShare  Messenger</string>
+   <string>RetroShare Messenger</string>
   </property>
   <property name="windowIcon">
    <iconset resource="images.qrc">
@@ -251,7 +251,7 @@ p, li { white-space: pre-wrap; }
           <string notr="true"/>
          </property>
          <property name="text">
-          <string>...</string>
+          <string/>
          </property>
          <property name="icon">
           <iconset resource="images.qrc">

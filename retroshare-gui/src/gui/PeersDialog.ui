@@ -1417,7 +1417,7 @@ p, li { white-space: pre-wrap; }
      <normaloff>:/images/new_forum16.png</normaloff>:/images/new_forum16.png</iconset>
    </property>
    <property name="text">
-    <string>Create New Forum</string>
+    <string>Create new Forum</string>
    </property>
    <property name="toolTip">
     <string>Create new Forum</string>
@@ -1432,7 +1432,7 @@ p, li { white-space: pre-wrap; }
      <normaloff>:/images/add_channel24.png</normaloff>:/images/add_channel24.png</iconset>
    </property>
    <property name="text">
-    <string>Create New Channel</string>
+    <string>Create new Channel</string>
    </property>
    <property name="toolTip">
     <string>Create new Channel</string>

@@ -74,6 +74,7 @@
 #include "util/rsversion.h"
 #include "settings/rsettingswin.h"
 #include "settings/rsharesettings.h"
+#include "common/StatusDefs.h"
 
 #include <sstream>
 #include <iomanip>
@@ -1004,22 +1005,19 @@ void MainWindow::initializeStatusObject(QObject *pObject, bool bConnect)
         /* initialize menu */
         QActionGroup *pGroup = new QActionGroup(pMenu);
 
-        rsStatus->getStatusString(RS_STATUS_ONLINE, statusString);
-        QAction *pAction = new QAction(QIcon(":/images/im-user.png"), tr(statusString.c_str()), pMenu);
+        QAction *pAction = new QAction(QIcon(StatusDefs::imageIM(RS_STATUS_ONLINE)), StatusDefs::name(RS_STATUS_ONLINE), pMenu);
         pAction->setData(RS_STATUS_ONLINE);
         pAction->setCheckable(true);
         pMenu->addAction(pAction);
         pGroup->addAction(pAction);
 
-        rsStatus->getStatusString(RS_STATUS_BUSY, statusString);
-        pAction = new QAction(QIcon(":/images/im-user-busy.png"), tr(statusString.c_str()), pMenu);
+        pAction = new QAction(QIcon(StatusDefs::imageIM(RS_STATUS_BUSY)), StatusDefs::name(RS_STATUS_BUSY), pMenu);
         pAction->setData(RS_STATUS_BUSY);
         pAction->setCheckable(true);
         pMenu->addAction(pAction);
         pGroup->addAction(pAction);
 
-        rsStatus->getStatusString(RS_STATUS_AWAY, statusString);
-        pAction = new QAction(QIcon(":/images/im-user-away.png"), tr(statusString.c_str()), pMenu);
+        pAction = new QAction(QIcon(StatusDefs::imageIM(RS_STATUS_AWAY)), StatusDefs::name(RS_STATUS_AWAY), pMenu);
         pAction->setData(RS_STATUS_AWAY);
         pAction->setCheckable(true);
         pMenu->addAction(pAction);
@@ -1032,12 +1030,9 @@ void MainWindow::initializeStatusObject(QObject *pObject, bool bConnect)
         /* initialize combobox */
         QComboBox *pComboBox = dynamic_cast<QComboBox*>(pObject);
         if (pComboBox) {
-            rsStatus->getStatusString(RS_STATUS_ONLINE, statusString);
-            pComboBox->addItem(QIcon(":/images/im-user.png"), tr(statusString.c_str()), RS_STATUS_ONLINE);
-            rsStatus->getStatusString(RS_STATUS_BUSY, statusString);
-            pComboBox->addItem(QIcon(":/images/im-user-busy.png"), tr(statusString.c_str()), RS_STATUS_BUSY);
-            rsStatus->getStatusString(RS_STATUS_AWAY, statusString);
-            pComboBox->addItem(QIcon(":/images/im-user-away.png"), tr(statusString.c_str()), RS_STATUS_AWAY);
+            pComboBox->addItem(QIcon(StatusDefs::imageIM(RS_STATUS_ONLINE)), StatusDefs::name(RS_STATUS_ONLINE), RS_STATUS_ONLINE);
+            pComboBox->addItem(QIcon(StatusDefs::imageIM(RS_STATUS_BUSY)), StatusDefs::name(RS_STATUS_BUSY), RS_STATUS_BUSY);
+            pComboBox->addItem(QIcon(StatusDefs::imageIM(RS_STATUS_AWAY)), StatusDefs::name(RS_STATUS_AWAY), RS_STATUS_AWAY);
 
             if (bConnect) {
                 connect(pComboBox, SIGNAL(activated(int)), this, SLOT(statusChangedComboBox(int)));

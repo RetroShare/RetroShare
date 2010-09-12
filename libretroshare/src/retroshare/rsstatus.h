@@ -36,11 +36,13 @@ extern RsStatus *rsStatus;
 #include <list>
 
 
-const uint32_t RS_STATUS_OFFLINE = 0x0000;
-const uint32_t RS_STATUS_AWAY    = 0x0001;
-const uint32_t RS_STATUS_BUSY    = 0x0002;
-const uint32_t RS_STATUS_ONLINE  = 0x0003;
+const uint32_t RS_STATUS_OFFLINE  = 0x0000;
+const uint32_t RS_STATUS_AWAY     = 0x0001;
+const uint32_t RS_STATUS_BUSY     = 0x0002;
+const uint32_t RS_STATUS_ONLINE   = 0x0003;
 const uint32_t RS_STATUS_INACTIVE = 0x0004;
+
+const uint32_t RS_STATUS_COUNT    = 0x0005; // count of status
 
 //! data object for peer status information
 /*!
@@ -95,14 +97,6 @@ class RsStatus
 	 * @return will return false if status info does not belong to client
 	 */
 	virtual bool sendStatus(std::string id, uint32_t status)                 = 0;
-
-	/**
-	 * translates the status field of a peer to a string
-	 * @status the status id that needs to be translated
-	 * @statusString the string translation is passed here
-	 */
-	virtual void getStatusString(uint32_t status, std::string& statusString) = 0;
-
 };
 
 

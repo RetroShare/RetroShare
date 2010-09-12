@@ -29,6 +29,7 @@
 #include <QDropEvent>
 #include <QFileDialog>
 #include "common/vmessagebox.h"
+#include "common/StatusDefs.h"
 #include <gui/mainpagestack.h>
 
 #include "retroshare/rsinit.h"
@@ -73,14 +74,7 @@
 #define IMAGE_MSG                ":/images/message-mail.png"
 #define IMAGE_CONNECT            ":/images/connect_friend.png"
 /* Images for Status icons */
-#define IMAGE_ONLINE             ":/images/user/identity24.png"
-#define IMAGE_AWAY               ":/images/user/identity24away.png"
-#define IMAGE_BUSY               ":/images/user/identity24busy.png"
-#define IMAGE_INACTIVE           ":/images/user/identity24idle.png"
-#define IMAGE_OFFLINE            ":/images/user/identityoffline24.png"
-#define IMAGE_OFFLINE2           ":/images/user/identitylightgrey24.png"
 #define IMAGE_AVAILABLE          ":/images/user/identityavaiblecyan24.png"
-#define IMAGE_UNREACHABLE        ":/images/user/identityunreachable24.png"
 #define IMAGE_CONNECT2           ":/images/reload24.png"
 #define IMAGE_PASTELINK          ":/images/pasterslink.png"
 
@@ -652,9 +646,9 @@ void  PeersDialog::insertPeers()
             if (sslDetail.state & RS_PEER_STATE_CONNECTED) {
                 customStateString = rsMsgs->getCustomStateString(sslDetail.id);
             }
-            sText = tr("location : ") + QString::fromStdString(sslDetail.location);
+            sText = tr("location") + " : " + QString::fromStdString(sslDetail.location);
             if (customStateString.empty() == false) {
-                sText += tr(" - ") + QString::fromStdString(customStateString);
+                sText += " - " + QString::fromStdString(customStateString);
             }
             sslItem -> setText( COLUMN_NAME, sText);
             sslItem -> setToolTip( COLUMN_NAME, sText);
@@ -713,12 +707,12 @@ void  PeersDialog::insertPeers()
         if (gpg_connected) {
             gpg_item->setHidden(false);
 
-            int bestPeerState = 0; // for gpg item
-            std::string bestSslId; // for gpg item
+            int bestPeerState = 0;        // for gpg item
+            std::string bestSslId;        // for gpg item
+            unsigned int bestRSState = 0; // for gpg item
 
             std::list<StatusInfo>::iterator it;
             for(it = statusInfo.begin(); it != statusInfo.end() ; it++) {
-
 
                 // don't forget the kids
                 std::list<std::string>::iterator cont_it;
@@ -728,9 +722,7 @@ void  PeersDialog::insertPeers()
 
                         int peerState = 0;
 
-                        std::string status;
-                        rsStatus->getStatusString(it->status, status);
-                        gpg_item -> setText(COLUMN_INFO, QString::fromStdString(status));
+                        gpg_item -> setText(COLUMN_INFO, StatusDefs::name(it->status));
 
                         switch (it->status) {
                         case RS_STATUS_INACTIVE:
@@ -755,10 +747,12 @@ void  PeersDialog::insertPeers()
                             /* first ssl contact */
                             bestPeerState = peerState;
                             bestSslId = *cont_it;
+                            bestRSState = it->status;
                         } else if (peerState < bestPeerState) {
                             /* higher state */
                             bestPeerState = peerState;
                             bestSslId = *cont_it;
+                            bestRSState = it->status;
                         } else if (peerState == bestPeerState) {
                             /* equal state ... use first */
                         }
@@ -769,57 +763,20 @@ void  PeersDialog::insertPeers()
             if (bestPeerState == 0) {
                 // show as online
                 bestPeerState = PEER_STATE_ONLINE;
+                bestRSState = RS_STATUS_ONLINE;
             }
 
-            QFont font;
-            font.setBold(true);
-
-            switch (bestPeerState) {
-            case PEER_STATE_INACTIVE:
-                gpgIcon = QIcon(IMAGE_INACTIVE);
-                gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Idle"));
-                gpg_item -> setText(COLUMN_STATE, tr("Idle"));
-
-                for(i = 0; i < COLUMN_COUNT; i++) {
-                    gpg_item -> setTextColor(i,(Qt::gray));
-                    gpg_item -> setFont(i,font);
-                }
-                break;
-
-            case PEER_STATE_ONLINE:
-                gpgIcon = QIcon(IMAGE_ONLINE);
-                gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Online"));
-                gpg_item -> setText(COLUMN_STATE, tr("Online"));
-
-                for(i = 0; i < COLUMN_COUNT; i++) {
-                    gpg_item -> setTextColor(i,(Qt::darkBlue));
-                    gpg_item -> setFont(i,font);
-                }
-                break;
-
-            case PEER_STATE_AWAY:
-                gpgIcon = QIcon(IMAGE_AWAY);
-                gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Away"));
-                gpg_item -> setText(COLUMN_STATE, tr("Away"));
-
-                for(i = 0; i < COLUMN_COUNT; i++) {
-                    gpg_item -> setTextColor(i,(Qt::gray));
-                    gpg_item -> setFont(i,font);
-                }
-                break;
-
-            case PEER_STATE_BUSY:
-                gpgIcon = QIcon(IMAGE_BUSY);
-                gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Busy"));
-                gpg_item -> setText(COLUMN_STATE, tr("Busy"));
-
-                for(i = 0; i < COLUMN_COUNT; i++) {
-                    gpg_item -> setTextColor(i,(Qt::gray));
-                    gpg_item -> setFont(i,font);
-                }
-                break;
+            QColor textColor = StatusDefs::textColor(bestRSState);
+            QFont font = StatusDefs::font(bestRSState);
+            for(i = 0; i < COLUMN_COUNT; i++) {
+                gpg_item -> setTextColor(i, textColor);
+                gpg_item -> setFont(i, font);
             }
 
+            gpgIcon = QIcon(StatusDefs::imageUser(bestRSState));
+
+            gpg_item -> setText(COLUMN_STATE, StatusDefs::name(bestRSState));
+            gpg_item -> setToolTip(COLUMN_NAME, StatusDefs::tooltip(bestRSState));
             gpg_item -> setData(COLUMN_STATE, ROLE_SORT, BuildStateSortString(true, gpg_item->text(COLUMN_NAME), bestPeerState));
         } else if (gpg_online) {
             gpg_item->setHidden(bHideUnconnected);
@@ -834,14 +791,15 @@ void  PeersDialog::insertPeers()
             }
         } else {
             gpg_item->setHidden(bHideUnconnected);
-            gpgIcon = QIcon(IMAGE_OFFLINE);
-            gpg_item -> setText(COLUMN_STATE, tr("Offline"));
+            gpgIcon = QIcon(StatusDefs::imageUser(RS_STATUS_OFFLINE));
+            gpg_item -> setText(COLUMN_STATE, StatusDefs::name(RS_STATUS_OFFLINE));
             gpg_item -> setData(COLUMN_STATE, ROLE_SORT, BuildStateSortString(true, gpg_item->text(COLUMN_NAME), PEER_STATE_OFFLINE));
-            QFont font;
-            font.setBold(false);
+
+            QColor textColor = StatusDefs::textColor(RS_STATUS_OFFLINE);
+            QFont font = StatusDefs::font(RS_STATUS_OFFLINE);
             for(i = 0; i < COLUMN_COUNT; i++) {
-                gpg_item -> setTextColor(i,(Qt::black));
-                gpg_item -> setFont(i,font);
+                gpg_item -> setTextColor(i, textColor);
+                gpg_item -> setFont(i, font);
             }
         }
 

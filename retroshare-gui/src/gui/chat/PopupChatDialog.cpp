@@ -48,6 +48,7 @@
 #include "gui/settings/RsharePeerSettings.h"
 #include "gui/notifyqt.h"
 #include "../RsAutoUpdatePage.h"
+#include "gui/common/StatusDefs.h"
 
 #include "gui/feeds/AttachFileItem.h"
 #include "gui/msgs/MessageComposer.h"
@@ -146,9 +147,9 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   //ui.textBrowser->setOpenExternalLinks ( false );
   //ui.textBrowser->setOpenLinks ( false );
 
-  QString title = tr("RetroShare - ") + QString::fromStdString(name);
+  QString title = tr("RetroShare") + " - " + QString::fromStdString(name);
   setWindowTitle(title);
-    
+
   setWindowIcon(QIcon(IMAGE_WINDOW));
   
   ui.textboldButton->setIcon(QIcon(QString(":/images/edit-bold.png")));
@@ -385,7 +386,7 @@ void PopupChatDialog::chatFriend(std::string id)
 
     if (!oneLocationConnected) {
         /* info dialog */
-        if ((QMessageBox::question(NULL, tr("Friend Not Online"),tr("Your Friend is offline \nDo you want to send them a Message instead"),QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes) {
+        if ((QMessageBox::question(NULL, tr("Friend not Online"),tr("Your Friend is offline \nDo you want to send them a Message instead"),QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes) {
             MessageComposer::msgFriend(id);
         }
     }
@@ -1101,8 +1102,6 @@ void PopupChatDialog::updateStatus(const QString &peer_id, int status)
     std::string stdPeerId = peer_id.toStdString();
     
     /* set font size for status  */
-    QString statusString("<span style=\"font-size:11pt; font-weight:500;""\">%1</span>");
-
     if (stdPeerId == dialogId) {
         // the peers status has changed
         switch (status) {
@@ -1111,7 +1110,6 @@ void PopupChatDialog::updateStatus(const QString &peer_id, int status)
             ui.avatarlabel->setEnabled(false);
             ui.infoframe->setVisible(true);
             ui.infolabel->setText( QString::fromStdString(dialogName) + " " + tr("apears to be Offline.") +"\n" + tr("Messages you send will be lost and not delivered, rs-Mail this contact instead."));
-            ui.friendnamelabel->setText( QString::fromStdString(dialogName) + " " + statusString.arg( tr("(Offline)") )) ;
             break;
 
         case RS_STATUS_INACTIVE:
@@ -1119,14 +1117,12 @@ void PopupChatDialog::updateStatus(const QString &peer_id, int status)
             ui.avatarlabel->setEnabled(true);
             ui.infoframe->setVisible(true);
             ui.infolabel->setText( QString::fromStdString(dialogName) + " " + tr("is Idle and may not reply"));
-            ui.friendnamelabel->setText( QString::fromStdString(dialogName) + " " + statusString.arg( tr("(Idle)") )) ;
             break;
 
         case RS_STATUS_ONLINE:
             ui.avatarlabel->setStyleSheet("QLabel#avatarlabel{ border-image:url(:/images/avatarstatus_bg_online.png); }");
             ui.avatarlabel->setEnabled(true);
             ui.infoframe->setVisible(false);
-            ui.friendnamelabel->setText( QString::fromStdString(dialogName) + " " + statusString.arg( tr("(Online)") )) ;
             break;
 
         case RS_STATUS_AWAY:
@@ -1134,7 +1130,6 @@ void PopupChatDialog::updateStatus(const QString &peer_id, int status)
             ui.avatarlabel->setEnabled(true);
             ui.infolabel->setText( QString::fromStdString(dialogName) + " " + tr("is Away and may not reply"));
             ui.infoframe->setVisible(true);
-            ui.friendnamelabel->setText( QString::fromStdString(dialogName) + " " + statusString.arg( tr("(Away)") )) ;
             break;
 
         case RS_STATUS_BUSY:
@@ -1142,9 +1137,12 @@ void PopupChatDialog::updateStatus(const QString &peer_id, int status)
             ui.avatarlabel->setEnabled(true);
             ui.infolabel->setText( QString::fromStdString(dialogName) + " " + tr("is Busy and may not reply"));
             ui.infoframe->setVisible(true);
-            ui.friendnamelabel->setText( QString::fromStdString(dialogName) + " " + statusString.arg( tr("(Busy)") )) ;
             break;
         }
+
+        QString statusString("<span style=\"font-size:11pt; font-weight:500;""\">%1</span>");
+        ui.friendnamelabel->setText( QString::fromStdString(dialogName) + " (" + statusString.arg(StatusDefs::name(status)) + ")") ;
+
         return;
     }
 

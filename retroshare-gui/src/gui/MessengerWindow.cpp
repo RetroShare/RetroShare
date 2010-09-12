@@ -25,6 +25,7 @@
 #include <QTimer>
 #include <QFileDialog>
 #include "common/vmessagebox.h"
+#include "common/StatusDefs.h"
 
 #include <retroshare/rsiface.h>
 #include <retroshare/rspeers.h>
@@ -68,13 +69,6 @@
 #define IMAGE_AVAIBLE            ":/images/user/identityavaiblecyan24.png"
 #define IMAGE_CONNECT2           ":/images/reload24.png"
 #define IMAGE_PASTELINK          ":/images/pasterslink.png"
-
-/* Images for Status icons */
-#define IMAGE_ONLINE             ":/images/im-user.png"
-#define IMAGE_OFFLINE            ":/images/im-user-offline.png"
-#define IMAGE_AWAY             ":/images/im-user-away.png"
-#define IMAGE_BUSY            ":/images/im-user-busy.png"
-#define IMAGE_INACTIVE		":/images/im-user-inactive.png"
 
 #define COLUMN_COUNT    3
 #define COLUMN_NAME     0
@@ -225,7 +219,7 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
     std::string ownId = rsPeers->getOwnId();
     if (rsPeers->getPeerDetails(ownId, pd)) {
         /* calculate only once */
-        m_nickName = QString::fromStdString(pd.name) + tr(" - ") + QString::fromStdString(pd.location);
+        m_nickName = QString::fromStdString(pd.name) + " - " + QString::fromStdString(pd.location);
 #ifdef MINIMAL_RSGUI
          ui.statusButton->setText(m_nickName);
 #endif
@@ -599,11 +593,11 @@ void  MessengerWindow::insertPeers()
             }
 #endif // MINIMAL_RSGUI
             if (sCustomString.isEmpty()) {
-                sslItem -> setText( COLUMN_NAME, tr("location : ") + QString::fromStdString(sslDetail.location) + " " + QString::fromStdString(sslDetail.autoconnect));
-                sslItem -> setToolTip( COLUMN_NAME, tr("location : ") + QString::fromStdString(sslDetail.location));
+                sslItem -> setText( COLUMN_NAME, tr("location") + " : " + QString::fromStdString(sslDetail.location) + " " + QString::fromStdString(sslDetail.autoconnect));
+                sslItem -> setToolTip( COLUMN_NAME, tr("location") + " : " + QString::fromStdString(sslDetail.location));
             } else {
-                sslItem -> setText( COLUMN_NAME, tr("location : ") + QString::fromStdString(sslDetail.location) + " " + QString::fromStdString(sslDetail.autoconnect) );
-                sslItem -> setToolTip( COLUMN_NAME, tr("location : ") + QString::fromStdString(sslDetail.location) + tr(" - ") + sCustomString);
+                sslItem -> setText( COLUMN_NAME, tr("location") + " : " + QString::fromStdString(sslDetail.location) + " " + QString::fromStdString(sslDetail.autoconnect) );
+                sslItem -> setToolTip( COLUMN_NAME, tr("location") + " : " + QString::fromStdString(sslDetail.location) + " - " + sCustomString);
 
                 /* store custom state string */
                 sslCustomStateStrings[sslDetail.id] = sCustomString;
@@ -621,8 +615,8 @@ void  MessengerWindow::insertPeers()
                 QFont font1;
                 font1.setBold(true);
 
-                gpg_item->setIcon(COLUMN_NAME,(QIcon(IMAGE_ONLINE)));
-                gpg_item->setToolTip(COLUMN_NAME, tr("Peer Online"));
+                gpg_item->setIcon(COLUMN_NAME,(StatusDefs::images(RS_STATUS_ONLINE)));
+                gpg_item->setToolTip(COLUMN_NAME, StatusDefs::tooltip(RS_STATUS_ONLINE));
                 gpg_item->setData(COLUMN_NAME, ROLE_SORT, BuildStateSortString(sortState, gpg_item->text(COLUMN_NAME), PEER_STATE_ONLINE));
 
                 for(i = 0; i < COLUMN_COUNT; i++) {
@@ -680,11 +674,11 @@ void  MessengerWindow::insertPeers()
 
         if (gpg_connected) {
             gpg_item->setHidden(false);
-            //gpg_item -> setText(COLUMN_STATE, tr("Online")); // set to online regardless on update
 
 #ifndef MINIMAL_RSGUI
-            int bestPeerState = 0; // for gpg item
-            std::string bestSslId; // for gpg item
+            int bestPeerState = 0;        // for gpg item
+            std::string bestSslId;        // for gpg item
+            unsigned int bestRSState = 0; // for gpg item
 
             std::list<StatusInfo>::iterator it = statusInfo.begin();
             for(; it != statusInfo.end() ; it++){
@@ -697,9 +691,7 @@ void  MessengerWindow::insertPeers()
 
                         int peerState = 0;
 
-                        std::string status;
-                        rsStatus->getStatusString(it->status, status);
-                        gpg_item -> setText(COLUMN_STATE, QString::fromStdString(status));
+                        gpg_item -> setText(COLUMN_STATE, StatusDefs::name(it->status));
 
                         unsigned char *data = NULL;
                         int size = 0 ;
@@ -739,10 +731,12 @@ void  MessengerWindow::insertPeers()
                             /* first ssl contact */
                             bestPeerState = peerState;
                             bestSslId = *cont_it;
+                            bestRSState = it->status;
                         } else if (peerState < bestPeerState) {
                             /* higher state */
                             bestPeerState = peerState;
                             bestSslId = *cont_it;
+                            bestRSState = it->status;
                         } else if (peerState == bestPeerState) {
                             /* equal state */
 
@@ -769,59 +763,20 @@ void  MessengerWindow::insertPeers()
             if (bestPeerState == 0) {
                 // show as online
                 bestPeerState = PEER_STATE_ONLINE;
+                bestRSState = RS_STATUS_ONLINE;
             }
 
-            QFont font;
-            font.setBold(true);
-
-            QString stateString;
-
-            switch (bestPeerState) {
-            case PEER_STATE_INACTIVE:
-                gpgIcon = QIcon(IMAGE_INACTIVE);
-                gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Idle"));
-                stateString = tr("Idle");
-
-                for(i = 0; i < COLUMN_COUNT; i++) {
-                    gpg_item -> setTextColor(i,(Qt::gray));
-                    gpg_item -> setFont(i,font);
-                }
-                break;
-
-            case PEER_STATE_ONLINE:
-                gpgIcon = QIcon(IMAGE_ONLINE);
-                gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Online"));
-                stateString = tr("Online");
-
-                for(i = 0; i < COLUMN_COUNT; i++) {
-                    gpg_item -> setTextColor(i,(Qt::darkBlue));
-                    gpg_item -> setFont(i,font);
-                }
-                break;
-
-            case PEER_STATE_AWAY:
-                gpgIcon = QIcon(IMAGE_AWAY);
-                gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Away"));
-                stateString = tr("Away");
-
-                for(i = 0; i < COLUMN_COUNT; i++) {
-                    gpg_item -> setTextColor(i,(Qt::gray));
-                    gpg_item -> setFont(i,font);
-                }
-                break;
-
-            case PEER_STATE_BUSY:
-                gpgIcon = QIcon(IMAGE_BUSY);
-                gpg_item -> setToolTip(COLUMN_NAME, tr("Peer Busy"));
-                stateString = tr("Busy");
-
-                for(i = 0; i < COLUMN_COUNT; i++) {
-                    gpg_item -> setTextColor(i,(Qt::gray));
-                    gpg_item -> setFont(i,font);
-                }
-                break;
+            QColor textColor = StatusDefs::textColor(bestRSState);
+            QFont font = StatusDefs::font(bestRSState);
+            for(i = 0; i < COLUMN_COUNT; i++) {
+                gpg_item -> setTextColor(i, textColor);
+                gpg_item -> setFont(i, font);
             }
+
+            gpgIcon = QIcon(StatusDefs::imageIM(bestRSState));
+
             gpg_item->setText(COLUMN_NAME, QString::fromStdString(detail.name));
+            gpg_item -> setToolTip(COLUMN_NAME, StatusDefs::tooltip(bestRSState));
 
             std::map<std::string, QString>::iterator customStateString = sslCustomStateStrings.find(bestSslId);
             if (customStateString == sslCustomStateStrings.end()) {
@@ -835,6 +790,9 @@ void  MessengerWindow::insertPeers()
 //                }
 
                 /* use state string for location */
+                QString stateString;
+                stateString = StatusDefs::name(bestRSState);
+
                 if (stateString.isEmpty()) {
                     /* show only the name */
                     gpg_item->setText(COLUMN_NAME, QString::fromStdString(detail.name));
@@ -855,7 +813,6 @@ void  MessengerWindow::insertPeers()
             gpg_item->setText(COLUMN_NAME, QString::fromStdString(detail.name));
             gpgIcon = QIcon(IMAGE_AVAIBLE);
             gpg_item->setData(COLUMN_NAME, ROLE_SORT, BuildStateSortString(sortState, gpg_item->text(COLUMN_NAME), PEER_STATE_ONLINE));
-            //gpg_item -> setText(COLUMN_STATE, tr("Available"));
             QFont font;
             font.setBold(true);
             for(i = 0; i < COLUMN_COUNT; i++) {
@@ -865,14 +822,14 @@ void  MessengerWindow::insertPeers()
         } else {
             gpg_item->setHidden(hideOfflineFriends);
             gpg_item->setText(COLUMN_NAME, QString::fromStdString(detail.name));
-            gpgIcon = QIcon(IMAGE_OFFLINE);
+            gpgIcon = QIcon(StatusDefs::imageIM(RS_STATUS_OFFLINE));
             gpg_item->setData(COLUMN_NAME, ROLE_SORT, BuildStateSortString(sortState, gpg_item->text(COLUMN_NAME), PEER_STATE_OFFLINE));
-            //gpg_item -> setText(COLUMN_STATE, tr("Offline"));
-            QFont font;
-            font.setBold(false);
+
+            QColor textColor = StatusDefs::textColor(RS_STATUS_OFFLINE);
+            QFont font = StatusDefs::font(RS_STATUS_OFFLINE);
             for(i = 0; i < COLUMN_COUNT; i++) {
-                gpg_item -> setTextColor(i,(Qt::black));
-                gpg_item -> setFont(i,font);
+                gpg_item -> setTextColor(i, textColor);
+                gpg_item -> setFont(i, font);
             }
         }
 
@@ -881,7 +838,6 @@ void  MessengerWindow::insertPeers()
         }
 
         gpg_item -> setIcon(COLUMN_NAME, gpgIcon);
-
 
         /* add gpg item to the list. If item is already in the list, it won't be duplicated thanks to Qt */
         peertreeWidget->addTopLevelItem(gpg_item);
@@ -1204,12 +1160,11 @@ void MessengerWindow::savestatusmessage()
 void MessengerWindow::updateOwnStatus(const QString &peer_id, int status)
 {
     // add self nick + own status
-    if (peer_id.toStdString() == rsPeers->getOwnId()) 
+    if (peer_id.toStdString() == rsPeers->getOwnId())
     {
         // my status has changed
-        std::string statusString;
-        rsStatus->getStatusString(status, statusString);
-        ui.statusButton->setText(m_nickName + " (" + tr(statusString.c_str()) + ")");
+
+        ui.statusButton->setText(m_nickName + " (" + StatusDefs::name(status) + ")");
 
         switch (status) {
         case RS_STATUS_OFFLINE:

@@ -48,8 +48,6 @@ public:
 	virtual bool getStatus(std::string &id, StatusInfo &statusInfo);
 	virtual bool sendStatus(std::string id, uint32_t status);
 
-	virtual void getStatusString(uint32_t status, std::string& statusString);
-
 private:
 
 	p3StatusService* mStatusSrv;
