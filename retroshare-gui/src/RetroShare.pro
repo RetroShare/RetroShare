@@ -651,6 +651,7 @@ minimal {
                   gui/help/browser/helpbrowser.cpp \
                   gui/help/browser/helptextbrowser.cpp \
                   gui/settings/rsettings.cpp \
+                  gui/settings/RsharePeerSettings.cpp \
                   gui/settings/rsharesettings.cpp \
                   gui/common/rwindow.cpp \
                   gui/common/StatusDefs.cpp \
@@ -683,6 +684,7 @@ minimal {
                   gui/help/browser/helptextbrowser.h \
                   gui/settings/rsettings.h \
                   gui/settings/rsharesettings.h \
+                  gui/settings/RsharePeerSettings.h \
                   gui/common/rwindow.h \
                   gui/common/StatusDefs.h \
                   gui/LogoBar.h \

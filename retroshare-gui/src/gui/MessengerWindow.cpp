@@ -462,7 +462,9 @@ void  MessengerWindow::insertPeers()
     }
 
     std::list<std::string> privateChatIds;
+#ifndef MINIMAL_RSGUI
     rsMsgs->getPrivateChatQueueIds(privateChatIds);
+#endif // MINIMAL_RSGUI
 
     rsPeers->getGPGAcceptedList(gpgFriends);
 
@@ -615,13 +617,14 @@ void  MessengerWindow::insertPeers()
                 QFont font1;
                 font1.setBold(true);
 
-                gpg_item->setIcon(COLUMN_NAME,(StatusDefs::images(RS_STATUS_ONLINE)));
                 gpg_item->setToolTip(COLUMN_NAME, StatusDefs::tooltip(RS_STATUS_ONLINE));
                 gpg_item->setData(COLUMN_NAME, ROLE_SORT, BuildStateSortString(sortState, gpg_item->text(COLUMN_NAME), PEER_STATE_ONLINE));
 
-                for(i = 0; i < COLUMN_COUNT; i++) {
-                    gpg_item->setTextColor(i,(Qt::darkBlue));
-                    gpg_item->setFont(i,font1);
+                QColor textColor = StatusDefs::textColor(RS_STATUS_ONLINE);
+                QFont font = StatusDefs::font(RS_STATUS_ONLINE);
+                for(int i = 0; i < COLUMN_COUNT; i++) {
+                    gpg_item -> setTextColor(i, textColor);
+                    gpg_item -> setFont(i, font);
                 }
 #endif // MINIMAL_RSGUI
 
@@ -675,7 +678,9 @@ void  MessengerWindow::insertPeers()
         if (gpg_connected) {
             gpg_item->setHidden(false);
 
-#ifndef MINIMAL_RSGUI
+#ifdef MINIMAL_RSGUI
+            gpgIcon = QIcon(StatusDefs::imageIM(RS_STATUS_ONLINE));
+#else
             int bestPeerState = 0;        // for gpg item
             std::string bestSslId;        // for gpg item
             unsigned int bestRSState = 0; // for gpg item
