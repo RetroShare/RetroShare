@@ -279,6 +279,7 @@ HEADERS +=  rshare.h \
             gui/common/rwindow.h \
             gui/common/html.h \
             gui/common/StatusDefs.h \
+            gui/common/TagDefs.h \
             gui/MessagesDialog.h \
             gui/help/browser/helpbrowser.h \
             gui/help/browser/helptextbrowser.h \
@@ -469,6 +470,7 @@ SOURCES +=  main.cpp \
             gui/common/rwindow.cpp \ 
             gui/common/html.cpp \
             gui/common/StatusDefs.cpp \
+            gui/common/TagDefs.cpp \
             gui/settings/rsharesettings.cpp \
             gui/settings/RsharePeerSettings.cpp \
             gui/settings/rsettings.cpp \

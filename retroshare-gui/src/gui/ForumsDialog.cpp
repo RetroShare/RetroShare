@@ -393,7 +393,7 @@ void ForumsDialog::threadListCustomPopupMenu( QPoint point )
     QAction *markMsgAsRead = new QAction(QIcon(":/images/message-mail-read.png"), tr("Mark as read"), &contextMnu);
     connect(markMsgAsRead , SIGNAL(triggered()), this, SLOT(markMsgAsRead()));
 
-    QAction *markMsgAsReadAll = new QAction(QIcon(":/images/message-mail-read.png"), tr("Mark as read") + " (" + tr ("with children)") + ")", &contextMnu);
+    QAction *markMsgAsReadAll = new QAction(QIcon(":/images/message-mail-read.png"), tr("Mark as read") + " (" + tr ("with children") + ")", &contextMnu);
     connect(markMsgAsReadAll, SIGNAL(triggered()), this, SLOT(markMsgAsReadAll()));
 
     QAction *markMsgAsUnread = new QAction(QIcon(":/images/message-mail.png"), tr("Mark as unread"), &contextMnu);
@@ -563,7 +563,7 @@ void ForumsDialog::insertForums()
 			{
 				std::ostringstream out;
 				out << it->pop;
-                                item -> setToolTip(COLUMN_FORUM_TITLE, tr("Popularity: ") + QString::fromStdString(out.str()));
+                                item -> setToolTip(COLUMN_FORUM_TITLE, tr("Popularity:") + " " + QString::fromStdString(out.str()));
 			}
 
 			// Date
@@ -608,7 +608,7 @@ void ForumsDialog::insertForums()
 			{
 				std::ostringstream out;
 				out << it->pop;
-                                item -> setToolTip(COLUMN_FORUM_TITLE, tr("Popularity: ") + QString::fromStdString(out.str()));
+                                item -> setToolTip(COLUMN_FORUM_TITLE, tr("Popularity:") + " " + QString::fromStdString(out.str()));
 			}
 
 			// Date
@@ -690,7 +690,7 @@ void ForumsDialog::insertForums()
 			{
 				std::ostringstream out;
 				out << it->pop;
-                                item -> setToolTip(COLUMN_FORUM_TITLE, tr("Popularity: ") + QString::fromStdString(out.str()));
+                                item -> setToolTip(COLUMN_FORUM_TITLE, tr("Popularity:") + " " + QString::fromStdString(out.str()));
 			}
 
 			// Date
@@ -1756,8 +1756,8 @@ void ForumsDialog::replytomessage()
     {
         MessageComposer *nMsgDialog = new MessageComposer();
         nMsgDialog->newMsg();
-        nMsgDialog->insertTitleText( (QString("Re: ") + QString::fromStdWString(msgInfo.title)).toStdString()) ;
-        nMsgDialog->setWindowTitle(tr("Re: ") + QString::fromStdWString(msgInfo.title) ) ;
+        nMsgDialog->insertTitleText( (QString("Re:") + " " + QString::fromStdWString(msgInfo.title)).toStdString()) ;
+        nMsgDialog->setWindowTitle(tr("Re:") + " " + QString::fromStdWString(msgInfo.title) ) ;
 
         QTextDocument doc ;
         doc.setHtml(QString::fromStdWString(msgInfo.msg)) ;

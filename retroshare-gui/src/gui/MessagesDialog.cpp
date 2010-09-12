@@ -37,6 +37,7 @@
 #include "util/printpreview.h"
 #include "settings/rsharesettings.h"
 #include "util/misc.h"
+#include "common/TagDefs.h"
 
 #include <retroshare/rsinit.h>
 #include <retroshare/rspeers.h>
@@ -458,7 +459,7 @@ void MessagesDialog::fillTags()
     std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag;
 
     // create tag menu
-    QMenu *pMenu = new MessagesMenu (tr("Tag"), this);
+    QMenu *pMenu = new MessagesMenu (tr("Tags"), this);
     connect(pMenu, SIGNAL(triggered (QAction*)), this, SLOT(tagTriggered(QAction*)));
     connect(pMenu, SIGNAL(aboutToShow()), this, SLOT(tagAboutToShow()));
 
@@ -479,11 +480,8 @@ void MessagesDialog::fillTags()
         pMenu->addSeparator();
 
         for (Tag = Tags.types.begin(); Tag != Tags.types.end(); Tag++) {
-            if (Tag->first < RS_MSGTAGTYPE_USER) {
-                text = tr(Tag->second.first.c_str());
-            } else {
-                text = QString::fromStdString(Tag->second.first);
-            }
+            text = TagDefs::name(Tag->first, Tag->second.first);
+
             pAction = new QAction(text, pMenu);
             Values [ACTION_TAGSINDEX_TYPE] = ACTION_TAGS_TAG;
             Values [ACTION_TAGSINDEX_ID] = Tag->first;
@@ -525,11 +523,8 @@ void MessagesDialog::fillTags()
 
     ui.tagWidget->clear();
     for (Tag = Tags.types.begin(); Tag != Tags.types.end(); Tag++) {
-        if (Tag->first < RS_MSGTAGTYPE_USER) {
-            text = tr(Tag->second.first.c_str());
-        } else {
-            text = QString::fromStdString(Tag->second.first);
-        }
+        text = TagDefs::name(Tag->first, Tag->second.first);
+
         pItem = new QListWidgetItem (text, ui.tagWidget);
         pItem->setForeground(QBrush(QColor(Tag->second.second)));
         pItem->setIcon(QIcon(":/images/foldermail.png"));
@@ -783,10 +778,10 @@ void MessagesDialog::replytomessage()
     }
     else
     {
-	nMsgDialog->insertTitleText( (QString("Re: ") + QString::fromStdWString(msgInfo.title)).toStdString()) ;
+        nMsgDialog->insertTitleText( (QString("Re:") + " " + QString::fromStdWString(msgInfo.title)).toStdString()) ;
     }
 
-    nMsgDialog->setWindowTitle( tr ("Compose: ") + tr("Re: ") + QString::fromStdWString(msgInfo.title) ) ;
+    nMsgDialog->setWindowTitle( tr ("Compose: ") + tr("Re:") + " " + QString::fromStdWString(msgInfo.title) ) ;
 
 
     QTextDocument doc ;
@@ -831,9 +826,9 @@ void MessagesDialog::replyallmessage()
     }
     else
     {
-	nMsgDialog->insertTitleText( (QString("Re: ") + QString::fromStdWString(msgInfo.title)).toStdString()) ;
+        nMsgDialog->insertTitleText( (QString("Re:") + " " + QString::fromStdWString(msgInfo.title)).toStdString()) ;
     }
-    nMsgDialog->setWindowTitle( tr ("Compose: ") + tr("Re: ") + QString::fromStdWString(msgInfo.title) ) ;
+    nMsgDialog->setWindowTitle( tr ("Compose: ") + tr("Re:") + " " + QString::fromStdWString(msgInfo.title) ) ;
 
 
     QTextDocument doc ;
@@ -886,10 +881,10 @@ void MessagesDialog::forwardmessage()
     }
     else
     {
-	nMsgDialog->insertTitleText( (QString("Fwd: ") + QString::fromStdWString(msgInfo.title)).toStdString()) ;
+        nMsgDialog->insertTitleText( (QString("Fwd:") + " " + QString::fromStdWString(msgInfo.title)).toStdString()) ;
     }
 
-    nMsgDialog->setWindowTitle( tr ("Compose: ") + tr("Fwd: ") + QString::fromStdWString(msgInfo.title) ) ;
+    nMsgDialog->setWindowTitle( tr ("Compose:") + " " + tr("Fwd:") + " " + QString::fromStdWString(msgInfo.title) ) ;
 
 
     QTextDocument doc ;
@@ -1403,11 +1398,7 @@ void MessagesDialog::insertMessages()
                 }
                 Tag = Tags.types.find(*tagId);
                 if (Tag != Tags.types.end()) {
-                    if (Tag->first < RS_MSGTAGTYPE_USER) {
-                        text += tr(Tag->second.first.c_str());
-                    } else {
-                        text += QString::fromStdString(Tag->second.first);
-                    }
+                    text += TagDefs::name(Tag->first, Tag->second.first);
                 } else {
                     // clean tagId
                     rsMsgs->setMessageTag(it->msgId, *tagId, false);

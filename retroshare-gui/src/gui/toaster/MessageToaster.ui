@@ -129,7 +129,7 @@ border: none;</string>
        <enum>Qt::ScrollBarAlwaysOff</enum>
       </property>
       <property name="html">
-       <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+       <string notr="true">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -228,10 +228,10 @@ p, li { white-space: pre-wrap; }
     <string>Close</string>
    </property>
    <property name="accessibleName">
-    <string>Close button</string>
+    <string notr="true">Close button</string>
    </property>
    <property name="accessibleDescription">
-    <string>Close the information dialog</string>
+    <string notr="true">Close the information dialog</string>
    </property>
    <property name="text">
     <string/>
@@ -268,9 +268,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>closebtn</tabstop>
  </tabstops>
  <resources>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

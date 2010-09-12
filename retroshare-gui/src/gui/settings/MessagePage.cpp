@@ -19,10 +19,12 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include "MessagePage.h"
 #include "rshare.h"
 #include "rsharesettings.h"
 #include "retroshare/rsmsgs.h"
+
+#include "MessagePage.h"
+#include "gui/common/TagDefs.h"
 
 #include <algorithm>
 
@@ -104,12 +106,8 @@ void MessagePage::fillTags()
 
     std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag;
     for (Tag = m_pTags->types.begin(); Tag != m_pTags->types.end(); Tag++) {
-        QString text;
-        if (Tag->first < RS_MSGTAGTYPE_USER) {
-            text = tr(Tag->second.first.c_str());
-        } else {
-            text = QString::fromStdString(Tag->second.first);
-        }
+        QString text = TagDefs::name(Tag->first, Tag->second.first);
+
         QListWidgetItem *pItemWidget = new QListWidgetItem(text, ui.tags_listWidget);
         pItemWidget->setTextColor(QColor(Tag->second.second));
         pItemWidget->setData(Qt::UserRole, Tag->first);
@@ -123,12 +121,8 @@ void MessagePage::addTag()
         std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag;
         Tag = m_pTags->types.find(TagDlg.m_nId);
         if (Tag != m_pTags->types.end()) {
-            QString text;
-            if (Tag->first < RS_MSGTAGTYPE_USER) {
-                text = tr(Tag->second.first.c_str());
-            } else {
-                text = QString::fromStdString(Tag->second.first);
-            }
+            QString text = TagDefs::name(Tag->first, Tag->second.first);
+
             QListWidgetItem *pItemWidget = new QListWidgetItem(text, ui.tags_listWidget);
             pItemWidget->setTextColor(QColor(Tag->second.second));
             pItemWidget->setData(Qt::UserRole, TagDlg.m_nId);
