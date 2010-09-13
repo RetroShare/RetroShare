@@ -175,7 +175,7 @@ p, li { white-space: pre-wrap; }
          <item>
           <widget class="QRadioButton" name="msgAuth">
            <property name="text">
-            <string>Authemticated Messages</string>
+            <string>Authenticated Messages</string>
            </property>
           </widget>
          </item>
@@ -238,17 +238,6 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <resources>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

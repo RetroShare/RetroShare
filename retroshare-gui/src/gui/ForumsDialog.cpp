@@ -471,11 +471,11 @@ void ForumsDialog::togglethreadview_internal()
     if (ui.expandButton->isChecked()) {
         ui.postText->setVisible(true);
         ui.expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
-        ui.expandButton->setToolTip("Hide");
+        ui.expandButton->setToolTip(tr("Hide"));
     } else  {
         ui.postText->setVisible(false);
         ui.expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
-        ui.expandButton->setToolTip("Expand");
+        ui.expandButton->setToolTip(tr("Expand"));
     }
 }
 

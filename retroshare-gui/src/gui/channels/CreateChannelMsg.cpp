@@ -494,7 +494,7 @@ void CreateChannelMsg::sendMessage(std::wstring subject, std::wstring msg, std::
 
 void CreateChannelMsg::addThumbnail()
 {
-	QString fileName = QFileDialog::getOpenFileName(this, "Load File", QDir::homePath(), "Pictures (*.png *.xpm *.jpg)");
+        QString fileName = QFileDialog::getOpenFileName(this, tr("Load File"), QDir::homePath(), tr("Pictures (*.png *.xpm *.jpg)"));
 	if(!fileName.isEmpty())
 	{
 		picture = QPixmap(fileName).scaled(156,107, Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
@@ -517,8 +517,3 @@ void CreateChannelMsg::addThumbnail()
 		//updateThumbnail() ;
 	}
 }
-			
-
-
-
-

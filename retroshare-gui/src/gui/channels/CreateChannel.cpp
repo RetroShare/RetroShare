@@ -242,7 +242,7 @@ void  CreateChannel::cancelChannel()
 
 void CreateChannel::addChannelLogo()
 {
-	QString fileName = QFileDialog::getOpenFileName(this, "Load File", QDir::homePath(), "Pictures (*.png *.xpm *.jpg)");
+        QString fileName = QFileDialog::getOpenFileName(this, tr("Load File"), QDir::homePath(), tr("Pictures (*.png *.xpm *.jpg)"));
 	if(!fileName.isEmpty())
 	{
             picture = QPixmap(fileName).scaled(64,64, Qt::IgnoreAspectRatio,Qt::SmoothTransformation);

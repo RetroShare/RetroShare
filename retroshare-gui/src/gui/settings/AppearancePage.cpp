@@ -48,12 +48,8 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WFlags flags)
     ui.cmboStyle->addItem(style, style.toLower());
   }
 
-  ui.styleSheetCombo->setCurrentIndex(ui.styleSheetCombo->findText("Default"));
   //loadStyleSheet("Default");
   loadqss();
-
-  //load();
-
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -69,32 +65,33 @@ AppearancePage::~AppearancePage()
 bool
 AppearancePage::save(QString &errmsg)
 {
-	Q_UNUSED(errmsg);
-	QString languageCode =
-    LanguageSupport::languageCode(ui.cmboLanguage->currentText());
+    Q_UNUSED(errmsg);
+    QString languageCode = LanguageSupport::languageCode(ui.cmboLanguage->currentText());
 
-        Settings->setLanguageCode(languageCode);
-        Settings->setInterfaceStyle(ui.cmboStyle->currentText());
-        Settings->setSheetName(ui.styleSheetCombo->currentText());
+    Settings->setLanguageCode(languageCode);
+    Settings->setInterfaceStyle(ui.cmboStyle->currentText());
+    Settings->setSheetName(ui.styleSheetCombo->currentText());
 
     /* Set to new style */
-	Rshare::setStyle(ui.cmboStyle->currentText());
-	return true;
+    Rshare::setStyle(ui.cmboStyle->currentText());
+    return true;
 }
-
-
 
 /** Loads the settings for this page */
 void
 AppearancePage::load()
 {
     int index = ui.cmboLanguage->findData(Settings->getLanguageCode());
-	ui.cmboLanguage->setCurrentIndex(index);
+    ui.cmboLanguage->setCurrentIndex(index);
 
-	index = ui.cmboStyle->findData(Rshare::style().toLower());
-	ui.cmboStyle->setCurrentIndex(index);
+    index = ui.cmboStyle->findData(Rshare::style().toLower());
+    ui.cmboStyle->setCurrentIndex(index);
 
-    ui.styleSheetCombo->setCurrentIndex(ui.styleSheetCombo->findText(Settings->getSheetName()));
+    index = ui.styleSheetCombo->findText(Settings->getSheetName());
+    if (index == -1) {
+        index = ui.styleSheetCombo->findText("noskin");
+    }
+    ui.styleSheetCombo->setCurrentIndex(index);
 
     /** load saved internal styleSheet **/
     //QFile file(":/qss/" + (settings.getSheetName().toLower()) + ".qss");
@@ -105,7 +102,6 @@ AppearancePage::load()
     file.open(QFile::ReadOnly);
     QString styleSheet = QLatin1String(file.readAll());
     qApp->setStyleSheet(styleSheet);
-
 }
 
 void AppearancePage::on_styleSheetCombo_activated(const QString &sheetName)

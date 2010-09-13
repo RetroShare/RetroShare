@@ -207,12 +207,15 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Choose the language used in RetroShare&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Wähle die Sprache für RetroShare aus&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+31"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Arial; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Changes to language will only take effect after restarting RetroShare!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Arial; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Änderungen in der Sprachwahl wirken sich erst nach einem Neustart von Retroshare aus!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;/head&gt;&lt;body style=&quot; white-space: pre-wrap; font-family:Arial; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Änderungen in der Sprachwahl wirken sich erst nach einem Neustart von Retroshare aus!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+20"/>
@@ -225,7 +228,10 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Choose RetroShare&apos;s interface style&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Wähle die Oberfläche für RetroShare aus&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+36"/>
@@ -822,7 +828,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+3"/>
         <source>Drag and Drop your friends&apos;s certificate in this Window or specify path in the box below </source>
-        <translation>Per Drag and Drop können Sie Freundes Zertifikat ins Fenster ziehen oder geben sie den Pfad unten in der Box an</translation>
+        <translation>Per Drag&apos;n&apos;Drop können Sie Freundes Zertifikat ins Fenster ziehen oder geben sie den Pfad unten in der Box an</translation>
     </message>
     <message>
         <location line="+26"/>
@@ -973,25 +979,7 @@ p, li { white-space: pre-wrap; }
         <translation>Kanal erstellen</translation>
     </message>
     <message>
-        <location line="-231"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:9pt; font-weight:600; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt;&quot;&gt;Channel Name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:9pt; font-weight:600; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt;&quot;&gt;Kanal Name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location line="-104"/>
-        <source>Post To Channel</source>
-        <translation>In Kanal schreiben</translation>
-    </message>
-    <message>
-        <location line="+170"/>
+        <location line="-165"/>
         <source>Unsubscribe</source>
         <translation>Abbestellen</translation>
     </message>
@@ -1046,12 +1034,13 @@ p, li { white-space: pre-wrap; }
         <translation>Andere Kanäle</translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location filename="../gui/ChannelFeed.ui" line="-147"/>
+        <location filename="../gui/ChannelFeed.cpp" line="+36"/>
         <source>Post to Channel</source>
-        <translation>Schreibe in den Kanal</translation>
+        <translation>Kanalbeitrag erstellen</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location filename="../gui/ChannelFeed.cpp" line="+3"/>
         <source>Subscribe to Channel</source>
         <translation>Kanal abonnieren</translation>
     </message>
@@ -1066,17 +1055,7 @@ p, li { white-space: pre-wrap; }
         <translation>Zeige Kanal-Details</translation>
     </message>
     <message>
-        <location line="+49"/>
-        <source>Create a new Channel</source>
-        <translation>Erstelle einen neuen Kanal</translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>New Channel</source>
-        <translation>Neuer Kanal</translation>
-    </message>
-    <message>
-        <location line="+194"/>
+        <location line="+241"/>
         <location line="+74"/>
         <location line="+77"/>
         <location line="+75"/>
@@ -1088,7 +1067,30 @@ Abgeholt: %2
 Verfügbar: %3</translation>
     </message>
     <message>
-        <location line="-470"/>
+        <location line="-186"/>
+        <location line="+76"/>
+        <location line="+76"/>
+        <location line="+76"/>
+        <source>Unknown Channel</source>
+        <translation>Unbekannter Kanal</translation>
+    </message>
+    <message>
+        <location line="-226"/>
+        <location line="+76"/>
+        <location line="+76"/>
+        <location line="+76"/>
+        <source>Unknown Channel
+No Description</source>
+        <translation>Unbekannter Kanal
+Keine Beschreibung</translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <source>No Channel Selected</source>
+        <translation>Keinen Kanal gewählt</translation>
+    </message>
+    <message>
+        <location line="-529"/>
         <source>Restore Publish Rights for Channel</source>
         <translation>Stelle Veröffentlichungsrechte für Kanal wieder her</translation>
     </message>
@@ -1458,7 +1460,7 @@ Verfügbar: %3</translation>
     <message>
         <location line="+23"/>
         <source>Marginal </source>
-        <translation>Geringfügig</translation>
+        <translation>Geringfügig </translation>
     </message>
     <message>
         <location line="+23"/>
@@ -1468,7 +1470,7 @@ Verfügbar: %3</translation>
     <message>
         <location filename="../gui/connect/ConfCertDialog.cpp" line="+61"/>
         <source>Apply and Close</source>
-        <translation>Annehmen und Schliessen</translation>
+        <translation>Übernehmen und Schliessen</translation>
     </message>
     <message>
         <location line="+68"/>
@@ -1485,12 +1487,12 @@ Verfügbar: %3</translation>
     <message>
         <location line="-128"/>
         <source>Your key is signed by : </source>
-        <translation>Ihr Schlüssel ist unterzeichnet von:</translation>
+        <translation>Ihr Schlüssel ist unterzeichnet von: </translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Peer key is signed by : </source>
-        <translation>Peer Schlüssel ist unterzeichnet von:</translation>
+        <translation>Peer Schlüssel ist unterzeichnet von: </translation>
     </message>
     <message>
         <location line="+29"/>
@@ -1510,7 +1512,7 @@ Verfügbar: %3</translation>
     <message>
         <location line="+6"/>
         <source>Your trust in this peer is none.</source>
-        <translation>Sie Vertrauen diesem Peer nicht.</translation>
+        <translation>Sie vertrauen diesem Peer nicht.</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -1562,7 +1564,7 @@ und meinen GPG Schlüssel nicht unterzeichnet</translation>
     <message>
         <location filename="../gui/connect/ConfCertDialog.cpp" line="+29"/>
         <source>Copy Peer</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopiere Peer</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.ui" line="+471"/>
@@ -1988,111 +1990,117 @@ Möchten Sie die Änderungen speichern?</translation>
     <message>
         <location filename="../gui/channels/CreateChannel.ui" line="+20"/>
         <source>Create a new Channel</source>
-        <translation type="unfinished">Erstelle neuen Kanal</translation>
+        <translation>Erstelle einen neuen Kanal</translation>
     </message>
     <message>
-        <location line="+65"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;New Channel&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <location line="+62"/>
+        <source>&lt;span style=&quot;font-size:24pt; font-weight:500;color:#32CD32;&quot;&gt;New Channel&lt;/span&gt;</source>
+        <translation>&lt;span style=&quot;font-size:24pt; font-weight:500;color:#32CD32;&quot;&gt;Neuer Kanal&lt;/span&gt;</translation>
     </message>
     <message>
-        <location line="+25"/>
+        <location line="+21"/>
         <source>Name</source>
-        <translation type="unfinished">Name</translation>
+        <translation>Name</translation>
     </message>
     <message>
         <location line="+39"/>
         <source>check peers you would like to share private publish key with</source>
-        <translation type="unfinished"></translation>
+        <translation>Wähle die Nachbarn, an die du den privaten Schlüssel verteilen möchtest</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Share Key With</source>
-        <translation type="unfinished"></translation>
+        <translation>Schlüssel verteilen an</translation>
     </message>
     <message>
         <location line="+47"/>
         <source>Contacts:</source>
-        <translation type="unfinished">Kontakte:</translation>
+        <translation>Kontakte:</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Description</source>
-        <translation type="unfinished">Beschreibung</translation>
+        <translation>Beschreibung</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Type:</source>
-        <translation type="unfinished">Typ:</translation>
+        <translation>Typ:</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation type="unfinished">Beschränkt - Jeder kann lesen, aber nicht jeder schreiben (Privater Veröffentlichungs-Schlüssel)</translation>
+        <translation>Beschränkt - Jeder kann lesen, aber nicht jeder schreiben (Privater Veröffentlichungs-Schlüssel)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation type="unfinished">Privat - (Privater Veröffentlichungsschlüssel erforderlich, um Nachrichten zu lesen)</translation>
+        <translation>Privat - (Privater Veröffentlichungsschlüssel erforderlich, um Nachrichten zu lesen)</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Allowed Messages</source>
-        <translation type="unfinished">Erlaubte Nachrichten</translation>
+        <translation>Erlaubte Nachrichten</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Anonymous Messages</source>
-        <translation type="unfinished">Anonyme Nachrichten</translation>
+        <translation>Anonyme Nachrichten</translation>
     </message>
     <message>
         <location line="+7"/>
-        <source>Authemticated Messages</source>
-        <translation type="unfinished">Authentifizierte Nachrichten</translation>
+        <source>Authenticated Messages</source>
+        <translation>Authentifizierte Nachrichten</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Key Sharing</source>
-        <translation type="unfinished"></translation>
+        <translation>Schlüsselverteilung</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Share Private Publish Key</source>
-        <translation type="unfinished"></translation>
+        <translation>Verteile privaten Schlüssel</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Channel Logo</source>
-        <translation type="unfinished">Kanal Logo</translation>
+        <translation>Kanal Logo</translation>
     </message>
     <message>
         <location line="+58"/>
         <source>Add Channel Logo</source>
-        <translation type="unfinished">Kanal Logo hinzufügen</translation>
+        <translation>Kanal Logo hinzufügen</translation>
     </message>
     <message>
         <location line="+68"/>
         <source>Cancel</source>
-        <translation type="unfinished">Abbrechen</translation>
+        <translation>Abbrechen</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Create</source>
-        <translation type="unfinished">Erstellen</translation>
+        <translation>Erstellen</translation>
     </message>
     <message>
         <location filename="../gui/channels/CreateChannel.cpp" line="+162"/>
         <source>RetroShare</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Please add a Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Bitte einen Name hinzufügen</translation>
+    </message>
+    <message>
+        <location line="+83"/>
+        <source>Load File</source>
+        <translation>Lade Datei</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Pictures (*.png *.xpm *.jpg)</source>
+        <translation>Bilder (*.png *.xpm *.jpg)</translation>
     </message>
 </context>
 <context>
@@ -2100,7 +2108,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/channels/CreateChannelMsg.ui" line="+17"/>
         <source>New Channel Post</source>
-        <translation>Neuer Kanal Post</translation>
+        <translation>Neuer Kanalbeitrag</translation>
     </message>
     <message>
         <location line="+60"/>
@@ -2113,17 +2121,17 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:26pt; color:#ffffff;&quot;&gt;Neuer Kanal Post&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:26pt; color:#ffffff;&quot;&gt;Neuer Kanalbeitrag&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>Channel Post</source>
-        <translation>Kanal Post</translation>
+        <translation>Kanalbeitrag</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Channel Post to:</source>
-        <translation>Kanal Post zu:</translation>
+        <translation>Kanal:</translation>
     </message>
     <message>
         <location line="+21"/>
@@ -2135,27 +2143,34 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; You can use Drap and Drop to Attach Files.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Set your Subject and Description for your Channel Post.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; You can View your Attached Files on Attachments Tab.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Du kannst dein Miniaturbild für deinen Kanalbeitrag setzen.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Du kannst Dateien mit Drag&apos;n&apos;Drop einfügen.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Schreibe deinen Betreff und die Beschreibung deines Beitrages.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Du kannst die angehängten Dateien in Reiter Anhang anschauen.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Add File to Attach</source>
-        <translation>Dateien hinzufügen zum Anhängen</translation>
+        <translation>Datei hinzufügen</translation>
     </message>
     <message>
         <location line="+11"/>
         <source>Add Channel Thumbnail</source>
-        <translation>Kanal Thumbnail hinzufügen</translation>
+        <translation>Miniaturbild hinzufügen</translation>
     </message>
     <message>
         <location line="+48"/>
         <source>Message</source>
-        <translation>Nachricht</translation>
+        <translation>Beitrag</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Subject :</source>
-        <translation>Betreff:</translation>
+        <translation>Betreff :</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -2166,7 +2181,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+78"/>
         <source>Drag and Drop Files from Search Results</source>
-        <translation>Drag &amp; Drop Dateien aus den Suchergebnissen</translation>
+        <translation>Drag&apos;n&apos;Drop Dateien aus den Suchergebnissen</translation>
     </message>
     <message>
         <location filename="../gui/channels/CreateChannelMsg.cpp" line="+288"/>
@@ -2182,6 +2197,16 @@ p, li { white-space: pre-wrap; }
         <location line="+1"/>
         <source>Please add a Subject</source>
         <translation>Bitte Subjekt nicht vergessen</translation>
+    </message>
+    <message>
+        <location line="+46"/>
+        <source>Load File</source>
+        <translation>Lade Datei</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Pictures (*.png *.xpm *.jpg)</source>
+        <translation>Bilder (*.png *.xpm *.jpg)</translation>
     </message>
 </context>
 <context>
@@ -2241,7 +2266,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+12"/>
-        <source>Authemticated Messages</source>
+        <source>Authenticated Messages</source>
         <translation>Authentifizierte Nachrichten</translation>
     </message>
     <message>
@@ -2273,49 +2298,44 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>CreateForumMsg</name>
     <message>
-        <location filename="../gui/forums/CreateForumMsg.ui" line="+314"/>
+        <location filename="../gui/forums/CreateForumMsg.ui" line="+321"/>
         <source>Post Forum Msg</source>
-        <translation>Forum-Nachricht senden</translation>
+        <translation>Forumbeitrag schreiben</translation>
     </message>
     <message>
-        <location line="-255"/>
+        <location line="-262"/>
         <source>Forum</source>
         <translation>Forum</translation>
     </message>
     <message>
-        <location line="+18"/>
-        <source>Forum Post Subject</source>
-        <translation>Forum Betreff</translation>
-    </message>
-    <message>
-        <location line="+113"/>
+        <location line="+131"/>
         <source>Paste retroshare link</source>
         <translation>RetroShare Link einfügen</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Forum Post</source>
-        <translation>Forum-Nachricht</translation>
+        <translation>Beitrag</translation>
     </message>
     <message>
         <location line="-68"/>
         <source>Sign Message</source>
-        <translation>Nachricht unterschreiben</translation>
+        <translation>Beitrag unterschreiben</translation>
     </message>
     <message>
-        <location line="+166"/>
+        <location line="-80"/>
+        <source>Subject</source>
+        <translation>Betreff</translation>
+    </message>
+    <message>
+        <location line="+253"/>
         <source>Close</source>
         <translation>Schliessen</translation>
     </message>
     <message>
-        <location line="-306"/>
+        <location line="-313"/>
         <source>Post Forum Message</source>
-        <translation>Post Forum Nachricht</translation>
-    </message>
-    <message>
-        <location line="+280"/>
-        <source>toolBar</source>
-        <translation></translation>
+        <translation>Erstelle Forumbeitrag</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForumMsg.cpp" line="+71"/>
@@ -2335,7 +2355,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+0"/>
         <source>Please set a Forum Subject and Forum Message</source>
-        <translation>Bitte Forum Betreff eingeben</translation>
+        <translation>Bitte einen Betreff und eine Beitrag eingeben</translation>
     </message>
     <message>
         <location line="+177"/>
@@ -2343,35 +2363,35 @@ p, li { white-space: pre-wrap; }
         <translation>Zusätzliche Datei hinzufügen</translation>
     </message>
     <message>
-        <location filename="../gui/forums/CreateForumMsg.ui" line="-183"/>
+        <location filename="../gui/forums/CreateForumMsg.ui" line="+97"/>
         <source>Attach File</source>
-        <translation type="unfinished">Datei Anhängen</translation>
+        <translation>Datei anhängen</translation>
     </message>
     <message>
-        <location line="+127"/>
+        <location line="+134"/>
         <source>Attach files via drag and drop</source>
-        <translation type="unfinished"></translation>
+        <translation>Hänge Dateien mit Drag&apos;n&apos;Drop an</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>You can attach files via drag and drop here in this window</source>
-        <translation type="unfinished"></translation>
+        <translation>Du kannst Dateien mit Drag&apos;n&apos;Drop anhängen</translation>
     </message>
     <message>
         <location filename="../gui/forums/CreateForumMsg.cpp" line="+93"/>
         <location line="+5"/>
         <source>Drop file error.</source>
-        <translation type="unfinished">Dateifehler bei drag and drop.</translation>
+        <translation>Dateifehler bei Drag&apos;n&apos;Drop.</translation>
     </message>
     <message>
         <location line="-5"/>
         <source>File not found or file name not accepted.</source>
-        <translation type="unfinished">Datei nicht gefunden oder Dateiname nicht akzeptiert.</translation>
+        <translation>Datei nicht gefunden oder Dateiname nicht akzeptiert.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
-        <translation type="unfinished">Ordner können nicht für Drag und Drop genutzt werden. Nur Dateien werden akzeptiert.</translation>
+        <translation>Ordner können nicht für Drag&apos;n&apos;Drop genutzt werden. Nur Dateien werden akzeptiert.</translation>
     </message>
 </context>
 <context>
@@ -3290,12 +3310,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+6"/>
         <source>Set message to read on activate</source>
-        <translation>Setze Nachricht beim Aktivieren als gelesen</translation>
+        <translation>Setze Beitrag beim Aktivieren als gelesen</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Expand new messages</source>
-        <translation>Neue Nachrichten erweitern</translation>
+        <translation>Neue Beiträge erweitern</translation>
     </message>
 </context>
 <context>
@@ -3341,53 +3361,17 @@ p, li { white-space: pre-wrap; }
         <translation>Alle reduzieren</translation>
     </message>
     <message>
-        <location line="+176"/>
-        <location line="+45"/>
-        <location line="+82"/>
-        <source>Popularity:</source>
-        <translation>Beliebtheit:</translation>
+        <location line="+84"/>
+        <source>Hide</source>
+        <translation>Verbergen</translation>
     </message>
     <message>
-        <location line="+332"/>
-        <location line="+107"/>
-        <source>Anonymous</source>
-        <translation>Anonym</translation>
+        <location line="+4"/>
+        <source>Expand</source>
+        <translation>Erweitern</translation>
     </message>
     <message>
-        <location line="-102"/>
-        <location line="+107"/>
-        <source>signed</source>
-        <translation>unterzeichnet</translation>
-    </message>
-    <message>
-        <location line="-102"/>
-        <location line="+107"/>
-        <source>none</source>
-        <translation>kein</translation>
-    </message>
-    <message>
-        <location line="+491"/>
-        <location line="+142"/>
-        <source>RetroShare</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="-142"/>
-        <source>No Forum Selected!</source>
-        <translation>Kein Forum ausgewählt!</translation>
-    </message>
-    <message>
-        <location line="+127"/>
-        <source>Re:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+15"/>
-        <source>You cant reply a Anonymous Author</source>
-        <translation>Sie können einem anonymen Autor nicht antworten</translation>
-    </message>
-    <message>
-        <location line="-1540"/>
+        <location line="-243"/>
         <source>Your Forums</source>
         <translation>Deine Foren</translation>
     </message>
@@ -3432,7 +3416,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-59"/>
         <source>Start new Thread for Selected Forum</source>
-        <translation>Starte einen neuen Thread im ausgewählten Forum</translation>
+        <translation>Starte ein neues Thema im ausgewählten Forum</translation>
     </message>
     <message>
         <location line="+109"/>
@@ -3446,7 +3430,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+42"/>
         <source>Last Post</source>
-        <translation>Letzter Post</translation>
+        <translation>Letzter Beitrag</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -3488,27 +3472,31 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Thread:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Thema:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+50"/>
         <source>Previous Thread</source>
-        <translation>Vorheriger Thread</translation>
+        <translation>Vorheriger Beitrag</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Next Thread</source>
-        <translation>Nächster Thread</translation>
+        <translation>Nächster Beitrag</translation>
     </message>
     <message>
         <location line="+178"/>
         <source>Reply Message</source>
-        <translation>Auf Nachricht antworten</translation>
+        <translation>Auf Beitrag antworten</translation>
     </message>
     <message>
         <location line="+71"/>
         <source>Create Forum</source>
-        <translation>Erstelle Forum</translation>
+        <translation>Forum erstellen</translation>
     </message>
     <message>
         <location line="-14"/>
@@ -3522,7 +3510,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="+121"/>
-        <location line="+1258"/>
         <source>Start New Thread</source>
         <translation>Erstelle neues Thema</translation>
     </message>
@@ -3537,7 +3524,7 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Suche forum Inhalt&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Suche Foren&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+28"/>
@@ -3550,7 +3537,7 @@ p, li { white-space: pre-wrap; }
         <translation>Inhalt</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="-1245"/>
+        <location filename="../gui/ForumsDialog.cpp" line="+13"/>
         <location line="+3"/>
         <source>Mark as read</source>
         <translation>Als gelesen markieren</translation>
@@ -6890,17 +6877,7 @@ p, li { white-space: pre-wrap; }
         <translation>Verfügbar</translation>
     </message>
     <message>
-        <location line="+716"/>
-        <source>Create a new Channel</source>
-        <translation>Erstelle neuen Kanal</translation>
-    </message>
-    <message>
-        <location line="+4"/>
-        <source>New Channel</source>
-        <translation>Neuer Kanal</translation>
-    </message>
-    <message>
-        <location line="+21"/>
+        <location line="+736"/>
         <source>Add Extra File</source>
         <translation>Zusätzliche Datei hinzufügen</translation>
     </message>
@@ -6908,7 +6885,7 @@ p, li { white-space: pre-wrap; }
         <location line="+103"/>
         <location line="+5"/>
         <source>Drop file error.</source>
-        <translation>Dateifehler bei drag and drop.</translation>
+        <translation>Dateifehler bei Drag&apos;n&apos;Drop.</translation>
     </message>
     <message>
         <location line="-5"/>
@@ -6918,10 +6895,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+5"/>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
-        <translation>Ordner können nicht für Drag und Drop genutzt werden. Nur Dateien werden akzeptiert.</translation>
+        <translation>Ordner können nicht für Drag&apos;n&apos;Drop genutzt werden. Nur Dateien werden akzeptiert.</translation>
     </message>
     <message>
-        <location line="-1374"/>
+        <location line="-1369"/>
         <source> (me)</source>
         <translation> (ich)</translation>
     </message>
@@ -7089,7 +7066,7 @@ p, li { white-space: pre-wrap; }
         <translation>Willst du diesen Freund entfernen?</translation>
     </message>
     <message>
-        <location line="+724"/>
+        <location line="+719"/>
         <source>Save as...</source>
         <translation>Speichern als...</translation>
     </message>
@@ -7122,7 +7099,7 @@ p, li { white-space: pre-wrap; }
         <translation>Status Spalte ausblenden</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="-1530"/>
+        <location filename="../gui/PeersDialog.cpp" line="-1525"/>
         <source>Friends Storm</source>
         <translation>Freundes Strom</translation>
     </message>
@@ -7545,12 +7522,12 @@ p, li { white-space: pre-wrap; }
         <location line="+169"/>
         <location line="+5"/>
         <source>Drop file error.</source>
-        <translation>Dateifehler bei drag and drop.</translation>
+        <translation>Dateifehler bei Drag&apos;n&apos;Drop.</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
-        <translation>Ordner können nicht für Drag und Drop genutzt werden. Nur Dateien werden akzeptiert.</translation>
+        <translation>Ordner können nicht für Drag&apos;n&apos;Drop genutzt werden. Nur Dateien werden akzeptiert.</translation>
     </message>
     <message>
         <location filename="../gui/chat/PopupChatDialog.ui" line="-295"/>
@@ -9287,12 +9264,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+52"/>
         <source>check peers you would like to share private publish key with</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Wähle die Nachbarn, an die du den privaten Schlüssel verteilen möchtest</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Share Key With</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Schlüssel freigeben mit</translation>
     </message>
     <message>
         <location line="+53"/>

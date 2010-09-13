@@ -125,7 +125,7 @@ ChannelFeed::ChannelFeed(QWidget *parent)
     channelmenu->addSeparator();
     channelpushButton->setMenu(channelmenu);
 
-	
+    updateChannelMsgs();
 
 }
 
@@ -196,12 +196,6 @@ void ChannelFeed::channelListCustomPopupMenu( QPoint point )
 void ChannelFeed::createChannel()
 {
 	CreateChannel cf (this);
-
-	cf.setWindowTitle(tr("Create a new Channel"));
-	cf.ui.labelicon->setPixmap(QPixmap(":/images/add_channel64.png"));
-	QString titleStr("<span style=\"font-size:24pt; font-weight:500;"
-                               "color:#32CD32;\">%1</span>");
-	cf.ui.textlabelcreatforums->setText( titleStr.arg( tr("New Channel") ) ) ;
 	cf.exec();
 }
 
@@ -435,9 +429,9 @@ void ChannelFeed::updateChannelListOwn(std::list<std::string> &ids)
 					
 					
 		} else {
-			chNameItem->setData(QVariant(QString("Unknown Channel")), Qt::DisplayRole);
+                        chNameItem->setData(QVariant(QString(tr("Unknown Channel"))), Qt::DisplayRole);
 			chPopItem->setData(QVariant(QString::fromStdString(*iit)), Qt::DisplayRole);
-			chNameItem->setToolTip("Unknown Channel\nNo Description");
+                        chNameItem->setToolTip(tr("Unknown Channel\nNo Description"));
 		}
     
 		channel.append(chNameItem);
@@ -511,9 +505,9 @@ void ChannelFeed::updateChannelListSub(std::list<std::string> &ids)
 
 
 				} else {
-					chNameItem->setData(QVariant(QString("Unknown Channel")), Qt::DisplayRole);
+                                        chNameItem->setData(QVariant(QString(tr("Unknown Channel"))), Qt::DisplayRole);
 					chPopItem->setData(QVariant(QString::fromStdString(*iit)), Qt::DisplayRole);
-					chNameItem->setToolTip("Unknown Channel\nNo Description");
+                                        chNameItem->setToolTip(tr("Unknown Channel\nNo Description"));
 				}
 
 		channel.append(chNameItem);
@@ -587,9 +581,9 @@ void ChannelFeed::updateChannelListPop(std::list<std::string> &ids)
 
 
 			} else {
-				chNameItem->setData(QVariant(QString("Unknown Channel")), Qt::DisplayRole);
+                                chNameItem->setData(QVariant(QString(tr("Unknown Channel"))), Qt::DisplayRole);
 				chPopItem->setData(QVariant(QString::fromStdString(*iit)), Qt::DisplayRole);
-				chNameItem->setToolTip("Unknown Channel\nNo Description");
+                                chNameItem->setToolTip(tr("Unknown Channel\nNo Description"));
 			}
 
 		channel.append(chNameItem);
@@ -663,9 +657,9 @@ void ChannelFeed::updateChannelListOther(std::list<std::string> &ids)
 
 
 				} else {
-					chNameItem->setData(QVariant(QString("Unknown Channel")), Qt::DisplayRole);
+                                        chNameItem->setData(QVariant(QString(tr("Unknown Channel"))), Qt::DisplayRole);
 					chPopItem->setData(QVariant(QString::fromStdString(*iit)), Qt::DisplayRole);
-					chNameItem->setToolTip("Unknown Channel\nNo Description");
+                                        chNameItem->setToolTip(tr("Unknown Channel\nNo Description"));
 				}
 
 		channel.append(chNameItem);
@@ -686,7 +680,7 @@ void ChannelFeed::updateChannelMsgs()
 		postButton->setEnabled(false);
 		subscribeButton->setEnabled(false);
 		unsubscribeButton->setEnabled(false);
-		nameLabel->setText("No Channel Selected");
+                nameLabel->setText(tr("No Channel Selected"));
 		iconLabel->setPixmap(QPixmap(":/images/channels.png"));
 		iconLabel->setEnabled(false);
 		return;

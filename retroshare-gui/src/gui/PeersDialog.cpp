@@ -1497,11 +1497,6 @@ void PeersDialog::on_actionCreate_New_Channel_activated()
     MainWindow::activatePage (MainWindow::Channels);
 
     CreateChannel cf (this);
-    cf.setWindowTitle(tr("Create a new Channel"));
-    cf.ui.labelicon->setPixmap(QPixmap(":/images/add_channel64.png"));
-    QString titleStr("<span style=\"font-size:24pt; font-weight:500;"
-                               "color:#32CD32;\">%1</span>");
-    cf.ui.textlabelcreatforums->setText( titleStr.arg( tr("New Channel") ) ) ;
     cf.exec();
 #endif
 }

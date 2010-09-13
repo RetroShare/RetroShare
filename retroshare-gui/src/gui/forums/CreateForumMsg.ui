@@ -74,7 +74,7 @@
            <item>
             <widget class="QLabel" name="label">
              <property name="text">
-              <string>Forum Post Subject</string>
+              <string>Subject</string>
              </property>
             </widget>
            </item>
@@ -230,6 +230,13 @@ border: 1px solid #CCCCCC;}</string>
               <property name="contextMenuPolicy">
                <enum>Qt::CustomContextMenu</enum>
               </property>
+              <property name="html">
+               <string notr="true">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
              </widget>
             </item>
            </layout>
@@ -255,7 +262,7 @@ border: 1px solid #CCCCCC;}</string>
                  <x>0</x>
                  <y>0</y>
                  <width>440</width>
-                 <height>60</height>
+                 <height>57</height>
                 </rect>
                </property>
                <layout class="QGridLayout" name="gridLayout_6">
@@ -294,7 +301,7 @@ border: 1px solid #CCCCCC;}</string>
   </widget>
   <widget class="QToolBar" name="toolBar">
    <property name="windowTitle">
-    <string>toolBar</string>
+    <string notr="true">toolBar</string>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>

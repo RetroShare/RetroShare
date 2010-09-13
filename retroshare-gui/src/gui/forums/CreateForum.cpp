@@ -73,7 +73,7 @@ void  CreateForum::createForum()
 
 	if(name.isEmpty())
 	{	/* error message */
-		int ret = QMessageBox::warning(this, tr("RetroShare"),
+		QMessageBox::warning(this, tr("RetroShare"),
                    tr("Please add a Name"),
                    QMessageBox::Ok, QMessageBox::Ok);
                    
