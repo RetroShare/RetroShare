@@ -227,31 +227,8 @@ border-radius: 10px}</string>
               <iconset resource="../images.qrc">
                <normaloff>:/images/message-mail.png</normaloff>:/images/message-mail.png</iconset>
              </property>
-             <property name="toolButtonStyle">
-              <enum>Qt::ToolButtonTextBesideIcon</enum>
-             </property>
-             <property name="autoRaise">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QToolButton" name="msgButton">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="toolTip">
-              <string>Send Mail</string>
-             </property>
-             <property name="text">
-              <string>Write Message</string>
-             </property>
-             <property name="icon">
-              <iconset resource="../images.qrc">
-               <normaloff>:/images/mail_send.png</normaloff>:/images/mail_send.png</iconset>
+             <property name="popupMode">
+              <enum>QToolButton::MenuButtonPopup</enum>
              </property>
              <property name="toolButtonStyle">
               <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -576,6 +553,15 @@ border-radius: 10px}</string>
     </widget>
    </item>
   </layout>
+  <action name="actionNew_Message">
+   <property name="icon">
+    <iconset resource="../images.qrc">
+     <normaloff>:/images/mail_send.png</normaloff>:/images/mail_send.png</iconset>
+   </property>
+   <property name="text">
+    <string>Write Message</string>
+   </property>
+  </action>
  </widget>
  <resources>
   <include location="../images.qrc"/>

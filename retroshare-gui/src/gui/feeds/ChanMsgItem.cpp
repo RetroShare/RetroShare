@@ -128,6 +128,7 @@ void ChanMsgItem::updateItemStatic()
 				"PNG");
 
 		label->setPixmap(thumbnail);
+		label->setStyleSheet("QLabel#label{border: 2px solid #D3D3D3;border-radius: 2px;}");
 	}
 	
 	if (mIsHome)

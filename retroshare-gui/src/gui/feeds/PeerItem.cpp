@@ -55,7 +55,7 @@ PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, std::string peerId, uint
 
     /* specific ones */
     connect( chatButton, SIGNAL( clicked( void ) ), this, SLOT( openChat ( void ) ) );
-    connect( msgButton, SIGNAL( clicked( void ) ), this, SLOT( sendMsg ( void ) ) );
+    connect( actionNew_Message, SIGNAL( triggered( ) ), this, SLOT( sendMsg ( void ) ) );
 
     connect( quickmsgButton, SIGNAL( clicked( ) ), this, SLOT( togglequickmessage() ) );
     connect( cancelButton, SIGNAL( clicked( ) ), this, SLOT( togglequickmessage() ) );
@@ -63,6 +63,11 @@ PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, std::string peerId, uint
     connect( sendmsgButton, SIGNAL( clicked( ) ), this, SLOT( sendMessage() ) );
 
     connect(NotifyQt::getInstance(), SIGNAL(peerHasNewAvatar(const QString&)), this, SLOT(updateAvatar(const QString&)));
+    
+    QMenu *msgmenu = new QMenu();
+    msgmenu->addAction(actionNew_Message);
+
+    quickmsgButton->setMenu(msgmenu);
 
     small();
     updateItemStatic();
@@ -135,9 +140,7 @@ void PeerItem::updateItemStatic()
                 lastLabel->setText(tr("Unknown Peer"));
 
 		chatButton->setEnabled(false);
-		//addButton->setEnabled(false);
-		//removeButton->setEnabled(false);
-		msgButton->setEnabled(false);
+
 	}
 
 	if (mIsHome)
@@ -205,13 +208,13 @@ void PeerItem::updateItem()
 		{
 			//addButton->setEnabled(false);
 			//removeButton->setEnabled(true);
-			msgButton->setEnabled(true);
+			quickmsgButton->setEnabled(true);
 		}
 		else
 		{
 			//addButton->setEnabled(true);
 			//removeButton->setEnabled(false);
-			msgButton->setEnabled(false);
+			quickmsgButton->setEnabled(false);
 		}
 	}
 
