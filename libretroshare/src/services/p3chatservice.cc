@@ -619,6 +619,7 @@ void p3ChatService::receiveStateString(const std::string& id,const std::string& 
    _state_strings[id]._peer_is_new = true ;
    _state_strings[id]._own_is_new = new_peer ;
 }
+
 void p3ChatService::receiveAvatarJpegData(RsChatAvatarItem *ci)
 {
 	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
@@ -628,6 +629,9 @@ void p3ChatService::receiveAvatarJpegData(RsChatAvatarItem *ci)
 
    bool new_peer = (_avatars.find(ci->PeerId()) == _avatars.end()) ;
 
+   if (new_peer == false && _avatars[ci->PeerId()]) {
+       delete _avatars[ci->PeerId()];
+   }
    _avatars[ci->PeerId()] = new AvatarInfo(ci->image_data,ci->image_size) ; 
    _avatars[ci->PeerId()]->_peer_is_new = true ;
    _avatars[ci->PeerId()]->_own_is_new = new_peer ;
