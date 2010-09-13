@@ -59,7 +59,6 @@ public slots:
   void smileyWidget();
   void addSmiley();
 
-  void changeStyle();
   void fileHashingFinished(AttachFileItem* file);
 
   void resetStatusBar() ;

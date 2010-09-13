@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>TrustView</class>
- <widget class="QWidget" name="TrustView" >
-  <property name="geometry" >
+ <widget class="QWidget" name="TrustView">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,10 +10,7 @@
     <height>394</height>
    </rect>
   </property>
-  <property name="windowTitle" >
-   <string>Form</string>
-  </property>
-  <layout class="QVBoxLayout" name="verticalLayout" >
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QTableWidget" name="trustTableTW">
      <property name="editTriggers">
@@ -21,41 +19,41 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout" >
+    <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="Line" name="line" >
-       <property name="orientation" >
+      <widget class="Line" name="line">
+       <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label" >
-       <property name="text" >
+      <widget class="QLabel" name="label">
+       <property name="text">
         <string>Zoom :</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QSlider" name="zoomHS" >
-       <property name="maximum" >
+      <widget class="QSlider" name="zoomHS">
+       <property name="maximum">
         <number>100</number>
        </property>
-       <property name="orientation" >
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="updatePB" >
-       <property name="text" >
+      <widget class="QPushButton" name="updatePB">
+       <property name="text">
         <string>Update</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="showingLabel" >
-       <property name="text" >
+      <widget class="QLabel" name="showingLabel">
+       <property name="text">
         <string>Showing: whole network</string>
        </property>
       </widget>
@@ -64,7 +62,7 @@
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="2" margin="3" />
+ <layoutdefault spacing="2" margin="3"/>
  <resources/>
  <connections/>
 </ui>

@@ -300,7 +300,7 @@ void SearchDialog::downloadDirectory(const QTreeWidgetItem *item, const QString 
 		std::list<std::string> srcIds;
 
 		QString path = QString::fromStdString(rsFiles->getDownloadDirectory())
-						+ tr("/") + base + tr("/");
+                                                + "/" + base + "/";
 		QString cleanPath = QDir::cleanPath(path);
 
 		getSourceFriendsForHash((item->text(SR_HASH_COL)).toStdString(),srcIds) ;
@@ -325,7 +325,7 @@ void SearchDialog::downloadDirectory(const QTreeWidgetItem *item, const QString 
 		if (base == tr(""))
 			path = item->text(SR_NAME_COL);
 		else
-			path = base + tr("/") + item->text(SR_NAME_COL);
+                        path = base + "/" + item->text(SR_NAME_COL);
 		QString cleanPath = QDir::cleanPath(path);
 
 		// create this folder in download path
@@ -831,7 +831,7 @@ void SearchDialog::insertFile(const std::string& txt,qulonglong searchId, const 
 				anonymousSource = modifiedResultCount.at(1).toInt() + 1;
 			}
 			anonymousSource = anonymousSource + friendSource;
-			modifiedResult = QString::number(friendSource) + tr("/") + QString::number(anonymousSource);
+                        modifiedResult = QString::number(friendSource) + "/" + QString::number(anonymousSource);
 			ui.searchResultWidget->topLevelItem(i)->setText(SR_ID_COL,modifiedResult);
 			QTreeWidgetItem *item = ui.searchResultWidget->topLevelItem(i);
 			found = true ;
@@ -962,7 +962,7 @@ void SearchDialog::insertFile(const std::string& txt,qulonglong searchId, const 
 		}
 
 		anonymousSource = anonymousSource + friendSource;
-		modifiedResult =QString::number(friendSource) + tr("/") + QString::number(anonymousSource);
+                modifiedResult =QString::number(friendSource) + "/" + QString::number(anonymousSource);
 		item->setText(SR_ID_COL,modifiedResult);
 		item->setTextAlignment( SR_ID_COL, Qt::AlignRight );
 		item->setText(SR_SEARCH_ID_COL, sid_hexa);

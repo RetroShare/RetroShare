@@ -158,9 +158,9 @@ QString RemoteDirModel::getFlagsString(uint32_t flags)
 {
 	switch(flags & (DIR_FLAGS_NETWORK_WIDE|DIR_FLAGS_BROWSABLE))
 	{
-		case DIR_FLAGS_NETWORK_WIDE: return QString("Anonymous") ;
-		case DIR_FLAGS_NETWORK_WIDE | DIR_FLAGS_BROWSABLE: return QString("Anonymous and browsable by friends") ;
-		case DIR_FLAGS_BROWSABLE: return QString("Only browsable by friends") ;
+		case DIR_FLAGS_NETWORK_WIDE: return tr("Anonymous") ;
+		case DIR_FLAGS_NETWORK_WIDE | DIR_FLAGS_BROWSABLE: return tr("Anonymous and browsable by friends") ;
+		case DIR_FLAGS_BROWSABLE: return tr("Only browsable by friends") ;
 		default:
 										  return QString() ;
 	}

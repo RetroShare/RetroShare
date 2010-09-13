@@ -126,16 +126,12 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   connect(ui.fontButton, SIGNAL(clicked()), this, SLOT(getFont())); 
   connect(ui.colorButton, SIGNAL(clicked()), this, SLOT(setColor()));
   connect(ui.emoteiconButton, SIGNAL(clicked()), this, SLOT(smileyWidget()));
-  connect(ui.styleButton, SIGNAL(clicked()), SLOT(changeStyle()));
   connect(ui.actionSave_Chat_History, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
 
   connect(ui.textBrowser, SIGNAL(anchorClicked(const QUrl &)), SLOT(anchorClicked(const QUrl &)));
 
   connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(const QString&, int)), this, SLOT(updateStatus(const QString&, int)));
   connect(NotifyQt::getInstance(), SIGNAL(peerHasNewCustomStateString(const QString&, const QString&)), this, SLOT(updatePeersCustomStateString(const QString&, const QString&)));
-
-  // hide until it works
-  ui.styleButton->setVisible(false);
 
   std::cerr << "Connecting custom context menu" << std::endl;
   ui.chattextEdit->setContextMenuPolicy(Qt::CustomContextMenu) ;
@@ -157,7 +153,6 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   ui.textitalicButton->setIcon(QIcon(QString(":/images/edit-italic.png")));
   ui.fontButton->setIcon(QIcon(QString(":/images/fonts.png")));
   ui.emoteiconButton->setIcon(QIcon(QString(":/images/emoticons/kopete/kopete020.png")));
-  ui.styleButton->setIcon(QIcon(QString(":/images/looknfeel.png")));
   
   ui.textboldButton->setCheckable(true);
   ui.textunderlineButton->setCheckable(true);
@@ -165,10 +160,7 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
 
   setAcceptDrops(true);
   ui.chattextEdit->setAcceptDrops(false);
-  
-  /*Disabled style Button when will switch chat style RetroShare will crash need to be fix */
-  //ui.styleButton->setEnabled(false);
-  
+
   QMenu * toolmenu = new QMenu();
   toolmenu->addAction(ui.actionClear_Chat);
   toolmenu->addAction(ui.actionSave_Chat_History);
@@ -632,7 +624,7 @@ void PopupChatDialog::sendChat()
     }
 
 #ifdef CHAT_DEBUG 
-    std::cout << "PopupChatDialog:sendChat " << styleHtm.toStdString() << std::endl;
+    std::cout << "PopupChatDialog:sendChat " << std::endl;
 #endif
 
     addChatMsg(ownId, time(NULL), msg);
@@ -653,12 +645,12 @@ void PopupChatDialog::showAvatarFrame(bool show)
         ui.avatarframe->setVisible(true);
         ui.avatarFrameButton->setChecked(true);
         ui.avatarFrameButton->setToolTip(tr("Hide Avatar"));
-        ui.avatarFrameButton->setIcon(QIcon(tr(":images/hide_toolbox_frame.png")));
+        ui.avatarFrameButton->setIcon(QIcon(":images/hide_toolbox_frame.png"));
     } else {
         ui.avatarframe->setVisible(false);
         ui.avatarFrameButton->setChecked(false);
         ui.avatarFrameButton->setToolTip(tr("Show Avatar"));
-        ui.avatarFrameButton->setIcon(QIcon(tr(":images/show_toolbox_frame.png")));
+        ui.avatarFrameButton->setIcon(QIcon(":images/show_toolbox_frame.png"));
     }
 }
 
@@ -739,31 +731,6 @@ void PopupChatDialog::addSmiley()
 void PopupChatDialog::on_actionClear_Chat_triggered()
 {
     ui.textBrowser->clear();
-}
-
-void PopupChatDialog::changeStyle()
-{
-//	QString newStyle = QFileDialog::getOpenFileName(this, tr("Open Style"),
-//                                                 appDir + "/style/chat/",
-//                                                 tr("Styles (*.htm)"));
-//	if(!newStyle.isEmpty())
-//	{
-//		QString wholeChat;
-//		styleHtm = newStyle;
-//
-//
-//		for(int i = 0; i < history.size(); i+=4)
-//		{
-//                        QString formatMsg = loadEmptyStyle();
-//			wholeChat += formatMsg.replace("%timestamp%", history.at(i+1))
-//                                  .replace("%name%", history.at(i+2))
-//				                  .replace("%message%", history.at(i+3)) + "\n";
-//		}
-//		ui.textBrowser->setHtml(wholeChat);
-//	}
-//	QTextCursor cursor = ui.textBrowser->textCursor();
-//	cursor.movePosition(QTextCursor::End);
-//	ui.textBrowser->setTextCursor(cursor);
 }
 
 void PopupChatDialog::updatePeerAvatar(const std::string& peer_id)
