@@ -2,7 +2,7 @@
 
 ; Define your application name
 !define APPNAME "RetroShare"
-!define VERSION "0.5.0"
+!define VERSION "0.5.1"
 !define APPNAMEANDVERSION "${APPNAME} ${VERSION}"
 
 ; Main Install settings
@@ -287,7 +287,7 @@ Section  $(sec_data) sec_data
 
   ; Add emoticons
   SetOutPath "$INSTDIR\emoticons\"
-  File /r emoticons\*.*   
+  ;File /r emoticons\*.*   
 	
   ; Add Chat Style
   ;SetOutPath "$INSTDIR\style\"
