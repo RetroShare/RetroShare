@@ -25,6 +25,8 @@
 
 #include "ui_CreateForumMsg.h"
 
+#include "gui/chat/ChatStyle.h"
+
 class AttachFileItem;
 
 class CreateForumMsg : public QMainWindow
@@ -35,8 +37,6 @@ public:
     CreateForumMsg(std::string fId, std::string pId);
 
     void newMsg(); /* cleanup */
-
-    void loadEmoticonsForums();
 
 private slots:
     /** Create the context popup menu and it's submenus */
@@ -64,7 +64,7 @@ private:
     std::string mForumId;
     std::string mParentId;
 
-    QHash<QString, QString> smileys;
+    ChatStyle style;
 
     /** Qt Designer generated object */
     Ui::CreateForumMsg ui;

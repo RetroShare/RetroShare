@@ -215,7 +215,7 @@ ForumsDialog::ForumsDialog(QWidget *parent)
     ui.forumName->setFont(m_ForumNameFont);
     ui.threadTitle->setFont(m_ForumNameFont);
 
-    loadForumEmoticons();
+    style.loadEmoticons();
 
     QMenu *forummenu = new QMenu();
     forummenu->addAction(ui.actionCreate_Forum);
@@ -433,6 +433,9 @@ void ForumsDialog::threadListCustomPopupMenu( QPoint point )
         if (nCount == 1) {
             replyAct->setEnabled (true);
             replyauthorAct->setEnabled (true);
+        } else {
+            replyAct->setDisabled (true);
+            replyauthorAct->setDisabled (true);
         }
     } else {
         markMsgAsRead->setDisabled(true);
@@ -1371,6 +1374,7 @@ void ForumsDialog::insertPost()
         ui.threadTitle->setText("");
         ui.previousButton->setEnabled(false);
         ui.nextButton->setEnabled(false);
+        ui.newmessageButton->setEnabled (false);
         return;
     }
 
@@ -1386,6 +1390,8 @@ void ForumsDialog::insertPost()
         ui.previousButton->setEnabled(false);
         ui.nextButton->setEnabled(false);
     }
+
+    ui.newmessageButton->setEnabled (m_bIsForumSubscribed && mCurrThreadId.empty() == false);
 
     /* get the Post */
     ForumMsgInfo msg;
@@ -1418,7 +1424,7 @@ void ForumsDialog::insertPost()
     QString extraTxt;
     extraTxt += QString::fromStdWString(msg.msg);
 
-    QHashIterator<QString, QString> i(smileys);
+    QHashIterator<QString, QString> i(style.smileys);
     while(i.hasNext())
     {
         i.next();
@@ -1676,68 +1682,6 @@ void ForumsDialog::showForumDetails()
 
     fui.showDetails (mCurrForumId);
     fui.exec ();
-}
-
-void ForumsDialog::loadForumEmoticons()
-{
-	QString sm_codes;
-	#if defined(Q_OS_WIN32)
-	QFile sm_file(QApplication::applicationDirPath() + "/emoticons/emotes.acs");
-	#else
-	QFile sm_file(QString(":/smileys/emotes.acs"));
-	#endif
-	if(!sm_file.open(QIODevice::ReadOnly))
-	{
-		std::cerr << "Could not open resouce file :/emoticons/emotes.acs" << std::endl ;
-		return ;
-	}
-	sm_codes = sm_file.readAll();
-	sm_file.close();
-	sm_codes.remove("\n");
-	sm_codes.remove("\r");
-	int i = 0;
-	QString smcode;
-	QString smfile;
-	while(sm_codes[i] != '{')
-	{
-		i++;
-
-	}
-	while (i < sm_codes.length()-2)
-	{
-		smcode = "";
-		smfile = "";
-		while(sm_codes[i] != '\"')
-		{
-			i++;
-		}
-		i++;
-		while (sm_codes[i] != '\"')
-		{
-			smcode += sm_codes[i];
-			i++;
-
-		}
-		i++;
-
-		while(sm_codes[i] != '\"')
-		{
-			i++;
-		}
-		i++;
-		while(sm_codes[i] != '\"' && sm_codes[i+1] != ';')
-		{
-			smfile += sm_codes[i];
-			i++;
-		}
-		i++;
-		if(!smcode.isEmpty() && !smfile.isEmpty())
-			#if defined(Q_OS_WIN32)
-		    smileys.insert(smcode, smfile);
-	        #else
-			smileys.insert(smcode, ":/"+smfile);
-			#endif
-	}
 }
 
 void ForumsDialog::replytomessage()

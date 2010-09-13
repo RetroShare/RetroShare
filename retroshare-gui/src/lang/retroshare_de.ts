@@ -4684,7 +4684,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+8"/>
         <source>Transfers</source>
-        <translation>Transfers</translation>
+        <translation>Übertragungen</translation>
     </message>
     <message>
         <location line="+8"/>

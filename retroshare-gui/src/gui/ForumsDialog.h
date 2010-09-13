@@ -24,6 +24,7 @@
 
 #include "mainpage.h"
 #include "RsAutoUpdatePage.h"
+#include "chat/ChatStyle.h"
 #include "ui_ForumsDialog.h"
 
 class ForumsDialog : public RsAutoUpdatePage 
@@ -85,8 +86,6 @@ private:
     void insertPost();
     void updateMessageSummaryList(std::string forumId);
 
-    void loadForumEmoticons();
-
     void forumSubscribe(bool subscribe);
     void FillForums(QTreeWidgetItem *Forum, QList<QTreeWidgetItem *> &ChildList);
     void FillThreads(QList<QTreeWidgetItem *> &ThreadList, bool bExpandNewMessages, std::list<QTreeWidgetItem*> &itemToExpand);
@@ -120,7 +119,7 @@ private:
     int m_LastViewType;
     std::string m_LastForumID;
 
-    QHash<QString, QString> smileys;
+    ChatStyle style;
 
     /** Qt Designer generated object */
     Ui::ForumsDialog ui;
