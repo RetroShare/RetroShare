@@ -84,10 +84,7 @@ void AddLinksDialog::addLinkComment()
 
 	if ((link == "") || (title == ""))
 	{
-		QMessageBox::StandardButton sb = QMessageBox::warning(NULL,
-									"Add Link Failure",
-									"Missing Link and/or Title",
-									QMessageBox::Ok);
+		QMessageBox::warning(NULL, tr("Add Link Failure"), tr("Missing Link and/or Title"), QMessageBox::Ok);
 		/* can't do anything */
 		return;
 	}

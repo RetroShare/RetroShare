@@ -57,7 +57,7 @@
           <item row="0" column="1">
            <widget class="QLabel" name="name_label_2">
             <property name="text">
-             <string>Name Label</string>
+             <string notr="true">Name Label</string>
             </property>
             <property name="textInteractionFlags">
              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
@@ -112,7 +112,7 @@
           <item row="2" column="1">
            <widget class="QLabel" name="size_label_2">
             <property name="text">
-             <string>Size Label</string>
+             <string notr="true">Size Label</string>
             </property>
             <property name="textInteractionFlags">
              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
@@ -138,7 +138,7 @@
           <item row="3" column="1">
            <widget class="QLabel" name="status_label_2">
             <property name="text">
-             <string>Status Label</string>
+             <string notr="true">Status Label</string>
             </property>
             <property name="textInteractionFlags">
              <set>Qt::LinksAccessibleByMouse</set>
@@ -155,7 +155,7 @@
           <item row="4" column="1">
            <widget class="QLabel" name="priority_label_2">
             <property name="text">
-             <string>Priority Label</string>
+             <string notr="true">Priority Label</string>
             </property>
             <property name="textInteractionFlags">
              <set>Qt::LinksAccessibleByMouse</set>
@@ -165,7 +165,7 @@
           <item row="5" column="1">
            <widget class="QLabel" name="type_label_2">
             <property name="text">
-             <string>Type Label</string>
+             <string notr="true">Type Label</string>
             </property>
            </widget>
           </item>
@@ -179,7 +179,7 @@
           <item row="1" column="1">
            <widget class="QLabel" name="hash_label_2">
             <property name="text">
-             <string>Hash Label</string>
+             <string notr="true">Hash Label</string>
             </property>
             <property name="textInteractionFlags">
              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
@@ -219,21 +219,21 @@
           <item row="0" column="1">
            <widget class="QLabel" name="sources_line">
             <property name="text">
-             <string>Source Label</string>
+             <string notr="true">Source Label</string>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
            <widget class="QLabel" name="datarate_line">
             <property name="text">
-             <string>Datarate Label</string>
+             <string notr="true">Datarate Label</string>
             </property>
            </widget>
           </item>
           <item row="2" column="1">
            <widget class="QLabel" name="completed_line">
             <property name="text">
-             <string>Completed Label</string>
+             <string notr="true">Completed Label</string>
             </property>
            </widget>
           </item>
@@ -253,7 +253,7 @@
           <item row="3" column="1">
            <widget class="QLabel" name="chunksizelabel">
             <property name="text">
-             <string>Chunks Label</string>
+             <string notr="true">Chunks Label</string>
             </property>
            </widget>
           </item>
@@ -270,7 +270,7 @@
              <string>Number of Chunks</string>
             </property>
             <property name="text">
-             <string>Chunks Number Label</string>
+             <string notr="true">Chunks Number Label</string>
             </property>
            </widget>
           </item>
@@ -287,11 +287,7 @@
           <item row="5" column="1">
            <widget class="QLabel" name="remaining_line">
             <property name="text">
-             <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Remaining Label&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string notr="true">Remaining Label</string>
             </property>
            </widget>
           </item>
@@ -321,7 +317,7 @@ p, li { white-space: pre-wrap; }
           <item>
            <widget class="QLabel" name="downloadtime_line">
             <property name="text">
-             <string>Download Time Label</string>
+             <string notr="true">Download Time Label</string>
             </property>
            </widget>
           </item>

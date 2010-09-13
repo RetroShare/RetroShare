@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string/>
   </property>
   <layout class="QGridLayout">
    <property name="horizontalSpacing">
@@ -88,7 +88,6 @@
         <widget class="QLabel" name="label">
          <property name="font">
           <font>
-           <pointsize>10</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -100,11 +99,6 @@
        </item>
        <item row="3" column="3">
         <widget class="QComboBox" name="rankComboBox">
-         <property name="font">
-          <font>
-           <pointsize>11</pointsize>
-          </font>
-         </property>
          <item>
           <property name="text">
            <string>Combo</string>
@@ -147,7 +141,6 @@
         <widget class="QLabel" name="label_2">
          <property name="font">
           <font>
-           <pointsize>10</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -159,11 +152,6 @@
        </item>
        <item row="3" column="6">
         <widget class="QComboBox" name="periodComboBox">
-         <property name="font">
-          <font>
-           <pointsize>11</pointsize>
-          </font>
-         </property>
          <item>
           <property name="text">
            <string>Month</string>
@@ -210,7 +198,6 @@
         <widget class="QLabel" name="label_3">
          <property name="font">
           <font>
-           <pointsize>10</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -222,11 +209,6 @@
        </item>
        <item row="3" column="9">
         <widget class="QComboBox" name="fromComboBox">
-         <property name="font">
-          <font>
-           <pointsize>11</pointsize>
-          </font>
-         </property>
          <item>
           <property name="text">
            <string>All Peers</string>
@@ -264,7 +246,6 @@
         <widget class="QLabel" name="label_5">
          <property name="font">
           <font>
-           <pointsize>10</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -276,11 +257,6 @@
        </item>
        <item row="3" column="12">
         <widget class="QComboBox" name="topComboBox">
-         <property name="font">
-          <font>
-           <pointsize>11</pointsize>
-          </font>
-         </property>
          <item>
           <property name="text">
            <string>Top 100</string>
@@ -353,7 +329,7 @@ background: white;}</string>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="layoutWidget">
+     <widget class="QWidget" name="layoutWidget_1">
       <layout class="QVBoxLayout">
        <item>
         <layout class="QHBoxLayout">
@@ -374,7 +350,6 @@ background: white;}</string>
           <widget class="QCheckBox" name="anonBox">
            <property name="font">
             <font>
-             <pointsize>11</pointsize>
              <weight>50</weight>
              <bold>false</bold>
             </font>
@@ -386,11 +361,6 @@ background: white;}</string>
          </item>
          <item>
           <widget class="QPushButton" name="addButton">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
            <property name="text">
             <string>Add Link/Comment</string>
            </property>
@@ -402,13 +372,6 @@ background: white;}</string>
         <layout class="QHBoxLayout">
          <item>
           <widget class="QLabel" name="label_6">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
            <property name="text">
             <string>Title:</string>
            </property>
@@ -416,11 +379,6 @@ background: white;}</string>
          </item>
          <item>
           <widget class="QLineEdit" name="titleLineEdit">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
            <property name="styleSheet">
             <string notr="true">QLineEdit{border: 2px solid #CCCCCC; 
 border-radius: 10px;
@@ -430,13 +388,6 @@ background: white;}</string>
          </item>
          <item>
           <widget class="QLabel" name="label_8">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
            <property name="text">
             <string>Score:</string>
            </property>
@@ -497,13 +448,6 @@ background: white;}</string>
         <layout class="QHBoxLayout">
          <item>
           <widget class="QLabel" name="label_7">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
            <property name="text">
             <string>Url:</string>
            </property>
@@ -511,11 +455,6 @@ background: white;}</string>
          </item>
          <item>
           <widget class="QLineEdit" name="linkLineEdit">
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
            <property name="styleSheet">
             <string notr="true">QLineEdit{border: 2px solid #CCCCCC; 
 border-radius: 10px;
@@ -538,11 +477,6 @@ background: white;}</string>
            <width>16777215</width>
            <height>16777215</height>
           </size>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-          </font>
          </property>
          <property name="styleSheet">
           <string notr="true">QTextEdit{border: 2px solid #CCCCCC; 
@@ -576,7 +510,7 @@ border: 1px solid #CCCCCC;}</string>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
+     <layout class="QGridLayout" name="gridLayout_1">
       <property name="margin">
        <number>2</number>
       </property>

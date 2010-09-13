@@ -809,14 +809,14 @@ void LinksDialog::toggleWindows( void )
 		newSizeList.push_back(totalSize);
 		newSizeList.push_back(0);
 		ui.expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
-	    ui.expandButton->setToolTip("Expand");
+            ui.expandButton->setToolTip(tr("Expand"));
 	}
 	else
 	{
 		newSizeList.push_back(totalSize * 3/4);
 		newSizeList.push_back(totalSize * 1/4);
 	    ui.expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
-	    ui.expandButton->setToolTip("Hide");
+            ui.expandButton->setToolTip(tr("Hide"));
 	}
 
 	ui.msgSplitter->setSizes(newSizeList);

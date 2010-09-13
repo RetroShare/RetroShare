@@ -216,7 +216,7 @@ Rshare::showUsageMessageBox()
   out << trow(tcol("-"ARG_LOGFILE" &lt;file&gt;") +
               tcol(tr("Sets the name and location of RetroShare's logfile.")));
   out << trow(tcol("-"ARG_LOGLEVEL" &lt;level&gt;") +
-              tcol(tr("Sets the verbosity of Vidalia's logging.") +
+              tcol(tr("Sets the verbosity of RetroShare's logging.") +
                    "<br>[" + Log::logLevels().join("|") +"]"));
   out << trow(tcol("-"ARG_GUISTYLE" &lt;style&gt;") +
               tcol(tr("Sets RetroShare's interface style.") +
@@ -403,7 +403,7 @@ bool Rshare::setConfigDirectory(QString dir)
   return true;
 }
 
-/** Writes <b>msg</b> with severity <b>level</b> to Vidalia's log. */
+/** Writes <b>msg</b> with severity <b>level</b> to RetroShare's log. */
 Log::LogMessage
 Rshare::log(Log::LogLevel level, QString msg)
 {
