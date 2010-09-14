@@ -1811,7 +1811,7 @@ bool ftController::RequestCacheFile(RsPeerId id, std::string path, std::string h
 		std::cerr << "Copying it !!" << std::endl ;
 #endif
 
-		if(copyFile(info.path,path+"/"+hash))
+		if(info.size > 0 && copyFile(info.path,path+"/"+hash))
 		{
 			CompletedCache(hash);
 			return true ;
