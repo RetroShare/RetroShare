@@ -44,6 +44,7 @@ Q_OBJECT
 public:
     /** Default Constructor */
     TransfersDialog(QWidget *parent = 0);
+    ~TransfersDialog();
 
 // replaced by shortcut
 //    virtual void keyPressEvent(QKeyEvent *) ;
@@ -153,6 +154,9 @@ private:
     QAction *chunkRandomAct;
     QAction *chunkStreamingAct;
     QAction *detailsfileAct;
+
+    bool m_bProcessSettings;
+    void processSettings(bool bLoad);
 
     void getIdOfSelectedItems(std::set<QStandardItem *>& items);
     bool controlTransferFile(uint32_t flags);

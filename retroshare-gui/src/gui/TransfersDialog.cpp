@@ -31,6 +31,8 @@
 #include <QMessageBox>
 #include <QDesktopServices>
 
+#include <algorithm>
+
 #include "TransfersDialog.h"
 #include "RetroShareLink.h"
 #include "DetailsDialog.h"
@@ -39,6 +41,7 @@
 #include "FileTransferInfoWidget.h"
 #include "TurtleRouterDialog.h"
 #include "xprogressbar.h"
+#include "settings/rsharesettings.h"
 
 #include <retroshare/rsfiles.h>
 #include <retroshare/rspeers.h>
@@ -74,6 +77,8 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
+
+    m_bProcessSettings = false;
 
     connect( ui.downloadList, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( downloadListCostumPopupMenu( QPoint ) ) );
 
@@ -267,6 +272,54 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 	connect(chunkRandomAct, SIGNAL(triggered()), this, SLOT(chunkRandom()));
 	playAct = new QAction(QIcon(IMAGE_PLAY), tr( "Play" ), this );
 	connect( playAct , SIGNAL( triggered() ), this, SLOT( openTransfer() ) );
+
+    // load settings
+    processSettings(true);
+}
+
+TransfersDialog::~TransfersDialog()
+{
+    // save settings
+    processSettings(false);
+}
+
+void TransfersDialog::processSettings(bool bLoad)
+{
+    m_bProcessSettings = true;
+
+    QHeaderView *DLHeader = ui.downloadList->header () ;
+    QHeaderView *ULHeader = ui.uploadsList->header () ;
+
+    Settings->beginGroup(QString("TransfersDialog"));
+
+    if (bLoad) {
+        // load settings
+
+        // state of checks
+        ui._showCacheTransfers_CB->setChecked(Settings->value("showCacheTransfers", false).toBool());
+
+        // state of the lists
+        DLHeader->restoreState(Settings->value("downloadList").toByteArray());
+        ULHeader->restoreState(Settings->value("uploadList").toByteArray());
+
+        // state of splitter
+        ui.splitter->restoreState(Settings->value("Splitter").toByteArray());
+    } else {
+        // save settings
+
+        // state of checks
+        Settings->setValue("showCacheTransfers", ui._showCacheTransfers_CB->isChecked());
+
+        // state of the lists
+        Settings->setValue("downloadList", DLHeader->saveState());
+        Settings->setValue("uploadList", ULHeader->saveState());
+
+        // state of splitter
+        Settings->setValue("Splitter", ui.splitter->saveState());
+    }
+
+    Settings->endGroup();
+    m_bProcessSettings = false;
 }
 
 // replaced by shortcut
@@ -431,14 +484,15 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 int TransfersDialog::addItem(const QString&, const QString& name, const QString& coreID, qlonglong fileSize, const FileProgressInfo& pinfo, double dlspeed,
 		const QString& sources,  const QString& status, const QString& priority, qlonglong completed, qlonglong remaining, qlonglong downloadtime)
 {
+	int rowCount = DLListModel->rowCount();
 	int row ;
-	for(row=0;row<DLListModel->rowCount();++row)
+	for(row=0;row<rowCount;++row)
 		if(DLListModel->item(row,ID)->data(Qt::EditRole).toString() == coreID)
 			break ;
 
-	if(row >= DLListModel->rowCount() )
+	if(row >= rowCount )
 	{
-		row = DLListModel->rowCount();
+		row = rowCount;
 		DLListModel->insertRow(row);
 	}
 
@@ -672,6 +726,16 @@ void TransfersDialog::insertTransfers()
 //	std::list<DwlDetails> dwlDetails;
 //	rsFiles->getDwlDetails(dwlDetails);
 
+	bool showCacheTransfers = ui._showCacheTransfers_CB->isChecked();
+
+	/* get online peers only once */
+	std::list<std::string> onlineIds;
+	rsPeers->getOnlineList(onlineIds);
+
+	/* get also only once */
+	std::map<std::string, std::string> versions;
+	bool retv = rsDisc->getDiscVersions(versions);
+
 	std::set<std::string> used_hashes ;
 
 	// clear all source peers.
@@ -685,7 +749,7 @@ void TransfersDialog::insertTransfers()
 			continue;
 		}
 
-		if((info.flags & CB_CODE_CACHE) && !ui._showCacheTransfers_CB->isChecked())
+		if((info.flags & CB_CODE_CACHE) && !showCacheTransfers)
 			continue;
 
 		QString fileName = QString::fromUtf8(info.fname.c_str());
@@ -697,7 +761,7 @@ void TransfersDialog::insertTransfers()
 		int online = 0;
 		std::list<TransferInfo>::iterator pit;
 		for (pit = info.peers.begin(); pit != info.peers.end(); pit++) {
-			if (rsPeers->isOnline(pit->peerId)) {
+			if (std::find(onlineIds.begin(), onlineIds.end(), pit->peerId) != onlineIds.end()) {
 				online++;
 			}
 		}
@@ -747,8 +811,6 @@ void TransfersDialog::insertTransfers()
 		used_hashes.insert(info.hash) ;
 
 		std::map<std::string, std::string>::iterator vit;
-		std::map<std::string, std::string> versions;
-		bool retv = rsDisc->getDiscVersions(versions);
 
 		std::set<int> used_rows ;
 
@@ -810,6 +872,8 @@ void TransfersDialog::insertTransfers()
 	std::list<std::string> upHashes;
 	rsFiles->FileUploads(upHashes);
 
+	std::string ownId = rsPeers->getOwnId();
+
 	used_hashes.clear() ;
 
 	for(it = upHashes.begin(); it != upHashes.end(); it++) 
@@ -818,13 +882,13 @@ void TransfersDialog::insertTransfers()
 		if (!rsFiles->FileDetails(*it, RS_FILE_HINTS_UPLOAD, info)) 
 			continue;
 		
-		if((info.flags & CB_CODE_CACHE) && !ui._showCacheTransfers_CB->isChecked())
+		if((info.flags & CB_CODE_CACHE) && showCacheTransfers)
 			continue ;
 
 		std::list<TransferInfo>::iterator pit;
 		for(pit = info.peers.begin(); pit != info.peers.end(); pit++) 
 		{
-			if (pit->peerId == rsPeers->getOwnId()) //don't display transfer to ourselves
+			if (pit->peerId == ownId) //don't display transfer to ourselves
 				continue ;
 
 			QString fileHash        = QString::fromStdString(info.hash);
