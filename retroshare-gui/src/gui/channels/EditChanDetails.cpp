@@ -20,29 +20,34 @@
  ****************************************************************/
 #include "EditChanDetails.h"
 
+#include <QFileDialog>
+
 #include <retroshare/rschannels.h>
 
 #include <list>
 #include <iostream>
 #include <string>
 
+#define CHAN_DEFAULT_IMAGE ":/images/channels.png"
+
 
 /** Default constructor */
 EditChanDetails::EditChanDetails(QWidget *parent, Qt::WFlags flags, std::string cId)
   : QDialog(parent, flags), mChannelId(cId)
 {
-  /* Invoke Qt Designer generated QObject setup routine */
-  ui.setupUi(this);
+    /* Invoke Qt Designer generated QObject setup routine */
+    ui.setupUi(this);
 
-  connect(ui.applyButton, SIGNAL(clicked()), this, SLOT(applyDialog()));
-  connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(closeinfodlg()));
+    connect(ui.applyButton, SIGNAL(clicked()), this, SLOT(applyDialog()));
+    connect(ui.cancelButton, SIGNAL(clicked()), this, SLOT(closeinfodlg()));
+  
+    connect( ui.LogoButton, SIGNAL(clicked() ), this , SLOT(addChannelLogo()));	
+    connect( ui.ChannelLogoButton, SIGNAL(clicked() ), this , SLOT(addChannelLogo()));
+    
+    ui.ChannelLogoButton->setDisabled(true);
+    ui.LogoButton->setDisabled(true);
 
-  ui.ChannelLogoButton->setDisabled(true);
-  ui.ChannelLogoButton->hide();
-  ui.LogoButton->setDisabled(true);
-  ui.LogoButton->hide();
-
-  loadChannel();
+    loadChannel();
 
 }
 
@@ -61,7 +66,7 @@ void EditChanDetails::show()
 
 void EditChanDetails::closeEvent (QCloseEvent * event)
 {
- QWidget::closeEvent(event);
+    QWidget::closeEvent(event);
 }
 
 void EditChanDetails::closeinfodlg()
@@ -87,6 +92,19 @@ void EditChanDetails::loadChannel()
 
     // Set Channel Description
     ui.DescriptiontextEdit->setText(QString::fromStdWString(ci.channelDesc));
+    
+	// Set Channel Logo
+    if(ci.pngImageLen != 0)
+    {
+        QPixmap chanImage;
+        chanImage.loadFromData(ci.pngChanImage, ci.pngImageLen, "PNG");
+        ui.ChannelLogoButton->setIcon(QIcon(chanImage));
+    }
+    else
+    {
+        QPixmap defaulImage(CHAN_DEFAULT_IMAGE);
+        ui.ChannelLogoButton->setIcon(QIcon(defaulImage));
+    }
 
 }
 
@@ -116,4 +134,15 @@ void EditChanDetails::applyDialog()
 }
 
 
+void EditChanDetails::addChannelLogo()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Load File"), QDir::homePath(), tr("Pictures (*.png *.xpm *.jpg)"));
+	if(!fileName.isEmpty())
+	{
+            picture = QPixmap(fileName).scaled(64,64, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+
+            // to show the selected
+            ui.ChannelLogoButton->setIcon(picture);
+	}
+}
 

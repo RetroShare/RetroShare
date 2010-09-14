@@ -30,36 +30,40 @@ class EditChanDetails : public QDialog
 {
   Q_OBJECT
 
-	public:  
+public:  
 	
-	/** Default constructor */
-            EditChanDetails(QWidget *parent = 0, Qt::WFlags flags = 0, std::string cId = "");
-  /** Default destructor */
+    /** Default constructor */
+    EditChanDetails(QWidget *parent = 0, Qt::WFlags flags = 0, std::string cId = "");
+    /** Default destructor */
 	
-
 signals:
-	  void configChanged() ;
+    void configChanged() ;
 
 public slots:
-  /** Overloaded QWidget.show */
-  void show();
-
+    /** Overloaded QWidget.show */
+    void show();
+    
+    
 protected:
-  void closeEvent (QCloseEvent * event);
+    void closeEvent (QCloseEvent * event);
   
 private slots:
 
 	void closeinfodlg();
 	void applyDialog();
+    void addChannelLogo();
 	
   
 private:
 
-  void 	loadChannel();
+    void loadChannel();
 
-  std::string mChannelId;
-  /** Qt Designer generated object */
-  Ui::EditChanDetails ui;
+    std::string mChannelId;
+    
+    QPixmap picture;
+    
+    /** Qt Designer generated object */
+    Ui::EditChanDetails ui;
 
 };
 
