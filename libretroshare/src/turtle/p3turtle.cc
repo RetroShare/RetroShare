@@ -55,6 +55,7 @@
 
 #include "util/rsdebug.h"
 #include "util/rsprint.h"
+#include "util/rsrandom.h"
 #include "pqi/pqinetwork.h"
 
 // These number may be quite important. I setup them with sensible values, but
@@ -537,19 +538,21 @@ bool p3turtle::loadList(std::list<RsItem*> load)
 //
 uint32_t p3turtle::generateRandomRequestId()
 {
-	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
+	return RSRandom::random_u32() ;
 
-	static uint64_t s = time(NULL) ;
-
-	s = s*1664525 + 1013904223 ;	// pseudo random number generator from Wikipedia/Numerical Recipies.
-
-	return (uint32_t)(s & 0x00000000ffffffff) ;
+//	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
+//
+//	static uint64_t s = time(NULL) ;
+//
+//	s = s*1664525 + 1013904223 ;	// pseudo random number generator from Wikipedia/Numerical Recipies.
+//
+//	return (uint32_t)(s & 0x00000000ffffffff) ;
 }
 
 uint32_t p3turtle::generatePersonalFilePrint(const TurtleFileHash& hash,bool b)
 {
 	// whatever cooking from the file hash and OwnId that cannot be recovered.
-	// The only important thing is that the saem hash produces the same tunnel
+	// The only important thing is that the saem couple (hash,SSL id) produces the same tunnel
 	// id. The result uses a boolean to allow generating non symmetric tunnel ids.
 
 	std::string buff(hash + mConnMgr->getOwnId()) ;
