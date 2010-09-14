@@ -300,6 +300,10 @@ border-radius: 10px;}</string>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="styleSheet">
+         <string notr="true">QLabel#msgLabel{border: 2px solid #D3D3D3;
+border-radius: 10px;}</string>
+        </property>
         <property name="text">
          <string notr="true">Long 
  message here</string>
@@ -312,6 +316,7 @@ border-radius: 10px;}</string>
   </layout>
  </widget>
  <resources>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
