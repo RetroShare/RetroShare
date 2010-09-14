@@ -1150,7 +1150,7 @@ Keine Beschreibung</translation>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ChatMsgItem.cpp" line="+273"/>
+        <location filename="../gui/feeds/ChatMsgItem.cpp" line="+272"/>
         <source>Quick Message</source>
         <translation>Schnelle Nachrricht</translation>
     </message>
@@ -1244,7 +1244,7 @@ Keine Beschreibung</translation>
         <translation>Verlauf</translation>
     </message>
     <message>
-        <location filename="../gui/settings/ChatPage.cpp" line="+211"/>
+        <location filename="../gui/settings/ChatPage.cpp" line="+210"/>
         <source>Incoming message in history</source>
         <translation>Eingehehende Nachricht aus dem Verlauf</translation>
     </message>
@@ -1267,7 +1267,7 @@ Keine Beschreibung</translation>
 <context>
     <name>ChatStyle</name>
     <message>
-        <location filename="../gui/chat/ChatStyle.cpp" line="+531"/>
+        <location filename="../gui/chat/ChatStyle.cpp" line="+374"/>
         <source>Standard style for group chat</source>
         <translation>Standard Stil für den Gruppenchat</translation>
     </message>
@@ -2344,7 +2344,7 @@ p, li { white-space: pre-wrap; }
         <translation>Erstelle Forumbeitrag</translation>
     </message>
     <message>
-        <location filename="../gui/forums/CreateForumMsg.cpp" line="+71"/>
+        <location filename="../gui/forums/CreateForumMsg.cpp" line="+70"/>
         <source>Paste retroshare Link</source>
         <translation>RetroShare Link einfügen</translation>
     </message>
@@ -2364,7 +2364,7 @@ p, li { white-space: pre-wrap; }
         <translation>Bitte einen Betreff und eine Beitrag eingeben</translation>
     </message>
     <message>
-        <location line="+177"/>
+        <location line="+53"/>
         <source>Add Extra File</source>
         <translation>Zusätzliche Datei hinzufügen</translation>
     </message>
@@ -2729,6 +2729,44 @@ p, li { white-space: pre-wrap; }
         <location line="+30"/>
         <source>Add Channel Logo</source>
         <translation>Kanal Logo hinzufügen</translation>
+    </message>
+</context>
+<context>
+    <name>EditForumDetails</name>
+    <message>
+        <location filename="../gui/forums/EditForumDetails.ui" line="+14"/>
+        <source>Forum Details</source>
+        <translation>Forum-Details</translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Cancel</source>
+        <translation>Abbrechen</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>OK</source>
+        <translation>OK</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Edit Forum Details</source>
+        <translation>Forum-Details bearbeiten</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Forum Info</source>
+        <translation>Forum Info</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Forum Name</source>
+        <translation>Forum Name</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Forum Description</source>
+        <translation>Forum Beschreibung</translation>
     </message>
 </context>
 <context>
@@ -3111,12 +3149,12 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/forums/ForumDetails.ui" line="+14"/>
         <location line="+18"/>
         <source>Forum Details</source>
-        <translation></translation>
+        <translation>Forum Details</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Forum Info</source>
-        <translation></translation>
+        <translation>Forum Info</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -3258,7 +3296,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ForumsDialog</name>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="+345"/>
+        <location filename="../gui/ForumsDialog.cpp" line="+346"/>
         <source>Subscribe to Forum</source>
         <translation>Forum abonnieren</translation>
     </message>
@@ -3278,7 +3316,12 @@ p, li { white-space: pre-wrap; }
         <translation>Zeige Foren-Details</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+4"/>
+        <source>Edit Forum Details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+23"/>
         <source>Reply</source>
         <translation>Antwort</translation>
     </message>
@@ -3298,7 +3341,7 @@ p, li { white-space: pre-wrap; }
         <translation>Alle reduzieren</translation>
     </message>
     <message>
-        <location line="+84"/>
+        <location line="+87"/>
         <source>Hide</source>
         <translation>Verbergen</translation>
     </message>
@@ -3315,7 +3358,7 @@ p, li { white-space: pre-wrap; }
         <translation>Beliebtheit:</translation>
     </message>
     <message>
-        <location line="+332"/>
+        <location line="+336"/>
         <location line="+107"/>
         <source>Anonymous</source>
         <translation>Anonym</translation>
@@ -3333,18 +3376,18 @@ p, li { white-space: pre-wrap; }
         <translation>keine</translation>
     </message>
     <message>
-        <location line="+491"/>
-        <location line="+142"/>
+        <location line="+487"/>
+        <location line="+91"/>
         <source>RetroShare</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-142"/>
+        <location line="-91"/>
         <source>No Forum Selected!</source>
         <translation>Kein Forum ausgewählt!</translation>
     </message>
     <message>
-        <location line="+127"/>
+        <location line="+76"/>
         <source>Re:</source>
         <translation></translation>
     </message>
@@ -3354,7 +3397,7 @@ p, li { white-space: pre-wrap; }
         <translation>Du kannst einem anonymen Autor nicht antworten</translation>
     </message>
     <message>
-        <location line="-1540"/>
+        <location line="-1498"/>
         <source>Your Forums</source>
         <translation>Deine Foren</translation>
     </message>
@@ -3496,8 +3539,8 @@ p, li { white-space: pre-wrap; }
         <translation>Druckvorschau</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="+121"/>
-        <location line="+1258"/>
+        <location filename="../gui/ForumsDialog.cpp" line="+127"/>
+        <location line="+1261"/>
         <source>Start New Thread</source>
         <translation>Erstelle neues Thema</translation>
     </message>
@@ -3525,7 +3568,7 @@ p, li { white-space: pre-wrap; }
         <translation>Inhalt</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="-1245"/>
+        <location filename="../gui/ForumsDialog.cpp" line="-1248"/>
         <location line="+3"/>
         <source>Mark as read</source>
         <translation>Als gelesen markieren</translation>
@@ -4337,7 +4380,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+32"/>
-        <location filename="../gui/im_history/ImHistoryBrowser.cpp" line="+262"/>
+        <location filename="../gui/im_history/ImHistoryBrowser.cpp" line="+261"/>
         <source>Copy</source>
         <translation>Kopieren</translation>
     </message>
@@ -6794,7 +6837,7 @@ p, li { white-space: pre-wrap; }
         <translation>Verbinde zum Freund</translation>
     </message>
     <message>
-        <location line="-214"/>
+        <location line="-213"/>
         <source>Profile</source>
         <translation>Profil</translation>
     </message>
@@ -6804,7 +6847,7 @@ p, li { white-space: pre-wrap; }
         <translation>RetroShare Link einfügen</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+25"/>
         <source>Welcome to RetroShare&apos;s group chat.</source>
         <translation>Willkommen bei RetroShare&apos;s Gruppenchat.</translation>
     </message>
@@ -7067,12 +7110,12 @@ p, li { white-space: pre-wrap; }
         <translation>Status Spalte ausblenden</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="-1525"/>
+        <location filename="../gui/PeersDialog.cpp" line="-1524"/>
         <source>Friends Storm</source>
         <translation>Aktivitäten</translation>
     </message>
     <message>
-        <location line="+227"/>
+        <location line="+226"/>
         <source>Recomend this Friend to...</source>
         <translation>Freund weiterempfehlen...</translation>
     </message>
@@ -8071,7 +8114,7 @@ p, li { white-space: pre-wrap; }
         <translation>Prüfsumme</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="+142"/>
+        <location filename="../main.cpp" line="+143"/>
         <location line="+6"/>
         <source>Multiple instances</source>
         <translation>Mehrere Instanzen</translation>

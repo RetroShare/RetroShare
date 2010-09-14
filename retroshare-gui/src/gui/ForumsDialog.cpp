@@ -30,6 +30,7 @@
 #include "forums/CreateForum.h"
 #include "forums/CreateForumMsg.h"
 #include "forums/ForumDetails.h"
+#include "forums/EditForumDetails.h"
 #include "msgs/MessageComposer.h"
 #include "settings/rsharesettings.h"
 #include "common/Emoticons.h"
@@ -168,6 +169,7 @@ ForumsDialog::ForumsDialog(QWidget *parent)
 
     m_bProcessSettings = false;
     m_bIsForumSubscribed = false;
+    m_bIsForumAdmin = false;
 
     connect( ui.forumTreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( forumListCustomPopupMenu( QPoint ) ) );
     connect( ui.threadTreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( threadListCustomPopupMenu( QPoint ) ) );
@@ -356,8 +358,13 @@ void ForumsDialog::forumListCustomPopupMenu( QPoint point )
     detailsForumAct->setDisabled (true);
     connect( detailsForumAct , SIGNAL( triggered() ), this, SLOT( showForumDetails() ) );
 
+    QAction *editForumDetailsAct = new QAction(QIcon(":/images/settings16.png"), tr("Edit Forum Details"), this);
+    editForumDetailsAct->setDisabled (true);
+    connect( editForumDetailsAct, SIGNAL( triggered() ), this, SLOT( editForumDetails() ) );
+
     if (!mCurrForumId.empty ()) {
         detailsForumAct->setEnabled (true);
+        editForumDetailsAct->setEnabled(m_bIsForumAdmin);
     }
 
     contextMnu.addAction( subForumAct );
@@ -365,6 +372,7 @@ void ForumsDialog::forumListCustomPopupMenu( QPoint point )
     contextMnu.addSeparator();
     contextMnu.addAction( newForumAct );
     contextMnu.addAction( detailsForumAct );
+    contextMnu.addAction( editForumDetailsAct );
 
     contextMnu.exec(QCursor::pos());
 }
@@ -896,6 +904,7 @@ void ForumsDialog::insertThreads()
     std::cerr << "ForumsDialog::insertThreads()" << std::endl;
 
     m_bIsForumSubscribed = false;
+    m_bIsForumAdmin = false;
 
     QTreeWidgetItem *forumItem = ui.forumTreeWidget->currentItem();
     if ((!forumItem) || (forumItem->parent() == NULL))
@@ -924,6 +933,9 @@ void ForumsDialog::insertThreads()
 
     ForumInfo fi;
     if (rsForums->getForumInfo (fId, fi)) {
+        if (fi.subscribeFlags & RS_DISTRIB_ADMIN) {
+            m_bIsForumAdmin = true;
+        }
         if (fi.subscribeFlags & (RS_DISTRIB_ADMIN | RS_DISTRIB_SUBSCRIBED)) {
             m_bIsForumSubscribed = true;
         }
@@ -1628,7 +1640,7 @@ void ForumsDialog::createmessage()
 void ForumsDialog::createthread()
 {
     if (mCurrForumId.empty ()) {
-        QMessageBox::information(this, tr("RetroShare"),tr("No Forum Selected!"));
+        QMessageBox::information(this, tr("RetroShare"), tr("No Forum Selected!"));
         return;
     }
 
@@ -1674,6 +1686,17 @@ void ForumsDialog::showForumDetails()
 
     fui.showDetails (mCurrForumId);
     fui.exec ();
+}
+
+void ForumsDialog::editForumDetails()
+{
+    if (mCurrForumId == "")
+    {
+            return;
+    }
+
+    EditForumDetails editUi(mCurrForumId, this);
+    editUi.exec();
 }
 
 void ForumsDialog::replytomessage()

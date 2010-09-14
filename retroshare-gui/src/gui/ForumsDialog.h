@@ -69,6 +69,7 @@ private slots:
     void unsubscribeToForum();
 
     void showForumDetails();
+    void editForumDetails();
 
     void previousMessage ();
     void nextMessage ();
@@ -112,6 +113,7 @@ private:
     std::string mCurrForumId;
     std::string mCurrThreadId;
     bool m_bIsForumSubscribed;
+    bool m_bIsForumAdmin;
 
     QFont m_ForumNameFont;
     QFont m_ItemFont;

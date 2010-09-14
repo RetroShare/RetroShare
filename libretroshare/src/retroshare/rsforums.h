@@ -130,6 +130,14 @@ virtual bool forumsChanged(std::list<std::string> &forumIds) = 0;
 virtual std::string createForum(std::wstring forumName, std::wstring forumDesc, uint32_t forumFlags) = 0;
 
 virtual bool getForumInfo(std::string fId, ForumInfo &fi) = 0;
+
+/*!
+ * allows peers to change information for the forum:
+ * can only change name and descriptions
+ *
+ */
+virtual bool setForumInfo(std::string fId, ForumInfo &fi) = 0;
+
 virtual bool getForumList(std::list<ForumInfo> &forumList) = 0;
 virtual bool getForumThreadList(std::string fId, std::list<ThreadInfoSummary> &msgs) = 0;
 virtual bool getForumThreadMsgList(std::string fId, std::string pId, std::list<ThreadInfoSummary> &msgs) = 0;

@@ -50,6 +50,7 @@ virtual bool forumsChanged(std::list<std::string> &forumIds);
 virtual std::string createForum(std::wstring forumName, std::wstring forumDesc, uint32_t forumFlags);
 
 virtual bool getForumInfo(std::string fId, ForumInfo &fi);
+virtual bool setForumInfo(std::string fId, ForumInfo &fi);
 virtual bool getForumList(std::list<ForumInfo> &forumList);
 virtual bool getForumThreadList(std::string fId, std::list<ThreadInfoSummary> &msgs);
 virtual bool getForumThreadMsgList(std::string fId, std::string tId, std::list<ThreadInfoSummary> &msgs);

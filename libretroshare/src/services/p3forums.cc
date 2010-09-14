@@ -128,6 +128,22 @@ bool p3Forums::getForumInfo(std::string fId, ForumInfo &fi)
 	return true;
 }
 
+/*!
+ * allows peers to change information for the forum:
+ * can only change name and descriptions
+ *
+ */
+bool p3Forums::setForumInfo(std::string fId, ForumInfo &fi)
+{
+	GroupInfo gi;
+
+	RsStackMutex stack(distribMtx);
+
+	gi.grpName = fi.forumName;
+	gi.grpDesc = fi.forumDesc;
+
+	return locked_editGroup(fId, gi);
+ }
 
 bool p3Forums::getForumList(std::list<ForumInfo> &forumList)
 {
