@@ -25,8 +25,6 @@
 
 #include "ui_CreateForumMsg.h"
 
-#include "gui/chat/ChatStyle.h"
-
 class AttachFileItem;
 
 class CreateForumMsg : public QMainWindow
@@ -63,8 +61,6 @@ protected:
 private:
     std::string mForumId;
     std::string mParentId;
-
-    ChatStyle style;
 
     /** Qt Designer generated object */
     Ui::CreateForumMsg ui;

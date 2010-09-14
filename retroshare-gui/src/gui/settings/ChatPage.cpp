@@ -198,7 +198,6 @@ void ChatPage::setPreviewMessages(QString &stylePath, QString styleVariant, QTex
 {
     ChatStyle style;
     style.setStylePath(stylePath, styleVariant);
-    style.loadEmoticons();
 
     textBrowser->clear();
 

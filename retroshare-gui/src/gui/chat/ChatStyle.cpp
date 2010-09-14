@@ -21,18 +21,11 @@
  ****************************************************************/
 
 #include <QApplication>
-#include <QDesktopWidget>
-#include <QWidget>
-#include <QFile>
-#include <QIcon>
-#include <QPushButton>
-#include <QXmlStreamReader>
-
-#include <iostream>
 
 #include "ChatStyle.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/notifyqt.h"
+#include "gui/common/Emoticons.h"
 
 #include <retroshare/rsinit.h>
 
@@ -106,154 +99,6 @@ bool ChatStyle::setStyleFromSettings(enumStyleType styleType)
     return result;
 }
 
-void ChatStyle::loadEmoticons()
-{
-    QString sm_codes;
-    bool internalEmoticons = true;
-
-#if defined(Q_OS_WIN32)
-    // first try external emoticons
-    QFile sm_file(QApplication::applicationDirPath() + "/emoticons/emotes.acs");
-    if(sm_file.open(QIODevice::ReadOnly))
-    {
-        internalEmoticons = false;
-    } else {
-        // then embedded emotions
-        sm_file.setFileName(":/smileys/emotes.acs");
-        if(!sm_file.open(QIODevice::ReadOnly))
-        {
-            std::cout << "error opening ressource file" << std::endl ;
-            return ;
-        }
-    }
-#else
-    QFile sm_file(QString(":/smileys/emotes.acs"));
-    if(!sm_file.open(QIODevice::ReadOnly))
-    {
-        std::cout << "error opening ressource file" << std::endl ;
-        return ;
-    }
-#endif
-
-    sm_codes = sm_file.readAll();
-    sm_file.close();
-
-    sm_codes.remove("\n");
-    sm_codes.remove("\r");
-
-    int i = 0;
-    QString smcode;
-    QString smfile;
-    while(sm_codes[i] != '{')
-    {
-        i++;
-    }
-    while (i < sm_codes.length()-2)
-    {
-        smcode = "";
-        smfile = "";
-
-        while(sm_codes[i] != '\"')
-        {
-            i++;
-        }
-        i++;
-        while (sm_codes[i] != '\"')
-        {
-            smcode += sm_codes[i];
-            i++;
-
-        }
-        i++;
-
-        while(sm_codes[i] != '\"')
-        {
-            i++;
-        }
-        i++;
-        while(sm_codes[i] != '\"' && sm_codes[i+1] != ';')
-        {
-            smfile += sm_codes[i];
-            i++;
-        }
-        i++;
-        if(!smcode.isEmpty() && !smfile.isEmpty()) {
-            if (internalEmoticons) {
-                smileys.insert(smcode, ":/"+smfile);
-            } else {
-                smileys.insert(smcode, smfile);
-            }
-        }
-    }
-
-    // init <img> embedder
-    defEmbedImg.InitFromAwkwardHash(smileys);
-}
-
-void ChatStyle::showSmileyWidget(QWidget *parent, QWidget *button, const char *slotAddMethod)
-{
-    QWidget *smWidget = new QWidget(parent, Qt::Popup);
-
-    smWidget->setAttribute( Qt::WA_DeleteOnClose);
-    smWidget->setWindowTitle("Emoticons");
-    smWidget->setWindowIcon(QIcon(QString(":/images/rstray3.png")));
-    smWidget->setBaseSize(4*24, (smileys.size()/4)*24);
-
-    //Warning: this part of code was taken from kadu instant messenger;
-    //         It was EmoticonSelector::alignTo(QWidget* w) function there
-    //         comments are Polish, I dont' know how does it work...
-    // oblicz pozycj� widgetu do kt�rego r�wnamy
-    // oblicz rozmiar selektora
-    QPoint pos = button->mapToGlobal(QPoint(0,0));
-    QSize e_size = smWidget->sizeHint();
-    // oblicz rozmiar pulpitu
-    QSize s_size = QApplication::desktop()->size();
-    // oblicz dystanse od widgetu do lewego brzegu i do prawego
-    int l_dist = pos.x();
-    int r_dist = s_size.width() - (pos.x() + button->width());
-    // oblicz pozycj� w zale�no�ci od tego czy po lewej stronie
-    // jest wi�cej miejsca czy po prawej
-    int x;
-    if (l_dist >= r_dist)
-        x = pos.x() - e_size.width();
-    else
-        x = pos.x() + button->width();
-    // oblicz pozycj� y - centrujemy w pionie
-    int y = pos.y() + button->height()/2 - e_size.height()/2;
-    // je�li wychodzi poza doln� kraw�d� to r�wnamy do niej
-    if (y + e_size.height() > s_size.height())
-        y = s_size.height() - e_size.height();
-    // je�li wychodzi poza g�rn� kraw�d� to r�wnamy do niej
-    if (y < 0)
-        y = 0;
-    // ustawiamy selektor na wyliczonej pozycji
-    smWidget->move(x, y);
-
-    x = 0;
-    y = 0;
-
-    QHashIterator<QString, QString> i(smileys);
-    while(i.hasNext())
-    {
-        i.next();
-        QPushButton *smButton = new QPushButton("", smWidget);
-        smButton->setGeometry(x*24, y*24, 24,24);
-        smButton->setIconSize(QSize(24,24));
-        smButton->setIcon(QPixmap(i.value()));
-        smButton->setToolTip(i.key());
-        ++x;
-        if(x > 4)
-        {
-            x = 0;
-            y++;
-        }
-        QObject::connect(smButton, SIGNAL(clicked()), parent, slotAddMethod);
-        QObject::connect(smButton, SIGNAL(clicked()), smWidget, SLOT(close()));
-    }
-
-    smWidget->show();
-}
-
 static QString getStyle(QDir &styleDir, QString styleVariant, enumGetStyle type)
 {
     QString style;
@@ -323,7 +168,7 @@ QString ChatStyle::formatText(QString &message, unsigned int flag)
         RsChat::embedHtml(doc, body, defEmbedAhref);
     }
     if (flag & CHAT_FORMATTEXT_EMBED_SMILEYS) {
-        RsChat::embedHtml(doc, body, defEmbedImg);
+        RsChat::embedHtml(doc, body, Emoticons::defEmbedImg);
     }
 
     return doc.toString(-1);		// -1 removes any annoying carriage return misinterpreted by QTextEdit
@@ -414,8 +259,6 @@ static bool getStyleInfo(QString stylePath, QString stylePathRelative, ChatStyle
         // No info file found
         return false;
     }
-
-    QDir dir(QApplication::applicationDirPath());
 
     QXmlStreamReader reader;
     reader.setDevice(&xmlFile);

@@ -39,6 +39,7 @@
 #include "gui/settings/RsharePeerSettings.h"
 #include "gui/connect/ConfCertDialog.h"
 #include "idle/idle.h"
+#include "gui/common/Emoticons.h"
 
 /*** WINDOWS DON'T LIKE THIS - REDEFINES VER numbers.
 #include <gui/qskinobject/qskinobject.h>
@@ -168,6 +169,8 @@ int main(int argc, char *argv[])
 
 	rshare.setQuitOnLastWindowClosed(true);
 #else
+	Emoticons::load();
+
 	MainWindow *w = MainWindow::Create ();
 
 	// I'm using a signal to transfer the hashing info to the mainwindow, because Qt schedules signals properly to

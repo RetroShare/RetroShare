@@ -71,7 +71,6 @@ ImHistoryBrowser::ImHistoryBrowser(bool isPrivateChatIn, IMHistoryKeeper &histKe
     }
 
     style.setStyleFromSettings(ChatStyle::TYPE_HISTORY);
-    style.loadEmoticons();
 
     ui.listWidget->setItemDelegate(new IMHistoryItemDelegate);
 

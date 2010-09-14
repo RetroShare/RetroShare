@@ -49,6 +49,7 @@
 #include "gui/notifyqt.h"
 #include "../RsAutoUpdatePage.h"
 #include "gui/common/StatusDefs.h"
+#include "gui/common/Emoticons.h"
 
 #include "gui/feeds/AttachFileItem.h"
 #include "gui/msgs/MessageComposer.h"
@@ -105,7 +106,6 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
 
   last_status_send_time = 0 ;
   style.setStyleFromSettings(ChatStyle::TYPE_PRIVATE);
-  style.loadEmoticons();
 
   /* Hide or show the frames */
   showAvatarFrame(true);  
@@ -716,7 +716,7 @@ void PopupChatDialog::setFont()
 
 void PopupChatDialog::smileyWidget()
 { 
-    style.showSmileyWidget(this, ui.emoteiconButton, SLOT(addSmiley()));
+    Emoticons::showSmileyWidget(this, ui.emoteiconButton, SLOT(addSmiley()), true);
 }
 
 //============================================================================

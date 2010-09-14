@@ -30,6 +30,7 @@
 #include <QFileDialog>
 #include "common/vmessagebox.h"
 #include "common/StatusDefs.h"
+#include "common/Emoticons.h"
 #include <gui/mainpagestack.h>
 
 #include "retroshare/rsinit.h"
@@ -197,7 +198,6 @@ PeersDialog::PeersDialog(QWidget *parent)
     ui.lineEdit->setFont(mCurrentFont);
 
     style.setStyleFromSettings(ChatStyle::TYPE_PUBLIC);
-    style.loadEmoticons();
 
     setChatInfo(tr("Welcome to RetroShare's group chat."), QString::fromUtf8("blue"));
 
@@ -1387,7 +1387,7 @@ void PeersDialog::displayInfoChatMenu(const QPoint& pos)
 
 void PeersDialog::smileyWidgetgroupchat()
 {
-    style.showSmileyWidget(this, ui.emoticonBtn, SLOT(addSmileys()));
+    Emoticons::showSmileyWidget(this, ui.emoticonBtn, SLOT(addSmileys()), true);
 }
 
 void PeersDialog::addSmileys()

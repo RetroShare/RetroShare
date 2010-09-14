@@ -24,7 +24,6 @@
 
 #include "mainpage.h"
 #include "RsAutoUpdatePage.h"
-#include "chat/ChatStyle.h"
 #include "ui_ForumsDialog.h"
 
 class ForumsDialog : public RsAutoUpdatePage 
@@ -118,8 +117,6 @@ private:
     QFont m_ItemFont;
     int m_LastViewType;
     std::string m_LastForumID;
-
-    ChatStyle style;
 
     /** Qt Designer generated object */
     Ui::ForumsDialog ui;

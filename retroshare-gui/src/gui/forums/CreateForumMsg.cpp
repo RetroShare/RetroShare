@@ -35,6 +35,7 @@
 #include "gui/settings/rsharesettings.h"
 #include "gui/RetroShareLink.h"
 #include "gui/feeds/AttachFileItem.h"
+#include "gui/common/Emoticons.h"
 
 #include <sys/stat.h>
 
@@ -59,8 +60,6 @@ CreateForumMsg::CreateForumMsg(std::string fId, std::string pId)
     connect( ui.pastersButton, SIGNAL(clicked() ), this , SLOT(pasteLink()));
 
     newMsg();
-
-    style.loadEmoticons();
 }
 
 /** context menu searchTablewidget2 **/
@@ -189,7 +188,7 @@ void CreateForumMsg::cancelMsg()
 
 void CreateForumMsg::smileyWidgetForums()
 {
-    style.showSmileyWidget(this, ui.emoticonButton, SLOT(addSmileys()));
+    Emoticons::showSmileyWidget(this, ui.emoticonButton, SLOT(addSmileys()), false);
 }
 
 void CreateForumMsg::addSmileys()

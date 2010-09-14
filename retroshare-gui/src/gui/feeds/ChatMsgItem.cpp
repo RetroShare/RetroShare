@@ -154,7 +154,6 @@ void ChatMsgItem::insertChat(std::string &message)
 
     // embed smileys ?
     if (Settings->valueFromGroup(QString("Chat"), QString::fromUtf8("Emoteicons_GroupChat"), true).toBool()) {
-        style.loadEmoticons();
         formatFlag |= CHAT_FORMATTEXT_EMBED_SMILEYS;
      }
 

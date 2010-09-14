@@ -74,8 +74,6 @@ public:
         TYPE_HISTORY
     };
 
-    QHash<QString, QString> smileys;
-
 public:
     /* Default constructor */
     ChatStyle();
@@ -84,12 +82,10 @@ public:
 
     bool setStylePath(const QString &stylePath, const QString &styleVariant);
     bool setStyleFromSettings(enumStyleType styleType);
-    void loadEmoticons();
 
     QString formatMessage(enumFormatMessage type, QString &name, QDateTime &timestamp, QString &message, unsigned int flag);
     QString formatText(QString &message, unsigned int flag);
 
-    void showSmileyWidget(QWidget *parent, QWidget *button, const char *slotAddMethod);
     static bool getAvailableStyles(enumStyleType styleType, QList<ChatStyleInfo> &styles);
     static bool getAvailableVariants(const QString &stylePath, QStringList &variants);
 
@@ -103,7 +99,6 @@ private:
 
     /** store default information for embedding HTML */
     RsChat::EmbedInHtmlAhref defEmbedAhref;
-    RsChat::EmbedInHtmlImg defEmbedImg;
 };
 
 #endif // _CHATSTYLE_H

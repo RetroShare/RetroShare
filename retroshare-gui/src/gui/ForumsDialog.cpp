@@ -26,12 +26,13 @@
 #include <QItemDelegate>
 
 #include "ForumsDialog.h"
-#include "gui/RetroShareLink.h"
-#include "gui/forums/CreateForum.h"
-#include "gui/forums/CreateForumMsg.h"
-#include "gui/forums/ForumDetails.h"
+#include "RetroShareLink.h"
+#include "forums/CreateForum.h"
+#include "forums/CreateForumMsg.h"
+#include "forums/ForumDetails.h"
 #include "msgs/MessageComposer.h"
-#include "gui/settings/rsharesettings.h"
+#include "settings/rsharesettings.h"
+#include "common/Emoticons.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsforums.h>
@@ -214,8 +215,6 @@ ForumsDialog::ForumsDialog(QWidget *parent)
     m_ForumNameFont = QFont("Times", 12, QFont::Bold);
     ui.forumName->setFont(m_ForumNameFont);
     ui.threadTitle->setFont(m_ForumNameFont);
-
-    style.loadEmoticons();
 
     QMenu *forummenu = new QMenu();
     forummenu->addAction(ui.actionCreate_Forum);
@@ -1423,14 +1422,7 @@ void ForumsDialog::insertPost()
 
     QString extraTxt;
     extraTxt += QString::fromStdWString(msg.msg);
-
-    QHashIterator<QString, QString> i(style.smileys);
-    while(i.hasNext())
-    {
-        i.next();
-        foreach(QString code, i.key().split("|"))
-            extraTxt.replace(code, "<img src=\"" + i.value() + "\" />");
-    }
+    Emoticons::formatText(extraTxt);
 
     ui.postText->setHtml(extraTxt);
     ui.threadTitle->setText(QString::fromStdWString(msg.title));
