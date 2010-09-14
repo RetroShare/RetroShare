@@ -132,6 +132,12 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     _header->resizeSection ( PRIORITY, 100 );
     _header->resizeSection ( REMAINING, 100 );
 
+    connect(_header, SIGNAL(sortIndicatorChanged(int, Qt::SortOrder)), this, SLOT(saveSortIndicatorDwl(int, Qt::SortOrder)));
+
+    // set default column and sort order for download
+    _sortColDwl = 0;
+    _sortOrderDwl = Qt::AscendingOrder;
+    
     // Set Upload list model
     ULListModel = new QStandardItemModel(0,8);
     ULListModel->setHeaderData(UNAME, Qt::Horizontal, tr("Name", "i.e: file name"));
@@ -154,8 +160,8 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 
 
   	//Selection Setup
-	  selectionup = ui.uploadsList->selectionModel();
-	  ui.uploadsList->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    selectionup = ui.uploadsList->selectionModel();
+    ui.uploadsList->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
     /* Set header resize modes and initial section sizes Uploads TreeView*/
     QHeaderView * upheader = ui.uploadsList->header () ;
@@ -177,6 +183,10 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 
     connect(upheader, SIGNAL(sortIndicatorChanged(int, Qt::SortOrder)), this, SLOT(saveSortIndicatorUpl(int, Qt::SortOrder)));
 
+    // set default column and sort order for upload
+    _sortColUpl = 0;
+    _sortOrderUpl = Qt::AscendingOrder;
+	
     FileTransferInfoWidget *ftiw = new FileTransferInfoWidget();
     ui.fileTransferInfoWidget->setWidget(ftiw);
     ui.fileTransferInfoWidget->setWidgetResizable(true);
@@ -651,6 +661,10 @@ static void QListDelete (const QList <QStandardItem*> &List)
 
 void TransfersDialog::insertTransfers() 
 {
+	ui.downloadList->sortByColumn(_sortColDwl, _sortOrderDwl);
+	/* disable for performance issues, enable after insert all transfers */
+	ui.downloadList->setSortingEnabled(false);
+
 	/* get the download lists */
 	std::list<std::string> downHashes;
 	rsFiles->FileDownloads(downHashes);
@@ -786,6 +800,10 @@ void TransfersDialog::insertTransfers()
 		 else 
 			removeIndex++;
 	}
+	
+    ui.downloadList->setSortingEnabled(true);
+
+    ui.uploadsList->sortByColumn(_sortColUpl, _sortOrderUpl);
 
 	// Now show upload hashes
 	//
@@ -1375,6 +1393,17 @@ void TransfersDialog::clearcompleted()
    	rsFiles->FileClearCompleted();
 }
 
+void TransfersDialog::saveSortIndicatorDwl(int logicalIndex, Qt::SortOrder order)
+{
+	_sortColDwl = logicalIndex;;
+	_sortOrderDwl = order;
+}
+
+void TransfersDialog::saveSortIndicatorUpl(int logicalIndex, Qt::SortOrder order)
+{
+	_sortColUpl = logicalIndex;;
+	_sortOrderUpl = order;
+}
 void TransfersDialog::showFileDetails()
 {
 	std::string file_hash ;
