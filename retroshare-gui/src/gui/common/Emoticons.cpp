@@ -181,6 +181,7 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
         smButton->setIconSize(QSize(buttonWidth, buttonHeight));
         smButton->setIcon(QPixmap(i.value()));
         smButton->setToolTip(i.key());
+        smButton->setStyleSheet("QPushButton:hover {border: 3px solid white; border-radius: 2px;}");
         smButton->setFlat(true);
         ++x;
         if(x >= countPerLine)
