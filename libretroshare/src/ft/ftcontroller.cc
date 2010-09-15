@@ -69,6 +69,9 @@ static const uint32_t SAVE_TRANSFERS_DELAY 			= 61	; // save transfer progress e
 static const uint32_t INACTIVE_CHUNKS_CHECK_DELAY 	= 60	; // time after which an inactive chunk is released
 static const uint32_t MAX_TIME_INACTIVE_REQUEUED 	= 60  ; // time after which an inactive ftFileControl is bt-queued
 
+static const uint32_t FT_FILECONTROL_QUEUE_ADD_END 			= 0 ;
+static const uint32_t FT_FILECONTROL_QUEUE_ADD_AFTER_CACHE 	= 1 ;
+
 ftFileControl::ftFileControl()
 	:mTransfer(NULL), mCreator(NULL),
 	 mState(DOWNLOADING), mSize(0), mFlags(0),
@@ -437,13 +440,40 @@ void ftController::checkDownloadQueue()
 		}
 }
 
-void ftController::locked_addToQueue(ftFileControl* ftfc)
+void ftController::locked_addToQueue(ftFileControl* ftfc,int add_strategy)
 {
 #ifdef DEBUG_DWLQUEUE
 	std::cerr << "Queueing ftfileControl " << (void*)ftfc << ", name=" << ftfc->mName << std::endl ;
 #endif
-	_queue.push_back(ftfc) ;
-	locked_checkQueueElement(_queue.size()-1) ;
+
+	switch(add_strategy)
+	{
+		case FT_FILECONTROL_QUEUE_ADD_END:			 _queue.push_back(ftfc) ;
+																 locked_checkQueueElement(_queue.size()-1) ;
+																 break ;
+		case FT_FILECONTROL_QUEUE_ADD_AFTER_CACHE:
+																 {
+																	 // We add the transfer just before the first non cache transfer.
+																	 //
+																	 uint32_t pos =0;
+																	 while(pos < _queue.size() && (_queue[pos]->mFlags & RS_FILE_HINTS_CACHE)>0) 
+																		 ++pos ;
+
+																	 _queue.push_back(NULL) ;
+
+																	 for(int i=int(_queue.size())-1;i>pos;--i)
+																	 {
+																		 _queue[i] = _queue[i-1] ;
+																		 locked_checkQueueElement(i) ;
+																	 }
+
+																	 _queue[pos] = ftfc ;
+																	 locked_checkQueueElement(pos) ;
+
+																	 std::cerr << "!!!!!!!!!!!!!! Added cache transfer at position " << pos << std::endl ;
+																 }
+																 break ;
+	}
 }
 
 void ftController::locked_queueRemove(uint32_t pos)
@@ -1248,7 +1278,7 @@ bool 	ftController::FileRequest(const std::string& fname, const std::string& has
 	/* add structures into the accessible data. Needs to be locked */
 	{
 		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
-		locked_addToQueue(ftfc) ;
+		locked_addToQueue(ftfc, (flags & RS_FILE_HINTS_CACHE)?FT_FILECONTROL_QUEUE_ADD_AFTER_CACHE : FT_FILECONTROL_QUEUE_ADD_END ) ;
 
 #ifdef CONTROL_DEBUG
 		std::cerr << "ftController::FileRequest() Created ftFileCreator @: " << fc;

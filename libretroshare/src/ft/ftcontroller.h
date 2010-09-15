@@ -217,7 +217,7 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 		/* RunTime Functions */
 		void 	checkDownloadQueue();							// check the whole queue for inactive files
 
-		void  locked_addToQueue(ftFileControl*) ;					// insert this one into the queue
+		void  locked_addToQueue(ftFileControl*,int strategy) ;// insert this one into the queue
 		void  locked_bottomQueue(uint32_t pos) ; 					// bottom queue file which is at this position
 		void  locked_topQueue(uint32_t pos) ; 						// top queue file which is at this position
 		void  locked_checkQueueElement(uint32_t pos) ;			// check the state of this element in the queue
