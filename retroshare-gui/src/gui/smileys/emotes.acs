@@ -4,7 +4,7 @@
 ";-)|;)":"smileys/wink.png";
 ":')":"smileys/crying.png";
 ":-O|:O":"smileys/surprised.png";
-":-S|:S":"smileys/wondering.png";
+":-S|:S":"smileys/confused.png";
 ":-(|:(":"smileys/sad.png";
 ":-*|:-{}":"smileys/kissing.png";
 ":-P|:P":"smileys/tongue.png";
@@ -17,6 +17,7 @@
 "(P)|(p)":"smileys/camera.png";
 "(C)|(c)":"smileys/coffee.png";
 "*JOKINGLY*|:))|:-))":"smileys/laugh.png";
+"*TIRED*":"smileys/sleeping.png";
 "bj|baijiu":"smileys/liquor.png";
 "(L)|(l)":"smileys/love.png";
 "(U)|(u)":"smileys/love-over.png";
@@ -27,7 +28,7 @@
 "(T)|(t)":"smileys/phone.png";
 "P)":"smileys/pirate.png";
 "(~~)":"smileys/pumpkin.png";
-":X":"smileys/in-love.png";
+":X|:x|:-x|:-X|":"smileys/amorous.png";
 "(ip)":"smileys/island.png";
 "(^)":"smileys/cake.png";
 "<:-P|<:-p":"smileys/party.png";
