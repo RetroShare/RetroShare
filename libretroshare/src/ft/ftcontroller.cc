@@ -1844,6 +1844,8 @@ bool ftController::RequestCacheFile(RsPeerId id, std::string path, std::string h
 			CompletedCache(hash);
 			return true ;
 		}
+		else
+			return false ;
 	}
 
 	FileRequest(hash, hash, size, path, RS_FILE_HINTS_CACHE | RS_FILE_HINTS_NO_SEARCH, ids);
