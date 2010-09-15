@@ -30,6 +30,9 @@ void EmbedInHtmlImg::InitFromAwkwardHash(const QHash< QString, QString >& hash)
 	QString newRE;
 	for(QHash<QString,QString>::const_iterator it = hash.begin(); it != hash.end(); ++it)
 		foreach(QString smile, it.key().split("|")) {
+			if (smile.isEmpty()) {
+				continue;
+			}
 			smileys.insert(smile, it.value());
 			newRE += "(" + QRegExp::escape(smile) + ")|";
 		}

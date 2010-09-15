@@ -91,7 +91,6 @@ void Emoticons::load()
         {
             smcode += sm_codes[i];
             i++;
-
         }
         i++;
 
@@ -107,6 +106,10 @@ void Emoticons::load()
         }
         i++;
         if(!smcode.isEmpty() && !smfile.isEmpty()) {
+            while (smcode.right(1) == "|") {
+                smcode.remove(smcode.length() - 1, 1);
+            }
+   
             if (internalEmoticons) {
                 Smileys.insert(smcode, ":/"+smfile);
             } else {
