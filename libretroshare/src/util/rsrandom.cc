@@ -2,9 +2,9 @@
 #include "rsrandom.h"
 
 uint32_t RSRandom::index = 0 ;
-static bool auto_seed = RSRandom::seed(time(NULL)) ;
 std::vector<uint32_t> RSRandom::MT(RSRandom::N,0u) ;
 RsMutex RSRandom::rndMtx ;
+static bool auto_seed = RSRandom::seed(time(NULL)) ;
 
 bool RSRandom::seed(uint32_t s) 
 {
