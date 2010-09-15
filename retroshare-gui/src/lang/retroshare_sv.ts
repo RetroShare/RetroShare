@@ -10044,8 +10044,8 @@ Vill du skicka ett meddelande i stället</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="476"/>
-        <source> (me)</source>
-        <translation> (jag)</translation>
+        <source>me</source>
+        <translation>jag</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="637"/>

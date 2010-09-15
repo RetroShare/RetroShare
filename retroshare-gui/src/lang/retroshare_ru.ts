@@ -8599,8 +8599,8 @@ Do you want to send them a Message instead</source>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="476"/>
-        <source> (me)</source>
-        <translation> (меня)</translation>
+        <source>me</source>
+        <translation>меня</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="637"/>

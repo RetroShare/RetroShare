@@ -7982,8 +7982,8 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="476"/>
-        <source> (me)</source>
-        <translation> (我)</translation>
+        <source>me</source>
+        <translation>我</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="635"/>

@@ -256,7 +256,7 @@ PeersDialog::PeersDialog(QWidget *parent)
     if (rsPeers->getPeerDetails(rsPeers->getOwnId(),pd)) {
         QString titleStr("<span style=\"font-size:16pt; font-weight:500;"
                          "color:#32cd32;\">%1</span>");
-        ui.nicklabel->setText(titleStr.arg(QString::fromStdString(pd.name) + tr(" (me)") + QString::fromStdString(pd.location)));
+        ui.nicklabel->setText(titleStr.arg(QString::fromStdString(pd.name) + " (" + tr("me") + ") " + QString::fromStdString(pd.location)));
     }
 
     /* Hide platform specific features */

@@ -8470,8 +8470,8 @@ Do you want to send them a Message instead</source>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="476"/>
-        <source> (me)</source>
-        <translation> (自分)</translation>
+        <source>me</source>
+        <translation>自分</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="637"/>

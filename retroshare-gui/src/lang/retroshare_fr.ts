@@ -10814,8 +10814,8 @@ Voulez-vous lui envoyer un message à la place ?</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="476"/>
-        <source> (me)</source>
-        <translation type="unfinished"> (Moi)</translation>
+        <source>me</source>
+        <translation type="unfinished">Moi</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="637"/>

@@ -2730,6 +2730,16 @@ p, li { white-space: pre-wrap; }
         <source>Add Channel Logo</source>
         <translation>Kanal Logo hinzufügen</translation>
     </message>
+    <message>
+        <location filename="../gui/channels/EditChanDetails.cpp" line="+139"/>
+        <source>Load File</source>
+        <translation type="unfinished">Lade Datei</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Pictures (*.png *.xpm *.jpg)</source>
+        <translation type="unfinished">Bilder (*.png *.xpm *.jpg)</translation>
+    </message>
 </context>
 <context>
     <name>EditForumDetails</name>
@@ -3318,7 +3328,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+4"/>
         <source>Edit Forum Details</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Forum-Details bearbeiten</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -6852,7 +6862,12 @@ p, li { white-space: pre-wrap; }
         <translation>Willkommen bei RetroShare&apos;s Gruppenchat.</translation>
     </message>
     <message>
-        <location line="+148"/>
+        <location line="+57"/>
+        <source>me</source>
+        <translation>ich</translation>
+    </message>
+    <message>
+        <location line="+91"/>
         <source>Expand all</source>
         <translation>Alle erweitern</translation>
     </message>
@@ -6916,11 +6931,6 @@ p, li { white-space: pre-wrap; }
         <location line="+5"/>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
         <translation>Ordner können nicht für Drag&apos;n&apos;Drop genutzt werden. Nur Dateien werden akzeptiert.</translation>
-    </message>
-    <message>
-        <location line="-1369"/>
-        <source> (me)</source>
-        <translation> (ich)</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.ui" line="+438"/>
@@ -7056,7 +7066,7 @@ p, li { white-space: pre-wrap; }
         <translation>Verlauf löschen</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="+139"/>
+        <location filename="../gui/PeersDialog.cpp" line="-1230"/>
         <source>Profile View</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10272,7 +10282,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TransfersDialog</name>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="+217"/>
+        <location filename="../gui/TransfersDialog.cpp" line="+232"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
@@ -10282,13 +10292,13 @@ p, li { white-space: pre-wrap; }
         <translation>Fertige ausblenden</translation>
     </message>
     <message>
-        <location line="-144"/>
-        <location line="+54"/>
+        <location line="-154"/>
+        <location line="+60"/>
         <source>Status</source>
         <translation>Status</translation>
     </message>
     <message>
-        <location line="-58"/>
+        <location line="-64"/>
         <source>Completed</source>
         <translation>Fertiggestellt</translation>
     </message>
@@ -10342,20 +10352,20 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="-2"/>
-        <location line="+55"/>
+        <location line="+61"/>
         <source>Name</source>
         <comment>i.e: file name</comment>
         <translation>Name</translation>
     </message>
     <message>
-        <location line="-54"/>
-        <location line="+55"/>
+        <location line="-60"/>
+        <location line="+61"/>
         <source>Size</source>
         <comment>i.e: file size</comment>
         <translation>Grösse</translation>
     </message>
     <message>
-        <location line="-53"/>
+        <location line="-59"/>
         <source>Speed</source>
         <comment>i.e: Download speed</comment>
         <translation>Geschwindigkeit</translation>
@@ -10378,7 +10388,7 @@ p, li { white-space: pre-wrap; }
         <translation>Kern-ID</translation>
     </message>
     <message>
-        <location line="+48"/>
+        <location line="+54"/>
         <source>Progress</source>
         <comment>i.e: % uploaded</comment>
         <translation>Fortschritt</translation>
@@ -10395,7 +10405,7 @@ p, li { white-space: pre-wrap; }
         <translation>Übertragen</translation>
     </message>
     <message>
-        <location line="+115"/>
+        <location line="+119"/>
         <source>Play</source>
         <translation>Abspielen</translation>
     </message>
@@ -10460,12 +10470,12 @@ p, li { white-space: pre-wrap; }
         <translation>Ende</translation>
     </message>
     <message>
-        <location line="+71"/>
+        <location line="+119"/>
         <source>Priority (Speed)...</source>
         <translation>Prioritä t(Geschwindigkeit)...</translation>
     </message>
     <message>
-        <location line="-69"/>
+        <location line="-117"/>
         <source>Streaming</source>
         <translation>Streaming</translation>
     </message>
@@ -10475,12 +10485,12 @@ p, li { white-space: pre-wrap; }
         <translation>Zufall</translation>
     </message>
     <message>
-        <location line="+67"/>
+        <location line="+115"/>
         <source>Chunk strategy</source>
         <translation>Blockstrategie</translation>
     </message>
     <message>
-        <location line="+376"/>
+        <location line="+391"/>
         <source>Queued</source>
         <translation>In Warteschleife</translation>
     </message>
@@ -10490,12 +10500,12 @@ p, li { white-space: pre-wrap; }
         <translation>Pausiert</translation>
     </message>
     <message>
-        <location line="-123"/>
+        <location line="-137"/>
         <source>Transferring</source>
         <translation>Übertrage</translation>
     </message>
     <message>
-        <location line="+334"/>
+        <location line="+352"/>
         <source>RetroShare</source>
         <translation></translation>
     </message>
@@ -10520,7 +10530,7 @@ p, li { white-space: pre-wrap; }
         <translation>Soll dieser Download wirklich abgebrochen und gelöscht werden?</translation>
     </message>
     <message>
-        <location line="-820"/>
+        <location line="-897"/>
         <source>Speed / Queue position</source>
         <translation>Geschwindigkeits- / Warteschlangenposition</translation>
     </message>
@@ -10536,7 +10546,7 @@ p, li { white-space: pre-wrap; }
         <translation>Download Zeit</translation>
     </message>
     <message>
-        <location line="+48"/>
+        <location line="+54"/>
         <source>Peer</source>
         <comment>i.e: user name</comment>
         <translation>Nachbar</translation>
@@ -10547,84 +10557,84 @@ p, li { white-space: pre-wrap; }
         <translation>Prüfsumme</translation>
     </message>
     <message>
-        <location line="+106"/>
-        <location line="+462"/>
+        <location line="+110"/>
+        <location line="+525"/>
         <source>Slower</source>
         <translation>Langsamer</translation>
     </message>
     <message>
-        <location line="-460"/>
-        <location line="+461"/>
+        <location line="-523"/>
+        <location line="+524"/>
         <location line="+2"/>
         <source>Average</source>
         <translation>Durchschnitt</translation>
     </message>
     <message>
-        <location line="-461"/>
-        <location line="+460"/>
+        <location line="-524"/>
+        <location line="+523"/>
         <source>Faster</source>
         <translation>Schneller</translation>
     </message>
     <message>
-        <location line="-404"/>
+        <location line="-419"/>
         <source>Move in Queue...</source>
         <translation>Verschiebe in Warteschlange...</translation>
     </message>
     <message>
-        <location line="+255"/>
+        <location line="+256"/>
+        <location line="+143"/>
         <location line="+129"/>
-        <location line="+125"/>
         <source>Failed</source>
         <translation>Gescheitert</translation>
     </message>
     <message>
-        <location line="-250"/>
-        <location line="+126"/>
-        <location line="+125"/>
+        <location line="-268"/>
+        <location line="+140"/>
+        <location line="+129"/>
         <source>Okay</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location line="-124"/>
-        <location line="+125"/>
+        <location line="-128"/>
+        <location line="+129"/>
         <source>Waiting</source>
         <translation>Warte</translation>
     </message>
     <message>
-        <location line="-124"/>
+        <location line="-128"/>
         <source>Downloading</source>
         <translation>Ladend</translation>
     </message>
     <message>
-        <location line="-116"/>
-        <location line="+117"/>
-        <location line="+125"/>
+        <location line="-130"/>
+        <location line="+131"/>
+        <location line="+129"/>
         <location line="+1"/>
         <source>Complete</source>
         <translation>Vollständig</translation>
     </message>
     <message>
-        <location line="-122"/>
+        <location line="-126"/>
         <source>Unknown</source>
         <translation>Unbekannt</translation>
     </message>
     <message>
-        <location line="+47"/>
+        <location line="+45"/>
         <source>version: </source>
         <translation>Version: </translation>
     </message>
     <message>
-        <location line="+73"/>
+        <location line="+79"/>
         <source>Uploading</source>
         <translation>Hochladend</translation>
     </message>
     <message>
-        <location line="-121"/>
+        <location line="-125"/>
         <source>Checking...</source>
         <translation>Überprüfe...</translation>
     </message>
     <message>
-        <location line="-487"/>
+        <location line="-550"/>
         <source>Force Check</source>
         <translation>Erzwinge Überprüfung</translation>
     </message>

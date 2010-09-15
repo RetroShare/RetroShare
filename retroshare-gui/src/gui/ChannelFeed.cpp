@@ -112,6 +112,9 @@ ChannelFeed::ChannelFeed(QWidget *parent)
 	model->appendRow(popularChannels);
 	model->appendRow(otherChannels);
 
+    treeView->expand(ownChannels->index());
+    treeView->expand(subcribedChannels->index());
+
 	//added from ahead
 	updateChannelList();
     
