@@ -100,7 +100,9 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     DLDelegate = new DLListDelegate();
     ui.downloadList->setItemDelegate(DLDelegate);
 
-    ui.downloadList->setAutoScroll(false) ;
+// Why disable autoscroll ?
+// With disabled autoscroll, the treeview doesn't scroll with cursor move
+//    ui.downloadList->setAutoScroll(false) ;
 
     // workaround for Qt bug, should be solved in next Qt release 4.7.0
     // http://bugreports.qt.nokia.com/browse/QTBUG-8270
@@ -159,7 +161,9 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     ULDelegate = new ULListDelegate();
     ui.uploadsList->setItemDelegate(ULDelegate);
 
-    ui.uploadsList->setAutoScroll(false) ;
+// Why disable autoscroll ?
+// With disabled autoscroll, the treeview doesn't scroll with cursor move
+//    ui.uploadsList->setAutoScroll(false) ;
 
     ui.uploadsList->setRootIsDecorated(false);
 
