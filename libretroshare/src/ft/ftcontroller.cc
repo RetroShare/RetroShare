@@ -469,8 +469,6 @@ void ftController::locked_addToQueue(ftFileControl* ftfc,int add_strategy)
 
 																	 _queue[pos] = ftfc ;
 																	 locked_checkQueueElement(pos) ;
-
-																	 std::cerr << "!!!!!!!!!!!!!! Added cache transfer at position " << pos << std::endl ;
 																 }
 																 break ;
 	}
