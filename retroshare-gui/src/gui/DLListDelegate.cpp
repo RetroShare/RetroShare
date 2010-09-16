@@ -55,6 +55,10 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 	qlonglong completed;
 	qlonglong downloadtime;
 
+	// prepare
+	painter->save();
+	painter->setClipRect(opt.rect);
+
 	//set text color
         QVariant value = index.data(Qt::TextColorRole);
         if(value.isValid() && qvariant_cast<QColor>(value).isValid()) {
@@ -75,7 +79,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
                         }
                         painter->fillRect(option.rect, option.palette.brush(cg, QPalette::Highlight));
                 } else {
-                        value = index.data(Qt::BackgroundColorRole);
+                        value = index.data(Qt::BackgroundRole);
                         if(value.isValid() && qvariant_cast<QColor>(value).isValid()) {
                                 painter->fillRect(option.rect, qvariant_cast<QColor>(value));
                         }
@@ -215,6 +219,9 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 		default:
 			painter->drawText(option.rect, Qt::AlignCenter, index.data().toString());
 	}
+
+	// done
+	painter->restore();
 }
 
 QSize DLListDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const
