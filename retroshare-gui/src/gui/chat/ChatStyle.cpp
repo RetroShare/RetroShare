@@ -195,7 +195,7 @@ QString ChatStyle::formatMessage(enumFormatMessage type, QString &name, QDateTim
 
     if (style.isEmpty()) {
         // default style
-        style = "<table width='100%'><tr><td><b>%name%</b></td><td width='130' align='right'>%timestamp%</td></tr></table><table width='100%'><tr><td>%message%</td></tr></table>";
+        style = "<table width='100%'><tr><td><b>%name%</b></td><td width='130' align='right'>%time%</td></tr></table><table width='100%'><tr><td>%message%</td></tr></table>";
     }
 
     unsigned int formatFlag = 0;
@@ -232,16 +232,9 @@ QString ChatStyle::formatMessage(enumFormatMessage type, QString &name, QDateTim
 //	}
 //    }
 
-    // if the message is on same date show only time
-    QString timeFormat;
-//    if (timestamp.daysTo(QDateTime::currentDateTime()) == 0) {
-//        timeFormat = "hh:mm:ss";
-//    } else {
-        timeFormat = "dd.MM.yyyy hh:mm:ss";
-//    }
-
     QString formatMsg = style.replace("%name%", name)
-                             .replace("%timestamp%", timestamp.toString(timeFormat))
+                             .replace("%date%", timestamp.date().toString("dd.MM.yyyy"))
+                             .replace("%time%", timestamp.time().toString("hh:mm:ss"))
                              .replace("%message%", msg);
 
     return formatMsg;
