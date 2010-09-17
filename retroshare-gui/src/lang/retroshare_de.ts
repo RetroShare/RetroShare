@@ -1041,7 +1041,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/ChannelFeed.ui" line="-147"/>
-        <location filename="../gui/ChannelFeed.cpp" line="+36"/>
+        <location filename="../gui/ChannelFeed.cpp" line="+39"/>
         <source>Post to Channel</source>
         <translation>Kanalbeitrag erstellen</translation>
     </message>
@@ -1267,7 +1267,7 @@ Keine Beschreibung</translation>
 <context>
     <name>ChatStyle</name>
     <message>
-        <location filename="../gui/chat/ChatStyle.cpp" line="+374"/>
+        <location filename="../gui/chat/ChatStyle.cpp" line="+367"/>
         <source>Standard style for group chat</source>
         <translation>Standard Stil für den Gruppenchat</translation>
     </message>
@@ -2634,7 +2634,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/settings/DirectoriesPage.ui" line="+605"/>
         <source>Shared Directories</source>
-        <translation>Freigegebene Verzeichnisse</translation>
+        <translation>Freigegebene Ordner</translation>
     </message>
     <message>
         <location filename="../gui/settings/DirectoriesPage.cpp" line="+39"/>
@@ -2660,12 +2660,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+29"/>
         <source>Set Incoming Directory</source>
-        <translation>Eingehende Dateien Verzeichnis</translation>
+        <translation>Ordner für eingehende Dateien</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Set Partials Directory</source>
-        <translation>Partielle Dateien</translation>
+        <translation>Ordner für temporäre Dateien</translation>
     </message>
     <message>
         <location filename="../gui/settings/DirectoriesPage.ui" line="-90"/>
@@ -2680,12 +2680,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-67"/>
         <source>Partials Directory</source>
-        <translation>Partielle Dateien</translation>
+        <translation>Temporäre Dateien</translation>
     </message>
     <message>
         <location line="+57"/>
         <source>Automatically share incoming directory (Recommended)</source>
-        <translation>Automatisch eingehendes Verzeichnis freigeben</translation>
+        <translation>Eingehende Ordner automatisch freigeben</translation>
     </message>
 </context>
 <context>
@@ -4958,7 +4958,7 @@ p, li { white-space: pre-wrap; }
 
 Normalerweise hält RetroShare jetzt sicher alle Festplattenzugriffe auf das Verzeichnis an.
 
-Bitte gib etwas SPeicher frei und drücke OK.</translation>
+Bitte gib etwas Speicher frei und drücke OK.</translation>
     </message>
     <message>
         <location line="+12"/>
@@ -5948,7 +5948,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+32"/>
         <source>Share Files for your Friends</source>
-        <translation>Verzeichnis für deine Freunde freigeben</translation>
+        <translation>Ordner für deine Freunde freigeben</translation>
     </message>
     <message>
         <location line="+111"/>
@@ -8331,7 +8331,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+59"/>
         <source>Directory</source>
-        <translation>Verzeichnis</translation>
+        <translation>Ordner</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -8399,17 +8399,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/QuickStartWizard.cpp" line="+193"/>
         <source>Select A Folder To Share</source>
-        <translation>Wählen Sie ein Verzeichnis zum Freigeben</translation>
+        <translation>Wählen Sie ein Ordner zum Freigeben</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Shared Directory Added!</source>
-        <translation>Verzeichnis wurde hinzugefügt!</translation>
+        <translation>Ordner wurde hinzugefügt!</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Do you really want to stop sharing this directory ? </source>
-        <translation>Möchtest Du wirklich die Freigabe dieses Verzeichnises entfernen ? </translation>
+        <translation>Möchtes Du die Freigabe dieses Ordners wirklich aufheben ?</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8453,7 +8453,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+4"/>
         <source>Directories</source>
-        <translation>Verzeichnisse</translation>
+        <translation>Ordner</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8539,7 +8539,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+4"/>
         <source>My Directories</source>
-        <translation>Meine Verzeichnisse</translation>
+        <translation>Meine Ordner</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -9108,7 +9108,7 @@ Es hilft auch, wenn Sie sich hinter einer Firewall/VPN befinden.</translation>
     <message>
         <location line="+86"/>
         <source>Transfer</source>
-        <translation type="unfinished">Übertragung</translation>
+        <translation>Übertragung</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -9148,7 +9148,7 @@ Es hilft auch, wenn Sie sich hinter einer Firewall/VPN befinden.</translation>
     <message>
         <location line="+18"/>
         <source>Directories</source>
-        <translation>Verzeichnisse</translation>
+        <translation>Ordner</translation>
     </message>
     <message>
         <location line="+27"/>
@@ -9176,7 +9176,7 @@ Es hilft auch, wenn Sie sich hinter einer Firewall/VPN befinden.</translation>
     <message>
         <location filename="../gui/ShareDialog.ui" line="+17"/>
         <source>RetroShare Share Folder</source>
-        <translation>RetroShare Verzeichnis freigeben	</translation>
+        <translation>RetroShare Ordner freigeben</translation>
     </message>
     <message>
         <location line="+75"/>
@@ -9189,12 +9189,12 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:26pt; font-weight:600; color:#ffffff;&quot;&gt;Verzeichnis freigeben&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans Serif&apos;; font-size:26pt; font-weight:600; color:#ffffff;&quot;&gt;Ordner freigeben&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Share Folder</source>
-        <translation>Gebe Ordner frei</translation>
+        <translation>Ordner</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -9223,21 +9223,21 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+3"/>
-        <source>Anonymous</source>
-        <translation>Anonym</translation>
+        <source>Network Wide</source>
+        <translation>Netzwerkweit</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+20"/>
         <source>Browseable by Friends</source>
         <translation>Durchsuchbar von Freunden</translation>
     </message>
     <message>
         <location line="+3"/>
-        <source>Friends</source>
-        <translation>Freunde</translation>
+        <source>Browsable</source>
+        <translation>Durchsuchbar</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+25"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
@@ -9247,7 +9247,7 @@ p, li { white-space: pre-wrap; }
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../gui/ShareDialog.cpp" line="+58"/>
+        <location filename="../gui/ShareDialog.cpp" line="+56"/>
         <source>Select A Folder To Share</source>
         <translation>Wähle einen Ordner zum Freigeben aus</translation>
     </message>
@@ -9311,38 +9311,33 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ShareManager</name>
     <message>
-        <location filename="../gui/ShareManager.cpp" line="+57"/>
+        <location filename="../gui/ShareManager.cpp" line="+60"/>
         <source>Add a Share Directory</source>
-        <translation>Verzeichnis hinzufügen</translation>
+        <translation>Ordner hinzufügen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Stop sharing selected Directory</source>
-        <translation>Stoppe die Freigabe des Verzeichnisses</translation>
+        <translation>Stoppe die Freigabe des Ordners</translation>
     </message>
     <message>
-        <location line="+141"/>
-        <source>Select A Folder To Share</source>
-        <translation>Wähle ein Verzeichnis zum Freigeben</translation>
+        <location line="+171"/>
+        <source>Do you really want to stop sharing this directory ?</source>
+        <translation>Möchtes Du die Freigabe dieses Ordners wirklich aufheben ?</translation>
     </message>
     <message>
-        <location line="+56"/>
-        <source>Do you really want to stop sharing this directory ? </source>
-        <translation>Möchtes Du wirklich die Freigabe dieses Ordners aufheben ? </translation>
-    </message>
-    <message>
-        <location filename="../gui/ShareManager.ui" line="+234"/>
-        <location filename="../gui/ShareManager.cpp" line="-176"/>
+        <location filename="../gui/ShareManager.ui" line="+257"/>
+        <location filename="../gui/ShareManager.cpp" line="-151"/>
         <source>Remove</source>
         <translation>Entfernen</translation>
     </message>
     <message>
-        <location filename="../gui/ShareManager.cpp" line="+180"/>
+        <location filename="../gui/ShareManager.cpp" line="+155"/>
         <source>Warning!</source>
         <translation>Warnung!</translation>
     </message>
     <message>
-        <location filename="../gui/ShareManager.ui" line="-217"/>
+        <location filename="../gui/ShareManager.ui" line="-240"/>
         <source>RetroShare Share Manager</source>
         <translation>RetroShare Freigabe Manager</translation>
     </message>
@@ -9365,22 +9360,35 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;This is a list of shared folders . You can add and remove folders using the button on the left. &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;This is a list of shared folders. You can add and remove folders using the buttons at the bottom.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;When you add a new folder, intially all files in that folder are shared.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;You can separately setup share flags for each shared directory:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Browsable &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: files are browsable from your direct friends.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Browsable&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: files are browsable from your direct friends.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Network Wide&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: files can be downloaded by anybody through anonymous tunnels.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Das ist die Liste der freigegebenen Ordner. Mit den unteren Knöpfen kannst Du neue Ordner hinzufügen oder vorhandene Ordner entfernen.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Wenn Du einen neuen Ordner hinzufügst, werden alle Dateien aus dem Ordner und Unterordnern freigegeben.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;Du kannst für jeden freigegebenen Ordner die Art der Freigabe einstellen:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Durchsuchbar&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: Dateien sind von Deinen direkten Freunden durchsuchbar.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Netzwerkweit&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: Dateien können von jedem über anoynme Tunnel heruntergeladen werden.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+64"/>
         <source>Directory</source>
-        <translation>Verzeichnis</translation>
+        <translation>Ordner</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Virtual Folder</source>
+        <translation>Virtueller Ordner</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Network Wide</source>
-        <translation>Im gesamten Netzwerk</translation>
+        <translation>Netzwerkweit</translation>
     </message>
     <message>
         <location line="+8"/>
@@ -9398,12 +9406,7 @@ p, li { white-space: pre-wrap; }
         <translation>Hinzufügen</translation>
     </message>
     <message>
-        <location filename="../gui/ShareManager.cpp" line="-48"/>
-        <source>Shared Directory Added!</source>
-        <translation>Verzeichnis wurde hinzugefügt!</translation>
-    </message>
-    <message>
-        <location filename="../gui/ShareManager.ui" line="-94"/>
+        <location line="-117"/>
         <source>Shared Folder Manager</source>
         <translation>Freigabe Manager</translation>
     </message>
@@ -9424,12 +9427,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+29"/>
         <source>Friends Folders</source>
-        <translation>Verzeichnisse der Freunde</translation>
+        <translation>Ordner der Freunde</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>My Folders</source>
-        <translation>Meine Verzeichnisse</translation>
+        <translation>Meine Ordner</translation>
     </message>
     <message>
         <location line="-91"/>
@@ -9478,7 +9481,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-550"/>
         <source>Open Folder</source>
-        <translation>Verzeichnis öffnen</translation>
+        <translation>Ordner öffnen</translation>
     </message>
     <message>
         <location line="+559"/>
@@ -10282,7 +10285,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TransfersDialog</name>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="+232"/>
+        <location filename="../gui/TransfersDialog.cpp" line="+236"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
@@ -10292,13 +10295,13 @@ p, li { white-space: pre-wrap; }
         <translation>Fertige ausblenden</translation>
     </message>
     <message>
-        <location line="-154"/>
-        <location line="+60"/>
+        <location line="-158"/>
+        <location line="+62"/>
         <source>Status</source>
         <translation>Status</translation>
     </message>
     <message>
-        <location line="-64"/>
+        <location line="-66"/>
         <source>Completed</source>
         <translation>Fertiggestellt</translation>
     </message>
@@ -10352,20 +10355,20 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="-2"/>
-        <location line="+61"/>
+        <location line="+63"/>
         <source>Name</source>
         <comment>i.e: file name</comment>
         <translation>Name</translation>
     </message>
     <message>
-        <location line="-60"/>
-        <location line="+61"/>
+        <location line="-62"/>
+        <location line="+63"/>
         <source>Size</source>
         <comment>i.e: file size</comment>
         <translation>Grösse</translation>
     </message>
     <message>
-        <location line="-59"/>
+        <location line="-61"/>
         <source>Speed</source>
         <comment>i.e: Download speed</comment>
         <translation>Geschwindigkeit</translation>
@@ -10388,7 +10391,7 @@ p, li { white-space: pre-wrap; }
         <translation>Kern-ID</translation>
     </message>
     <message>
-        <location line="+54"/>
+        <location line="+56"/>
         <source>Progress</source>
         <comment>i.e: % uploaded</comment>
         <translation>Fortschritt</translation>
@@ -10405,7 +10408,7 @@ p, li { white-space: pre-wrap; }
         <translation>Übertragen</translation>
     </message>
     <message>
-        <location line="+119"/>
+        <location line="+121"/>
         <source>Play</source>
         <translation>Abspielen</translation>
     </message>
@@ -10422,7 +10425,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+9"/>
         <source>Open Folder</source>
-        <translation>Verzeichnis öffnen</translation>
+        <translation>Ordner öffnen</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -10530,7 +10533,7 @@ p, li { white-space: pre-wrap; }
         <translation>Soll dieser Download wirklich abgebrochen und gelöscht werden?</translation>
     </message>
     <message>
-        <location line="-897"/>
+        <location line="-901"/>
         <source>Speed / Queue position</source>
         <translation>Geschwindigkeits- / Warteschlangenposition</translation>
     </message>
@@ -10546,7 +10549,7 @@ p, li { white-space: pre-wrap; }
         <translation>Download Zeit</translation>
     </message>
     <message>
-        <location line="+54"/>
+        <location line="+56"/>
         <source>Peer</source>
         <comment>i.e: user name</comment>
         <translation>Nachbar</translation>
@@ -10557,7 +10560,7 @@ p, li { white-space: pre-wrap; }
         <translation>Prüfsumme</translation>
     </message>
     <message>
-        <location line="+110"/>
+        <location line="+112"/>
         <location line="+525"/>
         <source>Slower</source>
         <translation>Langsamer</translation>

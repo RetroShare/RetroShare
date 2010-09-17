@@ -235,7 +235,6 @@ int ftFileCreator::locked_initializeFileAttrs()
 #ifdef FILE_DEBUG
 		std::cerr << "ftFileCreator::initializeFileAttrs() trying (r+b) " << file_name << " this: " << this << std::endl;
 #endif
-		std::cerr << std::endl;
 	}
 
 	/* 

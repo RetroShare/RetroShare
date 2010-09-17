@@ -529,7 +529,7 @@ FileIndex::~FileIndex()
 	delete root;
 }
 
-int	FileIndex::setRootDirectories(std::list<std::string> inlist, time_t updtime)
+int	FileIndex::setRootDirectories(std::list<std::string> &inlist, time_t updtime)
 {
 	/* set update time to zero */
 	std::map<std::string, DirEntry *>::iterator it;

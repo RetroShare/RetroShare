@@ -363,8 +363,19 @@ int	RsDirUtil::breakupDirList(std::string path,
 
 bool	RsDirUtil::checkDirectory(std::string dir)
 {
+	int val;
+	mode_t st_mode;
+#ifdef WINDOWS_SYS
+	std::wstring wdir;
+	librs::util::ConvertUtf8ToUtf16(dir, wdir);
+	struct _stat buf;
+	val = _wstat(wdir.c_str(), &buf);
+	st_mode = buf.st_mode;
+#else
 	struct stat buf;
-	int val = stat(dir.c_str(), &buf);
+	val = stat(dir.c_str(), &buf);
+	st_mode = buf.st_mode;
+#endif
 	if (val == -1)
 	{
 #ifdef RSDIR_DEBUG 
@@ -373,7 +384,7 @@ bool	RsDirUtil::checkDirectory(std::string dir)
 #endif
 		return false;
 	} 
-	else if (!S_ISDIR(buf.st_mode))
+	else if (!S_ISDIR(st_mode))
 	{
 		// Some other type - error.
 #ifdef RSDIR_DEBUG 

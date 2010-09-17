@@ -92,6 +92,7 @@ const uint32_t CB_CODE_MEDIA = 0x0004;
 struct SharedDirInfo
 {
 	std::string filename ;
+	std::string virtualname ;
 	uint32_t shareflags ;		// RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_BROWSABLE
 };
 
@@ -184,7 +185,7 @@ class RsFiles
 		virtual std::string getPartialsDirectory() = 0;
 
 		virtual bool    getSharedDirectories(std::list<SharedDirInfo> &dirs) = 0;
-		virtual bool    addSharedDirectory(SharedDirInfo dir) = 0;
+		virtual bool    addSharedDirectory(SharedDirInfo& dir) = 0;
 		virtual bool    updateShareFlags(const SharedDirInfo& dir) = 0;	// updates the flags. The directory should already exist !
 		virtual bool    removeSharedDirectory(std::string dir) = 0;
 

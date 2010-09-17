@@ -23,7 +23,6 @@
 #define _SHAREDIALOG_H
 
 #include <QDialog>
-#include <QFileDialog>
 
 #include "ui_ShareDialog.h"
 
@@ -31,13 +30,11 @@ class ShareDialog : public QDialog
 {
   Q_OBJECT
 
-	public:
+public:
 
   /** Default constructor */
   ShareDialog( QWidget *parent = 0, Qt::WFlags flags = 0);
   /** Default destructor */
-
-  bool messageBoxOk(QString);
 
 public slots:
 
@@ -55,7 +52,6 @@ private slots:
 
 private:
 
-  std::string currentDir;
   /** Qt Designer generated object */
   Ui::ShareDialog ui;
 };

@@ -30,53 +30,43 @@
 
 class ShareManager : public QDialog
 {
-  Q_OBJECT
+    Q_OBJECT
 
-	public:
-	  static void showYourself() ;
-	  static void postModDirectories(bool update_local);
+public:
+    static void showYourself() ;
+    static void postModDirectories(bool update_local);
 
 private:
-  /** Default constructor */
-  ShareManager( QWidget *parent = 0, Qt::WFlags flags = 0);
-  /** Default destructor */
-  ~ShareManager();
+    /** Default constructor */
+    ShareManager( QWidget *parent = 0, Qt::WFlags flags = 0);
+    /** Default destructor */
+    ~ShareManager();
 
-  /** Loads the settings for this page */
-  void load();
-  bool messageBoxOk(QString);
-
-public slots:
-
-  void showShareDialog();
-
+    /** Loads the settings for this page */
+    void load();
 
 protected:
-	virtual void showEvent(QShowEvent * event);
+    virtual void showEvent(QShowEvent * event);
 
 private slots:
+    /** Create the context popup menu and it's submenus */
+    void shareddirListCostumPopupMenu( QPoint point );
 
-  /** Create the context popup menu and it's submenus */
-  void shareddirListCostumPopupMenu( QPoint point );
-
-  void addShareDirectory();
-  void removeShareDirectory();
-  void updateFlags(bool);
-
+    void showShareDialog();
+    void removeShareDirectory();
+    void updateFlags(bool);
 
 private:
+    static ShareManager *_instance;
+    bool isLoading;
 
-
-  static ShareManager *_instance;
-  bool isLoading;
-
-  /** Define the popup menus for the Context menu */
-  QMenu* contextMnu;
+    /** Define the popup menus for the Context menu */
+    QMenu* contextMnu;
     /** Defines the actions for the context menu */
-  QAction* removeAct;
+    QAction* removeAct;
 
-  /** Qt Designer generated object */
-  Ui::ShareManager ui;
+    /** Qt Designer generated object */
+    Ui::ShareManager ui;
 };
 
 #endif

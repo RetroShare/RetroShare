@@ -801,7 +801,7 @@ void    FileIndexMonitor::updateShareFlags(const SharedDirInfo& dir)
 	cb->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
 }
 	/* interface */
-void    FileIndexMonitor::setSharedDirectories(std::list<SharedDirInfo> dirs)
+void    FileIndexMonitor::setSharedDirectories(std::list<SharedDirInfo>& dirs)
 {
 	cb->notifyListPreChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
 
@@ -822,8 +822,7 @@ void    FileIndexMonitor::setSharedDirectories(std::list<SharedDirInfo> dirs)
 
 		/* check if dir exists before adding in */
 		std::string path = (*it).filename;
-		DIR *dir = opendir(path.c_str());
-		if (!dir)
+		if (!RsDirUtil::checkDirectory(path))
 		{
 #ifdef FIM_DEBUG
 			std::cerr << "FileIndexMonitor::setSharedDirectories()";
@@ -834,7 +833,6 @@ void    FileIndexMonitor::setSharedDirectories(std::list<SharedDirInfo> dirs)
 		{
 			checkeddirs.push_back(*it);
 		}
-		closedir(dir);
 	}
 
 	{
@@ -915,7 +913,10 @@ bool    FileIndexMonitor::internal_setSharedDirectories()
 	{
 		/* get the head directory */
 		std::string root_dir = (*it).filename;
-		std::string top_dir  = RsDirUtil::getTopDir(root_dir);
+		std::string top_dir  = it->virtualname;
+		if (top_dir.empty()) {
+			top_dir = RsDirUtil::getTopDir(root_dir);
+		}
 
 		/* if unique -> add, else add modifier  */
 		bool unique = false;
@@ -931,6 +932,8 @@ bool    FileIndexMonitor::internal_setSharedDirectories()
 			if (directoryMap.end()== (cit=directoryMap.find(tst_dir)))
 			{
 				unique = true;
+				/* store calculated name */
+				it->virtualname = tst_dir;
 				/* add it! */
 				directoryMap[tst_dir.c_str()] = *it;
 #ifdef FIM_DEBUG

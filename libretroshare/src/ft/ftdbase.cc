@@ -198,6 +198,7 @@ std::list<RsItem *> ftFiMonitor::saveList(bool &cleanup)
 	{
 		RsFileConfigItem *fi = new RsFileConfigItem();
 		fi->file.path = (*it).filename ;
+		fi->file.name = (*it).virtualname ;
 		fi->flags = (*it).shareflags ;
 
 		sList.push_back(fi);
@@ -234,6 +235,7 @@ bool    ftFiMonitor::loadList(std::list<RsItem *> load)
 
 		SharedDirInfo info ;
 		info.filename = fi->file.path;
+		info.virtualname = fi->file.name;
 		info.shareflags = fi->flags & (RS_FILE_HINTS_BROWSABLE | RS_FILE_HINTS_NETWORK_WIDE) ;
 
 		dirList.push_back(info) ;
@@ -252,7 +254,7 @@ void	ftFiMonitor::updateShareFlags(const SharedDirInfo& info)
 	IndicateConfigChanged();
 }
 
-void	ftFiMonitor::setSharedDirectories(std::list<SharedDirInfo> dirList)
+void	ftFiMonitor::setSharedDirectories(std::list<SharedDirInfo>& dirList)
 {
 	FileIndexMonitor::setSharedDirectories(dirList);
 

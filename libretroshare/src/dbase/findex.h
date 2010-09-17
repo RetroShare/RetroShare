@@ -204,7 +204,7 @@ class FileIndex
 		~FileIndex();
 
 		/* control root entries */
-		int	setRootDirectories(std::list<std::string> inlist, time_t utime);
+		int	setRootDirectories(std::list<std::string> &inlist, time_t utime);
 		int	getRootDirectories(std::list<std::string> &outlist);
 
 		/* update (index building) */

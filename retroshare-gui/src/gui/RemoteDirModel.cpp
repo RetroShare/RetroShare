@@ -803,16 +803,16 @@ void RemoteDirModel::downloadDirectory(const DirDetails & dirDetails, int prefix
 	if (dirDetails.type & DIR_TYPE_FILE)
 	{
 		std::list<std::string> srcIds;
-		QString cleanPath = QDir::cleanPath((rsFiles->getDownloadDirectory() + "/" + dirDetails.path.substr(prefixLen)).c_str());
+		QString cleanPath = QDir::cleanPath(QString::fromUtf8(rsFiles->getDownloadDirectory().c_str()) + "/" + QString::fromUtf8(dirDetails.path.substr(prefixLen).c_str()));
 
 		srcIds.push_back(dirDetails.id);
-		rsFiles->FileRequest(dirDetails.name, dirDetails.hash, dirDetails.count, cleanPath.toStdString(), RS_FILE_HINTS_NETWORK_WIDE, srcIds);
+		rsFiles->FileRequest(dirDetails.name, dirDetails.hash, dirDetails.count, cleanPath.toUtf8().constData(), RS_FILE_HINTS_NETWORK_WIDE, srcIds);
 	}
 	else if (dirDetails.type & DIR_TYPE_DIR)
 	{
 		std::list<DirStub>::const_iterator it;
 		QDir dwlDir(rsFiles->getDownloadDirectory().c_str());
-		QString cleanPath = QDir::cleanPath(QString(dirDetails.path.c_str()).right(dirDetails.path.length() - prefixLen));
+		QString cleanPath = QDir::cleanPath(QString::fromUtf8(dirDetails.path.substr(prefixLen).c_str()));
 
 		if (!dwlDir.mkpath(cleanPath)) return;
 

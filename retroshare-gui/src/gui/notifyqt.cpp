@@ -152,7 +152,7 @@ void NotifyQt::notifyTurtleSearchResult(uint32_t search_id,const std::list<Turtl
 
 void NotifyQt::notifyHashingInfo(std::string fileinfo)
 {
-	emit hashingInfoChanged(QString::fromStdString(fileinfo)) ;
+        emit hashingInfoChanged(QString::fromUtf8(fileinfo.c_str())) ;
 }
 
 //void NotifyQt::notifyChat()

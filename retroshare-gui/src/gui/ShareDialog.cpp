@@ -23,7 +23,7 @@
 #include <retroshare/rsfiles.h>
 
 #include <QContextMenuEvent>
-
+#include <QFileDialog>
 #include <QMessageBox>
 #include <QComboBox>
 
@@ -31,89 +31,73 @@
 ShareDialog::ShareDialog(QWidget *parent, Qt::WFlags flags)
   : QDialog(parent, flags)
 {
-  /* Invoke Qt Designer generated QObject setup routine */
-  ui.setupUi(this);
+    /* Invoke Qt Designer generated QObject setup routine */
+    ui.setupUi(this);
 
-  connect(ui.browseButton, SIGNAL(clicked( bool ) ), this , SLOT( browseDirectory() ) );
-  connect(ui.okButton, SIGNAL(clicked( bool ) ), this , SLOT( addDirectory() ) );
-  connect(ui.closeButton, SIGNAL(clicked()), this, SLOT(closedialog()));
-  
-	load();
-	
+    connect(ui.browseButton, SIGNAL(clicked( bool ) ), this , SLOT( browseDirectory() ) );
+    connect(ui.okButton, SIGNAL(clicked( bool ) ), this , SLOT( addDirectory() ) );
+    connect(ui.closeButton, SIGNAL(clicked()), this, SLOT(closedialog()));
 
+    ui.okButton->setEnabled(false);
+
+    load();
 }
 
 void ShareDialog::load()
 {
-
-  ui.localpath_lineEdit->clear();
-  ui.anonymouscheckBox->setChecked(false);
-  ui.friendscheckBox->setChecked(false);
+    ui.localpath_lineEdit->clear();
+    ui.browsableCheckBox->setChecked(false);
+    ui.networkwideCheckBox->setChecked(false);
 }
 
 void ShareDialog::browseDirectory()
 {
+    /* select a dir*/
+    QString qdir = QFileDialog::getExistingDirectory(this, tr("Select A Folder To Share"), "", QFileDialog::DontUseNativeDialog | QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
 
-	/* select a dir*/
-	QString qdir = QFileDialog::getExistingDirectory(this, tr("Select A Folder To Share"), "", QFileDialog::DontUseNativeDialog | QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-
-	/* add it to the server */
-	currentDir = qdir.toStdString();
-	if (currentDir != "")
-	{		
-		ui.localpath_lineEdit->setText(QString::fromStdString(currentDir));
-	}
+    /* add it to the server */
+    if (qdir.isEmpty()) {
+        ui.okButton->setEnabled(false);
+        return;
+    }
+    ui.okButton->setEnabled(true);
+    ui.localpath_lineEdit->setText(qdir);
 }
 
 void ShareDialog::addDirectory()
 {
+    SharedDirInfo sdi ;
+    sdi.filename = ui.localpath_lineEdit->text().toUtf8().constData();
+    sdi.virtualname = ui.virtualpath_lineEdit->text().toUtf8().constData();
 
-		SharedDirInfo sdi ;
-		sdi.filename = currentDir  ;
-		
-		if( ui.anonymouscheckBox->isChecked() && ui.friendscheckBox->isChecked())
-		{
-      sdi.shareflags = RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_BROWSABLE ;
-		}
-		if ( ui.anonymouscheckBox->isChecked() && !ui.friendscheckBox->isChecked() )
-		{
-      sdi.shareflags = RS_FILE_HINTS_NETWORK_WIDE;
-		}
-		if ( ui.friendscheckBox->isChecked() && !ui.anonymouscheckBox->isChecked())
-		{
-      sdi.shareflags = RS_FILE_HINTS_BROWSABLE ;
-		}
-		
-		rsFiles->addSharedDirectory(sdi);
+    sdi.shareflags = 0;
 
-		//messageBoxOk(tr("Shared Directory Added!"));
-		load();
-		close();
+    if (ui.browsableCheckBox->isChecked()) {
+        sdi.shareflags |= RS_FILE_HINTS_BROWSABLE ;
+    }
+    if (ui.networkwideCheckBox->isChecked()) {
+        sdi.shareflags |= RS_FILE_HINTS_NETWORK_WIDE;
+    }
 
+    rsFiles->addSharedDirectory(sdi);
+
+    load();
+    close();
 }
 
 void ShareDialog::showEvent(QShowEvent *event)
 {
-	if (!event->spontaneous())
-	{
-		load();
-	}
+    if (!event->spontaneous())
+    {
+        load();
+    }
 }
 
 void ShareDialog::closedialog()
 {
-  ui.localpath_lineEdit->clear();
-  ui.anonymouscheckBox->setChecked(false);
-  ui.friendscheckBox->setChecked(false);
-  
-  close();
-}
+    ui.localpath_lineEdit->clear();
+    ui.browsableCheckBox->setChecked(false);
+    ui.networkwideCheckBox->setChecked(false);
 
-bool ShareDialog::messageBoxOk(QString msg)
-{
-    QMessageBox mb("Share Manager InfoBox!",msg,QMessageBox::Information,QMessageBox::Ok,0,0);
-    mb.setButtonText( QMessageBox::Ok, "OK" );
-		mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
-    mb.exec();
-    return true;
+    close();
 }
