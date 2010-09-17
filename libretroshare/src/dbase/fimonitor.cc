@@ -801,13 +801,13 @@ void    FileIndexMonitor::updateShareFlags(const SharedDirInfo& dir)
 	cb->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
 }
 	/* interface */
-void    FileIndexMonitor::setSharedDirectories(std::list<SharedDirInfo>& dirs)
+void    FileIndexMonitor::setSharedDirectories(const std::list<SharedDirInfo>& dirs)
 {
 	cb->notifyListPreChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
 
 	std::list<SharedDirInfo> checkeddirs;
 
-	std::list<SharedDirInfo>::iterator it;
+	std::list<SharedDirInfo>::const_iterator it;
 #ifdef FIM_DEBUG
 	std::cerr << "FileIndexMonitor::setSharedDirectories() :\n";
 #endif

@@ -254,7 +254,7 @@ void	ftFiMonitor::updateShareFlags(const SharedDirInfo& info)
 	IndicateConfigChanged();
 }
 
-void	ftFiMonitor::setSharedDirectories(std::list<SharedDirInfo>& dirList)
+void	ftFiMonitor::setSharedDirectories(const std::list<SharedDirInfo>& dirList)
 {
 	FileIndexMonitor::setSharedDirectories(dirList);
 

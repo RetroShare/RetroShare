@@ -578,7 +578,7 @@ bool	ftServer::setSharedDirectories(std::list<SharedDirInfo> &dirs)
 	return true;
 }
 
-bool 	ftServer::addSharedDirectory(SharedDirInfo& dir)
+bool 	ftServer::addSharedDirectory(const SharedDirInfo& dir)
 {
 	std::list<SharedDirInfo> dirList;
 	mFiMon->getSharedDirectories(dirList);

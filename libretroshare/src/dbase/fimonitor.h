@@ -109,7 +109,7 @@ class FileIndexMonitor: public CacheSource, public RsThread
 		int RequestDirDetails(std::string uid, std::string path, DirDetails &details) const ;
 
 		// set/update shared directories
-		virtual void    setSharedDirectories(std::list<SharedDirInfo>& dirs);
+		virtual void    setSharedDirectories(const std::list<SharedDirInfo>& dirs);
 		void    getSharedDirectories(std::list<SharedDirInfo>& dirs);
 		void	updateShareFlags(const SharedDirInfo& info) ;
 

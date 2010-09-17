@@ -185,7 +185,7 @@ class RsFiles
 		virtual std::string getPartialsDirectory() = 0;
 
 		virtual bool    getSharedDirectories(std::list<SharedDirInfo> &dirs) = 0;
-		virtual bool    addSharedDirectory(SharedDirInfo& dir) = 0;
+		virtual bool    addSharedDirectory(const SharedDirInfo& dir) = 0;
 		virtual bool    updateShareFlags(const SharedDirInfo& dir) = 0;	// updates the flags. The directory should already exist !
 		virtual bool    removeSharedDirectory(std::string dir) = 0;
 
