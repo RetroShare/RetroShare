@@ -169,7 +169,7 @@ void AttachFileItem::updateItemStatic()
 	std::cerr << std::endl;
 #endif
 
-	QString filename = QString::fromStdString(mFileName);
+        QString filename = QString::fromUtf8(mFileName.c_str());
 	mDivisor = 1;
 
 	if (mFileSize > 10000000) /* 10 Mb */
@@ -239,7 +239,7 @@ void AttachFileItem::updateItemStatic()
 			break;
 
 		case AFI_STATE_EXTRA:
-			filename = QString::fromStdString(mPath);
+                        filename = QString::fromUtf8(mPath.c_str());
 
 			progressBar->setRange(0, 100);
 			progressBar->setFormat("HASHING");

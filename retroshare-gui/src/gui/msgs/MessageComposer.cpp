@@ -264,7 +264,7 @@ void MessageComposer::recommendFriend(std::list <std::string> &peerids)
             continue;
         }
 
-        RetroShareLink link(QString::fromStdString(detail.name), QString::fromStdString(detail.id));
+        RetroShareLink link(QString::fromUtf8(detail.name.c_str()), QString::fromStdString(detail.id));
         if (link.valid() == false || link.type() != RetroShareLink::TYPE_PERSON) {
             continue;
         }
@@ -1297,7 +1297,7 @@ void MessageComposer::attachFile()
 	// select a file
 	QString qfile = QFileDialog::getOpenFileName(this, tr("Add Extra File"), "", "", 0,
 				QFileDialog::DontResolveSymlinks);
-	std::string filePath = qfile.toStdString();
+        std::string filePath = qfile.toUtf8().constData();
 	if (filePath != "")
 	{
 	    MessageComposer::addAttachment(filePath);
@@ -1342,7 +1342,7 @@ void MessageComposer::fileHashingFinished(AttachFileItem* file) {
 	    return;
 	}
 
-        RetroShareLink message(QString::fromStdString(file->FileName()), file->FileSize(), QString::fromStdString(file->FileHash()));
+        RetroShareLink message(QString::fromUtf8(file->FileName().c_str()), file->FileSize(), QString::fromStdString(file->FileHash()));
 #ifdef CHAT_DEBUG
         std::cerr << "MessageComposer::anchorClicked message : " << message.toHtmlFull().toStdString() << std::endl;
 #endif

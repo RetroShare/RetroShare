@@ -20,6 +20,7 @@
  ****************************************************************/
 
 #include <QFile>
+#include <QDir>
 #include <QFileInfo>
 #include <QShortcut>
 #include <QWidgetAction>
@@ -1561,7 +1562,7 @@ void PeersDialog::fileHashingFinished(AttachFileItem* file)
     //	sprintf(fileSizeChar, "%lld", file->FileSize());
     //	std::string fileSize = *(&fileSizeChar);
 
-    std::string mesgString = RetroShareLink(QString::fromStdString(file->FileName()),
+    std::string mesgString = RetroShareLink(QString::fromUtf8(file->FileName().c_str()),
                                             file->FileSize(),
                                             QString::fromStdString(file->FileHash())).toHtml().toStdString() ;
 
@@ -1586,57 +1587,57 @@ void PeersDialog::anchorClicked (const QUrl& link )
 
 void PeersDialog::dropEvent(QDropEvent *event)
 {
-	if (!(Qt::CopyAction & event->possibleActions()))
-	{
-                std::cerr << "PeersDialog::dropEvent() Rejecting uncopyable DropAction" << std::endl;
+    if (!(Qt::CopyAction & event->possibleActions()))
+    {
+        std::cerr << "PeersDialog::dropEvent() Rejecting uncopyable DropAction" << std::endl;
 
-		/* can't do it */
-		return;
-	}
+        /* can't do it */
+        return;
+    }
 
-        std::cerr << "PeersDialog::dropEvent() Formats" << std::endl;
-	QStringList formats = event->mimeData()->formats();
-	QStringList::iterator it;
-	for(it = formats.begin(); it != formats.end(); it++)
-	{
-                std::cerr << "Format: " << (*it).toStdString() << std::endl;
-	}
+    std::cerr << "PeersDialog::dropEvent() Formats" << std::endl;
+    QStringList formats = event->mimeData()->formats();
+    QStringList::iterator it;
+    for(it = formats.begin(); it != formats.end(); it++)
+    {
+        std::cerr << "Format: " << (*it).toStdString() << std::endl;
+    }
 
-	if (event->mimeData()->hasUrls())
-	{
-                std::cerr << "PeersDialog::dropEvent() Urls:" << std::endl;
+    if (event->mimeData()->hasUrls())
+    {
+        std::cerr << "PeersDialog::dropEvent() Urls:" << std::endl;
 
-		QList<QUrl> urls = event->mimeData()->urls();
-		QList<QUrl>::iterator uit;
-		for(uit = urls.begin(); uit != urls.end(); uit++)
-		{
-			std::string localpath = uit->toLocalFile().toStdString();
-                        std::cerr << "Whole URL: " << uit->toString().toStdString() << std::endl;
-                        std::cerr << "or As Local File: " << localpath << std::endl;
+        QList<QUrl> urls = event->mimeData()->urls();
+        QList<QUrl>::iterator uit;
+        for(uit = urls.begin(); uit != urls.end(); uit++)
+        {
+            QString localpath = uit->toLocalFile();
+            std::cerr << "Whole URL: " << uit->toString().toStdString() << std::endl;
+            std::cerr << "or As Local File: " << localpath.toStdString() << std::endl;
 
-			if (localpath.size() > 0)
-			{
-				struct stat buf;
-				//Check that the file does exist and is not a directory
-				if ((-1 == stat(localpath.c_str(), &buf))) {
-				    std::cerr << "PeersDialog::dropEvent() file does not exists."<< std::endl;
-				    QMessageBox mb(tr("Drop file error."), tr("File not found or file name not accepted."),QMessageBox::Information,QMessageBox::Ok,0,0);
-				    mb.setButtonText( QMessageBox::Ok, "OK" );
-				    mb.exec();
-				} else if (S_ISDIR(buf.st_mode)) {
-				    std::cerr << "PeersDialog::dropEvent() directory not accepted."<< std::endl;
-				    QMessageBox mb(tr("Drop file error."), tr("Directory can't be dropped, only files are accepted."),QMessageBox::Information,QMessageBox::Ok,0,0);
-				    mb.setButtonText( QMessageBox::Ok, "OK" );
-				    mb.exec();
-				} else {
-				    PeersDialog::addAttachment(localpath);
-				}
-			}
-		}
-	}
+            if (localpath.isEmpty() == false)
+            {
+                //Check that the file does exist and is not a directory
+                QDir dir(localpath);
+                if (dir.exists()) {
+                    std::cerr << "PeersDialog::dropEvent() directory not accepted."<< std::endl;
+                    QMessageBox mb(tr("Drop file error."), tr("Directory can't be dropped, only files are accepted."),QMessageBox::Information,QMessageBox::Ok,0,0);
+                    mb.setButtonText( QMessageBox::Ok, "OK" );
+                    mb.exec();
+                } else if (QFile::exists(localpath)) {
+                    PeersDialog::addAttachment(localpath.toUtf8().constData());
+                } else {
+                    std::cerr << "PeersDialog::dropEvent() file does not exists."<< std::endl;
+                    QMessageBox mb(tr("Drop file error."), tr("File not found or file name not accepted."),QMessageBox::Information,QMessageBox::Ok,0,0);
+                    mb.setButtonText( QMessageBox::Ok, "OK" );
+                    mb.exec();
+                }
+            }
+        }
+    }
 
-	event->setDropAction(Qt::CopyAction);
-	event->accept();
+    event->setDropAction(Qt::CopyAction);
+    event->accept();
 }
 
 void PeersDialog::dragEnterEvent(QDragEnterEvent *event)

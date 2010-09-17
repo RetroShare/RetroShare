@@ -252,14 +252,14 @@ bool RetroShareLink::process(std::list<std::string> *psrcIds, int flag)
 
     case TYPE_FILE:
         {
-            std::cerr << " RetroShareLink::process FileRequest : fileName : " << name().toStdString() << ". fileHash : " << hash().toStdString() << ". fileSize : " << size() << std::endl;
+            std::cerr << " RetroShareLink::process FileRequest : fileName : " << name().toUtf8().constData() << ". fileHash : " << hash().toStdString() << ". fileSize : " << size() << std::endl;
 
             std::list<std::string> srcIds;
             if (psrcIds) {
                 srcIds = *psrcIds;
             }
 
-            if (rsFiles->FileRequest(name().toStdString(), hash().toStdString(), size(), "", RS_FILE_HINTS_NETWORK_WIDE, srcIds)) {
+            if (rsFiles->FileRequest(name().toUtf8().constData(), hash().toStdString(), size(), "", RS_FILE_HINTS_NETWORK_WIDE, srcIds)) {
                 if (flag & RSLINK_PROCESS_NOTIFY_SUCCESS) {
                     QMessageBox mb(QObject::tr("File Request Confirmation"), QObject::tr("The file has been added to your download list."),QMessageBox::Information,QMessageBox::Ok,0,0);
                     mb.setButtonText( QMessageBox::Ok, "OK" );
