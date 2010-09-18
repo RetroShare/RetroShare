@@ -150,6 +150,8 @@ void	setHash(std::string h);
 
 	RsMutex cfgMtx;
 
+	static bool globalConfigType;
+
 	private:
 
 	/**
@@ -168,10 +170,13 @@ void	setHash(std::string h);
 	std::string filename;
 	std::string hash;
 
+
 	friend class p3ConfigMgr;
 	/* so it can access:
 	 * setFilename() and HasConfigChanged()
 	 */
+
+
 };
 
 
@@ -223,7 +228,44 @@ class p3ConfigMgr
 		 */
 		void	completeConfiguration();
 
+
+
 	private:
+
+		/**
+		 * this checks for the global config file and signature and determines class's mode of operation
+		 * @return global file rs-v0.#.cfg and rs-v0.#.sgn are present
+		 * @deprecated
+		 */
+		bool 	checkForGlobalSigConfig();
+
+		/**
+		 * removes theoldconfiguration type
+		 * @deprecated
+		 */
+		void removeOldConfigType();
+
+		/**
+		 * to save old style global-signature configuration files
+		 * @deprecated
+		 */
+		void globalSaveConfig();
+
+		/**
+		 * to load up old style global-signature config files
+		 * @deprecated
+		 */
+		void globalLoadConfig();
+
+		/**
+		 * saves configuration of pqiconfigs in object configs
+		 */
+		void saveConfig();
+
+		/**
+		 *
+		 */
+		void loadConfig();
 
 		/**
 		 * checks if signature and configuration file's signature matches
@@ -251,9 +293,12 @@ const std::string metasigfname;
 
 	RsMutex cfgMtx; /* below is protected */
 
+bool oldConfigType;
 bool	mConfigSaveActive;
 std::map<uint32_t, pqiConfig *> configs;
 };
+
+
 
 /***************************************************************************************************/
 
@@ -271,6 +316,7 @@ class p3Config: public pqiConfig
 
 virtual bool	loadConfiguration(std::string &loadHash);
 virtual bool	saveConfiguration();
+
 
 	protected:
 
@@ -311,6 +357,13 @@ bool backedUpFileSave(const std::string& fname, const std::string& fname_backup,
  */
 bool getHashAttempt(const std::string& loadHash, std::string& hashstr, const std::string& fname, std::list<RsItem *>& load);
 
+bool loadConfig();
+bool saveConfig();
+
+bool loadGlobalConfig(std::string& hash);
+bool saveGlobalConfig();
+
+bool loadAttempt(const std::string&,const std::string&, std::list<RsItem *>& load);
 
 }; /* end of p3Config */
 

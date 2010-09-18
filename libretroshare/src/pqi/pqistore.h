@@ -28,7 +28,7 @@
 #ifndef MRK_PQI_STORE_STREAMER_HEADER
 #define MRK_PQI_STORE_STREAMER_HEADER
 
-#include "pqi/pqi.h"
+#include "pqi/pqibin.h"
 
 #include <list>
 
@@ -53,19 +53,59 @@ virtual int     status();
 
 std::string     gethash();
 
-	private:
-int     writePkt(RsItem *item);
-int     readPkt(RsItem **item_out);
+protected:
 
-	// Serialiser
-	RsSerialiser *rsSerialiser;
+// Serialiser
+RsSerialiser *rsSerialiser;
+unsigned int  bio_flags; // only BIN_NO_CLOSE at the moment.
+
+// Temp Storage for transient data.....
+RsItem *nextPkt;
+std::string mSrcId;
+
+private:
+
+	int     writePkt(RsItem *item);
+	int     readPkt(RsItem **item_out);
+
+
+
 	// Binary Interface for IO, initialisated at startup.
 	BinInterface *bio;
-	unsigned int  bio_flags; // only BIN_NO_CLOSE at the moment.
 
-	// Temp Storage for transient data.....
-	RsItem *nextPkt;
-	std::string mSrcId;
+};
+
+
+/*!
+ * provdes an ssl encrypted stream to file storage
+ */
+class pqiSSLstore: public pqistore
+{
+
+public:
+
+	pqiSSLstore(RsSerialiser *rss, std::string srcId, BinEncryptedFileInterface *bio_in, int bio_flagsin);
+
+	virtual ~pqiSSLstore();
+
+	/*!
+	 * send items encrypted to file using client's ssl key
+	 */
+	bool encryptedSendItems(const std::list<RsItem* >&);
+
+	/*!
+	 * retrieve encrypted file using client's ssl key
+	 */
+	bool getEncryptedItems(std::list<RsItem*>&);
+
+private:
+
+	RsItem *GetItem();
+	int     readPkt(RsItem **item_out);
+
+	BinEncryptedFileInterface* enc_bio;
+
+
 };
 
 

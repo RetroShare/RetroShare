@@ -1039,12 +1039,18 @@ bool    AuthSSLimpl::decrypt(void *&out, int &outlen, const void *in, int inlen)
         int in_offset = 0, out_currOffset = 0;
         int size_net_ekl = sizeof(net_ekl);
 
+        if(size_net_ekl > inlen) return false;
+
         memcpy(&net_ekl, (unsigned char*)in, size_net_ekl);
         eklen = ntohl(net_ekl);
         in_offset += size_net_ekl;
 
+        if(eklen > (inlen-in_offset)) return false;
+
         memcpy(ek, (unsigned char*)in + in_offset, eklen);
         in_offset += eklen;
+
+        if(EVP_MAX_IV_LENGTH > (inlen-in_offset)) return false;
 
         memcpy(iv, (unsigned char*)in + in_offset, EVP_MAX_IV_LENGTH);
         in_offset += EVP_MAX_IV_LENGTH;
@@ -1064,7 +1070,8 @@ bool    AuthSSLimpl::decrypt(void *&out, int &outlen, const void *in, int inlen)
 
         outlen += out_currOffset;
 
-        free(ek);
+        if(ek != NULL)
+        	free(ek);
 
         #ifdef AUTHSSL_DEBUG
         std::cerr << "AuthSSLimpl::decrypt() finished with outlen : " << outlen << std::endl;

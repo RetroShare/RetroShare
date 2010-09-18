@@ -114,7 +114,14 @@ public:
 	PQInterface(std::string id) :peerId(id) { return; }
 virtual	~PQInterface() { return; }
 
+/*!
+ * allows user to send RsItems to a particular facility  (file, network)
+ */
 virtual int	SendItem(RsItem *) = 0;
+
+/*!
+ * Retrieve RsItem from a facility
+ */
 virtual RsItem *GetItem() = 0;
 
 /**

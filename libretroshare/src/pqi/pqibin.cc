@@ -26,7 +26,9 @@
 
 
 
+
 #include "pqi/pqibin.h"
+#include "pqi/authssl.h"
 #include "util/rsnet.h"
 
 
@@ -159,7 +161,142 @@ uint64_t BinFileInterface::bytecount()
 	}
 	return 0;
 }
-	
+
+int BinFileInterface::getFileSize()
+{
+	return size;
+}
+
+
+
+BinEncryptedFileInterface::BinEncryptedFileInterface(const char* fname, int flags)
+	: BinFileInterface(fname, flags), data(NULL), haveData(false), sizeData(0), cpyCount(0)
+{
+}
+
+BinEncryptedFileInterface::~BinEncryptedFileInterface()
+{
+	if((sizeData > 0) && data != NULL)
+	{
+		delete[] data;
+	}
+
+}
+
+int BinEncryptedFileInterface::senddata(void* data, int len)
+{
+
+	char* encrytedData = NULL;
+	int encDataLen = 0;
+
+	// encrypt using own ssl public key
+	if(len > 0)
+		AuthSSL::getAuthSSL()->encrypt((void*&)encrytedData, encDataLen, data, len, AuthSSL::getAuthSSL()->OwnId());
+	else
+		return -1;
+
+
+	if((encDataLen > 0) && (encrytedData != NULL))
+	{
+		BinFileInterface::senddata(encrytedData, encDataLen);
+		delete[] encrytedData;
+	}
+	else
+	{
+		return -1;
+	}
+
+	return len;
+}
+
+
+int BinEncryptedFileInterface::readdata(void* data, int len)
+{
+	// to respect the inherited behavior of BinInterface
+	// the whole file is read and decryped and store to be read by subsequent calls
+	char* encryptedData = NULL;
+	int encrypDataLen = 0;
+
+
+	if(!haveData) // read whole data for first call, or first call after close()
+	{
+
+		encrypDataLen = BinFileInterface::getFileSize();
+		encryptedData = new char[encrypDataLen];
+
+		// make sure assign was successful
+		if(encryptedData == NULL)
+			return -1;
+
+
+		if(-1 == BinFileInterface::readdata(encryptedData, encrypDataLen))
+			return -1;
+
+		if((encrypDataLen > 0) && (encryptedData != NULL))
+		{
+
+				if(!AuthSSL::getAuthSSL()->decrypt((void*&)(this->data), sizeData, encryptedData, encrypDataLen))
+					return -1;
+
+				haveData = true;
+				delete[] encryptedData;
+		}
+
+
+		if(len <= sizeData)
+		{
+			memcpy(data, this->data, len);
+			cpyCount += len;
+		}
+		else
+		{
+			std::cerr << "BinEncryptedFileInterface::readData(): Error, Asking for more data than present" << std::endl;
+			return -1;
+		}
+	}
+	else
+	{
+
+		if((cpyCount + len) <= sizeData)
+		{
+			memcpy(data, (void *) ((this->data) + cpyCount), len);
+			cpyCount += len;
+		}
+		else
+		{
+			std::cerr << "BinEncryptedFileInterface::readData(): Error, Asking for more data than present" << std::endl;
+			return -1;
+		}
+	}
+
+	return len;
+}
+
+int BinEncryptedFileInterface::close()
+{
+	if(data != NULL)
+	{
+		delete[] data;
+		sizeData = 0;
+		haveData = false;
+		cpyCount = 0;
+	}
+
+	return BinFileInterface::close();
+}
+
+uint64_t BinEncryptedFileInterface::bytecount()
+{
+	return cpyCount;
+}
+
+bool BinEncryptedFileInterface::moretoread()
+{
+	if(haveData)
+		return (cpyCount < sizeData);
+	else
+		return cpyCount < getFileSize();
+}
 
 BinMemInterface::BinMemInterface(int defsize, int flags)
 	:bin_flags(flags), buf(NULL), size(defsize), 

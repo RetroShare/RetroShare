@@ -181,6 +181,9 @@ RsItem *pqistore::GetItem()
 	return outPkt;
 }
 
+
+
+
 // // PQInterface
 int	pqistore::tick()
 {
@@ -386,5 +389,190 @@ std::string pqistore::gethash()
 	return bio->gethash();
 }
 
+pqiSSLstore::pqiSSLstore(RsSerialiser *rss, std::string srcId, BinEncryptedFileInterface* bio_in, int bio_flagsin)
+: pqistore(rss, srcId, bio_in, bio_flagsin), enc_bio(bio_in)
+{
+	return;
+}
 
+pqiSSLstore::~pqiSSLstore()
+{
+	return;
+}
+
+bool pqiSSLstore::encryptedSendItems(const std::list<RsItem*>& rsItemList)
+{
+
+	std::list<RsItem*>::const_iterator it;
+	uint32_t sizeItems = 0, sizeItem = 0;
+	uint32_t offset = 0;
+	char* data = NULL;
+
+	for(it = rsItemList.begin(); it != rsItemList.end(); it++)
+		sizeItems += rsSerialiser->size(*it);
+
+	data = new char[sizeItems];
+
+	for(it = rsItemList.begin(); it != rsItemList.end(); it++)
+	{
+		sizeItem = rsSerialiser->size(*it);
+		if(!rsSerialiser->serialise(*it, (data+offset),&sizeItem))
+			return false;
+		offset += sizeItem;
+
+	}
+
+	if(sizeItems == offset)
+		enc_bio->senddata(data, sizeItems);
+	else
+		return false;
+
+	if(data != NULL)
+		delete[] data;
+
+	return true;
+}
 	
+bool pqiSSLstore::getEncryptedItems(std::list<RsItem* >& rsItemList)
+{
+	RsItem* item;
+
+	while(NULL != (item = GetItem()))
+	{
+		rsItemList.push_back(item);
+	}
+
+	return true;
+}
+
+
+RsItem *pqiSSLstore::GetItem()
+{
+        {
+	  std::ostringstream out;
+	  out << "pqistore::GetItem()";
+	  pqioutput(PQL_DEBUG_ALL, pqistorezone, out.str());
+	}
+
+	// check if this is a reading bio.
+	if (!(bio_flags & BIN_FLAGS_READABLE))
+	{
+		std::ostringstream out;
+		out << "pqistore::GetItem()";
+        	out << "Error Not Readable" << std::endl;
+		pqioutput(PQL_DEBUG_BASIC, pqistorezone, out.str());
+		return NULL;
+	}
+
+	// load if we dont have a packet.
+	if (!nextPkt)
+	{
+		if (!readPkt(&nextPkt))
+		{
+			std::ostringstream out;
+			out << "pqistore::GetItem()";
+        		out << "Failed to ReadPkt" << std::endl;
+			pqioutput(PQL_DEBUG_BASIC, pqistorezone, out.str());
+			return NULL;
+		}
+	}
+
+	if (!nextPkt) return NULL;
+
+	RsItem *outPkt = nextPkt;
+	nextPkt = NULL;
+
+	if (outPkt != NULL)
+        {
+	  std::ostringstream out;
+	  out << "pqistore::GetItem() Returning:" << std::endl;
+	  outPkt -> print(out);
+	  pqioutput(PQL_DEBUG_BASIC, pqistorezone, out.str());
+	}
+	return outPkt;
+}
+
+
+int     pqiSSLstore::readPkt(RsItem **item_out)
+{
+        {
+	  std::ostringstream out;
+	  out << "pqistore::readPkt()";
+	  pqioutput(PQL_DEBUG_ALL, pqistorezone, out.str());
+	}
+
+	if ((!(enc_bio->isactive())) || (!(enc_bio->moretoread())))
+	{
+		return 0;
+	}
+
+	// enough space to read any packet.
+	int maxlen = getRsPktMaxSize();
+	void *block = malloc(maxlen);
+
+	// initial read size: basic packet.
+	int blen = getRsPktBaseSize();
+
+	int tmplen;
+	/* we have the header */
+
+	// read the basic block (minimum packet size)
+	if (blen != (tmplen = enc_bio->readdata(block, blen)))
+	{
+	  	pqioutput(PQL_WARNING, pqistorezone,
+	  		"pqistore::readPkt() bad read(2)");
+
+		free(block);
+		return 0;
+	}
+
+	// workout how much more to read.
+	int extralen = getRsItemSize(block) - blen;
+
+	if(extralen+blen > maxlen)
+		std::cerr << "***** ERROR: trying to read a packet of length " << extralen+blen << ", while the maximum length is " << maxlen << std::endl ;
+
+	if (extralen > 0)
+	{
+	   if(extralen > blen + maxlen)
+	   {
+		  std::cerr << "pqistore: ERROR: Inconsistency in packet format (extralen=" << extralen << ", maxlen=" << maxlen << "). Wasting the whole file." << std::endl ;
+		  free(block) ;
+		  return 0 ;
+	   }
+
+		void *extradata = (void *) (((char *) block) + blen);
+
+		if (extralen != (tmplen = enc_bio->readdata(extradata, extralen)))
+		{
+
+	  		std::ostringstream out;
+	  		out << "pqistore::readPkt() ";
+			out << "Error Completing Read (read ";
+			out << tmplen << "/" << extralen << ")" << std::endl;
+	  		pqioutput(PQL_ALERT, pqistorezone, out.str());
+
+			free(block);
+			return 0;
+		}
+	}
+
+	// create packet, based on header.
+        //std::cerr << "Read Data Block -> Incoming Pkt(";
+        //std::cerr << blen + extralen << ")" << std::endl;
+	uint32_t readbytes = extralen + blen;
+
+	RsItem *item = rsSerialiser->deserialise(block, &readbytes);
+	free(block);
+
+	if (item == NULL)
+	{
+	  	pqioutput(PQL_ALERT, pqistorezone,
+		  "pqistore::readPkt() Failed to create Item from store!");
+		return 0;
+	}
+
+	item->PeerId(mSrcId);
+	*item_out = item;
+	return 1;
+}

@@ -28,8 +28,10 @@
 #ifndef PQI_BIN_INTERFACE_HEADER
 #define PQI_BIN_INTERFACE_HEADER
 
+
 #include "pqi/pqi_base.h"
 #include "pqi/pqihash.h"
+
 #include <stdio.h>
 
 
@@ -70,12 +72,61 @@ virtual bool    bandwidthLimited() { return false; }
 virtual std::string gethash();
 virtual uint64_t bytecount();
 
+protected:
+	virtual int getFileSize();
+
 private:
 	int   bin_flags;
 	FILE *buf;
 	int   size;
 	pqihash *hash;
 	uint64_t bcount;
+};
+
+/*!
+ * use this for writing encrypted data to file using user's (ownid) ssl key
+ * hash for encrypted data is calculated, not the unencrypted data
+ */
+class BinEncryptedFileInterface : public BinFileInterface
+{
+public:
+
+	BinEncryptedFileInterface(const char *fname, int flags);
+	virtual ~BinEncryptedFileInterface();
+
+	/*!
+	 * pls note if hashing is on, it is the hash of the encrypted data that is calculated
+	 * also note, sif data is sent more than once, in a single instance of this object, then you will need to store the
+	 * encrypted file size for each send externally as they are encrypted with different random keys.
+	 * @param data data to be sent
+	 * @param len length of data in bytes
+	 * @return -1 if failed to write data, if not number bytes sent to file is returned
+	 */
+	int	senddata(void *data, int len);
+
+	/*!
+	 * uses the hash of the encrypted data
+	 * @param location to place data
+	 * @param the length of data to be read
+	 * @return -1 if failed to write data, if not number of bytes read is returned
+	 */
+	int	readdata(void *data, int len);
+
+	/*!
+	 * this releases resources held by an instance
+	 */
+	int	close();
+
+	uint64_t bytecount();
+	bool	moretoread();
+
+private:
+
+	char* data;
+	bool haveData;
+	int sizeData;
+	uint64_t cpyCount;
+
 };
 
 //! handles writing to reading/writing to memory

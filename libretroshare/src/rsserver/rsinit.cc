@@ -1784,9 +1784,13 @@ bool  RsInit::RsTryAutoLogin()
 
 	fclose(helpFile);
 
+
 	delete[] indata;
 	delete[] outdata;
-	delete key;
+
+	if(key != NULL)
+		delete key;
+
 	return true;
 #else
 
