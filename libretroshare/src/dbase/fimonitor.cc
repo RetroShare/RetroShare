@@ -943,6 +943,8 @@ bool    FileIndexMonitor::internal_setSharedDirectories()
 		}
 	}
 
+	pendingDirList.clear();
+
 	/* now we've decided on the 'root' dirs set them to the
 	 * fileIndex
 	 */

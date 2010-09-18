@@ -31,27 +31,15 @@ class ShareDialog : public QDialog
   Q_OBJECT
 
 public:
-
   /** Default constructor */
-  ShareDialog( QWidget *parent = 0, Qt::WFlags flags = 0);
+    ShareDialog( std::string filename, QWidget *parent = 0, Qt::WFlags flags = 0);
   /** Default destructor */
 
-public slots:
-
-  /** Loads the settings for this page */
-  void load();
-
-protected:
-	virtual void showEvent(QShowEvent * event);
-
 private slots:
-
   void browseDirectory();
   void addDirectory();
-  void closedialog();
 
 private:
-
   /** Qt Designer generated object */
   Ui::ShareDialog ui;
 };

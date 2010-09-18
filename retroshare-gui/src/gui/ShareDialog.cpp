@@ -28,7 +28,7 @@
 #include <QComboBox>
 
 /** Default constructor */
-ShareDialog::ShareDialog(QWidget *parent, Qt::WFlags flags)
+ShareDialog::ShareDialog(std::string filename, QWidget *parent, Qt::WFlags flags)
   : QDialog(parent, flags)
 {
     /* Invoke Qt Designer generated QObject setup routine */
@@ -36,18 +36,32 @@ ShareDialog::ShareDialog(QWidget *parent, Qt::WFlags flags)
 
     connect(ui.browseButton, SIGNAL(clicked( bool ) ), this , SLOT( browseDirectory() ) );
     connect(ui.okButton, SIGNAL(clicked( bool ) ), this , SLOT( addDirectory() ) );
-    connect(ui.closeButton, SIGNAL(clicked()), this, SLOT(closedialog()));
+    connect(ui.closeButton, SIGNAL(clicked()), this, SLOT(close()));
 
     ui.okButton->setEnabled(false);
 
-    load();
-}
+    if (filename.empty() == false) {
+        /* edit exisiting share */
+        std::list<SharedDirInfo> dirs;
+        rsFiles->getSharedDirectories(dirs);
 
-void ShareDialog::load()
-{
-    ui.localpath_lineEdit->clear();
-    ui.browsableCheckBox->setChecked(false);
-    ui.networkwideCheckBox->setChecked(false);
+        std::list<SharedDirInfo>::const_iterator it;
+        for (it = dirs.begin(); it != dirs.end(); it++) {
+            if (it->filename == filename) {
+                /* fill dialog */
+                ui.okButton->setEnabled(true);
+
+                ui.localpath_lineEdit->setText(QString::fromUtf8(it->filename.c_str()));
+                ui.localpath_lineEdit->setDisabled(true);
+                ui.browseButton->setDisabled(true);
+                ui.virtualpath_lineEdit->setText(QString::fromUtf8(it->virtualname.c_str()));
+
+                ui.browsableCheckBox->setChecked(it->shareflags & RS_FILE_HINTS_BROWSABLE);
+                ui.networkwideCheckBox->setChecked(it->shareflags & RS_FILE_HINTS_NETWORK_WIDE);
+                break;
+            }
+        }
+    }
 }
 
 void ShareDialog::browseDirectory()
@@ -79,25 +93,44 @@ void ShareDialog::addDirectory()
         sdi.shareflags |= RS_FILE_HINTS_NETWORK_WIDE;
     }
 
-    rsFiles->addSharedDirectory(sdi);
+    if (ui.localpath_lineEdit->isEnabled()) {
+        /* add new share */
+        rsFiles->addSharedDirectory(sdi);
+    } else {
+        /* edit exisiting share */
+        bool found = false;
 
-    load();
-    close();
-}
+        std::list<SharedDirInfo> dirs;
+        rsFiles->getSharedDirectories(dirs);
 
-void ShareDialog::showEvent(QShowEvent *event)
-{
-    if (!event->spontaneous())
-    {
-        load();
+        std::list<SharedDirInfo>::iterator it;
+        for (it = dirs.begin(); it != dirs.end(); it++) {
+            if (it->filename == sdi.filename) {
+                found = true;
+
+                if (it->virtualname != sdi.virtualname) {
+                    /* virtual name changed, remove shared directory and add it again */
+                    rsFiles->removeSharedDirectory(it->filename);
+                    rsFiles->addSharedDirectory(sdi);
+                    break;
+                }
+                if (it->shareflags ^ sdi.shareflags) {
+                    /* modifies the flags */
+                    it->shareflags = sdi.shareflags;
+                    rsFiles->updateShareFlags(*it);
+                    break;
+                }
+
+                /* nothing changed */
+                break;
+            }
+        }
+
+        if (found == false) {
+            /* not modified, add share directory instead */
+            rsFiles->addSharedDirectory(sdi);
+        }
     }
-}
-
-void ShareDialog::closedialog()
-{
-    ui.localpath_lineEdit->clear();
-    ui.browsableCheckBox->setChecked(false);
-    ui.networkwideCheckBox->setChecked(false);
 
     close();
 }

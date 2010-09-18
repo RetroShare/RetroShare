@@ -18,10 +18,6 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
-#include "ShareManager.h"
-
-#include <retroshare/rsfiles.h>
-#include "ShareDialog.h"
 
 #include <QContextMenuEvent>
 #include <QMenu>
@@ -31,6 +27,12 @@
 #include <QHeaderView>
 #include <QMessageBox>
 
+#include <retroshare/rsfiles.h>
+
+#include "ShareManager.h"
+#include "ShareDialog.h"
+#include "settings/rsharesettings.h"
+
 /* Images for context menu icons */
 #define IMAGE_CANCEL               ":/images/delete.png"
 
@@ -38,6 +40,7 @@
 #define COLUMN_VIRTUALNAME  1
 #define COLUMN_NETWORKWIDE  2
 #define COLUMN_BROWSABLE    3
+#define COLUMN_COUNT        3
 
 ShareManager *ShareManager::_instance = NULL ;
 
@@ -51,14 +54,18 @@ ShareManager::ShareManager(QWidget *parent, Qt::WFlags flags)
     isLoading = false;
     load();
 
+    Settings->loadWidgetInformation(this);
+
     connect(ui.addButton, SIGNAL(clicked( bool ) ), this , SLOT( showShareDialog() ) );
+    connect(ui.editButton, SIGNAL(clicked( bool ) ), this , SLOT( editShareDirectory() ) );
     connect(ui.removeButton, SIGNAL(clicked( bool ) ), this , SLOT( removeShareDirectory() ) );
     connect(ui.closeButton, SIGNAL(clicked()), this, SLOT(close()));
 
-    connect( ui.shareddirList, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( shareddirListCostumPopupMenu( QPoint ) ) );
+    connect(ui.shareddirList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(shareddirListCostumPopupMenu(QPoint)));
+    connect(ui.shareddirList, SIGNAL(currentCellChanged(int,int,int,int)), this, SLOT(shareddirListCurrentCellChanged(int,int,int,int)));
 
-    ui.addButton->setToolTip(tr("Add a Share Directory"));
-    ui.removeButton->setToolTip(tr("Stop sharing selected Directory"));
+    ui.editButton->setEnabled(false);
+    ui.removeButton->setEnabled(false);
 
     ui.shareddirList->horizontalHeader()->setResizeMode( COLUMN_PATH, QHeaderView::Stretch);
     ui.shareddirList->horizontalHeader()->setResizeMode( COLUMN_BROWSABLE, QHeaderView::Interactive);
@@ -66,21 +73,30 @@ ShareManager::ShareManager(QWidget *parent, Qt::WFlags flags)
     ui.shareddirList->horizontalHeader()->resizeSection( COLUMN_PATH, 360 );
     ui.shareddirList->horizontalHeader()->setStretchLastSection(false);
 
+    ui.shareddirList->setRangeSelected(QTableWidgetSelectionRange(0, 0, 0, COLUMN_COUNT), true);
+
+
     setAttribute(Qt::WA_DeleteOnClose, true);
 }
 
 ShareManager::~ShareManager()
 {
     _instance = NULL;
+
+    Settings->saveWidgetInformation(this);
 }
 
 void ShareManager::shareddirListCostumPopupMenu( QPoint point )
 {
     QMenu contextMnu( this );
 
-    removeAct = new QAction(QIcon(IMAGE_CANCEL), tr( "Remove" ), this );
+    QAction *editAct = new QAction(tr( "Edit" ), &contextMnu );
+    connect( editAct , SIGNAL( triggered() ), this, SLOT( editShareDirectory() ) );
+
+    QAction *removeAct = new QAction(QIcon(IMAGE_CANCEL), tr( "Remove" ), &contextMnu );
     connect( removeAct , SIGNAL( triggered() ), this, SLOT( removeShareDirectory() ) );
 
+    contextMnu.addAction( editAct );
     contextMnu.addAction( removeAct );
 
     contextMnu.exec(QCursor::pos());
@@ -105,8 +121,8 @@ void ShareManager::load()
     connect(this,SIGNAL(itemClicked(QTableWidgetItem*)),this,SLOT(updateFlags(QTableWidgetItem*))) ;
 
 #ifndef USE_COMBOBOX
-    QString ToolTips [2] = { QString("If checked, the share is anonymously shared to anybody."),
-                             QString("If checked, the share is browsable by your friends.") };
+    QString ToolTips [2] = { tr("If checked, the share is anonymously shared to anybody."),
+                             tr("If checked, the share is browsable by your friends.") };
     int Flags [2] = { RS_FILE_HINTS_NETWORK_WIDE, RS_FILE_HINTS_BROWSABLE };
 #endif
 
@@ -219,6 +235,30 @@ void ShareManager::updateFlags(bool b)
     }
 }
 
+void ShareManager::editShareDirectory()
+{
+    /* id current dir */
+    int row = ui.shareddirList->currentRow();
+    QTableWidgetItem *item = ui.shareddirList->item(row, COLUMN_PATH);
+
+    if (item) {
+        std::string filename = item->text().toUtf8().constData();
+
+        std::list<SharedDirInfo> dirs;
+        rsFiles->getSharedDirectories(dirs);
+
+        std::list<SharedDirInfo>::const_iterator it;
+        for (it = dirs.begin(); it != dirs.end(); it++) {
+            if (it->filename == filename) {
+                /* file name found, show dialog */
+                ShareDialog sharedlg (it->filename, this);
+                sharedlg.exec();
+                break;
+            }
+        }
+    }
+}
+
 void ShareManager::removeShareDirectory()
 {
     /* id current dir */
@@ -227,13 +267,9 @@ void ShareManager::removeShareDirectory()
     int row = listWidget -> currentRow();
     QTableWidgetItem *qdir = listWidget->item(row, COLUMN_PATH);
 
-    QString queryWrn;
-    queryWrn.clear();
-    queryWrn.append(tr("Do you really want to stop sharing this directory ?"));
-
     if (qdir)
     {
-        if ((QMessageBox::question(this, tr("Warning!"),queryWrn,QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
+        if ((QMessageBox::question(this, tr("Warning!"),tr("Do you really want to stop sharing this directory ?"),QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
         {
             rsFiles->removeSharedDirectory( qdir->text().toUtf8().constData());
             load();
@@ -251,6 +287,21 @@ void ShareManager::showEvent(QShowEvent *event)
 
 void ShareManager::showShareDialog()
 {
-    ShareDialog sharedlg (this);
+    ShareDialog sharedlg ("", this);
     sharedlg.exec();
+}
+
+void ShareManager::shareddirListCurrentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn)
+{
+    Q_UNUSED(currentColumn);
+    Q_UNUSED(previousRow);
+    Q_UNUSED(previousColumn);
+
+    if (currentRow >= 0) {
+        ui.editButton->setEnabled(true);
+        ui.removeButton->setEnabled(true);
+    } else {
+        ui.editButton->setEnabled(false);
+        ui.removeButton->setEnabled(false);
+    }
 }

@@ -6817,7 +6817,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PeersDialog</name>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="+356"/>
+        <location filename="../gui/PeersDialog.cpp" line="+357"/>
         <source>Chat</source>
         <translation>Chat</translation>
     </message>
@@ -6918,17 +6918,17 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+103"/>
-        <location line="+5"/>
+        <location line="+7"/>
         <source>Drop file error.</source>
         <translation>Dateifehler bei Drag&apos;n&apos;Drop.</translation>
     </message>
     <message>
-        <location line="-5"/>
+        <location line="+0"/>
         <source>File not found or file name not accepted.</source>
         <translation>Datei nicht gefunden oder Dateiname nicht akzeptiert.</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="-7"/>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
         <translation>Ordner können nicht für Drag&apos;n&apos;Drop genutzt werden. Nur Dateien werden akzeptiert.</translation>
     </message>
@@ -7066,7 +7066,7 @@ p, li { white-space: pre-wrap; }
         <translation>Verlauf löschen</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="-1230"/>
+        <location filename="../gui/PeersDialog.cpp" line="-1225"/>
         <source>Profile View</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7462,7 +7462,7 @@ p, li { white-space: pre-wrap; }
         <translation>Avatar zeigen</translation>
     </message>
     <message>
-        <location line="+337"/>
+        <location line="+342"/>
         <source>File not found or file name not accepted.</source>
         <translation>Datei nicht gefunden oder Dateiname nicht akzeptiert.</translation>
     </message>
@@ -7510,7 +7510,7 @@ p, li { white-space: pre-wrap; }
         <translation>Deaktiviere Emoticons</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="-813"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="-818"/>
         <source>Paste retroshare Link</source>
         <translation>RetroShare Link einfügen</translation>
     </message>
@@ -7535,13 +7535,13 @@ p, li { white-space: pre-wrap; }
         <translation>Zusätzlich eine Datei hinzufügen</translation>
     </message>
     <message>
-        <location line="+169"/>
-        <location line="+5"/>
+        <location line="+167"/>
+        <location line="+7"/>
         <source>Drop file error.</source>
         <translation>Dateifehler bei Drag&apos;n&apos;Drop.</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="-7"/>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
         <translation>Ordner können nicht für Drag&apos;n&apos;Drop genutzt werden. Nur Dateien werden akzeptiert.</translation>
     </message>
@@ -7557,7 +7557,7 @@ p, li { white-space: pre-wrap; }
         <translation>Chat Verlauf speichern</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="+57"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="+62"/>
         <source>Save as...</source>
         <translation>Speichern unter...</translation>
     </message>
@@ -7567,7 +7567,7 @@ p, li { white-space: pre-wrap; }
         <translation>Text Datei (*.txt );;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location line="-671"/>
+        <location line="-669"/>
         <source>Your Friend is offline 
 Do you want to send them a Message instead</source>
         <translation>Dein Freund ist Offline willst du ihm stattdessen eine Nachricht senden</translation>
@@ -7584,7 +7584,7 @@ Do you want to send them a Message instead</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="+705"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="+703"/>
         <source>is Idle and may not reply</source>
         <translation>antwortet möglicherweise nicht, da der Status auf &quot;Untätig&quot; gesetzt wurde</translation>
     </message>
@@ -7610,7 +7610,7 @@ Do you want to send them a Message instead</source>
 Diesem Kontakt stattdessen eine RS-Mail senden.</translation>
     </message>
     <message>
-        <location line="-655"/>
+        <location line="-653"/>
         <source>is typing...</source>
         <translation>tippt...</translation>
     </message>
@@ -9247,7 +9247,7 @@ p, li { white-space: pre-wrap; }
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../gui/ShareDialog.cpp" line="+56"/>
+        <location filename="../gui/ShareDialog.cpp" line="+70"/>
         <source>Select A Folder To Share</source>
         <translation>Wähle einen Ordner zum Freigeben aus</translation>
     </message>
@@ -9311,33 +9311,43 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ShareManager</name>
     <message>
-        <location filename="../gui/ShareManager.cpp" line="+60"/>
+        <location filename="../gui/ShareManager.ui" line="+235"/>
         <source>Add a Share Directory</source>
-        <translation>Ordner hinzufügen</translation>
+        <translation>Freigabe hinzufügen</translation>
+    </message>
+    <message>
+        <location line="+28"/>
+        <source>Stop sharing selected Directory</source>
+        <translation>Freigabe entfernen</translation>
+    </message>
+    <message>
+        <location filename="../gui/ShareManager.cpp" line="+124"/>
+        <source>If checked, the share is anonymously shared to anybody.</source>
+        <translation>Wenn aktiviert, dann ist dieser Ordner anonym feigegeben.</translation>
     </message>
     <message>
         <location line="+1"/>
-        <source>Stop sharing selected Directory</source>
-        <translation>Stoppe die Freigabe des Ordners</translation>
+        <source>If checked, the share is browsable by your friends.</source>
+        <translation>Wenn aktiviert, dann ist dieser Ordner von Deinen Freunden durchsuchbar.</translation>
     </message>
     <message>
-        <location line="+171"/>
+        <location line="+147"/>
         <source>Do you really want to stop sharing this directory ?</source>
         <translation>Möchtes Du die Freigabe dieses Ordners wirklich aufheben ?</translation>
     </message>
     <message>
-        <location filename="../gui/ShareManager.ui" line="+257"/>
-        <location filename="../gui/ShareManager.cpp" line="-151"/>
+        <location filename="../gui/ShareManager.ui" line="+3"/>
+        <location filename="../gui/ShareManager.cpp" line="-176"/>
         <source>Remove</source>
         <translation>Entfernen</translation>
     </message>
     <message>
-        <location filename="../gui/ShareManager.cpp" line="+155"/>
+        <location filename="../gui/ShareManager.cpp" line="+176"/>
         <source>Warning!</source>
         <translation>Warnung!</translation>
     </message>
     <message>
-        <location filename="../gui/ShareManager.ui" line="-240"/>
+        <location filename="../gui/ShareManager.ui" line="-249"/>
         <source>RetroShare Share Manager</source>
         <translation>RetroShare Freigabe Manager</translation>
     </message>
@@ -9376,7 +9386,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Netzwerkweit&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: Dateien können von jedem über anoynme Tunnel heruntergeladen werden.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+64"/>
+        <location line="+67"/>
         <source>Directory</source>
         <translation>Ordner</translation>
     </message>
@@ -9396,17 +9406,28 @@ p, li { white-space: pre-wrap; }
         <translation>Durchsuchbar</translation>
     </message>
     <message>
-        <location line="+77"/>
+        <location line="+83"/>
         <source>Close</source>
         <translation>Schliessen</translation>
     </message>
     <message>
-        <location line="-51"/>
+        <location line="+7"/>
+        <source>Edit selected Shared Directory</source>
+        <translation>Freigabe bearbeiten</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <location filename="../gui/ShareManager.cpp" line="-179"/>
+        <source>Edit</source>
+        <translation>Bearbeiten</translation>
+    </message>
+    <message>
+        <location line="-64"/>
         <source>Add</source>
         <translation>Hinzufügen</translation>
     </message>
     <message>
-        <location line="-117"/>
+        <location line="-123"/>
         <source>Shared Folder Manager</source>
         <translation>Freigabe Manager</translation>
     </message>

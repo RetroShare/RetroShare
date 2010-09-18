@@ -50,9 +50,11 @@ protected:
 
 private slots:
     /** Create the context popup menu and it's submenus */
+    void shareddirListCurrentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn);
     void shareddirListCostumPopupMenu( QPoint point );
 
     void showShareDialog();
+    void editShareDirectory();
     void removeShareDirectory();
     void updateFlags(bool);
 
@@ -62,8 +64,6 @@ private:
 
     /** Define the popup menus for the Context menu */
     QMenu* contextMnu;
-    /** Defines the actions for the context menu */
-    QAction* removeAct;
 
     /** Qt Designer generated object */
     Ui::ShareManager ui;
