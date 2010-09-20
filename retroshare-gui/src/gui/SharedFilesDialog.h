@@ -26,6 +26,7 @@
 #include "ui_SharedFilesDialog.h"
 
 class RemoteDirModel;
+class QSortFilterProxyModel;
 
 class SharedFilesDialog : public RsAutoUpdatePage
 {
@@ -35,6 +36,7 @@ public:
   /** Default Constructor */
   SharedFilesDialog(QWidget *parent = 0);
   /** Default Destructor */
+  ~SharedFilesDialog();
 
   virtual void updatePage() { checkUpdate() ; }
 
@@ -94,7 +96,12 @@ private:
 
   //QMenu* contextMnu2;
 
+  void processSettings(bool bLoad);
+
    void copyLink (const QModelIndexList& lst, bool remote);
+
+  QModelIndexList getRemoteSelected();
+  QModelIndexList getLocalSelected();
 
   /** Defines the actions for the context menu for QTreeWidget */
   QAction* openfileAct;
@@ -116,7 +123,9 @@ private:
 
   /* RemoteDirModel */
   RemoteDirModel *model;
+  QSortFilterProxyModel *proxyModel;
   RemoteDirModel *localModel;
+  QSortFilterProxyModel *localProxyModel;
 
   QString currentCommand;
   QString currentFile;

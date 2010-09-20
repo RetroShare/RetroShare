@@ -29,6 +29,7 @@
 class LogoBar;
 class PeersDialog;
 class PopupChatDialog;
+class RSTreeWidgetItemCompareRole;
 
 class MessengerWindow : public RWindow
 {
@@ -130,6 +131,8 @@ private:
 
     QFont itemFont;
     QString m_nickName;
+
+    RSTreeWidgetItemCompareRole *m_compareRole;
 
     /** Qt Designer generated object */
     Ui::MessengerWindow ui;

@@ -50,11 +50,12 @@
 #include "profile/ProfileWidget.h"
 #include "profile/StatusMessage.h"
 
-#include "gui/connect/ConnectFriendWizard.h"
-#include "gui/forums/CreateForum.h"
-#include "gui/channels/CreateChannel.h"
-#include "gui/feeds/AttachFileItem.h"
-#include "gui/im_history/ImHistoryBrowser.h"
+#include "connect/ConnectFriendWizard.h"
+#include "forums/CreateForum.h"
+#include "channels/CreateChannel.h"
+#include "feeds/AttachFileItem.h"
+#include "im_history/ImHistoryBrowser.h"
+#include "common/RSTreeWidgetItem.h"
 
 #include "RetroShareLink.h"
 
@@ -94,43 +95,6 @@
  * #define PEERS_DEBUG 1
  *****/
 
-// quick and dirty for sorting, better use QTreeView and QSortFilterProxyModel
-class MyPeerTreeWidgetItem : public QTreeWidgetItem
-{
-public:
-    MyPeerTreeWidgetItem(QTreeWidget *pWidget, int type) : QTreeWidgetItem(type)
-    {
-        m_pWidget = pWidget; // can't access the member "view"
-    }
-
-    bool operator<(const QTreeWidgetItem &other) const
-    {
-        int role = Qt::DisplayRole;
-        int column = m_pWidget ? m_pWidget->sortColumn() : 0;
-
-        switch (column) {
-        case COLUMN_STATE:
-                // sort by state set in user role
-                role = ROLE_SORT;
-
-                // no break;
-
-        case COLUMN_NAME:
-            {
-                const QVariant v1 = data(column, role);
-                const QVariant v2 = other.data(column, role);
-                return (v1.toString().compare (v2.toString(), Qt::CaseInsensitive) < 0);
-            }
-        }
-
-        // let the standard do the sort
-        return QTreeWidgetItem::operator<(other);
-    }
-
-private:
-    QTreeWidget *m_pWidget; // the member "view" is private
-};
-
 
 /** Constructor */
 PeersDialog::PeersDialog(QWidget *parent)
@@ -140,6 +104,9 @@ PeersDialog::PeersDialog(QWidget *parent)
     ui.setupUi(this);
 
     last_status_send_time = 0 ;
+
+    m_compareRole = new RSTreeWidgetItemCompareRole;
+    m_compareRole->addRole(COLUMN_STATE, ROLE_SORT);
 
     connect( ui.peertreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( peertreeWidgetCostumPopupMenu( QPoint ) ) );
     connect( ui.peertreeWidget, SIGNAL( itemDoubleClicked ( QTreeWidgetItem *, int)), this, SLOT(chatfriend(QTreeWidgetItem *)));
@@ -270,6 +237,8 @@ PeersDialog::~PeersDialog ()
 {
     // save settings
     processSettings(false);
+
+    delete(m_compareRole);
 }
 
 void PeersDialog::processSettings(bool bLoad)
@@ -564,7 +533,7 @@ void  PeersDialog::insertPeers()
         }
 
         if (gpg_item == NULL) {
-            gpg_item = new MyPeerTreeWidgetItem(peertreeWidget, 0); //set type to 0 for custom popup menu
+            gpg_item = new RSTreeWidgetItem(m_compareRole, 0); //set type to 0 for custom popup menu
 
             /* Add gpg item to the list. Add here, because for setHidden the item must be added */
             peertreeWidget->addTopLevelItem(gpg_item);
@@ -628,7 +597,7 @@ void  PeersDialog::insertPeers()
             }
 
             if (newChild) {
-                sslItem = new MyPeerTreeWidgetItem(peertreeWidget, 1); //set type to 1 for custom popup menu
+                sslItem = new RSTreeWidgetItem(m_compareRole, 1); //set type to 1 for custom popup menu
 
                 #ifdef PEERS_DEBUG
                 std::cerr << "PeersDialog::insertPeers() inserting sslItem." << std::endl;

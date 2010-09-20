@@ -39,7 +39,7 @@ class RemoteDirModel : public QAbstractItemModel
 	Q_OBJECT
 
 	public:
-		enum Roles{ FileNameRole = Qt::UserRole+1 };
+		enum Roles{ FileNameRole = Qt::UserRole+1, SortRole = Qt::UserRole+2 };
 
 		RemoteDirModel(bool mode, QObject *parent = 0);
 

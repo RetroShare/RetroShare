@@ -228,7 +228,7 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
         FileInfo finfo;
         rsFiles->FileDetails(details.hash, 0, finfo);
 
-        return QString::fromStdString(finfo.path) ;
+        return QString::fromUtf8(finfo.path.c_str()) ;
     } /* end of FileNameRole */
 
     if (role == Qt::TextColorRole)
@@ -310,7 +310,7 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
 			 switch(coln)
 			 {
 				 case 0:
-					 QString ext = QFileInfo(QString::fromStdString(details.name)).suffix();
+					 QString ext = QFileInfo(QString::fromUtf8(details.name.c_str())).suffix();
 					 if (ext == "jpg" || ext == "jpeg" || ext == "png" || ext == "gif"
 							 || ext == "bmp" || ext == "ico" || ext == "svg")
 					 {
@@ -412,7 +412,7 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
 		switch(coln)
 		{
 			case 0:
-				return QString::fromStdString(details.name);
+				return QString::fromUtf8(details.name.c_str());
 				break;
 			case 1:
 				return QString() ;
@@ -490,9 +490,71 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
 		}
 	}
    } /* end of DisplayRole */
+
+    if (role == SortRole)
+    {
+
+        /*
+         * Person:  name,  id, 0, 0;
+         * File  :  name,  size, rank, (0) ts
+         * Dir   :  name,  (0) count, (0) path, (0) ts
+         */
+
+
+        if (details.type == DIR_TYPE_PERSON) /* Person */
+        {
+            switch(coln)
+            {
+            case 0:
+                return QString::fromUtf8(details.name.c_str());
+            case 1:
+                return QString();
+            default:
+                return QString();
+            }
+        }
+        else if (details.type == DIR_TYPE_FILE) /* File */
+        {
+            switch(coln)
+            {
+            case 0:
+                return QString::fromUtf8(details.name.c_str());
+            case 1:
+                return details.count;
+            case 2:
+               return  details.age;
+            case 3:
+                return getFlagsString(details.flags);
+            case 4:
+                {
+                    QString ind("");
+                    if (ageIndicator != IND_ALWAYS)
+                        ind = getAgeIndicatorString(details);
+                    return ind;
+                }
+            default:
+                return QString(tr("FILE"));
+            }
+        }
+        else if (details.type == DIR_TYPE_DIR) /* Dir */
+        {
+            switch(coln)
+            {
+            case 0:
+                return QString::fromUtf8(details.name.c_str());
+            case 1:
+                return details.count;
+            case 2:
+                return details.min_age;
+            case 3:
+                return getFlagsString(details.flags);
+            default:
+                return QString(tr("DIR"));
+            }
+        }
+    } /* end of SortRole */
+
    return QVariant();
-
-
 }
 
 void RemoteDirModel::getAgeIndicatorRec(DirDetails &details, QString &ret) const {
@@ -610,7 +672,7 @@ QModelIndex RemoteDirModel::index(int row, int column, const QModelIndex & paren
 	std::list<DirStub>::iterator it;
 	int i = 0;
 	for(it = details.children.begin(); ((i < row) && (it != details.children.end())); ++it,++i) ;
-	
+
 	if (it == details.children.end())
 	{
 #ifdef RDM_DEBUG

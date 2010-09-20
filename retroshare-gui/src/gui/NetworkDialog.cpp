@@ -31,6 +31,7 @@
 #include <retroshare/rsdisc.h>
 
 #include "common/vmessagebox.h"
+#include "common/RSTreeWidgetItem.h"
 #include "NetworkDialog.h"
 #include "TrustView.h"
 #include "GenCertDialog.h"
@@ -410,7 +411,7 @@ void NetworkDialog::insertConnect()
                         #ifdef NET_DEBUG
                         std::cerr << "NetworkDialog::insertConnect() creating new tree widget item : " << *it << std::endl;
                         #endif
-                        item = new QTreeWidgetItem(0);
+                        item = new RSTreeWidgetItem(NULL, 0);
                         item -> setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
                         item -> setSizeHint(0, QSize( 18,18 ) );
 
@@ -503,7 +504,7 @@ void NetworkDialog::insertConnect()
         if (list.size() == 1) {
             self_item = list.front();
         } else {
-            self_item = new QTreeWidgetItem(0);
+            self_item = new RSTreeWidgetItem(NULL, 0);
             self_item->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
         }
         self_item -> setText(0, "0");

@@ -49,6 +49,7 @@ class QTextEdit;
 class QTextCharFormat;
 class ChatDialog;
 class AttachFileItem;
+class RSTreeWidgetItemCompareRole;
 
 class PeersDialog : public RsAutoUpdatePage 
 {
@@ -172,6 +173,8 @@ private:
 		class QWidget *widget;
 		class QWidgetAction *widgetAction;
 		class QSpacerItem *spacerItem;
+
+		RSTreeWidgetItemCompareRole *m_compareRole;
 
 		///play the sound when recv a message
 		void playsound();

@@ -42,8 +42,8 @@
 #include "chat/PopupChatDialog.h"
 #include "msgs/MessageComposer.h"
 #include "ShareManager.h"
-#include "gui/notifyqt.h"
-#include "gui/connect/ConnectFriendWizard.h"
+#include "notifyqt.h"
+#include "connect/ConnectFriendWizard.h"
 #endif // MINIMAL_RSGUI
 #include "PeersDialog.h"
 #include "connect/ConfCertDialog.h"
@@ -51,6 +51,7 @@
 #include "LogoBar.h"
 #include "util/Widget.h"
 #include "settings/rsharesettings.h"
+#include "common/RSTreeWidgetItem.h"
 
 #include "RetroShareLink.h"
 
@@ -86,36 +87,6 @@
 
 MessengerWindow* MessengerWindow::_instance = NULL;
 static std::set<std::string> *expandedPeers = NULL;
-
-// quick and dirty for sorting, better use QTreeView and QSortFilterProxyModel
-class MyMessengerTreeWidgetItem : public QTreeWidgetItem
-{
-public:
-    MyMessengerTreeWidgetItem(QTreeWidget *pWidget, int type) : QTreeWidgetItem(type)
-    {
-        m_pWidget = pWidget; // can't access the member "view"
-    }
-
-    bool operator<(const QTreeWidgetItem &other) const
-    {
-        int column = m_pWidget ? m_pWidget->sortColumn() : 0;
-
-        switch (column) {
-        case COLUMN_NAME:
-            {
-                const QVariant v1 = data(column, ROLE_SORT);
-                const QVariant v2 = other.data(column, ROLE_SORT);
-                return (v1.toString().compare (v2.toString(), Qt::CaseInsensitive) < 0);
-            }
-        }
-
-        // let the standard do the sort
-        return QTreeWidgetItem::operator<(other);
-    }
-
-private:
-    QTreeWidget *m_pWidget; // the member "view" is private
-};
 
 /*static*/ void MessengerWindow::showYourself ()
 {
@@ -155,6 +126,9 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
 #ifdef MINIMAL_RSGUI
     setAttribute (Qt::WA_QuitOnClose, true);
 #endif // MINIMAL_RSGUI
+
+    m_compareRole = new RSTreeWidgetItemCompareRole;
+    m_compareRole->addRole(COLUMN_NAME, ROLE_SORT);
 
     connect( ui.messengertreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( messengertreeWidgetCostumPopupMenu( QPoint ) ) );
 #ifndef MINIMAL_RSGUI
@@ -264,6 +238,8 @@ MessengerWindow::~MessengerWindow ()
         pMainWindow->removeStatusObject(ui.statusButton);
     }
 #endif // MINIMAL_RSGUI
+
+    delete(m_compareRole);
 
     _instance = NULL;
 }
@@ -521,7 +497,7 @@ void  MessengerWindow::insertPeers()
         }
 
         if (gpg_item == NULL) {
-            gpg_item = new MyMessengerTreeWidgetItem(peertreeWidget, 0); //set type to 0 for custom popup menu
+            gpg_item = new RSTreeWidgetItem(m_compareRole, 0); //set type to 0 for custom popup menu
             gpg_item->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
         }
 
@@ -579,7 +555,7 @@ void  MessengerWindow::insertPeers()
             }
 
             if (sslItem == NULL) {
-                sslItem = new MyMessengerTreeWidgetItem(peertreeWidget, 1); //set type to 1 for custom popup menu
+                sslItem = new RSTreeWidgetItem(m_compareRole, 1); //set type to 1 for custom popup menu
             }
 
             /* not displayed, used to find back the item */

@@ -25,6 +25,7 @@
 #include <QMenu>
 #include <QMovie>
 #include <QProcess>
+#include <QSortFilterProxyModel>
 
 #include "SharedFilesDialog.h"
 #include "settings/AddFileAssociationDialog.h"
@@ -54,6 +55,30 @@
 
 const QString Image_AddNewAssotiationForFile = ":/images/kcmsystem24.png";
 
+class SFDSortFilterProxyModel : public QSortFilterProxyModel
+{
+public:
+    SFDSortFilterProxyModel(RemoteDirModel *dirModel, QObject *parent) : QSortFilterProxyModel(parent)
+    {
+        m_dirModel = dirModel;
+    };
+
+protected:
+    virtual bool lessThan(const QModelIndex &left, const QModelIndex &right) const
+    {
+        bool dirLeft = m_dirModel->isDir(left);
+        bool dirRight = m_dirModel->isDir(right);
+
+        if (dirLeft ^ dirRight) {
+            return dirLeft;
+        }
+
+        return QSortFilterProxyModel::lessThan(left, right);
+    }
+
+private:
+    RemoteDirModel *m_dirModel;
+};
 
 /** Constructor */
 SharedFilesDialog::SharedFilesDialog(QWidget *parent)
@@ -91,9 +116,26 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
 
 
   model = new RemoteDirModel(true);
+
+  proxyModel = new SFDSortFilterProxyModel(model, this);
+  proxyModel->setDynamicSortFilter(true);
+  proxyModel->setSourceModel(model);
+  proxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
+  proxyModel->setSortRole(RemoteDirModel::SortRole);
+  proxyModel->sort(0);
+
+  ui.remoteDirTreeView->setModel(proxyModel);
+
   localModel = new RemoteDirModel(false);
-  ui.remoteDirTreeView->setModel(model);
-  ui.localDirTreeView->setModel(localModel);
+
+  localProxyModel = new SFDSortFilterProxyModel(localModel, this);
+  localProxyModel->setDynamicSortFilter(true);
+  localProxyModel->setSourceModel(localModel);
+  localProxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
+  localProxyModel->setSortRole(RemoteDirModel::SortRole);
+  localProxyModel->sort(0);
+
+  ui.localDirTreeView->setModel(localProxyModel);
 
   ui.remoteDirTreeView->setColumnHidden(3,true) ;
   ui.remoteDirTreeView->setColumnHidden(4,true) ;
@@ -150,6 +192,8 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
   ui.remoteDirTreeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
   ui.localDirTreeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
+  // load settings
+  processSettings(true);
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -171,8 +215,39 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
   connect(openfileAct, SIGNAL(triggered()), this, SLOT(openfile()));
   openfolderAct = new QAction(QIcon(IMAGE_OPENFOLDER), tr("Open Folder"), this);
   connect(openfolderAct, SIGNAL(triggered()), this, SLOT(openfolder()));
+}
 
+SharedFilesDialog::~SharedFilesDialog()
+{
+    // save settings
+    processSettings(false);
+}
 
+void SharedFilesDialog::processSettings(bool bLoad)
+{
+    Settings->beginGroup("SharedFilesDialog");
+
+    if (bLoad) {
+        // load settings
+
+        // state of the trees
+        ui.localDirTreeView->header()->restoreState(Settings->value("LocalDirTreeView").toByteArray());
+        ui.remoteDirTreeView->header()->restoreState(Settings->value("RemoteDirTreeView").toByteArray());
+
+        // state of splitter
+        ui.splitter->restoreState(Settings->value("Splitter").toByteArray());
+    } else {
+        // save settings
+
+        // state of trees
+        Settings->setValue("LocalDirTreeView", ui.localDirTreeView->header()->saveState());
+        Settings->setValue("RemoteDirTreeView", ui.remoteDirTreeView->header()->saveState());
+
+        // state of splitter
+        Settings->setValue("Splitter", ui.splitter->saveState());
+    }
+
+    Settings->endGroup();
 }
 
 void SharedFilesDialog::checkUpdate()
@@ -231,6 +306,27 @@ void SharedFilesDialog::shareddirtreeviewCostumPopupMenu( QPoint point )
       contextMnu.exec(QCursor::pos());
 }
 
+QModelIndexList SharedFilesDialog::getLocalSelected()
+{
+    QModelIndexList list = ui.localDirTreeView->selectionModel()->selectedIndexes();
+    QModelIndexList proxyList;
+    for (QModelIndexList::iterator index = list.begin(); index != list.end(); index++) {
+        proxyList.append(localProxyModel->mapToSource(*index));
+    }
+
+    return proxyList;
+}
+
+QModelIndexList SharedFilesDialog::getRemoteSelected()
+{
+    QModelIndexList list = ui.remoteDirTreeView->selectionModel()->selectedIndexes();
+    QModelIndexList proxyList;
+    for (QModelIndexList::iterator index = list.begin(); index != list.end(); index++) {
+        proxyList.append(proxyModel->mapToSource(*index));
+    }
+
+    return proxyList;
+}
 
 void SharedFilesDialog::downloadRemoteSelected()
 {
@@ -239,8 +335,8 @@ void SharedFilesDialog::downloadRemoteSelected()
   std::cerr << "Downloading Files";
   std::cerr << std::endl;
 
-  QItemSelectionModel *qism = ui.remoteDirTreeView->selectionModel();
-  model -> downloadSelected(qism->selectedIndexes());
+  QModelIndexList lst = getRemoteSelected();
+  model -> downloadSelected(lst);
 }
 
 void SharedFilesDialog::copyLink (const QModelIndexList& lst, bool remote)
@@ -294,13 +390,13 @@ void SharedFilesDialog::copyLink (const QModelIndexList& lst, bool remote)
 
 void SharedFilesDialog::copyLinkRemote()
 {
-    QModelIndexList lst = ui.remoteDirTreeView->selectionModel ()->selectedIndexes ();
+    QModelIndexList lst = getRemoteSelected();
     copyLink (lst, true);
 }
 
 void SharedFilesDialog::copyLinkLocal()
 {
-    QModelIndexList lst = ui.localDirTreeView->selectionModel ()->selectedIndexes ();
+    QModelIndexList lst = getLocalSelected();
     copyLink (lst, false);
 }
 
@@ -422,10 +518,8 @@ void SharedFilesDialog::playselectedfiles()
   std::cerr << "SharedFilesDialog::playselectedfiles()";
   std::cerr << std::endl;
 
-  QItemSelectionModel *qism = ui.localDirTreeView->selectionModel();
-
   std::list<std::string> paths;
-  localModel -> getFilePaths(qism->selectedIndexes(), paths);
+  localModel -> getFilePaths(getLocalSelected(), paths);
 
   std::list<std::string>::iterator it;
   QStringList fullpaths;
@@ -456,8 +550,7 @@ void SharedFilesDialog::playselectedfiles()
 //  std::cerr << "Recommending Files";
 //  std::cerr << std::endl;
 //
-//  QItemSelectionModel *qism = ui.remoteDirTreeView->selectionModel();
-//  model -> recommendSelected(qism->selectedIndexes());
+//  model -> recommendSelected(getRemoteSelected());
 //}
 
 
@@ -468,8 +561,7 @@ void SharedFilesDialog::playselectedfiles()
 //  std::cerr << "Recommending Files";
 //  std::cerr << std::endl;
 //
-//  QItemSelectionModel *qism = ui.localDirTreeView->selectionModel();
-//  localModel -> recommendSelected(qism->selectedIndexes());
+//  localModel -> recommendSelected(getLocalSelected());
 //}
 
 
@@ -484,8 +576,7 @@ void SharedFilesDialog::playselectedfiles()
 //
 //  /* clear current recommend Selection done by model */
 //
-//  QItemSelectionModel *qism = ui.localDirTreeView->selectionModel();
-//  localModel -> recommendSelectedOnly(qism->selectedIndexes());
+//  localModel -> recommendSelectedOnly(getLocalSelected());
 //}
 
 
@@ -497,7 +588,7 @@ void SharedFilesDialog::recommendFilesTo( std::string rsid )
 
 	std::list<DirDetails> files_info ;
 
-	localModel->getFileInfoFromIndexList(ui.localDirTreeView->selectionModel()->selectedIndexes(),files_info);
+        localModel->getFileInfoFromIndexList(getLocalSelected(),files_info);
 
 	if(files_info.empty())
 		return ;
@@ -526,7 +617,7 @@ void SharedFilesDialog::recommendFilesToMsg( std::string rsid )
 {
 	std::list<DirDetails> files_info ;
 
-	localModel->getFileInfoFromIndexList(ui.localDirTreeView->selectionModel()->selectedIndexes(),files_info);
+        localModel->getFileInfoFromIndexList(getLocalSelected(),files_info);
 
 	if(files_info.empty())
 		return ;
@@ -556,7 +647,7 @@ void SharedFilesDialog::openfile()
 
     std::cerr << "SharedFilesDialog::openfile" << std::endl;
 
-	QModelIndexList qmil = ui.localDirTreeView->selectionModel()->selectedIndexes();
+        QModelIndexList qmil = getLocalSelected();
 	localModel->openSelected(qmil, false);
 }
 
@@ -565,7 +656,7 @@ void SharedFilesDialog::openfolder()
 {
 	std::cerr << "SharedFilesDialog::openfolder" << std::endl;
 
-	QModelIndexList qmil = ui.localDirTreeView->selectionModel()->selectedIndexes();
+        QModelIndexList qmil = getLocalSelected();
 	localModel->openSelected(qmil, true);
 }
 
