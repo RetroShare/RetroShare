@@ -54,7 +54,7 @@ const int msgservicezone = 54319;
 
 
 p3MsgService::p3MsgService(p3ConnectMgr *cm)
-	:p3Service(RS_SERVICE_TYPE_MSG), pqiConfig(CONFIG_TYPE_MSGS), 
+	:p3Service(RS_SERVICE_TYPE_MSG), p3Config(CONFIG_TYPE_MSGS),
 	mConnMgr(cm), msgChanged(1), mMsgUniqueId(1)
 {
 	addSerialType(new RsMsgSerialiser());
@@ -267,61 +267,45 @@ int     p3MsgService::checkOutgoingMessages()
 
 
 
-bool    p3MsgService::saveConfiguration()
+std::list<RsItem*>    p3MsgService::saveList(bool& cleanup)
 {
-	pqioutput(PQL_DEBUG_BASIC, msgservicezone, 
-		"p3MsgService::save_config()");
 
-	/* now we create a pqiarchive, and stream all the msgs into it
-	 */
-
-	std::string msgfile = Filename();
-	std::string msgfiletmp = Filename()+".tmp";
-
-	if (RsDirUtil::createBackup (msgfile) == false) {
-		getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "File backup error", "Error while backing up file " + msgfile);
-		// no error ?
-	}
-
-	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
-
-	RsSerialiser *rss = new RsSerialiser();
-	rss->addSerialType(new RsMsgSerialiser(true)); // create serialiser for configuration
-
-	BinFileInterface *out = new BinFileInterface(msgfiletmp.c_str(), BIN_FLAGS_WRITEABLE | BIN_FLAGS_HASH_DATA);
-	pqiarchive *pa_out = new pqiarchive(rss, out, BIN_FLAGS_WRITEABLE | BIN_FLAGS_NO_DELETE);
-	bool written = true;
+	std::list<RsItem*> itemList;
 
 	std::map<uint32_t, RsMsgItem *>::iterator mit;
-	for(mit = imsg.begin(); mit != imsg.end(); mit++)
-		written = written && pa_out -> SendItem(mit->second) ;
-
-	for(mit = msgOutgoing.begin(); mit != msgOutgoing.end(); mit++)
-		written = written && pa_out -> SendItem(mit->second) ;
-
 	std::map<uint32_t, RsMsgTagType* >::iterator mit2;
 	std::map<uint32_t, RsMsgTags* >::iterator mit3;
 
+	cleanup = false;
+
+	mMsgMtx.lock();
+
+	for(mit = imsg.begin(); mit != imsg.end(); mit++)
+		itemList.push_back(mit->second);
+
+	for(mit = msgOutgoing.begin(); mit != msgOutgoing.end(); mit++)
+		itemList.push_back(mit->second) ;
 
 	for(mit2 = mTags.begin();  mit2 != mTags.end(); mit2++)
-		written = written && pa_out -> SendItem(mit2->second);
+		itemList.push_back(mit2->second);
 
 	for(mit3 = mMsgTags.begin();  mit3 != mMsgTags.end(); mit3++)
-			written = written && pa_out -> SendItem(mit3->second);
+		itemList.push_back(mit3->second);
 
-	setHash(out->gethash());
-	delete pa_out;	
+	return itemList;
+}
 
-	if(!written)
-		return false ;
+void p3MsgService::saveDone()
+{
+	// unlocks mutex which has been locked by savelist
+	mMsgMtx.unlock();
+}
 
-	if(!RsDirUtil::renameFile(msgfiletmp,msgfile))
-	{
-		getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "File rename error", "Error while renaming file " + msgfile) ;
-		return false ;
-	}
-		
-	return true;
+RsSerialiser* p3MsgService::setupSerialiser()
+{
+    RsSerialiser *rss = new RsSerialiser ;
+    rss->addSerialType(new RsMsgSerialiser(true));
+	return rss;
 }
 
 // build list of standard tag types
@@ -365,29 +349,22 @@ void p3MsgService::initStandardTagTypes()
 	}
 }
 
-bool    p3MsgService::loadConfiguration(std::string &loadHash)
+bool    p3MsgService::loadList(std::list<RsItem*> load)
 {
-	std::string msgfile = Filename();
 
-	RsSerialiser *rss = new RsSerialiser();
-	rss->addSerialType(new RsMsgSerialiser(true)); // create serialiser for configuration
-
-	BinFileInterface *in = new BinFileInterface(msgfile.c_str(), BIN_FLAGS_READABLE | BIN_FLAGS_HASH_DATA);
-    pqiarchive *pa_in = new pqiarchive(rss, in, BIN_FLAGS_READABLE);
-
-
-    RsItem *item;
     RsMsgItem *mitem;
     RsMsgTagType* mtt;
     RsMsgTags* mti;
 
 
-	std::list<RsMsgItem*> items;
+    std::list<RsMsgItem*> items;
+	std::list<RsItem*>::iterator it;
 
 	// load items and calculate next unique msgId
-	while((item = pa_in -> GetItem()))
+	for(it = load.begin(); it != load.end(); it++)
 	{
-		if (NULL != (mitem = dynamic_cast<RsMsgItem *>(item)))
+
+		if (NULL != (mitem = dynamic_cast<RsMsgItem *>(*it)))
 		{
 			/* STORE MsgID */
 			if (mitem->msgId >= mMsgUniqueId) {
@@ -395,25 +372,21 @@ bool    p3MsgService::loadConfiguration(std::string &loadHash)
 			}
 			items.push_back(mitem);
 		}
-		else if(NULL != (mtt = dynamic_cast<RsMsgTagType *>(item)))
+		else if(NULL != (mtt = dynamic_cast<RsMsgTagType *>(*it)))
 		{
 			mTags.insert(std::pair<uint32_t, RsMsgTagType* >(mtt->tagId, mtt));
 		}
-		else if(NULL != (mti = dynamic_cast<RsMsgTags *>(item)))
+		else if(NULL != (mti = dynamic_cast<RsMsgTags *>(*it)))
 		{
 			mMsgTags.insert(std::pair<uint32_t, RsMsgTags* >(mti->msgId, mti));
-		}
-		else
-		{
-			delete item;
 		}
 	}
 
         // sort items into lists
-	std::list<RsMsgItem*>::iterator it;
-	for (it = items.begin(); it != items.end(); it++)
+	std::list<RsMsgItem*>::iterator msgIt;
+	for (msgIt = items.begin(); msgIt != items.end(); msgIt++)
 	{
-		mitem = *it;
+		mitem = *msgIt;
 
 		/* STORE MsgID */
 		if (mitem->msgId == 0) {
@@ -440,43 +413,6 @@ bool    p3MsgService::loadConfiguration(std::string &loadHash)
 			imsg[mitem->msgId] = mitem;
 		}
 	}
-
-	std::string hashin = in->gethash();
-
-	delete pa_in;
-
-	if (hashin != loadHash)
-	{
-		/* big error message! */
-		std::cerr << "p3MsgService::loadConfiguration() FAILED! Msgs Tampered" << std::endl;
-		std::string msgfileold = msgfile + ".failed";
-
-		rename(msgfile.c_str(), msgfileold.c_str());
-
-		std::cerr << "Moving Old file to: " << msgfileold << std::endl;
-		std::cerr << "removing dodgey msgs" << std::endl;
-
-		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
-
-
-		std::map<uint32_t, RsMsgItem *>::iterator mit;
-		for(mit = imsg.begin(); mit != imsg.end(); mit++)
-		{
-			delete (mit->second);
-		}
-		imsg.clear();
-
-		for(mit = msgOutgoing.begin(); mit != msgOutgoing.end(); mit++)
-		{
-			delete (mit->second);
-		}
-		msgOutgoing.clear();
-		setHash("");
-		return false;
-
-	}
-
-	setHash(hashin);
 
 	/* Initialize standard tag types */
 	initStandardTagTypes();

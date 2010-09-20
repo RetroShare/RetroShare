@@ -45,7 +45,7 @@
 
 class p3ConnectMgr;
 
-class p3MsgService: public p3Service, public pqiConfig, public pqiMonitor
+class p3MsgService: public p3Service, public p3Config, public pqiMonitor
 {
 	public:
 	p3MsgService(p3ConnectMgr *cm);
@@ -84,10 +84,12 @@ void    loadWelcomeMsg(); /* startup message */
 int	tick();
 int	status();
 
-	/*** Overloaded from pqiConfig ****/
-virtual bool    loadConfiguration(std::string &loadHash);
-virtual bool    saveConfiguration();
-	/*** Overloaded from pqiConfig ****/
+	/*** Overloaded from p3Config ****/
+virtual RsSerialiser *setupSerialiser();
+virtual std::list<RsItem*> saveList(bool& cleanup);
+virtual bool loadList(std::list<RsItem*> load);
+virtual void saveDone();
+	/*** Overloaded from p3Config ****/
 
 	/*** Overloaded from pqiMonitor ***/
 virtual void    statusChange(const std::list<pqipeer> &plist);
