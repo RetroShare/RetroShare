@@ -325,6 +325,9 @@ virtual RsSerialiser *setupSerialiser() = 0;
 
 /**
  * saves list of derived object
+ * @param cleanup this inform you if you need to call saveDone() to unlock/allow
+ * access to resources pointed to by handles (list)  returned by function: thus false, call saveDone after returned list finished with
+ * and vice versa
  * @return list of config items derived object wants to saves
  */
 virtual std::list<RsItem *> saveList(bool &cleanup) = 0;

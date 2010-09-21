@@ -41,7 +41,7 @@
  *
  */
 
-class pqiarchive: PQInterface
+class pqiarchive: public PQInterface
 {
 public:
 	pqiarchive(RsSerialiser *rss, BinInterface *bio_in, int bio_flagsin);

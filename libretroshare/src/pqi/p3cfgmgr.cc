@@ -29,6 +29,7 @@
 #include "pqi/authssl.h"
 #include "pqi/pqibin.h"
 #include "pqi/pqistore.h"
+#include "pqi/pqiarchive.h"
 #include "pqi/pqinotify.h"
 #include <errno.h>
 #include <util/rsdiscspace.h>
@@ -820,10 +821,32 @@ bool p3Config::getHashAttempt(const std::string& loadHash, std::string& hashstr,
 	uint32_t stream_flags = BIN_FLAGS_READABLE;
 
 	BinInterface *bio = new BinFileInterface(cfg_fname.c_str(), bioflags);
-	pqistore stream(setupSerialiser(), "CONFIG", bio, stream_flags);
+	PQInterface *stream = NULL;
+
+	std::string tempString, msgConfigFileName;
+	std::string::reverse_iterator rit = Filename().rbegin();
+
+
+	// get the msgconfig file name
+	for(int i =0; (i <= 7) && (rit != Filename().rend()); i++)
+	{
+		tempString.push_back(*rit);
+		rit++;
+	}
+
+	rit = tempString.rbegin();
+
+	for(; rit !=tempString.rend(); rit++)
+		msgConfigFileName.push_back(*rit);
+
+	if(msgConfigFileName == "msgs.cfg")
+		stream = new pqiarchive(setupSerialiser(), bio, bioflags);
+	else
+		stream = new  pqistore(setupSerialiser(), "CONFIG", bio, bioflags);
+
 	RsItem *item = NULL;
 
-	while(NULL != (item = stream.GetItem()))
+	while(NULL != (item = stream->GetItem()))
 	{
 #ifdef CONFIG_DEBUG
 		std::cerr << "p3Config::loadConfiguration() loaded item:";
@@ -862,7 +885,8 @@ bool p3Config::getHashAttempt(const std::string& loadHash, std::string& hashstr,
 
 		return false;
 	}
-	//delete bio;
+
+	delete stream;
 	return true;
 }
 
