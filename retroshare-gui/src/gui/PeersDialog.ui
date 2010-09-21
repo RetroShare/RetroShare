@@ -1497,6 +1497,18 @@ p, li { white-space: pre-wrap; }
     <string>Hide Status Column</string>
    </property>
   </action>
+  <action name="actionAdd_Group">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/user/add_group22.png</normaloff>:/images/user/add_group22.png</iconset>
+   </property>
+   <property name="text">
+    <string>Add a new Group</string>
+   </property>
+   <property name="toolTip">
+    <string>Add a new Group</string>
+   </property>
+  </action>
  </widget>
  <resources>
   <include location="images.qrc"/>

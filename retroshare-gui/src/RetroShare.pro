@@ -310,7 +310,8 @@ HEADERS +=  rshare.h \
             gui/feeds/SubFileItem.h \
             gui/feeds/SubDestItem.h \
             gui/feeds/AttachFileItem.h \
-            gui/connect/ConnectFriendWizard.h
+            gui/connect/ConnectFriendWizard.h \
+            gui/groups/CreateGroup.h
 
 
 FORMS +=    gui/StartDialog.ui \
@@ -388,6 +389,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/feeds/SubDestItem.ui \
             gui/feeds/AttachFileItem.ui \
             gui/im_history/ImHistoryBrowser.ui \
+            gui/groups/CreateGroup.ui
 
 SOURCES +=  main.cpp \
             rshare.cpp \
@@ -525,7 +527,8 @@ SOURCES +=  main.cpp \
             gui/feeds/SubFileItem.cpp \
             gui/feeds/SubDestItem.cpp \
             gui/feeds/AttachFileItem.cpp \
-            gui/connect/ConnectFriendWizard.cpp
+            gui/connect/ConnectFriendWizard.cpp \
+            gui/groups/CreateGroup.cpp
             
 RESOURCES += gui/images.qrc lang/lang.qrc gui/help/content/content.qrc 
 

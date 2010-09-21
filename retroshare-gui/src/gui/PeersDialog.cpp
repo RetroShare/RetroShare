@@ -53,6 +53,7 @@
 #include "connect/ConnectFriendWizard.h"
 #include "forums/CreateForum.h"
 #include "channels/CreateChannel.h"
+#include "groups/CreateGroup.h"
 #include "feeds/AttachFileItem.h"
 #include "im_history/ImHistoryBrowser.h"
 #include "common/RSTreeWidgetItem.h"
@@ -189,6 +190,8 @@ PeersDialog::PeersDialog(QWidget *parent)
 
     QMenu *menu = new QMenu();
     menu->addAction(ui.actionAdd_Friend);
+    menu->addAction(ui.actionAdd_Group);
+
     menu->addSeparator();
     menu->addAction(ui.actionCreate_New_Forum);
 #ifndef RS_RELEASE_VERSION
@@ -1711,4 +1714,10 @@ void PeersDialog::on_actionMessageHistory_triggered()
 {
     ImHistoryBrowser imBrowser(false, historyKeeper, ui.lineEdit, this);
     imBrowser.exec();
+}
+
+void PeersDialog::on_actionAdd_Group_activated()
+{
+    CreateGroup createGrpDialog (this);
+    createGrpDialog.exec();
 }
