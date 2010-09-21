@@ -955,8 +955,6 @@ std::list<RsItem*> p3ChatService::saveList(bool& cleanup)
 {
 	cleanup = true;
 
-	mChatMtx.lock(); /****** MUTEX LOCKED *******/
-
 	/* now we create a pqistore, and stream all the msgs into it */
 
 	std::list<RsItem*> list ;
@@ -968,6 +966,8 @@ std::list<RsItem*> p3ChatService::saveList(bool& cleanup)
 
 		list.push_back(ci) ;
 	}
+
+	mChatMtx.lock(); /****** MUTEX LOCKED *******/
 
 	RsChatStatusItem *di = new RsChatStatusItem ;
 	di->status_string = _custom_status_string ;
