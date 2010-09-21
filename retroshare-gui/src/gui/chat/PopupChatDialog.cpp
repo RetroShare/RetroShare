@@ -1133,7 +1133,7 @@ void PopupChatDialog::updateStatus(const QString &peer_id, int status)
             ui.avatarlabel->setStyleSheet("QLabel#avatarlabel{ border-image:url(:/images/avatarstatus_bg_offline.png); }");
             ui.avatarlabel->setEnabled(false);
             ui.infoframe->setVisible(true);
-            ui.infolabel->setText( QString::fromStdString(dialogName) + " " + tr("apears to be Offline.") +"\n" + tr("Messages you send will be lost and not delivered, rs-Mail this contact instead."));
+            ui.infolabel->setText( QString::fromStdString(dialogName) + " " + tr("apears to be Offline.") +"\n" + tr("Messages you send will be delivered after Friend is again Online"));
             break;
 
         case RS_STATUS_INACTIVE:
