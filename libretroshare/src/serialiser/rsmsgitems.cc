@@ -158,6 +158,7 @@ uint32_t RsChatMsgItem::serial_size()
 uint32_t RsPrivateChatMsgConfigItem::serial_size()
 {
 	uint32_t s = 8; /* header */
+	s += 4; /* version */
 	s += GetTlvStringSize(configPeerId);
 	s += 4; /* chatFlags */
 	s += 4; /* configFlags */
@@ -260,6 +261,7 @@ bool RsPrivateChatMsgConfigItem::serialise(void *data, uint32_t& pktsize)
 	offset += 8;
 
 	/* add mandatory parts first */
+	ok &= setRawUInt32(data, tlvsize, &offset, 0);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PEERID, configPeerId);
 	ok &= setRawUInt32(data, tlvsize, &offset, chatFlags);
 	ok &= setRawUInt32(data, tlvsize, &offset, configFlags);
@@ -390,6 +392,8 @@ RsPrivateChatMsgConfigItem::RsPrivateChatMsgConfigItem(void *data,uint32_t size)
 	bool ok = true ;
 
 	/* get mandatory parts first */
+	uint32_t version = 0;
+	ok &= getRawUInt32(data, rssize, &offset, &version);
         ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PEERID, configPeerId);
 	ok &= getRawUInt32(data, rssize, &offset, &chatFlags);
 	ok &= getRawUInt32(data, rssize, &offset, &configFlags);
