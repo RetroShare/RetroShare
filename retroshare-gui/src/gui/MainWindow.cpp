@@ -308,6 +308,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     /* call once */
     updateMessages();
     updateForums();
+    privateChatChanged(NOTIFY_LIST_PRIVATE_INCOMING_CHAT, NOTIFY_TYPE_ADD);
 
     idle = new Idle();
     idle->start();
@@ -511,18 +512,20 @@ void MainWindow::updateStatus()
     }
 }
 
-void MainWindow::privateChatChanged(int type)
+void MainWindow::privateChatChanged(int list, int type)
 {
     /* first process the chat messages */
-    PopupChatDialog::privateChatChanged();
+    PopupChatDialog::privateChatChanged(list, type);
 
-    /* than count the chat messages */
-    int chatCount = rsMsgs->getChatQueueCount(true);
+    if (list == NOTIFY_LIST_PRIVATE_INCOMING_CHAT) {
+        /* than count the chat messages */
+        int chatCount = rsMsgs->getPrivateChatQueueCount(true);
 
-    if (chatCount) {
-        trayIconChat->show();
-    } else {
-        trayIconChat->hide();
+        if (chatCount) {
+            trayIconChat->show();
+        } else {
+            trayIconChat->hide();
+        }
     }
 }
 
@@ -833,7 +836,7 @@ void MainWindow::trayIconChatClicked(QSystemTrayIcon::ActivationReason e)
     if(e == QSystemTrayIcon::Trigger || e == QSystemTrayIcon::DoubleClick) {
         PopupChatDialog *pcd = NULL;
         std::list<std::string> ids;
-        if (rsMsgs->getPrivateChatQueueIds(ids) && ids.size()) {
+        if (rsMsgs->getPrivateChatQueueIds(true, ids) && ids.size()) {
             pcd = PopupChatDialog::getPrivateChat(ids.front(), RS_CHAT_OPEN_NEW | RS_CHAT_REOPEN | RS_CHAT_FOCUS);
         }
 

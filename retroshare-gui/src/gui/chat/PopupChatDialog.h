@@ -42,7 +42,7 @@ public:
   static void cleanupChat();
   static void chatFriend(std::string id);
   static void updateAllAvatars();
-  static void privateChatChanged();
+  static void privateChatChanged(int list, int type);
 
   void updateChat();
   void updatePeerAvatar(const std::string&);
@@ -83,7 +83,7 @@ protected:
   bool eventFilter(QObject *obj, QEvent *ev);
 
   void insertChatMsgs();
-  void addChatMsg(std::string &id, uint sendTime, std::wstring &msg);
+  void addChatMsg(std::string &id, uint sendTime, std::wstring &msg, bool offline);
 
   void updateAvatar();
 
@@ -108,15 +108,19 @@ private slots:
 
   bool fileSave();
   bool fileSaveAs();
-  void setCurrentFileName(const QString &fileName);
+  void clearOfflineMessages();
 
 
 private:
+
+  void setCurrentFileName(const QString &fileName);
 
   void colorChanged(const QColor &c);
   void fontChanged(const QFont &font);
   void addAttachment(std::string,int flag);
   void processSettings(bool bLoad);
+
+   void onPrivateChatChanged(int list, int type);
 
    QAction *actionTextBold;
    QAction *actionTextUnderline;

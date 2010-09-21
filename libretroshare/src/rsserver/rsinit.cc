@@ -2302,6 +2302,7 @@ int RsServer::StartupRetroShare()
 #ifndef MINIMAL_LIBRS
 	mConnMgr->addMonitor(msgSrv);
 	mConnMgr->addMonitor(mStatusSrv);
+	mConnMgr->addMonitor(chatSrv);
 #endif // MINIMAL_LIBRS
 
 	/* must also add the controller as a Monitor...

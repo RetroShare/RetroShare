@@ -439,7 +439,7 @@ void  MessengerWindow::insertPeers()
 
     std::list<std::string> privateChatIds;
 #ifndef MINIMAL_RSGUI
-    rsMsgs->getPrivateChatQueueIds(privateChatIds);
+    rsMsgs->getPrivateChatQueueIds(true, privateChatIds);
 #endif // MINIMAL_RSGUI
 
     rsPeers->getGPGAcceptedList(gpgFriends);

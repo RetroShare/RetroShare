@@ -474,7 +474,7 @@ void  PeersDialog::insertPeers()
     bool bHideUnconnected = ui.action_Hide_Offline_Friends->isChecked();
 
     std::list<std::string> privateChatIds;
-    rsMsgs->getPrivateChatQueueIds(privateChatIds);
+    rsMsgs->getPrivateChatQueueIds(true, privateChatIds);
 
     rsPeers->getGPGAcceptedList(gpgFriends);
 

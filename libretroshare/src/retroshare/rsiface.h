@@ -216,19 +216,20 @@ class NotifyBase
 	virtual std::string askForPassword(const std::string& /* key_details */ ,bool /* prev_is_bad */ ) { return "" ;}
 };
 
-const int NOTIFY_LIST_NEIGHBOURS        = 1;
-const int NOTIFY_LIST_FRIENDS           = 2;
-const int NOTIFY_LIST_SEARCHLIST        = 4;
-const int NOTIFY_LIST_MESSAGELIST       = 5;
-const int NOTIFY_LIST_CHANNELLIST       = 6;
-const int NOTIFY_LIST_TRANSFERLIST      = 7;
-const int NOTIFY_LIST_CONFIG            = 8;
-const int NOTIFY_LIST_DIRLIST_LOCAL     = 9;
-const int NOTIFY_LIST_DIRLIST_FRIENDS  	= 10;
-const int NOTIFY_LIST_FORUMLIST_LOCKED	= 11; // use connect with Qt::QueuedConnection
-const int NOTIFY_LIST_MESSAGE_TAGS      = 12;
-const int NOTIFY_LIST_PUBLIC_CHAT       = 13;
-const int NOTIFY_LIST_PRIVATE_CHAT      = 14;
+const int NOTIFY_LIST_NEIGHBOURS            = 1;
+const int NOTIFY_LIST_FRIENDS               = 2;
+const int NOTIFY_LIST_SEARCHLIST            = 4;
+const int NOTIFY_LIST_MESSAGELIST           = 5;
+const int NOTIFY_LIST_CHANNELLIST           = 6;
+const int NOTIFY_LIST_TRANSFERLIST          = 7;
+const int NOTIFY_LIST_CONFIG                = 8;
+const int NOTIFY_LIST_DIRLIST_LOCAL         = 9;
+const int NOTIFY_LIST_DIRLIST_FRIENDS       = 10;
+const int NOTIFY_LIST_FORUMLIST_LOCKED      = 11; // use connect with Qt::QueuedConnection
+const int NOTIFY_LIST_MESSAGE_TAGS          = 12;
+const int NOTIFY_LIST_PUBLIC_CHAT           = 13;
+const int NOTIFY_LIST_PRIVATE_INCOMING_CHAT = 14;
+const int NOTIFY_LIST_PRIVATE_OUTGOING_CHAT = 15;
 
 const int NOTIFY_TYPE_SAME   = 0x01;
 const int NOTIFY_TYPE_MOD    = 0x02; /* general purpose, check all */

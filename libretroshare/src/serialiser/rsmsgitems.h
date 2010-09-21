@@ -44,8 +44,11 @@ const uint32_t RS_CHAT_FLAG_PUBLIC                 = 0x0020;
 const uint32_t RS_CHAT_FLAG_REQUEST_CUSTOM_STATE   = 0x0040;
 const uint32_t RS_CHAT_FLAG_CUSTOM_STATE_AVAILABLE = 0x0080;
 
-const uint8_t RS_PKT_SUBTYPE_CHAT_AVATAR = 0x03 ;	// default is 0x01
-const uint8_t RS_PKT_SUBTYPE_CHAT_STATUS = 0x04 ;	// default is 0x01
+const uint32_t RS_CHATMSG_CONFIGFLAG_INCOMING = 0x0001;
+
+const uint8_t RS_PKT_SUBTYPE_CHAT_AVATAR           = 0x03 ;	// default is 0x01
+const uint8_t RS_PKT_SUBTYPE_CHAT_STATUS           = 0x04 ;	// default is 0x01
+const uint8_t RS_PKT_SUBTYPE_PRIVATECHATMSG_CONFIG = 0x05 ;	// default is 0x01 
 
 // for defining tags themselves and msg tags
 const uint8_t RS_PKT_SUBTYPE_MSG_TAG_TYPE = 0x03;
@@ -86,7 +89,37 @@ class RsChatMsgItem: public RsChatItem
 		uint32_t sendTime;
 		std::wstring message;
 		/* not serialised */
-		uint32_t recvTime; 
+		uint32_t recvTime;
+};
+
+/*!
+ * For saving incoming and outgoing chat msgs
+ * @see p3ChatService
+ */
+class RsPrivateChatMsgConfigItem: public RsChatItem
+{
+	public:
+		RsPrivateChatMsgConfigItem() :RsChatItem(RS_PKT_SUBTYPE_PRIVATECHATMSG_CONFIG) {}
+		RsPrivateChatMsgConfigItem(void *data,uint32_t size) ; // deserialization
+
+		virtual ~RsPrivateChatMsgConfigItem() {}
+		virtual void clear() {}
+		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+
+		virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
+		virtual uint32_t serial_size() ; 							// deserialise is handled using a constructor
+
+		/* set data from RsChatMsgItem to RsPrivateChatMsgConfigItem */
+		void set(RsChatMsgItem *ci, const std::string &peerId, uint32_t confFlags);
+		/* get data from RsPrivateChatMsgConfigItem to RsChatMsgItem */
+		void get(RsChatMsgItem *ci);
+
+		std::string configPeerId;
+		uint32_t chatFlags;
+		uint32_t configFlags;
+		uint32_t sendTime;
+		std::wstring message;
+		uint32_t recvTime;
 };
 
 // This class contains activity info for the sending peer: active, idle, typing, etc.

@@ -119,7 +119,7 @@ class p3Msgs: public RsMsgs
 	   * returns the count of messages in public or private queue
 	   * @param public or private queue
 	   */
-	  virtual	int    getChatQueueCount(bool privateQueue);
+	  virtual	int    getPublicChatQueueCount();
 
 	  /*!
 	   * @param chats ref to list of received public chats is stored here
@@ -127,15 +127,27 @@ class p3Msgs: public RsMsgs
 	  virtual	bool	getPublicChatQueue(std::list<ChatInfo> &chats);
 
 	  /*!
+	   * returns the count of messages in private queue
+	   * @param public or private queue
+	   */
+	  virtual	int    getPrivateChatQueueCount(bool incoming);
+
+	  /*!
 	   * @param id's of available private chat messages
 	   */
-	  virtual	bool   getPrivateChatQueueIds(std::list<std::string> &ids);
+	  virtual	bool   getPrivateChatQueueIds(bool incoming, std::list<std::string> &ids);
 
 
 	  /*!
 	   * @param chats ref to list of received private chats is stored here
 	   */
-	  virtual	bool	getPrivateChatQueue(std::string id, std::list<ChatInfo> &chats);
+	  virtual	bool	getPrivateChatQueue(bool incoming, std::string id, std::list<ChatInfo> &chats);
+
+	  /*!
+	   * @param clear private chat queue
+	   */
+	  virtual	bool	clearPrivateChatQueue(bool incoming, std::string id);
+
 	  /*!
 	   * sends immediate status string to a specific peer, e.g. in a private chat
 	   * @param peer_id peer to send status string to

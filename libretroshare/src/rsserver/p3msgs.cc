@@ -156,9 +156,9 @@ void p3Msgs::sendStatusString(const std::string& peer_id,const std::string& stat
 	mChatSrv->sendStatusString(peer_id,status_string);
 }
 
-int	p3Msgs::getChatQueueCount(bool privateQueue)
+int	p3Msgs::getPublicChatQueueCount()
 {
-	return mChatSrv->getChatQueueCount(privateQueue);
+	return mChatSrv->getPublicChatQueueCount();
 }
 
 bool	p3Msgs::getPublicChatQueue(std::list<ChatInfo> &chats)
@@ -166,14 +166,24 @@ bool	p3Msgs::getPublicChatQueue(std::list<ChatInfo> &chats)
 	return mChatSrv->getPublicChatQueue(chats);
 }
 
-bool   p3Msgs::getPrivateChatQueueIds(std::list<std::string> &ids)
+int	p3Msgs::getPrivateChatQueueCount(bool incoming)
 {
-	return mChatSrv->getPrivateChatQueueIds(ids);
+	return mChatSrv->getPrivateChatQueueCount(incoming);
 }
 
-bool	p3Msgs::getPrivateChatQueue(std::string id, std::list<ChatInfo> &chats)
+bool   p3Msgs::getPrivateChatQueueIds(bool incoming, std::list<std::string> &ids)
 {
-	return mChatSrv->getPrivateChatQueue(id, chats);
+	return mChatSrv->getPrivateChatQueueIds(incoming, ids);
+}
+
+bool	p3Msgs::getPrivateChatQueue(bool incoming, std::string id, std::list<ChatInfo> &chats)
+{
+	return mChatSrv->getPrivateChatQueue(incoming, id, chats);
+}
+
+bool	p3Msgs::clearPrivateChatQueue(bool incoming, std::string id)
+{
+	return mChatSrv->clearPrivateChatQueue(incoming, id);
 }
 
 void p3Msgs::getOwnAvatarData(unsigned char *& data,int& size)

@@ -141,7 +141,7 @@ public slots:
     void checkAndSetIdle(int idleTime);
     void updateMessages();
     void updateForums();
-    void privateChatChanged(int type);
+    void privateChatChanged(int list, int type);
 
 protected:
     /** Default Constructor */

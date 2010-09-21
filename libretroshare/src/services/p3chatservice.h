@@ -42,12 +42,12 @@
   * This service uses rsnotify (callbacks librs clients (e.g. rs-gui))
   * @see NotifyBase
   */
-class p3ChatService: public p3Service, public p3Config
+class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 {
 	public:
 		p3ChatService(p3ConnectMgr *cm);
 
-		/* overloaded */
+		/***** overloaded from p3Service *****/
 		/*!
 		 * This retrieves all chat msg items and also (important!)
 		 * processes chat-status items that are in service item queue. chat msg item requests are also processed and not returned
@@ -58,16 +58,20 @@ class p3ChatService: public p3Service, public p3Config
 		virtual int   tick();
 		virtual int   status();
 
+		/*************** pqiMonitor callback ***********************/
+		virtual void statusChange(const std::list<pqipeer> &plist);
+
 		/*!
 		 * public chat sent to all peers
 		 */
 		int	sendPublicChat(std::wstring &msg);
 
+		/********* RsMsgs ***********/
 		/*!
 		 * chat is sent to specifc peer
 		 * @param id peer to send chat msg to
 		 */
-		int	sendPrivateChat(std::string &id, std::wstring &msg);
+		bool	sendPrivateChat(std::string &id, std::wstring &msg);
 
 		/*!
 		 * can be used to send 'immediate' status msgs, these status updates are meant for immediate use by peer (not saved by rs)
@@ -115,12 +119,11 @@ class p3ChatService: public p3Service, public p3Config
 		 */
 		void getOwnAvatarJpegData(unsigned char *& data,int& size) ;
 
-
 		/*!
-		 * returns the count of messages in public or private queue
+		 * returns the count of messages in public queue
 		 * @param public or private queue
 		 */
-		int getChatQueueCount(bool privateQueue);
+		int getPublicChatQueueCount();
 
 		/*!
 		 * This retrieves all public chat msg items
@@ -128,14 +131,25 @@ class p3ChatService: public p3Service, public p3Config
 		bool getPublicChatQueue(std::list<ChatInfo> &chats);
 
 		/*!
+		 * returns the count of messages in private queue
+		 * @param public or private queue
+		 */
+		int getPrivateChatQueueCount(bool incoming);
+
+		/*!
 		* @param id's of available private chat messages
 		*/
-		bool getPrivateChatQueueIds(std::list<std::string> &ids);
+		bool getPrivateChatQueueIds(bool incoming, std::list<std::string> &ids);
 
 		/*!
 		 * This retrieves all private chat msg items for peer
 		 */
-		bool getPrivateChatQueue(std::string id, std::list<ChatInfo> &chats);
+		bool getPrivateChatQueue(bool incoming, const std::string &id, std::list<ChatInfo> &chats);
+
+		/*!
+		 * @param clear private chat queue
+		 */
+		bool clearPrivateChatQueue(bool incoming, const std::string &id);
 
 		/************* from p3Config *******************/
 		virtual RsSerialiser *setupSerialiser() ;
@@ -144,6 +158,7 @@ class p3ChatService: public p3Service, public p3Config
 		 * chat msg items and custom status are saved
 		 */
 		virtual std::list<RsItem*> saveList(bool& cleanup) ;
+		virtual void saveDone();
 		virtual bool loadList(std::list<RsItem*> load) ;
 
 	private:
@@ -180,7 +195,8 @@ class p3ChatService: public p3Service, public p3Config
 		p3ConnectMgr *mConnMgr;
 
 		std::list<RsChatMsgItem *> publicList;
-		std::list<RsChatMsgItem *> privateList;
+		std::list<RsChatMsgItem *> privateIncomingList;
+		std::list<RsChatMsgItem *> privateOutgoingList;
 
 		AvatarInfo *_own_avatar ;
 		std::map<std::string,AvatarInfo *> _avatars ;

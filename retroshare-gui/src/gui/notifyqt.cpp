@@ -232,11 +232,12 @@ void NotifyQt::notifyListChange(int list, int type)
 #endif
 			emit publicChatChanged(type);
 			break;
-		case NOTIFY_LIST_PRIVATE_CHAT:
+		case NOTIFY_LIST_PRIVATE_INCOMING_CHAT:
+		case NOTIFY_LIST_PRIVATE_OUTGOING_CHAT:
 #ifdef NOTIFY_DEBUG
 			std::cerr << "received private chat changed" << std::endl ;
 #endif
-			emit privateChatChanged(type);
+			emit privateChatChanged(list, type);
 			break;
 		default:
 			break;
