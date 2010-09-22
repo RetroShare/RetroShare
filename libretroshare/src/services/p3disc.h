@@ -145,6 +145,8 @@ int 	idServers();
 
         std::map<std::string, autoneighbour> neighbours;
 	std::map<std::string, std::string> versions;
+
+	std::list<RsDiscReply*> discReplyList;
 };
 
 
