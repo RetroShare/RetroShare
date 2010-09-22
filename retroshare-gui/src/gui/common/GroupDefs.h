@@ -1,7 +1,7 @@
 /****************************************************************
- *  RetroShare is distributed under the following license:
+ * This file is distributed under the following license:
  *
- *  Copyright (C) 2006 - 2010 RetroShare Team
+ * Copyright (c) 2010, RetroShare Team
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -20,37 +20,17 @@
  ****************************************************************/
 
 
-#ifndef _CREATEGROUP_H
-#define _CREATEGROUP_H
+#ifndef _GROUPDEFS_H
+#define _GROUPDEFS_H
 
-#include "ui_CreateGroup.h"
+class RsGroupInfo;
 
-
-class CreateGroup : public QDialog
+class GroupDefs
 {
-    Q_OBJECT
-
 public:
-    /** Default constructor */
-    CreateGroup(const std::string groupId, QWidget *parent = 0, Qt::WFlags flags = 0);
-    /** Default destructor */
-    ~CreateGroup();
+    static const QString name(const RsGroupInfo &groupInfo);
 
-public slots:
-
-private slots:
-
-private:
-    std::string m_groupId;
-
-    QStringList usedGroupNames;
-
-    /** Qt Designer generated object */
-    Ui::CreateGroup ui;
-
-private slots:
-    void on_buttonBox_accepted();
-    void on_groupname_textChanged(QString );
+    static void sortByName(std::list<RsGroupInfo> &groupInfoList);
 };
 
 #endif

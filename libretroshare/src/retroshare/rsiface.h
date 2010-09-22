@@ -230,6 +230,7 @@ const int NOTIFY_LIST_MESSAGE_TAGS          = 12;
 const int NOTIFY_LIST_PUBLIC_CHAT           = 13;
 const int NOTIFY_LIST_PRIVATE_INCOMING_CHAT = 14;
 const int NOTIFY_LIST_PRIVATE_OUTGOING_CHAT = 15;
+const int NOTIFY_LIST_GROUPLIST             = 16;
 
 const int NOTIFY_TYPE_SAME   = 0x01;
 const int NOTIFY_TYPE_MOD    = 0x02; /* general purpose, check all */

@@ -2405,7 +2405,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/groups/CreateGroup.ui" line="+14"/>
         <source>Create a Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Gruppe erstellen</translation>
     </message>
     <message>
         <location line="+72"/>
@@ -2414,21 +2414,22 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:18pt; font-weight:600; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:400; color:#ffffff;&quot;&gt;Create a Group&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>ruppe erstellen</translatorcomment>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:18pt; font-weight:600; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:400; color:#ffffff;&quot;&gt;Gruppe erstellen&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+31"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:9pt;&quot;&gt;Group Name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <source>Group Name</source>
+        <translation>Name</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+7"/>
         <source>Enter a name for your group</source>
-        <translation type="unfinished"></translation>
+        <translation>Gib einen Namen für Deine Gruppe ein</translation>
     </message>
 </context>
 <context>
@@ -4099,6 +4100,34 @@ Fill in your GPG password when asked, to sign your new key.</source>
     </message>
 </context>
 <context>
+    <name>GroupDefs</name>
+    <message>
+        <location filename="../gui/common/GroupDefs.cpp" line="+38"/>
+        <source>Friends</source>
+        <translation>Freunde</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Family</source>
+        <translation>Familie</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Co-Workers</source>
+        <translation>Mitarbeiter</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Other Contacts</source>
+        <translation>Andere Kontakte</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Favorites</source>
+        <translation>Favoriten</translation>
+    </message>
+</context>
+<context>
     <name>HelpBrowser</name>
     <message>
         <location filename="../gui/help/browser/helpbrowser.cpp" line="+127"/>
@@ -4781,16 +4810,17 @@ p, li { white-space: pre-wrap; }
         <translation>Kanäle</translation>
     </message>
     <message>
+        <location line="+4"/>
         <source>Blogs</source>
-        <translation type="obsolete">Blogs</translation>
+        <translation type="unfinished">Blogs</translation>
     </message>
     <message>
-        <location line="+540"/>
+        <location line="+539"/>
         <source>Internal Error</source>
         <translation>Interener Fehler</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.ui" line="+83"/>
+        <location filename="../gui/MainWindow.ui" line="+82"/>
         <location filename="../gui/MainWindow.cpp" line="-43"/>
         <source>Options</source>
         <translation>Optionen</translation>
@@ -4815,12 +4845,12 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.ui" line="-69"/>
+        <location filename="../gui/MainWindow.ui" line="-68"/>
         <source>MainWindow</source>
         <translation>Hauptfenster</translation>
     </message>
     <message>
-        <location line="+48"/>
+        <location line="+47"/>
         <source>Add Friend</source>
         <translation>Freund hinzufügen</translation>
     </message>
@@ -4841,12 +4871,7 @@ p, li { white-space: pre-wrap; }
         <translation>Schnellstart Assistent</translation>
     </message>
     <message>
-        <location line="+9"/>
-        <source>Add Group</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/MainWindow.cpp" line="-261"/>
+        <location filename="../gui/MainWindow.cpp" line="-264"/>
         <source>Search</source>
         <translation>Suchen</translation>
     </message>
@@ -4856,12 +4881,12 @@ p, li { white-space: pre-wrap; }
         <translation>Dateien</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.ui" line="-47"/>
+        <location filename="../gui/MainWindow.ui" line="-38"/>
         <source>Messenger</source>
         <translation>Messenger</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="+148"/>
+        <location filename="../gui/MainWindow.cpp" line="+151"/>
         <source>Show/Hide</source>
         <translation>Anzeigen/Verbergen</translation>
     </message>
@@ -4938,12 +4963,12 @@ p, li { white-space: pre-wrap; }
         <translation>Foren</translation>
     </message>
     <message>
-        <location line="-66"/>
+        <location line="-69"/>
         <source>RetroShare %1 a secure decentralised communication platform</source>
         <translation>RetroShare %1 eine sichere und dezentralisierte Kommunikationsplattform</translation>
     </message>
     <message>
-        <location line="+567"/>
+        <location line="+570"/>
         <source>Open Messages</source>
         <translation>Öffne Nachrichten</translation>
     </message>
@@ -6852,17 +6877,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PeersDialog</name>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="+329"/>
+        <location filename="../gui/PeersDialog.cpp" line="+360"/>
         <source>Chat</source>
         <translation>Chat</translation>
     </message>
     <message>
-        <location line="+49"/>
-        <source>Export Friend</source>
-        <translation>Zertifikat des Freundes exportieren</translation>
-    </message>
-    <message>
-        <location line="+439"/>
+        <location line="+737"/>
         <source>Save Certificate</source>
         <translation>Zertifikat speichern</translation>
     </message>
@@ -6877,12 +6897,12 @@ p, li { white-space: pre-wrap; }
         <translation>Status</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="-475"/>
+        <location filename="../gui/PeersDialog.cpp" line="-736"/>
         <source>Connect To Friend</source>
         <translation>Verbinde zum Freund</translation>
     </message>
     <message>
-        <location line="-217"/>
+        <location line="-227"/>
         <source>Profile</source>
         <translation>Profil</translation>
     </message>
@@ -6902,7 +6922,7 @@ p, li { white-space: pre-wrap; }
         <translation>ich</translation>
     </message>
     <message>
-        <location line="+93"/>
+        <location line="+115"/>
         <source>Expand all</source>
         <translation>Alle erweitern</translation>
     </message>
@@ -6912,27 +6932,57 @@ p, li { white-space: pre-wrap; }
         <translation>Alle reduzieren</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+4"/>
         <source>Message Friend</source>
         <translation>Freund anschreiben</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+2"/>
         <source>Peer Details</source>
         <translation>Peer-Details</translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+2"/>
         <source>Deny Friend</source>
         <translation>Blockiere Freund</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+11"/>
         <source>Remove Friend Location</source>
         <translation>Freund entfernen</translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+53"/>
+        <source>Add to group</source>
+        <translation>Hinzufügen zur Gruppe</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Move to group</source>
+        <translation>Verschiebe in Gruppe</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Groups</source>
+        <translation>Gruppen</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Remove from group</source>
+        <translation>Aus Gruppe entfernen</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Remove from all groups</source>
+        <translation>Aus allen Gruppen entfernen</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Remove group</source>
+        <translation>Gruppe entfernen</translation>
+    </message>
+    <message>
+        <location line="+24"/>
         <source>&lt;strong&gt;GPG Key&lt;/strong&gt;</source>
         <translation></translation>
     </message>
@@ -6942,12 +6992,12 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location line="+349"/>
+        <location line="+519"/>
         <source>Available</source>
         <translation>Verfügbar</translation>
     </message>
     <message>
-        <location line="+736"/>
+        <location line="+758"/>
         <source>Add Extra File</source>
         <translation>Zusätzliche Datei hinzufügen</translation>
     </message>
@@ -7061,7 +7111,7 @@ p, li { white-space: pre-wrap; }
         <location line="+41"/>
         <location line="+3"/>
         <source>Add a new Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Neue Gruppe hinzufügen</translation>
     </message>
     <message>
         <location line="-107"/>
@@ -7107,18 +7157,13 @@ p, li { white-space: pre-wrap; }
         <translation>Verlauf löschen</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="-1225"/>
-        <source>Profile View</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/PeersDialog.ui" line="+85"/>
+        <location line="+85"/>
         <location line="+3"/>
         <source>Save Chat History</source>
         <translation>Chat Verlauf speichern</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="+564"/>
+        <location filename="../gui/PeersDialog.cpp" line="-661"/>
         <source>RetroShare</source>
         <translation></translation>
     </message>
@@ -7161,17 +7206,17 @@ p, li { white-space: pre-wrap; }
         <translation>Status Spalte ausblenden</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="-1528"/>
+        <location filename="../gui/PeersDialog.cpp" line="-1799"/>
         <source>Friends Storm</source>
         <translation>Aktivitäten</translation>
     </message>
     <message>
-        <location line="+230"/>
+        <location line="+252"/>
         <source>Recomend this Friend to...</source>
         <translation>Freund weiterempfehlen...</translation>
     </message>
     <message>
-        <location line="+645"/>
+        <location line="+894"/>
         <source>is typing...</source>
         <translation>tippt...</translation>
     </message>
@@ -7191,12 +7236,12 @@ p, li { white-space: pre-wrap; }
         <translation>Freunde</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="-638"/>
+        <location filename="../gui/PeersDialog.cpp" line="-887"/>
         <source>Paste Friend Link</source>
         <translation>RetroShare Link einfügen</translation>
     </message>
     <message>
-        <location line="+258"/>
+        <location line="+482"/>
         <source>location</source>
         <translation>Standort</translation>
     </message>
@@ -7655,11 +7700,6 @@ Do you want to send them a Message instead</source>
         <translation>ist Offline.</translation>
     </message>
     <message>
-        <source>Messages you send will be lost and not delivered, rs-Mail this contact instead.</source>
-        <translation type="obsolete">Nachrichten, die Du versendest gehen bei diesem Kontakt nicht ein.
-Diesem Kontakt stattdessen eine RS-Mail senden.</translation>
-    </message>
-    <message>
         <location line="-693"/>
         <source>is typing...</source>
         <translation>tippt...</translation>
@@ -7820,7 +7860,7 @@ Diesem Kontakt stattdessen eine RS-Mail senden.</translation>
 <context>
     <name>ProfileView</name>
     <message>
-        <location filename="../gui/profile/ProfileView.cpp" line="+77"/>
+        <location filename="../gui/profile/ProfileView.cpp" line="+76"/>
         <source>Clear Photo</source>
         <translation>Photo entfernen</translation>
     </message>

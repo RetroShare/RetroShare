@@ -61,6 +61,15 @@ const uint32_t RS_PEER_STATE_ONLINE	= 0x0002;
 const uint32_t RS_PEER_STATE_CONNECTED  = 0x0004;
 const uint32_t RS_PEER_STATE_UNREACHABLE= 0x0008;
 
+/* Groups */
+#define RS_GROUP_ID_FRIENDS    "Friends"
+#define RS_GROUP_ID_FAMILY     "Family"
+#define RS_GROUP_ID_COWORKERS  "Co-Workers"
+#define RS_GROUP_ID_OTHERS     "Other Contacts"
+#define RS_GROUP_ID_FAVORITES  "Favorites"
+
+const uint32_t RS_GROUP_FLAG_STANDARD = 0x0001;
+
 /* A couple of helper functions for translating the numbers games */
 
 std::string RsPeerTrustString(uint32_t trustLvl);
@@ -117,6 +126,18 @@ class RsPeerDetails
 	uint32_t		lastConnect; /* how long ago */
 	std::string		autoconnect;
         uint32_t		connectPeriod;
+};
+
+class RsGroupInfo
+{
+public:
+	RsGroupInfo();
+
+	std::string id;
+	std::string name;
+	uint32_t    flag;
+
+	std::list<std::string> peerIds;
 };
 
 std::ostream &operator<<(std::ostream &out, const RsPeerDetails &detail);
@@ -190,6 +211,16 @@ virtual	std::string saveCertificateToString(std::string id)  	= 0;
 virtual	bool setAcceptToConnectGPGCertificate(std::string gpg_id, bool acceptance) = 0;
 virtual	bool signGPGCertificate(std::string gpg_id)                   	= 0;
 virtual	bool trustGPGCertificate(std::string gpg_id, uint32_t trustlvl) 	= 0;
+
+	/* Group Stuff */
+virtual bool    addGroup(RsGroupInfo &groupInfo) = 0;
+virtual bool    editGroup(const std::string &groupId, RsGroupInfo &groupInfo) = 0;
+virtual bool    removeGroup(const std::string &groupId) = 0;
+virtual bool    getGroupInfo(const std::string &groupId, RsGroupInfo &groupInfo) = 0;
+virtual bool    getGroupInfoList(std::list<RsGroupInfo> &groupInfoList) = 0;
+// groupId == "" && assign == false -> remove from all groups
+virtual bool    assignPeerToGroup(const std::string &groupId, const std::string &peerId, bool assign) = 0;
+virtual bool    assignPeersToGroup(const std::string &groupId, const std::list<std::string> &peerIds, bool assign) = 0;
 
 };
 

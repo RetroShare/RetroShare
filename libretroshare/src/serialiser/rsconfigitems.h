@@ -35,6 +35,8 @@
 #include "serialiser/rstlvtypes.h"
 #include "serialiser/rstlvaddrs.h"
 
+class RsGroupInfo;
+
 const uint8_t RS_PKT_TYPE_GENERAL_CONFIG = 0x01;
 const uint8_t RS_PKT_TYPE_PEER_CONFIG    = 0x02;
 const uint8_t RS_PKT_TYPE_CACHE_CONFIG   = 0x03;
@@ -44,9 +46,10 @@ const uint8_t RS_PKT_TYPE_FILE_CONFIG    = 0x04;
 const uint8_t RS_PKT_SUBTYPE_KEY_VALUE = 0x01;
 
 	/* PEER CONFIG SUBTYPES */
-const uint8_t RS_PKT_SUBTYPE_PEER_OLD_NET  = 0x01;
-const uint8_t RS_PKT_SUBTYPE_PEER_STUN = 0x02;
-const uint8_t RS_PKT_SUBTYPE_PEER_NET  = 0x03;     /* replacement for OLD_NET */
+const uint8_t RS_PKT_SUBTYPE_PEER_OLD_NET = 0x01;
+const uint8_t RS_PKT_SUBTYPE_PEER_STUN    = 0x02;
+const uint8_t RS_PKT_SUBTYPE_PEER_NET     = 0x03;     /* replacement for OLD_NET */
+const uint8_t RS_PKT_SUBTYPE_PEER_GROUP   = 0x04;
 
 	/* FILE CONFIG SUBTYPES */
 const uint8_t RS_PKT_SUBTYPE_FILE_TRANSFER = 0x01;
@@ -114,6 +117,28 @@ std::ostream &print(std::ostream &out, uint16_t indent = 0);
 	RsTlvIpAddrSet extAddrList;
 };
 
+class RsPeerGroupItem : public RsItem
+{
+public:
+	RsPeerGroupItem();
+	virtual ~RsPeerGroupItem();
+
+	virtual void clear();
+	std::ostream &print(std::ostream &out, uint16_t indent = 0);
+
+	/* set data from RsGroupInfo to RsPeerGroupItem */
+	void set(RsGroupInfo &groupInfo);
+	/* get data from RsGroupInfo to RsPeerGroupItem */
+	void get(RsGroupInfo &groupInfo);
+
+	/* Mandatory */
+	std::string id;
+	std::string name;
+	uint32_t    flag;
+
+	std::list<std::string> peerIds;
+};
+
 
 class RsPeerStunItem: public RsItem
 {
@@ -159,6 +184,10 @@ virtual	RsPeerNetItem *deserialiseNet(void *data, uint32_t *size);
 virtual	uint32_t    sizeStun(RsPeerStunItem *);
 virtual	bool        serialiseStun  (RsPeerStunItem *item, void *data, uint32_t *size);
 virtual	RsPeerStunItem *    deserialiseStun(void *data, uint32_t *size);
+
+virtual	uint32_t    sizeGroup(RsPeerGroupItem *);
+virtual	bool        serialiseGroup  (RsPeerGroupItem *item, void *data, uint32_t *size);
+virtual	RsPeerGroupItem *    deserialiseGroup(void *data, uint32_t *size);
 
 };
 

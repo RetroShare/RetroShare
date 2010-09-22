@@ -281,6 +281,7 @@ HEADERS +=  rshare.h \
             gui/common/html.h \
             gui/common/StatusDefs.h \
             gui/common/TagDefs.h \
+            gui/common/GroupDefs.h \
             gui/common/Emoticons.h \
             gui/common/RSTreeWidgetItem.h \
             gui/MessagesDialog.h \
@@ -478,6 +479,7 @@ SOURCES +=  main.cpp \
             gui/common/html.cpp \
             gui/common/StatusDefs.cpp \
             gui/common/TagDefs.cpp \
+            gui/common/GroupDefs.cpp \
             gui/common/Emoticons.cpp \
             gui/common/RSTreeWidgetItem.cpp \
             gui/settings/rsharesettings.cpp \

@@ -26,6 +26,7 @@
 
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rsconfigitems.h"
+#include "retroshare/rspeers.h"
 
 /***
 #define RSSERIAL_DEBUG 1
@@ -664,6 +665,7 @@ uint32_t    RsPeerConfigSerialiser::size(RsItem *i)
 	RsPeerOldNetItem *oldpni;
 	RsPeerStunItem *psi;
 	RsPeerNetItem *pni;
+	RsPeerGroupItem *pgi;
 
 	if (NULL != (oldpni = dynamic_cast<RsPeerOldNetItem *>(i)))
 	{
@@ -677,6 +679,10 @@ uint32_t    RsPeerConfigSerialiser::size(RsItem *i)
 	{
 		return sizeStun(psi);
 	}
+	else if (NULL != (pgi = dynamic_cast<RsPeerGroupItem *>(i)))
+	{
+		return sizeGroup(pgi);
+	}
 
 	return 0;
 }
@@ -687,6 +693,7 @@ bool    RsPeerConfigSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsi
 	RsPeerOldNetItem *oldpni;
 	RsPeerNetItem *pni;
 	RsPeerStunItem *psi;
+	RsPeerGroupItem *pgi;
 
 	if (NULL != (oldpni = dynamic_cast<RsPeerOldNetItem *>(i)))
 	{
@@ -699,6 +706,10 @@ bool    RsPeerConfigSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsi
 	else if (NULL != (psi = dynamic_cast<RsPeerStunItem *>(i)))
 	{
 		return serialiseStun(psi, data, pktsize);
+	}
+	else if (NULL != (pgi = dynamic_cast<RsPeerGroupItem *>(i)))
+	{
+		return serialiseGroup(pgi, data, pktsize);
 	}
 
 	return false;
@@ -726,16 +737,14 @@ RsItem *RsPeerConfigSerialiser::deserialise(void *data, uint32_t *pktsize)
 			old = deserialiseOldNet(data, pktsize);
 			/* upgrade mechanism */
 			return convertToNetItem(old);
-			break;
 		case RS_PKT_SUBTYPE_PEER_NET:
 			return deserialiseNet(data, pktsize);
-			break;
 		case RS_PKT_SUBTYPE_PEER_STUN:
 			return deserialiseStun(data, pktsize);
-			break;
+		case RS_PKT_SUBTYPE_PEER_GROUP:
+			return deserialiseGroup(data, pktsize);
 		default:
 			return NULL;
-			break;
 	}
 	return NULL;
 }
@@ -1294,6 +1303,186 @@ RsPeerStunItem *RsPeerConfigSerialiser::deserialiseStun(void *data, uint32_t *si
 	if (offset != rssize)
 	{
 
+		/* error */
+		delete item;
+		return NULL;
+	}
+
+	return item;
+}
+
+/*************************************************************************/
+
+RsPeerGroupItem::RsPeerGroupItem() : RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG, RS_PKT_TYPE_PEER_CONFIG, RS_PKT_SUBTYPE_PEER_GROUP)
+{
+}
+
+RsPeerGroupItem::~RsPeerGroupItem()
+{
+}
+
+void RsPeerGroupItem::clear()
+{
+	id.clear();
+	name.clear();
+	flag = 0;
+	peerIds.clear();
+}
+
+std::ostream &RsPeerGroupItem::print(std::ostream &out, uint16_t indent)
+{
+	printRsItemBase(out, "RsPeerGroupItem", indent);
+	uint16_t int_Indent = indent + 2;
+
+	printIndent(out, int_Indent);
+	out << "groupId: " << id << std::endl; 
+
+	printIndent(out, int_Indent);
+	out << "groupName: " << name << std::endl;
+
+	printIndent(out, int_Indent);
+	out << "groupFlag: " << flag << std::endl;
+
+	std::list<std::string>::iterator it;
+	for (it = peerIds.begin(); it != peerIds.end(); it++) {
+		printIndent(out, int_Indent);
+		out << "peerId: " << *it << std::endl;
+	}
+
+	printRsItemEnd(out, "RsPeerGroupItem", indent);
+	return out;
+}
+
+/* set data from RsGroupInfo to RsPeerGroupItem */
+void RsPeerGroupItem::set(RsGroupInfo &groupInfo)
+{
+	id = groupInfo.id;
+	name = groupInfo.name;
+	flag = groupInfo.flag;
+	peerIds = groupInfo.peerIds;
+}
+
+/* get data from RsGroupInfo to RsPeerGroupItem */
+void RsPeerGroupItem::get(RsGroupInfo &groupInfo)
+{
+	groupInfo.id = id;
+	groupInfo.name = name;
+	groupInfo.flag = flag;
+	groupInfo.peerIds = peerIds;
+}
+
+/*************************************************************************/
+
+uint32_t RsPeerConfigSerialiser::sizeGroup(RsPeerGroupItem *i)
+{	
+	uint32_t s = 8; /* header */
+	s += 4; /* version */
+	s += GetTlvStringSize(i->id);
+	s += GetTlvStringSize(i->name);
+	s += 4; /* flag */
+
+	std::list<std::string>::iterator it;
+	for (it = i->peerIds.begin(); it != i->peerIds.end(); it++) {
+		s += GetTlvStringSize(*it);
+	}
+
+	return s;
+}
+
+bool RsPeerConfigSerialiser::serialiseGroup(RsPeerGroupItem *item, void *data, uint32_t *size)
+{
+	uint32_t tlvsize = RsPeerConfigSerialiser::sizeGroup(item);
+	uint32_t offset = 0;
+
+	if(*size < tlvsize)
+		return false; /* not enough space */
+
+	*size = tlvsize;
+
+	bool ok = true;
+
+	// serialise header
+
+	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+
+#ifdef RSSERIAL_DEBUG
+	std::cerr << "RsPeerConfigSerialiser::serialiseGroup() Header: " << ok << std::endl;
+	std::cerr << "RsPeerConfigSerialiser::serialiseGroup() Header: " << tlvsize << std::endl;
+#endif
+
+	/* skip the header */
+	offset += 8;
+
+	/* add mandatory parts first */
+	ok &= setRawUInt32(data, tlvsize, &offset, 0);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_KEY, item->id);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, item->name);
+	ok &= setRawUInt32(data, tlvsize, &offset, item->flag);
+
+	std::list<std::string>::iterator it;
+	for (it = item->peerIds.begin(); it != item->peerIds.end(); it++) {
+		ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PEERID, *it);
+	}
+
+	if(offset != tlvsize)
+	{
+		ok = false;
+#ifdef RSSERIAL_DEBUG
+		std::cerr << "RsPeerConfigSerialiser::serialiseGroup() Size Error! " << std::endl;
+#endif
+	}
+
+	return ok;
+}
+
+RsPeerGroupItem *RsPeerConfigSerialiser::deserialiseGroup(void *data, uint32_t *size)
+{
+	/* get the type and size */
+	uint32_t rstype = getRsItemId(data);
+	uint32_t rssize = getRsItemSize(data);
+
+	uint32_t offset = 0;
+
+	if ((RS_PKT_VERSION1 != getRsItemVersion(rstype)) ||
+		(RS_PKT_CLASS_CONFIG != getRsItemClass(rstype)) ||
+		(RS_PKT_TYPE_PEER_CONFIG  != getRsItemType(rstype)) ||
+		(RS_PKT_SUBTYPE_PEER_GROUP != getRsItemSubType(rstype)))
+	{
+		return NULL; /* wrong type */
+	}
+
+	if (*size < rssize)    /* check size */
+		return NULL; /* not enough data */
+
+	/* set the packet length */
+	*size = rssize;
+
+	bool ok = true;
+
+	RsPeerGroupItem *item = new RsPeerGroupItem();
+	item->clear();
+
+	/* skip the header */
+	offset += 8;
+
+	/* get mandatory parts first */
+	uint32_t version;
+	ok &= getRawUInt32(data, rssize, &offset, &version);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_KEY, item->id);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_NAME, item->name);
+	ok &= getRawUInt32(data, rssize, &offset, &(item->flag));
+
+	std::string peerId;
+	while (offset != rssize) {
+		peerId.erase();
+
+		ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PEERID, peerId);
+
+		item->peerIds.push_back(peerId);
+	}
+
+	if (offset != rssize)
+	{
 		/* error */
 		delete item;
 		return NULL;

@@ -38,6 +38,7 @@ const int p3connectzone = 3431;
 
 #include "serialiser/rsconfigitems.h"
 #include "pqi/pqinotify.h"
+#include "retroshare/rsiface.h"
 
 #include <sstream>
 
@@ -196,6 +197,8 @@ p3ConnectMgr::p3ConnectMgr()
 	
 		mNetFlags = pqiNetStatus();
 		mOldNetFlags = pqiNetStatus();
+
+		lastGroupId = 1;
 	}
 	
 #ifdef CONN_DEBUG
@@ -2194,53 +2197,62 @@ bool p3ConnectMgr::removeFriend(std::string id)
 {
 
 #ifdef CONN_DEBUG
-        std::cerr << "p3ConnectMgr::removeFriend() for id : " << id << std::endl;
-        std::cerr << "p3ConnectMgr::removeFriend() mFriendList.size() : " << mFriendList.size() << std::endl;
+	std::cerr << "p3ConnectMgr::removeFriend() for id : " << id << std::endl;
+	std::cerr << "p3ConnectMgr::removeFriend() mFriendList.size() : " << mFriendList.size() << std::endl;
 #endif
 
 	netAssistFriend(id, false);
 
-	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+	std::list<std::string> toRemove;
 
-	/* move to othersList */
-	bool success = false;
-        std::list<std::string> toRemove;
-        std::map<std::string, peerConnectState>::iterator it;
-        //remove ssl and gpg_ids
-        for(it = mFriendList.begin(); it != mFriendList.end(); it++)
-        {
-            if (it->second.id == id || it->second.gpg_id == id) {
+	{
+		RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
+		/* move to othersList */
+		bool success = false;
+		std::map<std::string, peerConnectState>::iterator it;
+		//remove ssl and gpg_ids
+		for(it = mFriendList.begin(); it != mFriendList.end(); it++)
+		{
+			if (it->second.id == id || it->second.gpg_id == id) {
 #ifdef CONN_DEBUG
-        std::cerr << "p3ConnectMgr::removeFriend() friend found in the list." << id << std::endl;
+				std::cerr << "p3ConnectMgr::removeFriend() friend found in the list." << id << std::endl;
 #endif
-                peerConnectState peer = it->second;
+				peerConnectState peer = it->second;
 
-                toRemove.push_back(it->second.id);
+				toRemove.push_back(it->second.id);
 
-		peer.state &= (~RS_PEER_S_FRIEND);
-		peer.state &= (~RS_PEER_S_CONNECTED);
-		peer.state &= (~RS_PEER_S_ONLINE);
-		peer.actions = RS_PEER_MOVED;
-		peer.inConnAttempt = false;
-                mOthersList[id] = peer;
-		mStatusChanged = true;
+				peer.state &= (~RS_PEER_S_FRIEND);
+				peer.state &= (~RS_PEER_S_CONNECTED);
+				peer.state &= (~RS_PEER_S_ONLINE);
+				peer.actions = RS_PEER_MOVED;
+				peer.inConnAttempt = false;
+				mOthersList[id] = peer;
+				mStatusChanged = true;
 
-                success = true;
-            }
+				success = true;
+			}
+		}
+
+		std::list<std::string>::iterator toRemoveIt;
+		for(toRemoveIt = toRemove.begin(); toRemoveIt != toRemove.end(); toRemoveIt++) {
+			if (mFriendList.end() != (it = mFriendList.find(*toRemoveIt))) {
+				mFriendList.erase(it);
+			}
+		}
+
+#ifdef CONN_DEBUG
+		std::cerr << "p3ConnectMgr::removeFriend() new mFriendList.size() : " << mFriendList.size() << std::endl;
+#endif
 	}
 
-        std::list<std::string>::iterator toRemoveIt;
-        for(toRemoveIt = toRemove.begin(); toRemoveIt != toRemove.end(); toRemoveIt++) {
-            if (mFriendList.end() != (it = mFriendList.find(*toRemoveIt))) {
-                mFriendList.erase(it);
-            }
-        }
+	/* remove id from all groups */
+	std::list<std::string> peerIds;
+	peerIds.push_back(id);
 
+	assignPeersToGroup("", peerIds, false);
 
-#ifdef CONN_DEBUG
-        std::cerr << "p3ConnectMgr::removeFriend() new mFriendList.size() : " << mFriendList.size() << std::endl;
-#endif
-        IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
         return !toRemove.empty();
 }
@@ -2994,9 +3006,9 @@ std::list<RsItem *> p3ConnectMgr::saveList(bool &cleanup)
 {
 	/* create a list of current peers */
 	std::list<RsItem *> saveData;
-	cleanup = true;
+	cleanup = false;
 
-	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+	connMtx.lock(); /****** MUTEX LOCKED *******/ 
 
 	RsPeerNetItem *item = new RsPeerNetItem();
 	item->clear();
@@ -3033,6 +3045,7 @@ std::list<RsItem *> p3ConnectMgr::saveList(bool &cleanup)
 #endif
 
 	saveData.push_back(item);
+	saveCleanupList.push_back(item);
 
 	/* iterate through all friends and save */
         std::map<std::string, peerConnectState>::iterator it;
@@ -3054,6 +3067,7 @@ std::list<RsItem *> p3ConnectMgr::saveList(bool &cleanup)
                 (it->second).ipAddrs.mExt.loadTlv(item->extAddrList);
 
 		saveData.push_back(item);
+		saveCleanupList.push_back(item);
 #ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::saveList() Peer Config Item:" << std::endl;
 		item->print(std::cerr, 10);
@@ -3074,6 +3088,7 @@ std::list<RsItem *> p3ConnectMgr::saveList(bool &cleanup)
 	std::cout << "Pushing item for use_extr_addr_finder = " << mUseExtAddrFinder << std::endl ;
         #endif
 	saveData.push_back(vitem);
+	saveCleanupList.push_back(vitem);
 
                 // Now save config for network digging strategies
 
@@ -3088,8 +3103,31 @@ std::list<RsItem *> p3ConnectMgr::saveList(bool &cleanup)
         std::cout << "Pushing item for allow_tunnel_connection = " << mAllowTunnelConnection << std::endl ;
         #endif
         saveData.push_back(vitem2);
+	saveCleanupList.push_back(vitem2);
+
+	/* save groups */
+
+	std::list<RsPeerGroupItem *>::iterator groupIt;
+	for (groupIt = groupList.begin(); groupIt != groupList.end(); groupIt++) {
+		saveData.push_back(*groupIt); // no delete
+	}
 
 	return saveData;
+}
+
+void    p3ConnectMgr::saveDone()
+{
+	/* clean up the save List */
+	std::list<RsItem *>::iterator it;
+	for(it = saveCleanupList.begin(); it != saveCleanupList.end(); it++)
+	{
+		delete (*it);
+	}
+
+	saveCleanupList.clear();
+
+	/* unlock mutex */
+	connMtx.unlock(); /****** MUTEX UNLOCKED *******/
 }
 
 bool  p3ConnectMgr::loadList(std::list<RsItem *> load)
@@ -3111,7 +3149,6 @@ bool  p3ConnectMgr::loadList(std::list<RsItem *> load)
 	for(it = load.begin(); it != load.end(); it++)
 	{
 		RsPeerNetItem *pitem = dynamic_cast<RsPeerNetItem *>(*it);
-		RsConfigKeyValueSet *vitem = dynamic_cast<RsConfigKeyValueSet *>(*it) ;
 		if (pitem)
 		{
 			if (pitem->pid == ownId)
@@ -3146,8 +3183,14 @@ bool  p3ConnectMgr::loadList(std::list<RsItem *> load)
 			addrs.mLocal.extractFromTlv(pitem->localAddrList);
 			addrs.mExt.extractFromTlv(pitem->extAddrList);
                         updateAddressList(pitem->pid, addrs);
+
+			delete(*it);
+
+			continue;
 		}
-		else if(vitem)
+
+		RsConfigKeyValueSet *vitem = dynamic_cast<RsConfigKeyValueSet *>(*it) ;
+		if (vitem)
 		{
 			RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
@@ -3166,10 +3209,86 @@ bool  p3ConnectMgr::loadList(std::list<RsItem *> load)
 					std::cerr << "setting allow_tunnel_connection to " << mAllowTunnelConnection << std::endl ;
 				}
 			}
+
+			delete(*it);
+
+			continue;
+		}
+
+		RsPeerGroupItem *gitem = dynamic_cast<RsPeerGroupItem *>(*it) ;
+		if (gitem)
+		{
+			RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
+#ifdef CONN_DEBUG
+			std::cerr << "p3ConnectMgr::loadList() Peer group item:" << std::endl;
+			gitem->print(std::cerr, 10);
+			std::cerr << std::endl;
+#endif
+
+			groupList.push_back(gitem); // don't delete
+
+			if ((gitem->flag & RS_GROUP_FLAG_STANDARD) == 0) {
+				/* calculate group id */
+				uint32_t groupId = atoi(gitem->id.c_str());
+				if (groupId > lastGroupId) {
+					lastGroupId = groupId;
+				}
+			}
+
+			continue;
 		}
 
 		delete (*it);
 	}
+
+	{
+		/* set missing groupIds */
+
+		RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
+		/* Standard groups */
+		const int standardGroupCount = 5;
+		const char *standardGroup[standardGroupCount] = { RS_GROUP_ID_FRIENDS, RS_GROUP_ID_FAMILY, RS_GROUP_ID_COWORKERS, RS_GROUP_ID_OTHERS, RS_GROUP_ID_FAVORITES };
+		bool foundStandardGroup[standardGroupCount] = { false, false, false, false, false };
+
+		std::list<RsPeerGroupItem *>::iterator groupIt;
+		for (groupIt = groupList.begin(); groupIt != groupList.end(); groupIt++) {
+			if ((*groupIt)->flag & RS_GROUP_FLAG_STANDARD) {
+				int i;
+				for (i = 0; i < standardGroupCount; i++) {
+					if ((*groupIt)->id == standardGroup[i]) {
+						foundStandardGroup[i] = true;
+						break;
+					}
+				}
+				
+				if (i >= standardGroupCount) {
+					/* No more a standard group, remove the flag standard */
+					(*groupIt)->flag &= ~RS_GROUP_FLAG_STANDARD;
+				}
+			} else {
+				uint32_t groupId = atoi((*groupIt)->id.c_str());
+				if (groupId == 0) {
+					std::ostringstream out;
+					out << (lastGroupId++);
+					(*groupIt)->id = out.str();
+				}
+			}
+		}
+		
+		/* Initialize standard groups */
+		for (int i = 0; i < standardGroupCount; i++) {
+			if (foundStandardGroup[i] == false) {
+				RsPeerGroupItem *gitem = new RsPeerGroupItem;
+				gitem->id = standardGroup[i];
+				gitem->name = standardGroup[i];
+				gitem->flag |= RS_GROUP_FLAG_STANDARD;
+				groupList.push_back(gitem);
+			}
+		}
+	}
+
 	return true;
 }
 
@@ -3399,10 +3518,203 @@ bool	p3ConnectMgr::getDHTEnabled()
 	return netAssistConnectEnabled();
 }
 
-
 void	p3ConnectMgr::getNetStatus(pqiNetStatus &status)
 {
 	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 	status = mNetFlags;
 }
 
+/**********************************************************************
+ **********************************************************************
+ ************************** Groups ************************************
+ **********************************************************************
+ **********************************************************************/
+
+bool p3ConnectMgr::addGroup(RsGroupInfo &groupInfo)
+{
+	{
+		RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
+		RsPeerGroupItem *groupItem = new RsPeerGroupItem;
+		groupItem->set(groupInfo);
+
+		std::ostringstream out;
+		out << (++lastGroupId);
+		groupItem->id = out.str();
+
+		// remove standard flag
+		groupItem->flag &= ~RS_GROUP_FLAG_STANDARD;
+
+		groupItem->PeerId(getOwnId());
+
+		groupList.push_back(groupItem);
+	}
+
+	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_GROUPLIST, NOTIFY_TYPE_ADD);
+
+	IndicateConfigChanged();
+
+	return true;
+}
+
+bool p3ConnectMgr::editGroup(const std::string &groupId, RsGroupInfo &groupInfo)
+{
+	if (groupId.empty()) {
+		return false;
+	}
+
+	bool changed = false;
+
+	{
+		RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
+		std::list<RsPeerGroupItem*>::iterator groupIt;
+		for (groupIt = groupList.begin(); groupIt != groupList.end(); groupIt++) {
+			if ((*groupIt)->id == groupId) {
+				break;
+			}
+		}
+
+		if (groupIt != groupList.end()) {
+			if ((*groupIt)->flag & RS_GROUP_FLAG_STANDARD) {
+				// can't edit standard groups
+			} else {
+				changed = true;
+				(*groupIt)->set(groupInfo);
+			}
+		}
+	}
+
+	if (changed) {
+		rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_GROUPLIST, NOTIFY_TYPE_MOD);
+
+		IndicateConfigChanged();
+	}
+
+	return changed;
+}
+
+bool p3ConnectMgr::removeGroup(const std::string &groupId)
+{
+	if (groupId.empty()) {
+		return false;
+	}
+
+	bool changed = false;
+
+	{
+		RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
+		std::list<RsPeerGroupItem*>::iterator groupIt;
+		for (groupIt = groupList.begin(); groupIt != groupList.end(); groupIt++) {
+			if ((*groupIt)->id == groupId) {
+				break;
+			}
+		}
+
+		if (groupIt != groupList.end()) {
+			if ((*groupIt)->flag & RS_GROUP_FLAG_STANDARD) {
+				// can't remove standard groups
+			} else {
+				changed = true;
+				delete(*groupIt);
+				groupList.erase(groupIt);
+			}
+		}
+	}
+
+	if (changed) {
+		rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_GROUPLIST, NOTIFY_TYPE_DEL);
+
+		IndicateConfigChanged();
+	}
+
+	return changed;
+}
+
+bool p3ConnectMgr::getGroupInfo(const std::string &groupId, RsGroupInfo &groupInfo)
+{
+	if (groupId.empty()) {
+		return false;
+	}
+
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
+	std::list<RsPeerGroupItem*>::iterator groupIt;
+	for (groupIt = groupList.begin(); groupIt != groupList.end(); groupIt++) {
+		if ((*groupIt)->id == groupId) {
+			(*groupIt)->get(groupInfo);
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool p3ConnectMgr::getGroupInfoList(std::list<RsGroupInfo> &groupInfoList)
+{
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
+	std::list<RsPeerGroupItem*>::iterator groupIt;
+	for (groupIt = groupList.begin(); groupIt != groupList.end(); groupIt++) {
+		RsGroupInfo groupInfo;
+		(*groupIt)->get(groupInfo);
+		groupInfoList.push_back(groupInfo);
+	}
+
+	return true;
+}
+
+// groupId == "" && assign == false -> remove from all groups
+bool p3ConnectMgr::assignPeersToGroup(const std::string &groupId, const std::list<std::string> &peerIds, bool assign)
+{
+	if (groupId.empty() && assign == true) {
+		return false;
+	}
+
+	if (peerIds.empty()) {
+		return false;
+	}
+
+	bool changed = false;
+
+	{
+		RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
+		std::list<RsPeerGroupItem*>::iterator groupIt;
+		for (groupIt = groupList.begin(); groupIt != groupList.end(); groupIt++) {
+			if (groupId.empty() || (*groupIt)->id == groupId) {
+				RsPeerGroupItem *groupItem = *groupIt;
+
+				std::list<std::string>::const_iterator peerIt;
+				for (peerIt = peerIds.begin(); peerIt != peerIds.end(); peerIt++) {
+					std::list<std::string>::iterator peerIt1 = std::find(groupItem->peerIds.begin(), groupItem->peerIds.end(), *peerIt);
+					if (assign) {
+						if (peerIt1 == groupItem->peerIds.end()) {
+							groupItem->peerIds.push_back(*peerIt);
+							changed = true;
+						}
+					} else {
+						if (peerIt1 != groupItem->peerIds.end()) {
+							groupItem->peerIds.erase(peerIt1);
+							changed = true;
+						}
+					}
+				}
+
+				if (groupId.empty() == false) {
+					break;
+				}
+			}
+		}
+	}
+
+	if (changed) {
+		rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_GROUPLIST, NOTIFY_TYPE_MOD);
+
+		IndicateConfigChanged();
+	}
+
+	return changed;
+}

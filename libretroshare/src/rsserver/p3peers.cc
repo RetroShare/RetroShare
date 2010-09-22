@@ -1150,8 +1150,68 @@ int ensureExtension(std::string &name, std::string def_ext)
 	return 1;
 }
 
+	/* Group Stuff */
+bool p3Peers::addGroup(RsGroupInfo &groupInfo)
+{
+#ifdef P3PEERS_DEBUG
+        std::cerr << "p3Peers::addGroup()" << std::endl;
+#endif
 
+	return mConnMgr->addGroup(groupInfo);
+}
 
+bool p3Peers::editGroup(const std::string &groupId, RsGroupInfo &groupInfo)
+{
+#ifdef P3PEERS_DEBUG
+        std::cerr << "p3Peers::editGroup()" << std::endl;
+#endif
+
+	return mConnMgr->editGroup(groupId, groupInfo);
+}
+
+bool p3Peers::removeGroup(const std::string &groupId)
+{
+#ifdef P3PEERS_DEBUG
+        std::cerr << "p3Peers::removeGroup()" << std::endl;
+#endif
+
+	return mConnMgr->removeGroup(groupId);
+}
+
+bool p3Peers::getGroupInfo(const std::string &groupId, RsGroupInfo &groupInfo)
+{
+#ifdef P3PEERS_DEBUG
+        std::cerr << "p3Peers::getGroupInfo()" << std::endl;
+#endif
+
+	return mConnMgr->getGroupInfo(groupId, groupInfo);
+}
+
+bool p3Peers::getGroupInfoList(std::list<RsGroupInfo> &groupInfoList)
+{
+#ifdef P3PEERS_DEBUG
+        std::cerr << "p3Peers::getGroupInfoList()" << std::endl;
+#endif
+
+	return mConnMgr->getGroupInfoList(groupInfoList);
+}
+
+bool p3Peers::assignPeerToGroup(const std::string &groupId, const std::string &peerId, bool assign)
+{
+	std::list<std::string> peerIds;
+	peerIds.push_back(peerId);
+
+	return assignPeersToGroup(groupId, peerIds, assign);
+}
+
+bool p3Peers::assignPeersToGroup(const std::string &groupId, const std::list<std::string> &peerIds, bool assign)
+{
+#ifdef P3PEERS_DEBUG
+        std::cerr << "p3Peers::assignPeersToGroup()" << std::endl;
+#endif
+
+	return mConnMgr->assignPeersToGroup(groupId, peerIds, assign);
+}
 
 
 RsPeerDetails::RsPeerDetails()
@@ -1213,4 +1273,9 @@ std::ostream &operator<<(std::ostream &out, const RsPeerDetails &detail)
 	out << std::endl;
 
 	return out;
+}
+
+RsGroupInfo::RsGroupInfo()
+{
+	flag = 0;
 }

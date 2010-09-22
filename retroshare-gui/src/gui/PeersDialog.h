@@ -53,46 +53,48 @@ class RSTreeWidgetItemCompareRole;
 
 class PeersDialog : public RsAutoUpdatePage 
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
-		/** Default Constructor */
-		PeersDialog(QWidget *parent = 0);
-		/** Default Destructor */
-		~PeersDialog ();
+    /** Default Constructor */
+    PeersDialog(QWidget *parent = 0);
+    /** Default Destructor */
+    ~PeersDialog ();
 
-		//  void setChatDialog(ChatDialog *cd);
+    //  void setChatDialog(ChatDialog *cd);
 
-		virtual void updateDisplay() ;	// overloaded from RsAutoUpdatePage
-// replaced by shortcut
-//		virtual void keyPressEvent(QKeyEvent *) ;
+    virtual void updateDisplay() ;	// overloaded from RsAutoUpdatePage
+    // replaced by shortcut
+    //		virtual void keyPressEvent(QKeyEvent *) ;
 
 public slots:
 
-		void  insertPeers();
-		void publicChatChanged(int type);
-		void toggleSendItem( QTreeWidgetItem *item, int col );
+    void  insertPeers();
+    void publicChatChanged(int type);
+    void toggleSendItem( QTreeWidgetItem *item, int col );
 
-		void insertChat();
-		void setChatInfo(QString info, QColor color=QApplication::palette().color(QPalette::WindowText));
-		void resetStatusBar() ;
+    void insertChat();
+    void setChatInfo(QString info, QColor color=QApplication::palette().color(QPalette::WindowText));
+    void resetStatusBar() ;
 
-        void fileHashingFinished(AttachFileItem* file);
+    void fileHashingFinished(AttachFileItem* file);
 
-		void smileyWidgetgroupchat();
-		void addSmileys();
+    void smileyWidgetgroupchat();
+    void addSmileys();
 
-		void on_actionClearChat_triggered();
-		void on_actionMessageHistory_triggered();
+    void on_actionClearChat_triggered();
+    void on_actionMessageHistory_triggered();
 
-		void displayInfoChatMenu(const QPoint& pos);
+    void displayInfoChatMenu(const QPoint& pos);
 
-		// called by notifyQt when another peer is typing (in group chant and private chat)
-		void updatePeerStatusString(const QString& peer_id,const QString& status_string,bool is_private_chat) ;
+    // called by notifyQt when another peer is typing (in group chant and private chat)
+    void updatePeerStatusString(const QString& peer_id,const QString& status_string,bool is_private_chat) ;
 
-		void updatePeersAvatar(const QString& peer_id);
-		void updateAvatar();	// called by notifyQt to update the avatar when it gets changed by another component
-		
+    void updatePeersAvatar(const QString& peer_id);
+    void updateAvatar();	// called by notifyQt to update the avatar when it gets changed by another component
+
+    void groupsChanged(int type);
+
 protected:
     virtual void dragEnterEvent(QDragEnterEvent *event);
     virtual void dropEvent(QDropEvent *event);
@@ -100,108 +102,112 @@ protected:
     void showEvent (QShowEvent *event);
 
 private slots:
-		void pasteLink() ;
-		void contextMenu(QPoint) ;
+    void pasteLink() ;
+    void contextMenu(QPoint) ;
 
-		/** Create the context popup menu and it's submenus */
-		void peertreeWidgetCostumPopupMenu( QPoint point );
+    /** Create the context popup menu and it's submenus */
+    void peertreeWidgetCostumPopupMenu( QPoint point );
 
-		void updateStatusString(const QString& peer_id, const QString& statusString) ;	// called when a peer is typing in group chat
-		void updateStatusTyping() ;										// called each time a key is hit
+    void updateStatusString(const QString& peer_id, const QString& statusString) ;	// called when a peer is typing in group chat
+    void updateStatusTyping() ;										// called each time a key is hit
 
-		//void updatePeerStatusString(const QString& peer_id,const QString& chat_status) ;
+    //void updatePeerStatusString(const QString& peer_id,const QString& chat_status) ;
 
-		/** Export friend in Friends Dialog */
-		void exportfriend();
-		/** Remove friend  */
-		void removefriend();
-		/** start a chat with a friend **/
-		void chatfriend(QTreeWidgetItem* );
-		void chatfriendproxy();
-		void msgfriend();
-		void recommendfriend();
-		void pastePerson();
+    /** Export friend in Friends Dialog */
+    void exportfriend();
+    /** Remove friend  */
+    void removefriend();
+    /** start a chat with a friend **/
+    void chatfriend(QTreeWidgetItem* );
+    void chatfriendproxy();
+    void msgfriend();
+    void recommendfriend();
+    void pastePerson();
+    void addToGroup();
+    void moveToGroup();
+    void removeFromGroup();
+    void removeGroup();
 
+    void configurefriend();
+    void viewprofile();
 
-		void configurefriend();
-		void viewprofile();
+    /** RsServer Friend Calls */
+    void connectfriend();
 
-		/** RsServer Friend Calls */
-		void connectfriend();
+    void setColor();
+    void insertSendList();
+    void sendMsg();
 
-		void setColor();      
-		void insertSendList();
-		void sendMsg();
-		
-		void statusmessage();
+    void statusmessage();
 
-		void setFont();
-		void getFont();
-		void underline(); 
+    void setFont();
+    void getFont();
+    void underline();
 
-		void changeAvatarClicked();
-		void getAvatar();
+    void changeAvatarClicked();
+    void getAvatar();
 
-		void on_actionAdd_Friend_activated();
-        void on_actionAdd_Group_activated();
-		void on_actionCreate_New_Forum_activated();
-		void on_actionCreate_New_Channel_activated(); 
+    void on_actionAdd_Friend_activated();
+    void on_actionAdd_Group_activated();
+    void on_actionCreate_New_Forum_activated();
+    void on_actionCreate_New_Channel_activated();
 
-		void loadmypersonalstatus();
-		
-		void addExtraFile();
-		void anchorClicked (const QUrl &);
-		void addAttachment(std::string);
-		
-		bool fileSave();
-        bool fileSaveAs();
+    void loadmypersonalstatus();
 
-		void setCurrentFileName(const QString &fileName);
-		
-		void displayMenu();
-		void statusColumn();
+    void addExtraFile();
+    void anchorClicked (const QUrl &);
+    void addAttachment(std::string);
 
+    bool fileSave();
+    bool fileSaveAs();
+
+    void setCurrentFileName(const QString &fileName);
+
+    void displayMenu();
+    void statusColumn();
 
 signals:
-		void friendsUpdated() ;
-		void notifyGroupChat(const QString&,const QString&) ;
+    void friendsUpdated() ;
+    void notifyGroupChat(const QString&,const QString&) ;
 
 private:
-		void processSettings(bool bLoad);
-                void addChatMsg(bool incoming, bool history, QString &name, QDateTime &sendTime, QString &message);
+    void processSettings(bool bLoad);
+    void addChatMsg(bool incoming, bool history, QString &name, QDateTime &sendTime, QString &message);
 
-		class QLabel *iconLabel, *textLabel;
-		class QWidget *widget;
-		class QWidgetAction *widgetAction;
-		class QSpacerItem *spacerItem;
+    class QLabel *iconLabel, *textLabel;
+    class QWidget *widget;
+    class QWidgetAction *widgetAction;
+    class QSpacerItem *spacerItem;
 
-		RSTreeWidgetItemCompareRole *m_compareRole;
+    RSTreeWidgetItemCompareRole *m_compareRole;
 
-		///play the sound when recv a message
-		void playsound();
+    ///play the sound when recv a message
+    void playsound();
 
-		QString fileName; 
+    QString fileName;
+    bool groupsHasChanged;
+    std::list<std::string> openGroups;
 
-		/* Worker Functions */
-		/* (1) Update Display */
+    /* Worker Functions */
+    /* (1) Update Display */
 
-		/* (2) Utility Fns */
-		QTreeWidgetItem *getCurrentPeer();
+    /* (2) Utility Fns */
+    QTreeWidgetItem *getCurrentPeer();
 
-		/** Defines the actions for the context menu */
-		QAction* pasteLinkAct;
+    /** Defines the actions for the context menu */
+    QAction* pasteLinkAct;
 
-		IMHistoryKeeper historyKeeper;
-		ChatStyle style;
+    IMHistoryKeeper historyKeeper;
+    ChatStyle style;
 
-		QColor _currentColor;
-		bool _underline;
-		time_t last_status_send_time ;
+    QColor _currentColor;
+    bool _underline;
+    time_t last_status_send_time ;
 
-		QFont mCurrentFont; /* how the text will come out */
+    QFont mCurrentFont; /* how the text will come out */
 
-		/** Qt Designer generated object */
-		Ui::PeersDialog ui;
+    /** Qt Designer generated object */
+    Ui::PeersDialog ui;
 };
 
 #endif // MINIMAL_RSGUI

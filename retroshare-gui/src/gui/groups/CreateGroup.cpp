@@ -19,16 +19,42 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <QPushButton>
+
+#include <retroshare/rspeers.h>
+
 #include "CreateGroup.h"
+#include "gui/common/GroupDefs.h"
 
 /** Default constructor */
-CreateGroup::CreateGroup(QWidget *parent, Qt::WFlags flags)
+CreateGroup::CreateGroup(const std::string groupId, QWidget *parent, Qt::WFlags flags)
   : QDialog(parent, flags)
 {
-  /* Invoke Qt Designer generated QObject setup routine */
-  ui.setupUi(this);
+    /* Invoke Qt Designer generated QObject setup routine */
+    ui.setupUi(this);
 
- 
+    m_groupId = groupId;
+
+    if (m_groupId.empty() == false) {
+        /* edit exisiting group */
+        RsGroupInfo groupInfo;
+        if (rsPeers->getGroupInfo(m_groupId, groupInfo)) {
+            ui.groupname->setText(QString::fromUtf8(groupInfo.name.c_str()));
+        } else {
+            /* Group not found, create new */
+            m_groupId.clear();
+        }
+    }
+
+    std::list<RsGroupInfo> groupInfoList;
+    rsPeers->getGroupInfoList(groupInfoList);
+
+    std::list<RsGroupInfo>::iterator groupIt;
+    for (groupIt = groupInfoList.begin(); groupIt != groupInfoList.end(); groupIt++) {
+        usedGroupNames.append(GroupDefs::name(*groupIt));
+    }
+
+    on_groupname_textChanged(ui.groupname->text());
 }
 
 /** Destructor. */
@@ -36,3 +62,31 @@ CreateGroup::~CreateGroup()
 {
 }
 
+void CreateGroup::on_groupname_textChanged(QString text)
+{
+    if (text.isEmpty() || usedGroupNames.contains(text)) {
+        ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+    } else {
+        ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
+    }
+}
+
+void CreateGroup::on_buttonBox_accepted()
+{
+    RsGroupInfo groupInfo;
+
+    if (m_groupId.empty()) {
+        // add new group
+        groupInfo.name = ui.groupname->text().toUtf8().constData();
+        if (rsPeers->addGroup(groupInfo)) {
+            close();
+        }
+    } else {
+        if (rsPeers->getGroupInfo(m_groupId, groupInfo) == true) {
+            groupInfo.name = ui.groupname->text().toUtf8().constData();
+            if (rsPeers->editGroup(m_groupId, groupInfo)) {
+                close();
+            }
+        }
+    }
+}

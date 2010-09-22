@@ -77,6 +77,7 @@ class NotifyQt: public QObject, public NotifyBase
 		void peerStatusChangedSummary() const;
 		void publicChatChanged(int type) const ;
 		void privateChatChanged(int list, int type) const ;
+		void groupsChanged(int type) const ;
 
 		/* Notify from GUI */
 		void chatStyleChanged(int /*ChatStyle::enumStyleType*/ styleType);

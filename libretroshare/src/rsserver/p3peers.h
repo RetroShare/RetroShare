@@ -101,6 +101,15 @@ virtual	bool setAcceptToConnectGPGCertificate(std::string gpg_id, bool acceptanc
 virtual	bool signGPGCertificate(std::string id);
 virtual	bool trustGPGCertificate(std::string id, uint32_t trustlvl);
 
+	/* Group Stuff */
+virtual bool addGroup(RsGroupInfo &groupInfo);
+virtual bool editGroup(const std::string &groupId, RsGroupInfo &groupInfo);
+virtual bool removeGroup(const std::string &groupId);
+virtual bool getGroupInfo(const std::string &groupId, RsGroupInfo &groupInfo);
+virtual bool getGroupInfoList(std::list<RsGroupInfo> &groupInfoList);
+virtual bool assignPeerToGroup(const std::string &groupId, const std::string &peerId, bool assign);
+virtual bool assignPeersToGroup(const std::string &groupId, const std::list<std::string> &peerIds, bool assign);
+
 	private:
 
 	p3ConnectMgr *mConnMgr;

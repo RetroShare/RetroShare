@@ -201,7 +201,8 @@ class pqiNetStatus
 };
 
 class p3tunnel; 
-
+class RsPeerGroupItem;
+class RsGroupInfo;
 
 std::string textPeerConnectState(peerConnectState &state);
 
@@ -299,6 +300,13 @@ bool 	connectAttempt(std::string id, struct sockaddr_in &addr,
 				uint32_t &delay, uint32_t &period, uint32_t &type);
 bool 	connectResult(std::string id, bool success, uint32_t flags, struct sockaddr_in remote_peer_address);
 
+	/******************** Groups **********************/
+bool    addGroup(RsGroupInfo &groupInfo);
+bool    editGroup(const std::string &groupId, RsGroupInfo &groupInfo);
+bool    removeGroup(const std::string &groupId);
+bool    getGroupInfo(const std::string &groupId, RsGroupInfo &groupInfo);
+bool    getGroupInfoList(std::list<RsGroupInfo> &groupInfoList);
+bool    assignPeersToGroup(const std::string &groupId, const std::list<std::string> &peerIds, bool assign);
 
 
 protected:
@@ -362,6 +370,7 @@ bool	retryConnectTCP(std::string id);
         /* Key Functions to be overloaded for Full Configuration */
 	virtual RsSerialiser *setupSerialiser();
 	virtual std::list<RsItem *> saveList(bool &cleanup);
+	virtual void saveDone();
 	virtual bool    loadList(std::list<RsItem *> load);
 /*****************************************************************/
 
@@ -408,6 +417,11 @@ void 	netStatusReset_locked();
 
 	std::map<std::string, peerConnectState> mFriendList;
 	std::map<std::string, peerConnectState> mOthersList;
+
+	std::list<RsPeerGroupItem *> groupList;
+	uint32_t lastGroupId;
+
+	std::list<RsItem *> saveCleanupList; /* TEMPORARY LIST WHEN SAVING */
 };
 
 #endif // MRK_PQI_CONNECTION_MANAGER_HEADER
