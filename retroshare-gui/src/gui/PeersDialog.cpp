@@ -84,6 +84,8 @@
 #define IMAGE_PASTELINK          ":/images/pasterslink.png"
 #define IMAGE_GROUP16            ":/images/user/group16.png"
 #define IMAGE_GROUP24            ":/images/user/group24.png"
+#define IMAGE_EDIT               ":/images/edit_16.png"
+#define IMAGE_REMOVE             ":/images/delete.png"
 
 #define COLUMN_COUNT    3
 #define COLUMN_NAME     0
@@ -401,10 +403,10 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
             {
                 bool standard = c->data(COLUMN_DATA, ROLE_STANDARD).toBool();
 
-                action = contextMnu.addAction(QIcon(), tr("Edit group"), this, SLOT(editGroup()));
+                action = contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Edit group"), this, SLOT(editGroup()));
                 action->setDisabled(standard);
 
-                action = contextMnu.addAction(QIcon(), tr("Remove group"), this, SLOT(removeGroup()));
+                action = contextMnu.addAction(QIcon(IMAGE_REMOVE), tr("Remove group"), this, SLOT(removeGroup()));
                 action->setDisabled(standard);
             }
             break;
