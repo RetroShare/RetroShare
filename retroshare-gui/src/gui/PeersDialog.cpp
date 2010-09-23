@@ -87,6 +87,8 @@
 #define IMAGE_GROUP24            ":/images/user/group24.png"
 #define IMAGE_EDIT               ":/images/edit_16.png"
 #define IMAGE_REMOVE             ":/images/delete.png"
+#define IMAGE_EXPAND             ":/images/edit_add24.png"
+#define IMAGE_COLLAPSE           ":/images/edit_remove24.png"
 
 #define COLUMN_COUNT    3
 #define COLUMN_NAME     0
@@ -514,8 +516,8 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
 
     contextMnu.addSeparator();
 
-    contextMnu.addAction(QIcon(), tr("Expand all"), ui.peertreeWidget, SLOT(expandAll()));
-    contextMnu.addAction(QIcon(), tr("Collapse all"), ui.peertreeWidget, SLOT(collapseAll()));
+    contextMnu.addAction(QIcon(IMAGE_EXPAND), tr("Expand all"), ui.peertreeWidget, SLOT(expandAll()));
+    contextMnu.addAction(QIcon(IMAGE_COLLAPSE), tr("Collapse all"), ui.peertreeWidget, SLOT(collapseAll()));
 
     contextMnu.exec(QCursor::pos());
 }
