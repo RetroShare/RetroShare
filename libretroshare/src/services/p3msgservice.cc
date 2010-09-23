@@ -58,6 +58,10 @@ p3MsgService::p3MsgService(p3ConnectMgr *cm)
 	mConnMgr(cm), msgChanged(1), mMsgUniqueId(1)
 {
 	addSerialType(new RsMsgSerialiser());
+
+        /* Initialize standard tag types */
+        if(cm)
+            initStandardTagTypes();
 }
 
 uint32_t p3MsgService::getNewUniqueMsgId()
@@ -413,9 +417,6 @@ bool    p3MsgService::loadList(std::list<RsItem*> load)
 			imsg[mitem->msgId] = mitem;
 		}
 	}
-
-	/* Initialize standard tag types */
-	initStandardTagTypes();
 
 	return true;
 }
