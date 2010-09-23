@@ -675,7 +675,8 @@ void  PeersDialog::insertPeers()
         if (groupIt != groupInfoList.end()) {
             groupInfo = &(*groupIt);
 
-            if (groupInfo->peerIds.size() == 0) {
+            if ((groupInfo->flag & RS_GROUP_FLAG_STANDARD) && groupInfo->peerIds.size() == 0) {
+                // don't show empty standard groups
                 groupIt++;
                 continue;
             }
@@ -804,7 +805,7 @@ void  PeersDialog::insertPeers()
             availableCount++;
 
             gpgItem->setText(COLUMN_NAME, QString::fromStdString(detail.name));
-            gpgItem->setData(COLUMN_NAME, ROLE_SORT, "1 " + QString::fromStdString(detail.name));
+            gpgItem->setData(COLUMN_NAME, ROLE_SORT, "2 " + QString::fromStdString(detail.name));
 
             // remove items that are not friends anymore
             int childCount = gpgItem->childCount();
@@ -1043,12 +1044,13 @@ void  PeersDialog::insertPeers()
         }
 
         if (groupInfo && groupItem) {
-            if (groupItem->childCount() == 0) {
+            if ((groupInfo->flag & RS_GROUP_FLAG_STANDARD) && groupItem->childCount() == 0) {
                 // there are some dead id's assigned
                 groupItem->setHidden(true);
             } else {
                 groupItem->setText(COLUMN_NAME, QString("%1 (%2/%3)").arg(GroupDefs::name(*groupInfo)).arg(onlineCount).arg(availableCount));
-                groupItem->setData(COLUMN_NAME, ROLE_SORT, "0 " + QString::fromUtf8(groupInfo->name.c_str()));
+                // show first the standard groups, than the user groups
+                groupItem->setData(COLUMN_NAME, ROLE_SORT, ((groupInfo->flag & RS_GROUP_FLAG_STANDARD) ? "0 " : "1 ") + QString::fromUtf8(groupInfo->name.c_str()));
             }
         }
 
