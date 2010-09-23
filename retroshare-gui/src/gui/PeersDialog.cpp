@@ -72,6 +72,7 @@
 #include <QSound>
 
 /* Images for context menu icons */
+#define IMAGE_DENYFRIEND        ":/images/denied16.png"
 #define IMAGE_REMOVEFRIEND       ":/images/removefriend16.png"
 #define IMAGE_EXPORTFRIEND       ":/images/exportpeers_16x16.png"
 #define IMAGE_PEERINFO           ":/images/peerdetails_16x16.png"
@@ -431,7 +432,7 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
                 }
 
                 if (type == TYPE_GPG) {
-                    contextMnu.addAction(QIcon(IMAGE_REMOVEFRIEND), tr("Deny Friend"), this, SLOT(removefriend()));
+                    contextMnu.addAction(QIcon(IMAGE_DENYFRIEND), tr("Deny Friend"), this, SLOT(removefriend()));
                 } else {
                     //this is a SSL key
                     contextMnu.addAction(QIcon(IMAGE_REMOVEFRIEND), tr("Remove Friend Location"), this, SLOT(removefriend()));
