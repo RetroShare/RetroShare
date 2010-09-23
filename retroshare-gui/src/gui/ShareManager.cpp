@@ -35,6 +35,7 @@
 
 /* Images for context menu icons */
 #define IMAGE_CANCEL               ":/images/delete.png"
+#define IMAGE_EDIT                 ":/images/edit_16.png"
 
 #define COLUMN_PATH         0
 #define COLUMN_VIRTUALNAME  1
@@ -90,7 +91,7 @@ void ShareManager::shareddirListCostumPopupMenu( QPoint point )
 {
     QMenu contextMnu( this );
 
-    QAction *editAct = new QAction(tr( "Edit" ), &contextMnu );
+    QAction *editAct = new QAction(QIcon(IMAGE_EDIT), tr( "Edit" ), &contextMnu );
     connect( editAct , SIGNAL( triggered() ), this, SLOT( editShareDirectory() ) );
 
     QAction *removeAct = new QAction(QIcon(IMAGE_CANCEL), tr( "Remove" ), &contextMnu );
