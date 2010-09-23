@@ -75,9 +75,9 @@
 #define IMAGE_DENYFRIEND        ":/images/denied16.png"
 #define IMAGE_REMOVEFRIEND       ":/images/removefriend16.png"
 #define IMAGE_EXPORTFRIEND       ":/images/exportpeers_16x16.png"
-#define IMAGE_PEERINFO           ":/images/peerdetails_16x16.png"
+#define IMAGE_FRIENDINFO           ":/images/peerdetails_16x16.png"
 #define IMAGE_CHAT               ":/images/chat.png"
-#define IMAGE_MSG                ":/images/message-mail.png"
+#define IMAGE_MSG                ":/images/mail_new.png"
 #define IMAGE_CONNECT            ":/images/connect_friend.png"
 /* Images for Status icons */
 #define IMAGE_AVAILABLE          ":/images/user/identityavaiblecyan24.png"
@@ -418,7 +418,10 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
             {
                 contextMnu.addAction(QIcon(IMAGE_CHAT), tr("Chat"), this, SLOT(chatfriendproxy()));
                 contextMnu.addAction(QIcon(IMAGE_MSG), tr("Message Friend"), this, SLOT(msgfriend()));
-                contextMnu.addAction(QIcon(IMAGE_PEERINFO), tr("Peer Details"), this, SLOT(configurefriend()));
+                
+                contextMnu.addSeparator();
+                
+                contextMnu.addAction(QIcon(IMAGE_FRIENDINFO), tr("Friend Details"), this, SLOT(configurefriend()));
 //                contextMnu.addAction(QIcon(IMAGE_PEERINFO), tr("Profile View"), this, SLOT(viewprofile()));
 //                action = contextMnu.addAction(QIcon(IMAGE_EXPORTFRIEND), tr("Export Friend"), this, SLOT(exportfriend()));
 
