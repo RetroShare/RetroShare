@@ -226,7 +226,6 @@
         <file>images/informations_24x24.png</file>
         <file>images/invite-friend24.png</file>
         <file>images/connect_friend.png</file>
-        <file>images/group24.png</file>
         <file>images/kalarm.png</file>
         <file>images/kbackgammon.png</file>
         <file>images/kblogger.png</file>
@@ -436,6 +435,8 @@
         <file>images/user/kuser24.png</file>
         <file>images/user/agt_forum64.png</file>
         <file>images/user/agt_forum128.png</file>
+        <file>images/user/group16.png</file>
+        <file>images/user/group24.png</file>
         <file>images/up.png</file>
         <file>images/up0down0.png</file>
         <file>images/up0down1.png</file>

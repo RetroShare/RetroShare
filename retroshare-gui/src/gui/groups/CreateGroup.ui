@@ -74,7 +74,7 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QLabel" name="label_3">
+       <widget class="QLabel" name="headerLabel">
         <property name="font">
          <font>
           <pointsize>18</pointsize>

@@ -2431,6 +2431,16 @@ p, li { white-space: pre-wrap; }
         <source>Enter a name for your group</source>
         <translation>Gib einen Namen für Deine Gruppe ein</translation>
     </message>
+    <message>
+        <location filename="../gui/groups/CreateGroup.cpp" line="+44"/>
+        <source>Edit Group</source>
+        <translation>Gruppe ändern</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:18pt; font-weight:600; font-style:normal;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:400; color:#ffffff;&quot;&gt;Edit Group&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:18pt; font-weight:600; font-style:normal;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:400; color:#ffffff;&quot;&gt;Gruppe ändern&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
 </context>
 <context>
     <name>CryptoPage</name>
@@ -6877,12 +6887,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PeersDialog</name>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="+360"/>
+        <location filename="../gui/PeersDialog.cpp" line="+414"/>
         <source>Chat</source>
         <translation>Chat</translation>
     </message>
     <message>
-        <location line="+737"/>
+        <location line="+665"/>
         <source>Save Certificate</source>
         <translation>Zertifikat speichern</translation>
     </message>
@@ -6897,12 +6907,12 @@ p, li { white-space: pre-wrap; }
         <translation>Status</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="-736"/>
+        <location filename="../gui/PeersDialog.cpp" line="-656"/>
         <source>Connect To Friend</source>
         <translation>Verbinde zum Freund</translation>
     </message>
     <message>
-        <location line="-227"/>
+        <location line="-288"/>
         <source>Profile</source>
         <translation>Profil</translation>
     </message>
@@ -6922,42 +6932,52 @@ p, li { white-space: pre-wrap; }
         <translation>ich</translation>
     </message>
     <message>
-        <location line="+115"/>
+        <location line="+269"/>
         <source>Expand all</source>
         <translation>Alle erweitern</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+1"/>
         <source>Collapse all</source>
         <translation>Alle reduzieren</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="-95"/>
         <source>Message Friend</source>
         <translation>Freund anschreiben</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-24"/>
+        <source>&lt;strong&gt;Group&lt;/strong&gt;</source>
+        <translation>&lt;strong&gt;Gruppe&lt;/strong&gt;</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Edit group</source>
+        <translation>Gruppe ändern</translation>
+    </message>
+    <message>
+        <location line="+12"/>
         <source>Peer Details</source>
         <translation>Peer-Details</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+11"/>
         <source>Deny Friend</source>
         <translation>Blockiere Freund</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+3"/>
         <source>Remove Friend Location</source>
         <translation>Freund entfernen</translation>
     </message>
     <message>
-        <location line="+53"/>
+        <location line="+23"/>
         <source>Add to group</source>
         <translation>Hinzufügen zur Gruppe</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+9"/>
         <source>Move to group</source>
         <translation>Verschiebe in Gruppe</translation>
     </message>
@@ -6967,7 +6987,7 @@ p, li { white-space: pre-wrap; }
         <translation>Gruppen</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+13"/>
         <source>Remove from group</source>
         <translation>Aus Gruppe entfernen</translation>
     </message>
@@ -6977,27 +6997,27 @@ p, li { white-space: pre-wrap; }
         <translation>Aus allen Gruppen entfernen</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="-85"/>
         <source>Remove group</source>
         <translation>Gruppe entfernen</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="-12"/>
         <source>&lt;strong&gt;GPG Key&lt;/strong&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-3"/>
+        <location line="-26"/>
         <source>&lt;strong&gt;RetroShare instance&lt;/strong&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+519"/>
+        <location line="+627"/>
         <source>Available</source>
         <translation>Verfügbar</translation>
     </message>
     <message>
-        <location line="+758"/>
+        <location line="+759"/>
         <source>Add Extra File</source>
         <translation>Zusätzliche Datei hinzufügen</translation>
     </message>
@@ -7206,17 +7226,17 @@ p, li { white-space: pre-wrap; }
         <translation>Status Spalte ausblenden</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="-1799"/>
+        <location filename="../gui/PeersDialog.cpp" line="-1780"/>
         <source>Friends Storm</source>
         <translation>Aktivitäten</translation>
     </message>
     <message>
-        <location line="+252"/>
+        <location line="+284"/>
         <source>Recomend this Friend to...</source>
         <translation>Freund weiterempfehlen...</translation>
     </message>
     <message>
-        <location line="+894"/>
+        <location line="+843"/>
         <source>is typing...</source>
         <translation>tippt...</translation>
     </message>
@@ -7236,12 +7256,12 @@ p, li { white-space: pre-wrap; }
         <translation>Freunde</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="-887"/>
+        <location filename="../gui/PeersDialog.cpp" line="-762"/>
         <source>Paste Friend Link</source>
         <translation>RetroShare Link einfügen</translation>
     </message>
     <message>
-        <location line="+482"/>
+        <location line="+356"/>
         <source>location</source>
         <translation>Standort</translation>
     </message>

@@ -40,6 +40,13 @@ CreateGroup::CreateGroup(const std::string groupId, QWidget *parent, Qt::WFlags 
         RsGroupInfo groupInfo;
         if (rsPeers->getGroupInfo(m_groupId, groupInfo)) {
             ui.groupname->setText(QString::fromUtf8(groupInfo.name.c_str()));
+
+            setWindowTitle(tr("Edit Group"));
+            ui.headerLabel->setText(tr("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">"
+                                       "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">"
+                                       "p, li { white-space: pre-wrap; }"
+                                       "</style></head><body style=\" font-family:'MS Shell Dlg 2'; font-size:18pt; font-weight:600; font-style:normal;\">"
+                                       "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:400; color:#ffffff;\">Edit Group</span></p></body></html>"));
         } else {
             /* Group not found, create new */
             m_groupId.clear();
@@ -51,7 +58,9 @@ CreateGroup::CreateGroup(const std::string groupId, QWidget *parent, Qt::WFlags 
 
     std::list<RsGroupInfo>::iterator groupIt;
     for (groupIt = groupInfoList.begin(); groupIt != groupInfoList.end(); groupIt++) {
-        usedGroupNames.append(GroupDefs::name(*groupIt));
+        if (m_groupId.empty() || groupIt->id != m_groupId) {
+            usedGroupNames.append(GroupDefs::name(*groupIt));
+        }
     }
 
     on_groupname_textChanged(ui.groupname->text());

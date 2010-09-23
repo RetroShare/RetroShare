@@ -126,6 +126,7 @@ private slots:
     void addToGroup();
     void moveToGroup();
     void removeFromGroup();
+    void editGroup();
     void removeGroup();
 
     void configurefriend();
