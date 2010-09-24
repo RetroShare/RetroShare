@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>255</width>
-    <height>386</height>
+    <width>472</width>
+    <height>347</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Share Key</string>
+   <string>Share Channel</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
    <property name="verticalSpacing">
@@ -31,9 +31,7 @@
         </size>
        </property>
        <property name="styleSheet">
-        <string notr="true">QFrame#frame{
-background-color: rgb(255, 255, 255);
-background-image: url(:/images/connect/connectFriendBanner.png);
+        <string notr="true">QFrame#frame{background-image: url(:/images/connect/connectFriendBanner.png);
 }</string>
        </property>
        <property name="frameShape">
@@ -43,7 +41,10 @@ background-image: url(:/images/connect/connectFriendBanner.png);
         <enum>QFrame::Raised</enum>
        </property>
        <layout class="QGridLayout" name="gridLayout_2">
-        <item row="0" column="0">
+        <property name="margin">
+         <number>6</number>
+        </property>
+        <item row="0" column="1">
          <widget class="QLabel" name="tlShareKey">
           <property name="styleSheet">
            <string notr="true"/>
@@ -53,7 +54,23 @@ background-image: url(:/images/connect/connectFriendBanner.png);
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:18pt; font-weight:600; color:#ffffff;&quot;&gt;Share Key&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Arial'; font-size:18pt; font-weight:600; color:#ffffff;&quot;&gt;Share Channel&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label">
+          <property name="maximumSize">
+           <size>
+            <width>64</width>
+            <height>64</height>
+           </size>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="../images.qrc">:/images/user/agt_forum64.png</pixmap>
           </property>
          </widget>
         </item>
@@ -71,7 +88,7 @@ p, li { white-space: pre-wrap; }
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0">
+      <item row="1" column="0">
        <widget class="QDockWidget" name="contactsdockWidget">
         <property name="enabled">
          <bool>true</bool>
@@ -110,7 +127,7 @@ p, li { white-space: pre-wrap; }
          <set>QDockWidget::NoDockWidgetFeatures</set>
         </property>
         <property name="windowTitle">
-         <string>Share Key With</string>
+         <string>Share for Friend</string>
         </property>
         <widget class="QWidget" name="dockWidgetContents">
          <layout class="QGridLayout" name="_2">
@@ -172,7 +189,7 @@ p, li { white-space: pre-wrap; }
         </widget>
        </widget>
       </item>
-      <item row="1" column="0">
+      <item row="2" column="0">
        <layout class="QHBoxLayout" name="horizontalLayout">
         <property name="sizeConstraint">
          <enum>QLayout::SetDefaultConstraint</enum>
@@ -209,11 +226,26 @@ p, li { white-space: pre-wrap; }
         </item>
        </layout>
       </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Select the Friends with which you want to Share your Channel.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
+ </resources>
  <connections/>
 </ui>
