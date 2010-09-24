@@ -183,6 +183,7 @@ private:
 
   /* maps of files  */
   std::list<AttachFileItem *> mAttachments;
+  std::list<std::string> m_sslIds;
 
   bool mCheckAttachment;
 

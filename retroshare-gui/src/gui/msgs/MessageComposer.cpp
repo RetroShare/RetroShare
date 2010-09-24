@@ -31,6 +31,8 @@
 #include <QTextDocumentFragment>
 #include <QTimer>
 
+#include <algorithm>
+
 #include "rshare.h"
 #include "MessageComposer.h"
 
@@ -56,11 +58,11 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
     setupEditActions();
     setupViewActions();
     setupInsertActions();
-  
+
     Settings->loadWidgetInformation(this);
 
     setAttribute ( Qt::WA_DeleteOnClose, true );
-   
+
     // connect up the buttons. 
     connect( ui.actionSend, SIGNAL( triggered (bool)), this, SLOT( sendMessage( ) ) );
     //connect( ui.actionReply, SIGNAL( triggered (bool)), this, SLOT( replyMessage( ) ) );
@@ -83,20 +85,14 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
     connect(ui.codeButton, SIGNAL (clicked()), this, SLOT (toggleCode()));
 
     connect(ui.msgText, SIGNAL( checkSpellingChanged( bool ) ), this, SLOT( spellChecking( bool ) ) );
-  
-    connect(ui.msgText, SIGNAL(currentCharFormatChanged(const QTextCharFormat &)),
-            this, SLOT(currentCharFormatChanged(const QTextCharFormat &)));
-    connect(ui.msgText, SIGNAL(cursorPositionChanged()),
-            this, SLOT(cursorPositionChanged()));
-            
-    connect(ui.msgText->document(), SIGNAL(modificationChanged(bool)),
-            actionSave, SLOT(setEnabled(bool)));
-    connect(ui.msgText->document(), SIGNAL(modificationChanged(bool)),
-            this, SLOT(setWindowModified(bool)));
-    connect(ui.msgText->document(), SIGNAL(undoAvailable(bool)),
-            actionUndo, SLOT(setEnabled(bool)));
-    connect(ui.msgText->document(), SIGNAL(redoAvailable(bool)),
-            actionRedo, SLOT(setEnabled(bool)));
+
+    connect(ui.msgText, SIGNAL(currentCharFormatChanged(const QTextCharFormat &)), this, SLOT(currentCharFormatChanged(const QTextCharFormat &)));
+    connect(ui.msgText, SIGNAL(cursorPositionChanged()), this, SLOT(cursorPositionChanged()));
+
+    connect(ui.msgText->document(), SIGNAL(modificationChanged(bool)), actionSave, SLOT(setEnabled(bool)));
+    connect(ui.msgText->document(), SIGNAL(modificationChanged(bool)), this, SLOT(setWindowModified(bool)));
+    connect(ui.msgText->document(), SIGNAL(undoAvailable(bool)), actionUndo, SLOT(setEnabled(bool)));
+    connect(ui.msgText->document(), SIGNAL(redoAvailable(bool)), actionRedo, SLOT(setEnabled(bool)));
 
     setWindowModified(ui.msgText->document()->isModified());
     actionSave->setEnabled(ui.msgText->document()->isModified());
@@ -120,13 +116,12 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
 
     connect(ui.msgSendList, SIGNAL(itemChanged( QTreeWidgetItem *, int ) ), this, SLOT(togglePersonItem( QTreeWidgetItem *, int ) ));
 
-    connect(ui.msgFileList, SIGNAL(itemChanged( QTreeWidgetItem *, int ) ),
-      this, SLOT(toggleRecommendItem( QTreeWidgetItem *, int ) ));
+    connect(ui.msgFileList, SIGNAL(itemChanged( QTreeWidgetItem *, int ) ), this, SLOT(toggleRecommendItem( QTreeWidgetItem *, int ) ));
     
     /* hide the Tree +/- */
     ui.msgSendList -> setRootIsDecorated( false );
     ui.msgFileList -> setRootIsDecorated( false );
-  
+
     /* to hide the header  */
     //ui.msgSendList->header()->hide(); 
 
@@ -173,7 +168,7 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
     ui.comboSize->setCurrentIndex(ui.comboSize->findText(QString::number(QApplication::font().pointSize())));
     
     ui.textalignmentbtn->setIcon(QIcon(QString(":/images/textedit/textcenter.png"))); 
-       
+
     QMenu * alignmentmenu = new QMenu();
     alignmentmenu->addAction(actionAlignLeft);
     alignmentmenu->addAction(actionAlignCenter);
@@ -184,13 +179,13 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
     QPixmap pxm(24,24);
     pxm.fill(Qt::black);
     ui.colorbtn->setIcon(pxm);
-	
-	  /* Set header resize modes and initial section sizes */
+
+    /* Set header resize modes and initial section sizes */
     ui.msgFileList->setColumnCount(5);
     ui.msgFileList->setColumnHidden ( 4, true);
-     
+
     QHeaderView * _smheader = ui.msgFileList->header () ;   
-  
+
     _smheader->resizeSection ( 0, 200 );
     _smheader->resizeSection ( 1, 60 );
     _smheader->resizeSection ( 2, 60 );
@@ -205,7 +200,7 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
     /* set focus to subject */
     ui.titleEdit->setFocus();
 
-  /* Hide platform specific features */
+    /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
 #endif
@@ -215,17 +210,13 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
 {
 //    std::cerr << "MessageComposer::msgfriend()" << std::endl;
 
-    rsicontrol -> ClearInMsg();
-    rsicontrol -> SetInMsg(id, true);
-    std::list<std::string> sslIds;
-    rsPeers->getSSLChildListOfGPGId(id, sslIds);
-    for (std::list<std::string>::iterator it = sslIds.begin(); it != sslIds.end(); it++) {
-        //put all sslChilds in message list
-        rsicontrol -> SetInMsg(*it, true);
-    }
-
     /* create a message */
+
     MessageComposer *pMsgDialog = new MessageComposer();
+
+    pMsgDialog->m_sslIds.clear();
+    //put all sslChilds in message list
+    rsPeers->getSSLChildListOfGPGId(id, pMsgDialog->m_sslIds);
 
     pMsgDialog->newMsg();
     pMsgDialog->show();
@@ -241,9 +232,6 @@ void MessageComposer::recommendFriend(std::list <std::string> &peerids)
         return;
     }
 
-//    rsicontrol -> ClearInMsg();
-//    rsicontrol -> SetInMsg(id, true);
-
     /* create a message */
     MessageComposer *pMsgDialog = new MessageComposer();
 
@@ -255,7 +243,7 @@ void MessageComposer::recommendFriend(std::list <std::string> &peerids)
     sMsgText += "<br><br>";
 
     /* process peer ids */
-    std::list<FileInfo> files_info;
+//    std::list<FileInfo> files_info;
     std::list <std::string>::iterator peerid;
     for (peerid = peerids.begin(); peerid != peerids.end(); peerid++) {
         RsPeerDetails detail;
@@ -371,7 +359,7 @@ void  MessageComposer::insertSendList()
 		item -> setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
 		item -> setCheckState(0, Qt::Unchecked);
 
-		if (rsicontrol->IsInMsg(detail.id))
+                if (std::find(m_sslIds.begin(), m_sslIds.end(), detail.id) != m_sslIds.end())
 		{
 			item -> setCheckState(0, Qt::Checked);
 		}
@@ -432,8 +420,6 @@ void  MessageComposer::insertFileList(const std::list<DirDetails>& dir_info)
 
 void  MessageComposer::insertFileList(const std::list<FileInfo>& files_info)
 {
-//	rsiface->lockData();   /* Lock Interface */
-
 	_recList.clear() ;
 
 //	const std::list<FileInfo> &recList = rsiface->getRecommendList();
@@ -466,8 +452,6 @@ void  MessageComposer::insertFileList(const std::list<FileInfo>& files_info)
 
 	/* add the items in! */
 	tree->insertTopLevelItems(0, items);
-
-//	rsiface->unlockData(); /* UnLock Interface */
 
 	tree->update(); /* update display */
 }
@@ -600,13 +584,9 @@ void MessageComposer::sendMessage_internal(bool bDraftbox)
     mi.title = ui.titleEdit->text().toStdWString();
     mi.msg =   ui.msgText->toHtml().toStdWString();
 
-    rsiface->lockData();   /* Lock Interface */
-
     for(std::list<FileInfo>::const_iterator it(_recList.begin()); it != _recList.end(); ++it)
         if (it -> inRecommend)
             mi.files.push_back(*it);
-
-    rsiface->unlockData(); /* UnLock Interface */
 
     /* get the ids from the send list */
     std::list<std::string> peers;
@@ -615,7 +595,7 @@ void MessageComposer::sendMessage_internal(bool bDraftbox)
     rsPeers->getFriendList(peers);
 
     for(iit = peers.begin(); iit != peers.end(); iit++) {
-        if (rsicontrol->IsInMsg(*iit)) {
+        if (std::find(m_sslIds.begin(), m_sslIds.end(), *iit) != m_sslIds.end()) {
             mi.msgto.push_back(*iit);
         }
     }
@@ -661,34 +641,43 @@ void MessageComposer::addRecipient(std::string id)
 /* First the Msg (People) ones */
 void MessageComposer::togglePersonItem( QTreeWidgetItem *item, int col )
 {
-        //std::cerr << "TogglePersonItem()" << std::endl;
+    //std::cerr << "TogglePersonItem()" << std::endl;
 
-        /* extract id */
-        std::string id = (item -> text(1)).toStdString();
+    /* extract id */
+    std::string id = (item -> text(1)).toStdString();
 
-        /* get state */
-        bool inMsg = (Qt::Checked == item -> checkState(0)); /* alway column 0 */
+    /* get state */
+    bool inMsg = (Qt::Checked == item -> checkState(0)); /* alway column 0 */
 
-        /* call control fns */
+    /* call control fns */
 
-        rsicontrol -> SetInMsg(id, inMsg);
-        return;
+    std::list<std::string>::iterator sslIt = std::find(m_sslIds.begin(), m_sslIds.end(), id);
+    if (sslIt == m_sslIds.end()) {
+        if (inMsg) {
+            m_sslIds.push_back(id);
+        }
+    } else {
+        if (inMsg == false) {
+            m_sslIds.erase(sslIt);
+        }
+    }
 }
 
 void MessageComposer::toggleRecommendItem( QTreeWidgetItem *item, int col )
 {
-        //std::cerr << "ToggleRecommendItem()" << std::endl;
+    //std::cerr << "ToggleRecommendItem()" << std::endl;
 
-        /* extract name */
-        std::string id = (item -> text(0)).toStdString();
+    /* extract hash */
+    std::string hash = (item -> text(3)).toStdString();
 
-        /* get state */
-        bool inRecommend = (Qt::Checked == item -> checkState(0)); /* alway column 0 */
+    /* get state */
+    bool inRecommend = (Qt::Checked == item -> checkState(0)); /* alway column 0 */
 
-        /* call control fns */
-
-        rsicontrol -> SetInRecommend(id, inRecommend);
-        return;
+    for(std::list<FileInfo>::iterator it(_recList.begin()); it != _recList.end(); ++it) {
+        if (it->hash == hash) {
+            it->inRecommend = inRecommend;
+        }
+    }
 }
 
 

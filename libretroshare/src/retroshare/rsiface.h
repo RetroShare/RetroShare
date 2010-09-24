@@ -87,9 +87,6 @@ public:
 virtual	void lockData() = 0;
 virtual	void unlockData() = 0;
 
-	const std::list<FileInfo> &getRecommendList()
-		{ return mRecommendList; }
-
 	const RsConfig &getConfig()
 		{ return mConfig; }
 /****************************************/
@@ -125,8 +122,6 @@ bool	hasChanged(DataFlags set); /* resets it */
 void	fillLists(); /* create some dummy data to display */
 
 		/* Internals */
-	std::list<FileInfo>      mRecommendList;
-
 	bool mChanged[NumOfFlags];
 
 	RsConfig mConfig;
@@ -154,19 +149,10 @@ class RsControl /* The Main Interface Class - for controlling the server */
 		/****************************************/
 
 		/* Flagging Persons / Channels / Files in or out of a set (CheckLists) */
-		virtual int 	SetInChat(std::string id, bool in) = 0;		/* friend : chat msgs */
-		virtual int 	SetInMsg(std::string id, bool in)  = 0;		/* friend : msg receipients */
 		virtual int 	SetInBroadcast(std::string id, bool in) = 0;	/* channel : channel broadcast */
 		virtual int 	SetInSubscribe(std::string id, bool in) = 0;	/* channel : subscribed channels */
-		virtual int 	SetInRecommend(std::string id, bool in) = 0;	/* file : recommended file */
-		virtual int 	ClearInChat() = 0;
-		virtual int 	ClearInMsg() = 0;
 		virtual int 	ClearInBroadcast() = 0;
 		virtual int 	ClearInSubscribe() = 0;
-		virtual int 	ClearInRecommend() = 0;
-
-		virtual bool 	IsInChat(std::string id) = 0;		/* friend : chat msgs */
-		virtual bool 	IsInMsg(std::string id) = 0;		/* friend : msg recpts*/
 
 		/****************************************/
 		/* Config */

@@ -109,24 +109,12 @@ class RsServer: public RsControl, public RsThread
 
 	public:
 		/* Flagging Persons / Channels / Files in or out of a set (CheckLists) */
-		virtual int     SetInChat(std::string id, bool in);         /* friend : chat msgs */
-		virtual int     SetInMsg(std::string id, bool in);          /* friend : msg receipients */ 
 		virtual int     SetInBroadcast(std::string id, bool in);    /* channel : channel broadcast */
 		virtual int     SetInSubscribe(std::string id, bool in);    /* channel : subscribed channels */
-		virtual int     SetInRecommend(std::string id, bool in);    /* file : recommended file */
-		virtual int     ClearInChat();
-		virtual int     ClearInMsg();
 		virtual int     ClearInBroadcast();
 		virtual int     ClearInSubscribe();
-		virtual int     ClearInRecommend();
-
-		virtual bool    IsInChat(std::string id);           /* friend : chat msgs */
-		virtual bool    IsInMsg(std::string id);            /* friend : msg recpts*/
-
 
 	private:
-
-		std::list<std::string> mInChatList, mInMsgList;
 
 		void initRsMI(RsMsgItem *msg, MessageInfo &mi);
 

@@ -1545,23 +1545,23 @@ void  PeersDialog::insertSendList()
 /* to toggle the state */
 
 
-void PeersDialog::toggleSendItem( QTreeWidgetItem *item, int col )
-{
-        #ifdef PEERS_DEBUG
-	std::cerr << "ToggleSendItem()" << std::endl;
-        #endif
-
-	/* extract id */
-	std::string id = (item -> text(4)).toStdString();
-
-	/* get state */
-	bool inChat = (Qt::Checked == item -> checkState(0)); /* alway column 0 */
-
-	/* call control fns */
-
-	rsicontrol -> SetInChat(id, inChat);
-	return;
-}
+//void PeersDialog::toggleSendItem( QTreeWidgetItem *item, int col )
+//{
+//        #ifdef PEERS_DEBUG
+//	std::cerr << "ToggleSendItem()" << std::endl;
+//        #endif
+//
+//	/* extract id */
+//	std::string id = (item -> text(4)).toStdString();
+//
+//	/* get state */
+//	bool inChat = (Qt::Checked == item -> checkState(0)); /* alway column 0 */
+//
+//	/* call control fns */
+//
+//	rsicontrol -> SetInChat(id, inChat);
+//	return;
+//}
 
 //============================================================================
 

@@ -71,7 +71,7 @@ public slots:
 
     void  insertPeers();
     void publicChatChanged(int type);
-    void toggleSendItem( QTreeWidgetItem *item, int col );
+//    void toggleSendItem( QTreeWidgetItem *item, int col );
 
     void insertChat();
     void setChatInfo(QString info, QColor color=QApplication::palette().color(QPalette::WindowText));
