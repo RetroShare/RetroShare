@@ -1741,7 +1741,7 @@ void ForumsDialog::anchorClicked (const QUrl& link )
     std::cerr << "ForumsDialog::anchorClicked link.scheme() : " << link.scheme().toStdString() << std::endl;
     #endif
 
-    RetroShareLink::processUrl(link, NULL, RSLINK_PROCESS_NOTIFY_ALL);
+    RetroShareLink::processUrl(link, RSLINK_PROCESS_NOTIFY_ALL);
 }
 
 void ForumsDialog::filterRegExpChanged()

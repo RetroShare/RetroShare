@@ -1863,7 +1863,7 @@ void MessagesDialog::anchorClicked (const QUrl& link )
 {
     std::cerr << "MessagesDialog::anchorClicked link.scheme() : " << link.scheme().toStdString() << std::endl;
 
-    RetroShareLink::processUrl(link, NULL, RSLINK_PROCESS_NOTIFY_ALL);
+    RetroShareLink::processUrl(link, RSLINK_PROCESS_NOTIFY_ALL);
 }
 
 bool MessagesDialog::fileSave()

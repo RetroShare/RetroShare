@@ -994,8 +994,7 @@ void PopupChatDialog::anchorClicked (const QUrl& link )
 #endif
 
 	std::list<std::string> srcIds;
-	srcIds.push_back(dialogId);
-        RetroShareLink::processUrl(link, &srcIds, RSLINK_PROCESS_NOTIFY_ALL);
+	RetroShareLink::processUrl(link, RSLINK_PROCESS_NOTIFY_ALL);
 }
 
 void PopupChatDialog::dropEvent(QDropEvent *event)

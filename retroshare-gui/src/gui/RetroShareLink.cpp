@@ -239,7 +239,7 @@ bool RetroShareLink::checkHash(const QString& hash)
     return true ;
 }
 
-bool RetroShareLink::process(std::list<std::string> *psrcIds, int flag)
+bool RetroShareLink::process(int flag)
 {
     if (valid() == false) {
         std::cerr << " RetroShareLink::process invalid request" << std::endl;
@@ -254,12 +254,18 @@ bool RetroShareLink::process(std::list<std::string> *psrcIds, int flag)
         {
             std::cerr << " RetroShareLink::process FileRequest : fileName : " << name().toUtf8().constData() << ". fileHash : " << hash().toStdString() << ". fileSize : " << size() << std::endl;
 
-            std::list<std::string> srcIds;
-            if (psrcIds) {
-                srcIds = *psrcIds;
-            }
+				// Get a list of available direct sources, in case the file is browsable only.
+				std::list<std::string> srcIds;
+				FileInfo finfo ;
+				rsFiles->FileDetails(hash().toStdString(), RS_FILE_HINTS_REMOTE,finfo) ;
 
-            if (rsFiles->FileRequest(name().toUtf8().constData(), hash().toStdString(), size(), "", RS_FILE_HINTS_NETWORK_WIDE, srcIds)) {
+				for(std::list<TransferInfo>::const_iterator it(finfo.peers.begin());it!=finfo.peers.end();++it)
+				{
+					std::cerr << "  adding peerid " << (*it).peerId << std::endl ;
+					srcIds.push_back((*it).peerId) ;
+				}
+
+				if (rsFiles->FileRequest(name().toUtf8().constData(), hash().toStdString(), size(), "", RS_FILE_HINTS_NETWORK_WIDE, srcIds)) {
                 if (flag & RSLINK_PROCESS_NOTIFY_SUCCESS) {
                     QMessageBox mb(QObject::tr("File Request Confirmation"), QObject::tr("The file has been added to your download list."),QMessageBox::Information,QMessageBox::Ok,0,0);
                     mb.setButtonText( QMessageBox::Ok, "OK" );
@@ -340,7 +346,7 @@ bool RetroShareLink::process(std::list<std::string> *psrcIds, int flag)
     return false;
 }
 
-/*static*/ bool RetroShareLink::processUrl(const QUrl &url, std::list<std::string> *psrcIds, int flag)
+/*static*/ bool RetroShareLink::processUrl(const QUrl &url, int flag)
 {
     if (url.scheme() == "http") {
         QDesktopServices::openUrl(url);
@@ -359,7 +365,7 @@ bool RetroShareLink::process(std::list<std::string> *psrcIds, int flag)
 //        RetroShareLink link(url);
 //
 //        if (link.valid()) {
-//            return link.process(psrcId, flag);
+//            return link.process(flag);
 //        }
 //
 //        if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
@@ -502,7 +508,7 @@ bool RSLinkClipboard::empty(RetroShareLink::enumType type /*= RetroShareLink::TY
 
     for (uint32_t i = 0; i < links.size(); i++) {
         if (links[i].valid() && (type == RetroShareLink::TYPE_UNKNOWN || links[i].type() == type)) {
-            if (links[i].process(NULL, flag)) {
+            if (links[i].process(flag)) {
                 count++;
             }
         }

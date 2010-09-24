@@ -81,8 +81,8 @@ class RetroShareLink
 
 		bool operator==(const RetroShareLink& l) const { return _type == l._type && _hash == l._hash ; }
 
-		bool process(std::list<std::string> *psrcIds, int flag);
-		static bool processUrl(const QUrl &url, std::list<std::string> *psrcIds, int flag);
+		bool process(int flag);
+		static bool processUrl(const QUrl &url, int flag);
 
 	private:
 		void fromString(const QString &url);
