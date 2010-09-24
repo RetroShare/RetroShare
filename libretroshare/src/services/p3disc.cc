@@ -119,7 +119,42 @@ int p3disc::tick()
                 sendHeartbeat(*pit);
             }
         }
-        
+
+        std::string destId;
+        std::string srcId;
+
+        {
+            RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
+
+            while (!sendIdList.empty()) {
+                std::map<std::string, std::list<std::string> >::iterator sendIdIt = sendIdList.begin();
+
+                if (!sendIdIt->second.empty() && mConnMgr->isOnline(sendIdIt->first)) {
+                    std::string gpgId = sendIdIt->second.front();
+                    sendIdIt->second.pop_front();
+
+                    destId = sendIdIt->first;
+                    srcId = gpgId;
+
+                    /* send only one per tick */
+#ifdef P3DISC_DEBUG
+                    int count = 0;
+                    for (sendIdIt = sendIdList.begin(); sendIdIt != sendIdList.end(); sendIdIt++) {
+                        count += sendIdIt->second.size();
+                    }
+                    std::cerr << "p3disc::tick() Count of gpg id's " << count << std::endl;
+#endif
+                    break;
+                } else {
+                    /* peer is not online anymore ... try next */
+                    sendIdList.erase(sendIdIt);
+                }
+            }
+        }
+
+        if (!destId.empty() && !srcId.empty()) {
+            sendPeerDetails(destId, srcId);
+        }
 
 	return handleIncoming();
 }
@@ -199,11 +234,13 @@ int p3disc::handleIncoming()
 
 	// process one disc item
 	if (!discReplyList.empty()) {
-		std::cerr << "p3disc::handleIncoming() Count of disc items " << discReplyList.size() << std::endl;
 		RsDiscReply *dri = discReplyList.front();
 		discReplyList.pop_front();
 		recvPeerDetails(dri);
 		nhandled++;
+#ifdef P3DISC_DEBUG
+		std::cerr << "p3disc::handleIncoming() Count of disc items " << discReplyList.size() << std::endl;
+#endif
 		delete dri;
 	}
 
@@ -277,7 +314,7 @@ void p3disc::sendAllInfoToJustConnectedPeer(std::string id)
 
 	std::list<std::string> friendIds;
 	std::list<std::string>::iterator friendIdsIt;
-	std::set<std::string> gpgIds;;
+	std::set<std::string> gpgIds;
 
 	rsPeers->getFriendList(friendIds);
 
@@ -298,11 +335,20 @@ void p3disc::sendAllInfoToJustConnectedPeer(std::string id)
 	//add own info
 	gpgIds.insert(rsPeers->getGPGOwnId());
 
-	//send details for each gpg Ids
-	std::set<std::string>::iterator gpgIdsIt;
-        for (gpgIdsIt = gpgIds.begin(); gpgIdsIt != gpgIds.end(); gpgIdsIt++) {
-		sendPeerDetails(id, *gpgIdsIt);
-        }
+	{
+		RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
+
+		/* append gpg id's to the sending list for the id */
+
+		std::list<std::string> &idList = sendIdList[id];
+
+		std::set<std::string>::iterator gpgIdsIt;
+		for (gpgIdsIt = gpgIds.begin(); gpgIdsIt != gpgIds.end(); gpgIdsIt++) {
+			if (std::find(idList.begin(), idList.end(), *gpgIdsIt) == idList.end()) {
+				idList.push_back(*gpgIdsIt);
+			}
+		}
+	}
 
         #ifdef P3DISC_DEBUG
 	std::cerr << "p3disc::sendAllInfoToJustConnectedPeer() finished." << std::endl;
@@ -318,14 +364,22 @@ void p3disc::sendJustConnectedPeerInfoToAllPeer(std::string connectedPeerId)
 #endif
 	std::string gpg_connectedPeerId = rsPeers->getGPGId(connectedPeerId);
 	std::list<std::string> onlineIds;
-	std::list<std::string>::iterator onlineIdsIt;
 
 	rsPeers->getOnlineList(onlineIds);
 
-	/* send them a list of all friend's details */
-        for(onlineIdsIt = onlineIds.begin(); onlineIdsIt != onlineIds.end(); onlineIdsIt++) {
-		sendPeerDetails(*onlineIdsIt, gpg_connectedPeerId);
-        }
+	{
+		RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
+
+		/* append gpg id's of all friend's to the sending list */
+
+		std::list<std::string>::iterator onlineIdsIt;
+		for (onlineIdsIt = onlineIds.begin(); onlineIdsIt != onlineIds.end(); onlineIdsIt++) {
+			std::list<std::string> &idList = sendIdList[*onlineIdsIt];
+			if (std::find(idList.begin(), idList.end(), gpg_connectedPeerId) == idList.end()) {
+				idList.push_back(gpg_connectedPeerId);
+			}
+		}
+	}
 }
 
  /* (dest (to), source (cert)) */
