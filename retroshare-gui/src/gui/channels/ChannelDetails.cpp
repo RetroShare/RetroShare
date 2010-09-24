@@ -55,6 +55,9 @@ ChannelDetails::ChannelDetails(QWidget *parent, Qt::WFlags flags)
   ui.IDline ->setReadOnly(true);
   ui.DescriptiontextEdit ->setReadOnly(true);
   
+  ui.typeEncrypted->setEnabled(false);
+  ui.typePrivate->setEnabled(false);
+  
 
 }
 
@@ -94,7 +97,8 @@ void ChannelDetails::loadChannel()
 	if (!rsChannels)
 	{
 		return;
-	}	
+	}
+    uint32_t flags = 0;	
 
 	std::list<ChannelInfo> channelList;
 	std::list<ChannelInfo>::iterator it;
@@ -131,6 +135,17 @@ void ChannelDetails::loadChannel()
 	
     // Set Channel Description
     ui.DescriptiontextEdit->setText(QString::fromStdWString(ci.channelDesc));
+    
+    if (flags |= RS_DISTRIB_PRIVATE)
+	{
+        ui.typeEncrypted->setChecked(false);
+        ui.typePrivate->setChecked(true);
+	}
+	else if (flags |= RS_DISTRIB_ENCRYPTED)
+	{		
+		ui.typeEncrypted->setChecked(true);
+        ui.typePrivate->setChecked(false);
+	}
         
 
 	
