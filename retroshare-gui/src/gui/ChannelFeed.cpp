@@ -157,19 +157,19 @@ void ChannelFeed::channelListCustomPopupMenu( QPoint point )
       restoreKeysAct = new QAction(QIcon(":/images/settings16.png"), tr("Restore Publish Rights for Channel" ), this );
       connect( restoreKeysAct , SIGNAL( triggered() ), this, SLOT( restoreChannelKeys() ) );
 
-      editChannelDetailAct = new QAction(QIcon(":/images/settings16.png"), tr("Edit Channel Details"), this);
+      editChannelDetailAct = new QAction(QIcon(":/images/edit_16.png"), tr("Edit Channel Details"), this);
       connect( editChannelDetailAct, SIGNAL( triggered() ), this, SLOT( editChannelDetail() ) );
 
-      shareKeyAct = new QAction(QIcon(":/images/gpgp_key_generate.png"), tr("Share Key"), this);
+      shareKeyAct = new QAction(QIcon(":/images/gpgp_key_generate.png"), tr("Share Channel"), this);
       connect( shareKeyAct, SIGNAL( triggered() ), this, SLOT( shareKey() ) );
 
       if((ci.channelFlags & RS_DISTRIB_PUBLISH) && (ci.channelFlags & RS_DISTRIB_ADMIN))
       {
         contextMnu.addAction( postchannelAct );
         contextMnu.addSeparator();
-        contextMnu.addAction( channeldetailsAct );
         contextMnu.addAction( editChannelDetailAct);
         contextMnu.addAction( shareKeyAct );
+        contextMnu.addAction( channeldetailsAct );
       }
       else if (ci.channelFlags & RS_DISTRIB_PUBLISH)
       {
