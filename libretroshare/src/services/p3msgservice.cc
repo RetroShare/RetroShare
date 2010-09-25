@@ -38,6 +38,7 @@
 
 #include <sstream>
 #include <iomanip>
+#include <map>
 
 const int msgservicezone = 54319;
 
@@ -274,11 +275,14 @@ int     p3MsgService::checkOutgoingMessages()
 std::list<RsItem*>    p3MsgService::saveList(bool& cleanup)
 {
 
+
 	std::list<RsItem*> itemList;
 
 	std::map<uint32_t, RsMsgItem *>::iterator mit;
 	std::map<uint32_t, RsMsgTagType* >::iterator mit2;
 	std::map<uint32_t, RsMsgTags* >::iterator mit3;
+
+        MsgTagType stdTags;
 
 	cleanup = false;
 
@@ -290,8 +294,8 @@ std::list<RsItem*>    p3MsgService::saveList(bool& cleanup)
 	for(mit = msgOutgoing.begin(); mit != msgOutgoing.end(); mit++)
 		itemList.push_back(mit->second) ;
 
-	for(mit2 = mTags.begin();  mit2 != mTags.end(); mit2++)
-		itemList.push_back(mit2->second);
+        for(mit2 = mTags.begin();  mit2 != mTags.end(); mit2++)
+                itemList.push_back(mit2->second);
 
 	for(mit3 = mMsgTags.begin();  mit3 != mMsgTags.end(); mit3++)
 		itemList.push_back(mit3->second);
@@ -355,14 +359,14 @@ void p3MsgService::initStandardTagTypes()
 
 bool    p3MsgService::loadList(std::list<RsItem*> load)
 {
-
     RsMsgItem *mitem;
     RsMsgTagType* mtt;
     RsMsgTags* mti;
 
 
     std::list<RsMsgItem*> items;
-	std::list<RsItem*>::iterator it;
+    std::list<RsItem*>::iterator it;
+    std::map<uint32_t, RsMsgTagType*>::iterator tagIt;
 
 	// load items and calculate next unique msgId
 	for(it = load.begin(); it != load.end(); it++)
@@ -377,8 +381,19 @@ bool    p3MsgService::loadList(std::list<RsItem*> load)
 			items.push_back(mitem);
 		}
 		else if(NULL != (mtt = dynamic_cast<RsMsgTagType *>(*it)))
-		{
-			mTags.insert(std::pair<uint32_t, RsMsgTagType* >(mtt->tagId, mtt));
+                {
+                        // delete standard tags as they are now save in config
+                        if(mTags.end() == (tagIt = mTags.find(mtt->tagId)))
+                        {
+                            mTags.insert(std::pair<uint32_t, RsMsgTagType* >(mtt->tagId, mtt));
+                        }
+                        else
+                        {
+                            delete mTags[mtt->tagId];
+                            mTags.erase(tagIt);
+                            mTags.insert(std::pair<uint32_t, RsMsgTagType* >(mtt->tagId, mtt));
+                        }
+
 		}
 		else if(NULL != (mti = dynamic_cast<RsMsgTags *>(*it)))
 		{
@@ -1003,7 +1018,7 @@ bool 	p3MsgService::setMessageTag(std::string &msgId, uint32_t tagId, bool set)
 bool    p3MsgService::resetMessageStandardTagTypes(MsgTagType& tags)
 {
 	MsgTagType standardTags;
-	getStandardTagTypes(standardTags);
+        getStandardTagTypes(standardTags);
 
 	std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator mit;
 	for (mit = standardTags.types.begin(); mit != standardTags.types.end(); mit++) {
