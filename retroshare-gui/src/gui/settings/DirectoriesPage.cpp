@@ -127,14 +127,14 @@ void DirectoriesPage::load()
 	for(it = dirs.begin(); it != dirs.end(); it++)
 	{
 		/* (0) Dir Name */
-		listWidget->addItem(QString::fromStdString((*it).filename));
+		listWidget->addItem(QString::fromUtf8((*it).filename.c_str()));
 	}
 
 	/* set saved index */
 	listWidget->setCurrentIndex(rootIndex);
 
-	ui.incomingDir->setText(QString::fromStdString(rsFiles->getDownloadDirectory()));
-	ui.partialsDir->setText(QString::fromStdString(rsFiles->getPartialsDirectory()));
+	ui.incomingDir->setText(QString::fromUtf8(rsFiles->getDownloadDirectory().c_str()));
+	ui.partialsDir->setText(QString::fromUtf8(rsFiles->getPartialsDirectory().c_str()));
 
 	listWidget->update(); /* update display */
 }
