@@ -1075,7 +1075,7 @@ void MessengerWindow::sendMessage()
         return;
 
     std::string id = peer->data(COLUMN_DATA, ROLE_ID).toString().toStdString();
-    MessageComposer::msgFriend(id);
+    MessageComposer::msgFriend(id, false);
 }
 
 void MessengerWindow::changeAvatarClicked()

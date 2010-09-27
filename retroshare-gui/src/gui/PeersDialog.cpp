@@ -406,6 +406,10 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
             {
                 bool standard = c->data(COLUMN_DATA, ROLE_STANDARD).toBool();
 
+                contextMnu.addAction(QIcon(IMAGE_MSG), tr("Message group"), this, SLOT(msgfriend()));
+
+                contextMnu.addSeparator();
+
                 action = contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Edit group"), this, SLOT(editGroup()));
                 action->setDisabled(standard);
 
@@ -420,13 +424,13 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
                 contextMnu.addAction(QIcon(IMAGE_MSG), tr("Message Friend"), this, SLOT(msgfriend()));
                 
                 contextMnu.addSeparator();
-                
+
                 contextMnu.addAction(QIcon(IMAGE_FRIENDINFO), tr("Friend Details"), this, SLOT(configurefriend()));
 //                contextMnu.addAction(QIcon(IMAGE_PEERINFO), tr("Profile View"), this, SLOT(viewprofile()));
 //                action = contextMnu.addAction(QIcon(IMAGE_EXPORTFRIEND), tr("Export Friend"), this, SLOT(exportfriend()));
 
                 if (type == TYPE_GPG) {
-                    contextMnu.addAction(QIcon(IMAGE_EXPORTFRIEND), tr("Recomend this Friend to..."), this, SLOT(recommendfriend()));
+                    contextMnu.addAction(QIcon(IMAGE_EXPORTFRIEND), tr("Recommend this Friend to..."), this, SLOT(recommendfriend()));
                 }
 
                 contextMnu.addAction(QIcon(IMAGE_CONNECT), tr("Connect To Friend"), this, SLOT(connectfriend()));
@@ -1129,7 +1133,7 @@ void PeersDialog::msgfriend()
         return;
 
     std::string id = peer->data(COLUMN_DATA, ROLE_ID).toString().toStdString();
-    MessageComposer::msgFriend(id);
+    MessageComposer::msgFriend(id, (peer->type() == TYPE_GROUP));
 }
 
 void PeersDialog::recommendfriend()

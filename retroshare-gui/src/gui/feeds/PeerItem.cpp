@@ -305,7 +305,7 @@ void PeerItem::sendMsg()
     MessageComposer *nMsgDialog = new MessageComposer();
     nMsgDialog->newMsg();
 
-    nMsgDialog->addRecipient( mPeerId ) ;
+    nMsgDialog->addRecipient(MessageComposer::TO, mPeerId, false);
     nMsgDialog->show();
     nMsgDialog->activateWindow();
 

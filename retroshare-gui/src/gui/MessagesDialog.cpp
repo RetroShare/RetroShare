@@ -789,7 +789,7 @@ void MessagesDialog::replytomessage()
     std::string cited_text(doc.toPlainText().toStdString()) ;
 
     nMsgDialog->insertPastedText(cited_text) ;
-    nMsgDialog->addRecipient( msgInfo.srcId ) ;
+    nMsgDialog->addRecipient(MessageComposer::TO, msgInfo.srcId, false);
     nMsgDialog->show();
     nMsgDialog->activateWindow();
 
@@ -836,13 +836,13 @@ void MessagesDialog::replyallmessage()
     std::string cited_text(doc.toPlainText().toStdString()) ;
 
     nMsgDialog->insertPastedText(cited_text) ;
-    nMsgDialog->addRecipient( msgInfo.srcId ) ;
+    nMsgDialog->addRecipient(MessageComposer::TO, msgInfo.srcId, false);
 
     std::list<std::string> tl ( msgInfo.msgto );
 
     for ( std::list<std::string>::iterator tli = tl.begin(); tli!= tl.end(); tli++ )
     {
-        nMsgDialog->addRecipient( *tli ) ;
+        nMsgDialog->addRecipient(MessageComposer::TO, *tli, false) ;
     }
 
     nMsgDialog->show();

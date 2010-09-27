@@ -605,7 +605,7 @@ void SharedFilesDialog::recommendFilesTo( std::string rsid )
 	nMsgDialog->newMsg();
 	nMsgDialog->insertTitleText("Recommendation(s)");
 	nMsgDialog->insertMsgText(rsPeers->getPeerName(rsPeers->getOwnId())+" recommends " + ( (files_info.size()>1)?"a list of files":"a file")+" to you");
-	nMsgDialog->addRecipient(rsid) ;
+        nMsgDialog->addRecipient(MessageComposer::TO, rsid, false) ;
 
 	nMsgDialog->sendMessage();
 	nMsgDialog->close();
@@ -633,7 +633,7 @@ void SharedFilesDialog::recommendFilesToMsg( std::string rsid )
 	nMsgDialog->show();
 
 	std::cout << "recommending to " << rsid << std::endl ;
-	nMsgDialog->addRecipient(rsid) ;
+        nMsgDialog->addRecipient(MessageComposer::TO, rsid, false) ;
 
 	/* window will destroy itself! */
 }

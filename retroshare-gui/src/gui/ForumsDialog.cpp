@@ -1723,7 +1723,7 @@ void ForumsDialog::replytomessage()
         std::string cited_text(doc.toPlainText().toStdString()) ;
 
         nMsgDialog->insertPastedText(cited_text) ;
-        nMsgDialog->addRecipient( msgInfo.srcId ) ;
+        nMsgDialog->addRecipient(MessageComposer::TO, msgInfo.srcId, false);
         nMsgDialog->show();
         nMsgDialog->activateWindow();
 

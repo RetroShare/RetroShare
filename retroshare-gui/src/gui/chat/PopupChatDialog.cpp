@@ -395,7 +395,7 @@ void PopupChatDialog::chatFriend(std::string id)
 
     /* info dialog */
     if ((QMessageBox::question(NULL, tr("Friend not Online"),tr("Your Friend is offline \nDo you want to send them a Message instead"),QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes) {
-        MessageComposer::msgFriend(id);
+        MessageComposer::msgFriend(id, false);
     } else {
         if (firstId.empty() == false) {
             getPrivateChat(firstId, RS_CHAT_OPEN_NEW | RS_CHAT_REOPEN | RS_CHAT_FOCUS);

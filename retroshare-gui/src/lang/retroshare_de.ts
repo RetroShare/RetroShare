@@ -929,7 +929,22 @@ p, li { white-space: pre-wrap; }
         <translation>Kanal Beschreibung</translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+9"/>
+        <source>Type</source>
+        <translation type="unfinished">Typ</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
+        <translation type="unfinished">Beschränkt - Jeder kann lesen, aber nicht jeder schreiben (Privater Veröffentlichungs-Schlüssel)</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Private - (Private Publish Key required to view Messages)</source>
+        <translation type="unfinished">Privat - (Privater Veröffentlichungsschlüssel erforderlich, um Nachrichten zu lesen)</translation>
+    </message>
+    <message>
+        <location line="+35"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
@@ -944,7 +959,7 @@ p, li { white-space: pre-wrap; }
         <translation>Schliessen</translation>
     </message>
     <message>
-        <location filename="../gui/channels/ChannelDetails.ui" line="-89"/>
+        <location filename="../gui/channels/ChannelDetails.ui" line="-112"/>
         <source>Channel Name</source>
         <translation>Kanal-Name</translation>
     </message>
@@ -1061,7 +1076,12 @@ p, li { white-space: pre-wrap; }
         <translation>Zeige Kanal-Details</translation>
     </message>
     <message>
-        <location line="+241"/>
+        <location line="+9"/>
+        <source>Share Channel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+232"/>
         <location line="+74"/>
         <location line="+77"/>
         <location line="+75"/>
@@ -1104,11 +1124,6 @@ Keine Beschreibung</translation>
         <location line="+3"/>
         <source>Edit Channel Details</source>
         <translation>Kanal-Details bearbeiten</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Share Key</source>
-        <translation>Schlüssel freigeben</translation>
     </message>
 </context>
 <context>
@@ -2190,7 +2205,7 @@ p, li { white-space: pre-wrap; }
         <translation>Drag&apos;n&apos;Drop Dateien aus den Suchergebnissen</translation>
     </message>
     <message>
-        <location filename="../gui/channels/CreateChannelMsg.cpp" line="+288"/>
+        <location filename="../gui/channels/CreateChannelMsg.cpp" line="+290"/>
         <source>Add Extra File</source>
         <translation>Zusätzlich eine Datei hinzufügen</translation>
     </message>
@@ -5040,414 +5055,448 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
     <name>MessageComposer</name>
     <message>
         <location filename="../gui/msgs/MessageComposer.ui" line="+17"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="+391"/>
+        <location line="+344"/>
         <source>Compose</source>
-        <translation type="unfinished">Verfassen</translation>
+        <translation>Verfassen</translation>
     </message>
     <message>
         <location line="+49"/>
-        <location line="+709"/>
+        <location line="+819"/>
         <source>Contacts</source>
-        <translation type="unfinished">Kontakte</translation>
+        <translation>Kontakte</translation>
     </message>
     <message>
-        <location line="-694"/>
+        <location line="-804"/>
         <source>Search for Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Suche Name:</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Search Friends&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Search Friends&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location line="+28"/>
+        <location line="+31"/>
         <source>Reset</source>
-        <translation type="unfinished">Zurücksetzen</translation>
+        <translation>Zurücksetzen</translation>
     </message>
     <message>
-        <location line="+61"/>
+        <location line="+64"/>
         <source>Send To:</source>
-        <translation type="unfinished">Senden An:</translation>
+        <translation>Senden an:</translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+18"/>
+        <source>&gt;&gt; To</source>
+        <translation>&gt;&gt; An</translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>&gt;&gt; Cc</source>
+        <translation>&gt;&gt; Cc</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>&gt;&gt; Bcc</source>
+        <translation>&gt;&gt; Bcc</translation>
+    </message>
+    <message>
+        <location line="+472"/>
         <source>Subject:</source>
-        <translation type="unfinished">Betreff:</translation>
+        <translation>Betreff:</translation>
     </message>
     <message>
-        <location line="+43"/>
+        <location line="-401"/>
         <source>Paragraph</source>
-        <translation type="unfinished"></translation>
+        <translation>Absatz</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="-207"/>
+        <source>Search Friends</source>
+        <translation>Suche Freunde</translation>
+    </message>
+    <message>
+        <location line="+153"/>
+        <source>&gt;&gt; Recommend</source>
+        <translation>&gt;&gt; Empfehlen</translation>
+    </message>
+    <message>
+        <location line="+59"/>
         <source>Heading 1</source>
-        <translation type="unfinished"></translation>
+        <translation>Überschrift 1</translation>
     </message>
     <message>
         <location line="+5"/>
         <location line="+5"/>
         <source>Heading 2</source>
-        <translation type="unfinished"></translation>
+        <translation>Überschrift 2</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Heading 3</source>
-        <translation type="unfinished"></translation>
+        <translation>Überschrift 3</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Heading 4</source>
-        <translation type="unfinished"></translation>
+        <translation>Überschrift 4</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Heading 5</source>
-        <translation type="unfinished"></translation>
+        <translation>Überschrift 5</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Heading 6</source>
-        <translation type="unfinished"></translation>
+        <translation>Überschrift 6</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Font size</source>
-        <translation type="unfinished">Schriftgröße</translation>
+        <translation>Schriftgröße</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Increase font size</source>
-        <translation type="unfinished">Schrift vergrößern</translation>
+        <translation>Schrift vergrößern</translation>
     </message>
     <message>
         <location line="+29"/>
         <source>Decrease font size</source>
-        <translation type="unfinished">Verkleinere Schrift</translation>
+        <translation>Schrift verkleinern</translation>
     </message>
     <message>
         <location line="+35"/>
         <source>Bold</source>
-        <translation type="unfinished">Fett</translation>
+        <translation>Fett</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>Underline</source>
-        <translation type="unfinished">Unterstrichen</translation>
+        <translation>Unterstrichen</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>Italic</source>
-        <translation type="unfinished">Kursiv</translation>
+        <translation>Kursiv</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>Select Color</source>
-        <translation type="unfinished">Text-Farbe auswählen</translation>
+        <translation>Text-Farbe auswählen</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Alignment</source>
-        <translation type="unfinished">Ausrichtung</translation>
+        <translation>Ausrichtung</translation>
     </message>
     <message>
         <location line="+34"/>
         <source>Add a Image</source>
-        <translation type="unfinished">Ein Bild hinzufügen</translation>
+        <translation>Ein Bild hinzufügen</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Sets text font to code style</source>
-        <translation type="unfinished">Setzt Schriftart auf Codestil</translation>
+        <translation>Setzt Schriftart auf Codestil</translation>
     </message>
     <message>
-        <location line="+77"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="+383"/>
+        <source>To</source>
+        <translation>An</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Cc</source>
+        <translation>Cc</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Bcc</source>
+        <translation>Bcc</translation>
+    </message>
+    <message>
+        <location filename="../gui/msgs/MessageComposer.ui" line="+147"/>
         <source>Recommended Files</source>
-        <translation type="unfinished">Empfohlene Dateien</translation>
+        <translation>Empfohlene Dateien</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>File Name</source>
-        <translation type="unfinished">Dateiname</translation>
+        <translation>Dateiname</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Size</source>
-        <translation type="unfinished">Grösse</translation>
+        <translation>Grösse</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Sources</source>
-        <translation type="unfinished">Quellen</translation>
+        <translation>Quellen</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Hash</source>
-        <translation type="unfinished">Prüfsumme</translation>
+        <translation>Prüfsumme</translation>
     </message>
     <message>
         <location line="+58"/>
         <source>Send</source>
-        <translation type="unfinished">Senden</translation>
+        <translation>Senden</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Send this message now</source>
-        <translation type="unfinished">Diese Nachricht jetzt senden</translation>
+        <translation>Diese Nachricht jetzt senden</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Reply</source>
-        <translation type="unfinished"></translation>
+        <translation>Antwort</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Toggle Contacts View</source>
-        <translation type="unfinished">Kontakt-Ansicht umschalten</translation>
+        <translation>Kontakt-Ansicht umschalten</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Save</source>
-        <translation type="unfinished">Speichern</translation>
+        <translation>Speichern</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Save this message</source>
-        <translation type="unfinished">Diese Nachricht speichern</translation>
+        <translation>Diese Nachricht speichern</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Attach</source>
-        <translation type="unfinished">Anhängen</translation>
+        <translation>Anhängen</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Attach File</source>
-        <translation type="unfinished">Datei Anhängen</translation>
+        <translation>Datei anhängen</translation>
     </message>
     <message>
         <location line="+12"/>
         <source>Quote</source>
-        <translation type="unfinished">Blockquote</translation>
+        <translation>Blockquote</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Add Blockquote</source>
-        <translation type="unfinished">Blockquote hinzufügen</translation>
+        <translation>Blockquote hinzufügen</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="+139"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="-918"/>
         <source>&amp;Left</source>
-        <translation type="unfinished">&amp;Links</translation>
+        <translation>&amp;Links</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>C&amp;enter</source>
-        <translation type="unfinished">&amp;Zentriert</translation>
+        <translation>&amp;Zentriert</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Right</source>
-        <translation type="unfinished">&amp;Rechts</translation>
+        <translation>&amp;Rechts</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Justify</source>
-        <translation type="unfinished">&amp;Blocksatz</translation>
+        <translation>&amp;Blocksatz</translation>
     </message>
     <message>
-        <location line="+147"/>
-        <location line="+867"/>
+        <location line="+202"/>
+        <location line="+1390"/>
         <source>Save Message</source>
-        <translation type="unfinished">Nachricht speichern</translation>
+        <translation>Nachricht speichern</translation>
     </message>
     <message>
-        <location line="-866"/>
+        <location line="-1389"/>
         <source>Message has not been Sent.
 Do you want to save message to draft box?</source>
-        <translation type="unfinished"></translation>
+        <translation>Nachricht wurde noch nicht gesendet.
+Möchtest Du die Nachricht in den Entwürfen speichern?</translation>
     </message>
     <message>
-        <location line="-45"/>
-        <location line="+233"/>
-        <source>Compose: </source>
-        <translation type="unfinished">Verfassen: </translation>
+        <location line="+739"/>
+        <source>Unknown</source>
+        <translation>Unbekannt</translation>
     </message>
     <message>
-        <location line="+213"/>
+        <location line="+14"/>
+        <source>Unknown friend</source>
+        <translation>Unbekannter Freund</translation>
+    </message>
+    <message>
+        <location line="+176"/>
         <source>&amp;File</source>
-        <translation type="unfinished">&amp;Datei</translation>
+        <translation>&amp;Datei</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>&amp;New</source>
-        <translation type="unfinished">&amp;Neu</translation>
+        <translation>&amp;Neu</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>&amp;Open...</source>
-        <translation type="unfinished">O&amp;ffnen...</translation>
+        <translation>Ö&amp;ffnen...</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>&amp;Save</source>
-        <translation type="unfinished">S&amp;peichern</translation>
+        <translation>S&amp;peichern</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Save &amp;As File</source>
-        <translation type="unfinished"></translation>
+        <translation>Speichern &amp;unter</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Save &amp;As Draft</source>
-        <translation type="unfinished"></translation>
+        <translation>Als &amp;Entwurf speichern</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>&amp;Print...</source>
-        <translation type="unfinished">&amp;Drucken...</translation>
+        <translation>&amp;Drucken...</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>&amp;Export PDF...</source>
-        <translation type="unfinished">PDF &amp;exportieren...</translation>
+        <translation>PDF &amp;exportieren...</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>&amp;Quit</source>
-        <translation type="unfinished">&amp;Schliessen</translation>
+        <translation>&amp;Schliessen</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>&amp;Edit</source>
-        <translation type="unfinished">&amp;Bearbeiten</translation>
+        <translation>&amp;Bearbeiten</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Undo</source>
-        <translation type="unfinished">Rü&amp;ckgängig</translation>
+        <translation>Rü&amp;ckgängig</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Redo</source>
-        <translation type="unfinished">&amp;Wiederholen</translation>
+        <translation>&amp;Wiederholen</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Cu&amp;t</source>
-        <translation type="unfinished">Auss&amp;chneiden</translation>
+        <translation>Auss&amp;chneiden</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Copy</source>
-        <translation type="unfinished">Ko&amp;pieren</translation>
+        <translation>Ko&amp;pieren</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>&amp;Paste</source>
-        <translation type="unfinished">Einfü&amp;gen</translation>
+        <translation>Einfü&amp;gen</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>&amp;View</source>
-        <translation type="unfinished">Anse&amp;hen</translation>
+        <translation>&amp;Ansicht</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+3"/>
         <source>&amp;Contacts Sidebar</source>
-        <translation type="unfinished">&amp;Kontakt-Sidebar</translation>
+        <translation>&amp;Kontakt-Sidebar</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+6"/>
         <source>&amp;Insert</source>
-        <translation type="unfinished">Ein&amp;fügen</translation>
+        <translation>Ein&amp;fügen</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>&amp;Image</source>
-        <translation type="unfinished">&amp;Bild</translation>
+        <translation>&amp;Bild</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>&amp;Horizontal Line</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Horizontale Linie</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>&amp;Format</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Format</translation>
     </message>
     <message>
         <location line="+247"/>
         <source>Open File...</source>
-        <translation type="unfinished">Datei öffnen...</translation>
+        <translation>Datei öffnen...</translation>
     </message>
     <message>
         <location line="+1"/>
         <location line="+23"/>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
-        <translation type="unfinished">HTML-Dateien (*.htm *.html);;Alle Dateien (*)</translation>
+        <translation>HTML-Dateien (*.htm *.html);;Alle Dateien (*)</translation>
     </message>
     <message>
         <location line="-1"/>
         <source>Save as...</source>
-        <translation type="unfinished">Speichern unter...</translation>
+        <translation>Speichern unter...</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Print Document</source>
-        <translation type="unfinished">Dokument drucken</translation>
+        <translation>Dokument drucken</translation>
     </message>
     <message>
-        <location line="+63"/>
+        <location line="+62"/>
         <source>Message has not been Sent.
 Do you want to save message ?</source>
-        <translation type="unfinished">Nachricht noch nicht versandt.
-Wollen Sie sie speichern?</translation>
+        <translation>Nachricht noch nicht versandt.
+Willst Du die Nachricht speichern ?</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+24"/>
         <source>Choose Image</source>
-        <translation type="unfinished">Bild wählen</translation>
+        <translation>Bild wählen</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Image Files supported (*.png *.jpeg *.jpg *.gif)</source>
-        <translation type="unfinished">Unterstützte Bilddateien (*.png *.jpeg *.jpg *.gif)</translation>
+        <translation>Unterstützte Bilddateien (*.png *.jpeg *.jpg *.gif)</translation>
     </message>
     <message>
         <location line="+114"/>
         <source>Add Extra File</source>
-        <translation type="unfinished"></translation>
+        <translation>Zusätzliche Datei hinzufügen</translation>
     </message>
     <message>
-        <location line="-1047"/>
+        <location line="-1552"/>
         <source>Friend Recommendation</source>
-        <translation type="unfinished"></translation>
+        <translation>Freundempfehlung</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Friend Recommendation(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>Freundempfehlung(en)</translation>
     </message>
     <message>
-        <location line="+272"/>
+        <location line="+500"/>
         <source>No Title</source>
         <translation>Kein Titel</translation>
     </message>
     <message>
-        <location line="-270"/>
+        <location line="-498"/>
         <source>I recommend a good friend of me, you can trust him too when you trust me. &lt;br&gt; Copy friend link and paste to Friends list</source>
-        <translation type="unfinished"></translation>
+        <translation>Ich empfehle Dir einen guten Freund von mir. Du kannst ihm vertrauen, wenn Du mir vertraust. &lt;br&gt; Kopiere den Link und füge ihn in der Freundesliste ein</translation>
     </message>
 </context>
 <context>
@@ -6887,12 +6936,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PeersDialog</name>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="+414"/>
+        <location filename="../gui/PeersDialog.cpp" line="+423"/>
         <source>Chat</source>
         <translation>Chat</translation>
     </message>
     <message>
-        <location line="+665"/>
+        <location line="+673"/>
         <source>Save Certificate</source>
         <translation>Zertifikat speichern</translation>
     </message>
@@ -6907,12 +6956,12 @@ p, li { white-space: pre-wrap; }
         <translation>Status</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="-656"/>
+        <location filename="../gui/PeersDialog.cpp" line="-661"/>
         <source>Connect To Friend</source>
         <translation>Verbinde zum Freund</translation>
     </message>
     <message>
-        <location line="-288"/>
+        <location line="-295"/>
         <source>Profile</source>
         <translation>Profil</translation>
     </message>
@@ -6932,7 +6981,17 @@ p, li { white-space: pre-wrap; }
         <translation>ich</translation>
     </message>
     <message>
-        <location line="+269"/>
+        <location line="+164"/>
+        <source>Message group</source>
+        <translation>Gruppe anschreiben</translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Friend Details</source>
+        <translation>Freund-Details</translation>
+    </message>
+    <message>
+        <location line="+98"/>
         <source>Expand all</source>
         <translation>Alle erweitern</translation>
     </message>
@@ -6942,24 +7001,24 @@ p, li { white-space: pre-wrap; }
         <translation>Alle reduzieren</translation>
     </message>
     <message>
-        <location line="-95"/>
+        <location line="-103"/>
         <source>Message Friend</source>
         <translation>Freund anschreiben</translation>
     </message>
     <message>
-        <location line="-24"/>
+        <location line="-28"/>
         <source>&lt;strong&gt;Group&lt;/strong&gt;</source>
         <translation>&lt;strong&gt;Gruppe&lt;/strong&gt;</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+17"/>
         <source>Edit group</source>
         <translation>Gruppe ändern</translation>
     </message>
     <message>
-        <location line="+12"/>
-        <source>Peer Details</source>
-        <translation>Peer-Details</translation>
+        <location line="+20"/>
+        <source>Recommend this Friend to...</source>
+        <translation>Freund weiterempfehlen...</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -6997,12 +7056,12 @@ p, li { white-space: pre-wrap; }
         <translation>Aus allen Gruppen entfernen</translation>
     </message>
     <message>
-        <location line="-85"/>
+        <location line="-93"/>
         <source>Remove group</source>
         <translation>Gruppe entfernen</translation>
     </message>
     <message>
-        <location line="-12"/>
+        <location line="-16"/>
         <source>&lt;strong&gt;GPG Key&lt;/strong&gt;</source>
         <translation></translation>
     </message>
@@ -7012,7 +7071,7 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location line="+627"/>
+        <location line="+639"/>
         <source>Available</source>
         <translation>Verfügbar</translation>
     </message>
@@ -7226,17 +7285,12 @@ p, li { white-space: pre-wrap; }
         <translation>Status Spalte ausblenden</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="-1780"/>
+        <location filename="../gui/PeersDialog.cpp" line="-1792"/>
         <source>Friends Storm</source>
         <translation>Aktivitäten</translation>
     </message>
     <message>
-        <location line="+284"/>
-        <source>Recomend this Friend to...</source>
-        <translation>Freund weiterempfehlen...</translation>
-    </message>
-    <message>
-        <location line="+843"/>
+        <location line="+1139"/>
         <source>is typing...</source>
         <translation>tippt...</translation>
     </message>
@@ -7256,12 +7310,13 @@ p, li { white-space: pre-wrap; }
         <translation>Freunde</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="-762"/>
+        <location filename="../gui/PeersDialog.cpp" line="-843"/>
+        <location line="+80"/>
         <source>Paste Friend Link</source>
         <translation>RetroShare Link einfügen</translation>
     </message>
     <message>
-        <location line="+356"/>
+        <location line="+357"/>
         <source>location</source>
         <translation>Standort</translation>
     </message>
@@ -7568,7 +7623,7 @@ p, li { white-space: pre-wrap; }
         <translation>Avatar zeigen</translation>
     </message>
     <message>
-        <location line="+342"/>
+        <location line="+341"/>
         <source>File not found or file name not accepted.</source>
         <translation>Datei nicht gefunden oder Dateiname nicht akzeptiert.</translation>
     </message>
@@ -7626,7 +7681,7 @@ p, li { white-space: pre-wrap; }
         <translation>Deaktiviere Emoticons</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="-957"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="-956"/>
         <source>Paste retroshare Link</source>
         <translation>RetroShare Link einfügen</translation>
     </message>
@@ -7651,7 +7706,7 @@ p, li { white-space: pre-wrap; }
         <translation>Zusätzlich eine Datei hinzufügen</translation>
     </message>
     <message>
-        <location line="+167"/>
+        <location line="+166"/>
         <location line="+7"/>
         <source>Drop file error.</source>
         <translation>Dateifehler bei Drag&apos;n&apos;Drop.</translation>
@@ -7683,7 +7738,7 @@ p, li { white-space: pre-wrap; }
         <translation>Text Datei (*.txt );;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location line="-707"/>
+        <location line="-706"/>
         <source>Your Friend is offline 
 Do you want to send them a Message instead</source>
         <translation>Dein Freund ist Offline willst du ihm stattdessen eine Nachricht senden</translation>
@@ -7700,7 +7755,7 @@ Do you want to send them a Message instead</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="+746"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="+745"/>
         <source>is Idle and may not reply</source>
         <translation>antwortet möglicherweise nicht, da der Status auf &quot;Untätig&quot; gesetzt wurde</translation>
     </message>
@@ -7720,7 +7775,7 @@ Do you want to send them a Message instead</source>
         <translation>ist Offline.</translation>
     </message>
     <message>
-        <location line="-693"/>
+        <location line="-692"/>
         <source>is typing...</source>
         <translation>tippt...</translation>
     </message>
@@ -8260,7 +8315,7 @@ p, li { white-space: pre-wrap; }
         <translation>Vielleicht ist das Passwort falsch</translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="+264"/>
+        <location filename="../gui/RetroShareLink.cpp" line="+270"/>
         <source>File Request Confirmation</source>
         <translation>Bestätigung der Dateianforderung</translation>
     </message>
@@ -9367,32 +9422,28 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ShareKey</name>
     <message>
-        <location filename="../gui/channels/ShareKey.ui" line="+14"/>
-        <source>Share Key</source>
-        <translation>Schlüssel verteilen</translation>
-    </message>
-    <message>
-        <location line="+38"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:18pt; font-weight:600; color:#ffffff;&quot;&gt;Share Key&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:18pt; font-weight:600; color:#ffffff;&quot;&gt;Schlüssel verteilen&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location line="+52"/>
+        <location filename="../gui/channels/ShareKey.ui" line="+121"/>
         <source>check peers you would like to share private publish key with</source>
         <translation>Wähle die Nachbarn, an die du den privaten Schlüssel verteilen möchtest</translation>
     </message>
     <message>
-        <location line="+9"/>
-        <source>Share Key With</source>
-        <translation>Schlüssel verteilen an</translation>
+        <location line="-107"/>
+        <source>Share Channel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+39"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:18pt; font-weight:600; color:#ffffff;&quot;&gt;Share Channel&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+77"/>
+        <source>Share for Friend</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+53"/>
@@ -9408,6 +9459,15 @@ p, li { white-space: pre-wrap; }
         <location line="+7"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Select the Friends with which you want to Share your Channel.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/channels/ShareKey.cpp" line="+78"/>
@@ -9433,7 +9493,7 @@ p, li { white-space: pre-wrap; }
         <translation>Freigabe entfernen</translation>
     </message>
     <message>
-        <location filename="../gui/ShareManager.cpp" line="+124"/>
+        <location filename="../gui/ShareManager.cpp" line="+125"/>
         <source>If checked, the share is anonymously shared to anybody.</source>
         <translation>Wenn aktiviert, dann ist dieser Ordner anonym feigegeben.</translation>
     </message>
@@ -10078,7 +10138,7 @@ Bist Du sicher?</translation>
 <context>
     <name>StatusDefs</name>
     <message>
-        <location filename="../gui/common/StatusDefs.cpp" line="+31"/>
+        <location filename="../gui/common/StatusDefs.cpp" line="+32"/>
         <source>Offline</source>
         <translation></translation>
     </message>

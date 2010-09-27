@@ -21,10 +21,11 @@
 
 #include <QCoreApplication>
 #include <retroshare/rsstatus.h>
+#include <retroshare/rspeers.h>
 
 #include "StatusDefs.h"
 
-const QString StatusDefs::name(unsigned int status)
+const QString StatusDefs::name(const unsigned int status)
 {
     switch (status) {
     case RS_STATUS_OFFLINE:
@@ -43,7 +44,7 @@ const QString StatusDefs::name(unsigned int status)
     return "";
 }
 
-const char *StatusDefs::imageIM(unsigned int status)
+const char *StatusDefs::imageIM(const unsigned int status)
 {
     switch (status) {
     case RS_STATUS_OFFLINE:
@@ -62,7 +63,7 @@ const char *StatusDefs::imageIM(unsigned int status)
     return "";
 }
 
-const char *StatusDefs::imageUser(unsigned int status)
+const char *StatusDefs::imageUser(const unsigned int status)
 {
     switch (status) {
     case RS_STATUS_OFFLINE:
@@ -81,7 +82,7 @@ const char *StatusDefs::imageUser(unsigned int status)
     return "";
 }
 
-const QString StatusDefs::tooltip(unsigned int status)
+const QString StatusDefs::tooltip(const unsigned int status)
 {
     switch (status) {
     case RS_STATUS_OFFLINE:
@@ -100,7 +101,7 @@ const QString StatusDefs::tooltip(unsigned int status)
     return "";
 }
 
-const QColor StatusDefs::textColor(unsigned int status)
+const QColor StatusDefs::textColor(const unsigned int status)
 {
     switch (status) {
     case RS_STATUS_OFFLINE:
@@ -119,7 +120,7 @@ const QColor StatusDefs::textColor(unsigned int status)
     return Qt::black;
 }
 
-const QFont StatusDefs::font(unsigned int status)
+const QFont StatusDefs::font(const unsigned int status)
 {
     QFont font;
 

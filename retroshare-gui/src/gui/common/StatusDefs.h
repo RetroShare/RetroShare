@@ -29,13 +29,13 @@
 class StatusDefs
 {
 public:
-    static const QString name(unsigned int status);
-    static const char*   imageIM(unsigned int status);
-    static const char*   imageUser(unsigned int status);
-    static const QString tooltip(unsigned int status);
+    static const QString name(const unsigned int status);
+    static const char*   imageIM(const unsigned int status);
+    static const char*   imageUser(const unsigned int status);
+    static const QString tooltip(const unsigned int status);
 
-    static const QColor  textColor(unsigned int status);
-    static const QFont   font(unsigned int status);
+    static const QColor  textColor(const unsigned int status);
+    static const QFont   font(const unsigned int status);
 };
 
 #endif

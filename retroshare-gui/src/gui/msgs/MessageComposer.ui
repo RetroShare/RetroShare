@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>769</width>
-    <height>485</height>
+    <width>796</width>
+    <height>564</height>
    </rect>
   </property>
   <property name="contextMenuPolicy">
@@ -85,11 +85,7 @@
            <item row="1" column="0">
             <widget class="QLineEdit" name="filterPatternLineEdit">
              <property name="toolTip">
-              <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Search Friends&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>Search Friends</string>
              </property>
             </widget>
            </item>
@@ -169,6 +165,9 @@ border-image: url(:/images/closepressed.png)
              <height>0</height>
             </size>
            </property>
+           <property name="selectionMode">
+            <enum>QAbstractItemView::ExtendedSelection</enum>
+           </property>
            <property name="sortingEnabled">
             <bool>true</bool>
            </property>
@@ -178,6 +177,74 @@ border-image: url(:/images/closepressed.png)
             </property>
            </column>
           </widget>
+         </item>
+         <item row="3" column="0">
+          <layout class="QVBoxLayout" name="verticalLayout_4">
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout">
+             <item>
+              <widget class="QPushButton" name="addToButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>&gt;&gt; To</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <item>
+              <widget class="QPushButton" name="addCcButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>&gt;&gt; Cc</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="addBccButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>&gt;&gt; Bcc</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_3">
+             <item>
+              <widget class="QPushButton" name="addRecommendButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>&gt;&gt; Recommend</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
          </item>
         </layout>
        </widget>
@@ -191,34 +258,7 @@ border-image: url(:/images/closepressed.png)
          <property name="verticalSpacing">
           <number>2</number>
          </property>
-         <item row="0" column="0">
-          <layout class="QHBoxLayout">
-           <property name="spacing">
-            <number>6</number>
-           </property>
-           <property name="margin">
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QLabel" name="label">
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Subject:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="titleEdit"/>
-           </item>
-          </layout>
-         </item>
-         <item row="1" column="0">
+         <item row="5" column="0">
           <widget class="QFrame" name="frame">
            <property name="styleSheet">
             <string notr="true">QFrame#frame{ 
@@ -622,7 +662,7 @@ border: 1px solid #CCCCCC;}</string>
            </layout>
           </widget>
          </item>
-         <item row="2" column="0">
+         <item row="6" column="0">
           <widget class="QTextEdit" name="msgText">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
@@ -633,6 +673,76 @@ border: 1px solid #CCCCCC;}</string>
            <property name="textInteractionFlags">
             <set>Qt::TextEditorInteraction</set>
            </property>
+          </widget>
+         </item>
+         <item row="2" column="0" rowspan="2">
+          <layout class="QHBoxLayout" name="SubjectHLayout" stretch="0,0">
+           <property name="spacing">
+            <number>6</number>
+           </property>
+           <property name="sizeConstraint">
+            <enum>QLayout::SetNoConstraint</enum>
+           </property>
+           <item>
+            <widget class="QLabel" name="label_3">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Subject:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="titleEdit"/>
+           </item>
+          </layout>
+         </item>
+         <item row="0" column="0">
+          <widget class="QTableWidget" name="recipientWidget">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>68</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>68</height>
+            </size>
+           </property>
+           <property name="selectionMode">
+            <enum>QAbstractItemView::SingleSelection</enum>
+           </property>
+           <attribute name="horizontalHeaderVisible">
+            <bool>false</bool>
+           </attribute>
+           <attribute name="verticalHeaderVisible">
+            <bool>false</bool>
+           </attribute>
+           <attribute name="verticalHeaderDefaultSectionSize">
+            <number>22</number>
+           </attribute>
+           <attribute name="verticalHeaderVisible">
+            <bool>false</bool>
+           </attribute>
+           <attribute name="verticalHeaderDefaultSectionSize">
+            <number>22</number>
+           </attribute>
+           <attribute name="horizontalHeaderVisible">
+            <bool>false</bool>
+           </attribute>
           </widget>
          </item>
         </layout>
@@ -713,8 +823,8 @@ border: 1px solid #CCCCCC;}</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>769</width>
-     <height>21</height>
+     <width>796</width>
+     <height>20</height>
     </rect>
    </property>
   </widget>
@@ -820,7 +930,6 @@ border: 1px solid #CCCCCC;}</string>
  </widget>
  <tabstops>
   <tabstop>msgSendList</tabstop>
-  <tabstop>titleEdit</tabstop>
   <tabstop>msgText</tabstop>
   <tabstop>msgFileList</tabstop>
  </tabstops>
