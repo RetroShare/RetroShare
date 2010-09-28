@@ -26,6 +26,7 @@
 #include <algorithm>
 
 #include "CreateChannel.h"
+#include "gui/common/PeerDefs.h"
 
 #include <retroshare/rschannels.h>
 #include <retroshare/rspeers.h>
@@ -105,7 +106,7 @@ void CreateChannel::setShareList(){
 			/* make a widget per friend */
 	        QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
 
-			item -> setText(0, QString::fromStdString(detail.name) + " - " + QString::fromStdString(detail.location));
+			item -> setText(0, PeerDefs::nameWithLocation(detail));
 			if (detail.state & RS_PEER_STATE_CONNECTED) {
 				item -> setTextColor(0,(Qt::darkBlue));
 			}

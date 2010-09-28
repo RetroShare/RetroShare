@@ -31,6 +31,7 @@
 #include <retroshare/rsdisc.h>
 
 #include "gui/help/browser/helpbrowser.h"
+#include "gui/common/PeerDefs.h"
 
 ConfCertDialog *ConfCertDialog::instance()
 {
@@ -133,7 +134,7 @@ void ConfCertDialog::loadDialog()
 
 	ui.name->setText(QString::fromStdString(detail.name));
     ui.peerid->setText(QString::fromStdString(detail.id));
-    ui.rsid->setText(QString::fromStdString(detail.name) + "@" + QString::fromStdString(detail.id));
+    ui.rsid->setText(PeerDefs::rsid(detail));
 
         if (!detail.isOnlyGPGdetail) {
             
@@ -396,7 +397,7 @@ void ConfCertDialog::denyFriend() {
 void ConfCertDialog::signGPGKey() {
     std::string gpg_id = rsPeers->getGPGId(mId);
     if (!rsPeers->signGPGCertificate(gpg_id)) {
-                 QMessageBox::StandardButton sb = QMessageBox::warning ( NULL,
+                 QMessageBox::warning ( NULL,
                                 tr("Signature Failure"),
                                 tr("Maybe password is wrong"),
                                 QMessageBox::Ok);

@@ -70,8 +70,7 @@ public slots:
 
 protected:
   /** Default constructor */
-  PopupChatDialog(std::string id, std::string name,
-                QWidget *parent = 0, Qt::WFlags flags = 0);
+  PopupChatDialog(std::string id, const QString name, QWidget *parent = 0, Qt::WFlags flags = 0);
   /** Default destructor */
   ~PopupChatDialog();
 
@@ -127,7 +126,8 @@ private:
    QAction *actionTextItalic;
    QAction *pasteLinkAct ;
 
-   std::string dialogId, dialogName;
+   std::string dialogId;
+   QString dialogName;
    unsigned int lastChatTime;
    std::string  lastChatName;
 

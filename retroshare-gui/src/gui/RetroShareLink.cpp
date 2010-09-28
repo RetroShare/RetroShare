@@ -30,6 +30,7 @@
 
 #include "RetroShareLink.h"
 #include "util/misc.h"
+#include "common/PeerDefs.h"
 
 #include <retroshare/rsfiles.h>
 #include <retroshare/rspeers.h>
@@ -172,7 +173,7 @@ QString RetroShareLink::toString() const
 QString RetroShareLink::niceName() const
 {
     if (type() == TYPE_PERSON) {
-        return name() + "@" + hash();
+        return PeerDefs::rsid(name().toStdString(), hash().toStdString());
     }
 
     return name();

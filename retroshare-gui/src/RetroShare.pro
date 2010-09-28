@@ -284,6 +284,7 @@ HEADERS +=  rshare.h \
             gui/common/GroupDefs.h \
             gui/common/Emoticons.h \
             gui/common/RSTreeWidgetItem.h \
+            gui/common/PeerDefs.h \
             gui/MessagesDialog.h \
             gui/help/browser/helpbrowser.h \
             gui/help/browser/helptextbrowser.h \
@@ -482,6 +483,7 @@ SOURCES +=  main.cpp \
             gui/common/GroupDefs.cpp \
             gui/common/Emoticons.cpp \
             gui/common/RSTreeWidgetItem.cpp \
+            gui/common/PeerDefs.cpp \
             gui/settings/rsharesettings.cpp \
             gui/settings/RsharePeerSettings.cpp \
             gui/settings/rsettings.cpp \

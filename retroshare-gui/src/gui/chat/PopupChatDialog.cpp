@@ -53,6 +53,8 @@
 
 #include "gui/feeds/AttachFileItem.h"
 #include "gui/msgs/MessageComposer.h"
+#include "gui/common/PeerDefs.h"
+
 #include <time.h>
 
 #define appDir QApplication::applicationDirPath()
@@ -90,8 +92,7 @@ void playsound()
 }
 
 /** Default constructor */
-PopupChatDialog::PopupChatDialog(std::string id, std::string name, 
-				QWidget *parent, Qt::WFlags flags)
+PopupChatDialog::PopupChatDialog(std::string id, const QString name, QWidget *parent, Qt::WFlags flags)
   : QMainWindow(parent, flags), dialogId(id), dialogName(name),
     lastChatTime(0), lastChatName("")
     
@@ -145,7 +146,7 @@ PopupChatDialog::PopupChatDialog(std::string id, std::string name,
   //ui.textBrowser->setOpenExternalLinks ( false );
   //ui.textBrowser->setOpenLinks ( false );
 
-  QString title = tr("RetroShare") + " - " + QString::fromStdString(name);
+  QString title = tr("RetroShare") + " - " + name;
   setWindowTitle(title);
 
   setWindowIcon(QIcon(IMAGE_WINDOW));
@@ -259,7 +260,7 @@ void PopupChatDialog::processSettings(bool bLoad)
         {
             RsPeerDetails sslDetails;
             if (rsPeers->getPeerDetails(id, sslDetails)) {
-                popupchatdialog = new PopupChatDialog(id, sslDetails.name + " - " + sslDetails.location);
+                popupchatdialog = new PopupChatDialog(id, PeerDefs::nameWithLocation(sslDetails));
                 chatDialogs[id] = popupchatdialog;
 #ifdef PEERS_DEBUG
                 std::cerr << "new chat so: enable SHOW popupchatdialog()" << std::endl;
@@ -1132,14 +1133,14 @@ void PopupChatDialog::updateStatus(const QString &peer_id, int status)
             ui.avatarlabel->setStyleSheet("QLabel#avatarlabel{ border-image:url(:/images/avatarstatus_bg_offline.png); }");
             ui.avatarlabel->setEnabled(false);
             ui.infoframe->setVisible(true);
-            ui.infolabel->setText( QString::fromStdString(dialogName) + " " + tr("apears to be Offline.") +"\n" + tr("Messages you send will be delivered after Friend is again Online"));
+            ui.infolabel->setText(dialogName + " " + tr("apears to be Offline.") +"\n" + tr("Messages you send will be delivered after Friend is again Online"));
             break;
 
         case RS_STATUS_INACTIVE:
             ui.avatarlabel->setStyleSheet("QLabel#avatarlabel{ border-image:url(:/images/avatarstatus_bg_away.png); }");
             ui.avatarlabel->setEnabled(true);
             ui.infoframe->setVisible(true);
-            ui.infolabel->setText( QString::fromStdString(dialogName) + " " + tr("is Idle and may not reply"));
+            ui.infolabel->setText(dialogName + " " + tr("is Idle and may not reply"));
             break;
 
         case RS_STATUS_ONLINE:
@@ -1151,20 +1152,20 @@ void PopupChatDialog::updateStatus(const QString &peer_id, int status)
         case RS_STATUS_AWAY:
             ui.avatarlabel->setStyleSheet("QLabel#avatarlabel{ border-image:url(:/images/avatarstatus_bg_away.png); }");
             ui.avatarlabel->setEnabled(true);
-            ui.infolabel->setText( QString::fromStdString(dialogName) + " " + tr("is Away and may not reply"));
+            ui.infolabel->setText(dialogName + " " + tr("is Away and may not reply"));
             ui.infoframe->setVisible(true);
             break;
 
         case RS_STATUS_BUSY:
             ui.avatarlabel->setStyleSheet("QLabel#avatarlabel{ border-image:url(:/images/avatarstatus_bg_busy.png); }");
             ui.avatarlabel->setEnabled(true);
-            ui.infolabel->setText( QString::fromStdString(dialogName) + " " + tr("is Busy and may not reply"));
+            ui.infolabel->setText(dialogName + " " + tr("is Busy and may not reply"));
             ui.infoframe->setVisible(true);
             break;
         }
 
         QString statusString("<span style=\"font-size:11pt; font-weight:500;""\">%1</span>");
-        ui.friendnamelabel->setText( QString::fromStdString(dialogName) + " (" + statusString.arg(StatusDefs::name(status)) + ")") ;
+        ui.friendnamelabel->setText(dialogName + " (" + statusString.arg(StatusDefs::name(status)) + ")") ;
 
         return;
     }

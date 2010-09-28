@@ -38,6 +38,7 @@
 #include "settings/rsharesettings.h"
 #include "util/misc.h"
 #include "common/TagDefs.h"
+#include "common/PeerDefs.h"
 
 #include <retroshare/rsinit.h>
 #include <retroshare/rspeers.h>
@@ -1365,11 +1366,11 @@ void MessagesDialog::insertMessages()
                                 text += ", ";
                             }
 
-                            QString sPeer = QString::fromStdString(rsPeers->getPeerName(*pit));
-                            if (sPeer.isEmpty()) {
-                                text += tr("Anonymous") + "@" + QString::fromStdString(*pit);
+                            std::string peerName = rsPeers->getPeerName(*pit);
+                            if (peerName.empty()) {
+                                text += PeerDefs::rsid("", *pit);
                             } else {
-                                text += sPeer;
+                                text += QString::fromStdString(peerName);
                             }
                         }
                     } else {
@@ -1687,15 +1688,12 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index, bool bSetToRead)
     std::list<std::string>::const_iterator pit;
 
     QString msgTxt;
+    QString name;
+    QString rsid;
     for(pit = msgInfo.msgto.begin(); pit != msgInfo.msgto.end(); pit++)
     {
-        QString sPeer = QString::fromStdString(rsPeers->getPeerName(*pit));
-        if (sPeer.isEmpty())
-        {
-            msgTxt += "<a style='color: black;'href='" + tr("Anonymous") + "@" + QString::fromStdString(*pit) + "'> " +  tr("Anonymous")  + "</a>" + "    ";
-        }
-        else
-            msgTxt += "<a style='color: black;'href='" + sPeer + "@" + QString::fromStdString(*pit) + "'> " + sPeer  + "</a>" + "   ";
+        rsid = PeerDefs::rsidFromId(*pit, &name);
+        msgTxt += "<a style='color: black;'href='" + rsid + "'> " + name + "</a>" + "   ";
     }
     ui.toText->setText(msgTxt);
 
@@ -1706,13 +1704,8 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index, bool bSetToRead)
         msgTxt.clear();
         for(pit = msgInfo.msgcc.begin(); pit != msgInfo.msgcc.end(); pit++)
         {
-            QString sPeer = QString::fromStdString(rsPeers->getPeerName(*pit));
-            if (sPeer.isEmpty())
-            {
-                msgTxt += "<a style='color: black;'href='" + tr("Anonymous") + "@" + QString::fromStdString(*pit) + "'> " +  tr("Anonymous")  + "</a>" + "    ";
-            }
-            else
-                msgTxt += "<a style='color: black;'href='" + sPeer + "@" + QString::fromStdString(*pit) + "'> " + sPeer  + "</a>" + "   ";
+            rsid = PeerDefs::rsidFromId(*pit, &name);
+            msgTxt += "<a style='color: black;'href='" + rsid + "'> " + name + "</a>" + "   ";
         }
         ui.ccText->setText(msgTxt);
     } else {
@@ -1728,13 +1721,8 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index, bool bSetToRead)
         msgTxt.clear();
         for(pit = msgInfo.msgbcc.begin(); pit != msgInfo.msgbcc.end(); pit++)
         {
-            QString sPeer = QString::fromStdString(rsPeers->getPeerName(*pit));
-            if (sPeer.isEmpty())
-            {
-                msgTxt += "<a style='color: black;'href='" + tr("Anonymous") + "@" + QString::fromStdString(*pit) + "'> " +  tr("Anonymous")  + "</a>" + "    ";
-            }
-            else
-                msgTxt += "<a style='color: black;'href='" + sPeer + "@" + QString::fromStdString(*pit) + "'> " + sPeer  + "</a>" + "   ";
+            rsid = PeerDefs::rsidFromId(*pit, &name);
+            msgTxt += "<a style='color: black;'href='" + rsid + "'> " + name + "</a>" + "   ";
         }
         ui.bccText->setText(msgTxt);
     } else {
@@ -1757,8 +1745,11 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index, bool bSetToRead)
     } else {
         sSrcId = msgInfo.srcId;
     }
-    ui.fromText->setText("<a style='color: blue;' href='" + QString::fromStdString(rsPeers->getPeerName(sSrcId)) + "@" + QString::fromStdString(sSrcId) + "'> " + QString::fromStdString(rsPeers->getPeerName(sSrcId)) +"</a>");
-    ui.fromText->setToolTip(QString::fromStdString(rsPeers->getPeerName(sSrcId)) + "@" + QString::fromStdString(sSrcId));
+    rsid = PeerDefs::rsidFromId(sSrcId, &name);
+    msgTxt += "<a style='color: black;'href='" + rsid + "'> " + name + "</a>" + "   ";
+
+    ui.fromText->setText("<a style='color: blue;' href='" + rsid + "'> " + name +"</a>");
+    ui.fromText->setToolTip(rsid);
 
     ui.subjectText->setText(QString::fromStdWString(msgInfo.title));
     ui.msgText->setHtml(QString::fromStdWString(msgInfo.msg));
@@ -2296,23 +2287,10 @@ void MessagesDialog::tagTriggered(QAction *pAction)
 void MessagesDialog::linkActivated(QString link)
 {
     if (link.isEmpty() == false) {
-        // search for cert id in string
-        std::string certidstr;
-
-        int nIndex = link.indexOf("@");
-        if (nIndex >= 0)
-        {
-            // found "@", extract cert id from string
-            certidstr = link.mid(nIndex + 1).toStdString();
-        }
-        else
-        {
-            // maybe its only the cert id
-            certidstr = link.toStdString();
-        }
+        std::string id = PeerDefs::idFromRsid(link, false);
 
         RsPeerDetails detail;
-        if (rsPeers->getPeerDetails(certidstr, detail) && detail.accept_connection) {
+        if (rsPeers->getPeerDetails(id, detail) && detail.accept_connection) {
             MessageComposer::msgFriend(detail.id, false);
         }
     }

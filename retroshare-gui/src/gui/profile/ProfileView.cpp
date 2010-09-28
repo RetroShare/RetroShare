@@ -29,14 +29,8 @@
 
 //#include <QContextMenuEvent>
 #include <QMenu>
-//#include <QFile>
 #include <QFileDialog>
-//#include <QCursor>
-//#include <QPoint>
-//#include <QMouseEvent>
 #include <QMessageBox>
-//#include <QPixmap>
-//#include <QPrintDialog>
 
 
 /** Constructor */

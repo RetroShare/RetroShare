@@ -20,6 +20,7 @@
  ****************************************************************/
 
 #include "ConnectFriendWizard.h"
+#include "gui/common/PeerDefs.h"
 
 #include <retroshare/rspeers.h> //for rsPeers variable
 #include <retroshare/rsiface.h>
@@ -1065,18 +1066,10 @@ int RsidPage::nextId() const {
 
     if (rsidstring.isEmpty() == false) {
         // search for peer id in string
-        std::string rsidstr;
+        std::string rsidstr = PeerDefs::idFromRsid(rsidstring, false);
 
-        int nIndex = rsidstring.indexOf("@");
-        if (nIndex >= 0) {
-            // found "@", extract peer id from string
-            rsidstr = rsidstring.mid(nIndex + 1).toStdString();
-        } else {
-            // maybe its only the peer id
-            rsidstr = rsidstring.toStdString();
-        }
         RsPeerDetails pd;
-        if ( rsPeers->getPeerDetails(rsidstr, pd) ) {
+        if (rsidstr.empty() == false && rsPeers->getPeerDetails(rsidstr, pd) ) {
             wizard()->setField(SSL_ID_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(pd.id));
             wizard()->setField(GPG_ID_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(pd.gpg_id));
             wizard()->setField(LOCATION_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(pd.location));

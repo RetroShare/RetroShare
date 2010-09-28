@@ -371,7 +371,7 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
     iconLabel->setMaximumSize( iconLabel->frameSize().height() + 24, 24 );
     hbox->addWidget(iconLabel);
 
-    textLabel = new QLabel( tr("<strong>RetroShare instance</strong>"), widget );
+    textLabel = new QLabel("<strong>" + tr("RetroShare") + "</strong>", widget );
 
     hbox->addWidget(textLabel);
 
@@ -392,12 +392,16 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
         // define header
         switch (type) {
         case TYPE_GROUP:
-            //this is a GPG key
-            textLabel->setText(tr("<strong>Group</strong>"));
-            break;
+                //this is a GPG key
+                textLabel->setText("<strong>" + tr("Group") + "</strong>");
+                break;
         case TYPE_GPG:
                 //this is a GPG key
-                textLabel->setText(tr("<strong>Friend</strong>"));
+                textLabel->setText("<strong>" + tr("Friend") + "</strong>");
+                break;
+        case TYPE_SSL:
+                //this is a SSL key
+                textLabel->setText("<strong>" + tr("Location") + "</strong>");
                 break;
         }
 

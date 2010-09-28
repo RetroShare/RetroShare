@@ -34,7 +34,8 @@
 #include "settings/rsharesettings.h"
 #include "AddLinksDialog.h"
 #include "RetroShareLink.h"
-#include "gui/RemoteDirModel.h"
+#include "RemoteDirModel.h"
+#include "common/PeerDefs.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsfiles.h>
@@ -746,18 +747,16 @@ void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
 		if(!rsPeers->getPeerDetails(*it,details))
 			continue ;
 
-		std::string name = details.name ;
-		std::string location = details.location ;
+		QString nn = PeerDefs::nameWithLocation(details);
 
-		std::string nn = name + " (" + location +")" ;
 		/* parents are
 		 * 	recMenu
 		 * 	msgMenu
 		 */
 
-		RsAction *qaf1 = new RsAction( QIcon(IMAGE_FRIEND), QString::fromStdString( nn ), &recMenu, *it );
+		RsAction *qaf1 = new RsAction( QIcon(IMAGE_FRIEND), nn, &recMenu, *it );
 		connect( qaf1 , SIGNAL( triggeredId( std::string ) ), this, SLOT( recommendFilesTo( std::string ) ) );
-		RsAction *qaf2 = new RsAction( QIcon(IMAGE_FRIEND), QString::fromStdString( nn ), &msgMenu, *it );
+		RsAction *qaf2 = new RsAction( QIcon(IMAGE_FRIEND), nn, &msgMenu, *it );
 		connect( qaf2 , SIGNAL( triggeredId( std::string ) ), this, SLOT( recommendFilesToMsg( std::string ) ) );
 
 		recMenu.addAction(qaf1);

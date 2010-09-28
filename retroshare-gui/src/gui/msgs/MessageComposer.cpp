@@ -46,6 +46,7 @@
 #include "gui/common/RSTreeWidgetItem.h"
 #include "gui/common/GroupDefs.h"
 #include "gui/common/StatusDefs.h"
+#include "gui/common/PeerDefs.h"
 #include "gui/RetroShareLink.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/feeds/AttachFileItem.h"
@@ -93,16 +94,6 @@ public:
         QItemDelegate::paint (painter, ownOption, index);
     }
 };
-
-static QString BuildPeerName(RsPeerDetails &detail)
-{
-    QString name = QString::fromUtf8(detail.name.c_str());
-    if (detail.location.empty() == false) {
-        name += " - " + QString::fromUtf8(detail.location.c_str());
-    }
-
-    return name;
-}
 
 /** Constructor */
 MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
@@ -560,7 +551,7 @@ void MessageComposer::insertSendList()
 
             /* add all the labels */
             /* (0) Person */
-            QString name = BuildPeerName(detail);
+            QString name = PeerDefs::nameWithLocation(detail);
             item->setText(COLUMN_CONTACT_NAME, name);
 
             int state = RS_STATUS_OFFLINE;
@@ -605,7 +596,7 @@ void MessageComposer::insertSendList()
             continue; /* BAD */
         }
 
-        QString name = BuildPeerName(detail);
+        QString name = PeerDefs::nameWithLocation(detail);
         if (completerList.indexOf(name) == -1) {
             completerList.append(name);
         }
@@ -1160,9 +1151,9 @@ void MessageComposer::setRecipientToRow(int row, enumType type, std::string id, 
                 name = tr("Unknown");
             }
         } else {
-            RsPeerDetails detail;
-            if (rsPeers->getPeerDetails(id, detail)) {
-                name = BuildPeerName(detail);
+            RsPeerDetails details;
+            if (rsPeers->getPeerDetails(id, details)) {
+                name = PeerDefs::nameWithLocation(details);
 
                 StatusInfo peerStatusInfo;
                 // No check of return value. Non existing status info is handled as offline.
@@ -1267,15 +1258,15 @@ void MessageComposer::editingRecipientFinished()
 
     std::list<std::string>::iterator peerIt;
     for (peerIt = peers.begin(); peerIt != peers.end(); peerIt++) {
-        RsPeerDetails detail;
-        if (!rsPeers->getPeerDetails(*peerIt, detail)) {
+        RsPeerDetails details;
+        if (!rsPeers->getPeerDetails(*peerIt, details)) {
             continue; /* BAD */
         }
 
-        QString name = BuildPeerName(detail);
+        QString name = PeerDefs::nameWithLocation(details);
         if (text.compare(name, Qt::CaseSensitive) == 0) {
             // found it
-            setRecipientToRow(row, type, detail.id, false);
+            setRecipientToRow(row, type, details.id, false);
             return;
         }
     }

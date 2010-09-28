@@ -468,7 +468,7 @@ void NetworkDialog::insertConnect()
 				backgrndcolor=QColor("#42B2B2"); //kind of darkCyan
 				item -> setIcon(0,(QIcon(IMAGE_DENIED)));
 				for(int k=0;k<8;++k)
-				item -> setToolTip(k,QString::fromStdString(detail.name) + QString(tr(" has authenticated you. \nRight-click and select 'make friend' to be able to connect."))) ;
+				item -> setToolTip(k, QString::fromStdString(detail.name) + tr(" has authenticated you. \nRight-click and select 'make friend' to be able to connect."));
 			}
 			else
 			{
@@ -509,7 +509,7 @@ void NetworkDialog::insertConnect()
         }
         self_item -> setText(0, "0");
         self_item->setIcon(0,(QIcon(IMAGE_AUTHED)));
-        self_item->setText(COLUMN_PEERNAME,QString::fromStdString(ownGPGDetails.name) + " (yourself)") ;
+        self_item->setText(COLUMN_PEERNAME, QString::fromStdString(ownGPGDetails.name) + " (" + tr("yourself") + ")");
         self_item->setText(2,"N/A");
         self_item->setText(COLUMN_PEERID, QString::fromStdString(ownGPGDetails.id));
 

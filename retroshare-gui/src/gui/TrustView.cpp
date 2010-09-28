@@ -164,7 +164,7 @@ void TrustView::update()
 
 			int j = getRowColId(*it2) ;
 
-			QString trr( (i==j)?"Self":"Trust") ;
+			QString trr( (i==j)?tr("Self"):tr("Trust")) ;
 
 			if(trustTableTW->item(i,j) == NULL)
 				trustTableTW->setItem(i,j,new QTableWidgetItem(trr)) ;
