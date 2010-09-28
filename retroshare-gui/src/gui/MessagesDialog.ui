@@ -1018,7 +1018,7 @@ border-image: url(:/images/closepressed.png)
          <widget class="QFrame" name="frame_2">
           <property name="maximumSize">
            <size>
-            <width>140</width>
+            <width>160</width>
             <height>16777215</height>
            </size>
           </property>
@@ -1048,7 +1048,7 @@ border-image: url(:/images/closepressed.png)
              </property>
              <property name="maximumSize">
               <size>
-               <width>140</width>
+               <width>160</width>
                <height>16777215</height>
               </size>
              </property>
@@ -1147,7 +1147,7 @@ border-image: url(:/images/closepressed.png)
             <widget class="QListWidget" name="tagWidget">
              <property name="maximumSize">
               <size>
-               <width>140</width>
+               <width>160</width>
                <height>16777215</height>
               </size>
              </property>
@@ -1169,7 +1169,7 @@ border-image: url(:/images/closepressed.png)
              </property>
              <property name="maximumSize">
               <size>
-               <width>140</width>
+               <width>160</width>
                <height>16777215</height>
               </size>
              </property>
@@ -1229,7 +1229,7 @@ border: 1px solid #CCCCCC;}</string>
              </property>
              <property name="maximumSize">
               <size>
-               <width>140</width>
+               <width>160</width>
                <height>22</height>
               </size>
              </property>
