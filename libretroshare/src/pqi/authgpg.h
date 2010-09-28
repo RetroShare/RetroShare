@@ -371,7 +371,13 @@ private:
 
     static AuthGPG *instance_gpg; // pointeur vers le singleton
 
-    RsMutex gpgMtx;
+    RsMutex gpgMtxEngine;
+    /* Below is protected via the mutex */
+
+    gpgme_engine_info_t INFO;
+    gpgme_ctx_t CTX;
+
+    RsReadWriteMutex gpgMtxData;
     /* Below is protected via the mutex */
 
     certmap mKeyList;
@@ -381,9 +387,6 @@ private:
 
     bool gpgmeKeySelected;
     
-    gpgme_engine_info_t INFO;
-    gpgme_ctx_t CTX;
-
     std::string mOwnGpgId;
     gpgcert mOwnGpgCert;
 
