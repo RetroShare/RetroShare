@@ -4835,12 +4835,11 @@ p, li { white-space: pre-wrap; }
         <translation>Kanäle</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>Blogs</source>
-        <translation type="unfinished">Blogs</translation>
+        <translation type="obsolete">Blogs</translation>
     </message>
     <message>
-        <location line="+539"/>
+        <location line="+540"/>
         <source>Internal Error</source>
         <translation>Interener Fehler</translation>
     </message>
@@ -4896,7 +4895,7 @@ p, li { white-space: pre-wrap; }
         <translation>Schnellstart Assistent</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="-264"/>
+        <location filename="../gui/MainWindow.cpp" line="-261"/>
         <source>Search</source>
         <translation>Suchen</translation>
     </message>
@@ -4911,7 +4910,7 @@ p, li { white-space: pre-wrap; }
         <translation>Messenger</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="+151"/>
+        <location filename="../gui/MainWindow.cpp" line="+148"/>
         <source>Show/Hide</source>
         <translation>Anzeigen/Verbergen</translation>
     </message>
@@ -4988,12 +4987,12 @@ p, li { white-space: pre-wrap; }
         <translation>Foren</translation>
     </message>
     <message>
-        <location line="-69"/>
+        <location line="-66"/>
         <source>RetroShare %1 a secure decentralised communication platform</source>
         <translation>RetroShare %1 eine sichere und dezentralisierte Kommunikationsplattform</translation>
     </message>
     <message>
-        <location line="+570"/>
+        <location line="+567"/>
         <source>Open Messages</source>
         <translation>Öffne Nachrichten</translation>
     </message>
@@ -7952,7 +7951,7 @@ Do you want to send them a Message instead</source>
 <context>
     <name>ProfileView</name>
     <message>
-        <location filename="../gui/profile/ProfileView.cpp" line="+70"/>
+        <location filename="../gui/profile/ProfileView.cpp" line="+71"/>
         <source>Clear Photo</source>
         <translation>Photo entfernen</translation>
     </message>

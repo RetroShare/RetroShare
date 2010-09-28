@@ -1137,7 +1137,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>CertificatePage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="606"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="607"/>
         <source>Certificate files</source>
         <translation>Certifikatfiler</translation>
     </message>
@@ -1146,12 +1146,12 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Använd XPGP-certifikat sparade i filer</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="610"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="611"/>
         <source>You have to generate a file with your certificate and give it to your friend. Also, you can use a file generated before.</source>
         <translation>Du måste skapa en fil med ditt certifikat och ge det till din vän. Alternativt kan du använda en tidigare skapad fil.</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="619"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="620"/>
         <source>Export my certificate...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1160,12 +1160,12 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Ange sökväg till din väns certifikat i rutan nedan </translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="637"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="638"/>
         <source>Browse</source>
         <translation type="unfinished">Bläddra</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="656"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="657"/>
         <source>Select Certificate</source>
         <translation>Välj certifikat</translation>
     </message>
@@ -1174,67 +1174,67 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Certifikat (*.pqi *.pem)</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="680"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="681"/>
         <source>Please choose a filename</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="673"/>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="689"/>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="693"/>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="699"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="674"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="690"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="694"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="700"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="628"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="629"/>
         <source>Import friend&apos;s certificate...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="631"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="632"/>
         <source>Drag and Drop your friends&apos;s certificate in this Window or specify path in the box below </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="657"/>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="682"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="658"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="683"/>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="674"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="675"/>
         <source>Sorry, create certificate failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="690"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="691"/>
         <source>Certificate file successfully created</source>
         <translation>Certifikatsfil skapad utan fel</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="694"/>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="700"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="695"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="701"/>
         <source>Sorry, certificate file creation failed</source>
         <translation>Tyvärr, fel uppstod vid skapande av certifikatsfilen</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="782"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="783"/>
         <source>Certificate Load Failed:something is wrong with %1 </source>
         <translation type="unfinished">Laddning av certifikat felaktigt: något är fel med %1</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="786"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="787"/>
         <source>Certificate Load Failed:can&apos;t read from file %1 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="791"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="792"/>
         <source>Certificate Load Failed:file %1 not found</source>
         <translation>Laddning av certifikat felaktigt %1 hittades inte</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="608"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="609"/>
         <source>Use PGP certificates saved in files.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2253,37 +2253,37 @@ Available: %3</source>
 <context>
     <name>ConclusionPage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="835"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="836"/>
         <source>Make Friend</source>
         <translation>Skapa vän</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="837"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="838"/>
         <source>Details about your friend : </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="844"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="845"/>
         <source>Key validity:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="852"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="853"/>
         <source>Email:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="868"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="869"/>
         <source>Authenticate friend (Sign GPG Key)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="871"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="872"/>
         <source>Add as friend to connect with</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="969"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="970"/>
         <source>It seems your friend is already registered. Adding it might just set it&apos;s ip address.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2292,7 +2292,7 @@ Available: %3</source>
         <translation type="obsolete">Fyll i detaljerna om din vän här</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="840"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="841"/>
         <source>Peer details</source>
         <translation>Klientdetaljer</translation>
     </message>
@@ -2301,7 +2301,7 @@ Available: %3</source>
         <translation type="obsolete">Pålitlig:</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="848"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="849"/>
         <source>Name:</source>
         <translation>Namn:</translation>
     </message>
@@ -2310,7 +2310,7 @@ Available: %3</source>
         <translation type="obsolete">Org:</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="856"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="857"/>
         <source>Loc:</source>
         <translation>Plac:</translation>
     </message>
@@ -2319,7 +2319,7 @@ Available: %3</source>
         <translation type="obsolete">Land:</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="860"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="861"/>
         <source>Signers</source>
         <translation>Signerare</translation>
     </message>
@@ -2538,79 +2538,79 @@ Available: %3</source>
         <translation type="obsolete">Skapa vän (signera certifikat och acceptera)</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="61"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="62"/>
         <source>Apply and Close</source>
         <translation>Verkställ och stäng</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="129"/>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="330"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="130"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="331"/>
         <source>RetroShare</source>
         <translation type="unfinished">RetroShare</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="130"/>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="331"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="131"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="332"/>
         <source>Error : cannot get peer details.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="203"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="204"/>
         <source>Your key is signed by : </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="217"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="218"/>
         <source>Peer key is signed by : </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="246"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="247"/>
         <source>Your trust in this peer is ultimate, it&apos;s probably a key you own.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="255"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="256"/>
         <source>Your trust in this peer is full.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="261"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="262"/>
         <source>Your trust in this peer is marginal.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="267"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="268"/>
         <source>Your trust in this peer is none.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="273"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="274"/>
         <source>Your trust in this peer is not set.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="295"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="296"/>
         <source>Peer has authenticated me as a friend and did sign my GPG key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="297"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="298"/>
         <source>Peer has not authenticated me as a friend and did not sign my GPG key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="400"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="401"/>
         <source>Signature Failure</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="401"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="402"/>
         <source>Maybe password is wrong</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="430"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="431"/>
         <source>Copy Peer</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2693,7 +2693,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ConnectFriendWizard</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="98"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="99"/>
         <source>Connect Friend Wizard</source>
         <translation>Anslut till vän (assisterad)</translation>
     </message>
@@ -3216,22 +3216,22 @@ Do you want to save your changes?</source>
         <translation type="unfinished">Skapa</translation>
     </message>
     <message>
-        <location filename="../gui/channels/CreateChannel.cpp" line="162"/>
+        <location filename="../gui/channels/CreateChannel.cpp" line="163"/>
         <source>RetroShare</source>
         <translation type="unfinished">RetroShare</translation>
     </message>
     <message>
-        <location filename="../gui/channels/CreateChannel.cpp" line="162"/>
+        <location filename="../gui/channels/CreateChannel.cpp" line="163"/>
         <source>Please add a Name</source>
         <translation type="unfinished">Lägg till ett namn</translation>
     </message>
     <message>
-        <location filename="../gui/channels/CreateChannel.cpp" line="245"/>
+        <location filename="../gui/channels/CreateChannel.cpp" line="246"/>
         <source>Load File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/channels/CreateChannel.cpp" line="245"/>
+        <location filename="../gui/channels/CreateChannel.cpp" line="246"/>
         <source>Pictures (*.png *.xpm *.jpg)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4105,37 +4105,37 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>EmailPage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1108"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1101"/>
         <source>Invite Friend by Email</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1110"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1103"/>
         <source>Enter your friends&apos; email addresses (seperate each on with a semicolon)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1112"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1105"/>
         <source>Your friends&apos; email addresses:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1114"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1107"/>
         <source>Enter Friends Email addresses</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1117"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1110"/>
         <source>Subject:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1119"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1112"/>
         <source>Friend invites you to check out RetroShare</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1133"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1126"/>
         <source>Friend uses RetroShare to communicate securely, and invites you to join him to share files together. &lt;br&gt;RetroShare is free and using it is safe: it contains no viruses, no spyware, no adware and it can easily be uninstalled. &lt;br&gt;For more information, see our website http://retroshare.sourceforge.net/ or download the software here http://retroshare.sourceforge.net/downloads.html. &lt;br&gt;See you soon on RetroShare!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4143,12 +4143,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ErrorMessagePage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="810"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="811"/>
         <source>Sorry, some error appeared</source>
         <translation>Ursäkta, ett fel uppstod</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="811"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="812"/>
         <source>Here is the error message: </source>
         <translation>Här är felmeddelandet: </translation>
     </message>
@@ -4510,57 +4510,57 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>FofPage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="428"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="429"/>
         <source>Friends of friends</source>
         <translation>Vänner till vänner</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="430"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="431"/>
         <source>Select now who you want to make friends with.</source>
         <translation>Välj nu vem du vill bli vän med.</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="432"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="433"/>
         <source>Show me: </source>
         <translation>Visa mig: </translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="434"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="435"/>
         <source>Any peer I&apos;ve not signed</source>
         <translation>Osignerade klienter</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="435"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="436"/>
         <source>Friends of my friends who already trust me</source>
         <translation>Vänner till mina vänner som redan litar på mig</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="436"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="437"/>
         <source>Signed peers showing as denied</source>
         <translation>Signerade XXX som visas som nekade</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="440"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="441"/>
         <source>Peer name</source>
         <translation>Klientnamn</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="441"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="442"/>
         <source>Also signed by</source>
         <translation>Även signerad av</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="442"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="443"/>
         <source>Peer id</source>
         <translation>Klient-ID</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="444"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="445"/>
         <source>Make friend with these peers</source>
         <translation>Bli vän med dessa XXX</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="545"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="546"/>
         <source>*** None ***</source>
         <translation>*** Ingen ***</translation>
     </message>
@@ -6361,37 +6361,37 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>IntroPage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="162"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="163"/>
         <source>This wizard will help you to connect to your friend(s) to RetroShare network. There are three possible ways to do this:</source>
         <translation>Denna guide kommer att hjälpa dig att ansluta din(a) vän(ner) till RetroShare nätverk. Det finns tre möjliga sätt att göra detta:</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="168"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="169"/>
         <source>&amp;Make friend with selected friends of my friends</source>
         <translation>&amp;Bli vän med markerade vänner till mina vänner</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="160"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="161"/>
         <source>Add a new Friend</source>
         <translation>Lägg till en ny vän</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="166"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="167"/>
         <source>&amp;Enter the certificate manually</source>
         <translation>&amp;Skriv in certifikatet manuellt</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="167"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="168"/>
         <source>&amp;You get a certificate file from your friend</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="169"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="170"/>
         <source>&amp;Enter RetroShare ID manually</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="170"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="171"/>
         <source>&amp;Send a Invitation by Email 
  (She/He receives a email with instructions howto to download RetroShare) </source>
         <translation type="unfinished"></translation>
@@ -7028,8 +7028,8 @@ p, li { white-space: pre-wrap; }
     <name>MessageComposer</name>
     <message>
         <location filename="../gui/msgs/MessageComposer.ui" line="17"/>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="398"/>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="742"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="389"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="733"/>
         <source>Compose</source>
         <translation type="unfinished">Skapa</translation>
     </message>
@@ -7246,38 +7246,38 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="202"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="193"/>
         <source>&amp;Left</source>
         <translation type="unfinished">&amp;Vänster</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="205"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="196"/>
         <source>C&amp;enter</source>
         <translation type="unfinished">&amp;Centrerad</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="208"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="199"/>
         <source>&amp;Right</source>
         <translation type="unfinished">&amp;Höger</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="211"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="202"/>
         <source>&amp;Justify</source>
         <translation type="unfinished">&amp;Justerad</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="401"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="392"/>
         <source>I recommend a good friend of me, you can trust him too when you trust me. &lt;br&gt; Copy friend link and paste to Friends list</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="420"/>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1810"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="411"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1801"/>
         <source>Save Message</source>
         <translation type="unfinished">Spara meddelande</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="421"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="412"/>
         <source>Message has not been Sent.
 Do you want to save message to draft box?</source>
         <translation type="unfinished"></translation>
@@ -7287,190 +7287,190 @@ Do you want to save message to draft box?</source>
         <translation type="obsolete">Skapa: </translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="398"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="389"/>
         <source>Friend Recommendation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="399"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="390"/>
         <source>Friend Recommendation(s)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="899"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="890"/>
         <source>No Title</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1125"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1116"/>
         <source>To</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1126"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1117"/>
         <source>Cc</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1127"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1118"/>
         <source>Bcc</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1160"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1151"/>
         <source>Unknown</source>
         <translation type="unfinished">Okänd</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1174"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1165"/>
         <source>Unknown friend</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1350"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1341"/>
         <source>&amp;File</source>
         <translation type="unfinished">&amp;Fil</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1355"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1346"/>
         <source>&amp;New</source>
         <translation type="unfinished">&amp;Ny</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1360"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1351"/>
         <source>&amp;Open...</source>
         <translation type="unfinished">&amp;Öppna</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1367"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1358"/>
         <source>&amp;Save</source>
         <translation type="unfinished">&amp;Spara</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1373"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1364"/>
         <source>Save &amp;As File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1377"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1368"/>
         <source>Save &amp;As Draft</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1382"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1373"/>
         <source>&amp;Print...</source>
         <translation type="unfinished">Skriv &amp;ut....</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1391"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1382"/>
         <source>&amp;Export PDF...</source>
         <translation type="unfinished">&amp;Exportera till PDF</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1398"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1389"/>
         <source>&amp;Quit</source>
         <translation type="unfinished">&amp;Avsluta</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1406"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1397"/>
         <source>&amp;Edit</source>
         <translation type="unfinished">&amp;Redigera</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1410"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1401"/>
         <source>&amp;Undo</source>
         <translation type="unfinished">&amp;Ångra</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1413"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1404"/>
         <source>&amp;Redo</source>
         <translation type="unfinished">&amp;Gör om</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1417"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1408"/>
         <source>Cu&amp;t</source>
         <translation type="unfinished">&amp;Klipp ut</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1420"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1411"/>
         <source>&amp;Copy</source>
         <translation type="unfinished">K&amp;opiera</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1423"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1414"/>
         <source>&amp;Paste</source>
         <translation type="unfinished">K&amp;listra in</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1431"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1422"/>
         <source>&amp;View</source>
         <translation type="unfinished">&amp;Visa</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1434"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1425"/>
         <source>&amp;Contacts Sidebar</source>
         <translation type="unfinished">&amp;Kontakter i sidofältet</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1440"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1431"/>
         <source>&amp;Insert</source>
         <translation type="unfinished">&amp;Infoga</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1445"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1436"/>
         <source>&amp;Image</source>
         <translation type="unfinished">&amp;Bild</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1449"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1440"/>
         <source>&amp;Horizontal Line</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1457"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1448"/>
         <source>&amp;Format</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1704"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1695"/>
         <source>Open File...</source>
         <translation type="unfinished">Öppna fil...</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1705"/>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1728"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1696"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1719"/>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
         <translation type="unfinished">HTML-filer (*.htm *.html);;Alla filer (*)</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1727"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1718"/>
         <source>Save as...</source>
         <translation type="unfinished">Spara som...</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1749"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1740"/>
         <source>Print Document</source>
         <translation type="unfinished">Skriv ut dokument</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1811"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1802"/>
         <source>Message has not been Sent.
 Do you want to save message ?</source>
         <translation type="unfinished">Meddelandet har inte skickats.
 Vill du spara meddelandet ?</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1835"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1826"/>
         <source>Choose Image</source>
         <translation type="unfinished">Välj bild</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1836"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1827"/>
         <source>Image Files supported (*.png *.jpeg *.jpg *.gif)</source>
         <translation type="unfinished">Bildfiler som stöds (*.png *.jpeg *.jpg *.gif)</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="1950"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="1941"/>
         <source>Add Extra File</source>
         <translation type="unfinished">Lägg till extra fil</translation>
     </message>
@@ -7568,30 +7568,30 @@ Vill du spara meddelandet ?</translation>
     <name>MessagesDialog</name>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="573"/>
-        <location filename="../gui/MessagesDialog.cpp" line="690"/>
+        <location filename="../gui/MessagesDialog.cpp" line="691"/>
         <source>New Message</source>
         <translation>Nytt meddelande</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="614"/>
+        <location filename="../gui/MessagesDialog.cpp" line="615"/>
         <source>Reply to Message</source>
         <translation>Svara på meddelande</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="666"/>
+        <location filename="../gui/MessagesDialog.cpp" line="667"/>
         <source>Remove Message</source>
         <translation>Ta bort meddelande</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="945"/>
-        <location filename="../gui/MessagesDialog.cpp" line="292"/>
+        <location filename="../gui/MessagesDialog.cpp" line="293"/>
         <source>Date</source>
         <translation>Datum</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="940"/>
-        <location filename="../gui/MessagesDialog.cpp" line="291"/>
-        <location filename="../gui/MessagesDialog.cpp" line="1205"/>
+        <location filename="../gui/MessagesDialog.cpp" line="292"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1206"/>
         <source>From</source>
         <translation>Från</translation>
     </message>
@@ -7688,15 +7688,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="950"/>
-        <location filename="../gui/MessagesDialog.cpp" line="294"/>
+        <location filename="../gui/MessagesDialog.cpp" line="295"/>
         <source>Content</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="955"/>
         <location filename="../gui/MessagesDialog.ui" line="963"/>
-        <location filename="../gui/MessagesDialog.cpp" line="293"/>
-        <location filename="../gui/MessagesDialog.cpp" line="471"/>
+        <location filename="../gui/MessagesDialog.cpp" line="294"/>
+        <location filename="../gui/MessagesDialog.cpp" line="472"/>
         <source>Tags</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7707,17 +7707,17 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="1101"/>
-        <location filename="../gui/MessagesDialog.cpp" line="1161"/>
-        <location filename="../gui/MessagesDialog.cpp" line="2093"/>
-        <location filename="../gui/MessagesDialog.cpp" line="2103"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1162"/>
+        <location filename="../gui/MessagesDialog.cpp" line="2084"/>
+        <location filename="../gui/MessagesDialog.cpp" line="2094"/>
         <source>Inbox</source>
         <translation>Inkorg</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="1110"/>
-        <location filename="../gui/MessagesDialog.cpp" line="1166"/>
-        <location filename="../gui/MessagesDialog.cpp" line="2116"/>
-        <location filename="../gui/MessagesDialog.cpp" line="2124"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1167"/>
+        <location filename="../gui/MessagesDialog.cpp" line="2107"/>
+        <location filename="../gui/MessagesDialog.cpp" line="2115"/>
         <source>Outbox</source>
         <translation>Utkorg</translation>
     </message>
@@ -7728,15 +7728,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="1128"/>
-        <location filename="../gui/MessagesDialog.cpp" line="1176"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1177"/>
         <source>Sent</source>
         <translation>Skickat</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="1137"/>
-        <location filename="../gui/MessagesDialog.cpp" line="1181"/>
-        <location filename="../gui/MessagesDialog.cpp" line="2155"/>
-        <location filename="../gui/MessagesDialog.cpp" line="2160"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1182"/>
+        <location filename="../gui/MessagesDialog.cpp" line="2146"/>
+        <location filename="../gui/MessagesDialog.cpp" line="2151"/>
         <source>Trash</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7832,7 +7832,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Hämta alla</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="1873"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1864"/>
         <source>Print Document</source>
         <translation>Skriv ut dokument</translation>
     </message>
@@ -7851,68 +7851,68 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">#</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="345"/>
+        <location filename="../gui/MessagesDialog.cpp" line="346"/>
         <source>Forward selected Message</source>
         <translation>Vidarebefodra markerat meddelande</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="664"/>
+        <location filename="../gui/MessagesDialog.cpp" line="665"/>
         <source>Remove Messages</source>
         <translation>Ta bort meddelanden</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="622"/>
+        <location filename="../gui/MessagesDialog.cpp" line="623"/>
         <source>Forward Message</source>
         <translation>Vidarebefodra meddelande</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="482"/>
+        <location filename="../gui/MessagesDialog.cpp" line="483"/>
         <source>Remove All Tags</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="512"/>
+        <location filename="../gui/MessagesDialog.cpp" line="513"/>
         <source>New tag ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="630"/>
+        <location filename="../gui/MessagesDialog.cpp" line="631"/>
         <source>Edit...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="642"/>
+        <location filename="../gui/MessagesDialog.cpp" line="643"/>
         <source>Mark as read</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="649"/>
+        <location filename="../gui/MessagesDialog.cpp" line="650"/>
         <source>Mark as unread</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="674"/>
+        <location filename="../gui/MessagesDialog.cpp" line="675"/>
         <source>Undelete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="711"/>
+        <location filename="../gui/MessagesDialog.cpp" line="712"/>
         <source>Download</source>
         <translation>Hämta</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="793"/>
-        <location filename="../gui/MessagesDialog.cpp" line="840"/>
+        <location filename="../gui/MessagesDialog.cpp" line="794"/>
+        <location filename="../gui/MessagesDialog.cpp" line="841"/>
         <source>Re:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="896"/>
+        <location filename="../gui/MessagesDialog.cpp" line="897"/>
         <source>Compose:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="896"/>
+        <location filename="../gui/MessagesDialog.cpp" line="897"/>
         <source>Fwd:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7921,8 +7921,8 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Re:</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="793"/>
-        <location filename="../gui/MessagesDialog.cpp" line="840"/>
+        <location filename="../gui/MessagesDialog.cpp" line="794"/>
+        <location filename="../gui/MessagesDialog.cpp" line="841"/>
         <source>Compose: </source>
         <translation>Skapa: </translation>
     </message>
@@ -7931,34 +7931,30 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Fwd:</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="930"/>
+        <location filename="../gui/MessagesDialog.cpp" line="931"/>
         <source>Hide</source>
         <translation type="unfinished">Dölj</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="933"/>
+        <location filename="../gui/MessagesDialog.cpp" line="934"/>
         <source>Expand</source>
         <translation type="unfinished">Utöka</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="1171"/>
-        <location filename="../gui/MessagesDialog.cpp" line="2136"/>
-        <location filename="../gui/MessagesDialog.cpp" line="2144"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1172"/>
+        <location filename="../gui/MessagesDialog.cpp" line="2127"/>
+        <location filename="../gui/MessagesDialog.cpp" line="2135"/>
         <source>Drafts</source>
         <translation type="unfinished">Utkast</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="1207"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1208"/>
         <source>To</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="1370"/>
-        <location filename="../gui/MessagesDialog.cpp" line="1695"/>
-        <location filename="../gui/MessagesDialog.cpp" line="1712"/>
-        <location filename="../gui/MessagesDialog.cpp" line="1734"/>
         <source>Anonymous</source>
-        <translation type="unfinished">Anonym</translation>
+        <translation type="obsolete">Anonym</translation>
     </message>
     <message>
         <source>File Request Confirmation</source>
@@ -7986,21 +7982,21 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Fillänken är missbildad.</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="1913"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1904"/>
         <source>Save as...</source>
         <translation>Spara som...</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="1914"/>
+        <location filename="../gui/MessagesDialog.cpp" line="1905"/>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
         <translation>HTML-filer (*.htm *.html);;Alla filer (*)</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="2064"/>
-        <location filename="../gui/MessagesDialog.cpp" line="2068"/>
-        <location filename="../gui/MessagesDialog.cpp" line="2072"/>
-        <location filename="../gui/MessagesDialog.cpp" line="2076"/>
-        <location filename="../gui/MessagesDialog.cpp" line="2080"/>
+        <location filename="../gui/MessagesDialog.cpp" line="2055"/>
+        <location filename="../gui/MessagesDialog.cpp" line="2059"/>
+        <location filename="../gui/MessagesDialog.cpp" line="2063"/>
+        <location filename="../gui/MessagesDialog.cpp" line="2067"/>
+        <location filename="../gui/MessagesDialog.cpp" line="2071"/>
         <source>Total:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8009,14 +8005,14 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Svara alla</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="346"/>
-        <location filename="../gui/MessagesDialog.cpp" line="618"/>
+        <location filename="../gui/MessagesDialog.cpp" line="347"/>
+        <location filename="../gui/MessagesDialog.cpp" line="619"/>
         <source>Reply to All</source>
         <translation>Svara alla</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="935"/>
-        <location filename="../gui/MessagesDialog.cpp" line="289"/>
+        <location filename="../gui/MessagesDialog.cpp" line="290"/>
         <source>Subject</source>
         <translation>Ämne</translation>
     </message>
@@ -8289,75 +8285,75 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Lägg till en vän&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="293"/>
+        <location filename="../gui/MessengerWindow.cpp" line="294"/>
         <source>Expand all</source>
         <translation type="unfinished">Expandera alla</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="296"/>
+        <location filename="../gui/MessengerWindow.cpp" line="297"/>
         <source>Collapse all</source>
         <translation type="unfinished">Komprimera alla</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="300"/>
+        <location filename="../gui/MessengerWindow.cpp" line="301"/>
         <source>Chat</source>
         <translation>Chatt</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="307"/>
+        <location filename="../gui/MessengerWindow.cpp" line="308"/>
         <source>Message Friend</source>
         <translation type="unfinished">Meddelandevän</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="315"/>
+        <location filename="../gui/MessengerWindow.cpp" line="316"/>
         <source>Connect To Friend</source>
         <translation>Anslut till vän</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="323"/>
+        <location filename="../gui/MessengerWindow.cpp" line="324"/>
         <source>Peer Details</source>
         <translation type="unfinished">Klientdetaljer</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="330"/>
+        <location filename="../gui/MessengerWindow.cpp" line="331"/>
         <source>Recomend this Friend to...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="337"/>
+        <location filename="../gui/MessengerWindow.cpp" line="338"/>
         <source>Paste retroshare Link</source>
         <translation type="unfinished">Klistra in retrosharelänk</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="347"/>
+        <location filename="../gui/MessengerWindow.cpp" line="348"/>
         <source>Export Friend</source>
         <translation type="unfinished">Exportera vän</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="354"/>
+        <location filename="../gui/MessengerWindow.cpp" line="355"/>
         <source>Deny Friend</source>
         <translation type="unfinished">Neka vän</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="358"/>
+        <location filename="../gui/MessengerWindow.cpp" line="359"/>
         <source>Remove Friend Location</source>
         <translation type="unfinished">Ta bort kompis location</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="382"/>
+        <location filename="../gui/MessengerWindow.cpp" line="383"/>
         <source>&lt;strong&gt;GPG Key&lt;/strong&gt;</source>
         <translation type="unfinished">&lt;strong&gt;GPG Nyckel&lt;/strong&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="574"/>
         <location filename="../gui/MessengerWindow.cpp" line="575"/>
-        <location filename="../gui/MessengerWindow.cpp" line="577"/>
+        <location filename="../gui/MessengerWindow.cpp" line="576"/>
         <location filename="../gui/MessengerWindow.cpp" line="578"/>
+        <location filename="../gui/MessengerWindow.cpp" line="579"/>
         <source>location</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="379"/>
+        <location filename="../gui/MessengerWindow.cpp" line="380"/>
         <source>&lt;strong&gt;RetroShare instance&lt;/strong&gt;</source>
         <translation type="unfinished">&lt;strong&gt;RetroShare instance&lt;/strong&gt;</translation>
     </message>
@@ -8374,12 +8370,12 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Tillgänglig</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="882"/>
+        <location filename="../gui/MessengerWindow.cpp" line="883"/>
         <source>Save Certificate</source>
         <translation type="unfinished">Spara certifikat</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="883"/>
+        <location filename="../gui/MessengerWindow.cpp" line="884"/>
         <source>Certificates (*.pqi)</source>
         <translation type="unfinished">Certifikat (*.pqi)</translation>
     </message>
@@ -9069,6 +9065,11 @@ Högerklicka och välj &apos;bli vän med&apos; för att kunna ansluta.</transla
         <location filename="../gui/NetworkDialog.cpp" line="471"/>
         <source> has authenticated you. 
 Right-click and select &apos;make friend&apos; to be able to connect.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/NetworkDialog.cpp" line="512"/>
+        <source>yourself</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -9795,6 +9796,15 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>PeerDefs</name>
+    <message>
+        <location filename="../gui/common/PeerDefs.cpp" line="40"/>
+        <location filename="../gui/common/PeerDefs.cpp" line="60"/>
+        <source>Anonymous</source>
+        <translation type="unfinished">Anonym</translation>
+    </message>
+</context>
+<context>
     <name>PeerItem</name>
     <message>
         <source>Remove Friend</source>
@@ -9998,7 +10008,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PeersDialog</name>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="423"/>
+        <location filename="../gui/PeersDialog.cpp" line="427"/>
         <source>Chat</source>
         <translation>Chatta</translation>
     </message>
@@ -10011,12 +10021,12 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Ta bort vän</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="1097"/>
+        <location filename="../gui/PeersDialog.cpp" line="1101"/>
         <source>Save Certificate</source>
         <translation>Spara certifikat</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="1098"/>
+        <location filename="../gui/PeersDialog.cpp" line="1102"/>
         <source>Certificates (*.pqi)</source>
         <translation>Certifikat (*.pqi)</translation>
     </message>
@@ -10030,7 +10040,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Person</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="436"/>
+        <location filename="../gui/PeersDialog.cpp" line="440"/>
         <source>Connect To Friend</source>
         <translation>Anslut till vän</translation>
     </message>
@@ -10059,77 +10069,67 @@ p, li { white-space: pre-wrap; }
         <translation>Välkommen till RetroShares gruppchatt.</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="396"/>
-        <source>&lt;strong&gt;Group&lt;/strong&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/PeersDialog.cpp" line="400"/>
-        <source>&lt;strong&gt;Friend&lt;/strong&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/PeersDialog.cpp" line="409"/>
+        <location filename="../gui/PeersDialog.cpp" line="413"/>
         <source>Message group</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="413"/>
+        <location filename="../gui/PeersDialog.cpp" line="417"/>
         <source>Edit group</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="416"/>
+        <location filename="../gui/PeersDialog.cpp" line="420"/>
         <source>Remove group</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="428"/>
+        <location filename="../gui/PeersDialog.cpp" line="432"/>
         <source>Friend Details</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="433"/>
+        <location filename="../gui/PeersDialog.cpp" line="437"/>
         <source>Recommend this Friend to...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="470"/>
+        <location filename="../gui/PeersDialog.cpp" line="474"/>
         <source>Add to group</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="479"/>
+        <location filename="../gui/PeersDialog.cpp" line="483"/>
         <source>Move to group</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="491"/>
+        <location filename="../gui/PeersDialog.cpp" line="495"/>
         <source>Groups</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="504"/>
+        <location filename="../gui/PeersDialog.cpp" line="508"/>
         <source>Remove from group</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="509"/>
+        <location filename="../gui/PeersDialog.cpp" line="513"/>
         <source>Remove from all groups</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="526"/>
+        <location filename="../gui/PeersDialog.cpp" line="530"/>
         <source>Expand all</source>
         <translation>Expandera alla</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="527"/>
+        <location filename="../gui/PeersDialog.cpp" line="531"/>
         <source>Collapse all</source>
         <translation>Komprimera alla</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="424"/>
+        <location filename="../gui/PeersDialog.cpp" line="428"/>
         <source>Message Friend</source>
         <translation>Meddelandevän</translation>
     </message>
@@ -10138,12 +10138,12 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Klientdetaljer</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="444"/>
+        <location filename="../gui/PeersDialog.cpp" line="448"/>
         <source>Deny Friend</source>
         <translation>Neka vän</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="447"/>
+        <location filename="../gui/PeersDialog.cpp" line="451"/>
         <source>Remove Friend Location</source>
         <translation>Ta bort kompis location</translation>
     </message>
@@ -10152,9 +10152,8 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">&lt;strong&gt;GPG Nyckel&lt;/strong&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="374"/>
         <source>&lt;strong&gt;RetroShare instance&lt;/strong&gt;</source>
-        <translation>&lt;strong&gt;RetroShare instance&lt;/strong&gt;</translation>
+        <translation type="obsolete">&lt;strong&gt;RetroShare instance&lt;/strong&gt;</translation>
     </message>
     <message>
         <source>location : </source>
@@ -10177,7 +10176,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Upptagen</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="1014"/>
+        <location filename="../gui/PeersDialog.cpp" line="1018"/>
         <source>Available</source>
         <translation>Tillgänglig</translation>
     </message>
@@ -10188,22 +10187,23 @@ Do you want to send them a Message instead</source>
 Vill du skicka ett meddelande i stället</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="1215"/>
+        <location filename="../gui/PeersDialog.cpp" line="374"/>
+        <location filename="../gui/PeersDialog.cpp" line="1219"/>
         <source>RetroShare</source>
         <translation type="unfinished">RetroShare</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="1215"/>
+        <location filename="../gui/PeersDialog.cpp" line="1219"/>
         <source>Do you want to remove this Friend?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="1282"/>
+        <location filename="../gui/PeersDialog.cpp" line="1286"/>
         <source>is typing...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="1773"/>
+        <location filename="../gui/PeersDialog.cpp" line="1777"/>
         <source>Add Extra File</source>
         <translation>Lägg till extra fil</translation>
     </message>
@@ -10233,39 +10233,54 @@ Vill du skicka ett meddelande i stället</translation>
         <translation type="obsolete">Fillänken är missbildad.</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="1876"/>
-        <location filename="../gui/PeersDialog.cpp" line="1883"/>
+        <location filename="../gui/PeersDialog.cpp" line="1880"/>
+        <location filename="../gui/PeersDialog.cpp" line="1887"/>
         <source>Drop file error.</source>
         <translation>Filsläppningsfel.</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="1883"/>
+        <location filename="../gui/PeersDialog.cpp" line="1887"/>
         <source>File not found or file name not accepted.</source>
         <translation>Filen hittades inte eller filnamn ogiltigt.</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="1876"/>
+        <location filename="../gui/PeersDialog.cpp" line="1880"/>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
         <translation>Kataloger kan inte dra och släppas, endast filer.</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="438"/>
-        <location filename="../gui/PeersDialog.cpp" line="518"/>
+        <location filename="../gui/PeersDialog.cpp" line="396"/>
+        <source>Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/PeersDialog.cpp" line="400"/>
+        <source>Friend</source>
+        <translation type="unfinished">Vän</translation>
+    </message>
+    <message>
+        <location filename="../gui/PeersDialog.cpp" line="404"/>
+        <source>Location</source>
+        <translation type="unfinished">Plats</translation>
+    </message>
+    <message>
+        <location filename="../gui/PeersDialog.cpp" line="442"/>
+        <location filename="../gui/PeersDialog.cpp" line="522"/>
         <source>Paste Friend Link</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="876"/>
+        <location filename="../gui/PeersDialog.cpp" line="880"/>
         <source>location</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="1934"/>
+        <location filename="../gui/PeersDialog.cpp" line="1938"/>
         <source>Save as...</source>
         <translation type="unfinished">Spara som...</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="1935"/>
+        <location filename="../gui/PeersDialog.cpp" line="1939"/>
         <source>Text File (*.txt );;All Files (*)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10830,39 +10845,39 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PopupChatDialog</name>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="179"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="180"/>
         <source>Paste retroshare Link</source>
         <translation type="unfinished">Klistra in retrosharelänk</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="148"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="149"/>
         <source>RetroShare</source>
         <translation type="unfinished">RetroShare</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="397"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="398"/>
         <source>Your Friend is offline 
 Do you want to send them a Message instead</source>
         <translation type="unfinished">Din vän är offline
 Vill du skicka ett meddelande i stället</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="397"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="398"/>
         <source>Friend not Online</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="443"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="444"/>
         <source>is typing...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="701"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="702"/>
         <source>Hide Avatar</source>
         <translation>Göm avatar</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1135"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1136"/>
         <source>Messages you send will be delivered after Friend is again Online</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10871,7 +10886,7 @@ Vill du skicka ett meddelande i stället</translation>
         <translation type="obsolete">:images/hide_toolbox_frame.png</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="706"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="707"/>
         <source>Show Avatar</source>
         <translation>Visa avatar</translation>
     </message>
@@ -10888,32 +10903,32 @@ Vill du skicka ett meddelande i stället</translation>
         <translation type="obsolete">Stilar (*.htm)</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1102"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1103"/>
         <source>Save as...</source>
         <translation type="unfinished">Spara som...</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1103"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1104"/>
         <source>Text File (*.txt );;All Files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1135"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1136"/>
         <source>apears to be Offline.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1142"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1143"/>
         <source>is Idle and may not reply</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1154"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1155"/>
         <source>is Away and may not reply</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1161"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1162"/>
         <source>is Busy and may not reply</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11039,7 +11054,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Chattar med</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="874"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="875"/>
         <source>Add Extra File</source>
         <translation>Lägg till extra fil</translation>
     </message>
@@ -11064,18 +11079,18 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Fillänken är missbildad.</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1040"/>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1047"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1041"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1048"/>
         <source>Drop file error.</source>
         <translation>Filsläppningsfel.</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1047"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1048"/>
         <source>File not found or file name not accepted.</source>
         <translation>Filen hittades inte eller filnamn ogiltigt.</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="1040"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="1041"/>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
         <translation>Kataloger kan inte dra och släppas, endast filer.</translation>
     </message>
@@ -11279,48 +11294,48 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ProfileView</name>
     <message>
-        <location filename="../gui/profile/ProfileView.cpp" line="77"/>
+        <location filename="../gui/profile/ProfileView.cpp" line="71"/>
         <source>Clear Photo</source>
         <translation>Rensa foto</translation>
     </message>
     <message>
-        <location filename="../gui/profile/ProfileView.cpp" line="78"/>
+        <location filename="../gui/profile/ProfileView.cpp" line="72"/>
         <source>Change Photo</source>
         <translation>Ändra foto</translation>
     </message>
     <message>
         <location filename="../gui/profile/ProfileView.ui" line="183"/>
-        <location filename="../gui/profile/ProfileView.cpp" line="99"/>
+        <location filename="../gui/profile/ProfileView.cpp" line="93"/>
         <source>Edit Profile</source>
         <translation>Redigera profil</translation>
     </message>
     <message>
-        <location filename="../gui/profile/ProfileView.cpp" line="118"/>
+        <location filename="../gui/profile/ProfileView.cpp" line="112"/>
         <source>Remove Favourite</source>
         <translation>Ta bort favorit</translation>
     </message>
     <message>
-        <location filename="../gui/profile/ProfileView.cpp" line="119"/>
+        <location filename="../gui/profile/ProfileView.cpp" line="113"/>
         <source>Clear Favourites</source>
         <translation>Rensa favoriter</translation>
     </message>
     <message>
-        <location filename="../gui/profile/ProfileView.cpp" line="128"/>
+        <location filename="../gui/profile/ProfileView.cpp" line="122"/>
         <source>Download File</source>
         <translation>Ladda ned fil</translation>
     </message>
     <message>
-        <location filename="../gui/profile/ProfileView.cpp" line="129"/>
+        <location filename="../gui/profile/ProfileView.cpp" line="123"/>
         <source>Download All</source>
         <translation>Hämta alla</translation>
     </message>
     <message>
-        <location filename="../gui/profile/ProfileView.cpp" line="191"/>
+        <location filename="../gui/profile/ProfileView.cpp" line="185"/>
         <source>RetroShare</source>
         <translation type="unfinished">RetroShare</translation>
     </message>
     <message>
-        <location filename="../gui/profile/ProfileView.cpp" line="192"/>
+        <location filename="../gui/profile/ProfileView.cpp" line="186"/>
         <source>Error : cannot get peer details.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11660,75 +11675,75 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="270"/>
+        <location filename="../gui/RetroShareLink.cpp" line="271"/>
         <source>File Request Confirmation</source>
         <translation type="unfinished">Bekräfta filförfrågan</translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="270"/>
+        <location filename="../gui/RetroShareLink.cpp" line="271"/>
         <source>The file has been added to your download list.</source>
         <translation type="unfinished">Filen har lagts till i din nedladdningslista.</translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="279"/>
+        <location filename="../gui/RetroShareLink.cpp" line="280"/>
         <source>File Request canceled</source>
         <translation type="unfinished">File begäran avbryts</translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="279"/>
+        <location filename="../gui/RetroShareLink.cpp" line="280"/>
         <source>The file has not been added to your download list, because you already have it.</source>
         <translation type="unfinished">Filen har inte lagts till i din nedladdning listan, eftersom du redan har det.
 </translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="301"/>
-        <location filename="../gui/RetroShareLink.cpp" line="311"/>
+        <location filename="../gui/RetroShareLink.cpp" line="302"/>
+        <location filename="../gui/RetroShareLink.cpp" line="312"/>
         <source>Friend Request Confirmation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="301"/>
+        <location filename="../gui/RetroShareLink.cpp" line="302"/>
         <source>The friend is already in your list.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="311"/>
+        <location filename="../gui/RetroShareLink.cpp" line="312"/>
         <source>The friend has been added to your list.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="320"/>
-        <location filename="../gui/RetroShareLink.cpp" line="329"/>
+        <location filename="../gui/RetroShareLink.cpp" line="321"/>
+        <location filename="../gui/RetroShareLink.cpp" line="330"/>
         <source>Friend Request canceled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="320"/>
+        <location filename="../gui/RetroShareLink.cpp" line="321"/>
         <source>The friend could not be added to your list.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="329"/>
+        <location filename="../gui/RetroShareLink.cpp" line="330"/>
         <source>The friend could not be found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="341"/>
+        <location filename="../gui/RetroShareLink.cpp" line="342"/>
         <source>File Request Error</source>
         <translation type="unfinished">Filförfrågningsfel</translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="341"/>
+        <location filename="../gui/RetroShareLink.cpp" line="342"/>
         <source>The file link is malformed.</source>
         <translation type="unfinished">Fillänken är missbildad.</translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="359"/>
+        <location filename="../gui/RetroShareLink.cpp" line="360"/>
         <source>File Request</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="359"/>
+        <location filename="../gui/RetroShareLink.cpp" line="360"/>
         <source>Process of RetroShare links is not implemented. Please use copy instead.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12196,32 +12211,32 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RsidPage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1023"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1024"/>
         <source>RetroShare ID</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1025"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1026"/>
         <source>Use RetroShare ID for adding a Friend which is available in your network.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1034"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1035"/>
         <source>Add Friends RetroShare ID...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1037"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1038"/>
         <source>Paste Friends RetroShare ID in the box below </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1040"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1041"/>
         <source>Enter the RetroShare ID of your Friend, e.g. Peer@BDE8D16A46D938CF </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1092"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1085"/>
         <source>This Peer %1 is not available in your Network</source>
         <translation type="unfinished"></translation>
     </message>
@@ -13044,12 +13059,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/channels/ShareKey.cpp" line="78"/>
+        <location filename="../gui/channels/ShareKey.cpp" line="80"/>
         <source>RetroShare</source>
         <translation type="unfinished">RetroShare</translation>
     </message>
     <message>
-        <location filename="../gui/channels/ShareKey.cpp" line="78"/>
+        <location filename="../gui/channels/ShareKey.cpp" line="80"/>
         <source>Please select at least one peer</source>
         <translation type="unfinished"></translation>
     </message>
@@ -13198,7 +13213,7 @@ p, li { white-space: pre-wrap; }
     <name>SharedFilesDialog</name>
     <message>
         <location filename="../gui/SharedFilesDialog.ui" line="846"/>
-        <location filename="../gui/SharedFilesDialog.cpp" line="286"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="287"/>
         <source>Download</source>
         <translation>Hämta</translation>
     </message>
@@ -13221,93 +13236,93 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Rekommendera till </translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="258"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="259"/>
         <source>Checking...</source>
         <translation>Kontrollerar...</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="266"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="267"/>
         <source>Check files</source>
         <translation>Kontrollera filer</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="289"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="290"/>
         <source>Copy retroshare Link</source>
         <translation>Kopiera retrosharelänk</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="292"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="293"/>
         <source>Send retroshare Link</source>
         <translation>Skicka retrosharelänk</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="727"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="728"/>
         <source>Recommend (Automated message) To </source>
         <translation>Rekommendera (automatiserat meddelande) till </translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="729"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="730"/>
         <source>Recommend in a message to </source>
         <translation>Rekommendera i ett meddelande till </translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="202"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="203"/>
         <source>Copy retroshare Links to Clipboard</source>
         <translation>Kopiera retroshare Länkar till Urklipp</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="204"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="205"/>
         <source>Copy retroshare Links to Clipboard (HTML)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="206"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="207"/>
         <source>Send retroshare Links</source>
         <translation>Skicka retroshare Länkar</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="208"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="209"/>
         <source>Send retroshare Links (HTML)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="210"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="211"/>
         <source>Send retroshare Links to Cloud</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="212"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="213"/>
         <source>Add Links to Cloud</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="214"/>
-        <location filename="../gui/SharedFilesDialog.cpp" line="813"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="215"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="812"/>
         <source>Open File</source>
         <translation>Öppna fil</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="216"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="217"/>
         <source>Open Folder</source>
         <translation>Öppna katalog</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="822"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="821"/>
         <source>Set command for opening this file</source>
         <translation>Ange kommando för öppning av denna fil</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="882"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="881"/>
         <source>&lt;strong&gt;My Shared Files&lt;/strong&gt;</source>
         <translation>&lt;strong&gt;Mina Filer&lt;/strong&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="896"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="895"/>
         <source>&lt;strong&gt;Friends Files&lt;/strong&gt;</source>
         <translation>&lt;strong&gt;Vänner filer&lt;/strong&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="911"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="910"/>
         <source>&lt;strong&gt;Files&lt;/strong&gt;</source>
         <translation>&lt;strong&gt;Filer&lt;/strong&gt;</translation>
     </message>
@@ -14022,62 +14037,62 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TextPage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="207"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="208"/>
         <source>Use text representation of the PGP certificates.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="209"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="210"/>
         <source>The text below is your PGP certificate. You have to provide it to your friend </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="241"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="242"/>
         <source>Copy your Cert to Clipboard</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="250"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="251"/>
         <source>Save your Cert into a File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="273"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="274"/>
         <source>Please, paste your friends PGP certificate into the box below</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="315"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="316"/>
         <source>RetroShare Invite</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="326"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="327"/>
         <source>You can copy this text and send it to your friend via email or some other way</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="337"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="338"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="338"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="339"/>
         <source>Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="368"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="369"/>
         <source>Save as...</source>
         <translation>Spara som...</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="369"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="370"/>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="205"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="206"/>
         <source>Text certificate</source>
         <translation>Textcertifikat</translation>
     </message>
@@ -14090,7 +14105,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Texten nedan är ditt XPGP-certifikat. Du måste ge detta till din vän </translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="259"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="260"/>
         <source>Run Email program</source>
         <translation>Kör epostklient</translation>
     </message>
@@ -14099,7 +14114,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Klistra in dina vänners XPGP-certifikat i rutan nedan</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="325"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="326"/>
         <source>Connect Friend Help</source>
         <translation>Anslut vän-hjälp</translation>
     </message>
@@ -14108,7 +14123,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Du kan kopiera denna text och skicka till dina vänner via epost, ICQ eller annat sätt</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="414"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="415"/>
         <source>Certificate Load Failed</source>
         <translation>Inläsning av certifikat misslyckades</translation>
     </message>
@@ -14631,6 +14646,16 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/TrustView.cpp" line="29"/>
         <source>This table normaly auto-updates every 10 seconds.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/TrustView.cpp" line="167"/>
+        <source>Self</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/TrustView.cpp" line="167"/>
+        <source>Trust</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
