@@ -397,7 +397,7 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
             break;
         case TYPE_GPG:
                 //this is a GPG key
-                textLabel->setText(tr("<strong>GPG Key</strong>"));
+                textLabel->setText(tr("<strong>Friend</strong>"));
                 break;
         }
 
