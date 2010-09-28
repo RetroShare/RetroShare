@@ -4447,27 +4447,27 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/common/GroupDefs.cpp" line="38"/>
         <source>Friends</source>
-        <translation type="unfinished"></translation>
+        <translation>Arkadaşlar</translation>
     </message>
     <message>
         <location filename="../gui/common/GroupDefs.cpp" line="41"/>
         <source>Family</source>
-        <translation type="unfinished"></translation>
+        <translation>Aile</translation>
     </message>
     <message>
         <location filename="../gui/common/GroupDefs.cpp" line="44"/>
         <source>Co-Workers</source>
-        <translation type="unfinished"></translation>
+        <translation>Personel</translation>
     </message>
     <message>
         <location filename="../gui/common/GroupDefs.cpp" line="47"/>
         <source>Other Contacts</source>
-        <translation type="unfinished"></translation>
+        <translation>Diğer Kişiler</translation>
     </message>
     <message>
         <location filename="../gui/common/GroupDefs.cpp" line="50"/>
         <source>Favorites</source>
-        <translation type="unfinished"></translation>
+        <translation>Favori</translation>
     </message>
 </context>
 <context>
@@ -5985,32 +5985,32 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MessagesDialog.ui" line="579"/>
         <source>Compose</source>
-        <translation>Yeni ileti yaz</translation>
+        <translation>Yeni ileti</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="627"/>
         <source>Reply to selected message</source>
-        <translation type="unfinished"></translation>
+        <translation>Iletiyi yanıtla</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="668"/>
         <source>Reply all to selected message</source>
-        <translation type="unfinished"></translation>
+        <translation>Tüm alicilara yanıtla</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="706"/>
         <source>Forward selected message</source>
-        <translation type="unfinished"></translation>
+        <translation>Seçilmiş postaları ilet</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="751"/>
         <source>Remove selected message</source>
-        <translation type="unfinished"></translation>
+        <translation>Iletiyi sil</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="798"/>
         <source>Print selected message</source>
-        <translation type="unfinished"></translation>
+        <translation>Iletiyi yazdıır</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="833"/>
@@ -6039,12 +6039,12 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/MessagesDialog.cpp" line="293"/>
         <location filename="../gui/MessagesDialog.cpp" line="471"/>
         <source>Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Etiket</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="966"/>
         <source>Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Etiket</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="1101"/>
@@ -6079,12 +6079,12 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/MessagesDialog.cpp" line="2155"/>
         <location filename="../gui/MessagesDialog.cpp" line="2160"/>
         <source>Trash</source>
-        <translation type="unfinished"></translation>
+        <translation>Çöp</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="1184"/>
         <source>Favorite Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Favori Etiket</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="1218"/>
@@ -6094,7 +6094,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MessagesDialog.ui" line="1251"/>
         <source>Folders</source>
-        <translation type="unfinished"></translation>
+        <translation>Dosyalar</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="1645"/>
@@ -6200,27 +6200,27 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MessagesDialog.cpp" line="482"/>
         <source>Remove All Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Tüm etiketleri sil</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.cpp" line="512"/>
         <source>New tag ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Yeni etiket...</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.cpp" line="630"/>
         <source>Edit...</source>
-        <translation type="unfinished"></translation>
+        <translation>Düzenle...</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.cpp" line="642"/>
         <source>Mark as read</source>
-        <translation type="unfinished"></translation>
+        <translation>Işaretle Okunmuş olarak</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.cpp" line="649"/>
         <source>Mark as unread</source>
-        <translation type="unfinished"></translation>
+        <translation>Işaretle Okunmamuş olarak</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.cpp" line="674"/>
@@ -6257,24 +6257,24 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MessagesDialog.cpp" line="930"/>
         <source>Hide</source>
-        <translation type="unfinished"></translation>
+        <translation>Gizle</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.cpp" line="933"/>
         <source>Expand</source>
-        <translation type="unfinished"></translation>
+        <translation>Genişlet</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.cpp" line="1171"/>
         <location filename="../gui/MessagesDialog.cpp" line="2136"/>
         <location filename="../gui/MessagesDialog.cpp" line="2144"/>
         <source>Drafts</source>
-        <translation type="unfinished"></translation>
+        <translation>Taslak</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.cpp" line="1207"/>
         <source>To</source>
-        <translation type="unfinished"></translation>
+        <translation>Kime</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.cpp" line="1370"/>
@@ -6282,7 +6282,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/MessagesDialog.cpp" line="1712"/>
         <location filename="../gui/MessagesDialog.cpp" line="1734"/>
         <source>Anonymous</source>
-        <translation type="unfinished">Anonim</translation>
+        <translation>Anonim</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.cpp" line="1913"/>
@@ -6301,7 +6301,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/MessagesDialog.cpp" line="2076"/>
         <location filename="../gui/MessagesDialog.cpp" line="2080"/>
         <source>Total:</source>
-        <translation type="unfinished"></translation>
+        <translation>Toplam:</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.cpp" line="346"/>
