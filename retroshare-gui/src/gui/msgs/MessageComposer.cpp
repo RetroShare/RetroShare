@@ -1128,7 +1128,6 @@ void MessageComposer::setRecipientToRow(int row, enumType type, std::string id, 
 
         QString objectName = "lineEdit" + QString::number(row);
         lineEdit->setObjectName(objectName);
-        lineEdit->setStyleSheet(QString(STYLE_NORMAL).arg(objectName));
 
         lineEdit->setCompleter(m_completer);
 
@@ -1149,6 +1148,7 @@ void MessageComposer::setRecipientToRow(int row, enumType type, std::string id, 
                 name = GroupDefs::name(groupInfo);
             } else {
                 name = tr("Unknown");
+                id.clear();
             }
         } else {
             RsPeerDetails details;
@@ -1163,6 +1163,7 @@ void MessageComposer::setRecipientToRow(int row, enumType type, std::string id, 
             } else {
                 icon = QIcon(StatusDefs::imageUser(RS_STATUS_OFFLINE));
                 name = tr("Unknown friend");
+                id.clear();
             }
         }
     }
@@ -1170,6 +1171,11 @@ void MessageComposer::setRecipientToRow(int row, enumType type, std::string id, 
     comboBox->setCurrentIndex(comboBox->findData(type, Qt::UserRole));
 
     lineEdit->setText(name);
+    if (id.empty()) {
+        lineEdit->setStyleSheet(QString(STYLE_FAIL).arg(lineEdit->objectName()));
+    } else {
+        lineEdit->setStyleSheet(QString(STYLE_NORMAL).arg(lineEdit->objectName()));
+    }
 
     QTableWidgetItem *item = new QTableWidgetItem(icon, "", 0);
     item->setFlags(Qt::NoItemFlags);
