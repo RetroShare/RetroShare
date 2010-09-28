@@ -699,6 +699,7 @@ void  PeersDialog::insertPeers()
                 groupItem->setSizeHint(COLUMN_NAME, QSize(26, 26));
                 groupItem->setTextAlignment(COLUMN_NAME, Qt::AlignLeft | Qt::AlignVCenter);
                 groupItem->setIcon(COLUMN_NAME, QIcon(IMAGE_GROUP24));
+                groupItem->setForeground(COLUMN_NAME, QBrush(QColor(123, 123, 123)));
 
                 /* used to find back the item */
                 groupItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(groupInfo->id));
