@@ -338,13 +338,20 @@ void MessageComposer::processSettings(bool bLoad)
     if (group) {
         pMsgDialog->addRecipient(TO, id, true);
     } else {
-        //put all sslChilds in message list
-        std::list<std::string> sslIds;
-        rsPeers->getSSLChildListOfGPGId(id, sslIds);
+        RsPeerDetails detail;
+        if (rsPeers->getPeerDetails(id, detail) && detail.accept_connection) {
+            if (detail.isOnlyGPGdetail) {
+                //put all sslChilds in message list
+                std::list<std::string> sslIds;
+                rsPeers->getSSLChildListOfGPGId(id, sslIds);
 
-        std::list<std::string>::const_iterator it;
-        for (it = sslIds.begin(); it != sslIds.end(); it++) {
-            pMsgDialog->addRecipient(TO, *it, false);
+                std::list<std::string>::const_iterator it;
+                for (it = sslIds.begin(); it != sslIds.end(); it++) {
+                    pMsgDialog->addRecipient(TO, *it, false);
+                }
+            } else {
+                pMsgDialog->addRecipient(TO, detail.id, false);
+            }
         }
     }
 

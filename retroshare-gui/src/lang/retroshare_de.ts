@@ -5612,12 +5612,12 @@ Willst Du die Nachricht speichern ?</translation>
         <translation>Von</translation>
     </message>
     <message>
-        <location line="+709"/>
+        <location line="+778"/>
         <source>Size</source>
         <translation>Grösse</translation>
     </message>
     <message>
-        <location line="-324"/>
+        <location line="-393"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -5692,15 +5692,15 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+171"/>
         <location filename="../gui/MessagesDialog.cpp" line="-44"/>
-        <location line="+914"/>
+        <location line="+932"/>
         <location line="+10"/>
         <source>Inbox</source>
         <translation>Posteingang</translation>
     </message>
     <message>
         <location line="+9"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-919"/>
-        <location line="+932"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-937"/>
+        <location line="+950"/>
         <location line="+8"/>
         <source>Outbox</source>
         <translation>Postausgang</translation>
@@ -5712,12 +5712,22 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+9"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-930"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-948"/>
         <source>Sent</source>
         <translation>Gesendet</translation>
     </message>
     <message>
-        <location line="+545"/>
+        <location line="+513"/>
+        <source>Cc:</source>
+        <translation>Cc:</translation>
+    </message>
+    <message>
+        <location line="+35"/>
+        <source>Bcc:</source>
+        <translation>Bcc:</translation>
+    </message>
+    <message>
+        <location line="+66"/>
         <location line="+3"/>
         <source>Print...</source>
         <translation>Drucken...</translation>
@@ -5759,13 +5769,13 @@ p, li { white-space: pre-wrap; }
         <translation>Speichern unter...</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="+679"/>
+        <location filename="../gui/MessagesDialog.cpp" line="+697"/>
         <source>Print Document</source>
         <translation>Dokument drucken</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="-775"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-1561"/>
+        <location filename="../gui/MessagesDialog.ui" line="-844"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-1579"/>
         <source>Subject</source>
         <translation>Betreff</translation>
     </message>
@@ -5780,12 +5790,12 @@ p, li { white-space: pre-wrap; }
         <translation>Von:</translation>
     </message>
     <message>
-        <location line="+68"/>
+        <location line="+65"/>
         <source>To:</source>
         <translation>An:</translation>
     </message>
     <message>
-        <location line="+59"/>
+        <location line="+131"/>
         <source>File Name</source>
         <translation>Dateiname</translation>
     </message>
@@ -5800,7 +5810,7 @@ p, li { white-space: pre-wrap; }
         <translation>Prüfsumme</translation>
     </message>
     <message>
-        <location line="-858"/>
+        <location line="-927"/>
         <source>Print</source>
         <translation>Drucken</translation>
     </message>
@@ -5849,13 +5859,13 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+437"/>
         <location line="+325"/>
-        <location line="+13"/>
-        <location line="+13"/>
+        <location line="+17"/>
+        <location line="+22"/>
         <source>Anonymous</source>
         <translation>Anonym</translation>
     </message>
     <message>
-        <location line="+174"/>
+        <location line="+179"/>
         <source>Save as...</source>
         <translation>Speichern unter...</translation>
     </message>
@@ -5865,7 +5875,7 @@ p, li { white-space: pre-wrap; }
         <translation>HTML-Dateien (*.htm *.html);;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location line="-1545"/>
+        <location line="-1563"/>
         <location line="+267"/>
         <source>Reply to All</source>
         <translation>Allen antworten</translation>
@@ -5905,7 +5915,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+171"/>
         <location filename="../gui/MessagesDialog.cpp" line="+710"/>
-        <location line="+956"/>
+        <location line="+974"/>
         <location line="+5"/>
         <source>Trash</source>
         <translation>Papierkorb</translation>
@@ -5921,7 +5931,7 @@ p, li { white-space: pre-wrap; }
         <translation>Ordner</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="-1660"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-1678"/>
         <source>Remove All Tags</source>
         <translation>Alle Schlagwörter entfernen</translation>
     </message>
@@ -5957,13 +5967,13 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+275"/>
-        <location line="+947"/>
+        <location line="+965"/>
         <location line="+8"/>
         <source>Drafts</source>
         <translation>Entwürfe</translation>
     </message>
     <message>
-        <location line="-919"/>
+        <location line="-937"/>
         <source>To</source>
         <translation>An</translation>
     </message>
@@ -5973,7 +5983,7 @@ p, li { white-space: pre-wrap; }
         <translation>Editieren...</translation>
     </message>
     <message>
-        <location line="+1416"/>
+        <location line="+1434"/>
         <location line="+4"/>
         <location line="+4"/>
         <location line="+4"/>

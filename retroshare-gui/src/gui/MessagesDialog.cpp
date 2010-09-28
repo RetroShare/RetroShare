@@ -272,6 +272,10 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
     connect(ui.filterColumnComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterColumnChanged()));
 
+    connect(ui.toText, SIGNAL(linkActivated(QString)), this, SLOT(linkActivated(QString)));
+    connect(ui.ccText, SIGNAL(linkActivated(QString)), this, SLOT(linkActivated(QString)));
+    connect(ui.bccText, SIGNAL(linkActivated(QString)), this, SLOT(linkActivated(QString)));
+
     ui.msgText->setOpenLinks(false);
 
     m_eListMode = LIST_NOTHING;
@@ -361,6 +365,11 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     proxyModel->setFilterKeyColumn(FilterColumnFromComboBox(ui.filterColumnComboBox->currentIndex()));
 
     ui.clearButton->hide();
+
+    ui.bcclabel->setVisible(false);
+    ui.bccText->setVisible(false);
+    ui.cclabel->setVisible(false);
+    ui.ccText->setVisible(false);
 
     // load settings
     processSettings(true);
@@ -1688,31 +1697,50 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index, bool bSetToRead)
         else
             msgTxt += "<a style='color: black;'href='" + sPeer + "@" + QString::fromStdString(*pit) + "'> " + sPeer  + "</a>" + "   ";
     }
+    ui.toText->setText(msgTxt);
 
-    if (msgInfo.msgcc.size() > 0)
-        msgTxt += "\nCc: ";
-    for(pit = msgInfo.msgcc.begin(); pit != msgInfo.msgcc.end(); pit++)
-    {
-        QString sPeer = QString::fromStdString(rsPeers->getPeerName(*pit));
-        if (sPeer.isEmpty())
+    if (msgInfo.msgcc.size() > 0) {
+        ui.cclabel->setVisible(true);
+        ui.ccText->setVisible(true);
+
+        msgTxt.clear();
+        for(pit = msgInfo.msgcc.begin(); pit != msgInfo.msgcc.end(); pit++)
         {
-            msgTxt += "<a style='color: black;'href='" + tr("Anonymous") + "@" + QString::fromStdString(*pit) + "'> " +  tr("Anonymous")  + "</a>" + "    ";
+            QString sPeer = QString::fromStdString(rsPeers->getPeerName(*pit));
+            if (sPeer.isEmpty())
+            {
+                msgTxt += "<a style='color: black;'href='" + tr("Anonymous") + "@" + QString::fromStdString(*pit) + "'> " +  tr("Anonymous")  + "</a>" + "    ";
+            }
+            else
+                msgTxt += "<a style='color: black;'href='" + sPeer + "@" + QString::fromStdString(*pit) + "'> " + sPeer  + "</a>" + "   ";
         }
-        else
-            msgTxt += "<a style='color: black;'href='" + sPeer + "@" + QString::fromStdString(*pit) + "'> " + sPeer  + "</a>" + "   ";
+        ui.ccText->setText(msgTxt);
+    } else {
+        ui.cclabel->setVisible(false);
+        ui.ccText->setVisible(false);
+        ui.ccText->clear();
     }
 
-    if (msgInfo.msgbcc.size() > 0)
-        msgTxt += "\nBcc: ";
-    for(pit = msgInfo.msgbcc.begin(); pit != msgInfo.msgbcc.end(); pit++)
-    {
-        QString sPeer = QString::fromStdString(rsPeers->getPeerName(*pit));
-        if (sPeer.isEmpty())
+    if (msgInfo.msgbcc.size() > 0) {
+        ui.bcclabel->setVisible(true);
+        ui.bccText->setVisible(true);
+
+        msgTxt.clear();
+        for(pit = msgInfo.msgbcc.begin(); pit != msgInfo.msgbcc.end(); pit++)
         {
-            msgTxt += "<a style='color: black;'href='" + tr("Anonymous") + "@" + QString::fromStdString(*pit) + "'> " +  tr("Anonymous")  + "</a>" + "    ";
+            QString sPeer = QString::fromStdString(rsPeers->getPeerName(*pit));
+            if (sPeer.isEmpty())
+            {
+                msgTxt += "<a style='color: black;'href='" + tr("Anonymous") + "@" + QString::fromStdString(*pit) + "'> " +  tr("Anonymous")  + "</a>" + "    ";
+            }
+            else
+                msgTxt += "<a style='color: black;'href='" + sPeer + "@" + QString::fromStdString(*pit) + "'> " + sPeer  + "</a>" + "   ";
         }
-        else
-            msgTxt += "<a style='color: black;'href='" + sPeer + "@" + QString::fromStdString(*pit) + "'> " + sPeer  + "</a>" + "   ";
+        ui.bccText->setText(msgTxt);
+    } else {
+        ui.bcclabel->setVisible(false);
+        ui.bccText->setVisible(false);
+        ui.bccText->clear();
     }
 
     {
@@ -1721,7 +1749,6 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index, bool bSetToRead)
         QString timestamp = qtime.toString("dd.MM.yyyy hh:mm:ss");
         ui.dateText-> setText(timestamp);
     }
-    ui.toText->setText(msgTxt);
 
     std::string sSrcId;
     if ((msgInfo.msgflags & RS_MSG_BOXMASK) == RS_MSG_OUTBOX) {
@@ -2264,4 +2291,29 @@ void MessagesDialog::tagTriggered(QAction *pAction)
     }
 
     // LockUpdate -> insertMessages();
+}
+
+void MessagesDialog::linkActivated(QString link)
+{
+    if (link.isEmpty() == false) {
+        // search for cert id in string
+        std::string certidstr;
+
+        int nIndex = link.indexOf("@");
+        if (nIndex >= 0)
+        {
+            // found "@", extract cert id from string
+            certidstr = link.mid(nIndex + 1).toStdString();
+        }
+        else
+        {
+            // maybe its only the cert id
+            certidstr = link.toStdString();
+        }
+
+        RsPeerDetails detail;
+        if (rsPeers->getPeerDetails(certidstr, detail) && detail.accept_connection) {
+            MessageComposer::msgFriend(detail.id, false);
+        }
+    }
 }

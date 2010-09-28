@@ -55,7 +55,8 @@ public slots:
 private slots:
 
   /** Create the context popup menu and it's submenus */
-  void messageslistWidgetCostumPopupMenu( QPoint point ); 
+  void linkActivated(QString link);
+  void messageslistWidgetCostumPopupMenu( QPoint point );
   void msgfilelistWidgetCostumPopupMenu(QPoint);  
 
   void changeBox( int newrow );
