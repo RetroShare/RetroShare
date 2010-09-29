@@ -217,6 +217,8 @@ private slots:
 private:
     QGroupBox* peerDetailsFrame;
     QGridLayout* peerDetailsLayout;
+    QGroupBox* optionsFrame;
+    QGridLayout* optionsLayout;
     QLabel* trustLabel;
     QLabel* trustEdit;
     QLabel* nameLabel;

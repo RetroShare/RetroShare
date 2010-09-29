@@ -879,6 +879,19 @@ ConclusionPage::ConclusionPage(QWidget *parent) : QWizardPage(parent) {
     peerDetailsLayout->addWidget(signersEdit, 4,1,1,1);
 
     peerDetailsFrame->setLayout(peerDetailsLayout);
+    
+    optionsFrame = new QGroupBox;
+    optionsFrame ->setTitle( tr("Options") );
+    optionsLayout =  new QGridLayout();
+    
+    groupLabel = new QLabel( tr("Add friend to group:") );
+    optionsLayout->addWidget(groupLabel, 0,0,1,1);
+    
+    groupComboBox = new QComboBox(this);
+    optionsLayout->addWidget(groupComboBox, 0,1,1,1);
+    
+    optionsFrame->setLayout(optionsLayout);
+
 
     signGPGCheckBox = new QCheckBox();
     signGPGCheckBox->setText(tr("Authenticate friend (Sign GPG Key)"));
@@ -886,11 +899,13 @@ ConclusionPage::ConclusionPage(QWidget *parent) : QWizardPage(parent) {
     acceptNoSignGPGCheckBox = new QCheckBox();
     acceptNoSignGPGCheckBox->setText(tr("Add as friend to connect with"));
     registerField(ACCEPT_RADIO_BUTTON_FIELD_CONNECT_FRIEND_WIZARD,acceptNoSignGPGCheckBox);
-    peerDetailsLayout->addWidget(acceptNoSignGPGCheckBox, 5,0,1,-1); // QWidget * widget, int fromRow, int fromColumn, int rowSpan, int columnSpan, Qt::Alignment alignment = 0 )
-    peerDetailsLayout->addWidget(signGPGCheckBox, 6,0,1,-1); // QWidget * widget, int fromRow, int fromColumn, int rowSpan, int columnSpan, Qt::Alignment alignment = 0 )
+    optionsLayout->addWidget(acceptNoSignGPGCheckBox, 5,0,1,-1); // QWidget * widget, int fromRow, int fromColumn, int rowSpan, int columnSpan, Qt::Alignment alignment = 0 )
+    optionsLayout->addWidget(signGPGCheckBox, 6,0,1,-1); // QWidget * widget, int fromRow, int fromColumn, int rowSpan, int columnSpan, Qt::Alignment alignment = 0 )
+    
 
     conclusionPageLayout = new QVBoxLayout();
     conclusionPageLayout->addWidget(peerDetailsFrame);
+    conclusionPageLayout->addWidget(optionsFrame);
 
     setLayout(conclusionPageLayout);
 
@@ -931,9 +946,8 @@ ConclusionPage::ConclusionPage(QWidget *parent) : QWizardPage(parent) {
     dyndns->setVisible(false);
     registerField("dyndns",dyndns);
 
-    groupComboBox = new QComboBox(this);
-    groupLabel = new QLabel(this);
-    groupLabel->setVisible(false);
+    //groupLabel = new QLabel(this);
+    //groupLabel->setVisible(false);
     registerField(GROUP_ID_FIELD_CONNECT_FRIEND_WIZARD, groupLabel);
 }
 
