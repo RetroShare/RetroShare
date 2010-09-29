@@ -145,14 +145,23 @@ int UdpBitDht::status(std::ostream &out)
 }
 
         /*** Overloaded from iThread ***/
+#define MAX_MSG_PER_TICK	100
+#define TICK_PAUSE_USEC		20000  /* 20ms secs .. max messages = 50 x 100 = 5000 */
+
 void UdpBitDht::run()
 {
 	while(1)
 	{
-		tick();
+		while(tick())
+		{
+			usleep(TICK_PAUSE_USEC);
+		}
+
+		mBitDhtManager->iteration();
 		sleep(1);
 	}
 }
+
 
 int UdpBitDht::tick()
 {
@@ -164,8 +173,7 @@ int UdpBitDht::tick()
 	struct sockaddr_in toAddr;
 	int size = BITDHT_MAX_PKTSIZE;
 
-	/* accept up to 10 msgs / tick() */
-	while((i < 10) && (mBitDhtManager->outgoingMsg(&toAddr, data, &size)))
+	while((i < MAX_MSG_PER_TICK) && (mBitDhtManager->outgoingMsg(&toAddr, data, &size)))
 	{
 #ifdef DEBUG_UDP_BITDHT 
 		std::cerr << "UdpBitDht::tick() outgoing msg(" << size << ") to " << toAddr;
@@ -179,8 +187,11 @@ int UdpBitDht::tick()
 		size = BITDHT_MAX_PKTSIZE; // reset msg size!
 	}
 
-	mBitDhtManager->iteration();
-	return 1;
+	if (i == MAX_MSG_PER_TICK)
+	{
+		return 1; /* keep on ticking */
+	}
+	return 0;
 }
 
 

@@ -49,6 +49,9 @@ UdpStack::UdpStack(struct sockaddr_in &local)
 
 bool    UdpStack::resetAddress(struct sockaddr_in &local)
 {
+	std::cerr << "UdpStack::resetAddress(" << local << ")";
+	std::cerr << std::endl;
+
 	return udpLayer->reset(local);
 }
 
