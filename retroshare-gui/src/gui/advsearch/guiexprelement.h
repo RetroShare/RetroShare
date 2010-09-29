@@ -64,32 +64,6 @@ public:
     virtual void set(QObject*){}
     bool isStringSearchExpression();
 
-    /* translatable option strings for the comboboxes */
-    static const QString AND    ;
-    static const QString XOR    ;
-    static const QString OR     ;
-    static const QString NAME   ;
-    static const QString PATH   ;
-    static const QString EXT    ;
-    static const QString HASH   ;
-    static const QString KEYWORDS;
-    static const QString COMMENTS;
-    static const QString META   ;
-    static const QString DATE   ;
-    static const QString SIZE   ;
-    static const QString POP    ;
-
-    static const QString CONTAINS;
-    static const QString CONTALL ;
-    static const QString IS     ;
-
-    static const QString LT     ;
-    static const QString LTE    ;
-    static const QString EQUAL  ;
-    static const QString GTE    ;
-    static const QString GT     ;
-    static const QString RANGE  ;
-
 /* indices for possible cb options */ 
     static const int AND_INDEX;
     static const int XOR_INDEX;

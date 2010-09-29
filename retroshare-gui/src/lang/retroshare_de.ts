@@ -931,17 +931,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+9"/>
         <source>Type</source>
-        <translation type="unfinished">Typ</translation>
+        <translation>Typ</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation type="unfinished">Beschränkt - Jeder kann lesen, aber nicht jeder schreiben (Privater Veröffentlichungs-Schlüssel)</translation>
+        <translation>Beschränkt - Jeder kann lesen, aber nicht jeder schreiben (Privater Veröffentlichungs-Schlüssel)</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation type="unfinished">Privat - (Privater Veröffentlichungsschlüssel erforderlich, um Nachrichten zu lesen)</translation>
+        <translation>Privat - (Privater Veröffentlichungsschlüssel erforderlich, um Nachrichten zu lesen)</translation>
     </message>
     <message>
         <location line="+35"/>
@@ -972,12 +972,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ChannelFeed</name>
     <message>
-        <location filename="../gui/ChannelFeed.ui" line="+26"/>
-        <source>Form</source>
-        <translation>Formular</translation>
-    </message>
-    <message>
-        <location line="+118"/>
+        <location filename="../gui/ChannelFeed.ui" line="+141"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -1078,7 +1073,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+9"/>
         <source>Share Channel</source>
-        <translation type="unfinished"></translation>
+        <translation>Verteile Kanal</translation>
     </message>
     <message>
         <location line="+232"/>
@@ -2210,7 +2205,7 @@ p, li { white-space: pre-wrap; }
         <translation>Zusätzlich eine Datei hinzufügen</translation>
     </message>
     <message>
-        <location line="+162"/>
+        <location line="+159"/>
         <source>RetroShare</source>
         <translation></translation>
     </message>
@@ -2790,12 +2785,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/channels/EditChanDetails.cpp" line="+139"/>
         <source>Load File</source>
-        <translation type="unfinished">Lade Datei</translation>
+        <translation>Lade Datei</translation>
     </message>
     <message>
         <location line="+0"/>
         <source>Pictures (*.png *.xpm *.jpg)</source>
-        <translation type="unfinished">Bilder (*.png *.xpm *.jpg)</translation>
+        <translation>Bilder (*.png *.xpm *.jpg)</translation>
     </message>
 </context>
 <context>
@@ -2974,7 +2969,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ExprParamElement</name>
     <message>
-        <location filename="../gui/advsearch/guiexprelement.cpp" line="+369"/>
+        <location filename="../gui/advsearch/guiexprelement.cpp" line="+368"/>
         <location line="+13"/>
         <location line="+115"/>
         <source>to</source>
@@ -3385,7 +3380,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+4"/>
         <source>Edit Forum Details</source>
-        <translation type="unfinished">Forum-Details bearbeiten</translation>
+        <translation>Forum-Details bearbeiten</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -4153,6 +4148,104 @@ Fill in your GPG password when asked, to sign your new key.</source>
     </message>
 </context>
 <context>
+    <name>GuiExprElement</name>
+    <message>
+        <location filename="../gui/advsearch/guiexprelement.cpp" line="-437"/>
+        <source>and</source>
+        <translation>und</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>and / or</source>
+        <translation>und / oder</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>or</source>
+        <translation>oder</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Name</source>
+        <translation>Name</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Path</source>
+        <translation>Pfad</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Extension</source>
+        <translation>Erweiterung</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Hash</source>
+        <translation>Prüfsumme</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Date</source>
+        <translation>Datum</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Size</source>
+        <translation>Grösse</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Popularity</source>
+        <translation>Beliebtheit</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>contains</source>
+        <translation>enthält</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>contains all</source>
+        <translation>enthält alles</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>is</source>
+        <translation>ist</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>less than</source>
+        <translation>kleiner als</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>less than or equal</source>
+        <translation>kleiner als oder gleich</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>equals</source>
+        <translation>gleich</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>greater than or equal</source>
+        <translation>grösser als oder gleich</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>greater than</source>
+        <translation>grösser als</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>is in range</source>
+        <translation>im Bereich</translation>
+    </message>
+</context>
+<context>
     <name>HelpBrowser</name>
     <message>
         <location filename="../gui/help/browser/helpbrowser.cpp" line="+127"/>
@@ -4835,11 +4928,12 @@ p, li { white-space: pre-wrap; }
         <translation>Kanäle</translation>
     </message>
     <message>
+        <location line="+4"/>
         <source>Blogs</source>
-        <translation type="obsolete">Blogs</translation>
+        <translation type="unfinished">Blogs</translation>
     </message>
     <message>
-        <location line="+540"/>
+        <location line="+539"/>
         <source>Internal Error</source>
         <translation>Interener Fehler</translation>
     </message>
@@ -4895,7 +4989,7 @@ p, li { white-space: pre-wrap; }
         <translation>Schnellstart Assistent</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="-261"/>
+        <location filename="../gui/MainWindow.cpp" line="-264"/>
         <source>Search</source>
         <translation>Suchen</translation>
     </message>
@@ -4910,7 +5004,7 @@ p, li { white-space: pre-wrap; }
         <translation>Messenger</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="+148"/>
+        <location filename="../gui/MainWindow.cpp" line="+151"/>
         <source>Show/Hide</source>
         <translation>Anzeigen/Verbergen</translation>
     </message>
@@ -4987,12 +5081,12 @@ p, li { white-space: pre-wrap; }
         <translation>Foren</translation>
     </message>
     <message>
-        <location line="-66"/>
+        <location line="-69"/>
         <source>RetroShare %1 a secure decentralised communication platform</source>
         <translation>RetroShare %1 eine sichere und dezentralisierte Kommunikationsplattform</translation>
     </message>
     <message>
-        <location line="+567"/>
+        <location line="+570"/>
         <source>Open Messages</source>
         <translation>Öffne Nachrichten</translation>
     </message>
@@ -5308,29 +5402,29 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
     </message>
     <message>
         <location line="+209"/>
-        <location line="+1390"/>
+        <location line="+1396"/>
         <source>Save Message</source>
         <translation>Nachricht speichern</translation>
     </message>
     <message>
-        <location line="-1389"/>
+        <location line="-1395"/>
         <source>Message has not been Sent.
 Do you want to save message to draft box?</source>
         <translation>Nachricht wurde noch nicht gesendet.
 Möchtest Du die Nachricht in den Entwürfen speichern?</translation>
     </message>
     <message>
-        <location line="+739"/>
+        <location line="+738"/>
         <source>Unknown</source>
         <translation>Unbekannt</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+15"/>
         <source>Unknown friend</source>
         <translation>Unbekannter Freund</translation>
     </message>
     <message>
-        <location line="+176"/>
+        <location line="+182"/>
         <source>&amp;File</source>
         <translation>&amp;Datei</translation>
     </message>
@@ -5478,7 +5572,7 @@ Willst Du die Nachricht speichern ?</translation>
         <translation>Zusätzliche Datei hinzufügen</translation>
     </message>
     <message>
-        <location line="-1552"/>
+        <location line="-1558"/>
         <source>Friend Recommendation</source>
         <translation>Freundempfehlung</translation>
     </message>
@@ -7679,7 +7773,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+249"/>
         <source>Clear offline messages</source>
-        <translation type="unfinished"></translation>
+        <translation>Entferne offline Nachrichten</translation>
     </message>
     <message>
         <location line="-430"/>
@@ -7951,7 +8045,7 @@ Do you want to send them a Message instead</source>
 <context>
     <name>ProfileView</name>
     <message>
-        <location filename="../gui/profile/ProfileView.cpp" line="+71"/>
+        <location filename="../gui/profile/ProfileView.cpp" line="+70"/>
         <source>Clear Photo</source>
         <translation>Photo entfernen</translation>
     </message>
@@ -8250,101 +8344,6 @@ p, li { white-space: pre-wrap; }
 </context>
 <context>
     <name>QObject</name>
-    <message>
-        <location filename="../gui/advsearch/guiexprelement.cpp" line="-493"/>
-        <source>Name</source>
-        <translation>Name</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Path</source>
-        <translation>Pfad</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Extension</source>
-        <translation>Erweiterung</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Date</source>
-        <translation>Datum</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Size</source>
-        <translation>Grösse</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Popularity</source>
-        <translation>Beliebtheit</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>contains</source>
-        <translation>enthält</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>contains all</source>
-        <translation>enthält alles</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>is</source>
-        <translation>ist</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>less than</source>
-        <translation>kleiner als</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>less than or equal</source>
-        <translation>kleiner als oder gleich</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>greater than or equal</source>
-        <translation>grösser als oder gleich</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>greater than</source>
-        <translation>grösser als</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>is in range</source>
-        <translation>im Bereich</translation>
-    </message>
-    <message>
-        <location line="-24"/>
-        <source>and</source>
-        <translation>und</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>and / or</source>
-        <translation>und / oder</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>or</source>
-        <translation>oder</translation>
-    </message>
-    <message>
-        <location line="+19"/>
-        <source>equals</source>
-        <translation>gleich</translation>
-    </message>
-    <message>
-        <location line="-14"/>
-        <source>Hash</source>
-        <translation>Prüfsumme</translation>
-    </message>
     <message>
         <location filename="../main.cpp" line="+143"/>
         <location line="+6"/>
@@ -9486,7 +9485,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-107"/>
         <source>Share Channel</source>
-        <translation type="unfinished"></translation>
+        <translation>Verteile Kanal</translation>
     </message>
     <message>
         <location line="+39"/>
@@ -9495,12 +9494,16 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:18pt; font-weight:600; color:#ffffff;&quot;&gt;Share Channel&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:18pt; font-weight:600; color:#ffffff;&quot;&gt;Verteile Kanal&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+77"/>
         <source>Share for Friend</source>
-        <translation type="unfinished"></translation>
+        <translation>Verteile für Freund</translation>
     </message>
     <message>
         <location line="+53"/>
@@ -9524,7 +9527,11 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Select the Friends with which you want to Share your Channel.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Wähle die Freunde aus, mit denen Du den Kanal teilen möchtest.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/channels/ShareKey.cpp" line="+80"/>
@@ -10299,7 +10306,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/SubDestItem.ui" line="+150"/>
         <source>Delete FeedItem</source>
-        <translation type="unfinished">Nachricht löschen</translation>
+        <translation>Nachricht löschen</translation>
     </message>
 </context>
 <context>
@@ -10479,12 +10486,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TransferPage</name>
     <message>
-        <location filename="../gui/settings/TransferPage.ui" line="+14"/>
-        <source>Form</source>
-        <translation>Formular</translation>
-    </message>
-    <message>
-        <location line="+6"/>
+        <location filename="../gui/settings/TransferPage.ui" line="+17"/>
         <source>Transfer options</source>
         <translation>Übertragungsoptionen</translation>
     </message>
@@ -10509,7 +10511,20 @@ p, li { white-space: pre-wrap; }
         <translation>Zufall</translation>
     </message>
     <message>
-        <location line="-36"/>
+        <location line="+34"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;RetroShare&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt; is capable of transfering data and search requests between peers that are not necessarily friends. This traffic however only transits through a connected list of friends and is anonymous.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;You can separately setup share flags for each shared directory in the shared files dialog to be:&lt;/span&gt;&lt;/p&gt;
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Browsable by friends&lt;/span&gt;: files are seen by your friends.&lt;/li&gt;
+&lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Anonymously shared&lt;/span&gt;: files are anonymously reachable through distant F2F tunnels.&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-70"/>
         <source>Safety disk space limit :</source>
         <translation>Sicherheitsgrenze Festplattenspeicher:</translation>
     </message>
@@ -10517,19 +10532,6 @@ p, li { white-space: pre-wrap; }
         <location line="+44"/>
         <source> MB</source>
         <translation></translation>
-    </message>
-    <message>
-        <location line="+26"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;RetroShare&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; is capable of transfering data and search requests between peers that are not necessarily friends. This traffic however only transits through a connected list of friends and is anonymous.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;You can separately setup share flags for each shared directory in the shared files dialog to be:&lt;/span&gt;&lt;/p&gt;
-&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-size:8pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Browsable by friends&lt;/span&gt;: files are seen by your friends.&lt;/li&gt;
-&lt;li style=&quot; font-size:8pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Anonymously shared&lt;/span&gt;: files are anonymously reachable through distant F2F tunnels.&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

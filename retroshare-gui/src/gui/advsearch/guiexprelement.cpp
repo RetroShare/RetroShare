@@ -29,33 +29,6 @@
 #define STD_CB_WIDTH        90
 #define CONDITION_CB_WIDTH 170
 
-const QString GuiExprElement::AND     = QObject::tr("and");
-const QString GuiExprElement::OR      = QObject::tr("and / or");
-const QString GuiExprElement::XOR     = QObject::tr("or"); // exclusive or
-
-const QString GuiExprElement::NAME    = QObject::tr("Name");
-const QString GuiExprElement::PATH    = QObject::tr("Path");
-const QString GuiExprElement::EXT     = QObject::tr("Extension");
-const QString GuiExprElement::HASH     = QObject::tr("Hash");
-//const QString GuiExprElement::KEYWORDS= QObject::tr("Keywords");
-//const QString GuiExprElement::COMMENTS= QObject::tr("Comments");
-//const QString GuiExprElement::META    = QObject::tr("Meta");
-const QString GuiExprElement::DATE    = QObject::tr("Date");
-const QString GuiExprElement::SIZE    = QObject::tr("Size");
-const QString GuiExprElement::POP     = QObject::tr("Popularity");
-
-const QString GuiExprElement::CONTAINS= QObject::tr("contains");
-const QString GuiExprElement::CONTALL = QObject::tr("contains all");
-const QString GuiExprElement::IS      = QObject::tr("is");
-
-const QString GuiExprElement::LT      = QObject::tr("less than");
-const QString GuiExprElement::LTE     = QObject::tr("less than or equal");
-const QString GuiExprElement::EQUAL   = QObject::tr("equals");
-const QString GuiExprElement::GTE     = QObject::tr("greater than or equal");
-const QString GuiExprElement::GT      = QObject::tr("greater than");
-const QString GuiExprElement::RANGE   = QObject::tr("is in range");
-
-
 const int GuiExprElement::AND_INDEX         = 0;
 const int GuiExprElement::OR_INDEX          = 1;
 const int GuiExprElement::XOR_INDEX         = 2;
@@ -115,6 +88,32 @@ GuiExprElement::GuiExprElement(QWidget * parent)
 
 void GuiExprElement::initialiseOptionsLists()
 {
+    const QString AND     = tr("and");
+    const QString OR      = tr("and / or");
+    const QString XOR     = tr("or"); // exclusive or
+
+    const QString NAME    = tr("Name");
+    const QString PATH    = tr("Path");
+    const QString EXT     = tr("Extension");
+    const QString HASH     = tr("Hash");
+    //const QString KEYWORDS= tr("Keywords");
+    //const QString COMMENTS= tr("Comments");
+    //const QString META    = tr("Meta");
+    const QString DATE    = tr("Date");
+    const QString SIZE    = tr("Size");
+    const QString POP     = tr("Popularity");
+
+    const QString CONTAINS= tr("contains");
+    const QString CONTALL = tr("contains all");
+    const QString IS      = tr("is");
+
+    const QString LT      = tr("less than");
+    const QString LTE     = tr("less than or equal");
+    const QString EQUAL   = tr("equals");
+    const QString GTE     = tr("greater than or equal");
+    const QString GT      = tr("greater than");
+    const QString RANGE   = tr("is in range");
+
     exprOpsList->append(AND);
     exprOpsList->append(OR);
     exprOpsList->append(XOR);
@@ -175,28 +174,28 @@ void GuiExprElement::initialiseOptionsLists()
     (*GuiExprElement::relConditionIndexMap)[GuiExprElement::RANGE_INDEX] = InRange;
 
     // the string to index map
-    (*GuiExprElement::termsStrMap)[GuiExprElement::NAME_INDEX] = GuiExprElement::NAME;
-    (*GuiExprElement::termsStrMap)[GuiExprElement::PATH_INDEX] = GuiExprElement::PATH;
-    (*GuiExprElement::termsStrMap)[GuiExprElement::EXT_INDEX]  = GuiExprElement::EXT;
-    (*GuiExprElement::termsStrMap)[GuiExprElement::HASH_INDEX]  = GuiExprElement::HASH;
-    (*GuiExprElement::termsStrMap)[GuiExprElement::DATE_INDEX] = GuiExprElement::DATE;
-    (*GuiExprElement::termsStrMap)[GuiExprElement::SIZE_INDEX] = GuiExprElement::SIZE;
-    (*GuiExprElement::termsStrMap)[GuiExprElement::POP_INDEX]  = GuiExprElement::POP;
+    (*GuiExprElement::termsStrMap)[GuiExprElement::NAME_INDEX] = NAME;
+    (*GuiExprElement::termsStrMap)[GuiExprElement::PATH_INDEX] = PATH;
+    (*GuiExprElement::termsStrMap)[GuiExprElement::EXT_INDEX]  = EXT;
+    (*GuiExprElement::termsStrMap)[GuiExprElement::HASH_INDEX]  = HASH;
+    (*GuiExprElement::termsStrMap)[GuiExprElement::DATE_INDEX] = DATE;
+    (*GuiExprElement::termsStrMap)[GuiExprElement::SIZE_INDEX] = SIZE;
+    (*GuiExprElement::termsStrMap)[GuiExprElement::POP_INDEX]  = POP;
 
-    (*GuiExprElement::logicalOpStrMap)[GuiExprElement::AND_INDEX] = GuiExprElement::AND;
-    (*GuiExprElement::logicalOpStrMap)[GuiExprElement::XOR_INDEX] = GuiExprElement::XOR;
-    (*GuiExprElement::logicalOpStrMap)[GuiExprElement::OR_INDEX]  = GuiExprElement::OR;
+    (*GuiExprElement::logicalOpStrMap)[GuiExprElement::AND_INDEX] = AND;
+    (*GuiExprElement::logicalOpStrMap)[GuiExprElement::XOR_INDEX] = XOR;
+    (*GuiExprElement::logicalOpStrMap)[GuiExprElement::OR_INDEX]  = OR;
     
-    (*GuiExprElement::strConditionStrMap)[GuiExprElement::CONTAINS_INDEX] = GuiExprElement::CONTAINS;
-    (*GuiExprElement::strConditionStrMap)[GuiExprElement::CONTALL_INDEX] = GuiExprElement::CONTALL;
-    (*GuiExprElement::strConditionStrMap)[GuiExprElement::IS_INDEX] = GuiExprElement::IS;
+    (*GuiExprElement::strConditionStrMap)[GuiExprElement::CONTAINS_INDEX] = CONTAINS;
+    (*GuiExprElement::strConditionStrMap)[GuiExprElement::CONTALL_INDEX] = CONTALL;
+    (*GuiExprElement::strConditionStrMap)[GuiExprElement::IS_INDEX] = IS;
     
-    (*GuiExprElement::relConditionStrMap)[GuiExprElement::LT_INDEX] = GuiExprElement::LT;
-    (*GuiExprElement::relConditionStrMap)[GuiExprElement::LTE_INDEX] = GuiExprElement::LTE;
-    (*GuiExprElement::relConditionStrMap)[GuiExprElement::EQUAL_INDEX] = GuiExprElement::EQUAL;
-    (*GuiExprElement::relConditionStrMap)[GuiExprElement::GTE_INDEX] = GuiExprElement::GTE;
-    (*GuiExprElement::relConditionStrMap)[GuiExprElement::GT_INDEX] = GuiExprElement::GT;
-    (*GuiExprElement::relConditionStrMap)[GuiExprElement::RANGE_INDEX] = GuiExprElement::RANGE;
+    (*GuiExprElement::relConditionStrMap)[GuiExprElement::LT_INDEX] = LT;
+    (*GuiExprElement::relConditionStrMap)[GuiExprElement::LTE_INDEX] = LTE;
+    (*GuiExprElement::relConditionStrMap)[GuiExprElement::EQUAL_INDEX] = EQUAL;
+    (*GuiExprElement::relConditionStrMap)[GuiExprElement::GTE_INDEX] = GTE;
+    (*GuiExprElement::relConditionStrMap)[GuiExprElement::GT_INDEX] = GT;
+    (*GuiExprElement::relConditionStrMap)[GuiExprElement::RANGE_INDEX] = RANGE;
 
 
     GuiExprElement::initialised = true;
