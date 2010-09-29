@@ -75,6 +75,7 @@
 #define IMAGE_DENYFRIEND        ":/images/denied16.png"
 #define IMAGE_REMOVEFRIEND       ":/images/removefriend16.png"
 #define IMAGE_EXPORTFRIEND       ":/images/exportpeers_16x16.png"
+#define IMAGE_ADDFRIEND         ":/images/user/add_user16.png"
 #define IMAGE_FRIENDINFO           ":/images/peerdetails_16x16.png"
 #define IMAGE_CHAT               ":/images/chat.png"
 #define IMAGE_MSG                ":/images/mail_new.png"
@@ -134,6 +135,7 @@ PeersDialog::PeersDialog(QWidget *parent)
     connect( ui.addfileButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
     connect( ui.msgText, SIGNAL(anchorClicked(const QUrl &)), SLOT(anchorClicked(const QUrl &)));
 
+    connect(ui.actionAdd_Friend, SIGNAL(triggered()), this, SLOT(addFriend()));
     connect(ui.action_Hide_Offline_Friends, SIGNAL(triggered()), this, SLOT(insertPeers()));
     connect(ui.action_Hide_Status_Column, SIGNAL(triggered()), this, SLOT(statusColumn()));
 
@@ -410,14 +412,15 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
             {
                 bool standard = c->data(COLUMN_DATA, ROLE_STANDARD).toBool();
 
-                contextMnu.addAction(QIcon(IMAGE_MSG), tr("Message group"), this, SLOT(msgfriend()));
+                contextMnu.addAction(QIcon(IMAGE_MSG), tr("Message Group"), this, SLOT(msgfriend()));
+                contextMnu.addAction(QIcon(IMAGE_ADDFRIEND), tr("Add Friend"), this, SLOT(addFriend()));
 
                 contextMnu.addSeparator();
 
-                action = contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Edit group"), this, SLOT(editGroup()));
+                action = contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Edit Group"), this, SLOT(editGroup()));
                 action->setDisabled(standard);
 
-                action = contextMnu.addAction(QIcon(IMAGE_REMOVE), tr("Remove group"), this, SLOT(removeGroup()));
+                action = contextMnu.addAction(QIcon(IMAGE_REMOVE), tr("Remove Group"), this, SLOT(removeGroup()));
                 action->setDisabled(standard);
             }
             break;
@@ -1265,6 +1268,24 @@ void PeersDialog::configurefriend()
 	ConfCertDialog::show(getPeerRsCertId(getCurrentPeer()));
 }
 
+void PeersDialog::addFriend()
+{
+    std::string groupId;
+
+    QTreeWidgetItem *c = getCurrentPeer();
+    if (c && c->type() == TYPE_GROUP) {
+        groupId = c->data(COLUMN_DATA, ROLE_ID).toString().toStdString();
+    }
+
+    ConnectFriendWizard connwiz (this);
+
+    if (groupId.empty() == false) {
+        connwiz.setGroup(groupId);
+    }
+
+    connwiz.exec ();
+}
+
 void PeersDialog::resetStatusBar() 
 {
         #ifdef PEERS_DEBUG
@@ -1730,13 +1751,6 @@ void PeersDialog::changeAvatarClicked()
 {
 
 	updateAvatar();
-}
-
-void PeersDialog::on_actionAdd_Friend_activated() 
-{
-    ConnectFriendWizard connectwiz (this);
-
-    connectwiz.exec ();
 }
 
 void PeersDialog::on_actionCreate_New_Forum_activated()

@@ -38,6 +38,8 @@ public:
 
     ConnectFriendWizard(QWidget *parent = 0);
 
+    void setGroup(const std::string &groupId);
+
     void accept();
 
 private slots:
@@ -210,6 +212,7 @@ public:
 
 private slots:
 //    void printButtonClicked();
+    void groupCurrentIndexChanged(int index);
 
 private:
     QGroupBox* peerDetailsFrame;
@@ -224,6 +227,8 @@ private:
     QLabel* locEdit;
     QLabel* signersLabel;
     QTextEdit* signersEdit;
+    QComboBox* groupComboBox;
+    QLabel* groupLabel;
 
     QLabel* radioButtonsLabel;
     QCheckBox *signGPGCheckBox;

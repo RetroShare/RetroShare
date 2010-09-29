@@ -21,6 +21,7 @@
 
 #include "ConnectFriendWizard.h"
 #include "gui/common/PeerDefs.h"
+#include "gui/common/GroupDefs.h"
 
 #include <retroshare/rspeers.h> //for rsPeers variable
 #include <retroshare/rsiface.h>
@@ -56,6 +57,7 @@
 #define CERT_STRING_FIELD_CONNECT_FRIEND_WIZARD "peerCertString"
 #define SIGN_RADIO_BUTTON_FIELD_CONNECT_FRIEND_WIZARD "signCheckBox"
 #define ACCEPT_RADIO_BUTTON_FIELD_CONNECT_FRIEND_WIZARD "acceptCheckBox"
+#define GROUP_ID_FIELD_CONNECT_FRIEND_WIZARD "groupIdField"
 
 
 
@@ -99,6 +101,14 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent)
     setWindowTitle(tr("Connect Friend Wizard"));
 }
 
+
+//============================================================================
+
+void ConnectFriendWizard::setGroup(const std::string &groupId)
+{
+    setField(GROUP_ID_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(groupId));
+}
+
 //============================================================================
 
 void
@@ -119,6 +129,11 @@ ConnectFriendWizard::accept()
             } else if (accept_connection) {
                 std::cerr << "ConclusionPage::validatePage() accepting GPG key for connection." << std::endl;
                 rsPeers->setAcceptToConnectGPGCertificate(gpg_Id, true);
+            }
+
+            QString groupId = field(GROUP_ID_FIELD_CONNECT_FRIEND_WIZARD).toString();
+            if (groupId.isEmpty() == false) {
+                rsPeers->assignPeerToGroup(groupId.toStdString(), gpg_Id, true);
             }
         }
 
@@ -915,6 +930,11 @@ ConclusionPage::ConclusionPage(QWidget *parent) : QWizardPage(parent) {
     dyndns = new QLineEdit(this);
     dyndns->setVisible(false);
     registerField("dyndns",dyndns);
+
+    groupComboBox = new QComboBox(this);
+    groupLabel = new QLabel(this);
+    groupLabel->setVisible(false);
+    registerField(GROUP_ID_FIELD_CONNECT_FRIEND_WIZARD, groupLabel);
 }
 
 //============================================================================
@@ -926,6 +946,15 @@ int ConclusionPage::nextId() const {
 //
 //============================================================================
 //
+void ConclusionPage::groupCurrentIndexChanged(int index)
+{
+    setField(GROUP_ID_FIELD_CONNECT_FRIEND_WIZARD, groupComboBox->itemData(index, Qt::UserRole));
+}
+
+//
+//============================================================================
+//
+
 void ConclusionPage::initializePage() {
     std::string id = field(SSL_ID_FIELD_CONNECT_FRIEND_WIZARD).toString().toStdString();
     std::string gpg_id = field(GPG_ID_FIELD_CONNECT_FRIEND_WIZARD).toString().toStdString();
@@ -1008,6 +1037,19 @@ void ConclusionPage::initializePage() {
     locEdit->setText( QString::fromStdString( detail.location ) );
     signersEdit->setPlainText( ts );
     
+    std::list<RsGroupInfo> groupInfoList;
+    rsPeers->getGroupInfoList(groupInfoList);
+    GroupDefs::sortByName(groupInfoList);
+    groupComboBox->addItem("", ""); // empty value
+    for (std::list<RsGroupInfo>::iterator groupIt = groupInfoList.begin(); groupIt != groupInfoList.end(); groupIt++) {
+        groupComboBox->addItem(GroupDefs::name(*groupIt), QString::fromStdString(groupIt->id));
+    }
+
+    QString groupId = field(GROUP_ID_FIELD_CONNECT_FRIEND_WIZARD).toString();
+    if (groupId.isEmpty() == false) {
+        groupComboBox->setCurrentIndex(groupComboBox->findData(groupId));
+    }
+    connect(groupComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(groupCurrentIndexChanged(int)));
 }
 
 //============================================================================

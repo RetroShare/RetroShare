@@ -118,6 +118,7 @@ private slots:
     /** Remove friend  */
     void removefriend();
     /** start a chat with a friend **/
+    void addFriend();
     void chatfriend(QTreeWidgetItem* );
     void chatfriendproxy();
     void msgfriend();
@@ -148,7 +149,6 @@ private slots:
     void changeAvatarClicked();
     void getAvatar();
 
-    void on_actionAdd_Friend_activated();
     void on_actionAdd_Group_activated();
     void on_actionCreate_New_Forum_activated();
     void on_actionCreate_New_Channel_activated();
