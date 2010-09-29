@@ -158,7 +158,7 @@ int     bdnet_w2u_errno(int error);
  * void Sleep(int ms);
  */
 void sleep(int sec); 
-//void usleep(int usec);
+void usleep(int usec);
 
 #endif // END of WINDOWS defines.
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/

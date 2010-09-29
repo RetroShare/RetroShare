@@ -297,7 +297,7 @@ int bdnet_errno() { return errno; }
 
 
 /* check if we can modify the TTL on a UDP packet */
-int bdnet_checkTTL(int fd) { return 1;}
+int bdnet_checkTTL(int /*fd*/) { return 1;}
 
 
 int bdnet_inet_aton(const char *name, struct in_addr *addr)
