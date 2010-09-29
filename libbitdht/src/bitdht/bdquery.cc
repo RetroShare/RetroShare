@@ -36,10 +36,9 @@
  * #define DEBUG_QUERY 1
 **/
 
-//#define DEBUG_QUERY 1
 
-#define EXPECTED_REPLY 10
-#define QUERY_IDLE_RETRY_PEER_PERIOD (mFns->bdNodesPerBucket() * 15)
+#define EXPECTED_REPLY 20
+#define QUERY_IDLE_RETRY_PEER_PERIOD (mFns->bdNodesPerBucket() * 30)
 
 
 /************************************************************
@@ -52,18 +51,21 @@
  * This involves 
  */
 
-bdQuery::bdQuery(const bdNodeId *id, std::list<bdId> &startList, uint32_t queryFlags, bdDhtFunctions *fns)
+bdQuery::bdQuery(const bdNodeId *id, std::list<bdId> &startList, uint32_t queryFlags, 
+		bdDhtFunctions *fns)
 {
 	/* */
 	mId = *id;
 	mFns = fns;
 
+	time_t now = time(NULL);
 	std::list<bdId>::iterator it;
 	for(it = startList.begin(); it != startList.end(); it++)
 	{
 		bdPeer peer;
 		peer.mLastSendTime = 0;
 		peer.mLastRecvTime = 0;
+		peer.mFoundTime = now;
 		peer.mPeerId = *it;
 
 		bdMetric dist;
@@ -77,7 +79,7 @@ bdQuery::bdQuery(const bdNodeId *id, std::list<bdId> &startList, uint32_t queryF
 
 	mState = BITDHT_QUERY_QUERYING;
 	mQueryFlags = queryFlags;
-	mQueryTS = time(NULL);
+	mQueryTS = now;
 
 	/* setup the limit of the search
 	 * by default it is setup to 000000 = exact match
@@ -130,7 +132,8 @@ int bdQuery::nextQuery(bdId &id, bdNodeId &targetNodeId)
 		}
 
 		/* re-request every so often */
-		if ((mQueryFlags & BITDHT_QFLAGS_DO_IDLE) && (now - it->second.mLastSendTime > QUERY_IDLE_RETRY_PEER_PERIOD))
+		if ((!queryPeer) && (mQueryFlags & BITDHT_QFLAGS_DO_IDLE) && 
+				(now - it->second.mLastSendTime > QUERY_IDLE_RETRY_PEER_PERIOD))
 		{
 #ifdef DEBUG_QUERY 
         		fprintf(stderr, "NextQuery() Found out-of-date. queryPeer = true : ");
@@ -145,7 +148,6 @@ int bdQuery::nextQuery(bdId &id, bdNodeId &targetNodeId)
 		 * - replacement policy will still work.
 		 */	
 		if (it->second.mLastRecvTime == 0)
-		//if (it->second.mLastRecvTime < it->second.mLastSendTime)
 		{
 #ifdef DEBUG_QUERY 
         		fprintf(stderr, "NextQuery() Never Received: notFinished = true: ");
@@ -240,7 +242,6 @@ int bdQuery::nextQuery(bdId &id, bdNodeId &targetNodeId)
 	return 0;
 }
 
-
 int bdQuery::addPeer(const bdId *id, uint32_t mode)
 {
 	bdMetric dist;
@@ -264,7 +265,6 @@ int bdQuery::addPeer(const bdId *id, uint32_t mode)
 	{
 		time_t sendts = ts - it->second.mLastSendTime;
 		bool hasSent = (it->second.mLastSendTime != 0);
-		//bool hasReply = (it->second.mLastRecvTime != 0);
 		bool hasReply = (it->second.mLastRecvTime >= it->second.mLastSendTime);
 		if ((hasSent) && (!hasReply) && (sendts > EXPECTED_REPLY))
 		{
@@ -296,8 +296,9 @@ int bdQuery::addPeer(const bdId *id, uint32_t mode)
 #endif
 			if (mode & BITDHT_PEER_STATUS_RECV_NODES)
 			{
+				/* only update recvTime if sendTime > checkTime.... (then its our query) */
 #ifdef DEBUG_QUERY 
-        			fprintf(stderr, "Updating LastRecvTime\n");
+				fprintf(stderr, "Updating LastRecvTime\n");
 #endif
 				it->second.mLastRecvTime = ts;
 			}
@@ -320,7 +321,6 @@ int bdQuery::addPeer(const bdId *id, uint32_t mode)
 		{
 			time_t sendts = ts - it->second.mLastSendTime;
 			bool hasSent = (it->second.mLastSendTime != 0);
-			//bool hasReply = (it->second.mLastRecvTime != 0);
 			bool hasReply = (it->second.mLastRecvTime >= it->second.mLastSendTime);
 			if ((hasSent) && (!hasReply) && (sendts > EXPECTED_REPLY))
 			{
@@ -364,10 +364,13 @@ int bdQuery::addPeer(const bdId *id, uint32_t mode)
 	peer.mPeerId = *id;
 	peer.mLastSendTime = 0;
 	peer.mLastRecvTime = 0;
+	peer.mFoundTime = ts;
+
 	if (mode & BITDHT_PEER_STATUS_RECV_NODES)
 	{
 		peer.mLastRecvTime = ts;
 	}
+
 	mClosest.insert(std::pair<bdMetric, bdPeer>(dist, peer));
 	return 1;
 }
@@ -515,6 +518,7 @@ int bdQuery::addPotentialPeer(const bdId *id, uint32_t mode)
 	peer.mPeerId = *id;
 	peer.mLastSendTime = 0;
 	peer.mLastRecvTime = ts;
+	peer.mFoundTime = ts;
 	mPotentialClosest.insert(std::pair<bdMetric, bdPeer>(dist, peer));
 
 #ifdef DEBUG_QUERY 
@@ -534,7 +538,8 @@ int     bdQuery::printQuery()
 	time_t ts = time(NULL);
 	fprintf(stderr, "Query for: ");
 	mFns->bdPrintNodeId(std::cerr, &mId);
-	fprintf(stderr, "  Query State: %d", mState);
+	fprintf(stderr, " Query State: %d", mState);
+	fprintf(stderr, " Query Age %ld secs", ts-mQueryTS);
 	fprintf(stderr, "\n");
 
 	fprintf(stderr, "Closest Available Peers:\n");
@@ -544,6 +549,7 @@ int     bdQuery::printQuery()
 		fprintf(stderr, "Id:  ");
 		mFns->bdPrintId(std::cerr, &(it->second.mPeerId));
 		fprintf(stderr, "  Bucket: %d ", mFns->bdBucketDistance(&(it->first)));
+		fprintf(stderr," Found: %ld ago", ts-it->second.mFoundTime);
 		fprintf(stderr," LastSent: %ld ago", ts-it->second.mLastSendTime);
 		fprintf(stderr," LastRecv: %ld ago", ts-it->second.mLastRecvTime);
 		fprintf(stderr, "\n");
@@ -555,10 +561,12 @@ int     bdQuery::printQuery()
 		fprintf(stderr, "Id:  ");
 		mFns->bdPrintId(std::cerr, &(it->second.mPeerId));
 		fprintf(stderr, "  Bucket: %d ", mFns->bdBucketDistance(&(it->first)));
+		fprintf(stderr," Found: %ld ago", ts-it->second.mFoundTime);
 		fprintf(stderr," LastSent: %ld ago", ts-it->second.mLastSendTime);
 		fprintf(stderr," LastRecv: %ld ago", ts-it->second.mLastRecvTime);
 		fprintf(stderr, "\n");
 	}
+
 	return 1;
 }
 

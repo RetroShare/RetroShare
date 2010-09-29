@@ -43,7 +43,7 @@ void bdPrintToken(std::ostream &out, bdToken *token)
 	out << std::dec;
 }
 
-void bdPrintCompactPeerId(std::ostream &out, std::string cpi)
+void bdPrintCompactPeerId(std::ostream &out, std::string /*cpi*/ )
 {
 	out << "DummyCompactPeerId";
 }

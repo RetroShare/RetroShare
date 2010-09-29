@@ -313,7 +313,7 @@ bdSpace::bdSpace(bdNodeId *ownId, bdDhtFunctions *fns)
 	return;
 }
 
-int 	bdSpace::find_nearest_nodes(const bdNodeId *id, int number, std::list<bdId> excluding, std::multimap<bdMetric, bdId> &nearest)
+int 	bdSpace::find_nearest_nodes(const bdNodeId *id, int number, std::list<bdId> /*excluding*/, std::multimap<bdMetric, bdId> &nearest)
 {
 	std::multimap<bdMetric, bdId> closest;
 	std::multimap<bdMetric, bdId>::iterator mit;

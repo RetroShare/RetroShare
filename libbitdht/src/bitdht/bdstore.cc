@@ -94,7 +94,7 @@ int 	bdStore::getPeer(bdPeer *peer)
 
 	std::list<bdPeer>::iterator it;
 	int i = 0;
-	for(it = store.begin(); (it != store.end()) && (i < mIndex); it++, i++);
+	for(it = store.begin(); (it != store.end()) && (i < mIndex); it++, i++) ; /* empty loop */
 	if (it != store.end())
 	{
 		*peer = *it;
@@ -160,6 +160,16 @@ void	bdStore::writeStore(std::string file)
 #ifdef DEBUG_STORE
 	fprintf(stderr, "bdStore::writeStore(%s) =  %d entries\n", file.c_str(), store.size());
 #endif
+
+	if (store.size() < 0.9 * MAX_ENTRIES)
+	{
+		/* don't save yet! */
+#ifdef DEBUG_STORE
+		fprintf(stderr, "bdStore::writeStore() Delaying until more entries\n");
+#endif
+		return;
+	}
+
 
 	FILE *fd = fopen(file.c_str(), "w");
 

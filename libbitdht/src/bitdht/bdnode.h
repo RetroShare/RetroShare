@@ -32,6 +32,7 @@
 #include "bitdht/bdstore.h"
 #include "bitdht/bdobj.h"
 #include "bitdht/bdhash.h"
+#include "bitdht/bdhistory.h"
 
 
 #define BD_QUERY_NEIGHBOURS		1
@@ -191,6 +192,8 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 	bdDhtFunctions *mFns;
 
 	bdHashSpace mHashSpace;
+	
+	bdHistory mHistory; /* for understanding the DHT */
 
 	std::list<bdQuery> mLocalQueries;
 	std::list<bdRemoteQuery> mRemoteQueries;

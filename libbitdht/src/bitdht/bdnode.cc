@@ -43,6 +43,8 @@
 #define BITDHT_MAX_REMOTE_QUERY_AGE	10
 
 /****
+ * #define USE_HISTORY	1
+ *
  * #define DEBUG_NODE_MULTIPEER 1
  * #define DEBUG_NODE_PARSE 1
 
@@ -54,6 +56,7 @@
  ***/
 
 //#define DEBUG_NODE_MSGS 1
+
 
 bdNode::bdNode(bdNodeId *ownId, std::string dhtVersion, std::string bootfile, bdDhtFunctions *fns)
 	:mOwnId(*ownId), mNodeSpace(ownId, fns), mStore(bootfile, fns), mDhtVersion(dhtVersion), mFns(fns)
@@ -130,6 +133,10 @@ void bdNode::printState()
 
 	printQueries();
 
+#ifdef USE_HISTORY
+	mHistory.printMsgs();
+#endif
+	
 	printStats(std::cerr);
 }
 
@@ -189,32 +196,60 @@ void bdNode::iteration()
 
 	while((mPotentialPeers.size() > 0) && (i < ilim))
 	{
+		/* check history ... is we have pinged them already...
+		 * then simulate / pretend we have received a pong,
+		 * and don't bother sending another ping.
+		 */
+
 		bdId pid = mPotentialPeers.front();	
 		mPotentialPeers.pop_front();
-
-		bdToken transId;
-		genNewTransId(&transId);
-		registerOutgoingMsg(&pid, &transId, BITDHT_MSG_TYPE_PING);
-		msgout_ping(&pid, &transId);
-		i++;
+		
+		/* don't send too many queries ... check history first */
+#ifdef USE_HISTORY
+		if (mHistory.validPeer(&pid))
+		{
+			/* just add as peer */
 
 #ifdef DEBUG_NODE_MSGS 
-		std::cerr << "bdNode::iteration() Pinging Potential Peer : ";
-		mFns->bdPrintId(std::cerr, &pid);
-		std::cerr << std::endl;
+			std::cerr << "bdNode::iteration() Pinging Known Potential Peer : ";
+			mFns->bdPrintId(std::cerr, &pid);
+			std::cerr << std::endl;
 #endif
-		mCounterPings++;
+
+		}
+#endif
+
+		/**** TEMP ****/
+
+		{
+
+
+			bdToken transId;
+			genNewTransId(&transId);
+			//registerOutgoingMsg(&pid, &transId, BITDHT_MSG_TYPE_PING);
+			msgout_ping(&pid, &transId);
+			i++;
+
+#ifdef DEBUG_NODE_MSGS 
+			std::cerr << "bdNode::iteration() Pinging Potential Peer : ";
+			mFns->bdPrintId(std::cerr, &pid);
+			std::cerr << std::endl;
+#endif
+
+			mCounterPings++;
+		}
 
 	}
 
 	for(it = mLocalQueries.begin(); it != mLocalQueries.end(); it++)
 	{
+		/* go through the possible queries */
 		if (it->nextQuery(id, targetNodeId))
 		{
 			/* push out query */
 			bdToken transId;
 			genNewTransId(&transId);
-			registerOutgoingMsg(&id, &transId, BITDHT_MSG_TYPE_FIND_NODE);
+			//registerOutgoingMsg(&id, &transId, BITDHT_MSG_TYPE_FIND_NODE);
 
 			msgout_find_node(&id, &transId, &targetNodeId);
 
@@ -237,7 +272,7 @@ void bdNode::iteration()
 		/* push out ping */
 		bdToken transId;
 		genNewTransId(&transId);
-		registerOutgoingMsg(&id, &transId, BITDHT_MSG_TYPE_PING);
+		//registerOutgoingMsg(&id, &transId, BITDHT_MSG_TYPE_PING);
 		msgout_ping(&id, &transId);
 
 #ifdef DEBUG_NODE_MSGS 
@@ -630,6 +665,9 @@ void bdNode::msgout_ping(bdId *id, bdToken *transId)
 	std::cerr << std::endl;
 #endif
 
+	registerOutgoingMsg(id, transId, BITDHT_MSG_TYPE_PING);
+	
+	
         /* create string */
         char msg[10240];
         int avail = 10240;
@@ -653,6 +691,8 @@ void bdNode::msgout_pong(bdId *id, bdToken *transId)
 	mFns->bdPrintId(std::cerr, id);
 	std::cerr << std::endl;
 #endif
+
+	registerOutgoingMsg(id, transId, BITDHT_MSG_TYPE_PONG);
 
 	/* generate message, send to udp */
 	bdToken vid;
@@ -681,6 +721,9 @@ void bdNode::msgout_find_node(bdId *id, bdToken *transId, bdNodeId *query)
 	std::cerr << std::endl;
 #endif
 
+	registerOutgoingMsg(id, transId, BITDHT_MSG_TYPE_FIND_NODE);
+	
+
 
         char msg[10240];
         int avail = 10240;
@@ -696,6 +739,9 @@ void bdNode::msgout_reply_find_node(bdId *id, bdToken *transId, std::list<bdId> 
 {
         char msg[10240];
         int avail = 10240;
+
+	registerOutgoingMsg(id, transId, BITDHT_MSG_TYPE_REPLY_NODE);
+	
 
         int blen = bitdht_resp_node_msg(transId, &(mOwnId), peers, msg, avail-1);
 
@@ -737,6 +783,9 @@ void bdNode::msgout_get_hash(bdId *id, bdToken *transId, bdNodeId *info_hash)
         char msg[10240];
         int avail = 10240;
 
+	registerOutgoingMsg(id, transId, BITDHT_MSG_TYPE_GET_HASH);
+
+	
         int blen = bitdht_get_peers_msg(transId, &(mOwnId), info_hash, msg, avail-1);
 
         sendPkt(msg, blen, id->addr);
@@ -767,6 +816,8 @@ void bdNode::msgout_reply_hash(bdId *id, bdToken *transId, bdToken *token, std::
         char msg[10240];
         int avail = 10240;
 
+		registerOutgoingMsg(id, transId, BITDHT_MSG_TYPE_REPLY_HASH);
+
         int blen = bitdht_peers_reply_hash_msg(transId, &(mOwnId), token, values, msg, avail-1);
 
         sendPkt(msg, blen, id->addr);
@@ -796,7 +847,11 @@ void bdNode::msgout_reply_nearest(bdId *id, bdToken *transId, bdToken *token, st
 
         char msg[10240];
         int avail = 10240;
+	
+	registerOutgoingMsg(id, transId, BITDHT_MSG_TYPE_REPLY_NEAR);
+	
 
+	
         int blen = bitdht_peers_reply_closest_msg(transId, &(mOwnId), token, nodes, msg, avail-1);
 
         sendPkt(msg, blen, id->addr);
@@ -820,7 +875,10 @@ void bdNode::msgout_post_hash(bdId *id, bdToken *transId, bdNodeId *info_hash, u
 
         char msg[10240];
         int avail = 10240;
-
+	
+	registerOutgoingMsg(id, transId, BITDHT_MSG_TYPE_POST_HASH);
+	
+	
         int blen = bitdht_announce_peers_msg(transId,&(mOwnId),info_hash,port,token,msg,avail-1);
 
         sendPkt(msg, blen, id->addr);
@@ -840,6 +898,8 @@ void bdNode::msgout_reply_post(bdId *id, bdToken *transId)
 	/* generate message, send to udp */
         char msg[10240];
         int avail = 10240;
+
+	registerOutgoingMsg(id, transId, BITDHT_MSG_TYPE_REPLY_POST);
 
         int blen = bitdht_reply_announce_msg(transId, &(mOwnId), msg, avail-1);
 
@@ -1121,7 +1181,8 @@ void    bdNode::recvPkt(char *msg, int len, struct sockaddr_in addr)
 	/****************** Bits Parsed Ok. Process Msg ***********************/
 	/* Construct Source Id */
 	bdId srcId(id, addr);
-
+	
+	checkIncomingMsg(&srcId, &transId, beType);
 	switch(beType)
 	{
 		case BITDHT_MSG_TYPE_PING:  /* a: id, transId */
@@ -1274,6 +1335,8 @@ void bdNode::msgin_pong(bdId *id, bdToken *transId, bdToken *versionId)
 	std::cerr << " To: ";
 	mFns->bdPrintId(std::cerr, id);
 	std::cerr << std::endl;
+#else
+	(void) transId;
 #endif
 
 	mCounterRecvPong++;
@@ -1364,6 +1427,8 @@ void bdNode::msgin_reply_find_node(bdId *id, bdToken *transId, std::list<bdId> &
 		mFns->bdPrintId(std::cerr, &(*it));
 	}
 	std::cerr << std::endl;
+#else
+	(void) transId;
 #endif
 	mCounterRecvReplyFindNode++;
 
@@ -1422,7 +1487,11 @@ void bdNode::msgin_reply_hash(bdId *id, bdToken *transId, bdToken *token, std::l
 		bdPrintCompactPeerId(std::cerr, *it);
 	}
 	std::cerr << std::endl;
-
+#else
+	(void) id;
+	(void) transId;
+	(void) token;
+	(void) values;
 #endif
 }
 
@@ -1446,6 +1515,11 @@ void bdNode::msgin_reply_nearest(bdId *id, bdToken *transId, bdToken *token, std
 		mFns->bdPrintId(std::cerr, &(*it));
 	}
 	std::cerr << std::endl;
+#else
+	(void) id;
+	(void) transId;
+	(void) token;
+	(void) nodes;
 #endif
 }
 
@@ -1466,6 +1540,12 @@ void bdNode::msgin_post_hash(bdId *id,  bdToken *transId,  bdNodeId *info_hash, 
 	std::cerr << " Token: ";
 	bdPrintToken(std::cerr, token);
 	std::cerr << std::endl;
+#else
+	(void) id;
+	(void) transId;
+	(void) info_hash;
+	(void) port;
+	(void) token;
 #endif
 
 }
@@ -1482,6 +1562,9 @@ void bdNode::msgin_reply_post(bdId *id, bdToken *transId)
 	std::cerr << " From: ";
 	mFns->bdPrintId(std::cerr, id);
 	std::cerr << std::endl;
+#else
+	(void) id;
+	(void) transId;
 #endif
 }
 
@@ -1550,6 +1633,24 @@ int bdNode::queueQuery(bdId *id, bdNodeId *query, bdToken *transId, uint32_t que
 
 void bdNode::registerOutgoingMsg(bdId *id, bdToken *transId, uint32_t msgType)
 {
+	
+#ifdef DEBUG_MSG_CHECKS
+	std::cerr << "bdNode::registerOutgoingMsg(";
+	mFns->bdPrintId(std::cerr, id);
+	std::cerr << ", " << msgType << ")";
+	std::cerr << std::endl;
+#else
+	(void) id;
+	(void) msgType;
+#endif
+	
+#ifdef USE_HISTORY
+	mHistory.addMsg(id, transId, msgType, false);
+#else
+	(void) transId;
+#endif
+	
+	
 
 /****
 #define BITDHT_MSG_TYPE_UNKNOWN         0
@@ -1566,8 +1667,27 @@ void bdNode::registerOutgoingMsg(bdId *id, bdToken *transId, uint32_t msgType)
 
 }
 
+
+
 uint32_t bdNode::checkIncomingMsg(bdId *id, bdToken *transId, uint32_t msgType)
 {
+	
+#ifdef DEBUG_MSG_CHECKS
+	std::cerr << "bdNode::checkIncomingMsg(";
+	mFns->bdPrintId(std::cerr, id);
+	std::cerr << ", " << msgType << ")";
+	std::cerr << std::endl;
+#else
+	(void) id;
+	(void) msgType;
+#endif
+	
+#ifdef USE_HISTORY
+	mHistory.addMsg(id, transId, msgType, true);
+#else
+	(void) transId;
+#endif
+	
 	return 0;
 }
 

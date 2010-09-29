@@ -54,7 +54,6 @@
  * #define DEBUG_MGR_PKT 1
  ***/
 
-//#define DEBUG_MGR 1
 
 bdNodeManager::bdNodeManager(bdNodeId *id, std::string dhtVersion, std::string bootfile, bdDhtFunctions *fns)
 	:bdNode(id, dhtVersion, bootfile, fns)
@@ -122,7 +121,7 @@ void bdNodeManager::startQueries()
 			std::cerr << "bdNodeManager::startQueries() Found READY Query.";
 			std::cerr << std::endl;
 #endif
-			it->second.mStatus == BITDHT_QUERY_QUERYING;
+			it->second.mStatus = BITDHT_QUERY_QUERYING;
 
 			uint32_t qflags = it->second.mQFlags | BITDHT_QFLAGS_DISGUISE;
 			addQuery(&(it->first), qflags); 
@@ -545,7 +544,7 @@ int bdNodeManager::SearchOutOfDate()
         /* Request DHT Peer Lookup */
         /* Request Keyword Lookup */
 
-void bdNodeManager::findDhtValue(bdNodeId *id, std::string key, uint32_t mode)
+void bdNodeManager::findDhtValue(bdNodeId * /*id*/, std::string /*key*/, uint32_t /*mode*/)
 {
 #ifdef DEBUG_MGR
 	std::cerr << "bdNodeManager::findDhtValue() TODO";
@@ -555,24 +554,29 @@ void bdNodeManager::findDhtValue(bdNodeId *id, std::string key, uint32_t mode)
 
 
         /***** Get Results Details *****/
-int bdNodeManager::getDhtPeerAddress(bdNodeId *id, struct sockaddr_in &from)
+int bdNodeManager::getDhtPeerAddress(bdNodeId *id, struct sockaddr_in & /*from*/)
 {
 #ifdef DEBUG_MGR
 	std::cerr << "bdNodeManager::getDhtPeerAddress() Id: ";
 	mFns->bdPrintNodeId(std::cerr, id);
 	std::cerr << " ... ? TODO" << std::endl;
+#else
+	(void) id;
 #endif
 
 	return 1;
 }
 
-int bdNodeManager::getDhtValue(bdNodeId *id, std::string key, std::string &value)
+int bdNodeManager::getDhtValue(bdNodeId *id, std::string key, std::string & /*value*/)
 {
 #ifdef DEBUG_MGR
 	std::cerr << "bdNodeManager::getDhtValue() Id: ";
 	mFns->bdPrintNodeId(std::cerr, id);
 	std::cerr << " key: " << key;
 	std::cerr << " ... ? TODO" << std::endl;
+#else
+	(void) id;
+	(void) key;
 #endif
 
 	return 1;
@@ -661,7 +665,7 @@ void bdNodeManager::doPeerCallback(const bdNodeId *id, uint32_t status)
         return;
 }
 
-void bdNodeManager::doValueCallback(const bdNodeId *id, std::string key, uint32_t status)
+void bdNodeManager::doValueCallback(const bdNodeId *id, std::string /*key*/, uint32_t status)
 {
 #ifdef DEBUG_MGR
 	std::cerr << "bdNodeManager::doValueCallback()";
@@ -677,7 +681,7 @@ void bdNodeManager::doValueCallback(const bdNodeId *id, std::string key, uint32_
 }
 
         /******************* Internals *************************/
-int     bdNodeManager::isBitDhtPacket(char *data, int size, struct sockaddr_in &from)
+int     bdNodeManager::isBitDhtPacket(char *data, int size, struct sockaddr_in & from)
 
 {
 #ifdef DEBUG_MGR_PKT
@@ -710,6 +714,8 @@ int     bdNodeManager::isBitDhtPacket(char *data, int size, struct sockaddr_in &
 	}
 	std::cerr << "bdNodeManager::isBitDhtPacket() *******************************";
 	std::cerr << std::endl;
+#else
+	(void) from;
 #endif
 
 	/* try to parse it! */

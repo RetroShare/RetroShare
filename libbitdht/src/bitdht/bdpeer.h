@@ -124,6 +124,7 @@ class bdPeer
 	uint32_t mPeerFlags;
 	time_t mLastSendTime;
 	time_t mLastRecvTime;
+	time_t mFoundTime;     /* time stamp that peer was found */
 };
 
 

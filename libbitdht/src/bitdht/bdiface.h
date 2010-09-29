@@ -151,7 +151,7 @@ class BitDhtCallback
 //        ~BitDhtCallback();
 
 		// dummy cos not needed for standard dht behaviour;
-virtual int dhtNodeCallback(const bdId *id, uint32_t peerflags)  { return 0; } 
+virtual int dhtNodeCallback(const bdId *  /*id*/, uint32_t /*peerflags*/)  { return 0; } 
 
 		// must be implemented.
 virtual int dhtPeerCallback(const bdNodeId *id, uint32_t status) = 0;
