@@ -156,8 +156,8 @@ int operator==(const bdNodeId &a, const bdNodeId &b)
 
 int operator==(const bdId &a, const bdId &b)
 {
-	if (a.id == b.id)
-		return 1;
+	if (!(a.id == b.id))
+		return 0;
 
 	if ((a.addr.sin_addr.s_addr == b.addr.sin_addr.s_addr) &&
 	    (a.addr.sin_port == b.addr.sin_port))
