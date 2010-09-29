@@ -87,6 +87,7 @@ HEADERS += \
 	bitdht/bdnode.h		\
 	bitdht/bdmanager.h	\
 	bitdht/bdstddht.h	\
+	bitdht/bdhistory.h	\
 	util/bdnet.h	\
 	util/bdthreads.h	\
 	udp/udplayer.h   	\
@@ -104,6 +105,7 @@ SOURCES += \
 	bitdht/bdnode.cc	\
 	bitdht/bdmanager.cc	\
 	bitdht/bdstddht.cc	\
+	bitdht/bdhistory.cc	\
 	util/bdnet.cc  	\
 	util/bdthreads.cc  	\
 	udp/udplayer.cc		\
