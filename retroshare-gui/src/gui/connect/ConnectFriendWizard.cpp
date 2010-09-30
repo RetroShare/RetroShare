@@ -171,8 +171,8 @@ ConnectFriendWizard::accept()
 IntroPage::IntroPage(QWidget *parent)
     : QWizardPage(parent)
 {
-    QString titleStr("<span style=\"font-size:14pt; font-weight:500;"
-                               "color:#32cd32;\">%1</span>");
+    QString titleStr("<span style=\"font-size:16pt; font-weight:500;"
+                               "color:white;\">%1</span>");
     setTitle( titleStr.arg( tr("Add a new Friend") ) ) ;
              
     setSubTitle(tr("This wizard will help you to connect to your friend(s) "
@@ -216,8 +216,8 @@ int IntroPage::nextId() const
 TextPage::TextPage(QWidget *parent)
     : QWizardPage(parent)
 {
-    QString titleStr("<span style=\"font-size:14pt; font-weight:500;"
-                               "color:#32cd32;\">%1</span>");
+    QString titleStr("<span style=\"font-size:16pt; font-weight:500;"
+                               "color:white;\">%1</span>");
     setTitle( titleStr.arg( tr("Text certificate") ) ) ;
     
     setSubTitle(tr("Use text representation of the PGP certificates."));
@@ -440,7 +440,7 @@ int TextPage::nextId() const {
 //
 FofPage::FofPage(QWidget *parent) : QWizardPage(parent) {
 	_friends_signed = false ;
-    QString titleStr("<span style=\"font-size:14pt; font-weight:500;" "color:#32cd32;\">%1</span>");
+    QString titleStr("<span style=\"font-size:16pt; font-weight:500;" "color:white;\">%1</span>");
     setTitle( titleStr.arg( tr("Friends of friends") ) ) ;
 
     setSubTitle(tr("Select now who you want to make friends with."));
@@ -617,8 +617,8 @@ void FofPage::signAllSelectedUsers() {
 //============================================================================
 
 CertificatePage::CertificatePage(QWidget *parent) : QWizardPage(parent) {
-    QString titleStr("<span style=\"font-size:14pt; font-weight:500;"
-                               "color:#32cd32;\">%1</span>");
+    QString titleStr("<span style=\"font-size:16pt; font-weight:500;"
+                               "color:white;\">%1</span>");
     setTitle( titleStr.arg( tr("Certificate files") ) ) ;
 
     setSubTitle(tr("Use PGP certificates saved in files."));
@@ -821,8 +821,8 @@ int CertificatePage::nextId() const
 ErrorMessagePage::ErrorMessagePage(QWidget *parent)
     : QWizardPage(parent)
 {
-    QString titleStr("<span style=\"font-size:14pt; font-weight:500;"
-                               "color:#32cd32;\">%1</span>");
+    QString titleStr("<span style=\"font-size:16pt; font-weight:500;"
+                               "color:white;\">%1</span>");
     setTitle( titleStr.arg( tr("Sorry, some error appeared") ) ) ;
     setSubTitle( tr("Here is the error message: ") );
 
@@ -846,8 +846,8 @@ int ErrorMessagePage::nextId() const
 //============================================================================
 
 ConclusionPage::ConclusionPage(QWidget *parent) : QWizardPage(parent) {
-    QString titleStr("<span style=\"font-size:14pt; font-weight:500;"
-                               "color:#32cd32;\">%1</span>");
+    QString titleStr("<span style=\"font-size:16pt; font-weight:500;"
+                               "color:white;\">%1</span>");
     setTitle( titleStr.arg( tr("Make Friend") ) ) ;
 
     setSubTitle(tr("Details about your friend : "));
@@ -1075,8 +1075,8 @@ void ConclusionPage::initializePage() {
 //============================================================================
 
 RsidPage::RsidPage(QWidget *parent) : QWizardPage(parent) {
-    QString titleStr("<span style=\"font-size:14pt; font-weight:500;"
-                               "color:#32cd32;\">%1</span>");
+    QString titleStr("<span style=\"font-size:16pt; font-weight:500;"
+                               "color:white;\">%1</span>");
     setTitle( titleStr.arg( tr("RetroShare ID") ) ) ;
 
     setSubTitle(tr("Use RetroShare ID for adding a Friend which is available in your network."));
@@ -1152,8 +1152,8 @@ int RsidPage::nextId() const {
 //============================================================================
 
 EmailPage::EmailPage(QWidget *parent) : QWizardPage(parent) {
-    QString titleStr("<span style=\"font-size:14pt; font-weight:500;"
-                               "color:#32cd32;\">%1</span>");
+    QString titleStr("<span style=\"font-size:16pt; font-weight:500;"
+                               "color:white;\">%1</span>");
     setTitle( titleStr.arg( tr("Invite Friend by Email") ) ) ;
 
     setSubTitle(tr("Enter your friends' email addresses (seperate each on with a semicolon)"));
