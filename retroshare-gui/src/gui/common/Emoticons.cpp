@@ -126,8 +126,8 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
 {
     QWidget *smWidget = new QWidget(parent, Qt::Popup);
 
-    const int buttonWidth = 24;
-    const int buttonHeight = 24;
+    const int buttonWidth = 26;
+    const int buttonHeight = 26;
     const int countPerLine = 9;
 
     int rowCount = (Smileys.size()/countPerLine) + ((Smileys.size() % countPerLine) ? 1 : 0);
