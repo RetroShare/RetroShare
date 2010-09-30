@@ -87,6 +87,7 @@ class RsInitConfig
 #ifndef WINDOWS_SYS
 		static int lockHandle;
 #else
+		static HANDLE lockHandle;
 #endif
 
 		/* These fields are needed for login */
@@ -145,6 +146,7 @@ std::string RsInitConfig::preferedId;
 #ifndef WINDOWS_SYS
 	int RsInitConfig::lockHandle;
 #else
+	HANDLE RsInitConfig::lockHandle;
 #endif
 
 std::string RsInitConfig::configDir;
@@ -222,6 +224,7 @@ void RsInit::InitRsConfig()
 	RsInitConfig::lockHandle = -1;
 #else
 	RsInitConfig::dirSeperator = '\\'; // For windows.
+	RsInitConfig::lockHandle = NULL;
 #endif
 
 
@@ -928,10 +931,10 @@ int      RsInit::GetPGPLoginDetails(std::string id, std::string &name, std::stri
  */
 int RsInit::LockConfigDirectory(const std::string& accountDir)
 {
-/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#ifndef WINDOWS_SYS
 	const std::string lockFile = accountDir + RsInitConfig::dirSeperator + "lock";
 
+/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
+#ifndef WINDOWS_SYS
 	if(RsInitConfig::lockHandle != -1)
 		close(RsInitConfig::lockHandle);
 
@@ -971,6 +974,28 @@ int RsInit::LockConfigDirectory(const std::string& accountDir)
 
 	return 0;
 #else
+	if (RsInitConfig::lockHandle) {
+		CloseHandle(RsInitConfig::lockHandle);
+	}
+
+	std::wstring wlockFile;
+	librs::util::ConvertUtf8ToUtf16(lockFile, wlockFile);
+
+	// open the file in write mode, create it if necessary
+	RsInitConfig::lockHandle = CreateFile(wlockFile.c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, 0, NULL);
+
+	if (RsInitConfig::lockHandle == INVALID_HANDLE_VALUE) {
+		DWORD lasterror = GetLastError();
+
+		std::cerr << "Could not open lock file " << lockFile.c_str() << std::flush;
+		perror(NULL);
+
+		if (lasterror == ERROR_SHARING_VIOLATION || lasterror == ERROR_ACCESS_DENIED) {
+			return 1;
+		}
+		return 2;
+	}
+
 	return 0;
 #endif
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
@@ -990,6 +1015,11 @@ void	RsInit::UnlockConfigDirectory()
 		RsInitConfig::lockHandle = -1;
 	}
 #else
+	if(RsInitConfig::lockHandle)
+	{
+		CloseHandle(RsInitConfig::lockHandle);
+		RsInitConfig::lockHandle = NULL;
+	}
 #endif
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 }
