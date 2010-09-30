@@ -121,7 +121,7 @@ uint32_t RsDirUtil::rs_CRC32(const unsigned char *data,uint32_t _len)
 	uint32_t a = 0xffffffff ;
 	int64_t len = _len ;
 
-	for(const unsigned char *buf=data;len>=0;len--)
+	for(const unsigned char *buf=data;len>0;len--)
 		a = (a >> 8) ^ crc32_table[ (a & 0xff) ^ *buf++] ;
 
 	return a ^ 0xffffffff ;
