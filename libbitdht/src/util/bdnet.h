@@ -157,8 +157,8 @@ int     bdnet_w2u_errno(int error);
  * ms uses millisecs.
  * void Sleep(int ms);
  */
-void sleep(int sec); 
-void usleep(int usec);
+int sleep(unsigned int sec);
+int usleep(unsigned int usec);
 
 #endif // END of WINDOWS defines.
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
