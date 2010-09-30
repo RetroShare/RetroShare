@@ -171,6 +171,9 @@ border-image: url(:/images/closepressed.png)
            <property name="sortingEnabled">
             <bool>true</bool>
            </property>
+           <property name="expandsOnDoubleClick">
+            <bool>false</bool>
+           </property>
            <column>
             <property name="text">
              <string>Send To:</string>
