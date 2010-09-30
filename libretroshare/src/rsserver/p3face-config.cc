@@ -177,4 +177,6 @@ void RsServer::rsGlobalShutDown()
 
 	join();
 	ftserver->StopThreads();
+
+	AuthGPGExit();
 }

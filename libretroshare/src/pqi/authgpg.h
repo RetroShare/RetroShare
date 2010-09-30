@@ -52,8 +52,6 @@
 
 #define GPG_id std::string
 
-const time_t STORE_KEY_TIMEOUT = 60; //store key is call around every 60sec
-
 #define MAX_GPG_SIGNATURE_SIZE  4096
 
 /*!
@@ -99,6 +97,7 @@ typedef std::map<std::string, gpgcert> certmap;
  */
 
 extern void AuthGPGInit();
+extern void AuthGPGExit();
 
 class AuthGPG 
 {
@@ -218,7 +217,7 @@ virtual bool encryptText(gpgme_data_t PLAIN, gpgme_data_t CIPHER) = 0;
 /* The real implementation! */
 
 
-class AuthGPGimpl : public AuthGPG, public p3Config
+class AuthGPGimpl : public AuthGPG, public p3Config, public RsThread
 {
 	public:
 
@@ -366,6 +365,8 @@ virtual bool encryptText(gpgme_data_t PLAIN, gpgme_data_t CIPHER);
   	bool    printAllKeys_locked();
   	bool    printOwnKeys_locked();
 
+    /* own thread */
+    virtual void run();
 
 private:
 
@@ -377,7 +378,7 @@ private:
     gpgme_engine_info_t INFO;
     gpgme_ctx_t CTX;
 
-    RsReadWriteMutex gpgMtxData;
+    RsMutex gpgMtxData;
     /* Below is protected via the mutex */
 
     certmap mKeyList;
