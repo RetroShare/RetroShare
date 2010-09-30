@@ -194,7 +194,6 @@ private:
   CRC32Map _crcmap ;
   uint32_t _crcmap_state ;
   time_t   _crcmap_last_asked_time ;
-  int 	  _crcmap_last_source_id ;
 
   ftFileStatus mFileStatus; //used for pause/resume file transfer
 

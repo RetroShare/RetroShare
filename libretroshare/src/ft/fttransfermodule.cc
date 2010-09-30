@@ -60,10 +60,9 @@ const int32_t FT_TM_FAST_RTT    = 1.0;
 const int32_t FT_TM_STD_RTT     = 5.0;
 const int32_t FT_TM_SLOW_RTT    = 9.0;
 
-const uint32_t FT_TM_CRC_MAP_STATE_DONT_HAVE = 0 ;
-const uint32_t FT_TM_CRC_MAP_STATE_NOCHECK 	= 1 ;
-const uint32_t FT_TM_CRC_MAP_STATE_ASKED 		= 2 ;
-const uint32_t FT_TM_CRC_MAP_STATE_HAVE 		= 3 ;
+const uint32_t FT_TM_CRC_MAP_STATE_NOCHECK 	= 0 ;
+const uint32_t FT_TM_CRC_MAP_STATE_DONT_HAVE = 1 ;
+const uint32_t FT_TM_CRC_MAP_STATE_HAVE 		= 2 ;
 
 #define FT_TM_FLAG_DOWNLOADING 	0
 #define FT_TM_FLAG_CANCELED		1
@@ -87,7 +86,8 @@ ftTransferModule::ftTransferModule(ftFileCreator *fc, ftDataMultiplex *dm, ftCon
 	//mChunkSize = 10000;
 	desiredRate = 1000000; /* 1MB/s ??? */
 	actualRate = 0;
-	return;
+	_crcmap_state = FT_TM_CRC_MAP_STATE_NOCHECK ;
+	_crcmap_last_asked_time = 0 ;
 }
 
 ftTransferModule::~ftTransferModule()
@@ -573,20 +573,19 @@ bool ftTransferModule::checkFile()
 			return false ;
 		}
 
-		if(_hash_thread->hash() == mHash)
+		std::string check_hash( _hash_thread->hash() ) ;
+
+		delete _hash_thread ;
+		_hash_thread = NULL ;
+
+		if(check_hash == mHash)
 		{
 			mFlag = FT_TM_FLAG_COMPLETE ;	// Transfer is complete.
 #ifdef FT_DEBUG
 			std::cerr << "ftTransferModule::checkFile(): hash finished. File verification complete ! Setting mFlag to 1" << std::endl ;
 #endif
-			delete _hash_thread ;
-			_hash_thread = NULL ;
 			return true ;
 		}
-	
-		delete _hash_thread ;
-		_hash_thread = NULL ;
-
 	}
 	forceCheck() ;
 	return false ;
@@ -603,7 +602,6 @@ void ftTransferModule::forceCheck()
 	// setup flags for CRC state machine to work properly
 	_crcmap_state = FT_TM_CRC_MAP_STATE_DONT_HAVE ;
 	_crcmap_last_asked_time = 0 ;
-	_crcmap_last_source_id = -1 ;
 }
 
 bool ftTransferModule::checkCRC()
@@ -646,35 +644,38 @@ bool ftTransferModule::checkCRC()
 #endif
 			break ;
 
-		case FT_TM_CRC_MAP_STATE_ASKED:
-			std::cerr << "FT_TM_CRC_MAP_STATE_ASKED: last time is " << _crcmap_last_asked_time << std::endl ;
-			std::cerr << "FT_TM_CRC_MAP_STATE_ASKED: now       is " << now << std::endl ;
-			std::cerr << "Limit is " << (uint64_t)_crcmap_last_asked_time + (uint64_t)(FT_TM_CRC_MAP_MAX_WAIT_PER_GIG * (1+mSize/float(1024ull*1024ull*1024ull)))  << std::endl ;
-			if( (uint64_t)_crcmap_last_asked_time + (uint64_t)(FT_TM_CRC_MAP_MAX_WAIT_PER_GIG * (1+mSize/float(1024ull*1024ull*1024ull))) >  (uint64_t)now)
-			{
-#ifdef FT_DEBUG
-				std::cerr << "ftTransferModule::checkCRC(): state is NOCHECK. Doing nothing." << std::endl ;
-#endif
-				break ;
-			}
-#ifdef FT_DEBUG
-			else
-				std::cerr << "ftTransferModule::checkCRC(): state is ASKED, but time is too long. Asking again." << std::endl ;
-#endif
-
 		case FT_TM_CRC_MAP_STATE_DONT_HAVE:
 			{
+				// Check wether we have a CRC map or not.
+				//
+				std::cerr << "FT_TM_CRC_MAP_STATE_ASKED: last time is " << _crcmap_last_asked_time << std::endl ;
+				std::cerr << "FT_TM_CRC_MAP_STATE_ASKED: now       is " << now << std::endl ;
+
+				uint64_t threshold = (uint64_t)(FT_TM_CRC_MAP_MAX_WAIT_PER_GIG * (1+mSize/float(1024ull*1024ull*1024ull))) ;
+
+				std::cerr << "Threshold is " << threshold << std::endl;
+				std::cerr << "Limit is " << (uint64_t)_crcmap_last_asked_time + threshold  << std::endl ;
+
+				if( (uint64_t)_crcmap_last_asked_time + threshold >  (uint64_t)now)
+				{
+#ifdef FT_DEBUG
+					std::cerr << "ftTransferModule::checkCRC(): state is NOCHECK. Doing nothing." << std::endl ;
+#endif
+					break ;
+				}
 				// Ask the ones we should ask for.  We use a very coarse strategy now: we
 				// send the request to a random source.  We'll make this more sensible
 				// later.
 
 #ifdef FT_DEBUG
-				std::cerr << "ftTransferModule::checkCRC(): state is DONT_HAVE. Selecting a source for asking a CRC map." << std::endl ;
+				std::cerr << "ftTransferModule::checkCRC(): state is DONT_HAVE or last request is too old. Selecting a source for asking a CRC map." << std::endl ;
 #endif
-				//				if(_crcmap_last_source_id < 0)
-				//					_crcmap_last_source_id=lrand48() ;
-
-				//				_crcmap_last_source_id = (_crcmap_last_source_id+1)%mFileSources.size() ;
+				if(mFileSources.empty())
+				{
+					std::cerr << "ftTransferModule::checkCRC(): No sources available for checking file " << mHash << ": waiting 3 additional sec." <<std::endl ;
+					_crcmap_last_asked_time = now - threshold + 3 ;
+					break ;
+				}
 
 				int n = rand()%(mFileSources.size()) ;
 				int p=0 ;
@@ -686,8 +687,6 @@ bool ftTransferModule::checkCRC()
 #endif
 				_crcmap_last_asked_time = now ;
 				mMultiplexor->sendCRC32MapRequest(mit->first,mHash);
-
-				_crcmap_state = FT_TM_CRC_MAP_STATE_ASKED ;
 			}
 			break ;
 
