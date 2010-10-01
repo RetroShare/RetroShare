@@ -36,18 +36,18 @@ class CRC32Map ;
 
 namespace RsDirUtil {
 
-std::string 	getTopDir(std::string);
-std::string 	getRootDir(std::string);
-std::string 	removeRootDir(std::string path);
-std::string     removeTopDir(std::string dir);
-std::string 	removeRootDirs(std::string path, std::string root);
+std::string 	getTopDir(const std::string&);
+std::string 	getRootDir(const std::string&);
+std::string 	removeRootDir(const std::string& path);
+std::string     removeTopDir(const std::string& dir);
+std::string 	removeRootDirs(const std::string& path, const std::string& root);
 
 bool		hashFile(const std::string& full_path,std::string& hash) ;
 
 // Renames file from to file to. Files should be on the same file system.
 //	returns true if succeed, false otherwise.
 bool		renameFile(const std::string& from,const std::string& to) ;
-bool		createBackup (std::string sFilename, unsigned int nCount = 5);
+bool		createBackup (const std::string& sFilename, unsigned int nCount = 5);
 
 // returns the CRC32 of the data of length len
 //
@@ -57,17 +57,16 @@ uint32_t rs_CRC32(const unsigned char *data,uint32_t len) ;
 //
 bool crc32File(FILE *f,uint64_t file_size,uint32_t chunk_size,CRC32Map& map) ;
 
-int     	breakupDirList(std::string path,
-                        	std::list<std::string> &subdirs);
+int     	breakupDirList(const std::string& path, std::list<std::string> &subdirs);
 
-bool    	checkDirectory(std::string dir);
-bool    	checkCreateDirectory(std::string dir);
-bool    	cleanupDirectory(std::string dir, std::list<std::string> keepFiles);
+bool    	checkDirectory(const std::string& dir);
+bool    	checkCreateDirectory(const std::string& dir);
+bool    	cleanupDirectory(const std::string& dir, std::list<std::string> keepFiles);
 
-bool 		hashFile(std::string filepath,                
+bool 		hashFile(const std::string& filepath,                
 		  std::string &name, std::string &hash, uint64_t &size);
 
-bool 		getFileHash(std::string filepath,                
+bool 		getFileHash(const std::string& filepath,                
 			std::string &hash, uint64_t &size);
 
 

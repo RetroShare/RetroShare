@@ -56,7 +56,7 @@
  ****/
 #define RSDIR_DEBUG 1
 
-std::string 	RsDirUtil::getTopDir(std::string dir)
+std::string 	RsDirUtil::getTopDir(const std::string& dir)
 {
 	std::string top;
 
@@ -225,7 +225,7 @@ hashing_failed:
 	return false ;
 }
 
-std::string 	RsDirUtil::removeTopDir(std::string dir)
+std::string 	RsDirUtil::removeTopDir(const std::string& dir)
 {
 	std::string rest;
 
@@ -247,7 +247,7 @@ std::string 	RsDirUtil::removeTopDir(std::string dir)
 	return rest;
 }
 
-std::string 	RsDirUtil::getRootDir(std::string dir)
+std::string 	RsDirUtil::getRootDir(const std::string& dir)
 {
 	std::string root;
 
@@ -266,7 +266,7 @@ std::string 	RsDirUtil::getRootDir(std::string dir)
 	return root;
 }
 
-std::string RsDirUtil::removeRootDir(std::string path)
+std::string RsDirUtil::removeRootDir(const std::string& path)
 {
 	unsigned int i, j;
 	unsigned int len = path.length();
@@ -288,7 +288,7 @@ std::string RsDirUtil::removeRootDir(std::string path)
 	return output;
 }
 
-std::string RsDirUtil::removeRootDirs(std::string path, std::string root)
+std::string RsDirUtil::removeRootDirs(const std::string& path, const std::string& root)
 {
 	/* too tired */
 	std::string notroot;
@@ -335,7 +335,7 @@ std::string RsDirUtil::removeRootDirs(std::string path, std::string root)
 
 
 
-int	RsDirUtil::breakupDirList(std::string path, 
+int	RsDirUtil::breakupDirList(const std::string& path, 
 			std::list<std::string> &subdirs)
 {
 	int start = 0;
@@ -361,7 +361,7 @@ int	RsDirUtil::breakupDirList(std::string path,
 
 
 
-bool	RsDirUtil::checkDirectory(std::string dir)
+bool	RsDirUtil::checkDirectory(const std::string& dir)
 {
 	int val;
 	mode_t st_mode;
@@ -397,7 +397,7 @@ bool	RsDirUtil::checkDirectory(std::string dir)
 }
 
 
-bool	RsDirUtil::checkCreateDirectory(std::string dir)
+bool	RsDirUtil::checkCreateDirectory(const std::string& dir)
 {
 #ifdef RSDIR_DEBUG
         std::cerr << "RsDirUtil::checkCreateDirectory() dir: " << dir << std::endl;
@@ -440,7 +440,7 @@ bool	RsDirUtil::checkCreateDirectory(std::string dir)
 //#include <fcntl.h>
 //#include <unistd.h>
 
-bool 	RsDirUtil::cleanupDirectory(std::string cleandir, std::list<std::string> keepFiles)
+bool 	RsDirUtil::cleanupDirectory(const std::string& cleandir, std::list<std::string> keepFiles)
 {
 
 	/* check for the dir existance */
@@ -482,7 +482,7 @@ bool 	RsDirUtil::cleanupDirectory(std::string cleandir, std::list<std::string> k
 }
 
 /* slightly nicer helper function */
-bool RsDirUtil::hashFile(std::string filepath, 
+bool RsDirUtil::hashFile(const std::string& filepath, 
 		std::string &name, std::string &hash, uint64_t &size)
 {
 	if (getFileHash(filepath, hash, size))
@@ -500,7 +500,7 @@ bool RsDirUtil::hashFile(std::string filepath,
 #include <iomanip>
 
 /* Function to hash, and get details of a file */
-bool RsDirUtil::getFileHash(std::string filepath, 
+bool RsDirUtil::getFileHash(const std::string& filepath, 
 				std::string &hash, uint64_t &size)
 {
 	FILE *fd;
@@ -591,7 +591,7 @@ bool RsDirUtil::renameFile(const std::string& from, const std::string& to)
 	return true ;
 }
 
-bool RsDirUtil::createBackup (std::string sFilename, unsigned int nCount)
+bool RsDirUtil::createBackup (const std::string& sFilename, unsigned int nCount)
 {
 #ifdef WINDOWS_SYS
     if (GetFileAttributesA (sFilename.c_str ()) == -1) {
