@@ -10,6 +10,7 @@ INITTEST()
 
 int main()
 {
+	std::string ownId = "00000000000000000000000" ;
 
 	/* create a random file */
 	uint64_t size = 100000;
@@ -69,7 +70,7 @@ int main()
 			continue;
 		}
 
-		if (!provider->getFileData(offset, chunk, data))
+		if (!provider->getFileData(ownId,offset, chunk, data))
 		{
 			FAILED("Read from Test Data File");
 			std::cerr << "Failed to get data";

@@ -115,7 +115,7 @@ int main(int argc, char **argv)
 		displayExtraListDetails(eList,  toHash, hashed);
 	}
 
-	while(1)
+	for(int i=0;i<50;++i)
 	{
 		sleep(period);
 
