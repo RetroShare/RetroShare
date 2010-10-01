@@ -54,7 +54,6 @@
  * #define DEBUG_MGR_PKT 1
  ***/
 
-
 bdNodeManager::bdNodeManager(bdNodeId *id, std::string dhtVersion, std::string bootfile, bdDhtFunctions *fns)
 	:bdNode(id, dhtVersion, bootfile, fns)
 {
@@ -638,9 +637,12 @@ void bdNodeManager::addPeer(const bdId *id, uint32_t peerflags)
 void bdNodeManager::doNodeCallback(const bdId *id, uint32_t peerflags)
 {
 #ifdef DEBUG_MGR
-	std::cerr << "bdNodeManager::doPeerCallback()";
+	std::cerr << "bdNodeManager::doNodeCallback() ";
+	mFns->bdPrintId(std::cerr, id);
+	std::cerr << "peerflags: " << peerflags;
 	std::cerr << std::endl;
 #endif
+
         /* search list */
         std::list<BitDhtCallback *>::iterator it;
         for(it = mCallbacks.begin(); it != mCallbacks.end(); it++)
@@ -652,10 +654,14 @@ void bdNodeManager::doNodeCallback(const bdId *id, uint32_t peerflags)
 
 void bdNodeManager::doPeerCallback(const bdNodeId *id, uint32_t status)
 {
+
 #ifdef DEBUG_MGR
 	std::cerr << "bdNodeManager::doPeerCallback()";
+	mFns->bdPrintNodeId(std::cerr, id);
+	std::cerr << "status: " << status;
 	std::cerr << std::endl;
 #endif
+
         /* search list */
         std::list<BitDhtCallback *>::iterator it;
         for(it = mCallbacks.begin(); it != mCallbacks.end(); it++)
@@ -667,9 +673,10 @@ void bdNodeManager::doPeerCallback(const bdNodeId *id, uint32_t status)
 
 void bdNodeManager::doValueCallback(const bdNodeId *id, std::string /*key*/, uint32_t status)
 {
-#ifdef DEBUG_MGR
 	std::cerr << "bdNodeManager::doValueCallback()";
 	std::cerr << std::endl;
+
+#ifdef DEBUG_MGR
 #endif
         /* search list */
         std::list<BitDhtCallback *>::iterator it;
