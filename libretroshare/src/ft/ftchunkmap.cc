@@ -326,7 +326,7 @@ uint32_t ChunkMap::getAvailableChunk(uint32_t start_location,const std::string& 
 	{
 		SourceChunksInfo& pchunks(_peers_chunks_availability[peer_id]) ;
 
-		bool assume_availability = !rsTurtle->isTurtlePeer(peer_id) ;
+		bool assume_availability = !(rsTurtle!=NULL && rsTurtle->isTurtlePeer(peer_id)) ;
 
 		// Ok, we don't have the info, so two cases:
 		// 	- peer_id is a not a turtle peer, so he is considered having the full file source, so we init with a plain chunkmap
