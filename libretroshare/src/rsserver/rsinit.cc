@@ -2194,11 +2194,15 @@ int RsServer::StartupRetroShare()
 	rsUdpStack *mUdpStack = new rsUdpStack(tmpladdr);
 
 #ifdef RS_USE_BITDHT
-	std::string id = "idon't know?";
-	std::string bootstrapfile = "./bdboot.txt";
+	std::string bootstrapfile = RsInitConfig::configDir.c_str();
+	if (bootstrapfile != "")
+	{
+		bootstrapfile += "/";
+	}
+	bootstrapfile += "bdboot.txt";
 
-	p3BitDht *mBitDht = new p3BitDht(id, mConnMgr, mUdpStack, bootstrapfile);
-        //mUdpStack-stack->addReceiver(udps);
+	p3BitDht *mBitDht = new p3BitDht(ownId, mConnMgr, 
+				mUdpStack, bootstrapfile);
 
 	/* construct the rest of the stack */
 	tou_init(mUdpStack);

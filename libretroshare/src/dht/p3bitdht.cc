@@ -70,9 +70,23 @@ p3BitDht::p3BitDht(std::string id, pqiConnectCb *cb, UdpStack *udpstack, std::st
 	std::string dhtVersion = "RS51"; // should come from elsewhere!
 	bdNodeId ownId;
 
+	std::cerr << "p3BitDht::p3BitDht()" << std::endl;
+	std::cerr << "Using Id: " << id;
+	std::cerr << std::endl;
+	std::cerr << "Using Bootstrap File: " << bootstrapfile;
+	std::cerr << std::endl;
+	std::cerr << "Converting OwnId to bdNodeId....";
+	std::cerr << std::endl;
+
 	/* setup ownId */
 	storeTranslation(id);
 	lookupNodeId(id, &ownId);
+
+
+	std::cerr << "Own NodeId: ";
+	bdStdPrintNodeId(std::cerr, &ownId);
+	std::cerr << std::endl;
+
 
 	/* standard dht behaviour */
 	bdDhtFunctions *stdfns = new bdStdDht();
@@ -141,6 +155,9 @@ bool 	p3BitDht::findPeer(std::string pid)
 	/* convert id -> NodeId */
 	if (!storeTranslation(pid))
 	{
+		std::cerr << "p3BitDht::findPeer() Failed to storeTranslation";
+		std::cerr << std::endl;
+
 		/* error */
 		return false;
 	}
@@ -148,9 +165,16 @@ bool 	p3BitDht::findPeer(std::string pid)
 	bdNodeId nid;
 	if (!lookupNodeId(pid, &nid))
 	{
+		std::cerr << "p3BitDht::findPeer() Failed to lookupNodeId";
+		std::cerr << std::endl;
+
 		/* error */
 		return false;
 	}
+
+	std::cerr << "p3BitDht::findPeer() calling AddFindNode() with pid => NodeId: ";
+	bdStdPrintNodeId(std::cerr, &nid);
+	std::cerr << std::endl;
 
 	/* add in peer */
 	mUdpBitDht->addFindNode(&nid, BITDHT_QFLAGS_DO_IDLE);
@@ -167,9 +191,16 @@ bool 	p3BitDht::dropPeer(std::string pid)
 	bdNodeId nid;
 	if (!lookupNodeId(pid, &nid))
 	{
+		std::cerr << "p3BitDht::dropPeer() Failed to lookup NodeId";
+		std::cerr << std::endl;
+
 		/* error */
 		return false;
 	}
+
+	std::cerr << "p3BitDht::dropPeer() Translated to NodeId: ";
+	bdStdPrintNodeId(std::cerr, &nid);
+	std::cerr << std::endl;
 
 	/* remove in peer */
 	mUdpBitDht->removeFindNode(&nid);
@@ -177,6 +208,9 @@ bool 	p3BitDht::dropPeer(std::string pid)
 	/* remove from translation */
 	if (!removeTranslation(pid))
 	{
+		std::cerr << "p3BitDht::dropPeer() Failed to removeTranslation";
+		std::cerr << std::endl;
+
 		/* error */
 		return false;
 	}
@@ -220,7 +254,6 @@ int p3BitDht::calculateNodeId(const std::string pid, bdNodeId *id)
 {
 	/* generate node id from pid */
 	std::cerr << "p3BitDht::calculateNodeId() " << pid;
-	std::cerr << std::endl;
 
 	/* use a hash to make it impossible to reverse */
 
@@ -238,11 +271,19 @@ int p3BitDht::calculateNodeId(const std::string pid, bdNodeId *id)
 		id->data[i] = sha_hash[i];
         }
 	delete sha_ctx;
+
+	std::cerr << " => ";
+	bdStdPrintNodeId(std::cerr, id);
+	std::cerr << std::endl;
+
 	return 1;
 }
 
 int p3BitDht::lookupNodeId(const std::string pid, bdNodeId *id)
 {
+	std::cerr << "p3BitDht::lookupNodeId() for : " << pid;
+	std::cerr << std::endl;
+
 	RsStackMutex stack(dhtMtx);
 
 	std::map<std::string, bdNodeId>::iterator it;
@@ -256,12 +297,21 @@ int p3BitDht::lookupNodeId(const std::string pid, bdNodeId *id)
 	}
 	*id = it->second;
 
+
+	std::cerr << "p3BitDht::lookupNodeId() Found NodeId: ";
+	bdStdPrintNodeId(std::cerr, id);
+	std::cerr << std::endl;
+
 	return 1;
 }
 
 
 int p3BitDht::lookupRsId(const bdNodeId *id, std::string &pid)
 {
+	std::cerr << "p3BitDht::lookupRsId() for : ";
+	bdStdPrintNodeId(std::cerr, id);
+	std::cerr << std::endl;
+
 	RsStackMutex stack(dhtMtx);
 
 	std::map<bdNodeId, std::string>::iterator nit;
@@ -277,18 +327,32 @@ int p3BitDht::lookupRsId(const bdNodeId *id, std::string &pid)
 	}
 	pid = nit->second;
 
+
+	std::cerr << "p3BitDht::lookupRsId() Found Matching RsId: " << pid;
+	std::cerr << std::endl;
+
 	return 1;
 }
 
 int p3BitDht::storeTranslation(const std::string pid)
 {
+	std::cerr << "p3BitDht::storeTranslation(" << pid << ")";
+	std::cerr << std::endl;
+
 	bdNodeId nid;
 	calculateNodeId(pid, &nid);
 
 	RsStackMutex stack(dhtMtx);
 
+	std::cerr << "p3BitDht::storeTranslation() Converts to NodeId: ";
+	bdStdPrintNodeId(std::cerr, &(nid));
+	std::cerr << std::endl;
+
 	mTransToNodeId[pid] = nid;
 	mTransToRsId[nid] = pid;
+
+	std::cerr << "p3BitDht::storeTranslation() Success";
+	std::cerr << std::endl;
 
 	return 1;
 }
@@ -297,25 +361,41 @@ int p3BitDht::removeTranslation(const std::string pid)
 {
 	RsStackMutex stack(dhtMtx);
 
+	std::cerr << "p3BitDht::removeTranslation(" << pid << ")";
+	std::cerr << std::endl;
+
 	std::map<std::string, bdNodeId>::iterator it = mTransToNodeId.find(pid);
 	it = mTransToNodeId.find(pid);
 	if (it == mTransToNodeId.end())
 	{
+		std::cerr << "p3BitDht::removeTranslation() ERROR MISSING TransToNodeId";
+		std::cerr << std::endl;
 		/* missing */
 		return 0;
 	}
 
 	bdNodeId nid = it->second;
+
+	std::cerr << "p3BitDht::removeTranslation() Found Translation: NodeId: ";
+	bdStdPrintNodeId(std::cerr, &(nid));
+	std::cerr << std::endl;
+
+
 	std::map<bdNodeId, std::string>::iterator nit;
 	nit = mTransToRsId.find(nid);
 	if (nit == mTransToRsId.end())
 	{
+		std::cerr << "p3BitDht::removeTranslation() ERROR MISSING TransToRsId";
+		std::cerr << std::endl;
 		/* inconsistent!!! */
 		return 0;
 	}
 
 	mTransToNodeId.erase(it);
 	mTransToRsId.erase(nit);
+
+	std::cerr << "p3BitDht::removeTranslation() SUCCESS";
+	std::cerr << std::endl;
 
 	return 1;
 }
@@ -340,19 +420,26 @@ int p3BitDht::NodeCallback(const bdId *id, uint32_t peerflags)
 		for(int i = 0; i < 10; i++)
 		{
 			std::cerr << "p3BitDht::NodeCallback() FOUND NODE!!!: ";
-			std::cerr << pid << " flags: " << peerflags;
+			bdStdPrintNodeId(std::cerr, &(id->id));
+			std::cerr << "-> " << pid << " flags: " << peerflags;
 			std::cerr << std::endl;
 		}
 
 		return 1;
 	}
 
+#ifdef DEBUG_BITDHT
+	std::cerr << "p3BitDht::NodeCallback() FAILED TO FIND NODE: ";
+	bdStdPrintNodeId(std::cerr, &(id->id));
+	std::cerr << std::endl;
+#endif
+
 	return 0;
 }
 
 int p3BitDht::PeerCallback(const bdNodeId *id, uint32_t status)
 {
-	std::cerr << "p3BitDht::PeerCallback()";
+	std::cerr << "p3BitDht::PeerCallback() NOOP for NOW";
 	std::cerr << std::endl;
 
 	/* is it one that we are interested in? */
@@ -371,7 +458,7 @@ int p3BitDht::PeerCallback(const bdNodeId *id, uint32_t status)
 
 int p3BitDht::ValueCallback(const bdNodeId *id, std::string key, uint32_t status)
 {
-	std::cerr << "p3BitDht::ValueCallback()";
+	std::cerr << "p3BitDht::ValueCallback() NOOP for NOW";
 	std::cerr << std::endl;
 
 	/* ignore for now */
