@@ -134,3 +134,13 @@ bool 	ftDataRecvDummy::recvChunkMap(const std::string& peer_id,const std::string
 	return true;
 }
 
+bool 	ftDataRecvDummy::sendCRC32MapRequest(const std::string& peer_id,const std::string& hash)
+{
+	return true ;
+}
+
+	/* Send a chunk map */
+bool 	ftDataRecvDummy::sendCRC32Map(const std::string& peer_id,const std::string& hash, const CompressedChunkMap& cmap)
+{
+	return true ; 
+}
