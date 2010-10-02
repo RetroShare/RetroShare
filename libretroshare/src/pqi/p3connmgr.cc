@@ -2332,7 +2332,12 @@ bool   p3ConnectMgr::retryConnect(std::string id)
 	std::cerr << "p3ConnectMgr::retryConnect() id: " << id << std::endl;
 #endif
 
+#ifndef P3CONNMGR_NO_TCP_CONNECTIONS
+
 	retryConnectTCP(id);
+
+#endif  // P3CONNMGR_NO_TCP_CONNECTIONS
+
 	return true;
 }
 
@@ -2514,7 +2519,7 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
         if (it->second.inConnAttempt) {
                 /*  -> it'll automatically use the addresses we added */
 #ifdef CONN_DEBUG
-		std::cerr << "p3ConnectMgr::retryConnectTcp() Already in CONNECT ATTEMPT";
+		std::cerr << "p3ConnectMgr::retryConnectTCP() Already in CONNECT ATTEMPT";
 		std::cerr << std::endl;
             	std::cerr << "p3ConnectMgr::retryConnectTCP() Remaining ConnAddr Count: " << it->second.connAddrs.size();
 	    	std::cerr << std::endl;

@@ -308,9 +308,11 @@ int p3BitDht::lookupNodeId(const std::string pid, bdNodeId *id)
 
 int p3BitDht::lookupRsId(const bdNodeId *id, std::string &pid)
 {
+#ifdef DEBUG_BITDHT
 	std::cerr << "p3BitDht::lookupRsId() for : ";
 	bdStdPrintNodeId(std::cerr, id);
 	std::cerr << std::endl;
+#endif
 
 	RsStackMutex stack(dhtMtx);
 
@@ -417,13 +419,24 @@ int p3BitDht::NodeCallback(const bdId *id, uint32_t peerflags)
 		/* we found it ... do callback to p3connmgr */
 		//uint32_t cbflags = ONLINE | UNREACHABLE;
 
-		for(int i = 0; i < 10; i++)
-		{
-			std::cerr << "p3BitDht::NodeCallback() FOUND NODE!!!: ";
-			bdStdPrintNodeId(std::cerr, &(id->id));
-			std::cerr << "-> " << pid << " flags: " << peerflags;
-			std::cerr << std::endl;
-		}
+		std::cerr << "p3BitDht::NodeCallback() FOUND NODE!!!: ";
+		bdStdPrintNodeId(std::cerr, &(id->id));
+		std::cerr << "-> " << pid << " flags: " << peerflags;
+		std::cerr << std::endl;
+
+		/* add address to set */
+		pqiIpAddrSet addrs;
+		pqiIpAddress addr;
+
+		addr.mAddr = id->addr;
+		addr.mSeenTime = time(NULL);
+		addr.mSrc = 0;
+
+		addrs.updateExtAddrs(addr);
+		int type = 0;
+
+		/* callback to say they are online */
+                mConnCb->peerStatus(pid, addrs, type, 0, RS_CB_DHT);
 
 		return 1;
 	}
@@ -439,7 +452,8 @@ int p3BitDht::NodeCallback(const bdId *id, uint32_t peerflags)
 
 int p3BitDht::PeerCallback(const bdNodeId *id, uint32_t status)
 {
-	std::cerr << "p3BitDht::PeerCallback() NOOP for NOW";
+	std::cerr << "p3BitDht::PeerCallback() NodeId: ";
+	bdStdPrintNodeId(std::cerr, id);
 	std::cerr << std::endl;
 
 	/* is it one that we are interested in? */
@@ -447,10 +461,28 @@ int p3BitDht::PeerCallback(const bdNodeId *id, uint32_t status)
 	/* check for translation */
 	if (lookupRsId(id, pid))
 	{
+		std::cerr << "p3BitDht::PeerCallback() => RsId: ";
+		std::cerr << pid << " status: " << status;
+		std::cerr << " NOOP for NOW";
+		std::cerr << std::endl;
+
+
 		/* we found it ... do callback to p3connmgr */
 		//uint32_t cbflags = ONLINE | REACHABLE;
 
+		/* callback to say they are online */
+                //mConnCb->peerStatus(ent.id, addrs, ent.type, 0, RS_CB_DHT);
+        	//mConnCb->peerConnectRequest(peer.id, peer.laddr, RS_CB_DHT);
+
 		return 1;
+	}
+	else
+	{
+		std::cerr << "p3BitDht::PeerCallback()";
+		std::cerr << " FAILED TO TRANSLATE ID ";
+		std::cerr << " status: " << status;
+		std::cerr << " NOOP for NOW";
+		std::cerr << std::endl;
 	}
 
 	return 0;

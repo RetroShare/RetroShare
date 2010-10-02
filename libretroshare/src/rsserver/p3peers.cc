@@ -395,6 +395,17 @@ bool	p3Peers::getPeerDetails(std::string id, RsPeerDetails &d)
 
 	/* Finally determine AutoConnect Status */
 	std::ostringstream autostr;
+
+	/* HACK to display DHT Status info too */
+	if (pcs.dht.found)
+	{
+		autostr << "DHT:CONTACT!!! ";
+	}
+	else
+	{
+		autostr << "DHT:SEARCHING  ";
+	}
+
 	if (pcs.inConnAttempt)
 	{
                 if (pcs.currentConnAddrAttempt.type & RS_NET_CONN_TUNNEL) {
