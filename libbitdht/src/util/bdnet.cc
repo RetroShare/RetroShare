@@ -276,11 +276,13 @@ int bdnet_inet_aton(const char *name, struct in_addr *addr)
 int sleep(unsigned int sec)
 { 
 	Sleep(sec * 1000); 
+	return 0;
 }
 
 int usleep(unsigned int usec)
 { 
 	Sleep(usec / 1000); 
+	return 0;
 }
 
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
