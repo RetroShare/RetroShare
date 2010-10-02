@@ -52,7 +52,6 @@
 #include "util/Widget.h"
 #include "settings/rsharesettings.h"
 #include "common/RSTreeWidgetItem.h"
-#include "common/PeerDefs.h"
 
 #include "RetroShareLink.h"
 
@@ -194,7 +193,7 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
     std::string ownId = rsPeers->getOwnId();
     if (rsPeers->getPeerDetails(ownId, pd)) {
         /* calculate only once */
-        m_nickName = PeerDefs::nameWithLocation(pd);
+        m_nickName = QString::fromUtf8(pd.name.c_str());
 #ifdef MINIMAL_RSGUI
          ui.statusButton->setText(m_nickName);
 #endif
