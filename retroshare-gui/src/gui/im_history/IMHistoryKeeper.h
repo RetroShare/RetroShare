@@ -78,10 +78,14 @@ public:
 
     //! Adds new message to the history, but the message will be saved to
     //! file only after destroing the object
-    void addMessage(bool incoming, std::string &id, const QString &name, const QDateTime &sendTime, const QString &messageText);
+    void addMessage(bool incoming, const std::string &id, const QString &name, const QDateTime &sendTime, const QString &messageText);
 
     //! Clear the history
     void clear();
+
+    //! Find message
+    static bool compareItem(const IMHistoryItem &item, bool incoming, const std::string &id, const QDateTime &sendTime, const QString &messageText);
+    bool findMessage(bool incoming, const std::string &id, const QDateTime &sendTime, const QString &messageText, int &hiid);
 
     //! Remove item
     void removeMessage(int hiid);

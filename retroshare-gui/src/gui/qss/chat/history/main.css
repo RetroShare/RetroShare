@@ -57,3 +57,15 @@
 	color: #244578;
 }
 
+.ooutgoingTable{
+	background-color:#ffbebe;
+}
+
+.ooutgoingHeader {
+	border-color:#fafafa #e3e3e3 #e3e3e3 #fafafa;
+	color: #244578;
+}
+
+.ooutgoingTime {
+	color: #244578;
+}

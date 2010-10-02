@@ -31,11 +31,16 @@ class QTextCharFormat;
 class AttachFileItem;
 class ChatInfo;
 
+#include <retroshare/rsmsgs.h>
+#include "gui/im_history/IMHistoryKeeper.h"
 #include "ChatStyle.h"
 
 class PopupChatDialog : public QMainWindow
 {
   Q_OBJECT
+
+public:
+    enum enumChatType { TYPE_NORMAL, TYPE_HISTORY, TYPE_OFFLINE };
 
 public:
   static PopupChatDialog *getPrivateChat(std::string id, uint chatflags);
@@ -44,7 +49,6 @@ public:
   static void updateAllAvatars();
   static void privateChatChanged(int list, int type);
 
-  void updateChat();
   void updatePeerAvatar(const std::string&);
 
 public slots:
@@ -82,13 +86,14 @@ protected:
   bool eventFilter(QObject *obj, QEvent *ev);
 
   void insertChatMsgs();
-  void addChatMsg(std::string &id, uint sendTime, std::wstring &msg, bool offline);
+  void addChatMsg(bool incoming, const std::string &id, const QString &name, const QDateTime &sendTime, const QString &message, enumChatType chatType, bool addToHistory);
 
   void updateAvatar();
 
   QPixmap picture;
 
 private slots:
+  void on_actionMessageHistory_triggered();
   void addExtraFile();
   void addExtraPicture();
   void showAvatarFrame(bool show);
@@ -119,7 +124,7 @@ private:
   void addAttachment(std::string,int flag);
   void processSettings(bool bLoad);
 
-   void onPrivateChatChanged(int list, int type);
+   void onPrivateChatChanged(int list, int type, bool initial = false);
 
    QAction *actionTextBold;
    QAction *actionTextUnderline;
@@ -135,12 +140,14 @@ private:
    QColor mCurrentColor;
    QFont  mCurrentFont;
 
-//   QStringList history;
+   std::list<ChatInfo> m_savedOfflineChat;
    QString wholeChat;
    QString fileName; 
 
    bool m_bInsertOnVisible;
+   IMHistoryKeeper historyKeeper;
    ChatStyle style;
+   bool m_manualDelete;
 
   /** Qt Designer generated object */
   Ui::PopupChatDialog ui;
@@ -148,7 +155,3 @@ private:
 };
 
 #endif
-
-
-
-

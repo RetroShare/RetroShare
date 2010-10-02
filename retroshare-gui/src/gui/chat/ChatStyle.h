@@ -38,6 +38,8 @@
 #define CHAT_FORMATTEXT_EMBED_SMILEYS  1
 #define CHAT_FORMATTEXT_EMBED_LINKS    2
 
+#define FORMATMSG_COUNT  5
+
 class ChatStyleInfo
 {
 public:
@@ -60,10 +62,12 @@ class ChatStyle : public QObject
 public:
     enum enumFormatMessage
     {
-        FORMATMSG_INCOMING,
-        FORMATMSG_OUTGOING,
-        FORMATMSG_HINCOMING,
-        FORMATMSG_HOUTGOING
+        FORMATMSG_INCOMING = 0,
+        FORMATMSG_OUTGOING = 1,
+        FORMATMSG_HINCOMING = 2,
+        FORMATMSG_HOUTGOING = 3,
+        FORMATMSG_OOUTGOING = 4,
+        // FORMATMSG_COUNT
     };
 
     enum enumStyleType
@@ -83,8 +87,8 @@ public:
     bool setStylePath(const QString &stylePath, const QString &styleVariant);
     bool setStyleFromSettings(enumStyleType styleType);
 
-    QString formatMessage(enumFormatMessage type, QString &name, QDateTime &timestamp, QString &message, unsigned int flag);
-    QString formatText(QString &message, unsigned int flag);
+    QString formatMessage(enumFormatMessage type, const QString &name, const QDateTime &timestamp, const QString &message, unsigned int flag);
+    QString formatText(const QString &message, unsigned int flag);
 
     static bool getAvailableStyles(enumStyleType styleType, QList<ChatStyleInfo> &styles);
     static bool getAvailableVariants(const QString &stylePath, QStringList &variants);
@@ -96,6 +100,8 @@ private:
     enumStyleType m_styleType;
     QDir m_styleDir;
     QString m_styleVariant;
+
+    QString m_style[FORMATMSG_COUNT];
 
     /** store default information for embedding HTML */
     RsChat::EmbedInHtmlAhref defEmbedAhref;

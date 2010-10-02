@@ -34,7 +34,8 @@ enum enumGetStyle
     GETSTYLE_INCOMING,
     GETSTYLE_OUTGOING,
     GETSTYLE_HINCOMING,
-    GETSTYLE_HOUTGOING
+    GETSTYLE_HOUTGOING,
+    GETSTYLE_OOUTGOING
 };
 
 /* Default constructor */
@@ -96,10 +97,15 @@ bool ChatStyle::setStyleFromSettings(enumStyleType styleType)
 
     m_styleType = styleType;
 
+    // reset cache
+    for (int i = 0; i < FORMATMSG_COUNT; i++) {
+        m_style[i].clear();
+    }
+
     return result;
 }
 
-static QString getStyle(QDir &styleDir, QString styleVariant, enumGetStyle type)
+static QString getStyle(const QDir &styleDir, const QString &styleVariant, enumGetStyle type)
 {
     QString style;
 
@@ -120,6 +126,9 @@ static QString getStyle(QDir &styleDir, QString styleVariant, enumGetStyle type)
         break;
     case GETSTYLE_HOUTGOING:
         fileHtml.setFileName(QFileInfo(styleDir, "houtgoing.htm").absoluteFilePath());
+        break;
+    case GETSTYLE_OOUTGOING:
+        fileHtml.setFileName(QFileInfo(styleDir, "ooutgoing.htm").absoluteFilePath());
         break;
     default:
         return "";
@@ -153,7 +162,7 @@ static QString getStyle(QDir &styleDir, QString styleVariant, enumGetStyle type)
     return style;
 }
 
-QString ChatStyle::formatText(QString &message, unsigned int flag)
+QString ChatStyle::formatText(const QString &message, unsigned int flag)
 {
     if (flag == 0) {
         // nothing to do
@@ -174,28 +183,35 @@ QString ChatStyle::formatText(QString &message, unsigned int flag)
     return doc.toString(-1);		// -1 removes any annoying carriage return misinterpreted by QTextEdit
 }
 
-QString ChatStyle::formatMessage(enumFormatMessage type, QString &name, QDateTime &timestamp, QString &message, unsigned int flag)
+QString ChatStyle::formatMessage(enumFormatMessage type, const QString &name, const QDateTime &timestamp, const QString &message, unsigned int flag)
 {
-    QString style;
-
-    switch (type) {
-    case FORMATMSG_INCOMING:
-        style = getStyle(m_styleDir, m_styleVariant, GETSTYLE_INCOMING);
-        break;
-    case FORMATMSG_OUTGOING:
-        style = getStyle(m_styleDir, m_styleVariant, GETSTYLE_OUTGOING);
-        break;
-    case FORMATMSG_HINCOMING:
-        style = getStyle(m_styleDir, m_styleVariant, GETSTYLE_HINCOMING);
-        break;
-    case FORMATMSG_HOUTGOING:
-        style = getStyle(m_styleDir, m_styleVariant, GETSTYLE_HOUTGOING);
-        break;
-    }
+    QString style = m_style[type];
 
     if (style.isEmpty()) {
-        // default style
-        style = "<table width='100%'><tr><td><b>%name%</b></td><td width='130' align='right'>%time%</td></tr></table><table width='100%'><tr><td>%message%</td></tr></table>";
+        switch (type) {
+        case FORMATMSG_INCOMING:
+            style = getStyle(m_styleDir, m_styleVariant, GETSTYLE_INCOMING);
+            break;
+        case FORMATMSG_OUTGOING:
+            style = getStyle(m_styleDir, m_styleVariant, GETSTYLE_OUTGOING);
+            break;
+        case FORMATMSG_HINCOMING:
+            style = getStyle(m_styleDir, m_styleVariant, GETSTYLE_HINCOMING);
+            break;
+        case FORMATMSG_HOUTGOING:
+            style = getStyle(m_styleDir, m_styleVariant, GETSTYLE_HOUTGOING);
+            break;
+        case FORMATMSG_OOUTGOING:
+            style = getStyle(m_styleDir, m_styleVariant, GETSTYLE_OOUTGOING);
+            break;
+        }
+
+        if (style.isEmpty()) {
+            // default style
+            style = "<table width='100%'><tr><td><b>%name%</b></td><td width='130' align='right'>%time%</td></tr></table><table width='100%'><tr><td>%message%</td></tr></table>";
+        }
+
+        m_style[type] = style;
     }
 
     unsigned int formatFlag = 0;

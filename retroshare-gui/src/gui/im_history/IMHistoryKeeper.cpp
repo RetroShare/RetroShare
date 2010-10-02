@@ -67,7 +67,7 @@ void IMHistoryKeeper::init(QString historyFileName)
 
 //=============================================================================
 
-void IMHistoryKeeper::addMessage(bool incoming, std::string &id, const QString &name, const QDateTime &sendTime, const QString &messageText)
+void IMHistoryKeeper::addMessage(bool incoming, const std::string &id, const QString &name, const QDateTime &sendTime, const QString &messageText)
 {
     IMHistoryItem item(++lasthiid, incoming, id, name, sendTime, messageText);
 
@@ -176,6 +176,41 @@ void IMHistoryKeeper::clear()
 
 //=============================================================================
 
+/*static*/ bool IMHistoryKeeper::compareItem(const IMHistoryItem &item, bool incoming, const std::string &id, const QDateTime &sendTime, const QString &messageText)
+{
+    // "\n" is not saved in xml
+    QString copyMessage1(messageText);
+    copyMessage1.replace("\n", "");
+
+    QString copyMessage2(item.messageText);
+    copyMessage2.replace("\n", "");
+
+    if (item.incoming == incoming && item.id == id && item.sendTime == sendTime && copyMessage1 == copyMessage2) {
+        return true;
+    }
+
+    return false;
+}
+
+//=============================================================================
+
+bool IMHistoryKeeper::findMessage(bool incoming, const std::string &id, const QDateTime &sendTime, const QString &messageText, int &hiid)
+{
+    hiid = 0;
+
+    QList<IMHistoryItem>::const_iterator it;
+    for (it = hitems.begin(); it != hitems.end(); it++) {
+        if (compareItem(*it, incoming, id, sendTime, messageText)) {
+            hiid = it->hiid;
+            return true;
+        }
+    }
+
+    return false;
+}
+
+//=============================================================================
+
 void IMHistoryKeeper::removeMessage(int hiid)
 {
     QList<IMHistoryItem>::iterator it;
@@ -225,5 +260,7 @@ void IMHistoryKeeper::saveHistory()
 
         IMHistoryWriter wri;
         wri.write(hitems, hfName);
+
+        historyChanged = false;
     }
 }

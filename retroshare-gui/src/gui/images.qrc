@@ -459,6 +459,7 @@
         <file>qss/chat/private/outgoing.htm</file>
         <file>qss/chat/private/hincoming.htm</file>
         <file>qss/chat/private/houtgoing.htm</file>
+        <file>qss/chat/private/ooutgoing.htm</file>
         <file>qss/chat/private/main.css</file>
         <file>qss/chat/private/variants/Standard.css</file>
         <file>qss/chat/public/info.xml</file>
@@ -466,6 +467,7 @@
         <file>qss/chat/public/outgoing.htm</file>
         <file>qss/chat/public/hincoming.htm</file>
         <file>qss/chat/public/houtgoing.htm</file>
+        <file>qss/chat/public/ooutgoing.htm</file>
         <file>qss/chat/public/main.css</file>
         <file>qss/chat/public/variants/Standard.css</file>
         <file>qss/chat/history/info.xml</file>
@@ -473,6 +475,7 @@
         <file>qss/chat/history/outgoing.htm</file>
         <file>qss/chat/history/hincoming.htm</file>
         <file>qss/chat/history/houtgoing.htm</file>
+        <file>qss/chat/history/ooutgoing.htm</file>
         <file>qss/chat/history/main.css</file>
         <file>qss/chat/history/variants/Standard.css</file>
         <file>smileys/amorous.png</file>

@@ -532,7 +532,7 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="1" rowspan="5">
+          <item row="0" column="1" rowspan="6">
            <widget class="QGroupBox" name="groupBoxIRCColors">
             <property name="maximumSize">
              <size>
@@ -615,24 +615,24 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
+          <item row="3" column="0">
            <widget class="QCheckBox" name="checkBox_groupchathistory">
             <property name="text">
-             <string>Enable GroupChat History</string>
+             <string>Enable Group Chat History</string>
             </property>
             <property name="checked">
              <bool>true</bool>
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
+          <item row="4" column="0">
            <widget class="QCheckBox" name="sendMessageWithCtrlReturn">
             <property name="text">
              <string>Send message with Ctrl+Return</string>
             </property>
            </widget>
           </item>
-          <item row="4" column="0">
+          <item row="5" column="0">
            <spacer name="verticalSpacer">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
@@ -644,6 +644,13 @@
              </size>
             </property>
            </spacer>
+          </item>
+          <item row="2" column="0">
+           <widget class="QCheckBox" name="checkBox_privatechathistory">
+            <property name="text">
+             <string>Enable Private Chat History</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>

@@ -64,7 +64,7 @@ bool IMHistoryWriter::write(QList<IMHistoryItem>& itemList, const QString fileNa
         writeAttribute("id", QString::fromStdString(item.id));
         writeAttribute("name", item.name);
         writeAttribute("sendTime", QString::number(item.sendTime.toTime_t()));
-        writeCharacters(item.messageText);
+        writeCDATA(item.messageText);
         writeEndElement();
     }
 

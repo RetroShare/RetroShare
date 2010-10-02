@@ -2010,7 +2010,7 @@ void PeersDialog::statusColumn()
 
 void PeersDialog::on_actionMessageHistory_triggered()
 {
-    ImHistoryBrowser imBrowser(false, historyKeeper, ui.lineEdit, this);
+    ImHistoryBrowser imBrowser("", historyKeeper, ui.lineEdit, this);
     imBrowser.exec();
 }
 

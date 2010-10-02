@@ -34,18 +34,21 @@
 
 #include "rshare.h"
 #include "gui/settings/rsharesettings.h"
+#include "gui/notifyqt.h"
 
 #define ROLE_HIID      Qt::UserRole
 #define ROLE_PLAINTEXT Qt::UserRole + 1
+#define ROLE_OFFLINE   Qt::UserRole + 2
 
 /** Default constructor */
-ImHistoryBrowser::ImHistoryBrowser(bool isPrivateChatIn, IMHistoryKeeper &histKeeper, QTextEdit *edit, QWidget *parent, Qt::WFlags flags)
+ImHistoryBrowser::ImHistoryBrowser(const std::string &peerId, IMHistoryKeeper &histKeeper, QTextEdit *edit, QWidget *parent, Qt::WFlags flags)
   : QDialog(parent, flags), historyKeeper(histKeeper)
 {
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);
 
-    isPrivateChat = isPrivateChatIn;
+    m_peerId = peerId;
+    m_isPrivateChat = !m_peerId.empty();
     textEdit = edit;
 
     connect(&historyKeeper, SIGNAL(historyAdd(IMHistoryItem)), this, SLOT(historyAdd(IMHistoryItem)));
@@ -61,18 +64,23 @@ ImHistoryBrowser::ImHistoryBrowser(bool isPrivateChatIn, IMHistoryKeeper &histKe
     connect(ui.listWidget, SIGNAL(itemSelectionChanged()), this, SLOT(itemSelectionChanged()));
     connect(ui.listWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(customContextMenuRequested(QPoint)));
 
+    connect(NotifyQt::getInstance(), SIGNAL(privateChatChanged(int,int)), this, SLOT(privateChatChanged(int,int)));
+
     ui.clearFilterButton->hide();
 
     // embed smileys ?
-    if (isPrivateChat) {
-        embedSmileys = Settings->valueFromGroup(QString("Chat"), QString::fromUtf8("Emoteicons_PrivatChat"), true).toBool();
+    if (m_isPrivateChat) {
+        embedSmileys = Settings->valueFromGroup("Chat", "Emoteicons_PrivatChat", true).toBool();
     } else {
-        embedSmileys = Settings->valueFromGroup(QString("Chat"), QString::fromUtf8("Emoteicons_GroupChat"), true).toBool();
+        embedSmileys = Settings->valueFromGroup("Chat", "Emoteicons_GroupChat", true).toBool();
     }
 
     style.setStyleFromSettings(ChatStyle::TYPE_HISTORY);
 
     ui.listWidget->setItemDelegate(new IMHistoryItemDelegate);
+
+    // call once
+    privateChatChanged(NOTIFY_LIST_PRIVATE_OUTGOING_CHAT, NOTIFY_TYPE_ADD);
 
     QList<IMHistoryItem> historyItems;
     historyKeeper.getMessages(historyItems, 0);
@@ -89,7 +97,6 @@ ImHistoryBrowser::ImHistoryBrowser(bool isPrivateChatIn, IMHistoryKeeper &histKe
     itemSelectionChanged();
 
     ui.listWidget->installEventFilter(this);
-
 }
 
 ImHistoryBrowser::~ImHistoryBrowser()
@@ -138,7 +145,7 @@ void ImHistoryBrowser::historyClear()
     ui.listWidget->clear();
 }
 
-QListWidgetItem *ImHistoryBrowser::addItem(IMHistoryItem &item)
+void ImHistoryBrowser::fillItem(QListWidgetItem *itemWidget, IMHistoryItem &item)
 {
     unsigned int formatFlag = CHAT_FORMATMSG_EMBED_LINKS;
 
@@ -146,25 +153,52 @@ QListWidgetItem *ImHistoryBrowser::addItem(IMHistoryItem &item)
         formatFlag |= CHAT_FORMATMSG_EMBED_SMILEYS;
     }
 
+    std::list<ChatInfo>::iterator offineChatIt;
+    for(offineChatIt = m_savedOfflineChat.begin(); offineChatIt != m_savedOfflineChat.end(); offineChatIt++) {
+        /* are they public? */
+        if ((offineChatIt->chatflags & RS_CHAT_PRIVATE) == 0) {
+            /* this should not happen */
+            continue;
+        }
+
+        QDateTime sendTime = QDateTime::fromTime_t(offineChatIt->sendTime);
+        QString message = QString::fromStdWString(offineChatIt->msg);
+
+        if (IMHistoryKeeper::compareItem(item, false, offineChatIt->rsid, sendTime, message)) {
+            break;
+        }
+    }
+
     ChatStyle::enumFormatMessage type;
-    if (item.incoming) {
-        type = ChatStyle::FORMATMSG_INCOMING;
+    if (offineChatIt == m_savedOfflineChat.end()) {
+        if (item.incoming) {
+            type = ChatStyle::FORMATMSG_INCOMING;
+        } else {
+            type = ChatStyle::FORMATMSG_OUTGOING;
+        }
     } else {
-        type = ChatStyle::FORMATMSG_OUTGOING;
+        type = ChatStyle::FORMATMSG_OOUTGOING;
     }
 
     QString formatMsg = style.formatMessage(type, item.name, item.sendTime, item.messageText, formatFlag);
 
-    QListWidgetItem *itemWidget = new QListWidgetItem;
     itemWidget->setData(Qt::DisplayRole, qVariantFromValue(IMHistoryItemPainter(formatMsg)));
     itemWidget->setData(ROLE_HIID, item.hiid);
+    itemWidget->setData(ROLE_OFFLINE, (type == ChatStyle::FORMATMSG_OOUTGOING) ? true : false);
 
     /* calculate plain text */
     QTextDocument doc;
     doc.setHtml(item.messageText);
     itemWidget->setData(ROLE_PLAINTEXT, doc.toPlainText());
-    ui.listWidget->addItem(itemWidget);
 
+    filterRegExpChanged();
+}
+
+QListWidgetItem *ImHistoryBrowser::addItem(IMHistoryItem &item)
+{
+    QListWidgetItem *itemWidget = new QListWidgetItem;
+    ui.listWidget->addItem(itemWidget);
+    fillItem(itemWidget, item);
     return itemWidget;
 }
 
@@ -339,6 +373,46 @@ void ImHistoryBrowser::sendMessage()
                 cursor.movePosition(QTextCursor::End);
                 textEdit->setTextCursor(cursor);
                 close();
+            }
+        }
+    }
+}
+
+void ImHistoryBrowser::privateChatChanged(int list, int type)
+{
+    if (m_isPrivateChat == false) {
+        return;
+    }
+
+    if (list == NOTIFY_LIST_PRIVATE_OUTGOING_CHAT) {
+        switch (type) {
+        case NOTIFY_TYPE_ADD:
+            {
+                m_savedOfflineChat.clear();
+                rsMsgs->getPrivateChatQueueCount(false) && rsMsgs->getPrivateChatQueue(false, m_peerId, m_savedOfflineChat);
+            }
+            break;
+        case NOTIFY_TYPE_DEL:
+            {
+                m_savedOfflineChat.clear();
+            }
+            break;
+        }
+
+        // recalculate items in history
+        int count = ui.listWidget->count();
+        for (int i = 0; i < count; i++) {
+            QListWidgetItem *itemWidget = ui.listWidget->item(i);
+
+            if (itemWidget->data(ROLE_OFFLINE).toBool()) {
+                int hiid = itemWidget->data(ROLE_HIID).toInt();
+
+                IMHistoryItem item;
+                if (historyKeeper.getMessage(hiid, item) == false) {
+                    continue;
+                }
+
+                fillItem(itemWidget, item);
             }
         }
     }

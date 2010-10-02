@@ -40,12 +40,6 @@ class ChatPage : public ConfigPage
       /** Loads the settings for this page */
       void load();
 
-      bool emotePrivatChat() const;
-      bool emoteGroupChat() const;
-      bool groupchatHistory() const;
-
-      QFont fontTempChat;
-
   private slots:
       void on_historyComboBoxVariant_currentIndexChanged(int index);
       void on_privateComboBoxVariant_currentIndexChanged(int index);
@@ -59,6 +53,8 @@ class ChatPage : public ConfigPage
       void closeEvent (QCloseEvent * event);
       void setPreviewMessages(QString &stylePath, QString styleVariant, QTextBrowser *textBrowser);
       void fillPreview(QListWidget *listWidget, QComboBox *comboBox, QTextBrowser *textBrowser);
+
+      QFont fontTempChat;
 
       QString publicStylePath;
       QString publicStyleVariant;

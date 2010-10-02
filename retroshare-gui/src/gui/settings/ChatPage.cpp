@@ -103,9 +103,10 @@ ChatPage::save(QString &errmsg)
 {
     Settings->beginGroup(QString("Chat"));
 
-    Settings->setValue(QString::fromUtf8("Emoteicons_PrivatChat"), emotePrivatChat());
-    Settings->setValue(QString::fromUtf8("Emoteicons_GroupChat"), emoteGroupChat());
-    Settings->setValue(QString::fromUtf8("GroupChat_History"), groupchatHistory());
+    Settings->setValue(QString::fromUtf8("Emoteicons_PrivatChat"), ui.checkBox_emoteprivchat->isChecked());
+    Settings->setValue(QString::fromUtf8("Emoteicons_GroupChat"), ui.checkBox_emotegroupchat->isChecked());
+    Settings->setValue(QString::fromUtf8("GroupChat_History"), ui.checkBox_groupchathistory->isChecked());
+    Settings->setValue(QString::fromUtf8("PrivateChat_History"), ui.checkBox_privatechathistory->isChecked());
     Settings->endGroup();
 
     Settings->setChatScreenFont(fontTempChat.toString());
@@ -152,6 +153,7 @@ ChatPage::load()
     ui.checkBox_emoteprivchat->setChecked(Settings->value(QString::fromUtf8("Emoteicons_PrivatChat"), true).toBool());
     ui.checkBox_emotegroupchat->setChecked(Settings->value(QString::fromUtf8("Emoteicons_GroupChat"), true).toBool());
     ui.checkBox_groupchathistory->setChecked(Settings->value(QString::fromUtf8("GroupChat_History"), true).toBool());
+    ui.checkBox_privatechathistory->setChecked(Settings->value(QString::fromUtf8("PrivateChat_History"), true).toBool());
 
     Settings->endGroup();
 
@@ -166,21 +168,6 @@ ChatPage::load()
     publicStylePath = loadStyleInfo(ChatStyle::TYPE_PUBLIC, ui.publicList, ui.publicComboBoxVariant, publicStyleVariant);
     privateStylePath = loadStyleInfo(ChatStyle::TYPE_PRIVATE, ui.privateList, ui.privateComboBoxVariant, privateStyleVariant);
     historyStylePath = loadStyleInfo(ChatStyle::TYPE_HISTORY, ui.historyList, ui.historyComboBoxVariant, historyStyleVariant);
-}
-
-bool ChatPage::emotePrivatChat() const {
-  if(ui.checkBox_emoteprivchat->isChecked()) return true;
-  return ui.checkBox_emoteprivchat->isChecked();
-}
-
-bool ChatPage::emoteGroupChat() const {
-  if(ui.checkBox_emotegroupchat->isChecked()) return true;
-  return ui.checkBox_emotegroupchat->isChecked();
-}
-
-bool ChatPage::groupchatHistory() const {
-  if(ui.checkBox_groupchathistory->isChecked()) return true;
-  return ui.checkBox_groupchathistory->isChecked();
 }
 
 void ChatPage::on_pushButtonChangeChatFont_clicked()
@@ -219,6 +206,9 @@ void ChatPage::setPreviewMessages(QString &stylePath, QString styleVariant, QTex
     textEdit.setText(tr("Outgoing message"));
     message = textEdit.toHtml();
     textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_OUTGOING,  nameOutgoing, timestmp, message, CHAT_FORMATTEXT_EMBED_SMILEYS));
+    textEdit.setText(tr("Outgoing offline message"));
+    message = textEdit.toHtml();
+    textBrowser->append(style.formatMessage(ChatStyle::FORMATMSG_OOUTGOING,  nameOutgoing, timestmp, message, CHAT_FORMATTEXT_EMBED_SMILEYS));
 }
 
 void ChatPage::fillPreview(QListWidget *listWidget, QComboBox *comboBox, QTextBrowser *textBrowser)

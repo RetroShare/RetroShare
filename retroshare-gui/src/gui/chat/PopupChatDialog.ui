@@ -304,7 +304,7 @@ stop:0 #FFFFD7, stop:1 #FFFFB2);}</string>
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap resource="../images.qrc">:/images/info16.png</pixmap>
+          <pixmap>:/images/info16.png</pixmap>
          </property>
          <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -421,7 +421,7 @@ border: 1px solid #CCCCCC;
           <string/>
          </property>
          <property name="icon">
-          <iconset resource="../images.qrc">
+          <iconset>
            <normaloff>:/images/configure.png</normaloff>:/images/configure.png</iconset>
          </property>
          <property name="iconSize">
@@ -456,7 +456,7 @@ border: 1px solid #CCCCCC;
           <string/>
          </property>
          <property name="icon">
-          <iconset resource="../images.qrc">
+          <iconset>
            <normaloff>:/images/add_image24.png</normaloff>:/images/add_image24.png</iconset>
          </property>
          <property name="iconSize">
@@ -485,7 +485,7 @@ border: 1px solid #CCCCCC;
           <string/>
          </property>
          <property name="icon">
-          <iconset resource="../images.qrc">
+          <iconset>
            <normaloff>:/images/add-share24.png</normaloff>:/images/add-share24.png</iconset>
          </property>
          <property name="iconSize">
@@ -726,65 +726,38 @@ border: 1px solid #CCCCCC;
       <widget class="QWidget" name="verticalLayoutWidget">
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-      <widget class="QTextBrowser" name="textBrowser">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>100</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QTextBrowser{border: 1px solid #B8B6B1;
+         <widget class="QTextBrowser" name="textBrowser">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>100</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QTextBrowser{border: 1px solid #B8B6B1;
 border-radius: 6px;
 background: white;}</string>
-       </property>
-       <property name="html">
-        <string notr="true">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+          </property>
+          <property name="html">
+           <string notr="true">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="openExternalLinks">
-        <bool>true</bool>
-       </property>
-       <property name="openLinks">
-        <bool>false</bool>
-       </property>
-      </widget>
-        </item>
-        <item>
-      <widget class="QTextBrowser" name="offlineTextBrowser">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>100</height>
-        </size>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QTextBrowser{border: 1px solid #B8B6B1;
-border-radius: 6px;
-background: white;}</string>
-       </property>
-       <property name="openExternalLinks">
-        <bool>true</bool>
-       </property>
-       <property name="openLinks">
-        <bool>false</bool>
-       </property>
-      </widget>
+          </property>
+          <property name="openExternalLinks">
+           <bool>true</bool>
+          </property>
+          <property name="openLinks">
+           <bool>false</bool>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -908,7 +881,7 @@ background: white;}</string>
   </action>
   <action name="actionAvatar">
    <property name="icon">
-    <iconset resource="../images.qrc">
+    <iconset>
      <normaloff>:/images/no_avatar_70.png</normaloff>:/images/no_avatar_70.png</iconset>
    </property>
    <property name="text">
@@ -920,7 +893,7 @@ background: white;}</string>
   </action>
   <action name="actionClear_Chat">
    <property name="icon">
-    <iconset resource="../images.qrc">
+    <iconset>
      <normaloff>:/images/edit-clear-history.png</normaloff>:/images/edit-clear-history.png</iconset>
    </property>
    <property name="text">
@@ -948,9 +921,15 @@ background: white;}</string>
     <string>Clear offline messages</string>
    </property>
   </action>
+  <action name="actionMessageHistory">
+   <property name="text">
+    <string>Browse Message History</string>
+   </property>
+   <property name="toolTip">
+    <string>Browse History</string>
+   </property>
+  </action>
  </widget>
- <resources>
-  <include location="../images.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

@@ -25,6 +25,7 @@
 
 #include <QDialog>
 
+#include <retroshare/rsmsgs.h>
 #include "IMHistoryKeeper.h"
 #include "gui/chat/ChatStyle.h"
 
@@ -38,7 +39,7 @@ class ImHistoryBrowser : public QDialog
 
 public:
     /** Default constructor */
-    ImHistoryBrowser(bool isPrivateChat, IMHistoryKeeper &histKeeper, QTextEdit *edit, QWidget *parent = 0, Qt::WFlags flags = 0);
+    ImHistoryBrowser(const std::string &peerId, IMHistoryKeeper &histKeeper, QTextEdit *edit, QWidget *parent = 0, Qt::WFlags flags = 0);
     /** Default destructor */
     virtual ~ImHistoryBrowser();
 
@@ -61,21 +62,26 @@ private slots:
     void clearHistory();
     void sendMessage();
 
+    void privateChatChanged(int list, int type);
+
 private:
     QListWidgetItem *addItem(IMHistoryItem &item);
+    void fillItem(QListWidgetItem *itemWidget, IMHistoryItem &item);
     void filterItems(QListWidgetItem *item = NULL);
 
     void getSelectedItems(QList<int> &items);
 
-    bool isPrivateChat;
+    std::string m_peerId;
+    bool m_isPrivateChat;
     QTextEdit *textEdit;
     bool embedSmileys;
     IMHistoryKeeper &historyKeeper;
     ChatStyle style;
+
+    std::list<ChatInfo> m_savedOfflineChat;
 
     /** Qt Designer generated object */
     Ui::ImHistoryBrowser ui;
 };
 
 #endif
-

@@ -856,7 +856,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ChanMsgItem</name>
     <message>
-        <location filename="../gui/feeds/ChanMsgItem.ui" line="+218"/>
+        <location filename="../gui/feeds/ChanMsgItem.ui" line="+221"/>
         <source>Remove Item</source>
         <translation>Eintrag entfernen</translation>
     </message>
@@ -1198,12 +1198,7 @@ Keine Beschreibung</translation>
         <translation>Emoticons für Gruppenchat</translation>
     </message>
     <message>
-        <location line="+10"/>
-        <source>Enable GroupChat History</source>
-        <translation>Chat Verlauf für Gruppenchat</translation>
-    </message>
-    <message>
-        <location line="+47"/>
+        <location line="+64"/>
         <source>Group chat</source>
         <translation>Gruppenchat</translation>
     </message>
@@ -1213,17 +1208,27 @@ Keine Beschreibung</translation>
         <translation>Privater Chat</translation>
     </message>
     <message>
-        <location line="-293"/>
+        <location line="-300"/>
         <source>General</source>
         <translation>Allgemein</translation>
     </message>
     <message>
-        <location line="+121"/>
+        <location line="+111"/>
+        <source>Enable Group Chat History</source>
+        <translation>Chat Verlauf für Gruppenchat</translation>
+    </message>
+    <message>
+        <location line="+10"/>
         <source>Send message with Ctrl+Return</source>
         <translation>Sende Nachricht mit Strg+Enter</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+20"/>
+        <source>Enable Private Chat History</source>
+        <translation>Chat Verlauf für privaten Chat</translation>
+    </message>
+    <message>
+        <location line="+11"/>
         <source>Style</source>
         <translation>Stil</translation>
     </message>
@@ -1254,7 +1259,7 @@ Keine Beschreibung</translation>
         <translation>Verlauf</translation>
     </message>
     <message>
-        <location filename="../gui/settings/ChatPage.cpp" line="+210"/>
+        <location filename="../gui/settings/ChatPage.cpp" line="+197"/>
         <source>Incoming message in history</source>
         <translation>Eingehehende Nachricht aus dem Verlauf</translation>
     </message>
@@ -1273,11 +1278,16 @@ Keine Beschreibung</translation>
         <source>Outgoing message</source>
         <translation>Ausgehehende Nachricht</translation>
     </message>
+    <message>
+        <location line="+3"/>
+        <source>Outgoing offline message</source>
+        <translation>Ausgehehende offline Nachricht</translation>
+    </message>
 </context>
 <context>
     <name>ChatStyle</name>
     <message>
-        <location filename="../gui/chat/ChatStyle.cpp" line="+367"/>
+        <location filename="../gui/chat/ChatStyle.cpp" line="+381"/>
         <source>Standard style for group chat</source>
         <translation>Standard Stil für den Gruppenchat</translation>
     </message>
@@ -4578,7 +4588,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+32"/>
-        <location filename="../gui/im_history/ImHistoryBrowser.cpp" line="+261"/>
+        <location filename="../gui/im_history/ImHistoryBrowser.cpp" line="+295"/>
         <source>Copy</source>
         <translation>Kopieren</translation>
     </message>
@@ -6090,7 +6100,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MessengerWindow</name>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="+294"/>
+        <location filename="../gui/MessengerWindow.cpp" line="+293"/>
         <source>Expand all</source>
         <translation>Alle erweitern</translation>
     </message>
@@ -7734,7 +7744,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PopupChatDialog</name>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="+702"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="+778"/>
         <source>Hide Avatar</source>
         <translation>Avatar verstecken</translation>
     </message>
@@ -7755,24 +7765,24 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/chat/PopupChatDialog.ui" line="+571"/>
-        <location line="+320"/>
+        <location line="+293"/>
         <source>Bold</source>
         <translation>Fett</translation>
     </message>
     <message>
-        <location line="-288"/>
-        <location line="+298"/>
+        <location line="-261"/>
+        <location line="+271"/>
         <source>Underline</source>
         <translation>Unterstrichen</translation>
     </message>
     <message>
-        <location line="-266"/>
-        <location line="+261"/>
+        <location line="-239"/>
+        <location line="+234"/>
         <source>Italic</source>
         <translation>Kursiv</translation>
     </message>
     <message>
-        <location line="-229"/>
+        <location line="-202"/>
         <source>Set Font</source>
         <translation>Schriftart setzen</translation>
     </message>
@@ -7782,17 +7792,27 @@ p, li { white-space: pre-wrap; }
         <translation>Textfarbe</translation>
     </message>
     <message>
-        <location line="+249"/>
+        <location line="+222"/>
         <source>Clear offline messages</source>
         <translation>Entferne offline Nachrichten</translation>
     </message>
     <message>
-        <location line="-430"/>
+        <location line="+5"/>
+        <source>Browse Message History</source>
+        <translation>Nachrichtenverlauf anzeigen</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Browse History</source>
+        <translation>Nachrichtenverlauf</translation>
+    </message>
+    <message>
+        <location line="-411"/>
         <source>Send</source>
         <translation>Senden</translation>
     </message>
     <message>
-        <location line="+409"/>
+        <location line="+382"/>
         <source>Clear Chat</source>
         <translation>Chat-Chronik löschen</translation>
     </message>
@@ -7802,7 +7822,7 @@ p, li { white-space: pre-wrap; }
         <translation>Deaktiviere Emoticons</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="-956"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="-1033"/>
         <source>Paste retroshare Link</source>
         <translation>RetroShare Link einfügen</translation>
     </message>
@@ -7822,7 +7842,7 @@ p, li { white-space: pre-wrap; }
         <translation>Wähle dein Avatar Bild aus</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="+695"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="+772"/>
         <source>Add Extra File</source>
         <translation>Zusätzlich eine Datei hinzufügen</translation>
     </message>
@@ -7838,12 +7858,12 @@ p, li { white-space: pre-wrap; }
         <translation>Ordner können nicht für Drag&apos;n&apos;Drop genutzt werden. Nur Dateien werden akzeptiert.</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="-436"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="-409"/>
         <source>Add a File for your Friend</source>
         <translation>Füge eine Datei für deinen Freund hinzu</translation>
     </message>
     <message>
-        <location line="+458"/>
+        <location line="+431"/>
         <location line="+3"/>
         <source>Save Chat History</source>
         <translation>Chat Verlauf speichern</translation>
@@ -7859,13 +7879,13 @@ p, li { white-space: pre-wrap; }
         <translation>Text Datei (*.txt );;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location line="-706"/>
+        <location line="-750"/>
         <source>Your Friend is offline 
 Do you want to send them a Message instead</source>
         <translation>Dein Freund ist Offline willst du ihm stattdessen eine Nachricht senden</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="-490"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="-463"/>
         <source>Attach a Picture</source>
         <translation>Bild anhängen</translation>
     </message>
@@ -7876,7 +7896,7 @@ Do you want to send them a Message instead</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="+745"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="+789"/>
         <source>is Idle and may not reply</source>
         <translation>antwortet möglicherweise nicht, da der Status auf &quot;Untätig&quot; gesetzt wurde</translation>
     </message>
@@ -7896,7 +7916,7 @@ Do you want to send them a Message instead</source>
         <translation>ist Offline.</translation>
     </message>
     <message>
-        <location line="-692"/>
+        <location line="-734"/>
         <source>is typing...</source>
         <translation>tippt...</translation>
     </message>
@@ -7906,12 +7926,12 @@ Do you want to send them a Message instead</source>
         <translation>Schliessen</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="-295"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="-331"/>
         <source>RetroShare</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+249"/>
+        <location line="+283"/>
         <source>Friend not Online</source>
         <translation>Freund ist nicht online</translation>
     </message>
