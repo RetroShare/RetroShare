@@ -27,6 +27,7 @@
  * ftServer2Test - Demonstrates how to check for test stuff.
  */
 
+#include "retroshare/rsfiles.h"
 #include "ft/ftserver.h"
 
 #include "ft/ftextralist.h"
@@ -38,7 +39,7 @@
 
 #include "util/rsdebug.h"
 
-#include "ft/pqitestor.h"
+#include "pqitestor.h"
 #include "util/rsdir.h"
 #include "util/utest.h"
 
@@ -73,7 +74,7 @@ int main(int argc, char **argv)
 	bool debugStderr = true;
 	bool loadAll = false;
 
-        std::list<std::string> fileList;
+        std::list<SharedDirInfo> fileList;
         std::list<std::string> extraList;
 	std::list<std::string> peerIds;
 	std::map<std::string, ftServer *> mFtServers;
@@ -120,7 +121,13 @@ int main(int argc, char **argv)
 	for(; optind < argc; optind++)
 	{
 		std::cerr << "Adding: " << argv[optind] << std::endl;
-		fileList.push_back(std::string(argv[optind]));
+
+		SharedDirInfo info ;
+		info.shareflags = RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_BROWSABLE ;
+		info.filename = std::string(argv[optind]);
+		info.virtualname = info.filename ;
+
+		fileList.push_back(info) ;
 	}
 
 	/* We need to setup a series 2 - 4 different ftServers....
@@ -136,7 +143,7 @@ int main(int argc, char **argv)
 	std::list<pqiAuthDetails> baseFriendList, friendList;
 	std::list<pqiAuthDetails>::iterator fit;
 
-	P3Hub *testHub = new P3Hub();
+	P3Hub *testHub = new P3Hub(0,NULL);
 	testHub->start();
 
 	/* Setup Base Friend Info */
@@ -191,7 +198,7 @@ int main(int argc, char **argv)
 
 		/* add server */
 		ftServer *server;
-		server = new ftServer(authMgr, connMgr);
+		server = new ftServer(connMgr);
 		mFtServers[*it] = server;
 		if (!mLoadServer)
 		{
@@ -386,7 +393,7 @@ void *do_server_test_thread(void *data)
         }
        
         DirDetails details;
-        uint32_t flags = DIR_FLAGS_DETAILS |  DIR_FLAGS_REMOTE;
+        flags = DIR_FLAGS_DETAILS |  DIR_FLAGS_REMOTE;
         void *ref = NULL;
  
         if(!server->RequestDirDetails(ref,details,flags))

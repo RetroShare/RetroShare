@@ -44,7 +44,7 @@
 
 #include "util/rsdebug.h"
 
-#include "ft/pqitestor.h"
+#include "pqitestor.h"
 #include "util/rsdir.h"
 
 #include <sstream>

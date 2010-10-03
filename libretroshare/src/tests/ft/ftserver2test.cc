@@ -33,6 +33,7 @@
 #endif
 
 
+#include "retroshare/rsfiles.h"
 #include "ft/ftserver.h"
 
 #include "ft/ftextralist.h"
@@ -44,7 +45,7 @@
 
 #include "util/rsdebug.h"
 
-#include "ft/pqitestor.h"
+#include "pqitestor.h"
 #include "util/rsdir.h"
 #include "util/utest.h"
 
@@ -79,7 +80,7 @@ int main(int argc, char **argv)
 	bool debugStderr = true;
 	bool loadAll = false;
 
-        std::list<std::string> fileList;
+        std::list<SharedDirInfo> fileList;
         std::list<std::string> extraList;
 	std::list<std::string> peerIds;
 	std::map<std::string, ftServer *> mFtServers;
@@ -149,7 +150,11 @@ int main(int argc, char **argv)
 	for(; optind < argc; optind++)
 	{
 		std::cerr << "Adding: " << argv[optind] << std::endl;
-		fileList.push_back(std::string(argv[optind]));
+		SharedDirInfo info ;
+		info.shareflag = RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_BROWSABLE ;
+		info.filename = string(argv[optind]);
+		info.virtualname = string(argv[optind]);
+		fileList.push_back(info) ;
 	}
 
 	/* We need to setup a series 2 - 4 different ftServers....

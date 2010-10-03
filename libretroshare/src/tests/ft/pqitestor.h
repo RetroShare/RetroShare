@@ -108,44 +108,53 @@ private:
 
 class P3Pipe: public P3Interface
 {
-public:
-	P3Pipe() {return; }
-virtual ~P3Pipe() {return; }
+	public:
+		P3Pipe() {return; }
+		virtual ~P3Pipe() {return; }
 
-virtual int	tick() { return 1; }
-virtual int	status() { return 1; }
+		virtual int	tick() { return 1; }
+		virtual int	status() { return 1; }
 
-	/* Overloaded from P3Interface */
-virtual int	SearchSpecific(RsCacheRequest *item);
-virtual int     SendSearchResult(RsCacheItem *item);
-virtual int     SendFileRequest(RsFileRequest *item);
-virtual int     SendFileData(RsFileData *item);
-virtual int	SendRsRawItem(RsRawItem *item);
+		/* Overloaded from P3Interface */
+		virtual int	SearchSpecific(RsCacheRequest *item);
+		virtual int     SendSearchResult(RsCacheItem *item);
+		virtual int     SendFileRequest(RsFileRequest *item);
+		virtual int     SendFileData(RsFileData *item);
+		virtual int	SendRsRawItem(RsRawItem *item);
 
-virtual RsCacheRequest *RequestedSearch();
-virtual RsCacheItem *GetSearchResult();
-virtual RsFileRequest *GetFileRequest();
-virtual RsFileData *GetFileData();
-virtual RsRawItem *GetRsRawItem();
+		virtual RsCacheRequest *RequestedSearch();
+		virtual RsCacheItem *GetSearchResult();
+		virtual RsFileRequest *GetFileRequest();
+		virtual RsFileData *GetFileData();
+		virtual RsRawItem *GetRsRawItem();
 
-	/* Lower Interface for PQIHub */
+		virtual RsFileChunkMapRequest* GetFileChunkMapRequest() ;
+		virtual int SendFileChunkMapRequest(RsFileChunkMapRequest*) ;
+		virtual RsFileChunkMap* GetFileChunkMap() ;
+		virtual int SendFileChunkMap(RsFileChunkMap*) ;
+		virtual RsFileCRC32MapRequest* GetFileCRC32MapRequest() ;
+		virtual int SendFileCRC32MapRequest(RsFileCRC32MapRequest*) ;
+		virtual RsFileCRC32Map* GetFileCRC32Map() ;
+		virtual int SendFileCRC32Map(RsFileCRC32Map*) ;
 
-RsItem *PopSentItem();
-int 	PushRecvdItem(RsItem *item);
+		/* Lower Interface for PQIHub */
+
+		RsItem *PopSentItem();
+		int 	PushRecvdItem(RsItem *item);
 
 	private:
 
-int 	SendAllItem(RsItem *item);
+		int 	SendAllItem(RsItem *item);
 
-	RsMutex pipeMtx;
+		RsMutex pipeMtx;
 
-	std::list<RsItem *> mSentItems; 
+		std::list<RsItem *> mSentItems; 
 
-	std::list<RsCacheRequest *> mRecvdRsCacheRequests;
-	std::list<RsCacheItem *> mRecvdRsCacheItems;
-	std::list<RsFileRequest *> mRecvdRsFileRequests;
-	std::list<RsFileData *> mRecvdRsFileDatas;
-	std::list<RsRawItem *> mRecvdRsRawItems;
+		std::list<RsCacheRequest *> mRecvdRsCacheRequests;
+		std::list<RsCacheItem *> mRecvdRsCacheItems;
+		std::list<RsFileRequest *> mRecvdRsFileRequests;
+		std::list<RsFileData *> mRecvdRsFileDatas;
+		std::list<RsRawItem *> mRecvdRsRawItems;
 };
 
 

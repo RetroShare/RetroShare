@@ -50,7 +50,7 @@
 
 #include "util/rsdebug.h"
 
-#include "ft/pqitestor.h"
+#include "pqitestor.h"
 #include "util/rsdir.h"
 #include "util/utest.h"
 
@@ -86,7 +86,7 @@ int main(int argc, char **argv)
 	bool loadAll = false;
 	bool loadOthers = false;
 
-        std::list<std::string> fileList;
+        std::list<SharedDirInfo> fileList;
         std::list<std::string> extraList;
 	std::list<std::string> peerIds;
 	std::map<std::string, ftServer *> mFtServers;
@@ -159,7 +159,13 @@ int main(int argc, char **argv)
 	for(; optind < argc; optind++)
 	{
 		std::cerr << "Adding: " << argv[optind] << std::endl;
-		fileList.push_back(std::string(argv[optind]));
+
+		SharedDirInfo info ;
+		info.filename = std::string(argv[optind]);
+		info.virtualname = info.filename ;
+		info.shareflags = RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_BROWSABLE ;
+
+		fileList.push_back(info) ;
 	}
 
 	/* We need to setup a series 2 - 4 different ftServers....
@@ -386,10 +392,10 @@ void *do_server_test_thread(void *data)
 	SizeExpression se(Smaller, minFileSize);
 	Expression *expr = &se;
 
-	std::list<FileDetail> results;
-	std::list<FileDetail>::iterator it;
+	std::list<DirDetails> results;
+	std::list<DirDetails>::iterator it;
 
-	oServer->SearchBoolExp(expr, results);
+	oServer->SearchBoolExp(expr, results, RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_BROWSABLE);
 
 	if (results.size() < 1)
 	{
@@ -400,10 +406,9 @@ void *do_server_test_thread(void *data)
 	}
 
 	/* find the first remote entry */
-	FileDetail sFile;
+	DirDetails sFile;
 	bool foundFile = false;
-	for(it = results.begin(); 
-		(it != results.end()); it++)
+	for(it = results.begin(); (it != results.end()); it++)
 	{
 		std::cerr << "Shared File: " << it->name;
 		std::cerr << std::endl;
