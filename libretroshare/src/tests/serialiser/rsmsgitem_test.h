@@ -37,6 +37,7 @@ RsSerialType* init_item(RsChatAvatarItem& );
 RsSerialType* init_item(RsMsgItem& );
 RsSerialType* init_item(RsMsgTagType& );
 RsSerialType* init_item(RsMsgTags& );
+RsSerialType* init_item(RsMsgSrcId& );
 
 bool operator ==(const RsChatMsgItem& ,const  RsChatMsgItem& );
 bool operator ==(const RsChatStatusItem& , const RsChatStatusItem& );
@@ -44,6 +45,6 @@ bool operator ==(const RsChatAvatarItem&, const RsChatAvatarItem&  );
 bool operator ==(const RsMsgTagType&, const RsMsgTagType& );
 bool operator ==(const RsMsgTags&, const RsMsgTags& );
 bool operator ==(const RsMsgItem&, const RsMsgItem& );
-
+bool operator ==(const RsMsgSrcId&, const RsMsgSrcId& );
 
 #endif /* MSGITEM_TEST_H_ */

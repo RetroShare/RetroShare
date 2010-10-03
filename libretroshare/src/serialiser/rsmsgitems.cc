@@ -559,12 +559,42 @@ void RsMsgTags::clear()
 
 std::ostream& RsMsgTagType::print(std::ostream &out, uint16_t indent)
 {
+	printRsItemBase(out, "RsMsgTagType", indent);
+	uint16_t int_Indent = indent + 2;
+
+	printIndent(out, int_Indent);
+	out << "rgb_color : " << rgb_color  << std::endl;
+
+
+	printIndent(out, int_Indent);
+	out << "text: " << text << std::endl;
+
+	printIndent(out, int_Indent);
+	out << "tagId: " << tagId << std::endl;
+
+	printRsItemEnd(out, "RsMsgTagTypeItem", indent);
 
 	return out;
 }
 
 std::ostream& RsMsgTags::print(std::ostream &out, uint16_t indent)
 {
+
+	printRsItemBase(out, "RsMsgTagsItem", indent);
+	uint16_t int_Indent = indent + 2;
+
+	printIndent(out, int_Indent);
+	out << "msgId : " << msgId << std::endl;
+
+	std::list<uint32_t>::iterator it;
+
+	for(it=tagIds.begin(); it != tagIds.end(); it++)
+	{
+		printIndent(out, int_Indent);
+		out << "tagId : " << *it << std::endl;
+	}
+
+	printRsItemEnd(out, "RsMsgTags", indent);
 
 	return out;
 }
@@ -937,16 +967,156 @@ RsMsgTags* RsMsgSerialiser::deserialiseMsgTagItem(void* data, uint32_t* pktsize)
 	return item;
 }
 
+
+/************************************** Message SrcId **********************/
+
+
+
+RsMsgSrcId::~RsMsgSrcId()
+{
+	return;
+}
+
+std::ostream& RsMsgSrcId::print(std::ostream& out, uint16_t indent)
+{
+	printRsItemBase(out, "RsMsgSrcIdItem", indent);
+	uint16_t int_Indent = indent + 2;
+
+	printIndent(out, int_Indent);
+	out << "msgId : " << msgId << std::endl;
+
+	printIndent(out, int_Indent);
+	out << "SrcId: " << srcId << std::endl;
+
+
+	printRsItemEnd(out, "RsMsgItem", indent);
+
+	return out;
+}
+
+void RsMsgSrcId::clear()
+{
+	msgId = 0;
+	srcId.clear();
+
+	return;
+}
+
+uint32_t RsMsgSerialiser::sizeMsgSrcIdItem(RsMsgSrcId* item)
+{
+	uint32_t s = 8; /* header */
+
+	s += 4;
+	s += GetTlvStringSize(item->srcId);
+
+	return s;
+}
+
+
+bool RsMsgSerialiser::serialiseMsgSrcIdItem(RsMsgSrcId *item, void *data, uint32_t* pktsize)
+{
+	uint32_t tlvsize = sizeMsgSrcIdItem(item);
+	uint32_t offset = 0;
+
+	if (*pktsize < tlvsize)
+		return false; /* not enough space */
+
+	*pktsize = tlvsize;
+
+	bool ok = true;
+
+	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+
+#ifdef RSSERIAL_DEBUG
+	std::cerr << "RsMsgSerialiser::serialiseMsgSrcIdItem() Header: " << ok << std::endl;
+	std::cerr << "RsMsgSerialiser::serialiseMsgSrcIdItem() Size: " << tlvsize << std::endl;
+#endif
+
+	/* skip the header */
+	offset += 8;
+
+	ok &= setRawUInt32(data, tlvsize, &offset, item->msgId);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PEERID, (item->srcId));
+
+	if (offset != tlvsize)
+	{
+		ok = false;
+#ifdef RSSERIAL_DEBUG
+		std::cerr << "RsMsgSerialiser::serialiseMsgSrcIdItem() Size Error! " << std::endl;
+#endif
+	}
+
+	return ok;
+}
+
+RsMsgSrcId* RsMsgSerialiser::deserialiseMsgSrcIdItem(void* data, uint32_t* pktsize)
+{
+	/* get the type and size */
+	uint32_t rstype = getRsItemId(data);
+	uint32_t rssize = getRsItemSize(data);
+
+	uint32_t offset = 0;
+
+
+	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
+		(RS_SERVICE_TYPE_MSG != getRsItemService(rstype)) ||
+		(RS_PKT_SUBTYPE_MSG_SRC_TAG != getRsItemSubType(rstype)))
+	{
+		return NULL; /* wrong type */
+	}
+
+	if (*pktsize < rssize)    /* check size */
+		return NULL; /* not enough data */
+
+	/* set the packet length */
+	*pktsize = rssize;
+
+	bool ok = true;
+
+	/* ready to load */
+	RsMsgSrcId *item = new RsMsgSrcId();
+	item->clear();
+
+	/* skip the header */
+	offset += 8;
+
+
+	/* get mandatory parts first */
+	ok &= getRawUInt32(data, rssize, &offset, &(item->msgId));
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PEERID, item->srcId);
+
+	if (offset != rssize)
+	{
+		/* error */
+		delete item;
+		return NULL;
+	}
+
+	if (!ok)
+	{
+		delete item;
+		return NULL;
+	}
+
+	return item;
+}
+
+/************************* end of definition of msgSrcId serialisation functions ************************/
 uint32_t    RsMsgSerialiser::size(RsItem *i)
 {
 	RsMsgItem *mi;
 	RsMsgTagType *mtt;
 	RsMsgTags *mts;
+	RsMsgSrcId *msi;
 
 	/* in order of frequency */
 	if (NULL != (mi = dynamic_cast<RsMsgItem *>(i)))
 	{
 		return sizeMsgItem(mi);
+	}
+	else if (NULL != (msi = dynamic_cast<RsMsgSrcId *>(i)))
+	{
+		return sizeMsgSrcIdItem(msi);
 	}
 	else if (NULL != (mtt = dynamic_cast<RsMsgTagType *>(i)))
 	{
@@ -967,12 +1137,18 @@ bool     RsMsgSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsize)
 #endif
 
 	RsMsgItem *mi;
+	RsMsgSrcId* msi;
 	RsMsgTagType *mtt;
 	RsMsgTags *mts;
+
 
 	if (NULL != (mi = dynamic_cast<RsMsgItem *>(i)))
 	{
 		return serialiseMsgItem(mi, data, pktsize);
+	}
+	else if (NULL != (msi = dynamic_cast<RsMsgSrcId *>(i)))
+	{
+		return serialiseMsgSrcIdItem(msi, data, pktsize);
 	}
 	else if (NULL != (mtt = dynamic_cast<RsMsgTagType *>(i)))
 	{
@@ -982,6 +1158,7 @@ bool     RsMsgSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsize)
 	{
 		return serialiseMsgTagItem(mts, data, pktsize);
 	}
+
 	return false;
 }
 
@@ -1004,6 +1181,9 @@ RsItem* RsMsgSerialiser::deserialise(void *data, uint32_t *pktsize)
 	{
 		case RS_PKT_SUBTYPE_DEFAULT:
 			return deserialiseMsgItem(data, pktsize);
+			break;
+		case RS_PKT_SUBTYPE_MSG_SRC_TAG:
+			return deserialiseMsgSrcIdItem(data, pktsize);
 			break;
 		case RS_PKT_SUBTYPE_MSG_TAG_TYPE:
 			return deserialiseTagItem(data, pktsize);
