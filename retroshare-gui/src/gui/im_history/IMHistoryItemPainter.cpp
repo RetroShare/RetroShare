@@ -25,7 +25,7 @@
 
 #include "IMHistoryItemPainter.h"
 
-IMHistoryItemPainter::IMHistoryItemPainter(QString text)
+IMHistoryItemPainter::IMHistoryItemPainter(const QString &text)
 {
     itemText = text;
 

@@ -27,6 +27,7 @@
 #include <QTextEdit>
 #include <QClipboard>
 #include <QKeyEvent>
+#include <QThread>
 
 #include "ImHistoryBrowser.h"
 #include "IMHistoryItemDelegate.h"
@@ -39,6 +40,40 @@
 #define ROLE_HIID      Qt::UserRole
 #define ROLE_PLAINTEXT Qt::UserRole + 1
 #define ROLE_OFFLINE   Qt::UserRole + 2
+
+ImHistoryBrowserCreateItemsThread::ImHistoryBrowserCreateItemsThread(ImHistoryBrowser *parent, IMHistoryKeeper &histKeeper)
+    : QThread(parent), m_historyKeeper(histKeeper)
+{
+    m_historyBrowser = parent;
+}
+
+ImHistoryBrowserCreateItemsThread::~ImHistoryBrowserCreateItemsThread()
+{
+    // remove all items (when items are available, the thread was terminated)
+    QList<QListWidgetItem*>::iterator it;
+    for (it = m_items.begin(); it != m_items.end(); it++) {
+        delete(*it);
+    }
+
+    m_items.clear();
+}
+
+void ImHistoryBrowserCreateItemsThread::run()
+{
+    QList<IMHistoryItem> historyItems;
+    m_historyKeeper.getMessages(historyItems, 0);
+
+    int count = historyItems.count();
+    int current = 0;
+
+    foreach(IMHistoryItem item, historyItems) {
+        QListWidgetItem *itemWidget = m_historyBrowser->createItem(item);
+        if (itemWidget) {
+            m_items.push_back(itemWidget);
+            emit progress(++current, count);
+        }
+    }
+}
 
 /** Default constructor */
 ImHistoryBrowser::ImHistoryBrowser(const std::string &peerId, IMHistoryKeeper &histKeeper, QTextEdit *edit, QWidget *parent, Qt::WFlags flags)
@@ -82,26 +117,75 @@ ImHistoryBrowser::ImHistoryBrowser(const std::string &peerId, IMHistoryKeeper &h
     // call once
     privateChatChanged(NOTIFY_LIST_PRIVATE_OUTGOING_CHAT, NOTIFY_TYPE_ADD);
 
-    QList<IMHistoryItem> historyItems;
-    historyKeeper.getMessages(historyItems, 0);
-    foreach(IMHistoryItem item, historyItems) {
-        addItem(item);
-    }
-
     QByteArray geometry = Settings->valueFromGroup("HistorieBrowser", "Geometry", QByteArray()).toByteArray();
     if (geometry.isEmpty() == false) {
         restoreGeometry(geometry);
     }
 
-    // dummy call for set butons
+    // dummy call for set buttons
     itemSelectionChanged();
 
     ui.listWidget->installEventFilter(this);
+
+    m_createThread = new ImHistoryBrowserCreateItemsThread(this, historyKeeper);
+    connect(m_createThread, SIGNAL(finished()), this, SLOT(createThreadFinished()));
+    connect(m_createThread, SIGNAL(terminated()), this, SLOT(createThreadTerminated()));
+    connect(m_createThread, SIGNAL(progress(int,int)), this, SLOT(createThreadProgress(int,int)));
+    m_createThread->start();
 }
 
 ImHistoryBrowser::~ImHistoryBrowser()
 {
     Settings->setValueToGroup("HistorieBrowser", "Geometry", saveGeometry());
+
+    if (m_createThread) {
+        m_createThread->terminate();
+    }
+}
+
+void ImHistoryBrowser::createThreadTerminated()
+{
+    if (m_createThread == sender()) {
+        ui.progressBar->setVisible(false);
+        m_createThread = NULL;
+    }
+}
+
+void ImHistoryBrowser::createThreadFinished()
+{
+    if (m_createThread == sender()) {
+        ui.progressBar->setVisible(false);
+
+        // append created items
+        QList<QListWidgetItem*>::iterator it;
+        for (it = m_createThread->m_items.begin(); it != m_createThread->m_items.end(); it++) {
+            ui.listWidget->addItem(*it);
+        }
+
+        // clear list
+        m_createThread->m_items.clear();
+
+        filterRegExpChanged();
+
+        // dummy call for set buttons
+        itemSelectionChanged();
+
+        delete(m_createThread);
+        m_createThread = NULL;
+
+        QList<IMHistoryItem>::iterator histIt;
+        for (histIt = m_itemsAddedOnLoad.begin(); histIt != m_itemsAddedOnLoad.end(); histIt++) {
+            historyAdd(*histIt);
+        }
+        m_itemsAddedOnLoad.clear();
+    }
+}
+
+void ImHistoryBrowser::createThreadProgress(int current, int count)
+{
+    if (count) {
+        ui.progressBar->setValue(current * ui.progressBar->maximum() / count);
+    }
 }
 
 bool ImHistoryBrowser::eventFilter(QObject *obj, QEvent *event)
@@ -122,8 +206,15 @@ bool ImHistoryBrowser::eventFilter(QObject *obj, QEvent *event)
 
 void ImHistoryBrowser::historyAdd(IMHistoryItem item)
 {
-    QListWidgetItem *itemWidget = addItem(item);
+    if (m_createThread) {
+        // create later
+        m_itemsAddedOnLoad.push_back(item);
+        return;
+    }
+
+    QListWidgetItem *itemWidget = createItem(item);
     if (itemWidget) {
+        ui.listWidget->addItem(itemWidget);
         filterItems(itemWidget);
     }
 }
@@ -190,14 +281,11 @@ void ImHistoryBrowser::fillItem(QListWidgetItem *itemWidget, IMHistoryItem &item
     QTextDocument doc;
     doc.setHtml(item.messageText);
     itemWidget->setData(ROLE_PLAINTEXT, doc.toPlainText());
-
-    filterRegExpChanged();
 }
 
-QListWidgetItem *ImHistoryBrowser::addItem(IMHistoryItem &item)
+QListWidgetItem *ImHistoryBrowser::createItem(IMHistoryItem &item)
 {
     QListWidgetItem *itemWidget = new QListWidgetItem;
-    ui.listWidget->addItem(itemWidget);
     fillItem(itemWidget, item);
     return itemWidget;
 }
@@ -415,5 +503,7 @@ void ImHistoryBrowser::privateChatChanged(int list, int type)
                 fillItem(itemWidget, item);
             }
         }
+
+        filterRegExpChanged();
     }
 }

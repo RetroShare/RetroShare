@@ -235,7 +235,7 @@ void IMHistoryKeeper::removeMessages(QList<int> &hiids)
         if (qFind(hiids, it->hiid) != hiids.end()) {
             emit historyRemove(*it);
 
-            hitems.erase(it);
+            it = hitems.erase(it);
 
             changed = true;
 

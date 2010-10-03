@@ -32,10 +32,13 @@
 #include "ui_ImHistoryBrowser.h"
 
 class QTextEdit;
+class ImHistoryBrowserCreateItemsThread;
 
 class ImHistoryBrowser : public QDialog
 {
-  Q_OBJECT
+    Q_OBJECT
+
+    friend class ImHistoryBrowserCreateItemsThread;
 
 public:
     /** Default constructor */
@@ -47,6 +50,10 @@ protected:
     bool eventFilter(QObject *obj, QEvent *ev);
 
 private slots:
+    void createThreadTerminated();
+    void createThreadFinished();
+    void createThreadProgress(int current, int count);
+
     void historyAdd(IMHistoryItem item);
     void historyRemove(IMHistoryItem item);
     void historyClear();
@@ -65,11 +72,13 @@ private slots:
     void privateChatChanged(int list, int type);
 
 private:
-    QListWidgetItem *addItem(IMHistoryItem &item);
+    QListWidgetItem *createItem(IMHistoryItem &item);
     void fillItem(QListWidgetItem *itemWidget, IMHistoryItem &item);
     void filterItems(QListWidgetItem *item = NULL);
 
     void getSelectedItems(QList<int> &items);
+
+    ImHistoryBrowserCreateItemsThread *m_createThread;
 
     std::string m_peerId;
     bool m_isPrivateChat;
@@ -79,9 +88,31 @@ private:
     ChatStyle style;
 
     std::list<ChatInfo> m_savedOfflineChat;
+    QList<IMHistoryItem> m_itemsAddedOnLoad;
 
     /** Qt Designer generated object */
     Ui::ImHistoryBrowser ui;
+};
+
+class ImHistoryBrowserCreateItemsThread : public QThread
+{
+    Q_OBJECT
+
+public:
+    ImHistoryBrowserCreateItemsThread(ImHistoryBrowser *parent, IMHistoryKeeper &histKeeper);
+    ~ImHistoryBrowserCreateItemsThread();
+
+    void run();
+
+signals:
+    void progress(int current, int count);
+
+public:
+    QList<QListWidgetItem*> m_items;
+
+private:
+    IMHistoryKeeper &m_historyKeeper;
+    ImHistoryBrowser *m_historyBrowser;
 };
 
 #endif

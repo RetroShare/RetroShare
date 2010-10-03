@@ -240,7 +240,7 @@ border-image: url(:/images/closepressed.png)
      <property name="margin">
       <number>9</number>
      </property>
-     <item row="0" column="0">
+     <item row="1" column="0">
       <widget class="QListWidget" name="listWidget">
        <property name="contextMenuPolicy">
         <enum>Qt::CustomContextMenu</enum>
@@ -250,7 +250,7 @@ border-image: url(:/images/closepressed.png)
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
+     <item row="2" column="0">
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <property name="topMargin">
         <number>6</number>
@@ -283,13 +283,24 @@ border-image: url(:/images/closepressed.png)
        </item>
       </layout>
      </item>
+     <item row="0" column="0">
+      <widget class="QProgressBar" name="progressBar">
+       <property name="maximum">
+        <number>1000</number>
+       </property>
+       <property name="value">
+        <number>24</number>
+       </property>
+       <property name="textVisible">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
   </layout>
  </widget>
  <resources>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections>
