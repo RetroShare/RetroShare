@@ -86,13 +86,31 @@ uint32_t    actions;
 
 class p3ConnectMgr;
 
+/*!
+ * This class should be implemented
+ * to use the information that is passed to it via
+ * from the p3ConnectMngr
+ * Useful information is sent via ticks such as a peer's
+ * state and a peer's action
+ */
 class pqiMonitor
 {
 	public:
 	pqiMonitor() :mConnMgr(NULL) { return; }
 virtual ~pqiMonitor() { return; }
 
+	/*!
+	 * passes a handle the retroshare connection manager
+	 */
 	void setConnectionMgr(p3ConnectMgr *cm) { mConnMgr = cm; }
+
+	/*!
+	 * this serves as a call back function for server which has
+	 * a handle on the subclass and updates this subclass on the
+	 * action of peer's of the client (state and action information)
+	 *
+	 *@param plist contains list of states and actions of the client's peers
+	 */
 virtual void	statusChange(const std::list<pqipeer> &plist) = 0;
 //virtual void	ownStatusChange(pqipeer &) { return; } // SIGNAL reset or similar.
 //virtual void	peerStatus(std::string id, uint32_t mode) = 0;

@@ -2497,7 +2497,8 @@ bool p3GroupDistrib::locked_editGroup(std::string grpId, GroupInfo& gi){
 
     }
 
-	gi_curr->distribGroup->grpFlags |= RS_DISTRIB_UPDATE;
+    // set new timestamp for grp
+    gi_curr->distribGroup->timestamp = time(NULL);
 
     // create new signature for group
 
@@ -2524,6 +2525,9 @@ bool p3GroupDistrib::locked_editGroup(std::string grpId, GroupInfo& gi){
     mGroupsChanged = true;
     gi_curr->grpChanged = true;
     mGroupsRepublish = true;
+
+    // this is removed afterwards
+    gi_curr->distribGroup->grpFlags |= RS_DISTRIB_UPDATE;
 
     delete[] data;
 
