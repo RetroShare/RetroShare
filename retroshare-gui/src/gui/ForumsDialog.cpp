@@ -205,8 +205,8 @@ ForumsDialog::ForumsDialog(QWidget *parent)
     /* Set header resize modes and initial section sizes */
     QHeaderView * ttheader = ui.threadTreeWidget->header () ;
     ttheader->setResizeMode (COLUMN_THREAD_TITLE, QHeaderView::Interactive);
-    ttheader->resizeSection (COLUMN_THREAD_DATE,  190);
-    ttheader->resizeSection (COLUMN_THREAD_TITLE, 170);
+    ttheader->resizeSection (COLUMN_THREAD_DATE,  140);
+    ttheader->resizeSection (COLUMN_THREAD_TITLE, 290);
 
     ui.threadTreeWidget->sortItems( COLUMN_THREAD_DATE, Qt::DescendingOrder );
 
