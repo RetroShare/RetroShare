@@ -86,7 +86,7 @@ protected:
   bool eventFilter(QObject *obj, QEvent *ev);
 
   void insertChatMsgs();
-  void addChatMsg(bool incoming, const std::string &id, const QString &name, const QDateTime &sendTime, const QString &message, enumChatType chatType, bool addToHistory);
+  void addChatMsg(bool incoming, const std::string &id, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message, enumChatType chatType, bool addToHistory);
 
   void updateAvatar();
 

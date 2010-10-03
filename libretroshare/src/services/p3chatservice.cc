@@ -89,6 +89,7 @@ int     p3ChatService::sendPublicChat(std::wstring &msg)
 		ci->PeerId(*it);
 		ci->chatFlags = 0;
 		ci->sendTime = time(NULL);
+		ci->recvTime = ci->sendTime;
 		ci->message = msg;
 	
 #ifdef CHAT_DEBUG
@@ -216,6 +217,7 @@ bool     p3ChatService::sendPrivateChat(std::string &id, std::wstring &msg)
 	ci->PeerId(id);
 	ci->chatFlags = RS_CHAT_FLAG_PRIVATE;
 	ci->sendTime = time(NULL);
+	ci->recvTime = ci->sendTime;
 	ci->message = msg;
 
 	if (!mConnMgr->isOnline(id)) {
@@ -599,7 +601,8 @@ void p3ChatService::initRsChatInfo(RsChatMsgItem *c, ChatInfo &i)
 {
 	i.rsid = c->PeerId();
 	i.chatflags = 0;
-	i.sendTime =c->sendTime;
+	i.sendTime = c->sendTime;
+	i.recvTime = c->recvTime;
 	i.msg  = c->message;
 
 	if (c -> chatFlags & RS_CHAT_FLAG_PRIVATE)

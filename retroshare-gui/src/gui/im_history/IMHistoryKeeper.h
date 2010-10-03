@@ -78,7 +78,7 @@ public:
 
     //! Adds new message to the history, but the message will be saved to
     //! file only after destroing the object
-    void addMessage(bool incoming, const std::string &id, const QString &name, const QDateTime &sendTime, const QString &messageText);
+    void addMessage(bool incoming, const std::string &id, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &messageText);
 
     //! Clear the history
     void clear();

@@ -67,9 +67,9 @@ void IMHistoryKeeper::init(QString historyFileName)
 
 //=============================================================================
 
-void IMHistoryKeeper::addMessage(bool incoming, const std::string &id, const QString &name, const QDateTime &sendTime, const QString &messageText)
+void IMHistoryKeeper::addMessage(bool incoming, const std::string &id, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &messageText)
 {
-    IMHistoryItem item(++lasthiid, incoming, id, name, sendTime, messageText);
+    IMHistoryItem item(++lasthiid, incoming, id, name, sendTime, recvTime, messageText);
 
     hitems.append(item);
 

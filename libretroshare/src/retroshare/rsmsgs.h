@@ -128,6 +128,7 @@ class ChatInfo
 	std::string rsid;
 	unsigned int chatflags;
 	uint32_t sendTime;
+	uint32_t recvTime;
 	std::wstring msg;
 };
 

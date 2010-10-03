@@ -178,6 +178,13 @@ void IMHistoryReader::readMessage(IMHistoryItem &historyItem)
         int ti = attributes().value("sendTime").toString().toInt();
         historyItem.sendTime = QDateTime::fromTime_t(ti);
 
+        ti = attributes().value("recvTime").toString().toInt();
+        if (ti) {
+            historyItem.recvTime = QDateTime::fromTime_t(ti);
+        } else {
+            historyItem.recvTime = historyItem.sendTime;
+        }
+
         //=== after processing attributes, read the message text
         QString tstr = readElementText();
 

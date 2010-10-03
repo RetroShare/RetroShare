@@ -30,13 +30,14 @@ IMHistoryItem::IMHistoryItem()
 
 //============================================================================
 
-IMHistoryItem::IMHistoryItem(int hiidIn, bool incomingIn, const std::string &idIn, const QString &nameIn, const QDateTime &sendTimeIn, const QString &messageTextIn)
+IMHistoryItem::IMHistoryItem(int hiidIn, bool incomingIn, const std::string &idIn, const QString &nameIn, const QDateTime &sendTimeIn, const QDateTime &recvTimeIn, const QString &messageTextIn)
 {
     hiid = hiidIn;
     incoming = incomingIn;
     id = idIn;
     name = nameIn;
     sendTime = sendTimeIn;
+    recvTime = recvTimeIn;
     messageText = messageTextIn;
 }
 
@@ -46,5 +47,5 @@ IMHistoryItem::IMHistoryItem(int hiidIn, bool incomingIn, const std::string &idI
 bool
 IMHistoryItem::operator<(const IMHistoryItem& item) const
 {
-    return (sendTime < item.sendTime) ;
+    return (recvTime < item.recvTime) ;
 }

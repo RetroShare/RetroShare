@@ -173,7 +173,7 @@ signals:
 
 private:
     void processSettings(bool bLoad);
-    void addChatMsg(bool incoming, bool history, QString &name, QDateTime &sendTime, QString &message);
+    void addChatMsg(bool incoming, bool history, QString &name, QDateTime &recvTime, QString &message);
 
     class QLabel *iconLabel, *textLabel;
     class QWidget *widget;

@@ -229,7 +229,7 @@ PopupChatDialog::PopupChatDialog(std::string id, const QString name, QWidget *pa
           }
 
           if (offineChatIt == offlineChat.end()) {
-              addChatMsg(item.incoming, item.id, item.name, item.sendTime, item.messageText, TYPE_HISTORY, false);
+              addChatMsg(item.incoming, item.id, item.name, item.sendTime, item.recvTime, item.messageText, TYPE_HISTORY, false);
           }
       }
   }
@@ -576,6 +576,7 @@ void PopupChatDialog::onPrivateChatChanged(int list, int type, bool initial /*= 
 
                         QString name = QString::fromStdString(rsPeers->getPeerName(it->rsid));
                         QDateTime sendTime = QDateTime::fromTime_t(it->sendTime);
+                        QDateTime recvTime = QDateTime::fromTime_t(it->recvTime);
                         QString message = QString::fromStdWString(it->msg);
 
                         bool existingMessage;
@@ -591,7 +592,7 @@ void PopupChatDialog::onPrivateChatChanged(int list, int type, bool initial /*= 
                         }
 
                         if (showMessage) {
-                            addChatMsg(false, it->rsid, name, sendTime, message, TYPE_OFFLINE, !existingMessage);
+                            addChatMsg(false, it->rsid, name, sendTime, recvTime, message, TYPE_OFFLINE, !existingMessage);
                         }
                     }
                 }
@@ -605,9 +606,10 @@ void PopupChatDialog::onPrivateChatChanged(int list, int type, bool initial /*= 
                     for(it = m_savedOfflineChat.begin(); it != m_savedOfflineChat.end(); it++) {
                         QString name = QString::fromStdString(rsPeers->getPeerName(it->rsid));
                         QDateTime sendTime = QDateTime::fromTime_t(it->sendTime);
+                        QDateTime recvTime = QDateTime::fromTime_t(it->recvTime);
                         QString message = QString::fromStdWString(it->msg);
 
-                        addChatMsg(false, it->rsid, name, sendTime, message, TYPE_NORMAL, false);
+                        addChatMsg(false, it->rsid, name, sendTime, recvTime, message, TYPE_NORMAL, false);
                     }
                 }
 
@@ -646,7 +648,7 @@ void PopupChatDialog::insertChatMsgs()
             continue;
         }
 
-        addChatMsg(true, it->rsid, QString::fromStdString(rsPeers->getPeerName(it->rsid)), QDateTime::fromTime_t(it->sendTime), QString::fromStdWString(it->msg), TYPE_NORMAL, true);
+        addChatMsg(true, it->rsid, QString::fromStdString(rsPeers->getPeerName(it->rsid)), QDateTime::fromTime_t(it->sendTime), QDateTime::fromTime_t(it->recvTime), QString::fromStdWString(it->msg), TYPE_NORMAL, true);
     }
 
     rsMsgs->clearPrivateChatQueue(true, dialogId);
@@ -655,12 +657,9 @@ void PopupChatDialog::insertChatMsgs()
     QApplication::alert(this);
 }
 
-void PopupChatDialog::addChatMsg(bool incoming, const std::string &id, const QString &name, const QDateTime &sendTime, const QString &message, enumChatType chatType, bool addToHistory)
+void PopupChatDialog::addChatMsg(bool incoming, const std::string &id, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message, enumChatType chatType, bool addToHistory)
 {
     std::string ownId = rsPeers->getOwnId();
-
-//...
-//    QString name = QString::fromStdString(rsPeers->getPeerName(offline ? ownId : id));
 
 #ifdef CHAT_DEBUG
     std::cout << "PopupChatDialog:addChatMsg message : " << message.toStdString() << std::endl;
@@ -682,14 +681,10 @@ void PopupChatDialog::addChatMsg(bool incoming, const std::string &id, const QSt
         type = incoming ? ChatStyle::FORMATMSG_INCOMING : ChatStyle::FORMATMSG_OUTGOING;
     }
 
-    QString formatMsg = style.formatMessage(type, name, sendTime, message, formatFlag);
-
-//    if (offline) {
-//        ui.offlineTextBrowser->append(formatMsg);
-//    }
+    QString formatMsg = style.formatMessage(type, name, recvTime, message, formatFlag);
 
     if (addToHistory) {
-        historyKeeper.addMessage(incoming, id, name, sendTime, message);
+        historyKeeper.addMessage(incoming, id, name, sendTime, recvTime, message);
     }
 
     ui.textBrowser->append(formatMsg);
@@ -761,7 +756,8 @@ void PopupChatDialog::sendChat()
 #endif
 
     if (rsMsgs->sendPrivateChat(dialogId, msg)) {
-        addChatMsg(false, ownId, QString::fromStdString(rsPeers->getPeerName(ownId)), QDateTime::currentDateTime(), QString::fromStdWString(msg), TYPE_NORMAL, true);
+        QDateTime currentTime = QDateTime::currentDateTime();
+        addChatMsg(false, ownId, QString::fromStdString(rsPeers->getPeerName(ownId)), currentTime, currentTime, QString::fromStdWString(msg), TYPE_NORMAL, true);
     }
 
     chatWidget->clear();
@@ -1063,7 +1059,8 @@ void PopupChatDialog::fileHashingFinished(AttachFileItem* file)
     std::wstring msg = message.toStdWString();
 
     if (rsMsgs->sendPrivateChat(dialogId, msg)) {
-        addChatMsg(false, ownId, QString::fromStdString(rsPeers->getPeerName(ownId)), QDateTime::currentDateTime(), QString::fromStdWString(msg), TYPE_NORMAL, true);
+        QDateTime currentTime = QDateTime::currentDateTime();
+        addChatMsg(false, ownId, QString::fromStdString(rsPeers->getPeerName(ownId)), currentTime, currentTime, QString::fromStdWString(msg), TYPE_NORMAL, true);
     }
 }
 

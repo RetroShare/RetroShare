@@ -193,7 +193,7 @@ PeersDialog::PeersDialog(QWidget *parent)
         QList<IMHistoryItem> historyItems;
         historyKeeper.getMessages(historyItems, 20);
         foreach(IMHistoryItem item, historyItems) {
-            addChatMsg(item.incoming, true, item.name, item.sendTime, item.messageText);
+            addChatMsg(item.incoming, true, item.name, item.recvTime, item.messageText);
         }
     }
 
@@ -1364,7 +1364,7 @@ void PeersDialog::publicChatChanged(int type)
     }
 }
 
-void PeersDialog::addChatMsg(bool incoming, bool history, QString &name, QDateTime &sendTime, QString &message)
+void PeersDialog::addChatMsg(bool incoming, bool history, QString &name, QDateTime &recvTime, QString &message)
 {
     unsigned int formatFlag = CHAT_FORMATMSG_EMBED_LINKS;
 
@@ -1387,7 +1387,7 @@ void PeersDialog::addChatMsg(bool incoming, bool history, QString &name, QDateTi
             type = ChatStyle::FORMATMSG_OUTGOING;
         }
     }
-    QString formatMsg = style.formatMessage(type, name, sendTime, message, formatFlag);
+    QString formatMsg = style.formatMessage(type, name, recvTime, message, formatFlag);
 
     ui.msgText->append(formatMsg);
 }
@@ -1418,6 +1418,7 @@ void PeersDialog::insertChat()
         }
 
         QDateTime sendTime = QDateTime::fromTime_t(it->sendTime);
+        QDateTime recvTime = QDateTime::fromTime_t(it->recvTime);
         QString name = QString::fromStdString(rsPeers->getPeerName(it->rsid));
         QString msg = QString::fromStdWString(it->msg);
 
@@ -1443,8 +1444,8 @@ void PeersDialog::insertChat()
                 emit notifyGroupChat(QString("New group chat"), notifyMsg);
         }
 
-        historyKeeper.addMessage(incoming, it->rsid, name, sendTime, msg);
-        addChatMsg(incoming, false, name, sendTime, msg);
+        historyKeeper.addMessage(incoming, it->rsid, name, sendTime, recvTime, msg);
+        addChatMsg(incoming, false, name, recvTime, msg);
     }
 }
 
