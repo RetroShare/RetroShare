@@ -71,6 +71,22 @@ Q_DECLARE_METATYPE(FileProgressInfo)
 
 DetailsDialog *TransfersDialog::detailsdlg = NULL;
 
+class ProgressItem : public QStandardItem
+{
+public:
+    ProgressItem() : QStandardItem() {}
+
+    virtual bool operator<(const QStandardItem &other) const
+    {
+        const int role = model() ? model()->sortRole() : Qt::DisplayRole;
+
+        FileProgressInfo l = data(role).value<FileProgressInfo>();
+        FileProgressInfo r = other.data(role).value<FileProgressInfo>();
+
+        return l < r;
+    }
+};
+
 /** Constructor */
 TransfersDialog::TransfersDialog(QWidget *parent)
 : RsAutoUpdatePage(1000,parent)
@@ -139,11 +155,8 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     _header->resizeSection ( PRIORITY, 100 );
     _header->resizeSection ( REMAINING, 100 );
 
-    connect(_header, SIGNAL(sortIndicatorChanged(int, Qt::SortOrder)), this, SLOT(saveSortIndicatorDwl(int, Qt::SortOrder)));
-
     // set default column and sort order for download
-    _sortColDwl = 0;
-    _sortOrderDwl = Qt::AscendingOrder;
+    ui.downloadList->sortByColumn(NAME, Qt::AscendingOrder);
     
     // Set Upload list model
     ULListModel = new QStandardItemModel(0,8);
@@ -190,11 +203,8 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     upheader->resizeSection ( USTATUS, 100 );
     upheader->resizeSection ( USERNAME, 120 );
 
-    connect(upheader, SIGNAL(sortIndicatorChanged(int, Qt::SortOrder)), this, SLOT(saveSortIndicatorUpl(int, Qt::SortOrder)));
-
     // set default column and sort order for upload
-    _sortColUpl = 0;
-    _sortOrderUpl = Qt::AscendingOrder;
+    ui.uploadsList->sortByColumn(UNAME, Qt::AscendingOrder);
 	
     FileTransferInfoWidget *ftiw = new FileTransferInfoWidget();
     ui.fileTransferInfoWidget->setWidget(ftiw);
@@ -498,6 +508,9 @@ int TransfersDialog::addItem(const QString&, const QString& name, const QString&
 	{
 		row = rowCount;
 		DLListModel->insertRow(row);
+
+		// change progress column to own class for sorting
+		DLListModel->setItem(row, PROGRESS, new ProgressItem);
 	}
 
 	DLListModel->setData(DLListModel->index(row, NAME), QVariant(name));
@@ -578,7 +591,7 @@ int TransfersDialog::addPeerToItem(int row, const QString& name, const QString& 
 		  QStandardItem *i2  = new QStandardItem(); 
 		  QStandardItem *i3  = new QStandardItem(); 
 		  QStandardItem *i4  = new QStandardItem(); 
-		  QStandardItem *i5  = new QStandardItem(); 
+		  QStandardItem *i5  = new ProgressItem();
 		  QStandardItem *i6  = new QStandardItem(); 
 		  QStandardItem *i7  = new QStandardItem(); 
 		  QStandardItem *i8  = new QStandardItem(); 
@@ -676,6 +689,9 @@ int TransfersDialog::addUploadItem(	const QString&, const QString& name, const Q
 	{
 		row = ULListModel->rowCount();
 		ULListModel->insertRow(row);
+
+		// change progress column to own class for sorting
+		ULListModel->setItem(row, UPROGRESS, new ProgressItem);
 	}
 
 	ULListModel->setData(ULListModel->index(row, UNAME),        QVariant((QString)" "+name), Qt::DisplayRole);
@@ -714,12 +730,11 @@ void TransfersDialog::updateDisplay()
 
 static void QListDelete (const QList <QStandardItem*> &List)
 {
-    qDeleteAll (List.begin (), List.end ());
+    qDeleteAll (List);
 }
 
 void TransfersDialog::insertTransfers() 
 {
-	ui.downloadList->sortByColumn(_sortColDwl, _sortOrderDwl);
 	/* disable for performance issues, enable after insert all transfers */
 	ui.downloadList->setSortingEnabled(false);
 
@@ -867,9 +882,9 @@ void TransfersDialog::insertTransfers()
 			removeIndex++;
 	}
 	
-    ui.downloadList->setSortingEnabled(true);
+	ui.downloadList->setSortingEnabled(true);
 
-    ui.uploadsList->sortByColumn(_sortColUpl, _sortOrderUpl);
+	ui.uploadsList->setSortingEnabled(false);
 
 	// Now show upload hashes
 	//
@@ -962,7 +977,7 @@ void TransfersDialog::insertTransfers()
 			removeIndex++;
 	}
 
-
+	ui.uploadsList->setSortingEnabled(true);
 }
 
 QString TransfersDialog::getPeerName(const std::string& id) const
@@ -1461,17 +1476,6 @@ void TransfersDialog::clearcompleted()
    	rsFiles->FileClearCompleted();
 }
 
-void TransfersDialog::saveSortIndicatorDwl(int logicalIndex, Qt::SortOrder order)
-{
-	_sortColDwl = logicalIndex;;
-	_sortOrderDwl = order;
-}
-
-void TransfersDialog::saveSortIndicatorUpl(int logicalIndex, Qt::SortOrder order)
-{
-	_sortColUpl = logicalIndex;;
-	_sortOrderUpl = order;
-}
 void TransfersDialog::showFileDetails()
 {
 	std::string file_hash ;

@@ -98,10 +98,6 @@ private slots:
     void chunkRandom();
     void chunkStreaming();
 
-    /** save sort indicators for next transfers display */
-   void saveSortIndicatorDwl(int logicalIndex, Qt::SortOrder order);
-    void saveSortIndicatorUpl(int logicalIndex, Qt::SortOrder order);
-
     void showDetailsDialog();
     void updateDetailsDialog();
 
@@ -119,9 +115,6 @@ private:
 
     DLListDelegate *DLDelegate;
     ULListDelegate *ULDelegate;
-
-    int _sortColDwl, _sortColUpl;
-    Qt::SortOrder _sortOrderDwl, _sortOrderUpl;
 
     /** Create the actions on the tray menu or menubar */
     void createActions();

@@ -45,6 +45,8 @@ class FileProgressInfo
 		CompressedChunkMap cmap ;
 		float progress ;
 		uint32_t nb_chunks ;
+
+		bool operator<(const FileProgressInfo &other) const;
 };
 //
 class xProgressBar : public QObject
