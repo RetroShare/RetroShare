@@ -94,6 +94,10 @@ void bdNodeManager::addFindNode(bdNodeId *id, uint32_t qflags)
 	peer.mId.id = (*id);
 	peer.mStatus = BITDHT_QUERY_READY; //QUERYING;
 	peer.mQFlags = qflags;
+
+	peer.mDhtAddr.sin_addr.s_addr = 0;
+	peer.mDhtAddr.sin_port = 0;
+
 	mActivePeers[*id] = peer;
 #ifdef DEBUG_MGR
 	std::cerr << "bdNodeManager::addFindNode() Added QueryPeer as READY....";
@@ -291,6 +295,7 @@ int bdNodeManager::checkStatus()
 		bool doPing = false;
 		bool doRemove = false;
 		bool doCallback = false;
+		bool doSaveAddress = false;
 		uint32_t callbackStatus = 0;
 
 		switch(it->second.mStatus)
@@ -358,6 +363,7 @@ int bdNodeManager::checkStatus()
 					//foundId = 
 					doRemove = true;
 					doCallback = true;
+					doSaveAddress = true;
 					callbackStatus = BITDHT_MGR_QUERY_PEER_ONLINE;
 				}
 				break;
@@ -422,6 +428,18 @@ int bdNodeManager::checkStatus()
 			pit->second.mStatus = it->second.mStatus;
 		}
 
+		if (doSaveAddress)
+		{
+			if (it->second.mResults.size() > 0)
+			{
+				pit->second.mDhtAddr = it->second.mResults.front().addr;
+			}
+			else
+			{
+				pit->second.mDhtAddr.sin_addr.s_addr = 0;
+				pit->second.mDhtAddr.sin_port = 0;
+			}
+		}
 
 		/* add successful queries to ping list */
 		if (doPing)
@@ -553,7 +571,7 @@ void bdNodeManager::findDhtValue(bdNodeId * /*id*/, std::string /*key*/, uint32_
 
 
         /***** Get Results Details *****/
-int bdNodeManager::getDhtPeerAddress(bdNodeId *id, struct sockaddr_in & /*from*/)
+int bdNodeManager::getDhtPeerAddress(const bdNodeId *id, struct sockaddr_in &from)
 {
 #ifdef DEBUG_MGR
 	std::cerr << "bdNodeManager::getDhtPeerAddress() Id: ";
@@ -563,10 +581,34 @@ int bdNodeManager::getDhtPeerAddress(bdNodeId *id, struct sockaddr_in & /*from*/
 	(void) id;
 #endif
 
-	return 1;
+	std::map<bdNodeId, bdQueryPeer>::iterator pit;
+	pit = mActivePeers.find(*id);
+
+	std::cerr << "bdNodeManager::getDhtPeerAddress() Id: ";
+	mFns->bdPrintNodeId(std::cerr, id);
+	std::cerr << std::endl;
+
+	if (pit != mActivePeers.end())
+	{
+		std::cerr << "bdNodeManager::getDhtPeerAddress() Found ActiveQuery";
+		std::cerr << std::endl;
+
+		if (pit->second.mStatus == BITDHT_QUERY_SUCCESS)
+		{
+			from = pit->second.mDhtAddr;
+
+			std::cerr << "bdNodeManager::getDhtPeerAddress() Found Peer Address:";
+			std::cerr << inet_ntoa(from.sin_addr) << ":" << htons(from.sin_port);
+			std::cerr << std::endl;
+
+			return 1;
+		}
+	}
+	return 0;
+
 }
 
-int bdNodeManager::getDhtValue(bdNodeId *id, std::string key, std::string & /*value*/)
+int bdNodeManager::getDhtValue(const bdNodeId *id, std::string key, std::string & /*value*/)
 {
 #ifdef DEBUG_MGR
 	std::cerr << "bdNodeManager::getDhtValue() Id: ";

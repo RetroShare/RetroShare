@@ -173,8 +173,8 @@ virtual void addCallback(BitDhtCallback *cb) = 0;
 virtual void removeCallback(BitDhtCallback *cb) = 0;
 
 	/***** Get Results Details *****/
-virtual int getDhtPeerAddress(bdNodeId *id, struct sockaddr_in &from) = 0;
-virtual int getDhtValue(bdNodeId *id, std::string key, std::string &value) = 0;
+virtual int getDhtPeerAddress(const bdNodeId *id, struct sockaddr_in &from) = 0;
+virtual int getDhtValue(const bdNodeId *id, std::string key, std::string &value) = 0;
 
 };
 

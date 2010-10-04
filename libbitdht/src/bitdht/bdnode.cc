@@ -1348,27 +1348,40 @@ void bdNode::msgin_pong(bdId *id, bdToken *transId, bdToken *versionId)
 	bool sameAppl = false;
 	bool sameVersion = false;
 
-	/* check two bytes */
-	if ((versionId->len > 2) && (mDhtVersion.size() > 2) &&
-		(versionId->data[0] == mDhtVersion[0]) && (versionId->data[1] == mDhtVersion[1]))
+	if (versionId)
 	{
-		sameDhtEngine = true;
+		
+#ifdef DEBUG_NODE_MSGIN
+		std::cerr << "bdNode::msgin_pong() Peer Version: ";
+		for(int i = 0; i < versionId->len; i++)
+		{
+			std::cerr << versionId->data[i];
+		}
+		std::cerr << std::endl;
+#endif
+	
+		/* check two bytes */
+		if ((versionId->len > 2) && (mDhtVersion.size() > 2) &&
+			(versionId->data[0] == mDhtVersion[0]) && (versionId->data[1] == mDhtVersion[1]))
+		{
+			sameDhtEngine = true;
+		}
+	
+		/* check two bytes */
+		if ((versionId->len > 4) && (mDhtVersion.size() > 4) &&
+			(versionId->data[2] == mDhtVersion[2]) && (versionId->data[3] == mDhtVersion[3]))
+		{
+			sameAppl = true;
+		}
+	
+		/* check two bytes */
+		if ((versionId->len > 6) && (mDhtVersion.size() > 6) &&
+			(versionId->data[4] == mDhtVersion[4]) && (versionId->data[5] == mDhtVersion[5]))
+		{
+			sameVersion = true;
+		}
 	}
-
-	/* check two bytes */
-	if ((versionId->len > 4) && (mDhtVersion.size() > 4) &&
-		(versionId->data[2] == mDhtVersion[2]) && (versionId->data[3] == mDhtVersion[3]))
-	{
-		sameAppl = true;
-	}
-
-	/* check two bytes */
-	if ((versionId->len > 6) && (mDhtVersion.size() > 6) &&
-		(versionId->data[4] == mDhtVersion[4]) && (versionId->data[5] == mDhtVersion[5]))
-	{
-		sameVersion = true;
-	}
-
+	
 
 	uint32_t peerflags = BITDHT_PEER_STATUS_RECV_PONG; /* should have id too */
 	if (sameDhtEngine)

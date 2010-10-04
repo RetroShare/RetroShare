@@ -66,6 +66,7 @@ class bdQueryPeer
 	uint32_t mQFlags;
 	time_t mLastQuery;
 	time_t mLastFound;
+	struct sockaddr_in mDhtAddr;
 };
 
 
@@ -108,8 +109,8 @@ virtual void addCallback(BitDhtCallback *cb);
 virtual void removeCallback(BitDhtCallback *cb);
 
         /***** Get Results Details *****/
-virtual int getDhtPeerAddress(bdNodeId *id, struct sockaddr_in &from);
-virtual int getDhtValue(bdNodeId *id, std::string key, std::string &value);
+virtual int getDhtPeerAddress(const bdNodeId *id, struct sockaddr_in &from);
+virtual int getDhtValue(const bdNodeId *id, std::string key, std::string &value);
 
         /******************* Internals *************************/
 

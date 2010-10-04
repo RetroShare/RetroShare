@@ -103,14 +103,14 @@ void UdpBitDht::removeCallback(BitDhtCallback *cb)
 	mBitDhtManager->removeCallback(cb);
 }
 
-int UdpBitDht::getDhtPeerAddress(bdNodeId *id, struct sockaddr_in &from)
+int UdpBitDht::getDhtPeerAddress(const bdNodeId *id, struct sockaddr_in &from)
 {
 	bdStackMutex stack(dhtMtx); /********** MUTEX LOCKED *************/
 
 	return mBitDhtManager->getDhtPeerAddress(id, from);
 }
 
-int 	UdpBitDht::getDhtValue(bdNodeId *id, std::string key, std::string &value)
+int 	UdpBitDht::getDhtValue(const bdNodeId *id, std::string key, std::string &value)
 {
 	bdStackMutex stack(dhtMtx); /********** MUTEX LOCKED *************/
 
