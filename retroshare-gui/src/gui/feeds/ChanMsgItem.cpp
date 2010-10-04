@@ -53,6 +53,8 @@ ChanMsgItem::ChanMsgItem(FeedHolder *parent, uint32_t feedId, std::string chanId
   /* specific */
   connect( unsubscribeButton, SIGNAL( clicked( void ) ), this, SLOT( unsubscribeChannel ( void ) ) );
 
+  downloadButton->hide();
+  playButton->hide();
 
   small();
   updateItemStatic();

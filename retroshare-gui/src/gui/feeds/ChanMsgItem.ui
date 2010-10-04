@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>538</width>
+    <width>578</width>
     <height>225</height>
    </rect>
   </property>
@@ -105,7 +105,7 @@ border-radius: 10px;}</string>
       </item>
       <item row="0" column="1">
        <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="0" colspan="4">
+        <item row="0" column="0" colspan="6">
          <widget class="QLabel" name="titleLabel">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -130,7 +130,7 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
-        <item row="0" column="4" colspan="3">
+        <item row="0" column="6" colspan="3">
          <widget class="QLabel" name="datetimelabel">
           <property name="font">
            <font>
@@ -147,7 +147,7 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
-        <item row="1" column="0" colspan="7">
+        <item row="1" column="0" colspan="9">
          <widget class="QLabel" name="subjectLabel">
           <property name="sizePolicy">
            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
@@ -189,7 +189,7 @@ p, li { white-space: pre-wrap; }
           </property>
          </spacer>
         </item>
-        <item row="2" column="3" colspan="2">
+        <item row="2" column="5" colspan="2">
          <widget class="QPushButton" name="unsubscribeButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -209,7 +209,7 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
-        <item row="2" column="5">
+        <item row="2" column="7">
          <widget class="QPushButton" name="clearButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -229,7 +229,7 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
-        <item row="2" column="6">
+        <item row="2" column="8">
          <widget class="QPushButton" name="expandButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -256,6 +256,28 @@ p, li { white-space: pre-wrap; }
          <widget class="QLabel" name="filelabel">
           <property name="text">
            <string notr="true">TextLabel</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="3">
+         <widget class="QPushButton" name="downloadButton">
+          <property name="text">
+           <string>Download</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../images.qrc">
+            <normaloff>:/images/download16.png</normaloff>:/images/download16.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="4">
+         <widget class="QPushButton" name="playButton">
+          <property name="text">
+           <string>Play</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../images.qrc">
+            <normaloff>:/images/player_play.png</normaloff>:/images/player_play.png</iconset>
           </property>
          </widget>
         </item>
@@ -319,6 +341,7 @@ border-radius: 10px;}</string>
   </layout>
  </widget>
  <resources>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
