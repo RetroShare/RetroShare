@@ -50,7 +50,7 @@ CreateChannelMsg::CreateChannelMsg(std::string cId)
 	connect(addfilepushButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));	
 	connect(addThumbnailButton, SIGNAL(clicked() ), this , SLOT(addThumbnail()));
 	
-    buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+    //buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 
 	setAcceptDrops(true);
 	
