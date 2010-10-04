@@ -1,7 +1,7 @@
 TEMPLATE = lib
 #CONFIG += staticlib release
-#CONFIG += staticlib testnetwork
-CONFIG += staticlib testnetwork bitdht
+CONFIG += staticlib testnetwork
+#CONFIG += staticlib testnetwork bitdht
 CONFIG -= qt
 TARGET = retroshare
 
@@ -28,7 +28,7 @@ release {
 
 
 testnetwork {
-	# DEFINES *= PQI_DISABLE_UDP
+	DEFINES *= PQI_DISABLE_UDP
 	DEFINES *= PQI_DISABLE_TUNNEL
 
 	# DEFINES *= AUTHSSL_DEBUG GPG_DEBUG 
@@ -66,6 +66,7 @@ bitdht {
 
 HEADERS +=	dht/p3bitdht.h 
 SOURCES +=	dht/p3bitdht.cc 
+
 
 HEADERS +=	tcponudp/udppeer.h \
 		tcponudp/bio_tou.h \
@@ -498,6 +499,7 @@ SOURCES +=	services/p3channels.cc \
 # removed because getPeer() doesn t exist			services/p3tunnel.cc
 
 SOURCES +=	tcponudp/extaddrfinder.cc \
+
 
 SOURCES +=	turtle/p3turtle.cc \
 				turtle/rsturtleitem.cc 

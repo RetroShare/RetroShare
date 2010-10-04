@@ -2068,7 +2068,20 @@ void    p3ConnectMgr::peerConnectRequest(std::string id, struct sockaddr_in radd
 #ifdef CONN_DEBUG
 	std::cerr << "p3ConnectMgr::peerConnectRequest() Try TCP first" << std::endl;
 #endif
-	retryConnect(id);
+
+	if (source == RS_CB_DHT)
+	{
+		std::cerr << "p3ConnectMgr::peerConnectRequest() source DHT ==> retryConnectUDP()" << std::endl;
+		retryConnectUDP(id, raddr);
+		return;
+	}
+	else
+	{	// IS THIS USED???
+		std::cerr << "p3ConnectMgr::peerConnectRequest() source OTHER ==> retryConnect()" << std::endl;
+
+		retryConnect(id);
+		return;
+	}
 }
 
 
@@ -2342,6 +2355,78 @@ bool   p3ConnectMgr::retryConnect(std::string id)
 }
 
 
+
+bool   p3ConnectMgr::retryConnectUDP(std::string id, struct sockaddr_in &rUdpAddr)
+{
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
+	/* push all available addresses onto the connect addr stack */
+#ifdef CONN_DEBUG
+	std::cerr << "p3ConnectMgr::retryConnectTCP() id: " << id << std::endl;
+#endif
+
+        if (id == getOwnId()) {
+            #ifdef CONN_DEBUG
+            rslog(RSL_WARNING, p3connectzone, "p3ConnectMgr::retryConnectUDP() Failed, connecting to own id: ");
+            #endif
+            return false;
+        }
+
+        /* look up the id */
+        std::map<std::string, peerConnectState>::iterator it;
+	if (mFriendList.end() == (it = mFriendList.find(id)))
+	{
+#ifdef CONN_DEBUG
+               std::cerr << "p3ConnectMgr::retryConnectUDP() Peer is not Friend" << std::endl;
+#endif
+		return false;
+	}
+
+	/* if already connected -> done */
+        if (it->second.state & RS_PEER_S_CONNECTED)
+	{
+#ifdef CONN_DEBUG
+		std::cerr << "p3ConnectMgr::retryConnectUDP() Peer Already Connected" << std::endl;
+#endif
+                if (it->second.connecttype & RS_NET_CONN_TUNNEL) {
+#ifdef CONN_DEBUG
+                    std::cerr << "p3ConnectMgr::retryConnectUDP() Peer Connected through a tunnel connection, let's try a normal connection." << std::endl;
+#endif
+                } else {
+#ifdef CONN_DEBUG
+                    	std::cerr << "p3ConnectMgr::retryConnectUDP() Peer Connected no more connection attempts" << std::endl;
+#endif
+                    return false;
+                }
+	}
+
+	/* Explicit Request to start the UDP connection */
+	if (isValidNet(&(rUdpAddr.sin_addr)))
+	{
+#ifdef CONN_DEBUG
+		std::cerr << "Adding udp connection attempt: ";
+		std::cerr << "Addr: " << rs_inet_ntoa(rUdpAddr.sin_addr);
+		std::cerr << ":" << ntohs(rUdpAddr.sin_port);
+		std::cerr << std::endl;
+#endif
+		peerConnectAddress pca;
+		pca.addr = rUdpAddr;
+		pca.type = RS_NET_CONN_UDP_PEER_SYNC;
+		pca.delay = P3CONNMGR_UDP_DEFAULT_DELAY;
+		pca.ts = time(NULL);
+		pca.period = P3CONNMGR_UDP_DEFAULT_PERIOD;
+
+		addAddressIfUnique(it->second.connAddrs, pca);
+	}
+
+	/* finish it off */
+	return locked_ConnectAttempt_Complete(&(it->second));
+}
+
+
+
+
+
 bool   p3ConnectMgr::retryConnectTCP(std::string id)
 {
 	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
@@ -2388,47 +2473,65 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
 
 	/* UDP automatically searches -> no need to push start */
 
+	locked_ConnectAttempt_CurrentAddresses(&(it->second));
+	locked_ConnectAttempt_HistoricalAddresses(&(it->second));
+	locked_ConnectAttempt_AddDynDNS(&(it->second));
+	locked_ConnectAttempt_AddTunnel(&(it->second));
+
+	/* finish it off */
+	return locked_ConnectAttempt_Complete(&(it->second));
+}
+
+
+void  p3ConnectMgr::locked_ConnectAttempt_CurrentAddresses(peerConnectState *peer)
+{
 	// Just push all the addresses onto the stack.
 	/* try "current addresses" first */
-	if (isValidNet(&(it->second.currentlocaladdr.sin_addr)))
+	if (isValidNet(&(peer->currentlocaladdr.sin_addr)))
 	{
 #ifdef CONN_DEBUG
 		std::cerr << "Adding tcp connection attempt: ";
-		std::cerr << "Current Local Addr: " << rs_inet_ntoa(it->second.currentlocaladdr.sin_addr);
-		std::cerr << ":" << ntohs(it->second.currentlocaladdr.sin_port);
+		std::cerr << "Current Local Addr: " << rs_inet_ntoa(peer->currentlocaladdr.sin_addr);
+		std::cerr << ":" << ntohs(peer->currentlocaladdr.sin_port);
 		std::cerr << std::endl;
 #endif
 		peerConnectAddress pca;
-		pca.addr = it->second.currentlocaladdr;
+		pca.addr = peer->currentlocaladdr;
 		pca.type = RS_NET_CONN_TCP_LOCAL;
 		pca.delay = P3CONNMGR_TCP_DEFAULT_DELAY;
 		pca.ts = time(NULL);
 		pca.period = P3CONNMGR_TCP_DEFAULT_PERIOD;
-		it->second.connAddrs.push_back(pca);
+
+		addAddressIfUnique(peer->connAddrs, pca);
 	}
 
-	if (isValidNet(&(it->second.currentserveraddr.sin_addr)))
+	if (isValidNet(&(peer->currentserveraddr.sin_addr)))
 	{
 #ifdef CONN_DEBUG
 		std::cerr << "Adding tcp connection attempt: ";
-		std::cerr << "Current Ext Addr: " << rs_inet_ntoa(it->second.currentserveraddr.sin_addr);
-		std::cerr << ":" << ntohs(it->second.currentserveraddr.sin_port);
+		std::cerr << "Current Ext Addr: " << rs_inet_ntoa(peer->currentserveraddr.sin_addr);
+		std::cerr << ":" << ntohs(peer->currentserveraddr.sin_port);
 		std::cerr << std::endl;
 #endif
 		peerConnectAddress pca;
-		pca.addr = it->second.currentserveraddr;
+		pca.addr = peer->currentserveraddr;
 		pca.type = RS_NET_CONN_TCP_EXTERNAL;
 		pca.delay = P3CONNMGR_TCP_DEFAULT_DELAY;
 		pca.ts = time(NULL);
 		pca.period = P3CONNMGR_TCP_DEFAULT_PERIOD;
-		it->second.connAddrs.push_back(pca);
-	}
 
+		addAddressIfUnique(peer->connAddrs, pca);
+	}
+}
+
+
+void  p3ConnectMgr::locked_ConnectAttempt_HistoricalAddresses(peerConnectState *peer)
+{
 	/* now try historical addresses */
 	/* try local addresses first */
 	std::list<pqiIpAddress>::iterator ait;
-	for(ait = it->second.ipAddrs.mLocal.mAddrs.begin(); 
-		ait != it->second.ipAddrs.mLocal.mAddrs.end(); ait++)
+	for(ait = peer->ipAddrs.mLocal.mAddrs.begin(); 
+		ait != peer->ipAddrs.mLocal.mAddrs.end(); ait++)
 	{
 #ifdef CONN_DEBUG
 		std::cerr << "Adding tcp connection attempt: ";
@@ -2442,11 +2545,12 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
 		pca.delay = P3CONNMGR_TCP_DEFAULT_DELAY;
 		pca.ts = time(NULL);
 		pca.period = P3CONNMGR_TCP_DEFAULT_PERIOD;
-		it->second.connAddrs.push_back(pca);
+
+		addAddressIfUnique(peer->connAddrs, pca);
 	}
 
-	for(ait = it->second.ipAddrs.mExt.mAddrs.begin(); 
-		ait != it->second.ipAddrs.mExt.mAddrs.end(); ait++)
+	for(ait = peer->ipAddrs.mExt.mAddrs.begin(); 
+		ait != peer->ipAddrs.mExt.mAddrs.end(); ait++)
 	{
 #ifdef CONN_DEBUG
 		std::cerr << "Adding tcp connection attempt: ";
@@ -2460,18 +2564,23 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
 		pca.delay = P3CONNMGR_TCP_DEFAULT_DELAY;
 		pca.ts = time(NULL);
 		pca.period = P3CONNMGR_TCP_DEFAULT_PERIOD;
-		it->second.connAddrs.push_back(pca);
-	}
 
+		addAddressIfUnique(peer->connAddrs, pca);
+	}
+}
+
+
+void  p3ConnectMgr::locked_ConnectAttempt_AddDynDNS(peerConnectState *peer)
+{
 	/* try dyndns address too */
-        if (!it->second.dyndns.empty()) {
+        if (!peer->dyndns.empty()) {
             struct in_addr addr;
-            u_short port = it->second.currentserveraddr.sin_port ? it->second.currentserveraddr.sin_port : it->second.currentlocaladdr.sin_port;
+            u_short port = peer->currentserveraddr.sin_port ? peer->currentserveraddr.sin_port : peer->currentlocaladdr.sin_port;
 #ifdef CONN_DEBUG
             std::cerr << "Looking up DynDNS address" << std::endl;
 #endif
             if (port) {
-                if (getIPAddressFromString (it->second.dyndns.c_str (), &addr))
+                if (getIPAddressFromString (peer->dyndns.c_str (), &addr))
 		{
 #ifdef CONN_DEBUG
 			std::cerr << "Adding tcp connection attempt: ";
@@ -2488,15 +2597,17 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
                         pca.delay = P3CONNMGR_TCP_DEFAULT_DELAY;
                         pca.ts = time(NULL);
                         pca.period = P3CONNMGR_TCP_DEFAULT_PERIOD;
-                        it->second.connAddrs.push_back(pca);
+
+			addAddressIfUnique(peer->connAddrs, pca);
                 }
             }
         }
+}
 
 
-
-
-        if (!(it->second.state & RS_PEER_S_CONNECTED) && mAllowTunnelConnection)
+void  p3ConnectMgr::locked_ConnectAttempt_AddTunnel(peerConnectState *peer)
+{
+        if (!(peer->state & RS_PEER_S_CONNECTED) && mAllowTunnelConnection)
         {
 #ifdef CONN_DEBUG
 		std::cerr << "Adding TUNNEL Connection Attempt";
@@ -2509,38 +2620,70 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
 
             sockaddr_clear(&pca.addr);
 
-            it->second.connAddrs.push_back(pca);
+	    addAddressIfUnique(peer->connAddrs, pca);
         }
+}
+
+
+bool  p3ConnectMgr::addAddressIfUnique(std::list<peerConnectAddress> &addrList, peerConnectAddress &pca)
+{
+	/* iterate through the list, and make sure it isn't already 
+	 * in the list 
+	 */
+
+	bool found = false;
+
+	std::list<peerConnectAddress>::iterator it;
+	for(it = addrList.begin(); it != addrList.end(); it++)
+	{
+		if ((pca.addr.sin_addr.s_addr == it->addr.sin_addr.s_addr)	&&
+			(pca.addr.sin_port == it->addr.sin_port)	&&
+			(pca.type == it->type))
+		{
+			/* already */
+			return false;
+		}
+	}
+
+	addrList.push_back(pca);
+
+	return true;
+}
+
+
+
+bool  p3ConnectMgr::locked_ConnectAttempt_Complete(peerConnectState *peer)
+{
 
 	/* flag as last attempt to prevent loop */
 	//add a random perturbation between 0 and 2 sec.
-        it->second.lastattempt = time(NULL) + rand() % MAX_RANDOM_ATTEMPT_OFFSET; 
+        peer->lastattempt = time(NULL) + rand() % MAX_RANDOM_ATTEMPT_OFFSET; 
 
-        if (it->second.inConnAttempt) {
+        if (peer->inConnAttempt) {
                 /*  -> it'll automatically use the addresses we added */
 #ifdef CONN_DEBUG
-		std::cerr << "p3ConnectMgr::retryConnectTCP() Already in CONNECT ATTEMPT";
+		std::cerr << "p3ConnectMgr::locked_ConnectAttempt_Complete() Already in CONNECT ATTEMPT";
 		std::cerr << std::endl;
-            	std::cerr << "p3ConnectMgr::retryConnectTCP() Remaining ConnAddr Count: " << it->second.connAddrs.size();
+            	std::cerr << "p3ConnectMgr::locked_ConnectAttempt_Complete() Remaining ConnAddr Count: " << it->second.connAddrs.size();
 	    	std::cerr << std::endl;
 #endif
 		return true;
 	}
 
 	/* start a connection attempt */
-        if (it->second.connAddrs.size() > 0) 
+        if (peer->connAddrs.size() > 0) 
 	{
             #ifdef CONN_DEBUG
             std::ostringstream out;
-            out << "p3ConnectMgr::retryConnectTCP() Started CONNECT ATTEMPT! " << " id: " << id ;
+            out << "p3ConnectMgr::locked_ConnectAttempt_Complete() Started CONNECT ATTEMPT! " << " id: " << id ;
 	    out << std::endl;
-            out << "p3ConnectMgr::retryConnectTCP() ConnAddr Count: " << it->second.connAddrs.size();
+            out << "p3ConnectMgr::locked_ConnectAttempt_Complete() ConnAddr Count: " << peer->connAddrs.size();
             rslog(RSL_DEBUG_ALERT, p3connectzone, out.str());
 	    std::cerr << out.str() << std::endl;
 
             #endif
 
-            it->second.actions |= RS_PEER_CONNECT_REQ;
+            peer->actions |= RS_PEER_CONNECT_REQ;
             mStatusChanged = true;
 	    return true; 
         } 
@@ -2548,7 +2691,7 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
 	{
             #ifdef CONN_DEBUG
             std::ostringstream out;
-            out << "p3ConnectMgr::retryConnectTCP() No addr in the connect attempt list. Not suitable for CONNECT ATTEMPT! " << " id: " << id;
+            out << "p3ConnectMgr::locked_ConnectAttempt_Complete() No addr in the connect attempt list. Not suitable for CONNECT ATTEMPT! " << " id: " << id;
             rslog(RSL_DEBUG_ALERT, p3connectzone, out.str());
 	    std::cerr << out.str() << std::endl;
             #endif

@@ -411,6 +411,26 @@ int p3BitDht::NodeCallback(const bdId *id, uint32_t peerflags)
 	std::cerr << std::endl;
 #endif
 
+	// XXX THIS IS A BAD HACK TO PREVENT connection attempt to MEDIASENTRY (dht spies)
+	// peers... These peers appear to masquerade as your OwnNodeId!!!!
+	// which means peers could attempt to connect too?? not sure about this?
+	// Anyway they don't appear to REPLY to FIND_NODE requests...
+	// So if we ignore these peers, we'll only get the true RS peers!
+
+	// This should be fixed by a collaborative IP filter system,
+	// EACH peer identifies dodgey IP (ones spoofing yourself), and shares them
+	// This are distributed around RS via a service, and the UDP ignores 
+	// all comms from these sources. (AT a low level).
+
+	if (peerflags != BITDHT_PEER_STATUS_RECV_NODES)
+	{
+		std::cerr << "p3BitDht::NodeCallback() Ignoring !FIND_NODE callback from:";
+		bdStdPrintNodeId(std::cerr, &(id->id));
+		std::cerr << " flags: " << peerflags;
+		std::cerr << std::endl;
+		return 0;
+	}
+
 	/* is it one that we are interested in? */
 	std::string pid;
 	/* check for translation */
@@ -466,15 +486,66 @@ int p3BitDht::PeerCallback(const bdNodeId *id, uint32_t status)
 		std::cerr << " NOOP for NOW";
 		std::cerr << std::endl;
 
+		bool connect = false;
+		switch(status)
+		{
+  			case BITDHT_MGR_QUERY_FAILURE:
+				/* do nothing */
+				std::cerr << "p3BitDht::PeerCallback() QUERY FAILURE ... do nothin ";
+				std::cerr << std::endl;
 
-		/* we found it ... do callback to p3connmgr */
-		//uint32_t cbflags = ONLINE | REACHABLE;
+			break;
 
-		/* callback to say they are online */
-                //mConnCb->peerStatus(ent.id, addrs, ent.type, 0, RS_CB_DHT);
-        	//mConnCb->peerConnectRequest(peer.id, peer.laddr, RS_CB_DHT);
+			case BITDHT_MGR_QUERY_PEER_OFFLINE:
+				/* do nothing */
 
-		return 1;
+				std::cerr << "p3BitDht::PeerCallback() QUERY PEER OFFLINE ... do nothin ";
+				std::cerr << std::endl;
+
+			break;
+
+			case BITDHT_MGR_QUERY_PEER_UNREACHABLE:
+				/* do nothing */
+
+				std::cerr << "p3BitDht::PeerCallback() QUERY PEER UNREACHABLE ... flag? / do nothin ";
+				std::cerr << std::endl;
+
+
+			break;
+
+			case BITDHT_MGR_QUERY_PEER_ONLINE:
+				/* do something */
+
+				std::cerr << "p3BitDht::PeerCallback() QUERY PEER ONLINE ... try udp connection";
+				std::cerr << std::endl;
+
+				connect = true;
+			break;
+		}
+
+		if (connect)
+		{
+			std::cerr << "p3BitDht::PeerCallback() checking getDhtPeerAddress()";
+			std::cerr << std::endl;
+
+			/* get dht address */
+			/* we found it ... do callback to p3connmgr */
+			struct sockaddr_in dhtAddr;
+			if (mUdpBitDht->getDhtPeerAddress(id, dhtAddr))
+        		{
+				std::cerr << "p3BitDht::PeerCallback() getDhtPeerAddress() == true";
+				std::cerr << std::endl;
+				std::cerr << "p3BitDht::PeerCallback() mConnCb->peerConnectRequest()";
+				std::cerr << std::endl;
+
+				mConnCb->peerConnectRequest(pid, dhtAddr, RS_CB_DHT);
+			}
+			return 1;
+		}
+		else
+		{
+			return 0;
+		}
 	}
 	else
 	{

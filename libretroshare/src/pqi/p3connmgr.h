@@ -361,8 +361,22 @@ void 	networkConsistencyCheck();
 	/* monitor control */
 void 	tickMonitors();
 
-	/* connect attempts */
+	/* connect attempts UDP */
+bool    retryConnectUDP(std::string id, struct sockaddr_in &rUdpAddr);
+
+	/* connect attempts TCP */
 bool	retryConnectTCP(std::string id);
+
+void 	locked_ConnectAttempt_CurrentAddresses(peerConnectState *peer);
+void 	locked_ConnectAttempt_HistoricalAddresses(peerConnectState *peer);
+void 	locked_ConnectAttempt_AddDynDNS(peerConnectState *peer);
+void 	locked_ConnectAttempt_AddTunnel(peerConnectState *peer);
+
+bool  	locked_ConnectAttempt_Complete(peerConnectState *peer);
+
+bool 	addAddressIfUnique(std::list<peerConnectAddress> &addrList, 
+					peerConnectAddress &pca);
+
 
 	protected:
 /*****************************************************************/
