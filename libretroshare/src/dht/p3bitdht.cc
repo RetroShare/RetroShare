@@ -27,6 +27,7 @@
 #include "dht/p3bitdht.h"
 
 #include "bitdht/bdstddht.h"
+#include "pqi/p3connmgr.h"
 
 #include <openssl/sha.h>
 
@@ -404,6 +405,8 @@ int p3BitDht::removeTranslation(const std::string pid)
 
 
 /********************** Callback Functions **************************/
+uint32_t translatebdcbflgs(uint32_t peerflags);
+
 int p3BitDht::NodeCallback(const bdId *id, uint32_t peerflags)
 {
 #ifdef DEBUG_BITDHT
@@ -437,26 +440,27 @@ int p3BitDht::NodeCallback(const bdId *id, uint32_t peerflags)
 	if (lookupRsId(&(id->id), pid))
 	{
 		/* we found it ... do callback to p3connmgr */
-		//uint32_t cbflags = ONLINE | UNREACHABLE;
-
 		std::cerr << "p3BitDht::NodeCallback() FOUND NODE!!!: ";
 		bdStdPrintNodeId(std::cerr, &(id->id));
 		std::cerr << "-> " << pid << " flags: " << peerflags;
 		std::cerr << std::endl;
+			/* send status info to p3connmgr */
 
-		/* add address to set */
+
+
+		pqiIpAddress dhtpeer;
+		dhtpeer.mSrc = RS_CB_DHT;
+		dhtpeer.mSeenTime = time(NULL);
+		dhtpeer.mAddr = id->addr;
+
 		pqiIpAddrSet addrs;
-		pqiIpAddress addr;
+		addrs.updateExtAddrs(dhtpeer);
 
-		addr.mAddr = id->addr;
-		addr.mSeenTime = time(NULL);
-		addr.mSrc = 0;
+                uint32_t type = RS_NET_CONN_UDP_DHT_SYNC;
+		uint32_t flags = translatebdcbflgs(peerflags);
+		uint32_t source = RS_CB_DHT;
 
-		addrs.updateExtAddrs(addr);
-		int type = 0;
-
-		/* callback to say they are online */
-                mConnCb->peerStatus(pid, addrs, type, 0, RS_CB_DHT);
+		mConnCb->peerStatus(pid, addrs, type, flags, source);
 
 		return 1;
 	}
@@ -469,6 +473,33 @@ int p3BitDht::NodeCallback(const bdId *id, uint32_t peerflags)
 
 	return 0;
 }
+uint32_t translatebdcbflgs(uint32_t peerflags)
+{
+	uint32_t outflags = 0;
+	outflags |= RS_NET_FLAGS_ONLINE;
+	return outflags;
+#if 0
+
+	// The input flags.
+#define         BITDHT_PEER_STATUS_RECV_PONG            0x00000001
+#define         BITDHT_PEER_STATUS_RECV_NODES           0x00000002
+#define         BITDHT_PEER_STATUS_RECV_HASHES          0x00000004
+
+#define         BITDHT_PEER_STATUS_DHT_ENGINE           0x00000100
+#define         BITDHT_PEER_STATUS_DHT_APPL             0x00000200
+#define         BITDHT_PEER_STATUS_DHT_VERSION          0x00000400
+
+	if (peerflags & ONLINE)
+	{
+		outflags |= RS_NET_FLAGS_ONLINE;
+	}
+	if (peerflags & ONLINE)
+	{
+		outflags |= RS_NET_FLAGS_EXTERNAL_ADDR | RS_NET_FLAGS_STABLE_UDP;
+	}
+#endif
+}
+
 
 int p3BitDht::PeerCallback(const bdNodeId *id, uint32_t status)
 {

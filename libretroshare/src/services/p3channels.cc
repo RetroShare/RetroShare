@@ -278,7 +278,12 @@ bool p3Channels::ChannelMessageSend(ChannelMsgInfo &info)
 		cmsg->thumbnail.image_type = 0;
 	}
 
-	std::string msgId = publishMsg(cmsg, true);
+	bool toSign = false; 
+	// Channels are not personally signed yet... (certainly not by default!).
+	// This functionality can easily be added once its available in the gui + API.
+	// should check the GroupFlags for default.
+
+	std::string msgId = publishMsg(cmsg, toSign);
 
 	return true;
 }
