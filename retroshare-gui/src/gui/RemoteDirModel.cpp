@@ -520,10 +520,7 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
             case 0:
                 return QString::fromUtf8(details.name.c_str());
             case 1:
-
-				// notdefine: was, but has compile probs return details.count;
-				return misc::friendlyUnit(details.count);
-
+                return (qulonglong) details.count;
             case 2:
                return  details.age;
             case 3:
@@ -546,9 +543,7 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
             case 0:
                 return QString::fromUtf8(details.name.c_str());
             case 1:
-   				// notdefine: was, but has compile probs return details.count;
-				return misc::friendlyUnit(details.count);
-
+                return (qulonglong) details.count;
             case 2:
                 return details.min_age;
             case 3:
