@@ -1129,13 +1129,13 @@ void MessengerWindow::getAvatar()
 /** Loads own personal status message */
 void MessengerWindow::loadmystatusmessage()
 { 
-    ui.messagelineEdit->setText(QString::fromStdString(rsMsgs->getCustomStateString()));
+    ui.messagelineEdit->setEditText( QString::fromStdString(rsMsgs->getCustomStateString()));
 }
 
 /** Save own status message */
 void MessengerWindow::savestatusmessage()
 {
-    rsMsgs->setCustomStateString(ui.messagelineEdit->text().toStdString());
+    rsMsgs->setCustomStateString(ui.messagelineEdit->currentText().toStdString());
 }
 
 void MessengerWindow::updateOwnStatus(const QString &peer_id, int status)

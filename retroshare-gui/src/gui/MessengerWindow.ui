@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>221</width>
+    <width>258</width>
     <height>482</height>
    </rect>
   </property>
@@ -86,63 +86,51 @@ stop:0 #05538B, stop:1 #E4F1E5);
        </item>
        <item row="0" column="1">
         <layout class="QGridLayout" name="gridLayout_4">
-         <item row="0" column="0" colspan="3">
-          <widget class="QPushButton" name="statusButton">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
+         <item row="1" column="0" colspan="2">
+          <widget class="QComboBox" name="messagelineEdit">
+           <property name="editable">
+            <bool>true</bool>
            </property>
+          </widget>
+         </item>
+         <item row="0" column="0" colspan="2">
+          <widget class="QPushButton" name="statusButton">
            <property name="minimumSize">
             <size>
              <width>0</width>
-             <height>0</height>
+             <height>16</height>
             </size>
            </property>
-           <property name="font">
-            <font>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
            <property name="styleSheet">
-            <string notr="true">QPushButton:hover {
+            <string notr="true">QPushButton {
+         text-align: left;
+}
+QPushButton:hover {
             border: 2px solid #8f8f91;
             border-radius: 6px;
             background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                               stop: 0 #f6f7fa, stop: 1 #dadbde);
             min-width: 80px;
 
-        }
-
-        QPushButton:pressed {
+}
+QPushButton:pressed {
             background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                               stop: 0 #dadbde, stop: 1 #f6f7fa);
-        }
+}
 
-        QPushButton:flat {
+QPushButton:flat {
             border: none; /* no border for a flat push button */
-        }
+}
 
-        QPushButton:default {
+QPushButton:default {
             border-color: navy; /* make the default button prominent */
-        }</string>
+}</string>
            </property>
            <property name="text">
             <string/>
            </property>
            <property name="flat">
             <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0" colspan="3">
-          <widget class="QLineEdit" name="messagelineEdit">
-           <property name="toolTip">
-            <string>Change your Personal Status here...</string>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">border: 1px solid #CCCCCC;</string>
            </property>
           </widget>
          </item>
@@ -169,7 +157,7 @@ stop:0 #05538B, stop:1 #E4F1E5);
       <property name="maximumSize">
        <size>
         <width>16777215</width>
-        <height>38</height>
+        <height>32</height>
        </size>
       </property>
       <property name="styleSheet">
@@ -193,7 +181,7 @@ border-bottom: 1px solid #CCCCCC;
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
        <property name="margin">
-        <number>6</number>
+        <number>2</number>
        </property>
        <item row="0" column="0">
         <widget class="QToolButton" name="addIMAccountButton">
@@ -444,7 +432,7 @@ border: 1px solid #CCCCCC;
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>221</width>
+     <width>258</width>
      <height>20</height>
     </rect>
    </property>
