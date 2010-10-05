@@ -427,10 +427,14 @@ int p3BitDht::NodeCallback(const bdId *id, uint32_t peerflags)
 
 	if (peerflags != BITDHT_PEER_STATUS_RECV_NODES)
 	{
+
+#ifdef DEBUG_BITDHT
 		std::cerr << "p3BitDht::NodeCallback() Ignoring !FIND_NODE callback from:";
 		bdStdPrintNodeId(std::cerr, &(id->id));
 		std::cerr << " flags: " << peerflags;
 		std::cerr << std::endl;
+#endif
+
 		return 0;
 	}
 
