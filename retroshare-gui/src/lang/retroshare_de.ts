@@ -856,18 +856,28 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ChanMsgItem</name>
     <message>
-        <location filename="../gui/feeds/ChanMsgItem.ui" line="+221"/>
+        <location filename="../gui/feeds/ChanMsgItem.ui" line="+230"/>
         <source>Remove Item</source>
         <translation>Eintrag entfernen</translation>
     </message>
     <message>
         <location line="+20"/>
-        <location filename="../gui/feeds/ChanMsgItem.cpp" line="+189"/>
+        <location filename="../gui/feeds/ChanMsgItem.cpp" line="+249"/>
         <source>Expand</source>
         <translation>Erweitern</translation>
     </message>
     <message>
-        <location line="-40"/>
+        <location line="+24"/>
+        <source>Download</source>
+        <translation type="unfinished">Herunterladen</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Play</source>
+        <translation type="unfinished">Abspielen</translation>
+    </message>
+    <message>
+        <location line="-75"/>
         <source>Unsubscribe From Channel</source>
         <translation>Kanal abbestellen</translation>
     </message>
@@ -972,7 +982,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ChannelFeed</name>
     <message>
-        <location filename="../gui/ChannelFeed.ui" line="+141"/>
+        <location filename="../gui/ChannelFeed.ui" line="+144"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -1287,7 +1297,7 @@ Keine Beschreibung</translation>
 <context>
     <name>ChatStyle</name>
     <message>
-        <location filename="../gui/chat/ChatStyle.cpp" line="+381"/>
+        <location filename="../gui/chat/ChatStyle.cpp" line="+383"/>
         <source>Standard style for group chat</source>
         <translation>Standard Stil für den Gruppenchat</translation>
     </message>
@@ -2220,7 +2230,7 @@ p, li { white-space: pre-wrap; }
         <translation>Drag&apos;n&apos;Drop Dateien aus den Suchergebnissen</translation>
     </message>
     <message>
-        <location filename="../gui/channels/CreateChannelMsg.cpp" line="+290"/>
+        <location filename="../gui/channels/CreateChannelMsg.cpp" line="+289"/>
         <source>Add Extra File</source>
         <translation>Zusätzlich eine Datei hinzufügen</translation>
     </message>
@@ -3499,7 +3509,7 @@ p, li { white-space: pre-wrap; }
         <translation>Andere Foren</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.ui" line="+618"/>
+        <location filename="../gui/ForumsDialog.ui" line="+621"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -4588,7 +4598,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+32"/>
-        <location filename="../gui/im_history/ImHistoryBrowser.cpp" line="+295"/>
+        <location filename="../gui/im_history/ImHistoryBrowser.cpp" line="+383"/>
         <source>Copy</source>
         <translation>Kopieren</translation>
     </message>
@@ -5725,7 +5735,7 @@ Willst Du die Nachricht speichern ?</translation>
         <translation>Von</translation>
     </message>
     <message>
-        <location line="+793"/>
+        <location line="+796"/>
         <source>Size</source>
         <translation>Grösse</translation>
     </message>
@@ -5738,7 +5748,7 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:10pt; font-weight:600;&quot;&gt;Empfohlene Dateien&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="-692"/>
+        <location line="-695"/>
         <source>Reply</source>
         <translation>Antworten</translation>
     </message>
@@ -5803,7 +5813,7 @@ p, li { white-space: pre-wrap; }
         <translation>Anhänge</translation>
     </message>
     <message>
-        <location line="+171"/>
+        <location line="+174"/>
         <location filename="../gui/MessagesDialog.cpp" line="-44"/>
         <location line="+922"/>
         <location line="+10"/>
@@ -5887,13 +5897,13 @@ p, li { white-space: pre-wrap; }
         <translation>Dokument drucken</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="-859"/>
+        <location filename="../gui/MessagesDialog.ui" line="-862"/>
         <location filename="../gui/MessagesDialog.cpp" line="-1574"/>
         <source>Subject</source>
         <translation>Betreff</translation>
     </message>
     <message>
-        <location line="+514"/>
+        <location line="+517"/>
         <source>Subject:</source>
         <translation>Betreff:</translation>
     </message>
@@ -5923,7 +5933,7 @@ p, li { white-space: pre-wrap; }
         <translation>Prüfsumme</translation>
     </message>
     <message>
-        <location line="-942"/>
+        <location line="-945"/>
         <source>Print</source>
         <translation>Drucken</translation>
     </message>
@@ -5986,7 +5996,7 @@ p, li { white-space: pre-wrap; }
         <translation>Allen antworten</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="+579"/>
+        <location filename="../gui/MessagesDialog.ui" line="+582"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -5999,7 +6009,7 @@ p, li { white-space: pre-wrap; }
         <translation>Posteingang gesamt:</translation>
     </message>
     <message>
-        <location line="-268"/>
+        <location line="-271"/>
         <location filename="../gui/MessagesDialog.cpp" line="-324"/>
         <source>Content</source>
         <translation>Inhalt</translation>
@@ -6018,7 +6028,7 @@ p, li { white-space: pre-wrap; }
         <translation>Schlagwort</translation>
     </message>
     <message>
-        <location line="+171"/>
+        <location line="+174"/>
         <location filename="../gui/MessagesDialog.cpp" line="+710"/>
         <location line="+964"/>
         <location line="+5"/>
@@ -7190,7 +7200,7 @@ p, li { white-space: pre-wrap; }
         <translation>Verfügbar</translation>
     </message>
     <message>
-        <location line="+770"/>
+        <location line="+771"/>
         <source>Add Extra File</source>
         <translation>Zusätzliche Datei hinzufügen</translation>
     </message>
@@ -7308,7 +7318,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="-107"/>
-        <location filename="../gui/PeersDialog.cpp" line="-1478"/>
+        <location filename="../gui/PeersDialog.cpp" line="-1479"/>
         <source>Add Friend</source>
         <translation>Freund hinzufügen</translation>
     </message>
@@ -7383,7 +7393,7 @@ p, li { white-space: pre-wrap; }
         <translation>Willst du diesen Freund entfernen?</translation>
     </message>
     <message>
-        <location line="+730"/>
+        <location line="+731"/>
         <source>Save as...</source>
         <translation>Speichern unter...</translation>
     </message>
@@ -7416,7 +7426,7 @@ p, li { white-space: pre-wrap; }
         <translation>Status Spalte ausblenden</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="-1809"/>
+        <location filename="../gui/PeersDialog.cpp" line="-1810"/>
         <source>Friends Storm</source>
         <translation>Aktivitäten</translation>
     </message>
@@ -7744,7 +7754,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PopupChatDialog</name>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="+778"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="+777"/>
         <source>Hide Avatar</source>
         <translation>Avatar verstecken</translation>
     </message>
@@ -7754,12 +7764,12 @@ p, li { white-space: pre-wrap; }
         <translation>Avatar zeigen</translation>
     </message>
     <message>
-        <location line="+341"/>
+        <location line="+342"/>
         <source>File not found or file name not accepted.</source>
         <translation>Datei nicht gefunden oder Dateiname nicht akzeptiert.</translation>
     </message>
     <message>
-        <location line="+88"/>
+        <location line="+90"/>
         <source>Messages you send will be delivered after Friend is again Online</source>
         <translation>Nachrichten, die Du versendest gehen bei diesem Freund erst wieder ein wenn er Online ist</translation>
     </message>
@@ -7822,7 +7832,7 @@ p, li { white-space: pre-wrap; }
         <translation>Deaktiviere Emoticons</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="-1033"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="-1034"/>
         <source>Paste retroshare Link</source>
         <translation>RetroShare Link einfügen</translation>
     </message>
@@ -7842,12 +7852,12 @@ p, li { white-space: pre-wrap; }
         <translation>Wähle dein Avatar Bild aus</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="+772"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="+770"/>
         <source>Add Extra File</source>
         <translation>Zusätzlich eine Datei hinzufügen</translation>
     </message>
     <message>
-        <location line="+166"/>
+        <location line="+167"/>
         <location line="+7"/>
         <source>Drop file error.</source>
         <translation>Dateifehler bei Drag&apos;n&apos;Drop.</translation>
@@ -7879,7 +7889,7 @@ p, li { white-space: pre-wrap; }
         <translation>Text Datei (*.txt );;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location line="-750"/>
+        <location line="-749"/>
         <source>Your Friend is offline 
 Do you want to send them a Message instead</source>
         <translation>Dein Freund ist Offline willst du ihm stattdessen eine Nachricht senden</translation>
@@ -7896,7 +7906,7 @@ Do you want to send them a Message instead</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="+789"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="+790"/>
         <source>is Idle and may not reply</source>
         <translation>antwortet möglicherweise nicht, da der Status auf &quot;Untätig&quot; gesetzt wurde</translation>
     </message>
@@ -7916,7 +7926,7 @@ Do you want to send them a Message instead</source>
         <translation>ist Offline.</translation>
     </message>
     <message>
-        <location line="-734"/>
+        <location line="-735"/>
         <source>is typing...</source>
         <translation>tippt...</translation>
     </message>
@@ -8784,7 +8794,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RemoteDirModel</name>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="+611"/>
+        <location filename="../gui/RemoteDirModel.cpp" line="+606"/>
         <source>Friends Directories</source>
         <translation>Dateien von Freunden</translation>
     </message>
@@ -8814,7 +8824,7 @@ p, li { white-space: pre-wrap; }
         <translation>Alter</translation>
     </message>
     <message>
-        <location line="-461"/>
+        <location line="-456"/>
         <source>Anonymous</source>
         <translation>Anonym</translation>
     </message>
@@ -8830,12 +8840,12 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+295"/>
-        <location line="+81"/>
+        <location line="+78"/>
         <source>FILE</source>
         <translation>DATEI</translation>
     </message>
     <message>
-        <location line="-64"/>
+        <location line="-61"/>
         <source>Files</source>
         <translation>Dateien</translation>
     </message>
@@ -8846,7 +8856,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+10"/>
-        <location line="+69"/>
+        <location line="+64"/>
         <source>DIR</source>
         <translation>ORDNER</translation>
     </message>
@@ -10369,13 +10379,13 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+26"/>
-        <location filename="../gui/feeds/SubFileItem.cpp" line="+579"/>
+        <location filename="../gui/feeds/SubFileItem.cpp" line="+582"/>
         <location line="+6"/>
         <source>Play File</source>
         <translation>Datei abspielen</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/SubFileItem.cpp" line="+51"/>
+        <location filename="../gui/feeds/SubFileItem.cpp" line="+54"/>
         <source>Save Channel File</source>
         <translation>Channel Datei speichern</translation>
     </message>
@@ -10390,7 +10400,38 @@ p, li { white-space: pre-wrap; }
         <translation>Abspielen</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/SubFileItem.cpp" line="-56"/>
+        <location filename="../gui/feeds/SubFileItem.cpp" line="-429"/>
+        <location line="+8"/>
+        <source>ERROR</source>
+        <translation>FEHLER</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>EXTRA</source>
+        <translation>EXTRA</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>REMOTE</source>
+        <translation>ENTFERNT</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>DOWNLOAD</source>
+        <translation>DOWNLOAD</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>LOCAL</source>
+        <translation>LOKAL</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>UPLOAD</source>
+        <translation>UPLOAD</translation>
+    </message>
+    <message>
+        <location line="+306"/>
         <source>File %1 does not exist at location.</source>
         <translation>Datei %1 existiert nicht.</translation>
     </message>
@@ -10568,7 +10609,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TransfersDialog</name>
     <message>
-        <location filename="../gui/TransfersDialog.cpp" line="+236"/>
+        <location filename="../gui/TransfersDialog.cpp" line="+246"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
@@ -10578,13 +10619,13 @@ p, li { white-space: pre-wrap; }
         <translation>Fertige ausblenden</translation>
     </message>
     <message>
-        <location line="-158"/>
-        <location line="+62"/>
+        <location line="-152"/>
+        <location line="+59"/>
         <source>Status</source>
         <translation>Status</translation>
     </message>
     <message>
-        <location line="-66"/>
+        <location line="-63"/>
         <source>Completed</source>
         <translation>Fertiggestellt</translation>
     </message>
@@ -10638,20 +10679,20 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="-2"/>
-        <location line="+63"/>
+        <location line="+60"/>
         <source>Name</source>
         <comment>i.e: file name</comment>
         <translation>Name</translation>
     </message>
     <message>
-        <location line="-62"/>
-        <location line="+63"/>
+        <location line="-59"/>
+        <location line="+60"/>
         <source>Size</source>
         <comment>i.e: file size</comment>
         <translation>Grösse</translation>
     </message>
     <message>
-        <location line="-61"/>
+        <location line="-58"/>
         <source>Speed</source>
         <comment>i.e: Download speed</comment>
         <translation>Geschwindigkeit</translation>
@@ -10674,7 +10715,7 @@ p, li { white-space: pre-wrap; }
         <translation>Kern-ID</translation>
     </message>
     <message>
-        <location line="+56"/>
+        <location line="+53"/>
         <source>Progress</source>
         <comment>i.e: % uploaded</comment>
         <translation>Fortschritt</translation>
@@ -10691,7 +10732,7 @@ p, li { white-space: pre-wrap; }
         <translation>Übertragen</translation>
     </message>
     <message>
-        <location line="+121"/>
+        <location line="+118"/>
         <source>Play</source>
         <translation>Abspielen</translation>
     </message>
@@ -10776,7 +10817,7 @@ p, li { white-space: pre-wrap; }
         <translation>Blockstrategie</translation>
     </message>
     <message>
-        <location line="+391"/>
+        <location line="+396"/>
         <source>Queued</source>
         <translation>In Warteschleife</translation>
     </message>
@@ -10786,12 +10827,12 @@ p, li { white-space: pre-wrap; }
         <translation>Pausiert</translation>
     </message>
     <message>
-        <location line="-137"/>
+        <location line="-139"/>
         <source>Transferring</source>
         <translation>Übertrage</translation>
     </message>
     <message>
-        <location line="+352"/>
+        <location line="+354"/>
         <source>RetroShare</source>
         <translation></translation>
     </message>
@@ -10816,7 +10857,7 @@ p, li { white-space: pre-wrap; }
         <translation>Soll dieser Download wirklich abgebrochen und gelöscht werden?</translation>
     </message>
     <message>
-        <location line="-901"/>
+        <location line="-900"/>
         <source>Speed / Queue position</source>
         <translation>Geschwindigkeits- / Warteschlangenposition</translation>
     </message>
@@ -10832,7 +10873,7 @@ p, li { white-space: pre-wrap; }
         <translation>Download Zeit</translation>
     </message>
     <message>
-        <location line="+56"/>
+        <location line="+53"/>
         <source>Peer</source>
         <comment>i.e: user name</comment>
         <translation>Nachbar</translation>
@@ -10843,39 +10884,39 @@ p, li { white-space: pre-wrap; }
         <translation>Prüfsumme</translation>
     </message>
     <message>
-        <location line="+112"/>
-        <location line="+525"/>
+        <location line="+109"/>
+        <location line="+530"/>
         <source>Slower</source>
         <translation>Langsamer</translation>
     </message>
     <message>
-        <location line="-523"/>
-        <location line="+524"/>
+        <location line="-528"/>
+        <location line="+529"/>
         <location line="+2"/>
         <source>Average</source>
         <translation>Durchschnitt</translation>
     </message>
     <message>
-        <location line="-524"/>
-        <location line="+523"/>
+        <location line="-529"/>
+        <location line="+528"/>
         <source>Faster</source>
         <translation>Schneller</translation>
     </message>
     <message>
-        <location line="-419"/>
+        <location line="-424"/>
         <source>Move in Queue...</source>
         <translation>Verschiebe in Warteschlange...</translation>
     </message>
     <message>
-        <location line="+256"/>
-        <location line="+143"/>
+        <location line="+259"/>
+        <location line="+145"/>
         <location line="+129"/>
         <source>Failed</source>
         <translation>Gescheitert</translation>
     </message>
     <message>
-        <location line="-268"/>
-        <location line="+140"/>
+        <location line="-270"/>
+        <location line="+142"/>
         <location line="+129"/>
         <source>Okay</source>
         <translation>OK</translation>
@@ -10892,8 +10933,8 @@ p, li { white-space: pre-wrap; }
         <translation>Ladend</translation>
     </message>
     <message>
-        <location line="-130"/>
-        <location line="+131"/>
+        <location line="-132"/>
+        <location line="+133"/>
         <location line="+129"/>
         <location line="+1"/>
         <source>Complete</source>
@@ -10920,7 +10961,7 @@ p, li { white-space: pre-wrap; }
         <translation>Überprüfe...</translation>
     </message>
     <message>
-        <location line="-550"/>
+        <location line="-555"/>
         <source>Force Check</source>
         <translation>Erzwinge Überprüfung</translation>
     </message>

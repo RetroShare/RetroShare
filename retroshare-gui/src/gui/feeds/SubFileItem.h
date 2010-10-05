@@ -70,14 +70,17 @@ public:
 	bool ready();
 	uint32_t getState();
 
+	bool isDownloadable(bool &startable);
+	bool isPlayable(bool &startable);
+
 public  slots:
 	void download();
+	void play();
 
 private slots:
 	void toggle();
 
   	void cancel();
-	void play();
 	void save();
 
 	void updateItem();

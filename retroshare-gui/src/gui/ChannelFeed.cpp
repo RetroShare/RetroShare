@@ -672,6 +672,11 @@ void ChannelFeed::updateChannelListOther(std::list<std::string> &ids)
 	}
 }
 
+static bool sortChannelMsgSummary(const ChannelMsgSummary &msg1, const ChannelMsgSummary &msg2)
+{
+	return (msg1.ts < msg2.ts);
+}
+
 void ChannelFeed::updateChannelMsgs()
 {
 	if (!rsChannels)
@@ -743,6 +748,8 @@ void ChannelFeed::updateChannelMsgs()
 	std::list<ChannelMsgSummary>::iterator it;
 
 	rsChannels->getChannelMsgList(mChannelId, msgs);
+
+	msgs.sort(sortChannelMsgSummary);
 
 	for(it = msgs.begin(); it != msgs.end(); it++)
 	{

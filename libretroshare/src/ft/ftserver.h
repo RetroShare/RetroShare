@@ -120,6 +120,7 @@ ftController *getController() const { return mFtController ; }
 /***
  * Control of Downloads
  ***/
+virtual bool alreadyHaveFile(const std::string& hash, FileInfo &info);
 virtual bool FileRequest(const std::string& fname, const std::string& hash, uint64_t size, const std::string& dest, uint32_t flags, const std::list<std::string>& srcIds);
 virtual bool FileCancel(const std::string& hash);
 virtual bool FileControl(const std::string& hash, uint32_t flags);

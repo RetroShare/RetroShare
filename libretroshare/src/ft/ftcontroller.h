@@ -142,7 +142,7 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 				const std::list<std::string> &sourceIds);
 
 		/// Do we already have this file, either in download or in file lists ?
-		bool  alreadyHaveFile(const std::string& hash) ;
+		bool  alreadyHaveFile(const std::string& hash, FileInfo &info);
 
 		bool 	setChunkStrategy(const std::string& hash,FileChunksInfo::ChunkStrategy s);
 		void 	setDefaultChunkStrategy(FileChunksInfo::ChunkStrategy s);

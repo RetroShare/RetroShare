@@ -281,6 +281,11 @@ bool ftServer::checkHash(const std::string& hash,std::string& error_string)
 	return true ;
 }
 
+bool ftServer::alreadyHaveFile(const std::string& hash, FileInfo &info)
+{
+	return mFtController->alreadyHaveFile(hash, info);
+}
+
 bool ftServer::FileRequest(const std::string& fname, const std::string& hash, uint64_t size, const std::string& dest, uint32_t flags, const std::list<std::string>& srcIds)
 {
 	std::string error_string ;

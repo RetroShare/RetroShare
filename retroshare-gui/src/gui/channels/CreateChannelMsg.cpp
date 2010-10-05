@@ -135,15 +135,14 @@ void CreateChannelMsg::dropEvent(QDropEvent *event)
 		QList<QUrl>::iterator uit;
 		for(uit = urls.begin(); uit != urls.end(); uit++)
 		{
-			std::string localpath = uit->toLocalFile().toStdString();
+			std::string localpath = uit->toLocalFile().toUtf8().constData();
 			std::cerr << "Whole URL: " << uit->toString().toStdString();
 			std::cerr << std::endl;
-			std::cerr << "or As Local File: " << localpath;
+			std::cerr << "or As Local File: " << uit->toLocalFile().toStdString();
 			std::cerr << std::endl;
 
 			if (localpath.size() > 0)
 			{
-
 				addAttachment(localpath);
 			}
 		}
@@ -289,7 +288,7 @@ void CreateChannelMsg::addExtraFile()
 	// select a file
 	QString qfile = QFileDialog::getOpenFileName(this, tr("Add Extra File"), "", "", 0,
 				QFileDialog::DontResolveSymlinks);
-	std::string filePath = qfile.toStdString();
+	std::string filePath = qfile.toUtf8().constData();
 	if (filePath != "")
 	{
 		addAttachment(filePath);
@@ -347,9 +346,6 @@ void CreateChannelMsg::checkAttachmentReady()
 				buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 				buttonBox->button(QDialogButtonBox::Cancel)->setEnabled(false);
 				break;
-
-
-				return;
 			}
 		}
 	}

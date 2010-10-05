@@ -111,11 +111,9 @@ void SubFileItem::Setup()
   if (mMode == SFI_STATE_REMOTE)
   {
 	FileInfo fi;
-	uint32_t hintflags = RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL
-					| RS_FILE_HINTS_SPEC_ONLY;
 
 	/* look up path */
-	if (rsFiles->FileDetails(mFileHash, hintflags, fi))
+	if (rsFiles->alreadyHaveFile(mFileHash, fi))
 	{
 #ifdef DEBUG_ITEM
 		std::cerr << "SubFileItem::Setup() STATE=>Local Found File";
@@ -131,8 +129,6 @@ void SubFileItem::Setup()
   smaller();
   updateItemStatic();
   updateItem();
-
-
 }
 
 
@@ -154,7 +150,7 @@ void SubFileItem::updateItemStatic()
 	std::cerr << std::endl;
 #endif
 
-	QString filename = QString::fromStdString(mFileName);
+	QString filename = QString::fromUtf8(mFileName.c_str());
 	mDivisor = 1;
 
 	if (mFileSize > 10000000) /* 10 Mb */
@@ -214,7 +210,7 @@ void SubFileItem::updateItemStatic()
 	{
 		case SFI_STATE_ERROR:
 			progressBar->setRange(0, 100);
-			progressBar->setFormat("ERROR");
+		progressBar->setFormat(tr("ERROR"));
 
 			playButton->setEnabled(false);
 			downloadButton->setEnabled(false);
@@ -222,12 +218,12 @@ void SubFileItem::updateItemStatic()
 			expandButton->setEnabled(false);
 		
 			progressBar->setValue(0);
-			filename = "[ERROR] " + filename;
+			filename = "[" + tr("ERROR") + "] " + filename;
 
 			break;
 
 		case SFI_STATE_EXTRA:
-			filename = QString::fromStdString(mPath);
+			filename = QString::fromUtf8(mPath.c_str());
 
 			progressBar->setRange(0, 100);
 			progressBar->setFormat("HASHING");
@@ -238,7 +234,7 @@ void SubFileItem::updateItemStatic()
 			expandButton->setEnabled(false);
 
 			progressBar->setValue(0);
-			filename = "[EXTRA] " + filename;
+			filename = "[" + tr("EXTRA") + "] " + filename;
 
 			break;
 
@@ -249,7 +245,7 @@ void SubFileItem::updateItemStatic()
 			expandButton->setEnabled(false);
 
 			progressBar->setValue(0);
-			filename = "[REMOTE] " + filename;
+			filename = "[" + tr("REMOTE") + "] " + filename;
 
 			break;
 
@@ -258,7 +254,7 @@ void SubFileItem::updateItemStatic()
 			downloadButton->setEnabled(false);
 			cancelButton->setEnabled(true);
 			expandButton->setEnabled(true);
-			filename = "[DOWNLOAD] " + filename;
+			filename = "[" + tr("DOWNLOAD") + "] " + filename;
 
 			break;
 
@@ -269,7 +265,7 @@ void SubFileItem::updateItemStatic()
 			expandButton->setEnabled(false);
 
 			progressBar->setValue(mFileSize / mDivisor);
-			filename = "[LOCAL] " + filename;
+			filename = "[" + tr("LOCAL") + "] " + filename;
 
 			break;
 
@@ -278,7 +274,7 @@ void SubFileItem::updateItemStatic()
 			downloadButton->setEnabled(false);
 			cancelButton->setEnabled(false);
 			expandButton->setEnabled(true);
-			filename = "[UPLOAD] " + filename;
+			filename = "[" + tr("UPLOAD") + "] " + filename;
 
 			break;
 	}
@@ -341,6 +337,11 @@ void SubFileItem::updateItem()
 		std::cerr << std::endl;
 #endif
 		/* ignore - dead file, or done */
+
+		if (mMode == SFI_STATE_ERROR) {
+			/* updateStatic once */
+			stateChanged = true;
+		}
 	}
 	else if (mMode == SFI_STATE_EXTRA)
 	{
@@ -554,6 +555,8 @@ void SubFileItem::cancel()
 	{
 		rsFiles->FileCancel(mFileHash);
 	}
+
+	updateItem();
 }
 
 
@@ -617,6 +620,9 @@ void SubFileItem::download()
 	}
 	rsFiles->FileRequest(mFileName, mFileHash, mFileSize, "", RS_FILE_HINTS_NETWORK_WIDE, srcIds);
 
+	downloadButton->setEnabled(false);
+
+	updateItem();
 }
 
 
@@ -652,4 +658,22 @@ void SubFileItem::save()
 
 uint32_t SubFileItem::getState() {
     return mMode;
+}
+
+bool SubFileItem::isDownloadable(bool &startable)
+{
+	/* Check buttons. Not good, but it works. */
+	bool visible = downloadButton->isVisibleTo(this);
+	startable = visible && downloadButton->isEnabled();
+
+	return visible;
+}
+
+bool SubFileItem::isPlayable(bool &startable)
+{
+	/* Check buttons. Not good, but it works. */
+	bool visible = playButton->isVisibleTo(this);
+	startable = visible && playButton->isEnabled();
+
+	return visible;
 }

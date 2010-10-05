@@ -994,12 +994,10 @@ bool	ftController::handleAPendingRequest()
 	return true ;
 }
 
-bool ftController::alreadyHaveFile(const std::string& hash)
+bool ftController::alreadyHaveFile(const std::string& hash, FileInfo &info)
 {
-	FileInfo info ;
-
 	// check for downloads
-	if(FileDetails(hash, info) && (info.downloadStatus == FT_STATE_COMPLETE))
+	if (FileDetails(hash, info) && (info.downloadStatus == FT_STATE_COMPLETE))
 		return true ;
 
 	// check for file lists
@@ -1017,7 +1015,8 @@ bool 	ftController::FileRequest(const std::string& fname, const std::string& has
 
 	/* check if we have the file */
 
-	if(alreadyHaveFile(hash))
+	FileInfo info;
+	if(alreadyHaveFile(hash, info))
 		return false ;
 
 	if(size == 0)	// we treat this special case because
@@ -1077,7 +1076,6 @@ bool 	ftController::FileRequest(const std::string& fname, const std::string& has
 		}
 	}
 
-	FileInfo info;
 	std::list<std::string>::const_iterator it;
 	std::list<TransferInfo>::const_iterator pit;
 

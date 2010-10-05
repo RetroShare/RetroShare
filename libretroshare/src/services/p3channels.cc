@@ -338,7 +338,14 @@ bool p3Channels::channelExtraFileHash(std::string path, std::string chId, FileIn
 
 bool p3Channels::cpyMsgFileToChFldr(std::string path, std::string fname, std::string chId, bool& fileTooLarge){
 
-	FILE *outFile = NULL, *inFile = fopen(path.c_str(), "rb");
+	FILE *outFile = NULL, *inFile;
+#ifdef WINDOWS_SYS
+	std::wstring wpath;
+	librs::util::ConvertUtf8ToUtf16(path, wpath);
+	inFile = _wfopen(wpath.c_str(), L"rb");
+#else
+	inFile = fopen(path.c_str(), "rb");
+#endif
 
 	long buffSize = 0;
 	char* buffer = NULL;
@@ -370,7 +377,13 @@ bool p3Channels::cpyMsgFileToChFldr(std::string path, std::string fname, std::st
 		fclose(inFile);
 
 		std::string localpath = mChannelsDir + "/" + chId + "/" + fname;
+#ifdef WINDOWS_SYS
+		std::wstring wlocalpath;
+		librs::util::ConvertUtf8ToUtf16(localpath, wlocalpath);
+		outFile = _wfopen(wlocalpath.c_str(), L"wb");
+#else
 		outFile = fopen(localpath.c_str(), "wb");
+#endif
 	}
 
 	if(outFile){

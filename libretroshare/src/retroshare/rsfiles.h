@@ -111,6 +111,7 @@ class RsFiles
 		 *  Control of Downloads.
 		 ***/
 
+		virtual bool alreadyHaveFile(const std::string& hash, FileInfo &info) = 0;
 		/// Returns false is we already have the file. Otherwise, initiates the dl and returns true.
 		virtual bool FileRequest(const std::string& fname, const std::string& hash, uint64_t size, const std::string& dest, uint32_t flags, const std::list<std::string>& srcIds) = 0;
 		virtual bool FileCancel(const std::string& hash) = 0;
