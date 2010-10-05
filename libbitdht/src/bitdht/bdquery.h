@@ -59,6 +59,8 @@ int 	printQuery();
 	time_t mQueryTS;
 	uint32_t mQueryFlags;
 
+	int32_t mQueryIdlePeerRetryPeriod; // seconds between retries.
+
 	private:
 
 	// closest peers

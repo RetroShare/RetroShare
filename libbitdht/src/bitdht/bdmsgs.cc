@@ -114,7 +114,7 @@ int bitdht_response_ping_msg(bdToken *tid, bdNodeId *id, bdToken *vid,
 
         be_add_keypair(dict, "t", tidnode);
         be_add_keypair(dict, "y", yqrnode);
-        be_add_keypair(dict, "V", vnode);
+        be_add_keypair(dict, "v", vnode);
 
 #ifdef DEBUG_MSG_DUMP
         /* dump answer */

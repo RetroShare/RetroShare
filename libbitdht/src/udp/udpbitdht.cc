@@ -41,17 +41,31 @@
 
 /*
  * #define DEBUG_UDP_BITDHT 1
+ *
+ * #define BITDHT_VERSION_ANONYMOUS	1
  */
 
 //#define DEBUG_UDP_BITDHT 1
 
+#define BITDHT_VERSION_IDENTIFER	1
 /*************************************/
 
-UdpBitDht::UdpBitDht(UdpPublisher *pub, bdNodeId *id, std::string dhtVersion, std::string bootstrapfile, bdDhtFunctions *fns)
+UdpBitDht::UdpBitDht(UdpPublisher *pub, bdNodeId *id, std::string appVersion, std::string bootstrapfile, bdDhtFunctions *fns)
 	:UdpSubReceiver(pub), mFns(fns)
 {
+	std::string usedVersion;
+
+#ifdef BITDHT_VERSION_IDENTIFER
+	usedVersion = "BD";
+#endif
+	usedVersion += appVersion;
+
+#ifdef BITDHT_VERSION_ANONYMOUS
+	usedVersion = ""; /* blank it */
+#endif
+
 	/* setup nodeManager */
-	mBitDhtManager = new bdNodeManager(id, dhtVersion, bootstrapfile, fns);
+	mBitDhtManager = new bdNodeManager(id, usedVersion, bootstrapfile, fns);
 
 }
 

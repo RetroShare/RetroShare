@@ -35,6 +35,7 @@
 class bdToken
 {
 	public:
+	bdToken() :len(0) { return; }
 	uint32_t len;
 	unsigned char data[BITDHT_TOKEN_MAX_LEN];
 };
@@ -42,6 +43,7 @@ class bdToken
 class bdCompactIds
 {
 	public:
+	bdCompactIds() :len(0) { return; }
 	uint32_t len;
 	unsigned char data[BITDHT_TOKEN_MAX_LEN];
 };
@@ -49,6 +51,7 @@ class bdCompactIds
 class bdVersion
 {
 	public:
+	bdVersion() :len(0) { return; }
 	uint32_t len;
 	unsigned char data[BITDHT_TOKEN_MAX_LEN];
 };

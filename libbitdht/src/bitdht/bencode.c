@@ -27,9 +27,8 @@
 
 /***
  * #define BE_DEBUG_DECODE 1
+ * #define BE_DEBUG 1 // controlled from Makefile too.
  ***/
-
-//#define BE_DEBUG_DECODE 1
 
 #ifdef BE_DEBUG_DECODE 
 	#include <stdio.h> /* debug */
@@ -394,8 +393,9 @@ void be_dump_str(be_node *node)
 	}
 
 	int len = be_str_len(node);
+	int i = 0;
 	printf("str[%d] = ", len);
-	for(int i = 0; i < len; i++)
+	for(i = 0; i < len; i++)
 	{
 		/* sensible chars */
 		if ((node->val.s[i] > 31) && (node->val.s[i] < 127))

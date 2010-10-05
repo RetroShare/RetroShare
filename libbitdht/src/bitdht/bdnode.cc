@@ -681,8 +681,6 @@ void bdNode::msgout_ping(bdId *id, bdToken *transId)
 
 void bdNode::msgout_pong(bdId *id, bdToken *transId)
 {
-	char version[5] = "RS50";
-
 #ifdef DEBUG_NODE_MSGOUT
 	std::cerr << "bdNode::msgout_pong() TransId: ";
 	bdPrintTransId(std::cerr, transId);
@@ -696,8 +694,13 @@ void bdNode::msgout_pong(bdId *id, bdToken *transId)
 
 	/* generate message, send to udp */
 	bdToken vid;
-	memcpy(vid.data, version, 5);	
-	vid.len = 4;
+	int vlen = BITDHT_TOKEN_MAX_LEN;
+	if (mDhtVersion.size() < vlen)
+	{
+		vlen = mDhtVersion.size();
+	}
+	memcpy(vid.data, mDhtVersion.c_str(), vlen);	
+	vid.len = vlen;
 
         char msg[10240];
         int avail = 10240;
@@ -931,7 +934,19 @@ void    bdNode::sendPkt(char *msg, int len, struct sockaddr_in addr)
 void    bdNode::recvPkt(char *msg, int len, struct sockaddr_in addr)
 {
 #ifdef DEBUG_NODE_PARSE
-	fprintf(stderr, "bdNode::recvPkt()\n");
+	std::cerr << "bdNode::recvPkt() msg[" << len << "] = ";
+	for(int i = 0; i < len; i++)
+	{
+		if ((msg[i] > 31) && (msg[i] < 127))
+		{
+			std::cerr << msg[i];
+		}
+		else
+		{
+			std::cerr << "[" << (int) msg[i] << "]";
+		}
+	}
+	std::cerr << std::endl;
 #endif
 
 	/* convert to a be_node */
@@ -1035,7 +1050,7 @@ void    bdNode::recvPkt(char *msg, int len, struct sockaddr_in addr)
         bdToken versionId;
 	if (beType == BITDHT_MSG_TYPE_PONG)
 	{
-		be_version = beMsgGetDictNode(be_data, "version");
+		be_version = beMsgGetDictNode(node, "v");
 		if (!be_version)
 		{
 #ifdef DEBUG_NODE_PARSE
@@ -1049,7 +1064,6 @@ void    bdNode::recvPkt(char *msg, int len, struct sockaddr_in addr)
 	{
 		beMsgGetToken(be_version, versionId);
 	}
-
 
 	/*********** handle target (query) or info_hash (get_hash) ************/
 	bdNodeId target_info_hash;
@@ -1202,7 +1216,15 @@ void    bdNode::recvPkt(char *msg, int len, struct sockaddr_in addr)
 			mFns->bdPrintId(std::cerr, &srcId);
 			std::cerr << std::endl;
 #endif
-			msgin_pong(&srcId, &transId, &versionId);
+			if (be_version)
+			{
+				msgin_pong(&srcId, &transId, &versionId);
+			}
+			else
+			{
+				msgin_pong(&srcId, &transId, NULL);
+			}
+
 			break;
 		}
 		case BITDHT_MSG_TYPE_FIND_NODE: /* a: id, transId, target */     
@@ -1361,40 +1383,50 @@ void bdNode::msgin_pong(bdId *id, bdToken *transId, bdToken *versionId)
 #endif
 	
 		/* check two bytes */
-		if ((versionId->len > 2) && (mDhtVersion.size() > 2) &&
+		if ((versionId->len >= 2) && (mDhtVersion.size() >= 2) &&
 			(versionId->data[0] == mDhtVersion[0]) && (versionId->data[1] == mDhtVersion[1]))
 		{
 			sameDhtEngine = true;
 		}
 	
 		/* check two bytes */
-		if ((versionId->len > 4) && (mDhtVersion.size() > 4) &&
+		if ((versionId->len >= 4) && (mDhtVersion.size() >= 4) &&
 			(versionId->data[2] == mDhtVersion[2]) && (versionId->data[3] == mDhtVersion[3]))
 		{
 			sameAppl = true;
 		}
 	
 		/* check two bytes */
-		if ((versionId->len > 6) && (mDhtVersion.size() > 6) &&
+		if ((versionId->len >= 6) && (mDhtVersion.size() >= 6) &&
 			(versionId->data[4] == mDhtVersion[4]) && (versionId->data[5] == mDhtVersion[5]))
 		{
 			sameVersion = true;
 		}
 	}
+	else
+	{
+		
+#ifdef DEBUG_NODE_MSGIN
+		std::cerr << "bdNode::msgin_pong() No Version";
+		std::cerr << std::endl;
+#endif
+	}
+	
+
 	
 
 	uint32_t peerflags = BITDHT_PEER_STATUS_RECV_PONG; /* should have id too */
 	if (sameDhtEngine)
 	{
-		peerflags = BITDHT_PEER_STATUS_DHT_ENGINE; 
+		peerflags |= BITDHT_PEER_STATUS_DHT_ENGINE; 
 	}
 	if (sameAppl)
 	{
-		peerflags = BITDHT_PEER_STATUS_DHT_APPL; 
+		peerflags |= BITDHT_PEER_STATUS_DHT_APPL; 
 	}
 	if (sameVersion)
 	{
-		peerflags = BITDHT_PEER_STATUS_DHT_VERSION; 
+		peerflags |= BITDHT_PEER_STATUS_DHT_VERSION; 
 	}
 
 	addPeer(id, peerflags);

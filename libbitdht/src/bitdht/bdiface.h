@@ -120,7 +120,7 @@ virtual void bdPrintNodeId(std::ostream &out, const bdNodeId *a) = 0;
  */
 
 #define 	BITDHT_PEER_STATUS_MASK_RECVD		0x000000ff
-#define 	BITDHT_PEER_STATUS_MASK_DHT		0x000000ff
+#define 	BITDHT_PEER_STATUS_MASK_DHT		0x0000ff00
 
 #define 	BITDHT_PEER_STATUS_RECV_PONG		0x00000001
 #define 	BITDHT_PEER_STATUS_RECV_NODES		0x00000002

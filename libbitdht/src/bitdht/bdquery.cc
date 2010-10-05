@@ -38,7 +38,7 @@
 
 
 #define EXPECTED_REPLY 20
-#define QUERY_IDLE_RETRY_PEER_PERIOD (mFns->bdNodesPerBucket() * 30)
+#define QUERY_IDLE_RETRY_PEER_PERIOD 300 // 5min =  (mFns->bdNodesPerBucket() * 30)
 
 
 /************************************************************
@@ -81,6 +81,8 @@ bdQuery::bdQuery(const bdNodeId *id, std::list<bdId> &startList, uint32_t queryF
 	mQueryFlags = queryFlags;
 	mQueryTS = now;
 
+	mQueryIdlePeerRetryPeriod = QUERY_IDLE_RETRY_PEER_PERIOD;
+
 	/* setup the limit of the search
 	 * by default it is setup to 000000 = exact match
 	 */
@@ -114,6 +116,13 @@ int bdQuery::nextQuery(bdId &id, bdNodeId &targetNodeId)
 
 	/* search through through list, find closest not queried */
 	time_t now = time(NULL);
+
+	/* update IdlePeerRetry */
+	if ((now - mQueryTS) / 2 > mQueryIdlePeerRetryPeriod)
+	{
+		mQueryIdlePeerRetryPeriod = (now-mQueryTS) / 2;
+	}
+
 	bool notFinished = false;
 	std::multimap<bdMetric, bdPeer>::iterator it;
 	for(it = mClosest.begin(); it != mClosest.end(); it++)
@@ -133,7 +142,7 @@ int bdQuery::nextQuery(bdId &id, bdNodeId &targetNodeId)
 
 		/* re-request every so often */
 		if ((!queryPeer) && (mQueryFlags & BITDHT_QFLAGS_DO_IDLE) && 
-				(now - it->second.mLastSendTime > QUERY_IDLE_RETRY_PEER_PERIOD))
+			(now - it->second.mLastSendTime > mQueryIdlePeerRetryPeriod))
 		{
 #ifdef DEBUG_QUERY 
         		fprintf(stderr, "NextQuery() Found out-of-date. queryPeer = true : ");
