@@ -75,8 +75,7 @@ bdThread::bdThread()
 
 void bdThread::join() /* waits for the the mTid thread to stop */
 {
-	void *ptr;
-	pthread_join(mTid, &ptr);
+	pthread_join(mTid, NULL);
 }
 
 void bdThread::stop() 
