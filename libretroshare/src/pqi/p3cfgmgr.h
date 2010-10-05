@@ -132,13 +132,13 @@ uint32_t   Type();
 /**
  *  The name of the configuration file
  */
-std::string Filename();
+const std::string& Filename();
 
 /**
  * The hash computed for this configuration, can use this to compare to externally stored hash
  * for validation checking
  */
-std::string Hash();
+const std::string& Hash();
 
 	protected:
 

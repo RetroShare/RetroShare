@@ -825,11 +825,12 @@ bool p3Config::getHashAttempt(const std::string& loadHash, std::string& hashstr,
 	PQInterface *stream = NULL;
 
 	std::string tempString, msgConfigFileName;
-	std::string::reverse_iterator rit = Filename().rbegin();
+	std::string filename = Filename() ;
+	std::string::reverse_iterator rit = filename.rbegin();
 
 
 	// get the msgconfig file name
-	for(int i =0; (i <= 7) && (rit != Filename().rend()); i++)
+	for(int i =0; (i <= 7) && (rit != filename.rend()); i++)
 	{
 		tempString.push_back(*rit);
 		rit++;
@@ -1306,13 +1307,13 @@ uint32_t   pqiConfig::Type()
 	return type;
 }
 
-std::string pqiConfig::Filename()
+const std::string& pqiConfig::Filename()
 {
 	RsStackMutex stack(cfgMtx); /***** LOCK STACK MUTEX ****/
 	return filename;
 }
 
-std::string pqiConfig::Hash()
+const std::string& pqiConfig::Hash()
 {
 	RsStackMutex stack(cfgMtx); /***** LOCK STACK MUTEX ****/
 	return hash;
