@@ -1,7 +1,7 @@
 TEMPLATE = lib
 #CONFIG += staticlib release
-CONFIG += staticlib testnetwork
-#CONFIG += staticlib testnetwork bitdht
+#CONFIG += staticlib testnetwork
+CONFIG += staticlib testnetwork bitdht
 CONFIG -= qt
 TARGET = retroshare
 
@@ -21,14 +21,14 @@ profiling {
 
 release {
 	# UDP and TUNNEL dont work anymore.
-	DEFINES *= PQI_DISABLE_UDP
+	#DEFINES *= PQI_DISABLE_UDP
 	DEFINES *= PQI_DISABLE_TUNNEL
 }
 
 
 
 testnetwork {
-	DEFINES *= PQI_DISABLE_UDP
+	#DEFINES *= PQI_DISABLE_UDP
 	DEFINES *= PQI_DISABLE_TUNNEL
 
 	# DEFINES *= AUTHSSL_DEBUG GPG_DEBUG 
