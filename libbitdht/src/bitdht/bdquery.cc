@@ -326,11 +326,12 @@ int bdQuery::addPeer(const bdId *id, uint32_t mode)
         	fprintf(stderr, "Dropping Peer that dont reply\n");
 #endif
 		bool removed = false;
-		for(it = mClosest.begin(); (!removed) && (it != mClosest.end()); it++)
+		for(it = mClosest.begin(); it != mClosest.end(); ++it)
 		{
 			time_t sendts = ts - it->second.mLastSendTime;
 			bool hasSent = (it->second.mLastSendTime != 0);
 			bool hasReply = (it->second.mLastRecvTime >= it->second.mLastSendTime);
+
 			if ((hasSent) && (!hasReply) && (sendts > EXPECTED_REPLY))
 			{
 #ifdef DEBUG_QUERY 
@@ -340,6 +341,7 @@ int bdQuery::addPeer(const bdId *id, uint32_t mode)
 #endif
 				mClosest.erase(it);
 				removed = true;
+				break ;
 			}
 		}
 	}
@@ -349,13 +351,13 @@ int bdQuery::addPeer(const bdId *id, uint32_t mode)
 	{
 		std::multimap<bdMetric, bdPeer>::iterator it;
 		it = mClosest.end();
-		if (mClosest.begin() != mClosest.end())
+		if (!mClosest.empty())
 		{
 			it--;
 #ifdef DEBUG_QUERY 
-        		fprintf(stderr, "Removing Furthest Peer: ");
+			fprintf(stderr, "Removing Furthest Peer: ");
 			mFns->bdPrintId(std::cerr, &(it->second.mPeerId));
-        		fprintf(stderr, "\n");
+			fprintf(stderr, "\n");
 #endif
 
 			mClosest.erase(it);
@@ -503,15 +505,15 @@ int bdQuery::addPotentialPeer(const bdId *id, uint32_t mode)
 	{
 		std::multimap<bdMetric, bdPeer>::iterator it;
 		it = mPotentialClosest.end();
-		if (mPotentialClosest.begin() != mPotentialClosest.end())
-		{
-			it--;
-#ifdef DEBUG_QUERY 
-        		fprintf(stderr, "Removing Furthest Peer: ");
-			mFns->bdPrintId(std::cerr, &(it->second.mPeerId));
-        		fprintf(stderr, "\n");
-#endif
 
+		if(!mPotentialClosest.empty())
+		{
+			--it;
+#ifdef DEBUG_QUERY 
+			fprintf(stderr, "Removing Furthest Peer: ");
+			mFns->bdPrintId(std::cerr, &(it->second.mPeerId));
+			fprintf(stderr, "\n");
+#endif
 			mPotentialClosest.erase(it);
 		}
 	}
