@@ -52,8 +52,7 @@ class SubFileItem : public QWidget, private Ui::SubFileItem
 
 public:
   	/** Default Constructor */
-	SubFileItem(std::string hash, std::string name, std::string path, uint64_t size,
-					uint32_t flags, std::string srcId);
+	SubFileItem(const std::string &hash, const std::string &name, const std::string &path, uint64_t size, uint32_t flags, const std::string &srcId);
 
   	/** Default Destructor */
 

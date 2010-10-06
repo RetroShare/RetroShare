@@ -260,13 +260,14 @@ void ServerPage::saveAddresses()
 
 	if (saveAddr)
 	{
-	  rsPeers->setLocalAddress(rsPeers->getOwnId(), ui.localAddress->text().toStdString(), ui.localPort->value());
-	  rsPeers->setExtAddress(rsPeers->getOwnId(), ui.extAddress->text().toStdString(), ui.extPort->value());
+		rsPeers->setLocalAddress(ownId, ui.localAddress->text().toStdString(), ui.localPort->value());
+		rsPeers->setExtAddress(ownId, ui.extAddress->text().toStdString(), ui.extPort->value());
 	}
 
-        rsPeers->setDynDNS(rsPeers->getOwnId(), ui.dynDNS->text().toStdString());
+	rsPeers->setDynDNS(ownId, ui.dynDNS->text().toStdString());
 
-        rsicontrol->ConfigSetDataRates( ui.totalDownloadRate->value(), ui.totalUploadRate->value() );
+	rsicontrol->ConfigSetDataRates( ui.totalDownloadRate->value(), ui.totalUploadRate->value() );
+
 	load();
 }
 

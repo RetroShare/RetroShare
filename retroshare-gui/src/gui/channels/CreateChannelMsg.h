@@ -37,9 +37,8 @@ public:
   CreateChannelMsg(std::string cId);
   /** Default Destructor */
 
-	void addAttachment(std::string path);
-	void addAttachment(std::string hash, std::string fname, uint64_t size, 
-						bool local, std::string srcId);
+	void addAttachment(const std::string &path);
+	void addAttachment(const std::string &hash, const std::string &fname, uint64_t size, bool local, const std::string &srcId);
 
 	void newChannelMsg();
 	
@@ -60,7 +59,7 @@ private slots:
 
 private:
 
-  void parseRsFileListAttachments(std::string attachList);
+  void parseRsFileListAttachments(const std::string &attachList);
 
   void sendMessage(std::wstring subject, std::wstring msg, std::list<FileInfo> &files);
   
@@ -70,8 +69,6 @@ private:
 
 	bool mCheckAttachment;
 };
-
-
 
 #endif
 

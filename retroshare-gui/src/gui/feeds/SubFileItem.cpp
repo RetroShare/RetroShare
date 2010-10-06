@@ -66,8 +66,7 @@
 const uint32_t SFI_DEFAULT_PERIOD 	= (30 * 3600 * 24); /* 30 Days */
 
 /** Constructor */
-SubFileItem::SubFileItem(std::string hash, std::string name, std::string path, uint64_t size,
-						uint32_t flags, std::string srcId)
+SubFileItem::SubFileItem(const std::string &hash, const std::string &name, const std::string &path, uint64_t size, uint32_t flags, const std::string &srcId)
 :QWidget(NULL), mPath(path), mFileHash(hash), mFileName(name), mFileSize(size), mSrcId(srcId)
 {
   	/* Invoke the Qt Designer generated object setup routine */
@@ -182,8 +181,7 @@ void SubFileItem::updateItemStatic()
 		if (mPath == "")
 		{
 			FileInfo fi;
-			uint32_t hintflags = RS_FILE_HINTS_UPLOAD | RS_FILE_HINTS_LOCAL
-								| RS_FILE_HINTS_SPEC_ONLY;
+			uint32_t hintflags = RS_FILE_HINTS_UPLOAD | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_SPEC_ONLY | RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_BROWSABLE;
 
 			/* look up path */
 			if (!rsFiles->FileDetails(mFileHash, hintflags, fi))

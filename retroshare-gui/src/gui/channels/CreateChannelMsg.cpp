@@ -152,7 +152,6 @@ void CreateChannelMsg::dropEvent(QDropEvent *event)
 		std::cerr << "CreateChannelMsg::dropEvent() Application/x-rsfilelist";
 		std::cerr << std::endl;
 
-
 		QByteArray data = event->mimeData()->data("application/x-rsfilelist");
 		std::cerr << "Data Len:" << data.length();
 		std::cerr << std::endl;
@@ -162,13 +161,12 @@ void CreateChannelMsg::dropEvent(QDropEvent *event)
 		std::string newattachments(data.data());
 		parseRsFileListAttachments(newattachments);
 	}
-									       
 
 	event->setDropAction(Qt::CopyAction);
 	event->accept();
 }
 
-void CreateChannelMsg::parseRsFileListAttachments(std::string attachList)
+void CreateChannelMsg::parseRsFileListAttachments(const std::string &attachList)
 {
 	/* split into lines */
 	QString input = QString::fromStdString(attachList);
@@ -244,7 +242,7 @@ void CreateChannelMsg::parseRsFileListAttachments(std::string attachList)
 }
 
 
-void CreateChannelMsg::addAttachment(std::string hash, std::string fname, uint64_t size, bool local, std::string srcId)
+void CreateChannelMsg::addAttachment(const std::string &hash, const std::string &fname, uint64_t size, bool local, const std::string &srcId)
 {
 	/* add a SubFileItem to the attachment section */
 	std::cerr << "CreateChannelMsg::addAttachment()";
@@ -260,8 +258,6 @@ void CreateChannelMsg::addAttachment(std::string hash, std::string fname, uint64
 	else
 	{
 		flags |= SFI_STATE_REMOTE;
-		// TMP REMOVED REMOTE ADD FOR DEMONSTRATOR
-		return;
 	}
 
 	SubFileItem *file = new SubFileItem(hash, fname, "", size, flags, srcId); // destroyed when fileFrame (this subfileitem) is destroyed
@@ -296,7 +292,7 @@ void CreateChannelMsg::addExtraFile()
 }
 
 
-void CreateChannelMsg::addAttachment(std::string path)
+void CreateChannelMsg::addAttachment(const std::string &path)
 {
 	/* add a SubFileItem to the attachment section */
 	std::cerr << "CreateChannelMsg::addAttachment()";
