@@ -59,6 +59,7 @@ bdNodeManager::bdNodeManager(bdNodeId *id, std::string dhtVersion, std::string b
 {
 	mMode = BITDHT_MGR_STATE_STARTUP;
 	mFns = fns;
+	mModeTS = 0 ;
 
 	/* setup a query for self */
 #ifdef DEBUG_MGR
