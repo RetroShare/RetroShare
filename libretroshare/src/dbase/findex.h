@@ -79,7 +79,10 @@ class DirEntry;
 class FileEntry
 {
 	public:
-	FileEntry() :parent(NULL), row(0) { return; }
+	FileEntry() 
+		:parent(NULL), row(0) ,size(0),modtime(0),pop(0),updtime(0)
+	{ return; }
+
 virtual ~FileEntry() { return; }
 
 virtual int print(std::ostream &out);
@@ -106,6 +109,7 @@ class DirEntry: public FileEntry
 {
 	public:
 
+		DirEntry() : most_recent_time(0) {}
 		/* cleanup */
 virtual		~DirEntry();
 
