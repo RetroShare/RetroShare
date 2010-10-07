@@ -610,7 +610,7 @@ border: 1px solid #CCCCCC;}
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="QLabel" name="label_2">
+             <widget class="QLabel" name="forumslabel">
               <property name="font">
                <font>
                 <family>Arial</family>
@@ -829,9 +829,11 @@ p, li { white-space: pre-wrap; }
              </size>
             </property>
             <property name="styleSheet">
-             <string notr="true">QLabel{border: 2px solid #CCCCCC;
+             <string notr="true">
+border: 2px solid #CCCCCC;
 border-radius: 10px;
-background: white;}</string>
+background: white;
+</string>
             </property>
             <property name="text">
              <string/>
@@ -931,7 +933,8 @@ p, li { white-space: pre-wrap; }
              </sizepolicy>
             </property>
             <property name="styleSheet">
-             <string notr="true">QLabel{border: 2px solid #CCCCCC;
+             <string notr="true">QLabel#threadTitle{
+border: 2px solid #CCCCCC;
 border-radius: 10px;
 background: white;}</string>
             </property>

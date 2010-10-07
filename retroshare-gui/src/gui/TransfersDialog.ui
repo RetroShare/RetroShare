@@ -541,16 +541,7 @@ border: 1px solid #CCCCCC;}</string>
           <enum>QFrame::Raised</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout">
-          <property name="leftMargin">
-           <number>2</number>
-          </property>
-          <property name="topMargin">
-           <number>2</number>
-          </property>
-          <property name="rightMargin">
-           <number>6</number>
-          </property>
-          <property name="bottomMargin">
+          <property name="margin">
            <number>2</number>
           </property>
           <item>
@@ -572,7 +563,7 @@ border: 1px solid #CCCCCC;}</string>
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="QLabel" name="label_2">
+             <widget class="QLabel" name="downloadslabel">
               <property name="font">
                <font>
                 <pointsize>10</pointsize>
@@ -665,6 +656,9 @@ p, li { white-space: pre-wrap; }
          <attribute name="headerStretchLastSection">
           <bool>false</bool>
          </attribute>
+         <attribute name="headerStretchLastSection">
+          <bool>false</bool>
+         </attribute>
         </widget>
        </item>
       </layout>
@@ -740,8 +734,8 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>598</width>
-             <height>99</height>
+             <width>596</width>
+             <height>101</height>
             </rect>
            </property>
           </widget>
@@ -847,8 +841,8 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>578</width>
-             <height>113</height>
+             <width>98</width>
+             <height>28</height>
             </rect>
            </property>
           </widget>

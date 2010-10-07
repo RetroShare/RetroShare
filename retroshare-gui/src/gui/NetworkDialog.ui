@@ -176,7 +176,7 @@ border: 1px solid #CCCCCC;}</string>
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label_2">
+           <widget class="QLabel" name="networklabel">
             <property name="font">
              <font>
               <family>Arial</family>
