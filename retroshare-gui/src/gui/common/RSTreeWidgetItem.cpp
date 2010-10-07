@@ -119,7 +119,7 @@ bool RSTreeWidgetItem::operator<(const QTreeWidgetItem &other) const
     case 0: //integer type
         return v1.toLongLong() < v2.toLongLong();
     case 1: //floating point
-        return v1.toFloat() < v2.toFloat();
+        return v1.toDouble() < v2.toDouble();
     default:
         return (v1.toString().compare (v2.toString(), Qt::CaseInsensitive) < 0);
     }
