@@ -5,8 +5,13 @@
 
 
 /* Customize the toolbar. */
-QToolBar {
+QToolBar#toolBar {
     border-image: url(qss/blue/blue.png);
+
+}
+
+QToolBar#toolBar_2 {
+    border-image: url(qss/blue/blue2.png);
 
 }
 

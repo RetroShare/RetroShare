@@ -6,11 +6,34 @@
 
 
 /* Customize the toolbar. */
-QToolBar {
+QToolBar#toolBar {
     border-image: url(qss/yaba/yaba.png);
 
 }
 
+QToolBar#toolBar_2 {
+    border-image: url(qss/yaba/yaba2.png);
+
+}
+
+QFrame#frame_2{
+    border-image: url(qss/yaba/yaba3.png);
+
+}
+
+QFrame#buttonframe{
+    border-image: url(qss/yaba/yaba3.png);
+
+}
+
+QFrame#chheaderframe{
+    border-image: url(qss/yaba/yaba3.png);
+
+}
+QFrame#frame{
+    border-image: url(qss/yaba/yaba3.png);
+
+}
 
 QHeaderView::section {
      background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,

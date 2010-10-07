@@ -4,8 +4,14 @@
 
 
 /* Customize the toolbar. */
-QToolBar {
+QToolBar#toolBar {
     border-image: url(qss/redscorpion/red.png);
+
+
+}
+
+QToolBar#toolBar_2 {
+    border-image: url(qss/redscorpion/red2.png);
 
 
 }

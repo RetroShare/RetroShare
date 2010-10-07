@@ -4,10 +4,16 @@
 }
 
 /* Customize the toolbar. */
-QToolBar {
+QToolBar#toolBar {
        border-image: url(qss/qlive/qb.png);
 
 }
+
+QToolBar#toolBar_2 {
+       border-image: url(qss/qlive/qb2.png);
+
+}
+
 QMenu {
 	 background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                      stop: 0 #77AEF1, stop: 0.4 #86BBF7);
