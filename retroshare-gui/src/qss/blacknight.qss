@@ -217,3 +217,8 @@ background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1, stop: 0 rgb(0, 0, 0), st
 border-color: transparent;
 */
 }
+
+QLabel#infolabel{
+color: black;
+}
+

@@ -1,5 +1,6 @@
 .QWidget {
    background-color: #c4dafa;
+   border-color: transparent;
 }
 
 
@@ -123,5 +124,9 @@ QLabel#tolabel{
 QLabel#fromText{
 	font: bold ;
 	color: blue;
+
+}
+QSplitter#splitter{
+    border-image: url(qss/blue/blue.png);
 
 }

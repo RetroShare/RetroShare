@@ -54,11 +54,6 @@ QPushButton#applyButton {
       min-width: 75px;
 }
 
-QLabel
-{
-color: white;
-}
-
 QToolButton {
       color: black;
 }
@@ -100,7 +95,7 @@ QStatusBar{
 }
 
 QToolTip{
-	 background-color: #3E1716;
+	 background-color: darkred;
 }
 
 QMenu {
@@ -151,6 +146,34 @@ QFrame#Chatbuttonframe{
 
 }
 
+QFrame#frame_2{
+        border-image: url(qss/redscorpion/red.png);
+
+
+border: 1px solid #CCCCCC;
+}
+
+QFrame#buttonframe{
+        border-image: url(qss/redscorpion/red.png);
+
+
+border: 1px solid #CCCCCC;
+}
+
+QFrame#frame{
+        border-image: url(qss/redscorpion/red.png);
+
+        border: 1px solid #CCCCCC;
+}
+
+QFrame#chheaderframe{
+        border-image: url(qss/redscorpion/red.png);
+
+
+border: 1px solid #CCCCCC;
+}
+
+
 QLabel#subjectText{
 	font: bold 12px;
 
@@ -194,3 +217,25 @@ QLabel#labeltext{
   color: black;
 }
 
+QRadioButton{
+  color: white;
+}
+
+QLabel{
+
+    color: white;
+}
+
+QLabel#forumName{
+    border: 2px solid red;
+    border-radius: 10px;
+    background: white;
+    color: black;
+}
+
+QLabel#threadTitle{
+    border: 2px solid red;
+    border-radius: 10px;
+    background: white;
+    color: black;
+}

@@ -86,3 +86,7 @@ QLabel#fromText{
 	color: blue;
 
 }
+QStatusBar{
+       border-image: url(qss/qlive/qb.png);
+}
+
