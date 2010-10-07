@@ -1453,6 +1453,19 @@ void p3ConnectMgr::tickMonitors()
 			(*mit)->statusChange(actionList);
 		}
 	}
+
+#ifdef WINDOWS_SYS
+///////////////////////////////////////////////////////////
+// hack for too many connections
+
+	/* notify all monitors */
+	std::list<pqiMonitor *>::iterator mit;
+	for(mit = clients.begin(); mit != clients.end(); mit++) {
+		(*mit)->statusChanged();
+	}
+
+///////////////////////////////////////////////////////////
+#endif
 }
 
 

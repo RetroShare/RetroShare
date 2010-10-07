@@ -67,7 +67,7 @@ class RsInit
 		 */
 		static char dirSeperator();
 		static bool isPortable();
-
+		static bool isWindowsXP();
 
 		/*!
 		 *  Account Details (Combined GPG+SSL Setup)

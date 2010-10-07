@@ -112,6 +112,14 @@ virtual ~pqiMonitor() { return; }
 	 *@param plist contains list of states and actions of the client's peers
 	 */
 virtual void	statusChange(const std::list<pqipeer> &plist) = 0;
+
+#ifdef WINDOWS_SYS
+///////////////////////////////////////////////////////////
+// hack for too many connections
+virtual void	statusChanged() {};
+///////////////////////////////////////////////////////////
+#endif
+
 //virtual void	ownStatusChange(pqipeer &) { return; } // SIGNAL reset or similar.
 //virtual void	peerStatus(std::string id, uint32_t mode) = 0;
 

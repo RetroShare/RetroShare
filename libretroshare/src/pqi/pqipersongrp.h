@@ -64,10 +64,24 @@ int	load_config();
 	/*************** pqiMonitor callback ***********************/
 virtual void    statusChange(const std::list<pqipeer> &plist);
 
+#ifdef WINDOWS_SYS
+///////////////////////////////////////////////////////////
+// hack for too many connections
+virtual void    statusChanged();
+///////////////////////////////////////////////////////////
+#endif
+
 	/******************* Peer Control **************************/
 virtual int addPeer(std::string id); /* can be overloaded for testing */
 int     removePeer(std::string id);
-int     connectPeer(std::string id);
+int     connectPeer(std::string id
+#ifdef WINDOWS_SYS
+///////////////////////////////////////////////////////////
+// hack for too many connections
+					, bool bConnect = false
+///////////////////////////////////////////////////////////
+#endif
+					);
 
 	/* Work-around to dodgy pointer stuff */
 int	tagHeartbeatRecvd(std::string id);

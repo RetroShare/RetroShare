@@ -76,6 +76,7 @@ class RsInitConfig
                 static std::string homePath;
 #ifdef WINDOWS_SYS
                 static bool portable;
+                static bool isWindowsXP;
 #endif
 
 		static std::list<accountId> accountIds;
@@ -169,6 +170,7 @@ std::string RsInitConfig::basedir;
 std::string RsInitConfig::homePath;
 #ifdef WINDOWS_SYS
 bool RsInitConfig::portable = false;
+bool RsInitConfig::isWindowsXP = false;
 #endif
 
 /* Listening Port */
@@ -252,9 +254,37 @@ void RsInit::InitRsConfig()
 
 #ifdef WINDOWS_SYS
 	// test for portable version
-        if (GetFileAttributes (L"gpg.exe") != (DWORD) -1 && GetFileAttributes (L"gpgme-w32spawn.exe") != (DWORD) -1) {
+	if (GetFileAttributes (L"gpg.exe") != (DWORD) -1 && GetFileAttributes (L"gpgme-w32spawn.exe") != (DWORD) -1) {
 		// use portable version
 		RsInitConfig::portable = true;
+	}
+
+	// test for Windows XP
+	OSVERSIONINFOEX osvi;
+	memset(&osvi, 0, sizeof(osvi));
+	osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+
+	if (GetVersionEx((OSVERSIONINFO*) &osvi)) {
+		if (osvi.dwMajorVersion == 5) {
+			if (osvi.dwMinorVersion == 1) {
+				/* Windows XP */
+				RsInitConfig::isWindowsXP = true;
+			} else if (osvi.dwMinorVersion == 2) {
+				SYSTEM_INFO si;
+				memset(&si, 0, sizeof(si));
+				GetSystemInfo(&si);
+				if (osvi.wProductType == VER_NT_WORKSTATION && si.wProcessorArchitecture==PROCESSOR_ARCHITECTURE_AMD64) {
+					/* Windows XP Professional x64 Edition */
+					RsInitConfig::isWindowsXP = true;
+				}
+			}
+		}
+	}
+
+	if (RsInitConfig::isWindowsXP) {
+		std::cerr << "Running Windows XP" << std::endl;
+	} else {
+		std::cerr << "Not running Windows XP" << std::endl;
 	}
 #endif
 
@@ -1983,6 +2013,15 @@ bool RsInit::isPortable()
 {
 #ifdef WINDOWS_SYS
     return RsInitConfig::portable;
+#else
+    return false;
+#endif
+}
+
+bool RsInit::isWindowsXP()
+{
+#ifdef WINDOWS_SYS
+    return RsInitConfig::isWindowsXP;
 #else
     return false;
 #endif

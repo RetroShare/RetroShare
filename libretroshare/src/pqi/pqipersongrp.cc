@@ -32,6 +32,15 @@
 
 const int pqipersongrpzone = 354;
 
+#ifdef WINDOWS_SYS
+///////////////////////////////////////////////////////////
+// hack for too many connections
+#include "retroshare/rsinit.h"
+static std::list<std::string> waitingIds;
+#define MAX_CONNECT_COUNT 5
+///////////////////////////////////////////////////////////
+#endif
+
 /****
  *#define PGRP_DEBUG 1
  ****/
@@ -296,6 +305,73 @@ void    pqipersongrp::statusChange(const std::list<pqipeer> &plist)
 	}
 }
 
+#ifdef WINDOWS_SYS
+///////////////////////////////////////////////////////////
+// hack for too many connections
+void pqipersongrp::statusChanged()
+{
+#warning "Windows connection limited hacked together - please fix"
+
+	if (RsInit::isWindowsXP() == false) {
+		/* the problem only exist in Windows XP */
+		waitingIds.clear();
+		return;
+	}	
+
+	/* check for active connections and start waiting id's */
+	long connect_count = 0;
+
+	{
+		RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
+
+		/* get address from p3connmgr */
+		if (!mConnMgr) {
+			return;
+		}
+
+		/* check for active connections and start waiting id's */
+		std::list<std::string> peers;
+		mConnMgr->getFriendList(peers);
+
+		/* count connection attempts */
+		std::list<std::string>::iterator peer;
+		for (peer = peers.begin(); peer != peers.end(); peer++) {
+			peerConnectState state;
+			if (mConnMgr->getFriendNetStatus(*peer, state) == false) {
+				continue;
+			}
+
+			if (state.inConnAttempt) {
+				connect_count++;
+				if (connect_count >= MAX_CONNECT_COUNT) {
+#ifdef PGRP_DEBUG
+					std::cerr << "pqipersongrp::connectPeer() Too many connections due to windows limitations. There are " << waitingIds.size() << " waiting connections." << std::endl;
+#endif
+					return;
+				}
+			}
+		}
+
+	} /* UNLOCKED */
+
+#ifdef PGRP_DEBUG
+	std::cerr << "pqipersongrp::connectPeer() There are " << connect_count << " connection attempts and " << waitingIds.size() << " waiting connections. Can start " << (MAX_CONNECT_COUNT - connect_count) << " connection attempts." << std::endl;
+#endif
+
+	/* there is no need for a mutex for waitingIds */
+
+	/* start some waiting id's */
+	for (int i = connect_count; i < MAX_CONNECT_COUNT; i++) {
+		if (waitingIds.empty()) {
+			break;
+		}
+		std::string waitingId = waitingIds.front();
+		waitingIds.pop_front();
+		connectPeer(waitingId, true);
+	}
+}
+///////////////////////////////////////////////////////////
+#endif
 
 
 int     pqipersongrp::addPeer(std::string id)
@@ -393,7 +469,14 @@ int pqipersongrp::tagHeartbeatRecvd(std::string id)
 
 
 
-int     pqipersongrp::connectPeer(std::string id)
+int     pqipersongrp::connectPeer(std::string id
+#ifdef WINDOWS_SYS
+///////////////////////////////////////////////////////////
+// hack for too many connections
+								  , bool bConnect /*= false*/
+///////////////////////////////////////////////////////////
+#endif
+								  )
 {
 	/* get status from p3connectMgr */
 #ifdef PGRP_DEBUG
@@ -422,6 +505,33 @@ int     pqipersongrp::connectPeer(std::string id)
 	/* get address from p3connmgr */
 	if (!mConnMgr)
 		return 0;
+
+#ifdef WINDOWS_SYS
+	///////////////////////////////////////////////////////////
+	// hack for too many connections
+
+	if (RsInit::isWindowsXP()) {
+		/* the problem only exist in Windows XP */
+		if (bConnect == false) {
+			/* check for id is waiting */
+			if (std::find(waitingIds.begin(), waitingIds.end(), id) != waitingIds.end()) {
+				/* id is waiting for a connection */
+				return 0;
+			}
+
+			/* add id to waiting */
+			waitingIds.push_back(id);
+
+			/* wait for call to connectPeer with empty id */
+			return 0;
+		}
+
+		/* remove id from waiting */
+		waitingIds.remove(id);
+	}
+
+	///////////////////////////////////////////////////////////
+#endif
 
 	struct sockaddr_in addr;
 	uint32_t delay;
