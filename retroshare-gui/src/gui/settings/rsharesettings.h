@@ -31,6 +31,12 @@
 #include <gui/linetypes.h>
 #include "rsettings.h"
 
+/* Defines for get/setTrayNotifyFlags */
+#define TRAYNOTIFY_PRIVATECHAT   0x01
+#define TRAYNOTIFY_MESSAGES      0x02
+#define TRAYNOTIFY_CHANNELS      0x04
+#define TRAYNOTIFY_FORUMS        0x08
+#define TRAYNOTIFY_ALL           0x0F
 
 //Forward declaration.
 class QWidget;
@@ -112,6 +118,9 @@ public:
 
   uint getNotifyFlags();
   void setNotifyFlags(uint flags);
+
+  uint getTrayNotifyFlags();
+  void setTrayNotifyFlags(uint flags);
 
   bool getDisplayTrayGroupChat();
   void setDisplayTrayGroupChat(bool bValue);

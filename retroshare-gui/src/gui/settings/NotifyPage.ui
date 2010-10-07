@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>388</width>
+    <width>396</width>
     <height>425</height>
    </rect>
   </property>
@@ -576,6 +576,43 @@
         </widget>
        </item>
        <item>
+        <widget class="QGroupBox" name="trayNotifyGroupBox">
+         <property name="title">
+          <string>Systray Icon</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_5">
+          <item>
+           <widget class="QCheckBox" name="trayNotify_PrivateChat">
+            <property name="text">
+             <string>Private Message</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="trayNotify_Messages">
+            <property name="text">
+             <string>Message</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="trayNotify_Channels">
+            <property name="text">
+             <string>Channel Post</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="trayNotify_Forums">
+            <property name="text">
+             <string>Forum Post</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -686,8 +723,6 @@
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../images.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

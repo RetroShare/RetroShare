@@ -42,9 +42,6 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WFlags flags)
   setAttribute(Qt::WA_QuitOnClose, false);
   setWindowTitle(windowTitle() + QLatin1String(" - Notify"));
 
-
-
-
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
@@ -68,6 +65,7 @@ NotifyPage::save(QString &errmsg)
     /* extract from rsNotify the flags */
 
     uint notifyflags = 0;
+    uint traynotifyflags = 0;
     uint newsflags   = 0;
     uint chatflags   = 0;
 
@@ -106,7 +104,17 @@ NotifyPage::save(QString &errmsg)
     if (ui.chat_Focus->isChecked())
         chatflags |= RS_CHAT_FOCUS;
 
+    if (ui.trayNotify_PrivateChat->isChecked())
+        traynotifyflags |= TRAYNOTIFY_PRIVATECHAT;
+    if (ui.trayNotify_Messages->isChecked())
+        traynotifyflags |= TRAYNOTIFY_MESSAGES;
+    if (ui.trayNotify_Channels->isChecked())
+        traynotifyflags |= TRAYNOTIFY_CHANNELS;
+    if (ui.trayNotify_Forums->isChecked())
+        traynotifyflags |= TRAYNOTIFY_FORUMS;
+
     Settings->setNotifyFlags(notifyflags);
+    Settings->setTrayNotifyFlags(traynotifyflags);
     Settings->setNewsFeedFlags(newsflags);
     Settings->setChatFlags(chatflags);
 
@@ -125,6 +133,7 @@ void NotifyPage::load()
 {
     /* extract from rsNotify the flags */
     uint notifyflags = Settings->getNotifyFlags();
+    uint traynotifyflags = Settings->getTrayNotifyFlags();
     uint newsflags = Settings->getNewsFeedFlags();
     uint chatflags = Settings->getChatFlags();
 
@@ -146,6 +155,11 @@ void NotifyPage::load()
     ui.chat_Focus->setChecked(chatflags & RS_CHAT_FOCUS);
 
     ui.systray_GroupChat->setChecked(Settings->getDisplayTrayGroupChat());
+
+    ui.trayNotify_PrivateChat->setChecked(traynotifyflags & TRAYNOTIFY_PRIVATECHAT);
+    ui.trayNotify_Messages->setChecked(traynotifyflags & TRAYNOTIFY_MESSAGES);
+    ui.trayNotify_Channels->setChecked(traynotifyflags & TRAYNOTIFY_CHANNELS);
+    ui.trayNotify_Forums->setChecked(traynotifyflags & TRAYNOTIFY_FORUMS);
 
     ui.addFeedsAtEnd->setChecked(Settings->getAddFeedsAtEnd());
 }

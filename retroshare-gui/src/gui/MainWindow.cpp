@@ -446,7 +446,7 @@ void MainWindow::updateMessages()
         messageAction->setIcon(QIcon(QPixmap(":/images/evolution.png"))) ;
     }
 
-    if (newInboxCount) {
+    if (newInboxCount && (Settings->getTrayNotifyFlags() & TRAYNOTIFY_MESSAGES)) {
         if (newInboxCount > 1) {
             trayIconMessages->setToolTip(tr("RetroShare") + "\n" + tr("You have %1 new messages").arg(newInboxCount));
         } else {
@@ -470,7 +470,7 @@ void MainWindow::updateForums()
         forumAction->setIcon(QIcon(IMAGE_FORUMS)) ;
     }
 
-    if (newMessageCount) {
+    if (newMessageCount && (Settings->getTrayNotifyFlags() & TRAYNOTIFY_FORUMS)) {
         if (newMessageCount > 1) {
             trayIconForums->setToolTip(tr("RetroShare") + "\n" + tr("You have %1 new messages").arg(newMessageCount));
         } else {
@@ -494,7 +494,7 @@ void MainWindow::updateChannels(int type)
         channelAction->setIcon(QIcon(IMAGE_CHANNELS)) ;
     }
 
-    if (newMessageCount) {
+    if (newMessageCount && (Settings->getTrayNotifyFlags() & TRAYNOTIFY_CHANNELS)) {
         if (newMessageCount > 1) {
             trayIconChannels->setToolTip(tr("RetroShare") + "\n" + tr("You have %1 new messages").arg(newMessageCount));
         } else {
@@ -552,7 +552,7 @@ void MainWindow::privateChatChanged(int list, int type)
         /* than count the chat messages */
         int chatCount = rsMsgs->getPrivateChatQueueCount(true);
 
-        if (chatCount) {
+        if (chatCount && (Settings->getTrayNotifyFlags() & TRAYNOTIFY_PRIVATECHAT)) {
             trayIconChat->show();
         } else {
             trayIconChat->hide();
