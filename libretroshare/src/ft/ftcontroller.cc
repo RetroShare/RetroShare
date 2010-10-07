@@ -137,7 +137,10 @@ bool ftController::getFileDownloadChunksDetails(const std::string& hash,FileChun
 	{
 		// This should rather be done as a static method of ChunkMap.
 		//
+		// We do this manually, because the file creator has already been destroyed.
+		//
 		info.file_size = it->second->mSize ;
+		info.strategy = mDefaultChunkStrategy ;
 		info.chunk_size = ChunkMap::CHUNKMAP_FIXED_CHUNK_SIZE ;
 		info.flags = it->second->mFlags ;
 		uint32_t nb_chunks = it->second->mSize/ChunkMap::CHUNKMAP_FIXED_CHUNK_SIZE ;
@@ -461,7 +464,7 @@ void ftController::locked_addToQueue(ftFileControl* ftfc,int add_strategy)
 
 																	 _queue.push_back(NULL) ;
 
-																	 for(int i=int(_queue.size())-1;i>pos;--i)
+																	 for(int i=int(_queue.size())-1;i>(int)pos;--i)
 																	 {
 																		 _queue[i] = _queue[i-1] ;
 																		 locked_checkQueueElement(i) ;
