@@ -74,6 +74,45 @@ std::ostream &RsChannelMsg::print(std::ostream &out, uint16_t indent)
         return out;
 }
 
+void RsChannelReadStatus::clear()
+{
+
+	RsDistribChildConfig::clear();
+
+	channelId.clear();
+	msgReadStatus.clear();
+
+	return;
+
+}
+
+std::ostream& RsChannelReadStatus::print(std::ostream &out, uint16_t indent = 0)
+{
+
+    printRsItemBase(out, "RsChannelMsg", indent);
+    uint16_t int_Indent = indent + 2;
+
+    RsDistribChildConfig::print(out, int_Indent);
+
+    printIndent(out, int_Indent);
+    out << "ChannelId: " << channelId << std::endl;
+
+    std::map<std::string, uint32_t>::iterator mit = msgReadStatus.begin();
+
+    for(; mit != msgReadStatus.end(); mit++)
+    {
+
+        printIndent(out, int_Indent);
+        out << "msgId : " << mit->first << std::endl;
+
+        printIndent(out, int_Indent);
+        out << " status : " << mit->second << std::endl;
+
+    }
+
+    printRsItemEnd(out, "RsChannelMsg", indent);
+    return out;
+}
 
 /*************************************************************************/
 /*************************************************************************/
@@ -204,19 +243,207 @@ RsChannelMsg *RsChannelSerialiser::deserialiseMsg(void *data, uint32_t *pktsize)
 }
 
 
+uint32_t    RsChannelSerialiser::sizeReadStatus(RsChannelReadStatus *item)
+{
+	uint32_t s = 8; /* header */
+	/* RsDistribChildConfig stuff */
+
+	s += 4; /* save_type */
+
+	/* RsChannelReadStatus stuff */
+
+	s += GetTlvStringSize(item->channelId);
+
+	std::map<std::string, uint32_t>::iterator mit = item->msgReadStatus.begin();
+
+	for(; mit != item->msgReadStatus.end(); mit++)
+	{
+		s += GetTlvStringSize(mit->first); /* key */
+		s += 4; /* value */
+	}
+
+	return s;
+}
+
+/* serialise the data to the buffer */
+bool     RsChannelSerialiser::serialiseReadStatus(RsChannelReadStatus *item, void *data, uint32_t *pktsize)
+{
+	uint32_t tlvsize = sizeReadStatus(item);
+	uint32_t offset = 0;
+
+	if (*pktsize < tlvsize)
+		return false; /* not enough space */
+
+	*pktsize = tlvsize;
+
+	bool ok = true;
+
+	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+
+	std::cerr << "RsChannelSerialiser::serialiseReadStatus() Header: " << ok << std::endl;
+	std::cerr << "RsChannelSerialiser::serialiseReadStatus() Size: " << tlvsize << std::endl;
+
+	/* skip the header */
+	offset += 8;
+
+	/* RsDistribMsg first */
+
+	ok &= setRawUInt32(data, tlvsize, &offset, item->save_type);
+	std::cerr << "RsChannelSerialiser::serialiseReadStatus() save_type: " << ok << std::endl;
+
+
+
+	/* RsChannelMsg */
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GROUPID, item->channelId);
+	std::cerr << "RsChannelSerialiser::serialiseReadStatus() channelId: " << ok << std::endl;
+
+	std::map<std::string, uint32_t>::iterator mit = item->msgReadStatus.begin();
+
+	for(; mit != item->msgReadStatus.end(); mit++)
+	{
+		ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_MSGID, mit->first); /* key */
+		ok &= setRawUInt32(data, tlvsize, &offset, mit->second); /* value */
+	}
+
+	std::cerr << "RsChannelSerialiser::serialiseReadStatus() msgReadStatus: " << ok << std::endl;
+
+	if (offset != tlvsize)
+	{
+		ok = false;
+		std::cerr << "RsChannelSerialiser::serialiseReadStatus() Size Error! " << std::endl;
+	}
+
+	return ok;
+}
+
+
+
+RsChannelReadStatus *RsChannelSerialiser::deserialiseReadStatus(void *data, uint32_t *pktsize)
+{
+	/* get the type and size */
+	uint32_t rstype = getRsItemId(data);
+	uint32_t rssize = getRsItemSize(data);
+
+	uint32_t offset = 0;
+
+
+	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
+		(RS_SERVICE_TYPE_CHANNEL != getRsItemService(rstype)) ||
+		(RS_PKT_SUBTYPE_CHANNEL_READ_STATUS != getRsItemSubType(rstype)))
+	{
+		return NULL; /* wrong type */
+	}
+
+	if (*pktsize < rssize)    /* check size */
+		return NULL; /* not enough data */
+
+	/* set the packet length */
+	*pktsize = rssize;
+
+	bool ok = true;
+
+	/* ready to load */
+	RsChannelReadStatus *item = new RsChannelReadStatus();
+	item->clear();
+
+	/* skip the header */
+	offset += 8;
+
+	/* RsDistribMsg first */
+	ok &= getRawUInt32(data, rssize, &offset, &(item->save_type));
+
+	/* RschannelMsg */
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_GROUPID, item->channelId);
+
+	std::string key;
+	uint32_t value;
+
+	while(offset != rssize)
+	{
+		key.clear();
+		value = 0;
+
+		ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_MSGID, key); /* key */
+
+		/* incomplete key value pair? then fail*/
+		if(offset == rssize)
+		{
+			delete item;
+			return NULL;
+		}
+
+		ok &= getRawUInt32(data, rssize, &offset, &value); /* value */
+
+		item->msgReadStatus.insert(std::pair<std::string, uint32_t>(key, value));
+	}
+
+	if (!ok)
+	{
+		delete item;
+		return NULL;
+	}
+
+	return item;
+}
+
+/************************************************************/
+
 uint32_t    RsChannelSerialiser::size(RsItem *item)
 {
-	return sizeMsg((RsChannelMsg *) item);
+	RsChannelMsg* dcm;
+	RsChannelReadStatus* drs;
+
+	if( NULL != ( dcm = dynamic_cast<RsChannelMsg*>(item)))
+	{
+		return sizeMsg(dcm);
+	}
+	else if(NULL != (drs = dynamic_cast<RsChannelReadStatus* >(item)))
+	{
+		return sizeReadStatus(drs);
+	}
+
+	return false;
 }
 
 bool     RsChannelSerialiser::serialise(RsItem *item, void *data, uint32_t *pktsize)
 {
-	return serialiseMsg((RsChannelMsg *) item, data, pktsize);
+	RsChannelMsg* dcm;
+	RsChannelReadStatus* drs;
+
+	if( NULL != ( dcm = dynamic_cast<RsChannelMsg*>(item)))
+	{
+		return serialiseMsg(dcm, data, pktsize);
+	}
+	else if(NULL != (drs = dynamic_cast<RsChannelReadStatus* >(item)))
+	{
+		return serialiseReadStatus(drs, data, pktsize);
+	}
+
+	return false;
 }
 
 RsItem *RsChannelSerialiser::deserialise(void *data, uint32_t *pktsize)
 {
-	return deserialiseMsg(data, pktsize);
+	/* get the type and size */
+	uint32_t rstype = getRsItemId(data);
+
+	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
+		(RS_SERVICE_TYPE_CHANNEL != getRsItemService(rstype)))
+	{
+		return NULL; /* wrong type */
+	}
+
+	switch(getRsItemSubType(rstype))
+	{
+		case RS_PKT_SUBTYPE_CHANNEL_MSG:
+			return deserialiseMsg(data, pktsize);
+		case RS_PKT_SUBTYPE_CHANNEL_READ_STATUS:
+			return deserialiseReadStatus(data, pktsize);
+		default:
+			return NULL;
+	}
+
+	return NULL;
 }
 
 

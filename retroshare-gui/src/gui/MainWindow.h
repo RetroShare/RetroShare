@@ -141,6 +141,7 @@ public slots:
     void checkAndSetIdle(int idleTime);
     void updateMessages();
     void updateForums();
+    void updateChannels(int type);
     void privateChatChanged(int list, int type);
 
 protected:
@@ -161,6 +162,7 @@ private slots:
     void toggleVisibilitycontextmenu();
     void trayIconMessagesClicked(QSystemTrayIcon::ActivationReason e);
     void trayIconForumsClicked(QSystemTrayIcon::ActivationReason e);
+    void trayIconChannelsClicked(QSystemTrayIcon::ActivationReason e);
     void trayIconChatClicked(QSystemTrayIcon::ActivationReason e);
 
     /** Toolbar fns. */
@@ -225,6 +227,7 @@ private:
     QSystemTrayIcon *trayIcon;
     QSystemTrayIcon *trayIconMessages;
     QSystemTrayIcon *trayIconForums;
+    QSystemTrayIcon *trayIconChannels;
     QSystemTrayIcon *trayIconChat;
     QAction *toggleVisibilityAction, *toolAct;
     QMenu *trayMenu;
@@ -238,6 +241,7 @@ private:
 
     QAction *messageAction;
     QAction *forumAction;
+    QAction *channelAction;
 
     /* Status */
     std::set <QObject*> m_apStatusObjects; // added objects for status
@@ -254,4 +258,3 @@ private:
 };
 
 #endif
-

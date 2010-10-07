@@ -276,6 +276,51 @@ bool operator==(const RsForumReadStatus& frs1, const RsForumReadStatus& frs2)
 
 
 
+RsSerialType* init_item(RsChannelReadStatus& fRdStatus)
+{
+	randString(SHORT_STR, fRdStatus.channelId);
+	fRdStatus.save_type = rand()%42;
+
+	std::map<std::string, uint32_t>::iterator mit = fRdStatus.msgReadStatus.begin();
+
+	std::string id;
+	uint32_t status = 0;
+
+	int numMaps = rand()%12;
+
+	for(int i = 0; i < numMaps; i++)
+	{
+		randString(SHORT_STR, id);
+		status = rand()%23;
+
+		fRdStatus.msgReadStatus.insert(std::pair<std::string, uint32_t>(id, status));
+	}
+
+	return new RsChannelSerialiser();
+}
+
+bool operator==(const RsChannelReadStatus& frs1, const RsChannelReadStatus& frs2)
+{
+	if(frs1.channelId != frs2.channelId) return false;
+	if(frs1.save_type != frs2.save_type) return false;
+
+	if(frs1.msgReadStatus.size() != frs2.msgReadStatus.size()) return false;
+
+	std::map<std::string, uint32_t>::const_iterator mit
+		= frs1.msgReadStatus.begin();
+
+
+
+	for(;mit != frs1.msgReadStatus.end(); mit++)
+	{
+		if(mit->second != frs2.msgReadStatus.find(mit->first)->second) return false;
+	}
+
+	return true;
+
+}
+
+
 bool operator==(const RsBlogMsg& bMsg1,const RsBlogMsg& bMsg2)
 {
 
@@ -307,6 +352,7 @@ int main(){
 	test_RsItem<RsDistribGrpKey>(); REPORT("Serialise/Deserialise RsDistribGrpKey");
 	test_RsItem<RsDistribSignedMsg>(); REPORT("Serialise/Deserialise RsDistribSignedMsg");
 	test_RsItem<RsChannelMsg>(); REPORT("Serialise/Deserialise RsChannelMsg");
+	test_RsItem<RsChannelReadStatus>(); REPORT("Serialise/Deserialise RsChannelReadStatus");
 	test_RsItem<RsForumMsg>(); REPORT("Serialise/Deserialise RsForumMsg");
 	test_RsItem<RsForumReadStatus>(); REPORT("Serialise/Deserialise RsForumReadStatus");
 	test_RsItem<RsBlogMsg>(); REPORT("Serialise/Deserialise RsBlogMsg");

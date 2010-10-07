@@ -51,6 +51,9 @@ private slots:
 	void download();
 	void play();
 
+	void readToggled(bool checked);
+	void channelMsgReadSatusChanged(const QString& channelId, const QString& msgId, int status);
+
 	void updateItem();
 
 private:
@@ -61,11 +64,10 @@ private:
 	std::string mMsgId;
 
 	bool mIsHome;
+	bool m_inUpdateItemStatic;
 
 	std::list<SubFileItem *> mFileItems;
 };
-
-
 
 #endif
 

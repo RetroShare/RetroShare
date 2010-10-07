@@ -469,7 +469,7 @@ border-image: url(:/images/btn_26_pressed.png) 4;
              </spacer>
             </item>
             <item row="0" column="4">
-             <widget class="QToolButton" name="setallreadtoolButton">
+             <widget class="QToolButton" name="setAllAsReadButton">
               <property name="minimumSize">
                <size>
                 <width>26</width>

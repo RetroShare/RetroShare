@@ -67,6 +67,10 @@ virtual bool getChannelMsgList(std::string cId, std::list<ChannelMsgSummary> &ms
 virtual bool getChannelMessage(std::string cId, std::string mId, ChannelMsgInfo &msg);
 
 virtual	bool ChannelMessageSend(ChannelMsgInfo &info);
+virtual bool setMessageStatus(const std::string& cId, const std::string& mId, const uint32_t status, const uint32_t statusMask);
+virtual bool getMessageStatus(const std::string& cId, const std::string& mId, uint32_t& status);
+
+virtual	bool getMessageCount(const std::string cId, unsigned int &newCount, unsigned int &unreadCount);
 
 virtual bool channelSubscribe(std::string cId, bool subscribe);
 virtual bool channelExtraFileHash(std::string path, std::string chId, FileInfo& fInfo);
@@ -106,6 +110,7 @@ bool cpyMsgFileToChFldr(std::string path, std::string fname, std::string chId, b
 	std::string mChannelsDir;
 	std::list<RsItem *> saveList;
 
+	std::list<RsChannelReadStatus *> mReadStatus;
 };
 
 

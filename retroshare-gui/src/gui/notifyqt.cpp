@@ -98,6 +98,11 @@ void NotifyQt::notifyPeerStatusChangedSummary()
 	emit peerStatusChangedSummary();
 }
 
+void NotifyQt::notifyChannelMsgReadSatusChanged(const std::string& channelId, const std::string& msgId, uint32_t status)
+{
+        emit channelMsgReadSatusChanged(QString::fromStdString(channelId), QString::fromStdString(msgId), status);
+}
+
 void NotifyQt::notifyOwnStatusMessageChanged()
 {
         #ifdef NOTIFY_DEBUG
@@ -225,6 +230,12 @@ void NotifyQt::notifyListChange(int list, int type)
 			std::cerr << "received forum msg changed" << std::endl ;
 #endif
 			emit forumsChanged(); // use connect with Qt::QueuedConnection
+			break;
+		case NOTIFY_LIST_CHANNELLIST_LOCKED:
+#ifdef NOTIFY_DEBUG
+			std::cerr << "received channel msg changed" << std::endl ;
+#endif
+			emit channelsChanged(type); // use connect with Qt::QueuedConnection
 			break;
 		case NOTIFY_LIST_PUBLIC_CHAT:
 #ifdef NOTIFY_DEBUG

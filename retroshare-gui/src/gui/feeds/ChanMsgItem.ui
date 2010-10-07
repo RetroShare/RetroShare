@@ -87,7 +87,7 @@ border-radius: 10px;}</string>
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap resource="../images.qrc">:/images/thumb-default-video.png</pixmap>
+           <pixmap>:/images/thumb-default-video.png</pixmap>
           </property>
           <property name="scaledContents">
            <bool>true</bool>
@@ -114,7 +114,7 @@ border-radius: 10px;}</string>
       </item>
       <item row="0" column="1">
        <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="0" colspan="7">
+        <item row="0" column="0" colspan="8">
          <widget class="QLabel" name="titleLabel">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -139,7 +139,7 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
-        <item row="0" column="7" colspan="3">
+        <item row="0" column="8" colspan="3">
          <widget class="QLabel" name="datetimelabel">
           <property name="font">
            <font>
@@ -156,7 +156,7 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
-        <item row="1" column="0" colspan="10">
+        <item row="1" column="0" colspan="11">
          <widget class="QLabel" name="subjectLabel">
           <property name="sizePolicy">
            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
@@ -182,7 +182,7 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
-        <item row="2" column="6" colspan="2">
+        <item row="2" column="7" colspan="2">
          <widget class="QPushButton" name="unsubscribeButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -197,12 +197,12 @@ p, li { white-space: pre-wrap; }
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../images.qrc">
+           <iconset>
             <normaloff>:/images/mail_delete.png</normaloff>:/images/mail_delete.png</iconset>
           </property>
          </widget>
         </item>
-        <item row="2" column="8">
+        <item row="2" column="9">
          <widget class="QPushButton" name="clearButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -217,12 +217,12 @@ p, li { white-space: pre-wrap; }
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../images.qrc">
+           <iconset>
             <normaloff>:/images/close_normal.png</normaloff>:/images/close_normal.png</iconset>
           </property>
          </widget>
         </item>
-        <item row="2" column="9">
+        <item row="2" column="10">
          <widget class="QPushButton" name="expandButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -240,7 +240,7 @@ p, li { white-space: pre-wrap; }
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../images.qrc">
+           <iconset>
             <normaloff>:/images/edit_add24.png</normaloff>:/images/edit_add24.png</iconset>
           </property>
          </widget>
@@ -248,33 +248,33 @@ p, li { white-space: pre-wrap; }
         <item row="2" column="1">
          <widget class="QLabel" name="filelabel">
           <property name="text">
-           <string notr="true">TextLabel</string>
+           <string notr="true">fileLabel</string>
           </property>
          </widget>
         </item>
-        <item row="2" column="3">
+        <item row="2" column="4">
          <widget class="QPushButton" name="downloadButton">
           <property name="text">
            <string>Download</string>
           </property>
           <property name="icon">
-           <iconset resource="../images.qrc">
+           <iconset>
             <normaloff>:/images/download16.png</normaloff>:/images/download16.png</iconset>
           </property>
          </widget>
         </item>
-        <item row="2" column="4">
+        <item row="2" column="5">
          <widget class="QPushButton" name="playButton">
           <property name="text">
            <string>Play</string>
           </property>
           <property name="icon">
-           <iconset resource="../images.qrc">
+           <iconset>
             <normaloff>:/images/player_play.png</normaloff>:/images/player_play.png</iconset>
           </property>
          </widget>
         </item>
-        <item row="2" column="5">
+        <item row="2" column="6">
          <spacer>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -289,6 +289,30 @@ p, li { white-space: pre-wrap; }
            </size>
           </property>
          </spacer>
+        </item>
+        <item row="2" column="2">
+         <widget class="QPushButton" name="readButton">
+          <property name="icon">
+           <iconset>
+            <normaloff>:/images/message-state-unread.png</normaloff>:/images/message-state-unread.png</iconset>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+          <property name="flat">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="3">
+         <widget class="QLabel" name="newLabel">
+          <property name="text">
+           <string>New</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -349,15 +373,6 @@ border-radius: 10px;}</string>
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

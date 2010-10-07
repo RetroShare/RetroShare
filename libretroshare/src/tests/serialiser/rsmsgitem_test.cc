@@ -42,6 +42,18 @@ RsSerialType* init_item(RsChatMsgItem& cmi)
 	return new RsChatSerialiser();
 }
 
+RsSerialType* init_item(RsPrivateChatMsgConfigItem& pcmi)
+{
+	randString(SHORT_STR, pcmi.configPeerId);
+	pcmi.chatFlags = rand()%34;
+	pcmi.configFlags = rand()%21;
+	pcmi.sendTime = rand()%422224;
+	randString(LARGE_STR, pcmi.message);
+	pcmi.recvTime = rand()%344443;
+
+	return new RsChatSerialiser();
+}
+
 RsSerialType* init_item(RsChatStatusItem& csi)
 {
 
@@ -119,6 +131,19 @@ bool operator ==(const RsChatMsgItem& cmiLeft,const  RsChatMsgItem& cmiRight)
 	if(cmiLeft.chatFlags != cmiRight.chatFlags) return false;
 	if(cmiLeft.message != cmiRight.message) return false;
 	if(cmiLeft.sendTime != cmiRight.sendTime) return false;
+
+	return true;
+}
+
+bool operator ==(const RsPrivateChatMsgConfigItem& pcmiLeft,const  RsPrivateChatMsgConfigItem& pcmiRight)
+{
+
+	if(pcmiLeft.configPeerId != pcmiRight.configPeerId) return false;
+	if(pcmiLeft.chatFlags != pcmiRight.chatFlags) return false;
+	if(pcmiLeft.configFlags != pcmiRight.configFlags) return false;
+	if(pcmiLeft.message != pcmiRight.message) return false;
+	if(pcmiLeft.sendTime != pcmiRight.sendTime) return false;
+	if(pcmiLeft.recvTime != pcmiRight.recvTime) return false;
 
 	return true;
 }
@@ -201,6 +226,7 @@ bool operator ==(const RsMsgSrcId& msLeft, const RsMsgSrcId& msRight)
 int main()
 {
 	test_RsItem<RsChatMsgItem >(); REPORT("Serialise/Deserialise RsChatMsgItem");
+	test_RsItem<RsChatMsgItem >(); REPORT("Serialise/Deserialise RsPrivateChatMsgConfigItem");
 	test_RsItem<RsChatStatusItem >(); REPORT("Serialise/Deserialise RsChatStatusItem");
 	test_RsItem<RsChatAvatarItem >(); REPORT("Serialise/Deserialise RsChatAvatarItem");
 	test_RsItem<RsMsgItem >(); REPORT("Serialise/Deserialise RsMsgItem");

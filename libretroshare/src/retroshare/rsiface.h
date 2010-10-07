@@ -198,6 +198,7 @@ class NotifyBase
 	virtual void notifyPeerStatusChanged(const std::string& /* peer_id */, uint32_t /* status */) {}
 	/* one or more peers has changed the states */
 	virtual void notifyPeerStatusChangedSummary() {}
+	virtual void notifyChannelMsgReadSatusChanged(const std::string& /* channelId */, const std::string& /* msgId */, uint32_t /* status */) {}
 
 	virtual std::string askForPassword(const std::string& /* key_details */ ,bool /* prev_is_bad */ ) { return "" ;}
 };
@@ -217,6 +218,7 @@ const int NOTIFY_LIST_PUBLIC_CHAT           = 13;
 const int NOTIFY_LIST_PRIVATE_INCOMING_CHAT = 14;
 const int NOTIFY_LIST_PRIVATE_OUTGOING_CHAT = 15;
 const int NOTIFY_LIST_GROUPLIST             = 16;
+const int NOTIFY_LIST_CHANNELLIST_LOCKED    = 17; // use connect with Qt::QueuedConnection
 
 const int NOTIFY_TYPE_SAME   = 0x01;
 const int NOTIFY_TYPE_MOD    = 0x02; /* general purpose, check all */

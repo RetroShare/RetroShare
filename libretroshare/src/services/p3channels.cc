@@ -25,6 +25,7 @@
 
 #include "services/p3channels.h"
 #include "util/rsdir.h"
+#include "retroshare/rsiface.h"
 
 std::ostream &operator<<(std::ostream &out, const ChannelInfo &info)
 {
@@ -182,14 +183,14 @@ bool p3Channels::getChannelMsgList(std::string cId, std::list<ChannelMsgSummary>
 	return true;
 }
 
-bool p3Channels::getChannelMessage(std::string fId, std::string mId, ChannelMsgInfo &info)
+bool p3Channels::getChannelMessage(std::string cId, std::string mId, ChannelMsgInfo &info)
 {
 	std::list<std::string> msgIds;
 	std::list<std::string>::iterator it;
 
 	RsStackMutex stack(distribMtx); /***** STACK LOCKED MUTEX *****/
 
-	RsDistribMsg *msg = locked_getGroupMsg(fId, mId);
+	RsDistribMsg *msg = locked_getGroupMsg(cId, mId);
 	RsChannelMsg *cmsg = dynamic_cast<RsChannelMsg *>(msg);
 	if (!cmsg)
 		return false;
@@ -285,9 +286,181 @@ bool p3Channels::ChannelMessageSend(ChannelMsgInfo &info)
 
 	std::string msgId = publishMsg(cmsg, toSign);
 
+	if (msgId.empty()) {
+		return false;
+	}
+
+	return setMessageStatus(info.channelId, msgId, CHANNEL_MSG_STATUS_READ, CHANNEL_MSG_STATUS_MASK);
+}
+
+bool p3Channels::setMessageStatus(const std::string& cId,const std::string& mId,const uint32_t status, const uint32_t statusMask)
+{
+	bool changed = false;
+	uint32_t newStatus = 0;
+
+	{
+		RsStackMutex stack(distribMtx); /***** STACK LOCKED MUTEX *****/
+
+		std::list<RsChannelReadStatus *>::iterator lit = mReadStatus.begin();
+
+		for(; lit != mReadStatus.end(); lit++)
+		{
+
+			if((*lit)->channelId == cId)
+			{
+					RsChannelReadStatus* rsi = *lit;
+					uint32_t oldStatus = rsi->msgReadStatus[mId];
+					rsi->msgReadStatus[mId] &= ~statusMask;
+					rsi->msgReadStatus[mId] |= (status & statusMask);
+			
+					newStatus = rsi->msgReadStatus[mId];
+					if (oldStatus != newStatus) {
+						changed = true;
+					}
+					break;
+			}
+
+		}
+
+		// if channel id does not exist create one
+		if(lit == mReadStatus.end())
+		{
+			RsChannelReadStatus* rsi = new RsChannelReadStatus();
+			rsi->channelId = cId;
+			rsi->msgReadStatus[mId] = status & statusMask;
+			mReadStatus.push_back(rsi);
+			saveList.push_back(rsi);
+
+			newStatus = rsi->msgReadStatus[mId];
+			changed = true;
+		}
+
+		if (changed) {
+			IndicateConfigChanged();
+		}
+	} /******* UNLOCKED ********/
+
+	if (changed) {
+		rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHANNELLIST_LOCKED, NOTIFY_TYPE_MOD);
+		rsicontrol->getNotify().notifyChannelMsgReadSatusChanged(cId, mId, newStatus);
+	}
+
 	return true;
 }
 
+bool p3Channels::getMessageStatus(const std::string& cId, const std::string& mId, uint32_t& status)
+{
+
+	status = 0;
+
+	RsStackMutex stack(distribMtx);
+
+	std::list<RsChannelReadStatus *>::iterator lit = mReadStatus.begin();
+
+	for(; lit != mReadStatus.end(); lit++)
+	{
+
+		if((*lit)->channelId == cId)
+		{
+				break;
+		}
+
+	}
+
+	if(lit == mReadStatus.end())
+	{
+		return false;
+	}
+
+	std::map<std::string, uint32_t >::iterator mit = (*lit)->msgReadStatus.find(mId);
+
+	if(mit != (*lit)->msgReadStatus.end())
+	{
+		status = mit->second;
+		return true;
+	}
+
+	return false;
+}
+
+bool p3Channels::getMessageCount(const std::string cId, unsigned int &newCount, unsigned int &unreadCount)
+{
+	newCount = 0;
+	unreadCount = 0;
+
+	std::list<std::string> grpIds;
+
+	if (cId.empty()) {
+		// count all messages of all subscribed channels
+		getAllGroupList(grpIds);
+	} else {
+		// count all messages of one channels
+		grpIds.push_back(cId);
+	}
+
+	std::list<std::string>::iterator git;
+	for (git = grpIds.begin(); git != grpIds.end(); git++) {
+		std::string cId = *git;
+		uint32_t grpFlags;
+
+		{
+			// only flag is needed
+			RsStackMutex stack(distribMtx); /***** STACK LOCKED MUTEX *****/
+			GroupInfo *gi = locked_getGroupInfo(cId);
+			if (gi == NULL) {
+				return false;
+			}
+			grpFlags = gi->flags;
+		} /******* UNLOCKED ********/
+
+		if (grpFlags & (RS_DISTRIB_ADMIN | RS_DISTRIB_SUBSCRIBED)) {
+			std::list<std::string> msgIds;
+			if (getAllMsgList(cId, msgIds)) {
+				std::list<std::string>::iterator mit;
+
+				RsStackMutex stack(distribMtx); /***** STACK LOCKED MUTEX *****/
+
+				std::list<RsChannelReadStatus *>::iterator lit;
+				for(lit = mReadStatus.begin(); lit != mReadStatus.end(); lit++) {
+					if ((*lit)->channelId == cId) {
+						break;
+					}
+				}
+
+				if (lit == mReadStatus.end()) {
+					// no status available -> all messages are new
+					newCount += msgIds.size();
+					unreadCount += msgIds.size();
+					continue;
+				}
+
+				for (mit = msgIds.begin(); mit != msgIds.end(); mit++) {
+					std::map<std::string, uint32_t >::iterator rit = (*lit)->msgReadStatus.find(*mit);
+
+					if (rit == (*lit)->msgReadStatus.end()) {
+						// no status available -> message is new
+						newCount++;
+						unreadCount++;
+						continue;
+					}
+
+					if (rit->second & CHANNEL_MSG_STATUS_READ) {
+						// message is not new
+						if (rit->second & CHANNEL_MSG_STATUS_UNREAD_BY_USER) {
+							// message is unread
+							unreadCount++;
+						}
+					} else {
+						newCount++;
+						unreadCount++;
+					}
+				}
+			} /******* UNLOCKED ********/
+		}
+	}
+
+	return true;
+}
 
 bool p3Channels::channelExtraFileHash(std::string path, std::string chId, FileInfo& fInfo){
 
@@ -636,7 +809,6 @@ bool p3Channels::locked_eventNewMsg(GroupInfo *grp, RsDistribMsg *msg, std::stri
 	return locked_eventDuplicateMsg(grp, msg, id);
 }
 
-
 void p3Channels::locked_notifyGroupChanged(GroupInfo &grp, uint32_t flags)
 {
 	std::string grpId = grp.grpId;
@@ -655,12 +827,14 @@ void p3Channels::locked_notifyGroupChanged(GroupInfo &grp, uint32_t flags)
                         std::cerr << "p3Channels::locked_notifyGroupChanged() NEW UPDATE" << std::endl;
                         #endif
 			getPqiNotify()->AddFeedItem(RS_FEED_ITEM_CHAN_NEW, grpId, msgId, nullId);
+                        rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHANNELLIST_LOCKED, NOTIFY_TYPE_ADD);
 			break;
 		case GRP_UPDATE:
                         #ifdef CHANNEL_DEBUG
                         std::cerr << "p3Channels::locked_notifyGroupChanged() UPDATE" << std::endl;
                         #endif
 			getPqiNotify()->AddFeedItem(RS_FEED_ITEM_CHAN_UPDATE, grpId, msgId, nullId);
+                        rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHANNELLIST_LOCKED, NOTIFY_TYPE_MOD);
 			break;
 		case GRP_LOAD_KEY:
                         #ifdef CHANNEL_DEBUG
@@ -671,6 +845,7 @@ void p3Channels::locked_notifyGroupChanged(GroupInfo &grp, uint32_t flags)
                         #ifdef CHANNEL_DEBUG
                         std::cerr << "p3Channels::locked_notifyGroupChanged() NEW MSG" << std::endl;
                         #endif
+                        rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHANNELLIST_LOCKED, NOTIFY_TYPE_ADD);
                         break;
 		case GRP_SUBSCRIBED:
                         #ifdef CHANNEL_DEBUG
@@ -690,11 +865,13 @@ void p3Channels::locked_notifyGroupChanged(GroupInfo &grp, uint32_t flags)
 		/* check if downloads need to be started? */
 	}
 
+                        rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHANNELLIST_LOCKED, NOTIFY_TYPE_ADD);
 			break;
 		case GRP_UNSUBSCRIBED:
                         #ifdef CHANNEL_DEBUG
                         std::cerr << "p3Channels::locked_notifyGroupChanged() UNSUBSCRIBED" << std::endl;
                          #endif
+                        rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHANNELLIST_LOCKED, NOTIFY_TYPE_DEL);
 
 		/* won't stop downloads... */
 
@@ -778,6 +955,24 @@ void p3Channels::cleanUpOldFiles(){
 //TODO: if you want to config saving and loading for channel distrib service implement this method further
 bool p3Channels::childLoadList(std::list<RsItem* >& configSaves)
 {
+	RsChannelReadStatus* drs = NULL;
+	std::list<RsItem* >::iterator it;
+
+	for(it = configSaves.begin(); it != configSaves.end(); it++)
+	{
+		if(NULL != (drs = dynamic_cast<RsChannelReadStatus* >(*it)))
+		{
+			mReadStatus.push_back(drs);
+			saveList.push_back(drs);
+		}
+		else
+		{
+			std::cerr << "p3Channels::childLoadList(): Configs items loaded were incorrect!"
+					  << std::endl;
+			return false;
+		}
+	}
+
 	return true;
 }
 

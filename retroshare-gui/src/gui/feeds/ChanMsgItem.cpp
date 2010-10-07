@@ -26,6 +26,7 @@
 
 #include "FeedHolder.h"
 #include "SubFileItem.h"
+#include "gui/notifyqt.h"
 
 #include <retroshare/rschannels.h>
 
@@ -46,6 +47,8 @@ ChanMsgItem::ChanMsgItem(FeedHolder *parent, uint32_t feedId, std::string chanId
 
   setAttribute ( Qt::WA_DeleteOnClose, true );
 
+  m_inUpdateItemStatic = false;
+
   /* general ones */
   connect( expandButton, SIGNAL( clicked( void ) ), this, SLOT( toggle ( void ) ) );
   connect( clearButton, SIGNAL( clicked( void ) ), this, SLOT( removeItem ( void ) ) );
@@ -55,13 +58,15 @@ ChanMsgItem::ChanMsgItem(FeedHolder *parent, uint32_t feedId, std::string chanId
   connect( downloadButton, SIGNAL( clicked( void ) ), this, SLOT( download ( void ) ) );
   connect( playButton, SIGNAL( clicked( void ) ), this, SLOT( play ( void ) ) );
 
+  connect( readButton, SIGNAL( toggled(bool) ), this, SLOT( readToggled(bool) ) );
+  connect( NotifyQt::getInstance(), SIGNAL(channelMsgReadSatusChanged(QString,QString,int)), this, SLOT(channelMsgReadSatusChanged(QString,QString,int)), Qt::QueuedConnection);
+
   downloadButton->hide();
   playButton->hide();
 
   small();
   updateItemStatic();
   updateItem();
-
 }
 
 
@@ -81,12 +86,15 @@ void ChanMsgItem::updateItemStatic()
 	if (!rsChannels->getChannelMessage(mChanId, mMsgId, cmi))
 		return;
 
+	m_inUpdateItemStatic = true;
+
 	QString title;
+
+	ChannelInfo ci;
+	rsChannels->getChannelInfo(mChanId, ci);
 
 	if (!mIsHome)
 	{
-		ChannelInfo ci;
-		rsChannels->getChannelInfo(mChanId, ci);
 		title = "Channel Feed: ";
 		title += QString::fromStdWString(ci.channelName);
 		titleLabel->setText(title);
@@ -97,6 +105,8 @@ void ChanMsgItem::updateItemStatic()
 		} else {
 			unsubscribeButton->setEnabled(false);
 		}
+		readButton->setVisible(false);
+		newLabel->setVisible(false);
 	}
 	else
 	{
@@ -109,8 +119,32 @@ void ChanMsgItem::updateItemStatic()
 		unsubscribeButton->setEnabled(false);
 		clearButton->hide();
 		unsubscribeButton->hide();
+
+		if ((ci.channelFlags & RS_DISTRIB_SUBSCRIBED) || (ci.channelFlags & RS_DISTRIB_ADMIN)) {
+			readButton->setVisible(true);
+
+			uint32_t status = 0;
+			rsChannels->getMessageStatus(mChanId, mMsgId, status);
+
+			if ((status & CHANNEL_MSG_STATUS_READ) == 0 || (status & CHANNEL_MSG_STATUS_UNREAD_BY_USER)) {
+				readButton->setChecked(true);
+				readButton->setIcon(QIcon(":/images/message-state-unread.png"));
+			} else {
+				readButton->setChecked(false);
+				readButton->setIcon(QIcon(":/images/message-state-read.png"));
+			}
+
+			if (status & CHANNEL_MSG_STATUS_READ) {
+				newLabel->setVisible(false);
+			} else {
+				newLabel->setVisible(true);
+			}
+		} else {
+			readButton->setVisible(false);
+			newLabel->setVisible(false);
+		}
 	}
-	
+
 	msgLabel->setText(QString::fromStdWString(cmi.msg));
 
 	QDateTime qtime;
@@ -155,6 +189,8 @@ void ChanMsgItem::updateItemStatic()
 		label->setPixmap(thumbnail);
 		label->setStyleSheet("QLabel#label{border: 2px solid #D3D3D3;border-radius: 3px;}");
 	}
+
+	m_inUpdateItemStatic = false;
 }
 
 
@@ -310,4 +346,29 @@ void ChanMsgItem::play()
 			(*it)->play();
 		}
 	}
+}
+
+void ChanMsgItem::readToggled(bool checked)
+{
+    if (m_inUpdateItemStatic) {
+        return;
+    }
+
+    /* set always as read ... */
+    uint32_t statusNew = CHANNEL_MSG_STATUS_READ;
+    if (checked) {
+        /* ... and as unread by user */
+        statusNew |= CHANNEL_MSG_STATUS_UNREAD_BY_USER;
+    } else {
+        /* ... and as read by user */
+        statusNew &= ~CHANNEL_MSG_STATUS_UNREAD_BY_USER;
+    }
+    rsChannels->setMessageStatus(mChanId, mMsgId, statusNew, CHANNEL_MSG_STATUS_READ | CHANNEL_MSG_STATUS_UNREAD_BY_USER);
+}
+
+void ChanMsgItem::channelMsgReadSatusChanged(const QString& channelId, const QString& msgId, int status)
+{
+    if (channelId.toStdString() == mChanId && msgId.toStdString() == mMsgId) {
+        updateItemStatic();
+    }
 }

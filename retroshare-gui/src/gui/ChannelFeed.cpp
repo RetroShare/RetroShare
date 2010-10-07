@@ -26,21 +26,28 @@
 #include <iostream>
 #include <algorithm>
 
-#include <retroshare/rschannels.h>
-
 #include "ChannelFeed.h"
 
-#include "gui/feeds/ChanMsgItem.h"
+#include "feeds/ChanMsgItem.h"
 
-#include "gui/channels/CreateChannel.h"
-#include "gui/channels/ChannelDetails.h"
-#include "gui/channels/CreateChannelMsg.h"
-#include "gui/channels/EditChanDetails.h"
-#include "gui/channels/ShareKey.h"
+#include "channels/CreateChannel.h"
+#include "channels/ChannelDetails.h"
+#include "channels/CreateChannelMsg.h"
+#include "channels/EditChanDetails.h"
+#include "channels/ShareKey.h"
+#include "notifyqt.h"
 
-#include "gui/ChanGroupDelegate.h"
+#include "ChanGroupDelegate.h"
 
 #define CHAN_DEFAULT_IMAGE ":/images/channels.png"
+
+#define COLUMN_NAME        0
+#define COLUMN_POPULARITY  1
+#define COLUMN_COUNT       2
+#define COLUMN_DATA        COLUMN_NAME
+
+#define ROLE_ID            Qt::UserRole
+#define ROLE_CHANNEL_TITLE Qt::UserRole + 1
 
 /****
  * #define CHAN_DEBUG
@@ -50,78 +57,77 @@
 ChannelFeed::ChannelFeed(QWidget *parent)
 : RsAutoUpdatePage(1000,parent)
 {
-  	/* Invoke the Qt Designer generated object setup routine */
-  	setupUi(this);
+    /* Invoke the Qt Designer generated object setup routine */
+    setupUi(this);
 
-  	connect(actionCreate_Channel, SIGNAL(triggered()), this, SLOT(createChannel()));
-  	connect(postButton, SIGNAL(clicked()), this, SLOT(createMsg()));
-  	connect(subscribeButton, SIGNAL( clicked( void ) ), this, SLOT( subscribeChannel ( void ) ) );
-  	connect(unsubscribeButton, SIGNAL( clicked( void ) ), this, SLOT( unsubscribeChannel ( void ) ) );
+    connect(actionCreate_Channel, SIGNAL(triggered()), this, SLOT(createChannel()));
+    connect(postButton, SIGNAL(clicked()), this, SLOT(createMsg()));
+    connect(subscribeButton, SIGNAL( clicked( void ) ), this, SLOT( subscribeChannel ( void ) ) );
+    connect(unsubscribeButton, SIGNAL( clicked( void ) ), this, SLOT( unsubscribeChannel ( void ) ) );
+    connect(setAllAsReadButton, SIGNAL(clicked()), this, SLOT(setAllAsReadClicked()));
 
-	/*************** Setup Left Hand Side (List of Channels) ****************/
-	
-    connect(treeView, SIGNAL(clicked(const QModelIndex &)), this, SLOT(selectChannel(const QModelIndex &)));
-	connect(treeView, SIGNAL(activated(const QModelIndex &)), this, SLOT(toggleSelection(const QModelIndex &)));
-	connect(treeView, SIGNAL(customContextMenuRequested( QPoint ) ), this, SLOT( channelListCustomPopupMenu( QPoint ) ) );
+    connect(NotifyQt::getInstance(), SIGNAL(channelMsgReadSatusChanged(QString,QString,int)), this, SLOT(channelMsgReadSatusChanged(QString,QString,int)));
 
-  	mChannelId = "";
-	model = new QStandardItemModel(0, 3, this);
-	model->setHeaderData(0, Qt::Horizontal, tr("Name"), Qt::DisplayRole);
-	model->setHeaderData(1, Qt::Horizontal, tr("Popularity"), Qt::DisplayRole);
-	model->setHeaderData(2, Qt::Horizontal, tr("ID"), Qt::DisplayRole);
+    /*************** Setup Left Hand Side (List of Channels) ****************/
 
-	treeView->setModel(model);
-	treeView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    connect(treeView, SIGNAL(customContextMenuRequested( QPoint ) ), this, SLOT( channelListCustomPopupMenu( QPoint ) ) );
 
-	treeView->setItemDelegate(new ChanGroupDelegate());
-	treeView->setRootIsDecorated(true);
+    mChannelId.clear();
+    model = new QStandardItemModel(0, 2, this);
+    model->setHeaderData(COLUMN_NAME, Qt::Horizontal, tr("Name"), Qt::DisplayRole);
+    model->setHeaderData(COLUMN_POPULARITY, Qt::Horizontal, tr("Popularity"), Qt::DisplayRole);
 
-	// hide header and id column
-	treeView->setHeaderHidden(true);
-	treeView->hideColumn(2);
-	
-	/* Set header resize modes and initial section sizes TreeView*/
+    treeView->setModel(model);
+    treeView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+    treeView->setItemDelegate(new ChanGroupDelegate());
+    treeView->setRootIsDecorated(true);
+
+    connect(treeView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)), this, SLOT(selectChannel(QModelIndex)));
+
+    // hide header and id column
+    treeView->setHeaderHidden(true);
+
+    /* Set header resize modes and initial section sizes TreeView*/
     QHeaderView * _header = treeView->header () ;
-    _header->setResizeMode ( 1, QHeaderView::Custom);
-    _header->resizeSection ( 0, 190 );
-    _header->resizeSection ( 1, 22 );
-    _header->resizeSection ( 2, 22 );
+    _header->setResizeMode ( COLUMN_POPULARITY, QHeaderView::Custom);
+    _header->resizeSection ( COLUMN_NAME, 190 );
     
     // set ChannelList Font  
-	itemFont = QFont("ARIAL", 10);
-	itemFont.setBold(true);
-	
-	QStandardItem *ownChannels = new QStandardItem(tr("Own Channels"));
+    itemFont = QFont("ARIAL", 10);
+    itemFont.setBold(true);
+
+    QStandardItem *ownChannels = new QStandardItem(tr("Own Channels"));
     ownChannels->setFont(itemFont);
     ownChannels->setForeground(QBrush(QColor(79, 79, 79)));
 
-	QStandardItem *subcribedChannels = new QStandardItem(tr("Subscribed Channels"));
+    QStandardItem *subcribedChannels = new QStandardItem(tr("Subscribed Channels"));
     subcribedChannels->setFont(itemFont);    
     subcribedChannels->setForeground(QBrush(QColor(79, 79, 79)));
     
-	QStandardItem *popularChannels = new QStandardItem(tr("Popular Channels"));	
+    QStandardItem *popularChannels = new QStandardItem(tr("Popular Channels"));
     popularChannels->setFont(itemFont);
     popularChannels->setForeground(QBrush(QColor(79, 79, 79)));
     
-	QStandardItem *otherChannels = new QStandardItem(tr("Other Channels"));
+    QStandardItem *otherChannels = new QStandardItem(tr("Other Channels"));
     otherChannels->setFont(itemFont);
     otherChannels->setForeground(QBrush(QColor(79, 79, 79)));
 
-	model->appendRow(ownChannels);
-	model->appendRow(subcribedChannels);
-	model->appendRow(popularChannels);
-	model->appendRow(otherChannels);
+    model->appendRow(ownChannels);
+    model->appendRow(subcribedChannels);
+    model->appendRow(popularChannels);
+    model->appendRow(otherChannels);
 
     treeView->expand(ownChannels->index());
     treeView->expand(subcribedChannels->index());
 
-	//added from ahead
-	updateChannelList();
+    //added from ahead
+    updateChannelList();
     
-	mChannelFont = QFont("MS SANS SERIF", 22);	
-	nameLabel->setFont(mChannelFont);    
-	nameLabel->setMinimumWidth(20);
-  
+    mChannelFont = QFont("MS SANS SERIF", 22);
+    nameLabel->setFont(mChannelFont);
+    nameLabel->setMinimumWidth(20);
+
     // Setup Channel Menu:
     QMenu *channelmenu = new QMenu();
     channelmenu->addAction(actionCreate_Channel); 
@@ -129,71 +135,63 @@ ChannelFeed::ChannelFeed(QWidget *parent)
     channelpushButton->setMenu(channelmenu);
 
     updateChannelMsgs();
-
 }
 
 void ChannelFeed::channelListCustomPopupMenu( QPoint point )
 {
-      ChannelInfo ci;
-      if (!rsChannels->getChannelInfo(mChannelId, ci))
-      {
-            return;
-      }
+    ChannelInfo ci;
+    if (!rsChannels->getChannelInfo(mChannelId, ci)) {
+        return;
+    }
 
-      QMenu contextMnu( this );
-      
-      postchannelAct = new QAction(QIcon(":/images/mail_reply.png"), tr( "Post to Channel" ), this );
-      connect( postchannelAct , SIGNAL( triggered() ), this, SLOT( createMsg() ) );
-      
-      subscribechannelAct = new QAction(QIcon(":/images/edit_add24.png"), tr( "Subscribe to Channel" ), this );
-      connect( subscribechannelAct , SIGNAL( triggered() ), this, SLOT( subscribeChannel() ) );
+    QMenu contextMnu(this);
 
-      unsubscribechannelAct = new QAction(QIcon(":/images/cancel.png"), tr( "Unsubscribe to Channel" ), this );
-      connect( unsubscribechannelAct , SIGNAL( triggered() ), this, SLOT( unsubscribeChannel() ) );
-      
-      channeldetailsAct = new QAction(QIcon(":/images/info16.png"), tr( "Show Channel Details" ), this );
-      connect( channeldetailsAct , SIGNAL( triggered() ), this, SLOT( showChannelDetails() ) );
+    QAction *postchannelAct = new QAction(QIcon(":/images/mail_reply.png"), tr( "Post to Channel" ), &contextMnu);
+    connect( postchannelAct , SIGNAL( triggered() ), this, SLOT( createMsg() ) );
 
-      restoreKeysAct = new QAction(QIcon(":/images/settings16.png"), tr("Restore Publish Rights for Channel" ), this );
-      connect( restoreKeysAct , SIGNAL( triggered() ), this, SLOT( restoreChannelKeys() ) );
+    QAction *subscribechannelAct = new QAction(QIcon(":/images/edit_add24.png"), tr( "Subscribe to Channel" ), &contextMnu);
+    connect( subscribechannelAct , SIGNAL( triggered() ), this, SLOT( subscribeChannel() ) );
 
-      editChannelDetailAct = new QAction(QIcon(":/images/edit_16.png"), tr("Edit Channel Details"), this);
-      connect( editChannelDetailAct, SIGNAL( triggered() ), this, SLOT( editChannelDetail() ) );
+    QAction *unsubscribechannelAct = new QAction(QIcon(":/images/cancel.png"), tr( "Unsubscribe to Channel" ), &contextMnu);
+    connect( unsubscribechannelAct , SIGNAL( triggered() ), this, SLOT( unsubscribeChannel() ) );
 
-      shareKeyAct = new QAction(QIcon(":/images/gpgp_key_generate.png"), tr("Share Channel"), this);
-      connect( shareKeyAct, SIGNAL( triggered() ), this, SLOT( shareKey() ) );
+    QAction *channeldetailsAct = new QAction(QIcon(":/images/info16.png"), tr( "Show Channel Details" ), &contextMnu);
+    connect( channeldetailsAct , SIGNAL( triggered() ), this, SLOT( showChannelDetails() ) );
 
-      if((ci.channelFlags & RS_DISTRIB_PUBLISH) && (ci.channelFlags & RS_DISTRIB_ADMIN))
-      {
+    QAction *restoreKeysAct = new QAction(QIcon(":/images/settings16.png"), tr("Restore Publish Rights for Channel" ), &contextMnu);
+    connect( restoreKeysAct , SIGNAL( triggered() ), this, SLOT( restoreChannelKeys() ) );
+
+    QAction *editChannelDetailAct = new QAction(QIcon(":/images/edit_16.png"), tr("Edit Channel Details"), &contextMnu);
+    connect( editChannelDetailAct, SIGNAL( triggered() ), this, SLOT( editChannelDetail() ) );
+
+    QAction *shareKeyAct = new QAction(QIcon(":/images/gpgp_key_generate.png"), tr("Share Channel"), &contextMnu);
+    connect( shareKeyAct, SIGNAL( triggered() ), this, SLOT( shareKey() ) );
+
+    if ((ci.channelFlags & RS_DISTRIB_PUBLISH) && (ci.channelFlags & RS_DISTRIB_ADMIN)) {
         contextMnu.addAction( postchannelAct );
         contextMnu.addSeparator();
         contextMnu.addAction( editChannelDetailAct);
         contextMnu.addAction( shareKeyAct );
         contextMnu.addAction( channeldetailsAct );
-      }
-      else if (ci.channelFlags & RS_DISTRIB_PUBLISH)
-      {
+    }
+    else if (ci.channelFlags & RS_DISTRIB_PUBLISH) {
         contextMnu.addAction( postchannelAct );
         contextMnu.addSeparator();
         contextMnu.addAction( channeldetailsAct );
         contextMnu.addAction( shareKeyAct );
-      }
-      else if (ci.channelFlags & RS_DISTRIB_SUBSCRIBED)
-      {
+    } else if (ci.channelFlags & RS_DISTRIB_SUBSCRIBED) {
         contextMnu.addAction( unsubscribechannelAct );
         contextMnu.addSeparator();
         contextMnu.addAction( channeldetailsAct );
     	contextMnu.addAction( restoreKeysAct );
-      }
-      else
-      {      
+    } else {
         contextMnu.addAction( subscribechannelAct );
         contextMnu.addSeparator();
         contextMnu.addAction( channeldetailsAct );
         contextMnu.addAction( restoreKeysAct );
-      }
+    }
 
-      contextMnu.exec(QCursor::pos());
+    contextMnu.exec(QCursor::pos());
 }
 
 void ChannelFeed::createChannel()
@@ -212,602 +210,447 @@ void ChannelFeed::channelSelection()
 	updateChannelMsgs();
 }
 
-
-
 /*************************************************************************************/
 /*************************************************************************************/
 /*************************************************************************************/
 
 void ChannelFeed::deleteFeedItem(QWidget *item, uint32_t type)
 {
-	return;
 }
 
 void ChannelFeed::openChat(std::string peerId)
 {
-	return;
 }
 
 void ChannelFeed::editChannelDetail(){
     
     EditChanDetails editUi(this, 0, mChannelId);
     editUi.exec();
-
-    return;
 }
 
 void ChannelFeed::shareKey()
 {
     ShareKey shareUi(this, 0, mChannelId);
     shareUi.exec();
-
-    return;
 }
 
 void ChannelFeed::createMsg()
 {
-	if (mChannelId == "")
-	{
+    if (mChannelId.empty()) {
 	return;
-	}
+    }
 
-	CreateChannelMsg *msgDialog = new CreateChannelMsg(mChannelId);
+    CreateChannelMsg *msgDialog = new CreateChannelMsg(mChannelId);
+    msgDialog->show();
 
-	msgDialog->show();
-
-	/* window will destroy itself! */
+    /* window will destroy itself! */
 }
 
-void ChannelFeed::selectChannel( std::string cId)
+void ChannelFeed::restoreChannelKeys()
 {
-	mChannelId = cId;
-
-	updateChannelMsgs();
+    rsChannels->channelRestoreKeys(mChannelId);
 }
 
-void ChannelFeed::restoreChannelKeys(){
-
-	rsChannels->channelRestoreKeys(mChannelId);
-}
-
-void ChannelFeed::selectChannel(const QModelIndex &index)
+void ChannelFeed::selectChannel(QModelIndex index)
 {
-	int row = index.row();
-	int col = index.column();
-	if (col != 2) {
-		QModelIndex sibling = index.sibling(row, 2);
-		if (sibling.isValid())
-			mChannelId = sibling.data().toString().toStdString();
-	} else
-		mChannelId = index.data().toString().toStdString();
-	updateChannelMsgs();
+    QStandardItem *itemData = NULL;
+
+    if (index.isValid()) {
+        QStandardItem *item = model->itemFromIndex(index);
+        if (item && item->parent() != NULL) {
+            itemData = item->parent()->child(item->row(), COLUMN_DATA);
+        }
+    }
+
+    if (itemData) {
+        mChannelId = itemData->data(ROLE_ID).toString().toStdString();
+    } else {
+        mChannelId.clear();
+    }
+
+    updateChannelMsgs();
 }
 
 void ChannelFeed::updateDisplay()
 {
-	std::list<std::string> chanIds;
-	std::list<std::string>::iterator it;
-	if (!rsChannels)
-		return;
+    if (!rsChannels) {
+        return;
+    }
 
-	if (rsChannels->channelsChanged(chanIds))
-	{
-		/* update Forums List */
-		updateChannelList();
+    std::list<std::string> chanIds;
+    std::list<std::string>::iterator it;
 
-		it = std::find(chanIds.begin(), chanIds.end(), mChannelId);
-		if (it != chanIds.end())
-		{
-			updateChannelMsgs();
-		}
-	}
+    if (rsChannels->channelsChanged(chanIds)) {
+        /* update channel list */
+        updateChannelList();
+
+        it = std::find(chanIds.begin(), chanIds.end(), mChannelId);
+        if (it != chanIds.end()) {
+            updateChannelMsgs();
+        }
+    }
 }
 
 void ChannelFeed::updateChannelList()
 {
+    if (!rsChannels) {
+        return;
+    }
 
-	std::list<ChannelInfo> channelList;
-	std::list<ChannelInfo>::iterator it;
-	if (!rsChannels)
-	{
-		return;
-	}
+    std::list<ChannelInfo> channelList;
+    std::list<ChannelInfo>::iterator it;
 
-	rsChannels->getChannelList(channelList);
+    rsChannels->getChannelList(channelList);
 
-	/* get the ids for our lists */
-	std::list<std::string> adminIds;
-	std::list<std::string> subIds;
-	std::list<std::string> popIds;
-	std::list<std::string> otherIds;
-	std::multimap<uint32_t, std::string> popMap;
+    /* get the ids for our lists */
+    std::list<ChannelInfo> adminList;
+    std::list<ChannelInfo> subList;
+    std::list<ChannelInfo> popList;
+    std::list<ChannelInfo> otherList;
+    std::multimap<uint32_t, ChannelInfo> popMap;
 
-	for(it = channelList.begin(); it != channelList.end(); it++)
-	{
-		/* sort it into Publish (Own), Subscribed, Popular and Other */
-		uint32_t flags = it->channelFlags;
+    for(it = channelList.begin(); it != channelList.end(); it++) {
+        /* sort it into Publish (Own), Subscribed, Popular and Other */
+        uint32_t flags = it->channelFlags;
 
-		if (flags & RS_DISTRIB_ADMIN)
-		{
-			adminIds.push_back(it->channelId);
-		}
-		else if (flags & RS_DISTRIB_SUBSCRIBED)
-		{
-			subIds.push_back(it->channelId);
-		}
-		else
-		{
-			/* rate the others by popularity */
-			popMap.insert(std::make_pair(it->pop, it->channelId));
-		}
-	}
-
-	/* iterate backwards through popMap - take the top 5 or 10% of list */
-	uint32_t popCount = 5;
-	if (popCount < popMap.size() / 10)
-	{
-		popCount = popMap.size() / 10;
-	}
-
-	uint32_t i = 0;
-	std::multimap<uint32_t, std::string>::reverse_iterator rit;
-	for(rit = popMap.rbegin(); rit != popMap.rend(); rit++)
-	{
-		if(i < popCount){
-			popIds.push_back(rit->second);
-			i++;
-		}else{
-			otherIds.push_back(rit->second);
-		}
-	}
-
-	/* now we have our lists ---> update entries */
-
-	updateChannelListOwn(adminIds);
-	updateChannelListSub(subIds);
-	updateChannelListPop(popIds);
-	updateChannelListOther(otherIds);
-}
-
-void ChannelFeed::updateChannelListOwn(std::list<std::string> &ids)
-{
-    std::list<std::string>::iterator iit;
-
-    /* remove rows with groups before adding new ones */
-    model->item(OWN)->removeRows(0, model->item(OWN)->rowCount());
-
-    for (iit = ids.begin(); iit != ids.end(); iit ++) {
-#ifdef CHAN_DEBUG
-		std::cerr << "ChannelFeed::updateChannelListOwn(): " << *iit << std::endl;
-#endif
-		QStandardItem *ownGroup = model->item(OWN);
-		QList<QStandardItem *> channel;
-		QStandardItem *chNameItem = new QStandardItem();
-		QStandardItem *chPopItem = new QStandardItem();
-		QStandardItem *chIdItem = new QStandardItem();
-		chNameItem->setSizeHint( QSize( 22,22 ) ); 
-
-		ChannelInfo ci;
-		if (rsChannels && rsChannels->getChannelInfo(*iit, ci)) {
-			chNameItem->setData(QVariant(QString::fromStdWString(ci.channelName)), Qt::DisplayRole);
-			//chPopItem->setData(QVariant(QString::number(ci.pop)), Qt::DisplayRole);
-			chIdItem->setData(QVariant(QString::fromStdString(ci.channelId)), Qt::DisplayRole);
-			chNameItem->setToolTip(tr("Popularity: %1\nFetches: %2\nAvailable: %3").arg(QString::number(ci.pop)).arg(9999).arg(9999));
-			
-			  if(ci.pngImageLen != 0){
-
-        QPixmap chanImage;
-        chanImage.loadFromData(ci.pngChanImage, ci.pngImageLen, "PNG");
-        chNameItem->setData(QIcon(chanImage), Qt::DecorationRole);
-        }else{
-        QPixmap defaulImage(CHAN_DEFAULT_IMAGE);
-        chNameItem->setData(QIcon(defaulImage), Qt::DecorationRole);
+        if (flags & RS_DISTRIB_ADMIN) {
+            adminList.push_back(*it);
+        } else if (flags & RS_DISTRIB_SUBSCRIBED) {
+            subList.push_back(*it);
+        } else {
+            /* rate the others by popularity */
+            popMap.insert(std::make_pair(it->pop, *it));
         }
-					
-        int popcount = ci.pop;		
-        /* set Popularity icon  */
-        if (popcount == 0) 
-        {
-            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_0.png")), Qt::DecorationRole);
-        } 
-        else if (popcount < 2) 
-        {
-            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_1.png")), Qt::DecorationRole);
-        } 
-        else if (popcount < 4) 
-        {
-            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_2.png")), Qt::DecorationRole);
-        } 
-        else if (popcount < 8) 
-        {
-            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_3.png")), Qt::DecorationRole);
-        } 
-        else if (popcount < 16) {
-            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_4.png")), Qt::DecorationRole);
-        } 
-        else
-        {
-            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_5.png")), Qt::DecorationRole);
-        } 		
-					
-					
-		} else {
-                        chNameItem->setData(QVariant(QString(tr("Unknown Channel"))), Qt::DisplayRole);
-			chPopItem->setData(QVariant(QString::fromStdString(*iit)), Qt::DisplayRole);
-                        chNameItem->setToolTip(tr("Unknown Channel\nNo Description"));
-		}
-    
-		channel.append(chNameItem);
-		channel.append(chPopItem);
-		channel.append(chIdItem);
-		ownGroup->appendRow(channel);
-	}
+    }
+
+    /* iterate backwards through popMap - take the top 5 or 10% of list */
+    uint32_t popCount = 5;
+    if (popCount < popMap.size() / 10) {
+        popCount = popMap.size() / 10;
+    }
+
+    uint32_t i = 0;
+    std::multimap<uint32_t, ChannelInfo>::reverse_iterator rit;
+    for (rit = popMap.rbegin(); rit != popMap.rend(); rit++) {
+        if (i < popCount) {
+            popList.push_back(rit->second);
+            i++;
+        } else {
+            otherList.push_back(rit->second);
+        }
+    }
+
+    /* now we have our lists ---> update entries */
+
+    fillChannelList(OWN, adminList);
+    fillChannelList(SUBSCRIBED, subList);
+    fillChannelList(POPULAR, popList);
+    fillChannelList(OTHER, otherList);
+
+    updateMessageSummaryList("");
 }
 
-void ChannelFeed::updateChannelListSub(std::list<std::string> &ids)
+void ChannelFeed::fillChannelList(int channelItem, std::list<ChannelInfo> &channelInfos)
 {
-    std::list<std::string>::iterator iit;
+    std::list<ChannelInfo>::iterator iit;
 
     /* remove rows with groups before adding new ones */
-    model->item(SUBSCRIBED)->removeRows(0, model->item(SUBSCRIBED)->rowCount());
+    QStandardItem *groupItem = model->item(channelItem);
+    if (groupItem == NULL) {
+        return;
+    }
 
-    for (iit = ids.begin(); iit != ids.end(); iit ++) {
+    /* iterate all channels */
+    for (iit = channelInfos.begin(); iit != channelInfos.end(); iit++) {
 #ifdef CHAN_DEBUG
-		std::cerr << "ChannelFeed::updateChannelListSub(): " << *iit << std::endl;
+        std::cerr << "ChannelFeed::fillChannelList(): " << channelItem << " - " << iit->channelId << std::endl;
 #endif
-		QStandardItem *ownGroup = model->item(SUBSCRIBED);
-		QList<QStandardItem *> channel;
-		QStandardItem *chNameItem = new QStandardItem();
-		QStandardItem *chPopItem = new QStandardItem();
-		QStandardItem *chIdItem = new QStandardItem();
-		chNameItem->setSizeHint( QSize( 22,22 ) ); 
 
-		ChannelInfo ci;
-		if (rsChannels && rsChannels->getChannelInfo(*iit, ci)) {
-			chNameItem->setData(QVariant(QString::fromStdWString(ci.channelName)), Qt::DisplayRole);
-			chIdItem->setData(QVariant(QString::fromStdString(ci.channelId)), Qt::DisplayRole);
-			chNameItem->setToolTip(tr("Popularity: %1\nFetches: %2\nAvailable: %3").arg(QString::number(ci.pop)).arg(9999).arg(9999));
-			
-          if(ci.pngImageLen != 0){
+        ChannelInfo &ci = *iit;
+        QString channelId = QString::fromStdString(ci.channelId);
 
-          QPixmap chanImage;
-          chanImage.loadFromData(ci.pngChanImage, ci.pngImageLen, "PNG");
-          chNameItem->setData(QIcon(chanImage), Qt::DecorationRole);
-          }else{
-          QPixmap defaulImage(CHAN_DEFAULT_IMAGE);
-          chNameItem->setData(QIcon(defaulImage), Qt::DecorationRole);
-          }
-
-		      /* set Popularity icon  */
-		      int popcount = ci.pop;
-
-		        if (popcount == 0)
-		        {
-		            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_0.png")), Qt::DecorationRole);
-		        }
-		        else if (popcount < 2)
-		        {
-		            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_1.png")), Qt::DecorationRole);
-		        }
-		        else if (popcount < 4)
-		        {
-		            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_2.png")), Qt::DecorationRole);
-		        }
-		        else if (popcount < 8)
-		        {
-		            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_3.png")), Qt::DecorationRole);
-		        }
-		        else if (popcount < 16) 
-		        {
-		            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_4.png")), Qt::DecorationRole);
-		        }
-		        else
-		        {
-		            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_5.png")), Qt::DecorationRole);
-		        }
-
-
-				} else {
-                                        chNameItem->setData(QVariant(QString(tr("Unknown Channel"))), Qt::DisplayRole);
-					chPopItem->setData(QVariant(QString::fromStdString(*iit)), Qt::DisplayRole);
-                                        chNameItem->setToolTip(tr("Unknown Channel\nNo Description"));
-				}
-
-		channel.append(chNameItem);
-		channel.append(chPopItem);
-		channel.append(chIdItem);
-		ownGroup->appendRow(channel);
-	}
-
-}
-
-void ChannelFeed::updateChannelListPop(std::list<std::string> &ids)
-{
-    std::list<std::string>::iterator iit;
-
-    /* remove rows with groups before adding new ones */
-    model->item(POPULAR)->removeRows(0, model->item(POPULAR)->rowCount());
-
-    for (iit = ids.begin(); iit != ids.end(); iit ++) {
-#ifdef CHAN_DEBUG
-		std::cerr << "ChannelFeed::updateChannelListPop(): " << *iit << std::endl;
-#endif
-		QStandardItem *ownGroup = model->item(POPULAR);
-		QList<QStandardItem *> channel;
-		QStandardItem *chNameItem = new QStandardItem();
-		QStandardItem *chPopItem = new QStandardItem();
-		QStandardItem *chIdItem = new QStandardItem();
-		chNameItem->setSizeHint( QSize( 22,22 ) ); 
-
-		ChannelInfo ci;
-		if (rsChannels && rsChannels->getChannelInfo(*iit, ci)) {
-			chNameItem->setData(QVariant(QString::fromStdWString(ci.channelName)), Qt::DisplayRole);
-			chIdItem->setData(QVariant(QString::fromStdString(ci.channelId)), Qt::DisplayRole);
-			chNameItem->setToolTip(tr("Popularity: %1\nFetches: %2\nAvailable: %3").arg(QString::number(ci.pop)).arg(9999).arg(9999));
-			
-			  if(ci.pngImageLen != 0){
-
-        QPixmap chanImage;
-        chanImage.loadFromData(ci.pngChanImage, ci.pngImageLen, "PNG");
-        chNameItem->setData(QIcon(chanImage), Qt::DecorationRole);
-        }else{
-        QPixmap defaulImage(CHAN_DEFAULT_IMAGE);
-        chNameItem->setData(QIcon(defaulImage), Qt::DecorationRole);
+        /* search exisiting channel item */
+        int row;
+        int rowCount = groupItem->rowCount();
+        for (row = 0; row < rowCount; row++) {
+            if (groupItem->child(row, COLUMN_DATA)->data(ROLE_ID).toString() == channelId) {
+                /* found channel */
+                break;
+            }
         }
 
-	      /* set Popularity icon  */
-	      int popcount = ci.pop;
+        QStandardItem *chNameItem = new QStandardItem();
+        QStandardItem *chPopItem = new QStandardItem();
+        if (row < rowCount) {
+            chNameItem = groupItem->child(row, COLUMN_NAME);
+            chPopItem = groupItem->child(row, COLUMN_POPULARITY);
+        } else {
+            QList<QStandardItem*> channel;
+            chNameItem = new QStandardItem();
+            chPopItem = new QStandardItem();
 
-	        if (popcount == 0)
-	        {
-	            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_0.png")), Qt::DecorationRole);
-	        }
-	        else if (popcount < 2)
-	        {
-	            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_1.png")), Qt::DecorationRole);
-	        }
-	        else if (popcount < 4)
-	        {
-	            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_2.png")), Qt::DecorationRole);
-	        }
-	        else if (popcount < 8)
-	        {
-	            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_3.png")), Qt::DecorationRole);
-	        }
-	        else if (popcount < 16) {
-	            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_4.png")), Qt::DecorationRole);
-	        }
-	        else
-	        {
-	            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_5.png")), Qt::DecorationRole);
-	        }
+            chNameItem->setSizeHint(QSize(22, 22));
 
+            channel.append(chNameItem);
+            channel.append(chPopItem);
+            groupItem->appendRow(channel);
 
-			} else {
-                                chNameItem->setData(QVariant(QString(tr("Unknown Channel"))), Qt::DisplayRole);
-				chPopItem->setData(QVariant(QString::fromStdString(*iit)), Qt::DisplayRole);
-                                chNameItem->setToolTip(tr("Unknown Channel\nNo Description"));
-			}
+            groupItem->child(chNameItem->index().row(), COLUMN_DATA)->setData(channelId, ROLE_ID);
+        }
 
-		channel.append(chNameItem);
-		channel.append(chPopItem);
-		channel.append(chIdItem);
-		ownGroup->appendRow(channel);
-	}
+        chNameItem->setText(QString::fromStdWString(ci.channelName));
+        groupItem->child(chNameItem->index().row(), COLUMN_DATA)->setData(QString::fromStdWString(ci.channelName), ROLE_CHANNEL_TITLE);
+        chNameItem->setToolTip(tr("Popularity: %1\nFetches: %2\nAvailable: %3").arg(QString::number(ci.pop)).arg(9999).arg(9999));
+
+        QPixmap chanImage;
+        if (ci.pngImageLen != 0) {
+            chanImage.loadFromData(ci.pngChanImage, ci.pngImageLen, "PNG");
+        } else {
+            chanImage = QPixmap(CHAN_DEFAULT_IMAGE);
+        }
+        chNameItem->setIcon(QIcon(chanImage));
+
+        /* set Popularity icon */
+        int popcount = ci.pop;
+        if (popcount == 0) {
+            chPopItem->setIcon(QIcon(":/images/hot_0.png"));
+        } else if (popcount < 2) {
+            chPopItem->setIcon(QIcon(":/images/hot_1.png"));
+        } else if (popcount < 4) {
+            chPopItem->setIcon(QIcon(":/images/hot_2.png"));
+        } else if (popcount < 8) {
+            chPopItem->setIcon(QIcon(":/images/hot_3.png"));
+        } else if (popcount < 16) {
+            chPopItem->setIcon(QIcon(":/images/hot_4.png"));
+        } else {
+            chPopItem->setIcon(QIcon(":/images/hot_5.png"));
+        }
+    }
+
+    /* remove all items not in list */
+    int row = 0;
+    int rowCount = groupItem->rowCount();
+    while (row < rowCount) {
+        std::string channelId = groupItem->child(row, COLUMN_DATA)->data(ROLE_ID).toString().toStdString();
+
+        for (iit = channelInfos.begin(); iit != channelInfos.end(); iit++) {
+            if (iit->channelId == channelId) {
+                break;
+            }
+        }
+
+        if (iit == channelInfos.end()) {
+            groupItem->removeRow(row);
+            rowCount = groupItem->rowCount();
+        } else {
+            row++;
+        }
+    }
 }
 
-void ChannelFeed::updateChannelListOther(std::list<std::string> &ids)
+void ChannelFeed::channelMsgReadSatusChanged(const QString& channelId, const QString& msgId, int status)
 {
-    std::list<std::string>::iterator iit;
+    updateMessageSummaryList(channelId.toStdString());
+}
 
-    /* remove rows with groups before adding new ones */
-    model->item(OTHER)->removeRows(0, model->item(OTHER)->rowCount());
+void ChannelFeed::updateMessageSummaryList(const std::string &channelId)
+{
+    int channelItems[2] = { OWN, SUBSCRIBED };
 
-    for (iit = ids.begin(); iit != ids.end(); iit ++) {
-#ifdef CHAN_DEBUG
-		std::cerr << "ChannelFeed::updateChannelListOther(): " << *iit << std::endl;
-#endif
-		QStandardItem *ownGroup = model->item(OTHER);
-		QList<QStandardItem *> channel;
-		QStandardItem *chNameItem = new QStandardItem();
-		QStandardItem *chPopItem = new QStandardItem();
-		QStandardItem *chIdItem = new QStandardItem();
-		chNameItem->setSizeHint( QSize( 22,22 ) );
+    for (int channelItem = 0; channelItem < 2; channelItem++) {
+        QStandardItem *groupItem = model->item(channelItem);
+        if (groupItem == NULL) {
+            continue;
+        }
 
-		ChannelInfo ci;
-		if (rsChannels && rsChannels->getChannelInfo(*iit, ci)) {
-			chNameItem->setData(QVariant(QString::fromStdWString(ci.channelName)), Qt::DisplayRole);
-			chIdItem->setData(QVariant(QString::fromStdString(ci.channelId)), Qt::DisplayRole);
-			chNameItem->setToolTip(tr("Popularity: %1\nFetches: %2\nAvailable: %3"
-					).arg(QString::number(ci.pop)).arg(9999).arg(9999));
+        int row;
+        int rowCount = groupItem->rowCount();
+        for (row = 0; row < rowCount; row++) {
+            std::string rowChannelId = groupItem->child(row, COLUMN_DATA)->data(ROLE_ID).toString().toStdString();
+            if (rowChannelId.empty()) {
+                continue;
+            }
 
-			  if(ci.pngImageLen != 0){
+            if (channelId.empty() || rowChannelId == channelId) {
+                /* calculate unread messages */
+                unsigned int newMessageCount = 0;
+                unsigned int unreadMessageCount = 0;
+                rsChannels->getMessageCount(rowChannelId, newMessageCount, unreadMessageCount);
 
-      QPixmap chanImage;
-      chanImage.loadFromData(ci.pngChanImage, ci.pngImageLen, "PNG");
-      chNameItem->setData(QIcon(chanImage), Qt::DecorationRole);
-      }else{
-      QPixmap defaulImage(CHAN_DEFAULT_IMAGE);
-      chNameItem->setData(QIcon(defaulImage), Qt::DecorationRole);
-      }
+                QStandardItem *item = groupItem->child(row, COLUMN_NAME);
 
-		      /* set Popularity icon  */
-		      int popcount = ci.pop;
+                QString title = item->data(ROLE_CHANNEL_TITLE).toString();
+                QFont font = item->font();
 
-		        if (popcount == 0)
-		        {
-		            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_0.png")), Qt::DecorationRole);
-		        }
-		        else if (popcount < 2)
-		        {
-		            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_1.png")), Qt::DecorationRole);
-		        }
-		        else if (popcount < 4)
-		        {
-		            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_2.png")), Qt::DecorationRole);
-		        }
-		        else if (popcount < 8)
-		        {
-		            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_3.png")), Qt::DecorationRole);
-		        }
-		        else if (popcount < 16) {
-		            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_4.png")), Qt::DecorationRole);
-		        }
-		        else
-		        {
-		            chPopItem->setData(QIcon(QString::fromUtf8(":/images/hot_5.png")), Qt::DecorationRole);
-		        }
+                if (unreadMessageCount) {
+                    title += " (" + QString::number(unreadMessageCount) + ")";
+                    font.setBold(true);
+                } else {
+                    font.setBold(false);
+                }
 
+                item->setText(title);
+                item->setFont(font);
 
-				} else {
-                                        chNameItem->setData(QVariant(QString(tr("Unknown Channel"))), Qt::DisplayRole);
-					chPopItem->setData(QVariant(QString::fromStdString(*iit)), Qt::DisplayRole);
-                                        chNameItem->setToolTip(tr("Unknown Channel\nNo Description"));
-				}
-
-		channel.append(chNameItem);
-		channel.append(chPopItem);
-		channel.append(chIdItem);
-		ownGroup->appendRow(channel);
-	}
+                if (channelId.empty() == false) {
+                    /* calculate only this channel */
+                    break;
+                }
+            }
+        }
+    }
 }
 
 static bool sortChannelMsgSummary(const ChannelMsgSummary &msg1, const ChannelMsgSummary &msg2)
 {
-	return (msg1.ts < msg2.ts);
+    return (msg1.ts < msg2.ts);
 }
 
 void ChannelFeed::updateChannelMsgs()
 {
-	if (!rsChannels)
-		return;
+    if (!rsChannels) {
+        return;
+    }
 
-	ChannelInfo ci;
-	if (!rsChannels->getChannelInfo(mChannelId, ci))
-	{
-		postButton->setEnabled(false);
-		subscribeButton->setEnabled(false);
-		unsubscribeButton->setEnabled(false);
-                nameLabel->setText(tr("No Channel Selected"));
-		iconLabel->setPixmap(QPixmap(":/images/channels.png"));
-		iconLabel->setEnabled(false);
-		return;
-	}
-	
-	if(ci.pngImageLen != 0){
+    ChannelInfo ci;
+    if (!rsChannels->getChannelInfo(mChannelId, ci)) {
+        postButton->setEnabled(false);
+        subscribeButton->setEnabled(false);
+        unsubscribeButton->setEnabled(false);
+        setAllAsReadButton->setEnabled(false);
+        nameLabel->setText(tr("No Channel Selected"));
+        iconLabel->setPixmap(QPixmap(":/images/channels.png"));
+        iconLabel->setEnabled(false);
+        return;
+    }
 
-		QPixmap chanImage;
-		chanImage.loadFromData(ci.pngChanImage, ci.pngImageLen, "PNG");
-		iconLabel->setPixmap(chanImage);
-		iconLabel->setStyleSheet("QLabel{border: 3px solid white;}");
-	}else{
-		QPixmap defaulImage(CHAN_DEFAULT_IMAGE);
-		iconLabel->setPixmap(defaulImage);
-		iconLabel->setStyleSheet("QLabel{border: 2px solid white;border-radius: 10px;}");
-	}
-	iconLabel->setEnabled(true);
+    if (ci.pngImageLen != 0) {
+        QPixmap chanImage;
+        chanImage.loadFromData(ci.pngChanImage, ci.pngImageLen, "PNG");
+        iconLabel->setPixmap(chanImage);
+        iconLabel->setStyleSheet("QLabel{border: 3px solid white;}");
+    } else {
+        QPixmap defaulImage(CHAN_DEFAULT_IMAGE);
+        iconLabel->setPixmap(defaulImage);
+        iconLabel->setStyleSheet("QLabel{border: 2px solid white;border-radius: 10px;}");
+    }
+    iconLabel->setEnabled(true);
 
-	/* set textcolor for Channel name  */
-	QString channelStr("<span style=\"font-size:22pt; font-weight:500;"
-                               "color:#4F4F4F;\">%1</span>");
-	
-	/* set Channel name */
-	QString cname = QString::fromStdWString(ci.channelName);
-  nameLabel->setText(channelStr.arg(cname));
+    /* set textcolor for Channel name  */
+    QString channelStr("<span style=\"font-size:22pt; font-weight:500;"
+                       "color:#4F4F4F;\">%1</span>");
 
-	/* do buttons */
-	if (ci.channelFlags & RS_DISTRIB_SUBSCRIBED)
-	{
-		subscribeButton->setEnabled(false);
-		unsubscribeButton->setEnabled(true);
-	}
-	else
-	{
-		subscribeButton->setEnabled(true);
-		unsubscribeButton->setEnabled(false);
-	}
+    /* set Channel name */
+    QString cname = QString::fromStdWString(ci.channelName);
+    nameLabel->setText(channelStr.arg(cname));
 
-	if (ci.channelFlags & RS_DISTRIB_PUBLISH)
-	{
-		postButton->setEnabled(true);
-	}
-	else
-	{
-		postButton->setEnabled(false);
-	}
+    /* do buttons */
+    if (ci.channelFlags & RS_DISTRIB_SUBSCRIBED) {
+        subscribeButton->setEnabled(false);
+        unsubscribeButton->setEnabled(true);
+        setAllAsReadButton->setEnabled(true);
+    } else {
+        subscribeButton->setEnabled(true);
+        unsubscribeButton->setEnabled(false);
+        setAllAsReadButton->setEnabled(false);
+    }
 
-	/* replace all the messages with new ones */
-	std::list<ChanMsgItem *>::iterator mit;
-	for(mit = mChanMsgItems.begin(); mit != mChanMsgItems.end(); mit++)
-	{
-		delete (*mit);
-	}
-	mChanMsgItems.clear();
+    if (ci.channelFlags & RS_DISTRIB_PUBLISH) {
+        postButton->setEnabled(true);
+    } else {
+        postButton->setEnabled(false);
+    }
 
-	std::list<ChannelMsgSummary> msgs;
-	std::list<ChannelMsgSummary>::iterator it;
+    /* replace all the messages with new ones */
+    std::list<ChanMsgItem *>::iterator mit;
+    for (mit = mChanMsgItems.begin(); mit != mChanMsgItems.end(); mit++) {
+        delete (*mit);
+    }
+    mChanMsgItems.clear();
 
-	rsChannels->getChannelMsgList(mChannelId, msgs);
+    std::list<ChannelMsgSummary> msgs;
+    std::list<ChannelMsgSummary>::iterator it;
 
-	msgs.sort(sortChannelMsgSummary);
+    rsChannels->getChannelMsgList(mChannelId, msgs);
 
-	for(it = msgs.begin(); it != msgs.end(); it++)
-	{
-		ChanMsgItem *cmi = new ChanMsgItem(this, 0, mChannelId, it->msgId, true);
+    msgs.sort(sortChannelMsgSummary);
 
-		mChanMsgItems.push_back(cmi);
-		verticalLayout_2->addWidget(cmi);
-	}
+    for(it = msgs.begin(); it != msgs.end(); it++) {
+        ChanMsgItem *cmi = new ChanMsgItem(this, 0, mChannelId, it->msgId, true);
+
+        mChanMsgItems.push_back(cmi);
+        verticalLayout_2->addWidget(cmi);
+    }
 }
-
 
 void ChannelFeed::unsubscribeChannel()
 {
 #ifdef CHAN_DEBUG
-	std::cerr << "ChannelFeed::unsubscribeChannel()";
-	std::cerr << std::endl;
+    std::cerr << "ChannelFeed::unsubscribeChannel()";
+    std::cerr << std::endl;
 #endif
-	if (rsChannels)
-	{
-		rsChannels->channelSubscribe(mChannelId, false);
-	}
-	updateChannelMsgs();
+
+    if (rsChannels) {
+        rsChannels->channelSubscribe(mChannelId, false);
+    }
+
+    updateChannelMsgs();
 }
 
 
 void ChannelFeed::subscribeChannel()
 {
 #ifdef CHAN_DEBUG
-	std::cerr << "ChannelFeed::subscribeChannel()";
-	std::cerr << std::endl;
+    std::cerr << "ChannelFeed::subscribeChannel()";
+    std::cerr << std::endl;
 #endif
-	if (rsChannels)
-	{
-		rsChannels->channelSubscribe(mChannelId, true);
-	}
-	updateChannelMsgs();
-}
 
+    if (rsChannels) {
+        rsChannels->channelSubscribe(mChannelId, true);
+    }
 
-void ChannelFeed::toggleSelection(const QModelIndex &index)
-{
-	QItemSelectionModel *selectionModel = treeView->selectionModel();
-	if (index.child(0, 0).isValid())
-		selectionModel->select(index, QItemSelectionModel::Toggle);
+    updateChannelMsgs();
 }
 
 void ChannelFeed::showChannelDetails()
 {
-	if (mChannelId == "")
-	{
+    if (mChannelId.empty()) {
 	return;
-	}
+    }
 
-	if (!rsChannels)
-		return;
+    if (!rsChannels) {
+        return;
+    }
 
-	ChannelDetails channelui (this);
+    ChannelDetails channelui (this);
 
-	channelui.showDetails(mChannelId);
-	channelui.exec();
+    channelui.showDetails(mChannelId);
+    channelui.exec();
+}
+
+void ChannelFeed::setAllAsReadClicked()
+{
+    if (mChannelId.empty()) {
+        return;
+    }
+
+    if (!rsChannels) {
+        return;
+    }
+
+    ChannelInfo ci;
+    if (rsChannels->getChannelInfo(mChannelId, ci) == false) {
+        return;
+    }
+
+    if (ci.channelFlags & RS_DISTRIB_SUBSCRIBED) {
+        std::list<ChannelMsgSummary> msgs;
+        std::list<ChannelMsgSummary>::iterator it;
+
+        rsChannels->getChannelMsgList(mChannelId, msgs);
+
+        for(it = msgs.begin(); it != msgs.end(); it++) {
+            rsChannels->setMessageStatus(mChannelId, it->msgId, CHANNEL_MSG_STATUS_READ, CHANNEL_MSG_STATUS_READ | CHANNEL_MSG_STATUS_UNREAD_BY_USER);
+        }
+    }
 }

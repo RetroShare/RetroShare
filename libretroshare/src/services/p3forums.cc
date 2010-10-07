@@ -564,8 +564,10 @@ void p3Forums::locked_notifyGroupChanged(GroupInfo  &grp, uint32_t flags)
                         rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_FORUMLIST_LOCKED, NOTIFY_TYPE_ADD);
                         break;
                 case GRP_SUBSCRIBED:
-                case GRP_UNSUBSCRIBED:
                         rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_FORUMLIST_LOCKED, NOTIFY_TYPE_ADD);
+                        break;
+                case GRP_UNSUBSCRIBED:
+                        rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_FORUMLIST_LOCKED, NOTIFY_TYPE_DEL);
                         break;
         }
 	return p3GroupDistrib::locked_notifyGroupChanged(grp, flags);

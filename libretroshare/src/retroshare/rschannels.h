@@ -34,6 +34,10 @@
 #include "rstypes.h"
 #include "rsdistrib.h" /* For FLAGS */
 
+#define CHANNEL_MSG_STATUS_MASK           0x000f
+#define CHANNEL_MSG_STATUS_READ           0x0001
+#define CHANNEL_MSG_STATUS_UNREAD_BY_USER 0x0002
+
 //! Stores information for a give channel id
 /*!
  * Stores all information for a given channel id
@@ -166,6 +170,31 @@ virtual bool getChannelMsgList(std::string cId, std::list<ChannelMsgSummary> &ms
  * retrieve more comprehensive message info given channel id and message id
  */
 virtual bool getChannelMessage(std::string cId, std::string mId, ChannelMsgInfo &msg) = 0;
+
+/*!
+ * set message status
+ * @param cId channel id
+ * @param mId message id
+ * @param status status to set
+ * @param statusMask bitmask to modify
+ */
+virtual bool setMessageStatus(const std::string& cId,const std::string& mId, const uint32_t status, const uint32_t statusMask) = 0;
+
+/*!
+ * set message status
+ * @param cId channel id
+ * @param mId message id
+ * @param status status
+ */
+virtual bool getMessageStatus(const std::string& cId, const std::string& mId, uint32_t& status) = 0;
+
+/*!
+ * count the new and unread messages
+ * @param cId channel id
+ * @param newCount count of new messages
+ * @param unreadCount count of unread messages
+ */
+virtual	bool getMessageCount(const std::string cId, unsigned int &newCount, unsigned int &unreadCount) = 0;
 
 /*!
  * send message contain in message info to the id indicated within it (make sure you set the channel id of the message info)

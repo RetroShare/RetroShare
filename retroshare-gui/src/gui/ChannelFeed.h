@@ -22,6 +22,8 @@
 #ifndef _CHANNEL_FEED_DIALOG_H
 #define _CHANNEL_FEED_DIALOG_H
 
+#include <retroshare/rschannels.h>
+
 #include "mainpage.h"
 #include "RsAutoUpdatePage.h"
 
@@ -36,15 +38,16 @@
 
 class ChanMsgItem;
 class QStandardItemModel;
+class QStandardItem;
 
 class ChannelFeed : public RsAutoUpdatePage, public FeedHolder, private Ui::ChannelFeed
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  /** Default Constructor */
-  ChannelFeed(QWidget *parent = 0);
-  /** Default Destructor */
+    /** Default Constructor */
+    ChannelFeed(QWidget *parent = 0);
+    /** Default Destructor */
 
 
     virtual void deleteFeedItem(QWidget *item, uint32_t type);
@@ -54,59 +57,46 @@ public:
     virtual void updateDisplay();
 
 public slots:
-
-	void selectChannel( std::string );
-	void selectChannel(const QModelIndex &);
-	void toggleSelection(const QModelIndex &);
+    void selectChannel(QModelIndex index);
 
 private slots:
-
     void channelListCustomPopupMenu( QPoint point );
 
-	void createChannel();
+    void createChannel();
 
-	void channelSelection();
+    void channelSelection();
 
-	void subscribeChannel();
-	void unsubscribeChannel();
-	
-	void createMsg();
+    void subscribeChannel();
+    void unsubscribeChannel();
+    void setAllAsReadClicked();
+
+    void createMsg();
 
     void showChannelDetails();
     void restoreChannelKeys();
     void editChannelDetail();
     void shareKey();
 
+    void channelMsgReadSatusChanged(const QString& channelId, const QString& msgId, int status);
+
 private:
+    void updateChannelList();
+    void fillChannelList(int channelItem, std::list<ChannelInfo> &channelInfos);
 
-	void updateChannelList();
-	void updateChannelListOwn(std::list<std::string> &ids);
-	void updateChannelListSub(std::list<std::string> &ids);
-	void updateChannelListPop(std::list<std::string> &ids);
-	void updateChannelListOther(std::list<std::string> &ids);
+    void updateChannelMsgs();
+    void updateMessageSummaryList(const std::string &channelId);
 
-	void updateChannelMsgs();
+    QStandardItemModel *model;
 
-	QStandardItemModel *model;
+    std::string mChannelId; /* current Channel */
 
-	std::string mChannelId; /* current Channel */
+    /* Layout Pointers */
+    QBoxLayout *mMsgLayout;
 
-	/* Layout Pointers */
-	QBoxLayout *mMsgLayout;
+    std::list<ChanMsgItem *> mChanMsgItems;
 
-	std::list<ChanMsgItem *> mChanMsgItems;
-
-	QFont mChannelFont;
-	QFont itemFont;
-	
-	QAction* postchannelAct;
-	QAction* subscribechannelAct;
-	QAction* unsubscribechannelAct;
-	QAction* channeldetailsAct;
-	QAction* restoreKeysAct;
-    QAction* editChannelDetailAct;
-    QAction* shareKeyAct;
-
+    QFont mChannelFont;
+    QFont itemFont;
 };
 
 
