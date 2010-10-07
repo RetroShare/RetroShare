@@ -136,8 +136,11 @@ void ChanMsgItem::updateItemStatic()
 
 			if (status & CHANNEL_MSG_STATUS_READ) {
 				newLabel->setVisible(false);
+				frame->setStyleSheet("QFrame#frame {border: 3px solid #D3D3D3;background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFFF, stop:1 #F2F2F2);border-radius: 10px;}");
+
 			} else {
 				newLabel->setVisible(true);
+				frame->setStyleSheet("QFrame#frame {border: 3px solid #82B9F4;background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #F0F8FD, stop:0.8 #E6F2FD, stop: 0.81 #E6F2FD, stop: 1 #D2E7FD);border-radius: 10px;}");
 			}
 		} else {
 			readButton->setVisible(false);
