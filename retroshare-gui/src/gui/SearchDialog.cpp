@@ -177,11 +177,11 @@ void SearchDialog::checkText(const QString& txt)
 	if(txt.length() < 3)
 	{
 		std::cout << "setting palette 1" << std::endl ;
-		ui.frame_2->setStyleSheet("QFrame{ border: 2px solid #079E00; background-color: #DBDBDB; }");
+		ui.searchlineframe->setStyleSheet("QFrame{ border: 2px solid #079E00; background-color: #DBDBDB; }");
 	}
 	else
 	{
-		ui.frame_2->setStyleSheet("QFrame { border: 2px solid #079E00; background-color: white; }");
+		ui.searchlineframe->setStyleSheet("QFrame { border: 2px solid #079E00; background-color: white; }");
 		std::cout << "setting palette 2" << std::endl ;
 	}
 }
