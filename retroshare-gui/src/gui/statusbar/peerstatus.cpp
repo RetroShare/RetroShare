@@ -62,7 +62,7 @@ void PeerStatus::getPeerStatus(unsigned int nFriendCount, unsigned int nOnlineCo
 
 
     if (statusPeers)
-          statusPeers -> setText( tr("<span style=\"color:#000000\"><strong>Friends:</strong></span>") + " " + QString::fromStdString(out.str()) + " | " + tr("<span style=\"color:#0000FF\"><strong>Online:</strong></span>") + " " + QString::fromStdString(out2.str()) );
+          statusPeers -> setText( tr("<strong>Friends:</strong>") + " " + QString::fromStdString(out.str()) + " | " + tr("<span style=\"color:#0000FF\"><strong>Online:</strong></span>") + " " + QString::fromStdString(out2.str()) );
     		
     if (nOnlineCount > 0)
     {
