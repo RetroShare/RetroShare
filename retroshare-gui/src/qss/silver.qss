@@ -4,12 +4,16 @@
 }
 
 /* Customize the toolbar. */
-QToolBar {
+QToolBar#toolBar {
     border-image: url(qss/silver/silver.png);
 
 }
 
+/* Customize the toolbar. */
+QToolBar#toolBar_2 {
+    border-image: url(qss/silver/silver2.png);
 
+}
 
 QPushButton#okButton {
 	min-height: 27px;
