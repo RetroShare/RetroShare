@@ -8,8 +8,13 @@
 
 
 /* Customize the toolbar. */
-QToolBar {
+QToolBar#toolBar {
     border-image: url(qss/orangesurfer/main.png);
+
+}
+
+QToolBar#toolBar_2 {
+    border-image: url(qss/orangesurfer/main2.png);
 
 }
 

@@ -218,7 +218,24 @@ border-color: transparent;
 */
 }
 
+QTextBrowser#msgText{
+ color: black;
+}
+
+QTextEdit#lineedit{
+ color: white;
+
+}
+
 QLabel#infolabel{
+color: black;
+}
+
+QLabel#forumName{
+color: black;
+}
+
+QLabel#threadTitle{
 color: black;
 }
 

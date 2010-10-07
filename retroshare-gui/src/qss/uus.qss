@@ -8,9 +8,25 @@
 
 
 /* Customize the toolbar. */
-QToolBar {
+QToolBar#toolBar {
     border-image: url(qss/uus/uus.png);
 
+}
+QToolBar#toolBar_2 {
+    border-image: url(qss/uus/uus2.png);
+
+}
+
+QFrame#frame_2{
+background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #376D85, stop: 0.4 #185772);
+                                     border: 1px solid #CCCCCC;
+                            
+}
+
+QFrame#buttonframe{
+background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                       stop:0 #FEFEFE, stop:1 #E8E8E8);
 }
 
 /* it works only at the moment with vista Thema on XP*/
@@ -164,7 +180,8 @@ QTreeView::item:selected { /* when user selects item using mouse or keyboard */
 }
 
 QToolTip{
-	 background-color: black;
+	 background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 #F7B552, stop: 1 #FF5E07);
 }
 
 QFrame#messengerframetop{
