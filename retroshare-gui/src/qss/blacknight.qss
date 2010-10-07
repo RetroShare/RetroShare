@@ -218,6 +218,50 @@ border-color: transparent;
 */
 }
 
+QLabel#infolabel{
+    color: black;
+}
+
+QLabel#friendslabel{
+    color: black;
+}
+
+QLabel#networklabel{
+    color: black;
+}
+
+QLabel#channellabel{
+    color: black;
+}
+
+QLabel#forumslabel{
+    color: black;
+}
+
+QLabel#downloadslabel{
+    color: black;
+}
+
+QLabel#forumName{
+    color: black;
+}
+
+QLabel#threadTitle{
+    color: black;
+}
+
+QLabel#labeltext{
+    color: black;
+}
+
+QPushButton#Folders_Button{
+    color: black;
+}
+
+QToolButton#Tags_Button{
+    color: black;
+}
+
 QTextBrowser#msgText{
  color: black;
 }
@@ -226,16 +270,3 @@ QTextEdit#lineedit{
  color: white;
 
 }
-
-QLabel#infolabel{
-color: black;
-}
-
-QLabel#forumName{
-color: black;
-}
-
-QLabel#threadTitle{
-color: black;
-}
-

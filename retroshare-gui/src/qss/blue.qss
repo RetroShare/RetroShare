@@ -3,6 +3,10 @@
    border-color: transparent;
 }
 
+QDialog{
+   background-color: #c4dafa;
+
+}
 
 /* Customize the toolbar. */
 QToolBar#toolBar {
