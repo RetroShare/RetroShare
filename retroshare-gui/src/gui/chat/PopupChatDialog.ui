@@ -17,13 +17,11 @@
    <string notr="true">MainWindow</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QToolBar#chattoolBar{border: none; background-image: url(:/images/backblue.png)}
-QStatusBar{background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, 
-stop:0 #F6FCFF, stop:1 #F6FCFF);}</string>
+   <string notr="true"/>
   </property>
-  <widget class="QWidget" name="centralwidget">
+  <widget class="QWidget" name="chatcentralwidget">
    <property name="styleSheet">
-    <string notr="true">QWidget#centralwidget{background-image: url(:/images/backchat.png)}</string>
+    <string notr="true"/>
    </property>
    <layout class="QGridLayout" name="gridLayout_2">
     <property name="leftMargin">
@@ -39,7 +37,7 @@ stop:0 #F6FCFF, stop:1 #F6FCFF);}</string>
      <number>1</number>
     </property>
     <item row="0" column="0" rowspan="6">
-     <widget class="QFrame" name="frame">
+     <widget class="QFrame" name="leftsideframe">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -212,7 +210,7 @@ border-image: url(:/images/avatarstatus_bg.png);
      </widget>
     </item>
     <item row="0" column="2">
-     <widget class="QFrame" name="frame_2">
+     <widget class="QFrame" name="statusframe">
       <property name="styleSheet">
        <string notr="true">QFrame#frame_2{border: transparent}</string>
       </property>
@@ -370,10 +368,7 @@ border-image: url(:/images/closepressed.png)
        </size>
       </property>
       <property name="styleSheet">
-       <string notr="true">QFrame#Chatbuttonframe{ 
-background-image: url(:/images/buttonframe.png);
-
-border: 1px solid #BDD5DF;}</string>
+       <string notr="true"/>
       </property>
       <property name="frameShape">
        <enum>QFrame::StyledPanel</enum>
