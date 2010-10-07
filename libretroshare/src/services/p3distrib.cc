@@ -74,6 +74,7 @@ p3GroupDistrib::p3GroupDistrib(uint16_t subtype,
 {
 	/* force publication of groups (cleared if local cache file found) */
 	mGroupsRepublish = true;
+	mGroupsChanged = true;
 
         mOwnId = AuthSSL::getAuthSSL()->OwnId();
 
