@@ -458,7 +458,7 @@ void ChannelFeed::updateMessageSummaryList(const std::string &channelId)
     int channelItems[2] = { OWN, SUBSCRIBED };
 
     for (int channelItem = 0; channelItem < 2; channelItem++) {
-        QStandardItem *groupItem = model->item(channelItem);
+        QStandardItem *groupItem = model->item(channelItems[channelItem]);
         if (groupItem == NULL) {
             continue;
         }
@@ -503,7 +503,7 @@ void ChannelFeed::updateMessageSummaryList(const std::string &channelId)
 
 static bool sortChannelMsgSummary(const ChannelMsgSummary &msg1, const ChannelMsgSummary &msg2)
 {
-    return (msg1.ts < msg2.ts);
+    return (msg1.ts > msg2.ts);
 }
 
 void ChannelFeed::updateChannelMsgs()
@@ -511,6 +511,13 @@ void ChannelFeed::updateChannelMsgs()
     if (!rsChannels) {
         return;
     }
+
+    /* replace all the messages with new ones */
+    std::list<ChanMsgItem *>::iterator mit;
+    for (mit = mChanMsgItems.begin(); mit != mChanMsgItems.end(); mit++) {
+        delete (*mit);
+    }
+    mChanMsgItems.clear();
 
     ChannelInfo ci;
     if (!rsChannels->getChannelInfo(mChannelId, ci)) {
@@ -560,13 +567,6 @@ void ChannelFeed::updateChannelMsgs()
     } else {
         postButton->setEnabled(false);
     }
-
-    /* replace all the messages with new ones */
-    std::list<ChanMsgItem *>::iterator mit;
-    for (mit = mChanMsgItems.begin(); mit != mChanMsgItems.end(); mit++) {
-        delete (*mit);
-    }
-    mChanMsgItems.clear();
 
     std::list<ChannelMsgSummary> msgs;
     std::list<ChannelMsgSummary>::iterator it;
