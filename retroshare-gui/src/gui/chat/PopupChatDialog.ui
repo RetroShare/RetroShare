@@ -17,7 +17,7 @@
    <string notr="true">MainWindow</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QToolBar#toolBar{border: none; background-image: url(:/images/backblue.png)}
+   <string notr="true">QToolBar#chattoolBar{border: none; background-image: url(:/images/backblue.png)}
 QStatusBar{background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, 
 stop:0 #F6FCFF, stop:1 #F6FCFF);}</string>
   </property>
@@ -304,7 +304,7 @@ stop:0 #FFFFD7, stop:1 #FFFFB2);}</string>
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap>:/images/info16.png</pixmap>
+          <pixmap resource="../images.qrc">:/images/info16.png</pixmap>
          </property>
          <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -421,7 +421,7 @@ border: 1px solid #CCCCCC;
           <string/>
          </property>
          <property name="icon">
-          <iconset>
+          <iconset resource="../images.qrc">
            <normaloff>:/images/configure.png</normaloff>:/images/configure.png</iconset>
          </property>
          <property name="iconSize">
@@ -456,7 +456,7 @@ border: 1px solid #CCCCCC;
           <string/>
          </property>
          <property name="icon">
-          <iconset>
+          <iconset resource="../images.qrc">
            <normaloff>:/images/add_image24.png</normaloff>:/images/add_image24.png</iconset>
          </property>
          <property name="iconSize">
@@ -485,7 +485,7 @@ border: 1px solid #CCCCCC;
           <string/>
          </property>
          <property name="icon">
-          <iconset>
+          <iconset resource="../images.qrc">
            <normaloff>:/images/add-share24.png</normaloff>:/images/add-share24.png</iconset>
          </property>
          <property name="iconSize">
@@ -829,7 +829,7 @@ background: white;}</string>
    </layout>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <widget class="QToolBar" name="toolBar">
+  <widget class="QToolBar" name="chattoolBar">
    <property name="maximumSize">
     <size>
      <width>16777215</width>
@@ -881,7 +881,7 @@ background: white;}</string>
   </action>
   <action name="actionAvatar">
    <property name="icon">
-    <iconset>
+    <iconset resource="../images.qrc">
      <normaloff>:/images/no_avatar_70.png</normaloff>:/images/no_avatar_70.png</iconset>
    </property>
    <property name="text">
@@ -893,7 +893,7 @@ background: white;}</string>
   </action>
   <action name="actionClear_Chat">
    <property name="icon">
-    <iconset>
+    <iconset resource="../images.qrc">
      <normaloff>:/images/edit-clear-history.png</normaloff>:/images/edit-clear-history.png</iconset>
    </property>
    <property name="text">
@@ -930,6 +930,8 @@ background: white;}</string>
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="../images.qrc"/>
+ </resources>
  <connections/>
 </ui>
