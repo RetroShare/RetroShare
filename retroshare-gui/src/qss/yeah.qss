@@ -1,14 +1,24 @@
 .QWidget {
    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
                                        stop:0 lightgray, stop:1 darkgray);
- }
+}
 
+
+QDialog{
+   background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                       stop:0 lightgray, stop:1 darkgray);
+}
 
 
 /* Customize the toolbar. */
 QToolBar {
     border-image: url(qss/yeah/yeah.png);
 
+}
+
+QStatusBar{
+   background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                       stop:0 lightgray, stop:1 darkgray);
 }
 
 
@@ -19,13 +29,13 @@ QHeaderView::section {
      color: white;
      padding-left: 4px;
      border: 1px solid #6c6c6c;
- }
+}
 
 
- QMenuBar {
+QMenuBar {
      background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
                                        stop:0 lightgray, stop:1 darkgray);
- }
+}
 
      QTabWidget::pane { /* The tab widget frame */
          border-top: 2px solid #C2C7CB;

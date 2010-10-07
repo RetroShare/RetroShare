@@ -263,10 +263,14 @@ QToolButton#Tags_Button{
 }
 
 QTextBrowser#msgText{
- color: black;
+    color: black;
 }
 
 QTextEdit#lineedit{
- color: white;
+    color: white;
 
+}
+
+QTextEdit#chattextEdit{
+    color: black;
 }

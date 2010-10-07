@@ -3,7 +3,15 @@
                                        stop:0 #6F6F6F, stop:1 #979797);
  }
 
+QDialog, QMainWindow, QStatusBar{
+   background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                       stop:0 #6F6F6F, stop:1 #979797);
+}
 
+QWidget#chatcentralwidget{
+   background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                       stop:0 #6F6F6F, stop:1 #979797);
+}
 
 /* Customize the toolbar. */
 QToolBar#toolBar {
@@ -164,5 +172,10 @@ QLabel#tolabel{
 QLabel#fromText{
 	font: bold ;
 	color: blue;
+
+}
+
+QToolBar#chattoolBar{
+        border-image: url(qss/yaba/yaba.png);
 
 }

@@ -8,6 +8,10 @@ QToolBar {
 
 }
 
+QDialog, QStatusBar{
+   background-color: #F9F9F9;
+}
+
 QToolButton {
       color: white;
 }
@@ -32,6 +36,18 @@ QPushButton#applyButton {
 }
 
 QPushButton#cancelButton {
+
+	  min-height: 25px;
+      min-width: 77px;
+}
+
+QPushButton#canceButton {
+
+	  min-height: 25px;
+      min-width: 77px;
+}
+
+QPushButton#pushButtonConnectionBack#pushButtonConnectionNext#pushButtonConnectionExit {
 
 	  min-height: 25px;
       min-width: 77px;

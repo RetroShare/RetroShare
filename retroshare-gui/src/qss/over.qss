@@ -9,6 +9,15 @@ QToolBar {
 
 }
 
+QDialog{
+   background-color: #66ff33;
+
+}
+
+QStatusBar{
+   background-color: #66ff33;
+
+}
 
 QPushButton {
 

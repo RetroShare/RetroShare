@@ -8,6 +8,18 @@ QDialog{
 
 }
 
+QWidget#chatcentralwidget{
+   background-color: #c4dafa;
+
+}
+
+QToolBar#chattoolBar{
+    border-image: url(qss/blue/blue.png);
+
+
+}
+
+
 /* Customize the toolbar. */
 QToolBar#toolBar {
     border-image: url(qss/blue/blue.png);

@@ -2,6 +2,11 @@
    background-color: #3E1716;
 }
 
+QDialog{
+         background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                     stop: 0 red, stop: 1 darkred);
+
+}
 
 /* Customize the toolbar. */
 QToolBar#toolBar {
@@ -15,6 +20,12 @@ QToolBar#toolBar_2 {
 
 
 }
+
+QToolBar#chattoolBar{
+    border-image: url(qss/redscorpion/red.png);
+
+}
+
 
 /* it works only at the moment with vista Thema on XP*/
 QToolButton::hover {
@@ -209,6 +220,10 @@ QLabel#fromText{
 	font: bold ;
 	color: blue;
 
+}
+
+QLabel#infolabel{
+    color: darkred;
 }
 
 QLabel#friendstitlellabel{
