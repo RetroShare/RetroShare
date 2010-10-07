@@ -305,9 +305,9 @@ int bdNodeManager::checkStatus()
 			case BITDHT_QUERY_QUERYING:
 				{
 #ifdef DEBUG_MGR
-		std::cerr << "bdNodeManager::checkStatus() Query in Progress id: ";
-		mFns->bdPrintNodeId(std::cerr, &(it->first));
-		std::cerr << std::endl;
+					std::cerr << "bdNodeManager::checkStatus() Query in Progress id: ";
+					mFns->bdPrintNodeId(std::cerr, &(it->first));
+					std::cerr << std::endl;
 #endif
 				}
 				break;
@@ -315,9 +315,9 @@ int bdNodeManager::checkStatus()
 			case BITDHT_QUERY_FAILURE:
 				{
 #ifdef DEBUG_MGR
-		std::cerr << "bdNodeManager::checkStatus() Query Failed: id: ";
-		mFns->bdPrintNodeId(std::cerr, &(it->first));
-		std::cerr << std::endl;
+					std::cerr << "bdNodeManager::checkStatus() Query Failed: id: ";
+					mFns->bdPrintNodeId(std::cerr, &(it->first));
+					std::cerr << std::endl;
 #endif
 					// BAD.
 					doRemove = true;
@@ -329,11 +329,11 @@ int bdNodeManager::checkStatus()
 			case BITDHT_QUERY_FOUND_CLOSEST:
 				{
 #ifdef DEBUG_MGR
-		std::cerr << "bdNodeManager::checkStatus() Found Closest: id: ";
-		mFns->bdPrintNodeId(std::cerr, &(it->first));
-		std::cerr << std::endl;
+					std::cerr << "bdNodeManager::checkStatus() Found Closest: id: ";
+					mFns->bdPrintNodeId(std::cerr, &(it->first));
+					std::cerr << std::endl;
 #endif
-					
+
 					doRemove = true;
 					doCallback = true;
 					callbackStatus = BITDHT_MGR_QUERY_PEER_OFFLINE;
@@ -343,11 +343,11 @@ int bdNodeManager::checkStatus()
 			case BITDHT_QUERY_PEER_UNREACHABLE:
 				{
 #ifdef DEBUG_MGR
-		std::cerr << "bdNodeManager::checkStatus() the Peer Online but Unreachable: id: ";
-		mFns->bdPrintNodeId(std::cerr, &(it->first));
-		std::cerr << std::endl;
+					std::cerr << "bdNodeManager::checkStatus() the Peer Online but Unreachable: id: ";
+					mFns->bdPrintNodeId(std::cerr, &(it->first));
+					std::cerr << std::endl;
 #endif
-					
+
 					doRemove = true;
 					doCallback = true;
 					callbackStatus = BITDHT_MGR_QUERY_PEER_UNREACHABLE;
@@ -357,9 +357,9 @@ int bdNodeManager::checkStatus()
 			case BITDHT_QUERY_SUCCESS:
 				{
 #ifdef DEBUG_MGR
-		std::cerr << "bdNodeManager::checkStatus() Found Query: id: ";
-		mFns->bdPrintNodeId(std::cerr, &(it->first));
-		std::cerr << std::endl;
+					std::cerr << "bdNodeManager::checkStatus() Found Query: id: ";
+					mFns->bdPrintNodeId(std::cerr, &(it->first));
+					std::cerr << std::endl;
 #endif
 					//foundId = 
 					doRemove = true;
@@ -404,41 +404,44 @@ int bdNodeManager::checkStatus()
 			std::cerr << std::endl;
 #endif
 		}
-		else if (pit->second.mStatus == it->second.mStatus)
+		else 
 		{
-			/* status is unchanged */
-			doPing = false;
-			doCallback = false;
-#ifdef DEBUG_MGR
-			std::cerr << "bdNodeManager::checkStatus() Status unchanged for : ";
-			mFns->bdPrintNodeId(std::cerr, &(it->first));
-			std::cerr << " status: " << it->second.mStatus;
-			std::cerr << std::endl;
-#endif
-		}
-		else
-		{
-				
-#ifdef DEBUG_MGR
-			std::cerr << "bdNodeManager::checkStatus() Updating External Status for : ";
-			mFns->bdPrintNodeId(std::cerr, &(it->first));
-			std::cerr << " to: " << it->second.mStatus;
-			std::cerr << std::endl;
-#endif
-			/* update status */
-			pit->second.mStatus = it->second.mStatus;
-		}
-
-		if (doSaveAddress)
-		{
-			if (it->second.mResults.size() > 0)
+			if (pit->second.mStatus == it->second.mStatus)
 			{
-				pit->second.mDhtAddr = it->second.mResults.front().addr;
+				/* status is unchanged */
+				doPing = false;
+				doCallback = false;
+#ifdef DEBUG_MGR
+				std::cerr << "bdNodeManager::checkStatus() Status unchanged for : ";
+				mFns->bdPrintNodeId(std::cerr, &(it->first));
+				std::cerr << " status: " << it->second.mStatus;
+				std::cerr << std::endl;
+#endif
 			}
 			else
 			{
-				pit->second.mDhtAddr.sin_addr.s_addr = 0;
-				pit->second.mDhtAddr.sin_port = 0;
+
+#ifdef DEBUG_MGR
+				std::cerr << "bdNodeManager::checkStatus() Updating External Status for : ";
+				mFns->bdPrintNodeId(std::cerr, &(it->first));
+				std::cerr << " to: " << it->second.mStatus;
+				std::cerr << std::endl;
+#endif
+				/* update status */
+				pit->second.mStatus = it->second.mStatus;
+			}
+
+			if (doSaveAddress)
+			{
+				if (it->second.mResults.size() > 0)
+				{
+					pit->second.mDhtAddr = it->second.mResults.front().addr;
+				}
+				else
+				{
+					pit->second.mDhtAddr.sin_addr.s_addr = 0;
+					pit->second.mDhtAddr.sin_port = 0;
+				}
 			}
 		}
 
