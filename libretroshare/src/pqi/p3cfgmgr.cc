@@ -695,6 +695,8 @@ bool p3Config::loadConfig()
 			delete (*it);
 		}
 		pass = false;
+
+		load.clear();
 	}
 
 	// try 2nd attempt with backup files if first failed
