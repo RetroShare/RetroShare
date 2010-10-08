@@ -823,7 +823,7 @@ background: white;}</string>
     </item>
    </layout>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QStatusBar" name="chststatusbar"/>
   <widget class="QToolBar" name="chattoolBar">
    <property name="maximumSize">
     <size>
@@ -926,6 +926,7 @@ background: white;}</string>
   </action>
  </widget>
  <resources>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>
