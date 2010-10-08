@@ -514,7 +514,7 @@ void MainWindow::updateStatus()
 
     unsigned int nFriendCount = 0;
     unsigned int nOnlineCount = 0;
-    rsPeers->getPeerCount (&nFriendCount, &nOnlineCount);
+    rsPeers->getPeerCount (&nFriendCount, &nOnlineCount, false);
 
     if (ratesstatus)
         ratesstatus->getRatesStatus();

@@ -473,10 +473,6 @@ void    p3ConnectMgr::addNetListener(pqiNetListener *listener)
         mNetListeners.push_back(listener);
 }
 
-
-
-
-
 void p3ConnectMgr::netStatusReset_locked()
 {
 	//std::cerr << "p3ConnectMgr::netStatusReset()" << std::endl;;
@@ -1598,21 +1594,60 @@ void p3ConnectMgr::getOthersList(std::list<std::string> &peers)
 #endif
 
 
-void p3ConnectMgr::getPeerCount (unsigned int *pnFriendCount, unsigned int *pnOnlineCount)
+bool p3ConnectMgr::getPeerCount (unsigned int *pnFriendCount, unsigned int *pnOnlineCount, bool ssl)
 {
-	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+	if (ssl) {
+		/* count ssl id's */
 
-	if (pnFriendCount) *pnFriendCount = mFriendList.size();
-	if (pnOnlineCount) {
-		*pnOnlineCount = 0;
+		RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
-		std::map<std::string, peerConnectState>::iterator it;
-		for(it = mFriendList.begin(); it != mFriendList.end(); it++) {
-			if (it->second.state & RS_PEER_S_CONNECTED) {
-				(*pnOnlineCount)++;
+		if (pnFriendCount) *pnFriendCount = mFriendList.size();
+		if (pnOnlineCount) {
+			*pnOnlineCount = 0;
+
+			std::map<std::string, peerConnectState>::iterator it;
+			for (it = mFriendList.begin(); it != mFriendList.end(); it++) {
+				if (it->second.state & RS_PEER_S_CONNECTED) {
+					(*pnOnlineCount)++;
+				}
+			}
+		}
+	} else {
+		/* count gpg id's */
+
+		if (pnFriendCount) *pnFriendCount = 0;
+		if (pnOnlineCount) *pnOnlineCount = 0;
+
+		std::list<std::string> gpgIds;
+		if (AuthGPG::getAuthGPG()->getGPGAcceptedList(gpgIds) == false) {
+			return false;
+		}
+
+		if (pnFriendCount) *pnFriendCount = gpgIds.size();
+
+		if (pnOnlineCount) {
+			RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
+			/* check ssl id's */
+			std::map<std::string, peerConnectState>::iterator it;
+			for (it = mFriendList.begin(); it != mFriendList.end(); it++) {
+				if (it->second.state & RS_PEER_S_CONNECTED) {
+					std::list<std::string>::iterator gpgIt = std::find(gpgIds.begin(), gpgIds.end(), it->second.gpg_id);
+					if (gpgIt != gpgIds.end()) {
+						(*pnOnlineCount)++;
+						gpgIds.erase(gpgIt);
+
+						if (gpgIds.empty()) {
+							/* no more gpg id's to check */
+							break;
+						}
+					}
+				}
 			}
 		}
 	}
+
+	return true;
 }
 
 
@@ -2643,8 +2678,6 @@ bool  p3ConnectMgr::addAddressIfUnique(std::list<peerConnectAddress> &addrList, 
 	/* iterate through the list, and make sure it isn't already 
 	 * in the list 
 	 */
-
-	bool found = false;
 
 	std::list<peerConnectAddress>::iterator it;
 	for(it = addrList.begin(); it != addrList.end(); it++)

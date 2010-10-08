@@ -221,14 +221,14 @@ bool	p3Peers::getFriendList(std::list<std::string> &ids)
 //	return true;
 //}
 
-void p3Peers::getPeerCount (unsigned int *pnFriendCount, unsigned int *pnOnlineCount)
+bool p3Peers::getPeerCount (unsigned int *pnFriendCount, unsigned int *pnOnlineCount, bool ssl)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::getPeerCount()" << std::endl;
 #endif
 
         /* get from mConnectMgr */
-        mConnMgr->getPeerCount(pnFriendCount, pnOnlineCount);
+        return mConnMgr->getPeerCount(pnFriendCount, pnOnlineCount, ssl);
 }
 
 bool    p3Peers::isOnline(std::string id)
