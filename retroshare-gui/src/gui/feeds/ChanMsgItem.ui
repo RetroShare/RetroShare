@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>679</width>
+    <width>641</width>
     <height>198</height>
    </rect>
   </property>
@@ -137,6 +137,9 @@ p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:11pt; font-weight:600; font-style:italic;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-style:normal; color:#656565;&quot;&gt;Channel Subject&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
+          <property name="scaledContents">
+           <bool>false</bool>
+          </property>
          </widget>
         </item>
         <item row="0" column="8" colspan="3">
@@ -190,6 +193,12 @@ p, li { white-space: pre-wrap; }
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="maximumSize">
+           <size>
+            <width>24</width>
+            <height>16777215</height>
+           </size>
+          </property>
           <property name="toolTip">
            <string>Unsubscribe From Channel</string>
           </property>
@@ -210,6 +219,12 @@ p, li { white-space: pre-wrap; }
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="maximumSize">
+           <size>
+            <width>24</width>
+            <height>16777215</height>
+           </size>
+          </property>
           <property name="toolTip">
            <string>Remove Item</string>
           </property>
@@ -229,6 +244,12 @@ p, li { white-space: pre-wrap; }
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>24</width>
+            <height>16777215</height>
+           </size>
           </property>
           <property name="toolTip">
            <string>Expand</string>
@@ -292,6 +313,12 @@ p, li { white-space: pre-wrap; }
         </item>
         <item row="2" column="2">
          <widget class="QPushButton" name="readButton">
+          <property name="maximumSize">
+           <size>
+            <width>24</width>
+            <height>16777215</height>
+           </size>
+          </property>
           <property name="icon">
            <iconset resource="../images.qrc">
             <normaloff>:/images/message-state-unread.png</normaloff>:/images/message-state-unread.png</iconset>
@@ -386,6 +413,9 @@ border-radius: 10px;}</string>
   </layout>
  </widget>
  <resources>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>

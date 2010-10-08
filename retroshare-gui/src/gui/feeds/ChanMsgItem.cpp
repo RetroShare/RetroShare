@@ -63,6 +63,8 @@ ChanMsgItem::ChanMsgItem(FeedHolder *parent, uint32_t feedId, std::string chanId
 
   downloadButton->hide();
   playButton->hide();
+  
+  titleLabel->setMinimumWidth(100);
 
   small();
   updateItemStatic();
@@ -152,7 +154,7 @@ void ChanMsgItem::updateItemStatic()
 
 	QDateTime qtime;
 	qtime.setTime_t(cmi.ts);
-	QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm:ss");
+	QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm");
 	datetimelabel->setText(timestamp);
 	
 	{
