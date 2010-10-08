@@ -174,14 +174,11 @@ PeersDialog::PeersDialog(QWidget *parent)
 
     ui.fontsButton->setIcon(QIcon(QString(":/images/fonts.png")));
 
-    _currentColor = Qt::black;
-
-    QPixmap pxm(16,16);
-    pxm.fill(_currentColor);
-    ui.colorChatButton->setIcon(pxm);
-
+    mCurrentColor = Qt::black;
     mCurrentFont.fromString(Settings->getChatScreenFont());
-    ui.lineEdit->setFont(mCurrentFont);
+
+    colorChanged(mCurrentColor);
+    fontChanged(mCurrentFont);
 
     style.setStyleFromSettings(ChatStyle::TYPE_PUBLIC);
 
@@ -202,8 +199,6 @@ PeersDialog::PeersDialog(QWidget *parent)
     grpchatmenu->addAction(ui.actionSave_History);
     grpchatmenu->addAction(ui.actionMessageHistory);
     ui.menuButton->setMenu(grpchatmenu);
-
-    _underline = false;
 
     QMenu *menu = new QMenu();
     menu->addAction(ui.actionAdd_Friend);
@@ -339,7 +334,7 @@ void PeersDialog::showEvent(QShowEvent *event)
 
 void PeersDialog::pasteLink()
 {
-	ui.lineEdit->insertHtml(RSLinkClipboard::toHtml()) ;
+    ui.lineEdit->insertHtml(RSLinkClipboard::toHtml()) ;
 }
 
 void PeersDialog::contextMenu( QPoint point )
@@ -1499,6 +1494,10 @@ void PeersDialog::sendMsg()
 
     rsMsgs->sendPublicChat(message);
     ui.lineEdit->clear();
+    // workaround for Qt bug - http://bugreports.qt.nokia.com/browse/QTBUG-2533
+    // QTextEdit::clear() does not reset the CharFormat if document contains hyperlinks that have been accessed.
+    ui.lineEdit->setCurrentCharFormat(QTextCharFormat ());
+
     setFont();
 
     /* redraw send list */
@@ -1598,44 +1597,53 @@ void  PeersDialog::insertSendList()
 
 void PeersDialog::setColor()
 {
+    bool ok;
+    QRgb color = QColorDialog::getRgba(ui.lineEdit->textColor().rgba(), &ok, this);
+    if (ok) {
+        mCurrentColor = QColor(color);
+        colorChanged(mCurrentColor);
+    }
+    setFont();
+}
 
-    	bool ok;
- 	QRgb color = QColorDialog::getRgba(ui.lineEdit->textColor().rgba(), &ok, this);
- 	if (ok) {
- 	        _currentColor = QColor(color);
- 	        QPixmap pxm(16,16);
-	        pxm.fill(_currentColor);
-	        ui.colorChatButton->setIcon(pxm);
- 	}
-	setFont();
+void PeersDialog::colorChanged(const QColor &c)
+{
+    QPixmap pxm(16,16);
+    pxm.fill(mCurrentColor);
+    ui.colorChatButton->setIcon(pxm);
 }
 
 void PeersDialog::getFont()
 {
     bool ok;
     mCurrentFont = QFontDialog::getFont(&ok, mCurrentFont, this);
+    if (ok) {
+        fontChanged(mCurrentFont);
+    }
+}
+
+void PeersDialog::fontChanged(const QFont &font)
+{
+    mCurrentFont = font;
+
+    ui.textboldChatButton->setChecked(mCurrentFont.bold());
+    ui.textunderlineChatButton->setChecked(mCurrentFont.underline());
+    ui.textitalicChatButton->setChecked(mCurrentFont.italic());
+
     setFont();
 }
 
 void PeersDialog::setFont()
 {
-  mCurrentFont.setBold(ui.textboldChatButton->isChecked());
-  mCurrentFont.setUnderline(ui.textunderlineChatButton->isChecked());
-  mCurrentFont.setItalic(ui.textitalicChatButton->isChecked());
-  ui.lineEdit->setFont(mCurrentFont);
-  ui.lineEdit->setTextColor(_currentColor);
-  Settings->setChatScreenFont(mCurrentFont.toString());
+    mCurrentFont.setBold(ui.textboldChatButton->isChecked());
+    mCurrentFont.setUnderline(ui.textunderlineChatButton->isChecked());
+    mCurrentFont.setItalic(ui.textitalicChatButton->isChecked());
+    ui.lineEdit->setFont(mCurrentFont);
+    ui.lineEdit->setTextColor(mCurrentColor);
+    Settings->setChatScreenFont(mCurrentFont.toString());
 
-  ui.lineEdit->setFocus();
-
+    ui.lineEdit->setFocus();
 }
-
-void PeersDialog::underline()
-{
- 	        _underline = !_underline;
- 	        ui.lineEdit->setFontUnderline(_underline);
-}
-
 
 // Update Chat Info information
 void PeersDialog::setChatInfo(QString info, QColor color)

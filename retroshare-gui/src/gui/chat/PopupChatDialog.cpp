@@ -761,6 +761,10 @@ void PopupChatDialog::sendChat()
     }
 
     chatWidget->clear();
+    // workaround for Qt bug - http://bugreports.qt.nokia.com/browse/QTBUG-2533
+    // QTextEdit::clear() does not reset the CharFormat if document contains hyperlinks that have been accessed.
+    chatWidget->setCurrentCharFormat(QTextCharFormat ());
+
     setFont();
 
     /* redraw send list */

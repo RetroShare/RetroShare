@@ -144,7 +144,6 @@ private slots:
 
     void setFont();
     void getFont();
-    void underline();
 
     void changeAvatarClicked();
     void getAvatar();
@@ -175,6 +174,9 @@ private:
     void processSettings(bool bLoad);
     void addChatMsg(bool incoming, bool history, QString &name, QDateTime &recvTime, QString &message);
 
+    void colorChanged(const QColor &c);
+    void fontChanged(const QFont &font);
+
     class QLabel *iconLabel, *textLabel;
     class QWidget *widget;
     class QWidgetAction *widgetAction;
@@ -201,8 +203,7 @@ private:
     IMHistoryKeeper historyKeeper;
     ChatStyle style;
 
-    QColor _currentColor;
-    bool _underline;
+    QColor mCurrentColor;
     time_t last_status_send_time ;
 
     QFont mCurrentFont; /* how the text will come out */
