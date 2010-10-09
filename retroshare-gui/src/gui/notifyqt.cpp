@@ -155,9 +155,25 @@ void NotifyQt::notifyTurtleSearchResult(uint32_t search_id,const std::list<Turtl
 	}
 }
 
-void NotifyQt::notifyHashingInfo(std::string fileinfo)
+void NotifyQt::notifyHashingInfo(uint32_t type, const std::string& fileinfo)
 {
-        emit hashingInfoChanged(QString::fromUtf8(fileinfo.c_str())) ;
+	QString info;
+
+	switch (type) {
+	case NOTIFY_HASHTYPE_EXAMINING_FILES:
+		info = tr("Examining shared files...");
+		break;
+	case NOTIFY_HASHTYPE_FINISH:
+		break;
+	case NOTIFY_HASHTYPE_HASH_FILE:
+		info = tr("Hashing file") + " " + QString::fromUtf8(fileinfo.c_str());
+		break;
+	case NOTIFY_HASHTYPE_SAVE_FILE_INDEX:
+		info = tr("Saving file index...");
+		break;
+	}
+
+	emit hashingInfoChanged(info);
 }
 
 //void NotifyQt::notifyChat()

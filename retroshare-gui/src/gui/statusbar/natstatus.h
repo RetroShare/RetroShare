@@ -20,26 +20,22 @@
  ****************************************************************/
 #ifndef NATSTATUS_H
 #define NATSTATUS_H
-#include "gui/MainWindow.h"
-
 
 #include <QWidget>
 
+class QLabel;
 
 class NATStatus : public QWidget
 {
-Q_OBJECT
+    Q_OBJECT
+
 public:
     NATStatus(QWidget *parent = 0);
 
-    ~NATStatus();
-
     void getNATStatus( );
-    
 
 private:
-    class QLabel *iconLabel, *statusNAT;
-
+    QLabel *iconLabel, *statusNAT;
 };
 
 #endif

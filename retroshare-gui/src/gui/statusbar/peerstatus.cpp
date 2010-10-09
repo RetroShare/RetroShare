@@ -29,7 +29,7 @@
 PeerStatus::PeerStatus(QWidget *parent)
  : QWidget(parent)
 {
-    QHBoxLayout *hbox = new QHBoxLayout();
+    QHBoxLayout *hbox = new QHBoxLayout(this);
     hbox->setMargin(0);
     hbox->setSpacing(6);
     
@@ -39,15 +39,11 @@ PeerStatus::PeerStatus(QWidget *parent)
     hbox->addWidget(iconLabel);
     
     statusPeers = new QLabel( tr("Online: 0  | Friends: 0  | Network: 0 "), this );
-	  //statusPeers->setMinimumSize( statusPeers->frameSize().width() + 0, 0 );
+//    statusPeers->setMinimumSize( statusPeers->frameSize().width() + 0, 0 );
     hbox->addWidget(statusPeers);
     
-    setLayout( hbox );
+    setLayout(hbox);
 
-}
-
-PeerStatus::~PeerStatus()
-{
 }
 
 void PeerStatus::getPeerStatus(unsigned int nFriendCount, unsigned int nOnlineCount)

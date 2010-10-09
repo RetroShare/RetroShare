@@ -188,7 +188,7 @@ class NotifyBase
 	virtual void notifyChat() { return; }
 	virtual void notifyChatStatus(const std::string& /* peer_id */, const std::string& /* status_string */ ,bool /* is_private */) {}
 	virtual void notifyCustomState(const std::string& /* peer_id */, const std::string& /* status_string */) {}
-	virtual void notifyHashingInfo(std::string fileinfo) { (void)fileinfo; return ; }
+	virtual void notifyHashingInfo(uint32_t type, const std::string& fileinfo) { (void) type; (void)fileinfo; }
 	virtual void notifyTurtleSearchResult(uint32_t /* search_id */ ,const std::list<TurtleFileInfo>& files) { (void)files; }
 	virtual void notifyPeerHasNewAvatar(std::string peer_id) { (void)peer_id; }
 	virtual void notifyOwnAvatarChanged() {}
@@ -225,6 +225,9 @@ const int NOTIFY_TYPE_MOD    = 0x02; /* general purpose, check all */
 const int NOTIFY_TYPE_ADD    = 0x04; /* flagged additions */
 const int NOTIFY_TYPE_DEL    = 0x08; /* flagged deletions */
 
-
+const uint32_t NOTIFY_HASHTYPE_EXAMINING_FILES = 1; /* Examining shared files */
+const uint32_t NOTIFY_HASHTYPE_FINISH          = 2; /* Finish */
+const uint32_t NOTIFY_HASHTYPE_HASH_FILE       = 3; /* Hashing file */
+const uint32_t NOTIFY_HASHTYPE_SAVE_FILE_INDEX = 4; /* Hashing file */
 
 #endif

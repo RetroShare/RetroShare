@@ -34,6 +34,7 @@ class Idle;
 class PeerStatus;
 class NATStatus;
 class RatesStatus;
+class HashingStatus;
 class ForumsDialog;
 class PeersDialog;
 class ChatDialog;
@@ -134,7 +135,6 @@ public:
     void setStatus(QObject *pObject, int nStatus);
 
 public slots:
-    void updateHashingInfo(const QString&) ;
     void displayErrorMessage(int,int,const QString&) ;
     void postModDirectories(bool update_local);
     void displayDiskSpaceWarning(int loc,int size_limit_mb) ;
@@ -235,9 +235,8 @@ private:
     PeerStatus *peerstatus;
     NATStatus *natstatus;
     RatesStatus *ratesstatus;
+    HashingStatus *hashingstatus;
     QComboBox *statusComboBox;
-
-    QLabel *_hashing_info_label ;
 
     QAction *messageAction;
     QAction *forumAction;

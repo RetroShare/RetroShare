@@ -318,7 +318,7 @@ void 	FileIndexMonitor::updateCycle()
 		mInCheck = true;
 	}
 
-	cb->notifyHashingInfo("Examining shared files...") ;
+	cb->notifyHashingInfo(NOTIFY_HASHTYPE_EXAMINING_FILES, "") ;
 
 	std::vector<DirContentToHash> to_hash ;
 
@@ -543,7 +543,7 @@ void 	FileIndexMonitor::updateCycle()
 	if(!to_hash.empty())
 		hashFiles(to_hash) ;
 
-	cb->notifyHashingInfo("") ;
+	cb->notifyHashingInfo(NOTIFY_HASHTYPE_FINISH, "") ;
 
 	{ /* LOCKED DIRS */
 		RsStackMutex stack(fiMutex); /**** LOCKED DIRS ****/
@@ -634,8 +634,8 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 			//
 			std::ostringstream tmpout;
 			tmpout << cnt+1 << "/" << n_files << " (" << friendlyUnit(size) << " - " << int(size/double(total_size)*100.0) << "%) : " << to_hash[i].fentries[j].name ;
-			
-			cb->notifyHashingInfo("Hashing file " + tmpout.str()) ;
+
+			cb->notifyHashingInfo(NOTIFY_HASHTYPE_HASH_FILE, tmpout.str()) ;
 
 			FileEntry fe(to_hash[i].fentries[j]) ;	// copied, because hashFile updates the hash member
 
@@ -666,7 +666,7 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 			std::cerr << "size - last_save_size = " << size - last_save_size << ", max=" << MAX_SIZE_WITHOUT_SAVING << std::endl ;
 			if(size > last_save_size + MAX_SIZE_WITHOUT_SAVING)
 			{
-				cb->notifyHashingInfo("Saving file index...") ;
+				cb->notifyHashingInfo(NOTIFY_HASHTYPE_SAVE_FILE_INDEX, "") ;
 #ifdef WINDOWS_SYS
 				Sleep(1000) ;
 #else

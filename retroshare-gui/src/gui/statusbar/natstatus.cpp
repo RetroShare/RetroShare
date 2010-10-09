@@ -19,6 +19,7 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <QHBoxLayout>
 #include <QLabel>
 
 #include "natstatus.h"
@@ -28,33 +29,24 @@
 NATStatus::NATStatus(QWidget *parent)
  : QWidget(parent)
 {
-    QHBoxLayout *hbox = new QHBoxLayout();
+    QHBoxLayout *hbox = new QHBoxLayout(this);
     hbox->setMargin(0);
     hbox->setSpacing(6);
        
     statusNAT = new QLabel( tr("<strong>NAT:</strong>"), this );
-	  //statusDHT->setMinimumSize( statusPeers->frameSize().width() + 0, 0 );
+//    statusDHT->setMinimumSize( statusPeers->frameSize().width() + 0, 0 );
     hbox->addWidget(statusNAT);
     
-    iconLabel = new QLabel( this );
+    iconLabel = new QLabel(this);
     iconLabel->setPixmap(QPixmap(":/images/grayled.png"));
     // iconLabel doesn't change over time, so we didn't need a minimum size
     hbox->addWidget(iconLabel);
-    
-    setLayout( hbox );
-    
 
-
-
-}
-
-NATStatus::~NATStatus()
-{
+    setLayout(hbox);
 }
 
 void NATStatus::getNATStatus()
 {
-
     rsiface->lockData(); /* Lock Interface */
 
     /* now the extra bit .... switch on check boxes */
@@ -95,25 +87,25 @@ void NATStatus::getNATStatus()
     
     if (config.netUpnpOk)
     {
-    iconLabel->setPixmap(QPixmap(":/images/greenled.png"));
-    iconLabel->setToolTip(tr("OK | RetroShare Server"));
+        iconLabel->setPixmap(QPixmap(":/images/greenled.png"));
+        iconLabel->setToolTip(tr("OK | RetroShare Server"));
     }
     else if (config.netStunOk || config.netExtraAddressOk)
     {
-    iconLabel->setPixmap(QPixmap(":/images/greenled.png"));
-    iconLabel->setToolTip(tr("Internet connection"));
+        iconLabel->setPixmap(QPixmap(":/images/greenled.png"));
+        iconLabel->setToolTip(tr("Internet connection"));
     }
     else if (config.netLocalOk)
     {
-    iconLabel->setPixmap(QPixmap(":/images/grayled.png"));
-    iconLabel->setToolTip(tr("No internet connection"));
+        iconLabel->setPixmap(QPixmap(":/images/grayled.png"));
+        iconLabel->setToolTip(tr("No internet connection"));
     }
     else
     {
-    iconLabel->setPixmap(QPixmap(":/images/redled.png"));
-    iconLabel->setToolTip(tr("No local network"));
+        iconLabel->setPixmap(QPixmap(":/images/redled.png"));
+        iconLabel->setToolTip(tr("No local network"));
     }
-		
+
     rsiface->unlockData(); /* UnLock Interface */
 
 }

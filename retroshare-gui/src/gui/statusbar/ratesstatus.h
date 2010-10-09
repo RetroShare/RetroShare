@@ -20,26 +20,22 @@
  ****************************************************************/
 #ifndef RATESSTATUS_H
 #define RATESSTATUS_H
-#include "gui/MainWindow.h"
-
 
 #include <QWidget>
 
+class QLabel;
 
 class RatesStatus : public QWidget
 {
-Q_OBJECT
+    Q_OBJECT
+
 public:
     RatesStatus(QWidget *parent = 0);
 
-    ~RatesStatus();
-
     void getRatesStatus( );
-    
 
 private:
-    class QLabel *iconLabel, *statusRates;
-
+    QLabel *iconLabel, *statusRates;
 };
 
 #endif

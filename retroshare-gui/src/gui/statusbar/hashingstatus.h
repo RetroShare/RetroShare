@@ -20,27 +20,23 @@
  ****************************************************************/
 #ifndef HASHINGSTATUS_H
 #define HASHINGSTATUS_H
-#include "gui/MainWindow.h"
-
 
 #include <QWidget>
 
+class QLabel;
 
 class HashingStatus : public QWidget
 {
-Q_OBJECT
+    Q_OBJECT
+
 public:
     HashingStatus(QWidget *parent = 0);
 
-    ~HashingStatus();
-
 public slots:
-	  void updateHashingInfo(const QString&) ;
-    
+    void updateHashingInfo(const QString&) ;
 
 private:
-    class QLabel *iconLabel, *statusHashing;
-
+    QLabel *statusHashing;
 };
 
 #endif

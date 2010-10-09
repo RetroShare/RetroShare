@@ -19,6 +19,7 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <QHBoxLayout>
 #include <QLabel>
 
 #include "ratesstatus.h"
@@ -30,7 +31,7 @@
 RatesStatus::RatesStatus(QWidget *parent)
  : QWidget(parent)
 {
-    QHBoxLayout *hbox = new QHBoxLayout();
+    QHBoxLayout *hbox = new QHBoxLayout(this);
     hbox->setMargin(0);
     hbox->setSpacing(6);
     
@@ -40,15 +41,10 @@ RatesStatus::RatesStatus(QWidget *parent)
     hbox->addWidget(iconLabel);
     
     statusRates = new QLabel( tr("<strong>Down:</strong> 0.00 (kB/s) | <strong>Up:</strong> 0.00 (kB/s) "), this );
-	  //statusPeers->setMinimumSize( statusPeers->frameSize().width() + 0, 0 );
+//    statusPeers->setMinimumSize( statusPeers->frameSize().width() + 0, 0 );
     hbox->addWidget(statusRates);
     
-    setLayout( hbox );
-
-}
-
-RatesStatus::~RatesStatus()
-{
+    setLayout(hbox);
 }
 
 void RatesStatus::getRatesStatus()
@@ -87,6 +83,4 @@ void RatesStatus::getRatesStatus()
     {
         iconLabel->setPixmap(QPixmap(":/images/up0down0.png"));
     }
- 		
-
 }

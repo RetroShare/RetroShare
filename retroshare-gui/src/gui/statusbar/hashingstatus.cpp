@@ -18,61 +18,60 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
-#include "hashingstatus.h"
-
-#include <QtGui>
-#include <QString>
 
 #include <QLayout>
 #include <QLabel>
-#include <QIcon>
-#include <QPainter>
-#include <QPixmap>
 
-#include <retroshare/rsiface.h>
-#include <retroshare/rspeers.h>
-#include <retroshare/notifyqt.h>
+#include "hashingstatus.h"
 
-#include <sstream>
-#include <iomanip>
+#include "gui/notifyqt.h"
+
+class QStatusLabel : public QLabel
+{
+public:
+    QStatusLabel(QLayout *layout, QWidget *parent = NULL, Qt::WindowFlags f = 0) : QLabel(parent, f)
+    {
+        m_layout = layout;
+    }
+
+    virtual QSize minimumSizeHint() const
+    {
+        const QSize sizeHint = QLabel::minimumSizeHint();
+
+        // do not resize the layout
+        return QSize(qMin(sizeHint.width(), m_layout->geometry().width()), sizeHint.height());
+    }
+
+private:
+    QLayout *m_layout;
+};
 
 HashingStatus::HashingStatus(QWidget *parent)
  : QWidget(parent)
 {
-    QHBoxLayout *hbox = new QHBoxLayout();
+    QHBoxLayout *hbox = new QHBoxLayout(this);
     hbox->setMargin(0);
     hbox->setSpacing(6);
-        
-    //iconLabel = new QLabel( this );
-    //iconLabel->setPixmap(QPixmap::QPixmap(":/images/user/identitygray16.png"));
-    // iconLabel doesn't change over time, so we didn't need a minimum size
-    //hbox->addWidget(iconLabel);
-    
-    statusHashing = new QLabel( tr(""), this );
-	  //statusHashing->setMinimumSize( statusHashing->frameSize().width() + 0, 0 );
+
+    statusHashing = new QStatusLabel(hbox, this);
     hbox->addWidget(statusHashing);
 
     QSpacerItem *horizontalSpacer = new QSpacerItem(1000, 0, QSizePolicy::Expanding, QSizePolicy::Minimum);
     hbox->addItem(horizontalSpacer);
     
-    setLayout( hbox );
+    setLayout(hbox);
 
-}
+    statusHashing->hide();
 
-HashingStatus::~HashingStatus()
-{
+    connect(NotifyQt::getInstance(), SIGNAL(hashingInfoChanged(const QString&)), SLOT(updateHashingInfo(const QString&)));
 }
 
 void HashingStatus::updateHashingInfo(const QString& s)
 {
-	if(s == "")
-		statusHashing->hide() ;
-	else
-	{
-		statusHashing->setText("Hashing file " + s) ;
-		statusHashing->show() ;
-	}
+    if(s.isEmpty()) {
+        statusHashing->hide() ;
+    } else {
+        statusHashing->setText(s);
+        statusHashing->show();
+    }
 }
-
-
-

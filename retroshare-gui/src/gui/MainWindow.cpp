@@ -62,6 +62,7 @@
 #include "statusbar/peerstatus.h"
 #include "statusbar/natstatus.h"
 #include "statusbar/ratesstatus.h"
+#include "statusbar/hashingstatus.h"
 #include <retroshare/rsstatus.h>
 
 #include <retroshare/rsiface.h>
@@ -273,24 +274,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     natstatus = new NATStatus();
     statusBar()->addWidget(natstatus);
 
-    widget = new QWidget();
-    QSizePolicy sizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
-    sizePolicy.setHorizontalStretch(0);
-    sizePolicy.setVerticalStretch(0);
-    sizePolicy.setHeightForWidth(widget->sizePolicy().hasHeightForWidth());
-    widget->setSizePolicy(sizePolicy);
-    QHBoxLayout *horizontalLayout = new QHBoxLayout(widget);
-	  horizontalLayout->setContentsMargins(0, 0, 0, 0);
-    horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
-	  _hashing_info_label = new QLabel(widget) ;
-    _hashing_info_label->setObjectName(QString::fromUtf8("label"));
-
-    horizontalLayout->addWidget(_hashing_info_label);
-    QSpacerItem *horizontalSpacer = new QSpacerItem(1000, 0, QSizePolicy::Expanding, QSizePolicy::Minimum);
-    horizontalLayout->addItem(horizontalSpacer);
-
-    statusBar()->addPermanentWidget(widget);
-	  _hashing_info_label->hide() ;
+    hashingstatus = new HashingStatus();
+    statusBar()->addPermanentWidget(hashingstatus);
 
     ratesstatus = new RatesStatus();
     statusBar()->addPermanentWidget(ratesstatus);
@@ -558,17 +543,6 @@ void MainWindow::privateChatChanged(int list, int type)
             trayIconChat->hide();
         }
     }
-}
-
-void MainWindow::updateHashingInfo(const QString& s)
-{
-	if(s == "")
-		_hashing_info_label->hide() ;
-	else
-	{
-		_hashing_info_label->setText(s) ;
-		_hashing_info_label->show() ;
-	}
 }
 
 void MainWindow::postModDirectories(bool update_local)

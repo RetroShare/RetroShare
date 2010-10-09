@@ -23,20 +23,19 @@
 
 #include <QWidget>
 
+class QLabel;
+
 class PeerStatus : public QWidget
 {
-Q_OBJECT
+    Q_OBJECT
+
 public:
     PeerStatus(QWidget *parent = 0);
 
-    ~PeerStatus();
-
     void getPeerStatus(unsigned int nFriendCount, unsigned int nOnlineCount);
-    
 
 private:
-    class QLabel *iconLabel, *statusPeers;
-
+    QLabel *iconLabel, *statusPeers;
 };
 
 #endif
