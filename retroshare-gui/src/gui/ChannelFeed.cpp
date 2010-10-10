@@ -313,7 +313,7 @@ void ChannelFeed::updateChannelList()
         /* sort it into Publish (Own), Subscribed, Popular and Other */
         uint32_t flags = it->channelFlags;
 
-        if (flags & RS_DISTRIB_ADMIN) {
+        if ((flags & RS_DISTRIB_ADMIN) && (flags & RS_DISTRIB_SUBSCRIBED)) {
             adminList.push_back(*it);
         } else if (flags & RS_DISTRIB_SUBSCRIBED) {
             subList.push_back(*it);

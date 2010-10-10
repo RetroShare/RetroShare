@@ -303,6 +303,9 @@
          </property>
          <item>
           <widget class="QCheckBox" name="pubKeyShare_cb">
+           <property name="toolTip">
+            <string>Key recipients can publish to restricted-type channels, and can view and publish  for private-type channels </string>
+           </property>
            <property name="text">
             <string>Share Private Publish Key</string>
            </property>
