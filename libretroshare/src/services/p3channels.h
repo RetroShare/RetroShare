@@ -104,8 +104,6 @@ virtual std::list<RsItem *> childSaveList();
 
 	private:
 
-bool cpyMsgFileToChFldr(std::string path, std::string fname, std::string chId, bool& fileTooLarge);
-
 	RsFiles *mRsFiles;
 	std::string mChannelsDir;
 	std::list<RsItem *> saveList;

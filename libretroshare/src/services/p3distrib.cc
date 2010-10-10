@@ -930,8 +930,8 @@ void 	p3GroupDistrib::publishDistribGroups()
 	std::map<std::string, GroupInfo>::iterator it;
 	for(it = mGroups.begin(); it != mGroups.end(); it++)
 	{
-		/* if subscribed or listener -> do stuff */
-		if (it->second.flags & (RS_DISTRIB_SUBSCRIBED))
+		/* if subscribed or listener or admin -> then send it to be published by cache */
+		if ((it->second.flags & RS_DISTRIB_SUBSCRIBED) || (it->second.flags & RS_DISTRIB_ADMIN))
 		{
 #ifdef DISTRIB_DEBUG
 			std::cerr << "p3GroupDistrib::publishDistribGroups() Saving Group: " << it->first;

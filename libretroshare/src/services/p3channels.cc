@@ -77,8 +77,7 @@ p3Channels::p3Channels(uint16_t type, CacheStrapper *cs,
 	mRsFiles(files), 
 	mChannelsDir(chanDir)
 { 
-	//loadDummyData();
-	
+
 	/* create chanDir */
         if (!RsDirUtil::checkCreateDirectory(mChannelsDir)) {
                 std::cerr << "p3Channels() Failed to create Channels Directory: " << mChannelsDir << std::endl;
@@ -474,111 +473,22 @@ bool p3Channels::channelExtraFileHash(std::string path, std::string chId, FileIn
 
 	// reverse string buff for correct file name
 	fname.append(fnameBuff.rbegin(), fnameBuff.rend());
-	bool fileTooLarge = false;
 
-	// first copy file into channel directory
-	if(!cpyMsgFileToChFldr(path, fname, chId, fileTooLarge)){
-
-		if(!fileTooLarge)
-			return false;
-
-	}
 
 	uint32_t flags = RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_EXTRA;
 
 	// then hash file, but hash file at original location if its too large
 	// and get file info too
-	if(fileTooLarge){
 
-		if(!mRsFiles->ExtraFileHash(path, CHANNEL_STOREPERIOD, flags))
-			return false;
+	if(!mRsFiles->ExtraFileHash(path, CHANNEL_STOREPERIOD, flags))
+		return false;
 
-		fInfo.path = path;
-
-	}else{
-
-		std::string localpath = mChannelsDir + "/" + chId + "/" + fname;
-		if(!mRsFiles->ExtraFileHash(localpath, CHANNEL_STOREPERIOD, flags))
-			return false;
-
-		fInfo.path = localpath;
-	}
-
+	fInfo.path = path;
 	fInfo.fname = fname;
 
 	return true;
 }
 
-bool p3Channels::cpyMsgFileToChFldr(std::string path, std::string fname, std::string chId, bool& fileTooLarge){
-
-	FILE *outFile = NULL, *inFile;
-#ifdef WINDOWS_SYS
-	std::wstring wpath;
-	librs::util::ConvertUtf8ToUtf16(path, wpath);
-	inFile = _wfopen(wpath.c_str(), L"rb");
-#else
-	inFile = fopen(path.c_str(), "rb");
-#endif
-
-	long buffSize = 0;
-	char* buffer = NULL;
-
-	if(inFile){
-
-		// obtain file size:
-		fseek (inFile , 0 , SEEK_END);
-		buffSize = ftell (inFile);
-		rewind (inFile);
-
-		// don't copy if file over 100mb
-		if(buffSize > (MAX_AUTO_DL / 10) ){
-			fileTooLarge = true;
-			fclose(inFile);
-			return false;
-
-		}
-
-		// allocate memory to contain the whole file:
-		buffer = (char*) malloc (sizeof(char)*buffSize);
-
-		if(!buffer){
-			fclose(inFile);
-			return false;
-		}
-
-		fread (buffer,1,buffSize,inFile);
-		fclose(inFile);
-
-		std::string localpath = mChannelsDir + "/" + chId + "/" + fname;
-#ifdef WINDOWS_SYS
-		std::wstring wlocalpath;
-		librs::util::ConvertUtf8ToUtf16(localpath, wlocalpath);
-		outFile = _wfopen(wlocalpath.c_str(), L"wb");
-#else
-		outFile = fopen(localpath.c_str(), "wb");
-#endif
-	}
-
-	if(outFile){
-
-		fwrite(buffer, 1, buffSize, outFile);
-		fclose(outFile);
-	}else{
-		std::cerr << "p3Channels::cpyMsgFiletoFldr(): Failed to copy Channel Msg file to its channel folder"
-				  << std::endl;
-
-		if((buffSize > 0) && (buffer != NULL))
-			free(buffer);
-
-		return false;
-	}
-
-	if((buffSize > 0) && (buffer != NULL))
-		free(buffer);
-
-	return true;
-
-}
 
 bool p3Channels::channelExtraFileRemove(std::string hash, std::string chId){
 
