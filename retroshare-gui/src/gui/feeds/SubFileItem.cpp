@@ -28,6 +28,7 @@
 #include "SubFileItem.h"
 
 #include <retroshare/rsfiles.h>
+#include "util/misc.h"
 
 
 /****
@@ -93,7 +94,6 @@ SubFileItem::SubFileItem(const std::string &hash, const std::string &name, const
 
 void SubFileItem::Setup()
 {
-  connect( expandButton, SIGNAL( clicked( void ) ), this, SLOT( toggle ( void ) ) );
   connect( playButton, SIGNAL( clicked( void ) ), this, SLOT( play ( void ) ) );
   connect( downloadButton, SIGNAL( clicked( void ) ), this, SLOT( download ( void ) ) );
   connect( cancelButton, SIGNAL( clicked( void ) ), this, SLOT( cancel ( void ) ) );
@@ -208,12 +208,11 @@ void SubFileItem::updateItemStatic()
 	{
 		case SFI_STATE_ERROR:
 			progressBar->setRange(0, 100);
-		progressBar->setFormat(tr("ERROR"));
+            progressBar->setFormat(tr("ERROR"));
 
 			playButton->setEnabled(false);
 			downloadButton->setEnabled(false);
 			cancelButton->setEnabled(false);
-			expandButton->setEnabled(false);
 		
 			progressBar->setValue(0);
 			filename = "[" + tr("ERROR") + "] " + filename;
@@ -229,7 +228,6 @@ void SubFileItem::updateItemStatic()
 			playButton->setEnabled(false);
 			downloadButton->setEnabled(false);
 			cancelButton->setEnabled(false);
-			expandButton->setEnabled(false);
 
 			progressBar->setValue(0);
 			filename = "[" + tr("EXTRA") + "] " + filename;
@@ -240,10 +238,9 @@ void SubFileItem::updateItemStatic()
 			playButton->setEnabled(false);
 			downloadButton->setEnabled(true);
 			cancelButton->setEnabled(false);
-			expandButton->setEnabled(false);
 
 			progressBar->setValue(0);
-			filename = "[" + tr("REMOTE") + "] " + filename;
+			filename = "[" + tr("REMOTE") + "] " + filename + " (" + misc::friendlyUnit(mFileSize) + ")";
 
 			break;
 
@@ -251,7 +248,6 @@ void SubFileItem::updateItemStatic()
 			playButton->setEnabled(false);
 			downloadButton->setEnabled(false);
 			cancelButton->setEnabled(true);
-			expandButton->setEnabled(true);
 			filename = "[" + tr("DOWNLOAD") + "] " + filename;
 
 			break;
@@ -260,10 +256,9 @@ void SubFileItem::updateItemStatic()
 			playButton->setEnabled(true);
 			downloadButton->setEnabled(false);
 			cancelButton->setEnabled(false);
-			expandButton->setEnabled(false);
 
 			progressBar->setValue(mFileSize / mDivisor);
-			filename = "[" + tr("LOCAL") + "] " + filename;
+			filename = "[" + tr("LOCAL") + "] " + filename + " (" + misc::friendlyUnit(mFileSize) + ")";
 
 			break;
 
@@ -271,7 +266,6 @@ void SubFileItem::updateItemStatic()
 			playButton->setEnabled(true);
 			downloadButton->setEnabled(false);
 			cancelButton->setEnabled(false);
-			expandButton->setEnabled(true);
 			filename = "[" + tr("UPLOAD") + "] " + filename;
 
 			break;
@@ -300,7 +294,6 @@ void SubFileItem::updateItemStatic()
 			downloadButton->hide();
 			cancelButton->setEnabled(true);
 			cancelButton->setToolTip("Remove Attachment");
-			expandButton->hide();
 		}
 			break;
 		default:

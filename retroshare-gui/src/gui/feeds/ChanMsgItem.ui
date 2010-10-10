@@ -134,6 +134,7 @@ border-radius: 10px;}</string>
             <weight>75</weight>
             <italic>true</italic>
             <bold>true</bold>
+            <stylestrategy>PreferAntialias</stylestrategy>
            </font>
           </property>
           <property name="text">
@@ -154,6 +155,7 @@ p, li { white-space: pre-wrap; }
            <font>
             <weight>75</weight>
             <bold>true</bold>
+            <stylestrategy>PreferAntialias</stylestrategy>
            </font>
           </property>
           <property name="text">
@@ -426,6 +428,7 @@ border-radius: 10px;}</string>
   </layout>
  </widget>
  <resources>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
