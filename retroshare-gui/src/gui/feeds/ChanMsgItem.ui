@@ -283,6 +283,12 @@ p, li { white-space: pre-wrap; }
         </item>
         <item row="2" column="4">
          <widget class="QPushButton" name="downloadButton">
+          <property name="font">
+           <font>
+            <pointsize>-1</pointsize>
+            <stylestrategy>PreferAntialias</stylestrategy>
+           </font>
+          </property>
           <property name="text">
            <string>Download</string>
           </property>
@@ -294,6 +300,12 @@ p, li { white-space: pre-wrap; }
         </item>
         <item row="2" column="5">
          <widget class="QPushButton" name="playButton">
+          <property name="font">
+           <font>
+            <pointsize>-1</pointsize>
+            <stylestrategy>PreferAntialias</stylestrategy>
+           </font>
+          </property>
           <property name="text">
            <string>Play</string>
           </property>
@@ -357,6 +369,11 @@ p, li { white-space: pre-wrap; }
             <height>21</height>
            </size>
           </property>
+          <property name="font">
+           <font>
+            <stylestrategy>PreferAntialias</stylestrategy>
+           </font>
+          </property>
           <property name="styleSheet">
            <string notr="true">QLabel{border: 1px solid #167BE7; 
 background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
@@ -412,6 +429,11 @@ border-radius: 10px;}</string>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="font">
+         <font>
+          <stylestrategy>PreferAntialias</stylestrategy>
+         </font>
+        </property>
         <property name="styleSheet">
          <string notr="true">QLabel#msgLabel{border: 2px solid #238;
 border-radius: 10px;}</string>
@@ -428,6 +450,7 @@ border-radius: 10px;}</string>
   </layout>
  </widget>
  <resources>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
