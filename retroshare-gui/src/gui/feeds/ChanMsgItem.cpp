@@ -27,6 +27,7 @@
 #include "FeedHolder.h"
 #include "SubFileItem.h"
 #include "gui/notifyqt.h"
+#include "util/misc.h"
 
 #include <retroshare/rschannels.h>
 
@@ -65,6 +66,7 @@ ChanMsgItem::ChanMsgItem(FeedHolder *parent, uint32_t feedId, std::string chanId
   playButton->hide();
   
   titleLabel->setMinimumWidth(100);
+  subjectLabel->setMinimumWidth(100);
 
   small();
   updateItemStatic();
@@ -160,7 +162,7 @@ void ChanMsgItem::updateItemStatic()
 	{
 		std::ostringstream out;
 		out << "(" << cmi.count << " Files)";
-		filelabel->setText(QString::fromStdString(out.str()));
+		filelabel->setText(QString::fromStdString(out.str()) + " " + misc::friendlyUnit(cmi.size));
 	}
 		
 
