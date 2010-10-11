@@ -73,25 +73,22 @@ ChannelFeed::ChannelFeed(QWidget *parent)
     connect(treeView, SIGNAL(customContextMenuRequested( QPoint ) ), this, SLOT( channelListCustomPopupMenu( QPoint ) ) );
 
     mChannelId.clear();
-    model = new QStandardItemModel(0, 2, this);
+
+    model = new QStandardItemModel(0, COLUMN_COUNT, this);
     model->setHeaderData(COLUMN_NAME, Qt::Horizontal, tr("Name"), Qt::DisplayRole);
     model->setHeaderData(COLUMN_POPULARITY, Qt::Horizontal, tr("Popularity"), Qt::DisplayRole);
 
     treeView->setModel(model);
-    treeView->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     treeView->setItemDelegate(new ChanGroupDelegate());
-    treeView->setRootIsDecorated(true);
 
     connect(treeView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)), this, SLOT(selectChannel(QModelIndex)));
 
-    // hide header and id column
-    treeView->setHeaderHidden(true);
-
     /* Set header resize modes and initial section sizes TreeView*/
     QHeaderView * _header = treeView->header () ;
-    _header->setResizeMode ( COLUMN_POPULARITY, QHeaderView::Custom);
-    _header->resizeSection ( COLUMN_NAME, 190 );
+    _header->setResizeMode ( COLUMN_NAME, QHeaderView::Stretch);
+    _header->setResizeMode ( COLUMN_POPULARITY, QHeaderView::Fixed);
+    _header->resizeSection ( COLUMN_POPULARITY, 25 );
     
     // set ChannelList Font  
     itemFont = QFont("ARIAL", 10);

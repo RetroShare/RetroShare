@@ -856,7 +856,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ChanMsgItem</name>
     <message>
-        <location filename="../gui/feeds/ChanMsgItem.ui" line="+229"/>
+        <location filename="../gui/feeds/ChanMsgItem.ui" line="+235"/>
         <source>Remove Item</source>
         <translation>Eintrag entfernen</translation>
     </message>
@@ -877,12 +877,21 @@ p, li { white-space: pre-wrap; }
         <translation>Abspielen</translation>
     </message>
     <message>
-        <location line="+62"/>
+        <location line="+33"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Toggle Message Read Status&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished">Gelesen Status umschalten</translation>
+    </message>
+    <message>
+        <location line="+36"/>
         <source>New</source>
         <translation>Neu</translation>
     </message>
     <message>
-        <location line="-149"/>
+        <location line="-156"/>
         <source>Unsubscribe From Channel</source>
         <translation>Kanal abbestellen</translation>
     </message>
@@ -1005,9 +1014,9 @@ p, li { white-space: pre-wrap; }
         <translation>Hinzufügen</translation>
     </message>
     <message>
-        <location line="+340"/>
+        <location line="+355"/>
         <source>Set all to read</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle als gelesen markieren</translation>
     </message>
     <message>
         <location line="+100"/>
@@ -1035,7 +1044,7 @@ p, li { white-space: pre-wrap; }
         <translation>Kanal abbestellen</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.cpp" line="+77"/>
+        <location filename="../gui/ChannelFeed.cpp" line="+78"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
@@ -1045,7 +1054,7 @@ p, li { white-space: pre-wrap; }
         <translation>Beliebtheit</translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+18"/>
         <source>Own Channels</source>
         <translation>Meine Kanäle</translation>
     </message>
@@ -1065,7 +1074,7 @@ p, li { white-space: pre-wrap; }
         <translation>Andere Kanäle</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.ui" line="-147"/>
+        <location filename="../gui/ChannelFeed.ui" line="-162"/>
         <location filename="../gui/ChannelFeed.cpp" line="+37"/>
         <source>Post to Channel</source>
         <translation>Kanalbeitrag erstellen</translation>
@@ -1100,12 +1109,12 @@ Abgeholt: %2
 Verfügbar: %3</translation>
     </message>
     <message>
-        <location line="+134"/>
+        <location line="+125"/>
         <source>No Channel Selected</source>
         <translation>Keinen Kanal gewählt</translation>
     </message>
     <message>
-        <location line="-376"/>
+        <location line="-367"/>
         <source>Restore Publish Rights for Channel</source>
         <translation>Stelle Veröffentlichungsrechte für Kanal wieder her</translation>
     </message>
@@ -2089,6 +2098,11 @@ Möchten Sie die Änderungen speichern?</translation>
     </message>
     <message>
         <location line="+12"/>
+        <source>Key recipients can publish to restricted-type channels, and can view and publish  for private-type channels </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Share Private Publish Key</source>
         <translation>Verteile privaten Schlüssel</translation>
     </message>
@@ -4947,7 +4961,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Blogs</translation>
     </message>
     <message>
-        <location line="+562"/>
+        <location line="+542"/>
         <source>Internal Error</source>
         <translation>Interener Fehler</translation>
     </message>
@@ -5005,7 +5019,7 @@ p, li { white-space: pre-wrap; }
         <translation>Schnellstart Assistent</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="-298"/>
+        <location filename="../gui/MainWindow.cpp" line="-278"/>
         <source>Search</source>
         <translation>Suchen</translation>
     </message>
@@ -5020,7 +5034,7 @@ p, li { white-space: pre-wrap; }
         <translation>Messenger</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="+156"/>
+        <location filename="../gui/MainWindow.cpp" line="+136"/>
         <source>Show/Hide</source>
         <translation>Anzeigen/Verbergen</translation>
     </message>
@@ -5069,7 +5083,7 @@ p, li { white-space: pre-wrap; }
         <translation>Maximieren</translation>
     </message>
     <message>
-        <location line="-154"/>
+        <location line="-134"/>
         <source>Links Cloud</source>
         <translation>Verknüpfungs-Wolke</translation>
     </message>
@@ -5084,7 +5098,7 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="+509"/>
+        <location filename="../gui/MainWindow.cpp" line="+489"/>
         <source>Help</source>
         <translation>Hilfe</translation>
     </message>
@@ -5094,7 +5108,7 @@ p, li { white-space: pre-wrap; }
         <translation>Über</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="-530"/>
+        <location filename="../gui/MainWindow.cpp" line="-510"/>
         <source>Forums</source>
         <translation>Foren</translation>
     </message>
@@ -5104,7 +5118,7 @@ p, li { white-space: pre-wrap; }
         <translation>RetroShare %1 eine sichere und dezentralisierte Kommunikationsplattform</translation>
     </message>
     <message>
-        <location line="+593"/>
+        <location line="+573"/>
         <source>Open Messages</source>
         <translation>Öffne Nachrichten</translation>
     </message>
@@ -5114,12 +5128,12 @@ p, li { white-space: pre-wrap; }
         <translation>Anwendungen</translation>
     </message>
     <message>
-        <location line="-517"/>
+        <location line="-497"/>
         <source>Plugins</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+533"/>
+        <location line="+513"/>
         <source>Do you really want to exit RetroShare ?</source>
         <translation>Wollen Sie RetroShare wirklich beenden?</translation>
     </message>
@@ -7086,13 +7100,13 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+20"/>
-        <source>&lt;strong&gt;Friends:&lt;/strong&gt;</source>
-        <translation type="unfinished"></translation>
+        <source>Friends</source>
+        <translation>Freunde</translation>
     </message>
     <message>
         <location line="+0"/>
-        <source>&lt;span style=&quot;color:#0000FF&quot;&gt;&lt;strong&gt;Online:&lt;/strong&gt;&lt;/span&gt;</source>
-        <translation>&lt;span style=&quot;color:#0000FF&quot;&gt;&lt;strong&gt;Online:&lt;/strong&gt;&lt;/span&gt;</translation>
+        <source>Online</source>
+        <translation>Online</translation>
     </message>
 </context>
 <context>
