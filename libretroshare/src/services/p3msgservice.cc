@@ -879,9 +879,7 @@ bool    p3MsgService::removeMessageTagType(uint32_t tagId)
 					/* remove empty tag */
 					delete(tag);
 
-					std::map<uint32_t, RsMsgTags*>::iterator mit2 = mit1;
-					mit1++;
-					mMsgTags.erase(mit2);
+					mMsgTags.erase(mit1++);
 					continue;
 				}
 			}

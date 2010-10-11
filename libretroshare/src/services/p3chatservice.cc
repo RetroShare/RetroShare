@@ -1039,9 +1039,7 @@ void p3ChatService::statusChange(const std::list<pqipeer> &plist)
 
 							changed = true;
 
-							std::list<RsChatMsgItem *>::iterator cit1 = cit;
-							cit++;
-							privateOutgoingList.erase(cit1);
+							cit = privateOutgoingList.erase(cit);
 
 							continue;
 						}
