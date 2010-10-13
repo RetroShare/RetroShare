@@ -84,6 +84,48 @@ class gpgcert
 		gpgme_key_t key;
 };
 
+class AuthGPGOperation
+{
+public:
+    AuthGPGOperation(void *userdata)
+    {
+        m_userdata = userdata;
+    }
+    virtual ~AuthGPGOperation() {}
+
+public:
+    void *m_userdata;
+};
+
+class AuthGPGOperationLoadOrSave : public AuthGPGOperation
+{
+public:
+    AuthGPGOperationLoadOrSave(bool load, const std::string &certGpgOrId, void *userdata) : AuthGPGOperation(userdata)
+    {
+        m_load = load;
+        if (m_load) {
+            m_certGpg = certGpgOrId;
+        } else {
+            m_certGpgId = certGpgOrId;
+        }
+    }
+
+public:
+    bool m_load;
+    std::string m_certGpgId; // set for save
+    std::string m_certGpg; // set for load
+};
+
+class AuthGPGService
+{
+public:
+    AuthGPGService() {};
+    ~AuthGPGService() {};
+
+    virtual AuthGPGOperation *getGPGOperation() = 0;
+    virtual void setGPGOperation(AuthGPGOperation *operation) = 0;
+};
+
 /*!
  * The certificate map type
  */
@@ -135,7 +177,7 @@ virtual bool    InitAuth () = 0;
 virtual int     GPGInit(std::string ownId) = 0;
 virtual bool    CloseAuth() = 0;
 virtual bool    GeneratePGPCertificate(std::string name, std::string email, std::string passwd, std::string &pgpId, std::string &errString) = 0;
-  
+
 /*********************************************************************************/
 /************************* STAGE 3 ***********************************************/
 /*********************************************************************************/
@@ -206,11 +248,13 @@ virtual bool TrustCertificate(std::string id,  int trustlvl) = 0; //trustlvl is 
 //virtual bool SignData(const void *data, const uint32_t len, std::string &sign) = 0;
 //virtual bool SignDataBin(std::string input, unsigned char *sign, unsigned int *signlen) = 0;
 virtual bool SignDataBin(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen) = 0;
-virtual bool VerifySignBin(const void*, uint32_t, unsigned char*, unsigned int, std::string withfingerprint) = 0;
+virtual bool VerifySignBin(const void*, uint32_t, unsigned char*, unsigned int, const std::string &withfingerprint) = 0;
 virtual bool decryptText(gpgme_data_t CIPHER, gpgme_data_t PLAIN) = 0;
 virtual bool encryptText(gpgme_data_t PLAIN, gpgme_data_t CIPHER) = 0;
 //END of PGP public functions
 
+/* GPG service */
+virtual bool addService(AuthGPGService *service) = 0;
 
 };
 
@@ -253,7 +297,7 @@ virtual bool    InitAuth ();
 virtual int     GPGInit(std::string ownId);
 virtual bool    CloseAuth();
 virtual bool    GeneratePGPCertificate(std::string name, std::string email, std::string passwd, std::string &pgpId, std::string &errString);
-  
+
 /*********************************************************************************/
 /************************* STAGE 3 ***********************************************/
 /*********************************************************************************/
@@ -325,10 +369,13 @@ virtual bool TrustCertificate(std::string id,  int trustlvl); //trustlvl is 2 fo
 //virtual bool SignData(const void *data, const uint32_t len, std::string &sign);
 //virtual bool SignDataBin(std::string input, unsigned char *sign, unsigned int *signlen);
 virtual bool SignDataBin(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen);
-virtual bool VerifySignBin(const void*, uint32_t, unsigned char*, unsigned int, std::string withfingerprint);
+virtual bool VerifySignBin(const void*, uint32_t, unsigned char*, unsigned int, const std::string &withfingerprint);
 virtual bool decryptText(gpgme_data_t CIPHER, gpgme_data_t PLAIN);
 virtual bool encryptText(gpgme_data_t PLAIN, gpgme_data_t CIPHER);
 //END of PGP public functions
+
+/* GPG service */
+virtual bool addService(AuthGPGService *service);
 
         protected:
 /*****************************************************************/
@@ -348,7 +395,7 @@ virtual bool encryptText(gpgme_data_t PLAIN, gpgme_data_t CIPHER);
 
 	/* Internal functions */
         bool 	DoOwnSignature(const void *, unsigned int, void *, unsigned int *);
-        bool    VerifySignature(const void *data, int datalen, const void *sig, unsigned int siglen, std::string withfingerprint);
+        bool    VerifySignature(const void *data, int datalen, const void *sig, unsigned int siglen, const std::string &withfingerprint);
 
         /* Sign/Trust stuff */
         int	privateSignCertificate(GPG_id id);
@@ -361,6 +408,9 @@ virtual bool encryptText(gpgme_data_t PLAIN, gpgme_data_t CIPHER);
 
 // Not used anymore
 //        bool    updateTrustAllKeys_locked();
+
+        /* GPG service */
+        void    processServices();
 
   	bool    printAllKeys_locked();
   	bool    printOwnKeys_locked();
@@ -393,6 +443,10 @@ private:
 
     std::map<std::string, bool> mAcceptToConnectMap;
 
+    RsMutex gpgMtxService;
+    /* Below is protected via the mutex */
+
+    std::list<AuthGPGService*> services;
 };
 
 /*!

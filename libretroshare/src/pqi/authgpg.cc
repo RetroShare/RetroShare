@@ -357,12 +357,76 @@ void AuthGPGimpl::run()
         sleep(1);
 #endif
 
+        /* every second */
+        processServices();
+
         /* every minute */
         if (++count >= 60) {
             storeAllKeys_tick();
             count = 0;
         }
     }
+}
+
+void AuthGPGimpl::processServices()
+{
+    AuthGPGOperation *operation = NULL;
+    AuthGPGService *service = NULL;
+
+    {
+        RsStackMutex stack(gpgMtxService); /******* LOCKED ******/
+
+        std::list<AuthGPGService*>::iterator serviceIt;
+        for (serviceIt = services.begin(); serviceIt != services.end(); serviceIt++) {
+            operation = (*serviceIt)->getGPGOperation();
+            if (operation) {
+                service = *serviceIt;
+                break;
+            }
+        }
+    } /******* UNLOCKED ******/
+
+    if (operation == NULL) {
+        /* nothing to do */
+        return;
+    }
+
+    if (service == NULL) {
+        /* huh ? */
+        delete operation;
+        return;
+    }
+
+    AuthGPGOperationLoadOrSave *loadOrSave = dynamic_cast<AuthGPGOperationLoadOrSave*>(operation);
+    if (loadOrSave) {
+        if (loadOrSave->m_load) {
+            /* process load operation */
+
+#ifdef GPG_DEBUG
+            std::cerr << "AuthGPGimpl::processServices() Process load operation" << std::endl;
+#endif
+
+            /* load the certificate */
+            LoadCertificateFromString(loadOrSave->m_certGpg, loadOrSave->m_certGpgId);
+        } else {
+            /* process save operation */
+
+#ifdef GPG_DEBUG
+            std::cerr << "AuthGPGimpl::processServices() Process save operation" << std::endl;
+#endif
+
+            /* save the certificate to string */
+            loadOrSave->m_certGpg = SaveCertificateToString(loadOrSave->m_certGpgId);
+        }
+
+        service->setGPGOperation(loadOrSave);
+    } else {
+#ifdef GPG_DEBUG
+        std::cerr << "AuthGPGimpl::processServices() Unknown operation" << std::endl;
+#endif
+    }
+
+    delete operation;
 }
 
 bool   AuthGPGimpl::storeAllKeys_tick() {
@@ -892,7 +956,7 @@ bool AuthGPGimpl::DoOwnSignature(const void *data, unsigned int datalen, void *b
 
 
 /* import to GnuPG and other Certificates */
-bool AuthGPGimpl::VerifySignature(const void *data, int datalen, const void *sig, unsigned int siglen, std::string withfingerprint)
+bool AuthGPGimpl::VerifySignature(const void *data, int datalen, const void *sig, unsigned int siglen, const std::string &withfingerprint)
 {
 	gpgme_data_t gpgmeSig;
 	gpgme_data_t gpgmeData;
@@ -1504,7 +1568,7 @@ bool AuthGPGimpl::SignDataBin(const void *data, unsigned int datalen, unsigned c
                         sign, signlen);
 }
 
-bool AuthGPGimpl::VerifySignBin(const void *data, uint32_t datalen, unsigned char *sign, unsigned int signlen, std::string withfingerprint) {
+bool AuthGPGimpl::VerifySignBin(const void *data, uint32_t datalen, unsigned char *sign, unsigned int signlen, const std::string &withfingerprint) {
         return VerifySignature(data, datalen,
                         sign, signlen, withfingerprint);
 }
@@ -2314,3 +2378,15 @@ bool AuthGPGimpl::loadList(std::list<RsItem*> load)
         return true;
 }
 
+bool AuthGPGimpl::addService(AuthGPGService *service)
+{
+    RsStackMutex stack(gpgMtxService); /********* LOCKED *********/
+
+    if (std::find(services.begin(), services.end(), service) != services.end()) {
+        /* it exists already! */
+        return false;
+    }
+
+    services.push_back(service);
+    return true;
+}

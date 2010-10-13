@@ -42,6 +42,7 @@ class p3ConnectMgr;
 #include "pqi/pqimonitor.h"
 #include "serialiser/rsdiscitems.h"
 #include "services/p3service.h"
+#include "pqi/authgpg.h"
 
 class autoserver
 {
@@ -74,7 +75,7 @@ class autoneighbour: public autoserver
 class p3ConnectMgr;
 
 
-class p3disc: public p3Service, public pqiMonitor, public p3Config
+class p3disc: public p3Service, public pqiMonitor, public p3Config, public AuthGPGService
 {
 	public:
 
@@ -91,6 +92,10 @@ int	tick();
 bool 	potentialproxies(std::string id, std::list<std::string> &proxyIds);
 void 	getversions(std::map<std::string, std::string> &versions);
 
+	/************* from AuthGPService ****************/
+virtual AuthGPGOperation *getGPGOperation();
+virtual void setGPGOperation(AuthGPGOperation *operation);
+
         protected:
 /*****************************************************************/
 /***********************  p3config  ******************************/
@@ -103,13 +108,13 @@ virtual bool    loadList(std::list<RsItem *> load);
     private:
 
 
-void sendAllInfoToJustConnectedPeer(std::string id);
-void sendJustConnectedPeerInfoToAllPeer(std::string id);
+void sendAllInfoToJustConnectedPeer(const std::string &id);
+void sendJustConnectedPeerInfoToAllPeer(const std::string &id);
 
 	/* Network Output */
 //void sendOwnDetails(std::string to);
 void sendOwnVersion(std::string to);
-void sendPeerDetails(std::string to, std::string about);
+RsDiscReply *createDiscReply(const std::string &to, const std::string &about);
 //void sendPeerIssuer(std::string to, std::string about);
 void sendHeartbeat(std::string to);
 void askInfoToAllPeers(std::string about);
@@ -117,7 +122,7 @@ void askInfoToAllPeers(std::string about);
 	/* Network Input */
 int  handleIncoming();
 void recvAskInfo(RsDiscAskInfo *item);
-void recvPeerDetails(RsDiscReply *item);
+void recvPeerDetails(RsDiscReply *item, const std::string &certGpgId);
 //void recvPeerIssuerMsg(RsDiscIssuer *item);
 void recvPeerVersionMsg(RsDiscVersion *item);
 void recvHeartbeatMsg(RsDiscHeartbeat *item);
@@ -130,7 +135,6 @@ int     addDiscoveryData(std::string fromId, std::string aboutId,
 		uint32_t flags, time_t ts);
 
 int 	idServers();
-
 
 	private:
 
@@ -147,7 +151,7 @@ int 	idServers();
 	std::map<std::string, std::string> versions;
 
 	std::map<std::string, std::list<std::string> > sendIdList;
-	std::list<RsDiscReply*> discReplyList;
+	std::list<RsDiscReply*> pendingDiscReplyInList;
 };
 
 

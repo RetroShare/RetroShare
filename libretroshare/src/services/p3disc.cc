@@ -120,42 +120,6 @@ int p3disc::tick()
             }
         }
 
-        std::string destId;
-        std::string srcId;
-
-        {
-            RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
-
-            while (!sendIdList.empty()) {
-                std::map<std::string, std::list<std::string> >::iterator sendIdIt = sendIdList.begin();
-
-                if (!sendIdIt->second.empty() && mConnMgr->isOnline(sendIdIt->first)) {
-                    std::string gpgId = sendIdIt->second.front();
-                    sendIdIt->second.pop_front();
-
-                    destId = sendIdIt->first;
-                    srcId = gpgId;
-
-                    /* send only one per tick */
-#ifdef P3DISC_DEBUG
-                    int count = 0;
-                    for (sendIdIt = sendIdList.begin(); sendIdIt != sendIdList.end(); sendIdIt++) {
-                        count += sendIdIt->second.size();
-                    }
-                    std::cerr << "p3disc::tick() Count of gpg id's " << count << std::endl;
-#endif
-                    break;
-                } else {
-                    /* peer is not online anymore ... try next */
-                    sendIdList.erase(sendIdIt);
-                }
-            }
-        }
-
-        if (!destId.empty() && !srcId.empty()) {
-            sendPeerDetails(destId, srcId);
-        }
-
 	return handleIncoming();
 }
 
@@ -203,8 +167,20 @@ int p3disc::handleIncoming()
 		// if discovery reply then respond if haven't already.
                 if (NULL != (dri = dynamic_cast<RsDiscReply *> (item)))	{
 
+			RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
+
+			/* search pending item and remove it, when already exist */
+			std::list<RsDiscReply*>::iterator it;
+			for (it = pendingDiscReplyInList.begin(); it != pendingDiscReplyInList.end(); it++) {
+				if ((*it)->PeerId() == dri->PeerId() && (*it)->aboutId == dri->aboutId) {
+					delete (*it);
+					pendingDiscReplyInList.erase(it);
+					break;
+				}
+			}
+
 			// add item to list for later process
-			discReplyList.push_back(dri); // no delete
+			pendingDiscReplyInList.push_back(dri); // no delete
 		}
                 else if (NULL != (dvi = dynamic_cast<RsDiscVersion *> (item))) {
 			recvPeerVersionMsg(dvi);
@@ -230,18 +206,6 @@ int p3disc::handleIncoming()
 #endif
 			delete item;
 		}
-	}
-
-	// process one disc item
-	if (!discReplyList.empty()) {
-		RsDiscReply *dri = discReplyList.front();
-		discReplyList.pop_front();
-		recvPeerDetails(dri);
-		nhandled++;
-#ifdef P3DISC_DEBUG
-		std::cerr << "p3disc::handleIncoming() Count of disc items " << discReplyList.size() << std::endl;
-#endif
-		delete dri;
 	}
 
 #ifdef P3DISC_DEBUG
@@ -294,7 +258,7 @@ void p3disc::statusChange(const std::list<pqipeer> &plist)
 	return;
 }
 
-void p3disc::sendAllInfoToJustConnectedPeer(std::string id)
+void p3disc::sendAllInfoToJustConnectedPeer(const std::string &id)
 {
 	/* get a peer lists */
 
@@ -355,7 +319,7 @@ void p3disc::sendAllInfoToJustConnectedPeer(std::string id)
         #endif
 }
 
-void p3disc::sendJustConnectedPeerInfoToAllPeer(std::string connectedPeerId)
+void p3disc::sendJustConnectedPeerInfoToAllPeer(const std::string &connectedPeerId)
 {
 	/* get a peer lists */
 
@@ -383,44 +347,43 @@ void p3disc::sendJustConnectedPeerInfoToAllPeer(std::string connectedPeerId)
 }
 
  /* (dest (to), source (cert)) */
-void p3disc::sendPeerDetails(std::string to, std::string about) 
+RsDiscReply *p3disc::createDiscReply(const std::string &to, const std::string &about)
 {
-
 #ifdef P3DISC_DEBUG
-	std::cerr << "p3disc::sendPeerDetails() called. Sending details of: " << about << " to: " << to << std::endl;
+	std::cerr << "p3disc::createDiscReply() called. Sending details of: " << about << " to: " << to << std::endl;
 #endif
 
 	RsPeerDetails pd;
 	rsPeers->getPeerDetails(to, pd);
 	if (!pd.accept_connection || !pd.ownsign) {
 #ifdef P3DISC_DEBUG
-		std::cerr << "p3disc::sendPeerDetails() we're not sending the info because the destination gpg key is not signed or not accepted." << std::cerr << std::endl;
+		std::cerr << "p3disc::createDiscReply() we're not sending the info because the destination gpg key is not signed or not accepted." << std::cerr << std::endl;
 #endif
-		return;
+		return NULL;
 	}
 
 
 	// if off discard item.
 	peerConnectState detail;
         if (!mConnMgr->getOwnNetStatus(detail) || (detail.visState & RS_VIS_STATE_NODISC)) {
-		return;
+		return NULL;
         }
 
 	std::string aboutGpgId = rsPeers->getGPGId(about);
-	if (about == "") {
+	if (aboutGpgId.empty()) {
 #ifdef P3DISC_DEBUG
-		std::cerr << "p3disc::sendPeerDetails() no info about this id" << std::endl;
+		std::cerr << "p3disc::createDiscReply() no info about this id" << std::endl;
 #endif
-		return;
+		return NULL;
 	}
 
 	peerConnectState detailAbout;
 	if (mConnMgr->getFriendNetStatus(aboutGpgId, detailAbout) && detailAbout.visState & RS_VIS_STATE_NODISC) 
 	{
 #ifdef P3DISC_DEBUG
-		std::cerr << "p3disc::sendPeerDetails() don't send info about this peer because he has no disc enabled." << std::endl;
+		std::cerr << "p3disc::createDiscReply() don't send info about this peer because he has no disc enabled." << std::endl;
 #endif
-		return;
+		return NULL;
 	}
 
 	// Construct a message
@@ -440,7 +403,7 @@ void p3disc::sendPeerDetails(std::string to, std::string about)
 	for (sslChildIt = sslChilds.begin(); sslChildIt != sslChilds.end(); sslChildIt++) 
 	{
 #ifdef P3DISC_DEBUG
-		std::cerr << "p3disc::sendPeerDetails() Found Child SSL Id:" << *sslChildIt;
+		std::cerr << "p3disc::createDiscReply() Found Child SSL Id:" << *sslChildIt;
 		std::cerr << std::endl;
 #endif
 		if(to != *sslChildIt)	// We don't send info to a peer about itself, but we allow sending info
@@ -450,14 +413,14 @@ void p3disc::sendPeerDetails(std::string to, std::string about)
 				|| detail.visState & RS_VIS_STATE_NODISC)
  			{
 #ifdef P3DISC_DEBUG
-				std::cerr << "p3disc::sendPeerDetails() Skipping cos No Details or NODISC flag";
+				std::cerr << "p3disc::createDiscReply() Skipping cos No Details or NODISC flag";
 				std::cerr << std::endl;
 #endif
 				continue;
 			}
 
 #ifdef P3DISC_DEBUG
-			std::cerr << "p3disc::sendPeerDetails() Adding Child SSL Id Details";
+			std::cerr << "p3disc::createDiscReply() Adding Child SSL Id Details";
 			std::cerr << std::endl;
 #endif
 			shouldWeSendGPGKey = true;
@@ -482,7 +445,7 @@ void p3disc::sendPeerDetails(std::string to, std::string about)
 		else
 		{
 #ifdef P3DISC_DEBUG
-			std::cerr << "p3disc::sendPeerDetails() Skipping cos \"to == sslChildId\"";
+			std::cerr << "p3disc::createDiscReply() Skipping cos \"to == sslChildId\"";
 			std::cerr << std::endl;
 #endif
 		}
@@ -517,34 +480,14 @@ void p3disc::sendPeerDetails(std::string to, std::string about)
 
 	if (!shouldWeSendGPGKey) {
 #ifdef P3DISC_DEBUG
-		std::cerr << "p3disc::sendPeerDetails() GPG key should not be send, no friend with disc on found about it." << std::endl;
+		std::cerr << "p3disc::createDiscReply() GPG key should not be send, no friend with disc on found about it." << std::endl;
 #endif
 		// cleanup!
 		delete di;
-		return;
+		return NULL;
 	}
-	std::string cert = AuthGPG::getAuthGPG()->SaveCertificateToString(about);
-	if (cert == "") {
-#ifdef P3DISC_DEBUG
-		std::cerr << "p3disc::sendPeerDetails() don't send details because the gpg cert is not good" << std::endl;
 
-#endif
-		// cleanup!
-		delete di;
-		return;
-	}
-	di -> certGPG = cert;
-
-	// Send off message
-#ifdef P3DISC_DEBUG
-	std::cerr << "p3disc::sendPeerDetails() About to Send Message:" << std::endl;
-	di->print(std::cerr, 5);
-#endif
-	sendItem(di);
-
-#ifdef P3DISC_DEBUG
-	std::cerr << "p3disc::sendPeerDetails() discovery reply sent." << std::endl;
-#endif
+	return di;
 }
 
 void p3disc::sendOwnVersion(std::string to)
@@ -649,7 +592,7 @@ void p3disc::askInfoToAllPeers(std::string about)
 #endif
 }
 
-void p3disc::recvPeerDetails(RsDiscReply *item)
+void p3disc::recvPeerDetails(RsDiscReply *item, const std::string &certGpgId)
 {
 	// discovery is only disabled for sending, not for receiving.
 //	// if off discard item.
@@ -661,8 +604,8 @@ void p3disc::recvPeerDetails(RsDiscReply *item)
 #ifdef P3DISC_DEBUG
 	std::cerr << "p3disc::recvPeerFriendMsg() From: " << item->PeerId() << " About " << item->aboutId << std::endl;
 #endif
-	std::string certGpgId;
-        if (!AuthGPG::getAuthGPG()->LoadCertificateFromString(item->certGPG, certGpgId)) {
+
+	if (certGpgId.empty()) {
 #ifdef P3DISC_DEBUG
 		std::cerr << "p3disc::recvPeerFriendMsg() gpg cert is not good, aborting" << std::endl;
 #endif
@@ -816,9 +759,11 @@ void p3disc::recvAskInfo(RsDiscAskInfo *item) {
         std::cerr << std::endl;
 #endif
 
-        sendPeerDetails(item->PeerId(), item->gpg_id);
+        std::list<std::string> &idList = sendIdList[item->PeerId()];
 
-        return;
+        if (std::find(idList.begin(), idList.end(), item->gpg_id) == idList.end()) {
+            idList.push_back(item->gpg_id);
+        }
 }
 
 void p3disc::removeFriend(std::string ssl_id) {
@@ -831,12 +776,119 @@ void p3disc::removeFriend(std::string ssl_id) {
 	std::cerr << "p3disc::removeFriend() gpg_id : " << gpg_id << std::endl;
 #endif
 	if (gpg_id == AuthGPG::getAuthGPG()->getGPGOwnId() || rsPeers->isGPGAccepted(rsPeers->getGPGId(ssl_id))) {
- #ifdef P3DISC_DEBUG
+#ifdef P3DISC_DEBUG
 		std::cerr << "p3disc::removeFriend() storing the friend deletion." << ssl_id << std::endl;
 #endif
 		deletedSSLFriendsIds[ssl_id] = time(NULL);//just keep track of the deleted time
 		IndicateConfigChanged();
 	}
+}
+
+/*************************************************************************************/
+/*			AuthGPGService						     */
+/*************************************************************************************/
+AuthGPGOperation *p3disc::getGPGOperation()
+{
+	{
+		RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
+
+		/* process disc reply in list */
+		if (pendingDiscReplyInList.empty() == false) {
+			RsDiscReply *item = pendingDiscReplyInList.front();
+
+			return new AuthGPGOperationLoadOrSave(true, item->certGPG, item);
+		}
+	}
+
+	/* process disc reply out list */
+
+	std::string destId;
+	std::string srcId;
+
+	{
+		RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
+
+		while (!sendIdList.empty()) {
+			std::map<std::string, std::list<std::string> >::iterator sendIdIt = sendIdList.begin();
+
+			if (!sendIdIt->second.empty() && mConnMgr->isOnline(sendIdIt->first)) {
+				std::string gpgId = sendIdIt->second.front();
+				sendIdIt->second.pop_front();
+
+				destId = sendIdIt->first;
+				srcId = gpgId;
+
+				break;
+			} else {
+				/* peer is not online anymore ... try next */
+				sendIdList.erase(sendIdIt);
+			}
+		}
+	}
+
+	if (!destId.empty() && !srcId.empty()) {
+		RsDiscReply *item = createDiscReply(destId, srcId);
+		if (item) {
+			return new AuthGPGOperationLoadOrSave(false, item->aboutId, item);
+		}
+	}
+
+	return NULL;
+}
+
+void p3disc::setGPGOperation(AuthGPGOperation *operation)
+{
+	AuthGPGOperationLoadOrSave *loadOrSave = dynamic_cast<AuthGPGOperationLoadOrSave*>(operation);
+	if (loadOrSave) {
+		if (loadOrSave->m_load) {
+			/* search in pending in list */
+			RsDiscReply *item = NULL;
+
+			{
+				RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
+
+				std::list<RsDiscReply*>::iterator it = std::find(pendingDiscReplyInList.begin(), pendingDiscReplyInList.end(), loadOrSave->m_userdata);
+				if (it != pendingDiscReplyInList.end()) {
+					item = *it;
+					pendingDiscReplyInList.erase(it);
+				}
+			}
+
+			if (item) {
+				recvPeerDetails(item, loadOrSave->m_certGpgId);
+				delete item;
+			}
+		} else {
+			RsDiscReply *item = (RsDiscReply*) loadOrSave->m_userdata;
+
+			if (item) {
+				if (loadOrSave->m_certGpg.empty()) {
+#ifdef P3DISC_DEBUG
+					std::cerr << "p3disc::setGPGOperation() don't send details because the gpg cert is not good" << std::endl;
+#endif
+					delete item;
+					return;
+				}
+
+				// Send off message
+				item->certGPG = loadOrSave->m_certGpg;
+
+#ifdef P3DISC_DEBUG
+				std::cerr << "p3disc::setGPGOperation() About to Send Message:" << std::endl;
+				item->print(std::cerr, 5);
+#endif
+
+				sendItem(item);
+
+#ifdef P3DISC_DEBUG
+				std::cerr << "p3disc::cbkGPGOperationSave() discovery reply sent." << std::endl;
+#endif
+			}
+		}
+		return;
+	}
+
+	/* ignore other operations */
 }
 
 /*************************************************************************************/
