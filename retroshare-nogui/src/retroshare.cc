@@ -89,6 +89,14 @@ int main(int argc, char **argv)
 
 	notify->setRsIface(iface);
 
+	std::string preferredId, gpgId, gpgName, gpgEmail, sslName;
+	RsInit::getPreferedAccountId(preferredId);
+
+	if (RsInit::getAccountDetails(preferredId, gpgId, gpgName, gpgEmail, sslName))
+	{
+		RsInit::SelectGPGAccount(gpgId);
+	}
+
 	/* Key + Certificate are loaded into libretroshare */
 
 	int retVal = RsInit::LockAndLoadCertificates(false);
