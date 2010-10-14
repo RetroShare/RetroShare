@@ -7,10 +7,9 @@ RS_TOP_DIR = ../..
 include $(RS_TOP_DIR)/tests/scripts/config.mk
 ###############################################################
 
-TESTOBJ  = ftfileprovidertest.o ftfilecreatortest.o ftextralisttest.o ftdataplextest.o fttransfermoduletest.o ftcrc32test.o ftcontrollertest.o ftserver1test.o ftserver2test.o ftserver3test.o
+TESTOBJ  = ftfileprovidertest.o ftfilecreatortest.o ftextralisttest.o ftdataplextest.o fttransfermoduletest.o ftcrc32test.o ftcrossprovidercreatortest.o ftcontrollertest.o ftserver1test.o ftserver2test.o ftserver3test.o
 
-
-TESTS  = ftfileprovidertest ftfilecreatortest ftextralisttest ftdataplextest fttransfermoduletest ftcrc32test  ftcontrollertest ftserver1test ftserver2test fttransfermoduletest ftserver3test
+TESTS  = ftfileprovidertest ftfilecreatortest ftextralisttest ftdataplextest fttransfermoduletest ftcrc32test ftcrossprovidercreatortest ftcontrollertest ftserver1test ftserver2test fttransfermoduletest ftserver3test
 
 all: tests
 
@@ -20,6 +19,9 @@ ftcontrollertest : ftcontrollertest.o
 ftfilecreatortest : ftfilecreatortest.o 
 	$(CC) $(CFLAGS) -o ftfilecreatortest ftfilecreatortest.o $(LIBS)
 	
+ftcrossprovidercreatortest : ftcrossprovidercreatortest.o 
+	$(CC) $(CFLAGS) -o ftcrossprovidercreatortest ftcrossprovidercreatortest.o $(LIBS)
+
 ftfileprovidertest : ftfileprovidertest.o 
 	$(CC) $(CFLAGS) -o ftfileprovidertest ftfileprovidertest.o $(LIBS)
 
