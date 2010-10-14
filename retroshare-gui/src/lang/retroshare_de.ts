@@ -6871,7 +6871,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+12"/>
         <source>Peer Connect</source>
-        <translation>Verbinde zu Peer</translation>
+        <translation>Verbinde zu Nachbar</translation>
     </message>
     <message>
         <location line="+7"/>
