@@ -15,18 +15,25 @@ static void transfer(ftFileProvider *server, const std::string& server_peer_id,f
 
 int main()
 {
-	// We create two file creators and feed them with a file both from elsewhere and from each others, as file providers.
-	// This test should check that no data race occurs while reading/writting data and exchanging chunks.
-	//
+	// We create two file creators and feed them with a file both from elsewhere
+	// and from each others, as file providers.  This test should check that no
+	// data race occurs while reading/writting data and exchanging chunks.  The
+	// test is designed so that servers do not always have the required chunk,
+	// meaning that many requests can't be fullfilled. This is a good way to
+	// test if chunks availability is correctly handled.
 
 	// 1 - Create a temporary file, compute its hash
 	//
 	std::string fname = "source_tmp.bin" ;
 	std::string fname_copy_1 = "copy_1_tmp.bin" ;
 	std::string fname_copy_2 = "copy_2_tmp.bin" ;
-	uint64_t size = 55766278 ;
+	uint64_t size = 5560000 ;
 	std::string hash = "" ;
 
+	pthread_t seed = 6;//getpid() ;
+
+	std::cerr << "Seeding random generator with " << seed << std::endl ;
+	srand48(seed) ;
 	createTmpFile(fname,size,hash) ;
 
 	// 2 - Create one file provider for this file, and 2 file creators
@@ -51,36 +58,42 @@ int main()
 		std::string tmpserver_pid ;
 		std::string tmpclient_pid ;
 		
-		// choose client and server, randomly
+		// choose client and server, randomly, provided that they are not finished.
 		//
-		if(lrand48()&1)
+		if((!client1->finished()) && (client2->finished() || (lrand48()&1)))
 		{
+			//std::cerr << "###### Client 1 asking to " ;
 			tmpclient = client1 ;
 			tmpclient_pid = peer_id_1 ;
 
 			if(lrand48()&1)
 			{
+				//std::cerr << "Client 2 " ;
 				tmpserver = client2 ;
 				tmpserver_pid = peer_id_2 ;
 			}
 			else
 			{
+				//std::cerr << "Server ";
 				tmpserver = server ;
 				tmpserver_pid = server_id ;
 			}
 		}
-		else
+		else // client 2 is necessarily unfinished there.
 		{
+			//std::cerr << "###### Client 2 asking to " ;
 			tmpclient = client2 ;
 			tmpclient_pid = peer_id_2 ;
 			
 			if(lrand48()&1)
 			{
+				//std::cerr << "Client 1 " ;
 				tmpserver = client1 ;
 				tmpserver_pid = peer_id_1 ;
 			}
 			else
 			{
+				//std::cerr << "Server " ;
 				tmpserver = server ;
 				tmpserver_pid = server_id ;
 			}
@@ -90,6 +103,9 @@ int main()
 		// 2 - transfer from the server to the client.
 
 		transfer(tmpserver,tmpserver_pid,tmpclient,tmpclient_pid) ;
+
+		printf("Client1: %08lld, Client2: %08lld, transfer from %s to %s\r",client1->getRecvd(),client2->getRecvd(),tmpserver_pid.c_str(),tmpclient_pid.c_str()) ;
+		fflush(stdout) ;
 	}
 
 	// hash the received data
@@ -117,14 +133,33 @@ void transfer(ftFileProvider *server, const std::string& server_peer_id,ftFileCr
 	uint32_t chunk_size = 0;
 	bool toOld = false ;
 
+	//std::cerr << " for a pending chunk of size " << size_hint ;
+
 	if(! client->getMissingChunk(server_peer_id, size_hint, offset, chunk_size, toOld))
 		return ;
 
+	//std::cerr << "###### Got chunk " << offset << ", size=" << chunk_size << std::endl ;
+
 	void *data = malloc(chunk_size) ;
+	//std::cerr << "###### Asking data " << offset << ", size=" << chunk_size << std::endl ;
 
 	if( server->getFileData(client_peer_id,offset,chunk_size,data) )
+	{
 		client->addFileData(offset,chunk_size,data) ;
+		//std::cerr << "###### Added data " << offset << ", size=" << chunk_size << std::endl ;
+	}
 
+	//std::cerr << ", completion=" << client->getRecvd() << std::endl ;
+
+	// Normally this can't be true, because the ChunkMap class assumes availability for non turtle 
+	// peers.
+	if(toOld)
+	{
+		//std::cerr << "###### Map is too old. Transferring" << std::endl ;
+		CompressedChunkMap map ;
+		server->getAvailabilityMap(map) ;
+		client->setSourceMap(server_peer_id,map) ;
+	}
 	free(data) ;
 }
 

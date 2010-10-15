@@ -1,3 +1,32 @@
+/*
+ * libretroshare/src/ft: ftdata.cc
+ *
+ * File Transfer for RetroShare.
+ *
+ * Copyright 2010 by Cyril Soler
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License Version 2 as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA.
+ *
+ * Please report all bugs and problems to "csoler@users.sourceforge.net".
+ *
+ */
+
+/********
+ * #define DEBUG_FTCHUNK 1
+ *********/
+
 #ifdef DEBUG_FTCHUNK
 #include <assert.h>
 #endif
@@ -54,6 +83,10 @@ ChunkMap::ChunkMap(uint64_t s)
 	std::cerr << "   Strategy: " << _strategy << std::endl ;
 	std::cerr << "   ChunkSize: " << _chunk_size << std::endl ;
 	std::cerr << "   Number of Chunks: " << n << std::endl ;
+	std::cerr << "   Data: " ;
+	for(int i=0;i<_map.size();++i)
+		std::cerr << _map[i] ;
+	std::cerr << std::endl ;
 #endif
 }
 
@@ -252,16 +285,24 @@ bool ChunkMap::isChunkAvailable(uint64_t offset, uint32_t chunk_size) const
 	uint32_t chunk_number_start = offset/(uint64_t)_chunk_size ;
 	uint32_t chunk_number_end = (offset+(uint64_t)chunk_size)/(uint64_t)_chunk_size ;
 
-	if((offset+(uint64_t)chunk_size) % (uint64_t)_chunk_size == 0)
-		--chunk_number_end ;
+	if((offset+(uint64_t)chunk_size) % (uint64_t)_chunk_size != 0)
+		++chunk_number_end ;
 
 	// It's possible that chunk_number_start==chunk_number_end+1, but for this we need to have
 	// chunk_size=0, and offset%_chunk_size=0, so the response "true" is still valid.
 	//
-	for(uint32_t i=chunk_number_start;i!=chunk_number_end;++i)
+	for(uint32_t i=chunk_number_start;i<chunk_number_end;++i)
 		if(_map[i] != FileChunksInfo::CHUNK_DONE)
+		{
+#ifdef DEBUG_FTCHUNK
+			std::cerr << "ChunkMap::isChunkAvailable(): (" << offset << "," << chunk_size << ") is not available" << std::endl; 
+#endif
 			return false ;
+		}
 
+#ifdef DEBUG_FTCHUNK
+	std::cerr << "ChunkMap::isChunkAvailable(): (" << offset << "," << chunk_size << ") is available" << std::endl; 
+#endif
 	return true ;
 }
 

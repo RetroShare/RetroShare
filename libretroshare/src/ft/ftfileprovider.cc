@@ -9,6 +9,9 @@
 #include "util/rswin.h"
 #endif // WINDOWS_SYS
 
+/********
+* #define DEBUG_FT_FILE_PROVIDER 1
+********/
 
 static const time_t UPLOAD_CHUNK_MAPS_TIME = 20 ;	// time to ask for a new chunkmap from uploaders in seconds.
 

@@ -63,7 +63,6 @@
  * #define CONTROL_DEBUG 1
  * #define DEBUG_DWLQUEUE 1
  *****/
-//#define CONTROL_DEBUG 1
 
 static const uint32_t SAVE_TRANSFERS_DELAY 			= 61	; // save transfer progress every 61 seconds.
 static const uint32_t INACTIVE_CHUNKS_CHECK_DELAY 	= 60	; // time after which an inactive chunk is released
@@ -1946,7 +1945,12 @@ std::list<RsItem *> ftController::saveList(bool &cleanup)
 
 		/* ignore callback ones */
 		if (fit->second->mDoCallback)
+		{
+#ifdef CONTROL_DEBUG
+			std::cerr << "ftcontroller::saveList(): Not saving (callback) file entry " << fit->second->mName << ", " << fit->second->mHash << ", " << fit->second->mSize << std::endl ;
+#endif
 			continue;
+		}
 
 		if ((fit->second)->mCreator->finished())
 			continue;
@@ -2031,6 +2035,9 @@ bool ftController::loadList(std::list<RsItem *> load)
 			/* This will get stored on a waiting list - until the
 			 * config files are fully loaded
 			 */
+#ifdef CONTROL_DEBUG
+			std::cerr << "ftController::loadList(): requesting " << rsft->file.name << ", " << rsft->file.hash << ", " << rsft->file.filesize << std::endl ;
+#endif
 			FileRequest(rsft->file.name, rsft->file.hash, rsft->file.filesize, rsft->file.path, rsft->flags, rsft->allPeerIds.ids);
 
 			{

@@ -42,12 +42,21 @@ bool ftFileCreator::getFileData(const std::string& peer_id,uint64_t offset, uint
 {
 	// Only send the data if we actually have it.
 	//
+#ifdef FILE_DEBUG
+	std::cerr << "ftFileCreator::getFileData(). Asked for offset=" << offset << ", size=" << chunk_size << std::endl ;
+#endif
 	bool have_it = false ;
 	{
 		RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 
 		have_it = chunkMap.isChunkAvailable(offset, chunk_size) ;
 	}
+#ifdef FILE_DEBUG
+	if(have_it)
+		std::cerr << "ftFileCreator::getFileData(). Have it" << std::endl ;
+	else
+		std::cerr << "ftFileCreator::getFileData(). Don't have it" << std::endl ;
+#endif
 
 	if(have_it)
 		return ftFileProvider::getFileData(peer_id,offset, chunk_size, data);
@@ -433,6 +442,13 @@ void ftFileCreator::setAvailabilityMap(const CompressedChunkMap& cmap)
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 
 	chunkMap.setAvailabilityMap(cmap) ;
+#ifdef FILE_DEBUG
+	std::cerr << "ftFileCreator: setting chunkmap for hash " << hash << ": " ;
+
+	for(uint32_t i=0;i<cmap._map.size();++i)
+		std::cerr << (void*)cmap._map[i] ;
+	std::cerr << std::endl ;
+#endif
 }
 
 void ftFileCreator::getAvailabilityMap(CompressedChunkMap& map) 

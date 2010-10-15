@@ -284,7 +284,7 @@ class CompressedChunkMap ;
 class FileChunksInfo
 {
 	public:
-		enum ChunkState { CHUNK_DONE, CHUNK_ACTIVE, CHUNK_OUTSTANDING } ;
+		enum ChunkState { CHUNK_DONE=2, CHUNK_ACTIVE=1, CHUNK_OUTSTANDING=0 } ;
 		enum ChunkStrategy { CHUNK_STRATEGY_STREAMING, CHUNK_STRATEGY_RANDOM } ;
 
 		uint64_t file_size ;					// real size of the file
