@@ -768,7 +768,7 @@ void TransfersDialog::insertTransfers()
 			continue;
 		}
 
-		if((info.flags & CB_CODE_CACHE) && !showCacheTransfers)
+		if((info.flags & RS_FILE_HINTS_CACHE) && !showCacheTransfers)
 			continue;
 
 		QString fileName = QString::fromUtf8(info.fname.c_str());
@@ -901,7 +901,7 @@ void TransfersDialog::insertTransfers()
 		if (!rsFiles->FileDetails(*it, RS_FILE_HINTS_UPLOAD, info)) 
 			continue;
 		
-		if((info.flags & CB_CODE_CACHE) && showCacheTransfers)
+		if((info.flags & RS_FILE_HINTS_CACHE) && showCacheTransfers)
 			continue ;
 
 		std::list<TransferInfo>::iterator pit;

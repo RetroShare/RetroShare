@@ -73,21 +73,15 @@ const uint32_t RS_FILE_HINTS_UPLOAD	 		       = 0x00000020;
 const uint32_t RS_FILE_HINTS_NETWORK_WIDE        = 0x00000080;	// anonymously shared over network
 const uint32_t RS_FILE_HINTS_BROWSABLE 	       = 0x00000100;	// browsable by friends
 const uint32_t RS_FILE_HINTS_ASSUME_AVAILABILITY = 0x00000200; // Assume full source availability. Used for cache files.
+const uint32_t RS_FILE_HINTS_MEDIA	             = 0x00001000;
+const uint32_t RS_FILE_HINTS_BACKGROUND	       = 0x00002000; // To download slowly.
 
-const uint32_t RS_FILE_HINTS_SPEC_ONLY	 = 0x01000000;
-const uint32_t RS_FILE_HINTS_NO_SEARCH   = 0x02000000;
+const uint32_t RS_FILE_HINTS_SPEC_ONLY	          = 0x01000000;
+const uint32_t RS_FILE_HINTS_NO_SEARCH           = 0x02000000;
 
 /* Callback Codes */
-//const uint32_t RS_FILE_HINTS_CACHE	 = 0x00000001; // ALREADY EXISTS
-const uint32_t RS_FILE_HINTS_MEDIA	 = 0x00001000;
-
-const uint32_t RS_FILE_HINTS_BACKGROUND	 = 0x00002000; // To download slowly.
 
 const uint32_t RS_FILE_EXTRA_DELETE	 = 0x0010;
-
-const uint32_t CB_CODE_CACHE = 0x0001;
-const uint32_t CB_CODE_EXTRA = 0x0002;
-const uint32_t CB_CODE_MEDIA = 0x0004;
 
 struct SharedDirInfo
 {

@@ -63,6 +63,7 @@
  * #define CONTROL_DEBUG 1
  * #define DEBUG_DWLQUEUE 1
  *****/
+#define CONTROL_DEBUG 1
 
 static const uint32_t SAVE_TRANSFERS_DELAY 			= 61	; // save transfer progress every 61 seconds.
 static const uint32_t INACTIVE_CHUNKS_CHECK_DELAY 	= 60	; // time after which an inactive chunk is released
@@ -82,14 +83,12 @@ ftFileControl::ftFileControl()
 ftFileControl::ftFileControl(std::string fname,
 		std::string tmppath, std::string dest,
 		uint64_t size, std::string hash, uint32_t flags,
-		ftFileCreator *fc, ftTransferModule *tm, uint32_t cb)
+		ftFileCreator *fc, ftTransferModule *tm)
 	:mName(fname), mCurrentPath(tmppath), mDestination(dest),
 	 mTransfer(tm), mCreator(fc), mState(DOWNLOADING), mHash(hash),
-	 mSize(size), mFlags(flags), mDoCallback(false), mCallbackCode(cb),
+	 mSize(size), mFlags(flags), 
 	 mPriority(SPEED_NORMAL)	// default priority to normal
 {
-	if (cb)
-		mDoCallback = true;
 	return;
 }
 
@@ -738,10 +737,7 @@ bool ftController::completeFile(std::string hash)
 	uint32_t    state = 0;
 	uint32_t    period = 0;
 	uint32_t    flags = 0;
-
-	bool doCallback = false;
-	uint32_t callbackCode = 0;
-
+	uint32_t    extraflags = 0;
 
 	{
 		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
@@ -822,17 +818,14 @@ bool ftController::completeFile(std::string hash)
 		size    = fc->mSize;
 		state   = fc->mState;
 		period  = 30 * 24 * 3600; /* 30 days */
-		flags   = 0;
+		extraflags   = 0;
 
 #ifdef CONTROL_DEBUG
 		std::cerr << "CompleteFile(): size = " << size << std::endl ;
 #endif
 
-		doCallback = fc->mDoCallback;
-		callbackCode = fc->mCallbackCode;
-
 		mDataplex->removeTransferModule(hash_to_suppress) ;
-		uint32_t flgs = fc->mFlags ;
+		flags = fc->mFlags ;
 
 		locked_queueRemove(it->second->mQueuePosition) ;
 
@@ -844,7 +837,7 @@ bool ftController::completeFile(std::string hash)
 
 		mDownloads.erase(it);
 
-		if(flgs & RS_FILE_HINTS_NETWORK_WIDE)
+		if(flags & RS_FILE_HINTS_NETWORK_WIDE)
 			mTurtle->stopMonitoringFileTunnels(hash_to_suppress) ;
 
 	} /******* UNLOCKED ********/
@@ -855,50 +848,51 @@ bool ftController::completeFile(std::string hash)
 	 ***********************************************************/
 
 	/* If it has a callback - do it now */
-	if (doCallback)
+
+	if(flags & ( RS_FILE_HINTS_CACHE | RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_MEDIA))
 	{
 #ifdef CONTROL_DEBUG
-	  std::cerr << "ftController::completeFile() doing Callback, callbackCode:" << callbackCode;
+	  std::cerr << "ftController::completeFile() doing Callback, callbackflags:" << (flags & ( RS_FILE_HINTS_CACHE | RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_MEDIA)) ;
 	  std::cerr << std::endl;
 #endif
-	  switch (callbackCode)
+	  if(flags & RS_FILE_HINTS_CACHE)
 	  {
-	    case CB_CODE_CACHE:
-		/* callback */
-		if (state == ftFileControl::COMPLETED)
-		{
+		  /* callback */
+		  if (state == ftFileControl::COMPLETED)
+		  {
 #ifdef CONTROL_DEBUG
-	  		std::cerr << "ftController::completeFile() doing Callback : Success";
-	  		std::cerr << std::endl;
+			  std::cerr << "ftController::completeFile() doing Callback : Success";
+			  std::cerr << std::endl;
 #endif
 
-			CompletedCache(hash);
-		}
-		else
-		{
+			  CompletedCache(hash);
+		  }
+		  else
+		  {
 #ifdef CONTROL_DEBUG
-	  		std::cerr << "ftController::completeFile() Cache Callback : Failed";
-	  		std::cerr << std::endl;
+			  std::cerr << "ftController::completeFile() Cache Callback : Failed";
+			  std::cerr << std::endl;
 #endif
-			FailedCache(hash);
-		}
-		break;
-	    case CB_CODE_EXTRA:
+			  FailedCache(hash);
+		  }
+	  }
+
+	  if(flags & RS_FILE_HINTS_EXTRA)
+	  {
 #ifdef CONTROL_DEBUG
-		std::cerr << "ftController::completeFile() adding to ExtraList";
-		std::cerr << std::endl;
+		  std::cerr << "ftController::completeFile() adding to ExtraList";
+		  std::cerr << std::endl;
 #endif
 
-		mExtraList->addExtraFile(path, hash, size, period, flags);
+		  mExtraList->addExtraFile(path, hash, size, period, extraflags);
+	  }
 
-
-		break;
-	    case CB_CODE_MEDIA:
+	  if(flags & RS_FILE_HINTS_MEDIA)
+	  {
 #ifdef CONTROL_DEBUG
 		std::cerr << "ftController::completeFile() NULL MEDIA callback";
 		std::cerr << std::endl;
 #endif
-		break;
 	  }
 	}
 	else
@@ -907,8 +901,6 @@ bool ftController::completeFile(std::string hash)
 		std::cerr << "ftController::completeFile() No callback";
 		std::cerr << std::endl;
 #endif
-
-
 	}
 
 	IndicateConfigChanged(); /* completed transfer -> save */
@@ -1158,27 +1150,7 @@ bool 	ftController::FileRequest(const std::string& fname, const std::string& has
 		}
 	} /******* UNLOCKED ********/
 
-	bool doCallback = false;
-	uint32_t callbackCode = 0;
-	if (flags & RS_FILE_HINTS_NO_SEARCH)
-	{
-#ifdef CONTROL_DEBUG
-		std::cerr << "ftController::FileRequest() Flags for NO_SEARCH ";
-		std::cerr << std::endl;
-#endif
-		/* no search */
-		if (flags & RS_FILE_HINTS_CACHE)
-		{
-			doCallback = true;
-			callbackCode = CB_CODE_CACHE;
-		}
-		else if (flags & RS_FILE_HINTS_EXTRA)
-		{
-			doCallback = true;
-			callbackCode = CB_CODE_EXTRA;
-		}
-	}
-	else
+	if(!(flags & RS_FILE_HINTS_NO_SEARCH))
 	{
 		/* do a source search - for any extra sources */
 		// add sources only in direct mode
@@ -1210,21 +1182,7 @@ bool 	ftController::FileRequest(const std::string& fname, const std::string& has
                                 }
 			}
 		}
-
-		if (flags & RS_FILE_HINTS_EXTRA)
-		{
-			doCallback = true;
-			callbackCode = CB_CODE_EXTRA;
-		}
-		else if (flags & RS_FILE_HINTS_MEDIA)
-		{
-			doCallback = true;
-			callbackCode = CB_CODE_MEDIA;
-		}
 	}
-
-	//std::map<std::string, ftTransferModule *> mTransfers;
-	//std::map<std::string, ftFileCreator *> mFileCreators;
 
 	/* add in new item for download */
 	std::string savepath;
@@ -1257,7 +1215,7 @@ bool 	ftController::FileRequest(const std::string& fname, const std::string& has
 	fc->setChunkStrategy(mDefaultChunkStrategy) ;
 
 	/* add into maps */
-	ftFileControl *ftfc = new ftFileControl(fname, savepath, destination, size, hash, flags, fc, tm, callbackCode);
+	ftFileControl *ftfc = new ftFileControl(fname, savepath, destination, size, hash, flags, fc, tm);
 	ftfc->mCreateTime = time(NULL);
 
 	/* now add source peers (and their current state) */
@@ -1943,8 +1901,9 @@ std::list<RsItem *> ftController::saveList(bool &cleanup)
 		if (fit == mDownloads.end())
 			continue;
 
-		/* ignore callback ones */
-		if (fit->second->mDoCallback)
+		/* ignore cache files. As this is small files, better download them again from scratch at restart.*/
+
+		if (fit->second->mFlags & RS_FILE_HINTS_CACHE)
 		{
 #ifdef CONTROL_DEBUG
 			std::cerr << "ftcontroller::saveList(): Not saving (callback) file entry " << fit->second->mName << ", " << fit->second->mHash << ", " << fit->second->mSize << std::endl ;

@@ -77,7 +77,7 @@ class ftFileControl
 		ftFileControl();
 		ftFileControl(std::string fname, std::string tmppath, std::string dest,
 							uint64_t size, std::string hash, uint32_t flags,
-							ftFileCreator *fc, ftTransferModule *tm, uint32_t cb_flags);
+							ftFileCreator *fc, ftTransferModule *tm);
 
 		std::string	   mName;
 		std::string	   mCurrentPath; /* current full path (including name) */
@@ -88,8 +88,6 @@ class ftFileControl
 		std::string	   mHash;
 		uint64_t	   mSize;
 		uint32_t	   mFlags;
-		bool		   mDoCallback;
-		uint32_t	   mCallbackCode;
 		time_t		mCreateTime;
 		DwlSpeed 	mPriority ;
 		uint32_t		mQueuePriority ;
