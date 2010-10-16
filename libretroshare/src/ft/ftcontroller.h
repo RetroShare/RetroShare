@@ -239,23 +239,15 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 
 		RsMutex ctrlMutex;
 
-//		std::list<FileInfo> incomingQueue;
-
 		std::map<std::string, ftFileControl*> mCompleted;
 		std::map<std::string, ftFileControl*> mDownloads;
 		std::vector<ftFileControl*> _queue ;
-
-		//std::map<std::string, ftTransferModule *> mTransfers;
-		//std::map<std::string, ftFileCreator *> mFileCreators;
 
 		std::string mConfigPath;
 		std::string mDownloadPath;
 		std::string mPartialsPath;
 
 		/**** SPEED QUEUES ****/
-//		std::list<std::string> mSlowQueue;
-//		std::list<std::string> mStreamQueue;
-//		std::list<std::string> mFastQueue;
 
 		/* callback list (for File Completion) */
 		RsMutex doneMutex;

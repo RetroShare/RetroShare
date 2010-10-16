@@ -63,7 +63,6 @@
  * #define CONTROL_DEBUG 1
  * #define DEBUG_DWLQUEUE 1
  *****/
-#define CONTROL_DEBUG 1
 
 static const uint32_t SAVE_TRANSFERS_DELAY 			= 61	; // save transfer progress every 61 seconds.
 static const uint32_t INACTIVE_CHUNKS_CHECK_DELAY 	= 60	; // time after which an inactive chunk is released
@@ -167,8 +166,6 @@ void ftController::addFileSource(const std::string& hash,const std::string& peer
 		{
 			it->second->mTransfer->addFileSource(peer_id);
 
-//			setPeerState(it->second.mTransfer, peer_id, rate, mConnMgr->isOnline(peer_id));
-
 #ifdef CONTROL_DEBUG
 			std::cerr << "... added." << std::endl ;
 #endif
@@ -193,8 +190,6 @@ void ftController::removeFileSource(const std::string& hash,const std::string& p
 		{
 			it->second->mTransfer->removeFileSource(peer_id);
 			it->second->mCreator->removeFileSource(peer_id);
-
-//			setPeerState(it->second.mTransfer, peer_id, rate, mConnMgr->isOnline(peer_id));
 
 #ifdef CONTROL_DEBUG
 			std::cerr << "... added." << std::endl ;
@@ -1386,10 +1381,10 @@ bool 	ftController::FileCancel(const std::string& hash)
 
 bool 	ftController::FileControl(const std::string& hash, uint32_t flags)
 {
-//#ifdef CONTROL_DEBUG
-	std::cerr << "ftController::FileControl(" << hash << ",";
-	std::cerr << flags << ")"<<std::endl;
-//#endif
+#ifdef CONTROL_DEBUG
+ std::cerr << "ftController::FileControl(" << hash << ",";
+ std::cerr << flags << ")"<<std::endl;
+#endif
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
 	/*check if the file in the download map*/
@@ -1416,7 +1411,6 @@ bool 	ftController::FileControl(const std::string& hash, uint32_t flags)
 			break;
 
 		case RS_FILE_CTRL_FORCE_CHECK:
-//			mit->second->mState = ftFileControl::CHECKING_HASH ;
 			mit->second->mTransfer->forceCheck();
 			std::cerr << "setting state to " << ftFileControl::CHECKING_HASH << std::endl ;
 			break;
