@@ -871,17 +871,22 @@ bool ftTransferModule::locked_tickPeerTransfer(peerInfo &info)
 	/* emergency shutdown if we are stuck in x 1.25 mode
 	 * probably not needed
 	 */
-  	if ((info.rttActive) && (ts - info.rttStart > FT_TM_SLOW_RTT))
-	{
-		if (info.mRateIncrease > 0)
-		{
-#ifdef FT_DEBUG
-			std::cerr << "!!! - Emergency shutdown because rttActive is true, and age is " << ts - info.rttStart << std::endl ;
-#endif
-			info.mRateIncrease = 0;
-			info.rttActive = false ; // I've added this to avoid being stuck when rttActive is true
-		}
-	}
+
+// csoler: I commented this out because that tends to make some sources 
+//  get stuck into minimal 128 B/s rate, when multiple sources are competiting into  the 
+//  same limited bandwidth. I don't think this emergency shutdown is necessary anyway.
+//
+//  	if ((info.rttActive) && (ts - info.rttStart > FT_TM_SLOW_RTT))
+//	{
+//		if (info.mRateIncrease > 0)
+//		{
+//#ifdef FT_DEBUG
+//			std::cerr << "!!! - Emergency shutdown because rttActive is true, and age is " << ts - info.rttStart << std::endl ;
+//#endif
+//			info.mRateIncrease = 0;
+//			info.rttActive = false ; // I've added this to avoid being stuck when rttActive is true
+//		}
+//	}
 
 	/* request at more than current rate */
 	uint32_t next_req = info.actualRate * (1.0 + info.mRateIncrease);
