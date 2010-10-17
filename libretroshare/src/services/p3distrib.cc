@@ -692,6 +692,10 @@ void	p3GroupDistrib::loadMsg(RsDistribSignedMsg *newMsg, std::string src, bool l
 	/* accept message */
 	(git->second).msgs[msg->msgId] = msg;
 
+	// update the time stamp of group for last post
+	if((git->second.lastPost < msg->timestamp))
+		git->second.lastPost = msg->timestamp;
+
 	/* now update parents TS */
 	locked_updateChildTS(git->second, msg);
 

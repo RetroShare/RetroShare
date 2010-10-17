@@ -23,6 +23,7 @@
 #define _CHANNEL_FEED_DIALOG_H
 
 #include <retroshare/rschannels.h>
+#include <QStandardItemModel>
 
 #include "mainpage.h"
 #include "RsAutoUpdatePage.h"
@@ -30,6 +31,8 @@
 #include "ui_ChannelFeed.h"
 
 #include "gui/feeds/FeedHolder.h"
+
+
 
 #define OWN	0
 #define SUBSCRIBED	1
@@ -78,6 +81,9 @@ private slots:
     void shareKey();
 
     void channelMsgReadSatusChanged(const QString& channelId, const QString& msgId, int status);
+    void searchChannels();
+    void searchMessages();
+    void finishSearching();
 
 private:
     void updateChannelList();
@@ -99,6 +105,30 @@ private:
     QFont itemFont;
 };
 
+class QChannelItem : public QStandardItem
+{
+
+public:
+
+	QChannelItem();
+	virtual ~QChannelItem();
+
+	/**
+	 * Allows users to set the search text for QChannel items
+	 * @param
+	 */
+	static void setSearchText(const QString& sText);
+
+	/**
+	 * reimplementing comparison operator so QChannelItems can be ordered in terms
+	 * of occurences of property searchText in its data columns
+	 */
+	bool operator<(const QStandardItem& other) const;
+
+private:
+
+	static QString searchText;
+};
 
 
 #endif

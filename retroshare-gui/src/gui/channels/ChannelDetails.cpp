@@ -100,17 +100,9 @@ void ChannelDetails::loadChannel()
 	}
     uint32_t flags = 0;	
 
-	std::list<ChannelInfo> channelList;
-	std::list<ChannelInfo>::iterator it;
-	
 	ChannelInfo ci;
 	rsChannels->getChannelInfo(cId, ci);
-
-	rsChannels->getChannelList(channelList);
-	
-	
-	for(it = channelList.begin(); it != channelList.end(); it++)
-	{
+	flags = ci.channelFlags;
 	
     // Set Channel Name
     ui.nameline->setText(QString::fromStdWString(ci.channelName));
@@ -118,14 +110,14 @@ void ChannelDetails::loadChannel()
     // Set Channel Popularity
     {
       std::ostringstream out;
-      out << it->pop;
+      out << ci.pop;
       ui.popline -> setText(QString::fromStdString(out.str()));
     }
 	
     // Set Last Channel Post Date 
     {
       QDateTime qtime;
-      qtime.setTime_t(it->lastPost);
+      qtime.setTime_t(ci.lastPost);
       QString timestamp = qtime.toString("yyyy-MM-dd hh:mm:ss");
       ui.postline -> setText(timestamp);
     }
@@ -145,10 +137,6 @@ void ChannelDetails::loadChannel()
 	{		
 		ui.typeEncrypted->setChecked(true);
         ui.typePrivate->setChecked(false);
-	}
-        
-
-	
 	}
 
 }
