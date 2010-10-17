@@ -117,6 +117,9 @@ void    p3BitDht::start()
 	std::cerr << std::endl;
 
 	mUdpBitDht->start(); /* starts up the bitdht thread */
+
+	/* switch on the dht too */
+	mUdpBitDht->startDht();
 }
 
 	/* pqiNetAssist - external interface functions */
