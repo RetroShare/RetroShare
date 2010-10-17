@@ -176,6 +176,12 @@ virtual void removeCallback(BitDhtCallback *cb) = 0;
 virtual int getDhtPeerAddress(const bdNodeId *id, struct sockaddr_in &from) = 0;
 virtual int getDhtValue(const bdNodeId *id, std::string key, std::string &value) = 0;
 
+        /* stats and Dht state */
+virtual int startDht() = 0;
+virtual int stopDht() = 0;
+virtual int stateDht() = 0; /* STOPPED, STARTING, ACTIVE, FAILED */
+virtual uint32_t statsNetworkSize() = 0;
+virtual uint32_t statsBDVersionSize() = 0; /* same version as us! */
 };
 
 #endif

@@ -41,14 +41,27 @@ bdStore::bdStore(std::string file, bdDhtFunctions *fns)
 #endif
 
 	/* read data from file */
-	mIndex = 0;
 	mStoreFile = file;
 
-	FILE *fd = fopen(file.c_str(), "r");
+	reloadFromStore();
+}
+
+int bdStore::clear()
+{
+	mIndex = 0;
+	store.clear();
+	return 1;
+}
+
+int bdStore::reloadFromStore()
+{
+	clear();
+
+	FILE *fd = fopen(mStoreFile.c_str(), "r");
 	if (!fd)
 	{
-		fprintf(stderr, "Failed to Open File: %s ... No Peers\n", file.c_str());
-		return;
+		fprintf(stderr, "Failed to Open File: %s ... No Peers\n", mStoreFile.c_str());
+		return 0;
 	}
 		
 
@@ -83,6 +96,8 @@ bdStore::bdStore(std::string file, bdDhtFunctions *fns)
 #ifdef DEBUG_STORE
 	fprintf(stderr, "Read %ld Peers\n", (long) store.size());
 #endif
+
+	return 1;
 
 }
 

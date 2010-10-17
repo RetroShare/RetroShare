@@ -97,6 +97,10 @@ class bdNode
 	bdNode(bdNodeId *id, std::string dhtVersion, std::string bootfile, 
 		bdDhtFunctions *fns);	
 
+	/* startup / shutdown node */
+	void restartNode();
+	void shutdownNode();
+
 	// virtual so manager can do callback.
 	// peer flags defined in bdiface.h
 	virtual void addPeer(const bdId *id, uint32_t peerflags);
@@ -109,6 +113,7 @@ class bdNode
 	void clearQuery(const bdNodeId *id);
 	void QueryStatus(std::map<bdNodeId, bdQueryStatus> &statusMap);
 
+	void iterationOff();
 	void iteration();
 	void processRemoteQuery();
 	void updateStore();
@@ -176,6 +181,8 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 	void printStats(std::ostream &out);	
 	void printQueries();
 
+	void resetCounters();
+	void resetStats();
 
 	protected:
 

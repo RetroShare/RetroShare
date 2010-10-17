@@ -277,3 +277,11 @@ int     bdHashSpace::cleanHashSpace(bdNodeId *min, bdNodeId *max, time_t maxAge)
 	return 1;
 }
 
+
+int     bdHashSpace::clear()
+{
+	mHashTable.clear();
+	return 1;
+}
+
+

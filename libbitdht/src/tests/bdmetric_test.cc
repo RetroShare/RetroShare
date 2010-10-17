@@ -29,8 +29,106 @@
 #include <iostream>
 #include <stdio.h>
 
+
+#include "utest.h"
+
+bool test_metric_explicit();
+bool test_metric_random();
+
+INITTEST();
+
 int main(int argc, char **argv)
 {
+        std::cerr << "libbitdht: " << argv[0] << std::endl;
+
+	test_metric_explicit();
+
+        FINALREPORT("libbitdht: Metric Tests");
+        return TESTRESULT();
+}
+
+bool test_metric_explicit()
+{
+        std::cerr << "test_metric_explicit:" << std::endl;
+
+#define NUM_IDS 6
+
+	/* create some ids */
+	bdId id[NUM_IDS];
+	int i, j;
+
+	/* create a set of known ids ... and 
+	 * check the metrics are what we expect.
+	 */
+
+	for(i = 0; i < NUM_IDS; i++)
+	{
+		bdZeroNodeId(&(id[i].id));
+	}
+
+	/* test the zero node works */
+	for(i = 0; i < NUM_IDS; i++)
+	{
+		for(j = 0; j < BITDHT_KEY_LEN; j++)
+		{
+        		CHECK(id[i].id.data[j] == 0);
+		}
+	}
+
+	for(i = 0; i < NUM_IDS; i++)
+	{
+		for(j = i; j < NUM_IDS; j++)
+		{
+			id[j].id.data[BITDHT_KEY_LEN - i - 1] = 1;
+		}
+	}
+		
+	for(i = 0; i < NUM_IDS; i++)
+	{
+		fprintf(stderr, "id[%d]:", i+1);
+		bdStdPrintId(std::cerr,&(id[i]));
+		fprintf(stderr, "\n");
+	}
+
+	/* now do the sums */
+	bdMetric met;
+	bdMetric met2;
+	int bdist = 0;
+
+	for(i = 0; i < 6; i++)
+	{
+		for(j = i+1; j < 6; j++)
+		{
+			bdStdDistance(&(id[i].id), &(id[j].id), &met);
+
+			fprintf(stderr, "%d^%d:", i, j);
+			bdStdPrintNodeId(std::cerr,&met);
+			fprintf(stderr, "\n");
+
+			bdist = bdStdBucketDistance(&met);
+			fprintf(stderr, " bucket: %d\n", bdist);
+		}
+	}
+
+#if 0
+	int c1 = met < met2;
+	int c2 = met2 < met;
+
+	fprintf(stderr, "1^2<1^3? : %d  1^3<1^2?: %d\n", c1, c2);
+#endif
+
+
+        REPORT("Test Byte Manipulation");
+        //FAILED("Couldn't Bind to socket");
+
+	return 1;
+}
+
+
+
+bool test_metric_random()
+{
+        std::cerr << "test_metric_random:" << std::endl;
 
 	/* create some ids */
 	bdId id1;

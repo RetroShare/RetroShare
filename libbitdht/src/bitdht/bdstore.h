@@ -36,6 +36,10 @@ class bdStore
 	public:
 
 	bdStore(std::string file, bdDhtFunctions *fns);
+
+int 	reloadFromStore(); /* for restarts */
+int 	clear();
+
 int 	getPeer(bdPeer *peer);
 void	addStore(bdPeer *peer);
 void	writeStore(std::string file);

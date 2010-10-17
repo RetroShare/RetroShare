@@ -70,11 +70,13 @@ class bdQueryPeer
 };
 
 
+#define BITDHT_MGR_STATE_OFF		0
 #define BITDHT_MGR_STATE_STARTUP	1
 #define BITDHT_MGR_STATE_FINDSELF	2
 #define BITDHT_MGR_STATE_ACTIVE 	3
 #define BITDHT_MGR_STATE_REFRESH 	4
 #define BITDHT_MGR_STATE_QUIET		5
+#define BITDHT_MGR_STATE_FAILED		6
 
 #define MAX_STARTUP_TIME 10
 #define MAX_REFRESH_TIME 10
@@ -112,6 +114,12 @@ virtual void removeCallback(BitDhtCallback *cb);
 virtual int getDhtPeerAddress(const bdNodeId *id, struct sockaddr_in &from);
 virtual int getDhtValue(const bdNodeId *id, std::string key, std::string &value);
 
+	/* stats and Dht state */
+virtual int startDht();
+virtual int stopDht();
+virtual int stateDht(); /* STOPPED, STARTING, ACTIVE, FAILED */
+virtual uint32_t statsNetworkSize();
+virtual uint32_t statsBDVersionSize(); /* same version as us! */
         /******************* Internals *************************/
 
 	// Overloaded from bdnode for external node callback.
@@ -139,6 +147,9 @@ void	startQueries();
 	time_t   mModeTS;
 
         bdDhtFunctions *mFns;
+
+	uint32_t mNetworkSize;
+	uint32_t mBdNetworkSize;
 
 	/* future node functions */
 	//addPeerPing(foundId);

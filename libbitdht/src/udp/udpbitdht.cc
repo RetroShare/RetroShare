@@ -131,6 +131,43 @@ int 	UdpBitDht::getDhtValue(const bdNodeId *id, std::string key, std::string &va
 	return mBitDhtManager->getDhtValue(id, key, value);
 }
 
+
+        /* stats and Dht state */
+int UdpBitDht:: startDht()
+{
+	bdStackMutex stack(dhtMtx); /********** MUTEX LOCKED *************/
+
+	return mBitDhtManager->startDht();
+}
+
+int UdpBitDht:: stopDht()
+{
+	bdStackMutex stack(dhtMtx); /********** MUTEX LOCKED *************/
+
+	return mBitDhtManager->stopDht();
+}
+
+int UdpBitDht::stateDht() 
+{
+	bdStackMutex stack(dhtMtx); /********** MUTEX LOCKED *************/
+
+	return mBitDhtManager->stateDht();
+}
+
+uint32_t UdpBitDht::statsNetworkSize()
+{
+	bdStackMutex stack(dhtMtx); /********** MUTEX LOCKED *************/
+
+	return mBitDhtManager->statsNetworkSize();
+}
+
+uint32_t UdpBitDht::statsBDVersionSize()
+{
+	bdStackMutex stack(dhtMtx); /********** MUTEX LOCKED *************/
+
+	return mBitDhtManager->statsBDVersionSize();
+}
+
         /******************* Internals *************************/
 
         /***** Iteration / Loop Management *****/

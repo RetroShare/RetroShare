@@ -76,6 +76,7 @@ int 	modify(bdNodeId *id, std::string key, bdHashEntry *entry, uint32_t modFlags
 
 int 	printHashSpace(std::ostream&);
 int     cleanHashSpace(bdNodeId *min, bdNodeId *max, time_t maxAge);
+int     clear();
 
 	private:
 

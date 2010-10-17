@@ -313,6 +313,19 @@ bdSpace::bdSpace(bdNodeId *ownId, bdDhtFunctions *fns)
 	return;
 }
 
+	/* empty the buckets */
+int     bdSpace::clear()
+{
+	std::vector<bdBucket>::iterator it;
+        /* iterate through the buckets, and sort by distance */
+        for(it = buckets.begin(); it != buckets.end(); it++)
+	{
+		it->entries.clear();
+	}
+	return 1;
+}
+
+
 int 	bdSpace::find_nearest_nodes(const bdNodeId *id, int number, std::list<bdId> /*excluding*/, std::multimap<bdMetric, bdId> &nearest)
 {
 	std::multimap<bdMetric, bdId> closest;
@@ -735,7 +748,84 @@ int     bdSpace::printDHT()
 }
 
 
-int     bdSpace::calcSizes()
+uint32_t  bdSpace::calcNetworkSize()
+{
+	std::vector<bdBucket>::iterator it;
+
+	/* little summary */
+	unsigned long long sum = 0;
+	unsigned long long no_peers = 0;
+	uint32_t count = 0;
+	bool doPrint = false;
+	bool doAvg = false;
+
+	int i = 0;
+	for(it = buckets.begin(); it != buckets.end(); it++, i++)
+	{
+		int size = it->entries.size();
+		int shift = BITDHT_KEY_BITLEN - i;
+		bool toBig = false;
+
+		if (shift > BITDHT_ULLONG_BITS - mFns->bdBucketBitSize() - 1)
+		{
+			toBig = true;
+			shift = BITDHT_ULLONG_BITS - mFns->bdBucketBitSize() - 1;
+		}
+		unsigned long long no_nets = ((unsigned long long) 1 << shift);
+
+		/* use doPrint so it acts as a single switch */
+		if (size && !doAvg && !doPrint)
+		{	
+			doAvg = true;
+		}
+
+		if (size && !doPrint)
+		{	
+			doPrint = true;
+		}
+
+		if (size == 0)
+		{
+			/* reset counters - if empty slot - to discount outliers in average */
+			sum = 0;
+			no_peers = 0;
+			count = 0;
+		}
+
+		if (!toBig)
+		{
+			no_peers = no_nets * size;
+		}
+
+		if (doPrint && doAvg && !toBig)
+		{
+			if (size == mFns->bdNodesPerBucket())
+			{
+				/* last average */
+				doAvg = false;
+			}
+			if (no_peers != 0)
+			{
+				sum += no_peers;
+				count++;	
+			}
+		}
+	}
+
+
+	uint32_t NetSize = 0;
+	if (count != 0)
+	{
+		NetSize = sum / count;
+	}
+
+	//std::cerr << "bdSpace::calcNetworkSize() : " << NetSize;
+	//std::cerr << std::endl;
+
+	return NetSize;
+}
+
+uint32_t  bdSpace::calcNetworkSizeWithFlag(uint32_t withFlag)
 {
 	std::vector<bdBucket>::iterator it;
 
@@ -750,7 +840,16 @@ int     bdSpace::calcSizes()
 	int i = 0;
 	for(it = buckets.begin(); it != buckets.end(); it++, i++)
 	{
-		int size = it->entries.size();
+		int size = 0;
+		std::list<bdPeer>::iterator lit;
+		for(lit = it->entries.begin(); lit != it->entries.end(); lit++)
+		{
+			if (withFlag & lit->mPeerFlags)
+			{
+				size++;
+			}
+		}
+
 		totalcount += size;
 
 		int shift = BITDHT_KEY_BITLEN - i;
@@ -804,31 +903,29 @@ int     bdSpace::calcSizes()
 	}
 
 
-	mLastSize = totalcount;
-	if (count == 0)
+	uint32_t NetSize = 0;
+	if (count != 0)
 	{
-		mLastNetSize = 0;
-	}
-	else
-	{
-		mLastNetSize = sum / count;
+		NetSize = sum / count;
 	}
 
-	return 1;
+	//std::cerr << "bdSpace::calcNetworkSize() : " << NetSize;
+	//std::cerr << std::endl;
+
+	return NetSize;
 }
 
-uint32_t bdSpace::size()
+
+uint32_t  bdSpace::calcSpaceSize()
 {
-	calcSizes();
-	return mLastSize;
+	std::vector<bdBucket>::iterator it;
+
+	/* little summary */
+	uint32_t totalcount = 0;
+	for(it = buckets.begin(); it != buckets.end(); it++)
+	{
+		totalcount += it->entries.size();
+	}
+	return totalcount;
 }
-
-uint32_t bdSpace::netSize()
-{
-	calcSizes();
-	return mLastNetSize;
-}
-
-
-
 

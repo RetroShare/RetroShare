@@ -61,41 +61,7 @@
 bdNode::bdNode(bdNodeId *ownId, std::string dhtVersion, std::string bootfile, bdDhtFunctions *fns)
 	:mOwnId(*ownId), mNodeSpace(ownId, fns), mStore(bootfile, fns), mDhtVersion(dhtVersion), mFns(fns)
 {
-	/* setup */
-	bdPeer peer;
-	while(mStore.getPeer(&peer))
-	{
-		addPotentialPeer(&(peer.mPeerId));
-	}
-	mCounterOutOfDatePing = 0;
-	mCounterPings = 0;
-	mCounterPongs = 0;
-	mCounterQueryNode = 0;
-	mCounterQueryHash = 0;
-	mCounterReplyFindNode = 0;
-	mCounterReplyQueryHash = 0;
-
-	mCounterRecvPing = 0;
-	mCounterRecvPong = 0;
-	mCounterRecvQueryNode = 0;
-	mCounterRecvQueryHash = 0;
-	mCounterRecvReplyFindNode = 0;
-	mCounterRecvReplyQueryHash = 0;
-
-	mLpfOutOfDatePing = 0;
-	mLpfPings = 0;
-	mLpfPongs = 0;
-	mLpfQueryNode = 0;
-	mLpfQueryHash = 0;
-	mLpfReplyFindNode = 0;
-	mLpfReplyQueryHash = 0;
-
-	mLpfRecvPing = 0;
-	mLpfRecvPong = 0;
-	mLpfRecvQueryNode = 0;
-	mLpfRecvQueryHash = 0;
-	mLpfRecvReplyFindNode = 0;
-	mLpfRecvReplyQueryHash = 0;
+	resetStats();
 }
 
 void bdNode::getOwnId(bdNodeId *id)
@@ -103,19 +69,47 @@ void bdNode::getOwnId(bdNodeId *id)
 	*id = mOwnId;
 }
 
-
-
-#if 0
-void bdNode::run()
+/***** Startup / Shutdown ******/
+void bdNode::restartNode()
 {
+	resetStats();
+
+	mStore.reloadFromStore();
+
 	/* setup */
-	while(1)
+	bdPeer peer;
+	while(mStore.getPeer(&peer))
 	{
-		iteration();
-		sleep(1);
+		addPotentialPeer(&(peer.mPeerId));
 	}
 }
-#endif
+
+
+void bdNode::shutdownNode()
+{
+	/* clear the queries */
+	mLocalQueries.clear();
+	mRemoteQueries.clear();
+
+	/* clear the space */
+	mNodeSpace.clear();
+	mHashSpace.clear();
+
+	/* clear other stuff */
+	mPotentialPeers.clear();
+	mStore.clear();
+
+	/* clean up any outgoing messages */
+	while(mOutgoingMsgs.size() > 0)
+	{
+		bdNodeNetMsg *msg = mOutgoingMsgs.front();
+		mOutgoingMsgs.pop_front();
+
+		/* cleanup message */
+		delete msg;
+	}
+}
+
 
 /* Crappy initial store... use bdspace as answer */
 void bdNode::updateStore()
@@ -153,6 +147,20 @@ void bdNode::printQueries()
 		fprintf(stderr, "Query #%d:\n", i);
 		it->printQuery();
 		fprintf(stderr, "\n\n");
+	}
+}
+
+
+void bdNode::iterationOff()
+{
+	/* clean up any incoming messages */
+	while(mIncomingMsgs.size() > 0)
+	{
+		bdNodeNetMsg *msg = mIncomingMsgs.front();
+		mIncomingMsgs.pop_front();
+
+		/* cleanup message */
+		delete msg;
 	}
 }
 
@@ -313,14 +321,6 @@ void bdNode::doStats()
 	mLpfReplyQueryHash *= (LPF_FACTOR);  	
 	mLpfReplyQueryHash += (1.0 - LPF_FACTOR) * mCounterReplyQueryHash;	
 
-	mCounterOutOfDatePing = 0;
-	mCounterPings = 0;
-	mCounterPongs = 0;
-	mCounterQueryNode = 0;
-	mCounterQueryHash = 0;
-	mCounterReplyFindNode = 0;
-	mCounterReplyQueryHash = 0;
-
 	mLpfRecvPing *= (LPF_FACTOR);  	
 	mLpfRecvPing += (1.0 - LPF_FACTOR) * mCounterRecvPing;	
 	mLpfRecvPong *= (LPF_FACTOR);  	
@@ -334,12 +334,8 @@ void bdNode::doStats()
 	mLpfRecvReplyQueryHash *= (LPF_FACTOR);  	
 	mLpfRecvReplyQueryHash += (1.0 - LPF_FACTOR) * mCounterRecvReplyQueryHash;	
 
-	mCounterRecvPing = 0;
-	mCounterRecvPong = 0;
-	mCounterRecvQueryNode = 0;
-	mCounterRecvQueryHash = 0;
-	mCounterRecvReplyFindNode = 0;
-	mCounterRecvReplyQueryHash = 0;
+
+	resetCounters();
 }
 
 void bdNode::printStats(std::ostream &out)
@@ -370,8 +366,43 @@ void bdNode::printStats(std::ostream &out)
 	out << std::endl;
 }
 
+void bdNode::resetCounters()
+{
+	mCounterOutOfDatePing = 0;
+	mCounterPings = 0;
+	mCounterPongs = 0;
+	mCounterQueryNode = 0;
+	mCounterQueryHash = 0;
+	mCounterReplyFindNode = 0;
+	mCounterReplyQueryHash = 0;
 
+	mCounterRecvPing = 0;
+	mCounterRecvPong = 0;
+	mCounterRecvQueryNode = 0;
+	mCounterRecvQueryHash = 0;
+	mCounterRecvReplyFindNode = 0;
+	mCounterRecvReplyQueryHash = 0;
+}
 
+void bdNode::resetStats()
+{
+	mLpfOutOfDatePing = 0;
+	mLpfPings = 0;
+	mLpfPongs = 0;
+	mLpfQueryNode = 0;
+	mLpfQueryHash = 0;
+	mLpfReplyFindNode = 0;
+	mLpfReplyQueryHash = 0;
+
+	mLpfRecvPing = 0;
+	mLpfRecvPong = 0;
+	mLpfRecvQueryNode = 0;
+	mLpfRecvQueryHash = 0;
+	mLpfRecvReplyFindNode = 0;
+	mLpfRecvReplyQueryHash = 0;
+
+	resetCounters();
+}
 
 
 void bdNode::checkPotentialPeer(bdId *id)
@@ -694,7 +725,7 @@ void bdNode::msgout_pong(bdId *id, bdToken *transId)
 
 	/* generate message, send to udp */
 	bdToken vid;
-	int vlen = BITDHT_TOKEN_MAX_LEN;
+	uint32_t vlen = BITDHT_TOKEN_MAX_LEN;
 	if (mDhtVersion.size() < vlen)
 	{
 		vlen = mDhtVersion.size();

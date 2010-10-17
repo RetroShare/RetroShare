@@ -66,13 +66,21 @@ int main(int argc, char **argv)
 	std::string uid;
 	bool setUid = false;
 	bool doRandomQueries = false;
+	bool doRestart = false;
+	bool doThreadJoin = false;
 
 	srand(time(NULL));
 
-	while((c = getopt(argc, argv,"p:b:u:r")) != -1)
+	while((c = getopt(argc, argv,"rjp:b:u:q")) != -1)
 	{
 		switch (c)
 		{
+			case 'r':
+				doRestart = true;
+				break;
+			case 'j':
+				doThreadJoin = true;
+				break;
 			case 'p':
 			{
 				int tmp_port = atoi(optarg);
@@ -107,7 +115,7 @@ int main(int argc, char **argv)
 				std::cerr << std::endl;
 			}
 			break;
-			case 'r':
+			case 'q':
 			{
 				doRandomQueries = true;
 				std::cerr << "Doing Random Queries";
@@ -183,9 +191,29 @@ int main(int argc, char **argv)
 
 
 	int count = 0;
+	int running = 1;
+
+	std::cerr << "Starting Dht: ";
+	std::cerr << std::endl;
+	bitdht->startDht();
+
+
 	while(1)
 	{
 		sleep(60);
+
+		std::cerr << "BitDht State: ";
+		std::cerr << bitdht->stateDht();
+		std::cerr << std::endl;
+
+		std::cerr << "Dht Network Size: ";
+		std::cerr << bitdht->statsNetworkSize();
+		std::cerr << std::endl;
+
+		std::cerr << "BitDht Network Size: ";
+		std::cerr << bitdht->statsBDVersionSize();
+		std::cerr << std::endl;
+
 		if (++count == 2)
 		{
 			/* switch to one-shot searchs */
@@ -196,10 +224,50 @@ int main(int argc, char **argv)
 		{
 			bdNodeId rndId;
 			bdStdRandomNodeId(&rndId);
+
+		std::cerr << "BitDht Launching Random Search: ";
+		bdStdPrintNodeId(std::cerr, &rndId);
+		std::cerr << std::endl;
+
 			bitdht->addFindNode(&rndId, mode);
 		}
-	}
 
+		if (doThreadJoin)
+		{
+			/* change address */
+			if (count % 2 == 0)
+			{
+
+		std::cerr << "Resetting UdpStack: ";
+		std::cerr << std::endl;
+
+				udpstack->resetAddress(local);
+			}
+		}
+		if (doRestart)
+		{
+			if (count % 2 == 1)
+			{
+				if (running)
+				{
+
+			std::cerr << "Stopping Dht: ";
+			std::cerr << std::endl;
+
+					bitdht->stopDht();
+					running = 0;
+				}
+				else
+				{
+			std::cerr << "Starting Dht: ";
+			std::cerr << std::endl;
+
+					bitdht->startDht();
+					running = 1;
+				}
+			}
+		}
+	}
 	return 1;
 }
 

@@ -54,12 +54,16 @@
  * #define DEBUG_MGR_PKT 1
  ***/
 
+
 bdNodeManager::bdNodeManager(bdNodeId *id, std::string dhtVersion, std::string bootfile, bdDhtFunctions *fns)
 	:bdNode(id, dhtVersion, bootfile, fns)
 {
-	mMode = BITDHT_MGR_STATE_STARTUP;
+	mMode = BITDHT_MGR_STATE_OFF;
 	mFns = fns;
 	mModeTS = 0 ;
+
+        mNetworkSize = 0;
+        mBdNetworkSize = 0;
 
 	/* setup a query for self */
 #ifdef DEBUG_MGR
@@ -69,6 +73,57 @@ bdNodeManager::bdNodeManager(bdNodeId *id, std::string dhtVersion, std::string b
 #endif
 }
 
+int	bdNodeManager::stopDht()
+{
+	time_t now = time(NULL);
+
+	/* clean up node */
+	shutdownNode();
+
+	/* flag queries as inactive */
+	/* check if exists already */
+	std::map<bdNodeId, bdQueryPeer>::iterator it;	
+	for(it = mActivePeers.begin(); it != mActivePeers.end(); it++)
+	{
+		it->second.mStatus = BITDHT_QUERY_READY;
+	}
+
+	/* set state flag */
+	mMode = BITDHT_MGR_STATE_OFF;
+	mModeTS = now;
+
+	return 1;
+}
+
+int	bdNodeManager::startDht()
+{
+	time_t now = time(NULL);
+
+	/* set startup mode */
+	restartNode();
+
+	mMode = BITDHT_MGR_STATE_STARTUP;
+	mModeTS = now;
+
+	return 1;
+}
+
+ /* STOPPED, STARTING, ACTIVE, FAILED */
+int 	bdNodeManager::stateDht()
+{
+	return mMode;
+}
+
+uint32_t bdNodeManager::statsNetworkSize()
+{
+        return mNetworkSize;
+}
+
+/* same version as us! */
+uint32_t bdNodeManager::statsBDVersionSize()
+{
+        return mBdNetworkSize;
+}
 
 
 void bdNodeManager::addFindNode(bdNodeId *id, uint32_t qflags)
@@ -166,6 +221,15 @@ void bdNodeManager::iteration()
 	time_t modeAge = now - mModeTS;
 	switch(mMode)
 	{
+		case BITDHT_MGR_STATE_OFF:
+			{
+#ifdef DEBUG_MGR
+				std::cerr << "bdNodeManager::iteration(): OFF";
+				std::cerr << std::endl;
+#endif
+			}
+			break;
+
 		case BITDHT_MGR_STATE_STARTUP:
 			/* 10 seconds startup .... then switch to ACTIVE */
 
@@ -189,17 +253,26 @@ void bdNodeManager::iteration()
 #define MAX_FINDSELF_TIME	60
 #define MIN_OP_SPACE_SIZE	100
 
+			{
+				uint32_t nodeSpaceSize = mNodeSpace.calcSpaceSize();
+
 #ifdef DEBUG_MGR
-			std::cerr << "bdNodeManager::iteration() Finding Oneself: NodeSpace Size:" << mNodeSpace.size();
+				std::cerr << "bdNodeManager::iteration() Finding Oneself: ";
+				std::cerr << "NodeSpace Size:" << nodeSpaceSize;
 				std::cerr << std::endl;
 #endif
 
-			if ((modeAge > MAX_FINDSELF_TIME) || 
-				(mNodeSpace.size() > MIN_OP_SPACE_SIZE))
-			{
-				//mMode = BITDHT_MGR_STATE_ACTIVE;
-				mMode = BITDHT_MGR_STATE_REFRESH;
-				mModeTS = now;
+				if (nodeSpaceSize > MIN_OP_SPACE_SIZE)
+				{
+					mMode = BITDHT_MGR_STATE_REFRESH;
+					mModeTS = now;
+				}
+
+				if (modeAge > MAX_FINDSELF_TIME) 
+				{
+					mMode = BITDHT_MGR_STATE_FAILED;
+					mModeTS = now;
+				}
 			}
 			
 			break;
@@ -253,15 +326,37 @@ void bdNodeManager::iteration()
 
 		case BITDHT_MGR_STATE_QUIET:
 			{
+#ifdef DEBUG_MGR
+				std::cerr << "bdNodeManager::iteration(): QUIET";
+				std::cerr << std::endl;
+#endif
 
 
 			}
 			break;
+
+		default:
+		case BITDHT_MGR_STATE_FAILED:
+			{
+#ifdef DEBUG_MGR
+				std::cerr << "bdNodeManager::iteration(): FAILED ==> STARTUP";
+				std::cerr << std::endl;
+#endif
+				stopDht();
+				startDht();
+			}
+			break;
 	}
 
-
-	/* tick parent */
-	bdNode::iteration();
+	if (mMode == BITDHT_MGR_STATE_OFF)
+	{
+		bdNode::iterationOff();
+	}
+	else
+	{
+		/* tick parent */
+		bdNode::iteration();
+	}
 }
 
 
@@ -271,6 +366,11 @@ int bdNodeManager::status()
 	printState();
 
 	checkStatus();
+
+	/* update the network numbers */
+	mNetworkSize = mNodeSpace.calcNetworkSize();
+	mBdNetworkSize = mNodeSpace.calcNetworkSizeWithFlag(
+					BITDHT_PEER_STATUS_DHT_APPL);
 	
 
 	return 1;
