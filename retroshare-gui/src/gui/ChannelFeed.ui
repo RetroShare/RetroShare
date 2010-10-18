@@ -247,8 +247,6 @@ p, li { white-space: pre-wrap; }
            </widget>
           </item>
          </layout>
-         <zorder>channelpushButton</zorder>
-         <zorder>postButton</zorder>
         </widget>
        </item>
        <item row="1" column="0">
@@ -351,7 +349,7 @@ border-image: url(:/images/closepressed.png)
                <string>Enter a Keyword here</string>
               </property>
               <property name="styleSheet">
-               <string notr="true">QLineEdit#lineEdit{background: transparent;
+               <string notr="true">QLineEdit#searchLine{background: transparent;
 border: none;}
 </string>
               </property>
