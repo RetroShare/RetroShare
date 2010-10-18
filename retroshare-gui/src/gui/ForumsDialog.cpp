@@ -983,15 +983,6 @@ void ForumsDialog::insertThreads()
         std::cerr << "ForumsDialog::insertThreads() Adding TopLevel Thread: mId: ";
         std::cerr << tit->msgId << std::endl;
 
-        /* add the top threads */
-        ForumMsgInfo msg;
-        if (!rsForums->getForumMessage(fId, tit->threadId, msg))
-        {
-            std::cerr << "ForumsDialog::insertThreads() Failed to Get TopLevel Msg";
-            std::cerr << std::endl;
-            continue;
-        }
-
         ForumMsgInfo msginfo;
         if (rsForums->getForumMessage(fId,tit->msgId,msginfo) == false) {
             std::cerr << "ForumsDialog::insertThreads() Failed to Get Msg";
