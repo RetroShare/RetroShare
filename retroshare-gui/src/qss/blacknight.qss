@@ -254,6 +254,10 @@ QLabel#labeltext{
     color: black;
 }
 
+QLabel#label{
+    color: black;
+}
+
 QPushButton#Folders_Button{
     color: black;
 }
@@ -279,4 +283,8 @@ QTextEdit#chattextEdit{
 QTextEdit#lineEdit{
     color: black;
     background: white;
+}
+
+QTextBrowser#postText{
+    color: white;
 }
