@@ -21,6 +21,7 @@
 
 #include <QObject>
 #include <QMessageBox>
+#include <QSplashScreen>
 #include <rshare.h>
 #ifndef MINIMAL_RSGUI
 #include "gui/MainWindow.h"
@@ -40,6 +41,7 @@
 #include "gui/connect/ConfCertDialog.h"
 #include "idle/idle.h"
 #include "gui/common/Emoticons.h"
+#include "gui/QuickStartWizard.h"
 
 /*** WINDOWS DON'T LIKE THIS - REDEFINES VER numbers.
 #include <gui/qskinobject/qskinobject.h>
@@ -83,6 +85,8 @@ int main(int argc, char *argv[])
 	Rshare rshare(args, argc, argv, 
 		QString::fromStdString(RsInit::RsConfigDirectory()));
 
+	QSplashScreen splashScreen(QPixmap(":/images/splash.png")/* , Qt::WindowStaysOnTopHint*/);
+
 	/* Login Dialog */
   	if (!okStart)
 	{
@@ -121,9 +125,13 @@ int main(int argc, char *argv[])
 			GenCertDialog gd;
 			gd.exec ();
 		}
+
+		splashScreen.show();
 	}
 	else
 	{
+		splashScreen.show();
+		splashScreen.showMessage(rshare.translate("SplashScreen", "Load profile"), Qt::AlignHCenter | Qt::AlignBottom);
 
             std::string preferredId, gpgId, gpgName, gpgEmail, sslName;
             RsInit::getPreferedAccountId(preferredId);
@@ -158,7 +166,11 @@ int main(int argc, char *argv[])
 			}
 	}
 
+	splashScreen.showMessage(rshare.translate("SplashScreen", "Load configuration"), Qt::AlignHCenter | Qt::AlignBottom);
+
 	rsicontrol->StartupRetroShare();
+
+	splashScreen.showMessage(rshare.translate("SplashScreen", "Create interface"), Qt::AlignHCenter | Qt::AlignBottom);
 
 	/* recreate global settings object, now with correct path */
 	RshareSettings::Create ();
@@ -171,7 +183,16 @@ int main(int argc, char *argv[])
 #else
 	Emoticons::load();
 
+	if (Settings->value(QString::fromUtf8("FirstRun"), true).toBool()) {
+		splashScreen.hide();
+
+		Settings->setValue(QString::fromUtf8("FirstRun"), false);
+		QuickStartWizard qstartWizard;
+		qstartWizard.exec();
+	}
+
 	MainWindow *w = MainWindow::Create ();
+	splashScreen.finish(w);
 
 	// I'm using a signal to transfer the hashing info to the mainwindow, because Qt schedules signals properly to
 	// avoid clashes between infos from threads.
@@ -214,6 +235,8 @@ int main(int argc, char *argv[])
 	if(!Settings->value(QString::fromUtf8("StartMinimized"), false).toBool())
 	{
 		w->show();
+	} else {
+		splashScreen.close();
 	}
 
 	/* Startup a Timer to keep the gui's updated */

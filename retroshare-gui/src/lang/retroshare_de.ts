@@ -856,28 +856,28 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ChanMsgItem</name>
     <message>
-        <location filename="../gui/feeds/ChanMsgItem.ui" line="+235"/>
+        <location filename="../gui/feeds/ChanMsgItem.ui" line="+357"/>
         <source>Remove Item</source>
         <translation>Eintrag entfernen</translation>
     </message>
     <message>
         <location line="+26"/>
-        <location filename="../gui/feeds/ChanMsgItem.cpp" line="+290"/>
+        <location filename="../gui/feeds/ChanMsgItem.cpp" line="+292"/>
         <source>Expand</source>
         <translation>Erweitern</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="-107"/>
         <source>Download</source>
         <translation>Herunterladen</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+16"/>
         <source>Play</source>
         <translation>Abspielen</translation>
     </message>
     <message>
-        <location line="+33"/>
+        <location line="-69"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -886,12 +886,12 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Gelesen Status umschalten</translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location line="+41"/>
         <source>New</source>
         <translation>Neu</translation>
     </message>
     <message>
-        <location line="-156"/>
+        <location line="+67"/>
         <source>Unsubscribe From Channel</source>
         <translation>Kanal abbestellen</translation>
     </message>
@@ -1009,12 +1009,32 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:600;&quot;&gt;Kanäle&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+29"/>
         <source>Add</source>
         <translation>Hinzufügen</translation>
     </message>
     <message>
-        <location line="+355"/>
+        <location line="+133"/>
+        <source>Reset</source>
+        <translation type="unfinished">Zurücksetzen</translation>
+    </message>
+    <message>
+        <location line="+43"/>
+        <source>Enter a Keyword here</source>
+        <translation type="unfinished">Geben sie einen Suchbegriff ein</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Start Search</source>
+        <translation type="unfinished">Starte Suche</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>Search</source>
+        <translation type="unfinished">Suchen</translation>
+    </message>
+    <message>
+        <location line="+269"/>
         <source>Set all to read</source>
         <translation>Alle als gelesen markieren</translation>
     </message>
@@ -1044,7 +1064,7 @@ p, li { white-space: pre-wrap; }
         <translation>Kanal abbestellen</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.cpp" line="+78"/>
+        <location filename="../gui/ChannelFeed.cpp" line="+84"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
@@ -1074,8 +1094,8 @@ p, li { white-space: pre-wrap; }
         <translation>Andere Kanäle</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.ui" line="-162"/>
-        <location filename="../gui/ChannelFeed.cpp" line="+37"/>
+        <location filename="../gui/ChannelFeed.ui" line="-303"/>
+        <location filename="../gui/ChannelFeed.cpp" line="+38"/>
         <source>Post to Channel</source>
         <translation>Kanalbeitrag erstellen</translation>
     </message>
@@ -1100,7 +1120,7 @@ p, li { white-space: pre-wrap; }
         <translation>Verteile Kanal</translation>
     </message>
     <message>
-        <location line="+236"/>
+        <location line="+281"/>
         <source>Popularity: %1
 Fetches: %2
 Available: %3</source>
@@ -1109,12 +1129,12 @@ Abgeholt: %2
 Verfügbar: %3</translation>
     </message>
     <message>
-        <location line="+125"/>
+        <location line="+126"/>
         <source>No Channel Selected</source>
         <translation>Keinen Kanal gewählt</translation>
     </message>
     <message>
-        <location line="-367"/>
+        <location line="-413"/>
         <source>Restore Publish Rights for Channel</source>
         <translation>Stelle Veröffentlichungsrechte für Kanal wieder her</translation>
     </message>
@@ -3448,7 +3468,7 @@ p, li { white-space: pre-wrap; }
         <translation>Beliebtheit:</translation>
     </message>
     <message>
-        <location line="+336"/>
+        <location line="+327"/>
         <location line="+107"/>
         <source>Anonymous</source>
         <translation>Anonym</translation>
@@ -3487,7 +3507,7 @@ p, li { white-space: pre-wrap; }
         <translation>Du kannst einem anonymen Autor nicht antworten</translation>
     </message>
     <message>
-        <location line="-1498"/>
+        <location line="-1489"/>
         <source>Your Forums</source>
         <translation>Deine Foren</translation>
     </message>
@@ -3630,7 +3650,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="+127"/>
-        <location line="+1261"/>
+        <location line="+1252"/>
         <source>Start New Thread</source>
         <translation>Erstelle neues Thema</translation>
     </message>
@@ -3658,7 +3678,7 @@ p, li { white-space: pre-wrap; }
         <translation>Inhalt</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="-1248"/>
+        <location filename="../gui/ForumsDialog.cpp" line="-1239"/>
         <location line="+3"/>
         <source>Mark as read</source>
         <translation>Als gelesen markieren</translation>
@@ -4931,7 +4951,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="+200"/>
+        <location filename="../gui/MainWindow.cpp" line="+193"/>
         <source>Network</source>
         <translation>Netzwerk</translation>
     </message>
@@ -8423,7 +8443,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../main.cpp" line="+143"/>
+        <location filename="../main.cpp" line="+151"/>
         <location line="+6"/>
         <source>Multiple instances</source>
         <translation>Mehrere Instanzen</translation>
@@ -9963,6 +9983,24 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>SplashScreen</name>
+    <message>
+        <location filename="../main.cpp" line="-29"/>
+        <source>Load profile</source>
+        <translation>Lade Profil</translation>
+    </message>
+    <message>
+        <location line="+35"/>
+        <source>Load configuration</source>
+        <translation>Lade Konfiguration</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Create interface</source>
+        <translation>Erstelle Oberfläche</translation>
+    </message>
+</context>
+<context>
     <name>StartDialog</name>
     <message>
         <location filename="../gui/StartDialog.ui" line="+435"/>
@@ -10390,33 +10428,28 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>SubFileItem</name>
     <message>
-        <location filename="../gui/feeds/SubFileItem.ui" line="+193"/>
+        <location filename="../gui/feeds/SubFileItem.ui" line="+142"/>
         <source>%p Kb</source>
         <translation>%p Kb</translation>
     </message>
     <message>
-        <location line="+65"/>
-        <source>Expand</source>
-        <translation>Erweitern</translation>
-    </message>
-    <message>
-        <location line="+26"/>
+        <location line="+117"/>
         <source>Save File</source>
         <translation>Datei speichern</translation>
     </message>
     <message>
-        <location line="-72"/>
+        <location line="-98"/>
         <source>Cancel Download</source>
         <translation>Download abbrechen</translation>
     </message>
     <message>
-        <location line="-107"/>
+        <location line="+26"/>
         <source>Download File</source>
         <translation>Datei herunterladen</translation>
     </message>
     <message>
         <location line="+26"/>
-        <location filename="../gui/feeds/SubFileItem.cpp" line="+580"/>
+        <location filename="../gui/feeds/SubFileItem.cpp" line="+573"/>
         <location line="+6"/>
         <source>Play File</source>
         <translation>Datei abspielen</translation>
@@ -10437,38 +10470,38 @@ p, li { white-space: pre-wrap; }
         <translation>Abspielen</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/SubFileItem.cpp" line="-429"/>
-        <location line="+8"/>
+        <location filename="../gui/feeds/SubFileItem.cpp" line="-422"/>
+        <location line="+7"/>
         <source>ERROR</source>
         <translation>FEHLER</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+15"/>
         <source>EXTRA</source>
         <translation>EXTRA</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+10"/>
         <source>REMOTE</source>
         <translation>ENTFERNT</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+8"/>
         <source>DOWNLOAD</source>
         <translation>DOWNLOAD</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+10"/>
         <source>LOCAL</source>
         <translation>LOKAL</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+8"/>
         <source>UPLOAD</source>
         <translation>UPLOAD</translation>
     </message>
     <message>
-        <location line="+306"/>
+        <location line="+305"/>
         <source>File %1 does not exist at location.</source>
         <translation>Datei %1 existiert nicht.</translation>
     </message>

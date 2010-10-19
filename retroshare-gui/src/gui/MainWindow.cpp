@@ -152,13 +152,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     m_bStatusLoadDone = false;
     isIdle = false;
 
-    if (Settings->value(QString::fromUtf8("FirstRun"), true).toBool())
-    {
-		Settings->setValue(QString::fromUtf8("FirstRun"), false);
-		QuickStartWizard *qstartWizard = new QuickStartWizard(this);
-		qstartWizard->exec();
-    }
-
     setWindowTitle(tr("RetroShare %1 a secure decentralised communication platform").arg(retroshareVersion()));
 
     // Setting icons

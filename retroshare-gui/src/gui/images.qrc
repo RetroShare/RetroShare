@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/" >
+        <file>images/splash.png</file>
         <file>images/attach.png</file>
         <file>images/audio-x-monkey.png</file>
         <file>images/video-x-generic.png</file>
