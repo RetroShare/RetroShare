@@ -80,6 +80,7 @@ bdQuery::bdQuery(const bdNodeId *id, std::list<bdId> &startList, uint32_t queryF
 	mState = BITDHT_QUERY_QUERYING;
 	mQueryFlags = queryFlags;
 	mQueryTS = now;
+	mSearchTime = 0;
 
 	mQueryIdlePeerRetryPeriod = QUERY_IDLE_RETRY_PEER_PERIOD;
 
@@ -227,6 +228,11 @@ int bdQuery::nextQuery(bdId &id, bdNodeId &targetNodeId)
 #endif
 
 	/* if we get here - query finished */
+	if (mState == BITDHT_QUERY_QUERYING)
+	{
+		/* store query time */
+		mSearchTime = now - mQueryTS;
+	}
 
 	/* check if we found the node */
 	if (mClosest.size() > 0)
@@ -544,15 +550,22 @@ int bdQuery::addPotentialPeer(const bdId *id, uint32_t mode)
 
 int     bdQuery::printQuery()
 {
-
+#ifdef DEBUG_QUERY 
 	fprintf(stderr, "bdQuery::printQuery()\n");
+#endif
+	
 	time_t ts = time(NULL);
 	fprintf(stderr, "Query for: ");
 	mFns->bdPrintNodeId(std::cerr, &mId);
 	fprintf(stderr, " Query State: %d", mState);
 	fprintf(stderr, " Query Age %ld secs", ts-mQueryTS);
+	if (mState >= BITDHT_QUERY_FAILURE)
+	{
+		fprintf(stderr, " Search Time: %d secs", mSearchTime);
+	}
 	fprintf(stderr, "\n");
 
+#ifdef DEBUG_QUERY 
 	fprintf(stderr, "Closest Available Peers:\n");
 	std::multimap<bdMetric, bdPeer>::iterator it;
 	for(it = mClosest.begin(); it != mClosest.end(); it++)
@@ -577,6 +590,32 @@ int     bdQuery::printQuery()
 		fprintf(stderr," LastRecv: %ld ago", ts-it->second.mLastRecvTime);
 		fprintf(stderr, "\n");
 	}
+#else
+	// shortened version.
+	fprintf(stderr, "Closest Available Peer: ");
+	std::multimap<bdMetric, bdPeer>::iterator it = mClosest.begin(); 
+	if (it != mClosest.end())
+	{
+		mFns->bdPrintId(std::cerr, &(it->second.mPeerId));
+		fprintf(stderr, "  Bucket: %d ", mFns->bdBucketDistance(&(it->first)));
+		fprintf(stderr," Found: %ld ago", ts-it->second.mFoundTime);
+		fprintf(stderr," LastSent: %ld ago", ts-it->second.mLastSendTime);
+		fprintf(stderr," LastRecv: %ld ago", ts-it->second.mLastRecvTime);
+	}
+	fprintf(stderr, "\n");
+
+	fprintf(stderr, "Closest Potential Peer: ");
+	it = mPotentialClosest.begin(); 
+	if (it != mPotentialClosest.end())
+	{
+		mFns->bdPrintId(std::cerr, &(it->second.mPeerId));
+		fprintf(stderr, "  Bucket: %d ", mFns->bdBucketDistance(&(it->first)));
+		fprintf(stderr," Found: %ld ago", ts-it->second.mFoundTime);
+		fprintf(stderr," LastSent: %ld ago", ts-it->second.mLastSendTime);
+		fprintf(stderr," LastRecv: %ld ago", ts-it->second.mLastRecvTime);
+	}
+	fprintf(stderr, "\n");
+#endif
 
 	return 1;
 }

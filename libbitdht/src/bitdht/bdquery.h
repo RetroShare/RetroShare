@@ -34,7 +34,7 @@
 /* Query result flags are in bdiface.h */
 
 #define BITDHT_MIN_QUERY_AGE		10
-#define BITDHT_MAX_QUERY_AGE		300
+#define BITDHT_MAX_QUERY_AGE		1800 /* 30 minutes */
 
 class bdQuery
 {
@@ -58,6 +58,7 @@ int 	printQuery();
 	uint32_t mState;
 	time_t mQueryTS;
 	uint32_t mQueryFlags;
+	int32_t mSearchTime;
 
 	int32_t mQueryIdlePeerRetryPeriod; // seconds between retries.
 

@@ -202,7 +202,7 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 	
 	bdHistory mHistory; /* for understanding the DHT */
 
-	std::list<bdQuery> mLocalQueries;
+	std::list<bdQuery *> mLocalQueries;
 	std::list<bdRemoteQuery> mRemoteQueries;
 
 	std::list<bdId> mPotentialPeers;

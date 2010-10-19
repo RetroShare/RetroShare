@@ -141,12 +141,12 @@ void bdNode::printQueries()
 	std::cerr << std::endl;
 
 	int i = 0;
-	std::list<bdQuery>::iterator it;
+	std::list<bdQuery *>::iterator it;
 	for(it = mLocalQueries.begin(); it != mLocalQueries.end(); it++, i++)
 	{
 		fprintf(stderr, "Query #%d:\n", i);
-		it->printQuery();
-		fprintf(stderr, "\n\n");
+		(*it)->printQuery();
+		fprintf(stderr, "\n");
 	}
 }
 
@@ -190,7 +190,59 @@ void bdNode::iteration()
 		delete msg;
 	}
 
-	int i = 0;
+
+	/* assume that this is called once per second... limit the messages 
+         * in theory, a query can generate up to 10 peers (which will all require a ping!).
+	 * we want to handle all the pings we can... so we don't hold up the process.
+	 * but we also want enough queries to keep things moving.
+	 * so allow up to 90% of messages to be pings.
+	 *
+	 * ignore responses to other peers... as the number is very small generally
+	 */
+	
+#define BDNODE_MESSAGE_RATE_HIGH 	1
+#define BDNODE_MESSAGE_RATE_MED 	2
+#define BDNODE_MESSAGE_RATE_LOW 	3
+#define BDNODE_MESSAGE_RATE_TRICKLE 	4
+	
+#define BDNODE_HIGH_MSG_RATE	100
+#define BDNODE_MED_MSG_RATE	50
+#define BDNODE_LOW_MSG_RATE	20
+#define BDNODE_TRICKLE_MSG_RATE	5
+
+	int maxMsgs = BDNODE_MED_MSG_RATE;
+	int mAllowedMsgRate = BDNODE_MESSAGE_RATE_MED;
+	
+	switch(mAllowedMsgRate)
+	{
+		case BDNODE_MESSAGE_RATE_HIGH:
+			maxMsgs = BDNODE_HIGH_MSG_RATE;
+			break;
+
+		case BDNODE_MESSAGE_RATE_MED:
+			maxMsgs = BDNODE_MED_MSG_RATE;
+			break;
+
+		case BDNODE_MESSAGE_RATE_LOW:
+			maxMsgs = BDNODE_LOW_MSG_RATE;
+			break;
+
+		case BDNODE_MESSAGE_RATE_TRICKLE:
+			maxMsgs = BDNODE_TRICKLE_MSG_RATE;
+			break;
+
+		default:
+			break;
+
+	}
+
+
+
+	int allowedPings = 0.9 * maxMsgs;
+	int sentMsgs = 0;
+	int sentPings = 0;
+
+#if 0
 	int ilim = mLocalQueries.size() * 15;
 	if (ilim < 20)
 	{
@@ -200,9 +252,9 @@ void bdNode::iteration()
 	{
 		ilim = 500;
 	}
+#endif
 
-
-	while((mPotentialPeers.size() > 0) && (i < ilim))
+	while((mPotentialPeers.size() > 0) && (sentMsgs < allowedPings))
 	{
 		/* check history ... is we have pinged them already...
 		 * then simulate / pretend we have received a pong,
@@ -211,6 +263,7 @@ void bdNode::iteration()
 
 		bdId pid = mPotentialPeers.front();	
 		mPotentialPeers.pop_front();
+
 		
 		/* don't send too many queries ... check history first */
 #ifdef USE_HISTORY
@@ -236,7 +289,9 @@ void bdNode::iteration()
 			genNewTransId(&transId);
 			//registerOutgoingMsg(&pid, &transId, BITDHT_MSG_TYPE_PING);
 			msgout_ping(&pid, &transId);
-			i++;
+		
+			sentMsgs++;
+			sentPings++;
 
 #ifdef DEBUG_NODE_MSGS 
 			std::cerr << "bdNode::iteration() Pinging Potential Peer : ";
@@ -248,11 +303,19 @@ void bdNode::iteration()
 		}
 
 	}
-
-	for(it = mLocalQueries.begin(); it != mLocalQueries.end(); it++)
+	
+	/* allow each query to send up to one query... until maxMsgs has been reached */
+	int numQueries = mLocalQueries.size();
+	int sentQueries = 0;
+	int i = 0;
+	while((i < numQueries) && (sentMsgs < maxMsgs))
 	{
+		bdQuery *query = mLocalQueries.front();
+		mLocalQueries.pop_front();
+		mLocalQueries.push_back(query);
+
 		/* go through the possible queries */
-		if (it->nextQuery(id, targetNodeId))
+		if (query->nextQuery(id, targetNodeId))
 		{
 			/* push out query */
 			bdToken transId;
@@ -269,8 +332,17 @@ void bdNode::iteration()
 			std::cerr << std::endl;
 #endif
 			mCounterQueryNode++;
+			sentMsgs++;
+			sentQueries++;
 		}
+		i++;
 	}
+	
+	std::cerr << "bdNode::iteration() maxMsgs: " << maxMsgs << " sentPings: " << sentPings;
+	std::cerr << " / " << allowedPings;
+	std::cerr << " sentQueries: " << sentQueries;
+	std::cerr << " / " << numQueries;
+	std::cerr << std::endl;
 
 	/* process remote query too */
 	processRemoteQuery();
@@ -409,10 +481,10 @@ void bdNode::checkPotentialPeer(bdId *id)
 {
 	bool isWorthyPeer = false;
 	/* also push to queries */
-	std::list<bdQuery>::iterator it;
+	std::list<bdQuery *>::iterator it;
 	for(it = mLocalQueries.begin(); it != mLocalQueries.end(); it++)
 	{
-		if (it->addPotentialPeer(id, 0))
+		if ((*it)->addPotentialPeer(id, 0))
 		{
 			isWorthyPeer = true;
 		}
@@ -444,10 +516,10 @@ void bdNode::addPeer(const bdId *id, uint32_t peerflags)
 #endif
 
 	/* iterate through queries */
-	std::list<bdQuery>::iterator it;
+	std::list<bdQuery *>::iterator it;
 	for(it = mLocalQueries.begin(); it != mLocalQueries.end(); it++)
 	{
-		it->addPeer(id, peerflags);
+		(*it)->addPeer(id, peerflags);
 	}
 
 	mNodeSpace.add_peer(id, peerflags);
@@ -511,19 +583,21 @@ void bdNode::addQuery(const bdNodeId *id, uint32_t qflags)
                 startList.push_back(it->second);
         }
 
-        bdQuery query(id, startList, qflags, mFns);
+        bdQuery *query = new bdQuery(id, startList, qflags, mFns);
 	mLocalQueries.push_back(query);
 }
 
 
 void bdNode::clearQuery(const bdNodeId *rmId)
 {
-	std::list<bdQuery>::iterator it;
+	std::list<bdQuery *>::iterator it;
 	for(it = mLocalQueries.begin(); it != mLocalQueries.end();)
 	{
-		if (it->mId == *rmId)
+		if ((*it)->mId == *rmId)
 		{
+			bdQuery *query = (*it);
 			it = mLocalQueries.erase(it);
+			delete query;
 		}
 		else
 		{
@@ -534,14 +608,14 @@ void bdNode::clearQuery(const bdNodeId *rmId)
 
 void bdNode::QueryStatus(std::map<bdNodeId, bdQueryStatus> &statusMap)
 {
-	std::list<bdQuery>::iterator it;
+	std::list<bdQuery *>::iterator it;
 	for(it = mLocalQueries.begin(); it != mLocalQueries.end(); it++)
 	{
 		bdQueryStatus status;
-		status.mStatus = it->mState;
-		status.mQFlags = it->mQueryFlags;
-		it->result(status.mResults);
-		statusMap[it->mId] = status;
+		status.mStatus = (*it)->mState;
+		status.mQFlags = (*it)->mQueryFlags;
+		(*it)->result(status.mResults);
+		statusMap[(*it)->mId] = status;
 	}
 }
 

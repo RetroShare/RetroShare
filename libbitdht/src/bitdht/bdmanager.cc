@@ -184,7 +184,9 @@ void bdNodeManager::startQueries()
 
 			uint32_t qflags = it->second.mQFlags | BITDHT_QFLAGS_DISGUISE;
 			addQuery(&(it->first), qflags); 
-			return;
+
+			// add all queries at the same time!
+			//return;
 		}
 	}
 	return;
@@ -251,16 +253,16 @@ void bdNodeManager::iteration()
 		case BITDHT_MGR_STATE_FINDSELF:
 			/* 60 seconds further startup .... then switch to ACTIVE */
 #define MAX_FINDSELF_TIME	60
-#define MIN_OP_SPACE_SIZE	100
+#define MIN_OP_SPACE_SIZE	50 /* 100 seemed hard! */
 
 			{
 				uint32_t nodeSpaceSize = mNodeSpace.calcSpaceSize();
 
 #ifdef DEBUG_MGR
+#endif
 				std::cerr << "bdNodeManager::iteration() Finding Oneself: ";
 				std::cerr << "NodeSpace Size:" << nodeSpaceSize;
 				std::cerr << std::endl;
-#endif
 
 				if (nodeSpaceSize > MIN_OP_SPACE_SIZE)
 				{
@@ -338,9 +340,9 @@ void bdNodeManager::iteration()
 		default:
 		case BITDHT_MGR_STATE_FAILED:
 			{
-#ifdef DEBUG_MGR
 				std::cerr << "bdNodeManager::iteration(): FAILED ==> STARTUP";
 				std::cerr << std::endl;
+#ifdef DEBUG_MGR
 #endif
 				stopDht();
 				startDht();

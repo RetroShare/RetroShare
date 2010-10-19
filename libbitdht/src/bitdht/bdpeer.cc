@@ -608,14 +608,16 @@ int     bdSpace::printDHT()
 	std::vector<bdBucket>::iterator it;
 	std::list<bdPeer>::iterator eit;
 
-	fprintf(stderr, "bdSpace::printDHT()\n");
 	/* iterate through the buckets, and sort by distance */
 	int i = 0;
+
+#ifdef BITDHT_DEBUG
+	fprintf(stderr, "bdSpace::printDHT()\n");
 	for(it = buckets.begin(); it != buckets.end(); it++, i++)
 	{
 		if (it->entries.size() > 0)
 		{
-		fprintf(stderr, "Bucket %d ----------------------------\n", i);
+			fprintf(stderr, "Bucket %d ----------------------------\n", i);
 		}
 
 		for(eit = it->entries.begin(); eit != it->entries.end(); eit++) 
@@ -631,8 +633,11 @@ int     bdSpace::printDHT()
 			fprintf(stderr, "\n");
 		}
 	}
+#endif
+
 	fprintf(stderr, "--------------------------------------\n");
-	fprintf(stderr, "Summary ------------------------------\n");
+	fprintf(stderr, "DHT Table Summary --------------------\n");
+	fprintf(stderr, "--------------------------------------\n");
 
 	/* little summary */
 	unsigned long long sum = 0;
