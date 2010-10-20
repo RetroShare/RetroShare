@@ -435,6 +435,9 @@ border-radius: 10px;}</string>
          <string notr="true">Long 
  message here</string>
         </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
      </layout>
@@ -456,6 +459,7 @@ border-radius: 10px;}</string>
   </layout>
  </widget>
  <resources>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
