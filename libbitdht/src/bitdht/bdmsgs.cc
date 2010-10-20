@@ -780,6 +780,7 @@ int decodeCompactPeerId(struct sockaddr_in *addr, char *enc, int len)
 	uint16_t *port = (uint16_t *) (&enc[4]);
 	addr->sin_addr.s_addr = (*ip); 
 	addr->sin_port = (*port); 
+	addr->sin_family = AF_INET;
 
 	return 1;
 }

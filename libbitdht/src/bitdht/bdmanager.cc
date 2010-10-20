@@ -251,9 +251,14 @@ void bdNodeManager::iteration()
 			break;
 
 		case BITDHT_MGR_STATE_FINDSELF:
-			/* 60 seconds further startup .... then switch to ACTIVE */
-#define MAX_FINDSELF_TIME	60
-#define MIN_OP_SPACE_SIZE	50 /* 100 seemed hard! */
+			/* 60 seconds further startup .... then switch to ACTIVE 
+			 * if we reach TRANSITION_OP_SPACE_SIZE before this time, transition immediately...
+			 * if, after 60 secs, we haven't reached MIN_OP_SPACE_SIZE, restart....
+			 */
+			
+#define MAX_FINDSELF_TIME		60
+#define TRANSITION_OP_SPACE_SIZE	100 /* 1 query / sec, should take 12-15 secs */
+#define MIN_OP_SPACE_SIZE		20 
 
 			{
 				uint32_t nodeSpaceSize = mNodeSpace.calcSpaceSize();
@@ -264,7 +269,7 @@ void bdNodeManager::iteration()
 				std::cerr << "NodeSpace Size:" << nodeSpaceSize;
 				std::cerr << std::endl;
 
-				if (nodeSpaceSize > MIN_OP_SPACE_SIZE)
+				if (nodeSpaceSize > TRANSITION_OP_SPACE_SIZE)
 				{
 					mMode = BITDHT_MGR_STATE_REFRESH;
 					mModeTS = now;
@@ -272,8 +277,16 @@ void bdNodeManager::iteration()
 
 				if (modeAge > MAX_FINDSELF_TIME) 
 				{
-					mMode = BITDHT_MGR_STATE_FAILED;
-					mModeTS = now;
+					if (nodeSpaceSize > MIN_OP_SPACE_SIZE)
+					{
+						mMode = BITDHT_MGR_STATE_REFRESH;
+						mModeTS = now;
+					}
+					else
+					{
+						mMode = BITDHT_MGR_STATE_FAILED;
+						mModeTS = now;
+					}
 				}
 			}
 			

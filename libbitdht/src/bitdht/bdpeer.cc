@@ -39,16 +39,27 @@
  * #define BITDHT_DEBUG 1
 **/
 
+void bdSockAddrInit(struct sockaddr_in *addr)
+{
+	memset(addr, 0, sizeof(struct sockaddr_in));
+	addr->sin_family = AF_INET;
+}
+
 bdId::bdId()
 {
 	/* blank everything */
-	memset(&addr, 0, sizeof(struct sockaddr_in));
+	bdSockAddrInit(&addr);
 	memset(&id.data, 0, BITDHT_KEY_LEN);
 }
 
+
 bdId::bdId(bdNodeId in_id, struct sockaddr_in in_addr)
 {
-        addr = in_addr;
+	/* this bit is to ensure the address is valid for windows / osx */
+	bdSockAddrInit(&addr);
+	addr.sin_addr.s_addr = in_addr.sin_addr.s_addr;
+	addr.sin_port = in_addr.sin_port;
+
 	for(int i = 0; i < BITDHT_KEY_LEN; i++)
 	{
 		id.data[i] = in_id.data[i];
