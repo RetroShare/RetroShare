@@ -260,6 +260,9 @@ void GraphWidget::timerEvent(QTimerEvent *event)
 {
     Q_UNUSED(event);
 
+	 if(!isVisible())
+		 return ;
+
 	 static const int S = 256 ;
 	 static double *forceMap = new double[2*S*S] ;
 
