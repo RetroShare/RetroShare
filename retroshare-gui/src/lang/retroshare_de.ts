@@ -1411,12 +1411,7 @@ Verfügbar: %3</translation>
         <translation>Peer Info</translation>
     </message>
     <message>
-        <location line="-24"/>
-        <source>Peer Details</source>
-        <translation>Peer-Details</translation>
-    </message>
-    <message>
-        <location line="+18"/>
+        <location line="-6"/>
         <source>Details</source>
         <translation>Details</translation>
     </message>
@@ -1481,7 +1476,12 @@ Verfügbar: %3</translation>
         <translation>Letzter Kontakt</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="-58"/>
+        <source>Friend Details</source>
+        <translation>Freund-Details</translation>
+    </message>
+    <message>
+        <location line="+79"/>
         <source>Version</source>
         <translation></translation>
     </message>
@@ -2412,7 +2412,12 @@ p, li { white-space: pre-wrap; }
         <translation>Vollen RetroShare Link einfügen</translation>
     </message>
     <message>
-        <location line="+78"/>
+        <location line="+29"/>
+        <source>In Reply to</source>
+        <translation>Als Antwort auf</translation>
+    </message>
+    <message>
+        <location line="+49"/>
         <source>RetroShare</source>
         <translation></translation>
     </message>

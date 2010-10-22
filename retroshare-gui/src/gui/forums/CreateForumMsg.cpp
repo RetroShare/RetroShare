@@ -97,7 +97,7 @@ void  CreateForumMsg::newMsg()
         QString subj;
         if ((mParentId != "") && (rsForums->getForumMessage(mForumId, mParentId, msg)))
         {
-            name += " In Reply to: ";
+            name += " " + tr("In Reply to") + ": ";
             name += QString::fromStdWString(msg.title);
 
             QString text = QString::fromStdWString(msg.title);
