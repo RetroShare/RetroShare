@@ -1,36 +1,41 @@
 /****************************************************************************
 **
-** Copyright (C) 2006-2007 Trolltech ASA. All rights reserved.
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Contact: Qt Software Information (qt-info@nokia.com)
 **
 ** This file is part of the example classes of the Qt Toolkit.
 **
-** This file may be used under the terms of the GNU General Public
-** License version 2.0 as published by the Free Software Foundation
-** and appearing in the file LICENSE.GPL included in the packaging of
-** this file.  Please review the following information to ensure GNU
-** General Public Licensing requirements will be met:
-** http://trolltech.com/products/qt/licenses/licensing/opensource/
+** $QT_BEGIN_LICENSE:LGPL$
+** Commercial Usage
+** Licensees holding valid Qt Commercial licenses may use this file in
+** accordance with the Qt Commercial License Agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and Nokia.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain
+** additional rights. These rights are described in the Nokia Qt LGPL
+** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
+** package.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 3.0 as published by the Free Software
+** Foundation and appearing in the file LICENSE.GPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU General Public License version 3.0 requirements will be
+** met: http://www.gnu.org/copyleft/gpl.html.
 **
 ** If you are unsure which license is appropriate for your use, please
-** review the following information:
-** http://trolltech.com/products/qt/licenses/licensing/licensingoverview
-** or contact the sales department at sales@trolltech.com.
-**
-** In addition, as a special exception, Trolltech gives you certain
-** additional rights. These rights are described in the Trolltech GPL
-** Exception version 1.0, which can be found at
-** http://www.trolltech.com/products/qt/gplexception/ and in the file
-** GPL_EXCEPTION.txt in this package.
-**
-** In addition, as a special exception, Trolltech, as the sole copyright
-** holder for Qt Designer, grants users of the Qt/Eclipse Integration
-** plug-in the right for the Qt/Eclipse Integration to link to
-** functionality provided by Qt Designer and its related libraries.
-**
-** Trolltech reserves all rights not expressly granted herein.
-**
-** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+** contact the sales department at qt-sales@nokia.com.
+** $QT_END_LICENSE$
 **
 ****************************************************************************/
 
@@ -38,27 +43,31 @@
 #define GRAPHWIDGET_H
 
 #include <QtGui/QGraphicsView>
-#include <string>
-#include <map>
-#include <stdint.h>
 
 class Node;
-class Edge;
-class Arrow;
 
 class GraphWidget : public QGraphicsView
 {
     Q_OBJECT
 
 public:
-    GraphWidget(QWidget *parent);
+    GraphWidget(QWidget * = NULL);
 
-    void itemMoved();
+	 typedef int NodeId ;
+	 typedef int EdgeId ;
 
-    bool clearGraph();
-    void addNode(uint32_t type, std::string id, std::string name);
-    void addEdge(std::string id1, std::string id2);
-    void addArrow(std::string id1, std::string id2);
+	 typedef enum  {
+		 	ELASTIC_NODE_FLAG_OWN				= 0x0001,
+			ELASTIC_NODE_FLAG_FRIEND 			= 0x0002,
+			ELASTIC_NODE_FLAG_AUTHED			= 0x0004,
+			ELASTIC_NODE_FLAG_MARGINALAUTH	= 0x0008
+	 } NodeFlags ;
+
+    virtual void itemMoved();
+	 NodeId addNode(const std::string& NodeText,uint32_t flags) ;
+	 EdgeId addEdge(NodeId n1,NodeId n2) ;
+
+	 void clearGraph() ;
 
 protected:
     void keyPressEvent(QKeyEvent *event);
@@ -70,11 +79,11 @@ protected:
 
 private:
     int timerId;
-    Node *centerNode;
+    //Node *centerNode;
+	 bool mDeterminedBB ;
 
-    std::map<std::string, Node *> nodeMap;
-    std::list<Edge *> edgeList;
-    std::list<Arrow *> arrowList;
+	 std::vector<Node *> _nodes ;
+	 std::vector<Node *> _edges ;
 };
 
 #endif

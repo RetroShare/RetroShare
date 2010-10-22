@@ -1,36 +1,41 @@
 /****************************************************************************
 **
-** Copyright (C) 2006-2007 Trolltech ASA. All rights reserved.
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Contact: Qt Software Information (qt-info@nokia.com)
 **
 ** This file is part of the example classes of the Qt Toolkit.
 **
-** This file may be used under the terms of the GNU General Public
-** License version 2.0 as published by the Free Software Foundation
-** and appearing in the file LICENSE.GPL included in the packaging of
-** this file.  Please review the following information to ensure GNU
-** General Public Licensing requirements will be met:
-** http://trolltech.com/products/qt/licenses/licensing/opensource/
+** $QT_BEGIN_LICENSE:LGPL$
+** Commercial Usage
+** Licensees holding valid Qt Commercial licenses may use this file in
+** accordance with the Qt Commercial License Agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and Nokia.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain
+** additional rights. These rights are described in the Nokia Qt LGPL
+** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
+** package.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 3.0 as published by the Free Software
+** Foundation and appearing in the file LICENSE.GPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU General Public License version 3.0 requirements will be
+** met: http://www.gnu.org/copyleft/gpl.html.
 **
 ** If you are unsure which license is appropriate for your use, please
-** review the following information:
-** http://trolltech.com/products/qt/licenses/licensing/licensingoverview
-** or contact the sales department at sales@trolltech.com.
-**
-** In addition, as a special exception, Trolltech gives you certain
-** additional rights. These rights are described in the Trolltech GPL
-** Exception version 1.0, which can be found at
-** http://www.trolltech.com/products/qt/gplexception/ and in the file
-** GPL_EXCEPTION.txt in this package.
-**
-** In addition, as a special exception, Trolltech, as the sole copyright
-** holder for Qt Designer, grants users of the Qt/Eclipse Integration
-** plug-in the right for the Qt/Eclipse Integration to link to
-** functionality provided by Qt Designer and its related libraries.
-**
-** Trolltech reserves all rights not expressly granted herein.
-**
-** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+** contact the sales department at qt-sales@nokia.com.
+** $QT_END_LICENSE$
 **
 ****************************************************************************/
 
@@ -88,6 +93,8 @@ void Edge::adjust()
 
     QLineF line(mapFromItem(source, 0, 0), mapFromItem(dest, 0, 0));
     qreal length = line.length();
+	 if(length==0.0f)
+		 length=1.0 ;
     QPointF edgeOffset((line.dx() * 10) / length, (line.dy() * 10) / length);
 
     prepareGeometryChange();
@@ -119,21 +126,48 @@ void Edge::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
     painter->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     painter->drawLine(line);
 
+	 return ;
     // Draw the arrows if there's enough room
-    double angle = ::acos(line.dx() / line.length());
-    if (line.dy() >= 0)
-        angle = TwoPi - angle;
 
-    QPointF sourceArrowP1 = sourcePoint + QPointF(sin(angle + Pi / 3) * arrowSize,
-                                                  cos(angle + Pi / 3) * arrowSize);
-    QPointF sourceArrowP2 = sourcePoint + QPointF(sin(angle + Pi - Pi / 3) * arrowSize,
-                                                  cos(angle + Pi - Pi / 3) * arrowSize);   
-    QPointF destArrowP1 = destPoint + QPointF(sin(angle - Pi / 3) * arrowSize,
-                                              cos(angle - Pi / 3) * arrowSize);
-    QPointF destArrowP2 = destPoint + QPointF(sin(angle - Pi + Pi / 3) * arrowSize,
-                                              cos(angle - Pi + Pi / 3) * arrowSize);
+	 float length = line.length() ;
+	 float cos_theta,sin_theta ;
+
+	 if(length == 0.0f)
+	 {
+		 cos_theta = 1.0f ;
+		 sin_theta = 0.0f ;
+	 }
+	 else
+	 {
+		 cos_theta = line.dx() / length ;
+		 sin_theta =-line.dy() / length ;
+	 }
+
+	 static const float cos_pi_over_3 = 0.5 ;
+	 static const float sin_pi_over_3 = 0.5 * sqrt(3) ;
+	 static const float cos_2_pi_over_3 =-0.5 ;
+	 static const float sin_2_pi_over_3 = 0.5 * sqrt(3) ;
+
+	 float cos_theta_plus_pi_over_3 = cos_theta * cos_pi_over_3 - sin_theta * sin_pi_over_3 ;
+	 float sin_theta_plus_pi_over_3 = sin_theta * cos_pi_over_3 + cos_theta * sin_pi_over_3 ;
+
+	 float cos_theta_mins_pi_over_3 = cos_theta_plus_pi_over_3 + 2 * sin_theta * sin_pi_over_3 ;
+	 float sin_theta_mins_pi_over_3 = sin_theta_plus_pi_over_3 - 2 * cos_theta * sin_pi_over_3 ;
+
+	 float cos_theta_plus_2_pi_over_3 = cos_theta * cos_2_pi_over_3 - sin_theta * sin_2_pi_over_3 ;
+	 float sin_theta_plus_2_pi_over_3 = sin_theta * cos_2_pi_over_3 + cos_theta * sin_2_pi_over_3 ;
+
+	 float cos_theta_mins_2_pi_over_3 = cos_theta_plus_2_pi_over_3 + 2 * sin_theta * sin_2_pi_over_3 ;
+	 float sin_theta_mins_2_pi_over_3 = sin_theta_plus_2_pi_over_3 - 2 * cos_theta * sin_2_pi_over_3 ;
+
+    QPointF sourceArrowP1 = sourcePoint + QPointF(  sin_theta_plus_pi_over_3 * arrowSize,   cos_theta_plus_pi_over_3 * arrowSize);
+    QPointF sourceArrowP2 = sourcePoint + QPointF(sin_theta_plus_2_pi_over_3 * arrowSize, cos_theta_plus_2_pi_over_3 * arrowSize);   
+
+    QPointF destArrowP1 = destPoint + QPointF(  sin_theta_mins_pi_over_3 * arrowSize,   cos_theta_mins_pi_over_3 * arrowSize);
+    QPointF destArrowP2 = destPoint + QPointF(sin_theta_mins_2_pi_over_3 * arrowSize, cos_theta_mins_2_pi_over_3 * arrowSize);
 
     painter->setBrush(Qt::black);
-    painter->drawPolygon(QPolygonF() << line.p1() << sourceArrowP1 << sourceArrowP2);
-    painter->drawPolygon(QPolygonF() << line.p2() << destArrowP1 << destArrowP2);        
+    painter->drawConvexPolygon(QPolygonF() << line.p1() << sourceArrowP1 << sourceArrowP2);
+    painter->drawConvexPolygon(QPolygonF() << line.p2() << destArrowP1 << destArrowP2);        
 }
+

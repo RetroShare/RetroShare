@@ -1,36 +1,41 @@
 /****************************************************************************
 **
-** Copyright (C) 2006-2007 Trolltech ASA. All rights reserved.
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Contact: Qt Software Information (qt-info@nokia.com)
 **
 ** This file is part of the example classes of the Qt Toolkit.
 **
-** This file may be used under the terms of the GNU General Public
-** License version 2.0 as published by the Free Software Foundation
-** and appearing in the file LICENSE.GPL included in the packaging of
-** this file.  Please review the following information to ensure GNU
-** General Public Licensing requirements will be met:
-** http://trolltech.com/products/qt/licenses/licensing/opensource/
+** $QT_BEGIN_LICENSE:LGPL$
+** Commercial Usage
+** Licensees holding valid Qt Commercial licenses may use this file in
+** accordance with the Qt Commercial License Agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and Nokia.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain
+** additional rights. These rights are described in the Nokia Qt LGPL
+** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
+** package.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 3.0 as published by the Free Software
+** Foundation and appearing in the file LICENSE.GPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU General Public License version 3.0 requirements will be
+** met: http://www.gnu.org/copyleft/gpl.html.
 **
 ** If you are unsure which license is appropriate for your use, please
-** review the following information:
-** http://trolltech.com/products/qt/licenses/licensing/licensingoverview
-** or contact the sales department at sales@trolltech.com.
-**
-** In addition, as a special exception, Trolltech gives you certain
-** additional rights. These rights are described in the Trolltech GPL
-** Exception version 1.0, which can be found at
-** http://www.trolltech.com/products/qt/gplexception/ and in the file
-** GPL_EXCEPTION.txt in this package.
-**
-** In addition, as a special exception, Trolltech, as the sole copyright
-** holder for Qt Designer, grants users of the Qt/Eclipse Integration
-** plug-in the right for the Qt/Eclipse Integration to link to
-** functionality provided by Qt Designer and its related libraries.
-**
-** Trolltech reserves all rights not expressly granted herein.
-**
-** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+** contact the sales department at qt-sales@nokia.com.
+** $QT_END_LICENSE$
 **
 ****************************************************************************/
 
@@ -38,25 +43,26 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
 #include <QStyleOption>
-#include <QMenu>
-
-#include "edge.h"
-#include "arrow.h"
-#include "node.h"
-#include "graphwidget.h"
-#include <math.h>
-#include "../connect/ConfCertDialog.h"
-
-#include <retroshare/rspeers.h>
-
 #include <iostream>
 
-Node::Node(GraphWidget *graphWidget, uint32_t t, std::string id_in, std::string n)
-    : graph(graphWidget), ntype(t), id(id_in), name(n),
-      mDeterminedBB(false)
+#include <math.h>
+
+#include "edge.h"
+#include "node.h"
+#include "graphwidget.h"
+
+Node::Node(const std::string& node_string,uint32_t flags,GraphWidget *graphWidget)
+    : graph(graphWidget),_desc_string(node_string),_flags(flags)
 {
     setFlag(ItemIsMovable);
+    setFlag(ItemSendsGeometryChanges);
+    setCacheMode(DeviceCoordinateCache);
     setZValue(1);
+	 mDeterminedBB = false ;
+	 mBBWidth = 0 ;
+
+	 _speedx=_speedy=0;
+	 _steps=0;
 }
 
 void Node::addEdge(Edge *edge)
@@ -70,89 +76,107 @@ QList<Edge *> Node::edges() const
     return edgeList;
 }
 
-void Node::addArrow(Arrow *arrow)
+static double interpolate(const double *map,int W,int H,float x,float y) 
 {
-    arrowList << arrow;
-    arrow->adjust();
+	if(x>W-2) x=W-2 ;
+	if(y>H-2) y=H-2 ;
+	if(x<0  ) x=0   ;
+	if(y<0  ) y=0   ;
+
+	int i=(int)floor(x) ;
+	int j=(int)floor(y) ;
+	double di = x-i ;
+	double dj = y-j ;
+
+	return (1-di)*( (1-dj)*map[2*(i+W*j)] + dj*map[2*(i+W*(j+1))])
+				+di *( (1-dj)*map[2*(i+1+W*j)] + dj*map[2*(i+1+W*(j+1))]) ;
 }
 
-QList<Arrow *> Node::arrows() const
+void Node::calculateForces(const double *map,int width,int height,int W,int H,float x,float y,float speedf)
 {
-    return arrowList;
-}
-
-void Node::calculateForces()
-{
-    if (!scene() || scene()->mouseGrabberItem() == this) {
-        newPos = pos();
-        return;
-    }
-    
-    // Sum up all forces pushing this item away
-    qreal xvel = 0;
-    qreal yvel = 0;
-    foreach (QGraphicsItem *item, scene()->items()) {
-        Node *node = qgraphicsitem_cast<Node *>(item);
-        if (!node)
-            continue;
-
-        QLineF line(mapFromItem(node, 0, 0), QPointF(0, 0));
-        qreal dx = line.dx();
-        qreal dy = line.dy();
-        double l = 2.0 * (dx * dx + dy * dy);
-        if (l > 0) {
-            xvel += (dx * 150.0) / l;
-            yvel += (dy * 150.0) / l;
-        }
-    }
+	if (!scene() || scene()->mouseGrabberItem() == this) 
+	{
+		newPos = pos();
+		return;
+	}
 
 
-    // Now subtract all forces pulling items together
-    double weight = sqrt(edgeList.size() + 1) * 10;
-    foreach (Edge *edge, edgeList) {
-        QPointF pos;
-        if (edge->sourceNode() == this)
-            pos = mapFromItem(edge->destNode(), 0, 0);
-        else
-            pos = mapFromItem(edge->sourceNode(), 0, 0);
-        xvel += pos.x() / weight;
-        yvel += pos.y() / weight;
-    }
+	// Sum up all forces pushing this item away
+	qreal xforce = 0;
+	qreal yforce = 0;
 
+	float dei=0.0f ;
+	float dej=0.0f ;
 
-    // Now subtract all forces pulling items together
-    // alternative weight??
-    weight = sqrt(arrowList.size() + 1) * 10;
-    foreach (Arrow *arrow, arrowList) {
-        QPointF pos;
-        if (arrow->sourceNode() == this)
-            pos = mapFromItem(arrow->destNode(), 0, 0);
-        else
-            pos = mapFromItem(arrow->sourceNode(), 0, 0);
-        xvel += pos.x() / weight;
-        yvel += pos.y() / weight;
-    }
+	static float *e = NULL ;
+	static const int KS = 5 ;
 
-    // push away from edges too.
-    QRectF sceneRect = scene()->sceneRect();
-    int mid_x = (sceneRect.left() + sceneRect.right()) / 2;
-    int mid_y = (sceneRect.top() + sceneRect.bottom()) / 2;
+	if(e == NULL)
+	{
+		e = new float[(2*KS+1)*(2*KS+1)] ;
 
-    if (qAbs(xvel) < 0.1 && qAbs(yvel) < 0.1)
-        xvel = yvel = 0;
+		for(int i=-KS;i<=KS;++i)
+			for(int j=-KS;j<=KS;++j)
+				e[i+KS+(2*KS+1)*(j+KS)] = exp( -(i*i+j*j)/30.0 ) ;	// can be precomputed
+	}
 
-    //newPos = pos() + QPointF(xvel, yvel);
-    // Increased the velocity for faster settling period.
-    newPos = pos() + QPointF(5 * xvel, 5 * yvel);
-    newPos.setX(qMin(qMax(newPos.x(), sceneRect.left() + 10), sceneRect.right() - 10));
-    newPos.setY(qMin(qMax(newPos.y(), sceneRect.top() + 10), sceneRect.bottom() - 10));
+	for(int i=-KS;i<=KS;++i)
+		for(int j=-KS;j<=KS;++j)
+		{
+			int X = std::min(W-1,std::max(0,(int)rint(x))) ;
+			int Y = std::min(H-1,std::max(0,(int)rint(y))) ;
 
-    if (ntype == ELASTIC_NODE_TYPE_OWN)
-    {
-	/* own one always goes in the middle */
-	newPos.setX(mid_x);
-	newPos.setY(mid_y);
-    }
+			float val = map[2*((i+X)%W + W*((j+Y)%H))] ;
+
+			dei += i * e[i+KS+(2*KS+1)*(j+KS)] * val ;
+			dej += j * e[i+KS+(2*KS+1)*(j+KS)] * val ;
+		}
+
+	xforce = REPULSION_FACTOR * dei/25.0;
+	yforce = REPULSION_FACTOR * dej/25.0;
+
+	// Now subtract all forces pulling items together
+	double weight = (edgeList.size() + 1) ;
+	foreach (Edge *edge, edgeList) {
+		QPointF pos;
+		if (edge->sourceNode() == this)
+			pos = mapFromItem(edge->destNode(), 0, 0);
+		else
+			pos = mapFromItem(edge->sourceNode(), 0, 0);
+
+		float dist = sqrtf(pos.x()*pos.x() + pos.y()*pos.y()) ;
+		float val = dist - NODE_DISTANCE ;
+
+		xforce += 0.01*pos.x() * val / weight;
+		yforce += 0.01*pos.y() * val / weight;
+	}
+
+	static const float friction = 0.4 ;
+
+	xforce -= FRICTION_FACTOR * _speedx ;
+	yforce -= FRICTION_FACTOR * _speedy ;
+
+	// This term drags nodes away from the sides.
+	//
+	if(x < 15) xforce += 100.0/(x+0.1) ;
+	if(y < 15) yforce += 100.0/(y+0.1) ;
+	if(x > width-15) xforce -= 100.0/(width-x+0.1) ;
+	if(y > height-15) yforce -= 100.0/(height-y+0.1) ;
+
+	// now time filter:
+
+	_speedx += xforce / MASS_FACTOR;
+	_speedy += yforce / MASS_FACTOR;
+
+	if(_speedx > 10) _speedx = 10.0f ;
+	if(_speedy > 10) _speedy = 10.0f ;
+	if(_speedx <-10) _speedx =-10.0f ;
+	if(_speedy <-10) _speedy =-10.0f ;
+
+	QRectF sceneRect = scene()->sceneRect();
+	newPos = pos() + QPointF(_speedx, _speedy);
+	newPos.setX(qMin(qMax(newPos.x(), sceneRect.left() + 10), sceneRect.right() - 10));
+	newPos.setY(qMin(qMax(newPos.y(), sceneRect.top() + 10), sceneRect.bottom() - 10));
 }
 
 bool Node::advance()
@@ -166,7 +190,7 @@ bool Node::advance()
 
 QRectF Node::boundingRect() const
 {
-    qreal adjust = 2;
+	    qreal adjust = 2;
     /* add in the size of the text */
     qreal realwidth = 40;
     if (mDeterminedBB)
@@ -180,75 +204,69 @@ QRectF Node::boundingRect() const
 
     return QRectF(-10 - adjust, -10 - adjust,
                   realwidth, 23 + adjust);
-                 // 23 + adjust, 23 + adjust);
 }
 
-
-//QPainterPath Node::shape() const
-//{
-//    QPainterPath path;
-//    path.addEllipse(-10, -10, 20, 20);
-//    return path;
-//}
+QPainterPath Node::shape() const
+{
+    QPainterPath path;
+    path.addEllipse(-10, -10, 20, 20);
+    return path;
+}
 
 void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)
 {
-    painter->setPen(Qt::NoPen);
-    painter->setBrush(Qt::darkGray);
-    painter->drawEllipse(-7, -7, 20, 20);
+	painter->setPen(Qt::NoPen);
+	painter->setBrush(Qt::darkGray);
+	painter->drawEllipse(-7, -7, 20, 20);
 
-    QColor col0, col1;
-    if (ntype == ELASTIC_NODE_TYPE_OWN)
-    {
-    	col0 = QColor(Qt::yellow);
-    	col1 = QColor(Qt::darkYellow);
-    }
-    else if (ntype == ELASTIC_NODE_TYPE_FRIEND)
-    {
-    	col0 = QColor(Qt::green);
-    	col1 = QColor(Qt::darkGreen);
-    }
-    else if (ntype == ELASTIC_NODE_TYPE_AUTHED)
-    {
-    	//col0 = QColor(Qt::cyan);
-    	//col1 = QColor(Qt::darkCyan);
-    	//col0 = QColor(Qt::blue);
+	QColor col0, col1;
+	if (_flags & GraphWidget::ELASTIC_NODE_FLAG_OWN)
+	{
+		col0 = QColor(Qt::yellow);
+		col1 = QColor(Qt::darkYellow);
+	}
+	else if (_flags & GraphWidget::ELASTIC_NODE_FLAG_FRIEND)
+	{
+		col0 = QColor(Qt::green);
+		col1 = QColor(Qt::darkGreen);
+	}
+	else if (_flags & GraphWidget::ELASTIC_NODE_FLAG_AUTHED)
+	{
+		col0 = QColor(Qt::cyan);
+		col1 = QColor(Qt::darkBlue);
+	}
+	else if (_flags & GraphWidget::ELASTIC_NODE_FLAG_MARGINALAUTH)
+	{
+		col0 = QColor(Qt::magenta);
+		col1 = QColor(Qt::darkMagenta);
+	}
+	else
+	{
+		col0 = QColor(Qt::red);
+		col1 = QColor(Qt::darkRed);
+	}
 
-    	col0 = QColor(Qt::cyan);
-    	col1 = QColor(Qt::darkBlue);
-    }
-    else if (ntype == ELASTIC_NODE_TYPE_MARGINALAUTH)
-    {
-    	col0 = QColor(Qt::magenta);
-    	col1 = QColor(Qt::darkMagenta);
-    }
-    else
-    {
-    	col0 = QColor(Qt::red);
-    	col1 = QColor(Qt::darkRed);
-    }
+	QRadialGradient gradient(-3, -3, 10);
+	if (option->state & QStyle::State_Sunken) {
+		gradient.setCenter(3, 3);
+		gradient.setFocalPoint(3, 3);
+		gradient.setColorAt(1, col0.light(120));
+		gradient.setColorAt(0, col1.light(120));
+	} else {
+		gradient.setColorAt(0, col0);
+		gradient.setColorAt(1, col1);
+	}
+	painter->setBrush(gradient);
+	painter->setPen(QPen(Qt::black, 0));
+	painter->drawEllipse(-10, -10, 20, 20);
+	painter->drawText(-10, 0, QString::fromStdString(_desc_string));
 
-    QRadialGradient gradient(-3, -3, 10);
-    if (option->state & QStyle::State_Sunken) {
-        gradient.setCenter(3, 3);
-        gradient.setFocalPoint(3, 3);
-        gradient.setColorAt(1, col0.light(120));
-        gradient.setColorAt(0, col1.light(120));
-    } else {
-        gradient.setColorAt(0, col0);
-        gradient.setColorAt(1, col1);
-    }
-    painter->setBrush(gradient);
-    painter->setPen(QPen(Qt::black, 0));
-    painter->drawEllipse(-10, -10, 20, 20);
-    painter->drawText(-10, 0, QString::fromStdString(name));
-
-    if (!mDeterminedBB)
-    {
-    	QRect textBox = painter->boundingRect(-10, 0, 400, 20, 0, QString::fromStdString(name));
-	mBBWidth = textBox.width();
-	mDeterminedBB = true;
-    }
+	if (!mDeterminedBB)
+	{
+		QRect textBox = painter->boundingRect(-10, 0, 400, 20, 0, QString::fromStdString(_desc_string));
+		mBBWidth = textBox.width();
+		mDeterminedBB = true;
+	}
 }
 
 QVariant Node::itemChange(GraphicsItemChange change, const QVariant &value)
@@ -257,8 +275,6 @@ QVariant Node::itemChange(GraphicsItemChange change, const QVariant &value)
     case ItemPositionHasChanged:
         foreach (Edge *edge, edgeList)
             edge->adjust();
-        foreach (Arrow *arrow, arrowList)
-            arrow->adjust();
         graph->itemMoved();
         break;
     default:
@@ -279,195 +295,3 @@ void Node::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     update();
     QGraphicsItem::mouseReleaseEvent(event);
 }
-
-void Node::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
-{
-	RsPeerDetails details;
-	if (!rsPeers->getPeerDetails(id, details))
-	{
-		event->accept();
-		return;
-	}
-
-	/* no events for self */	
-#if 0
-	if (ntype == ELASTIC_NODE_TYPE_OWN) 
-	{
-		event->accept();
-		return;
-	}
-#endif
-
-	QString menuTitle = QString::fromStdString(details.name);
-	menuTitle += " : ";
-
-	std::cerr << "Node Menu for " << details.name << std::endl;	
-
-	QMenu menu;
-
-     switch(ntype)
-	{
-		case ELASTIC_NODE_TYPE_OWN:
-		{
-			menuTitle += "Ourselves";
-			break;
-		}
-		case ELASTIC_NODE_TYPE_FRIEND:
-		{
-			menuTitle += "Friend";
-			break;
-		}
-		case ELASTIC_NODE_TYPE_AUTHED:
-		{
-			menuTitle += "Authenticated";
-			break;
-		}
-		case ELASTIC_NODE_TYPE_MARGINALAUTH:
-		{
-			menuTitle += "Friend of a Friend";
-			break;
-		}
-		default:
-		case ELASTIC_NODE_TYPE_FOF:
-		{
-			menuTitle += " Unknown";
-			break;
-		}
-	}
-
-     	QAction *titleAction = menu.addAction(menuTitle);
-	titleAction->setEnabled(false);
-	menu.addSeparator();
-
-	/* find all the peers which have this pgp peer as issuer */
-	std::list<std::string> ids;
-	std::list<std::string>::iterator it;
-	bool haveSSLcerts = false;
-
-	if ((ntype ==  ELASTIC_NODE_TYPE_AUTHED) || 	
-		(ntype ==  ELASTIC_NODE_TYPE_FRIEND) || 	
-			(ntype ==  ELASTIC_NODE_TYPE_OWN)) 	
-	{
-                rsPeers->getFriendList(ids);
-
-    		QAction *addAction = menu.addAction("Add All as Friends");
-     		QAction *rmAction = menu.addAction("Remove All as Friends");
-
-		std::cerr << "OthersList looking for ::Issuer " << id << std::endl;	
-		int nssl = 0;
-		for(it = ids.begin(); it != ids.end(); it++)
-		{
-			RsPeerDetails d2;
-	        	if (!rsPeers->getPeerDetails(*it, d2))
-				continue;
-
-			std::cerr << "OthersList::Id " << d2.id;
-			std::cerr << " ::Issuer " << d2.issuer << std::endl;	
-			if (d2.issuer == id)
-			{
-				QString sslTitle = "     SSL ID: ";
-				sslTitle += QString::fromStdString(d2.location);
-	
-				if (RS_PEER_STATE_FRIEND & d2.state)
-				{
-					sslTitle += " Allowed";
-				}
-				else
-				{
-					sslTitle += " Denied";
-				}
-
-				QMenu *sslMenu =  menu.addMenu (sslTitle);
-				if (RS_PEER_STATE_FRIEND & d2.state)
-				{
-					sslMenu->addAction("Deny");
-				}
-				else
-				{
-					sslMenu->addAction("Allow");
-				}
-				nssl++;
-			}
-		}
-
-		if (nssl > 0)
-		{
-			menu.addSeparator();
-			haveSSLcerts = true;
-		}
-		else
-		{
-			addAction->setVisible(false);
-			rmAction->setVisible(false);
-
-    			QAction *noAction = menu.addAction("No SSL Certificates for Peer");
-			noAction->setEnabled(false);
-			menu.addSeparator();
-		}
-	}
-	
-
-     switch(ntype)
-	{
-		case ELASTIC_NODE_TYPE_OWN:
-		{
-			break;
-		}
-		case ELASTIC_NODE_TYPE_FRIEND:
-		{
-			menu.addAction("Chat");
-			menu.addAction("Msg");
-			menu.addSeparator();
-			menu.addAction("Connect");
-			menu.addSeparator();
-			break;
-		}
-		case ELASTIC_NODE_TYPE_AUTHED:
-		{
-			break;
-		}
-		case ELASTIC_NODE_TYPE_MARGINALAUTH:
-		{
-			if (haveSSLcerts)
-			{
-				menu.addAction("Sign Peer and Add Friend");
-				menu.addSeparator();
-			}
-			else
-			{
-				menu.addAction("Sign Peer to Authenticate");
-				menu.addSeparator();
-			}
-			break;
-		}
-		default:
-		case ELASTIC_NODE_TYPE_FOF:
-		{
-			if (haveSSLcerts)
-			{
-				menu.addAction("Sign Peer and Add Friend");
-				menu.addSeparator();
-			}
-			else
-			{
-				menu.addAction("Sign Peer to Authenticate");
-				menu.addSeparator();
-			}
-			break;
-		}
-	}
-
-     QAction *detailAction = menu.addAction("Peer Details");
-     QObject::connect( detailAction , SIGNAL( triggered() ), this, SLOT( peerdetails() ) );
-     connect( detailAction , SIGNAL( triggered() ), this, SLOT( peerdetails() ) );
-
-     menu.addAction("Export Certificate");
-
-     menu.exec(event->screenPos());
-} 
-
-void Node::peerdetails()
-{
-         ConfCertDialog::show(id);
-}
-

@@ -36,18 +36,18 @@ NetworkView::NetworkView(QWidget *parent)
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
 
-  //mScene = new QGraphicsScene();
-  //ui.graphicsView->setScene(mScene);
+  mScene = new QGraphicsScene();
+  ui.graphicsView->setScene(mScene);
 
   /* add button */
   connect( ui.refreshButton, SIGNAL( clicked( void ) ), this, SLOT( insertPeers( void ) ) );
-  //connect( mScene, SIGNAL( changed ( const QList<QRectF> & ) ), this, SLOT ( changedScene( void ) ) );
+  connect( mScene, SIGNAL( changed ( const QList<QRectF> & ) ), this, SLOT ( changedScene( void ) ) );
 
-    /* Hide Settings frame */
-    shownwSettingsFrame(false);
-    connect( ui.nviewsettingsButton, SIGNAL(toggled(bool)), this, SLOT(shownwSettingsFrame(bool)));
-    
-    insertPeers();
+  /* Hide Settings frame */
+  shownwSettingsFrame(false);
+  connect( ui.nviewsettingsButton, SIGNAL(toggled(bool)), this, SLOT(shownwSettingsFrame(bool)));
+
+  insertPeers();
 
 
   /* hide the Tree +/- */
@@ -86,7 +86,7 @@ void  NetworkView::clearPeerItems()
 
 	for(pit = mPeerItems.begin(); pit != mPeerItems.end(); pit++)
 	{
-		//mScene->destroyItemGroup((QGraphicsItemGroup *) pit->second);
+		mScene->destroyItemGroup((QGraphicsItemGroup *) pit->second);
 	}
 	mPeerItems.clear();
 }
@@ -98,7 +98,7 @@ void  NetworkView::clearOtherItems()
 
 	for(oit = mOtherItems.begin(); oit != mOtherItems.end(); oit++)
 	{
-		//mScene->removeItem(*oit);
+		mScene->removeItem(*oit);
 		delete (*oit);
 	}
 	mOtherItems.clear();
@@ -111,7 +111,7 @@ void  NetworkView::clearLineItems()
 
 	for(oit = mLineItems.begin(); oit != mLineItems.end(); oit++)
 	{
-		//mScene->removeItem(*oit);
+		mScene->removeItem(*oit);
 		delete (*oit);
 	}
 	mLineItems.clear();
@@ -126,77 +126,100 @@ void  NetworkView::insertPeers()
 	/* add all friends */
 	std::list<std::string> ids;
 	std::list<std::string>::iterator it;
-        rsPeers->getGPGAllList(ids);
-        std::string ownId = rsPeers->getGPGOwnId();
+
+	std::string ownId = rsPeers->getGPGOwnId();
+	RsPeerDetails detail ;
+
+	if(!rsPeers->getPeerDetails(ownId,detail))
+		return ;
+
+	ids = detail.gpgSigners ;
 
 	std::cerr << "NetworkView::insertPeers()" << std::endl;
 
-	/* get the list of friends' issuers, as we flag them specially */
-	std::list<std::string> fids;
-        //rsPeers->getPGPFriendList(fids);
-	
-
 	int i = 0;
-	uint32_t type = 0;
+	uint32_t flags = 0;
+
+	std::map<std::string,GraphWidget::NodeId> node_ids ;
+
 	for(it = ids.begin(); it != ids.end(); it++, i++)
 	{
 		if (*it == ownId)
-		{
-			continue;
-		}
+			flags |= GraphWidget::ELASTIC_NODE_FLAG_OWN ;
 
 		/* *** */
-                RsPeerDetails detail;
 		if (!rsPeers->getPeerDetails(*it, detail))
 		{
 			continue;
 		}
 		switch(detail.validLvl)
 		{
-			default:
 			case GPGME_VALIDITY_UNKNOWN:
 			case GPGME_VALIDITY_UNDEFINED: 
 			case GPGME_VALIDITY_NEVER:
 				/* lots of fall through */
-				type = ELASTIC_NODE_TYPE_FOF;
 				break;
 
 			case GPGME_VALIDITY_MARGINAL:
 				/* lots of fall through */
-				type = ELASTIC_NODE_TYPE_MARGINALAUTH;
+				flags |= GraphWidget::ELASTIC_NODE_FLAG_MARGINALAUTH;
 				break;
 
 
 			case GPGME_VALIDITY_FULL:
 			case GPGME_VALIDITY_ULTIMATE:
 				/* lots of fall through */
-				type = ELASTIC_NODE_TYPE_AUTHED;
-
-				if (fids.end() != std::find(fids.begin(), fids.end(), *it))
-				{
-					type = ELASTIC_NODE_TYPE_FRIEND;
-				}	
+				flags |= GraphWidget::ELASTIC_NODE_FLAG_AUTHED;
 				break;
+
+			default: 
+				break ;
 		}
-  		ui.graphicsView->addNode(type, *it, detail.name);
+
+		node_ids[*it] = ui.graphicsView->addNode("       "+detail.name+"@"+*it,flags);
 
 		std::cerr << "NetworkView::insertPeers() Added Friend: " << *it << std::endl;
 	}
 
-	insertConnections();
-	insertSignatures();
+	/* iterate through all friends */
+
+	std::cerr << "NetworkView::insertSignatures()" << std::endl;
+
+	for(it = ids.begin(); it != ids.end(); it++, i++)
+	{
+		RsPeerDetails detail;
+		if (!rsPeers->getPeerDetails(*it, detail))
+		{
+			continue;
+		}
+
+		for(std::list<std::string>::const_iterator sit(detail.gpgSigners.begin()); sit != detail.gpgSigners.end(); sit++)
+		{
+			if ((*it == ownId || *sit == ownId) && *it < *sit)
+			{
+				std::cerr << "NetworkView: Adding Arrow: ";
+				std::cerr << *sit << " <-> " << *it;
+				std::cerr << std::endl;
+
+				if(node_ids.find(*sit) != node_ids.end())
+					ui.graphicsView->addEdge(node_ids[*sit], node_ids[*it]);
+			}
+		}
+	}
+
 }
 
 
 void  NetworkView::insertConnections()
 {
+#if 0
 	/* iterate through all friends */
 	std::list<std::string> fids, ids;
 	std::list<std::string>::iterator it;
 
-	//std::string ownId = rsPeers->getGPGOwnId();
- 	//rsPeers->getPGPAllList(ids);
-        //rsPeers->getPGPFriendList(fids);
+	std::string ownId = rsPeers->getGPGOwnId();
+ 	rsPeers->getPGPAllList(ids);
+	rsPeers->getPGPFriendList(fids);
 
 	std::cerr << "NetworkView::insertConnections()" << std::endl;
 
@@ -208,7 +231,6 @@ void  NetworkView::insertConnections()
 		std::cerr << std::endl;
 	}
 
-#if 0
 	int i = 0;
 	for(it = ids.begin(); it != ids.end(); it++, i++)
 	{
@@ -267,37 +289,6 @@ void  NetworkView::insertConnections()
 
 void  NetworkView::insertSignatures()
 {
-	/* iterate through all friends */
-	std::list<std::string> ids;
-	std::list<std::string>::iterator it, sit;
-        std::string ownId = rsPeers->getGPGOwnId();
-
-        rsPeers->getGPGAllList(ids);
-
-	std::cerr << "NetworkView::insertSignatures()" << std::endl;
-
-	int i = 0;
-	for(it = ids.begin(); it != ids.end(); it++, i++)
-	{
-		RsPeerDetails detail;
-		if (!rsPeers->getPeerDetails(*it, detail))
-		{
-			continue;
-		}
-
-                for(sit = detail.gpgSigners.begin(); sit != detail.gpgSigners.end(); sit++)
-		{
-
-				if (*it != *sit)
-				{
-					std::cerr << "NetworkView: Adding Arrow: ";
-					std::cerr << *sit << " <-> " << *it;
-					std::cerr << std::endl;
-
-  					ui.graphicsView->addArrow(*sit, *it);
-				}
-		}
-	}
 }
 
 void  NetworkView::changedScene()

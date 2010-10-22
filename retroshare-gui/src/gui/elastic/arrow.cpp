@@ -50,8 +50,10 @@ Arrow::Arrow(Node *sourceNode, Node *destNode)
     setAcceptedMouseButtons(0);
     source = sourceNode;
     dest = destNode;
+#ifdef SUSP
     source->addArrow(this);
     dest->addArrow(this);
+#endif
     adjust();
 }
 

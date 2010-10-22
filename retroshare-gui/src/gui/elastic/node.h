@@ -1,36 +1,41 @@
 /****************************************************************************
 **
-** Copyright (C) 2006-2007 Trolltech ASA. All rights reserved.
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Contact: Qt Software Information (qt-info@nokia.com)
 **
 ** This file is part of the example classes of the Qt Toolkit.
 **
-** This file may be used under the terms of the GNU General Public
-** License version 2.0 as published by the Free Software Foundation
-** and appearing in the file LICENSE.GPL included in the packaging of
-** this file.  Please review the following information to ensure GNU
-** General Public Licensing requirements will be met:
-** http://trolltech.com/products/qt/licenses/licensing/opensource/
+** $QT_BEGIN_LICENSE:LGPL$
+** Commercial Usage
+** Licensees holding valid Qt Commercial licenses may use this file in
+** accordance with the Qt Commercial License Agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and Nokia.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain
+** additional rights. These rights are described in the Nokia Qt LGPL
+** Exception version 1.0, included in the file LGPL_EXCEPTION.txt in this
+** package.
+**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 3.0 as published by the Free Software
+** Foundation and appearing in the file LICENSE.GPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU General Public License version 3.0 requirements will be
+** met: http://www.gnu.org/copyleft/gpl.html.
 **
 ** If you are unsure which license is appropriate for your use, please
-** review the following information:
-** http://trolltech.com/products/qt/licenses/licensing/licensingoverview
-** or contact the sales department at sales@trolltech.com.
-**
-** In addition, as a special exception, Trolltech gives you certain
-** additional rights. These rights are described in the Trolltech GPL
-** Exception version 1.0, which can be found at
-** http://www.trolltech.com/products/qt/gplexception/ and in the file
-** GPL_EXCEPTION.txt in this package.
-**
-** In addition, as a special exception, Trolltech, as the sole copyright
-** holder for Qt Designer, grants users of the Qt/Eclipse Integration
-** plug-in the right for the Qt/Eclipse Integration to link to
-** functionality provided by Qt Designer and its related libraries.
-**
-** Trolltech reserves all rights not expressly granted herein.
-**
-** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+** contact the sales department at qt-sales@nokia.com.
+** $QT_END_LICENSE$
 **
 ****************************************************************************/
 
@@ -38,67 +43,53 @@
 #define NODE_H
 
 #include <QGraphicsItem>
-#include <stdint.h>
+#include <QList>
 
-#define ELASTIC_NODE_TYPE_OWN		1
-#define ELASTIC_NODE_TYPE_FRIEND	2
-#define ELASTIC_NODE_TYPE_AUTHED	3
-#define ELASTIC_NODE_TYPE_MARGINALAUTH	4
-#define ELASTIC_NODE_TYPE_FOF		5
+#include "graphwidget.h"
 
 class Edge;
-class Arrow;
-class GraphWidget;
+QT_BEGIN_NAMESPACE
 class QGraphicsSceneMouseEvent;
+QT_END_NAMESPACE
 
-class Node : public QObject, public QGraphicsItem
+class Node : public QGraphicsItem
 {
-  Q_OBJECT
-
-
 public:
-    Node(GraphWidget *graphWidget, uint32_t t, std::string id_in, std::string n);
+    Node(const std::string& node_string,uint32_t flags,GraphWidget *graphWidget);
 
     void addEdge(Edge *edge);
     QList<Edge *> edges() const;
 
-    void addArrow(Arrow *arrow);
-    QList<Arrow *> arrows() const;
-
-    enum { Type = UserType + 1 };
     int type() const { return Type; }
 
-    void calculateForces();
+    void calculateForces(const double *data,int width,int height,int W,int H,float x,float y,float speedf);
     bool advance();
 
     QRectF boundingRect() const;
-    //QPainterPath shape() const;
+    QPainterPath shape() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
-public slots:
-	void peerdetails();
-
 protected:
-    QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+    virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-    void contextMenuEvent(QGraphicsSceneContextMenuEvent *event); 
-
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    
 private:
     QList<Edge *> edgeList;
-    QList<Arrow *> arrowList;
     QPointF newPos;
     GraphWidget *graph;
+	 qreal _speedx,_speedy;
+	 int _steps ;
+	 std::string _desc_string ;
+	 uint32_t _flags ;
+	 bool mDeterminedBB ;
+	 int mBBWidth ;
 
-    /* extra information */
-	uint32_t ntype; /* Ourself, friend, fof */
-	std::string id;
-	std::string name;
-
-    bool mDeterminedBB;
-    uint32_t mBBWidth;
-
+	 static const float MASS_FACTOR = 10 ;
+	 static const float FRICTION_FACTOR = 6.8 ;
+	 static const float REPULSION_FACTOR = 4 ;
+	 static const float NODE_DISTANCE = 130.0 ;
 };
 
 #endif
