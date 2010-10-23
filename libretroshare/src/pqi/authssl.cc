@@ -53,7 +53,7 @@
  * #define AUTHSSL_DEBUG 1
  ***/
 
-// initialisation du pointeur de singleton Ã  zÃ©ro
+// initialisation du pointeur de singleton à zéro
 static AuthSSL *instance_ssl = NULL;
 
 /* hidden function - for testing purposes() */
@@ -971,7 +971,10 @@ bool    AuthSSLimpl::encrypt(void *&out, int &outlen, const void *in, int inlen,
         int max_outlen = inlen + cipher_block_size + EVP_MAX_IV_LENGTH + max_evp_key_size + size_net_ekl;
 
         // intialize context and send store encrypted cipher in ek
-    	if(!EVP_SealInit(&ctx, EVP_aes_128_cbc(), &ek, &eklen, iv, &public_key, 1)) return false;
+        if(!EVP_SealInit(&ctx, EVP_aes_128_cbc(), &ek, &eklen, iv, &public_key, 1)) {
+            free(ek);
+            return false;
+        }
 
     	// now assign memory to out accounting for data, and cipher block size, key length, and key length val
         out = new unsigned char[inlen + cipher_block_size + size_net_ekl + eklen + EVP_MAX_IV_LENGTH];
@@ -987,13 +990,23 @@ bool    AuthSSLimpl::encrypt(void *&out, int &outlen, const void *in, int inlen,
     	out_offset += EVP_MAX_IV_LENGTH;
 
     	// now encrypt actual data
-    	if(!EVP_SealUpdate(&ctx, (unsigned char*) out + out_offset, &out_currOffset, (unsigned char*) in, inlen)) return false;
+        if(!EVP_SealUpdate(&ctx, (unsigned char*) out + out_offset, &out_currOffset, (unsigned char*) in, inlen)) {
+            free(ek);
+            delete[] (unsigned char*) out;
+            out = NULL;
+            return false;
+        }
 
     	// move along to partial block space
     	out_offset += out_currOffset;
 
     	// add padding
-    	if(!EVP_SealFinal(&ctx, (unsigned char*) out + out_offset, &out_currOffset)) return false;
+        if(!EVP_SealFinal(&ctx, (unsigned char*) out + out_offset, &out_currOffset)) {
+            free(ek);
+            delete[] (unsigned char*) out;
+            out = NULL;
+            return false;
+        }
 
     	// move to end
     	out_offset += out_currOffset;
@@ -1005,9 +1018,6 @@ bool    AuthSSLimpl::encrypt(void *&out, int &outlen, const void *in, int inlen,
     	free(ek);
 
     	outlen = out_offset;
-    	return true;
-
-        delete[] ek;
 
     #ifdef DISTRIB_DEBUG
         std::cerr << "Authssl::encrypt() finished with outlen : " << outlen << std::endl;
@@ -1039,34 +1049,56 @@ bool    AuthSSLimpl::decrypt(void *&out, int &outlen, const void *in, int inlen)
         int in_offset = 0, out_currOffset = 0;
         int size_net_ekl = sizeof(net_ekl);
 
-        if(size_net_ekl > inlen) return false;
+        if(size_net_ekl > inlen) {
+            free(ek);
+            return false;
+        }
 
         memcpy(&net_ekl, (unsigned char*)in, size_net_ekl);
         eklen = ntohl(net_ekl);
         in_offset += size_net_ekl;
 
-        if(eklen > (inlen-in_offset)) return false;
+        if(eklen > (inlen-in_offset)) {
+            free(ek);
+            return false;
+        }
 
         memcpy(ek, (unsigned char*)in + in_offset, eklen);
         in_offset += eklen;
 
-        if(EVP_MAX_IV_LENGTH > (inlen-in_offset)) return false;
+        if(EVP_MAX_IV_LENGTH > (inlen-in_offset)) {
+            free(ek);
+            return false;
+        }
 
         memcpy(iv, (unsigned char*)in + in_offset, EVP_MAX_IV_LENGTH);
         in_offset += EVP_MAX_IV_LENGTH;
 
         const EVP_CIPHER* cipher = EVP_aes_128_cbc();
 
-        if(!EVP_OpenInit(&ctx, cipher, ek, eklen, iv, mOwnPrivateKey)) return false;
+        if(!EVP_OpenInit(&ctx, cipher, ek, eklen, iv, mOwnPrivateKey)) {
+            free(ek);
+            return false;
+        }
 
         out = new unsigned char[inlen - in_offset];
 
-        if(!EVP_OpenUpdate(&ctx, (unsigned char*) out, &out_currOffset, (unsigned char*)in + in_offset, inlen - in_offset)) return false;
+        if(!EVP_OpenUpdate(&ctx, (unsigned char*) out, &out_currOffset, (unsigned char*)in + in_offset, inlen - in_offset)) {
+            free(ek);
+            delete[] (unsigned char*) out;
+            out = NULL;
+            return false;
+        }
 
         in_offset += out_currOffset;
         outlen += out_currOffset;
 
-        if(!EVP_OpenFinal(&ctx, (unsigned char*)out + out_currOffset, &out_currOffset)) return false;
+        if(!EVP_OpenFinal(&ctx, (unsigned char*)out + out_currOffset, &out_currOffset)) {
+            free(ek);
+            delete[] (unsigned char*) out;
+            out = NULL;
+            return false;
+        }
 
         outlen += out_currOffset;
 
