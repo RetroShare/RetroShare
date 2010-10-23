@@ -3361,6 +3361,11 @@ p, li { white-space: pre-wrap; }
         <source>Reply</source>
         <translation>Antwort</translation>
     </message>
+    <message>
+        <location filename="../gui/feeds/ForumMsgItem.cpp" line="+137"/>
+        <source>In Reply to</source>
+        <translation>Als Antwort auf</translation>
+    </message>
 </context>
 <context>
     <name>ForumNewItem</name>
@@ -4167,9 +4172,14 @@ Fill in your GPG password when asked, to sign your new key.</source>
 <context>
     <name>GraphWidget</name>
     <message>
-        <location filename="../gui/elastic/graphwidget.cpp" line="+75"/>
+        <location filename="../gui/elastic/graphwidget.cpp" line="+141"/>
         <source>Elastic Nodes</source>
         <translation></translation>
+    </message>
+    <message>
+        <location line="+208"/>
+        <source>Click and drag the nodes around, and zoom with the mouse wheel or the &apos;+&apos; and &apos;-&apos; keys</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6357,7 +6367,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>NetworkDialog</name>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="+298"/>
+        <location filename="../gui/NetworkDialog.cpp" line="+299"/>
         <location line="+310"/>
         <source>Select a pem/pqi File</source>
         <translation>Wählen einer PEM- oder PQI-Datei</translation>
@@ -6562,9 +6572,14 @@ p, li { white-space: pre-wrap; }
         <translation>Unbekannt</translation>
     </message>
     <message>
-        <location line="-291"/>
+        <location line="-292"/>
         <source>Authentication matrix</source>
         <translation>Authentifizierungsmatrix</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Network View</source>
+        <translation>Netzwerk Ansicht</translation>
     </message>
     <message>
         <location line="+280"/>
@@ -6732,7 +6747,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>NetworkView</name>
     <message>
-        <location filename="../gui/NetworkView.cpp" line="+315"/>
+        <location filename="../gui/NetworkView.cpp" line="+306"/>
         <source>Hide Settings</source>
         <translation>Einstellungen verbergen</translation>
     </message>

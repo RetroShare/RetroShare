@@ -134,7 +134,7 @@ void ForumMsgItem::updateItemStatic()
             QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm:ss");
             timestamplabel->setText(timestamp);
 			
-			prevSHLabel->setText("In Reply To: ");
+			prevSHLabel->setText(tr("In Reply to") + ": ");
 
 			ForumMsgInfo msgParent;
 			if (rsForums->getForumMessage(mForumId, msg.parentId, msgParent))
