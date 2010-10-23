@@ -126,7 +126,7 @@ void Node::calculateForces(const double *map,int width,int height,int W,int H,fl
 			int X = std::min(W-1,std::max(0,(int)rint(x))) ;
 			int Y = std::min(H-1,std::max(0,(int)rint(y))) ;
 
-			float val = map[2*((i+X)%W + W*((j+Y)%H))] ;
+			float val = map[2*((i+X+W)%W + W*((j+Y+H)%H))] ;
 
 			dei += i * e[i+KS+(2*KS+1)*(j+KS)] * val ;
 			dej += j * e[i+KS+(2*KS+1)*(j+KS)] * val ;
