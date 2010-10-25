@@ -24,6 +24,7 @@
 
 #include <retroshare/rschannels.h>
 #include <QStandardItemModel>
+#include <map>
 
 #include "mainpage.h"
 #include "RsAutoUpdatePage.h"
@@ -81,14 +82,14 @@ private slots:
     void shareKey();
 
     void channelMsgReadSatusChanged(const QString& channelId, const QString& msgId, int status);
-    void searchChannels();
-    void searchMessages();
+    void filterRegExpChanged();
     void finishSearching();
 
 private:
+
     void updateChannelList();
     void fillChannelList(int channelItem, std::list<ChannelInfo> &channelInfos);
-
+    void filterChannelList(std::list<ChannelInfo>&);
     void updateChannelMsgs();
     void updateMessageSummaryList(const std::string &channelId);
 
@@ -100,6 +101,7 @@ private:
     QBoxLayout *mMsgLayout;
 
     std::list<ChanMsgItem *> mChanMsgItems;
+    std::map<std::string, uint32_t> mChanSearchScore; //chanId, score
 
     QFont mChannelFont;
     QFont itemFont;
@@ -114,20 +116,11 @@ public:
 	virtual ~QChannelItem();
 
 	/**
-	 * Allows users to set the search text for QChannel items
-	 * @param
-	 */
-	static void setSearchText(const QString& sText);
-
-	/**
 	 * reimplementing comparison operator so QChannelItems can be ordered in terms
 	 * of occurences of property searchText in its data columns
 	 */
 	bool operator<(const QStandardItem& other) const;
 
-private:
-
-	static QString searchText;
 };
 
 

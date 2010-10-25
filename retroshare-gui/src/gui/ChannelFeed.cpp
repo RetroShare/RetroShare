@@ -49,8 +49,12 @@
 
 #define ROLE_ID            Qt::UserRole
 #define ROLE_CHANNEL_TITLE Qt::UserRole + 1
-#define ROLE_CHANNEL_DESC Qt::UserRole + 2
+#define ROLE_CHANNEL_SEARCH_SCORE Qt::UserRole + 2
 #define ROLE_CHANNEL_TS Qt::UserRole + 3
+
+
+#define COMBO_TITLE_INDEX 0
+#define COMBO_DESC_INDEX 1
 
 /****
  * #define CHAN_DEBUG
@@ -68,9 +72,8 @@ ChannelFeed::ChannelFeed(QWidget *parent)
     connect(subscribeButton, SIGNAL( clicked( void ) ), this, SLOT( subscribeChannel ( void ) ) );
     connect(unsubscribeButton, SIGNAL( clicked( void ) ), this, SLOT( unsubscribeChannel ( void ) ) );
     connect(setAllAsReadButton, SIGNAL(clicked()), this, SLOT(setAllAsReadClicked()));
-    connect(searchLine, SIGNAL(returnPressed()), this, SLOT(searchChannels( void )));
-    connect(pushButtonSearch, SIGNAL(clicked()), this, SLOT(searchChannels( void )));
     connect(resetButton, SIGNAL(clicked()), this, SLOT(finishSearching( void )));
+    connect( searchLine, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
 
     connect(NotifyQt::getInstance(), SIGNAL(channelMsgReadSatusChanged(QString,QString,int)), this, SLOT(channelMsgReadSatusChanged(QString,QString,int)));
 
@@ -295,42 +298,33 @@ void ChannelFeed::updateDisplay()
     }
 }
 
-void ChannelFeed::searchChannels(){
+void ChannelFeed::filterRegExpChanged(){
 
-	// do not allow update of page (new items to be added)
-	RsAutoUpdatePage::lockAllEvents();
 
-	if(searchLine->text().isEmpty())
+	if(searchLine->text().isEmpty()){
 		finishSearching();
+		return;
+	}
 
+	resetButton->setEnabled(true);
 	resetButton->setVisible(true);
 
-	QChannelItem::setSearchText(searchLine->text());
-
-	model->item(OWN)->sortChildren(COLUMN_NAME, Qt::DescendingOrder);
-	model->item(SUBSCRIBED)->sortChildren(COLUMN_NAME, Qt::DescendingOrder);
-	model->item(POPULAR)->sortChildren(COLUMN_NAME, Qt::DescendingOrder);
-	model->item(OTHER)->sortChildren(COLUMN_NAME, Qt::DescendingOrder);
+	// force display to be updated
+	updateChannelList();
 
 	return;
 }
 
 void ChannelFeed::finishSearching(){
 
-	// unlock channel page update if user is done searching
-	RsAutoUpdatePage::unlockAllEvents();
 
 	searchLine->clear();
-
 	resetButton->setVisible(false);
+	resetButton->setEnabled(false);
+	mChanSearchScore.clear();
+	updateChannelList();
 
 	return;
-}
-
-void ChannelFeed::searchMessages(){
-
-	return;
-
 }
 
 
@@ -384,6 +378,15 @@ void ChannelFeed::updateChannelList()
         }
     }
 
+    // check if search filter is being used
+    if(! searchLine->text().isEmpty()){
+
+    	filterChannelList(adminList);
+        filterChannelList(subList);
+        filterChannelList(popList);
+        filterChannelList(otherList);
+    }
+
     /* now we have our lists ---> update entries */
 
     fillChannelList(OWN, adminList);
@@ -392,6 +395,37 @@ void ChannelFeed::updateChannelList()
     fillChannelList(OTHER, otherList);
 
     updateMessageSummaryList("");
+}
+
+
+void ChannelFeed::filterChannelList(std::list<ChannelInfo> &ci){
+
+	uint32_t score = 0;
+	QString scoreString;
+	mChanSearchScore.clear();
+	std::list<ChannelInfo>::iterator it = ci.begin();
+
+	// first find out which has given word in it
+	for(;it != ci.end(); it++){
+
+		if(sectionCombo->currentIndex() == COMBO_DESC_INDEX){
+			scoreString = QString::fromStdWString(it->channelDesc);
+			score = scoreString.count(searchLine->text(), Qt::CaseInsensitive);
+			mChanSearchScore.insert(std::pair<std::string, uint32_t>(it->channelId, score));
+		}
+		else {
+			scoreString = QString::fromStdWString(it->channelName);
+			score = scoreString.count(searchLine->text(), Qt::CaseInsensitive);
+			mChanSearchScore.insert(std::pair<std::string, uint32_t>(it->channelId, score));
+		}
+
+		if(score == 0){
+			it = ci.erase(it);
+			it--;
+		}
+	}
+
+
 }
 
 void ChannelFeed::fillChannelList(int channelItem, std::list<ChannelInfo> &channelInfos)
@@ -423,8 +457,8 @@ void ChannelFeed::fillChannelList(int channelItem, std::list<ChannelInfo> &chann
             }
         }
 
-        QStandardItem *chNameItem = NULL;//new QChannelItem(); // use channel item to enable channel specific sorting
-        QStandardItem *chPopItem = NULL;// new QStandardItem();
+        QStandardItem *chNameItem = NULL;
+        QStandardItem *chPopItem = NULL;
         if (row < rowCount) {
             chNameItem = groupItem->child(row, COLUMN_NAME);
             chPopItem = groupItem->child(row, COLUMN_POPULARITY);
@@ -445,9 +479,11 @@ void ChannelFeed::fillChannelList(int channelItem, std::list<ChannelInfo> &chann
         chNameItem->setText(QString::fromStdWString(ci.channelName));
         groupItem->child(chNameItem->index().row(), COLUMN_DATA)->setData(QString::fromStdWString(ci.channelName), ROLE_CHANNEL_TITLE);
 
-        // important for searching channels
-        groupItem->child(chNameItem->index().row(), COLUMN_DATA)->setData(QString::fromStdWString(ci.channelDesc), ROLE_CHANNEL_DESC);
+        // important for arrangement of channels
+        groupItem->child(chNameItem->index().row(), COLUMN_DATA)->setData(((mChanSearchScore.find(channelId.toStdString()))->second),
+        		ROLE_CHANNEL_SEARCH_SCORE);
         groupItem->child(chNameItem->index().row(), COLUMN_DATA)->setData(QDateTime::fromTime_t(ci.lastPost), ROLE_CHANNEL_TS);
+
 
         chNameItem->setToolTip(tr("Popularity: %1\nFetches: %2\nAvailable: %3").arg(QString::number(ci.pop)).arg(9999).arg(9999));
 
@@ -495,6 +531,8 @@ void ChannelFeed::fillChannelList(int channelItem, std::list<ChannelInfo> &chann
             row++;
         }
     }
+
+    model->item(channelItem)->sortChildren(COLUMN_NAME, Qt::DescendingOrder);
 
 }
 
@@ -705,8 +743,6 @@ void ChannelFeed::setAllAsReadClicked()
     }
 }
 
-QString QChannelItem::searchText = "";
-
 QChannelItem::QChannelItem()
 	: QStandardItem(){
 }
@@ -718,19 +754,17 @@ QChannelItem::QChannelItem()
 
 bool QChannelItem::operator<(const QStandardItem& other) const {
 
-	// calculate *this/other search scores
-	int otherCount = other.data(ROLE_CHANNEL_TITLE).toString().count(searchText,Qt::CaseInsensitive);
-	otherCount += other.data(ROLE_CHANNEL_DESC).toString().count(searchText,Qt::CaseInsensitive);
-	int thisCount = this->data(ROLE_CHANNEL_TITLE).toString().count(searchText, Qt:: CaseInsensitive);
-	thisCount += this->data(ROLE_CHANNEL_DESC).toString().count(searchText, Qt:: CaseInsensitive);
-
+	uint32_t otherCount = 0, thisCount = 0;
 	uint otherChanTs = other.data(ROLE_CHANNEL_TS).toDateTime().toTime_t();
 	uint thisChanTs = this->data(ROLE_CHANNEL_TS).toDateTime().toTime_t();
 
 
+	otherCount = other.data(ROLE_CHANNEL_SEARCH_SCORE).toUInt();
+	thisCount = this->data(ROLE_CHANNEL_SEARCH_SCORE).toUInt();
+
 	// if counts are equal then determine by who has the most recent post
 	if(otherCount == thisCount){
-		if(otherChanTs < thisChanTs)
+		if(thisChanTs < otherChanTs)
 			return true;
 	}
 
@@ -738,13 +772,9 @@ bool QChannelItem::operator<(const QStandardItem& other) const {
 	if(thisCount < otherCount)
 		return true;
 
+	if(thisChanTs < otherChanTs)
+		return true;
+
 	return false;
-}
-
-void QChannelItem::setSearchText(const QString& sText){
-
-	searchText = sText;
-
-	return;
 }
 
