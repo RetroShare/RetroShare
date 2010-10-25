@@ -29,67 +29,46 @@
 
 class ConfCertDialog : public QDialog
 {
-  Q_OBJECT
+    Q_OBJECT
 
-	public:
-        static void show(const std::string& id) ;
-        static void showTrust(const std::string& id) ;
+public:
+    enum enumPage { PageDetails, PageTrust, PageCertificate };
 
-	  static ConfCertDialog *instance() ;
+    static void showIt(const std::string& id, enumPage page);
+
 signals:
-	  void configChanged() ;
+    void configChanged();
+
 private:
+    /** Default constructor */
+    ConfCertDialog(const std::string& id, QWidget *parent = 0, Qt::WFlags flags = 0);
+    /** Default destructor */
+    ~ConfCertDialog();
 
-  /** Default constructor */
-  ConfCertDialog(QWidget *parent = 0, Qt::WFlags flags = 0);
-  /** Default destructor */
+    static ConfCertDialog *instance(const std::string& peer_id);
 
+    static void loadAll();
+    void load();
 
-    void loadId(std::string id);
-
-#if 0
-    void setInfo(std::string name, 
-		std::string trust, 
-		std::string org,
-		std::string loc,
-		std::string country,
-		std::string signers);
-#endif
-
-protected:
-    void closeEvent (QCloseEvent * event);
-      
 private slots:
+    void listWidgetContextMenuPopup(const QPoint &pos);
 
-    /** Overloaded QWidget.show */
-    void show();
-    void showTrust();    
+    void applyDialog();
+    void makeFriend();
+    void denyFriend();
+    void signGPGKey();
 
-    void listWidgetContextMenuPopup( const QPoint &pos);
+    void showHelpDialog();
+    /** Called when a child window requests the given help <b>topic</b>. */
+    void showHelpDialog(const QString &topic);
 
-	void closeinfodlg();
-	void applyDialog();
-	void makeFriend();
-	void denyFriend();
-	void signGPGKey();
-
-	void showHelpDialog();
-	/** Called when a child window requests the given help <b>topic</b>. */
-	void showHelpDialog(const QString &topic);
-	
-	void copyToClipboard();
+    void copyToClipboard();
 
 private:
- 
-    void loadDialog();
-
     std::string mId;
-    bool isPGPId;
     
     /** Qt Designer generated object */
     Ui::ConfCertDialog ui;
-
 };
 
 #endif
-

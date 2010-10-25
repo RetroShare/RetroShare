@@ -1360,7 +1360,7 @@ Verfügbar: %3</translation>
     <message>
         <location line="+10"/>
         <source>Authenticate friend (Sign GPG Key)</source>
-        <translation>Authentifiziere Freund(GPG Schlüssel unterzeichnen)</translation>
+        <translation>Authentifiziere Freund (GPG Schlüssel unterzeichnen)</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -1396,7 +1396,7 @@ Verfügbar: %3</translation>
 <context>
     <name>ConfCertDialog</name>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="+626"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="+629"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
@@ -1406,9 +1406,9 @@ Verfügbar: %3</translation>
         <translation>OK</translation>
     </message>
     <message>
-        <location line="-575"/>
+        <location line="-578"/>
         <source>Peer Info</source>
-        <translation>Peer Info</translation>
+        <translation>Nachbar Info</translation>
     </message>
     <message>
         <location line="-6"/>
@@ -1428,7 +1428,7 @@ Verfügbar: %3</translation>
     <message>
         <location line="+73"/>
         <source>Peer Address</source>
-        <translation>Adresse des Peers</translation>
+        <translation>Adresse des Nachbarn</translation>
     </message>
     <message>
         <location line="+399"/>
@@ -1442,13 +1442,14 @@ Verfügbar: %3</translation>
     </message>
     <message>
         <location line="-73"/>
+        <location line="+20"/>
         <source>Sign GPG key</source>
         <translation>Unterzeichne GPG Schlüssel</translation>
     </message>
     <message>
-        <location line="-158"/>
+        <location line="-178"/>
         <source>Your trust in this peer is:</source>
-        <translation>Ihr Vertrauen zu diesem Peer ist:</translation>
+        <translation>Ihr Vertrauen zu diesem Nachbar ist:</translation>
     </message>
     <message>
         <location line="+89"/>
@@ -1458,20 +1459,15 @@ Verfügbar: %3</translation>
     <message>
         <location line="+18"/>
         <source>Peer has signed my GPG key</source>
-        <translation>Peer hat meinen GPG Schlüssel unterzeichnet</translation>
+        <translation>Nachbar hat meinen GPG Schlüssel unterzeichnet</translation>
     </message>
     <message>
         <location line="+27"/>
         <source>Peer key is signed by :</source>
-        <translation>Peer Schlüssel ist unterzeichnet von:</translation>
+        <translation>Nachbar Schlüssel ist unterzeichnet von:</translation>
     </message>
     <message>
-        <location line="+44"/>
-        <source>SignGPG Key</source>
-        <translation>Unterzeichne GPG Key</translation>
-    </message>
-    <message>
-        <location line="-425"/>
+        <location line="-381"/>
         <source>Last Contact</source>
         <translation>Letzter Kontakt</translation>
     </message>
@@ -1514,7 +1510,7 @@ Verfügbar: %3</translation>
     <message>
         <location line="+75"/>
         <source>None </source>
-        <translation>Keine </translation>
+        <translation>Nicht </translation>
     </message>
     <message>
         <location line="+23"/>
@@ -1527,12 +1523,12 @@ Verfügbar: %3</translation>
         <translation>Voll </translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="+62"/>
+        <location line="+230"/>
         <source>Apply and Close</source>
         <translation>Übernehmen und Schliessen</translation>
     </message>
     <message>
-        <location line="+68"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="+125"/>
         <location line="+201"/>
         <source>RetroShare</source>
         <translation></translation>
@@ -1541,57 +1537,57 @@ Verfügbar: %3</translation>
         <location line="-200"/>
         <location line="+201"/>
         <source>Error : cannot get peer details.</source>
-        <translation>Fehler:  Kann Peer Details nicht bekommen.</translation>
+        <translation>Fehler:  Kann Peer Details nicht ermitteln.</translation>
     </message>
     <message>
-        <location line="-128"/>
+        <location line="-127"/>
         <source>Your key is signed by : </source>
         <translation>Ihr Schlüssel ist unterzeichnet von: </translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Peer key is signed by : </source>
-        <translation>Peer Schlüssel ist unterzeichnet von: </translation>
+        <translation>Nachbar Schlüssel ist unterzeichnet von: </translation>
     </message>
     <message>
-        <location line="+29"/>
+        <location line="+28"/>
         <source>Your trust in this peer is ultimate, it&apos;s probably a key you own.</source>
-        <translation>Sie haben das höchste Vertrauen in diesen Peer. Es ist wahrscheinlich ein Schlüssel von Ihnen.</translation>
+        <translation>Sie haben das höchste Vertrauen in diesen Nachbarn. Es ist wahrscheinlich ein Schlüssel von Ihnen.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Your trust in this peer is full.</source>
-        <translation>Sie vertrauen diesem Peer voll.</translation>
+        <translation>Sie vertrauen diesem Nachbarn voll.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Your trust in this peer is marginal.</source>
-        <translation>Sie vertrauen diesem Peer geringfügig.</translation>
+        <translation>Sie vertrauen diesem Nachbarn geringfügig.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Your trust in this peer is none.</source>
-        <translation>Sie vertrauen diesem Peer nicht.</translation>
+        <translation>Sie vertrauen diesem Nachbarn nicht.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Your trust in this peer is not set.</source>
-        <translation>Ihr Vertrauen in diesen Peer ist nicht festgelegt.</translation>
+        <translation>Ihr Vertrauen in diesen Nachbarn ist nicht festgelegt.</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Peer has authenticated me as a friend and did sign my GPG key</source>
-        <translation>Peer hat mich als Freund authentifiziert
+        <translation>Nachbar hat mich als Freund authentifiziert
 und meinen GPG Schlüssel unterzeichnet</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Peer has not authenticated me as a friend and did not sign my GPG key</source>
-        <translation>Peer hat mich nicht als Freund authentifiziert
+        <translation>Nachbar hat mich nicht als Freund authentifiziert
 und meinen GPG Schlüssel nicht unterzeichnet</translation>
     </message>
     <message>
-        <location line="+103"/>
+        <location line="+112"/>
         <source>Signature Failure</source>
         <translation>Signatur Fehler</translation>
     </message>
@@ -1601,7 +1597,7 @@ und meinen GPG Schlüssel nicht unterzeichnet</translation>
         <translation>Vielleicht ist das Passwort falsch</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.ui" line="-70"/>
+        <location filename="../gui/connect/ConfCertDialog.ui" line="-300"/>
         <source>Trust </source>
         <translation>Vertrauen </translation>
     </message>
@@ -1621,9 +1617,9 @@ und meinen GPG Schlüssel nicht unterzeichnet</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="+29"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="+31"/>
         <source>Copy Peer</source>
-        <translation>Kopiere Peer</translation>
+        <translation>Kopiere Nachbar</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConfCertDialog.ui" line="+471"/>
@@ -5170,7 +5166,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+513"/>
         <source>Do you really want to exit RetroShare ?</source>
-        <translation>Wollen Sie RetroShare wirklich beenden?</translation>
+        <translation>Wollst Du RetroShare wirklich beenden?</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -6564,7 +6560,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+5"/>
         <source>Peer details...</source>
-        <translation>Peer-Dateils...</translation>
+        <translation>Nachbar-Details...</translation>
     </message>
     <message>
         <location line="+187"/>

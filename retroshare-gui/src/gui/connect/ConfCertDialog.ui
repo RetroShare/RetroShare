@@ -21,7 +21,7 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="stabWidget">
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="icon">
@@ -494,7 +494,7 @@
          <item>
           <widget class="QToolButton" name="signKeyButton">
            <property name="text">
-            <string>SignGPG Key</string>
+            <string>Sign GPG key</string>
            </property>
            <property name="icon">
             <iconset resource="../images.qrc">
@@ -581,6 +581,10 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tab_3">
+      <attribute name="icon">
+       <iconset resource="../images.qrc">
+        <normaloff>:/images/view-certificate-sign-32.png</normaloff>:/images/view-certificate-sign-32.png</iconset>
+      </attribute>
       <attribute name="title">
        <string>Certificate</string>
       </attribute>
@@ -609,6 +613,9 @@
      </item>
      <item row="0" column="2">
       <widget class="QPushButton" name="applyButton">
+       <property name="toolTip">
+        <string>Apply and Close</string>
+       </property>
        <property name="text">
         <string>OK</string>
        </property>

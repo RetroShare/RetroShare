@@ -1014,7 +1014,7 @@ void MessengerWindow::connectfriend()
 /* GUI stuff -> don't do anything directly with Control */
 void MessengerWindow::configurefriend()
 {
-	ConfCertDialog::show(getPeersRsCertId(getCurrentPeer()));
+    ConfCertDialog::showIt(getPeersRsCertId(getCurrentPeer()), ConfCertDialog::PageDetails);
 }
 
 void MessengerWindow::recommendfriend()

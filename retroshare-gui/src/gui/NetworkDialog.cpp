@@ -283,13 +283,13 @@ void NetworkDialog::deleteCert()
 
 void NetworkDialog::makeFriend()
 {
-    ConfCertDialog::showTrust(getCurrentNeighbour()->text(4).toStdString());
+    ConfCertDialog::showIt(getCurrentNeighbour()->text(4).toStdString(), ConfCertDialog::PageTrust);
 }
 
 /** Shows Peer Information/Auth Dialog */
 void NetworkDialog::peerdetails()
 {
-    ConfCertDialog::show(getCurrentNeighbour()->text(4).toStdString());
+    ConfCertDialog::showIt(getCurrentNeighbour()->text(4).toStdString(), ConfCertDialog::PageDetails);
 }
 
 /** Open a QFileDialog to browse for a pem/pqi file. */

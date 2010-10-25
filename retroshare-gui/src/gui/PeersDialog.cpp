@@ -1260,7 +1260,7 @@ void PeersDialog::connectfriend()
 /* GUI stuff -> don't do anything directly with Control */
 void PeersDialog::configurefriend()
 {
-	ConfCertDialog::show(getPeerRsCertId(getCurrentPeer()));
+    ConfCertDialog::showIt(getPeerRsCertId(getCurrentPeer()), ConfCertDialog::PageDetails);
 }
 
 void PeersDialog::addFriend()
