@@ -301,10 +301,29 @@ void CreateChannelMsg::addAttachment(const std::string &path)
 	/* add widget in for new destination */
 	uint32_t flags =  SFI_TYPE_CHANNEL | SFI_STATE_EXTRA;
 
+
+	// check attachment if hash exists already
+	std::list<SubFileItem* >::iterator  it;
+
+	for(it= mAttachments.begin(); it != mAttachments.end(); it++){
+
+		if((*it)->FilePath() == path){
+			QMessageBox::warning(this, tr("RetroShare"),
+	                   tr("File already Added and Hashed"),
+	                   QMessageBox::Ok, QMessageBox::Ok);
+
+			return;
+		}
+
+	}
+
 	// channels creates copy of file into channels directory and shares this
 
 	FileInfo fInfo;
 	rsChannels->channelExtraFileHash(path, mChannelId, fInfo);
+
+
+
 
 	// file is not innitial
 	SubFileItem *file = new SubFileItem(fInfo.hash, fInfo.fname, fInfo.path, fInfo.size,
