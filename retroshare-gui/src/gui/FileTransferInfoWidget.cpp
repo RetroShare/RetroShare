@@ -1,6 +1,7 @@
 /****************************************************************
  * This file is distributed under the following license:
  *
+ * Copyright (c) 2010, csoler
  * Copyright (c) 2009, defnax
  * Copyright (c) 2009, lsn752 
  *
@@ -166,13 +167,14 @@ void FileTransferInfoWidget::draw(const FileInfo& nfo,const FileChunksInfo& info
 		 painter->setPen(QColor::fromRgb(0,0,0)) ;
 		 painter->drawText(5,y+text_height,QString::number(info.active_chunks[i].first)) ;
 
-		 uint32_t s = (uint32_t)rint(sizeX*(info.chunk_size - info.active_chunks[i].second)/(float)info.chunk_size) ;
+		 int size_of_this_chunk = ( info.active_chunks[i].first == info.chunks.size()-1 && ((info.file_size % blockSize)>0) )?(info.file_size % blockSize):blockSize ;
+		 uint32_t s = (uint32_t)rint(sizeX*(size_of_this_chunk - info.active_chunks[i].second)/(float)size_of_this_chunk) ;
 
 		 painter->fillRect(ch_num_size,y,s,sizeY,QColor::fromHsv(200,200,255)) ;
 		 painter->fillRect(ch_num_size+s,y,sizeX-s,sizeY,QColor::fromHsv(200,50,255)) ;
 
 		 painter->setPen(QColor::fromRgb(0,0,0)) ;
-		 float percent = (info.chunk_size - info.active_chunks[i].second)*100.0/info.chunk_size ;
+		 float percent = (size_of_this_chunk - info.active_chunks[i].second)*100.0/size_of_this_chunk ;
 
 		 painter->drawText(sizeX+55,y+text_height,QString::number(percent,'g',2) + " %") ;
 
