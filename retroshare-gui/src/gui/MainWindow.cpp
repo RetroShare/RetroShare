@@ -498,6 +498,10 @@ void MainWindow::updateStatus()
     unsigned int nFriendCount = 0;
     unsigned int nOnlineCount = 0;
     rsPeers->getPeerCount (&nFriendCount, &nOnlineCount, false);
+    
+    float downKb = 0;
+    float upKb = 0;
+    rsicontrol -> ConfigGetDataRates(downKb, upKb);
 
     if (ratesstatus)
         ratesstatus->getRatesStatus();
@@ -527,6 +531,17 @@ void MainWindow::updateStatus()
     {
         trayIcon->setIcon(QIcon(IMAGE_RETROSHARE));
     }
+    
+
+    if (nOnlineCount  > 1) 
+        trayIcon->setToolTip( tr("RetroShare") + "\n" + tr("Down: %1 (kB/s)").arg(downKb) + " | " + tr("Up: %1 (kB/s)").arg(upKb)
+        + "\n" + tr("%1 friends connected").arg(nOnlineCount) );
+    } else {
+        trayIcon->setToolTip( tr("RetroShare") + "\n" + tr("Down: %1 (kB/s)").arg(downKb) + " | " + tr("Up: %1 (kB/s)").arg(upKb)
+        + "\n" + tr("%1 friend connected").arg(nOnlineCount) );
+    }
+    
+    
 }
 
 void MainWindow::privateChatChanged(int list, int type)
