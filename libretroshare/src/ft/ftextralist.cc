@@ -329,7 +329,7 @@ bool	ftExtraList::hashExtraFileDone(std::string path, FileInfo &info)
 	 * Search Function - used by File Transfer 
 	 *
 	 **/
-bool    ftExtraList::search(std::string hash, uint32_t hintflags, FileInfo &info) const
+bool    ftExtraList::search(const std::string &hash, uint32_t hintflags, FileInfo &info) const
 {
 
 #ifdef  DEBUG_ELIST

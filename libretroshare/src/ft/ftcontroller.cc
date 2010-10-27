@@ -1544,7 +1544,7 @@ std::string ftController::getPartialsDirectory()
 	return mPartialsPath;
 }
 
-bool 	ftController::FileDetails(std::string hash, FileInfo &info)
+bool 	ftController::FileDetails(const std::string &hash, FileInfo &info)
 {
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 

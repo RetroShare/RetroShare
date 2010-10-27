@@ -429,7 +429,7 @@ bool ftServer::FileUploads(std::list<std::string> &hashs)
 	return mFtDataplex->FileUploads(hashs);
 }
 
-bool ftServer::FileDetails(std::string hash, uint32_t hintflags, FileInfo &info)
+bool ftServer::FileDetails(const std::string &hash, uint32_t hintflags, FileInfo &info)
 {
 	if (hintflags & RS_FILE_HINTS_DOWNLOAD)
 		if(mFtController->FileDetails(hash, info))

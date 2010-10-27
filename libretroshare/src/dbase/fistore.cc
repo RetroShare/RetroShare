@@ -190,11 +190,12 @@ int FileIndexStore::RequestDirDetails(void *ref, DirDetails &details, uint32_t f
 
 	lockData();
 
-	if(ref != NULL && !FileIndex::isValid(ref))
-	{
-		unlockData() ;
-		return false ;
-	}
+//	checked by FileIndex::extractData
+//	if(ref != NULL && !FileIndex::isValid(ref))
+//	{
+//		unlockData() ;
+//		return false ;
+//	}
 
 	/* so cast *ref to a DirEntry */
 	/* root case */

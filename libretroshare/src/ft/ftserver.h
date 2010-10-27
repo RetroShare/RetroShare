@@ -148,7 +148,7 @@ virtual bool clearDownload(const std::string hash);
  ***/
 virtual bool FileDownloads(std::list<std::string> &hashs);
 virtual bool FileUploads(std::list<std::string> &hashs);
-virtual bool FileDetails(std::string hash, uint32_t hintflags, FileInfo &info);
+virtual bool FileDetails(const std::string &hash, uint32_t hintflags, FileInfo &info);
 virtual bool FileDownloadChunksDetails(const std::string& hash,FileChunksInfo& info) ;
 virtual bool FileUploadChunksDetails(const std::string& hash,const std::string& peer_id,CompressedChunkMap& map) ;
 

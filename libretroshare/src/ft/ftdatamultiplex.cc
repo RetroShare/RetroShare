@@ -121,7 +121,7 @@ bool    ftDataMultiplex::FileDownloads(std::list<std::string> &hashs)
 }
 
 
-bool    ftDataMultiplex::FileDetails(std::string hash, uint32_t hintsflag, FileInfo &info)
+bool    ftDataMultiplex::FileDetails(const std::string &hash, uint32_t hintsflag, FileInfo &info)
 {
 #ifdef MPLEX_DEBUG
 	std::cerr << "ftDataMultiplex::FileDetails(";

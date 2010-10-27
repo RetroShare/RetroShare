@@ -51,7 +51,7 @@ class ftFiStore: public FileIndexStore, public ftSearch
                         RsPeerId ownid, std::string cachedir);
 
 	/* overloaded search function */
-virtual bool search(std::string hash, uint32_t hintflags, FileInfo &info) const;
+virtual bool search(const std::string &hash, uint32_t hintflags, FileInfo &info) const;
 };
 
 class ftFiMonitor: public FileIndexMonitor, public ftSearch, public p3Config
@@ -60,7 +60,7 @@ class ftFiMonitor: public FileIndexMonitor, public ftSearch, public p3Config
 	ftFiMonitor(CacheStrapper *cs,NotifyBase *cb_in, std::string cachedir, std::string pid);
 
 	/* overloaded search function */
-	virtual bool search(std::string hash, uint32_t hintflags, FileInfo &info) const;
+	virtual bool search(const std::string &hash, uint32_t hintflags, FileInfo &info) const;
 
 	/* overloaded set dirs enables config indication */
 	virtual void setSharedDirectories(const std::list<SharedDirInfo>& dirList);
@@ -84,7 +84,7 @@ class ftCacheStrapper: public CacheStrapper, public ftSearch
         ftCacheStrapper(p3ConnectMgr *cm);
 
 	/* overloaded search function */
-virtual bool search(std::string hash, uint32_t hintflags, FileInfo &info) const;
+virtual bool search(const std::string &hash, uint32_t hintflags, FileInfo &info) const;
 
 };
 

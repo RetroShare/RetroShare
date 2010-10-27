@@ -94,7 +94,7 @@ class ftDataMultiplex: public ftDataRecv, public RsQueueThread
 		/* get Details of File Transfers */
 		bool    FileUploads(std::list<std::string> &hashs);
 		bool    FileDownloads(std::list<std::string> &hashs);
-		bool    FileDetails(std::string hash, uint32_t hintsflag, FileInfo &info);
+		bool    FileDetails(const std::string &hash, uint32_t hintsflag, FileInfo &info);
 
 		void		deleteUnusedServers() ;
 

@@ -37,7 +37,7 @@ ftFiStore::ftFiStore(CacheStrapper *cs, CacheTransfer *cft, NotifyBase *cb_in,p3
 	return;
 }
 
-bool ftFiStore::search(std::string hash, uint32_t hintflags, FileInfo &info) const
+bool ftFiStore::search(const std::string &hash, uint32_t hintflags, FileInfo &info) const
 {
 	/* could use hintflags to specify which bits of fileinfo to use additionally.
 	   eg. hintflags & FT_SEARCH_PEER_ID, then only return matching peers + hash.
@@ -125,7 +125,7 @@ ftFiMonitor::ftFiMonitor(CacheStrapper *cs,NotifyBase *cb_in, std::string cached
 	return;
 }
 
-bool ftFiMonitor::search(std::string hash, uint32_t hintflags, FileInfo &info) const
+bool ftFiMonitor::search(const std::string &hash, uint32_t hintflags, FileInfo &info) const
 {
 	uint64_t fsize;
 	std::string path;
@@ -271,7 +271,7 @@ ftCacheStrapper::ftCacheStrapper(p3ConnectMgr *cm)
 }
 
 	/* overloaded search function */
-bool ftCacheStrapper::search(std::string hash, uint32_t hintflags, FileInfo &info) const
+bool ftCacheStrapper::search(const std::string &hash, uint32_t hintflags, FileInfo &info) const
 {
 #ifdef DB_DEBUG
 	std::cerr << "ftCacheStrapper::search(" << hash << "," << hintflags;

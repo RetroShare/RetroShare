@@ -75,7 +75,7 @@ bool	ftFileSearch::addSearchMode(ftSearch *search, uint32_t hintflags)
 	return false;
 }
 
-bool	ftFileSearch::search(std::string hash, uint32_t hintflags, FileInfo &info) const
+bool	ftFileSearch::search(const std::string &hash, uint32_t hintflags, FileInfo &info) const
 {
 	uint32_t hints, i;
 

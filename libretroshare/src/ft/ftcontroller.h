@@ -173,7 +173,7 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 		bool 	setPartialsDirectory(std::string path);
 		std::string getDownloadDirectory();
 		std::string getPartialsDirectory();
-		bool 	FileDetails(std::string hash, FileInfo &info);
+		bool 	FileDetails(const std::string &hash, FileInfo &info);
 
 		bool moveFile(const std::string& source,const std::string& dest) ;
 		bool copyFile(const std::string& source,const std::string& dest) ;

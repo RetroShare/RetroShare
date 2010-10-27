@@ -133,7 +133,7 @@ class RsFiles
 		 ***/
 		virtual bool FileDownloads(std::list<std::string> &hashs) = 0;
 		virtual bool FileUploads(std::list<std::string> &hashs) = 0;
-		virtual bool FileDetails(std::string hash, uint32_t hintflags, FileInfo &info) = 0;
+		virtual bool FileDetails(const std::string &hash, uint32_t hintflags, FileInfo &info) = 0;
 
 		/// Gives chunk details about the downloaded file with given hash.
 		virtual bool FileDownloadChunksDetails(const std::string& hash,FileChunksInfo& info) = 0 ;
