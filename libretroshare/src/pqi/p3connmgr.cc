@@ -199,6 +199,15 @@ p3ConnectMgr::p3ConnectMgr()
 		mOldNetFlags = pqiNetStatus();
 
 		lastGroupId = 1;
+
+		/* setup Banned Ip Address - static for now 
+		 */
+
+		struct in_addr bip;
+		memset(&bip, 0, sizeof(bip));
+		bip.s_addr = 1;
+
+		mBannedIpList.push_back(bip);
 	}
 	
 #ifdef CONN_DEBUG
@@ -2479,7 +2488,12 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
 {
 	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
-	/* push all available addresses onto the connect addr stack */
+	/* push all available addresses onto the connect addr stack...
+	 * with the following exceptions:
+   	 *   - check local address, see if it is the same network as us
+	     - check address age. don't add old ones
+	 */
+
 #ifdef CONN_DEBUG
 	std::cerr << "p3ConnectMgr::retryConnectTCP() id: " << id << std::endl;
 #endif
@@ -2531,11 +2545,110 @@ bool   p3ConnectMgr::retryConnectTCP(std::string id)
 }
 
 
+#define MAX_TCP_ADDR_AGE	(3600 * 24 * 14) // two weeks in seconds.
+
+bool  p3ConnectMgr::locked_CheckPotentialAddr(struct sockaddr_in *addr, time_t age)
+{
+#ifdef CONN_DEBUG
+	std::cerr << "p3ConnectMgr::locked_CheckPotentialAddr("; 
+	std::cerr << rs_inet_ntoa(addr->sin_addr);
+	std::cerr << ":" << ntohs(addr->sin_port);
+	std::cerr << ", " << age << ")";
+	std::cerr << std::endl;
+#endif
+
+	/*
+	 * if it is old - quick rejection 
+	 */
+	if (age > MAX_TCP_ADDR_AGE)
+	{
+#ifdef CONN_DEBUG
+		std::cerr << "p3ConnectMgr::locked_CheckPotentialAddr() REJECTING - TOO OLD"; 
+		std::cerr << std::endl;
+#endif
+		return false;
+	}
+
+	bool isValid = isValidNet(&(addr->sin_addr));
+	bool isLoopback = isLoopbackNet(&(addr->sin_addr));
+	bool isPrivate = isPrivateNet(&(addr->sin_addr));
+	bool isExternal = isExternalNet(&(addr->sin_addr));
+
+	/* if invalid - quick rejection */
+	if (!isValid)
+	{
+#ifdef CONN_DEBUG
+		std::cerr << "p3ConnectMgr::locked_CheckPotentialAddr() REJECTING - INVALID";
+		std::cerr << std::endl;
+#endif
+		return false;
+	}
+
+	/* if it is on the ban list - ignore */
+	/* checks - is it the dreaded 1.0.0.0 */
+
+	std::list<struct in_addr>::const_iterator it;
+	for(it = mBannedIpList.begin(); it != mBannedIpList.end(); it++)
+	{
+		if (it->s_addr == addr->sin_addr.s_addr)
+		{
+#ifdef CONN_DEBUG
+			std::cerr << "p3ConnectMgr::locked_CheckPotentialAddr() REJECTING - ON BANNED IPLIST"; 
+			std::cerr << std::endl;
+#endif
+			return false;
+		}
+	}
+
+
+	/* if it is an external address, we'll accept it.
+	 * - even it is meant to be a local address.
+	 */
+	if (isExternal)
+	{
+#ifdef CONN_DEBUG
+		std::cerr << "p3ConnectMgr::locked_CheckPotentialAddr() ACCEPTING - EXTERNAL"; 
+		std::cerr << std::endl;
+#endif
+		return true;
+	}
+
+
+	/* get here, it is private or loopback 
+	 *  - can only connect to these addresses if we are on the same subnet.
+	    - check net against our local address.
+	 */
+
+	std::cerr << "p3ConnectMgr::locked_CheckPotentialAddr() Checking sameNet against: "; 
+	std::cerr << rs_inet_ntoa(mOwnState.currentlocaladdr.sin_addr);
+	std::cerr << ")";
+	std::cerr << std::endl;
+
+	if (sameNet(&(mOwnState.currentlocaladdr.sin_addr), &(addr->sin_addr)))
+	{
+#ifdef CONN_DEBUG
+		std::cerr << "p3ConnectMgr::locked_CheckPotentialAddr() ACCEPTING - PRIVATE & sameNET"; 
+		std::cerr << std::endl;
+#endif
+		return true;
+	}
+
+#ifdef CONN_DEBUG
+	std::cerr << "p3ConnectMgr::locked_CheckPotentialAddr() REJECTING - PRIVATE & !sameNET"; 
+	std::cerr << std::endl;
+#endif
+
+	/* else it fails */
+	return false;
+
+}
+
+
 void  p3ConnectMgr::locked_ConnectAttempt_CurrentAddresses(peerConnectState *peer)
 {
 	// Just push all the addresses onto the stack.
 	/* try "current addresses" first */
-	if (isValidNet(&(peer->currentlocaladdr.sin_addr)))
+	if (locked_CheckPotentialAddr(&(peer->currentlocaladdr), 0))
 	{
 #ifdef CONN_DEBUG
 		std::cerr << "Adding tcp connection attempt: ";
@@ -2553,7 +2666,7 @@ void  p3ConnectMgr::locked_ConnectAttempt_CurrentAddresses(peerConnectState *pee
 		addAddressIfUnique(peer->connAddrs, pca);
 	}
 
-	if (isValidNet(&(peer->currentserveraddr.sin_addr)))
+	if (locked_CheckPotentialAddr(&(peer->currentserveraddr), 0))
 	{
 #ifdef CONN_DEBUG
 		std::cerr << "Adding tcp connection attempt: ";
@@ -2578,42 +2691,53 @@ void  p3ConnectMgr::locked_ConnectAttempt_HistoricalAddresses(peerConnectState *
 	/* now try historical addresses */
 	/* try local addresses first */
 	std::list<pqiIpAddress>::iterator ait;
+	time_t now = time(NULL);
+
 	for(ait = peer->ipAddrs.mLocal.mAddrs.begin(); 
 		ait != peer->ipAddrs.mLocal.mAddrs.end(); ait++)
 	{
-#ifdef CONN_DEBUG
-		std::cerr << "Adding tcp connection attempt: ";
-		std::cerr << "Local Addr: " << rs_inet_ntoa(ait->mAddr.sin_addr);
-		std::cerr << ":" << ntohs(ait->mAddr.sin_port);
-		std::cerr << std::endl;
-#endif
-		peerConnectAddress pca;
-		pca.addr = ait->mAddr;
-		pca.type = RS_NET_CONN_TCP_LOCAL;
-		pca.delay = P3CONNMGR_TCP_DEFAULT_DELAY;
-		pca.ts = time(NULL);
-		pca.period = P3CONNMGR_TCP_DEFAULT_PERIOD;
+		if (locked_CheckPotentialAddr(&(ait->mAddr), now - ait->mSeenTime))
+		{
 
-		addAddressIfUnique(peer->connAddrs, pca);
+#ifdef CONN_DEBUG
+			std::cerr << "Adding tcp connection attempt: ";
+			std::cerr << "Local Addr: " << rs_inet_ntoa(ait->mAddr.sin_addr);
+			std::cerr << ":" << ntohs(ait->mAddr.sin_port);
+			std::cerr << std::endl;
+#endif
+
+			peerConnectAddress pca;
+			pca.addr = ait->mAddr;
+			pca.type = RS_NET_CONN_TCP_LOCAL;
+			pca.delay = P3CONNMGR_TCP_DEFAULT_DELAY;
+			pca.ts = time(NULL);
+			pca.period = P3CONNMGR_TCP_DEFAULT_PERIOD;
+	
+			addAddressIfUnique(peer->connAddrs, pca);
+		}
 	}
 
 	for(ait = peer->ipAddrs.mExt.mAddrs.begin(); 
 		ait != peer->ipAddrs.mExt.mAddrs.end(); ait++)
 	{
+		if (locked_CheckPotentialAddr(&(ait->mAddr), now - ait->mSeenTime))
+		{
+	
 #ifdef CONN_DEBUG
-		std::cerr << "Adding tcp connection attempt: ";
-		std::cerr << "Ext Addr: " << rs_inet_ntoa(ait->mAddr.sin_addr);
-		std::cerr << ":" << ntohs(ait->mAddr.sin_port);
-		std::cerr << std::endl;
+			std::cerr << "Adding tcp connection attempt: ";
+			std::cerr << "Ext Addr: " << rs_inet_ntoa(ait->mAddr.sin_addr);
+			std::cerr << ":" << ntohs(ait->mAddr.sin_port);
+			std::cerr << std::endl;
 #endif
-		peerConnectAddress pca;
-		pca.addr = ait->mAddr;
-		pca.type = RS_NET_CONN_TCP_EXTERNAL;
-		pca.delay = P3CONNMGR_TCP_DEFAULT_DELAY;
-		pca.ts = time(NULL);
-		pca.period = P3CONNMGR_TCP_DEFAULT_PERIOD;
-
-		addAddressIfUnique(peer->connAddrs, pca);
+			peerConnectAddress pca;
+			pca.addr = ait->mAddr;
+			pca.type = RS_NET_CONN_TCP_EXTERNAL;
+			pca.delay = P3CONNMGR_TCP_DEFAULT_DELAY;
+			pca.ts = time(NULL);
+			pca.period = P3CONNMGR_TCP_DEFAULT_PERIOD;
+	
+			addAddressIfUnique(peer->connAddrs, pca);
+		}
 	}
 }
 
@@ -2646,7 +2770,11 @@ void  p3ConnectMgr::locked_ConnectAttempt_AddDynDNS(peerConnectState *peer)
                         pca.ts = time(NULL);
                         pca.period = P3CONNMGR_TCP_DEFAULT_PERIOD;
 
-			addAddressIfUnique(peer->connAddrs, pca);
+			/* check address validity */
+			if (locked_CheckPotentialAddr(&(pca.addr), 0))
+			{
+				addAddressIfUnique(peer->connAddrs, pca);
+			}
                 }
             }
         }
@@ -2710,7 +2838,7 @@ bool  p3ConnectMgr::locked_ConnectAttempt_Complete(peerConnectState *peer)
 #ifdef CONN_DEBUG
 		std::cerr << "p3ConnectMgr::locked_ConnectAttempt_Complete() Already in CONNECT ATTEMPT";
 		std::cerr << std::endl;
-            	std::cerr << "p3ConnectMgr::locked_ConnectAttempt_Complete() Remaining ConnAddr Count: " << it->second.connAddrs.size();
+            	std::cerr << "p3ConnectMgr::locked_ConnectAttempt_Complete() Remaining ConnAddr Count: " << peer->connAddrs.size();
 	    	std::cerr << std::endl;
 #endif
 		return true;
@@ -2721,7 +2849,7 @@ bool  p3ConnectMgr::locked_ConnectAttempt_Complete(peerConnectState *peer)
 	{
             #ifdef CONN_DEBUG
             std::ostringstream out;
-            out << "p3ConnectMgr::locked_ConnectAttempt_Complete() Started CONNECT ATTEMPT! " << " id: " << id ;
+            out << "p3ConnectMgr::locked_ConnectAttempt_Complete() Started CONNECT ATTEMPT! " ;
 	    out << std::endl;
             out << "p3ConnectMgr::locked_ConnectAttempt_Complete() ConnAddr Count: " << peer->connAddrs.size();
             rslog(RSL_DEBUG_ALERT, p3connectzone, out.str());
@@ -2737,7 +2865,7 @@ bool  p3ConnectMgr::locked_ConnectAttempt_Complete(peerConnectState *peer)
 	{
             #ifdef CONN_DEBUG
             std::ostringstream out;
-            out << "p3ConnectMgr::locked_ConnectAttempt_Complete() No addr in the connect attempt list. Not suitable for CONNECT ATTEMPT! " << " id: " << id;
+            out << "p3ConnectMgr::locked_ConnectAttempt_Complete() No addr in the connect attempt list. Not suitable for CONNECT ATTEMPT! ";
             rslog(RSL_DEBUG_ALERT, p3connectzone, out.str());
 	    std::cerr << out.str() << std::endl;
             #endif

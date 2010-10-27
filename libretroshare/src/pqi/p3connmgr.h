@@ -374,6 +374,7 @@ void 	locked_ConnectAttempt_AddTunnel(peerConnectState *peer);
 
 bool  	locked_ConnectAttempt_Complete(peerConnectState *peer);
 
+bool  	locked_CheckPotentialAddr(struct sockaddr_in *addr, time_t age);
 bool 	addAddressIfUnique(std::list<peerConnectAddress> &addrList, 
 					peerConnectAddress &pca);
 
@@ -436,6 +437,10 @@ void 	netStatusReset_locked();
 	uint32_t lastGroupId;
 
 	std::list<RsItem *> saveCleanupList; /* TEMPORARY LIST WHEN SAVING */
+
+
+	/* relatively static list of banned ip addresses */
+	std::list<struct in_addr> mBannedIpList;
 };
 
 #endif // MRK_PQI_CONNECTION_MANAGER_HEADER
