@@ -20,25 +20,21 @@
  ****************************************************************/
 #ifndef DHTSTATUS_H
 #define DHTSTATUS_H
-#include "gui/MainWindow.h"
-
 
 #include <QWidget>
 
+class QLabel;
 
 class DHTStatus : public QWidget
 {
-Q_OBJECT
+    Q_OBJECT
 public:
     DHTStatus(QWidget *parent = 0);
 
-    ~DHTStatus();
-
-    void getDHTStatus( );
-    
+    void getDHTStatus( );    
 
 private:
-    class QLabel *iconLabel, *statusDHT;
+    QLabel *dhtstatusLabel, *statusDHT, *dhtnetworkLabel, *dhtnetworksizeLabel, *spaceLabel;
 
 };
 

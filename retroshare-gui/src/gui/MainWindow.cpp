@@ -62,6 +62,7 @@
 #include "statusbar/peerstatus.h"
 #include "statusbar/natstatus.h"
 #include "statusbar/ratesstatus.h"
+#include "statusbar/dhtstatus.h"
 #include "statusbar/hashingstatus.h"
 #include <retroshare/rsstatus.h>
 
@@ -266,6 +267,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
     natstatus = new NATStatus();
     statusBar()->addWidget(natstatus);
+    
+    dhtstatus = new DHTStatus();
+    statusBar()->addWidget(dhtstatus);
 
     hashingstatus = new HashingStatus();
     statusBar()->addPermanentWidget(hashingstatus);
@@ -306,6 +310,7 @@ MainWindow::~MainWindow()
     delete _messengerwindowAct;
     delete peerstatus;
     delete natstatus;
+    delete dhtstatus;
     delete ratesstatus;
     MessengerWindow::releaseInstance();
 #ifdef UNFINISHED
@@ -502,6 +507,9 @@ void MainWindow::updateStatus()
 
     if (natstatus)
         natstatus->getNATStatus();
+        
+    if (dhtstatus)
+        dhtstatus->getDHTStatus();
 
     if (nOnlineCount == 0)
     {

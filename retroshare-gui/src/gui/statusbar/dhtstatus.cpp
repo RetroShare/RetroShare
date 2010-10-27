@@ -20,17 +20,13 @@
  ****************************************************************/
 #include "dhtstatus.h"
 
-#include <QtGui>
-#include <QString>
-
 #include <QLayout>
 #include <QLabel>
 #include <QIcon>
-#include <QPainter>
 #include <QPixmap>
 
-#include "rsiface/rsiface.h"
-#include "rsiface/rspeers.h"
+#include "retroshare/rsiface.h"
+#include "retroshare/rspeers.h"
 
 #include <sstream>
 #include <iomanip>
@@ -46,20 +42,25 @@ DHTStatus::DHTStatus(QWidget *parent)
 	  //statusDHT->setMinimumSize( statusPeers->frameSize().width() + 0, 0 );
     hbox->addWidget(statusDHT);
     
-    iconLabel = new QLabel( this );
-    iconLabel->setPixmap(QPixmap::QPixmap(":/images/grayled.png"));
-    // iconLabel doesn't change over time, so we didn't need a minimum size
-    hbox->addWidget(iconLabel);
+    dhtstatusLabel = new QLabel( this );
+    dhtstatusLabel->setPixmap(QPixmap(":/images/grayled.png"));
+    hbox->addWidget(dhtstatusLabel);
+    
+    spaceLabel = new QLabel( " | ", this );
+    hbox->addWidget(spaceLabel);
+    
+    dhtnetworkLabel = new QLabel( this );
+    dhtnetworkLabel->setPixmap(QPixmap(":/images/dht16.png"));
+    hbox->addWidget(dhtnetworkLabel);
+    
+    dhtnetworksizeLabel = new QLabel( "0 (0) ",this );
+    hbox->addWidget(dhtnetworksizeLabel);
     
     setLayout( hbox );
     
 
 
 
-}
-
-DHTStatus::~DHTStatus()
-{
 }
 
 void DHTStatus::getDHTStatus()
@@ -73,13 +74,13 @@ void DHTStatus::getDHTStatus()
 
     if (config.netDhtOk)
     {
-        iconLabel->setPixmap(QPixmap::QPixmap(":/images/greenled.png"));
-        iconLabel->setToolTip(tr("DHT OK"));
+        dhtstatusLabel->setPixmap(QPixmap(":/images/greenled.png"));
+        dhtstatusLabel->setToolTip(tr("DHT On"));
     }
     else
     {
-        iconLabel->setPixmap(QPixmap::QPixmap(":/images/redled.png"));
-        iconLabel->setToolTip(tr("DHT DOWN"));
+        dhtstatusLabel->setPixmap(QPixmap(":/images/redled.png"));
+        dhtstatusLabel->setToolTip(tr("DHT Off"));
     }
 		
     rsiface->unlockData(); /* UnLock Interface */

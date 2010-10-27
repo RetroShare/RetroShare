@@ -290,6 +290,7 @@ HEADERS +=  rshare.h \
             gui/help/browser/helptextbrowser.h \
             gui/statusbar/peerstatus.h \
             gui/statusbar/natstatus.h \
+            gui/statusbar/dhtstatus.h \
             gui/statusbar/ratesstatus.h \
             gui/statusbar/hashingstatus.h \
             gui/advsearch/advancedsearchdialog.h \
@@ -506,6 +507,7 @@ SOURCES +=  main.cpp \
             gui/settings/AddFileAssociationDialog.cpp \
             gui/statusbar/peerstatus.cpp \
             gui/statusbar/natstatus.cpp \
+            gui/statusbar/dhtstatus.cpp \
             gui/statusbar/ratesstatus.cpp \
             gui/statusbar/hashingstatus.cpp \
             gui/toaster/ChatToaster.cpp \
