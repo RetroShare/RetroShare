@@ -47,12 +47,9 @@ RatesStatus::RatesStatus(QWidget *parent)
     setLayout(hbox);
 }
 
-void RatesStatus::getRatesStatus()
+void RatesStatus::getRatesStatus(float downKb, float upKb)
 {
     /* set users/friends/network */
-    float downKb = 0;
-    float upKb = 0;
-    rsicontrol -> ConfigGetDataRates(downKb, upKb);
 
     std::ostringstream out;
     out << std::setprecision(2) << std::fixed << downKb ;

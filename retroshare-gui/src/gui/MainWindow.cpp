@@ -504,7 +504,7 @@ void MainWindow::updateStatus()
     rsicontrol -> ConfigGetDataRates(downKb, upKb);
 
     if (ratesstatus)
-        ratesstatus->getRatesStatus();
+        ratesstatus->getRatesStatus(downKb, upKb);
 
     if (peerstatus)
         peerstatus->getPeerStatus(nFriendCount, nOnlineCount);

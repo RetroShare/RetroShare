@@ -32,7 +32,7 @@ class RatesStatus : public QWidget
 public:
     RatesStatus(QWidget *parent = 0);
 
-    void getRatesStatus( );
+    void getRatesStatus(float downKb, float upKb);
 
 private:
     QLabel *iconLabel, *statusRates;
