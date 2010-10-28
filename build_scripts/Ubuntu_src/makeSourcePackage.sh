@@ -22,7 +22,7 @@ read tmp
 
 packages="."
 
-echo SVN number is $svnnumber
+echo SVN number is $svn
 echo version is $version
 
 echo Extracting base archive...
@@ -52,11 +52,11 @@ echo Setting version numbers...
 
 # setup version numbers
 cat retroshare-0.5/src/libretroshare/util/rsversion.h | grep -v SVN_REVISION > /tmp/toto2342
-echo \#define SVN_REVISION \"Revision: "$svnnumber"  date : `date`\" >> /tmp/toto2342
+echo \#define SVN_REVISION \"Revision: "$version"  date : `date`\" >> /tmp/toto2342
 cp /tmp/toto2342 retroshare-0.5/src/libretroshare/util/rsversion.h
 
 cat retroshare-0.5/src/retroshare-gui/util/rsversion.h | grep -v GUI_REVISION > /tmp/toto4463
-echo \#define GUI_REVISION \"Revision: "$svnnumber"  date : `date`\" >> /tmp/toto4463
+echo \#define GUI_REVISION \"Revision: "$version"  date : `date`\" >> /tmp/toto4463
 cp /tmp/toto4463 retroshare-0.5/src/retroshare-gui/util/rsversion.h
 
 # Various cleaning
