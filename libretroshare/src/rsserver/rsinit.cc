@@ -789,6 +789,98 @@ void RsInit::setupBaseDir()
 }
 
 
+/***********************************************************
+ * This Directory is used to store data and "template" file that Retroshare requires.
+ * These files will either be copied into Retroshare's configuration directory, 
+ * if they are to be modified. Or used directly, if read-only.
+ *
+ * This will initially be used for the DHT bootstrap file.
+ *
+ * Please modify the code below to suit your platform!
+ * 
+ * WINDOWS: 
+ * WINDOWS PORTABLE:
+ * Linux:
+ * OSX:
+
+ ***********/
+
+#ifdef __APPLE__
+	/* needs CoreFoundation Framework */
+	#include <CoreFoundation/CoreFoundation.h>
+	//#include <CFURL.h>
+	//#include <CFBundle.h>
+#endif
+
+std::string RsInit::getRetroshareDataDirectory()
+{
+	std::string dataDirectory;
+
+/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
+#ifndef WINDOWS_SYS
+
+  #ifdef __APPLE__
+	/* For OSX, applications are Bundled in a directory...
+	 * need to get the path to the executable Bundle.
+	 * 
+	 * Code nicely supplied by Qt!
+	 */
+
+	CFURLRef pluginRef = CFBundleCopyBundleURL(CFBundleGetMainBundle());
+	CFStringRef macPath = CFURLCopyFileSystemPath(pluginRef,
+       	                                    kCFURLPOSIXPathStyle);
+	const char *pathPtr = CFStringGetCStringPtr(macPath,
+                                           CFStringGetSystemEncoding());
+	dataDirectory = pathPtr;
+	CFRelease(pluginRef);
+	CFRelease(macPath);
+
+    	dataDirectory += "/Contents/Resources";
+	std::cerr << "getRetroshareDataDirectory() OSX: " << dataDirectory;
+
+  #else
+	/* For Linux, we have a fixed standard data directory  */
+	dataDirectory = "/usr/share/Retroshare";
+	std::cerr << "getRetroshareDataDirectory() Linux: " << dataDirectory;
+
+  #endif
+#else
+	if (RsInitConfig::portable) 
+	{
+		/* For Windows Portable, files must be in the data directory */
+		dataDirectory = "Data";
+		std::cerr << "getRetroshareDataDirectory() WINDOWS PORTABLE: " << dataDirectory;
+		std::cerr << std::endl;
+	}
+	else
+	{
+		/* For Windows: environment variable APPDATA should be suitable */
+		dataDirectory = getenv("APPDATA");
+		dataDirectory += "\\RetroShare";
+
+		std::cerr << "getRetroshareDataDirectory() WINDOWS: " << dataDirectory;
+		std::cerr << std::endl;
+	}
+#endif
+/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
+
+	/* Make sure the directory exists, else return emptyString */
+	if (!RsDirUtil::checkDirectory(dataDirectory))
+	{
+		std::cerr << "Data Directory not Found: " << dataDirectory << std::endl;
+		dataDirectory = "";
+	}
+	else
+	{
+		std::cerr << "Data Directory Found: " << dataDirectory << std::endl;
+	}
+
+	return dataDirectory;
+}
+
+
+
+
 /* directories with valid certificates in the expected location */
 bool getAvailableAccounts(std::list<accountId> &ids)
 {
@@ -2233,12 +2325,48 @@ int RsServer::StartupRetroShare()
 	rsUdpStack *mUdpStack = new rsUdpStack(tmpladdr);
 
 #ifdef RS_USE_BITDHT
+
+#define BITDHT_BOOTSTRAP_FILENAME  	"bdboot.txt"
+
+
 	std::string bootstrapfile = RsInitConfig::configDir.c_str();
 	if (bootstrapfile != "")
 	{
 		bootstrapfile += "/";
 	}
-	bootstrapfile += "bdboot.txt";
+	bootstrapfile += BITDHT_BOOTSTRAP_FILENAME;
+
+	std::cerr << "Checking for DHT bootstrap file: " << bootstrapfile << std::endl;
+
+	/* check if bootstrap file exists...
+	 * if not... copy from dataDirectory
+	 */
+
+	if (!RsDirUtil::checkFile(bootstrapfile))
+	{
+		std::cerr << "DHT bootstrap file not in ConfigDir: " << bootstrapfile << std::endl;
+		std::string installfile = RsInit::getRetroshareDataDirectory();
+		installfile += RsInitConfig::dirSeperator;
+		installfile += BITDHT_BOOTSTRAP_FILENAME;
+
+		std::cerr << "Checking for Installation DHT bootstrap file " << installfile << std::endl;
+		if ((installfile != "") && (RsDirUtil::checkFile(installfile)))
+		{
+			std::cerr << "Copying Installation DHT bootstrap file..." << std::endl;
+			if (RsDirUtil::copyFile(installfile, bootstrapfile))
+			{
+				std::cerr << "Installed DHT bootstrap file in configDir" << std::endl;
+			}
+			else
+			{
+				std::cerr << "Failed Installation DHT bootstrap file..." << std::endl;
+			}
+		}
+		else
+		{
+			std::cerr << "No Installation DHT bootstrap file to copy" << std::endl;
+		}
+	}
 
 	p3BitDht *mBitDht = new p3BitDht(ownId, mConnMgr, 
 				mUdpStack, bootstrapfile);

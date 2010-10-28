@@ -129,6 +129,8 @@ class RsInit
 		static void setAutoLogin(bool autoLogin);
 		static bool RsClearAutoLogin() ;
 
+		/* used for static install data */
+		static std::string getRetroshareDataDirectory();
 
 	private:
 

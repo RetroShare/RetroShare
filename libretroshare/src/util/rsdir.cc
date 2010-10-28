@@ -360,6 +360,100 @@ int	RsDirUtil::breakupDirList(const std::string& path,
 }
 
 
+/**** Copied and Tweaked from ftcontroller ***/
+bool RsDirUtil::copyFile(const std::string& source,const std::string& dest)
+{
+#ifdef WINDOWS_SYS
+        std::wstring sourceW;
+        std::wstring destW;
+        librs::util::ConvertUtf8ToUtf16(source,sourceW);
+        librs::util::ConvertUtf8ToUtf16(dest,destW);
+
+        return (CopyFileW(sourceW.c_str(), destW.c_str(), FALSE) != 0);
+
+#else
+	FILE *in = fopen(source.c_str(),"rb") ;
+
+	if(in == NULL)
+	{
+		return false ;
+	}
+
+	FILE *out = fopen(dest.c_str(),"wb") ;
+
+	if(out == NULL)
+	{
+		fclose (in);
+		return false ;
+	}
+
+	size_t s=0;
+	size_t T=0;
+
+	static const int BUFF_SIZE = 10485760 ; // 10 MB buffer to speed things up.
+	void *buffer = malloc(BUFF_SIZE) ;
+
+	bool bRet = true;
+
+	while( (s = fread(buffer,1,BUFF_SIZE,in)) > 0)
+	{
+		size_t t = fwrite(buffer,1,s,out) ;
+		T += t ;
+
+		if(t != s)
+		{
+			bRet = false ;
+			break;
+		}
+	}
+
+	fclose(in) ;
+	fclose(out) ;
+
+	free(buffer) ;
+
+	return true ;
+
+#endif
+
+}
+
+
+bool	RsDirUtil::checkFile(const std::string& filename)
+{
+	int val;
+	mode_t st_mode;
+#ifdef WINDOWS_SYS
+	std::wstring wfilename;
+	librs::util::ConvertUtf8ToUtf16(filename, wfilename);
+	struct _stat buf;
+	val = _wstat(wfilename.c_str(), &buf);
+	st_mode = buf.st_mode;
+#else
+	struct stat buf;
+	val = stat(filename.c_str(), &buf);
+	st_mode = buf.st_mode;
+#endif
+	if (val == -1)
+	{
+#ifdef RSDIR_DEBUG 
+		std::cerr << "RsDirUtil::checkFile() ";
+		std::cerr << filename << " doesn't exist" << std::endl;
+#endif
+		return false;
+	} 
+	else if (!S_ISREG(st_mode))
+	{
+		// Some other type - error.
+#ifdef RSDIR_DEBUG 
+		std::cerr << "RsDirUtil::checkFile() ";
+		std::cerr << filename << " is not a Regular File" << std::endl;
+#endif
+		return false;
+	}
+	return true;
+}
+
 
 bool	RsDirUtil::checkDirectory(const std::string& dir)
 {

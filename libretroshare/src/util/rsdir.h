@@ -59,6 +59,8 @@ bool crc32File(FILE *f,uint64_t file_size,uint32_t chunk_size,CRC32Map& map) ;
 
 int     	breakupDirList(const std::string& path, std::list<std::string> &subdirs);
 
+bool 		copyFile(const std::string& source,const std::string& dest);
+bool    	checkFile(const std::string& filename);
 bool    	checkDirectory(const std::string& dir);
 bool    	checkCreateDirectory(const std::string& dir);
 bool    	cleanupDirectory(const std::string& dir, std::list<std::string> keepFiles);
