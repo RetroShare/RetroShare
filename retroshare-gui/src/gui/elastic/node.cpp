@@ -55,7 +55,9 @@ Node::Node(const std::string& node_string,uint32_t flags,GraphWidget *graphWidge
     : graph(graphWidget),_desc_string(node_string),_flags(flags)
 {
     setFlag(ItemIsMovable);
+#if QT_VERSION >= 0x040600
     setFlag(ItemSendsGeometryChanges);
+#endif
     setCacheMode(DeviceCoordinateCache);
     setZValue(1);
 	 mDeterminedBB = false ;
