@@ -531,17 +531,16 @@ void MainWindow::updateStatus()
     {
         trayIcon->setIcon(QIcon(IMAGE_RETROSHARE));
     }
-    
 
-    if (nOnlineCount  > 1) 
-        trayIcon->setToolTip( tr("RetroShare") + "\n" + tr("Down: %1 (kB/s)").arg(downKb) + " | " + tr("Up: %1 (kB/s)").arg(upKb)
-        + "\n" + tr("%1 friends connected").arg(nOnlineCount) );
+    QString tray = tr("RetroShare") + "\n" + tr("Down: %1 (kB/s)").arg(downKb, 0, 'f', 2) + " | " + tr("Up: %1 (kB/s)").arg(upKb, 0, 'f', 2) + "\n";
+
+    if (nOnlineCount == 1) {
+        tray += tr("%1 friend connected").arg(nOnlineCount);
     } else {
-        trayIcon->setToolTip( tr("RetroShare") + "\n" + tr("Down: %1 (kB/s)").arg(downKb) + " | " + tr("Up: %1 (kB/s)").arg(upKb)
-        + "\n" + tr("%1 friend connected").arg(nOnlineCount) );
+        tray += tr("%1 friends connected").arg(nOnlineCount);
     }
-    
-    
+
+    trayIcon->setToolTip(tray);
 }
 
 void MainWindow::privateChatChanged(int list, int type)
