@@ -169,8 +169,8 @@ QString RemoteDirModel::getFlagsString(uint32_t flags)
 QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
 {
 	QString ret("");
-	QString nind("NEW");
-	QString oind("OLD");
+	QString nind = tr("NEW");
+//	QString oind = tr("OLD");
 	uint32_t age = details.age;
 
 	switch (ageIndicator) {
@@ -225,17 +225,11 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
 
     if (role == RemoteDirModel::FileNameRole)
     {
-        FileInfo finfo;
-        rsFiles->FileDetails(details.hash, 0, finfo);
-
-        return QString::fromUtf8(finfo.path.c_str()) ;
+        return QString::fromUtf8(details.name.c_str());
     } /* end of FileNameRole */
 
     if (role == Qt::TextColorRole)
     {
-        FileInfo finfo;
-        rsFiles->FileDetails(details.hash, 0, finfo);
-
         if(details.min_age > ageIndicator)
             return Qt::gray ;
         else
@@ -245,9 +239,6 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
 
     if (role == Qt::DecorationRole)
     {
-        FileInfo finfo;
-        rsFiles->FileDetails(details.hash, 0, finfo);
-	 
         if (details.type == DIR_TYPE_PERSON)
         {
             switch(coln)
@@ -299,7 +290,7 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
                 }
                 else
                 {
-                    return(QIcon(categoryIcon));
+                    return QIcon(categoryIcon);
                 }
                 break;
 			 }
@@ -314,58 +305,49 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
 					 if (ext == "jpg" || ext == "jpeg" || ext == "png" || ext == "gif"
 							 || ext == "bmp" || ext == "ico" || ext == "svg")
 					 {
-						 QIcon icon(":/images/FileTypePicture.png");
-						 return icon;
+						 return QIcon(":/images/FileTypePicture.png");
 					 }
 					 else if (ext == "avi" || ext == "AVI" || ext == "mpg" || ext == "mpeg" || ext == "wmv" || ext == "ogm"
 							 || ext == "mkv" || ext == "mp4" || ext == "flv" || ext == "mov"
 							 || ext == "vob" || ext == "qt" || ext == "rm" || ext == "3gp")
 					 {
-						 QIcon icon(":/images/FileTypeVideo.png");
-						 return icon;
+						 return QIcon(":/images/FileTypeVideo.png");
 					 }
 					 else if (ext == "ogg" || ext == "mp3" || ext == "wav" || ext == "wma" || ext == "xpm")
 					 {
-						 QIcon icon(":/images/FileTypeAudio.png");
-						 return icon;
+						 return QIcon(":/images/FileTypeAudio.png");
 					 }
 					 else if (ext == "tar" || ext == "bz2" || ext == "zip" || ext == "gz" || ext == "7z"
 							 || ext == "rar" || ext == "rpm" || ext == "deb")
 					 {
-						 QIcon icon(":/images/FileTypeArchive.png");
-						 return icon;
+						 return QIcon(":/images/FileTypeArchive.png");
 					 }
 					 else if (ext == "app" || ext == "bat" || ext == "cgi" || ext == "com"
 							 || ext == "bin" || ext == "exe" || ext == "js" || ext == "pif"
 							 || ext == "py" || ext == "pl" || ext == "sh" || ext == "vb" || ext == "ws")
 					 {
-						 return(QIcon(":/images/FileTypeProgram.png"));
+						 return QIcon(":/images/FileTypeProgram.png");
 					 }
 					 else if (ext == "iso" || ext == "nrg" || ext == "mdf" )
 					 {
-						 QIcon icon(":/images/FileTypeCDImage.png");
-						 return icon;
+						 return QIcon(":/images/FileTypeCDImage.png");
 					 }
 					 else if (ext == "txt" || ext == "cpp" || ext == "c" || ext == "h")
 					 {
-						 QIcon icon(":/images/FileTypeDocument.png");
-						 return icon;
+						 return QIcon(":/images/FileTypeDocument.png");
 					 }
 					 else if (ext == "doc" || ext == "rtf" || ext == "sxw" || ext == "xls"
 							 || ext == "sxc" || ext == "odt" || ext == "ods")
 					 {
-						 QIcon icon(":/images/FileTypeDocument.png");
-						 return icon;
+						 return QIcon(":/images/FileTypeDocument.png");
 					 }
 					 else if (ext == "html" || ext == "htm" || ext == "php")
 					 {
-						 QIcon icon(":/images/FileTypeDocument.png");
-						 return icon;
+						 return QIcon(":/images/FileTypeDocument.png");
 					 }
 					 else
 					 {
-						 QIcon icon(":/images/FileTypeAny.png");
-						 return icon;
+						 return QIcon(":/images/FileTypeAny.png");
 					 }
 					 break;
 			 }
@@ -395,7 +377,8 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
 		{
             return int( Qt::AlignRight | Qt::AlignVCenter);
 		}
-    } /* end of TextAlignmentRole */     
+        return QVariant();
+    } /* end of TextAlignmentRole */
 
     if (role == Qt::DisplayRole)
     {
@@ -413,13 +396,10 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
 		{
 			case 0:
 				return QString::fromUtf8(details.name.c_str());
-				break;
 			case 1:
 				return QString() ;
-				break;
 			default:
 				return QString() ;
-				break;
 		}
 	}
 	else if (details.type == DIR_TYPE_FILE) /* File */
@@ -428,24 +408,12 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
 		{
 			case 0:
 				return QString::fromUtf8(details.name.c_str());
-				break;
 			case 1:
-				{
-                std::ostringstream out;
-                return  misc::friendlyUnit(details.count);
-                }
-			break;
+				return  misc::friendlyUnit(details.count);
 			case 2:
-                {
-                std::ostringstream out;
-                return  misc::userFriendlyDuration(details.age);
-                }
-			break;
+				return  misc::userFriendlyDuration(details.age);
 			case 3:
-                {
-                return getFlagsString(details.flags);
-                }
-			break;
+				return getFlagsString(details.flags);
 			case 4:
                 {
                 QString ind("");
@@ -453,10 +421,8 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
                 ind = getAgeIndicatorString(details);
                 return ind;
                 }
-            break;
 			default:
-                return QString(tr("FILE"));
-			break;
+                return tr("FILE");
 		}
 	}
 	else if (details.type == DIR_TYPE_DIR) /* Dir */
@@ -467,28 +433,20 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
           return QString::fromUtf8(details.name.c_str());
 				break;
 			case 1:
+				if (details.count > 1)
 				{
-					std::ostringstream out;
-					out << details.count;
-					if (details.count > 1)
-					{
-                    return QString::fromStdString(out.str()) + " " + tr("Files");
-					}
-					else
-                    return QString::fromStdString(out.str()) + " " + tr("File");
+					return QString::number(details.count) + " " + tr("Files");
 				}
-				break;
+				return QString::number(details.count) + " " + tr("File");
 			case 2:
-					return misc::userFriendlyDuration(details.min_age);
-				break;
+				return misc::userFriendlyDuration(details.min_age);
 			case 3:
-					return getFlagsString(details.flags);
-				break;
+				return getFlagsString(details.flags);
 			default:
-				return QString(tr("DIR"));
-				break;
+				return tr("DIR");
 		}
 	}
+	return QVariant();
    } /* end of DisplayRole */
 
     if (role == SortRole)
@@ -533,7 +491,7 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
                     return ind;
                 }
             default:
-                return QString(tr("FILE"));
+                return tr("FILE");
             }
         }
         else if (details.type == DIR_TYPE_DIR) /* Dir */
@@ -549,9 +507,10 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
             case 3:
                 return getFlagsString(details.flags);
             default:
-                return QString(tr("DIR"));
+                return tr("DIR");
             }
         }
+        return QVariant();
     } /* end of SortRole */
 
    return QVariant();
@@ -561,7 +520,7 @@ void RemoteDirModel::getAgeIndicatorRec(DirDetails &details, QString &ret) const
 	if (details.type == DIR_TYPE_FILE) {
 		ret = getAgeIndicatorString(details);
 		return;
-	} else if (details.type == DIR_TYPE_DIR && ret == tr("")) {
+	} else if (details.type == DIR_TYPE_DIR && ret.isEmpty()) {
 		std::list<DirStub>::iterator it;
 		for (it = details.children.begin(); it != details.children.end(); it++) {
 			void *ref = it->ref;
@@ -603,25 +562,17 @@ void RemoteDirModel::getAgeIndicatorRec(DirDetails &details, QString &ret) const
 			case 0:
 				if (RemoteMode)
 				{
-					return QString(tr("Friends Directories"));
+					return tr("Friends Directories");
 				}
-				else
-				{
-					return QString(tr("My Directories"));
-				}
-				break;
+				return tr("My Directories");
 			case 1:
-				return QString(tr("Size"));
-				break;
+				return tr("Size");
 			case 2:
-				return QString(tr("Age"));
-				break;
+				return tr("Age");
 			case 3:
-				return QString(tr("Share Type"));
-				break;
+				return tr("Share Type");
 			case 4:
-				return QString(tr("What's new"));
-				break;
+				return tr("What's new");
 		}
 		return QString("Column %1").arg(section);
 	}
@@ -765,11 +716,12 @@ Qt::ItemFlags RemoteDirModel::flags( const QModelIndex & index ) const
 
 	switch(details.type)
 	{
-		case DIR_TYPE_PERSON: return Qt::ItemIsEnabled;
-		case DIR_TYPE_DIR:	 return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
-		default: ;
-		case DIR_TYPE_FILE:	 return Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled;
+	case DIR_TYPE_PERSON: return Qt::ItemIsEnabled;
+	case DIR_TYPE_DIR:	 return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+	case DIR_TYPE_FILE:	 return Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled;
 	}
+
+	return Qt::ItemIsSelectable;
 }
 
 // The other flags...
@@ -1289,6 +1241,3 @@ RemoteDirModel::isDir ( const QModelIndex & index ) const
 
     return (details.type == DIR_TYPE_DIR) ;
 }
-
-
-

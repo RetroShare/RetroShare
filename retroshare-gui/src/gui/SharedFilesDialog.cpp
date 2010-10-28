@@ -693,10 +693,12 @@ void  SharedFilesDialog::postModDirectories(bool update_local)
 void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
 {
 	//=== at this moment we'll show menu only for files, not for folders
-	QModelIndex midx = ui.localDirTreeView->indexAt(point);
-	//if (localModel->isDir( midx ) )
-	//	return;
-
+	QModelIndex idx = ui.localDirTreeView->indexAt(point);
+	if (!idx.isValid())
+		return;
+	QModelIndex midx = localProxyModel->mapToSource(idx);
+	if (!midx.isValid())
+		return;
 	currentFile = localModel->data(midx, RemoteDirModel::FileNameRole).toString();
 
 	QMenu contextMnu2( this );
