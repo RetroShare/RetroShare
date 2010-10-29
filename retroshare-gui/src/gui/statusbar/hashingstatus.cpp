@@ -26,10 +26,10 @@
 
 #include "gui/notifyqt.h"
 
-class QStatusLabel : public QLabel
+class StatusLabel : public QLabel
 {
 public:
-    QStatusLabel(QLayout *layout, QWidget *parent = NULL, Qt::WindowFlags f = 0) : QLabel(parent, f)
+    StatusLabel(QLayout *layout, QWidget *parent = NULL, Qt::WindowFlags f = 0) : QLabel(parent, f)
     {
         m_layout = layout;
     }
@@ -53,7 +53,7 @@ HashingStatus::HashingStatus(QWidget *parent)
     hbox->setMargin(0);
     hbox->setSpacing(6);
 
-    statusHashing = new QStatusLabel(hbox, this);
+    statusHashing = new StatusLabel(hbox, this);
     hbox->addWidget(statusHashing);
 
     QSpacerItem *horizontalSpacer = new QSpacerItem(1000, 0, QSizePolicy::Expanding, QSizePolicy::Minimum);
