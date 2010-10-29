@@ -55,7 +55,7 @@ protected:
   
 private slots:
   /** Adds new data to the graph */
-  void updateGraph(quint64 bytesRead, quint64 bytesWritten);
+  void updateGraph(qreal bytesRead, qreal bytesWritten);
   /** Called when settings button is toggled */
   void showSettingsFrame(bool show);
   /** Called when the settings button is toggled */
