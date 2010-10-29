@@ -896,7 +896,6 @@ void  PeersDialog::insertPeers()
                     gpg_connected = true;
 
                     sslIcon = QIcon(":/images/connect_established.png");
-                    sslItem -> setIcon(COLUMN_STATE,(QIcon(":/images/encrypted32.png")));
 
                     sslFont.setBold(true);
                     sslColor = Qt::darkBlue;
