@@ -141,16 +141,14 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
   ui.remoteDirTreeView->setColumnHidden(4,true) ;
   ui.localDirTreeView->setColumnHidden(4,true) ;
 
-  connect( ui.remoteDirTreeView, SIGNAL( collapsed(const QModelIndex & ) ),
-  	model, SLOT(  collapsed(const QModelIndex & ) ) );
-  connect( ui.remoteDirTreeView, SIGNAL( expanded(const QModelIndex & ) ),
-  	model, SLOT(  expanded(const QModelIndex & ) ) );
+  connect( ui.remoteDirTreeView, SIGNAL( collapsed(const QModelIndex & ) ), model, SLOT(  collapsed(const QModelIndex & ) ) );
+  connect( ui.remoteDirTreeView, SIGNAL( expanded(const QModelIndex & ) ), model, SLOT(  expanded(const QModelIndex & ) ) );
 
-  connect( ui.localDirTreeView, SIGNAL( collapsed(const QModelIndex & ) ),
-  	localModel, SLOT(  collapsed(const QModelIndex & ) ) );
-  connect( ui.localDirTreeView, SIGNAL( expanded(const QModelIndex & ) ),
-  	localModel, SLOT(  expanded(const QModelIndex & ) ) );
+  connect( ui.localDirTreeView, SIGNAL( collapsed(const QModelIndex & ) ), localModel, SLOT(  collapsed(const QModelIndex & ) ) );
+  connect( ui.localDirTreeView, SIGNAL( expanded(const QModelIndex & ) ), localModel, SLOT(  expanded(const QModelIndex & ) ) );
 
+  connect( localModel, SIGNAL( layoutAboutToBeChanged() ), ui.localDirTreeView, SLOT( reset() ) );
+  connect( localModel, SIGNAL( layoutChanged() ), ui.localDirTreeView, SLOT( update() ) );
 
   /* Set header resize modes and initial section sizes  */
 	QHeaderView * l_header = ui.localDirTreeView->header () ;
