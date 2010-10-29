@@ -48,6 +48,8 @@ cd retroshare-0.5/src/retroshare-nogui/
 svn co https://retroshare.svn.sourceforge.net/svnroot/retroshare/trunk/retroshare-nogui/src . 2> /dev/null
 cd ../../..
 
+echo Copying bdboot.txt file at installation place
+cp retroshare-0.5/src/libbitdht/bitdht/bdboot.txt
 echo Setting version numbers...
 
 # setup version numbers
