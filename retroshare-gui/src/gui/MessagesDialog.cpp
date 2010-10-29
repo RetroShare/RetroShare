@@ -239,6 +239,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
     connect( ui.messagestreeView, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( messageslistWidgetCostumPopupMenu( QPoint ) ) );
     connect( ui.msgList, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( msgfilelistWidgetCostumPopupMenu( QPoint ) ) );
+    connect( ui.listWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( folderlistWidgetCostumPopupMenu( QPoint ) ) );
     connect( ui.messagestreeView, SIGNAL(clicked ( const QModelIndex &) ) , this, SLOT( clicked( const QModelIndex & ) ) );
     connect( ui.messagestreeView, SIGNAL(doubleClicked ( const QModelIndex& ) ) , this, SLOT( doubleClicked( const QModelIndex & ) ) );
     connect( ui.listWidget, SIGNAL( currentRowChanged ( int) ), this, SLOT( changeBox ( int) ) );
@@ -717,6 +718,20 @@ void MessagesDialog::msgfilelistWidgetCostumPopupMenu( QPoint point )
 
     contextMnu.addAction( getRecAct);
 //    contextMnu.addAction( getAllRecAct);
+    contextMnu.exec(QCursor::pos());
+}
+
+void MessagesDialog::folderlistWidgetCostumPopupMenu(QPoint point)
+{
+    if (ui.listWidget->currentRow() != ROW_TRASHBOX) {
+        /* Context menu only neede for trash box */
+        return;
+    }
+
+    QMenu contextMnu(this);
+
+    contextMnu.addAction(tr("Empty trash"), this, SLOT(emptyTrash()));
+
     contextMnu.exec(QCursor::pos());
 }
 
@@ -1829,7 +1844,6 @@ void MessagesDialog::removemessage()
             QString mid = pItem->data(ROLE_MSGID).toString();
             if (bDelete) {
                 rsMsgs->MessageDelete(mid.toStdString());
-
             } else {
                 rsMsgs->MessageToTrash(mid.toStdString(), true);
             }
@@ -2294,4 +2308,21 @@ void MessagesDialog::linkActivated(QString link)
             MessageComposer::msgFriend(detail.id, false);
         }
     }
+}
+
+void MessagesDialog::emptyTrash()
+{
+    LockUpdate Lock (this, true);
+
+    std::list<MsgInfoSummary> msgList;
+    rsMsgs->getMessageSummaries(msgList);
+
+    std::list<MsgInfoSummary>::const_iterator it;
+    for (it = msgList.begin(); it != msgList.end(); it++) {
+        if (it->msgflags & RS_MSG_TRASH) {
+            rsMsgs->MessageDelete(it->msgId);
+        }
+    }
+
+    // LockUpdate -> insertMessages();
 }

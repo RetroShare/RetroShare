@@ -155,7 +155,7 @@ private:
     void colorChanged(const QColor &c);
     void alignmentChanged(Qt::Alignment a);
 
-    void  sendMessage_internal(bool bDraftbox);
+    bool  sendMessage_internal(bool bDraftbox);
     
     void FilterItems();
     bool FilterItem(QTreeWidgetItem *pItem, QString &sPattern);

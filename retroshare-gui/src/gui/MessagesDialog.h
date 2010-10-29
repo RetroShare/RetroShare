@@ -53,11 +53,11 @@ public slots:
   void messagesTagsChanged();
   
 private slots:
-
   /** Create the context popup menu and it's submenus */
   void linkActivated(QString link);
   void messageslistWidgetCostumPopupMenu( QPoint point );
-  void msgfilelistWidgetCostumPopupMenu(QPoint);  
+  void msgfilelistWidgetCostumPopupMenu(QPoint);
+  void folderlistWidgetCostumPopupMenu(QPoint);
 
   void changeBox( int newrow );
   void changeTag( int newrow );
@@ -84,6 +84,8 @@ private slots:
 
   void markAsRead();
   void markAsUnread();
+
+  void emptyTrash();
 
   void anchorClicked (const QUrl &);
   

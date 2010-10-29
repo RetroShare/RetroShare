@@ -954,17 +954,25 @@ void  MessageComposer::insertHtmlText(std::string msg)
 
 void  MessageComposer::sendMessage()
 {
-    sendMessage_internal(false);
-    close();
+    if (sendMessage_internal(false)) {
+        close();
+    }
 }
 
-void MessageComposer::sendMessage_internal(bool bDraftbox)
+bool MessageComposer::sendMessage_internal(bool bDraftbox)
 {
     /* construct a message */
     MessageInfo mi;
 
     mi.title = ui.titleEdit->text().toStdWString();
     mi.msg =   ui.msgText->toHtml().toStdWString();
+
+    /* check for existing title */
+    if (bDraftbox == false && mi.title.empty()) {
+        if (QMessageBox::warning(this, tr("RetroShare"), tr("Do you want to send the message without a subject ?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No) {
+            return false; // Don't send with an empty subject
+        }
+    }
 
     for(std::list<FileInfo>::const_iterator it(_recList.begin()); it != _recList.end(); ++it)
         if (it -> inRecommend)
@@ -1055,10 +1063,16 @@ void MessageComposer::sendMessage_internal(bool bDraftbox)
         // use new message id
         m_sDraftMsgId = mi.msgId;
     } else {
+        /* check for the recipient */
+        if (mi.msgto.empty()) {
+            QMessageBox::warning(this, tr("RetroShare"), tr("Please insert at least one recipient."), QMessageBox::Ok);
+            return false; // Don't send with no recipient
+        }
         rsMsgs->MessageSend(mi);
     }
 
     ui.msgText->document()->setModified(false);
+    return true;
 }
 
 void  MessageComposer::cancelMessage()
