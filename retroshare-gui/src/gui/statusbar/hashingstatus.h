@@ -36,7 +36,9 @@ public slots:
     void updateHashingInfo(const QString&) ;
 
 private:
-    QLabel *statusHashing;
+    QLabel *statusHashing, *hashloader;
+    QMovie *movie;
+
 };
 
 #endif

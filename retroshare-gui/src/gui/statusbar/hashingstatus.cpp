@@ -21,6 +21,7 @@
 
 #include <QLayout>
 #include <QLabel>
+#include <QMovie>
 
 #include "hashingstatus.h"
 
@@ -52,6 +53,9 @@ HashingStatus::HashingStatus(QWidget *parent)
     QHBoxLayout *hbox = new QHBoxLayout(this);
     hbox->setMargin(0);
     hbox->setSpacing(6);
+        
+    hashloader = new QLabel(this);
+    hbox->addWidget(hashloader);
 
     statusHashing = new StatusLabel(hbox, this);
     hbox->addWidget(statusHashing);
@@ -61,17 +65,27 @@ HashingStatus::HashingStatus(QWidget *parent)
     
     setLayout(hbox);
 
+    hashloader->hide();
     statusHashing->hide();
 
     connect(NotifyQt::getInstance(), SIGNAL(hashingInfoChanged(const QString&)), SLOT(updateHashingInfo(const QString&)));
+
 }
 
 void HashingStatus::updateHashingInfo(const QString& s)
 {
+    QMovie *movie = new QMovie(":/images/loader/16-loader.gif");
+
     if(s.isEmpty()) {
         statusHashing->hide() ;
+        hashloader->hide() ;
     } else {
         statusHashing->setText(s);
         statusHashing->show();
+        hashloader->show() ;
+
+        hashloader->setMovie(movie);
+        movie->start();
+        movie->setSpeed(80); // 2x speed
     }
 }

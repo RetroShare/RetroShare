@@ -116,7 +116,6 @@ private:
   QAction* copylinklocalhtmlAct;
 
   QTreeView *shareddirtreeview;
-  QMovie *movie;
 
   /** Qt Designer generated object */
   Ui::SharedFilesDialog ui;

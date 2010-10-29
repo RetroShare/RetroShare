@@ -23,7 +23,6 @@
 #include <QTreeView>
 #include <QClipboard>
 #include <QMenu>
-#include <QMovie>
 #include <QProcess>
 #include <QSortFilterProxyModel>
 
@@ -257,14 +256,10 @@ void SharedFilesDialog::checkUpdate()
 	if (rsFiles->InDirectoryCheck())
 	{
 		ui.checkButton->setText(tr("Checking..."));
-    QMovie *movie = new QMovie(":/images/loader/16-loader.gif");
-    ui.hashLabel->setMovie(movie);
-    movie->start();
-    movie->setSpeed(100); // 2x speed
 	}
 	else
 	{
-	  ui.checkButton->setText(tr("Check files"));
+        ui.checkButton->setText(tr("Check files"));
 		ui.hashLabel->setPixmap(QPixmap(IMAGE_HASH_DONE));
 		ui.hashLabel->setToolTip("") ;
 	}
