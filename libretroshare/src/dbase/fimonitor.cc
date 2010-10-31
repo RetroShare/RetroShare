@@ -43,6 +43,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <fstream>
 
 //***********
 //#define FIM_DEBUG 1
@@ -51,12 +52,198 @@
 FileIndexMonitor::FileIndexMonitor(CacheStrapper *cs, NotifyBase *cb_in,std::string cachedir, std::string pid)
 	:CacheSource(RS_SERVICE_TYPE_FILE_INDEX, false, cs, cachedir), fi(pid),
 		pendingDirs(false), pendingForceCacheWrite(false),
-		mForceCheck(false), mInCheck(false),cb(cb_in)
+		mForceCheck(false), mInCheck(false),cb(cb_in), hashCache(cachedir+"/" + "fc-own-cache.rsfa"),useHashCache(true)
 
 {
 	updatePeriod = 60;
 }
+bool FileIndexMonitor::rememberHashFiles()
+{
+	RsStackMutex mtx(fiMutex) ; /* LOCKED DIRS */
+	return useHashCache ;
+}
+void FileIndexMonitor::setRememberHashFiles(bool b)
+{
+	RsStackMutex mtx(fiMutex) ; /* LOCKED DIRS */
+#ifdef FIM_DEBUG
+	std::cerr << "Setting useHashCache to " << b << std::endl;
+#endif
+	useHashCache = b ;
+}
+void	FileIndexMonitor::setRememberHashFilesDuration(uint32_t days) 
+{
+	RsStackMutex mtx(fiMutex) ; /* LOCKED DIRS */
 
+#ifdef FIM_DEBUG
+	std::cerr << "Setting HashCache duration to " << days << std::endl;
+#endif
+	hashCache.setRememberHashFilesDuration(days) ;
+	hashCache.clean() ;
+}
+
+uint32_t FileIndexMonitor::rememberHashFilesDuration() const 
+{
+	RsStackMutex mtx(fiMutex) ; /* LOCKED DIRS */
+	
+	return hashCache.rememberHashFilesDuration() ;
+}
+
+// Remove any memory of formerly hashed files that are not shared anymore
+void   FileIndexMonitor::clearHashFiles() 
+{
+	RsStackMutex mtx(fiMutex) ; /* LOCKED DIRS */
+
+	hashCache.clear() ;
+	hashCache.save() ;
+}
+
+HashCache::HashCache(const std::string& path)
+	: _path(path)
+{
+	_max_cache_duration_days = 10 ; // 10 days is the default value.
+	_files.clear() ;
+	_changed = false ;
+	std::ifstream f(_path.c_str()) ;
+
+	std::streamsize max_line_size = 2000 ; // should be enough. Anyway, if we
+														// miss one entry, we just lose some
+														// cache itemsn but this is not too
+														// much of a problem.
+	char *buff = new char[max_line_size] ;
+
+#ifdef FIM_DEBUG
+	std::cerr << "Loading HashCache from file " << path << std::endl ;
+	int n=0 ;
+#endif
+
+	while(f.good())
+	{
+		HashCacheInfo info ;
+
+		f.getline(buff,max_line_size,'\n') ;
+		std::string name(buff) ;
+
+		f.getline(buff,max_line_size,'\n') ; if(sscanf(buff,"%lld",&info.size) != 1) break ;
+		f.getline(buff,max_line_size,'\n') ; if(sscanf(buff,"%ld",&info.time_stamp) != 1) break ;
+		f.getline(buff,max_line_size,'\n') ; if(sscanf(buff,"%ld",&info.modf_stamp) != 1) break ;
+		f.getline(buff,max_line_size,'\n') ; info.hash = std::string(buff) ;
+
+#ifdef FIM_DEBUG
+		std::cerr << "  (" << name << ", " << info.size << ", " << info.time_stamp << ", " << info.modf_stamp << ", " << info.hash << std::endl ;
+		++n ;
+#endif
+		_files[name] = info ;
+	}
+	f.close() ;
+
+	delete[] buff ;
+#ifdef FIM_DEBUG
+	std::cerr << n << " entries loaded." << std::endl ;
+#endif
+}
+
+void HashCache::save()
+{
+	if(_changed)
+	{
+#ifdef FIM_DEBUG
+		std::cerr << "Saving Hash Cache to file " << _path << "..." << std::endl ;
+#endif
+		std::ofstream f( (_path+".tmp").c_str() ) ;
+
+		for(std::map<std::string,HashCacheInfo>::const_iterator it(_files.begin());it!=_files.end();++it)
+		{
+			f << it->first << std::endl ;
+			f << it->second.size << std::endl;
+			f << it->second.time_stamp << std::endl;
+			f << it->second.modf_stamp << std::endl;
+			f << it->second.hash << std::endl;
+		}
+		f.close() ;
+
+		RsDirUtil::renameFile(_path+".tmp",_path) ;
+#ifdef FIM_DEBUG
+		std::cerr << "done." << std::endl ;
+#endif
+
+		_changed = false ;
+	}
+#ifdef FIM_DEBUG
+	else
+		std::cerr << "Hash cache not changed. Not saving." << std::endl ;
+#endif
+}
+
+bool HashCache::find(const std::string& full_path,uint64_t size,time_t time_stamp,std::string& hash)
+{
+#ifdef FIM_DEBUG
+	std::cerr << "HashCache: looking for " << full_path << std::endl ;
+#endif
+	time_t now = time(NULL) ;
+	std::map<std::string,HashCacheInfo>::iterator it(_files.find(full_path)) ;
+
+	if(it != _files.end() && time_stamp == it->second.modf_stamp && size == it->second.size)
+	{
+		hash = it->second.hash ;
+		it->second.time_stamp = now ;
+#ifdef FIM_DEBUG
+		std::cerr << "Found in cache." << std::endl ;
+#endif
+		return true ;
+	}
+	else
+	{
+#ifdef FIM_DEBUG
+		std::cerr << "not found in cache." << std::endl ;
+#endif
+		return false ;
+	}
+}
+void HashCache::insert(const std::string& full_path,uint64_t size,time_t time_stamp,const std::string& hash)
+{
+	HashCacheInfo info ;
+	info.size = size ;
+	info.modf_stamp = time_stamp ;
+	info.time_stamp = time(NULL) ;
+	info.hash = hash ;
+
+	_files[full_path] = info ;
+	_changed = true ;
+
+#ifdef FIM_DEBUG
+	std::cerr << "Entry inserted in cache: " << full_path << ", " << size << ", " << time_stamp << std::endl ;
+#endif
+}
+void HashCache::clean()
+{
+#ifdef FIM_DEBUG
+	std::cerr << "Cleaning HashCache..." << std::endl ;
+#endif
+	time_t now = time(NULL) ;
+	time_t duration = _max_cache_duration_days * 24 * 3600 ; // seconds
+
+#ifdef FIM_DEBUG
+	std::cerr << "cleaning hash cache." << std::endl ;
+#endif
+
+	for(std::map<std::string,HashCacheInfo>::iterator it(_files.begin());it!=_files.end();)
+		if(it->second.time_stamp + duration < now)
+		{
+#ifdef FIM_DEBUG
+			std::cerr << "  Entry too old: " << it->first << ", ts=" << it->second.time_stamp << std::endl ;
+#endif
+			std::map<std::string,HashCacheInfo>::iterator tmp(it) ;
+			++tmp ;
+			_files.erase(it) ;
+			it=tmp ;
+		}
+		else
+			++it ;
+
+#ifdef FIM_DEBUG
+	std::cerr << "Done." << std::endl;
+#endif
+}
 
 FileIndexMonitor::~FileIndexMonitor()
 {
@@ -535,7 +722,7 @@ void 	FileIndexMonitor::updateCycle()
 		olddir = NULL;
 
 		/* close directory */
-                dirIt.closedir();
+		dirIt.closedir();
 	}
 
 	// Now, hash all files at once.
@@ -574,6 +761,9 @@ void 	FileIndexMonitor::updateCycle()
 		fi.updateMaxModTime() ;	// Update modification times for proper display.
 
 		mInCheck = false;
+
+		if(useHashCache)
+			hashCache.save() ;
 	}
 }
 
@@ -638,8 +828,13 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 			cb->notifyHashingInfo(NOTIFY_HASHTYPE_HASH_FILE, tmpout.str()) ;
 
 			FileEntry fe(to_hash[i].fentries[j]) ;	// copied, because hashFile updates the hash member
+			std::string real_path(to_hash[i].realpath + "/" + to_hash[i].fentries[j].name) ;
 
-			if(RsDirUtil::hashFile(to_hash[i].realpath + "/" + to_hash[i].fentries[j].name, fe.hash))
+			// 1st look into the hash cache if this file already exists.
+			//
+			if(useHashCache && hashCache.find(real_path,to_hash[i].fentries[j].size,to_hash[i].fentries[j].modtime,fe.hash)) 
+				fi.updateFileEntry(to_hash[i].dirpath,fe,stamp);
+			else if(RsDirUtil::hashFile(real_path, fe.hash))		// not found, then hash it.
 			{
 				RsStackMutex stack(fiMutex); /**** LOCKED DIRS ****/
 
@@ -647,6 +842,10 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 				/* update with new time */
 
 				fi.updateFileEntry(to_hash[i].dirpath,fe,stamp);
+
+				// Update the hash cache
+				if(useHashCache)
+					hashCache.insert(real_path,to_hash[i].fentries[j].size,to_hash[i].fentries[j].modtime,fe.hash) ;
 			}
 			else
 				std::cerr << "Failed to Hash File " << to_hash[i].fentries[j].name << std::endl;
@@ -675,6 +874,9 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 				RsStackMutex stack(fiMutex); /**** LOCKED DIRS ****/
 				FileIndexMonitor::locked_saveFileIndexes() ;
 				last_save_size = size ;
+
+				if(useHashCache)
+					hashCache.save() ;
 			}
 		}
 

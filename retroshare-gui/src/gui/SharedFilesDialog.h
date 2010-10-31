@@ -115,7 +115,6 @@ private:
   QAction* sendchatlinkAct;
   QAction* copylinklocalhtmlAct;
 
-  QTreeView *shareddirtreeview;
 
   /** Qt Designer generated object */
   Ui::SharedFilesDialog ui;

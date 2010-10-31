@@ -66,6 +66,12 @@ class ftFiMonitor: public FileIndexMonitor, public ftSearch, public p3Config
 	virtual void setSharedDirectories(const std::list<SharedDirInfo>& dirList);
 	virtual void updateShareFlags(const SharedDirInfo& info) ;
 
+	void	setRememberHashCacheDuration(uint32_t days) ;
+	uint32_t rememberHashCacheDuration() const ;
+	void	setRememberHashCache(bool) ;
+	bool rememberHashCache() ;
+	void clearHashCache() ;
+
 	/***
 	* Configuration - store shared directories
 	*/

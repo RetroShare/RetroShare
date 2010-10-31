@@ -71,6 +71,34 @@ class DirContentToHash
 		std::string dirpath ;
 };
 
+class HashCache
+{
+	public:
+		HashCache(const std::string& save_file_name) ;
+
+		void save() ;
+		void insert(const std::string& full_path,uint64_t size,time_t time_stamp,const std::string& hash) ;
+		bool find(const  std::string& full_path,uint64_t size,time_t time_stamp,std::string& hash) ;
+		void clean() ;
+
+		typedef struct 
+		{
+			uint64_t size ;
+			time_t time_stamp ;
+			time_t modf_stamp ;
+			std::string hash ;
+		} HashCacheInfo ;
+
+		void setRememberHashFilesDuration(uint32_t days) { _max_cache_duration_days = days ; }
+		uint32_t rememberHashFilesDuration() const { return _max_cache_duration_days ; }
+		void clear() { _files.clear(); }
+	private:
+		uint32_t _max_cache_duration_days ;	// maximum duration of un-requested cache entries
+		std::map<std::string, HashCacheInfo> _files ;
+		std::string _path ;
+		bool _changed ;
+};
+
 /******************************************************************************************
  * FileIndexMonitor
  *****************************************************************************************/
@@ -119,6 +147,16 @@ class FileIndexMonitor: public CacheSource, public RsThread
 
 		/* util fns */
 
+	protected:
+		// Sets/gets the duration period within which already hashed files are remembered.
+		//
+		void	setRememberHashFilesDuration(uint32_t days) ;
+		uint32_t rememberHashFilesDuration() const ;
+		void	setRememberHashFiles(bool) ;
+		bool rememberHashFiles() ;
+		// Remove any memory of formerly hashed files that are not shared anymore
+		void   clearHashFiles() ;
+
 	private:
 		/* the mutex should be locked before calling these 3. */
 
@@ -154,6 +192,9 @@ class FileIndexMonitor: public CacheSource, public RsThread
 		bool    internal_setSharedDirectories();
 
 		NotifyBase *cb ;
+
+		HashCache hashCache ;
+		bool useHashCache ;
 };
 
 

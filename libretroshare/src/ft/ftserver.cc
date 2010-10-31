@@ -83,10 +83,6 @@ void	ftServer::setConfigDirectory(std::string path)
 	RsDirUtil::checkCreateDirectory(basecachedir) ;
 	RsDirUtil::checkCreateDirectory(localcachedir) ;
 	RsDirUtil::checkCreateDirectory(remotecachedir) ;
-
-	//mFiStore -> setCacheDir(remotecachedir);
-        //mFiMon -> setCacheDir(localcachedir);
-
 }
 
 void	ftServer::setP3Interface(P3Interface *pqi)
@@ -151,8 +147,6 @@ void ftServer::SetupFtServer(NotifyBase *cb)
 	mConnMgr->addMonitor(mFtController);
 	mConnMgr->addMonitor(mCacheStrapper);
 
-//    mFtDwlQueue = new ftDwlQueue(mFtController);
-
 	return;
 }
 
@@ -183,9 +177,6 @@ void    ftServer::StartupThreads()
 
 	/* Dataplex */
 	mFtDataplex->start();
-
-//	/* Download Queue */
-//	mFtDwlQueue->start();
 
 	/* start own thread */
 	start();
@@ -375,11 +366,6 @@ bool ftServer::clearDownload(const std::string hash)
 {
    return true ;
 }
-
-//void ftServer::getDwlDetails(std::list<DwlDetails> & details)
-//{
-//	mFtDwlQueue->getDwlDetails(details);
-//}
 
 bool ftServer::FileDownloadChunksDetails(const std::string& hash,FileChunksInfo& info)
 {
@@ -659,6 +645,26 @@ bool 	ftServer::removeSharedDirectory(std::string dir)
 	mFiMon->setSharedDirectories(dirList);
 
 	return true;
+}
+void	ftServer::setRememberHashFiles(bool b) 
+{
+	mFiMon->setRememberHashCache(b) ;
+}
+bool ftServer::rememberHashFiles() const
+{
+	return mFiMon->rememberHashCache() ;
+}
+void	ftServer::setRememberHashFilesDuration(uint32_t days) 
+{
+	mFiMon->setRememberHashCacheDuration(days) ;
+}
+uint32_t ftServer::rememberHashFilesDuration() const 
+{
+	return mFiMon->rememberHashCacheDuration() ;
+}
+void   ftServer::clearHashCache() 
+{
+	mFiMon->clearHashCache() ;
 }
 
 void ftServer::setShareDownloadDirectory(bool value)
@@ -1250,7 +1256,6 @@ bool    ftServer::addConfiguration(p3ConfigMgr *cfgmgr)
 	cfgmgr->addConfiguration("ft_shared.cfg", mFiMon);
 	cfgmgr->addConfiguration("ft_extra.cfg", mFtExtra);
 	cfgmgr->addConfiguration("ft_transfers.cfg", mFtController);
-//	cfgmgr->addConfiguration("ft_dwlqueue.cfg", mFtDwlQueue);
 
 	return true;
 }

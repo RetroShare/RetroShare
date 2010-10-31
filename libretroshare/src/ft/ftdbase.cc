@@ -161,6 +161,29 @@ bool ftFiMonitor::search(const std::string &hash, uint32_t hintflags, FileInfo &
 	return false;
 };
 
+void	ftFiMonitor::setRememberHashCacheDuration(uint32_t days) 
+{
+	setRememberHashFilesDuration(days) ;	// calls FileIndexMonitor
+	IndicateConfigChanged() ;
+}
+uint32_t ftFiMonitor::rememberHashCacheDuration() const 
+{
+	return rememberHashFilesDuration() ; // calls FileIndexMonitor
+}
+void	ftFiMonitor::setRememberHashCache(bool b) 
+{
+	setRememberHashFiles(b) ; // calls FileIndexMonitor
+	IndicateConfigChanged() ;
+}
+bool ftFiMonitor::rememberHashCache() 
+{
+	return rememberHashFiles() ; // calls FileIndexMonitor
+}
+void ftFiMonitor::clearHashCache()
+{
+	clearHashFiles() ;
+}
+
 /******* LOAD / SAVE CONFIG List.
  *
  *
@@ -174,8 +197,13 @@ RsSerialiser *ftFiMonitor::setupSerialiser()
 
 	/* add in the types we need! */
 	rss->addSerialType(new RsFileConfigSerialiser());
+	rss->addSerialType(new RsGeneralConfigSerialiser());
+
 	return rss;
 }
+
+const std::string hash_cache_duration_ss("HASH_CACHE_DURATION");
+const std::string hash_cache_ss("HASH_CACHE");
 
 std::list<RsItem *> ftFiMonitor::saveList(bool &cleanup)
 {
@@ -204,6 +232,30 @@ std::list<RsItem *> ftFiMonitor::saveList(bool &cleanup)
 		sList.push_back(fi);
 	}
 
+	std::map<std::string, std::string> configMap;
+
+	/* basic control parameters */
+	std::ostringstream s ;
+	s << rememberHashFilesDuration() ;
+
+	configMap[hash_cache_duration_ss] = s.str() ;
+	configMap[hash_cache_ss] = rememberHashFiles()?"YES":"NO" ;
+
+	RsConfigKeyValueSet *rskv = new RsConfigKeyValueSet();
+
+	/* Convert to TLV */
+	for(std::map<std::string,std::string>::const_iterator mit = configMap.begin(); mit != configMap.end(); mit++)
+	{
+		RsTlvKeyValue kv;
+		kv.key = mit->first;
+		kv.value = mit->second;
+
+		rskv->tlvkvs.pairs.push_back(kv);
+	}
+
+	/* Add KeyValue to saveList */
+	sList.push_back(rskv);
+
 	return sList;
 }
 
@@ -224,6 +276,29 @@ bool    ftFiMonitor::loadList(std::list<RsItem *> load)
 	std::list<RsItem *>::iterator it;
 	for(it = load.begin(); it != load.end(); it++)
 	{
+		RsConfigKeyValueSet *rskv ;
+				/* switch on type */
+		if (NULL != (rskv = dynamic_cast<RsConfigKeyValueSet *>(*it)))
+		{
+			/* make into map */
+			std::map<std::string, std::string> configMap;
+			std::map<std::string, std::string>::const_iterator mit ;
+
+			for(std::list<RsTlvKeyValue>::const_iterator kit = rskv->tlvkvs.pairs.begin(); kit != rskv->tlvkvs.pairs.end(); kit++)
+			{
+				configMap[kit->key] = kit->value;
+			}
+
+			if (configMap.end() != (mit = configMap.find(hash_cache_duration_ss)))
+			{
+				uint32_t t=0 ;
+				if(sscanf(mit->second.c_str(),"%d",&t) == 1)
+					setRememberHashFilesDuration(t);
+			}
+			if(configMap.end() != (mit = configMap.find(hash_cache_ss)))
+				setRememberHashFiles( mit->second == "YES") ;
+		}
+
 		RsFileConfigItem *fi = dynamic_cast<RsFileConfigItem *>(*it);
 		if (!fi)
 		{

@@ -21,6 +21,7 @@
 
 #include "DirectoriesPage.h"
 #include "gui/ShareManager.h"
+#include <QMessageBox>
 
 #include "rshare.h"
 #include <retroshare/rsfiles.h>
@@ -52,15 +53,58 @@ DirectoriesPage::DirectoriesPage(QWidget * parent, Qt::WFlags flags)
         ui.checkBox->setChecked(false);	/* signal not emitted */
     }
 
+	 uint32_t t = rsFiles->rememberHashFilesDuration() ;
+	 bool b = rsFiles->rememberHashFiles() ;
+
+	 ui.rememberHashesSB->setValue(t) ;
+	 ui.rememberHashesCB->setChecked(b) ;
+
     connect(ui.incomingButton, SIGNAL(clicked( bool ) ), this , SLOT( setIncomingDirectory() ) );
     connect(ui.partialButton, SIGNAL(clicked( bool ) ), this , SLOT( setPartialsDirectory() ) );
     connect(ui.checkBox, SIGNAL(stateChanged(int)), this, SLOT(shareDownloadDirectory(int)));
     connect(ui.editButton, SIGNAL(clicked()), this, SLOT(editDirectories()));
+    connect(ui.cleanHashCachePB, SIGNAL(clicked()), this, SLOT(clearHashCache()));
+    connect(ui.rememberHashesCB, SIGNAL(toggled(bool)), this, SLOT(toggleRememberHashes(bool)));
+    connect(ui.rememberHashesSB, SIGNAL(valueChanged(int)), this, SLOT(setRememberHashesDuration(int)));
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
 #endif
+}
+
+void DirectoriesPage::setRememberHashesDuration(int d)
+{
+	rsFiles->setRememberHashFilesDuration(d) ;
+}
+
+void DirectoriesPage::toggleRememberHashes(bool b)
+{
+	if(!b)
+	{
+		if(QMessageBox::question(NULL,"Cache cleaning confirmation","The will forget any former hash of non shared files. Do you confirm ?") == QMessageBox::Ok)
+		{
+			rsFiles->clearHashCache() ;
+			rsFiles->setRememberHashFiles(b) ;
+			ui.rememberHashesSB->setEnabled(false) ;
+			ui.cleanHashCachePB->setEnabled(false) ;
+		}
+		else
+			ui.rememberHashesCB->setChecked(true) ;
+	}
+	else
+	{
+		rsFiles->setRememberHashFiles(true) ;
+		ui.rememberHashesSB->setEnabled(true) ;
+		ui.cleanHashCachePB->setEnabled(true) ;
+	}
+}
+
+
+void DirectoriesPage::clearHashCache()
+{
+	if(QMessageBox::question(NULL,"Cache cleaning confirmation","The will forget any former hash of non shared files. Do you confirm ?", QMessageBox::Ok | QMessageBox::Cancel) == QMessageBox::Ok)
+		rsFiles->clearHashCache() ;
 }
 
 void

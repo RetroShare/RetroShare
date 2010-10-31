@@ -184,6 +184,11 @@ class RsFiles
 		virtual bool    addSharedDirectory(const SharedDirInfo& dir) = 0;
 		virtual bool    updateShareFlags(const SharedDirInfo& dir) = 0;	// updates the flags. The directory should already exist !
 		virtual bool    removeSharedDirectory(std::string dir) = 0;
+		virtual void	setRememberHashFilesDuration(uint32_t days) = 0 ;
+		virtual uint32_t rememberHashFilesDuration() const = 0 ;
+		virtual void   clearHashCache() = 0 ;
+				virtual bool rememberHashFiles() const =0;
+		virtual void setRememberHashFiles(bool) =0;
 
 		virtual void	setShareDownloadDirectory(bool value) = 0;
 		virtual bool	getShareDownloadDirectory() = 0;

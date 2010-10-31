@@ -202,6 +202,12 @@ virtual bool	getShareDownloadDirectory();
 virtual bool 	shareDownloadDirectory();
 virtual bool 	unshareDownloadDirectory();
 
+		virtual void	setRememberHashFilesDuration(uint32_t days) ;
+		virtual uint32_t rememberHashFilesDuration() const ;
+		virtual bool rememberHashFiles() const ;
+		virtual void setRememberHashFiles(bool) ;
+		virtual void   clearHashCache() ;
+
 	/***************************************************************/
 	/*************** Control Interface *****************************/
 	/***************************************************************/
