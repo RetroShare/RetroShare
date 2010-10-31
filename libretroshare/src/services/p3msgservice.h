@@ -131,6 +131,9 @@ void    initStandardTagTypes();
 	Indicator msgChanged;
 	uint32_t mMsgUniqueId;
 
+	// used delete msgSrcIds after config save
+	std::list<RsMsgSrcId*> mSrcIdList;
+
 	std::string config_dir;
 };
 

@@ -169,6 +169,10 @@ int 	p3MsgService::incomingMsgs()
 		}
 
 		imsg[mi->msgId] = mi;
+		RsMsgSrcId* msi = new RsMsgSrcId();
+		msi->msgId = mi->msgId;
+		msi->srcId = mi->PeerId();
+		mSrcIdList.push_back(msi);
 		msgChanged.IndicateChanged();
 		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
@@ -200,7 +204,6 @@ int     p3MsgService::checkOutgoingMessages()
 
 		std::list<uint32_t>::iterator it;
 		std::list<uint32_t> toErase;
-
 		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
 		std::map<uint32_t, RsMsgItem *>::iterator mit;
@@ -281,8 +284,9 @@ std::list<RsItem*>    p3MsgService::saveList(bool& cleanup)
 	std::map<uint32_t, RsMsgItem *>::iterator mit;
 	std::map<uint32_t, RsMsgTagType* >::iterator mit2;
 	std::map<uint32_t, RsMsgTags* >::iterator mit3;
+	std::list<RsMsgSrcId* >::iterator lit;
 
-        MsgTagType stdTags;
+    MsgTagType stdTags;
 
 	cleanup = false;
 
@@ -290,6 +294,10 @@ std::list<RsItem*>    p3MsgService::saveList(bool& cleanup)
 
 	for(mit = imsg.begin(); mit != imsg.end(); mit++)
 		itemList.push_back(mit->second);
+
+	for(lit = mSrcIdList.begin(); lit != mSrcIdList.end(); lit++)
+		itemList.push_back(*lit);
+
 
 	for(mit = msgOutgoing.begin(); mit != msgOutgoing.end(); mit++)
 		itemList.push_back(mit->second) ;
@@ -362,11 +370,14 @@ bool    p3MsgService::loadList(std::list<RsItem*> load)
     RsMsgItem *mitem;
     RsMsgTagType* mtt;
     RsMsgTags* mti;
-
+    RsMsgSrcId* msi;
 
     std::list<RsMsgItem*> items;
     std::list<RsItem*>::iterator it;
     std::map<uint32_t, RsMsgTagType*>::iterator tagIt;
+	std::map<uint32_t, std::string> srcIdMsgMap;
+	std::map<uint32_t, std::string>::iterator srcIt;
+
 
 	// load items and calculate next unique msgId
 	for(it = load.begin(); it != load.end(); it++)
@@ -399,6 +410,11 @@ bool    p3MsgService::loadList(std::list<RsItem*> load)
 		{
 			mMsgTags.insert(std::pair<uint32_t, RsMsgTags* >(mti->msgId, mti));
 		}
+		else if(NULL != (msi = dynamic_cast<RsMsgSrcId *>(*it)))
+		{
+			srcIdMsgMap.insert(std::pair<uint32_t, std::string>(msi->msgId, msi->srcId));
+			mSrcIdList.push_back(msi); // does not need to be kept
+		}
 	}
 
         // sort items into lists
@@ -428,6 +444,10 @@ bool    p3MsgService::loadList(std::list<RsItem*> load)
 		else
 		{
 			RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+			srcIt = srcIdMsgMap.find(mitem->msgId);
+
+			if(srcIt != srcIdMsgMap.end())
+				mitem->PeerId(srcIt->second);
 
 			imsg[mitem->msgId] = mitem;
 		}

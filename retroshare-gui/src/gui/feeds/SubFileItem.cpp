@@ -227,7 +227,7 @@ void SubFileItem::updateItemStatic()
 
 			playButton->setEnabled(false);
 			downloadButton->setEnabled(false);
-			cancelButton->setEnabled(false);
+			cancelButton->setEnabled(true);
 
 			progressBar->setValue(0);
 			filename = "[" + tr("EXTRA") + "] " + filename;
@@ -281,6 +281,7 @@ void SubFileItem::updateItemStatic()
 			if (mMode == SFI_STATE_LOCAL)
 			{
 				saveButton->setEnabled(true);
+				cancelButton->setEnabled(true); // channel files which are extra files are removed
 			}
 			else
 			{
@@ -538,9 +539,11 @@ void SubFileItem::cancel()
 	mMode = SFI_STATE_ERROR;
 
 	/* Only occurs - if it is downloading */
-	if (mType == SFI_TYPE_ATTACH)
+	if ((mType == SFI_TYPE_ATTACH) || (mType == SFI_TYPE_CHANNEL))
 	{
 		hide();
+		rsFiles->ExtraFileRemove(FileHash(), RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_EXTRA);
+		mPath = "";
 	}
 	else
 	{
@@ -624,6 +627,8 @@ void SubFileItem::save()
 	std::cerr << std::endl;
 #endif
 
+	FileInfo fInfo;
+
 	if (mType == SFI_TYPE_CHANNEL)
 	{
 		/* only enable these function for Channels. */
@@ -639,7 +644,19 @@ void SubFileItem::save()
 
 		if (destpath != "")
 		{
-			rsFiles->ExtraFileMove(mFileName, mFileHash, mFileSize, destpath);
+			bool copied = rsFiles->ExtraFileMove(mFileName, mFileHash, mFileSize, destpath);
+
+			// may be manually downloaded channel file
+			if(!copied){
+				rsFiles->FileDetails(mFileHash, RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_EXTRA, fInfo);
+
+				if(fInfo.path != "")
+				{
+
+					destpath += "/" + fInfo.fname;
+					rsFiles->CopyFile(fInfo.path, destpath);
+				}
+			}
 		}
 	}
 	else
@@ -668,3 +685,4 @@ bool SubFileItem::isPlayable(bool &startable)
 
 	return visible;
 }
+

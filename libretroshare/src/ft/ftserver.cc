@@ -571,6 +571,13 @@ bool    ftServer::InDirectoryCheck()
 	return mFiMon->inDirectoryCheck();
 }
 
+bool ftServer::CopyFile(const std::string& source, const std::string& dest)
+{
+
+	mFtController->copyFile(source, dest);
+
+}
+
 bool	ftServer::getSharedDirectories(std::list<SharedDirInfo> &dirs)
 {
 	mFiMon->getSharedDirectories(dirs);
