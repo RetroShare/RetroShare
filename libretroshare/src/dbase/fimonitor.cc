@@ -509,6 +509,12 @@ void 	FileIndexMonitor::updateCycle()
 
 	std::vector<DirContentToHash> to_hash ;
 
+	bool cache_is_new ;
+	{
+		RsStackMutex mtx(fiMutex) ;
+		cache_is_new = useHashCache && hashCache.empty() ;
+	}
+			
 	while(moretodo)
 	{
 		/* sleep a bit for each loop */
@@ -703,6 +709,9 @@ void 	FileIndexMonitor::updateCycle()
 						std::cerr << "File Hasn't Changed:" << fname << std::endl;
 #endif
 						fi.updateFileEntry(olddir->path, fe, stamp);
+
+						if(cache_is_new)
+							hashCache.insert(realpath+"/"+fe.name,fe.size,fe.modtime,fe.hash) ;
 					}
 				}
 			}
@@ -822,17 +831,17 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 			// This is a very basic progress notification. To be more complete and user friendly, one would
 			// rather send a completion ratio based on the size of files vs/ total size.
 			//
+			FileEntry fe(to_hash[i].fentries[j]) ;	// copied, because hashFile updates the hash member
 			std::ostringstream tmpout;
-			tmpout << cnt+1 << "/" << n_files << " (" << friendlyUnit(size) << " - " << int(size/double(total_size)*100.0) << "%) : " << to_hash[i].fentries[j].name ;
+			tmpout << cnt+1 << "/" << n_files << " (" << friendlyUnit(size) << " - " << int(size/double(total_size)*100.0) << "%) : " << fe.name ;
 
 			cb->notifyHashingInfo(NOTIFY_HASHTYPE_HASH_FILE, tmpout.str()) ;
 
-			FileEntry fe(to_hash[i].fentries[j]) ;	// copied, because hashFile updates the hash member
-			std::string real_path(to_hash[i].realpath + "/" + to_hash[i].fentries[j].name) ;
+			std::string real_path(to_hash[i].realpath + "/" + fe.name) ;
 
 			// 1st look into the hash cache if this file already exists.
 			//
-			if(useHashCache && hashCache.find(real_path,to_hash[i].fentries[j].size,to_hash[i].fentries[j].modtime,fe.hash)) 
+			if(useHashCache && hashCache.find(real_path,fe.size,fe.modtime,fe.hash)) 
 				fi.updateFileEntry(to_hash[i].dirpath,fe,stamp);
 			else if(RsDirUtil::hashFile(real_path, fe.hash))		// not found, then hash it.
 			{
@@ -845,10 +854,10 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 
 				// Update the hash cache
 				if(useHashCache)
-					hashCache.insert(real_path,to_hash[i].fentries[j].size,to_hash[i].fentries[j].modtime,fe.hash) ;
+					hashCache.insert(real_path,fe.size,fe.modtime,fe.hash) ;
 			}
 			else
-				std::cerr << "Failed to Hash File " << to_hash[i].fentries[j].name << std::endl;
+				std::cerr << "Failed to Hash File " << fe.name << std::endl;
 
 			size += to_hash[i].fentries[j].size ;
 

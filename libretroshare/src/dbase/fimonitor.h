@@ -92,6 +92,7 @@ class HashCache
 		void setRememberHashFilesDuration(uint32_t days) { _max_cache_duration_days = days ; }
 		uint32_t rememberHashFilesDuration() const { return _max_cache_duration_days ; }
 		void clear() { _files.clear(); }
+		bool empty() const { return _files.empty() ; }
 	private:
 		uint32_t _max_cache_duration_days ;	// maximum duration of un-requested cache entries
 		std::map<std::string, HashCacheInfo> _files ;
