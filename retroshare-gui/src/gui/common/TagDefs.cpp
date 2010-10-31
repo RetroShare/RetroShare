@@ -20,6 +20,8 @@
  ****************************************************************/
 
 #include <QCoreApplication>
+#include <QColor>
+
 #include <retroshare/rsmsgs.h>
 
 #include "TagDefs.h"
@@ -46,4 +48,21 @@ const QString TagDefs::name(const unsigned int tagId, const std::string &text)
 
     std::cerr << "TagDefs::name: Unknown tag id requested " << tagId;
     return "";
+}
+
+const QString TagDefs::labelStyleSheet(const QColor &color)
+{
+    /* calculate best text color */
+    QRgb textColor;
+    if (qGray(color.rgb()) < 128) {
+        /* dark color, use white */
+        textColor = qRgb(255, 255, 255);
+    } else {
+        /* light color, use black */
+        textColor = qRgb(0, 0, 0);
+    }
+
+    return QString("QLabel{padding-left: 2px; padding-right: 2px; color: #%1; background-color: #%2; border-radius: 3px}")
+            .arg(textColor & RGB_MASK, 6, 16, QChar('0'))
+            .arg(color.rgb() & RGB_MASK, 6, 16, QChar('0'));
 }

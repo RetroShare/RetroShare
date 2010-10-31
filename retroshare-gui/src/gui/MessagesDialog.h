@@ -141,6 +141,9 @@ private:
 
   void processSettings(bool bLoad);
 
+  void clearTagLabels();
+  void showTagLabels();
+
   void setToolbarButtonStyle(Qt::ToolButtonStyle style);
   void fillTags();
   bool m_bProcessSettings;
@@ -151,6 +154,7 @@ private:
 
   std::string mCurrCertId;
   std::string mCurrMsgId;
+  QList<QLabel*> tagLabels;
 
   QString fileName;
   QFont mFont;

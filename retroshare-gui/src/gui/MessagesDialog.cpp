@@ -1580,6 +1580,54 @@ void MessagesDialog::markAsUnread()
     updateMessageSummaryList();
 }
 
+void MessagesDialog::clearTagLabels()
+{
+    /* clear all tags */
+    while (tagLabels.size()) {
+        delete tagLabels.front();
+        tagLabels.pop_front();
+    }
+    while (ui.taglayout->count()) {
+        delete ui.taglayout->takeAt(0);
+    }
+
+    ui.tagslabel->setVisible(false);
+}
+
+void MessagesDialog::showTagLabels()
+{
+    clearTagLabels();
+
+    if (mCurrMsgId.empty()) {
+        return;
+    }
+
+    MsgTagInfo tagInfo;
+    rsMsgs->getMessageTag(mCurrMsgId, tagInfo);
+
+    if (tagInfo.tagIds.empty() == false) {
+        ui.tagslabel->setVisible(true);
+
+        MsgTagType Tags;
+        rsMsgs->getMessageTagTypes(Tags);
+
+        std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag;
+        for (std::list<uint32_t>::iterator tagId = tagInfo.tagIds.begin(); tagId != tagInfo.tagIds.end(); tagId++) {
+            Tag = Tags.types.find(*tagId);
+            if (Tag != Tags.types.end()) {
+                QLabel *tagLabel = new QLabel(TagDefs::name(Tag->first, Tag->second.first), this);
+                tagLabel->setStyleSheet(TagDefs::labelStyleSheet(Tag->second.second));
+                tagLabels.push_back(tagLabel);
+                ui.taglayout->addWidget(tagLabel);
+                ui.taglayout->addSpacing(3);
+            }
+        }
+        ui.taglayout->addStretch();
+    } else {
+        ui.tagslabel->setVisible(false);
+    }
+}
+
 void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index, bool bSetToRead)
 {
     std::cerr << "MessagesDialog::insertMsgTxtAndFiles()" << std::endl;
@@ -1591,11 +1639,22 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index, bool bSetToRead)
     QModelIndex currentIndex = proxyModel->mapToSource(Index);
     if (currentIndex.isValid() == false)
     {
+        mCurrCertId.clear();
+        mCurrMsgId.clear();
+
         /* blank it */
         ui.dateText-> setText("");
         ui.toText->setText("");
         ui.fromText->setText("");
         ui.filesText->setText("");
+
+        ui.cclabel->setVisible(false);
+        ui.ccText->setVisible(false);
+        ui.ccText->clear();
+
+        ui.bcclabel->setVisible(false);
+        ui.bccText->setVisible(false);
+        ui.bccText->clear();
 
         ui.subjectText->setText("");
         ui.msgList->clear();
@@ -1605,18 +1664,17 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index, bool bSetToRead)
         ui.actionPrintPreview->setDisabled(true);
         ui.actionPrint->setDisabled(true);
 
+        clearTagLabels();
+
         return;
     }
-    else
-    {
-        QStandardItem *item;
-        item = MessagesModel->item(currentIndex.row(),COLUMN_DATA);
-        if (item == NULL) {
-            return;
-        }
-        cid = item->data(ROLE_SRCID).toString().toStdString();
-        mid = item->data(ROLE_MSGID).toString().toStdString();
+
+    QStandardItem *item = MessagesModel->item(currentIndex.row(),COLUMN_DATA);
+    if (item == NULL) {
+        return;
     }
+    cid = item->data(ROLE_SRCID).toString().toStdString();
+    mid = item->data(ROLE_MSGID).toString().toStdString();
 
     int nCount = getSelectedMsgCount (NULL, NULL, NULL);
     if (nCount == 1) {
@@ -1633,6 +1691,8 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index, bool bSetToRead)
         // message doesn't changed
         return;
     }
+
+    clearTagLabels();
 
     /* Save the Data.... for later */
 
@@ -1774,6 +1834,8 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index, bool bSetToRead)
         out << "(" << msgInfo.count << " Files)";
         ui.filesText->setText(QString::fromStdString(out.str()));
     }
+
+    showTagLabels();
 
     std::cerr << "MessagesDialog::insertMsgTxtAndFiles() Msg Displayed OK!" << std::endl;
 }
@@ -2294,6 +2356,8 @@ void MessagesDialog::tagTriggered(QAction *pAction)
             }
         }
     }
+
+    showTagLabels();
 
     // LockUpdate -> insertMessages();
 }

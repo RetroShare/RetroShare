@@ -23,10 +23,13 @@
 #ifndef _TAGDEFS_H
 #define _TAGDEFS_H
 
+class QColor;
+
 class TagDefs
 {
 public:
     static const QString name(const unsigned int tagId, const std::string &text);
+    static const QString labelStyleSheet(const QColor &color);
 };
 
 #endif
