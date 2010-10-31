@@ -822,6 +822,7 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 
 	uint32_t cnt=0 ;
 	uint64_t size=0 ;
+	uint64_t hashed_size=0 ;
 	uint64_t last_save_size=0 ;
 
 	/* update files */
@@ -852,6 +853,8 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 
 				fi.updateFileEntry(to_hash[i].dirpath,fe,stamp);
 
+				hashed_size += to_hash[i].fentries[j].size ;
+
 				// Update the hash cache
 				if(useHashCache)
 					hashCache.insert(real_path,fe.size,fe.modtime,fe.hash) ;
@@ -871,8 +874,9 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 #endif
 
 			// Save the hashing result every 60 seconds, so has to save what is already hashed.
-			std::cerr << "size - last_save_size = " << size - last_save_size << ", max=" << MAX_SIZE_WITHOUT_SAVING << std::endl ;
-			if(size > last_save_size + MAX_SIZE_WITHOUT_SAVING)
+			std::cerr << "size - last_save_size = " << hashed_size - last_save_size << ", max=" << MAX_SIZE_WITHOUT_SAVING << std::endl ;
+
+			if(hashed_size > last_save_size + MAX_SIZE_WITHOUT_SAVING)
 			{
 				cb->notifyHashingInfo(NOTIFY_HASHTYPE_SAVE_FILE_INDEX, "") ;
 #ifdef WINDOWS_SYS
@@ -882,7 +886,7 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 #endif
 				RsStackMutex stack(fiMutex); /**** LOCKED DIRS ****/
 				FileIndexMonitor::locked_saveFileIndexes() ;
-				last_save_size = size ;
+				last_save_size = hashed_size ;
 
 				if(useHashCache)
 					hashCache.save() ;
