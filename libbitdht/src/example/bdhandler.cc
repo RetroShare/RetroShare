@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
  * USA.
  *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
+ * Please report all bugs and problems to "bitdht@lunamutt.com".
  *
  */
 
