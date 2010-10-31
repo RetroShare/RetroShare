@@ -180,6 +180,10 @@ class RsConfig
 		bool			netDhtOk;  /* response from dht */
 		bool			netStunOk;  /* recvd stun / udp packets */
 		bool			netExtraAddressOk;  /* recvd ip address with external finder*/
+
+		uint32_t		netDhtNetSize;  /* response from dht */
+		uint32_t		netDhtRsNetSize;  /* response from dht */
+
 };
 
 /********************** For Search Interface *****************/

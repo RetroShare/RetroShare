@@ -94,15 +94,6 @@ class pqiNetAssistConnect: public pqiNetAssist
 	 * for the DHT, and must be non-blocking and return quickly
 	 */
 
-#if 0
-virtual void	setBootstrapAllowed(bool on) = 0;
-virtual bool 	getBootstrapAllowed() = 0;
-
-	/* set key data */
-virtual bool 	setExternalInterface(struct sockaddr_in laddr,
-			struct sockaddr_in raddr, uint32_t type) = 0;
-#endif
-
 	/* add / remove peers */
 virtual bool 	findPeer(std::string id) = 0;
 virtual bool 	dropPeer(std::string id) = 0;
@@ -112,54 +103,17 @@ virtual bool 	getPeerStatus(std::string id,
 			struct sockaddr_in &laddr, struct sockaddr_in &raddr, 
 			uint32_t &type, uint32_t &mode) = 0;
 
-#if 0
+//virtual bool 	getExternalInterface(struct sockaddr_in &raddr, 
+//					uint32_t &mode) = 0;
 
-	/* post DHT key saying we should connect (callback when done) */
-virtual bool 	notifyPeer(std::string id) = 0; 
-
-	/* stun */
-virtual bool	enableStun(bool on)		= 0;
-virtual bool 	addStun(std::string id)		= 0;
-#endif
+	/***** Stats for Network / DHT *****/
+virtual bool    getNetworkStats(uint32_t &netsize, uint32_t &localnetsize) = 0;
 
 	protected:
 	std::string  mPeerId;
 	pqiConnectCb *mConnCb;
 };
 
-
-#if 0
-
-class pqiNetAssistConnectBitDht: public pqiNetAssist
-{
-	/* 
-	 */
-	public:
-	pqiNetAssistConnectBitDht(std::string id, pqiConnectCb *cb)
-	:mPeerId(id), mConnCb(cb) { return; }
-
-	/********** External DHT Interface ************************
-	 * These Functions are the external interface
-	 * for the DHT, and must be non-blocking and return quickly
-	 */
-
-	/* add / remove peers */
-virtual bool 	findPeer(std::string id) = 0;
-virtual bool 	dropPeer(std::string id) = 0;
-
-	/* extract current peer status */
-virtual bool 	getPeerStatus(std::string id, struct sockaddr_in &raddr, 
-					uint32_t &mode) = 0;
-
-virtual bool 	getExternalInterface(struct sockaddr_in &raddr, 
-					uint32_t &mode) = 0;
-
-	protected:
-	std::string  mPeerId;
-	pqiConnectCb *mConnCb;
-};
-
-#endif
 
 #endif /* MRK_PQI_ASSIST_H */
 

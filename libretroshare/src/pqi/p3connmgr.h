@@ -187,6 +187,9 @@ class pqiNetStatus
         bool mUpnpOk;          // upnp is ok.
         bool mDhtOk;           // dht is ok.
 
+	uint32_t mDhtNetworkSize;
+	uint32_t mDhtRsNetworkSize;
+
 	struct sockaddr_in mLocalAddr; // percieved ext addr.
 	struct sockaddr_in mExtAddr; // percieved ext addr.
 
@@ -231,6 +234,7 @@ bool	retryConnect(std::string id);
 bool    getUPnPState();
 bool	getUPnPEnabled();
 bool	getDHTEnabled();
+bool    getDHTStats(uint32_t &netsize, uint32_t &localnetsize);
 
 bool  getIPServersEnabled();
 void  setIPServersEnabled(bool b) ;
@@ -320,6 +324,8 @@ virtual bool enableNetAssistConnect(bool on);
 virtual bool netAssistConnectEnabled();
 virtual bool netAssistConnectActive();
 virtual bool netAssistConnectShutdown();
+virtual bool netAssistConnectStats(uint32_t &netsize, uint32_t &localnetsize);
+
 
 /* Assist Firewall */
 bool netAssistExtAddress(struct sockaddr_in &extAddr);

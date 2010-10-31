@@ -129,11 +129,15 @@ int RsServer::UpdateAllConfig()
 
 	pqiNetStatus status;	
 	mConnMgr->getNetStatus(status);
+
 	config.netLocalOk = status.mLocalAddrOk;  
 	config.netUpnpOk  = status.mUpnpOk;
-	config.netDhtOk   = status.mDhtOk;
 	config.netStunOk  = false;
 	config.netExtraAddressOk = status.mExtAddrOk;
+
+	config.netDhtOk   = status.mDhtOk;
+	config.netDhtNetSize = status.mDhtNetworkSize;
+	config.netDhtRsNetSize = status.mDhtRsNetworkSize;
 
 	/* update DHT/UPnP config */
 

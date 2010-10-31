@@ -118,35 +118,52 @@ void    p3BitDht::start()
 
 	mUdpBitDht->start(); /* starts up the bitdht thread */
 
-	/* switch on the dht too */
-	mUdpBitDht->startDht();
+	/* dht switched on by config later. */
 }
 
 	/* pqiNetAssist - external interface functions */
 void    p3BitDht::enable(bool on)
 {
-	//mUdpBitDht->enable(on);
+	std::cerr << "p3BitDht::enable(" << on << ")";
+	std::cerr << std::endl;
+
+	if (on)
+	{
+		mUdpBitDht->startDht();
+	}
+	else
+	{
+		mUdpBitDht->stopDht();
+	}
 }
 	
 void    p3BitDht::shutdown() /* blocking call */
 {
-	//mUdpBitDht->shutdown();
+	mUdpBitDht->stopDht();
 }
 
 
 void	p3BitDht::restart()
 {
-	//mUdpBitDht->restart();
+	mUdpBitDht->stopDht();
+	mUdpBitDht->startDht();
 }
 
 bool    p3BitDht::getEnabled()
 {
-	return false;
+	return (mUdpBitDht->stateDht() != 0);
 }
 
 bool    p3BitDht::getActive()
 {
-	return false;
+	return (mUdpBitDht->stateDht() >= BITDHT_MGR_STATE_ACTIVE);
+}
+
+bool    p3BitDht::getNetworkStats(uint32_t &netsize, uint32_t &localnetsize)
+{
+	netsize = mUdpBitDht->statsNetworkSize();
+	localnetsize = mUdpBitDht->statsBDVersionSize();
+	return true;
 }
 
 	/* pqiNetAssistConnect - external interface functions */

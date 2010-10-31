@@ -146,6 +146,9 @@ pqiNetStatus::pqiNetStatus()
 	:mLocalAddrOk(false), mExtAddrOk(false), mExtAddrStableOk(false), 
 	mUpnpOk(false), mDhtOk(false), mResetReq(false)
 {
+        mDhtNetworkSize = 0;
+        mDhtRsNetworkSize = 0;
+
 	sockaddr_clear(&mLocalAddr);
 	sockaddr_clear(&mExtAddr);
 	return;
@@ -163,6 +166,8 @@ void pqiNetStatus::print(std::ostream &out)
         out << " mUpnpOk: " << mUpnpOk;
         out << " mDhtOk: " << mDhtOk;
         out << " mResetReq: " << mResetReq;
+        out << std::endl;
+	out << "mDhtNetworkSize: " << mDhtNetworkSize << " mDhtRsNetworkSize: " << mDhtRsNetworkSize;
         out << std::endl;
 	out << "mLocalAddr: " << rs_inet_ntoa(mLocalAddr.sin_addr) << ":" << ntohs(mLocalAddr.sin_port) << " ";
 	out << "mExtAddr: " << rs_inet_ntoa(mExtAddr.sin_addr) << ":" << ntohs(mExtAddr.sin_port) << " ";
@@ -3117,14 +3122,19 @@ bool    p3ConnectMgr::setLocation(std::string id, std::string location)
 
 bool    p3ConnectMgr::setVisState(std::string id, uint32_t visState)
 {
-	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
         if (id == AuthSSL::getAuthSSL()->OwnId())
 	{
-            mOwnState.visState = visState;
-            IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
-            return true;
+		uint32_t netMode;
+		{
+			RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+			netMode = mOwnState.netMode;
+		}
+		setOwnNetConfig(netMode, visState);
+		return true;
 	}
+
+	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
 	/* check if it is a friend */
         std::map<std::string, peerConnectState>::iterator it;
@@ -3742,6 +3752,12 @@ void p3ConnectMgr::addNetAssistConnect(uint32_t id, pqiNetAssistConnect *dht)
 
 bool p3ConnectMgr::enableNetAssistConnect(bool on)
 {
+
+#ifdef CONN_DEBUG
+	std::cerr << "p3ConnectMgr::enableNetAssistConnect(" << on << ")";
+	std::cerr << std::endl;
+#endif
+
 	std::map<uint32_t, pqiNetAssistConnect *>::iterator it;
 	for(it = mDhts.begin(); it != mDhts.end(); it++)
 	{
@@ -3757,9 +3773,20 @@ bool p3ConnectMgr::netAssistConnectEnabled()
 	{
 		if ((it->second)->getEnabled())
 		{
+#ifdef CONN_DEBUG
+			std::cerr << "p3ConnectMgr::netAssistConnectEnabled() YES";
+			std::cerr << std::endl;
+#endif
+
 			return true;
 		}
 	}
+
+#ifdef CONN_DEBUG
+	std::cerr << "p3ConnectMgr::netAssistConnectEnabled() NO";
+	std::cerr << std::endl;
+#endif
+
 	return false;
 }
 
@@ -3771,14 +3798,56 @@ bool p3ConnectMgr::netAssistConnectActive()
 		if ((it->second)->getActive())
 
 		{
+#ifdef CONN_DEBUG
+			std::cerr << "p3ConnectMgr::netAssistConnectActive() ACTIVE";
+			std::cerr << std::endl;
+#endif
+
 			return true;
 		}
 	}
+
+#ifdef CONN_DEBUG
+	std::cerr << "p3ConnectMgr::netAssistConnectActive() INACTIVE";
+	std::cerr << std::endl;
+#endif
+
+	return false;
+}
+
+bool p3ConnectMgr::netAssistConnectStats(uint32_t &netsize, uint32_t &localnetsize)
+{
+	std::map<uint32_t, pqiNetAssistConnect *>::iterator it;
+	for(it = mDhts.begin(); it != mDhts.end(); it++)
+	{
+		if (((it->second)->getActive()) && ((it->second)->getNetworkStats(netsize, localnetsize)))
+
+		{
+#ifdef CONN_DEBUG
+			std::cerr << "p3ConnectMgr::netAssistConnectStats(";
+			std::cerr << netsize << ", " << localnetsize << ")";
+			std::cerr << std::endl;
+#endif
+
+			return true;
+		}
+	}
+
+#ifdef CONN_DEBUG
+	std::cerr << "p3ConnectMgr::netAssistConnectStats() INACTIVE";
+	std::cerr << std::endl;
+#endif
+
 	return false;
 }
 
 bool p3ConnectMgr::netAssistConnectShutdown()
 {
+#ifdef CONN_DEBUG
+	std::cerr << "p3ConnectMgr::netAssistConnectShutdown()";
+	std::cerr << std::endl;
+#endif
+
 	std::map<uint32_t, pqiNetAssistConnect *>::iterator it;
 	for(it = mDhts.begin(); it != mDhts.end(); it++)
 	{
@@ -3840,9 +3909,15 @@ bool	p3ConnectMgr::getDHTEnabled()
 	return netAssistConnectEnabled();
 }
 
+
 void	p3ConnectMgr::getNetStatus(pqiNetStatus &status)
 {
 	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
+	/* quick update of the stuff that can change! */
+	mNetFlags.mDhtOk = netAssistConnectActive();
+	netAssistConnectStats(mNetFlags.mDhtNetworkSize, mNetFlags.mDhtRsNetworkSize);
+
 	status = mNetFlags;
 }
 

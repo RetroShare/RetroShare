@@ -805,6 +805,7 @@ p3Peers::setVisState(std::string id, uint32_t extVisState)
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::setVisState() " << id << std::endl;
 #endif
+        std::cerr << "p3Peers::setVisState() " << id << " " << extVisState << std::endl;
 
 	uint32_t visState = 0;
 	if (!(extVisState & RS_VS_DHT_ON))

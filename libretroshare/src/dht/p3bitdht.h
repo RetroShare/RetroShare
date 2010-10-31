@@ -56,6 +56,7 @@ virtual void	restart();
 
 virtual bool    getEnabled();
 virtual bool    getActive();
+virtual bool    getNetworkStats(uint32_t &netsize, uint32_t &localnetsize);
 
 	/* pqiNetAssistConnect - external interface functions */
 

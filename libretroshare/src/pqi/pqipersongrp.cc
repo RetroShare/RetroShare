@@ -44,7 +44,7 @@ static std::list<std::string> waitingIds;
 /****
  *#define PGRP_DEBUG 1
  ****/
-#define PGRP_DEBUG 1
+//#define PGRP_DEBUG 1
 
 /* MUTEX NOTES:
  * Functions like GetRsRawItem() lock itself (pqihandler) and
