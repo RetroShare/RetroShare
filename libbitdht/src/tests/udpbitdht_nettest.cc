@@ -46,7 +46,9 @@ int args(char *name)
 	std::cerr << " -p <port> ";
 	std::cerr << " -b </path/to/bootfile> ";
 	std::cerr << " -u <uid> ";
-	std::cerr << " -r (do random queries) ";
+	std::cerr << " -q <num_queries>";
+	std::cerr << " -r  (do dht restarts) ";
+	std::cerr << " -j  (do join test) ";
 	std::cerr << std::endl;
 	return 1;
 }
@@ -68,10 +70,11 @@ int main(int argc, char **argv)
 	bool doRandomQueries = false;
 	bool doRestart = false;
 	bool doThreadJoin = false;
+	int noQueries = 0;
 
 	srand(time(NULL));
 
-	while((c = getopt(argc, argv,"rjp:b:u:q")) != -1)
+	while((c = getopt(argc, argv,"rjp:b:u:q:")) != -1)
 	{
 		switch (c)
 		{
@@ -118,6 +121,7 @@ int main(int argc, char **argv)
 			case 'q':
 			{
 				doRandomQueries = true;
+				noQueries = atoi(optarg);
 				std::cerr << "Doing Random Queries";
 				std::cerr << std::endl;
 			}
@@ -187,8 +191,6 @@ int main(int argc, char **argv)
 	/* do a couple of random continuous searchs. */
 
 	uint32_t mode = BITDHT_QFLAGS_DO_IDLE;
-	mode = 0;
-
 
 	int count = 0;
 	int running = 1;
@@ -197,6 +199,22 @@ int main(int argc, char **argv)
 	std::cerr << std::endl;
 	bitdht->startDht();
 
+
+	if (doRandomQueries)
+	{
+		for(int i = 0; i < noQueries; i++)
+		{
+			bdNodeId rndId;
+			bdStdRandomNodeId(&rndId);
+
+			std::cerr << "BitDht Launching Random Search: ";
+			bdStdPrintNodeId(std::cerr, &rndId);
+			std::cerr << std::endl;
+
+			bitdht->addFindNode(&rndId, mode);
+
+		}
+	}
 
 	while(1)
 	{
@@ -218,18 +236,6 @@ int main(int argc, char **argv)
 		{
 			/* switch to one-shot searchs */
 			mode = 0;
-		}
-
-		if (doRandomQueries)
-		{
-			bdNodeId rndId;
-			bdStdRandomNodeId(&rndId);
-
-		std::cerr << "BitDht Launching Random Search: ";
-		bdStdPrintNodeId(std::cerr, &rndId);
-		std::cerr << std::endl;
-
-			bitdht->addFindNode(&rndId, mode);
 		}
 
 		if (doThreadJoin)
