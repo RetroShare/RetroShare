@@ -135,11 +135,36 @@ void ServerPage::load()
 	}
 	ui.netModeComboBox->setCurrentIndex(netIndex);
 
-	netIndex = 1;
-	if (detail.visState & RS_VS_DISC_ON)
+	/* DHT + Discovery: (public)
+	 * Discovery only:  (private)
+	 * DHT only: (inverted)
+	 * None: (dark net)
+	 */
+
+	netIndex = 3; // NONE.
+	if (detail.visState & RS_VS_DHT_ON)
 	{
-		netIndex = 0;
+		if (detail.visState & RS_VS_DISC_ON)
+		{
+			netIndex = 0; // PUBLIC
+		}
+		else
+		{
+			netIndex = 2; // INVERTED
+		}
 	}
+	else
+	{
+		if (detail.visState & RS_VS_DISC_ON)
+		{
+			netIndex = 1; // PRIVATE
+		}
+		else
+		{
+			netIndex = 3; // NONE
+		}
+	}
+
 	ui.discComboBox->setCurrentIndex(netIndex);
 
 	rsiface->lockData(); /* Lock Interface */
@@ -249,8 +274,21 @@ void ServerPage::saveAddresses()
 
 	uint32_t visState = 0;
 	/* Check if vis has changed */
-	if (0 == ui.discComboBox->currentIndex())
-		visState |= RS_VS_DISC_ON;
+	switch(ui.discComboBox->currentIndex())
+	{
+		case 0:
+			visState |= (RS_VS_DISC_ON | RS_VS_DHT_ON);
+			break;
+		case 1:
+			visState |= RS_VS_DISC_ON;
+			break;
+		case 2:
+			visState |= RS_VS_DHT_ON;
+			break;
+		case 3:
+		default:
+			break;
+	}
 
 	if (visState != detail.visState)
 		rsPeers->setVisState(ownId, visState);

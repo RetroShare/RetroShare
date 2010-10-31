@@ -82,6 +82,15 @@ void DHTStatus::getDHTStatus()
         dhtstatusLabel->setPixmap(QPixmap(":/images/redled.png"));
         dhtstatusLabel->setToolTip(tr("DHT Off"));
     }
+
+    QString dhtsize;
+    {
+	std::ostringstream out;
+	out << (int) config.netDhtRsNetSize << " ( " << (int) config.netDhtNetSize << " )";
+	dhtsize = QString::fromStdString(out.str());
+    }
+
+    dhtnetworksizeLabel->setText(dhtsize);
 		
     rsiface->unlockData(); /* UnLock Interface */
 

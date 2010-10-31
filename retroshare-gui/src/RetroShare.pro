@@ -118,9 +118,12 @@ macx {
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
         LIBS += -lssl -lcrypto -lz -lgpgme -lgpg-error
 	LIBS += ../../../miniupnpc-1.0/libminiupnpc.a
+	LIBS += -framework CoreFoundation
 
     	INCLUDEPATH += .
 	#DEFINES* = MAC_IDLE # for idle feature
+	CONFIG -= uitools
+
 
 }
 
