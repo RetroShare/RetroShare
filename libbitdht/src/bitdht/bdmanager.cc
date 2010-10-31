@@ -386,7 +386,11 @@ int bdNodeManager::status()
 	mNetworkSize = mNodeSpace.calcNetworkSize();
 	mBdNetworkSize = mNodeSpace.calcNetworkSizeWithFlag(
 					BITDHT_PEER_STATUS_DHT_APPL);
-	
+
+#ifdef DEBUG_MGR
+	std::cerr << "BitDHT NetworkSize: " << mNetworkSize << std::endl;
+	std::cerr << "BitDHT App NetworkSize: " << mBdNetworkSize << std::endl;
+#endif
 
 	return 1;
 }

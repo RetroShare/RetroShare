@@ -338,11 +338,13 @@ void bdNode::iteration()
 		i++;
 	}
 	
+#ifdef DEBUG_NODE_ACTIONS 
 	std::cerr << "bdNode::iteration() maxMsgs: " << maxMsgs << " sentPings: " << sentPings;
 	std::cerr << " / " << allowedPings;
 	std::cerr << " sentQueries: " << sentQueries;
 	std::cerr << " / " << numQueries;
 	std::cerr << std::endl;
+#endif
 
 	/* process remote query too */
 	processRemoteQuery();
