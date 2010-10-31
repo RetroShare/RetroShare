@@ -91,6 +91,7 @@ void DHTStatus::getDHTStatus()
     }
 
     dhtnetworksizeLabel->setText(dhtsize);
+    dhtnetworksizeLabel->setToolTip(QString("RetroShare users in DHT (Total DHT users)") );
 		
     rsiface->unlockData(); /* UnLock Interface */
 
