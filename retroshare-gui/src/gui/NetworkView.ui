@@ -1,63 +1,50 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>NetworkView</class>
- <widget class="QWidget" name="NetworkView" >
-  <property name="geometry" >
+ <widget class="QWidget" name="NetworkView">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>493</width>
-    <height>373</height>
+    <width>616</width>
+    <height>499</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" >
-   <property name="leftMargin" >
-    <number>0</number>
-   </property>
-   <property name="topMargin" >
-    <number>0</number>
-   </property>
-   <property name="rightMargin" >
-    <number>0</number>
-   </property>
-   <property name="bottomMargin" >
-    <number>0</number>
-   </property>
-   <property name="horizontalSpacing" >
+  <layout class="QGridLayout">
+   <property name="horizontalSpacing">
     <number>6</number>
    </property>
-   <property name="verticalSpacing" >
+   <property name="verticalSpacing">
     <number>2</number>
    </property>
-   <item row="0" column="0" >
-    <widget class="GraphWidget" name="graphicsView" >
-     <property name="styleSheet" >
-      <string>background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                                       stop:0 lightgray, stop:1 darkgray);
- 
-
-
-</string>
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item row="0" column="0">
+    <widget class="GraphWidget" name="graphicsView">
+     <property name="styleSheet">
+      <string>background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 lightgray, stop:1 darkgray);</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="0" >
-    <layout class="QGridLayout" >
-     <item row="0" column="0" >
-      <widget class="QPushButton" name="refreshButton" >
-       <property name="text" >
+   <item row="1" column="0">
+    <layout class="QGridLayout">
+     <item row="0" column="0">
+      <widget class="QPushButton" name="refreshButton">
+       <property name="text">
         <string>Refresh</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="1" >
+     <item row="0" column="7">
       <spacer>
-       <property name="orientation" >
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>391</width>
          <height>23</height>
@@ -65,96 +52,70 @@
        </property>
       </spacer>
      </item>
-     <item row="0" column="2" >
-      <widget class="QPushButton" name="nviewsettingsButton" >
-       <property name="text" >
-        <string>Settings</string>
+     <item row="0" column="2">
+      <widget class="QComboBox" name="comboBox">
+       <item>
+        <property name="text">
+         <string>Basic</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Friends</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Extended</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Display mode:</string>
        </property>
-       <property name="checkable" >
-        <bool>true</bool>
+      </widget>
+     </item>
+     <item row="0" column="4">
+      <widget class="QSpinBox" name="maxFriendLevelSB">
+       <property name="minimum">
+        <number>0</number>
+       </property>
+       <property name="maximum">
+        <number>10</number>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="3">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Friends level:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="6">
+      <widget class="QSpinBox" name="edgeLengthSB">
+       <property name="minimum">
+        <number>10</number>
+       </property>
+       <property name="maximum">
+        <number>200</number>
+       </property>
+       <property name="value">
+        <number>50</number>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="5">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Edge length:</string>
        </property>
       </widget>
      </item>
     </layout>
-   </item>
-   <item row="2" column="0" >
-    <widget class="QFrame" name="viewsettingsframe" >
-     <property name="frameShape" >
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow" >
-      <enum>QFrame::Raised</enum>
-     </property>
-     <layout class="QGridLayout" >
-      <property name="leftMargin" >
-       <number>9</number>
-      </property>
-      <property name="topMargin" >
-       <number>9</number>
-      </property>
-      <property name="rightMargin" >
-       <number>9</number>
-      </property>
-      <property name="bottomMargin" >
-       <number>9</number>
-      </property>
-      <item row="0" column="0" >
-       <layout class="QGridLayout" >
-        <item row="0" column="0" >
-         <widget class="QCheckBox" name="fofCheckBox" >
-          <property name="text" >
-           <string>Show Friends of Friends</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0" >
-         <widget class="QCheckBox" name="checkBox" >
-          <property name="text" >
-           <string>Connect Signature</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="0" column="1" >
-       <layout class="QGridLayout" >
-        <item row="0" column="0" >
-         <widget class="QCheckBox" name="checkBox_2" >
-          <property name="text" >
-           <string>Draw Friend Connections</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0" >
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>141</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
-      <item row="0" column="2" >
-       <spacer>
-        <property name="orientation" >
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" >
-         <size>
-          <width>161</width>
-          <height>41</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-     </layout>
-    </widget>
    </item>
   </layout>
  </widget>

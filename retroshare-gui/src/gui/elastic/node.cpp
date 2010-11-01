@@ -51,8 +51,8 @@
 #include "node.h"
 #include "graphwidget.h"
 
-Node::Node(const std::string& node_string,uint32_t flags,GraphWidget *graphWidget)
-    : graph(graphWidget),_desc_string(node_string),_flags(flags)
+Node::Node(const std::string& node_string,GraphWidget::NodeType type,GraphWidget::AuthType auth,GraphWidget *graphWidget)
+    : graph(graphWidget),_desc_string(node_string),_type(type),_auth(auth)
 {
     setFlag(ItemIsMovable);
 #if QT_VERSION >= 0x040600
@@ -147,7 +147,7 @@ void Node::calculateForces(const double *map,int width,int height,int W,int H,fl
 			pos = mapFromItem(edge->sourceNode(), 0, 0);
 
 		float dist = sqrtf(pos.x()*pos.x() + pos.y()*pos.y()) ;
-		float val = dist - NODE_DISTANCE ;
+		float val = dist - graph->edgeLength() ;
 
 		xforce += 0.01*pos.x() * val / weight;
 		yforce += 0.01*pos.y() * val / weight;
@@ -183,11 +183,10 @@ void Node::calculateForces(const double *map,int width,int height,int W,int H,fl
 
 bool Node::advance()
 {
-    if (newPos == pos())
-        return false;
+	float f = std::max(fabs(newPos.x() - pos().x()), fabs(newPos.y() - pos().y())) ;
 
     setPos(newPos);
-    return true;
+    return f > 0.05;
 }
 
 QRectF Node::boundingRect() const
@@ -217,44 +216,26 @@ QPainterPath Node::shape() const
 
 void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)
 {
+	static QColor type_color[4] = { QColor(Qt::yellow), QColor(Qt::green), QColor(Qt::cyan), QColor(Qt::black) } ;
+	static QColor auth_color[3] = { QColor(Qt::darkYellow), QColor(Qt::darkGreen), QColor(Qt::darkBlue) } ;
+
 	painter->setPen(Qt::NoPen);
 	painter->setBrush(Qt::darkGray);
 	painter->drawEllipse(-7, -7, 20, 20);
 
-	QColor col0, col1;
-	if (_flags & GraphWidget::ELASTIC_NODE_FLAG_OWN)
-	{
-		col0 = QColor(Qt::yellow);
-		col1 = QColor(Qt::darkYellow);
-	}
-	else if (_flags & GraphWidget::ELASTIC_NODE_FLAG_FRIEND)
-	{
-		col0 = QColor(Qt::green);
-		col1 = QColor(Qt::darkGreen);
-	}
-	else if (_flags & GraphWidget::ELASTIC_NODE_FLAG_AUTHED)
-	{
-		col0 = QColor(Qt::cyan);
-		col1 = QColor(Qt::darkBlue);
-	}
-	else if (_flags & GraphWidget::ELASTIC_NODE_FLAG_MARGINALAUTH)
-	{
-		col0 = QColor(Qt::magenta);
-		col1 = QColor(Qt::darkMagenta);
-	}
-	else
-	{
-		col0 = QColor(Qt::red);
-		col1 = QColor(Qt::darkRed);
-	}
+	QColor col0(type_color[_type]) ;
+	QColor col1(auth_color[_auth]) ;
 
 	QRadialGradient gradient(-3, -3, 10);
-	if (option->state & QStyle::State_Sunken) {
+	if (option->state & QStyle::State_Sunken) 
+	{
 		gradient.setCenter(3, 3);
 		gradient.setFocalPoint(3, 3);
 		gradient.setColorAt(1, col0.light(120));
 		gradient.setColorAt(0, col1.light(120));
-	} else {
+	} 
+	else 
+	{
 		gradient.setColorAt(0, col0);
 		gradient.setColorAt(1, col1);
 	}

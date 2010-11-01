@@ -58,17 +58,26 @@ public:
 	 typedef int EdgeId ;
 
 	 typedef enum  {
-		 	ELASTIC_NODE_FLAG_OWN				= 0x0001,
-			ELASTIC_NODE_FLAG_FRIEND 			= 0x0002,
-			ELASTIC_NODE_FLAG_AUTHED			= 0x0004,
-			ELASTIC_NODE_FLAG_MARGINALAUTH	= 0x0008
-	 } NodeFlags ;
+		 	ELASTIC_NODE_TYPE_OWN				= 0x0000,
+			ELASTIC_NODE_TYPE_FRIEND 			= 0x0001,
+			ELASTIC_NODE_TYPE_F_OF_F 			= 0x0002,
+			ELASTIC_NODE_TYPE_UNKNOWN			= 0x0003
+	 } NodeType ;
 
-    virtual void itemMoved();
-	 NodeId addNode(const std::string& NodeText,uint32_t flags) ;
+	 typedef enum {
+			ELASTIC_NODE_AUTH_FULL			= 0x0000,
+			ELASTIC_NODE_AUTH_MARGINAL		= 0x0001,
+			ELASTIC_NODE_AUTH_UNKNOWN		= 0x0002
+	 } AuthType ;
+
+	 NodeId addNode(const std::string& NodeShortText,const std::string& nodeCompleteText,NodeType type,AuthType auth) ;
 	 EdgeId addEdge(NodeId n1,NodeId n2) ;
 
 	 void clearGraph() ;
+    virtual void itemMoved();
+
+	 void setEdgeLength(uint32_t l) ;
+	 uint32_t edgeLength() const { return _edge_length ; }
 
 protected:
     void keyPressEvent(QKeyEvent *event);
@@ -85,6 +94,8 @@ private:
 
 	 std::vector<Node *> _nodes ;
 	 std::vector<Node *> _edges ;
+
+	 uint32_t _edge_length ;
 };
 
 #endif

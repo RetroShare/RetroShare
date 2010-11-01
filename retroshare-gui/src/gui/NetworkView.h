@@ -38,6 +38,8 @@ public:
 
 private slots:
 
+	void setMaxFriendLevel(int) ;
+	void setEdgeLength(int) ;
 void insertPeers();
 void insertSignatures();
 void insertConnections();
@@ -68,6 +70,7 @@ private:
 
 	/** Qt Designer generated object */
 	Ui::NetworkView ui;
+	int _max_friend_level ;
 };
 
 #endif

@@ -55,7 +55,7 @@ QT_END_NAMESPACE
 class Node : public QGraphicsItem
 {
 public:
-    Node(const std::string& node_string,uint32_t flags,GraphWidget *graphWidget);
+    Node(const std::string& node_string,GraphWidget::NodeType type,GraphWidget::AuthType auth,GraphWidget *graphWidget);
 
     void addEdge(Edge *edge);
     QList<Edge *> edges() const;
@@ -82,7 +82,8 @@ private:
 	 qreal _speedx,_speedy;
 	 int _steps ;
 	 std::string _desc_string ;
-	 uint32_t _flags ;
+	 GraphWidget::NodeType _type ;
+	 GraphWidget::AuthType _auth ;
 	 bool mDeterminedBB ;
 	 int mBBWidth ;
 

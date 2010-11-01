@@ -143,28 +143,28 @@ GraphWidget::GraphWidget(QWidget *)
 
 void GraphWidget::clearGraph()
 {
-	QGraphicsScene *oldscene = scene();
-
-	QGraphicsScene *scene = new QGraphicsScene(this);
-	scene->setItemIndexMethod(QGraphicsScene::NoIndex);
-	scene->setSceneRect(-200, -200, 1000, 1000);
-	setScene(scene);
+//	QGraphicsScene *scene = new QGraphicsScene(this);
+//	scene->setItemIndexMethod(QGraphicsScene::NoIndex);
+//	setScene(scene);
 
 //	scene->addItem(centerNode);
 //	centerNode->setPos(0, 0);
 
-	if (oldscene != NULL)
-	{
-		delete oldscene;
-	}
+//	if (oldscene != NULL)
+//	{
+//		delete oldscene;
+//	}
 
+	scene()->clear();
+	scene()->setSceneRect(-200, -200, 1000, 1000);
 	_edges.clear();
 	_nodes.clear();
 }
 
-GraphWidget::NodeId GraphWidget::addNode(const std::string& node_string,uint32_t flags)
+GraphWidget::NodeId GraphWidget::addNode(const std::string& node_short_string,const std::string& node_complete_string,NodeType type,AuthType auth)
 {
-    Node *node = new Node(node_string,flags,this);
+    Node *node = new Node(node_short_string,type,auth,this);
+	 node->setToolTip(QString::fromStdString(node_complete_string)) ;
 	 _nodes.push_back(node) ;
     scene()->addItem(node);
     node->setPos(-50+rand()%1000/53.0f, -50+rand()%1000/53.0f);
@@ -179,7 +179,10 @@ GraphWidget::EdgeId GraphWidget::addEdge(NodeId n1,NodeId n2)
 void GraphWidget::itemMoved()
 {
     if (!timerId)
+	 {
+		 std::cout << "starting timer" << std::endl;
         timerId = startTimer(1000 / 25);
+	 }
 }
 
 void GraphWidget::keyPressEvent(QKeyEvent *event)
@@ -306,15 +309,26 @@ void GraphWidget::timerEvent(QTimerEvent *event)
 	 }
 
     bool itemsMoved = false;
-    foreach (Node *node, _nodes) {
-        if (node->advance())
+    foreach (Node *node, _nodes) 
+        if(node->advance())
             itemsMoved = true;
-    }
 
     if (!itemsMoved) {
         killTimer(timerId);
+		  std::cerr << "Killing timr" << std::endl ;
         timerId = 0;
     }
+}
+
+void GraphWidget::setEdgeLength(uint32_t l)
+{
+	_edge_length = l ;
+
+	if(!timerId)
+	{
+		 std::cout << "starting timer" << std::endl;
+        timerId = startTimer(1000 / 25);
+	}
 }
 
 void GraphWidget::wheelEvent(QWheelEvent *event)
