@@ -2575,18 +2575,23 @@ p, li { white-space: pre-wrap; }
     <name>DHTStatus</name>
     <message>
         <location filename="../gui/statusbar/dhtstatus.cpp" line="+41"/>
-        <source>&lt;strong&gt;DHT:&lt;/strong&gt;</source>
-        <translation type="unfinished"></translation>
+        <source>DHT</source>
+        <translation>DHT</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+32"/>
         <source>DHT On</source>
-        <translation type="unfinished"></translation>
+        <translation>DHT An</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>DHT Off</source>
-        <translation type="unfinished"></translation>
+        <translation>DHT aus</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>RetroShare users in DHT (Total DHT users)</source>
+        <translation>RetroShare Nutzer in DHT (Totale DHT Nutzer)</translation>
     </message>
 </context>
 <context>
@@ -2762,7 +2767,7 @@ p, li { white-space: pre-wrap; }
         <translation>Freigegebene Ordner</translation>
     </message>
     <message>
-        <location filename="../gui/settings/DirectoriesPage.cpp" line="+39"/>
+        <location filename="../gui/settings/DirectoriesPage.cpp" line="+40"/>
         <source>Add a Share Directory</source>
         <translation>Freigabe hinzufügen</translation>
     </message>
@@ -2778,7 +2783,7 @@ p, li { white-space: pre-wrap; }
         <translation>Durchsuchen</translation>
     </message>
     <message>
-        <location line="+106"/>
+        <location line="+149"/>
         <source>Add Shared Directory</source>
         <translation>Freigabe hinzufügen</translation>
     </message>
@@ -2798,17 +2803,45 @@ p, li { white-space: pre-wrap; }
         <translation>Eingehende Dateien</translation>
     </message>
     <message>
-        <location line="+112"/>
+        <location line="+114"/>
         <source>Edit Share</source>
         <translation>Freigaben bearbeiten</translation>
     </message>
     <message>
-        <location line="-67"/>
+        <location line="+11"/>
+        <source>Remember file hashes even if not shared. 
+This might be useful if you&apos;re sharing an 
+external HD, to avoid re-hashing files when 
+you plug it in.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Remember hashed files for </source>
+        <translation>Merke gehashte Dateien für</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source> days</source>
+        <translation> Tage</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Forget any hashed file that is not anymore shared.</source>
+        <translation>Vergesse gehashte Dateien, die nicht mehr freigegeben sind.</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Clean Hash Cache</source>
+        <translation>Bereinige Hash Cache</translation>
+    </message>
+    <message>
+        <location line="-115"/>
         <source>Partials Directory</source>
         <translation>Temporäre Dateien</translation>
     </message>
     <message>
-        <location line="+57"/>
+        <location line="+59"/>
         <source>Automatically share incoming directory (Recommended)</source>
         <translation>Eingehende Ordner automatisch freigeben</translation>
     </message>
@@ -5829,12 +5862,12 @@ Willst Du die Nachricht speichern ?</translation>
         <translation>Von</translation>
     </message>
     <message>
-        <location line="+799"/>
+        <location line="+825"/>
         <source>Size</source>
         <translation>Grösse</translation>
     </message>
     <message>
-        <location line="-408"/>
+        <location line="-434"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -5909,15 +5942,15 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+177"/>
         <location filename="../gui/MessagesDialog.cpp" line="-44"/>
-        <location line="+921"/>
+        <location line="+983"/>
         <location line="+10"/>
         <source>Inbox</source>
         <translation>Posteingang</translation>
     </message>
     <message>
         <location line="+9"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-926"/>
-        <location line="+939"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-988"/>
+        <location line="+1001"/>
         <location line="+8"/>
         <source>Outbox</source>
         <translation>Postausgang</translation>
@@ -5929,7 +5962,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+9"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-937"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-999"/>
         <source>Sent</source>
         <translation>Gesendet</translation>
     </message>
@@ -5944,7 +5977,12 @@ p, li { white-space: pre-wrap; }
         <translation>Bcc:</translation>
     </message>
     <message>
-        <location line="+74"/>
+        <location line="+37"/>
+        <source>Tags:</source>
+        <translation>Schlagwörter:</translation>
+    </message>
+    <message>
+        <location line="+63"/>
         <location line="+3"/>
         <source>Print...</source>
         <translation>Drucken...</translation>
@@ -5986,13 +6024,13 @@ p, li { white-space: pre-wrap; }
         <translation>Speichern unter...</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="+686"/>
+        <location filename="../gui/MessagesDialog.cpp" line="+748"/>
         <source>Print Document</source>
         <translation>Dokument drucken</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="-865"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-1587"/>
+        <location filename="../gui/MessagesDialog.ui" line="-891"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-1649"/>
         <source>Subject</source>
         <translation>Betreff</translation>
     </message>
@@ -6012,7 +6050,7 @@ p, li { white-space: pre-wrap; }
         <translation>An:</translation>
     </message>
     <message>
-        <location line="+146"/>
+        <location line="+172"/>
         <source>File Name</source>
         <translation>Dateiname</translation>
     </message>
@@ -6027,7 +6065,7 @@ p, li { white-space: pre-wrap; }
         <translation>Prüfsumme</translation>
     </message>
     <message>
-        <location line="-948"/>
+        <location line="-974"/>
         <source>Print</source>
         <translation>Drucken</translation>
     </message>
@@ -6074,7 +6112,7 @@ p, li { white-space: pre-wrap; }
         <translation>Empfohlene Dateien einblenden</translation>
     </message>
     <message>
-        <location line="+969"/>
+        <location line="+1031"/>
         <source>Save as...</source>
         <translation>Speichern unter...</translation>
     </message>
@@ -6084,7 +6122,7 @@ p, li { white-space: pre-wrap; }
         <translation>HTML-Dateien (*.htm *.html);;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location line="-1571"/>
+        <location line="-1633"/>
         <location line="+272"/>
         <source>Reply to All</source>
         <translation>Allen antworten</translation>
@@ -6124,7 +6162,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+177"/>
         <location filename="../gui/MessagesDialog.cpp" line="+724"/>
-        <location line="+963"/>
+        <location line="+1025"/>
         <location line="+5"/>
         <source>Trash</source>
         <translation>Papierkorb</translation>
@@ -6140,7 +6178,7 @@ p, li { white-space: pre-wrap; }
         <translation>Ordner</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="-1681"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-1743"/>
         <source>Remove All Tags</source>
         <translation>Alle Schlagwörter entfernen</translation>
     </message>
@@ -6181,13 +6219,13 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+275"/>
-        <location line="+954"/>
+        <location line="+1016"/>
         <location line="+8"/>
         <source>Drafts</source>
         <translation>Entwürfe</translation>
     </message>
     <message>
-        <location line="-926"/>
+        <location line="-988"/>
         <source>To</source>
         <translation>An</translation>
     </message>
@@ -6197,7 +6235,7 @@ p, li { white-space: pre-wrap; }
         <translation>Editieren...</translation>
     </message>
     <message>
-        <location line="+1437"/>
+        <location line="+1499"/>
         <location line="+4"/>
         <location line="+4"/>
         <location line="+4"/>
@@ -6406,7 +6444,7 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location line="+60"/>
+        <location line="+62"/>
         <source>Internet connection</source>
         <translation>Internetverbindung</translation>
     </message>
@@ -7893,7 +7931,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PopupChatDialog</name>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="+781"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="+783"/>
         <source>Hide Avatar</source>
         <translation>Avatar verstecken</translation>
     </message>
@@ -7971,7 +8009,7 @@ p, li { white-space: pre-wrap; }
         <translation>Deaktiviere Emoticons</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="-1038"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="-1040"/>
         <source>Paste retroshare Link</source>
         <translation>RetroShare Link einfügen</translation>
     </message>
@@ -7991,7 +8029,7 @@ p, li { white-space: pre-wrap; }
         <translation>Wähle dein Avatar Bild aus</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="+774"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="+776"/>
         <source>Add Extra File</source>
         <translation>Zusätzlich eine Datei hinzufügen</translation>
     </message>
@@ -8028,7 +8066,7 @@ p, li { white-space: pre-wrap; }
         <translation>Text Datei (*.txt );;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location line="-753"/>
+        <location line="-755"/>
         <source>Your Friend is offline 
 Do you want to send them a Message instead</source>
         <translation>Dein Freund ist Offline willst du ihm stattdessen eine Nachricht senden</translation>
@@ -8045,7 +8083,7 @@ Do you want to send them a Message instead</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="+794"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="+796"/>
         <source>is Idle and may not reply</source>
         <translation>antwortet möglicherweise nicht, da der Status auf &quot;Untätig&quot; gesetzt wurde</translation>
     </message>
@@ -8065,7 +8103,7 @@ Do you want to send them a Message instead</source>
         <translation>ist Offline.</translation>
     </message>
     <message>
-        <location line="-739"/>
+        <location line="-741"/>
         <source>is typing...</source>
         <translation>tippt...</translation>
     </message>
@@ -8980,7 +9018,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+9"/>
         <source>NEW</source>
-        <translation type="unfinished"></translation>
+        <translation>NEU</translation>
     </message>
     <message>
         <location line="+253"/>
@@ -9397,7 +9435,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ServerPage</name>
     <message>
-        <location filename="../gui/settings/ServerPage.ui" line="+714"/>
+        <location filename="../gui/settings/ServerPage.ui" line="+721"/>
         <location line="+23"/>
         <source>Port:</source>
         <translation>Port:</translation>
@@ -9413,12 +9451,12 @@ p, li { white-space: pre-wrap; }
         <translation>Externe Adresse</translation>
     </message>
     <message>
-        <location line="-112"/>
+        <location line="-106"/>
         <source>Transfer Rates</source>
         <translation>Übertragungsgeschwindigkeiten</translation>
     </message>
     <message>
-        <location line="-62"/>
+        <location line="-78"/>
         <source>Automatic (Upnp)</source>
         <translation>Automatisch (UPnP)</translation>
     </message>
@@ -9433,22 +9471,12 @@ p, li { white-space: pre-wrap; }
         <translation>Portweiterleitung von Hand</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+30"/>
         <source>Should be disabled if you don&apos;t want to share connection information between peers.</source>
         <translation>Sollte deaktiviert werden, wenn Sie keine Verbindungsinformationen mit Freunden teilen möchten.</translation>
     </message>
     <message>
-        <location line="+4"/>
-        <source>Discovery Enabled</source>
-        <translation>&quot;Discovery&quot; aktiviert</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Discovery Disabled</source>
-        <translation>&quot;Discovery&quot; deaktiviert</translation>
-    </message>
-    <message>
-        <location line="+33"/>
+        <location line="+46"/>
         <source>Download (KB/s) </source>
         <translation></translation>
     </message>
@@ -9464,13 +9492,33 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location line="-115"/>
-        <location line="+150"/>
+        <location line="-125"/>
+        <location line="+160"/>
         <source>Network Configuration</source>
         <translation>Netzwerkkonfiguration</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="-107"/>
+        <source>Public: DHT &amp; Discovery</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Private: Discovery Only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Inverted: DHT Only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Dark Net: None</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+98"/>
         <source>If you unckeck this, RetroShare will not use tunnel connection between peers that are firewalled and cannot connect directly. This is independant from F2F routing (turtle router).</source>
         <translation>Wenn Sie dies abwählen, wird RetroShare keinen Tunnel zwischen Peers aufbauen, die durch eine Firewall nicht direkt zueinander verbinden Können. Dies ist unabhängig vom &quot;Turtle router&quot; F2F-Routen Prinzip.</translation>
     </message>
@@ -9857,7 +9905,7 @@ p, li { white-space: pre-wrap; }
     <name>SharedFilesDialog</name>
     <message>
         <location filename="../gui/SharedFilesDialog.ui" line="+846"/>
-        <location filename="../gui/SharedFilesDialog.cpp" line="+282"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="+280"/>
         <source>Download</source>
         <translation>Herunterladen</translation>
     </message>
@@ -10536,13 +10584,13 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+26"/>
-        <location filename="../gui/feeds/SubFileItem.cpp" line="+573"/>
+        <location filename="../gui/feeds/SubFileItem.cpp" line="+576"/>
         <location line="+6"/>
         <source>Play File</source>
         <translation>Datei abspielen</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/SubFileItem.cpp" line="+54"/>
+        <location filename="../gui/feeds/SubFileItem.cpp" line="+56"/>
         <source>Save Channel File</source>
         <translation>Channel Datei speichern</translation>
     </message>
@@ -10557,7 +10605,7 @@ p, li { white-space: pre-wrap; }
         <translation>Abspielen</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/SubFileItem.cpp" line="-422"/>
+        <location filename="../gui/feeds/SubFileItem.cpp" line="-427"/>
         <location line="+7"/>
         <source>ERROR</source>
         <translation>FEHLER</translation>
@@ -10588,7 +10636,7 @@ p, li { white-space: pre-wrap; }
         <translation>UPLOAD</translation>
     </message>
     <message>
-        <location line="+305"/>
+        <location line="+308"/>
         <source>File %1 does not exist at location.</source>
         <translation>Datei %1 existiert nicht.</translation>
     </message>
@@ -10609,7 +10657,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TagDefs</name>
     <message>
-        <location filename="../gui/common/TagDefs.cpp" line="+36"/>
+        <location filename="../gui/common/TagDefs.cpp" line="+38"/>
         <source>Important</source>
         <translation>Wichtig</translation>
     </message>

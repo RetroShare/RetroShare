@@ -42,6 +42,8 @@ NATStatus::NATStatus(QWidget *parent)
     // iconLabel doesn't change over time, so we didn't need a minimum size
     hbox->addWidget(iconLabel);
 
+    hbox->addSpacing(2);
+
     setLayout(hbox);
 }
 

@@ -38,8 +38,7 @@ DHTStatus::DHTStatus(QWidget *parent)
     hbox->setMargin(0);
     hbox->setSpacing(6);
        
-    statusDHT = new QLabel( tr("<strong>DHT:</strong>"), this );
-	  //statusDHT->setMinimumSize( statusPeers->frameSize().width() + 0, 0 );
+    statusDHT = new QLabel("<strong>" + tr("DHT") + ":</strong>", this );
     hbox->addWidget(statusDHT);
     
     dhtstatusLabel = new QLabel( this );
@@ -55,22 +54,18 @@ DHTStatus::DHTStatus(QWidget *parent)
     
     dhtnetworksizeLabel = new QLabel( "0 (0) ",this );
     hbox->addWidget(dhtnetworksizeLabel);
-    
+
+    hbox->addSpacing(2);
+
     setLayout( hbox );
-    
-
-
-
 }
 
 void DHTStatus::getDHTStatus()
 {
-
     rsiface->lockData(); /* Lock Interface */
 
     /* now the extra bit .... switch on check boxes */
     const RsConfig &config = rsiface->getConfig();
-
 
     if (config.netDhtOk)
     {
@@ -91,10 +86,7 @@ void DHTStatus::getDHTStatus()
     }
 
     dhtnetworksizeLabel->setText(dhtsize);
-    dhtnetworksizeLabel->setToolTip(QString("RetroShare users in DHT (Total DHT users)") );
+    dhtnetworksizeLabel->setToolTip(tr("RetroShare users in DHT (Total DHT users)") );
 		
     rsiface->unlockData(); /* UnLock Interface */
-
 }
-
-
