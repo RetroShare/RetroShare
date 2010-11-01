@@ -288,7 +288,7 @@ Section  $(sec_data) sec_data
   ; File /r release\skin\*.* 
 
   ; Add emoticons
-  SetOutPath "$INSTDIR\emoticons\"
+  ;SetOutPath "$INSTDIR\emoticons\"
   ;File /r emoticons\*.*   
 	
   ; Add Chat Style
