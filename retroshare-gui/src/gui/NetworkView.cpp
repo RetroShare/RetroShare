@@ -54,21 +54,6 @@ NetworkView::NetworkView(QWidget *parent)
   connect( ui.edgeLengthSB, SIGNAL(valueChanged(int)), this, SLOT(setEdgeLength(int)));
 
   insertPeers();
-
-
-  /* hide the Tree +/- */
-//  ui.linkTreeWidget -> setRootIsDecorated( false );
-  
-    /* Set header resize modes and initial section sizes */
-//	QHeaderView * _header = ui.linkTreeWidget->header () ;
-//   	_header->setResizeMode (0, QHeaderView::Interactive);
-//	_header->setResizeMode (1, QHeaderView::Interactive);
-//	_header->setResizeMode (2, QHeaderView::Interactive);
-//
-//	_header->resizeSection ( 0, 400 );
-//	_header->resizeSection ( 1, 50 );
-//	_header->resizeSection ( 2, 150 );
-
 }
 
 void NetworkView::setEdgeLength(int l)
@@ -224,17 +209,17 @@ void  NetworkView::insertPeers()
 
 			node_ids[info.gpg_id] = ui.graphicsView->addNode("       "+detail.name, detail.name+"@"+info.gpg_id,type,auth);
 			std::cerr << "  inserted node " << info.gpg_id << ", type=" << type << ", auth=" << auth << std::endl ;
+
+			std::cerr << "NetworkView::insertPeers() Added Friend: " << info.gpg_id << std::endl;
+
+			for(std::list<std::string>::const_iterator sit(detail.gpgSigners.begin()); sit != detail.gpgSigners.end(); ++sit)
+				if(nodes_considered.find(*sit) == nodes_considered.end())
+				{
+					std::cerr << "  adding to queue: " << *sit << ", with level " << info.friend_level+1 << std::endl ;
+					nodes_to_treat.push_front( NodeInfo(*sit,info.friend_level + 1) ) ;
+					nodes_considered.insert(*sit) ;
+				}
 		}
-
-		std::cerr << "NetworkView::insertPeers() Added Friend: " << info.gpg_id << std::endl;
-
-		for(std::list<std::string>::const_iterator sit(detail.gpgSigners.begin()); sit != detail.gpgSigners.end(); ++sit)
-			if(nodes_considered.find(*sit) == nodes_considered.end())
-			{
-				std::cerr << "  adding to queue: " << *sit << ", with level " << info.friend_level+1 << std::endl ;
-				nodes_to_treat.push_front( NodeInfo(*sit,info.friend_level + 1) ) ;
-				nodes_considered.insert(*sit) ;
-			}
 	}
 
 	/* iterate through all friends */

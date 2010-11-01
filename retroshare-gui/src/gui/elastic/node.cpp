@@ -138,16 +138,26 @@ void Node::calculateForces(const double *map,int width,int height,int W,int H,fl
 	yforce = REPULSION_FACTOR * dej/25.0;
 
 	// Now subtract all forces pulling items together
-	double weight = (edgeList.size() + 1) ;
+	double weight = (n_edges() + 1) ;
+
 	foreach (Edge *edge, edgeList) {
 		QPointF pos;
+		double w2 ;	// This factor makes the edge length depend on connectivity, so clusters of friends tend to stay in the
+						// same location.
+						//
 		if (edge->sourceNode() == this)
+		{
 			pos = mapFromItem(edge->destNode(), 0, 0);
+			w2 = sqrtf(std::min(n_edges(),edge->destNode()->n_edges())) ;
+		}
 		else
+		{
 			pos = mapFromItem(edge->sourceNode(), 0, 0);
+			w2 = sqrtf(std::min(n_edges(),edge->sourceNode()->n_edges())) ;
+		}
 
 		float dist = sqrtf(pos.x()*pos.x() + pos.y()*pos.y()) ;
-		float val = dist - graph->edgeLength() ;
+		float val = dist - graph->edgeLength() * w2 ;
 
 		xforce += 0.01*pos.x() * val / weight;
 		yforce += 0.01*pos.y() * val / weight;

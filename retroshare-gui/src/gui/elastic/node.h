@@ -69,6 +69,7 @@ public:
     QPainterPath shape() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
+	 int n_edges() const { return edgeList.size() ; }
 protected:
     virtual QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
