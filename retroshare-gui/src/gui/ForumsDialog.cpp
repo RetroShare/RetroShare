@@ -1704,16 +1704,13 @@ void ForumsDialog::replytomessage()
 
     if (rsPeers->getPeerName(msgInfo.srcId) !="")
     {
-        MessageComposer *nMsgDialog = new MessageComposer();
-        nMsgDialog->newMsg();
-        nMsgDialog->insertTitleText( (QString("Re:") + " " + QString::fromStdWString(msgInfo.title)).toStdString()) ;
-        nMsgDialog->setWindowTitle(tr("Re:") + " " + QString::fromStdWString(msgInfo.title) ) ;
+        MessageComposer *nMsgDialog = MessageComposer::newMsg();
+        nMsgDialog->insertTitleText(QString::fromStdWString(msgInfo.title), MessageComposer::REPLY);
 
         QTextDocument doc ;
         doc.setHtml(QString::fromStdWString(msgInfo.msg)) ;
-        std::string cited_text(doc.toPlainText().toStdString()) ;
 
-        nMsgDialog->insertPastedText(cited_text) ;
+        nMsgDialog->insertPastedText(doc.toPlainText());
         nMsgDialog->addRecipient(MessageComposer::TO, msgInfo.srcId, false);
         nMsgDialog->show();
         nMsgDialog->activateWindow();

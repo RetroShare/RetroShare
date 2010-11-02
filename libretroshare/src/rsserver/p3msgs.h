@@ -54,22 +54,25 @@ class p3Msgs: public RsMsgs
 	   * @param msgList ref to list summarising client's msgs
 	   */
 	  virtual bool getMessageSummaries(std::list<MsgInfoSummary> &msgList);
-	  virtual bool getMessage(std::string mId, MessageInfo &msg);
+	  virtual bool getMessage(const std::string &mId, MessageInfo &msg);
 	  virtual void getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox, unsigned int *pnTrashbox);
 
 	  virtual bool MessageSend(MessageInfo &info);
-	  virtual bool MessageToDraft(MessageInfo &info);
-	  virtual bool MessageToTrash(std::string mid, bool bTrash);
-	  virtual bool MessageDelete(std::string mid);
-	  virtual bool MessageRead(std::string mid, bool bUnreadByUser);
+	  virtual bool MessageToDraft(MessageInfo &info, const std::string &msgParentId);
+	  virtual bool MessageToTrash(const std::string &mid, bool bTrash);
+	  virtual bool MessageDelete(const std::string &mid);
+	  virtual bool MessageRead(const std::string &mid, bool bUnreadByUser);
+	  virtual bool MessageReplied(const std::string &mid, bool replied);
+	  virtual bool MessageForwarded(const std::string &mid, bool forwarded);
+	  virtual bool getMsgParentId(const std::string &msgId, std::string &msgParentId);
 
 	  virtual bool getMessageTagTypes(MsgTagType& tags);
 	  virtual bool setMessageTagType(uint32_t tagId, std::string& text, uint32_t rgb_color);
 	  virtual bool removeMessageTagType(uint32_t tagId);
 
-	  virtual bool getMessageTag(std::string msgId, MsgTagInfo& info);
+	  virtual bool getMessageTag(const std::string &msgId, MsgTagInfo& info);
 	  /* set == false && tagId == 0 --> remove all */
-	  virtual bool setMessageTag(std::string msgId, uint32_t tagId, bool set);
+	  virtual bool setMessageTag(const std::string &msgId, uint32_t tagId, bool set);
 
 	  virtual bool resetMessageStandardTagTypes(MsgTagType& tags);
 

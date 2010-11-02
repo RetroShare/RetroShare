@@ -40,6 +40,7 @@ class MessageComposer : public QMainWindow
 
 public:
     enum enumType { TO, CC, BCC };
+    enum enumMessageType { NORMAL, REPLY, FORWARD };
 
 public:
     /** Default Constructor */
@@ -50,29 +51,29 @@ public:
     static void msgFriend(std::string id, bool group);
     static void recommendFriend(std::list <std::string> &peerids);
 
-    void  newMsg(std::string msgId = "");
+    static MessageComposer *newMsg(const std::string &msgId = "");
+    static MessageComposer *replyMsg(const std::string &msgId, bool all);
+    static MessageComposer *forwardMsg(const std::string &msgId);
 
     /* worker fns */
     void  insertSendList();
     void  insertFileList(const std::list<DirDetails>&);
     void  insertFileList(const std::list<FileInfo>&);
-    void  insertTitleText(std::string title);
-    void  insertPastedText(std::string msg) ;
-    void  insertForwardPastedText(std::string msg);
-    void  insertHtmlText(std::string msg);
-    void  insertMsgText(std::string msg);
+    void  insertTitleText(const QString &title, enumMessageType type = NORMAL);
+    void  insertPastedText(QString msg) ;
+    void  insertForwardPastedText(QString msg);
+    void  insertHtmlText(const QString &msg);
+    void  insertMsgText(const QString &msg);
     void  addRecipient(enumType type, const std::string &id, bool group);
     void  Create_New_Image_Tag(const QString urlremoteorlocal);
 
 public slots:
-
     /* actions to take.... */
     void  sendMessage();
     void  cancelMessage();
     void  addImage();
     
     void changeFormatType(int styleIndex );
-
 
 protected:
     void closeEvent (QCloseEvent * event);
@@ -155,7 +156,7 @@ private:
     void colorChanged(const QColor &c);
     void alignmentChanged(Qt::Alignment a);
 
-    bool  sendMessage_internal(bool bDraftbox);
+    bool sendMessage_internal(bool bDraftbox);
     
     void FilterItems();
     bool FilterItem(QTreeWidgetItem *pItem, QString &sPattern);
@@ -191,8 +192,9 @@ private:
     QHash<QString, QString> autoLinkTitleDictionary;
     QHash<QString, int> autoLinkTargetDictionary;
 
-    std::string m_sMsgId;      // existing message id
+    std::string m_msgParentId; // parent message id
     std::string m_sDraftMsgId; // existing message id
+    enumMessageType m_msgType;
 
     /* maps of files  */
     std::list<AttachFileItem *> mAttachments;

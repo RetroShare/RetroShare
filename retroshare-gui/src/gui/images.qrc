@@ -282,6 +282,8 @@
         <file>images/message-mail-forwarded-read.png</file>
         <file>images/message-mail-replied.png</file>
         <file>images/message-mail-forwarded.png</file>
+        <file>images/message-mail-replied-forw.png</file>
+        <file>images/message-mail-replied-forw-read.png</file>
         <file>images/message-state-read.png</file>
         <file>images/message-state-unread.png</file>
         <file>images/message-state-header.png</file>

@@ -899,7 +899,7 @@ p, li { white-space: pre-wrap; }
          </property>
          <widget class="QWidget" name="tab">
           <attribute name="title">
-           <string>Live Chat</string>
+           <string>Group Chat</string>
           </attribute>
           <layout class="QGridLayout" name="gridLayout_3">
            <item row="0" column="0">

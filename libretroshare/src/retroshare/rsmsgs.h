@@ -50,6 +50,8 @@
 #define RS_MSG_NEW             0x0010   /* New */
 #define RS_MSG_TRASH           0x0020   /* Trash */
 #define RS_MSG_UNREAD_BY_USER  0x0040   /* Unread by user */
+#define RS_MSG_REPLIED         0x0080   /* Message is replied */
+#define RS_MSG_FORWARDED       0x0100   /* Message is forwarded */
 
 #define RS_MSGTAGTYPE_IMPORTANT  1
 #define RS_MSGTAGTYPE_WORK       2
@@ -152,15 +154,18 @@ virtual ~RsMsgs() { return; }
 	/* Message Items */
 
 virtual bool getMessageSummaries(std::list<MsgInfoSummary> &msgList) = 0;
-virtual bool getMessage(std::string mId, MessageInfo &msg)  = 0;
+virtual bool getMessage(const std::string &mId, MessageInfo &msg)  = 0;
 virtual void getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox, unsigned int *pnTrashbox) = 0;
 
 virtual	bool MessageSend(MessageInfo &info)                 = 0;
-virtual bool MessageToDraft(MessageInfo &info)              = 0;
-virtual bool MessageToTrash(std::string mid, bool bTrash)   = 0;
+virtual bool MessageToDraft(MessageInfo &info, const std::string &msgParentId) = 0;
+virtual bool MessageToTrash(const std::string &mid, bool bTrash)   = 0;
+virtual bool getMsgParentId(const std::string &msgId, std::string &msgParentId) = 0;
 
-virtual bool MessageDelete(std::string mid)                 = 0;
-virtual bool MessageRead(std::string mid, bool bUnreadByUser) = 0;
+virtual bool MessageDelete(const std::string &mid)                 = 0;
+virtual bool MessageRead(const std::string &mid, bool bUnreadByUser) = 0;
+virtual bool MessageReplied(const std::string &mid, bool replied) = 0;
+virtual bool MessageForwarded(const std::string &mid, bool forwarded) = 0;
 
 /* message tagging */
 
@@ -169,8 +174,8 @@ virtual bool getMessageTagTypes(MsgTagType& tags) = 0;
 virtual bool setMessageTagType(uint32_t tagId, std::string& text, uint32_t rgb_color) = 0;
 virtual bool removeMessageTagType(uint32_t tagId) = 0;
 
-virtual bool getMessageTag(std::string msgId, MsgTagInfo& info) = 0;
-virtual bool setMessageTag(std::string msgId, uint32_t tagId, bool set) = 0;
+virtual bool getMessageTag(const std::string &msgId, MsgTagInfo& info) = 0;
+virtual bool setMessageTag(const std::string &msgId, uint32_t tagId, bool set) = 0;
 
 virtual bool resetMessageStandardTagTypes(MsgTagType& tags) = 0;
 

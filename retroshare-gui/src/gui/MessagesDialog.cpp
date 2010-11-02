@@ -66,10 +66,11 @@
 
 #define COLUMN_DATA          0 // column for storing the userdata like msgid and srcid
 
-#define ROLE_SORT   Qt::UserRole
-#define ROLE_MSGID  Qt::UserRole + 1
-#define ROLE_SRCID  Qt::UserRole + 2
-#define ROLE_UNREAD Qt::UserRole + 3
+#define ROLE_SORT     Qt::UserRole
+#define ROLE_MSGID    Qt::UserRole + 1
+#define ROLE_SRCID    Qt::UserRole + 2
+#define ROLE_UNREAD   Qt::UserRole + 3
+#define ROLE_MSGFLAGS Qt::UserRole + 4
 
 #define ROW_INBOX         0
 #define ROW_OUTBOX        1
@@ -737,11 +738,13 @@ void MessagesDialog::folderlistWidgetCostumPopupMenu(QPoint point)
 
 void MessagesDialog::newmessage()
 {
-    MessageComposer *nMsgDialog = new MessageComposer();
+    MessageComposer *nMsgDialog = MessageComposer::newMsg();
+    if (nMsgDialog == NULL) {
+        return;
+    }
 
     /* fill it in */
     //std::cerr << "MessagesDialog::newmessage()" << std::endl;
-    nMsgDialog->newMsg();
     nMsgDialog->show();
     nMsgDialog->activateWindow();
 
@@ -757,15 +760,10 @@ void MessagesDialog::editmessage()
     if(!getCurrentMsg(cid, mid))
         return ;
 
-    MessageInfo msgInfo;
-    if (!rsMsgs->getMessage(mid, msgInfo)) {
-        std::cerr << "MessagesDialog::editmessage() Couldn't find Msg" << std::endl;
+    MessageComposer *pMsgDialog = MessageComposer::newMsg(mid);
+    if (pMsgDialog == NULL) {
         return;
     }
-
-    MessageComposer *pMsgDialog = new MessageComposer();
-    /* fill it in */
-    pMsgDialog->newMsg(msgInfo.msgId);
 
     pMsgDialog->show();
     pMsgDialog->activateWindow();
@@ -786,35 +784,11 @@ void MessagesDialog::replytomessage()
     mCurrCertId = cid;
     mCurrMsgId  = mid;
 
-    MessageInfo msgInfo;
-    if (!rsMsgs -> getMessage(mid, msgInfo))
-        return ;
-
-    MessageComposer *nMsgDialog = new MessageComposer();
-    /* fill it in */
-    //std::cerr << "MessagesDialog::newmessage()" << std::endl;
-    nMsgDialog->newMsg();
-
-    QString text = QString::fromStdWString(msgInfo.title);
-
-    if (text.startsWith("Re:", Qt::CaseInsensitive))
-    {
-	nMsgDialog->insertTitleText( QString::fromStdWString(msgInfo.title).toStdString()) ;
-    }
-    else
-    {
-        nMsgDialog->insertTitleText( (QString("Re:") + " " + QString::fromStdWString(msgInfo.title)).toStdString()) ;
+    MessageComposer *nMsgDialog = MessageComposer::replyMsg(mid, false);
+    if (nMsgDialog == NULL) {
+        return;
     }
 
-    nMsgDialog->setWindowTitle( tr ("Compose: ") + tr("Re:") + " " + QString::fromStdWString(msgInfo.title) ) ;
-
-
-    QTextDocument doc ;
-    doc.setHtml(QString::fromStdWString(msgInfo.msg)) ;
-    std::string cited_text(doc.toPlainText().toStdString()) ;
-
-    nMsgDialog->insertPastedText(cited_text) ;
-    nMsgDialog->addRecipient(MessageComposer::TO, msgInfo.srcId, false);
     nMsgDialog->show();
     nMsgDialog->activateWindow();
 
@@ -834,40 +808,9 @@ void MessagesDialog::replyallmessage()
     mCurrCertId = cid;
     mCurrMsgId  = mid;
 
-    MessageInfo msgInfo;
-    if (!rsMsgs -> getMessage(mid, msgInfo))
-        return ;
-
-    MessageComposer *nMsgDialog = new MessageComposer();
-    /* fill it in */
-    //std::cerr << "MessagesDialog::newmessage()" << std::endl;
-    nMsgDialog->newMsg();
-
-    QString text = QString::fromStdWString(msgInfo.title);
-
-    if (text.startsWith("Re:", Qt::CaseInsensitive))
-    {
-	nMsgDialog->insertTitleText( QString::fromStdWString(msgInfo.title).toStdString()) ;
-    }
-    else
-    {
-        nMsgDialog->insertTitleText( (QString("Re:") + " " + QString::fromStdWString(msgInfo.title)).toStdString()) ;
-    }
-    nMsgDialog->setWindowTitle( tr ("Compose: ") + tr("Re:") + " " + QString::fromStdWString(msgInfo.title) ) ;
-
-
-    QTextDocument doc ;
-    doc.setHtml(QString::fromStdWString(msgInfo.msg)) ;
-    std::string cited_text(doc.toPlainText().toStdString()) ;
-
-    nMsgDialog->insertPastedText(cited_text) ;
-    nMsgDialog->addRecipient(MessageComposer::TO, msgInfo.srcId, false);
-
-    std::list<std::string> tl ( msgInfo.msgto );
-
-    for ( std::list<std::string>::iterator tli = tl.begin(); tli!= tl.end(); tli++ )
-    {
-        nMsgDialog->addRecipient(MessageComposer::TO, *tli, false) ;
+    MessageComposer *nMsgDialog = MessageComposer::replyMsg(mid, true);
+    if (nMsgDialog == NULL) {
+        return;
     }
 
     nMsgDialog->show();
@@ -889,46 +832,11 @@ void MessagesDialog::forwardmessage()
     mCurrCertId = cid;
     mCurrMsgId  = mid;
 
-    MessageInfo msgInfo;
-    if (!rsMsgs -> getMessage(mid, msgInfo))
-        return ;
-
-    MessageComposer *nMsgDialog = new MessageComposer();
-    /* fill it in */
-    //std::cerr << "MessagesDialog::newmessage()" << std::endl;
-    nMsgDialog->newMsg();
-
-    QString text = QString::fromStdWString(msgInfo.title);
-
-    if (text.startsWith("Fwd:", Qt::CaseInsensitive))
-    {
-	nMsgDialog->insertTitleText( QString::fromStdWString(msgInfo.title).toStdString()) ;
-    }
-    else
-    {
-        nMsgDialog->insertTitleText( (QString("Fwd:") + " " + QString::fromStdWString(msgInfo.title)).toStdString()) ;
+    MessageComposer *nMsgDialog = MessageComposer::forwardMsg(mid);
+    if (nMsgDialog == NULL) {
+        return;
     }
 
-    nMsgDialog->setWindowTitle( tr ("Compose:") + " " + tr("Fwd:") + " " + QString::fromStdWString(msgInfo.title) ) ;
-
-
-    QTextDocument doc ;
-    doc.setHtml(QString::fromStdWString(msgInfo.msg)) ;
-    std::string cited_text(doc.toPlainText().toStdString()) ;
-
-    nMsgDialog->insertForwardPastedText(cited_text) ;
-
-    std::list<FileInfo>& files_info = msgInfo.files;
-
-    /* enable all files for sending */
-    std::list<FileInfo>::iterator it;
-    for(it = files_info.begin(); it != files_info.end(); it++)
-    {
-        it->inRecommend = true;
-    }
-
-    nMsgDialog->insertFileList(files_info);
-    //nMsgDialog->addRecipient( msgInfo.srcId ) ;
     nMsgDialog->show();
     nMsgDialog->activateWindow();
 
@@ -1087,31 +995,37 @@ void MessagesDialog::messagesTagsChanged()
     insertMessages();
 }
 
-static void InitIconAndFont(QStandardItem *pItem [COLUMN_COUNT], int nFlag)
+static void InitIconAndFont(QStandardItem *pItem [COLUMN_COUNT])
 {
     QString sText = pItem [COLUMN_SUBJECT]->text();
     QString mid = pItem [COLUMN_DATA]->data(ROLE_MSGID).toString();
+    int nFlag = pItem [COLUMN_DATA]->data(ROLE_MSGFLAGS).toInt();
 
     // show the real "New" state
     if (nFlag & RS_MSG_NEW) {
-        if (sText.startsWith("Re:", Qt::CaseInsensitive)) {
-            pItem[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-mail-replied.png"));
-        } else if (sText.startsWith("Fwd:", Qt::CaseInsensitive)) {
-            pItem[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-mail-forwarded.png"));
-        } else {
-            pItem[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-mail.png"));
-        }
         pItem[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-state-new.png"));
     } else {
-        // Change Message icon when Subject is Re: or Fwd:
-        if (sText.startsWith("Re:", Qt::CaseInsensitive)) {
-            pItem[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-mail-replied-read.png"));
-        } else if (sText.startsWith("Fwd:", Qt::CaseInsensitive)) {
-            pItem[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-mail-forwarded-read.png"));
+        if (nFlag & RS_MSG_UNREAD_BY_USER) {
+            if ((nFlag & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == RS_MSG_REPLIED) {
+                pItem[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-mail-replied.png"));
+            } else if ((nFlag & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == RS_MSG_FORWARDED) {
+                pItem[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-mail-forwarded.png"));
+            } else if ((nFlag & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == (RS_MSG_REPLIED | RS_MSG_FORWARDED)) {
+                pItem[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-mail-replied-forw.png"));
+            } else {
+                pItem[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-mail.png"));
+            }
         } else {
-            pItem[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-mail-read.png"));
+            if ((nFlag & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == RS_MSG_REPLIED) {
+                pItem[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-mail-replied-read.png"));
+            } else if ((nFlag & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == RS_MSG_FORWARDED) {
+                pItem[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-mail-forwarded-read.png"));
+            } else if ((nFlag & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == (RS_MSG_REPLIED | RS_MSG_FORWARDED)) {
+                pItem[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-mail-replied-forw-read.png"));
+            } else {
+                pItem[COLUMN_SUBJECT]->setIcon(QIcon(":/images/message-mail-read.png"));
+            }
         }
-        pItem[COLUMN_SUBJECT]->setIcon(QIcon());
     }
 
     bool bNew = nFlag & (RS_MSG_NEW | RS_MSG_UNREAD_BY_USER);
@@ -1405,9 +1319,10 @@ void MessagesDialog::insertMessages()
             QString msgId = QString::fromStdString(it->msgId);
             item[COLUMN_DATA]->setData(QString::fromStdString(it->srcId), ROLE_SRCID);
             item[COLUMN_DATA]->setData(msgId, ROLE_MSGID);
+            item[COLUMN_DATA]->setData(it->msgflags, ROLE_MSGFLAGS);
 
             // Init icon and font
-            InitIconAndFont(item, it->msgflags);
+            InitIconAndFont(item);
 
             // Tags
             MsgTagInfo tagInfo;
@@ -1555,7 +1470,18 @@ void MessagesDialog::setMsgAsReadUnread(const QList<int> &Rows, bool bRead)
         std::string mid = item[COLUMN_DATA]->data(ROLE_MSGID).toString().toStdString();
 
         if (rsMsgs->MessageRead(mid, !bRead)) {
-            InitIconAndFont(item, bRead ? 0 : RS_MSG_UNREAD_BY_USER);
+            int nFlag = item[COLUMN_DATA]->data(ROLE_MSGFLAGS).toInt();
+            nFlag &= ~RS_MSG_NEW;
+
+            if (bRead) {
+                nFlag &= ~RS_MSG_UNREAD_BY_USER;
+            } else {
+                nFlag |= RS_MSG_UNREAD_BY_USER;
+            }
+
+            item[COLUMN_DATA]->setData(nFlag, ROLE_MSGFLAGS);
+
+            InitIconAndFont(item);
         }
     }
 

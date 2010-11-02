@@ -102,6 +102,8 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
 
+    m_msgType = NORMAL;
+
     setupFileActions();
     setupEditActions();
     setupViewActions();
@@ -275,6 +277,9 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
     // load settings
     processSettings(true);
 
+    /* worker fns */
+    insertSendList();
+
     /* set focus to subject */
     ui.titleEdit->setFocus();
 
@@ -322,9 +327,10 @@ void MessageComposer::processSettings(bool bLoad)
 
     /* create a message */
 
-    MessageComposer *pMsgDialog = new MessageComposer();
-
-    pMsgDialog->newMsg();
+    MessageComposer *pMsgDialog = MessageComposer::newMsg();
+    if (pMsgDialog == NULL) {
+        return;
+    }
 
     if (group) {
         pMsgDialog->addRecipient(TO, id, true);
@@ -383,15 +389,13 @@ void MessageComposer::recommendFriend(std::list <std::string> &peerids)
     }
 
     /* create a message */
-    MessageComposer *pMsgDialog = new MessageComposer();
+    MessageComposer *pMsgDialog = MessageComposer::newMsg();
 
-    pMsgDialog->newMsg();
-    pMsgDialog->setWindowTitle(tr("Compose") + ": " + tr("Friend Recommendation")) ;
-    pMsgDialog->insertTitleText(tr("Friend Recommendation(s)").toStdString());
+    pMsgDialog->insertTitleText(tr("Friend Recommendation(s)"));
 
-    std::string sMsgText = tr("I recommend a good friend of me, you can trust him too when you trust me. <br> Copy friend link and paste to Friends list").toStdString();
+    QString sMsgText = tr("I recommend a good friend of me, you can trust him too when you trust me. <br> Copy friend link and paste to Friends list");
     sMsgText += "<br><br>";
-    sMsgText += BuildRecommendHtml(peerids).toStdString();
+    sMsgText += BuildRecommendHtml(peerids);
     pMsgDialog->insertMsgText(sMsgText);
 
 //    pMsgDialog->insertFileList(files_info);
@@ -704,7 +708,7 @@ void  MessageComposer::insertFileList(const std::list<FileInfo>& files_info)
         /* make a widget per person */
         QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
 
-        item->setText(0, QString::fromStdString(it->fname));			/* (0) Filename */
+        item->setText(0, QString::fromUtf8(it->fname.c_str()));			/* (0) Filename */
         item->setText(1, misc::friendlyUnit(it->size));			 		/* (1) Size */
         item->setText(2, QString::number(0)) ;//it->rank));
         item->setText(3, QString::fromStdString(it->hash));
@@ -820,38 +824,38 @@ static void calculateGroupsOfSslIds(std::list<RsGroupInfo> &existingGroupInfos, 
     }
 }
 
-void  MessageComposer::newMsg(std::string msgId /*= ""*/)
+MessageComposer *MessageComposer::newMsg(const std::string &msgId /*= ""*/)
 {
-    /* clear all */
-    ui.msgText->setText("");
+    MessageComposer *msgComposer = new MessageComposer();
 
-    /* worker fns */
-    insertSendList();
+    msgComposer->addEmptyRecipient();
 
-    ui.recipientWidget->setRowCount(0);
-    addEmptyRecipient();
-
-    m_sMsgId = msgId;
-    m_sDraftMsgId.clear();
-
-    if (m_sMsgId.empty() == false) {
+    if (msgId.empty() == false) {
         // fill existing message
         MessageInfo msgInfo;
-        if (!rsMsgs->getMessage(m_sMsgId, msgInfo)) {
+        if (!rsMsgs->getMessage(msgId, msgInfo)) {
             std::cerr << "MessageComposer::newMsg() Couldn't find Msg" << std::endl;
-            m_sMsgId.clear();
-            return;
+            delete msgComposer;
+            return NULL;
         }
 
         if (msgInfo.msgflags & RS_MSG_DRAFT) {
-            m_sDraftMsgId = msgId;
+            msgComposer->m_sDraftMsgId = msgId;
+
+            rsMsgs->getMsgParentId(msgId,  msgComposer->m_msgParentId);
+
+            if (msgInfo.msgflags & RS_MSG_REPLIED) {
+                msgComposer->m_msgType = REPLY;
+            } else if (msgInfo.msgflags & RS_MSG_FORWARDED) {
+                msgComposer->m_msgType = FORWARD;
+            }
         }
 
-        insertTitleText( QString::fromStdWString(msgInfo.title).toStdString());
+        msgComposer->insertTitleText(QString::fromStdWString(msgInfo.title));
 
-        insertMsgText(QString::fromStdWString(msgInfo.msg).toStdString());
+        msgComposer->insertMsgText(QString::fromStdWString(msgInfo.msg));
 
-        insertFileList(msgInfo.files);
+        msgComposer->insertFileList(msgInfo.files);
 
         // get existing groups
         std::list<RsGroupInfo> groupInfoList;
@@ -863,48 +867,152 @@ void  MessageComposer::newMsg(std::string msgId /*= ""*/)
 
         calculateGroupsOfSslIds(groupInfoList, msgInfo.msgto, groupIds);
         for (groupIt = groupIds.begin(); groupIt != groupIds.end(); groupIt++ ) {
-            addRecipient(MessageComposer::TO, *groupIt, true) ;
+            msgComposer->addRecipient(MessageComposer::TO, *groupIt, true) ;
         }
         for (it = msgInfo.msgto.begin(); it != msgInfo.msgto.end(); it++ ) {
-            addRecipient(MessageComposer::TO, *it, false) ;
+            msgComposer->addRecipient(MessageComposer::TO, *it, false) ;
         }
 
         calculateGroupsOfSslIds(groupInfoList, msgInfo.msgcc, groupIds);
         for (groupIt = groupIds.begin(); groupIt != groupIds.end(); groupIt++ ) {
-            addRecipient(MessageComposer::CC, *groupIt, true) ;
+            msgComposer->addRecipient(MessageComposer::CC, *groupIt, true) ;
         }
         for (it = msgInfo.msgcc.begin(); it != msgInfo.msgcc.end(); it++ ) {
-            addRecipient(MessageComposer::CC, *it, false) ;
+            msgComposer->addRecipient(MessageComposer::CC, *it, false) ;
         }
 
         calculateGroupsOfSslIds(groupInfoList, msgInfo.msgbcc, groupIds);
         for (groupIt = groupIds.begin(); groupIt != groupIds.end(); groupIt++ ) {
-            addRecipient(MessageComposer::BCC, *groupIt, true) ;
+            msgComposer->addRecipient(MessageComposer::BCC, *groupIt, true) ;
         }
         for (it = msgInfo.msgbcc.begin(); it != msgInfo.msgbcc.end(); it++ ) {
-            addRecipient(MessageComposer::BCC, *it, false) ;
+            msgComposer->addRecipient(MessageComposer::BCC, *it, false) ;
         }
 
-        ui.msgText->document()->setModified(false);
+        msgComposer->ui.msgText->document()->setModified(false);
     } else {
-        insertTitleText(tr("No Title").toStdString());
+        msgComposer->insertTitleText(tr("No Title"));
     }
 
-    calculateTitle();
+    msgComposer->calculateTitle();
+
+    return msgComposer;
 }
 
-void  MessageComposer::insertTitleText(std::string title)
+MessageComposer *MessageComposer::replyMsg(const std::string &msgId, bool all)
 {
-    ui.titleEdit->setText(QString::fromStdString(title));
+    MessageInfo msgInfo;
+    if (!rsMsgs->getMessage(msgId, msgInfo)) {
+        return NULL;
+    }
+
+    MessageComposer *msgComposer = MessageComposer::newMsg();
+    msgComposer->m_msgParentId = msgId;
+    msgComposer->m_msgType = REPLY;
+
+    /* fill it in */
+
+    msgComposer->insertTitleText(QString::fromStdWString(msgInfo.title), REPLY);
+
+    QTextDocument doc ;
+    doc.setHtml(QString::fromStdWString(msgInfo.msg));
+
+    msgComposer->insertPastedText(doc.toPlainText());
+    msgComposer->addRecipient(MessageComposer::TO, msgInfo.srcId, false);
+
+    if (all) {
+        std::string ownId = rsPeers->getOwnId();
+
+        for (std::list<std::string>::iterator tli = msgInfo.msgto.begin(); tli != msgInfo.msgto.end(); tli++) {
+            if (ownId != *tli) {
+                msgComposer->addRecipient(MessageComposer::TO, *tli, false) ;
+            }
+        }
+
+        for (std::list<std::string>::iterator tli = msgInfo.msgcc.begin(); tli != msgInfo.msgcc.end(); tli++) {
+            if (ownId != *tli) {
+                msgComposer->addRecipient(MessageComposer::TO, *tli, false) ;
+            }
+        }
+    }
+
+    msgComposer->calculateTitle();
+
+    /* window will destroy itself! */
+
+    return msgComposer;
 }
 
-void  MessageComposer::insertPastedText(std::string msg)
+MessageComposer *MessageComposer::forwardMsg(const std::string &msgId)
 {
-    std::string::size_type i=0 ;
-    while( (i=msg.find_first_of('\n',i+1)) < msg.size())
-        msg.replace(i,1,std::string("\n<BR/>> ")) ;
+    MessageInfo msgInfo;
+    if (!rsMsgs->getMessage(msgId, msgInfo)) {
+        return NULL;
+    }
 
-    ui.msgText->setHtml(QString("<HTML><font color=\"blue\">")+QString::fromStdString(std::string("> ") + msg)+"</font><br/><br/></HTML>") ;
+    MessageComposer *msgComposer = MessageComposer::newMsg();
+    msgComposer->m_msgParentId = msgId;
+    msgComposer->m_msgType = FORWARD;
+
+    /* fill it in */
+
+    msgComposer->insertTitleText(QString::fromStdWString(msgInfo.title), FORWARD);
+
+    QTextDocument doc ;
+    doc.setHtml(QString::fromStdWString(msgInfo.msg)) ;
+
+    msgComposer->insertForwardPastedText(doc.toPlainText());
+
+    std::list<FileInfo>& files_info = msgInfo.files;
+
+    /* enable all files for sending */
+    std::list<FileInfo>::iterator it;
+    for(it = files_info.begin(); it != files_info.end(); it++)
+    {
+        it->inRecommend = true;
+    }
+
+    msgComposer->insertFileList(files_info);
+
+    msgComposer->calculateTitle();
+
+    /* window will destroy itself! */
+
+    return msgComposer;
+}
+
+void  MessageComposer::insertTitleText(const QString &title, enumMessageType type)
+{
+    QString titleText;
+
+    switch (type) {
+    case NORMAL:
+        titleText = title;
+        break;
+    case REPLY:
+        if (title.startsWith("Re:", Qt::CaseInsensitive)) {
+            titleText = title;
+        } else {
+            titleText = tr("Re:") + " " + title;
+        }
+        break;
+    case FORWARD:
+        if (title.startsWith("Fwd:", Qt::CaseInsensitive)) {
+            titleText = title;
+        } else {
+            titleText = tr("Fwd:") + " " + title;
+        }
+        break;
+    }
+
+    ui.titleEdit->setText(titleText);
+}
+
+void  MessageComposer::insertPastedText(QString msg)
+{
+    msg.replace("\n", "\n<BR/>> ");
+
+    ui.msgText->setHtml("<HTML><font color=\"blue\"> > " + msg + "</font><br/><br/></HTML>");
 
     ui.msgText->setFocus( Qt::OtherFocusReason );
 
@@ -915,13 +1023,11 @@ void  MessageComposer::insertPastedText(std::string msg)
     ui.msgText->document()->setModified(true);
 }
 
-void  MessageComposer::insertForwardPastedText(std::string msg)
+void  MessageComposer::insertForwardPastedText(QString msg)
 {
-    std::string::size_type i=0 ;
-    while( (i=msg.find_first_of('\n',i+1)) < msg.size())
-        msg.replace(i,1,std::string("\n<BR/>> ")) ;
+    msg.replace("\n", "\n<BR/>> ");
 
-    ui.msgText->setHtml(QString("<HTML><blockquote [type=cite]><font color=\"blue\">")+QString::fromStdString(std::string("") + msg)+"</font><br/><br/></blockquote></HTML>") ;
+    ui.msgText->setHtml("<HTML><blockquote [type=cite]><font color=\"blue\">> " + msg + "</font><br/><br/></blockquote></HTML>");
 
     ui.msgText->setFocus( Qt::OtherFocusReason );
 
@@ -932,9 +1038,9 @@ void  MessageComposer::insertForwardPastedText(std::string msg)
     ui.msgText->document()->setModified(true);
 }
 
-void  MessageComposer::insertMsgText(std::string msg)
+void  MessageComposer::insertMsgText(const QString &msg)
 {
-    ui.msgText->setText(QString::fromStdString(msg));
+    ui.msgText->setText(msg);
 
     ui.msgText->setFocus( Qt::OtherFocusReason );
 
@@ -945,9 +1051,9 @@ void  MessageComposer::insertMsgText(std::string msg)
     ui.msgText->document()->setModified(true);
 }
 
-void  MessageComposer::insertHtmlText(std::string msg)
+void  MessageComposer::insertHtmlText(const QString &msg)
 {
-    ui.msgText->setHtml(QString("<a href='") + QString::fromStdString(std::string(msg + "'> ") ) + QString::fromStdString(std::string(msg)) + "</a>") ;
+    ui.msgText->setHtml("<a href='" + msg + "'> " + msg + "</a>");
 
     ui.msgText->document()->setModified(true);
 }
@@ -1058,17 +1164,47 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
 
     if (bDraftbox) {
         mi.msgId = m_sDraftMsgId;
-        rsMsgs->MessageToDraft(mi);
+
+        rsMsgs->MessageToDraft(mi, m_msgParentId);
 
         // use new message id
         m_sDraftMsgId = mi.msgId;
+
+        switch (m_msgType) {
+        case NORMAL:
+            break;
+        case REPLY:
+            rsMsgs->MessageReplied(m_sDraftMsgId, true);
+            break;
+        case FORWARD:
+            rsMsgs->MessageForwarded(m_sDraftMsgId, true);
+            break;
+        }
+        
+        // PROBLEM: message to set reply/forwarded get lost
     } else {
         /* check for the recipient */
         if (mi.msgto.empty()) {
             QMessageBox::warning(this, tr("RetroShare"), tr("Please insert at least one recipient."), QMessageBox::Ok);
             return false; // Don't send with no recipient
         }
-        rsMsgs->MessageSend(mi);
+
+        if (rsMsgs->MessageSend(mi) == false) {
+            return false;
+        }
+
+        if (m_msgParentId.empty() == false) {
+            switch (m_msgType) {
+            case NORMAL:
+                break;
+            case REPLY:
+                rsMsgs->MessageReplied(m_msgParentId, true);
+                break;
+            case FORWARD:
+                rsMsgs->MessageForwarded(m_msgParentId, true);
+                break;
+            }
+        }
     }
 
     ui.msgText->document()->setModified(false);
@@ -1747,7 +1883,6 @@ void MessageComposer::saveasDraft()
 {
     sendMessage_internal(true);
 }
-
 
 void MessageComposer::filePrint()
 {

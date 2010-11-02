@@ -124,6 +124,13 @@ RsSerialType* init_item(RsMsgSrcId& ms)
 	return new RsMsgSerialiser();
 }
 
+RsSerialType* init_item(RsMsgParentId& ms)
+{
+	ms.msgId = rand()%354;
+	ms.msgParentId = rand()%476;
+
+	return new RsMsgSerialiser();
+}
 
 bool operator ==(const RsChatMsgItem& cmiLeft,const  RsChatMsgItem& cmiRight)
 {
@@ -223,6 +230,14 @@ bool operator ==(const RsMsgSrcId& msLeft, const RsMsgSrcId& msRight)
 	return true;
 }
 
+bool operator ==(const RsMsgParentId& msLeft, const RsMsgParentId& msRight)
+{
+	if(msLeft.msgId != msRight.msgId) return false;
+	if(msLeft.msgParentId != msRight.msgParentId) return false;
+
+	return true;
+}
+
 int main()
 {
 	test_RsItem<RsChatMsgItem >(); REPORT("Serialise/Deserialise RsChatMsgItem");
@@ -233,6 +248,7 @@ int main()
 	test_RsItem<RsMsgTagType>(); REPORT("Serialise/Deserialise RsMsgTagType");
 	test_RsItem<RsMsgTags>(); REPORT("Serialise/Deserialise RsMsgTags");
 	test_RsItem<RsMsgSrcId>(); REPORT("Serialise/Deserialise RsMsgSrcId");
+	test_RsItem<RsMsgParentId>(); REPORT("Serialise/Deserialise RsMsgParentId");
 
 	std::cerr << std::endl;
 

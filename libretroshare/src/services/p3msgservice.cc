@@ -135,7 +135,6 @@ int 	p3MsgService::incomingMsgs()
 		changed = true ;
 		++i;
 		mi -> recvTime = time(NULL);
-		mi -> msgFlags = RS_MSG_FLAGS_NEW;
 		mi -> msgId = getNewUniqueMsgId();
 
 		std::string mesg;
@@ -149,6 +148,8 @@ int 	p3MsgService::incomingMsgs()
 		}
 		else
 		{
+			mi -> msgFlags = RS_MSG_FLAGS_NEW;
+
 			/* from a peer */
 			MsgInfoSummary mis;
 			initRsMIS(mi, mis);
@@ -285,6 +286,7 @@ std::list<RsItem*>    p3MsgService::saveList(bool& cleanup)
 	std::map<uint32_t, RsMsgTagType* >::iterator mit2;
 	std::map<uint32_t, RsMsgTags* >::iterator mit3;
 	std::list<RsMsgSrcId* >::iterator lit;
+	std::map<uint32_t, RsMsgParentId* >::iterator mit4;
 
     MsgTagType stdTags;
 
@@ -307,6 +309,9 @@ std::list<RsItem*>    p3MsgService::saveList(bool& cleanup)
 
 	for(mit3 = mMsgTags.begin();  mit3 != mMsgTags.end(); mit3++)
 		itemList.push_back(mit3->second);
+
+	for(mit4 = mParentId.begin();  mit4 != mParentId.end(); mit4++)
+		itemList.push_back(mit4->second);
 
 	return itemList;
 }
@@ -371,6 +376,7 @@ bool    p3MsgService::loadList(std::list<RsItem*> load)
     RsMsgTagType* mtt;
     RsMsgTags* mti;
     RsMsgSrcId* msi;
+    RsMsgParentId* msp;
 
     std::list<RsMsgItem*> items;
     std::list<RsItem*>::iterator it;
@@ -415,6 +421,10 @@ bool    p3MsgService::loadList(std::list<RsItem*> load)
 			srcIdMsgMap.insert(std::pair<uint32_t, std::string>(msi->msgId, msi->srcId));
 			mSrcIdList.push_back(msi); // does not need to be kept
 		}
+		else if(NULL != (msp = dynamic_cast<RsMsgParentId *>(*it)))
+		{
+			mParentId.insert(std::pair<uint32_t, RsMsgParentId*>(msp->msgId, msp));
+		}
 	}
 
         // sort items into lists
@@ -453,6 +463,20 @@ bool    p3MsgService::loadList(std::list<RsItem*> load)
 		}
 	}
 
+	/* remove missing msgId in mParentId */
+	std::map<uint32_t, RsMsgParentId *>::iterator mit = mParentId.begin();
+	while (mit != mParentId.end()) {
+		if (imsg.find(mit->first) == imsg.end()) {
+			if (msgOutgoing.find(mit->first) == msgOutgoing.end()) {
+				/* not found */
+				mParentId.erase(mit++);
+				continue;
+			}
+		}
+	
+		mit++;
+	}
+	
 	return true;
 }
 
@@ -523,7 +547,7 @@ bool p3MsgService::getMessageSummaries(std::list<MsgInfoSummary> &msgList)
 }
 
 
-bool p3MsgService::getMessage(std::string &mId, MessageInfo &msg)
+bool p3MsgService::getMessage(const std::string &mId, MessageInfo &msg)
 {
   	std::map<uint32_t, RsMsgItem *>::iterator mit;
 	uint32_t msgId = atoi(mId.c_str());
@@ -590,7 +614,7 @@ void p3MsgService::getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxN
 }
 
 /* remove based on the unique mid (stored in sid) */
-bool    p3MsgService::removeMsgId(std::string &mid)
+bool    p3MsgService::removeMsgId(const std::string &mid)
 {
   	std::map<uint32_t, RsMsgItem *>::iterator mit;
 	uint32_t msgId = atoi(mid.c_str());
@@ -627,6 +651,7 @@ bool    p3MsgService::removeMsgId(std::string &mid)
 		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
 		setMessageTag(mid, 0, false);
+		setMsgParentId(msgId, 0);
 
 		rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
 	}
@@ -634,7 +659,7 @@ bool    p3MsgService::removeMsgId(std::string &mid)
 	return changed;
 }
 
-bool    p3MsgService::markMsgIdRead(std::string &mid, bool bUnreadByUser)
+bool    p3MsgService::markMsgIdRead(const std::string &mid, bool bUnreadByUser)
 {
 	std::map<uint32_t, RsMsgItem *>::iterator mit;
 	uint32_t msgId = atoi(mid.c_str());
@@ -672,6 +697,104 @@ bool    p3MsgService::markMsgIdRead(std::string &mid, bool bUnreadByUser)
 
 	if (changed) {
 		rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
+	}
+
+	return true;
+}
+
+bool    p3MsgService::setMsgFlag(const std::string &mid, uint32_t flag, uint32_t mask)
+{
+  	std::map<uint32_t, RsMsgItem *>::iterator mit;
+	uint32_t msgId = atoi(mid.c_str());
+
+	bool changed = false;
+
+	{
+		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+
+		mit = imsg.find(msgId);
+		if (mit == imsg.end())
+		{
+			mit = msgOutgoing.find(msgId);
+			if (mit == msgOutgoing.end())
+			{
+				return false;
+			}
+		}
+
+		uint32_t oldFlag = mit->second->msgFlags;
+
+		mit->second->msgFlags &= ~mask;
+		mit->second->msgFlags |= flag;
+
+		if (mit->second->msgFlags != oldFlag) {
+			changed = true;
+			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+		}
+	} /* UNLOCKED */
+
+	if (changed) {
+		rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
+	}
+
+	return true;
+}
+
+bool    p3MsgService::getMsgParentId(const std::string &msgId, std::string &msgParentId)
+{
+	msgParentId.clear();
+
+	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+
+	std::map<uint32_t, RsMsgParentId *>::iterator mit = mParentId.find(atoi(msgId.c_str()));
+	if (mit == mParentId.end()) {
+		return false;
+	}
+
+	std::ostringstream out;
+	out << mit->second->msgParentId;
+	msgParentId = out.str();
+	
+	return true;
+}
+
+bool    p3MsgService::setMsgParentId(uint32_t msgId, uint32_t msgParentId)
+{
+	std::map<uint32_t, RsMsgParentId *>::iterator mit;
+
+	bool changed = false;
+
+	{
+		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+
+		mit = mParentId.find(msgId);
+		if (mit == mParentId.end())
+		{
+			if (msgParentId) {
+				RsMsgParentId* msp = new RsMsgParentId();
+				msp->PeerId (mConnMgr->getOwnId());
+				msp->msgId = msgId;
+				msp->msgParentId = msgParentId;
+				mParentId.insert(std::pair<uint32_t, RsMsgParentId*>(msgId, msp));
+
+				changed = true;
+			}
+		} else {
+			if (msgParentId) {
+				if (mit->second->msgParentId != msgParentId) {
+					mit->second->msgParentId = msgParentId;
+					changed = true;
+				}
+			} else {
+				delete mit->second;
+				mParentId.erase(mit);
+				changed = true;
+			}
+		}
+	} /* UNLOCKED */
+
+	if (changed) {
+		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 	}
 
 	return true;
@@ -745,7 +868,7 @@ bool 	p3MsgService::MessageSend(MessageInfo &info)
 	return true;
 }
 
-bool p3MsgService::MessageToDraft(MessageInfo &info)
+bool p3MsgService::MessageToDraft(MessageInfo &info, const std::string &msgParentId)
 {
     RsMsgItem *msg = initMIRsMsg(info, mConnMgr->getOwnId());
     if (msg)
@@ -785,6 +908,8 @@ bool p3MsgService::MessageToDraft(MessageInfo &info)
             out << msg->msgId;
             info.msgId = out.str();
         }
+
+        setMsgParentId(msg->msgId, atoi(msgParentId.c_str()));
 
         IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
@@ -919,7 +1044,7 @@ bool    p3MsgService::removeMessageTagType(uint32_t tagId)
 	return true;
 }
 
-bool 	p3MsgService::getMessageTag(std::string &msgId, MsgTagInfo& info)
+bool 	p3MsgService::getMessageTag(const std::string &msgId, MsgTagInfo& info)
 {
 	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
@@ -945,7 +1070,7 @@ bool 	p3MsgService::getMessageTag(std::string &msgId, MsgTagInfo& info)
 }
 
 /* set == false && tagId == 0 --> remove all */
-bool 	p3MsgService::setMessageTag(std::string &msgId, uint32_t tagId, bool set)
+bool 	p3MsgService::setMessageTag(const std::string &msgId, uint32_t tagId, bool set)
 {
 	uint32_t mid = atoi(msgId.c_str());
 	if (mid == 0) {
@@ -1047,7 +1172,7 @@ bool    p3MsgService::resetMessageStandardTagTypes(MsgTagType& tags)
 }
 
 /* move message to trash based on the unique mid */
-bool p3MsgService::MessageToTrash(std::string mid, bool bTrash)
+bool p3MsgService::MessageToTrash(const std::string &mid, bool bTrash)
 {
     std::map<uint32_t, RsMsgItem *>::iterator mit;
     uint32_t msgId = atoi(mid.c_str());
@@ -1141,6 +1266,14 @@ void p3MsgService::initRsMI(RsMsgItem *msg, MessageInfo &mi)
 	{
 		mi.msgflags |= RS_MSG_UNREAD_BY_USER;
 	}
+	if (msg->msgFlags & RS_MSG_FLAGS_REPLIED)
+	{
+		mi.msgflags |= RS_MSG_REPLIED;
+	}
+	if (msg->msgFlags & RS_MSG_FLAGS_FORWARDED)
+	{
+		mi.msgflags |= RS_MSG_FORWARDED;
+	}
 
 	mi.ts = msg->sendTime;
 	mi.srcId = msg->PeerId();
@@ -1227,6 +1360,14 @@ void p3MsgService::initRsMIS(RsMsgItem *msg, MsgInfoSummary &mis)
         if (msg->msgFlags & RS_MSG_FLAGS_UNREAD_BY_USER)
 	{
 		mis.msgflags |= RS_MSG_UNREAD_BY_USER;
+	}
+	if (msg->msgFlags & RS_MSG_FLAGS_REPLIED)
+	{
+		mis.msgflags |= RS_MSG_REPLIED;
+	}
+	if (msg->msgFlags & RS_MSG_FLAGS_FORWARDED)
+	{
+		mis.msgflags |= RS_MSG_FORWARDED;
 	}
 
 	mis.srcId = msg->PeerId();

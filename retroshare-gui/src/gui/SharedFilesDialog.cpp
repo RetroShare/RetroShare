@@ -410,16 +410,18 @@ void SharedFilesDialog::sendremoteLinkTo()
     copyLinkRemote ();
 
     /* create a message */
-    MessageComposer *nMsgDialog = new MessageComposer();
+    MessageComposer *nMsgDialog = MessageComposer::newMsg();
+    if (nMsgDialog == NULL) {
+        return;
+    }
 
     /* fill it in
     * files are receommended already
     * just need to set peers
     */
     std::cerr << "SharedFilesDialog::sendremoteLinkTo()" << std::endl;
-    nMsgDialog->newMsg();
-    nMsgDialog->insertTitleText("RetroShare Link");
-    nMsgDialog->insertMsgText(RSLinkClipboard::toHtml().toStdString());
+    nMsgDialog->insertTitleText(tr("RetroShare Link"));
+    nMsgDialog->insertMsgText(RSLinkClipboard::toHtml());
 
     nMsgDialog->show();
 
@@ -431,40 +433,43 @@ void SharedFilesDialog::sendLinkTo()
     copyLinkLocal ();
 
     /* create a message */
-    MessageComposer *nMsgDialog = new MessageComposer();
-
+    MessageComposer *nMsgDialog = MessageComposer::newMsg();
+    if (nMsgDialog == NULL) {
+        return;
+    }
 
     /* fill it in
     * files are receommended already
     * just need to set peers
     */
     std::cerr << "SharedFilesDialog::sendLinkTo()" << std::endl;
-    nMsgDialog->newMsg();
-    nMsgDialog->insertTitleText("RetroShare Link");
+    nMsgDialog->insertTitleText(tr("RetroShare Link"));
 
-    nMsgDialog->insertMsgText(RSLinkClipboard::toHtml().toStdString());
+    nMsgDialog->insertMsgText(RSLinkClipboard::toHtml());
 
     nMsgDialog->show();
 
     /* window will destroy itself! */
 }
 
-void SharedFilesDialog::sendHtmlLinkTo(  )
+void SharedFilesDialog::sendHtmlLinkTo()
 {
     copyLinkLocal ();
 
     /* create a message */
-    MessageComposer *nMsgDialog = new MessageComposer();
+    MessageComposer *nMsgDialog = MessageComposer::newMsg();
+    if (nMsgDialog == NULL) {
+        return;
+    }
 
     /* fill it in
     * files are receommended already
     * just need to set peers
     */
     std::cerr << "SharedFilesDialog::sendLinkTo()" << std::endl;
-    nMsgDialog->newMsg();
-    nMsgDialog->insertTitleText("RetroShare Link");
+    nMsgDialog->insertTitleText(tr("RetroShare Link"));
  //   nMsgDialog->insertHtmlText(QApplication::clipboard()->text().toStdString());// not compatible with multiple links
-    nMsgDialog->insertMsgText(RSLinkClipboard::toHtml().toStdString());
+    nMsgDialog->insertMsgText(RSLinkClipboard::toHtml());
 
     nMsgDialog->show();
 
@@ -588,7 +593,10 @@ void SharedFilesDialog::recommendFilesTo( std::string rsid )
 		return ;
 
 	/* create a message */
-        MessageComposer *nMsgDialog = new MessageComposer();
+        MessageComposer *nMsgDialog = MessageComposer::newMsg();
+	if (nMsgDialog == NULL) {
+		return;
+	}
 
 	/* fill it in
 	 * files are receommended already
@@ -596,9 +604,14 @@ void SharedFilesDialog::recommendFilesTo( std::string rsid )
 	 */
 
 	nMsgDialog->insertFileList(files_info) ;
-	nMsgDialog->newMsg();
-	nMsgDialog->insertTitleText("Recommendation(s)");
-	nMsgDialog->insertMsgText(rsPeers->getPeerName(rsPeers->getOwnId())+" recommends " + ( (files_info.size()>1)?"a list of files":"a file")+" to you");
+        nMsgDialog->insertTitleText(tr("Recommendation(s)"));
+
+        QString peerName = QString::fromStdString(rsPeers->getPeerName(rsPeers->getOwnId()));
+        if (files_info.size() > 1) {
+            nMsgDialog->insertMsgText(tr("%1 recommends a list of files to you").arg(peerName));
+        } else {
+            nMsgDialog->insertMsgText(tr("%1 recommends a file to you").arg(peerName));
+        }
         nMsgDialog->addRecipient(MessageComposer::TO, rsid, false) ;
 
 	nMsgDialog->sendMessage();
@@ -618,12 +631,14 @@ void SharedFilesDialog::recommendFilesToMsg( std::string rsid )
 
 	/* create a message */
 
-        MessageComposer *nMsgDialog = new MessageComposer();
+        MessageComposer *nMsgDialog = MessageComposer::newMsg();
+	if (nMsgDialog == NULL) {
+		return;
+	}
 
 	nMsgDialog->insertFileList(files_info) ;
-	nMsgDialog->newMsg();
-	nMsgDialog->insertTitleText("Recommendation(s)");
-	nMsgDialog->insertMsgText("Recommendation(s)");
+        nMsgDialog->insertTitleText(tr("Recommendation(s)"));
+        nMsgDialog->insertMsgText(tr("Recommendation(s)"));
 	nMsgDialog->show();
 
 	std::cout << "recommending to " << rsid << std::endl ;

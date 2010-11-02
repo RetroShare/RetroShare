@@ -1199,12 +1199,14 @@ void SearchDialog::sendLinkTo( )
     copysearchLink();
 
     /* create a message */
-    MessageComposer *nMsgDialog = new MessageComposer();
+    MessageComposer *nMsgDialog = MessageComposer::newMsg();
+    if (nMsgDialog == NULL) {
+        return;
+    }
 
-    nMsgDialog->newMsg();
-    nMsgDialog->insertTitleText("New RetroShare Link(s)");
+    nMsgDialog->insertTitleText(tr("New RetroShare Link(s)"));
 
-    nMsgDialog->insertMsgText(RSLinkClipboard::toHtml().toStdString()) ;
+    nMsgDialog->insertMsgText(RSLinkClipboard::toHtml()) ;
     nMsgDialog->show();
 
     /* window will destroy itself! */

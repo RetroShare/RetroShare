@@ -54,6 +54,7 @@ const uint8_t RS_PKT_SUBTYPE_PRIVATECHATMSG_CONFIG = 0x05 ;	// default is 0x01
 const uint8_t RS_PKT_SUBTYPE_MSG_TAG_TYPE = 0x03;
 const uint8_t RS_PKT_SUBTYPE_MSG_TAGS = 0x04;
 const uint8_t RS_PKT_SUBTYPE_MSG_SRC_TAG = 0x05;
+const uint8_t RS_PKT_SUBTYPE_MSG_PARENT_TAG = 0x06;
 
 
 class RsChatItem: public RsItem
@@ -184,6 +185,8 @@ const uint32_t RS_MSG_FLAGS_DRAFT          = 0x0004;
 const uint32_t RS_MSG_FLAGS_NEW            = 0x0010;
 const uint32_t RS_MSG_FLAGS_TRASH          = 0x0020;
 const uint32_t RS_MSG_FLAGS_UNREAD_BY_USER = 0x0040;
+const uint32_t RS_MSG_FLAGS_REPLIED        = 0x0080;
+const uint32_t RS_MSG_FLAGS_FORWARDED      = 0x0100;
 
 class RsMsgItem: public RsItem
 {
@@ -275,6 +278,26 @@ public:
 
 };
 
+class RsMsgParentId : public RsItem
+{
+
+public:
+	RsMsgParentId()
+	: RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_MSG,
+				RS_PKT_SUBTYPE_MSG_PARENT_TAG)
+	{ return;}
+
+	std::ostream &print(std::ostream &out, uint16_t indent = 0);
+
+	virtual ~RsMsgParentId();
+	virtual void clear();
+
+
+	uint32_t msgId;
+	uint32_t msgParentId;
+
+};
+
 class RsMsgSerialiser: public RsSerialType
 {
 	public:
@@ -311,6 +334,9 @@ virtual	uint32_t    sizeMsgSrcIdItem(RsMsgSrcId *);
 virtual	bool        serialiseMsgSrcIdItem  (RsMsgSrcId *item, void *data, uint32_t *size);
 virtual	RsMsgSrcId *deserialiseMsgSrcIdItem(void *data, uint32_t *size);
 
+virtual	uint32_t    sizeMsgParentIdItem(RsMsgParentId *);
+virtual	bool        serialiseMsgParentIdItem  (RsMsgParentId *item, void *data, uint32_t *size);
+virtual	RsMsgParentId *deserialiseMsgParentIdItem(void *data, uint32_t *size);
 
 
 	bool m_bConfiguration; // is set to true for saving configuration (enables serialising msgId)

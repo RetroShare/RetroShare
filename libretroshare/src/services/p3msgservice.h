@@ -56,23 +56,27 @@ bool    MsgNotifications();	/* popup - messages */
 bool 	getMessageNotifications(std::list<MsgInfoSummary> &noteList);
 
 bool 	getMessageSummaries(std::list<MsgInfoSummary> &msgList);
-bool 	getMessage(std::string &mid, MessageInfo &msg);
+bool 	getMessage(const std::string &mid, MessageInfo &msg);
 void    getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox, unsigned int *pnTrashbox);
 
-bool    removeMsgId(std::string &mid); 
-bool    markMsgIdRead(std::string &mid, bool bUnreadByUser);
+bool    removeMsgId(const std::string &mid); 
+bool    markMsgIdRead(const std::string &mid, bool bUnreadByUser);
+bool    setMsgFlag(const std::string &mid, uint32_t flag, uint32_t mask);
+bool    getMsgParentId(const std::string &msgId, std::string &msgParentId);
+// msgParentId == 0 --> remove
+bool    setMsgParentId(uint32_t msgId, uint32_t msgParentId);
 
 bool    MessageSend(MessageInfo &info);
-bool    MessageToDraft(MessageInfo &info);
-bool    MessageToTrash(std::string mid, bool bTrash);
+bool    MessageToDraft(MessageInfo &info, const std::string &msgParentId);
+bool    MessageToTrash(const std::string &mid, bool bTrash);
 
 bool 	getMessageTagTypes(MsgTagType& tags);
 bool  	setMessageTagType(uint32_t tagId, std::string& text, uint32_t rgb_color);
 bool    removeMessageTagType(uint32_t tagId);
 
-bool 	getMessageTag(std::string &msgId, MsgTagInfo& info);
+bool 	getMessageTag(const std::string &msgId, MsgTagInfo& info);
 /* set == false && tagId == 0 --> remove all */
-bool 	setMessageTag(std::string &msgId, uint32_t tagId, bool set);
+bool 	setMessageTag(const std::string &msgId, uint32_t tagId, bool set);
 
 bool    resetMessageStandardTagTypes(MsgTagType& tags);
 
@@ -133,6 +137,9 @@ void    initStandardTagTypes();
 
 	// used delete msgSrcIds after config save
 	std::list<RsMsgSrcId*> mSrcIdList;
+
+	// save the parent of the messages in draft for replied and forwarded
+	std::map<uint32_t, RsMsgParentId*> mParentId;
 
 	std::string config_dir;
 };

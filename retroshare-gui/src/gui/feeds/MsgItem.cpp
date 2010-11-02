@@ -254,26 +254,15 @@ void MsgItem::replyMsg()
 	{
 		//mParent->openMsg(FEEDHOLDER_MSG_MESSAGE, mPeerId, mMsgId);
 		
-		MessageInfo msgInfo;
-    if (!rsMsgs -> getMessage(mMsgId, msgInfo))
-		return ;
+    MessageComposer *nMsgDialog = MessageComposer::replyMsg(mMsgId, false);
+    if (nMsgDialog == NULL) {
+        return;
+    }
 
-    MessageComposer *nMsgDialog = new MessageComposer();
-    nMsgDialog->newMsg();
-    nMsgDialog->insertTitleText( (QString("Re: ") + QString::fromStdWString(msgInfo.title)).toStdString()) ;
-    nMsgDialog->setWindowTitle(tr("Re: ") + QString::fromStdWString(msgInfo.title) ) ;
-
-    QTextDocument doc ;
-    doc.setHtml(QString::fromStdWString(msgInfo.msg)) ;
-    std::string cited_text(doc.toPlainText().toStdString()) ;
-
-    nMsgDialog->insertPastedText(cited_text) ;
-    nMsgDialog->addRecipient(MessageComposer::TO, msgInfo.srcId, false);
     nMsgDialog->show();
     nMsgDialog->activateWindow();
 
     /* window will destroy itself! */
-   
   }
 }
 

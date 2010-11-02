@@ -196,8 +196,10 @@ void ChatMsgItem::sendMsg()
 	if (mParent)
 	{
 
-    MessageComposer *nMsgDialog = new MessageComposer();
-    nMsgDialog->newMsg();
+    MessageComposer *nMsgDialog = MessageComposer::newMsg();
+    if (nMsgDialog == NULL) {
+        return;
+    }
 
     nMsgDialog->addRecipient(MessageComposer::TO, mPeerId, false);
     nMsgDialog->show();

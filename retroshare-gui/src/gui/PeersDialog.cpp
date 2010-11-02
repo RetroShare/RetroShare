@@ -1433,9 +1433,9 @@ void PeersDialog::insertChat()
             QString notifyMsg = name + ": " + editor.toPlainText();
 
             if(notifyMsg.length() > 30)
-                emit notifyGroupChat(QString("New group chat"), notifyMsg.left(30) + QString("..."));
+                emit notifyGroupChat(tr("New group chat"), notifyMsg.left(30) + QString("..."));
             else
-                emit notifyGroupChat(QString("New group chat"), notifyMsg);
+                emit notifyGroupChat(tr("New group chat"), notifyMsg);
         }
 
         historyKeeper.addMessage(incoming, it->rsid, name, sendTime, recvTime, msg);
