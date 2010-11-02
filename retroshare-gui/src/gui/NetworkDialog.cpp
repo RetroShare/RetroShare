@@ -734,16 +734,16 @@ void NetworkDialog::getNetworkStatus()
     }
     else
     {    
-      setLogInfo(tr("UPNP NOT FOUND."), QString::fromUtf8("red"));
+      setLogInfo(tr("UPNP not found or not enabled."), QString::fromUtf8("red"));
     }
 
     if(config.netDhtOk)
     {
-      setLogInfo(tr("DHT OK."), QString::fromUtf8("green"));
+      setLogInfo(tr("DHT is running."), QString::fromUtf8("green"));
     }
     else 
     {
-      setLogInfo(tr("DHT is not working (down)."), QString::fromUtf8("red"));
+      setLogInfo(tr("DHT is off."), QString::fromUtf8("red"));
     }
         
     if(config.netStunOk)
