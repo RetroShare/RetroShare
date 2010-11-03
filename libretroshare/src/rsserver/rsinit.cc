@@ -585,8 +585,11 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 	setupBaseDir();
 	get_configinit(RsInitConfig::basedir, RsInitConfig::preferedId);
 
-        /* Initialize AuthGPG */
-        AuthGPG::getAuthGPG()->InitAuth();
+	/* Initialize AuthGPG */
+	if (AuthGPG::getAuthGPG()->InitAuth() == false) {
+		std::cerr << "AuthGPG::InitAuth failed" << std::endl;
+		return RS_INIT_AUTH_FAILED;
+	}
 
 	//std::list<accountId> ids;
 	std::list<accountId>::iterator it;
@@ -648,7 +651,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 
 		if (RsInitConfig::havePasswd)
 		{
-			return 1;
+			return RS_INIT_HAVE_ACCOUNT;
 		}
 
 		RsInit::LoadPassword(RsInitConfig::preferedId, "");
@@ -656,10 +659,10 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 		if (RsTryAutoLogin())
 		{
 			RsInit::setAutoLogin(true);
-			return 1;
+			return RS_INIT_HAVE_ACCOUNT;
 		}
 	}
-	return 0;
+	return RS_INIT_OK;
 }
 
 /**************************** Access Functions for Init Data **************************/

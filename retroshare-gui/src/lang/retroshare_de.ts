@@ -1193,7 +1193,7 @@ Verfügbar: %3</translation>
     <message>
         <location filename="../gui/settings/ChatPage.ui" line="+522"/>
         <source>Chat Settings</source>
-        <translation>Chat EInstellungen</translation>
+        <translation>Chat Einstellungen</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -4225,7 +4225,7 @@ Fill in your GPG password when asked, to sign your new key.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+208"/>
+        <location line="+222"/>
         <source>Click and drag the nodes around, and zoom with the mouse wheel or the &apos;+&apos; and &apos;-&apos; keys</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6493,29 +6493,29 @@ Rechtsklick und als Freund hinzufügen um zu verbinden.</translation>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="+111"/>
         <location line="+168"/>
-        <location line="+235"/>
+        <location line="+238"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location line="-398"/>
-        <location line="+403"/>
+        <location line="-401"/>
+        <location line="+406"/>
         <source>Did I authenticated peer</source>
         <translation>Habe ich den Peer authentifiziert</translation>
     </message>
     <message>
-        <location line="-400"/>
+        <location line="-403"/>
         <source>Did I sign his gpg key</source>
         <translation>Habe ich seinen GPG Schlüssel unterzeichnet</translation>
     </message>
     <message>
         <location line="+10"/>
-        <location line="+400"/>
+        <location line="+403"/>
         <source>Cert Id</source>
         <translation>ID des Zertifikates</translation>
     </message>
     <message>
-        <location line="-316"/>
+        <location line="-319"/>
         <source>Search Network</source>
         <translation>Netzwerksuche</translation>
     </message>
@@ -6553,7 +6553,7 @@ p, li { white-space: pre-wrap; }
         <translation>Externer IP Adressen Finder</translation>
     </message>
     <message>
-        <location line="+121"/>
+        <location line="+124"/>
         <source>Add Friend</source>
         <translation>Freund hinzufügen</translation>
     </message>
@@ -6583,18 +6583,18 @@ p, li { white-space: pre-wrap; }
         <translation>Willkommen bei RetroShare.</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="-566"/>
+        <location filename="../gui/NetworkDialog.ui" line="-569"/>
         <source>Network</source>
         <translation>Netzwerk</translation>
     </message>
     <message>
         <location line="+88"/>
-        <location line="+400"/>
+        <location line="+403"/>
         <source>Did peer authenticated me</source>
         <translation>Hat mich der Peer authentifiziert</translation>
     </message>
     <message>
-        <location line="-232"/>
+        <location line="-235"/>
         <source>Show keys that are not validated by the GPG web of trust</source>
         <translation>Zeige Schlüssel, die nicht vom web of trust bestätigt sind</translation>
     </message>
@@ -6604,7 +6604,7 @@ p, li { white-space: pre-wrap; }
         <translation>Log</translation>
     </message>
     <message>
-        <location line="+194"/>
+        <location line="+197"/>
         <source>Clear</source>
         <translation>Leeren</translation>
     </message>
@@ -6704,16 +6704,29 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+4"/>
-        <source>UPNP NOT FOUND.</source>
-        <translation>UPNP wurde nicht gefunden.</translation>
+        <source>UPNP not found or not enabled.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
-        <source>DHT OK.</source>
-        <translation>DHT OK.</translation>
+        <source>DHT is running.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+4"/>
+        <source>DHT is off.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>UPNP NOT FOUND.</source>
+        <translation type="obsolete">UPNP wurde nicht gefunden.</translation>
+    </message>
+    <message>
+        <source>DHT OK.</source>
+        <translation type="obsolete">DHT OK.</translation>
+    </message>
+    <message>
+        <location line="+5"/>
         <source>Stun external address detection is working.</source>
         <translation>Stun externe Adresserkennung arbeitet.</translation>
     </message>
@@ -6743,17 +6756,16 @@ p, li { white-space: pre-wrap; }
         <translation>Externer IP Adress-Finder hat nichts gefunden</translation>
     </message>
     <message>
-        <location line="-27"/>
         <source>DHT is not working (down).</source>
-        <translation>DHT läuft nicht.</translation>
+        <translation type="obsolete">DHT läuft nicht.</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="-162"/>
+        <location filename="../gui/NetworkDialog.ui" line="-165"/>
         <source>Network Status</source>
         <translation>Netzwerk-Status</translation>
     </message>
     <message>
-        <location line="+167"/>
+        <location line="+170"/>
         <source>Set Tabs Right</source>
         <translation>Setze Tabs nach Rechts</translation>
     </message>
@@ -6783,7 +6795,7 @@ p, li { white-space: pre-wrap; }
         <translation>Setze Tabs Form Dreieck</translation>
     </message>
     <message>
-        <location line="-384"/>
+        <location line="-387"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -6801,7 +6813,7 @@ p, li { white-space: pre-wrap; }
         <translation>Peer ID</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="-90"/>
+        <location filename="../gui/NetworkDialog.cpp" line="-117"/>
         <source>Sorry, create certificate failed</source>
         <translation>Zertifikat-Datei konnte nicht erstellt werden</translation>
     </message>
@@ -6819,54 +6831,69 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>NetworkView</name>
     <message>
-        <location filename="../gui/NetworkView.cpp" line="+306"/>
         <source>Hide Settings</source>
-        <translation>Einstellungen verbergen</translation>
+        <translation type="obsolete">Einstellungen verbergen</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>Show Settings</source>
-        <translation>Einstellungen anzeigen</translation>
+        <translation type="obsolete">Einstellungen anzeigen</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkView.ui" line="+13"/>
+        <location filename="../gui/NetworkView.ui" line="+14"/>
         <source>Form</source>
         <translation>Formular</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+15"/>
+        <source>background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 lightgray, stop:1 darkgray);</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
         <source>Refresh</source>
         <translation>Erneuern</translation>
     </message>
     <message>
+        <location line="+21"/>
+        <source>Basic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Friends</source>
+        <translation type="unfinished">Freunde</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Extended</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Display mode:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+17"/>
+        <source>Friends level:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+20"/>
+        <source>Edge length:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Settings</source>
-        <translation>Einstellungen</translation>
+        <translation type="obsolete">Einstellungen</translation>
     </message>
     <message>
-        <location line="+35"/>
         <source>Show Friends of Friends</source>
-        <translation>Zeige Freunde von Freunden</translation>
+        <translation type="obsolete">Zeige Freunde von Freunden</translation>
     </message>
     <message>
-        <location line="+18"/>
         <source>Draw Friend Connections</source>
-        <translation>Zeichne Verbindungen zwischen Freunden</translation>
-    </message>
-    <message>
-        <location line="-87"/>
-        <source>background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                                       stop:0 lightgray, stop:1 darkgray);
- 
-
-
-</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+76"/>
-        <source>Connect Signature</source>
-        <translation></translation>
+        <translation type="obsolete">Zeichne Verbindungen zwischen Freunden</translation>
     </message>
 </context>
 <context>
@@ -8541,7 +8568,24 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../main.cpp" line="+151"/>
+        <location filename="../main.cpp" line="+75"/>
+        <location line="+119"/>
+        <source>RetroShare</source>
+        <translation>RetroShare</translation>
+    </message>
+    <message>
+        <location line="-113"/>
+        <source>Inititialize failed. Wrong or missing installation of gpg.</source>
+        <translation>Initialisierung fehlgeschlagen. GPG fehlt oder es ist eine falsche Version installiert.</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <location line="+108"/>
+        <source>An unexpected error occured. Please report &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</source>
+        <translation>Ein unerwarteter Fehler ist aufgetreten. Bitte melde &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</translation>
+    </message>
+    <message>
+        <location line="-21"/>
         <location line="+6"/>
         <source>Multiple instances</source>
         <translation>Mehrere Instanzen</translation>
@@ -10127,12 +10171,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>SplashScreen</name>
     <message>
-        <location filename="../main.cpp" line="-29"/>
+        <location filename="../main.cpp" line="-28"/>
         <source>Load profile</source>
         <translation>Lade Profil</translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+41"/>
         <source>Load configuration</source>
         <translation>Lade Konfiguration</translation>
     </message>

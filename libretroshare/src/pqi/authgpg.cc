@@ -135,6 +135,8 @@ AuthGPGimpl::AuthGPGimpl()
         {
             RsStackMutex stack(gpgMtxEngine); /******* LOCKED ******/
 
+            CTX = NULL;
+
             setlocale(LC_ALL, "");
             gpgme_check_version(NULL);
             gpgme_set_locale(NULL, LC_CTYPE, setlocale (LC_CTYPE, NULL));
@@ -196,6 +198,11 @@ AuthGPGimpl::AuthGPGimpl()
 bool AuthGPGimpl::InitAuth ()
 {
     std::string HomeDir;
+
+    if (!CTX) {
+        std::cerr << "Error with gpg initialization. Is gpg missing ?" << std::endl;
+        return false;
+    }
 
 #ifdef WINDOWS_SYS
     if (RsInit::isPortable ()) {

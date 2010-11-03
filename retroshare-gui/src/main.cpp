@@ -67,7 +67,28 @@ int main(int argc, char *argv[])
 
         /* RetroShare Core Objects */
 	RsInit::InitRsConfig();
-	bool okStart = RsInit::InitRetroShare(argc, argv);
+	int initResult = RsInit::InitRetroShare(argc, argv);
+
+	if (initResult < 0) {
+		/* Error occured */
+		QApplication dummyApp (argc, argv); // needed for QMessageBox
+		QMessageBox mb(QMessageBox::Critical, QObject::tr("RetroShare"), "", QMessageBox::Ok);
+		mb.setWindowIcon(QIcon(":/images/rstray3.png"));
+
+		switch (initResult) {
+		case RS_INIT_AUTH_FAILED:
+			std::cerr << "RsInit::InitRetroShare AuthGPG::InitAuth failed" << std::endl;
+			mb.setText(QObject::tr("Inititialize failed. Wrong or missing installation of gpg."));
+			break;
+		default:
+			/* Unexpected return code */
+			std::cerr << "RsInit::InitRetroShare unexpected return code " << initResult << std::endl;
+			mb.setText(QObject::tr("An unexpected error occured. Please report 'RsInit::InitRetroShare unexpected return code %1'.").arg(initResult));
+			break;
+		}
+		mb.exec();
+		return 1;
+	}
 
 	/* create global settings object
 	   path maybe wrong, when no profile exist
@@ -87,62 +108,63 @@ int main(int argc, char *argv[])
 
 	QSplashScreen splashScreen(QPixmap(":/images/splash.png")/* , Qt::WindowStaysOnTopHint*/);
 
-	/* Login Dialog */
-  	if (!okStart)
-	{
-		/* check for existing Certificate */
-		std::string userName;
-
-		StartDialog *sd = NULL;
-		bool genCert = false;
-		std::list<std::string> accountIds;
-		if (RsInit::getAccountIds(accountIds) && (accountIds.size() > 0))
+	switch (initResult) {
+	case RS_INIT_OK:
 		{
-			sd = new StartDialog();
-			sd->show();
+			/* Login Dialog */
+			/* check for existing Certificate */
+			std::string userName;
 
-			while(sd -> isVisible())
+			StartDialog *sd = NULL;
+			bool genCert = false;
+			std::list<std::string> accountIds;
+			if (RsInit::getAccountIds(accountIds) && (accountIds.size() > 0))
 			{
-				rshare.processEvents();
+				sd = new StartDialog();
+				sd->show();
+
+				while(sd -> isVisible())
+				{
+					rshare.processEvents();
 #ifdef WIN32
-				Sleep(10);
+					Sleep(10);
 #else // __LINUX__
-				usleep(10000);
+					usleep(10000);
 #endif
+				}
+
+				/* if we're logged in */
+				genCert = sd->requestedNewCert();
+				delete (sd);
+			}
+			else
+			{
+				genCert = true;
 			}
 
-			/* if we're logged in */
-			genCert = sd->requestedNewCert();
-			delete (sd);
+			if (genCert)
+			{
+				GenCertDialog gd;
+				gd.exec ();
+			}
+
+			splashScreen.show();
 		}
-		else
+		break;
+	case RS_INIT_HAVE_ACCOUNT:
 		{
-			genCert = true;
-		}
+			splashScreen.show();
+			splashScreen.showMessage(rshare.translate("SplashScreen", "Load profile"), Qt::AlignHCenter | Qt::AlignBottom);
 
-		if (genCert)
-		{
-			GenCertDialog gd;
-			gd.exec ();
-		}
+			std::string preferredId, gpgId, gpgName, gpgEmail, sslName;
+			RsInit::getPreferedAccountId(preferredId);
 
-		splashScreen.show();
-	}
-	else
-	{
-		splashScreen.show();
-		splashScreen.showMessage(rshare.translate("SplashScreen", "Load profile"), Qt::AlignHCenter | Qt::AlignBottom);
+			if (RsInit::getAccountDetails(preferredId, gpgId, gpgName, gpgEmail, sslName))
+			{
+				RsInit::SelectGPGAccount(gpgId);
+			}
 
-            std::string preferredId, gpgId, gpgName, gpgEmail, sslName;
-            RsInit::getPreferedAccountId(preferredId);
-
-            if (RsInit::getAccountDetails(preferredId,
-                            gpgId, gpgName, gpgEmail, sslName))
-            {
-                    RsInit::SelectGPGAccount(gpgId);
-            }
-
-            // true: note auto-login is active
+			// true: note auto-login is active
 			int retVal = RsInit::LockAndLoadCertificates(true);
 			switch(retVal)
 			{
@@ -164,6 +186,13 @@ int main(int argc, char *argv[])
 						return 1;
 				default: std::cerr << "StartDialog::loadCertificates() unexpected switch value " << retVal << std::endl;
 			}
+		}
+		break;
+	default:
+		/* Unexpected return code */
+		std::cerr << "RsInit::InitRetroShare unexpected return code " << initResult << std::endl;
+		QMessageBox::warning(0, QObject::tr("RetroShare"), QObject::tr("An unexpected error occured. Please report 'RsInit::InitRetroShare unexpected return code %1'.").arg(initResult));
+		return 1;
 	}
 
 	splashScreen.showMessage(rshare.translate("SplashScreen", "Load configuration"), Qt::AlignHCenter | Qt::AlignBottom);

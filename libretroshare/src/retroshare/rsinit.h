@@ -26,7 +26,11 @@
  *
  */
 
-
+// Initialize ok, result >= 0
+#define RS_INIT_OK              0 // Initialize ok
+#define RS_INIT_HAVE_ACCOUNT    1 // Initialize ok, have account
+// Initialize failed, result < 0
+#define RS_INIT_AUTH_FAILED    -1 // AuthGPG::InitAuth failed
 
 
 /****
@@ -55,10 +59,9 @@ class RsInit
 		 * @param argc passed from executable
 		 * @param argv commandline arguments passed to executable
 		 * @param strictCheck set to true if you want rs to continue executing if invalid argument passed and vice versa
-		 * @return one is initialisation has been successful
+		 * @return RS_INIT_...
 		 */
-		static int 	InitRetroShare(int argc, char **argv,
-					bool strictCheck=true);
+		static int 	InitRetroShare(int argc, char **argv, bool strictCheck=true);
 
 		/*!
 		 * This return directory seperator for different platforms, not an issue anymore as C library can distinguish
@@ -107,7 +110,7 @@ class RsInit
 
 		/*!
 		 * Final Certificate load. This can be called if:
-		 * a) InitRetroshare() returns true -> autoLoad/password Set.
+		 * a) InitRetroshare() returns RS_INIT_HAVE_ACCOUNT -> autoLoad/password Set.
 		 * b) SelectGPGAccount() && LoadPassword()
 		 *
 		 * This wrapper is used to lock the profile first before

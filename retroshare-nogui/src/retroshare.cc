@@ -71,7 +71,21 @@ int main(int argc, char **argv)
 	 **/
 
 	RsInit::InitRsConfig();
-	RsInit::InitRetroShare(argc, argv);
+	int initResult = RsInit::InitRetroShare(argc, argv);
+
+	if (initResult < 0) {
+		/* Error occured */
+		switch (initResult) {
+		case RS_INIT_AUTH_FAILED:
+			std::cerr << "RsInit::InitRetroShare AuthGPG::InitAuth failed" << std::endl;
+			break;
+		default:
+			/* Unexpected return code */
+			std::cerr << "RsInit::InitRetroShare unexpected return code " << initResult << std::endl;
+			break;
+		}
+		return 1;
+	}
 
 	 /* load password should be called at this point: LoadPassword()
 	  * otherwise loaded from commandline.
@@ -128,7 +142,3 @@ int main(int argc, char **argv)
 	}
 	return 1;
 }
-
-
-
-
