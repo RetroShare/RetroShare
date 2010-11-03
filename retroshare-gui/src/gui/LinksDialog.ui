@@ -556,6 +556,25 @@ p, li { white-space: pre-wrap; }
         </property>
        </spacer>
       </item>
+      <item row="0" column="3">
+       <widget class="QPushButton" name="pushButton">
+        <property name="styleSheet">
+         <string notr="true">QPushButton:hover { 
+border: 1px solid #CCCCCC;
+}</string>
+        </property>
+        <property name="text">
+         <string>Add new link</string>
+        </property>
+        <property name="icon">
+         <iconset resource="images.qrc">
+          <normaloff>:/images/edit_add24.png</normaloff>:/images/edit_add24.png</iconset>
+        </property>
+        <property name="flat">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>

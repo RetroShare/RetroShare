@@ -27,6 +27,7 @@
 
 #include "LinksDialog.h"
 #include "RetroShareLink.h"
+#include "AddLinksDialog.h"
 #include <retroshare/rspeers.h>
 #include <retroshare/rsrank.h>
 #include <retroshare/rsfiles.h>
@@ -67,6 +68,8 @@ LinksDialog::LinksDialog(QWidget *parent)
   /* add button */
   connect( ui.addButton, SIGNAL( clicked( void ) ), this, SLOT( addLinkComment( void ) ) );
   connect( ui.expandButton, SIGNAL( clicked( void ) ), this, SLOT( toggleWindows( void ) ) );
+  
+  connect( ui.pushButton, SIGNAL( clicked( ) ), this, SLOT( addNewLink( ) ) );
 
   connect( ui.linkTreeWidget, SIGNAL( currentItemChanged ( QTreeWidgetItem *, QTreeWidgetItem * ) ),
   		this, SLOT( changedItem ( QTreeWidgetItem *, QTreeWidgetItem * ) ) );
@@ -1042,4 +1045,14 @@ void LinksDialog::anchorClicked (const QUrl& link )
 		newAddress.prepend("http://");
 		QDesktopServices::openUrl(QUrl(newAddress));
 	}
+}
+
+void LinksDialog::addNewLink()
+{
+
+	AddLinksDialog *nAddLinksDialog = new AddLinksDialog("");
+
+	nAddLinksDialog->show();
+
+	/* window will destroy itself! */
 }

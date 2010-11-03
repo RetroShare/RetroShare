@@ -48,7 +48,6 @@ AddLinksDialog::AddLinksDialog(QString url, QWidget *parent)
   
   connect( ui.anonBox, SIGNAL( stateChanged ( int ) ), this, SLOT( load ( void  ) ) );
 
-  ui.linkLineEdit->setReadOnly(true);
   ui.linkLineEdit->setText(url);
 
   RetroShareLink link(url);
