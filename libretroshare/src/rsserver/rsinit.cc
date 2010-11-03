@@ -845,22 +845,25 @@ std::string RsInit::getRetroshareDataDirectory()
 
   #endif
 #else
-	if (RsInitConfig::portable) 
-	{
-		/* For Windows Portable, files must be in the data directory */
-		dataDirectory = "Data";
-		std::cerr << "getRetroshareDataDirectory() WINDOWS PORTABLE: " << dataDirectory;
-		std::cerr << std::endl;
-	}
-	else
-	{
-		/* For Windows: environment variable APPDATA should be suitable */
-		dataDirectory = getenv("APPDATA");
-		dataDirectory += "\\RetroShare";
+//	if (RsInitConfig::portable)
+//	{
+//		/* For Windows Portable, files must be in the data directory */
+//		dataDirectory = "Data";
+//		std::cerr << "getRetroshareDataDirectory() WINDOWS PORTABLE: " << dataDirectory;
+//		std::cerr << std::endl;
+//	}
+//	else
+//	{
+//		/* For Windows: environment variable APPDATA should be suitable */
+//		dataDirectory = getenv("APPDATA");
+//		dataDirectory += "\\RetroShare";
+//
+//		std::cerr << "getRetroshareDataDirectory() WINDOWS: " << dataDirectory;
+//		std::cerr << std::endl;
+//	}
 
-		std::cerr << "getRetroshareDataDirectory() WINDOWS: " << dataDirectory;
-		std::cerr << std::endl;
-	}
+	/* Use RetroShare's exe dir */
+	dataDirectory = ".";
 #endif
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
