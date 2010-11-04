@@ -54,6 +54,14 @@
 
 int main(int argc, char *argv[])
 { 
+#ifdef WINDOWS_SYS
+	{
+		/* Set the current directory to the application dir,
+		   because the start dir with autostart from the registry run key is not the exe dir */
+		QApplication app(argc, argv);
+		QDir::setCurrent(QCoreApplication::applicationDirPath());
+	}
+#endif
 
   QStringList args = char_array_to_stringlist(argv+1, argc-1);
   
