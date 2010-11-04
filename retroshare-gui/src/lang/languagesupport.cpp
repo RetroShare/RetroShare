@@ -128,14 +128,20 @@ LanguageSupport::translate(const QString &languageCode)
 
   /* Attempt to load the translations for Qt's internal widgets from their
    * installed Qt directory. */
+  QString qtTranslation = QLibraryInfo::location(QLibraryInfo::TranslationsPath) + "/qt_" + languageCode + ".qm";
   QTranslator *systemQtTranslator = new QTranslator(rApp);
   Q_CHECK_PTR(systemQtTranslator);
 
-  QString qtDir = QLibraryInfo::location(QLibraryInfo::TranslationsPath);
-  if (systemQtTranslator->load(qtDir + "/qt_" + languageCode + ".qm"))
+  if (QFile::exists(qtTranslation) && systemQtTranslator->load(qtTranslation))
     QApplication::installTranslator(systemQtTranslator);
-  else
-    delete systemQtTranslator;
+  else {
+    /* Attempt to load the translations for Qt's internal widgets from the translations directory in the exe dir. */
+    qtTranslation = QCoreApplication::applicationDirPath() + "/translations/qt_" + languageCode + ".qm";
+    if (QFile::exists(qtTranslation) && systemQtTranslator->load(qtTranslation))
+      QApplication::installTranslator(systemQtTranslator);
+    else
+      delete systemQtTranslator;
+  }
 
   /* Install a translator for RetroShare's UI widgets */
   QTranslator *retroshareTranslator = new QTranslator(rApp);
@@ -148,4 +154,3 @@ LanguageSupport::translate(const QString &languageCode)
   delete retroshareTranslator;
   return false;
 }
-
