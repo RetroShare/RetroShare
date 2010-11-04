@@ -25,15 +25,14 @@
 #include <QDir>
 #include <QCoreApplication>
 #include <QStyleFactory>
+#include <QWidget>
 #include <lang/languagesupport.h>
 #include <rshare.h>
 
 #include "rsharesettings.h"
+#include "gui/MainWindow.h"
 
 #include <retroshare/rsnotify.h>
-
-#include <QWidget>
-#include <QMainWindow>
 
 #if defined(Q_WS_WIN)
 #include <util/win32.h>
@@ -458,7 +457,7 @@ void RshareSettings::loadWidgetInformation(QMainWindow *widget, QToolBar *toolBa
 /* MainWindow */
 int RshareSettings::getLastPageInMainWindow ()
 {
-    return valueFromGroup("MainWindow", "LastPage", true).toInt();
+    return valueFromGroup("MainWindow", "LastPage", MainWindow::Network).toInt();
 }
 
 void RshareSettings::setLastPageInMainWindow (int value)
