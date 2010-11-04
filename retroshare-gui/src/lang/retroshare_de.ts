@@ -147,7 +147,7 @@ p, li { white-space: pre-wrap; }
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../gui/AddLinksDialog.cpp" line="+87"/>
+        <location filename="../gui/AddLinksDialog.cpp" line="+86"/>
         <source>Add Link Failure</source>
         <translation>Fehle beim Hinzufügen des Links</translation>
     </message>
@@ -1221,7 +1221,27 @@ Verfügbar: %3</translation>
         <translation>Emoticons für Gruppenchat</translation>
     </message>
     <message>
-        <location line="+64"/>
+        <location line="+34"/>
+        <source>Chat History</source>
+        <translation>Chat History</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Load number of messages (0 = off)</source>
+        <translation>Lade Anzahl von Nachrichten (0 = aus)</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Group Chat</source>
+        <translation>Gruppenchat</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Private Chat</source>
+        <translation>Privater Chat</translation>
+    </message>
+    <message>
+        <location line="+49"/>
         <source>Group chat</source>
         <translation>Gruppenchat</translation>
     </message>
@@ -1231,12 +1251,12 @@ Verfügbar: %3</translation>
         <translation>Privater Chat</translation>
     </message>
     <message>
-        <location line="-300"/>
+        <location line="-354"/>
         <source>General</source>
         <translation>Allgemein</translation>
     </message>
     <message>
-        <location line="+111"/>
+        <location line="+118"/>
         <source>Enable Group Chat History</source>
         <translation>Chat Verlauf für Gruppenchat</translation>
     </message>
@@ -1246,12 +1266,12 @@ Verfügbar: %3</translation>
         <translation>Sende Nachricht mit Strg+Enter</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="-17"/>
         <source>Enable Private Chat History</source>
         <translation>Chat Verlauf für privaten Chat</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+95"/>
         <source>Style</source>
         <translation>Stil</translation>
     </message>
@@ -1282,7 +1302,7 @@ Verfügbar: %3</translation>
         <translation>Verlauf</translation>
     </message>
     <message>
-        <location filename="../gui/settings/ChatPage.cpp" line="+197"/>
+        <location filename="../gui/settings/ChatPage.cpp" line="+203"/>
         <source>Incoming message in history</source>
         <translation>Eingehehende Nachricht aus dem Verlauf</translation>
     </message>
@@ -4785,7 +4805,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>LinksDialog</name>
     <message>
-        <location filename="../gui/LinksDialog.cpp" line="+134"/>
+        <location filename="../gui/LinksDialog.cpp" line="+137"/>
         <source>Share Link Anonymously</source>
         <translation>Verknüpfung anonym teilen</translation>
     </message>
@@ -5006,7 +5026,12 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Verknüpfungs-Wolke&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="-435"/>
+        <location line="+28"/>
+        <source>Add new link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-463"/>
         <source>Combo</source>
         <translation>Kombiniert</translation>
     </message>

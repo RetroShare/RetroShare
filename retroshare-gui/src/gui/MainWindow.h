@@ -68,19 +68,20 @@ class MainWindow : public RWindow
 public:
     /** Main dialog pages. */
     enum Page {
-        Network            = 0,  		/** Network page. */
-        Friends,              	 		/** Peers page. */
-        Search,					        /** Search page. */
-        Transfers, 				        /** Transfers page. */
-        SharedDirectories,   			/** Shared Directories page. */
-        Messages,  		           	    /** Messages page. */
-        Channels,  				        /** Channels page. */
-        Forums,  				        /** Forums page. */
+        /* Fixed numbers for load and save the last page */
+        Network            = 0,  /** Network page. */
+        Friends            = 1,  /** Peers page. */
+        Search             = 2,  /** Search page. */
+        Transfers          = 3,  /** Transfers page. */
+        SharedDirectories  = 4,  /** Shared Directories page. */
+        Messages           = 5,  /** Messages page. */
+        Channels           = 6,  /** Channels page. */
+        Forums             = 7,  /** Forums page. */
 #ifdef BLOGS
-        Blogs,  				        /** Blogs page. */
+        Blogs              = 8,  /** Blogs page. */
 #endif
 #ifndef RS_RELEASE_VERSION
-        Links,  				        /** Links page. */
+        Links              = 9,  /** Links page. */
 #endif        
     };
 
@@ -94,7 +95,8 @@ public:
     /** Shows the MainWindow dialog with focus set to the given page. */
     static void showWindow(Page page);
     /** Set focus to the given page. */
-    static void activatePage (Page page);
+    static bool activatePage (Page page);
+    static Page getActivatePage ();
 
     /** get page */
     static MainPage *getPage (Page page);

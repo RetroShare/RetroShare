@@ -132,6 +132,11 @@ bool IMHistoryKeeper::getMessages(QList<IMHistoryItem> &historyItems, const int 
 
     historyItems.clear();
 
+    if (messagesCount == 0) {
+        /* nothing to do */
+        return true;
+    }
+
     QListIterator<IMHistoryItem> hii(hitems);
     hii.toBack();
     while (hii.hasPrevious()) {

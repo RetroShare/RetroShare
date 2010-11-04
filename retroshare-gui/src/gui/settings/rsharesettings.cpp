@@ -140,16 +140,6 @@ void RshareSettings::initSettings()
   setDefault("AddFeedsAtEnd", false);
 }
 
-/** Gets/sets the currently saved chat avatar. */
-QImage RshareSettings::getChatAvatar() const
-{
-  return value(SETTING_CHAT_AVATAR).value<QImage>();
-}
-void RshareSettings::setChatAvatar(const QImage& I)
-{
-  setValue(SETTING_CHAT_AVATAR,I) ;
-}
-
 /** Gets the currently preferred language code for Rshare. */
 QString RshareSettings::getLanguageCode()
 {
@@ -356,6 +346,26 @@ void RshareSettings::setHistoryChatStyle(const QString &stylePath, const QString
     setValueToGroup("Chat", "StylePrivateVariant", styleVariant);
 }
 
+int RshareSettings::getPublicChatHistoryCount()
+{
+    return valueFromGroup("Chat", "PublicChatHistoryCount", 0).toInt();
+}
+
+void RshareSettings::setPublicChatHistoryCount(int value)
+{
+    setValueToGroup("Chat", "PublicChatHistoryCount", value);
+}
+
+int RshareSettings::getPrivateChatHistoryCount()
+{
+    return valueFromGroup("Chat", "PrivateChatHistoryCount", 20).toInt();
+}
+
+void RshareSettings::setPrivateChatHistoryCount(int value)
+{
+    setValueToGroup("Chat", "PrivateChatHistoryCount", value);
+}
+
 /** Returns true if RetroShare is set to run on system boot. */
 bool
 RshareSettings::runRetroshareOnBoot()
@@ -443,6 +453,17 @@ void RshareSettings::loadWidgetInformation(QMainWindow *widget, QToolBar *toolBa
  endGroup();
  
  loadWidgetInformation(widget);
+}
+
+/* MainWindow */
+int RshareSettings::getLastPageInMainWindow ()
+{
+    return valueFromGroup("MainWindow", "LastPage", true).toInt();
+}
+
+void RshareSettings::setLastPageInMainWindow (int value)
+{
+    setValueToGroup("MainWindow", "LastPage", value);
 }
 
 /* Messages */

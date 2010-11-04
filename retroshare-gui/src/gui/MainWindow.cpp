@@ -246,8 +246,10 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     addAction(new QAction(QIcon(IMAGE_UNFINISHED), tr("Unfinished"), ui.toolBar), SLOT(showApplWindow()));
 #endif
 
-    /* Select the first action */
-    grp->actions()[0]->setChecked(true);
+    if (activatePage((Page) Settings->getLastPageInMainWindow()) == false) {
+        /* Select the first action */
+        grp->actions()[0]->setChecked(true);
+    }
 
     /** StatusBar section ********/
     /* initialize combobox in status bar */
@@ -306,6 +308,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 /** Destructor. */
 MainWindow::~MainWindow()
 {
+    Settings->setLastPageInMainWindow(getActivatePage());
+
     delete _bandwidthGraph;
     delete _messengerwindowAct;
     delete peerstatus;
@@ -600,10 +604,10 @@ void MainWindow::addAction(QAction *action, const char *slot)
 }
 
 /** Set focus to the given page. */
-/*static*/ void MainWindow::activatePage(Page page)
+/*static*/ bool MainWindow::activatePage(Page page)
 {
     if (_instance == NULL) {
-        return;
+        return false;
     }
 
     MainPage *Page = NULL;
@@ -648,7 +652,57 @@ void MainWindow::addAction(QAction *action, const char *slot)
     if (Page) {
         /* Set the focus to the specified page. */
         _instance->ui.stackPages->setCurrentPage(Page);
+        return true;
     }
+
+    return false;
+}
+
+/** Get the active page. */
+/*static*/ MainWindow::Page MainWindow::getActivatePage()
+{
+   if (_instance == NULL) {
+       return Network;
+   }
+
+   QWidget *page = _instance->ui.stackPages->currentWidget();
+
+   if (page == _instance->networkDialog) {
+       return Network;
+   }
+   if (page == _instance->peersDialog) {
+       return Friends;
+   }
+   if (page == _instance->searchDialog) {
+       return Search;
+   }
+   if (page == _instance->transfersDialog) {
+       return Transfers;
+   }
+   if (page == _instance->sharedfilesDialog) {
+       return SharedDirectories;
+   }
+   if (page == _instance->messagesDialog) {
+       return Messages;
+   }
+#ifndef RS_RELEASE_VERSION
+   if (page == _instance->linksDialog) {
+       return Links;
+   }
+   if (page == _instance->channelFeed) {
+       return Channels;
+   }
+#endif
+   if (page == _instance->forumsDialog) {
+       return Forums;
+   }
+#ifdef BLOGS
+   if (page == _instance->blogsFeed) {
+       return Blogs;
+   }
+#endif
+
+   return Network;
 }
 
 /** get page */

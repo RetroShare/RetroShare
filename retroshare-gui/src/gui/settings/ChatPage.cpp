@@ -113,6 +113,9 @@ ChatPage::save(QString &errmsg)
 
     Settings->setChatSendMessageWithCtrlReturn(ui.sendMessageWithCtrlReturn->isChecked());
 
+    Settings->setPublicChatHistoryCount(ui.groupchatspinBox->value());
+    Settings->setPrivateChatHistoryCount(ui.privatchatspinBox->value());
+
     ChatStyleInfo info;
     QListWidgetItem *item = ui.publicList->currentItem();
     if (item) {
@@ -160,6 +163,9 @@ ChatPage::load()
     fontTempChat.fromString(Settings->getChatScreenFont());
 
     ui.sendMessageWithCtrlReturn->setChecked(Settings->getChatSendMessageWithCtrlReturn());
+
+    ui.groupchatspinBox->setValue(Settings->getPublicChatHistoryCount());
+    ui.privatchatspinBox->setValue(Settings->getPrivateChatHistoryCount());
 
     ui.labelChatFontPreview->setText(fontTempChat.rawName());
     ui.labelChatFontPreview->setFont(fontTempChat);

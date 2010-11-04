@@ -648,7 +648,7 @@
              <item row="0" column="0">
               <widget class="QLabel" name="label">
                <property name="text">
-                <string>0 = off</string>
+                <string>Load number of messages (0 = off)</string>
                </property>
               </widget>
              </item>

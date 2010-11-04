@@ -84,12 +84,6 @@ public:
   /** Set whether to run RetroShare on system boot. */
   void setRunRetroshareOnBoot(bool run);
 
-  /** Returns the chat avatar. Returns a null image if no avatar is saved. */
-  QImage getChatAvatar() const ;
-
-  /** set the chat avatar. Returns a null image if no avatar is saved. */
-  void setChatAvatar(const QImage&) ;
-  
   /* Get the destination log file. */
   QString getLogFile();
   /** Set the destination log file. */
@@ -145,6 +139,13 @@ public:
   void getHistoryChatStyle(QString &stylePath, QString &styleVariant);
   void setHistoryChatStyle(const QString &stylePath, const QString &styleVariant);
 
+  /* Chat */
+  int  getPublicChatHistoryCount();
+  void setPublicChatHistoryCount(int value);
+
+  int  getPrivateChatHistoryCount();
+  void setPrivateChatHistoryCount(int value);
+
   //! Save placement, state and size information of a window.
   void saveWidgetInformation(QWidget *widget);
 
@@ -156,6 +157,10 @@ public:
 
   //! Method overload. Restore window and toolbar information.
   void loadWidgetInformation(QMainWindow *widget, QToolBar *toolBar);
+
+  /* MainWindow */
+  int  getLastPageInMainWindow ();
+  void setLastPageInMainWindow (int value);
 
   /* Messages */
   bool getMsgSetToReadOnActivate ();

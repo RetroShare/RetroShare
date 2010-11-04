@@ -188,7 +188,7 @@ PeersDialog::PeersDialog(QWidget *parent)
         historyKeeper.init(QString::fromStdString(RsInit::RsProfileConfigDirectory()) + "/chatPublic.xml");
 
         QList<IMHistoryItem> historyItems;
-        historyKeeper.getMessages(historyItems, 20);
+        historyKeeper.getMessages(historyItems, Settings->getPublicChatHistoryCount());
         foreach(IMHistoryItem item, historyItems) {
             addChatMsg(item.incoming, true, item.name, item.recvTime, item.messageText);
         }
