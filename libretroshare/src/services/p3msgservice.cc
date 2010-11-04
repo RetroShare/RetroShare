@@ -509,7 +509,9 @@ void p3MsgService::loadWelcomeMsg()
 
 	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
-	imsg[msg->msgId] = msg;	
+	imsg[msg->msgId] = msg;
+
+	IndicateConfigChanged();
 }
 
 
