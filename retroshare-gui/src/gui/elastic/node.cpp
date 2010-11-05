@@ -73,7 +73,7 @@ void Node::addEdge(Edge *edge)
     edge->adjust();
 }
 
-QList<Edge *> Node::edges() const
+const QList<Edge *>& Node::edges() const
 {
     return edgeList;
 }
@@ -163,8 +163,6 @@ void Node::calculateForces(const double *map,int width,int height,int W,int H,fl
 		yforce += 0.01*pos.y() * val / weight;
 	}
 
-	static const float friction = 0.4 ;
-
 	xforce -= FRICTION_FACTOR * _speedx ;
 	yforce -= FRICTION_FACTOR * _speedy ;
 
@@ -193,10 +191,13 @@ void Node::calculateForces(const double *map,int width,int height,int W,int H,fl
 
 bool Node::advance()
 {
+	if(_type == GraphWidget::ELASTIC_NODE_TYPE_OWN)
+		return false;
+
 	float f = std::max(fabs(newPos.x() - pos().x()), fabs(newPos.y() - pos().y())) ;
 
     setPos(newPos);
-    return f > 0.05;
+    return f > 0.5;
 }
 
 QRectF Node::boundingRect() const

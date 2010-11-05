@@ -42,10 +42,12 @@
 #ifndef GRAPHWIDGET_H
 #define GRAPHWIDGET_H
 
+#include <map>
 #include <QtGui/QGraphicsView>
 #include <stdint.h>
 
 class Node;
+class Edge;
 
 class GraphWidget : public QGraphicsView
 {
@@ -93,7 +95,7 @@ private:
 	 bool mDeterminedBB ;
 
 	 std::vector<Node *> _nodes ;
-	 std::vector<Node *> _edges ;
+	 std::map<std::pair<NodeId,NodeId>,Edge *> _edges ;
 
 	 uint32_t _edge_length ;
 };

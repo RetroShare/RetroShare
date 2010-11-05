@@ -24,53 +24,53 @@
 
 #include <QGraphicsScene>
 
-#include "mainpage.h"
+#include "RsAutoUpdatePage.h"
 #include "ui_NetworkView.h"
 
 
-class NetworkView : public MainPage 
+class NetworkView : public RsAutoUpdatePage 
 {
-  Q_OBJECT
+	Q_OBJECT
 
-public:
-	NetworkView(QWidget *parent = 0);
+	public:
+		NetworkView(QWidget *parent = 0);
 
+		virtual void updateDisplay() ; // derived from RsAutoUpdatePage
 
-private slots:
+	public slots:
+		void update() ;
 
-	void setMaxFriendLevel(int) ;
-	void setEdgeLength(int) ;
-void insertPeers();
-void insertSignatures();
-void insertConnections();
+	private slots:
 
-void changedScene();
+		void setMaxFriendLevel(int) ;
+		void setEdgeLength(int) ;
 
-void changedFoFCheckBox( );
-void changedDrawSignatures( );
-void changedDrawFriends( );
+		void changedFoFCheckBox( );
 
-/** Called when Settings button is toggled */
-void shownwSettingsFrame(bool show);
+		/** Called when Settings button is toggled */
+		void shownwSettingsFrame(bool show);
 
-private:
+	private:
 
-	void  clearPeerItems();
-	void  clearOtherItems();
-	void  clearLineItems();
+		void  clearPeerItems();
+		void  clearOtherItems();
+		void  clearLineItems();
 
-	QGraphicsScene *mScene;
+		QGraphicsScene *mScene;
 
-        std::map<std::string, QGraphicsItem *> mPeerItems;
-        std::list<QGraphicsItem *> mOtherItems;
+		std::map<std::string, QGraphicsItem *> mPeerItems;
+		std::list<QGraphicsItem *> mOtherItems;
 
-        std::list<QGraphicsItem *> mLineItems;
-	bool mLineChanged;
+		std::list<QGraphicsItem *> mLineItems;
+		bool mLineChanged;
 
 
-	/** Qt Designer generated object */
-	Ui::NetworkView ui;
-	int _max_friend_level ;
+		/** Qt Designer generated object */
+		Ui::NetworkView ui;
+		int _max_friend_level ;
+		std::map<std::string,GraphWidget::NodeId> _node_ids ;
+
+		bool _should_update ;
 };
 
 #endif

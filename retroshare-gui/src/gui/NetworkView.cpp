@@ -21,6 +21,7 @@
 
 #include "NetworkView.h"
 #include <retroshare/rspeers.h>
+#include <retroshare/rsdisc.h>
 
 #include <gpgme.h>
 
@@ -31,9 +32,14 @@
 
 #include "gui/elastic/node.h"
 
+/********
+* #define DEBUG_NETWORKVIEW
+********/
+#define DEBUG_NETWORKVIEW
+
 /** Constructor */
 NetworkView::NetworkView(QWidget *parent)
-: MainPage(parent)
+: RsAutoUpdatePage(60000,parent)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
@@ -45,7 +51,7 @@ NetworkView::NetworkView(QWidget *parent)
   setMaxFriendLevel(ui.maxFriendLevelSB->value()) ;
 
   /* add button */
-  connect( ui.refreshButton, SIGNAL( clicked( void ) ), this, SLOT( insertPeers( void ) ) );
+  connect( ui.refreshButton, SIGNAL( clicked( void ) ), this, SLOT( updateDisplay( void ) ) );
   connect( mScene, SIGNAL( changed ( const QList<QRectF> & ) ), this, SLOT ( changedScene( void ) ) );
 
   /* Hide Settings frame */
@@ -53,7 +59,7 @@ NetworkView::NetworkView(QWidget *parent)
   connect( ui.maxFriendLevelSB, SIGNAL(valueChanged(int)), this, SLOT(setMaxFriendLevel(int)));
   connect( ui.edgeLengthSB, SIGNAL(valueChanged(int)), this, SLOT(setEdgeLength(int)));
 
-  insertPeers();
+  _should_update = true ;
 }
 
 void NetworkView::setEdgeLength(int l)
@@ -63,21 +69,11 @@ void NetworkView::setEdgeLength(int l)
 void NetworkView::setMaxFriendLevel(int m)
 {
 	_max_friend_level = m ;
-	insertPeers() ;
+	updateDisplay() ;
 }
 void NetworkView::changedFoFCheckBox( )
 {
-	insertPeers();
-}
-
-void NetworkView::changedDrawSignatures( )
-{
-	insertPeers();
-}
-
-void NetworkView::changedDrawFriends( )
-{
-	insertPeers();
+	updateDisplay();
 }
 
 void  NetworkView::clearPeerItems()
@@ -120,47 +116,60 @@ void  NetworkView::clearLineItems()
 class NodeInfo
 {
 	public:
-		NodeInfo(const std::string& id,uint32_t lev) : gpg_id(id),friend_level(lev) {}
+		NodeInfo(const std::string& _gpg_id,const std::string& _ssl_id,uint32_t lev) : gpg_id(_gpg_id),ssl_id(_ssl_id),friend_level(lev) {}
 
 		std::string gpg_id ;
+		std::string ssl_id ;
 		uint32_t friend_level ;
 } ;
 
-void  NetworkView::insertPeers()
+void  NetworkView::update()
 {
-	/* clear graphics scene */
-  	ui.graphicsView->clearGraph();
+	_should_update = true ;
+}
+void  NetworkView::updateDisplay()
+{
+	if(!isVisible())
+		return ;
+	if(!_should_update)
+		return ;
 
 	/* add all friends */
-	std::string ownId = rsPeers->getGPGOwnId();
-	std::cerr << "NetworkView::insertPeers()" << std::endl;
+	std::string ownGPGId = rsPeers->getGPGOwnId();
+	std::string ownSSLId = rsPeers->getOwnId();
+#ifdef DEBUG_NETWORKVIEW
+	std::cerr << "NetworkView::updateDisplay()" << std::endl;
+#endif
 
 	int i = 0;
 
-	std::map<std::string,GraphWidget::NodeId> node_ids ;	// node ids of the created nodes. 
 	std::deque<NodeInfo> nodes_to_treat ;						// list of nodes to be treated. Used as a queue. The int is the level of friendness
 	std::set<std::string> nodes_considered ;					// list of nodes already considered. Eases lookup.
 
-	nodes_to_treat.push_front(NodeInfo(ownId,0)) ;			// initialize queue with own id.
-	nodes_considered.insert(ownId) ;
+	nodes_to_treat.push_front(NodeInfo(ownGPGId,ownSSLId,0)) ;			// initialize queue with own id.
+	nodes_considered.insert(rsPeers->getOwnId()) ;
 
 	// compute the list of GPG friends
 	
 	std::set<std::string> gpg_friends ;
-	std::list<std::string> ssl_friends ;
+	std::list<std::string> friends ;
+	std::set<std::string> ssl_friends ;
 
-	if(!rsPeers->getFriendList(ssl_friends))
+	if(!rsPeers->getFriendList(friends))
 		return ;
 
-	for(std::list<std::string>::const_iterator it(ssl_friends.begin());it!=ssl_friends.end();++it)
+	for(std::list<std::string>::const_iterator it(friends.begin());it!=friends.end();++it)
 	{
 		RsPeerDetails d ;
 		if(!rsPeers->getPeerDetails(*it,d))
 			continue ;
 
 		gpg_friends.insert(d.gpg_id) ;
+		ssl_friends.insert(d.id) ;
 	}
-	std::cerr << "Found " << gpg_friends.size() << " gpg friends." << std::endl ;
+#ifdef DEBUG_NETWORKVIEW
+	std::cerr << "Found " << ssl_friends.size() << " gpg friends." << std::endl ;
+#endif
 
 	// Put own id in queue, and empty the queue, treating all nodes.
 	//
@@ -168,19 +177,23 @@ void  NetworkView::insertPeers()
 	{	
 		NodeInfo info(nodes_to_treat.back()) ;
 		nodes_to_treat.pop_back() ;
+#ifdef DEBUG_NETWORKVIEW
+		std::cerr << "  Poped out of queue: " << info.ssl_id << ", with level " << info.friend_level << std::endl ;
+#endif
+		std::list<std::string> friendList;
+		rsDisc->getDiscFriends(info.ssl_id, friendList);
 
-		std::cerr << "  Poped out of queue: " << info.gpg_id << ", with level " << info.friend_level << std::endl ;
-		RsPeerDetails detail ;
+#ifdef DEBUG_NETWORKVIEW
+		std::cerr << "  Got a list of " << friendList.size() << " friends for this peer." << std::endl ;
+#endif
+//		if(!rsPeers->getPeerDetails(info.gpg_id,detail))
+//		{
+//			std::cerr << "Could not request GPG details for node " << info.gpg_id << std::endl ;
+//			continue ;
+//		}
 
-		if(!rsPeers->getPeerDetails(info.gpg_id,detail))
+//		if(info.friend_level <= _max_friend_level && (info.friend_level != 1 || ssl_friends.find(info.ssl_id) != ssl_friends.end()))
 		{
-			std::cerr << "Could not request GPG details for node " << info.gpg_id << std::endl ;
-			continue ;
-		}
-
-		if(info.friend_level <= _max_friend_level && (info.friend_level != 1 || gpg_friends.find(info.gpg_id) != gpg_friends.end()))
-		{
-
 			GraphWidget::NodeType type ;
 			GraphWidget::AuthType auth ;
 
@@ -196,6 +209,10 @@ void  NetworkView::insertPeers()
 						  type = GraphWidget::ELASTIC_NODE_TYPE_UNKNOWN ;
 			}
 
+			RsPeerDetails detail ;
+			if (!rsPeers->getPeerDetails(info.ssl_id, detail))
+				continue ;
+
 			switch(detail.validLvl)
 			{
 				case GPGME_VALIDITY_MARGINAL: auth = GraphWidget::ELASTIC_NODE_AUTH_MARGINAL ; break;
@@ -207,16 +224,22 @@ void  NetworkView::insertPeers()
 				default: 							auth = GraphWidget::ELASTIC_NODE_AUTH_UNKNOWN ; break ;
 			}
 
-			node_ids[info.gpg_id] = ui.graphicsView->addNode("       "+detail.name, detail.name+"@"+info.gpg_id,type,auth);
-			std::cerr << "  inserted node " << info.gpg_id << ", type=" << type << ", auth=" << auth << std::endl ;
+			if(_node_ids.find(info.ssl_id) == _node_ids.end())
+			{
+				_node_ids[info.ssl_id] = ui.graphicsView->addNode("       "+detail.name +"("+detail.location+")", "("+detail.name+","+info.ssl_id+","+detail.gpg_id+")",type,auth);
+#ifdef DEBUG_NETWORKVIEW
+				std::cerr << "  inserted node " << info.ssl_id << ", type=" << type << ", auth=" << auth << std::endl ;
+				std::cerr << "  NetworkView::updateDisplay() Added Friend: " << info.ssl_id << std::endl;
+#endif
+			}
 
-			std::cerr << "NetworkView::insertPeers() Added Friend: " << info.gpg_id << std::endl;
-
-			for(std::list<std::string>::const_iterator sit(detail.gpgSigners.begin()); sit != detail.gpgSigners.end(); ++sit)
+			for(std::list<std::string>::const_iterator sit(friendList.begin()); sit != friendList.end(); ++sit)
 				if(nodes_considered.find(*sit) == nodes_considered.end())
 				{
+#ifdef DEBUG_NETWORKVIEW
 					std::cerr << "  adding to queue: " << *sit << ", with level " << info.friend_level+1 << std::endl ;
-					nodes_to_treat.push_front( NodeInfo(*sit,info.friend_level + 1) ) ;
+#endif
+					nodes_to_treat.push_front( NodeInfo("unknown",*sit,info.friend_level + 1) ) ;
 					nodes_considered.insert(*sit) ;
 				}
 		}
@@ -224,114 +247,32 @@ void  NetworkView::insertPeers()
 
 	/* iterate through all friends */
 
+#ifdef DEBUG_NETWORKVIEW
 	std::cerr << "NetworkView::insertSignatures()" << std::endl;
-
-	for(std::map<std::string,GraphWidget::NodeId>::const_iterator it(node_ids.begin()); it != node_ids.end(); it++)
-	{
-		RsPeerDetails detail;
-		if (!rsPeers->getPeerDetails(it->first, detail))
-			continue;
-
-		for(std::list<std::string>::const_iterator sit(detail.gpgSigners.begin()); sit != detail.gpgSigners.end(); sit++)
-		{
-			if(it->first < *sit)
-			{
-				std::cerr << "NetworkView: Adding Arrow: ";
-				std::cerr << *sit << " <-> " << it->first;
-				std::cerr << std::endl;
-
-				if(node_ids.find(*sit) != node_ids.end())
-					ui.graphicsView->addEdge(node_ids[*sit], it->second);
-			}
-		}
-	}
-
-}
-
-
-void  NetworkView::insertConnections()
-{
-#if 0
-	/* iterate through all friends */
-	std::list<std::string> fids, ids;
-	std::list<std::string>::iterator it;
-
-	std::string ownId = rsPeers->getGPGOwnId();
- 	rsPeers->getPGPAllList(ids);
-	rsPeers->getPGPFriendList(fids);
-
-	std::cerr << "NetworkView::insertConnections()" << std::endl;
-
-	// For the moment, only add friends.
-	for(it = fids.begin(); it != fids.end(); it++)
-	{
-  		ui.graphicsView->addEdge("", *it);
-		std::cerr << "NetworkView: Adding Edge: Self -> " << *it;
-		std::cerr << std::endl;
-	}
-
-	int i = 0;
-	for(it = ids.begin(); it != ids.end(); it++, i++)
-	{
-		if (rsPeers->isFriend(*it))
-		{
-			/* add own connection (check for it first) */
-			std::list<std::string> &refList = connLists[*it];
-			if (refList.end() == std::find(refList.begin(), refList.end(), ownId))
-			{
-				connLists[ownId].push_back(*it);
-				connLists[*it].push_back(ownId);
-
-  				ui.graphicsView->addEdge("", *it);
-				std::cerr << "NetworkView: Adding Edge: Self -> " << *it;
-				std::cerr << std::endl;
-			}
-			else
-			{
-				std::cerr << "NetworkView: Already Edge: Self -> " << *it;
-				std::cerr << std::endl;
-			}
-		}
-
-		std::list<std::string> friendList;
-		std::list<std::string>::iterator it2;
-
-		rsDisc->getDiscFriends(*it, friendList);
-		int j = 0;
-
-		for(it2 = friendList.begin(); it2 != friendList.end(); it2++)
-		{
-			if (*it == *it2)
-				continue;
-
-			/* check that we haven't added this one already */
-			std::list<std::string> &refList = connLists[*it];
-			if (refList.end() == std::find(refList.begin(), refList.end(), *it2))
-			{
-				connLists[*it2].push_back(*it);
-				connLists[*it].push_back(*it2);
-
-  				ui.graphicsView->addEdge(*it, *it2);
-				std::cerr << "NetworkView: Adding Edge: " << *it << " <-> " << *it2;
-				std::cerr << std::endl;
-			}
-			else
-			{
-				std::cerr << "NetworkView: Already Edge: " << *it << " <-> " << *it2;
-				std::cerr << std::endl;
-			}
-		}
-	}
 #endif
 
-}
+	for(std::map<std::string,GraphWidget::NodeId>::const_iterator it(_node_ids.begin()); it != _node_ids.end(); it++)
+	{
+		std::list<std::string> friendList ;
 
-void  NetworkView::insertSignatures()
-{
-}
+		if(rsDisc->getDiscFriends(it->first,friendList)) 
+			for(std::list<std::string>::const_iterator sit(friendList.begin()); sit != friendList.end(); sit++)
+			{
+				if(it->first < *sit)
+				{
+#ifdef DEBUG_NETWORKVIEW
+					std::cerr << "NetworkView: Adding Arrow: ";
+					std::cerr << *sit << " <-> " << it->first;
+					std::cerr << std::endl;
+#endif
 
-void  NetworkView::changedScene()
-{
+					if(_node_ids.find(*sit) != _node_ids.end())
+						ui.graphicsView->addEdge(_node_ids[*sit], it->second);
+				}
+			}
+	}
+
+	_should_update = false ;
 }
 
 /**

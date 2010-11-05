@@ -199,6 +199,7 @@ class NotifyBase
 	/* one or more peers has changed the states */
 	virtual void notifyPeerStatusChangedSummary() {}
 	virtual void notifyChannelMsgReadSatusChanged(const std::string& /* channelId */, const std::string& /* msgId */, uint32_t /* status */) {}
+	virtual void notifyDiscInfoChanged() {}
 
 	virtual std::string askForPassword(const std::string& /* key_details */ ,bool /* prev_is_bad */ ) { return "" ;}
 };

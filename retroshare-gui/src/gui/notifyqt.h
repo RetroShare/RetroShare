@@ -46,6 +46,7 @@ class NotifyQt: public QObject, public NotifyBase
 		virtual void notifyPeerStatusChangedSummary();
 		virtual void notifyChannelMsgReadSatusChanged(const std::string& channelId, const std::string& msgId, uint32_t status);
 
+		virtual void notifyDiscInfoChanged() ;
 		virtual std::string askForPassword(const std::string& key_details,bool prev_is_bad) ;
 
 		/* Notify from GUI */
@@ -80,6 +81,7 @@ class NotifyQt: public QObject, public NotifyBase
 		void publicChatChanged(int type) const ;
 		void privateChatChanged(int list, int type) const ;
 		void groupsChanged(int type) const ;
+		void discInfoChanged() const ;
 		void channelMsgReadSatusChanged(const QString& channelId, const QString& msgId, int status);
 
 		/* Notify from GUI */

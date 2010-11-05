@@ -58,7 +58,7 @@ public:
     Node(const std::string& node_string,GraphWidget::NodeType type,GraphWidget::AuthType auth,GraphWidget *graphWidget);
 
     void addEdge(Edge *edge);
-    QList<Edge *> edges() const;
+    const QList<Edge *>& edges() const;
 
     int type() const { return Type; }
 

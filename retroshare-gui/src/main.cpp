@@ -260,7 +260,8 @@ int main(int argc, char *argv[])
 	QObject::connect(notify,SIGNAL(ownAvatarChanged()),w->peersDialog,SLOT(updateAvatar()));
 	QObject::connect(notify,SIGNAL(ownStatusMessageChanged()),w->peersDialog,SLOT(loadmypersonalstatus()));
 
-	QObject::connect(notify,SIGNAL(logInfoChanged(const QString&)),w->networkDialog,SLOT(setLogInfo(QString))) ;
+	QObject::connect(notify,SIGNAL(logInfoChanged(const QString&))		,w->networkDialog,SLOT(setLogInfo(QString))) ;
+	QObject::connect(notify,SIGNAL(discInfoChanged())						,w->networkDialog,SLOT(updateNewDiscoveryInfo()),Qt::QueuedConnection) ;
 	QObject::connect(notify,SIGNAL(errorOccurred(int,int,const QString&)),w,SLOT(displayErrorMessage(int,int,const QString&))) ;
 
 	QObject::connect(w->peersDialog,SIGNAL(friendsUpdated()),w->networkDialog,SLOT(insertConnect())) ;

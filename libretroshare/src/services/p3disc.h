@@ -132,7 +132,7 @@ void removeFriend(std::string ssl_id); //keep tracks of removed friend so we're 
 /* handle network shape */
 int     addDiscoveryData(std::string fromId, std::string aboutId,
 		struct sockaddr_in laddr, struct sockaddr_in raddr,
-		uint32_t flags, time_t ts);
+		uint32_t flags, time_t ts,bool& new_info);
 
 int 	idServers();
 

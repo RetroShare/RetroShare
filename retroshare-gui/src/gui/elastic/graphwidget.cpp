@@ -125,6 +125,7 @@ GraphWidget::GraphWidget(QWidget *)
 {
     QGraphicsScene *scene = new QGraphicsScene(this);
     scene->setItemIndexMethod(QGraphicsScene::NoIndex);
+	 scene->clear() ;
     scene->setSceneRect(-200, -200, 1000, 1000);
     setScene(scene);
 
@@ -167,15 +168,25 @@ GraphWidget::NodeId GraphWidget::addNode(const std::string& node_short_string,co
 	 node->setToolTip(QString::fromStdString(node_complete_string)) ;
 	 _nodes.push_back(node) ;
     scene()->addItem(node);
-    node->setPos(-50+rand()%1000/53.0f, -50+rand()%1000/53.0f);
+    node->setPos(rand()%1000/53.0f, rand()%1000/53.0f);
+	 std::cerr << "Added node " << _nodes.size()-1 << std::endl ;
 	 return _nodes.size()-1 ;
 }
 GraphWidget::EdgeId GraphWidget::addEdge(NodeId n1,NodeId n2)
 {
-    Edge *edge = new Edge(_nodes[n1],_nodes[n2]);
-    scene()->addItem(edge);
-	 return 0 ;
+	std::pair<NodeId,NodeId> ed(std::min(n1,n2),std::max(n1,n2)) ;
+
+	if( _edges.find(ed) == _edges.end() )
+	{
+		Edge *edge = new Edge(_nodes[n1],_nodes[n2]);
+		scene()->addItem(edge);
+		_edges[ed] = edge ;
+		std::cerr << "Added edge " << n1 << " - " << n2 << std::endl ;
+	}
+
+	return 0 ;
 }
+
 void GraphWidget::itemMoved()
 {
     if (!timerId)

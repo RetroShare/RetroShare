@@ -146,7 +146,7 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     ui.unvalidGPGkeyWidget->sortItems( 1, Qt::AscendingOrder );
 
     ui.networkTab->addTab(new TrustView(),QString(tr("Authentication matrix")));
-    ui.networkTab->addTab(new NetworkView(),QString(tr("Network View")));
+    ui.networkTab->addTab(networkview = new NetworkView(),QString(tr("Network View")));
      
     QString version = "-";
     std::map<std::string, std::string>::iterator vit;
@@ -199,6 +199,13 @@ NetworkDialog::NetworkDialog(QWidget *parent)
 #ifdef Q_WS_WIN
 
 #endif
+}
+
+void NetworkDialog::updateNewDiscoveryInfo()
+{
+	std::cerr << "Received new p3disc info. Updating networkview." << std::endl;
+	networkview->update();
+	networkview->updateDisplay();
 }
 
 void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point )

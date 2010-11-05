@@ -42,6 +42,7 @@ public slots:
   std::string loadneighbour();
   /* void loadneighbour(); */
   void setLogInfo(QString info, QColor color=QApplication::palette().color(QPalette::WindowText));
+  void updateNewDiscoveryInfo() ;
 
 
 private slots:

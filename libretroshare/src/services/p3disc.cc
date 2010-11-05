@@ -618,9 +618,15 @@ void p3disc::recvPeerDetails(RsDiscReply *item, const std::string &certGpgId)
 		return;
 	}
 
+  bool should_notify_discovery = false ;
+
 	for (std::list<RsPeerNetItem>::iterator pitem = item->rsPeerList.begin(); pitem != item->rsPeerList.end(); pitem++) 
 	{
-		addDiscoveryData(item->PeerId(), pitem->pid, pitem->currentlocaladdr, pitem->currentremoteaddr, 0, time(NULL));
+		bool new_info ;
+		addDiscoveryData(item->PeerId(), pitem->pid, pitem->currentlocaladdr, pitem->currentremoteaddr, 0, time(NULL),new_info);
+
+		if(new_info)
+			should_notify_discovery = true ;
 
 #ifdef P3DISC_DEBUG
 		std::cerr << "p3disc::recvPeerFriendMsg() Peer Config Item:" << std::endl;
@@ -724,6 +730,9 @@ void p3disc::recvPeerDetails(RsDiscReply *item, const std::string &certGpgId)
 	}
 
 	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_NEIGHBOURS, NOTIFY_TYPE_MOD);
+
+	if(should_notify_discovery)
+		rsicontrol->getNotify().notifyDiscInfoChanged();
 
 	/* cleanup (handled by caller) */
 }
@@ -894,10 +903,12 @@ void p3disc::setGPGOperation(AuthGPGOperation *operation)
 /*************************************************************************************/
 /*				Storing Network Graph				     */
 /*************************************************************************************/
-int	p3disc::addDiscoveryData(std::string fromId, std::string aboutId, struct sockaddr_in laddr, struct sockaddr_in raddr, uint32_t flags, time_t ts)
+int	p3disc::addDiscoveryData(std::string fromId, std::string aboutId, struct sockaddr_in laddr, struct sockaddr_in raddr, uint32_t flags, time_t ts,bool& new_info)
 {
 	RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
 
+	new_info = false ;
+	std::cerr << "Adding discovery data " << fromId << " - " << aboutId << std::endl ;
 	/* Store Network information */
 	std::map<std::string, autoneighbour>::iterator it;
 	if (neighbours.end() == (it = neighbours.find(aboutId)))
@@ -914,6 +925,7 @@ int	p3disc::addDiscoveryData(std::string fromId, std::string aboutId, struct soc
 		neighbours[aboutId] = an;
 
 		it = neighbours.find(aboutId);
+		new_info = true ;
 	}
 
 	/* it always valid */
@@ -943,7 +955,11 @@ int	p3disc::addDiscoveryData(std::string fromId, std::string aboutId, struct soc
 		it->second.discFlags = as.discFlags;
 	}
 
-	(it->second).neighbour_of[fromId] = as;
+	if(it->second.neighbour_of.find(fromId) == it->second.neighbour_of.end())
+	{
+		(it->second).neighbour_of[fromId] = as;
+		new_info =true ;
+	}
 
 	/* do we update network address info??? */
 	return 1;
@@ -958,6 +974,9 @@ int	p3disc::addDiscoveryData(std::string fromId, std::string aboutId, struct soc
 bool p3disc::potentialproxies(std::string id, std::list<std::string> &proxyIds)
 {
 	/* find id -> and extract the neighbour_of ids */
+
+	if(id == rsPeers->getOwnId()) // SSL id			// This is treated appart, because otherwise we don't receive any disc info about us
+		return rsPeers->getFriendList(proxyIds) ;
 
 	RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
 
