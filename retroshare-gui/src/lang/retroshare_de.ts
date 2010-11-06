@@ -4240,12 +4240,12 @@ Fill in your GPG password when asked, to sign your new key.</source>
 <context>
     <name>GraphWidget</name>
     <message>
-        <location filename="../gui/elastic/graphwidget.cpp" line="+141"/>
+        <location filename="../gui/elastic/graphwidget.cpp" line="+142"/>
         <source>Elastic Nodes</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+222"/>
+        <location line="+232"/>
         <source>Click and drag the nodes around, and zoom with the mouse wheel or the &apos;+&apos; and &apos;-&apos; keys</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5069,7 +5069,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Blogs</translation>
     </message>
     <message>
-        <location line="+314"/>
+        <location line="+318"/>
         <source>Down: %1 (kB/s)</source>
         <translation>Runter: %1 (kB/s)</translation>
     </message>
@@ -5089,7 +5089,7 @@ p, li { white-space: pre-wrap; }
         <translation>%1 Freund verbunden</translation>
     </message>
     <message>
-        <location line="+246"/>
+        <location line="+296"/>
         <source>Internal Error</source>
         <translation>Interener Fehler</translation>
     </message>
@@ -5110,7 +5110,7 @@ p, li { white-space: pre-wrap; }
         <translation>Zeigen</translation>
     </message>
     <message>
-        <location line="-443"/>
+        <location line="-493"/>
         <location line="+60"/>
         <location line="+2"/>
         <location line="+22"/>
@@ -5148,7 +5148,7 @@ p, li { white-space: pre-wrap; }
         <translation>Schnellstart Assistent</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="-333"/>
+        <location filename="../gui/MainWindow.cpp" line="-337"/>
         <source>Search</source>
         <translation>Suchen</translation>
     </message>
@@ -5163,7 +5163,7 @@ p, li { white-space: pre-wrap; }
         <translation>Messenger</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="+140"/>
+        <location filename="../gui/MainWindow.cpp" line="+144"/>
         <source>Show/Hide</source>
         <translation>Anzeigen/Verbergen</translation>
     </message>
@@ -5187,7 +5187,7 @@ p, li { white-space: pre-wrap; }
         <translation>Du hast %1 neuen Beitrag</translation>
     </message>
     <message>
-        <location line="+260"/>
+        <location line="+310"/>
         <source>Bandwidth Graph</source>
         <translation>Bandbreiten-Graph</translation>
     </message>
@@ -5202,7 +5202,7 @@ p, li { white-space: pre-wrap; }
         <translation>Schliessen</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="-381"/>
+        <location filename="../gui/MainWindow.cpp" line="-431"/>
         <source>Minimize</source>
         <translation>Minimieren</translation>
     </message>
@@ -5212,7 +5212,7 @@ p, li { white-space: pre-wrap; }
         <translation>Maximieren</translation>
     </message>
     <message>
-        <location line="-138"/>
+        <location line="-142"/>
         <source>Links Cloud</source>
         <translation>Verknüpfungs-Wolke</translation>
     </message>
@@ -5227,7 +5227,7 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="+510"/>
+        <location filename="../gui/MainWindow.cpp" line="+564"/>
         <source>Help</source>
         <translation>Hilfe</translation>
     </message>
@@ -5237,7 +5237,7 @@ p, li { white-space: pre-wrap; }
         <translation>Über</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="-531"/>
+        <location filename="../gui/MainWindow.cpp" line="-585"/>
         <source>Forums</source>
         <translation>Foren</translation>
     </message>
@@ -5247,7 +5247,7 @@ p, li { white-space: pre-wrap; }
         <translation>RetroShare %1 eine sichere und dezentralisierte Kommunikationsplattform</translation>
     </message>
     <message>
-        <location line="+594"/>
+        <location line="+648"/>
         <source>Open Messages</source>
         <translation>Öffne Nachrichten</translation>
     </message>
@@ -5257,12 +5257,12 @@ p, li { white-space: pre-wrap; }
         <translation>Anwendungen</translation>
     </message>
     <message>
-        <location line="-518"/>
+        <location line="-572"/>
         <source>Plugins</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+534"/>
+        <location line="+588"/>
         <source>Do you really want to exit RetroShare ?</source>
         <translation>Willst Du RetroShare wirklich beenden?</translation>
     </message>
@@ -5272,7 +5272,7 @@ p, li { white-space: pre-wrap; }
         <translation>Wirklich beenden?</translation>
     </message>
     <message>
-        <location line="-432"/>
+        <location line="-482"/>
         <source>Low disk space warning</source>
         <translation>Wenig Festplatenspeicher</translation>
     </message>
@@ -6464,7 +6464,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>NetworkDialog</name>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="+299"/>
+        <location filename="../gui/NetworkDialog.cpp" line="+306"/>
         <location line="+310"/>
         <source>Select a pem/pqi File</source>
         <translation>Wählen einer PEM- oder PQI-Datei</translation>
@@ -6603,7 +6603,7 @@ p, li { white-space: pre-wrap; }
         <translation>Erstelle ein neues Profil</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="-408"/>
+        <location filename="../gui/NetworkDialog.cpp" line="-415"/>
         <source>Welcome to RetroShare.</source>
         <translation>Willkommen bei RetroShare.</translation>
     </message>
@@ -6639,7 +6639,7 @@ p, li { white-space: pre-wrap; }
         <translation>RetroShare %1 gestartet.</translation>
     </message>
     <message>
-        <location line="+64"/>
+        <location line="+71"/>
         <source>Deny friend</source>
         <translation>Blockiere Freund</translation>
     </message>
@@ -6669,7 +6669,7 @@ p, li { white-space: pre-wrap; }
         <translation>Unbekannt</translation>
     </message>
     <message>
-        <location line="-292"/>
+        <location line="-299"/>
         <source>Authentication matrix</source>
         <translation>Authentifizierungsmatrix</translation>
     </message>
@@ -6679,7 +6679,7 @@ p, li { white-space: pre-wrap; }
         <translation>Netzwerk Ansicht</translation>
     </message>
     <message>
-        <location line="+280"/>
+        <location line="+287"/>
         <source>Authenticated</source>
         <translation>Authentifiziert</translation>
     </message>
@@ -6964,6 +6964,11 @@ p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Aktivitäten&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
+    <message>
+        <location line="+72"/>
+        <source>Remove All</source>
+        <translation>Alle entfernen</translation>
+    </message>
 </context>
 <context>
     <name>NotifyPage</name>
@@ -7096,7 +7101,7 @@ p, li { white-space: pre-wrap; }
         <translation>Bitte geben Sie das Passwort ein um folgenden GPG Schlüssel freizuschalten:</translation>
     </message>
     <message>
-        <location line="+97"/>
+        <location line="+103"/>
         <source>Examining shared files...</source>
         <translation>Prüfe freigegebene Dateien...</translation>
     </message>
@@ -7137,7 +7142,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="-20"/>
-        <location filename="../gui/feeds/PeerItem.cpp" line="+245"/>
+        <location filename="../gui/feeds/PeerItem.cpp" line="+246"/>
         <source>Expand</source>
         <translation>Erweitern</translation>
     </message>
@@ -7207,7 +7212,7 @@ p, li { white-space: pre-wrap; }
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/PeerItem.cpp" line="-143"/>
+        <location filename="../gui/feeds/PeerItem.cpp" line="-144"/>
         <source>Friend Connected</source>
         <translation>Freund verbunden</translation>
     </message>
@@ -7232,7 +7237,7 @@ p, li { white-space: pre-wrap; }
         <translation>Nachbar</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+25"/>
         <location line="+1"/>
         <location line="+1"/>
         <location line="+1"/>
@@ -7245,7 +7250,7 @@ p, li { white-space: pre-wrap; }
         <translation>Unbekannter Nachbar</translation>
     </message>
     <message>
-        <location line="+99"/>
+        <location line="+96"/>
         <source>Hide</source>
         <translation>Verbergen</translation>
     </message>
@@ -8593,7 +8598,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../main.cpp" line="+75"/>
+        <location filename="../main.cpp" line="+83"/>
         <location line="+119"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
