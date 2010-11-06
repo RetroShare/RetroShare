@@ -64,11 +64,11 @@ NewsFeed::NewsFeed(QWidget *parent)
   	/* Invoke the Qt Designer generated object setup routine */
   	setupUi(this);
 
+	connect(removeAllButton, SIGNAL(clicked()), this, SLOT(removeAll()));
 
 	QTimer *timer = new QTimer(this);
 	timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateFeed()));
 	timer->start(1000);
-
 }
 
 
@@ -157,6 +157,11 @@ void NewsFeed::updateFeed()
 
 void NewsFeed::addFeedItem(QWidget *item)
 {
+	item->setAttribute(Qt::WA_DeleteOnClose, true);
+
+	connect(item, SIGNAL(destroyed(QObject*)), this, SLOT(itemDestroyed(QObject*)));
+	widgetList.push_back(item);
+
 	if (Settings->getAddFeedsAtEnd()) {
 		verticalLayout->addWidget(item);
 	} else {
@@ -439,4 +444,27 @@ void NewsFeed::openChat(std::string peerId)
 #endif
 
 	PopupChatDialog::chatFriend(peerId);
+}
+
+void NewsFeed::itemDestroyed(QObject *item)
+{
+	int index = widgetList.indexOf(item);
+	if (index >= 0) {
+		widgetList.removeAt(index);
+	}
+}
+
+void NewsFeed::removeAll()
+{
+#ifdef NEWS_DEBUG
+	std::cerr << "NewsFeed::removeAll()" << std::endl;
+#endif
+	while (widgetList.count()) {
+		QObject *item = widgetList.first();
+		widgetList.pop_front();
+
+		if (item) {
+			item->deleteLater();
+		}
+	}
 }

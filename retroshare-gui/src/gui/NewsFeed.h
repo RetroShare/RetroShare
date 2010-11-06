@@ -48,7 +48,9 @@ public:
 private slots:
  // void toggleChanMsgItems(bool on);
  
-	void updateFeed();
+  void updateFeed();
+  void removeAll();
+  void itemDestroyed(QObject*);
 
 private:
   void  addFeedItem(QWidget *item);
@@ -70,6 +72,7 @@ private:
   void	addFeedItemFilesNew(RsFeedItem &fi);
 
   QLayout *mLayout;
+  QObjectList widgetList;
 
   /* lists of feedItems */
   std::list<ForumNewItem *> 	mForumNewItems;

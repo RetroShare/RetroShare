@@ -122,6 +122,10 @@ void PeerItem::updateItemStatic()
     QString peername =  QString::fromStdString(details.name);
     peernameLabel->setText(nameStr.arg(peername));
 
+		QDateTime date = QDateTime::fromTime_t(details.lastConnect);
+		QString stime = date.toString(Qt::LocalDate);
+		lastLabel-> setText(stime);
+
 		/* expanded Info */
 		nameLabel->setText(QString::fromStdString(details.name));
 		idLabel->setText(QString::fromStdString(details.id));
@@ -198,9 +202,6 @@ void PeerItem::updateItem()
 		}
 
 		connLabel->setText(QString::fromStdString(details.autoconnect));
-		QDateTime date = QDateTime::fromTime_t(details.lastConnect);
-		QString stime = date.toString(Qt::LocalDate);
-		lastLabel-> setText(stime);
 
 		/* do buttons */
 		chatButton->setEnabled(details.state & RS_PEER_STATE_CONNECTED);
