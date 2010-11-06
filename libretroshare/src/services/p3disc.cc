@@ -377,15 +377,6 @@ RsDiscReply *p3disc::createDiscReply(const std::string &to, const std::string &a
 		return NULL;
 	}
 
-	peerConnectState detailAbout;
-	if (mConnMgr->getFriendNetStatus(aboutGpgId, detailAbout) && detailAbout.visState & RS_VIS_STATE_NODISC) 
-	{
-#ifdef P3DISC_DEBUG
-		std::cerr << "p3disc::createDiscReply() don't send info about this peer because he has no disc enabled." << std::endl;
-#endif
-		return NULL;
-	}
-
 	// Construct a message
 	RsDiscReply *di = new RsDiscReply();
 
@@ -406,8 +397,9 @@ RsDiscReply *p3disc::createDiscReply(const std::string &to, const std::string &a
 		std::cerr << "p3disc::createDiscReply() Found Child SSL Id:" << *sslChildIt;
 		std::cerr << std::endl;
 #endif
-		if(to != *sslChildIt)	// We don't send info to a peer about itself, but we allow sending info
-		{								// about peers with the same GPG id.
+		if(sslChilds.size() == 1 || to != *sslChildIt)	// We don't send info to a peer about itself, when there are more than one ssl children,
+		{						// but we allow sending info about peers with the same GPG id. When there is only one ssl child,
+								// we must send it to transfer the signers of the gpg key. The receiver is skipping the own id.
 			peerConnectState detail;
 			if (!mConnMgr->getFriendNetStatus(*sslChildIt, detail) 
 				|| detail.visState & RS_VIS_STATE_NODISC)

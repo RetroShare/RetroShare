@@ -50,8 +50,6 @@
 #include <map>
 #include "pqi/p3cfgmgr.h"
 
-#define GPG_id std::string
-
 #define MAX_GPG_SIGNATURE_SIZE  4096
 
 /*!
@@ -174,7 +172,7 @@ virtual bool    active() = 0;
 virtual bool    InitAuth () = 0;
 
         /* Init by generating new Own PGP Cert, or selecting existing PGP Cert */
-virtual int     GPGInit(std::string ownId) = 0;
+virtual int     GPGInit(const std::string &ownId) = 0;
 virtual bool    CloseAuth() = 0;
 virtual bool    GeneratePGPCertificate(std::string name, std::string email, std::string passwd, std::string &pgpId, std::string &errString) = 0;
 
@@ -189,23 +187,23 @@ virtual bool    GeneratePGPCertificate(std::string name, std::string email, std:
  * provide access to details in cache list.
  *
  ****/
-virtual std::string getGPGName(GPG_id pgp_id) = 0;
-virtual std::string getGPGEmail(GPG_id pgp_id) = 0;
+virtual std::string getGPGName(const std::string &pgp_id) = 0;
+virtual std::string getGPGEmail(const std::string &pgp_id) = 0;
 
     /* PGP web of trust management */
 virtual std::string getGPGOwnId() = 0;
 virtual std::string getGPGOwnName() = 0;
 
 //virtual std::string getGPGOwnEmail() = 0;
-virtual bool	getGPGDetails(std::string id, RsPeerDetails &d) = 0;
+virtual bool	getGPGDetails(const std::string &id, RsPeerDetails &d) = 0;
 virtual bool	getGPGAllList(std::list<std::string> &ids) = 0;
 virtual bool	getGPGValidList(std::list<std::string> &ids) = 0;
 virtual bool	getGPGAcceptedList(std::list<std::string> &ids) = 0;
 virtual bool	getGPGSignedList(std::list<std::string> &ids) = 0;
-virtual bool	isGPGValid(std::string id) = 0;
-virtual bool	isGPGSigned(std::string id) = 0;
-virtual bool	isGPGAccepted(std::string id) = 0;
-virtual bool        isGPGId(GPG_id id) = 0;
+virtual bool	isGPGValid(const std::string &id) = 0;
+virtual bool	isGPGSigned(const std::string &id) = 0;
+virtual bool	isGPGAccepted(const std::string &id) = 0;
+virtual bool    isGPGId(const std::string &id) = 0;
 
 /*********************************************************************************/
 /************************* STAGE 4 ***********************************************/
@@ -214,8 +212,8 @@ virtual bool        isGPGId(GPG_id id) = 0;
  * STAGE 4: Loading and Saving Certificates. (Strings and Files)
  *
  ****/
-virtual bool LoadCertificateFromString(std::string pem, std::string &gpg_id) = 0;
-virtual std::string SaveCertificateToString(std::string id) = 0;
+virtual bool LoadCertificateFromString(const std::string &pem, std::string &gpg_id) = 0;
+virtual std::string SaveCertificateToString(const std::string &id) = 0;
 
 /*********************************************************************************/
 /************************* STAGE 6 ***********************************************/
@@ -227,13 +225,13 @@ virtual std::string SaveCertificateToString(std::string id) = 0;
  * done in gpgroot already.
  *
  ****/
-virtual bool setAcceptToConnectGPGCertificate(std::string gpg_id, bool acceptance) = 0; //don't act on the gpg key, use a seperate set
-virtual bool SignCertificateLevel0(std::string id) = 0;
-virtual bool RevokeCertificate(std::string id) = 0;  /* Particularly hard - leave for later */
+virtual bool setAcceptToConnectGPGCertificate(const std::string &gpg_id, bool acceptance) = 0; //don't act on the gpg key, use a seperate set
+virtual bool SignCertificateLevel0(const std::string &id) = 0;
+virtual bool RevokeCertificate(const std::string &id) = 0;  /* Particularly hard - leave for later */
 //virtual bool TrustCertificateNone(std::string id) = 0;
 //virtual bool TrustCertificateMarginally(std::string id) = 0;
 //virtual bool TrustCertificateFully(std::string id) = 0;
-virtual bool TrustCertificate(std::string id,  int trustlvl) = 0; //trustlvl is 2 for none, 3 for marginal and 4 for full trust
+virtual bool TrustCertificate(const std::string &id,  int trustlvl) = 0; //trustlvl is 2 for none, 3 for marginal and 4 for full trust
 
 /*********************************************************************************/
 /************************* STAGE 7 ***********************************************/
@@ -294,7 +292,7 @@ virtual bool    active();
 virtual bool    InitAuth ();
 
         /* Init by generating new Own PGP Cert, or selecting existing PGP Cert */
-virtual int     GPGInit(std::string ownId);
+virtual int     GPGInit(const std::string &ownId);
 virtual bool    CloseAuth();
 virtual bool    GeneratePGPCertificate(std::string name, std::string email, std::string passwd, std::string &pgpId, std::string &errString);
 
@@ -309,23 +307,23 @@ virtual bool    GeneratePGPCertificate(std::string name, std::string email, std:
  * provide access to details in cache list.
  *
  ****/
-virtual std::string getGPGName(GPG_id pgp_id);
-virtual std::string getGPGEmail(GPG_id pgp_id);
+virtual std::string getGPGName(const std::string &pgp_id);
+virtual std::string getGPGEmail(const std::string &pgp_id);
 
     /* PGP web of trust management */
 virtual std::string getGPGOwnId();
 virtual std::string getGPGOwnName();
 
 //virtual std::string getGPGOwnEmail();
-virtual bool	getGPGDetails(std::string id, RsPeerDetails &d);
+virtual bool	getGPGDetails(const std::string &id, RsPeerDetails &d);
 virtual bool	getGPGAllList(std::list<std::string> &ids);
 virtual bool	getGPGValidList(std::list<std::string> &ids);
 virtual bool	getGPGAcceptedList(std::list<std::string> &ids);
 virtual bool	getGPGSignedList(std::list<std::string> &ids);
-virtual bool	isGPGValid(std::string id);
-virtual bool	isGPGSigned(std::string id);
-virtual bool	isGPGAccepted(std::string id);
-virtual bool        isGPGId(GPG_id id);
+virtual bool	isGPGValid(const std::string &id);
+virtual bool	isGPGSigned(const std::string &id);
+virtual bool	isGPGAccepted(const std::string &id);
+virtual bool    isGPGId(const std::string &id);
 
 /*********************************************************************************/
 /************************* STAGE 4 ***********************************************/
@@ -334,8 +332,8 @@ virtual bool        isGPGId(GPG_id id);
  * STAGE 4: Loading and Saving Certificates. (Strings and Files)
  *
  ****/
-virtual bool LoadCertificateFromString(std::string pem, std::string &gpg_id);
-virtual std::string SaveCertificateToString(std::string id);
+virtual bool LoadCertificateFromString(const std::string &pem, std::string &gpg_id);
+virtual std::string SaveCertificateToString(const std::string &id);
 
 /*********************************************************************************/
 /************************* STAGE 6 ***********************************************/
@@ -347,14 +345,14 @@ virtual std::string SaveCertificateToString(std::string id);
  * done in gpgroot already.
  *
  ****/
-virtual bool setAcceptToConnectGPGCertificate(std::string gpg_id, bool acceptance); //don't act on the gpg key, use a seperate set
-virtual bool SignCertificateLevel0(std::string id);
-virtual bool RevokeCertificate(std::string id);  /* Particularly hard - leave for later */
+virtual bool setAcceptToConnectGPGCertificate(const std::string &gpg_id, bool acceptance); //don't act on the gpg key, use a seperate set
+virtual bool SignCertificateLevel0(const std::string &id);
+virtual bool RevokeCertificate(const std::string &id);  /* Particularly hard - leave for later */
 
 //virtual bool TrustCertificateNone(std::string id);
 //virtual bool TrustCertificateMarginally(std::string id);
 //virtual bool TrustCertificateFully(std::string id);
-virtual bool TrustCertificate(std::string id,  int trustlvl); //trustlvl is 2 for none, 3 for marginal and 4 for full trust
+virtual bool TrustCertificate(const std::string &id,  int trustlvl); //trustlvl is 2 for none, 3 for marginal and 4 for full trust
 
 /*********************************************************************************/
 /************************* STAGE 7 ***********************************************/
@@ -398,9 +396,9 @@ virtual bool addService(AuthGPGService *service);
         bool    VerifySignature(const void *data, int datalen, const void *sig, unsigned int siglen, const std::string &withfingerprint);
 
         /* Sign/Trust stuff */
-        int	privateSignCertificate(GPG_id id);
-        int	privateRevokeCertificate(GPG_id id);		/* revoke the signature on Certificate */
-        int	privateTrustCertificate(GPG_id id, int trustlvl);
+        int	privateSignCertificate(const std::string &id);
+        int	privateRevokeCertificate(const std::string &id);		/* revoke the signature on Certificate */
+        int	privateTrustCertificate(const std::string &id, int trustlvl);
 
         // store all keys in map mKeyList to avoid calling gpgme exe repeatedly
   	bool    storeAllKeys();

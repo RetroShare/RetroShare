@@ -307,7 +307,7 @@ bool AuthGPGimpl::availableGPGCertificatesWithPrivateKeys(std::list<std::string>
  * This function must be called successfully (return == 1)
  * before anything else can be done. (except above fn).
  */
-int	AuthGPGimpl::GPGInit(std::string ownId)
+int	AuthGPGimpl::GPGInit(const std::string &ownId)
 {
 
         std::cerr << "AuthGPGimpl::GPGInit() called with own gpg id : " << ownId << std::endl;
@@ -1109,7 +1109,7 @@ bool    AuthGPGimpl::CloseAuth()
 }
 
 /**** These Two are common */
-std::string AuthGPGimpl::getGPGName(GPG_id id)
+std::string AuthGPGimpl::getGPGName(const std::string &id)
 {
         RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
 
@@ -1121,7 +1121,7 @@ std::string AuthGPGimpl::getGPGName(GPG_id id)
 }
 
 /**** These Two are common */
-std::string AuthGPGimpl::getGPGEmail(GPG_id id)
+std::string AuthGPGimpl::getGPGEmail(const std::string &id)
 {
         RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
 
@@ -1159,7 +1159,7 @@ bool	AuthGPGimpl::getGPGAllList(std::list<std::string> &ids)
 	return true;
 }
 
-bool	AuthGPGimpl::getGPGDetails(std::string id, RsPeerDetails &d)
+bool	AuthGPGimpl::getGPGDetails(const std::string &id, RsPeerDetails &d)
 {
 #ifdef GPG_DEBUG
 	std::cerr << "AuthGPGimpl::getPGPDetails() called for : " << id << std::endl;
@@ -1275,7 +1275,7 @@ bool	AuthGPGimpl::getGPGSignedList(std::list<std::string> &ids)
 	return true;
 }
 
-bool	AuthGPGimpl::isGPGValid(GPG_id id)
+bool	AuthGPGimpl::isGPGValid(const std::string &id)
 {
         RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
         certmap::iterator it;
@@ -1287,7 +1287,7 @@ bool	AuthGPGimpl::isGPGValid(GPG_id id)
 
 }
 
-bool	AuthGPGimpl::isGPGId(GPG_id id)
+bool	AuthGPGimpl::isGPGId(const std::string &id)
 {
         RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
         certmap::iterator it;
@@ -1299,7 +1299,7 @@ bool	AuthGPGimpl::isGPGId(GPG_id id)
 }
 
 
-bool	AuthGPGimpl::isGPGSigned(GPG_id id)
+bool	AuthGPGimpl::isGPGSigned(const std::string &id)
 {
         RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
         certmap::iterator it;
@@ -1310,7 +1310,7 @@ bool	AuthGPGimpl::isGPGSigned(GPG_id id)
 	return false;
 }
 
-bool	AuthGPGimpl::isGPGAccepted(GPG_id id)
+bool	AuthGPGimpl::isGPGAccepted(const std::string &id)
 {
         RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
         certmap::iterator it;
@@ -1331,7 +1331,7 @@ bool	AuthGPGimpl::isGPGAccepted(GPG_id id)
 
 
 /* SKTAN : do not know how to use std::string id */
-std::string AuthGPGimpl::SaveCertificateToString(std::string id)
+std::string AuthGPGimpl::SaveCertificateToString(const std::string &id)
 {
 
         if (!isGPGId(id)) {
@@ -1381,7 +1381,7 @@ std::string AuthGPGimpl::SaveCertificateToString(std::string id)
 }
 
 /* import to GnuPG and other Certificates */
-bool AuthGPGimpl::LoadCertificateFromString(std::string str, std::string &gpg_id)
+bool AuthGPGimpl::LoadCertificateFromString(const std::string &str, std::string &gpg_id)
 {
         if (str == "") {
             #ifdef GPG_DEBUG
@@ -1430,7 +1430,7 @@ bool AuthGPGimpl::LoadCertificateFromString(std::string str, std::string &gpg_id
     #ifdef GPG_DEBUG
             std::cerr << "AuthGPGimpl::LoadCertificateFromString() Importing considered folowing fpr : " << fingerprint << std::endl;
     #endif
-            imported = res->imported;
+            imported = res->imported || res->new_signatures;
 
     #ifdef GPG_DEBUG
             fprintf(stderr, "ImportCertificate(Considered: %d Imported: %d)\n",
@@ -1481,7 +1481,7 @@ bool AuthGPGimpl::LoadCertificateFromString(std::string str, std::string &gpg_id
 /*************************************/
 
 /* These take PGP Ids */
-bool AuthGPGimpl::setAcceptToConnectGPGCertificate(std::string gpg_id, bool acceptance)
+bool AuthGPGimpl::setAcceptToConnectGPGCertificate(const std::string &gpg_id, bool acceptance)
 {
 
 #ifdef GPG_DEBUG
@@ -1507,7 +1507,7 @@ bool AuthGPGimpl::setAcceptToConnectGPGCertificate(std::string gpg_id, bool acce
 }
 
 /* These take PGP Ids */
-bool AuthGPGimpl::SignCertificateLevel0(GPG_id id)
+bool AuthGPGimpl::SignCertificateLevel0(const std::string &id)
 {
 
 #ifdef GPG_DEBUG
@@ -1525,7 +1525,7 @@ bool AuthGPGimpl::SignCertificateLevel0(GPG_id id)
 	return true;
 }
 
-bool AuthGPGimpl::RevokeCertificate(std::string id)
+bool AuthGPGimpl::RevokeCertificate(const std::string &id)
 {
         //RsStackMutex stack(gpgMtx); /******* LOCKED ******/
 
@@ -1536,7 +1536,7 @@ bool AuthGPGimpl::RevokeCertificate(std::string id)
 	return false;
 }
 
-bool AuthGPGimpl::TrustCertificate(std::string id, int trustlvl)
+bool AuthGPGimpl::TrustCertificate(const std::string &id, int trustlvl)
 {
 #ifdef GPG_DEBUG
         std::cerr << "AuthGPGimpl::TrustCertificate(" << id << ", " << trustlvl << ")" << std::endl;
@@ -1583,7 +1583,7 @@ bool AuthGPGimpl::VerifySignBin(const void *data, uint32_t datalen, unsigned cha
 
 	/* Sign/Trust stuff */
 
-int	AuthGPGimpl::privateSignCertificate(std::string id)
+int	AuthGPGimpl::privateSignCertificate(const std::string &id)
 {
 	/* The key should be in Others list and not in Peers list ?? 
 	 * Once the key is signed, it moves from Others to Peers list ??? 
@@ -1642,14 +1642,14 @@ int	AuthGPGimpl::privateSignCertificate(std::string id)
 }
 
 /* revoke the signature on Certificate */
-int	AuthGPGimpl::privateRevokeCertificate(std::string id)
+int	AuthGPGimpl::privateRevokeCertificate(const std::string &id)
 {
         //RsStackMutex stack(gpgMtx); /******* LOCKED ******/
 
 	return 0;
 }
 
-int	AuthGPGimpl::privateTrustCertificate(std::string id, int trustlvl)
+int	AuthGPGimpl::privateTrustCertificate(const std::string &id, int trustlvl)
 {
 	/* The certificate should be in Peers list ??? */	
         if(!isGPGAccepted(id)) {
