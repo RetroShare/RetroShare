@@ -69,7 +69,7 @@ ChanMsgItem::ChanMsgItem(FeedHolder *parent, uint32_t feedId, std::string chanId
   
   titleLabel->setMinimumWidth(100);
   subjectLabel->setMinimumWidth(100);
-
+  warning_label->setMinimumWidth(100);
 
   small();
   updateItemStatic();
