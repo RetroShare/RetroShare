@@ -26,6 +26,8 @@
 
 #include <iostream>
 #include <algorithm>
+#include <set>
+#include <map>
 
 #include "ChannelFeed.h"
 
@@ -55,6 +57,8 @@
 
 #define COMBO_TITLE_INDEX 0
 #define COMBO_DESC_INDEX 1
+
+#define WARNING_LIMIT 3600*24*2
 
 /****
  * #define CHAN_DEBUG
@@ -181,7 +185,7 @@ void ChannelFeed::channelListCustomPopupMenu( QPoint point )
         contextMnu.addAction( shareKeyAct );
         contextMnu.addAction( channeldetailsAct );
     }
-    else if (ci.channelFlags & RS_DISTRIB_PUBLISH) {
+    else if ((ci.channelFlags & RS_DISTRIB_PUBLISH) && (ci.channelFlags & RS_DISTRIB_SUBSCRIBED)) {
         contextMnu.addAction( postchannelAct );
         contextMnu.addSeparator();
         contextMnu.addAction( channeldetailsAct );
@@ -350,10 +354,9 @@ void ChannelFeed::updateChannelList()
         /* sort it into Publish (Own), Subscribed, Popular and Other */
         uint32_t flags = it->channelFlags;
 
-        if ((flags & (RS_DISTRIB_ADMIN | RS_DISTRIB_PUBLISH)) && (flags & RS_DISTRIB_SUBSCRIBED)
-        		) {
+        if ((flags & RS_DISTRIB_ADMIN) && (flags & RS_DISTRIB_PUBLISH) && (flags & RS_DISTRIB_SUBSCRIBED)) {
             adminList.push_back(*it);
-        } else if (flags & RS_DISTRIB_SUBSCRIBED) {
+        } else if ((flags & RS_DISTRIB_SUBSCRIBED) || ((flags & RS_DISTRIB_SUBSCRIBED) && (flags &RS_DISTRIB_PUBLISH)) ) {
             subList.push_back(*it);
         } else {
             /* rate the others by popularity */
@@ -394,6 +397,11 @@ void ChannelFeed::updateChannelList()
     fillChannelList(POPULAR, popList);
     fillChannelList(OTHER, otherList);
 
+    // place notices for channel with private keys available
+    highlightPrivateKeys(SUBSCRIBED);
+    highlightPrivateKeys(POPULAR);
+    highlightPrivateKeys(OTHER);
+
     updateMessageSummaryList("");
 }
 
@@ -428,8 +436,44 @@ void ChannelFeed::filterChannelList(std::list<ChannelInfo> &ci){
 
 }
 
-void ChannelFeed::fillChannelList(int channelItem, std::list<ChannelInfo> &channelInfos)
-{
+void ChannelFeed::highlightPrivateKeys(int group){
+
+	  QStandardItem *groupItem = model->item(group);
+	  QStandardItem *item = NULL;
+	  std::list<std::string> keysAvailable;
+	  std::list<std::string>::iterator it;
+	  int rowCount = 0;
+	  QBrush brush;
+
+	  brush.setColor(Qt::blue);
+
+	  if((groupItem == NULL) || (rsChannels == NULL))
+		  return;
+
+	  rowCount = groupItem->rowCount();
+	  rsChannels->getPubKeysAvailableGrpIds(keysAvailable);
+
+
+	  for(it= keysAvailable.begin(); it != keysAvailable.end(); it++)
+
+	  for (int row = 0; row < rowCount; row++) {
+		  if (groupItem->child(row, COLUMN_DATA)->data(ROLE_ID).toString() == QString::fromStdString(*it)) {
+			  /* found channel */
+			  item = groupItem->child(row, COLUMN_NAME);
+
+			  /* set title text to bold and colored blue */
+			  QFont chanFont = item->font();
+			  chanFont.setBold(true);
+			  item->setFont(chanFont);
+			  item->setForeground(brush);
+			  item->setToolTip(item->toolTip() + QString("\nPrivate Key Available"));
+
+		  }
+	  }
+
+}
+
+void ChannelFeed::fillChannelList(int channelItem, std::list<ChannelInfo> &channelInfos){
     std::list<ChannelInfo>::iterator iit;
 
     /* remove rows with groups before adding new ones */
@@ -485,7 +529,7 @@ void ChannelFeed::fillChannelList(int channelItem, std::list<ChannelInfo> &chann
         groupItem->child(chNameItem->index().row(), COLUMN_DATA)->setData(QDateTime::fromTime_t(ci.lastPost), ROLE_CHANNEL_TS);
 
 
-        chNameItem->setToolTip(tr("Popularity: %1\nFetches: %2\nAvailable: %3").arg(QString::number(ci.pop)).arg(9999).arg(9999));
+        chNameItem->setToolTip(tr("Popularity: %1").arg(QString::number(ci.pop)));
 
         QPixmap chanImage;
         if (ci.pngImageLen != 0) {
@@ -544,6 +588,8 @@ void ChannelFeed::channelMsgReadSatusChanged(const QString& channelId, const QSt
 void ChannelFeed::updateMessageSummaryList(const std::string &channelId)
 {
     int channelItems[2] = { OWN, SUBSCRIBED };
+
+
 
     for (int channelItem = 0; channelItem < 2; channelItem++) {
         QStandardItem *groupItem = model->item(channelItems[channelItem]);
@@ -658,13 +704,22 @@ void ChannelFeed::updateChannelMsgs()
 
     std::list<ChannelMsgSummary> msgs;
     std::list<ChannelMsgSummary>::iterator it;
-
     rsChannels->getChannelMsgList(mChannelId, msgs);
 
     msgs.sort(sortChannelMsgSummary);
 
+    /* set get warning list for channel */
+    std::map<std::string, uint32_t> warningList;
+    std::map<std::string, uint32_t>::iterator msgId_it;
+
+    rsChannels->getCleanUpList(warningList, mChannelId, WARNING_LIMIT);
+
     for(it = msgs.begin(); it != msgs.end(); it++) {
         ChanMsgItem *cmi = new ChanMsgItem(this, 0, mChannelId, it->msgId, true);
+
+        msgId_it = warningList.find(it->msgId);
+        if(msgId_it != warningList.end())
+        	cmi->setFileCleanUpWarning(msgId_it->second);
 
         mChanMsgItems.push_back(cmi);
         verticalLayout_2->addWidget(cmi);

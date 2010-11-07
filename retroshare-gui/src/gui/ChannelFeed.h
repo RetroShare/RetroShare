@@ -86,7 +86,7 @@ private slots:
     void finishSearching();
 
 private:
-
+    void highlightPrivateKeys(int group);
     void updateChannelList();
     void fillChannelList(int channelItem, std::list<ChannelInfo> &channelInfos);
     void filterChannelList(std::list<ChannelInfo>&);

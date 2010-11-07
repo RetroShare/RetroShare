@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>518</width>
+    <width>528</width>
     <height>208</height>
    </rect>
   </property>
@@ -211,7 +211,7 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
-        <item row="3" column="0">
+        <item row="4" column="0">
          <widget class="QPushButton" name="readButton">
           <property name="maximumSize">
            <size>
@@ -241,7 +241,7 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
-        <item row="3" column="1">
+        <item row="4" column="1">
          <widget class="QLabel" name="newLabel">
           <property name="maximumSize">
            <size>
@@ -265,7 +265,7 @@ border-radius: 3px}</string>
           </property>
          </widget>
         </item>
-        <item row="3" column="2">
+        <item row="4" column="2">
          <widget class="QPushButton" name="downloadButton">
           <property name="font">
            <font>
@@ -281,7 +281,7 @@ border-radius: 3px}</string>
           </property>
          </widget>
         </item>
-        <item row="3" column="3">
+        <item row="4" column="3">
          <widget class="QPushButton" name="playButton">
           <property name="font">
            <font>
@@ -297,7 +297,7 @@ border-radius: 3px}</string>
           </property>
          </widget>
         </item>
-        <item row="3" column="4">
+        <item row="4" column="4">
          <spacer>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -313,7 +313,7 @@ border-radius: 3px}</string>
           </property>
          </spacer>
         </item>
-        <item row="3" column="5" colspan="2">
+        <item row="4" column="5" colspan="2">
          <widget class="QPushButton" name="unsubscribeButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -339,7 +339,7 @@ border-radius: 3px}</string>
           </property>
          </widget>
         </item>
-        <item row="3" column="7">
+        <item row="4" column="7">
          <widget class="QPushButton" name="clearButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -365,7 +365,7 @@ border-radius: 3px}</string>
           </property>
          </widget>
         </item>
-        <item row="3" column="8">
+        <item row="4" column="8">
          <widget class="QPushButton" name="expandButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -391,6 +391,23 @@ border-radius: 3px}</string>
           <property name="icon">
            <iconset resource="../images.qrc">
             <normaloff>:/images/edit_add24.png</normaloff>:/images/edit_add24.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="warn_image_label">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="../images.qrc">:/images/status_unknown.png</pixmap>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QLabel" name="warning_label">
+          <property name="text">
+           <string>TextLabel</string>
           </property>
          </widget>
         </item>
@@ -432,8 +449,7 @@ border-radius: 10px;}</string>
 border-radius: 10px;}</string>
         </property>
         <property name="text">
-         <string notr="true">Long 
- message here</string>
+         <string notr="true"/>
         </property>
         <property name="wordWrap">
          <bool>true</bool>

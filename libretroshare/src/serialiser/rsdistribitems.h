@@ -42,7 +42,7 @@ const uint8_t RS_PKT_SUBTYPE_DISTRIB_CONFIG_DATA	= 0x04;
 /**************************************************************************/
 
 /*!
- * This should be derived from to store RsDistrib child objects
+ * This should be subclassed by p3distrib subclass's to store their data
  * save data
  */
 class RsDistribChildConfig: public RsItem

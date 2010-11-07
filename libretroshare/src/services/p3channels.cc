@@ -65,7 +65,6 @@ RsChannels *rsChannels = NULL;
 /* remember 2^16 = 64K max units in store period.
  * PUBPERIOD * 2^16 = max STORE PERIOD */
 #define CHANNEL_STOREPERIOD (30*24*3600)    /*  30 * 24 * 3600 - secs in a 30 day month */
-#define TEST_CHANNEL_STOREPERIOD (24*3600)   /* one day */
 #define CHANNEL_PUBPERIOD   600            /* 10 minutes ... (max = 455 days) */
 #define MAX_AUTO_DL 1E9 /* auto download of attachment limit; 1 GIG */
 
@@ -603,6 +602,14 @@ bool p3Channels::channelEditInfo(std::string chId, ChannelInfo& info){
 }
 
 
+void p3Channels::getPubKeysAvailableGrpIds(std::list<std::string>& grpIds)
+{
+
+	getGrpListPubKeyAvailable(grpIds);
+	return;
+
+}
+
 /***************************************************************************************/
 /****************** Event Feedback (Overloaded form p3distrib) *************************/
 /***************************************************************************************/
@@ -795,7 +802,41 @@ void p3Channels::locked_notifyGroupChanged(GroupInfo &grp, uint32_t flags)
 	return p3GroupDistrib::locked_notifyGroupChanged(grp, flags);
 }
 
-void p3Channels::cleanUpOldFiles(){
+bool p3Channels::getCleanUpList(std::map<std::string, uint32_t>& warnings,const std::string& chId,uint32_t limit)
+{
+
+	time_t now = time(NULL);
+	uint32_t timeLeft = 0;
+	bool first = true;
+	std::list<ChannelMsgSummary> msgList;
+	std::list<ChannelMsgSummary>::iterator msg_it;
+	ChannelMsgInfo chMsgInfo;
+
+	if(!getChannelMsgList(chId, msgList))
+		return false;
+
+	for(msg_it = msgList.begin(); msg_it != msgList.end(); msg_it++){
+
+
+		if(!getChannelMessage(chId, msg_it->msgId, chMsgInfo))
+			continue;
+
+		// if msg not close to warning limit leave it alone
+		if( chMsgInfo.ts > (now - CHANNEL_STOREPERIOD + limit))
+			continue;
+
+		timeLeft = CHANNEL_STOREPERIOD - (now - chMsgInfo.ts);
+		warnings.insert(std::pair<std::string, uint32_t>(msg_it->msgId, timeLeft));
+
+	}
+
+}
+
+
+
+
+void p3Channels::cleanUpOldFiles()
+{
 
 	time_t now = time(NULL);
 	std::list<ChannelInfo> chList;

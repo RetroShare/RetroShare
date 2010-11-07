@@ -277,6 +277,12 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		bool backUpKeys(const std::list<RsDistribGrpKey* > &keysToBackUp, std::string grpId);
 		void locked_sharePubKey();
 
+		/*!
+		 * Attempt to load public key from recvd list if it exists for grpId
+		 * @param grpId the id for the group for which private publish key is wanted
+		 */
+		bool	attemptPublishKeysRecvd(GroupInfo& info);
+
 	protected:
 
 			/* load cache msgs */
@@ -341,6 +347,7 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		bool	subscribeToGroup(std::string grpId, bool subscribe);
 
 
+
 		/***************************************************************************************/
 		/***************************************************************************************/
 
@@ -376,6 +383,11 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 
 		GroupInfo *locked_getGroupInfo(std::string grpId);
 		RsDistribMsg *locked_getGroupMsg(std::string grpId, std::string msgId);
+
+		/*!
+		 * for retrieving the grpList for which public keys are available
+		 */
+		void getGrpListPubKeyAvailable(std::list<std::string>& grpList);
 
 		/* Filter Messages */
 
@@ -497,9 +509,9 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		 */
 		virtual void locked_receivePubKeys();
 
-		/**
-		 * This loads received pub keys
-		 *
+		/*!
+		 * utility function to check whether grps exist
+		 * for private publish keys received
 		 */
 		virtual void locked_loadRecvdPubKeys();
 
@@ -510,7 +522,7 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		 */
 		virtual bool locked_editGroup(std::string grpId, GroupInfo& gi);
 
-		/**
+		/*!
 		 * Encrypts data using envelope encryption (taken from open ssl's evp_sealinit )
 		 * only full publish key holders can encrypt data for given group
 		 *@param out
@@ -671,6 +683,7 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 
 		std::map<std::string, RsDistribGrpKey* > mRecvdPubKeys; /// full publishing keys received from users
 		std::map<std::string, std::list<std::string> > mPendingPubKeyRecipients; /// peers to receive publics key for a given grp
+		std::list<std::string> mPubKeyAvailableGrpId; // groups id for which public keys are available
 		time_t mLastKeyPublishTime, mLastRecvdKeyTime;
 	
 };

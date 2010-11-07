@@ -78,6 +78,8 @@ virtual bool channelExtraFileRemove(std::string hash, std::string chId);
 virtual bool channelRestoreKeys(std::string chId);
 virtual bool channelShareKeys(std::string chId, std::list<std::string>& peers);
 virtual bool channelEditInfo(std::string chId, ChannelInfo &ci);
+virtual void getPubKeysAvailableGrpIds(std::list<std::string>& grpIds);
+virtual bool getCleanUpList(std::map<std::string, uint32_t>& warnings,const std::string& chId, uint32_t limit);
 /***************************************************************************************/
 /****************** Event Feedback (Overloaded form p3distrib) *************************/
 /***************************************************************************************/

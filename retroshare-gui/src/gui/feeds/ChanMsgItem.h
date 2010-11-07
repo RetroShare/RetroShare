@@ -40,6 +40,7 @@ public:
 
 	void updateItemStatic();
   	void small();
+  	void setFileCleanUpWarning(uint32_t time_left);
 
 private slots:
 	/* default stuff */

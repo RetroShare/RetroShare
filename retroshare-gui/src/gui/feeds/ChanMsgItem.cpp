@@ -64,9 +64,12 @@ ChanMsgItem::ChanMsgItem(FeedHolder *parent, uint32_t feedId, std::string chanId
 
   downloadButton->hide();
   playButton->hide();
+  warn_image_label->hide();
+  warning_label->hide();
   
   titleLabel->setMinimumWidth(100);
   subjectLabel->setMinimumWidth(100);
+
 
   small();
   updateItemStatic();
@@ -89,6 +92,8 @@ void ChanMsgItem::updateItemStatic()
 
 	if (!rsChannels->getChannelMessage(mChanId, mMsgId, cmi))
 		return;
+
+
 
 	m_inUpdateItemStatic = true;
 
@@ -198,6 +203,25 @@ void ChanMsgItem::updateItemStatic()
 	}
 
 	m_inUpdateItemStatic = false;
+}
+
+
+void ChanMsgItem::setFileCleanUpWarning(uint32_t time_left)
+{
+	int hours = (int)time_left/3600;
+	int minutes = (time_left - hours*3600)%60;
+
+	warning_label->setText(tr("Warning! You have less than %1 hours and %2 minute before this file is delted Consider saving it.").arg(
+			QString::number(hours)).arg(QString::number(minutes)));
+
+	QFont warnFont = warning_label->font();
+	warnFont.setBold(true);
+	warning_label->setFont(warnFont);
+
+	warn_image_label->setVisible(true);
+	warning_label->setVisible(true);
+	return;
+
 }
 
 
