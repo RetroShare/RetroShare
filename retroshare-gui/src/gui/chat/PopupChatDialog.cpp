@@ -210,7 +210,10 @@ PopupChatDialog::PopupChatDialog(std::string id, const QString name, QWidget *pa
       rsMsgs->getPrivateChatQueueCount(false) && rsMsgs->getPrivateChatQueue(false, dialogId, offlineChat);
 
       QList<IMHistoryItem> historyItems;
-      historyKeeper.getMessages(historyItems, Settings->getPrivateChatHistoryCount());
+      int messageCount = Settings->getPrivateChatHistoryCount();
+      if (messageCount > 0) {
+          historyKeeper.getMessages(historyItems, messageCount);
+      }
       foreach(IMHistoryItem item, historyItems) {
           for(offineChatIt = offlineChat.begin(); offineChatIt != offlineChat.end(); offineChatIt++) {
               /* are they public? */

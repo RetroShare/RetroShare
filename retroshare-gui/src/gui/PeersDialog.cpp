@@ -187,10 +187,13 @@ PeersDialog::PeersDialog(QWidget *parent)
     if (Settings->valueFromGroup("Chat", QString::fromUtf8("GroupChat_History"), true).toBool()) {
         historyKeeper.init(QString::fromStdString(RsInit::RsProfileConfigDirectory()) + "/chatPublic.xml");
 
-        QList<IMHistoryItem> historyItems;
-        historyKeeper.getMessages(historyItems, Settings->getPublicChatHistoryCount());
-        foreach(IMHistoryItem item, historyItems) {
-            addChatMsg(item.incoming, true, item.name, item.recvTime, item.messageText);
+        int messageCount = Settings->getPublicChatHistoryCount();
+        if (messageCount > 0) {
+            QList<IMHistoryItem> historyItems;
+            historyKeeper.getMessages(historyItems, messageCount);
+            foreach(IMHistoryItem item, historyItems) {
+                addChatMsg(item.incoming, true, item.name, item.recvTime, item.messageText);
+            }
         }
     }
 
