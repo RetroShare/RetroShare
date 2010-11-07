@@ -243,6 +243,22 @@ virtual bool channelShareKeys(std::string chId, std::list<std::string>& peers) =
  *
  */
 virtual bool channelEditInfo(std::string chId, ChannelInfo &ci) = 0;
+
+
+/*!
+ * get list of channels for which private publish key is available
+ * @param grpIds list of channels for which private publish key is available
+ */
+virtual void getPubKeysAvailableGrpIds(std::list<std::string>& chanIds) = 0;
+
+/*!
+ *
+ * get list of channels for which file contents will be cleaned out soon
+ * @param warning contains msgs ids given a using channel id as the key for which warnings should issued to user
+ * @parma limit the length of time before clean warning should be issued for a given id
+ *
+ */
+virtual bool getCleanUpList(std::map<std::string, uint32_t>& warnings,const std::string& chId, uint32_t limit) = 0;
 };
 
 
