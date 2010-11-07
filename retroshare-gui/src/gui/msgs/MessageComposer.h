@@ -59,6 +59,7 @@ public:
     void  insertSendList();
     void  insertFileList(const std::list<DirDetails>&);
     void  insertFileList(const std::list<FileInfo>&);
+    void  addFile(const FileInfo &fileInfo);
     void  insertTitleText(const QString &title, enumMessageType type = NORMAL);
     void  insertPastedText(QString msg) ;
     void  insertForwardPastedText(QString msg);

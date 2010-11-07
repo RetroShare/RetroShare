@@ -67,13 +67,9 @@ class RemoteDirModel : public QAbstractItemModel
 
 		void getDirDetailsFromSelect (QModelIndexList list, std::vector <DirDetails>& dirVec);
 
-		bool isDir ( const QModelIndex & index ) const ;
+		int getType ( const QModelIndex & index ) const ;
 		//void openFile(QModelIndex fileIndex, const QString command);
 
-		//#if 0  /****** REMOVED ******/
-		//     void recommendSelected(QModelIndexList list);
-		//     void recommendSelectedOnly(QModelIndexList list);
-		//#endif
 		void getFileInfoFromIndexList(const QModelIndexList& list, std::list<DirDetails>& files_info) ;
 
 		void openSelected(QModelIndexList list, bool openFolder);

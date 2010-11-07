@@ -579,7 +579,7 @@ border: 1px solid #CCCCCC;}</string>
          <string>Compose</string>
         </property>
         <property name="icon">
-         <iconset resource="images.qrc">
+         <iconset>
           <normaloff>:/images/folder-draft24.png</normaloff>:/images/folder-draft24.png</iconset>
         </property>
         <property name="iconSize">
@@ -633,7 +633,7 @@ border: 1px solid #CCCCCC;}</string>
          <string>Reply</string>
         </property>
         <property name="icon">
-         <iconset resource="images.qrc">
+         <iconset>
           <normaloff>:/images/replymail-pressed.png</normaloff>:/images/replymail-pressed.png</iconset>
         </property>
         <property name="iconSize">
@@ -671,7 +671,7 @@ border: 1px solid #CCCCCC;}</string>
          <string>Reply all</string>
         </property>
         <property name="icon">
-         <iconset resource="images.qrc">
+         <iconset>
           <normaloff>:/images/replymailall24-hover.png</normaloff>:/images/replymailall24-hover.png</iconset>
         </property>
         <property name="iconSize">
@@ -709,7 +709,7 @@ border: 1px solid #CCCCCC;}</string>
          <string>Foward</string>
         </property>
         <property name="icon">
-         <iconset resource="images.qrc">
+         <iconset>
           <normaloff>:/images/mailforward24-hover.png</normaloff>:/images/mailforward24-hover.png</iconset>
         </property>
         <property name="iconSize">
@@ -757,7 +757,7 @@ border: 1px solid #CCCCCC;}</string>
          <string>Delete</string>
         </property>
         <property name="icon">
-         <iconset resource="images.qrc">
+         <iconset>
           <normaloff>:/images/deletemail24.png</normaloff>:/images/deletemail24.png</iconset>
         </property>
         <property name="iconSize">
@@ -801,7 +801,7 @@ border: 1px solid #CCCCCC;}</string>
          <string>Print</string>
         </property>
         <property name="icon">
-         <iconset resource="images.qrc">
+         <iconset>
           <normaloff>:/images/print24.png</normaloff>:/images/print24.png</iconset>
         </property>
         <property name="iconSize">
@@ -833,7 +833,7 @@ border: 1px solid #CCCCCC;}</string>
          <string>Display</string>
         </property>
         <property name="icon">
-         <iconset resource="images.qrc">
+         <iconset>
           <normaloff>:/images/looknfeel.png</normaloff>:/images/looknfeel.png</iconset>
         </property>
         <property name="iconSize">
@@ -874,7 +874,7 @@ border: 1px solid #CCCCCC;}</string>
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap resource="images.qrc">:/images/find-16.png</pixmap>
+           <pixmap>:/images/find-16.png</pixmap>
           </property>
          </widget>
         </item>
@@ -966,7 +966,7 @@ border-image: url(:/images/closepressed.png)
          <string>Tag</string>
         </property>
         <property name="icon">
-         <iconset resource="images.qrc">
+         <iconset>
           <normaloff>:/images/tag24.png</normaloff>:/images/tag24.png</iconset>
         </property>
         <property name="iconSize">
@@ -1107,7 +1107,7 @@ border-image: url(:/images/closepressed.png)
                <string>Inbox</string>
               </property>
               <property name="icon">
-               <iconset resource="images.qrc">
+               <iconset>
                 <normaloff>:/images/folder-inbox.png</normaloff>:/images/folder-inbox.png</iconset>
               </property>
              </item>
@@ -1116,7 +1116,7 @@ border-image: url(:/images/closepressed.png)
                <string>Outbox</string>
               </property>
               <property name="icon">
-               <iconset resource="images.qrc">
+               <iconset>
                 <normaloff>:/images/folder-outbox.png</normaloff>:/images/folder-outbox.png</iconset>
               </property>
              </item>
@@ -1125,7 +1125,7 @@ border-image: url(:/images/closepressed.png)
                <string>Draft</string>
               </property>
               <property name="icon">
-               <iconset resource="images.qrc">
+               <iconset>
                 <normaloff>:/images/folder-draft.png</normaloff>:/images/folder-draft.png</iconset>
               </property>
              </item>
@@ -1134,7 +1134,7 @@ border-image: url(:/images/closepressed.png)
                <string>Sent</string>
               </property>
               <property name="icon">
-               <iconset resource="images.qrc">
+               <iconset>
                 <normaloff>:/images/folder-sent.png</normaloff>:/images/folder-sent.png</iconset>
               </property>
              </item>
@@ -1143,7 +1143,7 @@ border-image: url(:/images/closepressed.png)
                <string>Trash</string>
               </property>
               <property name="icon">
-               <iconset resource="images.qrc">
+               <iconset>
                 <normaloff>:/images/folder-trash.png</normaloff>:/images/folder-trash.png</iconset>
               </property>
              </item>
@@ -1190,7 +1190,7 @@ border: 1px solid #CCCCCC;}</string>
               <string>Favorite Tags</string>
              </property>
              <property name="icon">
-              <iconset resource="images.qrc">
+              <iconset>
                <normaloff>:/images/tag24.png</normaloff>:/images/tag24.png</iconset>
              </property>
              <property name="checkable">
@@ -1321,7 +1321,7 @@ padding: 4px;
                     <string/>
                    </property>
                    <property name="pixmap">
-                    <pixmap resource="images.qrc">:/images/attachment.png</pixmap>
+                    <pixmap>:/images/attachment.png</pixmap>
                    </property>
                   </widget>
                  </item>
@@ -1354,7 +1354,7 @@ p, li { white-space: pre-wrap; }
                     <string/>
                    </property>
                    <property name="icon">
-                    <iconset resource="images.qrc">
+                    <iconset>
                      <normaloff>:/images/edit_remove24.png</normaloff>:/images/edit_remove24.png</iconset>
                    </property>
                    <property name="checkable">
@@ -1392,7 +1392,7 @@ p, li { white-space: pre-wrap; }
                   <string/>
                  </property>
                  <property name="icon">
-                  <iconset resource="images.qrc">
+                  <iconset>
                    <normaloff>:/images/down.png</normaloff>:/images/down.png</iconset>
                  </property>
                 </widget>
@@ -1767,11 +1767,6 @@ p, li { white-space: pre-wrap; }
            </column>
            <column>
             <property name="text">
-             <string>Sources</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
              <string>Hash</string>
             </property>
            </column>
@@ -1834,9 +1829,7 @@ p, li { white-space: pre-wrap; }
   <tabstop>msgText</tabstop>
   <tabstop>msgList</tabstop>
  </tabstops>
- <resources>
-  <include location="images.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
    <sender>expandFilesButton</sender>

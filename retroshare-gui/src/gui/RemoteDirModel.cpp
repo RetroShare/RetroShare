@@ -939,60 +939,6 @@ void RemoteDirModel::getFileInfoFromIndexList(const QModelIndexList& list, std::
 #endif
 }
 
-#if 0
-void RemoteDirModel::recommendSelectedOnly(QModelIndexList list)
-{
-#ifdef RDM_DEBUG
-	std::cerr << "recommendSelectedOnly()" << std::endl;
-#endif
-	if (RemoteMode)
-	{
-#ifdef RDM_DEBUG
-		std::cerr << "Cannot recommend remote! (should download)" << std::endl;
-#endif
-	}
-     	rsFiles->ClearInRecommend();
-
-	/* Fire off requests */
-	QModelIndexList::iterator it;
-	for(it = list.begin(); it != list.end(); it++)
-	{
-		void *ref = it -> internalPointer();
-
-     		DirDetails details;
-     		uint32_t flags = DIR_FLAGS_DETAILS;
-     		if (RemoteMode)
-		{
-     			flags |= DIR_FLAGS_REMOTE;
-			continue; /* don't recommend remote stuff */
-		}
-     		else
-		{
-     			flags |= DIR_FLAGS_LOCAL;
-		}
-
-     		if (!rsFiles->RequestDirDetails(ref, details, flags))
-     		{
-			continue;
-     		}
-
-#ifdef RDM_DEBUG
-		std::cerr << "::::::::::::FileRecommend:::: " << std::endl;
-		std::cerr << "Name: " << details.name << std::endl;
-		std::cerr << "Hash: " << details.hash << std::endl;
-		std::cerr << "Size: " << details.count << std::endl;
-		std::cerr << "Path: " << details.path << std::endl;
-#endif
-
-		rsFiles -> FileRecommend(details.name, details.hash, details.count);
-     		rsFiles -> SetInRecommend(details.name, true);
-	}
-#ifdef RDM_DEBUG
-	std::cerr << "::::::::::::Done FileRecommend" << std::endl;
-#endif
-}
-#endif
-
 /****************************************************************************
  * OLD RECOMMEND SYSTEM - DISABLED
  ******/
@@ -1218,8 +1164,7 @@ QStringList RemoteDirModel::mimeTypes () const
 
 //============================================================================
 
-bool
-RemoteDirModel::isDir ( const QModelIndex & index ) const
+int RemoteDirModel::getType ( const QModelIndex & index ) const
 {
     //if (RemoteMode) // only local files can be opened
     //    return ;
@@ -1239,5 +1184,5 @@ RemoteDirModel::isDir ( const QModelIndex & index ) const
         return false;//not good, but....
     }
 
-    return (details.type == DIR_TYPE_DIR) ;
+    return details.type;
 }

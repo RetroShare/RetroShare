@@ -72,6 +72,11 @@
 #define ROLE_UNREAD   Qt::UserRole + 3
 #define ROLE_MSGFLAGS Qt::UserRole + 4
 
+#define COLUMN_FILE_NAME   0
+#define COLUMN_FILE_SIZE   1
+#define COLUMN_FILE_HASH   2
+#define COLUMN_FILE_COUNT  3
+
 #define ROW_INBOX         0
 #define ROW_OUTBOX        1
 #define ROW_DRAFTBOX      2
@@ -335,15 +340,13 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
     /* Set header resize modes and initial section sizes */
     QHeaderView * msglheader = ui.msgList->header () ;
-    msglheader->setResizeMode (0, QHeaderView::Interactive);
-    msglheader->setResizeMode (1, QHeaderView::Interactive);
-    msglheader->setResizeMode (2, QHeaderView::Interactive);
-    msglheader->setResizeMode (3, QHeaderView::Interactive);
+    msglheader->setResizeMode (COLUMN_FILE_NAME, QHeaderView::Interactive);
+    msglheader->setResizeMode (COLUMN_FILE_SIZE, QHeaderView::Interactive);
+    msglheader->setResizeMode (COLUMN_FILE_HASH, QHeaderView::Interactive);
 
-    msglheader->resizeSection (0, 200);
-    msglheader->resizeSection (1, 100);
-    msglheader->resizeSection (2, 100);
-    msglheader->resizeSection (3, 200);
+    msglheader->resizeSection (COLUMN_FILE_NAME, 200);
+    msglheader->resizeSection (COLUMN_FILE_SIZE, 100);
+    msglheader->resizeSection (COLUMN_FILE_HASH, 200);
 
     ui.forwardmessageButton->setToolTip(tr("Forward selected Message"));
     ui.replyallmessageButton->setToolTip(tr("Reply to All"));
@@ -887,13 +890,15 @@ void MessagesDialog::getcurrentrecommended()
 
         switch(it->column())
         {
-        case 0: f.fname = it->data().toString().toStdString() ;
+        case COLUMN_FILE_NAME:
+            f.fname = it->data().toString().toStdString() ;
             break ;
-        case 1: f.size = it->data().toULongLong() ;
+        case COLUMN_FILE_SIZE:
+            f.size = it->data().toULongLong() ;
             break ;
-        case 3: f.hash = it->data().toString().toStdString() ;
+        case COLUMN_FILE_HASH:
+            f.hash = it->data().toString().toStdString() ;
             break ;
-        default: ;
         }
     }
 
@@ -1663,7 +1668,6 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index, bool bSetToRead)
     /* get the MessageInfo */
 
     tree->clear();
-    tree->setColumnCount(4);
 
     QList<QTreeWidgetItem *> items;
     for(it = recList.begin(); it != recList.end(); it++)
@@ -1671,12 +1675,11 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index, bool bSetToRead)
         /* make a widget per person */
         QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
         /* (0) Filename */
-        item -> setText(0, QString::fromStdString(it->fname));
+        item -> setText(COLUMN_FILE_NAME, QString::fromStdString(it->fname));
         //std::cerr << "Msg FileItem(" << it->fname.length() << ") :" << it->fname << std::endl;
 
-        item -> setText(1, QString::number(it->size)); /* (1) Size */
-        item -> setText(2, QString::number(0)); 			/* (2) Rank */ // what is this ???
-        item -> setText(3, QString::fromStdString(it->hash));
+        item -> setText(COLUMN_FILE_SIZE, QString::number(it->size)); /* (1) Size */
+        item -> setText(COLUMN_FILE_HASH, QString::fromStdString(it->hash));
 
         /* add to the list */
         items.append(item);

@@ -75,6 +75,11 @@
 #define ROLE_RECIPIENT_ID     Qt::UserRole
 #define ROLE_RECIPIENT_GROUP  Qt::UserRole + 1
 
+#define COLUMN_FILE_NAME   0
+#define COLUMN_FILE_SIZE   1
+#define COLUMN_FILE_HASH   2
+#define COLUMN_FILE_COUNT  3
+
 #define STYLE_NORMAL "QLineEdit#%1 { border : none; }"
 #define STYLE_FAIL   "QLineEdit#%1 { border : none; color : red; }"
 
@@ -242,16 +247,11 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
     ui.colorbtn->setIcon(pxm);
 
     /* Set header resize modes and initial section sizes */
-    ui.msgFileList->setColumnCount(5);
-    ui.msgFileList->setColumnHidden ( 4, true);
-
     QHeaderView * _smheader = ui.msgFileList->header () ;
 
-    _smheader->resizeSection ( 0, 200 );
-    _smheader->resizeSection ( 1, 60 );
-    _smheader->resizeSection ( 2, 60 );
-    _smheader->resizeSection ( 3, 220 );
-    _smheader->resizeSection ( 4, 10 );
+    _smheader->resizeSection(COLUMN_FILE_NAME, 200);
+    _smheader->resizeSection(COLUMN_FILE_SIZE, 60);
+    _smheader->resizeSection(COLUMN_FILE_HASH, 220);
 
     QPalette palette = QApplication::palette();
     codeBackground = palette.color( QPalette::Active, QPalette::Midlight );
@@ -679,7 +679,6 @@ void  MessageComposer::insertFileList(const std::list<DirDetails>& dir_info)
         FileInfo info ;
         info.fname = it->name ;
         info.hash = it->hash ;
-        info.rank = 0;//it->rank ;
         info.size = it->count ;
         info.inRecommend = true;
         files_info.push_back(info) ;
@@ -692,37 +691,31 @@ void  MessageComposer::insertFileList(const std::list<FileInfo>& files_info)
 {
     _recList.clear() ;
 
+    ui.msgFileList->clear();
+
     std::list<FileInfo>::const_iterator it;
-
-    /* get a link to the table */
-    QTreeWidget *tree = ui.msgFileList;
-
-    tree->clear();
-    tree->setColumnCount(5);
-
-    QList<QTreeWidgetItem *> items;
-    for(it = files_info.begin(); it != files_info.end(); it++)
-    {
-        _recList.push_back(*it) ;
-
-        /* make a widget per person */
-        QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
-
-        item->setText(0, QString::fromUtf8(it->fname.c_str()));			/* (0) Filename */
-        item->setText(1, misc::friendlyUnit(it->size));			 		/* (1) Size */
-        item->setText(2, QString::number(0)) ;//it->rank));
-        item->setText(3, QString::fromStdString(it->hash));
-        item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
-        item->setCheckState(0, it->inRecommend ? Qt::Checked : Qt::Unchecked);
-
-        /* add to the list */
-        items.append(item);
+    for(it = files_info.begin(); it != files_info.end(); it++) {
+        addFile(*it);
     }
 
-    /* add the items in! */
-    tree->insertTopLevelItems(0, items);
+    ui.msgFileList->update(); /* update display */
+}
 
-    tree->update(); /* update display */
+void MessageComposer::addFile(const FileInfo &fileInfo)
+{
+    _recList.push_back(fileInfo) ;
+
+    /* make a widget per person */
+    QTreeWidgetItem *item = new QTreeWidgetItem;
+
+    item->setText(COLUMN_FILE_NAME, QString::fromUtf8(fileInfo.fname.c_str()));
+    item->setText(COLUMN_FILE_SIZE, misc::friendlyUnit(fileInfo.size));
+    item->setText(COLUMN_FILE_HASH, QString::fromStdString(fileInfo.hash));
+    item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
+    item->setCheckState(COLUMN_FILE_NAME, fileInfo.inRecommend ? Qt::Checked : Qt::Unchecked);
+
+    /* add to the list */
+    ui.msgFileList->addTopLevelItem(item);
 }
 
 /* title changed */
@@ -2141,13 +2134,13 @@ void MessageComposer::fileHashingFinished(AttachFileItem* file)
         return;
     }
 
-    RetroShareLink message(QString::fromUtf8(file->FileName().c_str()), file->FileSize(), QString::fromStdString(file->FileHash()));
-#ifdef CHAT_DEBUG
-    std::cerr << "MessageComposer::anchorClicked message : " << message.toHtmlFull().toStdString() << std::endl;
-#endif
+    FileInfo fileInfo;
+    fileInfo.fname = file->FileName();
+    fileInfo.hash = file->FileHash();
+    fileInfo.size = file->FileSize();
+    fileInfo.inRecommend = true;
 
-    ui.msgText->textCursor().insertHtml(message.toHtmlFull() + QString("<br>"));
-    ui.msgText->setFocus( Qt::OtherFocusReason );
+    addFile(fileInfo);
 }
 
 void MessageComposer::checkAttachmentReady()

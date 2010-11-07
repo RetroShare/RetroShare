@@ -477,6 +477,7 @@ void AttachFileItem::updateItem()
 		case AFI_STATE_LOCAL:
 			repeat = 0;
 			emit fileFinished(this);
+			hide(); // auto hide
 			break;
 
 		case AFI_STATE_UPLOAD:

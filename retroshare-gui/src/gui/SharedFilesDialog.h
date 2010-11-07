@@ -56,7 +56,7 @@ private slots:
   void sharedDirTreeWidgetContextMenu( QPoint point );
 
   void downloadRemoteSelected();
-//  void addMsgRemoteSelected();
+  void addMsgRemoteSelected();
 
   void copyLinkRemote();
   void copyLinkLocal();
@@ -66,20 +66,16 @@ private slots:
   void sendHtmlLinkTo();
   void sendLinkToCloud();
   void addLinkToCloud();
-//  void sendLinktoChat();
 
   void showFrame(bool show);
   void showFrameRemote(bool show);
   void showFrameSplitted(bool show);
 
-//  void recommendfile();
   void playselectedfiles();
   void openfile();
   void openfolder();
 
-//  void recommendFileSetOnly();
-  void recommendFilesTo( std::string rsid );
-  void recommendFilesToMsg( std::string rsid );
+  void recommendFilesToMsg();
   void runCommandForFile();
   void tryToAddNewAssotiation();
 	
