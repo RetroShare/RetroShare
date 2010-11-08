@@ -28,6 +28,8 @@
 #include "retroshare/rsiface.h"
 #include "retroshare/rspeers.h"
 
+#include "util/misc.h"
+
 #include <sstream>
 #include <iomanip>
 
@@ -46,13 +48,16 @@ DHTStatus::DHTStatus(QWidget *parent)
     hbox->addWidget(dhtstatusLabel);
     
     spaceLabel = new QLabel( " | ", this );
+    spaceLabel->setVisible(false);
     hbox->addWidget(spaceLabel);
-    
+
     dhtnetworkLabel = new QLabel( this );
+    dhtnetworkLabel->setVisible(false);
     dhtnetworkLabel->setPixmap(QPixmap(":/images/dht16.png"));
     hbox->addWidget(dhtnetworkLabel);
-    
+
     dhtnetworksizeLabel = new QLabel( "0 (0) ",this );
+    dhtnetworksizeLabel->setVisible(false);
     hbox->addWidget(dhtnetworksizeLabel);
 
     hbox->addSpacing(2);
@@ -71,22 +76,26 @@ void DHTStatus::getDHTStatus()
     {
         dhtstatusLabel->setPixmap(QPixmap(":/images/greenled.png"));
         dhtstatusLabel->setToolTip(tr("DHT On"));
+
+        spaceLabel->setVisible(true);
+        dhtnetworkLabel->setVisible(true);
+        dhtnetworksizeLabel->setVisible(true);
+
+        dhtnetworksizeLabel->setText(QString("%1 (%2)").arg(misc::userFriendlyUnit(config.netDhtRsNetSize, 1)).arg(misc::userFriendlyUnit(config.netDhtNetSize, 1)));
+        dhtnetworksizeLabel->setToolTip(tr("RetroShare users in DHT (Total DHT users)") );
     }
     else
     {
         dhtstatusLabel->setPixmap(QPixmap(":/images/redled.png"));
         dhtstatusLabel->setToolTip(tr("DHT Off"));
+
+        spaceLabel->setVisible(false);
+        dhtnetworkLabel->setVisible(false);
+        dhtnetworksizeLabel->setVisible(false);
+
+        dhtnetworksizeLabel->setText("");
+        dhtnetworksizeLabel->setToolTip("");
     }
 
-    QString dhtsize;
-    {
-	std::ostringstream out;
-	out << (int) config.netDhtRsNetSize << " ( " << (int) config.netDhtNetSize << " )";
-	dhtsize = QString::fromStdString(out.str());
-    }
-
-    dhtnetworksizeLabel->setText(dhtsize);
-    dhtnetworksizeLabel->setToolTip(tr("RetroShare users in DHT (Total DHT users)") );
-		
     rsiface->unlockData(); /* UnLock Interface */
 }

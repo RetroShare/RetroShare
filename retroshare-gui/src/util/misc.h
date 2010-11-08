@@ -326,6 +326,44 @@ class misc : public QObject{
 		 days = days - years * 365;
 		 return tr("%1y %2d", "e.g: 2 years 2days ").arg(QString::fromUtf8(misc::toString(years).c_str())).arg(QString::fromUtf8(misc::toString(days).c_str()));
 	 }
+
+	static QString userFriendlyUnit(double count, unsigned int decimal, double factor = 1000)
+	{
+		if (count <= 0.0) {
+			return "0";
+		}
+
+		QString output;
+
+		int i;
+		for (i = 0; i < 5; i++) {
+			if (count < factor) {
+				break;
+			}
+
+			count /= factor;
+		}
+
+		QString unit;
+		switch (i) {
+		case 0:
+			decimal = 0; // no decimal
+			break;
+		case 1:
+			unit = tr("k", "e.g: 3.1 k");
+			break;
+		case 2:
+			unit = tr("M", "e.g: 3.1 M");
+			break;
+		case 3:
+			unit = tr("G", "e.g: 3.1 G");
+			break;
+		default: // >= 4
+			unit = tr("T", "e.g: 3.1 T");
+		}
+
+		return QString("%1 %2").arg(count, 0, 'f', decimal).arg(unit);
+	}
 };
 
 //  Trick to get a portable sleep() function

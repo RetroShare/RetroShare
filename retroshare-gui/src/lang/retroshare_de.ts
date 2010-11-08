@@ -2608,22 +2608,22 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>DHTStatus</name>
     <message>
-        <location filename="../gui/statusbar/dhtstatus.cpp" line="+41"/>
+        <location filename="../gui/statusbar/dhtstatus.cpp" line="+43"/>
         <source>DHT</source>
         <translation>DHT</translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+35"/>
         <source>DHT On</source>
         <translation>DHT An</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+12"/>
         <source>DHT Off</source>
         <translation>DHT aus</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="-5"/>
         <source>RetroShare users in DHT (Total DHT users)</source>
         <translation>RetroShare Nutzer in DHT (Totale DHT Nutzer)</translation>
     </message>
@@ -11528,6 +11528,30 @@ p, li { white-space: pre-wrap; }
         <source>%1y %2d</source>
         <comment>e.g: 2 years 2days </comment>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>k</source>
+        <comment>e.g: 3.1 k</comment>
+        <translation>k</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>M</source>
+        <comment>e.g: 3.1 M</comment>
+        <translation>M</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>G</source>
+        <comment>e.g: 3.1 G</comment>
+        <translation>G</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>T</source>
+        <comment>e.g: 3.1 T</comment>
+        <translation>T</translation>
     </message>
 </context>
 </TS>
