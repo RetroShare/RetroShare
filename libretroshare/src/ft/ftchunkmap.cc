@@ -192,19 +192,7 @@ bool ChunkMap::getDataChunk(const std::string& peer_id,uint32_t size_hint,ftChun
 	{
 		// 1 - select an available chunk id for this peer.
 		//
-		uint32_t c ;
-
-		switch(_strategy)
-		{
-			case FileChunksInfo::CHUNK_STRATEGY_STREAMING:	c = getAvailableChunk(0,peer_id,source_chunk_map_needed) ;	// very bold!!
-																			break ;
-
-			case FileChunksInfo::CHUNK_STRATEGY_RANDOM: 		c = getAvailableChunk(rand()%_map.size(),peer_id,source_chunk_map_needed) ;
-																			break ;
-			default:
-													std::cerr << "!!! ChunkMap::getDataChunk: error!: unknown strategy" << std::endl ;
-													return false ;
-		}
+		uint32_t c = getAvailableChunk(peer_id,source_chunk_map_needed) ;	
 
 		if(c >= _map.size()) 
 			return false ;
@@ -347,7 +335,7 @@ uint32_t ChunkMap::sizeOfChunk(uint32_t cid) const
 		return _chunk_size ;
 }
 
-uint32_t ChunkMap::getAvailableChunk(uint32_t start_location,const std::string& peer_id,bool& map_is_too_old) 
+uint32_t ChunkMap::getAvailableChunk(const std::string& peer_id,bool& map_is_too_old) 
 {
 	// Quite simple strategy: Check for 1st availabe chunk for this peer starting from the given start location.
 	//
@@ -404,16 +392,31 @@ uint32_t ChunkMap::getAvailableChunk(uint32_t start_location,const std::string& 
 	else
 		map_is_too_old = false ;// the map is not too old
 
+	uint32_t start_location = (_strategy == FileChunksInfo::CHUNK_STRATEGY_STREAMING)?0:(rand()%_map.size()) ;
+
 	for(unsigned int i=0;i<_map.size();++i)
 	{
 		uint32_t j = (start_location+i)%(int)_map.size() ;	// index of the chunk
 
 		if(_map[j] == FileChunksInfo::CHUNK_OUTSTANDING && (peer_chunks->is_full || peer_chunks->cmap[j]))
 		{
+			if(_strategy == FileChunksInfo::CHUNK_STRATEGY_STREAMING)
+				return j ;
+			else
+			{
+				// reserve a series of available chunks
+				//
+				uint32_t k=0 ;
+
+				for(;k+j<_map.size() && (_map[k+j] == FileChunksInfo::CHUNK_OUTSTANDING && (peer_chunks->is_full || peer_chunks->cmap[k+j]));++k) ;
+
 #ifdef DEBUG_FTCHUNK
-			std::cerr << "ChunkMap::getAvailableChunk: returning chunk " << j << " for peer " << peer_id << std::endl;
+				std::cerr << "ChunkMap::getAvailableChunk: returning chunk " << j+k << " for peer " << peer_id << std::endl;
 #endif
-			return j ;
+				// ...and select one randomly
+				//
+				return (rand()%k) + j ;
+			}
 		}
 	}
 

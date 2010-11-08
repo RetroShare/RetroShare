@@ -170,9 +170,9 @@ class ChunkMap
 		/// handles what size the last chunk has.
 		uint32_t sizeOfChunk(uint32_t chunk_number) const ;
 
-		/// Returns the first chunk available starting from start_location for this peer_id.
+		/// Returns a chunk available for this peer_id, depending on the chunk strategy.
 		//
-		uint32_t getAvailableChunk(uint32_t start_location,const std::string& peer_id,bool& chunk_map_too_old) ;
+		uint32_t getAvailableChunk(const std::string& peer_id,bool& chunk_map_too_old) ;
 
 	private:
 		uint64_t												_file_size ;						//! total size of the file in bytes.
