@@ -437,12 +437,22 @@ p, li { white-space: pre-wrap; }
              <widget class="QComboBox" name="discoveryComboBox">
               <item>
                <property name="text">
-                <string>Share Ip and information with your friend (Disc On)</string>
+                <string>Public: DHT &amp; Discovery</string>
                </property>
               </item>
               <item>
                <property name="text">
-                <string>Don't share any information (Disc Off)</string>
+                <string>Private: Discovery Only</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Inverted: DHT Only</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Dark Net: None</string>
                </property>
               </item>
              </widget>
