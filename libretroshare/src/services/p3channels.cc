@@ -805,13 +805,17 @@ void p3Channels::locked_notifyGroupChanged(GroupInfo &grp, uint32_t flags)
 bool p3Channels::getCleanUpList(std::map<std::string, uint32_t>& warnings,const std::string& chId,uint32_t limit)
 {
 
+        ChannelInfo chInfo;
+        getChannelInfo(chId, chInfo);
+
+        if(chInfo.channelFlags & RS_DISTRIB_ADMIN)
+            return false;
+
 	time_t now = time(NULL);
 	uint32_t timeLeft = 0;
-	bool first = true;
 	std::list<ChannelMsgSummary> msgList;
 	std::list<ChannelMsgSummary>::iterator msg_it;
 	ChannelMsgInfo chMsgInfo;
-
 	if(!getChannelMsgList(chId, msgList))
 		return false;
 
@@ -822,7 +826,7 @@ bool p3Channels::getCleanUpList(std::map<std::string, uint32_t>& warnings,const 
 			continue;
 
 		// if msg not close to warning limit leave it alone
-		if( chMsgInfo.ts > (now - CHANNEL_STOREPERIOD + limit))
+                if((chMsgInfo.ts > (now - CHANNEL_STOREPERIOD + limit)) || (chMsgInfo.count < 1))
 			continue;
 
 		timeLeft = CHANNEL_STOREPERIOD - (now - chMsgInfo.ts);
@@ -852,7 +856,8 @@ void p3Channels::cleanUpOldFiles()
 	// then msg for each channel
 	for(ch_it = chList.begin(); ch_it != chList.end(); ch_it++){
 
-		if(!getChannelMsgList(ch_it->channelId, msgList))
+                // don't deal with files owned by client (they are not extra files anyways so slightly redundant)
+                if(!getChannelMsgList(ch_it->channelId, msgList) || (ch_it->channelFlags & RS_DISTRIB_ADMIN))
 			continue;
 
 		std::string channelname = ch_it->channelId;
