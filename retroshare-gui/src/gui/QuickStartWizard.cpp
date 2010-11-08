@@ -120,9 +120,20 @@ void QuickStartWizard::on_pushButtonConnectionNext_clicked()
 
         /* Check if vis has changed */
         uint32_t visState = 0;
-        if (0 == ui.discoveryComboBox->currentIndex())
+        switch(ui.discoveryComboBox->currentIndex())
         {
+            case 0:
+                visState |= (RS_VS_DISC_ON | RS_VS_DHT_ON);
+                break;
+            case 1:
                 visState |= RS_VS_DISC_ON;
+                break;
+            case 2:
+                visState |= RS_VS_DHT_ON;
+                break;
+            case 3:
+            default:
+            break;
         }
 
         RsPeerDetails detail;
