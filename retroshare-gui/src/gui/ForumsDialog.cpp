@@ -34,6 +34,7 @@
 #include "msgs/MessageComposer.h"
 #include "settings/rsharesettings.h"
 #include "common/Emoticons.h"
+#include "common/RSItemDelegate.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsforums.h>
@@ -97,36 +98,6 @@
 #define ROLE_THREAD_COUNT           2
 
 #define IS_UNREAD(status) ((status & FORUM_MSG_STATUS_READ) == 0 || (status & FORUM_MSG_STATUS_UNREAD_BY_USER))
-
-class ForumsItemDelegate : public QItemDelegate
-{
-public:
-    ForumsItemDelegate(QObject *parent = 0) : QItemDelegate(parent)
-    {
-    }
-
-    void paint (QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
-    {
-        QStyleOptionViewItem ownOption (option);
-
-        if (index.column() == COLUMN_THREAD_READ) {
-            ownOption.state &= ~QStyle::State_HasFocus; // don't show text and focus rectangle
-        }
-
-        QItemDelegate::paint (painter, ownOption, index);
-    }
-
-    QSize sizeHint (const QStyleOptionViewItem &option, const QModelIndex &index) const
-    {
-        QStyleOptionViewItem ownOption (option);
-
-        if (index.column() == COLUMN_THREAD_READ) {
-            ownOption.state &= ~QStyle::State_HasFocus; // don't show text and focus rectangle
-        }
-
-        return QItemDelegate::sizeHint(ownOption, index);
-    }
-};
 
 static int FilterColumnFromComboBox(int nIndex)
 {
@@ -194,8 +165,14 @@ ForumsDialog::ForumsDialog(QWidget *parent)
     connect(ui.filterColumnComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterColumnChanged()));
 
     /* Set own item delegate */
-    QItemDelegate *pDelegate = new ForumsItemDelegate(this);
-    ui.threadTreeWidget->setItemDelegate(pDelegate);
+    RSItemDelegate *itemDelegate = new RSItemDelegate(this);
+    itemDelegate->removeFocusRect(COLUMN_THREAD_READ);
+    itemDelegate->setSpacing(QSize(0, 2));
+    ui.threadTreeWidget->setItemDelegate(itemDelegate);
+
+    itemDelegate = new RSItemDelegate(this);
+    itemDelegate->setSpacing(QSize(0, 2));
+    ui.forumTreeWidget->setItemDelegate(itemDelegate);
 
     /* Set header resize modes and initial section sizes */
     QHeaderView * ftheader = ui.forumTreeWidget->header () ;

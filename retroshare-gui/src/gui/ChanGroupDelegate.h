@@ -8,10 +8,13 @@
 #ifndef CHANGROUPDELEGATE_H_
 #define CHANGROUPDELEGATE_H_
 
-#include <QItemDelegate>
+#include "common/RSItemDelegate.h"
 
-class ChanGroupDelegate : public QItemDelegate
+class ChanGroupDelegate : public RSItemDelegate
 {
+public:
+	ChanGroupDelegate(QObject *parent = 0);
+
 	virtual void paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const;
 };
 

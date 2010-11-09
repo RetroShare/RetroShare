@@ -39,6 +39,7 @@
 #include "util/misc.h"
 #include "common/TagDefs.h"
 #include "common/PeerDefs.h"
+#include "common/RSItemDelegate.h"
 
 #include <retroshare/rsinit.h>
 #include <retroshare/rspeers.h>
@@ -91,36 +92,6 @@
 #define ACTION_TAGS_REMOVEALL 0
 #define ACTION_TAGS_TAG       1
 #define ACTION_TAGS_NEWTAG    2
-
-class MessagesItemDelegate : public QItemDelegate
-{
-public:
-    MessagesItemDelegate(QObject *parent = 0) : QItemDelegate(parent)
-    {
-    }
-
-    void paint (QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
-    {
-        QStyleOptionViewItem ownOption (option);
-
-        if (index.column() == COLUMN_UNREAD) {
-            ownOption.state &= ~QStyle::State_HasFocus; // don't show text and focus rectangle
-        }
-
-        QItemDelegate::paint (painter, ownOption, index);
-    }
-
-    QSize sizeHint (const QStyleOptionViewItem &option, const QModelIndex &index) const
-    {
-        QStyleOptionViewItem ownOption (option);
-
-        if (index.column() == COLUMN_UNREAD) {
-            ownOption.state &= ~QStyle::State_HasFocus; // don't show text and focus rectangle
-        }
-
-        return QItemDelegate::sizeHint(ownOption, index);
-    }
-};
 
 class MessagesMenu : public QMenu
 {
@@ -309,8 +280,10 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     ui.messagestreeView->setModel(proxyModel);
     ui.messagestreeView->setSelectionBehavior(QTreeView::SelectRows);
 
-    QItemDelegate *pDelegate = new MessagesItemDelegate(this);
-    ui.messagestreeView->setItemDelegate(pDelegate);
+    RSItemDelegate *itemDelegate = new RSItemDelegate(this);
+    itemDelegate->removeFocusRect(COLUMN_UNREAD);
+    itemDelegate->setSpacing(QSize(0, 2));
+    ui.messagestreeView->setItemDelegate(itemDelegate);
 
     ui.messagestreeView->setRootIsDecorated(false);
     ui.messagestreeView->setSortingEnabled(true);

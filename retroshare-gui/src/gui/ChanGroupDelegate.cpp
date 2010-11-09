@@ -10,6 +10,10 @@
 #include <QPainter>
 #include <QColor>
 
+ChanGroupDelegate::ChanGroupDelegate(QObject *parent) : RSItemDelegate(parent)
+{
+}
+
 void ChanGroupDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
 	if (index.child(0, 0).isValid()) {
@@ -19,5 +23,5 @@ void ChanGroupDelegate::paint(QPainter * painter, const QStyleOptionViewItem & o
 		QApplication::style()->drawControl(QStyle::CE_PushButtonBevel, &opt, painter);
 	}
 
-	QItemDelegate::paint(painter, option, index);
+	RSItemDelegate::paint(painter, option, index);
 }

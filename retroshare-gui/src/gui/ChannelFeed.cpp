@@ -93,7 +93,10 @@ ChannelFeed::ChannelFeed(QWidget *parent)
 
     treeView->setModel(model);
 
-    treeView->setItemDelegate(new ChanGroupDelegate());
+    RSItemDelegate *itemDelegate = new ChanGroupDelegate(this);
+    itemDelegate->removeFocusRect(COLUMN_POPULARITY);
+    itemDelegate->setSpacing(QSize(0, 2));
+    treeView->setItemDelegate(itemDelegate);
 
     connect(treeView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)), this, SLOT(selectChannel(QModelIndex)));
 
