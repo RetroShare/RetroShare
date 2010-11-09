@@ -826,7 +826,7 @@ bool p3Channels::getCleanUpList(std::map<std::string, uint32_t>& warnings,const 
 			continue;
 
 		// if msg not close to warning limit leave it alone
-                if((chMsgInfo.ts > (now - CHANNEL_STOREPERIOD + limit)) || (chMsgInfo.count < 1))
+                if((chMsgInfo.ts + CHANNEL_STOREPERIOD > (time_t)now + (time_t)limit) || (chMsgInfo.count < 1))
 			continue;
 
 		timeLeft = CHANNEL_STOREPERIOD - (now - chMsgInfo.ts);
@@ -834,6 +834,7 @@ bool p3Channels::getCleanUpList(std::map<std::string, uint32_t>& warnings,const 
 
 	}
 
+	return true ;
 }
 
 
