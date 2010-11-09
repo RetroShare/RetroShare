@@ -727,7 +727,7 @@ void MessageComposer::titleChanged()
 
 void MessageComposer::calculateTitle()
 {
-    setWindowTitle(tr("Compose") + ": " + ui.titleEdit->text());
+    setWindowTitle(tr("Compose") + ": " + misc::removeNewLine(ui.titleEdit->text()));
 }
 
 static void calculateGroupsOfSslIds(std::list<RsGroupInfo> &existingGroupInfos, std::list<std::string> &checkSslIds, std::list<std::string> &checkGroupIds)
@@ -998,7 +998,7 @@ void  MessageComposer::insertTitleText(const QString &title, enumMessageType typ
         break;
     }
 
-    ui.titleEdit->setText(titleText);
+    ui.titleEdit->setText(misc::removeNewLine(titleText));
 }
 
 void  MessageComposer::insertPastedText(QString msg)
@@ -1063,7 +1063,7 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
     /* construct a message */
     MessageInfo mi;
 
-    mi.title = ui.titleEdit->text().toStdWString();
+    mi.title = misc::removeNewLine(ui.titleEdit->text()).toStdWString();
     mi.msg =   ui.msgText->toHtml().toStdWString();
 
     /* check for existing title */

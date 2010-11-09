@@ -23,6 +23,8 @@
 
 #include <retroshare/rspeers.h>
 
+#include "util/misc.h"
+
 #include "CreateGroup.h"
 #include "gui/common/GroupDefs.h"
 
@@ -39,7 +41,7 @@ CreateGroup::CreateGroup(const std::string groupId, QWidget *parent, Qt::WFlags 
         /* edit exisiting group */
         RsGroupInfo groupInfo;
         if (rsPeers->getGroupInfo(m_groupId, groupInfo)) {
-            ui.groupname->setText(QString::fromUtf8(groupInfo.name.c_str()));
+            ui.groupname->setText(misc::removeNewLine(groupInfo.name));
 
             setWindowTitle(tr("Edit Group"));
             ui.headerLabel->setText(tr("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">"
@@ -73,7 +75,7 @@ CreateGroup::~CreateGroup()
 
 void CreateGroup::on_groupname_textChanged(QString text)
 {
-    if (text.isEmpty() || usedGroupNames.contains(text)) {
+    if (text.isEmpty() || usedGroupNames.contains(misc::removeNewLine(text))) {
         ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
     } else {
         ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
@@ -86,13 +88,13 @@ void CreateGroup::on_buttonBox_accepted()
 
     if (m_groupId.empty()) {
         // add new group
-        groupInfo.name = ui.groupname->text().toUtf8().constData();
+        groupInfo.name = misc::removeNewLine(ui.groupname->text()).toUtf8().constData();
         if (rsPeers->addGroup(groupInfo)) {
             close();
         }
     } else {
         if (rsPeers->getGroupInfo(m_groupId, groupInfo) == true) {
-            groupInfo.name = ui.groupname->text().toUtf8().constData();
+            groupInfo.name = misc::removeNewLine(ui.groupname->text()).toUtf8().constData();
             if (rsPeers->editGroup(m_groupId, groupInfo)) {
                 close();
             }

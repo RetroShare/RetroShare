@@ -1050,9 +1050,10 @@ void  PeersDialog::insertPeers()
                 // there are some dead id's assigned
                 groupItem->setHidden(true);
             } else {
-                groupItem->setText(COLUMN_NAME, QString("%1 (%2/%3)").arg(GroupDefs::name(*groupInfo)).arg(onlineCount).arg(availableCount));
+                QString groupName = GroupDefs::name(*groupInfo);
+                groupItem->setText(COLUMN_NAME, QString("%1 (%2/%3)").arg(groupName).arg(onlineCount).arg(availableCount));
                 // show first the standard groups, than the user groups
-                groupItem->setData(COLUMN_NAME, ROLE_SORT, ((groupInfo->flag & RS_GROUP_FLAG_STANDARD) ? "0 " : "1 ") + QString::fromUtf8(groupInfo->name.c_str()));
+                groupItem->setData(COLUMN_NAME, ROLE_SORT, ((groupInfo->flag & RS_GROUP_FLAG_STANDARD) ? "0 " : "1 ") + groupName);
             }
         }
 

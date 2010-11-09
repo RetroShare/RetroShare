@@ -21,6 +21,8 @@
 
 #include <QMessageBox>
 
+#include "util/misc.h"
+
 #include "CreateForum.h"
 
 #include <retroshare/rsforums.h>
@@ -67,7 +69,7 @@ void  CreateForum::newForum()
 
 void  CreateForum::createForum()
 {
-	QString name = ui.forumName->text();
+	QString name = misc::removeNewLine(ui.forumName->text());
 	QString desc = ui.forumDesc->toPlainText(); //toHtml();
 	uint32_t flags = 0;
 

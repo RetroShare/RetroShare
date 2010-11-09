@@ -26,12 +26,13 @@
 #include <algorithm>
 
 #include "GroupDefs.h"
+#include "util/misc.h"
 
 const QString GroupDefs::name(const RsGroupInfo &groupInfo)
 {
     if ((groupInfo.flag & RS_GROUP_FLAG_STANDARD) == 0) {
         /* no need to be translated */
-        return QString::fromUtf8(groupInfo.name.c_str());
+        return misc::removeNewLine(groupInfo.name);
     }
 
     if (groupInfo.id == RS_GROUP_ID_FRIENDS) {

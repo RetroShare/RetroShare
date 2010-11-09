@@ -511,8 +511,6 @@ void ChannelFeed::fillChannelList(int channelItem, std::list<ChannelInfo> &chann
             chNameItem = new QChannelItem();
             chPopItem = new QStandardItem();
 
-            chNameItem->setSizeHint(QSize(22, 22));
-
             channel.append(chNameItem);
             channel.append(chPopItem);
             groupItem->appendRow(channel);

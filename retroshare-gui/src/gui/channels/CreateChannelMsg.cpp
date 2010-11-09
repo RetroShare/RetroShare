@@ -28,6 +28,7 @@
 
 #include "CreateChannelMsg.h"
 #include "gui/feeds/SubFileItem.h"
+#include "util/misc.h"
 
 #include <retroshare/rschannels.h>
 #include <retroshare/rsfiles.h>
@@ -407,9 +408,6 @@ void CreateChannelMsg::newChannelMsg()
 	}
 			
 	channelName->setText(QString::fromStdWString(ci.channelName));
-
-
-
 }
 
 
@@ -419,7 +417,7 @@ void CreateChannelMsg::sendMsg()
 	std::cerr << std::endl;
 
 	/* construct message bits */
-	std::wstring subject = subjectEdit->text().toStdWString();
+	std::wstring subject = misc::removeNewLine(subjectEdit->text()).toStdWString();
 	std::wstring msg     = msgEdit->toPlainText().toStdWString();
 
 	std::list<FileInfo> files;
@@ -456,7 +454,7 @@ void CreateChannelMsg::sendMsg()
 
 void CreateChannelMsg::sendMessage(std::wstring subject, std::wstring msg, std::list<FileInfo> &files)
 {
-	QString name = subjectEdit->text();
+	QString name = misc::removeNewLine(subjectEdit->text());
 
 	if(name.isEmpty())
 	{	/* error message */
@@ -467,12 +465,6 @@ void CreateChannelMsg::sendMessage(std::wstring subject, std::wstring msg, std::
 		return; //Don't add  an empty Subject!!
 	}
 	else
-
-
-
-
-
-
 	/* rsChannels */
 	if (rsChannels)
 	{

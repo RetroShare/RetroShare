@@ -1019,7 +1019,6 @@ void ForumsDialog::insertThreads()
         }
 
         item->setText(COLUMN_THREAD_TITLE, QString::fromStdWString(tit->title));
-        item->setSizeHint(COLUMN_THREAD_TITLE, QSize( 18,18 ) );
 
         if (rsPeers->getPeerName(msginfo.srcId) !="")
         {
@@ -1126,7 +1125,7 @@ void ForumsDialog::insertThreads()
                     }
 
                     child->setText(COLUMN_THREAD_TITLE, QString::fromStdWString(mit->title));
-                    child->setSizeHint(COLUMN_THREAD_TITLE, QSize( 17,17 ) );
+
 
                     if (rsPeers->getPeerName(msginfo.srcId) !="")
                     {

@@ -28,7 +28,6 @@
 #include <QDesktopWidget>
 #include <QDropEvent>
 
-
 #include <retroshare/rsforums.h>
 #include <retroshare/rsfiles.h>
 
@@ -36,6 +35,8 @@
 #include "gui/RetroShareLink.h"
 #include "gui/feeds/AttachFileItem.h"
 #include "gui/common/Emoticons.h"
+
+#include "util/misc.h"
 
 #include <sys/stat.h>
 
@@ -97,24 +98,25 @@ void  CreateForumMsg::newMsg()
         QString subj;
         if ((mParentId != "") && (rsForums->getForumMessage(mForumId, mParentId, msg)))
         {
+            QString title = QString::fromStdWString(msg.title);
             name += " " + tr("In Reply to") + ": ";
-            name += QString::fromStdWString(msg.title);
+            name += title;
 
-            QString text = QString::fromStdWString(msg.title);
+            QString text = title;
 
             if (text.startsWith("Re:", Qt::CaseInsensitive))
             {
-                subj = QString::fromStdWString(msg.title);
+                subj = title;
             }
             else
             {
-                subj = "Re: " + QString::fromStdWString(msg.title);
+                subj = "Re: " + title;
             }
 
         }
 
-        ui.forumName->setText(name);
-        ui.forumSubject->setText(subj);
+        ui.forumName->setText(misc::removeNewLine(name));
+        ui.forumSubject->setText(misc::removeNewLine(subj));
 
         if (!ui.forumSubject->text().isEmpty())
         {
@@ -141,7 +143,7 @@ void  CreateForumMsg::newMsg()
 
 void  CreateForumMsg::createMsg()
 {
-    QString name = ui.forumSubject->text();
+    QString name = misc::removeNewLine(ui.forumSubject->text());
     QString desc = ui.forumMessage->toHtml();
 
     if(name.isEmpty())

@@ -23,6 +23,8 @@
 
 #include <retroshare/rsforums.h>
 
+#include "util/misc.h"
+
 #include <list>
 #include <iostream>
 #include <string>
@@ -69,7 +71,7 @@ void EditForumDetails::applyDialog()
 
     ForumInfo info;
 
-    info.forumName = ui.nameline->text().toStdWString();
+    info.forumName = misc::removeNewLine(ui.nameline->text()).toStdWString();
     info.forumDesc = ui.DescriptiontextEdit->document()->toPlainText().toStdWString();
 
     rsForums->setForumInfo(m_forumId, info);

@@ -24,6 +24,8 @@
 
 #include <retroshare/rschannels.h>
 
+#include "util/misc.h"
+
 #include <list>
 #include <iostream>
 #include <string>
@@ -89,7 +91,6 @@ void EditChanDetails::loadChannel()
     // Set Channel Name
     ui.nameline->setText(QString::fromStdWString(ci.channelName));
 
-
     // Set Channel Description
     ui.DescriptiontextEdit->setText(QString::fromStdWString(ci.channelDesc));
     
@@ -120,7 +121,7 @@ void EditChanDetails::applyDialog()
 
     ChannelInfo ci;
 
-    ci.channelName = ui.nameline->text().toStdWString();
+    ci.channelName = misc::removeNewLine(ui.nameline->text()).toStdWString();
     ci.channelDesc = ui.DescriptiontextEdit->document()->toPlainText().toStdWString();
 
 

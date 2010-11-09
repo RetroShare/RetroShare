@@ -27,6 +27,7 @@
 
 #include "CreateChannel.h"
 #include "gui/common/PeerDefs.h"
+#include "util/misc.h"
 
 #include <retroshare/rschannels.h>
 #include <retroshare/rspeers.h>
@@ -154,7 +155,7 @@ void  CreateChannel::newChannel()
 
 void  CreateChannel::createChannel()
 {
-	QString name = ui.channelName->text();
+	QString name = misc::removeNewLine(ui.channelName->text());
 	QString desc = ui.channelDesc->toPlainText();
 	uint32_t flags = 0;
 

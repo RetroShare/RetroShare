@@ -364,6 +364,21 @@ class misc : public QObject{
 
 		return QString("%1 %2").arg(count, 0, 'f', decimal).arg(unit);
 	}
+
+	static QString removeNewLine(const QString &text)
+	{
+		return QString(text).replace("\n", " ");
+	}
+
+	static QString removeNewLine(const std::string &text)
+	{
+		return QString::fromUtf8(text.c_str()).replace("\n", " ");
+	}
+
+	static QString removeNewLine(const std::wstring &text)
+	{
+		return QString::fromStdWString(text).replace("\n", " ");
+	}
 };
 
 //  Trick to get a portable sleep() function
