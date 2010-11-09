@@ -260,8 +260,8 @@ Section $(sec_main) sec_main
   File /r "release\libgpg-error-0.dll"
   File /r "release\libgpgme-11.dll"
   File /r "changelog.txt"
+  File /r "release\bdboot.txt"
 
-  
 
 SectionEnd
 
@@ -278,10 +278,9 @@ Section  $(sec_data) sec_data
   SetOutPath "$APPDATA\RetroShare\plugins\"
   ;File /r "plugins\"
   
-  ; We're not ready for external skins...
-  ; Set Section qss need to remove svn path
+  ; Set Section qss and exclude svn
   SetOutPath "$INSTDIR\qss\"
-  File /r qss\*.*   
+  File /r /x .svn qss\*.*
   
   ; Set Section skin
   ; SetOutPath "$INSTDIR\skin\"
