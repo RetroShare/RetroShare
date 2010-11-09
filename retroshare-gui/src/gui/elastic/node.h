@@ -52,10 +52,12 @@ QT_BEGIN_NAMESPACE
 class QGraphicsSceneMouseEvent;
 QT_END_NAMESPACE
 
-class Node : public QGraphicsItem
+class Node : public QGraphicsObject
 {
+	Q_OBJECT
+
 public:
-    Node(const std::string& node_string,GraphWidget::NodeType type,GraphWidget::AuthType auth,GraphWidget *graphWidget);
+    Node(const std::string& node_string,GraphWidget::NodeType type,GraphWidget::AuthType auth,GraphWidget *graphWidget,const std::string& ssl_id,const std::string& gpg_id);
 
     void addEdge(Edge *edge);
     const QList<Edge *>& edges() const;
@@ -75,7 +77,13 @@ protected:
 
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
     virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+
+	 virtual void contextMenuEvent(QGraphicsSceneContextMenuEvent *) ;
     
+ protected slots:
+	 void denyFriend() ;
+	 void makeFriend() ;
+	 void peerDetails() ;
 private:
     QList<Edge *> edgeList;
     QPointF newPos;
@@ -87,6 +95,9 @@ private:
 	 GraphWidget::AuthType _auth ;
 	 bool mDeterminedBB ;
 	 int mBBWidth ;
+
+	 std::string _ssl_id ;
+	 std::string _gpg_id ;
 
 	 static const float MASS_FACTOR = 10 ;
 	 static const float FRICTION_FACTOR = 6.8 ;

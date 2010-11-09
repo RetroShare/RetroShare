@@ -39,20 +39,31 @@
 **
 ****************************************************************************/
 
+#include <math.h>
+
+#include <QApplication>
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
+#include <QAction>
+#include <QMenu>
 #include <QStyleOption>
 #include <iostream>
 
-#include <math.h>
+#include <gui/connect/ConfCertDialog.h>
 
+#include <retroshare/rspeers.h>
 #include "edge.h"
 #include "node.h"
 #include "graphwidget.h"
 
-Node::Node(const std::string& node_string,GraphWidget::NodeType type,GraphWidget::AuthType auth,GraphWidget *graphWidget)
-    : graph(graphWidget),_desc_string(node_string),_type(type),_auth(auth)
+#define IMAGE_AUTHED         ":/images/accepted16.png"
+#define IMAGE_DENIED         ":/images/denied16.png"
+#define IMAGE_TRUSTED        ":/images/rs-2.png"
+#define IMAGE_MAKEFRIEND     ":/images/user/add_user16.png"
+
+Node::Node(const std::string& node_string,GraphWidget::NodeType type,GraphWidget::AuthType auth,GraphWidget *graphWidget,const std::string& ssl_id,const std::string& gpg_id)
+    : graph(graphWidget),_desc_string(node_string),_type(type),_auth(auth),_ssl_id(ssl_id),_gpg_id(gpg_id)
 {
     setFlag(ItemIsMovable);
 #if QT_VERSION >= 0x040600
@@ -280,8 +291,36 @@ QVariant Node::itemChange(GraphicsItemChange change, const QVariant &value)
 
 void Node::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    update();
-    QGraphicsItem::mousePressEvent(event);
+	update();
+	QGraphicsItem::mousePressEvent(event);
+}
+
+void Node::peerDetails()
+{
+	std::cerr << "Calling peer details" << std::endl;
+    ConfCertDialog::showIt(_ssl_id, ConfCertDialog::PageDetails);
+}
+void Node::makeFriend()
+{
+	ConfCertDialog::showIt(_gpg_id, ConfCertDialog::PageTrust);
+}
+void Node::denyFriend()
+{
+	ConfCertDialog::showIt(_gpg_id, ConfCertDialog::PageTrust);
+}
+
+void Node::contextMenuEvent(QGraphicsSceneContextMenuEvent *event) 
+{
+	QMenu contextMnu ;
+
+	if(_type == GraphWidget::ELASTIC_NODE_TYPE_FRIEND)
+		contextMnu.addAction(QIcon(IMAGE_DENIED), QObject::tr( "Deny friend" ), this, SLOT(denyFriend()) );
+	else if(_type != GraphWidget::ELASTIC_NODE_TYPE_OWN)
+		contextMnu.addAction(QIcon(IMAGE_MAKEFRIEND), QObject::tr( "Make friend" ), this, SLOT(makeFriend()) );
+
+	contextMnu.addAction(QIcon(IMAGE_MAKEFRIEND), QObject::tr( "Peer details" ), this, SLOT(peerDetails()) );
+
+	contextMnu.exec(event->screenPos());
 }
 
 void Node::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)

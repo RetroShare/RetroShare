@@ -226,7 +226,7 @@ void  NetworkView::updateDisplay()
 
 			if(_node_ids.find(info.ssl_id) == _node_ids.end())
 			{
-				_node_ids[info.ssl_id] = ui.graphicsView->addNode("       "+detail.name +"("+detail.location+")", "("+detail.name+","+info.ssl_id+","+detail.gpg_id+")",type,auth);
+				_node_ids[info.ssl_id] = ui.graphicsView->addNode("       "+detail.name +"("+detail.location+")", "("+detail.name+","+info.ssl_id+","+detail.gpg_id+")",type,auth,info.ssl_id,info.gpg_id);
 #ifdef DEBUG_NETWORKVIEW
 				std::cerr << "  inserted node " << info.ssl_id << ", type=" << type << ", auth=" << auth << std::endl ;
 				std::cerr << "  NetworkView::updateDisplay() Added Friend: " << info.ssl_id << std::endl;

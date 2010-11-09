@@ -123,11 +123,11 @@ void fourn(double data[],unsigned long nn[],unsigned long ndim,int isign)
 GraphWidget::GraphWidget(QWidget *)
     : timerId(0)
 {
-    QGraphicsScene *scene = new QGraphicsScene(this);
+    QGraphicsScene *scene = new QGraphicsScene(QRectF(0,0,500,500),this);
     scene->setItemIndexMethod(QGraphicsScene::NoIndex);
 	 scene->clear() ;
-    scene->setSceneRect(-200, -200, 1000, 1000);
     setScene(scene);
+    scene->setSceneRect(0, 0, 500, 500);
 
     setCacheMode(CacheBackground);
     setViewportUpdateMode(BoundingRectViewportUpdate);
@@ -138,8 +138,8 @@ GraphWidget::GraphWidget(QWidget *)
 
 
     scale(qreal(0.8), qreal(0.8));
-    setMinimumSize(400, 400);
-    setWindowTitle(tr("Elastic Nodes"));
+    setMinimumSize(500, 500);
+    //setWindowTitle(tr("Elastic Nodes"));
 }
 
 void GraphWidget::clearGraph()
@@ -162,9 +162,9 @@ void GraphWidget::clearGraph()
 	_nodes.clear();
 }
 
-GraphWidget::NodeId GraphWidget::addNode(const std::string& node_short_string,const std::string& node_complete_string,NodeType type,AuthType auth)
+GraphWidget::NodeId GraphWidget::addNode(const std::string& node_short_string,const std::string& node_complete_string,NodeType type,AuthType auth,const std::string& ssl_id,const std::string& gpg_id)
 {
-    Node *node = new Node(node_short_string,type,auth,this);
+    Node *node = new Node(node_short_string,type,auth,this,ssl_id,gpg_id);
 	 node->setToolTip(QString::fromStdString(node_complete_string)) ;
 	 _nodes.push_back(node) ;
     scene()->addItem(node);
