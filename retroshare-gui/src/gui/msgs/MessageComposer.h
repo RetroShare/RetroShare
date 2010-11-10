@@ -107,6 +107,8 @@ private slots:
     void textStyle(int styleIndex);
     void textColor();
     void textAlign(QAction *a);
+    void smileyWidget();
+    void addSmileys();
 
     void currentCharFormatChanged(const QTextCharFormat &format);
     void cursorPositionChanged();

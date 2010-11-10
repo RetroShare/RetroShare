@@ -40,6 +40,7 @@
 #include "common/TagDefs.h"
 #include "common/PeerDefs.h"
 #include "common/RSItemDelegate.h"
+#include "common/Emoticons.h"
 
 #include <retroshare/rsinit.h>
 #include <retroshare/rspeers.h>
@@ -1664,27 +1665,27 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index, bool bSetToRead)
     /* iterate through the sources */
     std::list<std::string>::const_iterator pit;
 
-    QString msgTxt;
+    QString text;
     QString name;
     QString rsid;
     for(pit = msgInfo.msgto.begin(); pit != msgInfo.msgto.end(); pit++)
     {
         rsid = PeerDefs::rsidFromId(*pit, &name);
-        msgTxt += "<a style='color: black;'href='" + rsid + "'> " + name + "</a>" + "   ";
+        text += "<a style='color: black;'href='" + rsid + "'> " + name + "</a>" + "   ";
     }
-    ui.toText->setText(msgTxt);
+    ui.toText->setText(text);
 
     if (msgInfo.msgcc.size() > 0) {
         ui.cclabel->setVisible(true);
         ui.ccText->setVisible(true);
 
-        msgTxt.clear();
+        text.clear();
         for(pit = msgInfo.msgcc.begin(); pit != msgInfo.msgcc.end(); pit++)
         {
             rsid = PeerDefs::rsidFromId(*pit, &name);
-            msgTxt += "<a style='color: black;'href='" + rsid + "'> " + name + "</a>" + "   ";
+            text += "<a style='color: black;'href='" + rsid + "'> " + name + "</a>" + "   ";
         }
-        ui.ccText->setText(msgTxt);
+        ui.ccText->setText(text);
     } else {
         ui.cclabel->setVisible(false);
         ui.ccText->setVisible(false);
@@ -1695,13 +1696,13 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index, bool bSetToRead)
         ui.bcclabel->setVisible(true);
         ui.bccText->setVisible(true);
 
-        msgTxt.clear();
+        text.clear();
         for(pit = msgInfo.msgbcc.begin(); pit != msgInfo.msgbcc.end(); pit++)
         {
             rsid = PeerDefs::rsidFromId(*pit, &name);
-            msgTxt += "<a style='color: black;'href='" + rsid + "'> " + name + "</a>" + "   ";
+            text += "<a style='color: black;'href='" + rsid + "'> " + name + "</a>" + "   ";
         }
-        ui.bccText->setText(msgTxt);
+        ui.bccText->setText(text);
     } else {
         ui.bcclabel->setVisible(false);
         ui.bccText->setVisible(false);
@@ -1723,13 +1724,16 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index, bool bSetToRead)
         sSrcId = msgInfo.srcId;
     }
     rsid = PeerDefs::rsidFromId(sSrcId, &name);
-    msgTxt += "<a style='color: black;'href='" + rsid + "'> " + name + "</a>" + "   ";
+    text += "<a style='color: black;'href='" + rsid + "'> " + name + "</a>" + "   ";
 
     ui.fromText->setText("<a style='color: blue;' href='" + rsid + "'> " + name +"</a>");
     ui.fromText->setToolTip(rsid);
 
     ui.subjectText->setText(QString::fromStdWString(msgInfo.title));
-    ui.msgText->setHtml(QString::fromStdWString(msgInfo.msg));
+
+    text = QString::fromStdWString(msgInfo.msg);
+    Emoticons::formatText(text);
+    ui.msgText->setHtml(text);
 
     {
         std::ostringstream out;

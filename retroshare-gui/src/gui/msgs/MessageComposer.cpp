@@ -50,6 +50,7 @@
 #include "gui/RetroShareLink.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/feeds/AttachFileItem.h"
+#include "gui/common/Emoticons.h"
 #include "textformat.h"
 #include "util/misc.h"
 
@@ -131,6 +132,7 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
     connect(ui.italicbtn, SIGNAL(clicked()), this, SLOT(textItalic()));
     connect(ui.colorbtn, SIGNAL(clicked()), this, SLOT(textColor()));
     connect(ui.imagebtn, SIGNAL(clicked()), this, SLOT(addImage()));
+    connect(ui.emoticonButton, SIGNAL(clicked()), this, SLOT(smileyWidget()));
     //connect(ui.linkbtn, SIGNAL(clicked()), this, SLOT(insertLink()));
     connect(ui.actionContactsView, SIGNAL(triggered()), this, SLOT(toggleContacts()));
     connect(ui.actionSaveas, SIGNAL(triggered()), this, SLOT(saveasDraft()));
@@ -1775,6 +1777,16 @@ void MessageComposer::textAlign(QAction *a)
         ui.msgText->setAlignment(Qt::AlignRight);
     else if (a == actionAlignJustify)
         ui.msgText->setAlignment(Qt::AlignJustify);
+}
+
+void MessageComposer::smileyWidget()
+{
+    Emoticons::showSmileyWidget(this, ui.emoticonButton, SLOT(addSmileys()), false);
+}
+
+void MessageComposer::addSmileys()
+{
+    ui.msgText->textCursor().insertText(qobject_cast<QPushButton*>(sender())->toolTip().split("|").first());
 }
 
 void MessageComposer::currentCharFormatChanged(const QTextCharFormat &format)

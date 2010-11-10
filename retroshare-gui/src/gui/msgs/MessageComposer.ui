@@ -17,7 +17,7 @@
    <string>Compose</string>
   </property>
   <property name="windowIcon">
-   <iconset>
+   <iconset resource="../images.qrc">
     <normaloff>:/images/folder-draft.png</normaloff>:/images/folder-draft.png</iconset>
   </property>
   <property name="styleSheet">
@@ -364,7 +364,7 @@ border: 1px solid #CCCCCC;}</string>
                 </property>
                </widget>
               </item>
-              <item row="0" column="3">
+              <item row="0" column="4">
                <widget class="QToolButton" name="sizeincreaseButton">
                 <property name="maximumSize">
                  <size>
@@ -379,7 +379,7 @@ border: 1px solid #CCCCCC;}</string>
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset>
+                 <iconset resource="../images.qrc">
                   <normaloff>:/images/textedit/format_font_size_more.png</normaloff>:/images/textedit/format_font_size_more.png</iconset>
                 </property>
                 <property name="iconSize">
@@ -393,7 +393,7 @@ border: 1px solid #CCCCCC;}</string>
                 </property>
                </widget>
               </item>
-              <item row="0" column="4">
+              <item row="0" column="5">
                <widget class="QToolButton" name="sizedecreaseButton">
                 <property name="maximumSize">
                  <size>
@@ -408,7 +408,7 @@ border: 1px solid #CCCCCC;}</string>
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset>
+                 <iconset resource="../images.qrc">
                   <normaloff>:/images/textedit/format_font_size_less.png</normaloff>:/images/textedit/format_font_size_less.png</iconset>
                 </property>
                 <property name="iconSize">
@@ -422,7 +422,7 @@ border: 1px solid #CCCCCC;}</string>
                 </property>
                </widget>
               </item>
-              <item row="0" column="5">
+              <item row="0" column="6">
                <widget class="QToolButton" name="boldbtn">
                 <property name="minimumSize">
                  <size>
@@ -443,7 +443,7 @@ border: 1px solid #CCCCCC;}</string>
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset>
+                 <iconset resource="../images.qrc">
                   <normaloff>:/images/textedit/textbold.png</normaloff>:/images/textedit/textbold.png</iconset>
                 </property>
                 <property name="iconSize">
@@ -460,7 +460,7 @@ border: 1px solid #CCCCCC;}</string>
                 </property>
                </widget>
               </item>
-              <item row="0" column="6">
+              <item row="0" column="7">
                <widget class="QToolButton" name="underlinebtn">
                 <property name="minimumSize">
                  <size>
@@ -481,7 +481,7 @@ border: 1px solid #CCCCCC;}</string>
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset>
+                 <iconset resource="../images.qrc">
                   <normaloff>:/images/textedit/textunder.png</normaloff>:/images/textedit/textunder.png</iconset>
                 </property>
                 <property name="iconSize">
@@ -498,7 +498,7 @@ border: 1px solid #CCCCCC;}</string>
                 </property>
                </widget>
               </item>
-              <item row="0" column="7">
+              <item row="0" column="8">
                <widget class="QToolButton" name="italicbtn">
                 <property name="minimumSize">
                  <size>
@@ -519,7 +519,7 @@ border: 1px solid #CCCCCC;}</string>
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset>
+                 <iconset resource="../images.qrc">
                   <normaloff>:/images/textedit/textitalic.png</normaloff>:/images/textedit/textitalic.png</iconset>
                 </property>
                 <property name="iconSize">
@@ -536,7 +536,7 @@ border: 1px solid #CCCCCC;}</string>
                 </property>
                </widget>
               </item>
-              <item row="0" column="9">
+              <item row="0" column="10">
                <widget class="QToolButton" name="colorbtn">
                 <property name="minimumSize">
                  <size>
@@ -561,7 +561,7 @@ border: 1px solid #CCCCCC;}</string>
                 </property>
                </widget>
               </item>
-              <item row="0" column="10">
+              <item row="0" column="11">
                <widget class="QToolButton" name="textalignmentbtn">
                 <property name="minimumSize">
                  <size>
@@ -595,7 +595,7 @@ border: 1px solid #CCCCCC;}</string>
                 </property>
                </widget>
               </item>
-              <item row="0" column="11">
+              <item row="0" column="12">
                <widget class="QToolButton" name="imagebtn">
                 <property name="minimumSize">
                  <size>
@@ -616,7 +616,7 @@ border: 1px solid #CCCCCC;}</string>
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset>
+                 <iconset resource="../images.qrc">
                   <normaloff>:/images/add_image24.png</normaloff>:/images/add_image24.png</iconset>
                 </property>
                 <property name="iconSize">
@@ -630,7 +630,7 @@ border: 1px solid #CCCCCC;}</string>
                 </property>
                </widget>
               </item>
-              <item row="0" column="8">
+              <item row="0" column="9">
                <widget class="QToolButton" name="codeButton">
                 <property name="toolTip">
                  <string>Sets text font to code style</string>
@@ -639,7 +639,7 @@ border: 1px solid #CCCCCC;}</string>
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset>
+                 <iconset resource="../images.qrc">
                   <normaloff>:/images/textedit/hi22-action-format-text-code.png</normaloff>:/images/textedit/hi22-action-format-text-code.png</iconset>
                 </property>
                 <property name="iconSize">
@@ -653,7 +653,7 @@ border: 1px solid #CCCCCC;}</string>
                 </property>
                </widget>
               </item>
-              <item row="0" column="14">
+              <item row="0" column="16">
                <spacer>
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
@@ -665,6 +665,23 @@ border: 1px solid #CCCCCC;}</string>
                  </size>
                 </property>
                </spacer>
+              </item>
+              <item row="0" column="3">
+               <widget class="QToolButton" name="emoticonButton">
+                <property name="icon">
+                 <iconset resource="../images.qrc">
+                  <normaloff>:/images/emoticons/kopete/kopete020.png</normaloff>:/images/emoticons/kopete/kopete020.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>24</width>
+                  <height>24</height>
+                 </size>
+                </property>
+                <property name="autoRaise">
+                 <bool>true</bool>
+                </property>
+               </widget>
               </item>
              </layout>
             </item>
@@ -861,7 +878,7 @@ border: 1px solid #CCCCCC;}</string>
   </widget>
   <action name="actionSend">
    <property name="icon">
-    <iconset>
+    <iconset resource="../images.qrc">
      <normaloff>:/images/send24.png</normaloff>:/images/send24.png</iconset>
    </property>
    <property name="text">
@@ -873,7 +890,7 @@ border: 1px solid #CCCCCC;}</string>
   </action>
   <action name="actionReply">
    <property name="icon">
-    <iconset>
+    <iconset resource="../images.qrc">
      <normaloff>:/images/replymail24.png</normaloff>:/images/replymail24.png</iconset>
    </property>
    <property name="text">
@@ -882,7 +899,7 @@ border: 1px solid #CCCCCC;}</string>
   </action>
   <action name="actionContactsView">
    <property name="icon">
-    <iconset>
+    <iconset resource="../images.qrc">
      <normaloff>:/images/contacts24.png</normaloff>:/images/contacts24.png</iconset>
    </property>
    <property name="text">
@@ -894,7 +911,7 @@ border: 1px solid #CCCCCC;}</string>
   </action>
   <action name="actionSaveas">
    <property name="icon">
-    <iconset>
+    <iconset resource="../images.qrc">
      <normaloff>:/images/save24.png</normaloff>:/images/save24.png</iconset>
    </property>
    <property name="text">
@@ -906,7 +923,7 @@ border: 1px solid #CCCCCC;}</string>
   </action>
   <action name="actionAttach">
    <property name="icon">
-    <iconset>
+    <iconset resource="../images.qrc">
      <normaloff>:/images/attach.png</normaloff>:/images/attach.png</iconset>
    </property>
    <property name="text">
@@ -921,7 +938,7 @@ border: 1px solid #CCCCCC;}</string>
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset>
+    <iconset resource="../images.qrc">
      <normaloff>:/images/quote_24.png</normaloff>:/images/quote_24.png</iconset>
    </property>
    <property name="text">
@@ -937,6 +954,8 @@ border: 1px solid #CCCCCC;}</string>
   <tabstop>msgText</tabstop>
   <tabstop>msgFileList</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="../images.qrc"/>
+ </resources>
  <connections/>
 </ui>
