@@ -1194,9 +1194,7 @@ bool 	ftController::FileRequest(const std::string& fname, const std::string& has
 			destination = mDownloadPath + "/" + fname;
 	} /******* UNLOCKED ********/
 
-  // We check that flags are consistent.  In particular, for know
-  // we can't send chunkmaps through normal traffic, so availability must be assumed whenever the traffic is not
-  // a turtle traffic:
+  // We check that flags are consistent.  
   
   	if(flags & RS_FILE_HINTS_NETWORK_WIDE)
 		mTurtle->monitorFileTunnels(fname,hash,size) ;

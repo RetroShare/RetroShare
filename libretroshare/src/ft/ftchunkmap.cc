@@ -392,32 +392,40 @@ uint32_t ChunkMap::getAvailableChunk(const std::string& peer_id,bool& map_is_too
 	else
 		map_is_too_old = false ;// the map is not too old
 
-	uint32_t start_location = (_strategy == FileChunksInfo::CHUNK_STRATEGY_STREAMING)?0:(rand()%_map.size()) ;
+	uint32_t available_chunks = 0 ;
 
 	for(unsigned int i=0;i<_map.size();++i)
-	{
-		uint32_t j = (start_location+i)%(int)_map.size() ;	// index of the chunk
-
-		if(_map[j] == FileChunksInfo::CHUNK_OUTSTANDING && (peer_chunks->is_full || peer_chunks->cmap[j]))
+		if(_map[i] == FileChunksInfo::CHUNK_OUTSTANDING && (peer_chunks->is_full || peer_chunks->cmap[i]))
 		{
 			if(_strategy == FileChunksInfo::CHUNK_STRATEGY_STREAMING)
-				return j ;
-			else
 			{
-				// reserve a series of available chunks
-				//
-				uint32_t k=0 ;
-
-				for(;k+j<_map.size() && (_map[k+j] == FileChunksInfo::CHUNK_OUTSTANDING && (peer_chunks->is_full || peer_chunks->cmap[k+j]));++k) ;
-
 #ifdef DEBUG_FTCHUNK
-				std::cerr << "ChunkMap::getAvailableChunk: returning chunk " << j+k << " for peer " << peer_id << std::endl;
+				std::cerr << "ChunkMap::getAvailableChunk: returning chunk " << i << " for peer " << peer_id << std::endl;
 #endif
-				// ...and select one randomly
-				//
-				return (rand()%k) + j ;
+				return i ;
 			}
+			else
+				++available_chunks ;
 		}
+
+	if(available_chunks > 0)
+	{
+		uint32_t chosen_chunk_number = rand() % available_chunks ;
+		uint32_t j=0 ;
+
+		for(uint32_t i=0;i<_map.size();++i)
+			if(_map[i] == FileChunksInfo::CHUNK_OUTSTANDING && (peer_chunks->is_full || peer_chunks->cmap[i]))
+			{
+				if(j == chosen_chunk_number)
+				{
+#ifdef DEBUG_FTCHUNK
+					std::cerr << "ChunkMap::getAvailableChunk: returning chunk " << i << " for peer " << peer_id << std::endl;
+#endif
+					return i ;
+				}
+				else
+					++j ;
+			}
 	}
 
 #ifdef DEBUG_FTCHUNK
