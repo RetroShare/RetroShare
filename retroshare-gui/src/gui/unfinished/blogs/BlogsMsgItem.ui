@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>516</width>
-    <height>327</height>
+    <height>294</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -61,38 +61,7 @@ border-radius: 10px;}</string>
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
-      <item row="1" column="0">
-       <widget class="QFrame" name="expandFrame">
-        <property name="styleSheet">
-         <string notr="true">QFrame#expandFrame{border: 2px solid #D3D3D3;
-background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, 
-stop:0 #FFFFFF, stop:1 #F2F2F2);;
-border-radius: 10px;}</string>
-        </property>
-        <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
-        </property>
-        <layout class="QVBoxLayout">
-         <item>
-          <widget class="QLabel" name="msgLabel">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Comments here</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item row="0" column="0">
+      <item row="0" column="0" colspan="2">
        <layout class="QGridLayout" name="gridLayout">
         <item row="0" column="0" colspan="3">
          <widget class="QLabel" name="titleLabel">
@@ -170,7 +139,7 @@ p, li { white-space: pre-wrap; }
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../images.qrc">
+           <iconset resource="../../images.qrc">
             <normaloff>:/images/edit_add24.png</normaloff>:/images/edit_add24.png</iconset>
           </property>
          </widget>
@@ -190,7 +159,7 @@ p, li { white-space: pre-wrap; }
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../images.qrc">
+           <iconset resource="../../images.qrc">
             <normaloff>:/images/close_normal.png</normaloff>:/images/close_normal.png</iconset>
           </property>
          </widget>
@@ -210,7 +179,7 @@ p, li { white-space: pre-wrap; }
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../images.qrc">
+           <iconset resource="../../images.qrc">
             <normaloff>:/images/mail_delete.png</normaloff>:/images/mail_delete.png</iconset>
           </property>
          </widget>
@@ -232,34 +201,74 @@ border-radius: 10px;}</string>
         </item>
        </layout>
       </item>
+      <item row="1" column="0" colspan="2">
+       <widget class="QFrame" name="expandFrame">
+        <property name="styleSheet">
+         <string notr="true">QFrame#expandFrame{border: 2px solid #D3D3D3;
+background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, 
+stop:0 #FFFFFF, stop:1 #F2F2F2);;
+border-radius: 10px;}</string>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <layout class="QVBoxLayout">
+         <item>
+          <widget class="QLabel" name="msgLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Comments here</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="2" column="0" colspan="2">
+       <widget class="QTextEdit" name="commentEdit">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>60</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>398</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="3" column="1">
+       <widget class="QPushButton" name="commentButton">
+        <property name="text">
+         <string>Comment</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
   </layout>
  </widget>
  <resources>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
+  <include location="../../images.qrc"/>
  </resources>
  <connections/>
 </ui>
