@@ -166,6 +166,8 @@ private slots:
     void displayMenu();
     void statusColumn();
 
+    void newsFeedChanged(int count);
+
 signals:
     void friendsUpdated() ;
     void notifyGroupChat(const QString&,const QString&) ;
@@ -207,6 +209,10 @@ private:
     time_t last_status_send_time ;
 
     QFont mCurrentFont; /* how the text will come out */
+
+    int newsFeedTabIndex;
+    QColor newsFeedTabColor;
+    QString newsFeedText;
 
     /** Qt Designer generated object */
     Ui::PeersDialog ui;

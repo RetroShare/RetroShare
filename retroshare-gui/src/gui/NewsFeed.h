@@ -45,6 +45,9 @@ public:
   virtual void deleteFeedItem(QWidget *item, uint32_t type);
   virtual void openChat(std::string peerId);
 
+signals:
+  void newsFeedChanged(int count);
+
 private slots:
  // void toggleChanMsgItems(bool on);
  
@@ -70,6 +73,8 @@ private:
   void	addFeedItemChatNew(RsFeedItem &fi);
   void	addFeedItemMessage(RsFeedItem &fi);
   void	addFeedItemFilesNew(RsFeedItem &fi);
+
+  void sendNewsFeedChanged();
 
   QLayout *mLayout;
   QObjectList widgetList;

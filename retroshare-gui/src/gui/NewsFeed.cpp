@@ -162,6 +162,8 @@ void NewsFeed::addFeedItem(QWidget *item)
 	connect(item, SIGNAL(destroyed(QObject*)), this, SLOT(itemDestroyed(QObject*)));
 	widgetList.push_back(item);
 
+	sendNewsFeedChanged();
+
 	if (Settings->getAddFeedsAtEnd()) {
 		verticalLayout->addWidget(item);
 	} else {
@@ -452,6 +454,8 @@ void NewsFeed::itemDestroyed(QObject *item)
 	if (index >= 0) {
 		widgetList.removeAt(index);
 	}
+
+	sendNewsFeedChanged();
 }
 
 void NewsFeed::removeAll()
@@ -467,4 +471,19 @@ void NewsFeed::removeAll()
 			item->deleteLater();
 		}
 	}
+}
+
+void NewsFeed::sendNewsFeedChanged()
+{
+	int count = 0;
+
+	QObjectList::iterator it;
+	for (it = widgetList.begin(); it != widgetList.end(); it++) {
+		if (dynamic_cast<PeerItem*>(*it) == NULL) {
+			/* don't count PeerItem's */
+			count++;
+		}
+	}
+
+	emit newsFeedChanged(count);
 }

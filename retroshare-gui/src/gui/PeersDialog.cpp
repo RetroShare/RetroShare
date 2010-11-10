@@ -90,6 +90,8 @@
 #define IMAGE_REMOVE             ":/images/delete.png"
 #define IMAGE_EXPAND             ":/images/edit_add24.png"
 #define IMAGE_COLLAPSE           ":/images/edit_remove24.png"
+#define IMAGE_NEWSFEED           ""
+#define IMAGE_NEWSFEED_NEW       ":/images/message-state-new.png"
 
 #define COLUMN_COUNT    3
 #define COLUMN_NAME     0
@@ -140,8 +142,16 @@ PeersDialog::PeersDialog(QWidget *parent)
     connect(ui.action_Hide_Status_Column, SIGNAL(triggered()), this, SLOT(statusColumn()));
 
     ui.peertabWidget->setTabPosition(QTabWidget::North);
-    ui.peertabWidget->addTab(new ProfileWidget(),QString(tr("Profile")));
-    ui.peertabWidget->addTab(new NewsFeed(),QString(tr("Friends Storm")));
+    ui.peertabWidget->addTab(new ProfileWidget(), tr("Profile"));
+    NewsFeed *newsFeed = new NewsFeed();
+    newsFeedTabIndex = ui.peertabWidget->addTab(newsFeed, tr("Friends Storm"));
+    ui.peertabWidget->tabBar()->setIconSize(QSize(10, 10));
+
+    /* get the current text and text color of the tab bar */
+    newsFeedTabColor = ui.peertabWidget->tabBar()->tabTextColor(newsFeedTabIndex);
+    newsFeedText = ui.peertabWidget->tabBar()->tabText(newsFeedTabIndex);
+
+    connect(newsFeed, SIGNAL(newsFeedChanged(int)), this, SLOT(newsFeedChanged(int)));
 
     ui.peertreeWidget->setColumnCount(4);
     ui.peertreeWidget->setColumnHidden ( 3, true);
@@ -2152,4 +2162,17 @@ void PeersDialog::groupsChanged(int type)
     Q_UNUSED(type);
 
     groupsHasChanged = true;
+}
+
+void PeersDialog::newsFeedChanged(int count)
+{
+    if (count) {
+        ui.peertabWidget->tabBar()->setTabText(newsFeedTabIndex, QString("%1 (%2)").arg(newsFeedText).arg(count));
+        ui.peertabWidget->tabBar()->setTabTextColor(newsFeedTabIndex, Qt::blue);
+        ui.peertabWidget->tabBar()->setTabIcon(newsFeedTabIndex, QIcon(IMAGE_NEWSFEED_NEW));
+    } else {
+        ui.peertabWidget->tabBar()->setTabText(newsFeedTabIndex, newsFeedText);
+        ui.peertabWidget->tabBar()->setTabTextColor(newsFeedTabIndex, newsFeedTabColor);
+        ui.peertabWidget->tabBar()->setTabIcon(newsFeedTabIndex,  QIcon(IMAGE_NEWSFEED));
+    }
 }
