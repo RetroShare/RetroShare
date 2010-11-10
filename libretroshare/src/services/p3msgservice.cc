@@ -173,7 +173,7 @@ int 	p3MsgService::incomingMsgs()
 		RsMsgSrcId* msi = new RsMsgSrcId();
 		msi->msgId = mi->msgId;
 		msi->srcId = mi->PeerId();
-		mSrcIdList.push_back(msi);
+		mSrcIds.insert(std::pair<uint32_t, RsMsgSrcId*>(msi->msgId, msi));
 		msgChanged.IndicateChanged();
 		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
@@ -259,6 +259,12 @@ int     p3MsgService::checkOutgoingMessages()
 			{
 				msgOutgoing.erase(mit);
 			}
+
+			std::map<uint32_t, RsMsgSrcId*>::iterator srcIt = mSrcIds.find(*it);
+			if (srcIt != mSrcIds.end()) {
+				delete (srcIt->second);
+				mSrcIds.erase(srcIt);
+			}
 		}
 
 		if (toErase.size() > 0)
@@ -285,7 +291,7 @@ std::list<RsItem*>    p3MsgService::saveList(bool& cleanup)
 	std::map<uint32_t, RsMsgItem *>::iterator mit;
 	std::map<uint32_t, RsMsgTagType* >::iterator mit2;
 	std::map<uint32_t, RsMsgTags* >::iterator mit3;
-	std::list<RsMsgSrcId* >::iterator lit;
+	std::map<uint32_t, RsMsgSrcId* >::iterator lit;
 	std::map<uint32_t, RsMsgParentId* >::iterator mit4;
 
     MsgTagType stdTags;
@@ -297,8 +303,8 @@ std::list<RsItem*>    p3MsgService::saveList(bool& cleanup)
 	for(mit = imsg.begin(); mit != imsg.end(); mit++)
 		itemList.push_back(mit->second);
 
-	for(lit = mSrcIdList.begin(); lit != mSrcIdList.end(); lit++)
-		itemList.push_back(*lit);
+	for(lit = mSrcIds.begin(); lit != mSrcIds.end(); lit++)
+		itemList.push_back(lit->second);
 
 
 	for(mit = msgOutgoing.begin(); mit != msgOutgoing.end(); mit++)
@@ -419,7 +425,7 @@ bool    p3MsgService::loadList(std::list<RsItem*> load)
 		else if(NULL != (msi = dynamic_cast<RsMsgSrcId *>(*it)))
 		{
 			srcIdMsgMap.insert(std::pair<uint32_t, std::string>(msi->msgId, msi->srcId));
-			mSrcIdList.push_back(msi); // does not need to be kept
+			mSrcIds.insert(std::pair<uint32_t, RsMsgSrcId*>(msi->msgId, msi)); // does not need to be kept
 		}
 		else if(NULL != (msp = dynamic_cast<RsMsgParentId *>(*it)))
 		{
@@ -438,12 +444,19 @@ bool    p3MsgService::loadList(std::list<RsItem*> load)
 		    mitem->msgId = getNewUniqueMsgId();
 		}
 
+		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+
+		srcIt = srcIdMsgMap.find(mitem->msgId);
+		if(srcIt != srcIdMsgMap.end()) {
+			mitem->PeerId(srcIt->second);
+			srcIdMsgMap.erase(srcIt);
+		}
+
 		/* switch depending on the PENDING
 		 * flags
 		 */
 		if (mitem -> msgFlags & RS_MSG_FLAGS_PENDING)
 		{
-			RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
 			//std::cerr << "MSG_PENDING";
 			//std::cerr << std::endl;
@@ -453,13 +466,18 @@ bool    p3MsgService::loadList(std::list<RsItem*> load)
 		}
 		else
 		{
-			RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
-			srcIt = srcIdMsgMap.find(mitem->msgId);
-
-			if(srcIt != srcIdMsgMap.end())
-				mitem->PeerId(srcIt->second);
-
 			imsg[mitem->msgId] = mitem;
+		}
+	}
+
+	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+
+	/* remove missing msgId in mSrcIds */
+	for (srcIt = srcIdMsgMap.begin(); srcIt != srcIdMsgMap.end(); srcIt++) {
+		std::map<uint32_t, RsMsgSrcId*>::iterator it = mSrcIds.find(srcIt->first);
+		if (it != mSrcIds.end()) {
+			delete(it->second);
+			mSrcIds.erase(it);
 		}
 	}
 
@@ -647,6 +665,13 @@ bool    p3MsgService::removeMsgId(const std::string &mid)
 			msgOutgoing.erase(mit);
 			delete mi;
 		}
+
+		std::map<uint32_t, RsMsgSrcId*>::iterator srcIt = mSrcIds.find(msgId);
+		if (srcIt != mSrcIds.end()) {
+			changed = true;
+			delete (srcIt->second);
+			mSrcIds.erase(srcIt);
+		}
 	}
 
 	if(changed) {
@@ -812,16 +837,22 @@ int     p3MsgService::sendMessage(RsMsgItem *item)
 
 	item -> msgId = getNewUniqueMsgId(); /* grabs Mtx as well */
 
-      {
-	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+	{
+		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
-	/* add pending flag */
-	item->msgFlags |= 
-		(RS_MSG_FLAGS_OUTGOING | 
-		 RS_MSG_FLAGS_PENDING);
-	/* STORE MsgID */
-	msgOutgoing[item->msgId] = item;
-      }
+		/* add pending flag */
+		item->msgFlags |= (RS_MSG_FLAGS_OUTGOING | RS_MSG_FLAGS_PENDING);
+		/* STORE MsgID */
+		msgOutgoing[item->msgId] = item;
+
+		if (item->PeerId() != mConnMgr->getOwnId()) {
+			/* not to the loopback device */
+			RsMsgSrcId* msi = new RsMsgSrcId();
+			msi->msgId = item->msgId;
+			msi->srcId = item->PeerId();
+			mSrcIds.insert(std::pair<uint32_t, RsMsgSrcId*>(msi->msgId, msi));
+		}
+	}
 
 	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 

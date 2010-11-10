@@ -136,7 +136,7 @@ void    initStandardTagTypes();
 	uint32_t mMsgUniqueId;
 
 	// used delete msgSrcIds after config save
-	std::list<RsMsgSrcId*> mSrcIdList;
+        std::map<uint32_t, RsMsgSrcId*> mSrcIds;
 
 	// save the parent of the messages in draft for replied and forwarded
 	std::map<uint32_t, RsMsgParentId*> mParentId;
