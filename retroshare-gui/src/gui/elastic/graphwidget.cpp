@@ -123,11 +123,11 @@ void fourn(double data[],unsigned long nn[],unsigned long ndim,int isign)
 GraphWidget::GraphWidget(QWidget *)
     : timerId(0)
 {
-    QGraphicsScene *scene = new QGraphicsScene(QRectF(0,0,500,500),this);
-    scene->setItemIndexMethod(QGraphicsScene::NoIndex);
-	 scene->clear() ;
-    setScene(scene);
-    scene->setSceneRect(0, 0, 500, 500);
+//    QGraphicsScene *scene = new QGraphicsScene(QRectF(0,0,500,500),this);
+//    scene->setItemIndexMethod(QGraphicsScene::NoIndex);
+//	 scene->clear() ;
+//    setScene(scene);
+//    scene->setSceneRect(0, 0, 500, 500);
 
     setCacheMode(CacheBackground);
     setViewportUpdateMode(BoundingRectViewportUpdate);

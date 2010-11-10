@@ -65,6 +65,7 @@
 Node::Node(const std::string& node_string,GraphWidget::NodeType type,GraphWidget::AuthType auth,GraphWidget *graphWidget,const std::string& ssl_id,const std::string& gpg_id)
     : graph(graphWidget),_desc_string(node_string),_type(type),_auth(auth),_ssl_id(ssl_id),_gpg_id(gpg_id)
 {
+	std::cerr << "Created node type " << type << ", string=" << node_string << std::endl ;
     setFlag(ItemIsMovable);
 #if QT_VERSION >= 0x040600
     setFlag(ItemSendsGeometryChanges);

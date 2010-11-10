@@ -45,6 +45,9 @@ NetworkView::NetworkView(QWidget *parent)
   ui.setupUi(this);
 
   mScene = new QGraphicsScene();
+  mScene->setItemIndexMethod(QGraphicsScene::NoIndex);
+  mScene->setSceneRect(-200, -200, 1200, 1200);
+
   ui.graphicsView->setScene(mScene);
   ui.graphicsView->setEdgeLength(ui.edgeLengthSB->value()) ;
 
@@ -242,6 +245,20 @@ void  NetworkView::updateDisplay()
 					nodes_to_treat.push_front( NodeInfo("unknown",*sit,info.friend_level + 1) ) ;
 					nodes_considered.insert(*sit) ;
 				}
+		
+			// now insert in list the GPG signers that are not our friends, to get 2nd order peers in the network.
+			//
+			for(std::list<std::string>::const_iterator sit(detail.gpgSigners.begin()); sit != detail.gpgSigners.end(); ++sit)
+				if(nodes_considered.find(*sit) == nodes_considered.end() && gpg_friends.find(*sit) == gpg_friends.end())
+				{
+#ifdef DEBUG_NETWORKVIEW
+					std::cerr << "  adding to queue: " << *sit << ", with level " << info.friend_level+1 << std::endl ;
+#endif
+					nodes_to_treat.push_front( NodeInfo(*sit,*sit,info.friend_level + 1) ) ;
+					nodes_considered.insert(*sit) ;
+					gpg_friends.insert(*sit) ;
+				}
+
 		}
 	}
 
