@@ -45,6 +45,12 @@ const int PQISTREAM_ABS_MAX = 100000000; /* 100 MB/sec (actually per loop) */
 #define RSITEM_DEBUG 1
  ***/
 
+#define DEBUG_TRANSFER	 1
+
+#ifdef DEBUG_TRANSFER
+	#include "util/rsprint.h"
+#endif
+
 
 pqistreamer::pqistreamer(RsSerialiser *rss, std::string id, BinInterface *bio_in, int bio_flags_in)
 	:PQInterface(id), rsSerialiser(rss), bio(bio_in), bio_flags(bio_flags_in), 
@@ -451,6 +457,20 @@ int	pqistreamer::handleoutgoing()
 
 		if ((!(bio->cansend())) || (maxbytes < sentbytes))
 		{
+
+#ifdef DEBUG_TRANSFER
+			if (maxbytes < sentbytes)
+			{
+				std::cerr << "pqistreamer::handleoutgoing() Stopped sending sentbytes > maxbytes. Sent " << sentbytes << " bytes ";
+				std::cerr << std::endl;
+			}
+			else
+			{
+				std::cerr << "pqistreamer::handleoutgoing() Stopped sending at cansend() is false";
+				std::cerr << std::endl;
+			}
+#endif
+
 			outSentBytes(sentbytes);
 			return 0;
 		}
@@ -463,11 +483,20 @@ int	pqistreamer::handleoutgoing()
 			{
 				pkt_wpending = *(out_pkt.begin()); 
 				out_pkt.pop_front();
+#ifdef DEBUG_TRANSFER
+				std::cerr << "pqistreamer::handleoutgoing() getting next pkt from out_pkt queue";
+				std::cerr << std::endl;
+#endif
+
 			}
 			else if (out_data.size() > 0)
 			{
 				pkt_wpending = *(out_data.begin()); 
 				out_data.pop_front();
+#ifdef DEBUG_TRANSFER
+				std::cerr << "pqistreamer::handleoutgoing() getting next pkt from out_data queue";
+				std::cerr << std::endl;
+#endif
 			}
 		}
 
@@ -493,6 +522,11 @@ int	pqistreamer::handleoutgoing()
 				// ensuring exactly the same data is written (openSSL requirement).
 				return -1;
 			}
+
+#ifdef DEBUG_TRANSFER
+			std::cerr << "pqistreamer::handleoutgoing() Sent Packet len: " << len << " @ " << RsUtil::AccurateTimeString();
+			std::cerr << std::endl;
+#endif
 
 //			out << " Success!" << ", sent " << len << " bytes" << std::endl;
 			//			std::cerr << out.str() ;
@@ -785,6 +819,14 @@ continue_packet:
 
 	if(maxin > readbytes && bio->moretoread())
 		goto start_packet_read ;
+
+#ifdef DEBUG_TRANSFER
+	if (readbytes >= maxin)
+	{
+		std::cerr << "pqistreamer::handleincoming() Stopped reading as readbytes >= maxin. Read " << readbytes << " bytes ";
+		std::cerr << std::endl;
+	}
+#endif
 
 	inReadBytes(readbytes);
 	return 0;
