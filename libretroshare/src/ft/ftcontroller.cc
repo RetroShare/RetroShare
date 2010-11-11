@@ -98,7 +98,8 @@ ftController::ftController(CacheStrapper *cs, ftDataMultiplex *dm, std::string c
 	mDataplex(dm),
 	mTurtle(NULL), 
 	mFtActive(false),
-	mShareDownloadDir(true)
+	mShareDownloadDir(true),
+	mDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_RANDOM) 
 {
 	_max_active_downloads = 5 ; // default queue size
 	/* TODO */

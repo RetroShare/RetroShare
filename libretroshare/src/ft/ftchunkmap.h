@@ -121,8 +121,8 @@ class ChunkMap
 
       /// Decides how chunks are selected. 
       ///    STREAMING: the 1st chunk is always returned
-      ///       RANDOM: the beginning of a random interval is selected first. If two few intervals 
-      ///                exist, the largest one is randomly split into two.
+      ///       RANDOM: a uniformly random chunk is selected among available chunks for the current source.
+      ///              
 
 		void setStrategy(FileChunksInfo::ChunkStrategy s) { _strategy = s ; }
 		FileChunksInfo::ChunkStrategy getStrategy() const { return _strategy ; }
