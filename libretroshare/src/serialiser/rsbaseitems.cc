@@ -32,6 +32,12 @@
 #define RSSERIAL_DEBUG 1
 ***/
 
+#define TRANSFER_DEBUG 1
+
+#ifdef TRANSFER_DEBUG
+	#include "util/rsprint.h"
+#endif
+
 #include <iostream>
 
 /*************************************************************************/
@@ -168,8 +174,8 @@ std::ostream &RsFileRequest::print(std::ostream &out, uint16_t indent)
         printRsItemBase(out, "RsFileRequest", indent);
 	uint16_t int_Indent = indent + 2;
         printIndent(out, int_Indent);
-        out << "FileOffset: " << fileoffset << std::endl;
-        out << "ChunkSize:  " << chunksize  << std::endl;
+        out << "FileOffset: " << fileoffset;
+        out << " ChunkSize:  " << chunksize  << std::endl;
 	file.print(out, int_Indent);
         printRsItemEnd(out, "RsFileRequest", indent);
         return out;
@@ -221,6 +227,15 @@ bool     RsFileItemSerialiser::serialiseReq(RsFileRequest *item, void *data, uin
 		std::cerr << "RsFileItemSerialiser::serialiseReq() Size Error! " << std::endl;
 #endif
 	}
+
+	/*** Debugging Transfer rates. 
+	 * print timestamp, and file details so we can workout packet lags.
+	 ***/
+
+#ifdef TRANSFER_DEBUG
+	std::cerr << "RsFileItemSerialiser::serialiseReq() at: " << RsUtil::AccurateTimeString() << std::endl;
+	item->print(std::cerr, 10);
+#endif
 
 	return ok;
 }
@@ -274,6 +289,16 @@ RsFileRequest *RsFileItemSerialiser::deserialiseReq(void *data, uint32_t *pktsiz
 		delete item;
 		return NULL;
 	}
+
+
+	/*** Debugging Transfer rates. 
+	 * print timestamp, and file details so we can workout packet lags.
+	 ***/
+
+#ifdef TRANSFER_DEBUG
+	std::cerr << "RsFileItemSerialiser::deserialiseReq() at: " << RsUtil::AccurateTimeString() << std::endl;
+	item->print(std::cerr, 10);
+#endif
 
 	return item;
 }
@@ -332,7 +357,6 @@ std::ostream &RsFileData::print(std::ostream &out, uint16_t indent)
 {
         printRsItemBase(out, "RsFileData", indent);
 	uint16_t int_Indent = indent + 2;
-        printIndent(out, int_Indent);
 	fd.print(out, int_Indent);
         printRsItemEnd(out, "RsFileData", indent);
         return out;
@@ -379,6 +403,12 @@ bool     RsFileItemSerialiser::serialiseData(RsFileData *item, void *data, uint3
 		std::cerr << "RsFileItemSerialiser::serialiseData() Size Error! " << std::endl;
 #endif
 	}
+
+#ifdef TRANSFER_DEBUG
+	std::cerr << "RsFileItemSerialiser::serialiseData() at: " << RsUtil::AccurateTimeString() << std::endl;
+	item->print(std::cerr, 10);
+#endif
+
 
 	return ok;
 }
@@ -429,6 +459,12 @@ RsFileData *RsFileItemSerialiser::deserialiseData(void *data, uint32_t *pktsize)
 		delete item;
 		return NULL;
 	}
+
+#ifdef TRANSFER_DEBUG
+	std::cerr << "RsFileItemSerialiser::deserialiseData() at: " << RsUtil::AccurateTimeString() << std::endl;
+	item->print(std::cerr, 10);
+#endif
+
 
 	return item;
 }

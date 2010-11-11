@@ -80,3 +80,44 @@ std::string RsUtil::HashId(std::string id, bool reverse)
 
 	return hash;
 }
+
+
+
+
+#ifdef WINDOWS_SYS
+#include <time.h>
+#include <sys/timeb.h>
+#endif
+
+#include <sys/time.h>
+#include <sstream>
+#include <iomanip>
+
+static double getCurrentTS();
+
+// Little fn to get current timestamp in an independent manner.
+std::string RsUtil::AccurateTimeString()
+{
+	std::ostringstream out;
+	out << std::setprecision(15) << getCurrentTS();
+	return out.str();
+}
+
+static double getCurrentTS()
+{
+
+#ifndef WINDOWS_SYS
+        struct timeval cts_tmp;
+        gettimeofday(&cts_tmp, NULL);
+        double cts =  (cts_tmp.tv_sec) + ((double) cts_tmp.tv_usec) / 1000000.0;
+#else
+        struct _timeb timebuf;
+        _ftime( &timebuf);
+        double cts =  (timebuf.time) + ((double) timebuf.millitm) / 1000.0;
+#endif
+        return cts;
+}
+
+
+
+

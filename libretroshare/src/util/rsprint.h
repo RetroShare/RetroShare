@@ -37,6 +37,8 @@ std::string BinToHex(std::string bin);
 std::string BinToHex(const char *arr, const uint32_t len);
 std::string HashId(std::string id, bool reverse = false);
 
+std::string AccurateTimeString();
+
 }
 	
 #endif

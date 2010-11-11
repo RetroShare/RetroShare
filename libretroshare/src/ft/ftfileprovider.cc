@@ -13,6 +13,16 @@
 * #define DEBUG_FT_FILE_PROVIDER 1
 ********/
 
+/***** TO GET TIMESTAMPS of DATA READING ****/
+#define DEBUG_TRANSFERS	1
+
+#ifdef DEBUG_TRANSFERS
+	#include "util/rsprint.h"
+	#include <iomanip>
+#endif
+
+
+
 static const time_t UPLOAD_CHUNK_MAPS_TIME = 20 ;	// time to ask for a new chunkmap from uploaders in seconds.
 
 ftFileProvider::ftFileProvider(std::string path, uint64_t size, std::string hash) 
@@ -186,6 +196,17 @@ bool ftFileProvider::getFileData(const std::string& peer_id,uint64_t offset, uin
 		//
 		time_t now = time(NULL) ;
 		uploading_peers[peer_id].updateStatus(offset,data_size,now) ;
+
+#ifdef DEBUG_TRANSFERS
+		std::cerr << "ftFileProvider::getFileData() ";
+		std::cerr << " at " << RsUtil::AccurateTimeString();
+		std::cerr << " hash: " << hash;
+		std::cerr << " for peerId: " << peer_id;
+		std::cerr << " offset: " << offset;
+		std::cerr << " chunkSize: " << chunk_size;
+		std::cerr << std::endl;
+#endif
+
 	}
 	else 
 	{
