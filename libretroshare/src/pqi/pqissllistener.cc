@@ -223,6 +223,48 @@ int	pqissllistenbase::setuplisten()
 		  "pqissllistenbase::setuplisten() Bound to Address.");
 	}
 
+#ifdef WINDOWS_SYS
+	/* Set TCP buffer size for Windows systems */
+
+	int sockbufsize = 0;
+	int size = sizeof(int);
+
+	err = getsockopt(lsock, SOL_SOCKET, SO_RCVBUF, (char *)&sockbufsize, &size);
+	if (err == 0) {
+		std::cerr << "pqissllistenbase::setuplisten: Current TCP receive buffer size " << sockbufsize << std::endl;
+	} else {
+		std::cerr << "pqissllistenbase::setuplisten: Error getting TCP receive buffer size. Error " << err << std::endl;
+	}
+
+	sockbufsize = 0;
+
+	err = getsockopt(lsock, SOL_SOCKET, SO_SNDBUF, (char *)&sockbufsize, &size);
+
+	if (err == 0) {
+		std::cerr << "pqissllistenbase::setuplisten: Current TCP send buffer size " << sockbufsize << std::endl;
+	} else {
+		std::cerr << "pqissllistenbase::setuplisten: Error getting TCP send buffer size. Error " << err << std::endl;
+	}
+
+	sockbufsize = WINDOWS_TCP_BUFFER_SIZE;
+
+	err = setsockopt(lsock, SOL_SOCKET, SO_RCVBUF, (char *)&sockbufsize, sizeof(sockbufsize));
+
+	if (err == 0) {
+		std::cerr << "pqissllistenbase::setuplisten: TCP receive buffer size set to " << sockbufsize << std::endl;
+	} else {
+		std::cerr << "pqissllistenbase::setuplisten: Error setting TCP receive buffer size. Error " << err << std::endl;
+	}
+
+	err = setsockopt(lsock, SOL_SOCKET, SO_SNDBUF, (char *)&sockbufsize, sizeof(sockbufsize));
+
+	if (err == 0) {
+		std::cerr << "pqissllistenbase::setuplisten: TCP send buffer size set to " << sockbufsize << std::endl;
+	} else {
+		std::cerr << "pqissllistenbase::setuplisten: Error setting TCP send buffer size. Error " << err << std::endl;
+	}
+#endif
+
 	if (0 != (err = listen(lsock, 100)))
 	{
 		std::ostringstream out;

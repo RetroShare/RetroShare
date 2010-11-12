@@ -59,6 +59,8 @@ const int PQISSL_DNS_FLAG = 0x04;
 /* not sure about the value? */
 const int PQISSL_UDP_FLAG = 0x02;
 
+/* TCP buffer size for Windows systems */
+const int WINDOWS_TCP_BUFFER_SIZE = 128 * 1024; // 128 KB
 
 /***************************** pqi Net SSL Interface *********************************
  * This provides the base SSL interface class, 
