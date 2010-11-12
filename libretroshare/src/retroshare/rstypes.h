@@ -110,8 +110,6 @@ class FileInfo
 		uint64_t avail; /* how much we have */
 		int status;
 
-		bool inRecommend;
-
 		double rank;
 		int age;
 		uint32_t queue_position ;

@@ -76,10 +76,11 @@
 #define ROLE_RECIPIENT_ID     Qt::UserRole
 #define ROLE_RECIPIENT_GROUP  Qt::UserRole + 1
 
-#define COLUMN_FILE_NAME   0
-#define COLUMN_FILE_SIZE   1
-#define COLUMN_FILE_HASH   2
-#define COLUMN_FILE_COUNT  3
+#define COLUMN_FILE_CHECKED 0
+#define COLUMN_FILE_NAME    0
+#define COLUMN_FILE_SIZE    1
+#define COLUMN_FILE_HASH    2
+#define COLUMN_FILE_COUNT   3
 
 #define STYLE_NORMAL "QLineEdit#%1 { border : none; }"
 #define STYLE_FAIL   "QLineEdit#%1 { border : none; color : red; }"
@@ -175,8 +176,6 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
     connect(ui.msgText, SIGNAL(copyAvailable(bool)), actionCopy, SLOT(setEnabled(bool)));
 
     connect(QApplication::clipboard(), SIGNAL(dataChanged()), this, SLOT(clipboardDataChanged()));
-
-    connect(ui.msgFileList, SIGNAL(itemChanged( QTreeWidgetItem *, int ) ), this, SLOT(toggleRecommendItem( QTreeWidgetItem *, int ) ));
 
     connect(ui.addToButton, SIGNAL(clicked(void)), this, SLOT(btnClickEvent()));
     connect(ui.addCcButton, SIGNAL(clicked(void)), this, SLOT(btnClickEvent()));
@@ -433,12 +432,6 @@ void MessageComposer::closeEvent (QCloseEvent * event)
     if (bClose) {
         Settings->saveWidgetInformation(this);
 
-        //=== uncheck all repecient's boxes =======
-        QTreeWidget *sendWidget = ui.msgSendList;
-
-        for (int i=0;i<sendWidget->topLevelItemCount();++i)
-            sendWidget->topLevelItem(i)->setCheckState(0,Qt::Unchecked) ;
-
         // save settings
         processSettings(false);
 
@@ -682,7 +675,6 @@ void  MessageComposer::insertFileList(const std::list<DirDetails>& dir_info)
         info.fname = it->name ;
         info.hash = it->hash ;
         info.size = it->count ;
-        info.inRecommend = true;
         files_info.push_back(info) ;
     }
 
@@ -714,7 +706,7 @@ void MessageComposer::addFile(const FileInfo &fileInfo)
     item->setText(COLUMN_FILE_SIZE, misc::friendlyUnit(fileInfo.size));
     item->setText(COLUMN_FILE_HASH, QString::fromStdString(fileInfo.hash));
     item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
-    item->setCheckState(COLUMN_FILE_NAME, fileInfo.inRecommend ? Qt::Checked : Qt::Unchecked);
+    item->setCheckState(COLUMN_FILE_CHECKED, Qt::Checked);
 
     /* add to the list */
     ui.msgFileList->addTopLevelItem(item);
@@ -960,13 +952,6 @@ MessageComposer *MessageComposer::forwardMsg(const std::string &msgId)
 
     std::list<FileInfo>& files_info = msgInfo.files;
 
-    /* enable all files for sending */
-    std::list<FileInfo>::iterator it;
-    for(it = files_info.begin(); it != files_info.end(); it++)
-    {
-        it->inRecommend = true;
-    }
-
     msgComposer->insertFileList(files_info);
 
     msgComposer->calculateTitle();
@@ -1075,9 +1060,19 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
         }
     }
 
-    for(std::list<FileInfo>::const_iterator it(_recList.begin()); it != _recList.end(); ++it)
-        if (it -> inRecommend)
-            mi.files.push_back(*it);
+    int filesCount = ui.msgFileList->topLevelItemCount();
+    for (int i = 0; i < filesCount; i++) {
+        QTreeWidgetItem *item = ui.msgFileList->topLevelItem(i);
+        if (item->checkState(COLUMN_FILE_CHECKED)) {
+            std::string hash = item->text(COLUMN_FILE_HASH).toStdString();
+            for(std::list<FileInfo>::iterator it = _recList.begin(); it != _recList.end(); it++) {
+                if (it->hash == hash) {
+                    mi.files.push_back(*it);
+                    break;
+                }
+            }
+        }
+    }
 
     /* get the ids from the send list */
     std::list<std::string> peers;
@@ -1175,8 +1170,6 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
             rsMsgs->MessageForwarded(m_sDraftMsgId, true);
             break;
         }
-        
-        // PROBLEM: message to set reply/forwarded get lost
     } else {
         /* check for the recipient */
         if (mi.msgto.empty()) {
@@ -1468,23 +1461,6 @@ void MessageComposer::addRecipient(enumType type, const std::string &id, bool gr
     }
 
     setRecipientToRow(row, type, id, group);
-}
-
-void MessageComposer::toggleRecommendItem( QTreeWidgetItem *item, int col )
-{
-    //std::cerr << "ToggleRecommendItem()" << std::endl;
-
-    /* extract hash */
-    std::string hash = (item -> text(3)).toStdString();
-
-    /* get state */
-    bool inRecommend = (Qt::Checked == item -> checkState(0)); /* alway column 0 */
-
-    for(std::list<FileInfo>::iterator it(_recList.begin()); it != _recList.end(); ++it) {
-        if (it->hash == hash) {
-            it->inRecommend = inRecommend;
-        }
-    }
 }
 
 void MessageComposer::setupFileActions()
@@ -2150,7 +2126,6 @@ void MessageComposer::fileHashingFinished(AttachFileItem* file)
     fileInfo.fname = file->FileName();
     fileInfo.hash = file->FileHash();
     fileInfo.size = file->FileSize();
-    fileInfo.inRecommend = true;
 
     addFile(fileInfo);
 }

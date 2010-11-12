@@ -86,9 +86,6 @@ private slots:
     void on_contactsdockWidget_visibilityChanged(bool visible);
     void toggleContacts();
 
-    /* for toggling flags */
-    void toggleRecommendItem( QTreeWidgetItem *item, int col );
-
     void fileNew();
     void fileOpen();
     bool fileSave();
