@@ -1016,15 +1016,17 @@ bool     ftServer::handleCacheData()
 
 		/* these go to the CacheStrapper! */
 		CacheData data;
+		data.pid = ci->PeerId();
+		peerConnectState pca;
+		mConnMgr->getFriendNetStatus(ci->PeerId(), pca);
+		data.pname = pca.name;
 		data.cid = CacheId(ci->cacheType, ci->cacheSubId);
+		data.path = ci->file.path;
+		data.name = ci->file.name;
 		data.hash = ci->file.hash;
 		data.size = ci->file.filesize;
-		data.name = ci->file.name;
-		data.path = ci->file.path;
-		data.pid = ci->PeerId();
-                peerConnectState pca;
-                mConnMgr->getFriendNetStatus(ci->PeerId(), pca);
-                data.pname = pca.name;
+		data.recvd = time(NULL) ;
+
 		mCacheStrapper->recvCacheResponse(data, time(NULL));
 
 		delete ci;
