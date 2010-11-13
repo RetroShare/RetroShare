@@ -138,8 +138,6 @@ GraphWidget::GraphWidget(QWidget *)
 
 
     scale(qreal(0.8), qreal(0.8));
-    setMinimumSize(500, 500);
-    //setWindowTitle(tr("Elastic Nodes"));
 }
 
 void GraphWidget::clearGraph()

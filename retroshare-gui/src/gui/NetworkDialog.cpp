@@ -38,6 +38,7 @@
 #include "GenCertDialog.h"
 #include "connect/ConfCertDialog.h"
 #include "settings/rsharesettings.h"
+#include "common/RSItemDelegate.h"
 
 
 /* Images for context menu icons */
@@ -98,6 +99,11 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     ui.connecttreeWidget -> setRootIsDecorated( false );
     ui.connecttreeWidget -> setColumnCount(5);
     ui.unvalidGPGkeyWidget-> setColumnCount(5);
+
+    RSItemDelegate *itemDelegate = new RSItemDelegate(this);
+    itemDelegate->removeFocusRect(0);
+    ui.connecttreeWidget->setItemDelegate(itemDelegate);
+    ui.unvalidGPGkeyWidget->setItemDelegate(itemDelegate);
 
     /* Set header resize modes and initial section sizes */
     QHeaderView * _header = ui.connecttreeWidget->header () ;
