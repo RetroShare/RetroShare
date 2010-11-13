@@ -844,7 +844,20 @@ void ForumsDialog::CalculateIconsAndFonts(QTreeWidgetItem *pItem, bool &bHasRead
     // set font
     for (int i = 0; i < COLUMN_THREAD_COUNT; i++) {
         QFont qf = pItem->font(i);
-        qf.setBold(bUnread || bMyUnreadChilddren);
+
+        if (m_bIsForumSubscribed == false) {
+            qf.setBold(false);
+            pItem->setTextColor(i, Qt::black);
+        } else if (bUnread) {
+            qf.setBold(true);
+            pItem->setTextColor(i, Qt::black);
+        } else if (bMyUnreadChilddren) {
+            qf.setBold(true);
+            pItem->setTextColor(i, Qt::gray);
+        } else {
+            qf.setBold(false);
+            pItem->setTextColor(i, Qt::gray);
+        }
         pItem->setFont(i, qf);
     }
 
