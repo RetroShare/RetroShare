@@ -29,12 +29,12 @@
 #include "serialiser/rstlvbase.h"
 
 /***
-#define RSSERIAL_DEBUG 1
+ * #define RSSERIAL_DEBUG 1
+ * #define DEBUG_TRANSFERS 1
 ***/
 
-#define TRANSFER_DEBUG 1
 
-#ifdef TRANSFER_DEBUG
+#ifdef DEBUG_TRANSFERS
 	#include "util/rsprint.h"
 #endif
 
@@ -232,7 +232,7 @@ bool     RsFileItemSerialiser::serialiseReq(RsFileRequest *item, void *data, uin
 	 * print timestamp, and file details so we can workout packet lags.
 	 ***/
 
-#ifdef TRANSFER_DEBUG
+#ifdef DEBUG_TRANSFERS
 	std::cerr << "RsFileItemSerialiser::serialiseReq() at: " << RsUtil::AccurateTimeString() << std::endl;
 	item->print(std::cerr, 10);
 #endif
@@ -295,7 +295,7 @@ RsFileRequest *RsFileItemSerialiser::deserialiseReq(void *data, uint32_t *pktsiz
 	 * print timestamp, and file details so we can workout packet lags.
 	 ***/
 
-#ifdef TRANSFER_DEBUG
+#ifdef DEBUG_TRANSFERS
 	std::cerr << "RsFileItemSerialiser::deserialiseReq() at: " << RsUtil::AccurateTimeString() << std::endl;
 	item->print(std::cerr, 10);
 #endif
@@ -404,7 +404,7 @@ bool     RsFileItemSerialiser::serialiseData(RsFileData *item, void *data, uint3
 #endif
 	}
 
-#ifdef TRANSFER_DEBUG
+#ifdef DEBUG_TRANSFERS
 	std::cerr << "RsFileItemSerialiser::serialiseData() at: " << RsUtil::AccurateTimeString() << std::endl;
 	item->print(std::cerr, 10);
 #endif
@@ -460,7 +460,7 @@ RsFileData *RsFileItemSerialiser::deserialiseData(void *data, uint32_t *pktsize)
 		return NULL;
 	}
 
-#ifdef TRANSFER_DEBUG
+#ifdef DEBUG_TRANSFERS
 	std::cerr << "RsFileItemSerialiser::deserialiseData() at: " << RsUtil::AccurateTimeString() << std::endl;
 	item->print(std::cerr, 10);
 #endif

@@ -43,11 +43,11 @@ const int PQISTREAM_ABS_MAX = 100000000; /* 100 MB/sec (actually per loop) */
 /* This removes the print statements (which hammer pqidebug) */
 /***
 #define RSITEM_DEBUG 1
+#define DEBUG_TRANSFERS	 1
  ***/
 
-#define DEBUG_TRANSFER	 1
 
-#ifdef DEBUG_TRANSFER
+#ifdef DEBUG_TRANSFERS
 	#include "util/rsprint.h"
 #endif
 
@@ -458,7 +458,7 @@ int	pqistreamer::handleoutgoing()
 		if ((!(bio->cansend())) || (maxbytes < sentbytes))
 		{
 
-#ifdef DEBUG_TRANSFER
+#ifdef DEBUG_TRANSFERS
 			if (maxbytes < sentbytes)
 			{
 				std::cerr << "pqistreamer::handleoutgoing() Stopped sending sentbytes > maxbytes. Sent " << sentbytes << " bytes ";
@@ -483,7 +483,7 @@ int	pqistreamer::handleoutgoing()
 			{
 				pkt_wpending = *(out_pkt.begin()); 
 				out_pkt.pop_front();
-#ifdef DEBUG_TRANSFER
+#ifdef DEBUG_TRANSFERS
 				std::cerr << "pqistreamer::handleoutgoing() getting next pkt from out_pkt queue";
 				std::cerr << std::endl;
 #endif
@@ -493,7 +493,7 @@ int	pqistreamer::handleoutgoing()
 			{
 				pkt_wpending = *(out_data.begin()); 
 				out_data.pop_front();
-#ifdef DEBUG_TRANSFER
+#ifdef DEBUG_TRANSFERS
 				std::cerr << "pqistreamer::handleoutgoing() getting next pkt from out_data queue";
 				std::cerr << std::endl;
 #endif
@@ -523,7 +523,7 @@ int	pqistreamer::handleoutgoing()
 				return -1;
 			}
 
-#ifdef DEBUG_TRANSFER
+#ifdef DEBUG_TRANSFERS
 			std::cerr << "pqistreamer::handleoutgoing() Sent Packet len: " << len << " @ " << RsUtil::AccurateTimeString();
 			std::cerr << std::endl;
 #endif
@@ -820,7 +820,7 @@ continue_packet:
 	if(maxin > readbytes && bio->moretoread())
 		goto start_packet_read ;
 
-#ifdef DEBUG_TRANSFER
+#ifdef DEBUG_TRANSFERS
 	if (readbytes >= maxin)
 	{
 		std::cerr << "pqistreamer::handleincoming() Stopped reading as readbytes >= maxin. Read " << readbytes << " bytes ";

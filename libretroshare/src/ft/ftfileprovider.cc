@@ -11,10 +11,9 @@
 
 /********
 * #define DEBUG_FT_FILE_PROVIDER 1
+* #define DEBUG_TRANSFERS	 1 // TO GET TIMESTAMPS of DATA READING 
 ********/
 
-/***** TO GET TIMESTAMPS of DATA READING ****/
-#define DEBUG_TRANSFERS	1
 
 #ifdef DEBUG_TRANSFERS
 	#include "util/rsprint.h"

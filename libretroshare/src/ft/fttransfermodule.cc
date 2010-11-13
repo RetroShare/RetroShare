@@ -27,8 +27,6 @@
  * #define FT_DEBUG 1
  *****/
 
-#define FT_DEBUG 1
-
 #include "retroshare/rsturtle.h"
 #include "fttransfermodule.h"
 

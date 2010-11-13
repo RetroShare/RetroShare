@@ -213,7 +213,6 @@ std::ostream &RsTlvBinaryData::print(std::ostream &out, uint16_t indent)
         sout << "RsTlvBinaryData: Type: " << tlvtype << " Size: " << bin_len;
         sout << std::hex;
 
-#if 0
         for(i = 0; i < bin_len; i++)
         {
                 if (i % 16 == 0)
@@ -224,9 +223,8 @@ std::ostream &RsTlvBinaryData::print(std::ostream &out, uint16_t indent)
                 sout << std::setw(2) << std::setfill('0')
                         << (int) (((unsigned char *) bin_data)[i]) << ":";
         }
-#endif
-        sout << std::endl;
 
+        sout << std::endl;
         out << sout.str();
 
         printEnd(out, "RsTlvBinaryData", indent);
