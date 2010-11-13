@@ -98,7 +98,9 @@ PopupChatDialog::PopupChatDialog(std::string id, const QString name, QWidget *pa
 {
   /* Invoke Qt Designer generated QObject setup routine */
   ui.setupUi(this);
-  
+
+  firstShow = true;
+
   Settings->loadWidgetInformation(this);
   this->move(qrand()%100, qrand()%100); //avoid to stack multiple popup chat windows on the same position
 
@@ -269,84 +271,48 @@ void PopupChatDialog::processSettings(bool bLoad)
     Settings->endGroup();
 }
 
+/*static*/ PopupChatDialog *PopupChatDialog::getExistingInstance(std::string id)
+{
+    std::map<std::string, PopupChatDialog *>::iterator it;
+    if (chatDialogs.end() != (it = chatDialogs.find(id))) {
+        /* exists already */
+        return it->second;
+    }
+
+    return NULL;
+}
+
 /*static*/ PopupChatDialog *PopupChatDialog::getPrivateChat(std::string id, uint chatflags)
 {
     /* see if it exists already */
-    PopupChatDialog *popupchatdialog = NULL;
-    bool show = false;
-
-    if (chatflags & RS_CHAT_REOPEN)
-    {
-        show = true;
-#ifdef PEERS_DEBUG
-        std::cerr << "reopen flag so: enable SHOW popupchatdialog()" << std::endl;
-#endif
-    }
-
-    std::map<std::string, PopupChatDialog *>::iterator it;
-    if (chatDialogs.end() != (it = chatDialogs.find(id)))
-    {
-        /* exists already */
-        popupchatdialog = it->second;
-    }
-    else
-    {
-
-        if (chatflags & RS_CHAT_OPEN_NEW)
-        {
+    PopupChatDialog *popupchatdialog = getExistingInstance(id);
+    if (popupchatdialog) {
+        if (popupchatdialog->isVisible() == false && (chatflags & RS_CHAT_OPEN) == 0) {
+            /* Window exists, but is hidden ... don't show it */
+            return popupchatdialog;
+        }
+    } else {
+        if (chatflags & RS_CHAT_OPEN) {
             RsPeerDetails sslDetails;
             if (rsPeers->getPeerDetails(id, sslDetails)) {
                 popupchatdialog = new PopupChatDialog(id, PeerDefs::nameWithLocation(sslDetails));
                 chatDialogs[id] = popupchatdialog;
-#ifdef PEERS_DEBUG
-                std::cerr << "new chat so: enable SHOW popupchatdialog()" << std::endl;
-#endif
-
-                show = true;
             }
         }
     }
 
-    if (show && popupchatdialog)
-    {
-#ifdef PEERS_DEBUG
-        std::cerr << "SHOWING popupchatdialog()" << std::endl;
-#endif
+    if (popupchatdialog == NULL) {
+        return NULL;
+    }
 
+    if (chatflags & RS_CHAT_FOCUS) {
+        popupchatdialog->show();
+        popupchatdialog->getfocus();
+    } else {
         if (popupchatdialog->isVisible() == false) {
-            if (chatflags & RS_CHAT_FOCUS) {
-                popupchatdialog->show();
-            } else {
-                popupchatdialog->showMinimized();
-            }
+            popupchatdialog->showMinimized();
         }
-    }
-
-    /* now only do these if the window is visible */
-    if (popupchatdialog && popupchatdialog->isVisible())
-    {
-        if (chatflags & RS_CHAT_FOCUS)
-        {
-#ifdef PEERS_DEBUG
-            std::cerr << "focus chat flag so: GETFOCUS popupchatdialog()" << std::endl;
-#endif
-
-            popupchatdialog->getfocus();
-        }
-        else
-        {
-#ifdef PEERS_DEBUG
-            std::cerr << "no focus chat flag so: FLASH popupchatdialog()" << std::endl;
-#endif
-
-            popupchatdialog->flash();
-        }
-    }
-    else
-    {
-#ifdef PEERS_DEBUG
-        std::cerr << "not visible ... so leave popupchatdialog()" << std::endl;
-#endif
+        QApplication::alert(popupchatdialog);
     }
 
     return popupchatdialog;
@@ -417,14 +383,14 @@ void PopupChatDialog::chatFriend(std::string id)
             RsPeerDetails sslDetails;
             if (rsPeers->getPeerDetails(*it, sslDetails)) {
                 if (sslDetails.state & RS_PEER_STATE_CONNECTED) {
-                    getPrivateChat(*it, RS_CHAT_OPEN_NEW | RS_CHAT_REOPEN | RS_CHAT_FOCUS);
+                    getPrivateChat(*it, RS_CHAT_OPEN | RS_CHAT_FOCUS);
                     return;
                 }
             }
         }
     } else {
         if (detail.state & RS_PEER_STATE_CONNECTED) {
-            getPrivateChat(id, RS_CHAT_OPEN_NEW | RS_CHAT_REOPEN | RS_CHAT_FOCUS);
+            getPrivateChat(id, RS_CHAT_OPEN | RS_CHAT_FOCUS);
             return;
         }
         firstId = id;
@@ -437,7 +403,7 @@ void PopupChatDialog::chatFriend(std::string id)
         MessageComposer::msgFriend(id, false);
     } else {
         if (firstId.empty() == false) {
-            getPrivateChat(firstId, RS_CHAT_OPEN_NEW | RS_CHAT_REOPEN | RS_CHAT_FOCUS);
+            getPrivateChat(firstId, RS_CHAT_OPEN | RS_CHAT_FOCUS);
         }
     }
 }
@@ -502,48 +468,26 @@ void PopupChatDialog::updateStatusString(const QString& peer_id, const QString& 
     QTimer::singleShot(5000,this,SLOT(resetStatusBar())) ;
 }
 
-/** 
- Overloads the default show() slot so we can set opacity*/
-
-void PopupChatDialog::show()
-{
-
-  if(!this->isVisible()) {
-    QMainWindow::show();
-  } else {
-    //QMainWindow::activateWindow();
-    //setWindowState(windowState() & ~Qt::WindowMinimized | Qt::WindowActive);
-    //QMainWindow::raise();
-  }
-  
-}
-
 void PopupChatDialog::getfocus()
 {
-
-  QMainWindow::activateWindow();
-  setWindowState((windowState() & (~Qt::WindowMinimized)) | Qt::WindowActive);
-  QMainWindow::raise();
-}
-
-void PopupChatDialog::flash()
-{
-
-  if(!this->isVisible()) {
-    //QMainWindow::show();
-  } else {
-    // Want to reduce the interference on other applications.
-    //QMainWindow::activateWindow();
-    //setWindowState(windowState() & ~Qt::WindowMinimized | Qt::WindowActive);
-    //QMainWindow::raise();
-  }
-  
+    activateWindow();
+    setWindowState((windowState() & (~Qt::WindowMinimized)) | Qt::WindowActive);
+    raise();
+    ui.chattextEdit->setFocus();
 }
 
 void PopupChatDialog::showEvent(QShowEvent *event)
 {
     if (m_bInsertOnVisible) {
         insertChatMsgs();
+    }
+
+    if (firstShow) {
+        firstShow = false;
+
+        // Workaround: now the scroll position is correct calculated
+        QScrollBar *scrollbar = ui.textBrowser->verticalScrollBar();
+        scrollbar->setValue(scrollbar->maximum());
     }
 }
 
@@ -693,6 +637,10 @@ void PopupChatDialog::addChatMsg(bool incoming, const std::string &id, const QSt
     }
 
     ui.textBrowser->append(formatMsg);
+
+    /* Scroll to the end */
+    QScrollBar *scrollbar = ui.textBrowser->verticalScrollBar();
+    scrollbar->setValue(scrollbar->maximum());
 
     resetStatusBar() ;
 }

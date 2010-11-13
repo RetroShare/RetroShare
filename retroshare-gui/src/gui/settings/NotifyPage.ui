@@ -667,14 +667,7 @@
           <item>
            <widget class="QCheckBox" name="chat_NewWindow">
             <property name="text">
-             <string>Open Window for new Peer Chat</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="chat_Reopen">
-            <property name="text">
-             <string>Reopen if closed by user:</string>
+             <string>Open Window for new chat</string>
             </property>
            </widget>
           </item>

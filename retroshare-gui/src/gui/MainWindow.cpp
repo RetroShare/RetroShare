@@ -918,7 +918,7 @@ void MainWindow::trayIconChatClicked(QSystemTrayIcon::ActivationReason e)
         PopupChatDialog *pcd = NULL;
         std::list<std::string> ids;
         if (rsMsgs->getPrivateChatQueueIds(true, ids) && ids.size()) {
-            pcd = PopupChatDialog::getPrivateChat(ids.front(), RS_CHAT_OPEN_NEW | RS_CHAT_REOPEN | RS_CHAT_FOCUS);
+            pcd = PopupChatDialog::getPrivateChat(ids.front(), RS_CHAT_OPEN | RS_CHAT_FOCUS);
         }
 
         if (pcd == NULL) {

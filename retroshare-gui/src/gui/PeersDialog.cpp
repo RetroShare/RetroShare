@@ -1350,7 +1350,7 @@ void PeersDialog::updatePeerStatusString(const QString& peer_id,const QString& s
 {
     if(is_private_chat)
     {
-        PopupChatDialog *pcd = PopupChatDialog::getPrivateChat(peer_id.toStdString(), 0);
+        PopupChatDialog *pcd = PopupChatDialog::getExistingInstance(peer_id.toStdString());
         if (pcd) {
             pcd->updateStatusString(peer_id, status_string);
         }

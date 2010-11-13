@@ -43,115 +43,111 @@ public:
     enum enumChatType { TYPE_NORMAL, TYPE_HISTORY, TYPE_OFFLINE };
 
 public:
-  static PopupChatDialog *getPrivateChat(std::string id, uint chatflags);
-  static void cleanupChat();
-  static void chatFriend(std::string id);
-  static void updateAllAvatars();
-  static void privateChatChanged(int list, int type);
+    static PopupChatDialog *getExistingInstance(std::string id);
+    static PopupChatDialog *getPrivateChat(std::string id, uint chatflags);
+    static void cleanupChat();
+    static void chatFriend(std::string id);
+    static void updateAllAvatars();
+    static void privateChatChanged(int list, int type);
 
-  void updatePeerAvatar(const std::string&);
+    void updatePeerAvatar(const std::string&);
 
 public slots:
-  /** Overloaded QWidget.show */
-  void show(); 
+    void getfocus();
+    void pasteLink() ;
+    void contextMenu(QPoint) ;
 
-  void getfocus();
-  void flash(); 
-  void pasteLink() ;
-  void contextMenu(QPoint) ;
+    void smileyWidget();
+    void addSmiley();
 
-  void smileyWidget();
-  void addSmiley();
+    void fileHashingFinished(AttachFileItem* file);
 
-  void fileHashingFinished(AttachFileItem* file);
+    void resetStatusBar() ;
+    void updateStatusTyping() ;
+    void updateStatusString(const QString& peer_id, const QString& statusString) ;
+    void anchorClicked (const QUrl &);
 
-  void resetStatusBar() ;
-  void updateStatusTyping() ;
-  void updateStatusString(const QString& peer_id, const QString& statusString) ;
-  void anchorClicked (const QUrl &);
-
-  void updateStatus(const QString &peer_id, int status);
+    void updateStatus(const QString &peer_id, int status);
 
 protected:
-  /** Default constructor */
-  PopupChatDialog(std::string id, const QString name, QWidget *parent = 0, Qt::WFlags flags = 0);
-  /** Default destructor */
-  ~PopupChatDialog();
+    /** Default constructor */
+    PopupChatDialog(std::string id, const QString name, QWidget *parent = 0, Qt::WFlags flags = 0);
+    /** Default destructor */
+    ~PopupChatDialog();
 
-  void closeEvent (QCloseEvent * event);
-  void showEvent (QShowEvent * event);
-  virtual void dragEnterEvent(QDragEnterEvent *event);
-  virtual void dropEvent(QDropEvent *event);
+    void closeEvent (QCloseEvent * event);
+    void showEvent (QShowEvent * event);
+    virtual void dragEnterEvent(QDragEnterEvent *event);
+    virtual void dropEvent(QDropEvent *event);
 
-  bool eventFilter(QObject *obj, QEvent *ev);
+    bool eventFilter(QObject *obj, QEvent *ev);
 
-  void insertChatMsgs();
-  void addChatMsg(bool incoming, const std::string &id, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message, enumChatType chatType, bool addToHistory);
+    void insertChatMsgs();
+    void addChatMsg(bool incoming, const std::string &id, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message, enumChatType chatType, bool addToHistory);
 
-  void updateAvatar();
+    void updateAvatar();
 
-  QPixmap picture;
+    QPixmap picture;
 
 private slots:
-  void on_actionMessageHistory_triggered();
-  void addExtraFile();
-  void addExtraPicture();
-  void showAvatarFrame(bool show);
-  void on_closeInfoFrameButton_clicked();
+    void on_actionMessageHistory_triggered();
+    void addExtraFile();
+    void addExtraPicture();
+    void showAvatarFrame(bool show);
+    void on_closeInfoFrameButton_clicked();
 
-  void setColor();
-  void getFont();
-  void setFont();
- 
-  void sendChat();
+    void setColor();
+    void getFont();
+    void setFont();
 
-  void updatePeersCustomStateString(const QString& peer_id, const QString& status_string) ;
-  void getAvatar();
+    void sendChat();
 
-  void on_actionClear_Chat_triggered();
+    void updatePeersCustomStateString(const QString& peer_id, const QString& status_string) ;
+    void getAvatar();
 
-  bool fileSave();
-  bool fileSaveAs();
-  void clearOfflineMessages();
+    void on_actionClear_Chat_triggered();
 
+    bool fileSave();
+    bool fileSaveAs();
+    void clearOfflineMessages();
 
 private:
+    void setCurrentFileName(const QString &fileName);
 
-  void setCurrentFileName(const QString &fileName);
+    void colorChanged(const QColor &c);
+    void fontChanged(const QFont &font);
+    void addAttachment(std::string,int flag);
+    void processSettings(bool bLoad);
 
-  void colorChanged(const QColor &c);
-  void fontChanged(const QFont &font);
-  void addAttachment(std::string,int flag);
-  void processSettings(bool bLoad);
+    void onPrivateChatChanged(int list, int type, bool initial = false);
 
-   void onPrivateChatChanged(int list, int type, bool initial = false);
+    QAction *actionTextBold;
+    QAction *actionTextUnderline;
+    QAction *actionTextItalic;
+    QAction *pasteLinkAct ;
 
-   QAction *actionTextBold;
-   QAction *actionTextUnderline;
-   QAction *actionTextItalic;
-   QAction *pasteLinkAct ;
+    std::string dialogId;
+    QString dialogName;
+    unsigned int lastChatTime;
+    std::string  lastChatName;
 
-   std::string dialogId;
-   QString dialogName;
-   unsigned int lastChatTime;
-   std::string  lastChatName;
+    time_t last_status_send_time ;
+    QColor mCurrentColor;
+    QFont  mCurrentFont;
 
-   time_t last_status_send_time ;
-   QColor mCurrentColor;
-   QFont  mCurrentFont;
+    std::list<ChatInfo> m_savedOfflineChat;
+    QString wholeChat;
+    QString fileName;
 
-   std::list<ChatInfo> m_savedOfflineChat;
-   QString wholeChat;
-   QString fileName; 
+    bool m_bInsertOnVisible;
+    IMHistoryKeeper historyKeeper;
+    ChatStyle style;
+    bool m_manualDelete;
 
-   bool m_bInsertOnVisible;
-   IMHistoryKeeper historyKeeper;
-   ChatStyle style;
-   bool m_manualDelete;
+    bool firstShow;
 
-  /** Qt Designer generated object */
-  Ui::PopupChatDialog ui;
-
+    /** Qt Designer generated object */
+    Ui::PopupChatDialog ui;
 };
 
 #endif

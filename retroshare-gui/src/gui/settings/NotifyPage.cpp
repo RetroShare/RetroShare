@@ -98,9 +98,7 @@ NotifyPage::save(QString &errmsg)
         newsflags |= RS_FEED_TYPE_CHAT;
 
     if (ui.chat_NewWindow->isChecked())
-        chatflags |= RS_CHAT_OPEN_NEW;
-    if (ui.chat_Reopen->isChecked())
-        chatflags |= RS_CHAT_REOPEN;
+        chatflags |= RS_CHAT_OPEN;
     if (ui.chat_Focus->isChecked())
         chatflags |= RS_CHAT_FOCUS;
 
@@ -150,8 +148,7 @@ void NotifyPage::load()
     ui.notify_Messages->setChecked(newsflags & RS_FEED_TYPE_MSG);
     ui.notify_Chat->setChecked(newsflags & RS_FEED_TYPE_CHAT);
 
-    ui.chat_NewWindow->setChecked(chatflags & RS_CHAT_OPEN_NEW);
-    ui.chat_Reopen->setChecked(chatflags & RS_CHAT_REOPEN);
+    ui.chat_NewWindow->setChecked(chatflags & RS_CHAT_OPEN);
     ui.chat_Focus->setChecked(chatflags & RS_CHAT_FOCUS);
 
     ui.systray_GroupChat->setChecked(Settings->getDisplayTrayGroupChat());
