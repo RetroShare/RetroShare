@@ -740,6 +740,7 @@ Qt::ItemFlags RemoteDirModel::flags( const QModelIndex & index ) const
 #endif
 	//modelAboutToBeReset();
 //	reset();
+	beginResetModel();
 	layoutAboutToBeChanged();
  }
 
@@ -752,6 +753,7 @@ Qt::ItemFlags RemoteDirModel::flags( const QModelIndex & index ) const
 	//modelReset();
 	layoutChanged();
 	//reset();
+	endResetModel();
  }
 
 
