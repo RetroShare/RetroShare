@@ -63,6 +63,7 @@ public:
     const QList<Edge *>& edges() const;
 
     int type() const { return Type; }
+	 const std::string& idString() const { return _gpg_id ; }
 
     void calculateForces(const double *data,int width,int height,int W,int H,float x,float y,float speedf);
     bool advance();

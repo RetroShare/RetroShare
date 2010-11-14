@@ -54,6 +54,9 @@
      </item>
      <item row="0" column="2">
       <widget class="QComboBox" name="comboBox">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <item>
         <property name="text">
          <string>Basic</string>
@@ -73,6 +76,9 @@
      </item>
      <item row="0" column="1">
       <widget class="QLabel" name="label">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>Display mode:</string>
        </property>
@@ -84,7 +90,10 @@
         <number>0</number>
        </property>
        <property name="maximum">
-        <number>10</number>
+        <number>2</number>
+       </property>
+       <property name="value">
+        <number>1</number>
        </property>
       </widget>
      </item>

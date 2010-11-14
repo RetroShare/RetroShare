@@ -615,7 +615,7 @@ void p3disc::recvPeerDetails(RsDiscReply *item, const std::string &certGpgId)
 	for (std::list<RsPeerNetItem>::iterator pitem = item->rsPeerList.begin(); pitem != item->rsPeerList.end(); pitem++) 
 	{
 		bool new_info ;
-		addDiscoveryData(item->PeerId(), pitem->pid, pitem->currentlocaladdr, pitem->currentremoteaddr, 0, time(NULL),new_info);
+		addDiscoveryData(item->PeerId(), pitem->pid,rsPeers->getGPGId(item->PeerId()),item->aboutId, pitem->currentlocaladdr, pitem->currentremoteaddr, 0, time(NULL),new_info);
 
 		if(new_info)
 			should_notify_discovery = true ;
@@ -895,11 +895,14 @@ void p3disc::setGPGOperation(AuthGPGOperation *operation)
 /*************************************************************************************/
 /*				Storing Network Graph				     */
 /*************************************************************************************/
-int	p3disc::addDiscoveryData(std::string fromId, std::string aboutId, struct sockaddr_in laddr, struct sockaddr_in raddr, uint32_t flags, time_t ts,bool& new_info)
+int	p3disc::addDiscoveryData(const std::string& fromId, const std::string& aboutId,const std::string& from_gpg_id,const std::string& about_gpg_id, const struct sockaddr_in& laddr, const struct sockaddr_in& raddr, uint32_t flags, time_t ts,bool& new_info)
 {
 	RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
 
 	new_info = false ;
+
+	gpg_neighbors[from_gpg_id].insert(about_gpg_id) ;
+
 	std::cerr << "Adding discovery data " << fromId << " - " << aboutId << std::endl ;
 	/* Store Network information */
 	std::map<std::string, autoneighbour>::iterator it;
@@ -963,7 +966,7 @@ int	p3disc::addDiscoveryData(std::string fromId, std::string aboutId, struct soc
 /*************************************************************************************/
 /*			   Extracting Network Graph Details			     */
 /*************************************************************************************/
-bool p3disc::potentialproxies(std::string id, std::list<std::string> &proxyIds)
+bool p3disc::potentialproxies(const std::string& id, std::list<std::string> &proxyIds)
 {
 	/* find id -> and extract the neighbour_of ids */
 
@@ -979,11 +982,29 @@ bool p3disc::potentialproxies(std::string id, std::list<std::string> &proxyIds)
 		return false;
 	}
 
-	for(sit = it->second.neighbour_of.begin();
-		sit != it->second.neighbour_of.end(); sit++)
+	for(sit = it->second.neighbour_of.begin(); sit != it->second.neighbour_of.end(); sit++)
 	{
 		proxyIds.push_back(sit->first);
 	}
+	return true;
+}
+bool p3disc::potentialGPGproxies(const std::string& gpg_id, std::list<std::string> &proxyGPGIds)
+{
+	/* find id -> and extract the neighbour_of ids */
+
+	if(gpg_id == rsPeers->getGPGOwnId()) // SSL id			// This is treated appart, because otherwise we don't receive any disc info about us
+		return rsPeers->getGPGAcceptedList(proxyGPGIds) ;
+
+	RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
+
+	std::map<std::string, std::set<std::string> >::iterator it = gpg_neighbors.find(gpg_id) ;
+
+	if(it == gpg_neighbors.end())
+		return false;
+
+	for(std::set<std::string>::const_iterator sit(it->second.begin()); sit != it->second.end(); ++sit)
+		proxyGPGIds.push_back(*sit);
+
 	return true;
 }
 

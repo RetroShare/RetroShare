@@ -89,7 +89,8 @@ virtual void statusChange(const std::list<pqipeer> &plist);
 int	tick();
 
 	/* GUI requires access */
-bool 	potentialproxies(std::string id, std::list<std::string> &proxyIds);
+bool 	potentialGPGproxies(const std::string& id, std::list<std::string> &proxyGPGIds);
+bool 	potentialproxies(const std::string& id, std::list<std::string> &proxyIds);
 void 	getversions(std::map<std::string, std::string> &versions);
 
 	/************* from AuthGPService ****************/
@@ -130,8 +131,9 @@ void recvHeartbeatMsg(RsDiscHeartbeat *item);
 void removeFriend(std::string ssl_id); //keep tracks of removed friend so we're not gonna add them again immediately
 
 /* handle network shape */
-int     addDiscoveryData(std::string fromId, std::string aboutId,
-		struct sockaddr_in laddr, struct sockaddr_in raddr,
+int     addDiscoveryData(const std::string& fromId, const std::string& aboutId,
+		const std::string& fromGPGId,const std::string& aboutGPGId,
+		const struct sockaddr_in& laddr, const struct sockaddr_in& raddr,
 		uint32_t flags, time_t ts,bool& new_info);
 
 int 	idServers();
@@ -152,6 +154,10 @@ int 	idServers();
 
 	std::map<std::string, std::list<std::string> > sendIdList;
 	std::list<RsDiscReply*> pendingDiscReplyInList;
+
+	// Neighbors at the gpg level.
+	//
+	std::map<std::string,std::set<std::string> > gpg_neighbors ;
 };
 
 

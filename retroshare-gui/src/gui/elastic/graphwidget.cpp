@@ -166,10 +166,34 @@ GraphWidget::NodeId GraphWidget::addNode(const std::string& node_short_string,co
 	 node->setToolTip(QString::fromStdString(node_complete_string)) ;
 	 _nodes.push_back(node) ;
     scene()->addItem(node);
-    node->setPos(rand()%1000/53.0f, rand()%1000/53.0f);
+
+	 std::map<std::string,QPointF>::const_iterator it(_node_cached_positions.find(gpg_id)) ;
+	 if(_node_cached_positions.end() != it)
+		 node->setPos(it->second) ;
+	 else
+	 {
+		 qreal x1,y1,x2,y2 ;
+		 sceneRect().getCoords(&x1,&y1,&x2,&y2) ;
+
+		 float f1 = rand()/(float)RAND_MAX ;
+		 float f2 = rand()/(float)RAND_MAX ;
+
+		 node->setPos(x1+f1*(x2-x1),y1+f2*(y2-y1));
+	 }
+
 	 std::cerr << "Added node " << _nodes.size()-1 << std::endl ;
 	 return _nodes.size()-1 ;
 }
+void GraphWidget::snapshotNodesPositions()
+{
+	for(uint32_t i=0;i<_nodes.size();++i)
+		_node_cached_positions[_nodes[i]->idString()] = _nodes[i]->mapToScene(QPointF(0,0)) ;
+}
+void GraphWidget::clearNodesPositions()
+{
+	_node_cached_positions.clear() ;
+}
+
 GraphWidget::EdgeId GraphWidget::addEdge(NodeId n1,NodeId n2)
 {
 	std::pair<NodeId,NodeId> ed(std::min(n1,n2),std::max(n1,n2)) ;

@@ -75,6 +75,8 @@ public:
 	 NodeId addNode(const std::string& NodeShortText,const std::string& nodeCompleteText,NodeType type,AuthType auth,const std::string& ssl_id,const std::string& gpg_id) ;
 	 EdgeId addEdge(NodeId n1,NodeId n2) ;
 
+	 void snapshotNodesPositions() ;
+	 void clearNodesPositions() ;
 	 void clearGraph() ;
     virtual void itemMoved();
 
@@ -96,6 +98,7 @@ private:
 
 	 std::vector<Node *> _nodes ;
 	 std::map<std::pair<NodeId,NodeId>,Edge *> _edges ;
+	 std::map<std::string,QPointF> _node_cached_positions ;
 
 	 uint32_t _edge_length ;
 };

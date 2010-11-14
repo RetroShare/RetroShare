@@ -46,24 +46,13 @@ class NetworkView : public RsAutoUpdatePage
 		void setEdgeLength(int) ;
 
 		void changedFoFCheckBox( );
-
-		/** Called when Settings button is toggled */
-		void shownwSettingsFrame(bool show);
+		void redraw();
 
 	private:
 
-		void  clearPeerItems();
-		void  clearOtherItems();
-		void  clearLineItems();
+		void  clear();
 
 		QGraphicsScene *mScene;
-
-		std::map<std::string, QGraphicsItem *> mPeerItems;
-		std::list<QGraphicsItem *> mOtherItems;
-
-		std::list<QGraphicsItem *> mLineItems;
-		bool mLineChanged;
-
 
 		/** Qt Designer generated object */
 		Ui::NetworkView ui;

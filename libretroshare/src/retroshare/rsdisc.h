@@ -42,7 +42,8 @@ class RsDisc
 	RsDisc()  { return; }
 virtual ~RsDisc() { return; }
 
-virtual bool	getDiscFriends(std::string id, std::list<std::string> &friends) = 0;
+virtual bool	getDiscFriends(std::string id, std::list<std::string>& friends) = 0;
+virtual bool	getDiscGPGFriends(std::string id, std::list<std::string>& gpg_friends) = 0;
 virtual bool 	getDiscVersions(std::map<std::string, std::string> &versions) = 0;
 
 };

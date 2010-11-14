@@ -29,6 +29,14 @@
 
 RsDisc *rsDisc = NULL;
 
+bool p3Discovery::getDiscGPGFriends(std::string id, std::list<std::string>& gpg_friends)
+{
+	if (mDisc)
+	{
+		return mDisc->potentialGPGproxies(id, gpg_friends);
+	}
+	return false;
+}
 bool p3Discovery::getDiscFriends(std::string id, std::list<std::string> &friends)
 {
 	if (mDisc)
