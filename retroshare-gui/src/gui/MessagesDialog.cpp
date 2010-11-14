@@ -340,6 +340,8 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
     mFont = QFont("Arial", 10, QFont::Bold);
     ui.subjectText->setFont(mFont);
+    
+    ui.filterPatternLineEdit->setMinimumWidth(20);
 
     //setting default filter by column as subject
     proxyModel->setFilterKeyColumn(FilterColumnFromComboBox(ui.filterColumnComboBox->currentIndex()));

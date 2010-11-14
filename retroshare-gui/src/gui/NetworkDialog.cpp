@@ -153,6 +153,8 @@ NetworkDialog::NetworkDialog(QWidget *parent)
 
     ui.networkTab->addTab(new TrustView(),QString(tr("Authentication matrix")));
     ui.networkTab->addTab(networkview = new NetworkView(),QString(tr("Network View")));
+    
+    ui.showUnvalidKeys->setMinimumWidth(20);
      
     QString version = "-";
     std::map<std::string, std::string>::iterator vit;
