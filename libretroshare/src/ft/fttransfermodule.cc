@@ -46,10 +46,10 @@
  *
  */
 
-const double FT_TM_MAX_PEER_RATE = 1024 * 1024; /* 1MB/s */
+const double FT_TM_MAX_PEER_RATE = 10 * 1024 * 1024; /* 10MB/s */
 const uint32_t FT_TM_MAX_RESETS  = 5;
 
-const uint32_t FT_TM_MINIMUM_CHUNK = 128; /* ie 1/8Kb / sec */
+const uint32_t FT_TM_MINIMUM_CHUNK = 1024; /* ie 1Kb / sec */
 const uint32_t FT_TM_RESTART_DOWNLOAD = 20; /* 20 seconds */
 const uint32_t FT_TM_DOWNLOAD_TIMEOUT = 10; /* 10 seconds */
 const uint32_t FT_TM_CRC_MAP_MAX_WAIT_PER_GIG = 20; /* 20 seconds per gigabyte */
@@ -84,7 +84,7 @@ ftTransferModule::ftTransferModule(ftFileCreator *fc, ftDataMultiplex *dm, ftCon
 	// Dummy for Testing (should be handled independantly for 
 	// each peer.
 	//mChunkSize = 10000;
-	desiredRate = 1000000; /* 1MB/s ??? */
+	desiredRate = FT_TM_MAX_PEER_RATE; /* 1MB/s ??? */
 	actualRate = 0;
 	_crcmap_state = FT_TM_CRC_MAP_STATE_NOCHECK ;
 	_crcmap_last_asked_time = 0 ;
