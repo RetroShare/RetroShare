@@ -35,7 +35,6 @@
 /********
 * #define DEBUG_NETWORKVIEW
 ********/
-#define DEBUG_NETWORKVIEW
 
 /** Constructor */
 NetworkView::NetworkView(QWidget *parent)
