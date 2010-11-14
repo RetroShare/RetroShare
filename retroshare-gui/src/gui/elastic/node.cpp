@@ -187,10 +187,8 @@ void Node::calculateForces(const double *map,int width,int height,int W,int H,fl
 
 	// now time filter:
 
-	float f = (_type == GraphWidget::ELASTIC_NODE_TYPE_OWN)?10.0f:1.0f ;
-
-	_speedx += xforce / (MASS_FACTOR * f);
-	_speedy += yforce / (MASS_FACTOR * f);
+	_speedx += xforce / MASS_FACTOR;
+	_speedy += yforce / MASS_FACTOR;
 
 	if(_speedx > 10) _speedx = 10.0f ;
 	if(_speedy > 10) _speedy = 10.0f ;
@@ -205,8 +203,8 @@ void Node::calculateForces(const double *map,int width,int height,int W,int H,fl
 
 bool Node::advance()
 {
-//	if(_type == GraphWidget::ELASTIC_NODE_TYPE_OWN)
-//		return false;
+	if(_type == GraphWidget::ELASTIC_NODE_TYPE_OWN)
+		return false;
 
 	float f = std::max(fabs(newPos.x() - pos().x()), fabs(newPos.y() - pos().y())) ;
 
