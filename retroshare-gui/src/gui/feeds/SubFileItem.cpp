@@ -227,7 +227,7 @@ void SubFileItem::updateItemStatic()
 
 			playButton->setEnabled(false);
 			downloadButton->setEnabled(false);
-			cancelButton->setEnabled(true);
+                        cancelButton->setEnabled(false);
 
 			progressBar->setValue(0);
 			filename = "[" + tr("EXTRA") + "] " + filename;
@@ -255,7 +255,7 @@ void SubFileItem::updateItemStatic()
 		case SFI_STATE_LOCAL:
 			playButton->setEnabled(true);
 			downloadButton->setEnabled(false);
-			cancelButton->setEnabled(false);
+                        cancelButton->setEnabled(true);
 
 			progressBar->setValue(mFileSize / mDivisor);
 			filename = "[" + tr("LOCAL") + "] " + filename + " (" + misc::friendlyUnit(mFileSize) + ")";
