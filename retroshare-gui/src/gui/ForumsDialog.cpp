@@ -320,36 +320,29 @@ void ForumsDialog::forumListCustomPopupMenu( QPoint point )
 {
     QMenu contextMnu( this );
 
-    QAction *subForumAct = new QAction(QIcon(IMAGE_SUBSCRIBE), tr( "Subscribe to Forum" ), &contextMnu );
-    subForumAct->setDisabled (m_bIsForumSubscribed);
-    connect( subForumAct , SIGNAL( triggered() ), this, SLOT( subscribeToForum() ) );
+    QAction *action = contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Subscribe to Forum"), this, SLOT(subscribeToForum()));
+    action->setDisabled (m_bIsForumSubscribed);
 
-    QAction *unsubForumAct = new QAction(QIcon(IMAGE_UNSUBSCRIBE), tr( "Unsubscribe to Forum" ), &contextMnu );
-    unsubForumAct->setEnabled (m_bIsForumSubscribed);
-    connect( unsubForumAct , SIGNAL( triggered() ), this, SLOT( unsubscribeToForum() ) );
+    action = contextMnu.addAction(QIcon(IMAGE_UNSUBSCRIBE), tr("Unsubscribe to Forum"), this, SLOT(unsubscribeToForum()));
+    action->setEnabled (m_bIsForumSubscribed);
 
-    QAction *newForumAct = new QAction(QIcon(IMAGE_NEWFORUM), tr( "New Forum" ), &contextMnu );
-    connect( newForumAct , SIGNAL( triggered() ), this, SLOT( newforum() ) );
-
-    QAction *detailsForumAct = new QAction(QIcon(IMAGE_INFO), tr( "Show Forum Details" ), &contextMnu );
-    detailsForumAct->setDisabled (true);
-    connect( detailsForumAct , SIGNAL( triggered() ), this, SLOT( showForumDetails() ) );
-
-    QAction *editForumDetailsAct = new QAction(QIcon(":/images/settings16.png"), tr("Edit Forum Details"), this);
-    editForumDetailsAct->setDisabled (true);
-    connect( editForumDetailsAct, SIGNAL( triggered() ), this, SLOT( editForumDetails() ) );
-
-    if (!mCurrForumId.empty ()) {
-        detailsForumAct->setEnabled (true);
-        editForumDetailsAct->setEnabled(m_bIsForumAdmin);
-    }
-
-    contextMnu.addAction( subForumAct );
-    contextMnu.addAction( unsubForumAct );
     contextMnu.addSeparator();
-    contextMnu.addAction( newForumAct );
-    contextMnu.addAction( detailsForumAct );
-    contextMnu.addAction( editForumDetailsAct );
+
+    contextMnu.addAction(QIcon(IMAGE_NEWFORUM), tr("New Forum"), this, SLOT(newforum()));
+
+    action = contextMnu.addAction(QIcon(IMAGE_INFO), tr("Show Forum Details"), this, SLOT(showForumDetails()));
+    action->setEnabled (!mCurrForumId.empty ());
+
+    action = contextMnu.addAction(QIcon(":/images/settings16.png"), tr("Edit Forum Details"), this, SLOT(editForumDetails()));
+    action->setEnabled (!mCurrForumId.empty () && m_bIsForumAdmin);
+
+    contextMnu.addSeparator();
+
+    action = contextMnu.addAction(QIcon(":/images/message-mail-read.png"), tr("Mark all as read"), this, SLOT(markMsgAsReadAll()));
+    action->setEnabled (!mCurrForumId.empty () && m_bIsForumSubscribed);
+
+    action = contextMnu.addAction(QIcon(":/images/message-mail.png"), tr("Mark all as unread"), this, SLOT(markMsgAsUnreadAll()));
+    action->setEnabled (!mCurrForumId.empty () && m_bIsForumSubscribed);
 
     contextMnu.exec(QCursor::pos());
 }
@@ -377,14 +370,14 @@ void ForumsDialog::threadListCustomPopupMenu( QPoint point )
     QAction *markMsgAsRead = new QAction(QIcon(":/images/message-mail-read.png"), tr("Mark as read"), &contextMnu);
     connect(markMsgAsRead , SIGNAL(triggered()), this, SLOT(markMsgAsRead()));
 
-    QAction *markMsgAsReadAll = new QAction(QIcon(":/images/message-mail-read.png"), tr("Mark as read") + " (" + tr ("with children") + ")", &contextMnu);
-    connect(markMsgAsReadAll, SIGNAL(triggered()), this, SLOT(markMsgAsReadAll()));
+    QAction *markMsgAsReadChildren = new QAction(QIcon(":/images/message-mail-read.png"), tr("Mark as read") + " (" + tr ("with children") + ")", &contextMnu);
+    connect(markMsgAsReadChildren, SIGNAL(triggered()), this, SLOT(markMsgAsReadChildren()));
 
     QAction *markMsgAsUnread = new QAction(QIcon(":/images/message-mail.png"), tr("Mark as unread"), &contextMnu);
     connect(markMsgAsUnread , SIGNAL(triggered()), this, SLOT(markMsgAsUnread()));
 
-    QAction *markMsgAsUnreadAll = new QAction(QIcon(":/images/message-mail.png"), tr("Mark as unread") + " (" + tr ("with children") + ")", &contextMnu);
-    connect(markMsgAsUnreadAll , SIGNAL(triggered()), this, SLOT(markMsgAsUnreadAll()));
+    QAction *markMsgAsUnreadChildren = new QAction(QIcon(":/images/message-mail.png"), tr("Mark as unread") + " (" + tr ("with children") + ")", &contextMnu);
+    connect(markMsgAsUnreadChildren , SIGNAL(triggered()), this, SLOT(markMsgAsUnreadChildren()));
 
     if (m_bIsForumSubscribed) {
         QList<QTreeWidgetItem*> Rows;
@@ -411,8 +404,8 @@ void ForumsDialog::threadListCustomPopupMenu( QPoint point )
                 bHasReadChildren = true;
             }
         }
-        markMsgAsReadAll->setEnabled(bHasUnreadChildren);
-        markMsgAsUnreadAll->setEnabled(bHasReadChildren);
+        markMsgAsReadChildren->setEnabled(bHasUnreadChildren);
+        markMsgAsUnreadChildren->setEnabled(bHasReadChildren);
 
         if (nCount == 1) {
             replyAct->setEnabled (true);
@@ -423,9 +416,9 @@ void ForumsDialog::threadListCustomPopupMenu( QPoint point )
         }
     } else {
         markMsgAsRead->setDisabled(true);
-        markMsgAsReadAll->setDisabled(true);
+        markMsgAsReadChildren->setDisabled(true);
         markMsgAsUnread->setDisabled(true);
-        markMsgAsUnreadAll->setDisabled(true);
+        markMsgAsUnreadChildren->setDisabled(true);
         replyAct->setDisabled (true);
         replyauthorAct->setDisabled (true);
     }
@@ -435,9 +428,9 @@ void ForumsDialog::threadListCustomPopupMenu( QPoint point )
     contextMnu.addAction( replyauthorAct);
     contextMnu.addSeparator();
     contextMnu.addAction(markMsgAsRead);
-    contextMnu.addAction(markMsgAsReadAll);
+    contextMnu.addAction(markMsgAsReadChildren);
     contextMnu.addAction(markMsgAsUnread);
-    contextMnu.addAction(markMsgAsUnreadAll);
+    contextMnu.addAction(markMsgAsUnreadChildren);
     contextMnu.addSeparator();
     contextMnu.addAction( expandAll);
     contextMnu.addAction( collapseAll);
@@ -1536,7 +1529,7 @@ void ForumsDialog::setMsgAsReadUnread(QList<QTreeWidgetItem*> &Rows, bool bRead)
     }
 }
 
-void ForumsDialog::markMsgAsReadUnread (bool bRead, bool bAll)
+void ForumsDialog::markMsgAsReadUnread (bool bRead, bool bChildren, bool bForum)
 {
     if (mCurrForumId.empty() || m_bIsForumSubscribed == false) {
         return;
@@ -1544,9 +1537,16 @@ void ForumsDialog::markMsgAsReadUnread (bool bRead, bool bAll)
 
     /* get selected messages */
     QList<QTreeWidgetItem*> Rows;
-    getSelectedMsgCount (&Rows, NULL, NULL);
+    if (bForum) {
+        int itemCount = ui.threadTreeWidget->topLevelItemCount();
+        for (int item = 0; item < itemCount; item++) {
+            Rows.push_back(ui.threadTreeWidget->topLevelItem(item));
+        }
+    } else {
+        getSelectedMsgCount (&Rows, NULL, NULL);
+    }
 
-    if (bAll) {
+    if (bChildren) {
         /* add children */
         QList<QTreeWidgetItem*> AllRows;
 
@@ -1580,22 +1580,32 @@ void ForumsDialog::markMsgAsReadUnread (bool bRead, bool bAll)
 
 void ForumsDialog::markMsgAsRead()
 {
-    markMsgAsReadUnread(true, false);
+    markMsgAsReadUnread(true, false, false);
+}
+
+void ForumsDialog::markMsgAsReadChildren()
+{
+    markMsgAsReadUnread(true, true, false);
 }
 
 void ForumsDialog::markMsgAsReadAll()
 {
-    markMsgAsReadUnread(true, true);
+    markMsgAsReadUnread(true, true, true);
 }
 
 void ForumsDialog::markMsgAsUnread()
 {
-    markMsgAsReadUnread(false, false);
+    markMsgAsReadUnread(false, false, false);
+}
+
+void ForumsDialog::markMsgAsUnreadChildren()
+{
+    markMsgAsReadUnread(false, true, false);
 }
 
 void ForumsDialog::markMsgAsUnreadAll()
 {
-    markMsgAsReadUnread(false, true);
+    markMsgAsReadUnread(false, true, true);
 }
 
 void ForumsDialog::newforum()
@@ -1603,7 +1613,6 @@ void ForumsDialog::newforum()
     CreateForum cf (this);
     cf.exec ();
 }
-
 
 void ForumsDialog::createmessage()
 {

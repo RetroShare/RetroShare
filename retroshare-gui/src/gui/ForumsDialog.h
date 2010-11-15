@@ -55,9 +55,11 @@ private slots:
 
     //void removemessage();
     void markMsgAsRead();
+    void markMsgAsReadChildren();
     void markMsgAsReadAll();
     void markMsgAsUnread();
     void markMsgAsUnreadAll();
+    void markMsgAsUnreadChildren();
 
     /* handle splitter */
     void togglethreadview();
@@ -93,7 +95,7 @@ private:
 
     int getSelectedMsgCount(QList<QTreeWidgetItem*> *pRows, QList<QTreeWidgetItem*> *pRowsRead, QList<QTreeWidgetItem*> *pRowsUnread);
     void setMsgAsReadUnread(QList<QTreeWidgetItem*> &Rows, bool bRead);
-    void markMsgAsReadUnread(bool bRead, bool bAll);
+    void markMsgAsReadUnread(bool bRead, bool bChildren, bool bForum);
     void CalculateIconsAndFonts(QTreeWidgetItem *pItem = NULL);
     void CalculateIconsAndFonts(QTreeWidgetItem *pItem, bool &bHasReadChilddren, bool &bHasUnreadChilddren);
 
