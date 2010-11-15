@@ -35,6 +35,7 @@
 #include <sys/stat.h>
 
 #include "PopupChatDialog.h"
+#include "PopupChatWindow.h"
 #include "gui/RetroShareLink.h"
 #include "rshare.h"
 
@@ -61,9 +62,7 @@
 
 #define appDir QApplication::applicationDirPath()
 
-#define IMAGE_WINDOW         ":/images/rstray3.png"
-#define IMAGE_WINDOW_TYPING  ":/images/typing.png"
-
+#define WINDOW(This) dynamic_cast<PopupChatWindow*>(This->window())
 
 /*****
  * #define CHAT_DEBUG 1
@@ -91,21 +90,18 @@ void playsound()
 }
 
 /** Default constructor */
-PopupChatDialog::PopupChatDialog(std::string id, const QString name, QWidget *parent, Qt::WFlags flags)
-  : QMainWindow(parent, flags), dialogId(id), dialogName(name),
+PopupChatDialog::PopupChatDialog(const std::string &id, const QString &name, QWidget *parent, Qt::WFlags flags)
+  : QWidget(parent, flags), dialogId(id), dialogName(name),
     lastChatTime(0), lastChatName("")
     
 {
   /* Invoke Qt Designer generated QObject setup routine */
   ui.setupUi(this);
 
-  firstShow = true;
-
-  Settings->loadWidgetInformation(this);
-  this->move(qrand()%100, qrand()%100); //avoid to stack multiple popup chat windows on the same position
-
-  m_bInsertOnVisible = true;
+  newMessages = false;
+  typing = false;
   m_manualDelete = false;
+  peerStatus = 0;
 
   last_status_send_time = 0 ;
   style.setStyleFromSettings(ChatStyle::TYPE_PRIVATE);
@@ -116,8 +112,6 @@ PopupChatDialog::PopupChatDialog(std::string id, const QString name, QWidget *pa
   ui.statusmessagelabel->hide();
 
   connect(ui.avatarFrameButton, SIGNAL(toggled(bool)), this, SLOT(showAvatarFrame(bool)));
-
-  connect(ui.actionAvatar, SIGNAL(triggered()),this, SLOT(getAvatar()));
 
   connect(ui.sendButton, SIGNAL(clicked( ) ), this, SLOT(sendChat( ) ));
   connect(ui.addFileButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
@@ -142,16 +136,11 @@ PopupChatDialog::PopupChatDialog(std::string id, const QString name, QWidget *pa
   connect(ui.chattextEdit,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(contextMenu(QPoint)));
 
   // Create the status bar
-  resetStatusBar() ;
+  resetStatusBar();
 
   //ui.textBrowser->setOpenExternalLinks ( false );
   //ui.textBrowser->setOpenLinks ( false );
 
-  QString title = tr("RetroShare") + " - " + name;
-  setWindowTitle(title);
-
-  setWindowIcon(QIcon(IMAGE_WINDOW));
-  
   ui.textboldButton->setIcon(QIcon(QString(":/images/edit-bold.png")));
   ui.textunderlineButton->setIcon(QIcon(QString(":/images/edit-underline.png")));
   ui.textitalicButton->setIcon(QIcon(QString(":/images/edit-italic.png")));
@@ -250,6 +239,17 @@ PopupChatDialog::~PopupChatDialog()
 {
     // save settings
     processSettings(false);
+
+    PopupChatWindow *window = WINDOW(this);
+    if (window) {
+        window->removeDialog(this);
+        window->calculateTitle(NULL);
+    }
+
+    std::map<std::string, PopupChatDialog *>::iterator it;
+    if (chatDialogs.end() != (it = chatDialogs.find(dialogId))) {
+        chatDialogs.erase(it);
+    }
 }
 
 void PopupChatDialog::processSettings(bool bLoad)
@@ -271,7 +271,7 @@ void PopupChatDialog::processSettings(bool bLoad)
     Settings->endGroup();
 }
 
-/*static*/ PopupChatDialog *PopupChatDialog::getExistingInstance(std::string id)
+/*static*/ PopupChatDialog *PopupChatDialog::getExistingInstance(const std::string &id)
 {
     std::map<std::string, PopupChatDialog *>::iterator it;
     if (chatDialogs.end() != (it = chatDialogs.find(id))) {
@@ -282,21 +282,19 @@ void PopupChatDialog::processSettings(bool bLoad)
     return NULL;
 }
 
-/*static*/ PopupChatDialog *PopupChatDialog::getPrivateChat(std::string id, uint chatflags)
+/*static*/ PopupChatDialog *PopupChatDialog::getPrivateChat(const std::string &id, uint chatflags)
 {
     /* see if it exists already */
     PopupChatDialog *popupchatdialog = getExistingInstance(id);
-    if (popupchatdialog) {
-        if (popupchatdialog->isVisible() == false && (chatflags & RS_CHAT_OPEN) == 0) {
-            /* Window exists, but is hidden ... don't show it */
-            return popupchatdialog;
-        }
-    } else {
+    if (popupchatdialog == NULL) {
         if (chatflags & RS_CHAT_OPEN) {
             RsPeerDetails sslDetails;
             if (rsPeers->getPeerDetails(id, sslDetails)) {
                 popupchatdialog = new PopupChatDialog(id, PeerDefs::nameWithLocation(sslDetails));
                 chatDialogs[id] = popupchatdialog;
+
+                PopupChatWindow *window = PopupChatWindow::getWindow(false);
+                window->addDialog(popupchatdialog);
             }
         }
     }
@@ -305,14 +303,11 @@ void PopupChatDialog::processSettings(bool bLoad)
         return NULL;
     }
 
-    if (chatflags & RS_CHAT_FOCUS) {
-        popupchatdialog->show();
-        popupchatdialog->getfocus();
-    } else {
-        if (popupchatdialog->isVisible() == false) {
-            popupchatdialog->showMinimized();
-        }
-        QApplication::alert(popupchatdialog);
+    popupchatdialog->insertChatMsgs();
+
+    PopupChatWindow *window = WINDOW(popupchatdialog);
+    if (window) {
+        window->showDialog(popupchatdialog, chatflags);
     }
 
     return popupchatdialog;
@@ -320,14 +315,24 @@ void PopupChatDialog::processSettings(bool bLoad)
 
 /*static*/ void PopupChatDialog::cleanupChat()
 {
-    std::map<std::string, PopupChatDialog *>::iterator it;
+    PopupChatWindow::cleanup();
+
+    /* PopupChatDialog destuctor removes the entry from the map */
+    std::list<PopupChatDialog*> list;
+
+    std::map<std::string, PopupChatDialog*>::iterator it;
     for (it = chatDialogs.begin(); it != chatDialogs.end(); it++) {
         if (it->second) {
-            delete (it->second);
+            list.push_back(it->second);
         }
     }
 
     chatDialogs.clear();
+
+    std::list<PopupChatDialog*>::iterator it1;
+    for (it1 = list.begin(); it1 != list.end(); it1++) {
+        delete (*it1);
+    }
 }
 
 /*static*/ void PopupChatDialog::privateChatChanged(int list, int type)
@@ -357,7 +362,7 @@ void PopupChatDialog::processSettings(bool bLoad)
     }
 }
 
-void PopupChatDialog::chatFriend(std::string id)
+void PopupChatDialog::chatFriend(const std::string &id)
 {
     if (id.empty()){
         return;
@@ -414,6 +419,11 @@ void PopupChatDialog::chatFriend(std::string id)
         it->second->updateAvatar() ;
 }
 
+void PopupChatDialog::focusDialog()
+{
+    ui.chattextEdit->setFocus();
+}
+
 void PopupChatDialog::pasteLink()
 {
 	std::cerr << "In paste link" << std::endl ;
@@ -434,10 +444,15 @@ void PopupChatDialog::contextMenu( QPoint point )
 
 void PopupChatDialog::resetStatusBar() 
 {
-        ui.statusLabel->clear();
-        ui.typingpixmapLabel->clear();
+    ui.statusLabel->clear();
+    ui.typingpixmapLabel->clear();
 
-        setWindowIcon(QIcon(IMAGE_WINDOW));
+    typing = false;
+
+    PopupChatWindow *window = WINDOW(this);
+    if (window) {
+        window->calculateTitle(this);
+    }
 }
 
 void PopupChatDialog::updateStatusTyping()
@@ -458,45 +473,39 @@ void PopupChatDialog::updateStatusTyping()
 void PopupChatDialog::updateStatusString(const QString& peer_id, const QString& status_string)
 {
     QString status = QString::fromStdString(rsPeers->getPeerName(peer_id.toStdString())) + " " + tr(status_string.toAscii());
-    ui.statusLabel->setText(status) ; // displays info for 5 secs.
+    ui.statusLabel->setText(status); // displays info for 5 secs.
     ui.typingpixmapLabel->setPixmap(QPixmap(":images/typing.png") );
 
     if (status_string == "is typing...") {
-        setWindowIcon(QIcon(IMAGE_WINDOW_TYPING));
+        typing = true;
+
+        PopupChatWindow *window = WINDOW(this);
+        if (window) {
+            window->calculateTitle(this);
+        }
     }
 
     QTimer::singleShot(5000,this,SLOT(resetStatusBar())) ;
 }
 
-void PopupChatDialog::getfocus()
+void PopupChatDialog::resizeEvent(QResizeEvent *event)
 {
-    activateWindow();
-    setWindowState((windowState() & (~Qt::WindowMinimized)) | Qt::WindowActive);
-    raise();
-    ui.chattextEdit->setFocus();
+    // Workaround: now the scroll position is correct calculated
+    QScrollBar *scrollbar = ui.textBrowser->verticalScrollBar();
+    scrollbar->setValue(scrollbar->maximum());
 }
 
-void PopupChatDialog::showEvent(QShowEvent *event)
+void PopupChatDialog::activate()
 {
-    if (m_bInsertOnVisible) {
-        insertChatMsgs();
+    PopupChatWindow *window = WINDOW(this);
+    if (window) {
+        if (window->isActiveWindow()) {
+            newMessages = false;
+            window->calculateTitle(this);
+        }
+    } else {
+        newMessages = false;
     }
-
-    if (firstShow) {
-        firstShow = false;
-
-        // Workaround: now the scroll position is correct calculated
-        QScrollBar *scrollbar = ui.textBrowser->verticalScrollBar();
-        scrollbar->setValue(scrollbar->maximum());
-    }
-}
-
-void PopupChatDialog::closeEvent (QCloseEvent * event)
-{
-    Settings->saveWidgetInformation(this);
-
-    hide();
-    event->ignore();
 }
 
 void PopupChatDialog::onPrivateChatChanged(int list, int type, bool initial /*= false*/)
@@ -573,13 +582,6 @@ void PopupChatDialog::onPrivateChatChanged(int list, int type, bool initial /*= 
 
 void PopupChatDialog::insertChatMsgs()
 {
-    if (isVisible() == false) {
-        m_bInsertOnVisible = true;
-        return;
-    }
-
-    m_bInsertOnVisible = false;
-
     std::list<ChatInfo> newchat;
     if (!rsMsgs->getPrivateChatQueue(true, dialogId, newchat))
     {
@@ -603,7 +605,19 @@ void PopupChatDialog::insertChatMsgs()
     rsMsgs->clearPrivateChatQueue(true, dialogId);
 
     playsound();
-    QApplication::alert(this);
+
+    PopupChatWindow *window = WINDOW(this);
+    if (window) {
+        window->alertDialog(this);
+    }
+
+    if (isVisible() == false || (window && window->isActiveWindow() == false)) {
+        newMessages = true;
+
+        if (window) {
+            window->calculateTitle(this);
+        }
+    }
 }
 
 void PopupChatDialog::addChatMsg(bool incoming, const std::string &id, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message, enumChatType chatType, bool addToHistory)
@@ -642,7 +656,7 @@ void PopupChatDialog::addChatMsg(bool incoming, const std::string &id, const QSt
     QScrollBar *scrollbar = ui.textBrowser->verticalScrollBar();
     scrollbar->setValue(scrollbar->maximum());
 
-    resetStatusBar() ;
+    resetStatusBar();
 }
 
 bool PopupChatDialog::eventFilter(QObject *obj, QEvent *event)
@@ -674,7 +688,7 @@ bool PopupChatDialog::eventFilter(QObject *obj, QEvent *event)
         }
     }
     // pass the event on to the parent class
-    return QMainWindow::eventFilter(obj, event);
+    return QWidget::eventFilter(obj, event);
 }
 
 void PopupChatDialog::sendChat()
@@ -877,30 +891,6 @@ void PopupChatDialog::updateAvatar()
 	delete[] data ;
 }
 
-void PopupChatDialog::getAvatar()
-{
-	QString fileName = QFileDialog::getOpenFileName(this, "Load File", QDir::homePath(), "Pictures (*.png *.xpm *.jpg)");
-
-	if(!fileName.isEmpty())
-	{
-		picture = QPixmap(fileName).scaled(96,96, Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
-
-		std::cerr << "Sending avatar image down the pipe" << std::endl ;
-
-		// send avatar down the pipe for other peers to get it.
-		QByteArray ba;
-		QBuffer buffer(&ba);
-		buffer.open(QIODevice::WriteOnly);
-		picture.save(&buffer, "PNG"); // writes image into ba in PNG format
-
-		std::cerr << "Image size = " << ba.size() << std::endl ;
-
-		rsMsgs->setOwnAvatarData((unsigned char *)(ba.data()),ba.size()) ;	// last char 0 included.
-
-		updateAvatar() ;
-	}
-}
-
 void PopupChatDialog::addExtraFile()
 {
 	// select a file
@@ -947,8 +937,6 @@ void PopupChatDialog::addAttachment(std::string filePath,int flag)
 		QObject::connect(file,SIGNAL(fileFinished(AttachFileItem *)), SLOT(fileHashingFinished(AttachFileItem *))) ;
 	    }
 }
-
-
 
 void PopupChatDialog::fileHashingFinished(AttachFileItem* file) 
 {
@@ -1163,6 +1151,7 @@ void PopupChatDialog::updateStatus(const QString &peer_id, int status)
     /* set font size for status  */
     if (stdPeerId == dialogId) {
         // the peers status has changed
+
         switch (status) {
         case RS_STATUS_OFFLINE:
             ui.avatarlabel->setStyleSheet("QLabel#avatarlabel{ border-image:url(:/images/avatarstatus_bg_offline.png); }");
@@ -1201,6 +1190,13 @@ void PopupChatDialog::updateStatus(const QString &peer_id, int status)
 
         QString statusString("<span style=\"font-size:11pt; font-weight:500;""\">%1</span>");
         ui.friendnamelabel->setText(dialogName + " (" + statusString.arg(StatusDefs::name(status)) + ")") ;
+
+        peerStatus = status;
+
+        PopupChatWindow *window = WINDOW(this);
+        if (window) {
+            window->calculateTitle(this);
+        }
 
         return;
     }
@@ -1250,7 +1246,6 @@ void PopupChatDialog::updatePeersCustomStateString(const QString& peer_id, const
         }
     }
 }
-
 
 void PopupChatDialog::on_actionMessageHistory_triggered()
 {

@@ -22,6 +22,7 @@
 #include <QColor>
 #include <QFont>
 #include <QDateTime>
+#include <QWidget>
 
 #include <string>
 #include <list>
@@ -154,4 +155,44 @@ QString RsharePeerSettings::getPrivateChatFont(const std::string &peerId)
 void RsharePeerSettings::setPrivateChatFont(const std::string &peerId, const QString &value)
 {
     set(peerId, "PrivateChatFont", value);
+}
+
+void RsharePeerSettings::saveWidgetInformation(const std::string &peerId, QWidget *widget)
+{
+    std::string gpgId;
+    if (getGpgIdOfSslId(peerId, gpgId) == false) {
+        /* gpg id not found */
+        return;
+    }
+
+    beginGroup(QString::fromStdString(gpgId));
+    beginGroup("widgetInformation");
+    beginGroup(widget->objectName());
+
+    setValue("size", widget->size());
+    setValue("pos", widget->pos());
+
+    endGroup();
+    endGroup();
+    endGroup();
+}
+
+void RsharePeerSettings::loadWidgetInformation(const std::string &peerId, QWidget *widget)
+{
+    std::string gpgId;
+    if (getGpgIdOfSslId(peerId, gpgId) == false) {
+        /* gpg id not found */
+        return;
+    }
+
+    beginGroup(QString::fromStdString(gpgId));
+    beginGroup("widgetInformation");
+    beginGroup(widget->objectName());
+
+    widget->resize(value("size", widget->size()).toSize());
+    widget->move(value("pos", QPoint(200, 200)).toPoint());
+
+    endGroup();
+    endGroup();
+    endGroup();
 }

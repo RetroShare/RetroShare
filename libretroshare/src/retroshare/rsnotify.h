@@ -52,6 +52,7 @@ const uint32_t RS_SYSTRAY_GROUP_MSG = 0x0010;
 const uint32_t RS_CHAT_OPEN			= 0x0001;
 //const uint32_t free			= 0x0002;
 const uint32_t RS_CHAT_FOCUS		= 0x0004;
+const uint32_t RS_CHAT_TABBED_WINDOW	= 0x0008;
 
 const uint32_t RS_FEED_TYPE_PEER 	= 0x0010;
 const uint32_t RS_FEED_TYPE_CHAN 	= 0x0020;

@@ -101,6 +101,8 @@ NotifyPage::save(QString &errmsg)
         chatflags |= RS_CHAT_OPEN;
     if (ui.chat_Focus->isChecked())
         chatflags |= RS_CHAT_FOCUS;
+    if (ui.chat_tabbedWindow->isChecked())
+        chatflags |= RS_CHAT_TABBED_WINDOW;
 
     if (ui.trayNotify_PrivateChat->isChecked())
         traynotifyflags |= TRAYNOTIFY_PRIVATECHAT;
@@ -150,6 +152,7 @@ void NotifyPage::load()
 
     ui.chat_NewWindow->setChecked(chatflags & RS_CHAT_OPEN);
     ui.chat_Focus->setChecked(chatflags & RS_CHAT_FOCUS);
+    ui.chat_tabbedWindow->setChecked(chatflags & RS_CHAT_TABBED_WINDOW);
 
     ui.systray_GroupChat->setChecked(Settings->getDisplayTrayGroupChat());
 

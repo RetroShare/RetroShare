@@ -35,7 +35,7 @@ class ChatInfo;
 #include "gui/im_history/IMHistoryKeeper.h"
 #include "ChatStyle.h"
 
-class PopupChatDialog : public QMainWindow
+class PopupChatDialog : public QWidget
 {
   Q_OBJECT
 
@@ -43,17 +43,23 @@ public:
     enum enumChatType { TYPE_NORMAL, TYPE_HISTORY, TYPE_OFFLINE };
 
 public:
-    static PopupChatDialog *getExistingInstance(std::string id);
-    static PopupChatDialog *getPrivateChat(std::string id, uint chatflags);
+    static PopupChatDialog *getExistingInstance(const std::string &id);
+    static PopupChatDialog *getPrivateChat(const std::string &id, uint chatflags);
     static void cleanupChat();
-    static void chatFriend(std::string id);
+    static void chatFriend(const std::string &id);
     static void updateAllAvatars();
     static void privateChatChanged(int list, int type);
 
     void updatePeerAvatar(const std::string&);
+    std::string getPeerId() { return dialogId; }
+    QString getTitle() { return dialogName; }
+    bool hasNewMessages() { return newMessages; }
+    bool isTyping() { return typing; }
+    int getPeerStatus() { return peerStatus; }
+    void focusDialog();
+    void activate();
 
 public slots:
-    void getfocus();
     void pasteLink() ;
     void contextMenu(QPoint) ;
 
@@ -71,12 +77,11 @@ public slots:
 
 protected:
     /** Default constructor */
-    PopupChatDialog(std::string id, const QString name, QWidget *parent = 0, Qt::WFlags flags = 0);
+    PopupChatDialog(const std::string &id, const QString &name, QWidget *parent = 0, Qt::WFlags flags = 0);
     /** Default destructor */
     ~PopupChatDialog();
 
-    void closeEvent (QCloseEvent * event);
-    void showEvent (QShowEvent * event);
+    virtual void resizeEvent(QResizeEvent *event);
     virtual void dragEnterEvent(QDragEnterEvent *event);
     virtual void dropEvent(QDropEvent *event);
 
@@ -86,8 +91,6 @@ protected:
     void addChatMsg(bool incoming, const std::string &id, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message, enumChatType chatType, bool addToHistory);
 
     void updateAvatar();
-
-    QPixmap picture;
 
 private slots:
     void on_actionMessageHistory_triggered();
@@ -103,7 +106,6 @@ private slots:
     void sendChat();
 
     void updatePeersCustomStateString(const QString& peer_id, const QString& status_string) ;
-    void getAvatar();
 
     void on_actionClear_Chat_triggered();
 
@@ -139,12 +141,12 @@ private:
     QString wholeChat;
     QString fileName;
 
-    bool m_bInsertOnVisible;
+    bool newMessages;
+    bool typing;
+    int peerStatus;
     IMHistoryKeeper historyKeeper;
     ChatStyle style;
     bool m_manualDelete;
-
-    bool firstShow;
 
     /** Qt Designer generated object */
     Ui::PopupChatDialog ui;

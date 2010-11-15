@@ -678,6 +678,13 @@
             </property>
            </widget>
           </item>
+          <item>
+           <widget class="QCheckBox" name="chat_tabbedWindow">
+            <property name="text">
+             <string>Use a single tabbed window</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>

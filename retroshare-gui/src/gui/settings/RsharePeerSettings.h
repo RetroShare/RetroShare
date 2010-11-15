@@ -37,6 +37,9 @@ public:
     QString getPrivateChatFont(const std::string &peerId);
     void    setPrivateChatFont(const std::string &peerId, const QString &value);
 
+    void    saveWidgetInformation(const std::string &peerId, QWidget *widget);
+    void    loadWidgetInformation(const std::string &peerId, QWidget *widget);
+
 protected:
     /** Default constructor. */
     RsharePeerSettings();

@@ -1140,14 +1140,6 @@ p, li { white-space: pre-wrap; }
         <translation>Verteile Kanal</translation>
     </message>
     <message>
-        <source>Popularity: %1
-Fetches: %2
-Available: %3</source>
-        <translation type="obsolete">Popularität: %1
-Abgeholt: %2
-Verfügbar: %3</translation>
-    </message>
-    <message>
         <location line="+482"/>
         <source>No Channel Selected</source>
         <translation>Keinen Kanal gewählt</translation>
@@ -3571,7 +3563,7 @@ p, li { white-space: pre-wrap; }
         <translation>Beliebtheit:</translation>
     </message>
     <message>
-        <location line="+326"/>
+        <location line="+339"/>
         <location line="+107"/>
         <source>Anonymous</source>
         <translation>Anonym</translation>
@@ -3605,7 +3597,7 @@ p, li { white-space: pre-wrap; }
         <translation>Du kannst einem anonymen Autor nicht antworten</translation>
     </message>
     <message>
-        <location line="-1485"/>
+        <location line="-1498"/>
         <source>Your Forums</source>
         <translation>Deine Foren</translation>
     </message>
@@ -3748,7 +3740,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="+127"/>
-        <location line="+1251"/>
+        <location line="+1264"/>
         <source>Start New Thread</source>
         <translation>Erstelle neues Thema</translation>
     </message>
@@ -3776,7 +3768,7 @@ p, li { white-space: pre-wrap; }
         <translation>Inhalt</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="-1238"/>
+        <location filename="../gui/ForumsDialog.cpp" line="-1251"/>
         <location line="+3"/>
         <source>Mark as read</source>
         <translation>Als gelesen markieren</translation>
@@ -5496,10 +5488,6 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
         <translation>Grösse</translation>
     </message>
     <message>
-        <source>Sources</source>
-        <translation type="obsolete">Quellen</translation>
-    </message>
-    <message>
         <location line="+5"/>
         <source>Hash</source>
         <translation>Prüfsumme</translation>
@@ -6091,10 +6079,6 @@ p, li { white-space: pre-wrap; }
         <location line="+172"/>
         <source>File Name</source>
         <translation>Dateiname</translation>
-    </message>
-    <message>
-        <source>Sources</source>
-        <translation type="obsolete">Quellen</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -6756,14 +6740,6 @@ p, li { white-space: pre-wrap; }
         <translation>DHT ist ausgeschaltet.</translation>
     </message>
     <message>
-        <source>UPNP NOT FOUND.</source>
-        <translation type="obsolete">UPNP wurde nicht gefunden.</translation>
-    </message>
-    <message>
-        <source>DHT OK.</source>
-        <translation type="obsolete">DHT OK.</translation>
-    </message>
-    <message>
         <location line="+5"/>
         <source>Stun external address detection is working.</source>
         <translation>Stun externe Adresserkennung arbeitet.</translation>
@@ -6792,10 +6768,6 @@ p, li { white-space: pre-wrap; }
         <location line="+4"/>
         <source>external address finder didn&apos;t found anything</source>
         <translation>Externer IP Adress-Finder hat nichts gefunden</translation>
-    </message>
-    <message>
-        <source>DHT is not working (down).</source>
-        <translation type="obsolete">DHT läuft nicht.</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="-165"/>
@@ -6869,14 +6841,6 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>NetworkView</name>
     <message>
-        <source>Hide Settings</source>
-        <translation type="obsolete">Einstellungen verbergen</translation>
-    </message>
-    <message>
-        <source>Show Settings</source>
-        <translation type="obsolete">Einstellungen anzeigen</translation>
-    </message>
-    <message>
         <location filename="../gui/NetworkView.ui" line="+14"/>
         <source>Form</source>
         <translation>Formular</translation>
@@ -6920,18 +6884,6 @@ p, li { white-space: pre-wrap; }
         <location line="+20"/>
         <source>Edge length:</source>
         <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Settings</source>
-        <translation type="obsolete">Einstellungen</translation>
-    </message>
-    <message>
-        <source>Show Friends of Friends</source>
-        <translation type="obsolete">Zeige Freunde von Freunden</translation>
-    </message>
-    <message>
-        <source>Draw Friend Connections</source>
-        <translation type="obsolete">Zeichne Verbindungen zwischen Freunden</translation>
     </message>
 </context>
 <context>
@@ -7071,21 +7023,14 @@ p, li { white-space: pre-wrap; }
         <translation>Öffne Fenster für neuen Chat</translation>
     </message>
     <message>
-        <source>Open Window for new Peer Chat</source>
-        <translation type="obsolete">Öffne Fenster für neuen Peer</translation>
-    </message>
-    <message>
-        <source>Reopen if closed by user</source>
-        <translation type="obsolete">Wiederöffnen, wenn von Benutzer geschlossen</translation>
-    </message>
-    <message>
-        <source>Reopen if closed by user:</source>
-        <translation type="obsolete">Wiederöffnen, wenn von Benutzer geschlossen:</translation>
-    </message>
-    <message>
         <location line="+7"/>
         <source>Grab Focus when chat arrives</source>
         <translation>Fokus auf neues Chatfenster legen</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Use a single tabbed window</source>
+        <translation>Ein Fenster mit Tabs verwenden</translation>
     </message>
     <message>
         <location line="+10"/>
@@ -7098,7 +7043,7 @@ p, li { white-space: pre-wrap; }
         <translation>Zeige Systemabschnitts-Nachricht an</translation>
     </message>
     <message>
-        <location line="-122"/>
+        <location line="-129"/>
         <source>Add feeds at end</source>
         <translation>Feeds am Ende anfügen</translation>
     </message>
@@ -7986,7 +7931,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PopupChatDialog</name>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="+745"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="+748"/>
         <source>Hide Avatar</source>
         <translation>Avatar verstecken</translation>
     </message>
@@ -7996,35 +7941,35 @@ p, li { white-space: pre-wrap; }
         <translation>Avatar zeigen</translation>
     </message>
     <message>
-        <location line="+342"/>
+        <location line="+316"/>
         <source>File not found or file name not accepted.</source>
         <translation>Datei nicht gefunden oder Dateiname nicht akzeptiert.</translation>
     </message>
     <message>
-        <location line="+90"/>
+        <location line="+91"/>
         <source>Messages you send will be delivered after Friend is again Online</source>
         <translation>Nachrichten, die Du versendest gehen bei diesem Freund erst wieder ein wenn er Online ist</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="+566"/>
-        <location line="+293"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="+564"/>
+        <location line="+263"/>
         <source>Bold</source>
         <translation>Fett</translation>
     </message>
     <message>
-        <location line="-261"/>
-        <location line="+271"/>
+        <location line="-231"/>
+        <location line="+241"/>
         <source>Underline</source>
         <translation>Unterstrichen</translation>
     </message>
     <message>
-        <location line="-239"/>
-        <location line="+234"/>
+        <location line="-209"/>
+        <location line="+204"/>
         <source>Italic</source>
         <translation>Kursiv</translation>
     </message>
     <message>
-        <location line="-202"/>
+        <location line="-172"/>
         <source>Set Font</source>
         <translation>Schriftart setzen</translation>
     </message>
@@ -8034,7 +7979,7 @@ p, li { white-space: pre-wrap; }
         <translation>Textfarbe</translation>
     </message>
     <message>
-        <location line="+222"/>
+        <location line="+180"/>
         <source>Clear offline messages</source>
         <translation>Entferne offline Nachrichten</translation>
     </message>
@@ -8049,12 +7994,12 @@ p, li { white-space: pre-wrap; }
         <translation>Nachrichtenverlauf</translation>
     </message>
     <message>
-        <location line="-411"/>
+        <location line="-369"/>
         <source>Send</source>
         <translation>Senden</translation>
     </message>
     <message>
-        <location line="+382"/>
+        <location line="+340"/>
         <source>Clear Chat</source>
         <translation>Chat-Chronik löschen</translation>
     </message>
@@ -8064,32 +8009,22 @@ p, li { white-space: pre-wrap; }
         <translation>Deaktiviere Emoticons</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="-1002"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="-989"/>
         <source>Paste retroshare Link</source>
         <translation>RetroShare Link einfügen</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="-29"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="-17"/>
         <source>Strike</source>
         <translation>Durchgestrichen</translation>
     </message>
     <message>
-        <location line="+9"/>
-        <source>Avatar</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Set your Avatar Picture</source>
-        <translation>Wähle dein Avatar Bild aus</translation>
-    </message>
-    <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="+738"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="+726"/>
         <source>Add Extra File</source>
         <translation>Zusätzlich eine Datei hinzufügen</translation>
     </message>
     <message>
-        <location line="+167"/>
+        <location line="+165"/>
         <location line="+7"/>
         <source>Drop file error.</source>
         <translation>Dateifehler bei Drag&apos;n&apos;Drop.</translation>
@@ -8100,12 +8035,12 @@ p, li { white-space: pre-wrap; }
         <translation>Ordner können nicht für Drag&apos;n&apos;Drop genutzt werden. Nur Dateien werden akzeptiert.</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="-409"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="-367"/>
         <source>Add a File for your Friend</source>
         <translation>Füge eine Datei für deinen Freund hinzu</translation>
     </message>
     <message>
-        <location line="+431"/>
+        <location line="+389"/>
         <location line="+3"/>
         <source>Save Chat History</source>
         <translation>Chat Verlauf speichern</translation>
@@ -8121,13 +8056,13 @@ p, li { white-space: pre-wrap; }
         <translation>Text Datei (*.txt );;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location line="-728"/>
+        <location line="-720"/>
         <source>Your Friend is offline 
 Do you want to send them a Message instead</source>
         <translation>Dein Freund ist Offline willst du ihm stattdessen eine Nachricht senden</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.ui" line="-463"/>
+        <location filename="../gui/chat/PopupChatDialog.ui" line="-421"/>
         <source>Attach a Picture</source>
         <translation>Bild anhängen</translation>
     </message>
@@ -8138,7 +8073,7 @@ Do you want to send them a Message instead</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="+769"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="+762"/>
         <source>is Idle and may not reply</source>
         <translation>antwortet möglicherweise nicht, da der Status auf &quot;Untätig&quot; gesetzt wurde</translation>
     </message>
@@ -8158,7 +8093,7 @@ Do you want to send them a Message instead</source>
         <translation>ist Offline.</translation>
     </message>
     <message>
-        <location line="-714"/>
+        <location line="-697"/>
         <source>is typing...</source>
         <translation>tippt...</translation>
     </message>
@@ -8168,14 +8103,39 @@ Do you want to send them a Message instead</source>
         <translation>Schliessen</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="-320"/>
-        <source>RetroShare</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+272"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="-58"/>
         <source>Friend not Online</source>
         <translation>Freund ist nicht online</translation>
+    </message>
+</context>
+<context>
+    <name>PopupChatWindow</name>
+    <message>
+        <location filename="../gui/chat/PopupChatWindow.ui" line="+94"/>
+        <source>Avatar</source>
+        <translation>Avatar</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Set your Avatar Picture</source>
+        <translation>Wähle dein Avatar Bild</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <location line="+3"/>
+        <source>Dock tab</source>
+        <translation>Docke Tab an</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <location line="+3"/>
+        <source>Undock tab</source>
+        <translation>Docke Tab ab</translation>
+    </message>
+    <message>
+        <location filename="../gui/chat/PopupChatWindow.cpp" line="+260"/>
+        <source>RetroShare</source>
+        <translation>RetroShare</translation>
     </message>
 </context>
 <context>
@@ -8602,18 +8562,6 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;Externe Adresse:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; color:#76746c;&quot;&gt;Dynamic DSN:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; color:#76746c;&quot;&gt;Dynamisches DSN:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <location line="+119"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -8836,14 +8784,6 @@ p, li { white-space: pre-wrap; }
         <location line="+8"/>
         <source>Discovery :</source>
         <translation>Entdeckung :</translation>
-    </message>
-    <message>
-        <source>Share Ip and information with your friend (Disc On)</source>
-        <translation type="obsolete">Teile IP und Informationen mit Freunden (Disc On)</translation>
-    </message>
-    <message>
-        <source>Don&apos;t share any information (Disc Off)</source>
-        <translation type="obsolete">Teile keine Informationen (Disc Off)</translation>
     </message>
     <message>
         <location line="+94"/>
@@ -10119,22 +10059,6 @@ p, li { white-space: pre-wrap; }
         <location line="+40"/>
         <source>Send retroshare Link</source>
         <translation>Sende RetroShare Link</translation>
-    </message>
-    <message>
-        <source>%1 recommends a list of files to you</source>
-        <translation type="obsolete">%1 empfiehlt Dir eine Liste von Dateien</translation>
-    </message>
-    <message>
-        <source>%1 recommends a file to you</source>
-        <translation type="obsolete">%1 empfiehlt Dir eine Datei</translation>
-    </message>
-    <message>
-        <source>Recommend (Automated message) To </source>
-        <translation type="obsolete">Empfehle (automatisch) in einer Nachricht an </translation>
-    </message>
-    <message>
-        <source>Recommend in a message to </source>
-        <translation type="obsolete">Empfehle in einer Nachricht an </translation>
     </message>
     <message>
         <location line="-100"/>

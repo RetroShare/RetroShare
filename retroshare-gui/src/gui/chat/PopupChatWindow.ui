@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PopupChatWindow</class>
+ <widget class="QMainWindow" name="PopupChatWindow">
+  <property name="windowModality">
+   <enum>Qt::NonModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>531</width>
+    <height>451</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string notr="true">MainWindow</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
+  <widget class="QWidget" name="chatcentralwidget">
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_2">
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <property name="horizontalSpacing">
+     <number>0</number>
+    </property>
+    <property name="verticalSpacing">
+     <number>1</number>
+    </property>
+    <item row="0" column="0">
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QTabWidget" name="tabWidget">
+        <property name="tabsClosable">
+         <bool>true</bool>
+        </property>
+        <property name="movable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QStatusBar" name="chatstatusbar"/>
+  <widget class="QToolBar" name="chattoolBar">
+   <property name="maximumSize">
+    <size>
+     <width>16777215</width>
+     <height>32</height>
+    </size>
+   </property>
+   <property name="movable">
+    <bool>false</bool>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::LeftToolBarArea|Qt::TopToolBarArea</set>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>24</width>
+     <height>24</height>
+    </size>
+   </property>
+   <property name="floatable">
+    <bool>false</bool>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionAvatar"/>
+   <addaction name="actionDockTab"/>
+   <addaction name="actionUndockTab"/>
+  </widget>
+  <action name="actionAvatar">
+   <property name="icon">
+    <iconset resource="../images.qrc">
+     <normaloff>:/images/no_avatar_70.png</normaloff>:/images/no_avatar_70.png</iconset>
+   </property>
+   <property name="text">
+    <string>Avatar</string>
+   </property>
+   <property name="toolTip">
+    <string>Set your Avatar Picture</string>
+   </property>
+  </action>
+  <action name="actionDockTab">
+   <property name="icon">
+    <iconset resource="../images.qrc">
+     <normaloff>:/images/uploads.png</normaloff>:/images/uploads.png</iconset>
+   </property>
+   <property name="text">
+    <string>Dock tab</string>
+   </property>
+   <property name="toolTip">
+    <string>Dock tab</string>
+   </property>
+  </action>
+  <action name="actionUndockTab">
+   <property name="icon">
+    <iconset resource="../images.qrc">
+     <normaloff>:/images/download.png</normaloff>:/images/download.png</iconset>
+   </property>
+   <property name="text">
+    <string>Undock tab</string>
+   </property>
+   <property name="toolTip">
+    <string>Undock tab</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="../images.qrc"/>
+ </resources>
+ <connections/>
+</ui>
