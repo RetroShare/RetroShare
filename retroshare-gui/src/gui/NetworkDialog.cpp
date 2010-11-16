@@ -362,10 +362,17 @@ void NetworkDialog::updateDisplay()
 /* get the list of Neighbours from the RsIface.  */
 void NetworkDialog::insertConnect()
 {
+	static time_t last_time = 0 ;
+
 	if (!rsPeers)
-	{
 		return;
-	}
+
+	// Because this is called from a qt signal, there's no limitation between calls.
+	time_t now = time(NULL);
+	if(last_time + 5 > now)		// never update more often then every 5 seconds.
+		return ;
+
+	last_time = now ;
 
     std::list<std::string> neighs; //these are GPG ids
 	std::list<std::string>::iterator it;
