@@ -80,6 +80,9 @@ protected:
     void closeEvent (QCloseEvent * event);
     bool eventFilter(QObject *obj, QEvent *ev);
 
+    virtual void dragEnterEvent(QDragEnterEvent *event);
+    virtual void dropEvent(QDropEvent *event);
+
 private slots:
 
     /* toggle Contacts DockWidget */

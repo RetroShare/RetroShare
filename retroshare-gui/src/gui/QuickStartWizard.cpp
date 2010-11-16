@@ -346,8 +346,7 @@ void QuickStartWizard::updateFlags(bool b)
 
 bool QuickStartWizard::messageBoxOk(QString msg)
  {
-    QMessageBox mb("Share Manager InfoBox!",msg,QMessageBox::Information,QMessageBox::Ok,0,0);
-    mb.setButtonText( QMessageBox::Ok, "OK" );
+    QMessageBox mb("Share Manager InfoBox!",msg,QMessageBox::Information,QMessageBox::Ok,0,0,this);
     mb.exec();
     return true;
  }

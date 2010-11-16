@@ -284,6 +284,8 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
     /* set focus to subject */
     ui.titleEdit->setFocus();
 
+    setAcceptDrops(true);
+
     /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
@@ -2288,4 +2290,80 @@ void MessageComposer::recommendButtonClicked()
     QString text = BuildRecommendHtml(gpgIds);
     ui.msgText->textCursor().insertHtml(text);
     ui.msgText->setFocus(Qt::OtherFocusReason);
+}
+
+void MessageComposer::dragEnterEvent(QDragEnterEvent *event)
+{
+    /* print out mimeType */
+    std::cerr << "PopupChatDialog::dragEnterEvent() Formats";
+    std::cerr << std::endl;
+
+    QStringList formats = event->mimeData()->formats();
+    QStringList::iterator it;
+    for(it = formats.begin(); it != formats.end(); it++) {
+        std::cerr << "Format: " << (*it).toStdString();
+        std::cerr << std::endl;
+    }
+
+    if (event->mimeData()->hasUrls()) {
+        std::cerr << "PopupChatDialog::dragEnterEvent() Accepting Urls";
+        std::cerr << std::endl;
+        event->acceptProposedAction();
+    } else {
+        std::cerr << "PopupChatDialog::dragEnterEvent() No Urls";
+        std::cerr << std::endl;
+    }
+}
+
+void MessageComposer::dropEvent(QDropEvent *event)
+{
+    if (!(Qt::CopyAction & event->possibleActions())) {
+        std::cerr << "PopupChatDialog::dropEvent() Rejecting uncopyable DropAction";
+        std::cerr << std::endl;
+
+        /* can't do it */
+        return;
+    }
+
+    std::cerr << "PopupChatDialog::dropEvent() Formats";
+    std::cerr << std::endl;
+
+    QStringList formats = event->mimeData()->formats();
+    QStringList::iterator it;
+    for(it = formats.begin(); it != formats.end(); it++) {
+        std::cerr << "Format: " << (*it).toStdString();
+        std::cerr << std::endl;
+    }
+
+    if (event->mimeData()->hasUrls()) {
+        std::cerr << "PopupChatDialog::dropEvent() Urls:";
+        std::cerr << std::endl;
+
+        QList<QUrl> urls = event->mimeData()->urls();
+        QList<QUrl>::iterator uit;
+        for(uit = urls.begin(); uit != urls.end(); uit++) {
+            QString localpath = uit->toLocalFile();
+            std::cerr << "Whole URL: " << uit->toString().toStdString() << std::endl;
+            std::cerr << "or As Local File: " << localpath.toStdString() << std::endl;
+
+            if (localpath.isEmpty() == false) {
+                //Check that the file does exist and is not a directory
+                QDir dir(localpath);
+                if (dir.exists()) {
+                    std::cerr << "PopupChatDialog::dropEvent() directory not accepted."<< std::endl;
+                    QMessageBox mb(tr("Drop file error."), tr("Directory can't be dropped, only files are accepted."),QMessageBox::Information,QMessageBox::Ok,0,0,this);
+                    mb.exec();
+                } else if (QFile::exists(localpath)) {
+                    addAttachment(localpath.toUtf8().constData());
+                } else {
+                    std::cerr << "PopupChatDialog::dropEvent() file does not exists."<< std::endl;
+                    QMessageBox mb(tr("Drop file error."), tr("File not found or file name not accepted."),QMessageBox::Information,QMessageBox::Ok,0,0,this);
+                    mb.exec();
+                }
+            }
+        }
+    }
+
+    event->setDropAction(Qt::CopyAction);
+    event->accept();
 }

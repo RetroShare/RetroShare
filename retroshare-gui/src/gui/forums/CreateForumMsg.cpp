@@ -294,13 +294,11 @@ void CreateForumMsg::dropEvent(QDropEvent *event)
 				//Check that the file does exist and is not a directory
 				if ((-1 == stat(localpath.c_str(), &buf))) {
 				    std::cerr << "CreateForumMsg::dropEvent() file does not exists."<< std::endl;
-				    QMessageBox mb(tr("Drop file error."), tr("File not found or file name not accepted."),QMessageBox::Information,QMessageBox::Ok,0,0);
-				    mb.setButtonText( QMessageBox::Ok, "OK" );
+				    QMessageBox mb(tr("Drop file error."), tr("File not found or file name not accepted."),QMessageBox::Information,QMessageBox::Ok,0,0,this);
 				    mb.exec();
 				} else if (S_ISDIR(buf.st_mode)) {
 				    std::cerr << "CreateForumMsg::dropEvent() directory not accepted."<< std::endl;
-				    QMessageBox mb(tr("Drop file error."), tr("Directory can't be dropped, only files are accepted."),QMessageBox::Information,QMessageBox::Ok,0,0);
-				    mb.setButtonText( QMessageBox::Ok, "OK" );
+				    QMessageBox mb(tr("Drop file error."), tr("Directory can't be dropped, only files are accepted."),QMessageBox::Information,QMessageBox::Ok,0,0,this);
 				    mb.exec();
 				} else {
 				    CreateForumMsg::addAttachment(localpath);

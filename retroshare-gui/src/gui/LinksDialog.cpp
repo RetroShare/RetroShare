@@ -1014,22 +1014,19 @@ void LinksDialog::anchorClicked (const QUrl& link )
 
 			if(rsFiles->FileRequest(fileName, fileHash, fileSize, "", RS_FILE_HINTS_NETWORK_WIDE, srcIds))
 			{
-				QMessageBox mb(tr("File Request Confirmation"), tr("The file has been added to your download list."),QMessageBox::Information,QMessageBox::Ok,0,0);
-				mb.setButtonText( QMessageBox::Ok, "OK" );
+				QMessageBox mb(tr("File Request Confirmation"), tr("The file has been added to your download list."),QMessageBox::Information,QMessageBox::Ok,0,0,this);
 				mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
 				mb.exec();
 			}
 			else
 			{
-				QMessageBox mb(tr("File Request canceled"), tr("The file has not been added to your download list, because you already have it."),QMessageBox::Information,QMessageBox::Ok,0,0);
-				mb.setButtonText( QMessageBox::Ok, "OK" );
+				QMessageBox mb(tr("File Request canceled"), tr("The file has not been added to your download list, because you already have it."),QMessageBox::Information,QMessageBox::Ok,0,0,this);
 				mb.exec();
 			}
 		} 
 		else 
 		{
-			QMessageBox mb(tr("File Request Error"), tr("The file link is malformed."),QMessageBox::Information,QMessageBox::Ok,0,0);
-			mb.setButtonText( QMessageBox::Ok, "OK" );
+			QMessageBox mb(tr("File Request Error"), tr("The file link is malformed."),QMessageBox::Information,QMessageBox::Ok,0,0,this);
 			mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
 			mb.exec();
 		}

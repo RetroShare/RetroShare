@@ -1913,15 +1913,13 @@ void PeersDialog::dropEvent(QDropEvent *event)
                 QDir dir(localpath);
                 if (dir.exists()) {
                     std::cerr << "PeersDialog::dropEvent() directory not accepted."<< std::endl;
-                    QMessageBox mb(tr("Drop file error."), tr("Directory can't be dropped, only files are accepted."),QMessageBox::Information,QMessageBox::Ok,0,0);
-                    mb.setButtonText( QMessageBox::Ok, "OK" );
+                    QMessageBox mb(tr("Drop file error."), tr("Directory can't be dropped, only files are accepted."),QMessageBox::Information,QMessageBox::Ok,0,0,this);
                     mb.exec();
                 } else if (QFile::exists(localpath)) {
                     PeersDialog::addAttachment(localpath.toUtf8().constData());
                 } else {
                     std::cerr << "PeersDialog::dropEvent() file does not exists."<< std::endl;
-                    QMessageBox mb(tr("Drop file error."), tr("File not found or file name not accepted."),QMessageBox::Information,QMessageBox::Ok,0,0);
-                    mb.setButtonText( QMessageBox::Ok, "OK" );
+                    QMessageBox mb(tr("Drop file error."), tr("File not found or file name not accepted."),QMessageBox::Information,QMessageBox::Ok,0,0,this);
                     mb.exec();
                 }
             }

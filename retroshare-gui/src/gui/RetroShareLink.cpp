@@ -269,7 +269,6 @@ bool RetroShareLink::process(int flag)
 				if (rsFiles->FileRequest(name().toUtf8().constData(), hash().toStdString(), size(), "", RS_FILE_HINTS_NETWORK_WIDE, srcIds)) {
                 if (flag & RSLINK_PROCESS_NOTIFY_SUCCESS) {
                     QMessageBox mb(QObject::tr("File Request Confirmation"), QObject::tr("The file has been added to your download list."),QMessageBox::Information,QMessageBox::Ok,0,0);
-                    mb.setButtonText( QMessageBox::Ok, "OK" );
                     mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
                     mb.exec();
                 }
@@ -278,7 +277,6 @@ bool RetroShareLink::process(int flag)
 
             if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
                 QMessageBox mb(QObject::tr("File Request canceled"), QObject::tr("The file has not been added to your download list, because you already have it."),QMessageBox::Critical,QMessageBox::Ok,0,0);
-                mb.setButtonText( QMessageBox::Ok, "OK" );
                 mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
                 mb.exec();
             }
@@ -300,7 +298,6 @@ bool RetroShareLink::process(int flag)
                     // peer connection is already accepted
                     if (flag & RSLINK_PROCESS_NOTIFY_SUCCESS) {
                         QMessageBox mb(QObject::tr("Friend Request Confirmation"), QObject::tr("The friend is already in your list."),QMessageBox::Information,QMessageBox::Ok,0,0);
-                        mb.setButtonText( QMessageBox::Ok, "OK" );
                         mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
                         mb.exec();
                     }
@@ -310,7 +307,6 @@ bool RetroShareLink::process(int flag)
                 if (rsPeers->setAcceptToConnectGPGCertificate(hash().toStdString(), true)) {
                     if (flag & RSLINK_PROCESS_NOTIFY_SUCCESS) {
                         QMessageBox mb(QObject::tr("Friend Request Confirmation"), QObject::tr("The friend has been added to your list."),QMessageBox::Information,QMessageBox::Ok,0,0);
-                        mb.setButtonText( QMessageBox::Ok, "OK" );
                         mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
                         mb.exec();
                     }
@@ -319,7 +315,6 @@ bool RetroShareLink::process(int flag)
 
                 if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
                     QMessageBox mb(QObject::tr("Friend Request canceled"), QObject::tr("The friend could not be added to your list."),QMessageBox::Critical,QMessageBox::Ok,0,0);
-                    mb.setButtonText( QMessageBox::Ok, "OK" );
                     mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
                     mb.exec();
                 }
@@ -328,7 +323,6 @@ bool RetroShareLink::process(int flag)
 
             if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
                 QMessageBox mb(QObject::tr("Friend Request canceled"), QObject::tr("The friend could not be found."),QMessageBox::Critical,QMessageBox::Ok,0,0);
-                mb.setButtonText( QMessageBox::Ok, "OK" );
                 mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
                 mb.exec();
             }
@@ -340,7 +334,6 @@ bool RetroShareLink::process(int flag)
 
     if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
         QMessageBox mb(QObject::tr("File Request Error"), QObject::tr("The file link is malformed."),QMessageBox::Critical,QMessageBox::Ok,0,0);
-        mb.setButtonText( QMessageBox::Ok, "OK" );
         mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
         mb.exec();
     }
@@ -358,7 +351,6 @@ bool RetroShareLink::process(int flag)
         // QUrl can't handle the RetroShare link format properly
         if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
             QMessageBox mb(QObject::tr("File Request"), QObject::tr("Process of RetroShare links is not implemented. Please use copy instead."),QMessageBox::Critical,QMessageBox::Ok,0,0);
-            mb.setButtonText( QMessageBox::Ok, "OK" );
             mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
             mb.exec();
         }
@@ -372,7 +364,6 @@ bool RetroShareLink::process(int flag)
 //        if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
 //            QMessageBox mb(QObject::tr("File Request Error"), QObject::tr("The file link is malformed."),QMessageBox::Information,QMessageBox::Ok,0,0);
 //second version: QMessageBox mb(QObject::tr("Badly formed RS link"), QObject::tr("This RetroShare link is malformed. This is bug. Please contact the developers.\n\nNote: this possibly comes from a bug in Qt4.6. Try to right-click + copy link location, and paste in Transfer Tab."),QMessageBox::Critical,QMessageBox::Ok,0,0);
-//            mb.setButtonText( QMessageBox::Ok, "OK" );
 //            mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
 //            mb.exec();
 //        }
