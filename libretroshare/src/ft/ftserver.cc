@@ -559,9 +559,7 @@ bool    ftServer::InDirectoryCheck()
 
 bool ftServer::CopyFile(const std::string& source, const std::string& dest)
 {
-
-	mFtController->copyFile(source, dest);
-
+	return mFtController->copyFile(source, dest);
 }
 
 bool	ftServer::getSharedDirectories(std::list<SharedDirInfo> &dirs)
