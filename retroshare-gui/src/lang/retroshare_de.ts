@@ -8134,13 +8134,13 @@ Do you want to send them a Message instead</source>
         <location line="+9"/>
         <location line="+3"/>
         <source>Dock tab</source>
-        <translation>Docke Tab an</translation>
+        <translation>Tab andocken</translation>
     </message>
     <message>
         <location line="+9"/>
         <location line="+3"/>
         <source>Undock tab</source>
-        <translation>Docke Tab ab</translation>
+        <translation>Tab abdocken</translation>
     </message>
     <message>
         <location filename="../gui/chat/PopupChatWindow.cpp" line="+260"/>

@@ -100,7 +100,7 @@
   <action name="actionDockTab">
    <property name="icon">
     <iconset resource="../images.qrc">
-     <normaloff>:/images/uploads.png</normaloff>:/images/uploads.png</iconset>
+     <normaloff>:/images/tab-dock.png</normaloff>:/images/tab-dock.png</iconset>
    </property>
    <property name="text">
     <string>Dock tab</string>
@@ -112,7 +112,7 @@
   <action name="actionUndockTab">
    <property name="icon">
     <iconset resource="../images.qrc">
-     <normaloff>:/images/download.png</normaloff>:/images/download.png</iconset>
+     <normaloff>:/images/tab-undock.png</normaloff>:/images/tab-undock.png</iconset>
    </property>
    <property name="text">
     <string>Undock tab</string>
