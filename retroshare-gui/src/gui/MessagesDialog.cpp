@@ -236,7 +236,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     connect(ui.printbutton, SIGNAL(clicked()), this, SLOT(print()));
 
     connect(ui.expandFilesButton, SIGNAL(clicked()), this, SLOT(togglefileview()));
-    connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(getcurrentrecommended()));
+    connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(getallrecommended()));
 
     connect( ui.msgText, SIGNAL( anchorClicked(const QUrl &)), SLOT(anchorClicked(const QUrl &)));
 
@@ -886,7 +886,6 @@ void MessagesDialog::getcurrentrecommended()
     }
 }
 
-#if 0
 void MessagesDialog::getallrecommended()
 {
     /* get Message */
@@ -899,32 +898,16 @@ void MessagesDialog::getallrecommended()
     const std::list<FileInfo> &recList = msgInfo.files;
     std::list<FileInfo>::const_iterator it;
 
-    std::list<std::string> fnames;
-    std::list<std::string> hashes;
-    std::list<int>         sizes;
-
+    /* do the requests */
     for(it = recList.begin(); it != recList.end(); it++)
-    {
-        fnames.push_back(it->fname);
-        hashes.push_back(it->hash);
-        sizes.push_back(it->size);
-    }
-
-    /* now do requests */
-    std::list<std::string>::const_iterator fit;
-    std::list<std::string>::const_iterator hit;
-    std::list<int>::const_iterator sit;
-
-    for(fit = fnames.begin(), hit = hashes.begin(), sit = sizes.begin(); fit != fnames.end(); fit++, hit++, sit++)
     {
         std::cerr << "MessagesDialog::getallrecommended() Calling File Request";
         std::cerr << std::endl;
         std::list<std::string> srcIds;
         srcIds.push_back(msgInfo.srcId);
-        rsFiles -> FileRequest(*fit, *hit, *sit, "", 0, srcIds);
+        rsFiles->FileRequest(it->fname, it->hash, it->size, "", RS_FILE_HINTS_NETWORK_WIDE, srcIds);
     }
 }
-#endif
 
 void MessagesDialog::changeBox(int)
 {
