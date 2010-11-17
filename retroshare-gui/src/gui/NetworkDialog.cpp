@@ -40,6 +40,7 @@
 #include "settings/rsharesettings.h"
 #include "common/RSItemDelegate.h"
 
+#include <time.h>
 
 /* Images for context menu icons */
 #define IMAGE_LOADCERT       ":/images/loadcert16.png"
