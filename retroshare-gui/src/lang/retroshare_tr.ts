@@ -5652,13 +5652,13 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/msgs/MessageComposer.ui" line="17"/>
         <location filename="../gui/msgs/MessageComposer.cpp" line="726"/>
         <source>Compose</source>
-        <translation type="unfinished"></translation>
+        <translation>Yeni ileti</translation>
     </message>
     <message>
         <location filename="../gui/msgs/MessageComposer.ui" line="66"/>
         <location filename="../gui/msgs/MessageComposer.ui" line="906"/>
         <source>Contacts</source>
-        <translation type="unfinished">Rehber</translation>
+        <translation>Rehber</translation>
     </message>
     <message>
         <location filename="../gui/msgs/MessageComposer.ui" line="81"/>
@@ -5673,12 +5673,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/msgs/MessageComposer.ui" line="179"/>
         <source>Send To:</source>
-        <translation type="unfinished">Gönde Kime:</translation>
+        <translation>Gönde Kime:</translation>
     </message>
     <message>
         <location filename="../gui/msgs/MessageComposer.ui" line="722"/>
         <source>Subject:</source>
-        <translation type="unfinished">Konu:</translation>
+        <translation>Konu:</translation>
     </message>
     <message>
         <location filename="../gui/msgs/MessageComposer.ui" line="304"/>
@@ -5693,22 +5693,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/msgs/MessageComposer.ui" line="197"/>
         <source>&gt;&gt; To</source>
-        <translation type="unfinished"></translation>
+        <translation>Kime: bölümüne ekle</translation>
     </message>
     <message>
         <location filename="../gui/msgs/MessageComposer.ui" line="214"/>
         <source>&gt;&gt; Cc</source>
-        <translation type="unfinished"></translation>
+        <translation>Ilgili adrese ekle</translation>
     </message>
     <message>
         <location filename="../gui/msgs/MessageComposer.ui" line="227"/>
         <source>&gt;&gt; Bcc</source>
-        <translation type="unfinished"></translation>
+        <translation>Gizli adrese ekle</translation>
     </message>
     <message>
         <location filename="../gui/msgs/MessageComposer.ui" line="244"/>
         <source>&gt;&gt; Recommend</source>
-        <translation type="unfinished"></translation>
+        <translation>Tavsiye</translation>
     </message>
     <message>
         <location filename="../gui/msgs/MessageComposer.ui" line="309"/>
@@ -5799,12 +5799,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/msgs/MessageComposer.ui" line="817"/>
         <source>File Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Dosya Adı</translation>
     </message>
     <message>
         <location filename="../gui/msgs/MessageComposer.ui" line="822"/>
         <source>Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Boyut</translation>
     </message>
     <message>
         <location filename="../gui/msgs/MessageComposer.ui" line="827"/>
@@ -5814,7 +5814,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/msgs/MessageComposer.ui" line="885"/>
         <source>Send</source>
-        <translation type="unfinished"></translation>
+        <translation>Gönder</translation>
     </message>
     <message>
         <location filename="../gui/msgs/MessageComposer.ui" line="888"/>
@@ -5824,7 +5824,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/msgs/MessageComposer.ui" line="897"/>
         <source>Reply</source>
-        <translation type="unfinished">Yanıtla</translation>
+        <translation>Yanıtla</translation>
     </message>
     <message>
         <location filename="../gui/msgs/MessageComposer.ui" line="909"/>
@@ -5834,7 +5834,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/msgs/MessageComposer.ui" line="918"/>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>Kaydet</translation>
     </message>
     <message>
         <location filename="../gui/msgs/MessageComposer.ui" line="921"/>
@@ -5844,12 +5844,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/msgs/MessageComposer.ui" line="930"/>
         <source>Attach</source>
-        <translation type="unfinished">Ekle</translation>
+        <translation>Ekle</translation>
     </message>
     <message>
         <location filename="../gui/msgs/MessageComposer.ui" line="933"/>
         <source>Attach File</source>
-        <translation type="unfinished">Dosya ekle</translation>
+        <translation>Dosya ekle</translation>
     </message>
     <message>
         <location filename="../gui/msgs/MessageComposer.ui" line="945"/>
@@ -5941,17 +5941,17 @@ Do you want to save message to draft box?</source>
     <message>
         <location filename="../gui/msgs/MessageComposer.cpp" line="1256"/>
         <source>To</source>
-        <translation type="unfinished">Kime</translation>
+        <translation>Kime</translation>
     </message>
     <message>
         <location filename="../gui/msgs/MessageComposer.cpp" line="1257"/>
         <source>Cc</source>
-        <translation type="unfinished"></translation>
+        <translation>Ilgili kopyasi</translation>
     </message>
     <message>
         <location filename="../gui/msgs/MessageComposer.cpp" line="1258"/>
         <source>Bcc</source>
-        <translation type="unfinished"></translation>
+        <translation>Gizli kopya</translation>
     </message>
     <message>
         <location filename="../gui/msgs/MessageComposer.cpp" line="1290"/>
@@ -10005,17 +10005,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/SearchDialog.ui" line="1053"/>
         <source>Close all Search Resullts</source>
-        <translation type="unfinished"></translation>
+        <translation>Tümünü Kapat</translation>
     </message>
     <message>
         <location filename="../gui/SearchDialog.ui" line="1098"/>
         <source>Close All Search Results</source>
-        <translation type="unfinished"></translation>
+        <translation>Tümünü Kapat</translation>
     </message>
     <message>
         <location filename="../gui/SearchDialog.ui" line="1130"/>
         <source>Download Selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Indir</translation>
     </message>
     <message>
         <location filename="../gui/SearchDialog.ui" line="1175"/>
@@ -11976,7 +11976,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/TransfersDialog.cpp" line="167"/>
         <source>Speed</source>
         <comment>i.e: upload speed</comment>
-        <translation>Speed</translation>
+        <translation>Hız</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="169"/>
