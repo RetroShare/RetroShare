@@ -232,6 +232,10 @@ PopupChatDialog::PopupChatDialog(const std::string &id, const QString &name, QWi
 
   // call once
   onPrivateChatChanged(NOTIFY_LIST_PRIVATE_OUTGOING_CHAT, NOTIFY_TYPE_ADD, true);
+
+#ifdef RS_RELEASE_VERSION
+  ui.attachPictureButton->setVisible(false);
+#endif
 }
 
 /** Destructor. */

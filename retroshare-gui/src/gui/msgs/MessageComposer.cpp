@@ -286,6 +286,11 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
 
     setAcceptDrops(true);
 
+#ifdef RS_RELEASE_VERSION
+    ui.imagebtn->setVisible(false);
+    ui.imagebtn->setVisible(false);
+#endif
+
     /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
@@ -1562,9 +1567,11 @@ void MessageComposer::setupInsertActions()
 
     QAction *a;
 
+#ifndef RS_RELEASE_VERSION
     a = new QAction(QIcon(""), tr("&Image"), this);
     connect(a, SIGNAL(triggered()), this, SLOT(addImage()));
     menu->addAction(a);
+#endif
 
     a = new QAction(QIcon(""), tr("&Horizontal Line"), this);
     connect(a, SIGNAL(triggered()), this, SLOT(addPostSplitter()));
