@@ -330,10 +330,18 @@ void bdNodeManager::iteration()
 				updateStore();
 
 #ifdef DEBUG_MGR
-				std::cerr << "bdNodeManager::iteration(): REFRESH ";
+				std::cerr << "bdNodeManager::iteration(): Do App Search";
 				std::cerr << std::endl;
 #endif
 
+				/* run a random search for ourselves, from own App DHT peer */
+				QueryRandomLocalNet();
+
+
+#ifdef DEBUG_MGR
+				std::cerr << "bdNodeManager::iteration(): REFRESH ";
+				std::cerr << std::endl;
+#endif
 
 				status();
 			}
@@ -371,6 +379,43 @@ void bdNodeManager::iteration()
 	{
 		/* tick parent */
 		bdNode::iteration();
+	}
+}
+
+	/* NB: This is a bit of a hack, the code is duplicated from bdnode & bdquery.
+	 * should use fn calls into their functions for good generality
+	 */
+void bdNodeManager::QueryRandomLocalNet()
+{
+        bdId id;
+	bdNodeId targetNodeId;
+
+	uint32_t withFlag = BITDHT_PEER_STATUS_DHT_APPL;
+	if (mNodeSpace.findRandomPeerWithFlag(id, withFlag))
+	{
+		/* calculate mid point */
+		mFns->bdRandomMidId(&mOwnId, &(id.id), &targetNodeId);
+
+		/* do standard find_peer message */
+
+		bdToken transId;
+		genNewTransId(&transId);
+		msgout_find_node(&id, &transId, &targetNodeId);
+			
+//#ifdef DEBUG_NODE_MSGS
+		std::cerr << "bdNodeManager::QueryRandomLocalNet() Querying : ";
+		mFns->bdPrintId(std::cerr, &id);
+		std::cerr << " searching for : ";
+		mFns->bdPrintNodeId(std::cerr, &targetNodeId);
+		std::cerr << std::endl;
+//#endif
+	}
+	else
+	{
+//#ifdef DEBUG_NODE_MSGS
+		std::cerr << "bdNodeManager::QueryRandomLocalNet() No LocalNet Peer Found";
+		std::cerr << std::endl;
+//#endif
 	}
 }
 

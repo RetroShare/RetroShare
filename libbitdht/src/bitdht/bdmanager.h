@@ -139,6 +139,7 @@ int	checkStatus();
 int 	checkPingStatus();
 int 	SearchOutOfDate();
 void	startQueries();
+void 	QueryRandomLocalNet();
 
 	std::map<bdNodeId, bdQueryPeer>	mActivePeers;
         std::list<BitDhtCallback *> mCallbacks;

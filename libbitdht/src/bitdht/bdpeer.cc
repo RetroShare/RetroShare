@@ -945,3 +945,76 @@ uint32_t  bdSpace::calcSpaceSize()
 	return totalcount;
 }
 
+uint32_t  bdSpace::calcSpaceSizeWithFlag(uint32_t withFlag)
+{
+	std::vector<bdBucket>::iterator it;
+
+	/* little summary */
+	uint32_t totalcount = 0;
+	
+	it = buckets.begin();
+	if (it != buckets.end())
+	{
+		it++; /* skip own bucket! */
+	}
+	for(; it != buckets.end(); it++)
+	{
+		int size = 0;
+		std::list<bdPeer>::iterator lit;
+		for(lit = it->entries.begin(); lit != it->entries.end(); lit++)
+		{
+			if (withFlag & lit->mPeerFlags)
+			{
+				size++;
+			}
+		}
+		totalcount += size;
+	}
+	return totalcount;
+}
+
+        /* special function to enable DHT localisation (i.e find peers from own network) */
+bool bdSpace::findRandomPeerWithFlag(bdId &id, uint32_t withFlag)
+{
+	std::vector<bdBucket>::iterator it;
+	uint32_t totalcount = calcSpaceSizeWithFlag(withFlag);
+	uint32_t rnd = rand() % totalcount;
+	uint32_t i = 0;
+	uint32_t buck = 0;
+
+	std::cerr << "bdSpace::findRandomPeerWithFlag()";
+	std::cerr << std::endl;
+
+	it = buckets.begin();
+	if (it != buckets.end())
+	{
+		it++; /* skip own bucket! */
+	}
+	for(; it != buckets.end(); it++, buck++)
+	{
+		int size = 0;
+		std::list<bdPeer>::iterator lit;
+		for(lit = it->entries.begin(); lit != it->entries.end(); lit++)
+		{
+			if (withFlag & lit->mPeerFlags)
+			{
+				if (i == rnd)
+				{
+					std::cerr << "bdSpace::findRandomPeerWithFlag() found #" << i;
+					std::cerr << " in bucket #" << buck;
+					std::cerr << std::endl;
+
+					/* found */
+					id = lit->mPeerId;
+					return true;
+				}
+				i++;
+			}
+		}
+	}
+	std::cerr << "bdSpace::findRandomPeerWithFlag() failed to find " << rnd << " / " << totalcount;
+	std::cerr << std::endl;
+
+	return false;
+}
+

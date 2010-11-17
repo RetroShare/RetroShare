@@ -159,6 +159,10 @@ int     printDHT();
 uint32_t calcNetworkSize();
 uint32_t calcNetworkSizeWithFlag(uint32_t withFlag);
 uint32_t calcSpaceSize();
+uint32_t calcSpaceSizeWithFlag(uint32_t withFlag);
+
+        /* special function to enable DHT localisation (i.e find peers from own network) */
+bool 	findRandomPeerWithFlag(bdId &id, uint32_t withFlag);
 
 	/* to add later */
 int	updateOwnId(bdNodeId *newOwnId);
