@@ -78,9 +78,6 @@
         </item>
         <item row="0" column="2">
          <widget class="RetroStyleLabel" name="chatButton">
-          <property name="pixmap">
-           <pixmap/>
-          </property>
          </widget>
         </item>
        </layout>

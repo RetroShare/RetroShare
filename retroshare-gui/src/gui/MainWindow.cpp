@@ -635,10 +635,10 @@ void MainWindow::addAction(QAction *action, const char *slot)
     case Links:
         Page = _instance->linksDialog;
         break;
+#endif
     case Channels:
         Page = _instance->channelFeed;
         break;
-#endif
     case Forums:
         Page = _instance->forumsDialog;
         break;
@@ -728,9 +728,9 @@ void MainWindow::addAction(QAction *action, const char *slot)
 #ifndef RS_RELEASE_VERSION
    case Links:
        return _instance->linksDialog;
+#endif
    case Channels:
        return _instance->channelFeed;
-#endif
    case Forums:
        return _instance->forumsDialog;
 #ifdef BLOGS
