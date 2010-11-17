@@ -978,6 +978,10 @@ bool bdSpace::findRandomPeerWithFlag(bdId &id, uint32_t withFlag)
 {
 	std::vector<bdBucket>::iterator it;
 	uint32_t totalcount = calcSpaceSizeWithFlag(withFlag);
+
+	if(totalcount == 0)
+		return false ;
+
 	uint32_t rnd = rand() % totalcount;
 	uint32_t i = 0;
 	uint32_t buck = 0;
