@@ -176,14 +176,13 @@ void PopupChatWindow::showDialog(PopupChatDialog *dialog, uint chatflags)
         activateWindow();
         setWindowState((windowState() & (~Qt::WindowMinimized)) | Qt::WindowActive);
         raise();
+        dialog->focusDialog();
     } else {
         if (isVisible() == false) {
             showMinimized();
         }
         alertDialog(dialog);
     }
-
-    dialog->focusDialog();
 }
 
 void PopupChatWindow::alertDialog(PopupChatDialog *dialog)

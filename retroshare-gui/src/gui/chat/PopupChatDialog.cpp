@@ -502,6 +502,7 @@ void PopupChatDialog::activate()
         if (window->isActiveWindow()) {
             newMessages = false;
             window->calculateTitle(this);
+            focusDialog();
         }
     } else {
         newMessages = false;
@@ -733,8 +734,6 @@ void PopupChatDialog::sendChat()
     chatWidget->setCurrentCharFormat(QTextCharFormat ());
 
     setFont();
-
-    /* redraw send list */
 }
 
 /**
