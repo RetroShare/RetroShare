@@ -86,8 +86,6 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     connect( ui.connecttreeWidget, SIGNAL( itemSelectionChanged()), ui.unvalidGPGkeyWidget, SLOT( clearSelection() ) );
     connect( ui.unvalidGPGkeyWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( connecttreeWidgetCostumPopupMenu( QPoint ) ) );
     connect( ui.unvalidGPGkeyWidget, SIGNAL( itemSelectionChanged()), ui.connecttreeWidget, SLOT( clearSelection() ) );
-
-    connect( ui.infoLog, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(displayInfoLogMenu(const QPoint&)));
   
     connect( ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
     connect( ui.filterColumnComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterColumnChanged()));
@@ -164,11 +162,6 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     if (retv && versions.end() != (vit = versions.find(rsPeers->getOwnId()))) {
     	version	= QString::fromStdString(vit->second);
     }
-
-    // Set Log infos
-    setLogInfo(tr("RetroShare %1 started.").arg(version));
-    
-    setLogInfo(tr("Welcome to RetroShare."), QString::fromUtf8("blue"));
       
     QMenu *menu = new QMenu();
     //menu->addAction(ui.actionAddFriend); 
@@ -185,21 +178,12 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     menu->addAction(ui.actionTabsRounded);
     ui.viewButton->setMenu(menu);
     
-    QTimer *timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(getNetworkStatus()));
-    timer->start(100000);
-    
     QTimer *timer2 = new QTimer(this);
     connect(timer2, SIGNAL(timeout()), this, SLOT(updateNetworkStatus()));
     timer2->start(1000);
     
-    getNetworkStatus();
     updateNetworkStatus();
     loadtabsettings();
-
-    #ifdef RS_RELEASE_VERSION
-    ui.tabBottom->removeTab(0); //hide the logs tab
-    #endif
     
     ui.clearButton->hide();
     
@@ -708,95 +692,10 @@ void NetworkDialog::on_actionExportKey_activated()
     }
 }
 
-// Update Log Info information
-void NetworkDialog::setLogInfo(QString info, QColor color) {
-  static unsigned int nbLines = 0;
-  ++nbLines;
-  // Check log size, clear it if too big
-  if(nbLines > 200) {
-    ui.infoLog->clear();
-    nbLines = 1;
-  }
-  ui.infoLog->append(QString::fromUtf8("<font color='grey'>")+ QTime::currentTime().toString(QString::fromUtf8("hh:mm:ss")) + QString::fromUtf8("</font> - <font color='") + color.name() +QString::fromUtf8("'><i>") + info + QString::fromUtf8("</i></font>"));
-}
-
-void NetworkDialog::on_actionClearLog_triggered() {
-  ui.infoLog->clear();
-}
-
 void NetworkDialog::on_actionCreate_New_Profile_activated()
 {
 //    GenCertDialog gencertdialog (this);
 //    gencertdialog.exec ();
-}
-
-void NetworkDialog::displayInfoLogMenu(const QPoint& pos) {
-  // Log Menu
-  QMenu myLogMenu(this);
-  myLogMenu.addAction(ui.actionClearLog);
-  // XXX: Why mapToGlobal() is not enough?
-  // myLogMenu.exec(mapToGlobal(pos)+QPoint(0,320));
-  // No. Simple use QCursor::pos() to retrieve the position of the cursor.
-  myLogMenu.exec(QCursor::pos());
-}
-
-void NetworkDialog::getNetworkStatus()
-{
-	if(RsAutoUpdatePage::eventsLocked())
-		return ;
-
-    rsiface->lockData(); /* Lock Interface */
-
-    /* now the extra bit .... switch on check boxes */
-    const RsConfig &config = rsiface->getConfig();
-
-    /****** Log Tab **************************/
-    if(config.netUpnpOk)
-    {
-      setLogInfo(tr("UPNP is active."), QString::fromUtf8("blue"));
-    }
-    else
-    {    
-      setLogInfo(tr("UPNP not found or not enabled."), QString::fromUtf8("red"));
-    }
-
-    if(config.netDhtOk)
-    {
-      setLogInfo(tr("DHT is running."), QString::fromUtf8("green"));
-    }
-    else 
-    {
-      setLogInfo(tr("DHT is off."), QString::fromUtf8("red"));
-    }
-        
-    if(config.netStunOk)
-    {
-      setLogInfo(tr("Stun external address detection is working."), QString::fromUtf8("green"));
-    }
-    else
-    {
-      setLogInfo(tr("Stun is not working."), QString::fromUtf8("red"));
-    }
-    
-    if (config.netLocalOk)
-    {
-      setLogInfo(tr("Local network detected"), QString::fromUtf8("magenta"));
-    }
-    else
-    {
-      setLogInfo(tr("No local network detected"), QString::fromUtf8("red"));
-    }
-
-    if (config.netExtraAddressOk)
-    {
-      setLogInfo(tr("ip found via external address finder"), QString::fromUtf8("magenta"));
-    }
-    else
-    {
-      setLogInfo(tr("external address finder didn't found anything"), QString::fromUtf8("red"));
-    }
-
-    rsiface->unlockData(); /* UnLock Interface */
 }
 
 void NetworkDialog::updateNetworkStatus()

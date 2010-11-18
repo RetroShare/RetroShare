@@ -41,7 +41,6 @@ public slots:
   void  insertConnect();
   std::string loadneighbour();
   /* void loadneighbour(); */
-  void setLogInfo(QString info, QColor color=QApplication::palette().color(QPalette::WindowText));
   void updateNewDiscoveryInfo() ;
 
 
@@ -66,12 +65,7 @@ private slots:
   void on_actionExportKey_activated();
 
   void on_actionCreate_New_Profile_activated();
-
-  
-  void on_actionClearLog_triggered();
-  void displayInfoLogMenu(const QPoint& pos);
-  
-  void getNetworkStatus();
+    
   void updateNetworkStatus();
   
   void loadtabsettings();
