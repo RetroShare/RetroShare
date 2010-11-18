@@ -39,18 +39,7 @@ CreateForum::CreateForum(QWidget *parent)
   connect( ui.createButton, SIGNAL( clicked ( bool ) ), this, SLOT( createForum( ) ) );
 
   newForum();
-
 }
-
-void CreateForum::show()
-{
-  //loadSettings();
-  if(!this->isVisible()) {
-    QWidget::show();
-
-  }
-}
-
 
 void  CreateForum::newForum()
 {
@@ -59,6 +48,11 @@ void  CreateForum::newForum()
 
 	ui.typePrivate->setEnabled(false);
 	ui.typeEncrypted->setEnabled(false);
+
+#ifdef RS_RELEASE_VERSION
+	ui.typePrivate->setVisible(false);
+	ui.typeEncrypted->setVisible(false);
+#endif
 
 	ui.msgAnon->setChecked(true);
 	//ui.msgAuth->setEnabled(false);
@@ -75,10 +69,9 @@ void  CreateForum::createForum()
 
 	if(name.isEmpty())
 	{	/* error message */
-		QMessageBox::warning(this, tr("RetroShare"),
-                   tr("Please add a Name"),
-                   QMessageBox::Ok, QMessageBox::Ok);
-                   
+		QMessageBox::warning(this, "RetroShare",
+							 tr("Please add a Name"),
+							 QMessageBox::Ok, QMessageBox::Ok);
 		return; //Don't add  a empty name!!
 	}
 	else
@@ -111,13 +104,10 @@ void  CreateForum::createForum()
 	}
 
 	close();
-	return;
 }
 
 
 void  CreateForum::cancelForum()
 {
 	close();
-	return;
 }
-
