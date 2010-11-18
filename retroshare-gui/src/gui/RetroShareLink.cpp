@@ -37,13 +37,19 @@
 
 #define DEBUG_RSLINK 1
 
-#define HEADER_FILE 	"retroshare://file"
-#define HEADER_PERSON	"retroshare://person"
+#define HOST_FILE       "file"
+#define HOST_PERSON     "person"
+
+#define FILE_NAME       "name"
+#define FILE_SIZE       "size"
+#define FILE_HASH       "hash"
+
+#define PERSON_NAME     "name"
+#define PERSON_HASH     "hash"
 
 RetroShareLink::RetroShareLink(const QUrl& url)
 {
-    const QString stringurl = url.toString();
-    fromString(stringurl);
+    fromUrl(url);
 }
 
 RetroShareLink::RetroShareLink(const QString& url)
@@ -53,52 +59,103 @@ RetroShareLink::RetroShareLink(const QString& url)
 
 void RetroShareLink::fromString(const QString& url)
 {
-    _valid = false;
+    clear();
 
     // parse
 #ifdef DEBUG_RSLINK
     std::cerr << "got new RS link \"" << url.toStdString() << "\"" << std::endl ;
 #endif
-    QStringList list = url.split ("|");
 
-    if (list.size() >= 1) {
-        if (list.size() == 4 && list[0] == HEADER_FILE) {
-            bool ok ;
+    if ((url.startsWith(QString(RSLINK_SCHEME) + "://" + QString(HOST_FILE)) && url.count("|") == 3) ||
+        (url.startsWith(QString(RSLINK_SCHEME) + "://" + QString(HOST_PERSON)) && url.count("|") == 2)) {
+        /* Old link, we try it */
+        QStringList list = url.split ("|");
 
-            _type = TYPE_FILE;
-            _name = list[1] ;
-            _size = list[2].toULongLong(&ok) ;
-            _hash = list[3].left(40) ;	// normally not necessary, but it's a security.
+        if (list.size() >= 1) {
+            if (list.size() == 4 && list[0] == QString(RSLINK_SCHEME) + "://" + QString(HOST_FILE)) {
+                bool ok ;
 
-            if (ok) {
+                _type = TYPE_FILE;
+                _name = list[1] ;
+                _size = list[2].toULongLong(&ok) ;
+                _hash = list[3].left(40) ;	// normally not necessary, but it's a security.
+
+                if (ok) {
 #ifdef DEBUG_RSLINK
-                std::cerr << "New RetroShareLink forged:" << std::endl ;
-                std::cerr << "  name = \"" << _name.toStdString() << "\"" << std::endl ;
-                std::cerr << "  hash = \"" << _hash.toStdString() << "\"" << std::endl ;
-                std::cerr << "  size = " << _size << std::endl ;
+                    std::cerr << "New RetroShareLink forged:" << std::endl ;
+                    std::cerr << "  name = \"" << _name.toStdString() << "\"" << std::endl ;
+                    std::cerr << "  hash = \"" << _hash.toStdString() << "\"" << std::endl ;
+                    std::cerr << "  size = " << _size << std::endl ;
 #endif
+                    check();
+                    return;
+                }
+            } else if (list.size() == 3 && list[0] == QString(RSLINK_SCHEME) + "://" + QString(HOST_PERSON)) {
+                _type = TYPE_PERSON;
+                _name = list[1] ;
+                _hash = list[2].left(40) ;	// normally not necessary, but it's a security.
+                _size = 0;
                 check();
                 return;
             }
-        } else if (list.size() == 3 && list[0] == HEADER_PERSON) {
-            _type = TYPE_PERSON;
-            _name = list[1] ;
-            _hash = list[2].left(40) ;	// normally not necessary, but it's a security.
-            _size = 0;
+
+            // bad link
+        }
+    }
+
+    /* Now try QUrl */
+    fromUrl(QUrl(url));
+}
+
+void RetroShareLink::fromUrl(const QUrl& url)
+{
+    clear();
+
+    // parse
+#ifdef DEBUG_RSLINK
+    std::cerr << "got new RS link \"" << url.toString().toStdString() << "\"" << std::endl ;
+#endif
+
+    if (url.scheme() != RSLINK_SCHEME) {
+        /* No RetroShare-Link */
+        return;
+    }
+
+    if (url.host() == HOST_FILE) {
+        bool ok ;
+
+        _type = TYPE_FILE;
+        _name = url.queryItemValue(FILE_NAME);
+        _size = url.queryItemValue(FILE_SIZE).toULongLong(&ok);
+        _hash = url.queryItemValue(FILE_HASH).left(40);	// normally not necessary, but it's a security.
+
+        if (ok) {
+#ifdef DEBUG_RSLINK
+            std::cerr << "New RetroShareLink forged:" << std::endl ;
+            std::cerr << "  name = \"" << _name.toStdString() << "\"" << std::endl ;
+            std::cerr << "  hash = \"" << _hash.toStdString() << "\"" << std::endl ;
+            std::cerr << "  size = " << _size << std::endl ;
+#endif
             check();
             return;
         }
-
-        // bad link
     }
+
+    if (url.host() == HOST_PERSON) {
+        _type = TYPE_PERSON;
+        _name = url.queryItemValue(PERSON_NAME);
+        _hash = url.queryItemValue(PERSON_HASH).left(40);	// normally not necessary, but it's a security.
+        _size = 0;
+        check();
+        return;
+    }
+
+    // bad link
 
 #ifdef DEBUG_RSLINK
     std::cerr << "Wrongly formed RS link. Can't process." << std::endl ;
 #endif
-    _type = TYPE_UNKNOWN;
-    _hash = "" ;
-    _size = 0 ;
-    _name = "" ;
+    clear();
 }
 
 RetroShareLink::RetroShareLink(const QString & name, uint64_t size, const QString & hash)
@@ -115,6 +172,15 @@ RetroShareLink::RetroShareLink(const QString & name, const QString & hash)
     _valid = false;
     _type = TYPE_PERSON;
     check() ;
+}
+
+void RetroShareLink::clear()
+{
+    _valid = false;
+    _type = TYPE_UNKNOWN;
+    _hash = "" ;
+    _size = 0 ;
+    _name = "" ;
 }
 
 void RetroShareLink::check()
@@ -162,9 +228,26 @@ QString RetroShareLink::toString() const
     case TYPE_UNKNOWN:
         break;
     case TYPE_FILE:
-        return QString(HEADER_FILE) + "|" + _name + "|" + QString::number(_size) + "|" + _hash;
+        {
+            QUrl url;
+            url.setScheme(RSLINK_SCHEME);
+            url.setHost(HOST_FILE);
+            url.addQueryItem(FILE_NAME, _name);
+            url.addQueryItem(FILE_SIZE, QString::number(_size));
+            url.addQueryItem(FILE_HASH, _hash);
+
+            return url.toString();
+        }
     case TYPE_PERSON:
-        return QString(HEADER_PERSON) + "|" + _name + "|" + _hash;
+        {
+            QUrl url;
+            url.setScheme(RSLINK_SCHEME);
+            url.setHost(HOST_PERSON);
+            url.addQueryItem(PERSON_NAME, _name);
+            url.addQueryItem(PERSON_HASH, _hash);
+
+            return url.toString();
+        }
     }
 
     return "";
@@ -255,18 +338,18 @@ bool RetroShareLink::process(int flag)
         {
             std::cerr << " RetroShareLink::process FileRequest : fileName : " << name().toUtf8().constData() << ". fileHash : " << hash().toStdString() << ". fileSize : " << size() << std::endl;
 
-				// Get a list of available direct sources, in case the file is browsable only.
-				std::list<std::string> srcIds;
-				FileInfo finfo ;
-				rsFiles->FileDetails(hash().toStdString(), RS_FILE_HINTS_REMOTE,finfo) ;
+            // Get a list of available direct sources, in case the file is browsable only.
+            std::list<std::string> srcIds;
+            FileInfo finfo ;
+            rsFiles->FileDetails(hash().toStdString(), RS_FILE_HINTS_REMOTE,finfo) ;
 
-				for(std::list<TransferInfo>::const_iterator it(finfo.peers.begin());it!=finfo.peers.end();++it)
-				{
-					std::cerr << "  adding peerid " << (*it).peerId << std::endl ;
-					srcIds.push_back((*it).peerId) ;
-				}
+            for(std::list<TransferInfo>::const_iterator it(finfo.peers.begin());it!=finfo.peers.end();++it)
+            {
+                std::cerr << "  adding peerid " << (*it).peerId << std::endl ;
+                srcIds.push_back((*it).peerId) ;
+            }
 
-				if (rsFiles->FileRequest(name().toUtf8().constData(), hash().toStdString(), size(), "", RS_FILE_HINTS_NETWORK_WIDE, srcIds)) {
+            if (rsFiles->FileRequest(name().toUtf8().constData(), hash().toStdString(), size(), "", RS_FILE_HINTS_NETWORK_WIDE, srcIds)) {
                 if (flag & RSLINK_PROCESS_NOTIFY_SUCCESS) {
                     QMessageBox mb(QObject::tr("File Request Confirmation"), QObject::tr("The file has been added to your download list."),QMessageBox::Information,QMessageBox::Ok,0,0);
                     mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
@@ -337,47 +420,6 @@ bool RetroShareLink::process(int flag)
         mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
         mb.exec();
     }
-    return false;
-}
-
-/*static*/ bool RetroShareLink::processUrl(const QUrl &url, int flag)
-{
-    if (url.scheme() == "http") {
-        QDesktopServices::openUrl(url);
-        return true;
-    }
-
-    if (url.scheme() == "retroshare") {
-        // QUrl can't handle the RetroShare link format properly
-        if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
-            QMessageBox mb(QObject::tr("File Request"), QObject::tr("Process of RetroShare links is not implemented. Please use copy instead."),QMessageBox::Critical,QMessageBox::Ok,0,0);
-            mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
-            mb.exec();
-        }
-
-//        RetroShareLink link(url);
-//
-//        if (link.valid()) {
-//            return link.process(flag);
-//        }
-//
-//        if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
-//            QMessageBox mb(QObject::tr("File Request Error"), QObject::tr("The file link is malformed."),QMessageBox::Information,QMessageBox::Ok,0,0);
-//second version: QMessageBox mb(QObject::tr("Badly formed RS link"), QObject::tr("This RetroShare link is malformed. This is bug. Please contact the developers.\n\nNote: this possibly comes from a bug in Qt4.6. Try to right-click + copy link location, and paste in Transfer Tab."),QMessageBox::Critical,QMessageBox::Ok,0,0);
-//            mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
-//            mb.exec();
-//        }
-
-        return false;
-    }
-
-    if (url.scheme().isEmpty()) {
-        //it's probably a web adress, let's add http:// at the beginning of the link
-        QString newAddress = "http://" + url.toString();
-        QDesktopServices::openUrl(QUrl(newAddress));
-        return true;
-    }
-
     return false;
 }
 

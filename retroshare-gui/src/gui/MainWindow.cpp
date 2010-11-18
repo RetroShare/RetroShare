@@ -159,7 +159,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     setWindowTitle(tr("RetroShare %1 a secure decentralised communication platform").arg(retroshareVersion()));
 
     /* add url handler for RetroShare links */
-    QDesktopServices::setUrlHandler("retroshare", this, "linkActivated");
+    QDesktopServices::setUrlHandler(RSLINK_SCHEME, this, "linkActivated");
 
     // Setting icons
     this->setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
@@ -1190,5 +1190,22 @@ void MainWindow::statusChangedComboBox(int index)
 
 void MainWindow::linkActivated(const QUrl &url)
 {
-    RetroShareLink::processUrl(url, RSLINK_PROCESS_NOTIFY_ALL);
+    RetroShareLink link(url);
+
+    if (link.valid() == false) {
+        // QUrl can't handle the old RetroShare link format properly
+        if (url.host().isEmpty()) {
+            QMessageBox mb("RetroShare", tr("It seems to be an old RetroShare link. Please use copy instead."), QMessageBox::Critical, QMessageBox::Ok, 0, 0);
+            mb.setWindowIcon(QIcon(":/images/rstray3.png"));
+            mb.exec();
+            return;
+        }
+
+        QMessageBox mb("RetroShare", tr("The file link is malformed."), QMessageBox::Critical, QMessageBox::Ok, 0, 0);
+        mb.setWindowIcon(QIcon(":/images/rstray3.png"));
+        mb.exec();
+        return;
+    }
+
+    link.process(RSLINK_PROCESS_NOTIFY_ERROR | RSLINK_PROCESS_NOTIFY_SUCCESS);
 }

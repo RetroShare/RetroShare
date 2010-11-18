@@ -42,6 +42,8 @@
 
 #define RSLINK_PROCESS_NOTIFY_ALL      -1
 
+#define RSLINK_SCHEME 	"retroshare"
+
 class RetroShareLink
 {
 	public:
@@ -63,14 +65,14 @@ class RetroShareLink
 		// get nice name for anchor
 		QString niceName() const;
 
-		/// returns the string retroshare://file|name|size|hash
-		///                    retroshare://person|name|hash
+		/// returns the string retroshare://file?name=&size=&hash=
+		///                    retroshare://person?name=&hash=
 		QString toString() const ;
-		/// returns the string <a href="retroshare://file|name|size|hash">name</a>
-		///                    <a href="retroshare://person|name|hash">name@hash</a>
+		/// returns the string <a href="retroshare://file?name=&size=&hash=">name</a>
+		///                    <a href="retroshare://person?name=&hash=">name@hash</a>
 		QString toHtml() const ;
-		/// returns the string <a href="retroshare://file|name|size|hash">retroshare://file|name|size|hash</a>
-		///                    <a href="retroshare://person|name|hash">retroshare://person|name|hash</a>
+		/// returns the string <a href="retroshare://file?name=&size=&hash=">retroshare://file?name=&size=&hash=</a>
+		///                    <a href="retroshare://person?name=&hash=">retroshare://person?name=&hash=</a>
 		QString toHtmlFull() const ;
 		
 		QString toHtmlSize() const ;
@@ -82,13 +84,14 @@ class RetroShareLink
 		bool operator==(const RetroShareLink& l) const { return _type == l._type && _hash == l._hash ; }
 
 		bool process(int flag);
-		static bool processUrl(const QUrl &url, int flag);
 
 	private:
 		void fromString(const QString &url);
-		void check() ;
-		static bool checkHash(const QString& hash) ;
-		static bool checkName(const QString& hash) ;
+		void fromUrl(const QUrl &url);
+		void clear();
+		void check();
+		static bool checkHash(const QString& hash);
+		static bool checkName(const QString& hash);
 
 		bool     _valid;
 		enumType _type;
@@ -128,7 +131,7 @@ class RSLinkClipboard
 		//
 		static QString toHtmlFull();
 		
-        // produces a list of html links that displays with the file name + filesize
+		// produces a list of html links that displays with the file name + filesize
 		//
 		static QString toHtmlSize();		
 
