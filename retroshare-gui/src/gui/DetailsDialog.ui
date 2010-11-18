@@ -148,7 +148,7 @@
           <item row="4" column="0">
            <widget class="QLabel" name="priority_label">
             <property name="text">
-             <string>Priority</string>
+             <string>Priority:</string>
             </property>
            </widget>
           </item>

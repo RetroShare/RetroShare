@@ -30,7 +30,7 @@ void RSTreeWidgetItemCompareRole::addRole(int column, int role)
     insert(column, role);
 }
 
-const int RSTreeWidgetItemCompareRole::findRole(const int column) const
+int RSTreeWidgetItemCompareRole::findRole(const int column) const
 {
     RSTreeWidgetItemCompareRole::const_iterator it = find(column);
     if (it == end()) {

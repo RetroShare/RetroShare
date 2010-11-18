@@ -594,10 +594,10 @@
       <item>
        <widget class="QSpinBox" name="spinBox">
         <property name="suffix">
-         <string/>
+         <string> seconds</string>
         </property>
         <property name="prefix">
-         <string>seconds </string>
+         <string/>
         </property>
         <property name="maximum">
          <number>1000</number>

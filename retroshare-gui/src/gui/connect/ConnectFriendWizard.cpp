@@ -176,7 +176,7 @@ IntroPage::IntroPage(QWidget *parent)
     setTitle( titleStr.arg( tr("Add a new Friend") ) ) ;
              
     setSubTitle(tr("This wizard will help you to connect to your friend(s) "
-                   "to RetroShare network. There are three possible ways "
+                   "to RetroShare network. There are five possible ways "
                    "to do this:")) ;
 
     textRadioButton = new QRadioButton(tr("&Enter the certificate manually"));
@@ -1154,7 +1154,7 @@ int RsidPage::nextId() const {
 EmailPage::EmailPage(QWidget *parent) : QWizardPage(parent) {
     QString titleStr("<span style=\"font-size:16pt; font-weight:500;"
                                "color:white;\">%1</span>");
-    setTitle( titleStr.arg( tr("Invite Friend by Email") ) ) ;
+    setTitle( titleStr.arg( tr("Invite Friends by Email") ) ) ;
 
     setSubTitle(tr("Enter your friends' email addresses (seperate each on with a semicolon)"));
                                       

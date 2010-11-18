@@ -32,7 +32,7 @@ public:
     RSTreeWidgetItemCompareRole();
 
     void addRole(int column, int role);
-    const int findRole(const int column) const;
+    int findRole(const int column) const;
 };
 
 class RSTreeWidgetItem : public QTreeWidgetItem

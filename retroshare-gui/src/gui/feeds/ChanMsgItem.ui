@@ -407,7 +407,7 @@ border-radius: 3px}</string>
         <item row="3" column="1" colspan="6">
          <widget class="QLabel" name="warning_label">
           <property name="text">
-           <string>TextLabel</string>
+           <string notr="true">TextLabel</string>
           </property>
          </widget>
         </item>
