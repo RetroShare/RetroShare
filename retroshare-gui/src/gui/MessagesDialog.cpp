@@ -33,7 +33,6 @@
 
 #include "MessagesDialog.h"
 #include "msgs/MessageComposer.h"
-#include "gui/RetroShareLink.h"
 #include "util/printpreview.h"
 #include "settings/rsharesettings.h"
 #include "util/misc.h"
@@ -238,8 +237,6 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     connect(ui.expandFilesButton, SIGNAL(clicked()), this, SLOT(togglefileview()));
     connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(getallrecommended()));
 
-    connect( ui.msgText, SIGNAL( anchorClicked(const QUrl &)), SLOT(anchorClicked(const QUrl &)));
-
     connect(ui.actionTextBesideIcon, SIGNAL(triggered()), this, SLOT(buttonstextbesideicon()));
     connect(ui.actionIconOnly, SIGNAL(triggered()), this, SLOT(buttonsicononly()));
     connect(ui.actionTextUnderIcon, SIGNAL(triggered()), this, SLOT(buttonstextundericon()));
@@ -255,8 +252,6 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     connect(ui.toText, SIGNAL(linkActivated(QString)), this, SLOT(linkActivated(QString)));
     connect(ui.ccText, SIGNAL(linkActivated(QString)), this, SLOT(linkActivated(QString)));
     connect(ui.bccText, SIGNAL(linkActivated(QString)), this, SLOT(linkActivated(QString)));
-
-    ui.msgText->setOpenLinks(false);
 
     m_eListMode = LIST_NOTHING;
 
@@ -1842,13 +1837,6 @@ void MessagesDialog::printpreview()
     preview->setWindowModality(Qt::WindowModal);
     preview->setAttribute(Qt::WA_DeleteOnClose);
     preview->show();
-}
-
-void MessagesDialog::anchorClicked (const QUrl& link )
-{
-    std::cerr << "MessagesDialog::anchorClicked link.scheme() : " << link.scheme().toStdString() << std::endl;
-
-    RetroShareLink::processUrl(link, RSLINK_PROCESS_NOTIFY_ALL);
 }
 
 bool MessagesDialog::fileSave()

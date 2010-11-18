@@ -135,7 +135,6 @@ PeersDialog::PeersDialog(QWidget *parent)
     connect( ui.actionSet_your_Avatar, SIGNAL(triggered()), this, SLOT(getAvatar()));
     connect( ui.actionSet_your_Personal_Message, SIGNAL(triggered()), this, SLOT(statusmessage()));
     connect( ui.addfileButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
-    connect( ui.msgText, SIGNAL(anchorClicked(const QUrl &)), SLOT(anchorClicked(const QUrl &)));
 
     connect(ui.actionAdd_Friend, SIGNAL(triggered()), this, SLOT(addFriend()));
     connect(ui.action_Hide_Offline_Friends, SIGNAL(triggered()), this, SLOT(insertPeers()));
@@ -226,9 +225,6 @@ PeersDialog::PeersDialog(QWidget *parent)
     menu->addAction(ui.actionSet_your_Personal_Message);
 
     ui.menupushButton->setMenu(menu);
-
-    //ui.msgText->setOpenExternalLinks ( false );
-    //ui.msgText->setOpenLinks ( false );
 
     setAcceptDrops(true);
     ui.lineEdit->setAcceptDrops(false);
@@ -1866,15 +1862,6 @@ void PeersDialog::fileHashingFinished(AttachFileItem* file)
 
     rsMsgs->sendPublicChat(QString::fromStdString(mesgString).toStdWString());
     setFont();
-}
-
-void PeersDialog::anchorClicked (const QUrl& link ) 
-{
-    #ifdef PEERS_DEBUG
-    std::cerr << "PeersDialog::anchorClicked link.scheme() : " << link.scheme().toStdString() << std::endl;
-    #endif
-
-    RetroShareLink::processUrl(link, RSLINK_PROCESS_NOTIFY_ALL);
 }
 
 void PeersDialog::dropEvent(QDropEvent *event)

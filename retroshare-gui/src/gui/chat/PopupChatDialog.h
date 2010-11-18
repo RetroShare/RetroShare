@@ -71,7 +71,6 @@ public slots:
     void resetStatusBar() ;
     void updateStatusTyping() ;
     void updateStatusString(const QString& peer_id, const QString& statusString) ;
-    void anchorClicked (const QUrl &);
 
     void updateStatus(const QString &peer_id, int status);
 

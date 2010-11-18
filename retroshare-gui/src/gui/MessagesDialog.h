@@ -87,8 +87,6 @@ private slots:
 
   void emptyTrash();
 
-  void anchorClicked (const QUrl &);
-  
   void getcurrentrecommended();
   void getallrecommended();
 

@@ -126,7 +126,6 @@ PopupChatDialog::PopupChatDialog(const std::string &id, const QString &name, QWi
   connect(ui.actionSave_Chat_History, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
   connect(ui.actionClearOfflineMessages, SIGNAL(triggered()), this, SLOT(clearOfflineMessages()));
 
-  connect(ui.textBrowser, SIGNAL(anchorClicked(const QUrl &)), SLOT(anchorClicked(const QUrl &)));
 
   connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(const QString&, int)), this, SLOT(updateStatus(const QString&, int)));
   connect(NotifyQt::getInstance(), SIGNAL(peerHasNewCustomStateString(const QString&, const QString&)), this, SLOT(updatePeersCustomStateString(const QString&, const QString&)));
@@ -137,9 +136,6 @@ PopupChatDialog::PopupChatDialog(const std::string &id, const QString &name, QWi
 
   // Create the status bar
   resetStatusBar();
-
-  //ui.textBrowser->setOpenExternalLinks ( false );
-  //ui.textBrowser->setOpenLinks ( false );
 
   ui.textboldButton->setIcon(QIcon(QString(":/images/edit-bold.png")));
   ui.textunderlineButton->setIcon(QIcon(QString(":/images/edit-underline.png")));
@@ -1002,7 +998,7 @@ void PopupChatDialog::fileHashingFinished(AttachFileItem* file)
     message+= RetroShareLink(QString::fromUtf8(file->FileName().c_str()),file->FileSize(),QString::fromStdString(file->FileHash())).toHtmlSize();
 
 #ifdef CHAT_DEBUG
-    std::cerr << "PopupChatDialog::anchorClicked message : " << message.toStdString() << std::endl;
+    std::cerr << "PopupChatDialog::fileHashingFinished message : " << message.toStdString() << std::endl;
 #endif
 
     std::wstring msg = message.toStdWString();
@@ -1011,16 +1007,6 @@ void PopupChatDialog::fileHashingFinished(AttachFileItem* file)
         QDateTime currentTime = QDateTime::currentDateTime();
         addChatMsg(false, ownId, QString::fromStdString(rsPeers->getPeerName(ownId)), currentTime, currentTime, QString::fromStdWString(msg), TYPE_NORMAL, true);
     }
-}
-
-void PopupChatDialog::anchorClicked (const QUrl& link ) 
-{
-#ifdef CHAT_DEBUG
-	std::cerr << "PopupChatDialog::anchorClicked link.scheme() : " << link.scheme().toStdString() << std::endl;
-#endif
-
-	std::list<std::string> srcIds;
-	RetroShareLink::processUrl(link, RSLINK_PROCESS_NOTIFY_ALL);
 }
 
 void PopupChatDialog::dropEvent(QDropEvent *event)

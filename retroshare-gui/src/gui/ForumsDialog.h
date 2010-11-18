@@ -38,7 +38,6 @@ public:
     virtual void updateDisplay();
 
 private slots:
-    void anchorClicked (const QUrl &);
     /** Create the context popup menu and it's submenus */
     void forumListCustomPopupMenu( QPoint point );
     void threadListCustomPopupMenu( QPoint point );

@@ -196,6 +196,7 @@ private slots:
     
     void on_actionQuick_Start_Wizard_activated();
 
+    void linkActivated(const QUrl &url);
 
 private:
 

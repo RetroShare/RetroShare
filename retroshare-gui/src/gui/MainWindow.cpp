@@ -25,6 +25,8 @@
 #include <QIcon>
 #include <QPixmap>
 #include <QColorDialog>
+#include <QDesktopServices>
+#include <QUrl>
 
 #ifdef BLOGS
 #include "gui/unfinished/blogs/BlogsDialog.h"
@@ -51,6 +53,7 @@
 #include "bwgraph/bwgraph.h"
 #include "help/browser/helpbrowser.h"
 #include "chat/PopupChatDialog.h"
+#include "RetroShareLink.h"
 
 #ifdef UNFINISHED
 #include "unfinished/ApplicationWindow.h"
@@ -154,6 +157,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     isIdle = false;
 
     setWindowTitle(tr("RetroShare %1 a secure decentralised communication platform").arg(retroshareVersion()));
+
+    /* add url handler for RetroShare links */
+    QDesktopServices::setUrlHandler("retroshare", this, "linkActivated");
 
     // Setting icons
     this->setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
@@ -1180,4 +1186,9 @@ void MainWindow::statusChangedComboBox(int index)
 
     /* no object known */
     setStatus(NULL, statusComboBox->itemData(index, Qt::UserRole).toInt());
+}
+
+void MainWindow::linkActivated(const QUrl &url)
+{
+    RetroShareLink::processUrl(url, RSLINK_PROCESS_NOTIFY_ALL);
 }

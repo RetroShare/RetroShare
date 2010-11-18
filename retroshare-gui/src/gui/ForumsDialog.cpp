@@ -26,7 +26,6 @@
 #include <QItemDelegate>
 
 #include "ForumsDialog.h"
-#include "RetroShareLink.h"
 #include "forums/CreateForum.h"
 #include "forums/CreateForumMsg.h"
 #include "forums/ForumDetails.h"
@@ -154,7 +153,6 @@ ForumsDialog::ForumsDialog(QWidget *parent)
     connect( ui.threadTreeWidget, SIGNAL( itemSelectionChanged() ), this, SLOT( changedThread () ) );
     connect( ui.threadTreeWidget, SIGNAL( itemClicked(QTreeWidgetItem*,int)), this, SLOT( clickedThread (QTreeWidgetItem*,int) ) );
     connect( ui.viewBox, SIGNAL( currentIndexChanged ( int ) ), this, SLOT( changedViewBox () ) );
-    connect( ui.postText, SIGNAL( anchorClicked(const QUrl &)), SLOT(anchorClicked(const QUrl &)));
 
     connect(ui.expandButton, SIGNAL(clicked()), this, SLOT(togglethreadview()));
     connect(ui.previousButton, SIGNAL(clicked()), this, SLOT(previousMessage()));
@@ -199,9 +197,6 @@ ForumsDialog::ForumsDialog(QWidget *parent)
     forummenu->addAction(ui.actionCreate_Forum);
     forummenu->addSeparator();
     ui.forumpushButton->setMenu(forummenu);
-
-    ui.postText->setOpenExternalLinks ( false );
-    ui.postText->setOpenLinks ( false );
 
     /* create forum tree */
     m_ItemFont = QFont("ARIAL", 10);
@@ -1719,15 +1714,6 @@ void ForumsDialog::replytomessage()
     {
         QMessageBox::information(this, tr("RetroShare"),tr("You cant reply a Anonymous Author"));
     }
-}
-
-void ForumsDialog::anchorClicked (const QUrl& link )
-{
-    #ifdef FORUM_DEBUG
-    std::cerr << "ForumsDialog::anchorClicked link.scheme() : " << link.scheme().toStdString() << std::endl;
-    #endif
-
-    RetroShareLink::processUrl(link, RSLINK_PROCESS_NOTIFY_ALL);
 }
 
 void ForumsDialog::filterRegExpChanged()

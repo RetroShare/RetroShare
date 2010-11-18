@@ -155,7 +155,6 @@ private slots:
     void loadmypersonalstatus();
 
     void addExtraFile();
-    void anchorClicked (const QUrl &);
     void addAttachment(std::string);
 
     bool fileSave();

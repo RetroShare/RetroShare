@@ -721,9 +721,6 @@ background: white;}</string>
          <attribute name="headerDefaultSectionSize">
           <number>200</number>
          </attribute>
-         <attribute name="headerDefaultSectionSize">
-          <number>200</number>
-         </attribute>
          <column>
           <property name="text">
            <string>Friends</string>
@@ -958,7 +955,7 @@ background: white;}</string>
                <bool>true</bool>
               </property>
               <property name="openLinks">
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
              </widget>
              <widget class="QWidget" name="layoutWidget_2">

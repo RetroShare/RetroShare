@@ -751,7 +751,7 @@ p, li { white-space: pre-wrap; }
             <bool>true</bool>
            </property>
            <property name="openLinks">
-            <bool>false</bool>
+            <bool>true</bool>
            </property>
           </widget>
          </item>
