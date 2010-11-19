@@ -180,8 +180,9 @@ GraphWidget::NodeId GraphWidget::addNode(const std::string& node_short_string,co
 
 		 node->setPos(x1+f1*(x2-x1),y1+f2*(y2-y1));
 	 }
-
+#ifdef DEBUG_ELASTIC
 	 std::cerr << "Added node " << _nodes.size()-1 << std::endl ;
+#endif
 	 return _nodes.size()-1 ;
 }
 void GraphWidget::snapshotNodesPositions()
@@ -203,7 +204,9 @@ GraphWidget::EdgeId GraphWidget::addEdge(NodeId n1,NodeId n2)
 		Edge *edge = new Edge(_nodes[n1],_nodes[n2]);
 		scene()->addItem(edge);
 		_edges[ed] = edge ;
+#ifdef DEBUG_ELASTIC
 		std::cerr << "Added edge " << n1 << " - " << n2 << std::endl ;
+#endif
 	}
 
 	return 0 ;
@@ -213,7 +216,9 @@ void GraphWidget::itemMoved()
 {
     if (!timerId)
 	 {
+#ifdef DEBUG_ELASTIC
 		 std::cout << "starting timer" << std::endl;
+#endif
         timerId = startTimer(1000 / 25);
 	 }
 }
@@ -348,7 +353,9 @@ void GraphWidget::timerEvent(QTimerEvent *event)
 
     if (!itemsMoved) {
         killTimer(timerId);
+#ifdef DEBUG_ELASTIC
 		  std::cerr << "Killing timr" << std::endl ;
+#endif
         timerId = 0;
     }
 }
@@ -359,7 +366,9 @@ void GraphWidget::setEdgeLength(uint32_t l)
 
 	if(!timerId)
 	{
+#ifdef DEBUG_ELASTIC
 		 std::cout << "starting timer" << std::endl;
+#endif
         timerId = startTimer(1000 / 25);
 	}
 }

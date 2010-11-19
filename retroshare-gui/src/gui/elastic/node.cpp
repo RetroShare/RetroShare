@@ -65,7 +65,9 @@
 Node::Node(const std::string& node_string,GraphWidget::NodeType type,GraphWidget::AuthType auth,GraphWidget *graphWidget,const std::string& ssl_id,const std::string& gpg_id)
     : graph(graphWidget),_desc_string(node_string),_type(type),_auth(auth),_ssl_id(ssl_id),_gpg_id(gpg_id)
 {
+#ifdef DEBUG_ELASTIC
 	std::cerr << "Created node type " << type << ", string=" << node_string << std::endl ;
+#endif
     setFlag(ItemIsMovable);
 #if QT_VERSION >= 0x040600
     setFlag(ItemSendsGeometryChanges);
@@ -296,7 +298,9 @@ void Node::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void Node::peerDetails()
 {
+#ifdef DEBUG_ELASTIC
 	std::cerr << "Calling peer details" << std::endl;
+#endif
     ConfCertDialog::showIt(_gpg_id, ConfCertDialog::PageDetails);
 }
 void Node::makeFriend()
