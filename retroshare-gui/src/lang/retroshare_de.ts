@@ -7133,7 +7133,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/toaster/OnlineToaster.ui" line="+152"/>
         <source>Friend Online</source>
-        <translation>Freund ist online</translation>
+        <translation type="unfinished">Freund Online</translation>
     </message>
 </context>
 <context>
