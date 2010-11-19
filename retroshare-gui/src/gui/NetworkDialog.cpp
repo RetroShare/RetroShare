@@ -485,7 +485,7 @@ void NetworkDialog::insertConnect()
 
 			if (detail.hasSignedMe)
 			{
-				backgrndcolor=QColor("#42B2B2"); //kind of darkCyan
+				backgrndcolor=QColor("#B242B2"); //kind of purple
 				item -> setIcon(0,(QIcon(IMAGE_DENIED)));
 				for(int k=0;k<8;++k)
 					item -> setToolTip(k, QString::fromStdString(detail.name) + tr(" has authenticated you. \nRight-click and select 'make friend' to be able to connect."));
