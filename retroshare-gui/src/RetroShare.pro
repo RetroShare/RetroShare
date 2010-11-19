@@ -6,7 +6,7 @@ TARGET = RetroShare
 
 #CONFIG += minimal
 
-#DEFINES += RS_RELEASE_VERSION
+DEFINES += RS_RELEASE_VERSION
 RCC_DIR = temp/qrc
 UI_DIR  = temp/ui
 MOC_DIR = temp/moc
