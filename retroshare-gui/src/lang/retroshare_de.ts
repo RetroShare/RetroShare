@@ -2260,33 +2260,43 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+23"/>
-        <location line="+45"/>
+        <location line="+28"/>
         <source>Attachments</source>
         <translation>Anhänge</translation>
     </message>
     <message>
-        <location line="+78"/>
+        <location line="+49"/>
+        <source> allow channels to get frame for message thumbnail from movie media attachments or not</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Auto Thumbnail</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+34"/>
         <source>Drag and Drop Files from Search Results</source>
         <translation>Drag&apos;n&apos;Drop Dateien aus den Suchergebnissen</translation>
     </message>
     <message>
-        <location filename="../gui/channels/CreateChannelMsg.cpp" line="+286"/>
+        <location filename="../gui/channels/CreateChannelMsg.cpp" line="+297"/>
         <source>Add Extra File</source>
         <translation>Zusätzlich eine Datei hinzufügen</translation>
     </message>
     <message>
-        <location line="+26"/>
-        <location line="+149"/>
+        <location line="+29"/>
+        <location line="+202"/>
         <source>RetroShare</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-148"/>
+        <location line="-201"/>
         <source>File already Added and Hashed</source>
         <translation>Datei wurde schon hinzugefügt und gehasht</translation>
     </message>
     <message>
-        <location line="+149"/>
+        <location line="+202"/>
         <source>Please add a Subject</source>
         <translation>Bitte Subjekt nicht vergessen</translation>
     </message>
@@ -2377,12 +2387,7 @@ p, li { white-space: pre-wrap; }
         <translation>Erstellen</translation>
     </message>
     <message>
-        <location filename="../gui/forums/CreateForum.cpp" line="+78"/>
-        <source>RetroShare</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+1"/>
+        <location filename="../gui/forums/CreateForum.cpp" line="+73"/>
         <source>Please add a Name</source>
         <translation>Bitte Name hinzüfügen</translation>
     </message>
@@ -6508,7 +6513,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>NetworkDialog</name>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="+315"/>
+        <location filename="../gui/NetworkDialog.cpp" line="+299"/>
         <location line="+317"/>
         <source>Select a pem/pqi File</source>
         <translation>Wählen einer PEM- oder PQI-Datei</translation>
@@ -6562,29 +6567,29 @@ Rechtsklick und als Freund hinzufügen um zu verbinden.</translation>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="+111"/>
         <location line="+168"/>
-        <location line="+252"/>
+        <location line="+220"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location line="-415"/>
-        <location line="+420"/>
+        <location line="-383"/>
+        <location line="+388"/>
         <source>Did I authenticated peer</source>
         <translation>Habe ich den Peer authentifiziert</translation>
     </message>
     <message>
-        <location line="-417"/>
+        <location line="-385"/>
         <source>Did I sign his gpg key</source>
         <translation>Habe ich seinen GPG Schlüssel unterzeichnet</translation>
     </message>
     <message>
         <location line="+10"/>
-        <location line="+417"/>
+        <location line="+385"/>
         <source>Cert Id</source>
         <translation>ID des Zertifikates</translation>
     </message>
     <message>
-        <location line="-333"/>
+        <location line="-301"/>
         <source>Search Network</source>
         <translation>Netzwerksuche</translation>
     </message>
@@ -6607,7 +6612,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Anzeige&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+110"/>
+        <location line="+78"/>
         <source>Local network</source>
         <translation>Lokales Netzwerk</translation>
     </message>
@@ -6647,43 +6652,40 @@ p, li { white-space: pre-wrap; }
         <translation>Erstelle ein neues Profil</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="-422"/>
         <source>Welcome to RetroShare.</source>
-        <translation>Willkommen bei RetroShare.</translation>
+        <translation type="obsolete">Willkommen bei RetroShare.</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.ui" line="-583"/>
+        <location line="-551"/>
         <source>Network</source>
         <translation>Netzwerk</translation>
     </message>
     <message>
         <location line="+88"/>
-        <location line="+417"/>
+        <location line="+385"/>
         <source>Did peer authenticated me</source>
         <translation>Hat mich der Peer authentifiziert</translation>
     </message>
     <message>
-        <location line="-249"/>
+        <location line="-217"/>
         <source>Show keys that are not validated by the GPG web of trust</source>
         <translation>Zeige Schlüssel, die nicht vom web of trust bestätigt sind</translation>
     </message>
     <message>
-        <location line="+55"/>
         <source>Log</source>
-        <translation>Log</translation>
+        <translation type="obsolete">Log</translation>
     </message>
     <message>
-        <location line="+211"/>
+        <location line="+234"/>
         <source>Clear</source>
         <translation>Leeren</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="-2"/>
         <source>RetroShare %1 started.</source>
-        <translation>RetroShare %1 gestartet.</translation>
+        <translation type="obsolete">RetroShare %1 gestartet.</translation>
     </message>
     <message>
-        <location line="+71"/>
+        <location filename="../gui/NetworkDialog.cpp" line="-353"/>
         <source>Deny friend</source>
         <translation>Blockiere Freund</translation>
     </message>
@@ -6713,7 +6715,7 @@ p, li { white-space: pre-wrap; }
         <translation>Unbekannt</translation>
     </message>
     <message>
-        <location line="-308"/>
+        <location line="-294"/>
         <source>Authentication matrix</source>
         <translation>Authentifizierungsmatrix</translation>
     </message>
@@ -6723,7 +6725,7 @@ p, li { white-space: pre-wrap; }
         <translation>Netzwerk Ansicht</translation>
     </message>
     <message>
-        <location line="+296"/>
+        <location line="+282"/>
         <source>Authenticated</source>
         <translation>Authentifiziert</translation>
     </message>
@@ -6767,54 +6769,44 @@ p, li { white-space: pre-wrap; }
         <translation>Zertifikat-Datei konnte nicht erstellt werden</translation>
     </message>
     <message>
-        <location line="+51"/>
         <source>UPNP is active.</source>
-        <translation>UPNP ist aktiv.</translation>
+        <translation type="obsolete">UPNP ist aktiv.</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>UPNP not found or not enabled.</source>
-        <translation>UPNP wurde nicht gefunden oder ist nicht aktiviert.</translation>
+        <translation type="obsolete">UPNP wurde nicht gefunden oder ist nicht aktiviert.</translation>
     </message>
     <message>
-        <location line="+5"/>
         <source>DHT is running.</source>
-        <translation>DHT ist gestartet.</translation>
+        <translation type="obsolete">DHT ist gestartet.</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>DHT is off.</source>
-        <translation>DHT ist ausgeschaltet.</translation>
+        <translation type="obsolete">DHT ist ausgeschaltet.</translation>
     </message>
     <message>
-        <location line="+5"/>
         <source>Stun external address detection is working.</source>
-        <translation>Stun externe Adresserkennung arbeitet.</translation>
+        <translation type="obsolete">Stun externe Adresserkennung arbeitet.</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>Stun is not working.</source>
-        <translation>Stun arbeitet nicht.</translation>
+        <translation type="obsolete">Stun arbeitet nicht.</translation>
     </message>
     <message>
-        <location line="+5"/>
         <source>Local network detected</source>
-        <translation>Lokales Netzwerk gefunden</translation>
+        <translation type="obsolete">Lokales Netzwerk gefunden</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>No local network detected</source>
-        <translation>Kein lokales Netzwerk gefunden</translation>
+        <translation type="obsolete">Kein lokales Netzwerk gefunden</translation>
     </message>
     <message>
-        <location line="+5"/>
         <source>ip found via external address finder</source>
-        <translation>Ip gefunden via externem IP Adress-Finder</translation>
+        <translation type="obsolete">Ip gefunden via externem IP Adress-Finder</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>external address finder didn&apos;t found anything</source>
-        <translation>Externer IP Adress-Finder hat nichts gefunden</translation>
+        <translation type="obsolete">Externer IP Adress-Finder hat nichts gefunden</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="-179"/>
@@ -6852,7 +6844,7 @@ p, li { white-space: pre-wrap; }
         <translation>Setze Tabs Form Dreieck</translation>
     </message>
     <message>
-        <location line="-401"/>
+        <location line="-369"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -6870,7 +6862,7 @@ p, li { white-space: pre-wrap; }
         <translation>Peer ID</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="-117"/>
+        <location filename="../gui/NetworkDialog.cpp" line="-26"/>
         <source>Sorry, create certificate failed</source>
         <translation>Zertifikat-Datei konnte nicht erstellt werden</translation>
     </message>
@@ -7051,8 +7043,12 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+12"/>
+        <source>Friend Connect</source>
+        <translation>Verbinde zu Freund</translation>
+    </message>
+    <message>
         <source>Peer Connect</source>
-        <translation>Verbinde zu Nachbar</translation>
+        <translation type="obsolete">Verbinde zu Nachbar</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -7131,9 +7127,13 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>OnlineToaster</name>
     <message>
-        <location filename="../gui/toaster/OnlineToaster.ui" line="+151"/>
         <source>Peer Online</source>
-        <translation>Nachbar Online</translation>
+        <translation type="obsolete">Nachbar Online</translation>
+    </message>
+    <message>
+        <location filename="../gui/toaster/OnlineToaster.ui" line="+152"/>
+        <source>Friend Online</source>
+        <translation>Freund ist online</translation>
     </message>
 </context>
 <context>
@@ -7978,7 +7978,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PopupChatDialog</name>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="+748"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="+747"/>
         <source>Hide Avatar</source>
         <translation>Avatar verstecken</translation>
     </message>
@@ -8056,7 +8056,7 @@ p, li { white-space: pre-wrap; }
         <translation>Deaktiviere Emoticons</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="-981"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="-980"/>
         <source>Paste retroshare Link</source>
         <translation>RetroShare Link einfügen</translation>
     </message>
@@ -8066,7 +8066,7 @@ p, li { white-space: pre-wrap; }
         <translation>Durchgestrichen</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="+730"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="+729"/>
         <source>Add Extra File</source>
         <translation>Zusätzlich eine Datei hinzufügen</translation>
     </message>
@@ -8103,7 +8103,7 @@ p, li { white-space: pre-wrap; }
         <translation>Text Datei (*.txt );;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location line="-708"/>
+        <location line="-707"/>
         <source>Your Friend is offline 
 Do you want to send them a Message instead</source>
         <translation>Dein Freund ist Offline willst du ihm stattdessen eine Nachricht senden</translation>
@@ -8114,7 +8114,7 @@ Do you want to send them a Message instead</source>
         <translation>Bild anhängen</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="+750"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="+749"/>
         <source>is Idle and may not reply</source>
         <translation>antwortet möglicherweise nicht, da der Status auf &quot;Untätig&quot; gesetzt wurde</translation>
     </message>
@@ -8134,7 +8134,7 @@ Do you want to send them a Message instead</source>
         <translation>ist Offline.</translation>
     </message>
     <message>
-        <location line="-685"/>
+        <location line="-684"/>
         <source>is typing...</source>
         <translation>tippt...</translation>
     </message>
@@ -8174,7 +8174,7 @@ Do you want to send them a Message instead</source>
         <translation>Tab abdocken</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatWindow.cpp" line="+260"/>
+        <location filename="../gui/chat/PopupChatWindow.cpp" line="+259"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
@@ -8319,7 +8319,7 @@ Do you want to send them a Message instead</source>
 <context>
     <name>ProfileView</name>
     <message>
-        <location filename="../gui/profile/ProfileView.cpp" line="+70"/>
+        <location filename="../gui/profile/ProfileView.cpp" line="+71"/>
         <source>Clear Photo</source>
         <translation>Photo entfernen</translation>
     </message>
@@ -10306,7 +10306,7 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;span style=&quot; font-size:18pt; color:#55aaff;&quot;&gt;Anmeldung&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:18pt; color:#55aaff;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.cpp" line="+172"/>
+        <location filename="../gui/StartDialog.cpp" line="+170"/>
         <source>Login Failure</source>
         <translation>Anmeldefehler</translation>
     </message>
@@ -10696,7 +10696,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+26"/>
-        <location filename="../gui/feeds/SubFileItem.cpp" line="+576"/>
+        <location filename="../gui/feeds/SubFileItem.cpp" line="+578"/>
         <location line="+6"/>
         <source>Play File</source>
         <translation>Datei abspielen</translation>
