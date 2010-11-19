@@ -35,11 +35,11 @@
      <item row="0" column="0">
       <widget class="QPushButton" name="refreshButton">
        <property name="text">
-        <string>Refresh</string>
+        <string>Redraw</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="7">
+     <item row="0" column="5">
       <spacer>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -53,38 +53,6 @@
       </spacer>
      </item>
      <item row="0" column="2">
-      <widget class="QComboBox" name="comboBox">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <item>
-        <property name="text">
-         <string>Basic</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Friends</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Extended</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QLabel" name="label">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="text">
-        <string>Display mode:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="4">
       <widget class="QSpinBox" name="maxFriendLevelSB">
        <property name="minimum">
         <number>0</number>
@@ -97,14 +65,14 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="3">
+     <item row="0" column="1">
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>Friends level:</string>
+        <string>Friendship level:</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="6">
+     <item row="0" column="4">
       <widget class="QSpinBox" name="edgeLengthSB">
        <property name="minimum">
         <number>10</number>
@@ -117,7 +85,7 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="5">
+     <item row="0" column="3">
       <widget class="QLabel" name="label_3">
        <property name="text">
         <string>Edge length:</string>

@@ -240,27 +240,25 @@ QPainterPath Node::shape() const
 void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)
 {
 	static QColor type_color[4] = { QColor(Qt::yellow), QColor(Qt::green), QColor(Qt::cyan), QColor(Qt::black) } ;
-	static QColor auth_color[3] = { QColor(Qt::darkYellow), QColor(Qt::darkGreen), QColor(Qt::darkBlue) } ;
+
+	QColor col0(type_color[_type]) ;
 
 	painter->setPen(Qt::NoPen);
 	painter->setBrush(Qt::darkGray);
 	painter->drawEllipse(-7, -7, 20, 20);
-
-	QColor col0(type_color[_type]) ;
-	QColor col1(auth_color[_auth]) ;
 
 	QRadialGradient gradient(-3, -3, 10);
 	if (option->state & QStyle::State_Sunken) 
 	{
 		gradient.setCenter(3, 3);
 		gradient.setFocalPoint(3, 3);
-		gradient.setColorAt(1, col0.light(120));
-		gradient.setColorAt(0, col1.light(120));
+		gradient.setColorAt(1, col0.light(120).dark(100+_auth*100));
+		gradient.setColorAt(0, col0.light(70).dark(100+_auth*100));
 	} 
 	else 
 	{
-		gradient.setColorAt(0, col0);
-		gradient.setColorAt(1, col1);
+		gradient.setColorAt(1, col0.light(50).dark(100+_auth*100));
+		gradient.setColorAt(0, col0.dark(100+_auth*100));
 	}
 	painter->setBrush(gradient);
 	painter->setPen(QPen(Qt::black, 0));
@@ -299,7 +297,7 @@ void Node::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void Node::peerDetails()
 {
 	std::cerr << "Calling peer details" << std::endl;
-    ConfCertDialog::showIt(_ssl_id, ConfCertDialog::PageDetails);
+    ConfCertDialog::showIt(_gpg_id, ConfCertDialog::PageDetails);
 }
 void Node::makeFriend()
 {

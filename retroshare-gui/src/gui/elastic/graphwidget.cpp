@@ -175,8 +175,8 @@ GraphWidget::NodeId GraphWidget::addNode(const std::string& node_short_string,co
 		 qreal x1,y1,x2,y2 ;
 		 sceneRect().getCoords(&x1,&y1,&x2,&y2) ;
 
-		 float f1 = rand()/(float)RAND_MAX ;
-		 float f2 = rand()/(float)RAND_MAX ;
+		 float f1 = (type == GraphWidget::ELASTIC_NODE_TYPE_OWN)?0.5:(rand()/(float)RAND_MAX) ;
+		 float f2 = (type == GraphWidget::ELASTIC_NODE_TYPE_OWN)?0.5:(rand()/(float)RAND_MAX) ;
 
 		 node->setPos(x1+f1*(x2-x1),y1+f2*(y2-y1));
 	 }

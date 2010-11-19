@@ -524,7 +524,7 @@ void NetworkDialog::insertConnect()
         // Color each Background column in the Network Tab except the first one => 1-9
         for(int i=0;i<10;++i)
         {
-                self_item->setBackground(i,QBrush(QColor("#45ff45")));
+                self_item->setBackground(i,Qt::yellow) ;//QBrush(QColor("#45ff45")));
         }
         connectWidget->addTopLevelItem(self_item);
 
