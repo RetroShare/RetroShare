@@ -18,6 +18,7 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
+#include <gpgme.h>
 
 #include <QTreeWidget>
 #include <QFileDialog>
@@ -359,99 +360,110 @@ void NetworkDialog::insertConnect()
 
 	last_time = now ;
 
-    std::list<std::string> neighs; //these are GPG ids
+	std::list<std::string> neighs; //these are GPG ids
 	std::list<std::string>::iterator it;
-    rsPeers->getGPGAllList(neighs);
-        
+	rsPeers->getGPGAllList(neighs);
+
 	/* get a link to the table */
-    QTreeWidget *connectWidget = ui.connecttreeWidget;
+	QTreeWidget *connectWidget = ui.connecttreeWidget;
 
-        //remove items
-        int index = 0;
-        while (index < connectWidget->topLevelItemCount()) {
-            std::string gpg_widget_id = (connectWidget->topLevelItem(index))->text(4).toStdString();
-            RsPeerDetails detail;
-            if (!rsPeers->getGPGDetails(gpg_widget_id, detail) || (detail.validLvl < 3 && !detail.accept_connection)) {
-                delete (connectWidget->takeTopLevelItem(index));
-            } else {
-                index++;
-            }
-        }
-        index = 0;
-        while (index < ui.unvalidGPGkeyWidget->topLevelItemCount()) {
-            std::string gpg_widget_id = (ui.unvalidGPGkeyWidget->topLevelItem(index))->text(4).toStdString();
-            RsPeerDetails detail;
-            if (!rsPeers->getGPGDetails(gpg_widget_id, detail) || detail.validLvl >= 3 || detail.accept_connection) {
-                delete (ui.unvalidGPGkeyWidget->takeTopLevelItem(index));
-            } else {
-                index++;
-            }
-        }
+	//remove items
+	int index = 0;
+	while (index < connectWidget->topLevelItemCount()) {
+		std::string gpg_widget_id = (connectWidget->topLevelItem(index))->text(4).toStdString();
+		RsPeerDetails detail;
+		if (!rsPeers->getGPGDetails(gpg_widget_id, detail) || (detail.validLvl < 3 && !detail.accept_connection)) {
+			delete (connectWidget->takeTopLevelItem(index));
+		} else {
+			index++;
+		}
+	}
+	index = 0;
+	while (index < ui.unvalidGPGkeyWidget->topLevelItemCount()) {
+		std::string gpg_widget_id = (ui.unvalidGPGkeyWidget->topLevelItem(index))->text(4).toStdString();
+		RsPeerDetails detail;
+		if (!rsPeers->getGPGDetails(gpg_widget_id, detail) || detail.validLvl >= 3 || detail.accept_connection) {
+			delete (ui.unvalidGPGkeyWidget->takeTopLevelItem(index));
+		} else {
+			index++;
+		}
+	}
 
-        QList<QTreeWidgetItem *> validItems;
-        QList<QTreeWidgetItem *> unvalidItems;
+	QList<QTreeWidgetItem *> validItems;
+	QList<QTreeWidgetItem *> unvalidItems;
 	for(it = neighs.begin(); it != neighs.end(); it++)
 	{
-                #ifdef NET_DEBUG
-                std::cerr << "NetworkDialog::insertConnect() inserting gpg key : " << *it << std::endl;
-                #endif
-                if (*it == rsPeers->getGPGOwnId()) {
-                    continue;
-                }
+#ifdef NET_DEBUG
+		std::cerr << "NetworkDialog::insertConnect() inserting gpg key : " << *it << std::endl;
+#endif
+		if (*it == rsPeers->getGPGOwnId()) {
+			continue;
+		}
 
-                RsPeerDetails detail;
-                if (!rsPeers->getGPGDetails(*it, detail))
-                {
-                        continue; /* BAD */
-                }
+		RsPeerDetails detail;
+		if (!rsPeers->getGPGDetails(*it, detail))
+		{
+			continue; /* BAD */
+		}
 
-                /* make a widget per friend */
-                QTreeWidgetItem *item;
-                QList<QTreeWidgetItem *> list = connectWidget->findItems(QString::fromStdString(*it), Qt::MatchExactly, 4);
-                if (list.size() == 1) {
-                    item = list.front();
-                } else {
-                    list = ui.unvalidGPGkeyWidget->findItems(QString::fromStdString(*it), Qt::MatchExactly, 4);
-                    if (list.size() == 1) {
-                        item = list.front();
-                    } else {
-                        //create new item
-                        #ifdef NET_DEBUG
-                        std::cerr << "NetworkDialog::insertConnect() creating new tree widget item : " << *it << std::endl;
-                        #endif
-                        item = new RSTreeWidgetItem(NULL, 0);
-                        item -> setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
-                        item -> setSizeHint(0, QSize( 18,18 ) );
+		/* make a widget per friend */
+		QTreeWidgetItem *item;
+		QList<QTreeWidgetItem *> list = connectWidget->findItems(QString::fromStdString(*it), Qt::MatchExactly, 4);
+		if (list.size() == 1) {
+			item = list.front();
+		} else {
+			list = ui.unvalidGPGkeyWidget->findItems(QString::fromStdString(*it), Qt::MatchExactly, 4);
+			if (list.size() == 1) {
+				item = list.front();
+			} else {
+				//create new item
+#ifdef NET_DEBUG
+				std::cerr << "NetworkDialog::insertConnect() creating new tree widget item : " << *it << std::endl;
+#endif
+				item = new RSTreeWidgetItem(NULL, 0);
+				item -> setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
+				item -> setSizeHint(0, QSize( 18,18 ) );
 
-                        /* (1) Person */
-                        item -> setText(COLUMN_PEERNAME, QString::fromStdString(detail.name));
+				/* (1) Person */
+				item -> setText(COLUMN_PEERNAME, QString::fromStdString(detail.name));
 
-                        /* (4) key id */
-                        item -> setText(COLUMN_PEERID, QString::fromStdString(detail.id));
-                    }
-                }
+				/* (4) key id */
+				item -> setText(COLUMN_PEERID, QString::fromStdString(detail.id));
+			}
+		}
 
-                /* (2) Key validity */
-                if (detail.ownsign) {
-                    item -> setText(2, tr("Authenticated"));
-                    item -> setToolTip(2, tr("GPG key signed"));
-                } else {
-                    item -> setText(2, tr("Not Authenticated"));
-                    item -> setToolTip(2, tr("GPG key not signed"));
-                }
+		QString TrustLevelString ;
 
-                /* (3) has me auth */
-                if (detail.hasSignedMe)
-                        item -> setText(3, tr("Has authenticated me"));
-		else
-                        item -> setText(3, tr("Unknown"));
-		
+		/* (2) Key validity */
+		if (detail.ownsign) 
+		{
+			item -> setText(2, tr("Personal signature"));
+			item -> setToolTip(2, tr("GPG key signed by you"));
+		} 
+		else 
+			switch(detail.validLvl)
+			{
+				case  GPGME_VALIDITY_MARGINAL: item->setText(2,tr("Marginally trusted peer")) ; break;
+				case GPGME_VALIDITY_FULL:
+				case GPGME_VALIDITY_ULTIMATE: item->setText(2,tr("Fully trusted peer")) ; break ;
+				case GPGME_VALIDITY_UNKNOWN:
+				case GPGME_VALIDITY_UNDEFINED: 
+				case GPGME_VALIDITY_NEVER:
+				default: 							item->setText(2,tr("Untrusted peer")) ; break ;
+			}
+
+		QString PeerAuthenticationString = tr("Unknown") ;
+		/* (3) has me auth */
+		if (detail.hasSignedMe)
+			PeerAuthenticationString = tr("Has authenticated me");
+
+		item->setText(3,PeerAuthenticationString) ;
 
 		/**
-		* Determinated the Background Color
-		*/
+		 * Determinated the Background Color
+		 */
 		QColor backgrndcolor;
-		
+
 		if (detail.accept_connection)
 		{
 			if (detail.ownsign) 
@@ -469,14 +481,14 @@ void NetworkDialog::insertConnect()
 		} 
 		else 
 		{
-				item -> setText(0, "1");
+			item -> setText(0, "1");
 
 			if (detail.hasSignedMe)
 			{
 				backgrndcolor=QColor("#42B2B2"); //kind of darkCyan
 				item -> setIcon(0,(QIcon(IMAGE_DENIED)));
 				for(int k=0;k<8;++k)
-				item -> setToolTip(k, QString::fromStdString(detail.name) + tr(" has authenticated you. \nRight-click and select 'make friend' to be able to connect."));
+					item -> setToolTip(k, QString::fromStdString(detail.name) + tr(" has authenticated you. \nRight-click and select 'make friend' to be able to connect."));
 			}
 			else
 			{
@@ -487,7 +499,7 @@ void NetworkDialog::insertConnect()
 
 		// Color each Background column in the Network Tab except the first one => 1-9
 		// whith the determinated color
-			for(int i = 0; i <10; i++)
+		for(int i = 0; i <10; i++)
 			item -> setBackground(i,QBrush(backgrndcolor));
 
 		/* add to the list */
@@ -504,41 +516,41 @@ void NetworkDialog::insertConnect()
 	}
 
 	// add self to network.
-        RsPeerDetails ownGPGDetails;
-        rsPeers->getGPGDetails(rsPeers->getGPGOwnId(), ownGPGDetails);
-        /* make a widget per friend */
-        QTreeWidgetItem *self_item;
-        QList<QTreeWidgetItem *> list = connectWidget->findItems(QString::fromStdString(ownGPGDetails.gpg_id), Qt::MatchExactly, 4);
-        if (list.size() == 1) {
-            self_item = list.front();
-        } else {
-            self_item = new RSTreeWidgetItem(NULL, 0);
-            self_item->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
-        }
-        self_item -> setText(0, "0");
-        self_item->setIcon(0,(QIcon(IMAGE_AUTHED)));
-        self_item->setText(COLUMN_PEERNAME, QString::fromStdString(ownGPGDetails.name) + " (" + tr("yourself") + ")");
-        self_item->setText(2,"N/A");
-        self_item->setText(COLUMN_PEERID, QString::fromStdString(ownGPGDetails.id));
+	RsPeerDetails ownGPGDetails;
+	rsPeers->getGPGDetails(rsPeers->getGPGOwnId(), ownGPGDetails);
+	/* make a widget per friend */
+	QTreeWidgetItem *self_item;
+	QList<QTreeWidgetItem *> list = connectWidget->findItems(QString::fromStdString(ownGPGDetails.gpg_id), Qt::MatchExactly, 4);
+	if (list.size() == 1) {
+		self_item = list.front();
+	} else {
+		self_item = new RSTreeWidgetItem(NULL, 0);
+		self_item->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
+	}
+	self_item -> setText(0, "0");
+	self_item->setIcon(0,(QIcon(IMAGE_AUTHED)));
+	self_item->setText(COLUMN_PEERNAME, QString::fromStdString(ownGPGDetails.name) + " (" + tr("yourself") + ")");
+	self_item->setText(2,"N/A");
+	self_item->setText(COLUMN_PEERID, QString::fromStdString(ownGPGDetails.id));
 
-        // Color each Background column in the Network Tab except the first one => 1-9
-        for(int i=0;i<10;++i)
-        {
-                self_item->setBackground(i,Qt::yellow) ;//QBrush(QColor("#45ff45")));
-        }
-        connectWidget->addTopLevelItem(self_item);
+	// Color each Background column in the Network Tab except the first one => 1-9
+	for(int i=0;i<10;++i)
+	{
+		self_item->setBackground(i,Qt::yellow) ;//QBrush(QColor("#45ff45")));
+	}
+	connectWidget->addTopLevelItem(self_item);
 
-        if (ui.showUnvalidKeys->isChecked()) {
-            ui.unvalidGPGkeyWidget->show();
-        } else {
-            ui.unvalidGPGkeyWidget->hide();
-        }
-        connectWidget->update(); /* update display */
-        ui.unvalidGPGkeyWidget->update(); /* update display */
-        
-        if (ui.filterPatternLineEdit->text().isEmpty() == false) {
-        FilterItems();
-        }
+	if (ui.showUnvalidKeys->isChecked()) {
+		ui.unvalidGPGkeyWidget->show();
+	} else {
+		ui.unvalidGPGkeyWidget->hide();
+	}
+	connectWidget->update(); /* update display */
+	ui.unvalidGPGkeyWidget->update(); /* update display */
+
+	if (ui.filterPatternLineEdit->text().isEmpty() == false) {
+		FilterItems();
+	}
 
 }
 
