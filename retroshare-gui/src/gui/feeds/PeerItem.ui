@@ -78,6 +78,9 @@ border-radius: 10px}</string>
              <property name="text">
               <string/>
              </property>
+             <property name="scaledContents">
+              <bool>true</bool>
+             </property>
              <property name="margin">
               <number>0</number>
              </property>
