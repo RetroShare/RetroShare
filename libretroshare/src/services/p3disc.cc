@@ -903,7 +903,9 @@ int	p3disc::addDiscoveryData(const std::string& fromId, const std::string& about
 
 	gpg_neighbors[from_gpg_id].insert(about_gpg_id) ;
 
+#ifdef P3DISC_DEBUG
 	std::cerr << "Adding discovery data " << fromId << " - " << aboutId << std::endl ;
+#endif
 	/* Store Network information */
 	std::map<std::string, autoneighbour>::iterator it;
 	if (neighbours.end() == (it = neighbours.find(aboutId)))
