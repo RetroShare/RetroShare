@@ -843,7 +843,7 @@ std::string RsInit::getRetroshareDataDirectory()
 
   #else
 	/* For Linux, we have a fixed standard data directory  */
-	dataDirectory = "/usr/share/Retroshare";
+	dataDirectory = "/usr/share/RetroShare";
 	std::cerr << "getRetroshareDataDirectory() Linux: " << dataDirectory;
 
   #endif
@@ -2237,7 +2237,7 @@ RsTurtle *rsTurtle = NULL ;
 #define RS_RELEASE 1
 ****/
 
-//#define RS_RELEASE 1
+#define RS_RELEASE 1
 
 
 RsControl *createRsControl(RsIface &iface, NotifyBase &notify)
