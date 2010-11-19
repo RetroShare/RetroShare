@@ -306,7 +306,7 @@ unsigned char * framecatcher::yv12ToRgb (uint8_t *src_y, uint8_t *src_u, uint8_t
 	return rgb;
 }
 
-void framecatcher::getXineError(int errorCode, std::string& errorStr){
+void framecatcher::getError(int errorCode, std::string& errorStr){
 
 	switch (errorCode){
 		case XINE_ERROR_NO_INPUT_PLUGIN:

@@ -25,6 +25,10 @@
 #include "ui_CreateChannelMsg.h"
 #include <stdint.h>
 
+#ifdef CHANNELS_FRAME_CATCHER
+#include "util/framecatcher.h"
+#endif
+
 class SubFileItem;
 class FileInfo;
 
@@ -35,7 +39,10 @@ class CreateChannelMsg : public QDialog, private Ui::CreateChannelMsg
 public:
   /** Default Constructor */
   CreateChannelMsg(std::string cId);
+
+
   /** Default Destructor */
+  ~CreateChannelMsg();
 
 	void addAttachment(const std::string &path);
 	void addAttachment(const std::string &hash, const std::string &fname, uint64_t size, bool local, const std::string &srcId);
@@ -56,18 +63,26 @@ private slots:
 	void sendMsg();
 	
 	void addThumbnail();
+	void allowAutoMediaThumbNail(bool);
 
 private:
 
   void parseRsFileListAttachments(const std::string &attachList);
-
   void sendMessage(std::wstring subject, std::wstring msg, std::list<FileInfo> &files);
+  bool setThumbNail(const std::string& path, int frame);
+
   
   std::string mChannelId;
 
 	std::list<SubFileItem *> mAttachments;
 
 	bool mCheckAttachment;
+    bool mAutoMediaThumbNail;
+
+#ifdef CHANNELS_FRAME_CATCHER
+    framecatcher* fCatcher;
+#endif
+
 };
 
 #endif

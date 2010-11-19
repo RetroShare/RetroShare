@@ -1,4 +1,4 @@
-CONFIG += qt gui uic qrc resources uitools idle bitdht # blogs
+CONFIG += qt gui uic qrc resources uitools idle bitdht # framecatcher# blogs
 QT     += network xml script opengl
 
 TEMPLATE = app
@@ -668,6 +668,20 @@ HEADERS += idle/idle.h
 SOURCES += idle/idle.cpp \
 	   idle/idle_platform.cpp 
 }
+
+framecatcher {
+
+HEADERS += util/framecatcher.h
+
+SOURCES += util/framecatcher.cpp
+
+LIBS += -lxine
+
+DEFINES *= CHANNELS_FRAME_CATCHER
+
+}
+	
+	
 
 minimal {
         SOURCES = main.cpp \

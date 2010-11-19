@@ -37,7 +37,7 @@
 
 /** Constructor */
 CreateChannelMsg::CreateChannelMsg(std::string cId)
-: QDialog (NULL), mChannelId(cId) ,mCheckAttachment(true)
+: QDialog (NULL), mChannelId(cId) ,mCheckAttachment(true), mAutoMediaThumbNail(false)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	setupUi(this);
@@ -50,12 +50,23 @@ CreateChannelMsg::CreateChannelMsg(std::string cId)
 	connect(addFileButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
 	connect(addfilepushButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));	
 	connect(addThumbnailButton, SIGNAL(clicked() ), this , SLOT(addThumbnail()));
-	
+	connect(thumbNailCb, SIGNAL(toggled(bool)), this, SLOT(allowAutoMediaThumbNail(bool)));
+#ifdef CHANNELS_FRAME_CATCHER
+	fCatcher = new framecatcher();
+#endif
     //buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 
 	setAcceptDrops(true);
 	
 	newChannelMsg();
+}
+
+CreateChannelMsg::~CreateChannelMsg(){
+
+#ifdef CHANNELS_FRAME_CATCHER
+	delete fCatcher;
+#endif
+
 }
 
 /* Dropping */
@@ -299,6 +310,9 @@ void CreateChannelMsg::addAttachment(const std::string &path)
 	std::cerr << "CreateChannelMsg::addAttachment()";
 	std::cerr << std::endl;
 
+	if(mAutoMediaThumbNail)
+	setThumbNail(path, 2000);
+
 	/* add widget in for new destination */
 	uint32_t flags =  SFI_TYPE_CHANNEL | SFI_STATE_EXTRA;
 
@@ -341,6 +355,59 @@ void CreateChannelMsg::addAttachment(const std::string &path)
 
 	return;
 
+}
+
+
+
+bool CreateChannelMsg::setThumbNail(const std::string& path, int frame){
+
+#ifdef CHANNELS_FRAME_CATCHER
+	unsigned char* imageBuffer = NULL;
+	int width = 0, height = 0, errCode = 0;
+	int length;
+	std::string errString;
+
+	if(1 !=  (errCode = fCatcher->open(path))){
+		fCatcher->getError(errCode, errString);
+		std::cerr << errString << std::endl;
+		return false;
+	}
+
+	length = fCatcher->getLength();
+
+	// make sure frame chosen is at lease a quarter length of video length if not choose quarter length
+	if(frame < (int) (0.25 * length))
+		frame = 0.25 * length;
+
+	if(1 != (errCode  = fCatcher->getRGBImage(frame, imageBuffer, width, height))){
+		fCatcher->getError(errCode, errString);
+		std::cerr << errString << std::endl;
+		return false;
+	}
+
+	if(imageBuffer == NULL)
+		return false;
+
+	QImage tNail(imageBuffer, width, height, QImage::Format_RGB32);
+	QByteArray ba;
+	QBuffer buffer(&ba);
+	buffer.open(QIODevice::WriteOnly);
+	tNail.save(&buffer, "PNG");
+	QPixmap img;
+	img.loadFromData(ba, "PNG");
+	img = img.scaled(thumbnail_label->width(), thumbnail_label->height(), Qt::KeepAspectRatio);
+	thumbnail_label->setPixmap(img);
+
+	delete[] imageBuffer;
+
+#endif
+
+	return true;
+}
+
+void CreateChannelMsg::allowAutoMediaThumbNail(bool allowThumbNail){
+
+	mAutoMediaThumbNail = allowThumbNail;
 }
 
 void CreateChannelMsg::checkAttachmentReady()

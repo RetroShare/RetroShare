@@ -58,17 +58,19 @@ public:
 	 */
 	void close();
 
+	void getError(int errCode, std::string& errStr);
+
 private:
 
 	xine_t	*xine;
-	static xine_stream_t	*stream;
+	xine_stream_t	*stream;
 	xine_video_port_t	*vo_port;
 	std::string  vo_driver;
-
+	std::string codec;
 
 	int length; // length of the stream
 
-	void getXineError(int errCode, std::string& errStr);
+
 
 	void yuy2Toyv12 (uint8_t *, uint8_t *, uint8_t *, uint8_t *, int , int );
 	unsigned char * yv12ToRgb (uint8_t *, uint8_t *, uint8_t *, int , int );
