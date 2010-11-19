@@ -644,7 +644,7 @@
           <item>
            <widget class="QCheckBox" name="popup_Connect">
             <property name="text">
-             <string>Peer Connect</string>
+             <string>Friend Connect</string>
             </property>
            </widget>
           </item>
