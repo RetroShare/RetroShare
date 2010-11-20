@@ -97,7 +97,7 @@ p, li { white-space: pre-wrap; }
       <item row="0" column="0">
        <widget class="QTabWidget" name="tabWidget">
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tab">
          <attribute name="title">
@@ -344,7 +344,7 @@ p, li { white-space: pre-wrap; }
                <x>0</x>
                <y>0</y>
                <width>456</width>
-               <height>251</height>
+               <height>260</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout">
@@ -416,6 +416,7 @@ background: white;}</string>
   </layout>
  </widget>
  <resources>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
