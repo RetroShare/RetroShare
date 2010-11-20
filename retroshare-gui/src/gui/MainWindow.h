@@ -49,7 +49,7 @@ class PluginsPage;
 class ChannelFeed;
 class BandwidthGraph;
 
-#ifndef RS_RELEASE_VERSION
+#ifdef RS_USE_LINKS
 class LinksDialog;
 #endif
 
@@ -80,7 +80,7 @@ public:
 #ifdef BLOGS
         Blogs              = 8,  /** Blogs page. */
 #endif
-#ifndef RS_RELEASE_VERSION
+#ifdef RS_USE_LINKS
         Links              = 9,  /** Links page. */
 #endif        
     };
@@ -117,7 +117,7 @@ public:
     ChannelFeed       *channelFeed;
     Idle              *idle;
 
-#ifndef RS_RELEASE_VERSION
+#ifdef RS_USE_LINKS
     LinksDialog       *linksDialog;
 #endif
 

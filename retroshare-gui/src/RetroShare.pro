@@ -1,4 +1,5 @@
 CONFIG += qt gui uic qrc resources uitools idle bitdht # framecatcher# blogs
+#CONFIG += use_links
 QT     += network xml script opengl
 
 TEMPLATE = app
@@ -66,11 +67,11 @@ win32-x-g++ {
 		OBJECTS_DIR = temp/win32-x-g++/obj
 
 		LIBS += ../../libretroshare/src/lib.win32xgcc/libretroshare.a
-		LIBS += ../../../../lib/win32-x-g++-v0.5/libssl.a 
-		LIBS += ../../../../lib/win32-x-g++-v0.5/libcrypto.a 
-		LIBS += ../../../../lib/win32-x-g++-v0.5/libgpgme.dll.a 
-		LIBS += ../../../../lib/win32-x-g++-v0.5/libminiupnpc.a 
-		LIBS += ../../../../lib/win32-x-g++-v0.5/libz.a 
+		LIBS += ../../../../lib/win32-x-g++-v0.5/libssl.a
+		LIBS += ../../../../lib/win32-x-g++-v0.5/libcrypto.a
+		LIBS += ../../../../lib/win32-x-g++-v0.5/libgpgme.dll.a
+		LIBS += ../../../../lib/win32-x-g++-v0.5/libminiupnpc.a
+		LIBS += ../../../../lib/win32-x-g++-v0.5/libz.a
 		LIBS += -L${HOME}/.wine/drive_c/pthreads/lib -lpthreadGCE2
 		LIBS += -lQtUiTools
 		LIBS += -lws2_32 -luuid -lole32 -liphlpapi -lcrypt32 -gdi32
@@ -93,7 +94,7 @@ win32 {
     #QTPLUGIN += qjpeg
 
     LIBS += ../../libretroshare/src/lib/libretroshare.a
-    LIBS += -L"../../../../lib" 
+    LIBS += -L"../../../../lib"
     LIBS += -lssl -lcrypto -lgpgme -lpthreadGC2d -lminiupnpc -lz
 # added after bitdht
 #    LIBS += -lws2_32
@@ -112,7 +113,7 @@ win32 {
 
 macx {
     # ENABLE THIS OPTION FOR Univeral Binary BUILD.
-    # CONFIG += ppc x86 
+    # CONFIG += ppc x86
 
 	CONFIG += version_detail_bash_script
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
@@ -152,12 +153,12 @@ DEPENDPATH += . \
             gui\bwgraph \
             gui\chat \
             gui\connect \
-            gui\images \              
+            gui\images \
             gui\common \
             gui\toaster \
             gui\help\browser \
             gui\elastic
-            
+
 INCLUDEPATH += ../../libretroshare/src/
 
 # Input
@@ -181,8 +182,6 @@ HEADERS +=  rshare.h \
             gui/RSHumanReadableDelegate.h \
             gui/TurtleRouterDialog.h \
             gui/AboutDialog.h \
-            gui/AddLinksDialog.h \
-            gui/LinksDialog.h \
             gui/ForumsDialog.h \
             gui/forums/ForumDetails.h \
             gui/forums/EditForumDetails.h \
@@ -195,7 +194,7 @@ HEADERS +=  rshare.h \
             gui/RemoteDirModel.h \
             gui/RetroShareLink.h \
             gui/SearchTreeWidget.h \
-            gui/SendLinkDialog.h \
+#            gui/SendLinkDialog.h \
             gui/SearchDialog.h \
             gui/SharedFilesDialog.h \
             gui/ShareManager.h \
@@ -222,7 +221,7 @@ HEADERS +=  rshare.h \
             util/RetroStyleLabel.h \
             util/dllexport.h \
             util/NonCopyable.h \
-            util/rsutildll.h \ 
+            util/rsutildll.h \
             util/dllexport.h \
             util/global.h \
             util/rsqtutildll.h \
@@ -327,14 +326,12 @@ HEADERS +=  rshare.h \
 FORMS +=    gui/StartDialog.ui \
             gui/GenCertDialog.ui \
             gui/AboutDialog.ui \
-            gui/AddLinksDialog.ui \
             gui/QuickStartWizard.ui \
             gui/NetworkDialog.ui \
             gui/TransfersDialog.ui \
             gui/ForumsDialog.ui \
             gui/MainWindow.ui \
             gui/TurtleRouterDialog.ui \
-            gui/LinksDialog.ui \
             gui/forums/CreateForum.ui \
             gui/forums/CreateForumMsg.ui \
             gui/forums/ForumDetails.ui \
@@ -344,7 +341,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/MessengerWindow.ui \
             gui/PeersDialog.ui \
             gui/SearchDialog.ui \
-            gui/SendLinkDialog.ui \
+#            gui/SendLinkDialog.ui \
             gui/SharedFilesDialog.ui \
             gui/ShareManager.ui \
             gui/ShareDialog.ui \
@@ -353,7 +350,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/HelpDialog.ui \
             gui/InfoDialog.ui \
             gui/DetailsDialog.ui \
-            gui/bwgraph/bwgraph.ui \   
+            gui/bwgraph/bwgraph.ui \
             gui/profile/ProfileView.ui \
             gui/profile/ProfileEdit.ui \
             gui/profile/ProfileWidget.ui \
@@ -418,7 +415,6 @@ SOURCES +=  main.cpp \
             gui/mainpagestack.cpp \
             gui/TurtleRouterDialog.cpp \
             gui/MainWindow.cpp \
-            gui/LinksDialog.cpp \
             gui/ForumsDialog.cpp \
             gui/forums/ForumDetails.cpp \
             gui/forums/EditForumDetails.cpp \
@@ -433,8 +429,7 @@ SOURCES +=  main.cpp \
             gui/RetroShareLink.cpp \
             gui/SearchTreeWidget.cpp \
             gui/SearchDialog.cpp \
-            gui/SendLinkDialog.cpp \
-            gui/AddLinksDialog.cpp \
+#            gui/SendLinkDialog.cpp \
             gui/SharedFilesDialog.cpp \
             gui/ShareManager.cpp \
             gui/ShareDialog.cpp \
@@ -473,7 +468,7 @@ SOURCES +=  main.cpp \
             gui/profile/ProfileView.cpp \
             gui/profile/ProfileEdit.cpp \
             gui/profile/ProfileWidget.cpp \
-            gui/profile/StatusMessage.cpp \      
+            gui/profile/StatusMessage.cpp \
             gui/channels/CreateChannel.cpp \
             gui/channels/CreateChannelMsg.cpp \
             gui/channels/ChannelDetails.cpp \
@@ -486,7 +481,7 @@ SOURCES +=  main.cpp \
             gui/connect/ConfCertDialog.cpp \
             gui/msgs/MessageComposer.cpp \
             gui/common/vmessagebox.cpp \
-            gui/common/rwindow.cpp \ 
+            gui/common/rwindow.cpp \
             gui/common/html.cpp \
             gui/common/StatusDefs.cpp \
             gui/common/TagDefs.cpp \
@@ -503,7 +498,7 @@ SOURCES +=  main.cpp \
             gui/settings/GeneralPage.cpp \
             gui/settings/DirectoriesPage.cpp \
             gui/settings/ServerPage.cpp \
-            gui/settings/NetworkPage.cpp \ 
+            gui/settings/NetworkPage.cpp \
             gui/settings/NotifyPage.cpp \
             gui/settings/CryptoPage.cpp \
             gui/settings/MessagePage.cpp \
@@ -547,8 +542,8 @@ SOURCES +=  main.cpp \
             gui/feeds/AttachFileItem.cpp \
             gui/connect/ConnectFriendWizard.cpp \
             gui/groups/CreateGroup.cpp
-            
-RESOURCES += gui/images.qrc lang/lang.qrc gui/help/content/content.qrc 
+
+RESOURCES += gui/images.qrc lang/lang.qrc gui/help/content/content.qrc
 
 TRANSLATIONS +=  \
             lang/retroshare_en.ts \
@@ -561,7 +556,7 @@ TRANSLATIONS +=  \
             lang/retroshare_tr.ts \
             lang/retroshare_sv.ts \
             lang/retroshare_zh_CN.ts
-            
+
 unfinishedtranslations {
 
        TRANSLATIONS +=  \
@@ -577,21 +572,21 @@ unfinishedtranslations {
             lang/retroshare_sl.ts \
             lang/retroshare_sr.ts \
             lang/retroshare_zh_TW.ts
-          
-}            
+
+}
 
 # Shifted Qt4.4 dependancies to here.
 #    qmake CONFIG=pluginmgr
 
-pluginmgr {                        
+pluginmgr {
 
         SOURCES += gui/PluginsPage.cpp \
             	gui/PluginManagerWidget.cpp \
-            	gui/PluginManager.cpp      
+            	gui/PluginManager.cpp
 
         HEADERS += gui/PluginsPage.h  \
             	gui/PluginManagerWidget.h \
-            	gui/PluginManager.h      
+            	gui/PluginManager.h
 
         DEFINES *= PLUGINMGR
 
@@ -602,32 +597,44 @@ blogs {
 DEPENDPATH += gui/unfinished \
 
 HEADERS += gui/unfinished/blogs/BlogsDialog.h \
-           gui/unfinished/blogs/CreateBlog.h \  
+           gui/unfinished/blogs/CreateBlog.h \
            gui/unfinished/blogs/CreateBlogMsg.h \
            gui/unfinished/blogs/BlogsMsgItem.h \
            gui/unfinished/blogs/BlogDetails.h \
-            gui/feeds/BlogNewItem.h \
-            gui/feeds/BlogMsgItem.h \
+           gui/feeds/BlogNewItem.h \
+           gui/feeds/BlogMsgItem.h \
 
 FORMS += gui/unfinished/blogs/BlogsDialog.ui \
          gui/unfinished/blogs/CreateBlog.ui \
          gui/unfinished/blogs/CreateBlogMsg.ui \
          gui/unfinished/blogs/BlogsMsgItem.ui \
-         gui/unfinished/blogs/BlogDetails.ui \ 
-            gui/feeds/BlogNewItem.ui \
-            gui/feeds/BlogMsgItem.ui \
-         
+         gui/unfinished/blogs/BlogDetails.ui \
+         gui/feeds/BlogNewItem.ui \
+         gui/feeds/BlogMsgItem.ui \
+
 SOURCES += gui/unfinished/blogs/BlogsDialog.cpp \
            gui/unfinished/blogs/CreateBlog.cpp \
            gui/unfinished/blogs/CreateBlogMsg.cpp \
            gui/unfinished/blogs/BlogsMsgItem.cpp \
            gui/unfinished/blogs/BlogDetails.cpp \
-            gui/feeds/BlogNewItem.cpp \
-            gui/feeds/BlogMsgItem.cpp \
+           gui/feeds/BlogNewItem.cpp \
+           gui/feeds/BlogMsgItem.cpp \
 
-          DEFINES *= BLOGS
+DEFINES += BLOGS
 }
 
+use_links {
+HEADERS += gui/AddLinksDialog.h \
+           gui/LinksDialog.h
+
+FORMS += gui/AddLinksDialog.ui \
+         gui/LinksDialog.ui
+
+SOURCES += gui/AddLinksDialog.cpp \
+           gui/LinksDialog.cpp
+
+DEFINES += RS_USE_LINKS
+}
 
 unfinished {
 
@@ -640,7 +647,7 @@ HEADERS += gui/unfinished/ApplicationWindow.h \
            gui/unfinished/PhotoDialog.h \
            gui/unfinished/PhotoShow.h \
            gui/unfinished/StatisticDialog.h
-	   
+
 
 FORMS += gui/unfinished/ApplicationWindow.ui \
          gui/unfinished/CalDialog.ui \
@@ -649,7 +656,7 @@ FORMS += gui/unfinished/ApplicationWindow.ui \
          gui/unfinished/PhotoDialog.ui \
          gui/unfinished/PhotoShow.ui \
          gui/unfinished/StatisticDialog.ui
-         
+
 SOURCES += gui/unfinished/ApplicationWindow.cpp \
            gui/unfinished/CalDialog.cpp \
            gui/unfinished/ExampleDialog.cpp \
@@ -664,9 +671,9 @@ SOURCES += gui/unfinished/ApplicationWindow.cpp \
 idle {
 
 HEADERS += idle/idle.h
-         
+
 SOURCES += idle/idle.cpp \
-	   idle/idle_platform.cpp 
+	   idle/idle_platform.cpp
 }
 
 framecatcher {
@@ -680,8 +687,8 @@ LIBS += -lxine
 DEFINES *= CHANNELS_FRAME_CATCHER
 
 }
-	
-	
+
+
 
 minimal {
         SOURCES = main.cpp \

@@ -31,7 +31,9 @@
 #include "util/RsAction.h"
 #include "msgs/MessageComposer.h"
 #include "settings/rsharesettings.h"
+#ifdef RS_USE_LINKS
 #include "AddLinksDialog.h"
+#endif
 #include "RetroShareLink.h"
 #include "RemoteDirModel.h"
 #include "common/PeerDefs.h"
@@ -202,10 +204,12 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
   connect( sendlinkAct , SIGNAL( triggered() ), this, SLOT( sendLinkTo( ) ) );
   sendhtmllinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Links (HTML)" ), this );
   connect( sendhtmllinkAct , SIGNAL( triggered() ), this, SLOT( sendHtmlLinkTo( ) ) );
+#ifdef RS_USE_LINKS
   sendlinkCloudAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Links to Cloud" ), this );
   connect( sendlinkCloudAct , SIGNAL( triggered() ), this, SLOT( sendLinkToCloud(  ) ) );
   addlinkCloudAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Add Links to Cloud" ), this );
   connect( addlinkCloudAct , SIGNAL( triggered() ), this, SLOT( addLinkToCloud(  ) ) );
+#endif
   openfileAct = new QAction(QIcon(IMAGE_OPENFILE), tr("Open File"), this);
   connect(openfileAct, SIGNAL(triggered()), this, SLOT(openfile()));
   openfolderAct = new QAction(QIcon(IMAGE_OPENFOLDER), tr("Open Folder"), this);
@@ -494,6 +498,7 @@ void SharedFilesDialog::sendHtmlLinkTo()
 //
 //}
 
+#ifdef RS_USE_LINKS
 void SharedFilesDialog::sendLinkToCloud()
 {
 	copyLinkLocal ();
@@ -516,6 +521,7 @@ void SharedFilesDialog::addLinkToCloud()
 
 	/* window will destroy itself! */
 }
+#endif
 
 void SharedFilesDialog::playselectedfiles()
 {
@@ -680,7 +686,7 @@ void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
         contextMnu.addAction(sendlinkAct);
 //        contextMnu.addAction(sendhtmllinkAct);
         contextMnu.addSeparator();
-#ifndef RS_RELEASE_VERSION
+#ifdef RS_USE_LINKS
         contextMnu.addAction(sendlinkCloudAct);
         contextMnu.addAction(addlinkCloudAct);
         contextMnu.addSeparator();

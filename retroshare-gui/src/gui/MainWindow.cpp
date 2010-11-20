@@ -43,7 +43,9 @@
 #include "PluginsPage.h"
 #include "ShareManager.h"
 #include "NetworkView.h"
+#ifdef RS_USE_LINKS
 #include "LinksDialog.h"
+#endif
 #include "ForumsDialog.h"
 #include "PeersDialog.h"
 #include "HelpDialog.h"
@@ -222,25 +224,25 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     ui.stackPages->add(channelFeed = new ChannelFeed(ui.stackPages),
                       channelAction = createPageAction(QIcon(IMAGE_CHANNELS), tr("Channels"), grp));
 
-    #ifdef BLOGS
+#ifdef BLOGS
     ui.stackPages->add(blogsFeed = new BlogsDialog(ui.stackPages),
 		createPageAction(QIcon(IMAGE_BLOGS), tr("Blogs"), grp));
-    #endif
+#endif
                       
     ui.stackPages->add(forumsDialog = new ForumsDialog(ui.stackPages),
                        forumAction = createPageAction(QIcon(IMAGE_FORUMS), tr("Forums"), grp));
 
-    #ifndef RS_RELEASE_VERSION
+#ifdef RS_USE_LINKS
     ui.stackPages->add(linksDialog = new LinksDialog(ui.stackPages),
 			createPageAction(QIcon(IMAGE_LINKS), tr("Links Cloud"), grp));
-    #endif
+#endif
 
-	#ifndef RS_RELEASE_VERSION
-    #ifdef PLUGINMGR
+#ifndef RS_RELEASE_VERSION
+#ifdef PLUGINMGR
     ui.stackPages->add(pluginsPage = new PluginsPage(ui.stackPages),
                        createPageAction(QIcon(IMAGE_PLUGINS), tr("Plugins"), grp));
-    #endif
-	#endif
+#endif
+#endif
 
     /* Create the toolbar */
     ui.toolBar->addActions(grp->actions());
@@ -637,7 +639,7 @@ void MainWindow::addAction(QAction *action, const char *slot)
     case Messages:
         Page = _instance->messagesDialog;
         break;
-#ifndef RS_RELEASE_VERSION
+#ifdef RS_USE_LINKS
     case Links:
         Page = _instance->linksDialog;
         break;
@@ -691,7 +693,7 @@ void MainWindow::addAction(QAction *action, const char *slot)
    if (page == _instance->messagesDialog) {
        return Messages;
    }
-#ifndef RS_RELEASE_VERSION
+#ifdef RS_USE_LINKS
    if (page == _instance->linksDialog) {
        return Links;
    }
@@ -731,7 +733,7 @@ void MainWindow::addAction(QAction *action, const char *slot)
        return _instance->sharedfilesDialog;
    case Messages:
        return _instance->messagesDialog;
-#ifndef RS_RELEASE_VERSION
+#ifdef RS_USE_LINKS
    case Links:
        return _instance->linksDialog;
 #endif
