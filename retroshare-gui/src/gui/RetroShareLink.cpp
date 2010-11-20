@@ -274,7 +274,7 @@ QString RetroShareLink::toHtmlFull() const
 
 QString RetroShareLink::toHtmlSize() const
 {
-	return QString("<a href='") + toString() + "'>" + name() +"</a>" + " " + "<HTML><font color=\"blue\">" + "(" +  misc::friendlyUnit(_size)   + ")" +"</font></HTML>";
+    return QString("<a href='") + toString() + "'>" + name() +"</a>" + " " + "<font color=\"blue\">" + "(" +  misc::friendlyUnit(_size) + ")" +"</font>";
 }
 
 bool RetroShareLink::checkName(const QString& name)

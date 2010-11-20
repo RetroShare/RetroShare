@@ -1850,9 +1850,9 @@ void PeersDialog::fileHashingFinished(AttachFileItem* file)
     //	sprintf(fileSizeChar, "%lld", file->FileSize());
     //	std::string fileSize = *(&fileSizeChar);
 
-    std::string mesgString = RetroShareLink(QString::fromUtf8(file->FileName().c_str()),
-                                            file->FileSize(),
-                                            QString::fromStdString(file->FileHash())).toHtml().toStdString() ;
+    QString mesgString = RetroShareLink(QString::fromUtf8(file->FileName().c_str()),
+                                        file->FileSize(),
+                                        QString::fromStdString(file->FileHash())).toHtmlSize();
 
     //	std::string mesgString = "<a href='retroshare://file|" + (file->FileName()) + "|" + fileSize + "|" + (file->FileHash()) + "'>"
     //	+ "retroshare://file|" + (file->FileName()) + "|" + fileSize +  "|" + (file->FileHash())  + "</a>";
@@ -1860,7 +1860,12 @@ void PeersDialog::fileHashingFinished(AttachFileItem* file)
     std::cerr << "PeersDialog::fileHashingFinished mesgString : " << mesgString << std::endl;
 #endif
 
-    rsMsgs->sendPublicChat(QString::fromStdString(mesgString).toStdWString());
+    /* convert to real html document */
+    QTextBrowser textBrowser;
+    textBrowser.setHtml(mesgString);
+    std::wstring msg = textBrowser.toHtml().toStdWString();
+
+    rsMsgs->sendPublicChat(msg);
     setFont();
 }
 

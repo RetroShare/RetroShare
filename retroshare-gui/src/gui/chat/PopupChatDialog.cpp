@@ -898,7 +898,7 @@ void PopupChatDialog::addExtraFile()
 	std::string filePath = qfile.toStdString();
 	if (filePath != "")
 	{
-	    PopupChatDialog::addAttachment(filePath,0);
+		addAttachment(filePath,0);
 	}
 }
 
@@ -994,13 +994,16 @@ void PopupChatDialog::fileHashingFinished(AttachFileItem* file)
     
 
 
-    message+= RetroShareLink(QString::fromUtf8(file->FileName().c_str()),file->FileSize(),QString::fromStdString(file->FileHash())).toHtmlSize();
+    message += RetroShareLink(QString::fromUtf8(file->FileName().c_str()),file->FileSize(),QString::fromStdString(file->FileHash())).toHtmlSize();
 
 #ifdef CHAT_DEBUG
     std::cerr << "PopupChatDialog::fileHashingFinished message : " << message.toStdString() << std::endl;
 #endif
 
-    std::wstring msg = message.toStdWString();
+    /* convert to real html document */
+    QTextBrowser textBrowser;
+    textBrowser.setHtml(message);
+    std::wstring msg = textBrowser.toHtml().toStdWString();
 
     if (rsMsgs->sendPrivateChat(dialogId, msg)) {
         QDateTime currentTime = QDateTime::currentDateTime();
