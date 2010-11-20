@@ -190,8 +190,8 @@ IntroPage::IntroPage(QWidget *parent)
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(textRadioButton);
     layout->addWidget(certRadioButton);
-    layout->addWidget(foffRadioButton);
-    layout->addWidget(rsidRadioButton);
+    //layout->addWidget(foffRadioButton);
+    //layout->addWidget(rsidRadioButton);
     layout->addWidget(emailRadioButton);
     setLayout(layout);
 }
