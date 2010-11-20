@@ -766,7 +766,7 @@ Qt::ItemFlags RemoteDirModel::flags( const QModelIndex & index ) const
 //	//rsFiles -> RequestDirectories(id, path, 1);
 //}
 
-void RemoteDirModel::downloadSelected(QModelIndexList list)
+void RemoteDirModel::downloadSelected(const QModelIndexList &list)
 {
 	if (!RemoteMode)
 	{
@@ -846,12 +846,12 @@ void RemoteDirModel::downloadDirectory(const DirDetails & dirDetails, int prefix
 	}
 }
 
-void RemoteDirModel::getDirDetailsFromSelect (QModelIndexList list, std::vector <DirDetails>& dirVec)
+void RemoteDirModel::getDirDetailsFromSelect (const QModelIndexList &list, std::vector <DirDetails>& dirVec)
 {
     dirVec.clear();
 
     /* Fire off requests */
-    QModelIndexList::iterator it;
+    QModelIndexList::const_iterator it;
     for(it = list.begin(); it != list.end(); it++)
     {
         if(it->column()==1)
@@ -945,7 +945,7 @@ void RemoteDirModel::getFileInfoFromIndexList(const QModelIndexList& list, std::
  * OLD RECOMMEND SYSTEM - DISABLED
  ******/
 
-void RemoteDirModel::openSelected(QModelIndexList qmil, bool openFolder)
+void RemoteDirModel::openSelected(const QModelIndexList &qmil)
 {
 #ifdef RDM_DEBUG
 	std::cerr << "RemoteDirModel::openSelected()" << std::endl;
@@ -968,37 +968,28 @@ void RemoteDirModel::openSelected(QModelIndexList qmil, bool openFolder)
 	{
 		if ((*it).type & DIR_TYPE_PERSON) continue;
 
-		std::string fullpath, name;
-		rsFiles->ConvertSharedFilePath((*it).path, fullpath);
-		int len = fullpath.length();
-		if (len && (fullpath[len - 1] != '/')) fullpath += '/';
+		std::string path, name;
+		rsFiles->ConvertSharedFilePath((*it).path, path);
 
+		QDir dir(QString::fromUtf8(path.c_str()));
+		QString dest;
 		if ((*it).type & DIR_TYPE_FILE) {
-			name = fullpath + (*it).name;
+			dest = dir.absoluteFilePath(QString::fromUtf8(it->name.c_str()));
 		} else if ((*it).type & DIR_TYPE_DIR) {
-			name = fullpath;
+			dest = dir.absolutePath();
 		}
 
-		std::cerr << "Opennign this file: " << name << std::endl ;
+		std::cerr << "Opening this file: " << dest.toStdString() << std::endl ;
 
-		QDesktopServices::openUrl(QUrl::fromLocalFile(QString::fromUtf8(name.c_str(),name.length())));
+		QDesktopServices::openUrl(QUrl::fromLocalFile(dest));
 	}
-
-//	if (openFolder) {
-//		std::list<std::string>::iterator dit;
-//		for (dit = dirs_to_open.begin(); dit != dirs_to_open.end(); dit++) 
-//		{
-//			std::cerr << "Opennign this folder: " << (*dit).c_str() << std::endl ;
-//			QDesktopServices::openUrl(QUrl::fromLocalFile(QString::fromUtf8((*dit).c_str())));
-//		}
-//	}
 
 #ifdef RDM_DEBUG
 	std::cerr << "::::::::::::Done RemoteDirModel::openSelected()" << std::endl;
 #endif
 }
 
-void RemoteDirModel::getFilePaths(QModelIndexList list, std::list<std::string> &fullpaths)
+void RemoteDirModel::getFilePaths(const QModelIndexList &list, std::list<std::string> &fullpaths)
 {
 #ifdef RDM_DEBUG
 	std::cerr << "RemoteDirModel::getFilePaths()" << std::endl;
@@ -1011,7 +1002,7 @@ void RemoteDirModel::getFilePaths(QModelIndexList list, std::list<std::string> &
 		return;
 	}
 	/* translate */
-	QModelIndexList::iterator it;
+	QModelIndexList::const_iterator it;
 	for(it = list.begin(); it != list.end(); it++)
 	{
 		void *ref = it -> internalPointer();

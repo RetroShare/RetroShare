@@ -63,18 +63,18 @@ class RemoteDirModel : public QAbstractItemModel
 		void postMods();
 
 		/* Callback from GUI */
-		void downloadSelected(QModelIndexList list);
+		void downloadSelected(const QModelIndexList &list);
 
-		void getDirDetailsFromSelect (QModelIndexList list, std::vector <DirDetails>& dirVec);
+		void getDirDetailsFromSelect (const QModelIndexList &list, std::vector <DirDetails>& dirVec);
 
 		int getType ( const QModelIndex & index ) const ;
 		//void openFile(QModelIndex fileIndex, const QString command);
 
 		void getFileInfoFromIndexList(const QModelIndexList& list, std::list<DirDetails>& files_info) ;
 
-		void openSelected(QModelIndexList list, bool openFolder);
+		void openSelected(const QModelIndexList &list);
 
-		void getFilePaths(QModelIndexList list, std::list<std::string> &fullpaths);
+		void getFilePaths(const QModelIndexList &list, std::list<std::string> &fullpaths);
 
 		void changeAgeIndicator(uint32_t indicator) { ageIndicator = indicator; }
 

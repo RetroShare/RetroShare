@@ -601,7 +601,7 @@ void SharedFilesDialog::openfile()
     std::cerr << "SharedFilesDialog::openfile" << std::endl;
 
         QModelIndexList qmil = getLocalSelected();
-	localModel->openSelected(qmil, false);
+        localModel->openSelected(qmil);
 }
 
 
@@ -610,7 +610,7 @@ void SharedFilesDialog::openfolder()
 	std::cerr << "SharedFilesDialog::openfolder" << std::endl;
 
         QModelIndexList qmil = getLocalSelected();
-	localModel->openSelected(qmil, true);
+        localModel->openSelected(qmil);
 }
 
 void  SharedFilesDialog::preModDirectories(bool update_local)
