@@ -103,13 +103,6 @@ int main(int argc, char *argv[])
 	   in this case it can be use only for default values */
 	RshareSettings::Create ();
 
-	/*
-	Function RsConfigMinimised is not available in SVN, so I commented it out.
-        bool startMinimised = RsConfigStartMinimised(config);
-	*/
-
-	//bool startMinimized = false;
-
 	/* Setup The GUI Stuff */
 	Rshare rshare(args, argc, argv, 
 		QString::fromStdString(RsInit::RsConfigDirectory()));
@@ -269,11 +262,11 @@ int main(int argc, char *argv[])
 	w->installGroupChatNotifier();
 
 	/* only show window, if not startMinimized */
-	if(!Settings->value(QString::fromUtf8("StartMinimized"), false).toBool())
+	if (RsInit::setStartMinimised() || Settings->value("StartMinimized", false).toBool())
 	{
-		w->show();
-	} else {
 		splashScreen.close();
+	} else {
+		w->show();
 	}
 
 	/* Startup a Timer to keep the gui's updated */
