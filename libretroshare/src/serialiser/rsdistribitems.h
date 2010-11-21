@@ -49,7 +49,7 @@ class RsDistribChildConfig: public RsItem
 {
 public:
 	RsDistribChildConfig(uint16_t servtype, uint8_t subtype)
-	: RsItem(RS_PKT_VERSION_SERVICE, servtype, subtype) {return;}
+	: RsItem(RS_PKT_VERSION_SERVICE, servtype, subtype),save_type(0) {return;}
 
 	virtual ~RsDistribChildConfig() { return; }
 
