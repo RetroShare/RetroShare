@@ -84,8 +84,11 @@ protected:
     virtual void dropEvent(QDropEvent *event);
 
 private slots:
-
     /* toggle Contacts DockWidget */
+    void contextMenu(QPoint);
+    void pasteLink();
+    void contextMenuFileList(QPoint);
+    void pasteRecommended();
     void on_contactsdockWidget_visibilityChanged(bool visible);
     void toggleContacts();
 

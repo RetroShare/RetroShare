@@ -130,8 +130,6 @@ PopupChatDialog::PopupChatDialog(const std::string &id, const QString &name, QWi
   connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(const QString&, int)), this, SLOT(updateStatus(const QString&, int)));
   connect(NotifyQt::getInstance(), SIGNAL(peerHasNewCustomStateString(const QString&, const QString&)), this, SLOT(updatePeersCustomStateString(const QString&, const QString&)));
 
-  std::cerr << "Connecting custom context menu" << std::endl;
-  ui.chattextEdit->setContextMenuPolicy(Qt::CustomContextMenu) ;
   connect(ui.chattextEdit,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(contextMenu(QPoint)));
 
   // Create the status bar
@@ -163,9 +161,6 @@ PopupChatDialog::PopupChatDialog(const std::string &id, const QString &name, QWi
 
   colorChanged(mCurrentColor);
   fontChanged(mCurrentFont);
-
-  pasteLinkAct = new QAction(QIcon(":/images/pasterslink.png"), tr( "Paste retroshare Link" ), this );
-  connect( pasteLinkAct , SIGNAL( triggered() ), this, SLOT( pasteLink() ) );
 
   updateAvatar() ;
   updatePeerAvatar(id) ;
@@ -432,14 +427,16 @@ void PopupChatDialog::pasteLink()
 
 void PopupChatDialog::contextMenu( QPoint point )
 {
-	std::cerr << "In context menu" << std::endl ;
-	if(RSLinkClipboard::empty())
-		return ;
+    std::cerr << "In context menu" << std::endl ;
 
-	QMenu contextMnu(this);
-	contextMnu.addAction( pasteLinkAct);
+    QMenu *contextMnu = ui.chattextEdit->createStandardContextMenu();
 
-        contextMnu.exec(QCursor::pos());
+    contextMnu->addSeparator();
+    QAction *action = contextMnu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteLink()));
+    action->setDisabled(RSLinkClipboard::empty());
+
+    contextMnu->exec(QCursor::pos());
+    delete(contextMnu);
 }
 
 void PopupChatDialog::resetStatusBar() 

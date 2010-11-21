@@ -166,13 +166,7 @@ PeersDialog::PeersDialog(QWidget *parent)
     connect(ui.Sendbtn, SIGNAL(clicked()), this, SLOT(sendMsg()));
     connect(ui.emoticonBtn, SIGNAL(clicked()), this, SLOT(smileyWidgetgroupchat()));
 
-    ui.lineEdit->setContextMenuPolicy(Qt::CustomContextMenu) ;
     connect(ui.lineEdit,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(contextMenu(QPoint)));
-
-    pasteLinkAct = new QAction(QIcon(":/images/pasterslink.png"), tr( "Paste retroshare Link" ), this );
-    connect( pasteLinkAct , SIGNAL( triggered() ), this, SLOT( pasteLink() ) );
-
-    connect( ui.msgText, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(displayInfoChatMenu(const QPoint&)));
 
     connect(ui.textboldChatButton, SIGNAL(clicked()), this, SLOT(setFont()));
     connect(ui.textunderlineChatButton, SIGNAL(clicked()), this, SLOT(setFont()));
@@ -346,15 +340,16 @@ void PeersDialog::pasteLink()
     ui.lineEdit->insertHtml(RSLinkClipboard::toHtml()) ;
 }
 
-void PeersDialog::contextMenu( QPoint point )
+void PeersDialog::contextMenu(QPoint point)
 {
-	if(RSLinkClipboard::empty())
-		return ;
+    QMenu *contextMnu = ui.lineEdit->createStandardContextMenu();
 
-	QMenu contextMnu(this);
-	contextMnu.addAction( pasteLinkAct);
+    contextMnu->addSeparator();
+    QAction *action = contextMnu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteLink()));
+    action->setDisabled(RSLinkClipboard::empty());
 
-	contextMnu.exec(QCursor::pos());
+    contextMnu->exec(QCursor::pos());
+    delete(contextMnu);
 }
 
 void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
@@ -1670,15 +1665,6 @@ void PeersDialog::setChatInfo(QString info, QColor color)
 void PeersDialog::on_actionClearChat_triggered()
 {
     ui.msgText->clear();
-}
-
-void PeersDialog::displayInfoChatMenu(const QPoint& pos)
-{
-  // Log Menu
-  QMenu myChatMenu(this);
-  myChatMenu.addAction(ui.actionClearChat);
-  // XXX: Why mapToGlobal() is not enough?
-  myChatMenu.exec(mapToGlobal(pos)+QPoint(0,80));
 }
 
 void PeersDialog::smileyWidgetgroupchat()

@@ -262,9 +262,9 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 	connect( clearcompletedAct , SIGNAL( triggered() ), this, SLOT( clearcompleted() ) );
 
 
-	copylinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Link" ), this );
+	copylinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy RetroShare Link" ), this );
 	connect( copylinkAct , SIGNAL( triggered() ), this, SLOT( copyLink() ) );
-	pastelinkAct = new QAction(QIcon(IMAGE_PASTELINK), tr( "Paste retroshare Link" ), this );
+	pastelinkAct = new QAction(QIcon(IMAGE_PASTELINK), tr( "Paste RetroShare Link" ), this );
 	connect( pastelinkAct , SIGNAL( triggered() ), this, SLOT( pasteLink() ) );
 	queueDownAct = new QAction(QIcon(":/images/go-down.png"), tr("Down"), this);
 	connect(queueDownAct, SIGNAL(triggered()), this, SLOT(priorityQueueDown()));

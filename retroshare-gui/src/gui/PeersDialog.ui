@@ -721,6 +721,9 @@ background: white;}</string>
          <attribute name="headerDefaultSectionSize">
           <number>200</number>
          </attribute>
+         <attribute name="headerDefaultSectionSize">
+          <number>200</number>
+         </attribute>
          <column>
           <property name="text">
            <string>Friends</string>
@@ -938,9 +941,6 @@ p, li { white-space: pre-wrap; }
                 <height>60</height>
                </size>
               </property>
-              <property name="contextMenuPolicy">
-               <enum>Qt::DefaultContextMenu</enum>
-              </property>
               <property name="styleSheet">
                <string notr="true">QTextEdit#msgText{border: 1px solid #CCCCCC;
 background: white;}</string>
@@ -1001,6 +1001,9 @@ background: white;}</string>
                    <width>0</width>
                    <height>0</height>
                   </size>
+                 </property>
+                 <property name="contextMenuPolicy">
+                  <enum>Qt::CustomContextMenu</enum>
                  </property>
                  <property name="styleSheet">
                   <string notr="true">QTextEdit#lineEdit{border: 1px solid #CCCCCC;

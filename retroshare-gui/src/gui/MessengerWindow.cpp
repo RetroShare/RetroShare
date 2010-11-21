@@ -334,7 +334,7 @@ void MessengerWindow::messengertreeWidgetCostumPopupMenu( QPoint point )
           recommendfriendAct->setDisabled(true);
       }
 
-      QAction* pastePersonAct = new QAction(QIcon(IMAGE_PASTELINK), tr( "Paste retroshare Link" ), &contextMnu );
+      QAction* pastePersonAct = new QAction(QIcon(IMAGE_PASTELINK), tr( "Paste RetroShare Link" ), &contextMnu );
       if(!RSLinkClipboard::empty(RetroShareLink::TYPE_PERSON)) {
           connect( pastePersonAct , SIGNAL( triggered() ), this, SLOT( pastePerson() ) );
       } else {

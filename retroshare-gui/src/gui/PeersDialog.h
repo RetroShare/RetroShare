@@ -85,8 +85,6 @@ public slots:
     void on_actionClearChat_triggered();
     void on_actionMessageHistory_triggered();
 
-    void displayInfoChatMenu(const QPoint& pos);
-
     // called by notifyQt when another peer is typing (in group chant and private chat)
     void updatePeerStatusString(const QString& peer_id,const QString& status_string,bool is_private_chat) ;
 
@@ -197,9 +195,6 @@ private:
 
     /* (2) Utility Fns */
     QTreeWidgetItem *getCurrentPeer();
-
-    /** Defines the actions for the context menu */
-    QAction* pasteLinkAct;
 
     IMHistoryKeeper historyKeeper;
     ChatStyle style;

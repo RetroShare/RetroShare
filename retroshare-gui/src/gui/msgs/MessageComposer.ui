@@ -696,6 +696,9 @@ border: 1px solid #CCCCCC;}</string>
              <verstretch>4</verstretch>
             </sizepolicy>
            </property>
+           <property name="contextMenuPolicy">
+            <enum>Qt::CustomContextMenu</enum>
+           </property>
            <property name="textInteractionFlags">
             <set>Qt::TextEditorInteraction</set>
            </property>
@@ -808,6 +811,9 @@ border: 1px solid #CCCCCC;}</string>
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+           <property name="contextMenuPolicy">
+            <enum>Qt::CustomContextMenu</enum>
            </property>
            <property name="sortingEnabled">
             <bool>true</bool>

@@ -50,6 +50,7 @@ public:
     static void updateAllAvatars();
     static void privateChatChanged(int list, int type);
 
+    void updateStatusString(const QString& peer_id, const QString& statusString);
     void updatePeerAvatar(const std::string&);
     std::string getPeerId() { return dialogId; }
     QString getTitle() { return dialogName; }
@@ -60,18 +61,6 @@ public:
     void activate();
 
 public slots:
-    void pasteLink() ;
-    void contextMenu(QPoint) ;
-
-    void smileyWidget();
-    void addSmiley();
-
-    void fileHashingFinished(AttachFileItem* file);
-
-    void resetStatusBar() ;
-    void updateStatusTyping() ;
-    void updateStatusString(const QString& peer_id, const QString& statusString) ;
-
     void updateStatus(const QString &peer_id, int status);
 
 protected:
@@ -92,6 +81,17 @@ protected:
     void updateAvatar();
 
 private slots:
+    void pasteLink() ;
+    void contextMenu(QPoint) ;
+
+    void fileHashingFinished(AttachFileItem* file);
+
+    void smileyWidget();
+    void addSmiley();
+
+    void resetStatusBar() ;
+    void updateStatusTyping() ;
+
     void on_actionMessageHistory_triggered();
     void addExtraFile();
     void addExtraPicture();
@@ -125,7 +125,6 @@ private:
     QAction *actionTextBold;
     QAction *actionTextUnderline;
     QAction *actionTextItalic;
-    QAction *pasteLinkAct ;
 
     std::string dialogId;
     QString dialogName;

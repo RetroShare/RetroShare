@@ -187,7 +187,7 @@ border: 1px solid #CCCCCC;}</string>
          <item>
           <widget class="QToolButton" name="pastersButton">
            <property name="toolTip">
-            <string>Paste retroshare link</string>
+            <string>Paste RetroShare Link</string>
            </property>
            <property name="text">
             <string/>
@@ -262,7 +262,7 @@ p, li { white-space: pre-wrap; }
                  <x>0</x>
                  <y>0</y>
                  <width>440</width>
-                 <height>60</height>
+                 <height>57</height>
                 </rect>
                </property>
                <layout class="QGridLayout" name="gridLayout_6">

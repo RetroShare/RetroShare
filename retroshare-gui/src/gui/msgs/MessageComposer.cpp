@@ -151,11 +151,14 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
 
     connect(ui.msgText, SIGNAL(currentCharFormatChanged(const QTextCharFormat &)), this, SLOT(currentCharFormatChanged(const QTextCharFormat &)));
     connect(ui.msgText, SIGNAL(cursorPositionChanged()), this, SLOT(cursorPositionChanged()));
+    connect(ui.msgText,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(contextMenu(QPoint)));
 
     connect(ui.msgText->document(), SIGNAL(modificationChanged(bool)), actionSave, SLOT(setEnabled(bool)));
     connect(ui.msgText->document(), SIGNAL(modificationChanged(bool)), this, SLOT(setWindowModified(bool)));
     connect(ui.msgText->document(), SIGNAL(undoAvailable(bool)), actionUndo, SLOT(setEnabled(bool)));
     connect(ui.msgText->document(), SIGNAL(redoAvailable(bool)), actionRedo, SLOT(setEnabled(bool)));
+
+    connect(ui.msgFileList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuFileList(QPoint)));
 
     setWindowModified(ui.msgText->document()->isModified());
     actionSave->setEnabled(ui.msgText->document()->isModified());
@@ -445,6 +448,50 @@ void MessageComposer::closeEvent (QCloseEvent * event)
         QMainWindow::closeEvent(event);
     } else {
         event->ignore();
+    }
+}
+
+void MessageComposer::contextMenu(QPoint)
+{
+    QMenu *contextMnu = ui.msgText->createStandardContextMenu();
+
+    contextMnu->addSeparator();
+    QAction *action = contextMnu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteLink()));
+    action->setDisabled(RSLinkClipboard::empty());
+
+    contextMnu->exec(QCursor::pos());
+    delete(contextMnu);
+}
+
+void MessageComposer::pasteLink()
+{
+    ui.msgText->insertHtml(RSLinkClipboard::toHtml()) ;
+}
+
+void MessageComposer::contextMenuFileList(QPoint)
+{
+    QMenu contextMnu(this);
+
+    QAction *action = contextMnu.addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteRecommended()));
+    action->setDisabled(RSLinkClipboard::empty(RetroShareLink::TYPE_FILE));
+
+    contextMnu.exec(QCursor::pos());
+}
+
+void MessageComposer::pasteRecommended()
+{
+    std::vector<RetroShareLink> links;
+    RSLinkClipboard::pasteLinks(links);
+
+    for (uint32_t i = 0; i < links.size(); i++) {
+        if (links[i].valid() && links[i].type() == RetroShareLink::TYPE_FILE) {
+            FileInfo fileInfo;
+            fileInfo.fname = links[i].name().toStdString();
+            fileInfo.hash = links[i].hash().toStdString();
+            fileInfo.size = links[i].size();
+
+            addFile(fileInfo);
+        }
     }
 }
 

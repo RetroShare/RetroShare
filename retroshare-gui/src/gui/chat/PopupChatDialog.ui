@@ -789,6 +789,9 @@ p, li { white-space: pre-wrap; }
              <height>30</height>
             </size>
            </property>
+           <property name="contextMenuPolicy">
+            <enum>Qt::CustomContextMenu</enum>
+           </property>
            <property name="styleSheet">
             <string notr="true">QTextEdit{border: 1px solid #B8B6B1;
 border-radius: 6px;

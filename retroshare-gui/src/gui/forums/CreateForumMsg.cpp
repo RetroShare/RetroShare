@@ -66,25 +66,20 @@ CreateForumMsg::CreateForumMsg(std::string fId, std::string pId)
 /** context menu searchTablewidget2 **/
 void CreateForumMsg::forumMessageCostumPopupMenu( QPoint point )
 {
-    QMenu contextMnu (this);
+    QMenu *contextMnu = ui.forumMessage->createStandardContextMenu();
 
-    QAction *pasteLinkAct = new QAction(QIcon(":/images/pasterslink.png"), tr( "Paste retroshare Link" ), &contextMnu );
-    QAction *pasteLinkFullAct = new QAction(QIcon(":/images/pasterslink.png"), tr( "Paste retroshare Link Full" ), &contextMnu );
+    contextMnu->addSeparator();
+    QAction *pasteLinkAct = contextMnu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteLink()));
+    QAction *pasteLinkFullAct = contextMnu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste full RetroShare Link"), this, SLOT(pasteLinkFull()));
 
     if (RSLinkClipboard::empty()) {
         pasteLinkAct->setDisabled (true);
         pasteLinkFullAct->setDisabled (true);
-    } else {
-        connect(pasteLinkAct , SIGNAL(triggered()), this, SLOT(pasteLink()));
-        connect(pasteLinkFullAct , SIGNAL(triggered()), this, SLOT(pasteLinkFull()));
     }
 
-    contextMnu.addAction(pasteLinkAct);
-    contextMnu.addAction(pasteLinkFullAct);
-
-    contextMnu.exec(QCursor::pos());
+    contextMnu->exec(QCursor::pos());
+    delete(contextMnu);
 }
-
 
 void  CreateForumMsg::newMsg()
 {
