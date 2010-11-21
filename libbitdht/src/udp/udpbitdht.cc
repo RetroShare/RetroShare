@@ -65,6 +65,7 @@ UdpBitDht::UdpBitDht(UdpPublisher *pub, bdNodeId *id, std::string appVersion, st
 #endif
 
 	/* setup nodeManager */
+	bdStackMutex stack(dhtMtx); /********** MUTEX LOCKED *************/
 	mBitDhtManager = new bdNodeManager(id, usedVersion, bootstrapfile, fns);
 
 }
@@ -208,7 +209,10 @@ void UdpBitDht::run()
 			usleep(TICK_PAUSE_USEC);
 		}
 
-		mBitDhtManager->iteration();
+		{
+			bdStackMutex stack(dhtMtx); /********** MUTEX LOCKED *************/
+			mBitDhtManager->iteration();
+		}
 		sleep(1);
 	}
 }
