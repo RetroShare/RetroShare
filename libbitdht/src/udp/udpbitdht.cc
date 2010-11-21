@@ -210,7 +210,6 @@ void UdpBitDht::run()
 		}
 
 		{
-			bdStackMutex stack(dhtMtx); /********** MUTEX LOCKED *************/
 			mBitDhtManager->iteration();
 		}
 		sleep(1);
