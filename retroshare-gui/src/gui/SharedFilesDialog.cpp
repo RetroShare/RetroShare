@@ -487,17 +487,6 @@ void SharedFilesDialog::sendHtmlLinkTo()
     /* window will destroy itself! */
 }
 
-//void SharedFilesDialog::sendLinktoChat()
-//{
-//	copyLinkLocal ();
-//
-//  static SendLinkDialog *slinkDialog = new SendLinkDialog(this);
-//  
-//  slinkDialog->insertMsgText(RSLinkClipboard::toHtml().toStdString());
-//  slinkDialog->show();
-//
-//}
-
 #ifdef RS_USE_LINKS
 void SharedFilesDialog::sendLinkToCloud()
 {
