@@ -89,8 +89,14 @@
         <property name="leftMargin">
          <number>4</number>
         </property>
+        <property name="topMargin">
+         <number>2</number>
+        </property>
         <property name="rightMargin">
          <number>4</number>
+        </property>
+        <property name="bottomMargin">
+         <number>2</number>
         </property>
         <property name="spacing">
          <number>0</number>
@@ -110,7 +116,10 @@
            </size>
           </property>
           <property name="styleSheet">
-           <string notr="true">border-image: url(:/images/avatar_background.png);</string>
+           <string notr="true">QLabel#pixmaplabel{
+border: 2px solid #238; 
+border-radius: 4px;}
+</string>
           </property>
           <property name="text">
            <string/>
@@ -145,8 +154,7 @@
            </font>
           </property>
           <property name="styleSheet">
-           <string notr="true">color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                     stop: 0 #49881F, stop: 1 #49881F );</string>
+           <string notr="true">color: #238;</string>
           </property>
           <property name="text">
            <string>Friend Online</string>
@@ -181,7 +189,7 @@
           <property name="sizeHint" stdset="0">
            <size>
             <width>81</width>
-            <height>20</height>
+            <height>18</height>
            </size>
           </property>
          </spacer>
@@ -201,7 +209,7 @@
           <property name="sizeHint" stdset="0">
            <size>
             <width>131</width>
-            <height>20</height>
+            <height>18</height>
            </size>
           </property>
          </spacer>
@@ -231,6 +239,8 @@
   <tabstop>closeButton</tabstop>
  </tabstops>
  <resources>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
