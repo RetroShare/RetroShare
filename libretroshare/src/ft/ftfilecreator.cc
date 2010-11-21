@@ -277,6 +277,8 @@ int ftFileCreator::locked_initializeFileAttrs()
 }
 ftFileCreator::~ftFileCreator()
 {
+	// Note: The file is actually closed in the parent, that is always a ftFileProvider.
+	//
 	/*
 	 * FIXME Any cleanups specific to filecreator?
 	 */
