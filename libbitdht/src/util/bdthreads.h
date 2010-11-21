@@ -27,6 +27,7 @@
  */
 
 
+#include <iostream>
 #include <pthread.h>
 #include <inttypes.h>
 
@@ -36,14 +37,29 @@ class bdMutex
 {
 	public:
 
-	bdMutex() { pthread_mutex_init(&realMutex, NULL); }
-        ~bdMutex() { pthread_mutex_destroy(&realMutex); }
-void	lock() { pthread_mutex_lock(&realMutex); }
-void	unlock() { pthread_mutex_unlock(&realMutex); }
-bool	trylock() { return (0 == pthread_mutex_trylock(&realMutex)); }
+		bdMutex(bool recursive = false) 
+		{
+			if(recursive)
+			{
+				pthread_mutexattr_t att ;
+				pthread_mutexattr_init(&att) ;
+				pthread_mutexattr_settype(&att,PTHREAD_MUTEX_RECURSIVE) ;
+
+				if( pthread_mutex_init(&realMutex, &att))
+					std::cerr << "ERROR: Could not initialize mutex !" << std::endl ;
+			}
+			else
+				if( pthread_mutex_init(&realMutex, NULL))
+					std::cerr << "ERROR: Could not initialize mutex !" << std::endl ;
+		}
+
+		~bdMutex() { pthread_mutex_destroy(&realMutex); }
+		void	lock() { pthread_mutex_lock(&realMutex); }
+		void	unlock() { pthread_mutex_unlock(&realMutex); }
+		bool	trylock() { return (0 == pthread_mutex_trylock(&realMutex)); }
 
 	private:
-	pthread_mutex_t  realMutex;
+		pthread_mutex_t  realMutex;
 };
 
 class bdStackMutex

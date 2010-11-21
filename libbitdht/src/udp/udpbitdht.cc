@@ -51,7 +51,7 @@
 /*************************************/
 
 UdpBitDht::UdpBitDht(UdpPublisher *pub, bdNodeId *id, std::string appVersion, std::string bootstrapfile, bdDhtFunctions *fns)
-	:UdpSubReceiver(pub), mFns(fns)
+	:UdpSubReceiver(pub), dhtMtx(true), mFns(fns)
 {
 	std::string usedVersion;
 
@@ -210,6 +210,7 @@ void UdpBitDht::run()
 		}
 
 		{
+			bdStackMutex stack(dhtMtx); /********** MUTEX LOCKED *************/
 			mBitDhtManager->iteration();
 		}
 		sleep(1);
