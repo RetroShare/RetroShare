@@ -53,12 +53,13 @@ ServerPage::ServerPage(QWidget * parent, Qt::WFlags flags)
 	ui.allowIpDeterminationCB->setChecked(b) ;
 	ui.IPServersLV->setEnabled(b) ;
 
-//        #ifdef RS_RELEASE_VERSION
-//        ui.allowTunnelConnectionCB->hide();
-//        this->toggleTunnelConnection(false);
-//        #endif
-        b = rsPeers->getAllowTunnelConnection() ;
-        ui.allowTunnelConnectionCB->setChecked(b) ;
+#ifdef RS_RELEASE_VERSION
+    ui.allowTunnelConnectionCB->hide();
+    this->toggleTunnelConnection(false);
+#else
+    b = rsPeers->getAllowTunnelConnection() ;
+    ui.allowTunnelConnectionCB->setChecked(b) ;
+#endif
 
 	std::list<std::string> ip_servers ;
 	rsPeers->getIPServersList(ip_servers) ;
