@@ -5,6 +5,7 @@
 #include <retroshare/rsnotify.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsphoto.h>
+#include <retroshare/rsmsgs.h>
 #ifdef TURTLE_HOPPING
 #include <retroshare/rsturtle.h>
 #endif
@@ -359,6 +360,12 @@ void NotifyQt::UpdateGUI()
 			/* id the name */
 			std::string name = rsPeers->getPeerName(id);
 			std::string realmsg = "<strong>" + name + "</strong>";
+			
+            unsigned char *data = NULL;
+            int size = 0 ;
+
+            rsMsgs->getAvatarData(id,data,size);
+			
 			switch(type)
 			{
 				case RS_POPUP_MSG:
@@ -393,6 +400,21 @@ void NotifyQt::UpdateGUI()
 				{
 					OnlineToaster * onlineToaster = new OnlineToaster();
 					onlineToaster->setMessage(QString::fromStdString(realmsg));
+					
+                    if(size != 0)
+                    {   
+                    // set the image
+                    QPixmap pix ;
+                    pix.loadFromData(data,size,"PNG") ;
+                    onlineToaster->setPixmap(pix);   
+                    delete[] data ;
+
+                    }
+                    else
+                    {
+                    onlineToaster->setPixmap(QPixmap(":/images/user/personal64.png"));
+                    }					
+					
 					onlineToaster->show();
 					onlineToaster->play();
 				}
