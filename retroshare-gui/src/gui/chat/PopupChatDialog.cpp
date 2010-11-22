@@ -988,6 +988,13 @@ void PopupChatDialog::fileHashingFinished(AttachFileItem* file)
         message+="\" width=\"48\" height=\"48\">";
         message+="<br>";
 	}
+	else if (ext == "jpg" || ext == "jpeg" || ext == "png" || ext == "gif" || ext == "bmp" || ext == "ico" 
+	|| ext == "svg" || ext == "tif" || ext == "tiff" || ext == "JPG")
+	{
+        message+="<img src=\":/images/application-draw.png";
+        message+="\" width=\"48\" height=\"48\">";
+        message+="<br>";
+	}
     
 
 
