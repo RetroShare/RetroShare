@@ -256,12 +256,16 @@ void ftController::run()
 		tickTransfers() ;
 
 		{
-			RsStackMutex stack2(doneMutex);
+			std::list<std::string> files_to_complete ;
 
-			for(std::list<std::string>::iterator it(mDone.begin()); it != mDone.end(); it++)
+			{
+				RsStackMutex stack2(doneMutex);
+				files_to_complete = mDone ;
+				mDone.clear();
+			}
+
+			for(std::list<std::string>::iterator it(files_to_complete.begin()); it != files_to_complete.end(); ++it)
 				completeFile(*it);
-			
-			mDone.clear();
 		}
 
 		if(cnt++ % 10 == 0)
