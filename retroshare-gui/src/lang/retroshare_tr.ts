@@ -3688,7 +3688,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="331"/>
         <source>Edit Forum Details</source>
-        <translation type="unfinished"></translation>
+        <translation>Forum Detayları düzenle</translation>
     </message>
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="349"/>
@@ -3738,13 +3738,13 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/ForumsDialog.cpp" line="365"/>
         <location filename="../gui/ForumsDialog.cpp" line="368"/>
         <source>Mark as read</source>
-        <translation type="unfinished">Işaretle Okunmuş olarak</translation>
+        <translation>Işaretle Okunmuş olarak</translation>
     </message>
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="371"/>
         <location filename="../gui/ForumsDialog.cpp" line="374"/>
         <source>Mark as unread</source>
-        <translation type="unfinished">Işaretle Okunmamuş olarak</translation>
+        <translation>Işaretle Okunmamuş olarak</translation>
     </message>
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="368"/>
@@ -3755,29 +3755,29 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="336"/>
         <source>Mark all as read</source>
-        <translation type="unfinished"></translation>
+        <translation>Hepsini Işaretle Okunmuş olarak</translation>
     </message>
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="339"/>
         <source>Mark all as unread</source>
-        <translation type="unfinished"></translation>
+        <translation>Hepsini Işaretle Okunmamuş olarak</translation>
     </message>
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="449"/>
         <source>Hide</source>
-        <translation type="unfinished"></translation>
+        <translation>Gizle</translation>
     </message>
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="453"/>
         <source>Expand</source>
-        <translation type="unfinished">Genişlet</translation>
+        <translation>Genişlet</translation>
     </message>
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="541"/>
         <location filename="../gui/ForumsDialog.cpp" line="586"/>
         <location filename="../gui/ForumsDialog.cpp" line="668"/>
         <source>Popularity:</source>
-        <translation type="unfinished"></translation>
+        <translation>Popülerlik:</translation>
     </message>
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="1007"/>
@@ -3789,7 +3789,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/ForumsDialog.cpp" line="1012"/>
         <location filename="../gui/ForumsDialog.cpp" line="1119"/>
         <source>signed</source>
-        <translation>imzalı</translation>
+        <translation>Imzalı</translation>
     </message>
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="1017"/>
@@ -6160,37 +6160,37 @@ Do you want to save message ?</source>
     <message>
         <location filename="../gui/settings/MessagePage.ui" line="522"/>
         <source>Tags</source>
-        <translation type="unfinished">Etiket</translation>
+        <translation>Etiket</translation>
     </message>
     <message>
         <location filename="../gui/settings/MessagePage.ui" line="528"/>
         <source>Tags can be used to categorize and prioritize your messages</source>
-        <translation type="unfinished"></translation>
+        <translation>Etiketler, iletilerde kategori oluşturmaya veya önemlilik derecesine göre sıralamanıza yarar.</translation>
     </message>
     <message>
         <location filename="../gui/settings/MessagePage.ui" line="538"/>
         <source>Add</source>
-        <translation type="unfinished">Ekle</translation>
+        <translation>Ekle</translation>
     </message>
     <message>
         <location filename="../gui/settings/MessagePage.ui" line="545"/>
         <source>Edit</source>
-        <translation type="unfinished">Değiştir</translation>
+        <translation>Düzenle</translation>
     </message>
     <message>
         <location filename="../gui/settings/MessagePage.ui" line="565"/>
         <source>Delete</source>
-        <translation type="unfinished">Sil</translation>
+        <translation>Sil</translation>
     </message>
     <message>
         <location filename="../gui/settings/MessagePage.ui" line="572"/>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation>Varsayılan</translation>
     </message>
     <message>
         <location filename="../gui/settings/MessagePage.cpp" line="148"/>
         <source>Edit Tag</source>
-        <translation type="unfinished"></translation>
+        <translation>Düzenle Etiketi</translation>
     </message>
 </context>
 <context>
@@ -9640,57 +9640,57 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/settings/rsettingswin.cpp" line="131"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation>Genel</translation>
     </message>
     <message>
         <location filename="../gui/settings/rsettingswin.cpp" line="135"/>
         <source>Directories</source>
-        <translation type="unfinished">Directories</translation>
+        <translation>Dizinler</translation>
     </message>
     <message>
         <location filename="../gui/settings/rsettingswin.cpp" line="139"/>
         <source>Server</source>
-        <translation type="unfinished">Peer Settings</translation>
+        <translation>Bağlantı</translation>
     </message>
     <message>
         <location filename="../gui/settings/rsettingswin.cpp" line="143"/>
         <source>Transfer</source>
-        <translation type="unfinished">Aktarım</translation>
+        <translation>Aktarım</translation>
     </message>
     <message>
         <location filename="../gui/settings/rsettingswin.cpp" line="147"/>
         <source>Notify</source>
-        <translation type="unfinished"></translation>
+        <translation>Bildirimler</translation>
     </message>
     <message>
         <location filename="../gui/settings/rsettingswin.cpp" line="151"/>
         <source>Security</source>
-        <translation type="unfinished">Güvenlik</translation>
+        <translation>Güvenlik</translation>
     </message>
     <message>
         <location filename="../gui/settings/rsettingswin.cpp" line="155"/>
         <source>Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Mesaj</translation>
     </message>
     <message>
         <location filename="../gui/settings/rsettingswin.cpp" line="159"/>
         <source>Forum</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/settings/rsettingswin.cpp" line="163"/>
         <source>Chat</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/settings/rsettingswin.cpp" line="167"/>
         <source>Appearance</source>
-        <translation type="unfinished"></translation>
+        <translation>Görünüm</translation>
     </message>
     <message>
         <location filename="../gui/settings/rsettingswin.cpp" line="176"/>
         <source>Sound</source>
-        <translation type="unfinished"></translation>
+        <translation>Ses</translation>
     </message>
     <message>
         <location filename="../gui/settings/rsettingswin.cpp" line="181"/>
@@ -10422,52 +10422,52 @@ behind a firewall or a VPN.</source>
     <message>
         <location filename="../gui/settings/settings.ui" line="14"/>
         <source>Options</source>
-        <translation type="unfinished">Seçenekler</translation>
+        <translation>Seçenekler</translation>
     </message>
     <message>
         <location filename="../gui/settings/settings.ui" line="100"/>
         <source>Transfer</source>
-        <translation type="unfinished">Aktarım</translation>
+        <translation>Aktarım</translation>
     </message>
     <message>
         <location filename="../gui/settings/settings.ui" line="118"/>
         <source>Notify</source>
-        <translation type="unfinished"></translation>
+        <translation>Bildirimler</translation>
     </message>
     <message>
         <location filename="../gui/settings/settings.ui" line="127"/>
         <source>Security</source>
-        <translation type="unfinished">Güvenlik</translation>
+        <translation>Güvenlik</translation>
     </message>
     <message>
         <location filename="../gui/settings/settings.ui" line="136"/>
         <source>Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Mesaj</translation>
     </message>
     <message>
         <location filename="../gui/settings/settings.ui" line="145"/>
         <source>Forum</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/settings/settings.ui" line="154"/>
         <source>Chat</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/settings/settings.ui" line="163"/>
         <source>Appearance</source>
-        <translation type="unfinished"></translation>
+        <translation>Görünüm</translation>
     </message>
     <message>
         <location filename="../gui/settings/settings.ui" line="172"/>
         <source>Sound</source>
-        <translation type="unfinished"></translation>
+        <translation>Ses</translation>
     </message>
     <message>
         <location filename="../gui/settings/settings.ui" line="277"/>
         <source>Cancel</source>
-        <translation type="unfinished">Cancel</translation>
+        <translation>Iptal</translation>
     </message>
     <message>
         <source>Apply</source>
@@ -10476,12 +10476,12 @@ behind a firewall or a VPN.</source>
     <message>
         <location filename="../gui/settings/settings.ui" line="290"/>
         <source>OK</source>
-        <translation type="unfinished">OK</translation>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="../gui/settings/settings.ui" line="82"/>
         <source>General</source>
-        <translation type="unfinished">General</translation>
+        <translation>Genel</translation>
     </message>
     <message>
         <source>Network</source>
@@ -10490,12 +10490,12 @@ behind a firewall or a VPN.</source>
     <message>
         <location filename="../gui/settings/settings.ui" line="91"/>
         <source>Server</source>
-        <translation type="unfinished">Peer Settings</translation>
+        <translation>Bağlantı</translation>
     </message>
     <message>
         <location filename="../gui/settings/settings.ui" line="109"/>
         <source>Directories</source>
-        <translation type="unfinished">Directories</translation>
+        <translation>Dizinler</translation>
     </message>
 </context>
 <context>
@@ -11591,17 +11591,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/common/TagDefs.cpp" line="38"/>
         <source>Important</source>
-        <translation type="unfinished"></translation>
+        <translation>Önemli</translation>
     </message>
     <message>
         <location filename="../gui/common/TagDefs.cpp" line="40"/>
         <source>Work</source>
-        <translation type="unfinished"></translation>
+        <translation>Iş</translation>
     </message>
     <message>
         <location filename="../gui/common/TagDefs.cpp" line="42"/>
         <source>Personal</source>
-        <translation type="unfinished"></translation>
+        <translation>Kişisel</translation>
     </message>
     <message>
         <location filename="../gui/common/TagDefs.cpp" line="44"/>
@@ -11611,7 +11611,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/common/TagDefs.cpp" line="46"/>
         <source>Later</source>
-        <translation type="unfinished"></translation>
+        <translation>Sonra</translation>
     </message>
 </context>
 <context>
