@@ -65,16 +65,17 @@ void Chunk::getSlice(uint32_t size_hint,ftChunk& chunk)
 	_offset += chunk.size ;
 }
 
-ChunkMap::ChunkMap(uint64_t s)
+ChunkMap::ChunkMap(uint64_t s,bool availability)
 	:	_file_size(s),
-		_chunk_size(CHUNKMAP_FIXED_CHUNK_SIZE) // 1MB chunks
+		_chunk_size(CHUNKMAP_FIXED_CHUNK_SIZE), // 1MB chunks
+		_assume_availability(availability)
 {
 	uint64_t n = s/(uint64_t)_chunk_size ;
 	if(s% (uint64_t)_chunk_size != 0)
 		++n ;
 
 	_map.resize(n,FileChunksInfo::CHUNK_OUTSTANDING) ;
-	_strategy = FileChunksInfo::CHUNK_STRATEGY_STREAMING ;
+	_strategy = FileChunksInfo::CHUNK_STRATEGY_RANDOM ;
 	_total_downloaded = 0 ;
 	_file_is_complete = false ;
 #ifdef DEBUG_FTCHUNK
@@ -355,13 +356,11 @@ uint32_t ChunkMap::getAvailableChunk(const std::string& peer_id,bool& map_is_too
 	{
 		SourceChunksInfo& pchunks(_peers_chunks_availability[peer_id]) ;
 
-		bool assume_availability = !(rsTurtle!=NULL && rsTurtle->isTurtlePeer(peer_id)) ;
-
 		// Ok, we don't have the info, so two cases:
 		// 	- peer_id is a not a turtle peer, so he is considered having the full file source, so we init with a plain chunkmap
 		// 	- otherwise, a source map needs to be obtained, so we init with a blank chunkmap
 		//
-		if(assume_availability)
+		if(_assume_availability)
 		{
 			pchunks.cmap._map.resize( CompressedChunkMap::getCompressedSize(_map.size()),~(uint32_t)0 ) ;
 			pchunks.TS = 0 ;

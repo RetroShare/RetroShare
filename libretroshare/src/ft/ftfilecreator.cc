@@ -17,8 +17,8 @@
 *
 ***********************************************************/
 
-ftFileCreator::ftFileCreator(std::string path, uint64_t size, std::string hash)
-	: ftFileProvider(path,size,hash), chunkMap(size)
+ftFileCreator::ftFileCreator(std::string path, uint64_t size, std::string hash,bool assume_availability)
+	: ftFileProvider(path,size,hash), chunkMap(size,assume_availability)
 {
 	/* 
          * FIXME any inits to do?
@@ -539,7 +539,9 @@ bool ftFileCreator::crossCheckChunkMap(const CRC32Map& ref,uint32_t& bad_chunks,
 				else
 				{
 					printf(" cannot fseek!\n") ;
-					return false ;
+					++bad_chunks ;
+					++incomplete_chunks ;
+					map.reset(i) ;
 				}
 			}
 			else

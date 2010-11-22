@@ -92,10 +92,7 @@ class ChunkMap
 
 		/// Constructor. Decides what will be the size of chunks and how many there will be.
 
-		ChunkMap(uint64_t file_size) ;
-
-		/// constructor from saved map info
-		ChunkMap(uint64_t file_size,const std::vector<uint32_t>& map,uint32_t chunk_size,uint32_t chunk_number,FileChunksInfo::ChunkStrategy s) ;
+		ChunkMap(uint64_t file_size,bool assume_availability) ;
 
 		/// destructor
 		virtual ~ChunkMap() {}
@@ -184,6 +181,7 @@ class ChunkMap
 		std::map<std::string,SourceChunksInfo>		_peers_chunks_availability ;	//! what does each source peer have
 		uint64_t												_total_downloaded ;				//! completion for the file
 		bool													_file_is_complete ;           //! set to true when the file is complete.
+		bool													_assume_availability ;			//! true if all sources always have the complete file.
 };
 
 

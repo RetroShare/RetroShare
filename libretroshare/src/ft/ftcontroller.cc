@@ -1200,7 +1200,9 @@ bool 	ftController::FileRequest(const std::string& fname, const std::string& has
   	if(flags & RS_FILE_HINTS_NETWORK_WIDE)
 		mTurtle->monitorFileTunnels(fname,hash,size) ;
 
-	ftFileCreator *fc = new ftFileCreator(savepath, size, hash);
+	bool assume_availability = flags & RS_FILE_HINTS_CACHE ;	// assume availability for cache files
+
+	ftFileCreator *fc = new ftFileCreator(savepath, size, hash,assume_availability);
 	ftTransferModule *tm = new ftTransferModule(fc, mDataplex,this);
 
 #ifdef CONTROL_DEBUG
