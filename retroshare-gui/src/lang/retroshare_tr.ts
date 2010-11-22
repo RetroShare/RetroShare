@@ -7972,12 +7972,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/PeersDialog.cpp" line="515"/>
         <source>Remove from group</source>
-        <translation>Gruptan kaldır</translation>
+        <translation>Grubtan kaldır</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="520"/>
         <source>Remove from all groups</source>
-        <translation>Tüm gruplardan Kaldır</translation>
+        <translation>Tüm grublardan Kaldır</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="537"/>
@@ -8098,17 +8098,17 @@ Bunun yerine Mesaj göndermek istiyor musunuz?</translation>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="419"/>
         <source>Message Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Gruba Mesaj yaz</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="424"/>
         <source>Edit Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Grubu düzenle</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="427"/>
         <source>Remove Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Grubu Kaldır</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="449"/>
@@ -8312,7 +8312,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/PeersDialog.ui" line="899"/>
         <source>Group Chat</source>
-        <translation type="unfinished"></translation>
+        <translation>Canli Sohbet</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.ui" line="1242"/>
