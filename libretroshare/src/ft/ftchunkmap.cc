@@ -33,7 +33,6 @@
 #include <math.h>
 #include <stdlib.h>
 #include "retroshare/rspeers.h"
-#include "retroshare/rsturtle.h"
 #include "ftchunkmap.h"
 #include <time.h>
 
