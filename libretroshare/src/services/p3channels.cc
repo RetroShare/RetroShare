@@ -644,10 +644,19 @@ bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std
 
 	/* request the files 
 	 * NB: This will result in duplicates.
-	 * it is upto ftserver/ftcontroller/ftextralist
+	 * it is upto ftserver/ftcontroller/ftextralist to handle this!
 	 * */
 
 	bool download = (grp->flags & RS_DISTRIB_SUBSCRIBED);
+
+ 	if (id == mOwnId)
+	{
+		download = false;
+//#ifdef CHANNEL_DEBUG
+               	std::cerr << "p3Channels::locked_eventDuplicateMsg() msg from self - not downloading";
+               	std::cerr << std::endl;
+//#endif
+	}
 
 	/* check subscribed */
 	if (!download)
@@ -678,7 +687,6 @@ bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std
 				RS_FILE_HINTS_NETWORK_WIDE;
 
 		std::list<std::string> srcIds;
-
 		srcIds.push_back(id);
 
 		/* download it ... and flag for ExtraList 
@@ -687,10 +695,12 @@ bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std
 		 * FileRequest will ignore request if file is already indexed.
 		 */
 
-                #ifdef CHANNEL_DEBUG
+                //#ifdef CHANNEL_DEBUG
                 std::cerr << "p3Channels::locked_eventDuplicateMsg() " << " Downloading: " << fname;
                 std::cerr << " to: " << localpath << " from: " << id << std::endl;
-                #endif
+                //#endif
+
+
 
         if(size < MAX_AUTO_DL)
         	mRsFiles->FileRequest(fname, hash, size,
