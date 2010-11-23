@@ -157,6 +157,8 @@ void ConfCertDialog::load()
         ui.extPort -> setValue(detail.extPort);
 
         ui.dynDNS->setText(QString::fromStdString(detail.dyndns));
+        
+        ui.statusline->setText(QString::fromStdString(detail.autoconnect));
 
         ui.ipAddressList->clear();
         for(std::list<std::string>::const_iterator it(detail.ipAddressList.begin());it!=detail.ipAddressList.end();++it)
@@ -164,6 +166,8 @@ void ConfCertDialog::load()
 
         ui.loc->show();
         ui.label_loc->show();
+        ui.statusline->show();
+        ui.label_status->show();
         ui.lastcontact->show();
         ui.label_last_contact->show();
         ui.version->show();
@@ -177,6 +181,8 @@ void ConfCertDialog::load()
         ui.label_rsid->show();
         ui.loc->hide();
         ui.label_loc->hide();
+		ui.statusline->hide();
+        ui.label_status->hide();
         ui.lastcontact->hide();
         ui.label_last_contact->hide();
         ui.version->hide();
