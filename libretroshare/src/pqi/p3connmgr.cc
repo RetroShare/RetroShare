@@ -3923,7 +3923,8 @@ void	p3ConnectMgr::getNetStatus(pqiNetStatus &status)
 
 	/* quick update of the stuff that can change! */
 	mNetFlags.mDhtOk = dhtOk;
-	netAssistConnectStats(netsize, rsnetsize);
+	mNetFlags.mDhtNetworkSize = netsize;
+	mNetFlags.mDhtRsNetworkSize = rsnetsize;
 
 	status = mNetFlags;
 }
