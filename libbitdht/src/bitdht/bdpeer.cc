@@ -993,10 +993,10 @@ bool bdSpace::findRandomPeerWithFlag(bdId &id, uint32_t withFlag)
 	if (it != buckets.end())
 	{
 		it++; /* skip own bucket! */
+		buck++;
 	}
 	for(; it != buckets.end(); it++, buck++)
 	{
-		int size = 0;
 		std::list<bdPeer>::iterator lit;
 		for(lit = it->entries.begin(); lit != it->entries.end(); lit++)
 		{

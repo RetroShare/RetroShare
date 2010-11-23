@@ -607,29 +607,30 @@ int bdNodeManager::checkStatus()
 					pit->second.mDhtAddr.sin_port = 0;
 				}
 			}
-		}
 
-		/* add successful queries to ping list */
-		if (doPing)
-		{
+			/* add successful queries to ping list */
+			if (doPing)
+			{
 #ifdef DEBUG_MGR
-		std::cerr << "bdNodeManager::checkStatus() Starting Ping (TODO): id: ";
-		mFns->bdPrintNodeId(std::cerr, &(it->first));
-		std::cerr << std::endl;
+				std::cerr << "bdNodeManager::checkStatus() Starting Ping (TODO): id: ";
+				mFns->bdPrintNodeId(std::cerr, &(it->first));
+				std::cerr << std::endl;
 #endif
-			/* add first matching peer */
-			//addPeerPing(foundId);
-		}
+				/* add first matching peer */
+				//addPeerPing(foundId);
+			}
 
-		/* callback on new successful queries */
-		if (doCallback)
-		{
+			/* callback on new successful queries */
+			if (doCallback)
+			{
 #ifdef DEBUG_MGR
-		std::cerr << "bdNodeManager::checkStatus() Doing Callback: id: ";
-		mFns->bdPrintNodeId(std::cerr, &(it->first));
-		std::cerr << std::endl;
+				std::cerr << "bdNodeManager::checkStatus() Doing Callback: id: ";
+				mFns->bdPrintNodeId(std::cerr, &(it->first));
+				std::cerr << std::endl;
 #endif
-			doPeerCallback(&(it->first), callbackStatus);
+				bdId id(it->first,pit->second.mDhtAddr);
+				doPeerCallback(&id, callbackStatus);
+			}
 		}
 	}
 	return 1;
@@ -862,7 +863,7 @@ void bdNodeManager::doNodeCallback(const bdId *id, uint32_t peerflags)
         return;
 }
 
-void bdNodeManager::doPeerCallback(const bdNodeId *id, uint32_t status)
+void bdNodeManager::doPeerCallback(const bdId *id, uint32_t status)
 {
 
 #ifdef DEBUG_MGR
@@ -881,7 +882,7 @@ void bdNodeManager::doPeerCallback(const bdNodeId *id, uint32_t status)
         return;
 }
 
-void bdNodeManager::doValueCallback(const bdNodeId *id, std::string /*key*/, uint32_t status)
+void bdNodeManager::doValueCallback(const bdNodeId *id, std::string key, uint32_t status)
 {
 	std::cerr << "bdNodeManager::doValueCallback()";
 	std::cerr << std::endl;
@@ -892,7 +893,7 @@ void bdNodeManager::doValueCallback(const bdNodeId *id, std::string /*key*/, uin
         std::list<BitDhtCallback *>::iterator it;
         for(it = mCallbacks.begin(); it != mCallbacks.end(); it++)
         {
-                (*it)->dhtPeerCallback(id, status);
+                (*it)->dhtValueCallback(id, key, status);
         }
         return;
 }

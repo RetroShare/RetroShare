@@ -39,6 +39,7 @@ class bdMutex
 
 		bdMutex(bool recursive = false) 
 		{
+#if 0 // TESTING WITHOUT RECURSIVE
 			if(recursive)
 			{
 				pthread_mutexattr_t att ;
@@ -51,6 +52,7 @@ class bdMutex
 			else
 				if( pthread_mutex_init(&realMutex, NULL))
 					std::cerr << "ERROR: Could not initialize mutex !" << std::endl ;
+#endif
 		}
 
 		~bdMutex() { pthread_mutex_destroy(&realMutex); }

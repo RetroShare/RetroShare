@@ -154,7 +154,7 @@ class BitDhtCallback
 virtual int dhtNodeCallback(const bdId *  /*id*/, uint32_t /*peerflags*/)  { return 0; } 
 
 		// must be implemented.
-virtual int dhtPeerCallback(const bdNodeId *id, uint32_t status) = 0;
+virtual int dhtPeerCallback(const bdId *id, uint32_t status) = 0;
 virtual int dhtValueCallback(const bdNodeId *id, std::string key, uint32_t status) = 0;
 };
 

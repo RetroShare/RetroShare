@@ -131,7 +131,7 @@ int 	isBitDhtPacket(char *data, int size, struct sockaddr_in &from);
 
 
 void 	doNodeCallback(const bdId *id, uint32_t peerflags);
-void 	doPeerCallback(const bdNodeId *id, uint32_t status);
+void 	doPeerCallback(const bdId *id, uint32_t status);
 void 	doValueCallback(const bdNodeId *id, std::string key, uint32_t status);
 
 int	status();
