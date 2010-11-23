@@ -3912,11 +3912,18 @@ bool	p3ConnectMgr::getDHTEnabled()
 
 void	p3ConnectMgr::getNetStatus(pqiNetStatus &status)
 {
+	/* cannot lock local stack, then call DHT... as this can cause lock up */
+	/* must extract data... then update mNetFlags */
+
+	bool dhtOk = netAssistConnectActive();
+	uint32_t netsize, rsnetsize;
+	netAssistConnectStats(netsize, rsnetsize);
+
 	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
 	/* quick update of the stuff that can change! */
-	mNetFlags.mDhtOk = netAssistConnectActive();
-	netAssistConnectStats(mNetFlags.mDhtNetworkSize, mNetFlags.mDhtRsNetworkSize);
+	mNetFlags.mDhtOk = dhtOk;
+	netAssistConnectStats(netsize, rsnetsize);
 
 	status = mNetFlags;
 }
