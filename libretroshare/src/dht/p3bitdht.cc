@@ -49,7 +49,7 @@ virtual int dhtNodeCallback(const bdId *id, uint32_t peerflags)
 	return mParent->NodeCallback(id, peerflags);
 }
 
-virtual int dhtPeerCallback(const bdNodeId *id, uint32_t status)
+virtual int dhtPeerCallback(const bdId *id, uint32_t status)
 {
 	return mParent->PeerCallback(id, status);
 }
@@ -88,8 +88,6 @@ p3BitDht::p3BitDht(std::string id, pqiConnectCb *cb, UdpStack *udpstack, std::st
 	bdStdPrintNodeId(std::cerr, &ownId);
 	std::cerr << std::endl;
 
-	RsStackMutex stack(dhtMtx);
-
 	/* standard dht behaviour */
 	bdDhtFunctions *stdfns = new bdStdDht();
 
@@ -109,7 +107,6 @@ p3BitDht::p3BitDht(std::string id, pqiConnectCb *cb, UdpStack *udpstack, std::st
 p3BitDht::~p3BitDht()
 {
 	//udpstack->removeReceiver(mUdpBitDht);
-	RsStackMutex stack(dhtMtx);
 	delete mUdpBitDht;
 }
 
@@ -118,7 +115,6 @@ void    p3BitDht::start()
 	std::cerr << "p3BitDht::start()";
 	std::cerr << std::endl;
 
-	RsStackMutex stack(dhtMtx);
 	mUdpBitDht->start(); /* starts up the bitdht thread */
 
 	/* dht switched on by config later. */
@@ -132,45 +128,38 @@ void    p3BitDht::enable(bool on)
 
 	if (on)
 	{
-		RsStackMutex stack(dhtMtx);
 		mUdpBitDht->startDht();
 	}
 	else
 	{
-		RsStackMutex stack(dhtMtx);
 		mUdpBitDht->stopDht();
 	}
 }
 	
 void    p3BitDht::shutdown() /* blocking call */
 {
-	RsStackMutex stack(dhtMtx);
 	mUdpBitDht->stopDht();
 }
 
 
 void	p3BitDht::restart()
 {
-	RsStackMutex stack(dhtMtx);
 	mUdpBitDht->stopDht();
 	mUdpBitDht->startDht();
 }
 
 bool    p3BitDht::getEnabled()
 {
-	RsStackMutex stack(dhtMtx);
 	return (mUdpBitDht->stateDht() != 0);
 }
 
 bool    p3BitDht::getActive()
 {
-	RsStackMutex stack(dhtMtx);
 	return (mUdpBitDht->stateDht() >= BITDHT_MGR_STATE_ACTIVE);
 }
 
 bool    p3BitDht::getNetworkStats(uint32_t &netsize, uint32_t &localnetsize)
 {
-	RsStackMutex stack(dhtMtx);
 	netsize = mUdpBitDht->statsNetworkSize();
 	localnetsize = mUdpBitDht->statsBDVersionSize();
 	return true;
@@ -207,7 +196,6 @@ bool 	p3BitDht::findPeer(std::string pid)
 	bdStdPrintNodeId(std::cerr, &nid);
 	std::cerr << std::endl;
 
-	RsStackMutex stack(dhtMtx);
 	/* add in peer */
 	mUdpBitDht->addFindNode(&nid, BITDHT_QFLAGS_DO_IDLE);
 
@@ -234,11 +222,8 @@ bool 	p3BitDht::dropPeer(std::string pid)
 	bdStdPrintNodeId(std::cerr, &nid);
 	std::cerr << std::endl;
 
-	{
-		RsStackMutex stack(dhtMtx);
-		/* remove in peer */
-		mUdpBitDht->removeFindNode(&nid);
-	}
+	/* remove in peer */
+	mUdpBitDht->removeFindNode(&nid);
 
 	/* remove from translation */
 	if (!removeTranslation(pid))
@@ -539,16 +524,16 @@ uint32_t translatebdcbflgs(uint32_t peerflags)
 }
 
 
-int p3BitDht::PeerCallback(const bdNodeId *id, uint32_t status)
+int p3BitDht::PeerCallback(const bdId *id, uint32_t status)
 {
-	std::cerr << "p3BitDht::PeerCallback() NodeId: ";
-	bdStdPrintNodeId(std::cerr, id);
+	std::cerr << "p3BitDht::PeerCallback() bdId: ";
+	bdStdPrintId(std::cerr, id);
 	std::cerr << std::endl;
 
 	/* is it one that we are interested in? */
 	std::string pid;
 	/* check for translation */
-	if (lookupRsId(id, pid))
+	if (lookupRsId(&(id->id), pid))
 	{
 		std::cerr << "p3BitDht::PeerCallback() => RsId: ";
 		std::cerr << pid << " status: " << status;
@@ -594,21 +579,10 @@ int p3BitDht::PeerCallback(const bdNodeId *id, uint32_t status)
 
 		if (connect)
 		{
-			std::cerr << "p3BitDht::PeerCallback() checking getDhtPeerAddress()";
+			std::cerr << "p3BitDht::PeerCallback() mConnCb->peerConnectRequest()";
 			std::cerr << std::endl;
 
-			/* get dht address */
-			/* we found it ... do callback to p3connmgr */
-			struct sockaddr_in dhtAddr;
-			if (mUdpBitDht->getDhtPeerAddress(id, dhtAddr))
-        		{
-				std::cerr << "p3BitDht::PeerCallback() getDhtPeerAddress() == true";
-				std::cerr << std::endl;
-				std::cerr << "p3BitDht::PeerCallback() mConnCb->peerConnectRequest()";
-				std::cerr << std::endl;
-
-				mConnCb->peerConnectRequest(pid, dhtAddr, RS_CB_DHT);
-			}
+			mConnCb->peerConnectRequest(pid, id->addr, RS_CB_DHT);
 			return 1;
 		}
 		else

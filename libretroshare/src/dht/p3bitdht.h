@@ -81,7 +81,7 @@ virtual bool 	getExternalInterface(struct sockaddr_in &raddr,
 
 	/* Callback functions - from bitdht */
 int 	NodeCallback(const bdId *id, uint32_t peerflags);
-int 	PeerCallback(const bdNodeId *id, uint32_t status);
+int 	PeerCallback(const bdId *id, uint32_t status);
 int 	ValueCallback(const bdNodeId *id, std::string key, uint32_t status);
 
 	private:
@@ -93,7 +93,7 @@ int 	ValueCallback(const bdNodeId *id, std::string key, uint32_t status);
 	int storeTranslation(const std::string pid);
 	int removeTranslation(const std::string pid);
 
-	UdpBitDht *mUdpBitDht; /* has own mutex */
+	UdpBitDht *mUdpBitDht; /* has own mutex, is static except for creation/destruction */
 
 	RsMutex dhtMtx;
 	/* translation maps */
