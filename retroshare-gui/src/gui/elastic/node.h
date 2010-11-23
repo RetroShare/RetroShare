@@ -52,7 +52,7 @@ QT_BEGIN_NAMESPACE
 class QGraphicsSceneMouseEvent;
 QT_END_NAMESPACE
 
-class Node : public QGraphicsObject
+class Node : public QObject, public QGraphicsItem
 {
 	Q_OBJECT
 

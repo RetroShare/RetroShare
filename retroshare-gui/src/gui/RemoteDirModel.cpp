@@ -740,7 +740,9 @@ Qt::ItemFlags RemoteDirModel::flags( const QModelIndex & index ) const
 #endif
 	//modelAboutToBeReset();
 //	reset();
+#if QT_VERSION >= 0x040600
 	beginResetModel();
+#endif
 	layoutAboutToBeChanged();
  }
 
@@ -753,7 +755,9 @@ Qt::ItemFlags RemoteDirModel::flags( const QModelIndex & index ) const
 	//modelReset();
 	layoutChanged();
 	//reset();
+#if QT_VERSION >= 0x040600
 	endResetModel();
+#endif
  }
 
 
