@@ -831,7 +831,7 @@ p, li { white-space: pre-wrap; }
             <property name="styleSheet">
              <string notr="true">
 border: 2px solid #CCCCCC;
-border-radius: 10px;
+border-radius:6px;
 background: white;
 </string>
             </property>
@@ -935,7 +935,7 @@ p, li { white-space: pre-wrap; }
             <property name="styleSheet">
              <string notr="true">QLabel#threadTitle{
 border: 2px solid #CCCCCC;
-border-radius: 10px;
+border-radius: 6px;
 background: white;}</string>
             </property>
             <property name="text">
