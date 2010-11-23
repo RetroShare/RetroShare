@@ -50,9 +50,9 @@ class bdMutex
 					std::cerr << "ERROR: Could not initialize mutex !" << std::endl ;
 			}
 			else
+#endif
 				if( pthread_mutex_init(&realMutex, NULL))
 					std::cerr << "ERROR: Could not initialize mutex !" << std::endl ;
-#endif
 		}
 
 		~bdMutex() { pthread_mutex_destroy(&realMutex); }
