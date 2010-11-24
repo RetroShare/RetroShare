@@ -567,7 +567,7 @@ void  MessengerWindow::insertPeers()
             QString sCustomString;
 #ifndef MINIMAL_RSGUI
             if (sslDetail.state & RS_PEER_STATE_CONNECTED) {
-                sCustomString = QString::fromStdString(rsMsgs->getCustomStateString(sslDetail.id));
+                sCustomString = QString::fromUtf8(rsMsgs->getCustomStateString(sslDetail.id).c_str());
             }
 #endif // MINIMAL_RSGUI
             if (sCustomString.isEmpty()) {
@@ -1129,13 +1129,13 @@ void MessengerWindow::getAvatar()
 /** Loads own personal status message */
 void MessengerWindow::loadmystatusmessage()
 { 
-    ui.messagelineEdit->setEditText( QString::fromStdString(rsMsgs->getCustomStateString()));
+    ui.messagelineEdit->setEditText( QString::fromUtf8(rsMsgs->getCustomStateString().c_str()));
 }
 
 /** Save own status message */
 void MessengerWindow::savestatusmessage()
 {
-    rsMsgs->setCustomStateString(ui.messagelineEdit->currentText().toStdString());
+    rsMsgs->setCustomStateString(ui.messagelineEdit->currentText().toUtf8().constData());
 }
 
 void MessengerWindow::updateOwnStatus(const QString &peer_id, int status)

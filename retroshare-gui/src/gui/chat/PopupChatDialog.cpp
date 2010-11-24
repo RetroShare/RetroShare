@@ -180,7 +180,7 @@ PopupChatDialog::PopupChatDialog(const std::string &id, const QString &name, QWi
   }
 
   // initialize first custom state string
-  QString customStateString = QString::fromStdString(rsMsgs->getCustomStateString(dialogId));
+  QString customStateString = QString::fromUtf8(rsMsgs->getCustomStateString(dialogId).c_str());
   updatePeersCustomStateString(QString::fromStdString(dialogId), customStateString);
 
   if (Settings->valueFromGroup("Chat", QString::fromUtf8("PrivateChat_History"), true).toBool()) {

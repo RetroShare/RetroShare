@@ -55,16 +55,15 @@ StatusMessage::~StatusMessage()
 /** Saves the changes on this page */
 void StatusMessage::save()
 {
-    rsMsgs->setCustomStateString(ui.txt_StatusMessage->text().toStdString());
+    rsMsgs->setCustomStateString(ui.txt_StatusMessage->text().toUtf8().constData());
 
     close();
 }
 
-
 /** Loads the settings for this page */
 void StatusMessage::load()
 {	
-    ui.txt_StatusMessage->setText(QString::fromStdString(rsMsgs->getCustomStateString()));
+    ui.txt_StatusMessage->setText(QString::fromUtf8(rsMsgs->getCustomStateString().c_str()));
 }
 
 

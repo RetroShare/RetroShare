@@ -875,13 +875,13 @@ void  PeersDialog::insertPeers()
                 sslItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(sslDetail.id));
 
                 QString sText;
-                std::string customStateString;
+                QString customStateString;
                 if (sslDetail.state & RS_PEER_STATE_CONNECTED) {
-                    customStateString = rsMsgs->getCustomStateString(sslDetail.id);
+                    customStateString = QString::fromUtf8(rsMsgs->getCustomStateString(sslDetail.id).c_str());
                 }
                 sText = tr("location") + " : " + QString::fromStdString(sslDetail.location);
-                if (customStateString.empty() == false) {
-                    sText += " - " + QString::fromStdString(customStateString);
+                if (customStateString.isEmpty() == false) {
+                    sText += " - " + customStateString;
                 }
                 sslItem->setText( COLUMN_NAME, sText);
                 sslItem->setToolTip( COLUMN_NAME, sText);
@@ -1780,7 +1780,7 @@ void PeersDialog::on_actionCreate_New_Channel_activated()
 /** Loads own personal status */
 void PeersDialog::loadmypersonalstatus()
 {
-    ui.mypersonalstatuslabel->setText(QString::fromStdString(rsMsgs->getCustomStateString()));
+    ui.mypersonalstatuslabel->setText(QString::fromUtf8(rsMsgs->getCustomStateString().c_str()));
 }
 
 void PeersDialog::statusmessage()
