@@ -376,19 +376,18 @@ void NotifyQt::UpdateGUI()
 			/* id the name */
 			std::string name;
 			std::string realmsg;
-			if (RS_POPUP_DOWNLOAD == RS_POPUP_DOWNLOAD) {
+			unsigned char *data = NULL;
+			int size = 0 ;
+
+			if (type == RS_POPUP_DOWNLOAD) {
 				/* id = file hash */
 			} else {
 				name = rsPeers->getPeerName(id);
 				realmsg = "<strong>" + name + "</strong>";
+
+				rsMsgs->getAvatarData(id,data,size);
 			}
 
-			
-            unsigned char *data = NULL;
-            int size = 0 ;
-
-            rsMsgs->getAvatarData(id,data,size);
-			
 			switch(type)
 			{
 				case RS_POPUP_MSG:
