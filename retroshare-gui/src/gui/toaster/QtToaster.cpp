@@ -41,7 +41,9 @@ QtToaster::QtToaster(QObject *master, QWidget * toaster, QFrame * toasterWindowF
 	_toaster->setAttribute ( Qt::WA_DeleteOnClose, true );
 
         _master = master;
-        WidgetBackgroundImage::setBackgroundImage(toasterWindowFrame, ":images/toaster/toaster-backrs4.png", WidgetBackgroundImage::AdjustSize);
+        if (toasterWindowFrame) {
+            WidgetBackgroundImage::setBackgroundImage(toasterWindowFrame, ":images/toaster/toaster-backrs4.png", WidgetBackgroundImage::AdjustSize);
+        }
 
 	_toaster->resize(184, 128);
 }

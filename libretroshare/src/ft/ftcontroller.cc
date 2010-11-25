@@ -55,6 +55,8 @@
 #include "pqi/p3connmgr.h"
 #include "pqi/pqinotify.h"
 
+#include "retroshare/rsiface.h"
+
 #include "serialiser/rsconfigitems.h"
 #include <stdio.h>
 #include <sstream>
@@ -733,11 +735,13 @@ bool ftController::completeFile(std::string hash)
 {
 	/* variables... so we can drop mutex later */
 	std::string path;
+	std::string name;
 	uint64_t    size = 0;
 	uint32_t    state = 0;
 	uint32_t    period = 0;
 	uint32_t    flags = 0;
 	uint32_t    extraflags = 0;
+	uint32_t    completeCount = 0;
 
 	{
 		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
@@ -814,6 +818,7 @@ bool ftController::completeFile(std::string hash)
 
 		/* for extralist additions */
 		path    = fc->mDestination;
+		name    = fc->mName;
 		//hash    = fc->mHash;
 		size    = fc->mSize;
 		state   = fc->mState;
@@ -831,8 +836,10 @@ bool ftController::completeFile(std::string hash)
 
 		/* switch map */
 		if (!(fc->mFlags & RS_FILE_HINTS_CACHE)) /* clean up completed cache files automatically */
+		{
 			mCompleted[fc->mHash] = fc;
-		else
+			completeCount = mCompleted.size();
+		} else
 			delete fc ;
 
 		mDownloads.erase(it);
@@ -901,6 +908,16 @@ bool ftController::completeFile(std::string hash)
 		std::cerr << "ftController::completeFile() No callback";
 		std::cerr << std::endl;
 #endif
+	}
+
+	/* Notify GUI */
+	if ((flags & RS_FILE_HINTS_CACHE) == 0) {
+		pqiNotify *notify = getPqiNotify();
+		if (notify) {
+			notify->AddPopupMessage(RS_POPUP_DOWNLOAD, hash, name, "");
+		}
+		rsicontrol->getNotify().notifyDownloadComplete(hash);
+		rsicontrol->getNotify().notifyDownloadCompleteCount(completeCount);
 	}
 
 	IndicateConfigChanged(); /* completed transfer -> save */
@@ -1431,14 +1448,18 @@ bool 	ftController::FileClearCompleted()
 #ifdef CONTROL_DEBUG
 	std::cerr << "ftController::FileClearCompleted()" <<std::endl;
 #endif
-	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+	{
+		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-	for(std::map<std::string, ftFileControl*>::iterator it(mCompleted.begin());it!=mCompleted.end();++it)
-		delete it->second ;
+		for(std::map<std::string, ftFileControl*>::iterator it(mCompleted.begin());it!=mCompleted.end();++it)
+			delete it->second ;
 
-	mCompleted.clear();
+		mCompleted.clear();
 
-	IndicateConfigChanged();
+		IndicateConfigChanged();
+	}  /******* UNLOCKED ********/
+
+	rsicontrol->getNotify().notifyDownloadCompleteCount(0);
 
 	return false;
 }

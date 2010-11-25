@@ -200,6 +200,8 @@ class NotifyBase
 	virtual void notifyPeerStatusChangedSummary() {}
 	virtual void notifyChannelMsgReadSatusChanged(const std::string& /* channelId */, const std::string& /* msgId */, uint32_t /* status */) {}
 	virtual void notifyDiscInfoChanged() {}
+	virtual void notifyDownloadComplete(const std::string& /* fileHash */) {};
+	virtual void notifyDownloadCompleteCount(uint32_t /* count */) {};
 
 	virtual std::string askForPassword(const std::string& /* key_details */ ,bool /* prev_is_bad */ ) { return "" ;}
 };

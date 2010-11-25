@@ -71,16 +71,16 @@ NotifyPage::save(QString &errmsg)
 
     if (ui.popup_Connect->isChecked())
         notifyflags |= RS_POPUP_CONNECT;
-
     if (ui.popup_NewMsg->isChecked())
         notifyflags |= RS_POPUP_MSG;
+    if (ui.popup_DownloadFinished->isChecked())
+        notifyflags |= RS_POPUP_DOWNLOAD;
 
     //if (ui.popup_NewChat->isChecked())
     notifyflags |= RS_POPUP_CHAT;
 
     //if (ui.popup_Call->isChecked())
     //	notifyflags |= RS_POPUP_CALL;
-
 
     if (ui.notify_Peers->isChecked())
         newsflags |= RS_FEED_TYPE_PEER;
@@ -112,6 +112,8 @@ NotifyPage::save(QString &errmsg)
         traynotifyflags |= TRAYNOTIFY_CHANNELS;
     if (ui.trayNotify_Forums->isChecked())
         traynotifyflags |= TRAYNOTIFY_FORUMS;
+    if (ui.trayNotify_Transfer->isChecked())
+        traynotifyflags |= TRAYNOTIFY_TRANSFERS;
 
     Settings->setNotifyFlags(notifyflags);
     Settings->setTrayNotifyFlags(traynotifyflags);
@@ -139,6 +141,7 @@ void NotifyPage::load()
 
     ui.popup_Connect->setChecked(notifyflags & RS_POPUP_CONNECT);
     ui.popup_NewMsg->setChecked(notifyflags & RS_POPUP_MSG);
+    ui.popup_DownloadFinished->setChecked(notifyflags & RS_POPUP_DOWNLOAD);
     //ui.popup_NewChat->setChecked(notifyflags & RS_POPUP_CHAT);
     //ui.popup_Call->setChecked(notifyflags & RS_POPUP_CALL);
 
@@ -160,6 +163,7 @@ void NotifyPage::load()
     ui.trayNotify_Messages->setChecked(traynotifyflags & TRAYNOTIFY_MESSAGES);
     ui.trayNotify_Channels->setChecked(traynotifyflags & TRAYNOTIFY_CHANNELS);
     ui.trayNotify_Forums->setChecked(traynotifyflags & TRAYNOTIFY_FORUMS);
+    ui.trayNotify_Transfer->setChecked(traynotifyflags & TRAYNOTIFY_TRANSFERS);
 
     ui.addFeedsAtEnd->setChecked(Settings->getAddFeedsAtEnd());
 }

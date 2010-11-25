@@ -609,6 +609,13 @@
             </property>
            </widget>
           </item>
+          <item>
+           <widget class="QCheckBox" name="trayNotify_Transfer">
+            <property name="text">
+             <string>Download completed</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -652,6 +659,13 @@
            <widget class="QCheckBox" name="popup_NewMsg">
             <property name="text">
              <string>New Message</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="popup_DownloadFinished">
+            <property name="text">
+             <string>Download completed</string>
             </property>
            </widget>
           </item>

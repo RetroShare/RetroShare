@@ -36,7 +36,8 @@
 #define TRAYNOTIFY_MESSAGES      0x02
 #define TRAYNOTIFY_CHANNELS      0x04
 #define TRAYNOTIFY_FORUMS        0x08
-#define TRAYNOTIFY_ALL           0x0F
+#define TRAYNOTIFY_TRANSFERS     0x10
+#define TRAYNOTIFY_ALL           0x1F
 
 //Forward declaration.
 class QWidget;

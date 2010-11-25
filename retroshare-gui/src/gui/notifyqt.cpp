@@ -17,6 +17,7 @@
 #include "gui/toaster/MessageToaster.h"
 #include "gui/toaster/ChatToaster.h"
 #include "gui/toaster/CallToaster.h"
+#include "gui/toaster/DownloadToaster.h"
 #endif // MINIMAL_RSGUI
 
 #include "gui/settings/rsharesettings.h"
@@ -78,6 +79,21 @@ void NotifyQt::notifyDiscInfoChanged()
 
 	emit discInfoChanged() ;
 }
+
+void NotifyQt::notifyDownloadComplete(const std::string& fileHash)
+{
+	std::cerr << "Notifyqt::notifyDownloadComplete notified that a download is completed" << std::endl;
+
+	emit downloadComplete(QString::fromStdString(fileHash));
+}
+
+void NotifyQt::notifyDownloadCompleteCount(uint32_t count)
+{
+	std::cerr << "Notifyqt::notifyDownloadCompleteCount " << count << std::endl;
+
+	emit downloadCompleteCountChanged(count);
+}
+
 void NotifyQt::notifyDiskFull(uint32_t loc,uint32_t size_in_mb)
 {
 	std::cerr << "Notifyqt:: notified that disk is full" << std::endl ;
@@ -352,14 +368,21 @@ void NotifyQt::UpdateGUI()
 		uint32_t sysid;
 		uint32_t type;
 		std::string title, id, msg;
-		
+
 		if (rsNotify->NotifyPopupMessage(type, id, title, msg))
 		{
 			uint popupflags = Settings->getNotifyFlags();
 
 			/* id the name */
-			std::string name = rsPeers->getPeerName(id);
-			std::string realmsg = "<strong>" + name + "</strong>";
+			std::string name;
+			std::string realmsg;
+			if (RS_POPUP_DOWNLOAD == RS_POPUP_DOWNLOAD) {
+				/* id = file hash */
+			} else {
+				name = rsPeers->getPeerName(id);
+				realmsg = "<strong>" + name + "</strong>";
+			}
+
 			
             unsigned char *data = NULL;
             int size = 0 ;
@@ -419,8 +442,14 @@ void NotifyQt::UpdateGUI()
 					onlineToaster->play();
 				}
 					break;
+				case RS_POPUP_DOWNLOAD:
+					if (popupflags & RS_POPUP_DOWNLOAD)
+					{
+						DownloadToaster *downloadToaster = new DownloadToaster();
+						downloadToaster->displayPopup(id, QString::fromUtf8(title.c_str()));
+					}
+					break;
 			}
-
 		}
 
 		if (rsNotify->NotifySysMessage(sysid, type, title, msg))

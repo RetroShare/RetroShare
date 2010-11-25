@@ -93,8 +93,6 @@ void MessageToaster::displayPopup()
 	move(desktop->width(), availableGeometry.height() - size().height());
 	this->show();
 
-	alpha = 0;
-
 	displayState = dsShowing;
 	displayTimer->start(2);
 }

@@ -211,7 +211,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
 
 
     ui.stackPages->add(transfersDialog = new TransfersDialog(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_TRANSFERS), tr("Transfers"), grp));
+                      transferAction = createPageAction(QIcon(IMAGE_TRANSFERS), tr("Transfers"), grp));
 
 
     ui.stackPages->add(sharedfilesDialog = new SharedFilesDialog(ui.stackPages),
@@ -409,6 +409,11 @@ void MainWindow::createTrayIcon()
     trayIconChat = new QSystemTrayIcon(this);
     trayIconChat->setIcon(QIcon(":/images/chat.png"));
     connect(trayIconChat, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayIconChatClicked(QSystemTrayIcon::ActivationReason)));
+
+    // Create the tray icon for transfers
+    trayIconTransfers = new QSystemTrayIcon(this);
+    trayIconTransfers->setIcon(QIcon(":/images/ktorrent32.png"));
+    connect(trayIconTransfers, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayIconTransfersClicked(QSystemTrayIcon::ActivationReason)));
 }
 
 /*static*/ void MainWindow::installGroupChatNotifier()
@@ -498,6 +503,26 @@ void MainWindow::updateChannels(int type)
         trayIconChannels->show();
     } else {
         trayIconChannels->hide();
+    }
+}
+
+void MainWindow::updateTransfers(int count)
+{
+    if (count) {
+        transferAction->setIcon(QIcon(":/images/transfers_new32.png")) ;
+    } else {
+        transferAction->setIcon(QIcon(IMAGE_TRANSFERS)) ;
+    }
+
+    if (count && (Settings->getTrayNotifyFlags() & TRAYNOTIFY_TRANSFERS)) {
+        if (count > 1) {
+            trayIconTransfers->setToolTip(tr("RetroShare") + "\n" + tr("You have %1 completed downloads").arg(count));
+        } else {
+            trayIconTransfers->setToolTip(tr("RetroShare") + "\n" + tr("You have %1 completed download").arg(count));
+        }
+        trayIconTransfers->show();
+    } else {
+        trayIconTransfers->hide();
     }
 }
 
@@ -932,6 +957,13 @@ void MainWindow::trayIconChatClicked(QSystemTrayIcon::ActivationReason e)
         if (pcd == NULL) {
             showWindow(MainWindow::Friends);
         }
+    }
+}
+
+void MainWindow::trayIconTransfersClicked(QSystemTrayIcon::ActivationReason e)
+{
+    if(e == QSystemTrayIcon::Trigger || e == QSystemTrayIcon::DoubleClick) {
+        showWindow(MainWindow::Transfers);
     }
 }
 

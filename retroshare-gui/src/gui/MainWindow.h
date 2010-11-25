@@ -145,6 +145,7 @@ public slots:
     void updateMessages();
     void updateForums();
     void updateChannels(int type);
+    void updateTransfers(int count);
     void privateChatChanged(int list, int type);
 
 protected:
@@ -167,6 +168,7 @@ private slots:
     void trayIconForumsClicked(QSystemTrayIcon::ActivationReason e);
     void trayIconChannelsClicked(QSystemTrayIcon::ActivationReason e);
     void trayIconChatClicked(QSystemTrayIcon::ActivationReason e);
+    void trayIconTransfersClicked(QSystemTrayIcon::ActivationReason e);
 
     /** Toolbar fns. */
     void addFriend();
@@ -233,6 +235,7 @@ private:
     QSystemTrayIcon *trayIconForums;
     QSystemTrayIcon *trayIconChannels;
     QSystemTrayIcon *trayIconChat;
+    QSystemTrayIcon *trayIconTransfers;
     QAction *toggleVisibilityAction, *toolAct;
     QMenu *trayMenu;
 
@@ -246,6 +249,7 @@ private:
     QAction *messageAction;
     QAction *forumAction;
     QAction *channelAction;
+    QAction *transferAction;
 
     /* Status */
     std::set <QObject*> m_apStatusObjects; // added objects for status

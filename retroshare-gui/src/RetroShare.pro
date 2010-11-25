@@ -274,6 +274,7 @@ HEADERS +=  rshare.h \
             gui/toaster/MessageToaster.h \
             gui/toaster/OnlineToaster.h \
             gui/toaster/ChatToaster.h \
+            gui/toaster/DownloadToaster.h \
             gui/toaster/CallToaster.h \
             gui/toaster/QtToaster.h \
             gui/toaster/IQtToaster.h \
@@ -380,6 +381,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/toaster/ChatToaster.ui \
             gui/toaster/MessageToaster.ui \
             gui/toaster/OnlineToaster.ui \
+            gui/toaster/DownloadToaster.ui \
             gui/advsearch/AdvancedSearchDialog.ui \
             gui/advsearch/expressionwidget.ui \
             gui/NewsFeed.ui \
@@ -514,6 +516,7 @@ SOURCES +=  main.cpp \
             gui/statusbar/hashingstatus.cpp \
             gui/toaster/ChatToaster.cpp \
             gui/toaster/MessageToaster.cpp \
+            gui/toaster/DownloadToaster.cpp \
             gui/toaster/CallToaster.cpp \
             gui/toaster/OnlineToaster.cpp \
             gui/toaster/QtToaster.cpp \

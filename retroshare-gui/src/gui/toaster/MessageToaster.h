@@ -51,8 +51,6 @@ Q_OBJECT
 		
   private:
 		QTimer *displayTimer;
-		QString videoFile;
 		DisplayState displayState;
-		double alpha;
 };
 #endif
