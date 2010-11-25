@@ -145,6 +145,7 @@ private slots:
 
     void changeAvatarClicked();
     void getAvatar();
+	void updateOwnStatus(const QString &peer_id, int status);
 
     void on_actionAdd_Group_activated();
     void on_actionCreate_New_Forum_activated();

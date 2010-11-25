@@ -43,6 +43,7 @@
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rsnotify.h>
 #include "settings/rsharesettings.h"
+#include "notifyqt.h"
 
 #include "chat/PopupChatDialog.h"
 #include "msgs/MessageComposer.h"
@@ -129,6 +130,8 @@ PeersDialog::PeersDialog(QWidget *parent)
 
     connect( ui.peertreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( peertreeWidgetCostumPopupMenu( QPoint ) ) );
     connect( ui.peertreeWidget, SIGNAL( itemDoubleClicked ( QTreeWidgetItem *, int)), this, SLOT(chatfriend(QTreeWidgetItem *)));
+    
+	connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(updateOwnStatus(QString,int)));
 
     connect( ui.avatartoolButton, SIGNAL(clicked()), SLOT(getAvatar()));
     connect( ui.mypersonalstatuslabel, SIGNAL(clicked()), SLOT(statusmessage()));
@@ -2150,5 +2153,38 @@ void PeersDialog::newsFeedChanged(int count)
         ui.peertabWidget->tabBar()->setTabText(newsFeedTabIndex, newsFeedText);
         ui.peertabWidget->tabBar()->setTabTextColor(newsFeedTabIndex, newsFeedTabColor);
         ui.peertabWidget->tabBar()->setTabIcon(newsFeedTabIndex,  QIcon(IMAGE_NEWSFEED));
+    }
+}
+
+void PeersDialog::updateOwnStatus(const QString &peer_id, int status)
+{
+    // add self nick + own status
+    if (peer_id.toStdString() == rsPeers->getOwnId())
+    {
+        // my status has changed
+
+        switch (status) {
+        case RS_STATUS_OFFLINE:
+            ui.avatartoolButton->setStyleSheet("QToolButton#avatartoolButton{border-image:url(:/images/mystatus_bg_offline.png); }");
+            break;
+
+        case RS_STATUS_INACTIVE:
+            ui.avatartoolButton->setStyleSheet("QToolButton#avatartoolButton{border-image:url(:/images/mystatus_bg_idle.png); }");
+            break;
+
+        case RS_STATUS_ONLINE:
+            ui.avatartoolButton->setStyleSheet("QToolButton#avatartoolButton{border-image:url(:/images/mystatus_bg_online.png); }");
+            break;
+
+        case RS_STATUS_AWAY:
+            ui.avatartoolButton->setStyleSheet("QToolButton#avatartoolButton{border-image:url(:/images/mystatus_bg_idle.png); }");
+            break;
+
+        case RS_STATUS_BUSY:
+            ui.avatartoolButton->setStyleSheet("QToolButton#avatartoolButton{border-image:url(:/images/mystatus_bg_busy.png); }");
+            break;
+        }
+
+        return;
     }
 }
