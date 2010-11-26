@@ -32,12 +32,14 @@
 #include "rsettings.h"
 
 /* Defines for get/setTrayNotifyFlags */
-#define TRAYNOTIFY_PRIVATECHAT   0x01
-#define TRAYNOTIFY_MESSAGES      0x02
-#define TRAYNOTIFY_CHANNELS      0x04
-#define TRAYNOTIFY_FORUMS        0x08
-#define TRAYNOTIFY_TRANSFERS     0x10
-#define TRAYNOTIFY_ALL           0x1F
+#define TRAYNOTIFY_PRIVATECHAT   0x00000001
+#define TRAYNOTIFY_MESSAGES      0x00000002
+#define TRAYNOTIFY_CHANNELS      0x00000004
+#define TRAYNOTIFY_FORUMS        0x00000008
+#define TRAYNOTIFY_TRANSFERS     0x00000010
+#define TRAYNOTIFY_ALL           0x0000001F
+
+#define TRAYNOTIFY_COMBINEDICON  0x80000000
 
 //Forward declaration.
 class QWidget;

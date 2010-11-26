@@ -114,6 +114,8 @@ NotifyPage::save(QString &errmsg)
         traynotifyflags |= TRAYNOTIFY_FORUMS;
     if (ui.trayNotify_Transfer->isChecked())
         traynotifyflags |= TRAYNOTIFY_TRANSFERS;
+    if (ui.trayNotify_CombinedIcon->isChecked())
+        traynotifyflags |= TRAYNOTIFY_COMBINEDICON;
 
     Settings->setNotifyFlags(notifyflags);
     Settings->setTrayNotifyFlags(traynotifyflags);
@@ -122,6 +124,7 @@ NotifyPage::save(QString &errmsg)
 
     Settings->setDisplayTrayGroupChat(ui.systray_GroupChat->isChecked());
     MainWindow::installGroupChatNotifier();
+    MainWindow::installNotifyIcons();
 
     Settings->setAddFeedsAtEnd(ui.addFeedsAtEnd->isChecked());
 
@@ -164,6 +167,7 @@ void NotifyPage::load()
     ui.trayNotify_Channels->setChecked(traynotifyflags & TRAYNOTIFY_CHANNELS);
     ui.trayNotify_Forums->setChecked(traynotifyflags & TRAYNOTIFY_FORUMS);
     ui.trayNotify_Transfer->setChecked(traynotifyflags & TRAYNOTIFY_TRANSFERS);
+    ui.trayNotify_CombinedIcon->setChecked(traynotifyflags & TRAYNOTIFY_COMBINEDICON);
 
     ui.addFeedsAtEnd->setChecked(Settings->getAddFeedsAtEnd());
 }

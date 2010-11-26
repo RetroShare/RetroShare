@@ -158,6 +158,18 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     m_bStatusLoadDone = false;
     isIdle = false;
 
+    trayIconCombined = NULL;
+    trayIconMessages = NULL;
+    trayIconForums = NULL;
+    trayIconChannels = NULL;
+    trayIconChat = NULL;
+    trayIconTransfers = NULL;
+    trayActionMessages = NULL;
+    trayActionForums = NULL;
+    trayActionChannels = NULL;
+    trayActionChat = NULL;
+    trayActionTransfers = NULL;
+
     setWindowTitle(tr("RetroShare %1 a secure decentralised communication platform").arg(retroshareVersion()));
 
     /* add url handler for RetroShare links */
@@ -298,12 +310,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     /* Set focus to the current page */
     ui.stackPages->currentWidget()->setFocus();
 
-    /* call once */
-    updateMessages();
-    updateForums();
-    updateChannels(NOTIFY_TYPE_ADD);
-    privateChatChanged(NOTIFY_LIST_PRIVATE_INCOMING_CHAT, NOTIFY_TYPE_ADD);
-
     idle = new Idle();
     idle->start();
     connect(idle, SIGNAL(secondsIdle(int)), this, SLOT(checkAndSetIdle(int)));
@@ -357,7 +363,7 @@ void MainWindow::displayDiskSpaceWarning(int loc,int size_limit_mb)
 void MainWindow::createTrayIcon()
 {
     /** Tray icon Menu **/
-    trayMenu = new QMenu(this);
+    QMenu *trayMenu = new QMenu(this);
     QObject::connect(trayMenu, SIGNAL(aboutToShow()), this, SLOT(updateMenu()));
     toggleVisibilityAction = trayMenu->addAction(QIcon(IMAGE_RETROSHARE), tr("Show/Hide"), this, SLOT(toggleVisibilitycontextmenu()));
 
@@ -390,30 +396,135 @@ void MainWindow::createTrayIcon()
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(toggleVisibility(QSystemTrayIcon::ActivationReason)));
     trayIcon->show();
 
-    // Create the tray icon for messages
-    trayIconMessages = new QSystemTrayIcon(this);
-    trayIconMessages->setIcon(QIcon(":/images/newmsg.png"));
-    connect(trayIconMessages, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayIconMessagesClicked(QSystemTrayIcon::ActivationReason)));
+    createNotifyIcons();
+}
 
-    // Create the tray icon for forums
-    trayIconForums = new QSystemTrayIcon(this);
-    trayIconForums->setIcon(QIcon(":/images/konversation16.png"));
-    connect(trayIconForums, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayIconForumsClicked(QSystemTrayIcon::ActivationReason)));
+void MainWindow::createNotifyIcons()
+{
+#define DELETE_ICON(x) if (x) { delete(x); x = NULL; }
 
-    // Create the tray icon for channels
-    trayIconChannels = new QSystemTrayIcon(this);
-    trayIconChannels->setIcon(QIcon(":/images/channels16.png"));
-    connect(trayIconChannels, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayIconChannelsClicked(QSystemTrayIcon::ActivationReason)));
+    int notifyFlag = Settings->getTrayNotifyFlags();
 
-    // Create the tray icon for chat
-    trayIconChat = new QSystemTrayIcon(this);
-    trayIconChat->setIcon(QIcon(":/images/chat.png"));
-    connect(trayIconChat, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayIconChatClicked(QSystemTrayIcon::ActivationReason)));
+    QMenu *trayMenu = NULL;
 
-    // Create the tray icon for transfers
-    trayIconTransfers = new QSystemTrayIcon(this);
-    trayIconTransfers->setIcon(QIcon(":/images/ktorrent32.png"));
-    connect(trayIconTransfers, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayIconTransfersClicked(QSystemTrayIcon::ActivationReason)));
+    /* Delete combined systray icon and rebuild it */
+    trayActionMessages = NULL;
+    trayActionForums = NULL;
+    trayActionChannels = NULL;
+    trayActionChat = NULL;
+    trayActionTransfers = NULL;
+    DELETE_ICON(trayIconCombined);
+
+    if (notifyFlag & TRAYNOTIFY_COMBINEDICON) {
+        /* Delete single systray icons */
+        DELETE_ICON(trayIconMessages);
+        DELETE_ICON(trayIconForums);
+        DELETE_ICON(trayIconChannels);
+        DELETE_ICON(trayIconChat);
+        DELETE_ICON(trayIconTransfers);
+
+        /* Create combined systray icon */
+        trayIconCombined = new QSystemTrayIcon(this);
+        trayIconCombined->setIcon(QIcon(":/images/rstray_new.png"));
+
+        trayMenu = new QMenu(this);
+        trayIconCombined->setContextMenu(trayMenu);
+    }
+
+    /* Create systray icons or actions */
+    if (notifyFlag & TRAYNOTIFY_MESSAGES) {
+        if (trayMenu) {
+            DELETE_ICON(trayIconMessages);
+
+            trayActionMessages = trayMenu->addAction(QIcon(":/images/newmsg.png"), "", this, SLOT(trayIconMessagesClicked()));
+            trayActionMessages->setVisible(false);
+            trayActionMessages->setData(tr("Messages"));
+        } else if (trayIconMessages == NULL) {
+            // Create the tray icon for messages
+            trayIconMessages = new QSystemTrayIcon(this);
+            trayIconMessages->setIcon(QIcon(":/images/newmsg.png"));
+            connect(trayIconMessages, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayIconMessagesClicked(QSystemTrayIcon::ActivationReason)));
+        }
+    } else {
+        DELETE_ICON(trayIconMessages);
+    }
+
+    if (notifyFlag & TRAYNOTIFY_FORUMS) {
+        if (trayMenu) {
+            DELETE_ICON(trayIconForums);
+
+            trayActionForums = trayMenu->addAction(QIcon(":/images/konversation16.png"), "", this, SLOT(trayIconForumsClicked()));
+            trayActionForums->setVisible(false);
+            trayActionForums->setData(tr("Forums"));
+        } else if (trayIconForums == NULL) {
+            // Create the tray icon for forums
+            trayIconForums = new QSystemTrayIcon(this);
+            trayIconForums->setIcon(QIcon(":/images/konversation16.png"));
+            connect(trayIconForums, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayIconForumsClicked(QSystemTrayIcon::ActivationReason)));
+        }
+    } else {
+        DELETE_ICON(trayIconForums);
+    }
+
+    if (notifyFlag & TRAYNOTIFY_CHANNELS) {
+        if (trayMenu) {
+            DELETE_ICON(trayIconChannels);
+
+            trayActionChannels = trayMenu->addAction(QIcon(":/images/channels16.png"), "", this, SLOT(trayIconChannelsClicked()));
+            trayActionChannels->setVisible(false);
+            trayActionChannels->setData(tr("Channels"));
+        } else if (trayIconChannels == NULL) {
+            // Create the tray icon for channels
+            trayIconChannels = new QSystemTrayIcon(this);
+            trayIconChannels->setIcon(QIcon(":/images/channels16.png"));
+            connect(trayIconChannels, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayIconChannelsClicked(QSystemTrayIcon::ActivationReason)));
+        }
+    } else {
+        DELETE_ICON(trayIconChannels);
+    }
+
+    if (notifyFlag & TRAYNOTIFY_PRIVATECHAT) {
+        if (trayMenu) {
+            DELETE_ICON(trayIconChat);
+
+            trayActionChat = trayMenu->addAction(QIcon(":/images/chat.png"), "", this, SLOT(trayIconChatClicked()));
+            trayActionChat->setVisible(false);
+            trayActionChat->setData(tr("Chat"));
+        } else if (trayIconChat == NULL) {
+            // Create the tray icon for chat
+            trayIconChat = new QSystemTrayIcon(this);
+            trayIconChat->setIcon(QIcon(":/images/chat.png"));
+            connect(trayIconChat, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayIconChatClicked(QSystemTrayIcon::ActivationReason)));
+        }
+    } else {
+        DELETE_ICON(trayIconChat);
+    }
+
+    if (notifyFlag & TRAYNOTIFY_TRANSFERS) {
+        if (trayMenu) {
+            DELETE_ICON(trayIconTransfers);
+
+            trayActionTransfers = trayMenu->addAction(QIcon(":/images/ktorrent32.png"), "", this, SLOT(trayIconTransfersClicked()));
+            trayActionTransfers->setVisible(false);
+            trayActionTransfers->setData(tr("Transfers"));
+        } else if (trayIconTransfers == NULL) {
+            // Create the tray icon for transfers
+            trayIconTransfers = new QSystemTrayIcon(this);
+            trayIconTransfers->setIcon(QIcon(":/images/ktorrent32.png"));
+            connect(trayIconTransfers, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayIconTransfersClicked(QSystemTrayIcon::ActivationReason)));
+        }
+    } else {
+        DELETE_ICON(trayIconTransfers);
+    }
+
+    /* call once */
+    updateMessages();
+    updateForums();
+    updateChannels(NOTIFY_TYPE_ADD);
+    privateChatChanged(NOTIFY_LIST_PRIVATE_INCOMING_CHAT, NOTIFY_TYPE_ADD);
+    // transfer
+
+#undef DELETE_ICON
 }
 
 /*static*/ void MainWindow::installGroupChatNotifier()
@@ -428,6 +539,16 @@ void MainWindow::createTrayIcon()
     } else {
         QObject::disconnect(_instance->peersDialog, SIGNAL(notifyGroupChat(const QString&,const QString&)), _instance, SLOT(displaySystrayMsg(const QString&,const QString&)));
     }
+}
+
+/*static*/ void MainWindow::installNotifyIcons()
+{
+   if (_instance == NULL) {
+       // nothing to do
+       return;
+   }
+
+   _instance->createNotifyIcons();
 }
 
 void MainWindow::displaySystrayMsg(const QString& title,const QString& msg)
@@ -446,16 +567,33 @@ void MainWindow::updateMessages()
         messageAction->setIcon(QIcon(QPixmap(":/images/evolution.png"))) ;
     }
 
-    if (newInboxCount && (Settings->getTrayNotifyFlags() & TRAYNOTIFY_MESSAGES)) {
-        if (newInboxCount > 1) {
-            trayIconMessages->setToolTip(tr("RetroShare") + "\n" + tr("You have %1 new messages").arg(newInboxCount));
+    if (trayIconMessages) {
+        if (newInboxCount) {
+            if (newInboxCount > 1) {
+                trayIconMessages->setToolTip("RetroShare\n" + tr("You have %1 new messages").arg(newInboxCount));
+            } else {
+                trayIconMessages->setToolTip("RetroShare\n" + tr("You have %1 new message").arg(newInboxCount));
+            }
+            trayIconMessages->show();
         } else {
-            trayIconMessages->setToolTip(tr("RetroShare") + "\n" + tr("You have %1 new message").arg(newInboxCount));
+            trayIconMessages->hide();
         }
-        trayIconMessages->show();
-    } else {
-        trayIconMessages->hide();
     }
+
+    if (trayActionMessages) {
+        if (newInboxCount) {
+            if (newInboxCount > 1) {
+                trayActionMessages->setText(tr("%1 new messages").arg(newInboxCount));
+            } else {
+                trayActionMessages->setText(tr("%1 new message").arg(newInboxCount));
+            }
+            trayActionMessages->setVisible(true);
+        } else {
+            trayActionMessages->setVisible(false);
+        }
+    }
+
+    updateTrayCombine();
 }
 
 void MainWindow::updateForums()
@@ -470,16 +608,33 @@ void MainWindow::updateForums()
         forumAction->setIcon(QIcon(IMAGE_FORUMS)) ;
     }
 
-    if (newMessageCount && (Settings->getTrayNotifyFlags() & TRAYNOTIFY_FORUMS)) {
-        if (newMessageCount > 1) {
-            trayIconForums->setToolTip(tr("RetroShare") + "\n" + tr("You have %1 new messages").arg(newMessageCount));
+    if (trayIconForums) {
+        if (newMessageCount) {
+            if (newMessageCount > 1) {
+                trayIconForums->setToolTip("RetroShare\n" + tr("You have %1 new messages").arg(newMessageCount));
+            } else {
+                trayIconForums->setToolTip("RetroShare\n" + tr("You have %1 new message").arg(newMessageCount));
+            }
+            trayIconForums->show();
         } else {
-            trayIconForums->setToolTip(tr("RetroShare") + "\n" + tr("You have %1 new message").arg(newMessageCount));
+            trayIconForums->hide();
         }
-        trayIconForums->show();
-    } else {
-        trayIconForums->hide();
     }
+
+    if (trayActionForums) {
+        if (newMessageCount) {
+            if (newMessageCount > 1) {
+                trayActionForums->setText(tr("%1 new messages").arg(newMessageCount));
+            } else {
+                trayActionForums->setText(tr("%1 new message").arg(newMessageCount));
+            }
+            trayActionForums->setVisible(true);
+        } else {
+            trayActionForums->setVisible(false);
+        }
+    }
+
+    updateTrayCombine();
 }
 
 void MainWindow::updateChannels(int type)
@@ -494,16 +649,33 @@ void MainWindow::updateChannels(int type)
         channelAction->setIcon(QIcon(IMAGE_CHANNELS)) ;
     }
 
-    if (newMessageCount && (Settings->getTrayNotifyFlags() & TRAYNOTIFY_CHANNELS)) {
-        if (newMessageCount > 1) {
-            trayIconChannels->setToolTip(tr("RetroShare") + "\n" + tr("You have %1 new messages").arg(newMessageCount));
+    if (trayIconChannels) {
+        if (newMessageCount) {
+            if (newMessageCount > 1) {
+                trayIconChannels->setToolTip("RetroShare\n" + tr("You have %1 new messages").arg(newMessageCount));
+            } else {
+                trayIconChannels->setToolTip("RetroShare\n" + tr("You have %1 new message").arg(newMessageCount));
+            }
+            trayIconChannels->show();
         } else {
-            trayIconChannels->setToolTip(tr("RetroShare") + "\n" + tr("You have %1 new message").arg(newMessageCount));
+            trayIconChannels->hide();
         }
-        trayIconChannels->show();
-    } else {
-        trayIconChannels->hide();
     }
+
+    if (trayActionChannels) {
+        if (newMessageCount) {
+            if (newMessageCount > 1) {
+                trayActionChannels->setText(tr("%1 new messages").arg(newMessageCount));
+            } else {
+                trayActionChannels->setText(tr("%1 new message").arg(newMessageCount));
+            }
+            trayActionChannels->setVisible(true);
+        } else {
+            trayActionChannels->setVisible(false);
+        }
+    }
+
+    updateTrayCombine();
 }
 
 void MainWindow::updateTransfers(int count)
@@ -514,15 +686,57 @@ void MainWindow::updateTransfers(int count)
         transferAction->setIcon(QIcon(IMAGE_TRANSFERS)) ;
     }
 
-    if (count && (Settings->getTrayNotifyFlags() & TRAYNOTIFY_TRANSFERS)) {
-        if (count > 1) {
-            trayIconTransfers->setToolTip(tr("RetroShare") + "\n" + tr("You have %1 completed downloads").arg(count));
+    if (trayIconTransfers) {
+        if (count) {
+            if (count > 1) {
+                trayIconTransfers->setToolTip("RetroShare\n" + tr("You have %1 completed downloads").arg(count));
+            } else {
+                trayIconTransfers->setToolTip("RetroShare\n" + tr("You have %1 completed download").arg(count));
+            }
+            trayIconTransfers->show();
         } else {
-            trayIconTransfers->setToolTip(tr("RetroShare") + "\n" + tr("You have %1 completed download").arg(count));
+            trayIconTransfers->hide();
         }
-        trayIconTransfers->show();
-    } else {
-        trayIconTransfers->hide();
+    }
+
+    if (trayActionTransfers) {
+        if (count) {
+            if (count > 1) {
+                trayActionTransfers->setText(tr("%1 completed downloads").arg(count));
+            } else {
+                trayActionTransfers->setText(tr("%1 completed download").arg(count));
+            }
+            trayActionTransfers->setVisible(true);
+        } else {
+            trayActionTransfers->setVisible(false);
+        }
+    }
+
+    updateTrayCombine();
+}
+
+void MainWindow::updateTrayCombine()
+{
+    if (trayIconCombined) {
+        QMenu *trayMenu = trayIconCombined->contextMenu();
+        QList<QAction*> actions = trayMenu->actions();
+
+        bool visible = false;
+        QString toolTip;
+
+        QList<QAction*>::iterator actionIt;
+        for (actionIt = actions.begin(); actionIt != actions.end(); actionIt++) {
+            if ((*actionIt)->isVisible()) {
+                visible = true;
+                if (toolTip.isEmpty() == false) {
+                    toolTip += "\r";
+                }
+                toolTip += (*actionIt)->data().toString() + ":" + (*actionIt)->text();
+            }
+        }
+
+        trayIconCombined->setToolTip(toolTip);
+        trayIconCombined->setVisible(visible);
     }
 }
 
@@ -569,7 +783,7 @@ void MainWindow::updateStatus()
         trayIcon->setIcon(QIcon(IMAGE_RETROSHARE));
     }
 
-    QString tray = tr("RetroShare") + "\n" + tr("Down: %1 (kB/s)").arg(downKb, 0, 'f', 2) + " | " + tr("Up: %1 (kB/s)").arg(upKb, 0, 'f', 2) + "\n";
+    QString tray = "RetroShare\n" + tr("Down: %1 (kB/s)").arg(downKb, 0, 'f', 2) + " | " + tr("Up: %1 (kB/s)").arg(upKb, 0, 'f', 2) + "\n";
 
     if (nOnlineCount == 1) {
         tray += tr("%1 friend connected").arg(nOnlineCount);
@@ -589,11 +803,33 @@ void MainWindow::privateChatChanged(int list, int type)
         /* than count the chat messages */
         int chatCount = rsMsgs->getPrivateChatQueueCount(true);
 
-        if (chatCount && (Settings->getTrayNotifyFlags() & TRAYNOTIFY_PRIVATECHAT)) {
-            trayIconChat->show();
-        } else {
-            trayIconChat->hide();
+        if (trayIconChat) {
+            if (chatCount) {
+                if (chatCount > 1) {
+                    trayIconChat->setToolTip("RetroShare\n" + tr("You have %1 new messages").arg(chatCount));
+                } else {
+                    trayIconChat->setToolTip("RetroShare\n" + tr("You have %1 new message").arg(chatCount));
+                }
+                trayIconChat->show();
+            } else {
+                trayIconChat->hide();
+            }
         }
+
+        if (trayActionChat) {
+            if (chatCount) {
+                if (chatCount > 1) {
+                    trayActionChat->setText(tr("%1 new messages").arg(chatCount));
+                } else {
+                    trayActionChat->setText(tr("%1 new message").arg(chatCount));
+                }
+                trayActionChat->setVisible(true);
+            } else {
+                trayActionChat->setVisible(false);;
+            }
+        }
+
+        updateTrayCombine();
     }
 }
 

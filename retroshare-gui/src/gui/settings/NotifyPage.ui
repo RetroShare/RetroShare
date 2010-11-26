@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>396</width>
+    <width>408</width>
     <height>425</height>
    </rect>
   </property>
@@ -613,6 +613,20 @@
            <widget class="QCheckBox" name="trayNotify_Transfer">
             <property name="text">
              <string>Download completed</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="Line" name="line_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="trayNotify_CombinedIcon">
+            <property name="text">
+             <string>Combined icon</string>
             </property>
            </widget>
           </item>

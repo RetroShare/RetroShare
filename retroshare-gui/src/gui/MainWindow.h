@@ -131,6 +131,7 @@ public:
     PluginsPage*   pluginsPage ;
 
     static void installGroupChatNotifier();
+    static void installNotifyIcons();
 
     /* initialize widget with status informations, status constant stored in data or in Qt::UserRole */
     void initializeStatusObject(QObject *pObject, bool bConnect);
@@ -164,11 +165,13 @@ private slots:
 
     void toggleVisibility(QSystemTrayIcon::ActivationReason e);
     void toggleVisibilitycontextmenu();
-    void trayIconMessagesClicked(QSystemTrayIcon::ActivationReason e);
-    void trayIconForumsClicked(QSystemTrayIcon::ActivationReason e);
-    void trayIconChannelsClicked(QSystemTrayIcon::ActivationReason e);
-    void trayIconChatClicked(QSystemTrayIcon::ActivationReason e);
-    void trayIconTransfersClicked(QSystemTrayIcon::ActivationReason e);
+
+    /* default parameter for connect with the actions of the combined systray icon */
+    void trayIconMessagesClicked(QSystemTrayIcon::ActivationReason e = QSystemTrayIcon::Trigger);
+    void trayIconForumsClicked(QSystemTrayIcon::ActivationReason e = QSystemTrayIcon::Trigger);
+    void trayIconChannelsClicked(QSystemTrayIcon::ActivationReason e = QSystemTrayIcon::Trigger);
+    void trayIconChatClicked(QSystemTrayIcon::ActivationReason e = QSystemTrayIcon::Trigger);
+    void trayIconTransfersClicked(QSystemTrayIcon::ActivationReason e = QSystemTrayIcon::Trigger);
 
     /** Toolbar fns. */
     void addFriend();
@@ -206,6 +209,8 @@ private:
     void createActions();
     
     void createTrayIcon();
+    void createNotifyIcons();
+    void updateTrayCombine();
 
     static MainWindow *_instance;
 
@@ -231,13 +236,18 @@ private:
     void loadStyleSheet(const QString &sheetName);
 
     QSystemTrayIcon *trayIcon;
+    QSystemTrayIcon *trayIconCombined;
     QSystemTrayIcon *trayIconMessages;
     QSystemTrayIcon *trayIconForums;
     QSystemTrayIcon *trayIconChannels;
     QSystemTrayIcon *trayIconChat;
     QSystemTrayIcon *trayIconTransfers;
+    QAction *trayActionMessages;
+    QAction *trayActionForums;
+    QAction *trayActionChannels;
+    QAction *trayActionChat;
+    QAction *trayActionTransfers;
     QAction *toggleVisibilityAction, *toolAct;
-    QMenu *trayMenu;
 
     PeerStatus *peerstatus;
     NATStatus *natstatus;
