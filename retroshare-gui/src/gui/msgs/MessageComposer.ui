@@ -17,7 +17,7 @@
    <string>Compose</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../images.qrc">
+   <iconset>
     <normaloff>:/images/folder-draft.png</normaloff>:/images/folder-draft.png</iconset>
   </property>
   <property name="styleSheet">
@@ -379,7 +379,7 @@ border: 1px solid #CCCCCC;}</string>
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset resource="../images.qrc">
+                 <iconset>
                   <normaloff>:/images/textedit/format_font_size_more.png</normaloff>:/images/textedit/format_font_size_more.png</iconset>
                 </property>
                 <property name="iconSize">
@@ -408,7 +408,7 @@ border: 1px solid #CCCCCC;}</string>
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset resource="../images.qrc">
+                 <iconset>
                   <normaloff>:/images/textedit/format_font_size_less.png</normaloff>:/images/textedit/format_font_size_less.png</iconset>
                 </property>
                 <property name="iconSize">
@@ -443,7 +443,7 @@ border: 1px solid #CCCCCC;}</string>
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset resource="../images.qrc">
+                 <iconset>
                   <normaloff>:/images/textedit/textbold.png</normaloff>:/images/textedit/textbold.png</iconset>
                 </property>
                 <property name="iconSize">
@@ -481,7 +481,7 @@ border: 1px solid #CCCCCC;}</string>
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset resource="../images.qrc">
+                 <iconset>
                   <normaloff>:/images/textedit/textunder.png</normaloff>:/images/textedit/textunder.png</iconset>
                 </property>
                 <property name="iconSize">
@@ -519,7 +519,7 @@ border: 1px solid #CCCCCC;}</string>
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset resource="../images.qrc">
+                 <iconset>
                   <normaloff>:/images/textedit/textitalic.png</normaloff>:/images/textedit/textitalic.png</iconset>
                 </property>
                 <property name="iconSize">
@@ -616,7 +616,7 @@ border: 1px solid #CCCCCC;}</string>
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset resource="../images.qrc">
+                 <iconset>
                   <normaloff>:/images/add_image24.png</normaloff>:/images/add_image24.png</iconset>
                 </property>
                 <property name="iconSize">
@@ -639,7 +639,7 @@ border: 1px solid #CCCCCC;}</string>
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset resource="../images.qrc">
+                 <iconset>
                   <normaloff>:/images/textedit/hi22-action-format-text-code.png</normaloff>:/images/textedit/hi22-action-format-text-code.png</iconset>
                 </property>
                 <property name="iconSize">
@@ -669,7 +669,7 @@ border: 1px solid #CCCCCC;}</string>
               <item row="0" column="3">
                <widget class="QToolButton" name="emoticonButton">
                 <property name="icon">
-                 <iconset resource="../images.qrc">
+                 <iconset>
                   <normaloff>:/images/emoticons/kopete/kopete020.png</normaloff>:/images/emoticons/kopete/kopete020.png</iconset>
                 </property>
                 <property name="iconSize">
@@ -836,7 +836,42 @@ border: 1px solid #CCCCCC;}</string>
           </widget>
          </item>
          <item row="2" column="0">
-          <layout class="QVBoxLayout" name="verticalLayout"/>
+          <widget class="QScrollArea" name="hashBox">
+           <property name="widgetResizable">
+            <bool>true</bool>
+           </property>
+           <widget class="QWidget" name="scrollAreaWidgetContents">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>560</width>
+              <height>57</height>
+             </rect>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_2">
+             <property name="margin">
+              <number>0</number>
+             </property>
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout"/>
+             </item>
+             <item>
+              <spacer name="verticalSpacer">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>46</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </widget>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -884,7 +919,7 @@ border: 1px solid #CCCCCC;}</string>
   </widget>
   <action name="actionSend">
    <property name="icon">
-    <iconset resource="../images.qrc">
+    <iconset>
      <normaloff>:/images/send24.png</normaloff>:/images/send24.png</iconset>
    </property>
    <property name="text">
@@ -896,7 +931,7 @@ border: 1px solid #CCCCCC;}</string>
   </action>
   <action name="actionReply">
    <property name="icon">
-    <iconset resource="../images.qrc">
+    <iconset>
      <normaloff>:/images/replymail24.png</normaloff>:/images/replymail24.png</iconset>
    </property>
    <property name="text">
@@ -905,7 +940,7 @@ border: 1px solid #CCCCCC;}</string>
   </action>
   <action name="actionContactsView">
    <property name="icon">
-    <iconset resource="../images.qrc">
+    <iconset>
      <normaloff>:/images/contacts24.png</normaloff>:/images/contacts24.png</iconset>
    </property>
    <property name="text">
@@ -917,7 +952,7 @@ border: 1px solid #CCCCCC;}</string>
   </action>
   <action name="actionSaveas">
    <property name="icon">
-    <iconset resource="../images.qrc">
+    <iconset>
      <normaloff>:/images/save24.png</normaloff>:/images/save24.png</iconset>
    </property>
    <property name="text">
@@ -929,7 +964,7 @@ border: 1px solid #CCCCCC;}</string>
   </action>
   <action name="actionAttach">
    <property name="icon">
-    <iconset resource="../images.qrc">
+    <iconset>
      <normaloff>:/images/attach.png</normaloff>:/images/attach.png</iconset>
    </property>
    <property name="text">
@@ -944,7 +979,7 @@ border: 1px solid #CCCCCC;}</string>
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../images.qrc">
+    <iconset>
      <normaloff>:/images/quote_24.png</normaloff>:/images/quote_24.png</iconset>
    </property>
    <property name="text">
@@ -960,8 +995,6 @@ border: 1px solid #CCCCCC;}</string>
   <tabstop>msgText</tabstop>
   <tabstop>msgFileList</tabstop>
  </tabstops>
- <resources>
-  <include location="../images.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

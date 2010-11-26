@@ -125,6 +125,8 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
 
     setAttribute ( Qt::WA_DeleteOnClose, true );
 
+    ui.hashBox->hide();
+
     // connect up the buttons.
     connect( ui.actionSend, SIGNAL( triggered (bool)), this, SLOT( sendMessage( ) ) );
     //connect( ui.actionReply, SIGNAL( triggered (bool)), this, SLOT( replyMessage( ) ) );
@@ -751,6 +753,13 @@ void  MessageComposer::insertFileList(const std::list<FileInfo>& files_info)
 
 void MessageComposer::addFile(const FileInfo &fileInfo)
 {
+    for(std::list<FileInfo>::iterator it = _recList.begin(); it != _recList.end(); it++) {
+        if (it->hash == fileInfo.hash) {
+            /* File already added */
+            return;
+        }
+    }
+
     _recList.push_back(fileInfo) ;
 
     /* make a widget per person */
@@ -2144,8 +2153,9 @@ void MessageComposer::addAttachment(std::string filePath)
 
     /* add widget in for new destination */
     AttachFileItem *file = new AttachFileItem(filePath);
-    //file->
 
+    ui.hashBox->show();
+    ui.msgFileList->hide();
     ui.verticalLayout->addWidget(file, 1, 0);
 
     //when the file is local or is finished hashing, call the fileHashingFinished method to send a chat message
@@ -2195,8 +2205,6 @@ void MessageComposer::checkAttachmentReady()
         {
             if (!(*fit)->ready())
             {
-                /*
-				 */
                 ui.actionSend->setEnabled(false);
                 break;
             }
@@ -2206,6 +2214,8 @@ void MessageComposer::checkAttachmentReady()
     if (fit == mAttachments.end())
     {
         ui.actionSend->setEnabled(true);
+        ui.hashBox->hide();
+        ui.msgFileList->show();
     }
 
     /* repeat... */
