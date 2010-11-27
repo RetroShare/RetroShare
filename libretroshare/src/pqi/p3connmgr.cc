@@ -73,11 +73,6 @@ const uint32_t PEER_IP_CONNECT_STATE_MAX_LIST_SIZE =     	4;
  * #define CONN_DEBUG_TICK 1
  ***/
 
-#define CONN_DEBUG 1
-#define CONN_DEBUG_RESET 1
-#define CONN_DEBUG_TICK 1
-#define CONN_DEBUG_RESET 1
-
 /****
  * #define P3CONNMGR_NO_TCP_CONNECTIONS 1
  ***/
@@ -2594,8 +2589,8 @@ bool  p3ConnectMgr::locked_CheckPotentialAddr(struct sockaddr_in *addr, time_t a
 	}
 
 	bool isValid = isValidNet(&(addr->sin_addr));
-	bool isLoopback = isLoopbackNet(&(addr->sin_addr));
-	bool isPrivate = isPrivateNet(&(addr->sin_addr));
+//	bool isLoopback = isLoopbackNet(&(addr->sin_addr));
+//	bool isPrivate = isPrivateNet(&(addr->sin_addr));
 	bool isExternal = isExternalNet(&(addr->sin_addr));
 
 	/* if invalid - quick rejection */
