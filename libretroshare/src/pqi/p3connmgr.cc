@@ -73,6 +73,9 @@ const uint32_t PEER_IP_CONNECT_STATE_MAX_LIST_SIZE =     	4;
  * #define CONN_DEBUG_TICK 1
  ***/
 
+#define CONN_DEBUG 1
+#define CONN_DEBUG_RESET 1
+#define CONN_DEBUG_TICK 1
 #define CONN_DEBUG_RESET 1
 
 /****
@@ -1737,120 +1740,128 @@ bool p3ConnectMgr::connectAttempt(std::string id, struct sockaddr_in &addr,
 
 bool p3ConnectMgr::connectResult(std::string id, bool success, uint32_t flags, struct sockaddr_in remote_peer_address)
 {
-	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
-
-        rslog(RSL_WARNING, p3connectzone, "p3ConnectMgr::connectResult() called Connect!: id: " + id);
-        if (success) {
-            rslog(RSL_WARNING, p3connectzone, "p3ConnectMgr::connectResult() called with SUCCESS.");
-        } else {
-            rslog(RSL_WARNING, p3connectzone, "p3ConnectMgr::connectResult() called with FAILED.");
-        }
-        
-        if (id == getOwnId()) {
-#ifdef CONN_DEBUG
-                rslog(RSL_WARNING, p3connectzone, "p3ConnectMgr::connectResult() Failed, connecting to own id: ");
-#endif
-            return false;
-        }
-	/* check for existing */
-        std::map<std::string, peerConnectState>::iterator it;
-	it = mFriendList.find(id);
-	if (it == mFriendList.end())
+	bool should_netAssistFriend_false = false ;
+	bool should_netAssistFriend_true  = false ;
 	{
-#ifdef CONN_DEBUG
-		std::cerr << "p3ConnectMgr::connectResult() Failed, missing Friend " << " id: " << id << std::endl;
-#endif
-		return false;
-	}
+		RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
-	if (success)
-	{
-                /* update address (should also come through from DISC) */
-
-#ifdef CONN_DEBUG
-		std::cerr << "p3ConnectMgr::connectResult() Connect!: id: " << id << std::endl;
-		std::cerr << " Success: " << success << " flags: " << flags << std::endl;
-#endif
-
-                rslog(RSL_WARNING, p3connectzone, "p3ConnectMgr::connectResult() Success");
-
-		/* change state */
-		it->second.state |= RS_PEER_S_CONNECTED;
-		it->second.actions |= RS_PEER_CONNECTED;
-		it->second.lastcontact = time(NULL);  /* time of connect */
-                it->second.connecttype = flags;
-
-
-		/* only update the peer's address if we were in a connect attempt.
-		 * Otherwise, they connected to us, and the address will be a
-		 * random port of their outgoing TCP socket
-		 *
-		 * NB even if we received the connection, the IP address is likely to okay.
-		 */
-
-                //used to send back to the peer it's own ext address
-                //it->second.currentserveraddr = remote_peer_address;
-
-		if ((it->second.inConnAttempt) &&
-        		(it->second.currentConnAddrAttempt.addr.sin_addr.s_addr 
-					== remote_peer_address.sin_addr.s_addr) &&
-        		(it->second.currentConnAddrAttempt.addr.sin_port 
-					== remote_peer_address.sin_port))
-		{
-                 	pqiIpAddress raddr;
-                 	raddr.mAddr = remote_peer_address;
-                 	raddr.mSeenTime = time(NULL);
-                 	raddr.mSrc = 0;
-			if (isPrivateNet(&(remote_peer_address.sin_addr)))
-			{
-                 		it->second.ipAddrs.updateLocalAddrs(raddr);
-                		it->second.currentlocaladdr = remote_peer_address;
-			}
-			else
-			{
-                 		it->second.ipAddrs.updateExtAddrs(raddr);
-                		it->second.currentserveraddr = remote_peer_address;
-			}
-#ifdef CONN_DEBUG
-			std::cerr << "p3ConnectMgr::connectResult() adding current peer address in list." << std::endl;
-			it->second.ipAddrs.printAddrs(std::cerr);
-#endif
+		rslog(RSL_WARNING, p3connectzone, "p3ConnectMgr::connectResult() called Connect!: id: " + id);
+		if (success) {
+			rslog(RSL_WARNING, p3connectzone, "p3ConnectMgr::connectResult() called with SUCCESS.");
+		} else {
+			rslog(RSL_WARNING, p3connectzone, "p3ConnectMgr::connectResult() called with FAILED.");
 		}
 
-                /* remove other attempts */
-                it->second.inConnAttempt = false;
-                it->second.connAddrs.clear();
-                netAssistFriend(id, false);
-                mStatusChanged = true;
-                return true;
-        }
+		if (id == getOwnId()) {
+#ifdef CONN_DEBUG
+			rslog(RSL_WARNING, p3connectzone, "p3ConnectMgr::connectResult() Failed, connecting to own id: ");
+#endif
+			return false;
+		}
+		/* check for existing */
+		std::map<std::string, peerConnectState>::iterator it;
+		it = mFriendList.find(id);
+		if (it == mFriendList.end())
+		{
+#ifdef CONN_DEBUG
+			std::cerr << "p3ConnectMgr::connectResult() Failed, missing Friend " << " id: " << id << std::endl;
+#endif
+			return false;
+		}
 
-        it->second.inConnAttempt = false;
+		if (success)
+		{
+			/* update address (should also come through from DISC) */
 
 #ifdef CONN_DEBUG
-	std::cerr << "p3ConnectMgr::connectResult() Disconnect/Fail: id: " << id << std::endl;
-	std::cerr << " Success: " << success << " flags: " << flags << std::endl;
+			std::cerr << "p3ConnectMgr::connectResult() Connect!: id: " << id << std::endl;
+			std::cerr << " Success: " << success << " flags: " << flags << std::endl;
 #endif
 
-	/* if currently connected -> flag as failed */
-	if (it->second.state & RS_PEER_S_CONNECTED)
-	{
-		it->second.state &= (~RS_PEER_S_CONNECTED);
-		it->second.actions |= RS_PEER_DISCONNECTED;
-		mStatusChanged = true;
+			rslog(RSL_WARNING, p3connectzone, "p3ConnectMgr::connectResult() Success");
 
-		it->second.lastcontact = time(NULL);  /* time of disconnect */
+			/* change state */
+			it->second.state |= RS_PEER_S_CONNECTED;
+			it->second.actions |= RS_PEER_CONNECTED;
+			it->second.lastcontact = time(NULL);  /* time of connect */
+			it->second.connecttype = flags;
 
-		netAssistFriend(id, true);
+
+			/* only update the peer's address if we were in a connect attempt.
+			 * Otherwise, they connected to us, and the address will be a
+			 * random port of their outgoing TCP socket
+			 *
+			 * NB even if we received the connection, the IP address is likely to okay.
+			 */
+
+			//used to send back to the peer it's own ext address
+			//it->second.currentserveraddr = remote_peer_address;
+
+			if ((it->second.inConnAttempt) &&
+					(it->second.currentConnAddrAttempt.addr.sin_addr.s_addr 
+					 == remote_peer_address.sin_addr.s_addr) &&
+					(it->second.currentConnAddrAttempt.addr.sin_port 
+					 == remote_peer_address.sin_port))
+			{
+				pqiIpAddress raddr;
+				raddr.mAddr = remote_peer_address;
+				raddr.mSeenTime = time(NULL);
+				raddr.mSrc = 0;
+				if (isPrivateNet(&(remote_peer_address.sin_addr)))
+				{
+					it->second.ipAddrs.updateLocalAddrs(raddr);
+					it->second.currentlocaladdr = remote_peer_address;
+				}
+				else
+				{
+					it->second.ipAddrs.updateExtAddrs(raddr);
+					it->second.currentserveraddr = remote_peer_address;
+				}
+#ifdef CONN_DEBUG
+				std::cerr << "p3ConnectMgr::connectResult() adding current peer address in list." << std::endl;
+				it->second.ipAddrs.printAddrs(std::cerr);
+#endif
+			}
+
+			/* remove other attempts */
+			it->second.inConnAttempt = false;
+			it->second.connAddrs.clear();
+			should_netAssistFriend_false = true ;
+			mStatusChanged = true;
+			return true;
+		}
+		else
+		{
+			it->second.inConnAttempt = false;
+
+#ifdef CONN_DEBUG
+			std::cerr << "p3ConnectMgr::connectResult() Disconnect/Fail: id: " << id << std::endl;
+			std::cerr << " Success: " << success << " flags: " << flags << std::endl;
+#endif
+
+			/* if currently connected -> flag as failed */
+			if (it->second.state & RS_PEER_S_CONNECTED)
+			{
+				it->second.state &= (~RS_PEER_S_CONNECTED);
+				it->second.actions |= RS_PEER_DISCONNECTED;
+				mStatusChanged = true;
+
+				it->second.lastcontact = time(NULL);  /* time of disconnect */
+
+				should_netAssistFriend_true = true ;
+			}
+
+			if (it->second.connAddrs.size() >= 1)
+			{
+				it->second.actions |= RS_PEER_CONNECT_REQ;
+				mStatusChanged = true;
+			}
+		}
 	}
-		
-	if (it->second.connAddrs.size() < 1)
-	{
-		return true;
-	}
-	
-	it->second.actions |= RS_PEER_CONNECT_REQ;
-	mStatusChanged = true;
+	if(should_netAssistFriend_true)
+		netAssistFriend(id,true) ;
+	if(should_netAssistFriend_false)
+		netAssistFriend(id,false) ;
 
 	return true;
 }
@@ -2152,117 +2163,125 @@ void    p3ConnectMgr::peerConnectRequest(std::string id, struct sockaddr_in radd
 
 bool p3ConnectMgr::addFriend(std::string id, std::string gpg_id, uint32_t netMode, uint32_t visState, time_t lastContact)
 {
-    RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
-
-    //set a new retry period, so the more frinds we have the less we launch conection attempts
-    mRetryPeriod = MIN_RETRY_PERIOD + (mFriendList.size() * 2);
-
-    if (id == AuthSSL::getAuthSSL()->OwnId()) {
-#ifdef CONN_DEBUG
-                std::cerr << "p3ConnectMgr::addFriend() cannot add own id as a friend." << std::endl;
-#endif
-                /* (1) already exists */
-                return false;
-    }
-        /* so four possibilities
-	 * (1) already exists as friend -> do nothing.
-	 * (2) is in others list -> move over.
-	 * (3) is non-existant -> create new one.
-	 */
-
-#ifdef CONN_DEBUG
-        std::cerr << "p3ConnectMgr::addFriend() " << id << "; gpg_id : " << gpg_id << std::endl;
-#endif
-
-	std::map<std::string, peerConnectState>::iterator it;
-	if (mFriendList.end() != mFriendList.find(id))
+	bool should_netAssistFriend_true = false ;
+	bool should_netAssistFriend_false = false ;
 	{
+		RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
+		//set a new retry period, so the more frinds we have the less we launch conection attempts
+		mRetryPeriod = MIN_RETRY_PERIOD + (mFriendList.size() * 2);
+
+		if (id == AuthSSL::getAuthSSL()->OwnId()) {
 #ifdef CONN_DEBUG
-		std::cerr << "p3ConnectMgr::addFriend() Already Exists" << std::endl;
+			std::cerr << "p3ConnectMgr::addFriend() cannot add own id as a friend." << std::endl;
 #endif
-		/* (1) already exists */
-		return true;
-	}
+			/* (1) already exists */
+			return false;
+		}
+		/* so four possibilities
+		 * (1) already exists as friend -> do nothing.
+		 * (2) is in others list -> move over.
+		 * (3) is non-existant -> create new one.
+		 */
 
-	//Authentication is now tested at connection time, we don't store the ssl cert anymore
-	//
-	if (!AuthGPG::getAuthGPG()->isGPGAccepted(gpg_id) &&  gpg_id != AuthGPG::getAuthGPG()->getGPGOwnId())
-	{
 #ifdef CONN_DEBUG
-		std::cerr << "p3ConnectMgr::addFriend() gpg is not accepted" << std::endl;
-#endif
-		/* no auth */
-		return false;
-	}
-
-
-        /* check if it is in others */
-	if (mOthersList.end() != (it = mOthersList.find(id)))
-	{
-		/* (2) in mOthersList -> move over */
-#ifdef CONN_DEBUG
-		std::cerr << "p3ConnectMgr::addFriend() Move from Others" << std::endl;
+		std::cerr << "p3ConnectMgr::addFriend() " << id << "; gpg_id : " << gpg_id << std::endl;
 #endif
 
-		mFriendList[id] = it->second;
-		mOthersList.erase(it);
-
-		it = mFriendList.find(id);
-
-		/* setup state */
-		it->second.state = RS_PEER_S_FRIEND;
-		it->second.actions = RS_PEER_NEW;
-
-		/* setup connectivity parameters */
-		it->second.visState = visState;
-		it->second.netMode  = netMode;
-		it->second.lastcontact = lastContact;
-
-		mStatusChanged = true;
-
-		/* add peer to DHT (if not dark) */
-		if (it->second.visState & RS_VIS_STATE_NODHT)
+		std::map<std::string, peerConnectState>::iterator it;
+		if (mFriendList.end() != mFriendList.find(id))
 		{
-			/* hidden from DHT world */
-			netAssistFriend(id, false);
+#ifdef CONN_DEBUG
+			std::cerr << "p3ConnectMgr::addFriend() Already Exists" << std::endl;
+#endif
+			/* (1) already exists */
+			return true;
+		}
+
+		//Authentication is now tested at connection time, we don't store the ssl cert anymore
+		//
+		if (!AuthGPG::getAuthGPG()->isGPGAccepted(gpg_id) &&  gpg_id != AuthGPG::getAuthGPG()->getGPGOwnId())
+		{
+#ifdef CONN_DEBUG
+			std::cerr << "p3ConnectMgr::addFriend() gpg is not accepted" << std::endl;
+#endif
+			/* no auth */
+			return false;
+		}
+
+
+		/* check if it is in others */
+		if (mOthersList.end() != (it = mOthersList.find(id)))
+		{
+			/* (2) in mOthersList -> move over */
+#ifdef CONN_DEBUG
+			std::cerr << "p3ConnectMgr::addFriend() Move from Others" << std::endl;
+#endif
+
+			mFriendList[id] = it->second;
+			mOthersList.erase(it);
+
+			it = mFriendList.find(id);
+
+			/* setup state */
+			it->second.state = RS_PEER_S_FRIEND;
+			it->second.actions = RS_PEER_NEW;
+
+			/* setup connectivity parameters */
+			it->second.visState = visState;
+			it->second.netMode  = netMode;
+			it->second.lastcontact = lastContact;
+
+			mStatusChanged = true;
+
+			/* add peer to DHT (if not dark) */
+			if (it->second.visState & RS_VIS_STATE_NODHT)
+			{
+				/* hidden from DHT world */
+				should_netAssistFriend_false = true ;
+			}
+			else
+			{
+				should_netAssistFriend_true = true ;
+			}
+
+			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 		}
 		else
 		{
-			netAssistFriend(id, true);
-		}
-
-		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
-
-		return true;
-	}
-
 #ifdef CONN_DEBUG
-	std::cerr << "p3ConnectMgr::addFriend() Creating New Entry" << std::endl;
+			std::cerr << "p3ConnectMgr::addFriend() Creating New Entry" << std::endl;
 #endif
 
-	/* create a new entry */
-	peerConnectState pstate;
+			/* create a new entry */
+			peerConnectState pstate;
 
-	pstate.id = id;
-        pstate.gpg_id = gpg_id;
-        pstate.name = AuthGPG::getAuthGPG()->getGPGName(gpg_id);
+			pstate.id = id;
+			pstate.gpg_id = gpg_id;
+			pstate.name = AuthGPG::getAuthGPG()->getGPGName(gpg_id);
 
-	pstate.state = RS_PEER_S_FRIEND;
-	pstate.actions = RS_PEER_NEW;
-	pstate.visState = visState;
-	pstate.netMode = netMode;
-	pstate.lastcontact = lastContact;
+			pstate.state = RS_PEER_S_FRIEND;
+			pstate.actions = RS_PEER_NEW;
+			pstate.visState = visState;
+			pstate.netMode = netMode;
+			pstate.lastcontact = lastContact;
 
-	/* addr & timestamps -> auto cleared */
+			/* addr & timestamps -> auto cleared */
 
-	mFriendList[id] = pstate;
+			mFriendList[id] = pstate;
 
-	mStatusChanged = true;
+			mStatusChanged = true;
 
-	/* expect it to be a standard DHT */
-	netAssistFriend(id, true);
+			/* expect it to be a standard DHT */
+			should_netAssistFriend_true = true ;
 
-	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+		}
+	}
+	if(should_netAssistFriend_true)
+		netAssistFriend(id,true) ;
+	if(should_netAssistFriend_false)
+		netAssistFriend(id,false) ;
 
 	return true;
 }
@@ -3122,8 +3141,7 @@ bool    p3ConnectMgr::setLocation(std::string id, std::string location)
 
 bool    p3ConnectMgr::setVisState(std::string id, uint32_t visState)
 {
-
-        if (id == AuthSSL::getAuthSSL()->OwnId())
+	if (id == AuthSSL::getAuthSSL()->OwnId())
 	{
 		uint32_t netMode;
 		{
@@ -3134,29 +3152,33 @@ bool    p3ConnectMgr::setVisState(std::string id, uint32_t visState)
 		return true;
 	}
 
-	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
-
-	/* check if it is a friend */
-        std::map<std::string, peerConnectState>::iterator it;
+	bool dht_state ;
 	bool isFriend = false;
-	if (mFriendList.end() == (it = mFriendList.find(id)))
 	{
-		if (mOthersList.end() == (it = mOthersList.find(id)))
-		{
-			return false;
-		}
-	}
-	else
-	{
-		isFriend = true;
-	}
+		RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
-	/* "it" points to peer */
-	it->second.visState = visState;
-	if (isFriend)
+		/* check if it is a friend */
+		std::map<std::string, peerConnectState>::iterator it;
+		if (mFriendList.end() == (it = mFriendList.find(id)))
+		{
+			if (mOthersList.end() == (it = mOthersList.find(id)))
+			{
+				return false;
+			}
+		}
+		else
+		{
+			isFriend = true;
+		}
+
+		/* "it" points to peer */
+		it->second.visState = visState;
+		dht_state = it->second.visState & RS_VIS_STATE_NODHT ;
+	}
+	if(isFriend)
 	{
 		/* toggle DHT state */
-		if (it->second.visState & RS_VIS_STATE_NODHT)
+		if(dht_state)
 		{
 			/* hidden from DHT world */
 			netAssistFriend(id, false);
@@ -3859,17 +3881,25 @@ bool p3ConnectMgr::netAssistConnectShutdown()
 bool p3ConnectMgr::netAssistFriend(std::string id, bool on)
 {
 	std::map<uint32_t, pqiNetAssistConnect *>::iterator it;
-	for(it = mDhts.begin(); it != mDhts.end(); it++)
+	std::list<pqiNetAssistConnect*> toFind ;
+	std::list<pqiNetAssistConnect*> toDrop ;
+
 	{
-		if (on)
+		RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+		for(it = mDhts.begin(); it != mDhts.end(); it++)
 		{
-			(it->second)->findPeer(id);
-		}
-		else
-		{
-			(it->second)->dropPeer(id);
+			if (on)
+				toFind.push_back(it->second) ;
+			else
+				toDrop.push_back(it->second) ;
 		}
 	}
+
+	for(std::list<pqiNetAssistConnect*>::const_iterator it(toFind.begin());it!=toFind.end();++it)
+		(*it)->findPeer(id) ;
+	for(std::list<pqiNetAssistConnect*>::const_iterator it(toDrop.begin());it!=toDrop.end();++it)
+		(*it)->dropPeer(id) ;
+
 	return true;
 }
 
