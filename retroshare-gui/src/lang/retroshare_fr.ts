@@ -830,7 +830,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/CalDialog.ui" line="122"/>
         <source>Location:</source>
-        <translation>Lieu :</translation>
+        <translation type="unfinished">Machine :</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/CalDialog.ui" line="256"/>
@@ -911,7 +911,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="622"/>
         <source>Certificate files</source>
-        <translation>Fichiers Certificat</translation>
+        <translation>Ajout via un certificat</translation>
     </message>
     <message>
         <source>Use XPGP certificates saved in files.</source>
@@ -920,7 +920,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="624"/>
         <source>Use PGP certificates saved in files.</source>
-        <translation>Utilisez un certificat PGP à partir d&apos;un fichier.</translation>
+        <translation>Utilisez un certificat PGP contenu dans un fichier.</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="626"/>
@@ -979,7 +979,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="647"/>
         <source>Drag and Drop your friends&apos;s certificate in this Window or specify path in the box below </source>
-        <translation>Glisser et déposer le certificat de vos amis dans cette fenêtre ou spécifier le chemin</translation>
+        <translation>Glissez et déposez le certificat de vos amis dans cette fenêtre ou spécifiez le chemin</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="673"/>
@@ -995,7 +995,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="706"/>
         <source>Certificate file successfully created</source>
-        <translation>Fichier certificat créé avec succès</translation>
+        <translation>Le certificat a été créé avec succès</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="710"/>
@@ -2564,7 +2564,7 @@ Do you want to save your changes?</source>
     <message>
         <location filename="../gui/channels/CreateChannel.ui" line="82"/>
         <source>&lt;span style=&quot;font-size:24pt; font-weight:500;color:#32CD32;&quot;&gt;New Channel&lt;/span&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;span style=&quot;font-size:24pt; font-weight:500;color:#32CD32;&quot;&gt;Nouveau cannal&lt;/span&gt;</translation>
     </message>
     <message>
         <location filename="../gui/channels/CreateChannel.ui" line="103"/>
@@ -3398,7 +3398,7 @@ Cela peut être intéressant si vous partagez des fichiers situés sur un disque
     <message>
         <location filename="../gui/settings/DirectoriesPage.ui" line="656"/>
         <source> days</source>
-        <translation>jours</translation>
+        <translation> jours</translation>
     </message>
     <message>
         <location filename="../gui/settings/DirectoriesPage.ui" line="672"/>
@@ -3595,7 +3595,12 @@ Cela peut être intéressant si vous partagez des fichiers situés sur un disque
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1182"/>
         <source>Friend uses RetroShare to communicate securely, and invites you to join him to share files together. &lt;br&gt;RetroShare is free and using it is safe: it contains no viruses, no spyware, no adware and it can easily be uninstalled. &lt;br&gt;For more information, see our website http://retroshare.sourceforge.net/ or download the software here http://retroshare.sourceforge.net/downloads.html. &lt;br&gt;See you soon on RetroShare!</source>
-        <translation>Votre ami utilise RetroShare pour communiquer de manière sécurisée, et vous invite à le rejoindre pour partager des fichiers avec vous. &lt;br&gt;RetroShare est gratuit et son utilisation est sûre: il ne contient aucun virus, aucun spyware, aucun logiciel de publicité et peut être facilement désinstallé.&lt;br&gt;Pour plus d&apos;informations, consultez notre site web : http://retroshare.sourceforge.net/downloads.html.&lt;br&gt;A bientôt sur RetroShare!</translation>
+        <translation>Votre ami utilise RetroShare pour communiquer de manière sécurisée, et vous invite à le rejoindre pour partager des fichiers avec vous. 
+RetroShare est gratuit et son utilisation est sûre: il ne contient aucun virus, aucun spyware, aucun logiciel de publicité et peut être facilement désinstallé.
+Pour plus d&apos;informations, consultez notre site web : http://retroshare.sourceforge.net/downloads.html. 
+A bientôt sur RetroShare!
+
+</translation>
     </message>
 </context>
 <context>
@@ -3672,7 +3677,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/ExampleDialog.ui" line="615"/>
         <source>Location</source>
-        <translation>Lieu</translation>
+        <translation type="unfinished">Machine</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/ExampleDialog.ui" line="620"/>
@@ -3954,7 +3959,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/forums/ForumDetails.ui" line="44"/>
         <source>Forum Name</source>
-        <translation>Nom du Forum</translation>
+        <translation>Nom du forum</translation>
     </message>
     <message>
         <location filename="../gui/forums/ForumDetails.ui" line="54"/>
@@ -3969,7 +3974,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/forums/ForumDetails.ui" line="82"/>
         <source>Forum ID</source>
-        <translation>ID du Forum</translation>
+        <translation>ID du forum</translation>
     </message>
     <message>
         <location filename="../gui/forums/ForumDetails.ui" line="92"/>
@@ -4149,7 +4154,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="331"/>
         <source>New Forum</source>
-        <translation>Nom du forum</translation>
+        <translation>Nouveau forum</translation>
     </message>
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="333"/>
@@ -4414,7 +4419,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/ForumsDialog.ui" line="847"/>
         <source>Last Post</source>
-        <translation>Dernier message</translation>
+        <translation>Derniers messages</translation>
     </message>
     <message>
         <location filename="../gui/ForumsDialog.ui" line="852"/>
@@ -4435,7 +4440,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/ForumsDialog.ui" line="903"/>
         <source>Signed</source>
-        <translation>Signé</translation>
+        <translation>Signature</translation>
     </message>
     <message>
         <location filename="../gui/ForumsDialog.ui" line="919"/>
@@ -4800,7 +4805,7 @@ mais pour rester anonyme, vous pouvez utiliser une fausse adresse e-mail.</trans
     <message>
         <location filename="../gui/GenCertDialog.ui" line="728"/>
         <source>Location:</source>
-        <translation>Lieu :</translation>
+        <translation>Machine :</translation>
     </message>
     <message>
         <location filename="../gui/GenCertDialog.ui" line="747"/>
@@ -4836,8 +4841,8 @@ p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;RetroShare utilise les clés PGP pour l&apos;identification. &lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;Vous pouvez utiliser un profile existant (clé PGP) ou en créer une nouvelle avec ce formulaire.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;Vous pouvez installer RestroShare sur différents ordinateurs en utilisant le même profile (clé GPG).&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;Utilisez un profil existant (clé PGP)ou créez-en un nouveau avec ce formulaire.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:600;&quot;&gt;Vous pouvez installer RestroShare sur différents ordinateurs en utilisant le même profil (clé GPG).&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/GenCertDialog.ui" line="689"/>
@@ -5095,12 +5100,12 @@ Introduisez votre mot de passe PGP lorsqu&apos;il vous est demandé, afin de sig
     <message>
         <location filename="../gui/settings/GeneralPage.ui" line="584"/>
         <source>Idle</source>
-        <translation type="unfinished">Veille</translation>
+        <translation type="unfinished">Inactivité</translation>
     </message>
     <message>
         <location filename="../gui/settings/GeneralPage.ui" line="590"/>
         <source>Idle Time</source>
-        <translation type="unfinished">Mise en veille</translation>
+        <translation>Inactif après</translation>
     </message>
     <message>
         <location filename="../gui/settings/GeneralPage.ui" line="600"/>
@@ -5127,7 +5132,7 @@ Introduisez votre mot de passe PGP lorsqu&apos;il vous est demandé, afin de sig
     <message>
         <location filename="../gui/graphframe.cpp" line="245"/>
         <source>Recv: </source>
-        <translation type="unfinished">Reçu : </translation>
+        <translation>Reçu : </translation>
     </message>
     <message>
         <location filename="../gui/graphframe.cpp" line="246"/>
@@ -5736,7 +5741,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://ftp.gpg4win.org/gpg4win-1.1.4.exe&quot;&gt;&lt;span style=&quot; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;http://ftp.gpg4win.org/gpg4win-1.1.4.exe&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600; color:#000000;&quot;&gt;3. Si vous utilisez GPA pour créer une clé GPG et que celui-çi ne fonctionne pas, utilisez plutôt WinPT pour la création de la clé GPG :&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600; color:#000000;&quot;&gt;3. Si vous utilisez GPA pour créer une clé GPG et que celle-ci ne fonctionne pas, utilisez plutôt WinPT pour la création de la clé GPG :&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; color:#0000ff;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://winpt.gnupt.de/winpt.zip&quot;&gt;&lt;span style=&quot; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;http://winpt.gnupt.de/winpt.zip&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;&lt;/p&gt;
@@ -5748,7 +5753,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="178"/>
         <source>This wizard will help you to connect to your friend(s) to RetroShare network. There are three possible ways to do this:</source>
-        <translation>Cet assistant vous aidera à connecter votre (vos) ami(s) à votre réseau RetroShare. Il y a trois moyens possibles :</translation>
+        <translation>Cet assistant vous aidera à connecter votre (vos) ami(s) à votre réseau. Il y a trois moyens possibles:</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="183"/>
@@ -5764,8 +5769,8 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="186"/>
         <source>&amp;Send a Invitation by Email 
  (She/He receives a email with instructions howto to download RetroShare) </source>
-        <translation>Envoyer une invitation par e-mail
-(Elle/il recevra un e-mail avec les instructions concernant le téléchargement de RetroShare) </translation>
+        <translation>Envoyez une invitation par e-mail à un ami 
+(Elle/il recevra un e-mail le renseignant sur RetroShare) </translation>
     </message>
     <message>
         <source>&amp;Use *.rsc files with certificates</source>
@@ -5788,7 +5793,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="182"/>
         <source>&amp;Enter the certificate manually</source>
-        <translation>&amp;Entrer manuellement le certificat</translation>
+        <translation>&amp;Entrez manuellement le certificat</translation>
     </message>
     <message>
         <source>&amp;Use *.pqi files with certificates</source>
@@ -6590,7 +6595,7 @@ Veuillez libérer de l&apos;espace disque et cliquer sur Ok.</translation>
         <location filename="../gui/msgs/MessageComposer.cpp" line="418"/>
         <location filename="../gui/msgs/MessageComposer.cpp" line="1939"/>
         <source>Save Message</source>
-        <translation type="unfinished">Enregistrer</translation>
+        <translation>Enregistrer</translation>
     </message>
     <message>
         <location filename="../gui/msgs/MessageComposer.cpp" line="419"/>
@@ -6845,7 +6850,7 @@ Voulez-vous enregistrer votre message ?</translation>
     <message>
         <location filename="../gui/settings/MessagePage.ui" line="528"/>
         <source>Tags can be used to categorize and prioritize your messages</source>
-        <translation>Tags sont utilisés pour classer et donner des priorités à vos messages</translation>
+        <translation>Les tags sont utilisés pour classer et donner des priorités à vos messages</translation>
     </message>
     <message>
         <location filename="../gui/settings/MessagePage.ui" line="538"/>
@@ -7555,7 +7560,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/MessengerWindow.cpp" line="577"/>
         <location filename="../gui/MessengerWindow.cpp" line="578"/>
         <source>location</source>
-        <translation>Lieu</translation>
+        <translation type="unfinished">Machine</translation>
     </message>
     <message>
         <location filename="../gui/MessengerWindow.cpp" line="379"/>
@@ -8203,7 +8208,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="155"/>
         <source>Network View</source>
-        <translation>Voir le réseau</translation>
+        <translation>Afficher le réseau</translation>
     </message>
     <message>
         <source>Form</source>
@@ -8352,18 +8357,18 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/NetworkDialog.ui" line="116"/>
         <location filename="../gui/NetworkDialog.ui" line="522"/>
         <source>Did I authenticated peer</source>
-        <translation>Ai-je authentifié la personne</translation>
+        <translation>J&apos;ai authentifié la personne</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="119"/>
         <source>Did I sign his gpg key</source>
-        <translation>Ai-je signé sa clé GPG?</translation>
+        <translation>J&apos;ai signé sa clé GPG</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="124"/>
         <location filename="../gui/NetworkDialog.ui" line="527"/>
         <source>Did peer authenticated me</source>
-        <translation>La personne m&apos;a-t-elle authentifié ?</translation>
+        <translation>La personne m&apos;a authentifié </translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -8481,12 +8486,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/NetworkView.ui" line="83"/>
         <source>Display mode:</source>
-        <translation>Mode d&apos;affichage</translation>
+        <translation>Mode d&apos;affichage :</translation>
     </message>
     <message>
         <location filename="../gui/NetworkView.ui" line="103"/>
         <source>Friends level:</source>
-        <translation>Niveau d&apos;affichage des amis</translation>
+        <translation>Niveau d&apos; amis:</translation>
     </message>
     <message>
         <location filename="../gui/NetworkView.ui" line="123"/>
@@ -8680,7 +8685,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/settings/NotifyPage.ui" line="647"/>
         <source>Peer Connect</source>
-        <translation>Connexion d&apos;une personne</translation>
+        <translation>Connetion d&apos;un ami</translation>
     </message>
     <message>
         <location filename="../gui/settings/NotifyPage.ui" line="654"/>
@@ -8817,7 +8822,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/PeerItem.ui" line="399"/>
         <source>Location</source>
-        <translation>Lieu</translation>
+        <translation>Machine</translation>
     </message>
     <message>
         <source>Country</source>
@@ -9266,7 +9271,7 @@ Voulez-vous lui envoyer un message à la place ?</translation>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="414"/>
         <source>Location</source>
-        <translation>Lieu</translation>
+        <translation>Machine</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="423"/>
@@ -9292,7 +9297,7 @@ Voulez-vous lui envoyer un message à la place ?</translation>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="891"/>
         <source>location</source>
-        <translation>Lieu</translation>
+        <translation type="unfinished">Machine</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="1450"/>
@@ -9611,7 +9616,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/unfinished/PhotoDialog.ui" line="120"/>
         <location filename="../gui/unfinished/PhotoDialog.ui" line="228"/>
         <source>Location</source>
-        <translation>Lieu</translation>
+        <translation type="unfinished">Machine</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/PhotoDialog.ui" line="125"/>
@@ -9706,7 +9711,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/PhotoShow.ui" line="33"/>
         <source>Location:</source>
-        <translation>Lieu :</translation>
+        <translation type="unfinished">Machine :</translation>
     </message>
     <message>
         <source>Form</source>
@@ -10146,13 +10151,13 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/chat/PopupChatWindow.ui" line="106"/>
         <location filename="../gui/chat/PopupChatWindow.ui" line="109"/>
         <source>Dock tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Activer les onglets</translation>
     </message>
     <message>
         <location filename="../gui/chat/PopupChatWindow.ui" line="118"/>
         <location filename="../gui/chat/PopupChatWindow.ui" line="121"/>
         <source>Undock tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Désactiver les onglets</translation>
     </message>
     <message>
         <location filename="../gui/chat/PopupChatWindow.cpp" line="260"/>
@@ -11461,12 +11466,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1094"/>
         <source>Paste Friends RetroShare ID in the box below </source>
-        <translation>Coller l&apos;ID RetroShare ci dessous</translation>
+        <translation>Coller l&apos;ID RetroShare ci-dessous</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1097"/>
         <source>Enter the RetroShare ID of your Friend, e.g. Peer@BDE8D16A46D938CF </source>
-        <translation>Entre l&apos;ID RetroShare de votre ami, e.x. Peer@BDE8D16A46D938CF.</translation>
+        <translation>Entrez l&apos;ID RetroShare de votre ami, e.x. Peer@BDE8D16A46D938CF </translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="1141"/>
@@ -11734,7 +11739,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/SearchDialog.ui" line="1232"/>
         <source>Search in friends lists</source>
-        <translation>Chercher dans les listes d&apos;amis</translation>
+        <translation>Chercher dans la liste d&apos;amis</translation>
     </message>
     <message>
         <location filename="../gui/SearchDialog.ui" line="1242"/>
@@ -12252,12 +12257,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/ShareDialog.ui" line="209"/>
         <source>Anonymous shared Network Wide</source>
-        <translation type="unfinished">Partage anonyme étendu </translation>
+        <translation>Partage anonyme </translation>
     </message>
     <message>
         <location filename="../gui/ShareDialog.ui" line="212"/>
         <source>Network Wide</source>
-        <translation type="unfinished">Anonyme</translation>
+        <translation>Anonyme</translation>
     </message>
     <message>
         <source>Anonymous</source>
@@ -12344,7 +12349,7 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Sélectionnez les amis avec qui vous désirez aprtager votre channel.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Sélectionnez les amis avec qui vous désirez partager votre channel.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/channels/ShareKey.cpp" line="80"/>
@@ -12492,8 +12497,8 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Voici la liste des dossiers partagés. Vous pouvez ajuter ou supprimer des fichiers en utilisant les boutons en bas.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Lorsque vous ajoutez un dossier, tous les fichiers contenus dans ce dossier seront partagés.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;Vous pouvez paramètrer le type de partage pour chaque dossier:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Visible&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: Les fichiers sont visibles par vos amis.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Anonyme&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: les fichiers peuvent être téléchargés anonymement par tout le monde à travers les tunnels</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Visibles&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: Les fichiers sont visibles par vos amis.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Anonymes&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: les fichiers peuvent être téléchargés anonymement par tout le monde à travers les tunnels</translation>
     </message>
     <message>
         <location filename="../gui/ShareManager.ui" line="191"/>
@@ -12843,17 +12848,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../main.cpp" line="165"/>
         <source>Load profile</source>
-        <translation>Importer un profil</translation>
+        <translation>Chargement du profil</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="206"/>
         <source>Load configuration</source>
-        <translation>importer une configuration</translation>
+        <translation>Chargement de la configuration</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="210"/>
         <source>Create interface</source>
-        <translation>Créer une interface</translation>
+        <translation>Création de l&apos; interface</translation>
     </message>
 </context>
 <context>
@@ -12994,8 +12999,8 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/StartDialog.cpp" line="182"/>
         <source>This will generate a new Profile
  Are you sure you want to continue?</source>
-        <translation>Ceci generera un nouveau profil.
-Etes-vous certains de vouloir continuer ?</translation>
+        <translation>Ceci génèrera un nouveau profil.
+Êtes-vous certain de vouloir continuer ?</translation>
     </message>
     <message>
         <location filename="../gui/StartDialog.cpp" line="212"/>
@@ -13518,7 +13523,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="289"/>
         <source>Please, paste your friends PGP certificate into the box below</source>
-        <translation>Veuillez coller le certificat PGP de votre ami dans la case çi-dessous</translation>
+        <translation>Veuillez coller le certificat PGP de votre ami dans la case ci-dessous</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="331"/>
@@ -13666,7 +13671,7 @@ p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;RetroShare&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt; est capable de transférer des fichiers et effectuer des recherches entre personnes qui ne sont pas amies. Cependant, ce traffic se fait à travers une liste de contacts anonymes.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;Vous pouvez paramétrer le type de partage dans lea fenêtre de partage de dossier:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;Vous pouvez paramétrer le type de partage dans la fenêtre de partage de dossier:&lt;/span&gt;&lt;/p&gt;
 &lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Visible par les amis&lt;/span&gt;: les fichiers sont visibles par les amis.&lt;/li&gt;
 &lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Partage anonyme&lt;/span&gt;: les fichiers sont accessibles anonymement par des tunnels F2F.&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -14236,13 +14241,13 @@ bloquera ce dernier.</translation>
         <location filename="../gui/TurtleRouterDialog.cpp" line="17"/>
         <location filename="../gui/TurtleRouterDialog.cpp" line="77"/>
         <source>Search requests</source>
-        <translation>Demande de recherche</translation>
+        <translation>Demande recherche</translation>
     </message>
     <message>
         <location filename="../gui/TurtleRouterDialog.cpp" line="22"/>
         <location filename="../gui/TurtleRouterDialog.cpp" line="88"/>
         <source>Tunnel requests</source>
-        <translation>Demande de Tunnel</translation>
+        <translation>Demande Tunnel</translation>
     </message>
 </context>
 <context>
