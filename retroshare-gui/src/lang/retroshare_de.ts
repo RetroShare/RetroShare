@@ -2290,7 +2290,7 @@ p, li { white-space: pre-wrap; }
         <translation>Zusätzlich eine Datei hinzufügen</translation>
     </message>
     <message>
-        <location line="+29"/>
+        <location line="+26"/>
         <location line="+202"/>
         <source>RetroShare</source>
         <translation></translation>
@@ -5420,18 +5420,18 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
     <name>MessageComposer</name>
     <message>
         <location filename="../gui/msgs/MessageComposer.ui" line="+17"/>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="+778"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="+787"/>
         <source>Compose</source>
         <translation>Verfassen</translation>
     </message>
     <message>
         <location line="+49"/>
-        <location line="+846"/>
+        <location line="+881"/>
         <source>Contacts</source>
         <translation>Kontakte</translation>
     </message>
     <message>
-        <location line="-831"/>
+        <location line="-866"/>
         <source>Search for Name:</source>
         <translation>Suche Name:</translation>
     </message>
@@ -5597,7 +5597,7 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
         <translation>Prüfsumme</translation>
     </message>
     <message>
-        <location line="+58"/>
+        <location line="+93"/>
         <source>Send</source>
         <translation>Senden</translation>
     </message>
@@ -5647,7 +5647,7 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
         <translation>Blockquote hinzufügen</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="-1106"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="-1113"/>
         <source>&amp;Left</source>
         <translation>&amp;Links</translation>
     </message>
@@ -5668,12 +5668,12 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
     </message>
     <message>
         <location line="+213"/>
-        <location line="+1567"/>
+        <location line="+1574"/>
         <source>Save Message</source>
         <translation>Nachricht speichern</translation>
     </message>
     <message>
-        <location line="-1566"/>
+        <location line="-1573"/>
         <source>Message has not been Sent.
 Do you want to save message to draft box?</source>
         <translation>Nachricht wurde noch nicht gesendet.
@@ -5686,7 +5686,7 @@ Möchtest Du die Nachricht in den Entwürfen speichern?</translation>
         <translation>RetroShare Link einfügen</translation>
     </message>
     <message>
-        <location line="+555"/>
+        <location line="+562"/>
         <source>Re:</source>
         <translation>Re:</translation>
     </message>
@@ -5870,7 +5870,7 @@ Willst Du die Nachricht speichern ?</translation>
         <translation>Zusätzliche Datei hinzufügen</translation>
     </message>
     <message>
-        <location line="+275"/>
+        <location line="+273"/>
         <location line="+6"/>
         <source>Drop file error.</source>
         <translation>Dateifehler bei Drag&apos;n&apos;Drop.</translation>
@@ -5886,17 +5886,17 @@ Willst Du die Nachricht speichern ?</translation>
         <translation>Datei nicht gefunden oder Dateiname nicht akzeptiert.</translation>
     </message>
     <message>
-        <location line="-2009"/>
+        <location line="-2014"/>
         <source>Friend Recommendation(s)</source>
         <translation>Freundempfehlung(en)</translation>
     </message>
     <message>
-        <location line="+530"/>
+        <location line="+537"/>
         <source>No Title</source>
         <translation>Kein Titel</translation>
     </message>
     <message>
-        <location line="-528"/>
+        <location line="-535"/>
         <source>I recommend a good friend of me, you can trust him too when you trust me. &lt;br&gt; Copy friend link and paste to Friends list</source>
         <translation>Ich empfehle Dir einen guten Freund von mir. Du kannst ihm vertrauen, wenn Du mir vertraust. &lt;br&gt; Kopiere den Link und füge ihn in der Freundesliste ein</translation>
     </message>
@@ -7303,7 +7303,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PeersDialog</name>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="+429"/>
+        <location filename="../gui/PeersDialog.cpp" line="+432"/>
         <source>Chat</source>
         <translation>Chat</translation>
     </message>
@@ -8329,7 +8329,7 @@ Do you want to send them a Message instead</source>
 <context>
     <name>ProfileView</name>
     <message>
-        <location filename="../gui/profile/ProfileView.cpp" line="+70"/>
+        <location filename="../gui/profile/ProfileView.cpp" line="+72"/>
         <source>Clear Photo</source>
         <translation>Photo entfernen</translation>
     </message>
@@ -10672,7 +10672,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+26"/>
-        <location filename="../gui/feeds/SubFileItem.cpp" line="+576"/>
+        <location filename="../gui/feeds/SubFileItem.cpp" line="+578"/>
         <location line="+6"/>
         <source>Play File</source>
         <translation>Datei abspielen</translation>
