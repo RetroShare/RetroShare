@@ -87,6 +87,7 @@ bool	ftDataMultiplex::addTransferModule(ftTransferModule *mod, ftFileCreator *f)
 bool	ftDataMultiplex::removeTransferModule(std::string hash)
 {
 	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
+
 	std::map<std::string, ftClient>::iterator it;
 	if (mClients.end() == (it = mClients.find(hash)))
 	{
@@ -94,6 +95,20 @@ bool	ftDataMultiplex::removeTransferModule(std::string hash)
 		return false;
 	}
 	mClients.erase(it);
+
+	// This is very important to delete the hash from servers as well, because
+	// after removing the transfer module, ftController will delete the fileCreator.
+	// If the file creator is also a server in use, then it will cause a crash
+	// at the next server request. 
+	//
+	// With the current action, the next server request will re-create the server as
+	// a ftFileProvider.
+	//
+	std::map<std::string, ftFileProvider*>::iterator sit = mServers.find(hash) ;
+
+	if(sit != mServers.end())
+		mServers.erase(sit);
+
 	return true;
 }
 
