@@ -294,13 +294,10 @@ void CreateChannelMsg::addExtraFile()
 	std::cerr << std::endl;
 
 	// select a file
-	QString qfile = QFileDialog::getOpenFileName(this, tr("Add Extra File"), "", "", 0,
-				QFileDialog::DontResolveSymlinks);
-	std::string filePath = qfile.toUtf8().constData();
-	if (filePath != "")
-	{
-		addAttachment(filePath);
-	}
+    QStringList files = QFileDialog::getOpenFileNames(this, tr("Add Extra File"), "", "", 0, QFileDialog::DontResolveSymlinks);
+    for (QStringList::iterator fileIt = files.begin(); fileIt != files.end(); fileIt++) {
+        addAttachment((*fileIt).toUtf8().constData());
+    }
 }
 
 
