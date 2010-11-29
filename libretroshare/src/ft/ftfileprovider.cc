@@ -100,6 +100,8 @@ bool    ftFileProvider::FileDetails(FileInfo &info)
 
 bool ftFileProvider::purgeOldPeers(time_t now,uint32_t max_duration)
 {
+	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
+
 	bool ret = true ;
 	for(std::map<std::string,PeerUploadInfo>::iterator it(uploading_peers.begin());it!=uploading_peers.end();)
 		if( (*it).second.lastTS+max_duration < (uint32_t)now)
