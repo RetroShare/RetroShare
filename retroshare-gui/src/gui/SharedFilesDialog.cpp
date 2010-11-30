@@ -149,6 +149,11 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
   connect( localModel, SIGNAL( layoutAboutToBeChanged() ), ui.localDirTreeView, SLOT( reset() ) );
   connect( localModel, SIGNAL( layoutChanged() ), ui.localDirTreeView, SLOT( update() ) );
 
+  connect(ui.filterClearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
+  connect(ui.filterStartButton, SIGNAL(clicked()), this, SLOT(startFilter()));
+  connect(ui.filterPatternLineEdit, SIGNAL(returnPressed()), this, SLOT(startFilter()));
+  connect(ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
+
   /* Set header resize modes and initial section sizes  */
 	QHeaderView * l_header = ui.localDirTreeView->header () ;
 //	l_header->setResizeMode (0, QHeaderView::Interactive);
@@ -188,6 +193,13 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
   /* Set Multi Selection */
   ui.remoteDirTreeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
   ui.localDirTreeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
+#ifdef RS_RELEASE_VERSION
+  ui.filterLabel->hide();
+  ui.filterPatternLineEdit->hide();
+#endif
+  ui.filterStartButton->hide();
+  ui.filterClearButton->hide();
 
   // load settings
   processSettings(true);
@@ -631,6 +643,10 @@ void  SharedFilesDialog::postModDirectories(bool update_local)
 	{
 		model->postMods();
 		ui.remoteDirTreeView->update() ;
+
+		if (ui.filterPatternLineEdit->text().isEmpty() == false) {
+			FilterItems();
+		}
 	}
 
 	QCoreApplication::flush();
@@ -817,3 +833,84 @@ void SharedFilesDialog::indicatorChanged(int index)
   updateDisplay() ;
 }
 
+void SharedFilesDialog::filterRegExpChanged()
+{
+    QString text = ui.filterPatternLineEdit->text();
+
+    if (text.isEmpty()) {
+        ui.filterClearButton->hide();
+    } else {
+        ui.filterClearButton->show();
+    }
+
+    if (text == lastFilterString) {
+        ui.filterStartButton->hide();
+    } else {
+        ui.filterStartButton->show();
+    }
+}
+
+/* clear Filter */
+void SharedFilesDialog::clearFilter()
+{
+    ui.filterPatternLineEdit->clear();
+    ui.filterPatternLineEdit->setFocus();
+
+    startFilter();
+}
+
+/* clear Filter */
+void SharedFilesDialog::startFilter()
+{
+    ui.filterStartButton->hide();
+    lastFilterString = ui.filterPatternLineEdit->text();
+
+    FilterItems();
+}
+
+void SharedFilesDialog::FilterItems()
+{
+    QString text = ui.filterPatternLineEdit->text();
+
+    setCursor(Qt::WaitCursor);
+
+    int rowCount = ui.remoteDirTreeView->model()->rowCount();
+    for (int row = 0; row < rowCount; row++) {
+        /* Filter name */
+        FilterItem(ui.remoteDirTreeView->model()->index(row, 0), text, 0);
+    }
+
+    setCursor(Qt::ArrowCursor);
+}
+
+bool SharedFilesDialog::FilterItem(const QModelIndex &index, const QString &text, int level)
+{
+    bool visible = true;
+
+    if (text.isEmpty() == false) {
+        // better use RemoteDirModel::getType, but its slow enough
+        if (/*index.parent().isValid()*/ level >= 1) {
+            if (index.data(RemoteDirModel::FileNameRole).toString().contains(text, Qt::CaseInsensitive) == false) {
+                visible = false;
+            }
+        } else {
+            visible = false;
+        }
+    }
+
+    int visibleChildCount = 0;
+    int rowCount = ui.remoteDirTreeView->model()->rowCount(index);
+    for (int row = 0; row < rowCount; row++) {
+        if (FilterItem(ui.remoteDirTreeView->model()->index(row, index.column(), index), text, level + 1)) {
+            visibleChildCount++;
+        }
+    }
+
+    if (visible || visibleChildCount) {
+        ui.remoteDirTreeView->setRowHidden(index.row(), index.parent(), false);
+    } else {
+        ui.remoteDirTreeView->setRowHidden(index.row(), index.parent(), true);
+    }
+
+    return (visible || visibleChildCount);
+}

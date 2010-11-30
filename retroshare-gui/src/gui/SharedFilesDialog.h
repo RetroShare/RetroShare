@@ -83,6 +83,10 @@ private slots:
 	
   void indicatorChanged(int index);
 
+  void filterRegExpChanged();
+  void clearFilter();
+  void startFilter();
+
 signals:
   void playFiles(QStringList files);
 
@@ -96,7 +100,10 @@ private:
 
   void processSettings(bool bLoad);
 
-   void copyLink (const QModelIndexList& lst, bool remote);
+  void copyLink (const QModelIndexList& lst, bool remote);
+
+  void FilterItems();
+  bool FilterItem(const QModelIndex &index, const QString &text, int level);
 
   QModelIndexList getRemoteSelected();
   QModelIndexList getLocalSelected();
@@ -115,7 +122,6 @@ private:
   QAction* sendchatlinkAct;
   QAction* copylinklocalhtmlAct;
 
-
   /** Qt Designer generated object */
   Ui::SharedFilesDialog ui;
 
@@ -127,6 +133,8 @@ private:
 
   QString currentCommand;
   QString currentFile;
+
+  QString lastFilterString;
 
   QAction* fileAssotiationAction(const QString fileName);
 };

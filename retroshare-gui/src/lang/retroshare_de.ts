@@ -2290,7 +2290,7 @@ p, li { white-space: pre-wrap; }
         <translation>Zusätzlich eine Datei hinzufügen</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+29"/>
         <location line="+202"/>
         <source>RetroShare</source>
         <translation></translation>
@@ -8329,7 +8329,7 @@ Do you want to send them a Message instead</source>
 <context>
     <name>ProfileView</name>
     <message>
-        <location filename="../gui/profile/ProfileView.cpp" line="+72"/>
+        <location filename="../gui/profile/ProfileView.cpp" line="+70"/>
         <source>Clear Photo</source>
         <translation>Photo entfernen</translation>
     </message>
@@ -9981,13 +9981,13 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>SharedFilesDialog</name>
     <message>
-        <location filename="../gui/SharedFilesDialog.ui" line="+846"/>
-        <location filename="../gui/SharedFilesDialog.cpp" line="+293"/>
+        <location filename="../gui/SharedFilesDialog.ui" line="+943"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="+305"/>
         <source>Download</source>
         <translation>Herunterladen</translation>
     </message>
     <message>
-        <location line="-250"/>
+        <location line="-347"/>
         <source>Splitted View</source>
         <translation>Geteiltes Fenster</translation>
     </message>
@@ -10035,28 +10035,43 @@ p, li { white-space: pre-wrap; }
         <translation>Einen Monat alt</translation>
     </message>
     <message>
-        <location line="+165"/>
+        <location line="+27"/>
+        <source>Search files</source>
+        <translation>Suche Dateien</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Start Search</source>
+        <translation>Starte Suche</translation>
+    </message>
+    <message>
+        <location line="+31"/>
+        <source>Reset</source>
+        <translation>Zurücksetzen</translation>
+    </message>
+    <message>
+        <location line="+180"/>
         <source>check files</source>
         <translation>Prüfe Dateien</translation>
     </message>
     <message>
         <location filename="../gui/SharedFilesDialog.cpp" line="-80"/>
-        <location line="+492"/>
+        <location line="+496"/>
         <source>Open File</source>
         <translation>Datei öffnen</translation>
     </message>
     <message>
-        <location line="-490"/>
+        <location line="-494"/>
         <source>Open Folder</source>
         <translation>Ordner öffnen</translation>
     </message>
     <message>
-        <location line="+499"/>
+        <location line="+503"/>
         <source>Set command for opening this file</source>
         <translation>Setze eine Regel zum Öffnen dieser Datei</translation>
     </message>
     <message>
-        <location line="-416"/>
+        <location line="-420"/>
         <source>Copy retroshare Link</source>
         <translation>Kopiere RetroShare Link</translation>
     </message>
@@ -10107,12 +10122,12 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+98"/>
-        <location line="+376"/>
+        <location line="+380"/>
         <source>Recommend in a message to</source>
         <translation>Empfehle in einer Nachricht an</translation>
     </message>
     <message>
-        <location line="-250"/>
+        <location line="-254"/>
         <location line="+23"/>
         <location line="+24"/>
         <source>RetroShare Link</source>
@@ -10127,7 +10142,7 @@ p, li { white-space: pre-wrap; }
         <translation>Empfehlung(en)</translation>
     </message>
     <message>
-        <location line="+188"/>
+        <location line="+192"/>
         <source>&lt;strong&gt;My Shared Files&lt;/strong&gt;</source>
         <translation>&lt;strong&gt;Meine Dateien&lt;/strong&gt;</translation>
     </message>
@@ -10672,7 +10687,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+26"/>
-        <location filename="../gui/feeds/SubFileItem.cpp" line="+578"/>
+        <location filename="../gui/feeds/SubFileItem.cpp" line="+576"/>
         <location line="+6"/>
         <source>Play File</source>
         <translation>Datei abspielen</translation>
