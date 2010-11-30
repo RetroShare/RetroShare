@@ -6907,29 +6907,28 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>NetworkView</name>
     <message>
-        <location filename="../gui/NetworkView.ui" line="+14"/>
         <source>Form</source>
-        <translation>Formular</translation>
+        <translation type="obsolete">Formular</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location filename="../gui/NetworkView.ui" line="+26"/>
         <source>background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 lightgray, stop:1 darkgray);</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Redraw</source>
-        <translation type="unfinished"></translation>
+        <translation>Neu zeichnen</translation>
     </message>
     <message>
         <location line="+33"/>
         <source>Friendship level:</source>
-        <translation type="unfinished"></translation>
+        <translation>Freundshaftslevel:</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Edge length:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kantenlänge:</translation>
     </message>
 </context>
 <context>
