@@ -879,7 +879,8 @@ int AuthSSLimpl::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
                     return false;
             }
             std::string pgpid = getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer);
-            if (!AuthGPG::getAuthGPG()->isGPGAccepted(pgpid))
+
+            if (pgpid != AuthGPG::getAuthGPG()->getGPGOwnId() && !AuthGPG::getAuthGPG()->isGPGAccepted(pgpid))
             {
                     #ifdef AUTHSSL_DEBUG
                     fprintf(stderr, "AuthSSLimpl::VerifyX509Callback() pgp key not accepted : \n");
