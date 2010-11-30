@@ -30,9 +30,10 @@
 class StatusLabel : public QLabel
 {
 public:
-    StatusLabel(QLayout *layout, QWidget *parent = NULL, Qt::WindowFlags f = 0) : QLabel(parent, f)
+    StatusLabel(QLayout *layout, int diffWidth, QWidget *parent = NULL, Qt::WindowFlags f = 0) : QLabel(parent, f)
     {
         m_layout = layout;
+        m_diffWidth = diffWidth;
     }
 
     virtual QSize minimumSizeHint() const
@@ -40,11 +41,12 @@ public:
         const QSize sizeHint = QLabel::minimumSizeHint();
 
         // do not resize the layout
-        return QSize(qMin(sizeHint.width(), m_layout->geometry().width()), sizeHint.height());
+        return QSize(qMin(sizeHint.width(), m_layout->geometry().width() - m_diffWidth), sizeHint.height());
     }
 
 private:
     QLayout *m_layout;
+    int m_diffWidth;
 };
 
 HashingStatus::HashingStatus(QWidget *parent)
@@ -54,10 +56,14 @@ HashingStatus::HashingStatus(QWidget *parent)
     hbox->setMargin(0);
     hbox->setSpacing(6);
         
+    movie = new QMovie(":/images/loader/16-loader.gif");
+    movie->setSpeed(80); // 2x speed
     hashloader = new QLabel(this);
+    hashloader->setMovie(movie);
     hbox->addWidget(hashloader);
 
-    statusHashing = new StatusLabel(hbox, this);
+    movie->jumpToNextFrame(); // to calculate the real width
+    statusHashing = new StatusLabel(hbox, movie->frameRect().width() + hbox->spacing(), this);
     hbox->addWidget(statusHashing);
 
     QSpacerItem *horizontalSpacer = new QSpacerItem(1000, 0, QSizePolicy::Expanding, QSizePolicy::Minimum);
@@ -69,23 +75,25 @@ HashingStatus::HashingStatus(QWidget *parent)
     statusHashing->hide();
 
     connect(NotifyQt::getInstance(), SIGNAL(hashingInfoChanged(const QString&)), SLOT(updateHashingInfo(const QString&)));
+}
 
+HashingStatus::~HashingStatus()
+{
+    delete(movie);
 }
 
 void HashingStatus::updateHashingInfo(const QString& s)
 {
-    QMovie *movie = new QMovie(":/images/loader/16-loader.gif");
-
     if(s.isEmpty()) {
-        statusHashing->hide() ;
-        hashloader->hide() ;
+        statusHashing->hide();
+        hashloader->hide();
+
+        movie->stop();
     } else {
         statusHashing->setText(s);
         statusHashing->show();
-        hashloader->show() ;
+        hashloader->show();
 
-        hashloader->setMovie(movie);
         movie->start();
-        movie->setSpeed(80); // 2x speed
     }
 }

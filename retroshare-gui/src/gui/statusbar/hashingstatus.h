@@ -31,6 +31,7 @@ class HashingStatus : public QWidget
 
 public:
     HashingStatus(QWidget *parent = 0);
+    ~HashingStatus();
 
 public slots:
     void updateHashingInfo(const QString&) ;
@@ -38,7 +39,6 @@ public slots:
 private:
     QLabel *statusHashing, *hashloader;
     QMovie *movie;
-
 };
 
 #endif
