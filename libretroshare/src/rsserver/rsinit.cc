@@ -2279,7 +2279,7 @@ int RsServer::StartupRetroShare()
         if ((!RsInitConfig::haveLogFile) && (!RsInitConfig::outStderr))
 	{
 		std::string crashfile = RsInitConfig::basedir + RsInitConfig::dirSeperator;
-		crashfile += configLogFileName;
+		crashfile += ownId + RsInitConfig::dirSeperator + configLogFileName;
 		setDebugCrashMode(crashfile.c_str());
 	}
 
