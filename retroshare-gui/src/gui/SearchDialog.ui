@@ -706,8 +706,8 @@ border-image: url(:/images/btn_26_pressed.png) 4;
            </size>
           </property>
           <property name="styleSheet">
-           <string notr="true">border: 2px solid #079E00;
-background: white;</string>
+           <string notr="true">QFrame#searchlineframe{border: 2px solid #079E00;
+background: white;}</string>
           </property>
           <property name="frameShape">
            <enum>QFrame::StyledPanel</enum>
