@@ -38,7 +38,7 @@ PeerStatus::PeerStatus(QWidget *parent)
     // iconLabel doesn't change over time, so we didn't need a minimum size
     hbox->addWidget(iconLabel);
     
-    statusPeers = new QLabel( tr("Online: 0  | Friends: 0  | Network: 0 "), this );
+    statusPeers = new QLabel( tr("Friends: 0/0"), this );
 //    statusPeers->setMinimumSize( statusPeers->frameSize().width() + 0, 0 );
     hbox->addWidget(statusPeers);
     
@@ -54,11 +54,12 @@ void PeerStatus::getPeerStatus(unsigned int nFriendCount, unsigned int nOnlineCo
     out << nFriendCount << " ";
     
     std::ostringstream out2;
-    out2 << nOnlineCount << " ";
+    out2 << nOnlineCount << "";
 
+    statusPeers->setToolTip(tr("Online Friends/Total Friends") );
 
     if (statusPeers)
-        statusPeers -> setText( "<strong>" + tr("Friends") + ":</strong> " + QString::fromStdString(out.str()) + " | <span style=\"color:#0000FF\"><strong>" + tr("Online") + ":</strong></span> " + QString::fromStdString(out2.str()) );
+        statusPeers -> setText( "<strong>" + tr("Friends") + ":</strong> " + QString::fromStdString(out2.str()) + "/" + QString::fromStdString(out.str()) );
     		
     if (nOnlineCount > 0)
     {
