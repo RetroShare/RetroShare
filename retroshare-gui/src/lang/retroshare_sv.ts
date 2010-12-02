@@ -9808,22 +9808,21 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Inställningar</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkView.ui" line="14"/>
         <source>Form</source>
-        <translation>Formulär</translation>
+        <translation type="obsolete">Formulär</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkView.ui" line="29"/>
+        <location filename="../gui/NetworkView.ui" line="26"/>
         <source>background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 lightgray, stop:1 darkgray);</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkView.ui" line="38"/>
+        <location filename="../gui/NetworkView.ui" line="41"/>
         <source>Redraw</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/NetworkView.ui" line="71"/>
+        <location filename="../gui/NetworkView.ui" line="74"/>
         <source>Friendship level:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9832,7 +9831,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Vänner</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkView.ui" line="91"/>
+        <location filename="../gui/NetworkView.ui" line="94"/>
         <source>Edge length:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10259,7 +10258,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Ta bort vän</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/PeerItem.ui" line="357"/>
+        <location filename="../gui/feeds/PeerItem.ui" line="384"/>
         <source>Name:</source>
         <translation>Namn:</translation>
     </message>
@@ -10268,7 +10267,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Organisation</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/PeerItem.ui" line="402"/>
+        <location filename="../gui/feeds/PeerItem.ui" line="429"/>
         <source>Location</source>
         <translation>Plats</translation>
     </message>
@@ -10281,7 +10280,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Formulär</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/PeerItem.ui" line="193"/>
+        <location filename="../gui/feeds/PeerItem.ui" line="202"/>
         <source>Remove Item</source>
         <translation>Radera objekt</translation>
     </message>
@@ -10290,48 +10289,48 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Ansluten</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/PeerItem.ui" line="173"/>
+        <location filename="../gui/feeds/PeerItem.ui" line="182"/>
         <location filename="../gui/feeds/PeerItem.cpp" line="246"/>
         <source>Expand</source>
         <translation>Utöka</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/PeerItem.ui" line="227"/>
+        <location filename="../gui/feeds/PeerItem.ui" line="236"/>
         <source>Write a quick Message</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/feeds/PeerItem.ui" line="315"/>
+        <location filename="../gui/feeds/PeerItem.ui" line="320"/>
         <source>Send</source>
         <translation type="unfinished">Skicka</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/PeerItem.ui" line="328"/>
+        <location filename="../gui/feeds/PeerItem.ui" line="313"/>
         <source>Cancel</source>
         <translation type="unfinished">Avbryt</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/PeerItem.ui" line="370"/>
+        <location filename="../gui/feeds/PeerItem.ui" line="397"/>
         <source>Peer ID:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/feeds/PeerItem.ui" line="565"/>
+        <location filename="../gui/feeds/PeerItem.ui" line="579"/>
         <source>Write Message</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/feeds/PeerItem.ui" line="256"/>
+        <location filename="../gui/feeds/PeerItem.ui" line="265"/>
         <source>Start Chat</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/feeds/PeerItem.ui" line="448"/>
+        <location filename="../gui/feeds/PeerItem.ui" line="475"/>
         <source>Status:</source>
         <translation>Status:</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/PeerItem.ui" line="389"/>
+        <location filename="../gui/feeds/PeerItem.ui" line="416"/>
         <source>Trust: </source>
         <translation>Pålitlig:</translation>
     </message>
@@ -10348,7 +10347,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Skicka mail</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/PeerItem.ui" line="253"/>
+        <location filename="../gui/feeds/PeerItem.ui" line="262"/>
         <source>Chat</source>
         <translation>Chatta</translation>
     </message>
@@ -10361,12 +10360,12 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">TextEtikett</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/PeerItem.ui" line="415"/>
+        <location filename="../gui/feeds/PeerItem.ui" line="442"/>
         <source>IP Address</source>
         <translation>Ip-adress</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/PeerItem.ui" line="428"/>
+        <location filename="../gui/feeds/PeerItem.ui" line="455"/>
         <source>Connection Method</source>
         <translation>Anslutningsmetod</translation>
     </message>
@@ -10426,19 +10425,27 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PeerStatus</name>
     <message>
-        <location filename="../gui/statusbar/peerstatus.cpp" line="41"/>
         <source>Online: 0  | Friends: 0  | Network: 0 </source>
-        <translation>Online: 0  | Vänner: 0  | Nätverk: 0 </translation>
+        <translation type="obsolete">Online: 0  | Vänner: 0  | Nätverk: 0 </translation>
     </message>
     <message>
-        <location filename="../gui/statusbar/peerstatus.cpp" line="61"/>
+        <location filename="../gui/statusbar/peerstatus.cpp" line="41"/>
+        <source>Friends: 0/0</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/statusbar/peerstatus.cpp" line="59"/>
+        <source>Online Friends/Total Friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/statusbar/peerstatus.cpp" line="62"/>
         <source>Friends</source>
         <translation type="unfinished">Vänner</translation>
     </message>
     <message>
-        <location filename="../gui/statusbar/peerstatus.cpp" line="61"/>
         <source>Online</source>
-        <translation type="unfinished">Ansluten</translation>
+        <translation type="obsolete">Ansluten</translation>
     </message>
     <message>
         <source>&lt;span style=&quot;color:#000000&quot;&gt;&lt;strong&gt;Friends:&lt;/strong&gt;&lt;/span&gt;</source>
@@ -13744,8 +13751,8 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>SharedFilesDialog</name>
     <message>
-        <location filename="../gui/SharedFilesDialog.ui" line="846"/>
-        <location filename="../gui/SharedFilesDialog.cpp" line="293"/>
+        <location filename="../gui/SharedFilesDialog.ui" line="943"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="305"/>
         <source>Download</source>
         <translation>Hämta</translation>
     </message>
@@ -13768,22 +13775,22 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Rekommendera till </translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="257"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="269"/>
         <source>Checking...</source>
         <translation>Kontrollerar...</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="261"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="273"/>
         <source>Check files</source>
         <translation>Kontrollera filer</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="298"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="310"/>
         <source>Copy retroshare Link</source>
         <translation>Kopiera retrosharelänk</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="301"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="313"/>
         <source>Send retroshare Link</source>
         <translation>Skicka retrosharelänk</translation>
     </message>
@@ -13796,84 +13803,84 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Rekommendera i ett meddelande till </translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="199"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="211"/>
         <source>Copy retroshare Links to Clipboard</source>
         <translation>Kopiera retroshare Länkar till Urklipp</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="201"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="213"/>
         <source>Copy retroshare Links to Clipboard (HTML)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="203"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="215"/>
         <source>Send retroshare Links</source>
         <translation>Skicka retroshare Länkar</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="205"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="217"/>
         <source>Send retroshare Links (HTML)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="208"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="220"/>
         <source>Send retroshare Links to Cloud</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="210"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="222"/>
         <source>Add Links to Cloud</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="213"/>
-        <location filename="../gui/SharedFilesDialog.cpp" line="705"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="225"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="721"/>
         <source>Open File</source>
         <translation>Öppna fil</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="215"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="227"/>
         <source>Open Folder</source>
         <translation>Öppna katalog</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="308"/>
-        <location filename="../gui/SharedFilesDialog.cpp" line="684"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="320"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="700"/>
         <source>Recommend in a message to</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="434"/>
-        <location filename="../gui/SharedFilesDialog.cpp" line="457"/>
-        <location filename="../gui/SharedFilesDialog.cpp" line="481"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="446"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="469"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="493"/>
         <source>RetroShare Link</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="561"/>
-        <location filename="../gui/SharedFilesDialog.cpp" line="562"/>
-        <location filename="../gui/SharedFilesDialog.cpp" line="585"/>
-        <location filename="../gui/SharedFilesDialog.cpp" line="586"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="573"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="574"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="597"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="598"/>
         <source>Recommendation(s)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="714"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="730"/>
         <source>Set command for opening this file</source>
         <translation>Ange kommando för öppning av denna fil</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="774"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="790"/>
         <source>&lt;strong&gt;My Shared Files&lt;/strong&gt;</source>
         <translation>&lt;strong&gt;Mina Filer&lt;/strong&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="788"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="804"/>
         <source>&lt;strong&gt;Friends Files&lt;/strong&gt;</source>
         <translation>&lt;strong&gt;Vänner filer&lt;/strong&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="803"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="819"/>
         <source>&lt;strong&gt;Files&lt;/strong&gt;</source>
         <translation>&lt;strong&gt;Filer&lt;/strong&gt;</translation>
     </message>
@@ -13934,12 +13941,27 @@ p, li { white-space: pre-wrap; }
         <translation>En månad gammal</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.ui" line="843"/>
+        <location filename="../gui/SharedFilesDialog.ui" line="732"/>
+        <source>Search files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/SharedFilesDialog.ui" line="756"/>
+        <source>Start Search</source>
+        <translation type="unfinished">Starta sökningen</translation>
+    </message>
+    <message>
+        <location filename="../gui/SharedFilesDialog.ui" line="787"/>
+        <source>Reset</source>
+        <translation type="unfinished">Nollställ</translation>
+    </message>
+    <message>
+        <location filename="../gui/SharedFilesDialog.ui" line="940"/>
         <source>Download selected</source>
         <translation>Ladda ned markerade</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.ui" line="870"/>
+        <location filename="../gui/SharedFilesDialog.ui" line="967"/>
         <source>check files</source>
         <translation>kontrollera filer</translation>
     </message>

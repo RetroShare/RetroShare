@@ -2290,7 +2290,7 @@ p, li { white-space: pre-wrap; }
         <translation>Zusätzlich eine Datei hinzufügen</translation>
     </message>
     <message>
-        <location line="+29"/>
+        <location line="+26"/>
         <location line="+202"/>
         <source>RetroShare</source>
         <translation></translation>
@@ -6916,7 +6916,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+15"/>
         <source>Redraw</source>
         <translation>Neu zeichnen</translation>
     </message>
@@ -7157,7 +7157,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PeerItem</name>
     <message>
-        <location filename="../gui/feeds/PeerItem.ui" line="+193"/>
+        <location filename="../gui/feeds/PeerItem.ui" line="+202"/>
         <source>Remove Item</source>
         <translation>Entferne Element</translation>
     </message>
@@ -7168,7 +7168,7 @@ p, li { white-space: pre-wrap; }
         <translation>Erweitern</translation>
     </message>
     <message>
-        <location line="+275"/>
+        <location line="+293"/>
         <source>Status:</source>
         <translation>Status:</translation>
     </message>
@@ -7178,12 +7178,12 @@ p, li { white-space: pre-wrap; }
         <translation>Vertrauen:</translation>
     </message>
     <message>
-        <location line="-136"/>
+        <location line="-154"/>
         <source>Chat</source>
         <translation>Chat</translation>
     </message>
     <message>
-        <location line="+104"/>
+        <location line="+122"/>
         <source>Name:</source>
         <translation>Name:</translation>
     </message>
@@ -7208,12 +7208,12 @@ p, li { white-space: pre-wrap; }
         <translation>Verbindungsmethode</translation>
     </message>
     <message>
-        <location line="+137"/>
+        <location line="+124"/>
         <source>Write Message</source>
         <translation>Nachricht schreiben</translation>
     </message>
     <message>
-        <location line="-309"/>
+        <location line="-314"/>
         <source>Start Chat</source>
         <translation>Chat starten</translation>
     </message>
@@ -7223,12 +7223,12 @@ p, li { white-space: pre-wrap; }
         <translation>Schnelle Nachricht schreiben</translation>
     </message>
     <message>
-        <location line="+88"/>
+        <location line="+84"/>
         <source>Send</source>
         <translation>Senden</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="-7"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
@@ -7284,19 +7284,27 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PeerStatus</name>
     <message>
-        <location filename="../gui/statusbar/peerstatus.cpp" line="+41"/>
         <source>Online: 0  | Friends: 0  | Network: 0 </source>
-        <translation>Online: 0  | Freunde: 0  | Netzwerk: 0 </translation>
+        <translation type="obsolete">Online: 0  | Freunde: 0  | Netzwerk: 0 </translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location filename="../gui/statusbar/peerstatus.cpp" line="+41"/>
+        <source>Friends: 0/0</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Online Friends/Total Friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Friends</source>
         <translation>Freunde</translation>
     </message>
     <message>
-        <location line="+0"/>
         <source>Online</source>
-        <translation>Online</translation>
+        <translation type="obsolete">Online</translation>
     </message>
 </context>
 <context>
@@ -8328,7 +8336,7 @@ Do you want to send them a Message instead</source>
 <context>
     <name>ProfileView</name>
     <message>
-        <location filename="../gui/profile/ProfileView.cpp" line="+70"/>
+        <location filename="../gui/profile/ProfileView.cpp" line="+72"/>
         <source>Clear Photo</source>
         <translation>Photo entfernen</translation>
     </message>
@@ -10686,7 +10694,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+26"/>
-        <location filename="../gui/feeds/SubFileItem.cpp" line="+576"/>
+        <location filename="../gui/feeds/SubFileItem.cpp" line="+578"/>
         <location line="+6"/>
         <source>Play File</source>
         <translation>Datei abspielen</translation>
