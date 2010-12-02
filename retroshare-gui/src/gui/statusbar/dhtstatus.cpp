@@ -47,7 +47,7 @@ DHTStatus::DHTStatus(QWidget *parent)
     dhtstatusLabel->setPixmap(QPixmap(":/images/grayled.png"));
     hbox->addWidget(dhtstatusLabel);
     
-    spaceLabel = new QLabel( " | ", this );
+    spaceLabel = new QLabel( "|", this );
     spaceLabel->setVisible(false);
     hbox->addWidget(spaceLabel);
 
