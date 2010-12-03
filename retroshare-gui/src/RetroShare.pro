@@ -463,6 +463,7 @@ SOURCES +=  main.cpp \
             util/rsversion.cpp \
             util/printpreview.cpp \
             util/log.cpp \
+            util/misc.cpp \
             gui/bwgraph/bwgraph.cpp \
             gui/profile/ProfileView.cpp \
             gui/profile/ProfileEdit.cpp \

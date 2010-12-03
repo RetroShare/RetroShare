@@ -24,7 +24,6 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QFile>
-#include <QFileDialog>
 #include <QDesktopWidget>
 #include <QDropEvent>
 
@@ -195,14 +194,12 @@ void CreateForumMsg::addSmileys()
 
 void CreateForumMsg::addFile()
 {
-	// select a file
-	QString qfile = QFileDialog::getOpenFileName(this, tr("Add Extra File"), "", "", 0,
-				QFileDialog::DontResolveSymlinks);
-	std::string filePath = qfile.toStdString();
-	if (filePath != "")
-	{
-	    CreateForumMsg::addAttachment(filePath);
-	}
+    QStringList files;
+    if (misc::getOpenFileNames(this, RshareSettings::LASTDIR_EXTRAFILE, tr("Add Extra File"), "", files)) {
+        for (QStringList::iterator fileIt = files.begin(); fileIt != files.end(); fileIt++) {
+            addAttachment((*fileIt).toUtf8().constData());
+        }
+    }
 }
 
 void CreateForumMsg::addAttachment(std::string filePath) {
@@ -236,21 +233,18 @@ void CreateForumMsg::fileHashingFinished(AttachFileItem* file) {
 	    return;
 	}
 
-	//convert fileSize from uint_64 to string for html link
-	char fileSizeChar [100];
-	sprintf(fileSizeChar, "%llu", (unsigned long long int)file->FileSize());
-	std::string fileSize = *(&fileSizeChar);
+	RetroShareLink link(QString::fromUtf8(file->FileName().c_str()), file->FileSize(), QString::fromStdString(file->FileHash()));
+	if (link.valid()) {
+		QString mesgString = link.toHtmlSize() + "<br>";
 
-	std::string mesgString = "<a href='retroshare://file|" + (file->FileName()) + "|" + fileSize + "|" + (file->FileHash()) + "'>"
-	+ "retroshare://file|" + (file->FileName()) + "|" + fileSize +  "|" + (file->FileHash())  + "</a>" + "<br>";
 #ifdef CHAT_DEBUG
-	    std::cerr << "CreateForumMsg::anchorClicked mesgString : " << mesgString << std::endl;
+		std::cerr << "CreateForumMsg::anchorClicked mesgString : " << mesgString.toStdString() << std::endl;
 #endif
 
-    ui.forumMessage->textCursor().insertHtml(QString::fromStdString(mesgString));
+		ui.forumMessage->textCursor().insertHtml(mesgString);
 
-	ui.forumMessage->setFocus( Qt::OtherFocusReason );
-
+		ui.forumMessage->setFocus( Qt::OtherFocusReason );
+	}
 }
 
 void CreateForumMsg::dropEvent(QDropEvent *event)

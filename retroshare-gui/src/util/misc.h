@@ -26,29 +26,17 @@
 #include <sstream>
 #include <stdexcept>
 #include <QObject>
-#include <QString>
-#include <QByteArray>
-#include <QFileInfo>
-#include <QDir>
-#include <QList>
 #include <QPair>
 #include <QThread>
 
-#include <QItemDelegate>
-#include <QStyleOptionProgressBarV2>
-#include <QStyleOptionViewItemV2>
-#include <QModelIndex>
-#include <QPainter>
-#include <QProgressBar>
-#include <QApplication>
-
-
+#include "gui/settings/rsharesettings.h"
 
 /*  Miscellaneaous functions that can be useful */
-class misc : public QObject{
- Q_OBJECT
+class misc : public QObject
+{
+    Q_OBJECT
 
-  public:
+ public:
     // Convert any type of variable to C++ String
     // convert=true will convert -1 to 0
     template <class T> static std::string toString(const T& x, bool convert=false) {
@@ -113,272 +101,65 @@ class misc : public QObject{
     // use Binary prefix standards from IEC 60027-2
     // see http://en.wikipedia.org/wiki/Kilobyte
     // value must be given in bytes
-    static QString friendlyUnit(float val) {
-      if(val < 0) {
-        return tr("Unknown", "Unknown (size)");
-      }
-      const QString units[4] = {tr(" B", "bytes"), tr(" KiB", "kibibytes (1024 bytes)"), tr(" MiB", "mebibytes (1024 kibibytes)"), tr(" GiB", "gibibytes (1024 mibibytes)")};
-      for(unsigned int i=0; i<5; ++i) {
-        if (val < 1024.) {
-          return QString(QByteArray::number(val, 'f', 1)) + units[i];
-        }
-        val /= 1024.;
-      }
-      return  QString(QByteArray::number(val, 'f', 1)) + tr(" TiB", "tebibytes (1024 gibibytes)");
-    }
+    static QString friendlyUnit(float val);
 
-    static bool isPreviewable(QString extension){
-      extension = extension.toUpper();
-      if(extension == "AVI") return true;
-      if(extension == "MP3") return true;
-      if(extension == "OGG") return true;
-      if(extension == "OGM") return true;
-      if(extension == "WMV") return true;
-      if(extension == "WMA") return true;
-      if(extension == "MPEG") return true;
-      if(extension == "MPG") return true;
-      if(extension == "ASF") return true;
-      if(extension == "QT") return true;
-      if(extension == "RM") return true;
-      if(extension == "RMVB") return true;
-      if(extension == "RMV") return true;
-      if(extension == "SWF") return true;
-      if(extension == "FLV") return true;
-      if(extension == "WAV") return true;
-      if(extension == "MOV") return true;
-      if(extension == "VOB") return true;
-      if(extension == "MID") return true;
-      if(extension == "AC3") return true;
-      if(extension == "MP4") return true;
-      if(extension == "MP2") return true;
-      if(extension == "AVI") return true;
-      if(extension == "FLAC") return true;
-      if(extension == "AU") return true;
-      if(extension == "MPE") return true;
-      if(extension == "MOV") return true;
-      if(extension == "MKV") return true;
-      if(extension == "AIF") return true;
-      if(extension == "AIFF") return true;
-      if(extension == "AIFC") return true;
-      if(extension == "RA") return true;
-      if(extension == "RAM") return true;
-      if(extension == "M4P") return true;
-      if(extension == "M4A") return true;
-      if(extension == "3GP") return true;
-      if(extension == "AAC") return true;
-      if(extension == "SWA") return true;
-      if(extension == "MPC") return true;
-      if(extension == "MPP") return true;
-      return false;
-    }
+    static bool isPreviewable(QString extension);
 
     // return qBittorrent config path
-    static QString qBittorrentPath() {
-      QString qBtPath = QDir::homePath()+QDir::separator()+QString::fromUtf8(".qbittorrent") + QDir::separator();
-      // Create dir if it does not exist
-      if(!QFile::exists(qBtPath)){
-        QDir dir(qBtPath);
-        dir.mkpath(qBtPath);
-      }
-      return qBtPath;
-    }
+    static QString qBittorrentPath();
 
-// Not used anymore because it is not safe
-//     static bool removePath(QString path) {
-//       qDebug((QString::fromUtf8("file to delete:") + path).toUtf8());
-//       if(!QFile::remove(path)) {
-//         // Probably a folder
-//         QDir current_dir(path);
-//         if(current_dir.exists()) {
-//           //Remove sub items
-//           QStringList subItems = current_dir.entryList();
-//           QString item;
-//           foreach(item, subItems) {
-//             if(item != QString::fromUtf8(".") && item != QString::fromUtf8("..")) {
-//               qDebug("-> Removing "+(path+QDir::separator()+item).toUtf8());
-//               removePath(path+QDir::separator()+item);
-//             }
-//           }
-//           // Remove empty folder
-//           if(current_dir.rmdir(path)) {
-//             return true;
-//           }else{
-//             return false;
-//           }
-//         }else{
-//           return false;
-//         }
-//       }
-//       return true;
-//     }
-
-    static QString findFileInDir(QString dir_path, QString fileName) {
-      QDir dir(dir_path);
-      if(dir.exists(fileName)) {
-        return dir.filePath(fileName);
-      }
-      QStringList subDirs = dir.entryList(QDir::Dirs);
-      QString subdir_name;
-      foreach(subdir_name, subDirs) {
-        QString result = findFileInDir(dir.path()+QDir::separator()+subdir_name, fileName);
-        if(!result.isNull()) {
-          return result;
-        }
-      }
-      return QString();
-    }
-
+    static QString findFileInDir(QString dir_path, QString fileName);
 
     // Insertion sort, used instead of bubble sort because it is
     // approx. 5 times faster.
-    template <class T> static void insertSort(QList<QPair<int, T> > &list, const QPair<int, T>& value, Qt::SortOrder sortOrder) {
-      int i = 0;
-      if(sortOrder == Qt::AscendingOrder) {
-        while(i < list.size() and value.second > list.at(i).second) {
-          ++i;
-        }
-      }else{
-        while(i < list.size() and value.second < list.at(i).second) {
-          ++i;
-        }
-      }
-      list.insert(i, value);
-    }
+//    template <class T> static void insertSort(QList<QPair<int, T> > &list, const QPair<int, T>& value, Qt::SortOrder sortOrder) {
+//      int i = 0;
+//      if(sortOrder == Qt::AscendingOrder) {
+//        while(i < list.size() and value.second > list.at(i).second) {
+//          ++i;
+//        }
+//      }else{
+//        while(i < list.size() and value.second < list.at(i).second) {
+//          ++i;
+//        }
+//      }
+//      list.insert(i, value);
+//    }
 
-    template <class T> static void insertSort2(QList<QPair<int, T> > &list, const QPair<int, T>& value, Qt::SortOrder sortOrder) {
-      int i = 0;
-      if(sortOrder == Qt::AscendingOrder) {
-        while(i < list.size() and value.first > list.at(i).first) {
-          ++i;
-        }
-      }else{
-        while(i < list.size() and value.first < list.at(i).first) {
-          ++i;
-        }
-      }
-      list.insert(i, value);
-    }
+//    template <class T> static void insertSort2(QList<QPair<int, T> > &list, const QPair<int, T>& value, Qt::SortOrder sortOrder) {
+//      int i = 0;
+//      if(sortOrder == Qt::AscendingOrder) {
+//        while(i < list.size() and value.first > list.at(i).first) {
+//          ++i;
+//        }
+//      }else{
+//        while(i < list.size() and value.first < list.at(i).first) {
+//          ++i;
+//        }
+//      }
+//      list.insert(i, value);
+//    }
 
     // Can't use template class for QString because >,< use unicode code for sorting
     // which is not what a human would expect when sorting strings.
-    static void insertSortString(QList<QPair<int, QString> > &list, QPair<int, QString> value, Qt::SortOrder sortOrder) {
-      int i = 0;
-      if(sortOrder == Qt::AscendingOrder) {
-        while(i < list.size() and QString::localeAwareCompare(value.second, list.at(i).second) > 0) {
-          ++i;
-        }
-      }else{
-        while(i < list.size() and QString::localeAwareCompare(value.second, list.at(i).second) < 0) {
-          ++i;
-        }
-      }
-      list.insert(i, value);
-    }
+    static void insertSortString(QList<QPair<int, QString> > &list, QPair<int, QString> value, Qt::SortOrder sortOrder);
 
-    static float getPluginVersion(QString filePath) {
-      QFile plugin(filePath);
-      if(!plugin.exists()){
-        qDebug("%s plugin does not exist, returning 0.0", filePath.toUtf8().data());
-        return 0.0;
-      }
-      if(!plugin.open(QIODevice::ReadOnly | QIODevice::Text)){
-        return 0.0;
-      }
-      float version = 0.0;
-      while (!plugin.atEnd()){
-        QByteArray line = plugin.readLine();
-        if(line.startsWith("#VERSION: ")){
-          line = line.split(' ').last();
-          line.replace("\n", "");
-          version = line.toFloat();
-          qDebug("plugin %s version: %.2f", filePath.toUtf8().data(), version);
-          break;
-        }
-      }
-      return version;
-    }
+    static float getPluginVersion(QString filePath);
 
     // Take a number of seconds and return an user-friendly
     // time duration like "1d 2h 10m".
-	 static QString userFriendlyDuration(qlonglong seconds) 
-	 {
-		 if(seconds < 0) {
-			 return tr("Unknown");
-		 }
-		 if(seconds < 60) {
-			 return tr("< 1m", "< 1 minute");
-		 }
-		 int minutes = seconds / 60;
-		 if(minutes < 60) {
-			 return tr("%1 minutes","e.g: 10minutes").arg(QString::QString::fromUtf8(misc::toString(minutes).c_str()));
-		 }
-		 int hours = minutes / 60;
-		 minutes = minutes - hours*60;
-		 if(hours < 24) {
-			 return tr("%1h %2m", "e.g: 3hours 5minutes").arg(QString::fromUtf8(misc::toString(hours).c_str())).arg(QString::fromUtf8(misc::toString(minutes).c_str()));
-		 }
-		 int days = hours / 24;
-		 hours = hours - days * 24;
-		 if(days < 365) {
-			 return tr("%1d %2h", "e.g: 2days 10hours").arg(QString::fromUtf8(misc::toString(days).c_str())).arg(QString::fromUtf8(misc::toString(hours).c_str()));
-		 }
-		 int years = days / 365;
-		 days = days - years * 365;
-		 return tr("%1y %2d", "e.g: 2 years 2days ").arg(QString::fromUtf8(misc::toString(years).c_str())).arg(QString::fromUtf8(misc::toString(days).c_str()));
-	 }
+    static QString userFriendlyDuration(qlonglong seconds);
 
-	static QString userFriendlyUnit(double count, unsigned int decimal, double factor = 1000)
-	{
-		if (count <= 0.0) {
-			return "0";
-		}
+    static QString userFriendlyUnit(double count, unsigned int decimal, double factor = 1000);
 
-		QString output;
+    static QString removeNewLine(const QString &text);
+    static QString removeNewLine(const std::string &text);
+    static QString removeNewLine(const std::wstring &text);
 
-		int i;
-		for (i = 0; i < 5; i++) {
-			if (count < factor) {
-				break;
-			}
+    static bool getOpenFileName(QWidget *parent, RshareSettings::enumLastDir type, const QString &caption, const QString &filter, QString &file);
+    static bool getOpenFileNames(QWidget *parent, RshareSettings::enumLastDir type, const QString &caption, const QString &filter, QStringList &files);
 
-			count /= factor;
-		}
-
-		QString unit;
-		switch (i) {
-		case 0:
-			decimal = 0; // no decimal
-			break;
-		case 1:
-			unit = tr("k", "e.g: 3.1 k");
-			break;
-		case 2:
-			unit = tr("M", "e.g: 3.1 M");
-			break;
-		case 3:
-			unit = tr("G", "e.g: 3.1 G");
-			break;
-		default: // >= 4
-			unit = tr("T", "e.g: 3.1 T");
-		}
-
-		return QString("%1 %2").arg(count, 0, 'f', decimal).arg(unit);
-	}
-
-	static QString removeNewLine(const QString &text)
-	{
-		return QString(text).replace("\n", " ");
-	}
-
-	static QString removeNewLine(const std::string &text)
-	{
-		return QString::fromUtf8(text.c_str()).replace("\n", " ");
-	}
-
-	static QString removeNewLine(const std::wstring &text)
-	{
-		return QString::fromStdWString(text).replace("\n", " ");
-	}
+    static bool getSaveFileName(QWidget *parent, RshareSettings::enumLastDir type, const QString &caption, const QString &filter, QString &file);
 };
 
 //  Trick to get a portable sleep() function

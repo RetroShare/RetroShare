@@ -39,7 +39,7 @@ public:
   
 public slots:
   void  insertConnect();
-  std::string loadneighbour();
+//  std::string loadneighbour();
   /* void loadneighbour(); */
   void updateNewDiscoveryInfo() ;
 
@@ -55,10 +55,10 @@ private slots:
   //void unvalidGPGkeyWidgetCostumPopupMenu( QPoint point );
 
   /** Called when user clicks "Load Cert" to choose location of a Cert file */
-  void loadcert();
+//  void loadcert();
 
-  void authneighbour();
-  void addneighbour();
+//  void authneighbour();
+//  void addneighbour();
 
   void on_actionAddFriend_activated();
   //void on_actionCopyKey_activated();

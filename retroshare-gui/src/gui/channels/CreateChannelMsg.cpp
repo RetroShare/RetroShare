@@ -21,7 +21,6 @@
 
 #include <QDragEnterEvent>
 #include <QUrl>
-#include <QFileDialog>
 #include <QTimer>
 #include <QMessageBox>
 #include <QBuffer>
@@ -289,14 +288,15 @@ void CreateChannelMsg::addAttachment(const std::string &hash, const std::string 
 
 void CreateChannelMsg::addExtraFile()
 {
-	/* add a SubFileItem to the attachment section */
-	std::cerr << "CreateChannelMsg::addExtraFile() opening file dialog";
-	std::cerr << std::endl;
+    /* add a SubFileItem to the attachment section */
+    std::cerr << "CreateChannelMsg::addExtraFile() opening file dialog";
+    std::cerr << std::endl;
 
-	// select a file
-    QStringList files = QFileDialog::getOpenFileNames(this, tr("Add Extra File"), "", "", 0, QFileDialog::DontResolveSymlinks);
-    for (QStringList::iterator fileIt = files.begin(); fileIt != files.end(); fileIt++) {
-        addAttachment((*fileIt).toUtf8().constData());
+    QStringList files;
+    if (misc::getOpenFileNames(this, RshareSettings::LASTDIR_EXTRAFILE, tr("Add Extra File"), "", files)) {
+        for (QStringList::iterator fileIt = files.begin(); fileIt != files.end(); fileIt++) {
+            addAttachment((*fileIt).toUtf8().constData());
+        }
     }
 }
 
@@ -563,8 +563,8 @@ void CreateChannelMsg::sendMessage(std::wstring subject, std::wstring msg, std::
 
 void CreateChannelMsg::addThumbnail()
 {
-        QString fileName = QFileDialog::getOpenFileName(this, tr("Load File"), QDir::homePath(), tr("Pictures (*.png *.xpm *.jpg)"));
-	if(!fileName.isEmpty())
+        QString fileName;
+	if (misc::getOpenFileName(this, RshareSettings::LASTDIR_IMAGES, tr("Load File"), tr("Pictures (*.png *.xpm *.jpg)"), fileName))
 	{
 		picture = QPixmap(fileName).scaled(156,107, Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
 		

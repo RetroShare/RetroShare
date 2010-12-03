@@ -28,7 +28,6 @@
 #include <QWidget>
 #include <QTextEdit>
 
-#include <QFileDialog>
 
 #include <QDebug>
 #include <QObject>

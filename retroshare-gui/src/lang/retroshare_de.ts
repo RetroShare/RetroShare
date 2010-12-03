@@ -1743,6 +1743,16 @@ p, li { white-space: pre-wrap; }
         <translation>Bitte Name hinzufügen</translation>
     </message>
     <message>
+        <location line="+53"/>
+        <source>Load File</source>
+        <translation type="unfinished">Lade Datei</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Pictures (*.png *.xpm *.jpg)</source>
+        <translation type="unfinished">Bilder (*.png *.xpm *.jpg)</translation>
+    </message>
+    <message>
         <location filename="../gui/unfinished/blogs/CreateBlog.ui" line="-137"/>
         <source>Authemticated Messages</source>
         <translation type="unfinished">Authentifizierte Nachrichten</translation>
@@ -1876,7 +1886,7 @@ p, li { white-space: pre-wrap; }
         <translation>Rückgängig</translation>
     </message>
     <message>
-        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="+197"/>
+        <location filename="../gui/unfinished/blogs/CreateBlogMsg.cpp" line="+198"/>
         <source>RetroShare</source>
         <translation></translation>
     </message>
@@ -2036,12 +2046,12 @@ Do you want to save your changes?</source>
 Möchten Sie die Änderungen speichern?</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+22"/>
         <source>Open File...</source>
         <translation>Datei öffnen...</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+0"/>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
         <translation>HTML-Dateien (*.htm *.html);;Alle Dateien (*)</translation>
     </message>
@@ -2051,22 +2061,27 @@ Möchten Sie die Änderungen speichern?</translation>
         <translation>Speichern unter...</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+0"/>
         <source>ODF files (*.odt);;HTML-Files (*.htm *.html);;All Files (*)</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+17"/>
         <source>Print Document</source>
         <translation>Dokument drucken</translation>
     </message>
     <message>
-        <location line="+64"/>
+        <location line="+33"/>
+        <source>Export PDF</source>
+        <translation type="unfinished">PDF exportieren</translation>
+    </message>
+    <message>
+        <location line="+30"/>
         <source>Choose Image</source>
         <translation>Bild wählen</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+0"/>
         <source>Image Files supported (*.png *.jpeg *.jpg *.gif)</source>
         <translation>Unterstützte Bilddateien (*.png *.jpeg *.jpg *.gif)</translation>
     </message>
@@ -2174,7 +2189,7 @@ Möchten Sie die Änderungen speichern?</translation>
         <translation>Erstellen</translation>
     </message>
     <message>
-        <location filename="../gui/channels/CreateChannel.cpp" line="+164"/>
+        <location filename="../gui/channels/CreateChannel.cpp" line="+163"/>
         <source>RetroShare</source>
         <translation></translation>
     </message>
@@ -2184,7 +2199,7 @@ Möchten Sie die Änderungen speichern?</translation>
         <translation>Bitte einen Name hinzufügen</translation>
     </message>
     <message>
-        <location line="+83"/>
+        <location line="+84"/>
         <source>Load File</source>
         <translation>Lade Datei</translation>
     </message>
@@ -2285,12 +2300,12 @@ p, li { white-space: pre-wrap; }
         <translation>Drag&apos;n&apos;Drop Dateien aus den Suchergebnissen</translation>
     </message>
     <message>
-        <location filename="../gui/channels/CreateChannelMsg.cpp" line="+297"/>
+        <location filename="../gui/channels/CreateChannelMsg.cpp" line="+296"/>
         <source>Add Extra File</source>
         <translation>Zusätzlich eine Datei hinzufügen</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+27"/>
         <location line="+202"/>
         <source>RetroShare</source>
         <translation></translation>
@@ -2306,7 +2321,7 @@ p, li { white-space: pre-wrap; }
         <translation>Bitte Subjekt nicht vergessen</translation>
     </message>
     <message>
-        <location line="+40"/>
+        <location line="+41"/>
         <source>Load File</source>
         <translation>Lade Datei</translation>
     </message>
@@ -2436,7 +2451,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+173"/>
-        <location filename="../gui/forums/CreateForumMsg.cpp" line="+72"/>
+        <location filename="../gui/forums/CreateForumMsg.cpp" line="+71"/>
         <source>Paste RetroShare Link</source>
         <translation>RetroShare Link einfügen</translation>
     </message>
@@ -2481,7 +2496,7 @@ p, li { white-space: pre-wrap; }
         <translation>Du kannst Dateien mit Drag&apos;n&apos;Drop anhängen</translation>
     </message>
     <message>
-        <location filename="../gui/forums/CreateForumMsg.cpp" line="+93"/>
+        <location filename="../gui/forums/CreateForumMsg.cpp" line="+88"/>
         <location line="+4"/>
         <source>Drop file error.</source>
         <translation>Dateifehler bei Drag&apos;n&apos;Drop.</translation>
@@ -2542,7 +2557,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>CryptoPage</name>
     <message>
-        <location filename="../gui/settings/CryptoPage.cpp" line="+93"/>
+        <location filename="../gui/settings/CryptoPage.cpp" line="+94"/>
         <source>RetroShare</source>
         <translation></translation>
     </message>
@@ -2552,12 +2567,12 @@ p, li { white-space: pre-wrap; }
         <translation>Dein öffentlicher Schlüssel ist in die Zwischenablage kopiert worden</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+25"/>
         <source>Save as...</source>
         <translation>Speichern unter...</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+0"/>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
         <translation></translation>
     </message>
@@ -5827,18 +5842,18 @@ Möchtest Du die Nachricht in den Entwürfen speichern?</translation>
         <translation>&amp;Format</translation>
     </message>
     <message>
-        <location line="+257"/>
+        <location line="+258"/>
         <source>Open File...</source>
         <translation>Datei öffnen...</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+0"/>
         <location line="+23"/>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
         <translation>HTML-Dateien (*.htm *.html);;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location line="-1"/>
+        <location line="+0"/>
         <source>Save as...</source>
         <translation>Speichern unter...</translation>
     </message>
@@ -5848,29 +5863,34 @@ Möchtest Du die Nachricht in den Entwürfen speichern?</translation>
         <translation>Dokument drucken</translation>
     </message>
     <message>
-        <location line="+62"/>
+        <location line="+12"/>
+        <source>Export PDF</source>
+        <translation>PDF exportieren</translation>
+    </message>
+    <message>
+        <location line="+49"/>
         <source>Message has not been Sent.
 Do you want to save message ?</source>
         <translation>Nachricht noch nicht versandt.
 Willst Du die Nachricht speichern ?</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+25"/>
         <source>Choose Image</source>
         <translation>Bild wählen</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+0"/>
         <source>Image Files supported (*.png *.jpeg *.jpg *.gif)</source>
         <translation>Unterstützte Bilddateien (*.png *.jpeg *.jpg *.gif)</translation>
     </message>
     <message>
-        <location line="+114"/>
+        <location line="+111"/>
         <source>Add Extra File</source>
         <translation>Zusätzliche Datei hinzufügen</translation>
     </message>
     <message>
-        <location line="+273"/>
+        <location line="+274"/>
         <location line="+6"/>
         <source>Drop file error.</source>
         <translation>Dateifehler bei Drag&apos;n&apos;Drop.</translation>
@@ -5886,7 +5906,7 @@ Willst Du die Nachricht speichern ?</translation>
         <translation>Datei nicht gefunden oder Dateiname nicht akzeptiert.</translation>
     </message>
     <message>
-        <location line="-2014"/>
+        <location line="-2012"/>
         <source>Friend Recommendation(s)</source>
         <translation>Freundempfehlung(en)</translation>
     </message>
@@ -6372,7 +6392,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MessengerWindow</name>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="+293"/>
+        <location filename="../gui/MessengerWindow.cpp" line="+292"/>
         <source>Expand all</source>
         <translation>Alle erweitern</translation>
     </message>
@@ -6587,37 +6607,27 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>NetworkDialog</name>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="+300"/>
-        <location line="+328"/>
         <source>Select a pem/pqi File</source>
-        <translation>Wählen einer PEM- oder PQI-Datei</translation>
+        <translation type="obsolete">Wählen einer PEM- oder PQI-Datei</translation>
     </message>
     <message>
-        <location line="-311"/>
-        <location line="+328"/>
         <source>File Not Found</source>
-        <translation>Datei nicht gefunden</translation>
+        <translation type="obsolete">Datei nicht gefunden</translation>
     </message>
     <message>
-        <location line="-327"/>
-        <location line="+328"/>
         <source>%1 does not exist. Would you like to create it?</source>
-        <translation>%1 ist nicht vorhanden. Möchten Sie es jetzt erstellen?</translation>
+        <translation type="obsolete">%1 ist nicht vorhanden. Möchten Sie es jetzt erstellen?</translation>
     </message>
     <message>
-        <location line="-317"/>
-        <location line="+328"/>
         <source>Failed to Create File</source>
-        <translation>Es ist nicht gelungen, die Datei zu erstellen</translation>
+        <translation type="obsolete">Es ist nicht gelungen, die Datei zu erstellen</translation>
     </message>
     <message>
-        <location line="-327"/>
-        <location line="+328"/>
         <source>Unable to create %1 [%2]</source>
-        <translation>Kann %1 [%2] nicht erstellen</translation>
+        <translation type="obsolete">Kann %1 [%2] nicht erstellen</translation>
     </message>
     <message>
-        <location line="-218"/>
+        <location filename="../gui/NetworkDialog.cpp" line="+436"/>
         <source>Personal signature</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6654,14 +6664,12 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
 Rechtsklick und als Freund hinzufügen um zu verbinden.</translation>
     </message>
     <message>
-        <location line="+97"/>
         <source>Select Certificate</source>
-        <translation>Zertifikat auswählen</translation>
+        <translation type="obsolete">Zertifikat auswählen</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Certificates (*.pqi *.pem)</source>
-        <translation>Zertifikate (*.pqi *.pem)</translation>
+        <translation type="obsolete">Zertifikate (*.pqi *.pem)</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="+111"/>
@@ -6772,7 +6780,7 @@ p, li { white-space: pre-wrap; }
         <translation>Leeren</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="-364"/>
+        <location filename="../gui/NetworkDialog.cpp" line="-263"/>
         <source>Deny friend</source>
         <translation>Blockiere Freund</translation>
     </message>
@@ -6797,12 +6805,12 @@ p, li { white-space: pre-wrap; }
         <translation>Nachbar-Details...</translation>
     </message>
     <message>
-        <location line="+201"/>
+        <location line="+198"/>
         <source>Unknown</source>
         <translation>Unbekannt</translation>
     </message>
     <message>
-        <location line="-301"/>
+        <location line="-298"/>
         <source>Authentication matrix</source>
         <translation>Authentifizierungsmatrix</translation>
     </message>
@@ -6812,28 +6820,17 @@ p, li { white-space: pre-wrap; }
         <translation>Netzwerk Ansicht</translation>
     </message>
     <message>
-        <location line="+377"/>
+        <location line="+374"/>
         <source>yourself</source>
         <translation>selbst</translation>
     </message>
     <message>
-        <location line="+142"/>
-        <location line="+16"/>
-        <location line="+4"/>
-        <location line="+6"/>
-        <source>RetroShare</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="-9"/>
         <source>Certificate file successfully created</source>
-        <translation>Zertifikat-Datei erfolgreich erstellt</translation>
+        <translation type="obsolete">Zertifikat-Datei erfolgreich erstellt</translation>
     </message>
     <message>
-        <location line="+4"/>
-        <location line="+6"/>
         <source>Sorry, certificate file creation failed</source>
-        <translation>Zertifikat-Datei konnte nicht erstellt werden</translation>
+        <translation type="obsolete">Zertifikat-Datei konnte nicht erstellt werden</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="-179"/>
@@ -6889,19 +6886,16 @@ p, li { white-space: pre-wrap; }
         <translation>Peer ID</translation>
     </message>
     <message>
-        <location filename="../gui/NetworkDialog.cpp" line="-26"/>
         <source>Sorry, create certificate failed</source>
-        <translation>Zertifikat-Datei konnte nicht erstellt werden</translation>
+        <translation type="obsolete">Zertifikat-Datei konnte nicht erstellt werden</translation>
     </message>
     <message>
-        <location line="+6"/>
         <source>Please choose a filename</source>
-        <translation>Bitte wählen sie einen Dateinamen</translation>
+        <translation type="obsolete">Bitte wählen sie einen Dateinamen</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
-        <translation>RetroShare Zertifikat (*.rsc );;Alle Dateien (*)</translation>
+        <translation type="obsolete">RetroShare Zertifikat (*.rsc );;Alle Dateien (*)</translation>
     </message>
 </context>
 <context>
@@ -7315,12 +7309,12 @@ p, li { white-space: pre-wrap; }
         <translation>Chat</translation>
     </message>
     <message>
-        <location line="+674"/>
+        <location line="+675"/>
         <source>Save Certificate</source>
         <translation>Zertifikat speichern</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+0"/>
         <source>Certificates (*.pqi)</source>
         <translation>Zertifikate (*.pqi)</translation>
     </message>
@@ -7435,18 +7429,28 @@ p, li { white-space: pre-wrap; }
         <translation>Verfügbar</translation>
     </message>
     <message>
-        <location line="+422"/>
+        <location line="+419"/>
         <location line="+2"/>
         <source>New group chat</source>
         <translation>Neuer Gruppenchat</translation>
     </message>
     <message>
-        <location line="+352"/>
+        <location line="+285"/>
+        <source>Load File</source>
+        <translation>Lade Datei</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Pictures (*.png *.xpm *.jpg *.tiff *.gif)</source>
+        <translation>Bilder (*.png *.xpm *.jpg *.tiff *.gif)</translation>
+    </message>
+    <message>
+        <location line="+67"/>
         <source>Add Extra File</source>
         <translation>Zusätzliche Datei hinzufügen</translation>
     </message>
     <message>
-        <location line="+99"/>
+        <location line="+95"/>
         <location line="+6"/>
         <source>Drop file error.</source>
         <translation>Dateifehler bei Drag&apos;n&apos;Drop.</translation>
@@ -7554,7 +7558,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="-107"/>
-        <location filename="../gui/PeersDialog.cpp" line="-1479"/>
+        <location filename="../gui/PeersDialog.cpp" line="-1472"/>
         <source>Add Friend</source>
         <translation>Freund hinzufügen</translation>
     </message>
@@ -7609,12 +7613,12 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="-40"/>
-        <location line="+846"/>
+        <location line="+843"/>
         <source>RetroShare</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-807"/>
+        <location line="-804"/>
         <source>Message Group</source>
         <translation>Gruppe anschreiben</translation>
     </message>
@@ -7629,17 +7633,17 @@ p, li { white-space: pre-wrap; }
         <translation>Gruppe entfernen</translation>
     </message>
     <message>
-        <location line="+799"/>
+        <location line="+796"/>
         <source>Do you want to remove this Friend?</source>
         <translation>Willst du diesen Freund entfernen?</translation>
     </message>
     <message>
-        <location line="+729"/>
+        <location line="+726"/>
         <source>Save as...</source>
         <translation>Speichern unter...</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+0"/>
         <source>Text File (*.txt );;All Files (*)</source>
         <translation>Text Datei (*.txt );;Alle Dateien (*)</translation>
     </message>
@@ -7667,12 +7671,12 @@ p, li { white-space: pre-wrap; }
         <translation>Status Spalte ausblenden</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="-1805"/>
+        <location filename="../gui/PeersDialog.cpp" line="-1798"/>
         <source>Friends Storm</source>
         <translation>Aktivitäten</translation>
     </message>
     <message>
-        <location line="+1160"/>
+        <location line="+1157"/>
         <source>is typing...</source>
         <translation>tippt...</translation>
     </message>
@@ -7692,7 +7696,7 @@ p, li { white-space: pre-wrap; }
         <translation>Freunde</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="-862"/>
+        <location filename="../gui/PeersDialog.cpp" line="-859"/>
         <location line="+80"/>
         <source>Paste Friend Link</source>
         <translation>RetroShare Link einfügen</translation>
@@ -7969,7 +7973,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PluginFrame</name>
     <message>
-        <location filename="../gui/PluginManagerWidget.cpp" line="+62"/>
+        <location filename="../gui/PluginManagerWidget.cpp" line="+61"/>
         <source>Remove</source>
         <translation>Entfernen</translation>
     </message>
@@ -8005,12 +8009,17 @@ p, li { white-space: pre-wrap; }
         <translation>Avatar zeigen</translation>
     </message>
     <message>
-        <location line="+315"/>
+        <location line="+153"/>
+        <source>Load Picture File</source>
+        <translation>Lade Bilddatei</translation>
+    </message>
+    <message>
+        <location line="+155"/>
         <source>File not found or file name not accepted.</source>
         <translation>Datei nicht gefunden oder Dateiname nicht akzeptiert.</translation>
     </message>
     <message>
-        <location line="+90"/>
+        <location line="+91"/>
         <source>Messages you send will be delivered after Friend is again Online</source>
         <translation>Nachrichten, die Du versendest gehen bei diesem Freund erst wieder ein wenn er Online ist</translation>
     </message>
@@ -8078,12 +8087,12 @@ p, li { white-space: pre-wrap; }
         <translation>Durchgestrichen</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="-261"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="-255"/>
         <source>Add Extra File</source>
         <translation>Zusätzlich eine Datei hinzufügen</translation>
     </message>
     <message>
-        <location line="+165"/>
+        <location line="+158"/>
         <location line="+6"/>
         <source>Drop file error.</source>
         <translation>Dateifehler bei Drag&apos;n&apos;Drop.</translation>
@@ -8105,17 +8114,17 @@ p, li { white-space: pre-wrap; }
         <translation>Chat Verlauf speichern</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="+60"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="+61"/>
         <source>Save as...</source>
         <translation>Speichern unter...</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+0"/>
         <source>Text File (*.txt );;All Files (*)</source>
         <translation>Text Datei (*.txt );;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location line="-719"/>
+        <location line="-712"/>
         <source>Your Friend is offline 
 Do you want to send them a Message instead</source>
         <translation>Dein Freund ist Offline willst du ihm stattdessen eine Nachricht senden</translation>
@@ -8126,7 +8135,7 @@ Do you want to send them a Message instead</source>
         <translation>Bild anhängen</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="+761"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="+755"/>
         <source>is Idle and may not reply</source>
         <translation>antwortet möglicherweise nicht, da der Status auf &quot;Untätig&quot; gesetzt wurde</translation>
     </message>
@@ -8146,7 +8155,7 @@ Do you want to send them a Message instead</source>
         <translation>ist Offline.</translation>
     </message>
     <message>
-        <location line="-719"/>
+        <location line="-713"/>
         <source>Paste RetroShare Link</source>
         <translation>RetroShare Link einfügen</translation>
     </message>
@@ -8194,6 +8203,16 @@ Do you want to send them a Message instead</source>
         <location filename="../gui/chat/PopupChatWindow.cpp" line="+259"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Load File</source>
+        <translation>Lade Datei</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Pictures (*.png *.xpm *.jpg *.tiff *.gif)</source>
+        <translation>Bilder (*.png *.xpm *.jpg *.tiff *.gif)</translation>
     </message>
 </context>
 <context>
@@ -8336,7 +8355,7 @@ Do you want to send them a Message instead</source>
 <context>
     <name>ProfileView</name>
     <message>
-        <location filename="../gui/profile/ProfileView.cpp" line="+72"/>
+        <location filename="../gui/profile/ProfileView.cpp" line="+70"/>
         <source>Clear Photo</source>
         <translation>Photo entfernen</translation>
     </message>
@@ -8743,17 +8762,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/elastic/node.cpp" line="+320"/>
         <source>Deny friend</source>
-        <translation type="unfinished">Blockiere Freund</translation>
+        <translation>Blockiere Freund</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Make friend</source>
-        <translation type="unfinished">Freund hinzufügen</translation>
+        <translation>Freund hinzufügen</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Peer details</source>
-        <translation type="unfinished">Nachbar Details</translation>
+        <translation>Nachbar Details</translation>
     </message>
 </context>
 <context>
@@ -9281,7 +9300,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+196"/>
-        <location filename="../gui/SearchDialog.cpp" line="+218"/>
+        <location filename="../gui/SearchDialog.cpp" line="+219"/>
         <source>Download</source>
         <translation>Herunterladen</translation>
     </message>
@@ -10694,7 +10713,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+26"/>
-        <location filename="../gui/feeds/SubFileItem.cpp" line="+578"/>
+        <location filename="../gui/feeds/SubFileItem.cpp" line="+576"/>
         <location line="+6"/>
         <source>Play File</source>
         <translation>Datei abspielen</translation>
@@ -11473,7 +11492,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>misc</name>
     <message>
-        <location filename="../util/misc.h" line="+118"/>
+        <location filename="../util/misc.cpp" line="+36"/>
         <source>Unknown</source>
         <comment>Unknown (size)</comment>
         <translation>Unbekannt</translation>
@@ -11509,7 +11528,7 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location line="+179"/>
+        <location line="+124"/>
         <source>Unknown</source>
         <translation>Unbekannt</translation>
     </message>

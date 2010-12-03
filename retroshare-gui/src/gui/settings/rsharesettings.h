@@ -55,7 +55,17 @@ class QMainWindow;
  */
 class RshareSettings : public RSettings
 {
-  
+public:
+  enum enumLastDir
+  {
+    LASTDIR_EXTRAFILE,
+    LASTDIR_CERT,
+    LASTDIR_HISTORY,
+    LASTDIR_IMAGES,
+    LASTDIR_MESSAGES,
+    LASTDIR_BLOGS
+  };
+
 public:
   /* create settings object */
   static void Create ();
@@ -91,6 +101,9 @@ public:
   QString getLogFile();
   /** Set the destination log file. */
   void setLogFile(QString file);
+
+  QString getLastDir(enumLastDir type);
+  void setLastDir(enumLastDir type, const QString &lastDir);
 
   /* Get the bandwidth graph line filter. */
   uint getBWGraphFilter();

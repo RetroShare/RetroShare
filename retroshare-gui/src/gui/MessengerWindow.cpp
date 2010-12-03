@@ -23,7 +23,6 @@
 #include <QFileInfo>
 #include <QWidgetAction>
 #include <QTimer>
-#include <QFileDialog>
 #include "common/vmessagebox.h"
 #include "common/StatusDefs.h"
 

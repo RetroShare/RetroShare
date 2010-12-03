@@ -28,7 +28,6 @@
 #include <QColorDialog>
 #include <QFontDialog>
 #include <QDropEvent>
-#include <QFileDialog>
 #include "common/vmessagebox.h"
 #include "common/StatusDefs.h"
 #include "common/GroupDefs.h"
@@ -64,6 +63,7 @@
 
 #include "MainWindow.h"
 #include "NewsFeed.h"
+#include "util/misc.h"
 
 #include <sstream>
 #include <time.h>
@@ -1103,18 +1103,15 @@ void PeersDialog::exportfriend()
 	}
 
 	std::string id = getPeerRsCertId(c);
-	QString fileName = QFileDialog::getSaveFileName(this, tr("Save Certificate"), "",
-	                                                     tr("Certificates (*.pqi)"));
 
-	std::string file = fileName.toStdString();
-	if (file != "")
+	if (misc::getSaveFileName(this, RshareSettings::LASTDIR_CERT, tr("Save Certificate"), tr("Certificates (*.pqi)"), fileName))
 	{
 #ifdef PEERS_DEBUG
                 std::cerr << "PeersDialog::exportfriend() Saving to: " << file << std::endl;
 #endif
 		if (rsPeers)
 		{
-                        rsPeers->saveCertificateToFile(id, file);
+                        rsPeers->saveCertificateToFile(id, fileName.toUtf8().constData());
 		}
 	}
 
@@ -1727,8 +1724,8 @@ void PeersDialog::updateAvatar()
 
 void PeersDialog::getAvatar()
 {
-	QString fileName = QFileDialog::getOpenFileName(this, "Load File", QDir::homePath(), "Pictures (*.png *.xpm *.jpg *.tiff *.gif)");
-	if(!fileName.isEmpty())
+	QString fileName;
+	if (misc::getOpenFileName(this, RshareSettings::LASTDIR_IMAGES, tr("Load File"), tr("Pictures (*.png *.xpm *.jpg *.tiff *.gif)"), fileName))
 	{
 		QPixmap picture;
 		picture = QPixmap(fileName).scaled(96,96, Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
@@ -1794,14 +1791,10 @@ void PeersDialog::statusmessage()
 
 void PeersDialog::addExtraFile()
 {
-	// select a file
-	QString qfile = QFileDialog::getOpenFileName(this, tr("Add Extra File"), "", "", 0,
-				QFileDialog::DontResolveSymlinks);
-	std::string filePath = qfile.toStdString();
-	if (filePath != "")
-	{
-	    PeersDialog::addAttachment(filePath);
-	}
+    QString file;
+    if (misc::getOpenFileName(this, RshareSettings::LASTDIR_EXTRAFILE, tr("Add Extra File"), "", file)) {
+        addAttachment(file.toUtf8().constData());
+    }
 }
 
 void PeersDialog::addAttachment(std::string filePath) {
@@ -1950,12 +1943,13 @@ bool PeersDialog::fileSave()
 
 bool PeersDialog::fileSaveAs()
 {
-    QString fn = QFileDialog::getSaveFileName(this, tr("Save as..."),
-                                              QString(), tr("Text File (*.txt );;All Files (*)"));
-    if (fn.isEmpty())
-        return false;
-    setCurrentFileName(fn);
-    return fileSave();    
+    QString fn;
+    if (misc::getSaveFileName(this, RshareSettings::LASTDIR_HISTORY, tr("Save as..."), tr("Text File (*.txt );;All Files (*)"), fn)) {
+        setCurrentFileName(fn);
+        return fileSave();
+    }
+
+    return false;
 }
 
 void PeersDialog::setCurrentFileName(const QString &fileName)

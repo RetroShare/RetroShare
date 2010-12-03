@@ -20,10 +20,10 @@
  ****************************************************************/
 
 #include <QMessageBox>
-#include <QFileDialog>
 #include <QBuffer>
 
 #include "CreateBlog.h"
+#include "util/misc.h"
 
 #include <retroshare/rsblogs.h>
 
@@ -143,8 +143,8 @@ void  CreateBlog::createBlog()
 
 void CreateBlog::addBlogLogo(){
 
-	QString fileName = QFileDialog::getOpenFileName(this, "Load File", QDir::homePath(), "Pictures (*.png *.xpm *.jpg)");
-	if(!fileName.isEmpty())
+	QString fileName;
+	if (misc::getOpenFileName(this, RshareSettings::LASTDIR_IMAGES, tr("Load File"), tr("Pictures (*.png *.xpm *.jpg)"), fileName))
 	{
 		picture = QPixmap(fileName).scaled(64,64, Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
 

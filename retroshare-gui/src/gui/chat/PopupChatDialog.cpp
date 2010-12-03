@@ -28,7 +28,6 @@
 #include <QDateTime>
 #include <QFontDialog>
 #include <QDir>
-#include <QFileDialog>
 #include <QBuffer>
 #include <QTextCodec>
 #include <QSound>
@@ -37,6 +36,7 @@
 #include "PopupChatDialog.h"
 #include "PopupChatWindow.h"
 #include "gui/RetroShareLink.h"
+#include "util/misc.h"
 #include "rshare.h"
 
 #include <retroshare/rspeers.h>
@@ -889,26 +889,19 @@ void PopupChatDialog::updateAvatar()
 
 void PopupChatDialog::addExtraFile()
 {
-	// select a file
-	QString qfile = QFileDialog::getOpenFileName(this, tr("Add Extra File"), "", "", 0,
-				QFileDialog::DontResolveSymlinks);
-	std::string filePath = qfile.toStdString();
-	if (filePath != "")
-	{
-		addAttachment(filePath,0);
-	}
+    QString file;
+    if (misc::getOpenFileName(this, RshareSettings::LASTDIR_EXTRAFILE, tr("Add Extra File"), "", file)) {
+        addAttachment(file.toUtf8().constData(), 0);
+    }
 }
 
 void PopupChatDialog::addExtraPicture()
 {
-	// select a picture file
-    QString qfile = QFileDialog::getOpenFileName(this, "Load Picture File", QDir::homePath(), "Pictures (*.png *.xpm *.jpg)",0,
-			        QFileDialog::DontResolveSymlinks);
-	std::string filePath=qfile.toStdString();
-	if(filePath!="")
-	{
-		PopupChatDialog::addAttachment(filePath,1); //picture
-	}
+    // select a picture file
+    QString file;
+    if (misc::getOpenFileName(this, RshareSettings::LASTDIR_IMAGES, tr("Load Picture File"), "Pictures (*.png *.xpm *.jpg)", file)) {
+        addAttachment(file.toUtf8().constData(), 1);
+    }
 }
 
 void PopupChatDialog::addAttachment(std::string filePath,int flag) 
@@ -1115,12 +1108,13 @@ bool PopupChatDialog::fileSave()
 
 bool PopupChatDialog::fileSaveAs()
 {
-    QString fn = QFileDialog::getSaveFileName(this, tr("Save as..."),
-                                              QString(), tr("Text File (*.txt );;All Files (*)"));
-    if (fn.isEmpty())
-        return false;
-    setCurrentFileName(fn);
-    return fileSave();    
+    QString fn;
+    if (misc::getSaveFileName(this, RshareSettings::LASTDIR_HISTORY, tr("Save as..."), tr("Text File (*.txt );;All Files (*)"), fn)) {
+        setCurrentFileName(fn);
+        return fileSave();
+    }
+
+    return false;
 }
 
 void PopupChatDialog::setCurrentFileName(const QString &fileName)

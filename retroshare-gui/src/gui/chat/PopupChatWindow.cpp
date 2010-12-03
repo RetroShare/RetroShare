@@ -21,13 +21,13 @@
  ****************************************************************/
 
 #include <QPixmap>
-#include <QFileDialog>
 
 #include "PopupChatWindow.h"
 #include "PopupChatDialog.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/settings/RsharePeerSettings.h"
 #include "gui/common/StatusDefs.h"
+#include"util/misc.h"
 
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rsnotify.h>
@@ -262,9 +262,9 @@ void PopupChatWindow::calculateTitle(PopupChatDialog *dialog)
 
 void PopupChatWindow::getAvatar()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, "Load File", QDir::homePath(), "Pictures (*.png *.xpm *.jpg)");
-
-    if(!fileName.isEmpty()) {
+    QString fileName;
+    if (misc::getOpenFileName(this, RshareSettings::LASTDIR_IMAGES, tr("Load File"), tr("Pictures (*.png *.xpm *.jpg *.tiff *.gif)"), fileName))
+    {
         QPixmap picture = QPixmap(fileName).scaled(96,96, Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
 
         std::cerr << "Sending avatar image down the pipe" << std::endl;

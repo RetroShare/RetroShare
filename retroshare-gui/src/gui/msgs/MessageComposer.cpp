@@ -25,12 +25,12 @@
 #include <QTextCodec>
 #include <QPrintDialog>
 #include <QPrinter>
-#include <QFileDialog>
 #include <QTextList>
 #include <QColorDialog>
 #include <QTextDocumentFragment>
 #include <QTimer>
 #include <QCompleter>
+#include <QItemDelegate>
 
 #include <algorithm>
 
@@ -1894,10 +1894,10 @@ void MessageComposer::fileNew()
 
 void MessageComposer::fileOpen()
 {
-    QString fn = QFileDialog::getOpenFileName(this, tr("Open File..."),
-                                              QString(), tr("HTML-Files (*.htm *.html);;All Files (*)"));
-    if (!fn.isEmpty())
+    QString fn;
+    if (misc::getOpenFileName(this, RshareSettings::LASTDIR_MESSAGES, tr("Open File..."), tr("HTML-Files (*.htm *.html);;All Files (*)"), fn)) {
         load(fn);
+    }
 }
 
 bool MessageComposer::fileSave()
@@ -1917,12 +1917,13 @@ bool MessageComposer::fileSave()
 
 bool MessageComposer::fileSaveAs()
 {
-    QString fn = QFileDialog::getSaveFileName(this, tr("Save as..."),
-                                              QString(), tr("HTML-Files (*.htm *.html);;All Files (*)"));
-    if (fn.isEmpty())
-        return false;
-    setCurrentFileName(fn);
-    return fileSave();
+    QString fn;
+    if (misc::getSaveFileName(this, RshareSettings::LASTDIR_MESSAGES, tr("Save as..."), tr("HTML-Files (*.htm *.html);;All Files (*)"), fn)) {
+        setCurrentFileName(fn);
+        return fileSave();
+    }
+
+    return false;
 }
 
 void MessageComposer::saveasDraft()
@@ -1949,9 +1950,8 @@ void MessageComposer::filePrint()
 void MessageComposer::filePrintPdf()
 {
 #ifndef QT_NO_PRINTER
-    QString fileName = QFileDialog::getSaveFileName(this, "Export PDF",
-                                                    QString(), "*.pdf");
-    if (!fileName.isEmpty()) {
+    QString fileName;
+    if (misc::getSaveFileName(this, RshareSettings::LASTDIR_MESSAGES, tr("Export PDF"), "*.pdf", fileName)) {
         if (QFileInfo(fileName).suffix().isEmpty())
             fileName.append(".pdf");
         QPrinter printer(QPrinter::HighResolution);
@@ -2024,19 +2024,15 @@ void MessageComposer::on_contactsdockWidget_visibilityChanged(bool visible)
 
 void  MessageComposer::addImage()
 {
-    QString fileimg = QFileDialog::getOpenFileName( this, tr( "Choose Image" ),
-                                                    QString(Settings->valueFromGroup("MessageComposer", "LastDir").toString()) ,tr("Image Files supported (*.png *.jpeg *.jpg *.gif)"));
+    QString fileimg;
+    if (misc::getOpenFileName(this, RshareSettings::LASTDIR_IMAGES, tr("Choose Image"), tr("Image Files supported (*.png *.jpeg *.jpg *.gif)"), fileimg)) {
+        QImage base(fileimg);
 
-    if ( fileimg.isEmpty() ) {
-        return;
+        QString pathimage = fileimg.left(fileimg.lastIndexOf("/"))+"/";
+        Settings->setValueToGroup("MessageComposer", "LastDir", pathimage);
+
+        Create_New_Image_Tag(fileimg);
     }
-
-    QImage base(fileimg);
-
-    QString pathimage = fileimg.left(fileimg.lastIndexOf("/"))+"/";
-    Settings->setValueToGroup("MessageComposer", "LastDir", pathimage);
-
-    Create_New_Image_Tag(fileimg);
 }
 
 void  MessageComposer::Create_New_Image_Tag( const QString urlremoteorlocal )
@@ -2139,9 +2135,11 @@ void MessageComposer::addPostSplitter()
 void MessageComposer::attachFile()
 {
     // select a file
-    QStringList files = QFileDialog::getOpenFileNames(this, tr("Add Extra File"), "", "", 0, QFileDialog::DontResolveSymlinks);
-    for (QStringList::iterator fileIt = files.begin(); fileIt != files.end(); fileIt++) {
-        MessageComposer::addAttachment((*fileIt).toUtf8().constData());
+    QStringList files;
+    if (misc::getOpenFileNames(this, RshareSettings::LASTDIR_EXTRAFILE, tr("Add Extra File"), "", files)) {
+        for (QStringList::iterator fileIt = files.begin(); fileIt != files.end(); fileIt++) {
+            addAttachment((*fileIt).toUtf8().constData());
+        }
     }
 }
 

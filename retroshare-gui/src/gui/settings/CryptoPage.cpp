@@ -21,11 +21,12 @@
 
 #include <QMessageBox>
 #include <QClipboard>
-#include <QFileDialog>
+#include <QFile>
 #include <QTextStream>
 #include <QTextCodec>
 
 #include "CryptoPage.h"
+#include "util/misc.h"
 
 #include <retroshare/rspeers.h> //for rsPeers variable
 
@@ -115,12 +116,12 @@ bool CryptoPage::fileSave()
 
 bool CryptoPage::fileSaveAs()
 {
-    QString fn = QFileDialog::getSaveFileName(this, tr("Save as..."),
-                                              QString(), tr("RetroShare Certificate (*.rsc );;All Files (*)"));
-    if (fn.isEmpty())
-        return false;
-    setCurrentFileName(fn);
-    return fileSave();    
+    QString fn;
+    if (misc::getSaveFileName(this, RshareSettings::LASTDIR_CERT, tr("Save as..."), tr("RetroShare Certificate (*.rsc );;All Files (*)"), fn)) {
+        setCurrentFileName(fn);
+        return fileSave();
+    }
+    return false;
 }
 
 void CryptoPage::setCurrentFileName(const QString &fileName)

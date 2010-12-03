@@ -21,7 +21,6 @@
 
 #include <QMessageBox>
 #include <QBuffer>
-#include <QFileDialog>
 
 #include <algorithm>
 
@@ -244,8 +243,8 @@ void  CreateChannel::cancelChannel()
 
 void CreateChannel::addChannelLogo()
 {
-        QString fileName = QFileDialog::getOpenFileName(this, tr("Load File"), QDir::homePath(), tr("Pictures (*.png *.xpm *.jpg)"));
-	if(!fileName.isEmpty())
+        QString fileName;
+	if (misc::getOpenFileName(this, RshareSettings::LASTDIR_IMAGES, tr("Load File"), tr("Pictures (*.png *.xpm *.jpg)"), fileName))
 	{
             picture = QPixmap(fileName).scaled(64,64, Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
 

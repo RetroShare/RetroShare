@@ -173,6 +173,45 @@ void RshareSettings::setSheetName(QString sheet)
     setValue(SETTING_SHEETNAME, sheet);
 }
 
+static QString getKeyForLastDir(RshareSettings::enumLastDir type)
+{
+    switch (type) {
+    case RshareSettings::LASTDIR_EXTRAFILE:
+        return "ExtraFile";
+    case RshareSettings::LASTDIR_CERT:
+        return "Certificate";
+    case RshareSettings::LASTDIR_HISTORY:
+        return "History";
+    case RshareSettings::LASTDIR_IMAGES:
+        return "Images";
+    case RshareSettings::LASTDIR_MESSAGES:
+        return "Messages";
+    case RshareSettings::LASTDIR_BLOGS:
+        return "Messages";
+    }
+    return "";
+}
+
+QString RshareSettings::getLastDir(enumLastDir type)
+{
+    QString key = getKeyForLastDir(type);
+    if (key.isEmpty()) {
+        return "";
+    }
+
+    return valueFromGroup("LastDir", key).toString();
+}
+
+void RshareSettings::setLastDir(enumLastDir type, const QString &lastDir)
+{
+    QString key = getKeyForLastDir(type);
+    if (key.isEmpty()) {
+        return;
+    }
+
+    setValueToGroup("LastDir", key, lastDir);
+}
+
 /** Returns the bandwidth line filter. */
 uint RshareSettings::getBWGraphFilter()
 {

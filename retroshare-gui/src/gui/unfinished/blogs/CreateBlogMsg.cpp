@@ -23,7 +23,7 @@
 #include <QColorDialog>
 #include <QFontComboBox>
 #include <QFile>
-#include <QFileDialog>
+#include <QFileInfo>
 #include <QPrintDialog>
 #include <QPrinter>
 #include <QTextCodec>
@@ -35,6 +35,7 @@
 
 #include "CreateBlogMsg.h"
 #include "gui/msgs/textformat.h"
+#include "util/misc.h"
 
 #include <retroshare/rsblogs.h>
 
@@ -803,9 +804,8 @@ void CreateBlogMsg::fileNew()
 
 void CreateBlogMsg::fileOpen()
 {
-    QString fn = QFileDialog::getOpenFileName(this, tr("Open File..."),
-                                              QString(), tr("HTML-Files (*.htm *.html);;All Files (*)"));
-    if (!fn.isEmpty())
+    QString fn;
+    if (misc::getOpenFileName(this, RshareSettings::LASTDIR_BLOGS, tr("Open File..."), tr("HTML-Files (*.htm *.html);;All Files (*)"), fn))
         load(fn);
 }
 
@@ -823,14 +823,15 @@ bool CreateBlogMsg::fileSave()
 
 bool CreateBlogMsg::fileSaveAs()
 {
-    QString fn = QFileDialog::getSaveFileName(this, tr("Save as..."),
-                                              QString(), tr("ODF files (*.odt);;HTML-Files (*.htm *.html);;All Files (*)"));
-    if (fn.isEmpty())
-        return false;
-    if (! (fn.endsWith(".odt", Qt::CaseInsensitive) || fn.endsWith(".htm", Qt::CaseInsensitive) || fn.endsWith(".html", Qt::CaseInsensitive)) )
-        fn += ".odt"; // default
-    setCurrentFileName(fn);
-    return fileSave();
+    QString fn;
+    if (misc::getSaveFileName(this, RshareSettings::LASTDIR_BLOGS, tr("Save as..."), tr("ODF files (*.odt);;HTML-Files (*.htm *.html);;All Files (*)"), fn)) {
+        if (! (fn.endsWith(".odt", Qt::CaseInsensitive) || fn.endsWith(".htm", Qt::CaseInsensitive) || fn.endsWith(".html", Qt::CaseInsensitive)) )
+            fn += ".odt"; // default
+        setCurrentFileName(fn);
+        return fileSave();
+    }
+
+    return false;
 }
 
 void CreateBlogMsg::filePrint()
@@ -872,9 +873,8 @@ void CreateBlogMsg::filePrintPdf()
 {
 #ifndef QT_NO_PRINTER
 //! [0]
-    QString fileName = QFileDialog::getSaveFileName(this, "Export PDF",
-                                                    QString(), "*.pdf");
-    if (!fileName.isEmpty()) {
+    QString fileName;
+    if (misc::getSaveFileName(this, RshareSettings::LASTDIR_MESSAGES, tr("Export PDF"), "*.pdf", fileName)) {
         if (QFileInfo(fileName).suffix().isEmpty())
             fileName.append(".pdf");
         QPrinter printer(QPrinter::HighResolution);
@@ -901,22 +901,14 @@ void CreateBlogMsg::setCurrentFileName(const QString &fileName)
     setWindowModified(false);
 }
 
-void  CreateBlogMsg::addImage()
+void CreateBlogMsg::addImage()
 {
-  
-	QString fileimg = QFileDialog::getOpenFileName( this, tr( "Choose Image" ), 
-	QString(setter.value("LastDir").toString()) ,tr("Image Files supported (*.png *.jpeg *.jpg *.gif)"));
+    QString fileimg;
+    if (misc::getOpenFileName(this, RshareSettings::LASTDIR_MESSAGES, tr("Choose Image"), tr("Image Files supported (*.png *.jpeg *.jpg *.gif)"), fileimg)) {
+        QImage base(fileimg);
     
-    if ( fileimg.isEmpty() ) {
-     return; 
+        Create_New_Image_Tag(fileimg);
     }
-    
-    QImage base(fileimg);
-    
-    QString pathimage = fileimg.left(fileimg.lastIndexOf("/"))+"/";
-    setter.setValue("LastDir",pathimage);   
-    
-    Create_New_Image_Tag(fileimg);
 }
 
 void  CreateBlogMsg::Create_New_Image_Tag( const QString urlremoteorlocal )

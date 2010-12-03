@@ -20,6 +20,7 @@
  ****************************************************************/
 
 #include <QMessageBox>
+#include <QDir>
 
 #include "SearchDialog.h"
 #include "RetroShareLink.h"

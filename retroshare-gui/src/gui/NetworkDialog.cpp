@@ -21,7 +21,6 @@
 #include <gpgme.h>
 
 #include <QTreeWidget>
-#include <QFileDialog>
 #include <QDebug>
 #include <QTimer>
 #include <QTime>
@@ -294,51 +293,48 @@ void NetworkDialog::peerdetails()
 }
 
 /** Open a QFileDialog to browse for a pem/pqi file. */
-void NetworkDialog::loadcert()
-{
-  /* Create a new input dialog, which allows users to create files, too */
-  QFileDialog dialog (this, tr("Select a pem/pqi File"));
-  //dialog.setDirectory(QFileInfo(ui.lineTorConfig->text()).absoluteDir());
-  //dialog.selectFile(QFileInfo(ui.lineTorConfig->text()).fileName());
-  dialog.setFileMode(QFileDialog::AnyFile);
-  dialog.setReadOnly(false);
-
-  /* Prompt the user to select a file or create a new one */
-  if (!dialog.exec() || dialog.selectedFiles().isEmpty()) {
-    return;
-  }
-  QString filename = QDir::convertSeparators(dialog.selectedFiles().at(0));
- 
-  /* Check if the file exists */
-  QFile torrcFile(filename);
-  if (!QFileInfo(filename).exists()) {
-    /* The given file does not exist. Should we create it? */
-    int response = VMessageBox::question(this,
-                     tr("File Not Found"),
-                     tr("%1 does not exist. Would you like to create it?")
-                                                            .arg(filename),
-                     VMessageBox::Yes, VMessageBox::No);
-    
-    if (response == VMessageBox::No) {
-      /* Don't create it. Just bail. */
-      return;
-    }
-    /* Attempt to create the specified file */
-    if (!torrcFile.open(QIODevice::WriteOnly)) {
-      VMessageBox::warning(this,
-        tr("Failed to Create File"),
-        tr("Unable to create %1 [%2]").arg(filename)
-                                      .arg(torrcFile.errorString()),
-        VMessageBox::Ok);
-      return;
-    }
-  }
-  //ui.lineTorConfig->setText(filename);
-}
-
-
-
-#include <sstream>
+//void NetworkDialog::loadcert()
+//{
+// use misc::getOpenFileName
+//  /* Create a new input dialog, which allows users to create files, too */
+//  QFileDialog dialog (this, tr("Select a pem/pqi File"));
+//  //dialog.setDirectory(QFileInfo(ui.lineTorConfig->text()).absoluteDir());
+//  //dialog.selectFile(QFileInfo(ui.lineTorConfig->text()).fileName());
+//  dialog.setFileMode(QFileDialog::AnyFile);
+//  dialog.setReadOnly(false);
+//
+//  /* Prompt the user to select a file or create a new one */
+//  if (!dialog.exec() || dialog.selectedFiles().isEmpty()) {
+//    return;
+//  }
+//  QString filename = QDir::convertSeparators(dialog.selectedFiles().at(0));
+//
+//  /* Check if the file exists */
+//  QFile torrcFile(filename);
+//  if (!QFileInfo(filename).exists()) {
+//    /* The given file does not exist. Should we create it? */
+//    int response = VMessageBox::question(this,
+//                     tr("File Not Found"),
+//                     tr("%1 does not exist. Would you like to create it?")
+//                                                            .arg(filename),
+//                     VMessageBox::Yes, VMessageBox::No);
+//
+//    if (response == VMessageBox::No) {
+//      /* Don't create it. Just bail. */
+//      return;
+//    }
+//    /* Attempt to create the specified file */
+//    if (!torrcFile.open(QIODevice::WriteOnly)) {
+//      VMessageBox::warning(this,
+//        tr("Failed to Create File"),
+//        tr("Unable to create %1 [%2]").arg(filename)
+//                                      .arg(torrcFile.errorString()),
+//        VMessageBox::Ok);
+//      return;
+//    }
+//  }
+//  //ui.lineTorConfig->setText(filename);
+//}
 
 void NetworkDialog::updateDisplay()
 {
@@ -580,128 +576,131 @@ RsCertId getNeighRsCertId(QTreeWidgetItem *i)
  * All of these rely on the finding of the current Id.
  */
 
-std::string NetworkDialog::loadneighbour()
-{
-#ifdef NET_DEBUG 
-        std::cerr << "NetworkDialog::loadneighbour()" << std::endl;
-#endif
-        QString fileName = QFileDialog::getOpenFileName(this, tr("Select Certificate"), "",
-	                                             tr("Certificates (*.pqi *.pem)"));
+//std::string NetworkDialog::loadneighbour()
+//{
+//#ifdef NET_DEBUG
+//        std::cerr << "NetworkDialog::loadneighbour()" << std::endl;
+//#endif
+// use misc::getOpenFileName
+//        QString fileName = QFileDialog::getOpenFileName(this, tr("Select Certificate"), "",
+//	                                             tr("Certificates (*.pqi *.pem)"));
+//
+//	std::string file = fileName.toStdString();
+//	std::string id;
+//        std::string gpg_id;
+//	if (file != "")
+//	{
+//                rsPeers->loadCertificateFromFile(file, id, gpg_id);
+//	}
+//	return id;
+//}
 
-	std::string file = fileName.toStdString();
-	std::string id;
-        std::string gpg_id;
-	if (file != "")
-	{
-                rsPeers->loadCertificateFromFile(file, id, gpg_id);
-	}
-	return id;
-}
+//void NetworkDialog::addneighbour()
+//{
+////        QTreeWidgetItem *c = getCurrentNeighbour();
+//#ifdef NET_DEBUG
+//        std::cerr << "NetworkDialog::addneighbour()" << std::endl;
+//#endif
+//        /*
+//        rsServer->NeighAddFriend(getNeighRsCertId(c));
+//        */
+//}
 
-void NetworkDialog::addneighbour()
-{
-//        QTreeWidgetItem *c = getCurrentNeighbour();
-#ifdef NET_DEBUG 
-        std::cerr << "NetworkDialog::addneighbour()" << std::endl;
-#endif
-        /*
-        rsServer->NeighAddFriend(getNeighRsCertId(c));
-        */
-}
-
-void NetworkDialog::authneighbour()
-{
-//        QTreeWidgetItem *c = getCurrentNeighbour();
-#ifdef NET_DEBUG 
-        std::cerr << "NetworkDialog::authneighbour()" << std::endl;
-#endif
-        /*
-	RsAuthId code;
-        rsServer->NeighAuthFriend(getNeighRsCertId(c), code);
-        */
-}
+//void NetworkDialog::authneighbour()
+//{
+////        QTreeWidgetItem *c = getCurrentNeighbour();
+//#ifdef NET_DEBUG
+//        std::cerr << "NetworkDialog::authneighbour()" << std::endl;
+//#endif
+//        /*
+//	RsAuthId code;
+//        rsServer->NeighAuthFriend(getNeighRsCertId(c), code);
+//        */
+//}
 
 /** Open a QFileDialog to browse for a pem/pqi file. */
 void NetworkDialog::on_actionAddFriend_activated()
 {
-  /* Create a new input dialog, which allows users to create files, too */
-  QFileDialog dialog (this, tr("Select a pem/pqi File"));
-  //dialog.setDirectory(QFileInfo(ui.lineTorConfig->text()).absoluteDir());
-  //dialog.selectFile(QFileInfo(ui.lineTorConfig->text()).fileName());
-  dialog.setFileMode(QFileDialog::AnyFile);
-  dialog.setReadOnly(false);
-
-  /* Prompt the user to select a file or create a new one */
-  if (!dialog.exec() || dialog.selectedFiles().isEmpty()) {
-    return;
-  }
-  QString filename = QDir::convertSeparators(dialog.selectedFiles().at(0));
- 
-  /* Check if the file exists */
-  QFile torrcFile(filename);
-  if (!QFileInfo(filename).exists()) {
-    /* The given file does not exist. Should we create it? */
-    int response = VMessageBox::question(this,
-                     tr("File Not Found"),
-                     tr("%1 does not exist. Would you like to create it?")
-                                                            .arg(filename),
-                     VMessageBox::Yes, VMessageBox::No);
-    
-    if (response == VMessageBox::No) {
-      /* Don't create it. Just bail. */
-      return;
-    }
-    /* Attempt to create the specified file */
-    if (!torrcFile.open(QIODevice::WriteOnly)) {
-      VMessageBox::warning(this,
-        tr("Failed to Create File"),
-        tr("Unable to create %1 [%2]").arg(filename)
-                                      .arg(torrcFile.errorString()),
-        VMessageBox::Ok);
-      return;
-    }
-  }
-  //ui.lineTorConfig->setText(filename);
+//  /* Create a new input dialog, which allows users to create files, too */
+// use misc::getOpenFileName
+//  QFileDialog dialog (this, tr("Select a pem/pqi File"));
+//  //dialog.setDirectory(QFileInfo(ui.lineTorConfig->text()).absoluteDir());
+//  //dialog.selectFile(QFileInfo(ui.lineTorConfig->text()).fileName());
+//  dialog.setFileMode(QFileDialog::AnyFile);
+//  dialog.setReadOnly(false);
+//
+//  /* Prompt the user to select a file or create a new one */
+//  if (!dialog.exec() || dialog.selectedFiles().isEmpty()) {
+//    return;
+//  }
+//  QString filename = QDir::convertSeparators(dialog.selectedFiles().at(0));
+//
+//  /* Check if the file exists */
+//  QFile torrcFile(filename);
+//  if (!QFileInfo(filename).exists()) {
+//    /* The given file does not exist. Should we create it? */
+//    int response = VMessageBox::question(this,
+//                     tr("File Not Found"),
+//                     tr("%1 does not exist. Would you like to create it?")
+//                                                            .arg(filename),
+//                     VMessageBox::Yes, VMessageBox::No);
+//
+//    if (response == VMessageBox::No) {
+//      /* Don't create it. Just bail. */
+//      return;
+//    }
+//    /* Attempt to create the specified file */
+//    if (!torrcFile.open(QIODevice::WriteOnly)) {
+//      VMessageBox::warning(this,
+//        tr("Failed to Create File"),
+//        tr("Unable to create %1 [%2]").arg(filename)
+//                                      .arg(torrcFile.errorString()),
+//        VMessageBox::Ok);
+//      return;
+//    }
+//  }
+//  //ui.lineTorConfig->setText(filename);
 }
 
 
 void NetworkDialog::on_actionExportKey_activated()
 {
-    qDebug() << "  exportcert";
-
-    std::string cert = rsPeers->GetRetroshareInvite();
-    if (cert.empty()) {
-        QMessageBox::information(this, tr("RetroShare"),
-                         tr("Sorry, create certificate failed"),
-                         QMessageBox::Ok, QMessageBox::Ok);
-        return;
-    }
-
-    QString qdir = QFileDialog::getSaveFileName(this,
-                                                tr("Please choose a filename"),
-                                                QDir::homePath(),
-                                                tr("RetroShare Certificate (*.rsc );;All Files (*)"));
-    //Todo: move save to file to p3Peers::SaveCertificateToFile
-
-    if (qdir.isEmpty() == false) {
-        QFile CertFile (qdir);
-        if (CertFile.open(QIODevice::WriteOnly/* | QIODevice::Text*/)) {
-            if (CertFile.write(QByteArray(cert.c_str())) > 0) {
-                QMessageBox::information(this, tr("RetroShare"),
-                                 tr("Certificate file successfully created"),
-                                 QMessageBox::Ok, QMessageBox::Ok);
-            } else {
-                QMessageBox::information(this, tr("RetroShare"),
-                                 tr("Sorry, certificate file creation failed"),
-                                 QMessageBox::Ok, QMessageBox::Ok);
-            }
-            CertFile.close();
-        } else {
-            QMessageBox::information(this, tr("RetroShare"),
-                             tr("Sorry, certificate file creation failed"),
-                             QMessageBox::Ok, QMessageBox::Ok);
-        }
-    }
+//    qDebug() << "  exportcert";
+//
+//    std::string cert = rsPeers->GetRetroshareInvite();
+//    if (cert.empty()) {
+//        QMessageBox::information(this, tr("RetroShare"),
+//                         tr("Sorry, create certificate failed"),
+//                         QMessageBox::Ok, QMessageBox::Ok);
+//        return;
+//    }
+//
+// use misc::getSaveFileName
+//    QString qdir = QFileDialog::getSaveFileName(this,
+//                                                tr("Please choose a filename"),
+//                                                QDir::homePath(),
+//                                                tr("RetroShare Certificate (*.rsc );;All Files (*)"));
+//    //Todo: move save to file to p3Peers::SaveCertificateToFile
+//
+//    if (qdir.isEmpty() == false) {
+//        QFile CertFile (qdir);
+//        if (CertFile.open(QIODevice::WriteOnly/* | QIODevice::Text*/)) {
+//            if (CertFile.write(QByteArray(cert.c_str())) > 0) {
+//                QMessageBox::information(this, tr("RetroShare"),
+//                                 tr("Certificate file successfully created"),
+//                                 QMessageBox::Ok, QMessageBox::Ok);
+//            } else {
+//                QMessageBox::information(this, tr("RetroShare"),
+//                                 tr("Sorry, certificate file creation failed"),
+//                                 QMessageBox::Ok, QMessageBox::Ok);
+//            }
+//            CertFile.close();
+//        } else {
+//            QMessageBox::information(this, tr("RetroShare"),
+//                             tr("Sorry, certificate file creation failed"),
+//                             QMessageBox::Ok, QMessageBox::Ok);
+//        }
+//    }
 }
 
 void NetworkDialog::on_actionCreate_New_Profile_activated()
