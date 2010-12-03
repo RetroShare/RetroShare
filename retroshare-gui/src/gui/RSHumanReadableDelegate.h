@@ -38,7 +38,7 @@
  */
 
 #include <QItemDelegate>
-#include <QPainter.h>
+#include <QPainter>
 #include <util/misc.h>
 
 class RSHumanReadableDelegate: public QAbstractItemDelegate
