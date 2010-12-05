@@ -1630,28 +1630,38 @@ bool p3ConnectMgr::getPeerCount (unsigned int *pnFriendCount, unsigned int *pnOn
 		if (pnFriendCount) *pnFriendCount = 0;
 		if (pnOnlineCount) *pnOnlineCount = 0;
 
-		std::list<std::string> gpgIds;
-		if (AuthGPG::getAuthGPG()->getGPGAcceptedList(gpgIds) == false) {
-			return false;
-		}
+		if (pnFriendCount || pnOnlineCount) {
+			std::list<std::string> gpgIds;
+			if (AuthGPG::getAuthGPG()->getGPGAcceptedList(gpgIds) == false) {
+				return false;
+			}
 
-		if (pnFriendCount) *pnFriendCount = gpgIds.size();
+			/* add own id */
+			gpgIds.push_back(AuthGPG::getAuthGPG()->getGPGOwnId());
 
-		if (pnOnlineCount) {
+			std::list<std::string> gpgOnlineIds = gpgIds;
+
 			RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
+
+			std::list<std::string>::iterator gpgIt;
 
 			/* check ssl id's */
 			std::map<std::string, peerConnectState>::iterator it;
 			for (it = mFriendList.begin(); it != mFriendList.end(); it++) {
-				if (it->second.state & RS_PEER_S_CONNECTED) {
-					std::list<std::string>::iterator gpgIt = std::find(gpgIds.begin(), gpgIds.end(), it->second.gpg_id);
+				if (pnFriendCount && gpgIds.size()) {
+					gpgIt = std::find(gpgIds.begin(), gpgIds.end(), it->second.gpg_id);
 					if (gpgIt != gpgIds.end()) {
-						(*pnOnlineCount)++;
+						(*pnFriendCount)++;
 						gpgIds.erase(gpgIt);
+					}
+				}
 
-						if (gpgIds.empty()) {
-							/* no more gpg id's to check */
-							break;
+				if (pnOnlineCount && gpgOnlineIds.size()) {
+					if (it->second.state & RS_PEER_S_CONNECTED) {
+						gpgIt = std::find(gpgOnlineIds.begin(), gpgOnlineIds.end(), it->second.gpg_id);
+						if (gpgIt != gpgOnlineIds.end()) {
+							(*pnOnlineCount)++;
+							gpgOnlineIds.erase(gpgIt);
 						}
 					}
 				}
