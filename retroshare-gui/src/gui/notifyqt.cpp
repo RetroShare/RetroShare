@@ -422,21 +422,19 @@ void NotifyQt::UpdateGUI()
 				{
 					OnlineToaster * onlineToaster = new OnlineToaster();
 					onlineToaster->setMessage(QString::fromStdString(realmsg));
-					
-                    if(size != 0)
-                    {   
-                    // set the image
-                    QPixmap pix ;
-                    pix.loadFromData(data,size,"PNG") ;
-                    onlineToaster->setPixmap(pix);   
-                    delete[] data ;
 
-                    }
-                    else
-                    {
-                    onlineToaster->setPixmap(QPixmap(":/images/user/personal64.png"));
-                    }					
-					
+					if(size != 0)
+					{
+						// set the image
+						QPixmap pix ;
+						pix.loadFromData(data,size,"PNG") ;
+						onlineToaster->setPixmap(pix);
+					}
+					else
+					{
+						onlineToaster->setPixmap(QPixmap(":/images/user/personal64.png"));
+					}
+
 					onlineToaster->show();
 					onlineToaster->play();
 				}
@@ -448,6 +446,10 @@ void NotifyQt::UpdateGUI()
 						downloadToaster->displayPopup(id, QString::fromUtf8(title.c_str()));
 					}
 					break;
+			}
+
+			if (data) {
+				delete[] data;
 			}
 		}
 
