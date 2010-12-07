@@ -313,7 +313,7 @@ class p3turtle: public p3Service, public pqiMonitor, public RsTurtle,/* public f
 		TurtleRequestId diggTunnel(const TurtleFileHash& hash) ;	
 
 		/// adds info related to a new virtual peer.
-		void addDistantPeer(const TurtleFileHash&, TurtleTunnelId) ;	
+		void locked_addDistantPeer(const TurtleFileHash&, TurtleTunnelId) ;	
 
 		/// estimates the speed of the traffic into tunnels.
 		void estimateTunnelSpeeds() ;

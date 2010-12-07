@@ -170,18 +170,16 @@ void p3turtle::statusChange(const std::list<pqipeer> &plist) // derived from pqi
 
 // adds a virtual peer to the list that is communicated ot ftController.
 //
-void p3turtle::addDistantPeer(const TurtleFileHash&,TurtleTunnelId tid)
+void p3turtle::locked_addDistantPeer(const TurtleFileHash&,TurtleTunnelId tid)
 {
 	char buff[400] ;
 	sprintf(buff,"Anonymous F2F tunnel %08x",tid) ;
 
-	{
-		_virtual_peers[TurtleVirtualPeerId(buff)] = tid ;
+	_virtual_peers[TurtleVirtualPeerId(buff)] = tid ;
 #ifdef P3TURTLE_DEBUG
-		assert(_local_tunnels.find(tid)!=_local_tunnels.end()) ;
+	assert(_local_tunnels.find(tid)!=_local_tunnels.end()) ;
 #endif
-		_local_tunnels[tid].vpid = TurtleVirtualPeerId(buff) ;
-	}
+	_local_tunnels[tid].vpid = TurtleVirtualPeerId(buff) ;
 }
 
 void p3turtle::getVirtualPeersList(std::list<pqipeer>& list)
@@ -1513,7 +1511,7 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 
 			// We add a virtual peer for that tunnel+hash combination.
 			//
-			addDistantPeer(item->file_hash,res_item->tunnel_id) ;
+			locked_addDistantPeer(item->file_hash,res_item->tunnel_id) ;
 
 			// Store the size of the file, to be able to re-form data requests to the multiplexer.
 			//
@@ -1643,7 +1641,7 @@ void p3turtle::handleTunnelResult(RsTurtleTunnelOkItem *item)
 					new_tunnel = true ;
 					new_hash = it->first ;
 
-					addDistantPeer(new_hash,item->tunnel_id) ;
+					locked_addDistantPeer(new_hash,item->tunnel_id) ;
 				}
 			if(!found)
 				std::cerr << "p3turtle: error. Could not find hash that emmitted tunnel request " << (void*)item->tunnel_id << std::endl ;
