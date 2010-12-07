@@ -41,7 +41,7 @@ static const uint32_t INACTIVE_CHUNK_TIME_LAPSE 		= 60 ; //! TTL for an inactive
 
 std::ostream& operator<<(std::ostream& o,const ftChunk& c)
 {
-	return o << "\tChunk [" << c.offset << "] size: " << c.size << "  ChunkId: " << c.id << "  Age: " << time(NULL) - c.ts ;
+	return o << "\tChunk [" << c.offset << "] size: " << c.size << "  ChunkId: " << c.id << "  Age: " << time(NULL) - c.ts << ", owner: " << c.peer_id ;
 }
 
 // Chunk: very bold implementation for now. We should compress the bits to have
@@ -221,6 +221,7 @@ bool ChunkMap::getDataChunk(const std::string& peer_id,uint32_t size_hint,ftChun
 	if(_active_chunks_feed[peer_id].empty())
 		_active_chunks_feed.erase(_active_chunks_feed.find(peer_id)) ;
 	
+	chunk.peer_id = peer_id ;
 #ifdef DEBUG_FTCHUNK
 	std::cout << "*** ChunkMap::getDataChunk: returning slice " << chunk << " for peer " << peer_id << std::endl ;
 #endif

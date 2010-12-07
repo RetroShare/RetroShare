@@ -36,6 +36,13 @@
 #include "ftchunkmap.h"
 #include <map>
 
+class ZeroInitCounter
+{
+	public:
+		ZeroInitCounter(): cnt(0) {}
+		uint32_t cnt ;
+};
+
 class ftFileCreator: public ftFileProvider
 {
 	public:
@@ -131,6 +138,7 @@ class ftFileCreator: public ftFileProvider
 		uint64_t mEnd;
 
 		std::map<uint64_t, ftChunk> mChunks;
+		std::map<std::string,ZeroInitCounter> mChunksPerPeer ;
 
 		ChunkMap chunkMap ;
 

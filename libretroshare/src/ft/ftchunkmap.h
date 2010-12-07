@@ -42,6 +42,7 @@ class ftChunk
 		uint64_t size;
 		ChunkId  id ;
 		time_t   ts;
+		std::string peer_id ;
 };
 
 // This class handles a single fixed-sized chunk. Although each chunk is requested at once,

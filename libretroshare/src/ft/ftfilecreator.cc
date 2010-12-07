@@ -8,8 +8,8 @@
  * #define FILE_DEBUG 1
  ******/
 
-#define CHUNK_MAX_AGE 20
-
+#define CHUNK_MAX_AGE 40
+#define MAX_FTCHUNKS_PER_PEER 5
 
 /***********************************************************
 *
@@ -202,6 +202,7 @@ void ftFileCreator::removeInactiveChunks()
 			{
 				std::map<uint64_t,ftChunk>::iterator tmp(it) ;
 				++it ;
+				--mChunksPerPeer[tmp->second.peer_id].cnt ;
 				mChunks.erase(tmp) ;
 			}
 			else
@@ -320,8 +321,11 @@ int ftFileCreator::locked_notifyReceived(uint64_t offset, uint32_t chunk_size)
 		chunk.offset += chunk_size;
 		mChunks[chunk.offset] = chunk;
 	}
-	else	// notify the chunkmap that the slice is finished
+	else	// notify the chunkmap that the slice is finished, and decrement the number of chunks for this peer.
+	{
 		chunkMap.dataReceived(chunk.id) ;
+		--mChunksPerPeer[chunk.peer_id].cnt ;
+	}
 
 	_last_recv_time_t = time(NULL) ;
 
@@ -371,26 +375,36 @@ bool ftFileCreator::getMissingChunk(const std::string& peer_id,uint32_t size_hin
 
 	/* check for freed chunks */
 	time_t ts = time(NULL);
-	time_t old = ts-CHUNK_MAX_AGE;
+//	time_t old = ts-CHUNK_MAX_AGE;
+//
+//	std::map<uint64_t, ftChunk>::iterator it;
+//	for(it = mChunks.begin(); it != mChunks.end(); it++)
+//	{
+//		/* very simple algorithm */
+//		if (it->second.ts < old)
+//		{
+//#ifdef FILE_DEBUG
+//			std::cerr << "ffc::getMissingChunk() Re-asking for an old chunk";
+//			std::cerr << std::endl;
+//#endif
+//
+//			/* retry this one */
+//			it->second.ts = ts;
+//			size = it->second.size;
+//			offset = it->second.offset;
+//
+//			return true;
+//		}
+//	}
 
-	std::map<uint64_t, ftChunk>::iterator it;
-	for(it = mChunks.begin(); it != mChunks.end(); it++)
+	uint32_t& chunks_for_this_peer(mChunksPerPeer[peer_id].cnt) ;
+
+	if(chunks_for_this_peer >= MAX_FTCHUNKS_PER_PEER)
 	{
-		/* very simple algorithm */
-		if (it->second.ts < old)
-		{
 #ifdef FILE_DEBUG
-			std::cerr << "ffc::getMissingChunk() Re-asking for an old chunk";
-			std::cerr << std::endl;
+		std::cerr << "ffc::getMissingChunk() too many chunks for peer " << peer_id << std::endl ;
 #endif
-
-			/* retry this one */
-			it->second.ts = ts;
-			size = it->second.size;
-			offset = it->second.offset;
-
-			return true;
-		}
+		return false ;
 	}
 
 	/* else allocate a new chunk */
@@ -408,6 +422,8 @@ bool ftFileCreator::getMissingChunk(const std::string& peer_id,uint32_t size_hin
 
 	offset = chunk.offset ;
 	size = chunk.size ;
+
+	++chunks_for_this_peer ;	// increase number of chunks for this peer.
 
 	return true; /* cos more data to get */
 }
@@ -435,6 +451,10 @@ bool ftFileCreator::locked_printChunkMap()
 	
 	for(it = mChunks.begin(); it != mChunks.end(); it++)
 		std::cerr << "  " << it->second << std::endl ;
+
+	std::cerr << "Active chunks per peer:" << std::endl ;
+	for(std::map<std::string,ZeroInitCounter>::const_iterator it(mChunksPerPeer.begin());it!=mChunksPerPeer.end();++it)
+		std::cerr << "   " << it->first << "\t: " << it->second.cnt << std::endl;
 
 	return true; 
 }
