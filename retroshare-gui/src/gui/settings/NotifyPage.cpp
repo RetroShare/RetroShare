@@ -22,15 +22,11 @@
 
 #include <rshare.h>
 #include "NotifyPage.h"
-#include <iostream>
-#include <sstream>
 
 #include <retroshare/rsnotify.h>
 #include "rsharesettings.h"
 
 #include "gui/MainWindow.h"
-
-#include <QTimer>
 
 
 /** Constructor */
@@ -75,12 +71,6 @@ NotifyPage::save(QString &errmsg)
         notifyflags |= RS_POPUP_MSG;
     if (ui.popup_DownloadFinished->isChecked())
         notifyflags |= RS_POPUP_DOWNLOAD;
-
-    //if (ui.popup_NewChat->isChecked())
-    notifyflags |= RS_POPUP_CHAT;
-
-    //if (ui.popup_Call->isChecked())
-    //	notifyflags |= RS_POPUP_CALL;
 
     if (ui.notify_Peers->isChecked())
         newsflags |= RS_FEED_TYPE_PEER;
@@ -145,8 +135,6 @@ void NotifyPage::load()
     ui.popup_Connect->setChecked(notifyflags & RS_POPUP_CONNECT);
     ui.popup_NewMsg->setChecked(notifyflags & RS_POPUP_MSG);
     ui.popup_DownloadFinished->setChecked(notifyflags & RS_POPUP_DOWNLOAD);
-    //ui.popup_NewChat->setChecked(notifyflags & RS_POPUP_CHAT);
-    //ui.popup_Call->setChecked(notifyflags & RS_POPUP_CALL);
 
     ui.notify_Peers->setChecked(newsflags & RS_FEED_TYPE_PEER);
     ui.notify_Channels->setChecked(newsflags & RS_FEED_TYPE_CHAN);

@@ -28,29 +28,19 @@
 
 #include "ui_MessageToaster.h"
 
-enum DisplayState {dsInactive, dsShowing, dsWaiting, dsHiding};
-
-class MessageToaster : public QWidget, public Ui::MessageToaster
+class MessageToaster : public QWidget
 {
-Q_OBJECT
-		
-	public:
-		MessageToaster( QWidget * parent = 0, Qt::WFlags f = 0 );
-		~MessageToaster();
-		
-		void displayPopup();
-        void setTitle(const QString &title);
-		void setMessage(const QString & message);
-		void setName(const QString & name);
+	Q_OBJECT
 
-		
-	private slots:
-		void displayTimerOnTimer();
-		void closeClicked();
-		void openmessageClicked();
-		
-  private:
-		QTimer *displayTimer;
-		DisplayState displayState;
+public:
+	MessageToaster(const QString &name, const QString &title, const QString &message);
+
+private slots:
+	void openmessageClicked();
+
+private:
+	/** Qt Designer generated object */
+	Ui::MessageToaster ui;
 };
+
 #endif

@@ -23,28 +23,23 @@
 #ifndef DOWNLOADTOASTER_H
 #define DOWNLOADTOASTER_H
 
-#include "MessageToaster.h" // for DisplayState
-
 #include "ui_DownloadToaster.h"
 
-class DownloadToaster : public QWidget, public Ui::DownloadToaster
+class DownloadToaster : public QWidget
 {
-Q_OBJECT
+	Q_OBJECT
 
 public:
-    DownloadToaster(QWidget *parent = 0, Qt::WFlags f = 0);
-    ~DownloadToaster();
-    void displayPopup(const std::string &hash, const QString &name);
+	DownloadToaster(const std::string &hash, const QString &name);
 
 private slots:
-    void displayTimerOnTimer();
-    void closeClicked();
-    void play();
+	void play();
 
 private:
-    QTimer *displayTimer;
-    std::string fileHash;
-    DisplayState displayState;
+	std::string fileHash;
+
+	/** Qt Designer generated object */
+	Ui::DownloadToaster ui;
 };
 
 #endif

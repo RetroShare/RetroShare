@@ -20,54 +20,30 @@
 #ifndef ONLINETOASTER_H
 #define ONLINETOASTER_H
 
-#include "IQtToaster.h"
-
-#include <QtCore/QObject>
-#include <QSound>
-
-class QtToaster;
-
-class QWidget;
-class QString;
-class QPixmap;
-namespace Ui { class OnlineToaster; }
+#include "ui_OnlineToaster.h"
 
 /**
  * Shows a toaster when friend is Online .
  *
  *
  */
-class OnlineToaster : public QObject, public IQtToaster {
+class OnlineToaster : public QWidget
+{
 	Q_OBJECT
+
 public:
+	OnlineToaster(const std::string &peerId, const QString &name, const QPixmap &avatar);
 
-	OnlineToaster();
-
-	~OnlineToaster();
-
-	void setMessage(const QString & message);
-
-	void setPixmap(const QPixmap & pixmap);
-
-	void show();
-        void play();
-
-Q_SIGNALS:
-
-	void chatButtonClicked();
-
-private Q_SLOTS:
-
+private slots:
 	void chatButtonSlot();
 
-	void close();
-
 private:
-	Ui::OnlineToaster * _ui;
+	void play();
 
-	QWidget * _onlineToasterWidget;
+	std::string peerId;
 
-	QtToaster * _toaster;
+	/** Qt Designer generated object */
+	Ui::OnlineToaster ui;
 };
 
 #endif	//MESSAGETOASTER_H

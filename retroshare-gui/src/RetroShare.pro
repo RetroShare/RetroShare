@@ -273,11 +273,7 @@ HEADERS +=  rshare.h \
             gui/settings/AddFileAssociationDialog.h \
             gui/toaster/MessageToaster.h \
             gui/toaster/OnlineToaster.h \
-            gui/toaster/ChatToaster.h \
             gui/toaster/DownloadToaster.h \
-            gui/toaster/CallToaster.h \
-            gui/toaster/QtToaster.h \
-            gui/toaster/IQtToaster.h \
             gui/toaster/RetroStyleLabelProxy.h \
             gui/common/vmessagebox.h \
             gui/common/rwindow.h \
@@ -377,8 +373,6 @@ FORMS +=    gui/StartDialog.ui \
             gui/settings/TransferPage.ui \
             gui/settings/SoundPage.ui \
             gui/settings/ChatPage.ui \
-            gui/toaster/CallToaster.ui \
-            gui/toaster/ChatToaster.ui \
             gui/toaster/MessageToaster.ui \
             gui/toaster/OnlineToaster.ui \
             gui/toaster/DownloadToaster.ui \
@@ -515,12 +509,9 @@ SOURCES +=  main.cpp \
             gui/statusbar/dhtstatus.cpp \
             gui/statusbar/ratesstatus.cpp \
             gui/statusbar/hashingstatus.cpp \
-            gui/toaster/ChatToaster.cpp \
             gui/toaster/MessageToaster.cpp \
             gui/toaster/DownloadToaster.cpp \
-            gui/toaster/CallToaster.cpp \
             gui/toaster/OnlineToaster.cpp \
-            gui/toaster/QtToaster.cpp \
             gui/advsearch/advancedsearchdialog.cpp \
             gui/advsearch/expressionwidget.cpp \
             gui/advsearch/guiexprelement.cpp \

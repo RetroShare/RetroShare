@@ -4,9 +4,11 @@
 #include <retroshare/rsiface.h>
 #include <retroshare/rsturtle.h>
 #include <QObject>
+//#include <QMutex>
 
 #include <string>
 
+class QTimer;
 class NetworkDialog;
 class PeersDialog;
 class SharedFilesDialog;
@@ -15,6 +17,7 @@ class ChatDialog;
 class MessagesDialog;
 class ChannelsDialog;
 class MessengerWindow;
+class Toaster;
 struct TurtleFileInfo;
 
 //class NotifyQt: public NotifyBase, public QObject
@@ -95,10 +98,22 @@ class NotifyQt: public QObject, public NotifyBase
 
 		void	UpdateGUI(); /* called by timer */
 
+	private slots:
+		void runningTick();
+
 	private:
-		NotifyQt() : cDialog(NULL) { return; }
+		NotifyQt();
 
 		static NotifyQt *_instance;
+
+		void startWaitingToasters();
+
+//		QMutex waitingToasterMutex; // for lock of the waiting toaster list
+		QList<Toaster*> waitingToasterList;
+
+		QTimer *runningToasterTimer;
+//		QMutex runningToasterMutex; // for lock of the running toaster list
+		QList<Toaster*> runningToasterList;
 
 //		void displayNeighbours();
 //		void displayFriends();

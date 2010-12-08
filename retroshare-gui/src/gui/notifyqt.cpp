@@ -1,5 +1,29 @@
+/****************************************************************
+ * This file is distributed under the following license:
+ *
+ * Copyright (c) 2010 RetroShare Team
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ *************************************************************************/
+
 #include <QInputDialog>
 #include <QMessageBox>
+#include <QTimer>
+//#include <QMutexLocker>
+#include <QDesktopWidget>
 
 #include "notifyqt.h"
 #include <retroshare/rsnotify.h>
@@ -10,14 +34,12 @@
 #include <retroshare/rsturtle.h>
 #endif
 
-#include "gui/RsAutoUpdatePage.h"
+#include "RsAutoUpdatePage.h"
 
 #ifndef MINIMAL_RSGUI
-#include "gui/toaster/OnlineToaster.h"
-#include "gui/toaster/MessageToaster.h"
-#include "gui/toaster/ChatToaster.h"
-#include "gui/toaster/CallToaster.h"
-#include "gui/toaster/DownloadToaster.h"
+#include "toaster/OnlineToaster.h"
+#include "toaster/MessageToaster.h"
+#include "toaster/DownloadToaster.h"
 #endif // MINIMAL_RSGUI
 
 #include "gui/settings/rsharesettings.h"
@@ -29,6 +51,40 @@
 /*****
  * #define NOTIFY_DEBUG
  ****/
+
+class Toaster
+{
+public:
+	Toaster(QWidget *widget)
+	{
+		this->widget = widget;
+
+		/* Standard values */
+		timeToShow = 500;
+		timeToLive = 3000;
+		timeToHide = 500;
+
+		/* Calculated values */
+		elapsedTimeToShow = 0;
+		elapsedTimeToLive = 0;
+		elapsedTimeToHide = 0;
+	}
+
+public:
+	QWidget *widget;
+
+	/* Standard values */
+	int timeToShow;
+	int timeToLive;
+	int timeToHide;
+
+	/* Calculated values */
+	QPoint startPos;
+	QPoint endPos;
+	int elapsedTimeToShow;
+	int elapsedTimeToLive;
+	int elapsedTimeToHide;
+};
 
 /*static*/ NotifyQt *NotifyQt::_instance = NULL;
 
@@ -44,6 +100,14 @@
 /*static*/ NotifyQt *NotifyQt::getInstance ()
 {
     return _instance;
+}
+
+NotifyQt::NotifyQt() : cDialog(NULL)
+{
+	runningToasterTimer = new QTimer(this);
+	connect(runningToasterTimer, SIGNAL(timeout()), this, SLOT(runningTick()));
+	runningToasterTimer->setInterval(10); // tick 100 times a second
+	runningToasterTimer->setSingleShot(true);
 }
 
 void NotifyQt::notifyErrorMsg(int list, int type, std::string msg)
@@ -373,6 +437,9 @@ void NotifyQt::UpdateGUI()
 		{
 			uint popupflags = Settings->getNotifyFlags();
 
+			/* You can set timeToShow, timeToLive and timeToHide or can leave the standard */
+			Toaster *toaster = NULL;
+
 			/* id the name */
 			std::string name;
 			std::string realmsg;
@@ -391,65 +458,47 @@ void NotifyQt::UpdateGUI()
 			switch(type)
 			{
 				case RS_POPUP_MSG:
-				if (popupflags & RS_POPUP_MSG)
-				{
-					MessageToaster * msgToaster = new MessageToaster();
-					msgToaster->setMessage(QString::fromStdString(msg));
-					msgToaster->setName(QString::fromStdString(realmsg));
-					msgToaster->setTitle(QString::fromStdString(title));
-					msgToaster->displayPopup();
-				}
+					if (popupflags & RS_POPUP_MSG)
+					{
+						toaster = new Toaster(new MessageToaster(QString::fromStdString(realmsg), QString::fromStdString(title), QString::fromStdString(msg)));
+					}
 					break;
-				case RS_POPUP_CHAT:
-				if (popupflags & RS_POPUP_CHAT)
-				{
-					ChatToaster * chatToaster = new ChatToaster();
-					chatToaster->setMessage(QString::fromStdString(realmsg));
-					chatToaster->show();
-				}
-					break;
-				case RS_POPUP_CALL:
-				if (popupflags & RS_POPUP_CALL)
-				{
-					CallToaster * callToaster = new CallToaster();
-					callToaster->setMessage(QString::fromStdString(realmsg));
-					callToaster->show();
-				}
-					break;
-				default:
 				case RS_POPUP_CONNECT:
-				if (popupflags & RS_POPUP_CONNECT)
-				{
-					OnlineToaster * onlineToaster = new OnlineToaster();
-					onlineToaster->setMessage(QString::fromStdString(realmsg));
-
-					if(size != 0)
+					if (popupflags & RS_POPUP_CONNECT)
 					{
-						// set the image
-						QPixmap pix ;
-						pix.loadFromData(data,size,"PNG") ;
-						onlineToaster->setPixmap(pix);
-					}
-					else
-					{
-						onlineToaster->setPixmap(QPixmap(":/images/user/personal64.png"));
-					}
+						QPixmap avatar;
+						if(size != 0)
+						{
+							// set the image
+							avatar.loadFromData(data,size,"PNG");
+						}
+						else
+						{
+							avatar = QPixmap(":/images/user/personal64.png");
+						}
 
-					onlineToaster->show();
-					onlineToaster->play();
-				}
+						toaster = new Toaster(new OnlineToaster(id, QString::fromStdString(realmsg), avatar));
+					}
 					break;
 				case RS_POPUP_DOWNLOAD:
 					if (popupflags & RS_POPUP_DOWNLOAD)
 					{
-						DownloadToaster *downloadToaster = new DownloadToaster();
-						downloadToaster->displayPopup(id, QString::fromUtf8(title.c_str()));
+						toaster = new Toaster(new DownloadToaster(id, QString::fromUtf8(title.c_str())));
 					}
 					break;
 			}
 
 			if (data) {
 				delete[] data;
+			}
+
+			if (toaster) {
+				/* init attributes */
+				toaster->widget->setWindowFlags(Qt::ToolTip | Qt::WindowStaysOnTopHint);
+
+				/* add toaster to waiting list */
+//				QMutexLocker lock(&waitingToasterMutex);
+				waitingToasterList.push_back(toaster);
 			}
 		}
 
@@ -476,6 +525,7 @@ void NotifyQt::UpdateGUI()
 					break;
 			}
 		}
+
 		if (rsNotify->NotifyLogMessage(sysid, type, title, msg))
 		{
 			/* make a log message */
@@ -489,6 +539,10 @@ void NotifyQt::UpdateGUI()
 			}
 		}
 	}
+
+	/* Now start the waiting toasters */
+	startWaitingToasters();
+
 #endif // MINIMAL_RSGUI
 }
 		
@@ -496,7 +550,134 @@ void NotifyQt::notifyChatStyleChanged(int /*ChatStyle::enumStyleType*/ styleType
 {
 	emit chatStyleChanged(styleType);
 }
-		
+
+void NotifyQt::startWaitingToasters()
+{
+	{
+//		QMutexLocker lock(&waitingToasterMutex);
+
+		if (waitingToasterList.empty()) {
+			/* No toasters are waiting */
+			return;
+		}
+	}
+
+	{
+//		QMutexLocker lock(&runningToasterMutex);
+
+		if (runningToasterList.size() >= 3) {
+			/* Don't show more than 3 toasters at once */
+			return;
+		}
+	}
+
+	Toaster *toaster = NULL;
+
+	{
+//		QMutexLocker lock(&waitingToasterMutex);
+
+		if (waitingToasterList.size()) {
+			/* Take one toaster of the waiting list */
+			toaster = waitingToasterList.front();
+			waitingToasterList.pop_front();
+		}
+	}
+
+	if (toaster) {
+		/* 10 pixels of x margin */
+		static const int MARGIN_X = 10;
+		/* 10 pixels of y margin */
+		static const int MARGIN_Y = 10;
+
+//		QMutexLocker lock(&runningToasterMutex);
+
+		/* Calculate positions */
+		QSize size = toaster->widget->size();
+
+		QDesktopWidget *desktop = QApplication::desktop();
+		QRect screenGeometry = desktop->screenGeometry(desktop->primaryScreen());
+		QRect desktopGeometry = desktop->availableGeometry(desktop->primaryScreen());
+
+		/* From bottom */
+		toaster->startPos = QPoint(screenGeometry.right() - size.width() - MARGIN_X, screenGeometry.bottom());
+		toaster->endPos = QPoint(toaster->startPos.x(), desktopGeometry.bottom() - size.height() - MARGIN_Y);
+		/* From top */
+//		toaster->startPos = QPoint(screenGeometry.right() - size.width() - MARGIN_X, screenGeometry.top() - size.height());
+//		toaster->endPos = QPoint(toaster->startPos.x(), desktopGeometry.top() + MARGIN_Y);
+
+		/* Initialize widget */
+		toaster->widget->move(toaster->startPos);
+		toaster->widget->show();
+
+		/* Initialize toaster */
+		toaster->elapsedTimeToShow = 0;
+		toaster->elapsedTimeToLive = 0;
+		toaster->elapsedTimeToHide = 0;
+
+		/* Add toaster to the running list */
+		runningToasterList.push_front(toaster);
+		if (runningToasterTimer->isActive() == false) {
+			/* Start the toaster timer */
+			runningToasterTimer->start();
+		}
+	}
+}
+
+void NotifyQt::runningTick()
+{
+//	QMutexLocker lock(&runningToasterMutex);
+
+	int interval = runningToasterTimer->interval();
+	QPoint diff;
+
+	QList<Toaster*>::iterator it = runningToasterList.begin();
+	while (it != runningToasterList.end()) {
+		Toaster *toaster = *it;
+
+		bool visible = toaster->widget->isVisible();
+
+		if (visible && toaster->elapsedTimeToShow <= toaster->timeToShow) {
+			/* Toaster is showing */
+			toaster->elapsedTimeToShow += interval;
+
+			QPoint newPos(toaster->startPos.x() - (toaster->startPos.x() - toaster->endPos.x()) * toaster->elapsedTimeToShow / toaster->timeToShow,
+						  toaster->startPos.y() - (toaster->startPos.y() - toaster->endPos.y()) * toaster->elapsedTimeToShow / toaster->timeToShow);
+			toaster->widget->move(newPos + diff);
+
+			diff += newPos - toaster->startPos;
+		} else if (visible && toaster->elapsedTimeToLive <= toaster->timeToLive) {
+			/* Toaster is living */
+			toaster->elapsedTimeToLive += interval;
+
+			toaster->widget->move(toaster->endPos + diff);
+
+			diff += toaster->endPos - toaster->startPos;
+		} else if (visible && toaster->elapsedTimeToHide <= toaster->timeToHide) {
+			/* Toaster is hiding */
+			toaster->elapsedTimeToHide += interval;
+
+			QPoint newPos(toaster->startPos.x() - (toaster->startPos.x() - toaster->endPos.x()) * (toaster->timeToHide - toaster->elapsedTimeToHide) / toaster->timeToHide,
+						  toaster->startPos.y() - (toaster->startPos.y() - toaster->endPos.y()) * (toaster->timeToHide - toaster->elapsedTimeToHide) / toaster->timeToHide);
+			toaster->widget->move(newPos + diff);
+
+			diff += newPos - toaster->startPos;
+		} else {
+			/* Toaster is hidden, delete it */
+			it = runningToasterList.erase(it);
+			delete(toaster->widget);
+			delete(toaster);
+			continue;
+		}
+
+		++it;
+	}
+
+	if (runningToasterList.size()) {
+		/* There are more running toasters, start the timer again */
+		runningToasterTimer->start();
+	}
+}
+
 //void NotifyQt::displaySearch()
 //{
 //	iface->lockData(); /* Lock Interface */
@@ -579,6 +760,3 @@ void NotifyQt::notifyChatStyleChanged(int /*ChatStyle::enumStyleType*/ styleType
 //
 //
 //}
-
-
-

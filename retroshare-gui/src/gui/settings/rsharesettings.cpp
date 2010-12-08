@@ -122,8 +122,7 @@ void RshareSettings::initSettings()
   uint defChat = RS_CHAT_OPEN;
 		// This is not default... RS_CHAT_FOCUS.
 
-  uint defNotify = (RS_POPUP_CONNECT | RS_POPUP_MSG |
-                	RS_POPUP_CHAT | RS_POPUP_CALL);
+  uint defNotify = (RS_POPUP_CONNECT | RS_POPUP_MSG);
 
   uint defNewsFeed = (RS_FEED_TYPE_PEER | RS_FEED_TYPE_CHAN |
                 RS_FEED_TYPE_FORUM | RS_FEED_TYPE_BLOG |
