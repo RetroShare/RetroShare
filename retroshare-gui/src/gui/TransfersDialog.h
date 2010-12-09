@@ -106,7 +106,7 @@ signals:
 
 private:
     QString getPeerName(const std::string& peer_id) const ;
-	 static QIcon getIconFromExtension(const QString&) ;
+    static QIcon getIconFromExtension(QString) ;
 
     QStandardItemModel *DLListModel;
     QStandardItemModel *ULListModel;

@@ -96,7 +96,7 @@ private:
 	 void insertFile(const std::string& txt,qulonglong searchId, const FileDetail& file, int searchType = ANONYMOUS_SEARCH) ;
 	 void insertDirectory(const std::string &txt, qulonglong searchId, const DirDetails &dir, QTreeWidgetItem *item);
          void insertDirectory(const std::string &txt, qulonglong searchId, const DirDetails &dir);
-	 void setIconAndType(QTreeWidgetItem *item, QString &ext);
+	 void setIconAndType(QTreeWidgetItem *item, QString ext);
 	 void downloadDirectory(const QTreeWidgetItem *item, const QString &base);
 	 void getSourceFriendsForHash(const std::string& hash,std::list<std::string>& srcIds);
 

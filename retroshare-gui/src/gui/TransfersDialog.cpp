@@ -531,32 +531,33 @@ int TransfersDialog::addItem(const QString&, const QString& name, const QString&
 	return row ;
 }
 
-QIcon TransfersDialog::getIconFromExtension(const QString& ext)
+QIcon TransfersDialog::getIconFromExtension(QString ext)
 {
-	if (ext == "jpg" || ext == "jpeg" || ext == "tif" || ext == "tiff" || ext == "JPG"|| ext == "png" || ext == "gif" || ext == "bmp" || ext == "ico" || ext == "svg") 
+	ext = ext.toLower();
+	if (ext == "jpg" || ext == "jpeg" || ext == "tif" || ext == "tiff" || ext == "png" || ext == "gif" || ext == "bmp" || ext == "ico" || ext == "svg")
 		return QIcon(QString::fromUtf8(":/images/FileTypePicture.png")) ;
-	else if (ext == "avi" ||ext == "AVI" || ext == "mpg" || ext == "mpeg" || ext == "wmv" || ext == "divx" || ext == "ts"
+	else if (ext == "avi" || ext == "mpg" || ext == "mpeg" || ext == "wmv" || ext == "divx" || ext == "ts"
 			|| ext == "mkv" || ext == "mp4" || ext == "flv" || ext == "mov" || ext == "asf" || ext == "xvid"
-			|| ext == "vob" || ext == "qt" || ext == "rm" || ext == "3gp" || ext == "mpeg" || ext == "ogm") 
+			|| ext == "vob" || ext == "qt" || ext == "rm" || ext == "3gp" || ext == "ogm")
 		return QIcon(QString::fromUtf8(":/images/FileTypeVideo.png")) ;
-	else if (ext == "ogg" || ext == "mp3" || ext == "MP3"  || ext == "mp1" || ext == "mp2" || ext == "wav" || ext == "wma") 
+	else if (ext == "ogg" || ext == "mp3" || ext == "mp1" || ext == "mp2" || ext == "wav" || ext == "wma" || ext == "m4a" || ext == "flac")
 		return QIcon(QString::fromUtf8(":/images/FileTypeAudio.png")) ;
 	else if (ext == "tar" || ext == "bz2" || ext == "zip" || ext == "gz" || ext == "7z" || ext == "msi"
 			|| ext == "rar" || ext == "rpm" || ext == "ace" || ext == "jar" || ext == "tgz" || ext == "lha"
-			|| ext == "cab" || ext == "cbz"|| ext == "cbr" || ext == "alz" || ext == "sit" || ext == "arj" || ext == "deb") 
+			|| ext == "cab" || ext == "cbz"|| ext == "cbr" || ext == "alz" || ext == "sit" || ext == "arj" || ext == "deb")
 		return QIcon(QString::fromUtf8(":/images/FileTypeArchive.png")) ;
 	else if (ext == "app" || ext == "bat" || ext == "cgi" || ext == "com"
 			|| ext == "exe" || ext == "js" || ext == "pif"
-			|| ext == "py" || ext == "pl" || ext == "sh" || ext == "vb" || ext == "ws") 
+			|| ext == "py" || ext == "pl" || ext == "sh" || ext == "vb" || ext == "ws")
 		return QIcon(QString::fromUtf8(":/images/FileTypeProgram.png")) ;
-	else if (ext == "iso" || ext == "nrg" || ext == "mdf" || ext == "img" || ext == "dmg" || ext == "bin" ) 
+	else if (ext == "iso" || ext == "nrg" || ext == "mdf" || ext == "img" || ext == "dmg" || ext == "bin" )
 		return QIcon(QString::fromUtf8(":/images/FileTypeCDImage.png")) ;
-	else if (ext == "txt" || ext == "cpp" || ext == "c" || ext == "h") 
+	else if (ext == "txt" || ext == "cpp" || ext == "c" || ext == "h")
 		return QIcon(QString::fromUtf8(":/images/FileTypeDocument.png")) ;
 	else if (ext == "doc" || ext == "rtf" || ext == "sxw" || ext == "xls" || ext == "pps" || ext == "xml"
-			|| ext == "sxc" || ext == "odt" || ext == "ods" || ext == "dot" || ext == "ppt" || ext == "css"  ) 
+			|| ext == "sxc" || ext == "odt" || ext == "ods" || ext == "dot" || ext == "ppt" || ext == "css"  )
 		return QIcon(QString::fromUtf8(":/images/FileTypeDocument.png")) ;
-	else if (ext == "html" || ext == "htm" || ext == "php") 
+	else if (ext == "html" || ext == "htm" || ext == "php")
 		return QIcon(QString::fromUtf8(":/images/FileTypeDocument.png")) ;
 	else 
 		return QIcon(QString::fromUtf8(":/images/FileTypeAny.png")) ;

@@ -192,7 +192,7 @@ void SearchDialog::initialiseFileTypeMappings()
 	/* edit these strings to change the range of extensions recognised by the search */
 	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_ANY, "");
 	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_AUDIO,
-		"aac aif iff m3u mid midi mp3 mpa ogg ra ram wav wma");
+		"aac aif flac iff m3u m4a mid midi mp3 mpa ogg ra ram wav wma");
 	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_ARCHIVE,
 		"7z bz2 gz pkg rar sea sit sitx tar zip");
 	SearchDialog::FileTypeExtensionMap->insert(FILETYPE_IDX_CDIMAGE,
@@ -624,11 +624,11 @@ void SearchDialog::updateFiles(qulonglong search_id,FileDetail file)
 
 		if (extIndex >= 0)
 		{
-			QString qExt = qName.mid(extIndex+1);
+			QString qExt = qName.mid(extIndex+1).toUpper();
 
 			if (qExt != "" )
 				for (int i = 0; i < extList.size(); ++i)
-					if (qExt.toUpper() == extList.at(i).toUpper())
+					if (qExt == extList.at(i).toUpper())
 						insertFile(txt,search_id,file);
 		}
 	}
@@ -1088,10 +1088,11 @@ void SearchDialog::selectSearchResults(int index)
 	ui.searchResultWidget->update();
 }
 
-void SearchDialog::setIconAndType(QTreeWidgetItem *item, QString &ext)
+void SearchDialog::setIconAndType(QTreeWidgetItem *item, QString ext)
 {
+	ext = ext.toLower();
 	if (ext == "jpg" || ext == "jpeg" || ext == "png" || ext == "gif" || ext == "bmp" || ext == "ico" 
-	|| ext == "svg" || ext == "tif" || ext == "tiff" || ext == "JPG")
+	|| ext == "svg" || ext == "tif" || ext == "tiff")
 	{
 		item->setIcon(SR_NAME_COL, QIcon(":/images/FileTypePicture.png"));
 		item->setText(SR_TYPE_COL, QString::fromUtf8("Picture"));
@@ -1103,7 +1104,7 @@ void SearchDialog::setIconAndType(QTreeWidgetItem *item, QString &ext)
 		item->setIcon(SR_NAME_COL, QIcon(":/images/FileTypeVideo.png"));
 		item->setText(SR_TYPE_COL, QString::fromUtf8("Video"));
 	}
-	else if (ext == "ogg" || ext == "mp3" || ext == "MP3"  || ext == "mp1" || ext == "mp2"  || ext == "wav" || ext == "wma")
+	else if (ext == "flac" || ext == "ogg" || ext == "mp3" || ext == "m4a" || ext == "mp1" || ext == "mp2"  || ext == "wav" || ext == "wma")
 	{
 		item->setIcon(SR_NAME_COL, QIcon(":/images/FileTypeAudio.png"));
 		item->setText(SR_TYPE_COL, QString::fromUtf8("Audio"));
