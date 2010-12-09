@@ -52,6 +52,10 @@
  * #define NOTIFY_DEBUG
  ****/
 
+#define TOASTER_MARGIN_X  10 // 10 pixels of x margin
+#define TOASTER_MARGIN_Y  10 // 10 pixels of y margin
+
+
 class Toaster
 {
 public:
@@ -584,30 +588,23 @@ void NotifyQt::startWaitingToasters()
 	}
 
 	if (toaster) {
-		/* 10 pixels of x margin */
-		static const int MARGIN_X = 10;
-		/* 10 pixels of y margin */
-		static const int MARGIN_Y = 10;
-
 //		QMutexLocker lock(&runningToasterMutex);
 
 		/* Calculate positions */
 		QSize size = toaster->widget->size();
 
 		QDesktopWidget *desktop = QApplication::desktop();
-		QRect screenGeometry = desktop->screenGeometry(desktop->primaryScreen());
 		QRect desktopGeometry = desktop->availableGeometry(desktop->primaryScreen());
 
 		/* From bottom */
-		toaster->startPos = QPoint(screenGeometry.right() - size.width() - MARGIN_X, screenGeometry.bottom());
-		toaster->endPos = QPoint(toaster->startPos.x(), desktopGeometry.bottom() - size.height() - MARGIN_Y);
+		toaster->startPos = QPoint(desktopGeometry.right() - size.width() - TOASTER_MARGIN_X, desktopGeometry.bottom());
+		toaster->endPos = QPoint(toaster->startPos.x(), desktopGeometry.bottom() - size.height() - TOASTER_MARGIN_Y);
 		/* From top */
-//		toaster->startPos = QPoint(screenGeometry.right() - size.width() - MARGIN_X, screenGeometry.top() - size.height());
-//		toaster->endPos = QPoint(toaster->startPos.x(), desktopGeometry.top() + MARGIN_Y);
+//		toaster->startPos = QPoint(desktopGeometry.right() - size.width() - TOASTER_MARGIN_X, desktopGeometry.top() - size.height());
+//		toaster->endPos = QPoint(toaster->startPos.x(), desktopGeometry.top() + TOASTER_MARGIN_Y);
 
 		/* Initialize widget */
 		toaster->widget->move(toaster->startPos);
-		toaster->widget->show();
 
 		/* Initialize toaster */
 		toaster->elapsedTimeToShow = 0;
@@ -627,6 +624,9 @@ void NotifyQt::runningTick()
 {
 //	QMutexLocker lock(&runningToasterMutex);
 
+	QDesktopWidget *desktop = QApplication::desktop();
+	QRect desktopGeometry = desktop->availableGeometry(desktop->primaryScreen());
+
 	int interval = runningToasterTimer->interval();
 	QPoint diff;
 
@@ -634,39 +634,65 @@ void NotifyQt::runningTick()
 	while (it != runningToasterList.end()) {
 		Toaster *toaster = *it;
 
-		bool visible = toaster->widget->isVisible();
+		bool visible = true;
+		if (toaster->elapsedTimeToShow) {
+			/* Toaster is started, check for visible */
+			visible = toaster->widget->isVisible();
+		}
+
+		QPoint newPos;
+		enum { NOTHING, SHOW, HIDE } operation = NOTHING;
 
 		if (visible && toaster->elapsedTimeToShow <= toaster->timeToShow) {
 			/* Toaster is showing */
+			if (toaster->elapsedTimeToShow == 0) {
+				/* Toaster is not visible, show it now */
+				operation = SHOW;
+			}
+
 			toaster->elapsedTimeToShow += interval;
 
-			QPoint newPos(toaster->startPos.x() - (toaster->startPos.x() - toaster->endPos.x()) * toaster->elapsedTimeToShow / toaster->timeToShow,
-						  toaster->startPos.y() - (toaster->startPos.y() - toaster->endPos.y()) * toaster->elapsedTimeToShow / toaster->timeToShow);
-			toaster->widget->move(newPos + diff);
-
-			diff += newPos - toaster->startPos;
+			newPos = QPoint(toaster->startPos.x() - (toaster->startPos.x() - toaster->endPos.x()) * toaster->elapsedTimeToShow / toaster->timeToShow,
+							toaster->startPos.y() - (toaster->startPos.y() - toaster->endPos.y()) * toaster->elapsedTimeToShow / toaster->timeToShow);
 		} else if (visible && toaster->elapsedTimeToLive <= toaster->timeToLive) {
 			/* Toaster is living */
 			toaster->elapsedTimeToLive += interval;
 
-			toaster->widget->move(toaster->endPos + diff);
-
-			diff += toaster->endPos - toaster->startPos;
+			newPos = toaster->endPos;
 		} else if (visible && toaster->elapsedTimeToHide <= toaster->timeToHide) {
 			/* Toaster is hiding */
 			toaster->elapsedTimeToHide += interval;
 
-			QPoint newPos(toaster->startPos.x() - (toaster->startPos.x() - toaster->endPos.x()) * (toaster->timeToHide - toaster->elapsedTimeToHide) / toaster->timeToHide,
-						  toaster->startPos.y() - (toaster->startPos.y() - toaster->endPos.y()) * (toaster->timeToHide - toaster->elapsedTimeToHide) / toaster->timeToHide);
-			toaster->widget->move(newPos + diff);
+			if (toaster->elapsedTimeToHide == toaster->timeToHide) {
+				/* Toaster is back at the start position, hide it */
+				operation = HIDE;
+			}
 
-			diff += newPos - toaster->startPos;
+			newPos = QPoint(toaster->startPos.x() - (toaster->startPos.x() - toaster->endPos.x()) * (toaster->timeToHide - toaster->elapsedTimeToHide) / toaster->timeToHide,
+							toaster->startPos.y() - (toaster->startPos.y() - toaster->endPos.y()) * (toaster->timeToHide - toaster->elapsedTimeToHide) / toaster->timeToHide);
 		} else {
 			/* Toaster is hidden, delete it */
 			it = runningToasterList.erase(it);
 			delete(toaster->widget);
 			delete(toaster);
 			continue;
+		}
+
+		toaster->widget->move(newPos + diff);
+		diff += newPos - toaster->startPos;
+
+		/* This is only correct when moving the toaster from bottom */
+		toaster->widget->setMask(QRegion(0, 0, toaster->widget->width(), qAbs(toaster->startPos.y() - newPos.y())));
+
+		switch (operation) {
+		case NOTHING:
+			break;
+		case SHOW:
+			toaster->widget->show();
+			break;
+		case HIDE:
+			toaster->widget->hide();
+			break;
 		}
 
 		++it;
