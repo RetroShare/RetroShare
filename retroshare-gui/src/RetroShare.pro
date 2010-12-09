@@ -274,7 +274,6 @@ HEADERS +=  rshare.h \
             gui/toaster/MessageToaster.h \
             gui/toaster/OnlineToaster.h \
             gui/toaster/DownloadToaster.h \
-            gui/toaster/RetroStyleLabelProxy.h \
             gui/common/vmessagebox.h \
             gui/common/rwindow.h \
             gui/common/html.h \
