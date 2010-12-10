@@ -66,6 +66,14 @@ public:
     LASTDIR_BLOGS
   };
 
+  enum enumToasterPosition
+  {
+    TOASTERPOS_TOPLEFT,
+    TOASTERPOS_TOPRIGHT,
+    TOASTERPOS_BOTTOMLEFT,
+    TOASTERPOS_BOTTOMRIGHT
+  };
+
 public:
   /* create settings object */
   static void Create ();
@@ -140,6 +148,12 @@ public:
 
   bool getChatSendMessageWithCtrlReturn();
   void setChatSendMessageWithCtrlReturn(bool bValue);
+
+  enumToasterPosition getToasterPosition();
+  void setToasterPosition(enumToasterPosition position);
+
+  QPoint getToasterMargin();
+  void   setToasterMargin(QPoint margin);
 
   /* chat font */
   QString getChatScreenFont();

@@ -331,6 +331,26 @@ bool RshareSettings::getChatSendMessageWithCtrlReturn()
     return valueFromGroup("Chat", "SendMessageWithCtrlReturn", false).toBool();
 }
 
+RshareSettings::enumToasterPosition RshareSettings::getToasterPosition()
+{
+    return (enumToasterPosition) value("ToasterPosition", TOASTERPOS_BOTTOMRIGHT).toInt();
+}
+
+void RshareSettings::setToasterPosition(enumToasterPosition position)
+{
+    setValue("ToasterPosition", position);
+}
+
+QPoint RshareSettings::getToasterMargin()
+{
+    return value("ToasterMargin", QPoint(10, 10)).toPoint();
+}
+
+void RshareSettings::setToasterMargin(QPoint margin)
+{
+    setValue("ToasterMargin", margin);
+}
+
 void RshareSettings::setChatSendMessageWithCtrlReturn(bool bValue)
 {
     setValueToGroup("Chat", "SendMessageWithCtrlReturn", bValue);

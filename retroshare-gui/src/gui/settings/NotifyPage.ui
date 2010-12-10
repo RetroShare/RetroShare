@@ -683,6 +683,85 @@
             </property>
            </widget>
           </item>
+          <item>
+           <layout class="QGridLayout" name="gridLayout">
+            <item row="1" column="0">
+             <widget class="QLabel" name="labelToasterPosition">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Position</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1" colspan="3">
+             <widget class="QComboBox" name="comboBoxToasterPosition">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="labelToasterXMargin">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>X Margin</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QSpinBox" name="spinBoxToasterXMargin">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximum">
+               <number>20</number>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="2">
+             <widget class="QLabel" name="labelToasterYMargin">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>Y Margin</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="3">
+             <widget class="QSpinBox" name="spinBoxToasterYMargin">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximum">
+               <number>20</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
          </layout>
         </widget>
        </item>

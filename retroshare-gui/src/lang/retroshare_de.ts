@@ -760,9 +760,8 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>CallToaster</name>
     <message>
-        <location filename="../gui/toaster/CallToaster.ui" line="+656"/>
         <source>Message</source>
-        <translation>Nachricht</translation>
+        <translation type="obsolete">Nachricht</translation>
     </message>
 </context>
 <context>
@@ -2909,7 +2908,7 @@ Das ist nützlich, wenn Du eine externe Festplatte freigibst und die Datei nicht
         <translation type="obsolete">Spiele das heruntergeladene Video ab</translation>
     </message>
     <message>
-        <location filename="../gui/toaster/DownloadToaster.ui" line="+121"/>
+        <location filename="../gui/toaster/DownloadToaster.ui" line="+106"/>
         <source>Start file</source>
         <translation>Starte Datei</translation>
     </message>
@@ -2919,7 +2918,7 @@ Das ist nützlich, wenn Du eine externe Festplatte freigibst und die Datei nicht
         <translation>&lt;b&gt;Download fertig&lt;/b&gt;</translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+35"/>
         <source>Close</source>
         <translation>Schliessen</translation>
     </message>
@@ -2932,9 +2931,8 @@ Das ist nützlich, wenn Du eine externe Festplatte freigibst und die Datei nicht
         <translation type="obsolete">Datei abspielen</translation>
     </message>
     <message>
-        <location filename="../gui/toaster/DownloadToaster.cpp" line="+127"/>
         <source>File %1 does not exist at location.</source>
-        <translation>Datei %1 existiert nicht.</translation>
+        <translation type="obsolete">Datei %1 existiert nicht.</translation>
     </message>
 </context>
 <context>
@@ -5972,22 +5970,19 @@ Willst Du die Nachricht speichern ?</translation>
 <context>
     <name>MessageToaster</name>
     <message>
-        <location filename="../gui/toaster/MessageToaster.ui" line="+152"/>
         <source>Play video</source>
-        <translation>Video abspielen</translation>
+        <translation type="obsolete">Video abspielen</translation>
     </message>
     <message>
-        <location line="+6"/>
         <source>Play button</source>
-        <translation>Abspielen Knopf</translation>
+        <translation type="obsolete">Abspielen Knopf</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>Play the downloaded video</source>
-        <translation>Spiele das heruntergeladene Video ab</translation>
+        <translation type="obsolete">Spiele das heruntergeladene Video ab</translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location filename="../gui/toaster/MessageToaster.ui" line="+81"/>
         <source>&lt;b&gt;1 new Message from&lt;/b&gt;</source>
         <translation>&lt;b&gt;1 neue Nachricht von&lt;/b&gt;</translation>
     </message>
@@ -5997,9 +5992,14 @@ Willst Du die Nachricht speichern ?</translation>
         <translation>Schliessen</translation>
     </message>
     <message>
-        <location line="-125"/>
+        <location line="+73"/>
         <source>Subject</source>
         <translation>Betreff</translation>
+    </message>
+    <message>
+        <location filename="../gui/toaster/MessageToaster.cpp" line="+34"/>
+        <source>Sub:</source>
+        <translation>Betreff:</translation>
     </message>
 </context>
 <context>
@@ -7063,7 +7063,22 @@ p, li { white-space: pre-wrap; }
         <translation>Neue Nachricht</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+22"/>
+        <source>Position</source>
+        <translation>Position</translation>
+    </message>
+    <message>
+        <location line="+23"/>
+        <source>X Margin</source>
+        <translation>Abstand X</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Y Margin</source>
+        <translation>Abstand Y</translation>
+    </message>
+    <message>
+        <location line="+25"/>
         <source>Private Chat</source>
         <translation>Privater Chat</translation>
     </message>
@@ -7093,15 +7108,35 @@ p, li { white-space: pre-wrap; }
         <translation>Zeige Systemabschnitts-Nachricht an</translation>
     </message>
     <message>
-        <location line="-157"/>
+        <location line="-236"/>
         <source>Add feeds at end</source>
         <translation>Feeds am Ende anfügen</translation>
+    </message>
+    <message>
+        <location filename="../gui/settings/NotifyPage.cpp" line="+173"/>
+        <source>Top Left</source>
+        <translation>Oben Links</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Top Right</source>
+        <translation>Oben Rechts</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Bottom Left</source>
+        <translation>Unten Links</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Bottom Right</source>
+        <translation>Unten Rechts</translation>
     </message>
 </context>
 <context>
     <name>NotifyQt</name>
     <message>
-        <location filename="../gui/notifyqt.cpp" line="+67"/>
+        <location filename="../gui/notifyqt.cpp" line="+131"/>
         <source>GPG key passphrase</source>
         <translation>GPG Schlüssel Passwort</translation>
     </message>
@@ -7134,9 +7169,13 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>OnlineToaster</name>
     <message>
-        <location filename="../gui/toaster/OnlineToaster.ui" line="+160"/>
+        <source>RetroShare</source>
+        <translation type="obsolete">RetroShare</translation>
+    </message>
+    <message>
+        <location filename="../gui/toaster/OnlineToaster.ui" line="+208"/>
         <source>Friend Online</source>
-        <translation type="unfinished">Freund Online</translation>
+        <translation>Freund Online</translation>
     </message>
 </context>
 <context>
@@ -9346,7 +9385,7 @@ p, li { white-space: pre-wrap; }
         <translation>Ordner</translation>
     </message>
     <message>
-        <location line="+456"/>
+        <location line="+457"/>
         <source>New RetroShare Link(s)</source>
         <translation>Neu(e) RetroShare Link(s)</translation>
     </message>
@@ -9396,7 +9435,7 @@ p, li { white-space: pre-wrap; }
         <translation>Such ID</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="-914"/>
+        <location filename="../gui/SearchDialog.cpp" line="-915"/>
         <source>Download Notice</source>
         <translation>Download</translation>
     </message>
@@ -11141,7 +11180,7 @@ p, li { white-space: pre-wrap; }
         <translation>Blockstrategie</translation>
     </message>
     <message>
-        <location line="+396"/>
+        <location line="+397"/>
         <source>Queued</source>
         <translation>In Warteschleife</translation>
     </message>
@@ -11181,7 +11220,7 @@ p, li { white-space: pre-wrap; }
         <translation>Soll dieser Download wirklich abgebrochen und gelöscht werden?</translation>
     </message>
     <message>
-        <location line="-900"/>
+        <location line="-901"/>
         <source>Speed / Queue position</source>
         <translation>Geschwindigkeits- / Warteschlangenposition</translation>
     </message>
@@ -11219,30 +11258,30 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+12"/>
-        <location line="+530"/>
+        <location line="+531"/>
         <source>Slower</source>
         <translation>Langsamer</translation>
     </message>
     <message>
-        <location line="-528"/>
-        <location line="+529"/>
+        <location line="-529"/>
+        <location line="+530"/>
         <location line="+2"/>
         <source>Average</source>
         <translation>Durchschnitt</translation>
     </message>
     <message>
-        <location line="-529"/>
-        <location line="+528"/>
+        <location line="-530"/>
+        <location line="+529"/>
         <source>Faster</source>
         <translation>Schneller</translation>
     </message>
     <message>
-        <location line="-424"/>
+        <location line="-425"/>
         <source>Move in Queue...</source>
         <translation>Verschiebe in Warteschlange...</translation>
     </message>
     <message>
-        <location line="+259"/>
+        <location line="+260"/>
         <location line="+145"/>
         <location line="+129"/>
         <source>Failed</source>
@@ -11295,7 +11334,7 @@ p, li { white-space: pre-wrap; }
         <translation>Überprüfe...</translation>
     </message>
     <message>
-        <location line="-555"/>
+        <location line="-556"/>
         <source>Force Check</source>
         <translation>Erzwinge Überprüfung</translation>
     </message>

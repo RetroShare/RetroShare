@@ -118,6 +118,13 @@ NotifyPage::save(QString &errmsg)
 
     Settings->setAddFeedsAtEnd(ui.addFeedsAtEnd->isChecked());
 
+    int index = ui.comboBoxToasterPosition->currentIndex();
+    if (index != -1) {
+        Settings->setToasterPosition((RshareSettings::enumToasterPosition) ui.comboBoxToasterPosition->itemData(index).toInt());
+    }
+
+    Settings->setToasterMargin(QPoint(ui.spinBoxToasterXMargin->value(), ui.spinBoxToasterYMargin->value()));
+
     load();
     return true;
 }
@@ -158,8 +165,30 @@ void NotifyPage::load()
     ui.trayNotify_CombinedIcon->setChecked(traynotifyflags & TRAYNOTIFY_COMBINEDICON);
 
     ui.addFeedsAtEnd->setChecked(Settings->getAddFeedsAtEnd());
-}
 
+    RshareSettings::enumToasterPosition toasterPosition = Settings->getToasterPosition();
+    ui.comboBoxToasterPosition->clear();
+
+    QMap<int, QString> toasterPositions;
+    toasterPositions[RshareSettings::TOASTERPOS_TOPLEFT] = tr("Top Left");
+    toasterPositions[RshareSettings::TOASTERPOS_TOPRIGHT] = tr("Top Right");
+    toasterPositions[RshareSettings::TOASTERPOS_BOTTOMLEFT] = tr("Bottom Left");
+    toasterPositions[RshareSettings::TOASTERPOS_BOTTOMRIGHT] = tr("Bottom Right");
+
+    QMap<int, QString>::iterator it;
+    int index = 0;
+    for (it = toasterPositions.begin(); it != toasterPositions.end(); it++, index++) {
+        ui.comboBoxToasterPosition->addItem(it.value(), it.key());
+
+        if (it.key() == toasterPosition) {
+            ui.comboBoxToasterPosition->setCurrentIndex(index);
+        }
+    }
+
+    QPoint margin = Settings->getToasterMargin();
+    ui.spinBoxToasterXMargin->setValue(margin.x());
+    ui.spinBoxToasterYMargin->setValue(margin.y());
+}
 
 /** Loads the settings for this page */
 void NotifyPage::updateStatus()

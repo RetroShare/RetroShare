@@ -52,10 +52,6 @@
  * #define NOTIFY_DEBUG
  ****/
 
-#define TOASTER_MARGIN_X  10 // 10 pixels of x margin
-#define TOASTER_MARGIN_Y  10 // 10 pixels of y margin
-
-
 class Toaster
 {
 public:
@@ -596,12 +592,28 @@ void NotifyQt::startWaitingToasters()
 		QDesktopWidget *desktop = QApplication::desktop();
 		QRect desktopGeometry = desktop->availableGeometry(desktop->primaryScreen());
 
-		/* From bottom */
-		toaster->startPos = QPoint(desktopGeometry.right() - size.width() - TOASTER_MARGIN_X, desktopGeometry.bottom());
-		toaster->endPos = QPoint(toaster->startPos.x(), desktopGeometry.bottom() - size.height() - TOASTER_MARGIN_Y);
-		/* From top */
-//		toaster->startPos = QPoint(desktopGeometry.right() - size.width() - TOASTER_MARGIN_X, desktopGeometry.top() - size.height());
-//		toaster->endPos = QPoint(toaster->startPos.x(), desktopGeometry.top() + TOASTER_MARGIN_Y);
+		RshareSettings::enumToasterPosition position = Settings->getToasterPosition();
+		QPoint margin = Settings->getToasterMargin();
+
+		switch (position) {
+		case RshareSettings::TOASTERPOS_TOPLEFT:
+			toaster->startPos = QPoint(desktopGeometry.left() + margin.x(), desktopGeometry.top() - size.height());
+			toaster->endPos = QPoint(toaster->startPos.x(), desktopGeometry.top() + margin.y());
+			break;
+		case RshareSettings::TOASTERPOS_TOPRIGHT:
+			toaster->startPos = QPoint(desktopGeometry.right() - size.width() - margin.x(), desktopGeometry.top() - size.height());
+			toaster->endPos = QPoint(toaster->startPos.x(), desktopGeometry.top() + margin.y());
+			break;
+		case RshareSettings::TOASTERPOS_BOTTOMLEFT:
+			toaster->startPos = QPoint(desktopGeometry.left() + margin.x(), desktopGeometry.bottom());
+			toaster->endPos = QPoint(toaster->startPos.x(), desktopGeometry.bottom() - size.height() - margin.y());
+			break;
+		case RshareSettings::TOASTERPOS_BOTTOMRIGHT: // default
+		default:
+			toaster->startPos = QPoint(desktopGeometry.right() - size.width() - margin.x(), desktopGeometry.bottom());
+			toaster->endPos = QPoint(toaster->startPos.x(), desktopGeometry.bottom() - size.height() - margin.y());
+			break;
+		}
 
 		/* Initialize widget */
 		toaster->widget->move(toaster->startPos);
@@ -681,8 +693,12 @@ void NotifyQt::runningTick()
 		toaster->widget->move(newPos + diff);
 		diff += newPos - toaster->startPos;
 
-		/* This is only correct when moving the toaster from bottom */
-		toaster->widget->setMask(QRegion(0, 0, toaster->widget->width(), qAbs(toaster->startPos.y() - newPos.y())));
+		QRect mask = QRect(0, 0, toaster->widget->width(), qAbs(toaster->startPos.y() - newPos.y()));
+		if (newPos.y() > toaster->startPos.y()) {
+			/* Toaster is moving from top */
+			mask.moveTop(toaster->widget->height() - (newPos.y() - toaster->startPos.y()));
+		}
+		toaster->widget->setMask(QRegion(mask));
 
 		switch (operation) {
 		case NOTHING:

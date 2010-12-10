@@ -129,7 +129,7 @@
            </font>
           </property>
           <property name="text">
-           <string>RetroShare</string>
+           <string notr="true">RetroShare</string>
           </property>
          </widget>
         </item>
@@ -246,7 +246,6 @@ border-radius: 4px;}
   <tabstop>closeButton</tabstop>
  </tabstops>
  <resources>
-  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

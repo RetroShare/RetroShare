@@ -39,8 +39,7 @@ OnlineToaster::OnlineToaster(const std::string &peerId, const QString &name, con
 	ui.messageLabel->setText(name);
 	ui.pixmaplabel->setPixmap(avatar);
 
-	WidgetBackgroundImage::setBackgroundImage(ui.windowFrame, ":images/toaster/backgroundtoaster.png", WidgetBackgroundImage::AdjustSize);
-	resize(300, 100);
+	WidgetBackgroundImage::setBackgroundImage(ui.windowFrame, ":images/toaster/backgroundtoaster.png", WidgetBackgroundImage::AdjustNone);
 
 	play();
 }
