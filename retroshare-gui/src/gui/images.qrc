@@ -155,6 +155,7 @@
         <file>images/filerating5.png</file>
         <file>images/fileshare16.png</file>
         <file>images/fileshare24.png</file>
+		<file>images/fileshare32.png</file>
         <file>images/fileshare48.png</file>
         <file>images/find.png</file>
         <file>images/find-16.png</file>
@@ -422,9 +423,7 @@
         <file>images/toaster/chat.png</file>
         <file>images/toaster/hangup.png</file>
         <file>images/toaster/pickup.png</file>
-        <file>images/toaster/toaster-background.png</file>
-        <file>images/toaster/toaster-backrs3.png</file>
-        <file>images/toaster/toaster-backrs4.png</file>
+        <file>images/toaster/backgroundtoaster.png</file>
         <file>images/thumb-default-video.png</file>
         <file>images/user/add_user24.png</file>
         <file>images/user/add_user48.png</file>

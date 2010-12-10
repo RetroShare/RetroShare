@@ -27,7 +27,7 @@ MessageToaster::MessageToaster(const QString &name, const QString &title, const 
 
 	/* connect buttons */
 	connect(ui.closebtn, SIGNAL(clicked()), this, SLOT(hide()));
-	connect(ui.openmessagebtn, SIGNAL(clicked()), this, SLOT(openmessageClicked()));
+	//connect(ui.openmessagebtn, SIGNAL(clicked()), this, SLOT(openmessageClicked()));
 	connect(ui.openmessagetoolButton, SIGNAL(clicked()), this, SLOT(openmessageClicked()));
 
 	/* set informations */

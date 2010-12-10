@@ -140,9 +140,9 @@
   <widget class="QLabel" name="lblTitle">
    <property name="geometry">
     <rect>
-     <x>28</x>
-     <y>1</y>
-     <width>248</width>
+     <x>30</x>
+     <y>10</y>
+     <width>241</width>
      <height>20</height>
     </rect>
    </property>
@@ -154,23 +154,26 @@
    <property name="geometry">
     <rect>
      <x>4</x>
-     <y>3</y>
-     <width>16</width>
-     <height>16</height>
+     <y>10</y>
+     <width>21</width>
+     <height>21</height>
     </rect>
    </property>
    <property name="text">
     <string/>
    </property>
    <property name="pixmap">
-    <pixmap resource="../images.qrc">:/images/accepted16.png</pixmap>
+    <pixmap resource="../images.qrc">:/images/rstray3.png</pixmap>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
    </property>
   </widget>
   <widget class="QToolButton" name="spbClose">
    <property name="geometry">
     <rect>
-     <x>279</x>
-     <y>1</y>
+     <x>270</x>
+     <y>10</y>
      <width>20</width>
      <height>20</height>
     </rect>
@@ -205,7 +208,7 @@
     <string/>
    </property>
    <property name="pixmap">
-    <pixmap resource="../images.qrc">:/images/finished_background.png</pixmap>
+    <pixmap resource="../images.qrc">:/images/toaster/backgroundtoaster.png</pixmap>
    </property>
   </widget>
   <zorder>label_2</zorder>
@@ -220,6 +223,9 @@
   <tabstop>spbClose</tabstop>
  </tabstops>
  <resources>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>
