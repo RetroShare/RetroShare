@@ -4231,17 +4231,22 @@ Fill in your GPG password when asked, to sign your new key.</source>
 <context>
     <name>GeneralPage</name>
     <message>
-        <location filename="../gui/settings/GeneralPage.ui" line="+561"/>
+        <location filename="../gui/settings/GeneralPage.ui" line="+588"/>
         <source>Auto Login</source>
         <translation>Automatische Anmeldung</translation>
     </message>
     <message>
-        <location line="-49"/>
+        <location line="-76"/>
         <source>Startup</source>
         <translation>Programmstart</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+41"/>
+        <source>Start minimized on system start</source>
+        <translation>Minimieren beim Starten mit dem System</translation>
+    </message>
+    <message>
+        <location line="+12"/>
         <source>Misc</source>
         <translation>Verschiedenes</translation>
     </message>
@@ -4258,20 +4263,20 @@ Fill in your GPG password when asked, to sign your new key.</source>
     <message>
         <location line="+46"/>
         <source> seconds</source>
-        <translation type="unfinished"></translation>
+        <translation>Sekunden</translation>
     </message>
     <message>
-        <location line="-72"/>
+        <location line="-99"/>
         <source>Start minimized</source>
         <translation>Minimiert starten</translation>
     </message>
     <message>
         <location line="-7"/>
         <source>Start RetroShare when my system starts</source>
-        <translation>Starte mit Windows</translation>
+        <translation>Starte RetroShare mit dem System</translation>
     </message>
     <message>
-        <location line="+66"/>
+        <location line="+93"/>
         <source>Idle</source>
         <translation>Untätig</translation>
     </message>
@@ -8841,12 +8846,12 @@ p, li { white-space: pre-wrap; }
         <location line="-494"/>
         <location line="+269"/>
         <location line="+235"/>
-        <location line="+178"/>
+        <location line="+205"/>
         <source>Exit</source>
         <translation>Beenden</translation>
     </message>
     <message>
-        <location line="-622"/>
+        <location line="-649"/>
         <source>For best performance, RetroShare needs to know a little about your connection to the internet.</source>
         <translation>Für die beste Leistung muss RetroShare ein wenig über Ihre Internetverbindung erfahren.</translation>
     </message>
@@ -8894,12 +8899,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+94"/>
         <location line="+235"/>
-        <location line="+178"/>
+        <location line="+205"/>
         <source>&lt; Back</source>
         <translation>&lt; Zurück</translation>
     </message>
     <message>
-        <location line="-331"/>
+        <location line="-358"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -8974,12 +8979,17 @@ p, li { white-space: pre-wrap; }
         <translation>Starte RetroShare mit dem System.</translation>
     </message>
     <message>
-        <location line="+63"/>
-        <source>Finish</source>
-        <translation>Ende</translation>
+        <location line="+25"/>
+        <source>Start minimized on system start</source>
+        <translation>Minimieren beim Starten mit dem System</translation>
     </message>
     <message>
-        <location filename="../gui/QuickStartWizard.cpp" line="+204"/>
+        <location line="+65"/>
+        <source>Finish</source>
+        <translation>Fertigstellen</translation>
+    </message>
+    <message>
+        <location filename="../gui/QuickStartWizard.cpp" line="+202"/>
         <source>Select A Folder To Share</source>
         <translation>Wählen Sie ein Ordner zum Freigeben</translation>
     </message>
@@ -8999,7 +9009,7 @@ p, li { white-space: pre-wrap; }
         <translation>Warnung!</translation>
     </message>
     <message>
-        <location filename="../gui/QuickStartWizard.ui" line="-748"/>
+        <location filename="../gui/QuickStartWizard.ui" line="-775"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }

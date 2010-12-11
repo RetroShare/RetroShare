@@ -158,7 +158,7 @@ p, li { white-space: pre-wrap; }
       <string notr="true"/>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="pageWelcome">
       <property name="styleSheet">
@@ -863,14 +863,14 @@ p, li { white-space: pre-wrap; }
           </item>
           <item row="3" column="0">
            <layout class="QGridLayout" name="gridLayout_19">
-            <item row="2" column="0">
+            <item row="5" column="0">
              <widget class="QCheckBox" name="checkBoxQuit">
               <property name="text">
                <string>Do not show a message when Closing RetroShare</string>
               </property>
              </widget>
             </item>
-            <item row="1" column="0">
+            <item row="4" column="0">
              <widget class="QCheckBox" name="checkBoxStartMinimized">
               <property name="text">
                <string>Start Minimized</string>
@@ -883,6 +883,33 @@ p, li { white-space: pre-wrap; }
                <string>Start RetroShare when my System Starts.</string>
               </property>
              </widget>
+            </item>
+            <item row="2" column="0">
+             <layout class="QHBoxLayout" name="horizontalLayout_4">
+              <item>
+               <spacer name="horizontalSpacer_7">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeType">
+                 <enum>QSizePolicy::Fixed</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>10</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="chkRunRetroshareAtSystemStartupMinimized">
+                <property name="text">
+                 <string>Start minimized on system start</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
            </layout>
           </item>

@@ -424,14 +424,19 @@ void RshareSettings::setPrivateChatHistoryCount(int value)
 
 /** Returns true if RetroShare is set to run on system boot. */
 bool
-RshareSettings::runRetroshareOnBoot()
+RshareSettings::runRetroshareOnBoot(bool &minimized)
 {
+  minimized = false;
+
 #if defined(Q_WS_WIN)
-  if (!win32_registry_get_key_value(STARTUP_REG_KEY, RETROSHARE_REG_KEY).isEmpty()) {
+  QString value = win32_registry_get_key_value(STARTUP_REG_KEY, RETROSHARE_REG_KEY);
+
+  if (!value.isEmpty()) {
+    /* Simple check for "-m" */
+    minimized = value.contains(" -m");
     return true;
-  } else {
-    return false;
   }
+  return false;
 #else
   /* Platforms other than windows aren't supported yet */
   return false;
@@ -440,14 +445,17 @@ RshareSettings::runRetroshareOnBoot()
 
 /** If <b>run</b> is set to true, then RetroShare will run on system boot. */
 void
-RshareSettings::setRunRetroshareOnBoot(bool run)
+RshareSettings::setRunRetroshareOnBoot(bool run, bool minimized)
 {
 #if defined(Q_WS_WIN)
   if (run) {
-    win32_registry_set_key_value(STARTUP_REG_KEY, RETROSHARE_REG_KEY,
-        QString("\"" +
-                QDir::convertSeparators(QCoreApplication::applicationFilePath())) +
-                "\"");
+    QString value = "\"" + QDir::convertSeparators(QCoreApplication::applicationFilePath()) + "\"";
+
+    if (minimized) {
+      value += " -m";
+    }
+
+    win32_registry_set_key_value(STARTUP_REG_KEY, RETROSHARE_REG_KEY, value);
   } else {
     win32_registry_remove_key(STARTUP_REG_KEY, RETROSHARE_REG_KEY);
   }

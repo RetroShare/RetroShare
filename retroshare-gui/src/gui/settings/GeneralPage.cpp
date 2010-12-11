@@ -39,11 +39,9 @@ GeneralPage::GeneralPage(QWidget * parent, Qt::WFlags flags)
   /* Hide platform specific features */
 #ifndef Q_WS_WIN
   ui.chkRunRetroshareAtSystemStartup->setVisible(false);
-
 #endif
 
   ui.autoLogin->setChecked(RsInit::getAutoLogin());
-
 }
 
 /** Destructor */
@@ -61,8 +59,7 @@ GeneralPage::save(QString &errmsg)
   
   Settings->setValue(QString::fromUtf8("ClosetoTray"), closetoTray());
   
-  Settings->setRunRetroshareOnBoot(
-  ui.chkRunRetroshareAtSystemStartup->isChecked());
+  Settings->setRunRetroshareOnBoot(ui.chkRunRetroshareAtSystemStartup->isChecked(), ui.chkRunRetroshareAtSystemStartupMinimized->isChecked());
   
   Settings->setMaxTimeBeforeIdle(ui.spinBox->value());
 
@@ -73,7 +70,9 @@ GeneralPage::save(QString &errmsg)
 void
 GeneralPage::load()
 {
-  ui.chkRunRetroshareAtSystemStartup->setChecked(Settings->runRetroshareOnBoot());
+  bool minimized;
+  ui.chkRunRetroshareAtSystemStartup->setChecked(Settings->runRetroshareOnBoot(minimized));
+  ui.chkRunRetroshareAtSystemStartupMinimized->setChecked(minimized);
 
   ui.checkStartMinimized->setChecked(Settings->value(QString::fromUtf8("StartMinimized"), false).toBool());
 
@@ -82,8 +81,6 @@ GeneralPage::load()
   ui.checkClosetoTray->setChecked(Settings->value(QString::fromUtf8("ClosetoTray"), false).toBool());
   
   ui.spinBox->setValue(Settings->getMaxTimeBeforeIdle());
-
-
 }
 
 bool GeneralPage::quit() const {
@@ -100,7 +97,6 @@ bool GeneralPage::closetoTray() const {
   if(ui.checkClosetoTray->isChecked()) return true;
   return ui.checkClosetoTray->isChecked();
 }
-
 
 /** Called when the "show on startup" checkbox is toggled. */
 void

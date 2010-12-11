@@ -100,10 +100,10 @@ public:
   void setShowMainWindowAtStart(bool show);
   
   /** Returns true if RetroShare should start on system boot. */
-  bool runRetroshareOnBoot();
+  bool runRetroshareOnBoot(bool &minimized);
 
   /** Set whether to run RetroShare on system boot. */
-  void setRunRetroshareOnBoot(bool run);
+  void setRunRetroshareOnBoot(bool run, bool minimized);
 
   /* Get the destination log file. */
   QString getLogFile();

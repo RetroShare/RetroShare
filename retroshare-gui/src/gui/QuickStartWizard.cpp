@@ -64,7 +64,6 @@ QuickStartWizard::QuickStartWizard(QWidget *parent) :
   /* Hide platform specific features */
 #ifndef Q_WS_WIN
   ui.checkBoxRunRetroshareAtSystemStartup->setVisible(false);
-
 #endif	  
 }
 
@@ -183,7 +182,7 @@ void QuickStartWizard::on_pushButtonSystemFinish_clicked()
 {
   Settings->setValue(QString::fromUtf8("StartMinimized"), startMinimized());
   Settings->setValue(QString::fromUtf8("doQuit"), quitbox());
-  Settings->setRunRetroshareOnBoot(ui.checkBoxRunRetroshareAtSystemStartup->isChecked());
+  Settings->setRunRetroshareOnBoot(ui.checkBoxRunRetroshareAtSystemStartup->isChecked(), ui.chkRunRetroshareAtSystemStartupMinimized->isChecked());
   
   saveChanges();
   
@@ -199,7 +198,6 @@ void QuickStartWizard::on_pushButtonSharesAdd_clicked()
 {
 /* select a dir
 	 */
-
 
 	QString qdir = QFileDialog::getExistingDirectory(this, tr("Select A Folder To Share"), "",
 			QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
@@ -363,7 +361,9 @@ bool QuickStartWizard::messageBoxOk(QString msg)
 void
 QuickStartWizard::loadGeneral()
 {
-  ui.checkBoxRunRetroshareAtSystemStartup->setChecked(Settings->runRetroshareOnBoot());
+  bool minimized;
+  ui.checkBoxRunRetroshareAtSystemStartup->setChecked(Settings->runRetroshareOnBoot(minimized));
+  ui.chkRunRetroshareAtSystemStartupMinimized->setChecked(minimized);
   ui.checkBoxStartMinimized->setChecked(Settings->value(QString::fromUtf8("StartMinimized"), false).toBool());
   ui.checkBoxQuit->setChecked(Settings->value(QString::fromUtf8("doQuit"), false).toBool());
   

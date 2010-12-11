@@ -511,7 +511,7 @@
      <property name="title">
       <string>Startup</string>
      </property>
-     <layout class="QGridLayout">
+     <layout class="QGridLayout" name="gridLayout_3">
       <item row="0" column="0">
        <widget class="QCheckBox" name="chkRunRetroshareAtSystemStartup">
         <property name="text">
@@ -519,7 +519,7 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
+      <item row="5" column="0">
        <widget class="QCheckBox" name="checkStartMinimized">
         <property name="text">
          <string>Start minimized</string>
@@ -528,6 +528,33 @@
          <bool>true</bool>
         </property>
        </widget>
+      </item>
+      <item row="3" column="0">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>10</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="chkRunRetroshareAtSystemStartupMinimized">
+          <property name="text">
+           <string>Start minimized on system start</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>
