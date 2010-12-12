@@ -35,6 +35,8 @@ linux-* {
 		message(Could not find gpgme-config on your system, assuming gpgme.h is in /usr/include)
 	}
 
+	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
+
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
 	LIBS += -lssl -lgpgme -lupnp -lXss
 	DEFINES *= HAVE_XSS # for idle time, libx screensaver extensions
@@ -137,6 +139,10 @@ macx {
 
 bitdht {
 	LIBS += ../../libbitdht/src/lib/libbitdht.a
+	linux-* {
+		# maybe it is also useful for something else than Linux?
+		PRE_TARGETDEPS *= ../../libbitdht/src/lib/libbitdht.a
+	}
 }
 
 win32 {
