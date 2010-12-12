@@ -183,7 +183,7 @@ border-bottom: 1px solid #CCCCCC;
        <property name="margin">
         <number>2</number>
        </property>
-       <item row="0" column="0">
+       <item row="0" column="1">
         <widget class="QToolButton" name="addIMAccountButton">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -221,7 +221,7 @@ border-bottom: 1px solid #CCCCCC;
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
+       <item row="0" column="2">
         <widget class="QToolButton" name="shareButton">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
@@ -253,7 +253,7 @@ border-bottom: 1px solid #CCCCCC;
          </property>
         </widget>
        </item>
-       <item row="0" column="2">
+       <item row="0" column="3">
         <widget class="QPushButton" name="displaypushButton">
          <property name="styleSheet">
           <string notr="true">QPushButton::menu-indicator { 
@@ -281,48 +281,6 @@ subcontrol-position: bottom right;
          </property>
         </widget>
        </item>
-       <item row="0" column="3">
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>161</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="3" column="0">
-     <widget class="QFrame" name="logoframe">
-      <property name="styleSheet">
-       <string notr="true">QFrame#logoframe{ 
-background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-stop:0 #FEFEFE, stop:1 #E8E8E8);
-
-border: 1px solid #CCCCCC;}</string>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::NoFrame</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="0">
-     <widget class="QFrame" name="frame_2">
-      <property name="styleSheet">
-       <string notr="true">QFrame#frame_2{ 
-background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-stop:0 #FEFEFE, stop:1 #E8E8E8);
-}</string>
-      </property>
-      <layout class="QGridLayout" name="gridLayout_3">
        <item row="0" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout">
          <property name="spacing">
@@ -389,6 +347,35 @@ border-image: url(:/images/closepressed.png)
          </item>
         </layout>
        </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QFrame" name="logoframe">
+      <property name="styleSheet">
+       <string notr="true">QFrame#logoframe{ 
+background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+stop:0 #FEFEFE, stop:1 #E8E8E8);
+
+border: 1px solid #CCCCCC;}</string>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::NoFrame</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QFrame" name="frame_2">
+      <property name="styleSheet">
+       <string notr="true">QFrame#frame_2{ 
+background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+stop:0 #FEFEFE, stop:1 #E8E8E8);
+}</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_3">
        <item row="1" column="0">
         <widget class="QTreeWidget" name="messengertreeWidget">
          <property name="contextMenuPolicy">
