@@ -95,10 +95,13 @@ public:
   
   /** Returns true if RetroShare's main window should be visible when the
   * application starts. */
-  bool showMainWindowAtStart();
+  bool getStartMinimized();
   /** Sets whether to show main window when the application starts. */
-  void setShowMainWindowAtStart(bool show);
-  
+  void setStartMinimized(bool startMinimized);
+
+  bool getCloseToTray();
+  void setCloseToTray(bool closeToTray);
+
   /** Returns true if RetroShare should start on system boot. */
   bool runRetroshareOnBoot(bool &minimized);
 

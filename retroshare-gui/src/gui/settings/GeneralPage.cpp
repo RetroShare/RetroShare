@@ -34,14 +34,11 @@ GeneralPage::GeneralPage(QWidget * parent, Qt::WFlags flags)
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
 
-  connect(ui.autoLogin, SIGNAL(clicked()), this, SLOT(setAutoLogin()));
-
   /* Hide platform specific features */
 #ifndef Q_WS_WIN
   ui.chkRunRetroshareAtSystemStartup->setVisible(false);
+  ui.chkRunRetroshareAtSystemStartupMinimized->setVisible(false);
 #endif
-
-  ui.autoLogin->setChecked(RsInit::getAutoLogin());
 }
 
 /** Destructor */
@@ -50,61 +47,38 @@ GeneralPage::~GeneralPage()
 }
 
 /** Saves the changes on this page */
-bool
-GeneralPage::save(QString &errmsg)
+bool GeneralPage::save(QString &errmsg)
 {
-  Settings->setValue(QString::fromUtf8("StartMinimized"), startMinimized());
+  Settings->setStartMinimized(ui.checkStartMinimized->isChecked());
+  Settings->setValue("doQuit", ui.checkQuit->isChecked());
+  Settings->setCloseToTray(ui.checkClosetoTray->isChecked());
 
-  Settings->setValue(QString::fromUtf8("doQuit"), quit());
-  
-  Settings->setValue(QString::fromUtf8("ClosetoTray"), closetoTray());
-  
+#ifdef Q_WS_WIN
   Settings->setRunRetroshareOnBoot(ui.chkRunRetroshareAtSystemStartup->isChecked(), ui.chkRunRetroshareAtSystemStartupMinimized->isChecked());
-  
+#endif
+
   Settings->setMaxTimeBeforeIdle(ui.spinBox->value());
+
+  RsInit::setAutoLogin(ui.autoLogin->isChecked());
 
   return true;
 }
 
 /** Loads the settings for this page */
-void
-GeneralPage::load()
+void GeneralPage::load()
 {
+#ifdef Q_WS_WIN
   bool minimized;
   ui.chkRunRetroshareAtSystemStartup->setChecked(Settings->runRetroshareOnBoot(minimized));
   ui.chkRunRetroshareAtSystemStartupMinimized->setChecked(minimized);
+#endif
 
-  ui.checkStartMinimized->setChecked(Settings->value(QString::fromUtf8("StartMinimized"), false).toBool());
+  ui.checkStartMinimized->setChecked(Settings->getStartMinimized());
+  ui.checkQuit->setChecked(Settings->value("doQuit", false).toBool());
 
-  ui.checkQuit->setChecked(Settings->value(QString::fromUtf8("doQuit"), false).toBool());
-  
-  ui.checkClosetoTray->setChecked(Settings->value(QString::fromUtf8("ClosetoTray"), false).toBool());
+  ui.checkClosetoTray->setChecked(Settings->getCloseToTray());
   
   ui.spinBox->setValue(Settings->getMaxTimeBeforeIdle());
-}
 
-bool GeneralPage::quit() const {
-  if(ui.checkQuit->isChecked()) return true;
-  return ui.checkQuit->isChecked();
-}
-
-bool GeneralPage::startMinimized() const {
-  if(ui.checkStartMinimized->isChecked()) return true;
-  return ui.checkStartMinimized->isChecked();
-}
-
-bool GeneralPage::closetoTray() const {
-  if(ui.checkClosetoTray->isChecked()) return true;
-  return ui.checkClosetoTray->isChecked();
-}
-
-/** Called when the "show on startup" checkbox is toggled. */
-void
-GeneralPage::toggleShowOnStartup(bool checked)
-{
-  Settings->setShowMainWindowAtStart(checked);
-}
-
-void GeneralPage::setAutoLogin(){
-	RsInit::setAutoLogin(ui.autoLogin->isChecked());
+  ui.autoLogin->setChecked(RsInit::getAutoLogin());
 }

@@ -64,7 +64,8 @@ QuickStartWizard::QuickStartWizard(QWidget *parent) :
   /* Hide platform specific features */
 #ifndef Q_WS_WIN
   ui.checkBoxRunRetroshareAtSystemStartup->setVisible(false);
-#endif	  
+  ui.chkRunRetroshareAtSystemStartupMinimized->setVisible(false);
+#endif
 }
 
 QuickStartWizard::~QuickStartWizard()
@@ -180,10 +181,12 @@ void QuickStartWizard::on_pushButtonSystemBack_clicked()
 
 void QuickStartWizard::on_pushButtonSystemFinish_clicked()
 {
-  Settings->setValue(QString::fromUtf8("StartMinimized"), startMinimized());
-  Settings->setValue(QString::fromUtf8("doQuit"), quitbox());
+  Settings->setStartMinimized(ui.checkBoxStartMinimized->isChecked());
+  Settings->setValue("doQuit", ui.checkBoxQuit->isChecked());
+#ifdef Q_WS_WIN
   Settings->setRunRetroshareOnBoot(ui.checkBoxRunRetroshareAtSystemStartup->isChecked(), ui.chkRunRetroshareAtSystemStartupMinimized->isChecked());
-  
+#endif
+
   saveChanges();
   
   close();
@@ -361,23 +364,16 @@ bool QuickStartWizard::messageBoxOk(QString msg)
 void
 QuickStartWizard::loadGeneral()
 {
+#ifdef Q_WS_WIN
   bool minimized;
   ui.checkBoxRunRetroshareAtSystemStartup->setChecked(Settings->runRetroshareOnBoot(minimized));
   ui.chkRunRetroshareAtSystemStartupMinimized->setChecked(minimized);
-  ui.checkBoxStartMinimized->setChecked(Settings->value(QString::fromUtf8("StartMinimized"), false).toBool());
-  ui.checkBoxQuit->setChecked(Settings->value(QString::fromUtf8("doQuit"), false).toBool());
+#endif
+
+  ui.checkBoxStartMinimized->setChecked(Settings->getStartMinimized());
+  ui.checkBoxQuit->setChecked(Settings->value("doQuit", false).toBool());
   
   //ui.checkBoxQuickWizard->setChecked(settings.value(QString::fromUtf8("FirstRun"), false).toBool());
-}
-
-bool QuickStartWizard::quitbox() const {
-  if(ui.checkBoxQuit->isChecked()) return true;
-  return ui.checkBoxQuit->isChecked();
-}
-
-bool QuickStartWizard::startMinimized() const {
-  if(ui.checkBoxStartMinimized->isChecked()) return true;
-  return ui.checkBoxStartMinimized->isChecked();
 }
 
 //bool QuickStartWizard::firstRunWizard() const {

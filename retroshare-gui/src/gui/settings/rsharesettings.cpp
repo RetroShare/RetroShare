@@ -45,7 +45,6 @@
 #define SETTING_SHEETNAME           "SheetName"
 
 #define SETTING_DATA_DIRECTORY      "DataDirectory"
-#define SETTING_SHOW_MAINWINDOW_AT_START  "ShowMainWindowAtStart"
 #define SETTING_BWGRAPH_FILTER        "StatisticDialog/BWLineFilter"
 #define SETTING_BWGRAPH_OPACITY       "StatisticDialog/Opacity"
 #define SETTING_BWGRAPH_ALWAYS_ON_TOP "StatisticDialog/AlwaysOnTop"
@@ -115,7 +114,6 @@ void RshareSettings::initSettings()
 
   setDefault(SETTING_LANGUAGE, LanguageSupport::defaultLanguageCode());
   setDefault(SETTING_SHEETNAME, true); 
-  setDefault(SETTING_SHOW_MAINWINDOW_AT_START, true);
 
   /* defaults here are not ideal.... but dusent matter */
 
@@ -252,17 +250,25 @@ void RshareSettings::setBWGraphAlwaysOnTop(bool alwaysOnTop)
 
 /** Returns true if RetroShare's main window should be visible when the
  * application starts. */
-bool
-RshareSettings::showMainWindowAtStart()
+bool RshareSettings::getStartMinimized()
 {
-  return value(SETTING_SHOW_MAINWINDOW_AT_START).toBool();
+  return value("StartMinimized", false).toBool();
 }
 
 /** Sets whether to show RetroShare's main window when the application starts. */
-void
-RshareSettings::setShowMainWindowAtStart(bool show)
+void RshareSettings::setStartMinimized(bool startMinimized)
 {
-  setValue(SETTING_SHOW_MAINWINDOW_AT_START, show);
+  setValue("StartMinimized", startMinimized);
+}
+
+bool RshareSettings::getCloseToTray()
+{
+  return value("ClosetoTray", false).toBool();
+}
+
+void RshareSettings::setCloseToTray(bool closeToTray)
+{
+  setValue("ClosetoTray", closeToTray);
 }
 
 /** Setting for Notify / Chat and NewsFeeds **/

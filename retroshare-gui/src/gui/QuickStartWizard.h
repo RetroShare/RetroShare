@@ -40,10 +40,6 @@ public:
     void loadNetwork();
     void loadShare();    
     void loadGeneral();
-    
-      bool startMinimized() const;
-      bool quitbox() const;
-
 
 protected:
     virtual void changeEvent(QEvent *e);

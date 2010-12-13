@@ -263,7 +263,7 @@ int main(int argc, char *argv[])
 	w->installGroupChatNotifier();
 
 	/* only show window, if not startMinimized */
-	if (RsInit::setStartMinimised() || Settings->value("StartMinimized", false).toBool())
+	if (RsInit::setStartMinimised() || Settings->getStartMinimized())
 	{
 		splashScreen.close();
 	} else {

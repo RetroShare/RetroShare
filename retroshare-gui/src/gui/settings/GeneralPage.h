@@ -41,20 +41,6 @@ public:
   bool save(QString &errmsg);
   /** Loads the settings for this page */
   void load();
-  bool startMinimized() const;
-  bool closetoTray() const;
-  bool quit() const;
-
-
-private slots:
-
-  /** Called when the "show on startup" checkbox is toggled. */
-  void toggleShowOnStartup(bool checked);
-
-  /**
-   *
-   */
-  void setAutoLogin();
 
 private:
   /** Qt Designer generated object */

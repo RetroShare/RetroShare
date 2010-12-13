@@ -896,7 +896,7 @@ p, li { white-space: pre-wrap; }
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
-                  <width>10</width>
+                  <width>15</width>
                   <height>20</height>
                  </size>
                 </property>

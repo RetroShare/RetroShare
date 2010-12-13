@@ -1085,7 +1085,7 @@ void MainWindow::createActions()
 */
 void MainWindow::doQuit()
 {
-	if(!Settings->value(QString::fromUtf8("doQuit"), false).toBool())
+	if(!Settings->value("doQuit", false).toBool())
 	{
 	  QString queryWrn;
 	  queryWrn.clear();
@@ -1111,7 +1111,7 @@ void MainWindow::closeEvent(QCloseEvent *e)
 {
     static bool firstTime = true;
 
-   if(!Settings->value(QString::fromUtf8("ClosetoTray"), false).toBool())
+   if(!Settings->getCloseToTray())
    {
       if (trayIcon->isVisible()) {
           if (firstTime)
