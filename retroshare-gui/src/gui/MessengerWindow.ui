@@ -34,10 +34,7 @@
        </size>
       </property>
       <property name="styleSheet">
-       <string notr="true">QFrame#messengerframetop{ 
-background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-stop:0 #05538B, stop:1 #E4F1E5);
-}</string>
+       <string notr="true"/>
       </property>
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
