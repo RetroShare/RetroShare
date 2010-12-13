@@ -502,12 +502,6 @@
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
     <widget class="QGroupBox" name="groupBox_2">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>80</height>
-      </size>
-     </property>
      <property name="title">
       <string>Startup</string>
      </property>
@@ -542,7 +536,7 @@
           <property name="sizeHint" stdset="0">
            <size>
             <width>15</width>
-            <height>20</height>
+            <height>0</height>
            </size>
           </property>
          </spacer>
