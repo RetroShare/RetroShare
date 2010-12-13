@@ -192,8 +192,8 @@ p3ConnectMgr::p3ConnectMgr()
 		// user decided.
 		//mOwnState.netMode |= RS_NET_MODE_TRY_UPNP;
 	
-		mUseExtAddrFinder = false;
-	        mAllowTunnelConnection = false;
+		mUseExtAddrFinder = true;
+		mAllowTunnelConnection = false;
 		mExtAddrFinder = new ExtAddrFinder;
 		mNetInitTS = 0;
 	        mRetryPeriod = MIN_RETRY_PERIOD;
@@ -1323,7 +1323,6 @@ void p3ConnectMgr::removeMonitor(pqiMonitor *mon)
 	return;
 }
 
-
 void p3ConnectMgr::tickMonitors()
 {
 	bool doStatusChange = false;
@@ -1384,10 +1383,7 @@ void p3ConnectMgr::tickMonitors()
 					pqiNotify *notify = getPqiNotify();
 					if (notify)
 					{
-						notify->AddPopupMessage(RS_POPUP_CONNECT, 
-                                                        peer.id,"", "Online: ");
-
-
+						notify->AddPopupMessage(RS_POPUP_CONNECT, peer.id,"", "Online: ");
 						notify->AddFeedItem(RS_FEED_ITEM_PEER_CONNECT, peer.id, "", "");
 					}
 				}
