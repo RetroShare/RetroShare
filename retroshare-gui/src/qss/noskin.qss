@@ -15,6 +15,11 @@ QFrame#Chatbuttonframe{
     background-image: url(:/images/buttonframe.png);
 }
 
+QFrame#messengerframetop{ 
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+	stop:0 #05538B, stop:1 #E4F1E5);
+}
+
 border: 1px solid #BDD5DF;}QPushButton#okButton {
 
       max-height: 25px
