@@ -44,6 +44,7 @@ const std::string CERT_LOCAL_IP = "--LOCAL--";
 const std::string CERT_EXT_IP = "--EXT--";
 const std::string CERT_DYNDNS = "--DYNDNS--";
 
+static const int MAX_TIME_KEEP_LOCATION_WITHOUT_CONTACT = 30*24*3600 ; // 30 days.
 
 
 #include "pqi/authssl.h"
@@ -526,28 +527,103 @@ bool	p3Peers::getGPGAcceptedList(std::list<std::string> &ids)
 bool	p3Peers::getSSLChildListOfGPGId(const std::string &gpg_id, std::list<std::string> &ids)
 {
 #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::getSSLChildListOfGPGId() for id : " << gpg_id << std::endl;
+	std::cerr << "p3Peers::getSSLChildListOfGPGId() for id : " << gpg_id << std::endl;
 #endif
-        ids.clear();
-        if (gpg_id == "" ) {
-            return false;
-        }
-        //let's roll throush the friends
-        std::list<std::string> friendsIds;
-        mConnMgr->getFriendList(friendsIds);
-        peerConnectState pcs;
-        for (std::list<std::string>::iterator it = friendsIds.begin(); it != friendsIds.end(); it++) {
+	ids.clear();
+	if (gpg_id == "" ) {
+		return false;
+	}
+	//let's roll throush the friends
+	std::list<std::string> friendsIds;
+	mConnMgr->getFriendList(friendsIds);
+	peerConnectState pcs;
+	for (std::list<std::string>::iterator it = friendsIds.begin(); it != friendsIds.end(); it++) 
+	{
 #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::getSSLChildListOfGPGId() iterating over friends id : " << *it << std::endl;
+		std::cerr << "p3Peers::getSSLChildListOfGPGId() iterating over friends id : " << *it << std::endl;
 #endif
-            if (mConnMgr->getFriendNetStatus(*it, pcs) && pcs.gpg_id == gpg_id) {
+		if (mConnMgr->getFriendNetStatus(*it, pcs) && pcs.gpg_id == gpg_id) {
 #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::getSSLChildListOfGPGId() adding ssl id :  " << pcs.id << std::endl;
+			std::cerr << "p3Peers::getSSLChildListOfGPGId() adding ssl id :  " << pcs.id << std::endl;
 #endif
-                ids.push_back(pcs.id);
-            }
-        }
-        return true;
+			ids.push_back(pcs.id);
+		}
+	}
+	return true;
+}
+
+bool p3Peers::cleanUnusedLocations()
+{
+	// Obtain all current locations of each GPG friend.
+	//
+	std::map<std::string,std::list<peerConnectState> > friends_info ;
+	std::list<std::string> friendSSLIds ;
+
+	mConnMgr->getFriendList(friendSSLIds);
+
+	for(std::list<std::string>::const_iterator it(friendSSLIds.begin());it!=friendSSLIds.end();++it)
+	{
+		peerConnectState pcs;
+
+		if(mConnMgr->getFriendNetStatus(*it, pcs))
+			friends_info[pcs.gpg_id].push_back(pcs) ;
+	}
+
+	// Now sort them out
+	//
+	
+	std::cerr << "Examining Old/Unused locations." << std::endl ;
+	time_t now = time(NULL) ;
+
+	std::list<std::string> locations_to_remove ;
+
+	for(std::map<std::string,std::list<peerConnectState> >::iterator it(friends_info.begin());it!=friends_info.end();++it)
+	{
+		std::list<peerConnectState>& locations_list(it->second) ;
+
+		int size = locations_list.size() ;
+
+		std::cerr << "  GPG id: " << it->first << std::endl ;
+
+		for(std::list<peerConnectState>::const_iterator itloc(locations_list.begin());itloc!=locations_list.end();++itloc)
+			std::cerr << "    Location " << (*itloc).id << ", last contact " << now - (*itloc).lastcontact << " seconds ago" << std::endl ;
+
+		// Remove any location that is dummy. Update the list, such that we only look into non dummy friends later.
+		//
+		for(std::list<peerConnectState>::iterator itloc(locations_list.begin());itloc!=locations_list.end();)
+			if(size > 1 && isDummyFriend((*itloc).id)) 
+			{
+				locations_to_remove.push_back((*itloc).id) ;
+				--size ;
+
+				std::cerr << "    Removing dummy location: " << (*itloc).id << std::endl ;
+
+				std::list<peerConnectState>::iterator tmp(itloc) ;
+				++tmp ;
+				locations_list.erase(itloc) ;
+				itloc=tmp ;
+			}
+			else
+				++itloc ;
+
+		for(std::list<peerConnectState>::const_iterator itloc(locations_list.begin());itloc!=locations_list.end();++itloc)
+			if(size > 1 && now > (*itloc).lastcontact + MAX_TIME_KEEP_LOCATION_WITHOUT_CONTACT)
+			{
+				locations_to_remove.push_back((*itloc).id) ;
+				--size ;
+				std::cerr << "    Removing unused location: " << (*itloc).id << std::endl ;
+			}
+	}
+
+	std::cerr << "Now removing unused locations:" << std::endl ;
+
+	for(std::list<std::string>::const_iterator it(locations_to_remove.begin());it!=locations_to_remove.end();++it)
+	{
+		std::cerr << "  Removing unused friend location " << *it << std::endl ;
+		removeFriend(*it) ;
+	}
+
+	return true ;
 }
 
 bool	p3Peers::getGPGDetails(const std::string &id, RsPeerDetails &d)

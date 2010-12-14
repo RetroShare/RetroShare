@@ -570,6 +570,18 @@ void p3ConnectMgr::tick()
 	statusTick();
 	tickMonitors();
 
+	static time_t last_friends_check = time(NULL) ;
+	static const time_t INTERVAL_BETWEEN_LOCATION_CLEANING = 600 ; // Remove unused locations every 10 minutes.
+
+	time_t now = time(NULL) ;
+
+	if(now > last_friends_check + INTERVAL_BETWEEN_LOCATION_CLEANING && rsPeers != NULL)
+	{
+		std::cerr << "p3ConnectMgr::tick(): cleaning unused locations." << std::endl ;
+
+		rsPeers->cleanUnusedLocations() ;
+		last_friends_check = now ;
+	}
 }
 
 bool p3ConnectMgr::shutdown() /* blocking shutdown call */

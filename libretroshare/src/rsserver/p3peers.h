@@ -70,6 +70,7 @@ virtual	bool addFriend(const std::string &ssl_id, const std::string &gpg_id);
 virtual	bool addDummyFriend(const std::string &gpg_id); //we want to add a empty ssl friend for this gpg id
 virtual	bool isDummyFriend(const std::string &ssl_id);
 virtual	bool removeFriend(const std::string &ssl_id);
+virtual  bool cleanUnusedLocations() ;
 
 	/* Network Stuff */
 virtual	bool connectAttempt(const std::string &id);

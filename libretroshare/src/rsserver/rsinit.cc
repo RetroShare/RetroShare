@@ -2711,8 +2711,7 @@ int RsServer::StartupRetroShare()
 	helppage += configHelpName;
 
 	/* Startup this thread! */
-        createThread(*this);
-
+	createThread(*this);
 
 	return 1;
 }

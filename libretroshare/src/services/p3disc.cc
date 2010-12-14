@@ -392,56 +392,57 @@ RsDiscReply *p3disc::createDiscReply(const std::string &to, const std::string &a
 
 	std::list<std::string>::iterator sslChildIt;
 	for (sslChildIt = sslChilds.begin(); sslChildIt != sslChilds.end(); sslChildIt++) 
-	{
-#ifdef P3DISC_DEBUG
-		std::cerr << "p3disc::createDiscReply() Found Child SSL Id:" << *sslChildIt;
-		std::cerr << std::endl;
-#endif
-		if(sslChilds.size() == 1 || to != *sslChildIt)	// We don't send info to a peer about itself, when there are more than one ssl children,
-		{						// but we allow sending info about peers with the same GPG id. When there is only one ssl child,
-								// we must send it to transfer the signers of the gpg key. The receiver is skipping the own id.
-			peerConnectState detail;
-			if (!mConnMgr->getFriendNetStatus(*sslChildIt, detail) 
-				|| detail.visState & RS_VIS_STATE_NODISC)
- 			{
-#ifdef P3DISC_DEBUG
-				std::cerr << "p3disc::createDiscReply() Skipping cos No Details or NODISC flag";
-				std::cerr << std::endl;
-#endif
-				continue;
-			}
-
-#ifdef P3DISC_DEBUG
-			std::cerr << "p3disc::createDiscReply() Adding Child SSL Id Details";
-			std::cerr << std::endl;
-#endif
-			shouldWeSendGPGKey = true;
-			RsPeerNetItem *rsPeerNetItem = new RsPeerNetItem();
-			rsPeerNetItem->clear();
-
-			rsPeerNetItem->pid = detail.id;
-			rsPeerNetItem->gpg_id = detail.gpg_id;
-			rsPeerNetItem->location = detail.location;
-			rsPeerNetItem->netMode = detail.netMode;
-			rsPeerNetItem->visState = detail.visState;
-			rsPeerNetItem->lastContact = detail.lastcontact;
-			rsPeerNetItem->currentlocaladdr = detail.currentlocaladdr;
-			rsPeerNetItem->currentremoteaddr = detail.currentserveraddr;
-			rsPeerNetItem->dyndns = detail.dyndns;
-                	detail.ipAddrs.mLocal.loadTlv(rsPeerNetItem->localAddrList);
-                	detail.ipAddrs.mExt.loadTlv(rsPeerNetItem->extAddrList);
-
-
-			di->rsPeerList.push_back(*rsPeerNetItem);
-		}
-		else
+		if(!rsPeers->isDummyFriend(*sslChildIt))
 		{
 #ifdef P3DISC_DEBUG
-			std::cerr << "p3disc::createDiscReply() Skipping cos \"to == sslChildId\"";
+			std::cerr << "p3disc::createDiscReply() Found Child SSL Id:" << *sslChildIt;
 			std::cerr << std::endl;
 #endif
+			if(sslChilds.size() == 1 || to != *sslChildIt)	// We don't send info to a peer about itself, when there are more than one ssl children,
+				{						// but we allow sending info about peers with the same GPG id. When there is only one ssl child,
+					// we must send it to transfer the signers of the gpg key. The receiver is skipping the own id.
+					peerConnectState detail;
+					if (!mConnMgr->getFriendNetStatus(*sslChildIt, detail) 
+							|| detail.visState & RS_VIS_STATE_NODISC)
+					{
+#ifdef P3DISC_DEBUG
+						std::cerr << "p3disc::createDiscReply() Skipping cos No Details or NODISC flag";
+						std::cerr << std::endl;
+#endif
+						continue;
+					}
+
+#ifdef P3DISC_DEBUG
+					std::cerr << "p3disc::createDiscReply() Adding Child SSL Id Details";
+					std::cerr << std::endl;
+#endif
+					shouldWeSendGPGKey = true;
+					RsPeerNetItem *rsPeerNetItem = new RsPeerNetItem();
+					rsPeerNetItem->clear();
+
+					rsPeerNetItem->pid = detail.id;
+					rsPeerNetItem->gpg_id = detail.gpg_id;
+					rsPeerNetItem->location = detail.location;
+					rsPeerNetItem->netMode = detail.netMode;
+					rsPeerNetItem->visState = detail.visState;
+					rsPeerNetItem->lastContact = detail.lastcontact;
+					rsPeerNetItem->currentlocaladdr = detail.currentlocaladdr;
+					rsPeerNetItem->currentremoteaddr = detail.currentserveraddr;
+					rsPeerNetItem->dyndns = detail.dyndns;
+					detail.ipAddrs.mLocal.loadTlv(rsPeerNetItem->localAddrList);
+					detail.ipAddrs.mExt.loadTlv(rsPeerNetItem->extAddrList);
+
+
+					di->rsPeerList.push_back(*rsPeerNetItem);
+				}
+			else
+			{
+#ifdef P3DISC_DEBUG
+				std::cerr << "p3disc::createDiscReply() Skipping cos \"to == sslChildId\"";
+				std::cerr << std::endl;
+#endif
+			}
 		}
-	}
 
 
 	//send own details
@@ -613,113 +614,114 @@ void p3disc::recvPeerDetails(RsDiscReply *item, const std::string &certGpgId)
   bool should_notify_discovery = false ;
 
 	for (std::list<RsPeerNetItem>::iterator pitem = item->rsPeerList.begin(); pitem != item->rsPeerList.end(); pitem++) 
-	{
-		bool new_info ;
-		addDiscoveryData(item->PeerId(), pitem->pid,rsPeers->getGPGId(item->PeerId()),item->aboutId, pitem->currentlocaladdr, pitem->currentremoteaddr, 0, time(NULL),new_info);
-
-		if(new_info)
-			should_notify_discovery = true ;
-
-#ifdef P3DISC_DEBUG
-		std::cerr << "p3disc::recvPeerFriendMsg() Peer Config Item:" << std::endl;
-
-		pitem->print(std::cerr, 10);
-		std::cerr << std::endl;
-#endif
-		if (pitem->pid != rsPeers->getOwnId()) 
+		if(!rsPeers->isDummyFriend(pitem->pid)) 
 		{
-			// Apparently, the connect manager won't add a friend if the gpg id is not
-			// trusted. However, this should be tested here for consistency and security 
-			// in case of modifications in mConnMgr.
-			//
-			if(AuthGPG::getAuthGPG()->isGPGAccepted(pitem->gpg_id) ||  pitem->gpg_id == AuthGPG::getAuthGPG()->getGPGOwnId())
+			bool new_info ;
+			addDiscoveryData(item->PeerId(), pitem->pid,rsPeers->getGPGId(item->PeerId()),item->aboutId, pitem->currentlocaladdr, pitem->currentremoteaddr, 0, time(NULL),new_info);
+
+			if(new_info)
+				should_notify_discovery = true ;
+
+#ifdef P3DISC_DEBUG
+			std::cerr << "p3disc::recvPeerFriendMsg() Peer Config Item:" << std::endl;
+
+			pitem->print(std::cerr, 10);
+			std::cerr << std::endl;
+#endif
+			if (pitem->pid != rsPeers->getOwnId())
 			{
-				// Add with no disc by default. If friend already exists, it will do nothing
+				// Apparently, the connect manager won't add a friend if the gpg id is not
+				// trusted. However, this should be tested here for consistency and security 
+				// in case of modifications in mConnMgr.
 				//
-#ifdef P3DISC_DEBUG
-				std::cerr << "--> Adding to friends list " << pitem->pid << " - " << pitem->gpg_id << std::endl;
-#endif
-				mConnMgr->addFriend(pitem->pid, pitem->gpg_id, pitem->netMode, 0, 0); 
-				RsPeerDetails storedDetails;
-
-				// Update if know this peer
-				if(rsPeers->getPeerDetails(pitem->pid, storedDetails))
-				{ 
-					// Update if it's fresh info or if it's from the peer itself
-					// their info is fresher than ours, update ours
+				if(AuthGPG::getAuthGPG()->isGPGAccepted(pitem->gpg_id) ||  pitem->gpg_id == AuthGPG::getAuthGPG()->getGPGOwnId())
+				{
+					// Add with no disc by default. If friend already exists, it will do nothing
 					//
-					if(!(storedDetails.state & RS_PEER_CONNECTED)) 
-					{
 #ifdef P3DISC_DEBUG
-						std::cerr << "Friend is not connected -> updating info" << std::endl;
-						std::cerr << "   -> network mode: " << pitem->netMode << std::endl;
-						std::cerr << "   ->     location: " << pitem->location << std::endl;
+					std::cerr << "--> Adding to friends list " << pitem->pid << " - " << pitem->gpg_id << std::endl;
 #endif
-						mConnMgr->setNetworkMode(pitem->pid, pitem->netMode);
-						mConnMgr->setLocation(pitem->pid, pitem->location);
+					mConnMgr->addFriend(pitem->pid, pitem->gpg_id, pitem->netMode, 0, 0); 
+					RsPeerDetails storedDetails;
+
+					// Update if know this peer
+					if(rsPeers->getPeerDetails(pitem->pid, storedDetails))
+					{ 
+						// Update if it's fresh info or if it's from the peer itself
+						// their info is fresher than ours, update ours
+						//
+						if(!(storedDetails.state & RS_PEER_CONNECTED)) 
+						{
+#ifdef P3DISC_DEBUG
+							std::cerr << "Friend is not connected -> updating info" << std::endl;
+							std::cerr << "   -> network mode: " << pitem->netMode << std::endl;
+							std::cerr << "   ->     location: " << pitem->location << std::endl;
+#endif
+							mConnMgr->setNetworkMode(pitem->pid, pitem->netMode);
+							mConnMgr->setLocation(pitem->pid, pitem->location);
+						}
+
+						// The info from the peer itself is ultimately trustable, so we can override some info,
+						// such as:
+						// 	- local and global addresses
+						// 	- address list
+						//
+						// If we enter here, we're necessarily connected to this peer.
+						//
+						if (item->PeerId() == pitem->pid) 
+						{
+#ifdef P3DISC_DEBUG
+							std::cerr << "Info sent by the peer itself -> updating self info:" << std::endl;
+							std::cerr << "  -> current local  addr = " << pitem->currentlocaladdr << std::endl;
+							std::cerr << "  -> current remote addr = " << pitem->currentremoteaddr << std::endl;
+							std::cerr << "  -> clearing NODISC flag " << std::endl;
+#endif
+
+							// When the peer sends his own list of IPs, the info replaces the existing info, because the
+							// peer is the primary source of his own IPs.
+
+							mConnMgr->setLocalAddress(pitem->pid, pitem->currentlocaladdr);
+							mConnMgr->setExtAddress(pitem->pid, pitem->currentremoteaddr);
+							pitem->visState &= ~RS_VIS_STATE_NODISC ;
+							mConnMgr->setVisState(pitem->pid, pitem->visState); 
+						}
+					}
+					else
+					{
+						std::cerr << "p3disc:: ERROR HOW DID WE GET HERE?" << std::endl;
 					}
 
-					// The info from the peer itself is ultimately trustable, so we can override some info,
-					// such as:
-					// 	- local and global addresses
-					// 	- address list
-					//
-					// If we enter here, we're necessarily connected to this peer.
-					//
-					if (item->PeerId() == pitem->pid) 
-					{
+					pqiIpAddrSet addrsFromPeer;	
+					addrsFromPeer.mLocal.extractFromTlv(pitem->localAddrList);
+					addrsFromPeer.mExt.extractFromTlv(pitem->extAddrList);
+
 #ifdef P3DISC_DEBUG
-						std::cerr << "Info sent by the peer itself -> updating self info:" << std::endl;
-						std::cerr << "  -> current local  addr = " << pitem->currentlocaladdr << std::endl;
-						std::cerr << "  -> current remote addr = " << pitem->currentremoteaddr << std::endl;
-						std::cerr << "  -> clearing NODISC flag " << std::endl;
+					std::cerr << "Setting address list to peer " << pitem->pid << ", to be:" << std::endl ;
+
+					addrsFromPeer.printAddrs(std::cerr);
+					std::cerr << std::endl;
 #endif
+					// allways update address list and dns, except if it's ours
+					if (pitem->dyndns != "") 
+						mConnMgr->setDynDNS(pitem->pid, pitem->dyndns);
 
-						// When the peer sends his own list of IPs, the info replaces the existing info, because the
-						// peer is the primary source of his own IPs.
-
-						mConnMgr->setLocalAddress(pitem->pid, pitem->currentlocaladdr);
-						mConnMgr->setExtAddress(pitem->pid, pitem->currentremoteaddr);
-						pitem->visState &= ~RS_VIS_STATE_NODISC ;
-						mConnMgr->setVisState(pitem->pid, pitem->visState); 
-					}
+					mConnMgr->updateAddressList(pitem->pid, addrsFromPeer);
 				}
+#ifdef P3DISC_DEBUG
 				else
 				{
-					std::cerr << "p3disc:: ERROR HOW DID WE GET HERE?" << std::endl;
+					std::cerr << "  skipping unknown gpg id " << pitem->gpg_id << std::endl ;
 				}
-
-				pqiIpAddrSet addrsFromPeer;	
-				addrsFromPeer.mLocal.extractFromTlv(pitem->localAddrList);
-                		addrsFromPeer.mExt.extractFromTlv(pitem->extAddrList);
-
-#ifdef P3DISC_DEBUG
-				std::cerr << "Setting address list to peer " << pitem->pid << ", to be:" << std::endl ;
-
-				addrsFromPeer.printAddrs(std::cerr);
-				std::cerr << std::endl;
 #endif
-				// allways update address list and dns, except if it's ours
-				if (pitem->dyndns != "") 
-					mConnMgr->setDynDNS(pitem->pid, pitem->dyndns);
-
-				mConnMgr->updateAddressList(pitem->pid, addrsFromPeer);
 			}
 #ifdef P3DISC_DEBUG
 			else
 			{
-				std::cerr << "  skipping unknown gpg id " << pitem->gpg_id << std::endl ;
+				std::cerr << "Skipping info about own id " << pitem->pid << std::endl ;
 			}
 #endif
-		}
-#ifdef P3DISC_DEBUG
-		else
-		{
-			std::cerr << "Skipping info about own id " << pitem->pid << std::endl ;
-		}
-#endif
 
-	}
+		}
 
 	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_NEIGHBOURS, NOTIFY_TYPE_MOD);
 
