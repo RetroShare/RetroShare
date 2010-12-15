@@ -686,6 +686,8 @@ void 	FileIndexMonitor::updateCycle()
 						{
 #ifdef FIM_DEBUG
 							std::cerr << "File ModTime/Size changed:" << fname << std::endl;
+							std::cerr << "fe.modtime = " << fe.modtime << std::endl;
+							std::cerr << "fit.mdtime = " << fit->second->modtime << std::endl;
 #endif
 							toadd = true;
 						}

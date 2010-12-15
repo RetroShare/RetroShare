@@ -145,7 +145,7 @@ int  DirEntry::updateChildRows()
 }
 
 
-int  DirEntry::removeDir(std::string name)
+int  DirEntry::removeDir(const std::string& name)
 {
 	/* if it doesn't exist - add */
 	std::map<std::string, DirEntry *>::iterator it;
@@ -174,7 +174,7 @@ int  DirEntry::removeDir(std::string name)
 }
 
 
-int  DirEntry::removeFile(std::string name)
+int  DirEntry::removeFile(const std::string& name)
 {
 	/* if it doesn't exist - add */
 	std::map<std::string, FileEntry *>::iterator it;
@@ -206,7 +206,7 @@ int  DirEntry::removeFile(std::string name)
 
 
 
-int  DirEntry::removeOldDir(std::string name, time_t old)
+int  DirEntry::removeOldDir(const std::string& name, time_t old)
 {
 	std::map<std::string, DirEntry *>::iterator it;
 	DirEntry *ndir = NULL;
@@ -329,7 +329,7 @@ DirEntry *DirEntry::findOldDirectory(time_t old)
 }
 
 
-DirEntry *DirEntry::findDirectory(std::string fpath)
+DirEntry *DirEntry::findDirectory(const std::string& fpath)
 {
 	std::string nextdir = RsDirUtil::getRootDir(fpath);
 	std::map<std::string, DirEntry *>::iterator it;
@@ -353,7 +353,7 @@ DirEntry *DirEntry::findDirectory(std::string fpath)
 }
 
 
-int DirEntry::updateDirectories(std::string fpath, int new_pop, int new_modtime)
+int DirEntry::updateDirectories(const std::string& fpath, int new_pop, int new_modtime)
 {
 	int ret = 1;
 	if (path != "") /* if not there -> continue down tree */
@@ -384,7 +384,7 @@ int DirEntry::updateDirectories(std::string fpath, int new_pop, int new_modtime)
 	return ret;
 }
 
-DirEntry *DirEntry::updateDir(FileEntry fe, time_t utime)
+DirEntry *DirEntry::updateDir(const FileEntry& fe, time_t utime)
 {
 	/* if it doesn't exist - add */
 	std::map<std::string, DirEntry *>::iterator it;
@@ -424,7 +424,7 @@ DirEntry *DirEntry::updateDir(FileEntry fe, time_t utime)
 }
 
 
-FileEntry *DirEntry::updateFile(FileEntry fe, time_t utime)
+FileEntry *DirEntry::updateFile(const FileEntry& fe, time_t utime)
 {
 	/* if it doesn't exist - add */
 	std::map<std::string, FileEntry *>::iterator it;
@@ -517,7 +517,7 @@ int DirEntry::print(std::ostream &out)
 	return 1;
 }
 
-FileIndex::FileIndex(std::string pid)
+FileIndex::FileIndex(const std::string& pid)
 {
 	root = new PersonEntry(pid);
 	registerEntry(root) ;
@@ -592,7 +592,7 @@ int	FileIndex::getRootDirectories(std::list<std::string> &outlist)
 }
 
 /* update (index building) */
-DirEntry *FileIndex::updateDirEntry(std::string fpath, FileEntry fe, time_t utime)
+DirEntry *FileIndex::updateDirEntry(const std::string& fpath, const FileEntry& fe, time_t utime)
 {
 	/* path is to parent */
 #ifdef FI_DEBUG_ALL
@@ -621,7 +621,7 @@ DirEntry *FileIndex::updateDirEntry(std::string fpath, FileEntry fe, time_t utim
 }
 
 
-FileEntry *FileIndex::updateFileEntry(std::string fpath, FileEntry fe, time_t utime)
+FileEntry *FileIndex::updateFileEntry(const std::string& fpath, const FileEntry& fe, time_t utime)
 {
 	/* path is to parent */
 #ifdef FI_DEBUG_ALL
@@ -662,7 +662,7 @@ DirEntry *FileIndex::findOldDirectory(time_t old)   /* finds directories older t
 	return olddir;
 }
 
-int  	FileIndex::removeOldDirectory(std::string fpath, std::string name, time_t old)
+int  	FileIndex::removeOldDirectory(const std::string& fpath, const std::string& name, time_t old)
 {
 	/* path is to parent */
 #ifdef FI_DEBUG_ALL
@@ -716,7 +716,7 @@ int     FileIndex::printFileIndex(std::ostream &out)
 	return 1;
 }
 
-int FileIndex::loadIndex(std::string filename, std::string expectedHash, uint64_t size)
+int FileIndex::loadIndex(const std::string& filename, const std::string& expectedHash, uint64_t size)
 {
 	std::ifstream file (filename.c_str(), std::ifstream::binary);
 	if (!file)
@@ -918,7 +918,7 @@ error:
 }
 
 
-int FileIndex::saveIndex(std::string filename, std::string &fileHash, uint64_t &size,const std::set<std::string>& forbidden_dirs)
+int FileIndex::saveIndex(const std::string& filename, std::string &fileHash, uint64_t &size,const std::set<std::string>& forbidden_dirs)
 {
 	unsigned char sha_buf[SHA_DIGEST_LENGTH];
 	std::string filenametmp = filename + ".tmp" ;
@@ -1008,9 +1008,10 @@ int FileIndex::saveIndex(std::string filename, std::string &fileHash, uint64_t &
 }
 
 
-std::string FixName(std::string in)
+std::string FixName(const std::string& _in)
 {
 	/* replace any , with _ */
+	std::string in(_in) ;
 	for(unsigned int i = 0; i < in.length(); i++)
 	{
 		if (in[i] == FILE_CACHE_SEPARATOR_CHAR)
@@ -1068,7 +1069,7 @@ int DirEntry::saveEntry(std::ostringstream &oss)
 }
 
 
-int FileIndex::searchHash(std::string hash, std::list<FileEntry *> &results) const
+int FileIndex::searchHash(const std::string& hash, std::list<FileEntry *> &results) const
 {
 #ifdef FI_DEBUG
 	std::cerr << "FileIndex::searchHash(" << hash << ")";
@@ -1109,7 +1110,7 @@ int FileIndex::searchHash(std::string hash, std::list<FileEntry *> &results) con
 }
 
 
-int FileIndex::searchTerms(std::list<std::string> terms, std::list<FileEntry *> &results) const
+int FileIndex::searchTerms(const std::list<std::string>& terms, std::list<FileEntry *> &results) const
 {
 	DirEntry *ndir = NULL;
 	std::list<DirEntry *> dirlist;

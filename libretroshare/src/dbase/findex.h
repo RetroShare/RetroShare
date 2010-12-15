@@ -114,27 +114,27 @@ class DirEntry: public FileEntry
 virtual		~DirEntry();
 
 		/* update local entries */
-DirEntry * 	updateDir(FileEntry fe, time_t updtime);
-FileEntry * 	updateFile(FileEntry fe, time_t updtime);
+DirEntry * 	updateDir(const FileEntry& fe, time_t updtime);
+FileEntry * 	updateFile(const FileEntry& fe, time_t updtime);
 
 
 int  		checkParentPointers();
 int 		updateChildRows();
 
 		/* remove local entries */
-int  		removeFile(std::string name);
-int  		removeDir(std::string name);
-int     	removeOldDir(std::string name, time_t old); /* checks ts first */
+int  		removeFile(const std::string& name);
+int  		removeDir(const std::string& name);
+int     	removeOldDir(const std::string& name, time_t old); /* checks ts first */
 
 		/* recursive cleanup */
 int  		removeOldEntries(time_t old, bool recursive); 
 
 		/* recursive searches */
 DirEntry *	findOldDirectory(time_t old);  
-DirEntry *	findDirectory(std::string path); 
+DirEntry *	findDirectory(const std::string& path); 
 
 		/* recursive update directory mod/pop values */
-int	 	updateDirectories(std::string path, int pop, int modtime);
+int	 	updateDirectories(const std::string& path, int pop, int modtime);
 
 		/* output */
 int 		print(std::ostream &out);
@@ -170,7 +170,7 @@ class PersonEntry: public DirEntry
 {
 	public:
 	/* cleanup */
-	PersonEntry(std::string pid) : id(pid) { return; }
+	PersonEntry(const std::string& pid) : id(pid) { return; }
 virtual	~PersonEntry() { return; }
 
 DirEntry &operator=(DirEntry &src)
@@ -204,7 +204,7 @@ class Expression;
 class FileIndex
 {
 	public:
-		FileIndex(std::string pid);
+		FileIndex(const std::string& pid);
 		~FileIndex();
 
 		/* control root entries */
@@ -212,11 +212,11 @@ class FileIndex
 		int	getRootDirectories(std::list<std::string> &outlist);
 
 		/* update (index building) */
-		DirEntry  * updateDirEntry(std::string path, FileEntry fe, time_t utime);
-		FileEntry * updateFileEntry(std::string path, FileEntry fe, time_t utime);
+		DirEntry  * updateDirEntry(const std::string& path, const FileEntry& fe, time_t utime);
+		FileEntry * updateFileEntry(const std::string& path, const FileEntry& fe, time_t utime);
 
 		DirEntry  * findOldDirectory(time_t old); /* finds directories older than old */
-		int     removeOldDirectory(std::string fpath, std::string name, time_t old);
+		int     removeOldDirectory(const std::string& fpath, const std::string& name, time_t old);
 
 		int	cleanOldEntries(time_t old);  /* removes entries older than old */
 
@@ -224,12 +224,12 @@ class FileIndex
 		int	printFileIndex(std::ostream &out);
 
 		/* load/save to file */
-		int 	loadIndex(std::string filename, std::string expectedHash, uint64_t size);
-		int 	saveIndex(std::string filename, std::string &fileHash, uint64_t &size, const std::set<std::string>& forbidden_roots);
+		int 	loadIndex(const std::string& filename, const std::string& expectedHash, uint64_t size);
+		int 	saveIndex(const std::string& filename, std::string &fileHash, uint64_t &size, const std::set<std::string>& forbidden_roots);
 
 		/* search through this index */
-		int 	searchTerms(std::list<std::string> terms, std::list<FileEntry *> &results) const;
-		int 	searchHash(std::string hash, std::list<FileEntry *> &results) const;
+		int 	searchTerms(const std::list<std::string>& terms, std::list<FileEntry *> &results) const;
+		int 	searchHash(const std::string& hash, std::list<FileEntry *> &results) const;
 		int     searchBoolExp(Expression * exp, std::list<FileEntry *> &results) const;
 
 		/// Recursively compute the maximum modification time of children.
