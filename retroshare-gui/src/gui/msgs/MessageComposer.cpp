@@ -117,7 +117,7 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
     setupInsertActions();
 
     m_compareRole = new RSTreeWidgetItemCompareRole;
-    m_compareRole->addRole(COLUMN_CONTACT_NAME, ROLE_CONTACT_SORT);
+    m_compareRole->setRole(COLUMN_CONTACT_NAME, ROLE_CONTACT_SORT);
 
     m_completer = NULL;
 

@@ -32,8 +32,8 @@
 // states for sorting (equal values are possible)
 // used in BuildSortString - state + name
 #define PEER_STATE_ONLINE       1
-#define PEER_STATE_AWAY         2
-#define PEER_STATE_BUSY         3
+#define PEER_STATE_BUSY         2
+#define PEER_STATE_AWAY         3
 #define PEER_STATE_AVAILABLE    4
 #define PEER_STATE_INACTIVE     5
 #define PEER_STATE_OFFLINE      6
@@ -161,8 +161,9 @@ private slots:
 
     void setCurrentFileName(const QString &fileName);
 
-    void displayMenu();
-    void statusColumn();
+    void sortByState();
+    void sortPeersAscendingOrder();
+    void sortPeersDescendingOrder();
 
     void newsFeedChanged(int count);
 
@@ -184,6 +185,7 @@ private:
 
     RSTreeWidgetItemCompareRole *m_compareRole;
 
+    void displayMenu();
     ///play the sound when recv a message
     void playsound();
 

@@ -127,7 +127,7 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
 #endif // MINIMAL_RSGUI
 
     m_compareRole = new RSTreeWidgetItemCompareRole;
-    m_compareRole->addRole(COLUMN_NAME, ROLE_SORT);
+    m_compareRole->setRole(COLUMN_NAME, ROLE_SORT);
 
     connect( ui.messengertreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( messengertreeWidgetCostumPopupMenu( QPoint ) ) );
 #ifndef MINIMAL_RSGUI

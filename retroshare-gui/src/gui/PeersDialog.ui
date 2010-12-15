@@ -718,20 +718,21 @@ background: white;}</string>
          <property name="expandsOnDoubleClick">
           <bool>false</bool>
          </property>
+         <attribute name="headerVisible">
+          <bool>false</bool>
+         </attribute>
          <attribute name="headerDefaultSectionSize">
           <number>200</number>
          </attribute>
          <attribute name="headerDefaultSectionSize">
           <number>200</number>
+         </attribute>
+         <attribute name="headerVisible">
+          <bool>false</bool>
          </attribute>
          <column>
           <property name="text">
            <string>Friends</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Status</string>
           </property>
          </column>
         </widget>
@@ -1497,12 +1498,23 @@ p, li { white-space: pre-wrap; }
     <string>Hide Offline Friends</string>
    </property>
   </action>
-  <action name="action_Hide_Status_Column">
+  <action name="action_Sort_by_State">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Hide Status Column</string>
+    <string>Sort by State</string>
+   </property>
+   <property name="toolTip">
+    <string>Sort by State</string>
+   </property>
+  </action>
+  <action name="action_Hide_State">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Hide State</string>
    </property>
   </action>
   <action name="actionAdd_Group">
@@ -1515,6 +1527,30 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="toolTip">
     <string>Add a new Group</string>
+   </property>
+  </action>
+  <action name="actionSort_Peers_Descending_Order">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/sort_decrease.png</normaloff>:/images/sort_decrease.png</iconset>
+   </property>
+   <property name="text">
+    <string>Sort Descending Order</string>
+   </property>
+   <property name="toolTip">
+    <string>Sort Descending Order</string>
+   </property>
+  </action>
+  <action name="actionSort_Peers_Ascending_Order">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/sort_incr.png</normaloff>:/images/sort_incr.png</iconset>
+   </property>
+   <property name="text">
+    <string>Sort Ascending Order</string>
+   </property>
+   <property name="toolTip">
+    <string>Sort Ascending Order</string>
    </property>
   </action>
  </widget>

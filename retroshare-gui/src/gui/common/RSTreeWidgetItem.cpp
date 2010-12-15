@@ -25,7 +25,7 @@ RSTreeWidgetItemCompareRole::RSTreeWidgetItemCompareRole()
 {
 }
 
-void RSTreeWidgetItemCompareRole::addRole(int column, int role)
+void RSTreeWidgetItemCompareRole::setRole(int column, int role)
 {
     insert(column, role);
 }
