@@ -212,6 +212,7 @@ private:
     QColor newsFeedTabColor;
     QString newsFeedText;
     bool wasStatusColumnHidden;
+    bool correctColumnStatusSize;
 
     /** Qt Designer generated object */
     Ui::PeersDialog ui;

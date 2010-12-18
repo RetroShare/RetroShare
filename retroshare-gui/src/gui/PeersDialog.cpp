@@ -122,6 +122,7 @@ PeersDialog::PeersDialog(QWidget *parent)
 
     last_status_send_time = 0 ;
     groupsHasChanged = false;
+    correctColumnStatusSize = false;
 
     m_compareRole = new RSTreeWidgetItemCompareRole;
     m_compareRole->setRole(COLUMN_NAME, ROLE_SORT);
@@ -235,7 +236,11 @@ PeersDialog::PeersDialog(QWidget *parent)
     // load settings
     processSettings(true);
 
-    ui.peertreeWidget->header()->setStretchLastSection(true);
+    /* Set header sizes for the fixed columns and resize modes, must be set after processSettings */
+    QHeaderView *header = ui.peertreeWidget->header();
+    header->setStretchLastSection(true);
+    ui.peertreeWidget->setColumnWidth(COLUMN_STATE, 20); // small enough
+    header->setResizeMode(COLUMN_STATE, QHeaderView::Stretch);
 
     // workaround for Qt bug, should be solved in next Qt release 4.7.0
     // http://bugreports.qt.nokia.com/browse/QTBUG-8270
@@ -300,6 +305,11 @@ void PeersDialog::processSettings(bool bLoad)
             openGroups.push_back(Settings->value("open").toString().toStdString());
         }
         Settings->endArray();
+
+        if (ui.peertreeWidget->isColumnHidden(COLUMN_STATE) && header->sectionSize(COLUMN_STATE) < 100) {
+            // Workaround
+            correctColumnStatusSize = true;
+        }
 
         setStateColumn();
     } else {
@@ -2035,6 +2045,10 @@ void PeersDialog::setStateColumn()
         ui.peertreeWidget->setColumnHidden(COLUMN_STATE, false);
         ui.peertreeWidget->setHeaderHidden(false);
         ui.action_Hide_State->setEnabled(false);
+        if (correctColumnStatusSize) {
+            correctColumnStatusSize = false;
+            ui.peertreeWidget->header()->resizeSection(COLUMN_STATE, 100);
+        }
         if (wasStatusColumnHidden) {
             ui.peertreeWidget->header()->resizeSection(COLUMN_NAME, ui.peertreeWidget->header()->sectionSize(COLUMN_NAME) - ui.peertreeWidget->header()->sectionSize(COLUMN_STATE));
         }
