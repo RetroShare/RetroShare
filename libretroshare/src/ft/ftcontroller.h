@@ -206,8 +206,8 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 
 		/* p3Config Interface */
 		virtual RsSerialiser *setupSerialiser();
-		virtual std::list<RsItem *> saveList(bool &cleanup);
-		virtual bool    loadList(std::list<RsItem *> load);
+		virtual bool saveList(bool &cleanup, std::list<RsItem *>&);
+		virtual bool    loadList(std::list<RsItem *>& load);
 		bool	loadConfigMap(std::map<std::string, std::string> &configMap);
 
 	private:

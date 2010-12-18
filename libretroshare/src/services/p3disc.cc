@@ -1120,13 +1120,13 @@ RsSerialiser *p3disc::setupSerialiser()
         return rss ;
 }
 
-std::list<RsItem*> p3disc::saveList(bool& cleanup)
+bool p3disc::saveList(bool& cleanup, std::list<RsItem*>& lst)
 {
         #ifdef P3DISC_DEBUG
         std::cerr << "p3disc::saveList() called" << std::endl;
         #endif
         cleanup = true ;
-        std::list<RsItem*> lst ;
+
 
         // Now save config for network digging strategies
         RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
@@ -1144,10 +1144,10 @@ std::list<RsItem*> p3disc::saveList(bool& cleanup)
         }
         lst.push_back(vitem);
 
-        return lst ;
+        return true ;
 }
 
-bool p3disc::loadList(std::list<RsItem*> load)
+bool p3disc::loadList(std::list<RsItem*>& load)
 {
         #ifdef P3DISC_DEBUG
         std::cerr << "p3disc::loadList() Item Count: " << load.size() << std::endl;

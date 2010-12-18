@@ -53,7 +53,7 @@
  * #define AUTHSSL_DEBUG 1
  ***/
 
-// initialisation du pointeur de singleton à zéro
+// initialisation du pointeur de singleton ï¿½ zï¿½ro
 static AuthSSL *instance_ssl = NULL;
 
 /* hidden function - for testing purposes() */
@@ -1256,7 +1256,7 @@ RsSerialiser *AuthSSLimpl::setupSerialiser()
         return rss ;
 }
 
-std::list<RsItem*> AuthSSLimpl::saveList(bool& cleanup)
+bool AuthSSLimpl::saveList(bool& cleanup, std::list<RsItem*>& lst)
 {
         #ifdef AUTHSSL_DEBUG
         std::cerr << "AuthSSLimpl::saveList() called" << std::endl ;
@@ -1265,8 +1265,6 @@ std::list<RsItem*> AuthSSLimpl::saveList(bool& cleanup)
         RsStackMutex stack(sslMtx); /******* LOCKED ******/
 
         cleanup = true ;
-        std::list<RsItem*> lst ;
-
 
         // Now save config for network digging strategies
         RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
@@ -1285,10 +1283,10 @@ std::list<RsItem*> AuthSSLimpl::saveList(bool& cleanup)
         }
         lst.push_back(vitem);
 
-        return lst ;
+        return true ;
 }
 
-bool AuthSSLimpl::loadList(std::list<RsItem*> load)
+bool AuthSSLimpl::loadList(std::list<RsItem*>& load)
 {
         #ifdef AUTHSSL_DEBUG
         std::cerr << "AuthSSLimpl::loadList() Item Count: " << load.size() << std::endl;

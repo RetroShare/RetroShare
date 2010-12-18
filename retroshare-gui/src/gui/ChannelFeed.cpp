@@ -709,18 +709,10 @@ void ChannelFeed::updateChannelMsgs()
 
     msgs.sort(sortChannelMsgSummary);
 
-    /* set get warning list for channel */
-    std::map<std::string, uint32_t> warningList;
-    std::map<std::string, uint32_t>::iterator msgId_it;
-
-    rsChannels->getCleanUpList(warningList, mChannelId, WARNING_LIMIT);
 
     for(it = msgs.begin(); it != msgs.end(); it++) {
         ChanMsgItem *cmi = new ChanMsgItem(this, 0, mChannelId, it->msgId, true);
 
-        msgId_it = warningList.find(it->msgId);
-        if(msgId_it != warningList.end())
-        	cmi->setFileCleanUpWarning(msgId_it->second);
 
         mChanMsgItems.push_back(cmi);
         verticalLayout_2->addWidget(cmi);

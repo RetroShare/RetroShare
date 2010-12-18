@@ -205,9 +205,9 @@ RsSerialiser *ftFiMonitor::setupSerialiser()
 const std::string hash_cache_duration_ss("HASH_CACHE_DURATION");
 const std::string hash_cache_ss("HASH_CACHE");
 
-std::list<RsItem *> ftFiMonitor::saveList(bool &cleanup)
+bool ftFiMonitor::saveList(bool &cleanup, std::list<RsItem *>& sList)
 {
-	std::list<RsItem *> sList;
+
 
 	cleanup = true;
 
@@ -256,11 +256,11 @@ std::list<RsItem *> ftFiMonitor::saveList(bool &cleanup)
 	/* Add KeyValue to saveList */
 	sList.push_back(rskv);
 
-	return sList;
+	return true;
 }
 
 
-bool    ftFiMonitor::loadList(std::list<RsItem *> load)
+bool    ftFiMonitor::loadList(std::list<RsItem *>& load)
 {
 	/* for each item, check it exists .... 
 	 * - remove any that are dead (or flag?) 

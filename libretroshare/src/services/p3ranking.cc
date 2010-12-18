@@ -1260,9 +1260,8 @@ bool	p3Ranking::addAnonToList(RsRankLinkMsg *msg)
 	return true;
 }
 
-std::list<RsItem *> p3Ranking::saveList(bool &cleanup)
+bool p3Ranking::saveList(bool &cleanup, std::list<RsItem *> & saveData)
 {
-	std::list<RsItem *> saveData;
 
 	mRankMtx.lock(); /*********************** LOCK *******/
 
@@ -1275,7 +1274,7 @@ std::list<RsItem *> p3Ranking::saveList(bool &cleanup)
 	}
 
 	/* list completed! */
-	return saveData;
+	return true;
 }
 
 void    p3Ranking::saveDone()
@@ -1284,7 +1283,7 @@ void    p3Ranking::saveDone()
 	return; 
 }
 
-bool p3Ranking::loadList(std::list<RsItem *> load)
+bool p3Ranking::loadList(std::list<RsItem *>& load)
 {
 	std::list<RsItem *>::iterator it;
 	RsRankLinkMsg *msg;

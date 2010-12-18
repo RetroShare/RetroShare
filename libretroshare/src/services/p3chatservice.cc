@@ -893,7 +893,7 @@ std::cerr << "p3chatservice: sending requested status string for peer " << peer_
 	sendItem(cs);
 }
 
-bool p3ChatService::loadList(std::list<RsItem*> load)
+bool p3ChatService::loadList(std::list<RsItem*>& load)
 {
 	for(std::list<RsItem*>::const_iterator it(load.begin());it!=load.end();++it)
 	{
@@ -954,13 +954,11 @@ bool p3ChatService::loadList(std::list<RsItem*> load)
 	return true;
 }
 
-std::list<RsItem*> p3ChatService::saveList(bool& cleanup)
+bool p3ChatService::saveList(bool& cleanup, std::list<RsItem*>& list)
 {
 	cleanup = true;
 
 	/* now we create a pqistore, and stream all the msgs into it */
-
-	std::list<RsItem*> list ;
 
 	if(_own_avatar != NULL)
 	{
@@ -999,7 +997,7 @@ std::list<RsItem*> p3ChatService::saveList(bool& cleanup)
 		list.push_back(ci);
 	}
 
-	return list;
+	return true;
 }
 
 void p3ChatService::saveDone()

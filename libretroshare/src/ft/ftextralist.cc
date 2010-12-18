@@ -363,9 +363,9 @@ RsSerialiser *ftExtraList::setupSerialiser()
 	return rss;
 }
 
-std::list<RsItem *> ftExtraList::saveList(bool &cleanup)
+bool ftExtraList::saveList(bool &cleanup, std::list<RsItem *>& sList)
 {
-	std::list<RsItem *> sList;
+
 
 	cleanup = true;
 
@@ -397,11 +397,11 @@ std::list<RsItem *> ftExtraList::saveList(bool &cleanup)
 		sList.push_back(fi);
 	}
 
-	return sList;
+	return true;
 }
 
 
-bool    ftExtraList::loadList(std::list<RsItem *> load)
+bool    ftExtraList::loadList(std::list<RsItem *>& load)
 {
 	/* for each item, check it exists .... 
 	 * - remove any that are dead (or flag?) 

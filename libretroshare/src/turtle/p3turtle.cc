@@ -472,13 +472,14 @@ RsSerialiser *p3turtle::setupSerialiser()
 
 	return rss ;
 }
-std::list<RsItem*> p3turtle::saveList(bool& cleanup)
+
+bool p3turtle::saveList(bool& cleanup, std::list<RsItem*>& lst)
 {
 #ifdef P3TURTLE_DEBUG
 	std::cerr << "p3turtle: saving list..." << std::endl ;
 #endif
 	cleanup = true ;
-	std::list<RsItem*> lst ;
+	 ;
 #ifdef TO_REMOVE
 	RsTurtleSearchResultItem *item = new RsTurtleSearchResultItem ;
 	item->PeerId("") ;
@@ -497,7 +498,7 @@ std::list<RsItem*> p3turtle::saveList(bool& cleanup)
 	}
 	lst.push_back(item) ;
 #endif
-	return lst ;
+	return true ;
 }
 
 #ifdef TO_REMOVE

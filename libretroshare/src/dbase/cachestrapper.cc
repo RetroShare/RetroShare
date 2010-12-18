@@ -729,9 +729,8 @@ RsSerialiser *CacheStrapper::setupSerialiser()
 }
 
 
-std::list<RsItem *> CacheStrapper::saveList(bool &cleanup)
+bool CacheStrapper::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 {
-	std::list<RsItem *> saveData;
 
 	/* it can delete them! */
 	cleanup = true;
@@ -810,11 +809,11 @@ std::list<RsItem *> CacheStrapper::saveList(bool &cleanup)
 	}
 
 	/* list completed! */
-	return saveData;
+	return true;
 }
 
 
-bool CacheStrapper::loadList(std::list<RsItem *> load)
+bool CacheStrapper::loadList(std::list<RsItem *>& load)
 {
 	std::list<RsItem *>::iterator it;
 	RsCacheConfig *rscc;

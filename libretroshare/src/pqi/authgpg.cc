@@ -2310,7 +2310,7 @@ RsSerialiser *AuthGPGimpl::setupSerialiser()
         return rss ;
 }
 
-std::list<RsItem*> AuthGPGimpl::saveList(bool& cleanup)
+bool AuthGPGimpl::saveList(bool& cleanup, std::list<RsItem*>& lst)
 {
         #ifdef GPG_DEBUG
         std::cerr << "AuthGPGimpl::saveList() called" << std::endl ;
@@ -2319,8 +2319,6 @@ std::list<RsItem*> AuthGPGimpl::saveList(bool& cleanup)
         RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
 
         cleanup = true ;
-        std::list<RsItem*> lst ;
-
 
         // Now save config for network digging strategies
         RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
@@ -2339,10 +2337,10 @@ std::list<RsItem*> AuthGPGimpl::saveList(bool& cleanup)
         }
         lst.push_back(vitem);
 
-        return lst ;
+        return true ;
 }
 
-bool AuthGPGimpl::loadList(std::list<RsItem*> load)
+bool AuthGPGimpl::loadList(std::list<RsItem*>& load)
 {
         #ifdef GPG_DEBUG
         std::cerr << "AuthGPGimpl::loadList() Item Count: " << load.size() << std::endl;

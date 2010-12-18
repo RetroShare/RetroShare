@@ -3369,10 +3369,9 @@ RsSerialiser *p3ConnectMgr::setupSerialiser()
 }
 
 
-std::list<RsItem *> p3ConnectMgr::saveList(bool &cleanup)
+bool p3ConnectMgr::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 {
 	/* create a list of current peers */
-	std::list<RsItem *> saveData;
 	cleanup = false;
 
 	connMtx.lock(); /****** MUTEX LOCKED *******/ 
@@ -3479,7 +3478,7 @@ std::list<RsItem *> p3ConnectMgr::saveList(bool &cleanup)
 		saveData.push_back(*groupIt); // no delete
 	}
 
-	return saveData;
+	return true;
 }
 
 void    p3ConnectMgr::saveDone()
@@ -3497,7 +3496,7 @@ void    p3ConnectMgr::saveDone()
 	connMtx.unlock(); /****** MUTEX UNLOCKED *******/
 }
 
-bool  p3ConnectMgr::loadList(std::list<RsItem *> load)
+bool  p3ConnectMgr::loadList(std::list<RsItem *>& load)
 {
 
         if (load.size() == 0) {

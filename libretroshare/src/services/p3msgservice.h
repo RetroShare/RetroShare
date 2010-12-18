@@ -90,8 +90,8 @@ int	status();
 
 	/*** Overloaded from p3Config ****/
 virtual RsSerialiser *setupSerialiser();
-virtual std::list<RsItem*> saveList(bool& cleanup);
-virtual bool loadList(std::list<RsItem*> load);
+virtual bool saveList(bool& cleanup, std::list<RsItem*>&);
+virtual bool loadList(std::list<RsItem*>& load);
 virtual void saveDone();
 	/*** Overloaded from p3Config ****/
 

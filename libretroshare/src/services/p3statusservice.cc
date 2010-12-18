@@ -246,13 +246,13 @@ RsSerialiser* p3StatusService::setupSerialiser(){
 	return rss;
 }
 
-std::list<RsItem*> p3StatusService::saveList(bool& cleanup){
+bool p3StatusService::saveList(bool& cleanup, std::list<RsItem*>& ilist){
 
 	// save your status before quiting
 	cleanup = true;
 	RsStatusItem* own_status = new RsStatusItem;
 	StatusInfo own_info;
-	std::list<RsItem*> ilist;
+
 	std::map<std::string, StatusInfo>::iterator it;
 
 	{
@@ -263,7 +263,7 @@ std::list<RsItem*> p3StatusService::saveList(bool& cleanup){
 			std::cerr << "p3StatusService::saveList() :" << "Did not find your status"
 				      << mConnMgr->getOwnId() << std::endl;
 			delete own_status;
-			return ilist;
+			return false;
 		}
 
 		own_info = it->second;
@@ -275,10 +275,10 @@ std::list<RsItem*> p3StatusService::saveList(bool& cleanup){
 
 	ilist.push_back(own_status);
 
-	return ilist;
+	return true;
 }
 
-bool p3StatusService::loadList(std::list<RsItem*> load){
+bool p3StatusService::loadList(std::list<RsItem*>& load){
 
 	// load your status from last rs session
 	StatusInfo own_info;

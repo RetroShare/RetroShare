@@ -390,9 +390,9 @@ bool 	addAddressIfUnique(std::list<peerConnectAddress> &addrList,
 /***********************  p3config  ******************************/
         /* Key Functions to be overloaded for Full Configuration */
 	virtual RsSerialiser *setupSerialiser();
-	virtual std::list<RsItem *> saveList(bool &cleanup);
+	virtual bool saveList(bool &cleanup, std::list<RsItem *>&);
 	virtual void saveDone();
-	virtual bool    loadList(std::list<RsItem *> load);
+	virtual bool    loadList(std::list<RsItem *>& load);
 /*****************************************************************/
 
 //void 	setupOwnNetConfig(RsPeerConfigItem *item);

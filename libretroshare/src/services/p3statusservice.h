@@ -79,12 +79,12 @@ virtual RsSerialiser *setupSerialiser();
 /*!
  * This stores information on what your status was before you exited rs
  */
-virtual std::list<RsItem*> saveList(bool& cleanup);
+virtual bool saveList(bool& cleanup, std::list<RsItem*>&);
 
 /*!
  * @param load Should contain a single item which is clients status from last rs session
  */
-virtual bool loadList(std::list<RsItem*> load);
+virtual bool loadList(std::list<RsItem*>& load);
 
 	private:
 

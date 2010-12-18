@@ -428,9 +428,9 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 	protected:
 
 		virtual RsSerialiser *setupSerialiser();
-		virtual std::list<RsItem *> saveList(bool &cleanup);
+		virtual bool saveList(bool &cleanup, std::list<RsItem *>& saveList);
 		virtual void 	saveDone();
-		virtual bool    loadList(std::list<RsItem *> load);
+		virtual bool    loadList(std::list<RsItem *>& load);
 
 		/*!
 		 * called by top class, child can use to save configs

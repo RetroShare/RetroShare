@@ -124,8 +124,8 @@ pqistore *createStore(std::string file, std::string src, bool reading);
 bool    addAnonToList(RsRankLinkMsg *msg);
 
 virtual RsSerialiser *setupSerialiser();
-virtual std::list<RsItem *> saveList(bool &cleanup);
-virtual bool loadList(std::list<RsItem *> load);
+virtual bool saveList(bool &cleanup, std::list<RsItem *>&);
+virtual bool loadList(std::list<RsItem *>& load);
 virtual void    saveDone();
 
 	private:	

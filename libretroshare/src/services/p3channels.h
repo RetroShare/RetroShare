@@ -79,7 +79,8 @@ virtual bool channelRestoreKeys(std::string chId);
 virtual bool channelShareKeys(std::string chId, std::list<std::string>& peers);
 virtual bool channelEditInfo(std::string chId, ChannelInfo &ci);
 virtual void getPubKeysAvailableGrpIds(std::list<std::string>& grpIds);
-virtual bool getCleanUpList(std::map<std::string, uint32_t>& warnings,const std::string& chId, uint32_t limit);
+
+
 /***************************************************************************************/
 /****************** Event Feedback (Overloaded form p3distrib) *************************/
 /***************************************************************************************/
@@ -96,8 +97,7 @@ virtual bool locked_eventDuplicateMsg(GroupInfo *, RsDistribMsg *, std::string);
 virtual RsSerialType *createSerialiser();
 
 virtual bool    locked_checkDistribMsg(RsDistribMsg *msg);
-virtual RsDistribGrp *locked_createPublicDistribGrp(GroupInfo &info);
-virtual RsDistribGrp *locked_createPrivateDistribGrp(GroupInfo &info);
+
 virtual bool childLoadList(std::list<RsItem* >& configSaves);
 virtual std::list<RsItem *> childSaveList();
 

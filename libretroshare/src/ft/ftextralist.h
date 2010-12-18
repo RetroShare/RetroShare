@@ -151,8 +151,8 @@ virtual void run();
 		 **/
         protected:
 virtual RsSerialiser *setupSerialiser();
-virtual std::list<RsItem *> saveList(bool &cleanup);
-virtual bool    loadList(std::list<RsItem *> load);
+virtual bool saveList(bool &cleanup, std::list<RsItem*>&);
+virtual bool    loadList(std::list<RsItem *>& load);
 
 	private:
 

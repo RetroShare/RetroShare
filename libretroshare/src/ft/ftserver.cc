@@ -705,13 +705,13 @@ RsSerialiser *ftServer::setupSerialiser()
 	return NULL;
 }
 
-std::list<RsItem *> ftServer::saveList(bool &cleanup)
+bool ftServer::saveList(bool &cleanup, std::list<RsItem *>& list)
 {
-	std::list<RsItem *> list;
-	return list;
+
+	return true;
 }
 
-bool    ftServer::loadList(std::list<RsItem *> load)
+bool    ftServer::loadList(std::list<RsItem *>& load)
 {
 	return true;
 }

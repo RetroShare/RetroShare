@@ -157,9 +157,9 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 		/*!
 		 * chat msg items and custom status are saved
 		 */
-		virtual std::list<RsItem*> saveList(bool& cleanup) ;
+		virtual bool saveList(bool& cleanup, std::list<RsItem*>&) ;
 		virtual void saveDone();
-		virtual bool loadList(std::list<RsItem*> load) ;
+		virtual bool loadList(std::list<RsItem*>& load) ;
 
 	private:
 		RsMutex mChatMtx;

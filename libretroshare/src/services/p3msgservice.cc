@@ -282,11 +282,8 @@ int     p3MsgService::checkOutgoingMessages()
 
 
 
-std::list<RsItem*>    p3MsgService::saveList(bool& cleanup)
+bool    p3MsgService::saveList(bool& cleanup, std::list<RsItem*>& itemList)
 {
-
-
-	std::list<RsItem*> itemList;
 
 	std::map<uint32_t, RsMsgItem *>::iterator mit;
 	std::map<uint32_t, RsMsgTagType* >::iterator mit2;
@@ -319,7 +316,7 @@ std::list<RsItem*>    p3MsgService::saveList(bool& cleanup)
 	for(mit4 = mParentId.begin();  mit4 != mParentId.end(); mit4++)
 		itemList.push_back(mit4->second);
 
-	return itemList;
+	return true;
 }
 
 void p3MsgService::saveDone()
@@ -376,7 +373,7 @@ void p3MsgService::initStandardTagTypes()
 	}
 }
 
-bool    p3MsgService::loadList(std::list<RsItem*> load)
+bool    p3MsgService::loadList(std::list<RsItem*>& load)
 {
     RsMsgItem *mitem;
     RsMsgTagType* mtt;

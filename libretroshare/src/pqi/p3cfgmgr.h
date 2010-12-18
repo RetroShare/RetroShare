@@ -330,13 +330,13 @@ virtual RsSerialiser *setupSerialiser() = 0;
  * and vice versa
  * @return list of config items derived object wants to saves
  */
-virtual std::list<RsItem *> saveList(bool &cleanup) = 0;
+virtual bool saveList(bool &cleanup, std::list<RsItem *>&) = 0;
 
 /**
  * loads up list of configs items for derived object
  * @param load list of config items to load up
  */
-virtual bool	loadList(std::list<RsItem *> load) = 0;
+virtual bool	loadList(std::list<RsItem *>& load) = 0;
 
 /**
  * callback for mutex unlocking
@@ -384,8 +384,8 @@ void 		setSetting(std::string opt, std::string val);
 
 	/* Key Functions to be overloaded for Full Configuration */
 virtual RsSerialiser *setupSerialiser();
-virtual std::list<RsItem *> saveList(bool &cleanup);
-virtual bool	loadList(std::list<RsItem *> load);
+virtual bool saveList(bool &cleanup, std::list<RsItem* >&);
+virtual bool	loadList(std::list<RsItem *>& );
 
 	private:
 

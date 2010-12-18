@@ -1862,10 +1862,9 @@ RsSerialiser *ftController::setupSerialiser()
 	return rss;
 }
 
-
-std::list<RsItem *> ftController::saveList(bool &cleanup)
+bool ftController::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 {
-	std::list<RsItem *> saveData;
+
 
 	/* it can delete them! */
 	cleanup = true;
@@ -1977,11 +1976,11 @@ std::list<RsItem *> ftController::saveList(bool &cleanup)
 	}
 
 	/* list completed! */
-	return saveData;
+	return true;
 }
 
 
-bool ftController::loadList(std::list<RsItem *> load)
+bool ftController::loadList(std::list<RsItem *>& load)
 {
 	std::list<RsItem *>::iterator it;
 	std::list<RsTlvKeyValue>::iterator kit;

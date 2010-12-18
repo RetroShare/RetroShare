@@ -1299,9 +1299,8 @@ RsSerialiser *p3GroupDistrib::setupSerialiser()
 	return rss;
 }
 
-std::list<RsItem *> p3GroupDistrib::saveList(bool &cleanup)
+bool p3GroupDistrib::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 {
-	std::list<RsItem *> saveData;
 
 #ifdef DISTRIB_DEBUG
 	std::cerr << "p3GroupDistrib::saveList()";
@@ -1471,7 +1470,7 @@ std::list<RsItem *> p3GroupDistrib::saveList(bool &cleanup)
 
 	delete childSer;
 
-	return saveData;
+	return true;
 }
 
 void    p3GroupDistrib::saveDone()
@@ -1489,7 +1488,7 @@ void    p3GroupDistrib::saveDone()
 	distribMtx.unlock(); /****** MUTEX UNLOCKED *******/
 }
 
-bool    p3GroupDistrib::loadList(std::list<RsItem *> load)
+bool    p3GroupDistrib::loadList(std::list<RsItem *>& load)
 {
 	std::list<RsItem *>::iterator lit;
 

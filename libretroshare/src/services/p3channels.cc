@@ -474,10 +474,9 @@ bool p3Channels::channelExtraFileHash(std::string path, std::string chId, FileIn
 	fname.append(fnameBuff.rbegin(), fnameBuff.rend());
 
 
-	uint32_t flags = RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_EXTRA;
+	uint32_t flags = RS_FILE_HINTS_NETWORK_WIDE;
 
-	// then hash file, but hash file at original location if its too large
-	// and get file info too
+	// then hash file and get file info too
 
 	if(!mRsFiles->ExtraFileHash(path, CHANNEL_STOREPERIOD, flags))
 		return false;
@@ -540,19 +539,6 @@ bool    p3Channels::locked_checkDistribMsg(RsDistribMsg *msg)
 }
 
 
-RsDistribGrp *p3Channels::locked_createPublicDistribGrp(GroupInfo &info)
-{
-	RsDistribGrp *grp = NULL; //new RsChannelGrp();
-
-	return grp;
-}
-
-RsDistribGrp *p3Channels::locked_createPrivateDistribGrp(GroupInfo &info)
-{
-	RsDistribGrp *grp = NULL; //new RsChannelGrp();
-
-	return grp;
-}
 
 
 bool p3Channels::channelSubscribe(std::string cId, bool subscribe)
@@ -630,12 +616,6 @@ bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std
 	std::string nullId;
 
 
-//	std::cerr << "p3Channels::locked_eventDuplicateMsg() ";
-//	std::cerr << " grpId: " << grpId << " msgId: " << msgId;
-//	std::cerr << " peerId: " << id;
-//	std::cerr << std::endl;
-
-
 	RsChannelMsg *chanMsg = dynamic_cast<RsChannelMsg *>(msg);
 	if (!chanMsg)
 	{
@@ -652,10 +632,10 @@ bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std
  	if (id == mOwnId)
 	{
 		download = false;
-//#ifdef CHANNEL_DEBUG
+#ifdef CHANNEL_DEBUG
                	std::cerr << "p3Channels::locked_eventDuplicateMsg() msg from self - not downloading";
                	std::cerr << std::endl;
-//#endif
+#endif
 	}
 
 	/* check subscribed */
@@ -672,6 +652,18 @@ bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std
 		return true;
 	}
 
+	// get channel info to determine if channel is private or not
+	ChannelInfo cInfo;
+	bool chanPrivate = false;
+
+	// tho if empty don't bother
+	if(!chanMsg->attachment.items.empty()){
+		getChannelInfo(grpId, cInfo);
+
+		if(cInfo.channelFlags & RS_DISTRIB_PRIVATE)
+			chanPrivate = true;
+	}
+
 	/* Iterate through files */
 	std::list<RsTlvFileItem>::iterator fit;
 	for(fit = chanMsg->attachment.items.begin(); 
@@ -681,11 +673,22 @@ bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std
 		std::string hash  = fit->hash;
 		uint64_t size     = fit->filesize;
 		std::string channelname = grpId;
-		std::string localpath = mChannelsDir + "/" + channelname;
-		uint32_t flags = RS_FILE_HINTS_EXTRA | 
-				RS_FILE_HINTS_BACKGROUND | 
-				RS_FILE_HINTS_NETWORK_WIDE;
 
+		std::string localpath;
+		uint32_t flags;
+
+		// send to download directory if file is private
+		if(chanPrivate){
+		localpath = mChannelsDir + "/" + channelname;
+		flags = RS_FILE_HINTS_BACKGROUND | RS_FILE_HINTS_EXTRA;
+
+		}else{
+
+			localpath = ""; // forces dl to default directory
+			flags = RS_FILE_HINTS_BACKGROUND |
+					RS_FILE_HINTS_NETWORK_WIDE;
+
+		}
 		std::list<std::string> srcIds;
 		srcIds.push_back(id);
 
@@ -695,12 +698,10 @@ bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std
 		 * FileRequest will ignore request if file is already indexed.
 		 */
 
-                //#ifdef CHANNEL_DEBUG
+#ifdef CHANNEL_DEBUG
                 std::cerr << "p3Channels::locked_eventDuplicateMsg() " << " Downloading: " << fname;
                 std::cerr << " to: " << localpath << " from: " << id << std::endl;
-                //#endif
-
-
+#endif
 
         if(size < MAX_AUTO_DL)
         	mRsFiles->FileRequest(fname, hash, size,
@@ -719,12 +720,6 @@ bool p3Channels::locked_eventNewMsg(GroupInfo *grp, RsDistribMsg *msg, std::stri
 	std::string msgId = msg->msgId;
 	std::string nullId;
 
-//	std::cerr << "p3Channels::locked_eventNewMsg() ";
-//	std::cerr << " grpId: " << grpId;
-//	std::cerr << " msgId: " << msgId;
-//	std::cerr << " peerId: " << id;
-//	std::cerr << std::endl;
-
 	getPqiNotify()->AddFeedItem(RS_FEED_ITEM_CHAN_MSG, grpId, msgId, nullId);
 
 	/* request the files 
@@ -742,10 +737,6 @@ void p3Channels::locked_notifyGroupChanged(GroupInfo &grp, uint32_t flags)
 	std::string msgId;
 	std::string nullId;
 
-//	std::cerr << "p3Channels::locked_notifyGroupChanged() ";
-//	std::cerr << grpId;
-//	std::cerr << " flags:" << flags;
-//	std::cerr << std::endl;
 
 	switch(flags)
 	{
@@ -812,112 +803,6 @@ void p3Channels::locked_notifyGroupChanged(GroupInfo &grp, uint32_t flags)
 	return p3GroupDistrib::locked_notifyGroupChanged(grp, flags);
 }
 
-bool p3Channels::getCleanUpList(std::map<std::string, uint32_t>& warnings,const std::string& chId,uint32_t limit)
-{
-
-        ChannelInfo chInfo;
-        getChannelInfo(chId, chInfo);
-
-        if(chInfo.channelFlags & RS_DISTRIB_ADMIN)
-            return false;
-
-	time_t now = time(NULL);
-	uint32_t timeLeft = 0;
-	std::list<ChannelMsgSummary> msgList;
-	std::list<ChannelMsgSummary>::iterator msg_it;
-	ChannelMsgInfo chMsgInfo;
-	if(!getChannelMsgList(chId, msgList))
-		return false;
-
-	for(msg_it = msgList.begin(); msg_it != msgList.end(); msg_it++){
-
-
-		if(!getChannelMessage(chId, msg_it->msgId, chMsgInfo))
-			continue;
-
-		// if msg not close to warning limit leave it alone
-                if((chMsgInfo.ts + CHANNEL_STOREPERIOD > (time_t)now + (time_t)limit) || (chMsgInfo.count < 1))
-			continue;
-
-		timeLeft = CHANNEL_STOREPERIOD - (now - chMsgInfo.ts);
-		warnings.insert(std::pair<std::string, uint32_t>(msg_it->msgId, timeLeft));
-
-	}
-
-	return true ;
-}
-
-
-
-
-void p3Channels::cleanUpOldFiles()
-{
-
-	time_t now = time(NULL);
-	std::list<ChannelInfo> chList;
-	std::list<ChannelInfo>::iterator ch_it;
-
-	// first get channel list
-	if(!getChannelList(chList))
-		return;
-
-	std::list<ChannelMsgSummary> msgList;
-	std::list<ChannelMsgSummary>::iterator msg_it;
-
-	// then msg for each channel
-	for(ch_it = chList.begin(); ch_it != chList.end(); ch_it++){
-
-                // don't deal with files owned by client (they are not extra files anyways so slightly redundant)
-                if(!getChannelMsgList(ch_it->channelId, msgList) || (ch_it->channelFlags & RS_DISTRIB_ADMIN))
-			continue;
-
-		std::string channelname = ch_it->channelId;
-		std::string localpath = mChannelsDir + "/" + channelname;
-
-		for(msg_it = msgList.begin(); msg_it != msgList.end(); msg_it++){
-
-			ChannelMsgInfo chMsgInfo;
-			if(!getChannelMessage(ch_it->channelId, msg_it->msgId, chMsgInfo))
-				continue;
-
-			// if msg not old, leave it alone
-			if( chMsgInfo.ts > (now - CHANNEL_STOREPERIOD))
-				continue;
-
-			std::list<FileInfo>::iterator file_it;
-			// get the files
-			for(file_it = chMsgInfo.files.begin(); file_it != chMsgInfo.files.end(); file_it++){
-
-				std::string msgFile = localpath + "/" + file_it->fname;
-
-				if(mRsFiles){
-					if(mRsFiles->ExtraFileRemove(file_it->hash, ~(RS_FILE_HINTS_DOWNLOAD | RS_FILE_HINTS_UPLOAD)))
-							std::cerr << "p3Channels::clearOldFIles() failed to remove files from extras" << std::endl;
-
-					if(remove(msgFile.c_str()) == 0){
-						std::cerr << "p3Channels::clearOldFiles() file removed: "
-								  << msgFile << std::endl;
-					}else{
-						std::cerr << "p3Channels::clearOldFiles() failed to remove file: "
-								  << msgFile << std::endl;
-					}
-
-				}else{
-					std::cerr << "p3Channels::cleanUpOldFiles() : Pointer passed to (this) Invalid" << std::endl;
-				}
-
-
-			}
-
-		}
-
-	}
-
-	// clean up local caches
-//.	clear_local_caches(now); //how about remote caches, remember its hardwired
-
-	return;
-}
 
 //TODO: if you want to config saving and loading for channel distrib service implement this method further
 bool p3Channels::childLoadList(std::list<RsItem* >& configSaves)
@@ -949,114 +834,3 @@ std::list<RsItem *> p3Channels::childSaveList()
 }
 
 /****************************************/
-
-#if 0
-
-void    p3Channels::loadDummyData()
-{
-	ChannelInfo fi;
-	std::string channelId;
-	std::string msgId;
-	time_t now = time(NULL);
-
-	fi.channelId = "FID1234";
-	fi.channelName = L"Channel 1";
-	fi.channelDesc = L"Channel 1";
-	fi.channelFlags = RS_DISTRIB_ADMIN;
-	fi.pop = 2;
-	fi.lastPost = now - 123;
-
-	channelId = createChannel(fi.channelName, fi.channelDesc, fi.channelFlags);
-
-	fi.channelId = "FID2345";
-	fi.channelName = L"Channel 2";
-	fi.channelDesc = L"Channel 2";
-	fi.channelFlags = RS_DISTRIB_SUBSCRIBED;
-	fi.pop = 3;
-	fi.lastPost = now - 1234;
-
-	channelId = createChannel(fi.channelName, fi.channelDesc, fi.channelFlags);
-	msgId = createChannelMsg(channelId, "", L"WELCOME TO Channel1", L"Hello!");
-	msgId = createChannelMsg(channelId, msgId, L"Love this channel", L"Hello2!");
-
-	return; 
-
-	/* ignore this */
-
-	fi.channelId = "FID3456";
-	fi.channelName = L"Channel 3";
-	fi.channelDesc = L"Channel 3";
-	fi.channelFlags = 0;
-	fi.pop = 3;
-	fi.lastPost = now - 1234;
-
-	channelId = createChannel(fi.channelName, fi.channelDesc, fi.channelFlags);
-
-	fi.channelId = "FID4567";
-	fi.channelName = L"Channel 4";
-	fi.channelDesc = L"Channel 4";
-	fi.channelFlags = 0;
-	fi.pop = 5;
-	fi.lastPost = now - 1234;
-
-	channelId = createChannel(fi.channelName, fi.channelDesc, fi.channelFlags);
-
-	fi.channelId = "FID5678";
-	fi.channelName = L"Channel 5";
-	fi.channelDesc = L"Channel 5";
-	fi.channelFlags = 0;
-	fi.pop = 1;
-	fi.lastPost = now - 1234;
-
-	channelId = createChannel(fi.channelName, fi.channelDesc, fi.channelFlags);
-
-	fi.channelId = "FID6789";
-	fi.channelName = L"Channel 6";
-	fi.channelDesc = L"Channel 6";
-	fi.channelFlags = 0;
-	fi.pop = 2;
-	fi.lastPost = now - 1234;
-
-	channelId = createChannel(fi.channelName, fi.channelDesc, fi.channelFlags);
-
-	fi.channelId = "FID7890";
-	fi.channelName = L"Channel 7";
-	fi.channelDesc = L"Channel 7";
-	fi.channelFlags = 0;
-	fi.pop = 4;
-	fi.lastPost = now - 1234;
-
-	channelId = createChannel(fi.channelName, fi.channelDesc, fi.channelFlags);
-
-	fi.channelId = "FID8901";
-	fi.channelName = L"Channel 8";
-	fi.channelDesc = L"Channel 8";
-	fi.channelFlags = 0;
-	fi.pop = 3;
-	fi.lastPost = now - 1234;
-
-	channelId = createChannel(fi.channelName, fi.channelDesc, fi.channelFlags);
-
-	fi.channelId = "FID9012";
-	fi.channelName = L"Channel 9";
-	fi.channelDesc = L"Channel 9";
-	fi.channelFlags = 0;
-	fi.pop = 2;
-	fi.lastPost = now - 1234;
-
-	channelId = createChannel(fi.channelName, fi.channelDesc, fi.channelFlags);
-
-	fi.channelId = "FID9123";
-	fi.channelName = L"Channel 10";
-	fi.channelDesc = L"Channel 10";
-	fi.channelFlags = 0;
-	fi.pop = 1;
-	fi.lastPost = now - 1234;
-
-	channelId = createChannel(fi.channelName, fi.channelDesc, fi.channelFlags);
-
-	mChannelsChanged = true;
-}
-
-#endif
-

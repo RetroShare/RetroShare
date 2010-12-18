@@ -904,7 +904,8 @@ bool p3Config::saveConfig()
 {
 
 	bool cleanup = true;
-	std::list<RsItem *> toSave = saveList(cleanup);
+	std::list<RsItem *> toSave;
+	saveList(cleanup, toSave);
 
 	// temporarily append new to files as these will replace current configuration
 	std::string newCfgFname = Filename() + "_new";
@@ -986,7 +987,8 @@ bool	p3Config::saveGlobalConfig()
 {
 
 	bool cleanup = true;
-	std::list<RsItem *> toSave = saveList(cleanup);
+	std::list<RsItem *> toSave;
+	saveList(cleanup, toSave);
 
 
 	std::string cfg_fname = Filename(); // get configuration file name
@@ -1212,7 +1214,7 @@ RsSerialiser *p3GeneralConfig::setupSerialiser()
 	return rss;
 }
 
-std::list<RsItem *> p3GeneralConfig::saveList(bool &cleanup)
+bool p3GeneralConfig::saveList(bool &cleanup, std::list<RsItem *>& savelist)
 {
 	RsStackMutex stack(cfgMtx); /***** LOCK STACK MUTEX ****/
 
@@ -1222,7 +1224,7 @@ std::list<RsItem *> p3GeneralConfig::saveList(bool &cleanup)
 #endif
 
 	cleanup = true;
-	std::list<RsItem *> savelist;
+
 
 	RsConfigKeyValueSet *item = new RsConfigKeyValueSet();
 	std::map<std::string, std::string>::iterator it;
@@ -1246,11 +1248,11 @@ std::list<RsItem *> p3GeneralConfig::saveList(bool &cleanup)
 		savelist.push_back(item);
 	}
 
-	return savelist;
+	return true;
 }
 
 
-bool    p3GeneralConfig::loadList(std::list<RsItem *> load)
+bool    p3GeneralConfig::loadList(std::list<RsItem *>& load)
 {
 #ifdef CONFIG_DEBUG
 	std::cerr << "p3GeneralConfig::loadList() count: " << load.size();

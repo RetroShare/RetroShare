@@ -260,8 +260,8 @@ class p3turtle: public p3Service, public pqiMonitor, public RsTurtle,/* public f
 
 		/************* from p3Config *******************/
 		virtual RsSerialiser *setupSerialiser() ;
-		virtual std::list<RsItem*> saveList(bool& cleanup) ;
-		virtual bool loadList(std::list<RsItem*> load) { return true; }
+		virtual bool saveList(bool& cleanup, std::list<RsItem*>&) ;
+		virtual bool loadList(std::list<RsItem*>& load) { return true; }
 
 		/************* Communication with ftserver *******************/
 		/// Does the turtle router manages tunnels to this peer ? (this is not a
