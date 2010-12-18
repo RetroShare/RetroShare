@@ -7348,7 +7348,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PeersDialog</name>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="+443"/>
+        <location filename="../gui/PeersDialog.cpp" line="+454"/>
         <source>Chat</source>
         <translation>Chat</translation>
     </message>
@@ -7373,22 +7373,22 @@ p, li { white-space: pre-wrap; }
         <translation>Verbinde zum Freund</translation>
     </message>
     <message>
-        <location line="-307"/>
+        <location line="-317"/>
         <source>Profile</source>
         <translation>Profil</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+43"/>
         <source>Welcome to RetroShare&apos;s group chat.</source>
         <translation>Willkommen bei RetroShare&apos;s Gruppenchat.</translation>
     </message>
     <message>
-        <location line="+59"/>
+        <location line="+63"/>
         <source>me</source>
         <translation>ich</translation>
     </message>
     <message>
-        <location line="+162"/>
+        <location line="+166"/>
         <source>Group</source>
         <translation>Gruppe</translation>
     </message>
@@ -7739,12 +7739,12 @@ p, li { white-space: pre-wrap; }
         <translation>Status Spalte ausblenden</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="-1829"/>
+        <location filename="../gui/PeersDialog.cpp" line="-1839"/>
         <source>Friends Storm</source>
         <translation>Aktivitäten</translation>
     </message>
     <message>
-        <location line="+1188"/>
+        <location line="+1198"/>
         <source>is typing...</source>
         <translation>tippt...</translation>
     </message>
@@ -11407,37 +11407,47 @@ p, li { white-space: pre-wrap; }
         <translation>Vertrauen</translation>
     </message>
     <message>
-        <location line="+31"/>
         <source> is athenticated (one way) by </source>
-        <translation> ist authentifiziert (ein Weg) von</translation>
+        <translation type="obsolete"> ist authentifiziert (ein Weg) von</translation>
     </message>
     <message>
-        <location line="+8"/>
         <source> athenticated himself</source>
-        <translation> authentifizierte sich selbst</translation>
+        <translation type="obsolete"> authentifizierte sich selbst</translation>
     </message>
     <message>
-        <location line="+5"/>
         <source> athenticated each others</source>
-        <translation> authentifizierten sich beide jeweils</translation>
+        <translation type="obsolete"> authentifizierten sich beide jeweils</translation>
     </message>
     <message>
-        <location line="+7"/>
         <source> is athenticated by </source>
-        <translation> ist authentifiziert von </translation>
+        <translation type="obsolete"> ist authentifiziert von </translation>
     </message>
     <message>
-        <location line="+3"/>
         <source> athenticated </source>
-        <translation> authentifiziert </translation>
+        <translation type="obsolete"> authentifiziert </translation>
     </message>
     <message>
-        <location line="-22"/>
+        <location line="+31"/>
+        <source> is authenticated (one way) by </source>
+        <translation> ist authentifiziert (ein Weg) von </translation>
+    </message>
+    <message>
+        <location line="+1"/>
         <source>Half</source>
         <translation>Halb</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+7"/>
+        <source> authenticated himself</source>
+        <translation> authentifizierte sich selbst</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source> authenticated each other</source>
+        <translation> authentifizierten sich einander</translation>
+    </message>
+    <message>
+        <location line="+1"/>
         <source>Full</source>
         <translation>Voll</translation>
     </message>
@@ -11446,6 +11456,16 @@ p, li { white-space: pre-wrap; }
         <location line="+3"/>
         <source> peers, including him(her)self.</source>
         <translation> Nachbarn, dich selber eingeschlossen.</translation>
+    </message>
+    <message>
+        <location line="-3"/>
+        <source> is authenticated by </source>
+        <translation> ist authentifiziert von </translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source> authenticated </source>
+        <translation> authentifiziert </translation>
     </message>
     <message>
         <location line="+36"/>

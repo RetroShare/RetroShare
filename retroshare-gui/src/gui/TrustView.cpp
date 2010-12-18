@@ -195,7 +195,7 @@ void TrustView::update()
 				if(i_ji == NULL)
 				{
 					i_ij->setBackgroundColor(Qt::yellow) ;
-					i_ij->setToolTip(trustTableTW->horizontalHeaderItem(i)->text() + tr(" is athenticated (one way) by " )+trustTableTW->verticalHeaderItem(j)->text()) ;
+					i_ij->setToolTip(trustTableTW->horizontalHeaderItem(i)->text() + tr(" is authenticated (one way) by " )+trustTableTW->verticalHeaderItem(j)->text()) ;
 					i_ij->setText(tr("Half")) ;
 				}
 				else
@@ -203,22 +203,22 @@ void TrustView::update()
 					if(i==j)
 					{
 						i_ij->setBackgroundColor(Qt::red) ;
-						i_ij->setToolTip(trustTableTW->horizontalHeaderItem(i)->text() + tr(" athenticated himself") ) ;
+						i_ij->setToolTip(trustTableTW->horizontalHeaderItem(i)->text() + tr(" authenticated himself") ) ;
 					}
 					else
 					{
 						i_ij->setBackgroundColor(Qt::green) ;
-						i_ij->setToolTip(trustTableTW->horizontalHeaderItem(i)->text() + " and " +trustTableTW->verticalHeaderItem(j)->text() + tr(" athenticated each others") ) ;
+						i_ij->setToolTip(trustTableTW->horizontalHeaderItem(i)->text() + " and " +trustTableTW->verticalHeaderItem(j)->text() + tr(" authenticated each other") ) ;
 						i_ij->setText(tr("Full")) ;
 					}
 				}
 			}
 		}
 	for(int i=0;i<trustTableTW->rowCount();++i)
-		trustTableTW->verticalHeaderItem(i)->setToolTip(trustTableTW->verticalHeaderItem(i)->text()+ tr(" is athenticated by ") + QString::number(ni[i]) + tr(" peers, including him(her)self.")) ;
+		trustTableTW->verticalHeaderItem(i)->setToolTip(trustTableTW->verticalHeaderItem(i)->text()+ tr(" is authenticated by ") + QString::number(ni[i]) + tr(" peers, including him(her)self.")) ;
 
 	for(int j=0;j<trustTableTW->columnCount();++j)
-		trustTableTW->horizontalHeaderItem(j)->setToolTip(trustTableTW->horizontalHeaderItem(j)->text()+ tr(" athenticated ") + QString::number(nj[j]) + tr(" peers, including him(her)self.")) ;
+		trustTableTW->horizontalHeaderItem(j)->setToolTip(trustTableTW->horizontalHeaderItem(j)->text()+ tr(" authenticated ") + QString::number(nj[j]) + tr(" peers, including him(her)self.")) ;
 
 }
 
