@@ -7348,12 +7348,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PeersDialog</name>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="+431"/>
+        <location filename="../gui/PeersDialog.cpp" line="+443"/>
         <source>Chat</source>
         <translation>Chat</translation>
     </message>
     <message>
-        <location line="+682"/>
+        <location line="+697"/>
         <source>Save Certificate</source>
         <translation>Zertifikat speichern</translation>
     </message>
@@ -7363,31 +7363,32 @@ p, li { white-space: pre-wrap; }
         <translation>Zertifikate (*.pqi)</translation>
     </message>
     <message>
+        <location filename="../gui/PeersDialog.ui" line="+734"/>
         <source>Status</source>
-        <translation type="obsolete">Status</translation>
+        <translation>Status</translation>
     </message>
     <message>
-        <location line="-669"/>
+        <location filename="../gui/PeersDialog.cpp" line="-684"/>
         <source>Connect To Friend</source>
         <translation>Verbinde zum Freund</translation>
     </message>
     <message>
-        <location line="-296"/>
+        <location line="-307"/>
         <source>Profile</source>
         <translation>Profil</translation>
     </message>
     <message>
-        <location line="+40"/>
+        <location line="+41"/>
         <source>Welcome to RetroShare&apos;s group chat.</source>
         <translation>Willkommen bei RetroShare&apos;s Gruppenchat.</translation>
     </message>
     <message>
-        <location line="+57"/>
+        <location line="+59"/>
         <source>me</source>
         <translation>ich</translation>
     </message>
     <message>
-        <location line="+154"/>
+        <location line="+162"/>
         <source>Group</source>
         <translation>Gruppe</translation>
     </message>
@@ -7467,12 +7468,13 @@ p, li { white-space: pre-wrap; }
         <translation>Aus allen Gruppen entfernen</translation>
     </message>
     <message>
-        <location line="+507"/>
+        <location line="+512"/>
+        <location line="+2"/>
         <source>Available</source>
         <translation>Verfügbar</translation>
     </message>
     <message>
-        <location line="+423"/>
+        <location line="+431"/>
         <location line="+2"/>
         <source>New group chat</source>
         <translation>Neuer Gruppenchat</translation>
@@ -7509,7 +7511,7 @@ p, li { white-space: pre-wrap; }
         <translation>Ordner können nicht für Drag&apos;n&apos;Drop genutzt werden. Nur Dateien werden akzeptiert.</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="+1173"/>
+        <location filename="../gui/PeersDialog.ui" line="+438"/>
         <source>Italic</source>
         <translation>Kursiv</translation>
     </message>
@@ -7519,7 +7521,7 @@ p, li { white-space: pre-wrap; }
         <translation>Unterstrichen</translation>
     </message>
     <message>
-        <location line="-591"/>
+        <location line="-590"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -7537,7 +7539,7 @@ p, li { white-space: pre-wrap; }
         <translation>Hinzufügen</translation>
     </message>
     <message>
-        <location line="+241"/>
+        <location line="+240"/>
         <source>Add or Change your Avatar</source>
         <translation>Wähle oder ändere dein Avatar Bild</translation>
     </message>
@@ -7594,7 +7596,7 @@ p, li { white-space: pre-wrap; }
         <translation>Statusnachricht ändern</translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+40"/>
         <location line="+3"/>
         <source>Sort by State</source>
         <translation>Sortiere nach Status</translation>
@@ -7602,7 +7604,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+8"/>
         <source>Hide State</source>
-        <translation type="unfinished">Status ausblenden</translation>
+        <translation>Status ausblenden</translation>
     </message>
     <message>
         <location line="+9"/>
@@ -7623,8 +7625,8 @@ p, li { white-space: pre-wrap; }
         <translation>Aufsteigend sortieren</translation>
     </message>
     <message>
-        <location line="-142"/>
-        <location filename="../gui/PeersDialog.cpp" line="-1479"/>
+        <location line="-150"/>
+        <location filename="../gui/PeersDialog.cpp" line="-1494"/>
         <source>Add Friend</source>
         <translation>Freund hinzufügen</translation>
     </message>
@@ -7679,12 +7681,12 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="-40"/>
-        <location line="+850"/>
+        <location line="+865"/>
         <source>RetroShare</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-811"/>
+        <location line="-826"/>
         <source>Message Group</source>
         <translation>Gruppe anschreiben</translation>
     </message>
@@ -7699,7 +7701,7 @@ p, li { white-space: pre-wrap; }
         <translation>Gruppe entfernen</translation>
     </message>
     <message>
-        <location line="+803"/>
+        <location line="+818"/>
         <source>Do you want to remove this Friend?</source>
         <translation>Willst du diesen Freund entfernen?</translation>
     </message>
@@ -7714,7 +7716,7 @@ p, li { white-space: pre-wrap; }
         <translation>Text Datei (*.txt );;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="-879"/>
+        <location filename="../gui/PeersDialog.ui" line="-878"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -7727,26 +7729,27 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Anzeige&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+887"/>
+        <location line="+886"/>
         <source>Hide Offline Friends</source>
         <translation>Verstecke offline Freunde</translation>
     </message>
     <message>
+        <location line="+8"/>
         <source>Hide Status Column</source>
-        <translation type="obsolete">Status Spalte ausblenden</translation>
+        <translation>Status Spalte ausblenden</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="-1803"/>
+        <location filename="../gui/PeersDialog.cpp" line="-1829"/>
         <source>Friends Storm</source>
         <translation>Aktivitäten</translation>
     </message>
     <message>
-        <location line="+1162"/>
+        <location line="+1188"/>
         <source>is typing...</source>
         <translation>tippt...</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="-19"/>
+        <location filename="../gui/PeersDialog.ui" line="-27"/>
         <source>Browse Message History</source>
         <translation>Nachrichtenverlauf anzeigen</translation>
     </message>
@@ -7756,18 +7759,18 @@ p, li { white-space: pre-wrap; }
         <translation>Nachrichtenverlauf</translation>
     </message>
     <message>
-        <location line="-747"/>
+        <location line="-752"/>
         <source>Friends</source>
         <translation>Freunde</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="-866"/>
+        <location filename="../gui/PeersDialog.cpp" line="-881"/>
         <location line="+80"/>
         <source>Paste Friend Link</source>
         <translation>RetroShare Link einfügen</translation>
     </message>
     <message>
-        <location line="+358"/>
+        <location line="+359"/>
         <source>location</source>
         <translation>Standort</translation>
     </message>

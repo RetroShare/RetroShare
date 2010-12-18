@@ -718,21 +718,20 @@ background: white;}</string>
          <property name="expandsOnDoubleClick">
           <bool>false</bool>
          </property>
-         <attribute name="headerVisible">
-          <bool>false</bool>
-         </attribute>
          <attribute name="headerDefaultSectionSize">
           <number>200</number>
          </attribute>
          <attribute name="headerDefaultSectionSize">
           <number>200</number>
-         </attribute>
-         <attribute name="headerVisible">
-          <bool>false</bool>
          </attribute>
          <column>
           <property name="text">
            <string>Friends</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Status</string>
           </property>
          </column>
         </widget>
@@ -1496,6 +1495,14 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Hide Offline Friends</string>
+   </property>
+  </action>
+  <action name="action_Hide_Status_Column">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Hide Status Column</string>
    </property>
   </action>
   <action name="action_Sort_by_State">

@@ -94,15 +94,15 @@
 #define IMAGE_NEWSFEED           ""
 #define IMAGE_NEWSFEED_NEW       ":/images/message-state-new.png"
 
-#define COLUMN_COUNT    1
+#define COLUMN_COUNT    2
 #define COLUMN_NAME     0
+#define COLUMN_STATE    1
 
 #define COLUMN_DATA     0 // column for storing the userdata id
 
-#define ROLE_SORT_NAME   Qt::UserRole
-#define ROLE_SORT_STATUS Qt::UserRole + 1
-#define ROLE_ID          Qt::UserRole + 2
-#define ROLE_STANDARD    Qt::UserRole + 3
+#define ROLE_SORT        Qt::UserRole
+#define ROLE_ID          Qt::UserRole + 1
+#define ROLE_STANDARD    Qt::UserRole + 2
 
 #define TYPE_GPG   0
 #define TYPE_SSL   1
@@ -124,11 +124,13 @@ PeersDialog::PeersDialog(QWidget *parent)
     groupsHasChanged = false;
 
     m_compareRole = new RSTreeWidgetItemCompareRole;
-    m_compareRole->setRole(COLUMN_NAME, ROLE_SORT_NAME);
+    m_compareRole->setRole(COLUMN_NAME, ROLE_SORT);
+    m_compareRole->setRole(COLUMN_STATE, ROLE_SORT);
 
     connect( ui.peertreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( peertreeWidgetCostumPopupMenu( QPoint ) ) );
     connect( ui.peertreeWidget, SIGNAL( itemDoubleClicked ( QTreeWidgetItem *, int)), this, SLOT(chatfriend(QTreeWidgetItem *)));
-    
+    connect( ui.peertreeWidget->header(), SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(peerSortIndicatorChanged(int,Qt::SortOrder)));
+
 	connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(updateOwnStatus(QString,int)));
 
     connect( ui.avatartoolButton, SIGNAL(clicked()), SLOT(getAvatar()));
@@ -139,7 +141,8 @@ PeersDialog::PeersDialog(QWidget *parent)
 
     connect(ui.actionAdd_Friend, SIGNAL(triggered()), this, SLOT(addFriend()));
     connect(ui.action_Hide_Offline_Friends, SIGNAL(triggered()), this, SLOT(insertPeers()));
-    connect(ui.action_Sort_by_State, SIGNAL(triggered()), this, SLOT(sortByState()));
+    connect(ui.action_Hide_Status_Column, SIGNAL(triggered()), this, SLOT(setStateColumn()));
+    connect(ui.action_Sort_by_State, SIGNAL(triggered()), this, SLOT(setStateColumn()));
     connect(ui.actionSort_Peers_Ascending_Order, SIGNAL(triggered()), this, SLOT(sortPeersAscendingOrder()));
     connect(ui.actionSort_Peers_Descending_Order, SIGNAL(triggered()), this, SLOT(sortPeersDescendingOrder()));
 
@@ -161,6 +164,9 @@ PeersDialog::PeersDialog(QWidget *parent)
     // set header text aligment
     QTreeWidgetItem * headerItem = ui.peertreeWidget->headerItem();
     headerItem->setTextAlignment(COLUMN_NAME, Qt::AlignHCenter | Qt::AlignVCenter);
+    headerItem->setTextAlignment(COLUMN_STATE, Qt::AlignLeft | Qt::AlignVCenter);
+
+    wasStatusColumnHidden = ui.peertreeWidget->isColumnHidden(COLUMN_STATE);
 
     connect(ui.Sendbtn, SIGNAL(clicked()), this, SLOT(sendMsg()));
     connect(ui.emoticonBtn, SIGNAL(clicked()), this, SLOT(smileyWidgetgroupchat()));
@@ -229,6 +235,8 @@ PeersDialog::PeersDialog(QWidget *parent)
     // load settings
     processSettings(true);
 
+    ui.peertreeWidget->header()->setStretchLastSection(true);
+
     // workaround for Qt bug, should be solved in next Qt release 4.7.0
     // http://bugreports.qt.nokia.com/browse/QTBUG-8270
     QShortcut *Shortcut = new QShortcut(QKeySequence (Qt::Key_Delete), ui.peertreeWidget, 0, 0, Qt::WidgetShortcut);
@@ -269,13 +277,16 @@ void PeersDialog::processSettings(bool bLoad)
 
         // state of peer tree
         header->restoreState(Settings->value("PeerTree").toByteArray());
+        wasStatusColumnHidden = ui.peertreeWidget->isColumnHidden(COLUMN_STATE);
 
         // state of hideUnconnected
         ui.action_Hide_Offline_Friends->setChecked(Settings->value("hideUnconnected", false).toBool());
         
         // state of the status
-        ui.action_Sort_by_State->setChecked(Settings->value("sortByState", false).toBool());
         ui.action_Hide_State->setChecked(Settings->value("hideState", false).toBool());
+
+        // state of hideStatusColumn
+        ui.action_Hide_Status_Column->setChecked(Settings->value("hideStatusColumn", false).toBool());
 
         // state of splitter
         ui.splitter->restoreState(Settings->value("Splitter").toByteArray());
@@ -290,7 +301,7 @@ void PeersDialog::processSettings(bool bLoad)
         }
         Settings->endArray();
 
-        sortByState();
+        setStateColumn();
     } else {
         // save settings
 
@@ -301,8 +312,10 @@ void PeersDialog::processSettings(bool bLoad)
         Settings->setValue("hideUnconnected", ui.action_Hide_Offline_Friends->isChecked());
         
         // state of the status
-        Settings->setValue("sortByState", ui.action_Sort_by_State->isChecked());
         Settings->setValue("hideState", ui.action_Hide_State->isChecked());
+
+        // state of hideStatusColumn
+        Settings->setValue("hideStatusColumn", ui.action_Hide_Status_Column->isChecked());
 
         // state of splitter
         Settings->setValue("Splitter", ui.splitter->saveState());
@@ -575,7 +588,8 @@ void  PeersDialog::insertPeers()
     }
 
     bool hideUnconnected = ui.action_Hide_Offline_Friends->isChecked();
-    bool hideState = ui.action_Hide_State->isChecked();
+    bool useStatusColumn = !ui.action_Hide_Status_Column->isChecked();
+    bool showState = !ui.action_Hide_State->isChecked();
 
     // get ids of existing private chat messages
     std::list<std::string> privateChatIds;
@@ -886,14 +900,18 @@ void  PeersDialog::insertPeers()
                 if (customStateString.isEmpty() == false) {
                     sText += " - " + customStateString;
                 }
-                if (hideState == false && sslDetail.autoconnect.empty() == false) {
-                    sText += " [" + QString::fromStdString(sslDetail.autoconnect) + "]";
+                if (sslDetail.autoconnect.empty() == false) {
+                    if (useStatusColumn) {
+                        sslItem->setText(COLUMN_STATE, QString::fromStdString(sslDetail.autoconnect));
+                    } else if (showState) {
+                        sText += " [" + QString::fromStdString(sslDetail.autoconnect) + "]";
+                    }
                 }
                 sslItem->setText( COLUMN_NAME, sText);
                 sslItem->setToolTip( COLUMN_NAME, sText);
 
                 // sort location
-                sslItem->setData(COLUMN_NAME, ROLE_SORT_STATUS, sText);
+                sslItem->setData(COLUMN_STATE, ROLE_SORT, sText);
 
                 /* change color and icon */
                 QIcon sslIcon;
@@ -1011,19 +1029,26 @@ void  PeersDialog::insertPeers()
 
                 gpgIcon = QIcon(StatusDefs::imageUser(bestRSState));
 
-                gpgItem->setToolTip(COLUMN_NAME, StatusDefs::tooltip(bestRSState));
-                gpgItem->setData(COLUMN_NAME, ROLE_SORT_STATUS, BuildStateSortString(true, gpgItemText, bestPeerState));
-                if (hideState == false) {
+                if (useStatusColumn) {
+                    gpgItem->setText(COLUMN_STATE, StatusDefs::name(bestRSState));
+                } else if (showState) {
                     gpgItemText += " [" + StatusDefs::name(bestRSState) + "]";
                 }
+
+                gpgItem->setToolTip(COLUMN_NAME, StatusDefs::tooltip(bestRSState));
+                gpgItem->setData(COLUMN_NAME, ROLE_SORT, BuildStateSortString(true, gpgItemText, bestPeerState));
+                gpgItem->setData(COLUMN_STATE, ROLE_SORT, BuildStateSortString(true, gpgItem->text(COLUMN_NAME), bestPeerState));
             } else if (gpg_online) {
+                if (useStatusColumn) {
+                    gpgItem->setText(COLUMN_STATE, tr("Available"));
+                } else if (showState) {
+                    gpgItemText += " [" + tr("Available") + "]";
+                }
+
                 onlineCount++;
                 gpgItem->setHidden(hideUnconnected);
                 gpgIcon = QIcon(IMAGE_AVAILABLE);
-                gpgItem->setData(COLUMN_NAME, ROLE_SORT_STATUS, BuildStateSortString(true, gpgItemText, PEER_STATE_AVAILABLE));
-                if (hideState == false) {
-                    gpgItemText += " [" + tr("Available") + "]";
-                }
+                gpgItem->setData(COLUMN_NAME, ROLE_SORT, BuildStateSortString(true, gpgItemText, PEER_STATE_AVAILABLE));
 
                 QFont font;
                 font.setBold(true);
@@ -1032,12 +1057,15 @@ void  PeersDialog::insertPeers()
                     gpgItem->setFont(i,font);
                 }
             } else {
+                if (useStatusColumn) {
+                    gpgItem->setText(COLUMN_STATE, StatusDefs::name(RS_STATUS_OFFLINE));
+                } else if (showState) {
+                    gpgItemText += " [" + StatusDefs::name(RS_STATUS_OFFLINE) + "]";
+                }
+
                 gpgItem->setHidden(hideUnconnected);
                 gpgIcon = QIcon(StatusDefs::imageUser(RS_STATUS_OFFLINE));
-                gpgItem->setData(COLUMN_NAME, ROLE_SORT_STATUS, BuildStateSortString(true, gpgItemText, PEER_STATE_OFFLINE));
-                if (hideState == false) {
-                   gpgItemText += " [" + StatusDefs::name(RS_STATUS_OFFLINE) + "]";
-                }
+                gpgItem->setData(COLUMN_NAME, ROLE_SORT, BuildStateSortString(true, gpgItemText, PEER_STATE_OFFLINE));
 
                 QColor textColor = StatusDefs::textColor(RS_STATUS_OFFLINE);
                 QFont font = StatusDefs::font(RS_STATUS_OFFLINE);
@@ -1052,7 +1080,7 @@ void  PeersDialog::insertPeers()
             }
 
             gpgItem->setText(COLUMN_NAME, gpgItemText);
-            gpgItem->setData(COLUMN_NAME, ROLE_SORT_NAME, "2 " + gpgItemText);
+            gpgItem->setData(COLUMN_NAME, ROLE_SORT, "2 " + gpgItemText);
             gpgItem->setIcon(COLUMN_NAME, gpgIcon);
         }
 
@@ -1064,7 +1092,7 @@ void  PeersDialog::insertPeers()
                 QString groupName = GroupDefs::name(*groupInfo);
                 groupItem->setText(COLUMN_NAME, QString("%1 (%2/%3)").arg(groupName).arg(onlineCount).arg(availableCount));
                 // show first the standard groups, than the user groups
-                groupItem->setData(COLUMN_NAME, ROLE_SORT_NAME, ((groupInfo->flag & RS_GROUP_FLAG_STANDARD) ? "0 " : "1 ") + groupName);
+                groupItem->setData(COLUMN_NAME, ROLE_SORT, ((groupInfo->flag & RS_GROUP_FLAG_STANDARD) ? "0 " : "1 ") + groupName);
             }
         }
 
@@ -1990,28 +2018,49 @@ void PeersDialog::displayMenu()
     displaymenu->addAction(ui.actionSort_Peers_Ascending_Order);
     displaymenu->addAction(ui.action_Hide_Offline_Friends);
     displaymenu->addAction(ui.action_Sort_by_State);
+    displaymenu->addAction(ui.action_Hide_Status_Column);
     displaymenu->addAction(ui.action_Hide_State);
 
     ui.displayButton->setMenu(displaymenu);
 }
 
-void PeersDialog::sortByState()
+void PeersDialog::setStateColumn()
 {
-    if(ui.action_Sort_by_State->isChecked()) {
-        m_compareRole->setRole(COLUMN_NAME, ROLE_SORT_STATUS);
+    if (ui.action_Hide_Status_Column->isChecked()) {
+        ui.peertreeWidget->setColumnHidden(COLUMN_STATE, true);
+        ui.peertreeWidget->setHeaderHidden(true);
+        ui.action_Hide_State->setEnabled(true);
+        wasStatusColumnHidden = true;
     } else {
-        m_compareRole->setRole(COLUMN_NAME, ROLE_SORT_NAME);
+        ui.peertreeWidget->setColumnHidden(COLUMN_STATE, false);
+        ui.peertreeWidget->setHeaderHidden(false);
+        ui.action_Hide_State->setEnabled(false);
+        if (wasStatusColumnHidden) {
+            ui.peertreeWidget->header()->resizeSection(COLUMN_NAME, ui.peertreeWidget->header()->sectionSize(COLUMN_NAME) - ui.peertreeWidget->header()->sectionSize(COLUMN_STATE));
+        }
+        wasStatusColumnHidden = false;
+    }
+
+    if(ui.action_Sort_by_State->isChecked()) {
+        ui.peertreeWidget->sortByColumn(COLUMN_STATE);
+    } else {
+        ui.peertreeWidget->sortByColumn(COLUMN_NAME);
     }
 }
 
 void PeersDialog::sortPeersAscendingOrder()
 {
-    ui.peertreeWidget->sortByColumn(COLUMN_NAME, Qt::AscendingOrder);
+    ui.peertreeWidget->sortByColumn(ui.peertreeWidget->sortColumn(), Qt::AscendingOrder);
 }
 
 void PeersDialog::sortPeersDescendingOrder()
 {
-    ui.peertreeWidget->sortByColumn(COLUMN_NAME, Qt::DescendingOrder);
+    ui.peertreeWidget->sortByColumn(ui.peertreeWidget->sortColumn(), Qt::DescendingOrder);
+}
+
+void PeersDialog::peerSortIndicatorChanged(int column, Qt::SortOrder)
+{
+    ui.action_Sort_by_State->setChecked(column == COLUMN_STATE);
 }
 
 void PeersDialog::on_actionMessageHistory_triggered()

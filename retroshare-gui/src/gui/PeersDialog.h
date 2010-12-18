@@ -161,9 +161,10 @@ private slots:
 
     void setCurrentFileName(const QString &fileName);
 
-    void sortByState();
+    void setStateColumn();
     void sortPeersAscendingOrder();
     void sortPeersDescendingOrder();
+    void peerSortIndicatorChanged(int,Qt::SortOrder);
 
     void newsFeedChanged(int count);
 
@@ -210,6 +211,7 @@ private:
     int newsFeedTabIndex;
     QColor newsFeedTabColor;
     QString newsFeedText;
+    bool wasStatusColumnHidden;
 
     /** Qt Designer generated object */
     Ui::PeersDialog ui;
