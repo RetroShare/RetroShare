@@ -41,7 +41,7 @@
 class pqistore: public PQInterface
 {
 public:
-	pqistore(RsSerialiser *rss, std::string srcId, BinInterface *bio_in, int bio_flagsin);
+	pqistore(RsSerialiser *rss, const std::string &srcId, BinInterface *bio_in, int bio_flagsin);
 virtual ~pqistore();
 
 // PQInterface

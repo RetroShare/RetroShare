@@ -95,6 +95,8 @@ win32 {
     #LIBS += -L"D/Qt/2009.03/qt/plugins/imageformats"
     #QTPLUGIN += qjpeg
 
+    PRE_TARGETDEPS += ../../libretroshare/src/lib/libretroshare.a
+
     LIBS += ../../libretroshare/src/lib/libretroshare.a
     LIBS += -L"../../../../lib"
     LIBS += -lssl -lcrypto -lgpgme -lpthreadGC2d -lminiupnpc -lz
@@ -139,10 +141,7 @@ macx {
 
 bitdht {
 	LIBS += ../../libbitdht/src/lib/libbitdht.a
-	linux-* {
-		# maybe it is also useful for something else than Linux?
-		PRE_TARGETDEPS *= ../../libbitdht/src/lib/libbitdht.a
-	}
+	PRE_TARGETDEPS *= ../../libbitdht/src/lib/libbitdht.a
 }
 
 win32 {

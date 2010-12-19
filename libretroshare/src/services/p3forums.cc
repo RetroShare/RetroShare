@@ -544,7 +544,7 @@ bool p3Forums::getMessageCount(const std::string fId, unsigned int &newCount, un
 
 void p3Forums::locked_notifyGroupChanged(GroupInfo  &grp, uint32_t flags)
 {
-	std::string grpId = grp.grpId;
+	const std::string &grpId = grp.grpId;
 	std::string msgId;
 	std::string nullId;
 

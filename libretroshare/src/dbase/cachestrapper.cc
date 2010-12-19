@@ -826,6 +826,10 @@ bool CacheStrapper::loadList(std::list<RsItem *>& load)
 	std::list<CacheData> remoteCaches;
 	std::string ownId = mConnMgr->getOwnId();
 
+	peerConnectState ownState;
+	mConnMgr->getOwnNetStatus(ownState);
+	std::string ownName = ownState.name+" ("+ownState.location+")";
+
 	std::map<std::string, std::list<std::string> > saveFiles;
 	std::map<std::string, std::list<std::string> >::iterator sit;
 
@@ -844,11 +848,9 @@ bool CacheStrapper::loadList(std::list<RsItem *>& load)
 
 			cd.pid = rscc->pid;
 
-			if(cd.pid == mConnMgr->getOwnId())
+			if(cd.pid == ownId)
 			{
-				peerConnectState pca;
-				mConnMgr->getOwnNetStatus(pca);
-				cd.pname = pca.name+" ("+pca.location+")";
+				cd.pname = ownName;
 			}
 			else
 			{

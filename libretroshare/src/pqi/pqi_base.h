@@ -111,7 +111,7 @@ class NetInterface;
 class PQInterface: public RateInterface
 {
 public:
-	PQInterface(std::string id) :peerId(id) { return; }
+	PQInterface(const std::string &id) :peerId(id) { return; }
 virtual	~PQInterface() { return; }
 
 /*!

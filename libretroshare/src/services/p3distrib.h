@@ -272,8 +272,8 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		int  	loadAnyCache(const CacheData &data, bool local);
 
 			/* load cache files */
-		void	loadFileGroups(std::string filename, std::string src, bool local);
-		void	loadFileMsgs(std::string filename, uint16_t cacheSubId, std::string src, uint32_t ts, bool local);
+		void	loadFileGroups(const std::string &filename, const std::string &src, bool local);
+		void	loadFileMsgs(const std::string &filename, uint16_t cacheSubId, const std::string &src, uint32_t ts, bool local);
 		bool backUpKeys(const std::list<RsDistribGrpKey* > &keysToBackUp, std::string grpId);
 		void locked_sharePubKey();
 
@@ -294,7 +294,7 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		 * @param src src of msg (peer id)
 		 * @param local is this a local cache msg (your msg)
 		 */
-		void	loadMsg(RsDistribSignedMsg *msg, std::string src, bool local);
+		void	loadMsg(RsDistribSignedMsg *msg, const std::string &src, bool local);
 
 		/*!
 		 * adds newgrp to grp set, GroupInfo type created and stored
@@ -344,7 +344,7 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		 * @param subscribe true to subscribe and vice versa
 		 * @return
 		 */
-		bool	subscribeToGroup(std::string grpId, bool subscribe);
+		bool	subscribeToGroup(const std::string &grpId, bool subscribe);
 
 
 
@@ -562,7 +562,7 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		 * @param bioflags read write permision for bio
 		 * @return pointer to pqistore instance
 		 */
-		virtual pqistore *createStore(BinInterface *bio, std::string src, uint32_t bioflags);
+		virtual pqistore *createStore(BinInterface *bio, const std::string &src, uint32_t bioflags);
 
 		/*!
 		 * checks to see if admin signature is valid

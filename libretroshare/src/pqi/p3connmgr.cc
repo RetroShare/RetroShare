@@ -1498,7 +1498,7 @@ bool p3ConnectMgr::getOwnNetStatus(peerConnectState &state)
 	return true;
 }
 
-bool p3ConnectMgr::isFriend(std::string id)
+bool p3ConnectMgr::isFriend(const std::string &id)
 {
 #ifdef CONN_DEBUG
                 std::cerr << "p3ConnectMgr::isFriend(" << id << ") called" << std::endl;
@@ -1511,7 +1511,7 @@ bool p3ConnectMgr::isFriend(std::string id)
         return ret;
 }
 
-bool p3ConnectMgr::isOnline(std::string id)
+bool p3ConnectMgr::isOnline(const std::string &id)
 {
 	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
@@ -1534,12 +1534,12 @@ bool p3ConnectMgr::isOnline(std::string id)
 	return false;
 }
 
-bool p3ConnectMgr::getFriendNetStatus(std::string id, peerConnectState &state)
+bool p3ConnectMgr::getFriendNetStatus(const std::string &id, peerConnectState &state)
 {
 	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
 	/* check for existing */
-        std::map<std::string, peerConnectState>::iterator it;
+	std::map<std::string, peerConnectState>::iterator it;
 	it = mFriendList.find(id);
 	if (it == mFriendList.end())
 	{
@@ -1551,12 +1551,12 @@ bool p3ConnectMgr::getFriendNetStatus(std::string id, peerConnectState &state)
 }
 
 
-bool p3ConnectMgr::getOthersNetStatus(std::string id, peerConnectState &state)
+bool p3ConnectMgr::getOthersNetStatus(const std::string &id, peerConnectState &state)
 {
 	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
 	/* check for existing */
-        std::map<std::string, peerConnectState>::iterator it;
+	std::map<std::string, peerConnectState>::iterator it;
 	it = mOthersList.find(id);
 	if (it == mOthersList.end())
 	{
@@ -1573,7 +1573,7 @@ void p3ConnectMgr::getOnlineList(std::list<std::string> &peers)
 	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
 	/* check for existing */
-        std::map<std::string, peerConnectState>::iterator it;
+	std::map<std::string, peerConnectState>::iterator it;
 	for(it = mFriendList.begin(); it != mFriendList.end(); it++)
 	{
 		if (it->second.state & RS_PEER_S_CONNECTED)
@@ -1681,14 +1681,14 @@ bool p3ConnectMgr::getPeerCount (unsigned int *pnFriendCount, unsigned int *pnOn
 }
 
 
-bool p3ConnectMgr::connectAttempt(std::string id, struct sockaddr_in &addr, 
+bool p3ConnectMgr::connectAttempt(const std::string &id, struct sockaddr_in &addr,
                                 uint32_t &delay, uint32_t &period, uint32_t &type)
 
 {
 	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
 	/* check for existing */
-        std::map<std::string, peerConnectState>::iterator it;
+	std::map<std::string, peerConnectState>::iterator it;
 	it = mFriendList.find(id);
 	if (it == mFriendList.end())
 	{
@@ -1751,7 +1751,7 @@ bool p3ConnectMgr::connectAttempt(std::string id, struct sockaddr_in &addr,
  *
  */
 
-bool p3ConnectMgr::connectResult(std::string id, bool success, uint32_t flags, struct sockaddr_in remote_peer_address)
+bool p3ConnectMgr::connectResult(const std::string &id, bool success, uint32_t flags, struct sockaddr_in remote_peer_address)
 {
 	bool should_netAssistFriend_false = false ;
 	bool should_netAssistFriend_true  = false ;
@@ -2174,7 +2174,7 @@ void    p3ConnectMgr::peerConnectRequest(std::string id, struct sockaddr_in radd
 /*******************************************************************/
 /*******************************************************************/
 
-bool p3ConnectMgr::addFriend(std::string id, std::string gpg_id, uint32_t netMode, uint32_t visState, time_t lastContact)
+bool p3ConnectMgr::addFriend(const std::string &id, const std::string &gpg_id, uint32_t netMode, uint32_t visState, time_t lastContact)
 {
 	bool should_netAssistFriend_true = false ;
 	bool should_netAssistFriend_false = false ;
@@ -2300,7 +2300,7 @@ bool p3ConnectMgr::addFriend(std::string id, std::string gpg_id, uint32_t netMod
 }
 
 
-bool p3ConnectMgr::removeFriend(std::string id)
+bool p3ConnectMgr::removeFriend(const std::string &id)
 {
 
 #ifdef CONN_DEBUG
@@ -2432,7 +2432,7 @@ bool p3ConnectMgr::addNeighbour(std::string id)
 /*******************************************************************/
 /*******************************************************************/
        /*************** External Control ****************/
-bool   p3ConnectMgr::retryConnect(std::string id)
+bool   p3ConnectMgr::retryConnect(const std::string &id)
 {
 	/* push all available addresses onto the connect addr stack */
 #ifdef CONN_DEBUG
@@ -2450,7 +2450,7 @@ bool   p3ConnectMgr::retryConnect(std::string id)
 
 
 
-bool   p3ConnectMgr::retryConnectUDP(std::string id, struct sockaddr_in &rUdpAddr)
+bool   p3ConnectMgr::retryConnectUDP(const std::string &id, struct sockaddr_in &rUdpAddr)
 {
 	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
@@ -2521,7 +2521,7 @@ bool   p3ConnectMgr::retryConnectUDP(std::string id, struct sockaddr_in &rUdpAdd
 
 
 
-bool   p3ConnectMgr::retryConnectTCP(std::string id)
+bool   p3ConnectMgr::retryConnectTCP(const std::string &id)
 {
 	RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
@@ -2918,7 +2918,7 @@ bool  p3ConnectMgr::locked_ConnectAttempt_Complete(peerConnectState *peer)
  **********************************************************************/
 
 
-bool    p3ConnectMgr::setLocalAddress(std::string id, struct sockaddr_in addr)
+bool    p3ConnectMgr::setLocalAddress(const std::string &id, struct sockaddr_in addr)
 {
 	if (id == AuthSSL::getAuthSSL()->OwnId())
 	{
@@ -2975,7 +2975,7 @@ bool    p3ConnectMgr::setLocalAddress(std::string id, struct sockaddr_in addr)
 	return true;
 }
 
-bool    p3ConnectMgr::setExtAddress(std::string id, struct sockaddr_in addr)
+bool    p3ConnectMgr::setExtAddress(const std::string &id, struct sockaddr_in addr)
 {
 	if (id == AuthSSL::getAuthSSL()->OwnId())
 	{
@@ -3015,7 +3015,7 @@ bool    p3ConnectMgr::setExtAddress(std::string id, struct sockaddr_in addr)
 }
 
 
-bool p3ConnectMgr::setDynDNS(std::string id, std::string dyndns)
+bool p3ConnectMgr::setDynDNS(const std::string &id, const std::string &dyndns)
 {
     if (id == AuthSSL::getAuthSSL()->OwnId())
     {
@@ -3088,7 +3088,7 @@ bool    p3ConnectMgr::updateAddressList(const std::string& id, const pqiIpAddrSe
 	return true;
 }
 
-bool    p3ConnectMgr::setNetworkMode(std::string id, uint32_t netMode)
+bool    p3ConnectMgr::setNetworkMode(const std::string &id, uint32_t netMode)
 {
 	if (id == AuthSSL::getAuthSSL()->OwnId())
 	{
@@ -3129,7 +3129,7 @@ bool    p3ConnectMgr::setNetworkMode(std::string id, uint32_t netMode)
 	return false;
 }
 
-bool    p3ConnectMgr::setLocation(std::string id, std::string location)
+bool    p3ConnectMgr::setLocation(const std::string &id, const std::string &location)
 {
         RsStackMutex stack(connMtx); /****** STACK LOCK MUTEX *******/
 
@@ -3152,7 +3152,7 @@ bool    p3ConnectMgr::setLocation(std::string id, std::string location)
         }
 }
 
-bool    p3ConnectMgr::setVisState(std::string id, uint32_t visState)
+bool    p3ConnectMgr::setVisState(const std::string &id, uint32_t visState)
 {
 	if (id == AuthSSL::getAuthSSL()->OwnId())
 	{

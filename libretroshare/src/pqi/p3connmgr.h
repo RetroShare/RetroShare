@@ -229,7 +229,7 @@ bool	checkNetAddress(); /* check our address is sensible */
 	/*************** External Control ****************/
 bool	shutdown(); /* blocking shutdown call */
 
-bool	retryConnect(std::string id);
+bool	retryConnect(const std::string &id);
 
 bool    getUPnPState();
 bool	getUPnPEnabled();
@@ -254,22 +254,22 @@ bool 	getExtFinderAddress(struct sockaddr_in &addr);
 void 	getNetStatus(pqiNetStatus &status);
 
 void 	setOwnNetConfig(uint32_t netMode, uint32_t visState);
-bool 	setLocalAddress(std::string id, struct sockaddr_in addr);
-bool 	setExtAddress(std::string id, struct sockaddr_in addr);
-bool    setDynDNS(std::string id, std::string dyndns);
+bool 	setLocalAddress(const std::string &id, struct sockaddr_in addr);
+bool 	setExtAddress(const std::string &id, struct sockaddr_in addr);
+bool    setDynDNS(const std::string &id, const std::string &dyndns);
 bool    updateAddressList(const std::string& id, const pqiIpAddrSet &addrs);
 
-bool 	setNetworkMode(std::string id, uint32_t netMode);
-bool 	setVisState(std::string id, uint32_t visState);
+bool 	setNetworkMode(const std::string &id, uint32_t netMode);
+bool 	setVisState(const std::string &id, uint32_t visState);
 
-bool    setLocation(std::string pid, std::string location);//location is shown in the gui to differentiate ssl certs
+bool    setLocation(const std::string &pid, const std::string &location);//location is shown in the gui to differentiate ssl certs
 
 	/* add/remove friends */
-bool 	addFriend(std::string ssl_id, std::string gpg_id, uint32_t netMode = RS_NET_MODE_UDP,
+bool 	addFriend(const std::string &ssl_id, const std::string &gpg_id, uint32_t netMode = RS_NET_MODE_UDP,
 	   uint32_t visState = RS_VIS_STATE_STD , time_t lastContact = 0);
 
-bool	removeFriend(std::string ssl_id);
-bool	addNeighbour(std::string);
+bool	removeFriend(const std::string &ssl_id);
+bool	addNeighbour(const std::string&);
 
 	/*************** External Control ****************/
 
@@ -277,10 +277,10 @@ bool	addNeighbour(std::string);
 const std::string getOwnId();
 bool	getOwnNetStatus(peerConnectState &state);
 
-bool	isFriend(std::string ssl_id);
-bool	isOnline(std::string ssl_id);
-bool	getFriendNetStatus(std::string id, peerConnectState &state);
-bool	getOthersNetStatus(std::string id, peerConnectState &state);
+bool	isFriend(const std::string &ssl_id);
+bool	isOnline(const std::string &ssl_id);
+bool	getFriendNetStatus(const std::string &id, peerConnectState &state);
+bool	getOthersNetStatus(const std::string &id, peerConnectState &state);
 
 void	getOnlineList(std::list<std::string> &ssl_peers);
 void	getFriendList(std::list<std::string> &ssl_peers);
@@ -300,9 +300,9 @@ virtual void    peerConnectRequest(std::string id,
 //virtual void    stunStatus(std::string id, struct sockaddr_in raddr, uint32_t type, uint32_t flags);
 
 	/****************** Connections *******************/
-bool 	connectAttempt(std::string id, struct sockaddr_in &addr, 
+bool 	connectAttempt(const std::string &id, struct sockaddr_in &addr,
 				uint32_t &delay, uint32_t &period, uint32_t &type);
-bool 	connectResult(std::string id, bool success, uint32_t flags, struct sockaddr_in remote_peer_address);
+bool 	connectResult(const std::string &id, bool success, uint32_t flags, struct sockaddr_in remote_peer_address);
 
 	/******************** Groups **********************/
 bool    addGroup(RsGroupInfo &groupInfo);
@@ -368,10 +368,10 @@ void 	networkConsistencyCheck();
 void 	tickMonitors();
 
 	/* connect attempts UDP */
-bool    retryConnectUDP(std::string id, struct sockaddr_in &rUdpAddr);
+bool    retryConnectUDP(const std::string &id, struct sockaddr_in &rUdpAddr);
 
 	/* connect attempts TCP */
-bool	retryConnectTCP(std::string id);
+bool	retryConnectTCP(const std::string &id);
 
 void 	locked_ConnectAttempt_CurrentAddresses(peerConnectState *peer);
 void 	locked_ConnectAttempt_HistoricalAddresses(peerConnectState *peer);

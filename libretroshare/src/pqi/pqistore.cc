@@ -50,7 +50,7 @@
 
 const int pqistorezone = 9511;
 
-pqistore::pqistore(RsSerialiser *rss, std::string srcId, BinInterface *bio_in, int bio_flags_in)
+pqistore::pqistore(RsSerialiser *rss, const std::string &srcId, BinInterface *bio_in, int bio_flags_in)
 	:PQInterface(""), rsSerialiser(rss), bio(bio_in), bio_flags(bio_flags_in),
         nextPkt(NULL), mSrcId(srcId)
 {

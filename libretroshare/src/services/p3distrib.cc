@@ -233,7 +233,7 @@ bool 	p3GroupDistrib::loadLocalCache(const CacheData &data)
 /* No need for special treatment for 'own' groups.
  * configuration should be loaded before cache files.
  */
-void	p3GroupDistrib::loadFileGroups(std::string filename, std::string src, bool local)
+void	p3GroupDistrib::loadFileGroups(const std::string &filename, const std::string &src, bool local)
 {
 #ifdef DISTRIB_DEBUG
 	std::cerr << "p3GroupDistrib::loadFileGroups()";
@@ -292,7 +292,7 @@ void	p3GroupDistrib::loadFileGroups(std::string filename, std::string src, bool 
 }
 
 
-void	p3GroupDistrib::loadFileMsgs(std::string filename, uint16_t cacheSubId, std::string src, uint32_t ts, bool local)
+void	p3GroupDistrib::loadFileMsgs(const std::string &filename, uint16_t cacheSubId, const std::string &src, uint32_t ts, bool local)
 {
 
 #ifdef DISTRIB_DEBUG
@@ -384,8 +384,8 @@ void	p3GroupDistrib::loadFileMsgs(std::string filename, uint16_t cacheSubId, std
 void	p3GroupDistrib::loadGroup(RsDistribGrp *newGrp)
 {
 	/* load groupInfo */
-	std::string gid = newGrp -> grpId;
-	std::string pid = newGrp -> PeerId();
+	const std::string &gid = newGrp -> grpId;
+	const std::string &pid = newGrp -> PeerId();
 
 #ifdef DISTRIB_DEBUG
 	std::cerr << "p3GroupDistrib::loadGroup()" << std::endl;
@@ -495,10 +495,10 @@ void	p3GroupDistrib::loadGroup(RsDistribGrp *newGrp)
 void	p3GroupDistrib::loadGroupKey(RsDistribGrpKey *newKey)
 {
 	/* load Key */
-	std::string pid = newKey -> PeerId();
-	std::string gid = newKey -> grpId;
+	const std::string &gid = newKey -> grpId;
 
 #ifdef DISTRIB_DEBUG
+	const std::string &pid = newKey -> PeerId();
 	std::cerr << "p3GroupDistrib::loadGroupKey()" << std::endl;
 	std::cerr << "PeerId: " << pid << std::endl;
 	std::cerr << "groupId: " << gid << std::endl;
@@ -576,7 +576,7 @@ void	p3GroupDistrib::loadGroupKey(RsDistribGrpKey *newKey)
 }
 
 
-void	p3GroupDistrib::loadMsg(RsDistribSignedMsg *newMsg, std::string src, bool local)
+void	p3GroupDistrib::loadMsg(RsDistribSignedMsg *newMsg, const std::string &src, bool local)
 {
 	/****************** check the msg ******************/
 	/* Do the most likely checks to fail first....
@@ -1215,7 +1215,7 @@ RsDistribMsg *p3GroupDistrib::locked_getGroupMsg(std::string grpId, std::string 
 	return mit->second;
 }
 
-bool    p3GroupDistrib::subscribeToGroup(std::string grpId, bool subscribe)
+bool    p3GroupDistrib::subscribeToGroup(const std::string &grpId, bool subscribe)
 {
 	RsStackMutex stack(distribMtx); /*************  STACK MUTEX ************/
 	std::map<std::string, GroupInfo>::iterator git;
@@ -1507,7 +1507,7 @@ bool    p3GroupDistrib::loadList(std::list<RsItem *>& load)
 
 		if ((newGrp = dynamic_cast<RsDistribGrp *>(*lit)))
 		{
-			std::string gid = newGrp -> grpId;
+			const std::string &gid = newGrp -> grpId;
 			loadGroup(newGrp);
 
 			subscribeToGroup(gid, true);
@@ -1547,7 +1547,7 @@ bool    p3GroupDistrib::loadList(std::list<RsItem *>& load)
  * As All the child packets are Packed, we should only need RsSerialDistrib() in it.
  */
 
-pqistore *p3GroupDistrib::createStore(BinInterface *bio, std::string src, uint32_t bioflags)
+pqistore *p3GroupDistrib::createStore(BinInterface *bio, const std::string &src, uint32_t bioflags)
 {
 	RsSerialiser *rsSerialiser = new RsSerialiser();
 	RsSerialType *serialType = new RsDistribSerialiser();
@@ -2706,7 +2706,7 @@ bool 	p3GroupDistrib::locked_checkGroupKeys(GroupInfo &info)
 bool 	p3GroupDistrib::locked_updateGroupAdminKey(GroupInfo &info, RsDistribGrpKey *newKey)
 {
 	/* so firstly - check that the KeyId matches something in the group */
-	std::string keyId = newKey->key.keyId;
+	const std::string &keyId = newKey->key.keyId;
 
 #ifdef DISTRIB_DEBUG
 	std::cerr << "p3GroupDistrib::locked_updateGroupAdminKey() grpId: " << keyId;
@@ -2795,7 +2795,7 @@ bool 	p3GroupDistrib::locked_updateGroupAdminKey(GroupInfo &info, RsDistribGrpKe
 bool 	p3GroupDistrib::locked_updateGroupPublishKey(GroupInfo &info, RsDistribGrpKey *newKey)
 {
 	/* so firstly - check that the KeyId matches something in the group */
-	std::string keyId = newKey->key.keyId;
+	const std::string &keyId = newKey->key.keyId;
 
 #ifdef DISTRIB_DEBUG
 	std::cerr << "p3GroupDistrib::locked_updateGroupPublishKey() grpId: " << info.grpId << " keyId: " << keyId;
