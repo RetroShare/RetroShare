@@ -507,11 +507,12 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		/**
 		 * Attempt to receive publication keys
 		 */
-		virtual void locked_receivePubKeys();
+                virtual void receivePubKeys();
 
 		/*!
 		 * utility function to check whether grps exist
 		 * for private publish keys received
+                 * @deprecated
 		 */
 		virtual void locked_loadRecvdPubKeys();
 

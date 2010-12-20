@@ -251,6 +251,13 @@ virtual bool channelEditInfo(std::string chId, ChannelInfo &ci) = 0;
  */
 virtual void getPubKeysAvailableGrpIds(std::list<std::string>& chanIds) = 0;
 
+/*!
+ *
+ *
+ *
+ */
+//virtual void setPrivateChannelDir(const std::string&) = 0;
+
 };
 
 

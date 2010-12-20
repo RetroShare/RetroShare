@@ -79,6 +79,7 @@ virtual bool channelRestoreKeys(std::string chId);
 virtual bool channelShareKeys(std::string chId, std::list<std::string>& peers);
 virtual bool channelEditInfo(std::string chId, ChannelInfo &ci);
 virtual void getPubKeysAvailableGrpIds(std::list<std::string>& grpIds);
+//virtual void setPrivateChannelDir(const std::string dirName);
 
 
 /***************************************************************************************/
