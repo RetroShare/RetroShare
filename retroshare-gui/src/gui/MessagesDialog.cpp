@@ -20,6 +20,7 @@
  ****************************************************************/
 
 #include <QItemDelegate>
+#include <QMessageBox>
 #include <QPainter>
 #include <QPaintEvent>
 #include <QStandardItemModel>
@@ -877,7 +878,13 @@ void MessagesDialog::getcurrentrecommended()
     {
         const FileInfo& f(it->second) ;
         std::cout << "Requesting file " << f.fname << ", size=" << f.size << ", hash=" << f.hash << std::endl ;
-        rsFiles -> FileRequest(it->second.fname,it->second.hash,it->second.size, "", RS_FILE_HINTS_NETWORK_WIDE, srcIds);
+
+		  if(! rsFiles->FileRequest(it->second.fname,it->second.hash,it->second.size, "", RS_FILE_HINTS_NETWORK_WIDE, srcIds))
+		  {
+			  QMessageBox mb(QObject::tr("File Request canceled"), QObject::tr("The following has not been added to your download list, because you already have it:\n    ")+QString::fromStdString(it->second.fname),QMessageBox::Critical,QMessageBox::Ok,0,0);
+			  mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
+			  mb.exec();
+		  }
     }
 }
 
