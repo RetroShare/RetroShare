@@ -35,6 +35,7 @@
 #endif
 
 #include "RsAutoUpdatePage.h"
+#include "MainWindow.h"
 
 #ifndef MINIMAL_RSGUI
 #include "toaster/OnlineToaster.h"
@@ -508,18 +509,18 @@ void NotifyQt::UpdateGUI()
 			switch(type)
 			{
 				case RS_SYS_ERROR:
-					QMessageBox::critical(0, 
+					QMessageBox::critical(MainWindow::getInstance(),
 							QString::fromStdString(title), 
 							QString::fromStdString(msg));
 					break;
 				case RS_SYS_WARNING:
-					QMessageBox::warning(0, 
+					QMessageBox::warning(MainWindow::getInstance(),
 							QString::fromStdString(title), 
 							QString::fromStdString(msg));
 					break;
 				default:
 				case RS_SYS_INFO:
-					QMessageBox::information(0, 
+					QMessageBox::information(MainWindow::getInstance(),
 							QString::fromStdString(title), 
 							QString::fromStdString(msg));
 					break;

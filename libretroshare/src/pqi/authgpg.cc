@@ -1652,7 +1652,7 @@ int	AuthGPGimpl::privateRevokeCertificate(const std::string &id)
 int	AuthGPGimpl::privateTrustCertificate(const std::string &id, int trustlvl)
 {
 	/* The certificate should be in Peers list ??? */	
-        if(!isGPGAccepted(id)) {
+	if(!isGPGAccepted(id)) {
 		std::cerr << "Invalid Certificate" << std::endl;
 		return 0;
 	}

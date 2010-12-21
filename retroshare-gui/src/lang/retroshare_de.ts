@@ -1474,7 +1474,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-178"/>
         <source>Your trust in this peer is:</source>
-        <translation>Ihr Vertrauen zu diesem Nachbar ist:</translation>
+        <translation>Dein Vertrauen zu diesem Nachbar ist:</translation>
     </message>
     <message>
         <location line="+89"/>
@@ -1514,7 +1514,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+28"/>
         <source>Status</source>
-        <translation type="unfinished">Status</translation>
+        <translation>Status</translation>
     </message>
     <message>
         <location line="+30"/>
@@ -1582,27 +1582,27 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+27"/>
         <source>Your trust in this peer is ultimate, it&apos;s probably a key you own.</source>
-        <translation>Sie haben das höchste Vertrauen in diesen Nachbarn. Es ist wahrscheinlich ein Schlüssel von Ihnen.</translation>
+        <translation>Du hast das höchste Vertrauen in diesen Nachbarn. Es ist wahrscheinlich ein Schlüssel von Dir.</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Your trust in this peer is full.</source>
-        <translation>Sie vertrauen diesem Nachbarn voll.</translation>
+        <translation>Du vertraust diesem Nachbarn voll.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Your trust in this peer is marginal.</source>
-        <translation>Sie vertrauen diesem Nachbarn geringfügig.</translation>
+        <translation>Du vertraust diesem Nachbarn geringfügig.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Your trust in this peer is none.</source>
-        <translation>Sie vertrauen diesem Nachbarn nicht.</translation>
+        <translation>Du vertraust diesem Nachbarn nicht.</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Your trust in this peer is not set.</source>
-        <translation>Ihr Vertrauen in diesen Nachbarn ist nicht festgelegt.</translation>
+        <translation>Dein Vertrauen in diesen Nachbarn ist nicht festgelegt.</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -6634,27 +6634,27 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/NetworkDialog.cpp" line="+436"/>
         <source>Personal signature</source>
-        <translation type="unfinished"></translation>
+        <translation>Persönliche Unterschrift</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>GPG key signed by you</source>
-        <translation type="unfinished"></translation>
+        <translation>GPG Schlüssel von dir unterzeichnet</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Marginally trusted peer</source>
-        <translation type="unfinished"></translation>
+        <translation>Geringfügig vertrauter Nachbar</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Fully trusted peer</source>
-        <translation type="unfinished"></translation>
+        <translation>Voll vertrauter Nachbar</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Untrusted peer</source>
-        <translation type="unfinished"></translation>
+        <translation>Nicht vertrauter Nachbar</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -7348,7 +7348,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PeersDialog</name>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="+454"/>
+        <location filename="../gui/PeersDialog.cpp" line="+455"/>
         <source>Chat</source>
         <translation>Chat</translation>
     </message>

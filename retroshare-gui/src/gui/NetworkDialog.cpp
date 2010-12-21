@@ -368,7 +368,7 @@ void NetworkDialog::insertConnect()
 	while (index < connectWidget->topLevelItemCount()) {
 		std::string gpg_widget_id = (connectWidget->topLevelItem(index))->text(4).toStdString();
 		RsPeerDetails detail;
-		if (!rsPeers->getGPGDetails(gpg_widget_id, detail) || (detail.validLvl < 3 && !detail.accept_connection)) {
+		if (!rsPeers->getGPGDetails(gpg_widget_id, detail) || (detail.validLvl < GPGME_VALIDITY_MARGINAL && !detail.accept_connection)) {
 			delete (connectWidget->takeTopLevelItem(index));
 		} else {
 			index++;
@@ -378,7 +378,7 @@ void NetworkDialog::insertConnect()
 	while (index < ui.unvalidGPGkeyWidget->topLevelItemCount()) {
 		std::string gpg_widget_id = (ui.unvalidGPGkeyWidget->topLevelItem(index))->text(4).toStdString();
 		RsPeerDetails detail;
-		if (!rsPeers->getGPGDetails(gpg_widget_id, detail) || detail.validLvl >= 3 || detail.accept_connection) {
+		if (!rsPeers->getGPGDetails(gpg_widget_id, detail) || detail.validLvl >= GPGME_VALIDITY_MARGINAL || detail.accept_connection) {
 			delete (ui.unvalidGPGkeyWidget->takeTopLevelItem(index));
 		} else {
 			index++;
@@ -437,9 +437,9 @@ void NetworkDialog::insertConnect()
 			item -> setToolTip(2, tr("GPG key signed by you"));
 		} 
 		else 
-			switch(detail.validLvl)
+			switch(detail.trustLvl)
 			{
-				case  GPGME_VALIDITY_MARGINAL: item->setText(2,tr("Marginally trusted peer")) ; break;
+				case GPGME_VALIDITY_MARGINAL: item->setText(2,tr("Marginally trusted peer")) ; break;
 				case GPGME_VALIDITY_FULL:
 				case GPGME_VALIDITY_ULTIMATE: item->setText(2,tr("Fully trusted peer")) ; break ;
 				case GPGME_VALIDITY_UNKNOWN:
@@ -499,7 +499,7 @@ void NetworkDialog::insertConnect()
 			item -> setBackground(i,QBrush(backgrndcolor));
 
 		/* add to the list */
-		if (detail.accept_connection || detail.validLvl >= 3) 
+		if (detail.accept_connection || detail.validLvl >= GPGME_VALIDITY_MARGINAL) 
 		{
 			/* add gpg item to the list. If item is already in the list, it won't be duplicated thanks to Qt */
 			connectWidget->addTopLevelItem(item);

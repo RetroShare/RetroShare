@@ -1199,11 +1199,12 @@ bool 	p3Peers::trustGPGCertificate(const std::string &id, uint32_t trustlvl)
 	std::cerr << std::endl;
 #endif
         //check if we've got a ssl or gpg id
-        if (getGPGId(id) == "") {
+        std::string gpgId = getGPGId(id);
+        if (gpgId.empty()) {
             //if no result then it must be a gpg id
             return AuthGPG::getAuthGPG()->TrustCertificate(id, trustlvl);
         } else {
-            return AuthGPG::getAuthGPG()->TrustCertificate(getGPGId(id), trustlvl);
+            return AuthGPG::getAuthGPG()->TrustCertificate(gpgId, trustlvl);
         }
 }
 
