@@ -914,7 +914,10 @@ bool CacheStrapper::loadList(std::list<RsItem *>& load)
 
 	/* assemble a list of dirs to clean (union of cache dirs) */
 	std::list<std::string> cacheDirs;
-	std::list<std::string>::iterator dit, fit;
+	std::list<std::string>::iterator dit;
+#ifdef CS_DEBUG
+	std::list<std::string>::iterator fit;
+#endif
 	std::map<uint16_t, CachePair>::iterator cit;
 	for(cit = caches.begin(); cit != caches.end(); cit++)
 	{
@@ -936,18 +939,16 @@ bool CacheStrapper::loadList(std::list<RsItem *>& load)
 	std::cerr << "CacheStrapper::loadList() Files To Save:"  << std::endl;
 #endif
 
+#ifdef CS_DEBUG
 	for(sit = saveFiles.begin(); sit != saveFiles.end(); sit++)
 	{
-#ifdef CS_DEBUG 
 		std::cerr << "CacheStrapper::loadList() Files To Save in dir: <" << sit->first << ">" << std::endl;
-#endif
 		for(fit = (sit->second).begin(); fit != (sit->second).end(); fit++)
 		{
-#ifdef CS_DEBUG 
 			std::cerr << "\tFile: " << *fit << std::endl;
-#endif
 		}
 	}
+#endif
 
 	std::list<std::string> emptyList;
 	for(dit = cacheDirs.begin(); dit != cacheDirs.end(); dit++)
@@ -958,12 +959,12 @@ bool CacheStrapper::loadList(std::list<RsItem *>& load)
 		sit = saveFiles.find(*dit);
 		if (sit != saveFiles.end())
 		{
+#ifdef CS_DEBUG
 			for(fit = (sit->second).begin(); fit != (sit->second).end(); fit++)
 			{
-#ifdef CS_DEBUG 
 				std::cerr << "CacheStrapper::loadList() Keeping File: " << *fit << std::endl;
-#endif
 			}
+#endif
 			RsDirUtil::cleanupDirectory(*dit, sit->second);
 		}
 		else

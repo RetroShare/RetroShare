@@ -534,7 +534,7 @@ bool	RsDirUtil::checkCreateDirectory(const std::string& dir)
 //#include <fcntl.h>
 //#include <unistd.h>
 
-bool 	RsDirUtil::cleanupDirectory(const std::string& cleandir, std::list<std::string> keepFiles)
+bool 	RsDirUtil::cleanupDirectory(const std::string& cleandir, const std::list<std::string> &keepFiles)
 {
 
 	/* check for the dir existance */
@@ -552,7 +552,7 @@ bool 	RsDirUtil::cleanupDirectory(const std::string& cleandir, std::list<std::st
 	while(NULL != (dent = readdir(dir)))
 	{
 		/* check entry type */
-		std::string fname = dent -> d_name;
+		const std::string &fname = dent -> d_name;
 		std::string fullname = cleandir + "/" + fname;
 
 	 	if (-1 != stat(fullname.c_str(), &buf))

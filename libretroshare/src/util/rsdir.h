@@ -63,7 +63,7 @@ bool 		copyFile(const std::string& source,const std::string& dest);
 bool    	checkFile(const std::string& filename);
 bool    	checkDirectory(const std::string& dir);
 bool    	checkCreateDirectory(const std::string& dir);
-bool    	cleanupDirectory(const std::string& dir, std::list<std::string> keepFiles);
+bool    	cleanupDirectory(const std::string& dir, const std::list<std::string> &keepFiles);
 
 bool 		hashFile(const std::string& filepath,                
 		  std::string &name, std::string &hash, uint64_t &size);
