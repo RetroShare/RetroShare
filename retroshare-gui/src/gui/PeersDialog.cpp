@@ -918,7 +918,13 @@ void  PeersDialog::insertPeers()
                     }
                 }
                 sslItem->setText( COLUMN_NAME, sText);
-                sslItem->setToolTip( COLUMN_NAME, sText);
+
+                if (useStatusColumn == false && showState == false) {
+                    /* Show the state as tooltip */
+                    sslItem->setToolTip(COLUMN_NAME, QString::fromStdString(sslDetail.autoconnect));
+                } else {
+                    sslItem->setToolTip(COLUMN_NAME, "");
+                }
 
                 // sort location
                 sslItem->setData(COLUMN_STATE, ROLE_SORT, sText);
@@ -1045,7 +1051,7 @@ void  PeersDialog::insertPeers()
                     gpgItemText += " [" + StatusDefs::name(bestRSState) + "]";
                 }
 
-                gpgItem->setToolTip(COLUMN_NAME, StatusDefs::tooltip(bestRSState));
+//                gpgItem->setToolTip(COLUMN_NAME, StatusDefs::tooltip(bestRSState));
                 gpgItem->setData(COLUMN_NAME, ROLE_SORT, BuildStateSortString(true, gpgItemText, bestPeerState));
                 gpgItem->setData(COLUMN_STATE, ROLE_SORT, BuildStateSortString(true, gpgItem->text(COLUMN_NAME), bestPeerState));
             } else if (gpg_online) {
