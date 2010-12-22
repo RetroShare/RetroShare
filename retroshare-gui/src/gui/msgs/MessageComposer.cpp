@@ -540,6 +540,9 @@ void MessageComposer::insertSendList()
     std::list<std::string>::iterator peerIt;
     rsPeers->getFriendList(peers);
 
+    std::list<StatusInfo> statusInfo;
+    rsStatus->getStatusList(statusInfo);
+
     std::list<std::string> fillPeerIds;
 
     // start with groups
@@ -600,7 +603,6 @@ void MessageComposer::insertSendList()
             // add equal too, its no problem
             fillPeerIds.push_back(detail.id);
 
-
             /* make a widget per friend */
             QTreeWidgetItem *item = new RSTreeWidgetItem(m_compareRole, TYPE_SSL);
 
@@ -611,8 +613,17 @@ void MessageComposer::insertSendList()
 
             int state = RS_STATUS_OFFLINE;
             if (detail.state & RS_PEER_STATE_CONNECTED) {
+                std::list<StatusInfo>::iterator it;
+                for (it = statusInfo.begin(); it != statusInfo.end() ; it++) {
+                    if (it->id == detail.id) {
+                        state = it->status;
+                        break;
+                    }
+                }
+            }
+
+            if (state != RS_STATUS_OFFLINE) {
                 item->setTextColor(COLUMN_CONTACT_NAME, COLOR_CONNECT);
-                state = RS_STATUS_ONLINE;
             }
 
             item->setIcon(COLUMN_CONTACT_NAME, QIcon(StatusDefs::imageUser(state)));
