@@ -178,6 +178,11 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     menu->addAction(ui.actionTabsRounded);
     ui.viewButton->setMenu(menu);
     
+    QTimer *timer2 = new QTimer(this);
+    connect(timer2, SIGNAL(timeout()), this, SLOT(updateNetworkStatus()));
+    timer2->start(1000);
+    
+    updateNetworkStatus();
     loadtabsettings();
     
     ui.clearButton->hide();
@@ -704,6 +709,49 @@ void NetworkDialog::on_actionCreate_New_Profile_activated()
 //    gencertdialog.exec ();
 }
 
+void NetworkDialog::updateNetworkStatus()
+{
+	if(RsAutoUpdatePage::eventsLocked())
+		return ;
+
+    rsiface->lockData(); /* Lock Interface */
+
+    /* now the extra bit .... switch on check boxes */
+    const RsConfig &config = rsiface->getConfig();
+
+    
+       /******* Network Status Tab *******/
+             
+      if(config.netUpnpOk)
+      {
+         ui.iconlabel_upnp->setPixmap(QPixmap(":/images/ledon1.png"));
+      }
+      else
+      {    
+         ui.iconlabel_upnp->setPixmap(QPixmap(":/images/ledoff1.png"));
+      }
+                              
+      if (config.netLocalOk)
+      {
+          ui.iconlabel_netLimited->setPixmap(QPixmap(":/images/ledon1.png"));
+      }
+      else
+      {          
+          ui.iconlabel_netLimited->setPixmap(QPixmap(":/images/ledoff1.png"));
+      }
+
+      if (config.netExtraAddressOk)
+      {
+          ui.iconlabel_ext->setPixmap(QPixmap(":/images/ledon1.png"));
+      }
+      else
+      {
+          ui.iconlabel_ext->setPixmap(QPixmap(":/images/ledoff1.png"));
+      }
+
+    rsiface->unlockData(); /* UnLock Interface */
+}
+
 void NetworkDialog::on_actionTabsnorth_activated()
 {
   ui.networkTab->setTabPosition(QTabWidget::North);
@@ -736,11 +784,13 @@ void NetworkDialog::on_actionTabsright_activated()
 void NetworkDialog::on_actionTabsTriangular_activated()
 {
   ui.networkTab->setTabShape(QTabWidget::Triangular);
+  ui.tabBottom->setTabShape(QTabWidget::Triangular);
 }
 
 void NetworkDialog::on_actionTabsRounded_activated()
 {
   ui.networkTab->setTabShape(QTabWidget::Rounded);
+  ui.tabBottom->setTabShape(QTabWidget::Rounded);
 }
 
 void NetworkDialog::loadtabsettings()
