@@ -290,6 +290,7 @@ HEADERS +=  rshare.h \
             gui/common/RSTabWidget.h \
             gui/common/RSItemDelegate.h \
             gui/common/PeerDefs.h \
+            gui/common/PopularityDefs.h \
             gui/MessagesDialog.h \
             gui/help/browser/helpbrowser.h \
             gui/help/browser/helptextbrowser.h \
@@ -489,6 +490,7 @@ SOURCES +=  main.cpp \
             gui/common/RSTabWidget.cpp \
             gui/common/RSItemDelegate.cpp \
             gui/common/PeerDefs.cpp \
+            gui/common/PopularityDefs.cpp \
             gui/settings/rsharesettings.cpp \
             gui/settings/RsharePeerSettings.cpp \
             gui/settings/rsettings.cpp \

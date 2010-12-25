@@ -34,11 +34,11 @@
 #include "settings/rsharesettings.h"
 #include "common/Emoticons.h"
 #include "common/RSItemDelegate.h"
+#include "common/PopularityDefs.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsforums.h>
 
-#include <sstream>
 #include <algorithm>
 
 
@@ -66,9 +66,9 @@
 #define VIEW_FLAT	2
 
 /* Forum constants */
-#define COLUMN_FORUM_COUNT    2
-#define COLUMN_FORUM_TITLE    0
-#define COLUMN_FORUM_DATE     1
+#define COLUMN_FORUM_COUNT      2
+#define COLUMN_FORUM_TITLE      0
+#define COLUMN_FORUM_POPULARITY 1
 
 #define COLUMN_FORUM_DATA     0
 
@@ -169,13 +169,17 @@ ForumsDialog::ForumsDialog(QWidget *parent)
     ui.threadTreeWidget->setItemDelegate(itemDelegate);
 
     itemDelegate = new RSItemDelegate(this);
+    itemDelegate->removeFocusRect(COLUMN_FORUM_POPULARITY);
     itemDelegate->setSpacing(QSize(0, 2));
     ui.forumTreeWidget->setItemDelegate(itemDelegate);
 
     /* Set header resize modes and initial section sizes */
-    QHeaderView * ftheader = ui.forumTreeWidget->header () ;
-    ftheader->setResizeMode (COLUMN_FORUM_TITLE, QHeaderView::Interactive);
+    ui.forumTreeWidget->setColumnCount(COLUMN_FORUM_COUNT);
+    QHeaderView * ftheader = ui.forumTreeWidget->header ();
+    ftheader->setResizeMode (COLUMN_FORUM_TITLE, QHeaderView::Stretch);
     ftheader->resizeSection (COLUMN_FORUM_TITLE, 170);
+    ftheader->setResizeMode (COLUMN_FORUM_POPULARITY, QHeaderView::Fixed);
+    ftheader->resizeSection (COLUMN_FORUM_POPULARITY, 25);
 
     /* Set header resize modes and initial section sizes */
     QHeaderView * ttheader = ui.threadTreeWidget->header () ;
@@ -496,10 +500,10 @@ void ForumsDialog::insertForums()
 
 	rsForums->getForumList(forumList);
 
-        QList<QTreeWidgetItem *> AdminList;
-        QList<QTreeWidgetItem *> SubList;
-        QList<QTreeWidgetItem *> PopList;
-        QList<QTreeWidgetItem *> OtherList;
+	QList<QTreeWidgetItem *> AdminList;
+	QList<QTreeWidgetItem *> SubList;
+	QList<QTreeWidgetItem *> PopList;
+	QList<QTreeWidgetItem *> OtherList;
 	std::multimap<uint32_t, std::string> popMap;
 
 	for(it = forumList.begin(); it != forumList.end(); it++)
@@ -518,38 +522,29 @@ void ForumsDialog::insertForums()
 			 * ForumId,
 			 */
 
-           		QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
+			QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
 
 			QString name = QString::fromStdWString(it->forumName);
 			if (it->forumFlags & RS_DISTRIB_AUTHEN_REQ)
 			{
 				name += " (AUTHD)";
-                                item -> setIcon(COLUMN_FORUM_TITLE,(QIcon(IMAGE_FORUMAUTHD)));
+				item -> setIcon(COLUMN_FORUM_TITLE,(QIcon(IMAGE_FORUMAUTHD)));
 			}
 			else
 			{
-                                item -> setIcon(COLUMN_FORUM_TITLE,(QIcon(IMAGE_FORUM)));
+				item -> setIcon(COLUMN_FORUM_TITLE,(QIcon(IMAGE_FORUM)));
 			}
 
-                        item -> setText(COLUMN_FORUM_TITLE, name);
-                        item -> setData(COLUMN_FORUM_DATA, ROLE_FORUM_TITLE, name);
+			item -> setText(COLUMN_FORUM_TITLE, name);
+			item -> setData(COLUMN_FORUM_DATA, ROLE_FORUM_TITLE, name);
 
 			/* (1) Popularity */
-			{
-				std::ostringstream out;
-				out << it->pop;
-                                item -> setToolTip(COLUMN_FORUM_TITLE, tr("Popularity:") + " " + QString::fromStdString(out.str()));
-			}
+			item -> setIcon(COLUMN_FORUM_POPULARITY, PopularityDefs::icon(it->pop));
+			item -> setToolTip(COLUMN_FORUM_TITLE, PopularityDefs::tooltip(it->pop));
+			item -> setToolTip(COLUMN_FORUM_POPULARITY, PopularityDefs::tooltip(it->pop));
 
-			// Date
-			{
-				QDateTime qtime;
-				qtime.setTime_t(it->lastPost);
-				QString timestamp = qtime.toString("yyyy-MM-dd hh:mm:ss");
-                                item -> setText(COLUMN_FORUM_DATE, timestamp);
-			}
 			// Id.
-                        item -> setData(COLUMN_FORUM_DATA, ROLE_FORUM_ID, QString::fromStdString(it->forumId));
+			item -> setData(COLUMN_FORUM_DATA, ROLE_FORUM_ID, QString::fromStdString(it->forumId));
 			AdminList.append(item);
 		}
 		else if (flags & RS_DISTRIB_SUBSCRIBED)
@@ -563,38 +558,29 @@ void ForumsDialog::insertForums()
 			 * ForumId,
 			 */
 
-           		QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
+			QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
 
 			QString name = QString::fromStdWString(it->forumName);
 			if (it->forumFlags & RS_DISTRIB_AUTHEN_REQ)
 			{
 				name += " (AUTHD)";
-                                item -> setIcon(COLUMN_FORUM_TITLE,(QIcon(IMAGE_FORUMAUTHD)));
+				item -> setIcon(COLUMN_FORUM_TITLE,(QIcon(IMAGE_FORUMAUTHD)));
 			}
 			else
 			{
-                          item -> setIcon(COLUMN_FORUM_TITLE,(QIcon(IMAGE_FORUM)));
+				item -> setIcon(COLUMN_FORUM_TITLE,(QIcon(IMAGE_FORUM)));
 			}
 
-                        item -> setText(COLUMN_FORUM_TITLE, name);
-                        item -> setData(COLUMN_FORUM_DATA, ROLE_FORUM_TITLE, name);
+			item -> setText(COLUMN_FORUM_TITLE, name);
+			item -> setData(COLUMN_FORUM_DATA, ROLE_FORUM_TITLE, name);
 
 			/* (1) Popularity */
-			{
-				std::ostringstream out;
-				out << it->pop;
-                                item -> setToolTip(COLUMN_FORUM_TITLE, tr("Popularity:") + " " + QString::fromStdString(out.str()));
-			}
+			item -> setIcon(COLUMN_FORUM_POPULARITY, PopularityDefs::icon(it->pop));
+			item -> setToolTip(COLUMN_FORUM_TITLE, PopularityDefs::tooltip(it->pop));
+			item -> setToolTip(COLUMN_FORUM_POPULARITY, PopularityDefs::tooltip(it->pop));
 
-			// Date
-			{
-				QDateTime qtime;
-				qtime.setTime_t(it->lastPost);
-				QString timestamp = qtime.toString("yyyy-MM-dd hh:mm:ss");
-                                item -> setText(COLUMN_FORUM_DATE, timestamp);
-			}
 			// Id.
-                        item -> setData(COLUMN_FORUM_DATA, ROLE_FORUM_ID, QString::fromStdString(it->forumId));
+			item -> setData(COLUMN_FORUM_DATA, ROLE_FORUM_ID, QString::fromStdString(it->forumId));
 			SubList.append(item);
 		}
 		else
@@ -635,7 +621,7 @@ void ForumsDialog::insertForums()
 		}
 		else
 		{
-      /* popular forum */
+			/* popular forum */
 
 			/* Name,
 			 * Type,
@@ -644,39 +630,30 @@ void ForumsDialog::insertForums()
 			 * ForumId,
 			 */
 
-           		QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
+			QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
 
 			QString name = QString::fromStdWString(it->forumName);
 			if (it->forumFlags & RS_DISTRIB_AUTHEN_REQ)
 			{
 				name += " (AUTHD)";
-                                item -> setIcon(COLUMN_FORUM_TITLE,(QIcon(IMAGE_FORUMAUTHD)));
+				item -> setIcon(COLUMN_FORUM_TITLE,(QIcon(IMAGE_FORUMAUTHD)));
 			}
 			else
 			{
-                          item -> setIcon(COLUMN_FORUM_TITLE,(QIcon(IMAGE_FORUM)));
+				item -> setIcon(COLUMN_FORUM_TITLE,(QIcon(IMAGE_FORUM)));
 			}
 
-                        item -> setText(COLUMN_FORUM_TITLE, name);
-                        item -> setData(COLUMN_FORUM_DATA, ROLE_FORUM_TITLE, name);
+			item -> setText(COLUMN_FORUM_TITLE, name);
+			item -> setData(COLUMN_FORUM_DATA, ROLE_FORUM_TITLE, name);
 
 
 			/* (1) Popularity */
-			{
-				std::ostringstream out;
-				out << it->pop;
-                                item -> setToolTip(COLUMN_FORUM_TITLE, tr("Popularity:") + " " + QString::fromStdString(out.str()));
-			}
+			item -> setIcon(COLUMN_FORUM_POPULARITY, PopularityDefs::icon(it->pop));
+			item -> setToolTip(COLUMN_FORUM_TITLE, PopularityDefs::tooltip(it->pop));
+			item -> setToolTip(COLUMN_FORUM_POPULARITY, PopularityDefs::tooltip(it->pop));
 
-			// Date
-			{
-				QDateTime qtime;
-				qtime.setTime_t(it->lastPost);
-				QString timestamp = qtime.toString("yyyy-MM-dd hh:mm:ss");
-                                item -> setText(COLUMN_FORUM_DATE, timestamp);
-			}
 			// Id.
-                        item -> setData(COLUMN_FORUM_DATA, ROLE_FORUM_ID, QString::fromStdString(it->forumId));
+			item -> setData(COLUMN_FORUM_DATA, ROLE_FORUM_ID, QString::fromStdString(it->forumId));
 
 			if (it->pop < popLimit)
 			{
@@ -690,18 +667,18 @@ void ForumsDialog::insertForums()
 	}
 
 	/* now we can add them in as a tree! */
-        FillForums (YourForums, AdminList);
-        FillForums (SubscribedForums, SubList);
-        FillForums (PopularForums, PopList);
-        FillForums (OtherForums, OtherList);
+	FillForums (YourForums, AdminList);
+	FillForums (SubscribedForums, SubList);
+	FillForums (PopularForums, PopList);
+	FillForums (OtherForums, OtherList);
 
-        // cleanup
-        CleanupItems (AdminList);
-        CleanupItems (SubList);
-        CleanupItems (PopList);
-        CleanupItems (OtherList);
+	// cleanup
+	CleanupItems (AdminList);
+	CleanupItems (SubList);
+	CleanupItems (PopList);
+	CleanupItems (OtherList);
 
-        updateMessageSummaryList("");
+	updateMessageSummaryList("");
 }
 
 void ForumsDialog::FillForums(QTreeWidgetItem *Forum, QList<QTreeWidgetItem *> &ChildList)

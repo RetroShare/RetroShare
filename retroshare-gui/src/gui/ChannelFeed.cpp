@@ -32,6 +32,7 @@
 #include "ChannelFeed.h"
 
 #include "feeds/ChanMsgItem.h"
+#include "common/PopularityDefs.h"
 
 #include "channels/CreateChannel.h"
 #include "channels/ChannelDetails.h"
@@ -530,7 +531,8 @@ void ChannelFeed::fillChannelList(int channelItem, std::list<ChannelInfo> &chann
         groupItem->child(chNameItem->index().row(), COLUMN_DATA)->setData(QDateTime::fromTime_t(ci.lastPost), ROLE_CHANNEL_TS);
 
 
-        chNameItem->setToolTip(tr("Popularity: %1").arg(QString::number(ci.pop)));
+        chNameItem->setToolTip(PopularityDefs::tooltip(ci.pop));
+        chPopItem->setToolTip(PopularityDefs::tooltip(ci.pop));
 
         QPixmap chanImage;
         if (ci.pngImageLen != 0) {
@@ -541,20 +543,7 @@ void ChannelFeed::fillChannelList(int channelItem, std::list<ChannelInfo> &chann
         chNameItem->setIcon(QIcon(chanImage));
 
         /* set Popularity icon */
-        int popcount = ci.pop;
-        if (popcount == 0) {
-            chPopItem->setIcon(QIcon(":/images/hot_0.png"));
-        } else if (popcount < 2) {
-            chPopItem->setIcon(QIcon(":/images/hot_1.png"));
-        } else if (popcount < 4) {
-            chPopItem->setIcon(QIcon(":/images/hot_2.png"));
-        } else if (popcount < 8) {
-            chPopItem->setIcon(QIcon(":/images/hot_3.png"));
-        } else if (popcount < 16) {
-            chPopItem->setIcon(QIcon(":/images/hot_4.png"));
-        } else {
-            chPopItem->setIcon(QIcon(":/images/hot_5.png"));
-        }
+        chPopItem->setIcon(PopularityDefs::icon(ci.pop));
     }
 
     /* remove all items not in list */
