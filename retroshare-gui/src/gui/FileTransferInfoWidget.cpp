@@ -170,8 +170,29 @@ void FileTransferInfoWidget::draw(const FileInfo& nfo,const FileChunksInfo& info
 		 int size_of_this_chunk = ( info.active_chunks[i].first == info.chunks.size()-1 && ((info.file_size % blockSize)>0) )?(info.file_size % blockSize):blockSize ;
 		 uint32_t s = (uint32_t)rint(sizeX*(size_of_this_chunk - info.active_chunks[i].second)/(float)size_of_this_chunk) ;
 
+		 std::cerr << "chunk " << info.active_chunks[i].first << ": Last received byte: " << size_of_this_chunk - info.active_chunks[i].second << std::endl;
+
+		 // Already Downloaded.
+		 //
 		 painter->fillRect(ch_num_size,y,s,sizeY,QColor::fromHsv(200,200,255)) ;
+
+		 // Remains to download
+		 //
 		 painter->fillRect(ch_num_size+s,y,sizeX-s,sizeY,QColor::fromHsv(200,50,255)) ;
+
+		 // now draw the slices under pending requests
+		 //
+		 std::map<uint32_t,std::vector<FileChunksInfo::SliceInfo> >::const_iterator it(info.pending_slices.find(info.active_chunks[i].first)) ;
+
+		 if(it != info.pending_slices.end())
+			 for(uint k=0;k<it->second.size();++k)
+			 {
+				 uint32_t s1 = (uint32_t)floor(sizeX*(it->second[k].start)/(float)size_of_this_chunk) ;
+				 uint32_t ss = (uint32_t)ceil(sizeX*(it->second[k].size )/(float)size_of_this_chunk) ;
+
+				 painter->fillRect(ch_num_size+s1,y,ss,sizeY,QColor::fromHsv(50,250,250)) ;
+
+			 }
 
 		 painter->setPen(QColor::fromRgb(0,0,0)) ;
 		 float percent = (size_of_this_chunk - info.active_chunks[i].second)*100.0/size_of_this_chunk ;

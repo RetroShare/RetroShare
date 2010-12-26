@@ -289,6 +289,13 @@ class FileChunksInfo
 		enum ChunkState { CHUNK_DONE=2, CHUNK_ACTIVE=1, CHUNK_OUTSTANDING=0 } ;
 		enum ChunkStrategy { CHUNK_STRATEGY_STREAMING, CHUNK_STRATEGY_RANDOM } ;
 
+		struct SliceInfo
+		{
+			uint32_t start ;
+			uint32_t size ;
+			std::string peer_id ;
+		};
+
 		uint64_t file_size ;					// real size of the file
 		uint32_t chunk_size ;				// size of chunks
 		uint32_t flags ;
@@ -303,6 +310,10 @@ class FileChunksInfo
 		// For each chunk (by chunk number), gives the completion of the chunk.
 		//                     
 		std::vector<std::pair<uint32_t,uint32_t> > active_chunks ;
+
+		// The list of pending requests, chunk per chunk (by chunk id)
+		//
+		std::map<uint32_t, std::vector<SliceInfo> > pending_slices ;
 };
 
 class CompressedChunkMap

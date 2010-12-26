@@ -775,7 +775,7 @@ void TransfersDialog::insertTransfers()
 		QString fileName = QString::fromUtf8(info.fname.c_str());
 		QString fileHash = QString::fromStdString(info.hash);
 		qlonglong fileSize    = info.size;
-		double fileDlspeed     = (info.downloadStatus==FT_STATE_PAUSED)?0.0:(info.tfRate * 1024.0);
+		double fileDlspeed     = (info.downloadStatus==FT_STATE_DOWNLOADING)?(info.tfRate * 1024.0):0.0;
 
 		/* get the sources (number of online peers) */
 		int online = 0;
@@ -826,6 +826,9 @@ void TransfersDialog::insertTransfers()
 		pinfo.type = FileProgressInfo::DOWNLOAD_LINE ;
 		pinfo.progress = (info.size==0)?0:(completed*100.0/info.size) ;
 		pinfo.nb_chunks = pinfo.cmap._map.empty()?0:fcinfo.chunks.size() ;
+
+		for(uint32_t i=0;i<fcinfo.active_chunks.size();++i)
+			pinfo.chunks_in_progress.push_back(fcinfo.active_chunks[i].first) ;
 
 		int addedRow = addItem("", fileName, fileHash, fileSize, pinfo, fileDlspeed, sources, status, priority, completed, remaining, downloadtime);
 		used_hashes.insert(info.hash) ;

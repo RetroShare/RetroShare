@@ -373,30 +373,6 @@ bool ftFileCreator::getMissingChunk(const std::string& peer_id,uint32_t size_hin
 #endif
 	source_chunk_map_needed = false ;
 
-	/* check for freed chunks */
-	time_t ts = time(NULL);
-//	time_t old = ts-CHUNK_MAX_AGE;
-//
-//	std::map<uint64_t, ftChunk>::iterator it;
-//	for(it = mChunks.begin(); it != mChunks.end(); it++)
-//	{
-//		/* very simple algorithm */
-//		if (it->second.ts < old)
-//		{
-//#ifdef FILE_DEBUG
-//			std::cerr << "ffc::getMissingChunk() Re-asking for an old chunk";
-//			std::cerr << std::endl;
-//#endif
-//
-//			/* retry this one */
-//			it->second.ts = ts;
-//			size = it->second.size;
-//			offset = it->second.offset;
-//
-//			return true;
-//		}
-//	}
-
 	uint32_t& chunks_for_this_peer(mChunksPerPeer[peer_id].cnt) ;
 
 	if(chunks_for_this_peer >= MAX_FTCHUNKS_PER_PEER)
@@ -433,6 +409,22 @@ void ftFileCreator::getChunkMap(FileChunksInfo& info)
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 
 	chunkMap.getChunksInfo(info) ;
+
+	// add info pending requests, handled by ftFileCreator
+	//
+	info.pending_slices.clear();
+
+	for(std::map<uint64_t, ftChunk>::iterator it = mChunks.begin();it!=mChunks.end();++it)
+	{
+		int n = it->second.id / info.chunk_size ;
+
+		FileChunksInfo::SliceInfo si ;
+		si.start = it->second.offset - n*info.chunk_size ;
+		si.size = it->second.size ;
+		si.peer_id = it->second.peer_id ;
+
+		info.pending_slices[n].push_back(si) ;
+	}
 }
 
 bool ftFileCreator::locked_printChunkMap()

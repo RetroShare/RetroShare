@@ -38,10 +38,10 @@ class ftChunk
 
 		friend std::ostream& operator<<(std::ostream& o,const ftChunk& f) ;
 
-		uint64_t offset;
-		uint64_t size;
-		ChunkId  id ;
-		time_t   ts;
+		uint64_t offset;	// current offset of the slice
+		uint64_t size;		// size remaining to download
+		ChunkId  id ;		// id of the chunk. Equal to the starting offset of the chunk
+		time_t   ts;		// time of last data received
 		std::string peer_id ;
 };
 

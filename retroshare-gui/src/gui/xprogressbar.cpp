@@ -219,6 +219,17 @@ void xProgressBar::paint()
 
 				i += j ;
 			}
+
+		QColor gradColor_a1, gradColor_a2 ;
+		gradColor_a1.setRgb(223, 134, 6);
+		gradColor_a2.setRgb(248, 170, 59);
+		linearGrad.setColorAt(0.00, gradColor_a1);
+		linearGrad.setColorAt(0.16, gradColor_a2);
+		linearGrad.setColorAt(1.00, gradColor_a1);
+		painter->setBrush(linearGrad);
+
+		for(uint32_t i=0;i<_pinfo.chunks_in_progress.size();++i)
+			painter->drawRect(rect.x() + hSpan+(int)rint(_pinfo.chunks_in_progress[i]*width/(float)ss), rect.y() + vSpan, (int)ceil(1.0f*width/(float)ss), rect.height() - 1 - vSpan * 2);
 	}
 	else
 	{
