@@ -3194,38 +3194,38 @@ p, li { white-space: pre-wrap; }
     <name>FileTransferInfoWidget</name>
     <message>
         <location filename="../gui/FileTransferInfoWidget.cpp" line="+122"/>
-        <source>Chunk map:</source>
-        <translation>Block map:</translation>
+        <source>Chunk map</source>
+        <translation>Block map</translation>
     </message>
     <message>
         <location line="+40"/>
-        <source>Active chunks:</source>
-        <translation>Aktive Blöcke:</translation>
+        <source>Active chunks</source>
+        <translation>Aktive Blöcke</translation>
     </message>
     <message>
         <location line="+51"/>
-        <source>Availability map (</source>
-        <translation>Verfügbarkeits map</translation>
+        <source>Availability map (%1 active sources)</source>
+        <translation>Verfügbarkeitsmappe (%1 aktive Quellen)</translation>
     </message>
     <message>
         <location line="+0"/>
-        <source> active sources</source>
-        <translation>aktive Quellen</translation>
+        <source>Availability map (%1 active source)</source>
+        <translation>Verfügbarkeitsmappe (%1 aktive Quelle)</translation>
     </message>
     <message>
         <location line="+28"/>
-        <source>File info:</source>
-        <translation>Datei Info:</translation>
+        <source>File info</source>
+        <translation>Datei Info</translation>
     </message>
     <message>
         <location line="+2"/>
-        <source>File hash: </source>
-        <translation>Datei Prüfsumme:</translation>
+        <source>File hash</source>
+        <translation>Datei Prüfsumme</translation>
     </message>
     <message>
         <location line="+2"/>
-        <source>File size: </source>
-        <translation>Datei Größe:</translation>
+        <source>File size</source>
+        <translation>Datei Größe</translation>
     </message>
     <message>
         <location line="+0"/>
@@ -3237,38 +3237,48 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="-6"/>
-        <source>Chunk size: </source>
-        <translation>Block Größe:</translation>
+        <source>Chunk size</source>
+        <translation>Block Größe</translation>
     </message>
     <message>
         <location line="+2"/>
-        <source>Number of chunks: </source>
-        <translation>Anzahl der Blöcke:</translation>
+        <source>Number of chunks</source>
+        <translation>Anzahl der Blöcke</translation>
     </message>
     <message>
         <location line="+2"/>
-        <source>Transfered: </source>
-        <translation>Übertragen:</translation>
+        <source>Transfered</source>
+        <translation>Übertragen</translation>
     </message>
     <message>
         <location line="+2"/>
-        <source>Remaining: </source>
-        <translation>Verbleibend:</translation>
+        <source>Remaining</source>
+        <translation>Verbleibend</translation>
     </message>
     <message>
         <location line="+2"/>
-        <source>Number of sources: </source>
-        <translation>Anzahl der Quellen:</translation>
+        <source>Number of sources</source>
+        <translation>Anzahl der Quellen</translation>
     </message>
     <message>
         <location line="+2"/>
-        <source>Chunk strategy: </source>
-        <translation>Block Strategie:</translation>
+        <source>Chunk strategy</source>
+        <translation>Block Strategie</translation>
     </message>
     <message>
         <location line="+2"/>
-        <source>Transfer type: </source>
-        <translation>Transfer Typ:</translation>
+        <source>Transfer type</source>
+        <translation>Transfer Typ</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Anonymous F2F</source>
+        <translation>Anonym F2F</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Direct friend transfer / Availability assumed</source>
+        <translation>Direkte Freund-Übertragung / Verfügbarkeit angenommen</translation>
     </message>
 </context>
 <context>
@@ -4302,7 +4312,7 @@ Fill in your GPG password when asked, to sign your new key.</source>
         <translation>Zurücksetzen</translation>
     </message>
     <message>
-        <location filename="../gui/common/GroupTreeWidget.cpp" line="+185"/>
+        <location filename="../gui/common/GroupTreeWidget.cpp" line="+187"/>
         <source>Private Key Available</source>
         <translation>Privater Schlüssel verfügbar</translation>
     </message>
@@ -7227,7 +7237,7 @@ p, li { white-space: pre-wrap; }
         <translation>Chat</translation>
     </message>
     <message>
-        <location line="+703"/>
+        <location line="+702"/>
         <source>Save Certificate</source>
         <translation>Zertifikat speichern</translation>
     </message>
@@ -7242,7 +7252,7 @@ p, li { white-space: pre-wrap; }
         <translation>Status</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="-690"/>
+        <location filename="../gui/PeersDialog.cpp" line="-689"/>
         <source>Connect To Friend</source>
         <translation>Verbinde zum Freund</translation>
     </message>
@@ -7342,13 +7352,13 @@ p, li { white-space: pre-wrap; }
         <translation>Aus allen Gruppen entfernen</translation>
     </message>
     <message>
-        <location line="+518"/>
+        <location line="+516"/>
         <location line="+2"/>
         <source>Available</source>
         <translation>Verfügbar</translation>
     </message>
     <message>
-        <location line="+431"/>
+        <location line="+432"/>
         <location line="+2"/>
         <source>New group chat</source>
         <translation>Neuer Gruppenchat</translation>
@@ -7500,7 +7510,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="-150"/>
-        <location filename="../gui/PeersDialog.cpp" line="-1500"/>
+        <location filename="../gui/PeersDialog.cpp" line="-1499"/>
         <source>Add Friend</source>
         <translation>Freund hinzufügen</translation>
     </message>
@@ -7555,12 +7565,12 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="-40"/>
-        <location line="+871"/>
+        <location line="+870"/>
         <source>RetroShare</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-832"/>
+        <location line="-831"/>
         <source>Message Group</source>
         <translation>Gruppe anschreiben</translation>
     </message>
@@ -7575,7 +7585,7 @@ p, li { white-space: pre-wrap; }
         <translation>Gruppe entfernen</translation>
     </message>
     <message>
-        <location line="+824"/>
+        <location line="+823"/>
         <source>Do you want to remove this Friend?</source>
         <translation>Willst du diesen Freund entfernen?</translation>
     </message>
@@ -7613,12 +7623,12 @@ p, li { white-space: pre-wrap; }
         <translation>Status Spalte ausblenden</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="-1845"/>
+        <location filename="../gui/PeersDialog.cpp" line="-1844"/>
         <source>Friends Storm</source>
         <translation>Aktivitäten</translation>
     </message>
     <message>
-        <location line="+1204"/>
+        <location line="+1203"/>
         <source>is typing...</source>
         <translation>tippt...</translation>
     </message>
@@ -7638,7 +7648,7 @@ p, li { white-space: pre-wrap; }
         <translation>Freunde</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="-887"/>
+        <location filename="../gui/PeersDialog.cpp" line="-886"/>
         <location line="+80"/>
         <source>Paste Friend Link</source>
         <translation>RetroShare Link einfügen</translation>

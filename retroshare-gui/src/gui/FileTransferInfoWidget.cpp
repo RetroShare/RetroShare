@@ -119,7 +119,7 @@ void FileTransferInfoWidget::draw(const FileInfo& nfo,const FileChunksInfo& info
 
 	 painter->setPen(QColor::fromRgb(0,0,0)) ;
 	 y += text_height ;
-	 painter->drawText(0,y,tr("Chunk map:")) ;
+	 painter->drawText(0,y,tr("Chunk map") + ":") ;
 	 y += block_sep ;
 
 	 // draw the chunk map
@@ -159,7 +159,7 @@ void FileTransferInfoWidget::draw(const FileInfo& nfo,const FileChunksInfo& info
 	 y += block_sep ;
 	 y += text_height ;
 	 painter->setPen(QColor::fromRgb(0,0,0)) ;
-	 painter->drawText(0,y,tr("Active chunks:")) ;
+	 painter->drawText(0,y,tr("Active chunks") + ":") ;
 	 y += block_sep ;
 
 	 for(uint i=0;i<info.active_chunks.size();++i)
@@ -210,7 +210,7 @@ void FileTransferInfoWidget::draw(const FileInfo& nfo,const FileChunksInfo& info
 	 y += block_sep ;
 	 y += text_height ;
 	 painter->setPen(QColor::fromRgb(0,0,0)) ;
-	 painter->drawText(0,y,tr("Availability map (")+QString::number(info.compressed_peer_availability_maps.size())+ tr(" active sources")+")") ;
+	 painter->drawText(0,y,(info.compressed_peer_availability_maps.size() == 1 ? tr("Availability map (%1 active source)") : tr("Availability map (%1 active sources)")).arg(info.compressed_peer_availability_maps.size())) ;
 	 y += block_sep ;
 
 	 // Note (for non geeks): the !! operator transforms anything positive into 1 and 0 into 0.
@@ -238,27 +238,27 @@ void FileTransferInfoWidget::draw(const FileInfo& nfo,const FileChunksInfo& info
 	 //
 
 	 painter->setPen(QColor::fromRgb(0,0,0)) ;
-	 y += text_height ; painter->drawText(0,y,tr("File info:")) ;
+	 y += text_height ; painter->drawText(0,y,tr("File info") + ":") ;
 	 y += block_sep ;
-	 y += text_height ; painter->drawText(20,y,tr("File hash: ")) ; painter->drawText(tab_size,y,QString::fromStdString(nfo.hash)) ;
+	 y += text_height ; painter->drawText(20,y,tr("File hash") + ":") ; painter->drawText(tab_size,y,QString::fromStdString(nfo.hash)) ;
 	 y += block_sep ;
-	 y += text_height ; painter->drawText(20,y,tr("File size: ")) ; painter->drawText(tab_size,y,QString::number(info.file_size) + " " + tr("bytes") + " " + "(" + misc::friendlyUnit(info.file_size) + ")") ;
+	 y += text_height ; painter->drawText(20,y,tr("File size") + ":") ; painter->drawText(tab_size,y,QString::number(info.file_size) + " " + tr("bytes") + " " + "(" + misc::friendlyUnit(info.file_size) + ")") ;
 	 y += block_sep ;
-	 y += text_height ; painter->drawText(20,y,tr("Chunk size: ")) ; painter->drawText(tab_size,y,QString::number(info.chunk_size) + " " + tr("bytes") + " " + "(" + misc::friendlyUnit(info.chunk_size) + ")") ;
+	 y += text_height ; painter->drawText(20,y,tr("Chunk size") + ":") ; painter->drawText(tab_size,y,QString::number(info.chunk_size) + " " + tr("bytes") + " " + "(" + misc::friendlyUnit(info.chunk_size) + ")") ;
 	 y += block_sep ;
-	 y += text_height ; painter->drawText(20,y,tr("Number of chunks: ")) ; painter->drawText(tab_size,y,QString::number(info.chunks.size())) ;
+	 y += text_height ; painter->drawText(20,y,tr("Number of chunks") + ":") ; painter->drawText(tab_size,y,QString::number(info.chunks.size())) ;
 	 y += block_sep ;
-	 y += text_height ; painter->drawText(20,y,tr("Transfered: ")) ; painter->drawText(tab_size,y,QString::number(nfo.transfered) + " " + tr("bytes") + " " + "(" + misc::friendlyUnit(nfo.transfered) + ")") ;
+	 y += text_height ; painter->drawText(20,y,tr("Transfered") + ":") ; painter->drawText(tab_size,y,QString::number(nfo.transfered) + " " + tr("bytes") + " " + "(" + misc::friendlyUnit(nfo.transfered) + ")") ;
 	 y += block_sep ;
-	 y += text_height ; painter->drawText(20,y,tr("Remaining: ")) ; painter->drawText(tab_size,y,QString::number(info.file_size - nfo.transfered) + " " + tr("bytes") + " " + "(" + misc::friendlyUnit(info.file_size - nfo.transfered) + ")") ;
+	 y += text_height ; painter->drawText(20,y,tr("Remaining") + ":") ; painter->drawText(tab_size,y,QString::number(info.file_size - nfo.transfered) + " " + tr("bytes") + " " + "(" + misc::friendlyUnit(info.file_size - nfo.transfered) + ")") ;
 	 y += block_sep ;
-	 y += text_height ; painter->drawText(20,y,tr("Number of sources: ")) ; painter->drawText(tab_size,y,QString::number(info.compressed_peer_availability_maps.size())) ;
+	 y += text_height ; painter->drawText(20,y,tr("Number of sources") + ":") ; painter->drawText(tab_size,y,QString::number(info.compressed_peer_availability_maps.size())) ;
 	 y += block_sep ;
-	 y += text_height ; painter->drawText(20,y,tr("Chunk strategy: ")) ; painter->drawText(tab_size,y,(info.strategy==FileChunksInfo::CHUNK_STRATEGY_RANDOM)?"Random":"Streaming") ;
+	 y += text_height ; painter->drawText(20,y,tr("Chunk strategy") + ":") ; painter->drawText(tab_size,y,(info.strategy==FileChunksInfo::CHUNK_STRATEGY_RANDOM)?"Random":"Streaming") ;
 	 y += block_sep ;
-	 y += text_height ; painter->drawText(20,y,tr("Transfer type: ")) ; 
-	 if(info.flags & RS_FILE_HINTS_NETWORK_WIDE) painter->drawText(tab_size,y,"Anonymous F2F") ;
-	 if(info.flags & RS_FILE_HINTS_ASSUME_AVAILABILITY) painter->drawText(tab_size,y,"Direct friend transfer / Availability assumed") ;
+	 y += text_height ; painter->drawText(20,y,tr("Transfer type") + ":") ; 
+	 if(info.flags & RS_FILE_HINTS_NETWORK_WIDE) painter->drawText(tab_size,y,tr("Anonymous F2F")) ;
+	 if(info.flags & RS_FILE_HINTS_ASSUME_AVAILABILITY) painter->drawText(tab_size,y,tr("Direct friend transfer / Availability assumed")) ;
 	 y += text_height ;
 	 y += block_sep ;
 
