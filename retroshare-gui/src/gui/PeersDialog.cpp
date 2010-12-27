@@ -972,6 +972,7 @@ void  PeersDialog::insertPeers()
                 }
             }
 
+            int bestPeerState = 0;        // for gpg item
             int i = 0;
             QIcon gpgIcon;
             if (gpg_connected) {
@@ -979,7 +980,6 @@ void  PeersDialog::insertPeers()
 
                 onlineCount++;
 
-                int bestPeerState = 0;        // for gpg item
                 std::string bestSslId;        // for gpg item
                 unsigned int bestRSState = 0; // for gpg item
 
@@ -1052,8 +1052,6 @@ void  PeersDialog::insertPeers()
                 }
 
 //                gpgItem->setToolTip(COLUMN_NAME, StatusDefs::tooltip(bestRSState));
-                gpgItem->setData(COLUMN_NAME, ROLE_SORT, BuildStateSortString(true, gpgItemText, bestPeerState));
-                gpgItem->setData(COLUMN_STATE, ROLE_SORT, BuildStateSortString(true, gpgItem->text(COLUMN_NAME), bestPeerState));
             } else if (gpg_online) {
                 if (useStatusColumn) {
                     gpgItem->setText(COLUMN_STATE, tr("Available"));
@@ -1061,10 +1059,10 @@ void  PeersDialog::insertPeers()
                     gpgItemText += " [" + tr("Available") + "]";
                 }
 
+                bestPeerState = PEER_STATE_AVAILABLE;
                 onlineCount++;
                 gpgItem->setHidden(hideUnconnected);
                 gpgIcon = QIcon(IMAGE_AVAILABLE);
-                gpgItem->setData(COLUMN_NAME, ROLE_SORT, BuildStateSortString(true, gpgItemText, PEER_STATE_AVAILABLE));
 
                 QFont font;
                 font.setBold(true);
@@ -1079,9 +1077,9 @@ void  PeersDialog::insertPeers()
                     gpgItemText += " [" + StatusDefs::name(RS_STATUS_OFFLINE) + "]";
                 }
 
+                bestPeerState = PEER_STATE_OFFLINE;
                 gpgItem->setHidden(hideUnconnected);
                 gpgIcon = QIcon(StatusDefs::imageUser(RS_STATUS_OFFLINE));
-                gpgItem->setData(COLUMN_NAME, ROLE_SORT, BuildStateSortString(true, gpgItemText, PEER_STATE_OFFLINE));
 
                 QColor textColor = StatusDefs::textColor(RS_STATUS_OFFLINE);
                 QFont font = StatusDefs::font(RS_STATUS_OFFLINE);
@@ -1097,6 +1095,7 @@ void  PeersDialog::insertPeers()
 
             gpgItem->setText(COLUMN_NAME, gpgItemText);
             gpgItem->setData(COLUMN_NAME, ROLE_SORT, "2 " + gpgItemText);
+            gpgItem->setData(COLUMN_STATE, ROLE_SORT, "2 " + BuildStateSortString(true, gpgItemText, bestPeerState));
             gpgItem->setIcon(COLUMN_NAME, gpgIcon);
         }
 
