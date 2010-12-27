@@ -25,6 +25,8 @@
 #include "RSItemDelegate.h"
 #include "PopularityDefs.h"
 
+#include <stdint.h>
+
 #define COLUMN_NAME        0
 #define COLUMN_POPULARITY  1
 #define COLUMN_COUNT       2
@@ -96,6 +98,8 @@ void GroupTreeWidget::customContextMenuRequested(const QPoint &pos)
 
 void GroupTreeWidget::currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)
 {
+	Q_UNUSED(previous);
+
 	QString id;
 
 	if (current) {
