@@ -958,10 +958,10 @@ void MainWindow::addAction(QAction *action, const char *slot)
    if (page == _instance->linksDialog) {
        return Links;
    }
+#endif
    if (page == _instance->channelFeed) {
        return Channels;
    }
-#endif
    if (page == _instance->forumsDialog) {
        return Forums;
    }
