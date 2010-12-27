@@ -65,18 +65,6 @@
 #define VIEW_THREADED	1
 #define VIEW_FLAT	2
 
-/* Forum constants */
-#define COLUMN_FORUM_COUNT      2
-#define COLUMN_FORUM_TITLE      0
-#define COLUMN_FORUM_POPULARITY 1
-
-#define COLUMN_FORUM_DATA     0
-
-#define ROLE_FORUM_ID         Qt::UserRole
-#define ROLE_FORUM_TITLE      Qt::UserRole + 1
-
-#define ROLE_FORUM_COUNT      2
-
 /* Thread constants */
 #define COLUMN_THREAD_COUNT    6
 #define COLUMN_THREAD_TITLE    0
@@ -141,14 +129,14 @@ ForumsDialog::ForumsDialog(QWidget *parent)
     m_bIsForumSubscribed = false;
     m_bIsForumAdmin = false;
 
-    connect( ui.forumTreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( forumListCustomPopupMenu( QPoint ) ) );
+    connect( ui.forumTreeWidget, SIGNAL( treeCustomContextMenuRequested( QPoint ) ), this, SLOT( forumListCustomPopupMenu( QPoint ) ) );
     connect( ui.threadTreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( threadListCustomPopupMenu( QPoint ) ) );
 
     connect(ui.actionCreate_Forum, SIGNAL(triggered()), this, SLOT(newforum()));
     connect(ui.newmessageButton, SIGNAL(clicked()), this, SLOT(createmessage()));
     connect(ui.newthreadButton, SIGNAL(clicked()), this, SLOT(createthread()));
 
-    connect( ui.forumTreeWidget, SIGNAL( currentItemChanged ( QTreeWidgetItem *, QTreeWidgetItem *) ), this, SLOT( changedForum( QTreeWidgetItem *, QTreeWidgetItem * ) ) );
+    connect( ui.forumTreeWidget, SIGNAL( treeCurrentItemChanged(QString) ), this, SLOT( changedForum(QString) ) );
 
     connect( ui.threadTreeWidget, SIGNAL( itemSelectionChanged() ), this, SLOT( changedThread () ) );
     connect( ui.threadTreeWidget, SIGNAL( itemClicked(QTreeWidgetItem*,int)), this, SLOT( clickedThread (QTreeWidgetItem*,int) ) );
@@ -167,19 +155,6 @@ ForumsDialog::ForumsDialog(QWidget *parent)
     itemDelegate->removeFocusRect(COLUMN_THREAD_READ);
     itemDelegate->setSpacing(QSize(0, 2));
     ui.threadTreeWidget->setItemDelegate(itemDelegate);
-
-    itemDelegate = new RSItemDelegate(this);
-    itemDelegate->removeFocusRect(COLUMN_FORUM_POPULARITY);
-    itemDelegate->setSpacing(QSize(0, 2));
-    ui.forumTreeWidget->setItemDelegate(itemDelegate);
-
-    /* Set header resize modes and initial section sizes */
-    ui.forumTreeWidget->setColumnCount(COLUMN_FORUM_COUNT);
-    QHeaderView * ftheader = ui.forumTreeWidget->header ();
-    ftheader->setResizeMode (COLUMN_FORUM_TITLE, QHeaderView::Stretch);
-    ftheader->resizeSection (COLUMN_FORUM_TITLE, 170);
-    ftheader->setResizeMode (COLUMN_FORUM_POPULARITY, QHeaderView::Fixed);
-    ftheader->resizeSection (COLUMN_FORUM_POPULARITY, 25);
 
     /* Set header resize modes and initial section sizes */
     QHeaderView * ttheader = ui.threadTreeWidget->header () ;
@@ -203,47 +178,10 @@ ForumsDialog::ForumsDialog(QWidget *parent)
     ui.forumpushButton->setMenu(forummenu);
 
     /* create forum tree */
-    m_ItemFont = QFont("ARIAL", 10);
-    m_ItemFont.setBold(true);
-
-    QList<QTreeWidgetItem *> TopList;
-
-    YourForums = new QTreeWidgetItem();
-    YourForums->setText(COLUMN_FORUM_TITLE, tr("Your Forums"));
-    YourForums->setFont(COLUMN_FORUM_TITLE, m_ItemFont);
-    YourForums->setIcon(COLUMN_FORUM_TITLE,(QIcon(IMAGE_FOLDER)));
-    YourForums->setSizeHint(COLUMN_FORUM_TITLE, QSize( 18,18 ) );
-    YourForums->setForeground(COLUMN_FORUM_TITLE, QBrush(QColor(79, 79, 79)));
-    TopList.append(YourForums);
-
-    SubscribedForums = new QTreeWidgetItem((QTreeWidget*)0);
-    SubscribedForums->setText(COLUMN_FORUM_TITLE, tr("Subscribed Forums"));
-    SubscribedForums->setFont(COLUMN_FORUM_TITLE, m_ItemFont);
-    SubscribedForums->setIcon(COLUMN_FORUM_TITLE,(QIcon(IMAGE_FOLDERRED)));
-    SubscribedForums->setSizeHint(COLUMN_FORUM_TITLE, QSize( 18,18 ) );
-    SubscribedForums->setForeground(COLUMN_FORUM_TITLE, QBrush(QColor(79, 79, 79)));
-    TopList.append(SubscribedForums);
-
-    PopularForums = new QTreeWidgetItem();
-    PopularForums->setText(COLUMN_FORUM_TITLE, tr("Popular Forums"));
-    PopularForums->setFont(COLUMN_FORUM_TITLE, m_ItemFont);
-    PopularForums->setIcon(COLUMN_FORUM_TITLE,(QIcon(IMAGE_FOLDERGREEN)));
-    PopularForums->setSizeHint(COLUMN_FORUM_TITLE, QSize( 18,18 ) );
-    PopularForums->setForeground(COLUMN_FORUM_TITLE, QBrush(QColor(79, 79, 79)));
-    TopList.append(PopularForums);
-
-    OtherForums = new QTreeWidgetItem();
-    OtherForums->setText(COLUMN_FORUM_TITLE, tr("Other Forums"));
-    OtherForums->setFont(COLUMN_FORUM_TITLE, m_ItemFont);
-    OtherForums->setIcon(COLUMN_FORUM_TITLE,(QIcon(IMAGE_FOLDERYELLOW)));
-    OtherForums->setSizeHint(COLUMN_FORUM_TITLE, QSize( 18,18 ) );
-    OtherForums->setForeground(COLUMN_FORUM_TITLE, QBrush(QColor(79, 79, 79)));
-    TopList.append(OtherForums);
-
-    ui.forumTreeWidget->addTopLevelItems(TopList);
-
-    YourForums->setExpanded(true);
-    SubscribedForums->setExpanded(true);
+    yourForums = ui.forumTreeWidget->addCategoryItem(tr("Your Forums"), QIcon(IMAGE_FOLDER), true);
+    subscribedForums = ui.forumTreeWidget->addCategoryItem(tr("Subscribed Forums"), QIcon(IMAGE_FOLDERRED), true);
+    popularForums = ui.forumTreeWidget->addCategoryItem(tr("Popular Forums"), QIcon(IMAGE_FOLDERGREEN), false);
+    otherForums = ui.forumTreeWidget->addCategoryItem(tr("Other Forums"), QIcon(IMAGE_FOLDERYELLOW), false);
 
     m_LastViewType = -1;
 
@@ -489,6 +427,22 @@ static void CleanupItems (QList<QTreeWidgetItem *> &Items)
     }
 }
 
+void ForumsDialog::forumInfoToGroupItemInfo(const ForumInfo &forumInfo, GroupItemInfo &groupItemInfo)
+{
+    groupItemInfo.id = QString::fromStdString(forumInfo.forumId);
+    groupItemInfo.name = QString::fromStdWString(forumInfo.forumName);
+    groupItemInfo.description = QString::fromStdWString(forumInfo.forumDesc);
+    groupItemInfo.popularity = forumInfo.pop;
+    groupItemInfo.lastpost = QDateTime::fromTime_t(forumInfo.lastPost);
+
+    if (forumInfo.forumFlags & RS_DISTRIB_AUTHEN_REQ) {
+        groupItemInfo.name += " (" + tr("AUTHD") + ")";
+        groupItemInfo.icon = QIcon(IMAGE_FORUMAUTHD);
+    } else {
+        groupItemInfo.icon = QIcon(IMAGE_FORUM);
+    }
+}
+
 void ForumsDialog::insertForums()
 {
 	std::list<ForumInfo> forumList;
@@ -500,93 +454,27 @@ void ForumsDialog::insertForums()
 
 	rsForums->getForumList(forumList);
 
-	QList<QTreeWidgetItem *> AdminList;
-	QList<QTreeWidgetItem *> SubList;
-	QList<QTreeWidgetItem *> PopList;
-	QList<QTreeWidgetItem *> OtherList;
-	std::multimap<uint32_t, std::string> popMap;
+    QList<GroupItemInfo> adminList;
+    QList<GroupItemInfo> subList;
+    QList<GroupItemInfo> popList;
+    QList<GroupItemInfo> otherList;
+    std::multimap<uint32_t, GroupItemInfo> popMap;
 
-	for(it = forumList.begin(); it != forumList.end(); it++)
-	{
+    for (it = forumList.begin(); it != forumList.end(); it++) {
 		/* sort it into Publish (Own), Subscribed, Popular and Other */
 		uint32_t flags = it->subscribeFlags;
 
-		if (flags & RS_DISTRIB_ADMIN)
-		{
-			/* own */
+        GroupItemInfo groupItemInfo;
+        forumInfoToGroupItemInfo(*it, groupItemInfo);
 
-			/* Name,
-			 * Type,
-			 * Rank,
-			 * LastPost
-			 * ForumId,
-			 */
-
-			QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
-
-			QString name = QString::fromStdWString(it->forumName);
-			if (it->forumFlags & RS_DISTRIB_AUTHEN_REQ)
-			{
-				name += " (AUTHD)";
-				item -> setIcon(COLUMN_FORUM_TITLE,(QIcon(IMAGE_FORUMAUTHD)));
-			}
-			else
-			{
-				item -> setIcon(COLUMN_FORUM_TITLE,(QIcon(IMAGE_FORUM)));
-			}
-
-			item -> setText(COLUMN_FORUM_TITLE, name);
-			item -> setData(COLUMN_FORUM_DATA, ROLE_FORUM_TITLE, name);
-
-			/* (1) Popularity */
-			item -> setIcon(COLUMN_FORUM_POPULARITY, PopularityDefs::icon(it->pop));
-			item -> setToolTip(COLUMN_FORUM_TITLE, PopularityDefs::tooltip(it->pop));
-			item -> setToolTip(COLUMN_FORUM_POPULARITY, PopularityDefs::tooltip(it->pop));
-
-			// Id.
-			item -> setData(COLUMN_FORUM_DATA, ROLE_FORUM_ID, QString::fromStdString(it->forumId));
-			AdminList.append(item);
-		}
-		else if (flags & RS_DISTRIB_SUBSCRIBED)
-		{
+        if (flags & RS_DISTRIB_ADMIN) {
+            adminList.push_back(groupItemInfo);
+        } else if (flags & RS_DISTRIB_SUBSCRIBED) {
 			/* subscribed forum */
-
-			/* Name,
-			 * Type,
-			 * Rank,
-			 * LastPost
-			 * ForumId,
-			 */
-
-			QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
-
-			QString name = QString::fromStdWString(it->forumName);
-			if (it->forumFlags & RS_DISTRIB_AUTHEN_REQ)
-			{
-				name += " (AUTHD)";
-				item -> setIcon(COLUMN_FORUM_TITLE,(QIcon(IMAGE_FORUMAUTHD)));
-			}
-			else
-			{
-				item -> setIcon(COLUMN_FORUM_TITLE,(QIcon(IMAGE_FORUM)));
-			}
-
-			item -> setText(COLUMN_FORUM_TITLE, name);
-			item -> setData(COLUMN_FORUM_DATA, ROLE_FORUM_TITLE, name);
-
-			/* (1) Popularity */
-			item -> setIcon(COLUMN_FORUM_POPULARITY, PopularityDefs::icon(it->pop));
-			item -> setToolTip(COLUMN_FORUM_TITLE, PopularityDefs::tooltip(it->pop));
-			item -> setToolTip(COLUMN_FORUM_POPULARITY, PopularityDefs::tooltip(it->pop));
-
-			// Id.
-			item -> setData(COLUMN_FORUM_DATA, ROLE_FORUM_ID, QString::fromStdString(it->forumId));
-			SubList.append(item);
-		}
-		else
-		{
+            subList.push_back(groupItemInfo);
+        } else {
 			/* rate the others by popularity */
-			popMap.insert(std::make_pair(it->pop, it->forumId));
+            popMap.insert(std::make_pair(it->pop, groupItemInfo));
 		}
 	}
 
@@ -599,151 +487,34 @@ void ForumsDialog::insertForums()
 
 	uint32_t i = 0;
 	uint32_t popLimit = 0;
-	std::multimap<uint32_t, std::string>::reverse_iterator rit;
+    std::multimap<uint32_t, GroupItemInfo>::reverse_iterator rit;
 	for(rit = popMap.rbegin(); ((rit != popMap.rend()) && (i < popCount)); rit++, i++);
-	if (rit != popMap.rend())
-	{
-		popLimit = rit->first;
-	}
+    if (rit != popMap.rend()) {
+        popLimit = rit->first;
+    }
 
-	for(it = forumList.begin(); it != forumList.end(); it++)
-	{
-		/* ignore the ones we've done already */
-		uint32_t flags = it->subscribeFlags;
-
-		if (flags & RS_DISTRIB_ADMIN)
-		{
-			continue;
-		}
-		else if (flags & RS_DISTRIB_SUBSCRIBED)
-		{
-			continue;
-		}
-		else
-		{
-			/* popular forum */
-
-			/* Name,
-			 * Type,
-			 * Rank,
-			 * LastPost
-			 * ForumId,
-			 */
-
-			QTreeWidgetItem *item = new QTreeWidgetItem((QTreeWidget*)0);
-
-			QString name = QString::fromStdWString(it->forumName);
-			if (it->forumFlags & RS_DISTRIB_AUTHEN_REQ)
-			{
-				name += " (AUTHD)";
-				item -> setIcon(COLUMN_FORUM_TITLE,(QIcon(IMAGE_FORUMAUTHD)));
-			}
-			else
-			{
-				item -> setIcon(COLUMN_FORUM_TITLE,(QIcon(IMAGE_FORUM)));
-			}
-
-			item -> setText(COLUMN_FORUM_TITLE, name);
-			item -> setData(COLUMN_FORUM_DATA, ROLE_FORUM_TITLE, name);
-
-
-			/* (1) Popularity */
-			item -> setIcon(COLUMN_FORUM_POPULARITY, PopularityDefs::icon(it->pop));
-			item -> setToolTip(COLUMN_FORUM_TITLE, PopularityDefs::tooltip(it->pop));
-			item -> setToolTip(COLUMN_FORUM_POPULARITY, PopularityDefs::tooltip(it->pop));
-
-			// Id.
-			item -> setData(COLUMN_FORUM_DATA, ROLE_FORUM_ID, QString::fromStdString(it->forumId));
-
-			if (it->pop < popLimit)
-			{
-				OtherList.append(item);
-			}
-			else
-			{
-				PopList.append(item);
-			}
-		}
+    for (rit = popMap.rbegin(); rit != popMap.rend(); rit++) {
+		if (rit->second.popularity < (int) popLimit) {
+            otherList.append(rit->second);
+        } else {
+            popList.append(rit->second);
+        }
 	}
 
 	/* now we can add them in as a tree! */
-	FillForums (YourForums, AdminList);
-	FillForums (SubscribedForums, SubList);
-	FillForums (PopularForums, PopList);
-	FillForums (OtherForums, OtherList);
-
-	// cleanup
-	CleanupItems (AdminList);
-	CleanupItems (SubList);
-	CleanupItems (PopList);
-	CleanupItems (OtherList);
+    ui.forumTreeWidget->fillGroupItems(yourForums, adminList);
+    ui.forumTreeWidget->fillGroupItems(subscribedForums, subList);
+    ui.forumTreeWidget->fillGroupItems(popularForums, popList);
+    ui.forumTreeWidget->fillGroupItems(otherForums, otherList);
 
 	updateMessageSummaryList("");
 }
 
-void ForumsDialog::FillForums(QTreeWidgetItem *Forum, QList<QTreeWidgetItem *> &ChildList)
+void ForumsDialog::changedForum(const QString &id)
 {
-    int ChildIndex;
-    int ChildIndexCur = 0;
+    mCurrForumId = id.toStdString();
 
-    QTreeWidgetItem *Child;
-
-    // iterate all new children
-    QList<QTreeWidgetItem *>::iterator NewChild;
-    for (NewChild = ChildList.begin (); NewChild != ChildList.end (); NewChild++) {
-        // search existing child
-        int ChildIndexFound = -1;
-        int ChildCount = Forum->childCount ();
-        for (ChildIndex = ChildIndexCur; ChildIndex < ChildCount; ChildIndex++) {
-            Child = Forum->child (ChildIndex);
-            if (Child->data (COLUMN_FORUM_DATA, ROLE_FORUM_ID) == (*NewChild)->data (COLUMN_FORUM_DATA, ROLE_FORUM_ID)) {
-                // found it
-                ChildIndexFound = ChildIndex;
-                break;
-            }
-        }
-        if (ChildIndexFound >= 0) {
-            // delete all children between
-            while (ChildIndexCur < ChildIndexFound) {
-                Child = Forum->takeChild (ChildIndexCur);
-                delete (Child);
-                ChildIndexFound--;
-            }
-
-            // set child data
-            Child = Forum->child (ChildIndexFound);
-            Child->setIcon (COLUMN_FORUM_TITLE, (*NewChild)->icon (COLUMN_FORUM_TITLE));
-            Child->setToolTip (COLUMN_FORUM_TITLE, (*NewChild)->toolTip (COLUMN_FORUM_TITLE));
-
-            int i;
-            for (i = 0; i < COLUMN_FORUM_COUNT; i++) {
-                Child->setText (i, (*NewChild)->text (i));
-            }
-            for (i = 0; i < ROLE_FORUM_COUNT; i++) {
-                Child->setData (COLUMN_FORUM_DATA, Qt::UserRole + i, (*NewChild)->data (COLUMN_FORUM_DATA, Qt::UserRole + i));
-            }
-        } else {
-            // insert new child
-            if (ChildIndexCur < ChildCount) {
-                Forum->insertChild (ChildIndexCur, *NewChild);
-            } else {
-                Forum->addChild (*NewChild);
-            }
-            *NewChild = NULL;
-        }
-        ChildIndexCur++;
-    }
-
-    // delete rest
-    while (ChildIndexCur < Forum->childCount ()) {
-        Child = Forum->takeChild (ChildIndexCur);
-        delete (Child);
-    }
-}
-
-void ForumsDialog::changedForum( QTreeWidgetItem *curr, QTreeWidgetItem *prev )
-{
-	insertThreads();
+    insertThreads();
 }
 
 void ForumsDialog::changedThread ()
@@ -861,8 +632,7 @@ void ForumsDialog::insertThreads()
     m_bIsForumSubscribed = false;
     m_bIsForumAdmin = false;
 
-    QTreeWidgetItem *forumItem = ui.forumTreeWidget->currentItem();
-    if ((!forumItem) || (forumItem->parent() == NULL))
+    if (mCurrForumId.empty())
     {
         /* not an actual forum - clear */
         ui.threadTreeWidget->clear();
@@ -881,13 +651,8 @@ void ForumsDialog::insertThreads()
         return;
     }
 
-    /* store forumId */
-    mCurrForumId = forumItem->data(COLUMN_FORUM_DATA, ROLE_FORUM_ID).toString().toStdString();
-    ui.forumName->setText(forumItem->text(COLUMN_FORUM_TITLE));
-    std::string fId = mCurrForumId;
-
     ForumInfo fi;
-    if (rsForums->getForumInfo (fId, fi)) {
+    if (rsForums->getForumInfo (mCurrForumId, fi)) {
         if (fi.subscribeFlags & RS_DISTRIB_ADMIN) {
             m_bIsForumAdmin = true;
         }
@@ -897,6 +662,8 @@ void ForumsDialog::insertThreads()
     } else {
         return;
     }
+
+    ui.forumName->setText(QString::fromStdWString(fi.forumName));
 
     ui.newmessageButton->setEnabled (m_bIsForumSubscribed);
     ui.newthreadButton->setEnabled (m_bIsForumSubscribed);
@@ -915,6 +682,12 @@ void ForumsDialog::insertThreads()
         default:
         case VIEW_THREADED:
                 break;
+    }
+
+    if (flatView) {
+        ui.threadTreeWidget->setRootIsDecorated( true );
+    } else {
+        ui.threadTreeWidget->setRootIsDecorated( true );
     }
 
     bool bExpandNewMessages = Settings->getExpandNewMessages();
@@ -939,7 +712,7 @@ void ForumsDialog::insertThreads()
         std::cerr << tit->msgId << std::endl;
 
         ForumMsgInfo msginfo;
-        if (rsForums->getForumMessage(fId,tit->msgId,msginfo) == false) {
+        if (rsForums->getForumMessage(mCurrForumId, tit->msgId, msginfo) == false) {
             std::cerr << "ForumsDialog::insertThreads() Failed to Get Msg";
             std::cerr << std::endl;
             continue;
@@ -1028,7 +801,7 @@ void ForumsDialog::insertThreads()
             std::cerr << "ForumsDialog::insertThreads() Getting Children of : " << pId;
             std::cerr << std::endl;
 
-            if (rsForums->getForumThreadMsgList(fId, pId, msgs))
+            if (rsForums->getForumThreadMsgList(mCurrForumId, pId, msgs))
             {
                 std::cerr << "ForumsDialog::insertThreads() #Children " << msgs.size();
                 std::cerr << std::endl;
@@ -1040,7 +813,7 @@ void ForumsDialog::insertThreads()
                     std::cerr << std::endl;
 
                     ForumMsgInfo msginfo;
-                    if (rsForums->getForumMessage(fId,mit->msgId,msginfo) == false) {
+                    if (rsForums->getForumMessage(mCurrForumId, mit->msgId, msginfo) == false) {
                         std::cerr << "ForumsDialog::insertThreads() Failed to Get Msg";
                         std::cerr << std::endl;
                         continue;
@@ -1050,12 +823,10 @@ void ForumsDialog::insertThreads()
                     if (flatView)
                     {
                         child = new QTreeWidgetItem();
-                        ui.threadTreeWidget->setRootIsDecorated( true );
                     }
                     else
                     {
                         child = new QTreeWidgetItem(parent);
-                        ui.threadTreeWidget->setRootIsDecorated( true );
                     }
 
                     {
@@ -1624,22 +1395,16 @@ void ForumsDialog::unsubscribeToForum()
 
 void ForumsDialog::forumSubscribe(bool subscribe)
 {
-    QTreeWidgetItem *forumItem = ui.forumTreeWidget->currentItem();
-    if ((!forumItem) || (forumItem->parent() == NULL))
-    {
-        return;
+    if (mCurrForumId.empty()) {
+            return;
     }
 
-    /* store forumId */
-    std::string fId = forumItem->data(COLUMN_FORUM_DATA, ROLE_FORUM_ID).toString().toStdString();
-
-    rsForums->forumSubscribe(fId, subscribe);
+    rsForums->forumSubscribe(mCurrForumId, subscribe);
 }
 
 void ForumsDialog::showForumDetails()
 {
-    if (mCurrForumId == "")
-    {
+    if (mCurrForumId.empty()) {
             return;
     }
 
@@ -1651,8 +1416,7 @@ void ForumsDialog::showForumDetails()
 
 void ForumsDialog::editForumDetails()
 {
-    if (mCurrForumId == "")
-    {
+    if (mCurrForumId.empty()) {
             return;
     }
 
@@ -1786,38 +1550,28 @@ bool ForumsDialog::FilterItem(QTreeWidgetItem *pItem, QString &sPattern, int nFi
 
 void ForumsDialog::updateMessageSummaryList(std::string forumId)
 {
-    QTreeWidgetItem *apToplevelItem[2] = { YourForums, SubscribedForums };
-    int nToplevelItem;
+    QTreeWidgetItem *items[2] = { yourForums, subscribedForums };
 
-    for (nToplevelItem = 0; nToplevelItem < 2; nToplevelItem++) {
-        QTreeWidgetItem *pToplevelItem = apToplevelItem[nToplevelItem];
+    for (int item = 0; item < 2; item++) {
+        int child;
+        int childCount = items[item]->childCount();
+        for (child = 0; child < childCount; child++) {
+            QTreeWidgetItem *childItem = items[item]->child(child);
+            std::string childId = ui.forumTreeWidget->itemId(childItem).toStdString();
+            if (childId.empty()) {
+                continue;
+            }
 
-        int nItem;
-        int nItemCount = pToplevelItem->childCount();
-
-        for (nItem = 0; nItem < nItemCount; nItem++) {
-            QTreeWidgetItem *pItem = pToplevelItem->child(nItem);
-            std::string fId = pItem->data(COLUMN_FORUM_DATA, ROLE_FORUM_ID).toString().toStdString();
-            if (forumId.empty() || fId == forumId) {
-                /* calculating the new messages */
+            if (forumId.empty() || childId == forumId) {
+                /* calculate unread messages */
                 unsigned int newMessageCount = 0;
                 unsigned int unreadMessageCount = 0;
-                rsForums->getMessageCount(fId, newMessageCount, unreadMessageCount);
+                rsForums->getMessageCount(childId, newMessageCount, unreadMessageCount);
 
-                QString sTitle = pItem->data(COLUMN_FORUM_DATA, ROLE_FORUM_TITLE).toString();
-                QFont qf = pItem->font(COLUMN_FORUM_TITLE);
-                if (unreadMessageCount) {
-                    sTitle += " (" + QString::number(unreadMessageCount) + ")";
-                    qf.setBold(true);
-                } else {
-                    qf.setBold(false);
-                }
-
-                pItem->setText(COLUMN_FORUM_TITLE, sTitle);
-                pItem->setFont(COLUMN_FORUM_TITLE, qf);
+                ui.forumTreeWidget->setUnreadCount(childItem, unreadMessageCount);
 
                 if (forumId.empty() == false) {
-                    /* calculate only this forum */
+                    /* Calculate only this forum */
                     break;
                 }
             }

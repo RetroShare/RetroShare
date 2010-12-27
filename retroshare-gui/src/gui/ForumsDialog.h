@@ -26,6 +26,8 @@
 #include "RsAutoUpdatePage.h"
 #include "ui_ForumsDialog.h"
 
+class ForumInfo;
+
 class ForumsDialog : public RsAutoUpdatePage 
 {
   Q_OBJECT
@@ -44,7 +46,7 @@ private slots:
 
     void newforum();
 
-    void changedForum( QTreeWidgetItem *curr, QTreeWidgetItem *prev );
+    void changedForum(const QString &id);
     void changedThread();
     void clickedThread (QTreeWidgetItem *item, int column);
 
@@ -86,9 +88,9 @@ private:
     void insertThreads();
     void insertPost();
     void updateMessageSummaryList(std::string forumId);
+    void forumInfoToGroupItemInfo(const ForumInfo &forumInfo, GroupItemInfo &groupItemInfo);
 
     void forumSubscribe(bool subscribe);
-    void FillForums(QTreeWidgetItem *Forum, QList<QTreeWidgetItem *> &ChildList);
     void FillThreads(QList<QTreeWidgetItem *> &ThreadList, bool bExpandNewMessages, std::list<QTreeWidgetItem*> &itemToExpand);
     void FillChildren(QTreeWidgetItem *Parent, QTreeWidgetItem *NewParent, bool bExpandNewMessages, std::list<QTreeWidgetItem*> &itemToExpand);
 
@@ -106,10 +108,10 @@ private:
 
     bool m_bProcessSettings;
 
-    QTreeWidgetItem *YourForums;
-    QTreeWidgetItem *SubscribedForums;
-    QTreeWidgetItem *PopularForums;
-    QTreeWidgetItem *OtherForums;
+    QTreeWidgetItem *yourForums;
+    QTreeWidgetItem *subscribedForums;
+    QTreeWidgetItem *popularForums;
+    QTreeWidgetItem *otherForums;
 
     std::string mCurrForumId;
     std::string mCurrThreadId;
@@ -117,7 +119,6 @@ private:
     bool m_bIsForumAdmin;
 
     QFont m_ForumNameFont;
-    QFont m_ItemFont;
     int m_LastViewType;
     std::string m_LastForumID;
 

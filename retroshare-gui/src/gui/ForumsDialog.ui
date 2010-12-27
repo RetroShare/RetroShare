@@ -709,27 +709,12 @@ p, li { white-space: pre-wrap; }
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QTreeWidget" name="forumTreeWidget">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
+        <widget class="GroupTreeWidget" name="forumTreeWidget" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="sizeIncrement">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
          </property>
          <property name="baseSize">
           <size>
@@ -742,42 +727,12 @@ p, li { white-space: pre-wrap; }
            <pointsize>9</pointsize>
           </font>
          </property>
-         <property name="contextMenuPolicy">
-          <enum>Qt::CustomContextMenu</enum>
-         </property>
-         <property name="editTriggers">
-          <set>QAbstractItemView::NoEditTriggers</set>
-         </property>
-         <property name="iconSize">
+         <property name="iconSize" stdset="0">
           <size>
-           <width>19</width>
-           <height>19</height>
+           <width>-1</width>
+           <height>-1</height>
           </size>
          </property>
-         <attribute name="headerVisible">
-          <bool>false</bool>
-         </attribute>
-         <attribute name="headerStretchLastSection">
-          <bool>false</bool>
-         </attribute>
-         <attribute name="headerVisible">
-          <bool>false</bool>
-         </attribute>
-         <attribute name="headerStretchLastSection">
-          <bool>false</bool>
-         </attribute>
-         <column>
-          <property name="text">
-           <string>RetroShare Forums</string>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>9</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-         </column>
         </widget>
        </item>
       </layout>
@@ -1282,6 +1237,14 @@ border-image: url(:/images/closepressed.png)
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>GroupTreeWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/common/GroupTreeWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="images.qrc"/>
  </resources>

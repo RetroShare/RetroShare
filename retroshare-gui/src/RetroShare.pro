@@ -291,6 +291,7 @@ HEADERS +=  rshare.h \
             gui/common/RSItemDelegate.h \
             gui/common/PeerDefs.h \
             gui/common/PopularityDefs.h \
+            gui/common/GroupTreeWidget.h \
             gui/MessagesDialog.h \
             gui/help/browser/helpbrowser.h \
             gui/help/browser/helptextbrowser.h \
@@ -308,7 +309,6 @@ HEADERS +=  rshare.h \
             gui/elastic/node.h \
             gui/NewsFeed.h \
             gui/ChannelFeed.h \
-            gui/ChanGroupDelegate.h \
             gui/feeds/FeedHolder.h \
             gui/feeds/ForumNewItem.h \
             gui/feeds/ForumMsgItem.h \
@@ -396,7 +396,8 @@ FORMS +=    gui/StartDialog.ui \
             gui/feeds/SubDestItem.ui \
             gui/feeds/AttachFileItem.ui \
             gui/im_history/ImHistoryBrowser.ui \
-            gui/groups/CreateGroup.ui
+            gui/groups/CreateGroup.ui \
+            gui/common/GroupTreeWidget.ui
 
 SOURCES +=  main.cpp \
             rshare.cpp \
@@ -491,6 +492,7 @@ SOURCES +=  main.cpp \
             gui/common/RSItemDelegate.cpp \
             gui/common/PeerDefs.cpp \
             gui/common/PopularityDefs.cpp \
+            gui/common/GroupTreeWidget.cpp \
             gui/settings/rsharesettings.cpp \
             gui/settings/RsharePeerSettings.cpp \
             gui/settings/rsettings.cpp \
@@ -527,7 +529,6 @@ SOURCES +=  main.cpp \
             gui/elastic/node.cpp \
             gui/NewsFeed.cpp \
             gui/ChannelFeed.cpp \
-            gui/ChanGroupDelegate.cpp \
             gui/feeds/ForumNewItem.cpp \
             gui/feeds/ForumMsgItem.cpp \
             gui/feeds/PeerItem.cpp \

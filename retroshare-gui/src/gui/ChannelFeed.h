@@ -33,16 +33,8 @@
 
 #include "gui/feeds/FeedHolder.h"
 
-
-
-#define OWN	0
-#define SUBSCRIBED	1
-#define POPULAR	2
-#define OTHER	3
-
 class ChanMsgItem;
-class QStandardItemModel;
-class QStandardItem;
+class QTreeWidgetItem;
 
 class ChannelFeed : public RsAutoUpdatePage, public FeedHolder, private Ui::ChannelFeed
 {
@@ -53,22 +45,17 @@ public:
     ChannelFeed(QWidget *parent = 0);
     /** Default Destructor */
 
-
     virtual void deleteFeedItem(QWidget *item, uint32_t type);
     virtual void openChat(std::string peerId);
 
     /* overloaded from RsAuthUpdatePage */ 
     virtual void updateDisplay();
 
-public slots:
-    void selectChannel(QModelIndex index);
-
 private slots:
     void channelListCustomPopupMenu( QPoint point );
+    void selectChannel(const QString &id);
 
     void createChannel();
-
-    void channelSelection();
 
     void subscribeChannel();
     void unsubscribeChannel();
@@ -82,18 +69,11 @@ private slots:
     void shareKey();
 
     void channelMsgReadSatusChanged(const QString& channelId, const QString& msgId, int status);
-    void filterRegExpChanged();
-    void finishSearching();
 
 private:
-    void highlightPrivateKeys(int group);
     void updateChannelList();
-    void fillChannelList(int channelItem, std::list<ChannelInfo> &channelInfos);
-    void filterChannelList(std::list<ChannelInfo>&);
     void updateChannelMsgs();
     void updateMessageSummaryList(const std::string &channelId);
-
-    QStandardItemModel *model;
 
     std::string mChannelId; /* current Channel */
 
@@ -103,26 +83,11 @@ private:
     std::list<ChanMsgItem *> mChanMsgItems;
     std::map<std::string, uint32_t> mChanSearchScore; //chanId, score
 
-    QFont mChannelFont;
-    QFont itemFont;
+	QTreeWidgetItem *ownChannels;
+	QTreeWidgetItem *subcribedChannels;
+	QTreeWidgetItem *popularChannels;
+	QTreeWidgetItem *otherChannels;
 };
-
-class QChannelItem : public QStandardItem
-{
-
-public:
-
-	QChannelItem();
-	virtual ~QChannelItem();
-
-	/**
-	 * reimplementing comparison operator so QChannelItems can be ordered in terms
-	 * of occurences of property searchText in its data columns
-	 */
-	bool operator<(const QStandardItem& other) const;
-
-};
-
 
 #endif
 

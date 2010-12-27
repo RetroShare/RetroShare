@@ -758,13 +758,6 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>CallToaster</name>
-    <message>
-        <source>Message</source>
-        <translation type="obsolete">Nachricht</translation>
-    </message>
-</context>
-<context>
     <name>CertificatePage</name>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="+622"/>
@@ -1005,7 +998,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ChannelFeed</name>
     <message>
-        <location filename="../gui/ChannelFeed.ui" line="+306"/>
+        <location filename="../gui/ChannelFeed.ui" line="+154"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -1023,17 +1016,7 @@ p, li { white-space: pre-wrap; }
         <translation>Hinzufügen</translation>
     </message>
     <message>
-        <location line="-122"/>
-        <source>Reset</source>
-        <translation>Zurücksetzen</translation>
-    </message>
-    <message>
-        <location line="-38"/>
-        <source>Enter a Keyword here</source>
-        <translation>Geben sie einen Suchbegriff ein</translation>
-    </message>
-    <message>
-        <location line="+504"/>
+        <location line="+316"/>
         <source>Set all to read</source>
         <translation>Alle als gelesen markieren</translation>
     </message>
@@ -1048,17 +1031,7 @@ p, li { white-space: pre-wrap; }
         <translation>Abbestellen</translation>
     </message>
     <message>
-        <location line="-393"/>
-        <source>Title</source>
-        <translation>Titel</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Description</source>
-        <translation>Beschreibung</translation>
-    </message>
-    <message>
-        <location line="+413"/>
+        <location line="+25"/>
         <source>Subscribe To Channel</source>
         <translation>Kanal abonnieren</translation>
     </message>
@@ -1073,42 +1046,28 @@ p, li { white-space: pre-wrap; }
         <translation>Kanal abbestellen</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.cpp" line="+92"/>
-        <source>Name</source>
-        <translation>Name</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Popularity</source>
-        <translation>Beliebtheit</translation>
-    </message>
-    <message>
-        <location line="+21"/>
+        <location filename="../gui/ChannelFeed.cpp" line="+73"/>
         <source>Own Channels</source>
         <translation>Meine Kanäle</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+1"/>
         <source>Subscribed Channels</source>
         <translation>Abonnierte Kanäle</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+1"/>
         <source>Popular Channels</source>
         <translation>Beliebte Kanäle</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+1"/>
         <source>Other Channels</source>
         <translation>Andere Kanäle</translation>
     </message>
     <message>
-        <source>Popularity: %1</source>
-        <translation type="obsolete">Beliebtheit: %1</translation>
-    </message>
-    <message>
-        <location filename="../gui/ChannelFeed.ui" line="-164"/>
-        <location filename="../gui/ChannelFeed.cpp" line="+38"/>
+        <location filename="../gui/ChannelFeed.ui" line="-136"/>
+        <location filename="../gui/ChannelFeed.cpp" line="+26"/>
         <source>Post to Channel</source>
         <translation>Kanalbeitrag erstellen</translation>
     </message>
@@ -1133,16 +1092,12 @@ p, li { white-space: pre-wrap; }
         <translation>Verteile Kanal</translation>
     </message>
     <message>
-        <location line="+469"/>
+        <location line="+258"/>
         <source>No Channel Selected</source>
         <translation>Keinen Kanal gewählt</translation>
     </message>
     <message>
-        <source>Restore Publish Rights for Channel</source>
-        <translation type="obsolete">Stelle Veröffentlichungsrechte für Kanal wieder her</translation>
-    </message>
-    <message>
-        <location line="-472"/>
+        <location line="-261"/>
         <source>Edit Channel Details</source>
         <translation>Kanal-Details bearbeiten</translation>
     </message>
@@ -2894,18 +2849,6 @@ Das ist nützlich, wenn Du eine externe Festplatte freigibst und die Datei nicht
 <context>
     <name>DownloadToaster</name>
     <message>
-        <source>Play video</source>
-        <translation type="obsolete">Video abspielen</translation>
-    </message>
-    <message>
-        <source>Play button</source>
-        <translation type="obsolete">Abspielen Knopf</translation>
-    </message>
-    <message>
-        <source>Play the downloaded video</source>
-        <translation type="obsolete">Spiele das heruntergeladene Video ab</translation>
-    </message>
-    <message>
         <location filename="../gui/toaster/DownloadToaster.ui" line="+106"/>
         <source>Start file</source>
         <translation>Starte Datei</translation>
@@ -2919,18 +2862,6 @@ Das ist nützlich, wenn Du eine externe Festplatte freigibst und die Datei nicht
         <location line="+35"/>
         <source>Close</source>
         <translation>Schliessen</translation>
-    </message>
-    <message>
-        <source>Download completed</source>
-        <translation type="obsolete">Download fertig</translation>
-    </message>
-    <message>
-        <source>Play File</source>
-        <translation type="obsolete">Datei abspielen</translation>
-    </message>
-    <message>
-        <source>File %1 does not exist at location.</source>
-        <translation type="obsolete">Datei %1 existiert nicht.</translation>
     </message>
 </context>
 <context>
@@ -3272,7 +3203,7 @@ p, li { white-space: pre-wrap; }
         <translation>Aktive Blöcke:</translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="+51"/>
         <source>Availability map (</source>
         <translation>Verfügbarkeits map</translation>
     </message>
@@ -3556,7 +3487,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ForumsDialog</name>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="+322"/>
+        <location filename="../gui/ForumsDialog.cpp" line="+260"/>
         <source>Subscribe to Forum</source>
         <translation>Forum abonnieren</translation>
     </message>
@@ -3621,60 +3552,61 @@ p, li { white-space: pre-wrap; }
         <translation>Erweitern</translation>
     </message>
     <message>
-        <source>Popularity:</source>
-        <translation type="obsolete">Beliebtheit:</translation>
+        <location line="+44"/>
+        <source>AUTHD</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+524"/>
-        <location line="+107"/>
+        <location line="+318"/>
+        <location line="+105"/>
         <source>Anonymous</source>
         <translation>Anonym</translation>
     </message>
     <message>
-        <location line="-102"/>
-        <location line="+107"/>
+        <location line="-100"/>
+        <location line="+105"/>
         <source>signed</source>
         <translation>unterzeichnet</translation>
     </message>
     <message>
-        <location line="-102"/>
-        <location line="+107"/>
+        <location line="-100"/>
+        <location line="+105"/>
         <source>none</source>
         <translation>keine</translation>
     </message>
     <message>
         <location line="+503"/>
-        <location line="+88"/>
+        <location line="+81"/>
         <source>RetroShare</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-88"/>
+        <location line="-81"/>
         <source>No Forum Selected!</source>
         <translation>Kein Forum ausgewählt!</translation>
     </message>
     <message>
-        <location line="+88"/>
+        <location line="+81"/>
         <source>You cant reply a Anonymous Author</source>
         <translation>Du kannst einem anonymen Autor nicht antworten</translation>
     </message>
     <message>
-        <location line="-1477"/>
+        <location line="-1275"/>
         <source>Your Forums</source>
         <translation>Deine Foren</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+1"/>
         <source>Subscribed Forums</source>
         <translation>Abonnierte Foren</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+1"/>
         <source>Popular Forums</source>
         <translation>Populäre Foren</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+1"/>
         <source>Other Forums</source>
         <translation>Andere Foren</translation>
     </message>
@@ -3697,17 +3629,12 @@ p, li { white-space: pre-wrap; }
         <translation>Hinzufügen</translation>
     </message>
     <message>
-        <location line="+118"/>
-        <source>RetroShare Forums</source>
-        <translation>RetroShare Foren</translation>
-    </message>
-    <message>
-        <location line="-71"/>
+        <location line="+47"/>
         <source>Start new Thread for Selected Forum</source>
         <translation>Starte ein neues Thema im ausgewählten Forum</translation>
     </message>
     <message>
-        <location line="+121"/>
+        <location line="+82"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -3801,8 +3728,8 @@ p, li { white-space: pre-wrap; }
         <translation>Druckvorschau</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="+120"/>
-        <location line="+1250"/>
+        <location filename="../gui/ForumsDialog.cpp" line="+110"/>
+        <location line="+1086"/>
         <source>Start New Thread</source>
         <translation>Erstelle neues Thema</translation>
     </message>
@@ -3830,7 +3757,7 @@ p, li { white-space: pre-wrap; }
         <translation>Inhalt</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="-1237"/>
+        <location filename="../gui/ForumsDialog.cpp" line="-1073"/>
         <location line="+3"/>
         <source>Mark as read</source>
         <translation>Als gelesen markieren</translation>
@@ -4350,6 +4277,34 @@ Fill in your GPG password when asked, to sign your new key.</source>
         <location line="+3"/>
         <source>Favorites</source>
         <translation>Favoriten</translation>
+    </message>
+</context>
+<context>
+    <name>GroupTreeWidget</name>
+    <message>
+        <location filename="../gui/common/GroupTreeWidget.ui" line="+117"/>
+        <source>Enter a Keyword here</source>
+        <translation>Gib einen Suchbegriff ein</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Title</source>
+        <translation>Titel</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Description</source>
+        <translation>Beschreibung</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Reset</source>
+        <translation>Zurücksetzen</translation>
+    </message>
+    <message>
+        <location filename="../gui/common/GroupTreeWidget.cpp" line="+185"/>
+        <source>Private Key Available</source>
+        <translation>Privater Schlüssel verfügbar</translation>
     </message>
 </context>
 <context>
@@ -5970,18 +5925,6 @@ Willst Du die Nachricht speichern ?</translation>
 <context>
     <name>MessageToaster</name>
     <message>
-        <source>Play video</source>
-        <translation type="obsolete">Video abspielen</translation>
-    </message>
-    <message>
-        <source>Play button</source>
-        <translation type="obsolete">Abspielen Knopf</translation>
-    </message>
-    <message>
-        <source>Play the downloaded video</source>
-        <translation type="obsolete">Spiele das heruntergeladene Video ab</translation>
-    </message>
-    <message>
         <location filename="../gui/toaster/MessageToaster.ui" line="+81"/>
         <source>&lt;b&gt;1 new Message from&lt;/b&gt;</source>
         <translation>&lt;b&gt;1 neue Nachricht von&lt;/b&gt;</translation>
@@ -6607,26 +6550,6 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>NetworkDialog</name>
     <message>
-        <source>Select a pem/pqi File</source>
-        <translation type="obsolete">Wählen einer PEM- oder PQI-Datei</translation>
-    </message>
-    <message>
-        <source>File Not Found</source>
-        <translation type="obsolete">Datei nicht gefunden</translation>
-    </message>
-    <message>
-        <source>%1 does not exist. Would you like to create it?</source>
-        <translation type="obsolete">%1 ist nicht vorhanden. Möchten Sie es jetzt erstellen?</translation>
-    </message>
-    <message>
-        <source>Failed to Create File</source>
-        <translation type="obsolete">Es ist nicht gelungen, die Datei zu erstellen</translation>
-    </message>
-    <message>
-        <source>Unable to create %1 [%2]</source>
-        <translation type="obsolete">Kann %1 [%2] nicht erstellen</translation>
-    </message>
-    <message>
         <location filename="../gui/NetworkDialog.cpp" line="+436"/>
         <source>Personal signature</source>
         <translation>Persönliche Unterschrift</translation>
@@ -6662,14 +6585,6 @@ p, li { white-space: pre-wrap; }
 Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <translation> hat mich authentifiziert. 
 Rechtsklick und als Freund hinzufügen um zu verbinden.</translation>
-    </message>
-    <message>
-        <source>Select Certificate</source>
-        <translation type="obsolete">Zertifikat auswählen</translation>
-    </message>
-    <message>
-        <source>Certificates (*.pqi *.pem)</source>
-        <translation type="obsolete">Zertifikate (*.pqi *.pem)</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="+111"/>
@@ -6825,14 +6740,6 @@ p, li { white-space: pre-wrap; }
         <translation>selbst</translation>
     </message>
     <message>
-        <source>Certificate file successfully created</source>
-        <translation type="obsolete">Zertifikat-Datei erfolgreich erstellt</translation>
-    </message>
-    <message>
-        <source>Sorry, certificate file creation failed</source>
-        <translation type="obsolete">Zertifikat-Datei konnte nicht erstellt werden</translation>
-    </message>
-    <message>
         <location filename="../gui/NetworkDialog.ui" line="-179"/>
         <source>Network Status</source>
         <translation>Netzwerk-Status</translation>
@@ -6885,25 +6792,9 @@ p, li { white-space: pre-wrap; }
         <source>Peer ID</source>
         <translation>Peer ID</translation>
     </message>
-    <message>
-        <source>Sorry, create certificate failed</source>
-        <translation type="obsolete">Zertifikat-Datei konnte nicht erstellt werden</translation>
-    </message>
-    <message>
-        <source>Please choose a filename</source>
-        <translation type="obsolete">Bitte wählen sie einen Dateinamen</translation>
-    </message>
-    <message>
-        <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
-        <translation type="obsolete">RetroShare Zertifikat (*.rsc );;Alle Dateien (*)</translation>
-    </message>
 </context>
 <context>
     <name>NetworkView</name>
-    <message>
-        <source>Form</source>
-        <translation type="obsolete">Formular</translation>
-    </message>
     <message>
         <location filename="../gui/NetworkView.ui" line="+26"/>
         <source>background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 lightgray, stop:1 darkgray);</source>
@@ -7169,10 +7060,6 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>OnlineToaster</name>
     <message>
-        <source>RetroShare</source>
-        <translation type="obsolete">RetroShare</translation>
-    </message>
-    <message>
         <location filename="../gui/toaster/OnlineToaster.ui" line="+208"/>
         <source>Friend Online</source>
         <translation>Freund Online</translation>
@@ -7317,10 +7204,6 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PeerStatus</name>
     <message>
-        <source>Online: 0  | Friends: 0  | Network: 0 </source>
-        <translation type="obsolete">Online: 0  | Freunde: 0  | Netzwerk: 0 </translation>
-    </message>
-    <message>
         <location filename="../gui/statusbar/peerstatus.cpp" line="+41"/>
         <source>Friends: 0/0</source>
         <translation type="unfinished"></translation>
@@ -7334,10 +7217,6 @@ p, li { white-space: pre-wrap; }
         <location line="+3"/>
         <source>Friends</source>
         <translation>Freunde</translation>
-    </message>
-    <message>
-        <source>Online</source>
-        <translation type="obsolete">Online</translation>
     </message>
 </context>
 <context>
@@ -8062,7 +7941,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PopularityDefs</name>
     <message>
-        <location filename="../gui/common/PopularityDefs.cpp" line="+49"/>
+        <location filename="../gui/common/PopularityDefs.cpp" line="+50"/>
         <source>Popularity</source>
         <translation>Beliebtheit</translation>
     </message>
@@ -9390,7 +9269,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/SearchDialog.cpp" line="-133"/>
         <source>Enter a keyword here (at least 3 char long)</source>
-        <translation>Geben sie einen Suchbegriff ein (min. 3 Zeichen)</translation>
+        <translation>Gib einen Suchbegriff ein (min. 3 Zeichen)</translation>
     </message>
     <message>
         <location line="+136"/>
@@ -9451,7 +9330,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+94"/>
         <source>Enter a Keyword here</source>
-        <translation>Geben sie einen Suchbegriff ein</translation>
+        <translation>Gib einen Suchbegriff ein</translation>
     </message>
     <message>
         <location line="+265"/>
@@ -11239,7 +11118,7 @@ p, li { white-space: pre-wrap; }
         <translation>Übertrage</translation>
     </message>
     <message>
-        <location line="+354"/>
+        <location line="+357"/>
         <source>RetroShare</source>
         <translation></translation>
     </message>
@@ -11264,7 +11143,7 @@ p, li { white-space: pre-wrap; }
         <translation>Soll dieser Download wirklich abgebrochen und gelöscht werden?</translation>
     </message>
     <message>
-        <location line="-901"/>
+        <location line="-904"/>
         <source>Speed / Queue position</source>
         <translation>Geschwindigkeits- / Warteschlangenposition</translation>
     </message>
@@ -11327,43 +11206,43 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+260"/>
         <location line="+145"/>
-        <location line="+129"/>
+        <location line="+132"/>
         <source>Failed</source>
         <translation>Gescheitert</translation>
     </message>
     <message>
-        <location line="-270"/>
+        <location line="-273"/>
         <location line="+142"/>
-        <location line="+129"/>
+        <location line="+132"/>
         <source>Okay</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location line="-128"/>
-        <location line="+129"/>
+        <location line="-131"/>
+        <location line="+132"/>
         <source>Waiting</source>
         <translation>Warte</translation>
     </message>
     <message>
-        <location line="-128"/>
+        <location line="-131"/>
         <source>Downloading</source>
         <translation>Ladend</translation>
     </message>
     <message>
         <location line="-132"/>
         <location line="+133"/>
-        <location line="+129"/>
+        <location line="+132"/>
         <location line="+1"/>
         <source>Complete</source>
         <translation>Vollständig</translation>
     </message>
     <message>
-        <location line="-126"/>
+        <location line="-129"/>
         <source>Unknown</source>
         <translation>Unbekannt</translation>
     </message>
     <message>
-        <location line="+45"/>
+        <location line="+48"/>
         <source>version: </source>
         <translation>Version: </translation>
     </message>
@@ -11373,7 +11252,7 @@ p, li { white-space: pre-wrap; }
         <translation>Hochladend</translation>
     </message>
     <message>
-        <location line="-125"/>
+        <location line="-128"/>
         <source>Checking...</source>
         <translation>Überprüfe...</translation>
     </message>
@@ -11415,26 +11294,6 @@ p, li { white-space: pre-wrap; }
         <location line="+0"/>
         <source>Trust</source>
         <translation>Vertrauen</translation>
-    </message>
-    <message>
-        <source> is athenticated (one way) by </source>
-        <translation type="obsolete"> ist authentifiziert (ein Weg) von</translation>
-    </message>
-    <message>
-        <source> athenticated himself</source>
-        <translation type="obsolete"> authentifizierte sich selbst</translation>
-    </message>
-    <message>
-        <source> athenticated each others</source>
-        <translation type="obsolete"> authentifizierten sich beide jeweils</translation>
-    </message>
-    <message>
-        <source> is athenticated by </source>
-        <translation type="obsolete"> ist authentifiziert von </translation>
-    </message>
-    <message>
-        <source> athenticated </source>
-        <translation type="obsolete"> authentifiziert </translation>
     </message>
     <message>
         <location line="+31"/>

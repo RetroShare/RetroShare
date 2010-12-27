@@ -22,7 +22,6 @@
 #include <QMenu>
 #include <QTimer>
 #include <QStandardItemModel>
-#include <QDateTime>
 
 #include <iostream>
 #include <algorithm>
@@ -41,23 +40,7 @@
 #include "channels/ShareKey.h"
 #include "notifyqt.h"
 
-#include "ChanGroupDelegate.h"
-
 #define CHAN_DEFAULT_IMAGE ":/images/channels.png"
-
-#define COLUMN_NAME        0
-#define COLUMN_POPULARITY  1
-#define COLUMN_COUNT       2
-#define COLUMN_DATA        COLUMN_NAME
-
-#define ROLE_ID            Qt::UserRole
-#define ROLE_CHANNEL_TITLE Qt::UserRole + 1
-#define ROLE_CHANNEL_SEARCH_SCORE Qt::UserRole + 2
-#define ROLE_CHANNEL_TS Qt::UserRole + 3
-
-
-#define COMBO_TITLE_INDEX 0
-#define COMBO_DESC_INDEX 1
 
 #define WARNING_LIMIT 3600*24*2
 
@@ -77,69 +60,25 @@ ChannelFeed::ChannelFeed(QWidget *parent)
     connect(subscribeButton, SIGNAL( clicked( void ) ), this, SLOT( subscribeChannel ( void ) ) );
     connect(unsubscribeButton, SIGNAL( clicked( void ) ), this, SLOT( unsubscribeChannel ( void ) ) );
     connect(setAllAsReadButton, SIGNAL(clicked()), this, SLOT(setAllAsReadClicked()));
-    connect(resetButton, SIGNAL(clicked()), this, SLOT(finishSearching( void )));
-    connect( searchLine, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
 
     connect(NotifyQt::getInstance(), SIGNAL(channelMsgReadSatusChanged(QString,QString,int)), this, SLOT(channelMsgReadSatusChanged(QString,QString,int)));
 
     /*************** Setup Left Hand Side (List of Channels) ****************/
 
-    connect(treeView, SIGNAL(customContextMenuRequested( QPoint ) ), this, SLOT( channelListCustomPopupMenu( QPoint ) ) );
+    connect(treeWidget, SIGNAL(treeCustomContextMenuRequested(QPoint)), this, SLOT( channelListCustomPopupMenu( QPoint ) ) );
+    connect(treeWidget, SIGNAL(treeCurrentItemChanged(QString)), this, SLOT(selectChannel(QString)));
 
     mChannelId.clear();
 
-    model = new QStandardItemModel(0, COLUMN_COUNT, this);
-    model->setHeaderData(COLUMN_NAME, Qt::Horizontal, tr("Name"), Qt::DisplayRole);
-    model->setHeaderData(COLUMN_POPULARITY, Qt::Horizontal, tr("Popularity"), Qt::DisplayRole);
-
-    treeView->setModel(model);
-
-    RSItemDelegate *itemDelegate = new ChanGroupDelegate(this);
-    itemDelegate->removeFocusRect(COLUMN_POPULARITY);
-    itemDelegate->setSpacing(QSize(0, 2));
-    treeView->setItemDelegate(itemDelegate);
-
-    connect(treeView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)), this, SLOT(selectChannel(QModelIndex)));
-
-    /* Set header resize modes and initial section sizes TreeView*/
-    QHeaderView * _header = treeView->header () ;
-    _header->setResizeMode ( COLUMN_NAME, QHeaderView::Stretch);
-    _header->setResizeMode ( COLUMN_POPULARITY, QHeaderView::Fixed);
-    _header->resizeSection ( COLUMN_POPULARITY, 25 );
-    
-    // set ChannelList Font  
-    itemFont = QFont("ARIAL", 10);
-    itemFont.setBold(true);
-
-    QStandardItem *ownChannels = new QStandardItem(tr("Own Channels"));
-    ownChannels->setFont(itemFont);
-    ownChannels->setForeground(QBrush(QColor(79, 79, 79)));
-
-    QStandardItem *subcribedChannels = new QStandardItem(tr("Subscribed Channels"));
-    subcribedChannels->setFont(itemFont);    
-    subcribedChannels->setForeground(QBrush(QColor(79, 79, 79)));
-    
-    QStandardItem *popularChannels = new QStandardItem(tr("Popular Channels"));
-    popularChannels->setFont(itemFont);
-    popularChannels->setForeground(QBrush(QColor(79, 79, 79)));
-    
-    QStandardItem *otherChannels = new QStandardItem(tr("Other Channels"));
-    otherChannels->setFont(itemFont);
-    otherChannels->setForeground(QBrush(QColor(79, 79, 79)));
-
-    model->appendRow(ownChannels);
-    model->appendRow(subcribedChannels);
-    model->appendRow(popularChannels);
-    model->appendRow(otherChannels);
-
-    treeView->expand(ownChannels->index());
-    treeView->expand(subcribedChannels->index());
+	ownChannels = treeWidget->addCategoryItem(tr("Own Channels"), QIcon(), true);
+	subcribedChannels = treeWidget->addCategoryItem(tr("Subscribed Channels"), QIcon(), true);
+	popularChannels = treeWidget->addCategoryItem(tr("Popular Channels"), QIcon(), false);
+	otherChannels = treeWidget->addCategoryItem(tr("Other Channels"), QIcon(), false);
 
     //added from ahead
     updateChannelList();
     
-    mChannelFont = QFont("MS SANS SERIF", 22);
-    nameLabel->setFont(mChannelFont);
+    nameLabel->setFont(QFont("MS SANS SERIF", 22));
     nameLabel->setMinimumWidth(20);
 
     // Setup Channel Menu:
@@ -147,7 +86,6 @@ ChannelFeed::ChannelFeed(QWidget *parent)
     channelmenu->addAction(actionCreate_Channel); 
     channelmenu->addSeparator();
     channelpushButton->setMenu(channelmenu);
-    resetButton->setVisible(false);
 
     updateChannelMsgs();
 }
@@ -215,16 +153,6 @@ void ChannelFeed::createChannel()
 	cf.exec();
 }
 
-void ChannelFeed::channelSelection()
-{
-	/* which item was selected? */
-
-
-	/* update mChannelId */
-
-	updateChannelMsgs();
-}
-
 /*************************************************************************************/
 /*************************************************************************************/
 /*************************************************************************************/
@@ -266,22 +194,9 @@ void ChannelFeed::restoreChannelKeys()
     rsChannels->channelRestoreKeys(mChannelId);
 }
 
-void ChannelFeed::selectChannel(QModelIndex index)
+void ChannelFeed::selectChannel(const QString &id)
 {
-    QStandardItem *itemData = NULL;
-
-    if (index.isValid()) {
-        QStandardItem *item = model->itemFromIndex(index);
-        if (item && item->parent() != NULL) {
-            itemData = item->parent()->child(item->row(), COLUMN_DATA);
-        }
-    }
-
-    if (itemData) {
-        mChannelId = itemData->data(ROLE_ID).toString().toStdString();
-    } else {
-        mChannelId.clear();
-    }
+    mChannelId = id.toStdString();
 
     updateChannelMsgs();
 }
@@ -306,269 +221,99 @@ void ChannelFeed::updateDisplay()
     }
 }
 
-void ChannelFeed::filterRegExpChanged(){
+static void channelInfoToGroupItemInfo(const ChannelInfo &channelInfo, GroupItemInfo &groupItemInfo)
+{
+	groupItemInfo.id = QString::fromStdString(channelInfo.channelId);
+	groupItemInfo.name = QString::fromStdWString(channelInfo.channelName);
+	groupItemInfo.description = QString::fromStdWString(channelInfo.channelDesc);
+	groupItemInfo.popularity = channelInfo.pop;
+	groupItemInfo.lastpost = QDateTime::fromTime_t(channelInfo.lastPost);
 
-
-	if(searchLine->text().isEmpty()){
-		finishSearching();
-		return;
+	QPixmap chanImage;
+	if (channelInfo.pngImageLen) {
+		chanImage.loadFromData(channelInfo.pngChanImage, channelInfo.pngImageLen, "PNG");
+	} else {
+		chanImage = QPixmap(CHAN_DEFAULT_IMAGE);
 	}
 
-	resetButton->setEnabled(true);
-	resetButton->setVisible(true);
-
-	// force display to be updated
-	updateChannelList();
-
-	return;
+	groupItemInfo.icon = QIcon(chanImage);
 }
-
-void ChannelFeed::finishSearching(){
-
-
-	searchLine->clear();
-	resetButton->setVisible(false);
-	resetButton->setEnabled(false);
-	mChanSearchScore.clear();
-	updateChannelList();
-
-	return;
-}
-
 
 void ChannelFeed::updateChannelList()
 {
-    if (!rsChannels) {
-        return;
-    }
+	if (!rsChannels) {
+		return;
+	}
 
-    std::list<ChannelInfo> channelList;
-    std::list<ChannelInfo>::iterator it;
+	std::list<ChannelInfo> channelList;
+	std::list<ChannelInfo>::iterator it;
+	rsChannels->getChannelList(channelList);
 
-    rsChannels->getChannelList(channelList);
+	std::list<std::string> keysAvailable;
+	std::list<std::string>::iterator keyIt;
+	rsChannels->getPubKeysAvailableGrpIds(keysAvailable);
 
-    /* get the ids for our lists */
-    std::list<ChannelInfo> adminList;
-    std::list<ChannelInfo> subList;
-    std::list<ChannelInfo> popList;
-    std::list<ChannelInfo> otherList;
-    std::multimap<uint32_t, ChannelInfo> popMap;
+	/* get the ids for our lists */
+	QList<GroupItemInfo> adminList;
+	QList<GroupItemInfo> subList;
+	QList<GroupItemInfo> popList;
+	QList<GroupItemInfo> otherList;
+	std::multimap<uint32_t, GroupItemInfo> popMap;
 
-    for(it = channelList.begin(); it != channelList.end(); it++) {
-        /* sort it into Publish (Own), Subscribed, Popular and Other */
-        uint32_t flags = it->channelFlags;
+	for(it = channelList.begin(); it != channelList.end(); it++) {
+		/* sort it into Publish (Own), Subscribed, Popular and Other */
+		uint32_t flags = it->channelFlags;
 
-        if ((flags & RS_DISTRIB_ADMIN) && (flags & RS_DISTRIB_PUBLISH) && (flags & RS_DISTRIB_SUBSCRIBED)) {
-            adminList.push_back(*it);
-        } else if ((flags & RS_DISTRIB_SUBSCRIBED) || ((flags & RS_DISTRIB_SUBSCRIBED) && (flags &RS_DISTRIB_PUBLISH)) ) {
-            subList.push_back(*it);
-        } else {
-            /* rate the others by popularity */
-            popMap.insert(std::make_pair(it->pop, *it));
-        }
-    }
+		GroupItemInfo groupItemInfo;
+		channelInfoToGroupItemInfo(*it, groupItemInfo);
 
-    /* iterate backwards through popMap - take the top 5 or 10% of list */
-    uint32_t popCount = 5;
-    if (popCount < popMap.size() / 10) {
-        popCount = popMap.size() / 10;
-    }
+		if ((flags & RS_DISTRIB_ADMIN) && (flags & RS_DISTRIB_PUBLISH) && (flags & RS_DISTRIB_SUBSCRIBED)) {
+			adminList.push_back(groupItemInfo);
+		} else {
+			for (keyIt = keysAvailable.begin(); keyIt != keysAvailable.end(); keyIt++) {
+				if (it->channelId == *keyIt) {
+					/* Found Key, set title text to bold and colored blue */
+					groupItemInfo.privatekey = true;
+					break;
+				}
+			}
 
-    uint32_t i = 0;
-    std::multimap<uint32_t, ChannelInfo>::reverse_iterator rit;
-    for (rit = popMap.rbegin(); rit != popMap.rend(); rit++) {
-        if (i < popCount) {
-            popList.push_back(rit->second);
-            i++;
-        } else {
-            otherList.push_back(rit->second);
-        }
-    }
-
-    // check if search filter is being used
-    if(! searchLine->text().isEmpty()){
-
-    	filterChannelList(adminList);
-        filterChannelList(subList);
-        filterChannelList(popList);
-        filterChannelList(otherList);
-    }
-
-    /* now we have our lists ---> update entries */
-
-    fillChannelList(OWN, adminList);
-    fillChannelList(SUBSCRIBED, subList);
-    fillChannelList(POPULAR, popList);
-    fillChannelList(OTHER, otherList);
-
-    // place notices for channel with private keys available
-    highlightPrivateKeys(SUBSCRIBED);
-    highlightPrivateKeys(POPULAR);
-    highlightPrivateKeys(OTHER);
-
-    updateMessageSummaryList("");
-}
-
-
-void ChannelFeed::filterChannelList(std::list<ChannelInfo> &ci){
-
-	uint32_t score = 0;
-	QString scoreString;
-	mChanSearchScore.clear();
-	std::list<ChannelInfo>::iterator it = ci.begin();
-
-	// first find out which has given word in it
-	for(;it != ci.end(); it++){
-
-		if(sectionCombo->currentIndex() == COMBO_DESC_INDEX){
-			scoreString = QString::fromStdWString(it->channelDesc);
-			score = scoreString.count(searchLine->text(), Qt::CaseInsensitive);
-			mChanSearchScore.insert(std::pair<std::string, uint32_t>(it->channelId, score));
-		}
-		else {
-			scoreString = QString::fromStdWString(it->channelName);
-			score = scoreString.count(searchLine->text(), Qt::CaseInsensitive);
-			mChanSearchScore.insert(std::pair<std::string, uint32_t>(it->channelId, score));
-		}
-
-		if(score == 0){
-			it = ci.erase(it);
-			it--;
+			if ((flags & RS_DISTRIB_SUBSCRIBED) || ((flags & RS_DISTRIB_SUBSCRIBED) && (flags & RS_DISTRIB_PUBLISH)) ) {
+				subList.push_back(groupItemInfo);
+			} else {
+				/* rate the others by popularity */
+				popMap.insert(std::make_pair(it->pop, groupItemInfo));
+			}
 		}
 	}
 
+	/* iterate backwards through popMap - take the top 5 or 10% of list */
+	uint32_t popCount = 5;
+	if (popCount < popMap.size() / 10) {
+		popCount = popMap.size() / 10;
+	}
 
+	uint32_t i = 0;
+	std::multimap<uint32_t, GroupItemInfo>::reverse_iterator rit;
+	for (rit = popMap.rbegin(); rit != popMap.rend(); rit++) {
+		if (i < popCount) {
+			popList.push_back(rit->second);
+			i++;
+		} else {
+			otherList.push_back(rit->second);
+		}
+	}
+
+    /* now we have our lists ---> update entries */
+
+	treeWidget->fillGroupItems(ownChannels, adminList);
+	treeWidget->fillGroupItems(subcribedChannels, subList);
+	treeWidget->fillGroupItems(popularChannels, popList);
+	treeWidget->fillGroupItems(otherChannels, otherList);
+
+	updateMessageSummaryList("");
 }
 
-void ChannelFeed::highlightPrivateKeys(int group){
-
-	  QStandardItem *groupItem = model->item(group);
-	  QStandardItem *item = NULL;
-	  std::list<std::string> keysAvailable;
-	  std::list<std::string>::iterator it;
-	  int rowCount = 0;
-	  QBrush brush;
-
-	  brush.setColor(Qt::blue);
-
-	  if((groupItem == NULL) || (rsChannels == NULL))
-		  return;
-
-	  rowCount = groupItem->rowCount();
-	  rsChannels->getPubKeysAvailableGrpIds(keysAvailable);
-
-
-	  for(it= keysAvailable.begin(); it != keysAvailable.end(); it++)
-
-	  for (int row = 0; row < rowCount; row++) {
-		  if (groupItem->child(row, COLUMN_DATA)->data(ROLE_ID).toString() == QString::fromStdString(*it)) {
-			  /* found channel */
-			  item = groupItem->child(row, COLUMN_NAME);
-
-			  /* set title text to bold and colored blue */
-			  QFont chanFont = item->font();
-			  chanFont.setBold(true);
-			  item->setFont(chanFont);
-			  item->setForeground(brush);
-			  item->setToolTip(item->toolTip() + QString("\nPrivate Key Available"));
-
-		  }
-	  }
-
-}
-
-void ChannelFeed::fillChannelList(int channelItem, std::list<ChannelInfo> &channelInfos){
-    std::list<ChannelInfo>::iterator iit;
-
-    /* remove rows with groups before adding new ones */
-    QStandardItem *groupItem = model->item(channelItem);
-    if (groupItem == NULL) {
-        return;
-    }
-
-    /* iterate all channels */
-    for (iit = channelInfos.begin(); iit != channelInfos.end(); iit++) {
-#ifdef CHAN_DEBUG
-        std::cerr << "ChannelFeed::fillChannelList(): " << channelItem << " - " << iit->channelId << std::endl;
-#endif
-
-        ChannelInfo &ci = *iit;
-        QString channelId = QString::fromStdString(ci.channelId);
-
-        /* search exisiting channel item */
-        int row;
-        int rowCount = groupItem->rowCount();
-        for (row = 0; row < rowCount; row++) {
-            if (groupItem->child(row, COLUMN_DATA)->data(ROLE_ID).toString() == channelId) {
-                /* found channel */
-                break;
-            }
-        }
-
-        QStandardItem *chNameItem = NULL;
-        QStandardItem *chPopItem = NULL;
-        if (row < rowCount) {
-            chNameItem = groupItem->child(row, COLUMN_NAME);
-            chPopItem = groupItem->child(row, COLUMN_POPULARITY);
-        } else {
-            QList<QStandardItem*> channel;
-            chNameItem = new QChannelItem();
-            chPopItem = new QStandardItem();
-
-            channel.append(chNameItem);
-            channel.append(chPopItem);
-            groupItem->appendRow(channel);
-
-            groupItem->child(chNameItem->index().row(), COLUMN_DATA)->setData(channelId, ROLE_ID);
-        }
-
-        chNameItem->setText(QString::fromStdWString(ci.channelName));
-        groupItem->child(chNameItem->index().row(), COLUMN_DATA)->setData(QString::fromStdWString(ci.channelName), ROLE_CHANNEL_TITLE);
-
-        // important for arrangement of channels
-        groupItem->child(chNameItem->index().row(), COLUMN_DATA)->setData(((mChanSearchScore.find(channelId.toStdString()))->second),
-        		ROLE_CHANNEL_SEARCH_SCORE);
-        groupItem->child(chNameItem->index().row(), COLUMN_DATA)->setData(QDateTime::fromTime_t(ci.lastPost), ROLE_CHANNEL_TS);
-
-
-        chNameItem->setToolTip(PopularityDefs::tooltip(ci.pop));
-        chPopItem->setToolTip(PopularityDefs::tooltip(ci.pop));
-
-        QPixmap chanImage;
-        if (ci.pngImageLen != 0) {
-            chanImage.loadFromData(ci.pngChanImage, ci.pngImageLen, "PNG");
-        } else {
-            chanImage = QPixmap(CHAN_DEFAULT_IMAGE);
-        }
-        chNameItem->setIcon(QIcon(chanImage));
-
-        /* set Popularity icon */
-        chPopItem->setIcon(PopularityDefs::icon(ci.pop));
-    }
-
-    /* remove all items not in list */
-    int row = 0;
-    int rowCount = groupItem->rowCount();
-    while (row < rowCount) {
-        std::string channelId = groupItem->child(row, COLUMN_DATA)->data(ROLE_ID).toString().toStdString();
-
-        for (iit = channelInfos.begin(); iit != channelInfos.end(); iit++) {
-            if (iit->channelId == channelId) {
-                break;
-            }
-        }
-
-        if (iit == channelInfos.end()) {
-            groupItem->removeRow(row);
-            rowCount = groupItem->rowCount();
-        } else {
-            row++;
-        }
-    }
-
-    model->item(channelItem)->sortChildren(COLUMN_NAME, Qt::DescendingOrder);
-
-}
 
 void ChannelFeed::channelMsgReadSatusChanged(const QString& channelId, const QString& msgId, int status)
 {
@@ -577,52 +322,33 @@ void ChannelFeed::channelMsgReadSatusChanged(const QString& channelId, const QSt
 
 void ChannelFeed::updateMessageSummaryList(const std::string &channelId)
 {
-    int channelItems[2] = { OWN, SUBSCRIBED };
+	QTreeWidgetItem *items[2] = { ownChannels, subcribedChannels };
 
+	for (int item = 0; item < 2; item++) {
+		int child;
+		int childCount = items[item]->childCount();
+		for (child = 0; child < childCount; child++) {
+			QTreeWidgetItem *childItem = items[item]->child(child);
+			std::string childId = treeWidget->itemId(childItem).toStdString();
+			if (childId.empty()) {
+				continue;
+			}
 
+			if (channelId.empty() || childId == channelId) {
+				/* Calculate unread messages */
+				unsigned int newMessageCount = 0;
+				unsigned int unreadMessageCount = 0;
+                rsChannels->getMessageCount(childId, newMessageCount, unreadMessageCount);
 
-    for (int channelItem = 0; channelItem < 2; channelItem++) {
-        QStandardItem *groupItem = model->item(channelItems[channelItem]);
-        if (groupItem == NULL) {
-            continue;
-        }
+				treeWidget->setUnreadCount(childItem, unreadMessageCount);
 
-        int row;
-        int rowCount = groupItem->rowCount();
-        for (row = 0; row < rowCount; row++) {
-            std::string rowChannelId = groupItem->child(row, COLUMN_DATA)->data(ROLE_ID).toString().toStdString();
-            if (rowChannelId.empty()) {
-                continue;
-            }
-
-            if (channelId.empty() || rowChannelId == channelId) {
-                /* calculate unread messages */
-                unsigned int newMessageCount = 0;
-                unsigned int unreadMessageCount = 0;
-                rsChannels->getMessageCount(rowChannelId, newMessageCount, unreadMessageCount);
-
-                QStandardItem *item = groupItem->child(row, COLUMN_NAME);
-
-                QString title = item->data(ROLE_CHANNEL_TITLE).toString();
-                QFont font = item->font();
-
-                if (unreadMessageCount) {
-                    title += " (" + QString::number(unreadMessageCount) + ")";
-                    font.setBold(true);
-                } else {
-                    font.setBold(false);
-                }
-
-                item->setText(title);
-                item->setFont(font);
-
-                if (channelId.empty() == false) {
-                    /* calculate only this channel */
-                    break;
-                }
-            }
-        }
-    }
+				if (channelId.empty() == false) {
+					/* Calculate only this channel */
+					break;
+				}
+			}
+		}
+	}
 }
 
 static bool sortChannelMsgSummary(const ChannelMsgSummary &msg1, const ChannelMsgSummary &msg2)
@@ -779,39 +505,3 @@ void ChannelFeed::setAllAsReadClicked()
         }
     }
 }
-
-QChannelItem::QChannelItem()
-	: QStandardItem(){
-}
-
-
- QChannelItem::~QChannelItem(){
-
-}
-
-bool QChannelItem::operator<(const QStandardItem& other) const {
-
-	uint32_t otherCount = 0, thisCount = 0;
-	uint otherChanTs = other.data(ROLE_CHANNEL_TS).toDateTime().toTime_t();
-	uint thisChanTs = this->data(ROLE_CHANNEL_TS).toDateTime().toTime_t();
-
-
-	otherCount = other.data(ROLE_CHANNEL_SEARCH_SCORE).toUInt();
-	thisCount = this->data(ROLE_CHANNEL_SEARCH_SCORE).toUInt();
-
-	// if counts are equal then determine by who has the most recent post
-	if(otherCount == thisCount){
-		if(thisChanTs < otherChanTs)
-			return true;
-	}
-
-	// choose the item where the string occurs the most
-	if(thisCount < otherCount)
-		return true;
-
-	if(thisChanTs < otherChanTs)
-		return true;
-
-	return false;
-}
-
