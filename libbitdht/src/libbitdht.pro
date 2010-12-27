@@ -1,5 +1,5 @@
 TEMPLATE = lib
-CONFIG += staticlib release
+CONFIG += staticlib
 CONFIG -= qt
 TARGET = bitdht
 QMAKE_CXXFLAGS *= -Wall -DBE_DEBUG
