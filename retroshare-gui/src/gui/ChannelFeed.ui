@@ -318,6 +318,9 @@ border-radius: 10px;
               <property name="pixmap">
                <pixmap resource="images.qrc">:/images/channels.png</pixmap>
               </property>
+              <property name="scaledContents">
+               <bool>true</bool>
+              </property>
              </widget>
             </item>
             <item row="0" column="1">
