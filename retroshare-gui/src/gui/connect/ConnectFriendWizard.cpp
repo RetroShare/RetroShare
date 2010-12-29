@@ -175,9 +175,7 @@ IntroPage::IntroPage(QWidget *parent)
                                "color:white;\">%1</span>");
     setTitle( titleStr.arg( tr("Add a new Friend") ) ) ;
              
-    setSubTitle(tr("This wizard will help you to connect to your friend(s) "
-                   "to RetroShare network. There are five possible ways "
-                   "to do this:")) ;
+    setSubTitle(tr("This wizard will help you to connect to your friend(s) to RetroShare network.\nThese ways are possible to do this:"));
 
     textRadioButton = new QRadioButton(tr("&Enter the certificate manually"));
     certRadioButton = new QRadioButton(tr("&You get a certificate file from your friend" ));

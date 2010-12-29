@@ -760,7 +760,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>CertificatePage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="+622"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="+620"/>
         <source>Certificate files</source>
         <translation>Zertifikat-Dateien</translation>
     </message>
@@ -1016,7 +1016,7 @@ p, li { white-space: pre-wrap; }
         <translation>Hinzufügen</translation>
     </message>
     <message>
-        <location line="+316"/>
+        <location line="+319"/>
         <source>Set all to read</source>
         <translation>Alle als gelesen markieren</translation>
     </message>
@@ -1066,7 +1066,7 @@ p, li { white-space: pre-wrap; }
         <translation>Andere Kanäle</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.ui" line="-136"/>
+        <location filename="../gui/ChannelFeed.ui" line="-139"/>
         <location filename="../gui/ChannelFeed.cpp" line="+26"/>
         <source>Post to Channel</source>
         <translation>Kanalbeitrag erstellen</translation>
@@ -1613,7 +1613,7 @@ und meinen GPG Schlüssel nicht unterzeichnet</translation>
 <context>
     <name>ConnectFriendWizard</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-775"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-773"/>
         <source>Connect Friend Wizard</source>
         <translation>Assistent um sich zu einem Freund zu verbinden</translation>
     </message>
@@ -2958,7 +2958,7 @@ Das ist nützlich, wenn Du eine externe Festplatte freigibst und die Datei nicht
 <context>
     <name>EmailPage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="+1056"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="+1054"/>
         <source>Invite Friends by Email</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4809,17 +4809,23 @@ p, li { white-space: pre-wrap; }
         <translation>&amp;Füge ausgewählte Freunde Deiner Freunde hinzu</translation>
     </message>
     <message>
-        <location line="-8"/>
+        <location line="-6"/>
         <source>Add a new Friend</source>
         <translation>Fügen einen neuen Freund hinzu</translation>
     </message>
     <message>
-        <location line="+2"/>
-        <source>This wizard will help you to connect to your friend(s) to RetroShare network. There are five possible ways to do this:</source>
-        <translation type="unfinished"></translation>
+        <source>This wizard will help you to connect to your friend(s) to RetroShare network. These ways are possible to do this:</source>
+        <translation type="obsolete">Dieser Assistent hilft Dir, Dich mit einem Freund im RetroShare-Netzwerk zu verbinden. Folgende Wege sind möglich:</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+2"/>
+        <source>This wizard will help you to connect to your friend(s) to RetroShare network.
+These ways are possible to do this:</source>
+        <translation>Dieser Assistent hilft Dir, Dich mit einem Freund im RetroShare-Netzwerk zu verbinden.
+Die folgenden Wege sind möglich:</translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>&amp;Enter the certificate manually</source>
         <translation>Gib das Zertifikat &amp;manuell ein</translation>
     </message>
