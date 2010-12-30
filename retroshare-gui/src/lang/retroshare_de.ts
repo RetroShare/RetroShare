@@ -1141,7 +1141,7 @@ p, li { white-space: pre-wrap; }
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ChatMsgItem.cpp" line="+274"/>
+        <location filename="../gui/feeds/ChatMsgItem.cpp" line="+273"/>
         <source>Quick Message</source>
         <translation>Schnelle Nachrricht</translation>
     </message>
@@ -1288,7 +1288,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ChatStyle</name>
     <message>
-        <location filename="../gui/chat/ChatStyle.cpp" line="+383"/>
+        <location filename="../gui/chat/ChatStyle.cpp" line="+362"/>
         <source>Standard style for group chat</source>
         <translation>Standard Stil für den Gruppenchat</translation>
     </message>
@@ -3585,7 +3585,7 @@ p, li { white-space: pre-wrap; }
         <translation>keine</translation>
     </message>
     <message>
-        <location line="+503"/>
+        <location line="+501"/>
         <location line="+81"/>
         <source>RetroShare</source>
         <translation></translation>
@@ -3601,7 +3601,7 @@ p, li { white-space: pre-wrap; }
         <translation>Du kannst einem anonymen Autor nicht antworten</translation>
     </message>
     <message>
-        <location line="-1275"/>
+        <location line="-1273"/>
         <source>Your Forums</source>
         <translation>Deine Foren</translation>
     </message>
@@ -3739,7 +3739,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="+110"/>
-        <location line="+1086"/>
+        <location line="+1084"/>
         <source>Start New Thread</source>
         <translation>Erstelle neues Thema</translation>
     </message>
@@ -3767,7 +3767,7 @@ p, li { white-space: pre-wrap; }
         <translation>Inhalt</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="-1073"/>
+        <location filename="../gui/ForumsDialog.cpp" line="-1071"/>
         <location line="+3"/>
         <source>Mark as read</source>
         <translation>Als gelesen markieren</translation>
@@ -6073,15 +6073,15 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+177"/>
         <location filename="../gui/MessagesDialog.cpp" line="-44"/>
-        <location line="+989"/>
+        <location line="+984"/>
         <location line="+10"/>
         <source>Inbox</source>
         <translation>Posteingang</translation>
     </message>
     <message>
         <location line="+9"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-994"/>
-        <location line="+1007"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-989"/>
+        <location line="+1002"/>
         <location line="+8"/>
         <source>Outbox</source>
         <translation>Postausgang</translation>
@@ -6093,7 +6093,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+9"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-1005"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-1000"/>
         <source>Sent</source>
         <translation>Gesendet</translation>
     </message>
@@ -6155,13 +6155,13 @@ p, li { white-space: pre-wrap; }
         <translation>Speichern unter...</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="+761"/>
+        <location filename="../gui/MessagesDialog.cpp" line="+756"/>
         <source>Print Document</source>
         <translation>Dokument drucken</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="-889"/>
-        <location filename="../gui/MessagesDialog.cpp" line="-1568"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-1563"/>
         <source>Subject</source>
         <translation>Betreff</translation>
     </message>
@@ -6226,7 +6226,17 @@ p, li { white-space: pre-wrap; }
         <translation>Empfohlene Dateien einblenden</translation>
     </message>
     <message>
-        <location line="+1034"/>
+        <location line="+892"/>
+        <source>File</source>
+        <translation>Datei</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Files</source>
+        <translation>Dateien</translation>
+    </message>
+    <message>
+        <location line="+137"/>
         <source>Save as...</source>
         <translation>Speichern unter...</translation>
     </message>
@@ -6236,7 +6246,7 @@ p, li { white-space: pre-wrap; }
         <translation>HTML-Dateien (*.htm *.html);;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location line="-1545"/>
+        <location line="-1540"/>
         <location line="+274"/>
         <source>Reply to All</source>
         <translation>Allen antworten</translation>
@@ -6276,7 +6286,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+177"/>
         <location filename="../gui/MessagesDialog.cpp" line="+628"/>
-        <location line="+1031"/>
+        <location line="+1026"/>
         <location line="+5"/>
         <source>Trash</source>
         <translation>Papierkorb</translation>
@@ -6292,7 +6302,7 @@ p, li { white-space: pre-wrap; }
         <translation>Ordner</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="-1653"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-1648"/>
         <source>Remove All Tags</source>
         <translation>Alle Schlagwörter entfernen</translation>
     </message>
@@ -6323,13 +6333,13 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+358"/>
-        <location line="+1022"/>
+        <location line="+1017"/>
         <location line="+8"/>
         <source>Drafts</source>
         <translation>Entwürfe</translation>
     </message>
     <message>
-        <location line="-994"/>
+        <location line="-989"/>
         <source>To</source>
         <translation>An</translation>
     </message>
@@ -6339,7 +6349,7 @@ p, li { white-space: pre-wrap; }
         <translation>Editieren...</translation>
     </message>
     <message>
-        <location line="+1409"/>
+        <location line="+1404"/>
         <location line="+4"/>
         <location line="+4"/>
         <location line="+4"/>
@@ -6351,7 +6361,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MessengerWindow</name>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="+292"/>
+        <location filename="../gui/MessengerWindow.cpp" line="+294"/>
         <source>Expand all</source>
         <translation>Alle erweitern</translation>
     </message>
@@ -8166,7 +8176,7 @@ Do you want to send them a Message instead</source>
         <translation>Tab abdocken</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatWindow.cpp" line="+259"/>
+        <location filename="../gui/chat/PopupChatWindow.cpp" line="+260"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
@@ -8674,7 +8684,7 @@ p, li { white-space: pre-wrap; }
         <translation>Die Datei wurde zur Downloadliste hinzugefügt.</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.cpp" line="-1149"/>
+        <location filename="../gui/MessagesDialog.cpp" line="-1144"/>
         <location filename="../gui/RetroShareLink.cpp" line="+8"/>
         <source>File Request canceled</source>
         <translation>Dateianforderung abgebrochen</translation>

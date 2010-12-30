@@ -36,9 +36,6 @@ public:
     static void showSmileyWidget(QWidget *parent, QWidget *button, const char *slotAddMethod, bool above);
 
     static void formatText(QString &text);
-
-public:
-    static RsChat::EmbedInHtmlImg defEmbedImg;
 };
 
 #endif

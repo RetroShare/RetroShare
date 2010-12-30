@@ -33,8 +33,11 @@
 #include <QRegExp>
 #include <QtXml>
 
+/* Flags for RsHtml::formatText */
+#define RSHTML_FORMATTEXT_EMBED_SMILEYS  1
+#define RSHTML_FORMATTEXT_EMBED_LINKS    2
 
-namespace RsChat {
+namespace RsHtml {
 
 
 /**
@@ -80,6 +83,7 @@ public:
 };
 
 
+
 /** 
   * This class is used to store information for embedding smileys into <img/> tags.
   *
@@ -102,11 +106,13 @@ public:
 	QHash<QString,QString> smileys;
 };
 
+extern EmbedInHtmlImg defEmbedImg;
 
+QString formatText(const QString &text, unsigned int flag);
 void embedHtml(QDomDocument& doc, QDomElement& currentElement, EmbedInHtml& embedInfos);
 
 
-} // namespace RsChat
+} // namespace RsHtml
 
 
 #endif // HANDLE_RICH_TEXT_H_

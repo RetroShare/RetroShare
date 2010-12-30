@@ -1148,9 +1148,7 @@ void ForumsDialog::insertPost()
         }
     }
 
-    QString extraTxt;
-    extraTxt += QString::fromStdWString(msg.msg);
-    Emoticons::formatText(extraTxt);
+    QString extraTxt = RsHtml::formatText(QString::fromStdWString(msg.msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
 
     ui.postText->setHtml(extraTxt);
     ui.threadTitle->setText(QString::fromStdWString(msg.title));

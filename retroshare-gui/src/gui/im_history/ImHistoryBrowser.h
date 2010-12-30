@@ -24,6 +24,7 @@
 #define _IMHISTORYBROWSER_H
 
 #include <QDialog>
+#include <QThread>
 
 #include <retroshare/rsmsgs.h>
 #include "IMHistoryKeeper.h"

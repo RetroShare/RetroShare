@@ -33,7 +33,6 @@
 #include "Emoticons.h"
 
 static QHash<QString, QString> Smileys;
-RsChat::EmbedInHtmlImg Emoticons::defEmbedImg;
 
 void Emoticons::load()
 {
@@ -119,7 +118,7 @@ void Emoticons::load()
     }
 
     // init <img> embedder
-    defEmbedImg.InitFromAwkwardHash(Smileys);
+    RsHtml::defEmbedImg.InitFromAwkwardHash(Smileys);
 }
 
 void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *slotAddMethod, bool above)

@@ -1718,15 +1718,10 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index, bool bSetToRead)
 
     ui.subjectText->setText(QString::fromStdWString(msgInfo.title));
 
-    text = QString::fromStdWString(msgInfo.msg);
-    Emoticons::formatText(text);
+    text = RsHtml::formatText(QString::fromStdWString(msgInfo.msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
     ui.msgText->setHtml(text);
 
-    {
-        std::ostringstream out;
-        out << "(" << msgInfo.count << " Files)";
-        ui.filesText->setText(QString::fromStdString(out.str()));
-    }
+    ui.filesText->setText(QString("(%1 %2)").arg(msgInfo.count).arg(msgInfo.count == 1 ? tr("File") : tr("Files")));
 
     showTagLabels();
 

@@ -22,8 +22,9 @@
 #include "HandleRichText.h"
 
 
-namespace RsChat {
+namespace RsHtml {
 
+EmbedInHtmlImg defEmbedImg;
 
 void EmbedInHtmlImg::InitFromAwkwardHash(const QHash< QString, QString >& hash)
 {
@@ -40,6 +41,27 @@ void EmbedInHtmlImg::InitFromAwkwardHash(const QHash< QString, QString >& hash)
 	myRE.setPattern(newRE);
 }
 
+QString formatText(const QString &text, unsigned int flag)
+{
+	if (flag == 0) {
+		// nothing to do
+		return text;
+	}
+
+	QDomDocument doc;
+	doc.setContent(text);
+
+	QDomElement body = doc.documentElement();
+	if (flag & RSHTML_FORMATTEXT_EMBED_SMILEYS) {
+		embedHtml(doc, body, defEmbedImg);
+	}
+	if (flag & RSHTML_FORMATTEXT_EMBED_LINKS) {
+		EmbedInHtmlAhref defEmbedAhref;
+		embedHtml(doc, body, defEmbedAhref);
+	}
+
+	return doc.toString(-1);  // -1 removes any annoying carriage return misinterpreted by QTextEdit
+}
 
 /**
  * Parses a DOM tree and replaces text by HTML tags.
@@ -123,5 +145,4 @@ void embedHtml(QDomDocument& doc, QDomElement& currentElement, EmbedInHtml& embe
 	}
 }
 
-
-} // namespace RsChat
+} // namespace RsHtml

@@ -21,6 +21,7 @@
  ****************************************************************/
 
 #include <QPixmap>
+#include <QBuffer>
 
 #include "PopupChatWindow.h"
 #include "PopupChatDialog.h"

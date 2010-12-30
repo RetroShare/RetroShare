@@ -162,27 +162,6 @@ static QString getStyle(const QDir &styleDir, const QString &styleVariant, enumG
     return style;
 }
 
-QString ChatStyle::formatText(const QString &message, unsigned int flag)
-{
-    if (flag == 0) {
-        // nothing to do
-        return message;
-    }
-
-    QDomDocument doc;
-    doc.setContent(message);
-
-    QDomElement body = doc.documentElement();
-    if (flag & CHAT_FORMATTEXT_EMBED_LINKS) {
-        RsChat::embedHtml(doc, body, defEmbedAhref);
-    }
-    if (flag & CHAT_FORMATTEXT_EMBED_SMILEYS) {
-        RsChat::embedHtml(doc, body, Emoticons::defEmbedImg);
-    }
-
-    return doc.toString(-1);		// -1 removes any annoying carriage return misinterpreted by QTextEdit
-}
-
 QString ChatStyle::formatMessage(enumFormatMessage type, const QString &name, const QDateTime &timestamp, const QString &message, unsigned int flag)
 {
     QString style = m_style[type];
@@ -216,13 +195,13 @@ QString ChatStyle::formatMessage(enumFormatMessage type, const QString &name, co
 
     unsigned int formatFlag = 0;
     if (flag & CHAT_FORMATMSG_EMBED_SMILEYS) {
-        formatFlag |= CHAT_FORMATTEXT_EMBED_SMILEYS;
+        formatFlag |= RSHTML_FORMATTEXT_EMBED_SMILEYS;
     }
     if (flag & CHAT_FORMATMSG_EMBED_LINKS) {
-        formatFlag |= CHAT_FORMATTEXT_EMBED_LINKS;
+        formatFlag |= RSHTML_FORMATTEXT_EMBED_LINKS;
     }
 
-    QString msg = formatText(message, formatFlag);
+    QString msg = RsHtml::formatText(message, formatFlag);
 
 //    //replace http://, https:// and www. with <a href> links
 //    QRegExp rx("(retroshare://[^ <>]*)|(https?://[^ <>]*)|(www\\.[^ <>]*)");

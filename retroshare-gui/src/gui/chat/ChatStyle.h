@@ -27,8 +27,7 @@
 #include <QDateTime>
 #include <QHash>
 #include <QMetaType>
-
-#include "HandleRichText.h"
+#include <QDir>
 
 /* Flags for ChatStyle::formatMessage */
 #define CHAT_FORMATMSG_EMBED_SMILEYS    1
@@ -88,7 +87,6 @@ public:
     bool setStyleFromSettings(enumStyleType styleType);
 
     QString formatMessage(enumFormatMessage type, const QString &name, const QDateTime &timestamp, const QString &message, unsigned int flag);
-    QString formatText(const QString &message, unsigned int flag);
 
     static bool getAvailableStyles(enumStyleType styleType, QList<ChatStyleInfo> &styles);
     static bool getAvailableVariants(const QString &stylePath, QStringList &variants);
@@ -102,9 +100,6 @@ private:
     QString m_styleVariant;
 
     QString m_style[FORMATMSG_COUNT];
-
-    /** store default information for embedding HTML */
-    RsChat::EmbedInHtmlAhref defEmbedAhref;
 };
 
 #endif // _CHATSTYLE_H
