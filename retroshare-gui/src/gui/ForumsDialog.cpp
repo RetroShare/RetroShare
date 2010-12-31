@@ -258,10 +258,10 @@ void ForumsDialog::forumListCustomPopupMenu( QPoint point )
     QMenu contextMnu( this );
 
     QAction *action = contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Subscribe to Forum"), this, SLOT(subscribeToForum()));
-    action->setDisabled (m_bIsForumSubscribed);
+    action->setDisabled (mCurrForumId.empty() || m_bIsForumSubscribed);
 
     action = contextMnu.addAction(QIcon(IMAGE_UNSUBSCRIBE), tr("Unsubscribe to Forum"), this, SLOT(unsubscribeToForum()));
-    action->setEnabled (m_bIsForumSubscribed);
+    action->setEnabled (!mCurrForumId.empty() && m_bIsForumSubscribed);
 
     contextMnu.addSeparator();
 
