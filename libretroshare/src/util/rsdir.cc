@@ -526,6 +526,7 @@ bool	RsDirUtil::checkCreateDirectory(const std::string& dir)
         std::cerr << "check_create_directory()";
         std::cerr <<std::endl<< "\tDir Exists:" <<dir<<std::endl;
 #endif
+		  closedir(direc) ;
         return 1;
 }
 

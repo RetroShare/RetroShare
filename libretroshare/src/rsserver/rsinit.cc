@@ -897,33 +897,33 @@ bool getAvailableAccounts(std::list<accountId> &ids)
 	std::cerr << "getAvailableAccounts()";
 	std::cerr << std::endl;
 
-                /* now iterate through the directory...
-                 * directories - flags as old,
-                 * files checked to see if they have changed. (rehashed)
-                 */
+	/* now iterate through the directory...
+	 * directories - flags as old,
+	 * files checked to see if they have changed. (rehashed)
+	 */
 
-        struct dirent *dent;
-        struct stat buf;
-	
-        /* check for the dir existance */
-        DIR *dir = opendir(RsInitConfig::basedir.c_str());
+	struct dirent *dent;
+	struct stat buf;
+
+	/* check for the dir existance */
+	DIR *dir = opendir(RsInitConfig::basedir.c_str());
 	if (!dir)
 	{
 		std::cerr << "Cannot Open Base Dir - No Available Accounts" << std::endl;
 		exit(1);
 	}
 
-        while(NULL != (dent = readdir(dir)))
-        {
+	while(NULL != (dent = readdir(dir)))
+	{
 		/* check entry type */
 		std::string fname = dent -> d_name;
 		std::string fullname = RsInitConfig::basedir + "/" + fname;
-		
+
 		if (-1 != stat(fullname.c_str(), &buf))
 		{
-			#ifdef FIM_DEBUG
+#ifdef FIM_DEBUG
 			std::cerr << "buf.st_mode: " << buf.st_mode <<std::endl;
-			#endif
+#endif
 			if (S_ISDIR(buf.st_mode))
 			{
 				if ((fname == ".") || (fname == ".."))
@@ -933,31 +933,32 @@ bool getAvailableAccounts(std::list<accountId> &ids)
 #endif
 					continue; /* skipping links */
 				}
-		
+
 #ifdef FIM_DEBUG
-			std::cerr << "Is Directory: " << fullname << std::endl;
+				std::cerr << "Is Directory: " << fullname << std::endl;
 #endif
 
-			/* */
-			directories.push_back(fname);
+				/* */
+				directories.push_back(fname);
 
 			}
 		}	
 	}
+	closedir(dir) ;
 
 	for(it = directories.begin(); it != directories.end(); it++)
 	{
 		std::string accountdir = RsInitConfig::basedir + RsInitConfig::dirSeperator + *it;
-                #ifdef GPG_DEBUG
-                std::cerr << "getAvailableAccounts() Checking: " << *it << std::endl;
-                #endif
+#ifdef GPG_DEBUG
+		std::cerr << "getAvailableAccounts() Checking: " << *it << std::endl;
+#endif
 
 		accountId tmpId;
 		if (checkAccount(accountdir, tmpId))
 		{
-                        #ifdef GPG_DEBUG
-                        std::cerr << "getAvailableAccounts() Accepted: " << *it << std::endl;
-                        #endif
+#ifdef GPG_DEBUG
+			std::cerr << "getAvailableAccounts() Accepted: " << *it << std::endl;
+#endif
 			ids.push_back(tmpId);
 		}
 	}

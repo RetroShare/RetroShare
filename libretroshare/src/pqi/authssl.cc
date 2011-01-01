@@ -765,10 +765,17 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509)
         std::cerr << "AuthSSLimpl::AuthX509() X509 authenticated" << std::endl;
         #endif
 
+		  OPENSSL_free(buf_in) ;
+		  OPENSSL_free(buf_hashout) ;
         return true;
 
   err:
         std::cerr << "AuthSSLimpl::AuthX509() X509 NOT authenticated" << std::endl;
+
+		  if(buf_in != NULL)
+			  OPENSSL_free(buf_in) ;
+		  if(buf_hashout != NULL)
+			  OPENSSL_free(buf_hashout) ;
         return false;
 }
 

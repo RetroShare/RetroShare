@@ -420,6 +420,8 @@ bool pqiSSLstore::encryptedSendItems(const std::list<RsItem*>& rsItemList)
 			return false;
 		offset += sizeItem;
 
+		if (!(bio_flags & BIN_FLAGS_NO_DELETE))
+			delete *it;
 	}
 
 	if(sizeItems == offset)

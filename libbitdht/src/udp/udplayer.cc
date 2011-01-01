@@ -304,6 +304,8 @@ void UdpLayer::recv_loop()
 #endif
 		}
 	}
+
+	free(inbuf) ;
 	return;
 }
 
