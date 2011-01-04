@@ -19,11 +19,15 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <QMenu>
+
 #include "GroupTreeWidget.h"
 #include "ui_GroupTreeWidget.h"
 
 #include "RSItemDelegate.h"
 #include "PopularityDefs.h"
+#include "gui/settings/rsharesettings.h"
+#include "RSTreeWidgetItem.h"
 
 #include <stdint.h>
 
@@ -35,8 +39,9 @@
 #define ROLE_ID           Qt::UserRole
 #define ROLE_NAME         Qt::UserRole + 1
 #define ROLE_DESCRIPTION  Qt::UserRole + 2
-#define ROLE_LASTPOST     Qt::UserRole + 3
-#define ROLE_SEARCH_SCORE Qt::UserRole + 4
+#define ROLE_POPULARITY   Qt::UserRole + 3
+#define ROLE_LASTPOST     Qt::UserRole + 4
+#define ROLE_SEARCH_SCORE Qt::UserRole + 5
 
 #define COMBO_NAME_INDEX  0
 #define COMBO_DESC_INDEX  1
@@ -45,6 +50,16 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 		QWidget(parent), ui(new Ui::GroupTreeWidget)
 {
 	ui->setupUi(this);
+
+	displayMenu = NULL;
+	actionSortAscending = NULL;
+//	actionSortDescending = NULL;
+	actionSortByName = NULL;
+	actionSortByPopularity = NULL;
+	actionSortByLastPost = NULL;
+
+	compareRole = new RSTreeWidgetItemCompareRole;
+	compareRole->setRole(COLUMN_DATA, ROLE_NAME);
 
 	/* Connect signals */
 	connect(ui->clearFilter, SIGNAL(clicked()), this, SLOT(clearFilter()));
@@ -89,6 +104,87 @@ void GroupTreeWidget::changeEvent(QEvent *e)
 	default:
 		break;
 	}
+}
+
+void GroupTreeWidget::processSettings(RshareSettings *settings, bool load)
+{
+	if (settings == NULL) {
+		return;
+	}
+
+	const int SORTBY_NAME = 1;
+	const int SORTBY_POPULRITY = 2;
+	const int SORTBY_LASTPOST = 3;
+
+	if (load) {
+		// load settings
+
+		// state of sort
+		int sortby = settings->value("GroupSortBy").toInt();
+		switch (sortby) {
+		case SORTBY_NAME:
+			if (actionSortByName) {
+				actionSortByName->setChecked(true);
+			}
+			break;
+		case SORTBY_POPULRITY:
+			if (actionSortByPopularity) {
+				actionSortByPopularity->setChecked(true);
+			}
+			break;
+		case SORTBY_LASTPOST:
+			if (actionSortByLastPost) {
+				actionSortByLastPost->setChecked(true);
+			}
+			break;
+		}
+	} else {
+		// save settings
+
+		// state of sort
+		int sortby = SORTBY_NAME;
+		if (actionSortByName && actionSortByName->isChecked()) {
+			sortby = SORTBY_NAME;
+		} else if (actionSortByPopularity && actionSortByPopularity->isChecked()) {
+			sortby = SORTBY_POPULRITY;
+		} else if (actionSortByLastPost && actionSortByLastPost->isChecked()) {
+			sortby = SORTBY_LASTPOST;
+		}
+		settings->setValue("GroupSortBy", sortby);
+	}
+}
+
+void GroupTreeWidget::initDisplayMenu(QPushButton *pushButton)
+{
+	displayMenu = new QMenu();
+//	QActionGroup *actionGroup = new QActionGroup(displayMenu);
+//
+//	actionSortDescending = displayMenu->addAction(QIcon(":/images/sort_decrease.png"), tr("Sort Descending Order"), this, SLOT(sort()));
+//	actionSortDescending->setCheckable(true);
+//	actionSortDescending->setActionGroup(actionGroup);
+//
+//	actionSortAscending = displayMenu->addAction(QIcon(":/images/sort_incr.png"), tr("Sort Ascending Order"), this, SLOT(sort()));
+//	actionSortAscending->setCheckable(true);
+//	actionSortAscending->setChecked(true); // set standard to sort ascending
+//	actionSortAscending->setActionGroup(actionGroup);
+//
+//	displayMenu->addSeparator();
+
+	QActionGroup *actionGroup = new QActionGroup(displayMenu);
+	actionSortByName = displayMenu->addAction(QIcon(), tr("Sort by Name"), this, SLOT(sort()));
+	actionSortByName->setCheckable(true);
+	actionSortByName->setChecked(true); // set standard to sort by name
+	actionSortByName->setActionGroup(actionGroup);
+
+	actionSortByPopularity = displayMenu->addAction(QIcon(), tr("Sort by Popularity"), this, SLOT(sort()));
+	actionSortByPopularity->setCheckable(true);
+	actionSortByPopularity->setActionGroup(actionGroup);
+
+	actionSortByLastPost = displayMenu->addAction(QIcon(), tr("Sort by Last Post"), this, SLOT(sort()));
+	actionSortByLastPost->setCheckable(true);
+	actionSortByLastPost->setActionGroup(actionGroup);
+
+	pushButton->setMenu(displayMenu);
 }
 
 void GroupTreeWidget::customContextMenuRequested(const QPoint &pos)
@@ -163,7 +259,7 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		}
 
 		if (item == NULL) {
-			item = new GroupTreeWidgetItem();
+			item = new RSTreeWidgetItem(compareRole);
 			item->setData(COLUMN_DATA, ROLE_ID, itemInfo.id);
 			categoryItem->addChild(item);
 		}
@@ -173,7 +269,8 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		item->setData(COLUMN_DATA, ROLE_DESCRIPTION, itemInfo.description);
 
 		/* Set last post */
-		item->setData(COLUMN_DATA, ROLE_LASTPOST, itemInfo.lastpost);
+		qlonglong lastPost = itemInfo.lastpost.toTime_t();
+		item->setData(COLUMN_DATA, ROLE_LASTPOST, -lastPost); // negative for correct sorting
 
 		/* Set icon */
 		item->setIcon(COLUMN_NAME, itemInfo.icon);
@@ -181,6 +278,7 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		/* Set popularity */
 		QString tooltip = PopularityDefs::tooltip(itemInfo.popularity);
 		item->setIcon(COLUMN_POPULARITY, PopularityDefs::icon(itemInfo.popularity));
+		item->setData(COLUMN_DATA, ROLE_POPULARITY, -itemInfo.popularity); // negative for correct sorting
 
 		/* Set tooltip */
 		if (itemInfo.privatekey) {
@@ -220,7 +318,7 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		}
 	}
 
-	categoryItem->sortChildren(COLUMN_NAME, Qt::DescendingOrder);
+	resort(categoryItem);
 }
 
 void GroupTreeWidget::setUnreadCount(QTreeWidgetItem *item, int unreadCount)
@@ -306,10 +404,7 @@ void GroupTreeWidget::filterChanged()
 	/* Recalculate score */
 	calculateScore(NULL);
 
-	int count = ui->treeWidget->topLevelItemCount();
-	for (int child = 0; child < count; child++) {
-		ui->treeWidget->topLevelItem(child)->sortChildren(COLUMN_NAME, Qt::DescendingOrder);
-	}
+	resort(NULL);
 }
 
 void GroupTreeWidget::clearFilter()
@@ -321,10 +416,37 @@ void GroupTreeWidget::clearFilter()
 	/* Recalculate score */
 	calculateScore(NULL);
 
-	int count = ui->treeWidget->topLevelItemCount();
-	for (int child = 0; child < count; child++) {
-		ui->treeWidget->topLevelItem(child)->sortChildren(COLUMN_NAME, Qt::DescendingOrder);
+	resort(NULL);
+}
+
+void GroupTreeWidget::resort(QTreeWidgetItem *categoryItem)
+{
+	Qt::SortOrder order = (actionSortAscending == NULL || actionSortAscending->isChecked()) ? Qt::AscendingOrder : Qt::DescendingOrder;
+
+	if (ui->filterText->text().isEmpty() == false) {
+		compareRole->setRole(COLUMN_DATA, ROLE_SEARCH_SCORE);
+		compareRole->addRole(COLUMN_DATA, ROLE_LASTPOST);
+	} else if (actionSortByName && actionSortByName->isChecked()) {
+		compareRole->setRole(COLUMN_DATA, ROLE_NAME);
+	} else if (actionSortByPopularity && actionSortByPopularity->isChecked()) {
+		compareRole->setRole(COLUMN_DATA, ROLE_POPULARITY);
+	} else if (actionSortByLastPost && actionSortByLastPost->isChecked()) {
+		compareRole->setRole(COLUMN_DATA, ROLE_LASTPOST);
 	}
+
+	if (categoryItem) {
+		categoryItem->sortChildren(COLUMN_DATA, order);
+	} else {
+		int count = ui->treeWidget->topLevelItemCount();
+		for (int child = 0; child < count; child++) {
+			ui->treeWidget->topLevelItem(child)->sortChildren(COLUMN_DATA, order);
+		}
+	}
+}
+
+void GroupTreeWidget::sort()
+{
+	resort(NULL);
 }
 
 GroupTreeWidgetItem::GroupTreeWidgetItem() : QTreeWidgetItem()
@@ -356,5 +478,5 @@ bool GroupTreeWidgetItem::operator<(const QTreeWidgetItem& other) const
 	}
 
 	/* Compare name */
-    return text(COLUMN_NAME) < other.text(COLUMN_NAME);
+	return text(COLUMN_NAME) < other.text(COLUMN_NAME);
 }

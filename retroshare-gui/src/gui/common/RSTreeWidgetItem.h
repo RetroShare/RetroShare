@@ -23,16 +23,19 @@
 #ifndef _RSTREEWIDGETITEM_H
 #define _RSTREEWIDGETITEM_H
 
+#include <QMap>
+#include <QList>
 #include <QTreeWidgetItem>
 
 /* For definition of the UserRole for comparing */
-class RSTreeWidgetItemCompareRole : QMap<int, int>
+class RSTreeWidgetItemCompareRole : QMap<int, QList<int> >
 {
 public:
     RSTreeWidgetItemCompareRole();
 
     void setRole(int column, int role);
-    int findRole(const int column) const;
+    void addRole(int column, int role);
+    void findRoles(const int column, QList<int> &roles) const;
 };
 
 class RSTreeWidgetItem : public QTreeWidgetItem

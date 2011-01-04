@@ -44,6 +44,7 @@ public:
     /** Default Constructor */
     ChannelFeed(QWidget *parent = 0);
     /** Default Destructor */
+    ~ChannelFeed();
 
     virtual void deleteFeedItem(QWidget *item, uint32_t type);
     virtual void openChat(std::string peerId);
@@ -74,6 +75,8 @@ private:
     void updateChannelList();
     void updateChannelMsgs();
     void updateMessageSummaryList(const std::string &channelId);
+
+    void processSettings(bool load);
 
     std::string mChannelId; /* current Channel */
 

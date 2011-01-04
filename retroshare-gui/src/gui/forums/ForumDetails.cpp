@@ -91,63 +91,44 @@ void ForumDetails::showDetails(std::string mCurrForumId)
 
 void ForumDetails::loadDialog()
 {
-
-  std::list<ForumInfo> forumList;
-	std::list<ForumInfo>::iterator it;
-
 	if (!rsForums)
 	{
 		return;
 	}
 
-  ForumInfo fi;
+	ForumInfo fi;
 	rsForums->getForumInfo(fId, fi);
-	
-	rsForums->getForumList(forumList);
-	
-	for(it = forumList.begin(); it != forumList.end(); it++)
-	{
-	
-    // Set Forum Name
-    ui.nameline->setText(QString::fromStdWString(fi.forumName));
 
-    // Set Popularity
-    {
-      std::ostringstream out;
-      out << it->pop;
-      ui.popline -> setText(QString::fromStdString(out.str()));
-    }
-	
-    // Set Last Post Date 
-    {
-      QDateTime qtime;
-      qtime.setTime_t(it->lastPost);
-      QString timestamp = qtime.toString("yyyy-MM-dd hh:mm:ss");
-      ui.postline -> setText(timestamp);
-    }
+	// Set Forum Name
+	ui.nameline->setText(QString::fromStdWString(fi.forumName));
 
-    // Set Forum ID
-    ui.IDline->setText(QString::fromStdString(fi.forumId));
-	
-    // Set Forum Description
-    ui.DescriptiontextEdit->setText(QString::fromStdWString(fi.forumDesc));
-        
-		
-      if (fi.forumFlags & RS_DISTRIB_AUTHEN_REQ)
-      {
-        ui.radioButton_authd->setChecked(true);
-        ui.radioButton_anonymous->setChecked(false);
-      }
-      if (fi.forumFlags & RS_DISTRIB_AUTHEN_ANON)
-      {
-        ui.radioButton_authd->setChecked(false);
-        ui.radioButton_anonymous->setChecked(true);
-      }
+	// Set Popularity
+	ui.popline->setText(QString::number(fi.pop));
 
-
-	
+	// Set Last Post Date
+	if (fi.lastPost) {
+		QDateTime qtime;
+		qtime.setTime_t(fi.lastPost);
+		QString timestamp = qtime.toString("yyyy-MM-dd hh:mm:ss");
+		ui.postline->setText(timestamp);
 	}
 
+	// Set Forum ID
+	ui.IDline->setText(QString::fromStdString(fi.forumId));
+
+	// Set Forum Description
+	ui.DescriptiontextEdit->setText(QString::fromStdWString(fi.forumDesc));
+
+	if (fi.forumFlags & RS_DISTRIB_AUTHEN_REQ)
+	{
+		ui.radioButton_authd->setChecked(true);
+		ui.radioButton_anonymous->setChecked(false);
+	}
+	if (fi.forumFlags & RS_DISTRIB_AUTHEN_ANON)
+	{
+		ui.radioButton_authd->setChecked(false);
+		ui.radioButton_anonymous->setChecked(true);
+	}
 }
 
 void ForumDetails::applyDialog()
@@ -160,6 +141,3 @@ void ForumDetails::applyDialog()
 	closeinfodlg();
 
 }
-
-
-

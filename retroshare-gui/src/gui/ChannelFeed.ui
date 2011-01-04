@@ -174,7 +174,7 @@ p, li { white-space: pre-wrap; }
             </property>
            </spacer>
           </item>
-          <item row="0" column="3">
+          <item row="0" column="4">
            <widget class="QPushButton" name="channelpushButton">
             <property name="enabled">
              <bool>true</bool>
@@ -203,12 +203,6 @@ p, li { white-space: pre-wrap; }
             <property name="icon">
              <iconset resource="images.qrc">
               <normaloff>:/images/edit_add24.png</normaloff>:/images/edit_add24.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>16</width>
-              <height>16</height>
-             </size>
             </property>
             <property name="default">
              <bool>false</bool>
@@ -252,6 +246,35 @@ p, li { white-space: pre-wrap; }
               <normaloff>:/images/mail_send.png</normaloff>:/images/mail_send.png</iconset>
             </property>
             <property name="autoRaise">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QPushButton" name="displayButton">
+            <property name="toolTip">
+             <string>Display</string>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QPushButton::menu-indicator {
+     subcontrol-origin: padding;
+     subcontrol-position: bottom right;
+ }
+
+ QPushButton::menu-indicator:pressed, QPushButton::menu-indicator:open {
+     position: relative;
+     top: 2px; left: 2px; /* shift the arrow by 2 px */
+ }
+
+ QPushButton:hover {
+	border: 1px solid #CCCCCC;
+ }</string>
+            </property>
+            <property name="icon">
+             <iconset resource="images.qrc">
+              <normaloff>:/images/looknfeel.png</normaloff>:/images/looknfeel.png</iconset>
+            </property>
+            <property name="flat">
              <bool>true</bool>
             </property>
            </widget>
@@ -551,7 +574,7 @@ border-image: url(:/images/btn_26_pressed.png) 4;
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>417</width>
+               <width>412</width>
                <height>331</height>
               </rect>
              </property>

@@ -27,6 +27,10 @@
 #include <QTreeWidgetItem>
 #include <QDateTime>
 
+class QPushButton;
+class RshareSettings;
+class RSTreeWidgetItemCompareRole;
+
 namespace Ui {
 	class GroupTreeWidget;
 }
@@ -58,6 +62,11 @@ public:
 	GroupTreeWidget(QWidget *parent = 0);
 	~GroupTreeWidget();
 
+	// Load and save settings (group must be startet from the caller)
+	void processSettings(RshareSettings *settings, bool load);
+	// Initialize the display menu for sorting
+	void initDisplayMenu(QPushButton *pushButton);
+
 	// Add a new category item
 	QTreeWidgetItem *addCategoryItem(const QString &name, const QIcon &icon, bool expand);
 	// Get id of item
@@ -68,22 +77,34 @@ public:
 	void setUnreadCount(QTreeWidgetItem *item, int unreadCount);
 
 signals:
-    void treeCustomContextMenuRequested(const QPoint &pos);
-    void treeCurrentItemChanged(const QString &id);
+	void treeCustomContextMenuRequested(const QPoint &pos);
+	void treeCurrentItemChanged(const QString &id);
 
 protected:
 	void changeEvent(QEvent *e);
 
 private slots:
 	void customContextMenuRequested(const QPoint &pos);
-    void currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
+	void currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
 	void filterChanged();
 	void clearFilter();
 
-private:
-	void calculateScore(QTreeWidgetItem *item);
+	void sort();
 
 private:
+	void calculateScore(QTreeWidgetItem *item);
+	void resort(QTreeWidgetItem *categoryItem);
+
+private:
+	QMenu *displayMenu;
+	QAction *actionSortAscending;
+//	QAction *actionSortDescending;
+	QAction *actionSortByName;
+	QAction *actionSortByPopularity;
+	QAction *actionSortByLastPost;
+
+	RSTreeWidgetItemCompareRole *compareRole;
+
 	Ui::GroupTreeWidget *ui;
 };
 

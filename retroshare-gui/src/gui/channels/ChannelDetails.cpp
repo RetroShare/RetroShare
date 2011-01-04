@@ -115,7 +115,7 @@ void ChannelDetails::loadChannel()
     }
 	
     // Set Last Channel Post Date 
-    {
+    if (ci.lastPost) {
       QDateTime qtime;
       qtime.setTime_t(ci.lastPost);
       QString timestamp = qtime.toString("yyyy-MM-dd hh:mm:ss");

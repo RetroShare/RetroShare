@@ -32,6 +32,7 @@
 
 #include "feeds/ChanMsgItem.h"
 #include "common/PopularityDefs.h"
+#include "settings/rsharesettings.h"
 
 #include "channels/CreateChannel.h"
 #include "channels/ChannelDetails.h"
@@ -70,10 +71,13 @@ ChannelFeed::ChannelFeed(QWidget *parent)
 
     mChannelId.clear();
 
-	ownChannels = treeWidget->addCategoryItem(tr("Own Channels"), QIcon(), true);
-	subcribedChannels = treeWidget->addCategoryItem(tr("Subscribed Channels"), QIcon(), true);
-	popularChannels = treeWidget->addCategoryItem(tr("Popular Channels"), QIcon(), false);
-	otherChannels = treeWidget->addCategoryItem(tr("Other Channels"), QIcon(), false);
+    /* Initialize group tree */
+    treeWidget->initDisplayMenu(displayButton);
+
+    ownChannels = treeWidget->addCategoryItem(tr("Own Channels"), QIcon(), true);
+    subcribedChannels = treeWidget->addCategoryItem(tr("Subscribed Channels"), QIcon(), true);
+    popularChannels = treeWidget->addCategoryItem(tr("Popular Channels"), QIcon(), false);
+    otherChannels = treeWidget->addCategoryItem(tr("Other Channels"), QIcon(), false);
 
     //added from ahead
     updateChannelList();
@@ -87,7 +91,31 @@ ChannelFeed::ChannelFeed(QWidget *parent)
     channelmenu->addSeparator();
     channelpushButton->setMenu(channelmenu);
 
+    /* load settings */
+    processSettings(true);
+
     updateChannelMsgs();
+}
+
+ChannelFeed::~ChannelFeed()
+{
+    // save settings
+    processSettings(false);
+}
+
+void ChannelFeed::processSettings(bool load)
+{
+    Settings->beginGroup(QString("ChannelFeed"));
+
+    if (load) {
+        // load settings
+    } else {
+        // save settings
+    }
+
+    treeWidget->processSettings(Settings, load);
+
+    Settings->endGroup();
 }
 
 void ChannelFeed::channelListCustomPopupMenu( QPoint point )

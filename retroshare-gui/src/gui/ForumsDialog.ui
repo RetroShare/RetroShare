@@ -641,7 +641,7 @@ p, li { white-space: pre-wrap; }
             </property>
            </spacer>
           </item>
-          <item row="0" column="4">
+          <item row="0" column="5">
            <widget class="QPushButton" name="forumpushButton">
             <property name="toolTip">
              <string>Add</string>
@@ -668,12 +668,6 @@ p, li { white-space: pre-wrap; }
              <iconset resource="images.qrc">
               <normaloff>:/images/edit_add24.png</normaloff>:/images/edit_add24.png</iconset>
             </property>
-            <property name="iconSize">
-             <size>
-              <width>16</width>
-              <height>16</height>
-             </size>
-            </property>
             <property name="default">
              <bool>false</bool>
             </property>
@@ -682,7 +676,7 @@ p, li { white-space: pre-wrap; }
             </property>
            </widget>
           </item>
-          <item row="0" column="2">
+          <item row="0" column="3">
            <widget class="QToolButton" name="newthreadButton">
             <property name="maximumSize">
              <size>
@@ -701,6 +695,35 @@ p, li { white-space: pre-wrap; }
               <normaloff>:/images/mail_new.png</normaloff>:/images/mail_new.png</iconset>
             </property>
             <property name="autoRaise">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="4">
+           <widget class="QPushButton" name="displayButton">
+            <property name="toolTip">
+             <string>Display</string>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QPushButton::menu-indicator {
+     subcontrol-origin: padding;
+     subcontrol-position: bottom right;
+ }
+
+ QPushButton::menu-indicator:pressed, QPushButton::menu-indicator:open {
+     position: relative;
+     top: 2px; left: 2px; /* shift the arrow by 2 px */
+ }
+
+ QPushButton:hover {
+	border: 1px solid #CCCCCC;
+ }</string>
+            </property>
+            <property name="icon">
+             <iconset resource="images.qrc">
+              <normaloff>:/images/looknfeel.png</normaloff>:/images/looknfeel.png</iconset>
+            </property>
+            <property name="flat">
              <bool>true</bool>
             </property>
            </widget>

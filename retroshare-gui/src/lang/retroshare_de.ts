@@ -1016,7 +1016,12 @@ p, li { white-space: pre-wrap; }
         <translation>Hinzufügen</translation>
     </message>
     <message>
-        <location line="+319"/>
+        <location line="+79"/>
+        <source>Display</source>
+        <translation type="unfinished">Anzeige</translation>
+    </message>
+    <message>
+        <location line="+275"/>
         <source>Set all to read</source>
         <translation>Alle als gelesen markieren</translation>
     </message>
@@ -1046,7 +1051,7 @@ p, li { white-space: pre-wrap; }
         <translation>Kanal abbestellen</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.cpp" line="+73"/>
+        <location filename="../gui/ChannelFeed.cpp" line="+77"/>
         <source>Own Channels</source>
         <translation>Meine Kanäle</translation>
     </message>
@@ -1066,8 +1071,8 @@ p, li { white-space: pre-wrap; }
         <translation>Andere Kanäle</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.ui" line="-139"/>
-        <location filename="../gui/ChannelFeed.cpp" line="+26"/>
+        <location filename="../gui/ChannelFeed.ui" line="-174"/>
+        <location filename="../gui/ChannelFeed.cpp" line="+50"/>
         <source>Post to Channel</source>
         <translation>Kanalbeitrag erstellen</translation>
     </message>
@@ -3497,7 +3502,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ForumsDialog</name>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="+260"/>
+        <location filename="../gui/ForumsDialog.cpp" line="+265"/>
         <source>Subscribe to Forum</source>
         <translation>Forum abonnieren</translation>
     </message>
@@ -3601,7 +3606,7 @@ p, li { white-space: pre-wrap; }
         <translation>Du kannst einem anonymen Autor nicht antworten</translation>
     </message>
     <message>
-        <location line="-1273"/>
+        <location line="-1275"/>
         <source>Your Forums</source>
         <translation>Deine Foren</translation>
     </message>
@@ -3644,7 +3649,12 @@ p, li { white-space: pre-wrap; }
         <translation>Starte ein neues Thema im ausgewählten Forum</translation>
     </message>
     <message>
-        <location line="+82"/>
+        <location line="+17"/>
+        <source>Display</source>
+        <translation type="unfinished">Anzeige</translation>
+    </message>
+    <message>
+        <location line="+100"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -3738,7 +3748,7 @@ p, li { white-space: pre-wrap; }
         <translation>Druckvorschau</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="+110"/>
+        <location filename="../gui/ForumsDialog.cpp" line="+112"/>
         <location line="+1084"/>
         <source>Start New Thread</source>
         <translation>Erstelle neues Thema</translation>
@@ -4312,7 +4322,22 @@ Fill in your GPG password when asked, to sign your new key.</source>
         <translation>Zurücksetzen</translation>
     </message>
     <message>
-        <location filename="../gui/common/GroupTreeWidget.cpp" line="+187"/>
+        <location filename="../gui/common/GroupTreeWidget.cpp" line="+174"/>
+        <source>Sort by Name</source>
+        <translation>Sortiere nach Name</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Sort by Popularity</source>
+        <translation>Sortiere nach Popularität</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Sort by Last Post</source>
+        <translation>Sortiere nach letztem Beitrag</translation>
+    </message>
+    <message>
+        <location line="+102"/>
         <source>Private Key Available</source>
         <translation>Privater Schlüssel verfügbar</translation>
     </message>
@@ -7263,7 +7288,7 @@ p, li { white-space: pre-wrap; }
         <translation>Zertifikate (*.pqi)</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="+734"/>
+        <location filename="../gui/PeersDialog.ui" line="+727"/>
         <source>Status</source>
         <translation>Status</translation>
     </message>
@@ -7421,7 +7446,7 @@ p, li { white-space: pre-wrap; }
         <translation>Unterstrichen</translation>
     </message>
     <message>
-        <location line="-590"/>
+        <location line="-583"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -7439,7 +7464,12 @@ p, li { white-space: pre-wrap; }
         <translation>Hinzufügen</translation>
     </message>
     <message>
-        <location line="+240"/>
+        <location line="+54"/>
+        <source>Display</source>
+        <translation>Anzeige</translation>
+    </message>
+    <message>
+        <location line="+179"/>
         <source>Add or Change your Avatar</source>
         <translation>Wähle oder ändere dein Avatar Bild</translation>
     </message>
@@ -7616,20 +7646,19 @@ p, li { white-space: pre-wrap; }
         <translation>Text Datei (*.txt );;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="-878"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Display&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Anzeige&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+886"/>
+        <location filename="../gui/PeersDialog.ui" line="+8"/>
         <source>Hide Offline Friends</source>
         <translation>Verstecke offline Freunde</translation>
     </message>

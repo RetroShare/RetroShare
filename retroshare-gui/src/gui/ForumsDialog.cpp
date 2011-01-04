@@ -177,6 +177,9 @@ ForumsDialog::ForumsDialog(QWidget *parent)
     forummenu->addSeparator();
     ui.forumpushButton->setMenu(forummenu);
 
+    /* Initialize group tree */
+    ui.forumTreeWidget->initDisplayMenu(ui.displayButton);
+
     /* create forum tree */
     yourForums = ui.forumTreeWidget->addCategoryItem(tr("Your Forums"), QIcon(IMAGE_FOLDER), true);
     subscribedForums = ui.forumTreeWidget->addCategoryItem(tr("Subscribed Forums"), QIcon(IMAGE_FOLDERRED), true);
@@ -248,6 +251,8 @@ void ForumsDialog::processSettings(bool bLoad)
         Settings->setValue("Splitter", ui.splitter->saveState());
         Settings->setValue("threadSplitter", ui.threadSplitter->saveState());
     }
+
+    ui.forumTreeWidget->processSettings(Settings, bLoad);
 
     Settings->endGroup();
     m_bProcessSettings = false;

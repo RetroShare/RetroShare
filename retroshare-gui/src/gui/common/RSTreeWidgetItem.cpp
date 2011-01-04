@@ -27,17 +27,32 @@ RSTreeWidgetItemCompareRole::RSTreeWidgetItemCompareRole()
 
 void RSTreeWidgetItemCompareRole::setRole(int column, int role)
 {
-    insert(column, role);
+    QList<int> roles;
+    roles.push_back(role);
+    insert(column, roles);
 }
 
-int RSTreeWidgetItemCompareRole::findRole(const int column) const
+void RSTreeWidgetItemCompareRole::addRole(int column, int role)
+{
+    RSTreeWidgetItemCompareRole::iterator it = find(column);
+    if (it == end()) {
+        setRole(column, role);
+        return;
+    }
+
+    it.value().push_back(role);
+}
+
+void RSTreeWidgetItemCompareRole::findRoles(const int column, QList<int> &roles) const
 {
     RSTreeWidgetItemCompareRole::const_iterator it = find(column);
     if (it == end()) {
-        return Qt::DisplayRole;
+        roles.clear();
+        roles.push_back(Qt::DisplayRole);
+        return;
     }
 
-    return it.value();
+    roles = it.value();
 }
 
 RSTreeWidgetItem::RSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, int type) : QTreeWidgetItem(type)
@@ -102,28 +117,55 @@ static uint typeOfVariant(const QVariant &value)
 bool RSTreeWidgetItem::operator<(const QTreeWidgetItem &other) const
 {
     int column = treeWidget()->sortColumn();
-    int role = Qt::DisplayRole;
+    QList<int> roles;
 
     /* Own role for sort defined ? */
     if (m_compareRole) {
-        role = m_compareRole->findRole(column);
+        m_compareRole->findRoles(column, roles);
     }
 
-    // taken from "bool QTreeWidgetItem::operator<(const QTreeWidgetItem &other) const"
-    const QVariant v1 = data(column, role);
-    const QVariant v2 = other.data(column, role);
+    QList<int>::iterator role;
+    for (role = roles.begin(); role != roles.end(); role++) {
+        // taken from "bool QTreeWidgetItem::operator<(const QTreeWidgetItem &other) const"
+        const QVariant v1 = data(column, *role);
+        const QVariant v2 = other.data(column, *role);
 
-    // taken from "bool QAbstractItemModelPrivate::variantLessThan(const QVariant &v1, const QVariant &v2)"
-    switch(qMax(typeOfVariant(v1), typeOfVariant(v2)))
-    {
-    case 0: //integer type
-        return v1.toLongLong() < v2.toLongLong();
-    case 1: //floating point
-        return v1.toDouble() < v2.toDouble();
-    default:
-        return (v1.toString().compare (v2.toString(), Qt::CaseInsensitive) < 0);
+        // taken from "bool QAbstractItemModelPrivate::variantLessThan(const QVariant &v1, const QVariant &v2)"
+        switch(qMax(typeOfVariant(v1), typeOfVariant(v2)))
+        {
+        case 0: //integer type
+            {
+                qlonglong value1 = v1.toLongLong();
+                qlonglong value2 = v2.toLongLong();
+
+                if (value1 != value2) {
+                    return value1 < value2;
+                }
+            }
+            break;
+        case 1: //floating point
+            {
+                double value1 = v1.toDouble();
+                double value2 = v2.toDouble();
+
+                if (value1 != value2) {
+                    return value1 < value2;
+                }
+            }
+            break;
+        default:
+            {
+                int compare = v1.toString().compare (v2.toString(), Qt::CaseInsensitive);
+                if (compare) {
+                    return (compare < 0);
+                }
+            }
+        }
     }
 
-    // let the standard do the sort, this code should not reached
-    return QTreeWidgetItem::operator<(other);
+    /* Compare DisplayRole */
+    const QVariant v1 = data(column, Qt::DisplayRole);
+    const QVariant v2 = other.data(column, Qt::DisplayRole);
+
+    return (v1.toString().compare (v2.toString(), Qt::CaseInsensitive) < 0);
 }
