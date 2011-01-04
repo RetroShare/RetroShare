@@ -40,7 +40,7 @@ void 	RsDistribMsg::clear()
 	parentId.clear();
 	threadId.clear();
 	timestamp = 0;
-
+	childTS = 0;
 
 	msgId.clear();
 	publishSignature.TlvClear();

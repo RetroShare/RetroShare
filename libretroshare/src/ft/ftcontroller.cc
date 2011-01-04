@@ -1103,7 +1103,6 @@ bool 	ftController::FileRequest(const std::string& fname, const std::string& has
 	std::cerr << std::endl;
 #endif
 
-	std::string ownId = mConnMgr->getOwnId();
 	uint32_t rate = 0;
 	if (flags & RS_FILE_HINTS_BACKGROUND)
 		rate = FT_CNTRL_SLOW_RATE;

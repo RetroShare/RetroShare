@@ -105,7 +105,7 @@ bool p3Forums::forumsChanged(std::list<std::string> &forumIds)
 	return groupsChanged(forumIds);
 }
 
-bool p3Forums::getForumInfo(std::string fId, ForumInfo &fi)
+bool p3Forums::getForumInfo(const std::string &fId, ForumInfo &fi)
 {
 	RsStackMutex stack(distribMtx); /***** STACK LOCKED MUTEX *****/
 
@@ -133,7 +133,7 @@ bool p3Forums::getForumInfo(std::string fId, ForumInfo &fi)
  * can only change name and descriptions
  *
  */
-bool p3Forums::setForumInfo(std::string fId, ForumInfo &fi)
+bool p3Forums::setForumInfo(const std::string &fId, ForumInfo &fi)
 {
 	GroupInfo gi;
 
@@ -163,7 +163,7 @@ bool p3Forums::getForumList(std::list<ForumInfo> &forumList)
 	return true;
 }
 
-bool p3Forums::getForumThreadList(std::string fId, std::list<ThreadInfoSummary> &msgs)
+bool p3Forums::getForumThreadList(const std::string &fId, std::list<ThreadInfoSummary> &msgs)
 {
 	std::list<std::string> msgIds;
 	std::list<std::string>::iterator it;
@@ -199,7 +199,7 @@ bool p3Forums::getForumThreadList(std::string fId, std::list<ThreadInfoSummary> 
 	return true;
 }
 
-bool p3Forums::getForumThreadMsgList(std::string fId, std::string pId, std::list<ThreadInfoSummary> &msgs)
+bool p3Forums::getForumThreadMsgList(const std::string &fId, const std::string &pId, std::list<ThreadInfoSummary> &msgs)
 {
 	std::list<std::string> msgIds;
 	std::list<std::string>::iterator it;
@@ -239,7 +239,7 @@ bool p3Forums::getForumThreadMsgList(std::string fId, std::string pId, std::list
 	return true;
 }
 
-bool p3Forums::getForumMessage(std::string fId, std::string mId, ForumMsgInfo &info)
+bool p3Forums::getForumMessage(const std::string &fId, const std::string &mId, ForumMsgInfo &info)
 {
 	RsStackMutex stack(distribMtx); /***** STACK LOCKED MUTEX *****/
 
@@ -360,7 +360,7 @@ bool p3Forums::getMessageStatus(const std::string& fId, const std::string& mId, 
 }
 
 
-std::string p3Forums::createForum(std::wstring forumName, std::wstring forumDesc, uint32_t forumFlags)
+std::string p3Forums::createForum(const std::wstring &forumName, const std::wstring &forumDesc, uint32_t forumFlags)
 {
 
         std::string id = createGroup(forumName, forumDesc, 
@@ -452,12 +452,12 @@ uint32_t convertToExternalFlags(uint32_t intFlags)
 	return intFlags;
 }
 
-bool p3Forums::forumSubscribe(std::string fId, bool subscribe)
+bool p3Forums::forumSubscribe(const std::string &fId, bool subscribe)
 {
 	return subscribeToGroup(fId, subscribe);
 }
 
-bool p3Forums::getMessageCount(const std::string fId, unsigned int &newCount, unsigned int &unreadCount)
+bool p3Forums::getMessageCount(const std::string &fId, unsigned int &newCount, unsigned int &unreadCount)
 {
 	newCount = 0;
 	unreadCount = 0;

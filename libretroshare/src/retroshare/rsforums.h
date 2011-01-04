@@ -127,28 +127,28 @@ virtual ~RsForums() { return; }
 virtual bool forumsChanged(std::list<std::string> &forumIds) = 0;
 
 
-virtual std::string createForum(std::wstring forumName, std::wstring forumDesc, uint32_t forumFlags) = 0;
+virtual std::string createForum(const std::wstring &forumName, const std::wstring &forumDesc, uint32_t forumFlags) = 0;
 
-virtual bool getForumInfo(std::string fId, ForumInfo &fi) = 0;
+virtual bool getForumInfo(const std::string &fId, ForumInfo &fi) = 0;
 
 /*!
  * allows peers to change information for the forum:
  * can only change name and descriptions
  *
  */
-virtual bool setForumInfo(std::string fId, ForumInfo &fi) = 0;
+virtual bool setForumInfo(const std::string &fId, ForumInfo &fi) = 0;
 
 virtual bool getForumList(std::list<ForumInfo> &forumList) = 0;
-virtual bool getForumThreadList(std::string fId, std::list<ThreadInfoSummary> &msgs) = 0;
-virtual bool getForumThreadMsgList(std::string fId, std::string pId, std::list<ThreadInfoSummary> &msgs) = 0;
-virtual bool getForumMessage(std::string fId, std::string mId, ForumMsgInfo &msg) = 0;
+virtual bool getForumThreadList(const std::string &fId, std::list<ThreadInfoSummary> &msgs) = 0;
+virtual bool getForumThreadMsgList(const std::string &fId, const std::string &pId, std::list<ThreadInfoSummary> &msgs) = 0;
+virtual bool getForumMessage(const std::string &fId, const std::string &mId, ForumMsgInfo &msg) = 0;
 virtual bool setMessageStatus(const std::string& fId,const std::string& mId, const uint32_t status, const uint32_t statusMask) = 0;
 virtual bool getMessageStatus(const std::string& fId, const std::string& mId, uint32_t& status) = 0;
-virtual	bool ForumMessageSend(ForumMsgInfo &info)                 = 0;
+virtual	bool ForumMessageSend(ForumMsgInfo &info) = 0;
 
-virtual bool forumSubscribe(std::string fId, bool subscribe)	= 0;
+virtual bool forumSubscribe(const std::string &fId, bool subscribe)	= 0;
 
-virtual	bool getMessageCount(const std::string fId, unsigned int &newCount, unsigned int &unreadCount) = 0;
+virtual	bool getMessageCount(const std::string &fId, unsigned int &newCount, unsigned int &unreadCount) = 0;
 
 /****************************************/
 
