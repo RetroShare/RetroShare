@@ -372,7 +372,7 @@ void GroupTreeWidget::calculateScore(QTreeWidgetItem *item)
 			}
 		}
 
-		item->setData(COLUMN_DATA, ROLE_SEARCH_SCORE, score);
+		item->setData(COLUMN_DATA, ROLE_SEARCH_SCORE, -score); // negative for correct sorting
 
 		return;
 	}
@@ -447,36 +447,4 @@ void GroupTreeWidget::resort(QTreeWidgetItem *categoryItem)
 void GroupTreeWidget::sort()
 {
 	resort(NULL);
-}
-
-GroupTreeWidgetItem::GroupTreeWidgetItem() : QTreeWidgetItem()
-{
-}
-
-bool GroupTreeWidgetItem::operator<(const QTreeWidgetItem& other) const
-{
-	QDateTime otherChanTs = other.data(COLUMN_DATA, ROLE_LASTPOST).toDateTime();
-	QDateTime thisChanTs = this->data(COLUMN_DATA, ROLE_LASTPOST).toDateTime();
-
-	uint32_t otherCount = other.data(COLUMN_DATA, ROLE_SEARCH_SCORE).toUInt();
-	uint32_t thisCount = this->data(COLUMN_DATA, ROLE_SEARCH_SCORE).toUInt();
-
-	/* If counts are equal then determine by who has the most recent post */
-	if (otherCount == thisCount){
-		if (thisChanTs < otherChanTs) {
-			return true;
-		}
-	}
-
-	/* Choose the item where the string occurs the most */
-	if (thisCount < otherCount) {
-		return true;
-	}
-
-	if (thisChanTs < otherChanTs) {
-		return true;
-	}
-
-	/* Compare name */
-	return text(COLUMN_NAME) < other.text(COLUMN_NAME);
 }

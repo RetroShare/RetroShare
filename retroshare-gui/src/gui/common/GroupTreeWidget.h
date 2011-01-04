@@ -108,16 +108,4 @@ private:
 	Ui::GroupTreeWidget *ui;
 };
 
-class GroupTreeWidgetItem : public QTreeWidgetItem
-{
-public:
-	GroupTreeWidgetItem();
-
-	/**
-	 * reimplementing comparison operator so GroupTreeWidgetItem can be ordered in terms
-	 * of occurences of property filterText in its data columns
-	 */
-	bool operator<(const QTreeWidgetItem &other) const;
-};
-
 #endif // GROUPTREEWIDGET_H
