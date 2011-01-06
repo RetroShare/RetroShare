@@ -36,6 +36,7 @@
 #include "gui/help/browser/helpbrowser.h"
 #include "gui/common/PeerDefs.h"
 #include "gui/MainWindow.h"
+#include "gui/common/StatusDefs.h"
 
 static QMap<std::string, ConfCertDialog*> instances;
 
@@ -159,8 +160,8 @@ void ConfCertDialog::load()
         ui.extPort -> setValue(detail.extPort);
 
         ui.dynDNS->setText(QString::fromStdString(detail.dyndns));
-        
-        ui.statusline->setText(QString::fromStdString(detail.autoconnect));
+
+        ui.statusline->setText(StatusDefs::connectStateString(detail));
 
         ui.ipAddressList->clear();
         for(std::list<std::string>::const_iterator it(detail.ipAddressList.begin());it!=detail.ipAddressList.end();++it)

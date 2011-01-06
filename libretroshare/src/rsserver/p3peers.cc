@@ -88,34 +88,6 @@ std::string RsPeerTrustString(uint32_t trustLvl)
 	return str;
 }
 
-
-		
-std::string RsPeerStateString(uint32_t state)
-{
-	std::string str;
-	if (state & RS_PEER_STATE_CONNECTED)
-	{
-		str = "Connected";
-	}
-	else if (state & RS_PEER_STATE_UNREACHABLE)
-	{
-		str = "Unreachable";
-	}
-	else if (state & RS_PEER_STATE_ONLINE)
-	{
-		str = "Available";
-	}
-	else if (state & RS_PEER_STATE_FRIEND)
-	{
-		str = "Offline";
-	}
-	else 
-	{
-		str = "Neighbour";
-	}
-	return str;
-}
-
 std::string RsPeerNetModeString(uint32_t netModel)
 {
 	std::string str;
@@ -337,10 +309,8 @@ bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
             d.ipAddressList.push_back("E:" + std::string(rs_inet_ntoa(it->mAddr.sin_addr)) + ":" + toto.str());
 	}
 
-		
-
 	/* Translate */
-	
+
 	d.state		= 0;
 	if (pcs.state & RS_PEER_S_FRIEND)
 		d.state |= RS_PEER_STATE_FRIEND;
@@ -395,56 +365,49 @@ bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 
 
 	/* Finally determine AutoConnect Status */
-	std::ostringstream autostr;
+	d.foundDHT = pcs.dht.found;
 
-	/* HACK to display DHT Status info too */
-	if (pcs.dht.found)
-	{
-		autostr << "DHT:CONTACT!!! ";
-	}
-	else
-	{
-		if (!(pcs.state & RS_PEER_S_CONNECTED))
-		{
-			autostr << "DHT:SEARCHING  ";
-		}
-	}
+	d.connectState = 0;
+	d.connectStateString.clear();
+
 
 	if (pcs.inConnAttempt)
 	{
-                if (pcs.currentConnAddrAttempt.type & RS_NET_CONN_TUNNEL) {
-                    autostr << "Trying tunnel connection";
-                } else if (pcs.currentConnAddrAttempt.type & RS_NET_CONN_TCP_ALL) {
-                    autostr << "Trying TCP : " << rs_inet_ntoa(pcs.currentConnAddrAttempt.addr.sin_addr) << ":" <<  ntohs(pcs.currentConnAddrAttempt.addr.sin_port);
-                } else if (pcs.currentConnAddrAttempt.type & RS_NET_CONN_UDP_ALL) {
-                    autostr << "Trying UDP : " << rs_inet_ntoa(pcs.currentConnAddrAttempt.addr.sin_addr) << ":" <<  ntohs(pcs.currentConnAddrAttempt.addr.sin_port);
-                }
+		if (pcs.currentConnAddrAttempt.type & RS_NET_CONN_TUNNEL) {
+			d.connectState = RS_PEER_CONNECTSTATE_TRYING_TUNNEL;
+		} else if (pcs.currentConnAddrAttempt.type & RS_NET_CONN_TCP_ALL) {
+			d.connectState = RS_PEER_CONNECTSTATE_TRYING_TCP;
+
+			std::ostringstream str;
+			str << rs_inet_ntoa(pcs.currentConnAddrAttempt.addr.sin_addr) << ":" <<  ntohs(pcs.currentConnAddrAttempt.addr.sin_port);
+			d.connectStateString = str.str();
+		} else if (pcs.currentConnAddrAttempt.type & RS_NET_CONN_UDP_ALL) {
+			d.connectState = RS_PEER_CONNECTSTATE_TRYING_UDP;
+
+			std::ostringstream str;
+			str << rs_inet_ntoa(pcs.currentConnAddrAttempt.addr.sin_addr) << ":" <<  ntohs(pcs.currentConnAddrAttempt.addr.sin_port);
+			d.connectStateString = str.str();
+		}
 	}
 	else if (pcs.state & RS_PEER_S_CONNECTED)
 	{
 		if (pcs.connecttype == RS_NET_CONN_TCP_ALL)
 		{
-			autostr << "Connected: TCP";
+			d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_TCP;
 		}
 		else if (pcs.connecttype == RS_NET_CONN_UDP_ALL)
 		{
-			autostr << "Connected: UDP";
+			d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_UDP;
 		}
 		else if (pcs.connecttype == RS_NET_CONN_TUNNEL)
 		{
-                        autostr << "Connected: Tunnel";
+			d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_TUNNEL;
 		}
 		else
 		{
-			autostr << "Connected: Unknown";
+			d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN;
 		}
 	}
-	else
-	{
-		autostr << RsPeerStateString(pcs.state);
-	}
-
-	d.autoconnect = autostr.str();
 
 	return true;
 }
@@ -1314,7 +1277,7 @@ RsPeerDetails::RsPeerDetails()
 		  trustLvl(0), validLvl(0),ownsign(false), 
 	hasSignedMe(false),accept_connection(false),
 	state(0),localAddr(""),localPort(0),extAddr(""),extPort(0),netMode(0),visState(0),
-	lastConnect(0),autoconnect(""),connectPeriod(0)
+	lastConnect(0),connectState(0),connectStateString(""),connectPeriod(0)
 {
 }
 

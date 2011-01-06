@@ -26,16 +26,21 @@
 #include <QColor>
 #include <QFont>
 
+class RsPeerDetails;
+
 class StatusDefs
 {
 public:
-    static const QString name(const unsigned int status);
-    static const char*   imageIM(const unsigned int status);
-    static const char*   imageUser(const unsigned int status);
-    static const QString tooltip(const unsigned int status);
+	static QString     name(unsigned int status);
+	static const char* imageIM(unsigned int status);
+	static const char* imageUser(unsigned int status);
+	static QString     tooltip(unsigned int status);
 
-    static const QColor  textColor(const unsigned int status);
-    static const QFont   font(const unsigned int status);
+	static QColor      textColor(unsigned int status);
+	static QFont       font(unsigned int status);
+
+	static QString     peerStateString(int peerState);
+	static QString     connectStateString(RsPeerDetails &details);
 };
 
 #endif

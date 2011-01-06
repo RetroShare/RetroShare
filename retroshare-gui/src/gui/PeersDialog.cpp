@@ -910,18 +910,18 @@ void  PeersDialog::insertPeers()
                 if (customStateString.isEmpty() == false) {
                     sText += " - " + customStateString;
                 }
-                if (sslDetail.autoconnect.empty() == false) {
-                    if (useStatusColumn) {
-                        sslItem->setText(COLUMN_STATE, QString::fromStdString(sslDetail.autoconnect));
-                    } else if (showState) {
-                        sText += " [" + QString::fromStdString(sslDetail.autoconnect) + "]";
-                    }
+
+                QString connectStateString = StatusDefs::connectStateString(sslDetail);
+                if (useStatusColumn) {
+                    sslItem->setText(COLUMN_STATE, connectStateString);
+                } else if (showState && connectStateString.isEmpty() == false) {
+                    sText += " [" + StatusDefs::connectStateString(sslDetail) + "]";
                 }
                 sslItem->setText( COLUMN_NAME, sText);
 
                 if (useStatusColumn == false && showState == false) {
                     /* Show the state as tooltip */
-                    sslItem->setToolTip(COLUMN_NAME, QString::fromStdString(sslDetail.autoconnect));
+                    sslItem->setToolTip(COLUMN_NAME, connectStateString);
                 } else {
                     sslItem->setToolTip(COLUMN_NAME, "");
                 }
@@ -945,11 +945,17 @@ void  PeersDialog::insertPeers()
                     sslItem->setHidden(hideUnconnected);
                     gpg_online = true;
 
+                    if (sslDetail.connectState) {
+                        sslIcon = QIcon(":/images/connect_creating.png");
+                    } else {
+                        sslIcon = QIcon(":/images/connect_no.png");
+                    }
+
                     sslFont.setBold(true);
                     sslColor = Qt::black;
                 } else {
                     sslItem->setHidden(hideUnconnected);
-                    if (sslDetail.autoconnect != "Offline") {
+                    if (sslDetail.connectState) {
                         sslIcon = QIcon(":/images/connect_creating.png");
                     } else {
                         sslIcon = QIcon(":/images/connect_no.png");

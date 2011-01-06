@@ -1016,12 +1016,12 @@ p, li { white-space: pre-wrap; }
         <translation>Hinzufügen</translation>
     </message>
     <message>
-        <location line="+79"/>
+        <location line="+73"/>
         <source>Display</source>
         <translation type="unfinished">Anzeige</translation>
     </message>
     <message>
-        <location line="+275"/>
+        <location line="+269"/>
         <source>Set all to read</source>
         <translation>Alle als gelesen markieren</translation>
     </message>
@@ -1071,7 +1071,7 @@ p, li { white-space: pre-wrap; }
         <translation>Andere Kanäle</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.ui" line="-174"/>
+        <location filename="../gui/ChannelFeed.ui" line="-168"/>
         <location filename="../gui/ChannelFeed.cpp" line="+50"/>
         <source>Post to Channel</source>
         <translation>Kanalbeitrag erstellen</translation>
@@ -1516,7 +1516,7 @@ p, li { white-space: pre-wrap; }
         <translation>Übernehmen und Schliessen</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="+127"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="+128"/>
         <location line="+201"/>
         <source>RetroShare</source>
         <translation></translation>
@@ -3644,7 +3644,7 @@ p, li { white-space: pre-wrap; }
         <translation>Hinzufügen</translation>
     </message>
     <message>
-        <location line="+47"/>
+        <location line="+41"/>
         <source>Start new Thread for Selected Forum</source>
         <translation>Starte ein neues Thema im ausgewählten Forum</translation>
     </message>
@@ -3654,7 +3654,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished">Anzeige</translation>
     </message>
     <message>
-        <location line="+100"/>
+        <location line="+94"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -7134,7 +7134,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="-20"/>
-        <location filename="../gui/feeds/PeerItem.cpp" line="+246"/>
+        <location filename="../gui/feeds/PeerItem.cpp" line="+247"/>
         <source>Expand</source>
         <translation>Erweitern</translation>
     </message>
@@ -10600,11 +10600,12 @@ Bist Du sicher?</translation>
     <name>StatusDefs</name>
     <message>
         <location filename="../gui/common/StatusDefs.cpp" line="+32"/>
+        <location line="+120"/>
         <source>Offline</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-118"/>
         <source>Away</source>
         <translation>Abwesend</translation>
     </message>
@@ -10647,6 +10648,66 @@ Bist Du sicher?</translation>
         <location line="+2"/>
         <source>Friend is idle</source>
         <translation>Freund ist untätig</translation>
+    </message>
+    <message>
+        <location line="+49"/>
+        <source>Connected</source>
+        <translation>Verbunden</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Unreachable</source>
+        <translation>Unerreichbar</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Available</source>
+        <translation>Verfügbar</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Neighbour</source>
+        <translation>Nachbar</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Trying tunnel connection</source>
+        <translation>Versuche Tunnelverbindung</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Trying TCP</source>
+        <translation>Versuche TCP</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Trying UDP</source>
+        <translation>Versuche UDP</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Connected: TCP</source>
+        <translation>Verbunden: TCP</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Connected: UDP</source>
+        <translation>Verbunden: UDP</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Connected: Tunnel</source>
+        <translation>Verbunden: Tunnel</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Connected: Unknown</source>
+        <translation>Verbunden: Unbekannt</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>DHT: Contact</source>
+        <translation>DHT: Kontakt</translation>
     </message>
 </context>
 <context>

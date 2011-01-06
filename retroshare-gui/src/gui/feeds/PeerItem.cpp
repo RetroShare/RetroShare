@@ -26,6 +26,7 @@
 #include "FeedHolder.h"
 #include "../RsAutoUpdatePage.h"
 #include "gui/msgs/MessageComposer.h"
+#include "gui/common/StatusDefs.h"
 
 #include "gui/notifyqt.h"
 
@@ -178,7 +179,7 @@ void PeerItem::updateItem()
 		}
 
 		/* top Level info */
-		QString status = QString::fromStdString(RsPeerStateString(details.state));
+		QString status = StatusDefs::peerStateString(details.state);
 
 #if 0
 		/* Append additional status info from status service */
@@ -201,7 +202,7 @@ void PeerItem::updateItem()
 			ipLabel->setText(QString::fromStdString(out.str()));
 		}
 
-		connLabel->setText(QString::fromStdString(details.autoconnect));
+		connLabel->setText(StatusDefs::connectStateString(details));
 
 		/* do buttons */
 		chatButton->setEnabled(details.state & RS_PEER_STATE_CONNECTED);

@@ -61,6 +61,15 @@ const uint32_t RS_PEER_STATE_ONLINE	= 0x0002;
 const uint32_t RS_PEER_STATE_CONNECTED  = 0x0004;
 const uint32_t RS_PEER_STATE_UNREACHABLE= 0x0008;
 
+/* Connect state */
+const uint32_t RS_PEER_CONNECTSTATE_TRYING_TUNNEL     = 1;
+const uint32_t RS_PEER_CONNECTSTATE_TRYING_TCP        = 2;
+const uint32_t RS_PEER_CONNECTSTATE_TRYING_UDP        = 3;
+const uint32_t RS_PEER_CONNECTSTATE_CONNECTED_TCP     = 4;
+const uint32_t RS_PEER_CONNECTSTATE_CONNECTED_UDP     = 5;
+const uint32_t RS_PEER_CONNECTSTATE_CONNECTED_TUNNEL  = 6;
+const uint32_t RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN = 7;
+
 /* Groups */
 #define RS_GROUP_ID_FRIENDS    "Friends"
 #define RS_GROUP_ID_FAMILY     "Family"
@@ -73,7 +82,6 @@ const uint32_t RS_GROUP_FLAG_STANDARD = 0x0001;
 /* A couple of helper functions for translating the numbers games */
 
 std::string RsPeerTrustString(uint32_t trustLvl);
-std::string RsPeerStateString(uint32_t state);
 std::string RsPeerNetModeString(uint32_t netModel);
 std::string RsPeerLastConnectString(uint32_t lastConnect);
 
@@ -86,9 +94,9 @@ class RsPeerDetails
 	RsPeerDetails();
 
 	/* Auth details */
-        bool isOnlyGPGdetail;
+	bool isOnlyGPGdetail;
 	std::string id;
-        std::string gpg_id;
+	std::string gpg_id;
 	std::string name;
 	std::string email;
 	std::string location;
@@ -98,24 +106,24 @@ class RsPeerDetails
 
 	std::string fpr; /* pgp fingerprint */
 	std::string authcode; 
-        std::list<std::string> gpgSigners;
+	std::list<std::string> gpgSigners;
 
 	uint32_t trustLvl;
 	uint32_t validLvl;
 
-        bool ownsign; /* we have signed the remote peer GPG key */
-        bool hasSignedMe; /* the remote peer has signed my GPG key */
+	bool ownsign; /* we have signed the remote peer GPG key */
+	bool hasSignedMe; /* the remote peer has signed my GPG key */
 
-        bool accept_connection;
+	bool accept_connection;
 
 	/* Network details (only valid if friend) */
 	uint32_t		state;
 
-        std::string             localAddr;
-        uint16_t                localPort;
-        std::string             extAddr;
-        uint16_t                extPort;
-        std::string             dyndns;
+	std::string             localAddr;
+	uint16_t                localPort;
+	std::string             extAddr;
+	uint16_t                extPort;
+	std::string             dyndns;
 	std::list<std::string>  ipAddressList;
 
 	uint32_t		netMode;
@@ -124,8 +132,10 @@ class RsPeerDetails
 
 	/* basic stats */
 	uint32_t		lastConnect; /* how long ago */
-	std::string		autoconnect;
-        uint32_t		connectPeriod;
+	uint32_t		connectState; /* RS_PEER_CONNECTSTATE_... */
+	std::string		connectStateString; /* Additional string like ip address */
+	uint32_t		connectPeriod;
+	bool			foundDHT;
 };
 
 class RsGroupInfo
