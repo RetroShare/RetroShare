@@ -59,6 +59,8 @@ CreateForumMsg::CreateForumMsg(std::string fId, std::string pId)
     connect( ui.attachFileButton, SIGNAL(clicked() ), this , SLOT(addFile()));
     connect( ui.pastersButton, SIGNAL(clicked() ), this , SLOT(pasteLink()));
 
+    setAcceptDrops(true);
+
     newMsg();
 }
 
