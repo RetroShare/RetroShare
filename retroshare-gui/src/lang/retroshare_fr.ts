@@ -3767,7 +3767,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/advsearch/guiexprelement.cpp" line="429"/>
         <source>ignore case</source>
-        <translation>Ignorez le cas</translation>
+        <translation>Ignorer la casse</translation>
     </message>
     <message>
         <location filename="../gui/advsearch/guiexprelement.cpp" line="445"/>
@@ -4291,7 +4291,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/ForumsDialog.cpp" line="368"/>
         <location filename="../gui/ForumsDialog.cpp" line="374"/>
         <source>with children</source>
-        <translation type="unfinished"></translation>
+        <translation>et toute la sous arborescence</translation>
     </message>
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="449"/>
@@ -7230,7 +7230,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/MessagesDialog.ui" line="1224"/>
         <source>Total Inbox:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tous les messages:</translation>
     </message>
     <message>
         <location filename="../gui/MessagesDialog.ui" line="1257"/>
@@ -8901,7 +8901,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/notifyqt.cpp" line="187"/>
         <source>Examining shared files...</source>
-        <translation>Examination des fichiers partagés...</translation>
+        <translation>Vérification des fichiers partagés...</translation>
     </message>
     <message>
         <location filename="../gui/notifyqt.cpp" line="192"/>
@@ -11378,7 +11378,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/settings/rsettingswin.cpp" line="139"/>
         <source>Server</source>
-        <translation>Serveur</translation>
+        <translation>Connection</translation>
     </message>
     <message>
         <location filename="../gui/settings/rsettingswin.cpp" line="143"/>
@@ -11388,12 +11388,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/settings/rsettingswin.cpp" line="147"/>
         <source>Notify</source>
-        <translation>Notifier</translation>
+        <translation>Notifications</translation>
     </message>
     <message>
         <location filename="../gui/settings/rsettingswin.cpp" line="151"/>
         <source>Security</source>
-        <translation>Sécurité</translation>
+        <translation>Clé GPG</translation>
     </message>
     <message>
         <location filename="../gui/settings/rsettingswin.cpp" line="155"/>
@@ -13566,7 +13566,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/feeds/SubFileItem.cpp" line="245"/>
         <source>REMOTE</source>
-        <translation type="unfinished"></translation>
+        <translation>LOINTAIN</translation>
     </message>
     <message>
         <location filename="../gui/feeds/SubFileItem.cpp" line="253"/>
