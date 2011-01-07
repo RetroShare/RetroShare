@@ -21,7 +21,6 @@
  ****************************************************************/
 
 
-
 #ifndef _RSHARESETTINGS_H
 #define _RSHARESETTINGS_H
 
@@ -40,6 +39,8 @@
 #define TRAYNOTIFY_ALL           0x0000001F
 
 #define TRAYNOTIFY_COMBINEDICON  0x80000000
+
+#define STATUSBAR_DISC  0x00000001
 
 //Forward declaration.
 class QWidget;
@@ -194,6 +195,9 @@ public:
   /* MainWindow */
   int  getLastPageInMainWindow ();
   void setLastPageInMainWindow (int value);
+  uint getStatusBarFlags();
+  void setStatusBarFlags(uint flags);
+  void setStatusBarFlag(uint flag, bool enable);
 
   /* Messages */
   bool getMsgSetToReadOnActivate ();

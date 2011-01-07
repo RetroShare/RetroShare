@@ -92,6 +92,7 @@ int	tick();
 bool 	potentialGPGproxies(const std::string& id, std::list<std::string> &proxyGPGIds);
 bool 	potentialproxies(const std::string& id, std::list<std::string> &proxyIds);
 void 	getversions(std::map<std::string, std::string> &versions);
+void 	getWaitingDiscCount(unsigned int *sendCount, unsigned int *recvCount);
 
 	/************* from AuthGPService ****************/
 virtual AuthGPGOperation *getGPGOperation();

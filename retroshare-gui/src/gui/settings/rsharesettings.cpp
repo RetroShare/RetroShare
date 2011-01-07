@@ -536,6 +536,30 @@ void RshareSettings::setLastPageInMainWindow (int value)
     setValueToGroup("MainWindow", "LastPage", value);
 }
 
+uint RshareSettings::getStatusBarFlags()
+{
+    /* Default = All but disc status */
+    return valueFromGroup("MainWindow", "StatusBarFlags", 0xFFFFFFFF ^ STATUSBAR_DISC).toUInt();
+}
+
+void RshareSettings::setStatusBarFlags(uint flags)
+{
+    setValueToGroup("MainWindow", "StatusBarFlags", flags);
+}
+
+void RshareSettings::setStatusBarFlag(uint flag, bool enable)
+{
+    uint flags = getStatusBarFlags();
+
+    if (enable) {
+        flags |= flag;
+    } else {
+        flags &= ~flag;
+    }
+
+    setStatusBarFlags(flags);
+}
+
 /* Messages */
 bool RshareSettings::getMsgSetToReadOnActivate ()
 {

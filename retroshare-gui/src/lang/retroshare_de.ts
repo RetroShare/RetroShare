@@ -2852,6 +2852,19 @@ Das ist nützlich, wenn Du eine externe Festplatte freigibst und die Datei nicht
     </message>
 </context>
 <context>
+    <name>DiscStatus</name>
+    <message>
+        <location filename="../gui/statusbar/discstatus.cpp" line="+39"/>
+        <source>Waiting outgoing discovery operations</source>
+        <translation>Wartende ausgehene Discovery-Operationen</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Waiting incoming discovery operations</source>
+        <translation>Wartende eingehende Discovery-Operationen</translation>
+    </message>
+</context>
+<context>
     <name>DownloadToaster</name>
     <message>
         <location filename="../gui/toaster/DownloadToaster.ui" line="+106"/>
@@ -5109,7 +5122,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="+214"/>
+        <location filename="../gui/MainWindow.cpp" line="+215"/>
         <source>Network</source>
         <translation>Netzwerk</translation>
     </message>
@@ -5120,29 +5133,29 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+8"/>
-        <location line="+283"/>
+        <location line="+287"/>
         <source>Transfers</source>
         <translation>Übertragungen</translation>
     </message>
     <message>
-        <location line="-275"/>
-        <location line="+207"/>
+        <location line="-279"/>
+        <location line="+211"/>
         <source>Messages</source>
         <translation>Nachrichten</translation>
     </message>
     <message>
-        <location line="-204"/>
-        <location line="+238"/>
+        <location line="-208"/>
+        <location line="+242"/>
         <source>Channels</source>
         <translation>Kanäle</translation>
     </message>
     <message>
-        <location line="-234"/>
+        <location line="-238"/>
         <source>Blogs</source>
         <translation type="unfinished">Blogs</translation>
     </message>
     <message>
-        <location line="+251"/>
+        <location line="+255"/>
         <source>Chat</source>
         <translation>Chat</translation>
     </message>
@@ -5150,20 +5163,20 @@ p, li { white-space: pre-wrap; }
         <location line="+94"/>
         <location line="+41"/>
         <location line="+41"/>
-        <location line="+154"/>
+        <location line="+158"/>
         <source>%1 new messages</source>
         <translation>%1 neue Nachrichten</translation>
     </message>
     <message>
-        <location line="-234"/>
+        <location line="-238"/>
         <location line="+41"/>
         <location line="+41"/>
-        <location line="+154"/>
+        <location line="+158"/>
         <source>%1 new message</source>
         <translation>%1 neue Nachricht</translation>
     </message>
     <message>
-        <location line="-132"/>
+        <location line="-136"/>
         <source>You have %1 completed downloads</source>
         <translation>Du hast %1 fertige Downloads</translation>
     </message>
@@ -5183,7 +5196,7 @@ p, li { white-space: pre-wrap; }
         <translation>%1 fertigen Download</translation>
     </message>
     <message>
-        <location line="+79"/>
+        <location line="+83"/>
         <source>Down: %1 (kB/s)</source>
         <translation>Runter: %1 (kB/s)</translation>
     </message>
@@ -5234,7 +5247,7 @@ p, li { white-space: pre-wrap; }
         <translation>Zeigen</translation>
     </message>
     <message>
-        <location line="-748"/>
+        <location line="-752"/>
         <source>RetroShare</source>
         <translation></translation>
     </message>
@@ -5265,7 +5278,7 @@ p, li { white-space: pre-wrap; }
         <translation>Schnellstart Assistent</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="-170"/>
+        <location filename="../gui/MainWindow.cpp" line="-174"/>
         <source>Search</source>
         <translation>Suchen</translation>
     </message>
@@ -5280,7 +5293,7 @@ p, li { white-space: pre-wrap; }
         <translation>Messenger</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="+138"/>
+        <location filename="../gui/MainWindow.cpp" line="+142"/>
         <source>Show/Hide</source>
         <translation>Anzeigen/Verbergen</translation>
     </message>
@@ -5293,15 +5306,15 @@ p, li { white-space: pre-wrap; }
         <location line="+186"/>
         <location line="+41"/>
         <location line="+41"/>
-        <location line="+154"/>
+        <location line="+158"/>
         <source>You have %1 new messages</source>
         <translation>Du hast %1 neue Nachrichten</translation>
     </message>
     <message>
-        <location line="-234"/>
+        <location line="-238"/>
         <location line="+41"/>
         <location line="+41"/>
-        <location line="+154"/>
+        <location line="+158"/>
         <source>You have %1 new message</source>
         <translation>Du hast %1 neue Nachricht</translation>
     </message>
@@ -5321,7 +5334,7 @@ p, li { white-space: pre-wrap; }
         <translation>Schliessen</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="-686"/>
+        <location filename="../gui/MainWindow.cpp" line="-690"/>
         <source>Minimize</source>
         <translation>Minimieren</translation>
     </message>
@@ -5331,7 +5344,7 @@ p, li { white-space: pre-wrap; }
         <translation>Maximieren</translation>
     </message>
     <message>
-        <location line="-136"/>
+        <location line="-140"/>
         <source>Links Cloud</source>
         <translation>Verknüpfungs-Wolke</translation>
     </message>
@@ -5346,7 +5359,7 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="+813"/>
+        <location filename="../gui/MainWindow.cpp" line="+821"/>
         <source>Help</source>
         <translation>Hilfe</translation>
     </message>
@@ -5356,18 +5369,18 @@ p, li { white-space: pre-wrap; }
         <translation>Über</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.cpp" line="-834"/>
-        <location line="+213"/>
+        <location filename="../gui/MainWindow.cpp" line="-842"/>
+        <location line="+217"/>
         <source>Forums</source>
         <translation>Foren</translation>
     </message>
     <message>
-        <location line="-285"/>
+        <location line="-289"/>
         <source>RetroShare %1 a secure decentralised communication platform</source>
         <translation>RetroShare %1 eine sichere und dezentralisierte Kommunikationsplattform</translation>
     </message>
     <message>
-        <location line="+900"/>
+        <location line="+908"/>
         <source>Open Messages</source>
         <translation>Öffne Nachrichten</translation>
     </message>
@@ -5377,12 +5390,12 @@ p, li { white-space: pre-wrap; }
         <translation>Anwendungen</translation>
     </message>
     <message>
-        <location line="-821"/>
+        <location line="-829"/>
         <source>Plugins</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+837"/>
+        <location line="+845"/>
         <source>Do you really want to exit RetroShare ?</source>
         <translation>Willst Du RetroShare wirklich beenden?</translation>
     </message>
@@ -5392,7 +5405,7 @@ p, li { white-space: pre-wrap; }
         <translation>Wirklich beenden?</translation>
     </message>
     <message>
-        <location line="-737"/>
+        <location line="-741"/>
         <source>Low disk space warning</source>
         <translation>Wenig Festplatenspeicher</translation>
     </message>
@@ -6446,7 +6459,7 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;strong&gt;RetroShare Instanz&lt;/strong&gt;</translation>
     </message>
     <message>
-        <location line="+503"/>
+        <location line="+509"/>
         <source>Save Certificate</source>
         <translation>Zertifikat speichern</translation>
     </message>
@@ -6513,7 +6526,7 @@ p, li { white-space: pre-wrap; }
         <translation>Sortiere nach Status</translation>
     </message>
     <message>
-        <location filename="../gui/MessengerWindow.cpp" line="-553"/>
+        <location filename="../gui/MessengerWindow.cpp" line="-559"/>
         <source>Recomend this Friend to...</source>
         <translation>Freund weiterempfehlen...</translation>
     </message>
@@ -7278,7 +7291,7 @@ p, li { white-space: pre-wrap; }
         <translation>Chat</translation>
     </message>
     <message>
-        <location line="+702"/>
+        <location line="+708"/>
         <source>Save Certificate</source>
         <translation>Zertifikat speichern</translation>
     </message>
@@ -7293,7 +7306,7 @@ p, li { white-space: pre-wrap; }
         <translation>Status</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="-689"/>
+        <location filename="../gui/PeersDialog.cpp" line="-695"/>
         <source>Connect To Friend</source>
         <translation>Verbinde zum Freund</translation>
     </message>
@@ -7393,7 +7406,7 @@ p, li { white-space: pre-wrap; }
         <translation>Aus allen Gruppen entfernen</translation>
     </message>
     <message>
-        <location line="+516"/>
+        <location line="+522"/>
         <location line="+2"/>
         <source>Available</source>
         <translation>Verfügbar</translation>
@@ -7556,7 +7569,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="-150"/>
-        <location filename="../gui/PeersDialog.cpp" line="-1499"/>
+        <location filename="../gui/PeersDialog.cpp" line="-1505"/>
         <source>Add Friend</source>
         <translation>Freund hinzufügen</translation>
     </message>
@@ -7611,12 +7624,12 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="-40"/>
-        <location line="+870"/>
+        <location line="+876"/>
         <source>RetroShare</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-831"/>
+        <location line="-837"/>
         <source>Message Group</source>
         <translation>Gruppe anschreiben</translation>
     </message>
@@ -7631,7 +7644,7 @@ p, li { white-space: pre-wrap; }
         <translation>Gruppe entfernen</translation>
     </message>
     <message>
-        <location line="+823"/>
+        <location line="+829"/>
         <source>Do you want to remove this Friend?</source>
         <translation>Willst du diesen Freund entfernen?</translation>
     </message>
@@ -7668,12 +7681,12 @@ p, li { white-space: pre-wrap; }
         <translation>Status Spalte ausblenden</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="-1844"/>
+        <location filename="../gui/PeersDialog.cpp" line="-1850"/>
         <source>Friends Storm</source>
         <translation>Aktivitäten</translation>
     </message>
     <message>
-        <location line="+1203"/>
+        <location line="+1209"/>
         <source>is typing...</source>
         <translation>tippt...</translation>
     </message>
@@ -7693,7 +7706,7 @@ p, li { white-space: pre-wrap; }
         <translation>Freunde</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="-886"/>
+        <location filename="../gui/PeersDialog.cpp" line="-892"/>
         <location line="+80"/>
         <source>Paste Friend Link</source>
         <translation>RetroShare Link einfügen</translation>
@@ -9612,7 +9625,12 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location line="-125"/>
+        <location line="+155"/>
+        <source>Show Discovery information in statusbar</source>
+        <translation>Zeige Discovery-Informationen in der Statuszeile</translation>
+    </message>
+    <message>
+        <location line="-280"/>
         <location line="+160"/>
         <source>Network Configuration</source>
         <translation>Netzwerkkonfiguration</translation>
@@ -9648,7 +9666,7 @@ p, li { white-space: pre-wrap; }
         <translation>Erlaube Tunnelverbindungen</translation>
     </message>
     <message>
-        <location line="+112"/>
+        <location line="+119"/>
         <source>IP Service</source>
         <translation>IP Dienst</translation>
     </message>
@@ -9669,7 +9687,7 @@ Es hilft auch, wenn Sie sich hinter einer Firewall/VPN befinden.</translation>
         <translation>Erlaube RetroShare folgende Webseiten nach Ihrer IP zu fragen:</translation>
     </message>
     <message>
-        <location line="-93"/>
+        <location line="-100"/>
         <source>Dynamic DNS</source>
         <translation>Dynamisches DNS</translation>
     </message>

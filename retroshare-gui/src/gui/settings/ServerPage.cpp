@@ -23,6 +23,7 @@
 #include <gui/TurtleRouterDialog.h>
 
 #include "rshare.h"
+#include "rsharesettings.h"
 
 #include <iostream>
 #include <sstream>
@@ -96,6 +97,7 @@ ServerPage::closeEvent (QCloseEvent * event)
 bool
 ServerPage::save(QString &errmsg)
 {
+    Settings->setStatusBarFlag(STATUSBAR_DISC, ui.showDiscStatusBar->isChecked());
 
 /* save the server address */
 /* save local address */
@@ -186,8 +188,10 @@ void ServerPage::load()
 		/* set the server address */
 	ui.extAddress->setText(QString::fromStdString(detail.extAddr));
 	ui.extPort -> setValue(detail.extPort);
-        /* set DynDNS */
-        ui.dynDNS -> setText(QString::fromStdString(detail.dyndns));
+	/* set DynDNS */
+	ui.dynDNS -> setText(QString::fromStdString(detail.dyndns));
+
+	ui.showDiscStatusBar->setChecked(Settings->getStatusBarFlags() & STATUSBAR_DISC);
 }
 
 /** Loads the settings for this page */

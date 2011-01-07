@@ -283,7 +283,7 @@ void p3disc::sendAllInfoToJustConnectedPeer(const std::string &id)
 	rsPeers->getFriendList(friendIds);
 
 	/* send them a list of all friend's details */
-        for(friendIdsIt = friendIds.begin(); friendIdsIt != friendIds.end(); friendIdsIt++) {
+	for(friendIdsIt = friendIds.begin(); friendIdsIt != friendIds.end(); friendIdsIt++) {
 		/* get details */
 		peerConnectState detail;
 		if (!mConnMgr->getFriendNetStatus(*friendIdsIt, detail)) {
@@ -1015,6 +1015,29 @@ bool p3disc::potentialGPGproxies(const std::string& gpg_id, std::list<std::strin
 void p3disc::getversions(std::map<std::string, std::string> &versions)
 {
 	versions = this->versions;
+}
+
+void p3disc::getWaitingDiscCount(unsigned int *sendCount, unsigned int *recvCount)
+{
+	if (sendCount == NULL && recvCount == NULL) {
+		/* Nothing to do */
+		return;
+	}
+
+	RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
+
+	if (sendCount) {
+		*sendCount = 0;
+
+		std::map<std::string, std::list<std::string> >::iterator it;
+		for (it = sendIdList.begin(); it != sendIdList.end(); it++) {
+			*sendCount += it->second.size();
+		}
+	}
+
+	if (recvCount) {
+		*recvCount = pendingDiscReplyInList.size();
+	}
 }
 
 int p3disc::idServers()

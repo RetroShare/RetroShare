@@ -34,6 +34,7 @@ class Idle;
 class PeerStatus;
 class NATStatus;
 class RatesStatus;
+class DiscStatus;
 class DHTStatus;
 class HashingStatus;
 class ForumsDialog;
@@ -253,6 +254,7 @@ private:
     NATStatus *natstatus;
     DHTStatus *dhtstatus;
     RatesStatus *ratesstatus;
+    DiscStatus *discstatus;
     HashingStatus *hashingstatus;
     QComboBox *statusComboBox;
 

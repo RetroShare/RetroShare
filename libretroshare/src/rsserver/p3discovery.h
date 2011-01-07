@@ -40,6 +40,7 @@ virtual ~p3Discovery() { return; }
 virtual bool	getDiscFriends(std::string id, std::list<std::string> &friends);
 virtual bool	getDiscGPGFriends(std::string id, std::list<std::string> &gpg_friends);
 virtual bool 	getDiscVersions(std::map<std::string, std::string> &versions);
+virtual bool 	getWaitingDiscCount(unsigned int *sendCount, unsigned int *recvCount);
 
 	private:
 

@@ -37,6 +37,7 @@ bool p3Discovery::getDiscGPGFriends(std::string id, std::list<std::string>& gpg_
 	}
 	return false;
 }
+
 bool p3Discovery::getDiscFriends(std::string id, std::list<std::string> &friends)
 {
 	if (mDisc)
@@ -56,3 +57,12 @@ bool p3Discovery::getDiscVersions(std::map<std::string, std::string> &versions)
 	return false;
 }
 
+bool p3Discovery::getWaitingDiscCount(unsigned int *sendCount, unsigned int *recvCount)
+{
+	if (mDisc)
+	{
+		mDisc->getWaitingDiscCount(sendCount, recvCount);
+		return true;
+	}
+	return false;
+}

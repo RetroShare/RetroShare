@@ -69,6 +69,7 @@
 #include "statusbar/ratesstatus.h"
 #include "statusbar/dhtstatus.h"
 #include "statusbar/hashingstatus.h"
+#include "statusbar/discstatus.h"
 #include <retroshare/rsstatus.h>
 
 #include <retroshare/rsiface.h>
@@ -296,6 +297,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     hashingstatus = new HashingStatus();
     statusBar()->addPermanentWidget(hashingstatus);
 
+    discstatus = new DiscStatus();
+    statusBar()->addPermanentWidget(discstatus);
+
     ratesstatus = new RatesStatus();
     statusBar()->addPermanentWidget(ratesstatus);
     /** Status Bar end ******/
@@ -330,6 +334,7 @@ MainWindow::~MainWindow()
     delete natstatus;
     delete dhtstatus;
     delete ratesstatus;
+    delete discstatus;
     MessengerWindow::releaseInstance();
 #ifdef UNFINISHED
     delete applicationWindow;
@@ -765,6 +770,10 @@ void MainWindow::updateStatus()
         
     if (dhtstatus)
         dhtstatus->getDHTStatus();
+
+    if (discstatus) {
+        discstatus->update();
+    }
 
     if (nOnlineCount == 0)
     {
