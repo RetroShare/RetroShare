@@ -1967,6 +1967,7 @@ bool p3GroupDistrib::restoreGrpKeys(std::string grpId){
 			std::cerr << "p3groupDistrib::restoreGrpKey() Key file / grp key item not Valid, grp: "
 					  "\ngrpId: " <<  grpId << std::endl;
 #endif
+			delete store ;
 			return false;
 		}
 
