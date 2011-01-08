@@ -755,12 +755,21 @@ void ftDataMultiplex::deleteUnusedServers()
 	for(std::map<std::string, ftFileProvider *>::iterator sit(mServers.begin());sit != mServers.end();)
 		if(sit->second->purgeOldPeers(now,10))
 		{
-#ifdef SERVER_DEBUG
-			std::cout << "info.lastTS = " << info.lastTS << ", now=" << now << std::endl ;
+#ifdef MPLEX_DEBUG
+			std::cerr << "ftDataMultiplex::deleteUnusedServers(): provider " << (void*)sit->second << " has no active peers. Removing. Now=" << now << std::endl ;
 #endif
 			// We don't delete servers that are clients at the same time !
 			if(dynamic_cast<ftFileCreator*>(sit->second) == NULL)
+			{
+#ifdef MPLEX_DEBUG
+				std::cerr << "ftDataMultiplex::deleteUnusedServers(): deleting file provider " << (void*)sit->second << std::endl ;
+#endif
 				delete sit->second;
+			}
+#ifdef MPLEX_DEBUG
+			else
+				std::cerr << "ftDataMultiplex::deleteUnusedServers(): " << (void*)sit->second << " was not deleted because it's also a file creator." << std::endl ;
+#endif
 
 			std::map<std::string, ftFileProvider *>::iterator tmp(sit);
 			++tmp ;
@@ -823,18 +832,33 @@ bool	ftDataMultiplex::handleSearchRequest(const std::string& peerId, const std::
 	if (mSearch->search(hash, hintflags, info))
 	{
 
-#ifdef MPLEX_DEBUG
-		std::cerr << "ftDataMultiplex::handleSearchRequest(";
-		std::cerr << " Found Local File, sharing...";
-		std::cerr << std::endl;
-#endif
-
 		/* setup a new provider */
 		RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
 
-		ftFileProvider *provider = new ftFileProvider(info.path, info.size, hash);
+		// We might already have a file provider, if two requests have got stacked in the request queue. So let's
+		// check that before.
 
-		mServers[hash] = provider;
+#ifdef MPLEX_DEBUG
+		std::cerr << "ftDataMultiplex::handleSearchRequest(";
+		std::cerr << " Found Local File, sharing...";
+#endif
+		std::map<std::string,ftFileProvider*>::const_iterator it = mServers.find(hash) ;
+		ftFileProvider *provider ;
+
+		if(it == mServers.end())
+		{
+			provider = new ftFileProvider(info.path, info.size, hash);
+			mServers[hash] = provider;
+#ifdef MPLEX_DEBUG
+			std::cerr << " created new file provider " << (void*)provider << std::endl;
+#endif
+		}
+		else
+		{
+#ifdef MPLEX_DEBUG
+			std::cerr << " re-using existing file provider " << (void*)it->second << std::endl;
+#endif
+		}
 
 		return true;
 	}

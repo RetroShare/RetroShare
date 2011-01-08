@@ -14,7 +14,6 @@
 * #define DEBUG_TRANSFERS	 1 // TO GET TIMESTAMPS of DATA READING 
 ********/
 
-
 #ifdef DEBUG_TRANSFERS
 	#include "util/rsprint.h"
 	#include <iomanip>
@@ -34,13 +33,17 @@ ftFileProvider::ftFileProvider(std::string path, uint64_t size, std::string hash
 #endif
 }
 
-ftFileProvider::~ftFileProvider(){
+ftFileProvider::~ftFileProvider()
+{
 #ifdef DEBUG_FT_FILE_PROVIDER
-	std::cout << "Destroying file provider for " << hash << std::endl ;
+	std::cout << "ftFileProvider::~ftFileProvider(): Destroying file provider for " << hash << std::endl ;
 #endif
 	if (fd!=NULL) {
 		fclose(fd);
 		fd = NULL ;
+#ifdef DEBUG_FT_FILE_PROVIDER
+		std::cout << "ftFileProvider::~ftFileProvider(): closed file: " << hash << std::endl ;
+#endif
 	}
 }
 
@@ -102,10 +105,16 @@ bool ftFileProvider::purgeOldPeers(time_t now,uint32_t max_duration)
 {
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 
+#ifdef DEBUG_FT_FILE_PROVIDER
+	std::cerr << "ftFileProvider::purgeOldPeers(): " << (void*)this << ": examining peers." << std::endl ;
+#endif
 	bool ret = true ;
 	for(std::map<std::string,PeerUploadInfo>::iterator it(uploading_peers.begin());it!=uploading_peers.end();)
 		if( (*it).second.lastTS+max_duration < (uint32_t)now)
 		{
+#ifdef DEBUG_FT_FILE_PROVIDER
+			std::cerr << "ftFileProvider::purgeOldPeers(): " << (void*)this << ": peer " << it->first << " is too old. Removing." << std::endl ;
+#endif
 			std::map<std::string,PeerUploadInfo>::iterator tmp = it ;
 			++tmp ;
 			uploading_peers.erase(it) ;
@@ -113,6 +122,9 @@ bool ftFileProvider::purgeOldPeers(time_t now,uint32_t max_duration)
 		}
 		else
 		{
+#ifdef DEBUG_FT_FILE_PROVIDER
+			std::cerr << "ftFileProvider::purgeOldPeers(): " << (void*)this << ": peer " << it->first << " will be kept." << std::endl ;
+#endif
 			ret = false ;
 			++it ;
 		}
@@ -320,6 +332,9 @@ int ftFileProvider::initializeFileAttrs()
 			return 0;
 		}
 	}
+#ifdef DEBUG_FT_FILE_PROVIDER
+	std::cerr << "ftFileProvider:: openned file " << file_name << std::endl ;
+#endif
 
 	return 1;
 }
