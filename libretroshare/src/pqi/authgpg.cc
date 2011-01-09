@@ -359,16 +359,16 @@ void AuthGPGimpl::run()
     while (m_bRun)
     {
 #ifdef WIN32
-        Sleep(1000);
+        Sleep(100);
 #else
-        sleep(1);
+        usleep(100000);
 #endif
 
-        /* every second */
+        /* every 100 milliseconds */
         processServices();
 
         /* every minute */
-        if (++count >= 60) {
+        if (++count >= 600) {
             storeAllKeys_tick();
             count = 0;
         }
