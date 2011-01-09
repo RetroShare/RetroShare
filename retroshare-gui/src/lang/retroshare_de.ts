@@ -2408,7 +2408,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+173"/>
-        <location filename="../gui/forums/CreateForumMsg.cpp" line="+71"/>
+        <location filename="../gui/forums/CreateForumMsg.cpp" line="+73"/>
         <source>Paste RetroShare Link</source>
         <translation>RetroShare Link einfügen</translation>
     </message>
@@ -2854,7 +2854,7 @@ Das ist nützlich, wenn Du eine externe Festplatte freigibst und die Datei nicht
 <context>
     <name>DiscStatus</name>
     <message>
-        <location filename="../gui/statusbar/discstatus.cpp" line="+39"/>
+        <location filename="../gui/statusbar/discstatus.cpp" line="+41"/>
         <source>Waiting outgoing discovery operations</source>
         <translation>Wartende ausgehene Discovery-Operationen</translation>
     </message>
@@ -7132,10 +7132,14 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PeerDefs</name>
     <message>
+        <source>Anonymous</source>
+        <translation type="obsolete">Anonym</translation>
+    </message>
+    <message>
         <location filename="../gui/common/PeerDefs.cpp" line="+40"/>
         <location line="+20"/>
-        <source>Anonymous</source>
-        <translation>Anonym</translation>
+        <source>Unknown</source>
+        <translation>Unbekannt</translation>
     </message>
 </context>
 <context>
@@ -7270,12 +7274,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/statusbar/peerstatus.cpp" line="+41"/>
         <source>Friends: 0/0</source>
-        <translation type="unfinished"></translation>
+        <translation>Freunde: 0/0</translation>
     </message>
     <message>
         <location line="+18"/>
         <source>Online Friends/Total Friends</source>
-        <translation type="unfinished"></translation>
+        <translation>Freunde online / Freunde total</translation>
     </message>
     <message>
         <location line="+3"/>
