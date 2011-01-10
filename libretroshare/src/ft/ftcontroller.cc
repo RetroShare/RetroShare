@@ -385,7 +385,8 @@ void ftController::checkDownloadQueue()
 	// 					- close it temporarily
 	// 					- remove it from turtle handling
 	// 					- move the ftFileControl to queued list
-	// 					- set the queue priority to 1+largest in the queue.
+	// 					- set the queue priority to +1 in the queue, so they will be first resumed
+	// 					  after one of the lower priority downloads finished
 	// 		1.2 - pop from the queue the 1st file to come (according to priority)
 	// 				- enable turtle router handling for this hash
 	// 				- reset counters
@@ -433,7 +434,15 @@ void ftController::checkDownloadQueue()
 #ifdef DEBUG_DWLQUEUE
 			std::cerr << "  - Inactive file " << it->second->mName << " at position " << it->second->mQueuePosition << " moved to end of the queue. mState=" << it->second->mState << ", time lapse=" << now - it->second->mCreator->lastRecvTimeStamp()  << std::endl ;
 #endif
-			locked_bottomQueue(it->second->mQueuePosition) ;
+
+	// notdefine: set the queue priority to +1 in the queue, so they will be first resumed
+	// 			  after one of the lower priority downloads finished
+	// locked_bottomQueue(it->second->mQueuePosition) ;
+
+	if(it->second->mQueuePosition > 0)
+		locked_swapQueue(it->second->mQueuePosition,it->second->mQueuePosition-1) ;
+	break ;
+			
 #ifdef DEBUG_DWLQUEUE
 			std::cerr << "  new position: " << it->second->mQueuePosition << std::endl ;
 			std::cerr << "  new state: " << it->second->mState << std::endl ;
