@@ -130,6 +130,8 @@ void  CreateForumMsg::newMsg()
         }
         else
         {
+            /* Uncheck sign box by default for anonymous forums */
+            ui.signBox->setChecked(false);
             ui.signBox->setEnabled(true);
         }
     }
