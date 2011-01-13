@@ -26,6 +26,7 @@
 #include "FeedHolder.h"
 #include "SubFileItem.h"
 #include "gui/msgs/MessageComposer.h"
+#include "gui/chat/HandleRichText.h"
 
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rspeers.h>
@@ -81,18 +82,18 @@ void MsgItem::updateItemStatic()
 	mPeerId = mi.srcId;
 
 	QString title;
-        QString timestamp;
+	QString timestamp;
 	QString srcName = QString::fromStdString(rsPeers->getPeerName(mi.srcId));
 
 	{
 		QDateTime qtime;
 		qtime.setTime_t(mi.ts);
-                timestamp = qtime.toString("yyyy-MM-dd hh:mm:ss");
+		timestamp = qtime.toString("yyyy-MM-dd hh:mm:ss");
 	}
 
 	if (!mIsHome)
 	{
-		title = "Message From: ";
+		title = tr("Message From") + ": ";
 	}
 	else
 	{
@@ -101,15 +102,15 @@ void MsgItem::updateItemStatic()
 		switch(box)
 		{
 			case RS_MSG_SENTBOX:
-				title = "Sent Msg: ";
+				title = tr("Sent Msg") + ": ";
 				replyButton->setEnabled(false);
 				break;
 			case RS_MSG_DRAFTBOX:
-				title = "Draft Msg: ";
+				title = tr("Draft Msg") + ": ";
 				replyButton->setEnabled(false);
 				break;
 			case RS_MSG_OUTBOX:
-				title = "Pending Msg: ";
+				title = tr("Pending Msg") + ": ";
 				//deleteButton->setEnabled(false);
 				replyButton->setEnabled(false);
 				break;
@@ -121,11 +122,10 @@ void MsgItem::updateItemStatic()
 	}
 	title += srcName + " @ " + timestamp;
 
-
 	titleLabel->setText(title);
 	subjectLabel->setText(QString::fromStdWString(mi.title));
 		
-	msgLabel->setText(QString::fromStdWString(mi.msg));
+	msgLabel->setText(RsHtml::formatText(QString::fromStdWString(mi.msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 
 	std::list<FileInfo>::iterator it;
 	for(it = mi.files.begin(); it != mi.files.end(); it++)

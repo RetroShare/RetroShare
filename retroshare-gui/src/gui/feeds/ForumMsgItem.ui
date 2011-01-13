@@ -64,7 +64,7 @@ border-radius: 10px}</string>
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap resource="../images.qrc">:/images/konversation.png</pixmap>
+           <pixmap>:/images/konversation.png</pixmap>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -144,7 +144,7 @@ border-radius: 10px}</string>
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../images.qrc">
+           <iconset>
             <normaloff>:/images/edit_add24.png</normaloff>:/images/edit_add24.png</iconset>
           </property>
          </widget>
@@ -164,7 +164,7 @@ border-radius: 10px}</string>
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../images.qrc">
+           <iconset>
             <normaloff>:/images/close_normal.png</normaloff>:/images/close_normal.png</iconset>
           </property>
          </widget>
@@ -260,7 +260,7 @@ border-radius: 10px}</string>
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../images.qrc">
+           <iconset>
             <normaloff>:/images/mail_delete.png</normaloff>:/images/mail_delete.png</iconset>
           </property>
          </widget>
@@ -296,7 +296,7 @@ border-radius: 10px}</string>
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../images.qrc">
+           <iconset>
             <normaloff>:/images/replymail24.png</normaloff>:/images/replymail24.png</iconset>
           </property>
          </widget>
@@ -378,6 +378,9 @@ border-radius: 10px}</string>
               <string notr="true">Previous Message...</string>
              </property>
              <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+             <property name="openExternalLinks">
               <bool>true</bool>
              </property>
             </widget>
@@ -496,6 +499,9 @@ border-radius: 10px}</string>
              <property name="wordWrap">
               <bool>true</bool>
              </property>
+             <property name="openExternalLinks">
+              <bool>true</bool>
+             </property>
             </widget>
            </item>
           </layout>
@@ -508,8 +514,6 @@ border-radius: 10px}</string>
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../images.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

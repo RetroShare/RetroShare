@@ -122,7 +122,7 @@ stop: 0 #2291E0, stop: 1 #3EB3FF);
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../images.qrc">
+           <iconset>
             <normaloff>:/images/edit_add24.png</normaloff>:/images/edit_add24.png</iconset>
           </property>
          </widget>
@@ -142,7 +142,7 @@ stop: 0 #2291E0, stop: 1 #3EB3FF);
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../images.qrc">
+           <iconset>
             <normaloff>:/images/close_normal.png</normaloff>:/images/close_normal.png</iconset>
           </property>
          </widget>
@@ -174,7 +174,7 @@ stop: 0 #2291E0, stop: 1 #3EB3FF);
          <string>Reply Message</string>
         </property>
         <property name="icon">
-         <iconset resource="../images.qrc">
+         <iconset>
           <normaloff>:/images/mail_reply.png</normaloff>:/images/mail_reply.png</iconset>
         </property>
         <property name="toolButtonStyle">
@@ -213,7 +213,7 @@ stop: 0 #2291E0, stop: 1 #3EB3FF);
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../images.qrc">
+         <iconset>
           <normaloff>:/images/mail_delete.png</normaloff>:/images/mail_delete.png</iconset>
         </property>
        </widget>
@@ -233,7 +233,7 @@ stop: 0 #2291E0, stop: 1 #3EB3FF);
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../images.qrc">
+         <iconset>
           <normaloff>:/images/startall.png</normaloff>:/images/startall.png</iconset>
         </property>
        </widget>
@@ -262,6 +262,9 @@ stop: 0 #2291E0, stop: 1 #3EB3FF);
            <property name="wordWrap">
             <bool>true</bool>
            </property>
+           <property name="openExternalLinks">
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
         </layout>
@@ -272,8 +275,6 @@ stop: 0 #2291E0, stop: 1 #3EB3FF);
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../images.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

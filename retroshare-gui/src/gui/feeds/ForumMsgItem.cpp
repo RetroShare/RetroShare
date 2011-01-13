@@ -26,7 +26,7 @@
 
 #include <retroshare/rsforums.h>
 #include "gui/forums/CreateForumMsg.h"
-
+#include "gui/chat/HandleRichText.h"
 
 /****
  * #define DEBUG_ITEM 1
@@ -89,7 +89,7 @@ void ForumMsgItem::updateItemStatic()
 	}
 	else
 	{
-		titleLabel->setText("Unknown Forum Post");
+		titleLabel->setText(tr("Unknown Forum Post"));
 	}
 
 	/* get actual Message */
@@ -115,7 +115,7 @@ void ForumMsgItem::updateItemStatic()
 		{
 			prevSHLabel->setText("Subject: ");
 			prevSubLabel->setText(QString::fromStdWString(msg.title));
-			prevMsgLabel->setText(QString::fromStdWString(msg.msg));
+			prevMsgLabel->setText(RsHtml::formatText(QString::fromStdWString(msg.msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 			
             QDateTime qtime;
             qtime.setTime_t(msg.ts);
@@ -127,7 +127,7 @@ void ForumMsgItem::updateItemStatic()
 		else
 		{
 			nextSubLabel->setText(QString::fromStdWString(msg.title));
-			nextMsgLabel->setText(QString::fromStdWString(msg.msg));
+			nextMsgLabel->setText(RsHtml::formatText(QString::fromStdWString(msg.msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 			
 			QDateTime qtime;
             qtime.setTime_t(msg.ts);
@@ -140,7 +140,7 @@ void ForumMsgItem::updateItemStatic()
 			if (rsForums->getForumMessage(mForumId, msg.parentId, msgParent))
 			{
 				prevSubLabel->setText(QString::fromStdWString(msgParent.title));
-				prevMsgLabel->setText(QString::fromStdWString(msgParent.msg));
+				prevMsgLabel->setText(RsHtml::formatText(QString::fromStdWString(msgParent.msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 			}
 			else
 			{

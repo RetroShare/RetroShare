@@ -2423,7 +2423,7 @@ p, li { white-space: pre-wrap; }
         <translation>Als Antwort auf</translation>
     </message>
     <message>
-        <location line="+49"/>
+        <location line="+51"/>
         <source>RetroShare</source>
         <translation></translation>
     </message>
@@ -3446,12 +3446,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+57"/>
         <location line="+134"/>
-        <location line="+116"/>
+        <location line="+119"/>
         <source>Subject: </source>
         <translation>Betreff:</translation>
     </message>
     <message>
-        <location line="-191"/>
+        <location line="-194"/>
         <source>Unsubscribe To Forum</source>
         <translation>Forum abbestellen</translation>
     </message>
@@ -3461,7 +3461,12 @@ p, li { white-space: pre-wrap; }
         <translation>Antwort</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ForumMsgItem.cpp" line="+137"/>
+        <location filename="../gui/feeds/ForumMsgItem.cpp" line="+92"/>
+        <source>Unknown Forum Post</source>
+        <translation>Unbekannter Forumbeitrag</translation>
+    </message>
+    <message>
+        <location line="+45"/>
         <source>In Reply to</source>
         <translation>Als Antwort auf</translation>
     </message>
@@ -6578,7 +6583,27 @@ p, li { white-space: pre-wrap; }
         <translation>Auf Nachricht antworten</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/MsgItem.cpp" line="-6"/>
+        <location filename="../gui/feeds/MsgItem.cpp" line="-107"/>
+        <source>Message From</source>
+        <translation>Nachricht von</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Sent Msg</source>
+        <translation>Gesendet</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Draft Msg</source>
+        <translation>Entwurf</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Pending Msg</source>
+        <translation>Wartend</translation>
+    </message>
+    <message>
+        <location line="+84"/>
         <source>Hide</source>
         <translation>Verbergen</translation>
     </message>
