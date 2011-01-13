@@ -264,17 +264,17 @@ QString RetroShareLink::niceName() const
 
 QString RetroShareLink::toHtml() const
 {
-    return QString("<a href='") + toString() + "'>" + niceName() + "</a>" ;
+    return QString("<a href=\"") + toString() + "\">" + niceName() + "</a>" ;
 }
 
 QString RetroShareLink::toHtmlFull() const
 {
-    return QString("<a href='") + toString() + "'>" + toString() + "</a>" ;
+    return QString("<a href=\"") + toString() + "\">" + toString() + "</a>" ;
 }
 
 QString RetroShareLink::toHtmlSize() const
 {
-    return QString("<a href='") + toString() + "'>" + name() +"</a>" + " " + "<font color=\"blue\">" + "(" +  misc::friendlyUnit(_size) + ")" +"</font>";
+    return QString("<a href=\"") + toString() + "\">" + name() +"</a>" + " " + "<font color=\"blue\">" + "(" +  misc::friendlyUnit(_size) + ")" +"</font>";
 }
 
 bool RetroShareLink::checkName(const QString& name)
