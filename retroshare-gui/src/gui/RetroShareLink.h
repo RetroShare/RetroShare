@@ -67,7 +67,7 @@ class RetroShareLink
 
 		/// returns the string retroshare://file?name=&size=&hash=
 		///                    retroshare://person?name=&hash=
-		QString toString() const ;
+		QString toString(bool encoded = true) const ;
 		/// returns the string <a href="retroshare://file?name=&size=&hash=">name</a>
 		///                    <a href="retroshare://person?name=&hash=">name@hash</a>
 		QString toHtml() const ;

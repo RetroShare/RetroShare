@@ -104,7 +104,7 @@ void RetroShareLink::fromString(const QString& url)
     }
 
     /* Now try QUrl */
-    fromUrl(QUrl(url));
+    fromUrl(QUrl::fromEncoded(url.toAscii()));
 }
 
 void RetroShareLink::fromUrl(const QUrl& url)
@@ -222,7 +222,7 @@ void RetroShareLink::check()
     }
 }
 
-QString RetroShareLink::toString() const
+QString RetroShareLink::toString(bool encoded /*= true*/) const
 {
     switch (_type) {
     case TYPE_UNKNOWN:
@@ -236,6 +236,10 @@ QString RetroShareLink::toString() const
             url.addQueryItem(FILE_SIZE, QString::number(_size));
             url.addQueryItem(FILE_HASH, _hash);
 
+            if (encoded) {
+                return url.toEncoded();
+            }
+
             return url.toString();
         }
     case TYPE_PERSON:
@@ -245,6 +249,10 @@ QString RetroShareLink::toString() const
             url.setHost(HOST_PERSON);
             url.addQueryItem(PERSON_NAME, _name);
             url.addQueryItem(PERSON_HASH, _hash);
+
+            if (encoded) {
+                return url.toEncoded();
+            }
 
             return url.toString();
         }
@@ -264,17 +272,17 @@ QString RetroShareLink::niceName() const
 
 QString RetroShareLink::toHtml() const
 {
-    return QString("<a href=\"") + toString() + "\">" + niceName() + "</a>" ;
+    return QString("<a href=\"") + toString(true) + "\">" + niceName() + "</a>" ;
 }
 
 QString RetroShareLink::toHtmlFull() const
 {
-    return QString("<a href=\"") + toString() + "\">" + toString() + "</a>" ;
+    return QString("<a href=\"") + toString(true) + "\">" + toString(false) + "</a>" ;
 }
 
 QString RetroShareLink::toHtmlSize() const
 {
-    return QString("<a href=\"") + toString() + "\">" + name() +"</a>" + " " + "<font color=\"blue\">" + "(" +  misc::friendlyUnit(_size) + ")" +"</font>";
+    return QString("<a href=\"") + toString(true) + "\">" + name() +"</a>" + " " + "<font color=\"blue\">" + "(" +  misc::friendlyUnit(_size) + ")" +"</font>";
 }
 
 bool RetroShareLink::checkName(const QString& name)
