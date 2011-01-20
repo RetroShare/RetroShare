@@ -31,6 +31,7 @@
 #include "pqi/authssl.h"
 #include "util/rsnet.h"
 
+// #define DEBUG_PQIBIN
 
 BinFileInterface::BinFileInterface(const char *fname, int flags)
 	:bin_flags(flags), buf(NULL), hash(NULL), bcount(0)
@@ -65,6 +66,9 @@ BinFileInterface::BinFileInterface(const char *fname, int flags)
 
 	if (buf)
 	{
+#ifdef DEBUG_PQIBIN
+		std::cerr << "BinFileInterface: " << (void*)this << ": openned file " << fname << std::endl;
+#endif
 		/* no problem */
 
 		/* go to the end */
@@ -91,6 +95,9 @@ BinFileInterface::~BinFileInterface()
 	if (buf)
 	{
 		fclose(buf);
+#ifdef DEBUG_PQIBIN
+		std::cerr << "BinFileInterface: " << (void*)this << ": closed file " << std::endl;
+#endif
 	}
 
 	if (hash)
@@ -104,6 +111,9 @@ int BinFileInterface::close()
 	if (buf)
 	{
 		fclose(buf);
+#ifdef DISTRIB_DEBUG
+		std::cerr << "BinFileInterface: " << (void*)this << ": closed file " << std::endl;
+#endif
 		buf = NULL;
 	}
 	return 1;

@@ -48,6 +48,10 @@
 #include <sstream>
 #include "util/rsdebug.h"
 
+// 
+// #define PQISTORE_DEBUG
+// 
+
 const int pqistorezone = 9511;
 
 pqistore::pqistore(RsSerialiser *rss, const std::string &srcId, BinInterface *bio_in, int bio_flags_in)
@@ -113,12 +117,14 @@ pqistore::~pqistore()
 // Get/Send Items.
 int	pqistore::SendItem(RsItem *si)
 {
+#ifdef PQISTORE_DEBUG
         {
 	  std::ostringstream out;
 	  out << "pqistore::SendItem()" << std::endl;
 	  si -> print(out);
 	  pqioutput(PQL_DEBUG_BASIC, pqistorezone, out.str());
 	}
+#endif
 
 	// check if this is a writing bio.
 	
@@ -137,19 +143,23 @@ int	pqistore::SendItem(RsItem *si)
 
 RsItem *pqistore::GetItem()
 {
+#ifdef PQISTORE_DEBUG
         {
 	  std::ostringstream out;
 	  out << "pqistore::GetItem()";
 	  pqioutput(PQL_DEBUG_ALL, pqistorezone, out.str());
 	}
+#endif
 
 	// check if this is a reading bio.
 	if (!(bio_flags & BIN_FLAGS_READABLE))
 	{
+#ifdef PQISTORE_DEBUG
 		std::ostringstream out;
 		out << "pqistore::GetItem()";
         	out << "Error Not Readable" << std::endl;
 		pqioutput(PQL_DEBUG_BASIC, pqistorezone, out.str());
+#endif
 		return NULL;
 	}
 
@@ -171,13 +181,15 @@ RsItem *pqistore::GetItem()
 	RsItem *outPkt = nextPkt;
 	nextPkt = NULL;
 
+#ifdef PQISTORE_DEBUG
 	if (outPkt != NULL)
-        {
-	  std::ostringstream out;
-	  out << "pqistore::GetItem() Returning:" << std::endl;
-	  outPkt -> print(out);
-	  pqioutput(PQL_DEBUG_BASIC, pqistorezone, out.str());
+	{
+		std::ostringstream out;
+		out << "pqistore::GetItem() Returning:" << std::endl;
+		outPkt -> print(out);
+		pqioutput(PQL_DEBUG_BASIC, pqistorezone, out.str());
 	}
+#endif
 	return outPkt;
 }
 
@@ -187,21 +199,25 @@ RsItem *pqistore::GetItem()
 // // PQInterface
 int	pqistore::tick()
 {
+#ifdef PQISTORE_DEBUG
         {
 	  std::ostringstream out;
 	  out << "pqistore::tick()";
 	  out << std::endl;
 	}
+#endif
 	return 0;
 }
 
 int	pqistore::status()
 {
+#ifdef PQISTORE_DEBUG
         {
 	  std::ostringstream out;
 	  out << "pqistore::status()";
 	  pqioutput(PQL_DEBUG_ALL, pqistorezone, out.str());
 	}
+#endif
 	return 0;
 }
 
@@ -211,22 +227,26 @@ int	pqistore::status()
 int	pqistore::writePkt(RsItem *pqi)
 {
 //	std::cerr << "writePkt, pqi->peerId()=" << pqi->PeerId() << std::endl ;
+#ifdef PQISTORE_DEBUG
         {
 	  std::ostringstream out;
 	  out << "pqistore::writePkt()";
 	  pqioutput(PQL_DEBUG_ALL, pqistorezone, out.str());
 	}
+#endif
 
 	uint32_t pktsize = rsSerialiser->size(pqi);
 	void *ptr = malloc(pktsize);
 	if (!(rsSerialiser->serialise(pqi, ptr, &pktsize)))
 	{
+#ifdef PQISTORE_DEBUG
 		std::ostringstream out;
 		out << "pqistore::writePkt() Null Pkt generated!";
 		out << std::endl;
 		out << "Caused By: " << std::endl;
 		pqi -> print(out);
 		pqioutput(PQL_ALERT, pqistorezone, out.str());
+#endif
 
 		free(ptr);
 		if (!(bio_flags & BIN_FLAGS_NO_DELETE))
@@ -269,14 +289,18 @@ int	pqistore::writePkt(RsItem *pqi)
 		return 0;
 	}
 
+#ifdef PQISTORE_DEBUG
 	std::ostringstream out;
 	out << "Writing Pkt Body" << std::endl;
+#endif
 	// write packet.
 	if (len != bio->senddata(ptr, len))
 	{
+#ifdef PQISTORE_DEBUG
 		out << "Problems with Send Data!";
 		out << std::endl;
 	  	pqioutput(PQL_ALERT, pqistorezone, out.str());
+#endif
 
 		free(ptr);
 		if (!(bio_flags & BIN_FLAGS_NO_DELETE))
@@ -285,8 +309,10 @@ int	pqistore::writePkt(RsItem *pqi)
 		return 0;
 	}
 
+#ifdef PQISTORE_DEBUG
 	out << " Success!" << std::endl;
 	pqioutput(PQL_DEBUG_BASIC, pqistorezone, out.str());
+#endif
 
 	free(ptr);
 	if (!(bio_flags & BIN_FLAGS_NO_DELETE))
@@ -301,11 +327,13 @@ int	pqistore::writePkt(RsItem *pqi)
 
 int     pqistore::readPkt(RsItem **item_out)
 {
+#ifdef PQISTORE_DEBUG
         {
 	  std::ostringstream out;
 	  out << "pqistore::readPkt()";
 	  pqioutput(PQL_DEBUG_ALL, pqistorezone, out.str());
 	}
+#endif
 
 	if ((!(bio->isactive())) || (!(bio->moretoread())))
 	{
@@ -397,6 +425,7 @@ pqiSSLstore::pqiSSLstore(RsSerialiser *rss, std::string srcId, BinEncryptedFileI
 
 pqiSSLstore::~pqiSSLstore()
 {
+	// no need to delete member enc_bio, as it is deleted by the parent class.
 	return;
 }
 
@@ -450,11 +479,13 @@ bool pqiSSLstore::getEncryptedItems(std::list<RsItem* >& rsItemList)
 
 RsItem *pqiSSLstore::GetItem()
 {
+#ifdef PQISTORE_DEBUG
         {
 	  std::ostringstream out;
 	  out << "pqistore::GetItem()";
 	  pqioutput(PQL_DEBUG_ALL, pqistorezone, out.str());
 	}
+#endif
 
 	// check if this is a reading bio.
 	if (!(bio_flags & BIN_FLAGS_READABLE))
@@ -484,6 +515,7 @@ RsItem *pqiSSLstore::GetItem()
 	RsItem *outPkt = nextPkt;
 	nextPkt = NULL;
 
+#ifdef PQISTORE_DEBUG
 	if (outPkt != NULL)
         {
 	  std::ostringstream out;
@@ -491,17 +523,20 @@ RsItem *pqiSSLstore::GetItem()
 	  outPkt -> print(out);
 	  pqioutput(PQL_DEBUG_BASIC, pqistorezone, out.str());
 	}
+#endif
 	return outPkt;
 }
 
 
 int     pqiSSLstore::readPkt(RsItem **item_out)
 {
+#ifdef PQISTORE_DEBUG
         {
 	  std::ostringstream out;
 	  out << "pqistore::readPkt()";
 	  pqioutput(PQL_DEBUG_ALL, pqistorezone, out.str());
 	}
+#endif
 
 	if ((!(enc_bio->isactive())) || (!(enc_bio->moretoread())))
 	{
@@ -567,12 +602,14 @@ int     pqiSSLstore::readPkt(RsItem **item_out)
 	RsItem *item = rsSerialiser->deserialise(block, &readbytes);
 	free(block);
 
+#ifdef PQISTORE_DEBUG
 	if (item == NULL)
 	{
 	  	pqioutput(PQL_ALERT, pqistorezone,
 		  "pqistore::readPkt() Failed to create Item from store!");
 		return 0;
 	}
+#endif
 
 	item->PeerId(mSrcId);
 	*item_out = item;

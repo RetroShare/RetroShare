@@ -233,7 +233,9 @@ void	p3GroupDistrib::loadFileGroups(const std::string &filename, const std::stri
 	BinInterface *bio = new BinFileInterface(filename.c_str(), BIN_FLAGS_READABLE);
 	pqistore *store = createStore(bio, src, BIN_FLAGS_READABLE);
 
+#ifdef DISTRIB_DEBUG
 	std::cerr << "loading file " << filename << std::endl ;
+#endif
 
 	RsItem *item;
 	RsDistribGrp *newGrp;
@@ -297,7 +299,9 @@ void	p3GroupDistrib::loadFileMsgs(const std::string &filename, uint16_t cacheSub
 	BinInterface *bio = new BinFileInterface(filename.c_str(), BIN_FLAGS_READABLE);
 	pqistore *store = createStore(bio, src, BIN_FLAGS_READABLE);
 
+#ifdef DISTRIB_DEBUG
 	std::cerr << "loading file " << filename << std::endl ;
+#endif
 
 	RsItem *item;
 	RsDistribSignedMsg *newMsg;
