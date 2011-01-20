@@ -264,10 +264,10 @@ void bdNodeManager::iteration()
 				uint32_t nodeSpaceSize = mNodeSpace.calcSpaceSize();
 
 #ifdef DEBUG_MGR
-#endif
 				std::cerr << "bdNodeManager::iteration() Finding Oneself: ";
 				std::cerr << "NodeSpace Size:" << nodeSpaceSize;
 				std::cerr << std::endl;
+#endif
 
 				if (nodeSpaceSize > TRANSITION_OP_SPACE_SIZE)
 				{
@@ -423,7 +423,9 @@ void bdNodeManager::QueryRandomLocalNet()
 int bdNodeManager::status()
 {
 	/* do status of bdNode */
+#ifdef DEBUG_MGR
 	printState();
+#endif
 
 	checkStatus();
 
@@ -1006,18 +1008,26 @@ bdDebugCallback::~bdDebugCallback()
 
 int bdDebugCallback::dhtPeerCallback(const bdNodeId *id, uint32_t status)
 {
+#ifdef DEBUG_MGR
 	std::cerr << "bdDebugCallback::dhtPeerCallback() Id: ";
+#endif
 	bdStdPrintNodeId(std::cerr, id);
+#ifdef DEBUG_MGR
 	std::cerr << " status: " << std::hex << status << std::dec << std::endl;
+#endif
 	return 1;
 }
 
 int bdDebugCallback::dhtValueCallback(const bdNodeId *id, std::string key, uint32_t status)
 {
+#ifdef DEBUG_MGR
 	std::cerr << "bdDebugCallback::dhtValueCallback() Id: ";
+#endif
 	bdStdPrintNodeId(std::cerr, id);
+#ifdef DEBUG_MGR
 	std::cerr << " key: " << key;
 	std::cerr << " status: " << std::hex << status << std::dec << std::endl;
+#endif
 
 	return 1;
 }

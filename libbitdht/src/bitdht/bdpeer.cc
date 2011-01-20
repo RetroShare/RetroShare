@@ -596,12 +596,12 @@ int     bdSpace::add_peer(const bdId *id, uint32_t peerflags)
 		buck.entries.push_back(newPeer);
 
 #ifdef DEBUG_BD_SPACE
-#endif
 		/* useful debug */
 		std::cerr << "bdSpace::add_peer() Added Bucket[";
 		std::cerr << bucket << "] Entry: ";
 		mFns->bdPrintId(std::cerr, id);
 		std::cerr << std::endl;
+#endif
 	}
 	return add;
 }
