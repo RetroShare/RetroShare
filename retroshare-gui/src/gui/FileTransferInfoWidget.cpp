@@ -170,7 +170,7 @@ void FileTransferInfoWidget::draw(const FileInfo& nfo,const FileChunksInfo& info
 		 int size_of_this_chunk = ( info.active_chunks[i].first == info.chunks.size()-1 && ((info.file_size % blockSize)>0) )?(info.file_size % blockSize):blockSize ;
 		 uint32_t s = (uint32_t)rint(sizeX*(size_of_this_chunk - info.active_chunks[i].second)/(float)size_of_this_chunk) ;
 
-		 std::cerr << "chunk " << info.active_chunks[i].first << ": Last received byte: " << size_of_this_chunk - info.active_chunks[i].second << std::endl;
+		 //std::cerr << "chunk " << info.active_chunks[i].first << ": Last received byte: " << size_of_this_chunk - info.active_chunks[i].second << std::endl;
 
 		 // Already Downloaded.
 		 //
@@ -197,7 +197,7 @@ void FileTransferInfoWidget::draw(const FileInfo& nfo,const FileChunksInfo& info
 		 painter->setPen(QColor::fromRgb(0,0,0)) ;
 		 float percent = (size_of_this_chunk - info.active_chunks[i].second)*100.0/size_of_this_chunk ;
 
-		 painter->drawText(sizeX+55,y+text_height,QString::number(percent,'g',3) + " %") ;
+		 painter->drawText(sizeX+55,y+text_height,QString::number(percent,'f',2) + " %") ;
 
 		 y += sizeY+block_sep ;
 	 }
