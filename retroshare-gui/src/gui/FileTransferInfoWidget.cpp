@@ -197,7 +197,7 @@ void FileTransferInfoWidget::draw(const FileInfo& nfo,const FileChunksInfo& info
 		 painter->setPen(QColor::fromRgb(0,0,0)) ;
 		 float percent = (size_of_this_chunk - info.active_chunks[i].second)*100.0/size_of_this_chunk ;
 
-		 painter->drawText(sizeX+55,y+text_height,QString::number(percent,'g',2) + " %") ;
+		 painter->drawText(sizeX+55,y+text_height,QString::number(percent,'g',3) + " %") ;
 
 		 y += sizeY+block_sep ;
 	 }
