@@ -140,14 +140,18 @@ std::string NotifyQt::askForPassword(const std::string& key_details,bool prev_is
 
 void NotifyQt::notifyDiscInfoChanged()
 {
+#ifdef NOTIFY_DEBUG
 	std::cerr << "Notifyqt:: notified that discoveryInfo changed" << std::endl ;
+#endif
 
 	emit discInfoChanged() ;
 }
 
 void NotifyQt::notifyDownloadComplete(const std::string& fileHash)
 {
+#ifdef NOTIFY_DEBUG
 	std::cerr << "Notifyqt::notifyDownloadComplete notified that a download is completed" << std::endl;
+#endif
 
 	emit downloadComplete(QString::fromStdString(fileHash));
 }

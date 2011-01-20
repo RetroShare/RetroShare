@@ -196,14 +196,14 @@ NetworkDialog::NetworkDialog(QWidget *parent)
 
 void NetworkDialog::updateNewDiscoveryInfo()
 {
-	std::cerr << "Received new p3disc info. Updating networkview." << std::endl;
+	//std::cerr << "Received new p3disc info. Updating networkview." << std::endl;
 	networkview->update();
 	networkview->updateDisplay();
 }
 
 void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point )
 {
-    std::cerr << "NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point ) called" << std::endl;
+    //std::cerr << "NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point ) called" << std::endl;
     QTreeWidgetItem *wi = getCurrentNeighbour();
     if (!wi)
     	return;
