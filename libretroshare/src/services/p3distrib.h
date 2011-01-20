@@ -36,6 +36,8 @@
 #include <openssl/ssl.h>
 #include <openssl/evp.h>
 
+#include <set>
+
 /* 
  * Group Messages....
  * 
@@ -281,7 +283,7 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		 * Attempt to load public key from recvd list if it exists for grpId
 		 * @param grpId the id for the group for which private publish key is wanted
 		 */
-		bool	attemptPublishKeysRecvd(GroupInfo& info);
+                bool	attemptPublishKeysRecvd();
 
 	protected:
 
@@ -304,9 +306,11 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 
 		/*!
 		 * Adds new keys dependent on whether it is an admin or publish key
+                 * on return resource pointed to by newKey should be considered invalid
 		 * @param newKey key to be added
+                 * @return if key is loaded to group or stored return true
 		 */
-		void    loadGroupKey(RsDistribGrpKey *newKey);
+                bool    loadGroupKey(RsDistribGrpKey *newKey);
 
 
 /***************************************************************************************/
@@ -509,13 +513,6 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		 */
                 virtual void receivePubKeys();
 
-		/*!
-		 * utility function to check whether grps exist
-		 * for private publish keys received
-                 * @deprecated
-		 */
-		virtual void locked_loadRecvdPubKeys();
-
 		/**
 		 * Allows group admin(s) to change group icon, description and name
 		 *@param grpId group id
@@ -684,7 +681,7 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 
 		std::map<std::string, RsDistribGrpKey* > mRecvdPubKeys; /// full publishing keys received from users
 		std::map<std::string, std::list<std::string> > mPendingPubKeyRecipients; /// peers to receive publics key for a given grp
-		std::list<std::string> mPubKeyAvailableGrpId; // groups id for which public keys are available
+                std::set<std::string> mPubKeyAvailableGrpId; // groups id for which public keys are available
 		time_t mLastKeyPublishTime, mLastRecvdKeyTime;
 	
 };

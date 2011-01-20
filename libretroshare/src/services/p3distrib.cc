@@ -123,15 +123,24 @@ int	p3GroupDistrib::tick()
 		mGroupsRepublish = false;
 	}
 
+        bool attemptRecv = false;
+
 	{
 		RsStackMutex stack(distribMtx);
-		toPublish = (mPendingPubKeyRecipients.size() > 0) && (now > (time_t) (mPubPeriod + mLastKeyPublishTime));
+                toPublish = (mPendingPubKeyRecipients.size() > 0) && (now > (time_t) (mPubPeriod + mLastKeyPublishTime));
+                attemptRecv = (mRecvdPubKeys.size() > 0) && (now > (time_t) (mPubPeriod + mLastKeyPublishTime));
 	}
 
 	if(toPublish){
 		RsStackMutex stack(distribMtx);
 		locked_sharePubKey();
 	}
+
+
+        if(attemptRecv)
+        {
+            attemptPublishKeysRecvd();
+        }
 
 	bool toReceive = receivedItems();
 
@@ -485,7 +494,7 @@ void	p3GroupDistrib::loadGroup(RsDistribGrp *newGrp)
 }
 
 
-void	p3GroupDistrib::loadGroupKey(RsDistribGrpKey *newKey)
+bool	p3GroupDistrib::loadGroupKey(RsDistribGrpKey *newKey)
 {
 	/* load Key */
 	const std::string &gid = newKey -> grpId;
@@ -521,13 +530,14 @@ void	p3GroupDistrib::loadGroupKey(RsDistribGrpKey *newKey)
                     // make sure key does not exist
                     if(mRecvdPubKeys.find(gid) == mRecvdPubKeys.end()){
 			mRecvdPubKeys.insert(std::pair<std::string, RsDistribGrpKey*>(gid, newKey));
-                        mPubKeyAvailableGrpId.push_back(gid);
+                        return true;
                     }else{
 #ifdef DISTRIB_DEBUG
                         std::cerr << "p3GroupDistrib::loadGroupKey() Key already received; discarding";
                         std::cerr << std::endl;
 #endif
                         delete newKey;
+
                     }
 
                 }
@@ -536,11 +546,13 @@ void	p3GroupDistrib::loadGroupKey(RsDistribGrpKey *newKey)
                     std::cerr << "p3GroupDistrib::loadGroupKey() Key out of date: discarding";
                 std::cerr << std::endl;
 #endif
+
                     delete newKey;
+
 
                 }
 
-		return;
+                return false;
 	}
 
 
@@ -572,59 +584,28 @@ void	p3GroupDistrib::loadGroupKey(RsDistribGrpKey *newKey)
 		else
 		{
 			updateOk = true;
+
 		}
 
 
-	}
-
-        std::map<std::string, RsDistribGrpKey* >::iterator kit;
-        std::list<std::string>::iterator sit;
-        bool canAdd = false;
-
-        // check to see if client has received a private publish key
-        if(mRecvdPubKeys.end() != (kit = mRecvdPubKeys.find(gid))){
-
-            if(!locked_updateGroupPublishKey(it->second, kit->second)){
-#ifdef DISTRIB_DEBUG
-                std::cerr << "p3GroupDistrib::loadGroupKey() Failed Recvd Publish Key Update";
-                std::cerr << std::endl;
-#endif
-            }else{
-#ifdef DISTRIB_DEBUG
-                std::cerr << "p3GroupDistrib::loadGroupKey() Recvd Publish Key Update";
-                std::cerr << std::endl;
-#endif
-
-
-                sit = mPubKeyAvailableGrpId.begin();
-                for(; sit != mPubKeyAvailableGrpId.end(); sit++){
-
-                    if(gid == *sit)
-                        canAdd = true;
-
-                }
-
-                if(canAdd)
-                    mPubKeyAvailableGrpId.push_back(gid);
-
-                mRecvdPubKeys.erase(gid);
-                updateOk = true;
-            }
-
-        }
-
-	if (updateOk)
-	{
-		locked_notifyGroupChanged(it->second, GRP_LOAD_KEY);
 	}
 
 #ifdef DISTRIB_DEBUG
 	std::cerr << "p3GroupDistrib::loadGroupKey() Done - Cleaning up.";
 	std::cerr << std::endl;
 #endif
-	delete newKey;
 
-	return;
+        GroupInfo *gi = locked_getGroupInfo(gid);
+
+        // special case, if user is not subscribed then save key
+        if(!(gi->flags & RS_DISTRIB_SUBSCRIBED) && updateOk){
+
+            mRecvdPubKeys.insert(std::pair<std::string, RsDistribGrpKey*>(gid, newKey));
+            return updateOk;
+        }
+
+        delete newKey;
+        return updateOk;
 }
 
 
@@ -1325,19 +1306,15 @@ bool    p3GroupDistrib::subscribeToGroup(const std::string &grpId, bool subscrib
 }
 
 
-bool p3GroupDistrib::attemptPublishKeysRecvd(GroupInfo& info)
+bool p3GroupDistrib::attemptPublishKeysRecvd()
 {
 
 	std::map<std::string, RsDistribGrpKey*>::iterator mit;
-	mit = mRecvdPubKeys.find(info.grpId);
+        mit = mRecvdPubKeys.begin();
 
-	if(mit == mRecvdPubKeys.end())
-		return false;
-
-	if(locked_updateGroupPublishKey(info, mit->second))
-		mRecvdPubKeys.erase(mit);
-	else
-		return false;
+        for(; mit != mRecvdPubKeys.end(); mit++){
+            loadGroupKey(mit->second);
+        }
 
 	return true;
 }
@@ -2121,6 +2098,8 @@ void p3GroupDistrib::receivePubKeys(){
 
 
 	RsItem* item;
+        GroupInfo *gi = NULL;
+        std::string gid;
 
 	while(NULL != (item = recvItem())){
 
@@ -2137,18 +2116,32 @@ void p3GroupDistrib::receivePubKeys(){
 #endif
 			if(key_item->key.keyFlags & RSTLV_KEY_TYPE_FULL){
 
-                            loadGroupKey(key_item);
+                            gid = key_item->grpId;
+                            if(loadGroupKey(key_item)){
 
-			}
+                                if(NULL != (gi = locked_getGroupInfo(gid))){
+                                    locked_notifyGroupChanged(*gi, GRP_LOAD_KEY);
+                                    gi = NULL;
+                                }
+
+                                mPubKeyAvailableGrpId.insert(gid);
+                            }
+                        }
 			else{
 				std::cerr << "p3GroupDistrib::locked_receiveKeys():" << "Not full public key"
 						  << "Deleting item"<< std::endl;
 				delete key_item;
-			}
-		}else{
-			delete item;
-		}
-	}
+                            }
+
+                    }
+                else{
+
+                            delete item;
+
+                        }
+                   }
+
+
 
 
         RsStackMutex stack(distribMtx);
@@ -2157,60 +2150,10 @@ void p3GroupDistrib::receivePubKeys(){
         if(!mRecvdPubKeys.empty())
             IndicateConfigChanged();
 
-
-
 	return;
-}
-
-void p3GroupDistrib::locked_loadRecvdPubKeys(){
-
-	std::map<std::string, RsDistribGrpKey* >::iterator mit;
-	std::list<std::string>::iterator lit;
-	GroupInfo *gi;
-	bool cont  = false;
-
-#ifdef DISTRIB_DEBUG
-	std::cerr << "p3GroupDistrib::locked_loadRecvdPubKeys() " << std::endl;
-#endif
 
 
-	// look for keys to add to private publish key received notify list
-	for(mit = mRecvdPubKeys.begin(); mit != mRecvdPubKeys.end(); mit++ ){
-
-		gi = locked_getGroupInfo(mit->second->grpId);
-
-		if(gi != NULL){
-
-			/* ensure grpId not added already */
-			for(lit=mPubKeyAvailableGrpId.begin(); lit != mPubKeyAvailableGrpId.end(); lit++){
-
-				if(mit->second->grpId == *lit){
-					cont = true;
-					break;
-				}
-			}
-
-			if(cont)
-			{
-				cont = false;
-				continue;
-			}
-
-			mPubKeyAvailableGrpId.push_back(mit->second->grpId);
-			locked_notifyGroupChanged(*gi, GRP_UPDATE);
-
-		}else{
-
-			std::cerr << "p3GroupDistrib::locked_loadRecvdPubKeys(): group does not exist" << std::endl;
-		}
-
-	}
-
-
-	mLastRecvdKeyTime = time(NULL);
-
-	return;
-}
+    }
 
 std::string	p3GroupDistrib::publishMsg(RsDistribMsg *msg, bool personalSign)
 {
@@ -3230,7 +3173,10 @@ RsDistribMsg *p3GroupDistrib::unpackDistribSignedMsg(RsDistribSignedMsg *newMsg)
 void p3GroupDistrib::getGrpListPubKeyAvailable(std::list<std::string>& grpList)
 {
 	RsStackMutex stack(distribMtx);
-	grpList = mPubKeyAvailableGrpId;
+        std::set<std::string>::const_iterator cit = mPubKeyAvailableGrpId.begin();
+
+        for(; cit != mPubKeyAvailableGrpId.end(); cit++)
+            grpList.push_back(*cit);
 
 	return;
 }
