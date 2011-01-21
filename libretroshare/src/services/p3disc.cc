@@ -220,15 +220,15 @@ int p3disc::handleIncoming()
         /************* from pqiMonitor *******************/
 void p3disc::statusChange(const std::list<pqipeer> &plist)
 {
-        #ifdef P3DISC_DEBUG
+#ifdef P3DISC_DEBUG
 	std::cerr << "p3disc::statusChange()" << std::endl;
-        #endif
+#endif
 
 	std::list<pqipeer>::const_iterator pit;
 	/* if any have switched to 'connected' then we notify */
-        for(pit =  plist.begin(); pit != plist.end(); pit++) 
+	for(pit =  plist.begin(); pit != plist.end(); pit++) 
 	{
-                if ((pit->state & RS_PEER_S_FRIEND) && (pit->actions & RS_PEER_CONNECTED)) 
+		if ((pit->state & RS_PEER_S_FRIEND) && (pit->actions & RS_PEER_CONNECTED)) 
 		{
 #ifdef P3DISC_DEBUG
 			std::cerr << "p3disc::statusChange() Starting Disc with: " << pit->id << std::endl;
@@ -268,7 +268,10 @@ void p3disc::sendAllInfoToJustConnectedPeer(const std::string &id)
 
 	RsPeerDetails pd;
 	rsPeers->getPeerDetails(id, pd);
-	if (!pd.accept_connection || (!pd.ownsign && pd.gpg_id != rsPeers->getGPGOwnId())) { //only send info when connection is accepted and gpg key is signed or our own key
+
+	if (!pd.accept_connection || (!pd.ownsign && pd.gpg_id != rsPeers->getGPGOwnId())) 
+	{ 
+		//only send info when connection is accepted and gpg key is signed or our own key
 #ifdef P3DISC_DEBUG
 		std::cerr << "p3disc::sendAllInfoToJustConnectedPeer() we're not sending the info because the destination gpg key is not signed or not accepted." << std::cerr << std::endl;
 #endif
@@ -417,23 +420,23 @@ RsDiscReply *p3disc::createDiscReply(const std::string &to, const std::string &a
 					std::cerr << std::endl;
 #endif
 					shouldWeSendGPGKey = true;
-					RsPeerNetItem *rsPeerNetItem = new RsPeerNetItem();
-					rsPeerNetItem->clear();
+					RsPeerNetItem rsPeerNetItem ;
+					rsPeerNetItem.clear();
 
-					rsPeerNetItem->pid = detail.id;
-					rsPeerNetItem->gpg_id = detail.gpg_id;
-					rsPeerNetItem->location = detail.location;
-					rsPeerNetItem->netMode = detail.netMode;
-					rsPeerNetItem->visState = detail.visState;
-					rsPeerNetItem->lastContact = detail.lastcontact;
-					rsPeerNetItem->currentlocaladdr = detail.currentlocaladdr;
-					rsPeerNetItem->currentremoteaddr = detail.currentserveraddr;
-					rsPeerNetItem->dyndns = detail.dyndns;
-					detail.ipAddrs.mLocal.loadTlv(rsPeerNetItem->localAddrList);
-					detail.ipAddrs.mExt.loadTlv(rsPeerNetItem->extAddrList);
+					rsPeerNetItem.pid = detail.id;
+					rsPeerNetItem.gpg_id = detail.gpg_id;
+					rsPeerNetItem.location = detail.location;
+					rsPeerNetItem.netMode = detail.netMode;
+					rsPeerNetItem.visState = detail.visState;
+					rsPeerNetItem.lastContact = detail.lastcontact;
+					rsPeerNetItem.currentlocaladdr = detail.currentlocaladdr;
+					rsPeerNetItem.currentremoteaddr = detail.currentserveraddr;
+					rsPeerNetItem.dyndns = detail.dyndns;
+					detail.ipAddrs.mLocal.loadTlv(rsPeerNetItem.localAddrList);
+					detail.ipAddrs.mExt.loadTlv(rsPeerNetItem.extAddrList);
 
 
-					di->rsPeerList.push_back(*rsPeerNetItem);
+					di->rsPeerList.push_back(rsPeerNetItem);
 				}
 			else
 			{
@@ -452,22 +455,21 @@ RsDiscReply *p3disc::createDiscReply(const std::string &to, const std::string &a
 		if (mConnMgr->getOwnNetStatus(detail)) 
 		{
 			shouldWeSendGPGKey = true;
-			RsPeerNetItem *rsPeerNetItem = new RsPeerNetItem();
-			rsPeerNetItem->clear();
-			rsPeerNetItem->pid = detail.id;
-			rsPeerNetItem->gpg_id = detail.gpg_id;
-			rsPeerNetItem->location = detail.location;
-			rsPeerNetItem->netMode = detail.netMode;
-			rsPeerNetItem->visState = detail.visState;
-			rsPeerNetItem->lastContact = time(NULL);
-			rsPeerNetItem->currentlocaladdr = detail.currentlocaladdr;
-			rsPeerNetItem->currentremoteaddr = detail.currentserveraddr;
-			rsPeerNetItem->dyndns = detail.dyndns;
-                	detail.ipAddrs.mLocal.loadTlv(rsPeerNetItem->localAddrList);
-                	detail.ipAddrs.mExt.loadTlv(rsPeerNetItem->extAddrList);
+			RsPeerNetItem rsPeerNetItem ;
+			rsPeerNetItem.clear();
+			rsPeerNetItem.pid = detail.id;
+			rsPeerNetItem.gpg_id = detail.gpg_id;
+			rsPeerNetItem.location = detail.location;
+			rsPeerNetItem.netMode = detail.netMode;
+			rsPeerNetItem.visState = detail.visState;
+			rsPeerNetItem.lastContact = time(NULL);
+			rsPeerNetItem.currentlocaladdr = detail.currentlocaladdr;
+			rsPeerNetItem.currentremoteaddr = detail.currentserveraddr;
+			rsPeerNetItem.dyndns = detail.dyndns;
+			detail.ipAddrs.mLocal.loadTlv(rsPeerNetItem.localAddrList);
+			detail.ipAddrs.mExt.loadTlv(rsPeerNetItem.extAddrList);
 
-
-			di->rsPeerList.push_back(*rsPeerNetItem);
+			di->rsPeerList.push_back(rsPeerNetItem);
 		}
 	}
 
