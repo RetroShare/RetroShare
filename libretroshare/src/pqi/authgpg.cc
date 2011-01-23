@@ -2413,7 +2413,9 @@ bool AuthGPGimpl::addService(AuthGPGService *service)
 /***************************** HACK to Cleanup OSX Zombies *****************************/
 
 
+#ifdef __APPLE__
 #include <sys/wait.h>
+#endif
 
 void cleanupZombies(int numkill)
 {
