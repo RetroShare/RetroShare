@@ -708,7 +708,7 @@ continue_packet:
 		{
 			void *extradata = (void *) (((char *) block) + blen);
 			int tmplen ;
-//			memset((void*)( &(((unsigned char *)block)[blen])),0,extralen) ;	// reset the block, to avoid uninitialized memory reads.
+			// reset the block, to avoid uninitialized memory reads.
 			memset( extradata,0,extralen ) ;	// for checking later
 
 			if (extralen != (tmplen = bio->readdata(extradata, extralen)))
@@ -741,9 +741,7 @@ continue_packet:
 						msgout <<  "Please contact the developers.";
 						msgout <<  "\n";
 
-						std::string msg = msgout.str();
-						std::cerr << msg << std::endl ;
-						std::cerr << "block = " 
+						msgout << "block = " 
 							<< (int)(((unsigned char*)block)[0]) << " " 
 							<< (int)(((unsigned char*)block)[1]) << " " 
 							<< (int)(((unsigned char*)block)[2]) << " " 
@@ -753,7 +751,8 @@ continue_packet:
 							<< (int)(((unsigned char*)block)[6]) << " " 
 							<< (int)(((unsigned char*)block)[7]) << " "
 							<< std::endl ;
-											notify->AddSysMessage(0, RS_SYS_WARNING, title, msg);
+
+						notify->AddSysMessage(0, RS_SYS_WARNING, title, msgout.str());
 					}
 
 					bio->close();	
