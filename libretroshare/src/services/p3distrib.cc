@@ -525,19 +525,22 @@ bool	p3GroupDistrib::loadGroupKey(RsDistribGrpKey *newKey)
 #endif
 
                 // if this is an in-date full publish key then keep to see if group arrives later
-                if(((time_t)(newKey->key.startTS + mStorePeriod) > time(NULL)) && (newKey->key.keyFlags & RSTLV_KEY_TYPE_FULL)){
+                if(((time_t)(newKey->key.startTS + mStorePeriod) > time(NULL)) && (newKey->key.keyFlags & RSTLV_KEY_TYPE_FULL))
+					 {
 
                     // make sure key does not exist
                     if(mRecvdPubKeys.find(gid) == mRecvdPubKeys.end()){
 			mRecvdPubKeys.insert(std::pair<std::string, RsDistribGrpKey*>(gid, newKey));
                         return true;
-                    }else{
+                    }
+						  else
+						  {
 #ifdef DISTRIB_DEBUG
                         std::cerr << "p3GroupDistrib::loadGroupKey() Key already received; discarding";
                         std::cerr << std::endl;
 #endif
                         delete newKey;
-
+								return false ;
                     }
 
                 }
@@ -548,11 +551,8 @@ bool	p3GroupDistrib::loadGroupKey(RsDistribGrpKey *newKey)
 #endif
 
                     delete newKey;
-
-
+								return false ;
                 }
-
-                return false;
 	}
 
 
@@ -604,7 +604,9 @@ bool	p3GroupDistrib::loadGroupKey(RsDistribGrpKey *newKey)
             return updateOk;
         }
 
-        delete newKey;
+		  if(!updateOk)
+			  delete newKey;
+
         return updateOk;
 }
 
@@ -726,7 +728,7 @@ void	p3GroupDistrib::loadMsg(RsDistribSignedMsg *newMsg, const std::string &src,
 	(git->second).msgs[msg->msgId] = msg;
 
 	// update the time stamp of group for last post
-	if((git->second.lastPost < msg->timestamp))
+	if((git->second.lastPost < (time_t)msg->timestamp))
 		git->second.lastPost = msg->timestamp;
 
 	/* now update parents TS */
@@ -1308,13 +1310,22 @@ bool    p3GroupDistrib::subscribeToGroup(const std::string &grpId, bool subscrib
 
 bool p3GroupDistrib::attemptPublishKeysRecvd()
 {
+	std::map<std::string, RsDistribGrpKey*>::iterator mit = mRecvdPubKeys.begin();
 
-	std::map<std::string, RsDistribGrpKey*>::iterator mit;
-        mit = mRecvdPubKeys.begin();
+	for(;mit != mRecvdPubKeys.end();)
+	{
+		bool ok = loadGroupKey(mit->second);
 
-        for(; mit != mRecvdPubKeys.end(); mit++){
-            loadGroupKey(mit->second);
-        }
+		if(!ok)
+		{
+			std::map<std::string, RsDistribGrpKey*>::iterator tmp(mit);
+			++mit ;
+			
+			mRecvdPubKeys.erase(tmp) ;
+		}
+		else
+			++mit ;
+	}
 
 	return true;
 }
