@@ -121,7 +121,7 @@ macx {
 
 	CONFIG += version_detail_bash_script
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
-        LIBS += -lssl -lcrypto -lz -lgpgme -lgpg-error
+        LIBS += -lssl -lcrypto -lz -lgpgme -lgpg-error -lassuan
 	LIBS += ../../../miniupnpc-1.0/libminiupnpc.a
 	LIBS += -framework CoreFoundation
 
