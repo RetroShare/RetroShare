@@ -1842,6 +1842,7 @@ bool ftController::CancelCacheFile(RsPeerId id, std::string path, std::string ha
 	return true;
 }
 
+const std::string active_downloads_size_ss("MAX_ACTIVE_DOWNLOADS");
 const std::string download_dir_ss("DOWN_DIR");
 const std::string partial_dir_ss("PART_DIR");
 const std::string share_dwl_dir("SHARE_DWL_DIR");
@@ -1874,6 +1875,9 @@ bool ftController::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	std::list<std::string>::iterator it;
 
 	/* basic control parameters */
+	std::ostringstream strm ;
+	strm << getQueueSize() ;
+	configMap[active_downloads_size_ss] = strm.str() ;
 	configMap[download_dir_ss] = getDownloadDirectory();
 	configMap[partial_dir_ss] = getPartialsDirectory();
 	configMap[share_dwl_dir] = mShareDownloadDir ? "YES" : "NO";
@@ -2054,8 +2058,15 @@ bool  ftController::loadConfigMap(std::map<std::string, std::string> &configMap)
 	std::string dir = "notempty";
 
 	if (configMap.end() != (mit = configMap.find(download_dir_ss)))
-	{
 		setDownloadDirectory(mit->second);
+
+	if (configMap.end() != (mit = configMap.find(active_downloads_size_ss)))
+	{
+		std::istringstream i(mit->second) ;
+		int n=5 ;
+		i >> n ;
+		std::cerr << "Note: loading active max downloads: " << n << std::endl;
+		setQueueSize(n);
 	}
 
 	if (configMap.end() != (mit = configMap.find(partial_dir_ss)))
