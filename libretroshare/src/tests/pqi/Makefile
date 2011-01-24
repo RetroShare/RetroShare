@@ -12,11 +12,11 @@ TESTOBJ  = conn_harness.o ppg_harness.o
 
 TESTOBJ  += net_test.o dht_test.o net_test1.o netiface_test.o dht_test.o 
 TESTOBJ  += pkt_test.o pqiarchive_test.o pqiperson_test.o
-TESTOBJ  += extaddrfinder_test.o pqiipset_test.o
+TESTOBJ  += extaddrfinder_test.o dnsresolver_test.o pqiipset_test.o
 TESTOBJ  += p3connmgr_reset_test.o p3connmgr_connect_test.o 
 #conn_test.o 
 
-TESTS  = net_test net_test1 netiface_test pqiarchive_test pqiperson_test extaddrfinder_test
+TESTS  = net_test net_test1 netiface_test pqiarchive_test pqiperson_test dnsresolver_test extaddrfinder_test
 TESTS  += pqiipset_test
 TESTS  += p3connmgr_reset_test p3connmgr_connect_test
 #TESTS  = p3connmgr_test1
@@ -55,6 +55,9 @@ pqiperson_test: pqiperson_test.o testconnect.o
 
 extaddrfinder_test: extaddrfinder_test.o 
 	$(CC) $(CFLAGS) -o extaddrfinder_test extaddrfinder_test.o $(LIBS)
+
+dnsresolver_test: dnsresolver_test.o 
+	$(CC) $(CFLAGS) -o dnsresolver_test dnsresolver_test.o $(LIBS)
 
 pqiipset_test: pqiipset_test.o 
 	$(CC) $(CFLAGS) -o pqiipset_test pqiipset_test.o $(LIBS)

@@ -38,6 +38,7 @@
 #include "util/rsthreads.h"
 
 class ExtAddrFinder ;
+class DNSResolver ;
 
 	/* RS_VIS_STATE_XXXX
 	 * determines how public this peer wants to be...
@@ -402,6 +403,7 @@ private:
 	// These should have there own Mutex Protection,
 	//p3tunnel *mP3tunnel;
 	ExtAddrFinder *mExtAddrFinder ;
+	DNSResolver *mDNSResolver ;
 
 	/* These are considered static from a MUTEX perspective */
 	std::map<uint32_t, pqiNetAssistFirewall *> mFwAgents;

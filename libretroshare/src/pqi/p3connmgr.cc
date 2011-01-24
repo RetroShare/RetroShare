@@ -27,7 +27,8 @@
 #include "pqi/p3connmgr.h"
 #include "pqi/p3dhtmgr.h" // Only need it for constants.
 #include "tcponudp/tou.h"
-#include "tcponudp/extaddrfinder.h"
+#include "util/extaddrfinder.h"
+#include "util/dnsresolver.h"
 #include "util/rsnet.h"
 #include "pqi/authgpg.h"
 
@@ -195,6 +196,7 @@ p3ConnectMgr::p3ConnectMgr()
 		mUseExtAddrFinder = true;
 		mAllowTunnelConnection = false;
 		mExtAddrFinder = new ExtAddrFinder;
+		mDNSResolver = new DNSResolver;
 		mNetInitTS = 0;
 	        mRetryPeriod = MIN_RETRY_PERIOD;
 	
@@ -2607,8 +2609,8 @@ bool  p3ConnectMgr::locked_CheckPotentialAddr(struct sockaddr_in *addr, time_t a
 	}
 
 	bool isValid = isValidNet(&(addr->sin_addr));
-//	bool isLoopback = isLoopbackNet(&(addr->sin_addr));
-//	bool isPrivate = isPrivateNet(&(addr->sin_addr));
+	//	bool isLoopback = isLoopbackNet(&(addr->sin_addr));
+	//	bool isPrivate = isPrivateNet(&(addr->sin_addr));
 	bool isExternal = isExternalNet(&(addr->sin_addr));
 
 	/* if invalid - quick rejection */
@@ -2782,39 +2784,41 @@ void  p3ConnectMgr::locked_ConnectAttempt_HistoricalAddresses(peerConnectState *
 void  p3ConnectMgr::locked_ConnectAttempt_AddDynDNS(peerConnectState *peer)
 {
 	/* try dyndns address too */
-        if (!peer->dyndns.empty()) {
-            struct in_addr addr;
-            u_short port = peer->currentserveraddr.sin_port ? peer->currentserveraddr.sin_port : peer->currentlocaladdr.sin_port;
+	if (!peer->dyndns.empty()) 
+	{
+		struct in_addr addr;
+		u_short port = peer->currentserveraddr.sin_port ? peer->currentserveraddr.sin_port : peer->currentlocaladdr.sin_port;
 #ifdef CONN_DEBUG
-            std::cerr << "Looking up DynDNS address" << std::endl;
+		std::cerr << "Looking up DynDNS address" << std::endl;
 #endif
-            if (port) {
-                if (getIPAddressFromString (peer->dyndns.c_str (), &addr))
+		if (port) 
 		{
-#ifdef CONN_DEBUG
-			std::cerr << "Adding tcp connection attempt: ";
-			std::cerr << "DynDNS Addr: " << rs_inet_ntoa(addr);
-			std::cerr << ":" << ntohs(port);
-			std::cerr << std::endl;
-#endif
-                        peerConnectAddress pca;
-                        pca.addr.sin_family = AF_INET;
-                        pca.addr.sin_addr.s_addr = addr.s_addr;
-                        pca.addr.sin_port = port;
-                        pca.type = RS_NET_CONN_TCP_EXTERNAL;
-                        //for the delay, we add a random time and some more time when the friend list is big
-                        pca.delay = P3CONNMGR_TCP_DEFAULT_DELAY;
-                        pca.ts = time(NULL);
-                        pca.period = P3CONNMGR_TCP_DEFAULT_PERIOD;
-
-			/* check address validity */
-			if (locked_CheckPotentialAddr(&(pca.addr), 0))
+			if(mDNSResolver->getIPAddressFromString (std::string(peer->dyndns.c_str()), addr))
 			{
-				addAddressIfUnique(peer->connAddrs, pca);
+#ifdef CONN_DEBUG
+				std::cerr << "Adding tcp connection attempt: ";
+				std::cerr << "DynDNS Addr: " << rs_inet_ntoa(addr);
+				std::cerr << ":" << ntohs(port);
+				std::cerr << std::endl;
+#endif
+				peerConnectAddress pca;
+				pca.addr.sin_family = AF_INET;
+				pca.addr.sin_addr.s_addr = addr.s_addr;
+				pca.addr.sin_port = port;
+				pca.type = RS_NET_CONN_TCP_EXTERNAL;
+				//for the delay, we add a random time and some more time when the friend list is big
+				pca.delay = P3CONNMGR_TCP_DEFAULT_DELAY;
+				pca.ts = time(NULL);
+				pca.period = P3CONNMGR_TCP_DEFAULT_PERIOD;
+
+				/* check address validity */
+				if (locked_CheckPotentialAddr(&(pca.addr), 0))
+				{
+					addAddressIfUnique(peer->connAddrs, pca);
+				}
 			}
-                }
-            }
-        }
+		}
+	}
 }
 
 

@@ -382,8 +382,6 @@ HEADERS +=	services/p3channels.h \
 			services/p3tunnel.h
 #	services/p3blogs.h \
 
-HEADERS +=	tcponudp/extaddrfinder.h \
-
 HEADERS +=	turtle/p3turtle.h \
 			turtle/rsturtleitem.h \
 			turtle/turtletypes.h
@@ -395,6 +393,8 @@ HEADERS +=	util/folderiterator.h \
 			util/rsdir.h \
 			util/rsdiscspace.h \
 			util/rsnet.h \
+			util/extaddrfinder.h \
+			util/dnsresolver.h \
 			util/rsprint.h \
 			util/rsthreads.h \
 			util/rsversion.h \
@@ -498,8 +498,6 @@ SOURCES +=	services/p3channels.cc \
 			services/p3statusservice.cc
 # removed because getPeer() doesn t exist			services/p3tunnel.cc
 
-SOURCES +=	tcponudp/extaddrfinder.cc \
-
 
 SOURCES +=	turtle/p3turtle.cc \
 				turtle/rsturtleitem.cc 
@@ -514,6 +512,8 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsdir.cc \
 			util/rsdiscspace.cc \
 			util/rsnet.cc \
+			util/extaddrfinder.cc \
+			util/dnsresolver.cc \
 			util/rsprint.cc \
 			util/rsthreads.cc \
 			util/rsversion.cc \

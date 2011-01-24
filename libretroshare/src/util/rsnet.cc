@@ -129,22 +129,6 @@ bool    isExternalNet(const struct in_addr *addr)
 	return true;
 }
 
-bool getIPAddressFromString (const char *addr_str, struct in_addr *addr)
-{
-    if (addr_str && addr) {
-        static RsMutex mtx;
-        RsStackMutex stack(mtx);
-
-        hostent *pHost = gethostbyname (addr_str);
-        if (pHost) {
-            addr->s_addr = *(unsigned long*) (pHost->h_addr);
-            return true;
-        }
-    }
-
-    return false;
-}
-
 std::ostream &operator<<(std::ostream &out, const struct sockaddr_in &addr)
 {
 	out << "[" << inet_ntoa(addr.sin_addr) << ":";
