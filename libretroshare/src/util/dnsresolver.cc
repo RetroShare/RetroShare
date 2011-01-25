@@ -29,6 +29,7 @@ void *solveDNSEntries(void *p)
 	{
 		// get an address request
 		time_t now = time(NULL) ;
+		more_to_go = false ;
 
 		std::string next_call = "" ;
 
@@ -73,7 +74,7 @@ void *solveDNSEntries(void *p)
 
 	{
 		RsStackMutex mut(dnsr->_rdnsMtx) ;
-		dnsr->_thread_running = false ;
+		*(dnsr->_thread_running) = false ;
 	}
 	return NULL ;
 }
@@ -134,7 +135,10 @@ bool DNSResolver::getIPAddressFromString(const std::string& server_name,struct i
 	}
 
 	if(!running)
+	{
+		std::cerr << "Launching reuqest!!"<< std::endl;
 		start_request();
+	}
 
 	return false ;
 }
