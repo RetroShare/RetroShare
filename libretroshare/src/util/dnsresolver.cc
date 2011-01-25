@@ -54,21 +54,25 @@ void *solveDNSEntries(void *p)
 																			break ;
 					}
 				}
+			else
+				return NULL; // the thread has been deleted. Return.
 		}
 
 		if(!next_call.empty())
 		{
 			hostent *pHost = gethostbyname(next_call.c_str());
 
-			if(pHost) 
 			{
 				RsStackMutex mut(dnsr->_rdnsMtx) ;
 
-				(*dnsr->_addr_map)[next_call].state = DNSResolver::DNS_HAVE ;
-				(*dnsr->_addr_map)[next_call].addr.s_addr  = *(unsigned long*) (pHost->h_addr);
+				if(pHost) 
+				{
+					(*dnsr->_addr_map)[next_call].state = DNSResolver::DNS_HAVE ;
+					(*dnsr->_addr_map)[next_call].addr.s_addr  = *(unsigned long*) (pHost->h_addr);
+				}
+				else
+					(*dnsr->_addr_map)[next_call].state = DNSResolver::DNS_LOOKUP_ERROR ;
 			}
-			else
-				(*dnsr->_addr_map)[next_call].state = DNSResolver::DNS_LOOKUP_ERROR ;
 		}
 	}
 
@@ -98,6 +102,7 @@ void DNSResolver::reset()
 
 	*_thread_running = false ;
 	_addr_map->clear();
+	_addr_map = NULL ;
 }
 
 bool DNSResolver::getIPAddressFromString(const std::string& server_name,struct in_addr& addr) 
@@ -135,10 +140,7 @@ bool DNSResolver::getIPAddressFromString(const std::string& server_name,struct i
 	}
 
 	if(!running)
-	{
-		std::cerr << "Launching reuqest!!"<< std::endl;
 		start_request();
-	}
 
 	return false ;
 }
