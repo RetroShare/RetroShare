@@ -61,8 +61,8 @@ background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
 stop: 0 #2291E0, stop: 1 #3EB3FF);
 }</string>
         </property>
-        <property name="text">
-         <string/>
+        <property name="scaledContents">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -122,7 +122,7 @@ stop: 0 #2291E0, stop: 1 #3EB3FF);
            <string/>
           </property>
           <property name="icon">
-           <iconset>
+           <iconset resource="../images.qrc">
             <normaloff>:/images/edit_add24.png</normaloff>:/images/edit_add24.png</iconset>
           </property>
          </widget>
@@ -142,7 +142,7 @@ stop: 0 #2291E0, stop: 1 #3EB3FF);
            <string/>
           </property>
           <property name="icon">
-           <iconset>
+           <iconset resource="../images.qrc">
             <normaloff>:/images/close_normal.png</normaloff>:/images/close_normal.png</iconset>
           </property>
          </widget>
@@ -174,7 +174,7 @@ stop: 0 #2291E0, stop: 1 #3EB3FF);
          <string>Reply Message</string>
         </property>
         <property name="icon">
-         <iconset>
+         <iconset resource="../images.qrc">
           <normaloff>:/images/mail_reply.png</normaloff>:/images/mail_reply.png</iconset>
         </property>
         <property name="toolButtonStyle">
@@ -213,7 +213,7 @@ stop: 0 #2291E0, stop: 1 #3EB3FF);
          <string/>
         </property>
         <property name="icon">
-         <iconset>
+         <iconset resource="../images.qrc">
           <normaloff>:/images/mail_delete.png</normaloff>:/images/mail_delete.png</iconset>
         </property>
        </widget>
@@ -233,7 +233,7 @@ stop: 0 #2291E0, stop: 1 #3EB3FF);
          <string/>
         </property>
         <property name="icon">
-         <iconset>
+         <iconset resource="../images.qrc">
           <normaloff>:/images/startall.png</normaloff>:/images/startall.png</iconset>
         </property>
        </widget>
@@ -275,6 +275,8 @@ stop: 0 #2291E0, stop: 1 #3EB3FF);
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../images.qrc"/>
+ </resources>
  <connections/>
 </ui>

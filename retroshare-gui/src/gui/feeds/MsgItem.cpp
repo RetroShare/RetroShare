@@ -27,6 +27,7 @@
 #include "SubFileItem.h"
 #include "gui/msgs/MessageComposer.h"
 #include "gui/chat/HandleRichText.h"
+#include "gui/notifyqt.h"
 
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rspeers.h>
@@ -36,8 +37,8 @@
  ****/
 
 /** Constructor */
-MsgItem::MsgItem(FeedHolder *parent, uint32_t feedId, std::string peerId, std::string msgId, bool isHome)
-:QWidget(NULL), mParent(parent), mFeedId(feedId), mPeerId(peerId), mMsgId(msgId), mIsHome(isHome)
+MsgItem::MsgItem(FeedHolder *parent, uint32_t feedId, std::string msgId, bool isHome)
+:QWidget(NULL), mParent(parent), mFeedId(feedId), mMsgId(msgId), mIsHome(isHome)
 {
   /* Invoke the Qt Designer generated object setup routine */
   setupUi(this);
@@ -54,11 +55,12 @@ MsgItem::MsgItem(FeedHolder *parent, uint32_t feedId, std::string peerId, std::s
   connect( deleteButton, SIGNAL( clicked( void ) ), this, SLOT( deleteMsg ( void ) ) );
   connect( replyButton, SIGNAL( clicked( void ) ), this, SLOT( replyMsg ( void ) ) );
 
+  connect(NotifyQt::getInstance(), SIGNAL(peerHasNewAvatar(const QString&)), this, SLOT(updateAvatar(const QString&)));
+
   small();
   updateItemStatic();
   updateItem();
   updateAvatar(QString::fromStdString(mPeerId));
-
 }
 
 
