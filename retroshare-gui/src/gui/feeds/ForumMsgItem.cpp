@@ -25,17 +25,24 @@
 #include "FeedHolder.h"
 
 #include <retroshare/rsforums.h>
+#include <retroshare/rsmsgs.h>
+#include <retroshare/rspeers.h>
+
+#include "gui/notifyqt.h"
+
 #include "gui/forums/CreateForumMsg.h"
 #include "gui/chat/HandleRichText.h"
+
+#include <algorithm>
 
 /****
  * #define DEBUG_ITEM 1
  ****/
 
 /** Constructor */
-ForumMsgItem::ForumMsgItem(FeedHolder *parent, uint32_t feedId, std::string forumId, std::string postId, bool isHome)
+ForumMsgItem::ForumMsgItem(FeedHolder *parent, uint32_t feedId, std::string forumId, std::string postId, std::string gpgId, bool isHome)
 :QWidget(NULL), mParent(parent), mFeedId(feedId), 
-	mForumId(forumId), mPostId(postId), mIsHome(isHome), mIsTop(false)
+	mForumId(forumId), mPostId(postId), mGpgId(gpgId), mIsHome(isHome), mIsTop(false)
 {
   /* Invoke the Qt Designer generated object setup routine */
   setupUi(this);
@@ -50,10 +57,13 @@ ForumMsgItem::ForumMsgItem(FeedHolder *parent, uint32_t feedId, std::string foru
   /* specific ones */
   connect( unsubscribeButton, SIGNAL( clicked( void ) ), this, SLOT( unsubscribeForum ( void ) ) );
   connect( replyButton, SIGNAL( clicked( void ) ), this, SLOT( replyToPost ( void ) ) );
+  
+  connect(NotifyQt::getInstance(), SIGNAL(peerHasNewAvatar(const QString&)), this, SLOT(updateAvatar(const QString&)));
 
   small();
   updateItemStatic();
   updateItem();
+  showAvatar("");
 }
 
 
@@ -110,9 +120,19 @@ void ForumMsgItem::updateItemStatic()
 		{
 			mIsTop = true;
 		}
+		
+		if (rsPeers->getPeerName(msg.srcId) !="")
+		{
+			namelabel->setText(QString::fromStdString(rsPeers->getPeerName(msg.srcId)));
+		}
+		else
+		{
+			namelabel->setText(tr("Anonymous"));
+		}
 
 		if (mIsTop)
-		{
+		{		
+		
 			prevSHLabel->setText("Subject: ");
 			prevSubLabel->setText(QString::fromStdWString(msg.title));
 			prevMsgLabel->setText(RsHtml::formatText(QString::fromStdWString(msg.msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
@@ -120,7 +140,7 @@ void ForumMsgItem::updateItemStatic()
             QDateTime qtime;
             qtime.setTime_t(msg.ts);
             QString timestamp = qtime.toString("dd.MM.yyyy hh:mm:ss");
-            timestamplabel->setText(timestamp);
+            timestamplabel->setText(timestamp);            
 
 			nextFrame->hide();
 		}
@@ -141,6 +161,16 @@ void ForumMsgItem::updateItemStatic()
 			{
 				prevSubLabel->setText(QString::fromStdWString(msgParent.title));
 				prevMsgLabel->setText(RsHtml::formatText(QString::fromStdWString(msgParent.msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+				
+				if (rsPeers->getPeerName(msgParent.srcId) !="")
+				{
+					nextnamelabel->setText(QString::fromStdString(rsPeers->getPeerName(msgParent.srcId)));
+				}
+				else
+				{
+					nextnamelabel->setText(tr("Anonymous"));
+				}
+			
 			}
 			else
 			{
@@ -274,3 +304,68 @@ void ForumMsgItem::replyToPost()
 	
 }
 
+void ForumMsgItem::updateAvatar(const QString &peer_id)
+{
+	if (mGpgId.empty()) {
+		/* Message is not signed */
+		return;
+	}
+
+	/* Is this one of the ssl ids of the gpg id ? */
+	std::list<std::string> sslIds;
+	if (rsPeers->getSSLChildListOfGPGId(mGpgId, sslIds) == false) {
+		return;
+	}
+
+	if (std::find(sslIds.begin(), sslIds.end(), peer_id.toStdString()) == sslIds.end()) {
+		/* Not one of the ssl ids of the gpg id */
+		return;
+	}
+
+	showAvatar(peer_id.toStdString());
+} 
+
+void ForumMsgItem::showAvatar(const std::string &peer_id)
+{
+	if (mGpgId.empty()) {
+		/* Message is not signed */
+		avatarlabel->setPixmap(QPixmap(":/images/user/personal64.png"));
+		return;
+	}
+
+	unsigned char *data = NULL;
+	int size = 0 ;
+
+	if (mGpgId == rsPeers->getGPGOwnId()) {
+		/* Its me */
+		rsMsgs->getOwnAvatarData(data,size);
+	} else {
+		if (peer_id.empty()) {
+			/* Show the first available avatar of one of the ssl ids */
+			std::list<std::string> sslIds;
+			if (rsPeers->getSSLChildListOfGPGId(mGpgId, sslIds) == false) {
+				return;
+			}
+
+			std::list<std::string>::iterator sslId;
+			for (sslId = sslIds.begin(); sslId != sslIds.end(); sslId++) {
+				rsMsgs->getAvatarData(*sslId,data,size);
+				if (size) {
+					break;
+				}
+			}
+		} else {
+			rsMsgs->getAvatarData(peer_id,data,size);
+		}
+	}
+
+	if(size != 0) {
+		// set the image
+		QPixmap pix ;
+		pix.loadFromData(data,size,"PNG") ;
+		avatarlabel->setPixmap(pix);
+		delete[] data ;
+	} else {
+		avatarlabel->setPixmap(QPixmap(":/images/user/personal64.png"));
+	}
+}

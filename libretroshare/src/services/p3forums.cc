@@ -580,11 +580,7 @@ bool p3Forums::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std::
 
 bool p3Forums::locked_eventNewMsg(GroupInfo *grp, RsDistribMsg *msg, std::string id)
 {
-	std::string grpId = msg->grpId;
-	std::string msgId = msg->msgId;
-	std::string nullId;
-
-	getPqiNotify()->AddFeedItem(RS_FEED_ITEM_FORUM_MSG, grpId, msgId, nullId);
+	getPqiNotify()->AddFeedItem(RS_FEED_ITEM_FORUM_MSG, msg->grpId, msg->msgId, msg->personalSignature.keyId);
 	return true;
 }
 

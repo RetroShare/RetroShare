@@ -32,10 +32,10 @@ class ForumMsgItem : public QWidget, private Ui::ForumMsgItem
   Q_OBJECT
 
 public:
-  /** Default Constructor */
-  ForumMsgItem(FeedHolder *parent, uint32_t feedId, std::string forumId, std::string postId, bool isHome);
+	/** Default Constructor */
+	ForumMsgItem(FeedHolder *parent, uint32_t feedId, std::string forumId, std::string postId, std::string gpgId, bool isHome);
 
-  /** Default Destructor */
+	/** Default Destructor */
 
 	void updateItemStatic();
   	void small();
@@ -51,13 +51,17 @@ private slots:
 	void replyToPost();
 
 	void updateItem();
+	void updateAvatar(const QString &peer_id);
 
 private:
+	void showAvatar(const std::string &peer_id);
+
 	FeedHolder *mParent;
 	uint32_t mFeedId;
 
 	std::string mForumId;
 	std::string mPostId;
+	std::string mGpgId;
 	bool mIsHome;
 	bool mIsTop;
 };
