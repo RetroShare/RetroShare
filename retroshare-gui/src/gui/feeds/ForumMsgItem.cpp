@@ -40,9 +40,8 @@
  ****/
 
 /** Constructor */
-ForumMsgItem::ForumMsgItem(FeedHolder *parent, uint32_t feedId, std::string forumId, std::string postId, std::string gpgId, bool isHome)
-:QWidget(NULL), mParent(parent), mFeedId(feedId), 
-	mForumId(forumId), mPostId(postId), mGpgId(gpgId), mIsHome(isHome), mIsTop(false)
+ForumMsgItem::ForumMsgItem(FeedHolder *parent, uint32_t feedId, const std::string &forumId, const std::string &postId, bool isHome)
+:QWidget(NULL), mParent(parent), mFeedId(feedId), mForumId(forumId), mPostId(postId), mIsHome(isHome), mIsTop(false)
 {
   /* Invoke the Qt Designer generated object setup routine */
   setupUi(this);
@@ -63,7 +62,6 @@ ForumMsgItem::ForumMsgItem(FeedHolder *parent, uint32_t feedId, std::string foru
   small();
   updateItemStatic();
   updateItem();
-  showAvatar("");
 }
 
 
@@ -71,7 +69,6 @@ void ForumMsgItem::updateItemStatic()
 {
 	if (!rsForums)
 		return;
-
 
 	/* fill in */
 #ifdef DEBUG_ITEM
@@ -121,19 +118,19 @@ void ForumMsgItem::updateItemStatic()
 			mIsTop = true;
 		}
 		
-		if (rsPeers->getPeerName(msg.srcId) !="")
-		{
-			namelabel->setText(QString::fromStdString(rsPeers->getPeerName(msg.srcId)));
-		}
-		else
-		{
-			namelabel->setText(tr("Anonymous"));
-		}
-
 		if (mIsTop)
 		{		
-		
-			prevSHLabel->setText("Subject: ");
+			mGpgIdPrev = msg.srcId;
+
+			if (rsPeers->getPeerName(msg.srcId) !="")
+			{
+				namelabel->setText(QString::fromStdString(rsPeers->getPeerName(msg.srcId)));
+			}
+			else
+			{
+				namelabel->setText(tr("Anonymous"));
+			}
+
 			prevSubLabel->setText(QString::fromStdWString(msg.title));
 			prevMsgLabel->setText(RsHtml::formatText(QString::fromStdWString(msg.msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 			
@@ -146,6 +143,17 @@ void ForumMsgItem::updateItemStatic()
 		}
 		else
 		{
+			mGpgIdNext = msg.srcId;
+
+			if (rsPeers->getPeerName(msg.srcId) !="")
+			{
+				nextnamelabel->setText(QString::fromStdString(rsPeers->getPeerName(msg.srcId)));
+			}
+			else
+			{
+				nextnamelabel->setText(tr("Anonymous"));
+			}
+
 			nextSubLabel->setText(QString::fromStdWString(msg.title));
 			nextMsgLabel->setText(RsHtml::formatText(QString::fromStdWString(msg.msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 			
@@ -159,18 +167,19 @@ void ForumMsgItem::updateItemStatic()
 			ForumMsgInfo msgParent;
 			if (rsForums->getForumMessage(mForumId, msg.parentId, msgParent))
 			{
+				mGpgIdPrev = msgParent.srcId;
+
 				prevSubLabel->setText(QString::fromStdWString(msgParent.title));
 				prevMsgLabel->setText(RsHtml::formatText(QString::fromStdWString(msgParent.msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 				
 				if (rsPeers->getPeerName(msgParent.srcId) !="")
 				{
-					nextnamelabel->setText(QString::fromStdString(rsPeers->getPeerName(msgParent.srcId)));
+					namelabel->setText(QString::fromStdString(rsPeers->getPeerName(msgParent.srcId)));
 				}
 				else
 				{
-					nextnamelabel->setText(tr("Anonymous"));
+					namelabel->setText(tr("Anonymous"));
 				}
-			
 			}
 			else
 			{
@@ -195,6 +204,9 @@ void ForumMsgItem::updateItemStatic()
 	}
 
 	unsubscribeButton->hide();
+
+	showAvatar("", true);
+	showAvatar("", false);
 }
 
 
@@ -306,44 +318,54 @@ void ForumMsgItem::replyToPost()
 
 void ForumMsgItem::updateAvatar(const QString &peer_id)
 {
-	if (mGpgId.empty()) {
-		/* Message is not signed */
-		return;
+	if (mGpgIdPrev.empty() == false) {
+		/* Is this one of the ssl ids of the gpg id ? */
+		std::list<std::string> sslIds;
+		if (rsPeers->getSSLChildListOfGPGId(mGpgIdPrev, sslIds) == false) {
+			return;
+		}
+
+		if (std::find(sslIds.begin(), sslIds.end(), peer_id.toStdString()) != sslIds.end()) {
+			/* One of the ssl ids of the gpg id */
+			showAvatar(peer_id.toStdString(), false);
+		}
 	}
 
-	/* Is this one of the ssl ids of the gpg id ? */
-	std::list<std::string> sslIds;
-	if (rsPeers->getSSLChildListOfGPGId(mGpgId, sslIds) == false) {
-		return;
+	if (mGpgIdNext.empty() == false) {
+		/* Is this one of the ssl ids of the gpg id ? */
+		std::list<std::string> sslIds;
+		if (rsPeers->getSSLChildListOfGPGId(mGpgIdNext, sslIds) == false) {
+			return;
+		}
+
+		if (std::find(sslIds.begin(), sslIds.end(), peer_id.toStdString()) != sslIds.end()) {
+			/* One of the ssl ids of the gpg id */
+			showAvatar(peer_id.toStdString(), true);
+		}
 	}
+}
 
-	if (std::find(sslIds.begin(), sslIds.end(), peer_id.toStdString()) == sslIds.end()) {
-		/* Not one of the ssl ids of the gpg id */
-		return;
-	}
-
-	showAvatar(peer_id.toStdString());
-} 
-
-void ForumMsgItem::showAvatar(const std::string &peer_id)
+void ForumMsgItem::showAvatar(const std::string &peer_id, bool next)
 {
-	if (mGpgId.empty()) {
-		/* Message is not signed */
-		avatarlabel->setPixmap(QPixmap(":/images/user/personal64.png"));
+	std::string gpgId = next ? mGpgIdNext : mGpgIdPrev;
+	QLabel *avatar = next ? nextavatarlabel : avatarlabel;
+
+	if (gpgId.empty()) {
+		avatar->setPixmap(QPixmap(":/images/user/personal64.png"));
 		return;
 	}
 
 	unsigned char *data = NULL;
 	int size = 0 ;
 
-	if (mGpgId == rsPeers->getGPGOwnId()) {
+	if (gpgId == rsPeers->getGPGOwnId()) {
 		/* Its me */
 		rsMsgs->getOwnAvatarData(data,size);
 	} else {
 		if (peer_id.empty()) {
 			/* Show the first available avatar of one of the ssl ids */
 			std::list<std::string> sslIds;
-			if (rsPeers->getSSLChildListOfGPGId(mGpgId, sslIds) == false) {
+			if (rsPeers->getSSLChildListOfGPGId(gpgId, sslIds) == false) {
 				return;
 			}
 
@@ -363,9 +385,9 @@ void ForumMsgItem::showAvatar(const std::string &peer_id)
 		// set the image
 		QPixmap pix ;
 		pix.loadFromData(data,size,"PNG") ;
-		avatarlabel->setPixmap(pix);
+		avatar->setPixmap(pix);
 		delete[] data ;
 	} else {
-		avatarlabel->setPixmap(QPixmap(":/images/user/personal64.png"));
+		avatar->setPixmap(QPixmap(":/images/user/personal64.png"));
 	}
 }

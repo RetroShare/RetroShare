@@ -330,7 +330,7 @@ void	NewsFeed::addFeedItemForumUpdate(RsFeedItem &fi)
 void	NewsFeed::addFeedItemForumMsg(RsFeedItem &fi)
 {
 	/* make new widget */
-	ForumMsgItem *fm = new ForumMsgItem(this, NEWSFEED_FORUMMSGLIST, fi.mId1, fi.mId2, fi.mId3, false);
+	ForumMsgItem *fm = new ForumMsgItem(this, NEWSFEED_FORUMMSGLIST, fi.mId1, fi.mId2, false);
 
 	/* store in forum list */
 
