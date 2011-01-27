@@ -26,9 +26,9 @@
       </sizepolicy>
      </property>
      <property name="styleSheet">
-      <string notr="true">QFrame#frame_3{border: 2px solid orange;
+      <string notr="true">QFrame#frame_3{border: 2px solid #CCCCCC;
 background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                     stop: 0 #F7B552, stop: 1 #FB8428);
+                                     stop: 0 #EEEEEE, stop: 1 #CCCCCC);
 border-radius: 10px}</string>
      </property>
      <property name="frameShape">
@@ -57,7 +57,7 @@ border-radius: 10px}</string>
           <property name="styleSheet">
            <string notr="true">QLabel#label{border: 2px solid black;
 background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                     stop: 0 #F7B552, stop: 1 #FB8428);
+                                     stop: 0 #EEEEEE, stop: 1 #CCCCCC);
 border-radius: 10px}</string>
           </property>
           <property name="text">
@@ -340,6 +340,15 @@ border-radius: 10px}</string>
          </item>
          <item row="0" column="1">
           <widget class="QLabel" name="namelabel">
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">color: rgb(59, 89, 152);</string>
+           </property>
            <property name="text">
             <string>Friend Name</string>
            </property>
@@ -489,6 +498,15 @@ border-radius: 10px}</string>
          </item>
          <item row="0" column="2">
           <widget class="QLabel" name="nextnamelabel">
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">color: rgb(59, 89, 152);</string>
+           </property>
            <property name="text">
             <string>Next Name</string>
            </property>
