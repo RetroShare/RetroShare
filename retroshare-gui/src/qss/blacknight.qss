@@ -288,3 +288,10 @@ QTextEdit#lineEdit{
 QTextBrowser#postText{
     color: white;
 }
+
+QTreeWidget#treeWidget{
+    color: white;
+    background: white;
+
+}
+
