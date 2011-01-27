@@ -49,6 +49,8 @@ private slots:
 	void unsubscribeForum();
 	void subscribeForum();
 	void replyToPost();
+	void sendMsg();
+
 
 	void updateItem();
 	void updateAvatar(const QString &peer_id);

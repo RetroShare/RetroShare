@@ -20,6 +20,7 @@
  ****************************************************************/
 
 #include <QDateTime>
+#include <QMessageBox>
 
 #include "ForumMsgItem.h"
 #include "FeedHolder.h"
@@ -56,12 +57,17 @@ ForumMsgItem::ForumMsgItem(FeedHolder *parent, uint32_t feedId, const std::strin
   /* specific ones */
   connect( unsubscribeButton, SIGNAL( clicked( void ) ), this, SLOT( unsubscribeForum ( void ) ) );
   connect( replyButton, SIGNAL( clicked( void ) ), this, SLOT( replyToPost ( void ) ) );
+  connect( sendButton, SIGNAL( clicked( ) ), this, SLOT( sendMsg() ) );
   
   connect(NotifyQt::getInstance(), SIGNAL(peerHasNewAvatar(const QString&)), this, SLOT(updateAvatar(const QString&)));
 
   small();
   updateItemStatic();
   updateItem();
+  textEdit->hide();
+  sendButton->hide();
+  signedcheckBox->hide();
+
 }
 
 
@@ -232,6 +238,9 @@ void ForumMsgItem::toggle()
 	if (prevFrame->isHidden())
 	{
 		prevFrame->show();
+		textEdit->show();
+		sendButton->show();
+		signedcheckBox->show();
 		expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
 	    expandButton->setToolTip("Hide");
 		if (!mIsTop)
@@ -243,6 +252,9 @@ void ForumMsgItem::toggle()
 	{
 		prevFrame->hide();
 		nextFrame->hide();
+		textEdit->hide();
+		sendButton->hide();
+		signedcheckBox->hide();
 		expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
 	    expandButton->setToolTip("Expand");
 	}
@@ -309,11 +321,47 @@ void ForumMsgItem::replyToPost()
 #endif
 	if (mParent)
 	{
-		//mParent->openMsg(FEEDHOLDER_MSG_FORUM, mForumId, mPostId);
 		CreateForumMsg *cfm = new CreateForumMsg(mForumId, mPostId);
 		cfm->show();
 	}
 	
+}
+
+void ForumMsgItem::sendMsg()
+{
+    QString name = prevSubLabel->text();
+    QString desc = textEdit->toHtml();
+    
+	if(textEdit->toPlainText().isEmpty())
+    {	/* error message */
+        QMessageBox::warning(this, tr("RetroShare"),tr("Please give a Text Message"),
+                             QMessageBox::Ok, QMessageBox::Ok);
+
+        return; //Don't add  a empty Message!!
+    }
+
+    ForumMsgInfo msgInfo;
+
+    msgInfo.forumId = mForumId;
+    msgInfo.threadId = "";
+    msgInfo.parentId = mPostId;
+    msgInfo.msgId = "";
+
+    msgInfo.title = name.toStdWString();
+    msgInfo.msg = desc.toStdWString();
+    msgInfo.msgflags = 0;
+
+    if (signedcheckBox->isChecked())
+    {
+        msgInfo.msgflags = RS_DISTRIB_AUTHEN_REQ;
+    }
+
+    if ((msgInfo.msg == L"") && (msgInfo.title == L""))
+        return; /* do nothing */
+
+    if (rsForums->ForumMessageSend(msgInfo) == true) {
+            textEdit->clear();
+    }
 }
 
 void ForumMsgItem::updateAvatar(const QString &peer_id)

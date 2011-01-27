@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>764</width>
-    <height>319</height>
+    <width>577</width>
+    <height>423</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <property name="margin">
     <number>6</number>
    </property>
-   <item row="0" column="0">
+   <item row="2" column="0">
     <widget class="QFrame" name="frame_3">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -37,7 +37,7 @@ border-radius: 10px}</string>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" name="gridLayout_3">
+     <layout class="QGridLayout" name="gridLayout_6">
       <item row="0" column="0">
        <layout class="QGridLayout" name="gridLayout">
         <item row="0" column="0">
@@ -487,14 +487,14 @@ border-radius: 10px}</string>
            </property>
           </widget>
          </item>
-         <item row="0" column="1">
+         <item row="0" column="2">
           <widget class="QLabel" name="nextnamelabel">
            <property name="text">
             <string>Next Name</string>
            </property>
           </widget>
          </item>
-         <item row="1" column="1">
+         <item row="1" column="2">
           <layout class="QHBoxLayout">
            <item>
             <widget class="QLabel" name="label_9">
@@ -543,7 +543,7 @@ border-radius: 10px}</string>
            </property>
           </spacer>
          </item>
-         <item row="2" column="1" rowspan="2">
+         <item row="2" column="2" rowspan="2">
           <layout class="QHBoxLayout">
            <item>
             <widget class="QLabel" name="nextMsgLabel">
@@ -568,6 +568,47 @@ border-radius: 10px}</string>
          </item>
         </layout>
        </widget>
+      </item>
+      <item row="4" column="0" colspan="2">
+       <widget class="QTextEdit" name="textEdit">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>40</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0" colspan="2">
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="0" column="0">
+         <spacer name="horizontalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>2</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="0" column="2">
+         <widget class="QPushButton" name="sendButton">
+          <property name="text">
+           <string>Send</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QCheckBox" name="signedcheckBox">
+          <property name="text">
+           <string>Signed</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>
