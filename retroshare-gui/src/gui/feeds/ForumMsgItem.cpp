@@ -67,7 +67,6 @@ ForumMsgItem::ForumMsgItem(FeedHolder *parent, uint32_t feedId, const std::strin
   textEdit->hide();
   sendButton->hide();
   signedcheckBox->hide();
-
 }
 
 
@@ -82,22 +81,32 @@ void ForumMsgItem::updateItemStatic()
 	std::cerr << std::endl;
 #endif
 
+	canReply = false;
+
 	ForumInfo fi;
 	if (rsForums->getForumInfo(mForumId, fi))
 	{
-		QString title = "Forum Post: ";
+		QString title = tr("Forum Post") + ": ";
 		title += QString::fromStdWString(fi.forumName);
 
 		titleLabel->setText(title);
-		if (!(fi.forumFlags & RS_DISTRIB_SUBSCRIBED))
-		{
-			unsubscribeButton->setEnabled(false);
-			replyButton->setEnabled(true);
-		}
-		else
+		if (fi.subscribeFlags & (RS_DISTRIB_ADMIN | RS_DISTRIB_SUBSCRIBED))
 		{
 			unsubscribeButton->setEnabled(true);
 			replyButton->setEnabled(true);
+
+			if (fi.forumFlags & RS_DISTRIB_AUTHEN_REQ)
+			{
+				signedcheckBox->setChecked(true);
+				signedcheckBox->setEnabled(false);
+			}
+
+			canReply = true;
+		}
+		else
+		{
+			unsubscribeButton->setEnabled(false);
+			replyButton->setEnabled(false);
 		}
 	}
 	else
@@ -238,9 +247,9 @@ void ForumMsgItem::toggle()
 	if (prevFrame->isHidden())
 	{
 		prevFrame->show();
-		textEdit->show();
-		sendButton->show();
-		signedcheckBox->show();
+		textEdit->setVisible(canReply);
+		sendButton->setVisible(canReply);
+		signedcheckBox->setVisible(canReply);
 		expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
 	    expandButton->setToolTip("Hide");
 		if (!mIsTop)
@@ -315,6 +324,10 @@ void ForumMsgItem::subscribeForum()
 
 void ForumMsgItem::replyToPost()
 {
+	if (canReply == false) {
+		return;
+	}
+
 #ifdef DEBUG_ITEM
 	std::cerr << "ForumMsgItem::replyToPost()";
 	std::cerr << std::endl;
@@ -329,7 +342,11 @@ void ForumMsgItem::replyToPost()
 
 void ForumMsgItem::sendMsg()
 {
-    QString name = prevSubLabel->text();
+	if (canReply == false) {
+		return;
+	}
+
+	QString name = prevSubLabel->text();
     QString desc = textEdit->toHtml();
     
 	if(textEdit->toPlainText().isEmpty())

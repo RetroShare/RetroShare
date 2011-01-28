@@ -60,6 +60,7 @@ private:
 
 	FeedHolder *mParent;
 	uint32_t mFeedId;
+	bool canReply;
 
 	std::string mForumId;
 	std::string mPostId;
