@@ -234,7 +234,8 @@ void GenCertDialog::genPerson()
 
 	//generate a random ssl password
 	std::string sslPasswd = RSRandom::random_alphaNumericString(RsInit::getSslPwdLen()) ;
-	std::cerr << "Generated sslPasswd: " << sslPasswd << std::endl;
+
+//	std::cerr << "Generated sslPasswd: " << sslPasswd << std::endl;
 
 //	const int PWD_LEN = RsInit::getSslPwdLen();
 //
