@@ -7,8 +7,9 @@ uint32_t RSRandom::index = 0 ;
 std::vector<uint32_t> RSRandom::MT(RSRandom::N,0u) ;
 RsMutex RSRandom::rndMtx ;
 
-// If this does not compile on windows, use a ifdef to keep this on linux plz.
+#ifdef UBUNTU
 static bool auto_seed = RSRandom::seed( (time(NULL) + pthread_self()*0x1293fe + (getpid()^0x113ef76b))^0x18e34a12 ) ;
+#endif
 
 bool RSRandom::seed(uint32_t s) 
 {
