@@ -132,6 +132,7 @@ int main(int argc, char **argv)
 	feenableexcept(FE_INVALID) ;
 	feenableexcept(FE_DIVBYZERO) ;
 #endif
+	std::cerr << "Generating random 64 chars string (run that again to test that it's changing): " << RSRandom::random_alphaNumericString(64) << std::endl;
 	int nt = 10 ;	// number of threads.
 	std::vector<myThread *> threads(nt,(myThread*)NULL) ;
 

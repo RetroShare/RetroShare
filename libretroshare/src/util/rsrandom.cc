@@ -1,10 +1,14 @@
 #include <stdlib.h>
+#include <string>
+#include <unistd.h>
 #include "rsrandom.h"
 
 uint32_t RSRandom::index = 0 ;
 std::vector<uint32_t> RSRandom::MT(RSRandom::N,0u) ;
 RsMutex RSRandom::rndMtx ;
-static bool auto_seed = RSRandom::seed(time(NULL)) ;
+
+// If this does not compile on windows, use a ifdef to keep this on linux plz.
+static bool auto_seed = RSRandom::seed( (time(NULL) + pthread_self()*0x1293fe + (getpid()^0x113ef76b))^0x18e34a12 ) ;
 
 bool RSRandom::seed(uint32_t s) 
 {
@@ -69,5 +73,15 @@ float RSRandom::random_f32()
 double RSRandom::random_f64() 
 {
 	return random_u64() / (double)(~(uint64_t)0) ;
+}
+
+std::string RSRandom::random_alphaNumericString(uint32_t len)
+{
+	std::string s = "" ;
+
+	for(int i=0;i<len;++i)
+		s += (char)( (random_u32()%94) + 33) ;
+
+	return s ;
 }
 
