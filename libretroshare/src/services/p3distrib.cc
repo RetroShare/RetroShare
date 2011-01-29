@@ -36,6 +36,7 @@
 #include "retroshare/rsdistrib.h"
 #include "services/p3distrib.h"
 #include "serialiser/rsdistribitems.h"
+#include "serialiser/rstlvkeys.h"
 
 #include "util/rsdir.h"
 #include "pqi/pqinotify.h"
