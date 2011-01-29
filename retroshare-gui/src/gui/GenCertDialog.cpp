@@ -20,6 +20,7 @@
  ****************************************************************/
 
 #include <rshare.h>
+#include <util/rsrandom.h>
 #include <retroshare/rsinit.h>
 #include "GenCertDialog.h"
 #include "InfoDialog.h"
@@ -232,17 +233,17 @@ void GenCertDialog::genPerson()
 
 
 	//generate a random ssl password
-	std::cerr << " generating sslPasswd." << std::endl;
-	qsrand(time(NULL));
-	std::string sslPasswd = "";
-	const int PWD_LEN = RsInit::getSslPwdLen();
+	std::string sslPasswd = RSRandom::random_alphaNumericString(RsInit::getSslPwdLen()) ;
+	std::cerr << "Generated sslPasswd: " << sslPasswd << std::endl;
 
-	for( int i = 0 ; i < PWD_LEN ; ++i )
-	{
-	    int iNumber;
-	    iNumber = qrand()%25 + 65;
-	    sslPasswd += (char)iNumber;
-	}
+//	const int PWD_LEN = RsInit::getSslPwdLen();
+//
+//	for( int i = 0 ; i < PWD_LEN ; ++i )
+//	{
+//	    int iNumber;
+//	    iNumber = qrand()%(127-33) + 33;
+//	    sslPasswd += (char)iNumber;
+//	}
 
 	/* Initialise the PGP user first */
 	RsInit::SelectGPGAccount(PGPId);

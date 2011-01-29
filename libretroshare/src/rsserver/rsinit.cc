@@ -139,7 +139,7 @@ static const std::string configKeyDir = "keys";
 static const std::string configCaFile = "cacerts.pem";
 static const std::string configLogFileName = "retro.log";
 static const std::string configHelpName = "retro.htm";
-static const int SSLPWD_LEN = 6;
+static const int SSLPWD_LEN = 64;
 
 std::list<accountId> RsInitConfig::accountIds;
 std::string RsInitConfig::preferedId;
@@ -422,7 +422,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
                                  break;
                          case 'w':
                                  RsInitConfig::passwd = optarg;
-                                 std::cerr << "Password Specified(" << RsInitConfig::passwd;
+                                 std::cerr << "Password Specified(********" ; //<< RsInitConfig::passwd;
                                  std::cerr << ") Selected" << std::endl;
                                  RsInitConfig::havePasswd = true;
                                  break;
@@ -659,6 +659,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 		if (RsTryAutoLogin())
 		{
 			RsInit::setAutoLogin(true);
+			std::cerr << "Autologin has succeeded" << std::endl;
 			return RS_INIT_HAVE_ACCOUNT;
 		}
 	}
@@ -1469,6 +1470,8 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 	bool have_help = false;
 
 	// Check if help file exists
+#ifndef UBUNTU
+	std::cerr << "Warning; in NOT ubuntu mode" << std::endl;
 	std::string help_file_name = RsInitConfig::configDir + RsInitConfig::dirSeperator +
 				configKeyDir + RsInitConfig::dirSeperator + "help.dta";
 	FILE* helpFile = fopen(help_file_name.c_str(), "r");
@@ -1484,6 +1487,13 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 
 
 	}
+#else
+	if(RsInitConfig::passwd == ""){ // in case user chooses a different user later in setup
+		std::cerr << "Calling RsTryAutoLogin()" << std::endl;
+		RsInitConfig::havePasswd = RsTryAutoLogin();
+	}
+	have_help = RsInitConfig::havePasswd;
+#endif
 
 	/* The SSL / SSL + PGP version requires, SSL init + PGP init.  */
 	const char* sslPassword;
@@ -1538,7 +1548,7 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 			    std::cerr << "Decrypting went ok !" << std::endl;
                             gpgme_data_write (plain, "", 1);
 			    sslPassword = gpgme_data_release_and_get_mem(plain, NULL);
-			    std::cerr << "sslpassword: " << sslPassword << std::endl;
+			    std::cerr << "sslpassword: " << "********************" << std::endl;
 			} else {
 			    gpgme_data_release (plain);
                             std::cerr << "Error : decrypting went wrong !" << std::endl;
@@ -1555,7 +1565,7 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 		sslPassword = RsInitConfig::passwd.c_str();
 	}
 	else{
-		RsInitConfig::passwd.insert(0, sslPassword, RsInit::getSslPwdLen());
+		RsInitConfig::passwd = sslPassword ; //.insert(0, sslPassword, RsInit::getSslPwdLen());
 	}
 
 
@@ -1774,6 +1784,18 @@ extern BOOL WINAPI CryptUnprotectData(
 #endif
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
+#ifdef UBUNTU
+#include <gnome-keyring-1/gnome-keyring.h>
+
+	GnomeKeyringPasswordSchema my_schema = {
+      GNOME_KEYRING_ITEM_ENCRYPTION_KEY_PASSWORD,
+      {
+           { "RetroShare SSL Id", GNOME_KEYRING_ATTRIBUTE_TYPE_STRING },
+           { NULL, (GnomeKeyringAttributeType)0 }
+      }
+  };
+#endif
+
 
 
 bool  RsInit::RsStoreAutoLogin()
@@ -1782,6 +1804,18 @@ bool  RsInit::RsStoreAutoLogin()
 
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS /* UNIX */
+#ifdef UBUNTU
+	if(GNOME_KEYRING_RESULT_OK == gnome_keyring_store_password_sync(&my_schema, NULL, (gchar*)("RetroShare password for SSL Id "+RsInitConfig::preferedId).c_str(),(gchar*)RsInitConfig::passwd.c_str(),"RetroShare SSL Id",RsInitConfig::preferedId.c_str(),NULL)) 
+	{
+		std::cerr << "Stored passwd " << "************************" << " into gnome keyring" << std::endl;
+		return true ;
+	}
+	else
+	{
+		std::cerr << "Could not store passwd into gnome keyring" << std::endl;
+		return false ;
+	}
+#else
 
 	/* WARNING: Autologin is inherently unsafe */
 	std::string helpFileName = RsInitConfig::configDir + RsInitConfig::dirSeperator +
@@ -1815,6 +1849,7 @@ bool  RsInit::RsStoreAutoLogin()
 
 
 	return true;
+#endif
 #else
 
 	/* store password encrypted in a file */
@@ -1900,7 +1935,6 @@ bool  RsInit::RsStoreAutoLogin()
 }
 
 
-
 bool  RsInit::RsTryAutoLogin()
 {
 
@@ -1908,6 +1942,26 @@ bool  RsInit::RsTryAutoLogin()
 
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS /* UNIX */
+#ifdef UBUNTU
+
+	gchar *passwd = NULL;
+
+	std::cerr << "Using attribute: " << RsInitConfig::preferedId << std::endl;
+	if( gnome_keyring_find_password_sync(&my_schema, &passwd,"RetroShare SSL Id",RsInitConfig::preferedId.c_str(),NULL) == GNOME_KEYRING_RESULT_OK )
+	{
+		std::cerr << "Got SSL passwd ********************" /*<< passwd*/ << " from gnome keyring" << std::endl;
+		RsInitConfig::passwd.clear();
+		RsInitConfig::passwd.insert(0, (char*)passwd, strlen(passwd));
+		RsInitConfig::havePasswd = true ;
+		return true ;
+	}
+	else
+	{
+		std::cerr << "Could not get passwd from gnome keyring" << std::endl;
+		return false ;
+	}
+
+#else
 	std::string helpFileName = RsInitConfig::basedir + RsInitConfig::dirSeperator + RsInitConfig::preferedId + RsInitConfig::dirSeperator +
 				configKeyDir + RsInitConfig::dirSeperator + "help.dta";
 
@@ -1920,17 +1974,25 @@ bool  RsInit::RsTryAutoLogin()
 
 	/* decrypt help */
 
-	const int DAT_LEN = RsInit::getSslPwdLen();
+	int c ;
+	std::string passwd ;
+	while( (c = getc(helpFile)) != EOF )
+		passwd += (char)c ;
+
+	const int DAT_LEN = passwd.length();
 	const int KEY_DAT_LEN = RsInitConfig::load_cert.length();
 	unsigned char* key_data  = (unsigned char*)RsInitConfig::load_cert.c_str();
 	unsigned char* indata = new unsigned char[DAT_LEN];
 	unsigned char* outdata = new unsigned char[DAT_LEN];
 
-	if(fscanf(helpFile, "%s", indata) != 1)
-	{
-		std::cerr << "Can't read RSA key in help file " << helpFileName << ". Sorry." << std::endl ;
-		return false ;
-	}
+	for(int i=0;i<DAT_LEN;++i)
+		indata[i] = passwd[i] ;
+
+//	if(fscanf(helpFile, "%s", indata) != 1)
+//	{
+//		std::cerr << "Can't read RSA key in help file " << helpFileName << ". Sorry." << std::endl ;
+//		return false ;
+//	}
 
 	RC4_KEY* key = new RC4_KEY;
 	RC4_set_key(key, KEY_DAT_LEN, key_data);
@@ -1951,6 +2013,7 @@ bool  RsInit::RsTryAutoLogin()
 		delete key;
 
 	return true;
+#endif	// UBUNTU
 #else
 
 	/* try to load from file */
@@ -2065,6 +2128,18 @@ bool  RsInit::RsTryAutoLogin()
 
 bool  RsInit::RsClearAutoLogin()
 {
+#ifdef UBUNTU
+	if(GNOME_KEYRING_RESULT_OK == gnome_keyring_delete_password_sync(&my_schema,"RetroShare SSL Id", RsInitConfig::preferedId.c_str(),NULL))
+	{
+		std::cerr << "Successfully Cleared gnome keyring passwd for SSLID " << RsInitConfig::preferedId << std::endl;
+		return true ;
+	}
+	else
+	{
+		std::cerr << "Could not clear gnome keyring passwd for SSLID " << RsInitConfig::preferedId << std::endl;
+		return false ;
+	}
+#else
 	std::string passwdfile = RsInitConfig::configDir;
 	passwdfile += RsInitConfig::dirSeperator + configKeyDir + RsInitConfig::dirSeperator;
 	passwdfile += "help.dta";
@@ -2085,7 +2160,7 @@ bool  RsInit::RsClearAutoLogin()
 	}
 
 	return false;
-
+#endif
 }
 
 

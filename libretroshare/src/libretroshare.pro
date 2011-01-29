@@ -137,6 +137,10 @@ PUBLIC_HEADERS =	retroshare/rsblogs.h \
 
 HEADERS += $$PUBLIC_HEADERS
 
+DEFINES *= UBUNTU
+INCLUDEPATH += /usr/include/glib-2.0/ /usr/lib/glib-2.0/include
+LIBS *= -lgnome-keyring
+
 # public headers to be...
 HEADERS +=		retroshare/rsgame.h \
 					retroshare/rsphoto.h

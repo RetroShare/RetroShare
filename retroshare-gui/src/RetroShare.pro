@@ -38,8 +38,9 @@ linux-* {
 	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
 
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
-	LIBS += -lssl -lgpgme -lupnp -lXss
+	LIBS += -lssl -lgpgme -lupnp -lXss -lgnome-keyring
 	DEFINES *= HAVE_XSS # for idle time, libx screensaver extensions
+	DEFINES *= UBUNTU
 }
 
 linux-g++ {

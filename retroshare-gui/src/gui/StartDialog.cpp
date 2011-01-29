@@ -209,12 +209,12 @@ LogoBar & StartDialog::getLogoBar() const {
 void StartDialog::notSecureWarning() {
 
 	/* some error msg */
-		if(ui.autologin_checkbox->isChecked()){
-            QMessageBox::warning ( this,
-                            tr("Insecure"),
-                            tr("Auto Login is not so much secure:\n    - Your SSL certificate will be stored unprotected. \n    - Your PGP key will however not be stored.\nThis choice be reverted in settings."),
-			QMessageBox::Ok);
-		}
+		if(ui.autologin_checkbox->isChecked())
+#ifdef UBUNTU
+				QMessageBox::warning ( this, tr("Warning"), tr(" The passwd to your SSL certificate (your location) will be stored encrypted in your Gnome Keyring. \n\n Your PGP passwd will not be stored.\n\nThis choice can be reverted in settings."), QMessageBox::Ok);
+#else
+				QMessageBox::warning ( this, tr("Warning"), tr(" The passwd to your SSL certificate (your location) will be stored encrypted in the keys/help.dta file. This is not secure. \n\n Your PGP passwd will not be stored.\n\nThis choice can be reverted in settings."), QMessageBox::Ok);
+#endif
 
 		return;
 }
