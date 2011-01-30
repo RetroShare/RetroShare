@@ -7,7 +7,9 @@ uint32_t RSRandom::index = 0 ;
 std::vector<uint32_t> RSRandom::MT(RSRandom::N,0u) ;
 RsMutex RSRandom::rndMtx ;
 
-#ifdef UBUNTU
+#ifdef WINDOWS_SYS
+static bool auto_seed = RSRandom::seed( (time(NULL) + pthread_self()*0x1293fe                        )^0x18e34a12 ) ;
+#else
 static bool auto_seed = RSRandom::seed( (time(NULL) + pthread_self()*0x1293fe + (getpid()^0x113ef76b))^0x18e34a12 ) ;
 #endif
 
@@ -80,7 +82,7 @@ std::string RSRandom::random_alphaNumericString(uint32_t len)
 {
 	std::string s = "" ;
 
-	for(int i=0;i<len;++i)
+	for(uint32_t i=0;i<len;++i)
 		s += (char)( (random_u32()%94) + 33) ;
 
 	return s ;
