@@ -268,11 +268,20 @@ void p3GroupDistrib::run() /* called once the thread is started */
 		if (validCache)
 		{
 			loadAnyCache(cache, isLocal);
+
+#ifndef WINDOWS_SYS
 			usleep(1000);
+#else
+			Sleep(1);
+#endif
 		}
 		else
 		{
+#ifndef WINDOWS_SYS
 			sleep(1);
+#else
+			Sleep(1000);
+#endif
 		}
 	}
 }
