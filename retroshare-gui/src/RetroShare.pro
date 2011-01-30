@@ -125,6 +125,9 @@ macx {
         LIBS += -lssl -lcrypto -lz -lgpgme -lgpg-error -lassuan
 	LIBS += ../../../miniupnpc-1.0/libminiupnpc.a
 	LIBS += -framework CoreFoundation
+	LIBS += -framework Security
+
+ #	LIBS += -framework CoreServices
 
     	INCLUDEPATH += .
 	#DEFINES* = MAC_IDLE # for idle feature

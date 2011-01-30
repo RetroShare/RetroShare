@@ -1797,6 +1797,15 @@ extern BOOL WINAPI CryptUnprotectData(
 #endif
 
 
+#ifdef __APPLE__
+	/* OSX Headers */
+
+#include <CoreFoundation/CoreFoundation.h>
+#include <Security/Security.h>
+
+#endif
+
+
 
 bool  RsInit::RsStoreAutoLogin()
 {
@@ -1816,6 +1825,39 @@ bool  RsInit::RsStoreAutoLogin()
 		return false ;
 	}
 #else
+ #ifdef __APPLE__
+	/***************** OSX KEYCHAIN ****************/
+	//Call SecKeychainAddGenericPassword to add a new password to the keychain:
+
+	std::cerr << "RsStoreAutoLogin() OSX Version!" << std::endl;
+
+	const void *password = RsInitConfig::passwd.c_str();
+	UInt32 passwordLength = strlen(RsInitConfig::passwd.c_str());
+	const char *userid = RsInitConfig::preferedId.c_str();
+	UInt32 uidLength = strlen(RsInitConfig::preferedId.c_str());
+
+ 	OSStatus status = SecKeychainAddGenericPassword (
+					NULL,            // default keychain
+                			10,              // length of service name
+                			"Retroshare",    // service name
+                			uidLength,              // length of account name
+                			userid,    // account name
+                			passwordLength,  // length of password
+                			password,        // pointer to password data
+                			NULL             // the item reference
+    					);
+
+	std::cerr << "RsStoreAutoLogin() Call to SecKeychainAddGenericPassword returned: " << status << std::endl;
+
+	if (status != 0)
+	{
+		std::cerr << "RsStoreAutoLogin() SecKeychainAddGenericPassword Failed" << std::endl;
+		return false;
+	}
+	return true;
+
+	/***************** OSX KEYCHAIN ****************/
+ #else
 
 	/* WARNING: Autologin is inherently unsafe */
 	std::string helpFileName = RsInitConfig::configDir + RsInitConfig::dirSeperator +
@@ -1849,8 +1891,9 @@ bool  RsInit::RsStoreAutoLogin()
 
 
 	return true;
-#endif
-#else
+ #endif // __APPLE__
+#endif // UBUNTU.
+#else  /* windows */
 
 	/* store password encrypted in a file */
 	std::string entropy = RsInitConfig::load_cert;
@@ -1962,6 +2005,66 @@ bool  RsInit::RsTryAutoLogin()
 	}
 
 #else
+ /******************** OSX KeyChain stuff *****************************/
+ #ifdef __APPLE__
+
+	std::cerr << "RsTryAutoLogin() OSX Version" << std::endl;
+	//Call SecKeychainFindGenericPassword to get a password from the keychain:
+
+	void *passwordData = NULL;
+	UInt32 passwordLength = 0;
+	const char *userId = RsInitConfig::preferedId.c_str();
+	UInt32 uidLength = strlen(RsInitConfig::preferedId.c_str());
+	SecKeychainItemRef itemRef = NULL;
+
+ 	OSStatus status = SecKeychainFindGenericPassword (
+                 NULL,           // default keychain
+                 10,             // length of service name
+                 "Retroshare",   // service name
+                 uidLength,             // length of account name
+                 userId,   // account name
+                 &passwordLength,  // length of password
+                 &passwordData,   // pointer to password data
+                 &itemRef         // the item reference
+    	);
+
+	std::cerr << "RsTryAutoLogin() SecKeychainFindGenericPassword returned: " << status << std::endl;
+
+	if (status != 0)
+	{
+		std::cerr << "RsTryAutoLogin() Error " << std::endl;
+
+		/* error */
+    		if (status == errSecItemNotFound) 
+		{ 
+			//Is password on keychain?
+			std::cerr << "RsTryAutoLogin() Error - Looks like password is not in KeyChain " << std::endl;
+		}
+	}
+	else
+	{
+		std::cerr << "RsTryAutoLogin() Password found on KeyChain! " << std::endl;
+
+		/* load up password to correct location */
+		RsInitConfig::passwd.clear();
+		RsInitConfig::passwd.insert(0, (char*)passwordData, passwordLength);
+		RsInitConfig::havePasswd = true ;
+	}
+
+        //Free the data allocated by SecKeychainFindGenericPassword:
+
+    	SecKeychainItemFreeContent (
+                 NULL,           //No attribute data to release
+                 passwordData    //Release data buffer allocated by SecKeychainFindGenericPassword
+    	);
+
+    	if (itemRef) CFRelease(itemRef);
+
+	return (status == 0);
+
+ /******************** OSX KeyChain stuff *****************************/
+ #else /* UNIX, but not UBUNTU or APPLE */
+
 	std::string helpFileName = RsInitConfig::basedir + RsInitConfig::dirSeperator + RsInitConfig::preferedId + RsInitConfig::dirSeperator +
 				configKeyDir + RsInitConfig::dirSeperator + "help.dta";
 
@@ -2013,7 +2116,9 @@ bool  RsInit::RsTryAutoLogin()
 		delete key;
 
 	return true;
+ #endif // APPLE
 #endif	// UBUNTU
+   /******* WINDOWS BELOW *****/
 #else
 
 	/* try to load from file */
