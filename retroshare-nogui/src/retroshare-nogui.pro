@@ -14,7 +14,7 @@ linux-* {
 	}
 
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
-	LIBS += -lssl -lgpgme -lupnp 
+	LIBS += -lssl -lgpgme -lupnp -lgnome-keyring
 }
 
 linux-g++ {
