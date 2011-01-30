@@ -247,7 +247,7 @@ const uint32_t GRP_UNSUBSCRIBED = 0x0006;
  * Group id is the public admin keys id
  *
  */
-class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, public p3Service
+class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, public p3ThreadedService
 {
 	public:
 
@@ -268,7 +268,15 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		virtual bool   loadLocalCache(const CacheData &data); /// overloaded from Cache Source
 		virtual int    loadCache(const CacheData &data); /// overloaded from Cache Store
 
+
+		/* From RsThread */
+		virtual void run(); /* called once the thread is started */
+
 	private:
+
+		/* these lists are filled by the overloaded fns... then cleared by the thread */
+		std::list<CacheData> mPendingLocalCache;
+		std::list<CacheData> mPendingRemoteCache;
 
 		/* top level load */
 		int  	loadAnyCache(const CacheData &data, bool local);

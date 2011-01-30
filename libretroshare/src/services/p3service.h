@@ -125,14 +125,12 @@ virtual RsRawItem *	send()
 };
 
 
-#if 0
-
 class p3ThreadedService: public p3Service, public RsThread
 {
 	protected:
 
-	p3ThreadedService(RsSerialiser *rss, uint32_t type) 
-	:p3Service(rss, type) { return; }
+	p3ThreadedService(uint16_t type) 
+	:p3Service(type) { return; }
 
 	public:
 
@@ -141,8 +139,6 @@ virtual ~p3ThreadedService() { return; }
 	private:
 
 };
-
-#endif
 
 
 #endif // P3_GENERIC_SERVICE_HEADER

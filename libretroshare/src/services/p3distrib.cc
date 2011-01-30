@@ -47,9 +47,11 @@
 
 /*****
  * #define DISTRIB_DEBUG 1
+ * #define DISTRIB_THREAD_DEBUG 1
  ****/
 
 //#define DISTRIB_DEBUG 1
+#define DISTRIB_THREAD_DEBUG 1
 
 RSA *extractPublicKey(RsTlvSecurityKey &key);
 RSA *extractPrivateKey(RsTlvSecurityKey &key);
@@ -66,7 +68,7 @@ p3GroupDistrib::p3GroupDistrib(uint16_t subtype,
 
 	:CacheSource(subtype, true, cs, sourcedir), 
 	CacheStore(subtype, true, cs, cft, storedir), 
-        p3Config(configId), p3Service(subtype),
+        p3Config(configId), p3ThreadedService(subtype),
 	mStorePeriod(storePeriod), 
 	mPubPeriod(pubPeriod), 
 	mLastPublishTime(0),
@@ -160,6 +162,123 @@ int	p3GroupDistrib::tick()
 /***************************************************************************************/
 /***************************************************************************************/
 
+int    p3GroupDistrib::loadCache(const CacheData &data)
+{
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::loadCache()";
+	std::cerr << std::endl;
+#endif
+
+	{
+		RsStackMutex stack(distribMtx);
+
+#ifdef DISTRIB_THREAD_DEBUG
+	std::cerr << "p3GroupDistrib::loadCache() Storing PendingRemoteCache";
+	std::cerr << std::endl;
+#endif
+		/* store the cache file for later processing */
+        	mPendingRemoteCache.push_back(data);
+	}
+
+	if (data.size > 0)
+	{
+        	CacheStore::lockData();   /*****   LOCK ****/
+        	locked_storeCacheEntry(data);
+        	CacheStore::unlockData(); /***** UNLOCK ****/
+	}
+
+	return 1;
+}
+
+bool 	p3GroupDistrib::loadLocalCache(const CacheData &data)
+{
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::loadLocalCache()";
+	std::cerr << std::endl;
+#endif
+
+	{
+		RsStackMutex stack(distribMtx);
+
+#ifdef DISTRIB_THREAD_DEBUG
+	std::cerr << "p3GroupDistrib::loadCache() Storing PendingLocalCache";
+	std::cerr << std::endl;
+#endif
+
+		/* store the cache file for later processing */
+        	mPendingLocalCache.push_back(data);
+	}
+
+	if (data.size > 0)
+	{
+		refreshCache(data);
+	}
+
+	return true;
+}
+
+
+
+                /* From RsThread */
+void p3GroupDistrib::run() /* called once the thread is started */
+{
+
+#ifdef DISTRIB_THREAD_DEBUG
+	std::cerr << "p3GroupDistrib::run()";
+	std::cerr << std::endl;
+#endif
+
+	while(1)
+	{
+		/* */
+		CacheData cache;
+		bool validCache = false;
+		bool isLocal = false;
+		{
+			RsStackMutex stack(distribMtx);
+
+			if (mPendingLocalCache.size() > 0)
+			{
+				cache = mPendingLocalCache.front();
+				mPendingLocalCache.pop_front();
+				validCache = true;
+				isLocal = true;
+
+#ifdef DISTRIB_THREAD_DEBUG
+				std::cerr << "p3GroupDistrib::run() found pendingLocalCache";
+				std::cerr << std::endl;
+#endif
+
+			}
+			else if (mPendingRemoteCache.size() > 0)
+			{
+				cache = mPendingRemoteCache.front();
+				mPendingRemoteCache.pop_front();
+				validCache = true;
+				isLocal = false;
+
+#ifdef DISTRIB_THREAD_DEBUG
+				std::cerr << "p3GroupDistrib::run() found pendingRemoteCache";
+				std::cerr << std::endl;
+#endif
+
+			}
+		}
+
+		if (validCache)
+		{
+			loadAnyCache(cache, isLocal);
+			usleep(1000);
+		}
+		else
+		{
+			sleep(1);
+		}
+	}
+}
+
+
+
 int     p3GroupDistrib::loadAnyCache(const CacheData &data, bool local)
 {
 	/* if subtype = 1 -> FileGroup, else -> FileMsgs */
@@ -184,43 +303,6 @@ int     p3GroupDistrib::loadAnyCache(const CacheData &data, bool local)
 	}
 	return true;
 }
-
-int    p3GroupDistrib::loadCache(const CacheData &data)
-{
-#ifdef DISTRIB_DEBUG
-	std::cerr << "p3GroupDistrib::loadCache()";
-	std::cerr << std::endl;
-#endif
-
-	loadAnyCache(data, false);
-
-	if (data.size > 0)
-	{
-        	CacheStore::lockData();   /*****   LOCK ****/
-        	locked_storeCacheEntry(data);
-        	CacheStore::unlockData(); /***** UNLOCK ****/
-	}
-
-	return 1;
-}
-
-bool 	p3GroupDistrib::loadLocalCache(const CacheData &data)
-{
-#ifdef DISTRIB_DEBUG
-	std::cerr << "p3GroupDistrib::loadLocalCache()";
-	std::cerr << std::endl;
-#endif
-
-	loadAnyCache(data, true);
-
-	if (data.size > 0)
-	{
-		refreshCache(data);
-	}
-
-	return true;
-}
-
 
 /***************************************************************************************/
 /***************************************************************************************/

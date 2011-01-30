@@ -2843,6 +2843,21 @@ int RsServer::StartupRetroShare()
         mBitDht->start();
 #endif
 
+	// startup the p3distrib threads (for cache loading).
+#ifndef MINIMAL_LIBRS
+	mForums->start();
+	mChannels->start();
+
+#ifdef RS_USE_BLOGS	
+	mBlogs->start();
+#endif
+#endif // MINIMAL_LIBRS
+
+	/**************************************************************************/
+
+
+
+
 	// create loopback device, and add to pqisslgrp.
 
 	SearchModule *mod = new SearchModule();
