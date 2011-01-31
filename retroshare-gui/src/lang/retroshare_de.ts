@@ -1018,7 +1018,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+73"/>
         <source>Display</source>
-        <translation type="unfinished">Anzeige</translation>
+        <translation>Anzeige</translation>
     </message>
     <message>
         <location line="+269"/>
@@ -3445,13 +3445,13 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+57"/>
-        <location line="+134"/>
-        <location line="+119"/>
+        <location line="+176"/>
+        <location line="+161"/>
         <source>Subject: </source>
         <translation>Betreff:</translation>
     </message>
     <message>
-        <location line="-194"/>
+        <location line="-278"/>
         <source>Unsubscribe To Forum</source>
         <translation>Forum abbestellen</translation>
     </message>
@@ -3461,14 +3461,45 @@ p, li { white-space: pre-wrap; }
         <translation>Antwort</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ForumMsgItem.cpp" line="+92"/>
+        <location line="+331"/>
+        <source>Send</source>
+        <translation>Senden</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Signed</source>
+        <translation>Unterzeichnen</translation>
+    </message>
+    <message>
+        <location filename="../gui/feeds/ForumMsgItem.cpp" line="+89"/>
+        <source>Forum Post</source>
+        <translation>Beitrag</translation>
+    </message>
+    <message>
+        <location line="+25"/>
         <source>Unknown Forum Post</source>
         <translation>Unbekannter Forumbeitrag</translation>
     </message>
     <message>
-        <location line="+45"/>
+        <location line="+32"/>
+        <location line="+23"/>
+        <location line="+27"/>
+        <source>Anonymous</source>
+        <translation>Anonym</translation>
+    </message>
+    <message>
+        <location line="-16"/>
         <source>In Reply to</source>
         <translation>Als Antwort auf</translation>
+    </message>
+    <message>
+        <source>RetroShare</source>
+        <translation type="obsolete">RetroShare</translation>
+    </message>
+    <message>
+        <location line="+174"/>
+        <source>Please give a Text Message</source>
+        <translation>Bitte Nachricht eingeben</translation>
     </message>
 </context>
 <context>
@@ -3669,7 +3700,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+17"/>
         <source>Display</source>
-        <translation type="unfinished">Anzeige</translation>
+        <translation>Anzeige</translation>
     </message>
     <message>
         <location line="+94"/>
@@ -3981,7 +4012,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>GenCertDialog</name>
     <message>
-        <location filename="../gui/GenCertDialog.cpp" line="+172"/>
+        <location filename="../gui/GenCertDialog.cpp" line="+173"/>
         <location line="+22"/>
         <source>Generate GPG key Failure</source>
         <translation>Fehler beim Generieren des GPG Schlüssels</translation>
@@ -3997,7 +4028,7 @@ p, li { white-space: pre-wrap; }
         <translation>Alle Felder sind mit min. 3 Zeichen zu versehen</translation>
     </message>
     <message>
-        <location line="+87"/>
+        <location line="+88"/>
         <source>Select Trusted Friend</source>
         <translation>Wähle vertrauten Freund</translation>
     </message>
@@ -4038,7 +4069,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="-199"/>
-        <location filename="../gui/GenCertDialog.cpp" line="-193"/>
+        <location filename="../gui/GenCertDialog.cpp" line="-194"/>
         <location line="+53"/>
         <source>Create new Profile</source>
         <translation>Erstelle neues Profil</translation>
@@ -4162,7 +4193,7 @@ Fill in your GPG password when asked, to sign your new key.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+128"/>
+        <location line="+129"/>
         <location line="+6"/>
         <source>Multiple instances</source>
         <translation type="unfinished">Mehrere Instanzen</translation>
@@ -5453,17 +5484,17 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
     </message>
     <message>
         <location line="+49"/>
-        <location line="+881"/>
+        <location line="+926"/>
         <source>Contacts</source>
         <translation>Kontakte</translation>
     </message>
     <message>
-        <location line="-866"/>
+        <location line="-911"/>
         <source>Search for Name:</source>
         <translation>Suche Name:</translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+34"/>
         <source>Reset</source>
         <translation>Zurücksetzen</translation>
     </message>
@@ -5488,27 +5519,27 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
         <translation>&gt;&gt; Bcc</translation>
     </message>
     <message>
-        <location line="+498"/>
+        <location line="+537"/>
         <source>Subject:</source>
         <translation>Betreff:</translation>
     </message>
     <message>
-        <location line="-421"/>
+        <location line="-457"/>
         <source>Paragraph</source>
         <translation>Absatz</translation>
     </message>
     <message>
-        <location line="-216"/>
+        <location line="-222"/>
         <source>Search Friends</source>
         <translation>Suche Freunde</translation>
     </message>
     <message>
-        <location line="+156"/>
+        <location line="+159"/>
         <source>&gt;&gt; Recommend</source>
         <translation>&gt;&gt; Empfehlen</translation>
     </message>
     <message>
-        <location line="+65"/>
+        <location line="+68"/>
         <source>Heading 1</source>
         <translation>Überschrift 1</translation>
     </message>
@@ -5539,57 +5570,57 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
         <translation>Überschrift 6</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+30"/>
         <source>Font size</source>
         <translation>Schriftgröße</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+16"/>
         <source>Increase font size</source>
         <translation>Schrift vergrößern</translation>
     </message>
     <message>
-        <location line="+29"/>
+        <location line="+32"/>
         <source>Decrease font size</source>
         <translation>Schrift verkleinern</translation>
     </message>
     <message>
-        <location line="+35"/>
+        <location line="+38"/>
         <source>Bold</source>
         <translation>Fett</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+244"/>
         <source>Underline</source>
         <translation>Unterstrichen</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="-203"/>
         <source>Italic</source>
         <translation>Kursiv</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+41"/>
         <source>Select Color</source>
         <translation>Text-Farbe auswählen</translation>
     </message>
     <message>
-        <location line="+25"/>
+        <location line="+28"/>
         <source>Alignment</source>
         <translation>Ausrichtung</translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+37"/>
         <source>Add a Image</source>
         <translation>Ein Bild hinzufügen</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+26"/>
         <source>Sets text font to code style</source>
         <translation>Setzt Schriftart auf Codestil</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="+530"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="+529"/>
         <source>To</source>
         <translation>An</translation>
     </message>
@@ -5604,7 +5635,7 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
         <translation>Bcc</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.ui" line="+167"/>
+        <location filename="../gui/msgs/MessageComposer.ui" line="+214"/>
         <source>Recommended Files</source>
         <translation>Empfohlene Dateien</translation>
     </message>
@@ -5674,7 +5705,7 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
         <translation>Blockquote hinzufügen</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="-1124"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="-1123"/>
         <source>&amp;Left</source>
         <translation>&amp;Links</translation>
     </message>
@@ -5695,12 +5726,12 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
     </message>
     <message>
         <location line="+213"/>
-        <location line="+1585"/>
+        <location line="+1584"/>
         <source>Save Message</source>
         <translation>Nachricht speichern</translation>
     </message>
     <message>
-        <location line="-1584"/>
+        <location line="-1583"/>
         <source>Message has not been Sent.
 Do you want to save message to draft box?</source>
         <translation>Nachricht wurde noch nicht gesendet.
@@ -5713,7 +5744,7 @@ Möchtest Du die Nachricht in den Entwürfen speichern?</translation>
         <translation>RetroShare Link einfügen</translation>
     </message>
     <message>
-        <location line="+573"/>
+        <location line="+571"/>
         <source>Re:</source>
         <translation>Re:</translation>
     </message>
@@ -5724,17 +5755,17 @@ Möchtest Du die Nachricht in den Entwürfen speichern?</translation>
     </message>
     <message>
         <location line="+75"/>
-        <location line="+118"/>
+        <location line="+119"/>
         <source>RetroShare</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-118"/>
+        <location line="-119"/>
         <source>Do you want to send the message without a subject ?</source>
         <translation>Möchtest Du die Nachricht ohne Betreff senden ?</translation>
     </message>
     <message>
-        <location line="+118"/>
+        <location line="+119"/>
         <source>Please insert at least one recipient.</source>
         <translation>Bitte geben sie mindestens einen Empfänger ein.</translation>
     </message>
@@ -5918,17 +5949,16 @@ Willst Du die Nachricht speichern ?</translation>
         <translation>Datei nicht gefunden oder Dateiname nicht akzeptiert.</translation>
     </message>
     <message>
-        <location line="-2023"/>
+        <location line="-2022"/>
         <source>Friend Recommendation(s)</source>
         <translation>Freundempfehlung(en)</translation>
     </message>
     <message>
-        <location line="+548"/>
         <source>No Title</source>
-        <translation>Kein Titel</translation>
+        <translation type="obsolete">Kein Titel</translation>
     </message>
     <message>
-        <location line="-546"/>
+        <location line="+2"/>
         <source>I recommend a good friend of me, you can trust him too when you trust me. &lt;br&gt; Copy friend link and paste to Friends list</source>
         <translation>Ich empfehle Dir einen guten Freund von mir. Du kannst ihm vertrauen, wenn Du mir vertraust. &lt;br&gt; Kopiere den Link und füge ihn in der Freundesliste ein</translation>
     </message>
@@ -6558,7 +6588,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="-20"/>
-        <location filename="../gui/feeds/MsgItem.cpp" line="+203"/>
+        <location filename="../gui/feeds/MsgItem.cpp" line="+205"/>
         <source>Expand</source>
         <translation>Erweitern</translation>
     </message>
@@ -7131,7 +7161,7 @@ p, li { white-space: pre-wrap; }
         <translation>Bitte geben Sie das Passwort ein um folgenden GPG Schlüssel freizuschalten:</translation>
     </message>
     <message>
-        <location line="+118"/>
+        <location line="+122"/>
         <source>Examining shared files...</source>
         <translation>Prüfe freigegebene Dateien...</translation>
     </message>
@@ -8745,7 +8775,7 @@ p, li { white-space: pre-wrap; }
         <translation>Vielleicht ist das Passwort falsch</translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="+354"/>
+        <location filename="../gui/RetroShareLink.cpp" line="+362"/>
         <source>File Request Confirmation</source>
         <translation>Bestätigung der Dateianforderung</translation>
     </message>
@@ -8764,7 +8794,8 @@ p, li { white-space: pre-wrap; }
         <location line="+0"/>
         <source>The following has not been added to your download list, because you already have it:
     </source>
-        <translation type="unfinished"></translation>
+        <translation>Die folgende Datei wurde nicht zur Downloadliste hinzugefügt, da Du diese schon hast:
+</translation>
     </message>
     <message>
         <location filename="../gui/RetroShareLink.cpp" line="+0"/>
@@ -10402,23 +10433,21 @@ p, li { white-space: pre-wrap; }
         <translation>Erstelle ein neues Profil</translation>
     </message>
     <message>
-        <location line="+30"/>
         <source>Insecure</source>
-        <translation>Unsicher</translation>
+        <translation type="obsolete">Unsicher</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Auto Login is not so much secure:
     - Your SSL certificate will be stored unprotected. 
     - Your PGP key will however not be stored.
 This choice be reverted in settings.</source>
-        <translation>Automatische Anmeldung ist nicht sicher:
+        <translation type="obsolete">Automatische Anmeldung ist nicht sicher:
     - Dein SSL Zertifikat wird ungesichert gespeichert. 
     - Dein PGP wird auch nicht sicher gespeichert.
 Du kannst die Auswahl auch in den Optionen ändern.</translation>
     </message>
     <message>
-        <location line="-54"/>
+        <location line="-23"/>
         <location line="+6"/>
         <source>Multiple instances</source>
         <translation>Mehrere Instanzen</translation>
@@ -10439,6 +10468,30 @@ Du kannst die Auswahl auch in den Optionen ändern.</translation>
  Are you sure you want to continue?</source>
         <translation>Es wird ein neues Profil erstellt
 Bist Du sicher?</translation>
+    </message>
+    <message>
+        <location line="+30"/>
+        <location line="+2"/>
+        <source>Warning</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-2"/>
+        <source> The passwd to your SSL certificate (your location) will be stored encrypted in your Gnome Keyring. 
+
+ Your PGP passwd will not be stored.
+
+This choice can be reverted in settings.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source> The passwd to your SSL certificate (your location) will be stored encrypted in the keys/help.dta file. This is not secure. 
+
+ Your PGP passwd will not be stored.
+
+This choice can be reverted in settings.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -11673,7 +11726,7 @@ p, li { white-space: pre-wrap; }
         <location line="+5"/>
         <source>%1h %2m</source>
         <comment>e.g: 3hours 5minutes</comment>
-        <translation></translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>

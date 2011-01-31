@@ -64,7 +64,7 @@ border-radius: 10px}</string>
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap>:/images/konversation.png</pixmap>
+           <pixmap resource="../images.qrc">:/images/konversation.png</pixmap>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -144,7 +144,7 @@ border-radius: 10px}</string>
            <string/>
           </property>
           <property name="icon">
-           <iconset>
+           <iconset resource="../images.qrc">
             <normaloff>:/images/edit_add24.png</normaloff>:/images/edit_add24.png</iconset>
           </property>
          </widget>
@@ -164,7 +164,7 @@ border-radius: 10px}</string>
            <string/>
           </property>
           <property name="icon">
-           <iconset>
+           <iconset resource="../images.qrc">
             <normaloff>:/images/close_normal.png</normaloff>:/images/close_normal.png</iconset>
           </property>
          </widget>
@@ -260,7 +260,7 @@ border-radius: 10px}</string>
            <string/>
           </property>
           <property name="icon">
-           <iconset>
+           <iconset resource="../images.qrc">
             <normaloff>:/images/mail_delete.png</normaloff>:/images/mail_delete.png</iconset>
           </property>
          </widget>
@@ -296,7 +296,7 @@ border-radius: 10px}</string>
            <string/>
           </property>
           <property name="icon">
-           <iconset>
+           <iconset resource="../images.qrc">
             <normaloff>:/images/replymail24.png</normaloff>:/images/replymail24.png</iconset>
           </property>
          </widget>
@@ -350,7 +350,7 @@ border-radius: 10px}</string>
             <string notr="true">color: rgb(59, 89, 152);</string>
            </property>
            <property name="text">
-            <string>Friend Name</string>
+            <string notr="true">Friend Name</string>
            </property>
           </widget>
          </item>
@@ -511,7 +511,7 @@ border-radius: 10px}</string>
             <string notr="true">color: rgb(59, 89, 152);</string>
            </property>
            <property name="text">
-            <string>Next Name</string>
+            <string notr="true">Next Name</string>
            </property>
           </widget>
          </item>
@@ -639,6 +639,8 @@ border-radius: 10px}</string>
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../images.qrc"/>
+ </resources>
  <connections/>
 </ui>

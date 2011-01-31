@@ -351,7 +351,7 @@ void ForumMsgItem::sendMsg()
     
 	if(textEdit->toPlainText().isEmpty())
     {	/* error message */
-        QMessageBox::warning(this, tr("RetroShare"),tr("Please give a Text Message"),
+		QMessageBox::warning(this, "RetroShare",tr("Please give a Text Message"),
                              QMessageBox::Ok, QMessageBox::Ok);
 
         return; //Don't add  a empty Message!!
