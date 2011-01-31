@@ -951,8 +951,6 @@ MessageComposer *MessageComposer::newMsg(const std::string &msgId /*= ""*/)
         }
 
         msgComposer->ui.msgText->document()->setModified(false);
-    } else {
-        msgComposer->insertTitleText(tr("No Title"));
     }
 
     msgComposer->calculateTitle();
@@ -1130,6 +1128,7 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
     /* check for existing title */
     if (bDraftbox == false && mi.title.empty()) {
         if (QMessageBox::warning(this, tr("RetroShare"), tr("Do you want to send the message without a subject ?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No) {
+            ui.titleEdit->setFocus();
             return false; // Don't send with an empty subject
         }
     }
