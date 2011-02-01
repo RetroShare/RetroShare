@@ -35,7 +35,9 @@
 
 #include "util/rsdebug.h"
 #include "util/rsdir.h"
+#include "util/rsrandom.h"
 #include "retroshare/rsinit.h"
+#include "rsserver/rsloginhandler.h"
 
 #include <list>
 #include <string>
@@ -96,11 +98,9 @@ class RsInitConfig
                 static std::string configDir;
                 static std::string load_cert;
                 static std::string load_key;
-		static std::string ssl_passphrase_file;
 
 		static std::string passwd;
 
-                static bool havePasswd;                 /* for Commandline password */
                 static bool autoLogin;                  /* autoLogin allowed */
                 static bool startMinimised; 		/* Icon or Full Window */
 
@@ -153,12 +153,10 @@ std::string RsInitConfig::preferedId;
 std::string RsInitConfig::configDir;
 std::string RsInitConfig::load_cert;
 std::string RsInitConfig::load_key;
-std::string RsInitConfig::ssl_passphrase_file;
 
 std::string RsInitConfig::passwd;
 //std::string RsInitConfig::gpgPasswd;
 
-bool RsInitConfig::havePasswd; 		/* for Commandline password */
 bool RsInitConfig::autoLogin;  		/* autoLogin allowed */
 bool RsInitConfig::startMinimised; /* Icon or Full Window */
 
@@ -232,7 +230,7 @@ void RsInit::InitRsConfig()
 
 	RsInitConfig::load_trustedpeer = false;
 	RsInitConfig::firsttime_run = false;
-	RsInitConfig::port = 7812; // default port.
+	RsInitConfig::port = (RSRandom::random_u32() & 0x1fff) + 7000 ; // random port between 7000 and 15191. Random port avoids clashes, improves anonymity.
 	RsInitConfig::forceLocalAddr = false;
 	RsInitConfig::haveLogFile    = false;
 	RsInitConfig::outStderr      = false;
@@ -244,7 +242,6 @@ void RsInit::InitRsConfig()
 	RsInitConfig::autoLogin      = false; // .
 	RsInitConfig::startMinimised = false;
 	RsInitConfig::passwd         = "";
-	RsInitConfig::havePasswd     = false;
 	RsInitConfig::haveDebugLevel = false;
 	RsInitConfig::debugLevel	= PQL_WARNING;
 	RsInitConfig::udpListenerOnly = false;
@@ -424,7 +421,6 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
                                  RsInitConfig::passwd = optarg;
                                  std::cerr << "Password Specified(********" ; //<< RsInitConfig::passwd;
                                  std::cerr << ") Selected" << std::endl;
-                                 RsInitConfig::havePasswd = true;
                                  break;
                          case 'i':
                                  strncpy(RsInitConfig::inet, optarg, 256);
@@ -644,19 +640,17 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 
 	}
 
-
 	/* if existing user, and havePasswd .... we can skip the login prompt */
 	if (existingUser)
 	{
-
-		if (RsInitConfig::havePasswd)
+		if (RsInitConfig::passwd != "")
 		{
 			return RS_INIT_HAVE_ACCOUNT;
 		}
 
 		RsInit::LoadPassword(RsInitConfig::preferedId, "");
 
-		if (RsTryAutoLogin())
+		if(RsLoginHandler::getSSLPassword(RsInitConfig::preferedId,false,RsInitConfig::passwd))
 		{
 			RsInit::setAutoLogin(true);
 			std::cerr << "Autologin has succeeded" << std::endl;
@@ -1400,17 +1394,16 @@ bool     RsInit::LoadPassword(std::string id, std::string inPwd)
 	RsInitConfig::configDir = RsInitConfig::basedir + RsInitConfig::dirSeperator + id;
 	RsInitConfig::passwd = inPwd;
 
-	if(inPwd != "")
-		RsInitConfig::havePasswd = true;
+	//	if(inPwd != "")
+	//		RsInitConfig::havePasswd = true;
 
-        // Create the filename.
-        std::string basename = RsInitConfig::configDir + RsInitConfig::dirSeperator;
-        basename += configKeyDir + RsInitConfig::dirSeperator;
-	RsInitConfig::ssl_passphrase_file  = basename + "ssl_passphrase.pgp";
+	// Create the filename.
+	std::string basename = RsInitConfig::configDir + RsInitConfig::dirSeperator;
+	basename += configKeyDir + RsInitConfig::dirSeperator;
 	basename += "user";
 
-        RsInitConfig::load_key  = basename + "_pk.pem";
-        RsInitConfig::load_cert = basename + "_cert.pem";
+	RsInitConfig::load_key  = basename + "_pk.pem";
+	RsInitConfig::load_cert = basename + "_cert.pem";
 
 	return true;
 }
@@ -1465,146 +1458,40 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 	  return 0;
 	}
 
-	RsInitConfig::autoLogin = autoLoginNT;
-	bool ok = false;
-	bool have_help = false;
-
-	// Check if help file exists
-#ifndef UBUNTU
-	std::cerr << "Warning; in NOT ubuntu mode" << std::endl;
-	std::string help_file_name = RsInitConfig::configDir + RsInitConfig::dirSeperator +
-				configKeyDir + RsInitConfig::dirSeperator + "help.dta";
-	FILE* helpFile = fopen(help_file_name.c_str(), "r");
-
-	if(helpFile != NULL){
-		have_help = true;
-                fclose(helpFile);
-
-                if(RsInitConfig::passwd == ""){ // in case user chooses a different user later in setup
-                    RsInitConfig::havePasswd = RsTryAutoLogin();
-                    have_help = RsInitConfig::havePasswd;
-                }
-
-
-	}
-#else
-	if(RsInitConfig::passwd == ""){ // in case user chooses a different user later in setup
-		std::cerr << "Calling RsTryAutoLogin()" << std::endl;
-		RsInitConfig::havePasswd = RsTryAutoLogin();
-	}
-	have_help = RsInitConfig::havePasswd;
-#endif
-
-	/* The SSL / SSL + PGP version requires, SSL init + PGP init.  */
-	const char* sslPassword;
-	sslPassword = RsInitConfig::passwd.c_str();
-
-
 	//check if password is already in memory
-	if (((RsInitConfig::havePasswd) && (RsInitConfig::passwd != "")) && !have_help)
-	{
-                std::cerr << "RetroShare has an ssl Password" << std::endl;
-		sslPassword = RsInitConfig::passwd.c_str();
-
-		std::cerr << "let's store the ssl Password into a pgp ecrypted file" << std::endl;
-		FILE *sslPassphraseFile = fopen(RsInitConfig::ssl_passphrase_file.c_str(), "w");
-                std::cerr << "opening sslPassphraseFile : " << RsInitConfig::ssl_passphrase_file.c_str() << std::endl;
-		gpgme_data_t cipher;
-		gpgme_data_t plain;
-                gpgme_data_new_from_mem(&plain, sslPassword, strlen(sslPassword), 1);
-                gpgme_data_new_from_stream (&cipher, sslPassphraseFile);
-                if (0 < AuthGPG::getAuthGPG()->encryptText(plain, cipher)) {
-		    std::cerr << "Encrypting went ok !" << std::endl;
-                } else {
-                    std::cerr << "Encrypting went wrong !" << std::endl;
-                }
-                gpgme_data_release (cipher);
-		gpgme_data_release (plain);
-		fclose(sslPassphraseFile);
-
-	} else
-	if(!have_help)	{
-
-
-		//let's read the password from an encrypted file
-		//let's check if there's a ssl_passpharese_file that we can decrypt with PGP
-		FILE *sslPassphraseFile = fopen(RsInitConfig::ssl_passphrase_file.c_str(), "r");
-		if (sslPassphraseFile == NULL)
-		{
-			std::cerr << "No password provided, and no sslPassphraseFile : " << RsInitConfig::ssl_passphrase_file.c_str() << std::endl;
-			return 0;
-		} else {
-                        std::cerr << "opening sslPassphraseFile : " << RsInitConfig::ssl_passphrase_file.c_str() << std::endl;
-			gpgme_data_t cipher;
-			gpgme_data_t plain;
-			gpgme_data_new (&plain);
-
-			if( gpgme_data_new_from_stream (&cipher, sslPassphraseFile) != GPG_ERR_NO_ERROR)
-			{
-				std::cerr << "Error while creating stream from ssl passwd file." << std::endl ;
-				return 0 ;
-			}
-                        if (0 < AuthGPG::getAuthGPG()->decryptText(cipher, plain)) {
-			    std::cerr << "Decrypting went ok !" << std::endl;
-                            gpgme_data_write (plain, "", 1);
-			    sslPassword = gpgme_data_release_and_get_mem(plain, NULL);
-			    std::cerr << "sslpassword: " << "********************" << std::endl;
-			} else {
-			    gpgme_data_release (plain);
-                            std::cerr << "Error : decrypting went wrong !" << std::endl;
-			    return 0;
-			}
-			gpgme_data_release (cipher);
-			fclose(sslPassphraseFile);
-		}
-	}
-
-
-
-	if(have_help){
-		sslPassword = RsInitConfig::passwd.c_str();
-	}
-	else{
-		RsInitConfig::passwd = sslPassword ; //.insert(0, sslPassword, RsInit::getSslPwdLen());
-	}
-
-
+	
+	if(RsInitConfig::passwd == "")
+		RsLoginHandler::getSSLPassword(RsInitConfig::preferedId,true,RsInitConfig::passwd) ;
+	else
+		RsLoginHandler::checkAndStoreSSLPasswdIntoGPGFile(RsInitConfig::preferedId,RsInitConfig::passwd) ;
 
 	std::cerr << "RsInitConfig::load_key.c_str() : " << RsInitConfig::load_key.c_str() << std::endl;
 
-        if (0 < AuthSSL::getAuthSSL() -> InitAuth(RsInitConfig::load_cert.c_str(), RsInitConfig::load_key.c_str(), sslPassword))
-	{
-		ok = true;
-	}
-	else
+	if(0 == AuthSSL::getAuthSSL() -> InitAuth(RsInitConfig::load_cert.c_str(), RsInitConfig::load_key.c_str(), RsInitConfig::passwd.c_str()))
 	{
 		std::cerr << "SSL Auth Failed!";
-		std::cerr << std::endl;
+		return 0 ;
 	}
 
-	if (ok)
+	if(autoLoginNT)
 	{
-		if (autoLoginNT && (!have_help))
-		{
-			std::cerr << "RetroShare will AutoLogin next time";
-			std::cerr << std::endl;
+		std::cerr << "RetroShare will AutoLogin next time";
+		std::cerr << std::endl;
 
-			RsStoreAutoLogin();
-		}
-		/* wipe password */
-		RsInitConfig::passwd = "";
-		create_configinit(RsInitConfig::basedir, RsInitConfig::preferedId);
-                //don't autorise the password callback again because it will lead to deadlock due to QT reentrance
-//                AuthGPG::getAuthGPG()->setAutorisePasswordCallbackNotify(false);
-		return 1;
+		RsLoginHandler::enableAutoLogin(RsInitConfig::preferedId,RsInitConfig::passwd);
+		RsInitConfig::autoLogin = true ;
 	}
 
-	std::cerr << "RetroShare Failed To Start!" << std::endl;
-	std::cerr << "Please Check File Names/Password" << std::endl;
-
-	return 0;
+	/* wipe out password */
+	RsInitConfig::passwd = "";
+	create_configinit(RsInitConfig::basedir, RsInitConfig::preferedId);
+      
+	return 1;
 }
-
+bool RsInit::RsClearAutoLogin()
+{
+	return	RsLoginHandler::clearAutoLogin(RsInitConfig::preferedId);
+}
 bool	RsInit::get_configinit(std::string dir, std::string &id)
 {
 	// have a config directories.
@@ -1714,574 +1601,6 @@ std::string make_path_unix(std::string path)
 }
 
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
-/* WINDOWS STRUCTURES FOR DPAPI */
-
-#ifndef WINDOWS_SYS /* UNIX */
-
-#include <openssl/rc4.h>
-
-#else
-/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
-
-
-#include <windows.h>
-#include <wincrypt.h>
-#include <iomanip>
-
-/*
-class CRYPTPROTECT_PROMPTSTRUCT;
-*/
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#ifdef WINDOWS_SYS
-#if defined(__CYGWIN__)
-
-typedef struct _CRYPTPROTECT_PROMPTSTRUCT {
-  DWORD cbSize;
-  DWORD dwPromptFlags;
-  HWND hwndApp;
-  LPCWSTR szPrompt;
-} CRYPTPROTECT_PROMPTSTRUCT,
- *PCRYPTPROTECT_PROMPTSTRUCT;
-
-#endif
-#endif
-
-/* definitions for the two functions */
-__declspec (dllimport)
-extern BOOL WINAPI CryptProtectData(
-  DATA_BLOB* pDataIn,
-  LPCWSTR szDataDescr,
-  DATA_BLOB* pOptionalEntropy,
-  PVOID pvReserved,
-  /* PVOID prompt, */
-  /* CRYPTPROTECT_PROMPTSTRUCT* pPromptStruct, */
-  CRYPTPROTECT_PROMPTSTRUCT* pPromptStruct,
-  DWORD dwFlags,
-  DATA_BLOB* pDataOut
-);
-
-__declspec (dllimport)
-extern BOOL WINAPI CryptUnprotectData(
-  DATA_BLOB* pDataIn,
-  LPWSTR* ppszDataDescr,
-  DATA_BLOB* pOptionalEntropy,
-  PVOID pvReserved,
-  /* PVOID prompt, */
-  /* CRYPTPROTECT_PROMPTSTRUCT* pPromptStruct, */
-  CRYPTPROTECT_PROMPTSTRUCT* pPromptStruct,
-  DWORD dwFlags,
-  DATA_BLOB* pDataOut
-);
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif
-/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
-
-#ifdef UBUNTU
-#include <gnome-keyring-1/gnome-keyring.h>
-
-	GnomeKeyringPasswordSchema my_schema = {
-      GNOME_KEYRING_ITEM_ENCRYPTION_KEY_PASSWORD,
-      {
-           { "RetroShare SSL Id", GNOME_KEYRING_ATTRIBUTE_TYPE_STRING },
-           { NULL, (GnomeKeyringAttributeType)0 }
-      }
-  };
-#endif
-
-
-#ifdef __APPLE__
-	/* OSX Headers */
-
-#include <CoreFoundation/CoreFoundation.h>
-#include <Security/Security.h>
-
-#endif
-
-
-
-bool  RsInit::RsStoreAutoLogin()
-{
-	std::cerr << "RsStoreAutoLogin()" << std::endl;
-
-/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#ifndef WINDOWS_SYS /* UNIX */
-#ifdef UBUNTU
-	if(GNOME_KEYRING_RESULT_OK == gnome_keyring_store_password_sync(&my_schema, NULL, (gchar*)("RetroShare password for SSL Id "+RsInitConfig::preferedId).c_str(),(gchar*)RsInitConfig::passwd.c_str(),"RetroShare SSL Id",RsInitConfig::preferedId.c_str(),NULL)) 
-	{
-		std::cerr << "Stored passwd " << "************************" << " into gnome keyring" << std::endl;
-		return true ;
-	}
-	else
-	{
-		std::cerr << "Could not store passwd into gnome keyring" << std::endl;
-		return false ;
-	}
-#else
- #ifdef __APPLE__
-	/***************** OSX KEYCHAIN ****************/
-	//Call SecKeychainAddGenericPassword to add a new password to the keychain:
-
-	std::cerr << "RsStoreAutoLogin() OSX Version!" << std::endl;
-
-	const void *password = RsInitConfig::passwd.c_str();
-	UInt32 passwordLength = strlen(RsInitConfig::passwd.c_str());
-	const char *userid = RsInitConfig::preferedId.c_str();
-	UInt32 uidLength = strlen(RsInitConfig::preferedId.c_str());
-
- 	OSStatus status = SecKeychainAddGenericPassword (
-					NULL,            // default keychain
-                			10,              // length of service name
-                			"Retroshare",    // service name
-                			uidLength,              // length of account name
-                			userid,    // account name
-                			passwordLength,  // length of password
-                			password,        // pointer to password data
-                			NULL             // the item reference
-    					);
-
-	std::cerr << "RsStoreAutoLogin() Call to SecKeychainAddGenericPassword returned: " << status << std::endl;
-
-	if (status != 0)
-	{
-		std::cerr << "RsStoreAutoLogin() SecKeychainAddGenericPassword Failed" << std::endl;
-		return false;
-	}
-	return true;
-
-	/***************** OSX KEYCHAIN ****************/
- #else
-
-	/* WARNING: Autologin is inherently unsafe */
-	std::string helpFileName = RsInitConfig::configDir + RsInitConfig::dirSeperator +
-				configKeyDir + RsInitConfig::dirSeperator + "help.dta";
-	FILE* helpFile = fopen(helpFileName.c_str(), "w");
-
-	if(helpFile == NULL){
-		std::cerr << "\nRsStoreAutoLogin(): Failed to open help file\n" << std::endl;
-		return false;
-	}
-
-	/* encrypt help */
-
-	const int DAT_LEN = RsInitConfig::passwd.length();
-	const int KEY_DAT_LEN = RsInitConfig::load_cert.length();
-	unsigned char* key_data = (unsigned char*)RsInitConfig::load_cert.c_str();
-	unsigned char* indata = (unsigned char*)RsInitConfig::passwd.c_str();
-	unsigned char* outdata = new unsigned char[DAT_LEN];
-
-	RC4_KEY* key = new RC4_KEY;
-	RC4_set_key(key, KEY_DAT_LEN, key_data);
-
-	RC4(key, DAT_LEN, indata, outdata);
-
-
-	fprintf(helpFile, "%s", outdata);
-	fclose(helpFile);
-
-	delete key;
-	delete[] outdata;
-
-
-	return true;
- #endif // __APPLE__
-#endif // UBUNTU.
-#else  /* windows */
-
-	/* store password encrypted in a file */
-	std::string entropy = RsInitConfig::load_cert;
-
-	DATA_BLOB DataIn;
-	DATA_BLOB DataEnt;
-	DATA_BLOB DataOut;
-	BYTE *pbDataInput = (BYTE *) strdup(RsInitConfig::passwd.c_str());
-	DWORD cbDataInput = strlen((char *)pbDataInput)+1;
-	BYTE *pbDataEnt   =(BYTE *)  strdup(entropy.c_str());
-	DWORD cbDataEnt   = strlen((char *)pbDataEnt)+1;
-	DataIn.pbData = pbDataInput;
-	DataIn.cbData = cbDataInput;
-	DataEnt.pbData = pbDataEnt;
-	DataEnt.cbData = cbDataEnt;
-
-        CRYPTPROTECT_PROMPTSTRUCT prom;
-
-        prom.cbSize = sizeof(prom);
-        prom.dwPromptFlags = 0;
-
-	/*********
-     	std::cerr << "Password (" << cbDataInput << "):";
-	std::cerr << pbDataInput << std::endl;
-     	std::cerr << "Entropy (" << cbDataEnt << "):";
-	std::cerr << pbDataEnt   << std::endl;
-	*********/
-
-	if(CryptProtectData(
-     		&DataIn,
-		NULL,
-     		&DataEnt, /* entropy.c_str(), */
-     		NULL,                               // Reserved.
-		&prom,
-     		0,
-     		&DataOut))
-	{
-
-		/**********
-     		std::cerr << "The encryption phase worked. (";
-     		std::cerr << DataOut.cbData << ")" << std::endl;
-
-		for(unsigned int i = 0; i < DataOut.cbData; i++)
-		{
-			std::cerr << std::setw(2) << (int) DataOut.pbData[i];
-			std::cerr << " ";
-		}
-     		std::cerr << std::endl;
-		**********/
-
-		/* save the data to the file */
-		std::string passwdfile = RsInitConfig::configDir;
-		passwdfile += RsInitConfig::dirSeperator  + configKeyDir + RsInitConfig::dirSeperator;
-		passwdfile += "help.dta";
-
-     		//std::cerr << "Save to: " << passwdfile;
-     		//std::cerr << std::endl;
-
-		FILE *fp = fopen(passwdfile.c_str(), "wb");
-		if (fp != NULL)
-		{
-			fwrite(DataOut.pbData, 1, DataOut.cbData, fp);
-			fclose(fp);
-
-     			std::cerr << "AutoLogin Data saved: ";
-     			std::cerr << std::endl;
-		}
-	}
-	else
-	{
-     		std::cerr << "Encryption Failed";
-     		std::cerr << std::endl;
-	}
-
-	free(pbDataInput);
-	free(pbDataEnt);
-	LocalFree(DataOut.pbData);
-#endif
-/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
-
-	return false;
-}
-
-
-bool  RsInit::RsTryAutoLogin()
-{
-
-	std::cerr << "RsTryAutoLogin()" << std::endl;
-
-/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#ifndef WINDOWS_SYS /* UNIX */
-#ifdef UBUNTU
-
-	gchar *passwd = NULL;
-
-	std::cerr << "Using attribute: " << RsInitConfig::preferedId << std::endl;
-	if( gnome_keyring_find_password_sync(&my_schema, &passwd,"RetroShare SSL Id",RsInitConfig::preferedId.c_str(),NULL) == GNOME_KEYRING_RESULT_OK )
-	{
-		std::cerr << "Got SSL passwd ********************" /*<< passwd*/ << " from gnome keyring" << std::endl;
-		RsInitConfig::passwd.clear();
-		RsInitConfig::passwd.insert(0, (char*)passwd, strlen(passwd));
-		RsInitConfig::havePasswd = true ;
-		return true ;
-	}
-	else
-	{
-		std::cerr << "Could not get passwd from gnome keyring" << std::endl;
-		return false ;
-	}
-
-#else
- /******************** OSX KeyChain stuff *****************************/
- #ifdef __APPLE__
-
-	std::cerr << "RsTryAutoLogin() OSX Version" << std::endl;
-	//Call SecKeychainFindGenericPassword to get a password from the keychain:
-
-	void *passwordData = NULL;
-	UInt32 passwordLength = 0;
-	const char *userId = RsInitConfig::preferedId.c_str();
-	UInt32 uidLength = strlen(RsInitConfig::preferedId.c_str());
-	SecKeychainItemRef itemRef = NULL;
-
- 	OSStatus status = SecKeychainFindGenericPassword (
-                 NULL,           // default keychain
-                 10,             // length of service name
-                 "Retroshare",   // service name
-                 uidLength,             // length of account name
-                 userId,   // account name
-                 &passwordLength,  // length of password
-                 &passwordData,   // pointer to password data
-                 &itemRef         // the item reference
-    	);
-
-	std::cerr << "RsTryAutoLogin() SecKeychainFindGenericPassword returned: " << status << std::endl;
-
-	if (status != 0)
-	{
-		std::cerr << "RsTryAutoLogin() Error " << std::endl;
-
-		/* error */
-    		if (status == errSecItemNotFound) 
-		{ 
-			//Is password on keychain?
-			std::cerr << "RsTryAutoLogin() Error - Looks like password is not in KeyChain " << std::endl;
-		}
-	}
-	else
-	{
-		std::cerr << "RsTryAutoLogin() Password found on KeyChain! " << std::endl;
-
-		/* load up password to correct location */
-		RsInitConfig::passwd.clear();
-		RsInitConfig::passwd.insert(0, (char*)passwordData, passwordLength);
-		RsInitConfig::havePasswd = true ;
-	}
-
-        //Free the data allocated by SecKeychainFindGenericPassword:
-
-    	SecKeychainItemFreeContent (
-                 NULL,           //No attribute data to release
-                 passwordData    //Release data buffer allocated by SecKeychainFindGenericPassword
-    	);
-
-    	if (itemRef) CFRelease(itemRef);
-
-	return (status == 0);
-
- /******************** OSX KeyChain stuff *****************************/
- #else /* UNIX, but not UBUNTU or APPLE */
-
-	std::string helpFileName = RsInitConfig::basedir + RsInitConfig::dirSeperator + RsInitConfig::preferedId + RsInitConfig::dirSeperator +
-				configKeyDir + RsInitConfig::dirSeperator + "help.dta";
-
-	FILE* helpFile = fopen(helpFileName.c_str(), "r");
-
-	if(helpFile == NULL){
-		std::cerr << "\nFailed to open help file\n" << std::endl;
-		return false;
-	}
-
-	/* decrypt help */
-
-	int c ;
-	std::string passwd ;
-	while( (c = getc(helpFile)) != EOF )
-		passwd += (char)c ;
-
-	const int DAT_LEN = passwd.length();
-	const int KEY_DAT_LEN = RsInitConfig::load_cert.length();
-	unsigned char* key_data  = (unsigned char*)RsInitConfig::load_cert.c_str();
-	unsigned char* indata = new unsigned char[DAT_LEN];
-	unsigned char* outdata = new unsigned char[DAT_LEN];
-
-	for(int i=0;i<DAT_LEN;++i)
-		indata[i] = passwd[i] ;
-
-//	if(fscanf(helpFile, "%s", indata) != 1)
-//	{
-//		std::cerr << "Can't read RSA key in help file " << helpFileName << ". Sorry." << std::endl ;
-//		return false ;
-//	}
-
-	RC4_KEY* key = new RC4_KEY;
-	RC4_set_key(key, KEY_DAT_LEN, key_data);
-
-	RC4(key, DAT_LEN, indata, outdata);
-
-	RsInitConfig::passwd.clear();
-	RsInitConfig::passwd.insert(0, (char*)outdata, DAT_LEN);
-
-
-	fclose(helpFile);
-
-
-	delete[] indata;
-	delete[] outdata;
-
-	if(key != NULL)
-		delete key;
-
-	return true;
- #endif // APPLE
-#endif	// UBUNTU
-   /******* WINDOWS BELOW *****/
-#else
-
-	/* try to load from file */
-	std::string entropy = RsInitConfig::load_cert;
-	/* get the data out */
-
-	/* open the data to the file */
-	std::string passwdfile = RsInitConfig::configDir;
-	passwdfile += RsInitConfig::dirSeperator + configKeyDir + RsInitConfig::dirSeperator;
-	passwdfile += "help.dta";
-
-	DATA_BLOB DataIn;
-	DATA_BLOB DataEnt;
-	DATA_BLOB DataOut;
-
-	BYTE *pbDataEnt   =(BYTE *)  strdup(entropy.c_str());
-	DWORD cbDataEnt   = strlen((char *)pbDataEnt)+1;
-	DataEnt.pbData = pbDataEnt;
-	DataEnt.cbData = cbDataEnt;
-
-	char *dataptr = NULL;
-	int   datalen = 0;
-
-	FILE *fp = fopen(passwdfile.c_str(), "rb");
-	if (fp != NULL)
-	{
-		fseek(fp, 0, SEEK_END);
-		datalen = ftell(fp);
-		fseek(fp, 0, SEEK_SET);
-		dataptr = (char *) malloc(datalen);
-		fread(dataptr, 1, datalen, fp);
-		fclose(fp);
-
-		/*****
-     		std::cerr << "Data loaded from: " << passwdfile;
-     		std::cerr << std::endl;
-
-     		std::cerr << "Size :";
-     		std::cerr << datalen << std::endl;
-
-		for(unsigned int i = 0; i < datalen; i++)
-		{
-			std::cerr << std::setw(2) << (int) dataptr[i];
-			std::cerr << " ";
-		}
-     		std::cerr << std::endl;
-		*****/
-	}
-	else
-	{
-		return false;
-	}
-
-	BYTE *pbDataInput =(BYTE *) dataptr;
-	DWORD cbDataInput = datalen;
-	DataIn.pbData = pbDataInput;
-	DataIn.cbData = cbDataInput;
-
-
-        CRYPTPROTECT_PROMPTSTRUCT prom;
-
-        prom.cbSize = sizeof(prom);
-        prom.dwPromptFlags = 0;
-
-
-	bool isDecrypt = CryptUnprotectData(
-       		&DataIn,
-		NULL,
-       		&DataEnt,  /* entropy.c_str(), */
-        	NULL,                 // Reserved
-        	&prom,                 // Opt. Prompt
-        	0,
-        	&DataOut);
-
-	if (isDecrypt)
-	{
-     		//std::cerr << "Decrypted size: " << DataOut.cbData;
-		//std::cerr << std::endl;
-		if (DataOut.pbData[DataOut.cbData - 1] != '\0')
-		{
-     			std::cerr << "Error: Decrypted Data not a string...";
-			std::cerr << std::endl;
-			isDecrypt = false;
-		}
-		else
-		{
-     		  //std::cerr << "The decrypted data is: " << DataOut.pbData;
-		  //std::cerr << std::endl;
-		  RsInitConfig::passwd = (char *) DataOut.pbData;
-		  RsInitConfig::havePasswd = true;
-		}
-	}
-	else
-	{
-    		std::cerr << "Decryption error!";
-		std::cerr << std::endl;
-	}
-
-	/* strings to be freed */
-	free(pbDataInput);
-	free(pbDataEnt);
-
-	/* generated data space */
-	LocalFree(DataOut.pbData);
-
-	return isDecrypt;
-#endif
-/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
-
-	return false;
-}
-
-bool  RsInit::RsClearAutoLogin()
-{
-#ifdef UBUNTU
-	if(GNOME_KEYRING_RESULT_OK == gnome_keyring_delete_password_sync(&my_schema,"RetroShare SSL Id", RsInitConfig::preferedId.c_str(),NULL))
-	{
-		std::cerr << "Successfully Cleared gnome keyring passwd for SSLID " << RsInitConfig::preferedId << std::endl;
-		return true ;
-	}
-	else
-	{
-		std::cerr << "Could not clear gnome keyring passwd for SSLID " << RsInitConfig::preferedId << std::endl;
-		return false ;
-	}
-#else
-	std::string passwdfile = RsInitConfig::configDir;
-	passwdfile += RsInitConfig::dirSeperator + configKeyDir + RsInitConfig::dirSeperator;
-	passwdfile += "help.dta";
-
-	FILE *fp = fopen(passwdfile.c_str(), "wb");
-	if (fp != NULL)
-	{
-		fwrite(" ", 1, 1, fp);
-		fclose(fp);
-		bool removed = remove(passwdfile.c_str());
-
-		if(removed != 0)
-			std::cerr << "RsClearAutoLogin(): Failed to Removed help file" << std::endl;
-
-     		std::cerr << "AutoLogin Data cleared ";
-     		std::cerr << std::endl;
-		return true;
-	}
-
-	return false;
-#endif
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 char RsInit::dirSeperator()
 {
@@ -2305,7 +1624,10 @@ bool RsInit::isWindowsXP()
     return false;
 #endif
 }
-
+std::string RsInit::RsConfigKeysDirectory()
+{
+    return RsInitConfig::basedir + RsInitConfig::dirSeperator + RsInitConfig::preferedId + RsInitConfig::dirSeperator + configKeyDir ;
+}
 std::string RsInit::RsConfigDirectory()
 {
 	return RsInitConfig::basedir;
@@ -2508,7 +1830,7 @@ int RsServer::StartupRetroShare()
 
 	struct sockaddr_in tmpladdr;
 	sockaddr_clear(&tmpladdr);
-	tmpladdr.sin_port = htons(7812);
+	tmpladdr.sin_port = htons(RsInitConfig::port);
 	rsUdpStack *mUdpStack = new rsUdpStack(tmpladdr);
 
 #ifdef RS_USE_BITDHT

@@ -39,6 +39,8 @@
 
 #define RS_USE_PGPSSL 1
 
+#include <list>
+
 /*!
  * Initialisation Class (not publicly disclosed to RsIFace)
  */
@@ -123,6 +125,7 @@ class RsInit
 		 * Post Login Options
 		 */
 		static std::string 	RsConfigDirectory();
+		static std::string 	RsConfigKeysDirectory();
 
         static std::string  RsProfileConfigDirectory();
 		static bool	setStartMinimised() ;

@@ -127,6 +127,7 @@ PUBLIC_HEADERS =	retroshare/rsblogs.h \
 					retroshare/rsforums.h \
 					retroshare/rsiface.h \
 					retroshare/rsinit.h \
+					retroshare/rsloginhandler.h \
 					retroshare/rsmsgs.h \
 					retroshare/rsnotify.h \
 					retroshare/rspeers.h \
@@ -462,6 +463,7 @@ SOURCES +=	rsserver/p3discovery.cc \
 			rsserver/p3status.cc \
 			rsserver/rsiface.cc \
 			rsserver/rsinit.cc \
+			rsserver/rsloginhandler.cc \
 			rsserver/rstypes.cc
 
 SOURCES +=	serialiser/rsbaseitems.cc \
