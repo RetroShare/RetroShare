@@ -540,7 +540,8 @@ bool RsLoginHandler::clearAutoLogin(const std::string& ssl_id)
 		return false ;
 	}
 #else
-	std::string passwdfile = getAutologinFileName() ;
+	
+	std::string passwdfile = getAutologinFileName(ssl_id) ;
 
 	FILE *fp = fopen(passwdfile.c_str(), "wb");
 
@@ -657,6 +658,7 @@ bool RsLoginHandler::getSSLPasswdFromGPGFile(const std::string& ssl_id,std::stri
 		return false;
 	}
 }
+
 
 std::string RsLoginHandler::getSSLPasswdFileName(const std::string& ssl_id)
 {

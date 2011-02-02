@@ -2142,7 +2142,17 @@ int RsServer::StartupRetroShare()
 	getPqiNotify()->ClearFeedItems(RS_FEED_ITEM_MESSAGE);
 	//getPqiNotify()->ClearFeedItems(RS_FEED_ITEM_FILES_NEW);
 
-
+	/* flag that the basic Caches are now in the pending Queues */
+#ifndef MINIMAL_LIBRS
+	mForums->HistoricalCachesDone();
+	mChannels->HistoricalCachesDone();
+	
+#ifdef RS_USE_BLOGS	
+	mBlogs->HistoricalCachesDone();
+#endif
+#endif // MINIMAL_LIBRS	
+	
+	
 	/**************************************************************************/
 	/* Add AuthGPG services */
 	/**************************************************************************/

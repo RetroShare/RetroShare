@@ -114,9 +114,9 @@ virtual bool isReply(BlogMsgInfo& info);
 /***************************************************************************************/
 
 	protected:
-virtual void locked_notifyGroupChanged(GroupInfo &info, uint32_t flags);
-virtual bool locked_eventNewMsg(GroupInfo *, RsDistribMsg *, std::string);
-virtual bool locked_eventDuplicateMsg(GroupInfo *, RsDistribMsg *, std::string);
+virtual void locked_notifyGroupChanged(GroupInfo &info, uint32_t flags, bool historical);
+virtual bool locked_eventNewMsg(GroupInfo *, RsDistribMsg *, std::string, bool historical);
+virtual bool locked_eventDuplicateMsg(GroupInfo *, RsDistribMsg *, std::string, bool historical);
 
 
 /****************************************/

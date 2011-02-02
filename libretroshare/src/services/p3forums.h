@@ -67,10 +67,9 @@ virtual	bool getMessageCount(const std::string &fId, unsigned int &newCount, uns
 /****************** Event Feedback (Overloaded form p3distrib) *************************/
 /***************************************************************************************/
 
-virtual void locked_notifyGroupChanged(GroupInfo &grp, uint32_t flags);
-virtual bool locked_eventDuplicateMsg(GroupInfo *, RsDistribMsg *, std::string);
-virtual bool locked_eventNewMsg(GroupInfo *, RsDistribMsg *, std::string);
-
+virtual void locked_notifyGroupChanged(GroupInfo &grp, uint32_t flags, bool historical);
+virtual bool locked_eventDuplicateMsg(GroupInfo *, RsDistribMsg *, std::string, bool historical);
+virtual bool locked_eventNewMsg(GroupInfo *, RsDistribMsg *, std::string, bool historical);
 
 
 /****************************************/

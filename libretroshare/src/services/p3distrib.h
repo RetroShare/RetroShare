@@ -92,6 +92,22 @@ const uint32_t GROUP_KEY_DISTRIB_ADMIN		= 0x0040;
 #endif
 
 
+/*
+ * A data structure to store dummy (missing) msgs.
+ * They are added to the GroupInfo if there is a missing parent Msg of thread Msg
+ * Basic Logic is:
+ *
+ */
+
+class RsDistribDummyMsg
+{
+	public:
+	std::string threadId;
+	std::string parentId;
+	std::string msgId;
+};
+
+
 //! for storing group keys to members of a group
 /*!
  * This key but be of many types, including private/public publish key, or admin prite key for group
@@ -247,6 +263,24 @@ const uint32_t GRP_UNSUBSCRIBED = 0x0006;
  * Group id is the public admin keys id
  *
  */
+
+/* 
+ * To Handle Cache Data Loading.... we want to be able to seperate Historical
+ * from new data (primarily for the gui's benefit).
+ * to do this we have a mHistoricalCaches flag, which is automatically raised at startup, 
+ * and a function is called to cancel it (HistoricalCachesDone()).
+ */
+
+class CacheDataPending
+{
+	public:
+
+	CacheDataPending(const CacheData &data, bool local, bool historical);
+	CacheData mData;
+	bool	  mLocal;
+	bool      mHistorical;
+};
+
 class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, public p3ThreadedService
 {
 	public:
@@ -272,18 +306,21 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		/* From RsThread */
 		virtual void run(); /* called once the thread is started */
 
+		void 	HistoricalCachesDone(); // called when Stored Caches have been added to Pending List.
+
 	private:
 
 		/* these lists are filled by the overloaded fns... then cleared by the thread */
-		std::list<CacheData> mPendingLocalCache;
-		std::list<CacheData> mPendingRemoteCache;
+		bool mHistoricalCaches; // initially true.... falsified by HistoricalCachesDone() 
+		std::list<CacheDataPending> mPendingCaches;
 
 		/* top level load */
-		int  	loadAnyCache(const CacheData &data, bool local);
+		int  	loadAnyCache(const CacheData &data, bool local, bool historical);
 
 			/* load cache files */
-		void	loadFileGroups(const std::string &filename, const std::string &src, bool local);
-		void	loadFileMsgs(const std::string &filename, uint16_t cacheSubId, const std::string &src, uint32_t ts, bool local);
+		void	loadFileGroups(const std::string &filename, const std::string &src, bool local, bool historical);
+		void	loadFileMsgs(const std::string &filename, uint16_t cacheSubId, const std::string &src, uint32_t ts, bool local, bool historical);
+
 		bool backUpKeys(const std::list<RsDistribGrpKey* > &keysToBackUp, std::string grpId);
 		void locked_sharePubKey();
 
@@ -304,13 +341,13 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		 * @param src src of msg (peer id)
 		 * @param local is this a local cache msg (your msg)
 		 */
-		void	loadMsg(RsDistribSignedMsg *msg, const std::string &src, bool local);
+		void	loadMsg(RsDistribSignedMsg *msg, const std::string &src, bool local, bool historical);
 
 		/*!
 		 * adds newgrp to grp set, GroupInfo type created and stored
 		 * @param newGrp grp to be added
 		 */
-		void	loadGroup(RsDistribGrp *newGrp);
+		void	loadGroup(RsDistribGrp *newGrp, bool historical);
 
 		/*!
 		 * Adds new keys dependent on whether it is an admin or publish key
@@ -318,7 +355,7 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		 * @param newKey key to be added
                  * @return if key is loaded to group or stored return true
 		 */
-                bool    loadGroupKey(RsDistribGrpKey *newKey);
+                bool    loadGroupKey(RsDistribGrpKey *newKey, bool historical);
 
 
 /***************************************************************************************/
@@ -411,7 +448,7 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		/*!
 		 *  root version (p3Distrib::) of this function must be called
 		 */
-		virtual void locked_notifyGroupChanged(GroupInfo &info, uint32_t flags);
+		virtual void locked_notifyGroupChanged(GroupInfo &info, uint32_t flags, bool historical);
 
 		/*!
 		 * client (inheriting class) should use this to determing behaviour of
@@ -419,18 +456,20 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		 * @param group should be called when duplicate message loaded
 		 * @param the duplicate message
 		 * @param id
+		 * @param historical: is this msg from an historical cache
 		 * @return successfully executed or not
 		 */
-		virtual bool locked_eventDuplicateMsg(GroupInfo *, RsDistribMsg *, std::string id) = 0;
+		virtual bool locked_eventDuplicateMsg(GroupInfo *, RsDistribMsg *, std::string id, bool historical) = 0;
 
 		/*!
 		 * Inheriting class should implement this as a response to a new msg arriving
 		 * @param
 		 * @param
 		 * @param id src of msg (peer id)
+		 * @param historical: is this msg from an historical cache
 		 * @return
 		 */
-		virtual bool locked_eventNewMsg(GroupInfo *, RsDistribMsg *, std::string id) = 0;
+		virtual bool locked_eventNewMsg(GroupInfo *, RsDistribMsg *, std::string id, bool historical) = 0;
 
 /***************************************************************************************/
 /********************************* p3Config ********************************************/

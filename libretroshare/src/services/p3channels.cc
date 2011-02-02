@@ -609,7 +609,7 @@ const uint32_t DOWNLOAD_PERIOD = 7 * 24 * 3600;
  * on a subscription to a channel..
  */
 
-bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std::string id)
+bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std::string id, bool historical)
 {
 	std::string grpId = msg->grpId;
 	std::string msgId = msg->msgId;
@@ -714,24 +714,27 @@ bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std
 
 #include "pqi/pqinotify.h"
 
-bool p3Channels::locked_eventNewMsg(GroupInfo *grp, RsDistribMsg *msg, std::string id)
+bool p3Channels::locked_eventNewMsg(GroupInfo *grp, RsDistribMsg *msg, std::string id, bool historical)
 {
 	std::string grpId = msg->grpId;
 	std::string msgId = msg->msgId;
 	std::string nullId;
 
-	getPqiNotify()->AddFeedItem(RS_FEED_ITEM_CHAN_MSG, grpId, msgId, nullId);
-
+	if (!historical)
+	{
+		getPqiNotify()->AddFeedItem(RS_FEED_ITEM_CHAN_MSG, grpId, msgId, nullId);
+	}
+	
 	/* request the files 
 	 * NB: This could result in duplicates.
 	 * which must be handled by ft side.
 	 *
 	 * this is exactly what DuplicateMsg does.
 	 * */
-	return locked_eventDuplicateMsg(grp, msg, id);
+	return locked_eventDuplicateMsg(grp, msg, id, historical);
 }
 
-void p3Channels::locked_notifyGroupChanged(GroupInfo &grp, uint32_t flags)
+void p3Channels::locked_notifyGroupChanged(GroupInfo &grp, uint32_t flags, bool historical)
 {
 	std::string grpId = grp.grpId;
 	std::string msgId;
@@ -744,14 +747,20 @@ void p3Channels::locked_notifyGroupChanged(GroupInfo &grp, uint32_t flags)
                         #ifdef CHANNEL_DEBUG
                         std::cerr << "p3Channels::locked_notifyGroupChanged() NEW UPDATE" << std::endl;
                         #endif
-			getPqiNotify()->AddFeedItem(RS_FEED_ITEM_CHAN_NEW, grpId, msgId, nullId);
+			if (!historical)
+			{
+				getPqiNotify()->AddFeedItem(RS_FEED_ITEM_CHAN_NEW, grpId, msgId, nullId);
+			}
                         rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHANNELLIST_LOCKED, NOTIFY_TYPE_ADD);
 			break;
 		case GRP_UPDATE:
                         #ifdef CHANNEL_DEBUG
                         std::cerr << "p3Channels::locked_notifyGroupChanged() UPDATE" << std::endl;
                         #endif
-			getPqiNotify()->AddFeedItem(RS_FEED_ITEM_CHAN_UPDATE, grpId, msgId, nullId);
+			if (!historical)
+			{
+				getPqiNotify()->AddFeedItem(RS_FEED_ITEM_CHAN_UPDATE, grpId, msgId, nullId);
+			}
                         rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHANNELLIST_LOCKED, NOTIFY_TYPE_MOD);
 			break;
 		case GRP_LOAD_KEY:
@@ -800,7 +809,7 @@ void p3Channels::locked_notifyGroupChanged(GroupInfo &grp, uint32_t flags)
 			break;
 	}
 
-	return p3GroupDistrib::locked_notifyGroupChanged(grp, flags);
+	return p3GroupDistrib::locked_notifyGroupChanged(grp, flags, historical);
 }
 
 

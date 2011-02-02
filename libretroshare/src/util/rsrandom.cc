@@ -10,9 +10,12 @@ RsMutex RSRandom::rndMtx ;
 #ifdef WINDOWS_SYS
 static bool auto_seed = RSRandom::seed( (time(NULL) + ((uint32_t) pthread_self().p)*0x1293fe)^0x18e34a12 ) ;
 #else
-static bool auto_seed = RSRandom::seed( (time(NULL) + pthread_self()*0x1293fe + (getpid()^0x113ef76b))^0x18e34a12 ) ;
+  #ifdef __APPLE__
+	static bool auto_seed = RSRandom::seed( (time(NULL) + pthread_mach_thread_np(pthread_self())*0x1293fe + (getpid()^0x113ef76b))^0x18e34a12 ) ;
+  #else
+    static bool auto_seed = RSRandom::seed( (time(NULL) + pthread_self()*0x1293fe + (getpid()^0x113ef76b))^0x18e34a12 ) ;
+  #endif
 #endif
-
 bool RSRandom::seed(uint32_t s) 
 {
 	RsStackMutex mtx(rndMtx) ;

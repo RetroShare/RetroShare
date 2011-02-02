@@ -292,14 +292,14 @@ const uint32_t DOWNLOAD_PERIOD = 7 * 24 * 3600;
  *
  */
 
-bool p3Blogs::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std::string id)
+bool p3Blogs::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std::string id, bool historical)
 {
 	return true;
 }
 
 #include "pqi/pqinotify.h"
 
-bool p3Blogs::locked_eventNewMsg(GroupInfo *grp, RsDistribMsg *msg, std::string id)
+bool p3Blogs::locked_eventNewMsg(GroupInfo *grp, RsDistribMsg *msg, std::string id, bool historical)
 {
 	std::string grpId = msg->grpId;
 	std::string msgId = msg->msgId;
@@ -311,7 +311,10 @@ bool p3Blogs::locked_eventNewMsg(GroupInfo *grp, RsDistribMsg *msg, std::string 
 	std::cerr << " peerId: " << id;
 	std::cerr << std::endl;
 
-	getPqiNotify()->AddFeedItem(RS_FEED_ITEM_BLOG_MSG, grpId, msgId, nullId);
+	if (!historical)
+	{
+		getPqiNotify()->AddFeedItem(RS_FEED_ITEM_BLOG_MSG, grpId, msgId, nullId);
+	}
 
 	/* request the files 
 	 * NB: This could result in duplicates.
@@ -319,13 +322,13 @@ bool p3Blogs::locked_eventNewMsg(GroupInfo *grp, RsDistribMsg *msg, std::string 
 	 *
 	 * this is exactly what DuplicateMsg does.
 	 * */
-	return locked_eventDuplicateMsg(grp, msg, id);
+	return locked_eventDuplicateMsg(grp, msg, id, historical);
 }
 
 
 
 
-void p3Blogs::locked_notifyGroupChanged(GroupInfo &grp, uint32_t flags)
+void p3Blogs::locked_notifyGroupChanged(GroupInfo &grp, uint32_t flags, bool historical)
 {
 	std::string grpId = grp.grpId;
 	std::string msgId;
@@ -341,12 +344,18 @@ void p3Blogs::locked_notifyGroupChanged(GroupInfo &grp, uint32_t flags)
 		case GRP_NEW_UPDATE:
 			std::cerr << "p3Blogs::locked_notifyGroupChanged() NEW UPDATE";
 			std::cerr << std::endl;
-			getPqiNotify()->AddFeedItem(RS_FEED_ITEM_BLOG_NEW, grpId, msgId, nullId);
+			if (!historical)
+			{
+				getPqiNotify()->AddFeedItem(RS_FEED_ITEM_BLOG_NEW, grpId, msgId, nullId);
+			}
 			break;
 		case GRP_UPDATE:
 			std::cerr << "p3Blogs::locked_notifyGroupChanged() UPDATE";
 			std::cerr << std::endl;
-			getPqiNotify()->AddFeedItem(RS_FEED_ITEM_BLOG_UPDATE, grpId, msgId, nullId);
+			if (!historical)
+			{
+				getPqiNotify()->AddFeedItem(RS_FEED_ITEM_BLOG_UPDATE, grpId, msgId, nullId);
+			}
 			break;
 		case GRP_LOAD_KEY:
 			std::cerr << "p3Blogs::locked_notifyGroupChanged() LOAD_KEY";

@@ -542,7 +542,7 @@ bool p3Forums::getMessageCount(const std::string &fId, unsigned int &newCount, u
 
 #include "pqi/pqinotify.h"
 
-void p3Forums::locked_notifyGroupChanged(GroupInfo  &grp, uint32_t flags)
+void p3Forums::locked_notifyGroupChanged(GroupInfo  &grp, uint32_t flags, bool historical)
 {
 	const std::string &grpId = grp.grpId;
 	std::string msgId;
@@ -551,11 +551,17 @@ void p3Forums::locked_notifyGroupChanged(GroupInfo  &grp, uint32_t flags)
         switch(flags)
         {
                 case GRP_NEW_UPDATE:
-                        getPqiNotify()->AddFeedItem(RS_FEED_ITEM_FORUM_NEW, grpId, msgId, nullId);
+			if (!historical)
+			{
+                        	getPqiNotify()->AddFeedItem(RS_FEED_ITEM_FORUM_NEW, grpId, msgId, nullId);
+			}
                         rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_FORUMLIST_LOCKED, NOTIFY_TYPE_ADD);
                         break;
                 case GRP_UPDATE:
-                        getPqiNotify()->AddFeedItem(RS_FEED_ITEM_FORUM_UPDATE, grpId, msgId, nullId);
+			if (!historical)
+			{
+                        	getPqiNotify()->AddFeedItem(RS_FEED_ITEM_FORUM_UPDATE, grpId, msgId, nullId);
+			}
                         rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_FORUMLIST_LOCKED, NOTIFY_TYPE_MOD);
                         break;
                 case GRP_LOAD_KEY:
@@ -570,21 +576,25 @@ void p3Forums::locked_notifyGroupChanged(GroupInfo  &grp, uint32_t flags)
                         rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_FORUMLIST_LOCKED, NOTIFY_TYPE_DEL);
                         break;
         }
-	return p3GroupDistrib::locked_notifyGroupChanged(grp, flags);
+	return p3GroupDistrib::locked_notifyGroupChanged(grp, flags, historical);
 }
 
-bool p3Forums::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std::string id)
+bool p3Forums::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std::string id, bool historical)
 {
 	return true;
 }
 
-bool p3Forums::locked_eventNewMsg(GroupInfo *grp, RsDistribMsg *msg, std::string id)
+bool p3Forums::locked_eventNewMsg(GroupInfo *grp, RsDistribMsg *msg, std::string id, bool historical)
 {
 	std::string grpId = msg->grpId;
 	std::string msgId = msg->msgId;
 	std::string nullId;
 
-	getPqiNotify()->AddFeedItem(RS_FEED_ITEM_FORUM_MSG, grpId, msgId, nullId);
+	if (!historical)
+	{
+		getPqiNotify()->AddFeedItem(RS_FEED_ITEM_FORUM_MSG, grpId, msgId, nullId);
+	}
+
 	return true;
 }
 
