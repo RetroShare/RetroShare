@@ -249,13 +249,8 @@ bool RsLoginHandler::tryAutoLogin(const std::string& ssl_id,std::string& ssl_pas
 #else
 
 	/* try to load from file */
-	std::string entropy = RsInitConfig::load_cert;
+	std::string entropy = getSSLPasswdFileName(ssl_id);
 	/* get the data out */
-
-	/* open the data to the file */
-	std::string passwdfile = RsInitConfig::configDir;
-	passwdfile += RsInitConfig::dirSeperator + configKeyDir + RsInitConfig::dirSeperator;
-	passwdfile += "help.dta";
 
 	DATA_BLOB DataIn;
 	DATA_BLOB DataEnt;
@@ -269,7 +264,8 @@ bool RsLoginHandler::tryAutoLogin(const std::string& ssl_id,std::string& ssl_pas
 	char *dataptr = NULL;
 	int   datalen = 0;
 
-	FILE *fp = fopen(passwdfile.c_str(), "rb");
+	/* open the data to the file */
+	FILE *fp = fopen(getAutologinFileName(ssl_id).c_str(), "rb");
 	if (fp != NULL)
 	{
 		fseek(fp, 0, SEEK_END);
@@ -445,7 +441,7 @@ bool RsLoginHandler::enableAutoLogin(const std::string& ssl_id,const std::string
 #else  /* windows */
 
 	/* store password encrypted in a file */
-	std::string entropy = RsInitConfig::load_cert;
+	std::string entropy = getSSLPasswdFileName(ssl_id);
 
 	DATA_BLOB DataIn;
 	DATA_BLOB DataEnt;
@@ -493,15 +489,11 @@ bool RsLoginHandler::enableAutoLogin(const std::string& ssl_id,const std::string
 		  std::cerr << std::endl;
 		 **********/
 
-		/* save the data to the file */
-		std::string passwdfile = RsInitConfig::configDir;
-		passwdfile += RsInitConfig::dirSeperator  + configKeyDir + RsInitConfig::dirSeperator;
-		passwdfile += "help.dta";
-
 		//std::cerr << "Save to: " << passwdfile;
 		//std::cerr << std::endl;
 
-		FILE *fp = fopen(passwdfile.c_str(), "wb");
+		/* save the data to the file */
+		FILE *fp = fopen(getAutologinFileName(ssl_id).c_str(), "wb");
 		if (fp != NULL)
 		{
 			fwrite(DataOut.pbData, 1, DataOut.cbData, fp);

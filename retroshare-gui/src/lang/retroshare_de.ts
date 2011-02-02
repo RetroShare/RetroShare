@@ -10473,25 +10473,33 @@ Bist Du sicher?</translation>
         <location line="+30"/>
         <location line="+2"/>
         <source>Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>Warnung</translation>
     </message>
     <message>
         <location line="-2"/>
-        <source> The passwd to your SSL certificate (your location) will be stored encrypted in your Gnome Keyring. 
+        <source>The passwd to your SSL certificate (your location) will be stored encrypted in your Gnome Keyring. 
 
  Your PGP passwd will not be stored.
 
 This choice can be reverted in settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>Das Passwort deines SSL Zertifikates (deines Standortes) wird verschlüsselt in deinem Gnome Keyring gespeichert.
+
+Dein PGP wird nicht gespeichert.
+
+Du kannst die Auswahl in den Optionen zurücksetzen.</translation>
     </message>
     <message>
         <location line="+2"/>
-        <source> The passwd to your SSL certificate (your location) will be stored encrypted in the keys/help.dta file. This is not secure. 
+        <source>The passwd to your SSL certificate (your location) will be stored encrypted in the keys/help.dta file. This is not secure. 
 
  Your PGP passwd will not be stored.
 
 This choice can be reverted in settings.</source>
-        <translation type="unfinished"></translation>
+        <translation>Das Passwort deines SSL Zertifikates (deines Standortes) wird verschlüsselt in der Datei keys/help.dta gespeichert- Das ist nicht sicher.
+
+Dein PGP wird nicht gespeichert.
+
+Du kannst die Auswahl in den Optionen zurücksetzen.</translation>
     </message>
 </context>
 <context>
