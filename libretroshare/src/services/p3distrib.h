@@ -102,6 +102,8 @@ const uint32_t GROUP_KEY_DISTRIB_ADMIN		= 0x0040;
 class RsDistribDummyMsg
 {
 	public:
+	RsDistribDummyMsg( std::string tId, std::string pId, std::string mId);
+	RsDistribDummyMsg() { return; }
 	std::string threadId;
 	std::string parentId;
 	std::string msgId;
@@ -170,6 +172,7 @@ class GroupInfo
 
 		std::list<std::string> sources;
 		std::map<std::string, RsDistribMsg *> msgs;
+		std::map<std::string, RsDistribDummyMsg> dummyMsgs; // dummyMsgs.
 
 	/***********************************/
 
@@ -697,6 +700,20 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 
 /***************************************************************************************/
 /***************************************************************************************/
+
+
+/***************************************************************************************/
+/**************************** DummyMsgs Functions **************************************/
+/***************************************************************************************/
+	public:
+
+bool 	locked_CheckNewMsgDummies(GroupInfo &info, RsDistribMsg *msg, std::string id, bool historical);
+bool 	locked_addDummyMsg(GroupInfo &info, std::string threadId, std::string parentId, std::string msgId);
+bool 	locked_clearDummyMsg(GroupInfo &info, std::string msgId);
+
+bool 	locked_printAllDummyMsgs();
+bool 	locked_printDummyMsgs(GroupInfo &info);
+
 
 	/* key cache functions - we use .... (not overloaded)
  	 */
