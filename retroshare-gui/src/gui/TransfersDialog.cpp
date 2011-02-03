@@ -778,14 +778,13 @@ void TransfersDialog::insertTransfers()
 		double fileDlspeed     = (info.downloadStatus==FT_STATE_DOWNLOADING)?(info.tfRate * 1024.0):0.0;
 
 		/* get the sources (number of online peers) */
-		int online = 0;
+		int active = 0;
 		std::list<TransferInfo>::iterator pit;
-		for (pit = info.peers.begin(); pit != info.peers.end(); pit++) {
-			if (std::find(onlineIds.begin(), onlineIds.end(), pit->peerId) != onlineIds.end()) {
-				online++;
-			}
-		}
-		QString sources     = QString("%1 (%2)").arg(online).arg(info.peers.size());
+		for (pit = info.peers.begin(); pit != info.peers.end(); pit++) 
+			if(pit->tfRate > 0 && info.downloadStatus==FT_STATE_DOWNLOADING)
+				active++;
+		
+		QString sources     = QString("%1 (%2)").arg(active).arg(info.peers.size());
 
 		QString status;
 		switch (info.downloadStatus) {
@@ -1528,7 +1527,7 @@ QString TransfersDialog::getStatus(int row, QStandardItemModel *model)
 
 QString TransfersDialog::getID(int row, QStandardItemModel *model)
 {
-	return model->data(model->index(row, ID), Qt::DisplayRole).toString();
+	return model->data(model->index(row, ID), Qt::DisplayRole).toString().left(40); // gets only the "hash" part of the name
 }
 
 QString TransfersDialog::getPriority(int row, QStandardItemModel *model)
