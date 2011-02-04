@@ -71,6 +71,11 @@ ChannelFeed::ChannelFeed(QWidget *parent)
 
     mChannelId.clear();
 
+    /* Set initial size the splitter */
+    QList<int> sizes;
+    sizes << 300 << width(); // Qt calculates the right sizes
+    splitter->setSizes(sizes);
+
     /* Initialize group tree */
     treeWidget->initDisplayMenu(displayButton);
 
@@ -109,8 +114,14 @@ void ChannelFeed::processSettings(bool load)
 
     if (load) {
         // load settings
+
+        // state of splitter
+        splitter->restoreState(Settings->value("Splitter").toByteArray());
     } else {
         // save settings
+
+        // state of splitter
+        Settings->setValue("Splitter", splitter->saveState());
     }
 
     treeWidget->processSettings(Settings, load);

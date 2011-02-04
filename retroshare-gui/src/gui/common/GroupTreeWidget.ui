@@ -190,24 +190,6 @@ border-image: url(:/images/closepressed.png)
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="sizeIncrement">
-      <size>
-       <width>0</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="baseSize">
-      <size>
-       <width>300</width>
-       <height>0</height>
-      </size>
-     </property>
      <property name="font">
       <font>
        <pointsize>9</pointsize>
@@ -237,6 +219,11 @@ border-image: url(:/images/closepressed.png)
      <attribute name="headerStretchLastSection">
       <bool>false</bool>
      </attribute>
+     <column>
+      <property name="text">
+       <string notr="true">1</string>
+      </property>
+     </column>
     </widget>
    </item>
   </layout>

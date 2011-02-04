@@ -150,6 +150,11 @@ ForumsDialog::ForumsDialog(QWidget *parent)
     connect(ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
     connect(ui.filterColumnComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterColumnChanged()));
 
+    /* Set initial size the splitter */
+    QList<int> sizes;
+    sizes << 300 << width(); // Qt calculates the right sizes
+    ui.splitter->setSizes(sizes);
+
     /* Set own item delegate */
     RSItemDelegate *itemDelegate = new RSItemDelegate(this);
     itemDelegate->removeFocusRect(COLUMN_THREAD_READ);

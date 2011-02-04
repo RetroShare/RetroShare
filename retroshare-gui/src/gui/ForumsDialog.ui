@@ -518,16 +518,10 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <widget class="QFrame" name="frame">
-      <property name="maximumSize">
-       <size>
-        <width>300</width>
-        <height>16777215</height>
-       </size>
-      </property>
       <property name="baseSize">
        <size>
-        <width>220</width>
-        <height>0</height>
+        <width>300</width>
+        <height>300</height>
        </size>
       </property>
       <property name="styleSheet">
@@ -548,24 +542,6 @@
        </property>
        <item row="0" column="0">
         <widget class="QFrame" name="chheaderframe">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="baseSize">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
          <property name="styleSheet">
           <string notr="true"> QFrame#chheaderframe{
 background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
@@ -738,12 +714,6 @@ p, li { white-space: pre-wrap; }
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
-         </property>
-         <property name="baseSize">
-          <size>
-           <width>300</width>
-           <height>0</height>
-          </size>
          </property>
          <property name="font">
           <font>
