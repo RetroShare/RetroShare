@@ -93,6 +93,9 @@ public:
     //! Remove items
     void removeMessages(QList<int> &hiids);
 
+    //! Remove history
+    void clearHistory(void);
+
 private:
     bool loadHistoryFile();
 

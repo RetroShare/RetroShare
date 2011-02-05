@@ -37,6 +37,9 @@ public:
     bool write(QList<IMHistoryItem>& itemList,
                const QString fileName  );
 
+    //! remove history file
+    bool remove(const QString& fileName);
+
     QString errorMessage();
 
 private:

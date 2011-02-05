@@ -20,6 +20,7 @@
  ****************************************************************/
 
 #include "IMHistoryKeeper.h"
+#include <iostream>
 
 #include <QFile>
 #include <QIODevice>
@@ -247,6 +248,14 @@ void IMHistoryKeeper::removeMessages(QList<int> &hiids)
     if (changed) {
         historyChanged = true;
     }
+}
+
+void IMHistoryKeeper::clearHistory(){
+
+    IMHistoryWriter wri;
+    if(!wri.remove(hfName))
+        std::cerr << "\nFailed to remove history file" << std::endl;
+
 }
 
 //=============================================================================
