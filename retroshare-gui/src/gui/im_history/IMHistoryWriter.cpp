@@ -77,3 +77,9 @@ bool IMHistoryWriter::write(QList<IMHistoryItem>& itemList, const QString fileNa
 
     return true;
 }
+
+bool IMHistoryWriter::remove(const QString &fileName){
+
+    return QFile::remove(fileName);
+
+}
