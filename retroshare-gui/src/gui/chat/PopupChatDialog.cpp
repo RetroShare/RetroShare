@@ -828,6 +828,7 @@ void PopupChatDialog::addSmiley()
 void PopupChatDialog::on_actionClear_Chat_triggered()
 {
     ui.textBrowser->clear();
+    historyKeeper.clearHistory();
 }
 
 void PopupChatDialog::updatePeerAvatar(const std::string& peer_id)
