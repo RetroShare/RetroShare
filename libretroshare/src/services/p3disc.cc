@@ -269,7 +269,7 @@ void p3disc::sendAllInfoToJustConnectedPeer(const std::string &id)
 	RsPeerDetails pd;
 	rsPeers->getPeerDetails(id, pd);
 
-	if (!pd.accept_connection || (!pd.ownsign && pd.gpg_id != rsPeers->getGPGOwnId())) 
+	if (pd.gpg_id != rsPeers->getGPGOwnId() && (!pd.accept_connection || !pd.ownsign) )
 	{ 
 		//only send info when connection is accepted and gpg key is signed or our own key
 #ifdef P3DISC_DEBUG
@@ -358,7 +358,8 @@ RsDiscReply *p3disc::createDiscReply(const std::string &to, const std::string &a
 
 	RsPeerDetails pd;
 	rsPeers->getPeerDetails(to, pd);
-	if (!pd.accept_connection || !pd.ownsign) {
+	if (pd.gpg_id != rsPeers->getGPGOwnId() && (!pd.accept_connection || !pd.ownsign) )
+	{
 #ifdef P3DISC_DEBUG
 		std::cerr << "p3disc::createDiscReply() we're not sending the info because the destination gpg key is not signed or not accepted." << std::cerr << std::endl;
 #endif
