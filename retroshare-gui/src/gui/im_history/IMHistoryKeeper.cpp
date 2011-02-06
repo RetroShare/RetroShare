@@ -256,6 +256,8 @@ void IMHistoryKeeper::clearHistory(){
     if(!wri.remove(hfName))
         std::cerr << "\nFailed to remove history file" << std::endl;
 
+    clear();
+
 }
 
 //=============================================================================

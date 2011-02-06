@@ -150,8 +150,8 @@ void ChannelFeed::channelListCustomPopupMenu( QPoint point )
     QAction *channeldetailsAct = new QAction(QIcon(":/images/info16.png"), tr( "Show Channel Details" ), &contextMnu);
     connect( channeldetailsAct , SIGNAL( triggered() ), this, SLOT( showChannelDetails() ) );
 
-    //QAction *restoreKeysAct = new QAction(QIcon(":/images/settings16.png"), tr("Restore Publish Rights for Channel" ), &contextMnu);
-    //connect( restoreKeysAct , SIGNAL( triggered() ), this, SLOT( restoreChannelKeys() ) );
+    QAction *restoreKeysAct = new QAction(QIcon(":/images/settings16.png"), tr("Restore Publish Rights for Channel" ), &contextMnu);
+    connect( restoreKeysAct , SIGNAL( triggered() ), this, SLOT( restoreChannelKeys() ) );
 
     QAction *editChannelDetailAct = new QAction(QIcon(":/images/edit_16.png"), tr("Edit Channel Details"), &contextMnu);
     connect( editChannelDetailAct, SIGNAL( triggered() ), this, SLOT( editChannelDetail() ) );
@@ -171,16 +171,17 @@ void ChannelFeed::channelListCustomPopupMenu( QPoint point )
         contextMnu.addSeparator();
         contextMnu.addAction( channeldetailsAct );
         contextMnu.addAction( shareKeyAct );
+        contextMnu.addAction( restoreKeysAct );
     } else if (ci.channelFlags & RS_DISTRIB_SUBSCRIBED) {
         contextMnu.addAction( unsubscribechannelAct );
         contextMnu.addSeparator();
         contextMnu.addAction( channeldetailsAct );
-  //  	contextMnu.addAction( restoreKeysAct );
+        contextMnu.addAction( restoreKeysAct );
     } else {
         contextMnu.addAction( subscribechannelAct );
         contextMnu.addSeparator();
         contextMnu.addAction( channeldetailsAct );
-   //     contextMnu.addAction( restoreKeysAct );
+        contextMnu.addAction( restoreKeysAct );
     }
 
     contextMnu.exec(QCursor::pos());

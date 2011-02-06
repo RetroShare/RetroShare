@@ -107,6 +107,7 @@ private slots:
     void updatePeersCustomStateString(const QString& peer_id, const QString& status_string) ;
 
     void on_actionClear_Chat_triggered();
+    void on_actionClear_Chat_History_triggered();
 
     bool fileSave();
     bool fileSaveAs();

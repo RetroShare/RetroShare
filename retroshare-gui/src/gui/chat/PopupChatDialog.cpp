@@ -150,6 +150,7 @@ PopupChatDialog::PopupChatDialog(const std::string &id, const QString &name, QWi
 
   QMenu * toolmenu = new QMenu();
   toolmenu->addAction(ui.actionClear_Chat);
+  toolmenu->addAction(ui.actionClear_Chat_History);
   toolmenu->addAction(ui.actionSave_Chat_History);
   toolmenu->addAction(ui.actionClearOfflineMessages);
   toolmenu->addAction(ui.actionMessageHistory);
@@ -826,6 +827,11 @@ void PopupChatDialog::addSmiley()
 //============================================================================
 
 void PopupChatDialog::on_actionClear_Chat_triggered()
+{
+    ui.textBrowser->clear();
+}
+
+void PopupChatDialog::on_actionClear_Chat_History_triggered()
 {
     ui.textBrowser->clear();
     historyKeeper.clearHistory();
