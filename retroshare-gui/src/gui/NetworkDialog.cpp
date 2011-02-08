@@ -858,6 +858,10 @@ void NetworkDialog::FilterItems()
     for (int nIndex = 0; nIndex < nCount; nIndex++) {
         FilterItem(ui.connecttreeWidget->topLevelItem(nIndex), sPattern, nFilterColumn);
     }
+    nCount = ui.unvalidGPGkeyWidget->topLevelItemCount ();
+    for (int nIndex = 0; nIndex < nCount; nIndex++) {
+        FilterItem(ui.unvalidGPGkeyWidget->topLevelItem(nIndex), sPattern, nFilterColumn);
+    }
 }
 
 bool NetworkDialog::FilterItem(QTreeWidgetItem *pItem, QString &sPattern, int nFilterColumn)
