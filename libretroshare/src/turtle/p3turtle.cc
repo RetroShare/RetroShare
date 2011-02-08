@@ -94,35 +94,49 @@ int p3turtle::tick()
 
 	time_t now = time(NULL) ;
 
+	bool should_manage_tunnels,should_autowash,should_estimatespeed ;
+	{
+		RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
+
+		should_manage_tunnels 	= now > TUNNEL_MANAGEMENT_LAPS_TIME+_last_tunnel_management_time || _force_digg_new_tunnels ;
+		should_autowash 			= now > 10+_last_clean_time ;
+		should_estimatespeed 	= now >= TUNNEL_SPEED_ESTIMATE_LAPSE + _last_tunnel_speed_estimate_time ;
+	}
+
 	// Tunnel management:
 	// 	- we digg new tunnels at least every 5 min (300 sec).
 	// 	- we digg new tunnels each time a new peer connects
 	// 	- we digg new tunnels each time a new hash is asked for
 	//
-	if(now > TUNNEL_MANAGEMENT_LAPS_TIME+_last_tunnel_management_time || _force_digg_new_tunnels)
+	if(should_manage_tunnels)
 	{
 #ifdef P3TURTLE_DEBUG
 		std::cerr << "Calling tunnel management." << std::endl ;
 #endif
 		manageTunnels() ;
 
+		RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 		_last_tunnel_management_time = now ;
 	}
 
 	// Clean every 10 sec.
 	//
-	if(now > 10+_last_clean_time)
+	if(should_autowash)
 	{
 #ifdef P3TURTLE_DEBUG
 		std::cerr << "Calling autowash." << std::endl ;
 #endif
 		autoWash() ;					// clean old/unused tunnels and file hashes, as well as search and tunnel requests.
+
+		RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 		_last_clean_time = now ;
 	}
 
-	if(now >= TUNNEL_SPEED_ESTIMATE_LAPSE + _last_tunnel_speed_estimate_time)
+	if(should_estimatespeed)
 	{
 		estimateTunnelSpeeds() ;
+
+		RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 		_last_tunnel_speed_estimate_time = now ;
 	}
 
