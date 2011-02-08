@@ -273,6 +273,8 @@ void ForumsDialog::forumListCustomPopupMenu( QPoint point )
     action = contextMnu.addAction(QIcon(IMAGE_UNSUBSCRIBE), tr("Unsubscribe to Forum"), this, SLOT(unsubscribeToForum()));
     action->setEnabled (!mCurrForumId.empty() && m_bIsForumSubscribed);
 
+
+
     contextMnu.addSeparator();
 
     contextMnu.addAction(QIcon(IMAGE_NEWFORUM), tr("New Forum"), this, SLOT(newforum()));
@@ -282,6 +284,13 @@ void ForumsDialog::forumListCustomPopupMenu( QPoint point )
 
     action = contextMnu.addAction(QIcon(":/images/settings16.png"), tr("Edit Forum Details"), this, SLOT(editForumDetails()));
     action->setEnabled (!mCurrForumId.empty () && m_bIsForumAdmin);
+
+
+    QAction *restoreKeysAct = new QAction(QIcon(":/images/settings16.png"), tr("Restore Publish Rights for Forum" ), &contextMnu);
+    connect( restoreKeysAct , SIGNAL( triggered() ), this, SLOT( restoreForumKeys() ) );
+
+    restoreKeysAct->setEnabled(!mCurrForumId.empty() && !m_bIsForumAdmin);
+    contextMnu.addAction( restoreKeysAct);
 
     contextMnu.addSeparator();
 
@@ -325,6 +334,8 @@ void ForumsDialog::threadListCustomPopupMenu( QPoint point )
 
     QAction *markMsgAsUnreadChildren = new QAction(QIcon(":/images/message-mail.png"), tr("Mark as unread") + " (" + tr ("with children") + ")", &contextMnu);
     connect(markMsgAsUnreadChildren , SIGNAL(triggered()), this, SLOT(markMsgAsUnreadChildren()));
+
+
 
     if (m_bIsForumSubscribed) {
         QList<QTreeWidgetItem*> Rows;
@@ -383,6 +394,11 @@ void ForumsDialog::threadListCustomPopupMenu( QPoint point )
     contextMnu.addAction( collapseAll);
 
     contextMnu.exec(QCursor::pos());
+}
+
+void ForumsDialog::restoreForumKeys(void)
+{
+	rsForums->forumRestoreKeys(mCurrForumId);
 }
 
 void ForumsDialog::togglethreadview()

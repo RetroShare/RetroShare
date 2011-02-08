@@ -2041,7 +2041,7 @@ bool p3GroupDistrib::backUpKeys(const std::list<RsDistribGrpKey* >& keysToBackUp
 
 	}
 
-        delete store;
+    delete store;
 
 	if(!RsDirUtil::renameFile(filenametmp,filename))
 	{
@@ -2058,7 +2058,7 @@ bool p3GroupDistrib::backUpKeys(const std::list<RsDistribGrpKey* >& keysToBackUp
 	return ok;
 }
 
-bool p3GroupDistrib::restoreGrpKeys(std::string grpId){
+bool p3GroupDistrib::restoreGrpKeys(const std::string& grpId){
 
 
 #ifdef DISTRIB_DEBUG
@@ -2077,6 +2077,7 @@ bool p3GroupDistrib::restoreGrpKeys(std::string grpId){
 	RsItem* item;
 	bool ok = true;
 	bool itemAttempted = false;
+	RsDistribGrpKey* key = NULL;
 
 	RsStackMutex stack(distribMtx);
 
@@ -2086,7 +2087,7 @@ bool p3GroupDistrib::restoreGrpKeys(std::string grpId){
 	while(NULL != (item = store->GetItem())){
 
 		itemAttempted = true;
-		RsDistribGrpKey* key = dynamic_cast<RsDistribGrpKey* >(item);
+		key = dynamic_cast<RsDistribGrpKey* >(item);
 
 		if(key == NULL){
 #ifdef DISTRIB_DEBUG
@@ -2097,20 +2098,14 @@ bool p3GroupDistrib::restoreGrpKeys(std::string grpId){
 			return false;
 		}
 
-		if(key->key.keyFlags & RSTLV_KEY_DISTRIB_ADMIN){
-
+		if(key->key.keyFlags & RSTLV_KEY_DISTRIB_ADMIN)
 			ok &= locked_updateGroupAdminKey(*gi, key);
-
-		}else
-			if((key->key.keyFlags & RSTLV_KEY_DISTRIB_PRIVATE)){
-
+		else if((key->key.keyFlags & RSTLV_KEY_DISTRIB_PRIVATE) ||
+				(key->key.keyFlags & RSTLV_KEY_DISTRIB_PUBLIC))
 			ok &= locked_updateGroupPublishKey(*gi, key);
-
-		}else{
-
+		else
 			ok &= false;
 
-		}
 	}
 
 

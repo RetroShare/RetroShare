@@ -43,7 +43,7 @@ private slots:
     /** Create the context popup menu and it's submenus */
     void forumListCustomPopupMenu( QPoint point );
     void threadListCustomPopupMenu( QPoint point );
-
+    void restoreForumKeys();
     void newforum();
 
     void changedForum(const QString &id);

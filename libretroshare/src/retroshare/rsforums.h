@@ -145,7 +145,7 @@ virtual bool getForumMessage(const std::string &fId, const std::string &mId, For
 virtual bool setMessageStatus(const std::string& fId,const std::string& mId, const uint32_t status, const uint32_t statusMask) = 0;
 virtual bool getMessageStatus(const std::string& fId, const std::string& mId, uint32_t& status) = 0;
 virtual	bool ForumMessageSend(ForumMsgInfo &info) = 0;
-
+virtual bool forumRestoreKeys(const std::string& fId) = 0;
 virtual bool forumSubscribe(const std::string &fId, bool subscribe)	= 0;
 
 virtual	bool getMessageCount(const std::string &fId, unsigned int &newCount, unsigned int &unreadCount) = 0;

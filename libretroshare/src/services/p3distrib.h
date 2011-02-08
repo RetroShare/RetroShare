@@ -552,7 +552,7 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		 * @param grpId the grpId id for which backup keys should be restored
 		 * @return false if failed and vice versa
 		 */
-		virtual bool restoreGrpKeys(std::string grpId); /// restores a group keys from backup
+		virtual bool restoreGrpKeys(const std::string& grpId); /// restores a group keys from backup
 
 		/**
 		 * Allows user to send keys to a list of peers

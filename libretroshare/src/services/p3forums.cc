@@ -431,6 +431,11 @@ bool p3Forums::getMessageStatus(const std::string& fId, const std::string& mId, 
 	return false;
 }
 
+bool p3Forums::forumRestoreKeys(const std::string& fIds)
+{
+	return p3GroupDistrib::restoreGrpKeys(fIds);
+}
+
 
 std::string p3Forums::createForum(const std::wstring &forumName, const std::wstring &forumDesc, uint32_t forumFlags)
 {
