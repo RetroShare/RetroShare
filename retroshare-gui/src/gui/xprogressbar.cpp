@@ -33,6 +33,11 @@ bool FileProgressInfo::operator<(const FileProgressInfo &other) const
 	return progress < other.progress;
 }
 
+bool FileProgressInfo::operator>(const FileProgressInfo &other) const
+{
+	return progress > other.progress;
+}
+
 xProgressBar::xProgressBar(const FileProgressInfo& pinfo,QRect rect, QPainter *painter, int schemaIndex)
 	: _pinfo(pinfo)
 {

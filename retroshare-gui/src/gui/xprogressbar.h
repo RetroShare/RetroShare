@@ -49,6 +49,7 @@ class FileProgressInfo
 		std::vector<uint32_t> chunks_in_progress ;
 
 		bool operator<(const FileProgressInfo &other) const;
+		bool operator>(const FileProgressInfo &other) const;
 };
 //
 class xProgressBar : public QObject

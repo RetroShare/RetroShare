@@ -151,7 +151,7 @@ private:
     bool m_bProcessSettings;
     void processSettings(bool bLoad);
 
-    void getIdOfSelectedItems(std::set<QStandardItem *>& items);
+    void getSelectedItems(std::set<std::string> *ids, std::set<int> *rows);
     bool controlTransferFile(uint32_t flags);
     void changePriority(int priority);
     void setChunkStrategy(FileChunksInfo::ChunkStrategy s) ;
@@ -169,10 +169,10 @@ public slots:
 	//
     int addItem(const QString& symbol, const QString& name, const QString& coreID, qlonglong size, const FileProgressInfo& pinfo, double dlspeed, const QString& sources, const QString& status, const QString& priority, qlonglong completed, qlonglong remaining, qlonglong downloadtime);
     int addPeerToItem(int row, const QString& name, const QString& coreID, double dlspeed, uint32_t status, const FileProgressInfo& peerInfo);
-    void delItem(int row);
+//    void delItem(int row);
 
     int addUploadItem(const QString& symbol, const QString& name, const QString& coreID, qlonglong size, const FileProgressInfo& pinfo, double dlspeed, const QString& sources,const QString& source_id, const QString& status, qlonglong completed, qlonglong remaining);
-    void delUploadItem(int row);
+//    void delUploadItem(int row);
 
     void showFileDetails() ;
 
@@ -185,6 +185,8 @@ public slots:
     qlonglong getFileSize(int row, QStandardItemModel *model);
     qlonglong getTransfered(int row, QStandardItemModel *model);
     qlonglong getRemainingTime(int row, QStandardItemModel *model);
+    qlonglong getDownloadTime(int row, QStandardItemModel *model);
+    QString getSources(int row, QStandardItemModel *model);
 };
 
 #endif
