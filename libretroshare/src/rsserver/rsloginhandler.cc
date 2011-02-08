@@ -531,7 +531,71 @@ bool RsLoginHandler::clearAutoLogin(const std::string& ssl_id)
 		std::cerr << "Could not clear gnome keyring passwd for SSLID " << ssl_id << std::endl;
 		return false ;
 	}
-#else
+#else 
+  #ifdef __APPLE__
+
+	std::cerr << "clearAutoLogin() OSX Version" << std::endl;
+	//Call SecKeychainFindGenericPassword to get a password from the keychain:
+
+	void *passwordData = NULL;
+	UInt32 passwordLength = 0;
+	const char *userId = ssl_id.c_str();
+	UInt32 uidLength = strlen(ssl_id.c_str());
+	SecKeychainItemRef itemRef = NULL;
+
+	OSStatus status = SecKeychainFindGenericPassword (
+			NULL,           // default keychain
+			10,             // length of service name
+			"Retroshare",   // service name
+			uidLength,             // length of account name
+			userId,   // account name
+			&passwordLength,  // length of password
+			&passwordData,   // pointer to password data
+			&itemRef         // the item reference
+			);
+
+	std::cerr << "RsTryAutoLogin() SecKeychainFindGenericPassword returned: " << status << std::endl;
+
+	if (status != 0)
+	{
+		std::cerr << "clearAutoLogin() Error Finding password " << std::endl;
+
+		/* error */
+		if (status == errSecItemNotFound) 
+		{ 
+			//Is password on keychain?
+			std::cerr << "RsTryAutoLogin() Error - Looks like password is not in KeyChain " << std::endl;
+		}
+	}
+	else
+	{
+		std::cerr << "clearAutoLogin() Password found on KeyChain! " << std::endl;
+
+		OSStatus deleteStatus = SecKeychainItemDelete (itemRef);
+		if (status != 0)
+		{
+			std::cerr << "clearAutoLogin() Failed to Delete Password status: " << deleteStatus << std::endl;
+		}
+		else
+		{
+			std::cerr << "clearAutoLogin() Deleted Password" << std::endl;
+		}
+	}
+
+	//Free the data allocated by SecKeychainFindGenericPassword:
+
+	SecKeychainItemFreeContent (
+			NULL,           //No attribute data to release
+			passwordData    //Release data buffer allocated by SecKeychainFindGenericPassword
+			);
+
+	if (itemRef) CFRelease(itemRef);
+
+	return (status == 0);
+
+	/******************** OSX KeyChain stuff *****************************/
+
+  #else // WINDOWS / Generic Linux.
 	
 	std::string passwdfile = getAutologinFileName(ssl_id) ;
 
@@ -552,6 +616,7 @@ bool RsLoginHandler::clearAutoLogin(const std::string& ssl_id)
 	}
 
 	return false;
+  #endif
 #endif
 }
 
