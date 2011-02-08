@@ -1385,7 +1385,7 @@ p, li { white-space: pre-wrap; }
     </widget>
    </item>
   </layout>
-  <action name="actionClearChat">
+  <action name="actionClear_Chat_History">
    <property name="icon">
     <iconset resource="images.qrc">
      <normaloff>:/images/edit-clear-history.png</normaloff>:/images/edit-clear-history.png</iconset>
@@ -1551,6 +1551,18 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="toolTip">
     <string>Sort Ascending Order</string>
+   </property>
+  </action>
+  <action name="actionDelete_Chat_History">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/edit-clear-history.png</normaloff>:/images/edit-clear-history.png</iconset>
+   </property>
+   <property name="text">
+    <string>Delete Chat History</string>
+   </property>
+   <property name="toolTip">
+    <string>Deletes all stored and displayed chat history</string>
    </property>
   </action>
  </widget>

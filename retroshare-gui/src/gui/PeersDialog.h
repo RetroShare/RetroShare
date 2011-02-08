@@ -82,9 +82,6 @@ public slots:
     void smileyWidgetgroupchat();
     void addSmileys();
 
-    void on_actionClearChat_triggered();
-    void on_actionMessageHistory_triggered();
-
     // called by notifyQt when another peer is typing (in group chant and private chat)
     void updatePeerStatusString(const QString& peer_id,const QString& status_string,bool is_private_chat) ;
 
@@ -102,6 +99,10 @@ protected:
 private slots:
     void pasteLink() ;
     void contextMenu(QPoint) ;
+
+    void on_actionClear_Chat_History_triggered();
+    void on_actionDelete_Chat_History_triggered();
+    void on_actionMessageHistory_triggered();
 
     /** Create the context popup menu and it's submenus */
     void peertreeWidgetCostumPopupMenu( QPoint point );

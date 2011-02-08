@@ -848,13 +848,13 @@ background: white;}</string>
     <string>Strike</string>
    </property>
   </action>
-  <action name="actionClear_Chat">
+  <action name="actionClear_Chat_History">
    <property name="icon">
     <iconset resource="../images.qrc">
      <normaloff>:/images/edit-clear-history.png</normaloff>:/images/edit-clear-history.png</iconset>
    </property>
    <property name="text">
-    <string>Clear Chat</string>
+    <string>Clear Chat History</string>
    </property>
   </action>
   <action name="action_Disable_Emoticons">
@@ -886,16 +886,16 @@ background: white;}</string>
     <string>Browse History</string>
    </property>
   </action>
-  <action name="actionClear_Chat_History">
+  <action name="actionDelete_Chat_History">
    <property name="icon">
     <iconset resource="../images.qrc">
      <normaloff>:/images/edit-clear-history.png</normaloff>:/images/edit-clear-history.png</iconset>
    </property>
    <property name="text">
-    <string>Clear Chat History</string>
+    <string>Delete Chat History</string>
    </property>
    <property name="toolTip">
-    <string>deletes all stored and displayed chat history </string>
+    <string>Deletes all stored and displayed chat history</string>
    </property>
   </action>
  </widget>

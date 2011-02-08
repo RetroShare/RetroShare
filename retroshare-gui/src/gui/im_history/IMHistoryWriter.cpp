@@ -41,6 +41,10 @@ bool IMHistoryWriter::write(QList<IMHistoryItem>& itemList, const QString fileNa
 
     errMess = "No error";
 
+    if (itemList.size() == 0) {
+        return remove(fileName);
+    }
+
     //==== check for file and open it
     QFile fl(fileName);
     if (fl.open(QIODevice::WriteOnly | QIODevice::Truncate) == false) {
@@ -78,8 +82,12 @@ bool IMHistoryWriter::write(QList<IMHistoryItem>& itemList, const QString fileNa
     return true;
 }
 
-bool IMHistoryWriter::remove(const QString &fileName){
+bool IMHistoryWriter::remove(const QString &fileName)
+{
+    if (!QFile::remove(fileName)) {
+        qDebug() << "  IMHistoryWriter::remove Failed to remove history file";
+        return false;
+    }
 
-    return QFile::remove(fileName);
-
+    return true;
 }

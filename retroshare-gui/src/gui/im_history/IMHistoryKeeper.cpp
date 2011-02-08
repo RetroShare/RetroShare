@@ -250,16 +250,6 @@ void IMHistoryKeeper::removeMessages(QList<int> &hiids)
     }
 }
 
-void IMHistoryKeeper::clearHistory(){
-
-    IMHistoryWriter wri;
-    if(!wri.remove(hfName))
-        std::cerr << "\nFailed to remove history file" << std::endl;
-
-    clear();
-
-}
-
 //=============================================================================
 
 void IMHistoryKeeper::saveHistory()

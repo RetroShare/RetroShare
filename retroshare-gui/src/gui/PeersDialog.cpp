@@ -207,7 +207,8 @@ PeersDialog::PeersDialog(QWidget *parent)
     }
 
     QMenu * grpchatmenu = new QMenu();
-    grpchatmenu->addAction(ui.actionClearChat);
+    grpchatmenu->addAction(ui.actionClear_Chat_History);
+    grpchatmenu->addAction(ui.actionDelete_Chat_History);
     grpchatmenu->addAction(ui.actionSave_History);
     grpchatmenu->addAction(ui.actionMessageHistory);
     ui.menuButton->setMenu(grpchatmenu);
@@ -1718,9 +1719,15 @@ void PeersDialog::setChatInfo(QString info, QColor color)
   ui.msgText->append(QString::fromUtf8("<font color='grey'>")+ QTime::currentTime().toString(QString::fromUtf8("hh:mm:ss")) + QString::fromUtf8("</font> - <font color='") + color.name() +QString::fromUtf8("'><i>") + info + QString::fromUtf8("</i></font>"));
 }
 
-void PeersDialog::on_actionClearChat_triggered()
+void PeersDialog::on_actionClear_Chat_History_triggered()
 {
     ui.msgText->clear();
+}
+
+void PeersDialog::on_actionDelete_Chat_History_triggered()
+{
+    on_actionClear_Chat_History_triggered();
+    historyKeeper.clear();
 }
 
 void PeersDialog::smileyWidgetgroupchat()
