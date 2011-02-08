@@ -170,6 +170,9 @@ bool p3Forums::getForumThreadList(const std::string &fId, std::list<ThreadInfoSu
 
 	getParentMsgList(fId, "", msgIds);
 
+        std::list<std::string> msgDummyIds;
+	getDummyParentMsgList(fId, "", msgDummyIds);
+
 	RsStackMutex stack(distribMtx); /***** STACK LOCKED MUTEX *****/
 	for(it = msgIds.begin(); it != msgIds.end(); it++)
 	{
@@ -196,6 +199,29 @@ bool p3Forums::getForumThreadList(const std::string &fId, std::list<ThreadInfoSu
 
 		msgs.push_back(tis);
 	}
+
+	// now add dummy msgs.
+	for(it = msgDummyIds.begin(); it != msgDummyIds.end(); it++)
+	{
+		/* get details */
+		RsDistribDummyMsg *msg = locked_getGroupDummyMsg(fId, *it);
+		ThreadInfoSummary tis;
+
+		tis.forumId = fId;
+		tis.msgId = msg->msgId;
+		tis.parentId = ""; // always NULL (see request)
+		tis.threadId = msg->msgId; // these are the thread heads!
+
+		tis.ts = msg->timestamp;
+		tis.childTS = msg->childTS;
+
+		/* dummy msg */
+		tis.title = L"Missing Message";
+		tis.msg  = L"Placeholder for missing Message";
+
+		msgs.push_back(tis);
+	}
+
 	return true;
 }
 
@@ -205,6 +231,9 @@ bool p3Forums::getForumThreadMsgList(const std::string &fId, const std::string &
 	std::list<std::string>::iterator it;
 
 	getParentMsgList(fId, pId, msgIds);
+
+        std::list<std::string> msgDummyIds;
+	getDummyParentMsgList(fId, pId, msgDummyIds);
 
 	RsStackMutex stack(distribMtx); /***** STACK LOCKED MUTEX *****/
 	for(it = msgIds.begin(); it != msgIds.end(); it++)
@@ -236,6 +265,29 @@ bool p3Forums::getForumThreadMsgList(const std::string &fId, const std::string &
 
 		msgs.push_back(tis);
 	}
+
+	// now add dummy msgs.
+	for(it = msgDummyIds.begin(); it != msgDummyIds.end(); it++)
+	{
+		/* get details */
+		RsDistribDummyMsg *msg = locked_getGroupDummyMsg(fId, *it);
+		ThreadInfoSummary tis;
+
+		tis.forumId = fId;
+		tis.msgId = msg->msgId;
+		tis.parentId = msg->parentId;
+		tis.threadId = msg->threadId;
+
+		tis.ts = msg->timestamp;
+		tis.childTS = msg->childTS;
+
+		/* dummy msg */
+		tis.title = L"Missing Message";
+		tis.msg  = L"Placeholder for missing Message";
+		/* the rest must be gotten from the derived Msg */
+
+		msgs.push_back(tis);
+	}
 	return true;
 }
 
@@ -246,8 +298,28 @@ bool p3Forums::getForumMessage(const std::string &fId, const std::string &mId, F
 	RsDistribMsg *msg = locked_getGroupMsg(fId, mId);
 	RsForumMsg *fmsg = dynamic_cast<RsForumMsg *>(msg);
 	if (!fmsg)
-		return false;
+	{
+		/* try for a dummy msg */
+		RsDistribDummyMsg *dmsg = locked_getGroupDummyMsg(fId, mId);
+		if (!dmsg)
+			return false;
 
+		/* fill in the dummy msg */
+		info.forumId = fId;
+		info.msgId = dmsg->msgId;
+		info.parentId = dmsg->parentId;
+		info.threadId = dmsg->threadId;
+
+		info.ts = dmsg->timestamp;
+		info.childTS = dmsg->childTS;
+
+		info.title = L"Missing Message";
+		info.msg  = L"Placeholder for missing Message";
+
+		info.srcId = "";
+
+		return true;
+	}
 
 	info.forumId = msg->grpId;
 	info.msgId = msg->msgId;

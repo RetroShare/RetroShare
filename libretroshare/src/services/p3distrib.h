@@ -102,11 +102,14 @@ const uint32_t GROUP_KEY_DISTRIB_ADMIN		= 0x0040;
 class RsDistribDummyMsg
 {
 	public:
-	RsDistribDummyMsg( std::string tId, std::string pId, std::string mId);
+	RsDistribDummyMsg( std::string tId, std::string pId, std::string mId, uint32_t ts);
 	RsDistribDummyMsg() { return; }
 	std::string threadId;
 	std::string parentId;
 	std::string msgId;
+
+	uint32_t    timestamp;
+        time_t childTS; /* timestamp of most recent child */
 };
 
 
@@ -708,11 +711,16 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 	public:
 
 bool 	locked_CheckNewMsgDummies(GroupInfo &info, RsDistribMsg *msg, std::string id, bool historical);
-bool 	locked_addDummyMsg(GroupInfo &info, std::string threadId, std::string parentId, std::string msgId);
+bool 	locked_addDummyMsg(GroupInfo &info, std::string threadId, std::string parentId, std::string msgId, uint32_t ts);
 bool 	locked_clearDummyMsg(GroupInfo &info, std::string msgId);
+bool    locked_updateDummyChildTS(GroupInfo &gi, std::string parentId, time_t updateTS); // NOTE MUST BE MERGED WITH nromal version.
 
 bool 	locked_printAllDummyMsgs();
 bool 	locked_printDummyMsgs(GroupInfo &info);
+
+	/* access the dummy msgs */
+bool    getDummyParentMsgList(std::string grpId, std::string pId, std::list<std::string> &msgIds);
+RsDistribDummyMsg *locked_getGroupDummyMsg(std::string grpId, std::string msgId);
 
 
 	/* key cache functions - we use .... (not overloaded)

@@ -48,10 +48,12 @@
 /*****
  * #define DISTRIB_DEBUG 1
  * #define DISTRIB_THREAD_DEBUG 1
+ * #define DISTRIB_DUMMYMSG_DEBUG 1
  ****/
 
 //#define DISTRIB_DEBUG 1
-#define DISTRIB_THREAD_DEBUG 1
+//#define DISTRIB_THREAD_DEBUG 1
+#define DISTRIB_DUMMYMSG_DEBUG 1
 
 RSA *extractPublicKey(RsTlvSecurityKey &key);
 RSA *extractPrivateKey(RsTlvSecurityKey &key);
@@ -289,6 +291,7 @@ void p3GroupDistrib::run() /* called once the thread is started */
 			Sleep(1000);
 #endif
 
+#ifdef DISTRIB_DUMMYMSG_DEBUG
 			/* HACK for debugging */
 			if (printed < 10)
 			{
@@ -297,6 +300,8 @@ void p3GroupDistrib::run() /* called once the thread is started */
 
 				printed++;
 			}
+#endif
+			
 		}
 	}
 }
@@ -812,6 +817,9 @@ void	p3GroupDistrib::loadMsg(RsDistribSignedMsg *newMsg, const std::string &src,
 	if((git->second.lastPost < (time_t)msg->timestamp))
 		git->second.lastPost = msg->timestamp;
 
+	// Interface to handle Dummy Msgs.
+	locked_CheckNewMsgDummies(git->second, msg, src, historical);
+	
 	/* now update parents TS */
 	locked_updateChildTS(git->second, msg);
 
@@ -819,9 +827,7 @@ void	p3GroupDistrib::loadMsg(RsDistribSignedMsg *newMsg, const std::string &src,
 	std::cerr << "p3GroupDistrib::loadMsg() Msg Loaded Successfully" << std::endl;
 	std::cerr << std::endl;
 #endif
-	
-	// Interface to handle Dummy Msgs.
-	locked_CheckNewMsgDummies(git->second, msg, src, historical);
+
 
 	/* Callback for any derived classes to play with */
 	locked_eventNewMsg(&(git->second), msg, src, historical);
@@ -3415,8 +3421,9 @@ bool	p3GroupDistrib::locked_updateChildTS(GroupInfo &gi, RsDistribMsg *msg)
         	std::map<std::string, RsDistribMsg *>::iterator mit;
         	if (gi.msgs.end() == (mit = gi.msgs.find(parentId)))
 		{
-			/* not found - abandon */
-			return true;
+			/* not found - abandon (check for dummyMsgs first) */
+			return locked_updateDummyChildTS(gi, parentId, updateTS);
+			
 		}
 		RsDistribMsg *parent = mit->second;
 		if ((!parent) || (parent->childTS > updateTS))
@@ -3757,13 +3764,11 @@ bool p3GroupDistrib::groupsChanged(std::list<std::string> &groupIds)
  *
  *    - check for matching dummy msgId.
  *	- if yes, delete.
- *	 	- if msg->parentId != dummy->parentId, then there is still a missing parent.
  *
  */
-#define DISTRIB_DUMMYMSG_DEBUG	1
 
-RsDistribDummyMsg::RsDistribDummyMsg( std::string tId, std::string pId, std::string mId)
-:threadId(tId), parentId(pId), msgId(mId)
+RsDistribDummyMsg::RsDistribDummyMsg( std::string tId, std::string pId, std::string mId, uint32_t ts)
+:threadId(tId), parentId(pId), msgId(mId), timestamp(ts), childTS(ts)
 {
 	return;
 }
@@ -3773,6 +3778,8 @@ std::ostream &operator<<(std::ostream &out, const RsDistribDummyMsg &msg)
 	out << "DummyMsg(" << msg.threadId << "," << msg.parentId << "," << msg.msgId << ")";
 	return out;
 }
+
+
 
 bool p3GroupDistrib::locked_CheckNewMsgDummies(GroupInfo &grp, RsDistribMsg *msg, std::string id, bool historical)
 {
@@ -3804,7 +3811,7 @@ bool p3GroupDistrib::locked_CheckNewMsgDummies(GroupInfo &grp, RsDistribMsg *msg
 			std::cerr << "p3GroupDistrib::locked_CheckNewMsgDummies() No ThreadId Msg, Adding DummyMsg";
 			std::cerr << std::endl;
 #endif
-			locked_addDummyMsg(grp, threadId, "", threadId);
+			locked_addDummyMsg(grp, threadId, "", threadId, msg->timestamp);
 		}
 		else
 		{
@@ -3826,7 +3833,7 @@ bool p3GroupDistrib::locked_CheckNewMsgDummies(GroupInfo &grp, RsDistribMsg *msg
 			std::cerr << "p3GroupDistrib::locked_CheckNewMsgDummies() No ParentId Msg, Adding DummyMsg";
 			std::cerr << std::endl;
 #endif
-			locked_addDummyMsg(grp, threadId, threadId, parentId);
+			locked_addDummyMsg(grp, threadId, threadId, parentId, msg->timestamp);
 		}
 		else
 		{
@@ -3855,7 +3862,7 @@ bool p3GroupDistrib::locked_CheckNewMsgDummies(GroupInfo &grp, RsDistribMsg *msg
 	return true;
 }
 
-bool p3GroupDistrib::locked_addDummyMsg(GroupInfo &grp, std::string threadId, std::string parentId, std::string msgId)
+bool p3GroupDistrib::locked_addDummyMsg(GroupInfo &grp, std::string threadId, std::string parentId, std::string msgId, uint32_t ts)
 {
 #ifdef DISTRIB_DUMMYMSG_DEBUG
 	std::cerr << "p3GroupDistrib::locked_addDummyMsg(grpId:" << grp.grpId << ", threadId: " << threadId;
@@ -3877,7 +3884,8 @@ bool p3GroupDistrib::locked_addDummyMsg(GroupInfo &grp, std::string threadId, st
 	
 	if (dit == grp.dummyMsgs.end()) // not there!
 	{ 
-		grp.dummyMsgs[msgId] = RsDistribDummyMsg(threadId, parentId, msgId);
+		grp.dummyMsgs[msgId] = RsDistribDummyMsg(threadId, parentId, msgId, ts);
+
 
 #ifdef DISTRIB_DUMMYMSG_DEBUG
 		std::cerr << "p3GroupDistrib::locked_addDummyMsg() Adding Dummy Msg";
@@ -3891,6 +3899,8 @@ bool p3GroupDistrib::locked_addDummyMsg(GroupInfo &grp, std::string threadId, st
 		std::cerr << std::endl;
 #endif
 	}
+
+	locked_updateDummyChildTS(grp, parentId, ts); // NOTE both ChildTS functions should be merged.
 	return true;
 }
 
@@ -3925,6 +3935,36 @@ bool p3GroupDistrib::locked_clearDummyMsg(GroupInfo &grp, std::string msgId)
 
 
 
+        /* now update parents TS */
+/* NB: it is a hack to have seperate updateChildTS functions for msgs and dummyMsgs, 
+ * this need to be combined (do when we add a parentId index.)
+ */
+
+bool	p3GroupDistrib::locked_updateDummyChildTS(GroupInfo &gi, std::string parentId, time_t updateTS)
+{
+	while("" != parentId)
+	{
+        	std::map<std::string, RsDistribDummyMsg>::iterator mit;
+        	if (gi.dummyMsgs.end() == (mit = gi.dummyMsgs.find(parentId)))
+		{
+			/* not found - abandon */
+			return true;
+		}
+		RsDistribDummyMsg *parent = &(mit->second);
+		if (parent->childTS > updateTS)
+		{
+			/* we're too old - give up! */
+			return true;
+		}
+
+		/* update timestamp */
+		parent->childTS = updateTS;
+		parentId = parent->parentId;
+	}
+	return false ;
+}
+
+
 bool p3GroupDistrib::locked_printAllDummyMsgs()
 {
 #ifdef DISTRIB_DUMMYMSG_DEBUG
@@ -3956,5 +3996,77 @@ bool p3GroupDistrib::locked_printDummyMsgs(GroupInfo &grp)
 	}
 	return true;
 }
+
+
+/***** These Functions are used by the children classes to access the dummyData
+ ****/
+
+bool p3GroupDistrib::getDummyParentMsgList(std::string grpId, std::string pId, std::list<std::string> &msgIds)
+{
+#ifdef DISTRIB_DUMMYMSG_DEBUG
+	std::cerr << "p3GroupDistrib::getDummyParentMsgList(grpId:" << grpId << "," << pId << ")";
+	std::cerr << std::endl;
+#endif
+	RsStackMutex stack(distribMtx); /*************  STACK MUTEX ************/
+	std::map<std::string, GroupInfo>::iterator git;
+	if (mGroups.end() == (git = mGroups.find(grpId)))
+	{
+#ifdef DISTRIB_DUMMYMSG_DEBUG
+		std::cerr << "p3GroupDistrib::getDummyParentMsgList() Group Not Found";
+		std::cerr << std::endl;
+#endif
+		return false;
+	}
+
+	std::map<std::string, RsDistribDummyMsg>::iterator mit;
+
+	for(mit = git->second.dummyMsgs.begin(); mit != git->second.dummyMsgs.end(); mit++)
+	{
+		if (mit->second.parentId == pId)
+		{
+			msgIds.push_back(mit->first);
+		}
+	}
+
+#ifdef DISTRIB_DUMMYMSG_DEBUG
+	std::cerr << "p3GroupDistrib::getDummyParentMsgList() found " << msgIds.size() << " msgs";
+	std::cerr << std::endl;
+#endif
+	return true;
+}
+
+
+RsDistribDummyMsg *p3GroupDistrib::locked_getGroupDummyMsg(std::string grpId, std::string msgId)
+{
+#ifdef DISTRIB_DUMMYMSG_DEBUG
+	std::cerr << "p3GroupDistrib::locked_getGroupDummyMsg(grpId:" << grpId << "," << msgId << ")";
+	std::cerr << std::endl;
+#endif
+	/************* ALREADY LOCKED ************/
+	std::map<std::string, GroupInfo>::iterator git;
+	if (mGroups.end() == (git = mGroups.find(grpId)))
+	{
+#ifdef DISTRIB_DUMMYMSG_DEBUG
+		std::cerr << "p3GroupDistrib::locked_getGroupDummyMsg() Group not found";
+		std::cerr << std::endl;
+#endif
+		return NULL;
+	}
+
+	std::map<std::string, RsDistribDummyMsg>::iterator dit;
+	if (git->second.dummyMsgs.end() == (dit = git->second.dummyMsgs.find(msgId)))
+	{
+#ifdef DISTRIB_DUMMYMSG_DEBUG
+		std::cerr << "p3GroupDistrib::locked_getGroupDummyMsg() Msg not found";
+		std::cerr << std::endl;
+#endif
+		return NULL;
+	}
+
+	return &(dit->second);
+}
+
+
+	
 
 
