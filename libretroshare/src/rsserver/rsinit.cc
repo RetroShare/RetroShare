@@ -230,7 +230,7 @@ void RsInit::InitRsConfig()
 
 	RsInitConfig::load_trustedpeer = false;
 	RsInitConfig::firsttime_run = false;
-	RsInitConfig::port = (RSRandom::random_u32() & 0x1fff) + 7000 ; // random port between 7000 and 15191. Random port avoids clashes, improves anonymity.
+	RsInitConfig::port = 0 ;
 	RsInitConfig::forceLocalAddr = false;
 	RsInitConfig::haveLogFile    = false;
 	RsInitConfig::outStderr      = false;

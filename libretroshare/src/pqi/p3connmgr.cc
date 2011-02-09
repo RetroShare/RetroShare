@@ -3306,7 +3306,16 @@ bool 	p3ConnectMgr::checkNetAddress()
 #ifdef CONN_DEBUG
 			std::cerr << "p3ConnectMgr::checkNetAddress() Correcting Port to DEFAULT" << std::endl;
 #endif
-			mOwnState.currentlocaladdr.sin_port = htons(PQI_DEFAULT_PORT);
+			// Generate a default port from SSL id. The port will always be the
+			// same, but appear random from peer to peer.
+		 	// Random port avoids clashes, improves anonymity.
+			//
+			uint32_t default_port_seed = 0 ;
+			for(uint i=0;i<mOwnState.id.size();++i)
+				default_port_seed = (0x473a8b74u * (unsigned int)(mOwnState.id[i]) + default_port_seed)^0x11837bea ;
+
+			mOwnState.currentlocaladdr.sin_port = htons(PQI_MIN_PORT + (default_port_seed % (PQI_MAX_PORT - PQI_MIN_PORT))); 
+
 			addrChanged = true;
 		}
 
