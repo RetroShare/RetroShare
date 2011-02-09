@@ -21,6 +21,7 @@
 
 #include <QMessageBox>
 #include <QDir>
+#include <QTimer>
 
 #include "SearchDialog.h"
 #include "RetroShareLink.h"
@@ -82,6 +83,7 @@ SearchDialog::SearchDialog(QWidget *parent)
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
 
+	 _queueIsAlreadyTakenCareOf = false ;
     ui.lineEdit->setFocus();
     ui.lineEdit->setToolTip(tr("Enter a keyword here (at least 3 char long)"));
 
@@ -599,39 +601,64 @@ void SearchDialog::searchKeywords()
 
 void SearchDialog::updateFiles(qulonglong search_id,FileDetail file)
 {
-	/* which extensions do we use? */
-	std::string txt = ui.lineEdit->text().toStdString();
+	searchResultsQueue.push_back(std::pair<qulonglong,FileDetail>(search_id,file)) ;
+
+	if(!_queueIsAlreadyTakenCareOf)
+	{
+		QTimer::singleShot(100,this,SLOT(processResultQueue())) ; 
+		_queueIsAlreadyTakenCareOf = true ;
+	}
+}
+
+void SearchDialog::processResultQueue()
+{
+	int nb_treated_elements = 0 ;
+
+	while(!searchResultsQueue.empty() && nb_treated_elements++ < 500)
+	{
+		qulonglong search_id = searchResultsQueue.back().first ;
+		FileDetail file = searchResultsQueue.back().second ;
+
+		searchResultsQueue.pop_back() ;
+
+		/* which extensions do we use? */
+		std::string txt = ui.lineEdit->text().toStdString();
 #ifdef DEBUG
-	std::cout << "Updating file detail:" << std::endl ;
-	std::cout << "  size = " << file.size << std::endl ;
-	std::cout << "  name = " << file.name << std::endl ;
-	std::cout << "  s_id = " << search_id << std::endl ;
+		std::cout << "Updating file detail:" << std::endl ;
+		std::cout << "  size = " << file.size << std::endl ;
+		std::cout << "  name = " << file.name << std::endl ;
+		std::cout << "  s_id = " << search_id << std::endl ;
 #endif
 
-	if (ui.FileTypeComboBox->currentIndex() == FILETYPE_IDX_ANY)
-		insertFile(txt,search_id,file);
-	else
-	{
-		// amend the text description of the search
-		txt += " (" + ui.FileTypeComboBox->currentText().toStdString() + ")";
-		// collect the extensions to use
-		QString extStr = SearchDialog::FileTypeExtensionMap->value(ui.FileTypeComboBox->currentIndex());
-		QStringList extList = extStr.split(" ");
-
-		// get this file's extension
-		QString qName = QString::fromUtf8(file.name.c_str());
-		int extIndex = qName.lastIndexOf(".");
-
-		if (extIndex >= 0)
+		if (ui.FileTypeComboBox->currentIndex() == FILETYPE_IDX_ANY)
+			insertFile(txt,search_id,file);
+		else
 		{
-			QString qExt = qName.mid(extIndex+1).toUpper();
+			// amend the text description of the search
+			txt += " (" + ui.FileTypeComboBox->currentText().toStdString() + ")";
+			// collect the extensions to use
+			QString extStr = SearchDialog::FileTypeExtensionMap->value(ui.FileTypeComboBox->currentIndex());
+			QStringList extList = extStr.split(" ");
 
-			if (qExt != "" )
-				for (int i = 0; i < extList.size(); ++i)
-					if (qExt == extList.at(i).toUpper())
-						insertFile(txt,search_id,file);
+			// get this file's extension
+			QString qName = QString::fromUtf8(file.name.c_str());
+			int extIndex = qName.lastIndexOf(".");
+
+			if (extIndex >= 0)
+			{
+				QString qExt = qName.mid(extIndex+1).toUpper();
+
+				if (qExt != "" )
+					for (int i = 0; i < extList.size(); ++i)
+						if (qExt == extList.at(i).toUpper())
+							insertFile(txt,search_id,file);
+			}
 		}
 	}
+	if(!searchResultsQueue.empty())
+		QTimer::singleShot(1000,this,SLOT(processResultQueue())) ; 
+	else
+		_queueIsAlreadyTakenCareOf = false ;
 }
 
 void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, const DirDetails &dir, QTreeWidgetItem *item)
@@ -815,11 +842,12 @@ void SearchDialog::insertFile(const std::string& txt,qulonglong searchId, const 
 
 	QString sid_hexa = QString::number(searchId,16) ;
 
-	for(int i = 0; i < items; i++)
-		if(ui.searchResultWidget->topLevelItem(i)->text(SR_HASH_COL) == QString::fromStdString(file.hash)
-				&& ui.searchResultWidget->topLevelItem(i)->text(SR_SEARCH_ID_COL) == sid_hexa)
+	QList<QTreeWidgetItem*> itms = ui.searchResultWidget->findItems(QString::fromStdString(file.hash),Qt::MatchExactly,SR_HASH_COL) ;
+
+	for(QList<QTreeWidgetItem*>::const_iterator it(itms.begin());it!=itms.end();++it)
+		if((*it)->text(SR_SEARCH_ID_COL) == sid_hexa)
 		{
-			QString resultCount = ui.searchResultWidget->topLevelItem(i)->text(SR_ID_COL);
+			QString resultCount = (*it)->text(SR_ID_COL);
 			QStringList modifiedResultCount = resultCount.split("/", QString::SkipEmptyParts); 
 			if(searchType == FRIEND_SEARCH)
 			{
@@ -833,8 +861,8 @@ void SearchDialog::insertFile(const std::string& txt,qulonglong searchId, const 
 			}
 			anonymousSource = anonymousSource + friendSource;
                         modifiedResult = QString::number(friendSource) + "/" + QString::number(anonymousSource);
-			ui.searchResultWidget->topLevelItem(i)->setText(SR_ID_COL,modifiedResult);
-			QTreeWidgetItem *item = ui.searchResultWidget->topLevelItem(i);
+			(*it)->setText(SR_ID_COL,modifiedResult);
+			QTreeWidgetItem *item = (*it);
 			found = true ;
 			int sources = friendSource + anonymousSource ;
 			if ( sources < 1)

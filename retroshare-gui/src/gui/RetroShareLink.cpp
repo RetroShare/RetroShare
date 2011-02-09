@@ -35,7 +35,7 @@
 #include <retroshare/rsfiles.h>
 #include <retroshare/rspeers.h>
 
-#define DEBUG_RSLINK 1
+//#define DEBUG_RSLINK 1
 
 #define HOST_FILE       "file"
 #define HOST_PERSON     "person"
@@ -344,7 +344,9 @@ bool RetroShareLink::process(int flag)
 
     case TYPE_FILE:
         {
+#ifdef DEBUG_RSLINK
             std::cerr << " RetroShareLink::process FileRequest : fileName : " << name().toUtf8().constData() << ". fileHash : " << hash().toStdString() << ". fileSize : " << size() << std::endl;
+#endif
 
             // Get a list of available direct sources, in case the file is browsable only.
             std::list<std::string> srcIds;
@@ -353,7 +355,9 @@ bool RetroShareLink::process(int flag)
 
             for(std::list<TransferInfo>::const_iterator it(finfo.peers.begin());it!=finfo.peers.end();++it)
             {
+#ifdef DEBUG_RSLINK
                 std::cerr << "  adding peerid " << (*it).peerId << std::endl ;
+#endif
                 srcIds.push_back((*it).peerId) ;
             }
 
@@ -376,7 +380,9 @@ bool RetroShareLink::process(int flag)
 
     case TYPE_PERSON:
         {
+#ifdef DEBUG_RSLINK
             std::cerr << " RetroShareLink::process FriendRequest : name : " << name().toStdString() << ". id : " << hash().toStdString() << std::endl;
+#endif
 
             RsPeerDetails detail;
             if (rsPeers->getPeerDetails(hash().toStdString(), detail)) {
@@ -477,11 +483,15 @@ void RSLinkClipboard::parseClipboard(std::vector<RetroShareLink> &links)
             if(!already)
             {
                 links.push_back(link) ;
+#ifdef DEBUG_RSLINK
                 std::cerr << "captured link: " << link.toString().toStdString() << std::endl ;
+#endif
             }
         }
+#ifdef DEBUG_RSLINK
         else
             std::cerr << "invalid link" << std::endl ;
+#endif
 
         pos += rx.matchedLength();
     }

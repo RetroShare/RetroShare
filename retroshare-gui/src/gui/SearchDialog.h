@@ -49,6 +49,7 @@ private slots:
 /** Create the context popup menu and it's submenus */
     void searchtableWidgetCostumPopupMenu( QPoint point );
 
+	void processResultQueue();
     void searchtableWidget2CostumPopupMenu( QPoint point );
 
     void download();
@@ -130,6 +131,9 @@ QTreeWidget *searchtablewidget2;
 
 /** Qt Designer generated object */
     Ui::SearchDialog ui;
+
+	 bool _queueIsAlreadyTakenCareOf ;
+	 std::vector<std::pair<qulonglong,FileDetail> > searchResultsQueue ;
 };
 
 #endif
