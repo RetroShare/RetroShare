@@ -150,7 +150,7 @@ PeersDialog::PeersDialog(QWidget *parent)
     ui.peertabWidget->setTabPosition(QTabWidget::North);
     ui.peertabWidget->addTab(new ProfileWidget(), tr("Profile"));
     NewsFeed *newsFeed = new NewsFeed();
-    newsFeedTabIndex = ui.peertabWidget->addTab(newsFeed, tr("Friends Storm"));
+    newsFeedTabIndex = ui.peertabWidget->addTab(newsFeed, tr("News Feed"));
     ui.peertabWidget->tabBar()->setIconSize(QSize(10, 10));
 
     /* get the current text and text color of the tab bar */
