@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>573</width>
-    <height>394</height>
+    <height>400</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -550,7 +550,15 @@
            </size>
           </property>
           <property name="toolTip">
-           <string>Should be disabled if you don't want to share connection information between peers.</string>
+           <string>The DHT allows you to answer connection 
+requests from your friends using BitTorrent's DHT. 
+It greatly improves the connectivity. 
+
+The Discovery service sends locations and GPG 
+identities of your trusted contacts to connected 
+peers, to help them choose new friends. 
+The friendship is never automatic however, and both 
+peers still need to trust each other to allow connection. </string>
           </property>
           <item>
            <property name="text">
