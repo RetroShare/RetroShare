@@ -3971,6 +3971,7 @@ bool p3GroupDistrib::locked_printAllDummyMsgs()
 	{
 		locked_printDummyMsgs(it->second);
 	}
+	return true ;
 }
 
 
