@@ -3311,7 +3311,7 @@ bool 	p3ConnectMgr::checkNetAddress()
 		 	// Random port avoids clashes, improves anonymity.
 			//
 			uint32_t default_port_seed = 0 ;
-			for(uint i=0;i<mOwnState.id.size();++i)
+			for(std::string::size_type i=0;i<mOwnState.id.size();++i)
 				default_port_seed = (0x473a8b74u * (unsigned int)(mOwnState.id[i]) + default_port_seed)^0x11837bea ;
 
 			mOwnState.currentlocaladdr.sin_port = htons(PQI_MIN_PORT + (default_port_seed % (PQI_MAX_PORT - PQI_MIN_PORT))); 

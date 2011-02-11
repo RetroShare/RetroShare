@@ -833,7 +833,6 @@ void SearchDialog::insertFile(const std::string& txt,qulonglong searchId, const 
 
 	// 1 - look in result window whether the file already exists.
 	//
-	int items = ui.searchResultWidget->topLevelItemCount();
 	bool found = false ;
 	int sources;
 	int friendSource = 0;

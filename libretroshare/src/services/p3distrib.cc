@@ -243,7 +243,9 @@ void p3GroupDistrib::run() /* called once the thread is started */
 	std::cerr << std::endl;
 #endif
 
+#ifdef DISTRIB_DUMMYMSG_DEBUG
 	int printed = 0;
+#endif
 
 	while(1)
 	{
