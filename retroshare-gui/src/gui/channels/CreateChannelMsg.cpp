@@ -50,8 +50,12 @@ CreateChannelMsg::CreateChannelMsg(std::string cId)
 	connect(addfilepushButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));	
 	connect(addThumbnailButton, SIGNAL(clicked() ), this , SLOT(addThumbnail()));
 	connect(thumbNailCb, SIGNAL(toggled(bool)), this, SLOT(allowAutoMediaThumbNail(bool)));
+	thumbNailCb->setVisible(false);
+	thumbNailCb->setEnabled(false);
 #ifdef CHANNELS_FRAME_CATCHER
 	fCatcher = new framecatcher();
+	thumbNailCb->setVisible(true);
+	thumbNailCb->setEnabled(true);
 #endif
     //buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 
