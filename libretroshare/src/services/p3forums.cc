@@ -216,8 +216,9 @@ bool p3Forums::getForumThreadList(const std::string &fId, std::list<ThreadInfoSu
 		tis.childTS = msg->childTS;
 
 		/* dummy msg */
-		tis.title = L"Missing Message";
+		tis.title = L"[ ... Missing Message ... ]";
 		tis.msg  = L"Placeholder for missing Message";
+		tis.msgflags |= RS_DISTRIB_MISSING_MSG;
 
 		msgs.push_back(tis);
 	}
@@ -282,9 +283,9 @@ bool p3Forums::getForumThreadMsgList(const std::string &fId, const std::string &
 		tis.childTS = msg->childTS;
 
 		/* dummy msg */
-		tis.title = L"Missing Message";
+		tis.title = L"[ ... Missing Message ... ]";
 		tis.msg  = L"Placeholder for missing Message";
-		/* the rest must be gotten from the derived Msg */
+		tis.msgflags |= RS_DISTRIB_MISSING_MSG;
 
 		msgs.push_back(tis);
 	}
@@ -313,8 +314,9 @@ bool p3Forums::getForumMessage(const std::string &fId, const std::string &mId, F
 		info.ts = dmsg->timestamp;
 		info.childTS = dmsg->childTS;
 
-		info.title = L"Missing Message";
+		info.title = L"[ ... Missing Message ... ]";
 		info.msg  = L"Placeholder for missing Message";
+		info.msgflags |= RS_DISTRIB_MISSING_MSG;
 
 		info.srcId = "";
 

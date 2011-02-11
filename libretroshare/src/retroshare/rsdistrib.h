@@ -27,23 +27,30 @@
  */
 
 
-#define RS_DISTRIB_PRIVACY_MASK		0x000f   /* who can publish & view */
-#define RS_DISTRIB_AUTHEN_MASK		0x00f0   /* how to publish */
-#define RS_DISTRIB_LISTEN_MASK		0x0f00   /* distribution flags */
-#define RS_DISTRIB_UPDATE_MASK 		0xf000   /* if sending a group info update */
+#define RS_DISTRIB_PRIVACY_MASK		0x0000000f   /* who can publish & view */
+#define RS_DISTRIB_AUTHEN_MASK		0x000000f0   /* how to publish */
+#define RS_DISTRIB_LISTEN_MASK		0x00000f00   /* distribution flags */
+#define RS_DISTRIB_UPDATE_MASK 		0x0000f000   /* if sending a group info update */
+#define RS_DISTRIB_MISC_MASK 		0x00ff0000   /* if sending a group info update */
 
-#define RS_DISTRIB_PUBLIC		0x0001   /* anyone can publish */
-#define RS_DISTRIB_PRIVATE		0x0002   /* anyone with key can publish */
-#define RS_DISTRIB_ENCRYPTED		0x0004   /* need publish key to view */
+#define RS_DISTRIB_PUBLIC		0x00000001   /* anyone can publish */
+#define RS_DISTRIB_PRIVATE		0x00000002   /* anyone with key can publish */
+#define RS_DISTRIB_ENCRYPTED		0x00000004   /* need publish key to view */
 
-#define RS_DISTRIB_AUTHEN_REQ		0x0010   /* you must sign messages */
-#define RS_DISTRIB_AUTHEN_ANON		0x0020   /* you can send anonymous messages */
+#define RS_DISTRIB_AUTHEN_REQ		0x00000010   /* you must sign messages */
+#define RS_DISTRIB_AUTHEN_ANON		0x00000020   /* you can send anonymous messages */
 
-#define RS_DISTRIB_ADMIN		0x0100   
-#define RS_DISTRIB_PUBLISH		0x0200   
-#define RS_DISTRIB_SUBSCRIBED		0x0400   
+#define RS_DISTRIB_ADMIN		0x00000100   
+#define RS_DISTRIB_PUBLISH		0x00000200   
+#define RS_DISTRIB_SUBSCRIBED		0x00000400   
 
-#define RS_DISTRIB_UPDATE		0x1000
+#define RS_DISTRIB_UPDATE		0x00001000
+
+/* don't know if this should go with the above flags, as it message specific, and not a group settings.
+ * As it is currently not stored any configuration, it can be changed.
+ */
+
+#define RS_DISTRIB_MISSING_MSG		0x00010000
 
 
 #endif

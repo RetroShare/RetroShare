@@ -53,7 +53,7 @@
 
 //#define DISTRIB_DEBUG 1
 //#define DISTRIB_THREAD_DEBUG 1
-#define DISTRIB_DUMMYMSG_DEBUG 1
+//#define DISTRIB_DUMMYMSG_DEBUG 1
 
 RSA *extractPublicKey(RsTlvSecurityKey &key);
 RSA *extractPrivateKey(RsTlvSecurityKey &key);
