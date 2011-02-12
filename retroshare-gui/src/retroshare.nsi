@@ -2,7 +2,7 @@
 
 ; Define your application name
 !define APPNAME "RetroShare"
-!define VERSION "0.5.1"
+!define VERSION "0.5.1 RC 4035"
 !define APPNAMEANDVERSION "${APPNAME} ${VERSION}"
 !define QTBASE "D:\qt\2010.01"
 
@@ -246,6 +246,7 @@ Section $(sec_main) sec_main
   ; Set Section Files and Shortcuts
   SetOutPath "$INSTDIR\"
   File /r "release\RetroShare.exe"
+  File /r "release\retroshare-nogui.exe"
   File /r "D:\Qt\2010.01\mingw\bin\mingwm10.dll"
   File /r "D:\Qt\2010.01\qt\bin\QtCore4.dll"
   File /r "D:\Qt\2010.01\qt\bin\QtGui4.dll"
@@ -260,7 +261,7 @@ Section $(sec_main) sec_main
   File /r "release\libgpg-error-0.dll"
   File /r "release\libgpgme-11.dll"
   File /r "changelog.txt"
-  File /r "release\bdboot.txt"
+  File /r /x Data "release\bdboot.txt" 
 
 
 SectionEnd
@@ -281,6 +282,10 @@ Section  $(sec_data) sec_data
   ; Set Section qss and exclude svn
   SetOutPath "$INSTDIR\qss\"
   File /r /x .svn qss\*.*
+  
+  ; Set Section sounds and exclude svn
+  SetOutPath "$INSTDIR\sounds\"
+  File /r /x .svn sounds\*.*
   
   ; Set Section skin
   ; SetOutPath "$INSTDIR\skin\"
