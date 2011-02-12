@@ -91,6 +91,11 @@ win32-x-g++ {
 #################################### Windows #####################################
 
 win32 {
+    # Switch off optimization
+    QMAKE_CXXFLAGS_RELEASE -= -O2
+    QMAKE_CXXFLAGS_RELEASE += -O0
+    QMAKE_CFLAGS_RELEASE -= -O2
+    QMAKE_CFLAGS_RELEASE += -O0
 
     OBJECTS_DIR = temp/obj
     #LIBS += -L"D/Qt/2009.03/qt/plugins/imageformats"

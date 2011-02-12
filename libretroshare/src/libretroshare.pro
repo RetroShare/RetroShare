@@ -236,6 +236,12 @@ win32 {
                 DEFINES *= MINIUPNPC_VERSION=13
                 DESTDIR = lib
 
+                # Switch off optimization
+                QMAKE_CXXFLAGS_RELEASE -= -O2
+                QMAKE_CXXFLAGS_RELEASE += -O0
+                QMAKE_CFLAGS_RELEASE -= -O2
+                QMAKE_CFLAGS_RELEASE += -O0
+
                 DEFINES -= DEBUG_PQISSL
                 DEFINES += USE_CMD_ARGS
 

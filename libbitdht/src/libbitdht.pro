@@ -58,6 +58,12 @@ win32 {
 		# These have been replaced by _WIN32 && __MINGW32__
 		#DEFINES *= WINDOWS_SYS WIN32 STATICLIB MINGW
 		DESTDIR = lib
+
+		# Switch off optimization
+		QMAKE_CXXFLAGS_RELEASE -= -O2
+		QMAKE_CXXFLAGS_RELEASE += -O0
+		QMAKE_CFLAGS_RELEASE -= -O2
+		QMAKE_CFLAGS_RELEASE += -O0
 }
 
 ################################# MacOSX ##########################################
