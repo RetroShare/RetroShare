@@ -78,11 +78,12 @@
 
 #define ROLE_THREAD_MSGID           Qt::UserRole
 #define ROLE_THREAD_STATUS          Qt::UserRole + 1
+#define ROLE_THREAD_MISSING         Qt::UserRole + 2
 // no need to copy, don't count in ROLE_THREAD_COUNT
-#define ROLE_THREAD_READCHILDREN    Qt::UserRole + 2
-#define ROLE_THREAD_UNREADCHILDREN  Qt::UserRole + 3
+#define ROLE_THREAD_READCHILDREN    Qt::UserRole + 3
+#define ROLE_THREAD_UNREADCHILDREN  Qt::UserRole + 4
 
-#define ROLE_THREAD_COUNT           2
+#define ROLE_THREAD_COUNT           3
 
 #define IS_UNREAD(status) ((status & FORUM_MSG_STATUS_READ) == 0 || (status & FORUM_MSG_STATUS_UNREAD_BY_USER))
 
@@ -580,17 +581,23 @@ void ForumsDialog::CalculateIconsAndFonts(QTreeWidgetItem *pItem, bool &bHasRead
     uint32_t status = pItem->data(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
 
     bool bUnread = IS_UNREAD(status);
+    bool missing = pItem->data(COLUMN_THREAD_DATA, ROLE_THREAD_MISSING).toBool();
 
     // set icon
-    if (bUnread) {
-        pItem->setIcon(COLUMN_THREAD_READ, QIcon(":/images/message-state-unread.png"));
-    } else {
-        pItem->setIcon(COLUMN_THREAD_READ, QIcon(":/images/message-state-read.png"));
-    }
-    if (status & FORUM_MSG_STATUS_READ) {
+    if (missing) {
+        pItem->setIcon(COLUMN_THREAD_READ, QIcon());
         pItem->setIcon(COLUMN_THREAD_TITLE, QIcon());
     } else {
-        pItem->setIcon(COLUMN_THREAD_TITLE, QIcon(":/images/message-state-new.png"));
+        if (bUnread) {
+            pItem->setIcon(COLUMN_THREAD_READ, QIcon(":/images/message-state-unread.png"));
+        } else {
+            pItem->setIcon(COLUMN_THREAD_READ, QIcon(":/images/message-state-read.png"));
+        }
+        if (status & FORUM_MSG_STATUS_READ) {
+            pItem->setIcon(COLUMN_THREAD_TITLE, QIcon());
+        } else {
+            pItem->setIcon(COLUMN_THREAD_TITLE, QIcon(":/images/message-state-new.png"));
+        }
     }
 
     int nItem;
@@ -619,6 +626,10 @@ void ForumsDialog::CalculateIconsAndFonts(QTreeWidgetItem *pItem, bool &bHasRead
         } else {
             qf.setBold(false);
             pItem->setTextColor(i, Qt::gray);
+        }
+        if (missing) {
+            /* Missing message */
+            pItem->setTextColor(i, Qt::darkRed);
         }
         pItem->setFont(i, qf);
     }
@@ -803,13 +814,15 @@ void ForumsDialog::insertThreads()
 
         item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID, QString::fromStdString(tit->msgId));
 
-        if (m_bIsForumSubscribed) {
+        if (m_bIsForumSubscribed && !(msginfo.msgflags & RS_DISTRIB_MISSING_MSG)) {
             rsForums->getMessageStatus(msginfo.forumId, msginfo.msgId, status);
         } else {
             // show message as read
             status = FORUM_MSG_STATUS_READ;
         }
         item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS, status);
+
+        item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_MISSING, (msginfo.msgflags & RS_DISTRIB_MISSING_MSG) ? true : false);
 
         std::list<QTreeWidgetItem *> threadlist;
         threadlist.push_back(item);
@@ -908,13 +921,15 @@ void ForumsDialog::insertThreads()
 
                     child->setData(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID, QString::fromStdString(mit->msgId));
 
-                    if (m_bIsForumSubscribed) {
+                    if (m_bIsForumSubscribed && !(msginfo.msgflags & RS_DISTRIB_MISSING_MSG)) {
                         rsForums->getMessageStatus(msginfo.forumId, msginfo.msgId, status);
                     } else {
                         // show message as read
                         status = FORUM_MSG_STATUS_READ;
                     }
                     child->setData(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS, status);
+
+                    child->setData(COLUMN_THREAD_DATA, ROLE_THREAD_MISSING, (msginfo.msgflags & RS_DISTRIB_MISSING_MSG) ? true : false);
 
                     if (bFillComplete && bExpandNewMessages && IS_UNREAD(status)) {
                         QTreeWidgetItem *pParent = child;
@@ -1261,6 +1276,11 @@ void ForumsDialog::setMsgAsReadUnread(QList<QTreeWidgetItem*> &Rows, bool bRead)
     std::list<QTreeWidgetItem*> changedItems;
 
     for (Row = Rows.begin(); Row != Rows.end(); Row++) {
+        if ((*Row)->data(COLUMN_THREAD_DATA, ROLE_THREAD_MISSING).toBool()) {
+            /* Missing message */
+            continue;
+        }
+
         uint32_t status = (*Row)->data(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
 
         /* set always as read ... */
