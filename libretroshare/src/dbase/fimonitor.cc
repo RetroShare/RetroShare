@@ -846,7 +846,7 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 			//
 			if(useHashCache && hashCache.find(real_path,fe.size,fe.modtime,fe.hash)) 
 				fi.updateFileEntry(to_hash[i].dirpath,fe,stamp);
-			else if(RsDirUtil::hashFile(real_path, fe.hash))		// not found, then hash it.
+			else if(RsDirUtil::getFileHash(real_path, fe.hash,fe.size))		// not found, then hash it.
 			{
 				RsStackMutex stack(fiMutex); /**** LOCKED DIRS ****/
 

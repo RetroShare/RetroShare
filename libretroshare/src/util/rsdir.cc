@@ -54,7 +54,6 @@
 /****
  * #define RSDIR_DEBUG 1
  ****/
-#define RSDIR_DEBUG 1
 
 std::string 	RsDirUtil::getTopDir(const std::string& dir)
 {
@@ -155,74 +154,6 @@ bool RsDirUtil::crc32File(FILE *fd, uint64_t file_size,uint32_t chunk_size, CRC3
 		return false ;
 	}
 	return true ;
-}
-
-bool RsDirUtil::hashFile(const std::string& f_hash, std::string& hash)
-{
-	FILE *fd;
-	int  len;
-	SHA_CTX *sha_ctx = new SHA_CTX;
-	unsigned char sha_buf[SHA_DIGEST_LENGTH];
-	unsigned char *gblBuf = new unsigned char[1024*1024*10];	// 10MB buffer.
-
-#ifdef FIM_DEBUG
-	std::cerr << "File to hash = " << f_hash << std::endl;
-#endif
-
-#ifdef WINDOWS_SYS
-        std::wstring wf_hash;
-        librs::util::ConvertUtf8ToUtf16(f_hash, wf_hash);
-        if (NULL == (fd = _wfopen(wf_hash.c_str(), L"rb")))
-            goto hashing_failed ;
-#else
-        if (NULL == (fd = fopen64(f_hash.c_str(), "rb")))
-            goto hashing_failed ;
-#endif
-
-	SHA1_Init(sha_ctx);
-	while((len = fread(gblBuf,1, 512, fd)) > 0)
-	{
-		SHA1_Update(sha_ctx, gblBuf, len);
-	}
-
-	/* reading failed for some reason */
-	if (ferror(fd))
-	{
-#ifdef FIM_DEBUG
-		std::cerr << "read error !!" << std::endl;
-#endif
-		goto hashing_failed ;
-	}
-
-	SHA1_Final(&sha_buf[0], sha_ctx);
-
-	/* TODO: Actually we should store the hash data as binary ...
-	 * but then it shouldn't be put in a string.
-	 */
-
-	{
-		std::ostringstream tmpout;
-		for(int i = 0; i < SHA_DIGEST_LENGTH; i++)
-		{
-			tmpout << std::setw(2) << std::setfill('0') << std::hex << (unsigned int) (sha_buf[i]);
-		}
-		hash = tmpout.str();
-	}
-
-	delete sha_ctx;
-	delete[] gblBuf ;
-	fclose(fd);
-	return true;
-
-hashing_failed:
-
-	delete sha_ctx;
-	delete[] gblBuf ;
-
-	if(fd != NULL)
-		fclose(fd) ;
-
-	return false ;
 }
 
 std::string 	RsDirUtil::removeTopDir(const std::string& dir)
@@ -595,8 +526,7 @@ bool RsDirUtil::hashFile(const std::string& filepath,
 #include <iomanip>
 
 /* Function to hash, and get details of a file */
-bool RsDirUtil::getFileHash(const std::string& filepath, 
-				std::string &hash, uint64_t &size)
+bool RsDirUtil::getFileHash(const std::string& filepath, std::string &hash, uint64_t &size)
 {
 	FILE *fd;
 	int  len;

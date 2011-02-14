@@ -42,8 +42,6 @@ std::string 	removeRootDir(const std::string& path);
 std::string     removeTopDir(const std::string& dir);
 std::string 	removeRootDirs(const std::string& path, const std::string& root);
 
-bool		hashFile(const std::string& full_path,std::string& hash) ;
-
 // Renames file from to file to. Files should be on the same file system.
 //	returns true if succeed, false otherwise.
 bool		renameFile(const std::string& from,const std::string& to) ;
@@ -65,11 +63,8 @@ bool    	checkDirectory(const std::string& dir);
 bool    	checkCreateDirectory(const std::string& dir);
 bool    	cleanupDirectory(const std::string& dir, const std::list<std::string> &keepFiles);
 
-bool 		hashFile(const std::string& filepath,                
-		  std::string &name, std::string &hash, uint64_t &size);
-
-bool 		getFileHash(const std::string& filepath,                
-			std::string &hash, uint64_t &size);
+bool 		hashFile(const std::string& filepath,   std::string &name, std::string &hash, uint64_t &size);
+bool 		getFileHash(const std::string& filepath,std::string &hash, uint64_t &size);
 
 
 std::wstring 	getWideTopDir(std::wstring);
