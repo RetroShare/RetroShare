@@ -2262,7 +2262,7 @@ p, li { white-space: pre-wrap; }
         <translation>Drag&apos;n&apos;Drop Dateien aus den Suchergebnissen</translation>
     </message>
     <message>
-        <location filename="../gui/channels/CreateChannelMsg.cpp" line="+296"/>
+        <location filename="../gui/channels/CreateChannelMsg.cpp" line="+300"/>
         <source>Add Extra File</source>
         <translation>Zusätzlich eine Datei hinzufügen</translation>
     </message>
@@ -2722,7 +2722,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+48"/>
-        <location filename="../gui/DetailsDialog.cpp" line="+42"/>
+        <location filename="../gui/DetailsDialog.cpp" line="+41"/>
         <source>Comments</source>
         <translation>Kommentare</translation>
     </message>
@@ -3556,7 +3556,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ForumsDialog</name>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="+270"/>
+        <location filename="../gui/ForumsDialog.cpp" line="+271"/>
         <source>Subscribe to Forum</source>
         <translation>Forum abonnieren</translation>
     </message>
@@ -3631,25 +3631,25 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+318"/>
-        <location line="+105"/>
+        <location line="+328"/>
+        <location line="+107"/>
         <source>Anonymous</source>
         <translation>Anonym</translation>
     </message>
     <message>
-        <location line="-100"/>
-        <location line="+105"/>
+        <location line="-102"/>
+        <location line="+107"/>
         <source>signed</source>
         <translation>unterzeichnet</translation>
     </message>
     <message>
-        <location line="-100"/>
-        <location line="+105"/>
+        <location line="-102"/>
+        <location line="+107"/>
         <source>none</source>
         <translation>keine</translation>
     </message>
     <message>
-        <location line="+501"/>
+        <location line="+508"/>
         <location line="+81"/>
         <source>RetroShare</source>
         <translation></translation>
@@ -3665,7 +3665,7 @@ p, li { white-space: pre-wrap; }
         <translation>Du kannst einem anonymen Autor nicht antworten</translation>
     </message>
     <message>
-        <location line="-1291"/>
+        <location line="-1310"/>
         <source>Your Forums</source>
         <translation>Deine Foren</translation>
     </message>
@@ -3808,7 +3808,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="+121"/>
-        <location line="+1091"/>
+        <location line="+1110"/>
         <source>Start New Thread</source>
         <translation>Erstelle neues Thema</translation>
     </message>
@@ -3836,7 +3836,7 @@ p, li { white-space: pre-wrap; }
         <translation>Inhalt</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="-1078"/>
+        <location filename="../gui/ForumsDialog.cpp" line="-1097"/>
         <location line="+3"/>
         <source>Mark as read</source>
         <translation>Als gelesen markieren</translation>
@@ -7535,7 +7535,7 @@ p, li { white-space: pre-wrap; }
         <translation>Ordner können nicht für Drag&apos;n&apos;Drop genutzt werden. Nur Dateien werden akzeptiert.</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="+438"/>
+        <location filename="../gui/PeersDialog.ui" line="+441"/>
         <source>Italic</source>
         <translation>Kursiv</translation>
     </message>
@@ -7545,7 +7545,7 @@ p, li { white-space: pre-wrap; }
         <translation>Unterstrichen</translation>
     </message>
     <message>
-        <location line="-583"/>
+        <location line="-586"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -7578,7 +7578,12 @@ p, li { white-space: pre-wrap; }
         <translation>Statusnachricht ändern</translation>
     </message>
     <message>
-        <location line="+232"/>
+        <location line="+112"/>
+        <source>Messages entered here are sent to all collected friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+123"/>
         <source>Bold</source>
         <translation>Fett</translation>
     </message>
@@ -7684,12 +7689,12 @@ p, li { white-space: pre-wrap; }
         <translation>Schriftart</translation>
     </message>
     <message>
-        <location line="-308"/>
+        <location line="-311"/>
         <source>Group Chat</source>
         <translation>Gruppenchat</translation>
     </message>
     <message>
-        <location line="+343"/>
+        <location line="+346"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -7800,7 +7805,7 @@ p, li { white-space: pre-wrap; }
         <translation>Nachrichtenverlauf</translation>
     </message>
     <message>
-        <location line="-752"/>
+        <location line="-755"/>
         <source>Friends</source>
         <translation>Freunde</translation>
     </message>
@@ -8486,7 +8491,7 @@ Do you want to send them a Message instead</source>
 <context>
     <name>ProfileView</name>
     <message>
-        <location filename="../gui/profile/ProfileView.cpp" line="+72"/>
+        <location filename="../gui/profile/ProfileView.cpp" line="+70"/>
         <source>Clear Photo</source>
         <translation>Photo entfernen</translation>
     </message>
@@ -8829,7 +8834,7 @@ p, li { white-space: pre-wrap; }
         <translation>Vielleicht ist das Passwort falsch</translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="+362"/>
+        <location filename="../gui/RetroShareLink.cpp" line="+366"/>
         <source>File Request Confirmation</source>
         <translation>Bestätigung der Dateianforderung</translation>
     </message>
@@ -8857,7 +8862,7 @@ p, li { white-space: pre-wrap; }
         <translation>Die Datei wurde nicht zur Downloadliste hinzugefügt, da Du sie schon hast.</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+23"/>
         <location line="+9"/>
         <source>Friend Request Confirmation</source>
         <translation>Freundanfrage bestätigen</translation>
@@ -9433,28 +9438,28 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>SearchDialog</name>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="+1024"/>
+        <location filename="../gui/SearchDialog.ui" line="+1146"/>
         <source>Sources</source>
         <translation>Quellen</translation>
     </message>
     <message>
-        <location line="-45"/>
+        <location line="-167"/>
         <source>Results</source>
         <translation>Ergebnisse</translation>
     </message>
     <message>
-        <location line="+196"/>
-        <location filename="../gui/SearchDialog.cpp" line="+219"/>
+        <location line="+316"/>
+        <location filename="../gui/SearchDialog.cpp" line="+238"/>
         <source>Download</source>
         <translation>Herunterladen</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="-133"/>
+        <location filename="../gui/SearchDialog.cpp" line="-138"/>
         <source>Enter a keyword here (at least 3 char long)</source>
         <translation>Gib einen Suchbegriff ein (min. 3 Zeichen)</translation>
     </message>
     <message>
-        <location line="+136"/>
+        <location line="+141"/>
         <source>Copy retroshare Link</source>
         <translation>Kopiere RetroShare Link</translation>
     </message>
@@ -9484,18 +9489,18 @@ p, li { white-space: pre-wrap; }
         <translation>Alle entfernen</translation>
     </message>
     <message>
-        <location line="+317"/>
-        <location line="+62"/>
+        <location line="+342"/>
+        <location line="+66"/>
         <source>Folder</source>
         <translation>Ordner</translation>
     </message>
     <message>
-        <location line="+457"/>
+        <location line="+466"/>
         <source>New RetroShare Link(s)</source>
         <translation>Neu(e) RetroShare Link(s)</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="-583"/>
+        <location filename="../gui/SearchDialog.ui" line="-703"/>
         <source>Any</source>
         <translation>Alle</translation>
     </message>
@@ -9515,7 +9520,12 @@ p, li { white-space: pre-wrap; }
         <translation>Gib einen Suchbegriff ein</translation>
     </message>
     <message>
-        <location line="+265"/>
+        <location line="+273"/>
+        <source>Filter Search Result</source>
+        <translation>Filter Suchergebnis</translation>
+    </message>
+    <message>
+        <location line="+114"/>
         <source>Filename</source>
         <translation>Dateiname</translation>
     </message>
@@ -9530,7 +9540,7 @@ p, li { white-space: pre-wrap; }
         <translation>Prüfsumme</translation>
     </message>
     <message>
-        <location line="-65"/>
+        <location line="-187"/>
         <source>KeyWords</source>
         <translation>Schlüsselwörter</translation>
     </message>
@@ -9540,7 +9550,7 @@ p, li { white-space: pre-wrap; }
         <translation>Such ID</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="-915"/>
+        <location filename="../gui/SearchDialog.cpp" line="-953"/>
         <source>Download Notice</source>
         <translation>Download</translation>
     </message>
@@ -9562,7 +9572,7 @@ p, li { white-space: pre-wrap; }
         <translation>Diese Funktion ist noch nicht eingebaut.</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.ui" line="+35"/>
+        <location filename="../gui/SearchDialog.ui" line="+157"/>
         <source>Size</source>
         <translation>Grösse</translation>
     </message>
@@ -9572,7 +9582,7 @@ p, li { white-space: pre-wrap; }
         <translation>Typ</translation>
     </message>
     <message>
-        <location line="-428"/>
+        <location line="-550"/>
         <source>Archive</source>
         <translation>Archiv</translation>
     </message>
@@ -9612,7 +9622,22 @@ p, li { white-space: pre-wrap; }
         <translation>Suchen</translation>
     </message>
     <message>
-        <location line="+196"/>
+        <location line="+189"/>
+        <source>Clear Filter</source>
+        <translation>Filter leeren</translation>
+    </message>
+    <message>
+        <location line="+51"/>
+        <source>File Name</source>
+        <translation>Dateiname</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>File Size</source>
+        <translation>Dateigröße</translation>
+    </message>
+    <message>
+        <location line="+71"/>
         <source>Close all Search Resullts</source>
         <translation>Schließe alle Suchergebnisse</translation>
     </message>
@@ -9622,7 +9647,7 @@ p, li { white-space: pre-wrap; }
         <translation>Ausgewählte herunterladen</translation>
     </message>
     <message>
-        <location line="+89"/>
+        <location line="+87"/>
         <source>Include files from your own file list in the search result</source>
         <translation>Schließe Dateien von dir in die Suchresultate ein</translation>
     </message>
@@ -9659,7 +9684,7 @@ p, li { white-space: pre-wrap; }
         <translation>Begrenze Anzahl der Resultate auf :</translation>
     </message>
     <message>
-        <location line="-483"/>
+        <location line="-601"/>
         <source>Reset</source>
         <translation>Zurücksetzen</translation>
     </message>
@@ -9674,7 +9699,7 @@ p, li { white-space: pre-wrap; }
         <translation>Erweitert</translation>
     </message>
     <message>
-        <location line="+171"/>
+        <location line="+291"/>
         <source>Close All Search Results</source>
         <translation>Schließe alle Suchergebnisse</translation>
     </message>
@@ -9682,7 +9707,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ServerPage</name>
     <message>
-        <location filename="../gui/settings/ServerPage.ui" line="+721"/>
+        <location filename="../gui/settings/ServerPage.ui" line="+729"/>
         <location line="+23"/>
         <source>Port:</source>
         <translation>Port:</translation>
@@ -9703,7 +9728,7 @@ p, li { white-space: pre-wrap; }
         <translation>Übertragungsgeschwindigkeiten</translation>
     </message>
     <message>
-        <location line="-78"/>
+        <location line="-86"/>
         <source>Automatic (Upnp)</source>
         <translation>Automatisch (UPnP)</translation>
     </message>
@@ -9718,12 +9743,11 @@ p, li { white-space: pre-wrap; }
         <translation>Portweiterleitung von Hand</translation>
     </message>
     <message>
-        <location line="+30"/>
         <source>Should be disabled if you don&apos;t want to share connection information between peers.</source>
-        <translation>Sollte deaktiviert werden, wenn Sie keine Verbindungsinformationen mit Freunden teilen möchten.</translation>
+        <translation type="obsolete">Sollte deaktiviert werden, wenn Sie keine Verbindungsinformationen mit Freunden teilen möchten.</translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+84"/>
         <source>Download (KB/s) </source>
         <translation></translation>
     </message>
@@ -9744,13 +9768,26 @@ p, li { white-space: pre-wrap; }
         <translation>Zeige Discovery-Informationen in der Statuszeile</translation>
     </message>
     <message>
-        <location line="-280"/>
-        <location line="+160"/>
+        <location line="-288"/>
+        <location line="+168"/>
         <source>Network Configuration</source>
         <translation>Netzwerkkonfiguration</translation>
     </message>
     <message>
-        <location line="-107"/>
+        <location line="-119"/>
+        <source>The DHT allows you to answer connection 
+requests from your friends using BitTorrent&apos;s DHT. 
+It greatly improves the connectivity. 
+
+The Discovery service sends locations and GPG 
+identities of your trusted contacts to connected 
+peers, to help them choose new friends. 
+The friendship is never automatic however, and both 
+peers still need to trust each other to allow connection. </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
         <source>Public: DHT &amp; Discovery</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10421,25 +10458,24 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location line="+198"/>
+        <location line="+203"/>
         <source>Log In</source>
         <translation>Anmelden</translation>
     </message>
     <message>
-        <location line="-19"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Create new Profile...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Erstelle ein neues Profile...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="-11"/>
+        <location line="-35"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -10452,7 +10488,23 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Info&quot;&gt;&lt;span style=&quot; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Info...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+80"/>
+        <location line="+11"/>
+        <source>Opens a dialog for creating a new profile or 
+adding locations to an existing profile. 
+The current identities/locations will not be affected.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Manage profiles and locations...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+69"/>
         <source>Name (GPG Id) - location:</source>
         <translation>Name (GPG Id) - Ort:</translation>
     </message>
@@ -10462,7 +10514,7 @@ p, li { white-space: pre-wrap; }
         <translation>Passwort speichern</translation>
     </message>
     <message>
-        <location line="-133"/>
+        <location line="-138"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -10482,9 +10534,8 @@ p, li { white-space: pre-wrap; }
         <translation>Vielleicht ist das Passwort falsch</translation>
     </message>
     <message>
-        <location line="+11"/>
         <source>Create a New Profile</source>
-        <translation>Erstelle ein neues Profil</translation>
+        <translation type="obsolete">Erstelle ein neues Profil</translation>
     </message>
     <message>
         <source>Insecure</source>
@@ -10501,7 +10552,7 @@ This choice be reverted in settings.</source>
 Du kannst die Auswahl auch in den Optionen ändern.</translation>
     </message>
     <message>
-        <location line="-23"/>
+        <location line="-12"/>
         <location line="+6"/>
         <source>Multiple instances</source>
         <translation>Mehrere Instanzen</translation>
@@ -10517,14 +10568,13 @@ Du kannst die Auswahl auch in den Optionen ändern.</translation>
         <translation>Ein unerwartete Fehler während des &quot;Single instance lock&quot; ist aufgetreten</translation>
     </message>
     <message>
-        <location line="+16"/>
         <source>This will generate a new Profile
  Are you sure you want to continue?</source>
-        <translation>Es wird ein neues Profil erstellt
+        <translation type="obsolete">Es wird ein neues Profil erstellt
 Bist Du sicher?</translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="+46"/>
         <location line="+2"/>
         <source>Warning</source>
         <translation>Warnung</translation>
@@ -10953,7 +11003,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+26"/>
-        <location filename="../gui/feeds/SubFileItem.cpp" line="+578"/>
+        <location filename="../gui/feeds/SubFileItem.cpp" line="+576"/>
         <location line="+6"/>
         <source>Play File</source>
         <translation>Datei abspielen</translation>
