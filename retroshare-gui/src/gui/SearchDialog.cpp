@@ -74,6 +74,18 @@ const int SearchDialog::FILETYPE_IDX_DIRECTORY = 8;
 QMap<int, QString> * SearchDialog::FileTypeExtensionMap = new QMap<int, QString>();
 bool SearchDialog::initialised = false;
 
+static int FilterColumnFromComboBox(int nIndex)
+{
+    switch (nIndex) {
+    case 0:
+        return SR_NAME_COL;
+    case 1:
+        return SR_SIZE_COL;
+    }
+
+    return SR_NAME_COL;
+}
+
 /** Constructor */
 SearchDialog::SearchDialog(QWidget *parent)
 : MainPage(parent),
@@ -113,6 +125,10 @@ SearchDialog::SearchDialog(QWidget *parent)
                     this, SLOT( selectSearchResults( void ) ) );
 
     connect(ui.FileTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(selectSearchResults(int)));
+    
+	connect( ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
+    connect( ui.filterColumnComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterColumnChanged()));
+	connect( ui.clearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
 
     /* hide the Tree +/- */
     ui.searchResultWidget -> setRootIsDecorated( true );
@@ -163,6 +179,7 @@ SearchDialog::SearchDialog(QWidget *parent)
     ui.searchResultWidget->sortItems(SR_NAME_COL, Qt::AscendingOrder);
 
     ui.resetButton->hide();
+	ui.clearButton->hide();
   
   	ui._ownFiles_CB->setMinimumWidth(20);
   	ui._friendListsearch_SB->setMinimumWidth(20);
@@ -760,6 +777,10 @@ void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, 
 			insertDirectory(txt, searchId, details, child);
 		}
 	}
+	
+	if (ui.filterPatternLineEdit->text().isEmpty() == false) {
+		FilterItems();
+	}
 }
 
 void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, const DirDetails &dir)
@@ -808,6 +829,10 @@ void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, 
     }
 
     selectSearchResults();
+    
+	if (ui.filterPatternLineEdit->text().isEmpty() == false) {
+		FilterItems();
+	}
 // TODO: check for duplicate directories
 }
 
@@ -1039,6 +1064,10 @@ void SearchDialog::insertFile(const std::string& txt,qulonglong searchId, const 
 
 	/* select this search result */
 	selectSearchResults();
+	
+	if (ui.filterPatternLineEdit->text().isEmpty() == false) {
+		FilterItems();
+	}
 }
 
 void SearchDialog::resultsToTree(std::string txt,qulonglong searchId, const std::list<DirDetails>& results)
@@ -1113,6 +1142,7 @@ void SearchDialog::selectSearchResults(int index)
 		}
 	}
 	ui.searchResultWidget->update();
+	ui.filterPatternLineEdit->clear();
 }
 
 void SearchDialog::setIconAndType(QTreeWidgetItem *item, QString ext)
@@ -1316,4 +1346,71 @@ void SearchDialog::onComboIndexChanged(int index)
             }
         }
     }
+}
+
+/* clear Filter */
+void SearchDialog::clearFilter()
+{
+    ui.filterPatternLineEdit->clear();
+    ui.filterPatternLineEdit->setFocus();
+}
+
+void SearchDialog::filterRegExpChanged()
+{
+
+    QString text = ui.filterPatternLineEdit->text();
+
+    if (text.isEmpty()) {
+        ui.clearButton->hide();
+    } else {
+        ui.clearButton->show();
+    }
+
+    FilterItems();
+}
+
+void SearchDialog::filterColumnChanged()
+{
+
+     FilterItems();
+
+}
+
+void SearchDialog::FilterItems()
+{
+    QString sPattern = ui.filterPatternLineEdit->text();
+    int nFilterColumn = FilterColumnFromComboBox(ui.filterColumnComboBox->currentIndex());
+
+    int nCount = ui.searchResultWidget->topLevelItemCount ();
+    for (int nIndex = 0; nIndex < nCount; nIndex++) {
+        FilterItem(ui.searchResultWidget->topLevelItem(nIndex), sPattern, nFilterColumn);
+    }
+
+}
+
+bool SearchDialog::FilterItem(QTreeWidgetItem *pItem, QString &sPattern, int nFilterColumn)
+{
+    bool bVisible = true;
+
+    if (sPattern.isEmpty() == false) {
+        if (pItem->text(nFilterColumn).contains(sPattern, Qt::CaseInsensitive) == false) {
+            bVisible = false;
+        }
+    }
+
+    int nVisibleChildCount = 0;
+    int nCount = pItem->childCount();
+    for (int nIndex = 0; nIndex < nCount; nIndex++) {
+        if (FilterItem(pItem->child(nIndex), sPattern, nFilterColumn)) {
+            nVisibleChildCount++;
+        }
+    }
+
+    if (bVisible || nVisibleChildCount) {
+        pItem->setHidden(false);
+    } else {
+        pItem->setHidden(true);
+    }
+
+    return (bVisible || nVisibleChildCount);
 }

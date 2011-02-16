@@ -88,6 +88,10 @@ private slots:
 
     void onComboIndexChanged(int index);
 
+	void filterColumnChanged();
+	void filterRegExpChanged();
+	void clearFilter();
+
 
 
 private:
@@ -122,10 +126,8 @@ private:
     static bool initialised;
     void initialiseFileTypeMappings();
 
-/****
-QTreeWidget *searchtableWidget;
-QTreeWidget *searchtablewidget2;
-****/
+	void FilterItems();
+	bool FilterItem(QTreeWidgetItem *pItem, QString &sPattern, int nFilterColumn);
 
     int nextSearchId;
 
