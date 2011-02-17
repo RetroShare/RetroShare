@@ -95,6 +95,8 @@ SearchDialog::SearchDialog(QWidget *parent)
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
 
+    m_bProcessSettings = false;
+
 	 _queueIsAlreadyTakenCareOf = false ;
     ui.lineEdit->setFocus();
     ui.lineEdit->setToolTip(tr("Enter a keyword here (at least 3 char long)"));
@@ -180,6 +182,9 @@ SearchDialog::SearchDialog(QWidget *parent)
 
     ui.resetButton->hide();
 	ui.clearButton->hide();
+	
+	// load settings
+    processSettings(true);
   
   	ui._ownFiles_CB->setMinimumWidth(20);
   	ui._friendListsearch_SB->setMinimumWidth(20);
@@ -191,6 +196,43 @@ SearchDialog::SearchDialog(QWidget *parent)
 
 #endif
 }
+
+SearchDialog::~SearchDialog()
+{
+    // save settings
+    processSettings(false);
+}
+
+void SearchDialog::processSettings(bool bLoad)
+{
+    m_bProcessSettings = true;
+
+    QHeaderView *pHeader = ui.searchSummaryWidget->header () ;
+
+    Settings->beginGroup(QString("SearchDialog"));
+
+    if (bLoad) {
+        // load settings
+
+        // state of SearchSummary tree
+        pHeader->restoreState(Settings->value("SearchSummaryTree").toByteArray());
+
+        // state of splitter
+        ui.splitter->restoreState(Settings->value("Splitter").toByteArray());
+    } else {
+        // save settings
+
+        // state of SearchSummary tree
+        Settings->setValue("SearchSummaryTree", pHeader->saveState());
+
+        // state of splitter
+        Settings->setValue("Splitter", ui.splitter->saveState());
+    }
+
+    Settings->endGroup();
+    m_bProcessSettings = false;
+}
+
 
 void SearchDialog::checkText(const QString& txt)
 {

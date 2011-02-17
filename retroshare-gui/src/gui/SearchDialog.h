@@ -39,7 +39,7 @@ class SearchDialog : public MainPage
 /** Default Constructor */
     SearchDialog(QWidget *parent = 0);
 /** Default Destructor */
-
+    ~SearchDialog();
 
 public slots:
 		void updateFiles(qulonglong request_id,FileDetail file) ;
@@ -126,8 +126,12 @@ private:
     static bool initialised;
     void initialiseFileTypeMappings();
 
+	void processSettings(bool bLoad);
+
 	void FilterItems();
 	bool FilterItem(QTreeWidgetItem *pItem, QString &sPattern, int nFilterColumn);
+
+    bool m_bProcessSettings;
 
     int nextSearchId;
 
