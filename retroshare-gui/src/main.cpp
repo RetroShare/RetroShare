@@ -210,6 +210,8 @@ int main(int argc, char *argv[])
 	MessengerWindow::showYourself();
 
 	rshare.setQuitOnLastWindowClosed(true);
+
+	splashScreen.hide();
 #else
 	Emoticons::load();
 

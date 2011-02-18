@@ -9,7 +9,7 @@ TARGET = retroshare
 #CONFIG += minimal
 
 minimal {
-	CONFIG -= use_blogs bitdht
+	CONFIG -= use_blogs
 
 	DEFINES += MINIMAL_LIBRS
 }
@@ -236,11 +236,15 @@ win32 {
                 DEFINES *= MINIUPNPC_VERSION=13
                 DESTDIR = lib
 
-                # Switch off optimization
+                # Switch off optimization for release version
                 QMAKE_CXXFLAGS_RELEASE -= -O2
                 QMAKE_CXXFLAGS_RELEASE += -O0
                 QMAKE_CFLAGS_RELEASE -= -O2
                 QMAKE_CFLAGS_RELEASE += -O0
+
+                # Switch on optimization for debug version
+                #QMAKE_CXXFLAGS_DEBUG += -O2
+                #QMAKE_CFLAGS_DEBUG += -O2
 
                 DEFINES -= DEBUG_PQISSL
                 DEFINES += USE_CMD_ARGS
