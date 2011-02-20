@@ -17,7 +17,7 @@
 *
 ***********************************************************/
 
-ftFileCreator::ftFileCreator(std::string path, uint64_t size, std::string hash,bool assume_availability)
+ftFileCreator::ftFileCreator(const std::string& path, uint64_t size, const std::string& hash,bool assume_availability)
 	: ftFileProvider(path,size,hash), chunkMap(size,assume_availability)
 {
 	/* 

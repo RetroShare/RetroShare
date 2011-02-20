@@ -38,7 +38,7 @@
 class ftFileProvider
 {
 	public:
-		ftFileProvider(std::string path, uint64_t size, std::string hash);
+		ftFileProvider(const std::string& path, uint64_t size, const std::string& hash);
 		virtual ~ftFileProvider();
 
 		virtual bool 	getFileData(const std::string& peer_id,uint64_t offset, uint32_t &chunk_size, void *data);

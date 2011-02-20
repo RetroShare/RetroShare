@@ -23,7 +23,7 @@
 
 static const time_t UPLOAD_CHUNK_MAPS_TIME = 20 ;	// time to ask for a new chunkmap from uploaders in seconds.
 
-ftFileProvider::ftFileProvider(std::string path, uint64_t size, std::string hash) 
+ftFileProvider::ftFileProvider(const std::string& path, uint64_t size, const std::string& hash)
 	: mSize(size), hash(hash), file_name(path), fd(NULL)
 {
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/

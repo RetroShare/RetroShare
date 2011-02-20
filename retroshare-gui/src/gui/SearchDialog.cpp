@@ -334,16 +334,17 @@ void SearchDialog::download()
 			 std::cerr << std::endl;
 			 std::list<std::string> srcIds;
 
-			 getSourceFriendsForHash((item->text(SR_HASH_COL)).toStdString(),srcIds) ;
+			 std::string hash = item->text(SR_HASH_COL).toStdString();
+			 getSourceFriendsForHash(hash,srcIds) ;
 
 			 if(!rsFiles -> FileRequest((item->text(SR_NAME_COL)).toStdString(),
-						 (item->text(SR_HASH_COL)).toStdString(),
+						 hash,
 						 (item->text(SR_SIZE_COL)).toULongLong(),
 						 "", RS_FILE_HINTS_NETWORK_WIDE, srcIds))
 				 attemptDownloadLocal = true ;
 			 else
 			 {
-				 std::cout << "isuing file request from search dialog: -" << (item->text(SR_NAME_COL)).toStdString() << "-" << (item->text(SR_HASH_COL)).toStdString() << "-" << (item->text(SR_SIZE_COL)).toULongLong() << "-ids=" ;
+				 std::cout << "isuing file request from search dialog: -" << (item->text(SR_NAME_COL)).toStdString() << "-" << hash << "-" << (item->text(SR_SIZE_COL)).toULongLong() << "-ids=" ;
 				 for(std::list<std::string>::const_iterator it(srcIds.begin());it!=srcIds.end();++it)
 					 std::cout << *it << "-" << std::endl ;
 			 }
@@ -365,17 +366,19 @@ void SearchDialog::downloadDirectory(const QTreeWidgetItem *item, const QString 
                                                 + "/" + base + "/";
 		QString cleanPath = QDir::cleanPath(path);
 
-		getSourceFriendsForHash((item->text(SR_HASH_COL)).toStdString(),srcIds) ;
+		std::string hash = item->text(SR_HASH_COL).toStdString();
+
+		getSourceFriendsForHash(hash,srcIds) ;
 
 		rsFiles->FileRequest(item->text(SR_NAME_COL).toStdString(),
-				item->text(SR_HASH_COL).toStdString(),
+				hash,
 				item->text(SR_SIZE_COL).toULongLong(),
 				cleanPath.toStdString(),RS_FILE_HINTS_NETWORK_WIDE, srcIds);
 
 		std::cout << "SearchDialog::downloadDirectory(): "\
 				"issuing file request from search dialog: -"
 			<< (item->text(SR_NAME_COL)).toStdString()
-			<< "-" << (item->text(SR_HASH_COL)).toStdString()
+			<< "-" << hash
 			<< "-" << (item->text(SR_SIZE_COL)).toULongLong()
 			<< "-ids=" ;
 		for(std::list<std::string>::const_iterator it(srcIds.begin());

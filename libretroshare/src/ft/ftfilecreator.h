@@ -47,7 +47,7 @@ class ftFileCreator: public ftFileProvider
 {
 	public:
 
-		ftFileCreator(std::string savepath, uint64_t size, std::string hash,bool assume_availability);
+		ftFileCreator(const std::string& savepath, uint64_t size, const std::string& hash,bool assume_availability);
 
 		~ftFileCreator();
 
