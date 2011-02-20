@@ -56,6 +56,8 @@
  * 8 bits: SubType
  ******************************************************************/
 
+#include <util/smallobject.h>
+
 const uint8_t RS_PKT_VERSION1        = 0x01;
 const uint8_t RS_PKT_VERSION_SERVICE = 0x02;
 
@@ -65,11 +67,15 @@ const uint8_t RS_PKT_CLASS_CONFIG    = 0x02;
 const uint8_t RS_PKT_SUBTYPE_DEFAULT = 0x01; /* if only one subtype */
 
 
-class RsItem
+class RsItem: public RsMemoryManagement::SmallObject
 {
 	public:
 	RsItem(uint32_t t);
 	RsItem(uint8_t ver, uint8_t cls, uint8_t t, uint8_t subtype);
+#ifdef DO_STATISTICS
+	void *operator new(size_t s) ;
+	void operator delete(void *,size_t s) ;
+#endif
 
 virtual ~RsItem();
 virtual void clear() = 0;

@@ -405,6 +405,7 @@ HEADERS +=	upnp/upnphandler.h
 
 HEADERS +=	util/folderiterator.h \
 			util/rsdebug.h \
+			util/smallobject.h \
 			util/rsdir.h \
 			util/rsdiscspace.h \
 			util/rsnet.h \
@@ -525,6 +526,7 @@ SOURCES +=	upnp/upnphandler.cc
 
 SOURCES +=	util/folderiterator.cc \
 			util/rsdebug.cc \
+			util/smallobject.cc \
 			util/rsdir.cc \
 			util/rsdiscspace.cc \
 			util/rsnet.cc \
