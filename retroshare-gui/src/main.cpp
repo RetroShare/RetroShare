@@ -32,6 +32,7 @@
 #include "gui/SharedFilesDialog.h"
 #include "gui/NetworkDialog.h"
 #include "gui/chat/PopupChatDialog.h"
+#include "gui/QuickStartWizard.h"
 #endif // MINIMAL_RSGUI
 #include "gui/MessengerWindow.h"
 #include "gui/StartDialog.h"
@@ -41,7 +42,6 @@
 #include "gui/connect/ConfCertDialog.h"
 #include "idle/idle.h"
 #include "gui/common/Emoticons.h"
-#include "gui/QuickStartWizard.h"
 
 /*** WINDOWS DON'T LIKE THIS - REDEFINES VER numbers.
 #include <gui/qskinobject/qskinobject.h>

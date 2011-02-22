@@ -35,9 +35,9 @@
 #endif
 
 #include "RsAutoUpdatePage.h"
-#include "MainWindow.h"
 
 #ifndef MINIMAL_RSGUI
+#include "MainWindow.h"
 #include "toaster/OnlineToaster.h"
 #include "toaster/MessageToaster.h"
 #include "toaster/DownloadToaster.h"

@@ -192,12 +192,14 @@ public:
   //! Method overload. Restore window and toolbar information.
   void loadWidgetInformation(QMainWindow *widget, QToolBar *toolBar);
 
+#ifndef MINIMAL_RSGUI
   /* MainWindow */
   int  getLastPageInMainWindow ();
   void setLastPageInMainWindow (int value);
   uint getStatusBarFlags();
   void setStatusBarFlags(uint flags);
   void setStatusBarFlag(uint flag, bool enable);
+#endif // MINIMAL_RSGUI
 
   /* Messages */
   bool getMsgSetToReadOnActivate ();

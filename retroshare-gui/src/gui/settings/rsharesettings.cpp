@@ -30,7 +30,11 @@
 #include <rshare.h>
 
 #include "rsharesettings.h"
+#ifdef MINIMAL_RSGUI
+#include <QMainWindow>
+#else
 #include "gui/MainWindow.h"
+#endif // MINIMAL_RSGUI
 
 #include <retroshare/rsnotify.h>
 
@@ -525,6 +529,7 @@ void RshareSettings::loadWidgetInformation(QMainWindow *widget, QToolBar *toolBa
  loadWidgetInformation(widget);
 }
 
+#ifndef MINIMAL_RSGUI
 /* MainWindow */
 int RshareSettings::getLastPageInMainWindow ()
 {
@@ -559,6 +564,7 @@ void RshareSettings::setStatusBarFlag(uint flag, bool enable)
 
     setStatusBarFlags(flags);
 }
+#endif // MINIMAL_RSGUI
 
 /* Messages */
 bool RshareSettings::getMsgSetToReadOnActivate ()
