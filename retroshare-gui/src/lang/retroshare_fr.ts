@@ -8716,7 +8716,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/NetworkDialog.ui" line="292"/>
         <source>Show keys that are not validated by the GPG web of trust</source>
-        <translation type="unfinished">Afficher les clés indépendantes du réseau local</translation>
+        <translation>Afficher toutes les clés du trousseau PGP</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="526"/>
@@ -9474,7 +9474,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/PeersDialog.cpp" line="194"/>
         <source>Welcome to RetroShare&apos;s group chat.</source>
-        <translation type="unfinished">Bienvenue dans le chat public RetroShare.</translation>
+        <translation>Bienvenue dans le chat public RetroShare.</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="461"/>
@@ -10343,7 +10343,7 @@ Voulez-vous lui envoyer un message à la place ?</translation>
     <message>
         <location filename="../gui/chat/PopupChatDialog.cpp" line="461"/>
         <source>is typing...</source>
-        <translation>est occupé d&apos;écrire...</translation>
+        <translation>est en train d&apos;écrire...</translation>
     </message>
     <message>
         <location filename="../gui/chat/PopupChatDialog.cpp" line="745"/>
