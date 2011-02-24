@@ -8716,7 +8716,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/NetworkDialog.ui" line="292"/>
         <source>Show keys that are not validated by the GPG web of trust</source>
-        <translation>Afficher les clés qui ne sont pas signées par la toile de confiance PGP</translation>
+        <translation type="unfinished">Afficher les clés indépendantes du réseau local</translation>
     </message>
     <message>
         <location filename="../gui/NetworkDialog.ui" line="526"/>
@@ -9474,7 +9474,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/PeersDialog.cpp" line="194"/>
         <source>Welcome to RetroShare&apos;s group chat.</source>
-        <translation>Bienvenue dans le chat pubic RetroShare.</translation>
+        <translation type="unfinished">Bienvenue dans le chat public RetroShare.</translation>
     </message>
     <message>
         <location filename="../gui/PeersDialog.cpp" line="461"/>
