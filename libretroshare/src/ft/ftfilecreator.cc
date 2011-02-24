@@ -539,7 +539,7 @@ bool ftFileCreator::crossCheckChunkMap(const CRC32Map& ref,uint32_t& bad_chunks,
 			printf("  Chunk %05d/%05d:",i,nb_chunks) ;
 			if(map[i])
 			{
-				if(fseek(fd,(uint64_t)i * (uint64_t)chunk_size,SEEK_SET)==0 && (len = fread(buff,1,chunk_size,fd)) > 0)
+				if(fseeko64(fd,(uint64_t)i * (uint64_t)chunk_size,SEEK_SET)==0 && (len = fread(buff,1,chunk_size,fd)) > 0)
 				{
 					uint32_t crc = RsDirUtil::rs_CRC32(buff,len) ;
 

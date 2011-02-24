@@ -303,14 +303,14 @@ bool RsDirUtil::copyFile(const std::string& source,const std::string& dest)
         return (CopyFileW(sourceW.c_str(), destW.c_str(), FALSE) != 0);
 
 #else
-	FILE *in = fopen(source.c_str(),"rb") ;
+	FILE *in = fopen64(source.c_str(),"rb") ;
 
 	if(in == NULL)
 	{
 		return false ;
 	}
 
-	FILE *out = fopen(dest.c_str(),"wb") ;
+	FILE *out = fopen64(dest.c_str(),"wb") ;
 
 	if(out == NULL)
 	{
@@ -994,7 +994,7 @@ bool RsDirUtil::getWideFileHash(std::wstring filepath,
 	/***** XXX TO MAKE WIDE SYSTEM CALL ******************************************************/
 	std::string fp(filepath.begin(), filepath.end());
 
-	if (NULL == (fd = fopen(fp.c_str(), "rb")))
+	if (NULL == (fd = fopen64(fp.c_str(), "rb")))
 		return false;
 
 	/***** XXX TO MAKE WIDE SYSTEM CALL ******************************************************/
