@@ -128,7 +128,7 @@ uint32_t RsDirUtil::rs_CRC32(const unsigned char *data,uint32_t _len)
 
 bool RsDirUtil::crc32File(FILE *fd, uint64_t file_size,uint32_t chunk_size, CRC32Map& crc_map) 
 {
-	if(fseek(fd,0,SEEK_SET) != 0)
+	if(fseeko64(fd,0,SEEK_SET) != 0)
 	{
 		std::cerr << "crc32File(): cannot fseek to beginnign of the file !!" << std::endl ;
 		return false ;
@@ -545,9 +545,9 @@ bool RsDirUtil::getFileHash(const std::string& filepath, std::string &hash, uint
 #endif
 
 	/* determine size */
- 	fseek(fd, 0, SEEK_END);
-	size = ftell(fd);
-	fseek(fd, 0, SEEK_SET);
+ 	fseeko64(fd, 0, SEEK_END);
+	size = ftello64(fd);
+	fseeko64(fd, 0, SEEK_SET);
 
 	SHA1_Init(sha_ctx);
 	while((len = fread(gblBuf,1, 512, fd)) > 0)
@@ -1000,9 +1000,9 @@ bool RsDirUtil::getWideFileHash(std::wstring filepath,
 	/***** XXX TO MAKE WIDE SYSTEM CALL ******************************************************/
 
 	/* determine size */
- 	fseek(fd, 0, SEEK_END);
-	size = ftell(fd);
-	fseek(fd, 0, SEEK_SET);
+ 	fseeko64(fd, 0, SEEK_END);
+	size = ftello64(fd);
+	fseeko64(fd, 0, SEEK_SET);
 
 	SHA1_Init(sha_ctx);
 	while((len = fread(gblBuf,1, 512, fd)) > 0)
