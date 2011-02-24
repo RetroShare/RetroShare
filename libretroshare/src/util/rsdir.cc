@@ -540,7 +540,7 @@ bool RsDirUtil::getFileHash(const std::string& filepath, std::string &hash, uint
 	if (NULL == (fd = _wfopen(filepathW.c_str(), L"rb")))
 		return false;
 #else
-	if (NULL == (fd = fopen(filepath.c_str(), "rb")))
+	if (NULL == (fd = fopen64(filepath.c_str(), "rb")))
 		return false;
 #endif
 
