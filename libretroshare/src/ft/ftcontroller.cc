@@ -683,7 +683,7 @@ bool ftController::moveFile(const std::string& source,const std::string& dest)
 
 bool ftController::copyFile(const std::string& source,const std::string& dest)
 {
-	FILE *in = fopen(source.c_str(),"rb") ;
+	FILE *in = fopen64(source.c_str(),"rb") ;
 
 	if(in == NULL)
 	{
@@ -691,7 +691,7 @@ bool ftController::copyFile(const std::string& source,const std::string& dest)
 		return false ;
 	}
 
-	FILE *out = fopen(dest.c_str(),"wb") ;
+	FILE *out = fopen64(dest.c_str(),"wb") ;
 
 	if(out == NULL)
 	{
@@ -1046,7 +1046,7 @@ bool 	ftController::FileRequest(const std::string& fname, const std::string& has
 		librs::util::ConvertUtf8ToUtf16(destination, destinationW);
 		FILE *f = _wfopen(destinationW.c_str(), L"w");
 #else
-		FILE *f = fopen(destination.c_str(),"w") ;
+		FILE *f = fopen64(destination.c_str(),"w") ;
 #endif
 		if(f == NULL)
 			std::cerr << "Could not open file " << destination << " for writting." << std::endl ;
