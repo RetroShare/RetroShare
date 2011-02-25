@@ -17,7 +17,7 @@
 *
 ***********************************************************/
 
-ftFileCreator::ftFileCreator(std::string path, uint64_t size, std::string hash,bool assume_availability)
+ftFileCreator::ftFileCreator(const std::string& path, uint64_t size, const std::string& hash,bool assume_availability)
 	: ftFileProvider(path,size,hash), chunkMap(size,assume_availability)
 {
 	/* 
@@ -278,6 +278,8 @@ int ftFileCreator::locked_initializeFileAttrs()
 }
 ftFileCreator::~ftFileCreator()
 {
+	std::cerr << "Deleting file creator for " << file_name << std::endl;
+
 	// Note: The file is actually closed in the parent, that is always a ftFileProvider.
 	//
 	/*
@@ -495,6 +497,7 @@ bool ftFileCreator::finished()
 
 bool ftFileCreator::hashReceivedData(std::string& hash)
 {
+	std::cerr << "file creator " << hash << " asked for hashing received data " << file_name << std::endl;
 	// csoler: No mutex here please !
 	//
 	// This is a bit dangerous, but otherwise we might stuck the GUI for a 
@@ -502,9 +505,13 @@ bool ftFileCreator::hashReceivedData(std::string& hash)
 	// at a time file_name nor hash can be modified, which is easy.
 	//
 	if(!finished())
+	{
+		std::cerr << "Transfer not finished !! This should not happen" << std::endl;
 		return false ;
+	}
 
-	return RsDirUtil::hashFile(file_name,hash) ;
+	uint64_t tmpsize ;
+	return RsDirUtil::getFileHash(file_name,hash,tmpsize) ;
 }
 
 bool ftFileCreator::crossCheckChunkMap(const CRC32Map& ref,uint32_t& bad_chunks,uint32_t& incomplete_chunks)
@@ -532,7 +539,7 @@ bool ftFileCreator::crossCheckChunkMap(const CRC32Map& ref,uint32_t& bad_chunks,
 			printf("  Chunk %05d/%05d:",i,nb_chunks) ;
 			if(map[i])
 			{
-				if(fseek(fd,(uint64_t)i * (uint64_t)chunk_size,SEEK_SET)==0 && (len = fread(buff,1,chunk_size,fd)) > 0)
+				if(fseeko64(fd,(uint64_t)i * (uint64_t)chunk_size,SEEK_SET)==0 && (len = fread(buff,1,chunk_size,fd)) > 0)
 				{
 					uint32_t crc = RsDirUtil::rs_CRC32(buff,len) ;
 

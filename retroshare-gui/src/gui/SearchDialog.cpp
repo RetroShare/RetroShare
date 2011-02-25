@@ -74,6 +74,18 @@ const int SearchDialog::FILETYPE_IDX_DIRECTORY = 8;
 QMap<int, QString> * SearchDialog::FileTypeExtensionMap = new QMap<int, QString>();
 bool SearchDialog::initialised = false;
 
+static int FilterColumnFromComboBox(int nIndex)
+{
+    switch (nIndex) {
+    case 0:
+        return SR_NAME_COL;
+    case 1:
+        return SR_SIZE_COL;
+    }
+
+    return SR_NAME_COL;
+}
+
 /** Constructor */
 SearchDialog::SearchDialog(QWidget *parent)
 : MainPage(parent),
@@ -82,6 +94,8 @@ SearchDialog::SearchDialog(QWidget *parent)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
+
+    m_bProcessSettings = false;
 
 	 _queueIsAlreadyTakenCareOf = false ;
     ui.lineEdit->setFocus();
@@ -113,6 +127,10 @@ SearchDialog::SearchDialog(QWidget *parent)
                     this, SLOT( selectSearchResults( void ) ) );
 
     connect(ui.FileTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(selectSearchResults(int)));
+    
+	connect( ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
+    connect( ui.filterColumnComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterColumnChanged()));
+	connect( ui.clearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
 
     /* hide the Tree +/- */
     ui.searchResultWidget -> setRootIsDecorated( true );
@@ -163,6 +181,10 @@ SearchDialog::SearchDialog(QWidget *parent)
     ui.searchResultWidget->sortItems(SR_NAME_COL, Qt::AscendingOrder);
 
     ui.resetButton->hide();
+	ui.clearButton->hide();
+	
+	// load settings
+    processSettings(true);
   
   	ui._ownFiles_CB->setMinimumWidth(20);
   	ui._friendListsearch_SB->setMinimumWidth(20);
@@ -174,6 +196,43 @@ SearchDialog::SearchDialog(QWidget *parent)
 
 #endif
 }
+
+SearchDialog::~SearchDialog()
+{
+    // save settings
+    processSettings(false);
+}
+
+void SearchDialog::processSettings(bool bLoad)
+{
+    m_bProcessSettings = true;
+
+    QHeaderView *pHeader = ui.searchSummaryWidget->header () ;
+
+    Settings->beginGroup(QString("SearchDialog"));
+
+    if (bLoad) {
+        // load settings
+
+        // state of SearchSummary tree
+        pHeader->restoreState(Settings->value("SearchSummaryTree").toByteArray());
+
+        // state of splitter
+        ui.splitter->restoreState(Settings->value("Splitter").toByteArray());
+    } else {
+        // save settings
+
+        // state of SearchSummary tree
+        Settings->setValue("SearchSummaryTree", pHeader->saveState());
+
+        // state of splitter
+        Settings->setValue("Splitter", ui.splitter->saveState());
+    }
+
+    Settings->endGroup();
+    m_bProcessSettings = false;
+}
+
 
 void SearchDialog::checkText(const QString& txt)
 {
@@ -275,16 +334,17 @@ void SearchDialog::download()
 			 std::cerr << std::endl;
 			 std::list<std::string> srcIds;
 
-			 getSourceFriendsForHash((item->text(SR_HASH_COL)).toStdString(),srcIds) ;
+			 std::string hash = item->text(SR_HASH_COL).toStdString();
+			 getSourceFriendsForHash(hash,srcIds) ;
 
 			 if(!rsFiles -> FileRequest((item->text(SR_NAME_COL)).toStdString(),
-						 (item->text(SR_HASH_COL)).toStdString(),
+						 hash,
 						 (item->text(SR_SIZE_COL)).toULongLong(),
 						 "", RS_FILE_HINTS_NETWORK_WIDE, srcIds))
 				 attemptDownloadLocal = true ;
 			 else
 			 {
-				 std::cout << "isuing file request from search dialog: -" << (item->text(SR_NAME_COL)).toStdString() << "-" << (item->text(SR_HASH_COL)).toStdString() << "-" << (item->text(SR_SIZE_COL)).toULongLong() << "-ids=" ;
+				 std::cout << "isuing file request from search dialog: -" << (item->text(SR_NAME_COL)).toStdString() << "-" << hash << "-" << (item->text(SR_SIZE_COL)).toULongLong() << "-ids=" ;
 				 for(std::list<std::string>::const_iterator it(srcIds.begin());it!=srcIds.end();++it)
 					 std::cout << *it << "-" << std::endl ;
 			 }
@@ -306,17 +366,19 @@ void SearchDialog::downloadDirectory(const QTreeWidgetItem *item, const QString 
                                                 + "/" + base + "/";
 		QString cleanPath = QDir::cleanPath(path);
 
-		getSourceFriendsForHash((item->text(SR_HASH_COL)).toStdString(),srcIds) ;
+		std::string hash = item->text(SR_HASH_COL).toStdString();
+
+		getSourceFriendsForHash(hash,srcIds) ;
 
 		rsFiles->FileRequest(item->text(SR_NAME_COL).toStdString(),
-				item->text(SR_HASH_COL).toStdString(),
+				hash,
 				item->text(SR_SIZE_COL).toULongLong(),
 				cleanPath.toStdString(),RS_FILE_HINTS_NETWORK_WIDE, srcIds);
 
 		std::cout << "SearchDialog::downloadDirectory(): "\
 				"issuing file request from search dialog: -"
 			<< (item->text(SR_NAME_COL)).toStdString()
-			<< "-" << (item->text(SR_HASH_COL)).toStdString()
+			<< "-" << hash
 			<< "-" << (item->text(SR_SIZE_COL)).toULongLong()
 			<< "-ids=" ;
 		for(std::list<std::string>::const_iterator it(srcIds.begin());
@@ -760,6 +822,10 @@ void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, 
 			insertDirectory(txt, searchId, details, child);
 		}
 	}
+	
+	if (ui.filterPatternLineEdit->text().isEmpty() == false) {
+		FilterItems();
+	}
 }
 
 void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, const DirDetails &dir)
@@ -808,6 +874,10 @@ void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, 
     }
 
     selectSearchResults();
+    
+	if (ui.filterPatternLineEdit->text().isEmpty() == false) {
+		FilterItems();
+	}
 // TODO: check for duplicate directories
 }
 
@@ -1039,6 +1109,10 @@ void SearchDialog::insertFile(const std::string& txt,qulonglong searchId, const 
 
 	/* select this search result */
 	selectSearchResults();
+	
+	if (ui.filterPatternLineEdit->text().isEmpty() == false) {
+		FilterItems();
+	}
 }
 
 void SearchDialog::resultsToTree(std::string txt,qulonglong searchId, const std::list<DirDetails>& results)
@@ -1113,6 +1187,7 @@ void SearchDialog::selectSearchResults(int index)
 		}
 	}
 	ui.searchResultWidget->update();
+	ui.filterPatternLineEdit->clear();
 }
 
 void SearchDialog::setIconAndType(QTreeWidgetItem *item, QString ext)
@@ -1316,4 +1391,71 @@ void SearchDialog::onComboIndexChanged(int index)
             }
         }
     }
+}
+
+/* clear Filter */
+void SearchDialog::clearFilter()
+{
+    ui.filterPatternLineEdit->clear();
+    ui.filterPatternLineEdit->setFocus();
+}
+
+void SearchDialog::filterRegExpChanged()
+{
+
+    QString text = ui.filterPatternLineEdit->text();
+
+    if (text.isEmpty()) {
+        ui.clearButton->hide();
+    } else {
+        ui.clearButton->show();
+    }
+
+    FilterItems();
+}
+
+void SearchDialog::filterColumnChanged()
+{
+
+     FilterItems();
+
+}
+
+void SearchDialog::FilterItems()
+{
+    QString sPattern = ui.filterPatternLineEdit->text();
+    int nFilterColumn = FilterColumnFromComboBox(ui.filterColumnComboBox->currentIndex());
+
+    int nCount = ui.searchResultWidget->topLevelItemCount ();
+    for (int nIndex = 0; nIndex < nCount; nIndex++) {
+        FilterItem(ui.searchResultWidget->topLevelItem(nIndex), sPattern, nFilterColumn);
+    }
+
+}
+
+bool SearchDialog::FilterItem(QTreeWidgetItem *pItem, QString &sPattern, int nFilterColumn)
+{
+    bool bVisible = true;
+
+    if (sPattern.isEmpty() == false) {
+        if (pItem->text(nFilterColumn).contains(sPattern, Qt::CaseInsensitive) == false) {
+            bVisible = false;
+        }
+    }
+
+    int nVisibleChildCount = 0;
+    int nCount = pItem->childCount();
+    for (int nIndex = 0; nIndex < nCount; nIndex++) {
+        if (FilterItem(pItem->child(nIndex), sPattern, nFilterColumn)) {
+            nVisibleChildCount++;
+        }
+    }
+
+    if (bVisible || nVisibleChildCount) {
+        pItem->setHidden(false);
+    } else {
+        pItem->setHidden(true);
+    }
+
+    return (bVisible || nVisibleChildCount);
 }

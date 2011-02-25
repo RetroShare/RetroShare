@@ -738,7 +738,8 @@ continue_packet:
 						msgout <<  "(M:" << maxlen << " B:" << blen;
 						msgout <<  " E:" << extralen << " R:" << tmplen << ")\n";
 						msgout <<  "\n";
-						msgout <<  "Please contact the developers.";
+						msgout <<  "Note: this error might as well happen (rarely) when a peer disconnects in between a transmission of a large packet." << std::endl;
+						msgout <<  "If it happens manny time, please contact the developers, and send them these numbers:";
 						msgout <<  "\n";
 
 						msgout << "block = " 
@@ -752,7 +753,10 @@ continue_packet:
 							<< (int)(((unsigned char*)block)[7]) << " "
 							<< std::endl ;
 
-						notify->AddSysMessage(0, RS_SYS_WARNING, title, msgout.str());
+
+						//notify->AddSysMessage(0, RS_SYS_WARNING, title, msgout.str());
+
+						std::cerr << msgout.str() << std::endl;
 					}
 
 					bio->close();	

@@ -24,6 +24,7 @@
  */
 
 #include <stdio.h>
+#include <assert.h>
 #include <string.h>
 #include "bitdht/bencode.h"
 #include "bitdht/bdmsgs.h"
@@ -646,6 +647,10 @@ int beMsgGetToken(be_node *n, bdToken &token)
 		return 0;
 	}
         int len = be_str_len(n);
+
+	if(len > BITDHT_TOKEN_MAX_LEN)
+		return 0 ;
+
 	for(int i = 0; i < len; i++)
 	{
 		token.data[i] = n->val.s[i];

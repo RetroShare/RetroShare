@@ -94,7 +94,7 @@ ftTransferModule::~ftTransferModule()
 {}
 
 
-bool ftTransferModule::setFileSources(std::list<std::string> peerIds)
+bool ftTransferModule::setFileSources(const std::list<std::string>& peerIds)
 {
   	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
 
@@ -105,7 +105,7 @@ bool ftTransferModule::setFileSources(std::list<std::string> peerIds)
 	std::cerr << " List of peers: " ;
 #endif
 
-  std::list<std::string>::iterator it;
+  std::list<std::string>::const_iterator it;
   for(it = peerIds.begin(); it != peerIds.end(); it++)
   {
 
@@ -135,7 +135,7 @@ bool ftTransferModule::getFileSources(std::list<std::string> &peerIds)
     return true;
 }
 
-bool ftTransferModule::addFileSource(std::string peerId)
+bool ftTransferModule::addFileSource(const std::string& peerId)
 {
   RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
   std::map<std::string,peerInfo>::iterator mit;
@@ -166,7 +166,7 @@ bool ftTransferModule::addFileSource(std::string peerId)
   return true;
 }
 
-bool ftTransferModule::removeFileSource(std::string peerId)
+bool ftTransferModule::removeFileSource(const std::string& peerId)
 {
 	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
 	std::map<std::string,peerInfo>::iterator mit;
@@ -188,7 +188,7 @@ bool ftTransferModule::removeFileSource(std::string peerId)
 	return true;
 }
 
-bool ftTransferModule::setPeerState(std::string peerId,uint32_t state,uint32_t maxRate) 
+bool ftTransferModule::setPeerState(const std::string& peerId,uint32_t state,uint32_t maxRate)
 {
   	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
 #ifdef FT_DEBUG
@@ -236,7 +236,7 @@ bool ftTransferModule::setPeerState(std::string peerId,uint32_t state,uint32_t m
 }
 
 
-bool ftTransferModule::getPeerState(std::string peerId,uint32_t &state,uint32_t &tfRate)
+bool ftTransferModule::getPeerState(const std::string& peerId,uint32_t &state,uint32_t &tfRate)
 {
   	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
   std::map<std::string,peerInfo>::iterator mit;
@@ -256,7 +256,7 @@ bool ftTransferModule::getPeerState(std::string peerId,uint32_t &state,uint32_t 
   return true;
 }
 
-uint32_t ftTransferModule::getDataRate(std::string peerId)
+uint32_t ftTransferModule::getDataRate(const std::string& peerId)
 {
   	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
   std::map<std::string,peerInfo>::iterator mit;
@@ -276,7 +276,7 @@ uint32_t ftTransferModule::getDataRate(std::string peerId)
 
 
   //interface to client module
-bool ftTransferModule::recvFileData(std::string peerId, uint64_t offset, uint32_t chunk_size, void *data)
+bool ftTransferModule::recvFileData(const std::string& peerId, uint64_t offset, uint32_t chunk_size, void *data)
 {
 #ifdef FT_DEBUG
 	std::cerr << "ftTransferModule::recvFileData()";
@@ -315,7 +315,7 @@ bool ftTransferModule::recvFileData(std::string peerId, uint64_t offset, uint32_
   return ok;
 }
 
-void ftTransferModule::requestData(std::string peerId, uint64_t offset, uint32_t chunk_size)
+void ftTransferModule::requestData(const std::string& peerId, uint64_t offset, uint32_t chunk_size)
 {
 #ifdef FT_DEBUG
 	std::cerr << "ftTransferModule::requestData()";

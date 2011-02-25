@@ -18,7 +18,7 @@ debug {
 }
 
 minimal {
-	CONFIG -= blogs bitdht
+	CONFIG -= blogs
 
 	DEFINES += MINIMAL_RSGUI
 }
@@ -91,11 +91,15 @@ win32-x-g++ {
 #################################### Windows #####################################
 
 win32 {
-    # Switch off optimization
+    # Switch off optimization for release version
     QMAKE_CXXFLAGS_RELEASE -= -O2
     QMAKE_CXXFLAGS_RELEASE += -O0
     QMAKE_CFLAGS_RELEASE -= -O2
     QMAKE_CFLAGS_RELEASE += -O0
+
+    # Switch on optimization for debug version
+    #QMAKE_CXXFLAGS_DEBUG += -O2
+    #QMAKE_CFLAGS_DEBUG += -O2
 
     OBJECTS_DIR = temp/obj
     #LIBS += -L"D/Qt/2009.03/qt/plugins/imageformats"
@@ -716,6 +720,8 @@ minimal {
                   gui/settings/rsharesettings.cpp \
                   gui/common/rwindow.cpp \
                   gui/common/StatusDefs.cpp \
+                  gui/common/PeerDefs.cpp \
+                  gui/common/RSTreeWidgetItem.cpp \
                   gui/LogoBar.cpp \
                   gui/RsAutoUpdatePage.cpp \
                   gui/common/vmessagebox.cpp \
@@ -748,6 +754,8 @@ minimal {
                   gui/settings/RsharePeerSettings.h \
                   gui/common/rwindow.h \
                   gui/common/StatusDefs.h \
+                  gui/common/PeerDefs.h \
+                  gui/common/RSTreeWidgetItem.h \
                   gui/LogoBar.h \
                   gui/RsAutoUpdatePage.h \
                   gui/common/vmessagebox.h \

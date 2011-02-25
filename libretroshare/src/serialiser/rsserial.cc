@@ -26,8 +26,11 @@
 
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rsserial.h"
+#include "util/rsthreads.h"
 
+#include <math.h>
 #include <map>
+#include <vector>
 #include <iostream>
 
 /***
@@ -44,6 +47,68 @@ RsItem::RsItem(uint32_t t)
 	return;
 }
 	
+#ifdef DO_STATISTICS
+class Counter
+{
+	public: 
+		Counter(int i): _i(i) {}
+		Counter(): _i(0) {} 
+
+		int v() const { return _i ; }
+		int& v() { return _i ; }
+	private:
+		int _i ;
+};
+
+	static RsMutex smtx ;
+	static std::map<int,Counter> size_hits ;
+	static int nb_rsitem_creations = 0 ;
+	static int total_rsitem_mallocs = 0 ;
+	static int total_rsitem_frees = 0 ;
+	static int total_rsitem_freed = 0 ;
+	static time_t last_time = 0 ;
+
+void *RsItem::operator new(size_t s)
+{
+//	std::cerr << "New RsItem: s=" << s << std::endl;
+
+	RsStackMutex m(smtx) ;
+
+	++size_hits[ s ].v() ;
+
+	time_t now = time(NULL);
+	++nb_rsitem_creations ;
+	total_rsitem_mallocs += s ;
+
+	if(last_time + 20 < now)
+	{
+		std::cerr << "Memory statistics:" << std::endl;
+		std::cerr << "  Total RsItem memory:       " << total_rsitem_mallocs << std::endl;
+		std::cerr << "  Total RsItem creations:    " << nb_rsitem_creations << std::endl;
+		std::cerr << "  Total RsItem freed memory: " << total_rsitem_freed << std::endl;
+		std::cerr << "  Total RsItem deletions:    " << total_rsitem_frees << std::endl;
+		std::cerr << "Now printing histogram:" << std::endl;
+
+		for(std::map<int,Counter>::const_iterator it(size_hits.begin());it!=size_hits.end();++it)
+			std::cerr << it->first << "  " << it->second.v() << std::endl;
+		last_time = now ;
+	}
+
+	RsItem *a = static_cast<RsItem*>(::operator new(s)) ;
+	return a ;
+}
+void RsItem::operator delete(void *p,size_t s)
+{
+//	std::cerr << "Delete RsItem: s=" << s << std::endl;
+
+	RsStackMutex m(smtx) ;
+	total_rsitem_freed += s ;
+	++total_rsitem_frees ;
+
+	::operator delete(p) ;
+}
+#endif
+
 RsItem::RsItem(uint8_t ver, uint8_t cls, uint8_t t, uint8_t subtype)
 {
 	type = (ver << 24) + (cls << 16) + (t << 8) + subtype;

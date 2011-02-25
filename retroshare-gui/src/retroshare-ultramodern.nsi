@@ -10,14 +10,14 @@
 Name "${APPNAMEANDVERSION}"
 InstallDir "$PROGRAMFILES\RetroShare"
 InstallDirRegKey HKLM "Software\${APPNAME}" ""
-OutFile "RetroShare_${VERSION}_setup.exe"
+OutFile "RetroShare_${VERSION}_setup_ultramodern.exe"
 BrandingText "${APPNAMEANDVERSION}"
 ; Use compression
 SetCompressor /SOLID LZMA 
 
 ; Modern interface settings
 !include Sections.nsh
-!include "MUI.nsh"
+!include "UMUI.nsh"
 
 ;Interface Settings
 !define MUI_ABORTWARNING
@@ -25,21 +25,21 @@ SetCompressor /SOLID LZMA
 ;!define MUI_HEADERIMAGE_BITMAP "retroshare.bmp" ; optional
 
 # MUI defines
-!define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\orange-install.ico"
+!define MUI_ICON "${NSISDIR}\Contrib\Graphics\UltraModernUI\Icon.ico"
 !define MUI_FINISHPAGE_NOAUTOCLOSE
 !define MUI_LICENSEPAGE_RADIOBUTTONS
 !define MUI_COMPONENTSPAGE_SMALLDESC
-!define MUI_FINISHPAGE_LINK "$(FINISHPAGELINK)"
+!define MUI_FINISHPAGE_LINK "Visit the RetroShare forum for the latest news and support"
 !define MUI_FINISHPAGE_LINK_LOCATION "http://retroshare.sourceforge.net/forum/"
 !define MUI_FINISHPAGE_RUN "$INSTDIR\RetroShare.exe"
 !define MUI_FINISHPAGE_SHOWREADME $INSTDIR\changelog.txt
 !define MUI_FINISHPAGE_SHOWREADME_TEXT changelog.txt
 !define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
-!define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\orange-uninstall.ico"
+!define MUI_UNICON "${NSISDIR}\Contrib\Graphics\UltraModernUI\UnIcon.ico"
 !define MUI_UNFINISHPAGE_NOAUTOCLOSE
 !define MUI_LANGDLL_REGISTRY_ROOT HKLM
 !define MUI_LANGDLL_REGISTRY_KEY ${REGKEY}
-!define MUI_LANGDLL_REGISTRY_VALUENAME InstallerLanguage
+!define UMUI_LANGDLL_REGISTRY_VALUENAME InstallerLanguage
 
 ;!define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of RetroShare. \r\n\r\nIt is recommended that you close all other applications before starting Setup. This will make it possible to update relevant system files without havinf to reboot your computer. \r\n\r\nIMPORTANT: Ensure that RetroShare is NOT RUNNING before continuing (you can exit from the taskbar menu), otherwise the installer cannot update the executables, and the installation will fail. \r\n\r\nClick Next to continue. "
 
@@ -135,9 +135,9 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
     LangString sec_shortcuts ${LANG_GERMAN} "Shortcuts"
     LangString sec_link ${LANG_GERMAN} "Dateiverknuepfungen"
     LangString sec_autostart ${LANG_GERMAN} "Auto Startup"
-	LangString DESC_sec_main ${LANG_GERMAN} "Installiert die erforderlichen Programmdateien."
-	LangString DESC_sec_data ${LANG_GERMAN} "Installiert RetroShare Skins"
-    LangString DESC_sec_shortcuts ${LANG_GERMAN} "Erstellt eine RetroShare Verknuepfung im Startmen�, Desktop oder im Schnellstarter."
+	  LangString DESC_sec_main ${LANG_GERMAN} "Installiert die erforderlichen Programmdateien."
+	  LangString DESC_sec_data ${LANG_GERMAN} "Installiert RetroShare Skins"
+    LangString DESC_sec_shortcuts ${LANG_GERMAN} "Erstellt eine RetroShare Verkn�pfung im Startmen�, Desktop oder im Schnellstarter."
     LangString DESC_sec_link ${LANG_GERMAN} "RetroShare mit .rsc Dateien verkn�pfen"
     LangString LANGUAGEID ${LANG_GERMAN} "1031"
         
@@ -146,8 +146,8 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
     LangString sec_shortcuts ${LANG_TURKISH} "Shortcut'lar"
     LangString sec_link ${LANG_TURKISH} ".rsc Dosya Kaydet"
     LangString sec_autostart ${LANG_TURKISH} "Otomatik calistir ve baglan"
-	LangString DESC_sec_main ${LANG_TURKISH} "Program dosyalar�n� kurar."
-	LangString DESC_sec_data ${LANG_TURKISH} "RetroShare Skin'leri kurar"
+	  LangString DESC_sec_main ${LANG_TURKISH} "Program dosyalar�n� kurar."
+	  LangString DESC_sec_data ${LANG_TURKISH} "RetroShare Skin'leri kurar"
     LangString DESC_sec_shortcuts ${TURKISH} "Shortcut yap Start menu , Desktop veya Quicklaunchbar icin."
     LangString DESC_sec_link ${LANG_TURKISH} "RetroShare .rsc almas� i�in kaydettirir"
     LangString LANGUAGEID ${LANG_TURKISH} "1055"
@@ -160,7 +160,7 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
     LangString DESC_sec_main ${LANG_SIMPCHINESE} "安装RetroShare程序"
     LangString DESC_sec_data ${LANG_SIMPCHINESE} "安装RetroShare皮肤"
     LangString DESC_sec_shortcuts ${LANG_SIMPCHINESE} "建RetroShare快捷方式"
-    LangString DESC_sec_link ${LANG_SIMPCHINESE} "关联.rsc扩展名"
+    LangString DESC_sec_link ${LANG_SIMPCHINESE} "关联.rsc扩"
     LangString LANGUAGEID ${LANG_SIMPCHINESE} "2052"
     
     LangString sec_main ${LANG_POLISH} "Pliki programu"
@@ -256,13 +256,13 @@ Section $(sec_main) sec_main
   File /r "D:\Qt\2010.01\qt\bin\libgcc_s_dw2-1.dll"
   File /r "D:\Qt\2010.01\qt\plugins\imageformats"
   File /r "D:\Development\miniupnpc-1.3\miniupnpc.dll"
-  File /r  ${QTBASE}\qt\qt_*.qm
+  File /r ${QTBASE}\qt\qt_*.qm
   File /r "release\pthreadGC2d.dll"
   File /r "release\libgpg-error-0.dll"
   File /r "release\libgpgme-11.dll"
   File /r "changelog.txt"
-  File /r /x Data "release\bdboot.txt" 
-
+  File /r /x Data "release\bdboot.txt"
+  
 
 SectionEnd
 
@@ -286,7 +286,7 @@ Section  $(sec_data) sec_data
   ; Set Section sounds and exclude svn
   SetOutPath "$INSTDIR\sounds\"
   File /r /x .svn sounds\*.*
-  
+
   ; Set Section skin
   ; SetOutPath "$INSTDIR\skin\"
   ; File /r release\skin\*.* 

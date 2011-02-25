@@ -13,11 +13,19 @@ svn update
 version="0.5.1"
 ######################################################
 
-echo attempting to get svn revision number...
-svn=`svn info | grep 'Revision:' | cut -d\  -f2`
+if test "$1" = "" ; then
+	echo attempting to get svn revision number...
+	svn=`svn info | grep 'Revision:' | cut -d\  -f2`
+else
+	echo svn number has been provided. Forcing update.
+	svn="$1"
+fi
+
 echo done.
 version="$version"."$svn"
-echo got version number $version. Hit ENTER is this is this correct. Otherwise hit Ctrl+C 
+echo got version number $version. 
+echo Please check that the changelog is up to date. 
+echo Hit ENTER is this is this correct. Otherwise hit Ctrl+C 
 read tmp
 
 packages="."
@@ -30,22 +38,22 @@ tar zxvf $packages/BaseRetroShareDirs.tgz 2> /dev/null
 
 echo Checking out latest snapshot in libbitdht...
 cd retroshare-0.5/src/libbitdht/
-svn co https://retroshare.svn.sourceforge.net/svnroot/retroshare/trunk/libbitdht/src . 2> /dev/null
+svn co -r$svn https://retroshare.svn.sourceforge.net/svnroot/retroshare/trunk/libbitdht/src . 2> /dev/null
 cd ../../..
 #  
 echo Checking out latest snapshot in libretroshare...
 cd retroshare-0.5/src/libretroshare/
-svn co https://retroshare.svn.sourceforge.net/svnroot/retroshare/trunk/libretroshare/src . 2> /dev/null
+svn co -r$svn https://retroshare.svn.sourceforge.net/svnroot/retroshare/trunk/libretroshare/src . 2> /dev/null
 cd ../../..
 #  
 echo Checking out latest snapshot in retroshare-gui...
 cd retroshare-0.5/src/retroshare-gui/
-svn co https://retroshare.svn.sourceforge.net/svnroot/retroshare/trunk/retroshare-gui/src . 2> /dev/null
+svn co -r$svn https://retroshare.svn.sourceforge.net/svnroot/retroshare/trunk/retroshare-gui/src . 2> /dev/null
 cd ../../..
 #
 echo Checking out latest snapshot in retroshare-nogui...
 cd retroshare-0.5/src/retroshare-nogui/
-svn co https://retroshare.svn.sourceforge.net/svnroot/retroshare/trunk/retroshare-nogui/src . 2> /dev/null
+svn co -r$svn https://retroshare.svn.sourceforge.net/svnroot/retroshare/trunk/retroshare-nogui/src . 2> /dev/null
 cd ../../..
 
 echo Copying bdboot.txt file at installation place
@@ -83,9 +91,9 @@ cp /tmp/toto752992 retroshare-0.5/src/libbitdht/libbitdht.pro
 
 #cat retroshare-gui-ext.pro >> retroshare-0.5/src/retroshare-gui/retroshare-gui.pro 
 
-echo Building orig directory...
-mkdir retroshare-0.5.orig
-cp -r retroshare-0.5/src retroshare-0.5.orig
+#echo Building orig directory...
+#mkdir retroshare-0.5.orig
+#cp -r retroshare-0.5/src retroshare-0.5.orig
 
 # Call debuild to make the source debian package
 
@@ -95,6 +103,12 @@ mv -f retroshare-0.5/debian/control.tmp retroshare-0.5/debian/control
 
 cd retroshare-0.5
 
-# This is the key for "Cyril Soler <csoler@sourceforge.net>"
-debuild -S -kC737CA98
+for i in lucid karmic jaunty maverick ; do
+	echo copying changelog for $i
+	cat ../changelog | sed -e s/XXXXXX/"$svn"/g | sed -e s/YYYYYY/"$i"/g > debian/changelog
+
+	# This is the key for "Cyril Soler <csoler@sourceforge.net>"
+	debuild -S -kC737CA98
+done
+
 

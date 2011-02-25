@@ -432,7 +432,7 @@ bool    ftExtraList::loadList(std::list<RsItem *>& load)
 		librs::util::ConvertUtf8ToUtf16(fi->file.path, filepathW);
 		FILE *fd = _wfopen(filepathW.c_str(), L"rb");
 #else
-		FILE *fd = fopen(fi->file.path.c_str(), "rb");
+		FILE *fd = fopen64(fi->file.path.c_str(), "rb");
 #endif
 		if (fd == NULL)
 		{

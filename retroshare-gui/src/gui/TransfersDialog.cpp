@@ -923,13 +923,15 @@ void TransfersDialog::insertTransfers()
 	//first clean the model in case some files are not download anymore
 	//remove items that are not fiends anymore
 	int removeIndex = 0;
-	while (removeIndex < DLListModel->rowCount()) 
+	int rowCount = DLListModel->rowCount();
+	while (removeIndex < rowCount)
 	{
 		std::string hash = DLListModel->item(removeIndex, ID)->data(Qt::DisplayRole).toString().toStdString();
 
-		if(used_hashes.find(hash) == used_hashes.end())
+		if(used_hashes.find(hash) == used_hashes.end()) {
 			QListDelete (DLListModel->takeRow(removeIndex));
-		 else 
+			rowCount = DLListModel->rowCount();
+		} else
 			removeIndex++;
 	}
 	
@@ -1017,14 +1019,16 @@ void TransfersDialog::insertTransfers()
 	//first clean the model in case some files are not download anymore
 	//remove items that are not fiends anymore
 	removeIndex = 0;
-	while (removeIndex < ULListModel->rowCount()) 
+	rowCount = ULListModel->rowCount();
+	while (removeIndex < rowCount)
 	{
 		std::string hash = ULListModel->item(removeIndex, UHASH)->data(Qt::EditRole).toString().toStdString();
 		std::string peer = ULListModel->item(removeIndex, UUSERID)->data(Qt::EditRole).toString().toStdString();
 
-		if(used_hashes.find(hash + peer) == used_hashes.end())
+		if(used_hashes.find(hash + peer) == used_hashes.end()) {
 			QListDelete (ULListModel->takeRow(removeIndex));
-		 else 
+			rowCount = ULListModel->rowCount();
+		} else
 			removeIndex++;
 	}
 

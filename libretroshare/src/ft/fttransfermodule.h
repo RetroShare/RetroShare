@@ -133,13 +133,13 @@ public:
   ~ftTransferModule();
 
   //interface to download controller
-  bool setFileSources(std::list<std::string> peerIds);
-  bool addFileSource(std::string peerId);
-  bool removeFileSource(std::string peerId);
-  bool setPeerState(std::string peerId,uint32_t state,uint32_t maxRate);  //state = ONLINE/OFFLINE
+  bool setFileSources(const std::list<std::string>& peerIds);
+  bool addFileSource(const std::string& peerId);
+  bool removeFileSource(const std::string& peerId);
+  bool setPeerState(const std::string& peerId,uint32_t state,uint32_t maxRate);  //state = ONLINE/OFFLINE
   bool getFileSources(std::list<std::string> &peerIds);
-  bool getPeerState(std::string peerId,uint32_t &state,uint32_t &tfRate);  
-  uint32_t getDataRate(std::string peerId);
+  bool getPeerState(const std::string& peerId,uint32_t &state,uint32_t &tfRate);
+  uint32_t getDataRate(const std::string& peerId);
   bool cancelTransfer();
   bool cancelFileTransferUpward();
   bool completeFileTransfer();
@@ -148,9 +148,9 @@ public:
   void addCRC32Map(const CRC32Map& map) ;
 
   //interface to multiplex module
-  bool recvFileData(std::string peerId, uint64_t offset, 
+  bool recvFileData(const std::string& peerId, uint64_t offset,
 			uint32_t chunk_size, void *data);
-  void requestData(std::string peerId, uint64_t offset, uint32_t chunk_size);
+  void requestData(const std::string& peerId, uint64_t offset, uint32_t chunk_size);
 
   //interface to file creator
   bool getChunk(const std::string& peer_id,uint32_t size_hint,uint64_t &offset, uint32_t &chunk_size);
