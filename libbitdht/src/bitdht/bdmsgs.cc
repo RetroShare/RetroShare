@@ -495,6 +495,10 @@ int beMsgMatchString(be_node *n, const char *str, int len)
 uint32_t beMsgGetY(be_node *n)
 {
 	be_node *val = beMsgGetDictNode(n, "y");
+
+	if(val == NULL)
+		return BE_Y_UNKNOWN ;
+
 	if (val->type != BE_STR)	
 	{
 		return BE_Y_UNKNOWN;
