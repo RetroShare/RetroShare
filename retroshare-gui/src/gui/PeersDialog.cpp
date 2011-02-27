@@ -399,7 +399,7 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
     iconLabel->setMaximumSize( iconLabel->frameSize().height() + 24, 24 );
     hbox->addWidget(iconLabel);
 
-    textLabel = new QLabel("<strong>" + tr("RetroShare") + "</strong>", widget );
+    textLabel = new QLabel("<strong>RetroShare</strong>", widget );
 
     hbox->addWidget(textLabel);
 
@@ -1275,7 +1275,7 @@ void PeersDialog::removefriend()
 
 	if (rsPeers)
 	{
-		if ((QMessageBox::question(this, tr("RetroShare"),tr("Do you want to remove this Friend?"),QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
+        if ((QMessageBox::question(this, "RetroShare",tr("Do you want to remove this Friend?"),QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
 		{
       rsPeers->removeFriend(getPeerRsCertId(c));
       emit friendsUpdated() ;
@@ -1726,8 +1726,10 @@ void PeersDialog::on_actionClear_Chat_History_triggered()
 
 void PeersDialog::on_actionDelete_Chat_History_triggered()
 {
-    on_actionClear_Chat_History_triggered();
-    historyKeeper.clear();
+    if ((QMessageBox::question(this, "RetroShare", tr("Do you really want to physically delete the history?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes)) == QMessageBox::Yes) {
+        on_actionClear_Chat_History_triggered();
+        historyKeeper.clear();
+    }
 }
 
 void PeersDialog::smileyWidgetgroupchat()

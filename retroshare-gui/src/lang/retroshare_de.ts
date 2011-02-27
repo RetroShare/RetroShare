@@ -1521,7 +1521,7 @@ p, li { white-space: pre-wrap; }
         <translation>Übernehmen und Schliessen</translation>
     </message>
     <message>
-        <location filename="../gui/connect/ConfCertDialog.cpp" line="+128"/>
+        <location filename="../gui/connect/ConfCertDialog.cpp" line="+133"/>
         <location line="+201"/>
         <source>RetroShare</source>
         <translation></translation>
@@ -7183,7 +7183,7 @@ p, li { white-space: pre-wrap; }
         <translation>Bitte geben Sie das Passwort ein um folgenden GPG Schlüssel freizuschalten:</translation>
     </message>
     <message>
-        <location line="+122"/>
+        <location line="+130"/>
         <source>Examining shared files...</source>
         <translation>Prüfe freigegebene Dateien...</translation>
     </message>
@@ -7504,7 +7504,12 @@ p, li { white-space: pre-wrap; }
         <translation>Neuer Gruppenchat</translation>
     </message>
     <message>
-        <location line="+291"/>
+        <location line="+229"/>
+        <source>Do you really want to physically delete the history?</source>
+        <translation>Willst Du wirklich den Nachrichtenverlauf physisch löschen?</translation>
+    </message>
+    <message>
+        <location line="+64"/>
         <source>Load File</source>
         <translation>Lade Datei</translation>
     </message>
@@ -7674,7 +7679,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="-162"/>
-        <location filename="../gui/PeersDialog.cpp" line="-1511"/>
+        <location filename="../gui/PeersDialog.cpp" line="-1513"/>
         <source>Add Friend</source>
         <translation>Freund hinzufügen</translation>
     </message>
@@ -7728,13 +7733,7 @@ p, li { white-space: pre-wrap; }
         <translation>Nachrichtenverlauf speichern</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="-40"/>
-        <location line="+876"/>
-        <source>RetroShare</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="-837"/>
+        <location filename="../gui/PeersDialog.cpp" line="-1"/>
         <source>Message Group</source>
         <translation>Gruppe anschreiben</translation>
     </message>
@@ -7754,7 +7753,7 @@ p, li { white-space: pre-wrap; }
         <translation>Willst du diesen Freund entfernen?</translation>
     </message>
     <message>
-        <location line="+732"/>
+        <location line="+734"/>
         <source>Save as...</source>
         <translation>Speichern unter...</translation>
     </message>
@@ -7790,7 +7789,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Aktivitäten</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="-647"/>
+        <location filename="../gui/PeersDialog.cpp" line="-649"/>
         <source>is typing...</source>
         <translation>tippt...</translation>
     </message>
@@ -8131,7 +8130,12 @@ p, li { white-space: pre-wrap; }
         <translation>Avatar zeigen</translation>
     </message>
     <message>
-        <location line="+159"/>
+        <location line="+86"/>
+        <source>Do you really want to physically delete the history?</source>
+        <translation>Willst Du wirklich den Nachrichtenverlauf physisch löschen?</translation>
+    </message>
+    <message>
+        <location line="+75"/>
         <source>Load Picture File</source>
         <translation>Lade Bilddatei</translation>
     </message>
@@ -8260,7 +8264,7 @@ p, li { white-space: pre-wrap; }
         <translation>Text Datei (*.txt );;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location line="-718"/>
+        <location line="-720"/>
         <source>Your Friend is offline 
 Do you want to send them a Message instead</source>
         <translation>Dein Freund ist Offline willst du ihm stattdessen eine Nachricht senden</translation>
@@ -8271,7 +8275,7 @@ Do you want to send them a Message instead</source>
         <translation>Bild anhängen</translation>
     </message>
     <message>
-        <location filename="../gui/chat/PopupChatDialog.cpp" line="+761"/>
+        <location filename="../gui/chat/PopupChatDialog.cpp" line="+763"/>
         <source>is Idle and may not reply</source>
         <translation>antwortet möglicherweise nicht, da der Status auf &quot;Untätig&quot; gesetzt wurde</translation>
     </message>
@@ -8291,7 +8295,7 @@ Do you want to send them a Message instead</source>
         <translation>ist Offline.</translation>
     </message>
     <message>
-        <location line="-719"/>
+        <location line="-721"/>
         <source>Paste RetroShare Link</source>
         <translation>RetroShare Link einfügen</translation>
     </message>
@@ -9449,17 +9453,17 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+316"/>
-        <location filename="../gui/SearchDialog.cpp" line="+238"/>
+        <location filename="../gui/SearchDialog.cpp" line="+280"/>
         <source>Download</source>
         <translation>Herunterladen</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="-138"/>
+        <location filename="../gui/SearchDialog.cpp" line="-178"/>
         <source>Enter a keyword here (at least 3 char long)</source>
         <translation>Gib einen Suchbegriff ein (min. 3 Zeichen)</translation>
     </message>
     <message>
-        <location line="+141"/>
+        <location line="+181"/>
         <source>Copy retroshare Link</source>
         <translation>Kopiere RetroShare Link</translation>
     </message>
@@ -9479,7 +9483,7 @@ p, li { white-space: pre-wrap; }
         <translation>Freunden empfehlen</translation>
     </message>
     <message>
-        <location line="+139"/>
+        <location line="+142"/>
         <source>Remove</source>
         <translation>Entfernen</translation>
     </message>
@@ -9550,7 +9554,7 @@ p, li { white-space: pre-wrap; }
         <translation>Such ID</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="-953"/>
+        <location filename="../gui/SearchDialog.cpp" line="-955"/>
         <source>Download Notice</source>
         <translation>Download</translation>
     </message>
@@ -9560,7 +9564,7 @@ p, li { white-space: pre-wrap; }
         <translation>Überspringe lokale Dateien</translation>
     </message>
     <message>
-        <location line="+56"/>
+        <location line="+58"/>
         <location line="+6"/>
         <source>Sorry</source>
         <translation>Entschuldigung</translation>
@@ -11446,7 +11450,7 @@ p, li { white-space: pre-wrap; }
         <translation>Übertrage</translation>
     </message>
     <message>
-        <location line="+361"/>
+        <location line="+365"/>
         <source>RetroShare</source>
         <translation></translation>
     </message>
@@ -11471,7 +11475,7 @@ p, li { white-space: pre-wrap; }
         <translation>Soll dieser Download wirklich abgebrochen und gelöscht werden?</translation>
     </message>
     <message>
-        <location line="-910"/>
+        <location line="-914"/>
         <source>Speed / Queue position</source>
         <translation>Geschwindigkeits- / Warteschlangenposition</translation>
     </message>
@@ -11534,38 +11538,38 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+262"/>
         <location line="+144"/>
-        <location line="+133"/>
+        <location line="+135"/>
         <source>Failed</source>
         <translation>Gescheitert</translation>
     </message>
     <message>
-        <location line="-273"/>
+        <location line="-275"/>
         <location line="+141"/>
-        <location line="+133"/>
+        <location line="+135"/>
         <source>Okay</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location line="-132"/>
-        <location line="+133"/>
+        <location line="-134"/>
+        <location line="+135"/>
         <source>Waiting</source>
         <translation>Warte</translation>
     </message>
     <message>
-        <location line="-132"/>
+        <location line="-134"/>
         <source>Downloading</source>
         <translation>Ladend</translation>
     </message>
     <message>
         <location line="-131"/>
         <location line="+132"/>
-        <location line="+133"/>
+        <location line="+135"/>
         <location line="+1"/>
         <source>Complete</source>
         <translation>Vollständig</translation>
     </message>
     <message>
-        <location line="-130"/>
+        <location line="-132"/>
         <source>Unknown</source>
         <translation>Unbekannt</translation>
     </message>
@@ -11575,12 +11579,12 @@ p, li { white-space: pre-wrap; }
         <translation>Version: </translation>
     </message>
     <message>
-        <location line="+80"/>
+        <location line="+82"/>
         <source>Uploading</source>
         <translation>Hochladend</translation>
     </message>
     <message>
-        <location line="-129"/>
+        <location line="-131"/>
         <source>Checking...</source>
         <translation>Überprüfe...</translation>
     </message>
