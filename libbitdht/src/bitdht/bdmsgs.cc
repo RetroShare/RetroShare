@@ -543,7 +543,10 @@ uint32_t beMsgType(be_node *n)
 #ifdef DEBUG_MSG_TYPE 
 		std::cerr << "bsMsgType() QUERY MSG TYPE" << std::endl;
 #endif
-	        be_node *query = beMsgGetDictNode(n, "q");
+		be_node *query = beMsgGetDictNode(n, "q");
+
+		if(query == NULL)
+			return BITDHT_MSG_TYPE_UNKNOWN;
 
 		if (beMsgMatchString(query, "ping", 4))
 		{
@@ -804,11 +807,11 @@ int beMsgGetListStrings(be_node *n, std::list<std::string> &values)
 	for(int i = 0; n->val.l[i] != NULL; i++)
 	{
 		be_node *val = n->val.l[i];
-		if (val->type != BE_STR)	
-		{
+
+		if (val == NULL || val->type != BE_STR)	
 			return 0;
-		}
-        	int len = be_str_len(val);
+
+		int len = be_str_len(val);
 		std::string str;
 		str.append(val->val.s, len);
 		values.push_back(str);
