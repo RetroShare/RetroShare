@@ -19,6 +19,7 @@ class RsAutoUpdatePage: public MainPage
 
 	public:
 		RsAutoUpdatePage(int ms_update_period = 1000,QWidget *parent=NULL) ;
+		virtual ~RsAutoUpdatePage() ;
 
 		virtual void updateDisplay() {}
 	
