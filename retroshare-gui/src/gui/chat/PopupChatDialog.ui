@@ -325,6 +325,9 @@ stop:0 #FFFFD7, stop:1 #FFFFB2);}</string>
             <height>16</height>
            </size>
           </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
           <property name="toolTip">
            <string>Close</string>
           </property>
@@ -398,6 +401,9 @@ border-image: url(:/images/closepressed.png)
             <height>28</height>
            </size>
           </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
           <property name="styleSheet">
            <string notr="true">QPushButton::menu-indicator { 
 subcontrol-origin: padding;
@@ -445,6 +451,9 @@ border: 1px solid #CCCCCC;
             <height>28</height>
            </size>
           </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
           <property name="toolTip">
            <string>Attach a Picture</string>
           </property>
@@ -473,6 +482,9 @@ border: 1px solid #CCCCCC;
             <width>28</width>
             <height>28</height>
            </size>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
           </property>
           <property name="toolTip">
            <string>Add a File for your Friend</string>
@@ -535,6 +547,9 @@ border: 1px solid #CCCCCC;
             <height>28</height>
            </size>
           </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
           <property name="text">
            <string/>
           </property>
@@ -562,6 +577,9 @@ border: 1px solid #CCCCCC;
             <width>28</width>
             <height>28</height>
            </size>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
           </property>
           <property name="toolTip">
            <string>Bold</string>
@@ -595,6 +613,9 @@ border: 1px solid #CCCCCC;
             <height>28</height>
            </size>
           </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
           <property name="toolTip">
            <string>Underline</string>
           </property>
@@ -626,6 +647,9 @@ border: 1px solid #CCCCCC;
             <width>28</width>
             <height>28</height>
            </size>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
           </property>
           <property name="toolTip">
            <string>Italic</string>
@@ -659,8 +683,11 @@ border: 1px solid #CCCCCC;
             <height>28</height>
            </size>
           </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
           <property name="toolTip">
-           <string>Set Font</string>
+           <string>Font</string>
           </property>
           <property name="text">
            <string/>
@@ -690,6 +717,9 @@ border: 1px solid #CCCCCC;
             <width>28</width>
             <height>28</height>
            </size>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
           </property>
           <property name="toolTip">
            <string>Text Color</string>

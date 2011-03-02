@@ -569,6 +569,9 @@ border: 1px solid #CCCCCC;}</string>
           <height>167777</height>
          </size>
         </property>
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
         <property name="toolTip">
          <string>New Message</string>
         </property>
@@ -579,7 +582,7 @@ border: 1px solid #CCCCCC;}</string>
          <string>Compose</string>
         </property>
         <property name="icon">
-         <iconset>
+         <iconset resource="images.qrc">
           <normaloff>:/images/folder-draft24.png</normaloff>:/images/folder-draft24.png</iconset>
         </property>
         <property name="iconSize">
@@ -623,6 +626,9 @@ border: 1px solid #CCCCCC;}</string>
           <height>16777</height>
          </size>
         </property>
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
         <property name="toolTip">
          <string>Reply to selected message</string>
         </property>
@@ -633,7 +639,7 @@ border: 1px solid #CCCCCC;}</string>
          <string>Reply</string>
         </property>
         <property name="icon">
-         <iconset>
+         <iconset resource="images.qrc">
           <normaloff>:/images/replymail-pressed.png</normaloff>:/images/replymail-pressed.png</iconset>
         </property>
         <property name="iconSize">
@@ -664,6 +670,9 @@ border: 1px solid #CCCCCC;}</string>
           <height>16777</height>
          </size>
         </property>
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
         <property name="toolTip">
          <string>Reply all to selected message</string>
         </property>
@@ -671,7 +680,7 @@ border: 1px solid #CCCCCC;}</string>
          <string>Reply all</string>
         </property>
         <property name="icon">
-         <iconset>
+         <iconset resource="images.qrc">
           <normaloff>:/images/replymailall24-hover.png</normaloff>:/images/replymailall24-hover.png</iconset>
         </property>
         <property name="iconSize">
@@ -702,6 +711,9 @@ border: 1px solid #CCCCCC;}</string>
           <height>16777</height>
          </size>
         </property>
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
         <property name="toolTip">
          <string>Forward selected message</string>
         </property>
@@ -709,7 +721,7 @@ border: 1px solid #CCCCCC;}</string>
          <string>Foward</string>
         </property>
         <property name="icon">
-         <iconset>
+         <iconset resource="images.qrc">
           <normaloff>:/images/mailforward24-hover.png</normaloff>:/images/mailforward24-hover.png</iconset>
         </property>
         <property name="iconSize">
@@ -747,6 +759,9 @@ border: 1px solid #CCCCCC;}</string>
           <height>16777</height>
          </size>
         </property>
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
         <property name="toolTip">
          <string>Remove selected message</string>
         </property>
@@ -757,7 +772,7 @@ border: 1px solid #CCCCCC;}</string>
          <string>Delete</string>
         </property>
         <property name="icon">
-         <iconset>
+         <iconset resource="images.qrc">
           <normaloff>:/images/deletemail24.png</normaloff>:/images/deletemail24.png</iconset>
         </property>
         <property name="iconSize">
@@ -794,6 +809,9 @@ border: 1px solid #CCCCCC;}</string>
           <height>16777</height>
          </size>
         </property>
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
         <property name="toolTip">
          <string>Print selected message</string>
         </property>
@@ -801,7 +819,7 @@ border: 1px solid #CCCCCC;}</string>
          <string>Print</string>
         </property>
         <property name="icon">
-         <iconset>
+         <iconset resource="images.qrc">
           <normaloff>:/images/print24.png</normaloff>:/images/print24.png</iconset>
         </property>
         <property name="iconSize">
@@ -829,11 +847,14 @@ border: 1px solid #CCCCCC;}</string>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
         <property name="text">
          <string>Display</string>
         </property>
         <property name="icon">
-         <iconset>
+         <iconset resource="images.qrc">
           <normaloff>:/images/looknfeel.png</normaloff>:/images/looknfeel.png</iconset>
         </property>
         <property name="iconSize">
@@ -874,7 +895,7 @@ border: 1px solid #CCCCCC;}</string>
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap>:/images/find-16.png</pixmap>
+           <pixmap resource="images.qrc">:/images/find-16.png</pixmap>
           </property>
          </widget>
         </item>
@@ -894,6 +915,9 @@ border: 1px solid #CCCCCC;}</string>
             <width>16</width>
             <height>16</height>
            </size>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
           </property>
           <property name="toolTip">
            <string>Reset</string>
@@ -959,6 +983,9 @@ border-image: url(:/images/closepressed.png)
       </item>
       <item row="0" column="6">
        <widget class="QToolButton" name="tagButton">
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
         <property name="toolTip">
          <string>Tags</string>
         </property>
@@ -966,7 +993,7 @@ border-image: url(:/images/closepressed.png)
          <string>Tag</string>
         </property>
         <property name="icon">
-         <iconset>
+         <iconset resource="images.qrc">
           <normaloff>:/images/tag24.png</normaloff>:/images/tag24.png</iconset>
         </property>
         <property name="iconSize">
@@ -1107,7 +1134,7 @@ border-image: url(:/images/closepressed.png)
                <string>Inbox</string>
               </property>
               <property name="icon">
-               <iconset>
+               <iconset resource="images.qrc">
                 <normaloff>:/images/folder-inbox.png</normaloff>:/images/folder-inbox.png</iconset>
               </property>
              </item>
@@ -1116,7 +1143,7 @@ border-image: url(:/images/closepressed.png)
                <string>Outbox</string>
               </property>
               <property name="icon">
-               <iconset>
+               <iconset resource="images.qrc">
                 <normaloff>:/images/folder-outbox.png</normaloff>:/images/folder-outbox.png</iconset>
               </property>
              </item>
@@ -1125,7 +1152,7 @@ border-image: url(:/images/closepressed.png)
                <string>Draft</string>
               </property>
               <property name="icon">
-               <iconset>
+               <iconset resource="images.qrc">
                 <normaloff>:/images/folder-draft.png</normaloff>:/images/folder-draft.png</iconset>
               </property>
              </item>
@@ -1134,7 +1161,7 @@ border-image: url(:/images/closepressed.png)
                <string>Sent</string>
               </property>
               <property name="icon">
-               <iconset>
+               <iconset resource="images.qrc">
                 <normaloff>:/images/folder-sent.png</normaloff>:/images/folder-sent.png</iconset>
               </property>
              </item>
@@ -1143,7 +1170,7 @@ border-image: url(:/images/closepressed.png)
                <string>Trash</string>
               </property>
               <property name="icon">
-               <iconset>
+               <iconset resource="images.qrc">
                 <normaloff>:/images/folder-trash.png</normaloff>:/images/folder-trash.png</iconset>
               </property>
              </item>
@@ -1190,7 +1217,7 @@ border: 1px solid #CCCCCC;}</string>
               <string>Favorite Tags</string>
              </property>
              <property name="icon">
-              <iconset>
+              <iconset resource="images.qrc">
                <normaloff>:/images/tag24.png</normaloff>:/images/tag24.png</iconset>
              </property>
              <property name="checkable">
@@ -1324,7 +1351,7 @@ padding: 4px;
                     <string/>
                    </property>
                    <property name="pixmap">
-                    <pixmap>:/images/attachment.png</pixmap>
+                    <pixmap resource="images.qrc">:/images/attachment.png</pixmap>
                    </property>
                   </widget>
                  </item>
@@ -1353,11 +1380,14 @@ p, li { white-space: pre-wrap; }
                  </item>
                  <item row="0" column="0">
                   <widget class="QPushButton" name="expandFilesButton">
+                   <property name="focusPolicy">
+                    <enum>Qt::NoFocus</enum>
+                   </property>
                    <property name="text">
                     <string/>
                    </property>
                    <property name="icon">
-                    <iconset>
+                    <iconset resource="images.qrc">
                      <normaloff>:/images/edit_remove24.png</normaloff>:/images/edit_remove24.png</iconset>
                    </property>
                    <property name="checkable">
@@ -1385,6 +1415,9 @@ p, li { white-space: pre-wrap; }
                </item>
                <item>
                 <widget class="QPushButton" name="downloadButton">
+                 <property name="focusPolicy">
+                  <enum>Qt::NoFocus</enum>
+                 </property>
                  <property name="toolTip">
                   <string>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -1395,7 +1428,7 @@ p, li { white-space: pre-wrap; }
                   <string/>
                  </property>
                  <property name="icon">
-                  <iconset>
+                  <iconset resource="images.qrc">
                    <normaloff>:/images/down.png</normaloff>:/images/down.png</iconset>
                  </property>
                 </widget>
@@ -1832,7 +1865,9 @@ p, li { white-space: pre-wrap; }
   <tabstop>msgText</tabstop>
   <tabstop>msgList</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="images.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>expandFilesButton</sender>

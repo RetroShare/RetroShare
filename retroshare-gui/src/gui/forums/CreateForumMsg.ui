@@ -110,6 +110,9 @@ border: 1px solid #CCCCCC;}</string>
          </property>
          <item>
           <widget class="QToolButton" name="attachFileButton">
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
            <property name="toolTip">
             <string>Attach File</string>
            </property>
@@ -133,6 +136,9 @@ border: 1px solid #CCCCCC;}</string>
          </item>
          <item>
           <widget class="QToolButton" name="emoticonButton">
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
            <property name="text">
             <string/>
            </property>
@@ -153,6 +159,9 @@ border: 1px solid #CCCCCC;}</string>
          </item>
          <item>
           <widget class="QCheckBox" name="signBox">
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
            <property name="text">
             <string>Sign Message</string>
            </property>
@@ -186,6 +195,9 @@ border: 1px solid #CCCCCC;}</string>
          </item>
          <item>
           <widget class="QToolButton" name="pastersButton">
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
            <property name="toolTip">
             <string>Paste RetroShare Link</string>
            </property>

@@ -769,6 +769,9 @@ border: none;}
                <height>16</height>
               </size>
              </property>
+             <property name="focusPolicy">
+              <enum>Qt::NoFocus</enum>
+             </property>
              <property name="toolTip">
               <string>Reset</string>
              </property>
@@ -830,6 +833,9 @@ border: none;}</string>
         </item>
         <item>
          <widget class="QPushButton" name="pushButtonsearch">
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
           <property name="toolTip">
            <string>Start Search</string>
           </property>
@@ -1041,6 +1047,9 @@ border-image: url(:/images/btn_26_pressed.png) 4;
               <font>
                <family>MS Shell Dlg 2</family>
               </font>
+             </property>
+             <property name="focusPolicy">
+              <enum>Qt::NoFocus</enum>
              </property>
              <property name="toolTip">
               <string>Clear Filter</string>

@@ -619,6 +619,9 @@ p, li { white-space: pre-wrap; }
           </item>
           <item row="0" column="5">
            <widget class="QPushButton" name="forumpushButton">
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
             <property name="toolTip">
              <string>Add</string>
             </property>
@@ -660,6 +663,9 @@ p, li { white-space: pre-wrap; }
               <height>24</height>
              </size>
             </property>
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
             <property name="toolTip">
              <string>Start new Thread for Selected Forum</string>
             </property>
@@ -677,6 +683,9 @@ p, li { white-space: pre-wrap; }
           </item>
           <item row="0" column="4">
            <widget class="QPushButton" name="displayButton">
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
             <property name="toolTip">
              <string>Display</string>
             </property>
@@ -938,6 +947,9 @@ background: white;}</string>
               <height>24</height>
              </size>
             </property>
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
             <property name="toolTip">
              <string>Previous Thread</string>
             </property>
@@ -973,6 +985,9 @@ background: white;}</string>
               <height>24</height>
              </size>
             </property>
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
             <property name="toolTip">
              <string>Next Thread</string>
             </property>
@@ -992,6 +1007,9 @@ background: white;}</string>
               <width>24</width>
               <height>24</height>
              </size>
+            </property>
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
             </property>
             <property name="text">
              <string/>
@@ -1080,6 +1098,9 @@ p, li { white-space: pre-wrap; }
                  <family>MS Shell Dlg 2</family>
                 </font>
                </property>
+               <property name="focusPolicy">
+                <enum>Qt::NoFocus</enum>
+               </property>
                <property name="toolTip">
                 <string>Reset</string>
                </property>
@@ -1150,6 +1171,9 @@ border-image: url(:/images/closepressed.png)
                <width>24</width>
                <height>24</height>
               </size>
+             </property>
+             <property name="focusPolicy">
+              <enum>Qt::NoFocus</enum>
              </property>
              <property name="toolTip">
               <string>Reply Message</string>
