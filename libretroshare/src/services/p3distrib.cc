@@ -690,7 +690,7 @@ bool	p3GroupDistrib::loadGroupKey(RsDistribGrpKey *newKey, bool historical)
 	std::cerr << std::endl;
 #endif
 
-		  if(!updateOk)
+//		  if(!updateOk)
 			  delete newKey;
 
         newKey = NULL;
