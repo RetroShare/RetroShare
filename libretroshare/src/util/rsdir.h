@@ -33,6 +33,7 @@
 #include <stdint.h>
 
 class CRC32Map ;
+class RsThread;
 
 namespace RsDirUtil {
 
@@ -64,7 +65,7 @@ bool    	checkCreateDirectory(const std::string& dir);
 bool    	cleanupDirectory(const std::string& dir, const std::list<std::string> &keepFiles);
 
 bool 		hashFile(const std::string& filepath,   std::string &name, std::string &hash, uint64_t &size);
-bool 		getFileHash(const std::string& filepath,std::string &hash, uint64_t &size);
+bool 		getFileHash(const std::string& filepath,std::string &hash, uint64_t &size, RsThread *thread = NULL);
 
 
 std::wstring 	getWideTopDir(std::wstring);

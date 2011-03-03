@@ -32,6 +32,7 @@
 #include "util/rsdir.h"
 #include "pqi/pqinotify.h"
 #include "retroshare/rstypes.h"
+#include "rsthreads.h"
 #include <string>
 #include <iostream>
 #include <algorithm>
@@ -526,7 +527,7 @@ bool RsDirUtil::hashFile(const std::string& filepath,
 #include <iomanip>
 
 /* Function to hash, and get details of a file */
-bool RsDirUtil::getFileHash(const std::string& filepath, std::string &hash, uint64_t &size)
+bool RsDirUtil::getFileHash(const std::string& filepath, std::string &hash, uint64_t &size, RsThread *thread /*= NULL*/)
 {
 	FILE *fd;
 	int  len;
@@ -549,14 +550,32 @@ bool RsDirUtil::getFileHash(const std::string& filepath, std::string &hash, uint
 	size = ftello64(fd);
 	fseeko64(fd, 0, SEEK_SET);
 
+	/* check if thread is running */
+	bool isRunning = thread ? thread->isRunning() : true;
+	int runningCheckCount = 0;
+
 	SHA1_Init(sha_ctx);
-	while((len = fread(gblBuf,1, 512, fd)) > 0)
+	while(isRunning && (len = fread(gblBuf,1, 512, fd)) > 0)
 	{
 		SHA1_Update(sha_ctx, gblBuf, len);
+
+		if (thread && ++runningCheckCount > (10 * 1024)) {
+			/* check all 50MB if thread is running */
+			isRunning = thread->isRunning();
+			runningCheckCount = 0;
+		}
+	}
+
+	/* Thread has ended */
+	if (isRunning == false)
+	{
+		delete sha_ctx;
+		fclose(fd);
+		return false;
 	}
 
 	/* reading failed for some reason */
-	if (ferror(fd)) 
+	if (ferror(fd))
 	{
 		delete sha_ctx;
 		fclose(fd);
@@ -565,7 +584,7 @@ bool RsDirUtil::getFileHash(const std::string& filepath, std::string &hash, uint
 
 	SHA1_Final(&sha_buf[0], sha_ctx);
 
-        std::ostringstream tmpout;
+	std::ostringstream tmpout;
 	for(int i = 0; i < SHA_DIGEST_LENGTH; i++)
 	{
 		tmpout << std::setw(2) << std::setfill('0') << std::hex << (unsigned int) (sha_buf[i]);

@@ -49,7 +49,7 @@ void ftExtraList::run()
 	time_t cleanup = 0;
 	time_t now = 0;
 
-	while (m_bRun)
+	while (isRunning())
 	{
 #ifdef  DEBUG_ELIST
 		//std::cerr << "ftExtraList::run() Iteration";

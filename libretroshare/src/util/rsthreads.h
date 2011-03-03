@@ -118,10 +118,13 @@ virtual void run() = 0; /* called once the thread is started */
 virtual	void join(); /* waits for the the mTid thread to stop */
 virtual	void stop(); /* calls pthread_exit() */
 
+bool isRunning();
+
 	pthread_t mTid;
-        RsMutex   mMutex;
-protected:
-	bool m_bRun;
+	RsMutex   mMutex;
+
+private:
+	bool mIsRunning;
 };
 
 
