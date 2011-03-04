@@ -125,6 +125,12 @@ border: none;}
         </item>
         <item row="0" column="3">
          <widget class="QComboBox" name="filterCombo">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>20</height>
+           </size>
+          </property>
           <item>
            <property name="text">
             <string>Title</string>
