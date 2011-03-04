@@ -155,6 +155,15 @@ int	p3GroupDistrib::tick()
                 receivePubKeys();
 	}
 
+	// update cache table every minute
+	bool updateCacheDoc = false;
+	{
+		updateCacheDoc = (now > (time_t) (mLastCacheDocUpdate + 60.));
+	}
+
+	if(false)
+		updateCacheDocument(mCacheDoc);
+
 	return 0;
 }
 
@@ -218,6 +227,66 @@ bool 	p3GroupDistrib::loadLocalCache(const CacheData &data)
 	}
 
 	return true;
+}
+
+
+void p3GroupDistrib::updateCacheDocument(pugi::xml_document& cacheDoc)
+{
+
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::updateCacheDocument() "
+			  << std::endl;
+#endif
+
+	/*
+	 * find group ids put down in mGroupCacheIds to be set into
+	 * the cache document then their subsequent messages
+	 */
+
+	std::map<std::string, std::string>::iterator cit =
+			mGroupCacheIds.begin(), mit = mMsgCacheIds.begin();
+
+	std::map<std::string, GroupInfo>::iterator git;
+	std::map<std::string, RsDistribMsg *>::iterator msgIt;
+
+
+	for(; cit != mGroupCacheIds.end(); cit++){
+
+		// add the group at depth on
+		git = mGroups.find(cit->first);
+
+		if(git != mGroups.end()){
+
+			// add another group node
+			cacheDoc.append_child("group");
+
+			// then add title
+			cacheDoc.last_child().append_child("title").append_child(
+					pugi::node_pcdata).set_value(git->second.grpId.c_str());
+
+			// then add the id
+			cacheDoc.last_child().append_child("id").append_child(
+					pugi::node_pcdata).set_value(cit->second
+							.c_str());
+
+		}
+	}
+
+#ifdef DISTRIB_DEBUG
+	std::cerr << "p3GroupDistrib::updateCacheDocument() "
+			  << "\nFinished Building xml doc, \n saving to file"
+			  << std::endl;
+#endif
+
+
+	cacheDoc.save_file("distrib_group.xml");
+	mLastCacheDocUpdate = time(NULL);
+
+	// essentially build by gathering all your group
+
+	// now do the same with messages which may have arrived for a group
+
+
 }
 
 
@@ -376,6 +445,7 @@ void	p3GroupDistrib::loadFileGroups(const std::string &filename, const std::stri
 		newKey = dynamic_cast<RsDistribGrpKey *>(item);
 		if ((newGrp = dynamic_cast<RsDistribGrp *>(item)))
 		{
+
 			loadGroup(newGrp, historical);
 		}
 		else if ((newKey = dynamic_cast<RsDistribGrpKey *>(item)))

@@ -314,6 +314,10 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 
 		void 	HistoricalCachesDone(); // called when Stored Caches have been added to Pending List.
 
+	protected:
+
+		void updateCacheDocument(pugi::xml_document& cacheDoc);
+
 	private:
 
 		/* these lists are filled by the overloaded fns... then cleared by the thread */
@@ -755,6 +759,14 @@ RsDistribDummyMsg *locked_getGroupDummyMsg(std::string grpId, std::string msgId)
 		std::map<std::string, std::list<std::string> > mPendingPubKeyRecipients; /// peers to receive publics key for a given grp
                 std::set<std::string> mPubKeyAvailableGrpId; // groups id for which public keys are available
 		time_t mLastKeyPublishTime, mLastRecvdKeyTime;
+
+		////////////// cache optimisation ////////////////
+
+		/// look table to calculate data location
+		std::map<std::string, std::string> mGroupCacheIds, mMsgCacheIds;
+		std::map<std::string, std::string> mGroupMessageIds;
+		time_t mLastCacheDocUpdate;
+		pugi::xml_document mCacheDoc;
 	
 };
 

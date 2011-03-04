@@ -416,6 +416,8 @@ HEADERS +=	util/folderiterator.h \
 			util/rsversion.h \
 			util/rswin.h \
 			util/rsrandom.h \
+			util/pugiconfig.h \
+			util/pugixml.h
 
 SOURCES +=	dbase/cachestrapper.cc \
 			dbase/fimonitor.cc \
@@ -536,7 +538,8 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsthreads.cc \
 			util/rsversion.cc \
 			util/rswin.cc \
-			util/rsrandom.cc
+			util/rsrandom.cc \
+			util/pugixml.cc
 
 minimal {
 	SOURCES -= rsserver/p3msgs.cc \

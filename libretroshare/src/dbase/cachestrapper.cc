@@ -259,6 +259,21 @@ bool	CacheStore::getStoredCache(CacheData &data)
 	return ok;
 }
 
+bool CacheStore::cached(const std::string cacheId)
+{
+
+	return false;
+}
+
+void CacheStore::updateCacheDocument(pugi::xml_document& cacheDoc)
+{
+	return;
+}
+
+void CacheStore::updateCacheTable()
+{
+	return;
+}
 
 bool	CacheStore::locked_getStoredCache(CacheData &data)
 {
