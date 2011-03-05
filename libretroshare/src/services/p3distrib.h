@@ -169,6 +169,7 @@ class GroupInfo
 		{
 			return;
 		}
+		virtual ~GroupInfo() ;
 
 		std::string grpId; /// the group id
 		RsDistribGrp *distribGroup; /// item which contains further information on group
@@ -297,6 +298,7 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 			uint32_t configId,
 					uint32_t storePeriod, uint32_t pubPeriod);
 
+		virtual ~p3GroupDistrib() ;
 
 /***************************************************************************************/
 /******************************* CACHE SOURCE / STORE Interface ************************/

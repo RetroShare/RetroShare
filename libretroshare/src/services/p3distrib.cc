@@ -60,7 +60,16 @@ RSA *extractPrivateKey(RsTlvSecurityKey &key);
 void 	setRSAPublicKey(RsTlvSecurityKey &key, RSA *rsa_pub);
 void 	setRSAPrivateKey(RsTlvSecurityKey &key, RSA *rsa_priv);
 
+GroupInfo::~GroupInfo()
+{
+	delete distribGroup ;
 
+	for(std::map<std::string, RsDistribMsg *>::const_iterator it(msgs.begin());it!=msgs.end();++it)
+		delete it->second ;
+
+	for(std::map<std::string, RsDistribMsg *>::const_iterator it(decrypted_msg_cache.begin());it!=decrypted_msg_cache.end();++it)
+		delete it->second ;
+}
 
 p3GroupDistrib::p3GroupDistrib(uint16_t subtype, 
 		CacheStrapper *cs, CacheTransfer *cft,
@@ -88,6 +97,14 @@ p3GroupDistrib::p3GroupDistrib(uint16_t subtype,
 	return;
 }
 
+p3GroupDistrib::~p3GroupDistrib()
+{
+	for(std::map<std::string, RsDistribGrpKey* >::iterator it(mRecvdPubKeys.begin());it!=mRecvdPubKeys.end();++it)
+		delete it->second ;
+
+	for(std::list<RsDistribSignedMsg*>::iterator it(mPendingPublish.begin());it!=mPendingPublish.end();++it)
+		delete *it ;
+}
 
 int	p3GroupDistrib::tick()
 {

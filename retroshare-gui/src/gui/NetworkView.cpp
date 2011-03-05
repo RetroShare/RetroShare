@@ -63,6 +63,12 @@ NetworkView::NetworkView(QWidget *parent)
   _should_update = true ;
 }
 
+NetworkView::~NetworkView()
+{
+	if(mScene != NULL)
+		delete mScene ;
+}
+
 void NetworkView::setEdgeLength(int l)
 {
 	ui.graphicsView->setEdgeLength(l);
