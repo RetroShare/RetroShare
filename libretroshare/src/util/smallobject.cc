@@ -170,14 +170,21 @@ void FixedAllocator::printStatistics() const
 SmallObjectAllocator::SmallObjectAllocator(size_t maxObjectSize)
 	: _maxObjectSize(maxObjectSize)
 {
+	RsStackMutex m(SmallObject::_mtx) ;
+
 	_lastAlloc = NULL ;
 	_lastDealloc = NULL ;
+	_active = true ;
 }
 
 SmallObjectAllocator::~SmallObjectAllocator()
 {
+	RsStackMutex m(SmallObject::_mtx) ;
+
 	for(std::map<int,FixedAllocator*>::const_iterator it(_pool.begin());it!=_pool.end();++it)
 		delete it->second ;
+
+	_active = false ;
 }
 
 void *SmallObjectAllocator::allocate(size_t bytes)
@@ -255,6 +262,10 @@ void *SmallObject::operator new(size_t size)
 #endif
 
 	RsStackMutex m(_mtx) ;
+
+	if(!_allocator._active)
+		return (void*)NULL;
+
 	void *p = _allocator.allocate(size) ;
 #ifdef DEBUG_MEMORY
 	std::cerr << "new RsItem: " << p << ", size=" << size << std::endl;
@@ -265,6 +276,10 @@ void *SmallObject::operator new(size_t size)
 void SmallObject::operator delete(void *p,size_t size)
 {
 	RsStackMutex m(_mtx) ;
+
+	if(!_allocator._active)
+		return ;
+
 	_allocator.deallocate(p,size) ;
 #ifdef DEBUG_MEMORY
 	std::cerr << "del RsItem: " << p << ", size=" << size << std::endl;
@@ -274,6 +289,10 @@ void SmallObject::operator delete(void *p,size_t size)
 void SmallObject::printStatistics() 
 {
 	RsStackMutex m(_mtx) ;
+
+	if(!_allocator._active)
+		return ;
+
 	_allocator.printStatistics() ;
 }
 

@@ -85,6 +85,8 @@ namespace RsMemoryManagement
 			void deallocate(void *p,size_t size) ;
 
 			void printStatistics() const ;
+
+			bool _active ;
 		private:
 			std::map<int,FixedAllocator*> _pool ;
 			FixedAllocator *_lastAlloc ;
@@ -105,6 +107,8 @@ namespace RsMemoryManagement
 		private:
 			static SmallObjectAllocator _allocator ;
 			static RsMutex _mtx;
+
+			friend class SmallObjectAllocator ;
 	};
 
 	extern void printStatistics() ;

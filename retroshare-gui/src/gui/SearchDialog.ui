@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>574</width>
-    <height>344</height>
+    <height>329</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -769,6 +769,9 @@ border: none;}
                <height>16</height>
               </size>
              </property>
+             <property name="focusPolicy">
+              <enum>Qt::NoFocus</enum>
+             </property>
              <property name="toolTip">
               <string>Reset</string>
              </property>
@@ -800,6 +803,12 @@ border-image: url(:/images/closepressed.png)
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="minimumSize">
+              <size>
+               <width>16</width>
+               <height>16</height>
+              </size>
+             </property>
              <property name="maximumSize">
               <size>
                <width>16</width>
@@ -830,6 +839,9 @@ border: none;}</string>
         </item>
         <item>
          <widget class="QPushButton" name="pushButtonsearch">
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
           <property name="toolTip">
            <string>Start Search</string>
           </property>
@@ -1041,6 +1053,9 @@ border-image: url(:/images/btn_26_pressed.png) 4;
               <font>
                <family>MS Shell Dlg 2</family>
               </font>
+             </property>
+             <property name="focusPolicy">
+              <enum>Qt::NoFocus</enum>
              </property>
              <property name="toolTip">
               <string>Clear Filter</string>

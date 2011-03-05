@@ -144,6 +144,9 @@ p, li { white-space: pre-wrap; }
             <property name="enabled">
              <bool>true</bool>
             </property>
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
             <property name="toolTip">
              <string>Add</string>
             </property>
@@ -197,6 +200,9 @@ p, li { white-space: pre-wrap; }
               <height>26</height>
              </size>
             </property>
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
             <property name="toolTip">
              <string>Post to Channel</string>
             </property>
@@ -217,6 +223,9 @@ p, li { white-space: pre-wrap; }
           </item>
           <item row="0" column="3">
            <widget class="QPushButton" name="displayButton">
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
             <property name="toolTip">
              <string>Display</string>
             </property>

@@ -126,16 +126,24 @@ void NotifyQt::notifyOwnAvatarChanged()
 
 std::string NotifyQt::askForPassword(const std::string& key_details,bool prev_is_bad)
 {
-
 	RsAutoUpdatePage::lockAllEvents() ;
 
-	std::string res = QInputDialog::getText(NULL, tr("GPG key passphrase"), 
-                        (prev_is_bad?tr("Wrong password !") + "\n\n" : QString()) +
-                        tr("Please enter the password to unlock the following GPG key:") + "\n" + QString::fromStdString(key_details), QLineEdit::Password, NULL, NULL).toStdString();
+	QInputDialog dialog;
+	dialog.setWindowTitle(tr("GPG key passphrase"));
+	dialog.setLabelText((prev_is_bad?tr("Wrong password !") + "\n\n" : QString()) +
+						tr("Please enter the password to unlock the following GPG key:") + "\n" + QString::fromStdString(key_details));
+	dialog.setTextEchoMode(QLineEdit::Password);
+	dialog.setWindowIcon(QIcon(":/images/rstray3.png"));
+
+	int ret = dialog.exec();
 
 	RsAutoUpdatePage::unlockAllEvents() ;
 
-	return res ;
+	if (ret) {
+		return dialog.textValue().toStdString();
+	}
+
+	return "";
 }
 
 void NotifyQt::notifyDiscInfoChanged()

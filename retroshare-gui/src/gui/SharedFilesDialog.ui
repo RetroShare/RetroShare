@@ -592,6 +592,9 @@ p, li { white-space: pre-wrap; }
           <height>24</height>
          </size>
         </property>
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
         <property name="toolTip">
          <string>Splitted View</string>
         </property>
@@ -621,6 +624,9 @@ p, li { white-space: pre-wrap; }
           <height>24</height>
          </size>
         </property>
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
         <property name="toolTip">
          <string>Friends Folders</string>
         </property>
@@ -649,6 +655,9 @@ p, li { white-space: pre-wrap; }
           <width>24</width>
           <height>24</height>
          </size>
+        </property>
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
         </property>
         <property name="toolTip">
          <string>My Folders</string>
@@ -752,6 +761,9 @@ p, li { white-space: pre-wrap; }
             <family>MS Shell Dlg 2</family>
            </font>
           </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
           <property name="toolTip">
            <string>Start Search</string>
           </property>
@@ -782,6 +794,9 @@ p, li { white-space: pre-wrap; }
            <font>
             <family>MS Shell Dlg 2</family>
            </font>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
           </property>
           <property name="toolTip">
            <string>Reset</string>

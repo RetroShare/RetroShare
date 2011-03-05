@@ -833,8 +833,10 @@ void PopupChatDialog::on_actionClear_Chat_History_triggered()
 
 void PopupChatDialog::on_actionDelete_Chat_History_triggered()
 {
-    on_actionClear_Chat_History_triggered();
-    historyKeeper.clear();
+    if ((QMessageBox::question(this, "RetroShare", tr("Do you really want to physically delete the history?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes)) == QMessageBox::Yes) {
+        on_actionClear_Chat_History_triggered();
+        historyKeeper.clear();
+    }
 }
 
 void PopupChatDialog::updatePeerAvatar(const std::string& peer_id)

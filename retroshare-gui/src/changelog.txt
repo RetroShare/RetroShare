@@ -1,31 +1,136 @@
-Changes for v0.5.1*
+Changes for v0.5.1a
 
-* custom status now sent without needing to have a private chat
-  - getcustom status now generate a requests to that peer.
-  - setowncustom status now generates an 'status available' item sent to all peers
-* added new const ids for custom status 'request' and 'available'
-* Udp connection uses now dyndns when available
-* Remove some error detection in deserial for dynDNS backward compatibility
-* Add the setDynDNS to the confcertdialog
-* fixed MessengerWindow TreeWidget stylesheet
-* fixed to get work rsStatus under Windows 
-* display Avatar icons on second item in MessengerWindow, when no Avatar pictures is available show a default one.
-* restored open messenger to main window left hand panel
-* replaced messenger peer icons with avatars
-* removed offline status msg
-* sendstatus is now on qtimer - think of replacing with rs notify call back
-  - hack to load file status from previous rs session
-  - also removed 'offline' status
-* Added to count new messages on Tray icon Tooltip.
-* implemented simple rsStatus for messenger window
-* fixed minor bug with messenger window (starts new pop-up chat dialog when peer responds, if private chat started from messenger window) 
-* removed double definition
-* Added ShareDialog for ShareManager
-* sorting on date in messages and showing time only for same day messages
-* Fixed some labels font display problem
-* Improved Display Messages Labels: From, Date, Subject, To, redesign the To Label to display it more user friendly
-* Added to display text for Dir counts
-* Added to display filesize in Bytes for Details
+New features (DHT, Channels, Network View) 
+Improved stability w.r.t. previous version 0.5.0g"
+Added lots of improvements, check for details svn log entrys
+
+Changes for v0.5.0g
+
+* corrected a bug that caused file copy error: a closeFile() was missing when the file is complete. 
+
+
+Changes for v0.5.0f
+
+* restored the retroshare-nogui executable
+* bug corrections in cachestrapper
+* bug corrections in RsTunnelItem and p3tunnel
+* better error handling in rstunnelitem on windows
+* removed deadlock in data multiplex
+* improved p3disc info update
+
+
+Changes for v0.5.0e
+
+* Made a pass on the code in p3disc. 
+
+* Corrected some bugs:
+    - suppressed an unwanted return in packet treatment
+    - prevented sending info to a peer about itself
+    - changed askInfoToAllPeers() such as not to discard info from peers with
+      NODISC flag (because we especially need info for these)
+    - enabled receiving p3disc info even if p3discovery is disabled. Indeed,
+      disabeling p3disc is a measure of protection, so it should limit the 
+      export of p3disc info, not the import.
+    - removed test discarding info about dummy friends, because it is useless
+    - don't discard info about peers that have the NODISC flag (meaning that we
+      especially need info for them)
+    - added safety check about received GPG keys. Before we relied on this test
+      being performed by p3ConnMgr::addFriend()
+    - added some debug info
+
+* put correct (i.e. non conservative) size for RsDiscReply packets
+
+* corrected bug in rsdiscitem that prevented RsDiscReply packets to transfer cp serialiser/rsdiscitems.cc
+
+* switched ip addr finder to on by default (users seem to request it, and its not harmful)
+
+* automatic removal of file lists from deleted peers, at restart (After double check that this does not alter exchange of file lists in any way)
+
+* set heartbeat values to intermediate value
+
+* added verification for file size computation (bug correction)
+
+* augmented the heartbeat parameters, to reduce the stress on connections. Seems to help a lot when the traffic is high.
+
+Changes for v0.5.0d
+
+Package improvements:
+
+* suppressed package dependency on gpg-agent
+
+Improvements:
+
+* implemented a free disk space checking method, with a warning when running low
+* fixed proper sorting/updating of IP lists.
+* only keep the most recent port for identical ips.
+* don't start when the local address+port are already in use to avoid corrupting file lists, config files etc
+* added failure tests for fwrite
+* added tests against wrong ip 1.0.0.0 on MacOS
+
+Major bug corrections:
+
+* added missing locks in search requests into fimonitor.cc
+* Suppressed the possibility for browsable only files to be searched by hash from turtle router.
+* cleaned up some deadly code in rsdiscitems.cc, causing crashes
+* improved the security of size determination for file lists, that caused a chain reaction ending in crash at clients.
+* added missign lock in ftcontroller
+
+Minor bug corrections:
+
+* added a check to avoid (possibly rare) data races in data multiplex
+* suppressed double click action for download in Shared File lists
+
+
+Changes for v0.5.0c
+
+* Fixes two problems in the current group chat:
+  - the parser fails to embed two links in the same sentence
+  - the parser can potentially put smileys in the middle of <a> tags
+  Solution:
+  Since the message is in HTML, it is parsed into a DOM tree, then that DOM tree
+  is traversed and only the text nodes are parsed (see HandleRichText.cpp for details).
+  Bonus fixes:
+  - missing std:: for endl (which was falling back to its Qt counterpart)
+  - commenting useless code in PeersDialog::smileyWidgetgroupchat()
+  - replacing int by size_t
+  - RetroShare.pro now queries gpgme-config for its include path
+* fixed Memory leaks:
+	- getLocalInterfaces -> iptable = (MIB_IPADDRTABLE *) malloc(dwSize);
+	- main -> RshareSettings  *_settings = new RshareSettings();
+	- ExtAddrFinder::~ExtAddrFinder - use free for pointer allocated with malloc
+*	fixed RetroShare stopped responding during signing a key and asking for password.
+	- The QSingleShotTimer of ConfCertDialog wants to update the gui and stopped in  PeerItem::updateItem.
+* fixed chat bug that was truncating some messages, due to using a uint16_t to store a local size. Totally backward compatible.
+* fixed	crash with second open of HelpDialog solved
+* implemented a short circuit to local cache transfers. 
+  - This saves a large number of file descriptors, and improves reactivity of the software
+
+Changes for v0.5.0b
+
+* suppressed unused files 
+* added a checkpoint to file hashing, to save intermediate results every 10 GB
+* corrected memory leak in p3disc heart-beat system.
+* correct bug with selection with human readable delegate.
+* fixed the sorting of SearchDialog by age and by size, by using proper delegates for displaying the numbers. 
+* Removed the SR_REALSIZE_COL column, that is no longer necessary.
+* improved readability of cert generation dialog. Added tooltips, information, and wait cursor
+* corrected bug in search: files with size > 2Gb would not be added to transfers
+* corrected bug about persistence of default chunk strategy
+* fix a gui bug 
+* The settings in the settings window are only loaded once.
+* Saving the settings without changing the network settings doesn't shutdown the connections
+* Forwarding a message keep the attached recommended files  
+  - starting with ssl_id which has saved pword, and switching ids at start dialog
+	- secondary id may or may not have saved pword. 
+* added check for the result of fscanf
+* fixed compatibility issue with dyndns patch
+* Ported trunk commit 2780: Set the trust lvl to 3 when accepting a friend and the trust lvl is unknown.
+* Removed some potentially harmful (deadlock) code.
+* Put some printf into debugging #ifdef
+* Bug fix: Checkbox for automatic share of the incoming directory doesn't correctly set with setDown, use setChecked
+* ShareManager and RSettingsWin doesn't need to be created all the time
+* RSettingsWin: Save the last active page for the current runtime
+* ShareManager and DirectoryPage: Show changed shared directories direct after the change
 
 Changes for v0.5.0a
 

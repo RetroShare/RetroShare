@@ -82,7 +82,7 @@ pthread_t  createThread(RsThread &thread)
 
 RsThread::RsThread ()
 {
-    m_bRun = true;
+	mIsRunning = true;
 
 #ifdef WINDOWS_SYS
     memset (&mTid, 0, sizeof(mTid));
@@ -93,7 +93,8 @@ RsThread::RsThread ()
 
 void RsThread::join() /* waits for the the mTid thread to stop */
 {
-	m_bRun = false;
+	// do we need a mutex for this ?
+	mIsRunning = false;
 
 	void *ptr;
 	pthread_join(mTid, &ptr);
@@ -102,6 +103,12 @@ void RsThread::join() /* waits for the the mTid thread to stop */
 void RsThread::stop() 
 {
 	pthread_exit(NULL);
+}
+
+bool RsThread::isRunning()
+{
+	// do we need a mutex for this ?
+	return mIsRunning;
 }
 
 RsQueueThread::RsQueueThread(uint32_t min, uint32_t max, double relaxFactor )
@@ -113,7 +120,7 @@ RsQueueThread::RsQueueThread(uint32_t min, uint32_t max, double relaxFactor )
 
 void RsQueueThread::run()
 {
-	while(m_bRun)
+	while(isRunning())
 	{
 		bool doneWork = false;
 		while(workQueued() && doWork())

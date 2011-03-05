@@ -3,6 +3,8 @@
 #include <retroshare/rsturtle.h>
 #include "TurtleRouterDialog.h"
 
+static const int MAX_TUNNEL_REQUESTS_DISPLAY = 10 ;
+
 TurtleRouterDialog::TurtleRouterDialog(QWidget *parent)
 	: RsAutoUpdatePage(2000,parent)
 {
@@ -41,7 +43,11 @@ void TurtleRouterDialog::updateDisplay()
 
 	// remove all children of top level objects
 	for(int i=0;i<_f2f_TW->topLevelItemCount();++i)
-		while(_f2f_TW->topLevelItem(i)->takeChild(0) != NULL) ;
+	{
+		QTreeWidgetItem *taken ;
+		while( (taken = _f2f_TW->topLevelItem(i)->takeChild(0)) != NULL) 
+			delete taken ;
+	}
 
 	for(uint i=0;i<hashes_info.size();++i)
 		findParentHashItem(hashes_info[i][0]) ;
@@ -55,14 +61,14 @@ void TurtleRouterDialog::updateDisplay()
 
 		QTreeWidgetItem *parent = findParentHashItem(hash) ;
 
-		if(parent->text(0) == QString("Unknown hashes"))
+		if(parent->text(0).left(14) == QString("Unknown hashes"))
 			unknown_hash_found = true ;
 
 		QString str = QString::fromStdString( "Tunnel id: " + tunnels_info[i][0] + "\t [" + tunnels_info[i][2] + "] --> [" + tunnels_info[i][1] + "]\t\t last transfer: " + tunnels_info[i][4] + "\t Speed: " + tunnels_info[i][5] ) ;
 		stl.clear() ;
 		stl.push_back(str) ;
 
-		new QTreeWidgetItem(parent,stl) ;
+		parent->addChild(new QTreeWidgetItem(stl)) ;
 	}
 
 	for(uint i=0;i<search_reqs_info.size();++i)
@@ -72,27 +78,41 @@ void TurtleRouterDialog::updateDisplay()
 		stl.clear() ;
 		stl.push_back(str) ;
 
-		new QTreeWidgetItem(top_level_s_requests,stl) ;
+		top_level_s_requests->addChild(new QTreeWidgetItem(stl)) ;
 	}
 	top_level_s_requests->setText(0, tr("Search requests") + "(" + QString::number(search_reqs_info.size()) + ")" ) ;
 
-	for(uint i=0;i<tunnel_reqs_info.size();++i)
-	{
-		QString str = QString::fromStdString( "Request id: " + tunnel_reqs_info[i][0] + "\t from [" + tunnel_reqs_info[i][1] + "]\t " + tunnel_reqs_info[i][2]) ;
+	int reqs_size = tunnel_reqs_info.size() ;
 
-		stl.clear() ;
-		stl.push_back(str) ;
+	for(uint i=0;i<reqs_size;++i)
+		if(i+MAX_TUNNEL_REQUESTS_DISPLAY >= reqs_size || i < MAX_TUNNEL_REQUESTS_DISPLAY)
+		{
+			QString str = QString::fromStdString( "Request id: " + tunnel_reqs_info[i][0] + "\t from [" + tunnel_reqs_info[i][1] + "]\t " + tunnel_reqs_info[i][2]) ;
 
-		new QTreeWidgetItem(top_level_t_requests,stl) ;
-	}
+			stl.clear() ;
+			stl.push_back(str) ;
+
+			top_level_t_requests->addChild(new QTreeWidgetItem(stl)) ;
+		}
+		else if(i == MAX_TUNNEL_REQUESTS_DISPLAY)
+		{
+			stl.clear() ;
+			stl.push_back(QString("...")) ;
+			top_level_t_requests->addChild(new QTreeWidgetItem(stl)) ;
+
+		} 
+
 	top_level_t_requests->setText(0, tr("Tunnel requests") + "("+QString::number(tunnel_reqs_info.size()) + ")") ;
+
+	QTreeWidgetItem *unknown_hashs_item = findParentHashItem("") ;
+	unknown_hashs_item->setText(0,QString("Unknown hashes (") + QString::number(unknown_hashs_item->childCount())+QString(")")) ;
 
 	// Ok, this is a N2 search, but there are very few elements in the list.
 	for(int i=2;i<_f2f_TW->topLevelItemCount();)
 	{
 		bool found = false ;
 
-		if(_f2f_TW->topLevelItem(i)->text(0) == "Unknown hashes" && unknown_hash_found)
+		if(_f2f_TW->topLevelItem(i)->text(0).left(14) == "Unknown hashes" && unknown_hash_found)
 			found = true ;
 
 		if(_f2f_TW->topLevelItem(i)->childCount() > 0)	// this saves uploading hashes
@@ -103,7 +123,7 @@ void TurtleRouterDialog::updateDisplay()
 				found=true ;
 
 		if(!found)
-			_f2f_TW->takeTopLevelItem(i) ;
+			delete _f2f_TW->takeTopLevelItem(i) ;
 		else
 			++i ;
 	}
@@ -113,7 +133,7 @@ QTreeWidgetItem *TurtleRouterDialog::findParentHashItem(const std::string& hash)
 {
 	// look for the hash, and insert a new element if necessary.
 	//
-	QList<QTreeWidgetItem*> items = _f2f_TW->findItems((hash=="")?QString("Unknown hashes"):QString::fromStdString(hash),Qt::MatchExactly) ;
+	QList<QTreeWidgetItem*> items = _f2f_TW->findItems((hash=="")?QString("Unknown hashes"):QString::fromStdString(hash),Qt::MatchStartsWith) ;
 
 	if(items.empty())
 	{	

@@ -553,6 +553,9 @@ p, li { white-space: pre-wrap; }
           </item>
           <item row="0" column="4">
            <widget class="QPushButton" name="menupushButton">
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
             <property name="toolTip">
              <string>Add</string>
             </property>
@@ -607,6 +610,9 @@ p, li { white-space: pre-wrap; }
           </item>
           <item row="0" column="3">
            <widget class="QPushButton" name="displayButton">
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
             <property name="toolTip">
              <string>Display</string>
             </property>
@@ -965,9 +971,6 @@ background: white;}</string>
                </item>
                <item>
                 <widget class="QTextEdit" name="lineEdit">
-                <property name="toolTip">
-                 <string>Messages entered here are sent to all collected friends</string>
-                </property>
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                    <horstretch>30</horstretch>
@@ -1000,6 +1003,9 @@ background: white;}</string>
                  </property>
                  <property name="contextMenuPolicy">
                   <enum>Qt::CustomContextMenu</enum>
+                 </property>
+                 <property name="toolTip">
+                  <string>Messages entered here are sent to all collected friends</string>
                  </property>
                  <property name="styleSheet">
                   <string notr="true">QTextEdit#lineEdit{border: 1px solid #CCCCCC;
@@ -1050,6 +1056,9 @@ border: 1px solid #CCCCCC;}</string>
                   <height>24</height>
                  </size>
                 </property>
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="text">
                  <string/>
                 </property>
@@ -1087,6 +1096,9 @@ border: 1px solid #CCCCCC;}</string>
                   <width>24</width>
                   <height>24</height>
                  </size>
+                </property>
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
                 </property>
                 <property name="toolTip">
                  <string>Bold</string>
@@ -1126,6 +1138,9 @@ border: 1px solid #CCCCCC;}</string>
                   <height>24</height>
                  </size>
                 </property>
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="toolTip">
                  <string>Underline</string>
                 </property>
@@ -1163,6 +1178,9 @@ border: 1px solid #CCCCCC;}</string>
                   <width>24</width>
                   <height>24</height>
                  </size>
+                </property>
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
                 </property>
                 <property name="toolTip">
                  <string>Italic</string>
@@ -1202,6 +1220,9 @@ border: 1px solid #CCCCCC;}</string>
                   <height>24</height>
                  </size>
                 </property>
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="toolTip">
                  <string>Font</string>
                 </property>
@@ -1237,12 +1258,11 @@ border: 1px solid #CCCCCC;}</string>
                   <height>24</height>
                  </size>
                 </property>
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="toolTip">
-                 <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;set Text Color&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 <string>Text Color</string>
                 </property>
                 <property name="text">
                  <string/>
@@ -1271,6 +1291,9 @@ p, li { white-space: pre-wrap; }
                   <width>24</width>
                   <height>24</height>
                  </size>
+                </property>
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
                 </property>
                 <property name="styleSheet">
                  <string notr="true">QPushButton::menu-indicator {
@@ -1324,6 +1347,9 @@ p, li { white-space: pre-wrap; }
                   <width>26</width>
                   <height>26</height>
                  </size>
+                </property>
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
                 </property>
                 <property name="toolTip">
                  <string>Attach File</string>

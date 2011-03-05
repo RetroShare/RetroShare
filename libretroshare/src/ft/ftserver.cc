@@ -225,7 +225,7 @@ CacheTransfer *ftServer::getCacheTransfer()
 
 void	ftServer::run()
 {
-	while(m_bRun)
+	while(isRunning())
 	{
 		mFtDataplex->deleteUnusedServers() ;
 #ifdef WIN32

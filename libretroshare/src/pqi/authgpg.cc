@@ -358,7 +358,7 @@ void AuthGPGimpl::run()
 {
     int count = 0;
 
-    while (m_bRun)
+    while (isRunning())
     {
 #ifdef WIN32
         Sleep(100);

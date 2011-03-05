@@ -453,13 +453,13 @@ void 	FileIndexMonitor::run()
 {
 	updateCycle();
 
-	while(m_bRun)
+	while(isRunning())
 	{
 
 		for(int i = 0; i < updatePeriod; i++)
 		{
 
-			if (m_bRun == false) {
+			if (isRunning() == false) {
 				return;
 			}
 
@@ -515,7 +515,7 @@ void 	FileIndexMonitor::updateCycle()
 		cache_is_new = useHashCache && hashCache.empty() ;
 	}
 			
-	while(moretodo)
+	while(isRunning() && moretodo)
 	{
 		/* sleep a bit for each loop */
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
@@ -571,8 +571,8 @@ void 	FileIndexMonitor::updateCycle()
 #endif
 
 		/* check for the dir existance */
-                librs::util::FolderIterator dirIt(realpath);
-                if (!dirIt.isValid())
+		librs::util::FolderIterator dirIt(realpath);
+		if (!dirIt.isValid())
 		{
 #ifdef FIM_DEBUG
 			std::cerr << "FileIndexMonitor::updateCycle()";
@@ -617,20 +617,20 @@ void 	FileIndexMonitor::updateCycle()
 		to_hash.back().realpath = realpath ;
 		to_hash.back().dirpath = dirpath ;
 
-                while(dirIt.readdir())
+		while(isRunning() && dirIt.readdir())
 		{
 			/* check entry type */
-                        std::string fname;
-                        dirIt.d_name(fname);
+			std::string fname;
+			dirIt.d_name(fname);
 			std::string fullname = realpath + "/" + fname;
 #ifdef FIM_DEBUG
 			std::cerr << "calling stats on " << fullname <<std::endl;
 #endif
 
 #ifdef WINDOWS_SYS
-                        std::wstring wfullname;
-                        librs::util::ConvertUtf8ToUtf16(fullname, wfullname);
-                        if (-1 != _wstati64(wfullname.c_str(), &buf))
+			std::wstring wfullname;
+			librs::util::ConvertUtf8ToUtf16(fullname, wfullname);
+			if (-1 != _wstati64(wfullname.c_str(), &buf))
 #else
 			if (-1 != stat64(fullname.c_str(), &buf))
 #endif
@@ -738,7 +738,7 @@ void 	FileIndexMonitor::updateCycle()
 
 	// Now, hash all files at once.
 	//
-	if(!to_hash.empty())
+	if(isRunning() && !to_hash.empty())
 		hashFiles(to_hash) ;
 
 	cb->notifyHashingInfo(NOTIFY_HASHTYPE_FINISH, "") ;
@@ -827,9 +827,12 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 	uint64_t hashed_size=0 ;
 	uint64_t last_save_size=0 ;
 
+	// check if thread is running
+	bool running = isRunning();
+
 	/* update files */
-	for(uint32_t i=0;i<to_hash.size();++i)
-		for(uint32_t j=0;j<to_hash[i].fentries.size();++j,++cnt)
+	for(uint32_t i=0;running && i<to_hash.size();++i)
+		for(uint32_t j=0;running && j<to_hash[i].fentries.size();++j,++cnt)
 		{
 			// This is a very basic progress notification. To be more complete and user friendly, one would
 			// rather send a completion ratio based on the size of files vs/ total size.
@@ -846,7 +849,7 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 			//
 			if(useHashCache && hashCache.find(real_path,fe.size,fe.modtime,fe.hash)) 
 				fi.updateFileEntry(to_hash[i].dirpath,fe,stamp);
-			else if(RsDirUtil::getFileHash(real_path, fe.hash,fe.size))		// not found, then hash it.
+			else if(RsDirUtil::getFileHash(real_path, fe.hash,fe.size, this))		// not found, then hash it.
 			{
 				RsStackMutex stack(fiMutex); /**** LOCKED DIRS ****/
 
@@ -893,6 +896,9 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 				if(useHashCache)
 					hashCache.save() ;
 			}
+
+			// check if thread is running
+			running = isRunning();
 		}
 
 	cb->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
