@@ -452,6 +452,8 @@ bool	RsDirUtil::checkCreateDirectory(const std::string& dir)
                 std::cerr << "check_create_directory()";
                 std::cerr <<std::endl<< "\tcreated:" <<dir<<std::endl;
 #endif
+
+		return 1;
         }
 
 #ifdef RSDIR_DEBUG
