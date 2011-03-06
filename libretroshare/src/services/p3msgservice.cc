@@ -501,24 +501,18 @@ void p3MsgService::loadWelcomeMsg()
 	/* Load Welcome Message */
 	RsMsgItem *msg = new RsMsgItem();
 
-       //msg -> PeerId(mConnMgr->getOwnId());
+	//msg -> PeerId(mConnMgr->getOwnId());
 
-        msg -> sendTime = time(NULL);
-        msg -> recvTime = time(NULL);
-        msg -> msgFlags =  RS_MSG_FLAGS_NEW;
+	msg -> sendTime = time(NULL);
+	msg -> recvTime = time(NULL);
+	msg -> msgFlags = RS_MSG_FLAGS_NEW;
 
 	msg -> subject = L"Welcome to Retroshare";
 
-	msg -> message    = L"Send and receive messages\n"; 
-	msg -> message   += L"with your friends...\n\n";
-
-	msg -> message   += L"These can hold recommendations\n";
-	msg -> message   += L"from your local shared files\n\n";
-
-	msg -> message   += L"Add recommendations through\n";
-	msg -> message   += L"the Local Files Dialog\n\n";
-
-	msg -> message   += L"Enjoy.\n";
+	msg -> message  = L"Send and receive messages with your friends...\n";
+	msg -> message += L"These can hold recommendations from your local shared files.\n\n";
+	msg -> message += L"Add recommendations through the Local Files Dialog.\n\n";
+	msg -> message += L"Enjoy.";
 
 	msg -> msgId = getNewUniqueMsgId();
 
@@ -1280,11 +1274,11 @@ void p3MsgService::initRsMI(RsMsgItem *msg, MessageInfo &mi)
 	{
 		mi.msgflags |= RS_MSG_PENDING;
 	}
-        if (msg->msgFlags & RS_MSG_FLAGS_DRAFT)
-        {
-                mi.msgflags |= RS_MSG_DRAFT;
-        }
-        if (msg->msgFlags & RS_MSG_FLAGS_NEW)
+	if (msg->msgFlags & RS_MSG_FLAGS_DRAFT)
+	{
+		mi.msgflags |= RS_MSG_DRAFT;
+	}
+	if (msg->msgFlags & RS_MSG_FLAGS_NEW)
 	{
 		mi.msgflags |= RS_MSG_NEW;
 	}
@@ -1292,7 +1286,7 @@ void p3MsgService::initRsMI(RsMsgItem *msg, MessageInfo &mi)
 	{
 		mi.msgflags |= RS_MSG_TRASH;
 	}
-        if (msg->msgFlags & RS_MSG_FLAGS_UNREAD_BY_USER)
+	if (msg->msgFlags & RS_MSG_FLAGS_UNREAD_BY_USER)
 	{
 		mi.msgflags |= RS_MSG_UNREAD_BY_USER;
 	}
@@ -1348,7 +1342,7 @@ void p3MsgService::initRsMI(RsMsgItem *msg, MessageInfo &mi)
 			it != msg->attachment.items.end(); it++)
 	{
 		FileInfo fi;
-	        fi.fname = RsDirUtil::getTopDir(it->name);
+		fi.fname = RsDirUtil::getTopDir(it->name);
 		fi.size  = it->filesize;
 		fi.hash  = it->hash;
 		fi.path  = it->path;
@@ -1375,11 +1369,11 @@ void p3MsgService::initRsMIS(RsMsgItem *msg, MsgInfoSummary &mis)
 	{
 		mis.msgflags |= RS_MSG_PENDING;
 	}
-        if (msg->msgFlags & RS_MSG_FLAGS_DRAFT)
-        {
-                mis.msgflags |= RS_MSG_DRAFT;
-        }
-        if (msg->msgFlags & RS_MSG_FLAGS_NEW)
+	if (msg->msgFlags & RS_MSG_FLAGS_DRAFT)
+	{
+		mis.msgflags |= RS_MSG_DRAFT;
+	}
+	if (msg->msgFlags & RS_MSG_FLAGS_NEW)
 	{
 		mis.msgflags |= RS_MSG_NEW;
 	}

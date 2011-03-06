@@ -19,6 +19,7 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <QTextBrowser>
 #include "HandleRichText.h"
 
 
@@ -49,7 +50,12 @@ QString formatText(const QString &text, unsigned int flag)
 	}
 
 	QDomDocument doc;
-	doc.setContent(text);
+	if (doc.setContent(text) == false) {
+		// convert text with QTextBrowser
+		QTextBrowser textBrowser;
+		textBrowser.setText(text);
+		doc.setContent(textBrowser.toHtml());
+	}
 
 	QDomElement body = doc.documentElement();
 	if (flag & RSHTML_FORMATTEXT_EMBED_SMILEYS) {
