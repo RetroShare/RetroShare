@@ -67,7 +67,7 @@ ShareDialog::ShareDialog(std::string filename, QWidget *parent, Qt::WFlags flags
 void ShareDialog::browseDirectory()
 {
     /* select a dir*/
-    QString qdir = QFileDialog::getExistingDirectory(this, tr("Select A Folder To Share"), "", QFileDialog::DontUseNativeDialog | QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    QString qdir = QFileDialog::getExistingDirectory(this, tr("Select A Folder To Share"), "", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
 
     /* add it to the server */
     if (qdir.isEmpty()) {

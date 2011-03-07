@@ -1339,7 +1339,7 @@ void TransfersDialog::openFolderTransfer()
 	}
 
 	/* open folder with a suitable application */
-	qinfo.setFile(path.c_str());
+	qinfo.setFile(QString::fromUtf8(path.c_str()));
 	if (qinfo.exists() && qinfo.isDir()) {
 		if (!QDesktopServices::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()))) {
 			std::cerr << "openFolderTransfer(): can't open folder " << path << std::endl;
@@ -1379,16 +1379,16 @@ void TransfersDialog::previewTransfer()
 	/* open or preview them with a suitable application */
 	QFileInfo qinfo;
 	if (complete) {
-		qinfo.setFile(QString::fromStdString(path));
+		qinfo.setFile(QString::fromUtf8(path.c_str()));
 		if (qinfo.exists()) {
 			if (!QDesktopServices::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()))) {
 				std::cerr << "previewTransfer(): can't preview file " << path << std::endl;
 			}
 		}
 	} else {
-		QString linkName = QString::fromStdString(path) +
-							QString::fromStdString(info.fname.substr(info.fname.find_last_of('.')));
-		if (QFile::link(QString::fromStdString(path), linkName)) {
+		QString linkName = QString::fromUtf8(path.c_str()) +
+							QString::fromUtf8(info.fname.substr(info.fname.find_last_of('.')).c_str());
+		if (QFile::link(QString::fromUtf8(path.c_str()), linkName)) {
 			qinfo.setFile(linkName);
 			if (qinfo.exists()) {
 				if (!QDesktopServices::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()))) {
@@ -1427,7 +1427,7 @@ void TransfersDialog::openTransfer()
 
 		/* open file with a suitable application */
 		QFileInfo qinfo;
-		qinfo.setFile(path.c_str());
+		qinfo.setFile(QString::fromUtf8(path.c_str()));
 		if (qinfo.exists()) {
 			if (!QDesktopServices::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()))) {
 				std::cerr << "openTransfer(): can't open file " << path << std::endl;
@@ -1436,7 +1436,7 @@ void TransfersDialog::openTransfer()
 	} else {
 		/* rise a message box for incompleted download file */
 		QMessageBox::information(this, tr("Open Transfer"),
-				tr("File %1 is not completed. If it is a media file, try to preview it.").arg(info.fname.c_str()));
+								 tr("File %1 is not completed. If it is a media file, try to preview it.").arg(QString::fromUtf8(info.fname.c_str())));
 	}
 }
 

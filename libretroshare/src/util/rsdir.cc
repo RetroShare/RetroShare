@@ -426,54 +426,70 @@ bool	RsDirUtil::checkDirectory(const std::string& dir)
 bool	RsDirUtil::checkCreateDirectory(const std::string& dir)
 {
 #ifdef RSDIR_DEBUG
-        std::cerr << "RsDirUtil::checkCreateDirectory() dir: " << dir << std::endl;
+	std::cerr << "RsDirUtil::checkCreateDirectory() dir: " << dir << std::endl;
 #endif
-        DIR *direc = opendir(dir.c_str());
-        if (!direc)
-        {
-                // directory don't exist. create.
+
+#ifdef WINDOWS_SYS
+	std::wstring wdir;
+	librs::util::ConvertUtf8ToUtf16(dir, wdir);
+	_WDIR *direc = _wopendir(wdir.c_str());
+	if (!direc)
+#else
+	DIR *direc = opendir(dir.c_str());
+	if (!direc)
+#endif
+	{
+		// directory don't exist. create.
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS // UNIX
-                if (-1 == mkdir(dir.c_str(), 0777))
+		if (-1 == mkdir(dir.c_str(), 0777))
 #else // WIN
-                if (-1 == mkdir(dir.c_str()))
+		if (-1 == _wmkdir(wdir.c_str()))
 #endif
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
-                {
+		{
 #ifdef RSDIR_DEBUG
-                  std::cerr << "check_create_directory() Fatal Error et oui--";
-                  std::cerr <<std::endl<< "\tcannot create:" <<dir<<std::endl;
+			std::cerr << "check_create_directory() Fatal Error et oui--";
+			std::cerr <<std::endl<< "\tcannot create:" <<dir<<std::endl;
 #endif
-                  return 0;
-                }
+			return 0;
+		}
 
 #ifdef RSDIR_DEBUG
-                std::cerr << "check_create_directory()";
-                std::cerr <<std::endl<< "\tcreated:" <<dir<<std::endl;
+		std::cerr << "check_create_directory()";
+		std::cerr <<std::endl<< "\tcreated:" <<dir<<std::endl;
 #endif
 
 		return 1;
-        }
+	}
 
 #ifdef RSDIR_DEBUG
-        std::cerr << "check_create_directory()";
-        std::cerr <<std::endl<< "\tDir Exists:" <<dir<<std::endl;
+	std::cerr << "check_create_directory()";
+	std::cerr <<std::endl<< "\tDir Exists:" <<dir<<std::endl;
 #endif
-		  closedir(direc) ;
-        return 1;
-}
 
-//#include <sys/types.h>
-//#include <sys/stat.h>
-//#include <fcntl.h>
-//#include <unistd.h>
+#ifdef WINDOWS_SYS
+	_wclosedir(direc);
+#else
+	closedir(direc) ;
+#endif
+
+	return 1;
+}
 
 bool 	RsDirUtil::cleanupDirectory(const std::string& cleandir, const std::list<std::string> &keepFiles)
 {
 
 	/* check for the dir existance */
+#ifdef WINDOWS_SYS
+	std::wstring wcleandir;
+	librs::util::ConvertUtf8ToUtf16(cleandir, wcleandir);
+	_WDIR *dir = _wopendir(wcleandir.c_str());
+#else
 	DIR *dir = opendir(cleandir.c_str());
+#endif
+
 	std::list<std::string>::const_iterator it;
 
 	if (!dir)
@@ -481,31 +497,60 @@ bool 	RsDirUtil::cleanupDirectory(const std::string& cleandir, const std::list<s
 		return false;
 	}
 
+#ifdef WINDOWS_SYS
+	struct _wdirent *dent;
+	struct _stat buf;
+
+	while(NULL != (dent = _wreaddir(dir)))
+#else
 	struct dirent *dent;
 	struct stat buf;
 
 	while(NULL != (dent = readdir(dir)))
+#endif
 	{
 		/* check entry type */
+#ifdef WINDOWS_SYS
+		const std::wstring &wfname = dent -> d_name;
+		std::wstring wfullname = wcleandir + L"/" + wfname;
+#else
 		const std::string &fname = dent -> d_name;
 		std::string fullname = cleandir + "/" + fname;
+#endif
 
-	 	if (-1 != stat(fullname.c_str(), &buf))
+#ifdef WINDOWS_SYS
+		if (-1 != _wstat(wfullname.c_str(), &buf))
+#else
+		if (-1 != stat(fullname.c_str(), &buf))
+#endif
 		{
 			/* only worry about files */
 			if (S_ISREG(buf.st_mode))
 			{
+#ifdef WINDOWS_SYS
+				std::string fname;
+				librs::util::ConvertUtf16ToUtf8(wfname, fname);
+#endif
 				/* check if we should keep it */
 				if (keepFiles.end() == (it = std::find(keepFiles.begin(), keepFiles.end(), fname)))
 				{
 					/* can remove */
+#ifdef WINDOWS_SYS
+					_wremove(wfullname.c_str());
+#else
 					remove(fullname.c_str());
+#endif
 				}
 			}
 		}
 	}
+
 	/* close directory */
+#ifdef WINDOWS_SYS
+	_wclosedir(dir);
+#else
 	closedir(dir);
+#endif
 
 	return true;
 }

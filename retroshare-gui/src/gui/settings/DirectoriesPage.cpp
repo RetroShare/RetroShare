@@ -220,10 +220,9 @@ void DirectoriesPage::removeShareDirectory()
 
 void DirectoriesPage::setIncomingDirectory()
 {
- 	QString qdir = QFileDialog::getExistingDirectory(this, tr("Set Incoming Directory"), "",
-				QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+	QString qdir = QFileDialog::getExistingDirectory(this, tr("Set Incoming Directory"), "", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
 
-	std::string dir = qdir.toStdString();
+	std::string dir = qdir.toUtf8().constData();
 	if (dir != "")
 	{
 		rsFiles->setDownloadDirectory(dir);
@@ -249,10 +248,9 @@ void DirectoriesPage::setIncomingDirectory()
 
 void DirectoriesPage::setPartialsDirectory()
 {
- 	QString qdir = QFileDialog::getExistingDirectory(this, tr("Set Partials Directory"), "",
-				QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+	QString qdir = QFileDialog::getExistingDirectory(this, tr("Set Partials Directory"), "", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
 
-	std::string dir = qdir.toStdString();
+	std::string dir = qdir.toUtf8().constData();
 	if (dir != "")
 	{
 		rsFiles->setPartialsDirectory(dir);
