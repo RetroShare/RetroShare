@@ -1,5 +1,35 @@
 retroshare (0.5.1-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
-  * Initial snapshot
+  * Improvements
+      - The working (hashing) thread FileIndexMonitor is now stopped when RetroShare is closed.
+      - Removed tab focus from the toolbar and image buttons.
+      - Fixed german translation.
 
- -- Cyril Soler <csoler@sourceforge.net> <csoler@sourceforge.net>  Sat, 06 Feb 2010 07:15:46 +0100
+  * Bug Fixes:
+      - Fixed a toolbar icon to display with a correct size on macosx
+      - Added missing return... which was causing crash at start during directory creation.
+      - Supressed memory leak due to not deleting a RsItem
+      - Suppressed potential SIGSEGV as exit time
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Thu, 07 Mar 2010 21:35:46 +0100
+
+retroshare (0.5.1-0.4069~lucid) lucid; urgency=low
+
+  * Improvements:
+      - Added a confirm to the delete history action.  
+      - Added the RetroShare icon to the password input window. 
+      - Added display of number of intermediate tunnels, and limited the number of displayed tunnel requests 
+
+  * Bug Fixes:
+      - Fixed potential SIGSEGV because of not checking returned pointer in DHT code. 
+      - Fixed memory leak in GUI responsible for high leaks in large networks.
+      - Fixed memory leak in p3distrib
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Thu, 28 Feb 2010 21:35:46 +0100
+
+retroshare (0.5.1-0.4059~lucid) lucid; urgency=low
+
+  * Release 0.5.1: 
+  		New features (DHT, Channels, Network View), Improved stability w.r.t. previous version 0.5.0g
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Thu, 24 Feb 2010 21:35:46 +0100
