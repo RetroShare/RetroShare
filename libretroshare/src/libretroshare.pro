@@ -1,7 +1,7 @@
 TEMPLATE = lib
 #CONFIG += staticlib release
 #CONFIG += staticlib testnetwork
-CONFIG += staticlib testnetwork bitdht
+CONFIG += staticlib bitdht
 CONFIG -= qt
 TARGET = retroshare
 
