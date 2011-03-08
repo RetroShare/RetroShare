@@ -2167,7 +2167,7 @@ int RsServer::StartupRetroShare()
 	/* Start up Threads */
 	/**************************************************************************/
 
-        ftserver->StartupThreads();
+	ftserver->StartupThreads();
 	ftserver->ResumeTransfers();
 
         //mDhtMgr->start();
@@ -2187,9 +2187,6 @@ int RsServer::StartupRetroShare()
 
 	/**************************************************************************/
 
-
-
-
 	// create loopback device, and add to pqisslgrp.
 
 	SearchModule *mod = new SearchModule();
@@ -2203,7 +2200,7 @@ int RsServer::StartupRetroShare()
 
 	/* Setup GUI Interfaces. */
 
-        rsPeers = new p3Peers(mConnMgr);
+	rsPeers = new p3Peers(mConnMgr);
 	rsDisc  = new p3Discovery(ad);
 
 #ifndef MINIMAL_LIBRS
@@ -2231,6 +2228,7 @@ int RsServer::StartupRetroShare()
 	if (RsInitConfig::firsttime_run)
 	{
 		msgSrv->loadWelcomeMsg();
+		ftserver->shareDownloadDirectory(true);
 	}
 #endif // MINIMAL_LIBRS
 
