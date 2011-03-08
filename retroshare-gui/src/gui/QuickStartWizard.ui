@@ -158,7 +158,7 @@ p, li { white-space: pre-wrap; }
       <string notr="true"/>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="pageWelcome">
       <property name="styleSheet">
@@ -341,41 +341,6 @@ p, li { white-space: pre-wrap; }
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
-           <widget class="QDoubleSpinBox" name="doubleSpinBoxUploadSpeed">
-            <property name="prefix">
-             <string>Choose your upload speed limit: </string>
-            </property>
-            <property name="suffix">
-             <string> KB/s</string>
-            </property>
-            <property name="decimals">
-             <number>0</number>
-            </property>
-            <property name="minimum">
-             <double>29.000000000000000</double>
-            </property>
-            <property name="maximum">
-             <double>155000.000000000000000</double>
-            </property>
-            <property name="value">
-             <double>256.000000000000000</double>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0">
-           <spacer name="verticalSpacer_5">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
           <item row="2" column="0">
            <widget class="QDoubleSpinBox" name="doubleSpinBoxDownloadSpeed">
             <property name="prefix">
@@ -395,6 +360,41 @@ p, li { white-space: pre-wrap; }
             </property>
             <property name="value">
              <double>2048.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <spacer name="verticalSpacer_5">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="3" column="0">
+           <widget class="QDoubleSpinBox" name="doubleSpinBoxUploadSpeed">
+            <property name="prefix">
+             <string>Choose your upload speed limit: </string>
+            </property>
+            <property name="suffix">
+             <string> KB/s</string>
+            </property>
+            <property name="decimals">
+             <number>0</number>
+            </property>
+            <property name="minimum">
+             <double>29.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>155000.000000000000000</double>
+            </property>
+            <property name="value">
+             <double>256.000000000000000</double>
             </property>
            </widget>
           </item>

@@ -536,6 +536,9 @@
           <height>31</height>
          </size>
         </property>
+        <property name="toolTip">
+         <string>Browse</string>
+        </property>
         <property name="text">
          <string/>
         </property>
@@ -580,6 +583,9 @@
           <width>31</width>
           <height>31</height>
          </size>
+        </property>
+        <property name="toolTip">
+         <string>Browse</string>
         </property>
         <property name="text">
          <string/>

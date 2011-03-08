@@ -34,16 +34,6 @@ DirectoriesPage::DirectoriesPage(QWidget * parent, Qt::WFlags flags)
     ui.setupUi(this);
     setAttribute(Qt::WA_QuitOnClose, false);
 
-    //load();
-
-#ifdef TO_REMOVE
-	ui.addButton->setToolTip(tr("Add a Share Directory"));
-	ui.removeButton->setToolTip(tr("Remove Shared Directory"));
-#endif
-
-    ui.incomingButton->setToolTip(tr("Browse"));
-    ui.partialButton->setToolTip(tr("Browse"));
-
     if (rsFiles->getShareDownloadDirectory())
     {
         ui.checkBox->setChecked(true);		/* signal not emitted */
@@ -118,7 +108,6 @@ void DirectoriesPage::editDirectories()
 	ShareManager::showYourself() ;
 }
 
-
 /** Saves the changes on this page */
 bool DirectoriesPage::save(QString &errmsg)
 {
@@ -182,41 +171,6 @@ void DirectoriesPage::load()
 
 	listWidget->update(); /* update display */
 }
-
-#ifdef TO_REMOVE
-void DirectoriesPage::addShareDirectory()
-{
-
-	/* select a dir
-	 */
-
-	int ind;
- 	QString qdir = QFileDialog::getExistingDirectory(this, tr("Add Shared Directory"), "",
- 	                            QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-        ind=qdir.lastIndexOf("/");
-
-	/* add it to the server */
-	std::string dir = qdir.toStdString();
-	if (dir != "")
-	{
-		rsFiles->addSharedDirectory(dir);
-		load();
-	}
-}
-
-void DirectoriesPage::removeShareDirectory()
-{
-	/* id current dir */
-	/* ask for removal */
-	QListWidget *listWidget = ui.dirList;
-	QListWidgetItem *qdir = listWidget -> currentItem();
-	if (qdir)
-	{
-		rsFiles->removeSharedDirectory( qdir->text().toStdString());
-		load();
-	}
-}
-#endif
 
 void DirectoriesPage::setIncomingDirectory()
 {
