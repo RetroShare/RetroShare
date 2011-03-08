@@ -51,6 +51,7 @@ private:
     bool messageBoxOk(QString);
 
 private Q_SLOTS:
+        void on_shareIncomingDirectory_clicked();
         void on_pushButtonSharesRemove_clicked();
         void on_pushButtonSharesAdd_clicked();
         void on_pushButtonSystemExit_clicked();

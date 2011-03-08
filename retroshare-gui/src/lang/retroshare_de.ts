@@ -2782,12 +2782,12 @@ p, li { white-space: pre-wrap; }
         <translation>Durchsuchen</translation>
     </message>
     <message>
-        <location filename="../gui/settings/DirectoriesPage.cpp" line="+179"/>
+        <location filename="../gui/settings/DirectoriesPage.cpp" line="+148"/>
         <source>Set Incoming Directory</source>
         <translation>Ordner für eingehende Dateien</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+16"/>
         <source>Set Partials Directory</source>
         <translation>Ordner für temporäre Dateien</translation>
     </message>
@@ -2838,7 +2838,7 @@ Das ist nützlich, wenn Du eine externe Festplatte freigibst und die Datei nicht
     <message>
         <location line="+62"/>
         <source>Automatically share incoming directory (Recommended)</source>
-        <translation>Eingehende Ordner automatisch freigeben</translation>
+        <translation>Eingehende Ordner automatisch freigeben (Empfohlen)</translation>
     </message>
 </context>
 <context>
@@ -8893,20 +8893,20 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+120"/>
         <location line="+269"/>
-        <location line="+235"/>
+        <location line="+242"/>
         <source>Next &gt;</source>
         <translation>Weiter &gt;</translation>
     </message>
     <message>
-        <location line="-494"/>
+        <location line="-501"/>
         <location line="+269"/>
-        <location line="+235"/>
+        <location line="+242"/>
         <location line="+205"/>
         <source>Exit</source>
         <translation>Beenden</translation>
     </message>
     <message>
-        <location line="-649"/>
+        <location line="-656"/>
         <source>For best performance, RetroShare needs to know a little about your connection to the internet.</source>
         <translation>Für die beste Leistung muß RetroShare ein wenig über Deine Internetverbindung wissen.</translation>
     </message>
@@ -8953,13 +8953,13 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+94"/>
-        <location line="+235"/>
+        <location line="+242"/>
         <location line="+205"/>
         <source>&lt; Back</source>
         <translation>&lt; Zurück</translation>
     </message>
     <message>
-        <location line="-358"/>
+        <location line="-365"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -9004,7 +9004,12 @@ p, li { white-space: pre-wrap; }
         <translation>Entfernen</translation>
     </message>
     <message>
-        <location line="+137"/>
+        <location line="+33"/>
+        <source>Automatically share incoming directory (Recommended)</source>
+        <translation>Eingehende Ordner automatisch freigeben (Empfohlen)</translation>
+    </message>
+    <message>
+        <location line="+111"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -9085,7 +9090,7 @@ p, li { white-space: pre-wrap; }
         <translation>Warnung!</translation>
     </message>
     <message>
-        <location filename="../gui/QuickStartWizard.ui" line="-775"/>
+        <location filename="../gui/QuickStartWizard.ui" line="-782"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }

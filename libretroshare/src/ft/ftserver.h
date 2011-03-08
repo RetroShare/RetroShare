@@ -197,10 +197,8 @@ virtual bool 	addSharedDirectory(const SharedDirInfo& dir);
 virtual bool   updateShareFlags(const SharedDirInfo& dir); 	// updates the flags. The directory should already exist !
 virtual bool 	removeSharedDirectory(std::string dir);
 
-virtual void	setShareDownloadDirectory(bool value);
 virtual bool	getShareDownloadDirectory();
-virtual bool 	shareDownloadDirectory();
-virtual bool 	unshareDownloadDirectory();
+virtual bool 	shareDownloadDirectory(bool share);
 
 		virtual void	setRememberHashFilesDuration(uint32_t days) ;
 		virtual uint32_t rememberHashFilesDuration() const ;

@@ -100,7 +100,6 @@ ftController::ftController(CacheStrapper *cs, ftDataMultiplex *dm, std::string c
 	mDataplex(dm),
 	mTurtle(NULL), 
 	mFtActive(false),
-	mShareDownloadDir(true),
 	mDefaultChunkStrategy(FileChunksInfo::CHUNK_STRATEGY_RANDOM) 
 {
 	_max_active_downloads = 5 ; // default queue size
@@ -1845,7 +1844,6 @@ bool ftController::CancelCacheFile(RsPeerId id, std::string path, std::string ha
 const std::string active_downloads_size_ss("MAX_ACTIVE_DOWNLOADS");
 const std::string download_dir_ss("DOWN_DIR");
 const std::string partial_dir_ss("PART_DIR");
-const std::string share_dwl_dir("SHARE_DWL_DIR");
 const std::string default_chunk_strategy_ss("DEFAULT_CHUNK_STRATEGY");
 const std::string free_space_limit_ss("FREE_SPACE_LIMIT");
 
@@ -1880,7 +1878,6 @@ bool ftController::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	configMap[active_downloads_size_ss] = strm.str() ;
 	configMap[download_dir_ss] = getDownloadDirectory();
 	configMap[partial_dir_ss] = getPartialsDirectory();
-	configMap[share_dwl_dir] = mShareDownloadDir ? "YES" : "NO";
 	configMap[default_chunk_strategy_ss] = (mDefaultChunkStrategy==FileChunksInfo::CHUNK_STRATEGY_STREAMING) ? "STREAMING" : "RANDOM";
 
 	std::ostringstream s ;
@@ -2074,18 +2071,6 @@ bool  ftController::loadConfigMap(std::map<std::string, std::string> &configMap)
 		setPartialsDirectory(mit->second);
 	}
 
-	if (configMap.end() != (mit = configMap.find(share_dwl_dir)))
-	{
-		if (mit->second == "YES")
-		{
-			setShareDownloadDirectory(true);
-		}
-		else if (mit->second == "NO")
-		{
-			setShareDownloadDirectory(false);
-		}
-	}
-
 	if (configMap.end() != (mit = configMap.find(default_chunk_strategy_ss)))
 	{
 		if(mit->second == "STREAMING")
@@ -2143,17 +2128,3 @@ void ftController::setDefaultChunkStrategy(FileChunksInfo::ChunkStrategy S)
 	mDefaultChunkStrategy = S ;
 	IndicateConfigChanged() ;
 }
-
-void ftController::setShareDownloadDirectory(bool value)
-{
-	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
-	mShareDownloadDir = value;
-	IndicateConfigChanged() ;
-}
-
-bool ftController::getShareDownloadDirectory()
-{
-	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
-	return mShareDownloadDir;
-}
-

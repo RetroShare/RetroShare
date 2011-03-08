@@ -244,6 +244,12 @@ void QuickStartWizard::on_pushButtonSharesRemove_clicked()
 	}
 }
 
+void QuickStartWizard::on_shareIncomingDirectory_clicked()
+{
+	rsFiles->shareDownloadDirectory(ui.shareIncomingDirectory->isChecked());
+	loadShare();
+}
+
 void QuickStartWizard::loadShare()
 {
 	std::cerr << "ShareManager:: In load !!!!!" << std::endl ;
@@ -251,6 +257,8 @@ void QuickStartWizard::loadShare()
 	std::list<SharedDirInfo>::const_iterator it;
 	std::list<SharedDirInfo> dirs;
 	rsFiles->getSharedDirectories(dirs);
+
+	ui.shareIncomingDirectory->setChecked(rsFiles->getShareDownloadDirectory());
 
 	/* get a link to the table */
 	QTableWidget *listWidget = ui.shareddirList;

@@ -665,27 +665,33 @@ void   ftServer::clearHashCache()
 	mFiMon->clearHashCache() ;
 }
 
-void ftServer::setShareDownloadDirectory(bool value)
-{
-	mFtController->setShareDownloadDirectory(value);
-}
-
 bool ftServer::getShareDownloadDirectory()
 {
-	return mFtController->getShareDownloadDirectory();
+	std::list<SharedDirInfo> dirList;
+	mFiMon->getSharedDirectories(dirList);
+
+	std::string dir = mFtController->getDownloadDirectory();
+
+	// check if the download directory is in the list.
+	for (std::list<SharedDirInfo>::const_iterator it(dirList.begin()); it != dirList.end(); ++it)
+		if ((*it).filename == dir)
+			return true;
+
+	return false;
 }
 
-bool ftServer::shareDownloadDirectory()
+bool ftServer::shareDownloadDirectory(bool share)
 {
-	SharedDirInfo inf ;
-	inf.filename = mFtController->getDownloadDirectory();
-	inf.shareflags = RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_BROWSABLE ;
+	if (share) {
+		/* Share */
+		SharedDirInfo inf ;
+		inf.filename = mFtController->getDownloadDirectory();
+		inf.shareflags = RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_BROWSABLE ;
 
-	return addSharedDirectory(inf);
-}
+		return addSharedDirectory(inf);
+	}
 
-bool ftServer::unshareDownloadDirectory()
-{
+	/* Unshare */
 	std::string dir = mFtController->getDownloadDirectory();
 	return removeSharedDirectory(dir);
 }

@@ -34,20 +34,13 @@ DirectoriesPage::DirectoriesPage(QWidget * parent, Qt::WFlags flags)
     ui.setupUi(this);
     setAttribute(Qt::WA_QuitOnClose, false);
 
-    if (rsFiles->getShareDownloadDirectory())
-    {
-        ui.checkBox->setChecked(true);		/* signal not emitted */
-    }
-    else
-    {
-        ui.checkBox->setChecked(false);	/* signal not emitted */
-    }
+	ui.checkBox->setChecked(rsFiles->getShareDownloadDirectory());		/* signal not emitted */
 
-	 uint32_t t = rsFiles->rememberHashFilesDuration() ;
-	 bool b = rsFiles->rememberHashFiles() ;
+	uint32_t t = rsFiles->rememberHashFilesDuration() ;
+	bool b = rsFiles->rememberHashFiles() ;
 
-	 ui.rememberHashesSB->setValue(t) ;
-	 ui.rememberHashesCB->setChecked(b) ;
+	ui.rememberHashesSB->setValue(t) ;
+	ui.rememberHashesCB->setChecked(b) ;
 
     connect(ui.incomingButton, SIGNAL(clicked( bool ) ), this , SLOT( setIncomingDirectory() ) );
     connect(ui.partialButton, SIGNAL(clicked( bool ) ), this , SLOT( setPartialsDirectory() ) );
@@ -57,7 +50,7 @@ DirectoriesPage::DirectoriesPage(QWidget * parent, Qt::WFlags flags)
     connect(ui.rememberHashesCB, SIGNAL(toggled(bool)), this, SLOT(toggleRememberHashes(bool)));
     connect(ui.rememberHashesSB, SIGNAL(valueChanged(int)), this, SLOT(setRememberHashesDuration(int)));
 
-  /* Hide platform specific features */
+	/* Hide platform specific features */
 #ifdef Q_WS_WIN
 
 #endif
@@ -114,29 +107,7 @@ bool DirectoriesPage::save(QString &errmsg)
 	/* this is usefull especially when shared incoming files is
 	 * default option and when the user don't check/uncheck the
 	 * checkBox, so no signal is emitted to update the shared list */
-	if (ui.checkBox->isChecked())
-	{
-		std::list<SharedDirInfo>::const_iterator it;
-		std::list<SharedDirInfo> dirs;
-		rsFiles->getSharedDirectories(dirs);
-
-		bool found = false ;
-		for(std::list<SharedDirInfo>::const_iterator it(dirs.begin());it!=dirs.end();++it)
-			if((*it).filename == rsFiles->getDownloadDirectory())
-			{
-				found=true ;
-				break ;
-			}
-		if(!found)
-			rsFiles->shareDownloadDirectory();
-
-		rsFiles->setShareDownloadDirectory(true);
-	}
-	else
-	{
-		rsFiles->unshareDownloadDirectory();
-		rsFiles->setShareDownloadDirectory(false);
-	}
+	rsFiles->shareDownloadDirectory(ui.checkBox->isChecked());
 
 	return true;
 }
@@ -182,19 +153,7 @@ void DirectoriesPage::setIncomingDirectory()
 		rsFiles->setDownloadDirectory(dir);
 		if (ui.checkBox->isChecked())
 		{
-			std::list<SharedDirInfo>::const_iterator it;
-			std::list<SharedDirInfo> dirs;
-			rsFiles->getSharedDirectories(dirs);
-
-			bool found = false ;
-			for(std::list<SharedDirInfo>::const_iterator it(dirs.begin());it!=dirs.end();++it)
-				if((*it).filename == rsFiles->getDownloadDirectory())
-				{
-					found=true ;
-					break ;
-				}
-			if(!found)
-				rsFiles->shareDownloadDirectory();
+			rsFiles->shareDownloadDirectory(true);
 		}
 	}
 	load();
@@ -214,29 +173,6 @@ void DirectoriesPage::setPartialsDirectory()
 
 void DirectoriesPage::shareDownloadDirectory(int state)
 {
-	if (state == Qt::Checked)
-	{
-		std::list<SharedDirInfo>::const_iterator it;
-		std::list<SharedDirInfo> dirs;
-		rsFiles->getSharedDirectories(dirs);
-
-		bool found = false ;
-		for(std::list<SharedDirInfo>::const_iterator it(dirs.begin());it!=dirs.end();++it)
-			if((*it).filename == rsFiles->getDownloadDirectory())
-			{
-				found=true ;
-				break ;
-			}
-		if(!found)
-			rsFiles->shareDownloadDirectory();
-
-		rsFiles->setShareDownloadDirectory(true);
-	}
-	else
-	{
-		rsFiles->unshareDownloadDirectory();
-		rsFiles->setShareDownloadDirectory(false);
-	}
+	rsFiles->shareDownloadDirectory(state == Qt::Checked);
 	load();
 }
-

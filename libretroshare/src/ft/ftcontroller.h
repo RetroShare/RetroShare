@@ -126,9 +126,6 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 		bool    activate();
 		bool 	isActiveAndNoPending();
 
-		void	setShareDownloadDirectory(bool value);
-		bool	getShareDownloadDirectory();
-
 		virtual void run();
 
 		/***************************************************************/
@@ -259,8 +256,6 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 		std::list<ftPendingRequest> mPendingRequests;
 		std::map<std::string,RsFileTransfer*> mPendingChunkMaps ;
 
-		/* share incoming directory */
-		bool mShareDownloadDir;
 		FileChunksInfo::ChunkStrategy mDefaultChunkStrategy ;
 
 		uint32_t _max_active_downloads ; // maximum number of simultaneous downloads

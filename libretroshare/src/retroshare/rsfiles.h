@@ -190,10 +190,8 @@ class RsFiles
 				virtual bool rememberHashFiles() const =0;
 		virtual void setRememberHashFiles(bool) =0;
 
-		virtual void	setShareDownloadDirectory(bool value) = 0;
 		virtual bool	getShareDownloadDirectory() = 0;
-		virtual bool 	shareDownloadDirectory() = 0;
-		virtual bool 	unshareDownloadDirectory() = 0;
+		virtual bool 	shareDownloadDirectory(bool share) = 0;
 
 };
 
