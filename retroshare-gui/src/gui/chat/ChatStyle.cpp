@@ -20,6 +20,84 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+/* Directory tree for stylesheets:
+
+   Install version:  <RetroShare config dir>/stylesheets
+   Portable version: <Application dir>/stylesheets
+
+   stylesheets
+   +history
+   |-Style1
+   |-Style2
+   +private
+   |-Style1
+   |-Style2
+   +public
+   |-Style1
+   |-Style2
+
+ Files and dirs of the style:
+   info.xml      - description
+   incoming.htm  - incoming messages
+   outgoing.htm  - outgoing messages
+   hincoming.htm - incoming history messages
+   houtgoing.htm - outgoing history messages
+   ooutgoing.htm - outgoing offline messages (private chat)
+   main.css      - stylesheet
+
+   variants      - directory with variants (optional)
+   +- *.css      - Stylesheets for the variants
+
+ Example:
+   info.xml
+     <?xml version="1.0" encoding="UTF-8"?>
+     <!DOCTYPE RetroShare_StyleInfo>
+     <RetroShare_Style version="1.0">
+     <style>
+       <name>Name</name>
+       <description>Description</description>
+     </style>
+     <author>
+       <name>Author</name>
+       <email>E-Mail</email>
+     </author>
+     </RetroShare_Style>
+
+   incoming.htm
+     <style type="text/css">
+     %css-style%
+     </style>
+     <span class='incomingTime'>%time%</span>
+     <span class='incomingName'><strong>%name%</strong></span>
+     %message%
+
+   outgoing.htm
+     <style type="text/css">
+     %css-style%
+     </style>
+     <span class='outgoingTime'>%time%</span>
+     <span class='outgoingName'><strong>%name%</strong></span>
+     %message%
+
+   main.css
+     .incomingTime {
+       color:#C00000;
+     }
+     .incomingName{
+       color:#2D84C9;
+     }
+     .outgoingTime {
+       color:#C00000;
+     }
+     .outgoingName{
+       color:#2D84C9;
+     }
+     :
+     more definitions for history and offline messages
+
+  See standard styles in retroshare-gui/src/gui/qss/chat/
+*/
+
 #include <QApplication>
 
 #include "ChatStyle.h"
