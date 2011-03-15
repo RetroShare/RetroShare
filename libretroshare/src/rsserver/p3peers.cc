@@ -959,7 +959,7 @@ bool 	p3Peers::loadCertificateFromFile(const std::string &fname, std::string &id
 
 
 
-bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetails &pd)
+bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetails &pd,std::string& error_string)
 {
 #ifdef P3PEERS_DEBUG
 	std::cerr << "p3Peers::LoadCertificateFromString() ";
@@ -978,7 +978,7 @@ bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetai
                     std::string pgpCert = certstr.substr(0, parsePosition);
                     std::string gpg_id;
                     std::string cleancert = cleanUpCertificate(pgpCert);
-                    AuthGPG::getAuthGPG()->LoadCertificateFromString(cleancert, gpg_id);
+                    AuthGPG::getAuthGPG()->LoadCertificateFromString(cleancert, gpg_id,error_string);
                     AuthGPG::getAuthGPG()->getGPGDetails(gpg_id, pd);
                     if (gpg_id == "") {
                         return false;

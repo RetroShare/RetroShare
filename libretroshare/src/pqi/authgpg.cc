@@ -80,7 +80,7 @@ static gpg_error_t keySignCallback(void *, gpgme_status_code_t, \
 static gpg_error_t trustCallback(void *, gpgme_status_code_t, \
 		const char *, int);
 
-static void ProcessPGPmeError(gpgme_error_t ERR);
+static std::string ProcessPGPmeError(gpgme_error_t ERR);
 
 /* Function to sign X509_REQ via GPGme.
  */
@@ -416,7 +416,8 @@ void AuthGPGimpl::processServices()
 #endif
 
             /* load the certificate */
-            LoadCertificateFromString(loadOrSave->m_certGpg, loadOrSave->m_certGpgId);
+				std::string error_string ;
+            LoadCertificateFromString(loadOrSave->m_certGpg, loadOrSave->m_certGpgId,error_string);
         } else {
             /* process save operation */
 
@@ -823,16 +824,22 @@ bool    AuthGPGimpl::printKeys()
 	return printOwnKeys_locked();
 }
 
-void ProcessPGPmeError(gpgme_error_t ERR)
+std::string ProcessPGPmeError(gpgme_error_t ERR)
 {
 	gpgme_err_code_t code = gpgme_err_code(ERR);
 	gpgme_err_source_t src = gpgme_err_source(ERR);
 
+	std::ostringstream ss ;
+
 	if(code > 0)
 	{
-		std::cerr << "GPGme ERROR: Code: " << code << " Source: " << src << std::endl;
-		std::cerr << "GPGme ERROR: " << gpgme_strerror(ERR) << std::endl;
+		ss << "GPGme ERROR: Code: " << code << " Source: " << src << std::endl;
+		ss << "GPGme ERROR: " << gpgme_strerror(ERR) << std::endl;
 	}
+	else
+		return std::string("Unknown error") ;
+
+	return ss.str() ;
 }
 
 void print_pgpme_verify_summary(unsigned int summary)
@@ -1394,12 +1401,10 @@ std::string AuthGPGimpl::SaveCertificateToString(const std::string &id)
 }
 
 /* import to GnuPG and other Certificates */
-bool AuthGPGimpl::LoadCertificateFromString(const std::string &str, std::string &gpg_id)
+bool AuthGPGimpl::LoadCertificateFromString(const std::string &str, std::string &gpg_id,std::string& error_string)
 {
         if (str == "") {
-            #ifdef GPG_DEBUG
-            std::cerr << "AuthGPGimpl::LoadCertificateFromString() cert is empty string, returning false." << std::endl;
-            #endif
+            error_string = "Certificate is an empty string." ;
             return false;
         }
         int imported = 0;
@@ -1415,8 +1420,11 @@ bool AuthGPGimpl::LoadCertificateFromString(const std::string &str, std::string 
             #endif
 
             gpgme_data_t gpgmeData;
-            if (GPG_ERR_NO_ERROR != gpgme_data_new_from_mem(&gpgmeData, cleancert.c_str(), cleancert.length(), 1))
+				gpg_error_t ERR ;
+
+            if (GPG_ERR_NO_ERROR != (ERR = gpgme_data_new_from_mem(&gpgmeData, cleancert.c_str(), cleancert.length(), 1)))
             {
+					error_string = ProcessPGPmeError(ERR) ;
                     std::cerr << "Error create Data" << std::endl;
                     return false;
             }
@@ -1424,9 +1432,10 @@ bool AuthGPGimpl::LoadCertificateFromString(const std::string &str, std::string 
             /* move string data to gpgmeData */
 
             gpgme_set_armor (CTX, 1);
-            if (GPG_ERR_NO_ERROR != gpgme_op_import (CTX,gpgmeData))
+            if (GPG_ERR_NO_ERROR != (ERR = gpgme_op_import (CTX,gpgmeData)))
             {
                     std::cerr << "AuthGPGimpl::LoadCertificateFromString() Error Importing Certificate" << std::endl;
+					error_string = ProcessPGPmeError(ERR) ;
                     gpgme_data_release (gpgmeData);
                     return false ;
             }
@@ -1436,6 +1445,7 @@ bool AuthGPGimpl::LoadCertificateFromString(const std::string &str, std::string 
 
             if(res == NULL || res->imports == NULL) {
                     gpgme_data_release (gpgmeData);
+						  error_string = "Certificate is corrupted." ;
                     return false ;
             }
 
