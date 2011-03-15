@@ -81,7 +81,8 @@ class LinearizedExpression
 							EXPR_NAME= 4,
 							EXPR_PATH= 5,
 							EXPR_EXT = 6,
-							EXPR_COMP= 7 } token ;
+							EXPR_COMP= 7,
+							EXPR_SIZE_MB=8 } token ;
 
 		static Expression *toExpr(const LinearizedExpression& e) ;
 
@@ -313,6 +314,20 @@ class SizeExpression: public RelExpression<int>
 		}
 };
 
+class SizeExpressionMB: public RelExpression<int> 
+{
+	public:
+		SizeExpressionMB(enum RelOperator op, int v): RelExpression<int>(op,v,v){}
+		SizeExpressionMB(enum RelOperator op, int lv, int hv): 
+			RelExpression<int>(op,lv,hv) {}
+		bool eval(FileEntry *file);
+
+		virtual void linearize(LinearizedExpression& e) const
+		{
+			e._tokens.push_back(LinearizedExpression::EXPR_SIZE_MB) ;
+			RelExpression<int>::linearize(e) ;
+		}
+};
 class PopExpression: public RelExpression<int> 
 {
 	public:
