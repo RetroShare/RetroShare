@@ -148,6 +148,8 @@
 #include "retroshare/rsturtle.h"
 #include "rsturtleitem.h"
 
+//#define TUNNEL_STATISTICS
+
 class ftServer ;
 class p3ConnectMgr;
 class ftDataMultiplex;
@@ -190,7 +192,7 @@ class TurtleFileHashInfo
 		TurtleRequestId last_request ;				// last request for the tunnels of this hash
 		
 		TurtleFileName name ;
-		time_t time_stamp ;
+		time_t last_digg_time ;
 		uint64_t size ;
 };
 
@@ -205,7 +207,7 @@ class TurtleFileHashInfo
 // 	p3Config   | ConfigChanged()  | used to load/save .cfg file for turtle variales.
 // 	-----------+------------------+------------------------------------------------------
 //
-class p3turtle: public p3Service, public pqiMonitor, public RsTurtle,/* public ftSearch */ public p3Config
+class p3turtle: public p3Service, /*public pqiMonitor,*/ public RsTurtle,/* public ftSearch */ public p3Config
 {
 	public:
 		p3turtle(p3ConnectMgr *cm,ftServer *m);
@@ -242,11 +244,13 @@ class p3turtle: public p3Service, public pqiMonitor, public RsTurtle,/* public f
 									std::vector<std::vector<std::string> >&,
 									std::vector<std::vector<std::string> >&) const ;
 		
+#ifdef TO_REMOVE
 		/************* from pqiMonitor *******************/
 		/// Informs the turtle router that some peers are (dis)connected. This should initiate digging new tunnels,
 		/// and closing other tunnels.
 		///
 		virtual void statusChange(const std::list<pqipeer> &plist);
+#endif
 
 		/************* from pqiMonitor *******************/
 
@@ -401,6 +405,9 @@ class p3turtle: public p3Service, public pqiMonitor, public RsTurtle,/* public f
 #ifdef P3TURTLE_DEBUG
 		// debug function
 		void dumpState() ;
+#endif
+#ifdef TUNNEL_STATISTICS
+		void TS_dumpState();
 #endif
 };
 
