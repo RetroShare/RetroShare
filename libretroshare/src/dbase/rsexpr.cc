@@ -48,6 +48,11 @@ bool DateExpression::eval(FileEntry *file)
 		return evalRel(file->modtime);	
 }
 
+bool SizeExpressionMB::eval(FileEntry *file)
+{
+	return evalRel((int)(file->size/(uint64_t)(1024*1024)));	
+}
+
 bool SizeExpression::eval(FileEntry *file)
 {
 	return evalRel(file->size);	

@@ -135,13 +135,23 @@ LogicalOperator ExpressionWidget::getOperator()
     return exprOpElem->getLogicalOperator();
 }
 
+static int checkedConversion(uint64_t s)
+{
+	if(s > 0x7fffffff)
+	{
+		std::cerr << "Error: bad convertion from uint64_t s=" << s << " into int" << std::endl;
+		return 0 ;
+	}
+	return (int)s ;
+}
+
 Expression* ExpressionWidget::getRsExpression()
 {
     Expression * expr = NULL;
     
     std::list<std::string> wordList;
-    int lowVal = 0;
-    int highVal = 0;
+    uint64_t lowVal = 0;
+    uint64_t highVal = 0;
     
     if (isStringSearchExpression()) 
     {
@@ -155,7 +165,7 @@ Expression* ExpressionWidget::getRsExpression()
         highVal = exprParamElem->getIntHighValue();
         if (lowVal >highVal)
         {   
-            lowVal  = lowVal^highVal;
+            lowVal  = lowVal^highVal;	// csoler: wow, that is some style!
             highVal = lowVal^highVal;
             lowVal  = lowVal^highVal;
         }
@@ -184,32 +194,34 @@ Expression* ExpressionWidget::getRsExpression()
             break;
         case DateSearch:
             if (inRangedConfig) {    
-                expr = new DateExpression(exprCondElem->getRelOperator(), 
-                                          lowVal,
-                                          highVal);
+                expr = new DateExpression(exprCondElem->getRelOperator(), checkedConversion(lowVal), checkedConversion(highVal));
             } else {
-                expr = new DateExpression(exprCondElem->getRelOperator(), 
-                                          exprParamElem->getIntValue());
+                expr = new DateExpression(exprCondElem->getRelOperator(), checkedConversion(exprParamElem->getIntValue()));
             }
             break;
         case PopSearch:
             if (inRangedConfig) {    
-                expr = new DateExpression(exprCondElem->getRelOperator(), 
-                                          lowVal,
-                                          highVal);
+                expr = new DateExpression(exprCondElem->getRelOperator(), checkedConversion(lowVal), checkedConversion(highVal));
             } else {
-                expr = new DateExpression(exprCondElem->getRelOperator(), 
-                                          exprParamElem->getIntValue());
+                expr = new DateExpression(exprCondElem->getRelOperator(), checkedConversion(exprParamElem->getIntValue()));
             }
             break;
         case SizeSearch:
-            if (inRangedConfig) {    
-                expr = new SizeExpression(exprCondElem->getRelOperator(),  
-                                          lowVal,
-                                          highVal);
-            } else {
-                expr = new SizeExpression(exprCondElem->getRelOperator(), 
-                                          exprParamElem->getIntValue());
+            if (inRangedConfig) 
+				{    
+						if(lowVal >= (uint64_t)(1024*1024*1024) || highVal >= (uint64_t)(1024*1024*1024)) 
+								 expr = new SizeExpressionMB(exprCondElem->getRelOperator(), (int)(lowVal / (1024*1024)), (int)(highVal / (1024*1024)));
+						else
+			                expr = new SizeExpression(exprCondElem->getRelOperator(),  lowVal, highVal);
+            } 
+				else 
+				{
+					uint64_t s = exprParamElem->getIntValue() ;
+
+					if(s >= (uint64_t)(1024*1024*1024))
+						expr = new SizeExpressionMB(exprCondElem->getRelOperator(), (int)(s/(1024*1024))) ;
+					else
+						expr = new SizeExpression(exprCondElem->getRelOperator(), (int)s) ;
             }
             break;
     };

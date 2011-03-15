@@ -192,9 +192,9 @@ public:
     void setRangedSearch(bool ranged = true);
     bool ignoreCase();
     QString getStrSearchValue();
-    int getIntValue();
-    int getIntLowValue();
-    int getIntHighValue();
+    uint64_t getIntValue();
+    uint64_t getIntLowValue();
+    uint64_t getIntHighValue();
     virtual QString toString();
 
 private:
@@ -202,7 +202,7 @@ private:
     QRegExpValidator * hexValidator;
     QFrame * rangeParamsFrame;
     bool inRangedConfig;
-    int getIntValueFromField(QString fieldName, bool isToField=false);
+    uint64_t getIntValueFromField(QString fieldName, bool isToField=false,bool *ok = NULL);
 };
 
 #endif

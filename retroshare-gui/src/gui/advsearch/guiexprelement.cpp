@@ -567,9 +567,11 @@ QString ExprParamElement::getStrSearchValue()
     return lineEdit->displayText();
 }
 
-int ExprParamElement::getIntValueFromField(QString fieldName, bool isToField)
+uint64_t ExprParamElement::getIntValueFromField(QString fieldName, bool isToField,bool *ok)
 {
-    int val = -1;
+    uint64_t val = 0;
+	 if(ok!=NULL)
+		 *ok=true ;
     QString suffix = (isToField) ? "2": "1" ;
 
     // NOTE qFindChild necessary for MSVC 6 compatibility!!
@@ -579,21 +581,24 @@ int ExprParamElement::getIntValueFromField(QString fieldName, bool isToField)
         {
             QDateEdit * dateEdit =  qFindChild<QDateEdit *> (internalframe, (fieldName + suffix));
             QDateTime * time = new QDateTime(dateEdit->date());
-            val = time->toTime_t();
+            val = (uint64_t)time->toTime_t();
             break;
         }   
         case SizeSearch:
         {
             QLineEdit * lineEditSize =  qFindChild<QLineEdit*>(internalframe, (fieldName + suffix));
-            bool ok = false;
-            val = (lineEditSize->displayText()).toInt(&ok);
-            if (ok) {
+            bool ok2 = false;
+            val = (lineEditSize->displayText()).toULongLong(&ok2);
+            if (ok2) 
+				{
                 QComboBox * cb = qFindChild<QComboBox*> (internalframe, (QString("unitsCb") + suffix));
                 QVariant data = cb->itemData(cb->currentIndex());
-                val *= data.toInt();
-            } else {
-                val = -1;
-            }
+                val *= data.toULongLong();
+            } 
+				else 
+					if(ok!=NULL) 
+						*ok=false ;
+           
             break;
         }
         case PopSearch: // not implemented
@@ -612,23 +617,24 @@ int ExprParamElement::getIntValueFromField(QString fieldName, bool isToField)
         case HashSearch:
         default:
             // shouldn't be here...val stays at -1
-            val = -1;
+				if(ok!=NULL)
+					*ok=false ;
     }
    
     return val;
 }
 
-int ExprParamElement::getIntValue()
+uint64_t ExprParamElement::getIntValue()
 {
     return getIntValueFromField("param");
 }
 
-int ExprParamElement::getIntLowValue()
+uint64_t ExprParamElement::getIntLowValue()
 {
     return getIntValue();
 }
 
-int ExprParamElement::getIntHighValue()
+uint64_t ExprParamElement::getIntHighValue()
 {
     if (!inRangedConfig) return getIntValue();
     return getIntValueFromField("param", true);
