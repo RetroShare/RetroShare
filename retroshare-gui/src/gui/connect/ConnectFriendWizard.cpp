@@ -404,8 +404,9 @@ int TextPage::nextId() const {
 
     std::string certstr;
     certstr = friendCertEdit->toPlainText().toStdString();
+	 std::string error_string ;
     RsPeerDetails pd;
-    if ( rsPeers->loadDetailsFromStringCert(certstr, pd) ) {
+    if ( rsPeers->loadDetailsFromStringCert(certstr, pd,error_string) ) {
 #ifdef FRIEND_WIZARD_DEBUG
             std::cerr << "ConnectFriendWizard got id : " << pd.id << "; gpg_id : " << pd.gpg_id << std::endl;
 #endif
@@ -425,7 +426,7 @@ int TextPage::nextId() const {
     else
     {
         // error message 
-        wizard()->setField("errorMessage",  tr("Certificate Load Failed") );
+        wizard()->setField("errorMessage",  tr("Certificate Load Failed")+": "+QString::fromStdString(error_string) );
         return ConnectFriendWizard::Page_ErrorMessage;
     }
 
@@ -776,7 +777,8 @@ int CertificatePage::nextId() const
 
         if (certstr.empty() == false) {
             RsPeerDetails pd;
-            if ( rsPeers->loadDetailsFromStringCert(certstr, pd) ) {
+				std::string error_string ;
+            if ( rsPeers->loadDetailsFromStringCert(certstr, pd,error_string) ) {
 #ifdef FRIEND_WIZARD_DEBUG
                 std::cerr << "ConnectFriendWizard got id : " << pd.id << "; gpg_id : " << pd.gpg_id << std::endl;
 #endif
@@ -793,7 +795,7 @@ int CertificatePage::nextId() const
 
                 return ConnectFriendWizard::Page_Conclusion ;
             } else {
-                wizard()->setField("errorMessage", QString(tr("Certificate Load Failed:something is wrong with %1 ")).arg(fn) );
+                wizard()->setField("errorMessage", QString(tr("Certificate Load Failed:something is wrong with %1 ")).arg(fn)+": "+QString::fromStdString(error_string) );
                 return ConnectFriendWizard::Page_ErrorMessage;
             }
         } else {
@@ -975,7 +977,8 @@ void ConclusionPage::initializePage() {
     std::cerr << "Conclusion page id : " << id << "; gpg_id : " << gpg_id << std::endl;
 
     RsPeerDetails detail;
-    if (!rsPeers->loadDetailsFromStringCert(certString, detail)) {
+	 std::string error_string ;
+    if (!rsPeers->loadDetailsFromStringCert(certString, detail,error_string)) {
         if (!rsPeers->getPeerDetails(id, detail)) {
             if (!rsPeers->getPeerDetails(gpg_id, detail)) {
                 rsiface->unlockData(); /* UnLock Interface */
