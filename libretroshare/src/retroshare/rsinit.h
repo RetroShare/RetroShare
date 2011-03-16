@@ -118,7 +118,7 @@ class RsInit
 		 * This wrapper is used to lock the profile first before
 		 * finalising the login
 		 */
-		static int 	LockAndLoadCertificates(bool autoLoginNT);
+                static int 	LockAndLoadCertificates(bool autoLoginNT, std::string& lockFilePath);
 
 
 		/*!
@@ -155,7 +155,7 @@ class RsInit
 		static bool RsTryAutoLogin() ;
 
 		/* Lock/unlock profile directory */
-		static int	LockConfigDirectory(const std::string& accountDir);
+                static int	LockConfigDirectory(const std::string& accountDir, std::string& lockFilePath);
 		static void	UnlockConfigDirectory();
 
 		/* The true LoadCertificates() method */

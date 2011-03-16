@@ -322,7 +322,8 @@ void GenCertDialog::checkChanged(int i)
 
 void GenCertDialog::loadCertificates()
 {
-	int retVal = RsInit::LockAndLoadCertificates(false);
+    std::string lockFile;
+        int retVal = RsInit::LockAndLoadCertificates(false, lockFile);
 	switch(retVal)
 	{
 		case 0: close();

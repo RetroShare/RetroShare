@@ -1053,10 +1053,11 @@ int      RsInit::GetPGPLoginDetails(std::string id, std::string &name, std::stri
  * 1 : Another instance already has the lock
  * 2 : Unexpected error
  */
-int RsInit::LockConfigDirectory(const std::string& accountDir)
+int RsInit::LockConfigDirectory(const std::string& accountDir, std::string& lockFilePath)
 {
 	const std::string lockFile = accountDir + RsInitConfig::dirSeperator + "lock";
 
+        lockFilePath = lockFile;
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS
 	if(RsInitConfig::lockHandle != -1)
@@ -1418,9 +1419,9 @@ bool     RsInit::LoadPassword(std::string id, std::string inPwd)
  * 2 : unexpected error while locking
  * 3 : unexpected error while loading certificates
  */
-int 	RsInit::LockAndLoadCertificates(bool autoLoginNT)
+int 	RsInit::LockAndLoadCertificates(bool autoLoginNT, std::string& lockFilePath)
 {
-	int retVal = LockConfigDirectory(RsInitConfig::configDir);
+        int retVal = LockConfigDirectory(RsInitConfig::configDir, lockFilePath);
 	if(retVal != 0)
 		return retVal;
 

@@ -166,20 +166,23 @@ int main(int argc, char *argv[])
 			}
 
 			// true: note auto-login is active
-			int retVal = RsInit::LockAndLoadCertificates(true);
+                        std::string lockFile;
+                        int retVal = RsInit::LockAndLoadCertificates(true, lockFile);
 			switch(retVal)
 			{
 				case 0:	break;
 				case 1:	QMessageBox::warning(	0,
 												QObject::tr("Multiple instances"),
 												QObject::tr("Another RetroShare using the same profile is "
-															"already running on your system. Please close "
-															"that instance first") );
+                                                                                                                "already running on your system. Please close "
+                                                                                                                "that instance first\n Lock file:\n") +
+                                                                                                                QString::fromStdString(lockFile));
 						return 1;
 				case 2:	QMessageBox::critical(	0,
 												QObject::tr("Multiple instances"),
 												QObject::tr("An unexpected error occurred when Retroshare"
-															"tried to acquire the single instance lock") );
+                                                                                                                     "tried to acquire the single instance lock\n Lock file:\n") +
+                                                                                                                     QString::fromStdString(lockFile));
 						return 1;
 				case 3: QMessageBox::critical(	0,
 												QObject::tr("Login Failure"),

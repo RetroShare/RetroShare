@@ -152,7 +152,8 @@ void StartDialog::loadPerson()
 void StartDialog::loadCertificates()
 {
 	/* Final stage of loading */
-	int retVal = RsInit::LockAndLoadCertificates(ui.autologin_checkbox->isChecked());
+    std::string lockFile;
+    int retVal = RsInit::LockAndLoadCertificates(ui.autologin_checkbox->isChecked(), lockFile);
 	switch(retVal)
 	{
 		case 0: close();
@@ -161,12 +162,14 @@ void StartDialog::loadCertificates()
 										tr("Multiple instances"),
 										tr("Another RetroShare using the same profile is "
 											"already running on your system. Please close "
-											"that instance first, or choose another profile") );
+                                                                                        "that instance first, or choose another profile\n"
+                                                                                        "lock file:\n ")+ QString::fromStdString(lockFile));
 				break;
 		case 2:	QMessageBox::warning(	this,
 										tr("Multiple instances"),
 										tr("An unexpected error occurred when Retroshare"
-											"tried to acquire the single instance lock") );
+                                                                                        "tried to acquire the single instance lock\n"
+                                                                                        "lock file:\n ")+ QString::fromStdString(lockFile));
 				break;
 		case 3: QMessageBox::warning(	this,
 										tr("Login Failure"),
