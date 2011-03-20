@@ -37,6 +37,7 @@
 #include <openssl/evp.h>
 
 #include <set>
+#include <vector>
 
 /* 
  * Group Messages....
@@ -242,6 +243,26 @@ const uint32_t GRP_SUBSCRIBED   = 0x0005;
 const uint32_t GRP_UNSUBSCRIBED = 0x0006;
 
 
+
+
+typedef std::pair<std::string, pugi::xml_node > grpNodePair; // (is loaded, iterator pointing to node)
+
+// these make up a cache list
+typedef std::pair<std::string, uint16_t> pCacheId; //(pid, subid)
+typedef std::pair<std::string, pCacheId> grpCachePair; // (grpid, cid)
+
+/*!
+ * grp node content for faster access
+ */
+struct nodeCache
+{
+	bool cached;
+	pugi::xml_node_iterator it;
+	pCacheId cid;
+	std::set<pCacheId> cIdSet;
+	pugi::xml_node node;
+};
+
 //! Cache based service to implement group messaging
 /*!
  *
@@ -316,9 +337,73 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 
 		void 	HistoricalCachesDone(); // called when Stored Caches have been added to Pending List.
 
-	protected:
 
-		void updateCacheDocument(pugi::xml_document& cacheDoc);
+
+	private:
+
+		/*!
+		 * This updates the cache document with pending msg and grp cache data
+		 */
+		void updateCacheDocument();
+
+		/*!
+		 * @param grpIter this is a list of iterators point to newly added grp nodes
+		 */
+		void locked_updateCacheTableGrp(const std::vector<grpNodePair>& grpNodes, bool historical);
+
+		/*!
+		 * @param msgCacheMap each entry a set of cache ids that are to be loaded if grpId(entry) is requested to be cached
+		 */
+		void locked_updateCacheTableMsg(const std::map<std::string, std::set<pCacheId> >& msgCacheMap);
+
+		/*!
+		 * @param grpId indicates which grp entry to update
+		 * @param cached pass as true to update entry as true and vice versa
+		 */
+		void locked_updateCacheTableEntry(const std::string& grpId, bool cached);
+
+
+		/*!
+		 * TODO: will be used to unpack cache doc from config load
+		 * @param cacheBinDoc contains cache document as binary
+		 */
+		bool loadCacheDoc(RsDistribConfigData& cacheBinDoc);
+
+
+		/*!
+		 * to find if grps messages have been loaded (assumes grps have been loaded first)
+		 * @param cached true if grp has been loaded, false if not
+		 * @return true is grp entry does not exist in table, false if not
+		 */
+		bool locked_historyCached(const std::string& grpId, bool& cached);
+
+		/*!
+		 * @param id of grp msg belongs to
+		 * @param cache id of msg
+		 * @param on return this is false if msg has not been cached and vice versa
+		 * @return false if cache entry does not exist in table
+ 		 */
+		bool locked_historyCached(const std::string& grpId, const pCacheId& cId, bool& cached);
+
+		/*!
+		 * builds cache table from loaded cached document
+		 * @return false if cache document is empty
+		 */
+		bool buildCacheTable(void);
+
+		/*!
+		 * if grp's message is not loaded, load it, and update cache table
+		 * @param grpId group whose messages to load if not cached
+		 */
+		void locked_processHistoryCached(const std::string& grpId);
+
+
+		/*!
+		 *
+		 * @param grpId grp for which to get list of cache data
+		 * @param cDataSet cache data belonging to grp is loaded into this list
+		 */
+		void locked_getHistoryCacheData(const std::string& grpId, std::list<CacheData>& cDataSet);
 
 	private:
 
@@ -330,9 +415,9 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		int  	loadAnyCache(const CacheData &data, bool local, bool historical);
 
 			/* load cache files */
-		void	loadFileGroups(const std::string &filename, const std::string &src, bool local, bool historical);
+		void	loadFileGroups(const std::string &filename, const std::string &src, bool local, bool historical, const pCacheId& cid);
 		void	loadFileMsgs(const std::string &filename, uint16_t cacheSubId, const std::string &src, uint32_t ts, bool local, bool historical);
-
+		void	locked_loadFileMsgs(const std::string &filename, uint16_t cacheSubId, const std::string &src, uint32_t ts, bool local, bool historical);
 		bool backUpKeys(const std::list<RsDistribGrpKey* > &keysToBackUp, std::string grpId);
 		void locked_sharePubKey();
 
@@ -353,13 +438,22 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		 * @param src src of msg (peer id)
 		 * @param local is this a local cache msg (your msg)
 		 */
-		void	loadMsg(RsDistribSignedMsg *msg, const std::string &src, bool local, bool historical);
+		bool	loadMsg(RsDistribSignedMsg *msg, const std::string &src, bool local, bool historical);
+
+		/*!
+		 * msg is loaded to its group and republished,
+		 * msg decrypted if grp is private
+		 * @param msg msg to loaded
+		 * @param src src of msg (peer id)
+		 * @param local is this a local cache msg (your msg)
+		 */
+		bool locked_loadMsg(RsDistribSignedMsg *newMsg, const std::string &src, bool local, bool historical);
 
 		/*!
 		 * adds newgrp to grp set, GroupInfo type created and stored
 		 * @param newGrp grp to be added
 		 */
-		void	loadGroup(RsDistribGrp *newGrp, bool historical);
+		bool	loadGroup(RsDistribGrp *newGrp, bool historical);
 
 		/*!
 		 * Adds new keys dependent on whether it is an admin or publish key
@@ -368,6 +462,7 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
                  * @return if key is loaded to group or stored return true
 		 */
                 bool    loadGroupKey(RsDistribGrpKey *newKey, bool historical);
+
 
 
 /***************************************************************************************/
@@ -764,10 +859,20 @@ RsDistribDummyMsg *locked_getGroupDummyMsg(std::string grpId, std::string msgId)
 
 		////////////// cache optimisation ////////////////
 
-		/// look table to calculate data location
-		std::map<std::string, std::string> mGroupCacheIds, mMsgCacheIds;
-		std::map<std::string, std::string> mGroupMessageIds;
+		/// table containing new msg cache data to be added to xml doc ( grpid, (cid,pid) )
+		std::vector<grpCachePair> mGrpHistPending;
+
+		/// table containing new grp cache data to be added to xml doc (grpid, (cid,pid) )
+		std::vector<grpCachePair> mMsgHistPending;
+
+
+
 		time_t mLastCacheDocUpdate;
+		bool mUpdateCacheDoc;
+
+		std::map<std::string, nodeCache> mCacheTable; // (cid, node)
+
+		/// contains information on cached data
 		pugi::xml_document mCacheDoc;
 	
 };
