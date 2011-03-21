@@ -760,7 +760,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>CertificatePage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="+620"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="+621"/>
         <source>Certificate files</source>
         <translation>Zertifikat-Dateien</translation>
     </message>
@@ -814,7 +814,7 @@ p, li { white-space: pre-wrap; }
         <translation>Zertifikat-Datei konnte nicht erstellt werden</translation>
     </message>
     <message>
-        <location line="+82"/>
+        <location line="+83"/>
         <source>Certificate Load Failed:something is wrong with %1 </source>
         <translation>Fehler beim Laden des Zertifikats : Etwas stimmt nicht mit %1</translation>
     </message>
@@ -824,7 +824,7 @@ p, li { white-space: pre-wrap; }
         <translation>Fehler beim Laden des Zertifikats: Datei %1 nicht gefunden</translation>
     </message>
     <message>
-        <location line="-163"/>
+        <location line="-164"/>
         <source>Import friend&apos;s certificate...</source>
         <translation>Importiere Zertifikat eines Freundes...</translation>
     </message>
@@ -845,7 +845,7 @@ p, li { white-space: pre-wrap; }
         <translation>Zertifikat-Datei konnte nicht erstellt werden</translation>
     </message>
     <message>
-        <location line="+112"/>
+        <location line="+113"/>
         <source>Certificate Load Failed:can&apos;t read from file %1 </source>
         <translation>Fehler beim Laden des Zertifikats: Datei %1 konnte nicht gelesen werden</translation>
     </message>
@@ -1298,7 +1298,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ChatStyle</name>
     <message>
-        <location filename="../gui/chat/ChatStyle.cpp" line="+362"/>
+        <location filename="../gui/chat/ChatStyle.cpp" line="+440"/>
         <source>Standard style for group chat</source>
         <translation>Standard Stil für den Gruppenchat</translation>
     </message>
@@ -1356,12 +1356,12 @@ p, li { white-space: pre-wrap; }
         <translation>Füge als Freund hinzu, zu dem verbunden wird</translation>
     </message>
     <message>
-        <location line="+113"/>
+        <location line="+114"/>
         <source>It seems your friend is already registered. Adding it might just set it&apos;s ip address.</source>
         <translation>Ihr Freund ist bereits registriert. Das nochmalige Hinzufügen ändert nur seine IP.</translation>
     </message>
     <message>
-        <location line="-157"/>
+        <location line="-158"/>
         <source>Peer details</source>
         <translation>Nachbar Details</translation>
     </message>
@@ -1623,7 +1623,7 @@ und meinen GPG Schlüssel nicht unterzeichnet</translation>
 <context>
     <name>ConnectFriendWizard</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-773"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-775"/>
         <source>Connect Friend Wizard</source>
         <translation>Assistent um sich zu einem Freund zu verbinden</translation>
     </message>
@@ -2966,7 +2966,7 @@ Das ist nützlich, wenn Du eine externe Festplatte freigibst und die Datei nicht
 <context>
     <name>EmailPage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="+1054"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="+1057"/>
         <source>Invite Friends by Email</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3007,7 +3007,7 @@ Bis bald in RetroShare!</translation>
 <context>
     <name>ErrorMessagePage</name>
     <message>
-        <location line="-356"/>
+        <location line="-357"/>
         <source>Sorry, some error appeared</source>
         <translation>Entschuldigung, es trat ein Fehler auf</translation>
     </message>
@@ -3292,7 +3292,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>FofPage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-383"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-384"/>
         <source>Friends of friends</source>
         <translation>Freunde von Freunden</translation>
     </message>
@@ -4186,7 +4186,7 @@ Fill in your GPG password when asked, to sign your new key.</source>
 Gib Dein GPG Passwort wenn Du gefragt wirst ein, um Deinen neuen Schlüssel zu unterzeichnen.</translation>
     </message>
     <message>
-        <location line="+129"/>
+        <location line="+130"/>
         <location line="+6"/>
         <source>Multiple instances</source>
         <translation>Mehrere Instanzen</translation>
@@ -4891,7 +4891,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>IntroPage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-377"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-378"/>
         <source>&amp;Make friend with selected friends of my friends</source>
         <translation>&amp;Füge ausgewählte Freunde Deiner Freunde hinzu</translation>
     </message>
@@ -5276,7 +5276,7 @@ p, li { white-space: pre-wrap; }
         <translation>Interener Fehler</translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.ui" line="+82"/>
+        <location filename="../gui/MainWindow.ui" line="+88"/>
         <location filename="../gui/MainWindow.cpp" line="-43"/>
         <source>Options</source>
         <translation>Optionen</translation>
@@ -5297,12 +5297,12 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/MainWindow.ui" line="-68"/>
+        <location filename="../gui/MainWindow.ui" line="-74"/>
         <source>MainWindow</source>
         <translation>Hauptfenster</translation>
     </message>
     <message>
-        <location line="+47"/>
+        <location line="+53"/>
         <source>Add Friend</source>
         <translation>Freund hinzufügen</translation>
     </message>
@@ -8743,39 +8743,55 @@ p, li { white-space: pre-wrap; }
     <name>QObject</name>
     <message>
         <location filename="../main.cpp" line="+83"/>
-        <location line="+112"/>
+        <location line="+115"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
     <message>
-        <location line="-106"/>
+        <location line="-109"/>
         <source>Inititialize failed. Wrong or missing installation of gpg.</source>
         <translation>Initialisierung fehlgeschlagen. GPG fehlt oder es ist eine falsche Version installiert.</translation>
     </message>
     <message>
         <location line="+5"/>
-        <location line="+101"/>
+        <location line="+104"/>
         <source>An unexpected error occured. Please report &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</source>
         <translation>Ein unerwarteter Fehler ist aufgetreten. Bitte melde &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</translation>
     </message>
     <message>
-        <location line="-21"/>
-        <location line="+6"/>
+        <location line="-23"/>
+        <location line="+7"/>
         <source>Multiple instances</source>
         <translation>Mehrere Instanzen</translation>
     </message>
     <message>
-        <location line="-5"/>
+        <location line="-6"/>
+        <source>Another RetroShare using the same profile is already running on your system. Please close that instance first
+ Lock file:
+</source>
+        <translation>Ein laufendes RetroShare benutzt das gleiche Profil. Bitte schliesse diese Instanz
+Lockdatei:
+</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>An unexpected error occurred when Retrosharetried to acquire the single instance lock
+ Lock file:
+</source>
+        <translation>Ein unerwartete Fehler während des &quot;Single instance lock&quot; ist aufgetreten
+Lockdatei:
+</translation>
+    </message>
+    <message>
         <source>Another RetroShare using the same profile is already running on your system. Please close that instance first</source>
-        <translation>Ein laufendes RetroShare benutzt das gleiche Profil. Bitte schliesse diese Instanz</translation>
+        <translation type="obsolete">Ein laufendes RetroShare benutzt das gleiche Profil. Bitte schliesse diese Instanz</translation>
     </message>
     <message>
-        <location line="+6"/>
         <source>An unexpected error occurred when Retrosharetried to acquire the single instance lock</source>
-        <translation>Ein unerwartete Fehler während des &quot;Single instance lock&quot; ist aufgetreten</translation>
+        <translation type="obsolete">Ein unerwartete Fehler während des &quot;Single instance lock&quot; ist aufgetreten</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+5"/>
         <source>Login Failure</source>
         <translation>Loginfehler</translation>
     </message>
@@ -9379,7 +9395,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RsidPage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="+894"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="+897"/>
         <source>RetroShare ID</source>
         <translation>RetroShare ID</translation>
     </message>
@@ -10428,12 +10444,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>SplashScreen</name>
     <message>
-        <location filename="../main.cpp" line="-28"/>
+        <location filename="../main.cpp" line="-31"/>
         <source>Load profile</source>
         <translation>Lade Profil</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+44"/>
         <source>Load configuration</source>
         <translation>Lade Konfiguration</translation>
     </message>
@@ -10511,7 +10527,7 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;span style=&quot; font-size:18pt; color:#55aaff;&quot;&gt;Anmeldung&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:18pt; color:#55aaff;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/StartDialog.cpp" line="+172"/>
+        <location filename="../gui/StartDialog.cpp" line="+175"/>
         <source>Login Failure</source>
         <translation>Anmeldefehler</translation>
     </message>
@@ -10521,23 +10537,35 @@ p, li { white-space: pre-wrap; }
         <translation>Vielleicht ist das Passwort falsch</translation>
     </message>
     <message>
-        <location line="-12"/>
-        <location line="+6"/>
+        <location line="-14"/>
+        <location line="+7"/>
         <source>Multiple instances</source>
         <translation>Mehrere Instanzen</translation>
     </message>
     <message>
-        <location line="-5"/>
         <source>Another RetroShare using the same profile is already running on your system. Please close that instance first, or choose another profile</source>
-        <translation>Ein laufendes RetroShare benutzt das gleiche Profil. Bitte schliesse diese Instanz oder benutze ein anderes Profil</translation>
+        <translation type="obsolete">Ein laufendes RetroShare benutzt das gleiche Profil. Bitte schliesse diese Instanz oder benutze ein anderes Profil</translation>
     </message>
     <message>
-        <location line="+6"/>
         <source>An unexpected error occurred when Retrosharetried to acquire the single instance lock</source>
-        <translation>Ein unerwartete Fehler während des &quot;Single instance lock&quot; ist aufgetreten</translation>
+        <translation type="obsolete">Ein unerwartete Fehler während des &quot;Single instance lock&quot; ist aufgetreten</translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="-6"/>
+        <source>Another RetroShare using the same profile is already running on your system. Please close that instance first, or choose another profile
+lock file:
+ </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>An unexpected error occurred when Retrosharetried to acquire the single instance lock
+lock file:
+ </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+47"/>
         <location line="+2"/>
         <source>Warning</source>
         <translation>Warnung</translation>
@@ -11067,7 +11095,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>TextPage</name>
     <message>
-        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-918"/>
+        <location filename="../gui/connect/ConnectFriendWizard.cpp" line="-921"/>
         <source>Use text representation of the PGP certificates.</source>
         <translation>Verwende diesen Text als PGP Zertifikat.</translation>
     </message>
@@ -11127,12 +11155,12 @@ p, li { white-space: pre-wrap; }
         <translation>Verbindungshilfe</translation>
     </message>
     <message>
-        <location line="+89"/>
+        <location line="+90"/>
         <source>Certificate Load Failed</source>
         <translation>Das Zertifikat konnte nicht geladen werden</translation>
     </message>
     <message>
-        <location line="-76"/>
+        <location line="-77"/>
         <source>Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way</source>
         <translation>Dein Zertiifkat ist in in die Zwischenablage kopiert worden</translation>
     </message>

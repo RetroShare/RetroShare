@@ -119,7 +119,7 @@ class RsInitConfig
                 static bool outStderr;
                 static bool haveDebugLevel;
                 static int  debugLevel;
-                static char logfname[1024];
+                static std::string logfname;
 
                 static bool firsttime_run;
                 static bool load_trustedpeer;
@@ -182,7 +182,7 @@ bool RsInitConfig::haveLogFile;
 bool RsInitConfig::outStderr;
 bool RsInitConfig::haveDebugLevel;
 int  RsInitConfig::debugLevel;
-char RsInitConfig::logfname[1024];
+std::string RsInitConfig::logfname;
 
 bool RsInitConfig::firsttime_run;
 bool RsInitConfig::load_trustedpeer;
@@ -237,7 +237,6 @@ void RsInit::InitRsConfig()
 	RsInitConfig::forceExtPort   = false;
 
 	strcpy(RsInitConfig::inet, "127.0.0.1");
-	strcpy(RsInitConfig::logfname, "");
 
 	RsInitConfig::autoLogin      = false; // .
 	RsInitConfig::startMinimised = false;
@@ -412,7 +411,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
                                  std::cerr << std::endl;
                                  break;
                          case 'l':
-                                 strncpy(RsInitConfig::logfname, optarg, 1024);
+                                 RsInitConfig::logfname = optarg;
                                  std::cerr << "LogFile (" << RsInitConfig::logfname;
                                  std::cerr << ") Selected" << std::endl;
                                  RsInitConfig::haveLogFile = true;
@@ -515,7 +514,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 	// set the debug file.
 	if (RsInitConfig::haveLogFile)
 	{
-		setDebugFile(RsInitConfig::logfname);
+		setDebugFile(RsInitConfig::logfname.c_str());
 	}
 
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
@@ -1112,7 +1111,8 @@ int RsInit::LockConfigDirectory(const std::string& accountDir, std::string& lock
 	if (RsInitConfig::lockHandle == INVALID_HANDLE_VALUE) {
 		DWORD lasterror = GetLastError();
 
-		std::cerr << "Could not open lock file " << lockFile.c_str() << std::flush;
+		std::cerr << "Could not open lock file " << lockFile.c_str() << std::endl;
+		std::cerr << "Last error: " << lasterror << std::endl << std::flush;
 		perror(NULL);
 
 		if (lasterror == ERROR_SHARING_VIOLATION || lasterror == ERROR_ACCESS_DENIED) {
