@@ -56,7 +56,7 @@
 //#define DISTRIB_DEBUG 1
 //#define DISTRIB_THREAD_DEBUG 1
 //#define DISTRIB_DUMMYMSG_DEBUG 1
-//#define DISTRIB_HISTORY_DEBUG
+#define DISTRIB_HISTORY_DEBUG
 
 RSA *extractPublicKey(RsTlvSecurityKey &key);
 RSA *extractPrivateKey(RsTlvSecurityKey &key);
@@ -185,8 +185,11 @@ int	p3GroupDistrib::tick()
 		updateCacheDoc &= !mHistoricalCaches && mUpdateCacheDoc;
 	}
 
-	if(false)
+
+#ifdef ENABLE_CACHE_OPT
+	if(updateCacheDoc)
 		updateCacheDocument();
+#endif
 
 	return 0;
 }
@@ -242,7 +245,7 @@ bool 	p3GroupDistrib::loadLocalCache(const CacheData &data)
 #endif
 
 		/* store the cache file for later processing */
-        	mPendingCaches.push_back(CacheDataPending(data, true, mHistoricalCaches));
+        mPendingCaches.push_back(CacheDataPending(data, true, mHistoricalCaches));
 	}
 
 	if (data.size > 0)
@@ -407,6 +410,7 @@ void p3GroupDistrib::updateCacheDocument()
 					  << "\nBut Parent group does not exists in cache table!"
 					  << std::endl;
 #endif
+			msgCacheMap.erase(msgIt->first);
 		}
 	}
 
@@ -1048,12 +1052,8 @@ void	p3GroupDistrib::locked_loadFileMsgs(const std::string &filename, uint16_t c
 			// if msg cache not present in table or not historical then load immediately
 			if(!locked_historyCached(newMsg->grpId, cId, cached) || !historical){
 
+				locked_loadMsg(newMsg, src, local, historical);
 
-				if(locked_loadMsg(newMsg, src, local, historical)){
-
-					mMsgHistPending.push_back(grpCachePair(grpId, cId));
-					mUpdateCacheDoc = true;
-				}
 			}
 
 		}
@@ -2114,7 +2114,9 @@ bool p3GroupDistrib::getTimePeriodMsgList(std::string grpId, uint32_t timeMin,
 
 GroupInfo *p3GroupDistrib::locked_getGroupInfo(std::string grpId)
 {
-	//locked_processHistoryCached(grpId);
+#ifdef ENABLE_CACHE_OPT
+	locked_processHistoryCached(grpId);
+#endif
 
 	/************* ALREADY LOCKED ************/
 	std::map<std::string, GroupInfo>::iterator git;
@@ -2440,7 +2442,10 @@ bool p3GroupDistrib::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	delete childSer;
 	std::string histCacheFile = mKeyBackUpDir + "/" + "grp_history.xml";
 	// now save hostory doc
-	//mCacheDoc.save_file(histCacheFile.c_str());
+
+#ifdef ENABLE_CACHE_OPT
+	mCacheDoc.save_file(histCacheFile.c_str());
+#endif
 
 	return true;
 }
@@ -2523,8 +2528,11 @@ bool    p3GroupDistrib::loadList(std::list<RsItem *>& load)
 	mGroupsRepublish = false;
 	delete childSer;
 	std::string histCacheFile = mKeyBackUpDir + "/" + "grp_history.xml";
-//	mCacheDoc.load_file(histCacheFile.c_str());
-//	buildCacheTable();
+
+#ifdef ENABLE_CACHE_OPT
+	mCacheDoc.load_file(histCacheFile.c_str());
+	buildCacheTable();
+#endif
 
 	return true;
 }
