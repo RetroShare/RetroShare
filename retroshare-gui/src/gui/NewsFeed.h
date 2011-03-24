@@ -50,6 +50,7 @@ signals:
 
 private slots:
  // void toggleChanMsgItems(bool on);
+  void feedoptions();
  
   void updateFeed();
   void removeAll();

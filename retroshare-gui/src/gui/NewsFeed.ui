@@ -70,7 +70,7 @@ p, li { white-space: pre-wrap; }
      </item>
     </layout>
    </item>
-   <item row="1" column="0" colspan="4">
+   <item row="1" column="0" colspan="5">
     <widget class="QFrame" name="frame">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
@@ -129,7 +129,7 @@ p, li { white-space: pre-wrap; }
      </layout>
     </widget>
    </item>
-   <item row="0" column="2">
+   <item row="0" column="3">
     <widget class="QPushButton" name="removeAllButton">
      <property name="text">
       <string>Remove All</string>
@@ -148,6 +148,13 @@ p, li { white-space: pre-wrap; }
       </size>
      </property>
     </spacer>
+   </item>
+   <item row="0" column="2">
+    <widget class="QPushButton" name="feedOptionsButton">
+     <property name="text">
+      <string>Edit Options</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

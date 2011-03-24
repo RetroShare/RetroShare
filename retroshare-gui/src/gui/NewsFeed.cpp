@@ -30,6 +30,7 @@
 #include "feeds/ChanMsgItem.h"
 #include "feeds/ForumNewItem.h"
 #include "feeds/ForumMsgItem.h"
+#include "feeds/FeedSettings.h"
 
 #ifdef BLOGS
 #include "feeds/BlogNewItem.h"
@@ -65,6 +66,8 @@ NewsFeed::NewsFeed(QWidget *parent)
   	setupUi(this);
 
 	connect(removeAllButton, SIGNAL(clicked()), this, SLOT(removeAll()));
+	connect(feedOptionsButton, SIGNAL(clicked()), this, SLOT(feedoptions()));
+	
 
 	QTimer *timer = new QTimer(this);
 	timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateFeed()));
@@ -486,4 +489,10 @@ void NewsFeed::sendNewsFeedChanged()
 	}
 
 	emit newsFeedChanged(count);
+}
+
+void NewsFeed::feedoptions()
+{
+    FeedSettings fs (this);
+    fs.exec ();
 }
