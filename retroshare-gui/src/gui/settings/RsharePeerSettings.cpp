@@ -196,3 +196,13 @@ void RsharePeerSettings::loadWidgetInformation(const std::string &peerId, QWidge
     endGroup();
     endGroup();
 }
+
+bool RsharePeerSettings::getShowAvatarFrame(const std::string &peerId)
+{
+    return get(peerId, "ShowAvatarFrame", true).toBool();
+}
+
+void RsharePeerSettings::setShowAvatarFrame(const std::string &peerId, bool value)
+{
+    return set(peerId, "ShowAvatarFrame", value);
+}

@@ -107,7 +107,7 @@ PopupChatDialog::PopupChatDialog(const std::string &id, const QString &name, QWi
   style.setStyleFromSettings(ChatStyle::TYPE_PRIVATE);
 
   /* Hide or show the frames */
-  showAvatarFrame(true);  
+  showAvatarFrame(PeerSettings->getShowAvatarFrame(dialogId));
   ui.infoframe->setVisible(false);
   ui.statusmessagelabel->hide();
 
@@ -750,6 +750,8 @@ void PopupChatDialog::showAvatarFrame(bool show)
         ui.avatarFrameButton->setToolTip(tr("Show Avatar"));
         ui.avatarFrameButton->setIcon(QIcon(":images/show_toolbox_frame.png"));
     }
+
+    PeerSettings->setShowAvatarFrame(dialogId, show);
 }
 
 void PopupChatDialog::on_closeInfoFrameButton_clicked()

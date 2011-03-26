@@ -40,6 +40,9 @@ public:
     void    saveWidgetInformation(const std::string &peerId, QWidget *widget);
     void    loadWidgetInformation(const std::string &peerId, QWidget *widget);
 
+    bool    getShowAvatarFrame(const std::string &peerId);
+    void    setShowAvatarFrame(const std::string &peerId, bool value);
+
 protected:
     /** Default constructor. */
     RsharePeerSettings();
