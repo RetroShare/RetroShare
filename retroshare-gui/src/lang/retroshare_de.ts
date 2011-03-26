@@ -6988,6 +6988,11 @@ p, li { white-space: pre-wrap; }
         <source>Remove All</source>
         <translation>Alle entfernen</translation>
     </message>
+    <message>
+        <location line="+20"/>
+        <source>Options</source>
+        <translation>Optionen</translation>
+    </message>
 </context>
 <context>
     <name>NotifyPage</name>
@@ -9171,7 +9176,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>RSettingsWin</name>
     <message>
-        <location filename="../gui/settings/rsettingswin.cpp" line="+131"/>
+        <location filename="../gui/settings/rsettingswin.cpp" line="+137"/>
         <source>General</source>
         <translation>Allgemein</translation>
     </message>

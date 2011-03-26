@@ -31,10 +31,10 @@ class RSettingsWin: public QDialog, private Ui::Settings
     Q_OBJECT
 
     public:
-        enum PageType { General = 0, Server, Transfer,
+        enum PageType { LastPage = -1, General = 0, Server, Transfer,
                         Directories, Notify, Security, Message, Forum, Chat, Appearance, Sound, Fileassociations };
 
-        static void showYourself(QWidget *parent);
+        static void showYourself(QWidget *parent, PageType page = LastPage);
         static void postModDirectories(bool update_local);
 
     protected:

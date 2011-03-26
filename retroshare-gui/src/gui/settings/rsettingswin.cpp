@@ -68,15 +68,21 @@ RSettingsWin::closeEvent (QCloseEvent * event)
     QWidget::closeEvent(event);
 }
 
-/*static*/ void RSettingsWin::showYourself(QWidget *parent)
+/*static*/ void RSettingsWin::showYourself(QWidget *parent, PageType page /*= LastPage*/)
 {
     if(_instance == NULL) {
         _instance = new RSettingsWin(parent);
     }
 
-    if (_instance->isHidden()) {
-        _instance->setNewPage(lastPage);
+    if (page != LastPage) {
+        /* show given page */
+        _instance->setNewPage(page);
+    } else {
+        if (_instance->isHidden()) {
+            _instance->setNewPage(lastPage);
+        }
     }
+
     _instance->show();
     _instance->activateWindow();
 }

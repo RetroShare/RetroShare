@@ -30,7 +30,7 @@
 #include "feeds/ChanMsgItem.h"
 #include "feeds/ForumNewItem.h"
 #include "feeds/ForumMsgItem.h"
-#include "feeds/FeedSettings.h"
+#include "settings/rsettingswin.h"
 
 #ifdef BLOGS
 #include "feeds/BlogNewItem.h"
@@ -493,6 +493,5 @@ void NewsFeed::sendNewsFeedChanged()
 
 void NewsFeed::feedoptions()
 {
-    FeedSettings fs (this);
-    fs.exec ();
+    RSettingsWin::showYourself(this, RSettingsWin::Notify);
 }
