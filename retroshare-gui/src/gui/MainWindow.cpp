@@ -799,6 +799,11 @@ void MainWindow::updateStatus()
     } else {
         tray += tr("%1 friends connected").arg(nOnlineCount);
     }
+    
+    RsPeerDetails pd ;    
+	if (rsPeers->getPeerDetails(rsPeers->getOwnId(),pd)) {
+	tray += "\n" + QString::fromStdString(pd.name) + " (" + QString::fromStdString(pd.location) + ") " ;
+	}
 
     trayIcon->setToolTip(tray);
 }
