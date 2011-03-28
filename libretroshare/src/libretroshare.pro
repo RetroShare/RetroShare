@@ -7,6 +7,7 @@ TARGET = retroshare
 
 # Beware: All data of the stripped services are lost
 #CONFIG += minimal
+DEFINES *= PQI_DISABLE_TUNNEL
 
 minimal {
 	CONFIG -= use_blogs
@@ -22,7 +23,6 @@ profiling {
 release {
 	# UDP and TUNNEL dont work anymore.
 	#DEFINES *= PQI_DISABLE_UDP
-	DEFINES *= PQI_DISABLE_TUNNEL
 }
 
 
