@@ -294,12 +294,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/unfinished/ApplicationWindow.cpp" line="166"/>
         <source>Hide</source>
-        <translation>Cacher</translation>
+        <translation type="unfinished">Cacher RetroShare</translation>
     </message>
     <message>
         <location filename="../gui/unfinished/ApplicationWindow.cpp" line="166"/>
         <source>Show</source>
-        <translation>Montrer</translation>
+        <translation type="unfinished">Montrer RetroShare</translation>
     </message>
     <message>
         <source>Peers</source>
@@ -3574,7 +3574,7 @@ Cela peut être intéressant si vous partagez des fichiers situés sur un disque
     <message>
         <location filename="../gui/channels/EditChanDetails.ui" line="75"/>
         <source>Channel Info</source>
-        <translation>Informations du canal</translation>
+        <translation type="unfinished">Détails du canal</translation>
     </message>
     <message>
         <location filename="../gui/channels/EditChanDetails.ui" line="81"/>
@@ -9808,7 +9808,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/PeersDialog.ui" line="857"/>
         <source>Edit Personal message</source>
-        <translation>Editer mon message personnel</translation>
+        <translation type="unfinished">Editer mon message perso</translation>
     </message>
     <message>
         <source>Live Chat</source>
@@ -11057,11 +11057,11 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;Version:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;Version:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;Version :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/profile/ProfileWidget.ui" line="372"/>
@@ -11083,11 +11083,11 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; font-weight:600; color:#808080;&quot;&gt;My Address&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; font-weight:600; color:#808080;&quot;&gt;Mon adresse :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt; font-weight:600; color:#808080;&quot;&gt;Mes adresses IP :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/profile/ProfileWidget.ui" line="460"/>
@@ -11096,11 +11096,11 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; color:#76746c;&quot;&gt;Local Address:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; color:#76746c;&quot;&gt;Adresse locale :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; color:#76746c;&quot;&gt;Adresse IP privée :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/profile/ProfileWidget.ui" line="538"/>
@@ -11109,11 +11109,11 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;External Address:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;Adresse externe :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;Adresse IP publique :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/profile/ProfileWidget.ui" line="616"/>
@@ -11135,11 +11135,11 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;Addresses list&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;Historique des adresses&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#76746c;&quot;&gt;Historique des adresses IP :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Addresses list</source>
@@ -11377,7 +11377,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/QuickStartWizard.ui" line="29"/>
         <source>Quick Start Wizard</source>
-        <translation>Assistant de configuration</translation>
+        <translation type="unfinished">Assistant de configuration rapide</translation>
     </message>
     <message>
         <location filename="../gui/QuickStartWizard.ui" line="144"/>
@@ -11441,17 +11441,17 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/QuickStartWizard.ui" line="778"/>
         <location filename="../gui/QuickStartWizard.ui" line="983"/>
         <source>Exit</source>
-        <translation>Terminé</translation>
+        <translation type="unfinished">Terminer</translation>
     </message>
     <message>
         <location filename="../gui/QuickStartWizard.ui" line="334"/>
         <source>For best performance, RetroShare needs to know a little about your connection to the internet.</source>
-        <translation>Pour obtenir de meilleures performances, RetroShare a besoin de s&apos;auto-configurer en fonction de votre connexion internet.</translation>
+        <translation type="unfinished">Pour obtenir de meilleures performances, RetroShare a besoin d&apos;informations au sujet de votre connexion internet.</translation>
     </message>
     <message>
         <location filename="../gui/QuickStartWizard.ui" line="347"/>
         <source>Choose your upload speed limit: </source>
-        <translation>Vitesse d&apos;envoie maximale : </translation>
+        <translation type="unfinished">Vitesse d&apos;envoi maximale : </translation>
     </message>
     <message>
         <location filename="../gui/QuickStartWizard.ui" line="350"/>
@@ -11482,7 +11482,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/QuickStartWizard.ui" line="424"/>
         <source>Manually forwarded port</source>
-        <translation>Redirection manuelle des ports</translation>
+        <translation type="unfinished">Redirection de port</translation>
     </message>
     <message>
         <source>Dicovery :</source>
@@ -11507,23 +11507,23 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;  Choose which files you share.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;  Get started using RetroShare.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Bienvenue dans RetroShare!&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Bienvenue dans RetroShare !&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Cet assistant de démarrage rapide vous permet de configurer RetroShare en quelques étapes.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Si vous êtes un utilisateur avancé,vous pouvez accéder aux options complètes de RetroShare via la barre d&apos;outils. Vous pouvez quitter l&apos;assistant à n&apos;importe quel moment en cliquant sur quitter.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Si vous êtes un utilisateur avancé,vous pouvez accéder aux options complètes de RetroShare via le menu options. Vous pouvez quitter cet assistant à tout moment en cliquant sur quitter.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;L&apos;assistant vous aidera à : &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Cet assistant vous permettra : &lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;  Informer RetroShare sur votre connection.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;  De paramêtrer vos informations de connexion&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;  Choisir les fichiers que vous désirez partager.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;  De choisir les fichiers à partager&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;  Commencer à utiliser RetroShare.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;  Commencer à utiliser RetroShare&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/QuickStartWizard.ui" line="432"/>
@@ -11563,7 +11563,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/QuickStartWizard.ui" line="445"/>
         <source>Private: Discovery Only</source>
-        <translation>Privée : Découverte only</translation>
+        <translation type="unfinished">Privée : Découverte seulement</translation>
     </message>
     <message>
         <location filename="../gui/QuickStartWizard.ui" line="450"/>
@@ -11592,14 +11592,14 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;You can separately setup share flags for each shared directory:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Browsable by friends&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: files are browsable from your direct friends.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Anonymously shared&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: files can be downloaded by anybody through anonymous tunnels.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Voici votre liste de dossiers partagés. Vous pouvez ajouter ou supprimer de nouveaux dossiers en utilisant les boutons &quot;Ajouter&quot; et &quot;Supprimer&quot; Quand vous ajoutez un nouveau dossier, tous les fichiers présents dans ce dossier sont automatiquement partagés.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;Vous pouvez paramétrer séparément la méthode de partage pour chaque dossier :&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Partage visible &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: vos fichiers sont visibles par vos amis.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Partage anonyme &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: vos fichiers seront accessibles par n&apos;importe qui par l&apos;intermédiaire d&apos;un Tunnel anaonyme.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Voici la liste des dossiers partagés. Vous pouvez ajouter ou supprimer de nouveaux dossiers en utilisant les boutons &quot;Ajouter&quot; et &quot;Supprimer&quot; Quand vous ajoutez un nouveau dossier, tous les fichiers présents dans ce dossier sont partagés.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;Vous pouvez paramêtrer séparément la méthode de partage pour chacun des dossiers :&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Partage public &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: votre liste de fichiers est visible par vos amis.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Partage anonyme &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: vos fichiers seront accessibles par n&apos;importe qui par l&apos;intermédiaire d&apos;un tunnel anonyme.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/QuickStartWizard.ui" line="667"/>
@@ -11614,7 +11614,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/QuickStartWizard.ui" line="677"/>
         <source>Browseable</source>
-        <translation>Visible</translation>
+        <translation type="unfinished">Public</translation>
     </message>
     <message>
         <location filename="../gui/QuickStartWizard.ui" line="687"/>
@@ -11635,13 +11635,13 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;Enjoy using RetroShare!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;Prenez du plaisir à utiliser RetroShare !&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;Amusez-vous bien avec RetroShare !&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../gui/QuickStartWizard.ui" line="847"/>
@@ -11653,13 +11653,13 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;These settings configure how and when RetroShare starts .&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Vous avez presque terminé la configuration de RetroShare ! &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Vous avez quasiement terminé la configuration de RetroShare ! &lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Ces paramètres déterminent comment et quand RetroShare démarre.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Ces paramètres détermineront le démarrage RetroShare.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
@@ -11675,7 +11675,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/QuickStartWizard.ui" line="883"/>
         <source>Start RetroShare when my System Starts.</source>
-        <translation>Démarrer RetroShare au lancement du système.</translation>
+        <translation type="unfinished">Démarrer RetroShare au lancement du système</translation>
     </message>
     <message>
         <location filename="../gui/QuickStartWizard.ui" line="908"/>
@@ -11685,7 +11685,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/QuickStartWizard.ui" line="973"/>
         <source>Finish</source>
-        <translation>Terminer</translation>
+        <translation type="unfinished">Fin de la configuration</translation>
     </message>
     <message>
         <location filename="../gui/QuickStartWizard.cpp" line="205"/>
@@ -11700,7 +11700,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/QuickStartWizard.cpp" line="233"/>
         <source>Do you really want to stop sharing this directory ? </source>
-        <translation>Etes-vous certains de ne plus vouloir partager ce dossier ?</translation>
+        <translation type="unfinished">Etes-vous sûr de ne plus vouloir partager ce dossier ?</translation>
     </message>
     <message>
         <location filename="../gui/QuickStartWizard.cpp" line="237"/>
@@ -14162,7 +14162,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/common/TagDefs.cpp" line="40"/>
         <source>Work</source>
-        <translation>Travail</translation>
+        <translation type="unfinished">Professionnel</translation>
     </message>
     <message>
         <location filename="../gui/common/TagDefs.cpp" line="42"/>
@@ -14190,7 +14190,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="223"/>
         <source>The text below is your PGP certificate. You have to provide it to your friend </source>
-        <translation>Le texte suivant est votre certificat PGP. Vous devez le fournir à vos amis</translation>
+        <translation type="unfinished">Le texte suivant est votre certificat PGP. Vous devez le fournir à vos amis </translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="264"/>
@@ -14205,7 +14205,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="329"/>
         <source>RetroShare Invite</source>
-        <translation>Invite</translation>
+        <translation type="unfinished">Invitation RetroShare</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="352"/>
@@ -14234,7 +14234,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="340"/>
         <source>You can copy this text and send it to your friend via email or some other way</source>
-        <translation>Vous pouvez copier ce texte et l&apos;envoyer à vos amis par courrier électronique ou par tout autre moyen</translation>
+        <translation type="unfinished">Vous pouvez copier votre certificat et l&apos;envoyer à vos amis par courrier électronique ou par tout autre moyen</translation>
     </message>
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="351"/>
@@ -14244,7 +14244,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="219"/>
         <source>Text certificate</source>
-        <translation>Texte du certificat</translation>
+        <translation type="unfinished">Certificat version texte</translation>
     </message>
     <message>
         <source>Use text representation of the XPGP certificates.</source>
@@ -14266,7 +14266,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="339"/>
         <source>Connect Friend Help</source>
-        <translation>Aide à la connexion d&apos;un ami</translation>
+        <translation type="unfinished">Aide pour l&apos;envoi du certificat</translation>
     </message>
     <message>
         <source>You can copy this text and send it to your friend via email, ICQ or some other way</source>
@@ -14275,7 +14275,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="428"/>
         <source>Certificate Load Failed</source>
-        <translation>Le certificat n&apos;a pas pu être chargé</translation>
+        <translation type="unfinished">Le certificat n&apos;a pas été chargé</translation>
     </message>
 </context>
 <context>
@@ -14329,7 +14329,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/settings/TransferPage.ui" line="85"/>
         <source> MB</source>
-        <translation> MB</translation>
+        <translation type="unfinished"> Mo</translation>
     </message>
     <message>
         <location filename="../gui/settings/TransferPage.ui" line="111"/>
@@ -14342,14 +14342,14 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;You can separately setup share flags for each shared directory in the shared files dialog to be:&lt;/span&gt;&lt;/p&gt;
 &lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Browsable by friends&lt;/span&gt;: files are seen by your friends.&lt;/li&gt;
 &lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Anonymously shared&lt;/span&gt;: files are anonymously reachable through distant F2F tunnels.&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;RetroShare&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt; est capable de transférer des fichiers et effectuer des recherches entre personnes qui ne sont pas amies. Cependant, ce traffic se fait à travers une liste de contacts anonymes.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;Vous pouvez paramétrer le type de partage dans la fenêtre de partage de dossier:&lt;/span&gt;&lt;/p&gt;
-&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Visible par les amis&lt;/span&gt;: les fichiers sont visibles par les amis.&lt;/li&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;Vous pouvez paramétrer le type de partage dans la fenêtre de partage de dossier :&lt;/span&gt;&lt;/p&gt;
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Visible par mes amis&lt;/span&gt;: les fichiers sont visibles par mes amis.&lt;/li&gt;
 &lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Partage anonyme&lt;/span&gt;: les fichiers sont accessibles anonymement par des tunnels F2F.&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
@@ -14395,13 +14395,13 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="306"/>
         <source>Clear Completed</source>
-        <translation>Effacer les fichiers terminés</translation>
+        <translation type="unfinished">Effacer les fichiers terminés de la liste</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="154"/>
         <location filename="../gui/TransfersDialog.cpp" line="213"/>
         <source>Status</source>
-        <translation>Etat</translation>
+        <translation type="unfinished">État</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="150"/>
@@ -14449,17 +14449,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/TransfersDialog.ui" line="764"/>
         <source>Done</source>
-        <translation>OK</translation>
+        <translation type="unfinished">Terminé</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.ui" line="785"/>
         <source>Active</source>
-        <translation>Actif</translation>
+        <translation type="unfinished">En cours</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.ui" line="806"/>
         <source>Outstanding</source>
-        <translation>En cours</translation>
+        <translation type="unfinished">En attente</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.ui" line="831"/>
@@ -14535,13 +14535,13 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="156"/>
         <source>Remaining</source>
-        <translation>Restant</translation>
+        <translation type="unfinished">Taille restante</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="157"/>
         <source>Download time</source>
         <comment>i.e: Estimated Time of Arrival / Time left</comment>
-        <translation>Durée du téléchargement</translation>
+        <translation type="unfinished">Temps restant estimé</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="210"/>
@@ -14574,7 +14574,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="282"/>
         <source>Pause</source>
-        <translation>En pause</translation>
+        <translation type="unfinished">Mettre en pause</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="285"/>
@@ -14589,7 +14589,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="294"/>
         <source>Open Folder</source>
-        <translation>Ouvrir le dossier</translation>
+        <translation type="unfinished">Ouvrir le répertoire de sortie</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="297"/>
@@ -14644,7 +14644,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/TransfersDialog.cpp" line="328"/>
         <location filename="../gui/TransfersDialog.cpp" line="858"/>
         <source>Faster</source>
-        <translation>Plus rapide</translation>
+        <translation type="unfinished">Rapide</translation>
     </message>
     <message>
         <source>Priority (Queue)</source>
@@ -14756,12 +14756,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="314"/>
         <source>Down</source>
-        <translation>Réception </translation>
+        <translation type="unfinished">Descendre</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="316"/>
         <source>Up</source>
-        <translation>Emission </translation>
+        <translation type="unfinished">Remonter</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="318"/>
@@ -14771,7 +14771,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="320"/>
         <source>Bottom</source>
-        <translation>En bas</translation>
+        <translation type="unfinished">En bas</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="439"/>
@@ -14786,7 +14786,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="706"/>
         <source>Transferring</source>
-        <translation>Transfert</translation>
+        <translation type="unfinished">En cours de transfert</translation>
     </message>
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="845"/>
@@ -14821,7 +14821,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/TransfersDialog.cpp" line="1065"/>
         <source>Are you sure that you want to cancel and delete these files?</source>
-        <translation>Etes-vous sûr de vouloir annuler et d&apos;effacer ces fichiers ?</translation>
+        <translation type="unfinished">Etes-vous sûr de vouloir annuler et supprimer ces fichiers ?</translation>
     </message>
 </context>
 <context>
@@ -14833,7 +14833,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/TrustView.ui" line="33"/>
         <source>Zoom :</source>
-        <translation>Zoom :</translation>
+        <translation type="unfinished">Zoom :.</translation>
     </message>
     <message>
         <location filename="../gui/TrustView.ui" line="50"/>
@@ -14844,12 +14844,12 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/TrustView.ui" line="57"/>
         <location filename="../gui/TrustView.cpp" line="241"/>
         <source>Showing: whole network</source>
-        <translation>Afficher : réseau entier</translation>
+        <translation type="unfinished">Affiché : réseau entier</translation>
     </message>
     <message>
         <location filename="../gui/TrustView.cpp" line="29"/>
         <source>This table normaly auto-updates every 10 seconds.</source>
-        <translation>La table se met à jour toutes les 10 secondes.</translation>
+        <translation type="unfinished">La table se met automatiquement à jour toutes les 10 secondes.</translation>
     </message>
     <message>
         <location filename="../gui/TrustView.cpp" line="167"/>
@@ -14884,17 +14884,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/TrustView.cpp" line="198"/>
         <source> is authenticated (one way) by </source>
-        <translation> est authentifié ( un sens) par </translation>
+        <translation type="unfinished">est authentifié(e) par </translation>
     </message>
     <message>
         <location filename="../gui/TrustView.cpp" line="199"/>
         <source>Half</source>
-        <translation>À moitié</translation>
+        <translation type="unfinished">Moyenne</translation>
     </message>
     <message>
         <location filename="../gui/TrustView.cpp" line="206"/>
         <source> authenticated himself</source>
-        <translation> est authentifié par lui-même</translation>
+        <translation type="unfinished"> s&apos;est authentifié(e)</translation>
     </message>
     <message>
         <location filename="../gui/TrustView.cpp" line="211"/>
@@ -14910,7 +14910,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/TrustView.cpp" line="218"/>
         <location filename="../gui/TrustView.cpp" line="221"/>
         <source> peers, including him(her)self.</source>
-        <translation> personnes, incluant lui(elle)-même.</translation>
+        <translation type="unfinished"> personnes, dont lui(elle)-même.</translation>
     </message>
     <message>
         <location filename="../gui/TrustView.cpp" line="218"/>
@@ -14925,7 +14925,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/TrustView.cpp" line="257"/>
         <source>Showing: peers connected to </source>
-        <translation>Afficher : personnes connectées à </translation>
+        <translation type="unfinished">Affiché : personnes connectées à </translation>
     </message>
 </context>
 <context>
@@ -14946,13 +14946,13 @@ bloquera ce dernier.</translation>
         <location filename="../gui/TurtleRouterDialog.cpp" line="17"/>
         <location filename="../gui/TurtleRouterDialog.cpp" line="77"/>
         <source>Search requests</source>
-        <translation>Demande recherche</translation>
+        <translation type="unfinished">Requêtes de recherche</translation>
     </message>
     <message>
         <location filename="../gui/TurtleRouterDialog.cpp" line="22"/>
         <location filename="../gui/TurtleRouterDialog.cpp" line="88"/>
         <source>Tunnel requests</source>
-        <translation>Demande Tunnel</translation>
+        <translation type="unfinished">Requpetes de tunnel</translation>
     </message>
 </context>
 <context>
@@ -14960,12 +14960,12 @@ bloquera ce dernier.</translation>
     <message>
         <location filename="../gui/TurtleRouterDialog.ui" line="14"/>
         <source>Router Statistics</source>
-        <translation>Statistiques du routage</translation>
+        <translation type="unfinished">Statistiques de routage</translation>
     </message>
     <message>
         <location filename="../gui/TurtleRouterDialog.ui" line="28"/>
         <source>F2F router information</source>
-        <translation>Information du routage F2F</translation>
+        <translation type="unfinished">Information de routage F2F</translation>
     </message>
     <message>
         <source>Hashes and Tunnels</source>
@@ -15057,22 +15057,23 @@ bloquera ce dernier.</translation>
     <message>
         <location filename="../gui/ULListDelegate.cpp" line="41"/>
         <source>B</source>
-        <translation></translation>
+        <translatorcomment>1 Byte (B) = 1 Octet (o)</translatorcomment>
+        <translation type="unfinished">octet</translation>
     </message>
     <message>
         <location filename="../gui/ULListDelegate.cpp" line="41"/>
         <source>KB</source>
-        <translation></translation>
+        <translation type="unfinished">Ko</translation>
     </message>
     <message>
         <location filename="../gui/ULListDelegate.cpp" line="41"/>
         <source>MB</source>
-        <translation></translation>
+        <translation type="unfinished">Mo</translation>
     </message>
     <message>
         <location filename="../gui/ULListDelegate.cpp" line="41"/>
         <source>GB</source>
-        <translation></translation>
+        <translation type="unfinished">Go</translation>
     </message>
 </context>
 <context>
@@ -15110,7 +15111,7 @@ bloquera ce dernier.</translation>
     <message>
         <location filename="../gui/common/vmessagebox.cpp" line="95"/>
         <source>Show Log</source>
-        <translation>Montrer le log</translation>
+        <translation type="unfinished">Afficher le log</translation>
     </message>
     <message>
         <location filename="../gui/common/vmessagebox.cpp" line="96"/>
@@ -15139,37 +15140,37 @@ bloquera ce dernier.</translation>
         <location filename="../util/misc.cpp" line="36"/>
         <source>Unknown</source>
         <comment>Unknown (size)</comment>
-        <translation>Inconnu</translation>
+        <translation type="unfinished">Inconnue</translation>
     </message>
     <message>
         <location filename="../util/misc.cpp" line="38"/>
         <source> B</source>
         <comment>bytes</comment>
-        <translation> B</translation>
+        <translation type="unfinished"> octet</translation>
     </message>
     <message>
         <location filename="../util/misc.cpp" line="38"/>
         <source> KiB</source>
         <comment>kibibytes (1024 bytes)</comment>
-        <translation></translation>
+        <translation type="unfinished"> Kio</translation>
     </message>
     <message>
         <location filename="../util/misc.cpp" line="38"/>
         <source> MiB</source>
         <comment>mebibytes (1024 kibibytes)</comment>
-        <translation></translation>
+        <translation type="unfinished"> Mio</translation>
     </message>
     <message>
         <location filename="../util/misc.cpp" line="38"/>
         <source> GiB</source>
         <comment>gibibytes (1024 mibibytes)</comment>
-        <translation></translation>
+        <translation type="unfinished"> Gio</translation>
     </message>
     <message>
         <location filename="../util/misc.cpp" line="45"/>
         <source> TiB</source>
         <comment>tebibytes (1024 gibibytes)</comment>
-        <translation></translation>
+        <translation type="unfinished"> Tio</translation>
     </message>
     <message>
         <location filename="../util/misc.cpp" line="169"/>
@@ -15192,13 +15193,13 @@ bloquera ce dernier.</translation>
         <location filename="../util/misc.cpp" line="186"/>
         <source>%1d %2h</source>
         <comment>e.g: 2days 10hours</comment>
-        <translation>%1J %2H</translation>
+        <translation type="unfinished">%1d %2h</translation>
     </message>
     <message>
         <location filename="../util/misc.cpp" line="190"/>
         <source>%1y %2d</source>
         <comment>e.g: 2 years 2days </comment>
-        <translation>%1A %2J</translation>
+        <translation type="unfinished">%1a %2j</translation>
     </message>
     <message>
         <location filename="../util/misc.cpp" line="216"/>
@@ -15233,7 +15234,7 @@ bloquera ce dernier.</translation>
         <location filename="../util/misc.cpp" line="181"/>
         <source>%1h %2m</source>
         <comment>e.g: 3hours 5minutes</comment>
-        <translation>%1H %2M</translation>
+        <translation type="unfinished">%1h %2m</translation>
     </message>
     <message>
         <source>%1d %2h %3m</source>
