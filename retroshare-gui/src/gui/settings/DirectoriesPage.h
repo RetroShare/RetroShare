@@ -49,6 +49,8 @@ class DirectoriesPage: public ConfigPage
 	 void clearHashCache() ;
 	 void setRememberHashesDuration(int) ;
 	 void toggleRememberHashes(bool) ;
+	 void setAutoCheckDirectoriesDelay(int) ;
+	 void toggleAutoCheckDirectories(bool) ;
 
     private:
 

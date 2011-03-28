@@ -161,6 +161,16 @@ bool ftFiMonitor::search(const std::string &hash, uint32_t hintflags, FileInfo &
 	return false;
 };
 
+int ftFiMonitor::watchPeriod() const
+{
+	return getPeriod() ;
+}
+void ftFiMonitor::setWatchPeriod(int seconds)
+{
+	setPeriod(seconds) ;// call FileIndexMonitor
+	IndicateConfigChanged() ;
+}
+
 void	ftFiMonitor::setRememberHashCacheDuration(uint32_t days) 
 {
 	setRememberHashFilesDuration(days) ;	// calls FileIndexMonitor
@@ -204,6 +214,7 @@ RsSerialiser *ftFiMonitor::setupSerialiser()
 
 const std::string hash_cache_duration_ss("HASH_CACHE_DURATION");
 const std::string hash_cache_ss("HASH_CACHE");
+const std::string watch_file_duration_ss("WATCH_FILES_DELAY");
 
 bool ftFiMonitor::saveList(bool &cleanup, std::list<RsItem *>& sList)
 {
@@ -235,11 +246,20 @@ bool ftFiMonitor::saveList(bool &cleanup, std::list<RsItem *>& sList)
 	std::map<std::string, std::string> configMap;
 
 	/* basic control parameters */
-	std::ostringstream s ;
-	s << rememberHashFilesDuration() ;
+	{
+		std::ostringstream s ;
+		s << rememberHashFilesDuration() ;
 
-	configMap[hash_cache_duration_ss] = s.str() ;
+		configMap[hash_cache_duration_ss] = s.str() ;
+	}
 	configMap[hash_cache_ss] = rememberHashFiles()?"YES":"NO" ;
+
+	{
+		std::ostringstream s ;
+		s << watchPeriod() ;
+
+		configMap[watch_file_duration_ss] = s.str() ;
+	}
 
 	RsConfigKeyValueSet *rskv = new RsConfigKeyValueSet();
 
@@ -297,6 +317,13 @@ bool    ftFiMonitor::loadList(std::list<RsItem *>& load)
 			}
 			if(configMap.end() != (mit = configMap.find(hash_cache_ss)))
 				setRememberHashFiles( mit->second == "YES") ;
+
+			if(configMap.end() != (mit = configMap.find(watch_file_duration_ss)))
+			{
+				uint32_t t=0 ;
+				if(sscanf(mit->second.c_str(),"%d",&t) == 1)
+					setWatchPeriod(t);
+			}
 		}
 
 		RsFileConfigItem *fi = dynamic_cast<RsFileConfigItem *>(*it);

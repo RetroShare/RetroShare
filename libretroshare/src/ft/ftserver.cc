@@ -167,9 +167,8 @@ void    ftServer::StartupThreads()
 
 	/* startup Monitor Thread */
 	/* startup the FileMonitor (after cache load) */
-	mFiMon->setPeriod(600); /* 10 minutes */
 	/* start it up */
-	//mFiMon->setSharedDirectories(dbase_dirs);
+	
 	mFiMon->start();
 
 	/* Controller thread */
@@ -644,6 +643,15 @@ bool 	ftServer::removeSharedDirectory(std::string dir)
 
 	return true;
 }
+void	ftServer::setWatchPeriod(int minutes) 
+{
+	mFiMon->setWatchPeriod(minutes*60) ;
+}
+int ftServer::watchPeriod() const
+{
+	return mFiMon->watchPeriod()/60 ;
+}
+
 void	ftServer::setRememberHashFiles(bool b) 
 {
 	mFiMon->setRememberHashCache(b) ;

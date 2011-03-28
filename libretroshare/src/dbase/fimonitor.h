@@ -142,7 +142,6 @@ class FileIndexMonitor: public CacheSource, public RsThread
 		void    getSharedDirectories(std::list<SharedDirInfo>& dirs);
 		void	updateShareFlags(const SharedDirInfo& info) ;
 
-		void    setPeriod(int insecs);
 		void    forceDirectoryCheck();
 		bool	inDirectoryCheck();
 
@@ -157,6 +156,10 @@ class FileIndexMonitor: public CacheSource, public RsThread
 		bool rememberHashFiles() ;
 		// Remove any memory of formerly hashed files that are not shared anymore
 		void   clearHashFiles() ;
+		void   setPeriod(uint32_t insecs);
+		uint32_t  getPeriod() const;
+
+		bool autoCheckEnabled() const ;
 
 	private:
 		/* the mutex should be locked before calling these 3. */

@@ -71,6 +71,8 @@ class ftFiMonitor: public FileIndexMonitor, public ftSearch, public p3Config
 	void	setRememberHashCache(bool) ;
 	bool rememberHashCache() ;
 	void clearHashCache() ;
+	void setWatchPeriod(int seconds) ;	// can be negative, which means auto-check disabled.
+	int watchPeriod() const ;
 
 	/***
 	* Configuration - store shared directories

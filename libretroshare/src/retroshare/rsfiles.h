@@ -189,6 +189,10 @@ class RsFiles
 		virtual void   clearHashCache() = 0 ;
 				virtual bool rememberHashFiles() const =0;
 		virtual void setRememberHashFiles(bool) =0;
+				virtual void setWatchPeriod(int minutes) =0;
+		virtual int watchPeriod() const =0;
+
+
 
 		virtual bool	getShareDownloadDirectory() = 0;
 		virtual bool 	shareDownloadDirectory(bool share) = 0;

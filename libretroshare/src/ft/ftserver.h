@@ -205,6 +205,8 @@ virtual bool 	shareDownloadDirectory(bool share);
 		virtual bool rememberHashFiles() const ;
 		virtual void setRememberHashFiles(bool) ;
 		virtual void   clearHashCache() ;
+		virtual void setWatchPeriod(int minutes) ;
+		virtual int watchPeriod() const ;
 
 	/***************************************************************/
 	/*************** Control Interface *****************************/

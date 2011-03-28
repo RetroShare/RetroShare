@@ -42,6 +42,11 @@ DirectoriesPage::DirectoriesPage(QWidget * parent, Qt::WFlags flags)
 	ui.rememberHashesSB->setValue(t) ;
 	ui.rememberHashesCB->setChecked(b) ;
 
+	int u = rsFiles->watchPeriod() ;
+	ui.autoCheckDirectoriesDelay_SB->setValue(abs(u)) ;
+	ui.autoCheckDirectories_CB->setChecked(u>0) ;
+	ui.autoCheckDirectoriesDelay_SB->setEnabled(u>0) ;
+
     connect(ui.incomingButton, SIGNAL(clicked( bool ) ), this , SLOT( setIncomingDirectory() ) );
     connect(ui.partialButton, SIGNAL(clicked( bool ) ), this , SLOT( setPartialsDirectory() ) );
     connect(ui.checkBox, SIGNAL(stateChanged(int)), this, SLOT(shareDownloadDirectory(int)));
@@ -49,11 +54,31 @@ DirectoriesPage::DirectoriesPage(QWidget * parent, Qt::WFlags flags)
     connect(ui.cleanHashCachePB, SIGNAL(clicked()), this, SLOT(clearHashCache()));
     connect(ui.rememberHashesCB, SIGNAL(toggled(bool)), this, SLOT(toggleRememberHashes(bool)));
     connect(ui.rememberHashesSB, SIGNAL(valueChanged(int)), this, SLOT(setRememberHashesDuration(int)));
+    connect(ui.autoCheckDirectoriesDelay_SB, SIGNAL(valueChanged(int)), this, SLOT(setAutoCheckDirectoriesDelay(int)));
+    connect(ui.autoCheckDirectories_CB, SIGNAL(toggled(bool)), this, SLOT(toggleAutoCheckDirectories(bool)));
 
 	/* Hide platform specific features */
 #ifdef Q_WS_WIN
 
 #endif
+}
+
+void DirectoriesPage::setAutoCheckDirectoriesDelay(int b)
+{
+	rsFiles->setWatchPeriod(ui.autoCheckDirectoriesDelay_SB->value()) ;
+}
+void DirectoriesPage::toggleAutoCheckDirectories(bool b)
+{
+	if(!b)
+	{
+		rsFiles->setWatchPeriod(-ui.autoCheckDirectoriesDelay_SB->value()) ;
+		ui.autoCheckDirectoriesDelay_SB->setEnabled(false) ;
+	}
+	else
+	{
+		rsFiles->setWatchPeriod(ui.autoCheckDirectoriesDelay_SB->value()) ;
+		ui.autoCheckDirectoriesDelay_SB->setEnabled(true) ;
+	}
 }
 
 void DirectoriesPage::setRememberHashesDuration(int d)

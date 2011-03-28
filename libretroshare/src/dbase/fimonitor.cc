@@ -57,6 +57,13 @@ FileIndexMonitor::FileIndexMonitor(CacheStrapper *cs, NotifyBase *cb_in,std::str
 {
 	updatePeriod = 60;
 }
+
+bool FileIndexMonitor::autoCheckEnabled() const
+{
+	RsStackMutex mtx(fiMutex) ; /* LOCKED DIRS */
+	return updatePeriod > 0 ;
+}
+
 bool FileIndexMonitor::rememberHashFiles()
 {
 	RsStackMutex mtx(fiMutex) ; /* LOCKED DIRS */
@@ -443,51 +450,69 @@ bool FileIndexMonitor::updateCache(const CacheData &data)  /* we call this one *
 }
 
 
-void 	FileIndexMonitor::setPeriod(int period)
+uint32_t	FileIndexMonitor::getPeriod() const
 {
+//#ifdef FIM_DEBUG
+	std::cerr << "FileIndexMonitor::setPeriod() getting watch period" << std::endl;
+//#endif
+	RsStackMutex mtx(fiMutex) ; /* LOCKED DIRS */
+	return updatePeriod ;
+}
+
+void 	FileIndexMonitor::setPeriod(uint32_t period)
+{
+	RsStackMutex mtx(fiMutex) ; /* LOCKED DIRS */
 	updatePeriod = period;
+//#ifdef FIM_DEBUG
+	std::cerr << "FileIndexMonitor::setPeriod() Setting watch period to " << updatePeriod << std::endl;
+//#endif
 }
 
 void 	FileIndexMonitor::run()
-//void 	FileIndexMonitor::run(std::string& current_job)
 {
-	updateCycle();
+	if(autoCheckEnabled())
+		updateCycle();
 
 	while(isRunning())
 	{
-
-		for(int i = 0; i < updatePeriod; i++)
+		int i=0 ;
+		for(;;i++)
 		{
-
-			if (isRunning() == false) {
+			if(!isRunning()) 
 				return;
-			}
 
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+			/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS
 			sleep(1);
 #else
 			Sleep(1000);
 #endif
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
+			/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
 			/* check dirs if they've changed */
 			if (internal_setSharedDirectories())
-			{
 				break;
+
+			{
+				RsStackMutex mtx(fiMutex) ;
+
+				if(i >= abs(updatePeriod))
+					break  ;
 			}
-			
+		}
+
+		if(i < abs(updatePeriod) || autoCheckEnabled())
+			updateCycle();
+
 #ifdef FIM_DEBUG
+		{
 			RsStackMutex mtx(fiMutex) ;
 			std::cerr <<"*********** FileIndex **************" << std::endl ;
 			fi.printFileIndex(std::cerr) ;
 			std::cerr <<"************** END *****************" << std::endl ;
 			std::cerr << std::endl ;
-#endif
 		}
-
-		updateCycle();
-
+#endif
 	}
 }
 
