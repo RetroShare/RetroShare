@@ -56,7 +56,7 @@
 //#define DISTRIB_DEBUG 1
 //#define DISTRIB_THREAD_DEBUG 1
 //#define DISTRIB_DUMMYMSG_DEBUG 1
-#define DISTRIB_HISTORY_DEBUG
+//#define DISTRIB_HISTORY_DEBUG
 
 RSA *extractPublicKey(RsTlvSecurityKey &key);
 RSA *extractPrivateKey(RsTlvSecurityKey &key);
@@ -1221,8 +1221,8 @@ bool	p3GroupDistrib::loadGroup(RsDistribGrp *newGrp, bool historical)
 #ifdef DISTRIB_DEBUG
 	std::cerr << "p3GroupDistrib::loadGroup() Done";
 	std::cerr << std::endl;
-#endif
 	std::cerr << "ok: " << ok << std::endl;
+#endif
 	return ok;
 
 }
