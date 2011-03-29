@@ -671,7 +671,7 @@ p, li { white-space: pre-wrap; }
        </font>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="icon">
@@ -734,8 +734,8 @@ p, li { white-space: pre-wrap; }
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>596</width>
-             <height>101</height>
+             <width>598</width>
+             <height>99</height>
             </rect>
            </property>
           </widget>
