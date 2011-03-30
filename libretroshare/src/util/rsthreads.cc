@@ -27,6 +27,8 @@
 
 #include "rsthreads.h"
 #include <unistd.h>    /* for usleep() */
+#include <errno.h>    /* for usleep() */
+#include <iostream>
 
 /*******
  * #define DEBUG_THREADS 1
@@ -71,8 +73,12 @@ pthread_t  createThread(RsThread &thread)
       	pthread_create(&tid, &tattr, &rsthread_init, data);
 #endif
 
-      	pthread_create(&tid, 0, &rsthread_init, data);
-      	thread.mTid = tid;
+			int err ;
+
+			if( 0 == (err=pthread_create(&tid, 0, &rsthread_init, data))) 
+				thread.mTid = tid;
+			else
+				std::cerr << "Fatal error: pthread_create could not create a thread. Error returned: " << err << " !!!!!!!" << std::endl;
     }
     thread.mMutex.unlock();
 
