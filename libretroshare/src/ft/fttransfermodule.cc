@@ -401,15 +401,15 @@ bool ftTransferModule::queryInactive()
 		if (mFileStatus.stat == ftFileStatus::PQIFILE_INIT)
 			mFileStatus.stat = ftFileStatus::PQIFILE_DOWNLOADING;
 
-		if (mFileStatus.stat == ftFileStatus::PQIFILE_CHECKING)
-			return false ;
-
 		if (mFileStatus.stat != ftFileStatus::PQIFILE_DOWNLOADING)
 		{
 			if (mFileStatus.stat == ftFileStatus::PQIFILE_FAIL_CANCEL)
 				mFlag = FT_TM_FLAG_COMPLETE; //file canceled by user
 			return false;
 		}
+
+		if (mFileStatus.stat == ftFileStatus::PQIFILE_CHECKING)
+			return false ;
 
 		std::map<std::string,peerInfo>::iterator mit;
 		for(mit = mFileSources.begin(); mit != mFileSources.end(); mit++)
@@ -522,8 +522,14 @@ class HashThread: public RsThread
 
 		virtual void run()
 		{
+#ifdef FT_DEBUG
+			std::cerr << "hash thread is running for file " << std::endl;
+#endif
+			std::string tmphash ;
+			_m->hashReceivedData(tmphash) ;
+
 			RsStackMutex stack(_hashThreadMtx) ;
-			_m->hashReceivedData(_hash) ;
+			_hash = tmphash ;
 			_finished = true ;
 		}
 		std::string hash() 
@@ -574,6 +580,8 @@ bool ftTransferModule::checkFile()
 		}
 
 		std::string check_hash( _hash_thread->hash() ) ;
+
+		_hash_thread->join();	// allow releasing of resources when finished.
 
 		delete _hash_thread ;
 		_hash_thread = NULL ;
