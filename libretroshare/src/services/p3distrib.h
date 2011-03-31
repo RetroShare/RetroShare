@@ -342,6 +342,11 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 	private:
 
 		/*!
+		 * called when all historical caches have been loaded
+		 */
+		void HistoricalCachesLoaded();
+
+		/*!
 		 * This updates the cache document with pending msg and grp cache data
 		 */
 		void updateCacheDocument();
@@ -378,18 +383,16 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		bool locked_historyCached(const std::string& grpId, bool& cached);
 
 		/*!
-		 * @param id of grp msg belongs to
-		 * @param cache id of msg
-		 * @param on return this is false if msg has not been cached and vice versa
+		 * @param cache cache data id
 		 * @return false if cache entry does not exist in table
  		 */
-		bool locked_historyCached(const std::string& grpId, const pCacheId& cId, bool& cached);
+		bool locked_historyCached(const pCacheId& cId);
 
 		/*!
 		 * builds cache table from loaded cached document
 		 * @return false if cache document is empty
 		 */
-		bool buildCacheTable(void);
+		bool locked_buildCacheTable(void);
 
 		/*!
 		 * if grp's message is not loaded, load it, and update cache table
@@ -404,6 +407,16 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		 * @param cDataSet cache data belonging to grp is loaded into this list
 		 */
 		void locked_getHistoryCacheData(const std::string& grpId, std::list<CacheData>& cDataSet);
+
+		/*!
+		 * encrypts and saves cache file
+		 */
+		bool locked_saveHistoryCacheFile();
+
+		/*!
+		 * decrypte and save cache file
+		 */
+		bool locked_loadHistoryCacheFile();
 
 	private:
 
@@ -858,17 +871,19 @@ RsDistribDummyMsg *locked_getGroupDummyMsg(std::string grpId, std::string msgId)
 		time_t mLastKeyPublishTime, mLastRecvdKeyTime;
 
 		////////////// cache optimisation ////////////////
-
+		int mCount;
 		/// table containing new msg cache data to be added to xml doc ( grpid, (cid,pid) )
 		std::vector<grpCachePair> mGrpHistPending;
 
 		/// table containing new grp cache data to be added to xml doc (grpid, (cid,pid) )
 		std::vector<grpCachePair> mMsgHistPending;
 
+		std::set<pCacheId> mCachePairsInTable, mCacheFailedTable;
 
+		std::list<CacheDataPending> mPendingHistCaches;
 
 		time_t mLastCacheDocUpdate;
-		bool mUpdateCacheDoc;
+		bool mUpdateCacheDoc, mHistoricalCachesLoaded;
 
 		std::map<std::string, nodeCache> mCacheTable; // (cid, node)
 

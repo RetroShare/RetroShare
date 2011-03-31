@@ -34,6 +34,8 @@
 #include <openssl/evp.h>
 #include <openssl/rand.h>
 #include <algorithm>
+#include <sstream>
+#include <fstream>
 
 #include "retroshare/rsdistrib.h"
 #include "services/p3distrib.h"
@@ -46,6 +48,9 @@
 #include "pqi/sslfns.h"
 #include "pqi/authssl.h"
 #include "pqi/authgpg.h"
+
+#define FAILED_CACHE_CONT "failedcachegrp" // cache id which have failed are stored under a node of this name/grpid
+#define HIST_CACHE_FNAME "grp_history.xml"
 
 /*****
  * #define DISTRIB_DEBUG 1
@@ -62,6 +67,18 @@ RSA *extractPublicKey(RsTlvSecurityKey &key);
 RSA *extractPrivateKey(RsTlvSecurityKey &key);
 void 	setRSAPublicKey(RsTlvSecurityKey &key, RSA *rsa_pub);
 void 	setRSAPrivateKey(RsTlvSecurityKey &key, RSA *rsa_priv);
+
+// add one set to another while not replacing elements unique to left operand
+void operator+=(std::set<pCacheId>& left, const std::set<pCacheId>& right){
+
+	std::set<pCacheId>::const_iterator sit = right.begin();
+
+	for(; sit != right.end(); sit++)
+		left.insert(*sit);
+
+	return;
+}
+
 
 GroupInfo::~GroupInfo()
 {
@@ -93,7 +110,9 @@ p3GroupDistrib::p3GroupDistrib(uint16_t subtype,
 	/* force publication of groups (cleared if local cache file found) */
 	mGroupsRepublish = true;
 	mGroupsChanged = true;
+	mCount = 0;
 	mLastCacheDocUpdate  = time(NULL);
+	mHistoricalCachesLoaded = false;
 
         mOwnId = AuthSSL::getAuthSSL()->OwnId();
 
@@ -123,8 +142,8 @@ int	p3GroupDistrib::tick()
 
 	{
 		RsStackMutex stack(distribMtx);  /**** STACK LOCKED MUTEX ****/
-                toPublish = ((mPendingPublish.size() > 0) || (mPendingPubKeyRecipients.size() > 0)) && (now > (time_t) (mPubPeriod + mLastPublishTime));
 
+		toPublish = ((mPendingPublish.size() > 0) || (mPendingPubKeyRecipients.size() > 0)) && (now > (time_t) (mPubPeriod + mLastPublishTime));
 	}
 
 	if (toPublish)
@@ -181,15 +200,20 @@ int	p3GroupDistrib::tick()
 	bool updateCacheDoc = false;
 	{
 		RsStackMutex stack(distribMtx);
-		updateCacheDoc = (now > (time_t) (mLastCacheDocUpdate + 15));
-		updateCacheDoc &= !mHistoricalCaches && mUpdateCacheDoc;
+		updateCacheDoc = (now > (time_t) (mLastCacheDocUpdate + 30));
+		updateCacheDoc &= !mHistoricalCaches && mUpdateCacheDoc && mHistoricalCachesLoaded;
+#ifdef DISTRIB_HISTORY_DEBUG
+		std::cerr << "num pending grps: " << mGrpHistPending.size() << std::endl;
+		std::cerr << "num pending msgs: " << mMsgHistPending.size() << std::endl;
+		std::cerr << "num unique cache ids in table: " << mCachePairsInTable.size() << std::endl;
+#endif
 	}
 
-
-#ifdef ENABLE_CACHE_OPT
-	if(updateCacheDoc)
+	if(updateCacheDoc){
+		std::cerr << "count: " << mCount << std::endl;
 		updateCacheDocument();
-#endif
+
+	}
 
 	return 0;
 }
@@ -208,15 +232,22 @@ int    p3GroupDistrib::loadCache(const CacheData &data)
 	std::cerr << std::endl;
 #endif
 
+	if(mHistoricalCaches)
 	{
 		RsStackMutex stack(distribMtx);
-
 #ifdef DISTRIB_THREAD_DEBUG
-	std::cerr << "p3GroupDistrib::loadCache() Storing PendingRemoteCache";
+	std::cerr << "p3GroupDistrib::loadCache() Storing historical PendingRemoteCache";
 	std::cerr << std::endl;
 #endif
 		/* store the cache file for later processing */
-        	mPendingCaches.push_back(CacheDataPending(data, false, mHistoricalCaches));
+        mPendingHistCaches.push_back(CacheDataPending(data, false, mHistoricalCaches));
+	}else
+	{
+#ifdef DISTRIB_THREAD_DEBUG
+	std::cerr << "p3GroupDistrib::loadCache() Storing non historical PendingRemoteCache";
+	std::cerr << std::endl;
+#endif
+		mPendingCaches.push_back(CacheDataPending(data, false, mHistoricalCaches));
 	}
 
 	if (data.size > 0)
@@ -257,34 +288,6 @@ bool 	p3GroupDistrib::loadLocalCache(const CacheData &data)
 }
 
 
-bool p3GroupDistrib::loadCacheDoc(RsDistribConfigData& historyDoc)
-{
-
-	if((historyDoc.service_data.bin_len == 0) || (historyDoc.service_data.bin_data == NULL)){
-#ifdef DISTRIB_HISTORY_DEBUG
-		std::cerr << "p3GroupDistrib::loadCacheDoc" << "Failed to load cache doc!"
-				  << "\nNo Data!"
-				  << std::endl;
-#endif
-		return false;
-	}
-
-	RsStackMutex stack(distribMtx);
-
-	pugi::xml_parse_result result;
-	result = mCacheDoc.load_buffer_inplace_own(historyDoc.service_data.bin_data,
-			historyDoc.service_data.bin_len);
-
-	if(!result){
-#ifdef DISTRIB_HISTORY_DEBUG
-		std::cerr << "p3GroupDistrib::loadCacheDoc" << "Failed to load cache doc!"
-				  << std::endl;
-#endif
-		return false;
-	}
-
-	return true;
-}
 
 void p3GroupDistrib::updateCacheDocument()
 {
@@ -298,6 +301,18 @@ void p3GroupDistrib::updateCacheDocument()
 #endif
 
 	std::vector<grpNodePair> grpNodes;
+	std::string failedCacheId = FAILED_CACHE_CONT;
+
+	// failed cache content node is has not been created add to doc
+	if(mCacheTable.find(failedCacheId) == mCacheTable.end()){
+
+		mCacheDoc.append_child("group");
+		mCacheDoc.last_child().append_child("grpId").append_child(
+							pugi::node_pcdata).set_value(failedCacheId.c_str());
+
+		grpNodes.push_back(grpNodePair(failedCacheId, mCacheDoc.last_child()));
+	}
+
 	std::map<std::string, nodeCache>::iterator nodeCache_iter;
 
 	// for transforming int to string
@@ -369,7 +384,12 @@ void p3GroupDistrib::updateCacheDocument()
 
 	// now update document with new msg cache info
 	msgIt = mMsgHistPending.begin();
+	std::vector<grpCachePair> msgHistRestart;
 	pugi::xml_node messages_node;
+	pCacheId pCid;
+
+	int count = 0;
+	int count2 = 0, count3 = 0;
 
 	for(; msgIt != mMsgHistPending.end(); msgIt++)
 	{
@@ -378,6 +398,20 @@ void p3GroupDistrib::updateCacheDocument()
 		nodeCache_iter = mCacheTable.find(msgIt->first);
 
 		if(nodeCache_iter != mCacheTable.end()){
+
+			pCid = pCacheId(msgIt->second.first,
+					msgIt->second.second);
+
+			// ensure you don't add cache ids twice to same group
+//			// by checking cache table and current msg additions
+//			if(nodeCache_iter->second.cIdSet.find(pCid) !=
+//					nodeCache_iter->second.cIdSet.end())
+//				count2++;
+//
+//			if(msgCacheMap[msgIt->first].find(pCid) != msgCacheMap[msgIt->first].end())
+//				count3++;
+
+
 
 			nodeIter = nodeCache_iter->second.node;
 			messages_node = nodeIter.child("messages");
@@ -392,15 +426,14 @@ void p3GroupDistrib::updateCacheDocument()
 			messages_node.last_child().append_child("pId").append_child(
 								pugi::node_pcdata).set_value(msgIt->second.first
 										.c_str());
-
 			sprintf(subIdBuffer, "%d", msgIt->second.second);
 			subId = subIdBuffer;
 			messages_node.last_child().append_child("subId").append_child(
 								pugi::node_pcdata).set_value(subId.c_str());
 
 			// add msg to grp set
-			msgCacheMap[msgIt->first].insert(pCacheId(msgIt->second.first,
-					msgIt->second.second));
+			msgCacheMap[msgIt->first].insert(pCid);
+			count++;
 
 		}
 		else{
@@ -410,16 +443,34 @@ void p3GroupDistrib::updateCacheDocument()
 					  << "\nBut Parent group does not exists in cache table!"
 					  << std::endl;
 #endif
+			// remove from map but keep for later in case historical grp loads aren't done yet
 			msgCacheMap.erase(msgIt->first);
+			msgHistRestart.push_back(*msgIt);
 		}
 	}
+
+
 
 	// now update cache table by tagging msg cache ids to their
 	// respective groups
 	locked_updateCacheTableMsg(msgCacheMap);
 
-	// clear pending as updating finished
-	mMsgHistPending.clear();
+	// clear msg pending if all pending historical grps have been loaded
+	if(mHistoricalCachesLoaded && (mGrpHistPending.size() == 0)){
+
+#ifdef DISTRIB_HISTORY_DEBUG
+		std::cerr << "mMsgHistRestart() " << msgHistRestart.size() << std::endl;
+		std::cerr << "mMsgHistPending() " << mMsgHistPending.size() << std::endl;
+		std::cerr << "count: " << count << " " << count2 << " " << count3 << std::endl;
+#endif
+
+		mMsgHistPending.clear();
+	}
+	else // if not keep the messages for next round of loads
+	{
+		mMsgHistPending.clear();
+		mMsgHistPending = msgHistRestart;
+	}
 
 	// indicate latest update to reset tick observer
 	mLastCacheDocUpdate = time(NULL);
@@ -453,6 +504,7 @@ void p3GroupDistrib::locked_updateCacheTableMsg(const std::map<std::string, std:
 
 #ifdef DISTRIB_HISTORY_DEBUG
 		std::cerr << "p3GroupDistrib::locked_updateCacheTableMsg() "
+				  << "loading " << msgCacheMap.size() << " messages"
 			      << std::endl;
 #endif
 
@@ -471,9 +523,21 @@ void p3GroupDistrib::locked_updateCacheTableMsg(const std::map<std::string, std:
 	{
 		cit = mCacheTable.find(mit->first);
 
+#ifdef DISTRIB_HISTORY_DEBUG
+		std::cerr << "p3GroupDistrib::locked_updateCacheTableMsg() "
+				  << "\nAdding." << mit->second.size() <<  "to grp "
+				  << mit->first << std::endl;
+#endif
 		// add new cache ids to grp
 		if(cit != mCacheTable.end()){
-			cit->second.cIdSet = mit->second;
+			cit->second.cIdSet += mit->second;
+
+			// don't add failed caches to cache pairs in table
+			if(mit->first != FAILED_CACHE_CONT)
+				mCachePairsInTable += mit->second;
+			else
+				mCacheFailedTable += mit->second;
+
 		}else{
 #ifdef DISTRIB_HISTORY_DEBUG
 		std::cerr << "p3GroupDistrib::locked_updateCacheTableMsg() "
@@ -499,24 +563,19 @@ bool p3GroupDistrib::locked_historyCached(const std::string& grpId, bool& cached
 	return false;
 }
 
-bool p3GroupDistrib::locked_historyCached(const std::string& grpId, const pCacheId& cId, bool& cached)
+bool p3GroupDistrib::locked_historyCached(const pCacheId& cId)
 {
 
-	cached = false;
+	if(mCachePairsInTable.find(cId) != mCachePairsInTable.end())
+		return true;
 
-	std::map<std::string, nodeCache>::iterator cit;
-	if(mCacheTable.end() != (cit = mCacheTable.find(grpId)))
-	{
-		if(cit->second.cIdSet.find(cId) != cit->second.cIdSet.end()){
-			cached = cit->second.cached;
-			return true;
-		}
-	}
+	if(mCacheFailedTable.find(cId) != mCacheFailedTable.end())
+		return true;
 
 	return false;
 }
 
-bool p3GroupDistrib::buildCacheTable(){
+bool p3GroupDistrib::locked_buildCacheTable(){
 
 #ifdef DISTRIB_HISTORY_DEBUG
 	std::cerr << "p3GroupDistrib::buildCacheTable()"
@@ -534,6 +593,7 @@ bool p3GroupDistrib::buildCacheTable(){
 	pugi::xml_node_iterator grpIt = mCacheDoc.begin(), msgIt;
 	pugi::xml_node messages_node;
 	std::map<std::string, std::set<pCacheId> > msgCacheMap;
+
 	std::vector<grpNodePair> grpNodes;
 
 
@@ -545,7 +605,7 @@ bool p3GroupDistrib::buildCacheTable(){
 
 		grpId = grpIt->child_value("grpId");
 		// add grps to grp node list
-		grpNodes.push_back(grpNodePair(grpId, mCacheDoc.last_child()/*(*grpIt)*/));
+		grpNodes.push_back(grpNodePair(grpId, *grpIt));
 		messages_node = grpIt->child("messages");
 
 		if(messages_node){
@@ -696,6 +756,80 @@ void p3GroupDistrib::locked_getHistoryCacheData(const std::string& grpId, std::l
 	return;
 }
 
+
+bool p3GroupDistrib::locked_loadHistoryCacheFile()
+{
+	std::string hFileName = mKeyBackUpDir + "/" + HIST_CACHE_FNAME;
+	std::ifstream hFile(hFileName.c_str());
+	int fileLength;
+	char* fileLoadBuffer;
+	char* decryptedCacheFile;
+	int outlen = 0;
+	bool ok = false;
+	hFile.seekg(0, std::ios::end);
+	fileLength = hFile.tellg();
+	hFile.seekg(0, std::ios::beg);
+
+	if(fileLength <= 0)
+		return false;
+
+	fileLoadBuffer = new char[fileLength];
+	hFile.read(fileLoadBuffer, fileLength);
+	hFile.close();
+
+	ok = AuthSSL::getAuthSSL()->decrypt((void*&)decryptedCacheFile, outlen,
+			fileLoadBuffer, fileLength);
+
+	char* buffer = static_cast<char*>(pugi::get_memory_allocation_function()(outlen));
+
+	memcpy(buffer, decryptedCacheFile, outlen);
+
+
+	ok &= mCacheDoc.load_buffer_inplace_own(buffer, outlen);
+
+	delete[] fileLoadBuffer;
+	delete[] decryptedCacheFile;
+
+	return ok;
+}
+
+bool p3GroupDistrib::locked_saveHistoryCacheFile()
+{
+
+	std::cout << mCacheDoc.last_child().value();
+	if(mCacheDoc.empty())
+		return false;
+
+	std::string hFileName = mKeyBackUpDir + "/" + HIST_CACHE_FNAME;
+	std::ofstream hFile(hFileName.c_str());
+	std::ostringstream cacheStream;
+	char* fileBuffer = NULL;
+	int streamLength;
+	char* encryptedFileBuffer = NULL;
+	int outlen = 0;
+	bool ok = false;
+
+	mCacheDoc.save(cacheStream);
+	streamLength = cacheStream.str().length();
+	std::string cacheContent = cacheStream.str();
+	fileBuffer = new char[cacheContent.size()];
+	cacheContent.copy(fileBuffer, cacheContent.size(), 0);
+
+	ok = AuthSSL::getAuthSSL()->encrypt((void*&)encryptedFileBuffer, outlen,
+			(void*&)fileBuffer, streamLength, mOwnId);
+
+	hFile.write(encryptedFileBuffer, outlen);
+	hFile.close();
+
+	if(fileBuffer)
+		delete[] fileBuffer;
+
+	if(encryptedFileBuffer)
+		delete[] encryptedFileBuffer;
+
+	return ok;
+}
+
 /* Handle the Cache Pending Setup */
 CacheDataPending::CacheDataPending(const CacheData &data, bool local, bool historical)
 	:mData(data), mLocal(local), mHistorical(historical)
@@ -707,6 +841,12 @@ void p3GroupDistrib::HistoricalCachesDone()
 {
 	RsStackMutex stack(distribMtx);
 	mHistoricalCaches = false; // called when Stored Caches have been added to Pending List.
+}
+
+void p3GroupDistrib::HistoricalCachesLoaded()
+{
+	RsStackMutex stack(distribMtx);
+	mHistoricalCachesLoaded = true;
 }
 
                 /* From RsThread */
@@ -721,18 +861,31 @@ void p3GroupDistrib::run() /* called once the thread is started */
 #ifdef DISTRIB_DUMMYMSG_DEBUG
 	int printed = 0;
 #endif
-
+	CacheData cache;
 	while(1)
 	{
 		/* */
-		CacheData cache;
+
 		bool validCache = false;
 		bool isLocal = false;
 		bool isHistorical = false;
 		{
-			RsStackMutex stack(distribMtx);
+		RsStackMutex stack(distribMtx);
+		if(!mHistoricalCaches){
 
-			if (mPendingCaches.size() > 0)
+
+			if(mPendingHistCaches.size() > 0){
+
+//				std::cerr << "loaded pending caches: " <<  mPendingHistCaches.size() << std::endl;
+				CacheDataPending &pendingCache = mPendingHistCaches.front();
+				cache = pendingCache.mData;
+				isLocal = pendingCache.mLocal;
+				isHistorical = pendingCache.mHistorical;
+
+				validCache = true;
+				mPendingHistCaches.pop_front();
+			}
+			else if (mPendingCaches.size() > 0)
 			{
 				CacheDataPending &pendingCache = mPendingCaches.front();
 				cache = pendingCache.mData;
@@ -749,10 +902,15 @@ void p3GroupDistrib::run() /* called once the thread is started */
 
 			}
 		}
-
+		}
 		if (validCache)
 		{
 			loadAnyCache(cache, isLocal, isHistorical);
+
+			if(!mHistoricalCachesLoaded){
+				if(mPendingHistCaches.size() == 0)
+					HistoricalCachesLoaded();
+			}
 
 #ifndef WINDOWS_SYS
 			usleep(1000);
@@ -800,7 +958,6 @@ int     p3GroupDistrib::loadAnyCache(const CacheData &data, bool local, bool his
 	std::cerr << "Cid: " << data.cid.type << ":" << data.cid.subid << std::endl;
 #endif
 
-	// if its historical then don't load if xml doc exists
 		if (data.cid.subid == 1)
 		{
 
@@ -900,7 +1057,6 @@ void	p3GroupDistrib::loadFileGroups(const std::string &filename, const std::stri
 	return;
 }
 
-
 void	p3GroupDistrib::loadFileMsgs(const std::string &filename, uint16_t cacheSubId, const std::string &src, uint32_t ts, bool local, bool historical)
 {
 
@@ -910,9 +1066,25 @@ void	p3GroupDistrib::loadFileMsgs(const std::string &filename, uint16_t cacheSub
 #endif
 
 	time_t now = time(NULL);
-	//time_t start = now;
-	//time_t end   = 0;
+	bool cache = false;
 
+	// if cache id exists in cache table exit
+	{
+		RsStackMutex stack(distribMtx);
+
+		if(locked_historyCached(pCacheId(src, cacheSubId))){
+			return;
+		}
+		else
+		{
+			cache = true;
+		}
+	}
+
+	// link grp to cache id (only one cache id, so doesn't matter if one grp comes out twice
+	// with same cache id)
+	std::map<std::string, pCacheId> msgCacheMap;
+	pCacheId failedCache = pCacheId(src, cacheSubId);
 	/* create the serialiser to load msgs */
 	BinInterface *bio = new BinFileInterface(filename.c_str(), BIN_FLAGS_READABLE);
 	pqistore *store = createStore(bio, src, BIN_FLAGS_READABLE);
@@ -923,6 +1095,9 @@ void	p3GroupDistrib::loadFileMsgs(const std::string &filename, uint16_t cacheSub
 
 	RsItem *item;
 	RsDistribSignedMsg *newMsg;
+	std::string grpId;
+
+
 
 	while(NULL != (item = store->GetItem()))
 	{
@@ -935,32 +1110,14 @@ void	p3GroupDistrib::loadFileMsgs(const std::string &filename, uint16_t cacheSub
 
 		if ((newMsg = dynamic_cast<RsDistribSignedMsg *>(item)))
 		{
-			std::string grpId = newMsg->grpId;
-			bool cached = false;
-			pCacheId cId(src, cacheSubId);
-
-			RsStackMutex stack(distribMtx);
-			// if msg cache not present in table then load immediately
-			if(!locked_historyCached(newMsg->grpId, cId, cached) || !historical){
-
-#ifdef DISTRIB_HISTORY_DEBUG
-				std::cerr << "p3GroupDistrib::loadFileMsgs()"
-						  << "\nNo msg cache not present, loading"
-						  << std::endl;
-#endif
-
-				if(locked_loadMsg(newMsg, src, local, historical)){
-
-					mMsgHistPending.push_back(grpCachePair(grpId, cId));
-					mUpdateCacheDoc = true;
-				}
-			}else
+			grpId = newMsg->grpId;
+			if(loadMsg(newMsg, src, local, historical))
 			{
-#ifdef DISTRIB_HISTORY_DEBUG
-				std::cerr << "p3GroupDistrib::loadFileMsgs()"
-						  << "\nNo msg cache present, not loading"
-						  << std::endl;
-#endif
+
+				if(cache)
+				{
+					msgCacheMap.insert(grpCachePair(grpId, pCacheId(src, cacheSubId)));
+				}
 			}
 
 		}
@@ -974,6 +1131,29 @@ void	p3GroupDistrib::loadFileMsgs(const std::string &filename, uint16_t cacheSub
 			delete item;
 		}
 	}
+
+	std::map<std::string, pCacheId>::iterator mit;
+
+	if(cache){
+
+		RsStackMutex stack(distribMtx);
+
+		mit = msgCacheMap.begin();
+		for(;mit != msgCacheMap.end(); mit++)
+		{
+			mMsgHistPending.push_back(grpCachePair(mit->first, mit->second));
+		}
+		mUpdateCacheDoc = true;
+		if(!msgCacheMap.empty())
+		mCount++;
+
+		std::string failedCacheId = FAILED_CACHE_CONT;
+
+		// if msg cache map is empty then cache id failed
+		if(msgCacheMap.empty())
+			mMsgHistPending.push_back(grpCachePair(failedCacheId, failedCache));
+	}
+
 
 
 	if (local)
@@ -1012,6 +1192,7 @@ void	p3GroupDistrib::loadFileMsgs(const std::string &filename, uint16_t cacheSub
 	return;
 }
 
+//TODO make carbon copy of sister
 void	p3GroupDistrib::locked_loadFileMsgs(const std::string &filename, uint16_t cacheSubId, const std::string &src, uint32_t ts, bool local, bool historical)
 {
 
@@ -1046,16 +1227,7 @@ void	p3GroupDistrib::locked_loadFileMsgs(const std::string &filename, uint16_t c
 
 		if ((newMsg = dynamic_cast<RsDistribSignedMsg *>(item)))
 		{
-			std::string grpId = newMsg->grpId;
-			bool cached = false;
-			pCacheId cId(src, cacheSubId);
-			// if msg cache not present in table or not historical then load immediately
-			if(!locked_historyCached(newMsg->grpId, cId, cached) || !historical){
-
-				locked_loadMsg(newMsg, src, local, historical);
-
-			}
-
+			locked_loadMsg(newMsg, src, local, historical);
 		}
 		else
 		{
@@ -2050,6 +2222,8 @@ bool p3GroupDistrib::getAllMsgList(std::string grpId, std::list<std::string> &ms
 
 	RsStackMutex stack(distribMtx); /*************  STACK MUTEX ************/
 
+	locked_processHistoryCached(grpId);
+
 	std::map<std::string, GroupInfo>::iterator git;
 	if (mGroups.end() == (git = mGroups.find(grpId)))
 	{
@@ -2070,6 +2244,9 @@ bool p3GroupDistrib::getParentMsgList(std::string grpId, std::string pId,
 						std::list<std::string> &msgIds)
 {
 	RsStackMutex stack(distribMtx); /*************  STACK MUTEX ************/
+
+	locked_processHistoryCached(grpId);
+
 	std::map<std::string, GroupInfo>::iterator git;
 	if (mGroups.end() == (git = mGroups.find(grpId)))
 	{
@@ -2114,10 +2291,6 @@ bool p3GroupDistrib::getTimePeriodMsgList(std::string grpId, uint32_t timeMin,
 
 GroupInfo *p3GroupDistrib::locked_getGroupInfo(std::string grpId)
 {
-#ifdef ENABLE_CACHE_OPT
-	locked_processHistoryCached(grpId);
-#endif
-
 	/************* ALREADY LOCKED ************/
 	std::map<std::string, GroupInfo>::iterator git;
 	if (mGroups.end() == (git = mGroups.find(grpId)))
@@ -2132,6 +2305,8 @@ RsDistribMsg *p3GroupDistrib::locked_getGroupMsg(std::string grpId, std::string 
 {
 
 	/************* ALREADY LOCKED ************/
+
+	locked_processHistoryCached(grpId);
 
 	std::map<std::string, GroupInfo>::iterator git;
 	if (mGroups.end() == (git = mGroups.find(grpId)))
@@ -2440,12 +2615,10 @@ bool p3GroupDistrib::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	}
 
 	delete childSer;
-	std::string histCacheFile = mKeyBackUpDir + "/" + "grp_history.xml";
+
 	// now save hostory doc
 
-#ifdef ENABLE_CACHE_OPT
-	mCacheDoc.save_file(histCacheFile.c_str());
-#endif
+	locked_saveHistoryCacheFile();
 
 	return true;
 }
@@ -2481,6 +2654,7 @@ bool    p3GroupDistrib::loadList(std::list<RsItem *>& load)
 		RsDistribGrpKey *newKey = NULL;
 		RsDistribSignedMsg *newMsg = NULL;
 		RsDistribConfigData* newChildConfig = NULL;
+
 
 		if ((newGrp = dynamic_cast<RsDistribGrp *>(*lit)))
 		{
@@ -2527,11 +2701,10 @@ bool    p3GroupDistrib::loadList(std::list<RsItem *>& load)
 
 	mGroupsRepublish = false;
 	delete childSer;
-	std::string histCacheFile = mKeyBackUpDir + "/" + "grp_history.xml";
 
 #ifdef ENABLE_CACHE_OPT
-	mCacheDoc.load_file(histCacheFile.c_str());
-	buildCacheTable();
+	if(locked_loadHistoryCacheFile())
+		locked_buildCacheTable();
 #endif
 
 	return true;
@@ -4820,11 +4993,15 @@ bool p3GroupDistrib::locked_printDummyMsgs(GroupInfo &grp)
 
 bool p3GroupDistrib::getDummyParentMsgList(std::string grpId, std::string pId, std::list<std::string> &msgIds)
 {
+
 #ifdef DISTRIB_DUMMYMSG_DEBUG
 	std::cerr << "p3GroupDistrib::getDummyParentMsgList(grpId:" << grpId << "," << pId << ")";
 	std::cerr << std::endl;
 #endif
 	RsStackMutex stack(distribMtx); /*************  STACK MUTEX ************/
+
+	// load grp from history cache if not already loaded
+	locked_processHistoryCached(grpId);
 	std::map<std::string, GroupInfo>::iterator git;
 	if (mGroups.end() == (git = mGroups.find(grpId)))
 	{
@@ -4855,6 +5032,8 @@ bool p3GroupDistrib::getDummyParentMsgList(std::string grpId, std::string pId, s
 
 RsDistribDummyMsg *p3GroupDistrib::locked_getGroupDummyMsg(std::string grpId, std::string msgId)
 {
+
+	locked_processHistoryCached(grpId);
 #ifdef DISTRIB_DUMMYMSG_DEBUG
 	std::cerr << "p3GroupDistrib::locked_getGroupDummyMsg(grpId:" << grpId << "," << msgId << ")";
 	std::cerr << std::endl;
