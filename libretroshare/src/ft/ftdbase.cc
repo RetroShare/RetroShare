@@ -320,7 +320,7 @@ bool    ftFiMonitor::loadList(std::list<RsItem *>& load)
 
 			if(configMap.end() != (mit = configMap.find(watch_file_duration_ss)))
 			{
-				uint32_t t=0 ;
+				int t=0 ;
 				if(sscanf(mit->second.c_str(),"%d",&t) == 1)
 					setWatchPeriod(t);
 			}
