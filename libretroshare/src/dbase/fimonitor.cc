@@ -450,7 +450,7 @@ bool FileIndexMonitor::updateCache(const CacheData &data)  /* we call this one *
 }
 
 
-uint32_t	FileIndexMonitor::getPeriod() const
+int	FileIndexMonitor::getPeriod() const
 {
 //#ifdef FIM_DEBUG
 	std::cerr << "FileIndexMonitor::setPeriod() getting watch period" << std::endl;
@@ -459,7 +459,7 @@ uint32_t	FileIndexMonitor::getPeriod() const
 	return updatePeriod ;
 }
 
-void 	FileIndexMonitor::setPeriod(uint32_t period)
+void 	FileIndexMonitor::setPeriod(int period)
 {
 	RsStackMutex mtx(fiMutex) ; /* LOCKED DIRS */
 	updatePeriod = period;

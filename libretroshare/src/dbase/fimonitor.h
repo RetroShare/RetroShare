@@ -156,8 +156,8 @@ class FileIndexMonitor: public CacheSource, public RsThread
 		bool rememberHashFiles() ;
 		// Remove any memory of formerly hashed files that are not shared anymore
 		void   clearHashFiles() ;
-		void   setPeriod(uint32_t insecs);
-		uint32_t  getPeriod() const;
+		void   setPeriod(int insecs);
+		int  getPeriod() const;
 
 		bool autoCheckEnabled() const ;
 
