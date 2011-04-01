@@ -34,33 +34,21 @@ static const uint32_t IND_LAST_WEEK   = 3600*24*7 ;
 static const uint32_t IND_LAST_MONTH  = 3600*24*31	; // I know, this is approximate
 static const uint32_t IND_ALWAYS      = ~(uint32_t)0 ;
 
-class RemoteDirModel : public QAbstractItemModel
+class RetroshareDirModel : public QAbstractItemModel
 {
 	Q_OBJECT
 
 	public:
 		enum Roles{ FileNameRole = Qt::UserRole+1, SortRole = Qt::UserRole+2 };
 
-		RemoteDirModel(bool mode, QObject *parent = 0);
-
-		/* These are all overloaded Virtual Functions */
-		int rowCount(const QModelIndex &parent = QModelIndex()) const;
-		int columnCount(const QModelIndex &parent = QModelIndex()) const;
-
-		QVariant data(const QModelIndex &index, int role) const;
-		QVariant headerData(int section, Qt::Orientation orientation,
-				int role = Qt::DisplayRole) const;
-
-		QModelIndex index(int row, int column,
-				const QModelIndex & parent = QModelIndex() ) const;
-		QModelIndex parent ( const QModelIndex & index ) const;
+		RetroshareDirModel(bool mode, QObject *parent = 0);
+		virtual ~RetroshareDirModel() {}
 
 		Qt::ItemFlags flags ( const QModelIndex & index ) const;
-		bool hasChildren(const QModelIndex & parent = QModelIndex()) const;
 
 		/* Callback from Core */
-		void preMods();
-		void postMods();
+		virtual void preMods();
+		virtual void postMods();
 
 		/* Callback from GUI */
 		void downloadSelected(const QModelIndexList &list);
@@ -68,35 +56,28 @@ class RemoteDirModel : public QAbstractItemModel
 		void getDirDetailsFromSelect (const QModelIndexList &list, std::vector <DirDetails>& dirVec);
 
 		int getType ( const QModelIndex & index ) const ;
-		//void openFile(QModelIndex fileIndex, const QString command);
-
 		void getFileInfoFromIndexList(const QModelIndexList& list, std::list<DirDetails>& files_info) ;
-
 		void openSelected(const QModelIndexList &list);
-
 		void getFilePaths(const QModelIndexList &list, std::list<std::string> &fullpaths);
-
 		void changeAgeIndicator(uint32_t indicator) { ageIndicator = indicator; }
 
-
-		public slots:
-
-//			void collapsed ( const QModelIndex & index ) { update(index); }
-//		void expanded ( const QModelIndex & index ) { update(index); }
-
-		/* Drag and Drop Functionality */
 	public:
 
 		virtual QMimeData * mimeData ( const QModelIndexList & indexes ) const;
 		virtual QStringList mimeTypes () const;
+		virtual QVariant data(const QModelIndex &index, int role) const;
 
-	private:
-//		void update (const QModelIndex &index );
+	protected:
 		void treeStyle();
 		void downloadDirectory(const DirDetails & details, int prefixLen);
 		static QString getFlagsString(uint32_t) ;
 		QString getAgeIndicatorString(const DirDetails &) const;
 		void getAgeIndicatorRec(DirDetails &details, QString &ret) const;
+
+		virtual QVariant displayRole(const DirDetails&,int) const = 0 ;
+
+		QVariant decorationRole(const DirDetails&,int) const ;
+		QVariant sortRole(const DirDetails&,int) const ;
 
 		uint32_t ageIndicator;
 
@@ -145,5 +126,63 @@ class RemoteDirModel : public QAbstractItemModel
 		mutable std::vector<RemoteIndex> indexSet;
 
 };
+
+// This class shows the classical hierarchical directory view of shared files
+// Columns are:
+// 	file name     |    Size      |   Age
+//
+class TreeStyle_RDM: public RetroshareDirModel
+{
+	public:
+		TreeStyle_RDM(bool mode)
+			: RetroshareDirModel(mode)
+		{
+		}
+
+		virtual ~TreeStyle_RDM() ;
+
+	protected:
+		/* These are all overloaded Virtual Functions */
+		virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
+		virtual int columnCount(const QModelIndex &parent = QModelIndex()) const;
+
+		virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+		virtual QVariant displayRole(const DirDetails&,int) const ;
+
+		virtual QModelIndex index(int row, int column, const QModelIndex & parent = QModelIndex() ) const;
+		virtual QModelIndex parent ( const QModelIndex & index ) const;
+		virtual bool hasChildren(const QModelIndex & parent = QModelIndex()) const;
+};
+
+// This class shows a flat list of all shared files
+// Columns are:
+// 	file name     |    Owner    |    Size      |   Age
+//
+class FlatStyle_RDM: public RetroshareDirModel
+{
+	public:
+		FlatStyle_RDM(bool mode)
+			: RetroshareDirModel(mode)
+		{
+		}
+
+		virtual ~FlatStyle_RDM() ;
+
+	protected:
+		virtual void postMods();
+
+		virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
+		virtual int columnCount(const QModelIndex &parent = QModelIndex()) const;
+
+		virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+		virtual QVariant displayRole(const DirDetails&,int) const ;
+
+		virtual QModelIndex index(int row, int column, const QModelIndex & parent = QModelIndex() ) const;
+		virtual QModelIndex parent ( const QModelIndex & index ) const;
+		virtual bool hasChildren(const QModelIndex & parent = QModelIndex()) const;
+
+		std::vector<void *> _ref_entries ;
+};
+
 
 #endif

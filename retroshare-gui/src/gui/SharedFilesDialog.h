@@ -25,7 +25,7 @@
 #include "RsAutoUpdatePage.h"
 #include "ui_SharedFilesDialog.h"
 
-class RemoteDirModel;
+class RetroshareDirModel;
 class QSortFilterProxyModel;
 
 class SharedFilesDialog : public RsAutoUpdatePage
@@ -87,6 +87,8 @@ private slots:
   void clearFilter();
   void startFilter();
 
+  public slots:
+	  void changeCurrentViewModel(int) ;
 signals:
   void playFiles(QStringList files);
 
@@ -103,7 +105,8 @@ private:
   void copyLink (const QModelIndexList& lst, bool remote);
 
   void FilterItems();
-  bool FilterItem(const QModelIndex &index, const QString &text, int level);
+  bool tree_FilterItem(const QModelIndex &index, const QString &text, int level);
+  bool flat_FilterItem(const QModelIndex &index, const QString &text, int level);
 
   QModelIndexList getRemoteSelected();
   QModelIndexList getLocalSelected();
@@ -125,10 +128,15 @@ private:
   /** Qt Designer generated object */
   Ui::SharedFilesDialog ui;
 
-  /* RemoteDirModel */
-  RemoteDirModel *model;
+  /* RetroshareDirModel */
+  RetroshareDirModel *tree_model;
+  RetroshareDirModel *flat_model;
+  RetroshareDirModel *model;
+  QSortFilterProxyModel *tree_proxyModel;
+  QSortFilterProxyModel *flat_proxyModel;
   QSortFilterProxyModel *proxyModel;
-  RemoteDirModel *localModel;
+
+  RetroshareDirModel *localModel;
   QSortFilterProxyModel *localProxyModel;
 
   QString currentCommand;

@@ -28,6 +28,7 @@
 #include "RemoteDirModel.h"
 #include <retroshare/rsfiles.h>
 #include <retroshare/rstypes.h>
+#include <retroshare/rspeers.h>
 #include "util/misc.h"
 
 #include <set>
@@ -38,7 +39,7 @@
  * #define RDM_DEBUG
  ****/
 
-RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
+RetroshareDirModel::RetroshareDirModel(bool mode, QObject *parent)
         : QAbstractItemModel(parent),
          ageIndicator(IND_ALWAYS),
          RemoteMode(mode), nIndex(1), indexSet(1) /* ass zero index cant be used */
@@ -47,7 +48,7 @@ RemoteDirModel::RemoteDirModel(bool mode, QObject *parent)
 	treeStyle();
 }
 
-void RemoteDirModel::treeStyle()
+void RetroshareDirModel::treeStyle()
 {
 	categoryIcon.addPixmap(QPixmap(":/images/folder16.png"),
 	                     QIcon::Normal, QIcon::Off);
@@ -56,105 +57,136 @@ void RemoteDirModel::treeStyle()
 	peerIcon = QIcon(":/images/user/identity16.png");
 }
 
- bool RemoteDirModel::hasChildren(const QModelIndex &parent) const
- {
+bool TreeStyle_RDM::hasChildren(const QModelIndex &parent) const
+{
 
 #ifdef RDM_DEBUG
-     std::cerr << "RemoteDirModel::hasChildren() :" << parent.internalPointer();
-     std::cerr << ": ";
+	std::cerr << "RetroshareDirModel::hasChildren() :" << parent.internalPointer();
+	std::cerr << ": ";
 #endif
 
-     if (!parent.isValid())
-     {
+	if (!parent.isValid())
+	{
 #ifdef RDM_DEBUG
-        std::cerr << "root -> true ";
-     	std::cerr << std::endl;
+		std::cerr << "root -> true ";
+		std::cerr << std::endl;
 #endif
-     	return true;
-     }
+		return true;
+	}
 
-     void *ref = parent.internalPointer();
+	void *ref = parent.internalPointer();
 
-     DirDetails details;
-     uint32_t flags = DIR_FLAGS_CHILDREN;
-     if (RemoteMode)
-     	flags |= DIR_FLAGS_REMOTE;
-     else
-     	flags |= DIR_FLAGS_LOCAL;
+	DirDetails details;
+	uint32_t flags = DIR_FLAGS_CHILDREN;
+	if (RemoteMode)
+		flags |= DIR_FLAGS_REMOTE;
+	else
+		flags |= DIR_FLAGS_LOCAL;
 
-     if (!rsFiles->RequestDirDetails(ref, details, flags))
-     {
-     	/* error */
+	if (!rsFiles->RequestDirDetails(ref, details, flags))
+	{
+		/* error */
 #ifdef RDM_DEBUG
-        std::cerr << "lookup failed -> false";
-     	std::cerr << std::endl;
+		std::cerr << "lookup failed -> false";
+		std::cerr << std::endl;
 #endif
-     	return false;
-     }
+		return false;
+	}
 
-     if (details.type == DIR_TYPE_FILE)
-     {
+	if (details.type == DIR_TYPE_FILE)
+	{
 #ifdef RDM_DEBUG
-        std::cerr << "lookup FILE -> false";
-     	std::cerr << std::endl;
+		std::cerr << "lookup FILE -> false";
+		std::cerr << std::endl;
 #endif
-        return false;
-     }
-     /* PERSON/DIR*/
+		return false;
+	}
+	/* PERSON/DIR*/
 #ifdef RDM_DEBUG
-     std::cerr << "lookup PER/DIR #" << details.count;
-     std::cerr << std::endl;
+	std::cerr << "lookup PER/DIR #" << details.count;
+	std::cerr << std::endl;
 #endif
-     return (details.count > 0); /* do we have children? */
- }
+	return (details.count > 0); /* do we have children? */
+}
+bool FlatStyle_RDM::hasChildren(const QModelIndex &parent) const
+{
 
-
- int RemoteDirModel::rowCount(const QModelIndex &parent) const
- {
 #ifdef RDM_DEBUG
-     std::cerr << "RemoteDirModel::rowCount(): " << parent.internalPointer();
-     std::cerr << ": ";
+	std::cerr << "RetroshareDirModel::hasChildren() :" << parent.internalPointer();
+	std::cerr << ": ";
 #endif
 
-     void *ref = (parent.isValid())? parent.internalPointer() : NULL ;
-
-     DirDetails details;
-     uint32_t flags = DIR_FLAGS_CHILDREN;
-     if (RemoteMode)
-     	flags |= DIR_FLAGS_REMOTE;
-     else
-     	flags |= DIR_FLAGS_LOCAL;
-
-     if (!rsFiles->RequestDirDetails(ref, details, flags))
-     {
+	if (!parent.isValid())
+	{
 #ifdef RDM_DEBUG
-        std::cerr << "lookup failed -> 0";
-     	std::cerr << std::endl;
+		std::cerr << "root -> true ";
+		std::cerr << std::endl;
 #endif
-     	return 0;
-     }
-     if (details.type == DIR_TYPE_FILE)
-     {
-#ifdef RDM_DEBUG
-        std::cerr << "lookup FILE: 0";
-        std::cerr << std::endl;
-#endif
-     	return 0;
-     }
+		return true;
+	}
+	else
+		return false ;
+}
 
-     /* else PERSON/DIR*/
+int TreeStyle_RDM::rowCount(const QModelIndex &parent) const
+{
 #ifdef RDM_DEBUG
-     std::cerr << "lookup PER/DIR #" << details.count;
-     std::cerr << std::endl;
+	std::cerr << "RetroshareDirModel::rowCount(): " << parent.internalPointer();
+	std::cerr << ": ";
 #endif
-     return details.count;
- }
 
- int RemoteDirModel::columnCount(const QModelIndex &parent) const
- {
+	void *ref = (parent.isValid())? parent.internalPointer() : NULL ;
+
+	DirDetails details;
+	uint32_t flags = DIR_FLAGS_CHILDREN;
+	if (RemoteMode)
+		flags |= DIR_FLAGS_REMOTE;
+	else
+		flags |= DIR_FLAGS_LOCAL;
+
+	if (!rsFiles->RequestDirDetails(ref, details, flags))
+	{
+#ifdef RDM_DEBUG
+		std::cerr << "lookup failed -> 0";
+		std::cerr << std::endl;
+#endif
+		return 0;
+	}
+	if (details.type == DIR_TYPE_FILE)
+	{
+#ifdef RDM_DEBUG
+		std::cerr << "lookup FILE: 0";
+		std::cerr << std::endl;
+#endif
+		return 0;
+	}
+
+	/* else PERSON/DIR*/
+#ifdef RDM_DEBUG
+	std::cerr << "lookup PER/DIR #" << details.count;
+	std::cerr << std::endl;
+#endif
+	return details.count;
+}
+
+int FlatStyle_RDM::rowCount(const QModelIndex &parent) const
+{
+#ifdef RDM_DEBUG
+	std::cerr << "RetroshareDirModel::rowCount(): " << parent.internalPointer();
+	std::cerr << ": ";
+#endif
+
+	return _ref_entries.size() ;
+}
+int TreeStyle_RDM::columnCount(const QModelIndex &parent) const
+{
 	return 5;
- }
-QString RemoteDirModel::getFlagsString(uint32_t flags)
+}
+int FlatStyle_RDM::columnCount(const QModelIndex &parent) const
+{
+	return 5;
+}
+QString RetroshareDirModel::getFlagsString(uint32_t flags)
 {
 	switch(flags & (DIR_FLAGS_NETWORK_WIDE|DIR_FLAGS_BROWSABLE))
 	{
@@ -166,7 +198,7 @@ QString RemoteDirModel::getFlagsString(uint32_t flags)
 	}
 }
 
-QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
+QString RetroshareDirModel::getAgeIndicatorString(const DirDetails &details) const
 {
 	QString ret("");
 	QString nind = tr("NEW");
@@ -195,195 +227,78 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
 	return ret;
 }
 
- QVariant RemoteDirModel::data(const QModelIndex &index, int role) const
- {
-#ifdef RDM_DEBUG
-     std::cerr << "RemoteDirModel::data(): " << index.internalPointer();
-     std::cerr << ": ";
-     std::cerr << std::endl;
-#endif
+QVariant RetroshareDirModel::decorationRole(const DirDetails& details,int coln) const
+{
+	if(coln > 0)
+		return QVariant() ;
 
-     if (!index.isValid())
-         return QVariant();
-
-     /* get the data from the index */
-     void *ref = index.internalPointer();
-     int coln = index.column();
-
-     DirDetails details;
-     uint32_t flags = DIR_FLAGS_DETAILS;
-     if (RemoteMode)
-     	flags |= DIR_FLAGS_REMOTE;
-     else
-     	flags |= DIR_FLAGS_LOCAL;
-
-
-     if (!rsFiles->RequestDirDetails(ref, details, flags))
-     {
-     	return QVariant();
-     }
-
-    if (role == RemoteDirModel::FileNameRole)
-    {
-        return QString::fromUtf8(details.name.c_str());
-    } /* end of FileNameRole */
-
-    if (role == Qt::TextColorRole)
-    {
-        if(details.min_age > ageIndicator)
-            return Qt::gray ;
-        else
-            return Qt::black ;
-    } /* end of TextColorRole */
-
-
-    if (role == Qt::DecorationRole)
-    {
-        if (details.type == DIR_TYPE_PERSON)
-        {
-            switch(coln)
-            {
-                case 0:
-                if(details.min_age > ageIndicator)
-                {
-                    return QIcon(":/images/folder_grey.png");
-                }
-                else if (ageIndicator == IND_LAST_DAY )
-                {
-                    return QIcon(":/images/folder_green.png");
-                }
-                else if (ageIndicator == IND_LAST_WEEK )
-                {
-                    return QIcon(":/images/folder_yellow.png");
-                }
-                else if (ageIndicator == IND_LAST_MONTH )
-                {
-                    return QIcon(":/images/folder_red.png");
-                }
-                else
-                {
-                    return (QIcon(peerIcon));
-                }
-                break;
-			 }
-		 }
-		 else if (details.type == DIR_TYPE_DIR)
-		 {
-            switch(coln)
-            {
-                case 0:
-                if(details.min_age > ageIndicator)
-                {
-                    return QIcon(":/images/folder_grey.png");
-                }
-                else if (ageIndicator == IND_LAST_DAY )
-                {
-                    return QIcon(":/images/folder_green.png");
-                }
-                else if (ageIndicator == IND_LAST_WEEK )
-                {
-                    return QIcon(":/images/folder_yellow.png");
-                }
-                else if (ageIndicator == IND_LAST_MONTH )
-                {
-                    return QIcon(":/images/folder_red.png");
-                }
-                else
-                {
-                    return QIcon(categoryIcon);
-                }
-                break;
-			 }
-		 }
-		 else if (details.type == DIR_TYPE_FILE) /* File */
-		 {
-			 // extensions predefined
-			 switch(coln)
-			 {
-				 case 0:
-					 QString ext = QFileInfo(QString::fromUtf8(details.name.c_str())).suffix();
-					 if (ext == "jpg" || ext == "jpeg" || ext == "png" || ext == "gif"
-							 || ext == "bmp" || ext == "ico" || ext == "svg")
-					 {
-						 return QIcon(":/images/FileTypePicture.png");
-					 }
-					 else if (ext == "avi" || ext == "AVI" || ext == "mpg" || ext == "mpeg" || ext == "wmv" || ext == "ogm"
-							 || ext == "mkv" || ext == "mp4" || ext == "flv" || ext == "mov"
-							 || ext == "vob" || ext == "qt" || ext == "rm" || ext == "3gp")
-					 {
-						 return QIcon(":/images/FileTypeVideo.png");
-					 }
-					 else if (ext == "ogg" || ext == "mp3" || ext == "wav" || ext == "wma" || ext == "xpm")
-					 {
-						 return QIcon(":/images/FileTypeAudio.png");
-					 }
-					 else if (ext == "tar" || ext == "bz2" || ext == "zip" || ext == "gz" || ext == "7z"
-							 || ext == "rar" || ext == "rpm" || ext == "deb")
-					 {
-						 return QIcon(":/images/FileTypeArchive.png");
-					 }
-					 else if (ext == "app" || ext == "bat" || ext == "cgi" || ext == "com"
-							 || ext == "bin" || ext == "exe" || ext == "js" || ext == "pif"
-							 || ext == "py" || ext == "pl" || ext == "sh" || ext == "vb" || ext == "ws")
-					 {
-						 return QIcon(":/images/FileTypeProgram.png");
-					 }
-					 else if (ext == "iso" || ext == "nrg" || ext == "mdf" )
-					 {
-						 return QIcon(":/images/FileTypeCDImage.png");
-					 }
-					 else if (ext == "txt" || ext == "cpp" || ext == "c" || ext == "h")
-					 {
-						 return QIcon(":/images/FileTypeDocument.png");
-					 }
-					 else if (ext == "doc" || ext == "rtf" || ext == "sxw" || ext == "xls"
-							 || ext == "sxc" || ext == "odt" || ext == "ods")
-					 {
-						 return QIcon(":/images/FileTypeDocument.png");
-					 }
-					 else if (ext == "html" || ext == "htm" || ext == "php")
-					 {
-						 return QIcon(":/images/FileTypeDocument.png");
-					 }
-					 else
-					 {
-						 return QIcon(":/images/FileTypeAny.png");
-					 }
-					 break;
-			 }
-		 }
-		 else
-		 {
-			 return QVariant();
-		 }
-	 } /* end of DecorationRole */
-
-     /*****************
-     Qt::EditRole
-     Qt::ToolTipRole
-     Qt::StatusTipRole
-     Qt::WhatsThisRole
-     Qt::SizeHintRole
-     ****************/
-     
-    if (role == Qt::SizeHintRole)
-    {       
-        return QSize(18, 18);     
-    } /* end of SizeHintRole */ 
-     
-    if (role == Qt::TextAlignmentRole)
+	if (details.type == DIR_TYPE_PERSON)
 	{
-        if(coln == 1)
-		{
-            return int( Qt::AlignRight | Qt::AlignVCenter);
-		}
-        return QVariant();
-    } /* end of TextAlignmentRole */
+		if(details.min_age > ageIndicator)
+			return QIcon(":/images/folder_grey.png");
+		else if (ageIndicator == IND_LAST_DAY )
+			return QIcon(":/images/folder_green.png");
+		else if (ageIndicator == IND_LAST_WEEK )
+			return QIcon(":/images/folder_yellow.png");
+		else if (ageIndicator == IND_LAST_MONTH )
+			return QIcon(":/images/folder_red.png");
+		else
+			return (QIcon(peerIcon));
+	}
+	else if (details.type == DIR_TYPE_DIR)
+	{
+		if(details.min_age > ageIndicator)
+			return QIcon(":/images/folder_grey.png");
+		else if (ageIndicator == IND_LAST_DAY )
+			return QIcon(":/images/folder_green.png");
+		else if (ageIndicator == IND_LAST_WEEK )
+			return QIcon(":/images/folder_yellow.png");
+		else if (ageIndicator == IND_LAST_MONTH )
+			return QIcon(":/images/folder_red.png");
+		else
+			return QIcon(categoryIcon);
+	}
+	else if (details.type == DIR_TYPE_FILE) /* File */
+	{
+		// extensions predefined
+		QString ext = QFileInfo(QString::fromUtf8(details.name.c_str())).suffix();
+		if (ext == "jpg" || ext == "jpeg" || ext == "png" || ext == "gif"
+				|| ext == "bmp" || ext == "ico" || ext == "svg")
+			return QIcon(":/images/FileTypePicture.png");
+		else if (ext == "avi" || ext == "AVI" || ext == "mpg" || ext == "mpeg" || ext == "wmv" || ext == "ogm"
+				|| ext == "mkv" || ext == "mp4" || ext == "flv" || ext == "mov"
+				|| ext == "vob" || ext == "qt" || ext == "rm" || ext == "3gp")
+			return QIcon(":/images/FileTypeVideo.png");
+		else if (ext == "ogg" || ext == "mp3" || ext == "wav" || ext == "wma" || ext == "xpm")
+			return QIcon(":/images/FileTypeAudio.png");
+		else if (ext == "tar" || ext == "bz2" || ext == "zip" || ext == "gz" || ext == "7z"
+				|| ext == "rar" || ext == "rpm" || ext == "deb")
+			return QIcon(":/images/FileTypeArchive.png");
+		else if (ext == "app" || ext == "bat" || ext == "cgi" || ext == "com"
+				|| ext == "bin" || ext == "exe" || ext == "js" || ext == "pif"
+				|| ext == "py" || ext == "pl" || ext == "sh" || ext == "vb" || ext == "ws")
+			return QIcon(":/images/FileTypeProgram.png");
+		else if (ext == "iso" || ext == "nrg" || ext == "mdf" )
+			return QIcon(":/images/FileTypeCDImage.png");
+		else if (ext == "txt" || ext == "cpp" || ext == "c" || ext == "h")
+			return QIcon(":/images/FileTypeDocument.png");
+		else if (ext == "doc" || ext == "rtf" || ext == "sxw" || ext == "xls"
+				|| ext == "sxc" || ext == "odt" || ext == "ods")
+			return QIcon(":/images/FileTypeDocument.png");
+		else if (ext == "html" || ext == "htm" || ext == "php")
+			return QIcon(":/images/FileTypeDocument.png");
+		else
+			return QIcon(":/images/FileTypeAny.png");
+	}
+	else
+		return QVariant();
 
-    if (role == Qt::DisplayRole)
-    {
+} /* end of DecorationRole */
 
-    /*
+QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
+{
+
+	/*
 	 * Person:  name,  id, 0, 0;
 	 * File  :  name,  size, rank, (0) ts
 	 * Dir   :  name,  (0) count, (0) path, (0) ts
@@ -415,14 +330,14 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
 			case 3:
 				return getFlagsString(details.flags);
 			case 4:
-                {
-                QString ind("");
-                if (ageIndicator != IND_ALWAYS)
-                ind = getAgeIndicatorString(details);
-                return ind;
-                }
+				{
+					QString ind("");
+					if (ageIndicator != IND_ALWAYS)
+						ind = getAgeIndicatorString(details);
+					return ind;
+				}
 			default:
-                return tr("FILE");
+				return tr("FILE");
 		}
 	}
 	else if (details.type == DIR_TYPE_DIR) /* Dir */
@@ -430,7 +345,7 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
 		switch(coln)
 		{
 			case 0:
-          return QString::fromUtf8(details.name.c_str());
+				return QString::fromUtf8(details.name.c_str());
 				break;
 			case 1:
 				if (details.count > 1)
@@ -447,76 +362,161 @@ QString RemoteDirModel::getAgeIndicatorString(const DirDetails &details) const
 		}
 	}
 	return QVariant();
-   } /* end of DisplayRole */
+} /* end of DisplayRole */
 
-    if (role == SortRole)
-    {
+QVariant FlatStyle_RDM::displayRole(const DirDetails& details,int coln) const
+{
+	if (details.type == DIR_TYPE_FILE) /* File */
+		switch(coln)
+		{
+			case 0: return QString::fromUtf8(details.name.c_str());
+			case 1: return misc::friendlyUnit(details.count);
+			case 2: return misc::userFriendlyDuration(details.age);
+			case 3: return QString::fromStdString(rsPeers->getPeerName(details.id));
+			default:
+				return QVariant() ;
+		}
 
-        /*
-         * Person:  name,  id, 0, 0;
-         * File  :  name,  size, rank, (0) ts
-         * Dir   :  name,  (0) count, (0) path, (0) ts
-         */
+	return QVariant();
+} /* end of DisplayRole */
+
+QVariant RetroshareDirModel::sortRole(const DirDetails& details,int coln) const
+{
+	/*
+	 * Person:  name,  id, 0, 0;
+	 * File  :  name,  size, rank, (0) ts
+	 * Dir   :  name,  (0) count, (0) path, (0) ts
+	 */
+
+	if (details.type == DIR_TYPE_PERSON) /* Person */
+	{
+		switch(coln)
+		{
+			case 0:
+				return QString::fromUtf8(details.name.c_str());
+			case 1:
+				return QString();
+			default:
+				return QString();
+		}
+	}
+	else if (details.type == DIR_TYPE_FILE) /* File */
+	{
+		switch(coln)
+		{
+			case 0:
+				return QString::fromUtf8(details.name.c_str());
+			case 1:
+				return (qulonglong) details.count;
+			case 2:
+				return  details.age;
+			case 3:
+				return getFlagsString(details.flags);
+			case 4:
+				{
+					QString ind("");
+					if (ageIndicator != IND_ALWAYS)
+						ind = getAgeIndicatorString(details);
+					return ind;
+				}
+			default:
+				return tr("FILE");
+		}
+	}
+	else if (details.type == DIR_TYPE_DIR) /* Dir */
+	{
+		switch(coln)
+		{
+			case 0:
+				return QString::fromUtf8(details.name.c_str());
+			case 1:
+				return (qulonglong) details.count;
+			case 2:
+				return details.min_age;
+			case 3:
+				return getFlagsString(details.flags);
+			default:
+				return tr("DIR");
+		}
+	}
+	return QVariant();
+} /* end of SortRole */
 
 
-        if (details.type == DIR_TYPE_PERSON) /* Person */
-        {
-            switch(coln)
-            {
-            case 0:
-                return QString::fromUtf8(details.name.c_str());
-            case 1:
-                return QString();
-            default:
-                return QString();
-            }
-        }
-        else if (details.type == DIR_TYPE_FILE) /* File */
-        {
-            switch(coln)
-            {
-            case 0:
-                return QString::fromUtf8(details.name.c_str());
-            case 1:
-                return (qulonglong) details.count;
-            case 2:
-               return  details.age;
-            case 3:
-                return getFlagsString(details.flags);
-            case 4:
-                {
-                    QString ind("");
-                    if (ageIndicator != IND_ALWAYS)
-                        ind = getAgeIndicatorString(details);
-                    return ind;
-                }
-            default:
-                return tr("FILE");
-            }
-        }
-        else if (details.type == DIR_TYPE_DIR) /* Dir */
-        {
-            switch(coln)
-            {
-            case 0:
-                return QString::fromUtf8(details.name.c_str());
-            case 1:
-                return (qulonglong) details.count;
-            case 2:
-                return details.min_age;
-            case 3:
-                return getFlagsString(details.flags);
-            default:
-                return tr("DIR");
-            }
-        }
-        return QVariant();
-    } /* end of SortRole */
 
-   return QVariant();
+
+QVariant RetroshareDirModel::data(const QModelIndex &index, int role) const
+{
+#ifdef RDM_DEBUG
+	std::cerr << "RetroshareDirModel::data(): " << index.internalPointer();
+	std::cerr << ": ";
+	std::cerr << std::endl;
+#endif
+
+	if (!index.isValid())
+		return QVariant();
+
+	/* get the data from the index */
+	void *ref = index.internalPointer();
+	int coln = index.column();
+
+	DirDetails details;
+	uint32_t flags = DIR_FLAGS_DETAILS;
+	if (RemoteMode)
+		flags |= DIR_FLAGS_REMOTE;
+	else
+		flags |= DIR_FLAGS_LOCAL;
+
+	if (!rsFiles->RequestDirDetails(ref, details, flags))
+		return QVariant();
+
+	if (role == RetroshareDirModel::FileNameRole) /* end of FileNameRole */
+		return QString::fromUtf8(details.name.c_str());
+
+	if (role == Qt::TextColorRole)
+	{
+		if(details.min_age > ageIndicator)
+			return Qt::gray ;
+		else
+			return Qt::black ;
+	} /* end of TextColorRole */
+
+
+	if(role == Qt::DecorationRole)
+		return decorationRole(details,coln) ;
+
+	/*****************
+	  Qt::EditRole
+	  Qt::ToolTipRole
+	  Qt::StatusTipRole
+	  Qt::WhatsThisRole
+	  Qt::SizeHintRole
+	 ****************/
+
+	if (role == Qt::SizeHintRole)
+	{       
+		return QSize(18, 18);     
+	} /* end of SizeHintRole */ 
+
+	if (role == Qt::TextAlignmentRole)
+	{
+		if(coln == 1)
+		{
+			return int( Qt::AlignRight | Qt::AlignVCenter);
+		}
+		return QVariant();
+	} /* end of TextAlignmentRole */
+
+	if (role == Qt::DisplayRole)
+		return displayRole(details,coln) ;
+
+	if (role == SortRole)
+		return sortRole(details,coln) ;
+
+	return QVariant();
 }
 
-void RemoteDirModel::getAgeIndicatorRec(DirDetails &details, QString &ret) const {
+void RetroshareDirModel::getAgeIndicatorRec(DirDetails &details, QString &ret) const {
 	if (details.type == DIR_TYPE_FILE) {
 		ret = getAgeIndicatorString(details);
 		return;
@@ -538,8 +538,49 @@ void RemoteDirModel::getAgeIndicatorRec(DirDetails &details, QString &ret) const
 	}
 }
 
- QVariant RemoteDirModel::headerData(int section, Qt::Orientation orientation,
-                                      int role) const
+QVariant TreeStyle_RDM::headerData(int section, Qt::Orientation orientation, int role) const
+{
+	if (role == Qt::SizeHintRole)
+	{
+		int defw = 50;
+		int defh = 21;
+		if (section < 2)
+		{
+			defw = 200;
+		}
+		return QSize(defw, defh);
+	}
+
+	if (role != Qt::DisplayRole)
+		return QVariant();
+
+	if (orientation == Qt::Horizontal)
+	{
+		switch(section)
+		{
+			case 0:
+				if (RemoteMode)
+					return tr("Friends Directories");
+				else
+					return tr("My Directories");
+			case 1:
+				return tr("Size");
+			case 2:
+				return tr("Age");
+			case 3:
+				if (RemoteMode)
+					return tr("Friend");
+				else
+					return tr("Share Type");
+			case 4:
+				return tr("What's new");
+		}
+		return QString("Column %1").arg(section);
+	}
+	else
+		return QString("Row %1").arg(section);
+}
+QVariant FlatStyle_RDM::headerData(int section, Qt::Orientation orientation, int role) const
 {
 	if (role == Qt::SizeHintRole)
 	{
@@ -570,7 +611,10 @@ void RemoteDirModel::getAgeIndicatorRec(DirDetails &details, QString &ret) const
 			case 2:
 				return tr("Age");
 			case 3:
-				return tr("Share Type");
+				if(RemoteMode)
+					return tr("Friend");
+				else
+					return tr("Share Type");
 			case 4:
 				return tr("What's new");
 		}
@@ -580,10 +624,10 @@ void RemoteDirModel::getAgeIndicatorRec(DirDetails &details, QString &ret) const
 		return QString("Row %1").arg(section);
 }
 
-QModelIndex RemoteDirModel::index(int row, int column, const QModelIndex & parent) const
+QModelIndex TreeStyle_RDM::index(int row, int column, const QModelIndex & parent) const
 {
 #ifdef RDM_DEBUG
-	std::cerr << "RemoteDirModel::index(): " << parent.internalPointer();
+	std::cerr << "RetroshareDirModel::index(): " << parent.internalPointer();
 	std::cerr << ": row:" << row << " col:" << column << " ";
 #endif
 
@@ -642,12 +686,30 @@ QModelIndex RemoteDirModel::index(int row, int column, const QModelIndex & paren
 
 	return createIndex(row, column, it->ref);
 }
-
-
-QModelIndex RemoteDirModel::parent( const QModelIndex & index ) const
+QModelIndex FlatStyle_RDM::index(int row, int column, const QModelIndex & parent) const
 {
 #ifdef RDM_DEBUG
-	std::cerr << "RemoteDirModel::parent(): " << index.internalPointer();
+	std::cerr << "RetroshareDirModel::index(): " << parent.internalPointer();
+	std::cerr << ": row:" << row << " col:" << column << " ";
+#endif
+
+	if(row < 0)
+		return QModelIndex() ;
+
+	if(row < _ref_entries.size())
+	{
+		void *ref = _ref_entries[row] ;
+
+		return createIndex(row, column, ref);
+	}
+	else
+		return QModelIndex();
+}
+
+QModelIndex TreeStyle_RDM::parent( const QModelIndex & index ) const
+{
+#ifdef RDM_DEBUG
+	std::cerr << "RetroshareDirModel::parent(): " << index.internalPointer();
 	std::cerr << ": ";
 #endif
 
@@ -691,11 +753,19 @@ QModelIndex RemoteDirModel::parent( const QModelIndex & index ) const
 #endif
 	return createIndex(details.prow, 0, details.parent);
 }
-
-Qt::ItemFlags RemoteDirModel::flags( const QModelIndex & index ) const
+QModelIndex FlatStyle_RDM::parent( const QModelIndex & index ) const
 {
 #ifdef RDM_DEBUG
-	std::cerr << "RemoteDirModel::flags()";
+	std::cerr << "RetroshareDirModel::parent(): " << index.internalPointer();
+	std::cerr << ": ";
+#endif
+
+	return QModelIndex();
+}
+Qt::ItemFlags RetroshareDirModel::flags( const QModelIndex & index ) const
+{
+#ifdef RDM_DEBUG
+	std::cerr << "RetroshareDirModel::flags()";
 	std::cerr << std::endl;
 #endif
 
@@ -733,10 +803,10 @@ Qt::ItemFlags RemoteDirModel::flags( const QModelIndex & index ) const
 
 
 /* Callback from */
- void RemoteDirModel::preMods()
+ void RetroshareDirModel::preMods()
  {
 #ifdef RDM_DEBUG
-	std::cerr << "RemoteDirModel::preMods()" << std::endl;
+	std::cerr << "RetroshareDirModel::preMods()" << std::endl;
 #endif
 	//modelAboutToBeReset();
 //	reset();
@@ -747,21 +817,20 @@ Qt::ItemFlags RemoteDirModel::flags( const QModelIndex & index ) const
  }
 
 /* Callback from */
- void RemoteDirModel::postMods()
+ void RetroshareDirModel::postMods()
  {
 #ifdef RDM_DEBUG
-	std::cerr << "RemoteDirModel::postMods()" << std::endl;
+	std::cerr << "RetroshareDirModel::postMods()" << std::endl;
 #endif
 	//modelReset();
 	layoutChanged();
-	//reset();
 #if QT_VERSION >= 0x040600
 	endResetModel();
 #endif
  }
 
 
-//void RemoteDirModel::update (const QModelIndex &index )
+//void RetroshareDirModel::update (const QModelIndex &index )
 //{
 //#ifdef RDM_DEBUG
 //	//std::cerr << "Directory Request(" << id << ") : ";
@@ -770,7 +839,7 @@ Qt::ItemFlags RemoteDirModel::flags( const QModelIndex & index ) const
 //	//rsFiles -> RequestDirectories(id, path, 1);
 //}
 
-void RemoteDirModel::downloadSelected(const QModelIndexList &list)
+void RetroshareDirModel::downloadSelected(const QModelIndexList &list)
 {
 	if (!RemoteMode)
 	{
@@ -800,7 +869,7 @@ void RemoteDirModel::downloadSelected(const QModelIndexList &list)
         /* if it is a file */
         if (details.type == DIR_TYPE_FILE)
         {
-            std::cerr << "RemoteDirModel::downloadSelected() Calling File Request";
+            std::cerr << "RetroshareDirModel::downloadSelected() Calling File Request";
             std::cerr << std::endl;
             std::list<std::string> srcIds;
             srcIds.push_back(details.id);
@@ -818,7 +887,7 @@ void RemoteDirModel::downloadSelected(const QModelIndexList &list)
 }
 
 /* recursively download a directory */
-void RemoteDirModel::downloadDirectory(const DirDetails & dirDetails, int prefixLen)
+void RetroshareDirModel::downloadDirectory(const DirDetails & dirDetails, int prefixLen)
 {
 	if (dirDetails.type & DIR_TYPE_FILE)
 	{
@@ -850,7 +919,7 @@ void RemoteDirModel::downloadDirectory(const DirDetails & dirDetails, int prefix
 	}
 }
 
-void RemoteDirModel::getDirDetailsFromSelect (const QModelIndexList &list, std::vector <DirDetails>& dirVec)
+void RetroshareDirModel::getDirDetailsFromSelect (const QModelIndexList &list, std::vector <DirDetails>& dirVec)
 {
     dirVec.clear();
 
@@ -888,7 +957,7 @@ void RemoteDirModel::getDirDetailsFromSelect (const QModelIndexList &list, std::
  *
  */
 
-void RemoteDirModel::getFileInfoFromIndexList(const QModelIndexList& list, std::list<DirDetails>& file_details)
+void RetroshareDirModel::getFileInfoFromIndexList(const QModelIndexList& list, std::list<DirDetails>& file_details)
 {
 	file_details.clear() ;
 
@@ -949,10 +1018,10 @@ void RemoteDirModel::getFileInfoFromIndexList(const QModelIndexList& list, std::
  * OLD RECOMMEND SYSTEM - DISABLED
  ******/
 
-void RemoteDirModel::openSelected(const QModelIndexList &qmil)
+void RetroshareDirModel::openSelected(const QModelIndexList &qmil)
 {
 #ifdef RDM_DEBUG
-	std::cerr << "RemoteDirModel::openSelected()" << std::endl;
+	std::cerr << "RetroshareDirModel::openSelected()" << std::endl;
 #endif
 
 	if (RemoteMode) {
@@ -989,14 +1058,14 @@ void RemoteDirModel::openSelected(const QModelIndexList &qmil)
 	}
 
 #ifdef RDM_DEBUG
-	std::cerr << "::::::::::::Done RemoteDirModel::openSelected()" << std::endl;
+	std::cerr << "::::::::::::Done RetroshareDirModel::openSelected()" << std::endl;
 #endif
 }
 
-void RemoteDirModel::getFilePaths(const QModelIndexList &list, std::list<std::string> &fullpaths)
+void RetroshareDirModel::getFilePaths(const QModelIndexList &list, std::list<std::string> &fullpaths)
 {
 #ifdef RDM_DEBUG
-	std::cerr << "RemoteDirModel::getFilePaths()" << std::endl;
+	std::cerr << "RetroshareDirModel::getFilePaths()" << std::endl;
 #endif
 	if (RemoteMode)
 	{
@@ -1056,7 +1125,7 @@ void RemoteDirModel::getFilePaths(const QModelIndexList &list, std::list<std::st
 }
 
   /* Drag and Drop Functionality */
-QMimeData * RemoteDirModel::mimeData ( const QModelIndexList & indexes ) const
+QMimeData * RetroshareDirModel::mimeData ( const QModelIndexList & indexes ) const
 {
 	/* extract from each the member text */
 	std::string  text;
@@ -1095,7 +1164,7 @@ QMimeData * RemoteDirModel::mimeData ( const QModelIndexList & indexes ) const
 		if (details.type != DIR_TYPE_FILE)
 		{
 #ifdef RDM_DEBUG
-			std::cerr << "RemoteDirModel::mimeData() Not File" << std::endl;
+			std::cerr << "RetroshareDirModel::mimeData() Not File" << std::endl;
 #endif
 			continue; /* not file! */
 		}
@@ -1103,7 +1172,7 @@ QMimeData * RemoteDirModel::mimeData ( const QModelIndexList & indexes ) const
 		if (drags.end() != (dit = drags.find(details.hash)))
 		{
 #ifdef RDM_DEBUG
-			std::cerr << "RemoteDirModel::mimeData() Duplicate" << std::endl;
+			std::cerr << "RetroshareDirModel::mimeData() Duplicate" << std::endl;
 #endif
 			continue; /* duplicate */
 		}
@@ -1151,7 +1220,7 @@ QMimeData * RemoteDirModel::mimeData ( const QModelIndexList & indexes ) const
 
 }
 
-QStringList RemoteDirModel::mimeTypes () const
+QStringList RetroshareDirModel::mimeTypes () const
 {
 	QStringList list;
 	list.push_back("application/x-rsfilelist");
@@ -1161,7 +1230,7 @@ QStringList RemoteDirModel::mimeTypes () const
 
 //============================================================================
 
-int RemoteDirModel::getType ( const QModelIndex & index ) const
+int RetroshareDirModel::getType ( const QModelIndex & index ) const
 {
     //if (RemoteMode) // only local files can be opened
     //    return ;
@@ -1183,3 +1252,45 @@ int RemoteDirModel::getType ( const QModelIndex & index ) const
 
     return details.type;
 }
+
+FlatStyle_RDM::~FlatStyle_RDM()
+{
+}
+
+TreeStyle_RDM::~TreeStyle_RDM()
+{
+}
+void FlatStyle_RDM::postMods()
+{
+	_ref_entries.clear() ;
+
+	std::cerr << "FlatStyle_RDM::postMods(): cleared ref entries" << std::endl;
+
+	std::vector<void *> stack(1,(void *)NULL) ;
+
+	while(!stack.empty())
+	{
+		void *ref = stack.back() ;
+#ifdef RDM_DEBUG
+		std::cerr << "FlatStyle_RDM::postMods(): poped ref " << ref << std::endl;
+#endif
+		stack.pop_back() ;
+		uint32_t flags = DIR_FLAGS_DETAILS;
+		DirDetails details ;
+
+		if (rsFiles->RequestDirDetails(ref, details, flags))
+		{
+			if(details.type == DIR_TYPE_FILE)		// only push files, not directories nor persons.
+				_ref_entries.push_back(ref);
+#ifdef RDM_DEBUG
+			std::cerr << "FlatStyle_RDM::postMods(): addign ref " << ref << std::endl;
+#endif
+			for(std::list<DirStub>::iterator it = details.children.begin(); it != details.children.end(); it++) 
+				stack.push_back(it->ref) ;
+		}
+	}
+	std::cerr << "reference tab contains " << _ref_entries.size() << " files" << std::endl;
+
+	RetroshareDirModel::postMods() ;
+}
+

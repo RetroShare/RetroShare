@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>525</width>
-    <height>297</height>
+    <width>934</width>
+    <height>402</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -584,7 +584,7 @@ p, li { white-space: pre-wrap; }
         </property>
        </spacer>
       </item>
-      <item row="0" column="5">
+      <item row="0" column="6">
        <widget class="QPushButton" name="splittedButton">
         <property name="maximumSize">
          <size>
@@ -616,7 +616,7 @@ p, li { white-space: pre-wrap; }
         </property>
        </widget>
       </item>
-      <item row="0" column="6">
+      <item row="0" column="7">
        <widget class="QPushButton" name="remoteButton">
         <property name="maximumSize">
          <size>
@@ -648,7 +648,7 @@ p, li { white-space: pre-wrap; }
         </property>
        </widget>
       </item>
-      <item row="0" column="7">
+      <item row="0" column="8">
        <widget class="QPushButton" name="localButton">
         <property name="maximumSize">
          <size>
@@ -680,7 +680,7 @@ p, li { white-space: pre-wrap; }
         </property>
        </widget>
       </item>
-      <item row="0" column="4">
+      <item row="0" column="5">
        <widget class="QComboBox" name="indicatorCBox">
         <item>
          <property name="text">
@@ -823,6 +823,20 @@ border-image: url(:/images/closepressed.png)
         </item>
        </layout>
       </item>
+      <item row="0" column="4">
+       <widget class="QComboBox" name="viewType_CB">
+        <item>
+         <property name="text">
+          <string>Tree view</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Flat view</string>
+         </property>
+        </item>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -878,6 +892,12 @@ background: white;}</string>
          <property name="sortingEnabled">
           <bool>true</bool>
          </property>
+         <attribute name="headerStretchLastSection">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="headerStretchLastSection">
+          <bool>false</bool>
+         </attribute>
         </widget>
        </item>
       </layout>
@@ -926,6 +946,12 @@ background: white;}</string>
          <property name="sortingEnabled">
           <bool>true</bool>
          </property>
+         <attribute name="headerStretchLastSection">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="headerStretchLastSection">
+          <bool>false</bool>
+         </attribute>
         </widget>
        </item>
       </layout>

@@ -60,7 +60,7 @@ const QString Image_AddNewAssotiationForFile = ":/images/kcmsystem24.png";
 class SFDSortFilterProxyModel : public QSortFilterProxyModel
 {
 public:
-    SFDSortFilterProxyModel(RemoteDirModel *dirModel, QObject *parent) : QSortFilterProxyModel(parent)
+    SFDSortFilterProxyModel(RetroshareDirModel *dirModel, QObject *parent) : QSortFilterProxyModel(parent)
     {
         m_dirModel = dirModel;
     };
@@ -79,7 +79,7 @@ protected:
     }
 
 private:
-    RemoteDirModel *m_dirModel;
+    RetroshareDirModel *m_dirModel;
 };
 
 /** Constructor */
@@ -89,13 +89,11 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
 
-
-
   connect(ui.checkButton, SIGNAL(clicked()), this, SLOT(forceCheck()));
-
   connect(ui.localButton, SIGNAL(toggled(bool)), this, SLOT(showFrame(bool)));
   connect(ui.remoteButton, SIGNAL(toggled(bool)), this, SLOT(showFrameRemote(bool)));
   connect(ui.splittedButton, SIGNAL(toggled(bool)), this, SLOT(showFrameSplitted(bool)));
+  connect(ui.viewType_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(changeCurrentViewModel(int)));
 
   connect( ui.localDirTreeView, SIGNAL( customContextMenuRequested( QPoint ) ), this,  SLOT( sharedDirTreeWidgetContextMenu( QPoint ) ) );
   connect( ui.remoteDirTreeView, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( shareddirtreeviewCostumPopupMenu( QPoint ) ) );
@@ -114,34 +112,33 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
 */
 
 
-  model = new RemoteDirModel(true);
+  tree_model = new TreeStyle_RDM(true);
+  flat_model = new FlatStyle_RDM(true);
 
-  proxyModel = new SFDSortFilterProxyModel(model, this);
-  proxyModel->setDynamicSortFilter(true);
-  proxyModel->setSourceModel(model);
-  proxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
-  proxyModel->setSortRole(RemoteDirModel::SortRole);
-  proxyModel->sort(0);
+  tree_proxyModel = new SFDSortFilterProxyModel(tree_model, this);
+  tree_proxyModel->setDynamicSortFilter(true);
+  tree_proxyModel->setSourceModel(tree_model);
+  tree_proxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
+  tree_proxyModel->setSortRole(RetroshareDirModel::SortRole);
+  tree_proxyModel->sort(0);
 
-  ui.remoteDirTreeView->setModel(proxyModel);
+  flat_proxyModel = new SFDSortFilterProxyModel(flat_model, this);
+  flat_proxyModel->setDynamicSortFilter(true);
+  flat_proxyModel->setSourceModel(flat_model);
+  flat_proxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
+  flat_proxyModel->setSortRole(RetroshareDirModel::SortRole);
+  flat_proxyModel->sort(0);
 
-  localModel = new RemoteDirModel(false);
+  localModel = new TreeStyle_RDM(false);
 
   localProxyModel = new SFDSortFilterProxyModel(localModel, this);
   localProxyModel->setDynamicSortFilter(true);
   localProxyModel->setSourceModel(localModel);
   localProxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
-  localProxyModel->setSortRole(RemoteDirModel::SortRole);
+  localProxyModel->setSortRole(RetroshareDirModel::SortRole);
   localProxyModel->sort(0);
 
   ui.localDirTreeView->setModel(localProxyModel);
-
-  ui.remoteDirTreeView->setColumnHidden(3,true) ;
-  ui.remoteDirTreeView->setColumnHidden(4,true) ;
-  ui.localDirTreeView->setColumnHidden(4,true) ;
-
-  connect( ui.remoteDirTreeView, SIGNAL( collapsed(const QModelIndex & ) ), model, SLOT(  collapsed(const QModelIndex & ) ) );
-  connect( ui.remoteDirTreeView, SIGNAL( expanded(const QModelIndex & ) ), model, SLOT(  expanded(const QModelIndex & ) ) );
 
   connect( ui.localDirTreeView, SIGNAL( collapsed(const QModelIndex & ) ), localModel, SLOT(  collapsed(const QModelIndex & ) ) );
   connect( ui.localDirTreeView, SIGNAL( expanded(const QModelIndex & ) ), localModel, SLOT(  expanded(const QModelIndex & ) ) );
@@ -153,6 +150,13 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
   connect(ui.filterStartButton, SIGNAL(clicked()), this, SLOT(startFilter()));
   connect(ui.filterPatternLineEdit, SIGNAL(returnPressed()), this, SLOT(startFilter()));
   connect(ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
+
+  // load settings
+  processSettings(true);
+
+  ui.remoteDirTreeView->setColumnHidden(3,false) ;
+  ui.remoteDirTreeView->setColumnHidden(4,true) ;
+  ui.localDirTreeView->setColumnHidden(4,true) ;
 
   /* Set header resize modes and initial section sizes  */
 	QHeaderView * l_header = ui.localDirTreeView->header () ;
@@ -173,6 +177,7 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
 
 	r_header->setResizeMode (0, QHeaderView::Interactive);
 	r_header->setStretchLastSection(false);
+	l_header->setStretchLastSection(false);
 
 // 	r_header->setResizeMode (1, QHeaderView::Fixed);
 // //	r_header->setResizeMode (2, QHeaderView::Interactive);
@@ -182,27 +187,29 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
 
 	r_header->resizeSection ( 0, 490 );
 	r_header->resizeSection ( 1, 70 );
-//	r_header->resizeSection ( 2, 0 );
+	r_header->resizeSection ( 2, 80 );
 	r_header->resizeSection ( 3, 100 );
-//	r_header->resizeSection ( 4, 0 );
+	r_header->resizeSection ( 4, 80 );
 
-	l_header->setHighlightSections(false);
-	r_header->setHighlightSections(false);
+//	l_header->setHighlightSections(false);
+//	r_header->setHighlightSections(false);
 
 
   /* Set Multi Selection */
   ui.remoteDirTreeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
   ui.localDirTreeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
-#ifdef RS_RELEASE_VERSION
-  ui.filterLabel->hide();
-  ui.filterPatternLineEdit->hide();
-#endif
+//#ifdef RS_RELEASE_VERSION
+//  ui.filterLabel->hide();
+//  ui.filterPatternLineEdit->hide();
+//#endif
+
+  // Setup the current view model.
+  //
+  changeCurrentViewModel(ui.viewType_CB->currentIndex()) ;
+
   ui.filterStartButton->hide();
   ui.filterClearButton->hide();
-
-  // load settings
-  processSettings(true);
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -259,6 +266,43 @@ void SharedFilesDialog::processSettings(bool bLoad)
     }
 
     Settings->endGroup();
+}
+
+void SharedFilesDialog::changeCurrentViewModel(int c)
+{
+	disconnect( ui.remoteDirTreeView, SIGNAL( collapsed(const QModelIndex & ) ), 0, 0 );
+	disconnect( ui.remoteDirTreeView, SIGNAL(  expanded(const QModelIndex & ) ), 0, 0 );
+
+	if(c == 0)
+	{
+		model = tree_model ;
+		proxyModel = tree_proxyModel ;
+		ui.remoteDirTreeView->setColumnHidden(3,true) ;
+		ui.filterLabel->hide();
+		ui.filterPatternLineEdit->hide();
+	}
+	else
+	{
+		model = flat_model ;
+		proxyModel = flat_proxyModel ;
+		ui.remoteDirTreeView->setColumnHidden(3,false) ;
+		ui.filterLabel->show();
+		ui.filterPatternLineEdit->show();
+	}
+
+	model->preMods();
+	model->postMods();
+
+	connect( ui.remoteDirTreeView, SIGNAL( collapsed(const QModelIndex & ) ), model, SLOT(  collapsed(const QModelIndex & ) ) );
+	connect( ui.remoteDirTreeView, SIGNAL(  expanded(const QModelIndex & ) ), model, SLOT(   expanded(const QModelIndex & ) ) );
+
+	ui.remoteDirTreeView->setModel(proxyModel);
+	ui.remoteDirTreeView->update();
+
+	ui.remoteDirTreeView->header()->headerDataChanged(Qt::Horizontal,0,4) ;
+
+	if(c == 1)
+		FilterItems();
 }
 
 void SharedFilesDialog::checkUpdate()
@@ -667,7 +711,7 @@ void SharedFilesDialog::sharedDirTreeWidgetContextMenu( QPoint point )
     if (!midx.isValid())
         return;
 
-    currentFile = localModel->data(midx, RemoteDirModel::FileNameRole).toString();
+    currentFile = localModel->data(midx, RetroshareDirModel::FileNameRole).toString();
 
     int type = localModel->getType(midx);
 
@@ -873,24 +917,40 @@ void SharedFilesDialog::FilterItems()
     QString text = ui.filterPatternLineEdit->text();
 
     setCursor(Qt::WaitCursor);
+	 QCoreApplication::processEvents() ;
 
     int rowCount = ui.remoteDirTreeView->model()->rowCount();
-    for (int row = 0; row < rowCount; row++) {
-        /* Filter name */
-        FilterItem(ui.remoteDirTreeView->model()->index(row, 0), text, 0);
-    }
+    for (int row = 0; row < rowCount; row++) 
+		 if(proxyModel == tree_proxyModel)
+			 tree_FilterItem(ui.remoteDirTreeView->model()->index(row, 0), text, 0);
+		 else
+			 flat_FilterItem(ui.remoteDirTreeView->model()->index(row, 0), text, 0);
 
     setCursor(Qt::ArrowCursor);
 }
 
-bool SharedFilesDialog::FilterItem(const QModelIndex &index, const QString &text, int level)
+bool SharedFilesDialog::flat_FilterItem(const QModelIndex &index, const QString &text, int level)
+{
+	if(index.data(RetroshareDirModel::FileNameRole).toString().contains(text, Qt::CaseInsensitive)) 
+	{
+		ui.remoteDirTreeView->setRowHidden(index.row(), index.parent(), false);
+		return false ;
+	}
+	else 
+	{
+		ui.remoteDirTreeView->setRowHidden(index.row(), index.parent(), true);
+		return true ;
+	}
+}
+
+bool SharedFilesDialog::tree_FilterItem(const QModelIndex &index, const QString &text, int level)
 {
     bool visible = true;
 
     if (text.isEmpty() == false) {
-        // better use RemoteDirModel::getType, but its slow enough
+        // better use RetroshareDirModel::getType, but its slow enough
         if (/*index.parent().isValid()*/ level >= 1) {
-            if (index.data(RemoteDirModel::FileNameRole).toString().contains(text, Qt::CaseInsensitive) == false) {
+            if (index.data(RetroshareDirModel::FileNameRole).toString().contains(text, Qt::CaseInsensitive) == false) {
                 visible = false;
             }
         } else {
@@ -901,7 +961,7 @@ bool SharedFilesDialog::FilterItem(const QModelIndex &index, const QString &text
     int visibleChildCount = 0;
     int rowCount = ui.remoteDirTreeView->model()->rowCount(index);
     for (int row = 0; row < rowCount; row++) {
-        if (FilterItem(ui.remoteDirTreeView->model()->index(row, index.column(), index), text, level + 1)) {
+        if (tree_FilterItem(ui.remoteDirTreeView->model()->index(row, index.column(), index), text, level + 1)) {
             visibleChildCount++;
         }
     }
@@ -914,3 +974,4 @@ bool SharedFilesDialog::FilterItem(const QModelIndex &index, const QString &text
 
     return (visible || visibleChildCount);
 }
+
