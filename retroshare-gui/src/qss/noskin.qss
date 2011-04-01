@@ -1,11 +1,18 @@
 
 QWidget#chatcentralwidget
 {
-    background-image: url(:/images/backchat.png)
+	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+								   stop: 0 #3AAEE4, stop: 0.1 #E0EFF6, 
+								   stop: 0.31 #E4F1F7, stop: 0.7 #FCFDFE,
+								   stop: 0.71 #F7FCFD, stop: 1 #C9E7F3,);
+    border: none;
 }
 
 QToolBar#chattoolBar{
-    border: none; background-image: url(:/images/backblue.png)
+	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+								   stop: 0 #8DD2F3, stop: 0.5 #43B5EB, 
+								   stop: 0.51 #39ABE1, stop: 1 #3CB2EA);
+    border: none;
 }
 QStatusBar#chatstatusbar{
     background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #F6FCFF, stop:1 #F6FCFF);

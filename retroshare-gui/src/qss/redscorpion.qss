@@ -10,8 +10,10 @@ QDialog{
 
 /* Customize the toolbar. */
 QToolBar#toolBar {
-    border-image: url(qss/redscorpion/red.png);
-
+	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+								   stop: 0 #F55332, stop: 0.5 #C82B18, 
+								   stop: 0.51 #B71502, stop: 1 #900907);
+    border: 1px solid #7A3C37;
 
 }
 
@@ -22,7 +24,10 @@ QToolBar#toolBar_2 {
 }
 
 QToolBar#chattoolBar{
-    border-image: url(qss/redscorpion/red.png);
+	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+								   stop: 0 #F55332, stop: 0.5 #C82B18, 
+								   stop: 0.51 #B71502, stop: 1 #900907);
+    border: 1px solid #7A3C37;
 
 }
 
@@ -107,7 +112,10 @@ QToolButton {
      }
      
 QStatusBar{
-    border-image: url(qss/redscorpion/red.png);
+	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+								   stop: 0 #F55332, stop: 0.5 #C82B18, 
+								   stop: 0.51 #B71502, stop: 1 #900907);
+    border: 1px solid #7A3C37;
 
 }
 
@@ -151,15 +159,18 @@ QTreeView::item:selected { /* when user selects item using mouse or keyboard */
 
 QFrame#messengerframetop{
          
-        border-image: url(qss/redscorpion/red.png);
-
-        /*background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                     stop: 0 #F7B552, stop: 1 #FF5E07);*/
+	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+								   stop: 0 #F55332, stop: 0.5 #C82B18, 
+								   stop: 0.51 #B71502, stop: 1 #900907);
+    border: 1px solid #7A3C37;
 }
 
 QFrame#Chatbuttonframe{
          
-        border-image: url(qss/redscorpion/red.png);
+	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+								   stop: 0 #F55332, stop: 0.5 #C82B18, 
+								   stop: 0.51 #B71502, stop: 1 #900907);
+    border: 1px solid #7A3C37;
 
 }
 
