@@ -1315,15 +1315,15 @@ int	pqissl::accept(SSL *ssl, int fd, struct sockaddr_in foreign_addr) // initiat
 	  out << std::endl;
 	  out << "\t remoteaddr: " << rs_inet_ntoa(remote_addr.sin_addr);
 	  out << std::endl;
-	  if (sameLAN)
-	  {
-	  	out << "\tSAME LAN - no bandwidth restrictions!";
-	  }
-	  else
-	  {
-	  	out << "\tDifferent LANs - bandwidth restrictions!";
-	  }
-	  out << std::endl;
+//	  if (sameLAN)
+//	  {
+//	  	out << "\tSAME LAN - no bandwidth restrictions!";
+//	  }
+//	  else
+//	  {
+//	  	out << "\tDifferent LANs - bandwidth restrictions!";
+//	  }
+//	  out << std::endl;
 
   	  rslog(RSL_WARNING, pqisslzone, out.str());
 	}
