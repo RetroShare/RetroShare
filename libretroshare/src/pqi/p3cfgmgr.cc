@@ -265,8 +265,8 @@ bool p3ConfigMgr::backedUpFileSave(const std::string& fname, const std::string& 
 #endif
 
 	// open file from which to collect buffer
-	file = fopen(fname.c_str(), "rb");
-	sign = fopen(sign_fname.c_str(), "rb");
+	file = RsDirUtil::rs_fopen(fname.c_str(), "rb");
+	sign = RsDirUtil::rs_fopen(sign_fname.c_str(), "rb");
 
 	// if failed then create files
 	if((file == NULL) || (sign == NULL)){
@@ -274,8 +274,8 @@ bool p3ConfigMgr::backedUpFileSave(const std::string& fname, const std::string& 
 		std::cerr << "p3Config::backedUpFileSave()  failed to open meta files " << fname << std::endl;
 #endif
 
-		file = fopen(fname.c_str(), "wb");
-		sign = fopen(sign_fname.c_str(), "wb");
+		file = RsDirUtil::rs_fopen(fname.c_str(), "wb");
+		sign = RsDirUtil::rs_fopen(sign_fname.c_str(), "wb");
 
 		if((file == NULL) || (sign == NULL)){
 			std::cerr << "p3Config::backedUpFileSave()  failed to open backup meta files" << fname_backup << std::endl;
@@ -319,8 +319,8 @@ bool p3ConfigMgr::backedUpFileSave(const std::string& fname, const std::string& 
 	if((size_file) > 0 && (size_sign > 0)){
 
 		// now write actual back-up file
-		file = fopen(fname_backup.c_str(), "wb");
-		sign = fopen(sign_fname_backup.c_str(), "wb");
+		file = RsDirUtil::rs_fopen(fname_backup.c_str(), "wb");
+		sign = RsDirUtil::rs_fopen(sign_fname_backup.c_str(), "wb");
 
 		if((file == NULL) || (sign == NULL)){
 #ifdef CONFIG_DEBUG
@@ -629,8 +629,8 @@ bool p3ConfigMgr::checkForGlobalSigConfig()
 	std::string fName = basedir + "/" + metafname;
 	std::string sigName = basedir + "/" + metasigfname;
 
-	metaFile = fopen(fName.c_str(), "r");
-	metaSig = fopen(sigName.c_str(), "r");
+	metaFile = RsDirUtil::rs_fopen(fName.c_str(), "r");
+	metaSig = RsDirUtil::rs_fopen(sigName.c_str(), "r");
 
 	// check if files exist
 	if((metaFile != NULL) && (metaSig != NULL))
@@ -1060,7 +1060,7 @@ bool p3Config::backedUpFileSave(const std::string& cfg_fname, const std::string&
 #endif
 
 	// open file from which to collect buffer
-	cfg_file = fopen(cfg_fname.c_str(), "rb");
+	cfg_file = RsDirUtil::rs_fopen(cfg_fname.c_str(), "rb");
 
 	// if it fails to open, create file,but back-up file will now be empty
 	if(cfg_file == NULL){
@@ -1068,7 +1068,7 @@ bool p3Config::backedUpFileSave(const std::string& cfg_fname, const std::string&
 		std::cerr << "p3Config::backedUpFileSave()  fopen failed for file: " << cfg_fname << std::endl;
 	#endif
 
-		cfg_file = fopen(cfg_fname.c_str(), "wb");
+		cfg_file = RsDirUtil::rs_fopen(cfg_fname.c_str(), "wb");
 
 		if(cfg_file == NULL)
 		{
@@ -1116,7 +1116,7 @@ bool p3Config::backedUpFileSave(const std::string& cfg_fname, const std::string&
 	{
 
 		// now write actual back-up file
-		cfg_file = fopen(cfg_fname_backup.c_str(), "wb");
+		cfg_file = RsDirUtil::rs_fopen(cfg_fname_backup.c_str(), "wb");
 
 		if(cfg_file == NULL){
 #ifdef CONFIG_DEBUG

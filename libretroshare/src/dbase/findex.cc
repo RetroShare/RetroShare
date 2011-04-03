@@ -978,7 +978,7 @@ int FileIndex::saveIndex(const std::string& filename, std::string &fileHash, uin
 
 	/* finally, save to file */
 
-	FILE *file = fopen(filenametmp.c_str(), "wb");
+	FILE *file = RsDirUtil::rs_fopen(filenametmp.c_str(), "wb");
 	if (file == NULL)
 	{
 		std::cerr << "FileIndex::saveIndex error opening file for writting: " << filename << ". Giving up." << std::endl;

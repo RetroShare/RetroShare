@@ -91,6 +91,7 @@ bool 		hashWideFile(std::wstring filepath,
 bool 		getWideFileHash(std::wstring filepath,                
 			std::string &hash, uint64_t &size);
 
+FILE		*rs_fopen(const char* filename, const char* mode);
 }
 
 	

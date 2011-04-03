@@ -23,13 +23,10 @@
  *
  */
 
-
-
-
-
 #include "pqi/pqibin.h"
 #include "pqi/authssl.h"
 #include "util/rsnet.h"
+#include "util/rsdir.h"
 
 // #define DEBUG_PQIBIN
 
@@ -40,23 +37,23 @@ BinFileInterface::BinFileInterface(const char *fname, int flags)
 	if ((bin_flags & BIN_FLAGS_READABLE) &&
 		(bin_flags & BIN_FLAGS_WRITEABLE))
 	{
-		buf = fopen(fname, "rb+");
+		buf = RsDirUtil::rs_fopen(fname, "rb+");
 		/* if the file don't exist */
 		if (!buf)
 		{
-			buf = fopen(fname, "wb+");
+			buf = RsDirUtil::rs_fopen(fname, "wb+");
 		}
 
 	}
 	else if (bin_flags & BIN_FLAGS_READABLE)
 	{
-		buf = fopen(fname, "rb");
+		buf = RsDirUtil::rs_fopen(fname, "rb");
 	}
 	else if (bin_flags & BIN_FLAGS_WRITEABLE)
 	{
 		// This is enough to remove old file in Linux...
 		// but not in windows.... (what to do)
-		buf = fopen(fname, "wb");
+		buf = RsDirUtil::rs_fopen(fname, "wb");
 		fflush(buf); /* this might help windows! */
 	}
 	else
@@ -430,7 +427,7 @@ uint64_t BinMemInterface::bytecount()
 	
 bool    BinMemInterface::writetofile(const char *fname)
 {
-	FILE *fd = fopen(fname, "wb");
+	FILE *fd = RsDirUtil::rs_fopen(fname, "wb");
 	if (!fd)
 	{
 		return false;
@@ -449,7 +446,7 @@ bool    BinMemInterface::writetofile(const char *fname)
 
 bool    BinMemInterface::readfromfile(const char *fname)
 {
-	FILE *fd = fopen(fname, "rb");
+	FILE *fd = RsDirUtil::rs_fopen(fname, "rb");
 	if (!fd)
 	{
 		return false;

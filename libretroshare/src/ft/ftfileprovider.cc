@@ -305,24 +305,14 @@ int ftFileProvider::initializeFileAttrs()
 	 * attempt to open file 
 	 */
 
-#ifdef WINDOWS_SYS
-	std::wstring wfile_name;
-	librs::util::ConvertUtf8ToUtf16(file_name, wfile_name);
-	fd = _wfopen(wfile_name.c_str(), L"r+b");
-#else
-	fd = fopen64(file_name.c_str(), "r+b");
-#endif
+	fd = RsDirUtil::rs_fopen(file_name.c_str(), "r+b");
 	if (!fd)
 	{
 		std::cerr << "ftFileProvider::initializeFileAttrs() Failed to open (r+b): ";
 		std::cerr << file_name << std::endl;
 
 		/* try opening read only */
-#ifdef WINDOWS_SYS
-		fd = _wfopen(wfile_name.c_str(), L"rb");
-#else
-		fd = fopen64(file_name.c_str(), "rb");
-#endif
+		fd = RsDirUtil::rs_fopen(file_name.c_str(), "rb");
 		if (!fd)
 		{
 			std::cerr << "ftFileProvider::initializeFileAttrs() Failed to open (rb): ";

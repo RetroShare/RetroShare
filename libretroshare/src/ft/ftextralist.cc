@@ -215,7 +215,7 @@ bool ftExtraList::moveExtraFile(std::string fname, std::string hash, uint64_t si
 	}
 
 	std::string path = destpath + '/' + fname;
-	if (0 == rename(it->second.info.path.c_str(), path.c_str()))
+	if (RsDirUtil::renameFile(it->second.info.path, path))
 	{
 		/* rename */
 		it->second.info.path = path;
@@ -427,13 +427,7 @@ bool    ftExtraList::loadList(std::list<RsItem *>& load)
 		}
 
 		/* open file */
-#ifdef WINDOWS_SYS
-		std::wstring filepathW;
-		librs::util::ConvertUtf8ToUtf16(fi->file.path, filepathW);
-		FILE *fd = _wfopen(filepathW.c_str(), L"rb");
-#else
-		FILE *fd = fopen64(fi->file.path.c_str(), "rb");
-#endif
+		FILE *fd = RsDirUtil::rs_fopen(fi->file.path.c_str(), "rb");
 		if (fd == NULL)
 		{
 			delete (*it);

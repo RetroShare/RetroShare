@@ -582,15 +582,8 @@ bool RsDirUtil::getFileHash(const std::string& filepath, std::string &hash, uint
 	unsigned char sha_buf[SHA_DIGEST_LENGTH];
 	unsigned char gblBuf[512];
 
-#ifdef WINDOWS_SYS
-	std::wstring filepathW;
-	librs::util::ConvertUtf8ToUtf16(filepath, filepathW);
-	if (NULL == (fd = _wfopen(filepathW.c_str(), L"rb")))
+	if (NULL == (fd = RsDirUtil::rs_fopen(filepath.c_str(), "rb")))
 		return false;
-#else
-	if (NULL == (fd = fopen64(filepath.c_str(), "rb")))
-		return false;
-#endif
 
 	/* determine size */
  	fseeko64(fd, 0, SEEK_END);
@@ -645,18 +638,18 @@ bool RsDirUtil::getFileHash(const std::string& filepath, std::string &hash, uint
 
 bool RsDirUtil::renameFile(const std::string& from, const std::string& to)
 {
-	int			loops = 0;
+	int loops = 0;
 
-#if defined(WIN32) || defined(MINGW) || defined(__CYGWIN__)
-#ifdef WIN_CROSS_UBUNTU
-	std::wstring f,t ;
-	for(int i=0;i<from.size();++i) f.push_back(from[i]) ;
-	for(int i=0;i<to.size();++i) t.push_back(to[i]) ;
+#ifdef WINDOWS_SYS
+	std::wstring f;
+	librs::util::ConvertUtf8ToUtf16(from, f);
+	std::wstring t;
+	librs::util::ConvertUtf8ToUtf16(to, t);
+
+	while (!MoveFileEx(f.c_str(), t.c_str(), MOVEFILE_REPLACE_EXISTING))
 #else
 	std::string f(from),t(to) ;
-#endif
-	while (!MoveFileExA(f.c_str(), t.c_str(), MOVEFILE_REPLACE_EXISTING))
-#else
+
 	while (rename(from.c_str(), to.c_str()) < 0)
 #endif
 	{
@@ -734,6 +727,20 @@ bool RsDirUtil::createBackup (const std::string& sFilename, unsigned int nCount)
     }
 #endif
     return true;
+}
+
+FILE *RsDirUtil::rs_fopen(const char* filename, const char* mode)
+{
+#ifdef WINDOWS_SYS
+	std::wstring wfilename;
+	librs::util::ConvertUtf8ToUtf16(filename, wfilename);
+	std::wstring wmode;
+	librs::util::ConvertUtf8ToUtf16(mode, wmode);
+
+	return _wfopen(wfilename.c_str(), wmode.c_str());
+#else
+	return = fopen64(filename, mode);
+#endif
 }
 
 #if 0 // NOT ENABLED YET!

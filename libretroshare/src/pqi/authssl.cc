@@ -36,6 +36,7 @@
 #include "authgpg.h"
 #include "pqi/p3connmgr.h"
 #include "serialiser/rsconfigitems.h"
+#include "util/rsdir.h"
 
 /******************** notify of new Cert **************************/
 #include "pqinotify.h"
@@ -178,7 +179,7 @@ static  int initLib = 0;
 	SSL_CTX_set_cipher_list(sslctx, "DEFAULT");
 
 	// certificates (Set Local Server Certificate).
-	FILE *ownfp = fopen(cert_file, "r");
+	FILE *ownfp = RsDirUtil::rs_fopen(cert_file, "r");
 	if (ownfp == NULL)
 	{
 		std::cerr << "Couldn't open Own Certificate!" << std::endl;
@@ -201,7 +202,7 @@ static  int initLib = 0;
         mOwnPublicKey = X509_get_pubkey(x509);
 
 	// get private key
-	FILE *pkfp = fopen(priv_key_file, "rb");
+	FILE *pkfp = RsDirUtil::rs_fopen(priv_key_file, "rb");
 	if (pkfp == NULL)
 	{
 		std::cerr << "Couldn't Open PrivKey File!" << std::endl;

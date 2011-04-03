@@ -2506,7 +2506,7 @@ uint32	TcpStream::int_rbytes()
 static FILE *bc_fd = 0;
 int	setupBinaryCheck(std::string fname)
 {
-	bc_fd = fopen(fname.c_str(), "r");
+	bc_fd = RsDirUtil::rs_fopen(fname.c_str(), "r");
 	return 1;
 }
 

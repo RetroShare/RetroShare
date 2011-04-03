@@ -32,6 +32,7 @@
 
 #include "pqi/sslfns.h"
 #include "pqi/pqi_base.h"
+#include "util/rsdir.h"
 
 #include <openssl/ssl.h>
 #include <openssl/err.h>
@@ -115,7 +116,7 @@ X509_REQ *GenerateX509Req(
 
         // open the file.
         FILE *out;
-        if (NULL == (out = fopen(pkey_file.c_str(), "w")))
+        if (NULL == (out = RsDirUtil::rs_fopen(pkey_file.c_str(), "w")))
         {
                 fprintf(stderr,"GenerateX509Req: Couldn't Create Key File!");
                 fprintf(stderr," : %s\n", pkey_file.c_str());
@@ -144,7 +145,7 @@ X509_REQ *GenerateX509Req(
         /********** Test Loading the private Key.... ************/
         FILE *tst_in = NULL;
         EVP_PKEY *tst_pkey = NULL;
-        if (NULL == (tst_in = fopen(pkey_file.c_str(), "rb")))
+        if (NULL == (tst_in = RsDirUtil::rs_fopen(pkey_file.c_str(), "rb")))
         {
                 fprintf(stderr,"GenerateX509Req() Couldn't Open Private Key");
                 fprintf(stderr," : %s\n", pkey_file.c_str());
@@ -692,7 +693,7 @@ int	LoadCheckX509(const char *cert_file, std::string &issuerName, std::string &l
 	 * and checks the certificate 
 	 */
 
-	FILE *tmpfp = fopen(cert_file, "r");
+	FILE *tmpfp = RsDirUtil::rs_fopen(cert_file, "r");
 	if (tmpfp == NULL)
 	{
 #ifdef AUTHSSL_DEBUG

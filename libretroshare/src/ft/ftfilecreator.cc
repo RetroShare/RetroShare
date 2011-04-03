@@ -251,13 +251,7 @@ int ftFileCreator::locked_initializeFileAttrs()
 	 * attempt to open file 
 	 */
 
-#ifdef WINDOWS_SYS
-	std::wstring wfile_name;
-	librs::util::ConvertUtf8ToUtf16(file_name, wfile_name);
-	fd = _wfopen(wfile_name.c_str(), L"r+b");
-#else
-	fd = fopen64(file_name.c_str(), "r+b");
-#endif
+	fd = RsDirUtil::rs_fopen(file_name.c_str(), "r+b");
 
 	if (!fd)
 	{
@@ -268,11 +262,7 @@ int ftFileCreator::locked_initializeFileAttrs()
 		std::cerr << std::endl;
 
 		/* try opening for write */
-#ifdef WINDOWS_SYS
-		fd = _wfopen(wfile_name.c_str(), L"w+b");
-#else
-		fd = fopen64(file_name.c_str(), "w+b");
-#endif
+		fd = RsDirUtil::rs_fopen(file_name.c_str(), "w+b");
 		if (!fd)
 		{
 			std::cerr << "ftFileCreator::initializeFileAttrs()";

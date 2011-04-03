@@ -3,6 +3,7 @@
 #include <retroshare/rsinit.h>
 #include <pqi/authgpg.h>
 #include "rsloginhandler.h"
+#include "util/rsdir.h"
 
 #ifdef UBUNTU
 #include <gnome-keyring-1/gnome-keyring.h>
@@ -195,7 +196,7 @@ bool RsLoginHandler::tryAutoLogin(const std::string& ssl_id,std::string& ssl_pas
 	/******************** OSX KeyChain stuff *****************************/
 #else /* UNIX, but not UBUNTU or APPLE */
 
-	FILE* helpFile = fopen(getAutologinFileName.c_str(), "r");
+	FILE* helpFile = RsDirUtil::rs_fopen(getAutologinFileName.c_str(), "r");
 
 	if(helpFile == NULL){
 		std::cerr << "\nFailed to open help file\n" << std::endl;
@@ -265,7 +266,7 @@ bool RsLoginHandler::tryAutoLogin(const std::string& ssl_id,std::string& ssl_pas
 	int   datalen = 0;
 
 	/* open the data to the file */
-	FILE *fp = fopen(getAutologinFileName(ssl_id).c_str(), "rb");
+	FILE *fp = RsDirUtil::rs_fopen(getAutologinFileName(ssl_id).c_str(), "rb");
 	if (fp != NULL)
 	{
 		fseek(fp, 0, SEEK_END);
@@ -407,7 +408,7 @@ bool RsLoginHandler::enableAutoLogin(const std::string& ssl_id,const std::string
 #else
 
 	/* WARNING: Autologin is inherently unsafe */
-	FILE* helpFile = fopen(getAutologinFileName.c_str(), "w");
+	FILE* helpFile = RsDirUtil::rs_fopen(getAutologinFileName.c_str(), "w");
 
 	if(helpFile == NULL){
 		std::cerr << "\nRsStoreAutoLogin(): Failed to open help file\n" << std::endl;
@@ -493,7 +494,7 @@ bool RsLoginHandler::enableAutoLogin(const std::string& ssl_id,const std::string
 		//std::cerr << std::endl;
 
 		/* save the data to the file */
-		FILE *fp = fopen(getAutologinFileName(ssl_id).c_str(), "wb");
+		FILE *fp = RsDirUtil::rs_fopen(getAutologinFileName(ssl_id).c_str(), "wb");
 		if (fp != NULL)
 		{
 			fwrite(DataOut.pbData, 1, DataOut.cbData, fp);
@@ -599,7 +600,7 @@ bool RsLoginHandler::clearAutoLogin(const std::string& ssl_id)
 	
 	std::string passwdfile = getAutologinFileName(ssl_id) ;
 
-	FILE *fp = fopen(passwdfile.c_str(), "wb");
+	FILE *fp = RsDirUtil::rs_fopen(passwdfile.c_str(), "wb");
 
 	if (fp != NULL)
 	{
@@ -626,7 +627,7 @@ bool RsLoginHandler::checkAndStoreSSLPasswdIntoGPGFile(const std::string& ssl_id
 	//
 	std::cerr << "let's store the ssl Password into a pgp ecrypted file" << std::endl;
 
-	FILE *sslPassphraseFile = fopen(getSSLPasswdFileName(ssl_id).c_str(), "r");
+	FILE *sslPassphraseFile = RsDirUtil::rs_fopen(getSSLPasswdFileName(ssl_id).c_str(), "r");
 
 	if(sslPassphraseFile != NULL)	// already have it.
 	{
@@ -634,7 +635,7 @@ bool RsLoginHandler::checkAndStoreSSLPasswdIntoGPGFile(const std::string& ssl_id
 		return true ;
 	}
 
-	sslPassphraseFile = fopen(getSSLPasswdFileName(ssl_id).c_str(), "w");
+	sslPassphraseFile = RsDirUtil::rs_fopen(getSSLPasswdFileName(ssl_id).c_str(), "w");
 
 	if(sslPassphraseFile == NULL)
 	{
@@ -674,7 +675,7 @@ bool RsLoginHandler::getSSLPasswdFromGPGFile(const std::string& ssl_id,std::stri
 	// Let's read the password from an encrypted file
 	// Let's check if there's a ssl_passpharese_file that we can decrypt with PGP
 	//
-	FILE *sslPassphraseFile = fopen(getSSLPasswdFileName(ssl_id).c_str(), "r");
+	FILE *sslPassphraseFile = RsDirUtil::rs_fopen(getSSLPasswdFileName(ssl_id).c_str(), "r");
 
 	if (sslPassphraseFile == NULL)
 	{

@@ -23,11 +23,9 @@
  *
  */
 
-
-
-
 #include "util/rsdebug.h"
 #include "util/rsthreads.h"
+#include "util/rsdir.h"
 
 #include <map>
 #include <stdio.h>
@@ -57,7 +55,7 @@ int setDebugCrashMode(const char *cfile)
 	RsStackMutex stack(logMtx); /******** LOCKED ****************/
 	crashfile = cfile;
 	/* if the file exists - then we crashed, save it */
-	FILE *tmpin = fopen(crashfile.c_str(), "r");
+	FILE *tmpin = RsDirUtil::rs_fopen(crashfile.c_str(), "r");
 	if (tmpin) 
 	{
 	  /* see how long it is */
@@ -71,7 +69,7 @@ int setDebugCrashMode(const char *cfile)
 	 	/* go back to the start */
 	  	fseek(tmpin, 0, SEEK_SET);
 
-		FILE *tmpout = fopen(crashfile_save.c_str(), "w");
+		FILE *tmpout = RsDirUtil::rs_fopen(crashfile_save.c_str(), "w");
 		int da_size = 10240;
 		char dataarray[da_size]; /* 10k */
 		unsigned int da_read = 0;
@@ -131,7 +129,7 @@ int clearDebugCrashLog()
 	debugMode = RS_DEBUG_STDERR;
 
 	/* just open the file, and then close */
-	FILE *tmpin = fopen(crashfile.c_str(), "w");
+	FILE *tmpin = RsDirUtil::rs_fopen(crashfile.c_str(), "w");
 	fclose(tmpin);
 
 	return 1;
@@ -147,7 +145,7 @@ int setDebugFile(const char *fname)
 
 int locked_setDebugFile(const char *fname)
 {
-	if (NULL != (ofd = fopen(fname, "w")))
+	if (NULL != (ofd = RsDirUtil::rs_fopen(fname, "w")))
 	{
 		fprintf(stderr, "Logging redirected to %s\n", fname);
 		debugMode = RS_DEBUG_LOGFILE;

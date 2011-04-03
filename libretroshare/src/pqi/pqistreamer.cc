@@ -804,7 +804,7 @@ continue_packet:
 
 //		if(pktlen == 17306)
 //		{
-//			FILE *f = fopen("dbug.packet.bin","w");
+//			FILE *f = RsDirUtil::rs_fopen("dbug.packet.bin","w");
 //			fwrite(block,pktlen,1,f) ;
 //			fclose(f) ;
 //			exit(-1) ;

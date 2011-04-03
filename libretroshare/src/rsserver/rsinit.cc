@@ -36,6 +36,7 @@
 #include "util/rsdebug.h"
 #include "util/rsdir.h"
 #include "util/rsrandom.h"
+#include "util/folderiterator.h"
 #include "retroshare/rsinit.h"
 #include "rsserver/rsloginhandler.h"
 
@@ -742,16 +743,20 @@ void RsInit::setupBaseDir()
 			// use directory "Data" in portable version
 			RsInitConfig::basedir = "Data";
 		} else {
-			char *h = getenv("APPDATA");
+			wchar_t *wh = _wgetenv(L"APPDATA");
+			std::string h;
+			librs::util::ConvertUtf16ToUtf8(std::wstring(wh), h);
 			std::cerr << "retroShare::basedir() -> $APPDATA = ";
 			std::cerr << h << std::endl;
 			char *h2 = getenv("HOMEDRIVE");
 			std::cerr << "retroShare::basedir() -> $HOMEDRIVE = ";
 			std::cerr << h2 << std::endl;
-			char *h3 = getenv("HOMEPATH");
+			wchar_t *wh3 = _wgetenv(L"HOMEPATH");
+			std::string h3;
+			librs::util::ConvertUtf16ToUtf8(std::wstring(wh3), h3);
 			std::cerr << "retroShare::basedir() -> $HOMEPATH = ";
 			std::cerr << h3 << std::endl;
-			if (h == NULL)
+			if (h.empty())
 			{
 				// generating default
 				std::cerr << "load_check_basedir() getEnv Error --Win95/98?";
@@ -896,24 +901,34 @@ bool getAvailableAccounts(std::list<accountId> &ids)
 	 * files checked to see if they have changed. (rehashed)
 	 */
 
-	struct dirent *dent;
-	struct stat buf;
-
 	/* check for the dir existance */
-	DIR *dir = opendir(RsInitConfig::basedir.c_str());
-	if (!dir)
+	librs::util::FolderIterator dirIt(RsInitConfig::basedir);
+	if (!dirIt.isValid())
 	{
 		std::cerr << "Cannot Open Base Dir - No Available Accounts" << std::endl;
 		exit(1);
 	}
 
-	while(NULL != (dent = readdir(dir)))
+	struct stat64 buf;
+
+	while (dirIt.readdir())
 	{
 		/* check entry type */
-		std::string fname = dent -> d_name;
+		std::string fname;
+		dirIt.d_name(fname);
 		std::string fullname = RsInitConfig::basedir + "/" + fname;
+#ifdef FIM_DEBUG
+		std::cerr << "calling stats on " << fullname <<std::endl;
+#endif
 
-		if (-1 != stat(fullname.c_str(), &buf))
+#ifdef WINDOWS_SYS
+		std::wstring wfullname;
+		librs::util::ConvertUtf8ToUtf16(fullname, wfullname);
+		if (-1 != _wstati64(wfullname.c_str(), &buf))
+#else
+		if (-1 != stat64(fullname.c_str(), &buf))
+#endif
+
 		{
 #ifdef FIM_DEBUG
 			std::cerr << "buf.st_mode: " << buf.st_mode <<std::endl;
@@ -938,7 +953,8 @@ bool getAvailableAccounts(std::list<accountId> &ids)
 			}
 		}	
 	}
-	closedir(dir) ;
+	/* close directory */
+	dirIt.closedir();
 
 	for(it = directories.begin(); it != directories.end(); it++)
 	{
@@ -1266,7 +1282,7 @@ bool     RsInit::GenerateSSLCertificate(std::string gpg_id, std::string org, std
 		/* Save cert to file */
         	// open the file.
         	FILE *out = NULL;
-        	if (NULL == (out = fopen(cert_name.c_str(), "w")))
+        	if (NULL == (out = RsDirUtil::rs_fopen(cert_name.c_str(), "w")))
         	{
                		fprintf(stderr,"RsGenerateCert() Couldn't create Cert File");
                 	fprintf(stderr," : %s\n", cert_name.c_str());
@@ -1306,7 +1322,7 @@ bool     RsInit::GenerateSSLCertificate(std::string gpg_id, std::string org, std
 	std::cerr << "Mv Config Dir from: " << tmpbase << " to: " << finalbase;
 	std::cerr << std::endl;
 
-	if (0 > rename(tmpbase.c_str(), finalbase.c_str()))
+	if (!RsDirUtil::renameFile(tmpbase, finalbase))
 	{
 		std::cerr << "rename FAILED" << std::endl;
 	}
@@ -1502,7 +1518,7 @@ bool	RsInit::get_configinit(std::string dir, std::string &id)
 	initfile += configInitFile;
 
 	// open and read in the lines.
-	FILE *ifd = fopen(initfile.c_str(), "r");
+	FILE *ifd = RsDirUtil::rs_fopen(initfile.c_str(), "r");
 	char path[1024];
 	int i;
 
@@ -1532,7 +1548,7 @@ bool	RsInit::create_configinit(std::string dir, std::string id)
 	initfile += configInitFile;
 
 	// open and read in the lines.
-	FILE *ifd = fopen(initfile.c_str(), "w");
+	FILE *ifd = RsDirUtil::rs_fopen(initfile.c_str(), "w");
 
 	if (ifd != NULL)
 	{

@@ -718,7 +718,7 @@ bool CacheStrapper::CacheExist(CacheData& data){
 	
 	std::string filename = data.path + "/" + data.name;
 	FILE* file = NULL;
-	file = fopen(filename.c_str(), "r");
+	file = RsDirUtil::rs_fopen(filename.c_str(), "r");
 
 	if(file == NULL)
 		return false;
