@@ -502,7 +502,25 @@ int ftServer::RequestDirDetails(void *ref, DirDetails &details, uint32_t flags)
 	else
 		return mFiStore->RequestDirDetails(ref, details, flags);
 }
+uint32_t ftServer::getType(void *ref, uint32_t flags)
+{
+#ifdef SERVER_DEBUG
+	std::cerr << "ftServer::RequestDirDetails(ref:" << ref;
+	std::cerr << ", flags:" << flags << ", ...) -> mFiStore";
+	std::cerr << std::endl;
 
+	if (!mFiStore)
+	{
+		std::cerr << "mFiStore not SET yet = FAIL";
+		std::cerr << std::endl;
+	}
+
+#endif
+	if(flags & DIR_FLAGS_LOCAL)
+		return mFiMon->getType(ref);
+	else
+		return mFiStore->getType(ref);
+}
 	/***************************************************************/
 	/******************** Search Interface *************************/
 	/***************************************************************/

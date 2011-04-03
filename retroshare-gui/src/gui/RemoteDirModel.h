@@ -61,6 +61,7 @@ class RetroshareDirModel : public QAbstractItemModel
 		void getFilePaths(const QModelIndexList &list, std::list<std::string> &fullpaths);
 		void changeAgeIndicator(uint32_t indicator) { ageIndicator = indicator; }
 
+		bool requestDirDetails(void *ref,DirDetails& details,uint32_t flags) const;
 	public:
 
 		virtual QMimeData * mimeData ( const QModelIndexList & indexes ) const;
@@ -75,9 +76,9 @@ class RetroshareDirModel : public QAbstractItemModel
 		void getAgeIndicatorRec(DirDetails &details, QString &ret) const;
 
 		virtual QVariant displayRole(const DirDetails&,int) const = 0 ;
+		virtual QVariant sortRole(const DirDetails&,int) const =0;
 
 		QVariant decorationRole(const DirDetails&,int) const ;
-		QVariant sortRole(const DirDetails&,int) const ;
 
 		uint32_t ageIndicator;
 
@@ -148,6 +149,7 @@ class TreeStyle_RDM: public RetroshareDirModel
 
 		virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 		virtual QVariant displayRole(const DirDetails&,int) const ;
+		virtual QVariant sortRole(const DirDetails&,int) const ;
 
 		virtual QModelIndex index(int row, int column, const QModelIndex & parent = QModelIndex() ) const;
 		virtual QModelIndex parent ( const QModelIndex & index ) const;
@@ -176,6 +178,7 @@ class FlatStyle_RDM: public RetroshareDirModel
 
 		virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 		virtual QVariant displayRole(const DirDetails&,int) const ;
+		virtual QVariant sortRole(const DirDetails&,int) const ;
 
 		virtual QModelIndex index(int row, int column, const QModelIndex & parent = QModelIndex() ) const;
 		virtual QModelIndex parent ( const QModelIndex & index ) const;

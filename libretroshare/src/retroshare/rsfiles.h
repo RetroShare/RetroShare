@@ -159,7 +159,9 @@ class RsFiles
 		 * Directory Listing / Search Interface
 		 */
 		virtual int RequestDirDetails(std::string uid, std::string path, DirDetails &details) = 0;
+
 		virtual int RequestDirDetails(void *ref, DirDetails &details, uint32_t flags) = 0;
+		virtual uint32_t getType(void *ref,uint32_t flags) = 0;
 
 		virtual int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,uint32_t flags) = 0;
 		virtual int SearchBoolExp(Expression * exp, std::list<DirDetails> &results,uint32_t flags) = 0;

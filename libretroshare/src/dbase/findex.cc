@@ -1216,6 +1216,16 @@ int FileIndex::searchBoolExp(Expression * exp, std::list<FileEntry *> &results) 
 	return 0;
 }
 
+uint32_t FileIndex::getType(void *ref) 
+{
+	if(ref == NULL)
+		return DIR_TYPE_ROOT ;
+
+	if(!isValid(ref))
+		return DIR_TYPE_ROOT ;
+
+	return static_cast<FileEntry*>(ref)->type() ;
+}
 bool FileIndex::extractData(void *ref,DirDetails& details) 
 {
 	if(!isValid(ref))
@@ -1227,7 +1237,7 @@ bool FileIndex::extractData(void *ref,DirDetails& details)
 	}
 
 	FileEntry *file = static_cast<FileEntry *>(ref);
-	DirEntry *dir = dynamic_cast<DirEntry *>(file);
+	DirEntry *dir = (file->hash.empty())?static_cast<DirEntry *>(file):NULL ; // This is a hack to avoid doing a dynamic_cast
 
 	details.children = std::list<DirStub>() ;
 	time_t now = time(NULL) ;
@@ -1304,7 +1314,7 @@ bool FileIndex::extractData(void *ref,DirDetails& details)
 	FileEntry *f ;
 	for(f=file;f->parent!=NULL;f=f->parent) ;
 
-	details.id = dynamic_cast<PersonEntry*>(f)->id;
+	details.id = static_cast<PersonEntry*>(f)->id;	// The topmost parent is necessarily a personEntrY, so we can avoid a dynamic_cast.
 
 #ifdef FI_DEBUG
 	assert(details.parent != details.ref) ;

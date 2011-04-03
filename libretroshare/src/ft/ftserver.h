@@ -171,6 +171,7 @@ virtual bool ExtraFileMove(std::string fname, std::string hash, uint64_t size,
  ***/
 virtual int RequestDirDetails(std::string uid, std::string path, DirDetails &details);
 virtual int RequestDirDetails(void *ref, DirDetails &details, uint32_t flags);
+virtual uint32_t getType(void *ref,uint32_t flags) ;
 
 virtual int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,uint32_t flags);
 virtual int SearchBoolExp(Expression * exp, std::list<DirDetails> &results,uint32_t flags);

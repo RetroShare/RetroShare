@@ -135,6 +135,7 @@ class FileIndexMonitor: public CacheSource, public RsThread
 
 		// Interface for browsing dir hirarchy
 		int RequestDirDetails(void*, DirDetails&, uint32_t) const ;
+		uint32_t getType(void*) const ;
 		int RequestDirDetails(std::string uid, std::string path, DirDetails &details) const ;
 
 		// set/update shared directories

@@ -155,6 +155,7 @@ int FileIndexStore::loadCache(const CacheData &data)
 	return ret;
 }
 
+
 	/* Search Interface - For Directory Access */
 int FileIndexStore::RequestDirDetails(std::string uid, std::string path, DirDetails &details) const
 {
@@ -247,7 +248,14 @@ int FileIndexStore::RequestDirDetails(void *ref, DirDetails &details, uint32_t f
 	unlockData();
 	return b;
 }
+uint32_t FileIndexStore::getType(void *ref) const
+{
+	lockData() ;
+	uint32_t b = FileIndex::getType(ref) ;
+	unlockData();
 
+	return b;
+}
 
 int FileIndexStore::SearchHash(std::string hash, std::list<FileDetail> &results) const
 {

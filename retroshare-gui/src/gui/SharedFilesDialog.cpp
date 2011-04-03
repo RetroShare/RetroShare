@@ -55,6 +55,10 @@
 #define IMAGE_OPENFOLDER        ":/images/folderopen.png"
 #define IMAGE_OPENFILE		 ":/images/fileopen.png"
 
+// Define to avoid using the search in treeview, because it is really slow for now.
+//
+#define DONT_USE_SEARCH_IN_TREE_VIEW 1
+
 const QString Image_AddNewAssotiationForFile = ":/images/kcmsystem24.png";
 
 class SFDSortFilterProxyModel : public QSortFilterProxyModel
@@ -208,9 +212,6 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
   //
   changeCurrentViewModel(ui.viewType_CB->currentIndex()) ;
 
-  ui.filterStartButton->hide();
-  ui.filterClearButton->hide();
-
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
@@ -278,16 +279,22 @@ void SharedFilesDialog::changeCurrentViewModel(int c)
 		model = tree_model ;
 		proxyModel = tree_proxyModel ;
 		ui.remoteDirTreeView->setColumnHidden(3,true) ;
+#ifdef DONT_USE_SEARCH_IN_TREE_VIEW
 		ui.filterLabel->hide();
 		ui.filterPatternLineEdit->hide();
+		ui.filterStartButton->hide();
+		ui.filterClearButton->hide();
+#endif
 	}
 	else
 	{
 		model = flat_model ;
 		proxyModel = flat_proxyModel ;
 		ui.remoteDirTreeView->setColumnHidden(3,false) ;
+#ifdef DONT_USE_SEARCH_IN_TREE_VIEW
 		ui.filterLabel->show();
 		ui.filterPatternLineEdit->show();
+#endif
 	}
 
 	model->preMods();
@@ -301,7 +308,9 @@ void SharedFilesDialog::changeCurrentViewModel(int c)
 
 	ui.remoteDirTreeView->header()->headerDataChanged(Qt::Horizontal,0,4) ;
 
+#ifdef DONT_USE_SEARCH_IN_TREE_VIEW
 	if(c == 1)
+#endif
 		FilterItems();
 }
 

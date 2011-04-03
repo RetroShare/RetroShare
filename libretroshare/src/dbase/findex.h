@@ -83,7 +83,8 @@ class FileEntry
 		: size(0), modtime(0), pop(0), updtime(0), parent(NULL), row(0)
 	{ return; }
 
-virtual ~FileEntry() { return; }
+	virtual ~FileEntry() { return; }
+	virtual uint32_t type() const { return DIR_TYPE_FILE ; }
 
 virtual int print(std::ostream &out);
 
@@ -118,6 +119,7 @@ DirEntry * 	updateDir(const FileEntry& fe, time_t updtime);
 FileEntry * 	updateFile(const FileEntry& fe, time_t updtime);
 
 
+	virtual uint32_t type() const { return DIR_TYPE_DIR ; }
 int  		checkParentPointers();
 int 		updateChildRows();
 
@@ -179,6 +181,7 @@ DirEntry &operator=(DirEntry &src)
 	(*pdest) = src;
 	return *this;
 }
+	virtual uint32_t type() const { return DIR_TYPE_PERSON ; }
 
 	/* Data */
 	std::string id;
@@ -248,6 +251,7 @@ class FileIndex
 		/// Fills up details from the data contained in ref.
 		//
 		static bool extractData(void *ref,DirDetails& details) ;
+		static uint32_t getType(void *ref) ;
 };
 
 

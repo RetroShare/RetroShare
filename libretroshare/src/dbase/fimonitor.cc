@@ -1237,6 +1237,12 @@ int FileIndexMonitor::RequestDirDetails(std::string uid, std::string path, DirDe
 	return (uid == fi.root->id) ;
 }
 
+uint32_t FileIndexMonitor::getType(void *ref) const
+{
+	RsStackMutex mutex(fiMutex) ;
+
+	return fi.getType(ref) ;
+}
 int FileIndexMonitor::RequestDirDetails(void *ref, DirDetails &details, uint32_t flags) const
 {
 	RsStackMutex mutex(fiMutex) ;

@@ -83,7 +83,7 @@ bool TreeStyle_RDM::hasChildren(const QModelIndex &parent) const
 	else
 		flags |= DIR_FLAGS_LOCAL;
 
-	if (!rsFiles->RequestDirDetails(ref, details, flags))
+	if (!requestDirDetails(ref, details, flags))
 	{
 		/* error */
 #ifdef RDM_DEBUG
@@ -144,7 +144,7 @@ int TreeStyle_RDM::rowCount(const QModelIndex &parent) const
 	else
 		flags |= DIR_FLAGS_LOCAL;
 
-	if (!rsFiles->RequestDirDetails(ref, details, flags))
+	if (!requestDirDetails(ref, details, flags))
 	{
 #ifdef RDM_DEBUG
 		std::cerr << "lookup failed -> 0";
@@ -379,8 +379,7 @@ QVariant FlatStyle_RDM::displayRole(const DirDetails& details,int coln) const
 
 	return QVariant();
 } /* end of DisplayRole */
-
-QVariant RetroshareDirModel::sortRole(const DirDetails& details,int coln) const
+QVariant TreeStyle_RDM::sortRole(const DirDetails& details,int coln) const
 {
 	/*
 	 * Person:  name,  id, 0, 0;
@@ -440,6 +439,27 @@ QVariant RetroshareDirModel::sortRole(const DirDetails& details,int coln) const
 		}
 	}
 	return QVariant();
+}
+QVariant FlatStyle_RDM::sortRole(const DirDetails& details,int coln) const
+{
+	/*
+	 * Person:  name,  id, 0, 0;
+	 * File  :  name,  size, rank, (0) ts
+	 * Dir   :  name,  (0) count, (0) path, (0) ts
+	 */
+
+	if (details.type == DIR_TYPE_FILE) /* File */
+	{
+		switch(coln)
+		{
+			case 0: return QString::fromUtf8(details.name.c_str());
+			case 1: return (qulonglong) details.count;
+			case 2: return  details.age;
+			case 3: return QString::fromStdString(rsPeers->getPeerName(details.id));
+		}
+	}
+	else 
+		return QVariant();
 } /* end of SortRole */
 
 
@@ -467,7 +487,7 @@ QVariant RetroshareDirModel::data(const QModelIndex &index, int role) const
 	else
 		flags |= DIR_FLAGS_LOCAL;
 
-	if (!rsFiles->RequestDirDetails(ref, details, flags))
+	if (!requestDirDetails(ref, details, flags))
 		return QVariant();
 
 	if (role == RetroshareDirModel::FileNameRole) /* end of FileNameRole */
@@ -532,7 +552,7 @@ void RetroshareDirModel::getAgeIndicatorRec(DirDetails &details, QString &ret) c
 			else
 				flags |= DIR_FLAGS_LOCAL;
 
-			if (rsFiles->RequestDirDetails(ref, childDetails, flags) && ret == tr(""))
+			if (requestDirDetails(ref, childDetails, flags) && ret == tr(""))
 				getAgeIndicatorRec(childDetails, ret);
 		}
 	}
@@ -650,7 +670,7 @@ QModelIndex TreeStyle_RDM::index(int row, int column, const QModelIndex & parent
 	else
 		flags |= DIR_FLAGS_LOCAL;
 
-	if (!rsFiles->RequestDirDetails(ref, details, flags))
+	if (!requestDirDetails(ref, details, flags))
 	{
 #ifdef RDM_DEBUG
 		std::cerr << "lookup failed -> invalid";
@@ -728,7 +748,7 @@ QModelIndex TreeStyle_RDM::parent( const QModelIndex & index ) const
 	DirDetails details;
 	uint32_t flags = (RemoteMode)?DIR_FLAGS_REMOTE:DIR_FLAGS_LOCAL;
 
-	if (!rsFiles->RequestDirDetails(ref, details, flags))
+	if (!requestDirDetails(ref, details, flags))
 	{
 #ifdef RDM_DEBUG
 		std::cerr << "Failed Lookup -> invalid";
@@ -781,7 +801,7 @@ Qt::ItemFlags RetroshareDirModel::flags( const QModelIndex & index ) const
 	else
 		flags |= DIR_FLAGS_LOCAL;
 
-	if (!rsFiles->RequestDirDetails(ref, details, flags))
+	if (!requestDirDetails(ref, details, flags))
 		return Qt::ItemIsSelectable; // Error.
 
 	switch(details.type)
@@ -829,15 +849,13 @@ Qt::ItemFlags RetroshareDirModel::flags( const QModelIndex & index ) const
 #endif
  }
 
+bool RetroshareDirModel::requestDirDetails(void *ref,DirDetails& details,uint32_t flags) const
+{
+	// We should use a cache instead of calling RsFiles::RequestDirDetails(), which is very costly
+	// due to some pointer checking crap.
 
-//void RetroshareDirModel::update (const QModelIndex &index )
-//{
-//#ifdef RDM_DEBUG
-//	//std::cerr << "Directory Request(" << id << ") : ";
-//	//std::cerr << path << std::endl;
-//#endif
-//	//rsFiles -> RequestDirectories(id, path, 1);
-//}
+	return rsFiles->RequestDirDetails(ref, details, flags) ;
+}
 
 void RetroshareDirModel::downloadSelected(const QModelIndexList &list)
 {
@@ -912,7 +930,7 @@ void RetroshareDirModel::downloadDirectory(const DirDetails & dirDetails, int pr
 			DirDetails subDirDetails;
 			uint32_t flags = DIR_FLAGS_CHILDREN | DIR_FLAGS_REMOTE;
 
-			if (!rsFiles->RequestDirDetails(it->ref, subDirDetails, flags)) continue;
+			if (!requestDirDetails(it->ref, subDirDetails, flags)) continue;
 
 			downloadDirectory(subDirDetails, prefixLen);
 		}
@@ -942,7 +960,7 @@ void RetroshareDirModel::getDirDetailsFromSelect (const QModelIndexList &list, s
                 flags |= DIR_FLAGS_LOCAL;
             }
 
-            if (!rsFiles->RequestDirDetails(ref, details, flags))
+            if (!requestDirDetails(ref, details, flags))
             {
                 continue;
             }
@@ -987,7 +1005,7 @@ void RetroshareDirModel::getFileInfoFromIndexList(const QModelIndexList& list, s
 			else
 				flags |= DIR_FLAGS_LOCAL;
 
-			if (!rsFiles->RequestDirDetails(ref, details, flags))
+			if (!requestDirDetails(ref, details, flags))
 				continue;
 
 			if(details.type == DIR_TYPE_PERSON)
@@ -1084,7 +1102,7 @@ void RetroshareDirModel::getFilePaths(const QModelIndexList &list, std::list<std
      		uint32_t flags = DIR_FLAGS_DETAILS;
      		flags |= DIR_FLAGS_LOCAL;
 
-     		if (!rsFiles->RequestDirDetails(ref, details, flags))
+     		if (!requestDirDetails(ref, details, flags))
      		{
 #ifdef RDM_DEBUG
 			std::cerr << "getFilePaths() Bad Request" << std::endl;
@@ -1148,7 +1166,7 @@ QMimeData * RetroshareDirModel::mimeData ( const QModelIndexList & indexes ) con
      			flags |= DIR_FLAGS_LOCAL;
 		}
 
-     		if (!rsFiles->RequestDirDetails(ref, details, flags))
+     		if (!requestDirDetails(ref, details, flags))
      		{
 			continue;
      		}
@@ -1232,25 +1250,12 @@ QStringList RetroshareDirModel::mimeTypes () const
 
 int RetroshareDirModel::getType ( const QModelIndex & index ) const
 {
-    //if (RemoteMode) // only local files can be opened
-    //    return ;
-    void *ref = index.internalPointer();
-    if (!ref)
-        return false;
+	//if (RemoteMode) // only local files can be opened
+	//    return ;
 
-    DirDetails details;
-    uint32_t flags = DIR_FLAGS_DETAILS;
-    if (RemoteMode)
-        flags |= DIR_FLAGS_REMOTE;
-    else
-        flags |= DIR_FLAGS_LOCAL;
+	uint32_t flags = RemoteMode?DIR_FLAGS_REMOTE:DIR_FLAGS_LOCAL;
 
-    if (!rsFiles->RequestDirDetails(ref, details, flags))
-    {
-        return false;//not good, but....
-    }
-
-    return details.type;
+	return rsFiles->getType(index.internalPointer(),flags);
 }
 
 FlatStyle_RDM::~FlatStyle_RDM()
@@ -1278,7 +1283,7 @@ void FlatStyle_RDM::postMods()
 		uint32_t flags = DIR_FLAGS_DETAILS;
 		DirDetails details ;
 
-		if (rsFiles->RequestDirDetails(ref, details, flags))
+		if (requestDirDetails(ref, details, flags))
 		{
 			if(details.type == DIR_TYPE_FILE)		// only push files, not directories nor persons.
 				_ref_entries.push_back(ref);
