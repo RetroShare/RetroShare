@@ -739,7 +739,7 @@ FILE *RsDirUtil::rs_fopen(const char* filename, const char* mode)
 
 	return _wfopen(wfilename.c_str(), wmode.c_str());
 #else
-	return = fopen64(filename, mode);
+	return fopen64(filename, mode);
 #endif
 }
 
