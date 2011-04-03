@@ -53,6 +53,7 @@ RsServer::RsServer(RsIface &i, NotifyBase &callback)
 	chatSrv = NULL;
 	mStatusSrv = NULL;
 	mChannels = NULL;
+	mForums = NULL;
 	/* caches (that need ticking) */
 	mRanking = NULL;
 

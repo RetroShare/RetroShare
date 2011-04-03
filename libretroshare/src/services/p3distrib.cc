@@ -862,7 +862,7 @@ void p3GroupDistrib::run() /* called once the thread is started */
 	int printed = 0;
 #endif
 	CacheData cache;
-	while(1)
+	while(isRunning())
 	{
 		/* */
 

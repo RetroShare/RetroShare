@@ -1957,7 +1957,7 @@ int RsServer::StartupRetroShare()
         CachePair cp(mRanking, mRanking, CacheId(RS_SERVICE_TYPE_RANK, 0));
 	mCacheStrapper -> addCachePair(cp);				/* end of declaration */
 
-	p3Forums *mForums = new p3Forums(RS_SERVICE_TYPE_FORUM,
+	mForums = new p3Forums(RS_SERVICE_TYPE_FORUM,
 			mCacheStrapper, mCacheTransfer,
                         localcachedir, remotecachedir, forumdir);
 

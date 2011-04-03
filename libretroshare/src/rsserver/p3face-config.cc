@@ -180,5 +180,15 @@ void RsServer::rsGlobalShutDown()
 	join();
 	ftserver->StopThreads();
 
+	// stop the p3distrib threads
+#ifndef MINIMAL_LIBRS
+	mForums->join();
+	mChannels->join();
+
+#ifdef RS_USE_BLOGS
+	mBlogs->join();
+#endif
+#endif // MINIMAL_LIBRS
+
 	AuthGPGExit();
 }

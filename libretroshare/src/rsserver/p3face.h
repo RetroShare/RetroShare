@@ -45,7 +45,7 @@
 #include "services/p3blogs.h"
 #include "services/p3statusservice.h"
 #include "services/p3channels.h"
-
+#include "services/p3forums.h"
 
 /* The Main Interface Class - for controlling the server */
 
@@ -163,6 +163,7 @@ class RsServer: public RsControl, public RsThread
 		p3ChatService *chatSrv;
 		p3StatusService *mStatusSrv;
 		p3Channels *mChannels;
+		p3Forums *mForums;
 		/* caches (that need ticking) */
 		p3Ranking *mRanking;
 
