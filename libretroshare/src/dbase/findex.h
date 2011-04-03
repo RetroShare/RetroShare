@@ -74,9 +74,11 @@ class ostream;
  * FileEntry
  *****************************************************************************************/
 
+#include <util/smallobject.h>
+
 class DirEntry;
 
-class FileEntry
+class FileEntry: public RsMemoryManagement::SmallObject
 {
 	public:
 	FileEntry() 
