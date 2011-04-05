@@ -33,6 +33,10 @@
 #include "serialiser/rstlvtypes.h"
 #include "serialiser/rschannelitems.h"
 
+#define RS_CHAN_STATUS_AUTO_DL 0x0004
+
+typedef std::map<std::string, uint32_t> statMap;
+typedef std::map<std::string, statMap> chanStatMap;
 
 //! Channels is a distributed 'feed' service
 /*!
@@ -79,8 +83,8 @@ virtual bool channelRestoreKeys(std::string chId);
 virtual bool channelShareKeys(std::string chId, std::list<std::string>& peers);
 virtual bool channelEditInfo(std::string chId, ChannelInfo &ci);
 virtual void getPubKeysAvailableGrpIds(std::list<std::string>& grpIds);
-//virtual void setPrivateChannelDir(const std::string dirName);
-
+virtual void channelSetAutoDl(const std::string& chId, bool autoDl);
+virtual bool channelGetAutoDl(const std::string& chId, bool& autoDl);
 
 /***************************************************************************************/
 /****************** Event Feedback (Overloaded form p3distrib) *************************/
@@ -107,11 +111,15 @@ virtual std::list<RsItem *> childSaveList();
 
 	private:
 
+void processChanReadStatus(RsChannelReadStatus* drs);
+
 	RsFiles *mRsFiles;
 	std::string mChannelsDir;
 	std::list<RsItem *> saveList;
 
 	std::list<RsChannelReadStatus *> mReadStatus;
+	chanStatMap mMsgReadStatus;
+	statMap mChannelStatus;
 };
 
 

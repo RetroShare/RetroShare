@@ -547,7 +547,12 @@ bool p3Channels::channelSubscribe(std::string cId, bool subscribe)
         std::cerr << "p3Channels::channelSubscribe() " << cId << std::endl;
 #endif
 
-	return subscribeToGroup(cId, subscribe);
+    bool ok = subscribeToGroup(cId, subscribe);
+
+    if(ok)
+    	mChannelStatus[cId] = RS_CHAN_STATUS_AUTO_DL;
+
+	return ok;
 }
 
 bool p3Channels::channelShareKeys(std::string chId, std::list<std::string>& peers){
@@ -596,6 +601,35 @@ void p3Channels::getPubKeysAvailableGrpIds(std::list<std::string>& grpIds)
 
 }
 
+void p3Channels::channelSetAutoDl(const std::string& chId, bool autoDl)
+{
+
+	RsStackMutex stack(distribMtx);
+
+	if(autoDl)
+		mChannelStatus[chId] |= RS_CHAN_STATUS_AUTO_DL;
+	else
+		mChannelStatus[chId] = ~RS_CHAN_STATUS_AUTO_DL;
+
+	return;
+}
+
+
+bool p3Channels::channelGetAutoDl(const std::string& chId, bool& autoDl)
+{
+	RsStackMutex stack(distribMtx);
+
+	statMap::iterator it = mChannelStatus.find(chId);
+
+	if(it != mChannelStatus.end())
+	{
+		autoDl = mChannelStatus[chId] & RS_CHAN_STATUS_AUTO_DL;
+		return true;
+	}
+
+	return false;
+}
+
 /***************************************************************************************/
 /****************** Event Feedback (Overloaded form p3distrib) *************************/
 /***************************************************************************************/
@@ -620,6 +654,29 @@ bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std
 	if (!chanMsg)
 	{
 		return true;
+	}
+
+	// check if msg has done download already
+
+	chanStatMap::iterator cit = mMsgReadStatus.find(grpId);
+	statMap MsgMap;
+	statMap::iterator mit1, mit2;
+
+	if(cit != mMsgReadStatus.end()){
+		mit1 = cit->second.find(msgId);
+
+		if(mit1 != cit->second.end()){
+			if(mit1->second & CHANNEL_MSG_STATUS_DOWLOADED)
+				return false;
+		}
+	}
+
+	mit2 = mChannelStatus.find(grpId);
+
+	if(mit2 != mChannelStatus.end())
+	{
+		if(!(mit2->second & RS_CHAN_STATUS_AUTO_DL))
+			return false;
 	}
 
 	/* request the files 
@@ -661,7 +718,7 @@ bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std
 
 
                 if(grp->flags & RS_DISTRIB_PRIVATE)
-			chanPrivate = true;
+                	chanPrivate = true;
 	}
 
 	/* Iterate through files */
@@ -689,6 +746,7 @@ bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std
 					RS_FILE_HINTS_NETWORK_WIDE;
 
 		}
+
 		std::list<std::string> srcIds;
 		srcIds.push_back(id);
 
@@ -708,6 +766,9 @@ bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std
         			localpath, flags, srcIds);
 	}
 
+
+	mit1->second |= (CHANNEL_MSG_STATUS_MASK &
+			CHANNEL_MSG_STATUS_DOWLOADED);
 
 	return true;
 }
@@ -823,8 +884,7 @@ bool p3Channels::childLoadList(std::list<RsItem* >& configSaves)
 	{
 		if(NULL != (drs = dynamic_cast<RsChannelReadStatus* >(*it)))
 		{
-			mReadStatus.push_back(drs);
-			saveList.push_back(drs);
+			processChanReadStatus(drs);
 		}
 		else
 		{
@@ -837,6 +897,29 @@ bool p3Channels::childLoadList(std::list<RsItem* >& configSaves)
 	return true;
 }
 
+void p3Channels::processChanReadStatus(RsChannelReadStatus* drs)
+{
+
+
+	mReadStatus.push_back(drs);
+	std::string chId = drs->channelId;
+
+	statMap::iterator sit = drs->msgReadStatus.find(chId);
+
+	if(sit != drs->msgReadStatus.end()){
+		mChannelStatus[chId] = sit->second;
+		drs->msgReadStatus.erase(sit);
+	}
+
+	// first pull out the channel id status
+
+	mMsgReadStatus[drs->channelId] = drs->msgReadStatus;
+	mReadStatus.push_back(drs);
+
+	saveList.push_back(drs);
+
+
+}
 std::list<RsItem *> p3Channels::childSaveList()
 {
 	return saveList;
