@@ -90,20 +90,20 @@ private:
 SharedFilesDialog::SharedFilesDialog(QWidget *parent)
 : RsAutoUpdatePage(1000,parent)
 {
-  /* Invoke the Qt Designer generated object setup routine */
-  ui.setupUi(this);
+	/* Invoke the Qt Designer generated object setup routine */
+	ui.setupUi(this);
 
-  connect(ui.checkButton, SIGNAL(clicked()), this, SLOT(forceCheck()));
-  connect(ui.localButton, SIGNAL(toggled(bool)), this, SLOT(showFrame(bool)));
-  connect(ui.remoteButton, SIGNAL(toggled(bool)), this, SLOT(showFrameRemote(bool)));
-  connect(ui.splittedButton, SIGNAL(toggled(bool)), this, SLOT(showFrameSplitted(bool)));
-  connect(ui.viewType_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(changeCurrentViewModel(int)));
+	connect(ui.checkButton, SIGNAL(clicked()), this, SLOT(forceCheck()));
+	connect(ui.localButton, SIGNAL(toggled(bool)), this, SLOT(showFrame(bool)));
+	connect(ui.remoteButton, SIGNAL(toggled(bool)), this, SLOT(showFrameRemote(bool)));
+	connect(ui.splittedButton, SIGNAL(toggled(bool)), this, SLOT(showFrameSplitted(bool)));
+	connect(ui.viewType_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(changeCurrentViewModel(int)));
 
-  connect( ui.localDirTreeView, SIGNAL( customContextMenuRequested( QPoint ) ), this,  SLOT( sharedDirTreeWidgetContextMenu( QPoint ) ) );
-  connect( ui.remoteDirTreeView, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( shareddirtreeviewCostumPopupMenu( QPoint ) ) );
+	connect( ui.localDirTreeView, SIGNAL( customContextMenuRequested( QPoint ) ), this,  SLOT( sharedDirTreeWidgetContextMenu( QPoint ) ) );
+	connect( ui.remoteDirTreeView, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( shareddirtreeviewCostumPopupMenu( QPoint ) ) );
 
 //  connect( ui.remoteDirTreeView, SIGNAL( doubleClicked(const QModelIndex&)), this, SLOT( downloadRemoteSelected()));
-  connect( ui.downloadButton, SIGNAL( clicked()), this, SLOT( downloadRemoteSelected()));
+	connect( ui.downloadButton, SIGNAL( clicked()), this, SLOT( downloadRemoteSelected()));
 
 	connect(ui.indicatorCBox, SIGNAL(currentIndexChanged(int)), this, SLOT(indicatorChanged(int)));
 
@@ -115,54 +115,46 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
 	this, SLOT( checkForRemoteDirRequest( QTreeWidgetItem * ) ) );
 */
 
+	tree_model = new TreeStyle_RDM(true);
+	flat_model = new FlatStyle_RDM(true);
 
-  tree_model = new TreeStyle_RDM(true);
-  flat_model = new FlatStyle_RDM(true);
+	tree_proxyModel = new SFDSortFilterProxyModel(tree_model, this);
+	tree_proxyModel->setDynamicSortFilter(true);
+	tree_proxyModel->setSourceModel(tree_model);
+	tree_proxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
+	tree_proxyModel->setSortRole(RetroshareDirModel::SortRole);
+	tree_proxyModel->sort(0);
 
-  tree_proxyModel = new SFDSortFilterProxyModel(tree_model, this);
-  tree_proxyModel->setDynamicSortFilter(true);
-  tree_proxyModel->setSourceModel(tree_model);
-  tree_proxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
-  tree_proxyModel->setSortRole(RetroshareDirModel::SortRole);
-  tree_proxyModel->sort(0);
+	flat_proxyModel = new SFDSortFilterProxyModel(flat_model, this);
+	flat_proxyModel->setDynamicSortFilter(true);
+	flat_proxyModel->setSourceModel(flat_model);
+	flat_proxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
+	flat_proxyModel->setSortRole(RetroshareDirModel::SortRole);
+	flat_proxyModel->sort(0);
 
-  flat_proxyModel = new SFDSortFilterProxyModel(flat_model, this);
-  flat_proxyModel->setDynamicSortFilter(true);
-  flat_proxyModel->setSourceModel(flat_model);
-  flat_proxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
-  flat_proxyModel->setSortRole(RetroshareDirModel::SortRole);
-  flat_proxyModel->sort(0);
+	localModel = new TreeStyle_RDM(false);
 
-  localModel = new TreeStyle_RDM(false);
+	localProxyModel = new SFDSortFilterProxyModel(localModel, this);
+	localProxyModel->setDynamicSortFilter(true);
+	localProxyModel->setSourceModel(localModel);
+	localProxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
+	localProxyModel->setSortRole(RetroshareDirModel::SortRole);
+	localProxyModel->sort(0);
 
-  localProxyModel = new SFDSortFilterProxyModel(localModel, this);
-  localProxyModel->setDynamicSortFilter(true);
-  localProxyModel->setSourceModel(localModel);
-  localProxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
-  localProxyModel->setSortRole(RetroshareDirModel::SortRole);
-  localProxyModel->sort(0);
+	ui.localDirTreeView->setModel(localProxyModel);
 
-  ui.localDirTreeView->setModel(localProxyModel);
+	connect( ui.localDirTreeView, SIGNAL( collapsed(const QModelIndex & ) ), localModel, SLOT(  collapsed(const QModelIndex & ) ) );
+	connect( ui.localDirTreeView, SIGNAL( expanded(const QModelIndex & ) ), localModel, SLOT(  expanded(const QModelIndex & ) ) );
 
-  connect( ui.localDirTreeView, SIGNAL( collapsed(const QModelIndex & ) ), localModel, SLOT(  collapsed(const QModelIndex & ) ) );
-  connect( ui.localDirTreeView, SIGNAL( expanded(const QModelIndex & ) ), localModel, SLOT(  expanded(const QModelIndex & ) ) );
+	connect( localModel, SIGNAL( layoutAboutToBeChanged() ), ui.localDirTreeView, SLOT( reset() ) );
+	connect( localModel, SIGNAL( layoutChanged() ), ui.localDirTreeView, SLOT( update() ) );
 
-  connect( localModel, SIGNAL( layoutAboutToBeChanged() ), ui.localDirTreeView, SLOT( reset() ) );
-  connect( localModel, SIGNAL( layoutChanged() ), ui.localDirTreeView, SLOT( update() ) );
+	connect(ui.filterClearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
+	connect(ui.filterStartButton, SIGNAL(clicked()), this, SLOT(startFilter()));
+	connect(ui.filterPatternLineEdit, SIGNAL(returnPressed()), this, SLOT(startFilter()));
+	connect(ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
 
-  connect(ui.filterClearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
-  connect(ui.filterStartButton, SIGNAL(clicked()), this, SLOT(startFilter()));
-  connect(ui.filterPatternLineEdit, SIGNAL(returnPressed()), this, SLOT(startFilter()));
-  connect(ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
-
-  // load settings
-  processSettings(true);
-
-  ui.remoteDirTreeView->setColumnHidden(3,false) ;
-  ui.remoteDirTreeView->setColumnHidden(4,true) ;
-  ui.localDirTreeView->setColumnHidden(4,true) ;
-
-  /* Set header resize modes and initial section sizes  */
+	/* Set header resize modes and initial section sizes  */
 	QHeaderView * l_header = ui.localDirTreeView->header () ;
 //	l_header->setResizeMode (0, QHeaderView::Interactive);
 //	l_header->setResizeMode (1, QHeaderView::Fixed);
@@ -176,18 +168,23 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
 	l_header->resizeSection ( 3, 100 );
 //	l_header->resizeSection ( 4, 100 );
 
+	l_header->setStretchLastSection(false);
+//	l_header->setHighlightSections(false);
+
+	// Setup the current view model.
+	//
+	changeCurrentViewModel(ui.viewType_CB->currentIndex()) ;
+
 	/* Set header resize modes and initial section sizes */
 	QHeaderView * r_header = ui.remoteDirTreeView->header () ;
 
 	r_header->setResizeMode (0, QHeaderView::Interactive);
 	r_header->setStretchLastSection(false);
-	l_header->setStretchLastSection(false);
 
 // 	r_header->setResizeMode (1, QHeaderView::Fixed);
 // //	r_header->setResizeMode (2, QHeaderView::Interactive);
 // 	r_header->setResizeMode (3, QHeaderView::Fixed);
 // //	r_header->setResizeMode (4, QHeaderView::Interactive);
-
 
 	r_header->resizeSection ( 0, 490 );
 	r_header->resizeSection ( 1, 70 );
@@ -195,22 +192,24 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
 	r_header->resizeSection ( 3, 100 );
 	r_header->resizeSection ( 4, 80 );
 
-//	l_header->setHighlightSections(false);
 //	r_header->setHighlightSections(false);
 
-
-  /* Set Multi Selection */
-  ui.remoteDirTreeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
-  ui.localDirTreeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
+	/* Set Multi Selection */
+	ui.remoteDirTreeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
+	ui.localDirTreeView->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
 //#ifdef RS_RELEASE_VERSION
 //  ui.filterLabel->hide();
 //  ui.filterPatternLineEdit->hide();
 //#endif
 
-  // Setup the current view model.
-  //
-  changeCurrentViewModel(ui.viewType_CB->currentIndex()) ;
+	// load settings
+	processSettings(true);
+
+	// Hide columns after loading the settings
+	ui.remoteDirTreeView->setColumnHidden(3,false) ;
+	ui.remoteDirTreeView->setColumnHidden(4,true) ;
+	ui.localDirTreeView->setColumnHidden(4,true) ;
 
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -244,29 +243,35 @@ SharedFilesDialog::~SharedFilesDialog()
 
 void SharedFilesDialog::processSettings(bool bLoad)
 {
-    Settings->beginGroup("SharedFilesDialog");
+	Settings->beginGroup("SharedFilesDialog");
 
-    if (bLoad) {
-        // load settings
+	if (bLoad) {
+		// load settings
 
-        // state of the trees
-        ui.localDirTreeView->header()->restoreState(Settings->value("LocalDirTreeView").toByteArray());
-        ui.remoteDirTreeView->header()->restoreState(Settings->value("RemoteDirTreeView").toByteArray());
+		// state of the trees
+		ui.localDirTreeView->header()->restoreState(Settings->value("LocalDirTreeView").toByteArray());
+		ui.remoteDirTreeView->header()->restoreState(Settings->value("RemoteDirTreeView").toByteArray());
 
-        // state of splitter
-        ui.splitter->restoreState(Settings->value("Splitter").toByteArray());
-    } else {
-        // save settings
+		// state of splitter
+		ui.splitter->restoreState(Settings->value("Splitter").toByteArray());
 
-        // state of trees
-        Settings->setValue("LocalDirTreeView", ui.localDirTreeView->header()->saveState());
-        Settings->setValue("RemoteDirTreeView", ui.remoteDirTreeView->header()->saveState());
+		// view type
+		ui.viewType_CB->setCurrentIndex(Settings->value("ViewType").toInt());
+	} else {
+		// save settings
 
-        // state of splitter
-        Settings->setValue("Splitter", ui.splitter->saveState());
-    }
+		// state of trees
+		Settings->setValue("LocalDirTreeView", ui.localDirTreeView->header()->saveState());
+		Settings->setValue("RemoteDirTreeView", ui.remoteDirTreeView->header()->saveState());
 
-    Settings->endGroup();
+		// state of splitter
+		Settings->setValue("Splitter", ui.splitter->saveState());
+
+		// view type
+		Settings->setValue("ViewType", ui.viewType_CB->currentIndex());
+	}
+
+	Settings->endGroup();
 }
 
 void SharedFilesDialog::changeCurrentViewModel(int c)
