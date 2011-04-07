@@ -284,6 +284,7 @@ void SharedFilesDialog::changeCurrentViewModel(int c)
 		model = tree_model ;
 		proxyModel = tree_proxyModel ;
 		ui.remoteDirTreeView->setColumnHidden(3,true) ;
+		ui.remoteDirTreeView->setColumnHidden(4,true) ;
 #ifdef DONT_USE_SEARCH_IN_TREE_VIEW
 		ui.filterLabel->hide();
 		ui.filterPatternLineEdit->hide();
@@ -296,6 +297,7 @@ void SharedFilesDialog::changeCurrentViewModel(int c)
 		model = flat_model ;
 		proxyModel = flat_proxyModel ;
 		ui.remoteDirTreeView->setColumnHidden(3,false) ;
+		ui.remoteDirTreeView->setColumnHidden(4,false) ;
 #ifdef DONT_USE_SEARCH_IN_TREE_VIEW
 		ui.filterLabel->show();
 		ui.filterPatternLineEdit->show();

@@ -364,6 +364,27 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 	return QVariant();
 } /* end of DisplayRole */
 
+QString FlatStyle_RDM::computeDirectoryPath(const DirDetails& details) const
+{
+	QString dir ;
+	DirDetails det(details) ;
+	uint32_t flags = (RemoteMode)?DIR_FLAGS_REMOTE:DIR_FLAGS_LOCAL;
+
+	if(!requestDirDetails(det.parent,det,flags))
+		return QString(); 
+
+	do
+	{
+		dir = QString::fromStdString(det.name)+"/"+dir ;
+
+		if(!requestDirDetails(det.parent,det,flags))
+			break ;
+	}
+	while(det.parent != NULL);
+	
+	return dir ;
+}
+
 QVariant FlatStyle_RDM::displayRole(const DirDetails& details,int coln) const
 {
 	if (details.type == DIR_TYPE_FILE) /* File */
@@ -373,13 +394,14 @@ QVariant FlatStyle_RDM::displayRole(const DirDetails& details,int coln) const
 			case 1: return misc::friendlyUnit(details.count);
 			case 2: return misc::userFriendlyDuration(details.age);
 			case 3: return QString::fromStdString(rsPeers->getPeerName(details.id));
+			case 4: return computeDirectoryPath(details);
 			default:
 				return QVariant() ;
 		}
 
 	return QVariant();
 } /* end of DisplayRole */
-QVariant TreeStyle_RDM::sortRole(const DirDetails& details,int coln) const
+QVariant TreeStyle_RDM::sortRole(const QModelIndex& index,const DirDetails& details,int coln) const
 {
 	/*
 	 * Person:  name,  id, 0, 0;
@@ -440,7 +462,7 @@ QVariant TreeStyle_RDM::sortRole(const DirDetails& details,int coln) const
 	}
 	return QVariant();
 }
-QVariant FlatStyle_RDM::sortRole(const DirDetails& details,int coln) const
+QVariant FlatStyle_RDM::sortRole(const QModelIndex& index,const DirDetails& details,int coln) const
 {
 	/*
 	 * Person:  name,  id, 0, 0;
@@ -456,10 +478,10 @@ QVariant FlatStyle_RDM::sortRole(const DirDetails& details,int coln) const
 			case 1: return (qulonglong) details.count;
 			case 2: return  details.age;
 			case 3: return QString::fromStdString(rsPeers->getPeerName(details.id));
+			case 4: return _ref_entries[index.row()].second ;
 		}
 	}
-	else 
-		return QVariant();
+	return QVariant();
 } /* end of SortRole */
 
 
@@ -531,7 +553,7 @@ QVariant RetroshareDirModel::data(const QModelIndex &index, int role) const
 		return displayRole(details,coln) ;
 
 	if (role == SortRole)
-		return sortRole(details,coln) ;
+		return sortRole(index,details,coln) ;
 
 	return QVariant();
 }
@@ -636,7 +658,7 @@ QVariant FlatStyle_RDM::headerData(int section, Qt::Orientation orientation, int
 				else
 					return tr("Share Type");
 			case 4:
-				return tr("What's new");
+				return tr("Directory");
 		}
 		return QString("Column %1").arg(section);
 	}
@@ -718,7 +740,7 @@ QModelIndex FlatStyle_RDM::index(int row, int column, const QModelIndex & parent
 
 	if(row < _ref_entries.size())
 	{
-		void *ref = _ref_entries[row] ;
+		void *ref = _ref_entries[row].first ;
 
 		return createIndex(row, column, ref);
 	}
@@ -1286,7 +1308,7 @@ void FlatStyle_RDM::postMods()
 		if (requestDirDetails(ref, details, flags))
 		{
 			if(details.type == DIR_TYPE_FILE)		// only push files, not directories nor persons.
-				_ref_entries.push_back(ref);
+				_ref_entries.push_back(std::pair<void*,QString>(ref,computeDirectoryPath(details)));
 #ifdef RDM_DEBUG
 			std::cerr << "FlatStyle_RDM::postMods(): addign ref " << ref << std::endl;
 #endif
