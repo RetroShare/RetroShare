@@ -164,6 +164,7 @@ class TurtleRequestInfo
 	public:
 		TurtlePeerId origin ;			// where the request came from.
 		uint32_t	time_stamp ;			// last time the tunnel was actually used. Used for cleaning old tunnels.
+		int depth ;							// depth of the request. Used to optimize tunnel length.
 };
 
 class TurtleTunnel
@@ -401,6 +402,11 @@ class p3turtle: public p3Service, /*public pqiMonitor,*/ public RsTurtle,/* publ
 
 		/// used to force digging new tunnels
 		bool _force_digg_new_tunnels ;			
+
+		/// used as a bias to introduce randomness in a consistent way, for
+		/// altering tunnel request depths, and tunnel re-routing actions.
+		///
+		uint32_t _random_bias ;
 
 #ifdef P3TURTLE_DEBUG
 		// debug function

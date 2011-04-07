@@ -94,7 +94,8 @@ p3turtle::p3turtle(p3ConnectMgr *cm,ftServer *fs)
 	_ft_server = fs ;
 	_ft_controller = fs->getController() ;
 
-	srand(time(NULL)) ;
+	_random_bias = RSRandom::random_u32() ;
+
 	addSerialType(new RsTurtleSerialiser());
 
 	_last_clean_time = 0 ;
@@ -766,7 +767,12 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 
 	// If search depth not too large, also forward this search request to all other peers.
 	//
-	if(item->depth < TURTLE_MAX_SEARCH_DEPTH)
+	// We use a random factor on the depth test that is biased by a mix between the session id and the partial tunnel id
+	// to scramble a possible search-by-depth attack.
+	//
+	bool random_bypass = (item->depth == TURTLE_MAX_SEARCH_DEPTH && (_random_bias ^ item->request_id)&0x7==2) ;
+
+	if(item->depth < TURTLE_MAX_SEARCH_DEPTH || random_bypass)
 	{
 		std::list<std::string> onlineIds ;
 		mConnMgr->getOnlineList(onlineIds);
@@ -1518,11 +1524,38 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 	{
 		RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
-		if(_tunnel_requests_origins.find(item->request_id) != _tunnel_requests_origins.end())
+		std::map<TurtleTunnelRequestId,TurtleRequestInfo>::iterator it = _tunnel_requests_origins.find(item->request_id) ;
+		
+		if(it != _tunnel_requests_origins.end())
 		{
 #ifdef P3TURTLE_DEBUG
- 		std::cerr << "  This is a bouncing request. Ignoring and deleting item." << std::endl ;
+			std::cerr << "  This is a bouncing request. Ignoring and deleting item." << std::endl ;
 #endif
+			// This trick allows to shorten tunnels, favoring tunnels of smallest length, with a bias that
+			// depends on a mix between a session-based constant and the tunnel partial id. This means
+			// that for a given couple of (source,hash), the optimisation always performs the same.
+			// overall, 80% tunnels are re-routed. The probability of a tunnel to have optimal length is
+			// thus 0.875^n where n is the length of the tunnel, supposing that it has 2 branching peers
+			// at each node. This makes:
+			// 		n				probability
+			// 		1				0.875
+			// 		2				0.76
+			// 		3				0.67
+			// 		4				0.58
+			// 		5				0.512
+			//
+			//  The lower the probability, the higher the anonymity level.
+			//
+			if(it->second.depth > item->depth && ((item->partial_tunnel_id ^ _random_bias)&0x7)>0)
+			{
+//#ifdef P3TURTLE_DEBUG
+				std::cerr << "  re-routing tunnel request. Item age difference = " << time(NULL)-it->second.time_stamp << std::endl;
+				std::cerr << "     - old source: " << it->second.origin << ", old depth=" << it->second.depth << std::endl ;
+				std::cerr << "     - new source: " << item->PeerId() << ", new depth=" << item->depth << std::endl ;
+//#endif
+				it->second.origin = item->PeerId() ;
+				it->second.depth = item->depth ;
+			}
 			return ;
 		}
 		// This is a new request. Let's add it to the request map, and forward
@@ -1532,6 +1565,7 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 		TurtleRequestInfo& req( _tunnel_requests_origins[item->request_id] ) ;
 		req.origin = item->PeerId() ;
 		req.time_stamp = time(NULL) ;
+		req.depth = item->depth ;
 
 #ifdef TUNNEL_STATISTICS
 		std::cerr << "storing tunnel request " << (void*)(item->request_id) << std::endl ;
@@ -1603,7 +1637,9 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 
 	// If search depth not too large, also forward this search request to all other peers.
 	//
-	if(item->depth < TURTLE_MAX_SEARCH_DEPTH)
+	bool random_bypass = (item->depth == TURTLE_MAX_SEARCH_DEPTH && (_random_bias ^ item->partial_tunnel_id)&0x7==2) ;
+
+	if(item->depth < TURTLE_MAX_SEARCH_DEPTH || random_bypass)
 	{
 		std::list<std::string> onlineIds ;
 		mConnMgr->getOnlineList(onlineIds);
