@@ -373,14 +373,18 @@ QString FlatStyle_RDM::computeDirectoryPath(const DirDetails& details) const
 	if(!requestDirDetails(det.parent,det,flags))
 		return QString(); 
 
+#ifdef SHOW_TOTAL_PATH
 	do
 	{
+#endif
 		dir = QString::fromStdString(det.name)+"/"+dir ;
 
+#ifdef SHOW_TOTAL_PATH
 		if(!requestDirDetails(det.parent,det,flags))
 			break ;
 	}
 	while(det.parent != NULL);
+#endif
 	
 	return dir ;
 }
