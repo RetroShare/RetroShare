@@ -33,7 +33,8 @@
 #include "serialiser/rstlvtypes.h"
 #include "serialiser/rschannelitems.h"
 
-#define RS_CHAN_STATUS_AUTO_DL 0x0004
+#define RS_CHAN_STATUS_MASK 0x000f
+#define RS_CHAN_STATUS_AUTO_DL 0x0002
 
 typedef std::map<std::string, uint32_t> statMap;
 typedef std::map<std::string, statMap> chanStatMap;
@@ -75,15 +76,14 @@ virtual bool setMessageStatus(const std::string& cId, const std::string& mId, co
 virtual bool getMessageStatus(const std::string& cId, const std::string& mId, uint32_t& status);
 
 virtual	bool getMessageCount(const std::string cId, unsigned int &newCount, unsigned int &unreadCount);
-
-virtual bool channelSubscribe(std::string cId, bool subscribe);
+virtual bool channelSubscribe(std::string cId, bool subscribe, bool autoDl);
 virtual bool channelExtraFileHash(std::string path, std::string chId, FileInfo& fInfo);
 virtual bool channelExtraFileRemove(std::string hash, std::string chId);
 virtual bool channelRestoreKeys(std::string chId);
 virtual bool channelShareKeys(std::string chId, std::list<std::string>& peers);
 virtual bool channelEditInfo(std::string chId, ChannelInfo &ci);
 virtual void getPubKeysAvailableGrpIds(std::list<std::string>& grpIds);
-virtual void channelSetAutoDl(const std::string& chId, bool autoDl);
+virtual bool channelSetAutoDl(const std::string& chId, bool autoDl);
 virtual bool channelGetAutoDl(const std::string& chId, bool& autoDl);
 
 /***************************************************************************************/
@@ -112,12 +112,15 @@ virtual std::list<RsItem *> childSaveList();
 	private:
 
 void processChanReadStatus(RsChannelReadStatus* drs);
-
+void addChannelReadStatusEntry(const std::string& cId);
+void removeChannelReadStatusEntry(const std::string& cId);
 	RsFiles *mRsFiles;
 	std::string mChannelsDir;
 	std::list<RsItem *> saveList;
 
 	std::list<RsChannelReadStatus *> mReadStatus;
+	std::map<std::string, RsChannelReadStatus* > mChanReadStatus;
+
 	chanStatMap mMsgReadStatus;
 	statMap mChannelStatus;
 };

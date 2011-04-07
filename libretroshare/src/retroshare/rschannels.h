@@ -37,6 +37,8 @@
 #define CHANNEL_MSG_STATUS_MASK           0x000f
 #define CHANNEL_MSG_STATUS_READ           0x0001
 #define CHANNEL_MSG_STATUS_UNREAD_BY_USER 0x0002
+#define CHANNEL_MSG_STATUS_DOWLOADED      0x0004
+
 
 //! Stores information for a give channel id
 /*!
@@ -45,13 +47,15 @@
 class ChannelInfo 
 {
 	public:
-    ChannelInfo() : pngChanImage(NULL), pngImageLen(0) {}
+    ChannelInfo() : autoDownload(false), pngChanImage(NULL), pngImageLen(0)
+     {}
 	std::string  channelId;
 	std::wstring channelName;
 	std::wstring channelDesc;
 
 	uint32_t channelFlags;
 	uint32_t pop; /// popularity
+	bool autoDownload;
 
 	unsigned char* pngChanImage;
 	uint32_t pngImageLen;
@@ -205,8 +209,9 @@ virtual	bool ChannelMessageSend(ChannelMsgInfo &info)                 = 0;
 /*!
  * @param cId the channel id
  * @param subscribe set to true if you want to subscribe and to false to unsubscribe
+ * @param set true to allow autodownload of new content and false otherwise, ignored when second param is false
  */
-virtual bool channelSubscribe(std::string cId, bool subscribe)	= 0;
+virtual bool channelSubscribe(std::string cId, bool subscribe, bool autoDl)	= 0;
 
 /*!
  * This hashes a file which is not already shared by client or his peers,
@@ -252,11 +257,20 @@ virtual bool channelEditInfo(std::string chId, ChannelInfo &ci) = 0;
 virtual void getPubKeysAvailableGrpIds(std::list<std::string>& chanIds) = 0;
 
 /*!
- *
- *
- *
+ * set the channel so that it does not auto download any more
+ * @param chId the channel id to set for
+ * @param set to true to enable auto dl and false to disable
  */
-//virtual void setPrivateChannelDir(const std::string&) = 0;
+virtual bool channelSetAutoDl(const std::string& chId, bool  autoDl) = 0;
+
+
+/*!
+ * get what autoDl is set to for the given channel id
+ * @param chId id of channel to get autoDl status for
+ * @param autoDl
+ * @return false if channel cannot be found
+ */
+virtual bool channelGetAutoDl(const std::string& chId, bool& autoDl) = 0;
 
 };
 

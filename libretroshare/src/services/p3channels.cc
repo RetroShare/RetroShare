@@ -541,20 +541,84 @@ bool    p3Channels::locked_checkDistribMsg(RsDistribMsg *msg)
 
 
 
-bool p3Channels::channelSubscribe(std::string cId, bool subscribe)
+bool p3Channels::channelSubscribe(std::string cId, bool subscribe, bool autoDl)
 {
 #ifdef CHANNEL_DEBUG
         std::cerr << "p3Channels::channelSubscribe() " << cId << std::endl;
 #endif
 
+    {
+        RsStackMutex stack(distribMtx);
+
+        if(subscribe)
+        	mChannelStatus[cId] |= autoDl ?
+           		(RS_CHAN_STATUS_AUTO_DL & RS_CHAN_STATUS_MASK) : ~RS_CHAN_STATUS_MASK;
+    }
+
     bool ok = subscribeToGroup(cId, subscribe);
 
-    if(ok)
-    	mChannelStatus[cId] = RS_CHAN_STATUS_AUTO_DL;
 
+    // if subscribing set channel status bit field on whether
+    // or not to auto download
+    {
+        RsStackMutex stack(distribMtx);
+
+        if(!ok || !subscribe){
+        	mChannelStatus.erase(cId);
+        	removeChannelReadStatusEntry(cId);
+        }
+        else{
+        	addChannelReadStatusEntry(cId);
+        }
+
+        IndicateConfigChanged();
+    }
 	return ok;
 }
 
+void p3Channels::addChannelReadStatusEntry(const std::string& cId)
+{
+	std::list<RsChannelReadStatus*>::iterator lit = mReadStatus.begin();
+	RsChannelReadStatus* rds = NULL;
+
+	// check to ensure an entry does not exist
+	for(; lit != mReadStatus.end(); lit++){
+
+		if((*lit)->channelId == cId)
+		{
+			break;
+		}
+	}
+
+	if(lit == mReadStatus.end()){
+		rds = new RsChannelReadStatus();
+		rds->channelId = cId;
+		mReadStatus.push_back(rds);
+		saveList.push_back(rds);
+	}
+
+	return;
+}
+
+//TODO: delete unsubscribed channels from entry
+void p3Channels::removeChannelReadStatusEntry(const std::string& cId)
+{
+	std::list<RsChannelReadStatus*>::iterator lit = mReadStatus.begin();
+	statMap::iterator mit;
+	// check to ensure an entry does not exist
+	for(; lit != mReadStatus.end(); lit++){
+
+		if((*lit)->channelId == cId)
+		{
+			if((mit = (*lit)->msgReadStatus.find(cId)) !=
+					(*lit)->msgReadStatus.end()){
+				(*lit)->msgReadStatus.erase(mit);
+				break;
+			}
+		}
+	}
+
+}
 bool p3Channels::channelShareKeys(std::string chId, std::list<std::string>& peers){
 
 #ifdef CHANNEL_DEBUG
@@ -601,17 +665,37 @@ void p3Channels::getPubKeysAvailableGrpIds(std::list<std::string>& grpIds)
 
 }
 
-void p3Channels::channelSetAutoDl(const std::string& chId, bool autoDl)
+bool p3Channels::channelSetAutoDl(const std::string& chId, bool autoDl)
 {
 
 	RsStackMutex stack(distribMtx);
 
-	if(autoDl)
-		mChannelStatus[chId] |= RS_CHAN_STATUS_AUTO_DL;
-	else
-		mChannelStatus[chId] = ~RS_CHAN_STATUS_AUTO_DL;
+	statMap::iterator it = mChannelStatus.find(chId);
+	bool changed = false;
 
-	return;
+	if(it != mChannelStatus.end()){
+
+		if(autoDl)
+			it->second |= RS_CHAN_STATUS_AUTO_DL;
+		else
+			it->second &= ~(RS_CHAN_STATUS_AUTO_DL & RS_CHAN_STATUS_MASK);
+
+		changed = true;
+	}
+	else
+	{
+#ifdef CHANNEL_DEBUG
+		std::cerr << "p3Channels::channelSetAutoDl(): " << "Channel does not exist"
+				  << std::endl;
+#endif
+		return false;
+	}
+
+	// save configuration
+	if(changed)
+		IndicateConfigChanged();
+
+	return true;
 }
 
 
@@ -623,7 +707,7 @@ bool p3Channels::channelGetAutoDl(const std::string& chId, bool& autoDl)
 
 	if(it != mChannelStatus.end())
 	{
-		autoDl = mChannelStatus[chId] & RS_CHAN_STATUS_AUTO_DL;
+		autoDl = it->second & RS_CHAN_STATUS_AUTO_DL;
 		return true;
 	}
 
@@ -766,9 +850,12 @@ bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std
         			localpath, flags, srcIds);
 	}
 
+	if(cit != mMsgReadStatus.end()){
 
-	mit1->second |= (CHANNEL_MSG_STATUS_MASK &
-			CHANNEL_MSG_STATUS_DOWLOADED);
+		if(mit1 != cit->second.end())
+			mit1->second |= (CHANNEL_MSG_STATUS_MASK &
+					CHANNEL_MSG_STATUS_DOWLOADED);
+	}
 
 	return true;
 }
@@ -890,7 +977,9 @@ bool p3Channels::childLoadList(std::list<RsItem* >& configSaves)
 		{
 			std::cerr << "p3Channels::childLoadList(): Configs items loaded were incorrect!"
 					  << std::endl;
-			return false;
+
+			if(*it != NULL)
+				delete *it;
 		}
 	}
 
@@ -908,7 +997,8 @@ void p3Channels::processChanReadStatus(RsChannelReadStatus* drs)
 
 	if(sit != drs->msgReadStatus.end()){
 		mChannelStatus[chId] = sit->second;
-		drs->msgReadStatus.erase(sit);
+		mChanReadStatus.insert(std::make_pair<std::string, RsChannelReadStatus*>
+			(chId, drs));
 	}
 
 	// first pull out the channel id status
@@ -920,8 +1010,30 @@ void p3Channels::processChanReadStatus(RsChannelReadStatus* drs)
 
 
 }
+
 std::list<RsItem *> p3Channels::childSaveList()
 {
+
+	std::list<RsChannelReadStatus* >::iterator lit = mReadStatus.begin();
+	statMap::iterator sit, mit;
+
+	// update or add current channel id status
+	for(; lit != mReadStatus.end(); lit++)
+	{
+		if((sit = mChannelStatus.find((*lit)->channelId)) != mChannelStatus.end())
+		{
+			mit = (*lit)->msgReadStatus.find((*lit)->channelId);
+			if(mit != (*lit)->msgReadStatus.end())
+			{
+				mit->second = sit->second;
+			}
+			else
+			{
+				(*lit)->msgReadStatus[(*lit)->channelId] = sit->second;
+			}
+		}
+	}
+
 	return saveList;
 }
 

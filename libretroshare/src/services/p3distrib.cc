@@ -61,7 +61,7 @@
 //#define DISTRIB_DEBUG 1
 //#define DISTRIB_THREAD_DEBUG 1
 //#define DISTRIB_DUMMYMSG_DEBUG 1
-//#define DISTRIB_HISTORY_DEBUG
+
 
 RSA *extractPublicKey(RsTlvSecurityKey &key);
 RSA *extractPrivateKey(RsTlvSecurityKey &key);
@@ -209,11 +209,13 @@ int	p3GroupDistrib::tick()
 #endif
 	}
 
+#ifdef ENABLE_CACHE_OPT
 	if(updateCacheDoc){
 		std::cerr << "count: " << mCount << std::endl;
 		updateCacheDocument();
 
 	}
+#endif
 
 	return 0;
 }
@@ -1068,6 +1070,7 @@ void	p3GroupDistrib::loadFileMsgs(const std::string &filename, uint16_t cacheSub
 	time_t now = time(NULL);
 	bool cache = false;
 
+#ifdef ENABLE_CACHE_OPT
 	// if cache id exists in cache table exit
 	{
 		RsStackMutex stack(distribMtx);
@@ -1080,6 +1083,7 @@ void	p3GroupDistrib::loadFileMsgs(const std::string &filename, uint16_t cacheSub
 			cache = true;
 		}
 	}
+#endif
 
 	// link grp to cache id (only one cache id, so doesn't matter if one grp comes out twice
 	// with same cache id)
@@ -2617,8 +2621,9 @@ bool p3GroupDistrib::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	delete childSer;
 
 	// now save hostory doc
-
+#ifdef ENABLE_CACHE_OPT
 	locked_saveHistoryCacheFile();
+#endif
 
 	return true;
 }

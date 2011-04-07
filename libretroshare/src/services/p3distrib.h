@@ -508,7 +508,7 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		std::string publishMsg(RsDistribMsg *msg, bool personalSign);
 
 		/*!
-		 *
+		 * note: call back to locked_eventDuplicateMSg is made on execution
 		 * @param grpId id of group to subscribe to
 		 * @param subscribe true to subscribe and vice versa
 		 * @return
