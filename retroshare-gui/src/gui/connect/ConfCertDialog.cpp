@@ -238,7 +238,7 @@ void ConfCertDialog::load()
             ui.signKeyButton->hide();
             if (!detail.ownsign) {
                 ui.signGPGKeyCheckBox->show();
-                ui.signGPGKeyCheckBox->setChecked(true);
+                ui.signGPGKeyCheckBox->setChecked(false);
             } else {
                 ui.signGPGKeyCheckBox->hide();
             }
