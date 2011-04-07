@@ -188,7 +188,7 @@ void ChanNewItem::unsubscribeChannel()
 #endif
 	if (rsChannels)
 	{
-		rsChannels->channelSubscribe(mChanId, false);
+		rsChannels->channelSubscribe(mChanId, false, false);
 	}
 	updateItemStatic();
 }
@@ -202,7 +202,7 @@ void ChanNewItem::subscribeChannel()
 #endif
 	if (rsChannels)
 	{
-		rsChannels->channelSubscribe(mChanId, true);
+		rsChannels->channelSubscribe(mChanId, true, true);
 	}
 	updateItemStatic();
 }

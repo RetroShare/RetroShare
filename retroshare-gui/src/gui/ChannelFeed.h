@@ -61,6 +61,7 @@ private slots:
     void subscribeChannel();
     void unsubscribeChannel();
     void setAllAsReadClicked();
+    void toggleAutoDownload();
 
     void createMsg();
 

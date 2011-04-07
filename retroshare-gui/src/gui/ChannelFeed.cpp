@@ -42,6 +42,8 @@
 #include "notifyqt.h"
 
 #define CHAN_DEFAULT_IMAGE ":/images/channels.png"
+#define ENABLE_AUTO_DL "Enable Auto-Download"
+#define DISABLE_AUTO_DL "Disable Auto-Download"
 
 #define WARNING_LIMIT 3600*24*2
 
@@ -61,6 +63,7 @@ ChannelFeed::ChannelFeed(QWidget *parent)
     connect(subscribeButton, SIGNAL( clicked( void ) ), this, SLOT( subscribeChannel ( void ) ) );
     connect(unsubscribeButton, SIGNAL( clicked( void ) ), this, SLOT( unsubscribeChannel ( void ) ) );
     connect(setAllAsReadButton, SIGNAL(clicked()), this, SLOT(setAllAsReadClicked()));
+    connect(autoDownload, SIGNAL(clicked()), this, SLOT(toggleAutoDownload()));
 
     connect(NotifyQt::getInstance(), SIGNAL(channelMsgReadSatusChanged(QString,QString,int)), this, SLOT(channelMsgReadSatusChanged(QString,QString,int)));
 
@@ -83,6 +86,7 @@ ChannelFeed::ChannelFeed(QWidget *parent)
     subcribedChannels = treeWidget->addCategoryItem(tr("Subscribed Channels"), QIcon(), true);
     popularChannels = treeWidget->addCategoryItem(tr("Popular Channels"), QIcon(), false);
     otherChannels = treeWidget->addCategoryItem(tr("Other Channels"), QIcon(), false);
+
 
     //added from ahead
     updateChannelList();
@@ -237,6 +241,14 @@ void ChannelFeed::restoreChannelKeys()
 void ChannelFeed::selectChannel(const QString &id)
 {
     mChannelId = id.toStdString();
+
+    bool autoDl = false;
+    rsChannels->channelGetAutoDl(mChannelId, autoDl);
+
+    if(autoDl)
+    	autoDownload->setText(QString(DISABLE_AUTO_DL));
+    else
+    	autoDownload->setText(QString(ENABLE_AUTO_DL));
 
     updateChannelMsgs();
 }
@@ -450,13 +462,20 @@ void ChannelFeed::updateChannelMsgs()
         subscribeButton->setEnabled(true);
         unsubscribeButton->setEnabled(false);
         setAllAsReadButton->setEnabled(false);
+        autoDownload->setEnabled(false);
     }
 
     if (ci.channelFlags & RS_DISTRIB_PUBLISH) {
         postButton->setEnabled(true);
+        autoDownload->setEnabled(false);
     } else {
         postButton->setEnabled(false);
     }
+
+    if(!(ci.channelFlags & RS_DISTRIB_PUBLISH) &&
+    	(ci.channelFlags & RS_DISTRIB_SUBSCRIBED))
+    	autoDownload->setEnabled(true);
+
 
     std::list<ChannelMsgSummary> msgs;
     std::list<ChannelMsgSummary>::iterator it;
@@ -482,7 +501,7 @@ void ChannelFeed::unsubscribeChannel()
 #endif
 
     if (rsChannels) {
-        rsChannels->channelSubscribe(mChannelId, false);
+        rsChannels->channelSubscribe(mChannelId, false, false);
     }
 
     updateChannelMsgs();
@@ -497,7 +516,7 @@ void ChannelFeed::subscribeChannel()
 #endif
 
     if (rsChannels) {
-        rsChannels->channelSubscribe(mChannelId, true);
+        rsChannels->channelSubscribe(mChannelId, true, true);
     }
 
     updateChannelMsgs();
@@ -544,4 +563,28 @@ void ChannelFeed::setAllAsReadClicked()
             rsChannels->setMessageStatus(mChannelId, it->msgId, CHANNEL_MSG_STATUS_READ, CHANNEL_MSG_STATUS_READ | CHANNEL_MSG_STATUS_UNREAD_BY_USER);
         }
     }
+}
+
+void ChannelFeed::toggleAutoDownload(){
+
+	if(mChannelId.empty())
+		return;
+
+	bool autoDl = true;
+
+	if(rsChannels->channelGetAutoDl(mChannelId, autoDl)){
+
+		// if auto dl is set true, then set false
+		if(autoDl){
+			rsChannels->channelSetAutoDl(mChannelId, false);
+			autoDownload->setText(QString(ENABLE_AUTO_DL));
+		}else{
+			rsChannels->channelSetAutoDl(mChannelId, true);
+			autoDownload->setText(QString(DISABLE_AUTO_DL));
+		}
+	}
+	else{
+		std::cerr << "Auto Download failed to set"
+				  << std::endl;
+	}
 }
