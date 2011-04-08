@@ -752,6 +752,22 @@ bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std
 			break;
 	}
 
+	mit2 = mChannelStatus.find(grpId);
+
+	if(mit2 != mChannelStatus.end())
+	{
+		if(!(mit2->second & RS_CHAN_STATUS_AUTO_DL)){
+
+			if(lit != mReadStatus.end()){
+
+				if(( mit1=(*lit)->msgReadStatus.find(msgId)) != (*lit)->msgReadStatus.end())
+					(*lit)->msgReadStatus[msgId] |= (CHANNEL_MSG_STATUS_MASK & CHANNEL_MSG_STATUS_DOWLOADED);
+
+			}
+			return false;
+		}
+	}
+
 	if(lit != mReadStatus.end()){
 
 		if(( mit1=(*lit)->msgReadStatus.find(msgId)) != (*lit)->msgReadStatus.end()){
@@ -763,13 +779,7 @@ bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std
 		}
 	}
 
-	mit2 = mChannelStatus.find(grpId);
 
-	if(mit2 != mChannelStatus.end())
-	{
-		if(!(mit2->second & RS_CHAN_STATUS_AUTO_DL))
-			return false;
-	}
 
 	/* request the files 
 	 * NB: This will result in duplicates.
