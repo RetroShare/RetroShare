@@ -110,6 +110,7 @@ int	p3Service::receive(RsRawItem *raw)
 			std::cerr << std::endl;
 #endif
 			delete item;
+			item=NULL ;
 		}
 	}
 

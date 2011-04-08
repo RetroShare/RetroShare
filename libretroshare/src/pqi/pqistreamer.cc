@@ -188,13 +188,12 @@ RsItem *pqistreamer::GetItem()
 	  pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out.str());
 	}
 
-	std::list<RsItem *>::iterator it;
+	if(incoming.empty())
+		return NULL; 
 
-	it = incoming.begin();
-	if (it == incoming.end()) { return NULL; }
+	RsItem *osr = incoming.front() ;
+	incoming.pop_front() ;
 
-	RsItem *osr = (*it);
-	incoming.erase(it);
 	return osr;
 }
 
