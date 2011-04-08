@@ -740,18 +740,26 @@ bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std
 		return true;
 	}
 
-	// check if msg has done download already
+	// return if msg has d download already
 
-	chanStatMap::iterator cit = mMsgReadStatus.find(grpId);
 	statMap MsgMap;
 	statMap::iterator mit1, mit2;
+	std::list<RsChannelReadStatus*>::iterator lit = mReadStatus.begin();
 
-	if(cit != mMsgReadStatus.end()){
-		mit1 = cit->second.find(msgId);
+	for(;lit != mReadStatus.end();lit++){
 
-		if(mit1 != cit->second.end()){
+		if((*lit)->channelId == grpId)
+			break;
+	}
+
+	if(lit != mReadStatus.end()){
+
+		if(( mit1=(*lit)->msgReadStatus.find(msgId)) != (*lit)->msgReadStatus.end()){
 			if(mit1->second & CHANNEL_MSG_STATUS_DOWLOADED)
 				return false;
+		}else{
+			// create an entry for msg id
+			(*lit)->msgReadStatus[msgId] = ~CHANNEL_MSG_STATUS_MASK;
 		}
 	}
 
@@ -850,12 +858,14 @@ bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, std
         			localpath, flags, srcIds);
 	}
 
-	if(cit != mMsgReadStatus.end()){
+	if(lit != mReadStatus.end()){
 
-		if(mit1 != cit->second.end())
-			mit1->second |= (CHANNEL_MSG_STATUS_MASK &
+		(*lit)->msgReadStatus[msgId] |= (CHANNEL_MSG_STATUS_MASK &
 					CHANNEL_MSG_STATUS_DOWLOADED);
+
 	}
+
+	IndicateConfigChanged();
 
 	return true;
 }
