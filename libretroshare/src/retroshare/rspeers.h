@@ -216,6 +216,7 @@ virtual	std::string GetRetroshareInvite() 			= 0;
 
 virtual	bool loadCertificateFromFile(const std::string &fname, std::string &ssl_id, std::string &gpg_id)  = 0;
 virtual	bool loadDetailsFromStringCert(const std::string &certGPG, RsPeerDetails &pd,std::string& error_string) = 0;
+virtual	bool cleanCertificate(const std::string &certstr, std::string &cleanCert) = 0;
 virtual	bool saveCertificateToFile(const std::string &id, const std::string &fname)  = 0;
 virtual	std::string saveCertificateToString(const std::string &id)  	= 0;
 

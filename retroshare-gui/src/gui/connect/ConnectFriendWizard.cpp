@@ -228,11 +228,9 @@ TextPage::TextPage(QWidget *parent)
     std::string invite = rsPeers->GetRetroshareInvite();
 
     userCertEdit->setReadOnly(true);
-    userCertEdit->setMinimumHeight(200);
-    userCertEdit->setMinimumWidth(530);
     QFont font("Courier New",10,50,false);
-	 font.setStyleHint(QFont::TypeWriter,QFont::PreferMatch);
-	 font.setStyle(QFont::StyleNormal);
+    font.setStyleHint(QFont::TypeWriter,QFont::PreferMatch);
+    font.setStyle(QFont::StyleNormal);
     userCertEdit->setFont(font);
     userCertEdit->setText(QString::fromStdString(invite));
 
@@ -292,12 +290,27 @@ TextPage::TextPage(QWidget *parent)
     //font.setWeight(75);
     friendCertEdit->setFont(font);
 
+    friendCertCleanButton = new QPushButton;
+    friendCertCleanButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    friendCertCleanButton->setFixedSize(20,20);
+    friendCertCleanButton->setFlat(true);
+    friendCertCleanButton->setIcon( QIcon(":images/accepted16.png") );
+    friendCertCleanButton->setToolTip(tr("Clean certificate"));
+    connect (friendCertCleanButton, SIGNAL(clicked()), this, SLOT(cleanFriendCert()));
+
+    friendCertButtonsLayout = new QVBoxLayout();
+    friendCertButtonsLayout->addWidget(friendCertCleanButton);
+
+    friendCertLayout = new QHBoxLayout();
+    friendCertLayout->addWidget(friendCertEdit);
+    friendCertLayout->addLayout(friendCertButtonsLayout);
+
     //=== add all widgets to one layout
     textPageLayout = new QVBoxLayout();
     textPageLayout->addWidget(userCertLabel);
     textPageLayout->addLayout(userCertLayout);
     textPageLayout->addWidget(friendCertLabel);
-    textPageLayout->addWidget(friendCertEdit);
+    textPageLayout->addLayout(friendCertLayout);
 //
     setLayout(textPageLayout);
 }
@@ -327,6 +340,16 @@ void
 TextPage::runEmailClient()
 {
     sendMail ("", tr("RetroShare Invite").toStdString(), userCertEdit->toPlainText().toStdString());
+}
+
+void TextPage::cleanFriendCert()
+{
+    std::string cert = friendCertEdit->toPlainText().toStdString();
+    std::string cleanCert;
+
+    if (rsPeers->cleanCertificate(cert, cleanCert)) {
+        friendCertEdit->setText(QString::fromStdString(cleanCert));
+    }
 }
 
 //

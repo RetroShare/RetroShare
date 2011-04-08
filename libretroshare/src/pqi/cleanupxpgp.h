@@ -38,13 +38,16 @@
 //! ...  text stuff .....
 //!
 //!-----BEGIN XPGP CERTIFICATE-----
+//!Version: ...
+//!
 //!MIICxQIBADCCAUkCAQAwHhcNMDkwMjI4MTgzODIyWhcNMTQwMjI3MTgzODIyWjCC
 //! ...more ines here...
 //!mEuhG8UmDIzC1jeTu8rTMnO+DO3FH/cek1vlfFl4t9g/xktG9U4SPLg=
+//!=checksum
 //!-----END XPGP CERTIFICATE-----
 //!  
 //! In the newer gui version, users send each other almost clean certificates,
 //! so this functon is used only to avoid possible bugs with line endings
-std::string cleanUpCertificate(std::string badCertificate);
+std::string cleanUpCertificate(const std::string& badCertificate);
 
 #endif

@@ -957,7 +957,24 @@ bool 	p3Peers::loadCertificateFromFile(const std::string &fname, std::string &id
 //	return false;
 //}
 
+static bool splitCert(const std::string &certstr, std::string &cert, std::string &peerInfo)
+{
+	cert.erase();
+	peerInfo.erase();
 
+	/* search for -----END CERTIFICATE----- */
+	std::string pgpend("-----END PGP PUBLIC KEY BLOCK-----");
+
+	size_t pos = certstr.find(pgpend);
+
+	if (pos != std::string::npos) {
+		pos += pgpend.length();
+		cert = certstr.substr(0, pos);
+		peerInfo = certstr.substr(pos + 1);
+	}
+
+	return !cert.empty();
+}
 
 bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetails &pd,std::string& error_string)
 {
@@ -966,23 +983,21 @@ bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetai
 	std::cerr << std::endl;
 #endif
 
-        /* search for -----END CERTIFICATE----- */
-        std::string pgpend("-----END PGP PUBLIC KEY BLOCK-----");
         //parse the text to get ip address
         try {
 
-            size_t parsePosition = certstr.find(pgpend);
+            std::string cert;
+            std::string peerInfo;
 
-            if (parsePosition != std::string::npos) {
-                    parsePosition += pgpend.length();
-                    std::string pgpCert = certstr.substr(0, parsePosition);
+            if (splitCert(certstr, cert, peerInfo)) {
                     std::string gpg_id;
-                    std::string cleancert = cleanUpCertificate(pgpCert);
-                    AuthGPG::getAuthGPG()->LoadCertificateFromString(cleancert, gpg_id,error_string);
+                    AuthGPG::getAuthGPG()->LoadCertificateFromString(cert, gpg_id,error_string);
                     AuthGPG::getAuthGPG()->getGPGDetails(gpg_id, pd);
-                    if (gpg_id == "") {
+                    if (gpg_id.empty()) {
                         return false;
                     }
+            } else {
+                    return false;
             }
 
             #ifdef P3PEERS_DEBUG
@@ -990,11 +1005,11 @@ bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetai
             #endif
 
             //let's parse the ssl id
-            parsePosition = certstr.find(CERT_SSL_ID);
+            size_t parsePosition = peerInfo.find(CERT_SSL_ID);
             std::cerr << "sslid position : " << parsePosition << std::endl;
             if (parsePosition != std::string::npos) {
                 parsePosition += CERT_SSL_ID.length();
-                std::string subCert = certstr.substr(parsePosition);
+                std::string subCert = peerInfo.substr(parsePosition);
                 parsePosition = subCert.find(";");
                 if (parsePosition != std::string::npos) {
                     std::string ssl_id = subCert.substr(0, parsePosition);
@@ -1005,11 +1020,11 @@ bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetai
             }
 
             //let's parse the location
-            parsePosition = certstr.find(CERT_LOCATION);
+            parsePosition = peerInfo.find(CERT_LOCATION);
             std::cerr << "location position : " << parsePosition << std::endl;
             if (parsePosition != std::string::npos) {
                 parsePosition += CERT_LOCATION.length();
-                std::string subCert = certstr.substr(parsePosition);
+                std::string subCert = peerInfo.substr(parsePosition);
                 parsePosition = subCert.find(";");
                 if (parsePosition != std::string::npos) {
                     std::string location = subCert.substr(0, parsePosition);
@@ -1019,11 +1034,11 @@ bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetai
             }
 
             //let's parse ip local address
-            parsePosition = certstr.find(CERT_LOCAL_IP);
+            parsePosition = peerInfo.find(CERT_LOCAL_IP);
             std::cerr << "local ip position : " << parsePosition << std::endl;
             if (parsePosition != std::string::npos) {
                 parsePosition += CERT_LOCAL_IP.length();
-                std::string subCert = certstr.substr(parsePosition);
+                std::string subCert = peerInfo.substr(parsePosition);
                 parsePosition = subCert.find(":");
                 if (parsePosition != std::string::npos) {
                     std::string local_ip = subCert.substr(0, parsePosition);
@@ -1045,11 +1060,11 @@ bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetai
             }
 
             //let's parse ip ext address
-            parsePosition = certstr.find(CERT_EXT_IP);
+            parsePosition = peerInfo.find(CERT_EXT_IP);
             std::cerr << "Ext ip position : " << parsePosition << std::endl;
             if (parsePosition != std::string::npos) {
                 parsePosition = parsePosition + CERT_EXT_IP.length();
-                std::string subCert = certstr.substr(parsePosition);
+                std::string subCert = peerInfo.substr(parsePosition);
                 parsePosition = subCert.find(":");
                 if (parsePosition != std::string::npos) {
                     std::string ext_ip = subCert.substr(0, parsePosition);
@@ -1071,11 +1086,11 @@ bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetai
             }
 
             //let's parse DynDNS
-            parsePosition = certstr.find(CERT_DYNDNS);
+            parsePosition = peerInfo.find(CERT_DYNDNS);
             std::cerr << "location DynDNS : " << parsePosition << std::endl;
             if (parsePosition != std::string::npos) {
                 parsePosition += CERT_DYNDNS.length();
-                std::string subCert = certstr.substr(parsePosition);
+                std::string subCert = peerInfo.substr(parsePosition);
                 parsePosition = subCert.find(";");
                 if (parsePosition != std::string::npos) {
                     std::string DynDNS = subCert.substr(0, parsePosition);
@@ -1095,9 +1110,26 @@ bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetai
         }
 }
 
+bool p3Peers::cleanCertificate(const std::string &certstr, std::string &cleanCert)
+{
+	std::string cert;
+	std::string peerInfo;
 
+	if (splitCert(certstr, cert, peerInfo)) {
+		cleanCert = cleanUpCertificate(cert);
+		if (!cleanCert.empty()) {
+			if (!peerInfo.empty()) {
+				if (*cleanCert.rbegin() != '\n') {
+					cleanCert += "\n";
+				}
+				cleanCert += peerInfo;
+			}
+			return true;
+		}
+	}
 
-
+	return false;
+}
 
 bool 	p3Peers::saveCertificateToFile(const std::string &id, const std::string &fname)
 {

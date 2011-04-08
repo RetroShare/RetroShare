@@ -89,7 +89,10 @@ private:
                                    //! launches default email client
     QLabel*      friendCertLabel;
     QTextEdit*   friendCertEdit;
-    
+    QPushButton* friendCertCleanButton;
+    QVBoxLayout* friendCertButtonsLayout;
+    QHBoxLayout* friendCertLayout;
+
     QVBoxLayout* textPageLayout;
     
     void setCurrentFileName(const QString &fileName);
@@ -99,13 +102,13 @@ private:
 private slots:
     void showHelpUserCert();
     void copyCert();
-    
+    void cleanFriendCert();
+
     bool fileSave();
     bool fileSaveAs();
     
 
     //! launches default email client (on windows)
-    
     //! Tested on Vista, it work normally... But a bit slowly.
     void runEmailClient();
 };
@@ -130,7 +133,7 @@ private:
     QLabel *userFileLabel;
     QPushButton* userFileCreateButton;
     QHBoxLayout* userFileLayout;
-    
+
     QLabel* friendFileLabel;
     QLineEdit *friendFileNameEdit;
     QPushButton* friendFileNameOpenButton;
