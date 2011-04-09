@@ -1,6 +1,52 @@
 retroshare (0.5.1-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
   * Improvements
+      - added flat view for shared files, with search, sorting and temporised update
+      - enabled file preview for partially downloaded files, for non windows users
+      - removed display of directories from search
+      - added auto-download option to channels
+      - added random bias to turtle search and tunnels at maximum depth, to prevent security issues
+      - added biased rerouting of tunnels requests to statistically optimize tunnel length
+      - made sign GPG button disabled by default
+      - optimized lookups of/into FileEntry structures (faster, better memory coalescence)
+      - added tunning for auto-check of shared directories, in config
+      - updated french/german translations
+      - saved the visible state of the avatar picture in private chat for the friend.
+      - removed own settings for news feed
+      - added tooltip for systray to display nickname and location
+      - made lock file warning more explicit
+
+  * Bug fixes
+      - channel download is now called only once for each channel post
+      - fixed cleaning issue of certificates. Added a button in cert dialog for cleaning. 
+      - removed automatic cleaning of certs.
+      - fixed bug with utf8 chatacters in %appdata% paths on windows
+      - fixed crash on shutdown when the cache loading is running
+      - fixed some stylesheets to use gradients instead of a background images,
+      - fixed thread leak in file checking due to not calling pthread_join() on finished thread
+      - showing uploads by default, instead of current transfer
+
+retroshare (0.5.1-0.4097~lucid) lucid; urgency=low
+
+  * Improvements
+      - attempt to make GPG errors more verbose at cert exchange time
+      - translate QuickStartWizard, GenCertDialog and StartDialog into german
+      - fixed tab order of the upload and download settings in QuickStartWizard
+      - Added a basic description of the chat style
+      - Added share incoming directory to the QuickStartWizard, while keeping 
+        the Download directory shared by default
+
+  * Bug Fixes
+      - implemented a backward compatible fix for advance searching with size 
+        larger than 2Gb
+      - implemented a better management of tunnel requests
+
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Thu, 07 Mar 2010 21:35:46 +0100
+
+retroshare (0.5.1-0.4087~lucid) lucid; urgency=low
+
+  * Improvements
       - The working (hashing) thread FileIndexMonitor is now stopped when RetroShare is closed.
       - Removed tab focus from the toolbar and image buttons.
       - Fixed german translation.
