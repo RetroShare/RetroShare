@@ -328,7 +328,10 @@ void SearchDialog::download()
 	 {
 		 item = itemsForDownload.at(i);
 		 // call the download
-                 if (!item->text(SR_HASH_COL).isEmpty() || !item->childCount())
+		 //
+		 if (item->text(SR_HASH_COL).isEmpty()) // we have a folder
+			 downloadDirectory(item, tr(""));
+		 else 
 		 {
 			 std::cerr << "SearchDialog::download() Calling File Request";
 			 std::cerr << std::endl;
@@ -337,10 +340,7 @@ void SearchDialog::download()
 			 std::string hash = item->text(SR_HASH_COL).toStdString();
 			 getSourceFriendsForHash(hash,srcIds) ;
 
-			 if(!rsFiles -> FileRequest((item->text(SR_NAME_COL)).toStdString(),
-						 hash,
-						 (item->text(SR_SIZE_COL)).toULongLong(),
-						 "", RS_FILE_HINTS_NETWORK_WIDE, srcIds))
+			 if(!rsFiles -> FileRequest((item->text(SR_NAME_COL)).toStdString(), hash, (item->text(SR_SIZE_COL)).toULongLong(), "", RS_FILE_HINTS_NETWORK_WIDE, srcIds))
 				 attemptDownloadLocal = true ;
 			 else
 			 {
@@ -349,8 +349,6 @@ void SearchDialog::download()
 					 std::cout << *it << "-" << std::endl ;
 			 }
 		 }
-		 else // we have a folder
-			 downloadDirectory(item, tr(""));
 	 }
     if (attemptDownloadLocal)
     	QMessageBox::information(0, tr("Download Notice"), tr("Skipping Local Files"));
@@ -830,6 +828,8 @@ void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, 
 
 void SearchDialog::insertDirectory(const std::string &txt, qulonglong searchId, const DirDetails &dir)
 {
+	return ; // Remove this statement to allow adding directories to the search results.
+
     QString sid_hexa = QString::number(searchId,16) ;
     QTreeWidgetItem *child = new QTreeWidgetItem(ui.searchResultWidget);
 
