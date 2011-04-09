@@ -58,12 +58,16 @@ private slots:
     void tabCurrentChanged(int tab);
     void dockTab();
     void undockTab();
+    void setStyle();
 
 private:
     bool tabbedWindow;
     bool firstShow;
     std::string peerId;
     PopupChatDialog *chatDialog;
+
+    PopupChatDialog *getCurrentDialog();
+    void calculateStyle(PopupChatDialog *dialog);
 
     /** Qt Designer generated object */
     Ui::PopupChatWindow ui;

@@ -31,6 +31,7 @@
 #include <retroshare/rspeers.h>
 
 #include "RsharePeerSettings.h"
+#include "gui/style/RSStyle.h"
 
 /** The file in which all settings of he peers will read and written. */
 #define SETTINGS_FILE   (RsInit::RsProfileConfigDirectory() + "/RSPeers.conf")
@@ -205,4 +206,42 @@ bool RsharePeerSettings::getShowAvatarFrame(const std::string &peerId)
 void RsharePeerSettings::setShowAvatarFrame(const std::string &peerId, bool value)
 {
     return set(peerId, "ShowAvatarFrame", value);
+}
+
+void RsharePeerSettings::getStyle(const std::string &peerId, const QString &name, RSStyle &style)
+{
+    std::string gpgId;
+    if (getGpgIdOfSslId(peerId, gpgId) == false) {
+        /* gpg id not found */
+        return;
+    }
+
+    beginGroup(QString::fromStdString(gpgId));
+    beginGroup("style");
+    beginGroup(name);
+
+    style.readSetting(*this);
+
+    endGroup();
+    endGroup();
+    endGroup();
+}
+
+void RsharePeerSettings::setStyle(const std::string &peerId, const QString &name, RSStyle &style)
+{
+    std::string gpgId;
+    if (getGpgIdOfSslId(peerId, gpgId) == false) {
+        /* gpg id not found */
+        return;
+    }
+
+    beginGroup(QString::fromStdString(gpgId));
+    beginGroup("style");
+    beginGroup(name);
+
+    style.writeSetting(*this);
+
+    endGroup();
+    endGroup();
+    endGroup();
 }

@@ -28,6 +28,7 @@
 #include "gui/settings/rsharesettings.h"
 #include "gui/settings/RsharePeerSettings.h"
 #include "gui/common/StatusDefs.h"
+#include "gui/style/RSStyle.h"
 #include"util/misc.h"
 
 #include <retroshare/rsmsgs.h>
@@ -83,6 +84,7 @@ PopupChatWindow::PopupChatWindow(bool tabbed, QWidget *parent, Qt::WFlags flags)
     setAttribute(Qt::WA_DeleteOnClose, true);
 
     connect(ui.actionAvatar, SIGNAL(triggered()),this, SLOT(getAvatar()));
+    connect(ui.actionColor, SIGNAL(triggered()), this, SLOT(setStyle()));
     connect(ui.actionDockTab, SIGNAL(triggered()), this, SLOT(dockTab()));
     connect(ui.actionUndockTab, SIGNAL(triggered()), this, SLOT(undockTab()));
 
@@ -120,18 +122,21 @@ void PopupChatWindow::showEvent(QShowEvent *event)
     }
 }
 
+PopupChatDialog *PopupChatWindow::getCurrentDialog()
+{
+    if (tabbedWindow) {
+        return dynamic_cast<PopupChatDialog*>(ui.tabWidget->currentWidget());
+    }
+
+    return chatDialog;
+}
+
 void PopupChatWindow::changeEvent(QEvent *event)
 {
     if (event->type() == QEvent::ActivationChange) {
-        if (tabbedWindow) {
-            PopupChatDialog *pcd = dynamic_cast<PopupChatDialog*>(ui.tabWidget->currentWidget());
-            if (pcd) {
-                pcd->activate();
-            }
-        } else {
-            if (chatDialog) {
-                chatDialog->activate();
-            }
+        PopupChatDialog *pcd = getCurrentDialog();
+        if (pcd) {
+            pcd->activate();
         }
     }
 }
@@ -144,6 +149,7 @@ void PopupChatWindow::addDialog(PopupChatDialog *dialog)
         ui.horizontalLayout->addWidget(dialog);
         peerId = dialog->getPeerId();
         chatDialog = dialog;
+        calculateStyle(dialog);
     }
 }
 
@@ -297,6 +303,7 @@ void PopupChatWindow::tabCurrentChanged(int tab)
 
     if (pcd) {
         pcd->activate();
+        calculateStyle(pcd);
     }
 }
 
@@ -328,4 +335,36 @@ void PopupChatWindow::undockTab()
             pcw->calculateTitle(pcd);
         }
     }
+}
+
+void PopupChatWindow::setStyle()
+{
+    PopupChatDialog *pcd = getCurrentDialog();
+
+    if (pcd && pcd->setStyle()) {
+        calculateStyle(pcd);
+    }
+}
+
+void PopupChatWindow::calculateStyle(PopupChatDialog *dialog)
+{
+    QString toolSheet;
+    QString statusSheet;
+    QString widgetSheet;
+
+    if (dialog) {
+        const RSStyle &style = dialog->getStyle();
+
+        QString styleSheet = style.getStyleSheet();
+
+        if (styleSheet.isEmpty() == false) {
+            toolSheet = QString("QToolBar{%1}").arg(styleSheet);
+            statusSheet = QString(".QStatusBar{%1}").arg(styleSheet);
+            widgetSheet = QString(".QWidget{%1}").arg(styleSheet);
+        }
+    }
+
+    ui.chattoolBar->setStyleSheet(toolSheet);
+    ui.chatstatusbar->setStyleSheet(statusSheet);
+    ui.chatcentralwidget->setStyleSheet(widgetSheet);
 }

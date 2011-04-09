@@ -104,7 +104,7 @@ PopupChatDialog::PopupChatDialog(const std::string &id, const QString &name, QWi
   peerStatus = 0;
 
   last_status_send_time = 0 ;
-  style.setStyleFromSettings(ChatStyle::TYPE_PRIVATE);
+  chatStyle.setStyleFromSettings(ChatStyle::TYPE_PRIVATE);
 
   /* Hide or show the frames */
   showAvatarFrame(PeerSettings->getShowAvatarFrame(dialogId));
@@ -168,6 +168,9 @@ PopupChatDialog::PopupChatDialog(const std::string &id, const QString &name, QWi
 
   // load settings
   processSettings(true);
+
+  // load style
+  PeerSettings->getStyle(dialogId, "PopupChatDialog", style);
 
   // initialize first status
   StatusInfo peerStatusInfo;
@@ -643,7 +646,7 @@ void PopupChatDialog::addChatMsg(bool incoming, const std::string &id, const QSt
         type = incoming ? ChatStyle::FORMATMSG_INCOMING : ChatStyle::FORMATMSG_OUTGOING;
     }
 
-    QString formatMsg = style.formatMessage(type, name, recvTime, message, formatFlag);
+    QString formatMsg = chatStyle.formatMessage(type, name, recvTime, message, formatFlag);
 
     if (addToHistory) {
         historyKeeper.addMessage(incoming, id, name, sendTime, recvTime, message);
@@ -762,7 +765,7 @@ void PopupChatDialog::on_closeInfoFrameButton_clicked()
 void PopupChatDialog::setColor()
 {	    
     bool ok;
-    QRgb color = QColorDialog::getRgba(ui.chattextEdit->textColor().rgba(), &ok, this);
+    QRgb color = QColorDialog::getRgba(ui.chattextEdit->textColor().rgba(), &ok, window());
     if (ok) {
         mCurrentColor = QColor(color);
         PeerSettings->setPrivateChatColor(dialogId, mCurrentColor.name());
@@ -910,32 +913,32 @@ void PopupChatDialog::addExtraPicture()
 {
     // select a picture file
     QString file;
-    if (misc::getOpenFileName(this, RshareSettings::LASTDIR_IMAGES, tr("Load Picture File"), "Pictures (*.png *.xpm *.jpg)", file)) {
+    if (misc::getOpenFileName(window(), RshareSettings::LASTDIR_IMAGES, tr("Load Picture File"), "Pictures (*.png *.xpm *.jpg)", file)) {
         addAttachment(file.toUtf8().constData(), 1);
     }
 }
 
 void PopupChatDialog::addAttachment(std::string filePath,int flag) 
 {
-	    /* add a AttachFileItem to the attachment section */
-	    std::cerr << "PopupChatDialog::addExtraFile() hashing file.";
-	    std::cerr << std::endl;
+    /* add a AttachFileItem to the attachment section */
+    std::cerr << "PopupChatDialog::addExtraFile() hashing file.";
+    std::cerr << std::endl;
 
-	    /* add widget in for new destination */
-        AttachFileItem *file = new AttachFileItem(filePath);
-	    //file->
-	    
-	    if(flag==1)
-	    	file->setPicFlag(1);
+    /* add widget in for new destination */
+    AttachFileItem *file = new AttachFileItem(filePath);
+    //file->
 
-	    ui.vboxLayout->addWidget(file, 1, 0);
+    if(flag==1)
+        file->setPicFlag(1);
 
-	    //when the file is local or is finished hashing, call the fileHashingFinished method to send a chat message
-	    if (file->getState() == AFI_STATE_LOCAL) {
+    ui.vboxLayout->addWidget(file, 1, 0);
+
+    //when the file is local or is finished hashing, call the fileHashingFinished method to send a chat message
+    if (file->getState() == AFI_STATE_LOCAL) {
 		fileHashingFinished(file);
-	    } else {
+    } else {
 		QObject::connect(file,SIGNAL(fileFinished(AttachFileItem *)), SLOT(fileHashingFinished(AttachFileItem *))) ;
-	    }
+    }
 }
 
 void PopupChatDialog::fileHashingFinished(AttachFileItem* file) 
@@ -1120,7 +1123,7 @@ bool PopupChatDialog::fileSave()
 bool PopupChatDialog::fileSaveAs()
 {
     QString fn;
-    if (misc::getSaveFileName(this, RshareSettings::LASTDIR_HISTORY, tr("Save as..."), tr("Text File (*.txt );;All Files (*)"), fn)) {
+    if (misc::getSaveFileName(window(), RshareSettings::LASTDIR_HISTORY, tr("Save as..."), tr("Text File (*.txt );;All Files (*)"), fn)) {
         setCurrentFileName(fn);
         return fileSave();
     }
@@ -1248,6 +1251,21 @@ void PopupChatDialog::updatePeersCustomStateString(const QString& peer_id, const
 
 void PopupChatDialog::on_actionMessageHistory_triggered()
 {
-    ImHistoryBrowser imBrowser(dialogId, historyKeeper, ui.chattextEdit, this);
+    ImHistoryBrowser imBrowser(dialogId, historyKeeper, ui.chattextEdit, window());
     imBrowser.exec();
+}
+
+bool PopupChatDialog::setStyle()
+{
+    if (style.showDialog(window())) {
+        PeerSettings->setStyle(dialogId, "PopupChatDialog", style);
+        return true;
+    }
+
+    return false;
+}
+
+const RSStyle &PopupChatDialog::getStyle()
+{
+    return style;
 }

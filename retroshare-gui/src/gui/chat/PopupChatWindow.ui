@@ -23,32 +23,16 @@
    <property name="styleSheet">
     <string notr="true"/>
    </property>
-   <layout class="QGridLayout" name="gridLayout_2">
-    <property name="leftMargin">
-     <number>0</number>
-    </property>
-    <property name="bottomMargin">
-     <number>0</number>
-    </property>
-    <property name="horizontalSpacing">
-     <number>0</number>
-    </property>
-    <property name="verticalSpacing">
-     <number>1</number>
-    </property>
-    <item row="0" column="0">
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QTabWidget" name="tabWidget">
-        <property name="tabsClosable">
-         <bool>true</bool>
-        </property>
-        <property name="movable">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-     </layout>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="tabsClosable">
+       <bool>true</bool>
+      </property>
+      <property name="movable">
+       <bool>true</bool>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -82,6 +66,7 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionAvatar"/>
+   <addaction name="actionColor"/>
    <addaction name="actionDockTab"/>
    <addaction name="actionUndockTab"/>
   </widget>
@@ -119,6 +104,18 @@
    </property>
    <property name="toolTip">
     <string>Undock tab</string>
+   </property>
+  </action>
+  <action name="actionColor">
+   <property name="icon">
+    <iconset resource="../images.qrc">
+     <normaloff>:/images/highlight.png</normaloff>:/images/highlight.png</iconset>
+   </property>
+   <property name="text">
+    <string>Set Chat Window Color</string>
+   </property>
+   <property name="toolTip">
+    <string>Set Chat Window Color</string>
    </property>
   </action>
  </widget>

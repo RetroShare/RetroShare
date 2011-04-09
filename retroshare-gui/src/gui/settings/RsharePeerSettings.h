@@ -24,6 +24,8 @@
 
 #include <QSettings>
 
+class RSStyle;
+
 /** Handles saving and restoring RShares's settings for peers */
 class RsharePeerSettings : public QSettings
 {
@@ -42,6 +44,9 @@ public:
 
     bool    getShowAvatarFrame(const std::string &peerId);
     void    setShowAvatarFrame(const std::string &peerId, bool value);
+
+    void    getStyle(const std::string &peerId, const QString &name, RSStyle &style);
+    void    setStyle(const std::string &peerId, const QString &name, RSStyle &style);
 
 protected:
     /** Default constructor. */

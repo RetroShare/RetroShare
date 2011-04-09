@@ -305,6 +305,8 @@ HEADERS +=  rshare.h \
             gui/common/PeerDefs.h \
             gui/common/PopularityDefs.h \
             gui/common/GroupTreeWidget.h \
+            gui/style/RSStyle.h \
+            gui/style/StyleDialog.h \
             gui/MessagesDialog.h \
             gui/help/browser/helpbrowser.h \
             gui/help/browser/helptextbrowser.h \
@@ -411,7 +413,8 @@ FORMS +=    gui/StartDialog.ui \
             gui/feeds/AttachFileItem.ui \
             gui/im_history/ImHistoryBrowser.ui \
             gui/groups/CreateGroup.ui \
-            gui/common/GroupTreeWidget.ui
+            gui/common/GroupTreeWidget.ui \
+            gui/style/StyleDialog.ui
 
 SOURCES +=  main.cpp \
             rshare.cpp \
@@ -507,6 +510,8 @@ SOURCES +=  main.cpp \
             gui/common/PeerDefs.cpp \
             gui/common/PopularityDefs.cpp \
             gui/common/GroupTreeWidget.cpp \
+            gui/style/RSStyle.cpp \
+            gui/style/StyleDialog.cpp \
             gui/settings/rsharesettings.cpp \
             gui/settings/RsharePeerSettings.cpp \
             gui/settings/rsettings.cpp \

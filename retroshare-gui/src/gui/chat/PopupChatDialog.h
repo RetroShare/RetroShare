@@ -34,6 +34,7 @@ class ChatInfo;
 #include <retroshare/rsmsgs.h>
 #include "gui/im_history/IMHistoryKeeper.h"
 #include "ChatStyle.h"
+#include "gui/style/RSStyle.h"
 
 class PopupChatDialog : public QWidget
 {
@@ -59,6 +60,8 @@ public:
     int getPeerStatus() { return peerStatus; }
     void focusDialog();
     void activate();
+    bool setStyle();
+    const RSStyle &getStyle();
 
 public slots:
     void updateStatus(const QString &peer_id, int status);
@@ -144,8 +147,10 @@ private:
     bool typing;
     int peerStatus;
     IMHistoryKeeper historyKeeper;
-    ChatStyle style;
+    ChatStyle chatStyle;
     bool m_manualDelete;
+
+    RSStyle style;
 
     /** Qt Designer generated object */
     Ui::PopupChatDialog ui;
