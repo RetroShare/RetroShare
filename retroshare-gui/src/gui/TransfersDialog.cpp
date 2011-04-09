@@ -514,7 +514,7 @@ void TransfersDialog::downloadListCostumPopupMenu( QPoint point )
 		if (addOpenFileOption)
 			contextMnu.addAction( openfileAct);
 
-#ifndef RS_RELEASE_VERSION		
+#ifndef WIN32		
 		contextMnu.addAction( previewfileAct);
 #endif		
 		contextMnu.addAction( openfolderAct);
@@ -1376,6 +1376,10 @@ void TransfersDialog::previewTransfer()
 		path = rsFiles->getPartialsDirectory() + "/" + info.hash;
 	}
 
+#ifndef WIN32
+	if (!QDesktopServices::openUrl(QUrl::fromLocalFile(QString::fromUtf8(path.c_str())))) 
+		QMessageBox::warning(this, tr("File preview"), tr("File %1 preview failed.").arg(QString::fromUtf8(path.c_str())));
+#else
 	/* open or preview them with a suitable application */
 	QFileInfo qinfo;
 	if (complete) {
@@ -1406,6 +1410,7 @@ void TransfersDialog::previewTransfer()
 			std::cerr << "previewTransfer(): can't create link for file " << path << std::endl;
 		}
 	}
+#endif
 }
 
 void TransfersDialog::openTransfer()
