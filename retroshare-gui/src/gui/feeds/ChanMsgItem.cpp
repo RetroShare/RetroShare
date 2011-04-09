@@ -351,7 +351,7 @@ void ChanMsgItem::unsubscribeChannel()
 
 	if (rsChannels)
 	{
-		rsChannels->channelSubscribe(mChanId, false);
+                rsChannels->channelSubscribe(mChanId, false, false);
 	}
 	updateItemStatic();
 }
