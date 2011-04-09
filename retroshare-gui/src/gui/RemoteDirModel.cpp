@@ -24,6 +24,7 @@
 #include <QDesktopServices>
 #include <QUrl>
 #include <QMimeData>
+#include <QTimer>
 
 #include "RemoteDirModel.h"
 #include <retroshare/rsfiles.h>
@@ -1294,18 +1295,28 @@ TreeStyle_RDM::~TreeStyle_RDM()
 void FlatStyle_RDM::postMods()
 {
 	_ref_entries.clear() ;
+	_ref_stack.clear() ;
+	
+	_ref_stack.push_back(NULL) ; // init the stack with the topmost parent directory
 
 	std::cerr << "FlatStyle_RDM::postMods(): cleared ref entries" << std::endl;
+	updateRefs() ;
+}
 
-	std::vector<void *> stack(1,(void *)NULL) ;
+void FlatStyle_RDM::updateRefs()
+{
+	RetroshareDirModel::preMods() ;
 
-	while(!stack.empty())
+	static const uint32_t MAX_REFS_PER_SECOND = 2000 ;
+	uint32_t nb_treated_refs = 0 ;
+
+	while(!_ref_stack.empty())
 	{
-		void *ref = stack.back() ;
+		void *ref = _ref_stack.back() ;
 #ifdef RDM_DEBUG
 		std::cerr << "FlatStyle_RDM::postMods(): poped ref " << ref << std::endl;
 #endif
-		stack.pop_back() ;
+		_ref_stack.pop_back() ;
 		uint32_t flags = DIR_FLAGS_DETAILS;
 		DirDetails details ;
 
@@ -1317,7 +1328,12 @@ void FlatStyle_RDM::postMods()
 			std::cerr << "FlatStyle_RDM::postMods(): addign ref " << ref << std::endl;
 #endif
 			for(std::list<DirStub>::iterator it = details.children.begin(); it != details.children.end(); it++) 
-				stack.push_back(it->ref) ;
+				_ref_stack.push_back(it->ref) ;
+		}
+		if(++nb_treated_refs > MAX_REFS_PER_SECOND) 	// we've done enough, let's give back hand to 
+		{															// the user and setup a timer to finish the job later.
+			QTimer::singleShot(500,this,SLOT(updateRefs())) ;
+			break ;
 		}
 	}
 	std::cerr << "reference tab contains " << _ref_entries.size() << " files" << std::endl;

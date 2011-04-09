@@ -162,6 +162,8 @@ class TreeStyle_RDM: public RetroshareDirModel
 //
 class FlatStyle_RDM: public RetroshareDirModel
 {
+	Q_OBJECT 
+
 	public:
 		FlatStyle_RDM(bool mode)
 			: RetroshareDirModel(mode)
@@ -169,6 +171,9 @@ class FlatStyle_RDM: public RetroshareDirModel
 		}
 
 		virtual ~FlatStyle_RDM() ;
+
+	protected slots:
+		void updateRefs() ;
 
 	protected:
 		virtual void postMods();
@@ -186,7 +191,8 @@ class FlatStyle_RDM: public RetroshareDirModel
 
 		QString computeDirectoryPath(const DirDetails& details) const ;
 
-		std::vector<std::pair<void *,QString> > _ref_entries ;
+		std::vector<std::pair<void *,QString> > _ref_entries ;// used to store the refs to display
+		std::vector<void *> _ref_stack ;		// used to store the refs to update
 };
 
 
