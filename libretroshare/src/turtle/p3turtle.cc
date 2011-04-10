@@ -770,7 +770,7 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 	// We use a random factor on the depth test that is biased by a mix between the session id and the partial tunnel id
 	// to scramble a possible search-by-depth attack.
 	//
-	bool random_bypass = (item->depth == TURTLE_MAX_SEARCH_DEPTH && (_random_bias ^ item->request_id)&0x7==2) ;
+	bool random_bypass = (item->depth == TURTLE_MAX_SEARCH_DEPTH && (((_random_bias ^ item->request_id)&0x7)==2)) ;
 
 	if(item->depth < TURTLE_MAX_SEARCH_DEPTH || random_bypass)
 	{
@@ -1507,8 +1507,8 @@ TurtleRequestId p3turtle::diggTunnel(const TurtleFileHash& hash)
 void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 {
 #ifdef P3TURTLE_DEBUG
-	std::cerr << "Received tunnel request from peer " << item->PeerId() << ": " << std::endl ;
-	item->print(std::cerr,0) ;
+ std::cerr << "Received tunnel request from peer " << item->PeerId() << ": " << std::endl ;
+ item->print(std::cerr,0) ;
 #endif
 
 #ifdef TUNNEL_STATISTICS
@@ -1548,11 +1548,12 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 			//
 			if(it->second.depth > item->depth && ((item->partial_tunnel_id ^ _random_bias)&0x7)>0)
 			{
-//#ifdef P3TURTLE_DEBUG
+#ifdef P3TURTLE_DEBUG
 				std::cerr << "  re-routing tunnel request. Item age difference = " << time(NULL)-it->second.time_stamp << std::endl;
 				std::cerr << "     - old source: " << it->second.origin << ", old depth=" << it->second.depth << std::endl ;
 				std::cerr << "     - new source: " << item->PeerId() << ", new depth=" << item->depth << std::endl ;
-//#endif
+				std::cerr << "     - half id: " << (void*)it->first << std::endl ;
+#endif
 				it->second.origin = item->PeerId() ;
 				it->second.depth = item->depth ;
 			}
@@ -1637,7 +1638,7 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 
 	// If search depth not too large, also forward this search request to all other peers.
 	//
-	bool random_bypass = (item->depth == TURTLE_MAX_SEARCH_DEPTH && (_random_bias ^ item->partial_tunnel_id)&0x7==2) ;
+	bool random_bypass = (item->depth == TURTLE_MAX_SEARCH_DEPTH && (((_random_bias ^ item->partial_tunnel_id)&0x7)==2)) ;
 
 	if(item->depth < TURTLE_MAX_SEARCH_DEPTH || random_bypass)
 	{
@@ -1678,19 +1679,30 @@ void p3turtle::handleTunnelResult(RsTurtleTunnelOkItem *item)
 
 		// Find who actually sent the corresponding turtle tunnel request.
 		//
-		std::map<TurtleTunnelRequestId,TurtleRequestInfo>::const_iterator it = _tunnel_requests_origins.find(item->request_id) ;
+		std::map<TurtleTunnelRequestId,TurtleRequestInfo>::iterator it = _tunnel_requests_origins.find(item->request_id) ;
 #ifdef P3TURTLE_DEBUG
 		std::cerr << "Received tunnel result:" << std::endl ;
 		item->print(std::cerr,0) ;
 #endif
+
 		if(it == _tunnel_requests_origins.end())
 		{
 			// This is an error: how could we receive a tunnel result corresponding to a tunnel item we
-			// have forwarded but that it not in the list ??
+			// have forwarded but that it not in the list ?? Actually that happens, when tunnel requests
+			// get too old, before the tunnelOk item gets back. But this is quite unusual.
 
+#ifdef P3TURTLE_DEBUG
 			std::cerr << __PRETTY_FUNCTION__ << ": tunnel result has no peer direction!" << std::endl ;
+#endif
 			return ;
 		}
+		if(it->second.responses.find(item->tunnel_id) != it->second.responses.end())
+		{
+			std::cerr << "p3turtle: ERROR: received a tunnel response twice. That should not happen." << std::endl;
+			return ;
+		}
+		else
+			it->second.responses.insert(item->tunnel_id) ;
 
 		// store tunnel info.
 		bool found = (_local_tunnels.find(item->tunnel_id) != _local_tunnels.end()) ;

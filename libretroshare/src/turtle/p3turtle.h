@@ -139,6 +139,7 @@
 
 #include <string>
 #include <list>
+#include <set>
 
 #include "pqi/pqinetwork.h"
 #include "pqi/pqi.h"
@@ -165,6 +166,7 @@ class TurtleRequestInfo
 		TurtlePeerId origin ;			// where the request came from.
 		uint32_t	time_stamp ;			// last time the tunnel was actually used. Used for cleaning old tunnels.
 		int depth ;							// depth of the request. Used to optimize tunnel length.
+		std::set<uint32_t> responses; // responses to this request. Useful to avoid spamming tunnel responses.
 };
 
 class TurtleTunnel
