@@ -684,7 +684,7 @@ void p3GroupDistrib::locked_processHistoryCached(const std::string& grpId)
 			// note: you could load msgs for a cache historied group that is not loaded,
 			// but any request for info of affected grp will consequently load
 			// all its msgs through this function anyways
-			locked_loadFileMsgs(file, cit->cid.subid, cit->pid, cit->recvd, false, false);
+			locked_loadFileMsgs(file, cit->cid.subid, cit->pid, cit->recvd, false, true);
 
 		}
 
@@ -1206,9 +1206,25 @@ void	p3GroupDistrib::locked_loadFileMsgs(const std::string &filename, uint16_t c
 #endif
 
 	time_t now = time(NULL);
-	//time_t start = now;
-	//time_t end   = 0;
+	bool cache = false;
 
+#ifdef ENABLE_CACHE_OPT
+	// if cache id exists in cache table exit
+	if(!historical){
+		if(locked_historyCached(pCacheId(src, cacheSubId))){
+			return;
+		}
+		else
+		{
+			cache = true;
+		}
+	}
+#endif
+
+	// link grp to cache id (only one cache id, so doesn't matter if one grp comes out twice
+	// with same cache id)
+	std::map<std::string, pCacheId> msgCacheMap;
+	pCacheId failedCache = pCacheId(src, cacheSubId);
 	/* create the serialiser to load msgs */
 	BinInterface *bio = new BinFileInterface(filename.c_str(), BIN_FLAGS_READABLE);
 	pqistore *store = createStore(bio, src, BIN_FLAGS_READABLE);
@@ -1219,6 +1235,9 @@ void	p3GroupDistrib::locked_loadFileMsgs(const std::string &filename, uint16_t c
 
 	RsItem *item;
 	RsDistribSignedMsg *newMsg;
+	std::string grpId;
+
+
 
 	while(NULL != (item = store->GetItem()))
 	{
@@ -1231,7 +1250,16 @@ void	p3GroupDistrib::locked_loadFileMsgs(const std::string &filename, uint16_t c
 
 		if ((newMsg = dynamic_cast<RsDistribSignedMsg *>(item)))
 		{
-			locked_loadMsg(newMsg, src, local, historical);
+			grpId = newMsg->grpId;
+			if(locked_loadMsg(newMsg, src, local, historical))
+			{
+
+				if(cache)
+				{
+					msgCacheMap.insert(grpCachePair(grpId, pCacheId(src, cacheSubId)));
+				}
+			}
+
 		}
 		else
 		{
@@ -1243,6 +1271,27 @@ void	p3GroupDistrib::locked_loadFileMsgs(const std::string &filename, uint16_t c
 			delete item;
 		}
 	}
+
+	std::map<std::string, pCacheId>::iterator mit;
+
+	if(cache){
+
+		mit = msgCacheMap.begin();
+		for(;mit != msgCacheMap.end(); mit++)
+		{
+			mMsgHistPending.push_back(grpCachePair(mit->first, mit->second));
+		}
+		mUpdateCacheDoc = true;
+		if(!msgCacheMap.empty())
+		mCount++;
+
+		std::string failedCacheId = FAILED_CACHE_CONT;
+
+		// if msg cache map is empty then cache id failed
+		if(msgCacheMap.empty())
+			mMsgHistPending.push_back(grpCachePair(failedCacheId, failedCache));
+	}
+
 
 
 	if (local)
@@ -1663,7 +1712,9 @@ bool	p3GroupDistrib::loadMsg(RsDistribSignedMsg *newMsg, const std::string &src,
 		delete newMsg;
 
 	}
-	locked_notifyGroupChanged(git->second, GRP_NEW_MSG, historical);
+
+	if(!historical)
+		locked_notifyGroupChanged(git->second, GRP_NEW_MSG, historical);
 
 	return true;
 }
@@ -1836,7 +1887,9 @@ bool	p3GroupDistrib::locked_loadMsg(RsDistribSignedMsg *newMsg, const std::strin
 		delete newMsg;
 
 	}
-	locked_notifyGroupChanged(git->second, GRP_NEW_MSG, historical);
+
+	if(!historical)
+		locked_notifyGroupChanged(git->second, GRP_NEW_MSG, historical);
 
 	return true;
 }
