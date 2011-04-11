@@ -113,7 +113,8 @@ int main(int argc, char **argv)
 
 	/* Key + Certificate are loaded into libretroshare */
 
-	int retVal = RsInit::LockAndLoadCertificates(false);
+	std::string error_string ;
+	int retVal = RsInit::LockAndLoadCertificates(false,error_string);
 	switch(retVal)
 	{
 		case 0:	break;
