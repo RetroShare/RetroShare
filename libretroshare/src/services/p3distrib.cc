@@ -784,13 +784,13 @@ bool p3GroupDistrib::locked_loadHistoryCacheFile()
 
 	char* buffer = static_cast<char*>(pugi::get_memory_allocation_function()(outlen));
 
-	memcpy(buffer, decryptedCacheFile, outlen);
-
-
-	ok &= mCacheDoc.load_buffer_inplace_own(buffer, outlen);
+	if(ok){
+		memcpy(buffer, decryptedCacheFile, outlen);
+		ok &= mCacheDoc.load_buffer_inplace_own(buffer, outlen);
+		delete[] decryptedCacheFile;
+	}
 
 	delete[] fileLoadBuffer;
-	delete[] decryptedCacheFile;
 
 	return ok;
 }
