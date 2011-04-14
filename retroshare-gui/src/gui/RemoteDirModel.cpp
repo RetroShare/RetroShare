@@ -26,6 +26,7 @@
 #include <QMimeData>
 #include <QTimer>
 
+#include <gui/RsAutoUpdatePage.h>
 #include "RemoteDirModel.h"
 #include <retroshare/rsfiles.h>
 #include <retroshare/rstypes.h>
@@ -45,10 +46,20 @@ RetroshareDirModel::RetroshareDirModel(bool mode, QObject *parent)
          ageIndicator(IND_ALWAYS),
          RemoteMode(mode), nIndex(1), indexSet(1) /* ass zero index cant be used */
 {
+	_visible = false ;
+	_needs_update = true ;
 	setSupportedDragActions(Qt::CopyAction);
 	treeStyle();
 }
 
+void RetroshareDirModel::update()
+{
+	if(_needs_update)
+	{
+		preMods() ;
+		postMods() ;
+	}
+}
 void RetroshareDirModel::treeStyle()
 {
 	categoryIcon.addPixmap(QPixmap(":/images/folder16.png"),
@@ -1294,17 +1305,29 @@ TreeStyle_RDM::~TreeStyle_RDM()
 }
 void FlatStyle_RDM::postMods()
 {
-	_ref_entries.clear() ;
-	_ref_stack.clear() ;
-	
-	_ref_stack.push_back(NULL) ; // init the stack with the topmost parent directory
+	if(visible())
+	{
+		_ref_entries.clear() ;
+		_ref_stack.clear() ;
 
-	std::cerr << "FlatStyle_RDM::postMods(): cleared ref entries" << std::endl;
-	updateRefs() ;
+		_ref_stack.push_back(NULL) ; // init the stack with the topmost parent directory
+
+		std::cerr << "FlatStyle_RDM::postMods(): cleared ref entries" << std::endl;
+		_needs_update = false ;
+		updateRefs() ;
+	}
+	else
+		_needs_update = true ;
 }
 
 void FlatStyle_RDM::updateRefs()
 {
+	if(RsAutoUpdatePage::eventsLocked())
+	{
+		_needs_update = true ;
+		return ;
+	}
+
 	RetroshareDirModel::preMods() ;
 
 	static const uint32_t MAX_REFS_PER_SECOND = 2000 ;
@@ -1332,11 +1355,19 @@ void FlatStyle_RDM::updateRefs()
 		}
 		if(++nb_treated_refs > MAX_REFS_PER_SECOND) 	// we've done enough, let's give back hand to 
 		{															// the user and setup a timer to finish the job later.
-			QTimer::singleShot(500,this,SLOT(updateRefs())) ;
+			_needs_update = true ;
+
+			if(visible())
+				QTimer::singleShot(2000,this,SLOT(updateRefs())) ;
+			else
+				std::cerr << "Not visible: suspending update"<< std::endl;
 			break ;
 		}
 	}
 	std::cerr << "reference tab contains " << _ref_entries.size() << " files" << std::endl;
+
+	if(_ref_stack.empty())
+		_needs_update = false ;
 
 	RetroshareDirModel::postMods() ;
 }

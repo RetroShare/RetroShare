@@ -27,6 +27,7 @@
 #include "RetroShareLink.h"
 #include "msgs/MessageComposer.h"
 #include "gui/RSHumanReadableDelegate.h"
+#include "gui/RsAutoUpdatePage.h"
 #include "settings/rsharesettings.h"
 #include "advsearch/advancedsearchdialog.h"
 
@@ -672,6 +673,15 @@ void SearchDialog::updateFiles(qulonglong search_id,FileDetail file)
 
 void SearchDialog::processResultQueue()
 {
+	// This avoids a deadlock when gpg callback asks a passwd.
+	// Send again in 10 secs.
+	//
+	if(RsAutoUpdatePage::eventsLocked())
+	{
+		QTimer::singleShot(10000,this,SLOT(processResultQueue())) ; 
+		return ;
+	}
+
 	int nb_treated_elements = 0 ;
 
 	while(!searchResultsQueue.empty() && nb_treated_elements++ < 500)

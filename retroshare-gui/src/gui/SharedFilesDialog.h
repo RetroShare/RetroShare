@@ -39,6 +39,8 @@ public:
   ~SharedFilesDialog();
 
   virtual void updatePage() { checkUpdate() ; }
+  virtual void hideEvent(QHideEvent *) ;
+  virtual void showEvent(QShowEvent *) ;
 
 
 private slots:

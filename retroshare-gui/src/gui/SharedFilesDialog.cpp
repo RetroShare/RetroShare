@@ -88,7 +88,7 @@ private:
 
 /** Constructor */
 SharedFilesDialog::SharedFilesDialog(QWidget *parent)
-: RsAutoUpdatePage(1000,parent)
+: RsAutoUpdatePage(1000,parent),model(NULL)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
@@ -235,6 +235,21 @@ SharedFilesDialog::SharedFilesDialog(QWidget *parent)
   connect(openfolderAct, SIGNAL(triggered()), this, SLOT(openfolder()));
 }
 
+void SharedFilesDialog::hideEvent(QHideEvent *)
+{
+	if(model!=NULL)
+		model->setVisible(false) ;
+	//std::cerr << "Hidden!"<< std::endl;
+}
+void SharedFilesDialog::showEvent(QShowEvent *)
+{
+	if(model!=NULL)
+	{
+		model->setVisible(true) ;
+		model->update() ;
+	}
+	//std::cerr << "Shown!"<< std::endl;
+}
 SharedFilesDialog::~SharedFilesDialog()
 {
     // save settings
@@ -279,6 +294,9 @@ void SharedFilesDialog::changeCurrentViewModel(int c)
 	disconnect( ui.remoteDirTreeView, SIGNAL( collapsed(const QModelIndex & ) ), 0, 0 );
 	disconnect( ui.remoteDirTreeView, SIGNAL(  expanded(const QModelIndex & ) ), 0, 0 );
 
+	if(model!=NULL)
+		model->setVisible(false) ;
+
 	if(c == 0)
 	{
 		model = tree_model ;
@@ -304,8 +322,11 @@ void SharedFilesDialog::changeCurrentViewModel(int c)
 #endif
 	}
 
-	model->preMods();
-	model->postMods();
+	if(isVisible())
+	{
+		model->setVisible(true) ;
+		model->update() ;
+	}
 
 	connect( ui.remoteDirTreeView, SIGNAL( collapsed(const QModelIndex & ) ), model, SLOT(  collapsed(const QModelIndex & ) ) );
 	connect( ui.remoteDirTreeView, SIGNAL(  expanded(const QModelIndex & ) ), model, SLOT(   expanded(const QModelIndex & ) ) );
@@ -682,8 +703,7 @@ void SharedFilesDialog::openfolder()
 
 void  SharedFilesDialog::preModDirectories(bool update_local)
 {
-
-        //std::cerr << "SharedFilesDialog::preModDirectories called with update_local = " << update_local << std::endl ;
+	//std::cerr << "SharedFilesDialog::preModDirectories called with update_local = " << update_local << std::endl ;
 	if (update_local)
 		localModel->preMods();
 	else

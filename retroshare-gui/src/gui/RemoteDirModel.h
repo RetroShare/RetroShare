@@ -50,6 +50,9 @@ class RetroshareDirModel : public QAbstractItemModel
 		virtual void preMods();
 		virtual void postMods();
 
+		void setVisible(bool b) { _visible = b ; }
+		bool visible() { return _visible ;}
+
 		/* Callback from GUI */
 		void downloadSelected(const QModelIndexList &list);
 
@@ -62,6 +65,7 @@ class RetroshareDirModel : public QAbstractItemModel
 		void changeAgeIndicator(uint32_t indicator) { ageIndicator = indicator; }
 
 		bool requestDirDetails(void *ref,DirDetails& details,uint32_t flags) const;
+		void update() ;
 	public:
 
 		virtual QMimeData * mimeData ( const QModelIndexList & indexes ) const;
@@ -69,6 +73,9 @@ class RetroshareDirModel : public QAbstractItemModel
 		virtual QVariant data(const QModelIndex &index, int role) const;
 
 	protected:
+		bool _visible ;
+		bool _needs_update ;
+
 		void treeStyle();
 		void downloadDirectory(const DirDetails & details, int prefixLen);
 		static QString getFlagsString(uint32_t) ;
