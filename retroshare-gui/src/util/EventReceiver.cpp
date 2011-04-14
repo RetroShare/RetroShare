@@ -91,18 +91,10 @@ bool EventReceiver::start()
 	return result;
 }
 
-void EventReceiver::showNoRunningInstanceFound()
-{
-	QMessageBox mb(QMessageBox::Critical, "RetroShare", QObject::tr("No running instance of RetroShare found."), QMessageBox::Ok);
-	mb.setWindowIcon(QIcon(":/images/rstray3.png"));
-	mb.exec();
-}
-
 bool EventReceiver::sendRetroShareLink(const QString& link)
 {
 	if (!sharedMMemory.attach()) {
 		/* No running instance found */
-		showNoRunningInstanceFound();
 		return false;
 	}
 
@@ -122,7 +114,6 @@ bool EventReceiver::sendRetroShareLink(const QString& link)
 
 				SendMessage((HWND) info->wid, WM_COPYDATA, (WPARAM) 0, (LPARAM) (PCOPYDATASTRUCT) &send);
 			} else {
-				showNoRunningInstanceFound();
 				result = false;
 			}
 #else

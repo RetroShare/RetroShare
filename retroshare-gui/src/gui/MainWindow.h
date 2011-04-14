@@ -150,6 +150,8 @@ public slots:
     void updateTransfers(int count);
     void privateChatChanged(int list, int type);
 
+    void linkActivated(const QUrl &url);
+
 protected:
     /** Default Constructor */
     MainWindow(QWidget *parent = 0, Qt::WFlags flags = 0);
@@ -201,8 +203,6 @@ private slots:
     void doQuit();
     
     void on_actionQuick_Start_Wizard_activated();
-
-    void linkActivated(const QUrl &url);
 
 private:
 

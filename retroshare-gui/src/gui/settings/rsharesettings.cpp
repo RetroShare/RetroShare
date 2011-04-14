@@ -500,8 +500,8 @@ bool RshareSettings::getRetroShareProtocol()
 	}
 #else
 	/* Platforms other than windows aren't supported yet */
-	return false;
 #endif
+	return false;
 }
 
 /** Register retroshare:// as protocl */

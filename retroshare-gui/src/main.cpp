@@ -43,6 +43,7 @@
 #include "idle/idle.h"
 #include "gui/common/Emoticons.h"
 #include "util/EventReceiver.h"
+#include "gui/RetroShareLink.h"
 
 /*** WINDOWS DON'T LIKE THIS - REDEFINES VER numbers.
 #include <gui/qskinobject/qskinobject.h>
@@ -108,12 +109,15 @@ int main(int argc, char *argv[])
 	Rshare rshare(args, argc, argv, 
 		QString::fromStdString(RsInit::RsConfigDirectory()));
 
-	std::string link = RsInit::getRetroShareLink();
-	if (!link.empty()) {
+	std::string url = RsInit::getRetroShareLink();
+	if (!url.empty()) {
 		/* start with RetroShare link */
 		EventReceiver eventReceiver;
-		eventReceiver.sendRetroShareLink(QString::fromStdString(link));
-		return 0;
+		if (eventReceiver.sendRetroShareLink(QString::fromStdString(url))) {
+			return 0;
+		}
+
+		/* Start RetroShare */
 	}
 
 	QSplashScreen splashScreen(QPixmap(":/images/splash.png")/* , Qt::WindowStaysOnTopHint*/);
@@ -244,6 +248,14 @@ int main(int argc, char *argv[])
 		eventReceiver = new EventReceiver;
 		if (eventReceiver->start()) {
 			QObject::connect(eventReceiver, SIGNAL(linkReceived(const QUrl&)), w, SLOT(linkActivated(const QUrl&)));
+		}
+	}
+
+	if (!url.empty()) {
+		/* Now use link from the command line, because no RetroShare was running */
+		RetroShareLink link(QString::fromStdString(url));
+		if (link.valid()) {
+			w->linkActivated(link.toUrl());
 		}
 	}
 

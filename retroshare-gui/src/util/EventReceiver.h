@@ -47,7 +47,6 @@ signals:
 	void linkReceived(const QUrl& url);
 
 private:
-	void showNoRunningInstanceFound();
 	void received(const QString& url);
 
 #ifdef WINDOWS_SYS
