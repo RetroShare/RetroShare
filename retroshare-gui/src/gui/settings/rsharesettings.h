@@ -109,6 +109,11 @@ public:
   /** Set whether to run RetroShare on system boot. */
   void setRunRetroshareOnBoot(bool run, bool minimized);
 
+  /** Returns true if retroshare:// is registered as protocol */
+  bool getRetroShareProtocol();
+  /** Register retroshare:// as protocl */
+  void setRetroShareProtocol(bool value);
+
   /* Get the destination log file. */
   QString getLogFile();
   /** Set the destination log file. */

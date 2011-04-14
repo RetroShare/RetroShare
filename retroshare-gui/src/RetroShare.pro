@@ -246,6 +246,7 @@ HEADERS +=  rshare.h \
             util/PixmapMerging.h \
             util/MouseEventFilter.h \
             util/EventFilter.h \
+            util/EventReceiver.h \
             util/Widget.h \
             util/rsversion.h \
             util/RsAction.h \
@@ -475,6 +476,7 @@ SOURCES +=  main.cpp \
             util/PixmapMerging.cpp \
             util/MouseEventFilter.cpp \
             util/EventFilter.cpp \
+            util/EventReceiver.cpp \
             util/Widget.cpp \
             util/RsAction.cpp \
             util/rsversion.cpp \

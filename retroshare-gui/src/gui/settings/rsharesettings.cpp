@@ -37,6 +37,7 @@
 #endif // MINIMAL_RSGUI
 
 #include <retroshare/rsnotify.h>
+#include <retroshare/rspeers.h>
 
 #if defined(Q_WS_WIN)
 #include <util/win32.h>
@@ -472,7 +473,56 @@ RshareSettings::setRunRetroshareOnBoot(bool run, bool minimized)
 #else
   /* Platforms othe rthan windows aren't supported yet */
   Q_UNUSED(run);
-  return;
+  Q_UNUSED(minimized);
+#endif
+}
+
+static QString getAppPathForProtocol()
+{
+	return "\"" + QDir::convertSeparators(QCoreApplication::applicationFilePath()) + "\" -r \"%1\"";
+}
+
+/** Returns true if retroshare:// is registered as protocol */
+bool RshareSettings::getRetroShareProtocol()
+{
+#if defined(Q_WS_WIN)
+	/* Check key */
+	QSettings retroshare("HKEY_CLASSES_ROOT\\retroshare", QSettings::NativeFormat);
+	if (retroshare.contains("Default")) {
+		/* Check profile */
+		if (retroshare.value("Profile").toString().toStdString() == rsPeers->getOwnId()) {
+			/* Check app path */
+			QSettings command("HKEY_CLASSES_ROOT\\retroshare\\shell\\open\\command", QSettings::NativeFormat);
+			if (command.value("Default").toString() == getAppPathForProtocol()) {
+				return true;
+			}
+		}
+	}
+#else
+	/* Platforms other than windows aren't supported yet */
+	return false;
+#endif
+}
+
+/** Register retroshare:// as protocl */
+void RshareSettings::setRetroShareProtocol(bool value)
+{
+#if defined(Q_WS_WIN)
+	if (value) {
+		QSettings retroshare("HKEY_CLASSES_ROOT\\retroshare", QSettings::NativeFormat);
+		retroshare.setValue("Default", "URL: RetroShare protocol");
+		retroshare.setValue("URL Protocol", "");
+		retroshare.setValue("Profile", QString::fromStdString(rsPeers->getOwnId()));
+
+		QSettings command("HKEY_CLASSES_ROOT\\retroshare\\shell\\open\\command", QSettings::NativeFormat);
+		command.setValue("Default", getAppPathForProtocol());
+	} else {
+		QSettings retroshare("HKEY_CLASSES_ROOT", QSettings::NativeFormat);
+		retroshare.remove("retroshare");
+	}
+#else
+	/* Platforms othe rthan windows aren't supported yet */
+	Q_UNUSED(value);
 #endif
 }
 

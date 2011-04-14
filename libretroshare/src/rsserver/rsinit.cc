@@ -127,6 +127,8 @@ class RsInitConfig
                 static std::string load_trustedpeer_file;
 
                 static bool udpListenerOnly;
+
+                static std::string RetroShareLink;
 };
 
 
@@ -160,6 +162,7 @@ std::string RsInitConfig::passwd;
 
 bool RsInitConfig::autoLogin;  		/* autoLogin allowed */
 bool RsInitConfig::startMinimised; /* Icon or Full Window */
+std::string RsInitConfig::RetroShareLink;
 
 /* Win/Unix Differences */
 char RsInitConfig::dirSeperator;
@@ -396,7 +399,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
          /* getopt info: every availiable option is listed here. if it is followed by a ':' it
             needs an argument. If it is followed by a '::' the argument is optional.
          */
-         while((c = getopt(argc, argv,"hesamui:p:c:w:l:d:U:")) != -1)
+         while((c = getopt(argc, argv,"hesamui:p:c:w:l:d:U:r:")) != -1)
          {
                  switch (c)
                  {
@@ -466,6 +469,11 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
                                  std::cerr << "Opt for User Id ";
                                  std::cerr << std::endl;
                                  break;
+                         case 'r':
+                                 RsInitConfig::RetroShareLink = optarg;
+                                 std::cerr << "Opt for RetroShare link";
+                                 std::cerr << std::endl;
+                                 break;
                          case 'h':
                                  std::cerr << "Help: " << std::endl;
                                  std::cerr << "The commandline options are for retroshare-nogui, a headless server in a shell, or systems without QT." << std::endl << std::endl;
@@ -481,14 +489,15 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
                                  std::cerr << "-u                Only listen to UDP" << std::endl;
                                  std::cerr << "-e                Use a forwarded external Port" << std::endl ;
                                  std::cerr << "-U [User Name/GPG id/SSL id]  Sets Account to Use, Useful when Autologin is enabled." << std::endl;
+                                 std::cerr << "-r link           Use RetroShare link." << std::endl;
                                  exit(1);
                                  break;
                          default:
-				if (strictCheck) {
+                                 if (strictCheck) {
                                    std::cerr << "Unknown Option!" << std::endl;
                                    std::cerr << "Use '-h' for help." << std::endl;
                                    exit(1);
-				}
+                                 }
                  }
          }
 
@@ -1657,9 +1666,14 @@ std::string RsInit::RsProfileConfigDirectory()
     return dir;
 }
 
-bool	RsInit::setStartMinimised()
+bool RsInit::getStartMinimised()
 {
 	return RsInitConfig::startMinimised;
+}
+
+std::string RsInit::getRetroShareLink()
+{
+	return RsInitConfig::RetroShareLink;
 }
 
 int RsInit::getSslPwdLen(){

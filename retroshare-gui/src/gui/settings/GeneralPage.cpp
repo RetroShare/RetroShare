@@ -38,6 +38,7 @@ GeneralPage::GeneralPage(QWidget * parent, Qt::WFlags flags)
 #ifndef Q_WS_WIN
   ui.chkRunRetroshareAtSystemStartup->setVisible(false);
   ui.chkRunRetroshareAtSystemStartupMinimized->setVisible(false);
+  ui.enableRetroShareProtocol->setVisible(false);
 #endif
 }
 
@@ -55,6 +56,10 @@ bool GeneralPage::save(QString &errmsg)
 
 #ifdef Q_WS_WIN
   Settings->setRunRetroshareOnBoot(ui.chkRunRetroshareAtSystemStartup->isChecked(), ui.chkRunRetroshareAtSystemStartupMinimized->isChecked());
+
+  if (ui.enableRetroShareProtocol->isChecked() != Settings->getRetroShareProtocol()) {
+    Settings->setRetroShareProtocol(ui.enableRetroShareProtocol->isChecked());
+  }
 #endif
 
   Settings->setMaxTimeBeforeIdle(ui.spinBox->value());
@@ -71,6 +76,8 @@ void GeneralPage::load()
   bool minimized;
   ui.chkRunRetroshareAtSystemStartup->setChecked(Settings->runRetroshareOnBoot(minimized));
   ui.chkRunRetroshareAtSystemStartupMinimized->setChecked(minimized);
+
+  ui.enableRetroShareProtocol->setChecked(Settings->getRetroShareProtocol());
 #endif
 
   ui.checkStartMinimized->setChecked(Settings->getStartMinimized());

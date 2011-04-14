@@ -4320,12 +4320,12 @@ Gib Dein GPG Passwort wenn Du gefragt wirst ein, um Deinen neuen Schlüssel zu u
         <translation>Nicht in den Systemabschnitt minimieren</translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+53"/>
         <source> seconds</source>
         <translation>Sekunden</translation>
     </message>
     <message>
-        <location line="-99"/>
+        <location line="-106"/>
         <source>Start minimized</source>
         <translation>Minimiert starten</translation>
     </message>
@@ -4335,7 +4335,12 @@ Gib Dein GPG Passwort wenn Du gefragt wirst ein, um Deinen neuen Schlüssel zu u
         <translation>Starte RetroShare mit dem System</translation>
     </message>
     <message>
-        <location line="+93"/>
+        <location line="+77"/>
+        <source>Register retroshare:// as url protocol (Restart required)</source>
+        <translation>Registriere retroshare:// als Protokoll (Neustart erforderlich)</translation>
+    </message>
+    <message>
+        <location line="+23"/>
         <source>Idle</source>
         <translation>Untätig</translation>
     </message>
@@ -8828,19 +8833,19 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../main.cpp" line="+83"/>
-        <location line="+115"/>
+        <location filename="../main.cpp" line="+84"/>
+        <location line="+123"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
     <message>
-        <location line="-109"/>
+        <location line="-117"/>
         <source>Inititialize failed. Wrong or missing installation of gpg.</source>
         <translation>Initialisierung fehlgeschlagen. GPG fehlt oder es ist eine falsche Version installiert.</translation>
     </message>
     <message>
         <location line="+5"/>
-        <location line="+104"/>
+        <location line="+112"/>
         <source>An unexpected error occured. Please report &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</source>
         <translation>Ein unerwarteter Fehler ist aufgetreten. Bitte melde &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</translation>
     </message>
@@ -8970,6 +8975,16 @@ Lockdatei:
         <location line="+2"/>
         <source>Peer details</source>
         <translation>Nachbar Details</translation>
+    </message>
+    <message>
+        <location filename="../util/EventReceiver.cpp" line="+91"/>
+        <source>No running instance of RetroShare found.</source>
+        <translation>Kein laufendes RetroShare gefunden.</translation>
+    </message>
+    <message>
+        <location line="+33"/>
+        <source>Start with a RetroShare link is only supported for Windows.</source>
+        <translation>Der Start mit einem RetroShare Link wird nur unter Windows unterstützt.</translation>
     </message>
 </context>
 <context>
@@ -11073,7 +11088,7 @@ p, li { white-space: pre-wrap; }
         <translation>Definiere Farben</translation>
     </message>
     <message>
-        <location line="+78"/>
+        <location line="+82"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }

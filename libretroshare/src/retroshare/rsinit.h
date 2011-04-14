@@ -127,8 +127,9 @@ class RsInit
 		static std::string 	RsConfigDirectory();
 		static std::string 	RsConfigKeysDirectory();
 
-        static std::string  RsProfileConfigDirectory();
-		static bool	setStartMinimised() ;
+		static std::string  RsProfileConfigDirectory();
+		static bool         getStartMinimised() ;
+		static std::string  getRetroShareLink();
 
 		static int getSslPwdLen();
 		static bool getAutoLogin();

@@ -42,6 +42,7 @@
 #include "gui/connect/ConfCertDialog.h"
 #include "idle/idle.h"
 #include "gui/common/Emoticons.h"
+#include "util/EventReceiver.h"
 
 /*** WINDOWS DON'T LIKE THIS - REDEFINES VER numbers.
 #include <gui/qskinobject/qskinobject.h>
@@ -106,6 +107,14 @@ int main(int argc, char *argv[])
 	/* Setup The GUI Stuff */
 	Rshare rshare(args, argc, argv, 
 		QString::fromStdString(RsInit::RsConfigDirectory()));
+
+	std::string link = RsInit::getRetroShareLink();
+	if (!link.empty()) {
+		/* start with RetroShare link */
+		EventReceiver eventReceiver;
+		eventReceiver.sendRetroShareLink(QString::fromStdString(link));
+		return 0;
+	}
 
 	QSplashScreen splashScreen(QPixmap(":/images/splash.png")/* , Qt::WindowStaysOnTopHint*/);
 
@@ -229,6 +238,15 @@ int main(int argc, char *argv[])
 	MainWindow *w = MainWindow::Create ();
 	splashScreen.finish(w);
 
+	EventReceiver *eventReceiver = NULL;
+	if (Settings->getRetroShareProtocol()) {
+		/* Create event receiver */
+		eventReceiver = new EventReceiver;
+		if (eventReceiver->start()) {
+			QObject::connect(eventReceiver, SIGNAL(linkReceived(const QUrl&)), w, SLOT(linkActivated(const QUrl&)));
+		}
+	}
+
 	// I'm using a signal to transfer the hashing info to the mainwindow, because Qt schedules signals properly to
 	// avoid clashes between infos from threads.
 	//
@@ -268,7 +286,7 @@ int main(int argc, char *argv[])
 	w->installGroupChatNotifier();
 
 	/* only show window, if not startMinimized */
-	if (RsInit::setStartMinimised() || Settings->getStartMinimized())
+	if (RsInit::getStartMinimised() || Settings->getStartMinimized())
 	{
 		splashScreen.close();
 	} else {
@@ -285,6 +303,12 @@ int main(int argc, char *argv[])
 	int ti = rshare.exec();
 #ifndef MINIMAL_RSGUI
 	delete w ;
+
+	if (eventReceiver) {
+		/* Destroy event receiver */
+		delete eventReceiver;
+		eventReceiver = NULL;
+	}
 
 	/* cleanup */
 	PopupChatDialog::cleanupChat();
