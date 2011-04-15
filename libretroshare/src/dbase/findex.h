@@ -27,6 +27,7 @@
 #include <string>
 #include <map>
 #include <set>
+#include <tr1/unordered_set>
 #include <list>
 #include <vector>
 #include <stdint.h>
@@ -245,7 +246,7 @@ class FileIndex
 
 		PersonEntry *root;
 
-		static std::set<void*> _pointers ;
+		static std::tr1::unordered_set<void*> _pointers ;
 		static void registerEntry(void*p) ; 
 		static void unregisterEntry(void*p) ; 
 		static bool isValid(void*p)  ;

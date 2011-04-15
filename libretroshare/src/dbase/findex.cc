@@ -31,6 +31,7 @@
 #include <algorithm>
 #include <iostream>
 #include <sstream>
+#include <tr1/unordered_set>
 #include <iomanip>
 #include <fstream>
 #include <sys/stat.h>
@@ -50,7 +51,7 @@ static const char FILE_CACHE_SEPARATOR_CHAR = '|' ;
  ****/
 
 static RsMutex FIndexPtrMtx ;
-std::set<void*> FileIndex::_pointers ;
+std::tr1::unordered_set<void*> FileIndex::_pointers ;
 
 void FileIndex::registerEntry(void*p)
 {
