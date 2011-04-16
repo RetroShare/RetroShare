@@ -14,7 +14,7 @@ echo Revision number is $svn.
 echo Type ^C to abort, or enter to continue
 read tmp
 
-svn=4097
+svn=4153
 rm -rf ./retroshare-0.5
 # ./makeSourcePackage.sh
 
