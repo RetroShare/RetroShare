@@ -346,18 +346,20 @@ void ftController::setPriority(const std::string& hash,DwlSpeed p)
 void ftController::cleanCacheDownloads()
 {
 	std::vector<std::string> toCancel ;
+	time_t now = time(NULL) ;
 
 	{
 		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
 		for(std::map<std::string,ftFileControl*>::iterator it(mDownloads.begin());it!=mDownloads.end();++it)
-			if ((it->second)->mFlags & RS_FILE_HINTS_CACHE) //check if a cache file is downloaded, if the case, timeout the transfer after TIMOUT_CACHE_FILE_TRANSFER
+			if ((it->second)->mFlags & RS_FILE_HINTS_CACHE)
+				// check if a cache file is downloaded, if the case, timeout the transfer after TIMOUT_CACHE_FILE_TRANSFER
 			{
 #ifdef CONTROL_DEBUG
 				std::cerr << "ftController::run() cache transfer found. age of this tranfer is :" << (int)(time(NULL) - (it->second)->mCreateTime);
 				std::cerr << std::endl;
 #endif
-				if ((time(NULL) - (it->second)->mCreateTime) > TIMOUT_CACHE_FILE_TRANSFER) 
+				if ((now - (it->second)->mCreator->lastRecvTimeStamp()) > TIMOUT_CACHE_FILE_TRANSFER) 
 				{
 #ifdef CONTROL_DEBUG
 					std::cerr << "ftController::run() cache transfer to old. Cancelling transfer. Hash :" << (it->second)->mHash << ", time=" << (it->second)->mCreateTime << ", now = " << time(NULL) ;

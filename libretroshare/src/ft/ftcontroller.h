@@ -60,7 +60,7 @@ class p3turtle ;
 const uint32_t FC_TRANSFER_COMPLETE = 0x0001;
 
 //timeouts in seconds
-const int TIMOUT_CACHE_FILE_TRANSFER = 300;
+const int TIMOUT_CACHE_FILE_TRANSFER = 800;
 
 class ftFileControl
 {
