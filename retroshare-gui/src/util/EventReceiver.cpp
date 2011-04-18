@@ -52,25 +52,25 @@ EventReceiver::EventReceiver()
 
 	/* Build unique name for the running instance */
 	QString name = QString("RetroShare-%1::EventReceiver").arg(QCoreApplication::applicationDirPath());
-	sharedMMemory.setKey(name);
+	sharedMemory.setKey(name);
 }
 
 EventReceiver::~EventReceiver()
 {
-	sharedMMemory.detach();
+	sharedMemory.detach();
 }
 
 bool EventReceiver::start()
 {
-	if (!sharedMMemory.create(sizeof(SharedMemoryInfo))) {
-		std::cerr << "EventReceiver::start() Cannot create shared memory !" << sharedMMemory.errorString().toStdString() << std::endl;
+	if (!sharedMemory.create(sizeof(SharedMemoryInfo))) {
+		std::cerr << "EventReceiver::start() Cannot create shared memory !" << sharedMemory.errorString().toStdString() << std::endl;
 		return false;
 	}
 
 	bool result = true;
 
-	if (sharedMMemory.lock()) {
-		SharedMemoryInfo *info = (SharedMemoryInfo*) sharedMMemory.data();
+	if (sharedMemory.lock()) {
+		SharedMemoryInfo *info = (SharedMemoryInfo*) sharedMemory.data();
 		if (info) {
 #ifdef WINDOWS_SYS
 			info->wid = winId();
@@ -82,7 +82,7 @@ bool EventReceiver::start()
 			std::cerr << "EventReceiver::start() Shared memory returns a NULL pointer!" << std::endl;
 		}
 
-		sharedMMemory.unlock();
+		sharedMemory.unlock();
 	} else {
 		result = false;
 		std::cerr << "EventReceiver::start() Cannot lock shared memory !" << std::endl;
@@ -93,23 +93,23 @@ bool EventReceiver::start()
 
 bool EventReceiver::sendRetroShareLink(const QString& link)
 {
-	if (!sharedMMemory.attach()) {
+	if (!sharedMemory.attach()) {
 		/* No running instance found */
 		return false;
 	}
 
 	bool result = true;
 
-	if (sharedMMemory.lock()) {
-		SharedMemoryInfo *info = (SharedMemoryInfo*) sharedMMemory.data();
+	if (sharedMemory.lock()) {
+		SharedMemoryInfo *info = (SharedMemoryInfo*) sharedMemory.data();
 		if (info) {
 #ifdef WINDOWS_SYS
 			if (info->wid) {
 				QByteArray linkData = link.toAscii();
 
 				COPYDATASTRUCT send;
-				send.cbData = (link.length() + 1) * sizeof(char);
 				send.dwData = OP_RETROSHARELINK;
+				send.cbData = link.length() * sizeof(char);
 				send.lpData = (void*) linkData.constData();
 
 				SendMessage((HWND) info->wid, WM_COPYDATA, (WPARAM) 0, (LPARAM) (PCOPYDATASTRUCT) &send);
@@ -128,13 +128,13 @@ bool EventReceiver::sendRetroShareLink(const QString& link)
 			std::cerr << "EventReceiver::sendRetroShareLink() Cannot lock shared memory !" << std::endl;
 		}
 
-		sharedMMemory.unlock();
+		sharedMemory.unlock();
 	} else {
 		result = false;
 		std::cerr << "EventReceiver::start() Cannot lock shared memory !" << std::endl;
 	}
 
-	sharedMMemory.detach();
+	sharedMemory.detach();
 
 	return result;
 }

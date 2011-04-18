@@ -54,7 +54,7 @@ private:
 	bool winEvent (MSG* message, long* result);
 #endif // WINDOWS_SYS
 
-	QSharedMemory sharedMMemory;
+	QSharedMemory sharedMemory;
 };
 
 #endif
