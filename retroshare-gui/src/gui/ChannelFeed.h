@@ -49,6 +49,8 @@ public:
     virtual void deleteFeedItem(QWidget *item, uint32_t type);
     virtual void openChat(std::string peerId);
 
+    bool navigate(const std::string& channelId, const std::string& msgId);
+
     /* overloaded from RsAuthUpdatePage */ 
     virtual void updateDisplay();
 
@@ -69,6 +71,7 @@ private slots:
     void restoreChannelKeys();
     void editChannelDetail();
     void shareKey();
+    void copyChannelLink();
 
     void channelMsgReadSatusChanged(const QString& channelId, const QString& msgId, int status);
 
@@ -78,6 +81,8 @@ private:
     void updateMessageSummaryList(const std::string &channelId);
 
     void processSettings(bool load);
+
+    void setAutoDownloadButton(bool autoDl);
 
     std::string mChannelId; /* current Channel */
 

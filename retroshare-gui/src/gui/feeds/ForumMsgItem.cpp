@@ -24,6 +24,8 @@
 
 #include "ForumMsgItem.h"
 #include "FeedHolder.h"
+#include "gui/MainWindow.h"
+#include "gui/ForumsDialog.h"
 
 #include <retroshare/rsforums.h>
 #include <retroshare/rsmsgs.h>
@@ -52,7 +54,7 @@ ForumMsgItem::ForumMsgItem(FeedHolder *parent, uint32_t feedId, const std::strin
   /* general ones */
   connect( expandButton, SIGNAL( clicked( void ) ), this, SLOT( toggle ( void ) ) );
   connect( clearButton, SIGNAL( clicked( void ) ), this, SLOT( removeItem ( void ) ) );
-  //connect( gotoButton, SIGNAL( clicked( void ) ), this, SLOT( gotoHome ( void ) ) );
+  connect( gotoButton, SIGNAL( clicked( void ) ), this, SLOT( gotoHome ( void ) ) );
 
   /* specific ones */
   connect( unsubscribeButton, SIGNAL( clicked( void ) ), this, SLOT( unsubscribeForum ( void ) ) );
@@ -290,6 +292,12 @@ void ForumMsgItem::gotoHome()
 	std::cerr << "ForumMsgItem::gotoHome()";
 	std::cerr << std::endl;
 #endif
+
+	MainWindow::showWindow(MainWindow::Forums);
+	ForumsDialog *forumsDialog = dynamic_cast<ForumsDialog*>(MainWindow::getPage(MainWindow::Forums));
+	if (forumsDialog) {
+		forumsDialog->navigate(mForumId, mPostId);
+	}
 }
 
 /*********** SPECIFIC FUNCTIOSN ***********************/

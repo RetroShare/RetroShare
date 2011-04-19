@@ -246,6 +246,26 @@ border-radius: 10px}</string>
          </spacer>
         </item>
         <item>
+         <widget class="QPushButton" name="gotoButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>Go to Forum Message</string>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../images.qrc">
+            <normaloff>:/images/find-16.png</normaloff>:/images/find-16.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QPushButton" name="unsubscribeButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">

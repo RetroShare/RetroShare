@@ -29,16 +29,24 @@
 #include <QObject>
 
 #include "RetroShareLink.h"
+#include "MainWindow.h"
+#include "ForumsDialog.h"
+#include "ChannelFeed.h"
 #include "util/misc.h"
 #include "common/PeerDefs.h"
 
 #include <retroshare/rsfiles.h>
 #include <retroshare/rspeers.h>
+#include <retroshare/rsforums.h>
+#include <retroshare/rschannels.h>
 
 //#define DEBUG_RSLINK 1
 
 #define HOST_FILE       "file"
 #define HOST_PERSON     "person"
+#define HOST_FORUM      "forum"
+#define HOST_CHANNEL    "channel"
+#define HOST_REGEXP     "file|person|forum|channel"
 
 #define FILE_NAME       "name"
 #define FILE_SIZE       "size"
@@ -46,6 +54,14 @@
 
 #define PERSON_NAME     "name"
 #define PERSON_HASH     "hash"
+
+#define FORUM_NAME      "name"
+#define FORUM_ID        "id"
+#define FORUM_MSGID     "msgid"
+
+#define CHANNEL_NAME    "name"
+#define CHANNEL_ID      "id"
+#define CHANNEL_MSGID   "msgid"
 
 RetroShareLink::RetroShareLink(const QUrl& url)
 {
@@ -150,6 +166,26 @@ void RetroShareLink::fromUrl(const QUrl& url)
         return;
     }
 
+    if (url.host() == HOST_FORUM) {
+        _type = TYPE_FORUM;
+        _name = url.queryItemValue(FORUM_NAME);
+        _hash = url.queryItemValue(FORUM_ID);
+        _msgId = url.queryItemValue(FORUM_MSGID);
+        _size = 0;
+        check();
+        return;
+    }
+
+    if (url.host() == HOST_CHANNEL) {
+        _type = TYPE_CHANNEL;
+        _name = url.queryItemValue(CHANNEL_NAME);
+        _hash = url.queryItemValue(CHANNEL_ID);
+        _msgId = url.queryItemValue(CHANNEL_MSGID);
+        _size = 0;
+        check();
+        return;
+    }
+
     // bad link
 
 #ifdef DEBUG_RSLINK
@@ -158,6 +194,7 @@ void RetroShareLink::fromUrl(const QUrl& url)
     clear();
 }
 
+// file
 RetroShareLink::RetroShareLink(const QString & name, uint64_t size, const QString & hash)
     : _name(name),_size(size),_hash(hash)
 {
@@ -166,11 +203,34 @@ RetroShareLink::RetroShareLink(const QString & name, uint64_t size, const QStrin
     check() ;
 }
 
+// person
 RetroShareLink::RetroShareLink(const QString & name, const QString & hash)
     : _name(name),_size(0),_hash(hash)
 {
     _valid = false;
     _type = TYPE_PERSON;
+    check() ;
+}
+
+// forum, channel
+RetroShareLink::RetroShareLink(enumType type, const QString& name, const QString& id, const QString& msgId)
+    : _name(name),_size(0),_hash(id),_msgId(msgId)
+{
+    _valid = false;
+    _type = TYPE_UNKNOWN;
+
+    switch (type) {
+    case TYPE_UNKNOWN:
+    case TYPE_FILE:
+    case TYPE_PERSON:
+        // wrong type
+        break;
+    case TYPE_FORUM:
+    case TYPE_CHANNEL:
+        _type = type;
+        break;
+    }
+
     check() ;
 }
 
@@ -202,6 +262,26 @@ void RetroShareLink::check()
             _valid = false;
         break;
     case TYPE_PERSON:
+        if(_size != 0)
+            _valid = false;
+
+        if(_name.isEmpty())
+            _valid = false;
+
+        if(_hash.isEmpty())
+            _valid = false;
+        break;
+    case TYPE_FORUM:
+        if(_size != 0)
+            _valid = false;
+
+        if(_name.isEmpty())
+            _valid = false;
+
+        if(_hash.isEmpty())
+            _valid = false;
+        break;
+    case TYPE_CHANNEL:
         if(_size != 0)
             _valid = false;
 
@@ -249,6 +329,40 @@ QString RetroShareLink::toString(bool encoded /*= true*/) const
             url.setHost(HOST_PERSON);
             url.addQueryItem(PERSON_NAME, _name);
             url.addQueryItem(PERSON_HASH, _hash);
+
+            if (encoded) {
+                return url.toEncoded();
+            }
+
+            return url.toString();
+        }
+    case TYPE_FORUM:
+        {
+            QUrl url;
+            url.setScheme(RSLINK_SCHEME);
+            url.setHost(HOST_FORUM);
+            url.addQueryItem(FORUM_NAME, _name);
+            url.addQueryItem(FORUM_ID, _hash);
+            if (!_msgId.isEmpty()) {
+                url.addQueryItem(FORUM_MSGID, _msgId);
+            }
+
+            if (encoded) {
+                return url.toEncoded();
+            }
+
+            return url.toString();
+        }
+    case TYPE_CHANNEL:
+        {
+            QUrl url;
+            url.setScheme(RSLINK_SCHEME);
+            url.setHost(HOST_CHANNEL);
+            url.addQueryItem(CHANNEL_NAME, _name);
+            url.addQueryItem(CHANNEL_ID, _hash);
+            if (!_msgId.isEmpty()) {
+                url.addQueryItem(CHANNEL_MSGID, _msgId);
+            }
 
             if (encoded) {
                 return url.toEncoded();
@@ -425,6 +539,80 @@ bool RetroShareLink::process(int flag)
             }
             return false;
         }
+
+    case TYPE_FORUM:
+        {
+#ifdef DEBUG_RSLINK
+            std::cerr << " RetroShareLink::process ForumRequest : name : " << name().toStdString() << ". id : " << hash().toStdString() << ". msgId : " << msgId().toStdString() << std::endl;
+#endif
+
+            ForumInfo fi;
+            if (!rsForums->getForumInfo(id().toStdString(), fi)) {
+                if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
+                    QMessageBox mb(QObject::tr("Forum Request canceled"), QObject::tr("The forum \"%1\" could not be found.").arg(name()),QMessageBox::Critical,QMessageBox::Ok,0,0);
+                    mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
+                    mb.exec();
+                }
+                return false;
+            }
+
+            ForumMsgInfo msg;
+            if (!msgId().isEmpty()) {
+                if (!rsForums->getForumMessage(fi.forumId, msgId().toStdString(), msg)) {
+                    if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
+                        QMessageBox mb(QObject::tr("Forum Request canceled"), QObject::tr("The forum message in forum \"%1\" could not be found.").arg(name()),QMessageBox::Critical,QMessageBox::Ok,0,0);
+                        mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
+                        mb.exec();
+                    }
+                    return false;
+                }
+            }
+
+            MainWindow::showWindow(MainWindow::Forums);
+            ForumsDialog *forumsDialog = dynamic_cast<ForumsDialog*>(MainWindow::getPage(MainWindow::Forums));
+            if (!forumsDialog) {
+                return false;
+            }
+
+            return forumsDialog->navigate(fi.forumId, msg.msgId);
+        }
+
+    case TYPE_CHANNEL:
+        {
+#ifdef DEBUG_RSLINK
+            std::cerr << " RetroShareLink::process ChannelRequest : name : " << name().toStdString() << ". id : " << hash().toStdString() << ". msgId : " << msgId().toStdString() << std::endl;
+#endif
+
+            ChannelInfo ci;
+            if (!rsChannels->getChannelInfo(id().toStdString(), ci)) {
+                if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
+                    QMessageBox mb(QObject::tr("Channel Request canceled"), QObject::tr("The channel \"%1\" could not be found.").arg(name()),QMessageBox::Critical,QMessageBox::Ok,0,0);
+                    mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
+                    mb.exec();
+                }
+                return false;
+            }
+
+            ChannelMsgInfo msg;
+            if (!msgId().isEmpty()) {
+                if (!rsChannels->getChannelMessage(ci.channelId, msgId().toStdString(), msg)) {
+                    if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
+                        QMessageBox mb(QObject::tr("Channel Request canceled"), QObject::tr("The channel message in channel \"%1\" could not be found.").arg(name()),QMessageBox::Critical,QMessageBox::Ok,0,0);
+                        mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
+                        mb.exec();
+                    }
+                    return false;
+                }
+            }
+
+            MainWindow::showWindow(MainWindow::Channels);
+            ChannelFeed *channelFeed = dynamic_cast<ChannelFeed*>(MainWindow::getPage(MainWindow::Channels));
+            if (!channelFeed) {
+                return false;
+            }
+
+            return channelFeed->navigate(ci.channelId, msg.msgId);
+        }
     }
 
     std::cerr << " RetroShareLink::process unknown type: " << type() << std::endl;
@@ -460,7 +648,7 @@ void RSLinkClipboard::parseClipboard(std::vector<RetroShareLink> &links)
 
     std::cerr << "Parsing clipboard:" << text.toStdString() << std::endl ;
 
-    QRegExp rx("retroshare://(file|person)[^\r\n]+") ;
+    QRegExp rx(QString("retroshare://(%1)[^\r\n]+").arg(HOST_REGEXP));
 
     int pos = 0;
 

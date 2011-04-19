@@ -21,6 +21,8 @@
 
 #include "ForumNewItem.h"
 #include "FeedHolder.h"
+#include "gui/MainWindow.h"
+#include "gui/ForumsDialog.h"
 
 #include <retroshare/rsforums.h>
 #include "gui/forums/CreateForumMsg.h"
@@ -42,7 +44,7 @@ ForumNewItem::ForumNewItem(FeedHolder *parent, uint32_t feedId, std::string foru
   /* general ones */
   connect( expandButton, SIGNAL( clicked( void ) ), this, SLOT( toggle ( void ) ) );
   connect( clearButton, SIGNAL( clicked( void ) ), this, SLOT( removeItem ( void ) ) );
-  //connect( gotoButton, SIGNAL( clicked( void ) ), this, SLOT( gotoHome ( void ) ) );
+  connect( gotoButton, SIGNAL( clicked( void ) ), this, SLOT( gotoHome ( void ) ) );
 
   /* specific ones */
   connect( subscribeButton, SIGNAL( clicked( void ) ), this, SLOT( subscribeForum ( void ) ) );
@@ -166,6 +168,12 @@ void ForumNewItem::gotoHome()
 	std::cerr << "ForumNewItem::gotoHome()";
 	std::cerr << std::endl;
 #endif
+
+	MainWindow::showWindow(MainWindow::Forums);
+	ForumsDialog *forumsDialog = dynamic_cast<ForumsDialog*>(MainWindow::getPage(MainWindow::Forums));
+	if (forumsDialog) {
+		forumsDialog->navigate(mForumId, "");
+	}
 }
 
 /*********** SPECIFIC FUNCTIOSN ***********************/

@@ -853,52 +853,66 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ChanMsgItem</name>
     <message>
-        <location filename="../gui/feeds/ChanMsgItem.ui" line="+357"/>
+        <location filename="../gui/feeds/ChanMsgItem.ui" line="+370"/>
         <source>Remove Item</source>
         <translation>Eintrag entfernen</translation>
     </message>
     <message>
         <location line="+26"/>
-        <location filename="../gui/feeds/ChanMsgItem.cpp" line="+316"/>
+        <location filename="../gui/feeds/ChanMsgItem.cpp" line="+320"/>
         <source>Expand</source>
         <translation>Erweitern</translation>
     </message>
     <message>
-        <location line="-107"/>
+        <location line="-124"/>
         <source>Download</source>
         <translation>Herunterladen</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="-49"/>
+        <source>Toggle Message Read Status</source>
+        <translation>Setze Gelesen-Status des Beitrages</translation>
+    </message>
+    <message>
+        <location line="+65"/>
         <source>Play</source>
         <translation>Abspielen</translation>
     </message>
     <message>
-        <location line="-69"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Toggle Message Read Status&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">Gelesen Status umschalten</translation>
+        <translation type="obsolete">Gelesen Status umschalten</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="-28"/>
         <source>New</source>
         <translation>Neu</translation>
     </message>
     <message>
-        <location line="+67"/>
+        <location line="+84"/>
         <source>Unsubscribe From Channel</source>
         <translation>Kanal abbestellen</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ChanMsgItem.cpp" line="-102"/>
+        <location line="+81"/>
+        <source>Go to Channel Message</source>
+        <translation>Gehe zum Kanalbeitrag</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Copy RetroShare Link</source>
+        <translation>Kopiere RetroShare Link</translation>
+    </message>
+    <message>
+        <location filename="../gui/feeds/ChanMsgItem.cpp" line="-101"/>
         <source>Warning! You have less than %1 hours and %2 minute before this file is delted Consider saving it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+96"/>
+        <location line="+95"/>
         <source>Hide</source>
         <translation>Verbergen</translation>
     </message>
@@ -906,7 +920,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ChanNewItem</name>
     <message>
-        <location filename="../gui/feeds/ChanNewItem.ui" line="+169"/>
+        <location filename="../gui/feeds/ChanNewItem.ui" line="+189"/>
         <source>Remove Item</source>
         <translation>Eintrag entfernen</translation>
     </message>
@@ -916,7 +930,12 @@ p, li { white-space: pre-wrap; }
         <translation>Kanal abonnieren</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="-20"/>
+        <source>Go to Channel</source>
+        <translation>Gehe zum Kanal</translation>
+    </message>
+    <message>
+        <location line="+40"/>
         <source>Expand</source>
         <translation>Erweitern</translation>
     </message>
@@ -1026,9 +1045,9 @@ p, li { white-space: pre-wrap; }
         <translation>Alle als gelesen markieren</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+27"/>
         <source>Enable Auto-download</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktiviere Auto-Download</translation>
     </message>
     <message>
         <location line="+88"/>
@@ -1036,7 +1055,7 @@ p, li { white-space: pre-wrap; }
         <translation>Kanal erstellen</translation>
     </message>
     <message>
-        <location line="-199"/>
+        <location line="-219"/>
         <source>Unsubscribe</source>
         <translation>Abbestellen</translation>
     </message>
@@ -1056,7 +1075,7 @@ p, li { white-space: pre-wrap; }
         <translation>Kanal abbestellen</translation>
     </message>
     <message>
-        <location filename="../gui/ChannelFeed.cpp" line="+85"/>
+        <location filename="../gui/ChannelFeed.cpp" line="+84"/>
         <source>Own Channels</source>
         <translation>Meine Kanäle</translation>
     </message>
@@ -1107,12 +1126,27 @@ p, li { white-space: pre-wrap; }
         <translation>Verteile Kanal</translation>
     </message>
     <message>
-        <location line="+267"/>
+        <location line="+28"/>
+        <source>Copy RetroShare Link</source>
+        <translation>Kopiere RetroShare Link</translation>
+    </message>
+    <message>
+        <location line="+257"/>
         <source>No Channel Selected</source>
         <translation>Keinen Kanal gewählt</translation>
     </message>
     <message>
-        <location line="-270"/>
+        <location line="+200"/>
+        <source>Disable Auto-Download</source>
+        <translation>Deaktiviere Auto-Download</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Enable Auto-Download</source>
+        <translation>Aktiviere Auto-Download</translation>
+    </message>
+    <message>
+        <location line="-490"/>
         <source>Edit Channel Details</source>
         <translation>Kanal-Details bearbeiten</translation>
     </message>
@@ -3329,7 +3363,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>FlatStyle_RDM</name>
     <message>
-        <location filename="../gui/RemoteDirModel.cpp" line="+653"/>
+        <location filename="../gui/RemoteDirModel.cpp" line="+664"/>
         <source>Friends Directories</source>
         <translation type="unfinished">Dateien von Freunden</translation>
     </message>
@@ -3510,13 +3544,18 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+57"/>
-        <location line="+176"/>
+        <location line="+196"/>
         <location line="+161"/>
         <source>Subject: </source>
         <translation>Betreff:</translation>
     </message>
     <message>
-        <location line="-278"/>
+        <location line="-298"/>
+        <source>Go to Forum Message</source>
+        <translation>Gehe zum Forumbeitrag</translation>
+    </message>
+    <message>
+        <location line="+20"/>
         <source>Unsubscribe To Forum</source>
         <translation>Forum abbestellen</translation>
     </message>
@@ -3536,7 +3575,7 @@ p, li { white-space: pre-wrap; }
         <translation>Unterzeichnen</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ForumMsgItem.cpp" line="+89"/>
+        <location filename="../gui/feeds/ForumMsgItem.cpp" line="+91"/>
         <source>Forum Post</source>
         <translation>Beitrag</translation>
     </message>
@@ -3558,7 +3597,7 @@ p, li { white-space: pre-wrap; }
         <translation>Als Antwort auf</translation>
     </message>
     <message>
-        <location line="+174"/>
+        <location line="+180"/>
         <source>Please give a Text Message</source>
         <translation>Bitte Nachricht eingeben</translation>
     </message>
@@ -3571,7 +3610,7 @@ p, li { white-space: pre-wrap; }
         <translation>Formular</translation>
     </message>
     <message>
-        <location line="+189"/>
+        <location line="+209"/>
         <source>Remove Item</source>
         <translation>Eintrag entfernen</translation>
     </message>
@@ -3581,7 +3620,12 @@ p, li { white-space: pre-wrap; }
         <translation>Forum abonnieren</translation>
     </message>
     <message>
-        <location line="+47"/>
+        <location line="-20"/>
+        <source>Go to Forum</source>
+        <translation>Gehe zum Forum</translation>
+    </message>
+    <message>
+        <location line="+67"/>
         <source>Expand</source>
         <translation>Erweitern</translation>
     </message>
@@ -3612,7 +3656,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ForumsDialog</name>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="+271"/>
+        <location filename="../gui/ForumsDialog.cpp" line="+273"/>
         <source>Subscribe to Forum</source>
         <translation>Forum abonnieren</translation>
     </message>
@@ -3622,7 +3666,7 @@ p, li { white-space: pre-wrap; }
         <translation>Forum abbestellen</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+5"/>
         <source>New Forum</source>
         <translation>Neues Forum</translation>
     </message>
@@ -3637,12 +3681,18 @@ p, li { white-space: pre-wrap; }
         <translation>Forum-Details bearbeiten</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+3"/>
         <source>Restore Publish Rights for Forum</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+6"/>
+        <location line="+93"/>
+        <source>Copy RetroShare Link</source>
+        <translation type="unfinished">Kopiere RetroShare Link</translation>
+    </message>
+    <message>
+        <location line="-88"/>
         <source>Mark all as read</source>
         <translation>Alle als gelesen markieren</translation>
     </message>
@@ -3705,7 +3755,7 @@ p, li { white-space: pre-wrap; }
         <translation>keine</translation>
     </message>
     <message>
-        <location line="+508"/>
+        <location line="+542"/>
         <location line="+81"/>
         <source>RetroShare</source>
         <translation></translation>
@@ -3721,7 +3771,7 @@ p, li { white-space: pre-wrap; }
         <translation>Du kannst einem anonymen Autor nicht antworten</translation>
     </message>
     <message>
-        <location line="-1310"/>
+        <location line="-1344"/>
         <source>Your Forums</source>
         <translation>Deine Foren</translation>
     </message>
@@ -3864,7 +3914,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="+121"/>
-        <location line="+1110"/>
+        <location line="+1144"/>
         <source>Start New Thread</source>
         <translation>Erstelle neues Thema</translation>
     </message>
@@ -3892,7 +3942,7 @@ p, li { white-space: pre-wrap; }
         <translation>Inhalt</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="-1097"/>
+        <location filename="../gui/ForumsDialog.cpp" line="-1131"/>
         <location line="+3"/>
         <source>Mark as read</source>
         <translation>Als gelesen markieren</translation>
@@ -8833,19 +8883,19 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../main.cpp" line="+84"/>
-        <location line="+123"/>
+        <location filename="../main.cpp" line="+85"/>
+        <location line="+126"/>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
     </message>
     <message>
-        <location line="-117"/>
+        <location line="-120"/>
         <source>Inititialize failed. Wrong or missing installation of gpg.</source>
         <translation>Initialisierung fehlgeschlagen. GPG fehlt oder es ist eine falsche Version installiert.</translation>
     </message>
     <message>
         <location line="+5"/>
-        <location line="+112"/>
+        <location line="+115"/>
         <source>An unexpected error occured. Please report &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</source>
         <translation>Ein unerwarteter Fehler ist aufgetreten. Bitte melde &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</translation>
     </message>
@@ -8892,7 +8942,7 @@ Lockdatei:
         <translation>Vielleicht ist das Passwort falsch</translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="+366"/>
+        <location filename="../gui/RetroShareLink.cpp" line="+480"/>
         <source>File Request Confirmation</source>
         <translation>Bestätigung der Dateianforderung</translation>
     </message>
@@ -8952,7 +9002,43 @@ Lockdatei:
         <translation>Der Freund konnte nicht gefunden werden.</translation>
     </message>
     <message>
+        <location line="+16"/>
         <location line="+11"/>
+        <source>Forum Request canceled</source>
+        <translation>Forumanfrage abgebrochen</translation>
+    </message>
+    <message>
+        <location line="-11"/>
+        <source>The forum &quot;%1&quot; could not be found.</source>
+        <translation>Das Forum &quot;%1&quot; konnte nicht gefunden werden.</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>The forum message in forum &quot;%1&quot; could not be found.</source>
+        <translation>Der Forumbeitrag im Forum &quot;%1&quot; konnte nicht gefunden werden.</translation>
+    </message>
+    <message>
+        <location line="+37"/>
+        <source>The channel message in channel &quot;%1&quot; could not be found.</source>
+        <translation>Der Kanalbeitrag im Kanal &quot;%1&quot; konnte nicht gefunden werden.</translation>
+    </message>
+    <message>
+        <source>The forum message could not be found.</source>
+        <translation type="obsolete">Der Forumbeitrag &quot;%1&quot; konnte nicht gefunden werden.</translation>
+    </message>
+    <message>
+        <location line="-11"/>
+        <location line="+11"/>
+        <source>Channel Request canceled</source>
+        <translation>Kanalanfrage abgebrochen</translation>
+    </message>
+    <message>
+        <location line="-11"/>
+        <source>The channel &quot;%1&quot; could not be found.</source>
+        <translation>Der Kanal &quot;%1&quot; konnte nicht gefunden werden.</translation>
+    </message>
+    <message>
+        <location line="+32"/>
         <source>File Request Error</source>
         <translation>Fehler bei der Dateianforderung</translation>
     </message>
@@ -8977,12 +9063,11 @@ Lockdatei:
         <translation>Nachbar Details</translation>
     </message>
     <message>
-        <location filename="../util/EventReceiver.cpp" line="+91"/>
         <source>No running instance of RetroShare found.</source>
-        <translation>Kein laufendes RetroShare gefunden.</translation>
+        <translation type="obsolete">Kein laufendes RetroShare gefunden.</translation>
     </message>
     <message>
-        <location line="+33"/>
+        <location filename="../util/EventReceiver.cpp" line="+120"/>
         <source>Start with a RetroShare link is only supported for Windows.</source>
         <translation>Der Start mit einem RetroShare Link wird nur unter Windows unterstützt.</translation>
     </message>
@@ -9570,7 +9655,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+319"/>
-        <location filename="../gui/SearchDialog.cpp" line="+280"/>
+        <location filename="../gui/SearchDialog.cpp" line="+281"/>
         <source>Download</source>
         <translation>Herunterladen</translation>
     </message>
@@ -9610,7 +9695,7 @@ p, li { white-space: pre-wrap; }
         <translation>Alle entfernen</translation>
     </message>
     <message>
-        <location line="+342"/>
+        <location line="+351"/>
         <location line="+68"/>
         <source>Folder</source>
         <translation>Ordner</translation>
@@ -9671,7 +9756,7 @@ p, li { white-space: pre-wrap; }
         <translation>Such ID</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="-957"/>
+        <location filename="../gui/SearchDialog.cpp" line="-966"/>
         <source>Download Notice</source>
         <translation>Download</translation>
     </message>
@@ -10311,7 +10396,7 @@ p, li { white-space: pre-wrap; }
     <name>SharedFilesDialog</name>
     <message>
         <location filename="../gui/SharedFilesDialog.ui" line="+984"/>
-        <location filename="../gui/SharedFilesDialog.cpp" line="+365"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="+386"/>
         <source>Download</source>
         <translation>Herunterladen</translation>
     </message>
@@ -10394,23 +10479,23 @@ p, li { white-space: pre-wrap; }
         <translation>Prüfe Dateien</translation>
     </message>
     <message>
-        <location filename="../gui/SharedFilesDialog.cpp" line="-133"/>
-        <location line="+549"/>
+        <location filename="../gui/SharedFilesDialog.cpp" line="-154"/>
+        <location line="+569"/>
         <source>Open File</source>
         <translation>Datei öffnen</translation>
     </message>
     <message>
-        <location line="-547"/>
+        <location line="-567"/>
         <source>Open Folder</source>
         <translation>Ordner öffnen</translation>
     </message>
     <message>
-        <location line="+556"/>
+        <location line="+576"/>
         <source>Set command for opening this file</source>
         <translation>Setze eine Regel zum Öffnen dieser Datei</translation>
     </message>
     <message>
-        <location line="-420"/>
+        <location line="-419"/>
         <source>Copy retroshare Link</source>
         <translation>Kopiere RetroShare Link</translation>
     </message>
@@ -10430,7 +10515,7 @@ p, li { white-space: pre-wrap; }
         <translation>Sende RetroShare Link</translation>
     </message>
     <message>
-        <location line="-155"/>
+        <location line="-176"/>
         <source>Copy retroshare Links to Clipboard</source>
         <translation>Kopiere RetroShare Links in die Zwischenablage</translation>
     </message>
@@ -10460,13 +10545,13 @@ p, li { white-space: pre-wrap; }
         <translation>Füge die Links zur Verknüpfungs-Wolke hinzu</translation>
     </message>
     <message>
-        <location line="+151"/>
-        <location line="+380"/>
+        <location line="+172"/>
+        <location line="+379"/>
         <source>Recommend in a message to</source>
         <translation>Empfehle in einer Nachricht an</translation>
     </message>
     <message>
-        <location line="-254"/>
+        <location line="-253"/>
         <location line="+23"/>
         <location line="+24"/>
         <source>RetroShare Link</source>
@@ -10481,7 +10566,7 @@ p, li { white-space: pre-wrap; }
         <translation>Empfehlung(en)</translation>
     </message>
     <message>
-        <location line="+192"/>
+        <location line="+191"/>
         <source>&lt;strong&gt;My Shared Files&lt;/strong&gt;</source>
         <translation>&lt;strong&gt;Meine Dateien&lt;/strong&gt;</translation>
     </message>

@@ -21,6 +21,8 @@
 
 #include "ChanNewItem.h"
 #include "FeedHolder.h"
+#include "gui/MainWindow.h"
+#include "gui/ChannelFeed.h"
 
 #include <retroshare/rschannels.h>
 
@@ -43,7 +45,7 @@ ChanNewItem::ChanNewItem(FeedHolder *parent, uint32_t feedId, std::string chanId
   /* general ones */
   connect( expandButton, SIGNAL( clicked( void ) ), this, SLOT( toggle ( void ) ) );
   connect( clearButton, SIGNAL( clicked( void ) ), this, SLOT( removeItem ( void ) ) );
-  //connect( gotoButton, SIGNAL( clicked( void ) ), this, SLOT( gotoHome ( void ) ) );
+  connect( gotoButton, SIGNAL( clicked( void ) ), this, SLOT( gotoHome ( void ) ) );
 
   /* specific ones */
   connect( subscribeButton, SIGNAL( clicked( void ) ), this, SLOT( subscribeChannel ( void ) ) );
@@ -175,6 +177,12 @@ void ChanNewItem::gotoHome()
 	std::cerr << "ChanNewItem::gotoHome()";
 	std::cerr << std::endl;
 #endif
+
+	MainWindow::showWindow(MainWindow::Channels);
+	ChannelFeed *channelFeed = dynamic_cast<ChannelFeed*>(MainWindow::getPage(MainWindow::Channels));
+	if (channelFeed) {
+		channelFeed->navigate(mChanId, "");
+	}
 }
 
 /*********** SPECIFIC FUNCTIOSN ***********************/

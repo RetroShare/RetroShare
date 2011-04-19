@@ -342,6 +342,41 @@ void GroupTreeWidget::setUnreadCount(QTreeWidgetItem *item, int unreadCount)
 
 }
 
+QTreeWidgetItem *GroupTreeWidget::getItemFromId(const QString &id)
+{
+	if (id.isEmpty()) {
+		return NULL;
+	}
+
+	/* Search exisiting item */
+	QTreeWidgetItemIterator itemIterator(ui->treeWidget);
+	QTreeWidgetItem *item;
+	while ((item = *itemIterator) != NULL) {
+		itemIterator++;
+
+		if (item->parent() == NULL) {
+			continue;
+		}
+		if (item->data(COLUMN_DATA, ROLE_ID).toString() == id) {
+			return item;
+		}
+	}
+}
+
+QTreeWidgetItem *GroupTreeWidget::activateId(const QString &id, bool focus)
+{
+	QTreeWidgetItem *item = getItemFromId(id);
+	if (item == NULL) {
+		return NULL;
+	}
+
+	ui->treeWidget->setCurrentItem(item);
+	if (focus) {
+		ui->treeWidget->setFocus();
+	}
+	return item;
+}
+
 void GroupTreeWidget::calculateScore(QTreeWidgetItem *item)
 {
 	if (item) {

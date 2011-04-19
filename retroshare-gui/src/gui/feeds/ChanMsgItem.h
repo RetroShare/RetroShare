@@ -30,27 +30,28 @@ class SubFileItem;
 
 class ChanMsgItem : public QWidget, private Ui::ChanMsgItem
 {
-  Q_OBJECT
+	Q_OBJECT
 
 public:
-  /** Default Constructor */
-  ChanMsgItem(FeedHolder *parent, uint32_t feedId, std::string chanId, std::string msgId, bool isHome);
-
-  /** Default Destructor */
+	/** Default Constructor */
+	ChanMsgItem(FeedHolder *parent, uint32_t feedId, std::string chanId, std::string msgId, bool isHome);
 
 	void updateItemStatic();
-  	void small();
-  	void setFileCleanUpWarning(uint32_t time_left);
+	void small();
+	void setFileCleanUpWarning(uint32_t time_left);
+
+	const std::string &msgId() { return mMsgId; }
 
 private slots:
 	/* default stuff */
-  	void gotoHome();
-  	void removeItem();
+	void gotoHome();
+	void removeItem();
 	void toggle();
 
 	void unsubscribeChannel();
 	void download();
 	void play();
+	void copyLink();
 
 	void readToggled(bool checked);
 	void channelMsgReadSatusChanged(const QString& channelId, const QString& msgId, int status);

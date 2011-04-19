@@ -40,10 +40,9 @@
 #include "channels/EditChanDetails.h"
 #include "channels/ShareKey.h"
 #include "notifyqt.h"
+#include "RetroShareLink.h"
 
 #define CHAN_DEFAULT_IMAGE ":/images/channels.png"
-#define ENABLE_AUTO_DL "Enable Auto-Download"
-#define DISABLE_AUTO_DL "Disable Auto-Download"
 
 #define WARNING_LIMIT 3600*24*2
 
@@ -188,6 +187,9 @@ void ChannelFeed::channelListCustomPopupMenu( QPoint point )
         contextMnu.addAction( restoreKeysAct );
     }
 
+    QAction *action = contextMnu.addAction(QIcon(":/images/copyrslink.png"), tr("Copy RetroShare Link"), this, SLOT(copyChannelLink()));
+    action->setEnabled(!mChannelId.empty());
+
     contextMnu.exec(QCursor::pos());
 }
 
@@ -221,6 +223,23 @@ void ChannelFeed::shareKey()
     shareUi.exec();
 }
 
+void ChannelFeed::copyChannelLink()
+{
+    if (mChannelId.empty()) {
+        return;
+    }
+
+    ChannelInfo ci;
+    if (rsChannels->getChannelInfo(mChannelId, ci)) {
+        RetroShareLink link(RetroShareLink::TYPE_CHANNEL, QString::fromStdWString(ci.channelName), QString::fromStdString(ci.channelId), "");
+        if (link.valid() && link.type() == RetroShareLink::TYPE_CHANNEL) {
+            std::vector<RetroShareLink> urls;
+            urls.push_back(link);
+            RSLinkClipboard::copyLinks(urls);
+        }
+    }
+}
+
 void ChannelFeed::createMsg()
 {
     if (mChannelId.empty()) {
@@ -245,10 +264,7 @@ void ChannelFeed::selectChannel(const QString &id)
     bool autoDl = false;
     rsChannels->channelGetAutoDl(mChannelId, autoDl);
 
-    if(autoDl)
-    	autoDownload->setText(QString(DISABLE_AUTO_DL));
-    else
-    	autoDownload->setText(QString(ENABLE_AUTO_DL));
+    setAutoDownloadButton(autoDl);
 
     updateChannelMsgs();
 }
@@ -390,7 +406,7 @@ void ChannelFeed::updateMessageSummaryList(const std::string &channelId)
 				/* Calculate unread messages */
 				unsigned int newMessageCount = 0;
 				unsigned int unreadMessageCount = 0;
-                rsChannels->getMessageCount(childId, newMessageCount, unreadMessageCount);
+				rsChannels->getMessageCount(childId, newMessageCount, unreadMessageCount);
 
 				treeWidget->setUnreadCount(childItem, unreadMessageCount);
 
@@ -427,6 +443,7 @@ void ChannelFeed::updateChannelMsgs()
         subscribeButton->setEnabled(false);
         unsubscribeButton->setEnabled(false);
         setAllAsReadButton->setEnabled(false);
+        autoDownload->setEnabled(false);
         nameLabel->setText(tr("No Channel Selected"));
         iconLabel->setPixmap(QPixmap(":/images/channels.png"));
         iconLabel->setEnabled(false);
@@ -577,14 +594,58 @@ void ChannelFeed::toggleAutoDownload(){
 		// if auto dl is set true, then set false
 		if(autoDl){
 			rsChannels->channelSetAutoDl(mChannelId, false);
-			autoDownload->setText(QString(ENABLE_AUTO_DL));
 		}else{
 			rsChannels->channelSetAutoDl(mChannelId, true);
-			autoDownload->setText(QString(DISABLE_AUTO_DL));
 		}
+		setAutoDownloadButton(!autoDl);
 	}
 	else{
 		std::cerr << "Auto Download failed to set"
 				  << std::endl;
+	}
+}
+
+bool ChannelFeed::navigate(const std::string& channelId, const std::string& msgId)
+{
+	if (channelId.empty()) {
+		return false;
+	}
+
+	if (treeWidget->activateId(QString::fromStdString(channelId), msgId.empty()) == NULL) {
+		return false;
+	}
+
+	/* Messages are filled in selectChannel */
+	if (mChannelId != channelId) {
+		return false;
+	}
+
+	if (msgId.empty()) {
+		return true;
+	}
+
+	/* Search exisiting item */
+	std::list<ChanMsgItem*>::iterator mit;
+	for (mit = mChanMsgItems.begin(); mit != mChanMsgItems.end(); mit++) {
+		ChanMsgItem *item = *mit;
+		if (item->msgId() == msgId) {
+			// the next two lines are necessary to calculate the layout of the widgets in the scroll area (maybe there is a better solution)
+			item->show();
+			QCoreApplication::processEvents();
+
+			scrollArea->ensureWidgetVisible(item, 0, 0);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void ChannelFeed::setAutoDownloadButton(bool autoDl)
+{
+	if (autoDl) {
+		autoDownload->setText(tr("Disable Auto-Download"));
+	}else{
+		autoDownload->setText(tr("Enable Auto-Download"));
 	}
 }

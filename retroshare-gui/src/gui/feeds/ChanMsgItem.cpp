@@ -28,6 +28,9 @@
 #include "SubFileItem.h"
 #include "gui/notifyqt.h"
 #include "util/misc.h"
+#include "gui/MainWindow.h"
+#include "gui/ChannelFeed.h"
+#include "gui/RetroShareLink.h"
 
 #include <retroshare/rschannels.h>
 
@@ -53,11 +56,13 @@ ChanMsgItem::ChanMsgItem(FeedHolder *parent, uint32_t feedId, std::string chanId
   /* general ones */
   connect( expandButton, SIGNAL( clicked( void ) ), this, SLOT( toggle ( void ) ) );
   connect( clearButton, SIGNAL( clicked( void ) ), this, SLOT( removeItem ( void ) ) );
+  connect( gotoButton, SIGNAL( clicked( void ) ), this, SLOT( gotoHome ( void ) ) );
 
   /* specific */
   connect( unsubscribeButton, SIGNAL( clicked( void ) ), this, SLOT( unsubscribeChannel ( void ) ) );
   connect( downloadButton, SIGNAL( clicked( void ) ), this, SLOT( download ( void ) ) );
   connect( playButton, SIGNAL( clicked( void ) ), this, SLOT( play ( void ) ) );
+  connect( copyLinkButton, SIGNAL( clicked( void ) ), this, SLOT( copyLink ( void ) ) );
 
   connect( readButton, SIGNAL( toggled(bool) ), this, SLOT( readToggled(bool) ) );
   connect( NotifyQt::getInstance(), SIGNAL(channelMsgReadSatusChanged(QString,QString,int)), this, SLOT(channelMsgReadSatusChanged(QString,QString,int)), Qt::QueuedConnection);
@@ -66,7 +71,7 @@ ChanMsgItem::ChanMsgItem(FeedHolder *parent, uint32_t feedId, std::string chanId
   playButton->hide();
   warn_image_label->hide();
   warning_label->hide();
-  
+
   titleLabel->setMinimumWidth(100);
   subjectLabel->setMinimumWidth(100);
   warning_label->setMinimumWidth(100);
@@ -75,7 +80,6 @@ ChanMsgItem::ChanMsgItem(FeedHolder *parent, uint32_t feedId, std::string chanId
   updateItemStatic();
   updateItem();
 }
-
 
 void ChanMsgItem::updateItemStatic()
 {
@@ -92,8 +96,6 @@ void ChanMsgItem::updateItemStatic()
 
 	if (!rsChannels->getChannelMessage(mChanId, mMsgId, cmi))
 		return;
-
-
 
 	m_inUpdateItemStatic = true;
 
@@ -114,8 +116,10 @@ void ChanMsgItem::updateItemStatic()
 		} else {
 			unsubscribeButton->setEnabled(false);
 		}
-		readButton->setVisible(false);
-		newLabel->setVisible(false);
+		readButton->hide();
+		newLabel->hide();
+		gotoButton->show();
+		copyLinkButton->hide();
 	}
 	else
 	{
@@ -128,6 +132,8 @@ void ChanMsgItem::updateItemStatic()
 		unsubscribeButton->setEnabled(false);
 		clearButton->hide();
 		unsubscribeButton->hide();
+		gotoButton->hide();
+		copyLinkButton->show();
 
 		if ((ci.channelFlags & RS_DISTRIB_SUBSCRIBED) || (ci.channelFlags & RS_DISTRIB_ADMIN)) {
 			readButton->setVisible(true);
@@ -205,7 +211,6 @@ void ChanMsgItem::updateItemStatic()
 	m_inUpdateItemStatic = false;
 }
 
-
 void ChanMsgItem::setFileCleanUpWarning(uint32_t time_left)
 {
 	int hours = (int)time_left/3600;
@@ -223,7 +228,6 @@ void ChanMsgItem::setFileCleanUpWarning(uint32_t time_left)
 	return;
 
 }
-
 
 void ChanMsgItem::updateItem()
 {
@@ -337,10 +341,15 @@ void ChanMsgItem::gotoHome()
 	std::cerr << "ChanMsgItem::gotoHome()";
 	std::cerr << std::endl;
 #endif
+
+	MainWindow::showWindow(MainWindow::Channels);
+	ChannelFeed *channelFeed = dynamic_cast<ChannelFeed*>(MainWindow::getPage(MainWindow::Channels));
+	if (channelFeed) {
+		channelFeed->navigate(mChanId, mMsgId);
+	}
 }
 
 /*********** SPECIFIC FUNCTIONS ***********************/
-
 
 void ChanMsgItem::unsubscribeChannel()
 {
@@ -402,4 +411,21 @@ void ChanMsgItem::channelMsgReadSatusChanged(const QString& channelId, const QSt
     if (channelId.toStdString() == mChanId && msgId.toStdString() == mMsgId) {
         updateItemStatic();
     }
+}
+
+void ChanMsgItem::copyLink()
+{
+	if (mChanId.empty() || mMsgId.empty()) {
+		return;
+	}
+
+	ChannelInfo ci;
+	if (rsChannels->getChannelInfo(mChanId, ci)) {
+		RetroShareLink link(RetroShareLink::TYPE_CHANNEL, QString::fromStdWString(ci.channelName), QString::fromStdString(ci.channelId), QString::fromStdString(mMsgId));
+		if (link.valid() && link.type() == RetroShareLink::TYPE_CHANNEL) {
+			std::vector<RetroShareLink> urls;
+			urls.push_back(link);
+			RSLinkClipboard::copyLinks(urls);
+		}
+	}
 }

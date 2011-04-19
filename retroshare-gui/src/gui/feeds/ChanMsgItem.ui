@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>528</width>
+    <width>583</width>
     <height>208</height>
    </rect>
   </property>
@@ -152,7 +152,7 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
-        <item row="0" column="5" rowspan="2" colspan="4">
+        <item row="0" column="8" rowspan="2" colspan="5">
          <widget class="QLabel" name="datetimelabel">
           <property name="font">
            <font>
@@ -170,7 +170,7 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
-        <item row="2" column="6" colspan="3">
+        <item row="2" column="9" colspan="4">
          <widget class="QLabel" name="filelabel">
           <property name="font">
            <font>
@@ -185,7 +185,7 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
-        <item row="2" column="0" colspan="6">
+        <item row="2" column="0" colspan="9">
          <widget class="QLabel" name="subjectLabel">
           <property name="sizePolicy">
            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
@@ -220,11 +220,7 @@ p, li { white-space: pre-wrap; }
            </size>
           </property>
           <property name="toolTip">
-           <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Toggle Message Read Status&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>Toggle Message Read Status</string>
           </property>
           <property name="icon">
            <iconset resource="../images.qrc">
@@ -313,7 +309,24 @@ border-radius: 3px}</string>
           </property>
          </spacer>
         </item>
-        <item row="4" column="5" colspan="2">
+        <item row="3" column="0">
+         <widget class="QLabel" name="warn_image_label">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap resource="../images.qrc">:/images/status_unknown.png</pixmap>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1" colspan="9">
+         <widget class="QLabel" name="warning_label">
+          <property name="text">
+           <string notr="true">TextLabel</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="8" colspan="2">
          <widget class="QPushButton" name="unsubscribeButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -339,7 +352,7 @@ border-radius: 3px}</string>
           </property>
          </widget>
         </item>
-        <item row="4" column="7">
+        <item row="4" column="11">
          <widget class="QPushButton" name="clearButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -365,7 +378,7 @@ border-radius: 3px}</string>
           </property>
          </widget>
         </item>
-        <item row="4" column="8">
+        <item row="4" column="12">
          <widget class="QPushButton" name="expandButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -394,20 +407,55 @@ border-radius: 3px}</string>
           </property>
          </widget>
         </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="warn_image_label">
+        <item row="4" column="6">
+         <widget class="QPushButton" name="gotoButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>24</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Go to Channel Message</string>
+          </property>
           <property name="text">
            <string/>
           </property>
-          <property name="pixmap">
-           <pixmap resource="../images.qrc">:/images/status_unknown.png</pixmap>
+          <property name="icon">
+           <iconset resource="../images.qrc">
+            <normaloff>:/images/find-16.png</normaloff>:/images/find-16.png</iconset>
           </property>
          </widget>
         </item>
-        <item row="3" column="1" colspan="6">
-         <widget class="QLabel" name="warning_label">
+        <item row="4" column="7">
+         <widget class="QPushButton" name="copyLinkButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>24</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Copy RetroShare Link</string>
+          </property>
           <property name="text">
-           <string notr="true">TextLabel</string>
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../images.qrc">
+            <normaloff>:/images/copyrslink.png</normaloff>:/images/copyrslink.png</iconset>
           </property>
          </widget>
         </item>
@@ -475,23 +523,6 @@ border-radius: 10px;}</string>
   </layout>
  </widget>
  <resources>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

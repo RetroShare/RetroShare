@@ -36,6 +36,8 @@ public:
     ForumsDialog(QWidget *parent = 0);
     ~ForumsDialog();
 
+    bool navigate(const std::string& forumId, const std::string& msgId);
+
     /* overloaded from RsAuthUpdatePage */
     virtual void updateDisplay();
 
@@ -61,6 +63,8 @@ private slots:
     void markMsgAsUnread();
     void markMsgAsUnreadAll();
     void markMsgAsUnreadChildren();
+    void copyForumLink();
+    void copyMessageLink();
 
     /* handle splitter */
     void togglethreadview();

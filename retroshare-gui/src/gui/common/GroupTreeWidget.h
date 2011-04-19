@@ -76,6 +76,9 @@ public:
 	// Set the unread count of an item
 	void setUnreadCount(QTreeWidgetItem *item, int unreadCount);
 
+	QTreeWidgetItem *getItemFromId(const QString &id);
+	QTreeWidgetItem *activateId(const QString &id, bool focus);
+
 signals:
 	void treeCustomContextMenuRequested(const QPoint &pos);
 	void treeCurrentItemChanged(const QString &id);

@@ -35,6 +35,7 @@
 #include "common/Emoticons.h"
 #include "common/RSItemDelegate.h"
 #include "common/PopularityDefs.h"
+#include "RetroShareLink.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsforums.h>
@@ -60,6 +61,7 @@
 #define IMAGE_INFO           ":/images/info16.png"
 #define IMAGE_NEWFORUM       ":/images/new_forum16.png"
 #define IMAGE_FORUMAUTHD     ":/images/konv_message2.png"
+#define IMAGE_COPYLINK       ":/images/copyrslink.png"
 
 #define VIEW_LAST_POST	0
 #define VIEW_THREADED	1
@@ -274,8 +276,6 @@ void ForumsDialog::forumListCustomPopupMenu( QPoint point )
     action = contextMnu.addAction(QIcon(IMAGE_UNSUBSCRIBE), tr("Unsubscribe to Forum"), this, SLOT(unsubscribeToForum()));
     action->setEnabled (!mCurrForumId.empty() && m_bIsForumSubscribed);
 
-
-
     contextMnu.addSeparator();
 
     contextMnu.addAction(QIcon(IMAGE_NEWFORUM), tr("New Forum"), this, SLOT(newforum()));
@@ -286,12 +286,14 @@ void ForumsDialog::forumListCustomPopupMenu( QPoint point )
     action = contextMnu.addAction(QIcon(":/images/settings16.png"), tr("Edit Forum Details"), this, SLOT(editForumDetails()));
     action->setEnabled (!mCurrForumId.empty () && m_bIsForumAdmin);
 
-
     QAction *restoreKeysAct = new QAction(QIcon(":/images/settings16.png"), tr("Restore Publish Rights for Forum" ), &contextMnu);
     connect( restoreKeysAct , SIGNAL( triggered() ), this, SLOT( restoreForumKeys() ) );
 
     restoreKeysAct->setEnabled(!mCurrForumId.empty() && !m_bIsForumAdmin);
     contextMnu.addAction( restoreKeysAct);
+
+    action = contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyForumLink()));
+    action->setEnabled(!mCurrForumId.empty());
 
     contextMnu.addSeparator();
 
@@ -335,8 +337,6 @@ void ForumsDialog::threadListCustomPopupMenu( QPoint point )
 
     QAction *markMsgAsUnreadChildren = new QAction(QIcon(":/images/message-mail.png"), tr("Mark as unread") + " (" + tr ("with children") + ")", &contextMnu);
     connect(markMsgAsUnreadChildren , SIGNAL(triggered()), this, SLOT(markMsgAsUnreadChildren()));
-
-
 
     if (m_bIsForumSubscribed) {
         QList<QTreeWidgetItem*> Rows;
@@ -385,6 +385,8 @@ void ForumsDialog::threadListCustomPopupMenu( QPoint point )
     contextMnu.addAction( replyAct);
     contextMnu.addAction( newthreadAct);
     contextMnu.addAction( replyauthorAct);
+    QAction* action = contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr( "Copy RetroShare Link"), this, SLOT(copyMessageLink()));
+    action->setEnabled(!mCurrForumId.empty() && !mCurrThreadId.empty());
     contextMnu.addSeparator();
     contextMnu.addAction(markMsgAsRead);
     contextMnu.addAction(markMsgAsReadChildren);
@@ -1395,6 +1397,40 @@ void ForumsDialog::markMsgAsUnreadAll()
     markMsgAsReadUnread(false, true, true);
 }
 
+void ForumsDialog::copyForumLink()
+{
+    if (mCurrForumId.empty()) {
+        return;
+    }
+
+    ForumInfo fi;
+    if (rsForums->getForumInfo(mCurrForumId, fi)) {
+        RetroShareLink link(RetroShareLink::TYPE_FORUM, QString::fromStdWString(fi.forumName), QString::fromStdString(fi.forumId), "");
+        if (link.valid() && link.type() == RetroShareLink::TYPE_FORUM) {
+            std::vector<RetroShareLink> urls;
+            urls.push_back(link);
+            RSLinkClipboard::copyLinks(urls);
+        }
+    }
+}
+
+void ForumsDialog::copyMessageLink()
+{
+    if (mCurrForumId.empty() || mCurrThreadId.empty()) {
+        return;
+    }
+
+    ForumInfo fi;
+    if (rsForums->getForumInfo(mCurrForumId, fi)) {
+        RetroShareLink link(RetroShareLink::TYPE_FORUM, QString::fromStdWString(fi.forumName), QString::fromStdString(mCurrForumId), QString::fromStdString(mCurrThreadId));
+        if (link.valid() && link.type() == RetroShareLink::TYPE_FORUM) {
+            std::vector<RetroShareLink> urls;
+            urls.push_back(link);
+            RSLinkClipboard::copyLinks(urls);
+        }
+    }
+}
+
 void ForumsDialog::newforum()
 {
     CreateForum cf (this);
@@ -1621,4 +1657,39 @@ void ForumsDialog::updateMessageSummaryList(std::string forumId)
             }
         }
     }
+}
+
+bool ForumsDialog::navigate(const std::string& forumId, const std::string& msgId)
+{
+    if (forumId.empty()) {
+        return false;
+    }
+
+    if (ui.forumTreeWidget->activateId(QString::fromStdString(forumId), msgId.empty()) == NULL) {
+        return false;
+    }
+
+    /* Threads are filled in changedForum */
+    if (mCurrForumId != forumId) {
+        return false;
+    }
+
+    if (msgId.empty()) {
+        return true;
+    }
+
+    /* Search exisiting item */
+    QTreeWidgetItemIterator itemIterator(ui.threadTreeWidget);
+    QTreeWidgetItem *item = NULL;
+    while ((item = *itemIterator) != NULL) {
+        itemIterator++;
+
+        if (item->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID).toString().toStdString() == msgId) {
+            ui.threadTreeWidget->setCurrentItem(item);
+            ui.threadTreeWidget->setFocus();
+            return true;
+        }
+    }
+
+    return false;
 }
