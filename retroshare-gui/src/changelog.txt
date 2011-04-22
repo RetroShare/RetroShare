@@ -1,3 +1,103 @@
+Changes for v0.5.1c
+
+* added print-cache code to the tests suite
+* Added new RetroShare link formats:
+  - retroshare://forum?
+  - retroshare://channel?...
+* Added "Go to" from the news feed of forums and channels.
+* Added "Copy RetroShare Link" to the forum/channel tree and messagees.
+* Fixed style sheet of the auto download button in ChannelFeed.
+* Fixed wrong size of the transfered link from the command line in EventReceiver.
+* changed policy for canceling cache files: only inactive transfers get canceled now.
+* used tr1::unordered_set instead of std::set to store pointer checking list, as it is more efficients for lookups
+* Adding a link from the browser now starts RetroShare when it is not running.
+* Added handling of RetroShare protocol under Windows.
+* Added new command line parameter "-r retroshare://..." for adding links to the registered running RetroShare.
+* attempt at making remoteDirModel less CPU intentive. Remove potential deadlock source in SearchDialog.
+* removed potential seg fault with decrypting cache file
+* implemented a verification for tunnel results. 
+  - When the network gets heavily loaded, some tunnel results happen to get back twice. 
+  - This stops the tunnel result sibblings
+* fixed cache opt bug related to new msg notice being flagged up for historical msgs
+* New dialog for defining own colors for the private chat window.
+* enabled file preview again for non windows users, using a direct call to the file in partials
+*  added logic to deal with case where auto dl has been disabled then re-enabled after a manual download
+* for each channel msg post download request is now only called once. 
+* fast simplification of code in pqistreamer, and added a missing =null in p3service that could cause a bug
+* Removed automatic cleaning of the certificate in p3Peers::loadDetailsFromStringCert.
+* Added new button in ConnectFriendWizard for cleaning the certificate.
+* Fixed cleaning:
+  - added blank line after the armor header
+  - moved the checksum to a new line
+* auto download option:
+  - ability to enable and disable channels auto dl added
+  - added gui update to channel feed
+* reduced path to only parent directory, to make cost tractable
+* added random bias to search and tunnel request maximum depth
+* added random (and biased) re-routing of tunnel request to improve tunnel length.
+* added a column for directory in flat view of shared files
+* made sign GPG key button disabled by default, and added a tooltip. As this action cannot be undone,it must be performed knowingly.
+* Fixed Q_ASSERT in SharedFilesDialog on Windows.
+* Load and save the view type (flat or tree) in SharedFilesDialog.
+* fix the msg download problem 
+* part of code the disable auto download for channels
+* Fixed problem with utf characters in the %APPDATA% path on Windows.
+* made FileEntry derive from SmallObject class, to improve memory cache efficiency (50% time gained)
+* added some optimization to RequestDirDetails internal functions
+* improved sorting/selection in shared files flat mode
+* Fixed crash on shutdown of RetroShare, when the cache loading is running.
+  - Now the p3distrib threads are stopped before the instance of AuthGPG is deleted.
+* fixed some stylesheets to use gradients instead of a background images, to solve some problems
+* implemented an optional flat view for shared files that allows sorting by date/peer/name
+* restored the search for flat view only (very slow for tree view)
+* cleaned the code a bit: made two subclasses of RetroshareDirModel: TreeStyle_RDM and FlatStyle_RDM
+* turned some uint32_t into int, for file watch period (did not produce a bug, but was still incorrect)
+* added a missing pthread_join in file checking, that eventually caused a leak of thread resources
+* changed the order of check in tick() to allow cancelling a file that is being checked
+* removed the hash step from mutex protection
+* added error message when thread creation fails
+* made sign GPG key checkbox unchecked by default
+* made current index be 0 for showing uploads by default
+* added a checkbox in settings for tuning auto-check of shared directories
+* Saved the visible state of the avatar picture in private chat for the friend.
+* Added parameter to RSettingsWin::showYourself to show the options with a specific page for news feed.
+* added tooltip for systray to display nickname and location
+* Show last error (GetLastError) in log when lock file cannot be accessed on Windows.
+* fixed file leak in history cache opt
+* added main parts of history cache optimisation. disabled at the moment (has file leakage)
+* check-pointing work essentially, but in principle working,
+* added lockfile path info to the multiple-instances warning window in rs-
+* attempt to make GPG errors more verbose at cert exchange time
+* implemented a backward compatible fix for bug when searching (advanced) with max size larger than 2Gb
+* implemented a better management of tunnel requests
+* Added a basic description of the chat style.
+* disabled the default context menus for the QToolBar's
+* Share the download directory by default.
+* Removed member ftController::mShareDownloadDir and calculate the value from the shared directories.
+* Combined the two methods for share and unshare of the download dir.
+* Added share incoming directory to the QuickStartWizard.
+* Translate QuickStartWizard, GenCertDialog and StartDialog into german.
+* Fixed tab order of the upload and download settings in QuickStartWizard.
+* Fixed utf8 issues when the partial or the download dir is set to a utf8 dir.
+* Use the native dialog for selecting the shared folder.
+* Messages with plain text (like the welcome message) are shown correctly.
+* added missign destructors, causing some parasitic memory leaks
+
+Changes for v0.5.1b
+
+* Added missing return... which was crashing OSX during directory creation.
+* fixed a toolbar icon to display with a correct size on macosx
+* The working (hashing) thread FileIndexMonitor is now stopped when RetroShare is closed.
+* Removed tab focus from the toolbar and image buttons.
+* Fixd german translation.
+* supressed memory leak due to not deleting a RsItem
+* suppressed potential SIGSEGV as exit time
+* suppressed memory leak in GUI
+* Added a confirm to the delete history action.
+* Added the RetroShare icon to the password input window.
+* fixed soem other potential SIGSEGVs
+* fixed potential SIGSEGV because of not checking returned pointer
+
 Changes for v0.5.1a
 
 New features (DHT, Channels, Network View) 
