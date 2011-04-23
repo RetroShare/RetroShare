@@ -1,6 +1,6 @@
 CONFIG += qt gui uic qrc resources uitools idle bitdht # framecatcher# blogs
 #CONFIG += use_links
-QT     += network xml script opengl
+QT     += network xml script 
 
 TEMPLATE = app
 TARGET = RetroShare
