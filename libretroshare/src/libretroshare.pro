@@ -7,7 +7,8 @@ TARGET = retroshare
 
 # Beware: All data of the stripped services are lost
 #CONFIG += minimal
-DEFINES *= PQI_DISABLE_TUNNEL
+DEFINES *= PQI_DISABLE_TUNNEL 
+#ENABLE_CACHE_OPT
 
 minimal {
 	CONFIG -= use_blogs
@@ -147,6 +148,9 @@ linux-* {
 	isEmpty(PREFIX)  { PREFIX = /usr }
 	isEmpty(INC_DIR) { INC_DIR = $${PREFIX}/include/retroshare/ }
 	isEmpty(LIB_DIR) { LIB_DIR = $${PREFIX}/lib/ }
+
+	# Fixes compilation on ubuntu natty 64bits. Probably a ubuntu packaging error.
+	INCLUDEPATH *= /usr/lib/x86_64-linux-gnu/glib-2.0/include/
 
 	DESTDIR = lib
 	QMAKE_CXXFLAGS *= -Wall -D_FILE_OFFSET_BITS=64
