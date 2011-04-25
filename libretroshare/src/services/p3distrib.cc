@@ -2004,6 +2004,9 @@ void 	p3GroupDistrib::locked_publishPendingMsgs()
 			resave = true;
 		}
 
+		// prevent sending original source of message to peers
+		(*it)->PeerId(mOwnId);
+
 		if(!store->SendItem(*it)) /* deletes it */
 		{
 			ok &= false;
@@ -2077,6 +2080,7 @@ void 	p3GroupDistrib::publishDistribGroups()
 	std::string tmpname = out.str();
 	std::string filename = path + "/" + tmpname;
 	std::string filenametmp = path + "/" + tmpname + ".tmp";
+	std::string tempPeerId; // to store actual id temporarily
 
 	BinInterface *bio = new BinFileInterface(filenametmp.c_str(), BIN_FLAGS_WRITEABLE | BIN_FLAGS_HASH_DATA);
 	pqistore *store = createStore(bio, mOwnId, BIN_FLAGS_NO_DELETE | BIN_FLAGS_WRITEABLE);
@@ -2102,7 +2106,10 @@ void 	p3GroupDistrib::publishDistribGroups()
 			if (grp)
 			{
 				/* store in Cache File */
+				tempPeerId = grp->PeerId();
+				grp->PeerId(mOwnId); // prevent sending original source to users
 				store->SendItem(grp); /* no delete */
+				grp->PeerId(tempPeerId);
 
 				grp->grpFlags &= (~RS_DISTRIB_UPDATE); // if this is an update, ensure flag is removed after publication
 			}
