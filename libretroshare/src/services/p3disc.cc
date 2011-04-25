@@ -661,8 +661,8 @@ void p3disc::recvPeerDetails(RsDiscReply *item, const std::string &certGpgId)
 							std::cerr << "   ->     location: " << pitem->location << std::endl;
 #endif
 							mConnMgr->setNetworkMode(pitem->pid, pitem->netMode);
-							mConnMgr->setLocation(pitem->pid, pitem->location);
 						}
+						mConnMgr->setLocation(pitem->pid, pitem->location);
 
 						// The info from the peer itself is ultimately trustable, so we can override some info,
 						// such as:
