@@ -69,6 +69,7 @@
 static const uint32_t SAVE_TRANSFERS_DELAY 			= 61	; // save transfer progress every 61 seconds.
 static const uint32_t INACTIVE_CHUNKS_CHECK_DELAY 	= 60	; // time after which an inactive chunk is released
 static const uint32_t MAX_TIME_INACTIVE_REQUEUED 	= 60  ; // time after which an inactive ftFileControl is bt-queued
+static const uint32_t TIMOUT_CACHE_FILE_TRANSFER 	= 800 ; // time after which cache transfer gets cancelled if inactive.
 
 static const uint32_t FT_FILECONTROL_QUEUE_ADD_END 			= 0 ;
 static const uint32_t FT_FILECONTROL_QUEUE_ADD_AFTER_CACHE 	= 1 ;
@@ -352,14 +353,14 @@ void ftController::cleanCacheDownloads()
 		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
 		for(std::map<std::string,ftFileControl*>::iterator it(mDownloads.begin());it!=mDownloads.end();++it)
-			if ((it->second)->mFlags & RS_FILE_HINTS_CACHE)
+			if (((it->second)->mFlags & RS_FILE_HINTS_CACHE) && it->second->mState != ftFileControl::DOWNLOADING)
 				// check if a cache file is downloaded, if the case, timeout the transfer after TIMOUT_CACHE_FILE_TRANSFER
 			{
 #ifdef CONTROL_DEBUG
 				std::cerr << "ftController::run() cache transfer found. age of this tranfer is :" << (int)(time(NULL) - (it->second)->mCreateTime);
 				std::cerr << std::endl;
 #endif
-				if ((now - (it->second)->mCreator->lastRecvTimeStamp()) > TIMOUT_CACHE_FILE_TRANSFER) 
+				if ((now > (it->second)->mCreator->creationTimeStamp()) + TIMOUT_CACHE_FILE_TRANSFER) 
 				{
 #ifdef CONTROL_DEBUG
 					std::cerr << "ftController::run() cache transfer to old. Cancelling transfer. Hash :" << (it->second)->mHash << ", time=" << (it->second)->mCreateTime << ", now = " << time(NULL) ;

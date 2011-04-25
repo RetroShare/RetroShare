@@ -98,6 +98,7 @@ class ftFileCreator: public ftFileProvider
 		// Returns resets the time stamp of the last data receive.
 		time_t lastRecvTimeStamp() ;
 		void resetRecvTimeStamp() ;
+		time_t creationTimeStamp() ;
 
 		// actually store data in the file, and update chunks info
 		//
@@ -142,7 +143,8 @@ class ftFileCreator: public ftFileProvider
 
 		ChunkMap chunkMap ;
 
-		time_t _last_recv_time_t ;	/// last time stamp when data was received.
+		time_t _last_recv_time_t ;	/// last time stamp when data was received. Used for queue control.
+		time_t _creation_time ;		/// time at which the file creator was created. Used to spot long-inactive transfers.
 };
 
 #endif // FT_FILE_CREATOR_HEADER

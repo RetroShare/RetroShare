@@ -35,7 +35,9 @@ ftFileCreator::ftFileCreator(const std::string& path, uint64_t size, const std::
 	std::cerr << std::endl;
 #endif
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
-	_last_recv_time_t = time(NULL) ;
+	time_t now = time(NULL) ;
+	_last_recv_time_t = now ;
+	_creation_time = now ;
 }
 
 bool ftFileCreator::getFileData(const std::string& peer_id,uint64_t offset, uint32_t &chunk_size, void *data)
@@ -64,6 +66,11 @@ bool ftFileCreator::getFileData(const std::string& peer_id,uint64_t offset, uint
 		return false ;
 }
 
+time_t ftFileCreator::creationTimeStamp() 
+{
+	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
+	return _creation_time ;
+}
 time_t ftFileCreator::lastRecvTimeStamp() 
 {
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
