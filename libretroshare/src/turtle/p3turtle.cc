@@ -2071,11 +2071,16 @@ void p3turtle::getInfo(	std::vector<std::vector<std::string> >& hashes_info,
 		tunnel.push_back(printNumber(it->first,true)) ;
 
 		RsPeerDetails sslDetails;
-		rsPeers->getPeerDetails(it->second.local_src,sslDetails) ;
-		tunnel.push_back(sslDetails.name + " - " + sslDetails.location) ;
 
-		rsPeers->getPeerDetails(it->second.local_dst,sslDetails) ;
-		tunnel.push_back(sslDetails.name + " - " + sslDetails.location) ;
+		if(rsPeers->getPeerDetails(it->second.local_src,sslDetails)) 
+			tunnel.push_back(sslDetails.name + " - " + sslDetails.location) ;
+		else
+			tunnel.push_back(it->second.local_src) ;
+
+		if(rsPeers->getPeerDetails(it->second.local_dst,sslDetails)) 
+			tunnel.push_back(sslDetails.name + " - " + sslDetails.location) ;
+		else
+			tunnel.push_back(it->second.local_dst);
 
 		tunnel.push_back(it->second.hash) ;
 		tunnel.push_back(printNumber(now-it->second.time_stamp) + " secs ago") ;
@@ -2092,8 +2097,10 @@ void p3turtle::getInfo(	std::vector<std::vector<std::string> >& hashes_info,
 		search_req.push_back(printNumber(it->first,true)) ;
 
 		RsPeerDetails sslDetails;
-		rsPeers->getPeerDetails(it->second.origin,sslDetails) ;
-		search_req.push_back(sslDetails.name + " - " + sslDetails.location) ;
+		if(rsPeers->getPeerDetails(it->second.origin,sslDetails)) 
+			search_req.push_back(sslDetails.name + " - " + sslDetails.location) ;
+		else
+			search_req.push_back(it->second.origin) ;
 
 		search_req.push_back(printNumber(now - it->second.time_stamp) + " secs ago") ;
 	}
@@ -2107,8 +2114,11 @@ void p3turtle::getInfo(	std::vector<std::vector<std::string> >& hashes_info,
 
 		tunnel_req.push_back(printNumber(it->first,true)) ;
 		RsPeerDetails sslDetails;
-		rsPeers->getPeerDetails(it->second.origin,sslDetails) ;
-		tunnel_req.push_back(sslDetails.name + " - " + sslDetails.location) ;
+		if(rsPeers->getPeerDetails(it->second.origin,sslDetails)) 
+			tunnel_req.push_back(sslDetails.name + " - " + sslDetails.location) ;
+		else
+			tunnel_req.push_back(it->second.origin) ;
+
 		tunnel_req.push_back(printNumber(now - it->second.time_stamp) + " secs ago") ;
 	}
 }
