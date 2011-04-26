@@ -3365,37 +3365,37 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/RemoteDirModel.cpp" line="+664"/>
         <source>Friends Directories</source>
-        <translation type="unfinished">Dateien von Freunden</translation>
+        <translation>Dateien von Freunden</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>My Directories</source>
-        <translation type="unfinished">Meine Ordner</translation>
+        <translation>Meine Ordner</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Size</source>
-        <translation type="unfinished">Grösse</translation>
+        <translation>Grösse</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Age</source>
-        <translation type="unfinished">Alter</translation>
+        <translation>Alter</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Friend</source>
-        <translation type="unfinished">Freund</translation>
+        <translation>Freund</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Share Type</source>
-        <translation type="unfinished">Freigabe Typ</translation>
+        <translation>Freigabe Typ</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Directory</source>
-        <translation type="unfinished">Ordner</translation>
+        <translation>Ordner</translation>
     </message>
 </context>
 <context>
@@ -3689,7 +3689,7 @@ p, li { white-space: pre-wrap; }
         <location line="+6"/>
         <location line="+93"/>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished">Kopiere RetroShare Link</translation>
+        <translation>Kopiere RetroShare Link</translation>
     </message>
     <message>
         <location line="-88"/>
@@ -10281,7 +10281,7 @@ p, li { white-space: pre-wrap; }
         <translation>Freigabe entfernen</translation>
     </message>
     <message>
-        <location filename="../gui/ShareManager.cpp" line="+125"/>
+        <location filename="../gui/ShareManager.cpp" line="+127"/>
         <source>If checked, the share is anonymously shared to anybody.</source>
         <translation>Wenn aktiviert, dann ist dieser Ordner anonym feigegeben.</translation>
     </message>
@@ -10296,8 +10296,24 @@ p, li { white-space: pre-wrap; }
         <translation>Möchtes Du die Freigabe dieses Ordners wirklich aufheben ?</translation>
     </message>
     <message>
+        <location line="+75"/>
+        <location line="+5"/>
+        <source>Drop file error.</source>
+        <translation>Dateifehler bei Drag&apos;n&apos;Drop.</translation>
+    </message>
+    <message>
+        <location line="-5"/>
+        <source>File can&apos;t be dropped, only directories are accepted.</source>
+        <translation>Dateien können nicht für Drag&apos;n&apos;Drop genutzt werden. Nur Ordner werden akzeptiert.</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Directory not found or directory name not accepted.</source>
+        <translation>Ordner nicht gefunden oder Ordnername nicht akzeptiert.</translation>
+    </message>
+    <message>
         <location filename="../gui/ShareManager.ui" line="+3"/>
-        <location filename="../gui/ShareManager.cpp" line="-176"/>
+        <location filename="../gui/ShareManager.cpp" line="-256"/>
         <source>Remove</source>
         <translation>Entfernen</translation>
     </message>
@@ -10335,7 +10351,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;You can separately setup share flags for each shared directory:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Browsable&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: files are browsable from your direct friends.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Network Wide&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: files can be downloaded by anybody through anonymous tunnels.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -10466,12 +10482,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+28"/>
         <source>Tree view</source>
-        <translation type="unfinished"></translation>
+        <translation>Baumansicht</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Flat view</source>
-        <translation type="unfinished"></translation>
+        <translation>Listenansicht</translation>
     </message>
     <message>
         <location line="+173"/>
@@ -11862,58 +11878,58 @@ p, li { white-space: pre-wrap; }
         <location filename="../gui/RemoteDirModel.cpp" line="+136"/>
         <location line="+108"/>
         <source>FILE</source>
-        <translation type="unfinished">DATEI</translation>
+        <translation>DATEI</translation>
     </message>
     <message>
         <location line="-95"/>
         <source>Files</source>
-        <translation type="unfinished">Dateien</translation>
+        <translation>Dateien</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>File</source>
-        <translation type="unfinished">Datei</translation>
+        <translation>Datei</translation>
     </message>
     <message>
         <location line="+6"/>
         <location line="+103"/>
         <source>DIR</source>
-        <translation type="unfinished">ORDNER</translation>
+        <translation>ORDNER</translation>
     </message>
     <message>
         <location line="+145"/>
         <source>Friends Directories</source>
-        <translation type="unfinished">Dateien von Freunden</translation>
+        <translation>Dateien von Freunden</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>My Directories</source>
-        <translation type="unfinished">Meine Ordner</translation>
+        <translation>Meine Ordner</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Size</source>
-        <translation type="unfinished">Grösse</translation>
+        <translation>Grösse</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Age</source>
-        <translation type="unfinished">Alter</translation>
+        <translation>Alter</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Friend</source>
-        <translation type="unfinished">Freund</translation>
+        <translation>Freund</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Share Type</source>
-        <translation type="unfinished">Freigabe Typ</translation>
+        <translation>Freigabe Typ</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>What&apos;s new</source>
-        <translation type="unfinished">Was ist neu</translation>
+        <translation>Was ist neu</translation>
     </message>
 </context>
 <context>

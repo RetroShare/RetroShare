@@ -26,6 +26,7 @@
 #include <QPoint>
 #include <QHeaderView>
 #include <QMessageBox>
+#include <QUrl>
 
 #include <retroshare/rsfiles.h>
 
@@ -76,6 +77,7 @@ ShareManager::ShareManager(QWidget *parent, Qt::WFlags flags)
 
     ui.shareddirList->setRangeSelected(QTableWidgetSelectionRange(0, 0, 0, COLUMN_COUNT), true);
 
+    setAcceptDrops(true);
 
     setAttribute(Qt::WA_DeleteOnClose, true);
 }
@@ -305,4 +307,58 @@ void ShareManager::shareddirListCurrentCellChanged(int currentRow, int currentCo
         ui.editButton->setEnabled(false);
         ui.removeButton->setEnabled(false);
     }
+}
+
+void ShareManager::dragEnterEvent(QDragEnterEvent *event)
+{
+	if (event->mimeData()->hasUrls()) {
+		event->acceptProposedAction();
+	}
+}
+
+void ShareManager::dropEvent(QDropEvent *event)
+{
+	if (!(Qt::CopyAction & event->possibleActions())) {
+		/* can't do it */
+		return;
+	}
+
+	QStringList formats = event->mimeData()->formats();
+	QStringList::iterator it;
+
+	bool errorShown = false;
+
+	if (event->mimeData()->hasUrls()) {
+		QList<QUrl> urls = event->mimeData()->urls();
+		QList<QUrl>::iterator it;
+		for (it = urls.begin(); it != urls.end(); it++) {
+			QString localpath = it->toLocalFile();
+
+			if (localpath.isEmpty() == false) {
+				QDir dir(localpath);
+				if (dir.exists()) {
+					SharedDirInfo sdi;
+					sdi.filename = localpath.toUtf8().constData();
+					sdi.virtualname.clear();
+
+					sdi.shareflags = 0;
+
+					/* add new share */
+					rsFiles->addSharedDirectory(sdi);
+				} else if (QFile::exists(localpath)) {
+					if (errorShown == false) {
+						QMessageBox mb(tr("Drop file error."), tr("File can't be dropped, only directories are accepted."), QMessageBox::Information, QMessageBox::Ok, 0, 0, this);
+						mb.exec();
+						errorShown = true;
+					}
+				} else {
+					QMessageBox mb(tr("Drop file error."), tr("Directory not found or directory name not accepted."), QMessageBox::Information, QMessageBox::Ok, 0, 0, this);
+					mb.exec();
+				}
+			}
+		}
+	}
+
+	event->setDropAction(Qt::CopyAction);
+	event->accept();
 }

@@ -48,6 +48,9 @@ private:
 protected:
     virtual void showEvent(QShowEvent * event);
 
+    virtual void dragEnterEvent(QDragEnterEvent *event);
+    virtual void dropEvent(QDropEvent *event);
+
 private slots:
     /** Create the context popup menu and it's submenus */
     void shareddirListCurrentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn);
