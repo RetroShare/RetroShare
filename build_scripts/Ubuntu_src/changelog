@@ -1,4 +1,20 @@
 retroshare (0.5.1-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
+
+  * Improvements
+      - updated packaging for ubuntu natty, removed dependency on qt4-opengl
+      - updated french/german translations 
+      - updated icons 
+      - enabled drag and drop of directories in share manager
+
+  * Bug fixes
+      - suppred unwanted apparence of channel source id as channel source
+      - improved strategy for cleaning stalled cache transfers
+      - fixed leaking of sources in channel posts
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Mon, 11 Apr 2010 21:35:46 +0100
+
+retroshare (0.5.1-0.4166~lucid) lucid; urgency=low
+
   * Improvements
       - made flat view for shared files less CPU demanding
       - added automated treatment of RS links from web browser
