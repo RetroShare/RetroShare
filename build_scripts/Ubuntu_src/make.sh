@@ -18,7 +18,7 @@ svn=4153
 rm -rf ./retroshare-0.5
 # ./makeSourcePackage.sh
 
-for dist in jaunty karmic lucid maverick; do
+for dist in jaunty karmic lucid maverick natty; do
 		sudo PBUILDFOLDER=/var/cache/pbuilder pbuilder-dist "$dist" build retroshare_0.5.1-0."$svn"~"$dist".dsc
 		cp /var/cache/pbuilder/"$dist"_result/retroshare_0.5.1-0."$svn"~"$dist"_amd64.deb .
 		sudo PBUILDFOLDER=/var/cache/pbuilder pbuilder-dist "$dist" i386 build retroshare_0.5.1-0."$svn"~"$dist".dsc
