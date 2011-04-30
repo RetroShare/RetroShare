@@ -149,8 +149,9 @@ linux-* {
 	isEmpty(INC_DIR) { INC_DIR = $${PREFIX}/include/retroshare/ }
 	isEmpty(LIB_DIR) { LIB_DIR = $${PREFIX}/lib/ }
 
-	# Fixes compilation on ubuntu natty 64bits. Probably a ubuntu packaging error.
+	# These two lines fixe compilation on ubuntu natty. Probably a ubuntu packaging error.
 	INCLUDEPATH *= /usr/lib/x86_64-linux-gnu/glib-2.0/include/
+	INCLUDEPATH *= /usr/lib/i386-linux-gnu/glib-2.0/include/
 
 	DESTDIR = lib
 	QMAKE_CXXFLAGS *= -Wall -D_FILE_OFFSET_BITS=64
