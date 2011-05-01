@@ -205,26 +205,11 @@ private slots:
     void on_actionQuick_Start_Wizard_activated();
 
 private:
-
-    /** Create the actions on the tray menu or menubar */
-    void createActions();
-    
     void createTrayIcon();
     void createNotifyIcons();
     void updateTrayCombine();
 
     static MainWindow *_instance;
-
-    /** Defines the actions for the tray menu */
-    QAction* _settingsAct;
-    QAction* _bandwidthAct;
-    QAction* _messengerwindowAct;
-    QAction* _messagesAct;
-    QAction* _smplayerAct;
-    QAction* _helpAct;
-#ifdef UNFINISHED   
-    QAction* _appAct;
-#endif    
 
     /** A BandwidthGraph object which handles monitoring RetroShare bandwidth usage */
     BandwidthGraph* _bandwidthGraph;
@@ -235,6 +220,8 @@ private:
     void addAction(QAction *action, const char *slot = 0);
 
     void loadStyleSheet(const QString &sheetName);
+
+    QString nameAndLocation;
 
     QSystemTrayIcon *trayIcon;
     QSystemTrayIcon *trayIconCombined;

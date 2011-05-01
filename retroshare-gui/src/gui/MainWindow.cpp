@@ -171,7 +171,13 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     trayActionChat = NULL;
     trayActionTransfers = NULL;
 
-    setWindowTitle(tr("RetroShare %1 a secure decentralised communication platform").arg(retroshareVersion()));
+    /* Calculate only once */
+    RsPeerDetails pd;
+    if (rsPeers->getPeerDetails(rsPeers->getOwnId(), pd)) {
+        nameAndLocation = QString("%1 (%2)").arg(QString::fromUtf8(pd.name.c_str())).arg(QString::fromUtf8(pd.location.c_str()));
+    }
+
+    setWindowTitle(tr("RetroShare %1 a secure decentralised communication platform").arg(retroshareVersion()) + " - " + nameAndLocation);
 
     /* add url handler for RetroShare links */
     QDesktopServices::setUrlHandler(RSLINK_SCHEME, this, "linkActivated");
@@ -304,8 +310,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     statusBar()->addPermanentWidget(ratesstatus);
     /** Status Bar end ******/
 
-    /* Create the actions that will go in the tray menu */
-    createActions();
     /* Creates a tray icon with a context menu and adds it to the system's * notification area. */
     createTrayIcon();
 
@@ -328,8 +332,6 @@ MainWindow::~MainWindow()
 {
     Settings->setLastPageInMainWindow(getActivatePage());
 
-    delete _bandwidthGraph;
-    delete _messengerwindowAct;
     delete peerstatus;
     delete natstatus;
     delete dhtstatus;
@@ -376,15 +378,15 @@ void MainWindow::createTrayIcon()
     initializeStatusObject(pStatusMenu, true);
 
     trayMenu->addSeparator();
-    trayMenu->addAction(_messengerwindowAct);
-    trayMenu->addAction(_messagesAct);
-    trayMenu->addAction(_bandwidthAct);
+    trayMenu->addAction(QIcon(IMAGE_RSM16), tr("Open Messenger"), this, SLOT(showMessengerWindow()));
+    trayMenu->addAction(QIcon(IMAGE_MESSAGES), tr("Open Messages"), this, SLOT(showMess()));
+    trayMenu->addAction(QIcon(IMAGE_BWGRAPH), tr("Bandwidth Graph"), _bandwidthGraph, SLOT(showWindow()));
 
 #ifdef UNFINISHED
-    trayMenu->addAction(_appAct);
+    trayMenu->addAction(QIcon(IMAGE_UNFINISHED), tr("Applications"), this, SLOT(showApplWindow()));
 #endif
-    trayMenu->addAction(_settingsAct);
-    trayMenu->addAction(_helpAct);
+    trayMenu->addAction(QIcon(IMAGE_PREFERENCES), tr("Options"), this, SLOT(showSettings()));
+    trayMenu->addAction(QIcon(IMG_HELP), tr("Help"), this, SLOT(showHelpDialog()));
     trayMenu->addSeparator();
     trayMenu->addAction(QIcon(IMAGE_MINIMIZE), tr("Minimize"), this, SLOT(showMinimized()));
     trayMenu->addAction(QIcon(IMAGE_MAXIMIZE), tr("Maximize"), this, SLOT(showMaximized()));
@@ -799,11 +801,8 @@ void MainWindow::updateStatus()
     } else {
         tray += tr("%1 friends connected").arg(nOnlineCount);
     }
-    
-    RsPeerDetails pd ;    
-	if (rsPeers->getPeerDetails(rsPeers->getOwnId(),pd)) {
-	tray += "\n" + QString::fromStdString(pd.name) + " (" + QString::fromStdString(pd.location) + ") " ;
-	}
+
+    tray += "\n" + nameAndLocation;
 
     trayIcon->setToolTip(tray);
 }
@@ -1070,29 +1069,6 @@ void MainWindow::showApplWindow()
     applicationWindow->show();
 }
 #endif
-
-/** Create and bind actions to events. Setup for initial
- * tray menu configuration. */
-void MainWindow::createActions()
-{
-    _settingsAct = new QAction(QIcon(IMAGE_PREFERENCES), tr("Options"), this);
-    connect(_settingsAct, SIGNAL(triggered()), this, SLOT(showSettings()));
-
-    _bandwidthAct = new QAction(QIcon(IMAGE_BWGRAPH), tr("Bandwidth Graph"), this);
-    connect(_bandwidthAct, SIGNAL(triggered()), _bandwidthGraph, SLOT(showWindow()));
-
-    _messengerwindowAct = new QAction(QIcon(IMAGE_RSM16), tr("Open Messenger"), this);
-    connect(_messengerwindowAct, SIGNAL(triggered()),this, SLOT(showMessengerWindow()));
-
-    _messagesAct = new QAction(QIcon(IMAGE_MESSAGES), tr("Open Messages"), this);
-    connect(_messagesAct, SIGNAL(triggered()),this, SLOT(showMess()));
-#ifdef UNFINISHED
-    _appAct = new QAction(QIcon(IMAGE_UNFINISHED), tr("Applications"), this);
-    connect(_appAct, SIGNAL(triggered()),this, SLOT(showApplWindow()));
-#endif
-    _helpAct = new QAction(QIcon(IMG_HELP), tr("Help"), this);
-    connect(_helpAct, SIGNAL(triggered()), this, SLOT(showHelpDialog()));
-}
 
 /** If the user attempts to quit the app, a check-warning is issued. This warning can be
     turned off for future quit events.
