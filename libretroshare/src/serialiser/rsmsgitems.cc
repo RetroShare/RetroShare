@@ -31,6 +31,7 @@
 
 /***
 #define RSSERIAL_DEBUG 1
+#define CHAT_DEBUG 1
 ***/
 
 #include <iostream>
@@ -223,6 +224,14 @@ bool RsChatMsgItem::serialise(void *data, uint32_t& pktsize)
 	ok &= setRawUInt32(data, tlvsize, &offset, chatFlags);
 	ok &= setRawUInt32(data, tlvsize, &offset, sendTime);
 	ok &= SetTlvWideString(data, tlvsize, &offset, TLV_TYPE_WSTR_MSG, message);
+#ifdef CHAT_DEBUG
+	std::cerr << "Serialized the following message:" << std::endl;
+	std::cerr << "========== BEGIN MESSAGE =========" << std::endl;
+	for(int i=0;i<message.length();++i)
+		std::cerr << (char)message[i] ;
+	std::cerr << std::endl;
+	std::cerr << "=========== END MESSAGE ==========" << std::endl;
+#endif
 
 	if (offset != tlvsize)
 	{
