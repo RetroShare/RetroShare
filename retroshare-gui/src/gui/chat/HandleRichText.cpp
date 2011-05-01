@@ -21,7 +21,7 @@
 
 #include <QTextBrowser>
 #include "HandleRichText.h"
-
+#include "gui/RetroShareLink.h"
 
 namespace RsHtml {
 
@@ -93,16 +93,28 @@ void embedHtml(QDomDocument& doc, QDomElement& currentElement, EmbedInHtml& embe
 
 	QDomNodeList children = currentElement.childNodes();
 	for(uint index = 0; index < children.length(); index++) {
-		QDomNode tempNode = children.item(index);
-		if(tempNode.isElement()) {
+		QDomNode node = children.item(index);
+		if(node.isElement()) {
 			// child is an element, we skip it if it's an <a> tag
-			QDomElement tempElement = tempNode.toElement();
-			if(tempElement.tagName().toLower() != "head" && tempElement.tagName().toLower() != "a")
-				embedHtml(doc, tempElement, embedInfos);
+			QDomElement element = node.toElement();
+			if(element.tagName().toLower() == "head") {
+				// skip it
+			} else if (element.tagName().toLower() == "a") {
+				// skip it, but add title if not available
+				if (element.attribute("title").isEmpty()) {
+					RetroShareLink link(element.attribute("href"));
+					QString title = link.title();
+					if (!title.isEmpty()) {
+						element.setAttribute("title", title);
+					}
+				}
+			} else {
+				embedHtml(doc, element, embedInfos);
+			}
 		}
-		else if(tempNode.isText()) {
+		else if(node.isText()) {
 			// child is a text, we parse it
-			QString tempText = tempNode.toText().data();
+			QString tempText = node.toText().data();
 			if(embedInfos.myRE.indexIn(tempText) == -1)
 				continue;
 
@@ -113,40 +125,51 @@ void embedHtml(QDomDocument& doc, QDomElement& currentElement, EmbedInHtml& embe
 				// if nextPos == 0 it means the text begins by a link
 				if(nextPos > 0) {
 					QDomText textPart = doc.createTextNode(tempText.mid(currentPos, nextPos - currentPos));
-					currentElement.insertBefore(textPart, tempNode);
+					currentElement.insertBefore(textPart, node);
 					index++;
 				}
 
 				// inserted tag
 				QDomElement insertedTag;
 				switch(embedInfos.myType) {
-					case Ahref:	insertedTag = doc.createElement("a");
-							insertedTag.setAttribute("href", embedInfos.myRE.cap(0));
-							insertedTag.appendChild(doc.createTextNode(embedInfos.myRE.cap(0)));
-							break;
-					case Img:	insertedTag = doc.createElement("img");
+					case Ahref:
 							{
+								insertedTag = doc.createElement("a");
+								insertedTag.setAttribute("href", embedInfos.myRE.cap(0));
+
+								RetroShareLink link(embedInfos.myRE.cap(0));
+								QString title = link.title();
+								if (!title.isEmpty()) {
+									insertedTag.setAttribute("title", title);
+								}
+
+								insertedTag.appendChild(doc.createTextNode(embedInfos.myRE.cap(0)));
+							}
+							break;
+					case Img:
+							{
+								insertedTag = doc.createElement("img");
 								const EmbedInHtmlImg& embedImg = static_cast<const EmbedInHtmlImg&>(embedInfos);
 								insertedTag.setAttribute("src", embedImg.smileys[embedInfos.myRE.cap(0)]);
 							}
 							break;
 				}
-				currentElement.insertBefore(insertedTag, tempNode);
+				currentElement.insertBefore(insertedTag, node);
 
 				currentPos = nextPos + embedInfos.myRE.matchedLength();
 				index++;
 			}
 
 			// text after the last link, only if there's one, don't touch the index
-			// otherwise decrement the index because we're going to remove tempNode
+			// otherwise decrement the index because we're going to remove node
 			if(currentPos < tempText.length()) {
 				QDomText textPart = doc.createTextNode(tempText.mid(currentPos));
-				currentElement.insertBefore(textPart, tempNode);
+				currentElement.insertBefore(textPart, node);
 			}
 			else
 				index--;
 
-			currentElement.removeChild(tempNode);
+			currentElement.removeChild(node);
 		}
 	}
 }

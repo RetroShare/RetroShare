@@ -302,6 +302,26 @@ void RetroShareLink::check()
     }
 }
 
+QString RetroShareLink::title() const
+{
+	if (!valid()) {
+		return "";
+	}
+
+	switch (_type) {
+	case TYPE_UNKNOWN:
+		break;
+	case TYPE_FILE:
+		return QString("%1 (%2)").arg(hash()).arg(misc::friendlyUnit(size()));
+	case TYPE_PERSON:
+	case TYPE_FORUM:
+	case TYPE_CHANNEL:
+		break;
+	}
+
+	return "";
+}
+
 QString RetroShareLink::toString(bool encoded /*= true*/) const
 {
     switch (_type) {
@@ -386,7 +406,15 @@ QString RetroShareLink::niceName() const
 
 QString RetroShareLink::toHtml() const
 {
-    return QString("<a href=\"") + toString(true) + "\">" + niceName() + "</a>" ;
+	QString html = "<a href=\"" + toString(true);
+
+	QString linkTitle = title();
+	if (!linkTitle.isEmpty()) {
+		html += " title=\"" + linkTitle + "\"";
+	}
+	html += "\">" + niceName() + "</a>" ;
+
+	return html;
 }
 
 QString RetroShareLink::toHtmlFull() const

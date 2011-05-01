@@ -65,6 +65,7 @@ class RetroShareLink
 		const QString& hash() const { return _hash ; }
 		const QString& id() const { return _hash ; }
 		const QString& msgId() const { return _msgId ; }
+		QString title() const;
 
 		// get nice name for anchor
 		QString niceName() const;

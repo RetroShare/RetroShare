@@ -2723,7 +2723,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+17"/>
         <source>Priority:</source>
-        <translation type="unfinished"></translation>
+        <translation>Priorität:</translation>
     </message>
     <message>
         <location line="+24"/>
@@ -2894,12 +2894,12 @@ Das ist nützlich, wenn Du eine externe Festplatte freigibst und die Datei nicht
     <message>
         <location line="+11"/>
         <source>Auto-check shared directories every </source>
-        <translation type="unfinished"></translation>
+        <translation>Automatische Überprüfung der Freigaben alle </translation>
     </message>
     <message>
         <location line="+10"/>
         <source> minute(s)</source>
-        <translation type="unfinished"></translation>
+        <translation> Minute(n)</translation>
     </message>
     <message>
         <location line="-139"/>
@@ -3039,7 +3039,7 @@ Das ist nützlich, wenn Du eine externe Festplatte freigibst und die Datei nicht
     <message>
         <location filename="../gui/connect/ConnectFriendWizard.cpp" line="+1080"/>
         <source>Invite Friends by Email</source>
-        <translation type="unfinished"></translation>
+        <translation>Lade Freunde per Email ein</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -5327,7 +5327,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="-238"/>
         <source>Blogs</source>
-        <translation type="unfinished">Blogs</translation>
+        <translation>Blogs</translation>
     </message>
     <message>
         <location line="+255"/>
@@ -7654,7 +7654,7 @@ p, li { white-space: pre-wrap; }
         <translation>Ordner können nicht für Drag&apos;n&apos;Drop genutzt werden. Nur Dateien werden akzeptiert.</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.ui" line="+453"/>
+        <location filename="../gui/PeersDialog.ui" line="+450"/>
         <source>Italic</source>
         <translation>Kursiv</translation>
     </message>
@@ -7664,7 +7664,7 @@ p, li { white-space: pre-wrap; }
         <translation>Unterstrichen</translation>
     </message>
     <message>
-        <location line="-601"/>
+        <location line="-598"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -7697,7 +7697,7 @@ p, li { white-space: pre-wrap; }
         <translation>Statusnachricht ändern</translation>
     </message>
     <message>
-        <location line="+145"/>
+        <location line="+142"/>
         <source>Messages entered here are sent to all collected friends</source>
         <translation>Nachrichten, die Du hier eingibst, werden an alle verbundenen Freunde versendet</translation>
     </message>
@@ -7809,12 +7809,12 @@ p, li { white-space: pre-wrap; }
         <translation>Schriftart</translation>
     </message>
     <message>
-        <location line="-326"/>
+        <location line="-323"/>
         <source>Group Chat</source>
         <translation>Gruppenchat</translation>
     </message>
     <message>
-        <location line="+454"/>
+        <location line="+451"/>
         <source>Attach File</source>
         <translation>Datei anhängen</translation>
     </message>
@@ -7890,7 +7890,7 @@ p, li { white-space: pre-wrap; }
         <translation>Nachrichtenverlauf</translation>
     </message>
     <message>
-        <location line="-775"/>
+        <location line="-772"/>
         <source>Friends</source>
         <translation>Freunde</translation>
     </message>
@@ -9504,22 +9504,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/RemoteDirModel.cpp" line="-472"/>
         <source>Anonymous</source>
-        <translation type="unfinished">Anonym</translation>
+        <translation>Anonym</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Anonymous and browsable by friends</source>
-        <translation type="unfinished">Anonym und Durchsuchbar von Freunden</translation>
+        <translation>Anonym und Durchsuchbar von Freunden</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Only browsable by friends</source>
-        <translation type="unfinished">Nur Durchsuchbar von Freunden</translation>
+        <translation>Nur Durchsuchbar von Freunden</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>NEW</source>
-        <translation type="unfinished">NEU</translation>
+        <translation>NEU</translation>
     </message>
 </context>
 <context>
@@ -11393,7 +11393,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location line="+13"/>
         <source>Clean certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>Bereinige Zertifikat</translation>
     </message>
     <message>
         <location line="+107"/>
