@@ -23,7 +23,7 @@
 #include <QFile>
 #include <QDateTime>
 #include <QMessageBox>
-#include <QItemDelegate>
+#include <QKeyEvent>
 
 #include "ForumsDialog.h"
 #include "forums/CreateForum.h"
@@ -207,6 +207,8 @@ ForumsDialog::ForumsDialog(QWidget *parent)
     ttheader->hideSection (COLUMN_THREAD_CONTENT);
 
     insertThreads();
+
+    ui.threadTreeWidget->installEventFilter(this);
 
     /* Hide platform specific features */
 #ifdef Q_WS_WIN
@@ -397,6 +399,23 @@ void ForumsDialog::threadListCustomPopupMenu( QPoint point )
     contextMnu.addAction( collapseAll);
 
     contextMnu.exec(QCursor::pos());
+}
+
+bool ForumsDialog::eventFilter(QObject *obj, QEvent *event)
+{
+    if (obj == ui.threadTreeWidget) {
+        if (event->type() == QEvent::KeyPress) {
+            QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+            if (keyEvent && keyEvent->key() == Qt::Key_Space) {
+                // Space pressed
+                QTreeWidgetItem *item = ui.threadTreeWidget->currentItem ();
+                clickedThread (item, COLUMN_THREAD_READ);
+                return true; // eat event
+            }
+        }
+    }
+    // pass the event on to the parent class
+    return RsAutoUpdatePage::eventFilter(obj, event);
 }
 
 void ForumsDialog::restoreForumKeys(void)

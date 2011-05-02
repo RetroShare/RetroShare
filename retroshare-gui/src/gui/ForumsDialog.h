@@ -41,6 +41,9 @@ public:
     /* overloaded from RsAuthUpdatePage */
     virtual void updateDisplay();
 
+protected:
+    bool eventFilter(QObject *obj, QEvent *ev);
+
 private slots:
     /** Create the context popup menu and it's submenus */
     void forumListCustomPopupMenu( QPoint point );

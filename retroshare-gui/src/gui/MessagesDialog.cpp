@@ -19,7 +19,6 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include <QItemDelegate>
 #include <QMessageBox>
 #include <QPainter>
 #include <QPaintEvent>
@@ -371,6 +370,8 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     timer->setSingleShot(true);
     connect(timer, SIGNAL(timeout()), this, SLOT(updateCurrentMessage()));
 
+    ui.messagestreeView->installEventFilter(this);
+
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
@@ -437,6 +438,24 @@ void MessagesDialog::processSettings(bool bLoad)
     Settings->endGroup();
 
     m_bProcessSettings = false;
+}
+
+bool MessagesDialog::eventFilter(QObject *obj, QEvent *event)
+{
+    if (obj == ui.messagestreeView) {
+        if (event->type() == QEvent::KeyPress) {
+            QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+            if (keyEvent && keyEvent->key() == Qt::Key_Space) {
+                // Space pressed
+                QModelIndex currentIndex = ui.messagestreeView->currentIndex();
+                QModelIndex index = ui.messagestreeView->model()->index(currentIndex.row(), COLUMN_UNREAD, currentIndex.parent());
+                clicked(index);
+                return true; // eat event
+            }
+        }
+    }
+    // pass the event on to the parent class
+    return MainPage::eventFilter(obj, event);
 }
 
 void MessagesDialog::fillTags()

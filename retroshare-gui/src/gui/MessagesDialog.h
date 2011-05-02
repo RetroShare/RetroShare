@@ -48,6 +48,9 @@ public:
 // replaced by shortcut
 //  virtual void keyPressEvent(QKeyEvent *) ;
 
+protected:
+  bool eventFilter(QObject *obj, QEvent *ev);
+
 public slots:
   void insertMessages();
   void messagesTagsChanged();
