@@ -21,11 +21,10 @@
 
 #include "ForumNewItem.h"
 #include "FeedHolder.h"
-#include "gui/MainWindow.h"
-#include "gui/ForumsDialog.h"
 
 #include <retroshare/rsforums.h>
 #include "gui/forums/CreateForumMsg.h"
+#include "gui/RetroShareLink.h"
 
 /****
  * #define DEBUG_ITEM 1
@@ -44,7 +43,6 @@ ForumNewItem::ForumNewItem(FeedHolder *parent, uint32_t feedId, std::string foru
   /* general ones */
   connect( expandButton, SIGNAL( clicked( void ) ), this, SLOT( toggle ( void ) ) );
   connect( clearButton, SIGNAL( clicked( void ) ), this, SLOT( removeItem ( void ) ) );
-  connect( gotoButton, SIGNAL( clicked( void ) ), this, SLOT( gotoHome ( void ) ) );
 
   /* specific ones */
   connect( subscribeButton, SIGNAL( clicked( void ) ), this, SLOT( subscribeForum ( void ) ) );
@@ -72,7 +70,8 @@ void ForumNewItem::updateItemStatic()
 	ForumInfo fi;
 	if (rsForums->getForumInfo(mForumId, fi))
 	{
-		nameLabel->setText(QString::fromStdWString(fi.forumName));
+		RetroShareLink link(RetroShareLink::TYPE_FORUM, QString::fromStdWString(fi.forumName), QString::fromStdString(fi.forumId), "");
+		nameLabel->setText(link.toHtml());
 
 		descLabel->setText(QString::fromStdWString(fi.forumDesc));
 
@@ -86,7 +85,6 @@ void ForumNewItem::updateItemStatic()
 			subscribeButton->setEnabled(true);
 			postButton->setEnabled(false);
 		}
-			
 
 		/* should also check the other flags */
 	}
@@ -110,7 +108,6 @@ void ForumNewItem::updateItemStatic()
 	{
 		/* disable buttons */
 		clearButton->setEnabled(false);
-		//gotoButton->setEnabled(false);
 	}
 }
 
@@ -161,20 +158,6 @@ void ForumNewItem::removeItem()
 	}
 }
 
-
-void ForumNewItem::gotoHome()
-{
-#ifdef DEBUG_ITEM
-	std::cerr << "ForumNewItem::gotoHome()";
-	std::cerr << std::endl;
-#endif
-
-	MainWindow::showWindow(MainWindow::Forums);
-	ForumsDialog *forumsDialog = dynamic_cast<ForumsDialog*>(MainWindow::getPage(MainWindow::Forums));
-	if (forumsDialog) {
-		forumsDialog->navigate(mForumId, "");
-	}
-}
 
 /*********** SPECIFIC FUNCTIOSN ***********************/
 

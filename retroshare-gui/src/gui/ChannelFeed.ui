@@ -507,27 +507,7 @@ border-image: url(:/images/btn_26_pressed.png) 4;
              </widget>
             </item>
             <item row="0" column="5">
-             <widget class="QToolButton" name="autoDownload">
-              <property name="styleSheet">
-               <string notr="true">QToolButton, QPushButton, QComboBox { 
-border-image: url(:/images/btn_26.png) 4;
-border-width: 4;
-padding: 0px 6px;
-font-size: 12px;
-}
-
-QToolButton:hover, QPushButton:hover, QComboBox:hover { 
-border-image: url(:/images/btn_26_hover.png) 4;
-}
-
-QToolButton:disabled, QPushButton:disabled, QComboBox::disabled {
-color:gray;
-}
-
-QToolButton:pressed, QPushButton:pressed{
-border-image: url(:/images/btn_26_pressed.png) 4;
-}</string>
-              </property>
+             <widget class="QPushButton" name="autoDownload">
               <property name="text">
                <string>Enable Auto-download</string>
               </property>

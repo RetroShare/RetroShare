@@ -28,8 +28,6 @@
 #include "SubFileItem.h"
 #include "gui/notifyqt.h"
 #include "util/misc.h"
-#include "gui/MainWindow.h"
-#include "gui/ChannelFeed.h"
 #include "gui/RetroShareLink.h"
 
 #include <retroshare/rschannels.h>
@@ -56,7 +54,6 @@ ChanMsgItem::ChanMsgItem(FeedHolder *parent, uint32_t feedId, std::string chanId
   /* general ones */
   connect( expandButton, SIGNAL( clicked( void ) ), this, SLOT( toggle ( void ) ) );
   connect( clearButton, SIGNAL( clicked( void ) ), this, SLOT( removeItem ( void ) ) );
-  connect( gotoButton, SIGNAL( clicked( void ) ), this, SLOT( gotoHome ( void ) ) );
 
   /* specific */
   connect( unsubscribeButton, SIGNAL( clicked( void ) ), this, SLOT( unsubscribeChannel ( void ) ) );
@@ -106,10 +103,12 @@ void ChanMsgItem::updateItemStatic()
 
 	if (!mIsHome)
 	{
-		title = "Channel Feed: ";
-		title += QString::fromStdWString(ci.channelName);
+		title = tr("Channel Feed") + ": ";
+		RetroShareLink link(RetroShareLink::TYPE_CHANNEL, QString::fromStdWString(ci.channelName), QString::fromStdString(ci.channelId), "");
+		title += link.toHtml();
 		titleLabel->setText(title);
-		subjectLabel->setText(QString::fromStdWString(cmi.subject));
+		RetroShareLink msgLink(RetroShareLink::TYPE_CHANNEL, QString::fromStdWString(cmi.subject), QString::fromStdString(cmi.channelId), QString::fromStdString(cmi.msgId));
+		subjectLabel->setText(msgLink.toHtml());
 
 		if ((ci.channelFlags & RS_DISTRIB_SUBSCRIBED) || (ci.channelFlags & RS_DISTRIB_ADMIN)) {
 			unsubscribeButton->setEnabled(true);
@@ -118,7 +117,6 @@ void ChanMsgItem::updateItemStatic()
 		}
 		readButton->hide();
 		newLabel->hide();
-		gotoButton->show();
 		copyLinkButton->hide();
 	}
 	else
@@ -132,7 +130,6 @@ void ChanMsgItem::updateItemStatic()
 		unsubscribeButton->setEnabled(false);
 		clearButton->hide();
 		unsubscribeButton->hide();
-		gotoButton->hide();
 		copyLinkButton->show();
 
 		if ((ci.channelFlags & RS_DISTRIB_SUBSCRIBED) || (ci.channelFlags & RS_DISTRIB_ADMIN)) {
@@ -334,21 +331,6 @@ void ChanMsgItem::removeItem()
 	}
 }
 
-
-void ChanMsgItem::gotoHome()
-{
-#ifdef DEBUG_ITEM
-	std::cerr << "ChanMsgItem::gotoHome()";
-	std::cerr << std::endl;
-#endif
-
-	MainWindow::showWindow(MainWindow::Channels);
-	ChannelFeed *channelFeed = dynamic_cast<ChannelFeed*>(MainWindow::getPage(MainWindow::Channels));
-	if (channelFeed) {
-		channelFeed->navigate(mChanId, mMsgId);
-	}
-}
-
 /*********** SPECIFIC FUNCTIONS ***********************/
 
 void ChanMsgItem::unsubscribeChannel()
@@ -419,9 +401,9 @@ void ChanMsgItem::copyLink()
 		return;
 	}
 
-	ChannelInfo ci;
-	if (rsChannels->getChannelInfo(mChanId, ci)) {
-		RetroShareLink link(RetroShareLink::TYPE_CHANNEL, QString::fromStdWString(ci.channelName), QString::fromStdString(ci.channelId), QString::fromStdString(mMsgId));
+	ChannelMsgInfo cmi;
+	if (rsChannels->getChannelMessage(mChanId, mMsgId, cmi)) {
+		RetroShareLink link(RetroShareLink::TYPE_CHANNEL, QString::fromStdWString(cmi.subject), QString::fromStdString(cmi.channelId), QString::fromStdString(cmi.msgId));
 		if (link.valid() && link.type() == RetroShareLink::TYPE_CHANNEL) {
 			std::vector<RetroShareLink> urls;
 			urls.push_back(link);

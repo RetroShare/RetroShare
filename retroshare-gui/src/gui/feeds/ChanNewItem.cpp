@@ -21,8 +21,7 @@
 
 #include "ChanNewItem.h"
 #include "FeedHolder.h"
-#include "gui/MainWindow.h"
-#include "gui/ChannelFeed.h"
+#include "gui/RetroShareLink.h"
 
 #include <retroshare/rschannels.h>
 
@@ -45,7 +44,6 @@ ChanNewItem::ChanNewItem(FeedHolder *parent, uint32_t feedId, std::string chanId
   /* general ones */
   connect( expandButton, SIGNAL( clicked( void ) ), this, SLOT( toggle ( void ) ) );
   connect( clearButton, SIGNAL( clicked( void ) ), this, SLOT( removeItem ( void ) ) );
-  connect( gotoButton, SIGNAL( clicked( void ) ), this, SLOT( gotoHome ( void ) ) );
 
   /* specific ones */
   connect( subscribeButton, SIGNAL( clicked( void ) ), this, SLOT( subscribeChannel ( void ) ) );
@@ -71,7 +69,8 @@ void ChanNewItem::updateItemStatic()
 	ChannelInfo ci;
 	if (rsChannels->getChannelInfo(mChanId, ci))
 	{
-		nameLabel->setText(QString::fromStdWString(ci.channelName));
+		RetroShareLink link(RetroShareLink::TYPE_CHANNEL, QString::fromStdWString(ci.channelName), QString::fromStdString(ci.channelId), "");
+		nameLabel->setText(link.toHtml());
 
 		descLabel->setText(QString::fromStdWString(ci.channelDesc));
 		
@@ -101,25 +100,24 @@ void ChanNewItem::updateItemStatic()
 	}
 	else
 	{
-		nameLabel->setText("Unknown Channel");
+		nameLabel->setText(tr("Unknown Channel"));
 		titleLabel->setText("Channel ???");
 		descLabel->setText("");
 	}
 
 	if (mIsNew)
 	{
-		titleLabel->setText("New Channel");
+		titleLabel->setText(tr("New Channel"));
 	}
 	else
 	{
-		titleLabel->setText("Updated Channel");
+		titleLabel->setText(tr("Updated Channel"));
 	}
 
 	if (mIsHome)
 	{
 		/* disable buttons */
 		clearButton->setEnabled(false);
-		//gotoButton->setEnabled(false);
 	}
 }
 
@@ -170,20 +168,6 @@ void ChanNewItem::removeItem()
 	}
 }
 
-
-void ChanNewItem::gotoHome()
-{
-#ifdef DEBUG_ITEM
-	std::cerr << "ChanNewItem::gotoHome()";
-	std::cerr << std::endl;
-#endif
-
-	MainWindow::showWindow(MainWindow::Channels);
-	ChannelFeed *channelFeed = dynamic_cast<ChannelFeed*>(MainWindow::getPage(MainWindow::Channels));
-	if (channelFeed) {
-		channelFeed->navigate(mChanId, "");
-	}
-}
 
 /*********** SPECIFIC FUNCTIOSN ***********************/
 

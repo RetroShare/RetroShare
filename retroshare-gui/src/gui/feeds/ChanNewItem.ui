@@ -75,6 +75,9 @@ border-radius: 2px;}</string>
           <property name="alignment">
            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
           </property>
+          <property name="openExternalLinks">
+           <bool>true</bool>
+          </property>
          </widget>
         </item>
         <item row="1" column="1">
@@ -94,6 +97,9 @@ border-radius: 2px;}</string>
           </property>
           <property name="text">
            <string notr="true">New Channel</string>
+          </property>
+          <property name="openExternalLinks">
+           <bool>false</bool>
           </property>
          </widget>
         </item>
@@ -116,26 +122,6 @@ border-radius: 2px;}</string>
            </size>
           </property>
          </spacer>
-        </item>
-        <item>
-         <widget class="QPushButton" name="gotoButton">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="toolTip">
-           <string>Go to Channel</string>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset resource="../images.qrc">
-            <normaloff>:/images/find-16.png</normaloff>:/images/find-16.png</iconset>
-          </property>
-         </widget>
         </item>
         <item>
          <widget class="QPushButton" name="subscribeButton">

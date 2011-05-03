@@ -64,7 +64,7 @@ border-radius: 10px}</string>
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap resource="../images.qrc">:/images/konversation.png</pixmap>
+           <pixmap>:/images/konversation.png</pixmap>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -92,6 +92,9 @@ border-radius: 10px}</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+          </property>
+          <property name="openExternalLinks">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -144,7 +147,7 @@ border-radius: 10px}</string>
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../images.qrc">
+           <iconset>
             <normaloff>:/images/edit_add24.png</normaloff>:/images/edit_add24.png</iconset>
           </property>
          </widget>
@@ -164,7 +167,7 @@ border-radius: 10px}</string>
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../images.qrc">
+           <iconset>
             <normaloff>:/images/close_normal.png</normaloff>:/images/close_normal.png</iconset>
           </property>
          </widget>
@@ -203,6 +206,9 @@ border-radius: 10px}</string>
          <widget class="QLabel" name="subjectLabel">
           <property name="text">
            <string notr="true">Subject...</string>
+          </property>
+          <property name="openExternalLinks">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -246,26 +252,6 @@ border-radius: 10px}</string>
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="gotoButton">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="toolTip">
-           <string>Go to Forum Message</string>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset resource="../images.qrc">
-            <normaloff>:/images/find-16.png</normaloff>:/images/find-16.png</iconset>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="QPushButton" name="unsubscribeButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -280,7 +266,7 @@ border-radius: 10px}</string>
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../images.qrc">
+           <iconset>
             <normaloff>:/images/mail_delete.png</normaloff>:/images/mail_delete.png</iconset>
           </property>
          </widget>
@@ -316,7 +302,7 @@ border-radius: 10px}</string>
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../images.qrc">
+           <iconset>
             <normaloff>:/images/replymail24.png</normaloff>:/images/replymail24.png</iconset>
           </property>
          </widget>
@@ -405,6 +391,9 @@ border-radius: 10px}</string>
              </property>
              <property name="text">
               <string notr="true">Message is about ???</string>
+             </property>
+             <property name="openExternalLinks">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -567,6 +556,9 @@ border-radius: 10px}</string>
              <property name="text">
               <string notr="true">Message is about ???</string>
              </property>
+             <property name="openExternalLinks">
+              <bool>true</bool>
+             </property>
             </widget>
            </item>
           </layout>
@@ -659,8 +651,6 @@ border-radius: 10px}</string>
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="../images.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

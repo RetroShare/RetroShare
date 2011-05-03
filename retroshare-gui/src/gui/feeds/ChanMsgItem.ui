@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>583</width>
+    <width>546</width>
     <height>208</height>
    </rect>
   </property>
@@ -150,9 +150,12 @@ p, li { white-space: pre-wrap; }
           <property name="scaledContents">
            <bool>false</bool>
           </property>
+          <property name="openExternalLinks">
+           <bool>true</bool>
+          </property>
          </widget>
         </item>
-        <item row="0" column="8" rowspan="2" colspan="5">
+        <item row="0" column="7" rowspan="2" colspan="5">
          <widget class="QLabel" name="datetimelabel">
           <property name="font">
            <font>
@@ -170,7 +173,7 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
-        <item row="2" column="9" colspan="4">
+        <item row="2" column="8" colspan="4">
          <widget class="QLabel" name="filelabel">
           <property name="font">
            <font>
@@ -185,7 +188,7 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
-        <item row="2" column="0" colspan="9">
+        <item row="2" column="0" colspan="8">
          <widget class="QLabel" name="subjectLabel">
           <property name="sizePolicy">
            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
@@ -207,6 +210,9 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;Short Description&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
           <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+          <property name="openExternalLinks">
            <bool>true</bool>
           </property>
          </widget>
@@ -319,14 +325,14 @@ border-radius: 3px}</string>
           </property>
          </widget>
         </item>
-        <item row="3" column="1" colspan="9">
+        <item row="3" column="1" colspan="8">
          <widget class="QLabel" name="warning_label">
           <property name="text">
            <string notr="true">TextLabel</string>
           </property>
          </widget>
         </item>
-        <item row="4" column="8" colspan="2">
+        <item row="4" column="7" colspan="2">
          <widget class="QPushButton" name="unsubscribeButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -352,7 +358,7 @@ border-radius: 3px}</string>
           </property>
          </widget>
         </item>
-        <item row="4" column="11">
+        <item row="4" column="10">
          <widget class="QPushButton" name="clearButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -378,7 +384,7 @@ border-radius: 3px}</string>
           </property>
          </widget>
         </item>
-        <item row="4" column="12">
+        <item row="4" column="11">
          <widget class="QPushButton" name="expandButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -408,32 +414,6 @@ border-radius: 3px}</string>
          </widget>
         </item>
         <item row="4" column="6">
-         <widget class="QPushButton" name="gotoButton">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>24</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="toolTip">
-           <string>Go to Channel Message</string>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset resource="../images.qrc">
-            <normaloff>:/images/find-16.png</normaloff>:/images/find-16.png</iconset>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="7">
          <widget class="QPushButton" name="copyLinkButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">

@@ -44,7 +44,6 @@ public:
 
 private slots:
 	/* default stuff */
-	void gotoHome();
 	void removeItem();
 	void toggle();
 

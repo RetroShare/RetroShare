@@ -24,8 +24,7 @@
 
 #include "ForumMsgItem.h"
 #include "FeedHolder.h"
-#include "gui/MainWindow.h"
-#include "gui/ForumsDialog.h"
+#include "gui/RetroShareLink.h"
 
 #include <retroshare/rsforums.h>
 #include <retroshare/rsmsgs.h>
@@ -54,7 +53,6 @@ ForumMsgItem::ForumMsgItem(FeedHolder *parent, uint32_t feedId, const std::strin
   /* general ones */
   connect( expandButton, SIGNAL( clicked( void ) ), this, SLOT( toggle ( void ) ) );
   connect( clearButton, SIGNAL( clicked( void ) ), this, SLOT( removeItem ( void ) ) );
-  connect( gotoButton, SIGNAL( clicked( void ) ), this, SLOT( gotoHome ( void ) ) );
 
   /* specific ones */
   connect( unsubscribeButton, SIGNAL( clicked( void ) ), this, SLOT( unsubscribeForum ( void ) ) );
@@ -88,8 +86,9 @@ void ForumMsgItem::updateItemStatic()
 	ForumInfo fi;
 	if (rsForums->getForumInfo(mForumId, fi))
 	{
+		RetroShareLink link(RetroShareLink::TYPE_FORUM, QString::fromStdWString(fi.forumName), QString::fromStdString(fi.forumId), "");
 		QString title = tr("Forum Post") + ": ";
-		title += QString::fromStdWString(fi.forumName);
+		title += link.toHtml();
 
 		titleLabel->setText(title);
 		if (fi.subscribeFlags & (RS_DISTRIB_ADMIN | RS_DISTRIB_SUBSCRIBED))
@@ -135,6 +134,8 @@ void ForumMsgItem::updateItemStatic()
 			mIsTop = true;
 		}
 		
+		RetroShareLink link(RetroShareLink::TYPE_FORUM, QString::fromStdWString(msg.title), QString::fromStdString(msg.forumId), QString::fromStdString(msg.msgId));
+
 		if (mIsTop)
 		{		
 			mGpgIdPrev = msg.srcId;
@@ -148,7 +149,7 @@ void ForumMsgItem::updateItemStatic()
 				namelabel->setText(tr("Anonymous"));
 			}
 
-			prevSubLabel->setText(QString::fromStdWString(msg.title));
+			prevSubLabel->setText(link.toHtml());
 			prevMsgLabel->setText(RsHtml::formatText(QString::fromStdWString(msg.msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 			
             QDateTime qtime;
@@ -171,7 +172,7 @@ void ForumMsgItem::updateItemStatic()
 				nextnamelabel->setText(tr("Anonymous"));
 			}
 
-			nextSubLabel->setText(QString::fromStdWString(msg.title));
+			nextSubLabel->setText(link.toHtml());
 			nextMsgLabel->setText(RsHtml::formatText(QString::fromStdWString(msg.msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 			
 			QDateTime qtime;
@@ -186,7 +187,8 @@ void ForumMsgItem::updateItemStatic()
 			{
 				mGpgIdPrev = msgParent.srcId;
 
-				prevSubLabel->setText(QString::fromStdWString(msgParent.title));
+				RetroShareLink linkParent(RetroShareLink::TYPE_FORUM, QString::fromStdWString(msgParent.title), QString::fromStdString(msgParent.forumId), QString::fromStdString(msgParent.msgId));
+				prevSubLabel->setText(linkParent.toHtml());
 				prevMsgLabel->setText(RsHtml::formatText(QString::fromStdWString(msgParent.msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 				
 				if (rsPeers->getPeerName(msgParent.srcId) !="")
@@ -208,7 +210,6 @@ void ForumMsgItem::updateItemStatic()
 		/* header stuff */
 		subjectLabel->setText(QString::fromStdWString(msg.title));
 		srcLabel->setText(QString::fromStdString(msg.srcId));
-
 	}
 
 	if (mIsHome)
@@ -282,21 +283,6 @@ void ForumMsgItem::removeItem()
 	if (mParent)
 	{
 		mParent->deleteFeedItem(this, mFeedId);
-	}
-}
-
-
-void ForumMsgItem::gotoHome()
-{
-#ifdef DEBUG_ITEM
-	std::cerr << "ForumMsgItem::gotoHome()";
-	std::cerr << std::endl;
-#endif
-
-	MainWindow::showWindow(MainWindow::Forums);
-	ForumsDialog *forumsDialog = dynamic_cast<ForumsDialog*>(MainWindow::getPage(MainWindow::Forums));
-	if (forumsDialog) {
-		forumsDialog->navigate(mForumId, mPostId);
 	}
 }
 
