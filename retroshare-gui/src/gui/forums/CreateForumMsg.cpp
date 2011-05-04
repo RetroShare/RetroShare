@@ -237,8 +237,8 @@ void CreateForumMsg::fileHashingFinished(AttachFileItem* file) {
 	    return;
 	}
 
-	RetroShareLink link(QString::fromUtf8(file->FileName().c_str()), file->FileSize(), QString::fromStdString(file->FileHash()));
-	if (link.valid()) {
+	RetroShareLink link;
+	if (link.createFile(QString::fromUtf8(file->FileName().c_str()), file->FileSize(), QString::fromStdString(file->FileHash()))) {
 		QString mesgString = link.toHtmlSize() + "<br>";
 
 #ifdef CHAT_DEBUG

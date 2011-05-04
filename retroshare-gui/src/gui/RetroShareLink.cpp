@@ -32,6 +32,7 @@
 #include "MainWindow.h"
 #include "ForumsDialog.h"
 #include "ChannelFeed.h"
+#include "SearchDialog.h"
 #include "util/misc.h"
 #include "common/PeerDefs.h"
 
@@ -46,7 +47,7 @@
 #define HOST_PERSON     "person"
 #define HOST_FORUM      "forum"
 #define HOST_CHANNEL    "channel"
-#define HOST_REGEXP     "file|person|forum|channel"
+#define HOST_REGEXP     "file|person|forum|channel|search"
 
 #define FILE_NAME       "name"
 #define FILE_SIZE       "size"
@@ -62,6 +63,9 @@
 #define CHANNEL_NAME    "name"
 #define CHANNEL_ID      "id"
 #define CHANNEL_MSGID   "msgid"
+
+#define HOST_SEARCH     "search"
+#define SEARCH_KEYWORDS "keywords"
 
 RetroShareLink::RetroShareLink(const QUrl& url)
 {
@@ -161,7 +165,6 @@ void RetroShareLink::fromUrl(const QUrl& url)
         _type = TYPE_PERSON;
         _name = url.queryItemValue(PERSON_NAME);
         _hash = url.queryItemValue(PERSON_HASH).left(40);	// normally not necessary, but it's a security.
-        _size = 0;
         check();
         return;
     }
@@ -171,7 +174,6 @@ void RetroShareLink::fromUrl(const QUrl& url)
         _name = url.queryItemValue(FORUM_NAME);
         _hash = url.queryItemValue(FORUM_ID);
         _msgId = url.queryItemValue(FORUM_MSGID);
-        _size = 0;
         check();
         return;
     }
@@ -181,7 +183,13 @@ void RetroShareLink::fromUrl(const QUrl& url)
         _name = url.queryItemValue(CHANNEL_NAME);
         _hash = url.queryItemValue(CHANNEL_ID);
         _msgId = url.queryItemValue(CHANNEL_MSGID);
-        _size = 0;
+        check();
+        return;
+    }
+
+    if (url.host() == HOST_SEARCH) {
+        _type = TYPE_SEARCH;
+        _name = url.queryItemValue(SEARCH_KEYWORDS);
         check();
         return;
     }
@@ -194,44 +202,82 @@ void RetroShareLink::fromUrl(const QUrl& url)
     clear();
 }
 
-// file
-RetroShareLink::RetroShareLink(const QString & name, uint64_t size, const QString & hash)
-    : _name(name),_size(size),_hash(hash)
+RetroShareLink::RetroShareLink()
 {
-    _valid = false;
+    clear();
+}
+
+bool RetroShareLink::createFile(const QString& name, uint64_t size, const QString& hash)
+{
+    clear();
+
+    _name = name;
+    _size = size;
+    _hash = hash;
+
     _type = TYPE_FILE;
-    check() ;
+
+    check();
+
+    return valid();
 }
 
-// person
-RetroShareLink::RetroShareLink(const QString & name, const QString & hash)
-    : _name(name),_size(0),_hash(hash)
+bool RetroShareLink::createPerson(const QString& name, const QString& hash)
 {
-    _valid = false;
+    clear();
+
+    _name = name;
+    _hash = hash;
+
     _type = TYPE_PERSON;
-    check() ;
+
+    check();
+
+    return valid();
 }
 
-// forum, channel
-RetroShareLink::RetroShareLink(enumType type, const QString& name, const QString& id, const QString& msgId)
-    : _name(name),_size(0),_hash(id),_msgId(msgId)
+bool RetroShareLink::createForum(const QString& name, const QString& id, const QString& msgId)
 {
-    _valid = false;
-    _type = TYPE_UNKNOWN;
+    clear();
 
-    switch (type) {
-    case TYPE_UNKNOWN:
-    case TYPE_FILE:
-    case TYPE_PERSON:
-        // wrong type
-        break;
-    case TYPE_FORUM:
-    case TYPE_CHANNEL:
-        _type = type;
-        break;
-    }
+    _name = name;
+    _hash = id;
+    _msgId = msgId;
 
-    check() ;
+    _type = TYPE_FORUM;
+
+    check();
+
+    return valid();
+}
+
+bool RetroShareLink::createChannel(const QString& name, const QString& id, const QString& msgId)
+{
+    clear();
+
+    _name = name;
+    _size = 0;
+    _hash = id;
+    _msgId = msgId;
+
+    _type = TYPE_CHANNEL;
+
+    check();
+
+    return valid();
+}
+
+bool RetroShareLink::createSearch(const QString& keywords)
+{
+    clear();
+
+    _name = keywords;
+
+    _type = TYPE_SEARCH;
+
+    check();
+
+    return valid();
 }
 
 void RetroShareLink::clear()
@@ -291,6 +337,16 @@ void RetroShareLink::check()
         if(_hash.isEmpty())
             _valid = false;
         break;
+    case TYPE_SEARCH:
+        if(_size != 0)
+            _valid = false;
+
+        if(_name.isEmpty())
+            _valid = false;
+
+        if(!_hash.isEmpty())
+            _valid = false;
+        break;
     }
 
     if(!_valid) // we should throw an exception instead of this crap, but drbob doesn't like exceptions. Why ???
@@ -316,6 +372,7 @@ QString RetroShareLink::title() const
 	case TYPE_PERSON:
 	case TYPE_FORUM:
 	case TYPE_CHANNEL:
+	case TYPE_SEARCH:
 		break;
 	}
 
@@ -383,6 +440,19 @@ QString RetroShareLink::toString(bool encoded /*= true*/) const
             if (!_msgId.isEmpty()) {
                 url.addQueryItem(CHANNEL_MSGID, _msgId);
             }
+
+            if (encoded) {
+                return url.toEncoded();
+            }
+
+            return url.toString();
+        }
+    case TYPE_SEARCH:
+        {
+            QUrl url;
+            url.setScheme(RSLINK_SCHEME);
+            url.setHost(HOST_SEARCH);
+            url.addQueryItem(SEARCH_KEYWORDS, _name);
 
             if (encoded) {
                 return url.toEncoded();
@@ -640,6 +710,22 @@ bool RetroShareLink::process(int flag)
             }
 
             return channelFeed->navigate(ci.channelId, msg.msgId);
+        }
+
+    case TYPE_SEARCH:
+        {
+#ifdef DEBUG_RSLINK
+            std::cerr << " RetroShareLink::process SearchRequest : string : " << name().toStdString() << std::endl;
+#endif
+
+            MainWindow::showWindow(MainWindow::Search);
+            SearchDialog *searchDialog = dynamic_cast<SearchDialog*>(MainWindow::getPage(MainWindow::Search));
+            if (!searchDialog) {
+                return false;
+            }
+
+            searchDialog->searchKeywords(name());
+            return true;
         }
     }
 

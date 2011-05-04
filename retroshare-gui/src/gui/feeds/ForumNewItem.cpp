@@ -70,7 +70,8 @@ void ForumNewItem::updateItemStatic()
 	ForumInfo fi;
 	if (rsForums->getForumInfo(mForumId, fi))
 	{
-		RetroShareLink link(RetroShareLink::TYPE_FORUM, QString::fromStdWString(fi.forumName), QString::fromStdString(fi.forumId), "");
+		RetroShareLink link;
+		link.createForum(QString::fromStdWString(fi.forumName), QString::fromStdString(fi.forumId), "");
 		nameLabel->setText(link.toHtml());
 
 		descLabel->setText(QString::fromStdWString(fi.forumDesc));

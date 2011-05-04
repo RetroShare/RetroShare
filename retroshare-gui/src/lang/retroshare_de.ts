@@ -853,13 +853,13 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ChanMsgItem</name>
     <message>
-        <location filename="../gui/feeds/ChanMsgItem.ui" line="+373"/>
+        <location filename="../gui/feeds/ChanMsgItem.ui" line="+376"/>
         <source>Remove Item</source>
         <translation>Eintrag entfernen</translation>
     </message>
     <message>
         <location line="+26"/>
-        <location filename="../gui/feeds/ChanMsgItem.cpp" line="+317"/>
+        <location filename="../gui/feeds/ChanMsgItem.cpp" line="+319"/>
         <source>Expand</source>
         <translation>Erweitern</translation>
     </message>
@@ -906,12 +906,12 @@ p, li { white-space: pre-wrap; }
         <translation>Kopiere RetroShare Link</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ChanMsgItem.cpp" line="-211"/>
+        <location filename="../gui/feeds/ChanMsgItem.cpp" line="-213"/>
         <source>Channel Feed</source>
         <translation>Kanal</translation>
     </message>
     <message>
-        <location line="+110"/>
+        <location line="+112"/>
         <source>Warning! You have less than %1 hours and %2 minute before this file is delted Consider saving it.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -938,7 +938,7 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Gehe zum Kanal</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ChanNewItem.cpp" line="+103"/>
+        <location filename="../gui/feeds/ChanNewItem.cpp" line="+104"/>
         <source>Unknown Channel</source>
         <translation>Unbekannter Kanal</translation>
     </message>
@@ -3592,7 +3592,7 @@ p, li { white-space: pre-wrap; }
         <translation>Unterzeichnen</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ForumMsgItem.cpp" line="+90"/>
+        <location filename="../gui/feeds/ForumMsgItem.cpp" line="+91"/>
         <source>Forum Post</source>
         <translation>Beitrag</translation>
     </message>
@@ -3602,19 +3602,19 @@ p, li { white-space: pre-wrap; }
         <translation>Unbekannter Forumbeitrag</translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+35"/>
         <location line="+23"/>
-        <location line="+28"/>
+        <location line="+29"/>
         <source>Anonymous</source>
         <translation>Anonym</translation>
     </message>
     <message>
-        <location line="-17"/>
+        <location line="-18"/>
         <source>In Reply to</source>
         <translation>Als Antwort auf</translation>
     </message>
     <message>
-        <location line="+165"/>
+        <location line="+166"/>
         <source>Please give a Text Message</source>
         <translation>Bitte Nachricht eingeben</translation>
     </message>
@@ -7654,7 +7654,7 @@ p, li { white-space: pre-wrap; }
         <translation>Zusätzliche Datei hinzufügen</translation>
     </message>
     <message>
-        <location line="+95"/>
+        <location line="+97"/>
         <location line="+6"/>
         <source>Drop file error.</source>
         <translation>Dateifehler bei Drag&apos;n&apos;Drop.</translation>
@@ -7810,7 +7810,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="-162"/>
-        <location filename="../gui/PeersDialog.cpp" line="-1513"/>
+        <location filename="../gui/PeersDialog.cpp" line="-1515"/>
         <source>Add Friend</source>
         <translation>Freund hinzufügen</translation>
     </message>
@@ -7871,7 +7871,7 @@ p, li { white-space: pre-wrap; }
         <translation>Willst du diesen Freund entfernen?</translation>
     </message>
     <message>
-        <location line="+734"/>
+        <location line="+736"/>
         <source>Save as...</source>
         <translation>Speichern unter...</translation>
     </message>
@@ -7891,7 +7891,7 @@ p, li { white-space: pre-wrap; }
         <translation>Status Spalte ausblenden</translation>
     </message>
     <message>
-        <location filename="../gui/PeersDialog.cpp" line="-649"/>
+        <location filename="../gui/PeersDialog.cpp" line="-651"/>
         <source>is typing...</source>
         <translation>tippt...</translation>
     </message>
@@ -8958,7 +8958,7 @@ Lockdatei:
         <translation>Vielleicht ist das Passwort falsch</translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="+508"/>
+        <location filename="../gui/RetroShareLink.cpp" line="+578"/>
         <source>File Request Confirmation</source>
         <translation>Bestätigung der Dateianforderung</translation>
     </message>
@@ -9054,7 +9054,7 @@ Lockdatei:
         <translation>Der Kanal &quot;%1&quot; konnte nicht gefunden werden.</translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+48"/>
         <source>File Request Error</source>
         <translation>Fehler bei der Dateianforderung</translation>
     </message>
@@ -9681,37 +9681,44 @@ p, li { white-space: pre-wrap; }
         <translation>Gib einen Suchbegriff ein (min. 3 Zeichen)</translation>
     </message>
     <message>
-        <location line="+181"/>
         <source>Copy retroshare Link</source>
+        <translation type="obsolete">Kopiere RetroShare Link</translation>
+    </message>
+    <message>
+        <source>Send retroshare Link</source>
+        <translation type="obsolete">Sende RetroShare Link</translation>
+    </message>
+    <message>
+        <source>Broadcast on Channel</source>
+        <translation type="obsolete">Im Kanal bekanntgeben</translation>
+    </message>
+    <message>
+        <source>Recommend to Friends</source>
+        <translation type="obsolete">Freunden empfehlen</translation>
+    </message>
+    <message>
+        <location line="+180"/>
+        <location line="+139"/>
+        <source>Copy RetroShare Link</source>
         <translation>Kopiere RetroShare Link</translation>
     </message>
     <message>
-        <location line="+3"/>
-        <source>Send retroshare Link</source>
+        <location line="-138"/>
+        <source>Send RetroShare Link</source>
         <translation>Sende RetroShare Link</translation>
     </message>
     <message>
-        <location line="+3"/>
-        <source>Broadcast on Channel</source>
-        <translation>Im Kanal bekanntgeben</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Recommend to Friends</source>
-        <translation>Freunden empfehlen</translation>
-    </message>
-    <message>
-        <location line="+140"/>
+        <location line="+135"/>
         <source>Remove</source>
         <translation>Entfernen</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+1"/>
         <source>Remove All</source>
         <translation>Alle entfernen</translation>
     </message>
     <message>
-        <location line="+351"/>
+        <location line="+372"/>
         <location line="+68"/>
         <source>Folder</source>
         <translation>Ordner</translation>
@@ -9772,7 +9779,7 @@ p, li { white-space: pre-wrap; }
         <translation>Such ID</translation>
     </message>
     <message>
-        <location filename="../gui/SearchDialog.cpp" line="-966"/>
+        <location filename="../gui/SearchDialog.cpp" line="-984"/>
         <source>Download Notice</source>
         <translation>Download</translation>
     </message>
@@ -11739,12 +11746,12 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location line="+124"/>
+        <location line="+126"/>
         <source>Details:</source>
         <translation>Details:</translation>
     </message>
     <message>
-        <location line="+186"/>
+        <location line="+190"/>
         <source>File preview</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11764,7 +11771,7 @@ p, li { white-space: pre-wrap; }
         <translation>Datei %1 ist nicht komplett. Wenn es eine Media Datei ist dann versuche &quot;Vorschau&quot;.</translation>
     </message>
     <message>
-        <location line="-375"/>
+        <location line="-381"/>
         <source>Are you sure that you want to cancel and delete these files?</source>
         <translation>Soll dieser Download wirklich abgebrochen und gelöscht werden?</translation>
     </message>

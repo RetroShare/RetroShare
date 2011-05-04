@@ -47,17 +47,18 @@
 class RetroShareLink
 {
 	public:
-		enum enumType { TYPE_UNKNOWN, TYPE_FILE, TYPE_PERSON, TYPE_FORUM, TYPE_CHANNEL };
+		enum enumType { TYPE_UNKNOWN, TYPE_FILE, TYPE_PERSON, TYPE_FORUM, TYPE_CHANNEL, TYPE_SEARCH };
 
 	public:
+		RetroShareLink();
 		RetroShareLink(const QUrl& url);
 		RetroShareLink(const QString& url);
-		// file
-		RetroShareLink(const QString& name, uint64_t size, const QString& hash);
-		// person
-		RetroShareLink(const QString& name, const QString& hash);
-		// forum, channel
-		RetroShareLink(enumType type, const QString& name, const QString& id, const QString& msgId);
+
+		bool createFile(const QString& name, uint64_t size, const QString& hash);
+		bool createPerson(const QString& name, const QString& hash);
+		bool createForum(const QString& name, const QString& id, const QString& msgId);
+		bool createChannel(const QString& name, const QString& id, const QString& msgId);
+		bool createSearch(const QString& keywords);
 
 		enumType type() const {return _type; }
 		uint64_t size() const { return _size ; }

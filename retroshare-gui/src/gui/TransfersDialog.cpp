@@ -1115,8 +1115,10 @@ void TransfersDialog::copyLink ()
 			continue;
 		}
 
-		RetroShareLink link(QString::fromStdString(info.fname), info.size, QString::fromStdString(info.hash));
-		links.push_back(link) ;
+		RetroShareLink link;
+		if (link.createFile(QString::fromStdString(info.fname), info.size, QString::fromStdString(info.hash))) {
+			links.push_back(link) ;
+		}
 	}
 
 	RSLinkClipboard::copyLinks(links) ;
@@ -1224,8 +1226,12 @@ void TransfersDialog::updateDetailsDialog()
     if (fname.isEmpty()) {
         detailsdlg->setLink("");
     } else {
-        RetroShareLink link(fname, filesize, fhash);
-        detailsdlg->setLink(link.toString());
+        RetroShareLink link;
+        if (link.createFile(fname, filesize, fhash)) {
+            detailsdlg->setLink(link.toString());
+        } else {
+            detailsdlg->setLink("");
+        }
     }
 
     FileChunksInfo info ;

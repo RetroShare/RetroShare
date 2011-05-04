@@ -383,8 +383,8 @@ static QString BuildRecommendHtml(std::list<std::string> &peerids)
             continue;
         }
 
-        RetroShareLink link(QString::fromUtf8(detail.name.c_str()), QString::fromStdString(detail.id));
-        if (link.valid() == false || link.type() != RetroShareLink::TYPE_PERSON) {
+        RetroShareLink link;
+        if (link.createPerson(QString::fromUtf8(detail.name.c_str()), QString::fromStdString(detail.id))) {
             continue;
         }
         text += link.toHtmlFull() + "<br>";

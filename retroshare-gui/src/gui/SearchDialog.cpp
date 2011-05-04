@@ -22,6 +22,7 @@
 #include <QMessageBox>
 #include <QDir>
 #include <QTimer>
+#include <QShortcut>
 
 #include "SearchDialog.h"
 #include "RetroShareLink.h"
@@ -192,6 +193,11 @@ SearchDialog::SearchDialog(QWidget *parent)
   	ui._anonF2Fsearch_CB->setMinimumWidth(20);
   	ui.label->setMinimumWidth(20);
 
+    // workaround for Qt bug, should be solved in next Qt release 4.7.0
+    // http://bugreports.qt.nokia.com/browse/QTBUG-8270
+    QShortcut *Shortcut = new QShortcut(QKeySequence (Qt::Key_Delete), ui.searchSummaryWidget, 0, 0, Qt::WidgetShortcut);
+    connect(Shortcut, SIGNAL(activated()), this, SLOT(searchRemove()));
+
 /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
@@ -278,26 +284,13 @@ void SearchDialog::searchtableWidgetCostumPopupMenu( QPoint point )
 
     QMenu contextMnu(this);
 
-    QAction* downloadAct = new QAction(QIcon(IMAGE_START), tr( "Download" ), &contextMnu );
-    connect( downloadAct , SIGNAL( triggered() ), this, SLOT( download() ) );
-
-    QAction* copysearchlinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Link" ), &contextMnu );
-    connect( copysearchlinkAct , SIGNAL( triggered() ), this, SLOT( copysearchLink() ) );
-        
-    QAction* sendrslinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Link" ), &contextMnu );
-    connect( sendrslinkAct , SIGNAL( triggered() ), this, SLOT( sendLinkTo( ) ) );
-
-    QAction* broadcastonchannelAct = new QAction( tr( "Broadcast on Channel" ), &contextMnu );
-    connect( broadcastonchannelAct , SIGNAL( triggered() ), this, SLOT( broadcastonchannel() ) );
-
-    QAction* recommendtofriendsAct = new QAction( tr( "Recommend to Friends" ), &contextMnu );
-    connect( recommendtofriendsAct , SIGNAL( triggered() ), this, SLOT( recommendtofriends() ) );
-
-    contextMnu.addAction( downloadAct);
+    contextMnu.addAction(QIcon(IMAGE_START), tr("Download"), this, SLOT(download()));
     contextMnu.addSeparator();
+    contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyResultLink()));
+    contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Send RetroShare Link"), this, SLOT(sendLinkTo()));
 
-    contextMnu.addAction( copysearchlinkAct);
-    contextMnu.addAction( sendrslinkAct);
+//    contextMnu.addAction(tr("Broadcast on Channel"), this, SLOT(broadcastonchannel()));
+//    contextMnu.addAction(tr("Recommend to Friends"), this, SLOT(recommendtofriends()));
 
     contextMnu.exec(QCursor::pos());
 }
@@ -429,15 +422,10 @@ void SearchDialog::searchtableWidget2CostumPopupMenu( QPoint point )
 
     QMenu contextMnu(this);
 
-    // create the menu as required
-    QAction* searchRemoveAct = new QAction(QIcon(IMAGE_REMOVE), tr( "Remove" ), &contextMnu );
-    connect( searchRemoveAct , SIGNAL( triggered() ), this, SLOT( searchRemove() ) );
-
-    QAction* searchRemoveAllAct = new QAction(QIcon(IMAGE_REMOVEALL), tr( "Remove All" ), &contextMnu );
-    connect( searchRemoveAllAct , SIGNAL( triggered() ), this, SLOT( searchRemoveAll() ) );
-
-    contextMnu.addAction( searchRemoveAct);
-    contextMnu.addAction( searchRemoveAllAct);
+    contextMnu.addAction(QIcon(IMAGE_REMOVE), tr("Remove"), this, SLOT(searchRemove()));
+    contextMnu.addAction(QIcon(IMAGE_REMOVE), tr("Remove All"), this, SLOT(searchRemoveAll()));
+    contextMnu.addSeparator();
+    contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copySearchLink()));
 
     contextMnu.exec(QCursor::pos());
 }
@@ -500,6 +488,26 @@ void SearchDialog::clearKeyword()
  	ui.lineEdit->setFocus();
 }
 
+void SearchDialog::copySearchLink()
+{
+    /* get the current search id from the summary window */
+    QTreeWidgetItem *ci = ui.searchSummaryWidget->currentItem();
+    if (!ci)
+        return;
+
+    /* get the keywords */
+    QString keywords = ci->text(SS_TEXT_COL);
+
+    std::cerr << "SearchDialog::copySearchLink(): keywords: " << keywords.toStdString();
+    std::cerr << std::endl;
+
+    RetroShareLink link;
+    if (link.createSearch(keywords)) {
+        std::vector<RetroShareLink> urls;
+        urls.push_back(link);
+        RSLinkClipboard::copyLinks(urls);
+    }
+}
 
 /* *****************************************************************
         Advanced search implementation
@@ -583,11 +591,14 @@ void SearchDialog::advancedSearch(Expression* expression)
 }
 
 
-
 void SearchDialog::searchKeywords()
 {
-	QString qTxt = ui.lineEdit->text();
-	std::string txt = qTxt.toStdString();
+	searchKeywords(ui.lineEdit->text());
+}
+
+void SearchDialog::searchKeywords(const QString& keywords)
+{
+	std::string txt = keywords.toStdString();
 
 	if(txt.length() < 3)
 		return ;
@@ -606,7 +617,7 @@ void SearchDialog::searchKeywords()
 	if(ui._friendListsearch_SB->isChecked() || ui._ownFiles_CB->isChecked())
 	{
 		/* extract keywords from lineEdit */
-		QStringList qWords = qTxt.split(" ", QString::SkipEmptyParts);
+		QStringList qWords = keywords.split(" ", QString::SkipEmptyParts);
 		std::list<std::string> words;
 		QStringListIterator qWordsIter(qWords);
 		while (qWordsIter.hasNext())
@@ -1275,7 +1286,7 @@ void SearchDialog::setIconAndType(QTreeWidgetItem *item, QString ext)
 	}
 }
 
-void SearchDialog::copysearchLink()
+void SearchDialog::copyResultLink()
 {
     /* should also be able to handle multi-selection */
     QList<QTreeWidgetItem*> itemsForCopy = ui.searchResultWidget->selectedItems();
@@ -1291,18 +1302,18 @@ void SearchDialog::copysearchLink()
 
 		 if (!item->childCount()) 
 		 {
-			 std::cerr << "SearchDialog::copysearchLink() Calling set retroshare link";
+			 std::cerr << "SearchDialog::copyResultLink() Calling set retroshare link";
 			 std::cerr << std::endl;
 
 			 QString fhash = item->text(SR_HASH_COL);
 			 qulonglong fsize = item->text(SR_SIZE_COL).toULongLong();
 			 QString fname = item->text(SR_NAME_COL);
 
-			 RetroShareLink link(fname, fsize, fhash);
-
-			 std::cerr << "new link added to clipboard: " << link.toString().toStdString() << std::endl ;
-			 if(link.valid() && link.type() == RetroShareLink::TYPE_FILE)
+			 RetroShareLink link;
+			 if (link.createFile(fname, fsize, fhash)) {
+				 std::cerr << "new link added to clipboard: " << link.toString().toStdString() << std::endl ;
 				 urls.push_back(link) ;
+			 }
 		 } 
 	 }
 	 RSLinkClipboard::copyLinks(urls) ;
@@ -1310,7 +1321,7 @@ void SearchDialog::copysearchLink()
 
 void SearchDialog::sendLinkTo( )
 {
-    copysearchLink();
+    copyResultLink();
 
     /* create a message */
     MessageComposer *nMsgDialog = MessageComposer::newMsg();

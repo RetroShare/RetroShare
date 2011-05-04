@@ -1897,9 +1897,11 @@ void PeersDialog::fileHashingFinished(AttachFileItem* file)
     //	sprintf(fileSizeChar, "%lld", file->FileSize());
     //	std::string fileSize = *(&fileSizeChar);
 
-    QString mesgString = RetroShareLink(QString::fromUtf8(file->FileName().c_str()),
-                                        file->FileSize(),
-                                        QString::fromStdString(file->FileHash())).toHtmlSize();
+    RetroShareLink link;
+    if (!link.createFile(QString::fromUtf8(file->FileName().c_str()), file->FileSize(), QString::fromStdString(file->FileHash()))) {
+        return;
+    }
+    QString mesgString = link.toHtmlSize();
 
     //	std::string mesgString = "<a href='retroshare://file|" + (file->FileName()) + "|" + fileSize + "|" + (file->FileHash()) + "'>"
     //	+ "retroshare://file|" + (file->FileName()) + "|" + fileSize +  "|" + (file->FileHash())  + "</a>";

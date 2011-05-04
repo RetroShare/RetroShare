@@ -1002,10 +1002,10 @@ void PopupChatDialog::fileHashingFinished(AttachFileItem* file)
         message+="\" width=\"48\" height=\"48\">";
         message+="<br>";
 	}
-    
 
-
-    message += RetroShareLink(QString::fromUtf8(file->FileName().c_str()),file->FileSize(),QString::fromStdString(file->FileHash())).toHtmlSize();
+    RetroShareLink link;
+    link.createFile(QString::fromUtf8(file->FileName().c_str()),file->FileSize(),QString::fromStdString(file->FileHash()));
+    message += link.toHtmlSize();
 
 #ifdef CHAT_DEBUG
     std::cerr << "PopupChatDialog::fileHashingFinished message : " << message.toStdString() << std::endl;

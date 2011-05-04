@@ -469,21 +469,21 @@ void SharedFilesDialog::copyLink (const QModelIndexList& lst, bool remote)
                 if (!rsFiles->RequestDirDetails(dirStub.ref, details, flags) || details.type != DIR_TYPE_FILE)
                     continue;
 
-                                         RetroShareLink link(QString::fromUtf8(details.name.c_str()), details.count, details.hash.c_str());
-
-					 if(link.valid() && link.type() == RetroShareLink::TYPE_FILE)
-						 urls.push_back(link) ;
+                RetroShareLink link;
+                if (link.createFile(QString::fromUtf8(details.name.c_str()), details.count, details.hash.c_str())) {
+                    urls.push_back(link) ;
+                }
             }
         }
         else
-		  {
-            RetroShareLink link(QString::fromUtf8(details.name.c_str()), details.count, details.hash.c_str());
-
-			  if(link.valid() && link.type() == RetroShareLink::TYPE_FILE)
-				  urls.push_back(link) ;
-		  }
+        {
+            RetroShareLink link;
+            if (link.createFile(QString::fromUtf8(details.name.c_str()), details.count, details.hash.c_str())) {
+                urls.push_back(link) ;
+            }
+        }
     }
-	 RSLinkClipboard::copyLinks(urls) ;
+    RSLinkClipboard::copyLinks(urls) ;
 }
 
 void SharedFilesDialog::copyLinkRemote()

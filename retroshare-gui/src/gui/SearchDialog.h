@@ -41,6 +41,8 @@ class SearchDialog : public MainPage
 /** Default Destructor */
     ~SearchDialog();
 
+    void searchKeywords(const QString& keywords);
+
 public slots:
 		void updateFiles(qulonglong request_id,FileDetail file) ;
 
@@ -59,13 +61,11 @@ private slots:
     void recommendtofriends();
 	 void checkText(const QString&) ;
     
-    void copysearchLink();
-
+    void copyResultLink();
+    void copySearchLink();
 
     void searchRemove();
-
     void searchRemoveAll();
-
     void searchKeywords();
 
 /** management of the adv search dialog object when switching search modes */
