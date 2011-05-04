@@ -1237,6 +1237,7 @@ void PopupChatDialog::updateStatus(const QString &peer_id, int status)
 void PopupChatDialog::updatePeersCustomStateString(const QString& peer_id, const QString& status_string)
 {
     std::string stdPeerId = peer_id.toStdString();
+    QString status_text;
 
     if (stdPeerId == dialogId) {
         // the peers status string has changed
@@ -1244,7 +1245,8 @@ void PopupChatDialog::updatePeersCustomStateString(const QString& peer_id, const
             ui.statusmessagelabel->hide();
         } else {
             ui.statusmessagelabel->show();
-            ui.statusmessagelabel->setText(status_string);
+			status_text = RsHtml::formatText(QString(status_string), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
+            ui.statusmessagelabel->setText(status_text);
         }
     }
 }
