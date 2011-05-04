@@ -189,6 +189,12 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 		/// Send a request for custom status string
 		void sendCustomStateRequest(const std::string& peer_id);
 
+		/// called as a proxy to sendItem(). Possibly splits item into multiple items of size lower than the maximum item size.
+		void checkSizeAndSendMessage(RsChatMsgItem *item) ;
+
+		/// Called when a RsChatMsgItem is received. The item may be collapsed with any waiting partial chat item from the same peer.
+		bool checkAndRebuildPartialMessage(RsChatMsgItem*) ;
+
 		RsChatAvatarItem *makeOwnAvatarItem() ;
 		RsChatStatusItem *makeOwnCustomStateStringItem() ;
 
@@ -200,6 +206,7 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor
 
 		AvatarInfo *_own_avatar ;
 		std::map<std::string,AvatarInfo *> _avatars ;
+		std::map<std::string,RsChatMsgItem *> _pendingPartialMessages ;
 
 		std::string _custom_status_string ;
 		std::map<std::string,StateStringInfo> _state_strings ;

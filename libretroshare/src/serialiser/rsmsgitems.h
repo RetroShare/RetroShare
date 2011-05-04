@@ -43,6 +43,7 @@ const uint32_t RS_CHAT_FLAG_CUSTOM_STATE           = 0x0010;  // used for transm
 const uint32_t RS_CHAT_FLAG_PUBLIC                 = 0x0020;
 const uint32_t RS_CHAT_FLAG_REQUEST_CUSTOM_STATE   = 0x0040;
 const uint32_t RS_CHAT_FLAG_CUSTOM_STATE_AVAILABLE = 0x0080;
+const uint32_t RS_CHAT_FLAG_PARTIAL_MESSAGE        = 0x0100;
 
 const uint32_t RS_CHATMSG_CONFIGFLAG_INCOMING = 0x0001;
 

@@ -204,6 +204,34 @@ void p3ChatService::sendStatusString( const std::string& id , const std::string&
 	sendItem(cs);
 }
 
+void p3ChatService::checkSizeAndSendMessage(RsChatMsgItem *msg)
+{
+	// We check the message item, and possibly split it into multiple messages, if the message is too big.
+
+	static const uint32_t MAX_STRING_SIZE = 15000 ;
+
+	while(msg->message.size() > MAX_STRING_SIZE)
+	{
+		// chop off the first 15000 wchars
+
+		RsChatMsgItem *item = new RsChatMsgItem(*msg) ;
+
+		item->message = item->message.substr(0,MAX_STRING_SIZE) ;
+		msg->message = msg->message.substr(MAX_STRING_SIZE,msg->message.size()-MAX_STRING_SIZE) ;
+
+		// Clear out any one time flags that should not be copied into multiple objects. This is 
+		// a precaution, in case the receivign peer does not yet handle split messages transparently.
+		//
+		item->chatFlags &= (RS_CHAT_FLAG_PRIVATE | RS_CHAT_FLAG_PUBLIC) ;
+
+		// Indicate that the message is to be continued.
+		//
+		item->chatFlags |= RS_CHAT_FLAG_PARTIAL_MESSAGE ;
+		sendItem(item) ;
+	}
+	sendItem(msg) ;
+}
+
 bool     p3ChatService::sendPrivateChat(std::string &id, std::wstring &msg)
 {
 	// make chat item....
@@ -262,7 +290,7 @@ bool     p3ChatService::sendPrivateChat(std::string &id, std::wstring &msg)
 	std::cerr << std::endl;
 #endif
 
-	sendItem(ci);
+	checkSizeAndSendMessage(ci);
 
 	// Check if custom state string has changed, in which case it should be sent to the peer.
 	bool should_send_state_string = false ;
@@ -297,6 +325,50 @@ bool     p3ChatService::sendPrivateChat(std::string &id, std::wstring &msg)
 	return true;
 }
 
+bool p3ChatService::checkAndRebuildPartialMessage(RsChatMsgItem *ci)
+{
+	// Check is the item is ending an incomplete item.
+	//
+	std::map<std::string,RsChatMsgItem*>::iterator it = _pendingPartialMessages.find(ci->PeerId()) ;
+
+	bool ci_is_partial = ci->chatFlags & RS_CHAT_FLAG_PARTIAL_MESSAGE ;
+
+	if(it != _pendingPartialMessages.end())
+	{
+#ifdef CHAT_DEBUG
+		std::cerr << "Pending messahe found. Happending it." << std::endl;
+#endif
+		// Yes, there is. Append the item to ci.
+
+		ci->message = it->second->message + ci->message ;
+		ci->chatFlags |= it->second->chatFlags ;
+
+		delete it->second ;
+
+		if(!ci_is_partial)
+			_pendingPartialMessages.erase(it) ;
+	}
+
+	if(ci_is_partial)
+	{
+#ifdef CHAT_DEBUG
+		std::cerr << "Message is partial, storing for later." << std::endl;
+#endif
+		// The item is a partial message. Push it, and wait for the rest.
+		//
+		_pendingPartialMessages[ci->PeerId()] = ci ;
+		return false ;
+	}
+	else
+	{
+#ifdef CHAT_DEBUG
+		std::cerr << "Message is complete, using it now." << std::endl;
+#endif
+		return true ;
+	}
+}
+
+
 void p3ChatService::receiveChatQueue()
 {
 	bool publicChanged = false;
@@ -321,11 +393,14 @@ void p3ChatService::receiveChatQueue()
 			std::cerr << std::endl;
 			std::cerr << "Got msg. Flags = " << ci->chatFlags << std::endl ;
 #endif
+			if(!checkAndRebuildPartialMessage(ci))
+				continue ;
 
 			if(ci->chatFlags & RS_CHAT_FLAG_REQUESTS_AVATAR)		// no msg here. Just an avatar request.
 			{
 				sendAvatarJpegData(ci->PeerId()) ;
 				delete item ;
+				continue ;
 			}
 			else														// normal msg. Return it normally.
 			{
@@ -371,14 +446,12 @@ void p3ChatService::receiveChatQueue()
 					}
 				} /* UNLOCK */
 			}
-
-			continue ;
 		}
 
 		RsChatStatusItem *cs = dynamic_cast<RsChatStatusItem*>(item) ;
 
-		if(cs != NULL){
-
+		if(cs != NULL)
+		{
 #ifdef CHAT_DEBUG
 			std::cerr << "Received status string \"" << cs->status_string << "\"" << std::endl ;
 #endif
@@ -388,8 +461,8 @@ void p3ChatService::receiveChatQueue()
 
 			}
 			else // Check if new custom string is available at peer's. If so, send a request to get the custom string.
-				if(cs->flags & RS_CHAT_FLAG_CUSTOM_STATE){
-
+				if(cs->flags & RS_CHAT_FLAG_CUSTOM_STATE)
+				{
 					receiveStateString(cs->PeerId(),cs->status_string) ;	// store it
 					rsicontrol->getNotify().notifyCustomState(cs->PeerId(), cs->status_string) ;
 				}else
@@ -406,7 +479,6 @@ void p3ChatService::receiveChatQueue()
 
 			delete item;
 			continue ;
-
 		}
 
 		RsChatAvatarItem *ca = dynamic_cast<RsChatAvatarItem*>(item) ;
@@ -876,7 +948,7 @@ void p3ChatService::sendAvatarJpegData(const std::string& peer_id)
 	}
    else {
 #ifdef CHAT_DEBUG
-        std::cerr << "Doing nothing" << std::endl ;
+        std::cerr << "We have no avatar yet: Doing nothing" << std::endl ;
 #endif
    }
 }
