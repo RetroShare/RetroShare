@@ -476,13 +476,13 @@ QString RetroShareLink::niceName() const
 
 QString RetroShareLink::toHtml() const
 {
-	QString html = "<a href=\"" + toString(true);
+	QString html = "<a href=\"" + toString(true) + "\"";
 
 	QString linkTitle = title();
 	if (!linkTitle.isEmpty()) {
 		html += " title=\"" + linkTitle + "\"";
 	}
-	html += "\">" + niceName() + "</a>" ;
+	html += ">" + niceName() + "</a>" ;
 
 	return html;
 }
