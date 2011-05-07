@@ -40,6 +40,7 @@
 #include "common/PeerDefs.h"
 #include "common/RSItemDelegate.h"
 #include "common/Emoticons.h"
+#include "RetroShareLink.h"
 
 #include <retroshare/rsinit.h>
 #include <retroshare/rspeers.h>
@@ -248,10 +249,6 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     connect( ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
 
     connect(ui.filterColumnComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterColumnChanged()));
-
-    connect(ui.toText, SIGNAL(linkActivated(QString)), this, SLOT(linkActivated(QString)));
-    connect(ui.ccText, SIGNAL(linkActivated(QString)), this, SLOT(linkActivated(QString)));
-    connect(ui.bccText, SIGNAL(linkActivated(QString)), this, SLOT(linkActivated(QString)));
 
     m_eListMode = LIST_NOTHING;
 
@@ -1671,13 +1668,14 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index, bool bSetToRead)
     /* iterate through the sources */
     std::list<std::string>::const_iterator pit;
 
+    RetroShareLink link;
     QString text;
-    QString name;
-    QString rsid;
+
     for(pit = msgInfo.msgto.begin(); pit != msgInfo.msgto.end(); pit++)
     {
-        rsid = PeerDefs::rsidFromId(*pit, &name);
-        text += "<a style='color: black;'href='" + rsid + "'> " + name + "</a>" + "   ";
+        if (link.createMessage(*pit, "")) {
+            text += link.toHtml() + "   ";
+        }
     }
     ui.toText->setText(text);
 
@@ -1688,8 +1686,9 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index, bool bSetToRead)
         text.clear();
         for(pit = msgInfo.msgcc.begin(); pit != msgInfo.msgcc.end(); pit++)
         {
-            rsid = PeerDefs::rsidFromId(*pit, &name);
-            text += "<a style='color: black;'href='" + rsid + "'> " + name + "</a>" + "   ";
+            if (link.createMessage(*pit, "")) {
+                text += link.toHtml() + "   ";
+            }
         }
         ui.ccText->setText(text);
     } else {
@@ -1705,8 +1704,9 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index, bool bSetToRead)
         text.clear();
         for(pit = msgInfo.msgbcc.begin(); pit != msgInfo.msgbcc.end(); pit++)
         {
-            rsid = PeerDefs::rsidFromId(*pit, &name);
-            text += "<a style='color: black;'href='" + rsid + "'> " + name + "</a>" + "   ";
+            if (link.createMessage(*pit, "")) {
+                text += link.toHtml() + "   ";
+            }
         }
         ui.bccText->setText(text);
     } else {
@@ -1722,18 +1722,17 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index, bool bSetToRead)
         ui.dateText-> setText(timestamp);
     }
 
-    std::string sSrcId;
+    std::string srcId;
     if ((msgInfo.msgflags & RS_MSG_BOXMASK) == RS_MSG_OUTBOX) {
         // outgoing message are from me
-        sSrcId = rsPeers->getOwnId();
+        srcId = rsPeers->getOwnId();
     } else {
-        sSrcId = msgInfo.srcId;
+        srcId = msgInfo.srcId;
     }
-    rsid = PeerDefs::rsidFromId(sSrcId, &name);
-    text += "<a style='color: black;'href='" + rsid + "'> " + name + "</a>" + "   ";
+    link.createMessage(srcId, "");
 
-    ui.fromText->setText("<a style='color: blue;' href='" + rsid + "'> " + name +"</a>");
-    ui.fromText->setToolTip(rsid);
+    ui.fromText->setText(link.toHtml());
+    ui.fromText->setToolTip(PeerDefs::rsidFromId(srcId));
 
     ui.subjectText->setText(QString::fromStdWString(msgInfo.title));
 
@@ -2260,18 +2259,6 @@ void MessagesDialog::tagTriggered(QAction *pAction)
     showTagLabels();
 
     // LockUpdate -> insertMessages();
-}
-
-void MessagesDialog::linkActivated(QString link)
-{
-    if (link.isEmpty() == false) {
-        std::string id = PeerDefs::idFromRsid(link, false);
-
-        RsPeerDetails detail;
-        if (rsPeers->getPeerDetails(id, detail) && detail.accept_connection) {
-            MessageComposer::msgFriend(detail.id, false);
-        }
-    }
 }
 
 void MessagesDialog::emptyTrash()

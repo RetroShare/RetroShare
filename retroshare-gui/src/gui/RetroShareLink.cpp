@@ -33,6 +33,7 @@
 #include "ForumsDialog.h"
 #include "ChannelFeed.h"
 #include "SearchDialog.h"
+#include "msgs/MessageComposer.h"
 #include "util/misc.h"
 #include "common/PeerDefs.h"
 
@@ -47,7 +48,8 @@
 #define HOST_PERSON     "person"
 #define HOST_FORUM      "forum"
 #define HOST_CHANNEL    "channel"
-#define HOST_REGEXP     "file|person|forum|channel|search"
+#define HOST_MESSAGE    "message"
+#define HOST_REGEXP     "file|person|forum|channel|search|message"
 
 #define FILE_NAME       "name"
 #define FILE_SIZE       "size"
@@ -63,6 +65,9 @@
 #define CHANNEL_NAME    "name"
 #define CHANNEL_ID      "id"
 #define CHANNEL_MSGID   "msgid"
+
+#define MESSAGE_ID      "id"
+#define MESSAGE_SUBJECT "subject"
 
 #define HOST_SEARCH     "search"
 #define SEARCH_KEYWORDS "keywords"
@@ -194,6 +199,13 @@ void RetroShareLink::fromUrl(const QUrl& url)
         return;
     }
 
+    if (url.host() == HOST_MESSAGE) {
+        _type = TYPE_MESSAGE;
+        std::string id = url.queryItemValue(MESSAGE_ID).toStdString();
+        createMessage(id, url.queryItemValue(MESSAGE_SUBJECT));
+        return;
+    }
+
     // bad link
 
 #ifdef DEBUG_RSLINK
@@ -280,6 +292,21 @@ bool RetroShareLink::createSearch(const QString& keywords)
     return valid();
 }
 
+bool RetroShareLink::createMessage(const std::string& peerId, const QString& subject)
+{
+	clear();
+
+	_hash = QString::fromStdString(peerId);
+	PeerDefs::rsidFromId(peerId, &_name);
+	_subject = subject;
+
+	_type = TYPE_MESSAGE;
+
+	check();
+
+	return valid();
+}
+
 void RetroShareLink::clear()
 {
     _valid = false;
@@ -291,71 +318,74 @@ void RetroShareLink::clear()
 
 void RetroShareLink::check()
 {
-    _valid = true;
+	_valid = true;
 
-    switch (_type) {
-    case TYPE_UNKNOWN:
-        _valid = false;
-        break;
-    case TYPE_FILE:
-        if(_size > (((uint64_t)1)<<40))	// 1TB. Who has such large files?
-            _valid = false;
+	switch (_type) {
+	case TYPE_UNKNOWN:
+		_valid = false;
+		break;
+	case TYPE_FILE:
+		if(_size > (((uint64_t)1)<<40))	// 1TB. Who has such large files?
+			_valid = false;
 
-        if(!checkName(_name))
-            _valid = false;
+		if(!checkName(_name))
+			_valid = false;
 
-        if(!checkHash(_hash))
-            _valid = false;
-        break;
-    case TYPE_PERSON:
-        if(_size != 0)
-            _valid = false;
+		if(!checkHash(_hash))
+			_valid = false;
+		break;
+	case TYPE_PERSON:
+		if(_size != 0)
+			_valid = false;
 
-        if(_name.isEmpty())
-            _valid = false;
+		if(_name.isEmpty())
+			_valid = false;
 
-        if(_hash.isEmpty())
-            _valid = false;
-        break;
-    case TYPE_FORUM:
-        if(_size != 0)
-            _valid = false;
+		if(_hash.isEmpty())
+			_valid = false;
+		break;
+	case TYPE_FORUM:
+		if(_size != 0)
+			_valid = false;
 
-        if(_name.isEmpty())
-            _valid = false;
+		if(_name.isEmpty())
+			_valid = false;
 
-        if(_hash.isEmpty())
-            _valid = false;
-        break;
-    case TYPE_CHANNEL:
-        if(_size != 0)
-            _valid = false;
+		if(_hash.isEmpty())
+			_valid = false;
+		break;
+	case TYPE_CHANNEL:
+		if(_size != 0)
+			_valid = false;
 
-        if(_name.isEmpty())
-            _valid = false;
+		if(_name.isEmpty())
+			_valid = false;
 
-        if(_hash.isEmpty())
-            _valid = false;
-        break;
-    case TYPE_SEARCH:
-        if(_size != 0)
-            _valid = false;
+		if(_hash.isEmpty())
+			_valid = false;
+		break;
+	case TYPE_SEARCH:
+		if(_size != 0)
+			_valid = false;
 
-        if(_name.isEmpty())
-            _valid = false;
+		if(_name.isEmpty())
+			_valid = false;
 
-        if(!_hash.isEmpty())
-            _valid = false;
-        break;
-    }
+		if(!_hash.isEmpty())
+			_valid = false;
+		break;
+	case TYPE_MESSAGE:
+		if(_size != 0)
+			_valid = false;
 
-    if(!_valid) // we should throw an exception instead of this crap, but drbob doesn't like exceptions. Why ???
-    {
-        _type = TYPE_UNKNOWN;
-        _hash = "" ;
-        _name = "" ;
-        _size = 0 ;
-    }
+		if(_hash.isEmpty())
+			_valid = false;
+		break;
+	}
+
+	if (!_valid) {
+		clear();
+	}
 }
 
 QString RetroShareLink::title() const
@@ -374,6 +404,8 @@ QString RetroShareLink::title() const
 	case TYPE_CHANNEL:
 	case TYPE_SEARCH:
 		break;
+	case TYPE_MESSAGE:
+		return PeerDefs::rsidFromId(hash().toStdString());
 	}
 
 	return "";
@@ -453,6 +485,22 @@ QString RetroShareLink::toString(bool encoded /*= true*/) const
             url.setScheme(RSLINK_SCHEME);
             url.setHost(HOST_SEARCH);
             url.addQueryItem(SEARCH_KEYWORDS, _name);
+
+            if (encoded) {
+                return url.toEncoded();
+            }
+
+            return url.toString();
+        }
+    case TYPE_MESSAGE:
+        {
+            QUrl url;
+            url.setScheme(RSLINK_SCHEME);
+            url.setHost(HOST_MESSAGE);
+            url.addQueryItem(MESSAGE_ID, _hash);
+            if (_subject.isEmpty() == false) {
+               url.addQueryItem(MESSAGE_SUBJECT, _subject);
+            }
 
             if (encoded) {
                 return url.toEncoded();
@@ -545,198 +593,232 @@ bool RetroShareLink::checkHash(const QString& hash)
 
 bool RetroShareLink::process(int flag)
 {
-    if (valid() == false) {
-        std::cerr << " RetroShareLink::process invalid request" << std::endl;
-        return false;
-    }
+	if (valid() == false) {
+		std::cerr << " RetroShareLink::process invalid request" << std::endl;
+		return false;
+	}
 
-    switch (type()) {
-    case TYPE_UNKNOWN:
-        break;
+	switch (type()) {
+	case TYPE_UNKNOWN:
+		break;
 
-    case TYPE_FILE:
-        {
+	case TYPE_FILE:
+		{
 #ifdef DEBUG_RSLINK
-            std::cerr << " RetroShareLink::process FileRequest : fileName : " << name().toUtf8().constData() << ". fileHash : " << hash().toStdString() << ". fileSize : " << size() << std::endl;
+			std::cerr << " RetroShareLink::process FileRequest : fileName : " << name().toUtf8().constData() << ". fileHash : " << hash().toStdString() << ". fileSize : " << size() << std::endl;
 #endif
 
-            // Get a list of available direct sources, in case the file is browsable only.
-            std::list<std::string> srcIds;
-            FileInfo finfo ;
-            rsFiles->FileDetails(hash().toStdString(), RS_FILE_HINTS_REMOTE,finfo) ;
+			// Get a list of available direct sources, in case the file is browsable only.
+			std::list<std::string> srcIds;
+			FileInfo finfo ;
+			rsFiles->FileDetails(hash().toStdString(), RS_FILE_HINTS_REMOTE,finfo) ;
 
-            for(std::list<TransferInfo>::const_iterator it(finfo.peers.begin());it!=finfo.peers.end();++it)
-            {
+			for(std::list<TransferInfo>::const_iterator it(finfo.peers.begin());it!=finfo.peers.end();++it)
+			{
 #ifdef DEBUG_RSLINK
-                std::cerr << "  adding peerid " << (*it).peerId << std::endl ;
+				std::cerr << "  adding peerid " << (*it).peerId << std::endl ;
 #endif
-                srcIds.push_back((*it).peerId) ;
-            }
+				srcIds.push_back((*it).peerId) ;
+			}
 
-            if (rsFiles->FileRequest(name().toUtf8().constData(), hash().toStdString(), size(), "", RS_FILE_HINTS_NETWORK_WIDE, srcIds)) {
-                if (flag & RSLINK_PROCESS_NOTIFY_SUCCESS) {
-                    QMessageBox mb(QObject::tr("File Request Confirmation"), QObject::tr("The file has been added to your download list."),QMessageBox::Information,QMessageBox::Ok,0,0);
-                    mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
-                    mb.exec();
-                }
-                return true;
-            }
+			if (rsFiles->FileRequest(name().toUtf8().constData(), hash().toStdString(), size(), "", RS_FILE_HINTS_NETWORK_WIDE, srcIds)) {
+				if (flag & RSLINK_PROCESS_NOTIFY_SUCCESS) {
+					QMessageBox mb(QObject::tr("File Request Confirmation"), QObject::tr("The file has been added to your download list."),QMessageBox::Information,QMessageBox::Ok,0,0);
+					mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
+					mb.exec();
+				}
+				return true;
+			}
 
-            if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
-                QMessageBox mb(QObject::tr("File Request canceled"), QObject::tr("The file has not been added to your download list, because you already have it."),QMessageBox::Critical,QMessageBox::Ok,0,0);
-                mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
-                mb.exec();
-            }
-            return false;
-        }
+			if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
+				QMessageBox mb(QObject::tr("File Request canceled"), QObject::tr("The file has not been added to your download list, because you already have it."),QMessageBox::Critical,QMessageBox::Ok,0,0);
+				mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
+				mb.exec();
+			}
+			return false;
+		}
 
-    case TYPE_PERSON:
-        {
+	case TYPE_PERSON:
+		{
 #ifdef DEBUG_RSLINK
-            std::cerr << " RetroShareLink::process FriendRequest : name : " << name().toStdString() << ". id : " << hash().toStdString() << std::endl;
-#endif
-
-            RsPeerDetails detail;
-            if (rsPeers->getPeerDetails(hash().toStdString(), detail)) {
-                if (detail.gpg_id == rsPeers->getGPGOwnId()) {
-                    // it's me, do nothing
-                    return true;
-                }
-
-                if (detail.accept_connection) {
-                    // peer connection is already accepted
-                    if (flag & RSLINK_PROCESS_NOTIFY_SUCCESS) {
-                        QMessageBox mb(QObject::tr("Friend Request Confirmation"), QObject::tr("The friend is already in your list."),QMessageBox::Information,QMessageBox::Ok,0,0);
-                        mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
-                        mb.exec();
-                    }
-                    return true;
-                }
-
-                if (rsPeers->setAcceptToConnectGPGCertificate(hash().toStdString(), true)) {
-                    if (flag & RSLINK_PROCESS_NOTIFY_SUCCESS) {
-                        QMessageBox mb(QObject::tr("Friend Request Confirmation"), QObject::tr("The friend has been added to your list."),QMessageBox::Information,QMessageBox::Ok,0,0);
-                        mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
-                        mb.exec();
-                    }
-                    return true;
-                }
-
-                if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
-                    QMessageBox mb(QObject::tr("Friend Request canceled"), QObject::tr("The friend could not be added to your list."),QMessageBox::Critical,QMessageBox::Ok,0,0);
-                    mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
-                    mb.exec();
-                }
-                return false;
-            }
-
-            if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
-                QMessageBox mb(QObject::tr("Friend Request canceled"), QObject::tr("The friend could not be found."),QMessageBox::Critical,QMessageBox::Ok,0,0);
-                mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
-                mb.exec();
-            }
-            return false;
-        }
-
-    case TYPE_FORUM:
-        {
-#ifdef DEBUG_RSLINK
-            std::cerr << " RetroShareLink::process ForumRequest : name : " << name().toStdString() << ". id : " << hash().toStdString() << ". msgId : " << msgId().toStdString() << std::endl;
+			std::cerr << " RetroShareLink::process FriendRequest : name : " << name().toStdString() << ". id : " << hash().toStdString() << std::endl;
 #endif
 
-            ForumInfo fi;
-            if (!rsForums->getForumInfo(id().toStdString(), fi)) {
-                if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
-                    QMessageBox mb(QObject::tr("Forum Request canceled"), QObject::tr("The forum \"%1\" could not be found.").arg(name()),QMessageBox::Critical,QMessageBox::Ok,0,0);
-                    mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
-                    mb.exec();
-                }
-                return false;
-            }
+			RsPeerDetails detail;
+			if (rsPeers->getPeerDetails(hash().toStdString(), detail)) {
+				if (detail.gpg_id == rsPeers->getGPGOwnId()) {
+					// it's me, do nothing
+					return true;
+				}
 
-            ForumMsgInfo msg;
-            if (!msgId().isEmpty()) {
-                if (!rsForums->getForumMessage(fi.forumId, msgId().toStdString(), msg)) {
-                    if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
-                        QMessageBox mb(QObject::tr("Forum Request canceled"), QObject::tr("The forum message in forum \"%1\" could not be found.").arg(name()),QMessageBox::Critical,QMessageBox::Ok,0,0);
-                        mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
-                        mb.exec();
-                    }
-                    return false;
-                }
-            }
+				if (detail.accept_connection) {
+					// peer connection is already accepted
+					if (flag & RSLINK_PROCESS_NOTIFY_SUCCESS) {
+						QMessageBox mb(QObject::tr("Friend Request Confirmation"), QObject::tr("The friend is already in your list."),QMessageBox::Information,QMessageBox::Ok,0,0);
+						mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
+						mb.exec();
+					}
+					return true;
+				}
 
-            MainWindow::showWindow(MainWindow::Forums);
-            ForumsDialog *forumsDialog = dynamic_cast<ForumsDialog*>(MainWindow::getPage(MainWindow::Forums));
-            if (!forumsDialog) {
-                return false;
-            }
+				if (rsPeers->setAcceptToConnectGPGCertificate(hash().toStdString(), true)) {
+					if (flag & RSLINK_PROCESS_NOTIFY_SUCCESS) {
+						QMessageBox mb(QObject::tr("Friend Request Confirmation"), QObject::tr("The friend has been added to your list."),QMessageBox::Information,QMessageBox::Ok,0,0);
+						mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
+						mb.exec();
+					}
+					return true;
+				}
 
-            return forumsDialog->navigate(fi.forumId, msg.msgId);
-        }
+				if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
+					QMessageBox mb(QObject::tr("Friend Request canceled"), QObject::tr("The friend could not be added to your list."),QMessageBox::Critical,QMessageBox::Ok,0,0);
+					mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
+					mb.exec();
+				}
+				return false;
+			}
 
-    case TYPE_CHANNEL:
-        {
+			if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
+				QMessageBox mb(QObject::tr("Friend Request canceled"), QObject::tr("The friend could not be found."),QMessageBox::Critical,QMessageBox::Ok,0,0);
+				mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
+				mb.exec();
+			}
+			return false;
+		}
+
+	case TYPE_FORUM:
+		{
 #ifdef DEBUG_RSLINK
-            std::cerr << " RetroShareLink::process ChannelRequest : name : " << name().toStdString() << ". id : " << hash().toStdString() << ". msgId : " << msgId().toStdString() << std::endl;
+			std::cerr << " RetroShareLink::process ForumRequest : name : " << name().toStdString() << ". id : " << hash().toStdString() << ". msgId : " << msgId().toStdString() << std::endl;
 #endif
 
-            ChannelInfo ci;
-            if (!rsChannels->getChannelInfo(id().toStdString(), ci)) {
-                if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
-                    QMessageBox mb(QObject::tr("Channel Request canceled"), QObject::tr("The channel \"%1\" could not be found.").arg(name()),QMessageBox::Critical,QMessageBox::Ok,0,0);
-                    mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
-                    mb.exec();
-                }
-                return false;
-            }
+			ForumInfo fi;
+			if (!rsForums->getForumInfo(id().toStdString(), fi)) {
+				if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
+					QMessageBox mb(QObject::tr("Forum Request canceled"), QObject::tr("The forum \"%1\" could not be found.").arg(name()),QMessageBox::Critical,QMessageBox::Ok,0,0);
+					mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
+					mb.exec();
+				}
+				return false;
+			}
 
-            ChannelMsgInfo msg;
-            if (!msgId().isEmpty()) {
-                if (!rsChannels->getChannelMessage(ci.channelId, msgId().toStdString(), msg)) {
-                    if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
-                        QMessageBox mb(QObject::tr("Channel Request canceled"), QObject::tr("The channel message in channel \"%1\" could not be found.").arg(name()),QMessageBox::Critical,QMessageBox::Ok,0,0);
-                        mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
-                        mb.exec();
-                    }
-                    return false;
-                }
-            }
+			ForumMsgInfo msg;
+			if (!msgId().isEmpty()) {
+				if (!rsForums->getForumMessage(fi.forumId, msgId().toStdString(), msg)) {
+					if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
+						QMessageBox mb(QObject::tr("Forum Request canceled"), QObject::tr("The forum message in forum \"%1\" could not be found.").arg(name()),QMessageBox::Critical,QMessageBox::Ok,0,0);
+						mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
+						mb.exec();
+					}
+					return false;
+				}
+			}
 
-            MainWindow::showWindow(MainWindow::Channels);
-            ChannelFeed *channelFeed = dynamic_cast<ChannelFeed*>(MainWindow::getPage(MainWindow::Channels));
-            if (!channelFeed) {
-                return false;
-            }
+			MainWindow::showWindow(MainWindow::Forums);
+			ForumsDialog *forumsDialog = dynamic_cast<ForumsDialog*>(MainWindow::getPage(MainWindow::Forums));
+			if (!forumsDialog) {
+				return false;
+			}
 
-            return channelFeed->navigate(ci.channelId, msg.msgId);
-        }
+			return forumsDialog->navigate(fi.forumId, msg.msgId);
+		}
 
-    case TYPE_SEARCH:
-        {
+	case TYPE_CHANNEL:
+		{
 #ifdef DEBUG_RSLINK
-            std::cerr << " RetroShareLink::process SearchRequest : string : " << name().toStdString() << std::endl;
+			std::cerr << " RetroShareLink::process ChannelRequest : name : " << name().toStdString() << ". id : " << hash().toStdString() << ". msgId : " << msgId().toStdString() << std::endl;
 #endif
 
-            MainWindow::showWindow(MainWindow::Search);
-            SearchDialog *searchDialog = dynamic_cast<SearchDialog*>(MainWindow::getPage(MainWindow::Search));
-            if (!searchDialog) {
-                return false;
-            }
+			ChannelInfo ci;
+			if (!rsChannels->getChannelInfo(id().toStdString(), ci)) {
+				if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
+					QMessageBox mb(QObject::tr("Channel Request canceled"), QObject::tr("The channel \"%1\" could not be found.").arg(name()),QMessageBox::Critical,QMessageBox::Ok,0,0);
+					mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
+					mb.exec();
+				}
+				return false;
+			}
 
-            searchDialog->searchKeywords(name());
-            return true;
-        }
-    }
+			ChannelMsgInfo msg;
+			if (!msgId().isEmpty()) {
+				if (!rsChannels->getChannelMessage(ci.channelId, msgId().toStdString(), msg)) {
+					if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
+						QMessageBox mb(QObject::tr("Channel Request canceled"), QObject::tr("The channel message in channel \"%1\" could not be found.").arg(name()),QMessageBox::Critical,QMessageBox::Ok,0,0);
+						mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
+						mb.exec();
+					}
+					return false;
+				}
+			}
 
-    std::cerr << " RetroShareLink::process unknown type: " << type() << std::endl;
+			MainWindow::showWindow(MainWindow::Channels);
+			ChannelFeed *channelFeed = dynamic_cast<ChannelFeed*>(MainWindow::getPage(MainWindow::Channels));
+			if (!channelFeed) {
+				return false;
+			}
 
-    if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
-        QMessageBox mb(QObject::tr("File Request Error"), QObject::tr("The file link is malformed."),QMessageBox::Critical,QMessageBox::Ok,0,0);
-        mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
-        mb.exec();
-    }
-    return false;
+			return channelFeed->navigate(ci.channelId, msg.msgId);
+		}
+
+	case TYPE_SEARCH:
+		{
+#ifdef DEBUG_RSLINK
+			std::cerr << " RetroShareLink::process SearchRequest : string : " << name().toStdString() << std::endl;
+#endif
+
+			MainWindow::showWindow(MainWindow::Search);
+			SearchDialog *searchDialog = dynamic_cast<SearchDialog*>(MainWindow::getPage(MainWindow::Search));
+			if (!searchDialog) {
+				return false;
+			}
+
+			searchDialog->searchKeywords(name());
+			return true;
+		}
+
+	case TYPE_MESSAGE:
+		{
+#ifdef DEBUG_RSLINK
+			std::cerr << " RetroShareLink::process MessageRequest : id : " << _hash.toStdString() << ", subject : " << name().toStdString() << std::endl;
+#endif
+			RsPeerDetails detail;
+			if (rsPeers->getPeerDetails(hash().toStdString(), detail)) {
+				if (detail.accept_connection || detail.id == rsPeers->getOwnId()) {
+					MessageComposer *msg = MessageComposer::newMsg();
+					msg->addRecipient(MessageComposer::TO, detail.id, false);
+					if (subject().isEmpty() == false) {
+						msg->insertTitleText(subject());
+					}
+					msg->show();
+
+					return true;
+				} else {
+					if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
+						QMessageBox mb(QObject::tr("Message Request canceled"), QObject::tr("Cannot send a message to a not accepted receipient \"%1\".").arg(hash()), QMessageBox::Critical, QMessageBox::Ok, 0, 0);
+						mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
+						mb.exec();
+					}
+				}
+			} else {
+				if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
+					QMessageBox mb(QObject::tr("Message Request canceled"), QObject::tr("The receipient of the message is unknown."), QMessageBox::Critical, QMessageBox::Ok, 0, 0);
+					mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
+					mb.exec();
+				}
+			}
+
+			return false;
+		}
+	}
+
+	std::cerr << " RetroShareLink::process unknown type: " << type() << std::endl;
+
+	if (flag & RSLINK_PROCESS_NOTIFY_ERROR) {
+		QMessageBox mb(QObject::tr("File Request Error"), QObject::tr("The file link is malformed."),QMessageBox::Critical,QMessageBox::Ok,0,0);
+		mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
+		mb.exec();
+	}
+	return false;
 }
 
 void RSLinkClipboard::copyLinks(const std::vector<RetroShareLink>& links) 

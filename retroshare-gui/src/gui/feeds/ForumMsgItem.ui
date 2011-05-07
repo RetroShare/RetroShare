@@ -358,6 +358,9 @@ border-radius: 10px}</string>
            <property name="text">
             <string notr="true">Friend Name</string>
            </property>
+           <property name="openExternalLinks">
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
          <item row="1" column="1" rowspan="2">
@@ -521,6 +524,9 @@ border-radius: 10px}</string>
            </property>
            <property name="text">
             <string notr="true">Next Name</string>
+           </property>
+           <property name="openExternalLinks">
+            <bool>true</bool>
            </property>
           </widget>
          </item>

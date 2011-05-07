@@ -1591,6 +1591,9 @@ p, li { white-space: pre-wrap; }
                    <property name="scaledContents">
                     <bool>true</bool>
                    </property>
+                   <property name="openExternalLinks">
+                    <bool>true</bool>
+                   </property>
                   </widget>
                  </item>
                  <item row="2" column="0">
@@ -1652,6 +1655,9 @@ p, li { white-space: pre-wrap; }
                  <item row="2" column="2" colspan="2">
                   <widget class="QLabel" name="toText">
                    <property name="wordWrap">
+                    <bool>true</bool>
+                   </property>
+                   <property name="openExternalLinks">
                     <bool>true</bool>
                    </property>
                   </widget>
@@ -1734,11 +1740,17 @@ p, li { white-space: pre-wrap; }
                    <property name="wordWrap">
                     <bool>true</bool>
                    </property>
+                   <property name="openExternalLinks">
+                    <bool>true</bool>
+                   </property>
                   </widget>
                  </item>
                  <item row="4" column="2" colspan="2">
                   <widget class="QLabel" name="bccText">
                    <property name="wordWrap">
+                    <bool>true</bool>
+                   </property>
+                   <property name="openExternalLinks">
                     <bool>true</bool>
                    </property>
                   </widget>

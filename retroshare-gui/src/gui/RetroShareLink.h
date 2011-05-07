@@ -47,7 +47,7 @@
 class RetroShareLink
 {
 	public:
-		enum enumType { TYPE_UNKNOWN, TYPE_FILE, TYPE_PERSON, TYPE_FORUM, TYPE_CHANNEL, TYPE_SEARCH };
+		enum enumType { TYPE_UNKNOWN, TYPE_FILE, TYPE_PERSON, TYPE_FORUM, TYPE_CHANNEL, TYPE_SEARCH, TYPE_MESSAGE };
 
 	public:
 		RetroShareLink();
@@ -59,6 +59,7 @@ class RetroShareLink
 		bool createForum(const QString& name, const QString& id, const QString& msgId);
 		bool createChannel(const QString& name, const QString& id, const QString& msgId);
 		bool createSearch(const QString& keywords);
+		bool createMessage(const std::string& peerId, const QString& subject);
 
 		enumType type() const {return _type; }
 		uint64_t size() const { return _size ; }
@@ -66,6 +67,7 @@ class RetroShareLink
 		const QString& hash() const { return _hash ; }
 		const QString& id() const { return _hash ; }
 		const QString& msgId() const { return _msgId ; }
+		const QString& subject() const { return _subject ; }
 		QString title() const;
 
 		// get nice name for anchor
@@ -103,8 +105,9 @@ class RetroShareLink
 		enumType _type;
 		QString  _name;
 		uint64_t _size;
-		QString  _hash;  // or id (forum, channel)
+		QString  _hash;  // or id (forum, channel, message)
 		QString  _msgId; // id of the message (forum, channel)
+		QString  _subject;
 };
 
 /// This class handles the copy/paste of links. Every member is static to ensure unicity.

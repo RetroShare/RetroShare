@@ -1509,31 +1509,52 @@ void MessageComposer::editingRecipientFinished()
 
 void MessageComposer::addRecipient(enumType type, const std::string &id, bool group)
 {
-    // search existing or empty row
-    int rowCount = ui.recipientWidget->rowCount();
-    int row;
-    for (row = 0; row < rowCount; row++) {
-        enumType rowType;
-        std::string rowId;
-        bool rowGroup;
+    std::list<std::string> sslIds;
+    if (group) {
+        sslIds.push_back(id);
+    } else {
+        // check for gpg id or ssl id
+        RsPeerDetails detail;
+        if (!rsPeers->getPeerDetails(id, detail)) {
+            return;
+        }
 
-        if (getRecipientFromRow(row, rowType, rowId, rowGroup) == true) {
-            if (rowId.empty()) {
+        if (detail.isOnlyGPGdetail) {
+            if (!rsPeers->getSSLChildListOfGPGId(id, sslIds)) {
+                return;
+            }
+        } else {
+            sslIds.push_back(id);
+        }
+    }
+    std::list<std::string>::const_iterator sslIt;
+    for (sslIt = sslIds.begin(); sslIt != sslIds.end(); sslIt++) {
+        // search existing or empty row
+        int rowCount = ui.recipientWidget->rowCount();
+        int row;
+        for (row = 0; row < rowCount; row++) {
+            enumType rowType;
+            std::string rowId;
+            bool rowGroup;
+
+            if (getRecipientFromRow(row, rowType, rowId, rowGroup) == true) {
+                if (rowId.empty()) {
+                    // use row
+                    break;
+                }
+
+                if (rowId == *sslIt && rowType == type && group == rowGroup) {
+                    // existing row
+                    break;
+                }
+            } else {
                 // use row
                 break;
             }
-
-            if (rowId == id && rowType == type && group == rowGroup) {
-                // existing row
-                break;
-            }
-        } else {
-            // use row
-            break;
         }
-    }
 
-    setRecipientToRow(row, type, id, group);
+        setRecipientToRow(row, type, *sslIt, group);
+    }
 }
 
 void MessageComposer::setupFileActions()

@@ -26,9 +26,9 @@
 
 const QString PeerDefs::nameWithLocation(const RsPeerDetails &details)
 {
-    QString name = QString::fromStdString(details.name);
+    QString name = QString::fromUtf8(details.name.c_str());
     if (details.location.empty() == false) {
-        name += " (" + QString::fromStdString(details.location) + ")";
+        name += " (" + QString::fromUtf8(details.location.c_str()) + ")";
     }
 
     return name;
@@ -40,7 +40,7 @@ const QString PeerDefs::rsid(const std::string &name, const std::string &id)
         return qApp->translate("PeerDefs", "Unknown") + "@" + QString::fromStdString(id);
     }
 
-    return QString::fromStdString(name) + "@" + QString::fromStdString(id);
+    return QString::fromUtf8(name.c_str()) + "@" + QString::fromStdString(id);
 }
 
 const QString PeerDefs::rsid(const RsPeerDetails &details)
@@ -63,7 +63,7 @@ const QString PeerDefs::rsidFromId(const std::string &id, QString *name /*= NULL
         rsid = PeerDefs::rsid(peerName, id);
 
         if (name) {
-            *name = QString::fromStdString(peerName);
+            *name = QString::fromUtf8(peerName.c_str());
         }
     }
 
