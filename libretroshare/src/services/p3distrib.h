@@ -402,7 +402,8 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 
 
 		/*!
-		 *
+		 * loads cache data which contains location of cache files belonging
+		 * to group
 		 * @param grpId grp for which to get list of cache data
 		 * @param cDataSet cache data belonging to grp is loaded into this list
 		 */
@@ -881,6 +882,8 @@ RsDistribDummyMsg *locked_getGroupDummyMsg(std::string grpId, std::string msgId)
 		std::set<pCacheId> mCachePairsInTable, mCacheFailedTable;
 
 		std::list<CacheDataPending> mPendingHistCaches;
+
+		std::map<CacheId, CacheData> mLocalHistCachesAvail;
 
 		time_t mLastCacheDocUpdate;
 		bool mUpdateCacheDoc, mHistoricalCachesLoaded;
