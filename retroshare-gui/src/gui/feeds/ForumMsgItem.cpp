@@ -58,8 +58,10 @@ ForumMsgItem::ForumMsgItem(FeedHolder *parent, uint32_t feedId, const std::strin
   connect( unsubscribeButton, SIGNAL( clicked( void ) ), this, SLOT( unsubscribeForum ( void ) ) );
   connect( replyButton, SIGNAL( clicked( void ) ), this, SLOT( replyToPost ( void ) ) );
   connect( sendButton, SIGNAL( clicked( ) ), this, SLOT( sendMsg() ) );
-
+  
   connect(NotifyQt::getInstance(), SIGNAL(peerHasNewAvatar(const QString&)), this, SLOT(updateAvatar(const QString&)));
+  
+  subjectLabel->setMinimumWidth(20);
 
   small();
   updateItemStatic();
@@ -144,9 +146,7 @@ void ForumMsgItem::updateItemStatic()
 
 			if (rsPeers->getPeerName(msg.srcId) !="")
 			{
-				RetroShareLink linkMessage;
-				linkMessage.createMessage(msg.srcId, "");
-				namelabel->setText(linkMessage.toHtml());
+				namelabel->setText(QString::fromStdString(rsPeers->getPeerName(msg.srcId)));
 			}
 			else
 			{
@@ -158,8 +158,8 @@ void ForumMsgItem::updateItemStatic()
 			
             QDateTime qtime;
             qtime.setTime_t(msg.ts);
-            QString timestamp = qtime.toString("dd.MM.yyyy hh:mm:ss");
-            timestamplabel->setText(timestamp);
+            QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm");
+            timestamplabel->setText(timestamp);            
 
 			nextFrame->hide();
 		}
@@ -169,9 +169,7 @@ void ForumMsgItem::updateItemStatic()
 
 			if (rsPeers->getPeerName(msg.srcId) !="")
 			{
-				RetroShareLink linkMessage;
-				linkMessage.createMessage(msg.srcId, "");
-				nextnamelabel->setText(linkMessage.toHtml());
+				nextnamelabel->setText(QString::fromStdString(rsPeers->getPeerName(msg.srcId)));
 			}
 			else
 			{
@@ -183,7 +181,7 @@ void ForumMsgItem::updateItemStatic()
 			
 			QDateTime qtime;
             qtime.setTime_t(msg.ts);
-            QString timestamp = qtime.toString("dd.MM.yyyy hh:mm:ss");
+            QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm");
             timestamplabel->setText(timestamp);
 			
 			prevSHLabel->setText(tr("In Reply to") + ": ");
@@ -200,9 +198,7 @@ void ForumMsgItem::updateItemStatic()
 				
 				if (rsPeers->getPeerName(msgParent.srcId) !="")
 				{
-					RetroShareLink linkMessage;
-					linkMessage.createMessage(msgParent.srcId, "");
-					namelabel->setText(linkMessage.toHtml());
+					namelabel->setText(QString::fromStdString(rsPeers->getPeerName(msgParent.srcId)));
 				}
 				else
 				{
@@ -218,7 +214,7 @@ void ForumMsgItem::updateItemStatic()
 
 		/* header stuff */
 		subjectLabel->setText(QString::fromStdWString(msg.title));
-		srcLabel->setText(QString::fromStdString(msg.srcId));
+		//srcLabel->setText(QString::fromStdString(msg.srcId));
 	}
 
 	if (mIsHome)
