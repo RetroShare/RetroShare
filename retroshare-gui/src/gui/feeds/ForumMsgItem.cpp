@@ -58,7 +58,7 @@ ForumMsgItem::ForumMsgItem(FeedHolder *parent, uint32_t feedId, const std::strin
   connect( unsubscribeButton, SIGNAL( clicked( void ) ), this, SLOT( unsubscribeForum ( void ) ) );
   connect( replyButton, SIGNAL( clicked( void ) ), this, SLOT( replyToPost ( void ) ) );
   connect( sendButton, SIGNAL( clicked( ) ), this, SLOT( sendMsg() ) );
-  
+
   connect(NotifyQt::getInstance(), SIGNAL(peerHasNewAvatar(const QString&)), this, SLOT(updateAvatar(const QString&)));
   
   subjectLabel->setMinimumWidth(20);
@@ -146,7 +146,9 @@ void ForumMsgItem::updateItemStatic()
 
 			if (rsPeers->getPeerName(msg.srcId) !="")
 			{
-				namelabel->setText(QString::fromStdString(rsPeers->getPeerName(msg.srcId)));
+				RetroShareLink linkMessage;
+				linkMessage.createMessage(msg.srcId, "");
+				namelabel->setText(linkMessage.toHtml());
 			}
 			else
 			{
@@ -159,7 +161,7 @@ void ForumMsgItem::updateItemStatic()
             QDateTime qtime;
             qtime.setTime_t(msg.ts);
             QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm");
-            timestamplabel->setText(timestamp);            
+            timestamplabel->setText(timestamp);
 
 			nextFrame->hide();
 		}
@@ -169,7 +171,9 @@ void ForumMsgItem::updateItemStatic()
 
 			if (rsPeers->getPeerName(msg.srcId) !="")
 			{
-				nextnamelabel->setText(QString::fromStdString(rsPeers->getPeerName(msg.srcId)));
+				RetroShareLink linkMessage;
+				linkMessage.createMessage(msg.srcId, "");
+				nextnamelabel->setText(linkMessage.toHtml());
 			}
 			else
 			{
@@ -198,7 +202,9 @@ void ForumMsgItem::updateItemStatic()
 				
 				if (rsPeers->getPeerName(msgParent.srcId) !="")
 				{
-					namelabel->setText(QString::fromStdString(rsPeers->getPeerName(msgParent.srcId)));
+					RetroShareLink linkMessage;
+					linkMessage.createMessage(msgParent.srcId, "");
+					namelabel->setText(linkMessage.toHtml());
 				}
 				else
 				{
