@@ -1116,7 +1116,7 @@ void TransfersDialog::copyLink ()
 		}
 
 		RetroShareLink link;
-		if (link.createFile(QString::fromStdString(info.fname), info.size, QString::fromStdString(info.hash))) {
+		if (link.createFile(QString::fromUtf8(info.fname.c_str()), info.size, QString::fromStdString(info.hash))) {
 			links.push_back(link) ;
 		}
 	}

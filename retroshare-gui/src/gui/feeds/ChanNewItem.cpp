@@ -70,7 +70,7 @@ void ChanNewItem::updateItemStatic()
 	if (rsChannels->getChannelInfo(mChanId, ci))
 	{
 		RetroShareLink link;
-		link.createChannel(QString::fromStdWString(ci.channelName), QString::fromStdString(ci.channelId), "");
+		link.createChannel(ci.channelId, "");
 		nameLabel->setText(link.toHtml());
 
 		descLabel->setText(QString::fromStdWString(ci.channelDesc));

@@ -56,8 +56,8 @@ class RetroShareLink
 
 		bool createFile(const QString& name, uint64_t size, const QString& hash);
 		bool createPerson(const QString& name, const QString& hash);
-		bool createForum(const QString& name, const QString& id, const QString& msgId);
-		bool createChannel(const QString& name, const QString& id, const QString& msgId);
+		bool createForum(const std::string& id, const std::string& msgId);
+		bool createChannel(const std::string& id, const std::string& msgId);
 		bool createSearch(const QString& keywords);
 		bool createMessage(const std::string& peerId, const QString& subject);
 
@@ -99,7 +99,7 @@ class RetroShareLink
 		void clear();
 		void check();
 		static bool checkHash(const QString& hash);
-		static bool checkName(const QString& hash);
+		static bool checkName(const QString& name);
 
 		bool     _valid;
 		enumType _type;

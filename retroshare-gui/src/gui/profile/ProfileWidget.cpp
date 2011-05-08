@@ -66,8 +66,8 @@ void ProfileWidget::showEvent ( QShowEvent * event )
     if (rsPeers->getPeerDetails(rsPeers->getOwnId(),detail))
     {
 
-    ui.name->setText(QString::fromStdString(detail.name));
-	ui.country->setText(QString::fromStdString(detail.location));
+    ui.name->setText(QString::fromUtf8(detail.name.c_str()));
+	ui.country->setText(QString::fromUtf8(detail.location.c_str()));
   
     ui.peerid->setText(QString::fromStdString(detail.id));
         

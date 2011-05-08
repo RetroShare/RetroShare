@@ -128,9 +128,9 @@ void PeerItem::updateItemStatic()
 		lastLabel-> setText(stime);
 
 		/* expanded Info */
-		nameLabel->setText(QString::fromStdString(details.name));
+		nameLabel->setText(QString::fromUtf8(details.name.c_str()));
 		idLabel->setText(QString::fromStdString(details.id));
-		locLabel->setText(QString::fromStdString(details.location));
+		locLabel->setText(QString::fromUtf8(details.location.c_str()));
 	}
 	else
 	{

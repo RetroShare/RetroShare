@@ -1245,7 +1245,7 @@ void PopupChatDialog::updatePeersCustomStateString(const QString& peer_id, const
             ui.statusmessagelabel->hide();
         } else {
             ui.statusmessagelabel->show();
-			status_text = RsHtml::formatText(QString(status_string), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
+            status_text = RsHtml::formatText(status_string, RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
             ui.statusmessagelabel->setText(status_text);
         }
     }

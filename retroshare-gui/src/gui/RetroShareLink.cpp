@@ -248,35 +248,60 @@ bool RetroShareLink::createPerson(const QString& name, const QString& hash)
     return valid();
 }
 
-bool RetroShareLink::createForum(const QString& name, const QString& id, const QString& msgId)
+bool RetroShareLink::createForum(const std::string& id, const std::string& msgId)
 {
-    clear();
+	clear();
 
-    _name = name;
-    _hash = id;
-    _msgId = msgId;
+	if (!id.empty()) {
+		_hash = QString::fromStdString(id);
+		_msgId = QString::fromStdString(msgId);
 
-    _type = TYPE_FORUM;
+		_type = TYPE_FORUM;
 
-    check();
+		if (msgId.empty()) {
+			ForumInfo fi;
+			if (rsForums->getForumInfo(id, fi)) {
+				_name = QString::fromStdWString(fi.forumName);
+			}
+		} else {
+			ForumMsgInfo mi;
+			if (rsForums->getForumMessage(id, msgId, mi)) {
+				_name = QString::fromStdWString(mi.title);
+			}
+		}
+	}
 
-    return valid();
+	check();
+
+	return valid();
 }
 
-bool RetroShareLink::createChannel(const QString& name, const QString& id, const QString& msgId)
+bool RetroShareLink::createChannel(const std::string& id, const std::string& msgId)
 {
-    clear();
+	clear();
 
-    _name = name;
-    _size = 0;
-    _hash = id;
-    _msgId = msgId;
+	if (!id.empty()) {
+		_hash = QString::fromStdString(id);
+		_msgId = QString::fromStdString(msgId);
 
-    _type = TYPE_CHANNEL;
+		_type = TYPE_CHANNEL;
 
-    check();
+		if (msgId.empty()) {
+			ChannelInfo ci;
+			if (rsChannels->getChannelInfo(id, ci)) {
+				_name = QString::fromStdWString(ci.channelName);
+			}
+		} else {
+			ChannelMsgInfo mi;
+			if (rsChannels->getChannelMessage(id, msgId, mi)) {
+				_name = QString::fromStdWString(mi.subject);
+			}
+		}
+	}
 
-    return valid();
+	check();
+
+	return valid();
 }
 
 bool RetroShareLink::createSearch(const QString& keywords)

@@ -572,11 +572,11 @@ void  MessengerWindow::insertPeers()
             }
 #endif // MINIMAL_RSGUI
             if (sCustomString.isEmpty()) {
-                sslItem -> setText( COLUMN_NAME, tr("location") + " : " + QString::fromStdString(sslDetail.location) + " " + StatusDefs::connectStateString(sslDetail));
-                sslItem -> setToolTip( COLUMN_NAME, tr("location") + " : " + QString::fromStdString(sslDetail.location));
+                sslItem -> setText( COLUMN_NAME, tr("location") + " : " + QString::fromUtf8(sslDetail.location.c_str()) + " " + StatusDefs::connectStateString(sslDetail));
+                sslItem -> setToolTip( COLUMN_NAME, tr("location") + " : " + QString::fromUtf8(sslDetail.location.c_str()));
             } else {
-                sslItem -> setText( COLUMN_NAME, tr("location") + " : " + QString::fromStdString(sslDetail.location) + " " + StatusDefs::connectStateString(sslDetail));
-                sslItem -> setToolTip( COLUMN_NAME, tr("location") + " : " + QString::fromStdString(sslDetail.location) + " - " + sCustomString);
+                sslItem -> setText( COLUMN_NAME, tr("location") + " : " + QString::fromUtf8(sslDetail.location.c_str()) + " " + StatusDefs::connectStateString(sslDetail));
+                sslItem -> setToolTip( COLUMN_NAME, tr("location") + " : " + QString::fromUtf8(sslDetail.location.c_str()) + " - " + sCustomString);
 
                 /* store custom state string */
                 sslCustomStateStrings[sslDetail.id] = sCustomString;

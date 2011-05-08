@@ -142,7 +142,7 @@ void ConfCertDialog::load()
 
     if (!detail.isOnlyGPGdetail) {
 
-        ui.loc->setText(QString::fromStdString(detail.location));
+        ui.loc->setText(QString::fromUtf8(detail.location.c_str()));
         // Dont Show a timestamp in RS calculate the day
         QDateTime date = QDateTime::fromTime_t(detail.lastConnect);
         QString stime = date.toString(Qt::LocalDate);

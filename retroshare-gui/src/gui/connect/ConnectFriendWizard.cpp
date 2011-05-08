@@ -435,7 +435,7 @@ int TextPage::nextId() const {
 #endif
         wizard()->setField(SSL_ID_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(pd.id));
         wizard()->setField(GPG_ID_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(pd.gpg_id));
-        wizard()->setField(LOCATION_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(pd.location));
+        wizard()->setField(LOCATION_FIELD_CONNECT_FRIEND_WIZARD, QString::fromUtf8(pd.location.c_str()));
         wizard()->setField(CERT_STRING_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(certstr));
 
         wizard()->setField("ext_friend_ip", QString::fromStdString(pd.extAddr));
@@ -807,7 +807,7 @@ int CertificatePage::nextId() const
 #endif
                 wizard()->setField(SSL_ID_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(pd.id));
                 wizard()->setField(GPG_ID_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(pd.gpg_id));
-                wizard()->setField(LOCATION_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(pd.location));
+                wizard()->setField(LOCATION_FIELD_CONNECT_FRIEND_WIZARD, QString::fromUtf8(pd.location.c_str()));
                 wizard()->setField(CERT_STRING_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(certstr));
 
                 wizard()->setField("ext_friend_ip", QString::fromStdString(pd.extAddr));
@@ -1072,7 +1072,7 @@ void ConclusionPage::initializePage() {
     nameEdit->setText( QString::fromStdString( detail.name ) ) ;
     trustEdit->setText(QString::fromStdString( trustString ) ) ;
     emailEdit->setText(QString::fromStdString( detail.email ) );
-    locEdit->setText( QString::fromStdString( detail.location ) );
+    locEdit->setText( QString::fromUtf8( detail.location.c_str() ) );
     signersEdit->setPlainText( ts );
     
     std::list<RsGroupInfo> groupInfoList;
@@ -1152,7 +1152,7 @@ int RsidPage::nextId() const {
         if (rsidstr.empty() == false && rsPeers->getPeerDetails(rsidstr, pd) ) {
             wizard()->setField(SSL_ID_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(pd.id));
             wizard()->setField(GPG_ID_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(pd.gpg_id));
-            wizard()->setField(LOCATION_FIELD_CONNECT_FRIEND_WIZARD, QString::fromStdString(pd.location));
+            wizard()->setField(LOCATION_FIELD_CONNECT_FRIEND_WIZARD, QString::fromUtf8(pd.location.c_str()));
 
             wizard()->setField("ext_friend_ip", QString::fromStdString(pd.extAddr));
             wizard()->setField("ext_friend_port", QString::number(pd.extPort));

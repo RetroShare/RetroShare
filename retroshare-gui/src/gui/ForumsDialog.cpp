@@ -1425,7 +1425,7 @@ void ForumsDialog::copyForumLink()
     ForumInfo fi;
     if (rsForums->getForumInfo(mCurrForumId, fi)) {
         RetroShareLink link;
-        if (link.createForum(QString::fromStdWString(fi.forumName), QString::fromStdString(fi.forumId), "")) {
+        if (link.createForum(fi.forumId, "")) {
             std::vector<RetroShareLink> urls;
             urls.push_back(link);
             RSLinkClipboard::copyLinks(urls);
@@ -1442,7 +1442,7 @@ void ForumsDialog::copyMessageLink()
     ForumInfo fi;
     if (rsForums->getForumInfo(mCurrForumId, fi)) {
         RetroShareLink link;
-        if (link.createForum(QString::fromStdWString(fi.forumName), QString::fromStdString(mCurrForumId), QString::fromStdString(mCurrThreadId))) {
+        if (link.createForum(mCurrForumId, mCurrThreadId)) {
             std::vector<RetroShareLink> urls;
             urls.push_back(link);
             RSLinkClipboard::copyLinks(urls);

@@ -255,7 +255,7 @@ PeersDialog::PeersDialog(QWidget *parent)
     if (rsPeers->getPeerDetails(rsPeers->getOwnId(),pd)) {
         QString titleStr("<span style=\"font-size:16pt; font-weight:500;"
                          "color:#32cd32;\">%1</span>");
-        ui.nicklabel->setText(titleStr.arg(QString::fromStdString(pd.name) + " (" + tr("me") + ") " + QString::fromStdString(pd.location)));
+        ui.nicklabel->setText(titleStr.arg(QString::fromStdString(pd.name) + " (" + tr("me") + ") " + QString::fromUtf8(pd.location.c_str())));
     }
 
     /* Hide platform specific features */
@@ -907,7 +907,7 @@ void  PeersDialog::insertPeers()
                 if (sslDetail.state & RS_PEER_STATE_CONNECTED) {
                     customStateString = QString::fromUtf8(rsMsgs->getCustomStateString(sslDetail.id).c_str());
                 }
-                sText = tr("location") + " : " + QString::fromStdString(sslDetail.location);
+                sText = tr("location") + " : " + QString::fromUtf8(sslDetail.location.c_str());
                 if (customStateString.isEmpty() == false) {
                     sText += " - " + customStateString;
                 }

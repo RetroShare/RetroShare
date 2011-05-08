@@ -105,11 +105,11 @@ void ChanMsgItem::updateItemStatic()
 	{
 		title = tr("Channel Feed") + ": ";
 		RetroShareLink link;
-		link.createChannel(QString::fromStdWString(ci.channelName), QString::fromStdString(ci.channelId), "");
+		link.createChannel(ci.channelId, "");
 		title += link.toHtml();
 		titleLabel->setText(title);
 		RetroShareLink msgLink;
-		msgLink.createChannel(QString::fromStdWString(cmi.subject), QString::fromStdString(cmi.channelId), QString::fromStdString(cmi.msgId));
+		msgLink.createChannel(cmi.channelId, cmi.msgId);
 		subjectLabel->setText(msgLink.toHtml());
 
 		if ((ci.channelFlags & RS_DISTRIB_SUBSCRIBED) || (ci.channelFlags & RS_DISTRIB_ADMIN)) {
@@ -406,7 +406,7 @@ void ChanMsgItem::copyLink()
 	ChannelMsgInfo cmi;
 	if (rsChannels->getChannelMessage(mChanId, mMsgId, cmi)) {
 		RetroShareLink link;
-		if (link.createChannel(QString::fromStdWString(cmi.subject), QString::fromStdString(cmi.channelId), QString::fromStdString(cmi.msgId))) {
+		if (link.createChannel(cmi.channelId, cmi.msgId)) {
 			std::vector<RetroShareLink> urls;
 			urls.push_back(link);
 			RSLinkClipboard::copyLinks(urls);

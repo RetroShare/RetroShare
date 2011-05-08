@@ -89,7 +89,7 @@ void ForumMsgItem::updateItemStatic()
 	if (rsForums->getForumInfo(mForumId, fi))
 	{
 		RetroShareLink link;
-		link.createForum(QString::fromStdWString(fi.forumName), QString::fromStdString(fi.forumId), "");
+		link.createForum(fi.forumId, "");
 		QString title = tr("Forum Post") + ": ";
 		title += link.toHtml();
 
@@ -138,7 +138,7 @@ void ForumMsgItem::updateItemStatic()
 		}
 		
 		RetroShareLink link;
-		link.createForum(QString::fromStdWString(msg.title), QString::fromStdString(msg.forumId), QString::fromStdString(msg.msgId));
+		link.createForum(msg.forumId, msg.msgId);
 
 		if (mIsTop)
 		{		
@@ -196,7 +196,7 @@ void ForumMsgItem::updateItemStatic()
 				mGpgIdPrev = msgParent.srcId;
 
 				RetroShareLink linkParent;
-				linkParent.createForum(QString::fromStdWString(msgParent.title), QString::fromStdString(msgParent.forumId), QString::fromStdString(msgParent.msgId));
+				linkParent.createForum(msgParent.forumId, msgParent.msgId);
 				prevSubLabel->setText(linkParent.toHtml());
 				prevMsgLabel->setText(RsHtml::formatText(QString::fromStdWString(msgParent.msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 				
