@@ -234,12 +234,18 @@ bool RetroShareLink::createFile(const QString& name, uint64_t size, const QStrin
     return valid();
 }
 
-bool RetroShareLink::createPerson(const QString& name, const QString& hash)
+bool RetroShareLink::createPerson(const std::string& id)
 {
     clear();
 
-    _name = name;
-    _hash = hash;
+    RsPeerDetails detail;
+    if (rsPeers->getPeerDetails(id, detail) == false) {
+        std::cerr << "RetroShareLink::createPerson() Couldn't find peer id " << id << std::endl;
+        return false;
+    }
+
+    _hash = QString::fromStdString(id);
+    _name = QString::fromUtf8(detail.name.c_str());
 
     _type = TYPE_PERSON;
 

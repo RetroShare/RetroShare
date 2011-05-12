@@ -377,17 +377,10 @@ static QString BuildRecommendHtml(std::list<std::string> &peerids)
     /* process peer ids */
     std::list <std::string>::iterator peerid;
     for (peerid = peerids.begin(); peerid != peerids.end(); peerid++) {
-        RsPeerDetails detail;
-        if (rsPeers->getPeerDetails(*peerid, detail) == false) {
-            std::cerr << "MessageComposer::recommendFriend() Couldn't find peer id " << *peerid << std::endl;
-            continue;
-        }
-
         RetroShareLink link;
-        if (link.createPerson(QString::fromUtf8(detail.name.c_str()), QString::fromStdString(detail.id))) {
-            continue;
+        if (link.createPerson(*peerid)) {
+            text += link.toHtml() + "<br>";
         }
-        text += link.toHtmlFull() + "<br>";
     }
 
     return text;

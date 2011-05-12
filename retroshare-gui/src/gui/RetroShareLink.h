@@ -55,7 +55,7 @@ class RetroShareLink
 		RetroShareLink(const QString& url);
 
 		bool createFile(const QString& name, uint64_t size, const QString& hash);
-		bool createPerson(const QString& name, const QString& hash);
+		bool createPerson(const std::string& id);
 		bool createForum(const std::string& id, const std::string& msgId);
 		bool createChannel(const std::string& id, const std::string& msgId);
 		bool createSearch(const QString& keywords);
