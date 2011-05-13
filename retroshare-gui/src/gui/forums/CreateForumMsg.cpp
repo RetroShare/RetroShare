@@ -255,46 +255,46 @@ void CreateForumMsg::dropEvent(QDropEvent *event)
 {
 	if (!(Qt::CopyAction & event->possibleActions()))
 	{
-                std::cerr << "CreateForumMsg::dropEvent() Rejecting uncopyable DropAction" << std::endl;
+		std::cerr << "CreateForumMsg::dropEvent() Rejecting uncopyable DropAction" << std::endl;
 
 		/* can't do it */
 		return;
 	}
 
-        std::cerr << "CreateForumMsg::dropEvent() Formats" << std::endl;
+	std::cerr << "CreateForumMsg::dropEvent() Formats" << std::endl;
 	QStringList formats = event->mimeData()->formats();
 	QStringList::iterator it;
 	for(it = formats.begin(); it != formats.end(); it++)
 	{
-                std::cerr << "Format: " << (*it).toStdString() << std::endl;
+		std::cerr << "Format: " << (*it).toStdString() << std::endl;
 	}
 
 	if (event->mimeData()->hasUrls())
 	{
-                std::cerr << "CreateForumMsg::dropEvent() Urls:" << std::endl;
+		std::cerr << "CreateForumMsg::dropEvent() Urls:" << std::endl;
 
 		QList<QUrl> urls = event->mimeData()->urls();
 		QList<QUrl>::iterator uit;
 		for(uit = urls.begin(); uit != urls.end(); uit++)
 		{
-			std::string localpath = uit->toLocalFile().toStdString();
-                        std::cerr << "Whole URL: " << uit->toString().toStdString() << std::endl;
-                        std::cerr << "or As Local File: " << localpath << std::endl;
+			QString localpath = uit->toLocalFile();
+			std::cerr << "Whole URL: " << uit->toString().toStdString() << std::endl;
+			std::cerr << "or As Local File: " << localpath.toStdString() << std::endl;
 
-			if (localpath.size() > 0)
+			if (localpath.isEmpty() == false)
 			{
-				struct stat buf;
-				//Check that the file does exist and is not a directory
-				if ((-1 == stat(localpath.c_str(), &buf))) {
-				    std::cerr << "CreateForumMsg::dropEvent() file does not exists."<< std::endl;
-				    QMessageBox mb(tr("Drop file error."), tr("File not found or file name not accepted."),QMessageBox::Information,QMessageBox::Ok,0,0,this);
-				    mb.exec();
-				} else if (S_ISDIR(buf.st_mode)) {
-				    std::cerr << "CreateForumMsg::dropEvent() directory not accepted."<< std::endl;
-				    QMessageBox mb(tr("Drop file error."), tr("Directory can't be dropped, only files are accepted."),QMessageBox::Information,QMessageBox::Ok,0,0,this);
-				    mb.exec();
+				// Check that the file does exist and is not a directory
+				QDir dir(localpath);
+				if (dir.exists()) {
+					std::cerr << "CreateForumMsg::dropEvent() directory not accepted."<< std::endl;
+					QMessageBox mb(tr("Drop file error."), tr("Directory can't be dropped, only files are accepted."),QMessageBox::Information,QMessageBox::Ok,0,0,this);
+					mb.exec();
+				} else if (QFile::exists(localpath)) {
+					addAttachment(localpath.toUtf8().constData());
 				} else {
-				    CreateForumMsg::addAttachment(localpath);
+					std::cerr << "CreateForumMsg::dropEvent() file does not exists."<< std::endl;
+					QMessageBox mb(tr("Drop file error."), tr("File not found or file name not accepted."),QMessageBox::Information,QMessageBox::Ok,0,0,this);
+					mb.exec();
 				}
 			}
 		}

@@ -24,6 +24,7 @@
 #include <QTimer>
 #include <QMessageBox>
 #include <QBuffer>
+#include <QDir>
 
 #include "CreateChannelMsg.h"
 #include "gui/feeds/SubFileItem.h"
@@ -123,8 +124,7 @@ void CreateChannelMsg::dropEvent(QDropEvent *event)
 		return;
 	}
 
-	std::cerr << "CreateChannelMsg::dropEvent() Formats";
-	std::cerr << std::endl;
+	std::cerr << "CreateChannelMsg::dropEvent() Formats" << std::endl;
 	QStringList formats = event->mimeData()->formats();
 	QStringList::iterator it;
 	for(it = formats.begin(); it != formats.end(); it++)
@@ -143,22 +143,31 @@ void CreateChannelMsg::dropEvent(QDropEvent *event)
 
 	if (event->mimeData()->hasUrls())
 	{
-		std::cerr << "CreateChannelMsg::dropEvent() Urls:";
-		std::cerr << std::endl;
+		std::cerr << "CreateChannelMsg::dropEvent() Urls:" << std::endl;
 
 		QList<QUrl> urls = event->mimeData()->urls();
 		QList<QUrl>::iterator uit;
 		for(uit = urls.begin(); uit != urls.end(); uit++)
 		{
-			std::string localpath = uit->toLocalFile().toUtf8().constData();
-			std::cerr << "Whole URL: " << uit->toString().toStdString();
-			std::cerr << std::endl;
-			std::cerr << "or As Local File: " << uit->toLocalFile().toStdString();
-			std::cerr << std::endl;
+			QString localpath = uit->toLocalFile();
+			std::cerr << "Whole URL: " << uit->toString().toStdString() << std::endl;
+			std::cerr << "or As Local File: " << localpath.toStdString() << std::endl;
 
-			if (localpath.size() > 0)
+			if (localpath.isEmpty() == false)
 			{
-				addAttachment(localpath);
+				// Check that the file does exist and is not a directory
+				QDir dir(localpath);
+				if (dir.exists()) {
+					std::cerr << "CreateChannelMsg::dropEvent() directory not accepted."<< std::endl;
+					QMessageBox mb(tr("Drop file error."), tr("Directory can't be dropped, only files are accepted."),QMessageBox::Information,QMessageBox::Ok,0,0,this);
+					mb.exec();
+				} else if (QFile::exists(localpath)) {
+					addAttachment(localpath.toUtf8().constData());
+				} else {
+					std::cerr << "CreateChannelMsg::dropEvent() file does not exists."<< std::endl;
+					QMessageBox mb(tr("Drop file error."), tr("File not found or file name not accepted."),QMessageBox::Information,QMessageBox::Ok,0,0,this);
+					mb.exec();
+				}
 			}
 		}
 	}
