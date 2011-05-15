@@ -38,7 +38,7 @@
 #include <QUrl>
 
 #define RSLINK_PROCESS_NOTIFY_SUCCESS	1 // notify on success
-#define RSLINK_PROCESS_NOTIFY_ERROR	2 // notify on error
+#define RSLINK_PROCESS_NOTIFY_ERROR		2 // notify on error
 
 #define RSLINK_PROCESS_NOTIFY_ALL      -1
 
@@ -92,6 +92,8 @@ class RetroShareLink
 		bool operator==(const RetroShareLink& l) const { return _type == l._type && _hash == l._hash ; }
 
 		bool process(int flag);
+
+		static int process(QStringList &urls, RetroShareLink::enumType type = RetroShareLink::TYPE_UNKNOWN, bool notify = true);
 
 	private:
 		void fromString(const QString &url);

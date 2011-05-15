@@ -109,8 +109,7 @@ public:
 extern EmbedInHtmlImg defEmbedImg;
 
 QString formatText(const QString &text, unsigned int flag);
-void embedHtml(QDomDocument& doc, QDomElement& currentElement, EmbedInHtml& embedInfos);
-
+bool    findAnchors(const QString &text, QStringList& urls);
 
 } // namespace RsHtml
 

@@ -1063,7 +1063,7 @@ p, li { white-space: pre-wrap; }
         <translation>Alle als gelesen markieren</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+33"/>
         <source>Enable Auto-download</source>
         <translation>Aktiviere Auto-Download</translation>
     </message>
@@ -1073,7 +1073,7 @@ p, li { white-space: pre-wrap; }
         <translation>Kanal erstellen</translation>
     </message>
     <message>
-        <location line="-199"/>
+        <location line="-225"/>
         <source>Unsubscribe</source>
         <translation>Abbestellen</translation>
     </message>
@@ -2341,7 +2341,23 @@ p, li { white-space: pre-wrap; }
         <translation>Drag&apos;n&apos;Drop Dateien aus den Suchergebnissen</translation>
     </message>
     <message>
-        <location filename="../gui/channels/CreateChannelMsg.cpp" line="+300"/>
+        <location filename="../gui/channels/CreateChannelMsg.cpp" line="+162"/>
+        <location line="+6"/>
+        <source>Drop file error.</source>
+        <translation type="unfinished">Dateifehler bei Drag&apos;n&apos;Drop.</translation>
+    </message>
+    <message>
+        <location line="-6"/>
+        <source>Directory can&apos;t be dropped, only files are accepted.</source>
+        <translation type="unfinished">Ordner können nicht für Drag&apos;n&apos;Drop genutzt werden. Nur Dateien werden akzeptiert.</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>File not found or file name not accepted.</source>
+        <translation type="unfinished">Datei nicht gefunden oder Dateiname nicht akzeptiert.</translation>
+    </message>
+    <message>
+        <location line="+141"/>
         <source>Add Extra File</source>
         <translation>Zusätzlich eine Datei hinzufügen</translation>
     </message>
@@ -2538,17 +2554,17 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/forums/CreateForumMsg.cpp" line="+88"/>
-        <location line="+4"/>
+        <location line="+6"/>
         <source>Drop file error.</source>
         <translation>Dateifehler bei Drag&apos;n&apos;Drop.</translation>
     </message>
     <message>
-        <location line="-4"/>
+        <location line="+0"/>
         <source>File not found or file name not accepted.</source>
         <translation>Datei nicht gefunden oder Dateiname nicht akzeptiert.</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="-6"/>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
         <translation>Ordner können nicht für Drag&apos;n&apos;Drop genutzt werden. Nur Dateien werden akzeptiert.</translation>
     </message>
@@ -3551,7 +3567,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ForumMsgItem</name>
     <message>
-        <location filename="../gui/feeds/ForumMsgItem.ui" line="+164"/>
+        <location filename="../gui/feeds/ForumMsgItem.ui" line="+266"/>
         <source>Remove Item</source>
         <translation>Eintrag entfernen</translation>
     </message>
@@ -3561,8 +3577,8 @@ p, li { white-space: pre-wrap; }
         <translation>Erweitern</translation>
     </message>
     <message>
-        <location line="+57"/>
-        <location line="+182"/>
+        <location line="-85"/>
+        <location line="+189"/>
         <location line="+167"/>
         <source>Subject: </source>
         <translation>Betreff:</translation>
@@ -3572,17 +3588,17 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Gehe zum Forumbeitrag</translation>
     </message>
     <message>
-        <location line="-287"/>
+        <location line="-311"/>
         <source>Unsubscribe To Forum</source>
         <translation>Forum abbestellen</translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location line="+20"/>
         <source>Reply</source>
         <translation>Antwort</translation>
     </message>
     <message>
-        <location line="+343"/>
+        <location line="+383"/>
         <source>Send</source>
         <translation>Senden</translation>
     </message>
@@ -3592,7 +3608,7 @@ p, li { white-space: pre-wrap; }
         <translation>Unterzeichnen</translation>
     </message>
     <message>
-        <location filename="../gui/feeds/ForumMsgItem.cpp" line="+91"/>
+        <location filename="../gui/feeds/ForumMsgItem.cpp" line="+93"/>
         <source>Forum Post</source>
         <translation>Beitrag</translation>
     </message>
@@ -3672,7 +3688,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>ForumsDialog</name>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="+275"/>
+        <location filename="../gui/ForumsDialog.cpp" line="+276"/>
         <source>Subscribe to Forum</source>
         <translation>Forum abonnieren</translation>
     </message>
@@ -3771,7 +3787,7 @@ p, li { white-space: pre-wrap; }
         <translation>keine</translation>
     </message>
     <message>
-        <location line="+542"/>
+        <location line="+556"/>
         <location line="+81"/>
         <source>RetroShare</source>
         <translation></translation>
@@ -3787,7 +3803,7 @@ p, li { white-space: pre-wrap; }
         <translation>Du kannst einem anonymen Autor nicht antworten</translation>
     </message>
     <message>
-        <location line="-1363"/>
+        <location line="-1377"/>
         <source>Your Forums</source>
         <translation>Deine Foren</translation>
     </message>
@@ -3864,24 +3880,24 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+36"/>
-        <location line="+276"/>
+        <location line="+296"/>
         <source>Date</source>
         <translation>Datum</translation>
     </message>
     <message>
-        <location line="-290"/>
-        <location line="+295"/>
+        <location line="-310"/>
+        <location line="+315"/>
         <source>Title</source>
         <translation>Titel</translation>
     </message>
     <message>
-        <location line="-276"/>
-        <location line="+281"/>
+        <location line="-296"/>
+        <location line="+301"/>
         <source>Author</source>
         <translation>Autor</translation>
     </message>
     <message>
-        <location line="-276"/>
+        <location line="-296"/>
         <source>Signed</source>
         <translation>Unterzeichnet</translation>
     </message>
@@ -3909,7 +3925,12 @@ p, li { white-space: pre-wrap; }
         <translation>Nächster Beitrag</translation>
     </message>
     <message>
-        <location line="+187"/>
+        <location line="+49"/>
+        <source>Download all files</source>
+        <translation>Alle Dateien runterladen</translation>
+    </message>
+    <message>
+        <location line="+158"/>
         <source>Reply Message</source>
         <translation>Auf Beitrag antworten</translation>
     </message>
@@ -3930,7 +3951,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/ForumsDialog.cpp" line="+123"/>
-        <location line="+1161"/>
+        <location line="+1175"/>
         <source>Start New Thread</source>
         <translation>Erstelle neues Thema</translation>
     </message>
@@ -3958,7 +3979,7 @@ p, li { white-space: pre-wrap; }
         <translation>Inhalt</translation>
     </message>
     <message>
-        <location filename="../gui/ForumsDialog.cpp" line="-1148"/>
+        <location filename="../gui/ForumsDialog.cpp" line="-1162"/>
         <location line="+3"/>
         <source>Mark as read</source>
         <translation>Als gelesen markieren</translation>
@@ -5633,7 +5654,7 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
     <name>MessageComposer</name>
     <message>
         <location filename="../gui/msgs/MessageComposer.ui" line="+17"/>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="+798"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="+791"/>
         <source>Compose</source>
         <translation>Verfassen</translation>
     </message>
@@ -5860,7 +5881,7 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
         <translation>Blockquote hinzufügen</translation>
     </message>
     <message>
-        <location filename="../gui/msgs/MessageComposer.cpp" line="-1123"/>
+        <location filename="../gui/msgs/MessageComposer.cpp" line="-1116"/>
         <source>&amp;Left</source>
         <translation>&amp;Links</translation>
     </message>
@@ -5880,7 +5901,7 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
         <translation>&amp;Blocksatz</translation>
     </message>
     <message>
-        <location line="+213"/>
+        <location line="+206"/>
         <location line="+1605"/>
         <source>Save Message</source>
         <translation>Nachricht speichern</translation>
@@ -6217,12 +6238,12 @@ Willst Du die Nachricht speichern ?</translation>
         <translation>Von</translation>
     </message>
     <message>
-        <location line="+849"/>
+        <location line="+843"/>
         <source>Size</source>
         <translation>Grösse</translation>
     </message>
     <message>
-        <location line="-452"/>
+        <location line="-446"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
@@ -6322,7 +6343,12 @@ p, li { white-space: pre-wrap; }
         <translation>Gesendet</translation>
     </message>
     <message>
-        <location line="+532"/>
+        <location line="+241"/>
+        <source>Download all Recommended Files</source>
+        <translation>Alle Dateien runterladen</translation>
+    </message>
+    <message>
+        <location line="+285"/>
         <source>Cc:</source>
         <translation>Cc:</translation>
     </message>
@@ -6384,13 +6410,13 @@ p, li { white-space: pre-wrap; }
         <translation>Dokument drucken</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="-910"/>
+        <location filename="../gui/MessagesDialog.ui" line="-904"/>
         <location filename="../gui/MessagesDialog.cpp" line="-1585"/>
         <source>Subject</source>
         <translation>Betreff</translation>
     </message>
     <message>
-        <location line="+532"/>
+        <location line="+526"/>
         <source>Subject:</source>
         <translation>Betreff:</translation>
     </message>
@@ -6415,7 +6441,7 @@ p, li { white-space: pre-wrap; }
         <translation>Prüfsumme</translation>
     </message>
     <message>
-        <location line="-999"/>
+        <location line="-993"/>
         <source>Print</source>
         <translation>Drucken</translation>
     </message>
@@ -6476,15 +6502,14 @@ p, li { white-space: pre-wrap; }
         <translation>Allen antworten</translation>
     </message>
     <message>
-        <location filename="../gui/MessagesDialog.ui" line="+603"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Download all Recommended Files&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Alle Dateien runterladen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="obsolete">&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;p, li { white-space: pre-wrap; }&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Alle Dateien runterladen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="-171"/>
+        <location filename="../gui/MessagesDialog.ui" line="+432"/>
         <source>Total Inbox:</source>
         <translation>Posteingang gesamt:</translation>
     </message>
@@ -8958,7 +8983,7 @@ Lockdatei:
         <translation>Vielleicht ist das Passwort falsch</translation>
     </message>
     <message>
-        <location filename="../gui/RetroShareLink.cpp" line="+626"/>
+        <location filename="../gui/RetroShareLink.cpp" line="+657"/>
         <source>File Request Confirmation</source>
         <translation>Bestätigung der Dateianforderung</translation>
     </message>
@@ -9044,11 +9069,25 @@ Lockdatei:
         <translation>Der Empfänger der Nachricht ist unbekannt.</translation>
     </message>
     <message>
+        <location line="+34"/>
+        <source>%1 of %2 RetroShare links processed.</source>
+        <translation>%1 von %2 RetroShare Links verarbeitet.</translation>
+    </message>
+    <message>
+        <source>%1 of %2 RetroShare links processed</source>
+        <translation type="obsolete">%1 von %2 RetroShare Links verarbeitet.</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Request Confirmation</source>
+        <translation>Anfrage bestätigen</translation>
+    </message>
+    <message>
         <source>The forum message could not be found.</source>
         <translation type="obsolete">Der Forumbeitrag &quot;%1&quot; konnte nicht gefunden werden.</translation>
     </message>
     <message>
-        <location line="-69"/>
+        <location line="-104"/>
         <location line="+11"/>
         <source>Channel Request canceled</source>
         <translation>Kanalanfrage abgebrochen</translation>
@@ -11989,7 +12028,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+7"/>
-        <location filename="../gui/TrustView.cpp" line="+241"/>
+        <location filename="../gui/TrustView.cpp" line="+243"/>
         <source>Showing: whole network</source>
         <translation>Anzeige: Ganzes Netzwerk</translation>
     </message>

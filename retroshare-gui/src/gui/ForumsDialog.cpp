@@ -148,6 +148,7 @@ ForumsDialog::ForumsDialog(QWidget *parent)
     connect(ui.expandButton, SIGNAL(clicked()), this, SLOT(togglethreadview()));
     connect(ui.previousButton, SIGNAL(clicked()), this, SLOT(previousMessage()));
     connect(ui.nextButton, SIGNAL(clicked()), this, SLOT(nextMessage()));
+    connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(downloadAllFiles()));
 
     connect(ui.clearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
     connect(ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
@@ -1249,6 +1250,20 @@ void ForumsDialog::nextMessage ()
             ui.threadTreeWidget->setCurrentItem (Next);
         }
     }
+}
+
+void ForumsDialog::downloadAllFiles()
+{
+	QStringList urls;
+	if (RsHtml::findAnchors(ui.postText->toHtml(), urls) == false) {
+		return;
+	}
+
+	if (urls.count() == 0) {
+		return;
+	}
+
+	RetroShareLink::process(urls, RetroShareLink::TYPE_FILE, true);
 }
 
 // TODO

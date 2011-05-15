@@ -852,6 +852,29 @@ bool RetroShareLink::process(int flag)
 	return false;
 }
 
+/*static*/ int RetroShareLink::process(QStringList &urls, RetroShareLink::enumType type /*= RetroShareLink::TYPE_UNKNOWN*/, bool notify /*= true*/)
+{
+	int processed = 0;
+
+	for (QStringList::iterator it = urls.begin(); it != urls.end(); it++) {
+		RetroShareLink link(*it);
+		if (link.valid() && (type == RetroShareLink::TYPE_UNKNOWN || link.type() == type)) {
+			if (link.process(0)) {
+				processed++;
+			}
+		}
+	}
+
+	if (notify) {
+		QString text = QObject::tr("%1 of %2 RetroShare links processed.").arg(processed).arg(urls.count());
+		QMessageBox mb(QObject::tr("Request Confirmation"), text, QMessageBox::Information, QMessageBox::Ok, 0, 0);
+		mb.setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
+		mb.exec();
+	}
+
+	return processed;
+}
+
 void RSLinkClipboard::copyLinks(const std::vector<RetroShareLink>& links) 
 {
     QString res ;

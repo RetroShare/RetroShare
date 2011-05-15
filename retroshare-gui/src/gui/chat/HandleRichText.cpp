@@ -42,33 +42,6 @@ void EmbedInHtmlImg::InitFromAwkwardHash(const QHash< QString, QString >& hash)
 	myRE.setPattern(newRE);
 }
 
-QString formatText(const QString &text, unsigned int flag)
-{
-	if (flag == 0) {
-		// nothing to do
-		return text;
-	}
-
-	QDomDocument doc;
-	if (doc.setContent(text) == false) {
-		// convert text with QTextBrowser
-		QTextBrowser textBrowser;
-		textBrowser.setText(text);
-		doc.setContent(textBrowser.toHtml());
-	}
-
-	QDomElement body = doc.documentElement();
-	if (flag & RSHTML_FORMATTEXT_EMBED_SMILEYS) {
-		embedHtml(doc, body, defEmbedImg);
-	}
-	if (flag & RSHTML_FORMATTEXT_EMBED_LINKS) {
-		EmbedInHtmlAhref defEmbedAhref;
-		embedHtml(doc, body, defEmbedAhref);
-	}
-
-	return doc.toString(-1);  // -1 removes any annoying carriage return misinterpreted by QTextEdit
-}
-
 /**
  * Parses a DOM tree and replaces text by HTML tags.
  * The tree is traversed depth-first, but only through children of Element type
@@ -86,7 +59,7 @@ QString formatText(const QString &text, unsigned int flag)
  * @param[in,out] currentElement The current node (which is of type Element)
  * @param[in] embedInfos The regular expression and the type of embedding to use
  */
-void embedHtml(QDomDocument& doc, QDomElement& currentElement, EmbedInHtml& embedInfos)
+static void embedHtml(QDomDocument& doc, QDomElement& currentElement, EmbedInHtml& embedInfos)
 {
 	if(embedInfos.myRE.pattern().length() == 0)	// we'll get stuck with an empty regexp
 		return;
@@ -172,6 +145,74 @@ void embedHtml(QDomDocument& doc, QDomElement& currentElement, EmbedInHtml& embe
 			currentElement.removeChild(node);
 		}
 	}
+}
+
+QString formatText(const QString &text, unsigned int flag)
+{
+	if (flag == 0) {
+		// nothing to do
+		return text;
+	}
+
+	QDomDocument doc;
+	if (doc.setContent(text) == false) {
+		// convert text with QTextBrowser
+		QTextBrowser textBrowser;
+		textBrowser.setText(text);
+		doc.setContent(textBrowser.toHtml());
+	}
+
+	QDomElement body = doc.documentElement();
+	if (flag & RSHTML_FORMATTEXT_EMBED_SMILEYS) {
+		embedHtml(doc, body, defEmbedImg);
+	}
+	if (flag & RSHTML_FORMATTEXT_EMBED_LINKS) {
+		EmbedInHtmlAhref defEmbedAhref;
+		embedHtml(doc, body, defEmbedAhref);
+	}
+
+	return doc.toString(-1);  // -1 removes any annoying carriage return misinterpreted by QTextEdit
+}
+
+static void findElements(QDomDocument& doc, QDomElement& currentElement, const QString& nodeName, const QString& nodeAttribute, QStringList &elements)
+{
+	if(nodeName.isEmpty()) {
+		return;
+	}
+
+	QDomNodeList children = currentElement.childNodes();
+	for (uint index = 0; index < children.length(); index++) {
+		QDomNode node = children.item(index);
+		if (node.isElement()) {
+			QDomElement element = node.toElement();
+			if (QString::compare(element.tagName(), nodeName, Qt::CaseInsensitive) == 0) {
+				if (nodeAttribute.isEmpty()) {
+					// use text
+					elements.append(element.text());
+				} else {
+					QString attribute = element.attribute(nodeAttribute);
+					if (attribute.isEmpty() == false) {
+						elements.append(attribute);
+					}
+				}
+				continue;
+			}
+			findElements(doc, element, nodeName, nodeAttribute, elements);
+		}
+	}
+}
+
+bool findAnchors(const QString &text, QStringList& urls)
+{
+	QDomDocument doc;
+	if (doc.setContent(text) == false) {
+		return false;
+	}
+
+	QDomElement body = doc.documentElement();
+	findElements(doc, body, "a", "href", urls);
+
+	return true;
 }
 
 } // namespace RsHtml
