@@ -92,6 +92,9 @@ bool 		getWideFileHash(std::wstring filepath,
 			std::string &hash, uint64_t &size);
 
 FILE		*rs_fopen(const char* filename, const char* mode);
+
+std::string convertPathToUnix(std::string path);
+std::string makePath(const std::string &path1, const std::string &path2);
 }
 
 	

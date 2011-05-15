@@ -336,7 +336,7 @@ bool    ftFiMonitor::loadList(std::list<RsItem *>& load)
 		/* ensure that it exists? */
 
 		SharedDirInfo info ;
-		info.filename = fi->file.path;
+		info.filename = RsDirUtil::convertPathToUnix(fi->file.path);
 		info.virtualname = fi->file.name;
 		info.shareflags = fi->flags & (RS_FILE_HINTS_BROWSABLE | RS_FILE_HINTS_NETWORK_WIDE) ;
 

@@ -65,12 +65,6 @@ class RsInit
 		 */
 		static int 	InitRetroShare(int argc, char **argv, bool strictCheck=true);
 
-		/*!
-		 * This return directory seperator for different platforms, not an issue anymore as C library can distinguish
-		 * @returns directory of seperator used for different platforms
-		 *
-		 */
-		static char dirSeperator();
 		static bool isPortable();
 		static bool isWindowsXP();
 

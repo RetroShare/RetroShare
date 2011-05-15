@@ -1489,7 +1489,7 @@ bool 	ftController::setDownloadDirectory(std::string path)
 	{
 		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-		mDownloadPath = path;
+		mDownloadPath = RsDirUtil::convertPathToUnix(path);
 #ifdef CONTROL_DEBUG
 		std::cerr << "ftController::setDownloadDirectory() Okay!";
 		std::cerr << std::endl;
@@ -1511,6 +1511,8 @@ bool 	ftController::setPartialsDirectory(std::string path)
 	/* check it is not a subdir of download / shared directories (BAD) - TODO */
 	{
         RsStackMutex stack(ctrlMutex);
+
+        path = RsDirUtil::convertPathToUnix(path);
 
         if (!path.find(mDownloadPath)) {
             return false;

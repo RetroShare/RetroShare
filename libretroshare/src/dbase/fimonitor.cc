@@ -868,7 +868,7 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 
 			cb->notifyHashingInfo(NOTIFY_HASHTYPE_HASH_FILE, tmpout.str()) ;
 
-			std::string real_path(to_hash[i].realpath + "/" + fe.name) ;
+			std::string real_path = RsDirUtil::makePath(to_hash[i].realpath, fe.name);
 
 			// 1st look into the hash cache if this file already exists.
 			//

@@ -209,7 +209,7 @@ bool AuthGPGimpl::InitAuth ()
 #ifdef WINDOWS_SYS
     if (RsInit::isPortable ()) {
         // set home dir of gpg to configdir\gnupg
-        HomeDir = RsInit::RsConfigDirectory() + RsInit::dirSeperator() + "gnupg";
+        HomeDir = RsInit::RsConfigDirectory() + "/" + "gnupg";
 
         if (!RsDirUtil::checkCreateDirectory(HomeDir)) {
             std::cerr << "Error creating gnupg directory" << std::endl;

@@ -876,7 +876,7 @@ bool CacheStrapper::loadList(std::list<RsItem *>& load)
 
 			cd.cid.type = rscc->cachetypeid;
 			cd.cid.subid = rscc->cachesubid;
-			cd.path = rscc->path;
+			cd.path = RsDirUtil::convertPathToUnix(rscc->path);
 			cd.name = rscc->name;
 			cd.hash = rscc->hash;
 			cd.size = rscc->size;

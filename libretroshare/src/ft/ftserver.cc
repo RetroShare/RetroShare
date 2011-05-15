@@ -593,16 +593,19 @@ bool	ftServer::setSharedDirectories(std::list<SharedDirInfo> &dirs)
 
 bool 	ftServer::addSharedDirectory(const SharedDirInfo& dir)
 {
+	SharedDirInfo _dir = dir;
+	_dir.filename = RsDirUtil::convertPathToUnix(_dir.filename);
+
 	std::list<SharedDirInfo> dirList;
 	mFiMon->getSharedDirectories(dirList);
 
 	// check that the directory is not already in the list.
 	for(std::list<SharedDirInfo>::const_iterator it(dirList.begin());it!=dirList.end();++it)
-		if((*it).filename == dir.filename)
+		if((*it).filename == _dir.filename)
 			return false ;
 
 	// ok then, add the shared directory.
-	dirList.push_back(dir);
+	dirList.push_back(_dir);
 
 	mFiMon->setSharedDirectories(dirList);
 	return true;
@@ -617,6 +620,8 @@ bool ftServer::updateShareFlags(const SharedDirInfo& info)
 
 bool 	ftServer::removeSharedDirectory(std::string dir)
 {
+	dir = RsDirUtil::convertPathToUnix(dir);
+
 	std::list<SharedDirInfo> dirList;
 	std::list<SharedDirInfo>::iterator it;
 

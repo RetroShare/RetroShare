@@ -14,7 +14,7 @@ FolderIterator::FolderIterator(const std::string& folderName)
         return;
     }
 
-    utf16Name += L"\\*.*";
+    utf16Name += L"/*.*";
 
     handle = FindFirstFileW(utf16Name.c_str(), &fileInfo);
     validity = handle != INVALID_HANDLE_VALUE;

@@ -71,9 +71,6 @@ class accountId
 class RsInitConfig 
 {
 	public:
-                /* OS Specifics */
-                static char dirSeperator;
-
                 /* Directories (SetupBaseDir) */
                 static std::string basedir;
                 static std::string homePath;
@@ -164,9 +161,6 @@ bool RsInitConfig::autoLogin;  		/* autoLogin allowed */
 bool RsInitConfig::startMinimised; /* Icon or Full Window */
 std::string RsInitConfig::RetroShareLink;
 
-/* Win/Unix Differences */
-char RsInitConfig::dirSeperator;
-
 /* Directories */
 std::string RsInitConfig::basedir;
 std::string RsInitConfig::homePath;
@@ -224,10 +218,8 @@ static std::string toLowerCase(const std::string& s)
 void RsInit::InitRsConfig()
 {
 #ifndef WINDOWS_SYS
-	RsInitConfig::dirSeperator = '/'; // For unix.
 	RsInitConfig::lockHandle = -1;
 #else
-	RsInitConfig::dirSeperator = '\\'; // For windows.
 	RsInitConfig::lockHandle = NULL;
 #endif
 
@@ -967,7 +959,7 @@ bool getAvailableAccounts(std::list<accountId> &ids)
 
 	for(it = directories.begin(); it != directories.end(); it++)
 	{
-		std::string accountdir = RsInitConfig::basedir + RsInitConfig::dirSeperator + *it;
+		std::string accountdir = RsInitConfig::basedir + "/" + *it;
 #ifdef GPG_DEBUG
 		std::cerr << "getAvailableAccounts() Checking: " << *it << std::endl;
 #endif
@@ -990,14 +982,14 @@ static bool checkAccount(std::string accountdir, accountId &id)
 {
 	/* check if the cert/key file exists */
 
-	std::string subdir1 = accountdir + RsInitConfig::dirSeperator;
+	std::string subdir1 = accountdir + "/";
 	std::string subdir2 = subdir1;
 	subdir1 += configKeyDir;
 	subdir2 += configCertDir;
 
 	// Create the filename.
-	std::string basename = accountdir + RsInitConfig::dirSeperator;
-	basename += configKeyDir + RsInitConfig::dirSeperator;
+	std::string basename = accountdir + "/";
+	basename += configKeyDir + "/";
 	basename += "user";
 
 	std::string cert_name = basename + "_cert.pem";
@@ -1079,7 +1071,7 @@ int      RsInit::GetPGPLoginDetails(std::string id, std::string &name, std::stri
  */
 int RsInit::LockConfigDirectory(const std::string& accountDir, std::string& lockFilePath)
 {
-	const std::string lockFile = accountDir + RsInitConfig::dirSeperator + "lock";
+	const std::string lockFile = accountDir + "/" + "lock";
 
         lockFilePath = lockFile;
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
@@ -1224,12 +1216,12 @@ bool     RsInit::GenerateSSLCertificate(std::string gpg_id, std::string org, std
 	// Temporary Directory for creating files....
 	std::string tmpdir = "TMPCFG";
 
-	std::string tmpbase = RsInitConfig::basedir + RsInitConfig::dirSeperator + tmpdir + RsInitConfig::dirSeperator;
+	std::string tmpbase = RsInitConfig::basedir + "/" + tmpdir + "/";
 	RsInit::setupAccount(tmpbase);
 
 	/* create directory structure */
 
-	std::string basename = tmpbase + configKeyDir + RsInitConfig::dirSeperator;
+	std::string basename = tmpbase + configKeyDir + "/";
 	basename += "user";
 
 	std::string key_name = basename + "_pk.pem";
@@ -1325,7 +1317,7 @@ bool     RsInit::GenerateSSLCertificate(std::string gpg_id, std::string org, std
         }
 
         /* Move directory to correct id */
-	std::string finalbase = RsInitConfig::basedir + RsInitConfig::dirSeperator + sslId + RsInitConfig::dirSeperator;
+	std::string finalbase = RsInitConfig::basedir + "/" + sslId + "/";
 	/* Rename Directory */
 
 	std::cerr << "Mv Config Dir from: " << tmpbase << " to: " << finalbase;
@@ -1356,16 +1348,16 @@ bool RsInit::setupAccount(std::string accountdir)
 {
 	/* actual config directory isd */
 
-	std::string subdir1 = accountdir + RsInitConfig::dirSeperator;
+	std::string subdir1 = accountdir + "/";
 	std::string subdir2 = subdir1;
 	subdir1 += configKeyDir;
 	subdir2 += configCertDir;
 
-	std::string subdir3 = accountdir + RsInitConfig::dirSeperator;
+	std::string subdir3 = accountdir + "/";
 	subdir3 += "cache";
 
-	std::string subdir4 = subdir3 + RsInitConfig::dirSeperator;
-	std::string subdir5 = subdir3 + RsInitConfig::dirSeperator;
+	std::string subdir4 = subdir3 + "/";
+	std::string subdir5 = subdir3 + "/";
 	subdir4 += "local";
 	subdir5 += "remote";
 
@@ -1417,15 +1409,15 @@ bool     RsInit::LoadPassword(std::string id, std::string inPwd)
 	/* select configDir */
 
 	RsInitConfig::preferedId = id;
-	RsInitConfig::configDir = RsInitConfig::basedir + RsInitConfig::dirSeperator + id;
+	RsInitConfig::configDir = RsInitConfig::basedir + "/" + id;
 	RsInitConfig::passwd = inPwd;
 
 	//	if(inPwd != "")
 	//		RsInitConfig::havePasswd = true;
 
 	// Create the filename.
-	std::string basename = RsInitConfig::configDir + RsInitConfig::dirSeperator;
-	basename += configKeyDir + RsInitConfig::dirSeperator;
+	std::string basename = RsInitConfig::configDir + "/";
+	basename += configKeyDir + "/";
 	basename += "user";
 
 	RsInitConfig::load_key  = basename + "_pk.pem";
@@ -1523,7 +1515,7 @@ bool	RsInit::get_configinit(std::string dir, std::string &id)
 	// have a config directories.
 
 	// Check for config file.
-	std::string initfile = dir + RsInitConfig::dirSeperator;
+	std::string initfile = dir + "/";
 	initfile += configInitFile;
 
 	// open and read in the lines.
@@ -1553,7 +1545,7 @@ bool	RsInit::get_configinit(std::string dir, std::string &id)
 bool	RsInit::create_configinit(std::string dir, std::string id)
 {
 	// Check for config file.
-	std::string initfile = dir + RsInitConfig::dirSeperator;
+	std::string initfile = dir + "/";
 	initfile += configInitFile;
 
 	// open and read in the lines.
@@ -1572,8 +1564,6 @@ bool	RsInit::create_configinit(std::string dir, std::string id)
 	std::cerr << "Failed To Create Init File: " << initfile << std::endl;
 	return false;
 }
-
-std::string make_path_unix(std::string path);
 
 std::string RsInit::getHomePath()
 {
@@ -1610,28 +1600,13 @@ std::string RsInit::getHomePath()
 	std::cerr << out.str();
 
 	// convert to FLTK desired format.
-	home = make_path_unix(home);
+	home = RsDirUtil::convertPathToUnix(home);
 #endif
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 	return home;
 }
 
-std::string make_path_unix(std::string path)
-{
-	for(unsigned int i = 0; i < path.length(); i++)
-	{
-		if (path[i] == '\\')
-			path[i] = '/';
-	}
-	return path;
-}
-
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
-
-char RsInit::dirSeperator()
-{
-	return RsInitConfig::dirSeperator;
-}
 
 bool RsInit::isPortable()
 {
@@ -1652,7 +1627,7 @@ bool RsInit::isWindowsXP()
 }
 std::string RsInit::RsConfigKeysDirectory()
 {
-    return RsInitConfig::basedir + RsInitConfig::dirSeperator + RsInitConfig::preferedId + RsInitConfig::dirSeperator + configKeyDir ;
+    return RsInitConfig::basedir + "/" + RsInitConfig::preferedId + "/" + configKeyDir ;
 }
 std::string RsInit::RsConfigDirectory()
 {
@@ -1661,7 +1636,7 @@ std::string RsInit::RsConfigDirectory()
 
 std::string RsInit::RsProfileConfigDirectory()
 {
-    std::string dir = RsInitConfig::basedir + RsInitConfig::dirSeperator + RsInitConfig::preferedId;
+    std::string dir = RsInitConfig::basedir + "/" + RsInitConfig::preferedId;
     //std::cerr << "RsInit::RsProfileConfigDirectory() returning : " << dir << std::endl;
     return dir;
 }
@@ -1812,8 +1787,8 @@ int RsServer::StartupRetroShare()
         std::cerr << "set the debugging to crashMode." << std::endl;
         if ((!RsInitConfig::haveLogFile) && (!RsInitConfig::outStderr))
 	{
-		std::string crashfile = RsInitConfig::basedir + RsInitConfig::dirSeperator;
-		crashfile += ownId + RsInitConfig::dirSeperator + configLogFileName;
+		std::string crashfile = RsInitConfig::basedir + "/";
+		crashfile += ownId + "/" + configLogFileName;
 		setDebugCrashMode(crashfile.c_str());
 	}
 
@@ -1886,7 +1861,7 @@ int RsServer::StartupRetroShare()
 	{
 		std::cerr << "DHT bootstrap file not in ConfigDir: " << bootstrapfile << std::endl;
 		std::string installfile = RsInit::getRetroshareDataDirectory();
-		installfile += RsInitConfig::dirSeperator;
+		installfile += "/";
 		installfile += BITDHT_BOOTSTRAP_FILENAME;
 
 		std::cerr << "Checking for Installation DHT bootstrap file " << installfile << std::endl;
@@ -2264,7 +2239,7 @@ int RsServer::StartupRetroShare()
 #endif // MINIMAL_LIBRS
 
 	// load up the help page
-	std::string helppage = RsInitConfig::basedir + RsInitConfig::dirSeperator;
+	std::string helppage = RsInitConfig::basedir + "/";
 	helppage += configHelpName;
 
 	/* Startup this thread! */

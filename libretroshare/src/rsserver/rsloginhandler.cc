@@ -720,11 +720,11 @@ bool RsLoginHandler::getSSLPasswdFromGPGFile(const std::string& ssl_id,std::stri
 
 std::string RsLoginHandler::getSSLPasswdFileName(const std::string& ssl_id)
 {
-	return RsInit::RsConfigKeysDirectory() + RsInit::dirSeperator() + "ssl_passphrase.pgp";
+	return RsInit::RsConfigKeysDirectory() + "/" + "ssl_passphrase.pgp";
 }
 
 std::string RsLoginHandler::getAutologinFileName(const std::string& ssl_id)
 {
-	return RsInit::RsConfigKeysDirectory() + RsInit::dirSeperator() + "help.dta" ;
+	return RsInit::RsConfigKeysDirectory() + "/" + "help.dta" ;
 }
 

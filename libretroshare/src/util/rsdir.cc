@@ -743,6 +743,28 @@ FILE *RsDirUtil::rs_fopen(const char* filename, const char* mode)
 #endif
 }
 
+std::string RsDirUtil::convertPathToUnix(std::string path)
+{
+	for (unsigned int i = 0; i < path.length(); i++)
+	{
+		if (path[i] == '\\')
+			path[i] = '/';
+	}
+	return path;
+}
+
+std::string RsDirUtil::makePath(const std::string &path1, const std::string &path2)
+{
+	std::string path = path1;
+
+	if (path.empty() == false && *path.rbegin() != '/') {
+		path += "/";
+	}
+	path += path2;
+
+	return path;
+}
+
 #if 0 // NOT ENABLED YET!
 /************************* WIDE STRING ***************************/
 /************************* WIDE STRING ***************************/
