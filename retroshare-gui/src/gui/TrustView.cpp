@@ -8,6 +8,8 @@
 #include <QTableView>
 #include "TrustView.h"
 
+#include <list>
+
 using namespace std ;
 
 TrustView::TrustView()

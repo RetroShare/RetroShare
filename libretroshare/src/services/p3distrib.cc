@@ -51,6 +51,7 @@
 
 #define FAILED_CACHE_CONT "failedcachegrp" // cache id which have failed are stored under a node of this name/grpid
 #define HIST_CACHE_FNAME "grp_history.xml"
+#define ENABLE_CACHE_OPT
 
 /*****
  * #define DISTRIB_DEBUG 1
@@ -786,7 +787,7 @@ void p3GroupDistrib::locked_getHistoryCacheData(const std::string& grpId, std::l
 bool p3GroupDistrib::locked_loadHistoryCacheFile()
 {
 	std::string hFileName = mKeyBackUpDir + "/" + HIST_CACHE_FNAME;
-	std::ifstream hFile(hFileName.c_str());
+        std::ifstream hFile(hFileName.c_str(), std::ios::binary | std::ios::in);
 	int fileLength;
 	char* fileLoadBuffer = NULL;
 	char* decryptedCacheFile = NULL;
@@ -812,6 +813,7 @@ bool p3GroupDistrib::locked_loadHistoryCacheFile()
 	char* buffer = static_cast<char*>(pugi::get_memory_allocation_function()(outlen));
 
 	if(ok){
+
 		memcpy(buffer, decryptedCacheFile, outlen);
 
 		if(decryptedCacheFile != NULL)
@@ -834,7 +836,7 @@ bool p3GroupDistrib::locked_saveHistoryCacheFile()
 		return false;
 
 	std::string hFileName = mKeyBackUpDir + "/" + HIST_CACHE_FNAME;
-	std::ofstream hFile(hFileName.c_str());
+        std::ofstream hFile(hFileName.c_str(), std::ios::binary | std::ios::out);
 	std::ostringstream cacheStream;
 	char* fileBuffer = NULL;
 	int streamLength;

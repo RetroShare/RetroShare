@@ -1026,6 +1026,8 @@ bool    AuthSSLimpl::encrypt(void *&out, int &outlen, const void *in, int inlen,
     	// free encrypted key data
     	free(ek);
 
+        EVP_CIPHER_CTX_cleanup(&ctx);
+
     	outlen = out_offset;
 
     #ifdef DISTRIB_DEBUG
@@ -1052,7 +1054,8 @@ bool    AuthSSLimpl::decrypt(void *&out, int &outlen, const void *in, int inlen)
         int eklen = 0, net_ekl = 0;
         unsigned char *ek = NULL;
         unsigned char iv[EVP_MAX_IV_LENGTH];
-        ek = (unsigned char*)malloc(EVP_PKEY_size(mOwnPrivateKey));
+        int ek_mkl = EVP_PKEY_size(mOwnPrivateKey);
+        ek = (unsigned char*)malloc(ek_mkl);
         EVP_CIPHER_CTX_init(&ctx);
 
         int in_offset = 0, out_currOffset = 0;
@@ -1085,7 +1088,7 @@ bool    AuthSSLimpl::decrypt(void *&out, int &outlen, const void *in, int inlen)
 
         const EVP_CIPHER* cipher = EVP_aes_128_cbc();
 
-        if(!EVP_OpenInit(&ctx, cipher, ek, eklen, iv, mOwnPrivateKey)) {
+        if(0 == EVP_OpenInit(&ctx, cipher, ek, eklen, iv, mOwnPrivateKey)) {
             free(ek);
             return false;
         }
@@ -1113,6 +1116,8 @@ bool    AuthSSLimpl::decrypt(void *&out, int &outlen, const void *in, int inlen)
 
         if(ek != NULL)
         	free(ek);
+
+        EVP_CIPHER_CTX_cleanup(&ctx);
 
         #ifdef AUTHSSL_DEBUG
         std::cerr << "AuthSSLimpl::decrypt() finished with outlen : " << outlen << std::endl;
