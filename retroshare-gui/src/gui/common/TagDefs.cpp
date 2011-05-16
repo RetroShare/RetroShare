@@ -62,7 +62,12 @@ const QString TagDefs::labelStyleSheet(const QColor &color)
         textColor = qRgb(0, 0, 0);
     }
 
-    return QString("QLabel{padding-left: 2px; padding-right: 2px; color: #%1; background-color: #%2; border-radius: 3px}")
+    QColor colorBorder = color.darker(120);
+    QColor colorGradient = color.lighter(150);
+
+    return QString("QLabel{padding-left: 2px; padding-right: 2px; color: #%1; background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 #%2, stop:1 #%3); border-radius: 3px; border-color: #%4; border-width: 1; border-style: solid}")
             .arg(textColor & RGB_MASK, 6, 16, QChar('0'))
-            .arg(color.rgb() & RGB_MASK, 6, 16, QChar('0'));
+            .arg(colorGradient.rgb() & RGB_MASK, 6, 16, QChar('0'))
+            .arg(color.rgb() & RGB_MASK, 6, 16, QChar('0'))
+            .arg(colorBorder.rgb() & RGB_MASK, 6, 16, QChar('0'));
 }
