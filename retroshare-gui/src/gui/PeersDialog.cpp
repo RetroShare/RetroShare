@@ -73,14 +73,15 @@
 #include <QSound>
 
 /* Images for context menu icons */
-#define IMAGE_DENYFRIEND        ":/images/denied16.png"
+#define IMAGE_DENYFRIEND         ":/images/denied16.png"
 #define IMAGE_REMOVEFRIEND       ":/images/removefriend16.png"
 #define IMAGE_EXPORTFRIEND       ":/images/exportpeers_16x16.png"
-#define IMAGE_ADDFRIEND         ":/images/user/add_user16.png"
-#define IMAGE_FRIENDINFO           ":/images/peerdetails_16x16.png"
+#define IMAGE_ADDFRIEND          ":/images/user/add_user16.png"
+#define IMAGE_FRIENDINFO         ":/images/peerdetails_16x16.png"
 #define IMAGE_CHAT               ":/images/chat.png"
 #define IMAGE_MSG                ":/images/mail_new.png"
 #define IMAGE_CONNECT            ":/images/connect_friend.png"
+#define IMAGE_COPYLINK           ":/images/copyrslink.png"
 /* Images for Status icons */
 #define IMAGE_AVAILABLE          ":/images/user/identityavaiblecyan24.png"
 #define IMAGE_CONNECT2           ":/images/reload24.png"
@@ -467,6 +468,10 @@ void PeersDialog::peertreeWidgetCostumPopupMenu( QPoint point )
                 }
 
                 contextMnu.addAction(QIcon(IMAGE_CONNECT), tr("Connect To Friend"), this, SLOT(connectfriend()));
+
+                if (type == TYPE_GPG) {
+                    contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyLink()));
+                }
 
                 action = contextMnu.addAction(QIcon(IMAGE_PASTELINK), tr("Paste Friend Link"), this, SLOT(pastePerson()));
                 if (RSLinkClipboard::empty(RetroShareLink::TYPE_PERSON)) {
@@ -1215,6 +1220,23 @@ void PeersDialog::recommendfriend()
 void PeersDialog::pastePerson()
 {
     RSLinkClipboard::process(RetroShareLink::TYPE_PERSON, RSLINK_PROCESS_NOTIFY_ERROR);
+}
+
+void PeersDialog::copyLink()
+{
+    QTreeWidgetItem *c = getCurrentPeer();
+
+    if (c == NULL) {
+        return;
+    }
+
+    std::vector<RetroShareLink> urls;
+    RetroShareLink link;
+    if (link.createPerson(c->data(COLUMN_DATA, ROLE_ID).toString().toStdString())) {
+        urls.push_back(link);
+    }
+
+    RSLinkClipboard::copyLinks(urls);
 }
 
 QTreeWidgetItem *PeersDialog::getCurrentPeer()

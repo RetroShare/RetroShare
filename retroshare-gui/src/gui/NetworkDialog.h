@@ -50,6 +50,7 @@ private slots:
   void denyFriend() ;
   void deleteCert() ;
   void peerdetails();
+  void copyLink();
   /** Create the context popup menu and it's submenus */
   void connecttreeWidgetCostumPopupMenu( QPoint point );
   //void unvalidGPGkeyWidgetCostumPopupMenu( QPoint point );

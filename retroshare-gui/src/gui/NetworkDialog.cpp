@@ -39,6 +39,7 @@
 #include "connect/ConfCertDialog.h"
 #include "settings/rsharesettings.h"
 #include "common/RSItemDelegate.h"
+#include "RetroShareLink.h"
 
 #include <time.h>
 
@@ -47,7 +48,8 @@
 #define IMAGE_PEERDETAILS    ":/images/peerdetails_16x16.png"
 #define IMAGE_AUTH           ":/images/encrypted16.png"
 #define IMAGE_MAKEFRIEND     ":/images/user/add_user16.png"
-#define IMAGE_EXPIORT      ":/images/exportpeers_16x16.png"
+#define IMAGE_EXPORT         ":/images/exportpeers_16x16.png"
+#define IMAGE_COPYLINK       ":/images/copyrslink.png"
 
 /* Images for Status icons */
 #define IMAGE_AUTHED         ":/images/accepted16.png"
@@ -245,7 +247,7 @@ void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point )
 		}
 		if(peer_id == rsPeers->getGPGOwnId())
 		{
-			QAction* exportcertAct = new QAction(QIcon(IMAGE_EXPIORT), tr( "Export my Cert" ), &contextMnu );
+			QAction* exportcertAct = new QAction(QIcon(IMAGE_EXPORT), tr( "Export my Cert" ), &contextMnu );
 		    connect( exportcertAct , SIGNAL( triggered() ), this, SLOT( on_actionExportKey_activated() ) );
 		    contextMnu.addAction( exportcertAct);
 		}
@@ -254,6 +256,7 @@ void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point )
 		connect( peerdetailsAct , SIGNAL( triggered() ), this, SLOT( peerdetails() ) );
 		contextMnu.addAction( peerdetailsAct);
 
+		contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyLink()));
 
 		contextMnu.exec(QCursor::pos());
 }
@@ -290,6 +293,24 @@ void NetworkDialog::makeFriend()
 void NetworkDialog::peerdetails()
 {
     ConfCertDialog::showIt(getCurrentNeighbour()->text(4).toStdString(), ConfCertDialog::PageDetails);
+}
+
+void NetworkDialog::copyLink()
+{
+	QTreeWidgetItem *wi = getCurrentNeighbour();
+	if (wi == NULL) {
+		return;
+	}
+
+	std::string peer_id = wi->text(4).toStdString() ;
+
+	std::vector<RetroShareLink> urls;
+	RetroShareLink link;
+	if (link.createPerson(peer_id)) {
+		urls.push_back(link);
+	}
+
+	RSLinkClipboard::copyLinks(urls);
 }
 
 /** Open a QFileDialog to browse for a pem/pqi file. */

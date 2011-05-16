@@ -123,6 +123,7 @@ private slots:
     void msgfriend();
     void recommendfriend();
     void pastePerson();
+    void copyLink();
     void addToGroup();
     void moveToGroup();
     void removeFromGroup();
