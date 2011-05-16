@@ -139,88 +139,6 @@ p, li { white-space: pre-wrap; }
             </property>
            </spacer>
           </item>
-          <item row="0" column="4">
-           <widget class="QPushButton" name="channelpushButton">
-            <property name="enabled">
-             <bool>true</bool>
-            </property>
-            <property name="focusPolicy">
-             <enum>Qt::NoFocus</enum>
-            </property>
-            <property name="toolTip">
-             <string>Add</string>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">QPushButton::menu-indicator {
-     subcontrol-origin: padding;
-     subcontrol-position: bottom right;
- }
-
- QPushButton::menu-indicator:pressed, QPushButton::menu-indicator:open {
-     position: relative;
-     top: 2px; left: 2px; /* shift the arrow by 2 px */
- }
-
- QPushButton:hover {
-	border: 1px solid #CCCCCC;
- }</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="images.qrc">
-              <normaloff>:/images/edit_add24.png</normaloff>:/images/edit_add24.png</iconset>
-            </property>
-            <property name="default">
-             <bool>false</bool>
-            </property>
-            <property name="flat">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QToolButton" name="postButton">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>25</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>26</height>
-             </size>
-            </property>
-            <property name="focusPolicy">
-             <enum>Qt::NoFocus</enum>
-            </property>
-            <property name="toolTip">
-             <string>Post to Channel</string>
-            </property>
-            <property name="styleSheet">
-             <string notr="true"/>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="images.qrc">
-              <normaloff>:/images/mail_send.png</normaloff>:/images/mail_send.png</iconset>
-            </property>
-            <property name="autoRaise">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="3">
            <widget class="QPushButton" name="displayButton">
             <property name="focusPolicy">
@@ -249,6 +167,26 @@ p, li { white-space: pre-wrap; }
               <normaloff>:/images/looknfeel.png</normaloff>:/images/looknfeel.png</iconset>
             </property>
             <property name="flat">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="4">
+           <widget class="QToolButton" name="newChannelButton">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
+            <property name="toolTip">
+             <string>Create Channel</string>
+            </property>
+            <property name="icon">
+             <iconset resource="images.qrc">
+              <normaloff>:/images/add_channel24.png</normaloff>:/images/add_channel24.png</iconset>
+            </property>
+            <property name="autoRaise">
              <bool>true</bool>
             </property>
            </widget>
@@ -355,12 +293,12 @@ p, li { white-space: pre-wrap; }
           <item row="2" column="0">
            <layout class="QGridLayout" name="gridLayout">
             <property name="leftMargin">
-             <number>9</number>
+             <number>2</number>
             </property>
             <property name="rightMargin">
-             <number>9</number>
+             <number>2</number>
             </property>
-            <item row="0" column="3">
+            <item row="0" column="4">
              <widget class="QPushButton" name="unsubscribeButton">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -402,7 +340,7 @@ border-image: url(:/images/btn_26_pressed.png) 4;
               </property>
              </widget>
             </item>
-            <item row="0" column="2">
+            <item row="0" column="3">
              <widget class="QPushButton" name="subscribeButton">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -454,7 +392,7 @@ border-image: url(:/images/btn_26_pressed.png) 4;
               </property>
              </widget>
             </item>
-            <item row="0" column="1">
+            <item row="0" column="2">
              <spacer name="horizontalSpacer">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
@@ -467,7 +405,7 @@ border-image: url(:/images/btn_26_pressed.png) 4;
               </property>
              </spacer>
             </item>
-            <item row="0" column="4">
+            <item row="0" column="5">
              <widget class="QToolButton" name="setAllAsReadButton">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -506,7 +444,7 @@ border-image: url(:/images/btn_26_pressed.png) 4;
               </property>
              </widget>
             </item>
-            <item row="0" column="5">
+            <item row="0" column="6">
              <widget class="QPushButton" name="autoDownload">
               <property name="minimumSize">
                <size>
@@ -536,6 +474,47 @@ border-image: url(:/images/btn_26_pressed.png) 4;
               </property>
               <property name="text">
                <string>Enable Auto-download</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QToolButton" name="postButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>25</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>26</height>
+               </size>
+              </property>
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="toolTip">
+               <string>Post to Channel</string>
+              </property>
+              <property name="styleSheet">
+               <string notr="true"/>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="images.qrc">
+                <normaloff>:/images/mail_send.png</normaloff>:/images/mail_send.png</iconset>
+              </property>
+              <property name="autoRaise">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -575,7 +554,7 @@ border-image: url(:/images/btn_26_pressed.png) 4;
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>452</width>
+               <width>484</width>
                <height>331</height>
               </rect>
              </property>
@@ -617,15 +596,6 @@ border-image: url(:/images/btn_26_pressed.png) 4;
     </widget>
    </item>
   </layout>
-  <action name="actionCreate_Channel">
-   <property name="icon">
-    <iconset resource="images.qrc">
-     <normaloff>:/images/add_channel24.png</normaloff>:/images/add_channel24.png</iconset>
-   </property>
-   <property name="text">
-    <string>Create Channel</string>
-   </property>
-  </action>
  </widget>
  <customwidgets>
   <customwidget>

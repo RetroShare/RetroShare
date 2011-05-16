@@ -57,7 +57,7 @@ ChannelFeed::ChannelFeed(QWidget *parent)
     /* Invoke the Qt Designer generated object setup routine */
     setupUi(this);
 
-    connect(actionCreate_Channel, SIGNAL(triggered()), this, SLOT(createChannel()));
+	connect(newChannelButton, SIGNAL(clicked()), this, SLOT(createChannel()));
     connect(postButton, SIGNAL(clicked()), this, SLOT(createMsg()));
     connect(subscribeButton, SIGNAL( clicked( void ) ), this, SLOT( subscribeChannel ( void ) ) );
     connect(unsubscribeButton, SIGNAL( clicked( void ) ), this, SLOT( unsubscribeChannel ( void ) ) );
@@ -92,12 +92,6 @@ ChannelFeed::ChannelFeed(QWidget *parent)
     
     nameLabel->setFont(QFont("MS SANS SERIF", 22));
     nameLabel->setMinimumWidth(20);
-
-    // Setup Channel Menu:
-    QMenu *channelmenu = new QMenu();
-    channelmenu->addAction(actionCreate_Channel); 
-    channelmenu->addSeparator();
-    channelpushButton->setMenu(channelmenu);
 
     /* load settings */
     processSettings(true);

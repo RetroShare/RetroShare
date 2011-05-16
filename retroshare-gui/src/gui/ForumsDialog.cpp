@@ -135,7 +135,7 @@ ForumsDialog::ForumsDialog(QWidget *parent)
     connect( ui.forumTreeWidget, SIGNAL( treeCustomContextMenuRequested( QPoint ) ), this, SLOT( forumListCustomPopupMenu( QPoint ) ) );
     connect( ui.threadTreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( threadListCustomPopupMenu( QPoint ) ) );
 
-    connect(ui.actionCreate_Forum, SIGNAL(triggered()), this, SLOT(newforum()));
+	connect(ui.newForumButton, SIGNAL(clicked()), this, SLOT(newforum()));
     connect(ui.newmessageButton, SIGNAL(clicked()), this, SLOT(createmessage()));
     connect(ui.newthreadButton, SIGNAL(clicked()), this, SLOT(createthread()));
 
@@ -180,11 +180,6 @@ ForumsDialog::ForumsDialog(QWidget *parent)
     m_ForumNameFont = QFont("Times", 12, QFont::Bold);
     ui.forumName->setFont(m_ForumNameFont);
     ui.threadTitle->setFont(m_ForumNameFont);
-
-    QMenu *forummenu = new QMenu();
-    forummenu->addAction(ui.actionCreate_Forum);
-    forummenu->addSeparator();
-    ui.forumpushButton->setMenu(forummenu);
 
     /* Initialize group tree */
     ui.forumTreeWidget->initDisplayMenu(ui.displayButton);
